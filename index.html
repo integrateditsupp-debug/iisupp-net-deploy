@@ -1213,6 +1213,13 @@
             .bg-i-stage { opacity: 0.11; width: 64vw; height: 64vw; }
         }
     </style>
+<style>
+/* ARIA homepage layout fix v1 */
+:where(.max-w-5xl):has(iframe[src*="aria.html"]),
+:where(.max-w-5xl):has(iframe[src*="aria-demo"]) { max-width: 1320px !important; }
+iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; }
+@media (max-width:1100px) { iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 900px !important; } }
+</style>
 </head>
 <body class="overflow-hidden">
 
