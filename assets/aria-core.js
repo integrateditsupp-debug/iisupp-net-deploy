@@ -856,3 +856,35 @@
   };
   window.ARIA = ARIA;
 })();
+
+/* ===== HOMEPAGE REORDER + INTRO INJECTION (2026-05-10) ===== */
+(function () {
+     "use strict";
+     var p = location.pathname;
+     if (p !== "/" && p !== "/index.html") return;
+     function init() {
+            var sc = document.getElementById("service-center");
+            if (!sc) return;
+            if (document.getElementById("company-intro")) return;
+            var parent = sc.parentNode;
+            var intro = document.createElement("section");
+            intro.id = "company-intro";
+            intro.className = "py-20 px-6 md:px-10 border-t border-[#c5a059]/15";
+            intro.innerHTML = '<div class="max-w-4xl mx-auto text-center"><p class="text-[10px] tracking-[0.3em] uppercase mb-4" style="color:#c5a059">WELCOME</p><h2 class="text-3xl md:text-4xl font-bold mb-8" style="font-family:Cinzel,serif">Welcome to <span style="color:#c5a059">Integrated IT Support Inc.</span></h2><p class="text-base md:text-lg leading-relaxed text-white/80">Our #1 objective and vision is to eliminate IT cost that just does not make sense — saving you not only money but time. Face it: a business runs to bring in revenue, not cut it. Who actually uses ITIL, Six Sigma and the many other skills obtained to help companies? Not many. Our goal is to bring you 21+ years of diverse IT experience across many industries, led by our CEO Ahmad Wasee, and importantly help you save time, effort, money — and stay focused on your goals, not worrying about IT at all. Take a look at some of our examples, apps, recent accomplishments, and much more down the pipeline. Welcome to the future, where AI helps you take over your challenges.</p></div>';
+            var aria = document.createElement("section");
+            aria.id = "introducing-aria";
+            aria.className = "py-20 px-6 md:px-10 border-t border-[#c5a059]/15";
+            aria.innerHTML = '<div class="max-w-6xl mx-auto"><div class="text-center mb-10"><p class="text-[10px] tracking-[0.3em] uppercase mb-4" style="color:#c5a059">NEW · ALWAYS ON</p><h2 class="text-3xl md:text-4xl font-bold mb-6" style="font-family:Cinzel,serif">Introducing <span style="color:#c5a059">ARIA</span></h2><p class="text-base md:text-lg leading-relaxed text-white/80 max-w-3xl mx-auto">Your AI technical analyst, customer support, service desk analyst, incident manager, help desk agent, receptionist, switchboard, and much more — all in one. Save tons of company expenses with ARIA.</p></div><div class="rounded-2xl border border-[#c5a059]/30 overflow-hidden" style="background:#000"><iframe src="/aria" loading="lazy" title="ARIA — AI Technical Assistant" style="width:100%;height:1100px;border:0;display:block;background:#000"></iframe></div></div>';
+            parent.insertBefore(intro, sc);
+            parent.insertBefore(aria, sc);
+            ["aria-cinematics","aria-capabilities","aria-revolution","aria-demo"].forEach(function(id){
+                     var el = document.getElementById(id);
+                     if (el) parent.insertBefore(el, sc);
+            });
+     }
+     if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", init);
+     } else {
+            init();
+     }
+})();
