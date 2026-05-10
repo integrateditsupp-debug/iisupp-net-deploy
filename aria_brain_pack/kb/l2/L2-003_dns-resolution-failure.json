@@ -1,0 +1,63 @@
+{
+  "id": "L2-003",
+  "title": "DNS resolution failure",
+  "level": "L2",
+  "category": "networking",
+  "environment": "hybrid",
+  "applies_to": [
+    "Windows",
+    "macOS",
+    "Cisco/Meraki",
+    "M365"
+  ],
+  "symptoms": [
+    "Can ping IP but not name",
+    "Websites fail by name",
+    "Internal apps fail"
+  ],
+  "causes": [
+    "Wrong DNS server",
+    "VPN DNS issue",
+    "Stale cache",
+    "Conditional forwarder issue",
+    "Public/private DNS mismatch"
+  ],
+  "safe_steps": [
+    "Test another website.",
+    "Restart browser/device.",
+    "Disable VPN temporarily if allowed.",
+    "Check if issue affects one user or many."
+  ],
+  "advanced_steps": [
+    "Flush DNS cache.",
+    "Check assigned DNS servers.",
+    "Test nslookup against expected DNS.",
+    "Review conditional forwarders or secure DNS settings."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Many users affected.",
+    "Internal domains fail.",
+    "DNS server or firewall changes required."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "dns",
+    "vpn",
+    "nslookup",
+    "conditional-forwarder"
+  ],
+  "source_basis": [
+    "Cisco official support troubleshooting guidance",
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

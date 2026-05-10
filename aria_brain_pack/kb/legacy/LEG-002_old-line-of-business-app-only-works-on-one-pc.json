@@ -1,0 +1,57 @@
+{
+  "id": "LEG-002",
+  "title": "Old line-of-business app only works on one PC",
+  "level": "L2",
+  "category": "legacy-app",
+  "environment": "legacy",
+  "applies_to": [
+    "Windows legacy apps",
+    "Access/ODBC",
+    "Old Java/.NET"
+  ],
+  "symptoms": [
+    "App crashes",
+    "Only one workstation works",
+    "Database connection error"
+  ],
+  "causes": [
+    "Old runtime dependency",
+    "Hardcoded path",
+    "ODBC DSN",
+    "Local admin dependency",
+    "Unsupported OS"
+  ],
+  "safe_steps": [
+    "Identify app name/version and working PC.",
+    "Do not uninstall working copy.",
+    "Check shortcut target and mapped drives."
+  ],
+  "advanced_steps": [
+    "Document dependencies, DSN, runtime versions, license files, and compatibility mode.",
+    "Plan modernization or virtualization."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Only working PC at risk.",
+    "No installer/license available.",
+    "Business-critical app."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "legacy-app",
+    "odbc",
+    "runtime",
+    "modernization"
+  ],
+  "source_basis": [
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

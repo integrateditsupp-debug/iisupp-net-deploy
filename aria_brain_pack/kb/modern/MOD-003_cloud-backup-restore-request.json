@@ -1,0 +1,58 @@
+{
+  "id": "MOD-003",
+  "title": "Cloud backup restore request",
+  "level": "L2",
+  "category": "backup",
+  "environment": "modern",
+  "applies_to": [
+    "OneDrive",
+    "SharePoint",
+    "Cloud backups"
+  ],
+  "symptoms": [
+    "Deleted file",
+    "Wrong version",
+    "Folder missing"
+  ],
+  "causes": [
+    "Accidental deletion",
+    "Sync conflict",
+    "Retention limit",
+    "Permission change"
+  ],
+  "safe_steps": [
+    "Check recycle bin.",
+    "Check version history.",
+    "Confirm file path and owner.",
+    "Stop syncing if mass deletion suspected."
+  ],
+  "advanced_steps": [
+    "Use admin restore, audit logs, retention/eDiscovery if licensed."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Mass deletion.",
+    "Legal/compliance file.",
+    "Ransomware suspected."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "backup",
+    "restore",
+    "onedrive",
+    "sharepoint",
+    "retention"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

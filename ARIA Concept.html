@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ARIA — Enterprise AI Concept</title>
+<link rel="stylesheet" href="aria-tokens.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #050402; color: #EDE6D6; height: 100%; }
+  #root { height: 100%; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="aria-shared.jsx"></script>
+<script type="text/babel" src="aria-artboards.jsx"></script>
+
+<script type="text/babel">
+  const App = () => (
+    <DesignCanvas title="ARIA — Enterprise AI Assistant" subtitle="Black & gold cinematic concept · seven artboards">
+      <DCSection id="overview" title="Overview" subtitle="Hero composition, mirrors the reference frame">
+        <DCArtboard id="01-dashboard" label="01 · Main dashboard · Research mode" width={1440} height={920}>
+          <SceneDashboard/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="research" title="Product research" subtitle="Luxury commerce scenario">
+        <DCArtboard id="02-luxury" label="02 · Luxury watchmaker research" width={1440} height={920}>
+          <SceneLuxuryResearch/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="support" title="IT support flow" subtitle="Three-frame walkthrough — choice → guided → autonomous">
+        <DCArtboard id="03-choice" label="03 · Support · Choice screen" width={1440} height={920}>
+          <SceneSupportChoice/>
+        </DCArtboard>
+        <DCArtboard id="04-walkthrough" label="04 · Walk me through it" width={1440} height={920}>
+          <SceneWalkthrough/>
+        </DCArtboard>
+        <DCArtboard id="05-resolve" label="05 · Resolve it for me" width={1440} height={920}>
+          <SceneResolve/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="voice" title="Voice & operations" subtitle="Customer voice mode and global ops grid">
+        <DCArtboard id="06-voice" label="06 · Voice assistant · close-up" width={1440} height={920}>
+          <SceneVoice/>
+        </DCArtboard>
+        <DCArtboard id="07-ops" label="07 · Enterprise operations · L1 / L2 / L3" width={1440} height={920}>
+          <SceneOpsGrid/>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+  ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

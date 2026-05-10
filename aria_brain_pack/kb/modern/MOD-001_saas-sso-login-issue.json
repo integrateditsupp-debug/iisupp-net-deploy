@@ -1,0 +1,60 @@
+{
+  "id": "MOD-001",
+  "title": "SaaS SSO login issue",
+  "level": "L2",
+  "category": "identity",
+  "environment": "modern",
+  "applies_to": [
+    "SaaS apps",
+    "Entra ID",
+    "Google Workspace",
+    "Okta-style SSO"
+  ],
+  "symptoms": [
+    "Cannot access SaaS app",
+    "SSO loop",
+    "Access denied"
+  ],
+  "causes": [
+    "MFA issue",
+    "Conditional access",
+    "User not assigned",
+    "SAML/OIDC config",
+    "License missing"
+  ],
+  "safe_steps": [
+    "Try private browser.",
+    "Confirm user can access other apps.",
+    "Check if app access is assigned.",
+    "Confirm MFA completes."
+  ],
+  "advanced_steps": [
+    "Review sign-in logs, SAML/OIDC configuration, group assignments, SCIM provisioning."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Many users blocked.",
+    "Admin app access broken.",
+    "Security policy conflict."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "sso",
+    "saml",
+    "oidc",
+    "saas",
+    "mfa"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

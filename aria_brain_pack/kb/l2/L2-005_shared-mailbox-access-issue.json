@@ -1,0 +1,58 @@
+{
+  "id": "L2-005",
+  "title": "Shared mailbox access issue",
+  "level": "L2",
+  "category": "email",
+  "environment": "modern",
+  "applies_to": [
+    "Microsoft 365",
+    "Exchange Online",
+    "Outlook"
+  ],
+  "symptoms": [
+    "Shared mailbox missing",
+    "Cannot send as",
+    "Permission denied"
+  ],
+  "causes": [
+    "Permission not assigned",
+    "Propagation delay",
+    "Outlook cache",
+    "Wrong permission type"
+  ],
+  "safe_steps": [
+    "Confirm mailbox name and user affected.",
+    "Try Outlook web.",
+    "Restart Outlook.",
+    "Allow time for permission propagation after changes."
+  ],
+  "advanced_steps": [
+    "Check FullAccess, SendAs, SendOnBehalf permissions.",
+    "Re-add mailbox profile if cache issue."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Executive/legal mailbox.",
+    "Permissions changed unexpectedly.",
+    "Audit required."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "shared-mailbox",
+    "exchange",
+    "permissions",
+    "outlook"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

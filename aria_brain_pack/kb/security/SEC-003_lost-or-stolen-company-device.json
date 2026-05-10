@@ -1,0 +1,61 @@
+{
+  "id": "SEC-003",
+  "title": "Lost or stolen company device",
+  "level": "L2",
+  "category": "security",
+  "environment": "modern",
+  "applies_to": [
+    "Intune",
+    "MDM",
+    "Windows",
+    "macOS",
+    "Mobile"
+  ],
+  "symptoms": [
+    "Device lost",
+    "Laptop stolen",
+    "Phone missing"
+  ],
+  "causes": [
+    "Theft",
+    "Lost device",
+    "Unknown data exposure"
+  ],
+  "safe_steps": [
+    "Confirm device owner, last known location, and whether sensitive data exists.",
+    "Report immediately.",
+    "Do not wait to see if company data is involved."
+  ],
+  "advanced_steps": [
+    "Use MDM to lock/wipe if policy allows.",
+    "Revoke sessions.",
+    "Rotate credentials.",
+    "Check encryption/compliance status."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Regulated data.",
+    "Executive device.",
+    "Device not encrypted."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "lost-device",
+    "mdm",
+    "intune",
+    "wipe",
+    "security"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "NIST incident response guidance",
+    "CISA cyber guidance"
+  ]
+}

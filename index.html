@@ -1,0 +1,2716 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noarchive, nosnippet">
+    <meta name="theme-color" content="#d4af37">
+    <title>Integrated IT Support | Distinguished Technical Services</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/aria-core.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=CAD&components=buttons&disable-funding=credit,card" data-namespace="paypal"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
+
+        :root {
+            --luxury-gold: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%);
+            --deep-slate: #050505;
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--deep-slate); color: #ffffff; margin: 0; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, .logo-text { font-family: 'Cinzel', serif; }
+
+        /* --- Anti-copy / protection layer --- */
+        body, .protected { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        input, textarea, select, .allow-select { -webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important; }
+        img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none; }
+
+        /* --- GATEWAY SYSTEM --- */
+        #gateway { position: fixed; inset: 0; z-index: 100; display: flex; background: #000; cursor: pointer; }
+        #gateway.hidden-gate { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        .door { flex: 1; background: #050505; height: 100vh; transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1); position: relative; display: flex; align-items: center; overflow: hidden; }
+        .door-left { justify-content: flex-end; border-right: 1px solid rgba(197, 160, 89, 0.2); }
+        .door-right { justify-content: flex-start; border-left: 1px solid rgba(197, 160, 89, 0.2); }
+        .portal-half { width: 150px; height: 85vh; border: 6px double #c5a059; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background: rgba(0,0,0,0.95); box-shadow: 0 0 40px rgba(197, 160, 89, 0.1); }
+        .door-left .portal-half { border-right: none; border-radius: 4px 0 0 4px; }
+        .door-right .portal-half { border-left: none; border-radius: 0 4px 4px 0; }
+        .huge-i { font-size: 50vh; color: rgba(197, 160, 89, 0.8); font-weight: bold; position: absolute; top: 50%; transform: translateY(-50%); line-height: 1; pointer-events: none; }
+        .door-left .huge-i { right: -28px; }
+        .door-right .huge-i { left: -28px; }
+        .inner-branding-container { position: absolute; bottom: 55px; width: 0; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible; pointer-events: none; }
+        .door-left .inner-branding-container { right: 0; }
+        .door-right .inner-branding-container { left: 0; }
+        .brand-main { font-size: 13px; letter-spacing: 0.25em; text-transform: uppercase; color: #ffffff; }
+        .brand-sub { font-size: 7.5px; letter-spacing: 0.4em; text-transform: uppercase; color: #c5a059; margin-top: 6px; }
+        .interaction-suite { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 120; display: flex; flex-direction: column; align-items: center; padding: 40px; pointer-events: auto; }
+        .handle-row { display: flex; gap: 40px; margin-bottom: 20px; }
+        .handle { width: 8px; height: 140px; background: var(--luxury-gold); border-radius: 10px; box-shadow: 0 0 20px rgba(197, 160, 89, 0.2); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .enter-text { color: #ffffff; font-size: 18px; letter-spacing: 0.6em; text-transform: uppercase; font-weight: 700; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); margin-top: 55px; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .interaction-suite:hover .handle { transform: scaleY(1.08) translateY(-5px); filter: brightness(1.2); box-shadow: 0 10px 30px rgba(197, 160, 89, 0.5); }
+        .interaction-suite:hover .enter-text { transform: translateY(10px); color: #f1dca7; text-shadow: 0 0 20px rgba(197, 160, 89, 0.8); }
+        #gateway.open .door-left { transform: translateX(-100%); }
+        #gateway.open .door-right { transform: translateX(100%); }
+        #gateway.open .interaction-suite { opacity: 0; pointer-events: none; }
+
+        /* --- FINGERPRINT BIOMETRIC SEQUENCE --- */
+        .biometric-overlay {
+            position: absolute; inset: 0; z-index: 115;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            background: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            transition: opacity 0.55s ease, backdrop-filter 0.55s ease, -webkit-backdrop-filter 0.55s ease, background 0.55s ease;
+        }
+        .biometric-overlay.bio-visible {
+            opacity: 1;
+            background: rgba(5, 5, 5, 0.55);
+            backdrop-filter: blur(14px) saturate(130%);
+            -webkit-backdrop-filter: blur(14px) saturate(130%);
+        }
+        .biometric-overlay.bio-fade-out {
+            opacity: 0;
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            background: rgba(0, 0, 0, 0);
+            transition: opacity 0.4s ease, backdrop-filter 0.4s ease, -webkit-backdrop-filter 0.4s ease, background 0.4s ease;
+        }
+        .bio-core {
+            position: relative;
+            width: 260px; height: 260px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .bio-fingerprint {
+            width: 220px; height: 220px;
+            color: #c5a059;
+            filter: drop-shadow(0 0 34px rgba(197,160,89,0.45));
+            animation: bioPulse 1.6s ease-in-out infinite;
+        }
+        .bio-fingerprint path, .bio-fingerprint circle {
+            stroke: currentColor;
+            stroke-width: 1.4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-dasharray: 140;
+            stroke-dashoffset: 140;
+            animation: bioTrace 1.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+        }
+        .bio-fingerprint path:nth-child(1) { animation-delay: 0.00s; }
+        .bio-fingerprint path:nth-child(2) { animation-delay: 0.08s; }
+        .bio-fingerprint path:nth-child(3) { animation-delay: 0.16s; }
+        .bio-fingerprint path:nth-child(4) { animation-delay: 0.24s; }
+        .bio-fingerprint path:nth-child(5) { animation-delay: 0.32s; }
+        .bio-fingerprint path:nth-child(6) { animation-delay: 0.40s; }
+        .bio-fingerprint path:nth-child(7) { animation-delay: 0.48s; }
+        .bio-fingerprint path:nth-child(8) { animation-delay: 0.56s; }
+        .bio-fingerprint path:nth-child(9) { animation-delay: 0.64s; }
+        .bio-fingerprint path:nth-child(10) { animation-delay: 0.72s; }
+
+        @keyframes bioTrace { to { stroke-dashoffset: 0; } }
+        @keyframes bioPulse {
+            0%, 100% { filter: drop-shadow(0 0 18px rgba(197,160,89,0.25)); transform: scale(1); }
+            50%      { filter: drop-shadow(0 0 32px rgba(197,160,89,0.55)); transform: scale(1.03); }
+        }
+
+        .bio-scanline {
+            position: absolute;
+            left: 50%; top: 22px;
+            transform: translateX(-50%);
+            width: 230px; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(241,220,167,0.98), transparent);
+            box-shadow: 0 0 18px rgba(241,220,167,0.7), 0 0 32px rgba(197,160,89,0.45);
+            opacity: 0;
+            animation: bioScan 1.5s cubic-bezier(0.22, 0.61, 0.36, 1) 0.1s forwards;
+        }
+        @keyframes bioScan {
+            0%   { transform: translate(-50%, 0);    opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { transform: translate(-50%, 218px); opacity: 0; }
+        }
+
+        .bio-ring {
+            position: absolute;
+            inset: 0;
+            border: 1px solid rgba(197,160,89,0.0);
+            border-radius: 50%;
+            animation: bioRing 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.35s forwards;
+        }
+        @keyframes bioRing {
+            0%   { transform: scale(0.65); border-color: rgba(197,160,89,0.0); }
+            40%  { border-color: rgba(197,160,89,0.55); }
+            100% { transform: scale(1.18); border-color: rgba(197,160,89,0.0); }
+        }
+
+        /* Decoding text overlaid directly on the fingerprint */
+        .bio-decode {
+            position: absolute;
+            inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none;
+            font-family: 'Courier New', ui-monospace, monospace;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            color: rgba(241, 220, 167, 0.85);
+            text-shadow: 0 0 10px rgba(197, 160, 89, 0.75), 0 0 22px rgba(5, 5, 5, 0.9);
+            white-space: nowrap;
+            user-select: none;
+            opacity: 0;
+            animation: bioDecodeShow 0.4s ease 0.15s forwards;
+        }
+        @keyframes bioDecodeShow {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        .bio-decode.bio-decode-hide {
+            animation: bioDecodeHide 0.35s ease forwards;
+        }
+        @keyframes bioDecodeHide {
+            from { opacity: 1; }
+            to   { opacity: 0; }
+        }
+
+        .bio-unlocked {
+            margin-top: 32px;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.7em;
+            text-transform: uppercase;
+            color: #f1dca7;
+            font-weight: 300;
+            opacity: 0;
+            transform: translateY(6px);
+            text-shadow: 0 0 18px rgba(197,160,89,0.35);
+        }
+        .bio-unlocked.bio-show {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .bio-unlocked .bio-dot {
+            display: inline-block;
+            width: 4px; height: 4px;
+            background: #c5a059;
+            border-radius: 50%;
+            margin: 0 10px 2px;
+            vertical-align: middle;
+            box-shadow: 0 0 8px rgba(197,160,89,0.7);
+        }
+
+        /* --- STYLES --- */
+        .luxury-flip-container { perspective: 1200px; width: 260px; height: 52px; }
+        .luxury-flip-card { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
+        .luxury-flip-container:hover .luxury-flip-card { transform: rotateX(180deg); }
+        .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 2px; font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.25em; }
+        .flip-front { background: var(--luxury-gold); color: #000; }
+        .flip-back { background: #111; color: #f1dca7; transform: rotateX(180deg); border: 1px solid #c5a059; }
+        .gold-glow { text-shadow: 0 0 25px rgba(197, 160, 89, 0.5); }
+        .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); transition: transform 0.5s ease, background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; }
+        .glass-panel:hover { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(197, 160, 89, 0.3); transform: translateY(-3px); box-shadow: 0 14px 40px rgba(197, 160, 89, 0.08); }
+        .portfolio-card { position: relative; overflow: hidden; border-left: 1px solid #c5a059; }
+        .portfolio-icon { font-size: 2rem; color: #c5a059; margin-bottom: 1.5rem; opacity: 0.8; }
+        .pathway-line { width: 1px; height: 50px; background: linear-gradient(to bottom, #c5a059, transparent); margin: 0 auto; }
+        .node { border: 1px solid #c5a059; padding: 10px 24px; font-size: 9px; text-transform: uppercase; letter-spacing: 2px; width: fit-content; margin: 0 auto; background: rgba(0,0,0,0.8); }
+
+        /* ====== SERVICE CENTER SECTION ====== */
+        .sc-section { position: relative; background: #050505; }
+        .sc-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(197,160,89,0.05) 0%, transparent 70%); pointer-events: none; }
+        .sc-bordered { border: 1px solid rgba(197,160,89,0.25); background: rgba(197,160,89,0.02); padding: 24px; max-width: 900px; margin: 0 auto; border-radius: 8px; }
+        .sc-cta-secondary { width: 100%; padding: 10px 16px; border: 1px solid rgba(197,160,89,0.3); background: rgba(197,160,89,0.03); color: #c5a059; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.4s ease; text-align: center; border-radius: 6px; }
+        .sc-cta-secondary:hover { border-color: #c5a059; box-shadow: 0 0 25px rgba(197,160,89,0.12); }
+        .sc-grid-btn { border: 1px solid rgba(255,255,255,0.05); background: #111; padding: 10px; cursor: pointer; transition: all 0.3s ease; text-align: left; }
+        .sc-grid-btn:hover { border-color: #c5a059; background: rgba(197,160,89,0.04); }
+        .sc-grid-btn h4 { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; margin: 0 0 2px 0; }
+        .sc-grid-btn p { font-size: 8px; color: rgba(255,255,255,0.4); margin: 0; text-transform: uppercase; letter-spacing: 0.05em; }
+        .sc-info-box { border: 1px solid rgba(255,255,255,0.05); background: #111; padding: 10px 12px; border-radius: 6px; transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+        .sc-info-box:hover { transform: translateY(-2px); border-color: rgba(197,160,89,0.35); box-shadow: 0 10px 22px rgba(0,0,0,0.4); }
+        .sc-info-box h5 { font-family: 'Cinzel', serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #c5a059; margin: 0 0 2px 0; }
+        .sc-info-box p { font-size: 7px; color: rgba(255,255,255,0.4); margin: 0; }
+        .sc-emergency { border-color: rgba(231,76,60,0.55) !important; background: linear-gradient(135deg, rgba(231,76,60,0.09), rgba(231,76,60,0.02)) !important; box-shadow: 0 0 22px rgba(231,76,60,0.12); }
+        .sc-emergency h5 { color: #e74c3c !important; }
+        .sc-emergency:hover { border-color: #e74c3c !important; box-shadow: 0 10px 30px rgba(231,76,60,0.22); }
+        .sc-group-label {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 8px;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: rgba(197,160,89,0.7);
+            font-weight: 700;
+            margin: 4px 0 10px;
+            text-align: left;
+            border-left: 2px solid #c5a059;
+            padding-left: 10px;
+        }
+        .sc-cta { width: 100%; padding: 14px 16px; border: 1px solid #c5a059; background: linear-gradient(135deg, rgba(197,160,89,0.16), rgba(197,160,89,0.05)); color: #c5a059; font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer; transition: all 0.4s ease; display: block; text-align: center; border-radius: 6px; box-shadow: 0 0 28px rgba(197,160,89,0.15); }
+        .sc-cta:hover { box-shadow: 0 0 50px rgba(197,160,89,0.3); background: linear-gradient(135deg, rgba(197,160,89,0.24), rgba(197,160,89,0.08)); transform: translateY(-1px); }
+        .sc-upsell { background: rgba(197,160,89,0.03); border: 1px solid rgba(197,160,89,0.2); padding: 8px; text-align: center; }
+        .sc-upsell p { font-size: 9px; color: rgba(255,255,255,0.5); margin: 0; }
+        .sc-upsell a { color: #c5a059; text-decoration: underline; }
+        .sc-upsell strong { color: #c5a059; }
+
+        /* --- EMAIL-TO-INQUIRE LINK --- */
+        .email-inquire { display: inline-block; margin-top: 16px; padding: 10px 14px; border: 1px solid rgba(197,160,89,0.4); background: rgba(197,160,89,0.04); color: #c5a059; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; text-align: center; width: 100%; box-sizing: border-box; transition: all 0.3s ease; }
+        .email-inquire:hover { border-color: #c5a059; background: rgba(197,160,89,0.1); color: #f1dca7; box-shadow: 0 0 20px rgba(197,160,89,0.15); }
+
+        /* ====== MODAL OVERLAY ====== */
+        .sc-modal-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .sc-modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .sc-modal-container {
+            width: 95vw; max-width: 1000px;
+            height: 90vh; max-height: 900px;
+            background: #0a0a0a;
+            border: 1px solid rgba(197,160,89,0.3);
+            position: relative;
+            display: flex; flex-direction: column;
+            transform: scale(0.95) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .sc-modal-overlay.active .sc-modal-container { transform: scale(1) translateY(0); }
+        .sc-modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, rgba(197,160,89,0.12), rgba(0,0,0,0.95));
+            border-bottom: 1px solid rgba(197,160,89,0.2);
+            flex-shrink: 0;
+        }
+        .sc-modal-header h4 { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #f1dca7; margin: 0; }
+        .sc-modal-close {
+            width: 32px; height: 32px;
+            background: none; border: 1px solid rgba(197,160,89,0.3);
+            color: #c5a059; font-size: 18px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .sc-modal-close:hover { background: rgba(197,160,89,0.1); border-color: #c5a059; }
+        .sc-modal-iframe { flex: 1; border: none; width: 100%; }
+        /* ─── Service Center v2 — refined, simpler than ARIA ─── */
+        .sc-card {
+            max-width: 880px; margin: 0 auto; padding: 36px 32px;
+            background: linear-gradient(180deg, rgba(197,160,89,0.04), rgba(197,160,89,0.01));
+            border: 1px solid rgba(197,160,89,0.18);
+            border-radius: 14px;
+            box-shadow: 0 0 60px rgba(197,160,89,0.06);
+        }
+        .sc-hero-cta {
+            width: 100%; padding: 18px 24px; margin-bottom: 28px;
+            display: flex; align-items: center; justify-content: center; gap: 14px;
+            border: 1px solid #c5a059;
+            background: linear-gradient(135deg, rgba(197,160,89,0.18), rgba(197,160,89,0.04));
+            color: #c5a059; font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700;
+            letter-spacing: 0.28em; text-transform: uppercase;
+            cursor: pointer; transition: all 0.4s ease; border-radius: 8px;
+            box-shadow: 0 0 32px rgba(197,160,89,0.15);
+        }
+        .sc-hero-cta:hover {
+            box-shadow: 0 0 48px rgba(197,160,89,0.3);
+            background: linear-gradient(135deg, rgba(197,160,89,0.28), rgba(197,160,89,0.08));
+            transform: translateY(-1px);
+        }
+        .sc-hero-icon { font-size: 18px; }
+        .sc-hero-text { flex: 0 1 auto; }
+        .sc-hero-arrow { font-size: 16px; opacity: 0.7; transition: transform 0.3s ease; }
+        .sc-hero-cta:hover .sc-hero-arrow { transform: translateX(4px); opacity: 1; }
+
+        .sc-section-label {
+            display: flex; align-items: center; gap: 12px;
+            margin: 20px 0 12px;
+            font-family: 'Cinzel', serif; font-size: 9px; font-weight: 700;
+            color: rgba(197,160,89,0.7); letter-spacing: 0.4em; text-transform: uppercase;
+        }
+        .sc-section-label::before, .sc-section-label::after {
+            content: ''; flex: 1; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(197,160,89,0.25), transparent);
+        }
+        .sc-section-label span { padding: 0 4px; }
+
+        .sc-tiles {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            margin-bottom: 24px;
+        }
+        .sc-tile {
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(15,15,15,0.7);
+            padding: 18px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-family: inherit;
+        }
+        .sc-tile:hover {
+            border-color: rgba(197,160,89,0.5);
+            background: rgba(197,160,89,0.06);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .sc-tile-icon { font-size: 22px; margin-bottom: 8px; line-height: 1; }
+        .sc-tile-title {
+            font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700;
+            color: #fff; letter-spacing: 0.18em; text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+        .sc-tile-sub {
+            font-size: 8px; color: rgba(255,255,255,0.45);
+            letter-spacing: 0.08em; text-transform: uppercase;
+        }
+
+        .sc-emergency-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px; margin: 18px 0 24px;
+            border: 1px solid rgba(231,76,60,0.45);
+            background: linear-gradient(135deg, rgba(231,76,60,0.08), rgba(231,76,60,0.02));
+            border-radius: 10px;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .sc-emergency-row:hover {
+            border-color: #e74c3c;
+            box-shadow: 0 0 28px rgba(231,76,60,0.2);
+            transform: translateX(2px);
+        }
+        .sc-emergency-pulse {
+            position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+            width: 6px; height: 6px; border-radius: 50%; background: #e74c3c;
+            box-shadow: 0 0 0 0 rgba(231,76,60,0.5);
+            animation: scPulse 1.8s ease-out infinite;
+        }
+        @keyframes scPulse {
+            0% { box-shadow: 0 0 0 0 rgba(231,76,60,0.6); }
+            100% { box-shadow: 0 0 0 14px rgba(231,76,60,0); }
+        }
+        .sc-emergency-icon { font-size: 22px; margin-left: 18px; }
+        .sc-emergency-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .sc-emergency-text strong {
+            font-family: 'Cinzel', serif; font-size: 11px; color: #e74c3c;
+            letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700;
+        }
+        .sc-emergency-text span {
+            font-size: 9px; color: rgba(255,255,255,0.6);
+            letter-spacing: 0.1em; text-transform: uppercase;
+        }
+        .sc-emergency-arrow { color: #e74c3c; font-size: 18px; opacity: 0.7; transition: transform 0.3s ease; }
+        .sc-emergency-row:hover .sc-emergency-arrow { transform: translateX(4px); opacity: 1; }
+
+        .sc-pair {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+            margin-bottom: 24px;
+        }
+        .sc-action-card {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 18px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(15,15,15,0.7);
+            border-radius: 10px;
+            cursor: pointer; transition: all 0.3s ease;
+            text-align: left; font-family: inherit;
+        }
+        .sc-action-card:hover {
+            border-color: rgba(197,160,89,0.5);
+            background: rgba(197,160,89,0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        }
+        .sc-action-icon { font-size: 22px; flex-shrink: 0; }
+        .sc-action-body { flex: 1; min-width: 0; }
+        .sc-action-title {
+            font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700;
+            color: #c5a059; letter-spacing: 0.18em; text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .sc-action-sub {
+            font-size: 9px; color: rgba(255,255,255,0.5);
+            letter-spacing: 0.06em;
+        }
+
+        .sc-perks {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        }
+        .sc-perk {
+            padding: 14px 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(15,15,15,0.5);
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            cursor: default;
+        }
+        .sc-perk-link { cursor: pointer; }
+        .sc-perk-link:hover, .sc-perk:hover {
+            border-color: rgba(197,160,89,0.35);
+            background: rgba(197,160,89,0.04);
+            transform: translateY(-2px);
+        }
+        .sc-perk-icon { font-size: 18px; margin-bottom: 6px; }
+        .sc-perk-title {
+            font-family: 'Cinzel', serif; font-size: 9px; font-weight: 700;
+            color: #c5a059; letter-spacing: 0.18em; text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+        .sc-perk-sub {
+            font-size: 8px; color: rgba(255,255,255,0.5);
+            letter-spacing: 0.06em;
+        }
+
+        @media (max-width: 720px) {
+            .sc-card { padding: 24px 18px; }
+            .sc-hero-cta { font-size: 12px; letter-spacing: 0.2em; padding: 16px 18px; }
+            .sc-tiles { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .sc-tile { padding: 14px 10px; }
+            .sc-tile-icon { font-size: 20px; }
+            .sc-pair { grid-template-columns: 1fr; }
+            .sc-perks { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .sc-perk { padding: 10px 6px; }
+            .sc-emergency-icon { margin-left: 12px; }
+        }
+        @media (max-width: 420px) {
+            .sc-perks { grid-template-columns: 1fr; }
+        }
+
+
+        /* --- DOWNLOAD APP BUTTON --- */
+        .download-app-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%);
+            color: #050505; font-size: 9px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            text-decoration: none; transition: all 0.3s ease;
+            border: none; cursor: pointer;
+        }
+        .download-app-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(197, 160, 89, 0.4); }
+        .download-app-btn svg { width: 14px; height: 14px; }
+
+        /* --- CHAT WIDGET --- */
+        .chat-fab { position: fixed; bottom: 24px; right: 24px; z-index: 90; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(197, 160, 89, 0.4); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .chat-fab:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(197, 160, 89, 0.6); }
+        .chat-fab svg { color: #050505; width: 28px; height: 28px; }
+
+        /* ARIA launcher — sits directly above the chat FAB, mirrors chat-fab circle size */
+        .aria-fab { position: fixed; bottom: 96px; right: 24px; z-index: 91; width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, rgba(241,220,167,0.45), transparent 60%), linear-gradient(135deg, #0a0a0a 0%, #161208 60%, #0a0a0a 100%); border: 1px solid rgba(197,160,89,0.55); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; box-shadow: 0 4px 24px rgba(197,160,89,0.3), inset 0 0 18px rgba(197,160,89,0.12); color: #f1dca7; font-family: 'Cinzel', serif; font-weight: 700; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .aria-fab:hover { transform: scale(1.1); box-shadow: 0 6px 36px rgba(197,160,89,0.5), inset 0 0 24px rgba(197,160,89,0.2); border-color: rgba(241,220,167,0.85); }
+        .aria-fab .aria-fab-dot { width: 6px; height: 6px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff5d9, #c5a059); box-shadow: 0 0 8px rgba(241,220,167,0.8); animation: ariaFabPulse 2.2s ease-in-out infinite; flex-shrink: 0; }
+        @keyframes ariaFabPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.55; transform: scale(0.8); } }
+        .chat-window { position: fixed; bottom: 96px; right: 24px; z-index: 90; width: 380px; max-width: calc(100vw - 48px); max-height: calc(100vh - 140px); background: #0a0a0a; border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transform-origin: bottom right; transition: opacity 0.3s ease, transform 0.3s ease; }
+        .chat-window.hidden { opacity: 0; transform: scale(0.9) translateY(10px); pointer-events: none; }
+        .chat-window.visible { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: linear-gradient(135deg, rgba(197, 160, 89, 0.15), rgba(0,0,0,0.9)); border-bottom: 1px solid rgba(197, 160, 89, 0.2); }
+        .chat-header h4 { font-size: 14px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #f1dca7; margin: 0; }
+        .chat-close-btn { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s; }
+        .chat-close-btn:hover { opacity: 0.7; }
+        .chat-close-btn svg { color: #c5a059; width: 20px; height: 20px; }
+        .chat-body { padding: 20px; overflow-y: auto; flex: 1; }
+        .chat-form .form-group { margin-bottom: 16px; }
+        .chat-form label { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 600; }
+        .chat-form input, .chat-form textarea { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; transition: border-color 0.2s; box-sizing: border-box; }
+        .chat-form input:focus, .chat-form textarea:focus { outline: none; border-color: rgba(197, 160, 89, 0.5); }
+        .chat-form input.invalid, .chat-form textarea.invalid { border-color: #e74c3c; }
+        .chat-form textarea { resize: vertical; min-height: 80px; }
+        .chat-form .error-msg { font-size: 10px; color: #e74c3c; margin-top: 4px; display: none; }
+        .chat-submit-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #c5a059, #b38728); border: none; border-radius: 6px; color: #050505; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; cursor: pointer; transition: opacity 0.2s, transform 0.2s; }
+        .chat-submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .chat-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .chat-success { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
+        .chat-success .check-circle { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #c5a059, #b38728); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .chat-success .check-circle svg { color: #050505; width: 28px; height: 28px; }
+        .chat-success p { color: rgba(255,255,255,0.7); font-size: 14px; line-height: 1.6; }
+
+        /* --- ABOUT US section moved to /about.html --- */
+
+        /* --- PRECISION METHODOLOGY (FRAMEWORKS) --- */
+        .framework-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .fw-card {
+            position: relative;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 26px 26px 22px;
+            cursor: pointer;
+            transition: border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+            text-align: left;
+            display: flex; flex-direction: column;
+        }
+        .fw-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(197,160,89,0.08), transparent 55%);
+            opacity: 0; transition: opacity 0.45s ease; pointer-events: none;
+        }
+        .fw-card:hover { border-color: rgba(197,160,89,0.35); background: rgba(255,255,255,0.035); transform: translateY(-2px); box-shadow: 0 14px 38px rgba(0,0,0,0.4), 0 0 22px rgba(197,160,89,0.07); }
+        .fw-card:hover::before { opacity: 1; }
+        .fw-card.fw-open { border-color: rgba(197,160,89,0.55); background: rgba(197,160,89,0.045); box-shadow: 0 18px 48px rgba(0,0,0,0.45), 0 0 28px rgba(197,160,89,0.12); }
+        .fw-head { display: flex; align-items: flex-start; gap: 14px; position: relative; z-index: 1; }
+        .fw-icon {
+            flex: 0 0 auto;
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(197,160,89,0.4);
+            color: #c5a059;
+            background: rgba(197,160,89,0.05);
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0;
+            transition: background 0.4s ease, color 0.4s ease, transform 0.4s ease;
+        }
+        .fw-card.fw-open .fw-icon { background: var(--luxury-gold); color: #050505; }
+        .fw-title-wrap { flex: 1; min-width: 0; }
+        .fw-title { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #fff; margin: 4px 0 6px; font-weight: 700; line-height: 1.25; }
+        .fw-tagline { font-size: 10px; color: rgba(255,255,255,0.55); letter-spacing: 0.04em; line-height: 1.5; }
+        .fw-toggle {
+            flex: 0 0 auto;
+            position: relative;
+            width: 26px; height: 26px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(197,160,89,0.4);
+            color: #c5a059;
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease;
+        }
+        .fw-card.fw-open .fw-toggle { transform: rotate(45deg); background: rgba(197,160,89,0.1); }
+        .fw-toggle::before, .fw-toggle::after { content: ''; position: absolute; left: 50%; top: 50%; background: currentColor; }
+        .fw-toggle::before { width: 12px; height: 1px; transform: translate(-50%, -50%); }
+        .fw-toggle::after  { width: 1px; height: 12px; transform: translate(-50%, -50%); }
+        .fw-body {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative; z-index: 1;
+        }
+        .fw-card.fw-open .fw-body { grid-template-rows: 1fr; }
+        .fw-body-inner { overflow: hidden; min-height: 0; }
+        .fw-body p {
+            font-size: 11px;
+            line-height: 1.75;
+            color: rgba(255,255,255,0.65);
+            letter-spacing: 0.02em;
+            margin: 18px 0 0;
+            padding-top: 18px;
+            border-top: 1px solid rgba(197,160,89,0.18);
+        }
+
+        @media (max-width: 1024px) {
+            .framework-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+        }
+        @media (max-width: 640px) {
+            .framework-grid { grid-template-columns: 1fr; gap: 12px; }
+            .fw-card { padding: 22px 20px 20px; }
+            .fw-title { font-size: 12px; letter-spacing: 0.14em; }
+            .fw-tagline { font-size: 10px; }
+            .fw-body p { font-size: 11px; }
+        }
+
+        /* --- STRATEGIC IMPACT TILES --- */
+        .impact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .impact-tile {
+            position: relative;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 32px 28px;
+            overflow: hidden;
+            transition: transform 0.45s ease, border-color 0.45s ease, background 0.45s ease, box-shadow 0.45s ease;
+            display: flex; flex-direction: column;
+            border-left: 1px solid #c5a059;
+        }
+        .impact-tile::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(197,160,89,0.1), transparent 55%);
+            opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+        }
+        .impact-tile:hover { transform: translateY(-4px); border-color: rgba(197,160,89,0.45); background: rgba(255,255,255,0.035); box-shadow: 0 18px 42px rgba(0,0,0,0.45), 0 0 28px rgba(197,160,89,0.1); }
+        .impact-tile:hover::after { opacity: 1; }
+        .impact-icon { font-size: 1.6rem; color: #c5a059; margin-bottom: 1rem; opacity: 0.85; position: relative; z-index: 1; }
+        .impact-tile h3 { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: #fff; margin: 0 0 12px; font-weight: 700; position: relative; z-index: 1; }
+        .impact-outcome {
+            font-size: 11px;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.65);
+            letter-spacing: 0.02em;
+            position: relative; z-index: 1;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease, margin-top 0.5s ease;
+        }
+        .impact-tile .impact-lead {
+            font-size: 10.5px;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.05em;
+            position: relative; z-index: 1;
+        }
+        .impact-tile:hover .impact-outcome { max-height: 260px; opacity: 1; margin-top: 14px; }
+
+        @media (max-width: 1024px) { .impact-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+        @media (max-width: 640px)  { .impact-grid { grid-template-columns: 1fr; gap: 14px; } .impact-tile { padding: 26px 22px; } .impact-tile .impact-outcome { max-height: 260px; opacity: 1; margin-top: 12px; } }
+
+        /* --- PRICING DECK OF CARDS --- */
+        .price-track { margin-bottom: 72px; }
+        .price-track:last-of-type { margin-bottom: 0; }
+        .price-track-head { text-align: center; margin-bottom: 28px; }
+        .price-track-head .track-eyebrow { font-size: 8px; letter-spacing: 0.5em; text-transform: uppercase; color: #c5a059; font-weight: 700; display: block; margin-bottom: 10px; }
+        .price-track-head .track-title { font-family: 'Cinzel', serif; font-size: clamp(0.95rem, 1.5vw, 1.15rem); letter-spacing: 0.3em; text-transform: uppercase; color: #fff; margin: 0 0 8px; font-weight: 700; }
+        .price-track-head .track-title .accent { color: #c5a059; font-style: italic; }
+        .price-track-head .track-sub { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.4); max-width: 620px; margin: 0 auto; }
+
+        .price-deck {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            perspective: 1600px;
+            position: relative;
+            padding: 24px 10px 40px;
+        }
+
+        .deck-slot {
+            position: relative;
+            min-height: 440px;
+            transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), z-index 0s 0.4s;
+            will-change: transform;
+        }
+        .price-deck.is-decked .deck-slot[data-deck="1"] { transform: rotate(-3.2deg) translateX(22px) translateY(6px); }
+        .price-deck.is-decked .deck-slot[data-deck="2"] { transform: translateY(-14px) scale(1.02); z-index: 2; }
+        .price-deck.is-decked .deck-slot[data-deck="3"] { transform: rotate(3.2deg) translateX(-22px) translateY(6px); }
+        .price-deck.is-decked .deck-slot:hover,
+        .price-deck.is-decked .deck-slot.is-flipped {
+            transform: rotate(0deg) translateY(-24px) scale(1.04);
+            z-index: 10;
+            transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), z-index 0s;
+        }
+
+        .deck-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: inherit;
+            transform-style: preserve-3d;
+            transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .deck-slot:hover .deck-card,
+        .deck-slot.is-flipped .deck-card { transform: rotateY(180deg); }
+
+        .deck-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            background: linear-gradient(155deg, rgba(197,160,89,0.06), rgba(255,255,255,0.02) 55%, rgba(0,0,0,0));
+            border: 1px solid rgba(197,160,89,0.35);
+            padding: 26px 24px 22px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 22px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .deck-face::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at top right, rgba(197,160,89,0.12), transparent 60%);
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .deck-face .deck-meta { position: relative; z-index: 1; }
+
+        .deck-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 9px; font-weight: 700;
+            letter-spacing: 0.38em;
+            text-transform: uppercase;
+            color: #c5a059;
+            border: 1px solid rgba(197,160,89,0.45);
+            background: rgba(197,160,89,0.06);
+            padding: 6px 12px;
+            margin-bottom: 18px;
+            align-self: flex-start;
+        }
+        .deck-badge .dot { width: 5px; height: 5px; border-radius: 50%; background: #c5a059; box-shadow: 0 0 8px rgba(197,160,89,0.7); }
+
+        .deck-name {
+            font-family: 'Cinzel', serif;
+            font-size: 16px; font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #fff;
+            margin: 0 0 8px;
+            line-height: 1.25;
+        }
+        .deck-scale {
+            font-size: 9.5px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 20px;
+        }
+        .deck-price {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.15rem, 1.6vw, 1.35rem);
+            font-weight: 700;
+            color: #f1dca7;
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 20px rgba(197,160,89,0.22);
+            margin-bottom: 14px;
+        }
+        .deck-price-sm {
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            color: #c5a059;
+            letter-spacing: 0.15em;
+            margin-bottom: 16px;
+        }
+        .deck-tagline {
+            font-size: 10.5px;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.58);
+            letter-spacing: 0.04em;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+        }
+        .deck-front .deck-hint {
+            margin-top: auto;
+            font-size: 8.5px;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: rgba(197,160,89,0.7);
+            padding-top: 18px;
+            border-top: 1px solid rgba(197,160,89,0.15);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .deck-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(155deg, rgba(197,160,89,0.08), rgba(10,10,10,0.98) 55%);
+            border-color: rgba(197,160,89,0.55);
+        }
+        .deck-back ul {
+            list-style: none;
+            padding: 0;
+            margin: 4px 0 14px;
+            position: relative;
+            z-index: 1;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+        }
+        .deck-back li {
+            font-size: 9.5px;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.68);
+            line-height: 1.6;
+            padding: 6px 0 6px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .deck-back li::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 13px;
+            width: 6px; height: 1px;
+            background: #c5a059;
+        }
+        .deck-positioning {
+            font-size: 10px;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.55);
+            letter-spacing: 0.03em;
+            font-style: italic;
+            padding: 12px 14px;
+            border-left: 2px solid #c5a059;
+            background: rgba(197,160,89,0.05);
+            margin: 10px 0 14px;
+            position: relative;
+            z-index: 1;
+        }
+        .deck-cta {
+            display: inline-block;
+            padding: 10px 14px;
+            border: 1px solid rgba(197,160,89,0.5);
+            background: rgba(197,160,89,0.06);
+            color: #c5a059;
+            font-family: 'Cinzel', serif;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+        .deck-cta:hover { background: var(--luxury-gold); color: #050505; border-color: transparent; box-shadow: 0 8px 22px rgba(197,160,89,0.3); }
+        .deck-cta-buy { display: block; margin-top: 8px; padding: 10px 14px; border-radius: 999px; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; text-align: center; background: linear-gradient(135deg, #d4af37 0%, #f1dca7 50%, #a47d1b 100%); color: #050505; border: 1px solid rgba(212,175,55,0.5); transition: filter .2s ease, transform .2s ease; width: 100%; }
+        .deck-cta-buy:hover { filter: brightness(1.08); transform: translateY(-1px); }
+        .deck-pay-note { font-size: 8px; opacity: .55; margin-top: 6px; text-align: center; letter-spacing: 0.08em; line-height: 1.5; }
+
+        /* Middle card slight elevation by default to suggest deck top */
+        .price-deck:not(.is-decked) .deck-slot { transform: none; }
+
+        /* Project Work supplementary card */
+        .project-card {
+            margin-top: 20px;
+            padding: 28px 32px;
+            background: linear-gradient(135deg, rgba(197,160,89,0.045), rgba(255,255,255,0.02));
+            border: 1px solid rgba(197,160,89,0.3);
+            border-left: 3px solid #c5a059;
+        }
+        .project-card-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(197,160,89,0.15); }
+        .project-card-head h4 { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.25em; text-transform: uppercase; color: #fff; margin: 0; font-weight: 700; }
+        .project-card-head span { font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: #c5a059; }
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0 28px;
+        }
+        .project-grid div {
+            display: flex; justify-content: space-between; gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 10.5px;
+            letter-spacing: 0.05em;
+            color: rgba(255,255,255,0.68);
+        }
+        .project-grid div span:last-child { color: #c5a059; font-weight: 700; font-family: 'Cinzel', serif; letter-spacing: 0.08em; white-space: nowrap; }
+
+        /* Private Engagement — editorial note */
+        .private-note {
+            margin-top: 24px;
+            padding: 18px 22px;
+            border: 1px solid rgba(197,160,89,0.2);
+            background: rgba(197,160,89,0.03);
+            font-size: 10px;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.55);
+            letter-spacing: 0.04em;
+            font-style: italic;
+            text-align: center;
+        }
+
+        @media (max-width: 1024px) {
+            .price-deck { grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 16px 0 30px; }
+            .price-deck.is-decked .deck-slot[data-deck="1"] { transform: rotate(-2deg) translateX(12px); }
+            .price-deck.is-decked .deck-slot[data-deck="3"] { transform: rotate(2deg) translateX(-12px); }
+            .deck-slot { min-height: 420px; }
+            .deck-face { padding: 22px 18px 20px; }
+            .deck-name { font-size: 14px; letter-spacing: 0.14em; }
+        }
+        @media (max-width: 768px) {
+            .price-deck { grid-template-columns: 1fr; gap: 14px; padding: 8px 0 20px; perspective: none; }
+            .price-deck.is-decked .deck-slot,
+            .price-deck.is-decked .deck-slot[data-deck="1"],
+            .price-deck.is-decked .deck-slot[data-deck="2"],
+            .price-deck.is-decked .deck-slot[data-deck="3"] { transform: none; }
+            .price-deck.is-decked .deck-slot.is-flipped { transform: translateY(-4px); }
+            .deck-slot { min-height: 420px; }
+            .deck-slot:hover .deck-card { transform: none; }
+            .deck-slot.is-flipped .deck-card { transform: rotateY(180deg); }
+            .project-grid { grid-template-columns: 1fr; }
+            .project-card { padding: 22px 20px; }
+        }
+
+        /* --- CREDENTIALS BAND (front-and-center trust signals) --- */
+        .cred-band {
+            position: relative;
+            padding: 42px 24px 36px;
+            border-top: 1px solid rgba(197,160,89,0.18);
+            border-bottom: 1px solid rgba(197,160,89,0.18);
+            background: linear-gradient(180deg, rgba(197,160,89,0.035), rgba(0,0,0,0) 60%), #070707;
+            text-align: center;
+            overflow: hidden;
+        }
+        .cred-band::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, rgba(197,160,89,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .cred-band .cred-eyebrow { font-size: 8px; letter-spacing: 0.55em; text-transform: uppercase; color: #c5a059; font-weight: 700; display: block; margin-bottom: 14px; position: relative; z-index: 1; }
+        .cred-band .cred-title { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; color: #fff; margin: 0 0 20px; font-weight: 700; position: relative; z-index: 1; }
+        .cred-band .cred-title .em { color: #c5a059; font-style: italic; }
+        .cred-chips {
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+            gap: 10px; position: relative; z-index: 1;
+            max-width: 1100px; margin: 0 auto 18px;
+        }
+        .cred-chip {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 14px;
+            border: 1px solid rgba(197,160,89,0.4);
+            background: rgba(197,160,89,0.05);
+            color: #f1dca7;
+            font-family: 'Cinzel', serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .cred-chip:hover { background: rgba(197,160,89,0.1); border-color: #c5a059; transform: translateY(-1px); box-shadow: 0 8px 22px rgba(197,160,89,0.15); }
+        .cred-chip .cred-dot { width: 5px; height: 5px; border-radius: 50%; background: #c5a059; box-shadow: 0 0 8px rgba(197,160,89,0.7); }
+        .cred-clients {
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+            gap: 10px 22px;
+            position: relative; z-index: 1;
+            max-width: 1100px; margin: 0 auto;
+            color: rgba(255,255,255,0.55);
+            font-size: 9.5px;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .cred-clients .cred-sep { color: rgba(197,160,89,0.5); }
+        .cred-band a.cred-clients-link { color: inherit; text-decoration: none; transition: color 0.25s ease; }
+        .cred-band a.cred-clients-link:hover { color: #c5a059; }
+        .cred-band .cred-footnote { margin-top: 14px; font-size: 8.5px; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,255,255,0.35); position: relative; z-index: 1; }
+        .cred-band .cred-footnote a { color: #c5a059; text-decoration: none; }
+        .cred-band .cred-footnote a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .cred-band { padding: 32px 18px 26px; }
+            .cred-band .cred-title { font-size: 12px; letter-spacing: 0.22em; }
+            .cred-chip { font-size: 9px; letter-spacing: 0.16em; padding: 7px 10px; }
+            .cred-clients { gap: 6px 14px; font-size: 8.5px; letter-spacing: 0.22em; }
+        }
+        .mobile-menu-btn { display: none; background: none; border: 1px solid rgba(197, 160, 89, 0.4); color: #c5a059; padding: 8px 10px; cursor: pointer; z-index: 60; }
+        .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: #c5a059; margin: 4px 0; transition: 0.3s; }
+        .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 55; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+        .mobile-nav-overlay.active { display: flex; }
+        .mobile-nav-overlay a { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.3s; padding: 4px 0; }
+        .mobile-nav-overlay a:hover { color: #c5a059; }
+        .mobile-nav-sep { width: 64px; height: 1px; background: rgba(197,160,89,0.28); margin: 6px 0; }
+        .nav-groups { display: flex; align-items: center; justify-content: center; gap: 22px; flex: 1; }
+        .nav-group { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.42); line-height: 1; }
+        .nav-group a, .nav-group span.nav-disabled { transition: color 0.3s; text-decoration: none; }
+        .nav-group a:hover { color: #c5a059; }
+        .nav-group .nav-accent { color: #c5a059; }
+        .nav-group .nav-accent:hover { color: #f1dca7; }
+        .nav-group .nav-disabled { color: rgba(255,255,255,0.35); cursor: default; }
+        .nav-divider { width: 1px; height: 36px; background: rgba(197,160,89,0.22); flex: 0 0 auto; }
+        .nav-divider-inline { width: 28px; height: 1px; background: rgba(197,160,89,0.32); margin: 2px 0; }
+        .nav-aria-block { gap: 6px; padding: 0 4px; }
+        .nav-aria-block .aria-link { color: #f1dca7; font-size: 11px; letter-spacing: 0.5em; padding: 2px 6px; border-bottom: 1px solid rgba(241,220,167,0.3); }
+        .nav-aria-block .aria-link:hover { color: #fff; border-bottom-color: #f1dca7; }
+        .nav-aria-block .method-link { font-size: 8px; letter-spacing: 0.35em; color: rgba(197,160,89,0.75); }
+        .nav-aria-block .method-link:hover { color: #f1dca7; }
+        @media (max-width: 1279px) { .nav-group.nav-group-collapsible { display: none; } }
+        .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: #c5a059; font-size: 28px; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            nav { padding: 16px 20px !important; }
+            .luxury-flip-container { width: 200px; height: 44px; }
+            .flip-front, .flip-back { font-size: 0.55rem; letter-spacing: 0.15em; }
+            .mobile-menu-btn { display: block; }
+            .desktop-nav-links { display: none !important; }
+            .download-app-btn { display: none; }
+            #solutions { padding: 80px 24px; }
+            #portfolio, #methodology { padding: 80px 24px; }
+        }
+        @media (max-width: 768px) {
+            nav { gap: 12px; padding: 14px 18px !important; }
+            nav .flex.items-center.gap-6 { gap: 12px; }
+            nav .flex.items-center.gap-6 .w-12 { width: 36px; height: 36px; min-width: 36px; }
+            nav .flex.items-center.gap-6 .w-12 span { font-size: 16px; }
+            nav .flex.items-center.gap-6 .flex.flex-col span:first-child { font-size: 11px; letter-spacing: 0.1em; }
+            nav .flex.items-center.gap-6 .flex.flex-col span:last-child { font-size: 7px; letter-spacing: 0.2em; }
+            .luxury-flip-container { width: 160px; height: 40px; }
+            .flip-front, .flip-back { font-size: 0.5rem; letter-spacing: 0.1em; }
+            section.h-screen { min-height: 100vh; min-height: 100dvh; padding: 0 24px; }
+            section.h-screen h1 { font-size: 2.2rem !important; line-height: 1.1; margin-bottom: 1.25rem; letter-spacing: -0.02em; }
+            section.h-screen p { font-size: 11px !important; padding: 0 8px; margin-bottom: 1.25rem; }
+            #solutions { padding: 64px 20px; }
+            #solutions h2 { font-size: 1.75rem; }
+            .node { font-size: 8px; padding: 8px 16px; letter-spacing: 1px; }
+            #portfolio { padding: 64px 20px; }
+            #portfolio h2 { font-size: 1.75rem; }
+            #methodology { padding: 64px 20px; }
+            #methodology h2 { font-size: 1.75rem; }
+            #service-center { padding-left: 20px; padding-right: 20px; }
+            #service-center h2 { font-size: 1.75rem; }
+            footer { padding: 40px 20px; }
+            footer a { font-size: 1.5rem; }
+            .portal-half { width: 100px; height: 70vh; }
+            .huge-i { font-size: 35vh; }
+            .brand-main { font-size: 10px; }
+            .brand-sub { font-size: 6px; }
+            .handle { height: 100px; }
+            .enter-text { font-size: 14px; letter-spacing: 0.4em; }
+            .bio-core { width: 210px; height: 210px; }
+            .bio-fingerprint { width: 172px; height: 172px; }
+            .bio-scanline { width: 180px; top: 18px; }
+            @keyframes bioScan {
+                0%   { transform: translate(-50%, 0);    opacity: 0; }
+                10%  { opacity: 1; }
+                90%  { opacity: 1; }
+                100% { transform: translate(-50%, 172px); opacity: 0; }
+            }
+            .bio-decode { font-size: 10px; letter-spacing: 0.15em; }
+            .bio-unlocked { font-size: 10px; letter-spacing: 0.55em; margin-top: 26px; }
+            .bio-unlocked .bio-dot { margin: 0 8px 2px; }
+            .sc-bordered { padding: 14px; }
+            .sc-grid-5 { grid-template-columns: repeat(2, 1fr) !important; }
+            .sc-grid-3 { grid-template-columns: 1fr !important; }
+            .sc-grid-btn h4 { font-size: 11px; }
+            .sc-grid-btn p { font-size: 9px; }
+            .sc-info-box h5 { font-size: 10px; }
+            .sc-info-box p { font-size: 8px; }
+            .sc-modal-container { width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh; }
+        }
+        @media (max-width: 480px) {
+            nav .flex.items-center.gap-6 .flex.flex-col span:first-child { font-size: 10px; letter-spacing: 0.08em; }
+            nav .flex.items-center.gap-6 .flex.flex-col span:last-child { font-size: 6.5px; letter-spacing: 0.18em; }
+            .luxury-flip-container { width: 128px; height: 36px; }
+            .flip-front, .flip-back { font-size: 0.42rem; letter-spacing: 0.08em; }
+            section.h-screen h1 { font-size: 1.75rem !important; line-height: 1.1; }
+            section.h-screen p { font-size: 10px !important; }
+            .portal-half { width: 80px; height: 60vh; }
+            .huge-i { font-size: 28vh; }
+            .handle-row { gap: 24px; }
+            .handle { height: 80px; width: 6px; }
+            .enter-text { font-size: 12px; letter-spacing: 0.3em; margin-top: 35px; }
+            .bio-core { width: 180px; height: 180px; }
+            .bio-fingerprint { width: 148px; height: 148px; }
+            .bio-scanline { width: 154px; top: 16px; }
+            @keyframes bioScan {
+                0%   { transform: translate(-50%, 0);    opacity: 0; }
+                10%  { opacity: 1; }
+                90%  { opacity: 1; }
+                100% { transform: translate(-50%, 148px); opacity: 0; }
+            }
+            .bio-decode { font-size: 9px; letter-spacing: 0.12em; }
+            .bio-unlocked { font-size: 9px; letter-spacing: 0.45em; margin-top: 22px; }
+            .sc-grid-5 { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
+            .sc-grid-btn { padding: 8px; }
+        }
+
+        /* --- HERO SECTION (tightened, no more giant gap) --- */
+        .hero-section {
+            min-height: 64vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 120px;
+            padding-bottom: 56px;
+        }
+        @media (max-width: 768px) { .hero-section { min-height: 62vh; padding-top: 110px; padding-bottom: 40px; } }
+
+        /* --- NAV I LOGO WITH HELPDESK MORPH (hover) --- */
+        .nav-home-link { text-decoration: none; color: inherit; }
+        .nav-i-logo {
+            position: relative;
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid #c5a059;
+            flex-shrink: 0;
+        }
+        .nav-i-logo::after {
+            content: ''; position: absolute; inset: 4px;
+            border: 1px solid rgba(197,160,89,0.3);
+            pointer-events: none;
+        }
+        .nav-i-letter {
+            color: #c5a059; font-weight: 700; font-size: 1.25rem;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            position: relative; z-index: 2;
+        }
+        .nav-i-helpdesk {
+            position: absolute; inset: 0; margin: auto;
+            width: 78%; height: 78%;
+            color: #c5a059;
+            opacity: 0;
+            transform: scale(0.7);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .nav-home-link:hover .nav-i-letter { opacity: 0; transform: scale(0.6); }
+        .nav-home-link:hover .nav-i-helpdesk { opacity: 1; transform: scale(1); }
+
+        /* --- FOOTER I LOGO WITH HELPDESK MORPH --- */
+        .footer-i-logo {
+            position: relative;
+            width: 52px; height: 52px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(197,160,89,0.5);
+            margin: 0 18px;
+            vertical-align: middle;
+            transition: border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+        .footer-i-logo::after {
+            content: ''; position: absolute; inset: 4px;
+            border: 1px solid rgba(197,160,89,0.25);
+            pointer-events: none;
+        }
+        .footer-i-logo:hover { border-color: #c5a059; box-shadow: 0 0 18px rgba(197,160,89,0.25); }
+        .footer-i-letter {
+            color: #c5a059; font-weight: 700; font-size: 1.3rem;
+            font-family: 'Cinzel', serif;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .footer-i-helpdesk {
+            position: absolute; inset: 0; margin: auto;
+            width: 72%; height: 72%;
+            color: #c5a059;
+            opacity: 0; transform: scale(0.7);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            pointer-events: none;
+        }
+        .footer-i-logo:hover .footer-i-letter { opacity: 0; transform: scale(0.6); }
+        .footer-i-logo:hover .footer-i-helpdesk { opacity: 1; transform: scale(1); }
+
+        .footer-inline-brand {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 12px;
+        }
+        @media (max-width: 768px) {
+            .footer-inline-brand { flex-direction: column; justify-content: center; text-align: center; }
+        }
+        @media (max-width: 640px) {
+            .footer-i-logo { width: 46px; height: 46px; margin: 10px 0; }
+        }
+
+        /* --- BACKGROUND I SCROLL MORPH SYSTEM --- */
+        .bg-i-stage {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(440px, 50vw);
+            height: min(440px, 50vw);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.14;
+            mix-blend-mode: screen;
+            transition: opacity 0.6s ease;
+        }
+        .bg-i-stage.bg-i-hide { opacity: 0; }
+        .bg-i-layer {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: #c5a059;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.8s ease, transform 1.1s cubic-bezier(0.22,1,0.36,1);
+        }
+        .bg-i-layer svg { width: 100%; height: 100%; }
+        .bg-i-layer img { width: 72%; height: 72%; object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 0 30px rgba(197,160,89,0.3)); }
+        .bg-i-layer.is-active { opacity: 1; transform: scale(1); }
+        @media (max-width: 768px) {
+            .bg-i-stage { opacity: 0.11; width: 64vw; height: 64vw; }
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+
+    <!-- ====== BACKGROUND I SCROLL-MORPH STAGE ====== -->
+    <div class="bg-i-stage" id="bgIStage" aria-hidden="true">
+        <div class="bg-i-layer is-active" data-layer="default">
+            <img src="/images/logo.png" alt="" aria-hidden="true" draggable="false">
+        </div>
+        <div class="bg-i-layer" data-layer="service">
+            <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="100" cy="100" r="6"/>
+                <circle cx="40" cy="50" r="4"/>
+                <circle cx="160" cy="50" r="4"/>
+                <circle cx="40" cy="150" r="4"/>
+                <circle cx="160" cy="150" r="4"/>
+                <circle cx="100" cy="30" r="4"/>
+                <circle cx="100" cy="170" r="4"/>
+                <line x1="100" y1="100" x2="40" y2="50"/>
+                <line x1="100" y1="100" x2="160" y2="50"/>
+                <line x1="100" y1="100" x2="40" y2="150"/>
+                <line x1="100" y1="100" x2="160" y2="150"/>
+                <line x1="100" y1="100" x2="100" y2="30"/>
+                <line x1="100" y1="100" x2="100" y2="170"/>
+            </svg>
+        </div>
+        <div class="bg-i-layer" data-layer="pricing">
+            <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="50" y="60" width="100" height="80" rx="4"/>
+                <line x1="50" y1="85" x2="150" y2="85"/>
+                <circle cx="64" cy="72" r="2" fill="currentColor"/>
+                <circle cx="74" cy="72" r="2" fill="currentColor"/>
+                <line x1="70" y1="105" x2="130" y2="105"/>
+                <line x1="70" y1="120" x2="110" y2="120"/>
+            </svg>
+        </div>
+        <div class="bg-i-layer" data-layer="methodology">
+            <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="100,30 170,75 145,155 55,155 30,75"/>
+                <line x1="100" y1="30" x2="100" y2="155"/>
+                <line x1="30" y1="75" x2="170" y2="75"/>
+                <line x1="55" y1="155" x2="145" y2="155"/>
+            </svg>
+        </div>
+        <div class="bg-i-layer" data-layer="impact">
+            <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="100" cy="100" r="70"/>
+                <circle cx="100" cy="100" r="45"/>
+                <circle cx="100" cy="100" r="20"/>
+                <line x1="30" y1="100" x2="170" y2="100"/>
+                <line x1="100" y1="30" x2="100" y2="170"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ====== GATEWAY ====== -->
+    <div id="gateway" onclick="openGateway()">
+        <div class="door door-left"><div class="portal-half"><span class="huge-i logo-text">I</span><div class="inner-branding-container logo-text"><div class="brand-main">Integrated IT Support</div><div class="brand-sub">A Distinguished Network</div></div></div></div>
+        <div class="interaction-suite"><div class="handle-row"><div class="handle"></div><div class="handle"></div></div><div class="enter-text logo-text">Enter</div></div>
+        <div class="door door-right"><div class="portal-half"><span class="huge-i logo-text">I</span><div class="inner-branding-container logo-text"><div class="brand-main">Integrated IT Support</div><div class="brand-sub">A Distinguished Network</div></div></div></div>
+
+        <!-- ====== FINGERPRINT BIOMETRIC OVERLAY ====== -->
+        <div class="biometric-overlay" id="bioOverlay" aria-hidden="true">
+            <div class="bio-core">
+                <div class="bio-ring"></div>
+                <svg class="bio-fingerprint" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M60 18 C 40 18, 26 34, 26 58 C 26 72, 28 86, 34 100"/>
+                    <path d="M60 26 C 44 26, 34 40, 34 58 C 34 72, 36 84, 42 96"/>
+                    <path d="M60 34 C 50 34, 42 44, 42 58 C 42 70, 44 82, 50 94"/>
+                    <path d="M60 42 C 54 42, 50 48, 50 58 C 50 70, 52 82, 58 92"/>
+                    <path d="M60 50 C 58 50, 58 54, 58 60 C 58 72, 60 84, 66 92"/>
+                    <path d="M74 94 C 70 82, 68 72, 68 60 C 68 50, 66 46, 62 44"/>
+                    <path d="M82 90 C 78 80, 76 70, 76 58 C 76 42, 68 34, 60 34"/>
+                    <path d="M90 82 C 86 72, 84 64, 84 58 C 84 40, 72 28, 60 28"/>
+                    <path d="M96 72 C 94 66, 92 62, 92 58 C 92 36, 78 22, 60 22"/>
+                    <path d="M40 58 C 40 46, 48 38, 60 38"/>
+                </svg>
+                <div class="bio-scanline"></div>
+                <div class="bio-decode" id="bioDecode" aria-hidden="true">DECODING</div>
+            </div>
+            <div class="bio-unlocked" id="bioUnlocked">Unlocked<span class="bio-dot" aria-hidden="true"></span>Access Granted</div>
+        </div>
+    </div>
+
+    <!-- ====== NAV ====== -->
+    <nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+        <a href="/" class="flex items-center gap-6 nav-home-link" aria-label="Return to home">
+            <div class="nav-i-logo" aria-hidden="true">
+                <span class="nav-i-letter logo-text">I</span>
+                <svg class="nav-i-helpdesk" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 19a9 9 0 0 1 18 0"/>
+                    <circle cx="16" cy="14" r="5"/>
+                    <rect x="6" y="18" width="3.2" height="5" rx="1.1"/>
+                    <rect x="22.8" y="18" width="3.2" height="5" rx="1.1"/>
+                </svg>
+            </div>
+            <div class="flex flex-col"><span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span><span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span></div>
+        </a>
+        <div class="desktop-nav-links hidden lg:flex nav-groups" aria-label="Primary">
+            <div class="nav-group">
+                <a href="#solutions">Pricing</a>
+                <a href="/aria?view=plans" class="aria-link" style="color:#c5a059;">Plans</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group nav-group-collapsible">
+                <a href="#methodology" class="method-link">Methodology</a>
+                <a href="/purchase-tech.html" class="nav-accent">Purchase Tech</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group nav-aria-block">
+                <a href="/aria.html" class="aria-link">ARIA</a>
+                <a href="#service-center">Service Center</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group nav-group-collapsible">
+                <span class="nav-disabled" title="Coming soon">AI Courses / Development</span>
+                <a href="#aria-demo">ARIA Demo</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group nav-group-collapsible">
+                <a href="#portfolio">Portfolio</a>
+                <a href="/about.html">About Us</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button type="button" id="installAppButton" data-install-pwa class="download-app-btn" style="display:none" aria-label="Install app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m6 9 6 6 6-6"/><path d="M5 21h14"/></svg>Install App</button>
+            <a href="#service-center" class="download-app-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Service Center</a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+            <div class="luxury-flip-container"><a href="mailto:Integrateditsupp@gmail.com?subject=Private Consultation Request" class="luxury-flip-card"><div class="flip-front">Request Consultation</div><div class="flip-back">Direct Email Access</div></a></div>
+        </div>
+    </nav>
+
+    <!-- ====== MOBILE MENU ====== -->
+    <div id="mobileMenu" class="mobile-nav-overlay">
+        <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
+        <a href="#solutions" onclick="toggleMobileMenu()">Pricing</a>
+        <a href="/aria?view=plans" onclick="toggleMobileMenu()" style="color: #c5a059;">Plans</a>
+        <div class="mobile-nav-sep" aria-hidden="true"></div>
+        <a href="#methodology" onclick="toggleMobileMenu()">Methodology</a>
+        <a href="/purchase-tech.html" onclick="toggleMobileMenu()" style="color: #c5a059;">Purchase Tech</a>
+        <div class="mobile-nav-sep" aria-hidden="true"></div>
+        <a href="/aria.html" onclick="toggleMobileMenu()" style="color: #c5a059;">ARIA</a>
+        <a href="#service-center" onclick="toggleMobileMenu()">Service Center</a>
+        <div class="mobile-nav-sep" aria-hidden="true"></div>
+        <a href="#" onclick="event.preventDefault(); toggleMobileMenu();" style="color: rgba(255,255,255,0.4);">AI Courses / Development</a>
+        <a href="#aria-demo" onclick="toggleMobileMenu()">ARIA Demo</a>
+        <div class="mobile-nav-sep" aria-hidden="true"></div>
+        <a href="#portfolio" onclick="toggleMobileMenu()">Portfolio</a>
+        <a href="/about.html" onclick="toggleMobileMenu()">About Us</a>
+        <div class="mobile-nav-sep" aria-hidden="true"></div>
+        <a href="tel:+16475813182" onclick="toggleMobileMenu()">Connect with Senior Director</a>
+        <a href="mailto:Integrateditsupp@gmail.com?subject=Private Consultation Request" onclick="toggleMobileMenu()" style="color: #c5a059;">Request Consultation</a>
+    </div>
+
+    <!-- ====== HERO ====== -->
+    <section class="hero-section relative overflow-hidden px-6">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(197,160,89,0.08)_0%,_transparent_70%)]"></div>
+        <div class="text-center z-10 relative">
+            <span class="text-[#c5a059] tracking-[0.7em] text-[9px] uppercase mb-10 block font-bold">Whitby • Ontario • Global</span>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-10">INTEGRATED IT SUPPORT <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic uppercase">Preventative Aid</span></h1>
+            <p class="max-w-2xl mx-auto text-white/40 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-6">We don't just fix problems — we ensure your operations run smoothly and consistently.</p>
+            <p class="max-w-xl mx-auto text-white/30 text-[10px] md:text-[11px] tracking-wider uppercase font-light leading-relaxed mb-10">System-driven · outcome-owned · second-order thinking applied before a single change is made.</p>
+            <a href="#service-center" class="text-[9px] tracking-[0.5em] uppercase font-bold border-b border-[#c5a059]/40 pb-2 hover:text-[#c5a059] transition">The Analytical Framework</a>
+        </div>
+    </section>
+
+    <!-- ─────────── SERVICE CENTER ─────────── -->
+    <section id="service-center" class="sc-section pt-0 mt-0 py-20 px-6 border-t border-[#c5a059]/15">
+        <div class="text-center mb-12">
+            <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-4">Powered by AI</span>
+            <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-3">Service <span class="text-[#c5a059]">Center</span></h2>
+            <p class="text-white/40 uppercase tracking-[0.25em] text-[10px] max-w-xl mx-auto leading-relaxed">AI diagnostics · guided fixes · equipment · 24/7 live escalation</p>
+        </div>
+
+        <div class="sc-card">
+
+            <!-- Hero CTA -->
+            <button class="sc-hero-cta" onclick="openPortal('chat')">
+                <span class="sc-hero-icon">🌐</span>
+                <span class="sc-hero-text">Get IT Support</span>
+                <span class="sc-hero-arrow">→</span>
+            </button>
+
+            <!-- Quick Actions — 4 clean tiles -->
+            <div class="sc-section-label"><span>Quick Actions</span></div>
+            <div class="sc-tiles">
+                <button class="sc-tile" onclick="openPortal('diagnostics')">
+                    <div class="sc-tile-icon">💾</div>
+                    <div class="sc-tile-title">Diagnostics</div>
+                    <div class="sc-tile-sub">Health &amp; specs</div>
+                </button>
+                <button class="sc-tile" onclick="openPortal('relaunch')">
+                    <div class="sc-tile-icon">🔄</div>
+                    <div class="sc-tile-title">Re-launch</div>
+                    <div class="sc-tile-sub">Kill &amp; reopen</div>
+                </button>
+                <button class="sc-tile" onclick="openPortal('screenshot')">
+                    <div class="sc-tile-icon">📷</div>
+                    <div class="sc-tile-title">Error Analysis</div>
+                    <div class="sc-tile-sub">Screenshot AI</div>
+                </button>
+                <button class="sc-tile" onclick="openPortal('ticket')">
+                    <div class="sc-tile-icon">🎫</div>
+                    <div class="sc-tile-title">Log Ticket</div>
+                    <div class="sc-tile-sub">Submit request</div>
+                </button>
+            </div>
+
+            <!-- Emergency Row — full width -->
+            <a class="sc-emergency-row" href="tel:6475813182">
+                <span class="sc-emergency-pulse"></span>
+                <span class="sc-emergency-icon">🚨</span>
+                <div class="sc-emergency-text">
+                    <strong>System down?</strong>
+                    <span>Call (647) 581-3182 · 24/7</span>
+                </div>
+                <span class="sc-emergency-arrow">→</span>
+            </a>
+
+            <!-- Purchase + Business — 2 wide cards -->
+            <div class="sc-section-label"><span>Purchase &amp; Business</span></div>
+            <div class="sc-pair">
+                <button class="sc-action-card" onclick="openPortal('purchase')">
+                    <div class="sc-action-icon">🛒</div>
+                    <div class="sc-action-body">
+                        <div class="sc-action-title">Purchase IT Equipment</div>
+                        <div class="sc-action-sub">Laptops, peripherals, hardware</div>
+                    </div>
+                </button>
+                <button class="sc-action-card" onclick="openPortal('ticket')">
+                    <div class="sc-action-icon">🏢</div>
+                    <div class="sc-action-body">
+                        <div class="sc-action-title">Business Consultation</div>
+                        <div class="sc-action-sub">Office IT setup &amp; review</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Secondary perks — 3 light cards -->
+            <div class="sc-section-label"><span>Perks &amp; Plans</span></div>
+            <div class="sc-perks">
+                <div class="sc-perk">
+                    <div class="sc-perk-icon">🤝</div>
+                    <div class="sc-perk-title">Referral</div>
+                    <div class="sc-perk-sub">$25 off per friend</div>
+                </div>
+                <div class="sc-perk">
+                    <div class="sc-perk-icon">♻️</div>
+                    <div class="sc-perk-title">Trade-In</div>
+                    <div class="sc-perk-sub">We buy old devices</div>
+                </div>
+                <a class="sc-perk sc-perk-link" href="#solutions">
+                    <div class="sc-perk-icon">📄</div>
+                    <div class="sc-perk-title">View Plans</div>
+                    <div class="sc-perk-sub">From $1.5K / mo</div>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ====== MODAL OVERLAY (loads portal iframe on demand) ====== -->
+    <div class="sc-modal-overlay" id="scModal">
+        <div class="sc-modal-container">
+            <div class="sc-modal-header">
+                <h4 class="logo-text">IISupport — ServiceCenter</h4>
+                <button class="sc-modal-close" onclick="closePortal()">&times;</button>
+            </div>
+            <iframe id="scIframe" class="sc-modal-iframe" src="about:blank" allow="microphone; clipboard-write" title="IISupport ServiceCenter"></iframe>
+        </div>
+    </div>
+
+    <!-- ====== PRICING — DECK OF CARDS ====== -->
+    <section id="solutions" class="py-32 px-6 md:px-10 bg-[#080808]">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-[#c5a059] tracking-[0.5em] text-[8px] uppercase font-bold block mb-3">Engagement Models</span>
+                <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">Pricing <span class="text-[#c5a059]">Options</span></h2>
+                <p class="text-white/30 uppercase tracking-[0.3em] text-[10px] max-w-xl mx-auto">Hover any tier for detail. Cards consolidate into a deck after scroll-in — the middle tier is the most selected.</p>
+            </div>
+
+            <!-- TRACK 1 — BUSINESS & ENTERPRISE -->
+            <div class="price-track">
+                <div class="price-track-head">
+                    <span class="track-eyebrow">Track 1</span>
+                    <h3 class="track-title">Business &amp; <span class="accent">Enterprise</span></h3>
+                    <p class="track-sub">Managed retainers sized to the operational consequence of your environment.</p>
+                </div>
+
+                <div class="price-deck" data-price-deck>
+                    <!-- Tier 1 -->
+                    <div class="deck-slot" data-deck="1">
+                        <div class="deck-card">
+                            <div class="deck-face deck-front">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Tier 1 · Operational Foundation</span>
+                                    <h4 class="deck-name">Operational Foundation</h4>
+                                    <div class="deck-scale">Small Business · 1–10 Users</div>
+                                    <div class="deck-price">$6,000 – $10,000 / mo</div>
+                                </div>
+                                <p class="deck-tagline">Fully managed IT for a lean team — proactive monitoring, patching, and Microsoft 365 administration.</p>
+                                <div class="deck-hint">Hover · reveal detail</div>
+                            </div>
+                            <div class="deck-face deck-back">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Tier 1</span>
+                                    <div class="deck-price-sm">$6,000 – $10,000 / mo</div>
+                                </div>
+                                <ul>
+                                    <li>Fully managed IT environment</li>
+                                    <li>Business-hours helpdesk support</li>
+                                    <li>Monthly system health audit</li>
+                                    <li>Security monitoring &amp; patch management</li>
+                                    <li>Microsoft 365 administration</li>
+                                </ul>
+                                <div class="deck-positioning">One IT emergency handled externally costs $500 – $2,000 alone. This retainer prevents ten of them per month. You are not buying support — you are buying the absence of downtime.</div>
+                                <a href="#" class="deck-cta" data-email-template="tier1">✉ Email to Inquire</a>
+                                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Tier 1 — Operational Foundation","options":[{"id":"tier1-deposit","name":"Tier 1 · Deposit to start","price":"2000.00","description":"Deposit against Tier 1 · Operational Foundation monthly retainer"},{"id":"tier1-first-month","name":"Tier 1 · First Month (lower tier)","price":"6000.00","description":"Tier 1 first-month retainer at lower bound ($6,000)"},{"id":"tier1-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+                                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tier 2 -->
+                    <div class="deck-slot" data-deck="2">
+                        <div class="deck-card">
+                            <div class="deck-face deck-front">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Tier 2 · Business Continuity</span>
+                                    <h4 class="deck-name">Business Continuity</h4>
+                                    <div class="deck-scale">Mid-Size Business · 11–50 Users</div>
+                                    <div class="deck-price">$14,000 – $24,000 / mo</div>
+                                </div>
+                                <p class="deck-tagline">Priority SLA, dedicated senior analyst, and disaster recovery planning baked in. Most selected.</p>
+                                <div class="deck-hint">Hover · reveal detail</div>
+                            </div>
+                            <div class="deck-face deck-back">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Tier 2 · Most Selected</span>
+                                    <div class="deck-price-sm">$14,000 – $24,000 / mo</div>
+                                </div>
+                                <ul>
+                                    <li>Everything in Tier 1</li>
+                                    <li>Priority SLA — 1 hour response or less</li>
+                                    <li>Quarterly executive IT report · OKR-aligned</li>
+                                    <li>Active Directory &amp; identity management</li>
+                                    <li>Vendor coordination fully handled</li>
+                                    <li>Disaster recovery planning &amp; testing</li>
+                                    <li>Dedicated senior analyst on account</li>
+                                </ul>
+                                <div class="deck-positioning">Your competitors are one ransomware attack away from two weeks of downtime. Your operations are not. That difference is worth more than this retainer every single month it does not happen.</div>
+                                <a href="#" class="deck-cta" data-email-template="tier2">✉ Email to Inquire</a>
+                                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Tier 2 — Business Continuity","options":[{"id":"tier2-deposit","name":"Tier 2 · Deposit to start","price":"4000.00","description":"Deposit against Tier 2 · Business Continuity monthly retainer"},{"id":"tier2-first-month","name":"Tier 2 · First Month (lower tier)","price":"14000.00","description":"Tier 2 first-month retainer at lower bound ($14,000)"},{"id":"tier2-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+                                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tier 3 -->
+                    <div class="deck-slot" data-deck="3">
+                        <div class="deck-card">
+                            <div class="deck-face deck-front">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Tier 3 · Enterprise Operations</span>
+                                    <h4 class="deck-name">Enterprise Operations</h4>
+                                    <div class="deck-scale">Corporate · 51–200+ Users · Multi-Location</div>
+                                    <div class="deck-price">$30,000 – $60,000 / mo</div>
+                                </div>
+                                <p class="deck-tagline">24/7 monitoring, Major Incident Management, Six Sigma auditing, and named senior analyst.</p>
+                                <div class="deck-hint">Hover · reveal detail</div>
+                            </div>
+                            <div class="deck-face deck-back">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Tier 3</span>
+                                    <div class="deck-price-sm">$30,000 – $60,000 / mo</div>
+                                </div>
+                                <ul>
+                                    <li>Everything in Tiers 1 &amp; 2</li>
+                                    <li>24/7 monitoring &amp; incident response</li>
+                                    <li>Major Incident Management — RBC &amp; Raymond James standard</li>
+                                    <li>Six Sigma process auditing · quarterly</li>
+                                    <li>PHIPA · PIPEDA · SOC-aligned compliance docs</li>
+                                    <li>SharePoint &amp; Microsoft 365 architecture support</li>
+                                    <li>Monthly C-suite IT risk &amp; roadmap briefing</li>
+                                    <li>Named senior analyst permanently assigned</li>
+                                </ul>
+                                <div class="deck-positioning">The same operational standard maintained inside Raymond James trading floors and Ontario Health provincial systems. You are not hiring an IT company — you are hiring the person who kept those organizations running when failure was not an option.</div>
+                                <a href="#" class="deck-cta" data-email-template="tier3">✉ Email to Inquire</a>
+                                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Tier 3 — Enterprise Operations","options":[{"id":"tier3-deposit","name":"Tier 3 · Deposit to start","price":"10000.00","description":"Deposit against Tier 3 · Enterprise Operations monthly retainer"},{"id":"tier3-first-month","name":"Tier 3 · First Month (lower tier)","price":"30000.00","description":"Tier 3 first-month retainer at lower bound ($30,000)"},{"id":"tier3-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+                                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Work supplementary -->
+                <div class="project-card">
+                    <div class="project-card-head">
+                        <h4>Project Work — Outside All Retainers</h4>
+                        <span>Fixed Scope</span>
+                    </div>
+                    <div class="project-grid">
+                        <div><span>IT Infrastructure Audit</span><span>$7,500 – $15,000</span></div>
+                        <div><span>Cloud Migration</span><span>$15,000 – $60,000</span></div>
+                        <div><span>Microsoft 365 Full Deployment</span><span>$10,500 – $24,000</span></div>
+                        <div><span>SharePoint Build &amp; Configuration</span><span>$12,000 – $36,000</span></div>
+                        <div><span>Cybersecurity Assessment</span><span>$9,000 – $22,500</span></div>
+                        <div><span>Disaster Recovery Build</span><span>$15,000 – $45,000</span></div>
+                        <div><span>AI Agent Setup &amp; Integration</span><span>$24,000 – $75,000</span></div>
+                        <div><span>Hourly — Out-of-Scope (Remote)</span><span>$555 – $675 / hr</span></div>
+                        <div><span>Hourly — Out-of-Scope (On-Site)</span><span>$925 – $1,125 / hr</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRACK 2 — PRIVATE ENGAGEMENT -->
+            <div class="price-track">
+                <div class="price-track-head">
+                    <span class="track-eyebrow">Track 2</span>
+                    <h3 class="track-title">Private <span class="accent">Engagement</span></h3>
+                    <p class="track-sub">For individuals, families &amp; personal technology. Technology should work for you — not against you.</p>
+                </div>
+
+                <div class="price-deck" data-price-deck>
+                    <!-- Private Card 1 — Home Foundations -->
+                    <div class="deck-slot" data-deck="1">
+                        <div class="deck-card">
+                            <div class="deck-face deck-front">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Home Foundations</span>
+                                    <h4 class="deck-name">Home Foundations</h4>
+                                    <div class="deck-scale">Diagnostics · Setup · Tuning</div>
+                                    <div class="deck-price">$1,250 – $3,500 · flat</div>
+                                </div>
+                                <p class="deck-tagline">Core services that restore, configure and optimize the technology you already own.</p>
+                                <div class="deck-hint">Hover · reveal detail</div>
+                            </div>
+                            <div class="deck-face deck-back">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Home Foundations</span>
+                                </div>
+                                <ul>
+                                    <li>Diagnostics &amp; Repair — $1,500 – $2,500 flat</li>
+                                    <li>Home Network Setup &amp; Optimization — $2,000 – $3,500</li>
+                                    <li>Device Setup &amp; Performance Tuning — $1,250 – $2,000</li>
+                                </ul>
+                                <div class="deck-positioning">Every hour is documented and closed against an outcome — not a ticket number. The same precision you would expect inside a corporate environment, delivered at your kitchen table.</div>
+                                <a href="#" class="deck-cta" data-email-template="private">✉ Email to Inquire</a>
+                                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Home Foundations","options":[{"id":"home-diagnostics","name":"Diagnostics & Repair","price":"1500.00","description":"Home Foundations · Diagnostics & Repair"},{"id":"home-network","name":"Home Network Setup","price":"2000.00","description":"Home Foundations · Home Network Setup & Optimization"},{"id":"home-tune","name":"Device Setup & Tuning","price":"1250.00","description":"Home Foundations · Device Setup & Performance Tuning"},{"id":"home-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Pick a service</button>
+                                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Private Card 2 — Recovery & Security -->
+                    <div class="deck-slot" data-deck="2">
+                        <div class="deck-card">
+                            <div class="deck-face deck-front">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Recovery &amp; Security</span>
+                                    <h4 class="deck-name">Recovery &amp; Security</h4>
+                                    <div class="deck-scale">Data · Digital Safety</div>
+                                    <div class="deck-price">$2,000 – $5,000 · flat</div>
+                                </div>
+                                <p class="deck-tagline">When data is lost or a household's digital footprint needs hardening.</p>
+                                <div class="deck-hint">Hover · reveal detail</div>
+                            </div>
+                            <div class="deck-face deck-back">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Recovery &amp; Security</span>
+                                </div>
+                                <ul>
+                                    <li>Data Recovery — $2,500 – $5,000 flat</li>
+                                    <li>Digital Security Audit — Personal — $2,000 – $4,000</li>
+                                    <li>Credential &amp; device hygiene review</li>
+                                    <li>Cloud &amp; backup strategy for the household</li>
+                                </ul>
+                                <div class="deck-positioning">The difference between a data loss incident that is recovered discreetly and one that ends in a call to your bank is the speed and discipline of the response. That standard does not change because the environment is a home office.</div>
+                                <a href="#" class="deck-cta" data-email-template="private">✉ Email to Inquire</a>
+                                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Recovery & Security","options":[{"id":"recovery-data","name":"Data Recovery","price":"2500.00","description":"Recovery & Security · Data Recovery (lower bound)"},{"id":"recovery-audit","name":"Digital Security Audit","price":"2000.00","description":"Recovery & Security · Personal Digital Security Audit (lower bound)"},{"id":"recovery-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Pick a service</button>
+                                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Private Card 3 — Monthly Home IT -->
+                    <div class="deck-slot" data-deck="3">
+                        <div class="deck-card">
+                            <div class="deck-face deck-front">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Monthly Home IT</span>
+                                    <h4 class="deck-name">Monthly Home IT</h4>
+                                    <div class="deck-scale">Always-On Support</div>
+                                    <div class="deck-price">$1,500 – $3,000 / mo</div>
+                                </div>
+                                <p class="deck-tagline">A senior technician on retainer for the household — selective availability.</p>
+                                <div class="deck-hint">Hover · reveal detail</div>
+                            </div>
+                            <div class="deck-face deck-back">
+                                <div class="deck-meta">
+                                    <span class="deck-badge"><span class="dot"></span>Monthly Home IT</span>
+                                    <div class="deck-price-sm">$1,500 – $3,000 / mo</div>
+                                </div>
+                                <ul>
+                                    <li>Priority remote response for all household devices</li>
+                                    <li>Quarterly on-site tune and audit</li>
+                                    <li>Identity, backup &amp; password manager oversight</li>
+                                    <li>Annual digital security review</li>
+                                </ul>
+                                <div class="deck-positioning">Private Engagement is selective. Availability is limited to ensure every client — business or individual — receives the full standard of care IIS is known for.</div>
+                                <a href="#" class="deck-cta" data-email-template="private">✉ Email to Inquire</a>
+                                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Monthly Home IT","options":[{"id":"monthly-home-deposit","name":"Deposit to start","price":"750.00","description":"Monthly Home IT · deposit to start retainer"},{"id":"monthly-home-first","name":"First Month (lower tier)","price":"1500.00","description":"Monthly Home IT · first month at lower bound ($1,500)"},{"id":"monthly-home-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+                                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="private-note">Private Engagement is selective. Availability is limited to ensure every client — business or individual — receives the full standard of care IIS is known for.</p>
+            </div>
+
+            <p style="text-align:center; font-size:9px; text-transform:uppercase; letter-spacing:0.25em; color:rgba(255,255,255,0.35); margin-top:28px;">Hover any card to flip. Tap on mobile. Email templates prefill — edit to fit your environment.</p>
+        </div>
+    </section>
+
+    <!-- ====== STRATEGIC IMPACT ====== -->
+    <section id="portfolio" class="py-32 px-10 bg-[#050505]">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <span class="text-[#c5a059] tracking-[0.5em] text-[8px] uppercase font-bold block mb-3">Proof of Execution</span>
+                <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">Industries <span class="text-[#c5a059]">We've Moved</span></h2>
+                <p class="text-white/30 uppercase tracking-[0.3em] text-[10px] max-w-xl mx-auto mb-8">Sectors where IIS has operated at the level that matters — where the stakes are real, the margins for error are zero, and outcomes are measured in business continuity, not closed tickets.</p>
+                <p class="text-[#f1dca7] text-[11px] tracking-[0.4em] uppercase font-bold italic">"We don't just fix problems — we ensure your operations run smoothly and consistently."</p>
+            </div>
+
+            <div class="impact-grid">
+                <div class="impact-tile">
+                    <i class="fas fa-chart-line impact-icon"></i>
+                    <h3>Global Finance</h3>
+                    <p class="impact-lead">Operational continuity across multi-timezone financial infrastructure.</p>
+                    <div class="impact-outcome">A single hour of downtime is not an inconvenience — it is a liability. Trading desks, compliance reporting and executive workflows kept live through market hours with white-glove application support and tightly tuned ServiceNow queues.</div>
+                </div>
+                <div class="impact-tile">
+                    <i class="fas fa-heart-pulse impact-icon"></i>
+                    <h3>Healthcare &amp; Medical Infrastructure</h3>
+                    <p class="impact-lead">Compliant, secured, and stabilized IT systems for medical environments.</p>
+                    <div class="impact-outcome">Data integrity is not a feature — it is a legal and ethical obligation tied directly to patient outcomes. PHIPA-compliant digital health platforms delivered across Ontario Health at provincial scale.</div>
+                </div>
+                <div class="impact-tile">
+                    <i class="fas fa-gavel impact-icon"></i>
+                    <h3>Legal &amp; Professional Services</h3>
+                    <p class="impact-lead">Fortress-level IT environments built for firms where confidentiality is currency.</p>
+                    <div class="impact-outcome">Document integrity is non-negotiable and a single breach ends careers and reputations. Worldox, NetDocs, ACL and enterprise DMS migrations executed without a single document-integrity incident.</div>
+                </div>
+                <div class="impact-tile">
+                    <i class="fas fa-building impact-icon"></i>
+                    <h3>Real Estate &amp; Property Development</h3>
+                    <p class="impact-lead">High-velocity IT operations managed for property firms where deal cycles move fast.</p>
+                    <div class="impact-outcome">CRM reliability determines commission. A dropped connection during negotiation is not an option. Document pipelines and remote team coordination engineered for zero friction — so offers, closings and on-site inspections never wait on technology.</div>
+                </div>
+                <div class="impact-tile">
+                    <i class="fas fa-cart-shopping impact-icon"></i>
+                    <h3>Retail &amp; E-Commerce</h3>
+                    <p class="impact-lead">Systems that hold under peak demand — because peak season never asks if you're ready.</p>
+                    <div class="impact-outcome">Every minute of downtime is a direct subtraction from the bottom line. POS lanes stabilized, inventory systems kept in sync, and digital storefronts monitored through the busiest trading windows.</div>
+                </div>
+                <div class="impact-tile">
+                    <i class="fas fa-user-graduate impact-icon"></i>
+                    <h3>Education &amp; Institutional Infrastructure</h3>
+                    <p class="impact-lead">Scalable, secure, and compliant environments deployed across multi-location institutions.</p>
+                    <div class="impact-outcome">Hundreds of users, thousands of devices, and data that legally cannot be compromised — ever. Lab operations, identity and access, onboarding, and disaster-recovery planning delivered for Seneca, George Brown, and public-sector environments built to scale without losing control.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== PRECISION METHODOLOGY — 9 FRAMEWORKS ====== -->
+    <section id="methodology" class="py-32 px-10 bg-[#080808]">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <span class="text-[#c5a059] tracking-[0.5em] text-[8px] uppercase font-bold block mb-3">Brand Authority · Trust · Differentiation</span>
+                <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">How We Think. <span class="text-[#c5a059]">How We Execute.</span></h2>
+                <p class="text-white/40 text-[11px] tracking-[0.15em] leading-relaxed max-w-2xl mx-auto">Nine proprietary operational frameworks applied to every engagement — so nothing is reactive, nothing is improvised, and every outcome is repeatable.</p>
+            </div>
+
+            <div class="framework-grid" id="frameworkGrid">
+                <button class="fw-card" type="button" aria-expanded="false" data-fw="1">
+                    <div class="fw-head">
+                        <div class="fw-icon">Ⅰ</div>
+                        <div class="fw-title-wrap">
+                            <div class="fw-title">5 W's Analysis</div>
+                            <div class="fw-tagline">Who · What · When · Where · Why</div>
+                        </div>
+                        <div class="fw-toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="fw-body"><div class="fw-body-inner"><p>Applied to every IT problem before any action is taken. Eliminates assumptions and ensures the right problem is being solved — not just the visible symptom.</p></div></div>
+                </button>
+                <button class="fw-card" type="button" aria-expanded="false" data-fw="2">
+                    <div class="fw-head">
+                        <div class="fw-icon">Ⅱ</div>
+                        <div class="fw-title-wrap">
+                            <div class="fw-title">STAR Framework</div>
+                            <div class="fw-tagline">Situation · Task · Action · Result</div>
+                        </div>
+                        <div class="fw-toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="fw-body"><div class="fw-body-inner"><p>Structures every client engagement and outcome delivery. Ensures every interaction is documented, measurable, and repeatable — no engagement lives only in someone's head.</p></div></div>
+                </button>
+                <button class="fw-card" type="button" aria-expanded="false" data-fw="3">
+                    <div class="fw-head">
+                        <div class="fw-icon">Ⅲ</div>
+                        <div class="fw-title-wrap">
+                            <div class="fw-title">First Principles Thinking</div>
+                            <div class="fw-tagline">Break problems down to fundamental truths</div>
+                        </div>
+                        <div class="fw-toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="fw-body"><div class="fw-body-inner"><p>Used by Elon Musk and Jeff Bezos — strips every problem down to its fundamental truths rather than inherited assumptions. Applied at IIS to rethink IT solutions from the ground up instead of defaulting to what has always been done. Forces better, faster, cheaper answers.</p></div></div>
+                </button>
+                <button class="fw-card" type="button" aria-expanded="false" data-fw="4">
+                    <div class="fw-head">
+                        <div class="fw-icon">Ⅳ</div>
+                        <div class="fw-title-wrap">
+                            <div class="fw-title">OKR Framework</div>
+                            <div class="fw-tagline">Objectives &amp; Key Results</div>
+                        </div>
+                        <div class="fw-toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="fw-body"><div class="fw-body-inner"><p>Used by Google, Amazon and Intel to align entire organizations to measurable goals. Applied at IIS to ensure every service delivered is tied to a client's real business objective — not just a closed ticket. Outcome accountability at every level.</p></div></div>
+                </button>
+                <button class="fw-card" type="button" aria-expanded="false" data-fw="5">
+                    <div class="fw-head">
+                        <div class="fw-icon">Ⅴ</div>
+                        <div class="fw-title-wrap">
+                            <div class="fw-title">Eisenhower Matrix</div>
+                            <div class="fw-tagline">Urgency vs. Importance</div>
+                        </div>
+                        <div class="fw-toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="fw-body"><div class="fw-body-inner"><p>Used by executives and elite operators to ruthlessly prioritize what gets done, when, and by whom. Applied at IIS to triage client issues, internal operations, and strategic decisions with precision — never reactive, always deliberate.</p></div></div>
+                </button>
+                <button class="fw-card" type="button" aria-expanded="false" data-fw="6">
+                    <div class="fw-head">
+                        <div class="fw-icon">Ⅵ</div>
+                        <div class="fw-title-wrap">
+                            <div class="fw-title">Six Sigma / DMAIC</div>
+                            <div class="fw-tagline">Define · Measure · Analyze · Improve · Control</div>
+                        </div>
+                        <div class="fw-toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="fw-body"><div class="fw-body-inner"><p>The methodology used by GE, Motorola and Amazon to reduce defects to near zero. Applied at IIS to eliminate recurring IT failures, reduce error rates, and deliver consistent, predictable service quality at scale.</p></div></div>
+                </button>
+                <button class="fw-card" type="button" aria-expanded="false" data-fw="7">
+                    <div class="fw-head">
+                        <div class="fw-icon">Ⅶ</div>
+                        <div class="fw-title-wrap">
+                            <div class="fw-title">Kaizen</div>
+                            <div class="fw-tagline">Continuous Improvement — every day, every call</div>
+                        </div>
+                        <div class="fw-toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="fw-body"><div class="fw-body-inner"><p>Toyota's philosophy of relentless, incremental daily improvement embedded into every process. Every service call, every system audit and every client interaction is reviewed for what can be done better the next time. Excellence is not an event — it is a standard.</p></div></div>
+                </button>
+                <button class="fw-card" type="button" aria-expanded="false" data-fw="8">
+                    <div class="fw-head">
+                        <div class="fw-icon">Ⅷ</div>
+                        <div class="fw-title-wrap">
+                            <div class="fw-title">Theory of Constraints</div>
+                            <div class="fw-tagline">Remove the single bottleneck first</div>
+                        </div>
+                        <div class="fw-toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="fw-body"><div class="fw-body-inner"><p>Developed by Eli Goldratt — identifies the single bottleneck limiting an organization's performance and eliminates it before moving to the next. Applied at IIS to systematically remove whatever is slowing down client operations, response times or internal throughput — one constraint at a time until flow is frictionless.</p></div></div>
+                </button>
+                <button class="fw-card" type="button" aria-expanded="false" data-fw="9">
+                    <div class="fw-head">
+                        <div class="fw-icon">Ⅸ</div>
+                        <div class="fw-title-wrap">
+                            <div class="fw-title">After Action Review</div>
+                            <div class="fw-tagline">Military-grade debrief — no blame, only improvement</div>
+                        </div>
+                        <div class="fw-toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="fw-body"><div class="fw-body-inner"><p>Used by elite units and top-tier organizations after every significant operation. Applied at IIS after every major deployment, incident or project: What was supposed to happen? What actually happened? Why was there a difference? What do we change? No blame — only improvement.</p></div></div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== ABOUT US moved to /about.html ====== -->
+
+
+    <!-- ====== ARIA — Premium AI Browsing Companion (embedded hub) ====== -->
+    <section id="aria" class="relative py-24 px-6 md:px-10 border-t border-white/5" style="background:radial-gradient(900px 500px at 50% 0%, rgba(197,160,89,0.08), transparent 65%), #050505;">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-10">
+                <span class="text-[#c5a059] tracking-[0.7em] text-[9px] uppercase mb-4 block font-bold">New · Premium</span>
+                <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-3">Meet <span class="text-[#c5a059]">ARIA</span></h2>
+                <p class="max-w-xl mx-auto text-white/40 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-3">Your AI browsing companion — safer, smarter, and more confident, wherever you go.</p>
+                <p class="max-w-2xl mx-auto text-white/30 text-[10px] md:text-[11px] tracking-wider uppercase font-light leading-relaxed">Voice-ready. Scam-aware. Suggestion-based, never advisory. Activate hands-free with <span class="text-[#c5a059]">"ARIA, Assist!"</span></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 max-w-4xl mx-auto">
+                <div class="p-5 rounded-xl border border-[#c5a059]/20 bg-white/[0.02]"><h4 class="logo-text text-[#f1dca7] text-sm tracking-[0.15em] uppercase mb-2">Decision support</h4><p class="text-white/50 text-[11px] leading-relaxed">Shopping, budgeting, markets, tech — short first, deeper only if you ask.</p></div>
+                <div class="p-5 rounded-xl border border-[#c5a059]/20 bg-white/[0.02]"><h4 class="logo-text text-[#f1dca7] text-sm tracking-[0.15em] uppercase mb-2">Calm protection</h4><p class="text-white/50 text-[11px] leading-relaxed">Scam guard, habit awareness, privacy summaries — non-judgmental, in your control.</p></div>
+                <div class="p-5 rounded-xl border border-[#c5a059]/20 bg-white/[0.02]"><h4 class="logo-text text-[#f1dca7] text-sm tracking-[0.15em] uppercase mb-2">Everywhere</h4><p class="text-white/50 text-[11px] leading-relaxed">Website, Chrome extension, and mobile app — one companion, same memory.</p></div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+                <a href="/aria.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#c5a059] to-[#f1dca7] text-[#050505] text-[10px] tracking-[0.3em] uppercase font-bold hover:opacity-90 transition">Open ARIA</a>
+                <button type="button" id="ariaInstallChrome" class="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#c5a059]/40 text-[#f1dca7] text-[10px] tracking-[0.3em] uppercase font-bold hover:border-[#c5a059] transition">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+                    Install Chrome Extension
+                </button>
+                <button type="button" id="ariaInstallMobile" class="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#c5a059]/40 text-[#f1dca7] text-[10px] tracking-[0.3em] uppercase font-bold hover:border-[#c5a059] transition">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+                    Get Mobile App
+                </button>
+            </div>
+
+            <div class="rounded-2xl border border-[#c5a059]/20 overflow-hidden" style="background:#070604; box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 40px rgba(197,160,89,0.08);">
+                <iframe src="/aria.html" title="ARIA · Premium AI Browsing Companion" loading="lazy" style="width:100%; height:900px; border:0; display:block; background:#070604;"></iframe>
+            </div>
+            <p class="text-center text-white/30 text-[9px] tracking-[0.35em] uppercase mt-4">Preview · Full ARIA experience at <a href="/aria.html" class="text-[#c5a059] hover:text-[#f1dca7] transition">aria.html</a></p>
+        </div>
+    </section>
+
+    <!-- ─── ARIA TRIAL — interactive 10-min widget (default visible; opt-out via ?aria=off) ─── -->
+    <aria-trial></aria-trial>
+
+    <!-- ─── ARIA CINEMATICS — native MP4 videos rendered from the design ─── -->
+    <section id="aria-cinematics" class="py-24 px-6 md:px-10 border-t border-[#c5a059]/20" style="background:radial-gradient(900px 500px at 50% 0%, rgba(197,160,89,0.08), transparent 65%), #050402;">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+          <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-4">Cinematic</span>
+          <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">ARIA <span class="text-[#c5a059]">in motion</span></h2>
+          <p class="text-white/50 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
+            Two short films from the ARIA design studio — a usage simulation that shows what working with ARIA actually feels like, and a stats-and-purpose reel that frames why it matters. Audio on, headphones recommended.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <figure class="aria-video-card">
+            <div class="aria-video-meta-top">
+              <span class="aria-video-kicker">Live usage</span>
+              <span class="aria-video-runtime">simulation</span>
+            </div>
+            <video class="aria-video"
+                   src="/assets/video/aria-usage-simulation.mp4"
+                   preload="none"
+                   controls
+                   playsinline
+                   poster=""
+                   aria-label="ARIA usage simulation video">
+              Your browser doesn't support HTML5 video. <a href="/assets/video/aria-usage-simulation.mp4">Download the simulation video</a>.
+            </video>
+            <figcaption class="aria-video-caption">
+              <span class="aria-video-title">ARIA Usage Simulation</span>
+              <span class="aria-video-sub">A real session: globe → research pane → voice reply → cited answer.</span>
+            </figcaption>
+          </figure>
+          <figure class="aria-video-card">
+            <div class="aria-video-meta-top">
+              <span class="aria-video-kicker">Stats &amp; purpose</span>
+              <span class="aria-video-runtime">manifesto</span>
+            </div>
+            <video class="aria-video"
+                   src="/assets/video/aria-stats-and-purpose.mp4"
+                   preload="none"
+                   controls
+                   playsinline
+                   poster=""
+                   aria-label="ARIA stats and purpose video">
+              Your browser doesn't support HTML5 video. <a href="/assets/video/aria-stats-and-purpose.mp4">Download the stats video</a>.
+            </video>
+            <figcaption class="aria-video-caption">
+              <span class="aria-video-title">ARIA Stats &amp; Purpose</span>
+              <span class="aria-video-sub">Numbers behind the system, framed by what ARIA replaces.</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .aria-video-card {
+        margin: 0;
+        background: linear-gradient(180deg, rgba(20,16,11,0.72), rgba(11,9,7,0.92));
+        border: 1px solid rgba(197,160,89,0.30);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.03);
+        display: flex; flex-direction: column;
+        transition: border-color .25s ease, box-shadow .25s ease;
+      }
+      .aria-video-card:hover {
+        border-color: rgba(241,220,167,0.55);
+        box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 40px rgba(197,160,89,0.12);
+      }
+      .aria-video-meta-top {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(197,160,89,0.18);
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 10px;
+        letter-spacing: 0.25em;
+        color: rgba(241,220,167,0.65);
+        text-transform: uppercase;
+      }
+      .aria-video-runtime { color: rgba(243,236,217,0.40); }
+      .aria-video {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        display: block;
+        background: #050402;
+      }
+      .aria-video-caption {
+        padding: 14px 18px 16px;
+        display: flex; flex-direction: column; gap: 4px;
+        border-top: 1px solid rgba(197,160,89,0.12);
+      }
+      .aria-video-title {
+        font-family: 'Cinzel', 'Cormorant Garamond', Georgia, serif;
+        font-size: 16px;
+        letter-spacing: 0.14em;
+        color: #f1dca7;
+        text-transform: uppercase;
+      }
+      .aria-video-sub {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 12px;
+        color: rgba(243,236,217,0.55);
+        line-height: 1.5;
+      }
+    </style>
+
+    <!-- ─── WHAT ARIA DOES TODAY — capability list with CSV download ─── -->
+    <section id="aria-capabilities" class="py-24 px-6 md:px-10 border-t border-[#c5a059]/20" style="background:radial-gradient(900px 500px at 50% 0%, rgba(197,160,89,0.05), transparent 65%), #060503;">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+          <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-4">Capabilities</span>
+          <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">What ARIA does <span class="text-[#c5a059]">today</span></h2>
+          <p class="text-white/50 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
+            A live snapshot of what ARIA is shipping right now — verified, tested, deployed. There is much more to ARIA coming soon.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+          <div class="cap-card"><div class="cap-card-h">Customer support</div><ul class="cap-card-list"><li>Plain-language IT answers in 5 W's + STAR style</li><li>Confirm-resolve loop — Yes / Still broken / Talk to human</li><li>Escalates only after trying first</li><li>Speech output with 9-state globe animation</li></ul></div>
+          <div class="cap-card"><div class="cap-card-h">Tech support · L1 — L3</div><ul class="cap-card-list"><li>72 verified articles — Browser · Email · M365 · MFA · OneDrive · VPN · Wi-Fi · Windows · macOS · Webcam · Bluetooth · USB</li><li>21 admin-tier articles — AD · Azure AD · BitLocker · Intune · Malware · BYOD · VIP support · Asset</li><li>11 architect-tier articles — DR · PKI · Cloud · SSO · Endpoint EDR</li></ul></div>
+          <div class="cap-card"><div class="cap-card-h">Knowledge base</div><ul class="cap-card-list"><li>Token-overlap retrieval, 90+ hard routing rules</li><li>Severity- and audience-aware (end-user / admin / technician)</li><li>21/21 verified test queries pass top-1</li></ul></div>
+          <div class="cap-card"><div class="cap-card-h">Policies / procedures</div><ul class="cap-card-list"><li>Upload .txt .md .pdf .csv .html — stored locally on the user's device</li><li>Doc-name boost — "Per BYOD Policy 2026" wins over generic advice</li><li>Soft-delete preserves prior versions for ARIA's reference</li></ul></div>
+          <div class="cap-card"><div class="cap-card-h">Voice / chat</div><ul class="cap-card-list"><li>Cinematic black-and-gold UI with 9 reasoning frameworks</li><li>Browser-native TTS, prioritized neural-voice picker</li><li>Free Mode (everyone) + Custom Company Mode (admin only)</li></ul></div>
+          <div class="cap-card"><div class="cap-card-h">Security / privacy</div><ul class="cap-card-list"><li>License-gated Settings — only IT admin can upload company docs</li><li>All uploaded data stays in the browser, never sent to any server</li><li>5-device cap per license, fingerprint-tracked</li><li>§10 admin notes hidden from end-user audience</li></ul></div>
+        </div>
+
+        <div class="text-center">
+          <a href="/assets/aria-capabilities.csv" download="ARIA-capabilities.csv" class="cap-download">
+            <span>↓</span> Download full capability sheet (.csv · opens in Excel)
+          </a>
+          <p class="cap-followup">There is much more to ARIA coming soon.</p>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .cap-card {
+        background: linear-gradient(180deg, rgba(20,16,11,0.65), rgba(11,9,7,0.85));
+        border: 1px solid rgba(197,160,89,0.20);
+        border-radius: 14px;
+        padding: 18px 18px 16px;
+      }
+      .cap-card-h {
+        font-family: 'Cinzel', 'Cormorant Garamond', Georgia, serif;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        color: #f1dca7;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(197,160,89,0.18);
+      }
+      .cap-card-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+      .cap-card-list li {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 12px;
+        line-height: 1.55;
+        color: rgba(243,236,217,0.75);
+        padding-left: 14px;
+        position: relative;
+      }
+      .cap-card-list li::before {
+        content: ""; position: absolute; left: 0; top: 7px;
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #c5a059;
+        box-shadow: 0 0 6px rgba(197,160,89,0.55);
+      }
+      .cap-download {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 12px 22px;
+        border: 1px solid rgba(241,220,167,0.50);
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(241,220,167,0.10), rgba(197,160,89,0.04));
+        color: #f1dca7;
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 11px;
+        letter-spacing: 0.20em;
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: all .2s ease;
+      }
+      .cap-download:hover {
+        border-color: rgba(241,220,167,0.85);
+        background: linear-gradient(180deg, rgba(241,220,167,0.18), rgba(197,160,89,0.08));
+      }
+      .cap-download span { font-size: 14px; }
+      .cap-followup {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-size: 14px;
+        color: rgba(243,236,217,0.50);
+        margin-top: 14px;
+      }
+    </style>
+
+    <!-- ─── REVOLUTION / BENEFITS — why decision-makers should switch ─── -->
+    <section id="aria-revolution" class="py-24 px-6 md:px-10 border-t border-[#c5a059]/20" style="background:radial-gradient(1100px 600px at 50% 0%, rgba(197,160,89,0.10), transparent 60%), #050402;">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-12">
+          <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-4">The Chain Reaction</span>
+          <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">How ARIA <span class="text-[#c5a059]">revolutionizes</span> support</h2>
+          <p class="text-white/50 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
+            ARIA is not a chatbot. It is a senior IT technician that learned your company in minutes — and never sleeps, never forgets, never escalates without trying first.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 mb-12">
+          <div class="rev-row"><span class="rev-arrow">→</span><div><b>No slip-ups.</b> Fewer security breaches. ARIA cites your policy verbatim — never fabricates an answer that costs an audit.</div></div>
+          <div class="rev-row"><span class="rev-arrow">→</span><div><b>No delays.</b> Fewer late payments, missed trades, dropped client responses. Instant retrieval replaces the L1 ticket queue.</div></div>
+          <div class="rev-row"><span class="rev-arrow">→</span><div><b>Communication barriers fall.</b> ARIA speaks the user's language — plain English for end-users, code blocks for admins. Same engine, audience-aware.</div></div>
+          <div class="rev-row"><span class="rev-arrow">→</span><div><b>Productivity compounds.</b> IT focuses on architecture, not password resets. Every employee gets 24/7 expertise.</div></div>
+          <div class="rev-row"><span class="rev-arrow">→</span><div><b>Support scales without headcount.</b> One ARIA serves every employee. Onboard a new hire? They walk in fluent in your runbooks on day one.</div></div>
+          <div class="rev-row"><span class="rev-arrow">→</span><div><b>Decision-makers see what's recurring.</b> Unanswered queries logged for KB review — your training signal becomes the company's IQ.</div></div>
+          <div class="rev-row"><span class="rev-arrow">→</span><div><b>Reduced dependency on overloaded teams.</b> Self-serve from 72 articles plus your own documentation, before a human is paged.</div></div>
+          <div class="rev-row"><span class="rev-arrow">→</span><div><b>Customer experience compounds.</b> Faster, more consistent answers means happier users — and the chain reaction reaches every department they touch.</div></div>
+        </div>
+        <div class="rev-close">
+          <p>ARIA is not just another support tool.</p>
+          <p class="rev-close-strong">It is the start of a faster, safer, smarter service environment.</p>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .rev-row { display: flex; gap: 14px; align-items: flex-start; padding: 12px 14px; background: rgba(255,255,255,0.012); border: 1px solid rgba(197,160,89,0.10); border-radius: 10px; }
+      .rev-row > div { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; color: rgba(243,236,217,0.78); line-height: 1.6; }
+      .rev-row > div b { color: #f1dca7; font-weight: 600; }
+      .rev-arrow { font-family: 'Cinzel', Georgia, serif; font-size: 18px; color: #c5a059; line-height: 1.4; flex-shrink: 0; }
+      .rev-close { text-align: center; padding-top: 12px; border-top: 1px solid rgba(197,160,89,0.20); }
+      .rev-close p { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 18px; color: rgba(243,236,217,0.62); margin: 4px 0; line-height: 1.5; }
+      .rev-close-strong { color: #f1dca7 !important; font-style: normal !important; font-weight: 500; letter-spacing: 0.02em; font-size: 22px !important; }
+    </style>
+
+    <!-- ─────────── ARIA DEMO ─────────── -->
+    <section id="aria-demo" class="py-24 px-6 md:px-10 border-t border-[#c5a059]/20" style="background:radial-gradient(900px 500px at 50% 0%, rgba(197,160,89,0.06), transparent 65%), #060606;">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+          <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-4">Watch How It Works</span>
+          <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">ARIA <span class="text-[#c5a059]">Demo</span></h2>
+          <p class="text-white/50 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
+            See ARIA in action — an 80-second sales pitch showing how we replace expensive IT departments with one AI senior tech, available 24/7. Built for businesses tired of paying $7,000+/month for in-house IT.
+          </p>
+        </div>
+
+        <div class="aria-demo-frame">
+          <iframe src="/aria-pitch/" title="ARIA Sales Pitch" loading="lazy" allowfullscreen></iframe>
+        </div>
+
+        <div class="text-center mt-8">
+          <a href="/aria-pitch/" target="_blank" class="inline-block px-8 py-3 border border-[#c5a059] text-[#c5a059] uppercase tracking-[0.3em] text-xs font-bold hover:bg-[#c5a059] hover:text-black transition-all" style="font-family:'Cinzel',serif;">Open Full Screen →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── AI COURSES (placeholder) ─────────── -->
+    <section id="courses" class="py-20 px-6 md:px-10" style="background:#060606;">
+      <div class="max-w-4xl mx-auto text-center">
+        <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-4">Coming Soon</span>
+        <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">AI Courses &amp; <span class="text-[#c5a059]">Development</span></h2>
+        <p class="text-white/50 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
+          Hands-on training programs for IT teams looking to deploy AI in real-world business environments — Q3 2026.
+        </p>
+        <div class="mt-8">
+          <span class="inline-block px-6 py-2 border border-white/15 text-white/40 text-xs uppercase tracking-[0.3em]" style="font-family:'Cinzel',serif;">Notify Me — Coming Q3 2026</span>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .aria-demo-frame {
+        position: relative;
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        aspect-ratio: 16 / 9;
+        border: 1px solid rgba(197,160,89,0.35);
+        border-radius: 14px;
+        overflow: hidden;
+        background: #0a0908;
+        box-shadow: 0 0 60px rgba(197,160,89,0.12), inset 0 0 30px rgba(0,0,0,0.6);
+      }
+      .aria-demo-frame iframe {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        border: 0;
+        display: block;
+      }
+    </style>
+
+
+
+    <!-- ====== FOOTER ====== -->
+    <footer class="py-20 px-10 border-t border-white/5 relative z-10">
+        <div class="max-w-7xl mx-auto footer-inline-brand">
+            <div><p class="logo-text text-lg tracking-widest uppercase mb-2">Integrated IT Support</p><p class="text-white/20 text-[9px] tracking-widest uppercase font-bold">30 Fothergill Court, Whitby, ON L1P 2L4</p></div>
+            <a href="/" class="footer-i-logo" aria-label="Return to home">
+                <span class="footer-i-letter">I</span>
+                <svg class="footer-i-helpdesk" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 19a9 9 0 0 1 18 0"/>
+                    <circle cx="16" cy="14" r="5"/>
+                    <rect x="6" y="18" width="3.2" height="5" rx="1.1"/>
+                    <rect x="22.8" y="18" width="3.2" height="5" rx="1.1"/>
+                </svg>
+            </a>
+            <div class="md:text-right"><a href="tel:+16475813182" class="text-3xl font-light tracking-tighter text-[#c5a059] hover:text-white transition block mb-2">(647) 581-3182</a><p class="text-white/20 text-[8px] uppercase font-bold">Ahmad W. • Senior Director</p></div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/5 text-center">
+            <a href="/about.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">About Us</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/copyright.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">© Integrated IT Support Inc. — Copyright &amp; Intellectual Property Disclaimer</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/terms.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Terms &amp; Conditions</a>
+        </div>
+    </footer>
+
+    <!-- ====== ARIA LAUNCHER (above chat FAB) ====== -->
+    <a href="/aria.html" class="aria-fab" id="ariaFab" aria-label="Open ARIA — Premium AI Browsing Companion">
+        <span class="aria-fab-dot" aria-hidden="true"></span>
+        <span>ARIA</span>
+    </a>
+
+    <!-- ====== CONTACT CHAT WIDGET ====== -->
+    <button class="chat-fab" id="chatFab" aria-label="Open contact form"><i data-lucide="message-circle"></i></button>
+    <div class="chat-window hidden" id="chatWindow">
+        <div class="chat-header"><h4 class="logo-text">Contact Us</h4><button class="chat-close-btn" id="chatClose" aria-label="Close contact form"><i data-lucide="x"></i></button></div>
+        <div class="chat-body">
+            <div id="chatFormContainer">
+                <form class="chat-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                    <input type="hidden" name="form-name" value="contact"><input type="hidden" name="subject" value="New Contact Form Submission from %{formName}"><p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
+                    <div class="form-group"><label for="cf-name">Full Name</label><input type="text" id="cf-name" name="name" required placeholder="Your full name"><div class="error-msg" id="nameError">Please enter your name.</div></div>
+                    <div class="form-group"><label for="cf-email">Email Address</label><input type="email" id="cf-email" name="email" required placeholder="you@example.com"><div class="error-msg" id="emailError">Please enter a valid email address.</div></div>
+                    <div class="form-group"><label for="cf-phone">Phone Number</label><input type="tel" id="cf-phone" name="phone" placeholder="(123) 456-7890"></div>
+                    <div class="form-group"><label for="cf-description">Description of Issue</label><textarea id="cf-description" name="description" required placeholder="How can we help?"></textarea><div class="error-msg" id="descError">Please describe your issue.</div></div>
+                    <button type="submit" class="chat-submit-btn" id="chatSubmitBtn">Submit</button>
+                </form>
+            </div>
+            <div id="chatSuccessContainer" class="chat-success" style="display:none;"><div class="check-circle"><i data-lucide="check"></i></div><p>Thank you! <span id="successName"></span>, we will be in touch shortly. If issue is urgent please do not hesitate to call us at <a href="tel:+16475813182" style="color:#c5a059; text-decoration:underline; white-space:nowrap;">(647) 581-3182</a>.</p></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
+        function openGateway() {
+            const g = document.getElementById('gateway');
+            if (!g || g.classList.contains('open')) return;
+            // Cancel any pending biometric timers (user clicked to skip)
+            if (typeof window.__clearBioTimers === 'function') window.__clearBioTimers();
+            // Fade biometric overlay cleanly as gate opens
+            const bio = document.getElementById('bioOverlay');
+            if (bio) bio.classList.add('bio-fade-out');
+            g.classList.add('open');
+            document.body.style.overflow = 'auto';
+            setTimeout(() => { g.classList.add('hidden-gate'); }, 1100);
+            setTimeout(() => { g.style.display = 'none'; }, 1500);
+        }
+
+        // --- BIOMETRIC ENTRY SEQUENCE ---
+        // 1.0s after load -> fingerprint fades in with blurred background, "decoding" text
+        // cycles over the fingerprint itself -> UNLOCKED renders -> fingerprint fades, gate opens.
+        // Click/tap at any point skips directly to openGateway().
+        (function biometricSequence() {
+            const bio = document.getElementById('bioOverlay');
+            const unlocked = document.getElementById('bioUnlocked');
+            const decode = document.getElementById('bioDecode');
+            if (!bio) return;
+
+            let startTimer, decodeTimer, unlockTimer, gateTimer;
+            const decodeTokens = [
+                'DECODING', 'SCANNING', 'MATCHING',
+                'VERIFY · 37%', 'VERIFY · 68%', 'VERIFY · 91%',
+                'HASH · A6F2', 'HASH · D19C', 'HASH · 7B4E',
+                'AUTHORIZING', 'CLEARANCE'
+            ];
+            let decodeIdx = 0;
+            function clearTimers() {
+                clearTimeout(startTimer);
+                clearInterval(decodeTimer);
+                clearTimeout(unlockTimer);
+                clearTimeout(gateTimer);
+            }
+            window.__clearBioTimers = clearTimers;
+
+            window.addEventListener('load', function() {
+                // 0.4s after load: fingerprint fades in, background blurs, decoding text cycles
+                startTimer = setTimeout(function() {
+                    bio.classList.add('bio-visible');
+                    if (decode) {
+                        decode.textContent = decodeTokens[0];
+                        decodeTimer = setInterval(function() {
+                            decodeIdx = (decodeIdx + 1) % decodeTokens.length;
+                            decode.textContent = decodeTokens[decodeIdx];
+                        }, 140);
+                    }
+                }, 400);
+
+                // UNLOCKED text appears ~1.1s in
+                unlockTimer = setTimeout(function() {
+                    clearInterval(decodeTimer);
+                    if (decode) {
+                        decode.textContent = 'VERIFIED';
+                        decode.classList.add('bio-decode-hide');
+                    }
+                    if (unlocked) unlocked.classList.add('bio-show');
+                }, 1100);
+
+                // Gate auto-opens at 1.5s total
+                gateTimer = setTimeout(openGateway, 1500);
+            });
+        })();
+
+        // --- Anti-copy / developer-tools deterrents (client-side best-effort) ---
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        document.addEventListener('dragstart', function(e) { if (e.target && e.target.tagName === 'IMG') e.preventDefault(); });
+        document.addEventListener('keydown', function(e) {
+            var k = e.key ? e.key.toLowerCase() : '';
+            if (e.key === 'F12') { e.preventDefault(); return; }
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','j','c'].indexOf(k) !== -1) { e.preventDefault(); return; }
+            if ((e.ctrlKey || e.metaKey) && ['u','s'].indexOf(k) !== -1) { e.preventDefault(); return; }
+            var active = document.activeElement;
+            var inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT');
+            if (!inField && (e.ctrlKey || e.metaKey) && ['c','x','a','p'].indexOf(k) !== -1) { e.preventDefault(); }
+        });
+        document.addEventListener('copy', function(e) {
+            var active = document.activeElement;
+            var inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
+            if (!inField) e.preventDefault();
+        });
+
+        // ====== SERVICE CENTER MODAL ======
+        // IMPORTANT: Replace this URL with your deployed portal URL
+        const PORTAL_URL = 'https://ii-support-portal-wd05qh.abacusai.app';
+
+        function openPortal(panel) {
+            const modal = document.getElementById('scModal');
+            const iframe = document.getElementById('scIframe');
+            // Load the portal — the portal reads ?panel= to auto-open specific panels
+            iframe.src = PORTAL_URL + '?panel=' + panel;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePortal() {
+            const modal = document.getElementById('scModal');
+            const iframe = document.getElementById('scIframe');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            // Unload iframe after animation
+            setTimeout(() => { iframe.src = 'about:blank'; }, 400);
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePortal(); });
+
+        // ====== PRECISION METHODOLOGY — expand/collapse ======
+        (function methodologyFrameworks() {
+            const grid = document.getElementById('frameworkGrid');
+            if (!grid) return;
+            grid.addEventListener('click', function(e) {
+                const card = e.target.closest('.fw-card');
+                if (!card) return;
+                const isOpen = card.classList.toggle('fw-open');
+                card.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+        })();
+
+        // ====== BACKGROUND I SCROLL-MORPH ======
+        // Shifts the fixed centered "I" layer to a context-appropriate icon
+        // as each section enters view. Lightweight — opacity crossfade only.
+        (function bgIMorph() {
+            const stage = document.getElementById('bgIStage');
+            if (!stage) return;
+            const layers = {};
+            stage.querySelectorAll('.bg-i-layer').forEach(function(l) { layers[l.dataset.layer] = l; });
+
+            const sectionMap = [
+                { id: 'service-center', layer: 'service' },
+                { id: 'solutions',      layer: 'pricing' },
+                { id: 'portfolio',      layer: 'impact' },
+                { id: 'methodology',    layer: 'methodology' }
+            ];
+            let current = 'default';
+            function setLayer(name) {
+                if (name === current) return;
+                Object.keys(layers).forEach(function(k) { layers[k].classList.toggle('is-active', k === name); });
+                current = name;
+            }
+
+            const obs = new IntersectionObserver(function(entries) {
+                let best = null;
+                entries.forEach(function(e) {
+                    if (!e.isIntersecting) return;
+                    if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
+                });
+                if (best) {
+                    const match = sectionMap.find(function(s) { return s.id === best.target.id; });
+                    if (match) setLayer(match.layer);
+                }
+            }, { threshold: [0.25, 0.5, 0.75] });
+
+            sectionMap.forEach(function(s) {
+                const el = document.getElementById(s.id);
+                if (el) obs.observe(el);
+            });
+
+            // At top of page (default), no section in view triggers default layer
+            window.addEventListener('scroll', function() {
+                if (window.scrollY < 200) setLayer('default');
+            }, { passive: true });
+        })();
+
+        // ====== PRICING — DECK OF CARDS ======
+        // On scroll-in: cards render in their original grid layout, then 1.5s later
+        // consolidate into a deck formation. Hover (desktop) flips each card; tap on
+        // mobile toggles .is-flipped.
+        (function pricingDeck() {
+            const decks = document.querySelectorAll('[data-price-deck]');
+            if (!decks.length) return;
+
+            // IntersectionObserver triggers the deck consolidation after 1.5s
+            // once each deck enters the viewport for the first time.
+            const io = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (!entry.isIntersecting) return;
+                    const deck = entry.target;
+                    io.unobserve(deck);
+                    setTimeout(function() { deck.classList.add('is-decked'); }, 1500);
+                });
+            }, { threshold: 0.3 });
+            decks.forEach(function(d) { io.observe(d); });
+
+            // Touch / tap flipping — on devices without hover, tap toggles the card.
+            const mql = window.matchMedia('(hover: none), (pointer: coarse)');
+            decks.forEach(function(deck) {
+                deck.addEventListener('click', function(e) {
+                    if (!mql.matches) return;
+                    const slot = e.target.closest('.deck-slot');
+                    if (!slot) return;
+                    // Let the CTA link behave normally
+                    if (e.target.closest('a,button')) return;
+                    const wasOpen = slot.classList.contains('is-flipped');
+                    deck.querySelectorAll('.deck-slot.is-flipped').forEach(function(s) { s.classList.remove('is-flipped'); });
+                    if (!wasOpen) slot.classList.add('is-flipped');
+                });
+            });
+        })();
+
+        // ====== EMAIL TEMPLATE PREFILL (Pricing cards) ======
+        (function() {
+            const RECIPIENT = 'integrateditsupp@gmail.com';
+            const templates = {
+                'tier1': {
+                    subject: 'Managed IT Inquiry — Tier 1 · Operational Foundation',
+                    body:
+`Hello Integrated IT Support Inc.,
+
+I am interested in the Tier 1 — Operational Foundation managed IT retainer ($1,500 – $2,500 / month) for my small business.
+
+Business Details
+Business Name:
+Contact Name:
+Phone Number:
+Email Address:
+Number of Users/Devices (1–10):
+
+Current IT Environment:
+(e.g., Microsoft 365, on-prem, hybrid, mixed)
+
+Top 3 IT pain points right now:
+1.
+2.
+3.
+
+Preferred Start Date:
+
+Please review and advise on next steps.
+
+Thank you,
+[Your Name]`
+                },
+                'tier2': {
+                    subject: 'Managed IT Inquiry — Tier 2 · Business Continuity',
+                    body:
+`Hello Integrated IT Support Inc.,
+
+I am interested in the Tier 2 — Business Continuity managed IT retainer ($3,500 – $6,000 / month) for my organization.
+
+Business Details
+Business Name:
+Contact Name:
+Phone Number:
+Email Address:
+Number of Users/Devices (11–50):
+
+Current IT Environment:
+
+Priority Areas:
+☐ Priority SLA — 1-hour response
+☐ Active Directory / Identity
+☐ Disaster Recovery Planning
+☐ Vendor Coordination
+☐ Executive IT Reporting
+
+Preferred Start Date:
+
+Please confirm availability and next steps.
+
+Thank you,
+[Your Name]`
+                },
+                'tier3': {
+                    subject: 'Managed IT Inquiry — Tier 3 · Enterprise Operations',
+                    body:
+`Hello Integrated IT Support Inc.,
+
+I am interested in the Tier 3 — Enterprise Operations managed IT retainer ($7,500 – $15,000 / month).
+
+Business Details
+Business Name:
+Contact Name:
+Phone Number:
+Email Address:
+Number of Users/Devices (51–200+):
+Locations:
+
+Environment:
+☐ Microsoft 365 / SharePoint Architecture
+☐ 24/7 Monitoring & Incident Response
+☐ Compliance: PHIPA / PIPEDA / SOC
+☐ Major Incident Management
+☐ C-Suite Risk Reporting
+
+Preferred Start Date:
+
+Please provide next steps to schedule an introductory call.
+
+Thank you,
+[Your Name]`
+                },
+                'private': {
+                    subject: 'Private Engagement Inquiry — Personal / Family IT',
+                    body:
+`Hello Integrated IT Support Inc.,
+
+I would like to inquire about Private Engagement services.
+
+Contact Information
+Name:
+Phone:
+Email:
+City:
+
+Service of Interest:
+☐ Diagnostics & Repair ($150 – $250 flat)
+☐ Home Network Setup & Optimization ($200 – $350)
+☐ Data Recovery ($250 – $500)
+☐ Device Setup & Performance Tuning ($125 – $200)
+☐ Digital Security Audit — Personal ($200 – $400)
+☐ Monthly Home IT Support ($150 – $300/mo)
+
+Description of need:
+
+Preferred Contact Time:
+
+Thank you,
+[Your Name]`
+                }
+            };
+
+            document.querySelectorAll('[data-email-template]').forEach(function(el) {
+                const tpl = templates[el.dataset.emailTemplate];
+                if (!tpl) return;
+                el.href = 'mailto:' + RECIPIENT
+                    + '?subject=' + encodeURIComponent(tpl.subject)
+                    + '&body=' + encodeURIComponent(tpl.body);
+            });
+        })();
+
+        // Chat widget
+        (function() {
+            const fab = document.getElementById('chatFab'); const win = document.getElementById('chatWindow'); const closeBtn = document.getElementById('chatClose'); const form = document.getElementById('contactForm'); const formContainer = document.getElementById('chatFormContainer'); const successContainer = document.getElementById('chatSuccessContainer'); const submitBtn = document.getElementById('chatSubmitBtn');
+            fab.addEventListener('click', function() { const h = win.classList.contains('hidden'); if (h) { win.classList.remove('hidden'); requestAnimationFrame(() => win.classList.add('visible')); } else { win.classList.remove('visible'); win.classList.add('hidden'); } });
+            closeBtn.addEventListener('click', function() { win.classList.remove('visible'); win.classList.add('hidden'); });
+            function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+            function clearErrors() { form.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid')); form.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none'); }
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault(); clearErrors();
+                const name = document.getElementById('cf-name'); const email = document.getElementById('cf-email'); const desc = document.getElementById('cf-description'); let valid = true;
+                if (!name.value.trim()) { name.classList.add('invalid'); document.getElementById('nameError').style.display = 'block'; valid = false; }
+                if (!validateEmail(email.value)) { email.classList.add('invalid'); document.getElementById('emailError').style.display = 'block'; valid = false; }
+                if (!desc.value.trim()) { desc.classList.add('invalid'); document.getElementById('descError').style.display = 'block'; valid = false; }
+                if (!valid) return;
+                submitBtn.disabled = true; submitBtn.textContent = 'Sending...';
+                try {
+                    const fd = new FormData(form);
+                    const resp = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(fd).toString() });
+                    if (!resp.ok) throw new Error('Submission failed: ' + resp.status);
+                    document.getElementById('successName').textContent = name.value.trim();
+                    formContainer.style.display = 'none';
+                    successContainer.style.display = 'flex';
+                    lucide.createIcons();
+                } catch (err) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit';
+                    alert('Sorry, something went wrong sending your message. Please try again, email integrateditsupp@gmail.com, or call (647) 581-3182.');
+                }
+            });
+            lucide.createIcons();
+        })();
+
+        // ARIA install CTAs (bottom section)
+        (function(){
+            const chromeBtn = document.getElementById('ariaInstallChrome');
+            const mobileBtn = document.getElementById('ariaInstallMobile');
+            if (chromeBtn) chromeBtn.addEventListener('click', () => {
+                window.location.href = '/extension.html';
+            });
+            if (mobileBtn) mobileBtn.addEventListener('click', () => {
+                if (window.ARIA && typeof window.ARIA.installPWA === 'function') window.ARIA.installPWA();
+                else window.location.href = '/aria.html';
+            });
+        })();
+
+        // Purchase buttons — open a premium modal with plan options, each opening
+        // a confirmation + PayPal checkout via the shared ARIA core.
+        (function(){
+            function waitForAria(cb){ if (window.ARIA) return cb(); setTimeout(()=>waitForAria(cb), 80); }
+            waitForAria(function(){
+                document.querySelectorAll('[data-buy-options]').forEach(function(btn){
+                    btn.addEventListener('click', function(){
+                        let data; try { data = JSON.parse(btn.getAttribute('data-buy-options')); } catch(_) { return; }
+                        const optionsHtml = data.options.map(function(opt, i){
+                            if (opt.quote) {
+                                return '<button type="button" class="aria-buy-option" data-quote="1" style="display:block;width:100%;margin-bottom:10px;padding:14px;border-radius:14px;border:1px solid rgba(212,175,55,0.25);background:rgba(0,0,0,0.35);color:#f3ecd9;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;transition:all .2s ease;"><b style="color:#f1dca7;display:block;margin-bottom:3px;">Request a custom quote</b><span style="opacity:.65;font-size:11.5px;">Email Integrated IT Support with your environment details for a precise quote.</span></button>';
+                            }
+                            return '<button type="button" class="aria-buy-option" data-idx="'+i+'" style="display:block;width:100%;margin-bottom:10px;padding:14px;border-radius:14px;border:1px solid rgba(212,175,55,0.25);background:rgba(0,0,0,0.35);color:#f3ecd9;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;transition:all .2s ease;"><b style="color:#f1dca7;display:block;margin-bottom:3px;">'+opt.name+' — $'+opt.price+' CAD</b><span style="opacity:.65;font-size:11.5px;">'+(opt.description||'')+'</span></button>';
+                        }).join('');
+                        const modal = window.ARIA.showPremiumModal({
+                            title: data.title,
+                            body: '<p style="opacity:.75;margin-bottom:14px;">Select how you would like to proceed. All payments are handled by PayPal; Integrated IT Support will confirm scope before work begins.</p>' + optionsHtml + '<p class="small-note" style="margin-top:10px;">Payments confirm purchase request. Final service scope may require confirmation before work begins.</p>'
+                        });
+                        const root = document.querySelector('.aria-premium-modal');
+                        if (!root) return;
+                        root.querySelectorAll('.aria-buy-option').forEach(function(btn2){
+                            btn2.addEventListener('mouseenter', ()=>{ btn2.style.borderColor='rgba(212,175,55,0.55)'; btn2.style.background='rgba(212,175,55,0.08)'; });
+                            btn2.addEventListener('mouseleave', ()=>{ btn2.style.borderColor='rgba(212,175,55,0.25)'; btn2.style.background='rgba(0,0,0,0.35)'; });
+                            btn2.addEventListener('click', function(){
+                                if (btn2.dataset.quote) {
+                                    modal.close();
+                                    window.location.href = 'mailto:integrateditsupp@gmail.com?subject=' + encodeURIComponent('Custom Quote Request — ' + data.title) + '&body=' + encodeURIComponent('Please provide a custom quote for ' + data.title + '.\n\nEnvironment details:\n- Users / devices:\n- Locations:\n- Current stack:\n- Timeline:\n\nThank you.');
+                                    return;
+                                }
+                                const opt = data.options[Number(btn2.dataset.idx)];
+                                modal.close();
+                                const host = document.createElement('div');
+                                host.id = 'paypal-host-' + opt.id;
+                                const launch = window.ARIA.showPremiumModal({
+                                    title: 'Confirm: ' + opt.name,
+                                    body: '<p>You are about to purchase <b>'+opt.name+'</b> for <b>$'+opt.price+' CAD</b>.</p><p style="opacity:.7;font-size:12.5px;">After PayPal checkout, Integrated IT Support will email you to confirm scope.</p><div id="paypal-host-'+opt.id+'" style="margin-top:16px;"></div><p class="small-note" style="margin-top:10px;">Payments confirm purchase request. Final service scope may require confirmation before work begins.</p>'
+                                });
+                                setTimeout(function(){
+                                    const mount = document.getElementById('paypal-host-' + opt.id);
+                                    if (mount) window.ARIA.renderPayPal(mount, opt);
+                                }, 40);
+                            });
+                        });
+                    });
+                });
+            });
+        })();
+    </script>
+    <script src="/assets/aria-core.js" defer></script>
+    <script type="module" src="/assets/aria-trial.js"></script>
+</body>
+</html>

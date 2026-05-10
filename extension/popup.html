@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ARIA</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <main class="aria-extension">
+    <header>
+      <div class="logo">I</div>
+      <div>
+        <h1>ARIA</h1>
+        <p>Your web assistant</p>
+      </div>
+    </header>
+
+    <section class="quick-actions">
+      <button id="summarizePage" type="button">Summarize page</button>
+      <button id="comparePrices" type="button">Compare prices</button>
+      <button id="addReminder" type="button">Add reminder</button>
+      <button id="openSite" type="button">Open iisupport.net</button>
+    </section>
+
+    <section class="chat">
+      <div id="messages" aria-live="polite"></div>
+      <div class="input-row">
+        <input id="userInput" placeholder="Ask ARIA…" autocomplete="off" />
+        <button id="sendMessage" type="button" aria-label="Send">↑</button>
+      </div>
+    </section>
+
+    <footer>
+      <span>Privacy-safe voice</span>
+      <a id="openPlans" href="https://iisupport.net/aria.html" target="_blank" rel="noopener">Plans</a>
+    </footer>
+  </main>
+
+  <script type="module" src="popup-kb.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

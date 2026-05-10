@@ -1,0 +1,3648 @@
+{
+  "browser": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "chrome": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "edge": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "firefox": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "safari": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "not loading": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "this site can't be reached": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "your connection is not private": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "net::err_cert": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "cache": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "cookies": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "phishing": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing \u2014 what to do",
+      "level": "L1"
+    },
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "suspicious email": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing \u2014 what to do",
+      "level": "L1"
+    }
+  ],
+  "scam email": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing \u2014 what to do",
+      "level": "L1"
+    }
+  ],
+  "spam": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing \u2014 what to do",
+      "level": "L1"
+    }
+  ],
+  "report phishing": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing \u2014 what to do",
+      "level": "L1"
+    }
+  ],
+  "email scam": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing \u2014 what to do",
+      "level": "L1"
+    }
+  ],
+  "business email compromise": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing \u2014 what to do",
+      "level": "L1"
+    }
+  ],
+  "bec": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing \u2014 what to do",
+      "level": "L1"
+    }
+  ],
+  "microsoft 365": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "m365": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "office 365": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "can't sign in": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "password prompt": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "login loop": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "aadsts": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "account locked": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    },
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "we couldn't connect": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "office activation": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "reduced functionality": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "license": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "subscription expired": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "product deactivated": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "sign in to activate office": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "mfa": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "2fa": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "two factor": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "multi factor": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "authenticator": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "lost phone": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "new phone": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "mfa code": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "microsoft authenticator": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "authy": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "google authenticator": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "onedrive": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "not syncing": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "paused": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "looking for changes": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "sync stuck": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "red x": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "upload pending": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "blocked file": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "restore file": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "deleted file": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "recover file": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "version history": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "previous version": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "rollback": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    },
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "ransomware recovery": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "onedrive recycle bin": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "sync conflict": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "duplicate file": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "file conflict": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "two copies": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "my computer copy": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "merged file": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "which version": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "outlook": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    },
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "not receiving emails": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "email stuck": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "inbox not updating": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "missing emails": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "send/receive": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "can't send": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "stuck in outbox": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "email not sending": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "unable to send": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "smtp error": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "outbox": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "password reset": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "forgot password": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "sspr": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "self service password reset": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "locked out": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    },
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "reset link": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "printer": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "not printing": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "print queue": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    },
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "stuck job": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "offline": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "print spooler": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "won't print": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "paper jam": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "error printing": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "garbled print": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "wrong characters": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "prints symbols": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "prints code": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "printer driver": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "corrupt print": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "teams": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "no audio": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    },
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "can't hear": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "mic not working": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "microphone": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "speaker": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "other people can't hear me": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "audio device not detected": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "teams won't load": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "teams stuck": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "white screen": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "splash screen": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "teams crashes": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "teams won't sign in": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "new teams not opening": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "vpn": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "won't connect": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "vpn disconnects": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "vpn timeout": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "cisco anyconnect": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "globalprotect": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "fortinet": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "openvpn": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "always on vpn": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    },
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "wifi": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "wi-fi": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "no internet": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "no internet secured": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "yellow triangle": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "wireless not working": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "can't connect": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "dropped connection": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "bsod": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "blue screen": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "stop error": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "kernel panic": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "system crash": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "critical_process_died": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "whea_uncorrectable": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "memory_management": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "driver_irql": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "won't boot": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "stuck on logo": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "spinning dots": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "black screen": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "boot loop": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "automatic repair loop": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "windows not loading": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "slow computer": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "laggy": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "performance": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    },
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "high cpu": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    },
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "high memory": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "high disk usage": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "100% disk": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "slow startup": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "takes forever to load": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "disk full": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "out of space": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "low disk space": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "c drive full": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "storage full": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "clear space": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "cleanup": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "no sound": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "speakers not working": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "audio missing": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "no audio output device": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "red x speaker icon": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "audio service not running": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "app won't open": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "level": "L1"
+    }
+  ],
+  "app crashes": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "level": "L1"
+    }
+  ],
+  "exe won't run": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "level": "L1"
+    }
+  ],
+  "application error": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "level": "L1"
+    }
+  ],
+  "not opening": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "level": "L1"
+    }
+  ],
+  "closes immediately": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "level": "L1"
+    }
+  ],
+  "account lockout": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "bad password attempts": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "repeating lockout": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "cached credential": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "service account locked": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "4740 event": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "conditional access": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "aadsts53003": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "aadsts53000": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "access blocked": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "compliant device required": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "mfa policy": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "locations": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "blocked by policy": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "bitlocker": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    },
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "recovery key": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "recovery prompt": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "tpm reset": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "hardware change": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "manage-bde": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "protector": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "deployment": [
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "autopilot": [
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    },
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    },
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "oobe": [
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "app rings": [
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "configuration profiles": [
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "device images": [
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "white glove": [
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "dhcp": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "apipa": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "169.254": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "scope exhaustion": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "lease": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "reservation": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    },
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "failover": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "rogue dhcp": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "dns": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "name resolution": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "split brain": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "conditional forwarder": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "stub zone": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "dns scavenging": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "srv records": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "aging": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "driver": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "whql": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "intune driver": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "autopatch": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "oem driver": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "windows update for business": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "asr": [
+    {
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "attack surface reduction": [
+    {
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "defender": [
+    {
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "block office macros": [
+    {
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "block credential stealing": [
+    {
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "audit mode": [
+    {
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "rule guid": [
+    {
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "mail flow": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "ndr": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "bounce": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "5.7.x": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "message trace": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "dkim": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "spf": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "dmarc": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "connector": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "intune": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "device compliance": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "not compliant": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "enrollment failed": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "hybrid join": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "company portal": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "device not registered": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "malware": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "virus": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "infected": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "ransomware": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "compromised": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "quarantine": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "mde": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "defender for endpoint": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "isolation": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "latency": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "packet loss": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "mtu": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "jumbo frames": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "traceroute": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "mtr": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "pmtud": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "duplex": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "errors": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "offboarding": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "termination": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "exit": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "disable account": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "litigation hold": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "shared mailbox": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "license reclaim": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "sessions revoked": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "onboarding": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "new hire": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "provisioning": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "first day": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "account creation": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "license assignment": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "device deployment": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "group based licensing": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "wpr": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "xperf": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "traces": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "boot performance": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "long delay": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "hang": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "ntfs": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "permissions": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    },
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "access denied": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    },
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "share": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "inheritance": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "take ownership": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "icacls": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "effective access": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "print server": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "universal print": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "printnightmare": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "point and print": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "driver isolation": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "0x0000011b": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "rdp": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "remote desktop": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "rds": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "terminal server": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "rd gateway": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "cant connect": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "certificate": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "licensing grace period": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "sharepoint": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "broken inheritance": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "sharing audit": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "link sharing": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "everyone except external": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "guests": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "vpn gateway": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "certificate expired": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "aovpn": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "device tunnel": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "user tunnel": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "rras": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "ikev2": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "profile corrupted": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "temp profile": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "profile rebuild": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "we can't sign in to your account": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "user shell folders": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "regedit profilelist": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "immutable backup": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "air gap": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "object lock": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "ransomware proof": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "3-2-1-1-0": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "veeam hardened repository": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "aws s3 object lock": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "azure backup vault": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "pki": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "certificate authority": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "ad cs": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "autoenroll": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "crl": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "ocsp": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "subordinate ca": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "root ca": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "hsm": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "revoke": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "azure": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "tenant": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "subscription": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "landing zone": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "management groups": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "azure policy": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "rbac": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "cost management": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "identity": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "disaster recovery": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "dr": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "rto": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "rpo": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "veeam": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "rubrik": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "cohesity": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "immutable": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "3-2-1": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "tabletop": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    },
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "bcp": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "edr": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "applocker": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "wdac": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "device guard": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "credential guard": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "hvci": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "hardening": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "cis": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "stig": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "msp": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "multi tenant": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "lighthouse": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "delegated administration": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "psa": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "rmm": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "automation": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "itil": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "itsm": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "azure ad connect": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "aad connect": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "hybrid identity": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "sync": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "password hash sync": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "pass-through auth": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "federation": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    },
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "cloud sync": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "writeback": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "network architecture": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "segmentation": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "zero trust": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "sd-wan": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "hub spoke": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "microsegmentation": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "vlans": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "firewall": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "nva": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "incident response": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "cyber incident": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "p1": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "soc": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "kill chain": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "mttc": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "mttd": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "exfiltration": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "lateral movement": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "windows server": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "server role": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "patching": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "cluster": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "storage spaces direct": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "sconfig": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "server core": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "sysprep": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "sso": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "saml": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "oidc": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "identity provider": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "service provider": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "assertion": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "claims": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "jwt": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "okta": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "entra": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "certificate rollover": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "booking": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "appointment": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "schedule": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "opentable": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "resy": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "calendar": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "confirmation": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "budget": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "50 30 20": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "track spending": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "personal finance": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "saving": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "emergency fund": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "ynab": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "mint": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "safe checkout": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "payment method": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "credit card": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "paypal": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "apple pay": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "google pay": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "virtual card": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "debit": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "wire transfer": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "gift card": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout \u2014 payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "explain simply": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "analogy": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "eli5": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "what is": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "how does it work": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "non-technical explanation": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "online form": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "fill out form": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "autofill": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "government form": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "tax form": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "dmv": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "safety": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "scam website": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "fake site": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "look-alike domain": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "typo squat": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "is this site safe": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "whois": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "trustpilot": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "senior": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "elderly": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "non-technical": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "simple language": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "patient": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "large text": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "voice": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "help my parent": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "online shopping": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "how to buy": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "first time online": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "amazon": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "shopify": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "safe shopping": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "help me buy": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "assist with purchase": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "compare products": [
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "which is better": [
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "specs": [
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "rtings": [
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "wirecutter": [
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "bestseller": [
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "vendor research": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research \u2014 is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "seller legit": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research \u2014 is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "is this real": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research \u2014 is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "check business": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research \u2014 is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "small business legit": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research \u2014 is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "bbb": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research \u2014 is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "secretary of state": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research \u2014 is this company legit?",
+      "level": "GA"
+    }
+  ]
+}

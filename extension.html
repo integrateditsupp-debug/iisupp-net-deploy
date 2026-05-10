@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARIA Chrome Extension · Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#d4af37" />
+<link rel="stylesheet" href="/assets/aria-core.css" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;700;900&display=swap');
+:root { --gold: #d4af37; --gold-bright: #f1dca7; --deep: #050505; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(212,175,55,0.08), transparent 60%),
+    radial-gradient(800px 500px at 50% 110%, rgba(212,175,55,0.04), transparent 60%),
+    var(--deep);
+  color: #f3ecd9;
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+}
+.ext-shell { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+.ext-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: rgba(241,220,167,.7);
+  text-decoration: none;
+  margin-bottom: 30px;
+}
+.ext-back:hover { color: var(--gold-bright); }
+.ext-head {
+  text-align: center;
+  padding: 30px 0 24px;
+  border-bottom: 1px solid rgba(212,175,55,0.18);
+}
+.ext-eyebrow { color: var(--gold); letter-spacing: .5em; font-size: 9px; text-transform: uppercase; font-weight: 700; }
+.ext-head h1 { font-family: 'Cinzel', serif; font-size: clamp(30px, 5vw, 46px); margin: 10px 0 12px; letter-spacing: .04em; color: var(--gold-bright); font-weight: 700; }
+.ext-head p { opacity: .7; font-size: 14px; letter-spacing: .03em; max-width: 620px; margin: 0 auto; line-height: 1.55; }
+.ext-grid {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+.ext-tile {
+  padding: 22px;
+  border: 1px solid rgba(212,175,55,0.22);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(8,8,8,0.9), rgba(20,17,11,0.9));
+  transition: all .25s ease;
+}
+.ext-tile:hover { border-color: rgba(212,175,55,0.45); transform: translateY(-2px); }
+.ext-tile h3 { font-family: 'Cinzel', serif; color: var(--gold-bright); margin: 0 0 8px; font-size: 16px; letter-spacing: .06em; }
+.ext-tile p { font-size: 12.5px; opacity: .75; line-height: 1.55; margin: 0; }
+.ext-actions {
+  margin-top: 36px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.ext-btn-primary, .ext-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .22s ease;
+  border: 1px solid rgba(212,175,55,0.5);
+}
+.ext-btn-primary {
+  background: linear-gradient(135deg, #d4af37 0%, #f1dca7 50%, #a47d1b 100%);
+  color: #050505;
+}
+.ext-btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.ext-btn-secondary {
+  background: transparent;
+  color: var(--gold-bright);
+}
+.ext-btn-secondary:hover { background: rgba(212,175,55,0.1); }
+
+.install-steps {
+  margin-top: 44px;
+  padding: 26px 28px;
+  border: 1px solid rgba(212,175,55,0.16);
+  border-radius: 18px;
+  background: rgba(0,0,0,0.4);
+}
+.install-steps h2 { font-family: 'Cinzel', serif; color: var(--gold-bright); font-size: 18px; margin: 0 0 14px; letter-spacing: .06em; }
+.install-steps ol { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.75; opacity: .85; }
+.install-steps code {
+  background: rgba(212,175,55,0.1);
+  padding: 1px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--gold-bright);
+  letter-spacing: .04em;
+}
+</style>
+</head>
+<body>
+  <div class="ext-shell">
+    <a href="/" class="ext-back">← Back to iisupport.net</a>
+
+    <header class="ext-head">
+      <span class="ext-eyebrow">Desktop Companion</span>
+      <h1>ARIA Chrome Extension</h1>
+      <p>ARIA follows your browsing with intelligent, privacy-aware support — quick-look answers, trading news, price comparison, and a quiet reminder system that never speaks private details out loud.</p>
+    </header>
+
+    <div class="ext-grid">
+      <div class="ext-tile">
+        <h3>Quick ARIA</h3>
+        <p>Open the extension from any tab for an instant answer, search, or tech triage — without leaving the page.</p>
+      </div>
+      <div class="ext-tile">
+        <h3>Reminders</h3>
+        <p>Set a task from the extension. When it's due, ARIA only says <em>"You have a task due soon."</em> — never the contents.</p>
+      </div>
+      <div class="ext-tile">
+        <h3>Trading News</h3>
+        <p>Aggregated from Yahoo Finance, CoinGecko, and SEC EDGAR — one tap, one view, no clutter.</p>
+      </div>
+      <div class="ext-tile">
+        <h3>Price Compare</h3>
+        <p>Send a product query across Google Shopping, Amazon.ca, Best Buy, and eBay Canada in a single click.</p>
+      </div>
+    </div>
+
+    <div class="ext-actions">
+      <a class="ext-btn-primary" href="/downloads/aria-chrome-extension.zip" download>Download Extension (.zip)</a>
+      <a class="ext-btn-secondary" href="/aria.html">Open ARIA on Web</a>
+    </div>
+
+    <section class="install-steps">
+      <h2>Install in Chrome (unpacked)</h2>
+      <ol>
+        <li>Download the <code>aria-chrome-extension.zip</code> above and unzip it.</li>
+        <li>Open Chrome and go to <code>chrome://extensions</code>.</li>
+        <li>Toggle <b>Developer mode</b> on (top right).</li>
+        <li>Click <b>Load unpacked</b> and select the unzipped folder.</li>
+        <li>Pin the ARIA extension to your toolbar for one-tap access.</li>
+      </ol>
+      <p style="margin-top:16px;font-size:12px;opacity:.6;">A Chrome Web Store listing is in review — the unpacked install works today on every Chromium-based browser (Chrome, Edge, Brave, Arc, Opera).</p>
+    </section>
+  </div>
+  <script src="/assets/aria-core.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{
+  "id": "L1-001",
+  "title": "No sound from Windows desktop",
+  "level": "L1",
+  "category": "audio",
+  "environment": "any",
+  "applies_to": [
+    "Windows 10/11",
+    "Realtek",
+    "HDMI/DisplayPort audio"
+  ],
+  "symptoms": [
+    "No audio",
+    "Wrong output device",
+    "Volume high but no sound"
+  ],
+  "causes": [
+    "Wrong output selected",
+    "Muted app mixer",
+    "Monitor selected instead of speakers",
+    "Driver issue"
+  ],
+  "safe_steps": [
+    "Open Sound settings and confirm output device.",
+    "Choose Realtek Speakers/Headphones for analog speakers/headset.",
+    "Choose NVIDIA/monitor audio only when sound comes through HDMI/DisplayPort monitor.",
+    "Check app volume mixer.",
+    "Unplug/replug audio device.",
+    "Reboot before advanced driver work."
+  ],
+  "advanced_steps": [
+    "Update Realtek/NVIDIA/OEM audio drivers.",
+    "Check Device Manager for disabled devices."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "No output device appears.",
+    "Driver reinstall fails.",
+    "Hardware jack/motherboard audio suspected."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "audio",
+    "realtek",
+    "nvidia",
+    "windows",
+    "speaker"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "MOD-002",
+  "title": "Zero Trust device compliance block",
+  "level": "L2",
+  "category": "endpoint-management",
+  "environment": "modern",
+  "applies_to": [
+    "Intune",
+    "Conditional Access",
+    "EDR"
+  ],
+  "symptoms": [
+    "Device blocked",
+    "Compliant status false",
+    "User cannot open apps"
+  ],
+  "causes": [
+    "Device not enrolled",
+    "Policy not synced",
+    "EDR unhealthy",
+    "OS out of date",
+    "Encryption disabled"
+  ],
+  "safe_steps": [
+    "Sync device with Company Portal.",
+    "Restart device.",
+    "Check Windows Update.",
+    "Confirm device is enrolled."
+  ],
+  "advanced_steps": [
+    "Review compliance policy, device risk, encryption, Defender/EDR status, last check-in."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Executive blocked.",
+    "Many devices noncompliant.",
+    "Policy accidentally changed."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "zero-trust",
+    "compliance",
+    "intune",
+    "conditional-access"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance"
+  ]
+}

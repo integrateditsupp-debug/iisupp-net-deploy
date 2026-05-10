@@ -1,0 +1,22 @@
+{
+  "title": "ARIA KB Article Schema",
+  "type": "object",
+  "required": ["id", "title", "level", "category", "applies_to", "symptoms", "causes", "safe_steps", "escalation", "tags"],
+  "properties": {
+    "id": {"type": "string"},
+    "title": {"type": "string"},
+    "level": {"enum": ["L1", "L2", "L3"]},
+    "category": {"type": "string"},
+    "environment": {"enum": ["legacy", "modern", "hybrid", "any"]},
+    "applies_to": {"type": "array", "items": {"type": "string"}},
+    "symptoms": {"type": "array", "items": {"type": "string"}},
+    "causes": {"type": "array", "items": {"type": "string"}},
+    "safe_steps": {"type": "array", "items": {"type": "string"}},
+    "advanced_steps": {"type": "array", "items": {"type": "string"}},
+    "do_not_do": {"type": "array", "items": {"type": "string"}},
+    "escalation": {"type": "array", "items": {"type": "string"}},
+    "technician_notes": {"type": "array", "items": {"type": "string"}},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "source_basis": {"type": "array", "items": {"type": "string"}}
+  }
+}

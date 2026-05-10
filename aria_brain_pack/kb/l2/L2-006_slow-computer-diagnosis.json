@@ -1,0 +1,61 @@
+{
+  "id": "L2-006",
+  "title": "Slow computer diagnosis",
+  "level": "L2",
+  "category": "endpoint",
+  "environment": "any",
+  "applies_to": [
+    "Windows",
+    "macOS"
+  ],
+  "symptoms": [
+    "Slow boot",
+    "Apps freeze",
+    "High CPU/RAM/disk",
+    "Fan loud"
+  ],
+  "causes": [
+    "Startup overload",
+    "Insufficient RAM",
+    "Failing drive",
+    "Malware/PUA",
+    "Thermal throttling",
+    "Old hardware"
+  ],
+  "safe_steps": [
+    "Restart.",
+    "Close heavy apps.",
+    "Check storage free space.",
+    "Run OS updates.",
+    "Check Task Manager/Activity Monitor."
+  ],
+  "advanced_steps": [
+    "Review startup apps, disk health, event logs, EDR alerts, thermal/hardware diagnostics.",
+    "Recommend RAM/SSD upgrade where appropriate."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Drive health warnings.",
+    "Security alerts.",
+    "Business-critical workstation."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "slow-pc",
+    "performance",
+    "ram",
+    "ssd",
+    "hardware"
+  ],
+  "source_basis": [
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

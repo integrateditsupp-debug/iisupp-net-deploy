@@ -1,0 +1,57 @@
+{
+  "id": "LEG-001",
+  "title": "Mapped network drive not connecting",
+  "level": "L2",
+  "category": "file-access",
+  "environment": "legacy",
+  "applies_to": [
+    "Windows",
+    "File servers",
+    "SMB"
+  ],
+  "symptoms": [
+    "Mapped drive missing",
+    "Access denied",
+    "Path not found"
+  ],
+  "causes": [
+    "VPN disconnected",
+    "Password changed",
+    "DNS/file server unavailable",
+    "Permission changed",
+    "Old SMB path"
+  ],
+  "safe_steps": [
+    "Confirm VPN/network connection.",
+    "Try opening UNC path.",
+    "Restart File Explorer.",
+    "Check credentials prompt."
+  ],
+  "advanced_steps": [
+    "Verify SMB path, NTFS/share permissions, DNS, and server availability."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Department share down.",
+    "Permission audit needed.",
+    "File server unavailable."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "mapped-drive",
+    "smb",
+    "file-server",
+    "legacy"
+  ],
+  "source_basis": [
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noarchive, nosnippet">
+    <meta name="theme-color" content="#d4af37">
+    <title>Purchase Tech | Integrated IT Support</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/aria-core.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
+
+        :root {
+            --luxury-gold: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%);
+            --deep-slate: #050505;
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--deep-slate); color: #ffffff; margin: 0; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, .logo-text { font-family: 'Cinzel', serif; }
+
+        /* --- Anti-copy / protection layer --- */
+        body, .protected { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        input, textarea, select, .allow-select { -webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important; }
+        img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none; pointer-events: none; }
+
+        .luxury-flip-container { perspective: 1200px; width: 260px; height: 52px; }
+        .luxury-flip-card { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
+        .luxury-flip-container:hover .luxury-flip-card { transform: rotateX(180deg); }
+        .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 2px; font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.25em; }
+        .flip-front { background: var(--luxury-gold); color: #000; }
+        .flip-back { background: #111; color: #f1dca7; transform: rotateX(180deg); border: 1px solid #c5a059; }
+
+        .gold-glow { text-shadow: 0 0 25px rgba(197, 160, 89, 0.5); }
+        .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.5s ease; }
+        .glass-panel:hover { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(197, 160, 89, 0.3); }
+
+        .download-app-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); color: #050505; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; text-decoration: none; transition: all 0.3s ease; border: none; cursor: pointer; }
+        .download-app-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(197, 160, 89, 0.4); }
+        .download-app-btn svg { width: 14px; height: 14px; }
+
+        /* --- PURCHASE FORM --- */
+        .purchase-form-wrap { background: rgba(255,255,255,0.02); border: 1px solid rgba(197,160,89,0.25); padding: 40px; border-radius: 4px; }
+        .pf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 18px; }
+        .pf-row.single { grid-template-columns: 1fr; }
+        .pf-field label { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255,255,255,0.55); margin-bottom: 8px; font-weight: 700; }
+        .pf-field label .req { color: #c5a059; margin-left: 4px; }
+        .pf-field input, .pf-field select, .pf-field textarea {
+            width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;
+            font-family: 'Inter', sans-serif; font-size: 13px; transition: border-color 0.2s; box-sizing: border-box;
+        }
+        .pf-field input:focus, .pf-field select:focus, .pf-field textarea:focus { outline: none; border-color: rgba(197, 160, 89, 0.6); }
+        .pf-field input.invalid, .pf-field textarea.invalid { border-color: #e74c3c; }
+        .pf-field textarea { resize: vertical; min-height: 90px; }
+        .pf-field .error-msg { font-size: 10px; color: #e74c3c; margin-top: 4px; display: none; }
+        .pf-field .hint { font-size: 9px; color: rgba(255,255,255,0.35); margin-top: 6px; letter-spacing: 0.08em; }
+        .pf-setup { border: 1px solid rgba(197,160,89,0.3); padding: 18px 20px; border-radius: 4px; background: rgba(197,160,89,0.04); }
+        .pf-setup label { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+        .pf-setup input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; accent-color: #c5a059; }
+        .pf-setup .pf-setup-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #f1dca7; font-weight: 700; }
+        .pf-setup .pf-setup-desc { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 6px; line-height: 1.6; letter-spacing: 0.05em; }
+        .pf-setup .pf-setup-desc a { color: #c5a059; text-decoration: underline; }
+        .pf-submit { width: 100%; padding: 16px; margin-top: 8px; background: var(--luxury-gold); border: none; border-radius: 4px; color: #050505; font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3em; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .pf-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 30px rgba(197,160,89,0.35); }
+        .pf-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .pf-success { display: none; flex-direction: column; align-items: center; text-align: center; padding: 40px 20px; }
+        .pf-success .check-circle { width: 64px; height: 64px; border-radius: 50%; background: var(--luxury-gold); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: #050505; font-size: 28px; }
+        .pf-success h3 { font-size: 20px; letter-spacing: 0.2em; margin-bottom: 14px; text-transform: uppercase; color: #f1dca7; }
+        .pf-success p { color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.7; max-width: 520px; }
+        .pf-success p a { color: #c5a059; text-decoration: underline; white-space: nowrap; }
+
+        /* --- INVENTORY --- */
+        .inv-card { position: relative; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; transition: all 0.4s ease; display: flex; flex-direction: column; }
+        .inv-card:hover { border-color: rgba(197,160,89,0.4); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+        .inv-media { position: relative; width: 100%; aspect-ratio: 16/10; max-height: 200px; overflow: hidden; background: #0a0a0a; }
+        .inv-media::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.7) 100%); pointer-events: none; z-index: 1; }
+        .inv-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); transform-origin: center; }
+        .inv-card:hover .inv-media img { transform: scale(1.18); }
+        .inv-badge { position: absolute; top: 10px; left: 10px; z-index: 2; padding: 4px 10px; background: rgba(0,0,0,0.8); border: 1px solid #c5a059; color: #f1dca7; font-size: 8px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+        .inv-body { padding: 16px 18px; }
+        .inv-body h4 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: #fff; margin: 0 0 6px 0; font-weight: 700; }
+        .inv-body .inv-sub { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 10px; }
+        .inv-body .inv-meta { font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 0.05em; line-height: 1.5; }
+
+        /* --- MOBILE NAV --- */
+        .mobile-menu-btn { display: none; background: none; border: 1px solid rgba(197, 160, 89, 0.4); color: #c5a059; padding: 8px 10px; cursor: pointer; z-index: 60; }
+        .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: #c5a059; margin: 4px 0; transition: 0.3s; }
+        .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 55; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+        .mobile-nav-overlay.active { display: flex; }
+        .mobile-nav-overlay a { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.3s; padding: 8px 0; }
+        .mobile-nav-overlay a:hover { color: #c5a059; }
+        .nav-groups { display: flex; align-items: center; justify-content: center; gap: 18px; flex: 1; }
+        .nav-group { display: flex; align-items: center; gap: 22px; font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.42); }
+        .nav-group a, .nav-group span.nav-disabled { transition: color 0.3s; text-decoration: none; }
+        .nav-group a:hover { color: #c5a059; }
+        .nav-group .nav-accent { color: #c5a059; }
+        .nav-group .nav-accent:hover { color: #f1dca7; }
+        .nav-group .nav-disabled { color: rgba(255,255,255,0.35); cursor: default; }
+        .nav-divider { width: 1px; height: 14px; background: rgba(197,160,89,0.22); flex: 0 0 auto; }
+        .nav-aria-block { display: flex; flex-direction: column; align-items: center; gap: 4px; line-height: 1; padding: 0 6px; }
+        .nav-aria-block .aria-link { color: #f1dca7; font-size: 11px; letter-spacing: 0.5em; padding: 2px 6px; border-bottom: 1px solid rgba(241,220,167,0.3); }
+        .nav-aria-block .aria-link:hover { color: #fff; border-bottom-color: #f1dca7; }
+        .nav-aria-block .method-link { font-size: 8px; letter-spacing: 0.35em; color: rgba(197,160,89,0.75); }
+        .nav-aria-block .method-link:hover { color: #f1dca7; }
+        @media (max-width: 1279px) { .nav-group.nav-group-collapsible { display: none; } }
+        .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: #c5a059; font-size: 28px; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+        /* --- AFFILIATE TECH SECTION --- */
+        .aff-section { position: relative; }
+        .aff-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top, rgba(197,160,89,0.045) 0%, transparent 60%); pointer-events: none; }
+        .aff-header { text-align: center; max-width: 760px; margin: 0 auto 48px; position: relative; z-index: 1; }
+        .aff-header .eyebrow { font-size: 8px; letter-spacing: 0.5em; text-transform: uppercase; color: #c5a059; font-weight: 700; display: block; margin-bottom: 14px; }
+        .aff-header h2 { font-size: clamp(1.75rem, 3.5vw, 2.25rem); letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 18px; }
+        .aff-header h2 .accent { color: #c5a059; font-style: italic; }
+        .aff-header p { color: rgba(255,255,255,0.5); font-size: 12px; letter-spacing: 0.05em; line-height: 1.75; }
+
+        .aff-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 auto 36px; max-width: 900px; position: relative; z-index: 1; }
+        .aff-tab { flex: 0 1 auto; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.55); font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; padding: 12px 22px; cursor: pointer; transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.3s ease; }
+        .aff-tab:hover { color: #f1dca7; border-color: rgba(197,160,89,0.35); }
+        .aff-tab.is-active { color: #050505; background: var(--luxury-gold); border-color: transparent; box-shadow: 0 6px 24px rgba(197,160,89,0.28); }
+
+        .aff-panel { display: none; position: relative; z-index: 1; animation: affFade 0.45s ease both; }
+        .aff-panel.is-active { display: block; }
+        @keyframes affFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        .aff-group { margin-bottom: 40px; }
+        .aff-group-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+        .aff-group-head .line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(197,160,89,0.35), transparent); }
+        .aff-group-head h3 { font-size: 12px; letter-spacing: 0.35em; text-transform: uppercase; color: #f1dca7; margin: 0; font-weight: 700; }
+        .aff-group-head .tag { font-size: 8px; letter-spacing: 0.25em; text-transform: uppercase; color: #c5a059; padding: 4px 10px; border: 1px solid rgba(197,160,89,0.35); background: rgba(197,160,89,0.06); }
+
+        .aff-grid { display: grid; grid-template-columns: 1fr; gap: 18px; align-items: stretch; max-width: 820px; margin: 0 auto; }
+
+        .aff-card {
+            position: relative;
+            background: linear-gradient(155deg, rgba(197,160,89,0.04), rgba(255,255,255,0.02) 60%, rgba(0,0,0,0));
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 26px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.8s cubic-bezier(0.22,1,0.36,1),
+                        opacity 0.8s ease,
+                        border-color 0.4s ease,
+                        background 0.4s ease,
+                        box-shadow 0.5s ease;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(34px);
+            border-radius: 6px;
+        }
+        .aff-card.is-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .aff-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(197,160,89,0.0) 0%, rgba(197,160,89,0.08) 60%, rgba(197,160,89,0) 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+        .aff-card::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(197,160,89,0.55), transparent);
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+            pointer-events: none;
+        }
+        .aff-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(197,160,89,0.55);
+            background: linear-gradient(155deg, rgba(197,160,89,0.07), rgba(255,255,255,0.02) 60%, rgba(0,0,0,0));
+            box-shadow: 0 18px 42px rgba(0,0,0,0.5), 0 0 32px rgba(197,160,89,0.15);
+        }
+        .aff-card:hover::before { opacity: 1; }
+        .aff-card:hover::after { transform: scaleX(1); }
+        .aff-card .aff-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+        .aff-card h4 { font-size: 13.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #fff; margin: 0; font-weight: 700; transition: color 0.4s ease; }
+        .aff-card:hover h4 { color: #f1dca7; }
+        .aff-card .aff-kind { font-size: 7.5px; letter-spacing: 0.3em; text-transform: uppercase; color: #c5a059; border: 1px solid rgba(197,160,89,0.35); padding: 3px 8px; white-space: nowrap; }
+
+        /* Full description always visible in stacked layout */
+        .aff-card p {
+            font-size: 11px;
+            line-height: 1.65;
+            color: rgba(255,255,255,0.55);
+            letter-spacing: 0.02em;
+            margin: 0;
+            transition: color 0.4s ease;
+        }
+        .aff-card:hover p { color: rgba(255,255,255,0.75); }
+
+        .aff-card .aff-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border: 1px solid rgba(197,160,89,0.4);
+            background: rgba(197,160,89,0.04);
+            color: #c5a059;
+            font-family: 'Cinzel', serif;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            text-decoration: none;
+            text-align: center;
+            margin-top: 4px;
+            align-self: flex-start;
+            transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .aff-card:hover .aff-btn {
+            border-color: rgba(197,160,89,0.65);
+            background: rgba(197,160,89,0.08);
+        }
+        .aff-card .aff-btn:hover { color: #050505; background: var(--luxury-gold); border-color: transparent; box-shadow: 0 6px 20px rgba(197,160,89,0.28); transform: translateY(-1px); }
+        .aff-card .aff-btn svg { width: 10px; height: 10px; }
+
+        .aff-phone-card { border-left: 1px solid rgba(197,160,89,0.55); }
+        .aff-phone-card h4 { color: #f1dca7; }
+
+        /* Compact meta line shown at rest so the card is not empty-looking */
+        .aff-card .aff-meta {
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+            transition: color 0.4s ease, opacity 0.4s ease;
+        }
+        .aff-card:hover .aff-meta { color: rgba(197,160,89,0.85); }
+
+        /* Vertical stacked layout — same across breakpoints */
+        @media (max-width: 1024px) {
+            .aff-grid { max-width: 100%; gap: 14px; }
+        }
+
+        /* --- LIFESTYLE LINKS --- */
+        .lifestyle-section { padding: 96px 24px 120px; background: #050505; position: relative; }
+        .lifestyle-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(197,160,89,0.04) 0%, transparent 70%); pointer-events: none; }
+        .lifestyle-wrap { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; text-align: center; }
+
+        .lifestyle-category {
+            margin-top: 88px;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1);
+        }
+        .lifestyle-category.is-visible { opacity: 1; transform: translateY(0); }
+
+        .lifestyle-category-head { text-align: center; margin-bottom: 36px; position: relative; }
+        .lifestyle-category-head::before,
+        .lifestyle-category-head::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(197,160,89,0.5), transparent);
+        }
+        .lifestyle-category-head::before { left: calc(50% - 180px); }
+        .lifestyle-category-head::after { right: calc(50% - 180px); }
+        .lifestyle-category-head .eyebrow-mini {
+            display: block;
+            font-size: 8px;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: #c5a059;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+        .lifestyle-category-head .label {
+            display: inline-block;
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: transparent;
+            background: var(--luxury-gold);
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-weight: 700;
+            padding: 0;
+            border: 0;
+            line-height: 1.1;
+        }
+
+        .lifestyle-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .life-card {
+            position: relative;
+            background: linear-gradient(155deg, rgba(197,160,89,0.04), rgba(255,255,255,0.02) 60%, rgba(0,0,0,0));
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 24px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(36px);
+            border-radius: 6px;
+            transition: transform 0.95s cubic-bezier(0.22,1,0.36,1),
+                        opacity 0.95s ease,
+                        border-color 0.4s ease,
+                        background 0.4s ease,
+                        box-shadow 0.5s ease;
+        }
+        .life-card.is-in { opacity: 1; transform: translateY(0); }
+        /* Progressive reveal: cards softly fade as they exit the top of the viewport, and come back when scrolling up */
+        .life-card.is-past { opacity: 0.25; transform: translateY(-10px); }
+        .life-card:hover {
+            border-color: rgba(197,160,89,0.5);
+            background: linear-gradient(155deg, rgba(197,160,89,0.08), rgba(255,255,255,0.03) 60%, rgba(0,0,0,0));
+            box-shadow: 0 18px 45px rgba(0,0,0,0.55), 0 0 35px rgba(197,160,89,0.12);
+        }
+        .life-card h4 {
+            font-size: 13px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #fff;
+            margin: 0;
+            font-weight: 700;
+            transition: color 0.4s ease;
+        }
+        .life-card:hover h4 { color: #f1dca7; }
+        .life-card p {
+            font-size: 11px;
+            line-height: 1.65;
+            color: rgba(255,255,255,0.55);
+            letter-spacing: 0.02em;
+            margin: 0;
+            transition: color 0.4s ease;
+        }
+        .life-card:hover p { color: rgba(255,255,255,0.75); }
+        .life-card .life-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 14px;
+            border: 1px solid rgba(197,160,89,0.4);
+            background: rgba(197,160,89,0.04);
+            color: #c5a059;
+            font-family: 'Cinzel', serif;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            text-decoration: none;
+            text-align: center;
+            margin-top: 4px;
+            align-self: flex-start;
+            transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .life-card:hover .life-btn {
+            border-color: rgba(197,160,89,0.65);
+            background: rgba(197,160,89,0.08);
+        }
+        .life-card .life-btn:hover {
+            color: #050505;
+            background: var(--luxury-gold);
+            border-color: transparent;
+            box-shadow: 0 6px 18px rgba(197,160,89,0.28);
+            transform: translateY(-1px);
+        }
+        .life-card .life-btn svg { width: 9px; height: 9px; }
+
+        @media (max-width: 900px) {
+            .lifestyle-category-head::before,
+            .lifestyle-category-head::after { display: none; }
+        }
+        @media (max-width: 640px) {
+            .lifestyle-category { margin-top: 60px; }
+            .life-card { padding: 18px 20px; }
+        }
+
+        @media (max-width: 768px) {
+            .aff-tabs { gap: 6px; }
+            .aff-tab { padding: 10px 14px; font-size: 9px; letter-spacing: 0.15em; }
+            .aff-grid { gap: 12px; }
+            .aff-card { padding: 20px 22px; }
+            .aff-group-head h3 { font-size: 11px; letter-spacing: 0.25em; }
+            .aff-group-head .tag { font-size: 7px; }
+            .lifestyle-section { padding: 64px 20px 88px; }
+            .lifestyle-category-head .label { font-size: clamp(1.4rem, 7vw, 1.85rem); letter-spacing: 0.14em; }
+        }
+
+        @media (max-width: 1024px) {
+            nav { padding: 16px 20px !important; }
+            .luxury-flip-container { width: 200px; height: 44px; }
+            .flip-front, .flip-back { font-size: 0.55rem; letter-spacing: 0.15em; }
+            .mobile-menu-btn { display: block; }
+            .desktop-nav-links { display: none !important; }
+            .download-app-btn { display: none; }
+        }
+        @media (max-width: 768px) {
+            .pf-row { grid-template-columns: 1fr; gap: 14px; }
+            .purchase-form-wrap { padding: 24px 18px; }
+            section.hero-purchase h1 { font-size: 2rem !important; }
+            nav { gap: 12px; padding: 12px 16px !important; }
+            nav .flex.items-center.gap-6 { gap: 12px; }
+            nav .flex.items-center.gap-6 .w-12 { width: 36px; height: 36px; min-width: 36px; }
+            nav .flex.items-center.gap-6 .w-12 span { font-size: 16px; }
+            nav .flex.items-center.gap-6 .flex.flex-col span:first-child { font-size: 11px; letter-spacing: 0.1em; }
+            nav .flex.items-center.gap-6 .flex.flex-col span:last-child { font-size: 7px; letter-spacing: 0.2em; }
+            .luxury-flip-container { width: 160px; height: 40px; }
+            .flip-front, .flip-back { font-size: 0.5rem; letter-spacing: 0.1em; }
+        }
+
+        /* --- BACKGROUND I SCROLL MORPH SYSTEM --- */
+        .bg-i-stage {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(440px, 50vw);
+            height: min(440px, 50vw);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.14;
+            mix-blend-mode: screen;
+            transition: opacity 0.6s ease;
+        }
+        .bg-i-stage.bg-i-hide { opacity: 0; }
+        .bg-i-layer {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: #c5a059;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.85s ease, transform 1.1s cubic-bezier(0.22,1,0.36,1);
+        }
+        .bg-i-layer svg { width: 100%; height: 100%; }
+        .bg-i-layer img { width: 72%; height: 72%; object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 0 30px rgba(197,160,89,0.3)); }
+        .bg-i-layer.is-active { opacity: 1; transform: scale(1); }
+        @media (max-width: 768px) {
+            .bg-i-stage { opacity: 0.11; width: 64vw; height: 64vw; }
+        }
+    </style>
+</head>
+<body class="protected">
+
+    <!-- ====== BACKGROUND I SCROLL-MORPH STAGE ====== -->
+    <div class="bg-i-stage" id="bgIStage" aria-hidden="true">
+        <div class="bg-i-layer is-active" data-layer="default">
+            <img src="/images/logo.png" alt="" aria-hidden="true" draggable="false">
+        </div>
+        <div class="bg-i-layer" data-layer="laptop">
+            <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="45" y="60" width="110" height="70" rx="4"/>
+                <line x1="35" y1="140" x2="165" y2="140"/>
+                <line x1="65" y1="130" x2="135" y2="130"/>
+                <line x1="60" y1="78" x2="140" y2="78"/>
+                <line x1="60" y1="92" x2="120" y2="92"/>
+                <line x1="60" y1="106" x2="130" y2="106"/>
+            </svg>
+        </div>
+        <div class="bg-i-layer" data-layer="tablet">
+            <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="60" y="35" width="80" height="130" rx="6"/>
+                <line x1="60" y1="50" x2="140" y2="50"/>
+                <line x1="60" y1="148" x2="140" y2="148"/>
+                <circle cx="100" cy="156" r="2" fill="currentColor"/>
+                <path d="M155 50 l18 -10 l0 30 l-18 -10 z"/>
+            </svg>
+        </div>
+        <div class="bg-i-layer" data-layer="inventory">
+            <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="30" y="70" width="60" height="60" rx="3"/>
+                <rect x="110" y="70" width="60" height="60" rx="3"/>
+                <rect x="70" y="140" width="60" height="32" rx="3"/>
+                <circle cx="60" cy="100" r="10"/>
+                <circle cx="140" cy="100" r="10"/>
+            </svg>
+        </div>
+        <div class="bg-i-layer" data-layer="lifestyle">
+            <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M100 40 L130 80 L175 85 L140 115 L150 160 L100 140 L50 160 L60 115 L25 85 L70 80 Z"/>
+                <circle cx="100" cy="110" r="14"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ====== NAV ====== -->
+    <nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+        <a href="/" class="flex items-center gap-6" style="text-decoration:none;color:inherit;">
+            <div class="w-12 h-12 flex items-center justify-center border border-[#c5a059] relative"><div class="absolute inset-1 border border-[#c5a059]/30"></div><span class="text-[#c5a059] font-bold text-xl logo-text">I</span></div>
+            <div class="flex flex-col"><span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span><span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span></div>
+        </a>
+        <div class="desktop-nav-links hidden lg:flex nav-groups" aria-label="Primary">
+            <div class="nav-group nav-group-collapsible">
+                <a href="/purchase-tech.html" class="nav-accent">Purchase Tech</a>
+                <a href="/#portfolio">Portfolio</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group">
+                <a href="/#service-center">Service Center</a>
+                <a href="/#solutions">Pricing</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group nav-aria-block">
+                <a href="/aria.html" class="aria-link">ARIA</a>
+                <a href="/#methodology" class="method-link">Methodology</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group nav-group-collapsible">
+                <span class="nav-disabled" title="Coming soon">AI Courses / Development</span>
+                <a href="/about.html">About Us</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="#purchase-form" class="download-app-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Request Quote</a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+            <div class="luxury-flip-container"><a href="mailto:Integrateditsupp@gmail.com?subject=Private Consultation Request" class="luxury-flip-card"><div class="flip-front">Request Consultation</div><div class="flip-back">Direct Email Access</div></a></div>
+        </div>
+    </nav>
+
+    <!-- ====== MOBILE MENU ====== -->
+    <div id="mobileMenu" class="mobile-nav-overlay">
+        <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
+        <a href="/purchase-tech.html" onclick="toggleMobileMenu()" style="color:#c5a059;">Purchase Tech</a>
+        <a href="/#portfolio" onclick="toggleMobileMenu()">Portfolio</a>
+        <a href="/#service-center" onclick="toggleMobileMenu()">Service Center</a>
+        <a href="/#solutions" onclick="toggleMobileMenu()">Pricing</a>
+        <a href="/aria.html" onclick="toggleMobileMenu()" style="color:#c5a059;">ARIA</a>
+        <a href="/#methodology" onclick="toggleMobileMenu()">Methodology</a>
+        <a href="#" onclick="event.preventDefault(); toggleMobileMenu();" style="color: rgba(255,255,255,0.4);">AI Courses / Development</a>
+        <a href="/about.html" onclick="toggleMobileMenu()">About Us</a>
+        <a href="tel:+16475813182" onclick="toggleMobileMenu()">Connect with Senior Director</a>
+    </div>
+
+    <!-- ====== HERO ====== -->
+    <section class="hero-purchase pt-48 pb-16 px-10 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(197,160,89,0.08)_0%,_transparent_70%)] pointer-events-none"></div>
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <span class="text-[#c5a059] tracking-[0.7em] text-[9px] uppercase mb-8 block font-bold">Tell us what you need</span>
+            <h1 class="text-4xl md:text-6xl font-black tracking-tighter leading-none mb-8 logo-text">PURCHASE <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic">Tech</span></h1>
+            <p class="max-w-2xl mx-auto text-white/50 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-6">Share what you want to purchase — make, model, storage, price range and how you'll use it. Our team will recommend the best option and reach out with a tailored quote.</p>
+            <p class="text-[#f1dca7] text-[10px] tracking-[0.4em] uppercase font-bold italic">Urgent? Call (647) 581-3182</p>
+        </div>
+    </section>
+
+    <!-- ====== FORM ====== -->
+    <section id="purchase-form" class="py-16 px-6 md:px-10">
+        <div class="max-w-4xl mx-auto">
+            <div id="purchaseFormContainer" class="purchase-form-wrap">
+                <form
+                    name="purchase-tech"
+                    method="POST"
+                    data-netlify="true"
+                    netlify-honeypot="bot-field"
+                    enctype="multipart/form-data"
+                    id="purchaseForm"
+                    autocomplete="on"
+                >
+                    <input type="hidden" name="form-name" value="purchase-tech">
+                    <input type="hidden" name="subject" value="New Purchase Request from %{formName}">
+                    <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
+
+                    <div class="pf-row">
+                        <div class="pf-field">
+                            <label for="pt-name">Full Name<span class="req">*</span></label>
+                            <input type="text" id="pt-name" name="name" required placeholder="Your full name">
+                            <div class="error-msg" id="ptNameError">Please enter your name.</div>
+                        </div>
+                        <div class="pf-field">
+                            <label for="pt-contact">Contact (phone or email)<span class="req">*</span></label>
+                            <input type="text" id="pt-contact" name="contact" required placeholder="(xxx) xxx-xxxx or name@email.com">
+                            <div class="error-msg" id="ptContactError">Please provide a phone number or email.</div>
+                        </div>
+                    </div>
+
+                    <div class="pf-row">
+                        <div class="pf-field">
+                            <label for="pt-make">Make / Brand</label>
+                            <input type="text" id="pt-make" name="make" placeholder="e.g. Apple, Dell, Lenovo">
+                        </div>
+                        <div class="pf-field">
+                            <label for="pt-model">Model</label>
+                            <input type="text" id="pt-model" name="model" placeholder="e.g. MacBook Pro 14, XPS 15">
+                        </div>
+                    </div>
+
+                    <div class="pf-row">
+                        <div class="pf-field">
+                            <label for="pt-storage">Storage Size</label>
+                            <select id="pt-storage" name="storage">
+                                <option value="">Select storage</option>
+                                <option>128 GB</option>
+                                <option>256 GB</option>
+                                <option>512 GB</option>
+                                <option>1 TB</option>
+                                <option>2 TB</option>
+                                <option>4 TB</option>
+                                <option>Other / Not Sure</option>
+                            </select>
+                        </div>
+                        <div class="pf-field">
+                            <label for="pt-price">Price Range</label>
+                            <select id="pt-price" name="price_range">
+                                <option value="">Select budget</option>
+                                <option>Under $500</option>
+                                <option>$500 – $1,000</option>
+                                <option>$1,000 – $2,000</option>
+                                <option>$2,000 – $3,500</option>
+                                <option>$3,500 – $5,000</option>
+                                <option>Over $5,000</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pf-row single">
+                        <div class="pf-field">
+                            <label for="pt-usage">Intended Usage</label>
+                            <textarea id="pt-usage" name="usage" placeholder="Tell us what you'll use the device for (e.g. everyday browsing, graphic design, software development, gaming, business operations) — we'll recommend the best option."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="pf-row single">
+                        <div class="pf-field">
+                            <label for="pt-image">Attach an Image (optional)</label>
+                            <input type="file" id="pt-image" name="reference_image" accept="image/*">
+                            <p class="hint">Attach a photo or screenshot of what you're looking for. Max 8&nbsp;MB per submission.</p>
+                        </div>
+                    </div>
+
+                    <div class="pf-row single">
+                        <div class="pf-setup">
+                            <label>
+                                <input type="checkbox" id="pt-setup" name="setup_service" value="Yes">
+                                <span>
+                                    <span class="pf-setup-title">Setup the device for me</span>
+                                    <span class="pf-setup-desc">Setup is billed at our out-of-scope hourly rate ($555 – $675 / hr remote, $925 – $1,125 / hr on-site) — see <a href="/#solutions">Pricing</a> for managed tiers. Delivery is extra and depends on your location — final quote confirmed before any work begins.</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pf-row single">
+                        <div class="pf-field">
+                            <label for="pt-notes">Additional Notes</label>
+                            <textarea id="pt-notes" name="notes" placeholder="Anything else we should know? Delivery address, preferred contact time, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="pf-submit" id="pfSubmitBtn">Submit Purchase Request</button>
+                </form>
+            </div>
+
+            <div id="purchaseSuccess" class="pf-success purchase-form-wrap" style="display:none;">
+                <div class="check-circle"><i class="fas fa-check"></i></div>
+                <h3>Request Received</h3>
+                <p>Thank you, <span id="pfSuccessName"></span> — someone will reach out to you shortly with recommendations and a quote. If urgent, please give us a call at <a href="tel:+16475813182">(647) 581-3182</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== INVENTORY / ITEMS FOR SALE ====== -->
+    <section id="inventory" class="py-24 px-6 md:px-10 bg-[#080808]">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-[#c5a059] tracking-[0.5em] text-[8px] uppercase font-bold block mb-3">In Stock Today</span>
+                <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">Currently <span class="text-[#c5a059]">Available</span></h2>
+                <p class="text-white/30 uppercase tracking-[0.3em] text-[10px] max-w-xl mx-auto">A curated selection of certified hardware ready for immediate purchase. Contact us for pricing and pick-up / delivery options.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Notebook RAM 16GB × 7 -->
+                <div class="inv-card">
+                    <div class="inv-media"><span class="inv-badge">7 Available</span><img src="/images/inventory/notebook-ram-16gb.jpg" alt="Notebook 16GB RAM"></div>
+                    <div class="inv-body">
+                        <h4>Notebook 16GB RAM</h4>
+                        <div class="inv-sub">Crucial • DDR3L SODIMM</div>
+                        <p class="inv-meta">16&nbsp;GB (2 × 8&nbsp;GB) kit — Mac/PC compatible. <strong style="color:#c5a059;">7 units available.</strong></p>
+                    </div>
+                </div>
+
+                <!-- Mac Mini #1 -->
+                <div class="inv-card">
+                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/mac-mini-1.jpg" alt="Mac Mini Model A1347"></div>
+                    <div class="inv-body">
+                        <h4>Mac Mini</h4>
+                        <div class="inv-sub">Model A1347 • Unit 1 of 2</div>
+                        <p class="inv-meta">Compact Apple desktop, fully tested and ready for home or office use.</p>
+                    </div>
+                </div>
+
+                <!-- Mac Mini #2 -->
+                <div class="inv-card">
+                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/mac-mini-2.jpg" alt="Mac Mini Model A1347"></div>
+                    <div class="inv-body">
+                        <h4>Mac Mini</h4>
+                        <div class="inv-sub">Model A1347 • Unit 2 of 2</div>
+                        <p class="inv-meta">Second available Mac Mini, fully diagnosed and verified by our team.</p>
+                    </div>
+                </div>
+
+                <!-- iPad A1458 -->
+                <div class="inv-card">
+                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/ipad-a1458.jpg" alt="iPad Model A1458"></div>
+                    <div class="inv-body">
+                        <h4>iPad</h4>
+                        <div class="inv-sub">Model A1458 • 1 Available</div>
+                        <p class="inv-meta">Apple tablet — ideal for reading, media and everyday productivity.</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Tower -->
+                <div class="inv-card">
+                    <div class="inv-media"><span class="inv-badge">Custom Build</span><img src="/images/inventory/desktop-tower.jpg" alt="Desktop Tower with Parts"></div>
+                    <div class="inv-body">
+                        <h4>Desktop Tower</h4>
+                        <div class="inv-sub">Corsair Case • With Parts</div>
+                        <p class="inv-meta">Full desktop tower with internal components — ready for workstation or gaming use.</p>
+                    </div>
+                </div>
+
+                <!-- Dell Laptop -->
+                <div class="inv-card">
+                    <div class="inv-media"><span class="inv-badge">Dell</span><img src="/images/inventory/dell-laptop.jpg" alt="Dell Laptop"></div>
+                    <div class="inv-body">
+                        <h4>Dell Laptop</h4>
+                        <div class="inv-sub">Inspiron Series • 1 Available</div>
+                        <p class="inv-meta">Reliable everyday Dell notebook — great for home, students or office work.</p>
+                    </div>
+                </div>
+
+                <!-- MacBook Pro -->
+                <div class="inv-card">
+                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/macbook-pro.jpg" alt="MacBook Pro"></div>
+                    <div class="inv-body">
+                        <h4>MacBook Pro</h4>
+                        <div class="inv-sub">Apple Silicon Class • 1 Available</div>
+                        <p class="inv-meta">Premium MacBook Pro — ideal for creative, developer and executive workflows.</p>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-center text-white/40 text-[10px] tracking-[0.25em] uppercase mt-12">Interested in any of the above? Fill the form above or call <a href="tel:+16475813182" style="color:#c5a059;">(647) 581-3182</a>.</p>
+        </div>
+    </section>
+
+    <!-- ====== PREFER TO PURCHASE IT YOURSELF? — AFFILIATE TECH TABS ====== -->
+    <section id="self-purchase" class="aff-section py-24 px-6 md:px-10 bg-[#050505]">
+        <div class="max-w-7xl mx-auto relative">
+            <div class="aff-header">
+                <span class="eyebrow">Curated Recommendations</span>
+                <h2 class="logo-text">Prefer to Purchase <span class="accent">It Yourself?</span></h2>
+                <p>If you prefer to purchase your own technology, here are trusted platforms and recommendations tailored to your needs, budget, and performance expectations.</p>
+            </div>
+
+            <div class="aff-tabs" id="affTabs" role="tablist"></div>
+            <div id="affPanels"></div>
+
+            <p style="text-align:center; font-size:9px; text-transform:uppercase; letter-spacing:0.25em; color:rgba(255,255,255,0.3); margin-top:32px;">Need help deciding? Submit the form above — our team will recommend the right option for you.</p>
+        </div>
+    </section>
+
+    <!-- ====== LIFESTYLE LINKS ====== -->
+    <section id="lifestyle" class="lifestyle-section">
+        <div class="lifestyle-wrap">
+            <span class="eyebrow" style="font-size:8px; letter-spacing:0.5em; text-transform:uppercase; color:#c5a059; font-weight:700; display:block; margin-bottom:14px;">Elevated Living</span>
+            <h2 class="logo-text" style="font-size:clamp(1.75rem, 3.5vw, 2.25rem); letter-spacing:0.08em; text-transform:uppercase; margin:0 0 18px;">Lifestyle <span style="color:#c5a059; font-style:italic;">Links</span></h2>
+            <p style="color:rgba(255,255,255,0.5); font-size:12px; letter-spacing:0.05em; line-height:1.75; max-width:620px; margin:0 auto;">Carefully selected brands for quality, performance, and elevated living.</p>
+
+            <div id="lifestyleGroups"></div>
+        </div>
+    </section>
+
+    <!-- ====== FOOTER ====== -->
+    <footer class="py-20 px-10 border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div><p class="logo-text text-lg tracking-widest uppercase mb-2">Integrated IT Support</p><p class="text-white/20 text-[9px] tracking-widest uppercase font-bold">30 Fothergill Court, Whitby, ON L1P 2L4</p></div>
+            <div class="md:text-right"><a href="tel:+16475813182" class="text-3xl font-light tracking-tighter text-[#c5a059] hover:text-white transition block mb-2">(647) 581-3182</a><p class="text-white/20 text-[8px] uppercase font-bold">Ahmad W. • Senior Director</p></div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/5 text-center">
+            <a href="/about.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">About Us</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/copyright.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">© Integrated IT Support Inc. — Copyright &amp; Intellectual Property Disclaimer</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/terms.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Terms &amp; Conditions</a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
+
+        // --- Anti-copy / developer-tools deterrents (client-side best-effort) ---
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        document.addEventListener('dragstart', function(e) { if (e.target && e.target.tagName === 'IMG') e.preventDefault(); });
+        document.addEventListener('keydown', function(e) {
+            var k = e.key ? e.key.toLowerCase() : '';
+            if (e.key === 'F12') { e.preventDefault(); return; }
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','j','c'].indexOf(k) !== -1) { e.preventDefault(); return; }
+            if ((e.ctrlKey || e.metaKey) && ['u','s'].indexOf(k) !== -1) { e.preventDefault(); return; }
+            var active = document.activeElement;
+            var inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT');
+            if (!inField && (e.ctrlKey || e.metaKey) && ['c','x','a','p'].indexOf(k) !== -1) { e.preventDefault(); }
+        });
+        document.addEventListener('copy', function(e) {
+            var active = document.activeElement;
+            var inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
+            if (!inField) e.preventDefault();
+        });
+
+        // --- Purchase form submission ---
+        (function() {
+            var form = document.getElementById('purchaseForm');
+            var btn = document.getElementById('pfSubmitBtn');
+            var formContainer = document.getElementById('purchaseFormContainer');
+            var successContainer = document.getElementById('purchaseSuccess');
+            var nameEl = document.getElementById('pt-name');
+            var contactEl = document.getElementById('pt-contact');
+
+            function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+            function isPhone(v) { return /[0-9]{7,}/.test(v.replace(/[^0-9]/g, '')); }
+            function clearErrors() {
+                form.querySelectorAll('.invalid').forEach(function(el) { el.classList.remove('invalid'); });
+                form.querySelectorAll('.error-msg').forEach(function(el) { el.style.display = 'none'; });
+            }
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                clearErrors();
+                var valid = true;
+                if (!nameEl.value.trim()) {
+                    nameEl.classList.add('invalid');
+                    document.getElementById('ptNameError').style.display = 'block';
+                    valid = false;
+                }
+                var contactVal = contactEl.value.trim();
+                if (!contactVal || (!isEmail(contactVal) && !isPhone(contactVal))) {
+                    contactEl.classList.add('invalid');
+                    document.getElementById('ptContactError').style.display = 'block';
+                    valid = false;
+                }
+                if (!valid) return;
+
+                btn.disabled = true; btn.textContent = 'Sending...';
+                try {
+                    var fd = new FormData(form);
+                    // multipart upload — do NOT set Content-Type manually
+                    var resp = await fetch('/', { method: 'POST', body: fd });
+                    if (!resp.ok) throw new Error('Submission failed');
+                    document.getElementById('pfSuccessName').textContent = nameEl.value.trim();
+                    formContainer.style.display = 'none';
+                    successContainer.style.display = 'flex';
+                    window.scrollTo({ top: successContainer.offsetTop - 100, behavior: 'smooth' });
+                } catch (err) {
+                    btn.disabled = false;
+                    btn.textContent = 'Submit Purchase Request';
+                    alert('Something went wrong. Please try again or call (647) 581-3182.');
+                }
+            });
+        })();
+
+        // ============================================================
+        // AFFILIATE / SELF-PURCHASE TABS
+        // Edit categories/stores/phones here — renders on load.
+        // Replace "#" placeholder URLs with affiliate links when ready.
+        // ============================================================
+        const AFFILIATE_CATEGORIES = [
+            {
+                id: 'graphic-design',
+                label: 'Graphic & Design',
+                top: [
+                    { name: 'Amazon', kind: 'Amazon Associates', desc: 'Widest catalog of creative-class laptops, Wacom tablets, and color-accurate monitors — backed by one of the most established affiliate programs.', url: '#' },
+                    { name: 'B&H Photo Video', kind: 'Affiliate Partner', desc: 'Pro-grade hardware destination for designers, photographers and video editors — tax-free in many regions.', url: '#' },
+                    { name: 'Apple Store', kind: 'Affiliate Program', desc: 'The industry standard for creative pros — MacBook Pro, iPad Pro, and Studio Display for precise color work.', url: '#' }
+                ],
+                secondary: [
+                    { name: 'Adorama', desc: 'Alternative to B&H with strong deals on creative workstations and display gear.', url: '#' },
+                    { name: 'Newegg', desc: 'Deep catalog for workstation GPUs, RAM kits and fast SSDs.', url: '#' }
+                ],
+                phones: [
+                    { name: 'iPhone Pro Max', reason: 'Best-in-class display colour accuracy, ProRAW photography, and access to the deepest creative app ecosystem.', url: '#' },
+                    { name: 'Samsung Galaxy S Ultra', reason: 'Included S-Pen, incredible zoom camera, and a vivid AMOLED panel — perfect for on-the-go sketching and editing.', url: '#' }
+                ]
+            },
+            {
+                id: 'office-use',
+                label: 'Office Use',
+                top: [
+                    { name: 'Amazon', kind: 'Amazon Associates', desc: 'Business-ready laptops, docks, monitors and accessories with fast delivery and easy returns.', url: '#' },
+                    { name: 'Dell', kind: 'Dell Affiliate', desc: 'Strong lineup of business-class Latitude and OptiPlex systems with enterprise-grade support.', url: '#' },
+                    { name: 'Lenovo', kind: 'Affiliate Program', desc: 'ThinkPads remain the gold standard for office productivity — durable, serviceable, keyboard-forward.', url: '#' }
+                ],
+                secondary: [
+                    { name: 'HP Store', desc: 'Reliable EliteBook and ProBook lines for stable office deployments.', url: '#' },
+                    { name: 'Best Buy', desc: 'Convenient local pickup when an office needs hardware the same day.', url: '#' },
+                    { name: 'Microsoft Store', desc: 'Surface line is an elegant Windows fit for hybrid office workflows.', url: '#' }
+                ],
+                phones: [
+                    { name: 'iPhone 15 Pro', reason: 'Seamless handoff with Mac, best-in-class security, and mature business app ecosystem.', url: '#' },
+                    { name: 'Samsung Galaxy S Series', reason: 'DeX desktop mode, Microsoft 365 integration, and long-term enterprise security updates.', url: '#' }
+                ]
+            },
+            {
+                id: 'day-to-day',
+                label: 'Day to Day Use',
+                top: [
+                    { name: 'Amazon', kind: 'Amazon Associates', desc: 'Everyday laptops, Chromebooks and tablets with Prime shipping and easy returns.', url: '#' },
+                    { name: 'Best Buy', kind: 'Affiliate Partner', desc: 'Strong selection for browsing, streaming and family use — pickup in store.', url: '#' },
+                    { name: 'Walmart', kind: 'Affiliate Program', desc: 'Great value pricing on everyday laptops, tablets and peripherals for the household.', url: '#' }
+                ],
+                secondary: [
+                    { name: 'HP Store', desc: 'Pavilion and Envy notebooks balance quality and price for daily drivers.', url: '#' },
+                    { name: 'Lenovo', desc: 'IdeaPad line is a dependable mid-range pick for casual users.', url: '#' }
+                ],
+                phones: [
+                    { name: 'iPhone SE', reason: 'Compact, dependable, long-supported — a perfect daily driver on a reasonable budget.', url: '#' },
+                    { name: 'Google Pixel', reason: 'Best stock Android experience with top-tier cameras and clean, fast updates.', url: '#' }
+                ]
+            },
+            {
+                id: 'gaming',
+                label: 'Gaming',
+                top: [
+                    { name: 'Amazon', kind: 'Amazon Associates', desc: 'Gaming laptops, GPUs, controllers and monitors — widest selection and frequent price drops.', url: '#' },
+                    { name: 'Newegg', kind: 'Affiliate Network', desc: 'Enthusiast-favourite for GPUs, motherboards and custom builds — commission-friendly affiliate program.', url: '#' },
+                    { name: 'Best Buy', kind: 'Affiliate Partner', desc: 'Reliable source for prebuilt gaming PCs and consoles with local pickup.', url: '#' }
+                ],
+                secondary: [
+                    { name: 'Dell / Alienware', desc: 'Alienware prebuilts and high-refresh gaming monitors for plug-and-play performance.', url: '#' },
+                    { name: 'Micro Center', desc: 'Deep component inventory and strong CPU bundle deals for DIY builders.', url: '#' }
+                ],
+                phones: [
+                    { name: 'ASUS ROG Phone', reason: 'Purpose-built for mobile gaming — advanced cooling, trigger buttons and high-refresh display.', url: '#' },
+                    { name: 'Samsung Galaxy S Ultra', reason: 'Top-tier SoC, large vivid AMOLED, and thermal headroom for demanding mobile titles.', url: '#' }
+                ]
+            },
+            {
+                id: 'technical',
+                label: 'Technical',
+                top: [
+                    { name: 'Amazon', kind: 'Amazon Associates', desc: 'Engineer-grade laptops, dev boards, network gear and peripherals with wide availability.', url: '#' },
+                    { name: 'Newegg', kind: 'Affiliate Network', desc: 'Components, server parts, and enterprise networking gear for technical users and homelabs.', url: '#' },
+                    { name: 'Lenovo', kind: 'Affiliate Program', desc: 'ThinkPad X and P series are the workhorse of engineers, sysadmins and developers.', url: '#' }
+                ],
+                secondary: [
+                    { name: 'Dell', desc: 'XPS and Precision lines are trusted for Linux-friendly dev machines.', url: '#' },
+                    { name: 'B&H Photo Video', desc: 'Professional audio, video and networking gear alongside computers.', url: '#' }
+                ],
+                phones: [
+                    { name: 'Google Pixel', reason: 'Preferred by Android devs — stock Android, clean Pixel firmware, and first-class AOSP support.', url: '#' },
+                    { name: 'Samsung Galaxy S Series', reason: 'Powerful hardware plus Samsung Knox security and generous long-term update support.', url: '#' }
+                ]
+            },
+            {
+                id: 'business',
+                label: 'Business',
+                top: [
+                    { name: 'Amazon Business', kind: 'Amazon Associates', desc: 'Business accounts, bulk ordering and tax exemption for company procurement.', url: '#' },
+                    { name: 'Dell for Business', kind: 'Dell Affiliate', desc: 'ProSupport, warranty tiers and volume pricing for corporate fleets.', url: '#' },
+                    { name: 'Lenovo Pro', kind: 'Affiliate Program', desc: 'ThinkPad, ThinkBook and Think workstations with dedicated business support and trade-in programs.', url: '#' }
+                ],
+                secondary: [
+                    { name: 'HP Business Store', desc: 'EliteBook, ZBook and business-class peripherals for corporate standards.', url: '#' },
+                    { name: 'Microsoft Store for Business', desc: 'Surface for Business, Microsoft 365 bundles, and volume licensing.', url: '#' },
+                    { name: 'Apple for Business', desc: 'Mac rollouts with MDM integration for executive teams.', url: '#' }
+                ],
+                phones: [
+                    { name: 'iPhone Pro', reason: 'Elite business choice — strong security posture, seamless executive workflows, premium build.', url: '#' },
+                    { name: 'Samsung Galaxy Z Fold', reason: 'Foldable productivity powerhouse — multitask documents, email, and video calls on one device.', url: '#' }
+                ]
+            }
+        ];
+
+        const LIFESTYLE_GROUPS = [
+            {
+                category: 'Beauty',
+                brands: [
+                    { name: 'Sephora', desc: 'Premium beauty destination with global recognition and a strong affiliate program.', url: '#' },
+                    { name: 'Ulta Beauty', desc: 'Prestige-meets-accessible beauty with a robust loyalty and affiliate ecosystem.', url: '#' }
+                ]
+            },
+            {
+                category: 'Wellness',
+                brands: [
+                    { name: 'Therabody', desc: 'Premium recovery and wellness technology — Theragun, PowerDot and more.', url: '#' },
+                    { name: 'Peloton', desc: 'Flagship home fitness brand with community, content and hardware at the high end.', url: '#' }
+                ]
+            },
+            {
+                category: 'Luxury',
+                brands: [
+                    { name: 'Nordstrom', desc: 'Curated luxury fashion and home with well-established affiliate partnerships.', url: '#' },
+                    { name: 'Saks Fifth Avenue', desc: 'Elite designer selection and frequent promotions — a top-tier affiliate retailer.', url: '#' }
+                ]
+            },
+            {
+                category: 'Lifestyle',
+                brands: [
+                    { name: 'Williams Sonoma', desc: 'Elevated home and kitchen — a go-to for sophisticated everyday living.', url: '#' },
+                    { name: 'Crate & Barrel', desc: 'Modern furniture and home essentials with refined, premium design.', url: '#' }
+                ]
+            }
+        ];
+
+        (function renderAffiliate() {
+            const tabsEl = document.getElementById('affTabs');
+            const panelsEl = document.getElementById('affPanels');
+            if (!tabsEl || !panelsEl) return;
+
+            function storeCard(s, kindFallback) {
+                const kind = s.kind || kindFallback || '';
+                const kindHtml = kind ? `<span class="aff-kind">${kind}</span>` : '';
+                return `
+                    <div class="aff-card">
+                        <div class="aff-card-top">
+                            <h4>${s.name}</h4>
+                            ${kindHtml}
+                        </div>
+                        <p>${s.desc}</p>
+                        <a class="aff-btn" href="${s.url || '#'}" target="_blank" rel="noopener sponsored">Visit Store
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                        </a>
+                    </div>`;
+            }
+            function phoneCard(p) {
+                return `
+                    <div class="aff-card aff-phone-card">
+                        <div class="aff-card-top">
+                            <h4>${p.name}</h4>
+                            <span class="aff-kind">Recommended</span>
+                        </div>
+                        <p>${p.reason}</p>
+                        <a class="aff-btn" href="${p.url || '#'}" target="_blank" rel="noopener sponsored">View Options
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                        </a>
+                    </div>`;
+            }
+
+            AFFILIATE_CATEGORIES.forEach((cat, idx) => {
+                const tab = document.createElement('button');
+                tab.className = 'aff-tab' + (idx === 0 ? ' is-active' : '');
+                tab.type = 'button';
+                tab.setAttribute('role', 'tab');
+                tab.dataset.target = cat.id;
+                tab.textContent = cat.label;
+                tabsEl.appendChild(tab);
+
+                const panel = document.createElement('div');
+                panel.className = 'aff-panel' + (idx === 0 ? ' is-active' : '');
+                panel.id = 'aff-panel-' + cat.id;
+
+                const topCards = cat.top.map(s => storeCard(s)).join('');
+                const secondaryCards = cat.secondary.map(s => storeCard(s, 'Trusted Retailer')).join('');
+                const phoneCards = cat.phones.map(phoneCard).join('');
+
+                panel.innerHTML = `
+                    <div class="aff-group">
+                        <div class="aff-group-head">
+                            <h3>Top Affiliate Platforms</h3>
+                            <span class="tag">Premier</span>
+                            <div class="line"></div>
+                        </div>
+                        <div class="aff-grid">${topCards}</div>
+                    </div>
+                    <div class="aff-group">
+                        <div class="aff-group-head">
+                            <h3>Other Trusted Options</h3>
+                            <div class="line"></div>
+                        </div>
+                        <div class="aff-grid">${secondaryCards}</div>
+                    </div>
+                    <div class="aff-group">
+                        <div class="aff-group-head">
+                            <h3>Recommended Smartphones</h3>
+                            <span class="tag">${cat.label}</span>
+                            <div class="line"></div>
+                        </div>
+                        <div class="aff-grid">${phoneCards}</div>
+                    </div>
+                `;
+                panelsEl.appendChild(panel);
+            });
+
+            tabsEl.addEventListener('click', function(e) {
+                const btn = e.target.closest('.aff-tab');
+                if (!btn) return;
+                const target = btn.dataset.target;
+                tabsEl.querySelectorAll('.aff-tab').forEach(t => t.classList.toggle('is-active', t === btn));
+                panelsEl.querySelectorAll('.aff-panel').forEach(p => p.classList.toggle('is-active', p.id === 'aff-panel-' + target));
+                // Re-run reveal for newly visible cards in the active panel
+                setTimeout(revealAffCards, 50);
+            });
+
+            // Scroll-reveal for affiliate cards — one by one as they enter view
+            function revealAffCards() {
+                const cards = panelsEl.querySelectorAll('.aff-panel.is-active .aff-card');
+                cards.forEach(function(c, i) {
+                    if (c.classList.contains('is-in')) return;
+                    const rect = c.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.92) {
+                        setTimeout(function() { c.classList.add('is-in'); }, Math.min(i * 65, 400));
+                    }
+                });
+            }
+            if ('IntersectionObserver' in window) {
+                const affObs = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry, i) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-in');
+                            affObs.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+                panelsEl.querySelectorAll('.aff-card').forEach(function(c) { affObs.observe(c); });
+            } else {
+                panelsEl.querySelectorAll('.aff-card').forEach(function(c) { c.classList.add('is-in'); });
+            }
+            window.addEventListener('scroll', revealAffCards, { passive: true });
+            revealAffCards();
+        })();
+
+        (function renderLifestyle() {
+            const host = document.getElementById('lifestyleGroups');
+            if (!host) return;
+            LIFESTYLE_GROUPS.forEach(group => {
+                const wrap = document.createElement('div');
+                wrap.className = 'lifestyle-category';
+                const cards = group.brands.map(b => `
+                    <div class="life-card">
+                        <h4>${b.name}</h4>
+                        <p>${b.desc}</p>
+                        <a class="life-btn" href="${b.url || '#'}" target="_blank" rel="noopener sponsored">Visit Site
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                        </a>
+                    </div>`).join('');
+                wrap.innerHTML = `
+                    <div class="lifestyle-category-head">
+                        <span class="eyebrow-mini">Curated Selection</span>
+                        <span class="label">${group.category}</span>
+                    </div>
+                    <div class="lifestyle-grid">${cards}</div>
+                `;
+                host.appendChild(wrap);
+            });
+
+            // Progressive reveal: each life-card fades in as it enters view,
+            // and dims as it scrolls off the top — re-emerges when scrolling back up.
+            const lifeCards = host.querySelectorAll('.life-card');
+            const categories = host.querySelectorAll('.lifestyle-category');
+            if ('IntersectionObserver' in window) {
+                // Category headline reveal (one-shot)
+                const catObs = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            catObs.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+                categories.forEach(function(c) { catObs.observe(c); });
+
+                // Per-card progressive reveal with is-in / is-past state
+                const cardObs = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        const t = entry.target;
+                        if (entry.isIntersecting) {
+                            t.classList.add('is-in');
+                            t.classList.remove('is-past');
+                        }
+                    });
+                }, { threshold: 0.25, rootMargin: '0px 0px -4% 0px' });
+                lifeCards.forEach(function(c) { cardObs.observe(c); });
+
+                // Fade prior cards gently as user scrolls past them (and restore when scrolling back up)
+                window.addEventListener('scroll', function() {
+                    lifeCards.forEach(function(c) {
+                        const r = c.getBoundingClientRect();
+                        // When a card has fully left the top of the viewport, dim it
+                        if (r.bottom < window.innerHeight * 0.18) {
+                            c.classList.add('is-past');
+                        } else if (r.top < window.innerHeight * 0.92 && r.bottom > 0) {
+                            c.classList.remove('is-past');
+                            c.classList.add('is-in');
+                        }
+                    });
+                }, { passive: true });
+            } else {
+                categories.forEach(function(c) { c.classList.add('is-visible'); });
+                lifeCards.forEach(function(c) { c.classList.add('is-in'); });
+            }
+        })();
+
+        // ====== BACKGROUND I SCROLL-MORPH (Purchase Tech) ======
+        (function bgIMorph() {
+            const stage = document.getElementById('bgIStage');
+            if (!stage) return;
+            const layers = {};
+            stage.querySelectorAll('.bg-i-layer').forEach(function(l) { layers[l.dataset.layer] = l; });
+
+            const sectionMap = [
+                { id: 'purchase-form', layer: 'tablet' },
+                { id: 'inventory',     layer: 'inventory' },
+                { id: 'self-purchase', layer: 'laptop' },
+                { id: 'lifestyle',     layer: 'lifestyle' }
+            ];
+            let current = 'default';
+            function setLayer(name) {
+                if (name === current) return;
+                Object.keys(layers).forEach(function(k) { layers[k].classList.toggle('is-active', k === name); });
+                current = name;
+            }
+
+            const obs = new IntersectionObserver(function(entries) {
+                let best = null;
+                entries.forEach(function(e) {
+                    if (!e.isIntersecting) return;
+                    if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
+                });
+                if (best) {
+                    const match = sectionMap.find(function(s) { return s.id === best.target.id; });
+                    if (match) setLayer(match.layer);
+                }
+            }, { threshold: [0.2, 0.45, 0.7] });
+
+            sectionMap.forEach(function(s) {
+                const el = document.getElementById(s.id);
+                if (el) obs.observe(el);
+            });
+            window.addEventListener('scroll', function() {
+                if (window.scrollY < 200) setLayer('default');
+            }, { passive: true });
+        })();
+    </script>
+    <script src="/assets/aria-core.js" defer></script>
+</body>
+</html>

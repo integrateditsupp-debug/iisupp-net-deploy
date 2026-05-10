@@ -1,0 +1,60 @@
+{
+  "id": "L3-005",
+  "title": "Data recovery planning after drive failure",
+  "level": "L3",
+  "category": "data-recovery",
+  "environment": "any",
+  "applies_to": [
+    "Windows",
+    "macOS",
+    "External drives",
+    "Servers"
+  ],
+  "symptoms": [
+    "Drive not detected",
+    "Clicking drive",
+    "Files missing",
+    "OS will not boot"
+  ],
+  "causes": [
+    "Hardware failure",
+    "File system corruption",
+    "Accidental deletion",
+    "Encryption issue"
+  ],
+  "safe_steps": [
+    "Stop using the drive.",
+    "Do not format.",
+    "Do not repeatedly power cycle a failing drive.",
+    "Check backups first."
+  ],
+  "advanced_steps": [
+    "Clone drive before recovery attempt.",
+    "Use professional lab for physical failure.",
+    "Validate backup integrity before restore."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Critical business data.",
+    "Physical drive failure.",
+    "Encrypted or regulated data."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "data-recovery",
+    "backup",
+    "drive-failure",
+    "restore"
+  ],
+  "source_basis": [
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

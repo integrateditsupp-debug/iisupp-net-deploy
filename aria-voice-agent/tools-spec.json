@@ -1,0 +1,124 @@
+{
+  "tools": [
+    {
+      "name": "transfer_to_human",
+      "description": "Warm-transfer the live call to Ahmad's mobile (647-581-3182) for Level-3 issues or whenever the caller explicitly asks for a human. ElevenLabs handles the actual SIP transfer natively — this tool fires the post-decision side-effect (logging + ticket creation) so we have a record. Always pre-announce to the caller before calling: 'I'm warming up the line, please hold for about twenty seconds.'",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Short reason for transfer, e.g. 'suspected ransomware', 'caller requested human', 'L3 server issue'."
+          },
+          "urgency": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "description": "How urgently Ahmad needs to respond."
+          },
+          "caller_name": { "type": "string" },
+          "caller_phone": { "type": "string", "description": "E.164 format" },
+          "summary": { "type": "string", "description": "1–2 sentence summary of what the caller said." }
+        },
+        "required": ["reason", "urgency", "summary"]
+      },
+      "webhook": {
+        "url": "https://www.iisupp.net/.netlify/functions/aria-inquiry",
+        "method": "POST",
+        "headers": { "Content-Type": "application/json" },
+        "body_template": {
+          "kind": "phone_transfer",
+          "name": "{{caller_name}}",
+          "phone": "{{caller_phone}}",
+          "summary": "{{summary}}",
+          "urgency": "{{urgency}}",
+          "source": "elevenlabs-call"
+        }
+      }
+    },
+
+    {
+      "name": "create_support_ticket",
+      "description": "Create a support ticket in our system. Use when transfer fails, when caller wants a callback, or at the end of every successful call to log what was resolved.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "phone": { "type": "string" },
+          "email": { "type": "string" },
+          "summary": { "type": "string" },
+          "urgency": { "type": "string", "enum": ["low", "medium", "high"] },
+          "status": { "type": "string", "enum": ["open", "resolved"], "description": "Use 'resolved' when ARIA fixed it on the call." }
+        },
+        "required": ["name", "phone", "summary", "urgency"]
+      },
+      "webhook": {
+        "url": "https://www.iisupp.net/.netlify/functions/aria-inquiry",
+        "method": "POST",
+        "headers": { "Content-Type": "application/json" },
+        "body_template": {
+          "kind": "phone_support",
+          "name": "{{name}}",
+          "phone": "{{phone}}",
+          "email": "{{email}}",
+          "summary": "{{summary}}",
+          "urgency": "{{urgency}}",
+          "status": "{{status}}",
+          "source": "elevenlabs-call"
+        }
+      }
+    },
+
+    {
+      "name": "send_sms_followup",
+      "description": "Send a text message to the caller with a summary of what was discussed, useful links, or the support phone number. Use at the end of most calls — improves perceived quality.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "phone": { "type": "string", "description": "E.164 format, e.g. +14165551234" },
+          "body": { "type": "string", "description": "Text message body, max 1000 chars. Keep it warm and concise." }
+        },
+        "required": ["phone", "body"]
+      },
+      "webhook": {
+        "url": "https://www.iisupp.net/.netlify/functions/aria-sms",
+        "method": "POST",
+        "headers": { "Content-Type": "application/json" },
+        "body_template": {
+          "to": "{{phone}}",
+          "body": "{{body}}"
+        }
+      }
+    },
+
+    {
+      "name": "lookup_caller_history",
+      "description": "Optionally call this early in the conversation if the caller's number is known. Returns prior tickets / known company. Use to personalize ('Welcome back — last time we sorted out the Outlook issue, right?'). If this returns nothing, just proceed normally.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "phone": { "type": "string", "description": "E.164 format" }
+        },
+        "required": ["phone"]
+      },
+      "webhook": {
+        "url": "https://www.iisupp.net/.netlify/functions/aria-caller-lookup",
+        "method": "POST",
+        "headers": { "Content-Type": "application/json" },
+        "body_template": {
+          "phone": "{{phone}}"
+        }
+      }
+    }
+  ],
+
+  "post_call_webhook": {
+    "url": "https://www.iisupp.net/.netlify/functions/aria-call-summary",
+    "method": "POST",
+    "auth": {
+      "type": "hmac",
+      "header": "X-ElevenLabs-Signature",
+      "secret_env": "ELEVENLABS_WEBHOOK_SECRET"
+    },
+    "description": "Fires when each call ends. Sends transcript + classification + tool-call log to integrateditsupp@gmail.com via Resend."
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "id": "SEC-001",
+  "title": "Phishing email response",
+  "level": "L1",
+  "category": "security",
+  "environment": "any",
+  "applies_to": [
+    "Email",
+    "Microsoft 365",
+    "Google Workspace"
+  ],
+  "symptoms": [
+    "Suspicious email",
+    "User clicked link",
+    "Asked for password/payment"
+  ],
+  "causes": [
+    "Phishing",
+    "Business email compromise",
+    "Malicious attachment",
+    "Credential harvesting"
+  ],
+  "safe_steps": [
+    "Do not click links or open attachments.",
+    "Report email using approved method.",
+    "If clicked, stop using that session and report immediately.",
+    "Change password only through official company login page if directed by support."
+  ],
+  "advanced_steps": [
+    "Review headers, URL, attachment sandbox, sign-in logs, mailbox rules."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "User entered credentials.",
+    "Payment/gift card request.",
+    "Attachment opened.",
+    "Multiple users received it."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "phishing",
+    "bec",
+    "email-security",
+    "awareness"
+  ],
+  "source_basis": [
+    "NIST incident response guidance",
+    "CISA cyber guidance"
+  ]
+}

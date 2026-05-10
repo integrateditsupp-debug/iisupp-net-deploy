@@ -1,0 +1,64 @@
+{
+  "id": "L2-001",
+  "title": "VPN connects but internal resources fail",
+  "level": "L2",
+  "category": "vpn",
+  "environment": "hybrid",
+  "applies_to": [
+    "Cisco Secure Client",
+    "AnyConnect",
+    "Windows VPN",
+    "SSL VPN"
+  ],
+  "symptoms": [
+    "VPN connected",
+    "Cannot access shared drive",
+    "Cannot RDP",
+    "Internal sites fail"
+  ],
+  "causes": [
+    "DNS not assigned",
+    "Split tunnel route issue",
+    "Permission issue",
+    "Firewall policy",
+    "Cached credential after password change"
+  ],
+  "safe_steps": [
+    "Confirm internet works without VPN.",
+    "Reconnect VPN.",
+    "Confirm username/MFA success.",
+    "Try internal resource by name and IP if safe.",
+    "Ask whether others are affected."
+  ],
+  "advanced_steps": [
+    "Check VPN assigned IP, DNS servers, route table, and client profile.",
+    "Validate firewall/VPN group policy.",
+    "Check logs for auth vs tunnel vs route failure."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Multiple users affected.",
+    "Firewall/VPN config change needed.",
+    "Production resource unreachable."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "vpn",
+    "dns",
+    "routing",
+    "cisco",
+    "remote-access"
+  ],
+  "source_basis": [
+    "Cisco official support troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "LEG-003",
+  "title": "On-prem Exchange/old Outlook compatibility issue",
+  "level": "L2",
+  "category": "email",
+  "environment": "legacy",
+  "applies_to": [
+    "Exchange Server",
+    "Outlook desktop"
+  ],
+  "symptoms": [
+    "Outlook disconnects",
+    "Certificate warning",
+    "Autodiscover fail"
+  ],
+  "causes": [
+    "Expired certificate",
+    "Autodiscover DNS issue",
+    "Old TLS/client version",
+    "Mailbox server issue"
+  ],
+  "safe_steps": [
+    "Confirm webmail access.",
+    "Check date/time.",
+    "Restart Outlook.",
+    "Record certificate warning exactly."
+  ],
+  "advanced_steps": [
+    "Check Exchange services, certificates, Autodiscover records, TLS compatibility."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Certificate expired.",
+    "Many users affected.",
+    "Server maintenance needed."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "exchange",
+    "autodiscover",
+    "certificate",
+    "legacy"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

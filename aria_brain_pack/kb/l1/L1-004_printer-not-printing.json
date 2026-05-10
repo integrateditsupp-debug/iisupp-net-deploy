@@ -1,0 +1,60 @@
+{
+  "id": "L1-004",
+  "title": "Printer not printing",
+  "level": "L1",
+  "category": "printer",
+  "environment": "legacy",
+  "applies_to": [
+    "Windows",
+    "Network printers",
+    "USB printers"
+  ],
+  "symptoms": [
+    "Job stuck",
+    "Printer offline",
+    "Wrong printer selected"
+  ],
+  "causes": [
+    "Offline queue",
+    "Paper/toner issue",
+    "Wrong default printer",
+    "Print spooler stuck",
+    "Old print server mapping"
+  ],
+  "safe_steps": [
+    "Confirm printer power, paper, and toner.",
+    "Cancel stuck print jobs.",
+    "Select correct printer.",
+    "Restart printer.",
+    "Restart computer."
+  ],
+  "advanced_steps": [
+    "Restart Print Spooler.",
+    "Remove and re-add printer.",
+    "Check print server path in legacy environment."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Department printer down.",
+    "Print server unavailable.",
+    "Driver package issue."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "printer",
+    "spooler",
+    "print-server",
+    "legacy"
+  ],
+  "source_basis": [
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

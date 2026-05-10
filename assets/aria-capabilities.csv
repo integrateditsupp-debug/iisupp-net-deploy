@@ -1,0 +1,75 @@
+Category,Capability,Status,Notes
+Customer support,Plain-language IT troubleshooting in 5 W's + STAR style,Live,Built into widget; 9 IIS frameworks visible
+Customer support,Confirm-resolve loop (Yes / Still broken / Talk to human),Live,Three buttons appended to every answer
+Customer support,Politely escalates only after trying first,Live,Phone CTA only on critical-severity OR explicit user request
+Customer support,Citation-grade answers with source attribution,Live,Company-doc card shows 'Per <Doc Name>' header
+Customer support,Speech output for any answer (TTS),Live,Browser SpeechSynthesis with prioritized neural-voice picker
+Customer support,Manual voice picker (right-click speaker),Live,Choose any installed voice; saves preference
+Tech support / L1,72-article built-in IT knowledge base,Live,Browser · Email · M365 · MFA · OneDrive · Outlook · Password · Printer · Teams · VPN · Wi-Fi · Windows · macOS · Webcam · Bluetooth · USB
+Tech support / L2,21 admin-tier articles,Live,AD · Azure AD · BitLocker · Deployment · DHCP · DNS · Drivers · Defender ASR · Exchange · Intune · Malware · Networking · Onboarding · Offboarding · Permissions · Print server · Profile rebuild · RDP · SharePoint · VPN gateway · Asset · VIP support · BYOD
+Tech support / L3,11 architect-tier articles,Live,Backup/DR · Certificates / PKI · Cloud (Azure) · Disaster recovery · Endpoint EDR · Enterprise/MSP · Hybrid AD · Networking architecture · Security incident response · Server roles · SSO/SAML/OIDC
+Tech support / GA,10 general-assistance articles,Live,Booking · Budgeting · Checkout · Explanation · Form-filling · Scam detection · Senior support · Shopping safety · Vendor research · Comparing products
+Troubleshooting,75 hard routing rules from symptoms to articles,Live,Maps natural-language symptoms to the right KB article first try
+Troubleshooting,Severity-aware response (low/medium/high/critical),Live,Critical articles auto-surface phone CTA; medium waits for user click
+Troubleshooting,Audience-aware (end-user / admin / technician / senior-user),Live,Never exposes §10 admin notes to end users
+Knowledge base use,Token-overlap retrieval with phrase boost,Live,Pure JS; runs in browser; offline-capable
+Knowledge base use,Auto-update from build script,Live,npm run kb:build re-indexes from manifest + .md files
+Knowledge base use,21 verified test queries (regression gate),Live,npm run kb:test — 21/21 passing
+Policy / procedure support,Upload company docs (.txt .md .pdf .csv .html .yml),Live,Stored locally in IndexedDB on user's device
+Policy / procedure support,Doc-name token boost in retrieval,Live,'Per Acme Password Policy' wins when 'acme' or 'password' in query
+Policy / procedure support,Phrase-fragment match for verbatim policy questions,Live,Up to 16-pt boost on 12+ char substring match
+Policy / procedure support,Soft-delete preserves doc history,Live,Removed docs stay archived for ARIA's reference
+Policy / procedure support,Storage stats (active count / chunk count / quota),Live,Visible in Settings panel
+Policy / procedure support,Versioned: re-uploading same name supersedes prior,Live,Old version marked active=0 + supersededAt
+Voice / chat support,Cinematic black-and-gold widget design,Live,Cormorant Garamond serif + Inter UI + JetBrains Mono labels
+Voice / chat support,9-state globe animation (idle/thinking/speaking),Live,CSS-only with prefers-reduced-motion respect
+Voice / chat support,Cadence-friendly TTS preprocessing,Live,Em-dashes and newlines become commas for natural pauses
+Voice / chat support,Chrome extension popup with same KB engine,Live,extension/ folder ready for unpacked-load OR Chrome Web Store
+Voice / chat support,Default greeting on first speaker click,Live,'Hi I'm Aria — tell me what's going on…'
+Escalation support,Critical-severity articles auto-surface (647) 581-3182,Live,Inline red banner before any troubleshooting steps
+Escalation support,Compliance/security incidents trigger hard handoff,Live,l3-security-001 / l2-malware-001 escalation rules
+Escalation support,Manual 'Talk to human' button on every reply,Live,Tied to your support number
+Productivity benefits,72 articles · 90+ routing rules · 18-min average resolve time per article,Live,Built-in KB metadata
+Productivity benefits,Trial timer (10 min) → upgrade modal,Live,sessionStorage-based; resets on tab close
+Productivity benefits,Confirm-resolve loop closes the ticket without IT involvement,Live,Reduces L1 ticket creation
+Security benefits,All uploaded company data is browser-local,Live,Never sent to any server (verifiable in DevTools)
+Security benefits,License-gated Settings (admin only),Live,Custom-mode + license key required to upload company docs
+Security benefits,Locked modal for non-admin Settings access,Live,Activate License + Call IT CTAs
+Security benefits,License has 5-device cap with fingerprint,Live,Server-side check via /api/aria-license
+Security benefits,No external API calls in Free Mode,Live,Pure offline retrieval; voice via browser speechSynthesis
+Security benefits,§10 (Internal Technician Notes) hidden from end users,Live,renderForAudience filter
+Pricing,7-tier pricing: Personal · Pro (× monthly/yearly) + Small Business / Mid-Size / Enterprise,Live,Hover-flip cards + Stripe checkout via existing function
+Pricing,Graceful 503 fallback for missing Price IDs,Live,Routes to 'Talk to sales' phone CTA
+Pricing,Trial expiry → upgrade modal with 4 self-serve plans + sales-led card,Live,Auto-disables chat input on expiry
+Onboarding,First-launch mode picker (Free vs Custom Company),Live,Modal with two cards + license input
+Onboarding,Cinematic 'Welcome to ARIA' intro,Live,Italic Cormorant title + gold globe centerpiece
+Onboarding,Mode badge in header (Free / Custom / Setup),Live,Color-coded indicator
+Reasoning style,9 IIS frameworks visibly applied: 5 W's · STAR · First Principles · OKR · Eisenhower · DMAIC · Kaizen · TOC · After Action Review,Live,Pills displayed below scene title
+Reasoning style,Try-first messaging — never premature 'call IT',Live,Resolve loop before any escalation
+Reasoning style,Plain English with no jargon for end-users,Live,§9 user_friendly_explanation rendered verbatim
+Reasoning style,'I don't know' is an acceptable answer,Live,Logs unanswered queries to localStorage for KB-author review
+Surfaces,Web widget on iisupp.net (default visible),Live,?aria=off to hide
+Surfaces,Chrome extension popup,Live,Same KB engine + retrieval module
+Surfaces,Cinematic demo videos embedded on home page,Live,2 MP4s — usage simulation + stats and purpose
+Surfaces,iOS / iPadOS / Android (Expo),Roadmap,Stage 4 — shares aria-kb-retrieval.mjs
+Surfaces,Windows / macOS native (RN-Win/Mac),Roadmap,Stage 4
+Future roadmap,Real LLM (Anthropic) wired to widget,Coming,aria.mts already wired — needs API key + spend approval
+Future roadmap,Cloud-sync uploaded docs across user's 5 devices,Coming,Netlify Blobs keyed by license token
+Future roadmap,Voice INPUT (mic / STT) inside widget,Coming,aria-core.js plumbing exists; just needs widget hookup
+Future roadmap,Action ledger with Ed25519 signed audit trail,Coming,Required before 'Resolve for me' autonomous mode
+Future roadmap,Multi-tenant config + SSO admin,Coming,Phase 5 of the brief
+Future roadmap,Analytics events (KB hits / conversion),Coming,Stage 2c
+Future roadmap,DOCX upload (mammoth.js),Coming,Currently must convert to PDF or paste as text
+Future roadmap,Lifetime tier ($1.2M inquiry-only) card,Coming,Listed in pricing doc; not yet in widget
+Future roadmap,STAR / First Principles applied to LLM system prompt,Coming,When LLM is wired in Stage 3
+Future roadmap,Native phone-receptionist mode (vapi or Retell AI),Coming,For after-hours coverage
+Revolution / chain reaction,No slip-ups → fewer security breaches,Live,Deterministic answers + audit-ready citations
+Revolution / chain reaction,No delays → fewer late payments / missed trades / dropped responses,Live,Instant retrieval; no ticket queue
+Revolution / chain reaction,Communication barriers reduced → user gets answer in their language not jargon,Live,Audience-aware tone (end-user vs admin)
+Revolution / chain reaction,Productivity increases → IT staff focus on architecture not password resets,Live,L1 deflection from the same KB
+Revolution / chain reaction,Support becomes faster · more consistent · more scalable,Live,One ARIA serves every employee 24/7
+Revolution / chain reaction,Employees waste less time waiting for help,Live,Average resolution moves from minutes-to-hours → seconds
+Revolution / chain reaction,Decision-makers get clearer visibility into recurring issues,Coming,Analytics roadmap will surface unanswered/repeated queries
+Revolution / chain reaction,Reduced dependency on overloaded internal teams,Live,Self-serve via 72 articles + uploaded company docs
+Revolution / chain reaction,Customer experience improves — support becomes immediate,Live,No call routing, no hold music, no 'please open a ticket'
+Revolution / chain reaction,Chain-reaction efficiency across industries,Live,Deploys identically for finance / healthcare / legal / manufacturing — only the company-docs change

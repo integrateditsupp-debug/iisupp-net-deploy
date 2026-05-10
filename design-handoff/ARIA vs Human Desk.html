@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ARIA — vs Human Service Desk</title>
+<link rel="stylesheet" href="aria-tokens.css"/>
+<style>
+  html, body { margin:0; padding:0; background:#050402; color:#EDE6D6; height:100%; overflow:hidden; }
+  #root { height:100%; }
+  .vs-card { background: linear-gradient(180deg, rgba(20,16,11,0.65), rgba(11,9,7,0.85)); border: 1px solid var(--aria-line-soft); border-radius: 10px; padding: 18px 20px; }
+  .vs-card.aria { border-color: rgba(232,201,136,0.35); box-shadow: 0 0 30px rgba(232,201,136,0.10), inset 0 0 0 1px rgba(232,201,136,0.10); }
+  .vs-card.team { border-color: rgba(237,230,214,0.10); }
+  .vs-kpi-num { font-family: 'Cormorant Garamond', serif; font-size: 38px; line-height: 1; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+  .vs-kpi-num.gold { color: var(--aria-gold-bright); }
+  .vs-kpi-num.cream { color: var(--aria-cream); }
+  .vs-bar { height: 6px; border-radius: 999px; background: rgba(237,230,214,0.06); overflow: hidden; position: relative; }
+  .vs-bar > span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .vs-bar > span.gold { background: linear-gradient(90deg, var(--aria-gold), var(--aria-gold-bright)); box-shadow: 0 0 10px rgba(232,201,136,0.5); }
+  .vs-bar > span.cream { background: rgba(237,230,214,0.45); }
+  .agent-row { display: grid; grid-template-columns: 32px 1fr 100px 80px; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--aria-line-soft); font-size: 12px; }
+  .agent-row:last-child { border-bottom: none; }
+  .agent-name { color: var(--aria-cream); }
+  .agent-state { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; }
+  .state-active { color: var(--aria-success); }
+  .state-break  { color: #D9C272; }
+  .state-frust  { color: var(--aria-danger); }
+  .state-train  { color: #8FB6E0; }
+  .state-pto    { color: var(--aria-cream-faint); }
+  .state-meet   { color: #C7A6E0; }
+  .mood-bar { height: 4px; border-radius: 999px; background: rgba(237,230,214,0.08); overflow: hidden; position: relative; }
+  .mood-bar > span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="rec-bar" style="position:fixed; bottom:14px; right:14px; z-index:60; display:flex; gap:8px; align-items:center; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.16em; color:#E8C988;">
+  <button id="rec-btn" style="background:rgba(11,9,7,0.85); border:1px solid #C9A567; color:#E8C988; padding:8px 14px; border-radius:999px; cursor:pointer; backdrop-filter:blur(8px);">● RECORD VIDEO</button>
+  <span id="rec-status" style="opacity:0.6;"></span>
+</div>
+<script>
+(function(){
+  const btn = document.getElementById('rec-btn'), stat = document.getElementById('rec-status');
+  let rec=null, chunks=[], stream=null, startedAt=0, timer=null;
+  function fmt(s){ s=Math.floor(s); return String(Math.floor(s/60)).padStart(2,'0')+":"+String(s%60).padStart(2,'0'); }
+  async function start(){
+    try { stream = await navigator.mediaDevices.getDisplayMedia({ video:{ frameRate:30 }, audio:true }); }
+    catch(e){ stat.textContent = "permission denied"; return; }
+    chunks=[];
+    const types=["video/mp4;codecs=h264,aac","video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"];
+    const mt=types.find(t=>MediaRecorder.isTypeSupported(t)) || "";
+    rec = new MediaRecorder(stream, mt?{mimeType:mt,videoBitsPerSecond:8_000_000}:{videoBitsPerSecond:8_000_000});
+    rec.ondataavailable = e=>{ if(e.data.size) chunks.push(e.data); };
+    rec.onstop = ()=>{
+      const blob = new Blob(chunks, { type: rec.mimeType||"video/webm" });
+      const ext = (rec.mimeType||"").includes("mp4") ? "mp4" : "webm";
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = "ARIA-vs-human-desk."+ext; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url), 4000);
+      stream.getTracks().forEach(t=>t.stop());
+      btn.textContent="● RECORD VIDEO"; btn.style.color="#E8C988"; btn.style.borderColor="#C9A567";
+      stat.textContent = "saved · "+ext.toUpperCase(); clearInterval(timer);
+    };
+    rec.start(250); startedAt = Date.now();
+    btn.textContent="■ STOP & DOWNLOAD"; btn.style.color="#D9665A"; btn.style.borderColor="#D9665A";
+    stat.textContent="recording…";
+    timer=setInterval(()=>{ stat.textContent="recording · "+fmt((Date.now()-startedAt)/1000); }, 250);
+    stream.getVideoTracks()[0].onended = ()=>{ if(rec && rec.state!=="inactive") rec.stop(); };
+  }
+  btn.onclick = ()=>{ if(rec && rec.state!=="inactive") rec.stop(); else start(); };
+})();
+</script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="animations.jsx"></script>
+<script type="text/babel" src="aria-shared.jsx"></script>
+<script type="text/babel" src="aria-motion.jsx"></script>
+
+<script type="text/babel" src="aria-vs-shared.jsx"></script>
+<script type="text/babel" src="aria-vs-act1.jsx"></script>
+<script type="text/babel" src="aria-vs-act2.jsx"></script>
+<script type="text/babel" src="aria-vs-act3.jsx"></script>
+
+<script type="text/babel">
+// Master controller — three sequential acts.
+// ACT I  · 0–45s   · KPI / SLA live ops
+// ACT II · 45–95s  · savings by company size
+// ACT III· 95–150s · what money doesn't measure
+const ACTS = [
+  { start: 0,   end: 45,  comp: "VsAct1", title: "ACT I" },
+  { start: 45,  end: 95,  comp: "VsAct2", title: "ACT II" },
+  { start: 95,  end: 150, comp: "VsAct3", title: "ACT III" },
+];
+
+function VsHeader({ t, actIdx }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 32px 12px" }}>
+      <div>
+        <div className="aria-tagline">SCENARIO · ENTERPRISE SERVICE DESK</div>
+        <div className="aria-serif" style={{ fontSize: 30, marginTop: 4, lineHeight: 1.1 }}>
+          ARIA <span style={{ color: "var(--aria-cream-faint)", fontStyle: "italic" }}>versus</span> a human service desk
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <span className="pulse-dot" style={{ opacity: 0.6 + 0.4 * Math.sin(t * 4) }}/>
+        <span className="aria-mono" style={{ fontSize: 11, color: "var(--aria-gold-bright)", letterSpacing: "0.20em" }}>LIVE SIMULATION</span>
+        <span className="aria-mono" style={{ fontSize: 11, color: "var(--aria-cream-faint)", letterSpacing: "0.18em", paddingLeft: 14, borderLeft: "1px solid var(--aria-line-soft)" }}>
+          {ACTS[actIdx].title} · {String(actIdx + 1).padStart(2,"0")} / {String(ACTS.length).padStart(2,"0")}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function VsDemo() {
+  const t = useTime();
+  let idx = 0;
+  for (let i = 0; i < ACTS.length; i++) if (t >= ACTS[i].start && t < ACTS[i].end) idx = i;
+  if (t >= ACTS[ACTS.length-1].end) idx = ACTS.length - 1;
+  const localT = t - ACTS[idx].start;
+
+  // Cross-fade between acts (300ms)
+  return (
+    <div style={{ position: "absolute", inset: 0, background: "#050402", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <VsHeader t={t} actIdx={idx}/>
+      <div style={{ position: "relative", flex: 1, minHeight: 0 }}>
+        {ACTS.map((act, i) => {
+          const Comp = window[act.comp];
+          if (!Comp) return null;
+          const visible = i === idx;
+          // pre-compute localT for visible act only (others paused)
+          const lt = visible ? localT : 0;
+          return (
+            <div key={i} style={{
+              position: "absolute", inset: 0,
+              opacity: visible ? 1 : 0,
+              pointerEvents: visible ? "auto" : "none",
+              transition: "opacity 0.4s ease",
+            }}>
+              {visible ? <Comp t={t} localT={lt}/> : null}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none", opacity: 0.04,
+        backgroundImage: "repeating-linear-gradient(0deg, rgba(255,255,255,0.5) 0 1px, transparent 1px 3px)",
+        mixBlendMode: "overlay",
+      }}/>
+    </div>
+  );
+}
+
+const App = () => (
+  <Stage width={1600} height={1000} duration={150} background="#050402" autoplay={true} loop={true} persistKey="aria-vs-v2">
+    <VsDemo/>
+  </Stage>
+);
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

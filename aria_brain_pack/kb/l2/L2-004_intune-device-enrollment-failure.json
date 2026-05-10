@@ -1,0 +1,60 @@
+{
+  "id": "L2-004",
+  "title": "Intune device enrollment failure",
+  "level": "L2",
+  "category": "endpoint-management",
+  "environment": "modern",
+  "applies_to": [
+    "Microsoft Intune",
+    "Windows Autopilot",
+    "Entra ID"
+  ],
+  "symptoms": [
+    "Enrollment fails",
+    "Device not compliant",
+    "Company Portal error",
+    "Autopilot error"
+  ],
+  "causes": [
+    "Licensing issue",
+    "Enrollment restriction",
+    "Stale device object",
+    "Time/date mismatch",
+    "Network/proxy issue"
+  ],
+  "safe_steps": [
+    "Confirm user has Intune license.",
+    "Check internet/time/date.",
+    "Restart device.",
+    "Try Company Portal sign-in again."
+  ],
+  "advanced_steps": [
+    "Check Entra device registration.",
+    "Review enrollment restrictions and Autopilot profile assignment.",
+    "Collect enrollment logs."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Autopilot deployment blocked.",
+    "Many devices affected.",
+    "Conditional Access locking out users."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "intune",
+    "autopilot",
+    "entra",
+    "mdm",
+    "compliance"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance"
+  ]
+}

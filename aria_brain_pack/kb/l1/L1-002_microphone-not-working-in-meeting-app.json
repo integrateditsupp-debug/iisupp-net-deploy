@@ -1,0 +1,60 @@
+{
+  "id": "L1-002",
+  "title": "Microphone not working in meeting app",
+  "level": "L1",
+  "category": "audio",
+  "environment": "any",
+  "applies_to": [
+    "Windows",
+    "Teams",
+    "Zoom",
+    "Google Meet"
+  ],
+  "symptoms": [
+    "Mic not detected",
+    "Others cannot hear user",
+    "Mic works in one app but not another"
+  ],
+  "causes": [
+    "Wrong input device",
+    "App permission blocked",
+    "Browser permission blocked",
+    "Hardware mute enabled"
+  ],
+  "safe_steps": [
+    "Confirm correct microphone in Windows input settings.",
+    "Check microphone privacy permissions.",
+    "Select correct mic inside meeting app.",
+    "Test in Sound Recorder.",
+    "Restart meeting app."
+  ],
+  "advanced_steps": [
+    "Update audio driver.",
+    "Check headset app/firmware."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Mic missing from all apps.",
+    "Business-critical meeting blocked."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "microphone",
+    "teams",
+    "zoom",
+    "meet",
+    "permissions"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

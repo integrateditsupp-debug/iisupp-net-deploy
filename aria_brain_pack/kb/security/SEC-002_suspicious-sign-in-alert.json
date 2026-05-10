@@ -1,0 +1,57 @@
+{
+  "id": "SEC-002",
+  "title": "Suspicious sign-in alert",
+  "level": "L2",
+  "category": "security",
+  "environment": "modern",
+  "applies_to": [
+    "Microsoft Entra ID",
+    "M365",
+    "SaaS"
+  ],
+  "symptoms": [
+    "Impossible travel",
+    "Unknown location",
+    "MFA fatigue",
+    "Login alert"
+  ],
+  "causes": [
+    "Stolen password",
+    "Token theft",
+    "MFA push abuse",
+    "VPN/proxy false positive"
+  ],
+  "safe_steps": [
+    "Ask user if sign-in was them.",
+    "Do not approve unexpected MFA prompts.",
+    "Change password through official process if suspicious."
+  ],
+  "advanced_steps": [
+    "Revoke sessions, reset password, require MFA re-registration, review sign-in logs and mailbox rules."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Privileged account.",
+    "Successful suspicious login.",
+    "Mailbox rules created."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "suspicious-login",
+    "mfa",
+    "entra",
+    "identity-security"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "NIST incident response guidance",
+    "CISA cyber guidance"
+  ]
+}

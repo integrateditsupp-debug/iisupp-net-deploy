@@ -1,0 +1,56 @@
+{
+  "id": "L3-001",
+  "title": "Active Directory domain login outage",
+  "level": "L3",
+  "category": "identity",
+  "environment": "legacy",
+  "applies_to": [
+    "Windows Server AD DS",
+    "Domain Controllers",
+    "DNS"
+  ],
+  "symptoms": [
+    "Many users cannot log in",
+    "Trust relationship errors",
+    "Group Policy failures"
+  ],
+  "causes": [
+    "Domain controller down",
+    "DNS failure",
+    "Time sync issue",
+    "Replication issue",
+    "Network segmentation"
+  ],
+  "safe_steps": [
+    "Identify scope and recent changes.",
+    "Confirm if cached logins work.",
+    "Do not make domain-wide changes from user workstation."
+  ],
+  "advanced_steps": [
+    "Check DC health, DNS SRV records, time sync, replication, event logs, network path."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Always escalate immediately if multiple users affected or DC health is unknown."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "active-directory",
+    "domain-controller",
+    "dns",
+    "replication",
+    "legacy"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

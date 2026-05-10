@@ -1,0 +1,60 @@
+{
+  "id": "L1-005",
+  "title": "Outlook not sending or receiving",
+  "level": "L1",
+  "category": "email",
+  "environment": "hybrid",
+  "applies_to": [
+    "Outlook",
+    "Microsoft 365",
+    "Exchange"
+  ],
+  "symptoms": [
+    "Emails stuck",
+    "Inbox not updating",
+    "Send/receive error"
+  ],
+  "causes": [
+    "Offline mode",
+    "Network issue",
+    "Expired sign-in token",
+    "Large OST/cache issue",
+    "Mailbox service issue"
+  ],
+  "safe_steps": [
+    "Check internet.",
+    "Confirm Outlook is not in Work Offline mode.",
+    "Restart Outlook.",
+    "Sign out/in to Office account.",
+    "Try Outlook web to isolate desktop vs service issue."
+  ],
+  "advanced_steps": [
+    "Create new Outlook profile.",
+    "Rebuild OST/cache only after confirming mailbox is cloud-synced."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Multiple users affected.",
+    "Mailbox corruption suspected.",
+    "Compliance/legal mailbox involved."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "outlook",
+    "exchange",
+    "m365",
+    "email"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

@@ -1,0 +1,9 @@
+
+# Large media excluded
+assets/video/
+*.mp4
+*.mov
+*.zip
+node_modules/
+.env
+

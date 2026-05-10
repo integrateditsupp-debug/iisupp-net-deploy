@@ -1,0 +1,2280 @@
+{
+  "version": "1.0",
+  "generated": "2026-05-07",
+  "articles": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "category": "browser",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "browser",
+        "chrome",
+        "edge",
+        "firefox",
+        "safari",
+        "not loading",
+        "this site can't be reached",
+        "your connection is not private",
+        "net::err_cert",
+        "cache",
+        "cookies"
+      ],
+      "related_articles": [
+        "l1-wifi-001",
+        "l1-windows-003",
+        "l2-networking-001"
+      ],
+      "escalation_trigger": "Same site fails for many users, or genuine cert issue on internal service, or DNS poisoning suspected",
+      "estimated_time_minutes": "12",
+      "version": "1.0",
+      "path": "L1/l1-browser-001-pages-not-loading.md"
+    },
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing — what to do",
+      "category": "email",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS",
+        "iOS",
+        "Android"
+      ],
+      "keywords": [
+        "phishing",
+        "suspicious email",
+        "scam email",
+        "spam",
+        "report phishing",
+        "email scam",
+        "business email compromise",
+        "bec"
+      ],
+      "related_articles": [
+        "l1-password-001",
+        "l3-security-001",
+        "ga-scam-001"
+      ],
+      "escalation_trigger": "User clicked link or entered credentials, or executive impersonation, or active BEC suspected",
+      "estimated_time_minutes": "5",
+      "version": "1.0",
+      "path": "L1/l1-email-001-suspicious-phishing.md"
+    },
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "category": "m365",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS",
+        "iOS",
+        "Android"
+      ],
+      "keywords": [
+        "microsoft 365",
+        "m365",
+        "office 365",
+        "can't sign in",
+        "password prompt",
+        "login loop",
+        "aadsts",
+        "account locked",
+        "we couldn't connect"
+      ],
+      "related_articles": [
+        "l1-mfa-001",
+        "l1-password-001",
+        "l2-azure-ad-001"
+      ],
+      "escalation_trigger": "AADSTS50053 (account locked), AADSTS50126, or pattern across multiple users on same tenant",
+      "estimated_time_minutes": "12",
+      "version": "1.0",
+      "path": "L1/l1-m365-001-cant-sign-in.md"
+    },
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues — apps in reduced functionality",
+      "category": "m365",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "office activation",
+        "reduced functionality",
+        "license",
+        "subscription expired",
+        "product deactivated",
+        "sign in to activate office"
+      ],
+      "related_articles": [
+        "l1-m365-001",
+        "l2-licensing-001"
+      ],
+      "escalation_trigger": "License unassigned in admin center or tenant has no available licenses for required SKU",
+      "estimated_time_minutes": "12",
+      "version": "1.0",
+      "path": "L1/l1-m365-002-license-activation-issues.md"
+    },
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "category": "mfa",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS",
+        "iOS",
+        "Android"
+      ],
+      "keywords": [
+        "mfa",
+        "2fa",
+        "two factor",
+        "multi factor",
+        "authenticator",
+        "lost phone",
+        "new phone",
+        "mfa code",
+        "microsoft authenticator",
+        "authy",
+        "google authenticator"
+      ],
+      "related_articles": [
+        "l1-m365-001",
+        "l1-password-001",
+        "l2-azure-ad-002"
+      ],
+      "escalation_trigger": "User locked out with no recovery method, or admin reset required for MFA, or token replay/abuse suspected",
+      "estimated_time_minutes": "12",
+      "version": "1.0",
+      "path": "L1/l1-mfa-001-setup-recovery.md"
+    },
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "category": "onedrive",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "onedrive",
+        "not syncing",
+        "paused",
+        "looking for changes",
+        "sync stuck",
+        "red x",
+        "upload pending",
+        "blocked file"
+      ],
+      "related_articles": [
+        "l1-onedrive-002",
+        "l2-sharepoint-001"
+      ],
+      "escalation_trigger": "Sync error code 0x8004... persists after reset, or pattern across multiple users on same tenant",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "L1/l1-onedrive-001-not-syncing.md"
+    },
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "category": "onedrive",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS",
+        "iOS",
+        "Android"
+      ],
+      "keywords": [
+        "restore file",
+        "deleted file",
+        "recover file",
+        "version history",
+        "previous version",
+        "rollback",
+        "ransomware recovery",
+        "onedrive recycle bin"
+      ],
+      "related_articles": [
+        "l1-onedrive-001",
+        "l2-backup-001"
+      ],
+      "escalation_trigger": "File deleted >93 days ago, or ransomware detected on tenant, or shared library file requires admin restore",
+      "estimated_time_minutes": "8",
+      "version": "1.0",
+      "path": "L1/l1-onedrive-002-restore-deleted-file.md"
+    },
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict — 'two copies of file' / file with computer name appended",
+      "category": "onedrive",
+      "support_level": "L1",
+      "severity": "low",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "sync conflict",
+        "duplicate file",
+        "file conflict",
+        "two copies",
+        "my computer copy",
+        "merged file",
+        "which version"
+      ],
+      "related_articles": [
+        "l1-onedrive-001",
+        "l1-onedrive-002"
+      ],
+      "escalation_trigger": "Conflict pattern affects shared library and multiple users; needs admin merge tooling",
+      "estimated_time_minutes": "8",
+      "version": "1.0",
+      "path": "L1/l1-onedrive-003-version-conflict.md"
+    },
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "category": "outlook",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "outlook",
+        "not receiving emails",
+        "email stuck",
+        "inbox not updating",
+        "missing emails",
+        "send/receive"
+      ],
+      "related_articles": [
+        "l1-outlook-002",
+        "l1-m365-002",
+        "l2-exchange-001"
+      ],
+      "escalation_trigger": "Send/Receive returns 0x8004... errors, or issue affects multiple users in same tenant",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "L1/l1-outlook-001-not-receiving-emails.md"
+    },
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "category": "outlook",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "outlook",
+        "can't send",
+        "stuck in outbox",
+        "email not sending",
+        "unable to send",
+        "smtp error",
+        "outbox"
+      ],
+      "related_articles": [
+        "l1-outlook-001",
+        "l2-exchange-001"
+      ],
+      "escalation_trigger": "Multiple users on same tenant cannot send, or NDR shows 5.7.x policy violation, or DKIM/SPF/DMARC failure",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "L1/l1-outlook-002-cant-send-emails.md"
+    },
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "category": "passwords",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS",
+        "iOS",
+        "Android"
+      ],
+      "keywords": [
+        "password reset",
+        "forgot password",
+        "sspr",
+        "self service password reset",
+        "locked out",
+        "account locked",
+        "reset link"
+      ],
+      "related_articles": [
+        "l1-mfa-001",
+        "l1-m365-001",
+        "l2-active-directory-001"
+      ],
+      "escalation_trigger": "User cannot complete SSPR (no verification methods or expired), or admin reset required, or local-account-only PC with lost password",
+      "estimated_time_minutes": "10",
+      "version": "1.0",
+      "path": "L1/l1-password-001-reset-and-sspr.md"
+    },
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "category": "printers",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "printer",
+        "not printing",
+        "print queue",
+        "stuck job",
+        "offline",
+        "print spooler",
+        "won't print",
+        "paper jam",
+        "error printing"
+      ],
+      "related_articles": [
+        "l2-printers-001",
+        "l1-printer-002"
+      ],
+      "escalation_trigger": "Print server side error, or driver requires admin install, or hardware error code on display",
+      "estimated_time_minutes": "12",
+      "version": "1.0",
+      "path": "L1/l1-printer-001-not-printing.md"
+    },
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "category": "printers",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "garbled print",
+        "wrong characters",
+        "prints symbols",
+        "prints code",
+        "printer driver",
+        "corrupt print"
+      ],
+      "related_articles": [
+        "l1-printer-001",
+        "l2-printers-001"
+      ],
+      "escalation_trigger": "Replacing driver doesn't resolve, or print server queue produces same output for all users",
+      "estimated_time_minutes": "12",
+      "version": "1.0",
+      "path": "L1/l1-printer-002-prints-garbage.md"
+    },
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "category": "teams",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "teams",
+        "no audio",
+        "can't hear",
+        "mic not working",
+        "microphone",
+        "speaker",
+        "other people can't hear me",
+        "audio device not detected"
+      ],
+      "related_articles": [
+        "l1-teams-002",
+        "l1-windows-005"
+      ],
+      "escalation_trigger": "USB audio device not detected by Windows at all (driver/hardware), or all users on tenant report similar",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "L1/l1-teams-001-audio-not-working.md"
+    },
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "category": "teams",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "teams won't load",
+        "teams stuck",
+        "white screen",
+        "splash screen",
+        "teams crashes",
+        "teams won't sign in",
+        "new teams not opening"
+      ],
+      "related_articles": [
+        "l1-teams-001",
+        "l1-m365-001"
+      ],
+      "escalation_trigger": "Reinstall fails, Teams admin center reports incident, or all users on tenant unable to load",
+      "estimated_time_minutes": "12",
+      "version": "1.0",
+      "path": "L1/l1-teams-002-wont-load-stuck-splash.md"
+    },
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "category": "vpn",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "vpn",
+        "won't connect",
+        "vpn disconnects",
+        "vpn timeout",
+        "cisco anyconnect",
+        "globalprotect",
+        "fortinet",
+        "openvpn",
+        "always on vpn"
+      ],
+      "related_articles": [
+        "l2-vpn-001",
+        "l1-wifi-001"
+      ],
+      "escalation_trigger": "Multiple users in same office / region cannot connect, or certificate revoked, or VPN gateway error reported by client",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "L1/l1-vpn-001-cant-connect.md"
+    },
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "category": "wifi",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "wifi",
+        "wi-fi",
+        "no internet",
+        "no internet secured",
+        "yellow triangle",
+        "wireless not working",
+        "can't connect",
+        "dropped connection"
+      ],
+      "related_articles": [
+        "l2-networking-001",
+        "l1-vpn-001"
+      ],
+      "escalation_trigger": "Issue affects multiple users on same SSID, or network adapter shows error code 10/12/43, or DHCP exhaustion suspected",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "L1/l1-wifi-001-cant-connect.md"
+    },
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "category": "windows",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "bsod",
+        "blue screen",
+        "stop error",
+        "kernel panic",
+        "system crash",
+        "critical_process_died",
+        "whea_uncorrectable",
+        "memory_management",
+        "driver_irql"
+      ],
+      "related_articles": [
+        "l1-windows-002",
+        "l2-drivers-003",
+        "l2-performance-005"
+      ],
+      "escalation_trigger": "BSOD repeats more than 3 times in 24h, occurs during boot before login, or shows DISK or NTFS-related stop codes",
+      "estimated_time_minutes": "20",
+      "version": "1.0",
+      "path": "L1/l1-windows-001-blue-screen-stop-error.md"
+    },
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot — stuck on spinning dots or black screen",
+      "category": "windows",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "won't boot",
+        "stuck on logo",
+        "spinning dots",
+        "black screen",
+        "boot loop",
+        "automatic repair loop",
+        "windows not loading"
+      ],
+      "related_articles": [
+        "l1-windows-001",
+        "l2-bitlocker-001",
+        "l3-disaster-recovery-002"
+      ],
+      "escalation_trigger": "BitLocker recovery key prompt appears, or boot fails after 2 startup-repair cycles, or storage SMART warnings present",
+      "estimated_time_minutes": "25",
+      "version": "1.0",
+      "path": "L1/l1-windows-002-wont-boot-spinning-dots.md"
+    },
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "category": "performance",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "slow computer",
+        "laggy",
+        "performance",
+        "high cpu",
+        "high memory",
+        "high disk usage",
+        "100% disk",
+        "slow startup",
+        "takes forever to load"
+      ],
+      "related_articles": [
+        "l2-performance-005",
+        "l2-malware-001",
+        "l1-windows-004"
+      ],
+      "escalation_trigger": "Performance issue persists after L1 cleanup, or task manager shows 100% disk usage with no identifiable process",
+      "estimated_time_minutes": "20",
+      "version": "1.0",
+      "path": "L1/l1-windows-003-slow-pc-performance.md"
+    },
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "category": "performance",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "disk full",
+        "out of space",
+        "low disk space",
+        "c drive full",
+        "storage full",
+        "clear space",
+        "cleanup"
+      ],
+      "related_articles": [
+        "l1-windows-003",
+        "l1-onedrive-001"
+      ],
+      "escalation_trigger": "Cleanup recovers <5% on a 256 GB+ drive, or hidden files / WinSxS bloat needs admin tools",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "L1/l1-windows-004-disk-cleanup.md"
+    },
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "category": "windows",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "no sound",
+        "no audio",
+        "speakers not working",
+        "audio missing",
+        "no audio output device",
+        "red x speaker icon",
+        "audio service not running"
+      ],
+      "related_articles": [
+        "l1-teams-001",
+        "l2-drivers-003"
+      ],
+      "escalation_trigger": "Audio device not detected after driver reinstall, or hardware failure suspected",
+      "estimated_time_minutes": "10",
+      "version": "1.0",
+      "path": "L1/l1-windows-005-audio-no-sound.md"
+    },
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "category": "windows",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "app won't open",
+        "app crashes",
+        "exe won't run",
+        "application error",
+        "not opening",
+        "closes immediately"
+      ],
+      "related_articles": [
+        "l1-windows-003",
+        "l2-windows-001"
+      ],
+      "escalation_trigger": "Multiple apps fail to launch (system-wide), or specific app crashes after reinstall",
+      "estimated_time_minutes": "10",
+      "version": "1.0",
+      "path": "L1/l1-windows-006-app-wont-open.md"
+    },
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "category": "active-directory",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Windows Server 2016+"
+      ],
+      "keywords": [
+        "account lockout",
+        "locked out",
+        "bad password attempts",
+        "repeating lockout",
+        "cached credential",
+        "service account locked",
+        "4740 event"
+      ],
+      "related_articles": [
+        "l1-password-001",
+        "l2-azure-ad-001"
+      ],
+      "escalation_trigger": "Lockout source unidentifiable, or service account, or pattern across many accounts (possible attack)",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-active-directory-001-account-lockout.md"
+    },
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "category": "azure-ad",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS",
+        "iOS",
+        "Android"
+      ],
+      "keywords": [
+        "conditional access",
+        "aadsts53003",
+        "aadsts53000",
+        "access blocked",
+        "compliant device required",
+        "mfa policy",
+        "locations",
+        "blocked by policy"
+      ],
+      "related_articles": [
+        "l1-m365-001",
+        "l2-intune-001",
+        "l3-security-001"
+      ],
+      "escalation_trigger": "Policy change required affecting >10 users, or break-glass account also blocked, or signs of token replay attack",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-azure-ad-001-conditional-access-block.md"
+    },
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "category": "bitlocker",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "bitlocker",
+        "recovery key",
+        "recovery prompt",
+        "tpm reset",
+        "hardware change",
+        "manage-bde",
+        "protector"
+      ],
+      "related_articles": [
+        "l1-windows-002",
+        "l2-intune-001"
+      ],
+      "escalation_trigger": "No recovery key in any directory; data may be unrecoverable. Or hardware platform regression after BIOS update.",
+      "estimated_time_minutes": "20",
+      "version": "1.0",
+      "path": "L2/l2-bitlocker-001-recovery-key-retrieval.md"
+    },
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "category": "deployment",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "deployment",
+        "autopilot",
+        "oobe",
+        "app rings",
+        "configuration profiles",
+        "device images",
+        "white glove"
+      ],
+      "related_articles": [
+        "l2-onboarding-001",
+        "l2-intune-001"
+      ],
+      "escalation_trigger": "Pilot fails wide rollout, or Autopilot service incident, or compliance gap on deployment",
+      "estimated_time_minutes": "45",
+      "version": "1.0",
+      "path": "L2/l2-deployment-001-image-build.md"
+    },
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "category": "dhcp",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Windows Server 2016+"
+      ],
+      "keywords": [
+        "dhcp",
+        "apipa",
+        "169.254",
+        "scope exhaustion",
+        "lease",
+        "reservation",
+        "failover",
+        "rogue dhcp"
+      ],
+      "related_articles": [
+        "l1-wifi-001",
+        "l2-dns-001"
+      ],
+      "escalation_trigger": "Rogue DHCP detected, or fleet IP conflicts, or scope cannot be expanded due to subnet limits",
+      "estimated_time_minutes": "25",
+      "version": "1.0",
+      "path": "L2/l2-dhcp-001-scope-exhaustion.md"
+    },
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "category": "dns",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Windows Server 2016+"
+      ],
+      "keywords": [
+        "dns",
+        "name resolution",
+        "split brain",
+        "conditional forwarder",
+        "stub zone",
+        "dns scavenging",
+        "srv records",
+        "aging"
+      ],
+      "related_articles": [
+        "l1-wifi-001",
+        "l3-networking-001",
+        "l2-active-directory-001"
+      ],
+      "escalation_trigger": "Replication failure, root hint corruption, or DNS poisoning suspected",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-dns-001-internal-resolution.md"
+    },
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "category": "drivers",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "driver",
+        "rollback",
+        "whql",
+        "intune driver",
+        "autopatch",
+        "oem driver",
+        "windows update for business"
+      ],
+      "related_articles": [
+        "l1-windows-001",
+        "l1-windows-005",
+        "l2-intune-001"
+      ],
+      "escalation_trigger": "Bad driver hits >5% of fleet, or BSOD pattern after Windows Update, or vendor regression",
+      "estimated_time_minutes": "20",
+      "version": "1.0",
+      "path": "L2/l2-drivers-001-driver-rollback.md"
+    },
+    {
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "category": "endpoint",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "asr",
+        "attack surface reduction",
+        "defender",
+        "block office macros",
+        "block credential stealing",
+        "audit mode",
+        "rule guid"
+      ],
+      "related_articles": [
+        "l2-malware-001",
+        "l3-security-001"
+      ],
+      "escalation_trigger": "Mass block on legitimate business app or ASR rule conflict with business workflow",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-endpoint-001-defender-asr.md"
+    },
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "category": "exchange",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Exchange Online"
+      ],
+      "keywords": [
+        "mail flow",
+        "ndr",
+        "bounce",
+        "5.7.x",
+        "message trace",
+        "dkim",
+        "spf",
+        "dmarc",
+        "connector"
+      ],
+      "related_articles": [
+        "l1-outlook-001",
+        "l1-outlook-002",
+        "l1-email-001"
+      ],
+      "escalation_trigger": "Tenant-wide mail flow outage, or domain reputation block, or DMARC enforcement failure",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-exchange-001-mail-flow.md"
+    },
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "category": "intune",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "iOS",
+        "Android",
+        "macOS"
+      ],
+      "keywords": [
+        "intune",
+        "device compliance",
+        "not compliant",
+        "autopilot",
+        "enrollment failed",
+        "hybrid join",
+        "company portal",
+        "device not registered"
+      ],
+      "related_articles": [
+        "l2-azure-ad-001",
+        "l2-bitlocker-001",
+        "l3-endpoint-001"
+      ],
+      "escalation_trigger": "Mass enrollment failure, or compliance regression after policy change, or Autopilot ESP timeout",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-intune-001-device-compliance.md"
+    },
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "category": "security",
+      "support_level": "L2",
+      "severity": "critical",
+      "audience": "admin",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "malware",
+        "virus",
+        "infected",
+        "ransomware",
+        "compromised",
+        "quarantine",
+        "mde",
+        "defender for endpoint",
+        "isolation"
+      ],
+      "related_articles": [
+        "l1-email-001",
+        "l3-security-001"
+      ],
+      "escalation_trigger": "Ransomware, lateral movement detected, exfiltration suspected, or executive workstation",
+      "estimated_time_minutes": "60",
+      "version": "1.0",
+      "path": "L2/l2-malware-001-triage.md"
+    },
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "category": "networking",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "latency",
+        "packet loss",
+        "mtu",
+        "jumbo frames",
+        "traceroute",
+        "mtr",
+        "pmtud",
+        "duplex",
+        "errors"
+      ],
+      "related_articles": [
+        "l1-wifi-001",
+        "l2-dns-001",
+        "l3-networking-001"
+      ],
+      "escalation_trigger": "Pattern points to ISP, infrastructure replacement needed, or capacity exhausted",
+      "estimated_time_minutes": "45",
+      "version": "1.0",
+      "path": "L2/l2-networking-001-deep-troubleshoot.md"
+    },
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "category": "onboarding",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "All"
+      ],
+      "keywords": [
+        "offboarding",
+        "termination",
+        "exit",
+        "disable account",
+        "litigation hold",
+        "shared mailbox",
+        "license reclaim",
+        "sessions revoked"
+      ],
+      "related_articles": [
+        "l2-onboarding-001",
+        "l3-security-001"
+      ],
+      "escalation_trigger": "Hostile termination, regulated industry retention, or executive/privileged user",
+      "estimated_time_minutes": "45",
+      "version": "1.0",
+      "path": "L2/l2-offboarding-001-exit-process.md"
+    },
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "category": "onboarding",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "Windows",
+        "iOS",
+        "Android",
+        "macOS"
+      ],
+      "keywords": [
+        "onboarding",
+        "new hire",
+        "provisioning",
+        "first day",
+        "account creation",
+        "license assignment",
+        "device deployment",
+        "autopilot",
+        "group based licensing"
+      ],
+      "related_articles": [
+        "l2-intune-001",
+        "l1-mfa-001",
+        "l1-password-001"
+      ],
+      "escalation_trigger": "Onboarding for executive / regulated user, or HR system integration failure",
+      "estimated_time_minutes": "60",
+      "version": "1.0",
+      "path": "L2/l2-onboarding-001-new-user.md"
+    },
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "category": "performance",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "technician",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "performance",
+        "wpr",
+        "xperf",
+        "traces",
+        "boot performance",
+        "high cpu",
+        "long delay",
+        "hang"
+      ],
+      "related_articles": [
+        "l1-windows-003",
+        "l2-drivers-001"
+      ],
+      "escalation_trigger": "Trace shows kernel-mode driver or firmware issue requiring vendor",
+      "estimated_time_minutes": "60",
+      "version": "1.0",
+      "path": "L2/l2-performance-001-deep-dive.md"
+    },
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "category": "permissions",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "Windows Server",
+        "Windows 10/11 file shares"
+      ],
+      "keywords": [
+        "ntfs",
+        "permissions",
+        "access denied",
+        "share",
+        "inheritance",
+        "take ownership",
+        "icacls",
+        "effective access"
+      ],
+      "related_articles": [
+        "l2-sharepoint-001",
+        "l2-active-directory-001"
+      ],
+      "escalation_trigger": "Cross-forest, broken ACL on critical share, or active investigation/audit",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-permissions-001-ntfs-fileshare.md"
+    },
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "category": "printers",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "Windows Server 2016+",
+        "Windows 10/11"
+      ],
+      "keywords": [
+        "print server",
+        "print queue",
+        "universal print",
+        "printnightmare",
+        "point and print",
+        "driver isolation",
+        "0x0000011b"
+      ],
+      "related_articles": [
+        "l1-printer-001",
+        "l1-printer-002"
+      ],
+      "escalation_trigger": "PrintNightmare-class CVE in environment, or print server compromise, or fleet-wide outage",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-printers-001-server-management.md"
+    },
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "category": "rdp",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "Windows Server 2016+",
+        "Windows 10/11 RDP"
+      ],
+      "keywords": [
+        "rdp",
+        "remote desktop",
+        "rds",
+        "terminal server",
+        "rd gateway",
+        "cant connect",
+        "certificate",
+        "licensing grace period"
+      ],
+      "related_articles": [
+        "l1-vpn-001",
+        "l2-vpn-001",
+        "l3-networking-001"
+      ],
+      "escalation_trigger": "Mass RDS outage, license server failure, or session host capacity exhausted",
+      "estimated_time_minutes": "25",
+      "version": "1.0",
+      "path": "L2/l2-rdp-001-cant-connect.md"
+    },
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "category": "sharepoint",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "SharePoint Online"
+      ],
+      "keywords": [
+        "sharepoint",
+        "permissions",
+        "broken inheritance",
+        "access denied",
+        "sharing audit",
+        "link sharing",
+        "everyone except external",
+        "guests"
+      ],
+      "related_articles": [
+        "l1-onedrive-003",
+        "l2-azure-ad-001"
+      ],
+      "escalation_trigger": "Site collection-wide permission corruption, or external sharing risk audit, or compliance review",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-sharepoint-001-permissions.md"
+    },
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "category": "vpn",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "vpn gateway",
+        "certificate expired",
+        "aovpn",
+        "always on vpn",
+        "device tunnel",
+        "user tunnel",
+        "rras",
+        "ikev2"
+      ],
+      "related_articles": [
+        "l1-vpn-001",
+        "l3-networking-001"
+      ],
+      "escalation_trigger": "Gateway capacity exhausted, or PKI compromise, or fleet-wide cert reissuance",
+      "estimated_time_minutes": "45",
+      "version": "1.0",
+      "path": "L2/l2-vpn-001-gateway-and-certs.md"
+    },
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "category": "windows",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "profile corrupted",
+        "temp profile",
+        "profile rebuild",
+        "we can't sign in to your account",
+        "user shell folders",
+        "regedit profilelist"
+      ],
+      "related_articles": [
+        "l1-windows-006",
+        "l2-active-directory-001"
+      ],
+      "escalation_trigger": "Roaming profile / FSLogix corruption affecting multiple users",
+      "estimated_time_minutes": "45",
+      "version": "1.0",
+      "path": "L2/l2-windows-001-profile-rebuild.md"
+    },
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "category": "backup-dr",
+      "support_level": "L3",
+      "severity": "high",
+      "audience": "technician",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "immutable backup",
+        "air gap",
+        "object lock",
+        "ransomware proof",
+        "3-2-1-1-0",
+        "veeam hardened repository",
+        "aws s3 object lock",
+        "azure backup vault"
+      ],
+      "related_articles": [
+        "l3-disaster-recovery-001",
+        "l2-malware-001"
+      ],
+      "escalation_trigger": "Active ransomware event, restore validation failure, immutable tier compromised",
+      "estimated_time_minutes": "60",
+      "version": "1.0",
+      "path": "L3/l3-backup-dr-002-immutable-storage.md"
+    },
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "category": "certificates",
+      "support_level": "L3",
+      "severity": "high",
+      "audience": "technician",
+      "os_scope": [
+        "Windows Server"
+      ],
+      "keywords": [
+        "pki",
+        "certificate authority",
+        "ad cs",
+        "autoenroll",
+        "crl",
+        "ocsp",
+        "subordinate ca",
+        "root ca",
+        "hsm",
+        "revoke"
+      ],
+      "related_articles": [
+        "l3-sso-saml-001",
+        "l2-vpn-001"
+      ],
+      "escalation_trigger": "CA compromise, root CA recovery, mass cert reissue",
+      "estimated_time_minutes": "90",
+      "version": "1.0",
+      "path": "L3/l3-certificates-001-pki.md"
+    },
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "category": "cloud",
+      "support_level": "L3",
+      "severity": "high",
+      "audience": "technician",
+      "os_scope": [
+        "Azure"
+      ],
+      "keywords": [
+        "azure",
+        "tenant",
+        "subscription",
+        "landing zone",
+        "management groups",
+        "azure policy",
+        "rbac",
+        "cost management",
+        "identity"
+      ],
+      "related_articles": [
+        "l3-security-001",
+        "l3-networking-001"
+      ],
+      "escalation_trigger": "Tenant restructure, sovereignty constraint, M&A integration",
+      "estimated_time_minutes": "120",
+      "version": "1.0",
+      "path": "L3/l3-cloud-001-azure-tenant-design.md"
+    },
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "category": "backup-dr",
+      "support_level": "L3",
+      "severity": "critical",
+      "audience": "technician",
+      "os_scope": [
+        "All"
+      ],
+      "keywords": [
+        "disaster recovery",
+        "dr",
+        "rto",
+        "rpo",
+        "veeam",
+        "rubrik",
+        "cohesity",
+        "immutable",
+        "3-2-1",
+        "tabletop",
+        "bcp"
+      ],
+      "related_articles": [
+        "l3-security-001",
+        "l2-malware-001"
+      ],
+      "escalation_trigger": "Real disaster, ransomware-induced restore, regulatory deadline",
+      "estimated_time_minutes": "240",
+      "version": "1.0",
+      "path": "L3/l3-disaster-recovery-001-runbook.md"
+    },
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "category": "endpoint",
+      "support_level": "L3",
+      "severity": "high",
+      "audience": "technician",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11"
+      ],
+      "keywords": [
+        "edr",
+        "applocker",
+        "wdac",
+        "device guard",
+        "credential guard",
+        "hvci",
+        "bitlocker",
+        "hardening",
+        "cis",
+        "stig"
+      ],
+      "related_articles": [
+        "l2-endpoint-001",
+        "l3-security-001"
+      ],
+      "escalation_trigger": "Strategic shift, vendor selection, mass roll-out planning",
+      "estimated_time_minutes": "90",
+      "version": "1.0",
+      "path": "L3/l3-endpoint-001-edr-strategy.md"
+    },
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "category": "enterprise",
+      "support_level": "L3",
+      "severity": "medium",
+      "audience": "technician",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "msp",
+        "multi tenant",
+        "lighthouse",
+        "delegated administration",
+        "psa",
+        "rmm",
+        "automation",
+        "itil",
+        "itsm"
+      ],
+      "related_articles": [
+        "l3-cloud-001",
+        "l3-security-001"
+      ],
+      "escalation_trigger": "Cross-tenant breach, contractual SLA breach, regulatory change",
+      "estimated_time_minutes": "90",
+      "version": "1.0",
+      "path": "L3/l3-enterprise-001-msp-architecture.md"
+    },
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "category": "active-directory",
+      "support_level": "L3",
+      "severity": "high",
+      "audience": "technician",
+      "os_scope": [
+        "Windows Server"
+      ],
+      "keywords": [
+        "azure ad connect",
+        "aad connect",
+        "hybrid identity",
+        "sync",
+        "password hash sync",
+        "pass-through auth",
+        "federation",
+        "cloud sync",
+        "writeback"
+      ],
+      "related_articles": [
+        "l2-active-directory-001",
+        "l3-sso-saml-001"
+      ],
+      "escalation_trigger": "Sync engine corruption, federation outage, mass attribute conflict",
+      "estimated_time_minutes": "90",
+      "version": "1.0",
+      "path": "L3/l3-hybrid-ad-001-aad-connect.md"
+    },
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "category": "networking",
+      "support_level": "L3",
+      "severity": "high",
+      "audience": "technician",
+      "os_scope": [
+        "Multi-vendor"
+      ],
+      "keywords": [
+        "network architecture",
+        "segmentation",
+        "zero trust",
+        "sd-wan",
+        "hub spoke",
+        "microsegmentation",
+        "vlans",
+        "firewall",
+        "nva"
+      ],
+      "related_articles": [
+        "l2-networking-001",
+        "l3-security-001"
+      ],
+      "escalation_trigger": "Architectural change, vendor hardware EOL, mass remediation",
+      "estimated_time_minutes": "90",
+      "version": "1.0",
+      "path": "L3/l3-networking-001-architecture.md"
+    },
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "category": "security",
+      "support_level": "L3",
+      "severity": "critical",
+      "audience": "technician",
+      "os_scope": [
+        "All"
+      ],
+      "keywords": [
+        "incident response",
+        "cyber incident",
+        "p1",
+        "soc",
+        "kill chain",
+        "mttc",
+        "mttd",
+        "exfiltration",
+        "lateral movement",
+        "tabletop"
+      ],
+      "related_articles": [
+        "l2-malware-001",
+        "l1-email-001",
+        "l3-disaster-recovery-001"
+      ],
+      "escalation_trigger": "Always engage executive leadership for P1; engage cyber-insurance, legal, external IR firm",
+      "estimated_time_minutes": "240",
+      "version": "1.0",
+      "path": "L3/l3-security-001-incident-response.md"
+    },
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "category": "servers",
+      "support_level": "L3",
+      "severity": "high",
+      "audience": "technician",
+      "os_scope": [
+        "Windows Server 2019/2022/2025"
+      ],
+      "keywords": [
+        "windows server",
+        "server role",
+        "patching",
+        "cluster",
+        "storage spaces direct",
+        "sconfig",
+        "server core",
+        "sysprep"
+      ],
+      "related_articles": [
+        "l3-disaster-recovery-001",
+        "l2-deployment-001"
+      ],
+      "escalation_trigger": "Cluster split-brain, storage corruption, datacenter-wide outage",
+      "estimated_time_minutes": "60",
+      "version": "1.0",
+      "path": "L3/l3-server-001-windows-server-roles.md"
+    },
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "category": "sso-saml",
+      "support_level": "L3",
+      "severity": "high",
+      "audience": "technician",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "sso",
+        "saml",
+        "oidc",
+        "federation",
+        "identity provider",
+        "service provider",
+        "assertion",
+        "claims",
+        "jwt",
+        "okta",
+        "entra",
+        "certificate rollover"
+      ],
+      "related_articles": [
+        "l2-azure-ad-001",
+        "l3-security-001"
+      ],
+      "escalation_trigger": "Federation-wide outage, IdP cert compromise, SAML response replay attack",
+      "estimated_time_minutes": "60",
+      "version": "1.0",
+      "path": "L3/l3-sso-saml-001-saml-troubleshoot.md"
+    },
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "category": "booking",
+      "support_level": "GA",
+      "severity": "low",
+      "audience": "end-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "booking",
+        "appointment",
+        "schedule",
+        "reservation",
+        "opentable",
+        "resy",
+        "calendar",
+        "confirmation"
+      ],
+      "related_articles": [
+        "ga-form-filling-001",
+        "ga-checkout-001"
+      ],
+      "escalation_trigger": "",
+      "estimated_time_minutes": "10",
+      "version": "1.0",
+      "path": "general-assistant/ga-booking-001-appointments.md"
+    },
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "category": "education",
+      "support_level": "GA",
+      "severity": "low",
+      "audience": "end-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "budget",
+        "50 30 20",
+        "track spending",
+        "personal finance",
+        "saving",
+        "emergency fund",
+        "ynab",
+        "mint"
+      ],
+      "related_articles": [
+        "ga-shopping-001",
+        "ga-checkout-001"
+      ],
+      "escalation_trigger": "",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "general-assistant/ga-budgeting-001-personal-finance.md"
+    },
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
+      "category": "shopping",
+      "support_level": "GA",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "safe checkout",
+        "payment method",
+        "credit card",
+        "paypal",
+        "apple pay",
+        "google pay",
+        "virtual card",
+        "debit",
+        "wire transfer",
+        "gift card"
+      ],
+      "related_articles": [
+        "ga-shopping-001",
+        "ga-scam-001"
+      ],
+      "escalation_trigger": "",
+      "estimated_time_minutes": "5",
+      "version": "1.0",
+      "path": "general-assistant/ga-checkout-001-safe-checkout.md"
+    },
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "category": "education",
+      "support_level": "GA",
+      "severity": "low",
+      "audience": "end-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "explain simply",
+        "analogy",
+        "eli5",
+        "what is",
+        "how does it work",
+        "non-technical explanation"
+      ],
+      "related_articles": [
+        "ga-senior-001"
+      ],
+      "escalation_trigger": "",
+      "estimated_time_minutes": "10",
+      "version": "1.0",
+      "path": "general-assistant/ga-explanation-001-explain-simply.md"
+    },
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "category": "forms",
+      "support_level": "GA",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "online form",
+        "fill out form",
+        "autofill",
+        "government form",
+        "tax form",
+        "dmv",
+        "safety"
+      ],
+      "related_articles": [
+        "ga-scam-001",
+        "ga-booking-001"
+      ],
+      "escalation_trigger": "",
+      "estimated_time_minutes": "10",
+      "version": "1.0",
+      "path": "general-assistant/ga-form-filling-001.md"
+    },
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "category": "scam-detection",
+      "support_level": "GA",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "scam website",
+        "fake site",
+        "phishing",
+        "look-alike domain",
+        "typo squat",
+        "is this site safe",
+        "whois",
+        "trustpilot"
+      ],
+      "related_articles": [
+        "l1-email-001",
+        "ga-shopping-001"
+      ],
+      "escalation_trigger": "",
+      "estimated_time_minutes": "5",
+      "version": "1.0",
+      "path": "general-assistant/ga-scam-001-detect-fake-sites.md"
+    },
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "category": "senior-friendly",
+      "support_level": "GA",
+      "severity": "low",
+      "audience": "senior-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "senior",
+        "elderly",
+        "non-technical",
+        "simple language",
+        "patient",
+        "large text",
+        "voice",
+        "help my parent"
+      ],
+      "related_articles": [
+        "ga-explanation-001",
+        "ga-scam-001"
+      ],
+      "escalation_trigger": "",
+      "estimated_time_minutes": "20",
+      "version": "1.0",
+      "path": "general-assistant/ga-senior-001-guiding-seniors.md"
+    },
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "category": "shopping",
+      "support_level": "GA",
+      "severity": "low",
+      "audience": "end-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "online shopping",
+        "how to buy",
+        "first time online",
+        "amazon",
+        "shopify",
+        "safe shopping",
+        "help me buy",
+        "assist with purchase"
+      ],
+      "related_articles": [
+        "ga-shopping-002",
+        "ga-scam-001",
+        "ga-checkout-001"
+      ],
+      "escalation_trigger": "Suspected fraudulent site, payment dispute, or user discomfort with checkout",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "general-assistant/ga-shopping-001-online-shopping-help.md"
+    },
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly — what specs matter and which are marketing",
+      "category": "shopping",
+      "support_level": "GA",
+      "severity": "low",
+      "audience": "end-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "compare products",
+        "which is better",
+        "specs",
+        "reviews",
+        "rtings",
+        "wirecutter",
+        "bestseller"
+      ],
+      "related_articles": [
+        "ga-shopping-001",
+        "ga-vendor-research-001"
+      ],
+      "escalation_trigger": "",
+      "estimated_time_minutes": "15",
+      "version": "1.0",
+      "path": "general-assistant/ga-shopping-002-comparing-products.md"
+    },
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research — is this company legit?",
+      "category": "shopping",
+      "support_level": "GA",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "vendor research",
+        "seller legit",
+        "is this real",
+        "check business",
+        "small business legit",
+        "bbb",
+        "secretary of state"
+      ],
+      "related_articles": [
+        "ga-scam-001",
+        "ga-shopping-001"
+      ],
+      "escalation_trigger": "",
+      "estimated_time_minutes": "5",
+      "version": "1.0",
+      "path": "general-assistant/ga-vendor-research-001.md"
+    },
+    {
+      "id": "l1-webcam-001",
+      "title": "Webcam / camera not working in Teams, Zoom, or other apps",
+      "category": "webcam",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "webcam",
+        "camera",
+        "video off",
+        "camera not working",
+        "camera not detected",
+        "black screen video",
+        "integrated camera",
+        "external webcam",
+        "logitech",
+        "privacy shutter",
+        "camera in use"
+      ],
+      "related_articles": [
+        "l1-teams-001",
+        "l1-windows-005",
+        "l1-windows-006"
+      ],
+      "escalation_trigger": "Camera not detected in Device Manager / System Information after driver reinstall, or hardware shutter physically broken",
+      "estimated_time_minutes": "12",
+      "version": "1.0",
+      "path": "L1/l1-webcam-001-camera-not-working.md"
+    },
+    {
+      "id": "l1-bluetooth-001",
+      "title": "Bluetooth: device won't pair, keeps disconnecting, or audio cuts out",
+      "category": "bluetooth",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "bluetooth",
+        "pair",
+        "won't pair",
+        "keeps disconnecting",
+        "airpods",
+        "bose",
+        "sony",
+        "jabra",
+        "mouse keyboard",
+        "audio cuts out",
+        "latency",
+        "bluetooth missing"
+      ],
+      "related_articles": [
+        "l1-teams-001",
+        "l1-windows-005"
+      ],
+      "escalation_trigger": "Bluetooth radio not detected in Device Manager / System Information at all, or hardware antenna damaged",
+      "estimated_time_minutes": "12",
+      "version": "1.0",
+      "path": "L1/l1-bluetooth-001-pairing-failed.md"
+    },
+    {
+      "id": "l1-usb-001",
+      "title": "USB device not recognized / unknown device / 'malfunctioned'",
+      "category": "usb",
+      "support_level": "L1",
+      "severity": "medium",
+      "audience": "end-user",
+      "os_scope": [
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "usb",
+        "usb device not recognized",
+        "unknown device",
+        "malfunctioned",
+        "usb-c",
+        "thunderbolt",
+        "dock",
+        "external drive",
+        "hub",
+        "port not working",
+        "code 43"
+      ],
+      "related_articles": [
+        "l1-windows-006",
+        "l1-bluetooth-001"
+      ],
+      "escalation_trigger": "Same device + same port fails after fresh OS install, or all USB ports fail simultaneously, or BIOS doesn't see USB devices at boot",
+      "estimated_time_minutes": "10",
+      "version": "1.0",
+      "path": "L1/l1-usb-001-device-not-recognized.md"
+    },
+    {
+      "id": "l1-mac-001",
+      "title": "macOS: kernel panic, spinning beach ball, or unexpected restart",
+      "category": "macos",
+      "support_level": "L1",
+      "severity": "high",
+      "audience": "end-user",
+      "os_scope": [
+        "macOS"
+      ],
+      "keywords": [
+        "kernel panic",
+        "mac restart",
+        "spinning beach ball",
+        "rainbow wheel",
+        "mac frozen",
+        "mac crash",
+        "your computer was restarted because of a problem",
+        "macos hung",
+        "sudden restart",
+        "mac unresponsive"
+      ],
+      "related_articles": [
+        "l1-windows-003",
+        "l1-windows-001"
+      ],
+      "escalation_trigger": "Kernel panic recurs >2x in 24h, panic log identifies a kext (3rd-party kernel extension) or hardware fault, or RAM/SSD diagnostics fail",
+      "estimated_time_minutes": "20",
+      "version": "1.0",
+      "path": "L1/l1-mac-001-kernel-panic-spinning-beach-ball.md"
+    },
+    {
+      "id": "l2-asset-management-001",
+      "title": "IT asset lifecycle: procurement, deployment, refresh, retirement",
+      "category": "asset-management",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "asset management",
+        "asset register",
+        "cmdb",
+        "itam",
+        "procurement",
+        "device refresh",
+        "hardware lifecycle",
+        "asset tag",
+        "serial number",
+        "depreciation",
+        "device retirement",
+        "e-waste",
+        "asset audit"
+      ],
+      "related_articles": [
+        "l2-onboarding-001",
+        "l2-offboarding-001",
+        "l2-deployment-001"
+      ],
+      "escalation_trigger": "Lost/stolen device, missing serial in audit, or device returned with sensitive data not wiped",
+      "estimated_time_minutes": "45",
+      "version": "1.0",
+      "path": "L2/l2-asset-management-001-it-asset-lifecycle.md"
+    },
+    {
+      "id": "l2-vip-support-001",
+      "title": "VIP / executive / white-glove support workflow",
+      "category": "vip-support",
+      "support_level": "L2",
+      "severity": "high",
+      "audience": "admin",
+      "os_scope": [
+        "Multi-platform"
+      ],
+      "keywords": [
+        "vip",
+        "executive support",
+        "white glove",
+        "c-suite",
+        "board member",
+        "personal assistant",
+        "desk-side",
+        "priority response",
+        "vvip",
+        "travel support",
+        "speakers needed at event"
+      ],
+      "related_articles": [
+        "l2-onboarding-001",
+        "l3-security-001",
+        "l1-mfa-001"
+      ],
+      "escalation_trigger": "VIP issue impacting board meeting, earnings call, customer demo, or live event in next 4 hours",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-vip-support-001-white-glove-workflow.md"
+    },
+    {
+      "id": "l2-byod-001",
+      "title": "BYOD policy: app protection, conditional access, data containers",
+      "category": "byod",
+      "support_level": "L2",
+      "severity": "medium",
+      "audience": "admin",
+      "os_scope": [
+        "iOS",
+        "Android",
+        "Windows 10",
+        "Windows 11",
+        "macOS"
+      ],
+      "keywords": [
+        "byod",
+        "bring your own device",
+        "personal device",
+        "app protection",
+        "mam",
+        "mdm",
+        "app wrap",
+        "intune app policy",
+        "data container",
+        "work profile",
+        "jamf",
+        "work data wipe"
+      ],
+      "related_articles": [
+        "l2-intune-001",
+        "l2-azure-ad-001",
+        "l1-mfa-001"
+      ],
+      "escalation_trigger": "Personal device on shared corporate VPN with no MAM, or jailbroken/rooted device flagged in compliance",
+      "estimated_time_minutes": "30",
+      "version": "1.0",
+      "path": "L2/l2-byod-001-bring-your-own-device.md"
+    }
+  ],
+  "total_articles": 72,
+  "by_level": {
+    "L1": 27,
+    "L2": 24,
+    "L3": 11,
+    "GA": 10
+  },
+  "by_category": {
+    "browser": 1,
+    "email": 1,
+    "m365": 2,
+    "mfa": 1,
+    "onedrive": 3,
+    "outlook": 2,
+    "passwords": 1,
+    "printers": 3,
+    "teams": 2,
+    "vpn": 2,
+    "wifi": 1,
+    "windows": 5,
+    "performance": 3,
+    "active-directory": 2,
+    "azure-ad": 1,
+    "bitlocker": 1,
+    "deployment": 1,
+    "dhcp": 1,
+    "dns": 1,
+    "drivers": 1,
+    "endpoint": 2,
+    "exchange": 1,
+    "intune": 1,
+    "security": 2,
+    "networking": 2,
+    "onboarding": 2,
+    "permissions": 1,
+    "rdp": 1,
+    "sharepoint": 1,
+    "backup-dr": 2,
+    "certificates": 1,
+    "cloud": 1,
+    "enterprise": 1,
+    "servers": 1,
+    "sso-saml": 1,
+    "booking": 1,
+    "education": 2,
+    "shopping": 4,
+    "forms": 1,
+    "scam-detection": 1,
+    "senior-friendly": 1
+  }
+}

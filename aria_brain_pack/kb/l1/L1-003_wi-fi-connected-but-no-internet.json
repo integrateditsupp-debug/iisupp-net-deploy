@@ -1,0 +1,60 @@
+{
+  "id": "L1-003",
+  "title": "Wi-Fi connected but no internet",
+  "level": "L1",
+  "category": "networking",
+  "environment": "any",
+  "applies_to": [
+    "Windows",
+    "macOS",
+    "home/office Wi-Fi"
+  ],
+  "symptoms": [
+    "Connected no internet",
+    "Websites do not load"
+  ],
+  "causes": [
+    "Router issue",
+    "DNS issue",
+    "Captive portal",
+    "Bad IP lease",
+    "Signal problem"
+  ],
+  "safe_steps": [
+    "Check if other devices have internet.",
+    "Forget and reconnect to Wi-Fi.",
+    "Restart device.",
+    "Move closer to access point.",
+    "Restart modem/router only if authorized.",
+    "Try another browser/site."
+  ],
+  "advanced_steps": [
+    "Release/renew IP and flush DNS if comfortable.",
+    "Check proxy/VPN disabled."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Multiple users affected.",
+    "Business network outage.",
+    "Firewall/router changes needed."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "wifi",
+    "internet",
+    "dns",
+    "ip",
+    "router"
+  ],
+  "source_basis": [
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

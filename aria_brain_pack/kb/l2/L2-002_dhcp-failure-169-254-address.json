@@ -1,0 +1,60 @@
+{
+  "id": "L2-002",
+  "title": "DHCP failure / 169.254 address",
+  "level": "L2",
+  "category": "networking",
+  "environment": "legacy",
+  "applies_to": [
+    "Windows",
+    "Cisco switching",
+    "DHCP server"
+  ],
+  "symptoms": [
+    "Device gets 169.254.x.x",
+    "No network access",
+    "Cannot obtain IP"
+  ],
+  "causes": [
+    "DHCP server unavailable",
+    "VLAN mismatch",
+    "Scope exhausted",
+    "IP helper missing",
+    "Switch port issue"
+  ],
+  "safe_steps": [
+    "Restart device/network adapter.",
+    "Try known-good cable/port.",
+    "Check if other devices on same network work.",
+    "Confirm Ethernet/Wi-Fi connection."
+  ],
+  "advanced_steps": [
+    "Check ipconfig details.",
+    "Verify VLAN, DHCP scope, DHCP relay/IP helper, switch port status."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Multiple devices affected.",
+    "Scope exhausted.",
+    "Switch/router/DHCP server access required."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "dhcp",
+    "169.254",
+    "vlan",
+    "ip-helper",
+    "cisco"
+  ],
+  "source_basis": [
+    "Cisco official support troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "L3-002",
+  "title": "Entra ID / Conditional Access lockout",
+  "level": "L3",
+  "category": "identity",
+  "environment": "modern",
+  "applies_to": [
+    "Microsoft Entra ID",
+    "Conditional Access",
+    "MFA"
+  ],
+  "symptoms": [
+    "Users blocked from apps",
+    "MFA loop",
+    "Access denied",
+    "Policy failure"
+  ],
+  "causes": [
+    "New CA policy",
+    "MFA registration issue",
+    "Risk policy",
+    "Device compliance condition",
+    "Location condition"
+  ],
+  "safe_steps": [
+    "Confirm affected users and apps.",
+    "Check whether break-glass/admin account is safe.",
+    "Do not disable security broadly without approval."
+  ],
+  "advanced_steps": [
+    "Review sign-in logs, CA report-only mode, policy changes, device compliance, named locations."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Admin lockout risk.",
+    "Many users affected.",
+    "Security policy rollback required."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "entra",
+    "conditional-access",
+    "mfa",
+    "zero-trust",
+    "identity"
+  ],
+  "source_basis": [
+    "Microsoft Learn / Microsoft troubleshooting guidance"
+  ]
+}

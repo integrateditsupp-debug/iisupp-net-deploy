@@ -1,0 +1,43 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "APP_URL,SALES_NOTIFY_EMAIL,ARIA_MODEL,ARIA_RATE_LIMIT,NETLIFY_SITE_ID,RESEND_FROM"
+  SECRETS_SCAN_OMIT_PATHS = "node_modules/**,.netlify/**,extension/**,downloads/**"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["stripe", "@netlify/blobs"]
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "microphone=(self), camera=(), geolocation=(self)"
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+[[redirects]]
+  from = "/aria"
+  to = "/aria.html"
+  status = 200
+[[redirects]]
+  from = "/purchase-tech"
+  to = "/purchase-tech.html"
+  status = 200
+[[redirects]]
+  from = "/copyright"
+  to = "/copyright.html"
+  status = 200
+[[redirects]]
+  from = "/terms"
+  to = "/terms.html"
+  status = 200
+[[redirects]]
+  from = "/extension"
+  to = "/extension.html"
+  status = 200

@@ -1,0 +1,61 @@
+{
+  "id": "L3-003",
+  "title": "Firewall or routing production outage",
+  "level": "L3",
+  "category": "networking",
+  "environment": "hybrid",
+  "applies_to": [
+    "Firewalls",
+    "Routers",
+    "Switches",
+    "VPN"
+  ],
+  "symptoms": [
+    "Site down",
+    "Apps unreachable",
+    "VPN outage",
+    "Intermittent routing"
+  ],
+  "causes": [
+    "Bad rule change",
+    "Routing loop",
+    "ISP issue",
+    "NAT issue",
+    "Certificate issue",
+    "Hardware failure"
+  ],
+  "safe_steps": [
+    "Gather symptoms and affected locations.",
+    "Check if internet, VPN, and internal apps fail separately.",
+    "Do not change firewall rules without change control."
+  ],
+  "advanced_steps": [
+    "Review change logs, routes, NAT, ACLs, VPN tunnel status, ISP status, HA failover."
+  ],
+  "do_not_do": [
+    "Do not run destructive commands without approval.",
+    "Do not ask users to share passwords.",
+    "Do not bypass security controls."
+  ],
+  "escalation": [
+    "Production outage.",
+    "Security boundary change required.",
+    "Unknown firewall rule impact."
+  ],
+  "technician_notes": [
+    "Confirm scope: one user, multiple users, or full site.",
+    "Record final fix into the client-specific KB."
+  ],
+  "tags": [
+    "firewall",
+    "routing",
+    "nat",
+    "vpn",
+    "outage"
+  ],
+  "source_basis": [
+    "Cisco official support troubleshooting guidance",
+    "Integrated IT Support original support workflow",
+    "Vendor-neutral IT support best practices"
+  ]
+}
