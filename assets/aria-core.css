@@ -209,3 +209,11 @@ body.aria-modal-open { overflow: hidden; }
   .aria-modal-content { margin: 3vh auto; padding: 24px 20px; max-height: 92vh; }
   .aria-modal-title { font-size: 19px; }
 }
+
+
+/* ===== HOMEPAGE CLEANUP v1 (2026-05-10) ===== */
+/* Hide old standalone ARIA panel from homepage (kept aria-demo only) */
+#aria { display: none !important; }
+/* Hide mode-picker entry gate so users land straight on the site */
+#scModal, .sc-modal-container { display: none !important; }
+body.overflow-hidden, body { overflow: auto !important; overflow-x: hidden !important; }
