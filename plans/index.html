@@ -26,6 +26,8 @@
   .pf-cta{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;padding:14px 16px;border-radius:14px;font-family:Cinzel,serif;font-weight:700;letter-spacing:.14em;font-size:13px;text-align:center;cursor:pointer;border:0;width:100%;transition:transform .15s,box-shadow .15s}
   .pf-cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(197,160,89,.45)}
   .pf-cta[disabled]{opacity:.55;cursor:wait}
+  .pf-cta-dark{background:transparent;color:#f1dca7;border:1px solid rgba(197,160,89,.45)}
+  .pf-cta-dark:hover{background:rgba(197,160,89,.08);box-shadow:none}
   .pf-most{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#c5a059;color:#1a1410;padding:5px 14px;border-radius:8px;font-size:10px;letter-spacing:.18em;font-weight:700;font-family:Cinzel,serif}
   .pf-grid{display:grid;gap:22px;grid-template-columns:1fr;max-width:1400px;margin:0 auto}
   @media (min-width:720px){.pf-grid{grid-template-columns:repeat(2,1fr)}}
@@ -36,6 +38,45 @@
   .pf-error a{color:#f1dca7;text-decoration:underline}
   .pf-back{color:rgba(255,255,255,.55);font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
   .pf-back:hover{color:#f1dca7}
+  .pf-tag{color:#c5a059;font-size:11px;letter-spacing:.32em;margin:0 0 12px;text-transform:uppercase}
+  .pf-lifetime{max-width:1400px;margin:36px auto 0;background:linear-gradient(135deg,rgba(197,160,89,.18) 0%,rgba(241,220,167,.10) 50%,rgba(197,160,89,.18) 100%);border:1.5px solid rgba(197,160,89,.55);border-radius:24px;padding:42px;box-shadow:0 30px 80px rgba(197,160,89,.15)}
+  .pf-lifetime-inner{display:flex;align-items:center;gap:42px;flex-wrap:wrap;justify-content:space-between}
+  .pf-lifetime-meta{flex:1;min-width:280px}
+  .pf-lifetime-meta h2{font-family:Cinzel,serif;font-size:36px;font-weight:700;margin:6px 0 14px;color:#fff}
+  .pf-lifetime-meta h2 span{color:#c5a059}
+  .pf-lifetime-desc{color:rgba(255,255,255,.78);line-height:1.6;font-size:14.5px;margin:0;max-width:560px}
+  .pf-lifetime-action{text-align:right;min-width:280px}
+  .pf-lifetime-price{font-family:Cinzel,serif;font-size:46px;color:#f1dca7;line-height:1;margin-bottom:6px}
+  .pf-lifetime-cycle{color:rgba(255,255,255,.55);font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:18px}
+  .pf-lifetime-action .pf-cta{min-width:260px}
+  @media (max-width:720px){.pf-lifetime{padding:28px}.pf-lifetime-inner{gap:24px}.pf-lifetime-action{text-align:center;width:100%}}
+  .pf-acquisition{max-width:1400px;margin:24px auto 0;background:linear-gradient(165deg,#0a0805 0%,#000 100%);border:1px solid rgba(197,160,89,.25);border-radius:24px;padding:42px}
+  .pf-acquisition h2{font-family:Cinzel,serif;font-size:32px;font-weight:700;margin:8px 0 12px;color:#fff}
+  .pf-acquisition h2 span{color:#c5a059}
+  .pf-acq-summary{color:rgba(255,255,255,.7);font-size:14px;margin:0 0 22px;max-width:680px;line-height:1.6}
+  #pf-acq-toggle{max-width:280px;font-size:11px}
+  .pf-acq-details{margin-top:30px;padding-top:24px;border-top:1px solid rgba(197,160,89,.15)}
+  .pf-acq-fine{color:rgba(255,255,255,.62);font-size:12.5px;line-height:1.7;margin:0 0 24px;padding:18px;background:rgba(0,0,0,.4);border-radius:14px;border:1px dashed rgba(197,160,89,.18)}
+  .pf-acq-fine strong{color:#f1dca7;font-weight:600}
+  .pf-bid-board{margin:24px 0;padding:24px;background:rgba(0,0,0,.4);border-radius:14px;border:1px solid rgba(197,160,89,.12)}
+  .pf-bid-board h3{font-family:Cinzel,serif;font-size:14px;letter-spacing:.18em;color:#c5a059;margin:0 0 14px;text-transform:uppercase}
+  .pf-bid-empty{color:rgba(255,255,255,.5);font-size:13px;margin:0;font-style:italic}
+  #pf-bid-open{max-width:340px;margin-top:18px}
+  .pf-bid-modal{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.94);backdrop-filter:blur(14px);display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+  .pf-bid-card{max-width:620px;width:100%;background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.45);border-radius:22px;padding:42px 36px;position:relative}
+  .pf-bid-close{position:absolute;top:14px;right:14px;background:transparent;border:0;color:#c5a059;font-size:28px;cursor:pointer;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s;line-height:1}
+  .pf-bid-close:hover{background:rgba(197,160,89,.12)}
+  .pf-bid-card h2{font-family:Cinzel,serif;font-size:26px;color:#fff;margin:0 0 8px}
+  .pf-bid-card>p{color:rgba(255,255,255,.72);font-size:13.5px;margin:0 0 22px;line-height:1.6}
+  .pf-bid-card>p strong{color:#f1dca7}
+  .pf-bid-card label{display:block;color:#f1dca7;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;font-family:Inter,sans-serif;font-weight:600}
+  .pf-bid-card input[type=text],.pf-bid-card input[type=email],.pf-bid-card input[type=tel],.pf-bid-card input[type=number],.pf-bid-card textarea{display:block;width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.25);color:#fff;padding:12px 14px;margin-top:6px;border-radius:10px;font-size:14px;font-family:Inter,sans-serif;font-weight:300;letter-spacing:normal;text-transform:none;box-sizing:border-box}
+  .pf-bid-card input:focus,.pf-bid-card textarea:focus{outline:none;border-color:#c5a059;box-shadow:0 0 0 3px rgba(197,160,89,.15)}
+  .pf-bid-card textarea{min-height:80px;resize:vertical}
+  .pf-check{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:11px !important;letter-spacing:.06em !important;text-transform:none !important;color:rgba(255,255,255,.7) !important;line-height:1.5;font-weight:400 !important}
+  .pf-check input{margin-top:2px;flex-shrink:0;accent-color:#c5a059}
+  .pf-bid-card .hidden{display:none}
+  .pf-bid-success{color:#4ade80;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);padding:14px 16px;border-radius:12px;margin-top:14px;font-size:13.5px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -117,9 +158,63 @@
       <button class="pf-cta" data-tier="enterprise_y" data-name="Enterprise">SUBSCRIBE</button>
     </div>
   </div>
+
+  <section class="pf-lifetime">
+    <div class="pf-lifetime-inner">
+      <div class="pf-lifetime-meta">
+        <p class="pf-tag">ONE-TIME &middot; NEVER PAY AGAIN</p>
+        <h2><span>Lifetime</span> access</h2>
+        <p class="pf-lifetime-desc">Unlimited usage, forever. All tiers, all features, all future updates. The full ARIA experience for life &mdash; no recurring fees, no user limits, no expiry. Built for organizations that want certainty and total ownership of cost.</p>
+      </div>
+      <div class="pf-lifetime-action">
+        <div class="pf-lifetime-price">$2,000,000</div>
+        <div class="pf-lifetime-cycle">One-time &middot; USD</div>
+        <button class="pf-cta" data-tier="lifetime" data-name="Lifetime">SECURE LIFETIME ACCESS</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="pf-acquisition">
+    <p class="pf-tag">PROFESSIONAL OFFER</p>
+    <h2>Buy ARIA <span>outright</span></h2>
+    <p class="pf-acq-summary">Acquire all rights to ARIA. Take it off the market. For organizations that want exclusive ownership of the entire technology, brand, IP, and roadmap.</p>
+    <button class="pf-cta pf-cta-dark" id="pf-acq-toggle">VIEW BID TERMS &amp; PROCESS</button>
+    <div class="pf-acq-details" id="pf-acq-details" hidden>
+      <p class="pf-acq-fine">Buy all rights to ARIA &mdash; take it off the market. Bidders submit offers; nothing under <strong>$10,000,000 USD</strong> is publicly displayed. To list a bid, the bidder must commit at minimum $10M and pay a non-refundable <strong>$3,000,000 deposit</strong>. Once a qualifying bid is verified, the bidding entity is publicly named and a <strong>6-month open window</strong> begins for competing offers. Only the highest, respectable minimum bids are displayed. At the end of the 6-month window, the highest qualifying bid takes ownership.</p>
+      <div class="pf-bid-board">
+        <h3>Current qualifying bids</h3>
+        <p class="pf-bid-empty">No qualifying bids on record. Be the first to set the floor.</p>
+      </div>
+      <button class="pf-cta" id="pf-bid-open">SUBMIT A QUALIFYING BID &rarr;</button>
+    </div>
+  </section>
+
   <div id="pf-error" class="pf-error"></div>
   <p style="text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:48px;letter-spacing:.1em">Powered by Stripe &middot; Cancel anytime &middot; No setup fees</p>
 </main>
+
+<div class="pf-bid-modal" id="pf-bid-modal" hidden>
+  <div class="pf-bid-card">
+    <button class="pf-bid-close" id="pf-bid-close" aria-label="Close">&times;</button>
+    <h2>Acquisition Bid</h2>
+    <p>Minimum bid: <strong>$10,000,000 USD</strong>. Non-refundable <strong>$3,000,000 deposit</strong> due within 14 days of bid acceptance. Submissions are reviewed personally by the founder.</p>
+    <form name="aria-acquisition-bid" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="pf-bid-form">
+      <input type="hidden" name="form-name" value="aria-acquisition-bid">
+      <p class="hidden"><label>Don't fill: <input name="bot-field"></label></p>
+      <label>Entity / Company name<input type="text" name="entity" required></label>
+      <label>Authorized representative<input type="text" name="contact_name" required></label>
+      <label>Business email<input type="email" name="contact_email" required></label>
+      <label>Phone (incl country code)<input type="tel" name="contact_phone" required></label>
+      <label>Bid amount in USD (minimum 10000000)<input type="number" name="bid_amount" min="10000000" step="100000" required placeholder="10000000"></label>
+      <label>Source of funds disclosure<textarea name="funds_source" required placeholder="Brief overview of the funding source for this acquisition."></textarea></label>
+      <label class="pf-check"><input type="checkbox" name="deposit_acknowledge" required value="yes">I acknowledge the $3,000,000 non-refundable deposit must be wired within 14 days of bid acceptance and is forfeited if I withdraw.</label>
+      <label class="pf-check"><input type="checkbox" name="legal_acknowledge" required value="yes">I confirm I have authority to bind the named entity and that this bid is submitted in good faith.</label>
+      <button type="submit" class="pf-cta" id="pf-bid-submit">SUBMIT BID</button>
+    </form>
+    <div class="pf-bid-success" id="pf-bid-success" hidden>Bid received. The founder will be in touch within 48 hours to verify your offer and arrange the deposit wire instructions.</div>
+  </div>
+</div>
+
 <script>
 (function(){
   var ENDPOINT='/.netlify/functions/stripe-checkout';
@@ -130,7 +225,7 @@
     err.classList.add('show');
     setTimeout(function(){err.classList.remove('show');},9000);
   }
-  document.querySelectorAll('.pf-cta').forEach(function(btn){
+  document.querySelectorAll('.pf-cta[data-tier]').forEach(function(btn){
     btn.addEventListener('click',async function(){
       var tier=btn.getAttribute('data-tier');
       var name=btn.getAttribute('data-name');
@@ -148,6 +243,47 @@
         btn.disabled=false;btn.textContent=orig;
       }
     });
+  });
+
+  var acqToggle=document.getElementById('pf-acq-toggle');
+  var acqDetails=document.getElementById('pf-acq-details');
+  acqToggle.addEventListener('click',function(){
+    var hidden=acqDetails.hasAttribute('hidden');
+    if(hidden){acqDetails.removeAttribute('hidden');acqToggle.textContent='HIDE BID TERMS';}
+    else{acqDetails.setAttribute('hidden','');acqToggle.textContent='VIEW BID TERMS & PROCESS';}
+  });
+
+  var bidOpen=document.getElementById('pf-bid-open');
+  var bidModal=document.getElementById('pf-bid-modal');
+  var bidClose=document.getElementById('pf-bid-close');
+  var bidForm=document.getElementById('pf-bid-form');
+  var bidSuccess=document.getElementById('pf-bid-success');
+  function openBid(){bidModal.removeAttribute('hidden');document.body.style.overflow='hidden';}
+  function closeBid(){bidModal.setAttribute('hidden','');document.body.style.overflow='';}
+  bidOpen.addEventListener('click',openBid);
+  bidClose.addEventListener('click',closeBid);
+  bidModal.addEventListener('click',function(e){if(e.target===bidModal)closeBid();});
+
+  bidForm.addEventListener('submit',async function(e){
+    e.preventDefault();
+    var submit=document.getElementById('pf-bid-submit');
+    submit.disabled=true;submit.textContent='SUBMITTING...';
+    try{
+      var fd=new FormData(bidForm);
+      var body=new URLSearchParams();
+      fd.forEach(function(v,k){body.append(k,String(v));});
+      var res=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()});
+      if(res.ok){
+        bidForm.style.display='none';
+        bidSuccess.removeAttribute('hidden');
+      }else{
+        submit.disabled=false;submit.textContent='SUBMIT BID';
+        alert('Bid submission failed (HTTP '+res.status+'). Please email integrateditsupp@gmail.com directly.');
+      }
+    }catch(err){
+      submit.disabled=false;submit.textContent='SUBMIT BID';
+      alert('Network error. Please email integrateditsupp@gmail.com directly.');
+    }
   });
 })();
 </script>
