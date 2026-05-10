@@ -888,3 +888,131 @@
             init();
      }
 })();
+
+
+/* ===== TRIAL TIMER + PAYWALL + PLANS LINK FIX (2026-05-10) ===== */
+(function () {
+  "use strict";
+  if (window.self !== window.top) return; // skip when running inside an iframe
+  var PLANS_PATH = "/plans/";
+  var TRIAL_MS = 3 * 60 * 1000;
+  var KEY = "aria_trial_started_at";
+
+  function rewritePlansLinks() {
+    document.querySelectorAll("a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      var t = (a.textContent || "").toLowerCase().replace(/\s+/g, " ").trim();
+      if (h === "/aria?view=plans" || /[?&]view=plans/.test(h)) {
+        a.setAttribute("href", PLANS_PATH);
+        return;
+      }
+      if (h === "#solutions" && /view\s+plans/.test(t)) {
+        a.setAttribute("href", PLANS_PATH);
+      }
+    });
+  }
+
+  function fmt(ms) {
+    if (ms < 0) ms = 0;
+    var total = Math.ceil(ms / 1000);
+    var m = Math.floor(total / 60);
+    var s = total % 60;
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function getTrialStart() {
+    var s = null;
+    try { s = localStorage.getItem(KEY); } catch (e) {}
+    if (!s) {
+      s = Date.now().toString();
+      try { localStorage.setItem(KEY, s); } catch (e) {}
+    }
+    return parseInt(s, 10) || Date.now();
+  }
+
+  function injectStyles() {
+    if (document.getElementById("aria-trial-style")) return;
+    var css = "" +
+      "#aria-trial-bar{position:fixed;top:0;left:0;right:0;z-index:9998;background:linear-gradient(90deg,#0a0805 0%,#1a1410 50%,#0a0805 100%);border-bottom:1px solid rgba(197,160,89,.45);padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:12px;font-family:Inter,sans-serif;font-size:12px;letter-spacing:.12em;color:#f1dca7}" +
+      "#aria-trial-bar .atb-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;animation:atbPulse 1.4s infinite}" +
+      "#aria-trial-bar.expired .atb-dot{background:#ef4444;box-shadow:0 0 6px #ef4444;animation:none}" +
+      "#aria-trial-bar .atb-time{font-family:Cinzel,serif;font-size:16px;color:#fff;letter-spacing:.04em;min-width:54px;text-align:center}" +
+      "#aria-trial-bar.expired .atb-time{color:#ef4444}" +
+      "#aria-trial-bar .atb-cta{background:#c5a059;color:#1a1410;padding:6px 14px;border-radius:10px;font-weight:700;text-decoration:none;letter-spacing:.15em;font-size:11px;font-family:Cinzel,serif;transition:transform .15s}" +
+      "#aria-trial-bar .atb-cta:hover{transform:translateY(-1px)}" +
+      "@keyframes atbPulse{0%,100%{opacity:1}50%{opacity:.35}}" +
+      "body.aria-trial-active{padding-top:42px !important}" +
+      "body.aria-trial-active nav.fixed{top:42px !important}" +
+      "@media (max-width:600px){#aria-trial-bar{font-size:10px;gap:8px;padding:6px 10px}#aria-trial-bar .atb-time{font-size:14px}#aria-trial-bar .atb-cta{padding:4px 10px;font-size:10px}}" +
+      "#aria-trial-paywall{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.94);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:20px}" +
+      "#aria-trial-paywall .atp-card{max-width:560px;width:100%;background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.45);border-radius:22px;padding:48px 36px;text-align:center;box-shadow:0 50px 100px rgba(0,0,0,.6)}" +
+      "#aria-trial-paywall h2{font-family:Cinzel,serif;font-size:28px;color:#fff;margin:0 0 14px;line-height:1.2}" +
+      "#aria-trial-paywall h2 span{color:#c5a059}" +
+      "#aria-trial-paywall p{color:rgba(255,255,255,.75);margin:0 0 28px;line-height:1.6;font-size:14.5px}" +
+      "#aria-trial-paywall .atp-cta{display:inline-block;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;padding:14px 32px;border-radius:14px;font-family:Cinzel,serif;font-weight:700;letter-spacing:.15em;text-decoration:none;font-size:13px;transition:transform .15s,box-shadow .15s}" +
+      "#aria-trial-paywall .atp-cta:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(197,160,89,.4)}" +
+      "#aria-trial-paywall .atp-sub{color:rgba(255,255,255,.5);font-size:11px;margin-top:22px;letter-spacing:.12em;text-transform:uppercase}" +
+      "#aria-trial-paywall .atp-sub a{color:#c5a059;text-decoration:none}";
+    var style = document.createElement("style");
+    style.id = "aria-trial-style";
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
+  function buildBar(remaining) {
+    var bar = document.createElement("div");
+    bar.id = "aria-trial-bar";
+    bar.innerHTML = '<span class="atb-dot"></span><span class="atb-label">FREE TRIAL</span>' +
+      '<span class="atb-time">' + fmt(remaining) + '</span>' +
+      '<span style="opacity:.55">remaining</span>' +
+      '<a class="atb-cta" href="' + PLANS_PATH + '">PICK A PLAN →</a>';
+    document.body.appendChild(bar);
+    document.body.classList.add("aria-trial-active");
+    return bar;
+  }
+
+  function buildPaywall() {
+    if (document.getElementById("aria-trial-paywall")) return;
+    var m = document.createElement("div");
+    m.id = "aria-trial-paywall";
+    m.innerHTML = '<div class="atp-card">' +
+      '<h2>Your <span>3-minute trial</span> is up.</h2>' +
+      '<p>You\'ve experienced what ARIA can do. Pick a plan to keep going — and replace the cost of an entire IT desk.</p>' +
+      '<a class="atp-cta" href="' + PLANS_PATH + '">VIEW PLANS →</a>' +
+      '<div class="atp-sub">Or <a href="mailto:integrateditsupp@gmail.com?subject=ARIA%20Sales%20Inquiry">talk to sales</a></div>' +
+      '</div>';
+    document.body.appendChild(m);
+    document.body.style.overflow = "hidden";
+  }
+
+  function init() {
+    rewritePlansLinks();
+    var p = location.pathname;
+    if (p === PLANS_PATH || p === "/plans") return;
+    injectStyles();
+    var start = getTrialStart();
+    var remaining = TRIAL_MS - (Date.now() - start);
+    var bar = buildBar(Math.max(0, remaining));
+    var timeEl = bar.querySelector(".atb-time");
+    var labelEl = bar.querySelector(".atb-label");
+    function tick() {
+      var r = TRIAL_MS - (Date.now() - start);
+      if (r <= 0) {
+        bar.classList.add("expired");
+        labelEl.textContent = "TRIAL ENDED";
+        timeEl.textContent = "0:00";
+        buildPaywall();
+        return;
+      }
+      timeEl.textContent = fmt(r);
+      setTimeout(tick, 1000);
+    }
+    tick();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
