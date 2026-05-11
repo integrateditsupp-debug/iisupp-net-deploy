@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0805">
+<title>Plans - ARIA - Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/aria-core.css">
+<style>
+  body{font-family:Inter,sans-serif;background:#050505;color:#fff;margin:0}
+  .pf-h1{font-family:Cinzel,serif}
+  .gold{color:#c5a059}
+  .pf-card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.25);border-radius:22px;padding:32px 26px;display:flex;flex-direction:column;position:relative;transition:transform .25s,box-shadow .25s,border-color .25s}
+  .pf-card:hover{transform:translateY(-6px);box-shadow:0 30px 60px rgba(197,160,89,.18);border-color:rgba(197,160,89,.6)}
+  .pf-tier{font-family:Cinzel,serif;font-size:22px;color:#f1dca7;letter-spacing:.04em}
+  .pf-price{font-family:Cinzel,serif;font-size:36px;color:#fff;line-height:1.1;margin-top:10px}
+  .pf-price .pf-unit{color:rgba(255,255,255,.55);font-size:15px;font-family:Inter,sans-serif;font-weight:300}
+  .pf-cycle{color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+  .pf-features{color:rgba(255,255,255,.78);font-size:13px;line-height:1.6;margin:22px 0 28px;flex:1;list-style:none;padding:0}
+  .pf-features li{padding-left:20px;position:relative;margin-bottom:9px}
+  .pf-features li::before{content:'\2713';position:absolute;left:0;color:#c5a059;font-weight:700}
+  .pf-features li.featured{color:#f1dca7;font-weight:600}
+  .pf-cta{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;padding:14px 16px;border-radius:14px;font-family:Cinzel,serif;font-weight:700;letter-spacing:.14em;font-size:13px;text-align:center;cursor:pointer;border:0;width:100%;transition:transform .15s,box-shadow .15s}
+  .pf-cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(197,160,89,.45)}
+  .pf-cta[disabled]{opacity:.55;cursor:wait}
+  .pf-cta-dark{background:transparent;color:#f1dca7;border:1px solid rgba(197,160,89,.45)}
+  .pf-cta-dark:hover{background:rgba(197,160,89,.08);box-shadow:none}
+  .pf-cta-decline{background:transparent;color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.25)}
+  .pf-cta-decline:hover{background:rgba(255,255,255,.04);color:#fff}
+  .pf-most{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#c5a059;color:#1a1410;padding:5px 14px;border-radius:8px;font-size:10px;letter-spacing:.18em;font-weight:700;font-family:Cinzel,serif}
+  .pf-grid{display:grid;gap:22px;grid-template-columns:1fr;max-width:1400px;margin:0 auto}
+  @media (min-width:720px){.pf-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (min-width:1100px){.pf-grid{grid-template-columns:repeat(3,1fr)}}
+  @media (min-width:1500px){.pf-grid{grid-template-columns:repeat(5,1fr)}}
+  .pf-error{display:none;background:rgba(255,80,80,.12);border:1px solid rgba(255,120,120,.3);color:#ffb4b4;border-radius:12px;padding:12px 16px;margin:24px auto 0;max-width:720px;font-size:13px;text-align:center}
+  .pf-error.show{display:block}
+  .pf-error a{color:#f1dca7;text-decoration:underline}
+  .pf-back{color:rgba(255,255,255,.55);font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
+  .pf-back:hover{color:#f1dca7}
+  .pf-tag{color:#c5a059;font-size:11px;letter-spacing:.32em;margin:0 0 12px;text-transform:uppercase}
+  .pf-lifetime{max-width:1400px;margin:36px auto 0;background:linear-gradient(135deg,rgba(197,160,89,.18) 0%,rgba(241,220,167,.10) 50%,rgba(197,160,89,.18) 100%);border:1.5px solid rgba(197,160,89,.55);border-radius:24px;padding:42px;box-shadow:0 30px 80px rgba(197,160,89,.15)}
+  .pf-lifetime-inner{display:flex;align-items:center;gap:42px;flex-wrap:wrap;justify-content:space-between}
+  .pf-lifetime-meta{flex:1;min-width:280px}
+  .pf-lifetime-meta h2{font-family:Cinzel,serif;font-size:36px;font-weight:700;margin:6px 0 14px;color:#fff}
+  .pf-lifetime-meta h2 span{color:#c5a059}
+  .pf-lifetime-desc{color:rgba(255,255,255,.78);line-height:1.6;font-size:14.5px;margin:0;max-width:560px}
+  .pf-lifetime-action{text-align:right;min-width:280px}
+  .pf-lifetime-price{font-family:Cinzel,serif;font-size:46px;color:#f1dca7;line-height:1;margin-bottom:6px}
+  .pf-lifetime-cycle{color:rgba(255,255,255,.55);font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:18px}
+  .pf-lifetime-action .pf-cta{min-width:260px}
+  @media (max-width:720px){.pf-lifetime{padding:28px}.pf-lifetime-inner{gap:24px}.pf-lifetime-action{text-align:center;width:100%}}
+  .pf-acquisition{max-width:1400px;margin:24px auto 0;background:linear-gradient(165deg,#0a0805 0%,#000 100%);border:1px solid rgba(197,160,89,.25);border-radius:24px;padding:42px}
+  .pf-acquisition h2{font-family:Cinzel,serif;font-size:32px;font-weight:700;margin:8px 0 14px;color:#fff}
+  .pf-acquisition h2 span{color:#c5a059}
+  .pf-acq-summary{color:rgba(255,255,255,.78);font-size:15px;margin:0 0 18px;max-width:680px;line-height:1.6}
+  .pf-acq-clause{color:rgba(255,255,255,.62);font-size:12.5px;line-height:1.65;margin:0 0 28px;max-width:680px;padding:14px 18px;background:rgba(0,0,0,.4);border-radius:12px;border-left:2px solid #c5a059}
+  .pf-acq-clause strong{color:#f1dca7;font-weight:600}
+  #pf-bid-open{max-width:280px}
+  .pf-modal{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.94);backdrop-filter:blur(14px);display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+  .pf-modal-card{max-width:620px;width:100%;background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.45);border-radius:22px;padding:42px 36px;position:relative}
+  .pf-modal-close{position:absolute;top:14px;right:14px;background:transparent;border:0;color:#c5a059;font-size:28px;cursor:pointer;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s;line-height:1}
+  .pf-modal-close:hover{background:rgba(197,160,89,.12)}
+  .pf-modal-card h2{font-family:Cinzel,serif;font-size:26px;color:#fff;margin:0 0 8px}
+  .pf-modal-card h2 .gold{color:#c5a059}
+  .pf-modal-card>p{color:rgba(255,255,255,.78);font-size:14px;margin:0 0 22px;line-height:1.65}
+  .pf-modal-card>p strong{color:#f1dca7}
+  .pf-modal-card label{display:block;color:#f1dca7;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;font-family:Inter,sans-serif;font-weight:600}
+  .pf-modal-card input[type=text],.pf-modal-card input[type=email],.pf-modal-card input[type=tel],.pf-modal-card input[type=number],.pf-modal-card textarea{display:block;width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.25);color:#fff;padding:12px 14px;margin-top:6px;border-radius:10px;font-size:14px;font-family:Inter,sans-serif;font-weight:300;letter-spacing:normal;text-transform:none;box-sizing:border-box}
+  .pf-modal-card input:focus,.pf-modal-card textarea:focus{outline:none;border-color:#c5a059;box-shadow:0 0 0 3px rgba(197,160,89,.15)}
+  .pf-modal-card textarea{min-height:80px;resize:vertical}
+  .pf-check{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px !important;letter-spacing:.04em !important;text-transform:none !important;color:rgba(255,255,255,.78) !important;line-height:1.55;font-weight:400 !important;margin-bottom:18px !important}
+  .pf-check input{margin-top:3px;flex-shrink:0;accent-color:#c5a059;width:16px;height:16px}
+  .pf-modal-card .hidden{display:none}
+  .pf-modal-success{color:#4ade80;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);padding:16px 18px;border-radius:12px;margin-top:14px;font-size:14px;line-height:1.55}
+  .pf-modal-warn{color:#fbbf24;background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.3);padding:18px 22px;border-radius:12px;font-size:14px;line-height:1.65;margin-bottom:22px}
+  .pf-modal-warn strong{color:#fde68a}
+  .pf-btn-row{display:flex;gap:12px;margin-top:8px}
+  .pf-btn-row .pf-cta{flex:1}
+  .pf-consent-summary{background:rgba(0,0,0,.4);border:1px solid rgba(197,160,89,.18);border-radius:12px;padding:18px 22px;margin-bottom:18px;font-size:13px;line-height:1.7;color:rgba(255,255,255,.78)}
+  .pf-consent-summary li{padding-left:14px;position:relative;margin-bottom:6px;list-style:none}
+  .pf-consent-summary li::before{content:'\2022';position:absolute;left:0;color:#c5a059}
+  .pf-consent-summary ul{padding:0;margin:8px 0 0}
+  .pf-consent-summary a{color:#c5a059;text-decoration:underline}
+  footer.pf-foot{max-width:1400px;margin:48px auto 0;padding:24px;text-align:center;color:rgba(255,255,255,.5);font-size:12px;letter-spacing:.08em;line-height:1.7}
+  footer.pf-foot a{color:#c5a059;text-decoration:none;margin:0 8px}
+  footer.pf-foot a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<header style="padding:22px 28px;border-bottom:1px solid rgba(197,160,89,.15);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+  <a href="/" class="pf-back">&larr; Back to home</a>
+  <a href="/" style="color:#f1dca7;font-family:Cinzel,serif;letter-spacing:.18em;font-weight:700;text-decoration:none;font-size:14px">INTEGRATED IT SUPPORT</a>
+  <a href="mailto:integrateditsupp@gmail.com?subject=ARIA%20Sales%20Inquiry" class="pf-back">Talk to sales</a>
+</header>
+<main style="max-width:1600px;margin:0 auto;padding:64px 24px 48px">
+  <div style="text-align:center;max-width:760px;margin:0 auto 56px">
+    <p style="color:#c5a059;font-size:11px;letter-spacing:.32em;margin-bottom:12px">CHOOSE YOUR ARIA</p>
+    <h1 class="pf-h1" style="font-size:44px;font-weight:700;line-height:1.1;margin:0 0 16px">Plans built for <span class="gold">every stage</span></h1>
+    <p style="color:rgba(255,255,255,.7);font-size:16px;line-height:1.6">Start free on this site for 3 minutes. Pick the plan that matches your team. Stripe-secured checkout. Cancel anytime.</p>
+  </div>
+  <div class="pf-grid">
+    <div class="pf-card">
+      <div class="pf-tier">Personal</div>
+      <div class="pf-price">$599<span class="pf-unit">/mo</span></div>
+      <div class="pf-cycle">Billed monthly &middot; USD</div>
+      <ul class="pf-features">
+        <li>1 user &mdash; full ARIA access</li>
+        <li>24/7 chat + voice support</li>
+        <li>Built-in 100+ article IT support library</li>
+        <li>Email support, 48-hour response</li>
+        <li>Remote support only</li>
+      </ul>
+      <button class="pf-cta" data-tier="personal" data-name="Personal">SUBSCRIBE</button>
+    </div>
+    <div class="pf-card">
+      <div class="pf-most">RECOMMENDED</div>
+      <div class="pf-tier">Pro</div>
+      <div class="pf-price">$1,500<span class="pf-unit">/mo</span></div>
+      <div class="pf-cycle">Billed monthly &middot; USD</div>
+      <ul class="pf-features">
+        <li>Up to 5 users</li>
+        <li>Custom company KB (your docs, FAQs)</li>
+        <li>Priority email + chat support</li>
+        <li>API access for automation</li>
+        <li>Onboarding session included</li>
+        <li>Remote support only</li>
+      </ul>
+      <button class="pf-cta" data-tier="pro" data-name="Pro">SUBSCRIBE</button>
+    </div>
+    <div class="pf-card">
+      <div class="pf-tier">Small Business</div>
+      <div class="pf-price">$156,000<span class="pf-unit">/yr</span></div>
+      <div class="pf-cycle">Annual &middot; USD</div>
+      <ul class="pf-features">
+        <li>Up to 50 users</li>
+        <li class="featured">5 on-site visits per year</li>
+        <li>Replaces Tier-1 IT support team</li>
+        <li>Dedicated success manager</li>
+        <li>SSO, audit logs, role-based access</li>
+        <li>4-hour incident response SLA</li>
+        <li>99.9% uptime guarantee</li>
+      </ul>
+      <button class="pf-cta" data-tier="small_business_y" data-name="Small Business">SUBSCRIBE</button>
+    </div>
+    <div class="pf-card">
+      <div class="pf-tier">Mid-Size</div>
+      <div class="pf-price">$312,000<span class="pf-unit">/yr</span></div>
+      <div class="pf-cycle">Annual &middot; USD</div>
+      <ul class="pf-features">
+        <li>Up to 250 users</li>
+        <li class="featured">10 on-site visits per year</li>
+        <li>Replaces Tier-1 + Tier-2 helpdesk</li>
+        <li>Custom integrations (Slack, Teams, ServiceNow)</li>
+        <li>White-glove onboarding</li>
+        <li>Quarterly business reviews</li>
+        <li>1-hour incident response SLA</li>
+      </ul>
+      <button class="pf-cta" data-tier="midsize_y" data-name="Mid-Size">SUBSCRIBE</button>
+    </div>
+    <div class="pf-card">
+      <div class="pf-tier">Enterprise</div>
+      <div class="pf-price">$625,000<span class="pf-unit">/yr</span></div>
+      <div class="pf-cycle">Annual &middot; USD</div>
+      <ul class="pf-features">
+        <li>Unlimited users</li>
+        <li class="featured">24 on-site visits per year &mdash; any request</li>
+        <li>Tier-3 incident management included</li>
+        <li>On-prem / private cloud option</li>
+        <li>24/7 dedicated support</li>
+        <li>Custom AI training on your stack</li>
+        <li>15-minute incident response SLA</li>
+        <li>Founder-level escalation access</li>
+      </ul>
+      <button class="pf-cta" data-tier="enterprise_y" data-name="Enterprise">SUBSCRIBE</button>
+    </div>
+  </div>
+
+  <p style="text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:18px;letter-spacing:.06em;max-width:900px;margin-left:auto;margin-right:auto">On-site visits beyond the included allotment are billed separately at the prevailing rate. Active interactions exceeding 1 hour are billed at the hourly rate &mdash; see <a href="/terms/" style="color:#c5a059">Terms</a> for the full schedule.</p>
+
+  <section class="pf-lifetime">
+    <div class="pf-lifetime-inner">
+      <div class="pf-lifetime-meta">
+        <p class="pf-tag">ONE-TIME &middot; NEVER PAY AGAIN</p>
+        <h2><span>Lifetime</span> access</h2>
+        <p class="pf-lifetime-desc">Unlimited usage, forever. All tiers, all features, all future updates. The full ARIA experience for life &mdash; no recurring fees, no user limits, no expiry. Built for organizations that want certainty and total ownership of cost.</p>
+      </div>
+      <div class="pf-lifetime-action">
+        <div class="pf-lifetime-price">$2,000,000</div>
+        <div class="pf-lifetime-cycle">One-time &middot; USD</div>
+        <button class="pf-cta" data-tier="lifetime" data-name="Lifetime">SECURE LIFETIME ACCESS</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="pf-acquisition">
+    <p class="pf-tag">PROFESSIONAL OFFER</p>
+    <h2>Buy ARIA <span>outright</span></h2>
+    <p class="pf-acq-summary">Buy all rights to ARIA &mdash; take it off the market.</p>
+    <p class="pf-acq-clause"><strong>Founder retention clause:</strong> all acquisitions retain a 5% founder stake &mdash; either 5% equity in the post-acquisition entity or 5% of ongoing revenue, at the founder's election. ARIA is the product of a lifetime of work; we remain a partner in its long-term growth.</p>
+    <button class="pf-cta" id="pf-bid-open" style="max-width:260px">MAKE AN OFFER &rarr;</button>
+  </section>
+
+  <div id="pf-error" class="pf-error"></div>
+</main>
+
+<footer class="pf-foot">
+  Powered by Stripe &middot; Cancel anytime &middot; No setup fees<br>
+  <a href="/terms/">Terms &amp; Conditions</a> &middot; <a href="mailto:integrateditsupp@gmail.com">integrateditsupp@gmail.com</a> &middot; <a href="tel:+16475813182">(647) 581-3182</a>
+</footer>
+
+<div class="pf-modal" id="pf-consent-modal" hidden>
+  <div class="pf-modal-card">
+    <button class="pf-modal-close" data-close="pf-consent-modal" aria-label="Close">&times;</button>
+    <h2>Before you <span class="gold">continue</span></h2>
+    <p>By proceeding you accept the operating terms below. The full Terms &amp; Conditions are available at <a href="/terms/" target="_blank" style="color:#c5a059">/terms</a>.</p>
+    <div class="pf-consent-summary">
+      <strong style="color:#f1dca7;font-size:11px;letter-spacing:.18em;text-transform:uppercase">Key terms in plain English:</strong>
+      <ul>
+        <li>Idle chat or voice sessions auto-close after 10 minutes. ARIA will attempt 3 reconnects (5 / 15 / 45 min). Unanswered sessions are dropped &mdash; the record is kept.</li>
+        <li>Active interactions over 1 hour are billed at the hourly rate. Any partial hour beyond the first counts as a full hour.</li>
+        <li>On-site visit allotments are per-plan (5 / 10 / 24 per year for Small Business / Mid-Size / Enterprise). Overages billed separately.</li>
+        <li>Every interaction is recorded for compliance. Resolved chats are removed from active memory; the record is retained.</li>
+        <li>For acquisition offers: founder retains a 5% stake (equity or revenue, founder's choice), non-negotiable.</li>
+        <li>Non-payment beyond 30 days may result in service suspension.</li>
+      </ul>
+    </div>
+    <label class="pf-check"><input type="checkbox" id="pf-consent-check"> I have read and accept the <a href="/terms/" target="_blank" style="color:#c5a059">Terms &amp; Conditions</a>.</label>
+    <div class="pf-btn-row">
+      <button class="pf-cta pf-cta-decline" data-close="pf-consent-modal">DECLINE</button>
+      <button class="pf-cta" id="pf-consent-accept">ACCEPT &amp; CONTINUE</button>
+    </div>
+  </div>
+</div>
+
+<div class="pf-modal" id="pf-bid-modal" hidden>
+  <div class="pf-modal-card">
+    <button class="pf-modal-close" data-close="pf-bid-modal" aria-label="Close">&times;</button>
+    <div id="pf-bid-view-form">
+      <h2>Acquisition <span class="gold">offer</span></h2>
+      <p>Submit your offer for outright acquisition of ARIA. Each offer is reviewed personally by the founder.</p>
+      <form name="aria-acquisition-bid" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="pf-bid-form">
+        <input type="hidden" name="form-name" value="aria-acquisition-bid">
+        <p class="hidden"><label>Don't fill: <input name="bot-field"></label></p>
+        <input type="hidden" name="bid_qualified" id="pf-bid-qualified" value="no">
+        <input type="hidden" name="warning_1_accepted" id="pf-w1-flag" value="no">
+        <input type="hidden" name="warning_2_accepted" id="pf-w2-flag" value="no">
+        <label>Entity / Company name<input type="text" name="entity" required></label>
+        <label>Authorized representative<input type="text" name="contact_name" required></label>
+        <label>Business email<input type="email" name="contact_email" required></label>
+        <label>Phone (incl country code)<input type="tel" name="contact_phone" required></label>
+        <label>Offer amount in USD<input type="number" name="bid_amount" min="1" step="1" required placeholder="Enter your offer"></label>
+        <label>Source of funds disclosure<textarea name="funds_source" required placeholder="Brief overview of the funding source for this acquisition."></textarea></label>
+        <button type="submit" class="pf-cta" id="pf-bid-submit">SUBMIT OFFER</button>
+      </form>
+    </div>
+    <div id="pf-bid-view-warn1" hidden>
+      <h2>Hold on &mdash; <span class="gold">deposit terms</span></h2>
+      <div class="pf-modal-warn">
+        Once you submit this bid, a <strong>$3,000,000 deposit</strong> becomes non-refundable in case you back out of the deal. If a higher qualifying bid comes in within the open window, your deposit will be returned in full. Do you accept these terms?
+      </div>
+      <label class="pf-check"><input type="checkbox" id="pf-w1-check"> I accept the deposit terms above.</label>
+      <div class="pf-btn-row">
+        <button class="pf-cta pf-cta-decline" data-bid-decline="1">DECLINE</button>
+        <button class="pf-cta" id="pf-w1-accept">ACCEPT</button>
+      </div>
+    </div>
+    <div id="pf-bid-view-warn2" hidden>
+      <h2>One more <span class="gold">moment</span></h2>
+      <div class="pf-modal-warn">
+        Take a moment and ensure this is a serious offer. To avoid confusion, mistakes, negligence, or any irresponsible action, we are giving you another moment to think. <strong>After this point your payment will be processed and the bid will be legally binding.</strong>
+      </div>
+      <label class="pf-check"><input type="checkbox" id="pf-w2-check"> I confirm this is a serious, intentional offer and I accept that it becomes legally binding.</label>
+      <div class="pf-btn-row">
+        <button class="pf-cta pf-cta-decline" data-bid-decline="2">DECLINE</button>
+        <button class="pf-cta" id="pf-w2-accept">CONFIRM &amp; PROCEED</button>
+      </div>
+    </div>
+    <div id="pf-bid-view-success" hidden>
+      <h2>Offer <span class="gold">received</span></h2>
+      <div class="pf-modal-success" id="pf-bid-success-msg">Your offer has been received. The founder will review and be in touch within 48 hours.</div>
+      <button class="pf-cta" data-close="pf-bid-modal" style="margin-top:18px">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var ENDPOINT='/.netlify/functions/stripe-checkout';
+  var QUALIFY_THRESHOLD=10000000;
+  var CONSENT_KEY='aria_terms_accepted_v1';
+  var err=document.getElementById('pf-error');
+  var pendingAction=null;
+
+  function showError(msg,salesled){
+    if(salesled){err.innerHTML=msg+' <a href="mailto:integrateditsupp@gmail.com?subject=ARIA%20Sales%20Inquiry">Email sales</a>';}
+    else{err.textContent=msg;}
+    err.classList.add('show');
+    setTimeout(function(){err.classList.remove('show');},9000);
+  }
+  function openModal(id){document.getElementById(id).removeAttribute('hidden');document.body.style.overflow='hidden';}
+  function closeModal(id){document.getElementById(id).setAttribute('hidden','');document.body.style.overflow='';}
+  document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',function(){closeModal(b.getAttribute('data-close'));});});
+  document.querySelectorAll('.pf-modal').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m){closeModal(m.id);}});});
+
+  function hasConsented(){try{return localStorage.getItem(CONSENT_KEY)==='1';}catch(e){return false;}}
+  function setConsented(){try{localStorage.setItem(CONSENT_KEY,'1');}catch(e){}}
+  function requireConsent(action){
+    if(hasConsented()){action();return;}
+    pendingAction=action;
+    document.getElementById('pf-consent-check').checked=false;
+    openModal('pf-consent-modal');
+  }
+  document.getElementById('pf-consent-accept').addEventListener('click',function(){
+    if(!document.getElementById('pf-consent-check').checked){alert('Please tick the checkbox to accept the Terms.');return;}
+    setConsented();
+    closeModal('pf-consent-modal');
+    if(pendingAction){var a=pendingAction;pendingAction=null;setTimeout(a,150);}
+  });
+
+  function startCheckout(btn){
+    var tier=btn.getAttribute('data-tier');
+    var name=btn.getAttribute('data-name');
+    var orig=btn.textContent;
+    btn.disabled=true;btn.textContent='STARTING CHECKOUT...';
+    fetch(ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({tier:tier,planName:name})})
+      .then(function(res){return res.json().then(function(d){return{ok:res.ok,status:res.status,data:d};}).catch(function(){return{ok:res.ok,status:res.status,data:{}};});})
+      .then(function(r){
+        if(r.ok&&r.data.url){window.location.href=r.data.url;return;}
+        showError(r.data.error||('Could not start checkout (HTTP '+r.status+').'),!!r.data.salesled);
+        btn.disabled=false;btn.textContent=orig;
+      })
+      .catch(function(){showError('Network error. Please try again or call (647) 581-3182.');btn.disabled=false;btn.textContent=orig;});
+  }
+  document.querySelectorAll('.pf-cta[data-tier]').forEach(function(btn){
+    btn.addEventListener('click',function(){requireConsent(function(){startCheckout(btn);});});
+  });
+
+  document.getElementById('pf-bid-open').addEventListener('click',function(){
+    requireConsent(function(){
+      ['pf-bid-view-form','pf-bid-view-warn1','pf-bid-view-warn2','pf-bid-view-success'].forEach(function(id,i){
+        document.getElementById(id).toggleAttribute('hidden',i!==0);
+      });
+      document.getElementById('pf-bid-qualified').value='no';
+      document.getElementById('pf-w1-flag').value='no';
+      document.getElementById('pf-w2-flag').value='no';
+      openModal('pf-bid-modal');
+    });
+  });
+
+  function showView(name){
+    ['form','warn1','warn2','success'].forEach(function(v){
+      var el=document.getElementById('pf-bid-view-'+v);
+      if(v===name){el.removeAttribute('hidden');}else{el.setAttribute('hidden','');}
+    });
+  }
+
+  document.querySelectorAll('[data-bid-decline]').forEach(function(b){
+    b.addEventListener('click',function(){showView('form');});
+  });
+
+  document.getElementById('pf-w1-accept').addEventListener('click',function(){
+    if(!document.getElementById('pf-w1-check').checked){alert('Please tick the checkbox to accept the deposit terms.');return;}
+    document.getElementById('pf-w1-flag').value='yes';
+    document.getElementById('pf-w2-check').checked=false;
+    showView('warn2');
+  });
+
+  function submitBidForm(qualified){
+    document.getElementById('pf-bid-qualified').value=qualified?'yes':'no';
+    var form=document.getElementById('pf-bid-form');
+    var fd=new FormData(form);
+    var body=new URLSearchParams();
+    fd.forEach(function(v,k){body.append(k,String(v));});
+    return fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()});
+  }
+
+  document.getElementById('pf-w2-accept').addEventListener('click',function(){
+    if(!document.getElementById('pf-w2-check').checked){alert('Please tick the checkbox to confirm.');return;}
+    document.getElementById('pf-w2-flag').value='yes';
+    var btn=this;btn.disabled=true;btn.textContent='SUBMITTING...';
+    submitBidForm(true).then(function(res){
+      if(res.ok){
+        document.getElementById('pf-bid-success-msg').innerHTML='Your <strong>qualifying offer</strong> is locked and recorded. The founder will contact you within 24 hours to arrange the $3,000,000 non-refundable deposit wire transfer. Both prompts have been logged with timestamps as proof of acceptance.';
+        showView('success');
+      }else{
+        btn.disabled=false;btn.textContent='CONFIRM & PROCEED';
+        alert('Submission failed (HTTP '+res.status+'). Please email integrateditsupp@gmail.com directly.');
+      }
+    }).catch(function(){
+      btn.disabled=false;btn.textContent='CONFIRM & PROCEED';
+      alert('Network error. Please email integrateditsupp@gmail.com directly.');
+    });
+  });
+
+  document.getElementById('pf-bid-form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var amount=parseFloat(document.getElementById('pf-bid-form').bid_amount.value)||0;
+    var btn=document.getElementById('pf-bid-submit');
+    if(amount>=QUALIFY_THRESHOLD){
+      document.getElementById('pf-w1-check').checked=false;
+      showView('warn1');
+    }else{
+      btn.disabled=true;btn.textContent='SUBMITTING...';
+      submitBidForm(false).then(function(res){
+        if(res.ok){
+          document.getElementById('pf-bid-success-msg').innerHTML='Your offer has been received. The founder will review and reach out if it is the right fit.';
+          showView('success');
+        }else{
+          btn.disabled=false;btn.textContent='SUBMIT OFFER';
+          alert('Submission failed (HTTP '+res.status+'). Please email integrateditsupp@gmail.com directly.');
+        }
+      }).catch(function(){
+        btn.disabled=false;btn.textContent='SUBMIT OFFER';
+        alert('Network error. Please email integrateditsupp@gmail.com directly.');
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

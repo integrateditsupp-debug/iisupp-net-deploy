@@ -7,14 +7,18 @@ const Stripe = require('stripe');
 // Add new keys when launching new tiers; missing env vars produce a 400 with a
 // clear error so the front-end can route to the call CTA instead.
 const PRICE_MAP = {
-  personal:          process.env.STRIPE_PRICE_PERSONAL,
-  personal_y:        process.env.STRIPE_PRICE_PERSONAL_Y,
-  pro:               process.env.STRIPE_PRICE_PRO,
-  pro_y:             process.env.STRIPE_PRICE_PRO_Y,
-  small_business_y:  process.env.STRIPE_PRICE_SMALL_BUSINESS_Y,
-  midsize_y:         process.env.STRIPE_PRICE_MIDSIZE_Y,
-  enterprise_y:      process.env.STRIPE_PRICE_ENTERPRISE_Y,
+  personal:         process.env.STRIPE_PRICE_PERSONAL,
+  personal_y:       process.env.STRIPE_PRICE_PERSONAL_Y,
+  pro:              process.env.STRIPE_PRICE_PRO,
+  pro_y:            process.env.STRIPE_PRICE_PRO_Y,
+  small_business_y: process.env.STRIPE_PRICE_SMALL_BUSINESS_Y,
+  midsize_y:        process.env.STRIPE_PRICE_MIDSIZE_Y,
+  enterprise_y:     process.env.STRIPE_PRICE_ENTERPRISE_Y,
+  lifetime:         process.env.STRIPE_PRICE_LIFETIME,
 };
+
+// Tiers that are one-time (mode: payment). All others default to subscription.
+const ONE_TIME_TIERS = new Set(['lifetime']);
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -37,15 +41,16 @@ exports.handler = async (event) => {
   if (!priceId) {
     // Tier exists in the map but its Price ID env var isn't set yet.
     // Front-end falls back to "Talk to sales" — same UX as a sales-led tier.
-    return { statusCode: 503, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ error: `Tier '${tier}' is not configured for checkout. Call (647) 581-3182.`, salesLed: true }) };
+    return { statusCode: 503, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ error: `Tier '${tier}' is not configured for checkout. Call (647) 581-3182.`, salesled: true }) };
   }
 
   const stripe = Stripe(stripeKey);
   const origin = event.headers.origin || event.headers.Origin || `https://${event.headers.host}`;
+  const isOneTime = ONE_TIME_TIERS.has(tier);
 
   try {
     const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
+      mode: isOneTime ? 'payment' : 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/aria?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${origin}/aria?checkout=canceled`,

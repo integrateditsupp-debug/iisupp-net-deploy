@@ -378,6 +378,7 @@
     if (!clean) return false;
     const u = new SpeechSynthesisUtterance(clean);
     u.rate = 1; u.pitch = 1; u.lang = 'en-US';
+try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Samantha","Microsoft Zira","Google UK English Female","Karen","Victoria","Allison","Microsoft Hazel","Microsoft Eva","Tessa","Fiona","Moira","Veena","Susan","Catherine","Serena"]; var __female=null; for(var __i=0;__i<__femPref.length && !__female;__i++){ var __np=__femPref[__i]; __female=__voices.find(function(v){return v.name===__np || v.name.indexOf(__np)>=0;}); } if(__female) u.voice=__female; u.rate=0.95; u.pitch=1.05; } catch(e){}
     speech.isSpeaking = true;
     if (speech.onStateChange) speech.onStateChange("speaking");
     u.onend = () => {
@@ -855,4 +856,656 @@
     onReminder: null,
   };
   window.ARIA = ARIA;
+})();
+
+/* ===== HOMEPAGE REORDER + INTRO INJECTION (2026-05-10) ===== */
+(function () {
+     "use strict";
+     var p = location.pathname;
+     if (p !== "/" && p !== "/index.html") return;
+     function init() {
+            var sc = document.getElementById("service-center");
+            if (!sc) return;
+            if (document.getElementById("company-intro")) return;
+            var parent = sc.parentNode;
+            var intro = document.createElement("section");
+            intro.id = "company-intro";
+            intro.className = "py-20 px-6 md:px-10 border-t border-[#c5a059]/15";
+            intro.innerHTML = '<div class="max-w-4xl mx-auto text-center"><p class="text-[10px] tracking-[0.3em] uppercase mb-4" style="color:#c5a059">WELCOME</p><h2 class="text-3xl md:text-4xl font-bold mb-8" style="font-family:Cinzel,serif">Welcome to <span style="color:#c5a059">Integrated IT Support Inc.</span></h2><p class="text-base md:text-lg leading-relaxed text-white/80">Our #1 objective and vision is to eliminate IT cost that just does not make sense — saving you not only money but time. Face it: a business runs to bring in revenue, not cut it. Who actually uses ITIL, Six Sigma and the many other skills obtained to help companies? Not many. Our goal is to bring you 21+ years of diverse IT experience across many industries, led by our CEO Ahmad Wasee, and importantly help you save time, effort, money — and stay focused on your goals, not worrying about IT at all. Take a look at some of our examples, apps, recent accomplishments, and much more down the pipeline. Welcome to the future, where AI helps you take over your challenges.</p></div>';
+            var aria = document.createElement("section");
+            aria.id = "introducing-aria";
+            aria.className = "py-20 px-6 md:px-10 border-t border-[#c5a059]/15";
+            aria.innerHTML = '<div class="max-w-6xl mx-auto"><div class="text-center mb-10"><p class="text-[10px] tracking-[0.3em] uppercase mb-4" style="color:#c5a059">NEW · ALWAYS ON</p><h2 class="text-3xl md:text-4xl font-bold mb-6" style="font-family:Cinzel,serif">Introducing <span style="color:#c5a059">ARIA</span></h2><p class="text-base md:text-lg leading-relaxed text-white/80 max-w-3xl mx-auto">Your AI technical analyst, customer support, service desk analyst, incident manager, help desk agent, receptionist, switchboard, and much more — all in one. Save tons of company expenses with ARIA.</p></div><div class="rounded-2xl border border-[#c5a059]/30 overflow-hidden" style="background:#000"><iframe src="/aria" loading="lazy" title="ARIA — AI Technical Assistant" style="width:100%;height:1100px;border:0;display:block;background:#000"></iframe></div></div>';
+            parent.insertBefore(intro, sc);
+            parent.insertBefore(aria, sc);
+            ["aria-cinematics","aria-capabilities","aria-revolution","aria-demo"].forEach(function(id){
+                     var el = document.getElementById(id);
+                     if (el) parent.insertBefore(el, sc);
+            });
+     }
+     if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", init);
+     } else {
+            init();
+     }
+})();
+
+
+/* ===== TRIAL TIMER + PAYWALL + PLANS LINK FIX (v2 2026-05-10) ===== */
+(function () {
+  "use strict";
+  if (window.self !== window.top) return;
+  var PLANS_PATH = "/plans/";
+  var TRIAL_MS = 3 * 60 * 1000;
+  var KEY = "aria_trial_started_at";
+  var ARIA_SECTION_IDS = ["introducing-aria", "aria-demo"];
+
+  function rewritePlansLinks() {
+    document.querySelectorAll("a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      var t = (a.textContent || "").toLowerCase().replace(/\s+/g, " ").trim();
+      if (h === "/aria?view=plans" || /[?&]view=plans/.test(h)) {
+        a.setAttribute("href", PLANS_PATH);
+        return;
+      }
+      if (h === "#solutions" && /view\s+plans/.test(t)) {
+        a.setAttribute("href", PLANS_PATH);
+      }
+    });
+  }
+
+  function fmt(ms) {
+    if (ms < 0) ms = 0;
+    var total = Math.ceil(ms / 1000);
+    var m = Math.floor(total / 60);
+    var s = total % 60;
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function getTrialStart() {
+    var s = null;
+    try { s = localStorage.getItem(KEY); } catch (e) {}
+    if (!s) {
+      s = Date.now().toString();
+      try { localStorage.setItem(KEY, s); } catch (e) {}
+    }
+    return parseInt(s, 10) || Date.now();
+  }
+
+  function injectStyles() {
+    if (document.getElementById("aria-trial-style")) return;
+    var css =
+      "#aria-trial-bar{position:fixed;top:0;left:0;right:0;z-index:9998;background:linear-gradient(90deg,#0a0805 0%,#1a1410 50%,#0a0805 100%);border-bottom:1px solid rgba(197,160,89,.45);padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:12px;font-family:Inter,sans-serif;font-size:12px;letter-spacing:.12em;color:#f1dca7}" +
+      "#aria-trial-bar .atb-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;animation:atbPulse 1.4s infinite}" +
+      "#aria-trial-bar.expired .atb-dot{background:#ef4444;box-shadow:0 0 6px #ef4444;animation:none}" +
+      "#aria-trial-bar .atb-time{font-family:Cinzel,serif;font-size:16px;color:#fff;letter-spacing:.04em;min-width:54px;text-align:center}" +
+      "#aria-trial-bar.expired .atb-time{color:#ef4444}" +
+      "#aria-trial-bar .atb-cta{background:#c5a059;color:#1a1410;padding:6px 14px;border-radius:10px;font-weight:700;text-decoration:none;letter-spacing:.15em;font-size:11px;font-family:Cinzel,serif;transition:transform .15s}" +
+      "#aria-trial-bar .atb-cta:hover{transform:translateY(-1px)}" +
+      "@keyframes atbPulse{0%,100%{opacity:1}50%{opacity:.35}}" +
+      "body.aria-trial-active{padding-top:42px !important}" +
+      "body.aria-trial-active nav.fixed{top:42px !important}" +
+      "@media (max-width:600px){#aria-trial-bar{font-size:10px;gap:8px;padding:6px 10px}#aria-trial-bar .atb-time{font-size:14px}#aria-trial-bar .atb-cta{padding:4px 10px;font-size:10px}}" +
+      ".aria-locked{position:relative}" +
+      ".aria-locked > *:not(.aria-locked-overlay){filter:blur(7px) saturate(.8);transition:filter .4s ease;pointer-events:none;user-select:none}" +
+      ".aria-locked-overlay{position:absolute;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at center,rgba(5,5,5,.45) 0%,rgba(5,5,5,.75) 100%);backdrop-filter:blur(2px);animation:lockFade .5s ease both}" +
+      "@keyframes lockFade{from{opacity:0}to{opacity:1}}" +
+      ".aria-locked-card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.55);border-radius:18px;padding:30px 32px;text-align:center;max-width:380px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(197,160,89,.18)}" +
+      ".aria-locked-card h3{font-family:Cinzel,serif;font-size:22px;color:#fff;margin:0 0 10px;letter-spacing:.02em}" +
+      ".aria-locked-card h3 .gold{color:#c5a059}" +
+      ".aria-locked-card p{color:rgba(255,255,255,.76);font-size:13.5px;line-height:1.6;margin:0 0 20px}" +
+      ".aria-locked-cta{display:inline-block;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;padding:12px 26px;border-radius:12px;font-family:Cinzel,serif;font-weight:700;letter-spacing:.15em;text-decoration:none;font-size:12px;transition:transform .15s,box-shadow .15s}" +
+      ".aria-locked-cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(197,160,89,.4)}" +
+      ".aria-locked-sub{margin-top:14px;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.08em}" +
+      ".aria-locked-sub a{color:#c5a059;text-decoration:none}" +
+      "#ariaFab.aria-locked-fab{filter:blur(4px) saturate(.7);opacity:.55;cursor:not-allowed !important;transition:filter .3s}";
+    var s = document.createElement("style");
+    s.id = "aria-trial-style";
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  function buildBar(remaining) {
+    var bar = document.createElement("div");
+    bar.id = "aria-trial-bar";
+    bar.innerHTML = '<span class="atb-dot"></span><span class="atb-label">FREE TRIAL</span>' +
+      '<span class="atb-time">' + fmt(remaining) + '</span>' +
+      '<span style="opacity:.55">remaining</span>' +
+      '<a class="atb-cta" href="' + PLANS_PATH + '">PICK A PLAN →</a>';
+    document.body.appendChild(bar);
+    document.body.classList.add("aria-trial-active");
+    return bar;
+  }
+
+  function blurAriaSections() {
+    ARIA_SECTION_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (el.querySelector(".aria-locked-overlay")) return;
+      el.classList.add("aria-locked");
+      var overlay = document.createElement("div");
+      overlay.className = "aria-locked-overlay";
+      overlay.innerHTML =
+        '<div class="aria-locked-card">' +
+          '<h3>Your <span class="gold">trial</span> is up</h3>' +
+          '<p>Pick a plan to keep using ARIA. The rest of the site stays open — explore as much as you want.</p>' +
+          '<a class="aria-locked-cta" href="' + PLANS_PATH + '">VIEW PLANS →</a>' +
+          '<div class="aria-locked-sub">Or <a href="mailto:integrateditsupp@gmail.com?subject=ARIA%20Sales%20Inquiry">talk to sales</a></div>' +
+        '</div>';
+      el.appendChild(overlay);
+    });
+    ["ariaFab","chatFab","installAppButton"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add("aria-locked-fab");
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.href = PLANS_PATH;
+      }, true);
+    });
+  }
+
+  function init() {
+    rewritePlansLinks();
+    var p = location.pathname;
+    if (p === PLANS_PATH || p === "/plans") return;
+    injectStyles();
+    var start = getTrialStart();
+    var remaining = TRIAL_MS - (Date.now() - start);
+    var bar = buildBar(Math.max(0, remaining));
+    var timeEl = bar.querySelector(".atb-time");
+    var labelEl = bar.querySelector(".atb-label");
+    function tick() {
+      var r = TRIAL_MS - (Date.now() - start);
+      if (r <= 0) {
+        bar.classList.add("expired");
+        labelEl.textContent = "TRIAL ENDED";
+        timeEl.textContent = "0:00";
+        blurAriaSections();
+        return;
+      }
+      timeEl.textContent = fmt(r);
+      setTimeout(tick, 1000);
+    }
+    tick();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+/* ===== VISION ROADMAP INJECTION (v2 2026-05-10) ===== */
+(function () {
+  "use strict";
+  if (window.self !== window.top) return;
+  var p = location.pathname;
+  if (p !== "/" && p !== "/index.html") return;
+
+  var MILESTONES = [
+    { status: "done",    title: "Small contracts closed",            desc: "2025 — $35K+ in real contracts. The first proof the model works in the field. Small businesses paying for real IT support." },
+    { status: "done",    title: "First long-term global contract",  desc: "2025 — $75K+/yr secured with a global company. Recurring revenue. Real partnership. The model scales." },
+    { status: "done",    title: "Reinvested for growth",            desc: "2025 — Revenue cycled back into skill, experience, and marketing development. We didn't pocket it — we built with it." },
+    { status: "done",    title: "ARIA brainstormed",                desc: "2026 — Vision initiated. The idea: an AI that replaces Tier 1, 2, and 3 IT support — and keeps expanding — with empathy, customer service, professionalism, and 24/7 availability. Saving companies millions annually, plus time, effort, frustration, and burn-out. Educating users along the way. Our focus isn't greed — that's why we're kept around for more opportunities inside large firms." },
+    { status: "done",    title: "ARIA conceived — with AI",         desc: "With AI's help, ARIA was conceived and continues as a work in progress. We keep adding capabilities and skills so businesses keep benefiting. We work hard to keep our clients happy and grow with them — as does ARIA." },
+    { status: "done",    title: "Knowledge base built",             desc: "100+ deep IT support articles — Windows, Mac, M365, networking, security, mobile. ARIA also supports businesses uploading their own knowledge base, so it follows your processes, procedures, and work culture." },
+    { status: "done",    title: "Live on iisupp.net",               desc: "Web platform with chat, voice, and live demo. The product is real. You're using it right now." },
+    { status: "done",    title: "Plans & payment infrastructure",   desc: "Five tiers, lifetime access, acquisition pathway, Stripe-secured checkout. Revenue rails laid down." },
+    { status: "done",    title: "Forced trial & paywall",           desc: "3-minute web trial with countdown. Pay or pick a plan. Real conversion mechanics, not vanity numbers." },
+    { status: "current", title: "Connecting with brands & companies", desc: "Where we are right now. Building real partnerships. Real contracts. Proving the model in the field, one customer at a time." },
+    { status: "future",  title: "Global expansion",                desc: "Multi-region, multi-language. Wherever a business needs IT support, ARIA shows up — North America, Europe, Asia, beyond." },
+    { status: "future",  title: "Charity support, pro bono",       desc: "Free ARIA for non-profits doing the work governments won't. Their tech burden becomes our responsibility." },
+    { status: "future",  title: "Reimagining education — with respect", desc: "Education is the most important part of our lives. It must change and grow with us — but never by tearing down the hardship and dedication of the generations before. We stay appreciative and aware. There is no good done from negativity; start negative and you end with a toxic message. We're not perfect — we strive for balance. To those who 'badmouth' the system, we understand the pain behind it, and we're with you too. Lead by great example: not by acting perfect, but by being vulnerable and true to our humanity." },
+    { status: "future",  title: "Eliminating real-world problems", desc: "Hunger. Housing. Mental health. Loneliness. We pick problems we can move with technology and patience — and we move them." },
+    { status: "future",  title: "Expanding into virtual worlds",  desc: "VR, AR, spatial computing. ARIA goes wherever humans go. But our feet stay on planet earth — the virtual serves the real, not the other way around." },
+    { status: "future",  title: "Mental health & human connection", desc: "Tech should bring people closer to themselves, to each other, to their lives. Not pull them away. We build for that line." }
+  ]
+
+  function injectStyles() {
+    if (document.getElementById("rm-style")) return;
+    var css =
+      "#vision-roadmap{position:relative;padding:90px 20px 120px;max-width:1200px;margin:0 auto;overflow:hidden;z-index:2}" +
+      "#vision-roadmap .rm-head{text-align:center;max-width:760px;margin:0 auto 64px;position:relative;z-index:2}" +
+      "#vision-roadmap .rm-tag{color:#c5a059;font-size:11px;letter-spacing:.34em;margin:0 0 14px;text-transform:uppercase}" +
+      "#vision-roadmap h2{font-family:Cinzel,serif;font-size:44px;font-weight:700;color:#fff;margin:0 0 18px;line-height:1.1}" +
+      "#vision-roadmap h2 .rm-gold{color:#c5a059}" +
+      "#vision-roadmap .rm-sub{color:rgba(255,255,255,.72);font-size:16px;line-height:1.6;margin:0}" +
+      "#vision-roadmap .rm-track{position:relative}" +
+      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:60px;padding-top:24px}" +
+      "#vision-roadmap .rm-tree{position:absolute;left:50%;top:0;width:240px;height:100%;transform:translateX(-50%);z-index:1;pointer-events:none}" +
+      "#vision-roadmap .rm-stone::before{content:'';position:absolute;top:50%;height:1.5px;transform:translateY(-50%);z-index:1;pointer-events:none;box-shadow:0 0 6px rgba(241,220,167,.4)}" +
+      "#vision-roadmap .rm-stone.left::before{right:50%;width:36%;background:linear-gradient(270deg,rgba(241,220,167,.85),rgba(241,220,167,0))}" +
+      "#vision-roadmap .rm-stone.right::before{left:50%;width:36%;background:linear-gradient(90deg,rgba(241,220,167,.85),rgba(241,220,167,0))}" +
+      "@media (max-width:720px){#vision-roadmap .rm-tree,#vision-roadmap .rm-stone::before{display:none}}" +
+      "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 64px 1fr;gap:14px;align-items:center;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
+      "#vision-roadmap .rm-stone.visible{opacity:1;transform:translateY(0)}" +
+      "#vision-roadmap .rm-card{background:none;border:none;border-radius:0;padding:14px 22px;box-shadow:none;transition:none}" +
+      "#vision-roadmap .rm-card:hover{background:none;border:none;box-shadow:none}" +
+      "#vision-roadmap .rm-stone.left .rm-card{grid-column:1;text-align:right}" +
+      "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left}" +
+      "#vision-roadmap .rm-stone.left .rm-spacer{grid-column:3}" +
+      "#vision-roadmap .rm-stone.right .rm-spacer{grid-column:1}" +
+      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:11px;letter-spacing:.04em;position:relative}" +
+      "#vision-roadmap .rm-card h3{font-family:Cinzel,serif;font-size:18px;color:#f1dca7;margin:0 0 8px;letter-spacing:.02em;line-height:1.25}" +
+      "#vision-roadmap .rm-card p{color:rgba(241,220,167,.78);font-size:13.5px;line-height:1.65;margin:0}" +
+      "#vision-roadmap .rm-badge{display:inline-block;margin-top:10px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-family:Cinzel,serif;font-weight:700;padding:3px 10px;border-radius:6px}" +
+      "#vision-roadmap .rm-stone.done .rm-node{background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);color:#fff;box-shadow:0 0 16px rgba(34,197,94,.55),inset 0 0 0 1.5px rgba(255,255,255,.18)}" +
+      "#vision-roadmap .rm-stone.done .rm-card{border-color:rgba(34,197,94,.35)}" +
+      "#vision-roadmap .rm-stone.done .rm-badge{background:rgba(34,197,94,.16);color:#86efac;border:1px solid rgba(34,197,94,.4)}" +
+      "#vision-roadmap .rm-stone.current .rm-node{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;box-shadow:0 0 22px rgba(241,220,167,.7),inset 0 0 0 1.5px rgba(255,255,255,.25);animation:rmPulse 2.2s infinite}" +
+      "#vision-roadmap .rm-stone.current .rm-card{border-color:rgba(241,220,167,.6);background:linear-gradient(165deg,#1a1410 0%,#251a12 100%);box-shadow:0 0 50px rgba(241,220,167,.18)}" +
+      "#vision-roadmap .rm-stone.current .rm-card h3{color:#fff;font-size:20px}" +
+      "#vision-roadmap .rm-stone.current .rm-badge{background:rgba(241,220,167,.16);color:#f1dca7;border:1px solid rgba(241,220,167,.5)}" +
+      "@keyframes rmPulse{0%,100%{box-shadow:0 0 22px rgba(241,220,167,.7),inset 0 0 0 1.5px rgba(255,255,255,.25)}50%{box-shadow:0 0 36px rgba(241,220,167,1),inset 0 0 0 1.5px rgba(255,255,255,.4)}}" +
+      "#vision-roadmap .rm-stone.future .rm-node{background:rgba(197,160,89,.08);color:#c5a059;border:1.5px dashed rgba(197,160,89,.55)}" +
+      "#vision-roadmap .rm-stone.future .rm-card{border-color:rgba(197,160,89,.18);opacity:.9}" +
+      "#vision-roadmap .rm-stone.future .rm-card h3{color:#f1dca7;opacity:.85}" +
+      "#vision-roadmap .rm-stone.future .rm-badge{background:rgba(197,160,89,.08);color:#c5a059;border:1px solid rgba(197,160,89,.3)}" +
+      "#vision-roadmap .rm-dream{margin-top:80px;text-align:center;position:relative;z-index:2;padding:48px 28px;background:radial-gradient(ellipse at center,rgba(197,160,89,.12) 0%,transparent 70%)}" +
+      "#vision-roadmap .rm-dream .rm-star{width:72px;height:72px;margin:0 auto 28px;border-radius:50%;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#c5a059 100%);display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:32px;color:#1a1410;box-shadow:0 0 70px rgba(241,220,167,.6),inset 0 0 0 1.5px rgba(255,255,255,.3);animation:rmStar 4s infinite}" +
+      "@keyframes rmStar{0%,100%{box-shadow:0 0 70px rgba(241,220,167,.6),inset 0 0 0 1.5px rgba(255,255,255,.3)}50%{box-shadow:0 0 110px rgba(241,220,167,.95),inset 0 0 0 1.5px rgba(255,255,255,.5)}}" +
+      "#vision-roadmap .rm-dream blockquote{font-family:Cinzel,serif;font-size:24px;font-style:italic;color:#f1dca7;margin:0;line-height:1.65;font-weight:400}" +
+      "#vision-roadmap .rm-dream blockquote .rm-line{display:block}" +
+      "#vision-roadmap .rm-dream cite{display:block;margin-top:22px;font-family:Inter,sans-serif;font-size:11px;font-style:normal;color:rgba(255,255,255,.55);letter-spacing:.32em;text-transform:uppercase}" +
+      "#vision-roadmap .rm-motto{text-align:center;margin:40px auto 0;max-width:600px;color:rgba(255,255,255,.55);font-size:13px;font-style:italic;letter-spacing:.04em;line-height:1.6}" +
+      "@media (max-width:720px){" +
+        "#vision-roadmap{padding:60px 16px 80px}" +
+        "#vision-roadmap h2{font-size:32px}" +
+        "#vision-roadmap .rm-stone{grid-template-columns:48px 1fr;gap:14px}" +
+        "#vision-roadmap .rm-stone.left .rm-card,#vision-roadmap .rm-stone.right .rm-card{grid-column:2;text-align:left}" +
+        "#vision-roadmap .rm-stone.left .rm-spacer,#vision-roadmap .rm-stone.right .rm-spacer{display:none}" +
+        "#vision-roadmap .rm-node{grid-column:1;width:34px;height:34px;font-size:10px}" +
+        "#vision-roadmap .rm-card{padding:18px 20px}" +
+        "#vision-roadmap .rm-dream blockquote{font-size:18px}" +
+      "}";
+    var s = document.createElement("style");
+    s.id = "rm-style";
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  function buildSVGTrunk() {
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("class", "rm-tree");
+    svg.setAttribute("viewBox", "0 0 240 1500");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    svg.innerHTML =
+      '<defs><linearGradient id="rmTrunk" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#c5a059" stop-opacity="0.2"/><stop offset="8%" stop-color="#c5a059" stop-opacity="0.85"/><stop offset="50%" stop-color="#f1dca7" stop-opacity="1"/><stop offset="92%" stop-color="#c5a059" stop-opacity="0.85"/><stop offset="100%" stop-color="#c5a059" stop-opacity="0.2"/></linearGradient><filter id="rmTreeGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+      '<path d="M 120 0 C 145 120, 95 240, 120 360 C 145 480, 95 600, 120 720 C 145 840, 95 960, 120 1080 C 145 1200, 95 1320, 120 1440 L 120 1500" stroke="url(#rmTrunk)" stroke-width="2.5" fill="none" filter="url(#rmTreeGlow)"/>' +
+      '<path d="M 120 180 Q 100 195, 88 215" stroke="url(#rmTrunk)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmTreeGlow)"/>' +
+      '<path d="M 120 540 Q 140 555, 152 575" stroke="url(#rmTrunk)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmTreeGlow)"/>' +
+      '<path d="M 120 900 Q 100 915, 88 935" stroke="url(#rmTrunk)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmTreeGlow)"/>' +
+      '<path d="M 120 1260 Q 140 1275, 152 1295" stroke="url(#rmTrunk)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmTreeGlow)"/>';
+    return svg;
+  }
+
+  function buildRoadmap() {
+    var section = document.createElement("section");
+    section.id = "vision-roadmap";
+    var head = document.createElement("div");
+    head.className = "rm-head";
+    head.innerHTML =
+      '<p class="rm-tag">THE ROAD AHEAD</p>' +
+      '<h2>From <span class="rm-gold">here</span> to <span class="rm-gold">everywhere</span></h2>' +
+      '<p class="rm-sub">A dreamer\'s roadmap. Where we are. Where we are going. And why this story does not end.</p>';
+    section.appendChild(head);
+
+    var track = document.createElement("div");
+    track.className = "rm-track";
+    track.appendChild(buildSVGTrunk());
+
+    var stones = document.createElement("div");
+    stones.className = "rm-stones";
+
+    MILESTONES.forEach(function (m, i) {
+      var side = (i % 2 === 0) ? "left" : "right";
+      var stone = document.createElement("div");
+      stone.className = "rm-stone " + m.status + " " + side;
+      var nodeContent = m.status === "done" ? "&#10003;" : (m.status === "current" ? "&#9203;" : String(i + 1));
+      var badge = m.status === "done" ? '<span class="rm-badge">Live</span>' :
+                  (m.status === "current" ? '<span class="rm-badge">In progress</span>' :
+                   '<span class="rm-badge">Coming</span>');
+      stone.innerHTML =
+        '<div class="rm-card"><h3>' + m.title + '</h3><p>' + m.desc + '</p>' + badge + '</div>' +
+        '<div class="rm-node">' + nodeContent + '</div>' +
+        '<div class="rm-spacer"></div>';
+      stones.appendChild(stone);
+    });
+
+    track.appendChild(stones);
+
+    var dream = document.createElement("div");
+    dream.className = "rm-dream";
+    dream.innerHTML =
+      '<div class="rm-star">A</div>' +
+      '<blockquote>' +
+        '<span class="rm-line">A dreamer never stops dreaming. There is no finish line.</span>' +
+        '<span class="rm-line">Stories continue, one way or another.</span>' +
+      '</blockquote>' +
+      '<cite>&mdash; The founder</cite>';
+    track.appendChild(dream);
+
+    var motto = document.createElement("div");
+    motto.className = "rm-motto";
+    motto.textContent = "The bigger we grow, the greater we build — we'll never stop efforts in growing!";
+    track.appendChild(motto);
+
+    section.appendChild(track);
+    return section;
+  }
+
+  function init() {
+    var sc = document.getElementById("service-center");
+    var ariaDemo = document.getElementById("aria-demo");
+    var anchor = ariaDemo || sc;
+    if (!anchor) return;
+    if (document.getElementById("vision-roadmap")) return;
+    injectStyles();
+    var section = buildRoadmap();
+    anchor.parentNode.insertBefore(section, anchor.nextSibling);
+
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add("visible");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: "0px 0px -80px 0px" });
+      section.querySelectorAll(".rm-stone").forEach(function (s) { io.observe(s); });
+    } else {
+      section.querySelectorAll(".rm-stone").forEach(function (s) { s.classList.add("visible"); });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+/* ===== GLOBAL SIDE ROOTS (v2 2026-05-10 — two side lines from welcome to dream) ===== */
+(function () {
+  "use strict";
+  if (window.self !== window.top) return;
+  var p = location.pathname;
+  if (p !== "/" && p !== "/index.html") return;
+
+  var SVG_NS = "http://www.w3.org/2000/svg";
+
+  function injectStyles() {
+    if (document.getElementById("gr-style")) return;
+    var css =
+      "#global-roots{position:absolute;left:0;width:100%;z-index:1;pointer-events:none}" +
+      "@media (max-width:720px){#global-roots{opacity:.55}}";
+    var s = document.createElement("style");
+    s.id = "gr-style";
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  function build() {
+    var top = document.getElementById("company-intro");
+    var bottom = document.getElementById("vision-roadmap");
+    if (!top || !bottom) return;
+    var topY = top.offsetTop;
+    var bottomY = bottom.offsetTop + bottom.offsetHeight;
+    var height = Math.max(800, bottomY - topY);
+
+    var prev = document.getElementById("global-roots");
+    if (prev) prev.remove();
+
+    document.body.style.position = "relative";
+
+    var svg = document.createElementNS(SVG_NS, "svg");
+    svg.id = "global-roots";
+    svg.setAttribute("viewBox", "0 0 1600 " + height);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    svg.style.top = topY + "px";
+    svg.style.height = height + "px";
+
+    function p(d, w, op) {
+      return '<path d="' + d + '" stroke="url(#grRoots)" stroke-width="' + w + '" fill="none" opacity="' + op + '" filter="url(#grGlow)"/>';
+    }
+
+    var h = height;
+    svg.innerHTML =
+      '<defs>' +
+        '<linearGradient id="grRoots" x1="0%" y1="0%" x2="0%" y2="100%">' +
+          '<stop offset="0%" stop-color="#c5a059" stop-opacity="0"/>' +
+          '<stop offset="4%" stop-color="#c5a059" stop-opacity="0.5"/>' +
+          '<stop offset="50%" stop-color="#f1dca7" stop-opacity="0.85"/>' +
+          '<stop offset="96%" stop-color="#c5a059" stop-opacity="0.5"/>' +
+          '<stop offset="100%" stop-color="#c5a059" stop-opacity="0"/>' +
+        '</linearGradient>' +
+        '<filter id="grGlow" x="-50%" y="-50%" width="200%" height="200%">' +
+          '<feGaussianBlur stdDeviation="3.5" result="b"/>' +
+          '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+        '</filter>' +
+      '</defs>' +
+      p("M 90 0 C 70 " + (h*0.15) + ", 110 " + (h*0.32) + ", 80 " + (h*0.5) + " C 50 " + (h*0.68) + ", 100 " + (h*0.85) + ", 80 " + h, 2.2, 1) +
+      p("M 1510 0 C 1530 " + (h*0.15) + ", 1490 " + (h*0.32) + ", 1520 " + (h*0.5) + " C 1550 " + (h*0.68) + ", 1500 " + (h*0.85) + ", 1520 " + h, 2.2, 1) +
+      p("M 80 " + (h*0.12) + " Q 50 " + (h*0.14) + ", 25 " + (h*0.17), 1.3, 0.55) +
+      p("M 1520 " + (h*0.28) + " Q 1555 " + (h*0.30) + ", 1580 " + (h*0.33), 1.3, 0.55) +
+      p("M 85 " + (h*0.42) + " Q 50 " + (h*0.44) + ", 20 " + (h*0.47), 1.3, 0.5) +
+      p("M 1515 " + (h*0.58) + " Q 1555 " + (h*0.60) + ", 1582 " + (h*0.63), 1.3, 0.5) +
+      p("M 80 " + (h*0.72) + " Q 45 " + (h*0.74) + ", 18 " + (h*0.77), 1.3, 0.5) +
+      p("M 1520 " + (h*0.88) + " Q 1555 " + (h*0.90) + ", 1582 " + (h*0.93), 1.3, 0.5);
+
+    document.body.appendChild(svg);
+  }
+
+  var pending = null;
+  function debouncedBuild() {
+    if (pending) clearTimeout(pending);
+    pending = setTimeout(build, 350);
+  }
+
+  function init() {
+    injectStyles();
+    setTimeout(build, 1800);
+    setTimeout(build, 4000);
+    window.addEventListener("resize", debouncedBuild);
+    if ("ResizeObserver" in window) {
+      var ro = new ResizeObserver(debouncedBuild);
+      setTimeout(function () {
+        var rm = document.getElementById("vision-roadmap");
+        if (rm) ro.observe(rm);
+        ro.observe(document.body);
+      }, 2200);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+
+/* ===== SERVICE CENTER STATUS LABELS (v1 2026-05-10) ===== */
+(function () {
+  "use strict";
+  if (window.self !== window.top) return;
+  var p = location.pathname;
+  if (p !== "/" && p !== "/index.html") return;
+  function init() {
+    var sc = document.getElementById("service-center");
+    if (!sc) return;
+    if (sc.querySelector(".sc-status-tag")) return;
+    var heading = sc.querySelector("h2, h1");
+    if (heading) {
+      var tag = document.createElement("p");
+      tag.className = "sc-status-tag";
+      tag.textContent = "IN PROGRESS";
+      tag.style.cssText = "color:#c5a059;font-size:10px;letter-spacing:.32em;margin:10px 0 0;font-family:Cinzel,serif;font-weight:700;text-transform:uppercase;text-align:center;opacity:.75";
+      heading.parentNode.insertBefore(tag, heading.nextSibling);
+    }
+    var footer = document.createElement("p");
+    footer.className = "sc-footer-status";
+    footer.textContent = "Completing soon";
+    footer.style.cssText = "color:rgba(241,220,167,.55);font-size:13px;font-style:italic;letter-spacing:.06em;text-align:center;margin:40px auto 0;font-family:Cinzel,serif";
+    sc.appendChild(footer);
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+
+/* Service Center male professional voice helper */
+(function(){if(window.serviceCenterSpeakText)return;window.serviceCenterSpeakText=function(text){if(!("speechSynthesis" in window))return;try{window.speechSynthesis.cancel();}catch(e){}var u=new SpeechSynthesisUtterance(text);try{var voices=window.speechSynthesis.getVoices();var pref=["Daniel","Alex","Microsoft David","Google UK English Male","Microsoft Mark","Tom","James","Reed","Fred","Lee","Oliver","Aaron","Arthur"];var pick=null;for(var i=0;i<pref.length&&!pick;i++){var np=pref[i];pick=voices.find(function(v){return v.name===np||v.name.indexOf(np)>=0;});}if(pick)u.voice=pick;u.rate=0.97;u.pitch=0.92;}catch(e){}u.volume=1.0;window.speechSynthesis.speak(u);};})();
+
+
+/* ARIA fab lock + /aria standalone 5-min trial overlay */
+(function(){
+  var css = '#ariaFab.aria-locked-fab{cursor:pointer !important}'+
+    '#ariaFab.aria-locked-fab::after{content:"\\1F512";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#c5a059;text-shadow:0 0 6px rgba(0,0,0,.7);filter:none;pointer-events:none;z-index:2}'+
+    '#aria5Modal{position:fixed;inset:0;background:rgba(8,5,2,.78);backdrop-filter:blur(10px);z-index:99999;display:flex;align-items:center;justify-content:center;animation:aria5Fade .4s ease}'+
+    '#aria5Modal .a5-card{background:linear-gradient(160deg,#100b06,#1a1209);border:1px solid rgba(197,160,89,.45);border-radius:18px;padding:36px 30px;max-width:440px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(197,160,89,.18)}'+
+    '#aria5Modal h2{font-family:Cinzel,serif;color:#c5a059;font-size:24px;margin:0 0 12px;letter-spacing:.02em}'+
+    '#aria5Modal p{color:rgba(255,255,255,.78);margin:0 0 22px;line-height:1.55;font-size:15px}'+
+    '#aria5Modal a{display:inline-block;padding:12px 22px;border-radius:8px;font-weight:600;text-decoration:none;margin:6px;font-size:14px;letter-spacing:.02em;transition:transform .15s}'+
+    '#aria5Modal a.a5-primary{background:linear-gradient(135deg,#c5a059,#9d7a3a);color:#0a0805}'+
+    '#aria5Modal a.a5-secondary{background:transparent;border:1px solid rgba(197,160,89,.45);color:#c5a059}'+
+    '#aria5Modal a:hover{transform:translateY(-2px)}'+
+    '@keyframes aria5Fade{from{opacity:0}to{opacity:1}}';
+  var st=document.createElement('style');st.id='aria5style';st.textContent=css;document.head.appendChild(st);
+  function intercept(){
+    var fab=document.getElementById('ariaFab');
+    if(!fab) return;
+    fab.addEventListener('click',function(e){
+      if(fab.classList.contains('aria-locked-fab')){ e.preventDefault(); e.stopPropagation(); window.location.href='/plans'; }
+    },true);
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',intercept);}else{intercept();}
+  function isAriaPage(){var p=location.pathname;return p==='/aria' || p==='/aria/' || /aria(\\.html)?$/i.test(p);}
+  if(!isAriaPage()) return;
+  var KEY='aria_standalone_5min_v1';
+  var DUR=5*60*1000;
+  var start=Number(localStorage.getItem(KEY))||0;
+  if(!start){start=Date.now();try{localStorage.setItem(KEY,String(start));}catch(e){}}
+  function showModal(){
+    if(document.getElementById('aria5Modal')) return;
+    var d=document.createElement('div');d.id='aria5Modal';
+    d.innerHTML='<div class="a5-card"><h2>Your ARIA preview has ended</h2><p>5 minutes is just a taste. Pick a plan to keep working with ARIA, or head back to the homepage.</p><a href="/plans" class="a5-primary">View Plans &amp; Pricing</a><a href="/" class="a5-secondary">Return to Homepage</a></div>';
+    document.body.appendChild(d);
+    var f=document.getElementById('ariaFab');if(f) f.classList.add('aria-locked-fab');
+    document.body.style.overflow='hidden';
+  }
+  var elapsed=Date.now()-start;
+  if(elapsed>=DUR){showModal();return;}
+  setTimeout(showModal, DUR-elapsed);
+})();
+
+
+/* Voice interrupt grammar + Get IT Support modal (lead capture) */
+(function(){
+  var INTERRUPT=/\b(pause|stop|wait|hold on|one sec|one second|hang on|halt)\b/i;
+  var RESUME=/\b(continue|go on|keep going|resume|carry on|proceed)\b/i;
+  var REPEAT=/\b(repeat|say that again|once more|go back)\b/i;
+  var lastUtter='';
+  if (typeof window.ariaSpeakText==='function'){
+    var origSpeak=window.ariaSpeakText;
+    window.ariaSpeakText=function(text){lastUtter=text||'';return origSpeak.apply(this,arguments);};
+  }
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var rec=null,recOn=false;
+  function startInterruptListener(){
+    if (!SR||recOn) return;
+    try {
+      rec=new SR();rec.continuous=true;rec.interimResults=true;rec.lang='en-US';
+      rec.onresult=function(ev){
+        for (var i=ev.resultIndex;i<ev.results.length;i++){
+          var t=ev.results[i][0].transcript||'';
+          if (INTERRUPT.test(t)) { try { window.speechSynthesis.pause(); } catch(e){} }
+          else if (RESUME.test(t)) { try { window.speechSynthesis.resume(); } catch(e){} }
+          else if (REPEAT.test(t) && lastUtter) { try { window.speechSynthesis.cancel(); } catch(e){} if (typeof window.ariaSpeakText==='function') window.ariaSpeakText(lastUtter); }
+        }
+      };
+      rec.onerror=function(){recOn=false;};rec.onend=function(){recOn=false;};
+      rec.start();recOn=true;
+    } catch(e){recOn=false;}
+  }
+  function stopInterruptListener(){if (rec&&recOn){try{rec.stop();}catch(e){}recOn=false;}}
+  if (window.speechSynthesis){
+    var orig2=window.speechSynthesis.speak.bind(window.speechSynthesis);
+    window.speechSynthesis.speak=function(u){startInterruptListener();if(u&&!u.onend){u.onend=function(){setTimeout(function(){if(!window.speechSynthesis.speaking)stopInterruptListener();},800);};}return orig2(u);};
+  }
+  function gisCSS(){
+    if (document.getElementById('gisStyle')) return;
+    var css='#gisModal{position:fixed;inset:0;background:rgba(8,5,2,.78);backdrop-filter:blur(8px);z-index:99998;display:flex;align-items:center;justify-content:center}'
+      +'#gisModal .gis-card{background:linear-gradient(160deg,#100b06,#1a1209);border:1px solid rgba(197,160,89,.45);border-radius:16px;padding:30px 28px;max-width:480px;width:92%;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(197,160,89,.18)}'
+      +'#gisModal h3{font-family:Cinzel,serif;color:#c5a059;font-size:22px;margin:0 0 8px}'
+      +'#gisModal p.gis-sub{color:rgba(255,255,255,.72);margin:0 0 20px;font-size:14px;line-height:1.5}'
+      +'#gisModal label{display:block;color:rgba(241,220,167,.85);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 6px}'
+      +'#gisModal input,#gisModal textarea{width:100%;background:rgba(0,0,0,.45);border:1px solid rgba(197,160,89,.28);border-radius:8px;padding:10px 12px;color:#fff;font-size:14px;font-family:inherit;box-sizing:border-box}'
+      +'#gisModal textarea{min-height:90px;resize:vertical}'
+      +'#gisModal .gis-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}'
+      +'#gisModal button{padding:10px 18px;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:14px;font-family:inherit}'
+      +'#gisModal .gis-send{background:linear-gradient(135deg,#c5a059,#9d7a3a);color:#0a0805}'
+      +'#gisModal .gis-cancel{background:transparent;border:1px solid rgba(197,160,89,.4);color:#c5a059}'
+      +'#gisModal .gis-msg{margin-top:12px;font-size:13px;color:#b8e6b0}'
+      +'#gisModal .gis-err{color:#e6a0a0}'
+      +'#gisModal .gis-hp{display:none}';
+    var st=document.createElement('style');st.id='gisStyle';st.textContent=css;document.head.appendChild(st);
+  }
+  function showGIS(){
+    if (document.getElementById('gisModal')) return;
+    gisCSS();
+    var d=document.createElement('div');d.id='gisModal';
+    d.innerHTML='<div class="gis-card"><h3>Get IT Support</h3><p class="gis-sub">Tell us what you need help with. We email back fast.</p>'
+      +'<form name="get-it-support" data-netlify="true" netlify-honeypot="bot-field" method="POST">'
+      +'<input type="hidden" name="form-name" value="get-it-support">'
+      +'<p class="gis-hp"><input name="bot-field"></p>'
+      +'<label>Your name</label><input type="text" name="name" required>'
+      +'<label>Email</label><input type="email" name="email" required>'
+      +'<label>Phone (optional)</label><input type="tel" name="phone">'
+      +'<label>What do you need help with?</label><textarea name="issue" required></textarea>'
+      +'<div class="gis-msg" id="gisMsg"></div>'
+      +'<div class="gis-actions"><button type="button" class="gis-cancel" id="gisCancel">Cancel</button><button type="submit" class="gis-send">Send to Support</button></div>'
+      +'</form></div>';
+    document.body.appendChild(d);
+    document.getElementById('gisCancel').onclick=function(){d.remove();};
+    var form=d.querySelector('form');
+    form.onsubmit=function(ev){
+      ev.preventDefault();
+      var fd=new FormData(form);var body=new URLSearchParams();fd.forEach(function(v,k){body.append(k,v);});
+      var msg=document.getElementById('gisMsg');msg.textContent='Sending...';msg.className='gis-msg';
+      fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()})
+        .then(function(r){if(r.ok){msg.textContent='Sent. We will reply to your email shortly.';setTimeout(function(){d.remove();},2200);}else{msg.textContent='Send failed. Email integrateditsupp@gmail.com directly.';msg.className='gis-msg gis-err';}})
+        .catch(function(){msg.textContent='Send failed. Email integrateditsupp@gmail.com directly.';msg.className='gis-msg gis-err';});
+    };
+  }
+  window.openGetItSupport=showGIS;
+  function wireChatFab(){
+    var cf=document.getElementById('chatFab');
+    if (!cf||cf.__gisHooked) return;
+    cf.__gisHooked=true;
+    cf.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();showGIS();},true);
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',wireChatFab); else wireChatFab();
+  setTimeout(wireChatFab,1500);
+  function injectStaticForm(){
+    if (document.getElementById('gisStaticForm')) return;
+    var hf=document.createElement('form');hf.id='gisStaticForm';
+    hf.setAttribute('name','get-it-support');
+    hf.setAttribute('data-netlify','true');
+    hf.setAttribute('netlify-honeypot','bot-field');
+    hf.style.display='none';
+    hf.innerHTML='<input name="form-name" value="get-it-support"><input name="bot-field"><input name="name"><input name="email"><input name="phone"><textarea name="issue"></textarea>';
+    if (document.body) document.body.appendChild(hf);
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',injectStaticForm); else injectStaticForm();
 })();
