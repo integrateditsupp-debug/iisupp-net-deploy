@@ -890,13 +890,14 @@
 })();
 
 
-/* ===== TRIAL TIMER + PAYWALL + PLANS LINK FIX (2026-05-10) ===== */
+/* ===== TRIAL TIMER + PAYWALL + PLANS LINK FIX (v2 2026-05-10) ===== */
 (function () {
   "use strict";
-  if (window.self !== window.top) return; // skip when running inside an iframe
+  if (window.self !== window.top) return;
   var PLANS_PATH = "/plans/";
   var TRIAL_MS = 3 * 60 * 1000;
   var KEY = "aria_trial_started_at";
+  var ARIA_SECTION_IDS = ["introducing-aria", "aria-cinematics", "aria-capabilities", "aria-revolution", "aria-demo"];
 
   function rewritePlansLinks() {
     document.querySelectorAll("a").forEach(function (a) {
@@ -932,7 +933,7 @@
 
   function injectStyles() {
     if (document.getElementById("aria-trial-style")) return;
-    var css = "" +
+    var css =
       "#aria-trial-bar{position:fixed;top:0;left:0;right:0;z-index:9998;background:linear-gradient(90deg,#0a0805 0%,#1a1410 50%,#0a0805 100%);border-bottom:1px solid rgba(197,160,89,.45);padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:12px;font-family:Inter,sans-serif;font-size:12px;letter-spacing:.12em;color:#f1dca7}" +
       "#aria-trial-bar .atb-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;animation:atbPulse 1.4s infinite}" +
       "#aria-trial-bar.expired .atb-dot{background:#ef4444;box-shadow:0 0 6px #ef4444;animation:none}" +
@@ -944,19 +945,23 @@
       "body.aria-trial-active{padding-top:42px !important}" +
       "body.aria-trial-active nav.fixed{top:42px !important}" +
       "@media (max-width:600px){#aria-trial-bar{font-size:10px;gap:8px;padding:6px 10px}#aria-trial-bar .atb-time{font-size:14px}#aria-trial-bar .atb-cta{padding:4px 10px;font-size:10px}}" +
-      "#aria-trial-paywall{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.94);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:20px}" +
-      "#aria-trial-paywall .atp-card{max-width:560px;width:100%;background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.45);border-radius:22px;padding:48px 36px;text-align:center;box-shadow:0 50px 100px rgba(0,0,0,.6)}" +
-      "#aria-trial-paywall h2{font-family:Cinzel,serif;font-size:28px;color:#fff;margin:0 0 14px;line-height:1.2}" +
-      "#aria-trial-paywall h2 span{color:#c5a059}" +
-      "#aria-trial-paywall p{color:rgba(255,255,255,.75);margin:0 0 28px;line-height:1.6;font-size:14.5px}" +
-      "#aria-trial-paywall .atp-cta{display:inline-block;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;padding:14px 32px;border-radius:14px;font-family:Cinzel,serif;font-weight:700;letter-spacing:.15em;text-decoration:none;font-size:13px;transition:transform .15s,box-shadow .15s}" +
-      "#aria-trial-paywall .atp-cta:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(197,160,89,.4)}" +
-      "#aria-trial-paywall .atp-sub{color:rgba(255,255,255,.5);font-size:11px;margin-top:22px;letter-spacing:.12em;text-transform:uppercase}" +
-      "#aria-trial-paywall .atp-sub a{color:#c5a059;text-decoration:none}";
-    var style = document.createElement("style");
-    style.id = "aria-trial-style";
-    style.textContent = css;
-    document.head.appendChild(style);
+      ".aria-locked{position:relative}" +
+      ".aria-locked > *:not(.aria-locked-overlay){filter:blur(7px) saturate(.8);transition:filter .4s ease;pointer-events:none;user-select:none}" +
+      ".aria-locked-overlay{position:absolute;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at center,rgba(5,5,5,.45) 0%,rgba(5,5,5,.75) 100%);backdrop-filter:blur(2px);animation:lockFade .5s ease both}" +
+      "@keyframes lockFade{from{opacity:0}to{opacity:1}}" +
+      ".aria-locked-card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.55);border-radius:18px;padding:30px 32px;text-align:center;max-width:380px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(197,160,89,.18)}" +
+      ".aria-locked-card h3{font-family:Cinzel,serif;font-size:22px;color:#fff;margin:0 0 10px;letter-spacing:.02em}" +
+      ".aria-locked-card h3 .gold{color:#c5a059}" +
+      ".aria-locked-card p{color:rgba(255,255,255,.76);font-size:13.5px;line-height:1.6;margin:0 0 20px}" +
+      ".aria-locked-cta{display:inline-block;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;padding:12px 26px;border-radius:12px;font-family:Cinzel,serif;font-weight:700;letter-spacing:.15em;text-decoration:none;font-size:12px;transition:transform .15s,box-shadow .15s}" +
+      ".aria-locked-cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(197,160,89,.4)}" +
+      ".aria-locked-sub{margin-top:14px;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.08em}" +
+      ".aria-locked-sub a{color:#c5a059;text-decoration:none}" +
+      ".aria-locked-fab{filter:blur(4px) saturate(.7);opacity:.55;cursor:not-allowed !important;transition:filter .3s}";
+    var s = document.createElement("style");
+    s.id = "aria-trial-style";
+    s.textContent = css;
+    document.head.appendChild(s);
   }
 
   function buildBar(remaining) {
@@ -971,18 +976,33 @@
     return bar;
   }
 
-  function buildPaywall() {
-    if (document.getElementById("aria-trial-paywall")) return;
-    var m = document.createElement("div");
-    m.id = "aria-trial-paywall";
-    m.innerHTML = '<div class="atp-card">' +
-      '<h2>Your <span>3-minute trial</span> is up.</h2>' +
-      '<p>You\'ve experienced what ARIA can do. Pick a plan to keep going — and replace the cost of an entire IT desk.</p>' +
-      '<a class="atp-cta" href="' + PLANS_PATH + '">VIEW PLANS →</a>' +
-      '<div class="atp-sub">Or <a href="mailto:integrateditsupp@gmail.com?subject=ARIA%20Sales%20Inquiry">talk to sales</a></div>' +
-      '</div>';
-    document.body.appendChild(m);
-    document.body.style.overflow = "hidden";
+  function blurAriaSections() {
+    ARIA_SECTION_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (el.querySelector(".aria-locked-overlay")) return;
+      el.classList.add("aria-locked");
+      var overlay = document.createElement("div");
+      overlay.className = "aria-locked-overlay";
+      overlay.innerHTML =
+        '<div class="aria-locked-card">' +
+          '<h3>Your <span class="gold">trial</span> is up</h3>' +
+          '<p>Pick a plan to keep using ARIA. The rest of the site stays open — explore as much as you want.</p>' +
+          '<a class="aria-locked-cta" href="' + PLANS_PATH + '">VIEW PLANS →</a>' +
+          '<div class="aria-locked-sub">Or <a href="mailto:integrateditsupp@gmail.com?subject=ARIA%20Sales%20Inquiry">talk to sales</a></div>' +
+        '</div>';
+      el.appendChild(overlay);
+    });
+    ["ariaFab","chatFab","installAppButton"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add("aria-locked-fab");
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.href = PLANS_PATH;
+      }, true);
+    });
   }
 
   function init() {
@@ -1001,7 +1021,7 @@
         bar.classList.add("expired");
         labelEl.textContent = "TRIAL ENDED";
         timeEl.textContent = "0:00";
-        buildPaywall();
+        blurAriaSections();
         return;
       }
       timeEl.textContent = fmt(r);
@@ -1017,8 +1037,7 @@
   }
 })();
 
-
-/* ===== VISION ROADMAP INJECTION (2026-05-10) ===== */
+/* ===== VISION ROADMAP INJECTION (v2 2026-05-10) ===== */
 (function () {
   "use strict";
   if (window.self !== window.top) return;
@@ -1034,55 +1053,24 @@
     { status: "current", title: "Connecting with brands & companies", desc: "Where we are right now. Building real partnerships. Real contracts. Proving the model in the field, one customer at a time." },
     { status: "future",  title: "Global expansion",               desc: "Multi-region, multi-language. Wherever a business needs IT support, ARIA shows up — North America, Europe, Asia, beyond." },
     { status: "future",  title: "Charity support, pro bono",      desc: "Free ARIA for non-profits doing the work governments won't. Their tech burden becomes our responsibility." },
-    { status: "future",  title: "Building new charities",         desc: "A founder's childhood dream: new methods of education that actually work for the kids who fall through the cracks. ARIA-powered, human-led." },
+    { status: "future",  title: "Reimagining education — with respect", desc: "Education is the most important part of our lives. It must change and grow with us — but never by tearing down the hardship and dedication of the generations before. We stay appreciative and aware. There is no good done from negativity; start negative and you end with a toxic message. We're not perfect — we strive for balance. To those who 'badmouth' the system, we understand the pain behind it, and we're with you too. Lead by great example: not by acting perfect, but by being vulnerable and true to our humanity." },
     { status: "future",  title: "Eliminating real-world problems", desc: "Hunger. Housing. Mental health. Loneliness. We pick problems we can move with technology and patience — and we move them." },
     { status: "future",  title: "Expanding into virtual worlds",  desc: "VR, AR, spatial computing. ARIA goes wherever humans go. But our feet stay on planet earth — the virtual serves the real, not the other way around." },
     { status: "future",  title: "Mental health & human connection", desc: "Tech should bring people closer to themselves, to each other, to their lives. Not pull them away. We build for that line." }
   ];
 
-  function buildSVG() {
-    var ns = "http://www.w3.org/2000/svg";
-    var svg = document.createElementNS(ns, "svg");
-    svg.setAttribute("class", "rm-roots");
-    svg.setAttribute("viewBox", "0 0 200 2200");
-    svg.setAttribute("preserveAspectRatio", "none");
-    svg.setAttribute("aria-hidden", "true");
-    svg.innerHTML =
-      '<defs>' +
-        '<linearGradient id="rmGold" x1="0%" y1="0%" x2="0%" y2="100%">' +
-          '<stop offset="0%" stop-color="#c5a059" stop-opacity="0.4"/>' +
-          '<stop offset="15%" stop-color="#f1dca7" stop-opacity="1"/>' +
-          '<stop offset="85%" stop-color="#c5a059" stop-opacity="0.9"/>' +
-          '<stop offset="100%" stop-color="#c5a059" stop-opacity="0.3"/>' +
-        '</linearGradient>' +
-        '<filter id="rmGlow" x="-50%" y="-50%" width="200%" height="200%">' +
-          '<feGaussianBlur stdDeviation="4" result="blur"/>' +
-          '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>' +
-        '</filter>' +
-      '</defs>' +
-      '<path d="M 100 0 C 115 200, 85 380, 100 560 C 115 740, 85 920, 100 1100 C 115 1280, 85 1460, 100 1640 C 115 1820, 90 2000, 100 2200" stroke="url(#rmGold)" stroke-width="2.5" fill="none" filter="url(#rmGlow)"/>' +
-      '<path d="M 100 220 Q 60 245, 30 280 Q 22 290, 18 305" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.55" filter="url(#rmGlow)"/>' +
-      '<path d="M 100 540 Q 145 565, 175 605 Q 184 618, 188 632" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.55" filter="url(#rmGlow)"/>' +
-      '<path d="M 100 880 Q 55 905, 24 945 Q 16 956, 12 970" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.55" filter="url(#rmGlow)"/>' +
-      '<path d="M 100 1240 Q 145 1265, 178 1305" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmGlow)"/>' +
-      '<path d="M 100 1600 Q 55 1625, 22 1665" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmGlow)"/>' +
-      '<path d="M 100 1980 Q 145 2005, 178 2045" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmGlow)"/>';
-    return svg;
-  }
-
   function injectStyles() {
     if (document.getElementById("rm-style")) return;
     var css =
-      "#vision-roadmap{position:relative;padding:90px 20px 120px;max-width:1200px;margin:0 auto;overflow:hidden}" +
+      "#vision-roadmap{position:relative;padding:90px 20px 120px;max-width:1200px;margin:0 auto;overflow:hidden;z-index:2}" +
       "#vision-roadmap .rm-head{text-align:center;max-width:760px;margin:0 auto 64px;position:relative;z-index:2}" +
       "#vision-roadmap .rm-tag{color:#c5a059;font-size:11px;letter-spacing:.34em;margin:0 0 14px;text-transform:uppercase}" +
       "#vision-roadmap h2{font-family:Cinzel,serif;font-size:44px;font-weight:700;color:#fff;margin:0 0 18px;line-height:1.1}" +
       "#vision-roadmap h2 .rm-gold{color:#c5a059}" +
       "#vision-roadmap .rm-sub{color:rgba(255,255,255,.72);font-size:16px;line-height:1.6;margin:0}" +
-      "#vision-roadmap .rm-track{position:relative;min-height:2200px}" +
-      "#vision-roadmap .rm-roots{position:absolute;left:50%;top:0;transform:translateX(-50%);width:240px;height:2200px;z-index:1;pointer-events:none}" +
-      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:48px;padding-top:40px}" +
-      "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 96px 1fr;gap:14px;align-items:center;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
+      "#vision-roadmap .rm-track{position:relative}" +
+      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:48px;padding-top:24px}" +
+      "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 64px 1fr;gap:14px;align-items:center;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
       "#vision-roadmap .rm-stone.visible{opacity:1;transform:translateY(0)}" +
       "#vision-roadmap .rm-card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.22);border-radius:16px;padding:22px 24px;transition:border-color .2s,box-shadow .2s}" +
       "#vision-roadmap .rm-card:hover{border-color:rgba(197,160,89,.55);box-shadow:0 18px 40px rgba(197,160,89,.14)}" +
@@ -1090,25 +1078,25 @@
       "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left}" +
       "#vision-roadmap .rm-stone.left .rm-spacer{grid-column:3}" +
       "#vision-roadmap .rm-stone.right .rm-spacer{grid-column:1}" +
-      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:14px;letter-spacing:.04em;position:relative}" +
+      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:11px;letter-spacing:.04em;position:relative}" +
       "#vision-roadmap .rm-card h3{font-family:Cinzel,serif;font-size:18px;color:#f1dca7;margin:0 0 8px;letter-spacing:.02em;line-height:1.25}" +
       "#vision-roadmap .rm-card p{color:rgba(255,255,255,.74);font-size:13.5px;line-height:1.6;margin:0}" +
       "#vision-roadmap .rm-badge{display:inline-block;margin-top:10px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-family:Cinzel,serif;font-weight:700;padding:3px 10px;border-radius:6px}" +
-      "#vision-roadmap .rm-stone.done .rm-node{background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);color:#fff;box-shadow:0 0 22px rgba(34,197,94,.55),inset 0 0 0 2px rgba(255,255,255,.18)}" +
+      "#vision-roadmap .rm-stone.done .rm-node{background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);color:#fff;box-shadow:0 0 16px rgba(34,197,94,.55),inset 0 0 0 1.5px rgba(255,255,255,.18)}" +
       "#vision-roadmap .rm-stone.done .rm-card{border-color:rgba(34,197,94,.35)}" +
       "#vision-roadmap .rm-stone.done .rm-badge{background:rgba(34,197,94,.16);color:#86efac;border:1px solid rgba(34,197,94,.4)}" +
-      "#vision-roadmap .rm-stone.current .rm-node{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;box-shadow:0 0 30px rgba(241,220,167,.7),inset 0 0 0 2px rgba(255,255,255,.25);animation:rmPulse 2.2s infinite}" +
+      "#vision-roadmap .rm-stone.current .rm-node{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;box-shadow:0 0 22px rgba(241,220,167,.7),inset 0 0 0 1.5px rgba(255,255,255,.25);animation:rmPulse 2.2s infinite}" +
       "#vision-roadmap .rm-stone.current .rm-card{border-color:rgba(241,220,167,.6);background:linear-gradient(165deg,#1a1410 0%,#251a12 100%);box-shadow:0 0 50px rgba(241,220,167,.18)}" +
       "#vision-roadmap .rm-stone.current .rm-card h3{color:#fff;font-size:20px}" +
       "#vision-roadmap .rm-stone.current .rm-badge{background:rgba(241,220,167,.16);color:#f1dca7;border:1px solid rgba(241,220,167,.5)}" +
-      "@keyframes rmPulse{0%,100%{box-shadow:0 0 30px rgba(241,220,167,.7),inset 0 0 0 2px rgba(255,255,255,.25)}50%{box-shadow:0 0 50px rgba(241,220,167,1),inset 0 0 0 2px rgba(255,255,255,.4)}}" +
+      "@keyframes rmPulse{0%,100%{box-shadow:0 0 22px rgba(241,220,167,.7),inset 0 0 0 1.5px rgba(255,255,255,.25)}50%{box-shadow:0 0 36px rgba(241,220,167,1),inset 0 0 0 1.5px rgba(255,255,255,.4)}}" +
       "#vision-roadmap .rm-stone.future .rm-node{background:rgba(197,160,89,.08);color:#c5a059;border:1.5px dashed rgba(197,160,89,.55)}" +
       "#vision-roadmap .rm-stone.future .rm-card{border-color:rgba(197,160,89,.18);opacity:.9}" +
       "#vision-roadmap .rm-stone.future .rm-card h3{color:#f1dca7;opacity:.85}" +
       "#vision-roadmap .rm-stone.future .rm-badge{background:rgba(197,160,89,.08);color:#c5a059;border:1px solid rgba(197,160,89,.3)}" +
       "#vision-roadmap .rm-dream{margin-top:80px;text-align:center;position:relative;z-index:2;padding:48px 28px;background:radial-gradient(ellipse at center,rgba(197,160,89,.12) 0%,transparent 70%)}" +
-      "#vision-roadmap .rm-dream .rm-star{width:84px;height:84px;margin:0 auto 28px;border-radius:50%;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#c5a059 100%);display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:38px;color:#1a1410;box-shadow:0 0 80px rgba(241,220,167,.6),inset 0 0 0 2px rgba(255,255,255,.3);animation:rmStar 4s infinite}" +
-      "@keyframes rmStar{0%,100%{box-shadow:0 0 80px rgba(241,220,167,.6),inset 0 0 0 2px rgba(255,255,255,.3)}50%{box-shadow:0 0 130px rgba(241,220,167,.95),inset 0 0 0 2px rgba(255,255,255,.5)}}" +
+      "#vision-roadmap .rm-dream .rm-star{width:72px;height:72px;margin:0 auto 28px;border-radius:50%;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#c5a059 100%);display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:32px;color:#1a1410;box-shadow:0 0 70px rgba(241,220,167,.6),inset 0 0 0 1.5px rgba(255,255,255,.3);animation:rmStar 4s infinite}" +
+      "@keyframes rmStar{0%,100%{box-shadow:0 0 70px rgba(241,220,167,.6),inset 0 0 0 1.5px rgba(255,255,255,.3)}50%{box-shadow:0 0 110px rgba(241,220,167,.95),inset 0 0 0 1.5px rgba(255,255,255,.5)}}" +
       "#vision-roadmap .rm-dream blockquote{font-family:Cinzel,serif;font-size:24px;font-style:italic;color:#f1dca7;margin:0;line-height:1.65;font-weight:400}" +
       "#vision-roadmap .rm-dream blockquote .rm-line{display:block}" +
       "#vision-roadmap .rm-dream cite{display:block;margin-top:22px;font-family:Inter,sans-serif;font-size:11px;font-style:normal;color:rgba(255,255,255,.55);letter-spacing:.32em;text-transform:uppercase}" +
@@ -1116,11 +1104,10 @@
       "@media (max-width:720px){" +
         "#vision-roadmap{padding:60px 16px 80px}" +
         "#vision-roadmap h2{font-size:32px}" +
-        "#vision-roadmap .rm-roots{left:32px;width:64px}" +
-        "#vision-roadmap .rm-stone{grid-template-columns:64px 1fr;gap:14px}" +
+        "#vision-roadmap .rm-stone{grid-template-columns:48px 1fr;gap:14px}" +
         "#vision-roadmap .rm-stone.left .rm-card,#vision-roadmap .rm-stone.right .rm-card{grid-column:2;text-align:left}" +
         "#vision-roadmap .rm-stone.left .rm-spacer,#vision-roadmap .rm-stone.right .rm-spacer{display:none}" +
-        "#vision-roadmap .rm-node{grid-column:1;width:44px;height:44px;font-size:12px}" +
+        "#vision-roadmap .rm-node{grid-column:1;width:34px;height:34px;font-size:10px}" +
         "#vision-roadmap .rm-card{padding:18px 20px}" +
         "#vision-roadmap .rm-dream blockquote{font-size:18px}" +
       "}";
@@ -1143,7 +1130,6 @@
 
     var track = document.createElement("div");
     track.className = "rm-track";
-    track.appendChild(buildSVG());
 
     var stones = document.createElement("div");
     stones.className = "rm-stones";
@@ -1208,6 +1194,106 @@
       section.querySelectorAll(".rm-stone").forEach(function (s) { io.observe(s); });
     } else {
       section.querySelectorAll(".rm-stone").forEach(function (s) { s.classList.add("visible"); });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+/* ===== GLOBAL SIDE ROOTS (v2 2026-05-10 — two side lines from welcome to dream) ===== */
+(function () {
+  "use strict";
+  if (window.self !== window.top) return;
+  var p = location.pathname;
+  if (p !== "/" && p !== "/index.html") return;
+
+  var SVG_NS = "http://www.w3.org/2000/svg";
+
+  function injectStyles() {
+    if (document.getElementById("gr-style")) return;
+    var css =
+      "#global-roots{position:absolute;left:0;width:100%;z-index:1;pointer-events:none}" +
+      "@media (max-width:720px){#global-roots{opacity:.55}}";
+    var s = document.createElement("style");
+    s.id = "gr-style";
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  function build() {
+    var top = document.getElementById("company-intro");
+    var bottom = document.getElementById("vision-roadmap");
+    if (!top || !bottom) return;
+    var topY = top.offsetTop;
+    var bottomY = bottom.offsetTop + bottom.offsetHeight;
+    var height = Math.max(800, bottomY - topY);
+
+    var prev = document.getElementById("global-roots");
+    if (prev) prev.remove();
+
+    document.body.style.position = "relative";
+
+    var svg = document.createElementNS(SVG_NS, "svg");
+    svg.id = "global-roots";
+    svg.setAttribute("viewBox", "0 0 1600 " + height);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    svg.style.top = topY + "px";
+    svg.style.height = height + "px";
+
+    function p(d, w, op) {
+      return '<path d="' + d + '" stroke="url(#grRoots)" stroke-width="' + w + '" fill="none" opacity="' + op + '" filter="url(#grGlow)"/>';
+    }
+
+    var h = height;
+    svg.innerHTML =
+      '<defs>' +
+        '<linearGradient id="grRoots" x1="0%" y1="0%" x2="0%" y2="100%">' +
+          '<stop offset="0%" stop-color="#c5a059" stop-opacity="0"/>' +
+          '<stop offset="4%" stop-color="#c5a059" stop-opacity="0.5"/>' +
+          '<stop offset="50%" stop-color="#f1dca7" stop-opacity="0.85"/>' +
+          '<stop offset="96%" stop-color="#c5a059" stop-opacity="0.5"/>' +
+          '<stop offset="100%" stop-color="#c5a059" stop-opacity="0"/>' +
+        '</linearGradient>' +
+        '<filter id="grGlow" x="-50%" y="-50%" width="200%" height="200%">' +
+          '<feGaussianBlur stdDeviation="3.5" result="b"/>' +
+          '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+        '</filter>' +
+      '</defs>' +
+      p("M 90 0 C 70 " + (h*0.15) + ", 110 " + (h*0.32) + ", 80 " + (h*0.5) + " C 50 " + (h*0.68) + ", 100 " + (h*0.85) + ", 80 " + h, 2.2, 1) +
+      p("M 1510 0 C 1530 " + (h*0.15) + ", 1490 " + (h*0.32) + ", 1520 " + (h*0.5) + " C 1550 " + (h*0.68) + ", 1500 " + (h*0.85) + ", 1520 " + h, 2.2, 1) +
+      p("M 80 " + (h*0.12) + " Q 50 " + (h*0.14) + ", 25 " + (h*0.17), 1.3, 0.55) +
+      p("M 1520 " + (h*0.28) + " Q 1555 " + (h*0.30) + ", 1580 " + (h*0.33), 1.3, 0.55) +
+      p("M 85 " + (h*0.42) + " Q 50 " + (h*0.44) + ", 20 " + (h*0.47), 1.3, 0.5) +
+      p("M 1515 " + (h*0.58) + " Q 1555 " + (h*0.60) + ", 1582 " + (h*0.63), 1.3, 0.5) +
+      p("M 80 " + (h*0.72) + " Q 45 " + (h*0.74) + ", 18 " + (h*0.77), 1.3, 0.5) +
+      p("M 1520 " + (h*0.88) + " Q 1555 " + (h*0.90) + ", 1582 " + (h*0.93), 1.3, 0.5);
+
+    document.body.appendChild(svg);
+  }
+
+  var pending = null;
+  function debouncedBuild() {
+    if (pending) clearTimeout(pending);
+    pending = setTimeout(build, 350);
+  }
+
+  function init() {
+    injectStyles();
+    setTimeout(build, 1800);
+    setTimeout(build, 4000);
+    window.addEventListener("resize", debouncedBuild);
+    if ("ResizeObserver" in window) {
+      var ro = new ResizeObserver(debouncedBuild);
+      setTimeout(function () {
+        var rm = document.getElementById("vision-roadmap");
+        if (rm) ro.observe(rm);
+        ro.observe(document.body);
+      }, 2200);
     }
   }
 
