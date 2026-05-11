@@ -897,7 +897,7 @@
   var PLANS_PATH = "/plans/";
   var TRIAL_MS = 3 * 60 * 1000;
   var KEY = "aria_trial_started_at";
-  var ARIA_SECTION_IDS = ["introducing-aria", "aria-cinematics", "aria-capabilities", "aria-revolution", "aria-demo"];
+  var ARIA_SECTION_IDS = ["introducing-aria", "aria-demo"];
 
   function rewritePlansLinks() {
     document.querySelectorAll("a").forEach(function (a) {
