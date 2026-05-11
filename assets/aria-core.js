@@ -958,7 +958,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       ".aria-locked-cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(197,160,89,.4)}" +
       ".aria-locked-sub{margin-top:14px;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.08em}" +
       ".aria-locked-sub a{color:#c5a059;text-decoration:none}" +
-      ".aria-locked-fab{filter:blur(4px) saturate(.7);opacity:.55;cursor:not-allowed !important;transition:filter .3s}";
+      "#ariaFab.aria-locked-fab{filter:blur(4px) saturate(.7);opacity:.55;cursor:not-allowed !important;transition:filter .3s}";
     var s = document.createElement("style");
     s.id = "aria-trial-style";
     s.textContent = css;
@@ -1366,3 +1366,45 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
 
 /* Service Center male professional voice helper */
 (function(){if(window.serviceCenterSpeakText)return;window.serviceCenterSpeakText=function(text){if(!("speechSynthesis" in window))return;try{window.speechSynthesis.cancel();}catch(e){}var u=new SpeechSynthesisUtterance(text);try{var voices=window.speechSynthesis.getVoices();var pref=["Daniel","Alex","Microsoft David","Google UK English Male","Microsoft Mark","Tom","James","Reed","Fred","Lee","Oliver","Aaron","Arthur"];var pick=null;for(var i=0;i<pref.length&&!pick;i++){var np=pref[i];pick=voices.find(function(v){return v.name===np||v.name.indexOf(np)>=0;});}if(pick)u.voice=pick;u.rate=0.97;u.pitch=0.92;}catch(e){}u.volume=1.0;window.speechSynthesis.speak(u);};})();
+
+
+/* ARIA fab lock + /aria standalone 5-min trial overlay */
+(function(){
+  var css = '#ariaFab.aria-locked-fab{cursor:pointer !important}'+
+    '#ariaFab.aria-locked-fab::after{content:"\\1F512";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#c5a059;text-shadow:0 0 6px rgba(0,0,0,.7);filter:none;pointer-events:none;z-index:2}'+
+    '#aria5Modal{position:fixed;inset:0;background:rgba(8,5,2,.78);backdrop-filter:blur(10px);z-index:99999;display:flex;align-items:center;justify-content:center;animation:aria5Fade .4s ease}'+
+    '#aria5Modal .a5-card{background:linear-gradient(160deg,#100b06,#1a1209);border:1px solid rgba(197,160,89,.45);border-radius:18px;padding:36px 30px;max-width:440px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(197,160,89,.18)}'+
+    '#aria5Modal h2{font-family:Cinzel,serif;color:#c5a059;font-size:24px;margin:0 0 12px;letter-spacing:.02em}'+
+    '#aria5Modal p{color:rgba(255,255,255,.78);margin:0 0 22px;line-height:1.55;font-size:15px}'+
+    '#aria5Modal a{display:inline-block;padding:12px 22px;border-radius:8px;font-weight:600;text-decoration:none;margin:6px;font-size:14px;letter-spacing:.02em;transition:transform .15s}'+
+    '#aria5Modal a.a5-primary{background:linear-gradient(135deg,#c5a059,#9d7a3a);color:#0a0805}'+
+    '#aria5Modal a.a5-secondary{background:transparent;border:1px solid rgba(197,160,89,.45);color:#c5a059}'+
+    '#aria5Modal a:hover{transform:translateY(-2px)}'+
+    '@keyframes aria5Fade{from{opacity:0}to{opacity:1}}';
+  var st=document.createElement('style');st.id='aria5style';st.textContent=css;document.head.appendChild(st);
+  function intercept(){
+    var fab=document.getElementById('ariaFab');
+    if(!fab) return;
+    fab.addEventListener('click',function(e){
+      if(fab.classList.contains('aria-locked-fab')){ e.preventDefault(); e.stopPropagation(); window.location.href='/plans'; }
+    },true);
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',intercept);}else{intercept();}
+  function isAriaPage(){var p=location.pathname;return p==='/aria' || p==='/aria/' || /aria(\\.html)?$/i.test(p);}
+  if(!isAriaPage()) return;
+  var KEY='aria_standalone_5min_v1';
+  var DUR=5*60*1000;
+  var start=Number(localStorage.getItem(KEY))||0;
+  if(!start){start=Date.now();try{localStorage.setItem(KEY,String(start));}catch(e){}}
+  function showModal(){
+    if(document.getElementById('aria5Modal')) return;
+    var d=document.createElement('div');d.id='aria5Modal';
+    d.innerHTML='<div class="a5-card"><h2>Your ARIA preview has ended</h2><p>5 minutes is just a taste. Pick a plan to keep working with ARIA, or head back to the homepage.</p><a href="/plans" class="a5-primary">View Plans &amp; Pricing</a><a href="/" class="a5-secondary">Return to Homepage</a></div>';
+    document.body.appendChild(d);
+    var f=document.getElementById('ariaFab');if(f) f.classList.add('aria-locked-fab');
+    document.body.style.overflow='hidden';
+  }
+  var elapsed=Date.now()-start;
+  if(elapsed>=DUR){showModal();return;}
+  setTimeout(showModal, DUR-elapsed);
+})();
