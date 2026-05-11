@@ -1408,3 +1408,104 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   if(elapsed>=DUR){showModal();return;}
   setTimeout(showModal, DUR-elapsed);
 })();
+
+
+/* Voice interrupt grammar + Get IT Support modal (lead capture) */
+(function(){
+  var INTERRUPT=/\b(pause|stop|wait|hold on|one sec|one second|hang on|halt)\b/i;
+  var RESUME=/\b(continue|go on|keep going|resume|carry on|proceed)\b/i;
+  var REPEAT=/\b(repeat|say that again|once more|go back)\b/i;
+  var lastUtter='';
+  if (typeof window.ariaSpeakText==='function'){
+    var origSpeak=window.ariaSpeakText;
+    window.ariaSpeakText=function(text){lastUtter=text||'';return origSpeak.apply(this,arguments);};
+  }
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var rec=null,recOn=false;
+  function startInterruptListener(){
+    if (!SR||recOn) return;
+    try {
+      rec=new SR();rec.continuous=true;rec.interimResults=true;rec.lang='en-US';
+      rec.onresult=function(ev){
+        for (var i=ev.resultIndex;i<ev.results.length;i++){
+          var t=ev.results[i][0].transcript||'';
+          if (INTERRUPT.test(t)) { try { window.speechSynthesis.pause(); } catch(e){} }
+          else if (RESUME.test(t)) { try { window.speechSynthesis.resume(); } catch(e){} }
+          else if (REPEAT.test(t) && lastUtter) { try { window.speechSynthesis.cancel(); } catch(e){} if (typeof window.ariaSpeakText==='function') window.ariaSpeakText(lastUtter); }
+        }
+      };
+      rec.onerror=function(){recOn=false;};rec.onend=function(){recOn=false;};
+      rec.start();recOn=true;
+    } catch(e){recOn=false;}
+  }
+  function stopInterruptListener(){if (rec&&recOn){try{rec.stop();}catch(e){}recOn=false;}}
+  if (window.speechSynthesis){
+    var orig2=window.speechSynthesis.speak.bind(window.speechSynthesis);
+    window.speechSynthesis.speak=function(u){startInterruptListener();if(u&&!u.onend){u.onend=function(){setTimeout(function(){if(!window.speechSynthesis.speaking)stopInterruptListener();},800);};}return orig2(u);};
+  }
+  function gisCSS(){
+    if (document.getElementById('gisStyle')) return;
+    var css='#gisModal{position:fixed;inset:0;background:rgba(8,5,2,.78);backdrop-filter:blur(8px);z-index:99998;display:flex;align-items:center;justify-content:center}'
+      +'#gisModal .gis-card{background:linear-gradient(160deg,#100b06,#1a1209);border:1px solid rgba(197,160,89,.45);border-radius:16px;padding:30px 28px;max-width:480px;width:92%;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(197,160,89,.18)}'
+      +'#gisModal h3{font-family:Cinzel,serif;color:#c5a059;font-size:22px;margin:0 0 8px}'
+      +'#gisModal p.gis-sub{color:rgba(255,255,255,.72);margin:0 0 20px;font-size:14px;line-height:1.5}'
+      +'#gisModal label{display:block;color:rgba(241,220,167,.85);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 6px}'
+      +'#gisModal input,#gisModal textarea{width:100%;background:rgba(0,0,0,.45);border:1px solid rgba(197,160,89,.28);border-radius:8px;padding:10px 12px;color:#fff;font-size:14px;font-family:inherit;box-sizing:border-box}'
+      +'#gisModal textarea{min-height:90px;resize:vertical}'
+      +'#gisModal .gis-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}'
+      +'#gisModal button{padding:10px 18px;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:14px;font-family:inherit}'
+      +'#gisModal .gis-send{background:linear-gradient(135deg,#c5a059,#9d7a3a);color:#0a0805}'
+      +'#gisModal .gis-cancel{background:transparent;border:1px solid rgba(197,160,89,.4);color:#c5a059}'
+      +'#gisModal .gis-msg{margin-top:12px;font-size:13px;color:#b8e6b0}'
+      +'#gisModal .gis-err{color:#e6a0a0}'
+      +'#gisModal .gis-hp{display:none}';
+    var st=document.createElement('style');st.id='gisStyle';st.textContent=css;document.head.appendChild(st);
+  }
+  function showGIS(){
+    if (document.getElementById('gisModal')) return;
+    gisCSS();
+    var d=document.createElement('div');d.id='gisModal';
+    d.innerHTML='<div class="gis-card"><h3>Get IT Support</h3><p class="gis-sub">Tell us what you need help with. We email back fast.</p>'
+      +'<form name="get-it-support" data-netlify="true" netlify-honeypot="bot-field" method="POST">'
+      +'<input type="hidden" name="form-name" value="get-it-support">'
+      +'<p class="gis-hp"><input name="bot-field"></p>'
+      +'<label>Your name</label><input type="text" name="name" required>'
+      +'<label>Email</label><input type="email" name="email" required>'
+      +'<label>Phone (optional)</label><input type="tel" name="phone">'
+      +'<label>What do you need help with?</label><textarea name="issue" required></textarea>'
+      +'<div class="gis-msg" id="gisMsg"></div>'
+      +'<div class="gis-actions"><button type="button" class="gis-cancel" id="gisCancel">Cancel</button><button type="submit" class="gis-send">Send to Support</button></div>'
+      +'</form></div>';
+    document.body.appendChild(d);
+    document.getElementById('gisCancel').onclick=function(){d.remove();};
+    var form=d.querySelector('form');
+    form.onsubmit=function(ev){
+      ev.preventDefault();
+      var fd=new FormData(form);var body=new URLSearchParams();fd.forEach(function(v,k){body.append(k,v);});
+      var msg=document.getElementById('gisMsg');msg.textContent='Sending...';msg.className='gis-msg';
+      fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()})
+        .then(function(r){if(r.ok){msg.textContent='Sent. We will reply to your email shortly.';setTimeout(function(){d.remove();},2200);}else{msg.textContent='Send failed. Email integrateditsupp@gmail.com directly.';msg.className='gis-msg gis-err';}})
+        .catch(function(){msg.textContent='Send failed. Email integrateditsupp@gmail.com directly.';msg.className='gis-msg gis-err';});
+    };
+  }
+  window.openGetItSupport=showGIS;
+  function wireChatFab(){
+    var cf=document.getElementById('chatFab');
+    if (!cf||cf.__gisHooked) return;
+    cf.__gisHooked=true;
+    cf.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();showGIS();},true);
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',wireChatFab); else wireChatFab();
+  setTimeout(wireChatFab,1500);
+  function injectStaticForm(){
+    if (document.getElementById('gisStaticForm')) return;
+    var hf=document.createElement('form');hf.id='gisStaticForm';
+    hf.setAttribute('name','get-it-support');
+    hf.setAttribute('data-netlify','true');
+    hf.setAttribute('netlify-honeypot','bot-field');
+    hf.style.display='none';
+    hf.innerHTML='<input name="form-name" value="get-it-support"><input name="bot-field"><input name="name"><input name="email"><input name="phone"><textarea name="issue"></textarea>';
+    if (document.body) document.body.appendChild(hf);
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',injectStaticForm); else injectStaticForm();
+})();
