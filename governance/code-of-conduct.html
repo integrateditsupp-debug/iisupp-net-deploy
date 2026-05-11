@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d4af37">
+  <title>Code of Conduct &amp; Business Ethics | Integrated IT Support</title>
+  <meta name="description" content="Standards of Professional Conduct">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/aria-core.css">
+  
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
+  :root { --luxury-gold: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); --deep-slate: #050505; }
+  body { font-family: 'Inter', sans-serif; background-color: var(--deep-slate); color: #ffffff; margin: 0; overflow-x: hidden; }
+  h1, h2, h3, h4, h5, .logo-text { font-family: 'Cinzel', serif; }
+  body, .protected { -webkit-user-select: none; user-select: none; }
+  input, textarea, select, .allow-select { -webkit-user-select: text !important; user-select: text !important; }
+  img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+  .gold-glow { text-shadow: 0 0 25px rgba(197, 160, 89, 0.5); }
+  .doc-wrap { max-width: 920px; margin: 0 auto; padding: 48px 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(197,160,89,0.2); border-radius: 4px; }
+  .doc-wrap p { color: rgba(255,255,255,0.82); line-height: 1.85; font-size: 14px; margin: 0 0 14px 0; letter-spacing: 0.01em; }
+  .doc-wrap strong { color: #f1dca7; font-weight: 700; }
+  .doc-wrap em { color: rgba(255,255,255,0.92); font-style: italic; }
+  .doc-wrap a { color: #c5a059; text-decoration: none; border-bottom: 1px dotted rgba(197,160,89,0.4); }
+  .doc-wrap a:hover { color: #f1dca7; border-bottom-color: #f1dca7; }
+  .doc-wrap h2 { color: #c5a059; font-size: 22px; letter-spacing: 0.18em; text-transform: uppercase; margin: 44px 0 10px 0; padding-bottom: 8px; border-bottom: 1px solid rgba(197,160,89,0.18); }
+  .doc-wrap h3 { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: #f1dca7; margin: 28px 0 12px 0; border-left: 2px solid #c5a059; padding-left: 12px; }
+  .doc-wrap ul, .doc-wrap ol { color: rgba(255,255,255,0.78); padding-left: 22px; margin: 0 0 18px 0; }
+  .doc-wrap ul li, .doc-wrap ol li { font-size: 13.5px; line-height: 1.85; padding: 4px 0; }
+  .doc-wrap ul li::marker { color: #c5a059; }
+  .doc-wrap ol li::marker { color: #c5a059; font-weight: 700; }
+  .doc-wrap table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12.5px; }
+  .doc-wrap table td, .doc-wrap table th { border: 1px solid rgba(197,160,89,0.18); padding: 10px 14px; vertical-align: top; }
+  .doc-wrap table tr.odd td { background: rgba(255,255,255,0.02); }
+  .doc-wrap table tr:first-child td strong { color: #f1dca7; }
+  .doc-wrap .meta-card { border: 1px solid rgba(197,160,89,0.25); background: rgba(197,160,89,0.04); padding: 22px 24px; border-radius: 4px; margin: 0 0 32px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 30px; }
+  .doc-wrap .meta-card .meta-label { color: rgba(255,255,255,0.5); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; }
+  .doc-wrap .meta-card .meta-value { color: #f1dca7; font-size: 13px; margin-top: 4px; font-weight: 600; }
+  .download-bar { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 36px 0; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border: 1px solid rgba(197,160,89,0.4); color: #f1dca7; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; text-decoration: none; transition: all 0.3s ease; border-radius: 2px; background: rgba(197,160,89,0.05); }
+  .dl-btn:hover { background: rgba(197,160,89,0.15); border-color: #c5a059; color: #fff; }
+  .back-link { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; font-weight: 700; padding: 10px 18px; border: 1px solid rgba(197,160,89,0.3); border-radius: 2px; transition: all 0.3s ease; }
+  .back-link:hover { color: #c5a059; border-color: #c5a059; }
+  .gov-card { display:block; border: 1px solid rgba(197,160,89,0.2); background: rgba(255,255,255,0.02); padding: 24px; border-radius: 4px; text-decoration: none; transition: all 0.3s ease; }
+  .gov-card:hover { border-color: #c5a059; background: rgba(197,160,89,0.05); transform: translateY(-2px); }
+  .gov-card .ref-tag { color: #c5a059; font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase; font-weight: 700; }
+  .gov-card .gov-title { color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin: 8px 0 6px 0; letter-spacing: 0.08em; }
+  .gov-card .gov-sub { color: rgba(255,255,255,0.6); font-size: 12px; line-height: 1.6; }
+  .mobile-menu-btn { display: none; background: none; border: 1px solid rgba(197, 160, 89, 0.4); color: #c5a059; padding: 8px 10px; cursor: pointer; }
+  .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: #c5a059; margin: 4px 0; }
+  .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 55; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+  .mobile-nav-overlay.active { display: flex; }
+  .mobile-nav-overlay a { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; color: rgba(255,255,255,0.6); text-decoration: none; padding: 8px 0; }
+  .mobile-nav-overlay a:hover { color: #c5a059; }
+  .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: #c5a059; font-size: 28px; cursor: pointer; }
+  @media (max-width: 1024px) { nav { padding: 16px 20px !important; } .mobile-menu-btn { display: block; } .desktop-nav-links { display: none !important; } }
+  @media (max-width: 768px) { .doc-wrap { padding: 28px 18px; margin: 0 12px; } .doc-wrap h2 { font-size: 16px; letter-spacing: 0.12em; } .doc-wrap p, .doc-wrap ul li, .doc-wrap ol li { font-size: 12.5px; } .doc-wrap .meta-card { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="protected">
+
+<nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+  <a href="/" class="flex items-center gap-6" style="text-decoration:none;color:inherit;">
+    <div class="w-12 h-12 flex items-center justify-center border border-[#c5a059] relative">
+      <div class="absolute inset-1 border border-[#c5a059]/30"></div>
+      <span class="text-[#c5a059] font-bold text-xl logo-text">I</span>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span>
+      <span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span>
+    </div>
+  </a>
+  <div class="desktop-nav-links hidden lg:flex space-x-12 text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
+    <a href="/purchase-tech.html" class="hover:text-[#c5a059] transition">Purchase Tech</a>
+    <a href="/#service-center" class="hover:text-[#c5a059] transition">Service Center</a>
+    <a href="/governance/" class="hover:text-[#c5a059] transition">Governance</a>
+    <a href="/about.html" class="hover:text-[#c5a059] transition">About Us</a>
+    <a href="tel:+16475813182" class="text-white hover:text-[#c5a059] transition">Connect with Senior Director</a>
+  </div>
+  <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div id="mobileMenu" class="mobile-nav-overlay">
+  <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
+  <a href="/" onclick="toggleMobileMenu()">Home</a>
+  <a href="/governance/" onclick="toggleMobileMenu()">Governance</a>
+  <a href="/about.html" onclick="toggleMobileMenu()">About Us</a>
+  <a href="tel:+16475813182" onclick="toggleMobileMenu()" style="color:#c5a059;">Call (647) 581-3182</a>
+</div>
+<script>function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('active')}</script>
+<section class="pt-36 pb-24 px-6">
+  <div class="max-w-5xl mx-auto text-center mb-12">
+    <span class="text-[#c5a059] tracking-[0.5em] text-[9px] uppercase font-bold block mb-4">Standards of Professional Conduct</span>
+    <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight logo-text uppercase">Code of Conduct & Business Ethics</h1>
+    <p class="text-white/40 uppercase tracking-[0.35em] text-[10px] mt-6">Document IIS-GOV-COC-001 &nbsp;•&nbsp; Version 1.0 &nbsp;•&nbsp; Effective 01 May 2026</p>
+  </div>
+  <div class="max-w-5xl mx-auto mb-8 px-2 flex justify-between items-center flex-wrap gap-3">
+    <a href="/governance/" class="back-link"><i class="fa fa-arrow-left"></i> Back to Governance</a>
+  </div>
+  <div class="doc-wrap">
+    
+<div class="download-bar">
+  <a class="dl-btn" href="/downloads/governance/Code_of_Conduct_and_Business_Ethics.docx" download>
+    <i class="fa fa-file-word"></i> Download .docx
+  </a>
+  <button class="dl-btn" onclick="window.print()">
+    <i class="fa fa-print"></i> Print / PDF
+  </button>
+</div>
+    <div class="meta-card">
+      <div><div class="meta-label">Document Reference</div><div class="meta-value">IIS-GOV-COC-001</div></div>
+      <div><div class="meta-label">Version</div><div class="meta-value">1.0</div></div>
+      <div><div class="meta-label">Effective Date</div><div class="meta-value">01 May 2026</div></div>
+      <div><div class="meta-label">Classification</div><div class="meta-value">PUBLIC</div></div>
+      <div><div class="meta-label">Jurisdiction</div><div class="meta-value">Ontario / Canada (primary), Global (secondary)</div></div>
+      <div><div class="meta-label">Approving Authority</div><div class="meta-value">CEO &amp; Executive Leadership</div></div>
+    </div>
+    <h2>1. Purpose and Spirit</h2><p>Integrated IT Support Inc. (the “Company”) is committed to conducting business with the highest standards of integrity, professionalism, and respect for the law and for the people we serve. This Code of Conduct &amp; Business Ethics (the “Code”) sets out the principles that govern how every director, officer, employee, intern, contractor, and authorised representative is expected to behave.</p><p>The Code is not a substitute for sound personal judgment, but it provides a clear framework that protects the Company, our clients, our colleagues, and the public. Compliance with the Code is a condition of continued employment and engagement.</p><h2>2. Scope and Applicability</h2><p>This Code applies to all personnel acting on behalf of the Company, regardless of role, location, or seniority. Suppliers and business partners are bound to equivalent standards through the Supplier Code of Conduct (IIS-GOV-SUP-001).</p><h2>3. Compliance with Law</h2><p>All personnel must comply with all applicable laws, regulations, and government orders in every jurisdiction in which the Company does business. Where the Code sets a higher standard than local law, the Code applies. Where the Code and local law conflict, personnel must consult the GRC Office before acting.</p><h2>4. Conflicts of Interest</h2><p>Personnel must avoid situations where personal interests, relationships, or outside activities conflict — or could reasonably appear to conflict — with the Company’s interests or the personnel member’s duties. Examples include:</p><ul><li><p>Holding a financial interest in a supplier, customer, or competitor.</p></li><li><p>Engaging in outside employment or consulting that competes with the Company or impairs your role.</p></li><li><p>Hiring, supervising, or evaluating a close family member or romantic partner.</p></li><li><p>Accepting gifts, hospitality, or favours that could influence — or appear to influence — business judgment.</p></li></ul><p>Actual or potential conflicts must be disclosed in writing to the GRC Office at the earliest opportunity.</p><h2>5. Anti-Bribery and Anti-Corruption</h2><p>The Company has zero tolerance for bribery, corruption, kickbacks, or facilitation payments, in compliance with the Canadian Corruption of Foreign Public Officials Act (CFPOA), the Criminal Code (Canada), the U.S. Foreign Corrupt Practices Act (FCPA), and the U.K. Bribery Act. See the Anti-Bribery &amp; Anti-Corruption Policy (IIS-GOV-ABC-001) for the full operating framework.</p><h2>6. Gifts and Hospitality</h2><ul><li><p>Gifts and hospitality offered or accepted must be infrequent, modest in value, in good taste, and never given or received with the intent or appearance of influencing a business decision.</p></li><li><p>Cash or cash equivalents must never be offered or accepted.</p></li><li><p>Personnel must never offer or accept anything of value to or from a government official, public-sector employee, or political party, without prior written approval from the GRC Office.</p></li><li><p>All gifts or hospitality exceeding a CAD $200 single-occurrence threshold must be reported to the GRC Office.</p></li></ul><h2>7. Fair Dealing</h2><p>Personnel must deal fairly with the Company’s clients, suppliers, competitors, and colleagues. No one should take unfair advantage through manipulation, concealment, abuse of privileged information, misrepresentation of material facts, or any other unfair-dealing practice.</p><h2>8. Anti-Competitive Behaviour</h2><p>The Company competes vigorously and lawfully. Personnel must not engage in price-fixing, bid-rigging, market-allocation, customer-allocation, or any other anti-competitive arrangement in violation of the Canadian Competition Act or any other applicable competition law.</p><h2>9. Insider Information and Securities</h2><p>Personnel who possess material non-public information about the Company or about a client, supplier, or partner must not trade in any related securities and must not disclose that information to others who might so trade. This duty continues until the information is publicly disclosed and absorbed by the market.</p><h2>10. Workplace Conduct</h2><ul><li><p>Treat every colleague, client, contractor, and member of the public with dignity, professionalism, and respect.</p></li><li><p>No discrimination, harassment, or workplace violence on any ground protected by the Ontario Human Rights Code, the Canadian Human Rights Act, or any applicable international standard.</p></li><li><p>Comply with the Workplace Violence and Harassment Prevention program (Ontario Bill 168 / Occupational Health and Safety Act Part III.0.1).</p></li><li><p>Maintain a safe and healthy workplace; report hazards, near-misses, and incidents promptly (Occupational Health &amp; Safety Policy IIS-GOV-OHS-001).</p></li></ul><h2>11. Confidentiality and Privacy</h2><ul><li><p>Protect the confidentiality of Company and client information at all times, both during and after employment.</p></li><li><p>Personal information is handled in accordance with the Privacy Policy (IIS-GOV-PRV-001) and PIPEDA.</p></li><li><p>Trade secrets, source code, security configurations, pricing, and client lists are Restricted information per the Information Classification Standard.</p></li></ul><h2>12. Use of Company Resources</h2><ul><li><p>Use Company information assets — including devices, networks, accounts, and credentials — only for authorised business purposes.</p></li><li><p>Adhere to the Information Security Policy (IIS-GOV-SEC-001) and Acceptable Use of AI Policy (IIS-GOV-AI-001).</p></li><li><p>Do not use Company resources for personal financial gain or for any unlawful, harassing, or offensive activity.</p></li></ul><h2>13. Books, Records, and Reporting</h2><ul><li><p>All financial transactions and material business records must be accurately, completely, and timely recorded.</p></li><li><p>Off-the-books accounts, undocumented payments, or false entries are strictly prohibited.</p></li><li><p>Records are retained per the Records Retention Schedule, including the seven-year minimum for materials supporting tax, S-211, and human-rights due diligence.</p></li></ul><h2>14. Reporting Concerns</h2><p>Any person — internal or external — who believes that the Code, applicable law, or Company policy has been or may be violated must report the concern in good faith. Reports may be made via:</p><ul><li><p>Direct supervisor or any member of leadership.</p></li><li><p>Confidential e-mail to <a href="mailto:ethics@iisupport.net">ethics@iisupport.net</a>.</p></li><li><p>Confidential web intake at <a href="/ethics-grievance">iisupport.net/ethics-grievance</a>.</p></li><li><p>Direct contact with the designated Human Rights Sponsor or the GRC Office.</p></li></ul><p>The Company prohibits, and will not tolerate, retaliation against any person who raises a concern in good faith.</p><h2>15. Consequences of Violation</h2><p>Violations of the Code may result in disciplinary action up to and including termination of employment or contract, recovery of losses, and referral to civil or criminal authorities, in accordance with applicable law and the Company’s disciplinary procedures.</p><h2>16. Acknowledgment</h2><p>All personnel are required to acknowledge in writing receipt of, and commitment to comply with, this Code upon joining and at least annually thereafter.</p><p><strong>Approval and Authority</strong></p><p>This document has been reviewed and approved by the Executive Leadership of Integrated IT Support Inc. and is issued under the authority of the Office of the Chief Executive Officer. The document is subject to periodic review and may be amended by the Approving Authority. Material amendments are communicated to all employees and key suppliers within thirty (30) days of issuance.</p><p>Signed for and on behalf of Integrated IT Support Inc.</p><p>________________________________________</p><p><strong>Ahmad — Chief Executive Officer</strong></p><p>Integrated IT Support Inc.</p><p>Date: 01 May 2026</p>
+
+  </div>
+</section>
+
+<footer class="border-t border-white/5 mt-24 py-12 px-8 text-center">
+  <p class="text-white/40 text-[10px] tracking-[0.4em] uppercase font-bold">© 2026 Integrated IT Support Inc. — All Rights Reserved</p>
+  <p class="text-[#c5a059]/60 text-[9px] tracking-[0.4em] uppercase mt-3">Project AEGIS — Governance, Risk & Compliance Program</p>
+  <div class="flex justify-center gap-6 mt-5 text-[9px] tracking-[0.3em] uppercase font-bold">
+    <a href="/governance/" class="text-white/40 hover:text-[#c5a059]">Governance</a>
+    <a href="/ethics-grievance" class="text-white/40 hover:text-[#c5a059]">Ethics &amp; Grievance</a>
+    <a href="/terms.html" class="text-white/40 hover:text-[#c5a059]">Terms</a>
+    <a href="/governance/privacy" class="text-white/40 hover:text-[#c5a059]">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>
