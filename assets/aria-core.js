@@ -1016,3 +1016,204 @@
     init();
   }
 })();
+
+
+/* ===== VISION ROADMAP INJECTION (2026-05-10) ===== */
+(function () {
+  "use strict";
+  if (window.self !== window.top) return;
+  var p = location.pathname;
+  if (p !== "/" && p !== "/index.html") return;
+
+  var MILESTONES = [
+    { status: "done",    title: "ARIA conceived",                 desc: "From a sketch to a name. The vision: an AI that replaces tier-1 IT support with empathy, memory, and 24/7 availability." },
+    { status: "done",    title: "Knowledge base built",           desc: "100+ deep IT support articles. Windows, Mac, M365, networking, security, mobile. The brain ARIA reasons from." },
+    { status: "done",    title: "Live on iisupp.net",             desc: "Web platform with chat, voice, and live demo. The product is real. You're using it right now." },
+    { status: "done",    title: "Plans & payment infrastructure", desc: "Five tiers, lifetime access, acquisition pathway, Stripe-secured checkout. Revenue rails laid down." },
+    { status: "done",    title: "Forced trial & paywall",         desc: "3-minute web trial with countdown. Pay or pick a plan. Real conversion mechanics, not vanity numbers." },
+    { status: "current", title: "Connecting with brands & companies", desc: "Where we are right now. Building real partnerships. Real contracts. Proving the model in the field, one customer at a time." },
+    { status: "future",  title: "Global expansion",               desc: "Multi-region, multi-language. Wherever a business needs IT support, ARIA shows up — North America, Europe, Asia, beyond." },
+    { status: "future",  title: "Charity support, pro bono",      desc: "Free ARIA for non-profits doing the work governments won't. Their tech burden becomes our responsibility." },
+    { status: "future",  title: "Building new charities",         desc: "A founder's childhood dream: new methods of education that actually work for the kids who fall through the cracks. ARIA-powered, human-led." },
+    { status: "future",  title: "Eliminating real-world problems", desc: "Hunger. Housing. Mental health. Loneliness. We pick problems we can move with technology and patience — and we move them." },
+    { status: "future",  title: "Expanding into virtual worlds",  desc: "VR, AR, spatial computing. ARIA goes wherever humans go. But our feet stay on planet earth — the virtual serves the real, not the other way around." },
+    { status: "future",  title: "Mental health & human connection", desc: "Tech should bring people closer to themselves, to each other, to their lives. Not pull them away. We build for that line." }
+  ];
+
+  function buildSVG() {
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("class", "rm-roots");
+    svg.setAttribute("viewBox", "0 0 200 2200");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    svg.innerHTML =
+      '<defs>' +
+        '<linearGradient id="rmGold" x1="0%" y1="0%" x2="0%" y2="100%">' +
+          '<stop offset="0%" stop-color="#c5a059" stop-opacity="0.4"/>' +
+          '<stop offset="15%" stop-color="#f1dca7" stop-opacity="1"/>' +
+          '<stop offset="85%" stop-color="#c5a059" stop-opacity="0.9"/>' +
+          '<stop offset="100%" stop-color="#c5a059" stop-opacity="0.3"/>' +
+        '</linearGradient>' +
+        '<filter id="rmGlow" x="-50%" y="-50%" width="200%" height="200%">' +
+          '<feGaussianBlur stdDeviation="4" result="blur"/>' +
+          '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+        '</filter>' +
+      '</defs>' +
+      '<path d="M 100 0 C 115 200, 85 380, 100 560 C 115 740, 85 920, 100 1100 C 115 1280, 85 1460, 100 1640 C 115 1820, 90 2000, 100 2200" stroke="url(#rmGold)" stroke-width="2.5" fill="none" filter="url(#rmGlow)"/>' +
+      '<path d="M 100 220 Q 60 245, 30 280 Q 22 290, 18 305" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.55" filter="url(#rmGlow)"/>' +
+      '<path d="M 100 540 Q 145 565, 175 605 Q 184 618, 188 632" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.55" filter="url(#rmGlow)"/>' +
+      '<path d="M 100 880 Q 55 905, 24 945 Q 16 956, 12 970" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.55" filter="url(#rmGlow)"/>' +
+      '<path d="M 100 1240 Q 145 1265, 178 1305" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmGlow)"/>' +
+      '<path d="M 100 1600 Q 55 1625, 22 1665" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmGlow)"/>' +
+      '<path d="M 100 1980 Q 145 2005, 178 2045" stroke="url(#rmGold)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmGlow)"/>';
+    return svg;
+  }
+
+  function injectStyles() {
+    if (document.getElementById("rm-style")) return;
+    var css =
+      "#vision-roadmap{position:relative;padding:90px 20px 120px;max-width:1200px;margin:0 auto;overflow:hidden}" +
+      "#vision-roadmap .rm-head{text-align:center;max-width:760px;margin:0 auto 64px;position:relative;z-index:2}" +
+      "#vision-roadmap .rm-tag{color:#c5a059;font-size:11px;letter-spacing:.34em;margin:0 0 14px;text-transform:uppercase}" +
+      "#vision-roadmap h2{font-family:Cinzel,serif;font-size:44px;font-weight:700;color:#fff;margin:0 0 18px;line-height:1.1}" +
+      "#vision-roadmap h2 .rm-gold{color:#c5a059}" +
+      "#vision-roadmap .rm-sub{color:rgba(255,255,255,.72);font-size:16px;line-height:1.6;margin:0}" +
+      "#vision-roadmap .rm-track{position:relative;min-height:2200px}" +
+      "#vision-roadmap .rm-roots{position:absolute;left:50%;top:0;transform:translateX(-50%);width:240px;height:2200px;z-index:1;pointer-events:none}" +
+      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:48px;padding-top:40px}" +
+      "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 96px 1fr;gap:14px;align-items:center;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
+      "#vision-roadmap .rm-stone.visible{opacity:1;transform:translateY(0)}" +
+      "#vision-roadmap .rm-card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.22);border-radius:16px;padding:22px 24px;transition:border-color .2s,box-shadow .2s}" +
+      "#vision-roadmap .rm-card:hover{border-color:rgba(197,160,89,.55);box-shadow:0 18px 40px rgba(197,160,89,.14)}" +
+      "#vision-roadmap .rm-stone.left .rm-card{grid-column:1;text-align:right}" +
+      "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left}" +
+      "#vision-roadmap .rm-stone.left .rm-spacer{grid-column:3}" +
+      "#vision-roadmap .rm-stone.right .rm-spacer{grid-column:1}" +
+      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:14px;letter-spacing:.04em;position:relative}" +
+      "#vision-roadmap .rm-card h3{font-family:Cinzel,serif;font-size:18px;color:#f1dca7;margin:0 0 8px;letter-spacing:.02em;line-height:1.25}" +
+      "#vision-roadmap .rm-card p{color:rgba(255,255,255,.74);font-size:13.5px;line-height:1.6;margin:0}" +
+      "#vision-roadmap .rm-badge{display:inline-block;margin-top:10px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-family:Cinzel,serif;font-weight:700;padding:3px 10px;border-radius:6px}" +
+      "#vision-roadmap .rm-stone.done .rm-node{background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);color:#fff;box-shadow:0 0 22px rgba(34,197,94,.55),inset 0 0 0 2px rgba(255,255,255,.18)}" +
+      "#vision-roadmap .rm-stone.done .rm-card{border-color:rgba(34,197,94,.35)}" +
+      "#vision-roadmap .rm-stone.done .rm-badge{background:rgba(34,197,94,.16);color:#86efac;border:1px solid rgba(34,197,94,.4)}" +
+      "#vision-roadmap .rm-stone.current .rm-node{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;box-shadow:0 0 30px rgba(241,220,167,.7),inset 0 0 0 2px rgba(255,255,255,.25);animation:rmPulse 2.2s infinite}" +
+      "#vision-roadmap .rm-stone.current .rm-card{border-color:rgba(241,220,167,.6);background:linear-gradient(165deg,#1a1410 0%,#251a12 100%);box-shadow:0 0 50px rgba(241,220,167,.18)}" +
+      "#vision-roadmap .rm-stone.current .rm-card h3{color:#fff;font-size:20px}" +
+      "#vision-roadmap .rm-stone.current .rm-badge{background:rgba(241,220,167,.16);color:#f1dca7;border:1px solid rgba(241,220,167,.5)}" +
+      "@keyframes rmPulse{0%,100%{box-shadow:0 0 30px rgba(241,220,167,.7),inset 0 0 0 2px rgba(255,255,255,.25)}50%{box-shadow:0 0 50px rgba(241,220,167,1),inset 0 0 0 2px rgba(255,255,255,.4)}}" +
+      "#vision-roadmap .rm-stone.future .rm-node{background:rgba(197,160,89,.08);color:#c5a059;border:1.5px dashed rgba(197,160,89,.55)}" +
+      "#vision-roadmap .rm-stone.future .rm-card{border-color:rgba(197,160,89,.18);opacity:.9}" +
+      "#vision-roadmap .rm-stone.future .rm-card h3{color:#f1dca7;opacity:.85}" +
+      "#vision-roadmap .rm-stone.future .rm-badge{background:rgba(197,160,89,.08);color:#c5a059;border:1px solid rgba(197,160,89,.3)}" +
+      "#vision-roadmap .rm-dream{margin-top:80px;text-align:center;position:relative;z-index:2;padding:48px 28px;background:radial-gradient(ellipse at center,rgba(197,160,89,.12) 0%,transparent 70%)}" +
+      "#vision-roadmap .rm-dream .rm-star{width:84px;height:84px;margin:0 auto 28px;border-radius:50%;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#c5a059 100%);display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:38px;color:#1a1410;box-shadow:0 0 80px rgba(241,220,167,.6),inset 0 0 0 2px rgba(255,255,255,.3);animation:rmStar 4s infinite}" +
+      "@keyframes rmStar{0%,100%{box-shadow:0 0 80px rgba(241,220,167,.6),inset 0 0 0 2px rgba(255,255,255,.3)}50%{box-shadow:0 0 130px rgba(241,220,167,.95),inset 0 0 0 2px rgba(255,255,255,.5)}}" +
+      "#vision-roadmap .rm-dream blockquote{font-family:Cinzel,serif;font-size:24px;font-style:italic;color:#f1dca7;margin:0;line-height:1.65;font-weight:400}" +
+      "#vision-roadmap .rm-dream blockquote .rm-line{display:block}" +
+      "#vision-roadmap .rm-dream cite{display:block;margin-top:22px;font-family:Inter,sans-serif;font-size:11px;font-style:normal;color:rgba(255,255,255,.55);letter-spacing:.32em;text-transform:uppercase}" +
+      "#vision-roadmap .rm-motto{text-align:center;margin:40px auto 0;max-width:600px;color:rgba(255,255,255,.55);font-size:13px;font-style:italic;letter-spacing:.04em;line-height:1.6}" +
+      "@media (max-width:720px){" +
+        "#vision-roadmap{padding:60px 16px 80px}" +
+        "#vision-roadmap h2{font-size:32px}" +
+        "#vision-roadmap .rm-roots{left:32px;width:64px}" +
+        "#vision-roadmap .rm-stone{grid-template-columns:64px 1fr;gap:14px}" +
+        "#vision-roadmap .rm-stone.left .rm-card,#vision-roadmap .rm-stone.right .rm-card{grid-column:2;text-align:left}" +
+        "#vision-roadmap .rm-stone.left .rm-spacer,#vision-roadmap .rm-stone.right .rm-spacer{display:none}" +
+        "#vision-roadmap .rm-node{grid-column:1;width:44px;height:44px;font-size:12px}" +
+        "#vision-roadmap .rm-card{padding:18px 20px}" +
+        "#vision-roadmap .rm-dream blockquote{font-size:18px}" +
+      "}";
+    var s = document.createElement("style");
+    s.id = "rm-style";
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  function buildRoadmap() {
+    var section = document.createElement("section");
+    section.id = "vision-roadmap";
+    var head = document.createElement("div");
+    head.className = "rm-head";
+    head.innerHTML =
+      '<p class="rm-tag">THE ROAD AHEAD</p>' +
+      '<h2>From <span class="rm-gold">here</span> to <span class="rm-gold">everywhere</span></h2>' +
+      '<p class="rm-sub">A dreamer\'s roadmap. Where we are. Where we are going. And why this story does not end.</p>';
+    section.appendChild(head);
+
+    var track = document.createElement("div");
+    track.className = "rm-track";
+    track.appendChild(buildSVG());
+
+    var stones = document.createElement("div");
+    stones.className = "rm-stones";
+
+    MILESTONES.forEach(function (m, i) {
+      var side = (i % 2 === 0) ? "left" : "right";
+      var stone = document.createElement("div");
+      stone.className = "rm-stone " + m.status + " " + side;
+      var nodeContent = m.status === "done" ? "&#10003;" : (m.status === "current" ? "&#9203;" : String(i + 1));
+      var badge = m.status === "done" ? '<span class="rm-badge">Live</span>' :
+                  (m.status === "current" ? '<span class="rm-badge">In progress</span>' :
+                   '<span class="rm-badge">Coming</span>');
+      stone.innerHTML =
+        '<div class="rm-card"><h3>' + m.title + '</h3><p>' + m.desc + '</p>' + badge + '</div>' +
+        '<div class="rm-node">' + nodeContent + '</div>' +
+        '<div class="rm-spacer"></div>';
+      stones.appendChild(stone);
+    });
+
+    track.appendChild(stones);
+
+    var dream = document.createElement("div");
+    dream.className = "rm-dream";
+    dream.innerHTML =
+      '<div class="rm-star">A</div>' +
+      '<blockquote>' +
+        '<span class="rm-line">A dreamer never stops dreaming.</span>' +
+        '<span class="rm-line">There is no finish line.</span>' +
+        '<span class="rm-line">Stories continue, one way or another.</span>' +
+      '</blockquote>' +
+      '<cite>&mdash; The founder</cite>';
+    track.appendChild(dream);
+
+    var motto = document.createElement("div");
+    motto.className = "rm-motto";
+    motto.textContent = "Our plans grow as our company does.";
+    track.appendChild(motto);
+
+    section.appendChild(track);
+    return section;
+  }
+
+  function init() {
+    var sc = document.getElementById("service-center");
+    var ariaDemo = document.getElementById("aria-demo");
+    var anchor = ariaDemo || sc;
+    if (!anchor) return;
+    if (document.getElementById("vision-roadmap")) return;
+    injectStyles();
+    var section = buildRoadmap();
+    anchor.parentNode.insertBefore(section, anchor.nextSibling);
+
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add("visible");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: "0px 0px -80px 0px" });
+      section.querySelectorAll(".rm-stone").forEach(function (s) { io.observe(s); });
+    } else {
+      section.querySelectorAll(".rm-stone").forEach(function (s) { s.classList.add("visible"); });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
