@@ -378,6 +378,7 @@
     if (!clean) return false;
     const u = new SpeechSynthesisUtterance(clean);
     u.rate = 1; u.pitch = 1; u.lang = 'en-US';
+    try { var __voices = window.speechSynthesis.getVoices(); var __pref = ['Daniel','Alex','Microsoft David','Google UK English Male','Tom','Mark','James','Microsoft Mark','Reed']; var __male = null; for (var __i = 0; __i < __pref.length && !__male; __i++) { __male = __voices.find(function(v){return v.name.indexOf(__pref[__i]) >= 0;}); } if (!__male) __male = __voices.find(function(v){return /male/i.test(v.name) && /^en/.test(v.lang);}); if (!__male) __male = __voices.find(function(v){return /^en/.test(v.lang) && !/female|samantha|victoria|karen|moira|tessa/i.test(v.name);}); if (__male) u.voice = __male; } catch (e) {}
     speech.isSpeaking = true;
     if (speech.onStateChange) speech.onStateChange("speaking");
     u.onend = () => {
