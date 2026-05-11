@@ -1070,6 +1070,8 @@
       "#vision-roadmap .rm-sub{color:rgba(255,255,255,.72);font-size:16px;line-height:1.6;margin:0}" +
       "#vision-roadmap .rm-track{position:relative}" +
       "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:48px;padding-top:24px}" +
+      "#vision-roadmap .rm-stones::before{content:'';position:absolute;left:50%;top:28px;bottom:28px;width:2.5px;background:linear-gradient(180deg,rgba(197,160,89,0) 0%,rgba(197,160,89,.7) 6%,rgba(241,220,167,.9) 50%,rgba(197,160,89,.7) 94%,rgba(197,160,89,0) 100%);transform:translateX(-50%);box-shadow:0 0 10px rgba(241,220,167,.5);z-index:1;pointer-events:none}" +
+      "@media (max-width:720px){#vision-roadmap .rm-stones::before{left:23px;top:0;bottom:0}}" +
       "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 64px 1fr;gap:14px;align-items:center;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
       "#vision-roadmap .rm-stone.visible{opacity:1;transform:translateY(0)}" +
       "#vision-roadmap .rm-card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.22);border-radius:16px;padding:22px 24px;transition:border-color .2s,box-shadow .2s}" +
@@ -1156,8 +1158,7 @@
     dream.innerHTML =
       '<div class="rm-star">A</div>' +
       '<blockquote>' +
-        '<span class="rm-line">A dreamer never stops dreaming.</span>' +
-        '<span class="rm-line">There is no finish line.</span>' +
+        '<span class="rm-line">A dreamer never stops dreaming. There is no finish line.</span>' +
         '<span class="rm-line">Stories continue, one way or another.</span>' +
       '</blockquote>' +
       '<cite>&mdash; The founder</cite>';
@@ -1165,7 +1166,7 @@
 
     var motto = document.createElement("div");
     motto.className = "rm-motto";
-    motto.textContent = "Our plans grow as our company does.";
+    motto.textContent = "The bigger we grow, the greater we build — we'll never stop efforts in growing!";
     track.appendChild(motto);
 
     section.appendChild(track);
