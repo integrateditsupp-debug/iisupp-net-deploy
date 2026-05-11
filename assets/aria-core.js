@@ -1069,20 +1069,23 @@
       "#vision-roadmap h2 .rm-gold{color:#c5a059}" +
       "#vision-roadmap .rm-sub{color:rgba(255,255,255,.72);font-size:16px;line-height:1.6;margin:0}" +
       "#vision-roadmap .rm-track{position:relative}" +
-      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:48px;padding-top:24px}" +
-      "#vision-roadmap .rm-stones::before{content:'';position:absolute;left:50%;top:28px;bottom:28px;width:2.5px;background:linear-gradient(180deg,rgba(197,160,89,0) 0%,rgba(197,160,89,.7) 6%,rgba(241,220,167,.9) 50%,rgba(197,160,89,.7) 94%,rgba(197,160,89,0) 100%);transform:translateX(-50%);box-shadow:0 0 10px rgba(241,220,167,.5);z-index:1;pointer-events:none}" +
-      "@media (max-width:720px){#vision-roadmap .rm-stones::before{left:23px;top:0;bottom:0}}" +
+      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:60px;padding-top:24px}" +
+      "#vision-roadmap .rm-tree{position:absolute;left:50%;top:0;width:240px;height:100%;transform:translateX(-50%);z-index:1;pointer-events:none}" +
+      "#vision-roadmap .rm-stone::before{content:'';position:absolute;top:50%;height:1.5px;transform:translateY(-50%);z-index:1;pointer-events:none;box-shadow:0 0 6px rgba(241,220,167,.4)}" +
+      "#vision-roadmap .rm-stone.left::before{right:50%;width:36%;background:linear-gradient(270deg,rgba(241,220,167,.85),rgba(241,220,167,0))}" +
+      "#vision-roadmap .rm-stone.right::before{left:50%;width:36%;background:linear-gradient(90deg,rgba(241,220,167,.85),rgba(241,220,167,0))}" +
+      "@media (max-width:720px){#vision-roadmap .rm-tree,#vision-roadmap .rm-stone::before{display:none}}" +
       "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 64px 1fr;gap:14px;align-items:center;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
       "#vision-roadmap .rm-stone.visible{opacity:1;transform:translateY(0)}" +
-      "#vision-roadmap .rm-card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.22);border-radius:16px;padding:22px 24px;transition:border-color .2s,box-shadow .2s}" +
-      "#vision-roadmap .rm-card:hover{border-color:rgba(197,160,89,.55);box-shadow:0 18px 40px rgba(197,160,89,.14)}" +
+      "#vision-roadmap .rm-card{background:none;border:none;border-radius:0;padding:14px 22px;box-shadow:none;transition:none}" +
+      "#vision-roadmap .rm-card:hover{background:none;border:none;box-shadow:none}" +
       "#vision-roadmap .rm-stone.left .rm-card{grid-column:1;text-align:right}" +
       "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left}" +
       "#vision-roadmap .rm-stone.left .rm-spacer{grid-column:3}" +
       "#vision-roadmap .rm-stone.right .rm-spacer{grid-column:1}" +
       "#vision-roadmap .rm-node{grid-column:2;justify-self:center;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:11px;letter-spacing:.04em;position:relative}" +
       "#vision-roadmap .rm-card h3{font-family:Cinzel,serif;font-size:18px;color:#f1dca7;margin:0 0 8px;letter-spacing:.02em;line-height:1.25}" +
-      "#vision-roadmap .rm-card p{color:rgba(255,255,255,.74);font-size:13.5px;line-height:1.6;margin:0}" +
+      "#vision-roadmap .rm-card p{color:rgba(241,220,167,.78);font-size:13.5px;line-height:1.65;margin:0}" +
       "#vision-roadmap .rm-badge{display:inline-block;margin-top:10px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-family:Cinzel,serif;font-weight:700;padding:3px 10px;border-radius:6px}" +
       "#vision-roadmap .rm-stone.done .rm-node{background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);color:#fff;box-shadow:0 0 16px rgba(34,197,94,.55),inset 0 0 0 1.5px rgba(255,255,255,.18)}" +
       "#vision-roadmap .rm-stone.done .rm-card{border-color:rgba(34,197,94,.35)}" +
@@ -1119,6 +1122,23 @@
     document.head.appendChild(s);
   }
 
+  function buildSVGTrunk() {
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("class", "rm-tree");
+    svg.setAttribute("viewBox", "0 0 240 1500");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    svg.innerHTML =
+      '<defs><linearGradient id="rmTrunk" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#c5a059" stop-opacity="0.2"/><stop offset="8%" stop-color="#c5a059" stop-opacity="0.85"/><stop offset="50%" stop-color="#f1dca7" stop-opacity="1"/><stop offset="92%" stop-color="#c5a059" stop-opacity="0.85"/><stop offset="100%" stop-color="#c5a059" stop-opacity="0.2"/></linearGradient><filter id="rmTreeGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+      '<path d="M 120 0 C 145 120, 95 240, 120 360 C 145 480, 95 600, 120 720 C 145 840, 95 960, 120 1080 C 145 1200, 95 1320, 120 1440 L 120 1500" stroke="url(#rmTrunk)" stroke-width="2.5" fill="none" filter="url(#rmTreeGlow)"/>' +
+      '<path d="M 120 180 Q 100 195, 88 215" stroke="url(#rmTrunk)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmTreeGlow)"/>' +
+      '<path d="M 120 540 Q 140 555, 152 575" stroke="url(#rmTrunk)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmTreeGlow)"/>' +
+      '<path d="M 120 900 Q 100 915, 88 935" stroke="url(#rmTrunk)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmTreeGlow)"/>' +
+      '<path d="M 120 1260 Q 140 1275, 152 1295" stroke="url(#rmTrunk)" stroke-width="1.2" fill="none" opacity="0.5" filter="url(#rmTreeGlow)"/>';
+    return svg;
+  }
+
   function buildRoadmap() {
     var section = document.createElement("section");
     section.id = "vision-roadmap";
@@ -1132,6 +1152,7 @@
 
     var track = document.createElement("div");
     track.className = "rm-track";
+    track.appendChild(buildSVGTrunk());
 
     var stones = document.createElement("div");
     stones.className = "rm-stones";
@@ -1298,6 +1319,38 @@
     }
   }
 
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+
+/* ===== SERVICE CENTER STATUS LABELS (v1 2026-05-10) ===== */
+(function () {
+  "use strict";
+  if (window.self !== window.top) return;
+  var p = location.pathname;
+  if (p !== "/" && p !== "/index.html") return;
+  function init() {
+    var sc = document.getElementById("service-center");
+    if (!sc) return;
+    if (sc.querySelector(".sc-status-tag")) return;
+    var heading = sc.querySelector("h2, h1");
+    if (heading) {
+      var tag = document.createElement("p");
+      tag.className = "sc-status-tag";
+      tag.textContent = "IN PROGRESS";
+      tag.style.cssText = "color:#c5a059;font-size:10px;letter-spacing:.32em;margin:10px 0 0;font-family:Cinzel,serif;font-weight:700;text-transform:uppercase;text-align:center;opacity:.75";
+      heading.parentNode.insertBefore(tag, heading.nextSibling);
+    }
+    var footer = document.createElement("p");
+    footer.className = "sc-footer-status";
+    footer.textContent = "Completing soon";
+    footer.style.cssText = "color:rgba(241,220,167,.55);font-size:13px;font-style:italic;letter-spacing:.06em;text-align:center;margin:40px auto 0;font-family:Cinzel,serif";
+    sc.appendChild(footer);
+  }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
