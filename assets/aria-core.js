@@ -378,7 +378,7 @@
     if (!clean) return false;
     const u = new SpeechSynthesisUtterance(clean);
     u.rate = 1; u.pitch = 1; u.lang = 'en-US';
-    try { var __voices = window.speechSynthesis.getVoices(); var __pref = ['Daniel','Alex','Microsoft David','Google UK English Male','Tom','Mark','James','Microsoft Mark','Reed']; var __male = null; for (var __i = 0; __i < __pref.length && !__male; __i++) { __male = __voices.find(function(v){return v.name.indexOf(__pref[__i]) >= 0;}); } if (!__male) __male = __voices.find(function(v){return /male/i.test(v.name) && /^en/.test(v.lang);}); if (!__male) __male = __voices.find(function(v){return /^en/.test(v.lang) && !/female|samantha|victoria|karen|moira|tessa/i.test(v.name);}); if (__male) u.voice = __male; } catch (e) {}
+try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Samantha","Microsoft Zira","Google UK English Female","Karen","Victoria","Allison","Microsoft Hazel","Microsoft Eva","Tessa","Fiona","Moira","Veena","Susan","Catherine","Serena"]; var __female=null; for(var __i=0;__i<__femPref.length && !__female;__i++){ var __np=__femPref[__i]; __female=__voices.find(function(v){return v.name===__np || v.name.indexOf(__np)>=0;}); } if(__female) u.voice=__female; u.rate=0.95; u.pitch=1.05; } catch(e){}
     speech.isSpeaking = true;
     if (speech.onStateChange) speech.onStateChange("speaking");
     u.onend = () => {
@@ -1046,21 +1046,23 @@
   if (p !== "/" && p !== "/index.html") return;
 
   var MILESTONES = [
-    { status: "done",    title: "ARIA conceived",                 desc: "From a sketch to a name. The vision: an AI that replaces tier-1 IT support with empathy, memory, and 24/7 availability." },
-    { status: "done",    title: "Knowledge base built",           desc: "100+ deep IT support articles. Windows, Mac, M365, networking, security, mobile. The brain ARIA reasons from." },
-    { status: "done",    title: "Live on iisupp.net",             desc: "Web platform with chat, voice, and live demo. The product is real. You're using it right now." },
-    { status: "done",    title: "Plans & payment infrastructure", desc: "Five tiers, lifetime access, acquisition pathway, Stripe-secured checkout. Revenue rails laid down." },
-    { status: "done",    title: "Forced trial & paywall",         desc: "3-minute web trial with countdown. Pay or pick a plan. Real conversion mechanics, not vanity numbers." },
-    { status: "done",    title: "First small contracts closed",  desc: "Multiple small contracts completed in 2025 — $35K+ in revenue. Every dollar reinvested into marketing, AI development, and the team that builds the next layer." },
-    { status: "done",    title: "First long-term contract — global company", desc: "$75K+ per year, multi-year deal. Our first anchor account with a global brand. Proof the model scales beyond one-off engagements." },
-    { status: "current", title: "Connecting with big brands & long-term partners", desc: "Where we are now. Targeting bigger names, multi-year contracts, anchor clients that compound. Building the partner network that takes ARIA from steady to dominant." },
-    { status: "future",  title: "Global expansion",               desc: "Multi-region, multi-language. Wherever a business needs IT support, ARIA shows up — North America, Europe, Asia, beyond." },
-    { status: "future",  title: "Charity support, pro bono",      desc: "Free ARIA for non-profits doing the work governments won't. Their tech burden becomes our responsibility." },
+    { status: "done",    title: "Small contracts closed",            desc: "2025 — $35K+ in real contracts. The first proof the model works in the field. Small businesses paying for real IT support." },
+    { status: "done",    title: "First long-term global contract",  desc: "2025 — $75K+/yr secured with a global company. Recurring revenue. Real partnership. The model scales." },
+    { status: "done",    title: "Reinvested for growth",            desc: "2025 — Revenue cycled back into skill, experience, and marketing development. We didn't pocket it — we built with it." },
+    { status: "done",    title: "ARIA brainstormed",                desc: "2026 — Vision initiated. The idea of an AI that replaces tier-1 IT support with empathy, memory, and 24/7 availability — the seed planted." },
+    { status: "done",    title: "ARIA conceived — with AI",         desc: "With AI's help, ARIA was conceived and continues as a work in progress. We keep adding capabilities and skills so businesses keep benefiting. We work hard to keep our clients happy and grow with them — as does ARIA." },
+    { status: "done",    title: "Knowledge base built",             desc: "100+ deep IT support articles — Windows, Mac, M365, networking, security, mobile. ARIA also supports businesses uploading their own knowledge base, so it follows your processes, procedures, and work culture." },
+    { status: "done",    title: "Live on iisupp.net",               desc: "Web platform with chat, voice, and live demo. The product is real. You're using it right now." },
+    { status: "done",    title: "Plans & payment infrastructure",   desc: "Five tiers, lifetime access, acquisition pathway, Stripe-secured checkout. Revenue rails laid down." },
+    { status: "done",    title: "Forced trial & paywall",           desc: "3-minute web trial with countdown. Pay or pick a plan. Real conversion mechanics, not vanity numbers." },
+    { status: "current", title: "Connecting with brands & companies", desc: "Where we are right now. Building real partnerships. Real contracts. Proving the model in the field, one customer at a time." },
+    { status: "future",  title: "Global expansion",                desc: "Multi-region, multi-language. Wherever a business needs IT support, ARIA shows up — North America, Europe, Asia, beyond." },
+    { status: "future",  title: "Charity support, pro bono",       desc: "Free ARIA for non-profits doing the work governments won't. Their tech burden becomes our responsibility." },
     { status: "future",  title: "Reimagining education — with respect", desc: "Education is the most important part of our lives. It must change and grow with us — but never by tearing down the hardship and dedication of the generations before. We stay appreciative and aware. There is no good done from negativity; start negative and you end with a toxic message. We're not perfect — we strive for balance. To those who 'badmouth' the system, we understand the pain behind it, and we're with you too. Lead by great example: not by acting perfect, but by being vulnerable and true to our humanity." },
     { status: "future",  title: "Eliminating real-world problems", desc: "Hunger. Housing. Mental health. Loneliness. We pick problems we can move with technology and patience — and we move them." },
     { status: "future",  title: "Expanding into virtual worlds",  desc: "VR, AR, spatial computing. ARIA goes wherever humans go. But our feet stay on planet earth — the virtual serves the real, not the other way around." },
     { status: "future",  title: "Mental health & human connection", desc: "Tech should bring people closer to themselves, to each other, to their lives. Not pull them away. We build for that line." }
-  ];
+  ]
 
   function injectStyles() {
     if (document.getElementById("rm-style")) return;
@@ -1360,3 +1362,7 @@
     init();
   }
 })();
+
+
+/* Service Center male professional voice helper */
+(function(){if(window.serviceCenterSpeakText)return;window.serviceCenterSpeakText=function(text){if(!("speechSynthesis" in window))return;try{window.speechSynthesis.cancel();}catch(e){}var u=new SpeechSynthesisUtterance(text);try{var voices=window.speechSynthesis.getVoices();var pref=["Daniel","Alex","Microsoft David","Google UK English Male","Microsoft Mark","Tom","James","Reed","Fred","Lee","Oliver","Aaron","Arthur"];var pick=null;for(var i=0;i<pref.length&&!pick;i++){var np=pref[i];pick=voices.find(function(v){return v.name===np||v.name.indexOf(np)>=0;});}if(pick)u.voice=pick;u.rate=0.97;u.pitch=0.92;}catch(e){}u.volume=1.0;window.speechSynthesis.speak(u);};})();
