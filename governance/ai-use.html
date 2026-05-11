@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d4af37">
+  <title>Acceptable Use of AI Policy | Integrated IT Support</title>
+  <meta name="description" content="ISO/IEC 42001 / NIST AI RMF Aligned">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/aria-core.css">
+  
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
+  :root { --luxury-gold: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); --deep-slate: #050505; }
+  body { font-family: 'Inter', sans-serif; background-color: var(--deep-slate); color: #ffffff; margin: 0; overflow-x: hidden; }
+  h1, h2, h3, h4, h5, .logo-text { font-family: 'Cinzel', serif; }
+  body, .protected { -webkit-user-select: none; user-select: none; }
+  input, textarea, select, .allow-select { -webkit-user-select: text !important; user-select: text !important; }
+  img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+  .gold-glow { text-shadow: 0 0 25px rgba(197, 160, 89, 0.5); }
+  .doc-wrap { max-width: 920px; margin: 0 auto; padding: 48px 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(197,160,89,0.2); border-radius: 4px; }
+  .doc-wrap p { color: rgba(255,255,255,0.82); line-height: 1.85; font-size: 14px; margin: 0 0 14px 0; letter-spacing: 0.01em; }
+  .doc-wrap strong { color: #f1dca7; font-weight: 700; }
+  .doc-wrap em { color: rgba(255,255,255,0.92); font-style: italic; }
+  .doc-wrap a { color: #c5a059; text-decoration: none; border-bottom: 1px dotted rgba(197,160,89,0.4); }
+  .doc-wrap a:hover { color: #f1dca7; border-bottom-color: #f1dca7; }
+  .doc-wrap h2 { color: #c5a059; font-size: 22px; letter-spacing: 0.18em; text-transform: uppercase; margin: 44px 0 10px 0; padding-bottom: 8px; border-bottom: 1px solid rgba(197,160,89,0.18); }
+  .doc-wrap h3 { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: #f1dca7; margin: 28px 0 12px 0; border-left: 2px solid #c5a059; padding-left: 12px; }
+  .doc-wrap ul, .doc-wrap ol { color: rgba(255,255,255,0.78); padding-left: 22px; margin: 0 0 18px 0; }
+  .doc-wrap ul li, .doc-wrap ol li { font-size: 13.5px; line-height: 1.85; padding: 4px 0; }
+  .doc-wrap ul li::marker { color: #c5a059; }
+  .doc-wrap ol li::marker { color: #c5a059; font-weight: 700; }
+  .doc-wrap table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12.5px; }
+  .doc-wrap table td, .doc-wrap table th { border: 1px solid rgba(197,160,89,0.18); padding: 10px 14px; vertical-align: top; }
+  .doc-wrap table tr.odd td { background: rgba(255,255,255,0.02); }
+  .doc-wrap table tr:first-child td strong { color: #f1dca7; }
+  .doc-wrap .meta-card { border: 1px solid rgba(197,160,89,0.25); background: rgba(197,160,89,0.04); padding: 22px 24px; border-radius: 4px; margin: 0 0 32px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 30px; }
+  .doc-wrap .meta-card .meta-label { color: rgba(255,255,255,0.5); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; }
+  .doc-wrap .meta-card .meta-value { color: #f1dca7; font-size: 13px; margin-top: 4px; font-weight: 600; }
+  .download-bar { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 36px 0; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border: 1px solid rgba(197,160,89,0.4); color: #f1dca7; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; text-decoration: none; transition: all 0.3s ease; border-radius: 2px; background: rgba(197,160,89,0.05); }
+  .dl-btn:hover { background: rgba(197,160,89,0.15); border-color: #c5a059; color: #fff; }
+  .back-link { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; font-weight: 700; padding: 10px 18px; border: 1px solid rgba(197,160,89,0.3); border-radius: 2px; transition: all 0.3s ease; }
+  .back-link:hover { color: #c5a059; border-color: #c5a059; }
+  .gov-card { display:block; border: 1px solid rgba(197,160,89,0.2); background: rgba(255,255,255,0.02); padding: 24px; border-radius: 4px; text-decoration: none; transition: all 0.3s ease; }
+  .gov-card:hover { border-color: #c5a059; background: rgba(197,160,89,0.05); transform: translateY(-2px); }
+  .gov-card .ref-tag { color: #c5a059; font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase; font-weight: 700; }
+  .gov-card .gov-title { color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin: 8px 0 6px 0; letter-spacing: 0.08em; }
+  .gov-card .gov-sub { color: rgba(255,255,255,0.6); font-size: 12px; line-height: 1.6; }
+  .mobile-menu-btn { display: none; background: none; border: 1px solid rgba(197, 160, 89, 0.4); color: #c5a059; padding: 8px 10px; cursor: pointer; }
+  .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: #c5a059; margin: 4px 0; }
+  .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 55; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+  .mobile-nav-overlay.active { display: flex; }
+  .mobile-nav-overlay a { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; color: rgba(255,255,255,0.6); text-decoration: none; padding: 8px 0; }
+  .mobile-nav-overlay a:hover { color: #c5a059; }
+  .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: #c5a059; font-size: 28px; cursor: pointer; }
+  @media (max-width: 1024px) { nav { padding: 16px 20px !important; } .mobile-menu-btn { display: block; } .desktop-nav-links { display: none !important; } }
+  @media (max-width: 768px) { .doc-wrap { padding: 28px 18px; margin: 0 12px; } .doc-wrap h2 { font-size: 16px; letter-spacing: 0.12em; } .doc-wrap p, .doc-wrap ul li, .doc-wrap ol li { font-size: 12.5px; } .doc-wrap .meta-card { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="protected">
+
+<nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+  <a href="/" class="flex items-center gap-6" style="text-decoration:none;color:inherit;">
+    <div class="w-12 h-12 flex items-center justify-center border border-[#c5a059] relative">
+      <div class="absolute inset-1 border border-[#c5a059]/30"></div>
+      <span class="text-[#c5a059] font-bold text-xl logo-text">I</span>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span>
+      <span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span>
+    </div>
+  </a>
+  <div class="desktop-nav-links hidden lg:flex space-x-12 text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
+    <a href="/purchase-tech.html" class="hover:text-[#c5a059] transition">Purchase Tech</a>
+    <a href="/#service-center" class="hover:text-[#c5a059] transition">Service Center</a>
+    <a href="/governance/" class="hover:text-[#c5a059] transition">Governance</a>
+    <a href="/about.html" class="hover:text-[#c5a059] transition">About Us</a>
+    <a href="tel:+16475813182" class="text-white hover:text-[#c5a059] transition">Connect with Senior Director</a>
+  </div>
+  <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div id="mobileMenu" class="mobile-nav-overlay">
+  <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
+  <a href="/" onclick="toggleMobileMenu()">Home</a>
+  <a href="/governance/" onclick="toggleMobileMenu()">Governance</a>
+  <a href="/about.html" onclick="toggleMobileMenu()">About Us</a>
+  <a href="tel:+16475813182" onclick="toggleMobileMenu()" style="color:#c5a059;">Call (647) 581-3182</a>
+</div>
+<script>function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('active')}</script>
+<section class="pt-36 pb-24 px-6">
+  <div class="max-w-5xl mx-auto text-center mb-12">
+    <span class="text-[#c5a059] tracking-[0.5em] text-[9px] uppercase font-bold block mb-4">ISO/IEC 42001 / NIST AI RMF Aligned</span>
+    <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight logo-text uppercase">Acceptable Use of AI Policy</h1>
+    <p class="text-white/40 uppercase tracking-[0.35em] text-[10px] mt-6">Document IIS-GOV-AI-001 &nbsp;•&nbsp; Version 1.0 &nbsp;•&nbsp; Effective 01 May 2026</p>
+  </div>
+  <div class="max-w-5xl mx-auto mb-8 px-2 flex justify-between items-center flex-wrap gap-3">
+    <a href="/governance/" class="back-link"><i class="fa fa-arrow-left"></i> Back to Governance</a>
+  </div>
+  <div class="doc-wrap">
+    
+<div class="download-bar">
+  <a class="dl-btn" href="/downloads/governance/Acceptable_Use_of_AI_Policy.docx" download>
+    <i class="fa fa-file-word"></i> Download .docx
+  </a>
+  <button class="dl-btn" onclick="window.print()">
+    <i class="fa fa-print"></i> Print / PDF
+  </button>
+</div>
+    <div class="meta-card">
+      <div><div class="meta-label">Document Reference</div><div class="meta-value">IIS-GOV-AI-001</div></div>
+      <div><div class="meta-label">Version</div><div class="meta-value">1.0</div></div>
+      <div><div class="meta-label">Effective Date</div><div class="meta-value">01 May 2026</div></div>
+      <div><div class="meta-label">Classification</div><div class="meta-value">PUBLIC</div></div>
+      <div><div class="meta-label">Jurisdiction</div><div class="meta-value">Ontario / Canada (primary), Global (secondary)</div></div>
+      <div><div class="meta-label">Approving Authority</div><div class="meta-value">CEO &amp; Executive Leadership</div></div>
+    </div>
+    <h2>1. Purpose &amp; Statement</h2><p>Integrated IT Support Inc. (the “Company”) embraces artificial intelligence (AI) as a means of delivering faster, more reliable, and more affordable services to its clients. The Company is equally committed to ensuring that AI systems it builds, deploys, or uses internally are developed and operated in a manner that is lawful, ethical, transparent, secure, and consistent with respect for human rights and client interests.</p><p>This Policy sets out the standards that govern the Company's use of AI, in alignment with leading frameworks including ISO/IEC 42001:2023 (AI Management System), the NIST AI Risk Management Framework (AI RMF 1.0), the Government of Canada Directive on Automated Decision-Making, the OECD AI Principles, and the principles of the EU AI Act.</p><h2>2. Scope</h2><p>This Policy applies to all use of AI by the Company and its personnel, whether for internal productivity, service delivery to clients, embedded product features, or experimental and research purposes. It applies to:</p><ul><li><p>AI systems developed in-house by the Company.</p></li><li><p>Third-party AI systems and APIs used by the Company (including generative AI chat tools, copilots, and agent platforms).</p></li><li><p>AI systems used by suppliers and sub-contractors on the Company's or its clients' behalf.</p></li></ul><h2>3. Definitions</h2><ul><li><p>AI System: a machine-based system that, for a given set of human-defined objectives, makes predictions, recommendations, or decisions influencing real or virtual environments.</p></li><li><p>Generative AI: an AI system capable of generating text, code, images, audio, video, or other content in response to prompts.</p></li><li><p>High-Risk AI System: an AI system used in a context that could materially affect an individual's rights, opportunities, safety, or finances (e.g., automated screening of job applicants, credit decisions, healthcare triage).</p></li><li><p>Confidential / Restricted Information: as defined in the Information Security Policy (IIS-GOV-SEC-001).</p></li></ul><h2>4. Governance &amp; Accountability</h2><ul><li><p>Executive accountability for AI rests with the CEO and the executive AI Sponsor (typically the CISO or a designated AI Lead).</p></li><li><p>The Governance, Risk &amp; Compliance Office maintains the AI Inventory (IIS-GOV-AI-INV-001) — a documented register of AI systems used by the Company, their purposes, risk classification, and approval status.</p></li><li><p>Every new AI use case must be reviewed and approved through the AI Use-Case Intake Process before being placed in production for client-impacting work.</p></li></ul><h2>5. Permitted Uses</h2><p>Subject to the controls below, the Company permits the use of approved AI tools for:</p><ul><li><p>Drafting internal documentation, code, and communications, with mandatory human review before reliance or external distribution.</p></li><li><p>Research, summarisation of public information, brainstorming, and learning.</p></li><li><p>Automation of well-bounded, internally-facing operational tasks (e.g., ticket triage, report generation) where errors are recoverable and a human-in-the-loop control is present.</p></li><li><p>Development of client-facing AI services that have passed the AI Use-Case Intake Process, including a risk assessment, transparency disclosure to the client, and explicit contractual permission where required.</p></li></ul><h2>6. Prohibited Uses</h2><p>Personnel must NOT, under any circumstances, do any of the following without explicit prior written authorisation from the GRC Office or a duly authorised executive:</p><ul><li><p>Submit Confidential or Restricted client data, personal information, credentials, secrets, source code, security configurations, or non-public business information to any public, free-tier, or non-approved AI tool, or to any AI tool that may use that input to train its models.</p></li><li><p>Use AI to generate content that infringes the intellectual-property rights of any party.</p></li><li><p>Use AI to impersonate any individual, including by deepfake audio or video, or to fabricate identities.</p></li><li><p>Use AI to generate or distribute deceptive content, misleading marketing, or content intended to manipulate financial markets or electoral processes.</p></li><li><p>Use AI to make automated decisions about hiring, performance, termination, credit, or access to services without a documented human-in-the-loop review and explicit notice to the affected individual.</p></li><li><p>Use AI to engage in surveillance, profiling, or discriminatory behaviour against any protected group.</p></li><li><p>Use AI in a manner that violates applicable law, regulation, client contract, or this Policy.</p></li></ul><h2>7. Data Handling in AI Systems</h2><ul><li><p>Use of Confidential or Restricted information with AI is permitted only with approved enterprise-grade AI services that operate under contractual data-protection commitments, including: no use of customer data for model training without explicit consent; encryption in transit and at rest; appropriate data residency; and contractual breach-notification obligations.</p></li><li><p>The Company maintains a list of Approved AI Services (IIS-GOV-AI-APV-001) reviewed at least quarterly.</p></li><li><p>Personal information processed via AI is subject to the Privacy Policy (IIS-GOV-PRV-001) and PIPEDA; clients are notified where AI processing of their personal information occurs outside Canada.</p></li></ul><h2>8. Transparency &amp; Disclosure</h2><ul><li><p>Where the Company uses AI in delivering services to clients, the Company will disclose this fact to the client, including the categories of AI used and any human-oversight controls applied.</p></li><li><p>AI-generated content shared externally on the Company's behalf is reviewed for accuracy, completeness, and appropriateness by a qualified human before publication.</p></li><li><p>Where required by applicable law (e.g., EU AI Act provisions on AI-generated content), AI-generated outputs are labelled accordingly.</p></li></ul><h2>9. Bias, Fairness &amp; Human Oversight</h2><ul><li><p>AI systems developed or operated by the Company that materially affect individuals' rights or opportunities undergo a documented Bias &amp; Fairness Assessment before deployment and at least annually thereafter.</p></li><li><p>High-risk AI systems include a human-in-the-loop or human-on-the-loop control proportionate to the risk.</p></li><li><p>Personnel are trained to recognise hallucinations, fabrications, and other typical failure modes of generative AI and to validate outputs against authoritative sources before reliance.</p></li></ul><h2>10. Security of AI Systems</h2><p>AI systems are subject to the Company's Information Security Policy (IIS-GOV-SEC-001). The Company specifically addresses AI-specific risks including:</p><ul><li><p>Prompt injection and indirect prompt injection.</p></li><li><p>Training-data poisoning.</p></li><li><p>Model extraction and inference attacks.</p></li><li><p>Insecure use of agentic AI with elevated privileges (least-privilege and human-confirm boundaries are enforced for agent actions involving data exfiltration, account changes, or financial transactions).</p></li></ul><h2>11. Vendor Due Diligence</h2><p>Before adding any AI service to the Approved list, the GRC Office reviews:</p><ul><li><p>The vendor's security posture (SOC 2 / ISO 27001 evidence).</p></li><li><p>The vendor's data-handling, training-data, and retention practices.</p></li><li><p>The contractual terms regarding ownership of inputs and outputs.</p></li><li><p>Data-residency options and sub-processor disclosure.</p></li><li><p>The vendor's published responsible-AI practices, model-card or system-card disclosures, and incident-disclosure history.</p></li></ul><h2>12. Intellectual Property &amp; Output Ownership</h2><ul><li><p>Personnel must not rely on AI outputs as final deliverables without verification and customisation by a qualified human.</p></li><li><p>The Company does not claim copyright in content that is purely AI-generated where copyright law does not provide protection.</p></li><li><p>Personnel must not introduce open-source or copyrighted code into client deliverables via AI tools without confirming license compatibility.</p></li></ul><h2>13. Training &amp; Awareness</h2><p>All personnel using AI in the course of their work must complete the Company's AI Acceptable Use training upon joining and at least annually. Targeted training is provided to client-facing technical roles on responsible-AI engineering, prompt-injection defence, and privacy-by-design.</p><h2>14. Monitoring, Audit &amp; Improvement</h2><ul><li><p>The GRC Office maintains the AI Risk Register and reviews AI-related incidents, near-misses, and corrective actions.</p></li><li><p>AI use cases are reviewed at least annually for continued necessity, performance, and compliance with this Policy.</p></li><li><p>Material changes to AI use cases are subject to re-approval through the Intake Process.</p></li></ul><h2>15. Reporting Concerns</h2><p>Any person — internal or external — may report a concern about the Company's use of AI through the Company's grievance mechanism (<a href="mailto:ethics@iisupport.net">ethics@iisupport.net</a> or <a href="/ethics-grievance">iisupport.net/ethics-grievance</a>). The Company will investigate concerns in good faith and apply its non-retaliation guarantee.</p><p><strong>Approval and Authority</strong></p><p>This document has been reviewed and approved by the Executive Leadership of Integrated IT Support Inc. and is issued under the authority of the Office of the Chief Executive Officer. The document is subject to periodic review and may be amended by the Approving Authority. Material amendments are communicated to all employees and key suppliers within thirty (30) days of issuance.</p><p>Signed for and on behalf of Integrated IT Support Inc.</p><p>________________________________________</p><p><strong>Ahmad — Chief Executive Officer</strong></p><p>Integrated IT Support Inc.</p><p>Date: 01 May 2026</p>
+
+  </div>
+</section>
+
+<footer class="border-t border-white/5 mt-24 py-12 px-8 text-center">
+  <p class="text-white/40 text-[10px] tracking-[0.4em] uppercase font-bold">© 2026 Integrated IT Support Inc. — All Rights Reserved</p>
+  <p class="text-[#c5a059]/60 text-[9px] tracking-[0.4em] uppercase mt-3">Project AEGIS — Governance, Risk & Compliance Program</p>
+  <div class="flex justify-center gap-6 mt-5 text-[9px] tracking-[0.3em] uppercase font-bold">
+    <a href="/governance/" class="text-white/40 hover:text-[#c5a059]">Governance</a>
+    <a href="/ethics-grievance" class="text-white/40 hover:text-[#c5a059]">Ethics &amp; Grievance</a>
+    <a href="/terms.html" class="text-white/40 hover:text-[#c5a059]">Terms</a>
+    <a href="/governance/privacy" class="text-white/40 hover:text-[#c5a059]">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d4af37">
+  <title>Ethics &amp; Grievance Reporting | Integrated IT Support</title>
+  <meta name="description" content="Confidential, non-retaliatory grievance mechanism for Integrated IT Support Inc.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/aria-core.css">
+  
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
+  :root { --luxury-gold: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); --deep-slate: #050505; }
+  body { font-family: 'Inter', sans-serif; background-color: var(--deep-slate); color: #ffffff; margin: 0; overflow-x: hidden; }
+  h1, h2, h3, h4, h5, .logo-text { font-family: 'Cinzel', serif; }
+  body, .protected { -webkit-user-select: none; user-select: none; }
+  input, textarea, select, .allow-select { -webkit-user-select: text !important; user-select: text !important; }
+  img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+  .gold-glow { text-shadow: 0 0 25px rgba(197, 160, 89, 0.5); }
+  .doc-wrap { max-width: 920px; margin: 0 auto; padding: 48px 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(197,160,89,0.2); border-radius: 4px; }
+  .doc-wrap p { color: rgba(255,255,255,0.82); line-height: 1.85; font-size: 14px; margin: 0 0 14px 0; letter-spacing: 0.01em; }
+  .doc-wrap strong { color: #f1dca7; font-weight: 700; }
+  .doc-wrap em { color: rgba(255,255,255,0.92); font-style: italic; }
+  .doc-wrap a { color: #c5a059; text-decoration: none; border-bottom: 1px dotted rgba(197,160,89,0.4); }
+  .doc-wrap a:hover { color: #f1dca7; border-bottom-color: #f1dca7; }
+  .doc-wrap h2 { color: #c5a059; font-size: 22px; letter-spacing: 0.18em; text-transform: uppercase; margin: 44px 0 10px 0; padding-bottom: 8px; border-bottom: 1px solid rgba(197,160,89,0.18); }
+  .doc-wrap h3 { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: #f1dca7; margin: 28px 0 12px 0; border-left: 2px solid #c5a059; padding-left: 12px; }
+  .doc-wrap ul, .doc-wrap ol { color: rgba(255,255,255,0.78); padding-left: 22px; margin: 0 0 18px 0; }
+  .doc-wrap ul li, .doc-wrap ol li { font-size: 13.5px; line-height: 1.85; padding: 4px 0; }
+  .doc-wrap ul li::marker { color: #c5a059; }
+  .doc-wrap ol li::marker { color: #c5a059; font-weight: 700; }
+  .doc-wrap table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12.5px; }
+  .doc-wrap table td, .doc-wrap table th { border: 1px solid rgba(197,160,89,0.18); padding: 10px 14px; vertical-align: top; }
+  .doc-wrap table tr.odd td { background: rgba(255,255,255,0.02); }
+  .doc-wrap table tr:first-child td strong { color: #f1dca7; }
+  .doc-wrap .meta-card { border: 1px solid rgba(197,160,89,0.25); background: rgba(197,160,89,0.04); padding: 22px 24px; border-radius: 4px; margin: 0 0 32px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 30px; }
+  .doc-wrap .meta-card .meta-label { color: rgba(255,255,255,0.5); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; }
+  .doc-wrap .meta-card .meta-value { color: #f1dca7; font-size: 13px; margin-top: 4px; font-weight: 600; }
+  .download-bar { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 36px 0; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border: 1px solid rgba(197,160,89,0.4); color: #f1dca7; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; text-decoration: none; transition: all 0.3s ease; border-radius: 2px; background: rgba(197,160,89,0.05); }
+  .dl-btn:hover { background: rgba(197,160,89,0.15); border-color: #c5a059; color: #fff; }
+  .back-link { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; font-weight: 700; padding: 10px 18px; border: 1px solid rgba(197,160,89,0.3); border-radius: 2px; transition: all 0.3s ease; }
+  .back-link:hover { color: #c5a059; border-color: #c5a059; }
+  .gov-card { display:block; border: 1px solid rgba(197,160,89,0.2); background: rgba(255,255,255,0.02); padding: 24px; border-radius: 4px; text-decoration: none; transition: all 0.3s ease; }
+  .gov-card:hover { border-color: #c5a059; background: rgba(197,160,89,0.05); transform: translateY(-2px); }
+  .gov-card .ref-tag { color: #c5a059; font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase; font-weight: 700; }
+  .gov-card .gov-title { color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin: 8px 0 6px 0; letter-spacing: 0.08em; }
+  .gov-card .gov-sub { color: rgba(255,255,255,0.6); font-size: 12px; line-height: 1.6; }
+  .mobile-menu-btn { display: none; background: none; border: 1px solid rgba(197, 160, 89, 0.4); color: #c5a059; padding: 8px 10px; cursor: pointer; }
+  .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: #c5a059; margin: 4px 0; }
+  .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 55; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+  .mobile-nav-overlay.active { display: flex; }
+  .mobile-nav-overlay a { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; color: rgba(255,255,255,0.6); text-decoration: none; padding: 8px 0; }
+  .mobile-nav-overlay a:hover { color: #c5a059; }
+  .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: #c5a059; font-size: 28px; cursor: pointer; }
+  @media (max-width: 1024px) { nav { padding: 16px 20px !important; } .mobile-menu-btn { display: block; } .desktop-nav-links { display: none !important; } }
+  @media (max-width: 768px) { .doc-wrap { padding: 28px 18px; margin: 0 12px; } .doc-wrap h2 { font-size: 16px; letter-spacing: 0.12em; } .doc-wrap p, .doc-wrap ul li, .doc-wrap ol li { font-size: 12.5px; } .doc-wrap .meta-card { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="protected">
+
+<nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+  <a href="/" class="flex items-center gap-6" style="text-decoration:none;color:inherit;">
+    <div class="w-12 h-12 flex items-center justify-center border border-[#c5a059] relative">
+      <div class="absolute inset-1 border border-[#c5a059]/30"></div>
+      <span class="text-[#c5a059] font-bold text-xl logo-text">I</span>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span>
+      <span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span>
+    </div>
+  </a>
+  <div class="desktop-nav-links hidden lg:flex space-x-12 text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
+    <a href="/purchase-tech.html" class="hover:text-[#c5a059] transition">Purchase Tech</a>
+    <a href="/#service-center" class="hover:text-[#c5a059] transition">Service Center</a>
+    <a href="/governance/" class="hover:text-[#c5a059] transition">Governance</a>
+    <a href="/about.html" class="hover:text-[#c5a059] transition">About Us</a>
+    <a href="tel:+16475813182" class="text-white hover:text-[#c5a059] transition">Connect with Senior Director</a>
+  </div>
+  <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div id="mobileMenu" class="mobile-nav-overlay">
+  <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
+  <a href="/" onclick="toggleMobileMenu()">Home</a>
+  <a href="/governance/" onclick="toggleMobileMenu()">Governance</a>
+  <a href="/about.html" onclick="toggleMobileMenu()">About Us</a>
+  <a href="tel:+16475813182" onclick="toggleMobileMenu()" style="color:#c5a059;">Call (647) 581-3182</a>
+</div>
+<script>function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('active')}</script>
+<section class="pt-36 pb-24 px-6">
+  <div class="max-w-5xl mx-auto text-center mb-12">
+    <span class="text-[#c5a059] tracking-[0.5em] text-[9px] uppercase font-bold block mb-4">Confidential &amp; Non-Retaliatory</span>
+    <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight logo-text uppercase">Ethics &amp; <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic">Grievance Reporting</span></h1>
+    <p class="text-white/55 max-w-2xl mx-auto mt-6 text-sm leading-relaxed">An accessible, predictable, equitable, and rights-compatible mechanism for raising concerns &mdash; designed against UN Guiding Principles Principle 31.</p>
+  </div>
+  <div class="max-w-5xl mx-auto mb-8 px-2"><a href="/governance/" class="back-link"><i class="fa fa-arrow-left"></i> Back to Governance</a></div>
+  <div class="doc-wrap">
+    
+<h2>How to Raise a Concern</h2>
+<p>Integrated IT Support Inc. operates an <strong>independent, confidential, non-retaliatory grievance mechanism</strong> through which any person — employee, contractor, supplier worker, client, community member, or any other third party — may raise a concern in good faith about actual or potential human-rights, labour-rights, ethics, or compliance impacts associated with the Company&rsquo;s operations or business relationships.</p>
+
+<h2>Channels</h2>
+<ul>
+  <li><strong>E-mail (preferred):</strong> <a href="mailto:ethics@iisupport.net">ethics@iisupport.net</a> &mdash; monitored by the Office of Governance, Risk &amp; Compliance.</li>
+  <li><strong>Telephone:</strong> <a href="tel:+16475813182">+1 (647) 581-3182</a> &mdash; ask for the designated Human Rights Sponsor.</li>
+  <li><strong>Postal (anonymous accepted):</strong> Office of Governance, Risk &amp; Compliance &mdash; Integrated IT Support Inc., Ontario, Canada (full mailing address provided on request).</li>
+  <li><strong>Anonymous submission:</strong> available via the e-mail channel; you may use a temporary or pseudonymous e-mail address. The Company will not attempt to identify you.</li>
+  <li><strong>Multilingual support:</strong> available on request. Please indicate your preferred language in your initial message.</li>
+  <li><strong>Accessibility:</strong> intake is operated consistent with the <em>Accessibility for Ontarians with Disabilities Act (AODA)</em>; alternate formats are available on request.</li>
+</ul>
+
+<h2>What You Can Raise</h2>
+<p>The mechanism accepts concerns about, but not limited to:</p>
+<ul>
+  <li>Discrimination, harassment, retaliation, or workplace violence.</li>
+  <li>Wages, hours, benefits, working conditions, or living wage.</li>
+  <li>Forced labour, child labour, modern slavery, or human trafficking, including in our supply chain.</li>
+  <li>Freedom of association and collective bargaining.</li>
+  <li>Occupational health and safety.</li>
+  <li>Data privacy and information security.</li>
+  <li>Environmental impacts, including hazardous waste, mercury, and persistent organic pollutants.</li>
+  <li>Land, forest, or water rights of local communities or Indigenous peoples.</li>
+  <li>Misuse of public or private security forces.</li>
+  <li>Bribery, corruption, fraud, or breach of laws or regulations.</li>
+  <li>Misuse of artificial intelligence in our services.</li>
+  <li>Any other ethics or compliance concern.</li>
+</ul>
+
+<h2>What to Include</h2>
+<ol>
+  <li>What happened (with as much detail as you are comfortable sharing).</li>
+  <li>Where and when it happened (date, location, geography).</li>
+  <li>Who was involved (if known and if you are comfortable sharing).</li>
+  <li>Any supporting documents, photographs, or witnesses.</li>
+  <li>How you would prefer to be contacted (or whether you wish to remain anonymous).</li>
+</ol>
+
+<h2>How We Handle Concerns</h2>
+<p>The Company&rsquo;s grievance handling follows the <strong>effectiveness criteria of UN Guiding Principles Principle 31</strong>: legitimate, accessible, predictable, equitable, transparent, rights-compatible, a source of continuous learning, and based on engagement and dialogue. Specifically:</p>
+<ol>
+  <li><strong>Acknowledgement</strong> within 5 business days.</li>
+  <li><strong>Triage and investigation</strong> by the Office of Governance, Risk &amp; Compliance, with independent expertise as required.</li>
+  <li><strong>Engagement with you</strong> (if not anonymous) on your preferred remedy.</li>
+  <li><strong>Appropriate remedy</strong>, which may include apology, restitution, restoration, compensation, behavioural-change measures, and assurances of non-repetition.</li>
+  <li><strong>Closure communication</strong> with a summary of what was found and what was done, to the extent permitted by privacy and legal constraints.</li>
+  <li><strong>Lessons learned</strong> are captured anonymously and reported to the Executive Leadership.</li>
+</ol>
+
+<h2>Non-Retaliation</h2>
+<p>The Company prohibits, and will not tolerate, any form of retaliation against any person raising a concern in good faith, whether or not the concern is ultimately substantiated. This protection extends to employees, contractors, supplier workers, and external complainants. Any act of retaliation will itself be treated as a serious breach of this Policy and may result in termination of employment or business relationship and, where applicable, referral to authorities.</p>
+
+<h2>External Recourse</h2>
+<p>Use of this internal mechanism does not waive your right to seek external recourse, including (without limitation):</p>
+<ul>
+  <li><a href="https://www.ohrc.on.ca/" target="_blank" rel="noopener">Ontario Human Rights Commission</a> &mdash; discrimination complaints under the Ontario Human Rights Code.</li>
+  <li><a href="https://www.canada.ca/en/employment-social-development/services/labour-standards.html" target="_blank" rel="noopener">Federal Labour Standards (ESDC)</a> and Ontario Ministry of Labour &mdash; employment-standards complaints.</li>
+  <li><a href="https://www.priv.gc.ca/" target="_blank" rel="noopener">Office of the Privacy Commissioner of Canada</a> &mdash; PIPEDA-related complaints.</li>
+  <li><a href="https://www.international.gc.ca/trade-agreements-accords-commerciaux/topics-domaines/other-autre/csr-rse.aspx" target="_blank" rel="noopener">Canada&rsquo;s National Contact Point for Responsible Business Conduct</a> &mdash; OECD Guidelines specific instances.</li>
+  <li><a href="https://core-ombuds.canada.ca/" target="_blank" rel="noopener">Canadian Ombudsperson for Responsible Enterprise (CORE)</a> &mdash; human-rights complaints relating to Canadian companies operating abroad.</li>
+  <li><a href="https://www.publicsafety.gc.ca/" target="_blank" rel="noopener">Public Safety Canada</a> &mdash; matters relating to forced labour and child labour under S-211.</li>
+</ul>
+
+  </div>
+</section>
+
+<footer class="border-t border-white/5 mt-24 py-12 px-8 text-center">
+  <p class="text-white/40 text-[10px] tracking-[0.4em] uppercase font-bold">© 2026 Integrated IT Support Inc. — All Rights Reserved</p>
+  <p class="text-[#c5a059]/60 text-[9px] tracking-[0.4em] uppercase mt-3">Project AEGIS — Governance, Risk & Compliance Program</p>
+  <div class="flex justify-center gap-6 mt-5 text-[9px] tracking-[0.3em] uppercase font-bold">
+    <a href="/governance/" class="text-white/40 hover:text-[#c5a059]">Governance</a>
+    <a href="/ethics-grievance" class="text-white/40 hover:text-[#c5a059]">Ethics &amp; Grievance</a>
+    <a href="/terms.html" class="text-white/40 hover:text-[#c5a059]">Terms</a>
+    <a href="/governance/privacy" class="text-white/40 hover:text-[#c5a059]">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>

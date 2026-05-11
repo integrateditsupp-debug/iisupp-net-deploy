@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d4af37">
+  <title>Modern Slavery &amp; Forced Labour Statement | Integrated IT Support</title>
+  <meta name="description" content="Canadian Act S-211 Compliance">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/aria-core.css">
+  
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
+  :root { --luxury-gold: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); --deep-slate: #050505; }
+  body { font-family: 'Inter', sans-serif; background-color: var(--deep-slate); color: #ffffff; margin: 0; overflow-x: hidden; }
+  h1, h2, h3, h4, h5, .logo-text { font-family: 'Cinzel', serif; }
+  body, .protected { -webkit-user-select: none; user-select: none; }
+  input, textarea, select, .allow-select { -webkit-user-select: text !important; user-select: text !important; }
+  img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+  .gold-glow { text-shadow: 0 0 25px rgba(197, 160, 89, 0.5); }
+  .doc-wrap { max-width: 920px; margin: 0 auto; padding: 48px 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(197,160,89,0.2); border-radius: 4px; }
+  .doc-wrap p { color: rgba(255,255,255,0.82); line-height: 1.85; font-size: 14px; margin: 0 0 14px 0; letter-spacing: 0.01em; }
+  .doc-wrap strong { color: #f1dca7; font-weight: 700; }
+  .doc-wrap em { color: rgba(255,255,255,0.92); font-style: italic; }
+  .doc-wrap a { color: #c5a059; text-decoration: none; border-bottom: 1px dotted rgba(197,160,89,0.4); }
+  .doc-wrap a:hover { color: #f1dca7; border-bottom-color: #f1dca7; }
+  .doc-wrap h2 { color: #c5a059; font-size: 22px; letter-spacing: 0.18em; text-transform: uppercase; margin: 44px 0 10px 0; padding-bottom: 8px; border-bottom: 1px solid rgba(197,160,89,0.18); }
+  .doc-wrap h3 { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: #f1dca7; margin: 28px 0 12px 0; border-left: 2px solid #c5a059; padding-left: 12px; }
+  .doc-wrap ul, .doc-wrap ol { color: rgba(255,255,255,0.78); padding-left: 22px; margin: 0 0 18px 0; }
+  .doc-wrap ul li, .doc-wrap ol li { font-size: 13.5px; line-height: 1.85; padding: 4px 0; }
+  .doc-wrap ul li::marker { color: #c5a059; }
+  .doc-wrap ol li::marker { color: #c5a059; font-weight: 700; }
+  .doc-wrap table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12.5px; }
+  .doc-wrap table td, .doc-wrap table th { border: 1px solid rgba(197,160,89,0.18); padding: 10px 14px; vertical-align: top; }
+  .doc-wrap table tr.odd td { background: rgba(255,255,255,0.02); }
+  .doc-wrap table tr:first-child td strong { color: #f1dca7; }
+  .doc-wrap .meta-card { border: 1px solid rgba(197,160,89,0.25); background: rgba(197,160,89,0.04); padding: 22px 24px; border-radius: 4px; margin: 0 0 32px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 30px; }
+  .doc-wrap .meta-card .meta-label { color: rgba(255,255,255,0.5); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; }
+  .doc-wrap .meta-card .meta-value { color: #f1dca7; font-size: 13px; margin-top: 4px; font-weight: 600; }
+  .download-bar { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 36px 0; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border: 1px solid rgba(197,160,89,0.4); color: #f1dca7; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; text-decoration: none; transition: all 0.3s ease; border-radius: 2px; background: rgba(197,160,89,0.05); }
+  .dl-btn:hover { background: rgba(197,160,89,0.15); border-color: #c5a059; color: #fff; }
+  .back-link { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; font-weight: 700; padding: 10px 18px; border: 1px solid rgba(197,160,89,0.3); border-radius: 2px; transition: all 0.3s ease; }
+  .back-link:hover { color: #c5a059; border-color: #c5a059; }
+  .gov-card { display:block; border: 1px solid rgba(197,160,89,0.2); background: rgba(255,255,255,0.02); padding: 24px; border-radius: 4px; text-decoration: none; transition: all 0.3s ease; }
+  .gov-card:hover { border-color: #c5a059; background: rgba(197,160,89,0.05); transform: translateY(-2px); }
+  .gov-card .ref-tag { color: #c5a059; font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase; font-weight: 700; }
+  .gov-card .gov-title { color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin: 8px 0 6px 0; letter-spacing: 0.08em; }
+  .gov-card .gov-sub { color: rgba(255,255,255,0.6); font-size: 12px; line-height: 1.6; }
+  .mobile-menu-btn { display: none; background: none; border: 1px solid rgba(197, 160, 89, 0.4); color: #c5a059; padding: 8px 10px; cursor: pointer; }
+  .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: #c5a059; margin: 4px 0; }
+  .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 55; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+  .mobile-nav-overlay.active { display: flex; }
+  .mobile-nav-overlay a { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; color: rgba(255,255,255,0.6); text-decoration: none; padding: 8px 0; }
+  .mobile-nav-overlay a:hover { color: #c5a059; }
+  .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: #c5a059; font-size: 28px; cursor: pointer; }
+  @media (max-width: 1024px) { nav { padding: 16px 20px !important; } .mobile-menu-btn { display: block; } .desktop-nav-links { display: none !important; } }
+  @media (max-width: 768px) { .doc-wrap { padding: 28px 18px; margin: 0 12px; } .doc-wrap h2 { font-size: 16px; letter-spacing: 0.12em; } .doc-wrap p, .doc-wrap ul li, .doc-wrap ol li { font-size: 12.5px; } .doc-wrap .meta-card { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="protected">
+
+<nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+  <a href="/" class="flex items-center gap-6" style="text-decoration:none;color:inherit;">
+    <div class="w-12 h-12 flex items-center justify-center border border-[#c5a059] relative">
+      <div class="absolute inset-1 border border-[#c5a059]/30"></div>
+      <span class="text-[#c5a059] font-bold text-xl logo-text">I</span>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span>
+      <span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span>
+    </div>
+  </a>
+  <div class="desktop-nav-links hidden lg:flex space-x-12 text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
+    <a href="/purchase-tech.html" class="hover:text-[#c5a059] transition">Purchase Tech</a>
+    <a href="/#service-center" class="hover:text-[#c5a059] transition">Service Center</a>
+    <a href="/governance/" class="hover:text-[#c5a059] transition">Governance</a>
+    <a href="/about.html" class="hover:text-[#c5a059] transition">About Us</a>
+    <a href="tel:+16475813182" class="text-white hover:text-[#c5a059] transition">Connect with Senior Director</a>
+  </div>
+  <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div id="mobileMenu" class="mobile-nav-overlay">
+  <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
+  <a href="/" onclick="toggleMobileMenu()">Home</a>
+  <a href="/governance/" onclick="toggleMobileMenu()">Governance</a>
+  <a href="/about.html" onclick="toggleMobileMenu()">About Us</a>
+  <a href="tel:+16475813182" onclick="toggleMobileMenu()" style="color:#c5a059;">Call (647) 581-3182</a>
+</div>
+<script>function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('active')}</script>
+<section class="pt-36 pb-24 px-6">
+  <div class="max-w-5xl mx-auto text-center mb-12">
+    <span class="text-[#c5a059] tracking-[0.5em] text-[9px] uppercase font-bold block mb-4">Canadian Act S-211 Compliance</span>
+    <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight logo-text uppercase">Modern Slavery & Forced Labour Statement</h1>
+    <p class="text-white/40 uppercase tracking-[0.35em] text-[10px] mt-6">Document IIS-GOV-MS-001 &nbsp;•&nbsp; Version 1.0 &nbsp;•&nbsp; Effective 01 May 2026</p>
+  </div>
+  <div class="max-w-5xl mx-auto mb-8 px-2 flex justify-between items-center flex-wrap gap-3">
+    <a href="/governance/" class="back-link"><i class="fa fa-arrow-left"></i> Back to Governance</a>
+  </div>
+  <div class="doc-wrap">
+    
+<div class="download-bar">
+  <a class="dl-btn" href="/downloads/governance/Modern_Slavery_and_Forced_Labour_Statement_S211.docx" download>
+    <i class="fa fa-file-word"></i> Download .docx
+  </a>
+  <button class="dl-btn" onclick="window.print()">
+    <i class="fa fa-print"></i> Print / PDF
+  </button>
+</div>
+    <div class="meta-card">
+      <div><div class="meta-label">Document Reference</div><div class="meta-value">IIS-GOV-MS-001</div></div>
+      <div><div class="meta-label">Version</div><div class="meta-value">1.0</div></div>
+      <div><div class="meta-label">Effective Date</div><div class="meta-value">01 May 2026</div></div>
+      <div><div class="meta-label">Classification</div><div class="meta-value">PUBLIC</div></div>
+      <div><div class="meta-label">Jurisdiction</div><div class="meta-value">Ontario / Canada (primary), Global (secondary)</div></div>
+      <div><div class="meta-label">Approving Authority</div><div class="meta-value">CEO &amp; Executive Leadership</div></div>
+    </div>
+    <h2>1. Statement and Reporting Period</h2><p>This Statement is issued by Integrated IT Support Inc. (the “Company”) in respect of the financial year ending 31 December 2025, in accordance with the Canadian Fighting Against Forced Labour and Child Labour in Supply Chains Act, S.C. 2023, c. 9 (the “Act”). The Statement addresses the steps taken by the Company to prevent and reduce the risk that forced labour or child labour is used at any step of the production, importation, or distribution of goods in, or into, Canada by the Company or in its supply chains.</p><p>The Company is committed to upholding human rights and ensuring its operations and value chain are free from forced labour, child labour, debt bondage, human trafficking, and any other form of modern slavery, consistent with ILO Conventions 29, 105, 138, and 182, and with the Company's Human Rights Policy (IIS-GOV-HR-001).</p><h2>2. Structure, Activities, and Supply Chains</h2><h3>2.1 Structure</h3><p>Integrated IT Support Inc. is a federally incorporated Canadian company headquartered in Ontario, Canada. The Company is privately owned and operates without affiliated entities outside Canada at the time of this Statement.</p><h3>2.2 Activities</h3><p>The Company provides enterprise IT support, managed services, AI automation, helpdesk and infrastructure services, IT consulting, and the resale and provisioning of IT hardware and software. Clients include public-sector bodies, enterprise corporations, financial institutions, law firms, real-estate firms, education providers, technology startups, and private clients.</p><h3>2.3 Supply Chains</h3><p>The Company's supply chain is composed primarily of: (a) original equipment manufacturers (OEMs) and authorised distributors of computing hardware (laptops, desktops, servers, networking equipment, peripherals, mobile devices); (b) software publishers and SaaS / cloud service providers; (c) telecommunications and connectivity providers; (d) logistics, fulfillment, and last-mile delivery providers; (e) professional service providers (legal, accounting, marketing); (f) outsourced technical contractors and subcontracted technicians; and (g) facilities and office-related vendors.</p><p>Within these categories, the Company assesses the highest inherent risk of forced or child labour as residing in the upstream electronics manufacturing supply chain (Tier-2 and below), particularly in extraction and refining of conflict minerals and certain raw materials.</p><h2>3. Policies and Due Diligence Processes</h2><p>The Company has formally adopted and implemented the following policies relevant to forced labour and child labour:</p><ul><li><p>Human Rights Policy &amp; Due Diligence Statement (IIS-GOV-HR-001) — establishes the Company's commitment to internationally recognised human rights, including the prohibition of forced labour and child labour, in alignment with the UN Guiding Principles on Business and Human Rights.</p></li><li><p>Supplier Code of Conduct (IIS-GOV-SUP-001) — flows down the Company's standards to all suppliers and includes an explicit prohibition on forced labour, child labour, and modern slavery.</p></li><li><p>Code of Conduct &amp; Business Ethics (IIS-GOV-COC-001) — sets ethical and behavioural expectations for all employees and contractors.</p></li><li><p>Procurement Policy (IIS-GOV-PRC-001) — requires human-rights and modern-slavery clauses in supplier contracts and provides for supplier qualification, monitoring, and the right to audit.</p></li></ul><p>Due diligence is conducted as part of the Company's Human Rights Risk Analysis Procedure (IIS-GOV-HR-PROC-001), which includes:</p><ol type="1"><li><p>Identification of risks of forced and child labour in the Company's own operations and across Tier-1 and (for high-risk commodities) Tier-n supply chains.</p></li><li><p>Risk assessment using authoritative sources including the U.S. Department of Labor List of Goods Produced by Child or Forced Labour, the Walk Free Global Slavery Index, the ITUC Global Rights Index, OECD due-diligence guidance, the Responsible Business Alliance (RBA) Code, and supplier self-disclosures (including CMRT/EMRT conflict-minerals reports).</p></li><li><p>Prioritisation by severity (scale, scope, irremediability) and likelihood, per UNGP Principle 17.</p></li><li><p>Integration of mitigations into supplier contracts, qualification, monitoring, and engagement.</p></li><li><p>Remediation, escalation, and grievance management for any identified or suspected incidents.</p></li><li><p>Periodic effectiveness review and annual reporting.</p></li></ol><h2>4. Parts of Business and Supply Chains at Risk of Forced or Child Labour</h2><p>The Company's risk analysis identifies the following areas of inherent risk:</p><ul><li><p>Upstream extraction and refining of 3TG minerals (tin, tantalum, tungsten, gold), cobalt, mica, lithium, and rare earth elements used in computing hardware procured from OEMs.</p></li><li><p>Electronics manufacturing and assembly in jurisdictions where the right to freedom of association and collective bargaining is restricted, or where migrant workers are at risk of unfair recruitment practices.</p></li><li><p>Sub-contracted technician services in jurisdictions with weak labour-rights enforcement.</p></li><li><p>Logistics and last-mile delivery operations using subcontracted labour.</p></li></ul><p>Within the Company's own operations in Canada, the assessed residual risk of forced or child labour is low, due to the application of Canadian and Ontario labour-rights law, the Company's hiring controls, and the predominantly skilled, salaried workforce.</p><h2>5. Measures Taken to Prevent and Reduce Risks</h2><p>During the reporting period, the Company has taken, or is in the process of implementing, the following measures:</p><ul><li><p>Adoption and publication of the Human Rights Policy &amp; Due Diligence Statement (IIS-GOV-HR-001) and the Supplier Code of Conduct (IIS-GOV-SUP-001).</p></li><li><p>Inclusion in standard supplier contracts of: (a) zero-tolerance for forced and child labour clauses; (b) the employer-pays principle (no recruitment fees charged to workers); (c) prohibition on retention of worker identity documents; (d) supplier self-assessment requirements; (e) right-to-audit clauses; and (f) immediate-notification clauses for any incident or allegation.</p></li><li><p>Preference for OEMs that publish credible Conflict Minerals Reports (CMRT/EMRT) and that participate in the Responsible Minerals Initiative (RMI).</p></li><li><p>Annual review of the U.S. Department of Labor List of Goods Produced by Child or Forced Labour, with explicit cross-checking against the Company's procurement categories.</p></li><li><p>Operation of a multi-channel grievance mechanism (web intake, e-mail to <a href="mailto:ethics@iisupport.net">ethics@iisupport.net</a>, designated executive contact) accessible to employees, supplier workers, and external stakeholders.</p></li><li><p>Strict non-retaliation policy for any person reporting suspected forced or child labour in good faith.</p></li></ul><h2>6. Remediation Measures</h2><p>Should the Company identify the use of forced labour or child labour in its operations or supply chain, it will follow the Remediation Framework set out in Section 17 of the Human Rights Policy. The framework includes:</p><ol start="7" type="1"><li><p>Immediate cessation of any conduct contributing to the harm.</p></li><li><p>Investigation by the GRC Office, with independent expertise as required.</p></li><li><p>Engagement with affected workers and, where relevant, with credible civil-society organisations to determine appropriate remedy.</p></li><li><p>Provision of appropriate remedy — including, where applicable, compensation, restitution, or restoration.</p></li><li><p>Use of leverage with the responsible business partner to seek remediation; responsible disengagement only as a last resort and in a manner that does not increase risk to affected persons.</p></li><li><p>Notification of relevant authorities where required by law.</p></li></ol><h2>7. Remediation for Loss of Income</h2><p>In the event that any measures taken by the Company to eliminate the use of forced labour or child labour in its activities or supply chain result in a loss of income to the most vulnerable families, the Company will work in good faith — including in coordination with credible civil-society organisations, recruitment agencies, and supplier counterparties — to identify and implement appropriate measures to remediate that loss. Such measures may include facilitating alternative employment opportunities, supporting transition or retraining programs, or providing or contributing to financial support for affected families on a transitional basis. The Company will not engage in responsible disengagement from a supplier in a way that knowingly worsens the livelihood of workers or their families without proportionate mitigation.</p><h2>8. Training</h2><p>During the reporting period, the Company has delivered or scheduled the following training relevant to forced and child labour:</p><ul><li><p>Annual mandatory training for all employees and contractors covering the Code of Conduct, the Human Rights Policy, and modern-slavery awareness (including indicators of forced labour, child labour, and human trafficking).</p></li><li><p>Enhanced training for Procurement and Vendor Management personnel covering supplier human-rights due diligence, the U.S. DoL List of Goods, conflict-minerals reporting, and responsible disengagement.</p></li><li><p>Briefings for the Executive Leadership on emerging modern-slavery regulatory developments, including the Canadian Act, the UK Modern Slavery Act, the Australian Modern Slavery Act, the German Lieferkettengesetz, and EU CS3D.</p></li></ul><p>Training completion is tracked and reported quarterly to the Executive.</p><h2>9. Effectiveness of Actions</h2><p>The Company assesses the effectiveness of its actions through:</p><ul><li><p>Quarterly executive review of key indicators, including training-completion rates, grievances received, supplier-assessment coverage and findings, and closure of corrective actions.</p></li><li><p>Annual review of the Human Rights Risk Register (IIS-GOV-HR-REG-001) and refresh of the underlying risk analysis.</p></li><li><p>Ad-hoc reviews triggered by entry into new markets, addition of new suppliers, or material changes in regulation or external risk indicators.</p></li><li><p>Stakeholder engagement through employee surveys, supplier dialogue, and consultation with civil-society organisations and subject-matter experts.</p></li></ul><p>No instances of forced labour or child labour have been identified by the Company in its own operations during the reporting period. Where the Company has identified concerns through media reports or civil-society sources concerning upstream suppliers, it has engaged its direct suppliers to seek clarification and, where appropriate, corrective action.</p><h2>10. Approval</h2><p>This Statement was approved by the Executive Leadership of Integrated IT Support Inc. on the effective date set out above, in accordance with paragraph 11(4)(b)(ii) of the Act. A copy of this Statement is published on the Company's website at <a href="/governance/modern-slavery">iisupport.net/governance/modern-slavery</a> and is provided to Public Safety Canada for inclusion in the public registry as required by the Act.</p><p><strong>Approval and Authority</strong></p><p>This document has been reviewed and approved by the Executive Leadership of Integrated IT Support Inc. and is issued under the authority of the Office of the Chief Executive Officer. The document is subject to periodic review and may be amended by the Approving Authority. Material amendments are communicated to all employees and key suppliers within thirty (30) days of issuance.</p><p>Signed for and on behalf of Integrated IT Support Inc.</p><p>________________________________________</p><p><strong>Ahmad — Chief Executive Officer</strong></p><p>Integrated IT Support Inc.</p><p>Date: 01 May 2026</p>
+
+  </div>
+</section>
+
+<footer class="border-t border-white/5 mt-24 py-12 px-8 text-center">
+  <p class="text-white/40 text-[10px] tracking-[0.4em] uppercase font-bold">© 2026 Integrated IT Support Inc. — All Rights Reserved</p>
+  <p class="text-[#c5a059]/60 text-[9px] tracking-[0.4em] uppercase mt-3">Project AEGIS — Governance, Risk & Compliance Program</p>
+  <div class="flex justify-center gap-6 mt-5 text-[9px] tracking-[0.3em] uppercase font-bold">
+    <a href="/governance/" class="text-white/40 hover:text-[#c5a059]">Governance</a>
+    <a href="/ethics-grievance" class="text-white/40 hover:text-[#c5a059]">Ethics &amp; Grievance</a>
+    <a href="/terms.html" class="text-white/40 hover:text-[#c5a059]">Terms</a>
+    <a href="/governance/privacy" class="text-white/40 hover:text-[#c5a059]">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>

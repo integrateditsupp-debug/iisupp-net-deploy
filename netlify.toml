@@ -41,3 +41,49 @@
   from = "/extension"
   to = "/extension.html"
   status = 200
+
+# --- Governance / AEGIS public library ---
+[[redirects]]
+  from = "/governance"
+  to = "/governance/index.html"
+  status = 200
+[[redirects]]
+  from = "/governance/"
+  to = "/governance/index.html"
+  status = 200
+[[redirects]]
+  from = "/governance/human-rights"
+  to = "/governance/human-rights.html"
+  status = 200
+[[redirects]]
+  from = "/governance/modern-slavery"
+  to = "/governance/modern-slavery.html"
+  status = 200
+[[redirects]]
+  from = "/governance/information-security"
+  to = "/governance/information-security.html"
+  status = 200
+[[redirects]]
+  from = "/governance/supplier-code-of-conduct"
+  to = "/governance/supplier-code-of-conduct.html"
+  status = 200
+[[redirects]]
+  from = "/governance/privacy"
+  to = "/governance/privacy.html"
+  status = 200
+[[redirects]]
+  from = "/governance/ai-use"
+  to = "/governance/ai-use.html"
+  status = 200
+[[redirects]]
+  from = "/governance/responsible-sourcing"
+  to = "/governance/responsible-sourcing.html"
+  status = 200
+[[redirects]]
+  from = "/ethics-grievance"
+  to = "/ethics-grievance.html"
+  status = 200
+[[redirects]]
+  from = "/privacy"
+  to = "/governance/privacy.html"
+  status = 200

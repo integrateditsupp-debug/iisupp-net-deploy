@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d4af37">
+  <title>Information Security Policy | Integrated IT Support</title>
+  <meta name="description" content="ISO 27001 / NIST CSF / ITSG-33">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/aria-core.css">
+  
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
+  :root { --luxury-gold: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); --deep-slate: #050505; }
+  body { font-family: 'Inter', sans-serif; background-color: var(--deep-slate); color: #ffffff; margin: 0; overflow-x: hidden; }
+  h1, h2, h3, h4, h5, .logo-text { font-family: 'Cinzel', serif; }
+  body, .protected { -webkit-user-select: none; user-select: none; }
+  input, textarea, select, .allow-select { -webkit-user-select: text !important; user-select: text !important; }
+  img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+  .gold-glow { text-shadow: 0 0 25px rgba(197, 160, 89, 0.5); }
+  .doc-wrap { max-width: 920px; margin: 0 auto; padding: 48px 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(197,160,89,0.2); border-radius: 4px; }
+  .doc-wrap p { color: rgba(255,255,255,0.82); line-height: 1.85; font-size: 14px; margin: 0 0 14px 0; letter-spacing: 0.01em; }
+  .doc-wrap strong { color: #f1dca7; font-weight: 700; }
+  .doc-wrap em { color: rgba(255,255,255,0.92); font-style: italic; }
+  .doc-wrap a { color: #c5a059; text-decoration: none; border-bottom: 1px dotted rgba(197,160,89,0.4); }
+  .doc-wrap a:hover { color: #f1dca7; border-bottom-color: #f1dca7; }
+  .doc-wrap h2 { color: #c5a059; font-size: 22px; letter-spacing: 0.18em; text-transform: uppercase; margin: 44px 0 10px 0; padding-bottom: 8px; border-bottom: 1px solid rgba(197,160,89,0.18); }
+  .doc-wrap h3 { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: #f1dca7; margin: 28px 0 12px 0; border-left: 2px solid #c5a059; padding-left: 12px; }
+  .doc-wrap ul, .doc-wrap ol { color: rgba(255,255,255,0.78); padding-left: 22px; margin: 0 0 18px 0; }
+  .doc-wrap ul li, .doc-wrap ol li { font-size: 13.5px; line-height: 1.85; padding: 4px 0; }
+  .doc-wrap ul li::marker { color: #c5a059; }
+  .doc-wrap ol li::marker { color: #c5a059; font-weight: 700; }
+  .doc-wrap table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12.5px; }
+  .doc-wrap table td, .doc-wrap table th { border: 1px solid rgba(197,160,89,0.18); padding: 10px 14px; vertical-align: top; }
+  .doc-wrap table tr.odd td { background: rgba(255,255,255,0.02); }
+  .doc-wrap table tr:first-child td strong { color: #f1dca7; }
+  .doc-wrap .meta-card { border: 1px solid rgba(197,160,89,0.25); background: rgba(197,160,89,0.04); padding: 22px 24px; border-radius: 4px; margin: 0 0 32px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 30px; }
+  .doc-wrap .meta-card .meta-label { color: rgba(255,255,255,0.5); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; }
+  .doc-wrap .meta-card .meta-value { color: #f1dca7; font-size: 13px; margin-top: 4px; font-weight: 600; }
+  .download-bar { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 36px 0; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border: 1px solid rgba(197,160,89,0.4); color: #f1dca7; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; text-decoration: none; transition: all 0.3s ease; border-radius: 2px; background: rgba(197,160,89,0.05); }
+  .dl-btn:hover { background: rgba(197,160,89,0.15); border-color: #c5a059; color: #fff; }
+  .back-link { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; font-weight: 700; padding: 10px 18px; border: 1px solid rgba(197,160,89,0.3); border-radius: 2px; transition: all 0.3s ease; }
+  .back-link:hover { color: #c5a059; border-color: #c5a059; }
+  .gov-card { display:block; border: 1px solid rgba(197,160,89,0.2); background: rgba(255,255,255,0.02); padding: 24px; border-radius: 4px; text-decoration: none; transition: all 0.3s ease; }
+  .gov-card:hover { border-color: #c5a059; background: rgba(197,160,89,0.05); transform: translateY(-2px); }
+  .gov-card .ref-tag { color: #c5a059; font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase; font-weight: 700; }
+  .gov-card .gov-title { color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin: 8px 0 6px 0; letter-spacing: 0.08em; }
+  .gov-card .gov-sub { color: rgba(255,255,255,0.6); font-size: 12px; line-height: 1.6; }
+  .mobile-menu-btn { display: none; background: none; border: 1px solid rgba(197, 160, 89, 0.4); color: #c5a059; padding: 8px 10px; cursor: pointer; }
+  .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: #c5a059; margin: 4px 0; }
+  .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 55; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+  .mobile-nav-overlay.active { display: flex; }
+  .mobile-nav-overlay a { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; color: rgba(255,255,255,0.6); text-decoration: none; padding: 8px 0; }
+  .mobile-nav-overlay a:hover { color: #c5a059; }
+  .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: #c5a059; font-size: 28px; cursor: pointer; }
+  @media (max-width: 1024px) { nav { padding: 16px 20px !important; } .mobile-menu-btn { display: block; } .desktop-nav-links { display: none !important; } }
+  @media (max-width: 768px) { .doc-wrap { padding: 28px 18px; margin: 0 12px; } .doc-wrap h2 { font-size: 16px; letter-spacing: 0.12em; } .doc-wrap p, .doc-wrap ul li, .doc-wrap ol li { font-size: 12.5px; } .doc-wrap .meta-card { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="protected">
+
+<nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+  <a href="/" class="flex items-center gap-6" style="text-decoration:none;color:inherit;">
+    <div class="w-12 h-12 flex items-center justify-center border border-[#c5a059] relative">
+      <div class="absolute inset-1 border border-[#c5a059]/30"></div>
+      <span class="text-[#c5a059] font-bold text-xl logo-text">I</span>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span>
+      <span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span>
+    </div>
+  </a>
+  <div class="desktop-nav-links hidden lg:flex space-x-12 text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
+    <a href="/purchase-tech.html" class="hover:text-[#c5a059] transition">Purchase Tech</a>
+    <a href="/#service-center" class="hover:text-[#c5a059] transition">Service Center</a>
+    <a href="/governance/" class="hover:text-[#c5a059] transition">Governance</a>
+    <a href="/about.html" class="hover:text-[#c5a059] transition">About Us</a>
+    <a href="tel:+16475813182" class="text-white hover:text-[#c5a059] transition">Connect with Senior Director</a>
+  </div>
+  <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div id="mobileMenu" class="mobile-nav-overlay">
+  <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
+  <a href="/" onclick="toggleMobileMenu()">Home</a>
+  <a href="/governance/" onclick="toggleMobileMenu()">Governance</a>
+  <a href="/about.html" onclick="toggleMobileMenu()">About Us</a>
+  <a href="tel:+16475813182" onclick="toggleMobileMenu()" style="color:#c5a059;">Call (647) 581-3182</a>
+</div>
+<script>function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('active')}</script>
+<section class="pt-36 pb-24 px-6">
+  <div class="max-w-5xl mx-auto text-center mb-12">
+    <span class="text-[#c5a059] tracking-[0.5em] text-[9px] uppercase font-bold block mb-4">ISO 27001 / NIST CSF / ITSG-33</span>
+    <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight logo-text uppercase">Information Security Policy</h1>
+    <p class="text-white/40 uppercase tracking-[0.35em] text-[10px] mt-6">Document IIS-GOV-SEC-001 &nbsp;•&nbsp; Version 1.0 &nbsp;•&nbsp; Effective 01 May 2026</p>
+  </div>
+  <div class="max-w-5xl mx-auto mb-8 px-2 flex justify-between items-center flex-wrap gap-3">
+    <a href="/governance/" class="back-link"><i class="fa fa-arrow-left"></i> Back to Governance</a>
+  </div>
+  <div class="doc-wrap">
+    
+<div class="download-bar">
+  <a class="dl-btn" href="/downloads/governance/Information_Security_Policy.docx" download>
+    <i class="fa fa-file-word"></i> Download .docx
+  </a>
+  <button class="dl-btn" onclick="window.print()">
+    <i class="fa fa-print"></i> Print / PDF
+  </button>
+</div>
+    <div class="meta-card">
+      <div><div class="meta-label">Document Reference</div><div class="meta-value">IIS-GOV-SEC-001</div></div>
+      <div><div class="meta-label">Version</div><div class="meta-value">1.0</div></div>
+      <div><div class="meta-label">Effective Date</div><div class="meta-value">01 May 2026</div></div>
+      <div><div class="meta-label">Classification</div><div class="meta-value">PUBLIC</div></div>
+      <div><div class="meta-label">Jurisdiction</div><div class="meta-value">Ontario / Canada (primary), Global (secondary)</div></div>
+      <div><div class="meta-label">Approving Authority</div><div class="meta-value">CEO &amp; Executive Leadership</div></div>
+    </div>
+    <h2>1. Purpose &amp; Scope</h2><p>This Policy establishes the Information Security Management System (ISMS) of Integrated IT Support Inc. (the “Company”), defines its governance, and sets out the control objectives that protect the confidentiality, integrity, and availability of all information assets entrusted to the Company by its clients, employees, partners, and other stakeholders.</p><p>This Policy applies to all information assets in any form (electronic, paper, oral) and across the entire information lifecycle (creation, storage, transmission, processing, disposal). It binds all directors, officers, employees, interns, contractors, and any third party accessing the Company's or its clients' information systems or data.</p><h2>2. Policy Statement</h2><p>Integrated IT Support Inc. is committed to operating an enterprise-grade information security program that:</p><ul><li><p>Protects the confidentiality, integrity, and availability of all information assets in proportion to their value and risk.</p></li><li><p>Aligns with internationally recognised frameworks, including ISO/IEC 27001:2022, the NIST Cybersecurity Framework (CSF) 2.0, NIST SP 800-53, and the Government of Canada IT Security Guidance (ITSG-33).</p></li><li><p>Meets all applicable legal, regulatory, and contractual obligations, including PIPEDA, CASL, Ontario laws, and client-specific requirements.</p></li><li><p>Operates a continuous-improvement cycle (Plan-Do-Check-Act) supported by measurable security objectives, internal audits, and management review.</p></li><li><p>Is led by accountable executive sponsorship, supported by a designated Chief Information Security Officer (CISO) function.</p></li></ul><h2>3. Governance &amp; Accountability</h2><h3>3.1 Roles and Responsibilities</h3><ul><li><p>Chief Executive Officer / Executive Leadership: ultimate accountability for information security; approves the Policy; reviews ISMS effectiveness at least annually.</p></li><li><p>Chief Information Security Officer (CISO): designated officer accountable for the ISMS, risk assessment, control implementation, security operations, incident response, and external assurance reporting.</p></li><li><p>Information Asset Owners: business owners for each information asset; accountable for classification, access decisions, and compliance with this Policy for their domain.</p></li><li><p>IT Operations: implements and operates security controls in line with this Policy and the technical standards that support it.</p></li><li><p>All Personnel: comply with this Policy and supporting procedures, complete mandatory awareness training, and report any suspected incident or weakness.</p></li></ul><h3>3.2 Documented Information</h3><p>The Company maintains a tiered documentation structure: this Policy (Tier 1) is supported by topic-specific Standards (Tier 2), Procedures and Work Instructions (Tier 3), and Records (Tier 4). All documents are version-controlled and reviewed at least annually.</p><h2>4. Risk Management</h2><p>The Company applies a documented risk-management process to identify, analyse, evaluate, and treat information security risks. Risk is assessed against confidentiality, integrity, and availability impacts and is rated on a 5x5 likelihood × impact matrix. Risk treatments include mitigation, transfer (e.g., insurance, contractual), avoidance, and informed acceptance by an appropriate authority. The Company maintains an Information Security Risk Register (IIS-GOV-SEC-REG-001) reviewed at least quarterly.</p><h2>5. Information Classification &amp; Handling</h2><p>Information assets are classified into four tiers and handled accordingly:</p><ul><li><p>Public — intended for unrestricted disclosure (e.g., marketing materials, this Policy).</p></li><li><p>Internal — for routine business use within the Company and authorised contractors.</p></li><li><p>Confidential — sensitive business information requiring restricted access and encryption in transit (e.g., commercial agreements, internal incident reports).</p></li><li><p>Restricted — highly sensitive information requiring strict access control, encryption in transit and at rest, and explicit data-handling controls (e.g., personal information, client credentials, security configurations, source code with embedded secrets).</p></li></ul><p>Handling rules — including labelling, storage, transmission, printing, copying, and disposal — are defined in the Information Classification &amp; Handling Standard (IIS-SEC-STD-001).</p><h2>6. Access Control &amp; Identity</h2><ul><li><p>Identity and access management is administered on a least-privilege, need-to-know, and just-in-time basis.</p></li><li><p>Multi-factor authentication (MFA) is required for all administrative access, remote access, all SaaS and cloud accounts, and access to any client data.</p></li><li><p>Privileged access is gated through a Privileged Access Management (PAM) workflow with logged session recording for systems above a defined criticality threshold.</p></li><li><p>Access reviews are performed at least quarterly for privileged accounts and at least semi-annually for standard accounts.</p></li><li><p>Joiner / mover / leaver processes are formalised, with same-day deprovisioning of access on termination.</p></li><li><p>Default credentials are forbidden on any system in production; password complexity, length, and rotation rules align with NIST SP 800-63B guidance.</p></li></ul><h2>7. Endpoint, Network &amp; Cloud Security</h2><h3>7.1 Endpoint Security</h3><ul><li><p>All Company and contractor endpoints used to process Company or client data must run an approved Endpoint Detection &amp; Response (EDR) agent and a current operating system within the vendor-supported patch lifecycle.</p></li><li><p>Full-disk encryption is mandatory.</p></li><li><p>Application allow-listing or equivalent controls are applied to high-risk endpoints.</p></li></ul><h3>7.2 Network Security</h3><ul><li><p>Perimeter and segmentation controls follow defence-in-depth principles; production environments are segmented from corporate networks.</p></li><li><p>All remote access is via VPN or zero-trust network access with MFA; no direct exposure of management protocols to the public internet.</p></li><li><p>DNS, web, and e-mail are protected with anti-phishing, anti-spoofing (SPF, DKIM, DMARC), and threat-intelligence-fed filtering.</p></li></ul><h3>7.3 Cloud &amp; SaaS</h3><ul><li><p>Cloud and SaaS services follow the Cloud Security Standard (IIS-SEC-STD-002), which mandates vendor due diligence (SOC 2 Type II or ISO 27001 evidence), data-residency assessment for personal information (PIPEDA), and configuration hardening per the cloud-provider's security benchmarks.</p></li><li><p>Customer data resides only in jurisdictions agreed contractually with the client.</p></li></ul><h2>8. Cryptography</h2><ul><li><p>Data in transit is protected with TLS 1.2 or higher (TLS 1.3 preferred); legacy protocols are disabled.</p></li><li><p>Data at rest containing Confidential or Restricted information is encrypted using FIPS 140-3 / FIPS 140-2 validated modules where available.</p></li><li><p>Cryptographic keys are managed via approved key-management systems with documented rotation, escrow (where required), and revocation procedures.</p></li></ul><h2>9. Vulnerability &amp; Patch Management</h2><ul><li><p>Vulnerabilities are tracked against published CVSS severity. Critical vulnerabilities (CVSS ≥ 9.0) are remediated or compensating-controlled within 7 calendar days; High (CVSS 7.0–8.9) within 30 days; Medium within 90 days.</p></li><li><p>Internet-facing assets are subject to authenticated vulnerability scanning at least monthly.</p></li><li><p>Annual third-party penetration testing is conducted for production systems hosting client data.</p></li></ul><h2>10. Secure Software Development &amp; Change Management</h2><ul><li><p>All software developed by or for the Company follows a documented Secure Software Development Lifecycle (SSDLC) covering threat modelling, secure coding standards, peer code review, automated SAST/DAST, and dependency scanning.</p></li><li><p>Production changes follow a formal Change Advisory process with risk assessment, rollback plan, and post-implementation review for material changes.</p></li></ul><h2>11. Logging, Monitoring &amp; Detection</h2><ul><li><p>Security-relevant events from endpoints, identity providers, network appliances, cloud platforms, and applications are centrally logged with sufficient retention (minimum 12 months online, 24 months archival).</p></li><li><p>A 24x7 monitoring capability — operated internally or through a managed detection &amp; response (MDR) partner — generates alerts on security-relevant anomalies.</p></li><li><p>Time synchronisation is enforced across all systems via authoritative NTP sources.</p></li></ul><h2>12. Incident Response &amp; Breach Notification</h2><p>The Company maintains a documented Incident Response Plan (IIS-SEC-IR-001) aligned with NIST SP 800-61. The plan covers preparation, detection and analysis, containment, eradication, recovery, and lessons learned. The Company:</p><ul><li><p>Maintains an Incident Response Team (IRT) on call 24x7 for severity-1 and severity-2 incidents.</p></li><li><p>Notifies affected clients of any incident materially affecting their data within contractually agreed timelines (no later than 72 hours absent contractual override).</p></li><li><p>Notifies the Office of the Privacy Commissioner of Canada and affected individuals of any privacy breach posing a real risk of significant harm, in accordance with PIPEDA's breach-of-security-safeguards reporting requirements.</p></li><li><p>Performs a documented post-incident review for every severity-1 and severity-2 incident, including a blameless root-cause analysis and corrective-action plan.</p></li></ul><h2>13. Business Continuity &amp; Disaster Recovery</h2><ul><li><p>Business-impact analysis (BIA) is performed annually to identify Recovery Time Objectives (RTO) and Recovery Point Objectives (RPO) for each critical service.</p></li><li><p>Continuity and recovery plans are documented and tested at least annually.</p></li><li><p>Backups are taken on a defined cadence, encrypted, and protected against ransomware tampering through immutable or offline copies.</p></li></ul><h2>14. Third-Party &amp; Supplier Security</h2><ul><li><p>All third parties processing Company or client data are subject to security due diligence proportional to the sensitivity and volume of data.</p></li><li><p>Standard contracts include data protection, security control, audit, breach notification, and right-to-terminate clauses.</p></li><li><p>Critical suppliers are reassessed annually.</p></li></ul><h2>15. Acceptable Use &amp; Awareness</h2><ul><li><p>All personnel must complete security awareness training within 30 days of joining and at least annually thereafter, including phishing-resistance exercises.</p></li><li><p>Personal accounts and devices may not store unencrypted Confidential or Restricted information.</p></li><li><p>Use of generative AI tools with Confidential or Restricted information is governed by the Acceptable Use of AI Policy (IIS-GOV-AI-001).</p></li></ul><h2>16. Audit, Compliance &amp; Continuous Improvement</h2><ul><li><p>Internal audits of the ISMS are performed at least annually; findings are tracked to closure.</p></li><li><p>Management review of ISMS performance is held at least annually, including risk-register status, audit results, training metrics, incident statistics, and effectiveness of corrective actions.</p></li><li><p>The Company tracks roadmap progress toward formal ISO/IEC 27001 certification and SOC 2 Type II attestation as a condition of expanding into higher-assurance government and enterprise engagements.</p></li></ul><p><strong>Approval and Authority</strong></p><p>This document has been reviewed and approved by the Executive Leadership of Integrated IT Support Inc. and is issued under the authority of the Office of the Chief Executive Officer. The document is subject to periodic review and may be amended by the Approving Authority. Material amendments are communicated to all employees and key suppliers within thirty (30) days of issuance.</p><p>Signed for and on behalf of Integrated IT Support Inc.</p><p>________________________________________</p><p><strong>Ahmad — Chief Executive Officer</strong></p><p>Integrated IT Support Inc.</p><p>Date: 01 May 2026</p>
+
+  </div>
+</section>
+
+<footer class="border-t border-white/5 mt-24 py-12 px-8 text-center">
+  <p class="text-white/40 text-[10px] tracking-[0.4em] uppercase font-bold">© 2026 Integrated IT Support Inc. — All Rights Reserved</p>
+  <p class="text-[#c5a059]/60 text-[9px] tracking-[0.4em] uppercase mt-3">Project AEGIS — Governance, Risk & Compliance Program</p>
+  <div class="flex justify-center gap-6 mt-5 text-[9px] tracking-[0.3em] uppercase font-bold">
+    <a href="/governance/" class="text-white/40 hover:text-[#c5a059]">Governance</a>
+    <a href="/ethics-grievance" class="text-white/40 hover:text-[#c5a059]">Ethics &amp; Grievance</a>
+    <a href="/terms.html" class="text-white/40 hover:text-[#c5a059]">Terms</a>
+    <a href="/governance/privacy" class="text-white/40 hover:text-[#c5a059]">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>
