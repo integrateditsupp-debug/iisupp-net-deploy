@@ -605,7 +605,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       }
       let suggestions = "";
       if (Array.isArray(data.suggestions) && data.suggestions.length) {
-        suggestions = '<ul class="aria-link-list">' + data.suggestions.map(s => `<li>${escapeHtml(s)}</li>`).join("") + '</ul>';
+        suggestions = '<ul class="aria-link-list aria-suggestions">' + data.suggestions.map(s => `<li class="aria-suggestion-item">${escapeHtml(s)}</li>`).join("") + '</ul>';
       }
 
       return {
@@ -1509,4 +1509,13 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
     if (document.body) document.body.appendChild(hf);
   }
   if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',injectStaticForm); else injectStaticForm();
+})();
+
+
+(function(){
+  if (document.getElementById('aria-suggestion-style')) return;
+  var st = document.createElement('style');
+  st.id = 'aria-suggestion-style';
+  st.textContent = `@keyframes ariaSuggPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(241,220,167,0.45), 0 4px 14px rgba(0,0,0,0.4); } 50% { transform: scale(1.03); box-shadow: 0 0 24px 6px rgba(241,220,167,0.55), 0 6px 20px rgba(0,0,0,0.5); } } .aria-link-list.aria-suggestions { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px; } .aria-suggestion-item { display: block; width: 100%; padding: 12px 18px; background: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); color: #0a0a0a; border: 1px solid rgba(241,220,167,0.5); border-radius: 12px; font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; text-align: center; cursor: pointer; animation: ariaSuggPulse 2.6s ease-in-out infinite; transition: transform .25s ease, filter .25s ease, box-shadow .25s ease; } .aria-suggestion-item:hover { transform: scale(1.06); filter: brightness(1.08); animation-play-state: paused; } .aria-suggestion-item:active { transform: scale(0.97); }`;
+  document.head.appendChild(st);
 })();
