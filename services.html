@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noarchive, nosnippet">
     <meta name="theme-color" content="#d4af37">
-    <title>Purchase Tech | Integrated IT Support</title>
+    <title>Services | Integrated IT Support — IT Services, Web Design, Cybersecurity</title>
+    <meta name="description" content="Full-spectrum IT services from Integrated IT Support Inc. — managed IT, cybersecurity, network setup, cloud migration, web design, custom software, and more. Transparent pricing." />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.webmanifest">
@@ -454,6 +455,33 @@
         @media (max-width: 768px) {
             .bg-i-stage { opacity: 0.11; width: 64vw; height: 64vw; }
         }
+
+        /* ===== SERVICES PAGE ===== */
+        .hero-services { min-height: 50vh; display: flex; align-items: center; }
+        .svc-section { color: #fff; }
+        .svc-cat-block { margin-bottom: 56px; }
+        .svc-cat-header { display: flex; align-items: center; gap: 18px; justify-content: center; margin-bottom: 28px; }
+        .svc-cat-tick { flex: 1; max-width: 120px; height: 1px; background: linear-gradient(90deg, transparent, rgba(197,160,89,0.4), transparent); }
+        .svc-cat-title { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 0.4em; text-transform: uppercase; color: #f1dca7; margin: 0; font-weight: 700; }
+        .svc-card { position: relative; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; padding: 22px 22px 18px; transition: all 0.4s ease; display: flex; flex-direction: column; min-height: 200px; overflow: hidden; }
+        .svc-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(197,160,89,0) 0%, rgba(197,160,89,0) 100%); transition: all 0.4s ease; }
+        .svc-card:hover { border-color: rgba(197,160,89,0.4); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+        .svc-card:hover::before { background: linear-gradient(90deg, transparent 0%, rgba(197,160,89,0.7) 50%, transparent 100%); }
+        .svc-name { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #fff; margin: 0 0 8px 0; font-weight: 700; line-height: 1.35; }
+        .svc-blurb { font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 0.02em; line-height: 1.55; margin: 0 0 16px 0; flex: 1; font-weight: 300; }
+        .svc-price-wrap { display: flex; flex-direction: column; gap: 2px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); }
+        .svc-price-label { font-size: 8px; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 700; }
+        .svc-price { font-family: 'Cinzel', serif; font-size: 16px; color: #f1dca7; font-weight: 700; letter-spacing: 0.02em; }
+        .cta-btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 28px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3em; text-decoration: none; transition: all 0.3s ease; border-radius: 2px; min-width: 200px; }
+        .cta-btn-primary { background: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); color: #050505; }
+        .cta-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(197,160,89,0.4); }
+        .cta-btn-secondary { background: transparent; color: #f1dca7; border: 1px solid rgba(197,160,89,0.4); }
+        .cta-btn-secondary:hover { background: rgba(197,160,89,0.08); border-color: #c5a059; transform: translateY(-1px); }
+        @media (max-width: 768px) {
+            .svc-cat-tick { max-width: 40px; }
+            .svc-cat-title { font-size: 11px; letter-spacing: 0.3em; }
+            .cta-btn { min-width: 100%; }
+        }
     </style>
 </head>
 <body class="protected">
@@ -528,7 +556,7 @@
             </div>
         </div>
         <div class="flex items-center gap-4">
-            <a href="#purchase-form" class="download-app-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Request Quote</a>
+            <a href="tel:+16475813182" class="download-app-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Request Quote</a>
             <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
             <div class="luxury-flip-container"><a href="mailto:Integrateditsupp@gmail.com?subject=Private Consultation Request" class="luxury-flip-card"><div class="flip-front">Request Consultation</div><div class="flip-back">Direct Email Access</div></a></div>
         </div>
@@ -549,247 +577,432 @@
         <a href="tel:+16475813182" onclick="toggleMobileMenu()">Connect with Senior Director</a>
     </div>
 
+    
     <!-- ====== HERO ====== -->
-    <section class="hero-purchase pt-48 pb-16 px-10 relative overflow-hidden">
+    <section class="hero-services pt-48 pb-16 px-10 relative overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(197,160,89,0.08)_0%,_transparent_70%)] pointer-events-none"></div>
         <div class="max-w-5xl mx-auto text-center relative z-10">
-            <span class="text-[#c5a059] tracking-[0.7em] text-[9px] uppercase mb-8 block font-bold">Tell us what you need</span>
-            <h1 class="text-4xl md:text-6xl font-black tracking-tighter leading-none mb-8 logo-text">PURCHASE <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic">Tech</span></h1>
-            <p class="max-w-2xl mx-auto text-white/50 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-6">Share what you want to purchase — make, model, storage, price range and how you'll use it. Our team will recommend the best option and reach out with a tailored quote.</p>
-            <p class="text-[#f1dca7] text-[10px] tracking-[0.4em] uppercase font-bold italic">Urgent? Call (647) 581-3182</p>
+            <span class="text-[#c5a059] tracking-[0.7em] text-[9px] uppercase mb-8 block font-bold">What we do</span>
+            <h1 class="text-4xl md:text-6xl font-black tracking-tighter leading-none mb-8 logo-text">OUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic">Services</span></h1>
+            <p class="max-w-2xl mx-auto text-white/50 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-6">From your website to your firewall, from a single laptop to a multi-site network — Integrated IT Support handles the full spectrum. Transparent pricing. No surprises.</p>
+            <p class="text-[#f1dca7] text-[10px] tracking-[0.4em] uppercase font-bold italic">Ready to start? Call (647) 581-3182</p>
         </div>
     </section>
 
-    <!-- ====== FORM ====== -->
-    <section id="purchase-form" class="py-16 px-6 md:px-10">
-        <div class="max-w-4xl mx-auto">
-            <div id="purchaseFormContainer" class="purchase-form-wrap">
-                <form
-                    name="purchase-tech"
-                    method="POST"
-                    data-netlify="true"
-                    netlify-honeypot="bot-field"
-                    enctype="multipart/form-data"
-                    id="purchaseForm"
-                    autocomplete="on"
-                >
-                    <input type="hidden" name="form-name" value="purchase-tech">
-                    <input type="hidden" name="subject" value="URGENT - Lead - New Purchase Request from %{formName}">
-                    <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
-
-                    <div class="pf-row">
-                        <div class="pf-field">
-                            <label for="pt-name">Full Name<span class="req">*</span></label>
-                            <input type="text" id="pt-name" name="name" required placeholder="Your full name">
-                            <div class="error-msg" id="ptNameError">Please enter your name.</div>
-                        </div>
-                        <div class="pf-field">
-                            <label for="pt-contact">Contact (phone or email)<span class="req">*</span></label>
-                            <input type="text" id="pt-contact" name="contact" required placeholder="(xxx) xxx-xxxx or name@email.com">
-                            <div class="error-msg" id="ptContactError">Please provide a phone number or email.</div>
-                        </div>
-                    </div>
-
-                    <div class="pf-row">
-                        <div class="pf-field">
-                            <label for="pt-make">Make / Brand</label>
-                            <input type="text" id="pt-make" name="make" placeholder="e.g. Apple, Dell, Lenovo">
-                        </div>
-                        <div class="pf-field">
-                            <label for="pt-model">Model</label>
-                            <input type="text" id="pt-model" name="model" placeholder="e.g. MacBook Pro 14, XPS 15">
-                        </div>
-                    </div>
-
-                    <div class="pf-row">
-                        <div class="pf-field">
-                            <label for="pt-storage">Storage Size</label>
-                            <select id="pt-storage" name="storage">
-                                <option value="">Select storage</option>
-                                <option>128 GB</option>
-                                <option>256 GB</option>
-                                <option>512 GB</option>
-                                <option>1 TB</option>
-                                <option>2 TB</option>
-                                <option>4 TB</option>
-                                <option>Other / Not Sure</option>
-                            </select>
-                        </div>
-                        <div class="pf-field">
-                            <label for="pt-price">Price Range</label>
-                            <select id="pt-price" name="price_range">
-                                <option value="">Select budget</option>
-                                <option>Under $500</option>
-                                <option>$500 – $1,000</option>
-                                <option>$1,000 – $2,000</option>
-                                <option>$2,000 – $3,500</option>
-                                <option>$3,500 – $5,000</option>
-                                <option>Over $5,000</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="pf-row single">
-                        <div class="pf-field">
-                            <label for="pt-usage">Intended Usage</label>
-                            <textarea id="pt-usage" name="usage" placeholder="Tell us what you'll use the device for (e.g. everyday browsing, graphic design, software development, gaming, business operations) — we'll recommend the best option."></textarea>
-                        </div>
-                    </div>
-
-                    <div class="pf-row single">
-                        <div class="pf-field">
-                            <label for="pt-image">Attach an Image (optional)</label>
-                            <input type="file" id="pt-image" name="reference_image" accept="image/*">
-                            <p class="hint">Attach a photo or screenshot of what you're looking for. Max 8&nbsp;MB per submission.</p>
-                        </div>
-                    </div>
-
-                    <div class="pf-row single">
-                        <div class="pf-setup">
-                            <label>
-                                <input type="checkbox" id="pt-setup" name="setup_service" value="Yes">
-                                <span>
-                                    <span class="pf-setup-title">Setup the device for me</span>
-                                    <span class="pf-setup-desc">Setup is billed at our out-of-scope hourly rate ($555 – $675 / hr remote, $925 – $1,125 / hr on-site) — see <a href="/#solutions">Pricing</a> for managed tiers. Delivery is extra and depends on your location — final quote confirmed before any work begins.</span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="pf-row single">
-                        <div class="pf-field">
-                            <label for="pt-notes">Additional Notes</label>
-                            <textarea id="pt-notes" name="notes" placeholder="Anything else we should know? Delivery address, preferred contact time, etc."></textarea>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="pf-submit" id="pfSubmitBtn">Submit Purchase Request</button>
-                </form>
-            </div>
-
-            <div id="purchaseSuccess" class="pf-success purchase-form-wrap" style="display:none;">
-                <div class="check-circle"><i class="fas fa-check"></i></div>
-                <h3>Request Received</h3>
-                <p>Thank you, <span id="pfSuccessName"></span> — someone will reach out to you shortly with recommendations and a quote. If urgent, please give us a call at <a href="tel:+16475813182">(647) 581-3182</a>.</p>
-            </div>
+    <!-- ====== SERVICES GRID ====== -->
+    <section class="svc-section py-12 px-6 md:px-10 max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <p class="text-[#c5a059] text-[9px] tracking-[0.5em] uppercase font-bold">Pricing is a guide — final quote depends on scope.<br/>Contact us for a tailored proposal.</p>
         </div>
-    </section>
 
-    <!-- ====== INVENTORY / ITEMS FOR SALE ====== -->
-    <section id="inventory" class="py-24 px-6 md:px-10 bg-[#080808]">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <span class="text-[#c5a059] tracking-[0.5em] text-[8px] uppercase font-bold block mb-3">In Stock Today</span>
-                <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">Currently <span class="text-[#c5a059]">Available</span></h2>
-                <p class="text-white/30 uppercase tracking-[0.3em] text-[10px] max-w-xl mx-auto">A curated selection of certified hardware ready for immediate purchase. Contact us for pricing and pick-up / delivery options.</p>
+        <!-- ===== Web &amp; Digital ===== -->
+        <div class="svc-cat-block">
+            <div class="svc-cat-header">
+                <span class="svc-cat-tick"></span>
+                <h2 class="svc-cat-title">Web &amp; Digital</h2>
+                <span class="svc-cat-tick"></span>
             </div>
-
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                <!-- Notebook RAM 16GB × 7 -->
-                <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">7 Available</span><img src="/images/inventory/notebook-ram-16gb.jpg" alt="Notebook 16GB RAM"></div>
-                    <div class="inv-body">
-                        <h4>Notebook 16GB RAM</h4>
-                        <div class="inv-sub">Crucial • DDR3L SODIMM</div>
-                        <p class="inv-meta">16&nbsp;GB (2 × 8&nbsp;GB) kit — Mac/PC compatible. <strong style="color:#c5a059;">7 units available.</strong></p>
+                <article class="svc-card">
+                    <h3 class="svc-name">Website Design / Upgrade / Creation</h3>
+                    <p class="svc-blurb">Custom websites built for conversion. Includes design, build, and deployment.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$2,000 – $6,000</span>
                     </div>
-                </div>
+                </article>
 
-                <!-- Mac Mini #1 -->
-                <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/mac-mini-1.jpg" alt="Mac Mini Model A1347"></div>
-                    <div class="inv-body">
-                        <h4>Mac Mini</h4>
-                        <div class="inv-sub">Model A1347 • Unit 1 of 2</div>
-                        <p class="inv-meta">Compact Apple desktop, fully tested and ready for home or office use.</p>
+                <article class="svc-card">
+                    <h3 class="svc-name">E-commerce Store Setup</h3>
+                    <p class="svc-blurb">Shopify, WooCommerce, or custom — product catalogs, payment, shipping.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$2,100 – $7,000</span>
                     </div>
-                </div>
+                </article>
 
-                <!-- Mac Mini #2 -->
-                <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/mac-mini-2.jpg" alt="Mac Mini Model A1347"></div>
-                    <div class="inv-body">
-                        <h4>Mac Mini</h4>
-                        <div class="inv-sub">Model A1347 • Unit 2 of 2</div>
-                        <p class="inv-meta">Second available Mac Mini, fully diagnosed and verified by our team.</p>
+                <article class="svc-card">
+                    <h3 class="svc-name">SEO &amp; Digital Marketing</h3>
+                    <p class="svc-blurb">Rank higher, drive qualified traffic. Monthly retainer.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$700 – $7,000 / mo</span>
                     </div>
-                </div>
+                </article>
 
-                <!-- iPad A1458 -->
-                <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/ipad-a1458.jpg" alt="iPad Model A1458"></div>
-                    <div class="inv-body">
-                        <h4>iPad</h4>
-                        <div class="inv-sub">Model A1458 • 1 Available</div>
-                        <p class="inv-meta">Apple tablet — ideal for reading, media and everyday productivity.</p>
+                <article class="svc-card">
+                    <h3 class="svc-name">Web Hosting &amp; Domain Management</h3>
+                    <p class="svc-blurb">Annual hosting, SSL, backups, DNS, and uptime monitoring.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$280 – $700 / yr</span>
                     </div>
-                </div>
+                </article>
 
-                <!-- Desktop Tower -->
-                <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Custom Build</span><img src="/images/inventory/desktop-tower.jpg" alt="Desktop Tower with Parts"></div>
-                    <div class="inv-body">
-                        <h4>Desktop Tower</h4>
-                        <div class="inv-sub">Corsair Case • With Parts</div>
-                        <p class="inv-meta">Full desktop tower with internal components — ready for workstation or gaming use.</p>
+                <article class="svc-card">
+                    <h3 class="svc-name">Domain &amp; SSL Setup</h3>
+                    <p class="svc-blurb">New domain registration, SSL certificate install, DNS configuration.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$140 – $420</span>
                     </div>
-                </div>
+                </article>
 
-                <!-- Dell Laptop -->
-                <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Dell</span><img src="/images/inventory/dell-laptop.jpg" alt="Dell Laptop"></div>
-                    <div class="inv-body">
-                        <h4>Dell Laptop</h4>
-                        <div class="inv-sub">Inspiron Series • 1 Available</div>
-                        <p class="inv-meta">Reliable everyday Dell notebook — great for home, students or office work.</p>
+                <article class="svc-card">
+                    <h3 class="svc-name">Email Setup &amp; Migration</h3>
+                    <p class="svc-blurb">Custom domain email, mailbox migration, anti-spam, deliverability.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$210 – $700</span>
                     </div>
-                </div>
+                </article>
 
-                <!-- MacBook Pro -->
-                <div class="inv-card">
-                    <div class="inv-media"><span class="inv-badge">Apple</span><img src="/images/inventory/macbook-pro.jpg" alt="MacBook Pro"></div>
-                    <div class="inv-body">
-                        <h4>MacBook Pro</h4>
-                        <div class="inv-sub">Apple Silicon Class • 1 Available</div>
-                        <p class="inv-meta">Premium MacBook Pro — ideal for creative, developer and executive workflows.</p>
-                    </div>
-                </div>
             </div>
-
-            <p class="text-center text-white/40 text-[10px] tracking-[0.25em] uppercase mt-12">Interested in any of the above? Fill the form above or call <a href="tel:+16475813182" style="color:#c5a059;">(647) 581-3182</a>.</p>
         </div>
-    </section>
 
-    <!-- ====== PREFER TO PURCHASE IT YOURSELF? — AFFILIATE TECH TABS ====== -->
-    <section id="self-purchase" class="aff-section py-24 px-6 md:px-10 bg-[#050505]">
-        <div class="max-w-7xl mx-auto relative">
-            <div class="aff-header">
-                <span class="eyebrow">Curated Recommendations</span>
-                <h2 class="logo-text">Prefer to Purchase <span class="accent">It Yourself?</span></h2>
-                <p>If you prefer to purchase your own technology, here are trusted platforms and recommendations tailored to your needs, budget, and performance expectations.</p>
+        <!-- ===== Managed IT ===== -->
+        <div class="svc-cat-block">
+            <div class="svc-cat-header">
+                <span class="svc-cat-tick"></span>
+                <h2 class="svc-cat-title">Managed IT</h2>
+                <span class="svc-cat-tick"></span>
             </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            <div class="aff-tabs" id="affTabs" role="tablist"></div>
-            <div id="affPanels"></div>
+                <article class="svc-card">
+                    <h3 class="svc-name">Managed IT Services</h3>
+                    <p class="svc-blurb">Full-service IT department on retainer. Per user, per month.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$140 – $280 / user / mo</span>
+                    </div>
+                </article>
 
-            <p style="text-align:center; font-size:9px; text-transform:uppercase; letter-spacing:0.25em; color:rgba(255,255,255,0.3); margin-top:32px;">Need help deciding? Submit the form above — our team will recommend the right option for you.</p>
+                <article class="svc-card">
+                    <h3 class="svc-name">Help Desk Support</h3>
+                    <p class="svc-blurb">On-call IT help for users and teams.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$105 – $210 / hour</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Remote IT Support (per incident)</h3>
+                    <p class="svc-blurb">One-off remote troubleshooting and fixes.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$105 – $280</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Microsoft 365 / Google Workspace Setup &amp; Migration</h3>
+                    <p class="svc-blurb">Tenant setup, user provisioning, mailbox + drive migration.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$700 – $4,200</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Active Directory &amp; User Management</h3>
+                    <p class="svc-blurb">AD / Entra ID setup, group policy, role-based access.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$1,400 – $4,200</span>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- ===== Network &amp; Infrastructure ===== -->
+        <div class="svc-cat-block">
+            <div class="svc-cat-header">
+                <span class="svc-cat-tick"></span>
+                <h2 class="svc-cat-title">Network &amp; Infrastructure</h2>
+                <span class="svc-cat-tick"></span>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Network Setup &amp; Configuration</h3>
+                    <p class="svc-blurb">Office network design, switching, firewall, segmentation.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$2,100 – $7,000</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Wi-Fi Network Design &amp; Optimization</h3>
+                    <p class="svc-blurb">Site survey, AP placement, mesh / enterprise Wi-Fi.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$420 – $2,100</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">VPN &amp; Remote Access Setup</h3>
+                    <p class="svc-blurb">Secure remote access for distributed teams.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$700 – $3,500</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">VoIP Phone System Setup</h3>
+                    <p class="svc-blurb">Cloud phone system, extensions, voicemail, call routing.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$1,400 – $4,900</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Server Installation &amp; Configuration</h3>
+                    <p class="svc-blurb">On-prem or hybrid server build, OS install, hardening.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$2,100 – $7,000</span>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- ===== Security &amp; Compliance ===== -->
+        <div class="svc-cat-block">
+            <div class="svc-cat-header">
+                <span class="svc-cat-tick"></span>
+                <h2 class="svc-cat-title">Security &amp; Compliance</h2>
+                <span class="svc-cat-tick"></span>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Cybersecurity Audit</h3>
+                    <p class="svc-blurb">Vulnerability assessment, risk report, prioritized remediation.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$4,200 – $21,000</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Penetration Testing</h3>
+                    <p class="svc-blurb">External + internal pen test, exploit verification, executive summary.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$5,600 – $28,000</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Virus / Malware Removal</h3>
+                    <p class="svc-blurb">Infection cleanup, root-cause analysis, hardening.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$210 – $560</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Data Backup &amp; Disaster Recovery</h3>
+                    <p class="svc-blurb">Automated backup, recovery testing, RTO / RPO planning.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$2,100 – $7,000</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Compliance Readiness (HIPAA / PCI / SOC 2)</h3>
+                    <p class="svc-blurb">Gap analysis, policy writing, audit preparation.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$7,000 – $35,000</span>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- ===== Hardware &amp; Repair ===== -->
+        <div class="svc-cat-block">
+            <div class="svc-cat-header">
+                <span class="svc-cat-tick"></span>
+                <h2 class="svc-cat-title">Hardware &amp; Repair</h2>
+                <span class="svc-cat-tick"></span>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <article class="svc-card">
+                    <h3 class="svc-name">PC / Mac Repair</h3>
+                    <p class="svc-blurb">Diagnosis, component replacement, OS reinstall. Per device.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$140 – $700</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Data Recovery</h3>
+                    <p class="svc-blurb">Drive failure, accidental delete, corrupted volumes.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$420 – $4,200</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Hardware Procurement &amp; Setup</h3>
+                    <p class="svc-blurb">Sourcing, configuration, deployment of business hardware.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$280 – $2,800</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Printer Setup &amp; Troubleshooting</h3>
+                    <p class="svc-blurb">Network printer install, driver issues, scan-to-email.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$140 – $420</span>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- ===== Cloud &amp; Automation ===== -->
+        <div class="svc-cat-block">
+            <div class="svc-cat-header">
+                <span class="svc-cat-tick"></span>
+                <h2 class="svc-cat-title">Cloud &amp; Automation</h2>
+                <span class="svc-cat-tick"></span>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Cloud Migration</h3>
+                    <p class="svc-blurb">On-prem to AWS / Azure / GCP, file shares to OneDrive / Google Drive.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$7,000 – $35,000</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Smart Office / Office Automation</h3>
+                    <p class="svc-blurb">Conference rooms, smart locks, building integrations.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$1,400 – $7,000</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">CCTV / Security Camera Installation</h3>
+                    <p class="svc-blurb">IP cameras, NVR, remote viewing, motion alerts.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$700 – $4,900</span>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- ===== Custom Development ===== -->
+        <div class="svc-cat-block">
+            <div class="svc-cat-header">
+                <span class="svc-cat-tick"></span>
+                <h2 class="svc-cat-title">Custom Development</h2>
+                <span class="svc-cat-tick"></span>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Custom Software Development</h3>
+                    <p class="svc-blurb">Internal tools, dashboards, line-of-business apps.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">Starts at $7,000</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">Mobile App Development</h3>
+                    <p class="svc-blurb">iOS + Android native or React Native.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$14,000 – $70,000</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">API &amp; System Integration</h3>
+                    <p class="svc-blurb">Connect your CRM, ERP, billing, marketing stacks.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$1,400 – $11,200</span>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- ===== Consulting ===== -->
+        <div class="svc-cat-block">
+            <div class="svc-cat-header">
+                <span class="svc-cat-tick"></span>
+                <h2 class="svc-cat-title">Consulting</h2>
+                <span class="svc-cat-tick"></span>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <article class="svc-card">
+                    <h3 class="svc-name">IT Consulting (hourly)</h3>
+                    <p class="svc-blurb">Strategic advice, second opinions, deep technical work.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$210 – $420 / hour</span>
+                    </div>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">IT Strategy &amp; Roadmap</h3>
+                    <p class="svc-blurb">Multi-quarter IT roadmap, vendor evaluation, budget planning.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$3,500 – $14,000</span>
+                    </div>
+                </article>
+
+            </div>
         </div>
     </section>
 
-    <!-- ====== LIFESTYLE LINKS ====== -->
-    <section id="lifestyle" class="lifestyle-section">
-        <div class="lifestyle-wrap">
-            <span class="eyebrow" style="font-size:8px; letter-spacing:0.5em; text-transform:uppercase; color:#c5a059; font-weight:700; display:block; margin-bottom:14px;">Elevated Living</span>
-            <h2 class="logo-text" style="font-size:clamp(1.75rem, 3.5vw, 2.25rem); letter-spacing:0.08em; text-transform:uppercase; margin:0 0 18px;">Lifestyle <span style="color:#c5a059; font-style:italic;">Links</span></h2>
-            <p style="color:rgba(255,255,255,0.5); font-size:12px; letter-spacing:0.05em; line-height:1.75; max-width:620px; margin:0 auto;">Carefully selected brands for quality, performance, and elevated living.</p>
-
-            <div id="lifestyleGroups"></div>
+    <!-- ====== CTA SECTION ====== -->
+    <section class="py-20 px-10 border-t border-white/5">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl md:text-5xl font-black tracking-tighter leading-none mb-6 logo-text">Need a <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] italic">Custom Quote?</span></h2>
+            <p class="text-white/50 text-[11px] tracking-wider uppercase mb-10 font-light">Tell us about your project. We'll respond within one business day with a tailored proposal.</p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <a href="tel:+16475813182" class="cta-btn cta-btn-primary">Call (647) 581-3182</a>
+                <a href="mailto:Integrateditsupp@gmail.com?subject=Service Inquiry from iisupp.net" class="cta-btn cta-btn-secondary">Email Us</a>
+                <a href="https://wa.me/16475813182?text=Hi%20Integrated%20IT%20Support%20%E2%80%94%20I%20saw%20your%20services%20page%20and%20want%20a%20quote." target="_blank" rel="noopener" class="cta-btn cta-btn-secondary">WhatsApp</a>
+            </div>
         </div>
     </section>
 
-    <!-- ====== FOOTER ====== -->
-    <footer class="py-20 px-10 border-t border-white/5">
+<footer class="py-20 px-10 border-t border-white/5">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
             <div><p class="logo-text text-lg tracking-widest uppercase mb-2">Integrated IT Support</p><p class="text-white/20 text-[9px] tracking-widest uppercase font-bold">30 Fothergill Court, Whitby, ON L1P 2L4</p></div>
             <div class="md:text-right"><a href="tel:+16475813182" class="text-3xl font-light tracking-tighter text-[#c5a059] hover:text-white transition block mb-2">(647) 581-3182</a><p class="text-white/20 text-[8px] uppercase font-bold">Ahmad W. • Senior Director</p></div>
