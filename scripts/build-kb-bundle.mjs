@@ -19,7 +19,8 @@ function walk(dir) {
 }
 
 function parseFrontmatter(text) {
-  const m = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  const t = text.replace(/\r\n/g, "\n");
+  const m = t.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!m) return null;
   const fm = {};
   let curList = null;
@@ -67,10 +68,10 @@ for (const fp of files) {
 
 mkdirSync(dirname(OUT), { recursive: true });
 const bundle = {
-  version: "1.3", generated: new Date().toISOString(), article_count: articles.length,
+  version: "1.4", generated: new Date().toISOString(), article_count: articles.length,
   schema: "aria-kb-local-bundle/v1", source_repo: "integrateditsupp-debug/iisupp-net-deploy",
   articles
 };
 writeFileSync(OUT, JSON.stringify(bundle));
 const sizeKb = (statSync(OUT).size / 1024).toFixed(1);
-console.log("Built", articles.length, "articles ->", OUT, "("+sizeKb+" KB)");
+console.log("Built", articles.length, "articles ->", OUT, "(" + sizeKb + " KB)");
