@@ -1959,46 +1959,161 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             Two short films from the ARIA design studio — a usage simulation that shows what working with ARIA actually feels like, and a stats-and-purpose reel that frames why it matters. Audio on, headphones recommended.
           </p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <figure class="aria-video-card">
-            <div class="aria-video-meta-top">
-              <span class="aria-video-kicker">Live usage</span>
-              <span class="aria-video-runtime">simulation</span>
+        
+        <section id="aria-cinema" class="cn-section">
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+            #aria-cinema { --cn-bg:#0a0a0b;--cn-bg2:#111113;--cn-fg:#f4f1ea;--cn-dim:#8a857c;--cn-accent:oklch(72% 0.14 75);--cn-line:rgba(244,241,234,0.08); display:block; padding:60px 24px; color:var(--cn-fg); font-family:'JetBrains Mono',ui-monospace,monospace; background:radial-gradient(ellipse at center, var(--cn-bg2) 0%, var(--cn-bg) 70%); border:0; }
+            #aria-cinema *, #aria-cinema *::before, #aria-cinema *::after { box-sizing:border-box; }
+            #aria-cinema .cn-stage { max-width:1160px; margin:0 auto; }
+            #aria-cinema .cn-header { display:flex; justify-content:space-between; align-items:center; padding:18px 0; border-bottom:1px solid var(--cn-line); font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--cn-dim); margin-bottom:32px; }
+            #aria-cinema .cn-brand { display:flex; align-items:center; gap:10px; color:var(--cn-fg); }
+            #aria-cinema .cn-brand .cn-dot { width:6px; height:6px; border-radius:50%; background:var(--cn-accent); box-shadow:0 0 12px var(--cn-accent); }
+            #aria-cinema .cn-nav { display:flex; gap:24px; }
+            #aria-cinema .cn-nav span { opacity:0.6; }
+            #aria-cinema .cn-kicker { font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--cn-dim); margin-bottom:14px; }
+            #aria-cinema .cn-kicker::before { content:'— '; color:var(--cn-accent); }
+            #aria-cinema .cn-title { font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(48px,7vw,96px); line-height:0.95; letter-spacing:-0.01em; color:var(--cn-fg); margin:0 0 28px; font-weight:400; }
+            #aria-cinema .cn-title em { color:var(--cn-accent); font-style:normal; font-family:'JetBrains Mono',monospace; font-size:0.35em; vertical-align:super; letter-spacing:0.1em; }
+            #aria-cinema .cn-meta-row { display:flex; justify-content:space-between; align-items:end; margin-bottom:24px; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--cn-dim); }
+            #aria-cinema .cn-meta-row .cn-left { display:flex; gap:32px; flex-wrap:wrap; }
+            #aria-cinema .cn-meta-row .cn-left b { color:var(--cn-fg); font-weight:500; }
+            #aria-cinema .cn-player { position:relative; aspect-ratio:16/9; background:var(--cn-bg2); border:1px solid var(--cn-line); border-radius:4px; overflow:hidden; box-shadow:0 40px 80px -30px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.02) inset; }
+            #aria-cinema .cn-player video { width:100%; height:100%; display:block; object-fit:cover; }
+            #aria-cinema .cn-player::before, #aria-cinema .cn-player::after, #aria-cinema .cn-corners > span { content:''; position:absolute; width:14px; height:14px; border-color:var(--cn-accent); pointer-events:none; z-index:3; }
+            #aria-cinema .cn-player::before { top:10px; left:10px; border-top:1px solid; border-left:1px solid; }
+            #aria-cinema .cn-player::after { top:10px; right:10px; border-top:1px solid; border-right:1px solid; }
+            #aria-cinema .cn-corners .cn-bl { bottom:10px; left:10px; border-bottom:1px solid; border-left:1px solid; }
+            #aria-cinema .cn-corners .cn-br { bottom:10px; right:10px; border-bottom:1px solid; border-right:1px solid; }
+            #aria-cinema .cn-controls { position:absolute; left:0; right:0; bottom:0; padding:18px 20px 16px; background:linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0)); display:flex; flex-direction:column; gap:10px; opacity:0; transition:opacity 0.25s ease; z-index:4; }
+            #aria-cinema .cn-player:hover .cn-controls, #aria-cinema .cn-player.cn-paused .cn-controls, #aria-cinema .cn-player:focus-within .cn-controls { opacity:1; }
+            #aria-cinema .cn-track { height:3px; background:rgba(255,255,255,0.12); cursor:pointer; position:relative; border-radius:2px; }
+            #aria-cinema .cn-track .cn-buffered { position:absolute; left:0; top:0; bottom:0; background:rgba(255,255,255,0.18); border-radius:2px; }
+            #aria-cinema .cn-track .cn-progress { position:absolute; left:0; top:0; bottom:0; background:var(--cn-accent); border-radius:2px; width:0; }
+            #aria-cinema .cn-track .cn-thumb { position:absolute; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:var(--cn-accent); border-radius:50%; box-shadow:0 0 0 4px rgba(0,0,0,0.4); }
+            #aria-cinema .cn-row { display:flex; align-items:center; gap:16px; color:var(--cn-fg); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; }
+            #aria-cinema .cn-row .cn-spacer { flex:1; }
+            #aria-cinema button.cn-ctrl { background:transparent; border:0; color:var(--cn-fg); cursor:pointer; width:36px; height:36px; display:grid; place-items:center; border-radius:50%; transition:background 0.15s; }
+            #aria-cinema button.cn-ctrl:hover { background:rgba(255,255,255,0.08); }
+            #aria-cinema button.cn-ctrl svg { width:16px; height:16px; fill:currentColor; }
+            #aria-cinema .cn-time { color:var(--cn-dim); }
+            #aria-cinema .cn-time .cn-now { color:var(--cn-fg); }
+            #aria-cinema .cn-bigplay { position:absolute; inset:0; display:grid; place-items:center; z-index:2; background:rgba(10,10,11,0.35); transition:opacity 0.25s; cursor:pointer; }
+            #aria-cinema .cn-bigplay.cn-hidden { opacity:0; pointer-events:none; }
+            #aria-cinema .cn-bigplay .cn-ring { width:96px; height:96px; border-radius:50%; border:1px solid rgba(255,255,255,0.4); display:grid; place-items:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); background:rgba(0,0,0,0.2); transition:transform 0.3s, border-color 0.3s; }
+            #aria-cinema .cn-bigplay:hover .cn-ring { transform:scale(1.08); border-color:var(--cn-accent); }
+            #aria-cinema .cn-bigplay svg { width:28px; height:28px; fill:var(--cn-fg); margin-left:4px; }
+            #aria-cinema .cn-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--cn-line); border:1px solid var(--cn-line); margin-top:32px; }
+            #aria-cinema .cn-strip > div { background:var(--cn-bg); padding:18px 20px; }
+            #aria-cinema .cn-strip .cn-k { font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--cn-dim); margin-bottom:8px; }
+            #aria-cinema .cn-strip .cn-v { font-family:'Instrument Serif',serif; font-size:28px; color:var(--cn-fg); }
+            #aria-cinema .cn-footer { border-top:1px solid var(--cn-line); padding:20px 0; margin-top:32px; display:flex; justify-content:space-between; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--cn-dim); }
+            #aria-cinema .cn-pulse { display:flex; align-items:center; gap:8px; }
+            #aria-cinema .cn-pulse::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--cn-accent); animation:cnPulse 2s ease-in-out infinite; }
+            @keyframes cnPulse { 0%,100% { opacity:0.3; } 50% { opacity:1; box-shadow:0 0 10px var(--cn-accent); } }
+            @media (max-width:720px) {
+              #aria-cinema .cn-header { flex-wrap:wrap; gap:10px; }
+              #aria-cinema .cn-nav { display:none; }
+              #aria-cinema .cn-meta-row { flex-direction:column; align-items:flex-start; gap:12px; }
+              #aria-cinema .cn-strip { grid-template-columns:repeat(2,1fr); }
+            }
+          </style>
+          <div class="cn-stage">
+            <div class="cn-header">
+              <div class="cn-brand"><span class="cn-dot"></span><span>ARIA / Console</span></div>
+              <div class="cn-nav"><span>Overview</span><span>Stats</span><span>Purpose</span><span>Docs</span></div>
+              <div>Rec. 04 · 05.2026</div>
             </div>
-            <video class="aria-video"
-                   src="/assets/video/aria-usage-simulation.mp4"
-                   preload="none"
-                   controls
-                   playsinline
-                   poster=""
-                   aria-label="ARIA usage simulation video">
-              Your browser doesn't support HTML5 video. <a href="/assets/video/aria-usage-simulation.mp4">Download the simulation video</a>.
-            </video>
-            <figcaption class="aria-video-caption">
-              <span class="aria-video-title">ARIA Usage Simulation</span>
-              <span class="aria-video-sub">A real session: globe → research pane → voice reply → cited answer.</span>
-            </figcaption>
-          </figure>
-          <figure class="aria-video-card">
-            <div class="aria-video-meta-top">
-              <span class="aria-video-kicker">Stats &amp; purpose</span>
-              <span class="aria-video-runtime">manifesto</span>
+            <div class="cn-kicker">Briefing 04 — Field Report</div>
+            <h2 class="cn-title">Stats &amp; Purpose<em>↗</em></h2>
+            <div class="cn-meta-row">
+              <div class="cn-left">
+                <div><b>Length</b> · 02:14</div>
+                <div><b>Codec</b> · H.264</div>
+                <div><b>Source</b> · aria.mp4</div>
+              </div>
+              <div>Press <b style="color:var(--cn-fg)">SPACE</b> to play</div>
             </div>
-            <video class="aria-video"
-                   src="/assets/video/aria-stats-and-purpose.mp4"
-                   preload="none"
-                   controls
-                   playsinline
-                   poster=""
-                   aria-label="ARIA stats and purpose video">
-              Your browser doesn't support HTML5 video. <a href="/assets/video/aria-stats-and-purpose.mp4">Download the stats video</a>.
-            </video>
-            <figcaption class="aria-video-caption">
-              <span class="aria-video-title">ARIA Stats &amp; Purpose</span>
-              <span class="aria-video-sub">Numbers behind the system, framed by what ARIA replaces.</span>
-            </figcaption>
-          </figure>
-        </div>
+            <div class="cn-player" id="cn-player">
+              <video id="cn-vid" preload="metadata" playsinline>
+                <source src="/assets/video/aria-stats-and-purpose.mp4" type="video/mp4" />
+              </video>
+              <div class="cn-corners"><span class="cn-bl"></span><span class="cn-br"></span></div>
+              <div class="cn-bigplay" id="cn-bigplay">
+                <div class="cn-ring"><svg viewBox="0 0 24 24"><path d="M6 4l14 8L6 20V4z"/></svg></div>
+              </div>
+              <div class="cn-controls">
+                <div class="cn-track" id="cn-track">
+                  <div class="cn-buffered" id="cn-buffered"></div>
+                  <div class="cn-progress" id="cn-progress"></div>
+                  <div class="cn-thumb" id="cn-thumb"></div>
+                </div>
+                <div class="cn-row">
+                  <button class="cn-ctrl" id="cn-playbtn" aria-label="Play/Pause"><svg id="cn-playicon" viewBox="0 0 24 24"><path d="M6 4l14 8L6 20V4z"/></svg></button>
+                  <div class="cn-time"><span class="cn-now" id="cn-now">0:00</span> / <span id="cn-dur">0:00</span></div>
+                  <div class="cn-spacer"></div>
+                  <button class="cn-ctrl" id="cn-mutebtn" aria-label="Mute"><svg id="cn-muteicon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg></button>
+                  <button class="cn-ctrl" id="cn-fsbtn" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M5 5h5V3H3v7h2V5zm0 14v-5H3v7h7v-2H5zm14-14h-5V3h7v7h-2V5zm0 14h-5v2h7v-7h-2v5z"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <div class="cn-strip">
+              <div><div class="cn-k">Section</div><div class="cn-v">Stats</div></div>
+              <div><div class="cn-k">Tone</div><div class="cn-v">Briefing</div></div>
+              <div><div class="cn-k">Format</div><div class="cn-v">16:9</div></div>
+              <div><div class="cn-k">Channel</div><div class="cn-v">Internal</div></div>
+            </div>
+            <div class="cn-footer">
+              <div class="cn-pulse">Signal live</div>
+              <div>ARIA / 2026</div>
+              <div>Console v0.4</div>
+            </div>
+          </div>
+          <script>
+          (function(){
+            var v = document.getElementById('cn-vid'); if (!v) return;
+            var player = document.getElementById('cn-player');
+            var playbtn = document.getElementById('cn-playbtn');
+            var playicon = document.getElementById('cn-playicon');
+            var big = document.getElementById('cn-bigplay');
+            var mute = document.getElementById('cn-mutebtn');
+            var muteicon = document.getElementById('cn-muteicon');
+            var fs = document.getElementById('cn-fsbtn');
+            var track = document.getElementById('cn-track');
+            var prog = document.getElementById('cn-progress');
+            var buf = document.getElementById('cn-buffered');
+            var thumb = document.getElementById('cn-thumb');
+            var now = document.getElementById('cn-now');
+            var dur = document.getElementById('cn-dur');
+            var PLAY = '<path d="M6 4l14 8L6 20V4z"/>';
+            var PAUSE = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+            var VOL = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/>';
+            var MUTED = '<path d="M3 9v6h4l5 5V4L7 9H3zm12 7l3-3 3 3 1.4-1.4-3-3 3-3L21 7l-3 3-3-3-1.4 1.4 3 3-3 3z"/>';
+            function fmt(t){ if (!isFinite(t)) return '0:00'; var m = Math.floor(t/60); var s = Math.floor(t%60).toString().padStart(2,'0'); return m+':'+s; }
+            function toggle(){ if (v.paused) v.play(); else v.pause(); }
+            playbtn.addEventListener('click', toggle);
+            big.addEventListener('click', toggle);
+            v.addEventListener('play', function(){ playicon.innerHTML = PAUSE; big.classList.add('cn-hidden'); player.classList.remove('cn-paused'); });
+            v.addEventListener('pause', function(){ playicon.innerHTML = PLAY; big.classList.remove('cn-hidden'); player.classList.add('cn-paused'); });
+            v.addEventListener('loadedmetadata', function(){ dur.textContent = fmt(v.duration); });
+            v.addEventListener('timeupdate', function(){ var p = (v.currentTime / v.duration) * 100 || 0; prog.style.width = p + '%'; thumb.style.left = p + '%'; now.textContent = fmt(v.currentTime); });
+            v.addEventListener('progress', function(){ if (v.buffered.length) buf.style.width = ((v.buffered.end(v.buffered.length-1) / v.duration) * 100) + '%'; });
+            track.addEventListener('click', function(e){ var r = track.getBoundingClientRect(); v.currentTime = ((e.clientX - r.left) / r.width) * v.duration; });
+            mute.addEventListener('click', function(){ v.muted = !v.muted; muteicon.innerHTML = v.muted ? MUTED : VOL; });
+            fs.addEventListener('click', function(){ if (!document.fullscreenElement) { if (player.requestFullscreen) player.requestFullscreen(); } else { if (document.exitFullscreen) document.exitFullscreen(); } });
+            document.addEventListener('keydown', function(e){
+              if (!player.isConnected) return;
+              var ae = document.activeElement;
+              if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
+              if (e.code === 'Space') { e.preventDefault(); toggle(); }
+              else if (e.code === 'KeyM') mute.click();
+              else if (e.code === 'KeyF') fs.click();
+              else if (e.code === 'ArrowRight') v.currentTime = Math.min(v.duration, v.currentTime + 5);
+              else if (e.code === 'ArrowLeft') v.currentTime = Math.max(0, v.currentTime - 5);
+            });
+          })();
+          </script>
+        </section>
       </div>
     </section>
 
@@ -2752,6 +2867,32 @@ Thank you,
       alert('Network error. Call (647) 581-3182.'); btn.textContent = origLabel; btn.style.filter=''; btn.dataset.busy = '';
     }
   });
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
+<script>
+(function(){
+  function init(){
+    if (typeof Lenis === 'undefined') { setTimeout(init, 80); return; }
+    if (window.__lenis) return;
+    var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+    try {
+      var lenis = new Lenis({
+        duration: 1.4,
+        easing: function(t){ return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+        smoothWheel: true,
+        smoothTouch: false,
+        wheelMultiplier: 1.0,
+        touchMultiplier: 1.5
+      });
+      function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      window.__lenis = lenis;
+    } catch(e) { /* fall back to native scroll */ }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 </script>
 </body>
