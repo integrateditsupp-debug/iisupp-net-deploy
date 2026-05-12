@@ -947,7 +947,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       "body.aria-trial-active nav.fixed{top:42px !important}" +
       "@media (max-width:600px){#aria-trial-bar{font-size:10px;gap:8px;padding:6px 10px}#aria-trial-bar .atb-time{font-size:14px}#aria-trial-bar .atb-cta{padding:4px 10px;font-size:10px}}" +
       ".aria-locked{position:relative}" +
-      ".aria-locked > *:not(.aria-locked-overlay){filter:blur(7px) saturate(.8);transition:filter .4s ease;pointer-events:none;user-select:none}" +
+      ".aria-locked > *:not(.aria-locked-overlay){pointer-events:none;user-select:none}" +
       ".aria-locked-overlay{position:absolute;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at center,rgba(5,5,5,.45) 0%,rgba(5,5,5,.75) 100%);backdrop-filter:blur(2px);animation:lockFade .5s ease both}" +
       "@keyframes lockFade{from{opacity:0}to{opacity:1}}" +
       ".aria-locked-card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.55);border-radius:18px;padding:30px 32px;text-align:center;max-width:380px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(197,160,89,.18)}" +
@@ -1517,5 +1517,14 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   var st = document.createElement('style');
   st.id = 'aria-suggestion-style';
   st.textContent = `@keyframes ariaSuggPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(241,220,167,0.45), 0 4px 14px rgba(0,0,0,0.4); } 50% { transform: scale(1.03); box-shadow: 0 0 24px 6px rgba(241,220,167,0.55), 0 6px 20px rgba(0,0,0,0.5); } } .aria-link-list.aria-suggestions { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px; } .aria-suggestion-item { display: block; width: 100%; padding: 12px 18px; background: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); color: #0a0a0a; border: 1px solid rgba(241,220,167,0.5); border-radius: 12px; font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; text-align: center; cursor: pointer; animation: ariaSuggPulse 2.6s ease-in-out infinite; transition: transform .25s ease, filter .25s ease, box-shadow .25s ease; } .aria-suggestion-item:hover { transform: scale(1.06); filter: brightness(1.08); animation-play-state: paused; } .aria-suggestion-item:active { transform: scale(0.97); }`;
+  document.head.appendChild(st);
+})();
+
+
+(function(){
+  if (document.getElementById('aria-trial-unlock-style')) return;
+  var st = document.createElement('style');
+  st.id = 'aria-trial-unlock-style';
+  st.textContent = `body.aria-trial-active.overflow-hidden, body.overflow-hidden.aria-trial-active { overflow-y: auto !important; overflow-x: hidden !important; } body.aria-trial-active #aria-trial-bar ~ * { /* let content scroll naturally */ }`;
   document.head.appendChild(st);
 })();
