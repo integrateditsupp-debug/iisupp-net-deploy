@@ -195,6 +195,19 @@
   v.addEventListener('loadedmetadata', () => {
     try { const t = parseFloat(localStorage.getItem('aria_t') || '0'); if (t > 0 && t < v.duration - 1) v.currentTime = t; } catch (e) {}
   });
+
+  // Graceful 404 fallback: if video can't load, show 'Briefing — coming soon' in the play ring instead of empty black
+  v.addEventListener('error', function(){
+    var big = document.getElementById('bigplay');
+    if (big) {
+      big.innerHTML = '<div style="text-align:center;color:#8a857c;font-family:JetBrains Mono,monospace;letter-spacing:0.16em;text-transform:uppercase;"><div style="color:#f1dca7;font-size:13px;letter-spacing:0.22em;margin-bottom:10px;">Briefing</div><div style="font-size:10px;opacity:0.75;">Coming soon</div></div>';
+      big.style.cursor = 'default';
+      big.onclick = null;
+    }
+  });
+  // Treat source-error on the <source> element the same way (Chrome sometimes dispatches there)
+  var src = v.querySelector('source');
+  if (src) src.addEventListener('error', function(){ v.dispatchEvent(new Event('error')); });
 </script>
 </body>
 </html>
