@@ -1246,5 +1246,54 @@
         })();
     </script>
     <script src="/assets/aria-core.js" defer></script>
+
+
+<!-- iis purchase-tech: buy buttons + stripe checkout wiring (auto-generated) -->
+<style>
+.inv-body .inv-price{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:14px;letter-spacing:0.08em;color:#f1dca7;margin-top:12px;font-weight:600}
+.inv-body .inv-price-sub{font-size:9px;letter-spacing:0.3em;color:#8a857c;text-transform:uppercase;margin-top:2px}
+.inv-body .inv-buy{display:inline-flex;align-items:center;justify-content:center;width:100%;margin-top:14px;padding:12px 16px;background:#f1dca7;color:#0c0c0c;border:0;border-radius:4px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:0.25em;text-transform:uppercase;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;font-weight:700}
+.inv-body .inv-buy:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(241,220,167,.28)}
+.inv-body .inv-buy:disabled{opacity:.55;cursor:wait}
+</style>
+<script>
+(function(){
+  var PRICES=[
+    {sku:"iis-notebook-ram-16gb",name:"Notebook 16GB RAM Kit (Crucial DDR3L SODIMM 2x8GB)",desc:"Crucial 16GB DDR3L SODIMM kit (2x8GB), Mac/PC compatible. Sold by Integrated IT Support Inc.",cents:6500},
+    {sku:"iis-mac-mini-a1347-u1",name:"Apple Mac Mini A1347 - Unit 1 of 2",desc:"Apple Mac Mini Model A1347. Compact Apple desktop, fully tested by Integrated IT Support Inc.",cents:26000},
+    {sku:"iis-mac-mini-a1347-u2",name:"Apple Mac Mini A1347 - Unit 2 of 2",desc:"Apple Mac Mini Model A1347. Second unit, diagnosed and verified by Integrated IT Support Inc.",cents:26000},
+    {sku:"iis-ipad-a1458",name:"Apple iPad A1458 (4th Gen)",desc:"Apple iPad Model A1458 - reading, media and everyday productivity. Tested by Integrated IT Support Inc.",cents:7200},
+    {sku:"iis-desktop-tower",name:"Custom Build Desktop Tower (Corsair Case)",desc:"Custom-built desktop tower in Corsair case with internal components. Built and tested by Integrated IT Support Inc.",cents:45500},
+    {sku:"iis-dell-inspiron",name:"Dell Laptop - Inspiron Series",desc:"Dell Inspiron Series notebook, tested by Integrated IT Support Inc.",cents:20800},
+    {sku:"iis-macbook-pro-as",name:"Apple MacBook Pro (Apple Silicon Class)",desc:"MacBook Pro, Apple Silicon class - creative, developer, executive workflows. Tested by Integrated IT Support Inc.",cents:84500}
+  ];
+  function fmt(c){return "$"+(c/100).toFixed(2);}
+  function attach(){
+    var cards=document.querySelectorAll(".inv-card");
+    cards.forEach(function(card,i){
+      var p=PRICES[i];if(!p)return;
+      var body=card.querySelector(".inv-body");if(!body)return;
+      if(body.querySelector(".inv-buy"))return;
+      var pw=document.createElement("div");pw.className="inv-price";pw.textContent=fmt(p.cents)+" USD";
+      var sub=document.createElement("div");sub.className="inv-price-sub";sub.textContent="INCL. INSPECTION + WARRANTY";
+      var btn=document.createElement("button");btn.type="button";btn.className="inv-buy";btn.setAttribute("data-buy",p.sku);btn.textContent="Buy now - "+fmt(p.cents);
+      btn.addEventListener("click",async function(){
+        if(btn.disabled)return;btn.disabled=true;var orig=btn.textContent;btn.textContent="Opening secure checkout...";
+        try{
+          var r=await fetch("/.netlify/functions/stripe-checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({priceData:{amount_cents:p.cents,currency:"usd",product_name:p.name,description:p.desc,id:p.sku}})});
+          var data=await r.json();
+          if(data&&data.url){window.location=data.url;return;}
+          throw new Error((data&&data.error)||"Checkout failed");
+        }catch(e){
+          btn.disabled=false;btn.textContent=orig;
+          alert("Could not start checkout: "+(e.message||e)+"\nPlease email integrateditsupp@gmail.com to complete purchase.");
+        }
+      });
+      body.appendChild(pw);body.appendChild(sub);body.appendChild(btn);
+    });
+  }
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",attach);}else{attach();}
+})();
+</script>
 </body>
 </html>
