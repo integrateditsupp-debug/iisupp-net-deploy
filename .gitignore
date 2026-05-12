@@ -1,7 +1,9 @@
 
-# Large media excluded
-assets/video/
+# Large media excluded (allow specific files via negation)
+assets/video/*
+!assets/video/aria-stats-and-purpose.mp4
 *.mp4
+!assets/video/aria-stats-and-purpose.mp4
 *.mov
 *.zip
 node_modules/
