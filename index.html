@@ -13,7 +13,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/aria-core.css">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=CAD&components=buttons&disable-funding=credit,card" data-namespace="paypal"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
 
@@ -2704,7 +2704,7 @@ Thank you,
                                 host.id = 'paypal-host-' + opt.id;
                                 const launch = window.ARIA.showPremiumModal({
                                     title: 'Confirm: ' + opt.name,
-                                    body: '<p>You are about to purchase <b>'+opt.name+'</b> for <b>$'+opt.price+' CAD</b>.</p><p style="opacity:.7;font-size:12.5px;">After PayPal checkout, Integrated IT Support will email you to confirm scope.</p><div id="paypal-host-'+opt.id+'" style="margin-top:16px;"></div><p class="small-note" style="margin-top:10px;">Payments confirm purchase request. Final service scope may require confirmation before work begins.</p>'
+                                    body: '<p>You are about to purchase <b>'+opt.name+'</b> for <b>$'+opt.price+' CAD</b>.</p><p style="opacity:.7;font-size:12.5px;">After secure checkout, Integrated IT Support will email you to confirm scope.</p><button class="aria-stripe-pay" data-id="'+opt.id+'" data-name="'+(opt.name||"").replace(/"/g,"&quot;")+'" data-price="'+opt.price+'" data-desc="'+((opt.description||"").replace(/"/g,"&quot;"))+'" style="margin-top:16px;display:block;width:100%;padding:14px 20px;background:linear-gradient(135deg,#635bff 0%,#5046e4 100%);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.04em;box-shadow:0 4px 14px rgba(99,91,255,.35);transition:filter .2s">Pay $'+opt.price+' CAD with Stripe</button><p class="small-note" style="margin-top:10px;">Payments confirm purchase request. Final service scope may require confirmation before work begins.</p>'
                                 });
                                 setTimeout(function(){
                                     const mount = document.getElementById('paypal-host-' + opt.id);
@@ -2719,5 +2719,40 @@ Thank you,
     </script>
     <script src="/assets/aria-core.js" defer></script>
     <script type="module" src="/assets/aria-trial.js"></script>
+
+<script>
+(function(){
+  document.addEventListener('click', async function(e){
+    var btn = e.target.closest('.aria-stripe-pay');
+    if (!btn) return;
+    e.preventDefault();
+    if (btn.dataset.busy === '1') return;
+    btn.dataset.busy = '1';
+    var origLabel = btn.textContent;
+    btn.textContent = 'Connecting to Stripe...';
+    btn.style.filter = 'brightness(.8)';
+    try {
+      var r = await fetch('/.netlify/functions/stripe-checkout', {
+        method: 'POST',
+        headers: {'content-type':'application/json'},
+        body: JSON.stringify({
+          priceData: {
+            amount_cents: Math.round(parseFloat(btn.dataset.price) * 100),
+            currency: 'cad',
+            product_name: btn.dataset.name,
+            description: btn.dataset.desc || '',
+            id: btn.dataset.id
+          }
+        })
+      });
+      var j = await r.json();
+      if (j.url) { window.location.href = j.url; }
+      else { alert(j.error || 'Could not start checkout. Call (647) 581-3182.'); btn.textContent = origLabel; btn.style.filter=''; btn.dataset.busy = ''; }
+    } catch (err) {
+      alert('Network error. Call (647) 581-3182.'); btn.textContent = origLabel; btn.style.filter=''; btn.dataset.busy = '';
+    }
+  });
+})();
+</script>
 </body>
 </html>
