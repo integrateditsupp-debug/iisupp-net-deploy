@@ -26,6 +26,10 @@
   to = "/aria.html"
   status = 200
 [[redirects]]
+  from = "/aria-cinema"
+  to = "/aria-cinema.html"
+  status = 200
+[[redirects]]
   from = "/purchase-tech"
   to = "/purchase-tech.html"
   status = 200
