@@ -1948,7 +1948,7 @@ function flushUnknowns(){
   const list = state.unknownQueries.map(u => `- "${u.text}" (${new Date(u.ts).toLocaleString()})`).join('\n');
   const subj = 'New user input ARIA needs to updated with';
   const body = `From session #${state.sessionId} on ${new Date().toLocaleString()}.\n\nThe following queries weren't understood:\n\n${list}\n\nPlease add patterns / KB articles so ARIA handles these next push.`;
-  const mailto = `mailto:integrateditsupp@gmail.com?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  const mailto = `mailto:ahmad.wasee@iisupp.net?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
   window.open(mailto, '_blank');
   appendMessage(ariaBubble("Sent.", `${state.unknownQueries.length} queries on the way to IIS. They'll push patterns in the next update — your ARIA picks them up automatically.`, ''));
   state.unknownQueries = [];
@@ -3255,7 +3255,7 @@ function handleUserInput(text){
     state.unknownQueries.push({ text, ts: Date.now() });
     const n = state.unknownQueries.length;
     const teachCue = n >= 3
-      ? `<div class="aria-text" style="margin-top:10px"><button class="esc-btn esc-urgent" data-send-unknowns style="width:auto;display:inline-flex"><div class="esc-num">${n}</div><div class="esc-body"><strong>Send these to IIS so they can teach me</strong><span>${n} unknown queries queued · email integrateditsupp@gmail.com</span></div></button></div>`
+      ? `<div class="aria-text" style="margin-top:10px"><button class="esc-btn esc-urgent" data-send-unknowns style="width:auto;display:inline-flex"><div class="esc-num">${n}</div><div class="esc-body"><strong>Send these to IIS so they can teach me</strong><span>${n} unknown queries queued · email ahmad.wasee@iisupp.net</span></div></button></div>`
       : `<div class="aria-text" style="font-size:11px;color:var(--muted);margin-top:6px">I'll log this and the next unknowns. After 3, you can send them to IIS to teach me.</div>`;
     renderConversational("Hmm — I don't have a confident match for that yet.", text);
     setTimeout(() => {
@@ -3366,10 +3366,10 @@ function handleEscalation(choice, ctx){
   } else if (choice === 'agent'){
     const subj = `${intentLabel(ctx)} — user needs immediate help`;
     const body = `Session #${state.sessionId} · ${intentLabel(ctx)}\nUser requested live-agent callback at ${new Date().toLocaleString()}.`;
-    const mailto = `mailto:integrateditsupp@gmail.com?subject=${encodeURIComponent('URGENT · '+subj)}&body=${encodeURIComponent(body)}`;
+    const mailto = `mailto:ahmad.wasee@iisupp.net?subject=${encodeURIComponent('URGENT · '+subj)}&body=${encodeURIComponent(body)}`;
     appendMessage(ariaBubble("URGENT escalation sent.", "", `
       <div class="email-card">
-        <div class="email-head"><span class="email-to">→ integrateditsupp@gmail.com</span><span class="email-pri">URGENT</span></div>
+        <div class="email-head"><span class="email-to">→ ahmad.wasee@iisupp.net</span><span class="email-pri">URGENT</span></div>
         <div class="email-subj">${escapeHTML(subj)}</div>
         <div class="email-body">Session #${state.sessionId} blocked on ${escapeHTML(intentLabel(ctx))}. Live-agent callback requested.<br/><span class="email-ts">${new Date().toLocaleTimeString()}</span></div>
       </div>

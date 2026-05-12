@@ -74,7 +74,7 @@ async function sendWelcomeEmail(email, license, plan) {
       </ol>
       <h2 style="color:#c5a059;font-size:18px;margin-top:32px;">Need Help?</h2>
       <p style="font-size:15px;line-height:1.6;">📞 <a href="tel:6475813182" style="color:#c5a059;">(647) 581-3182</a> — 24/7 support<br>
-      ✉️ <a href="mailto:integrateditsupp@gmail.com" style="color:#c5a059;">integrateditsupp@gmail.com</a></p>
+      ✉️ <a href="mailto:ahmad.wasee@iisupp.net" style="color:#c5a059;">ahmad.wasee@iisupp.net</a></p>
       <p style="font-size:12px;color:#888;margin-top:32px;border-top:1px solid #333;padding-top:16px;">
       Integrated IT Support Inc. · iisupport.net · 647-581-3182<br>
       ARIA — Senior IT Helpdesk in your pocket.</p>

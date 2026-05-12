@@ -136,7 +136,7 @@
           console.error("PayPal error", err);
           showPremiumModal({
             title: "Checkout unavailable",
-            body: "<p>PayPal could not complete the request. Try again or contact Integrated IT Support at <a href='mailto:integrateditsupp@gmail.com'>integrateditsupp@gmail.com</a>.</p>",
+            body: "<p>PayPal could not complete the request. Try again or contact Integrated IT Support at <a href='mailto:ahmad.wasee@iisupp.net'>ahmad.wasee@iisupp.net</a>.</p>",
           });
         },
       })
@@ -631,7 +631,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
             <ul class="aria-link-list">
               <li><a class="aria-result-link" href="/#service-center">Open the Service Center</a> — AI diagnostics, re-launch, screenshot triage.</li>
               <li><a class="aria-result-link" href="tel:+16475813182">Call Senior Director — (647) 581-3182</a></li>
-              <li><a class="aria-result-link" href="mailto:integrateditsupp@gmail.com?subject=Tech%20Support%20Request">Email integrateditsupp@gmail.com</a></li>
+              <li><a class="aria-result-link" href="mailto:ahmad.wasee@iisupp.net?subject=Tech%20Support%20Request">Email ahmad.wasee@iisupp.net</a></li>
             </ul>
             <p class="small-note">If the issue is urgent (system down, data loss, security incident) — call, don't email.</p>
           </div>`,
@@ -990,7 +990,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
           '<h3>Your <span class="gold">trial</span> is up</h3>' +
           '<p>Pick a plan to keep using ARIA. The rest of the site stays open — explore as much as you want.</p>' +
           '<a class="aria-locked-cta" href="' + PLANS_PATH + '">VIEW PLANS →</a>' +
-          '<div class="aria-locked-sub">Or <a href="mailto:integrateditsupp@gmail.com?subject=ARIA%20Sales%20Inquiry">talk to sales</a></div>' +
+          '<div class="aria-locked-sub">Or <a href="mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Sales%20Inquiry">talk to sales</a></div>' +
         '</div>';
       el.appendChild(overlay);
     });
@@ -1485,8 +1485,8 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       var fd=new FormData(form);var body=new URLSearchParams();fd.forEach(function(v,k){body.append(k,v);});
       var msg=document.getElementById('gisMsg');msg.textContent='Sending...';msg.className='gis-msg';
       fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()})
-        .then(function(r){if(r.ok){msg.textContent='Sent. We will reply to your email shortly.';setTimeout(function(){d.remove();},2200);}else{msg.textContent='Send failed. Email integrateditsupp@gmail.com directly.';msg.className='gis-msg gis-err';}})
-        .catch(function(){msg.textContent='Send failed. Email integrateditsupp@gmail.com directly.';msg.className='gis-msg gis-err';});
+        .then(function(r){if(r.ok){msg.textContent='Sent. We will reply to your email shortly.';setTimeout(function(){d.remove();},2200);}else{msg.textContent='Send failed. Email ahmad.wasee@iisupp.net directly.';msg.className='gis-msg gis-err';}})
+        .catch(function(){msg.textContent='Send failed. Email ahmad.wasee@iisupp.net directly.';msg.className='gis-msg gis-err';});
     };
   }
   window.openGetItSupport=showGIS;

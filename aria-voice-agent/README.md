@@ -18,7 +18,7 @@ Files in this folder are paste-ready for ElevenLabs Conversational AI.
 - TWILIO_AUTH_TOKEN          (mark secret)
 - TWILIO_PHONE_NUMBER        (E.164 format, e.g. +14165551234)
 - ELEVENLABS_WEBHOOK_SECRET  (mark secret — from Agent → Webhooks → reveal)
-- SALES_NOTIFY_EMAIL         (default: integrateditsupp@gmail.com)
+- SALES_NOTIFY_EMAIL         (default: ahmad.wasee@iisupp.net)
 - RESEND_API_KEY             (already set)
 - RESEND_FROM                (already set)
 

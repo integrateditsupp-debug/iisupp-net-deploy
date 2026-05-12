@@ -119,6 +119,6 @@
       "header": "X-ElevenLabs-Signature",
       "secret_env": "ELEVENLABS_WEBHOOK_SECRET"
     },
-    "description": "Fires when each call ends. Sends transcript + classification + tool-call log to integrateditsupp@gmail.com via Resend."
+    "description": "Fires when each call ends. Sends transcript + classification + tool-call log to ahmad.wasee@iisupp.net via Resend."
   }
 }

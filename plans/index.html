@@ -94,7 +94,7 @@
 <header style="padding:22px 28px;border-bottom:1px solid rgba(197,160,89,.15);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
   <a href="/" class="pf-back">&larr; Back to home</a>
   <a href="/" style="color:#f1dca7;font-family:Cinzel,serif;letter-spacing:.18em;font-weight:700;text-decoration:none;font-size:14px">INTEGRATED IT SUPPORT</a>
-  <a href="mailto:integrateditsupp@gmail.com?subject=ARIA%20Sales%20Inquiry" class="pf-back">Talk to sales</a>
+  <a href="mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Sales%20Inquiry" class="pf-back">Talk to sales</a>
 </header>
 <main style="max-width:1600px;margin:0 auto;padding:64px 24px 48px">
   <div style="text-align:center;max-width:760px;margin:0 auto 56px">
@@ -209,7 +209,7 @@
 
 <footer class="pf-foot">
   Powered by Stripe &middot; Cancel anytime &middot; No setup fees<br>
-  <a href="/terms/">Terms &amp; Conditions</a> &middot; <a href="mailto:integrateditsupp@gmail.com">integrateditsupp@gmail.com</a> &middot; <a href="tel:+16475813182">(647) 581-3182</a>
+  <a href="/terms/">Terms &amp; Conditions</a> &middot; <a href="mailto:ahmad.wasee@iisupp.net">ahmad.wasee@iisupp.net</a> &middot; <a href="tel:+16475813182">(647) 581-3182</a>
 </footer>
 
 <div class="pf-modal" id="pf-consent-modal" hidden>
@@ -296,7 +296,7 @@
   var pendingAction=null;
 
   function showError(msg,salesled){
-    if(salesled){err.innerHTML=msg+' <a href="mailto:integrateditsupp@gmail.com?subject=ARIA%20Sales%20Inquiry">Email sales</a>';}
+    if(salesled){err.innerHTML=msg+' <a href="mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Sales%20Inquiry">Email sales</a>';}
     else{err.textContent=msg;}
     err.classList.add('show');
     setTimeout(function(){err.classList.remove('show');},9000);
@@ -388,11 +388,11 @@
         showView('success');
       }else{
         btn.disabled=false;btn.textContent='CONFIRM & PROCEED';
-        alert('Submission failed (HTTP '+res.status+'). Please email integrateditsupp@gmail.com directly.');
+        alert('Submission failed (HTTP '+res.status+'). Please email ahmad.wasee@iisupp.net directly.');
       }
     }).catch(function(){
       btn.disabled=false;btn.textContent='CONFIRM & PROCEED';
-      alert('Network error. Please email integrateditsupp@gmail.com directly.');
+      alert('Network error. Please email ahmad.wasee@iisupp.net directly.');
     });
   });
 
@@ -411,11 +411,11 @@
           showView('success');
         }else{
           btn.disabled=false;btn.textContent='SUBMIT OFFER';
-          alert('Submission failed (HTTP '+res.status+'). Please email integrateditsupp@gmail.com directly.');
+          alert('Submission failed (HTTP '+res.status+'). Please email ahmad.wasee@iisupp.net directly.');
         }
       }).catch(function(){
         btn.disabled=false;btn.textContent='SUBMIT OFFER';
-        alert('Network error. Please email integrateditsupp@gmail.com directly.');
+        alert('Network error. Please email ahmad.wasee@iisupp.net directly.');
       });
     }
   });

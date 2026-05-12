@@ -34,7 +34,7 @@ exports.handler = async (event) => {
 
   const apiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESEND_FROM || 'ARIA Sales <noreply@iisupport.net>';
-  const salesTo = process.env.SALES_NOTIFY_EMAIL || 'integrateditsupp@gmail.com';
+  const salesTo = process.env.SALES_NOTIFY_EMAIL || 'ahmad.wasee@iisupp.net';
 
   if (!apiKey) {
     console.error('[aria-inquiry] RESEND_API_KEY missing');
@@ -137,7 +137,7 @@ function renderReplyHtml(d) {
       <p style="font-size:15px;line-height:1.6;color:#f5f5f0;">A senior member of our team will respond within <strong>one business day</strong> with next steps and any qualifying questions.</p>
       <h2 style="color:#c5a059;font-size:16px;margin-top:28px;letter-spacing:.05em;">Need to reach us sooner?</h2>
       <p style="font-size:14px;line-height:1.7;color:#f5f5f0;">📞 <a href="tel:6475813182" style="color:#c5a059;text-decoration:none;">${esc(SUPPORT_PHONE)}</a><br>
-      ✉️ <a href="mailto:integrateditsupp@gmail.com" style="color:#c5a059;text-decoration:none;">integrateditsupp@gmail.com</a></p>
+      ✉️ <a href="mailto:ahmad.wasee@iisupp.net" style="color:#c5a059;text-decoration:none;">ahmad.wasee@iisupp.net</a></p>
       <p style="font-size:12px;color:#888;margin-top:32px;border-top:1px solid #333;padding-top:16px;">
         Integrated IT Support Inc. · iisupport.net · ${esc(SUPPORT_PHONE)}<br>
         ARIA — Premium AI Browsing Companion.
