@@ -994,7 +994,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
         '</div>';
       el.appendChild(overlay);
     });
-    ["ariaFab","chatFab","installAppButton"].forEach(function (id) {
+    ["ariaFab","installAppButton"].forEach(function (id) {
       var el = document.getElementById(id);
       if (!el) return;
       el.classList.add("aria-locked-fab");
