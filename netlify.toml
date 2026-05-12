@@ -80,6 +80,26 @@
   to = "/governance/ai-use.html"
   status = 200
 [[redirects]]
+  from = "/governance/code-of-conduct"
+  to = "/governance/code-of-conduct.html"
+  status = 200
+[[redirects]]
+  from = "/governance/anti-bribery"
+  to = "/governance/anti-bribery.html"
+  status = 200
+[[redirects]]
+  from = "/governance/environmental"
+  to = "/governance/environmental.html"
+  status = 200
+[[redirects]]
+  from = "/governance/health-and-safety"
+  to = "/governance/health-and-safety.html"
+  status = 200
+[[redirects]]
+  from = "/governance/incident-response"
+  to = "/governance/incident-response.html"
+  status = 200
+[[redirects]]
   from = "/governance/responsible-sourcing"
   to = "/governance/responsible-sourcing.html"
   status = 200
@@ -90,4 +110,14 @@
 [[redirects]]
   from = "/privacy"
   to = "/governance/privacy.html"
+  status = 200
+
+# --- Vertical landing pages ---
+[[redirects]]
+  from = "/commercial-real-estate"
+  to = "/commercial-real-estate.html"
+  status = 200
+[[redirects]]
+  from = "/government"
+  to = "/government.html"
   status = 200
