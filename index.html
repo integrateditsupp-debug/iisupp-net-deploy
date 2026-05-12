@@ -2111,6 +2111,18 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
               else if (e.code === 'ArrowRight') v.currentTime = Math.min(v.duration, v.currentTime + 5);
               else if (e.code === 'ArrowLeft') v.currentTime = Math.max(0, v.currentTime - 5);
             });
+          
+            // Graceful 404 fallback: if video can't load, show 'Briefing - coming soon' in play ring
+            v.addEventListener('error', function(){
+              var big = document.getElementById('cn-bigplay');
+              if (big) {
+                big.innerHTML = '<div style="text-align:center;color:#8a857c;font-family:JetBrains Mono,monospace;letter-spacing:0.16em;text-transform:uppercase;"><div style="color:#f1dca7;font-size:13px;letter-spacing:0.22em;margin-bottom:10px;">Briefing</div><div style="font-size:10px;opacity:0.75;">Coming soon</div></div>';
+                big.style.cursor = 'default';
+                big.onclick = null;
+              }
+            });
+            var src = v.querySelector('source');
+            if (src) src.addEventListener('error', function(){ v.dispatchEvent(new Event('error')); });
           })();
           </script>
         </section>
