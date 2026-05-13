@@ -1068,6 +1068,138 @@
     .stats-top{grid-template-columns:repeat(4,1fr)}
     .right{position:relative}
   }
+
+  /* ====== CORE BRAIN VIEW ====== */
+  .brain-view{
+    display:flex;flex-direction:column;height:100%;overflow-y:auto;
+    padding:22px 22px 28px;gap:22px;
+    scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;
+  }
+  .brain-view::-webkit-scrollbar{width:4px}
+  .brain-view::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:4px}
+
+  .brain-header{
+    display:flex;align-items:center;gap:12px;padding-bottom:14px;
+    border-bottom:1px solid var(--border-2);flex-shrink:0;
+  }
+  .brain-header .bh-mark{
+    width:32px;height:32px;border-radius:8px;flex-shrink:0;
+    background:linear-gradient(155deg,#f0d895 0%,#d4a85a 50%,#8a6020 100%);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);font-weight:700;color:#1a1208;font-size:16px;
+  }
+  .brain-header .bh-title{
+    font-family:var(--mono);font-size:11px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--gold);
+  }
+  .brain-header .bh-sub{
+    font-family:var(--mono);font-size:9px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted);margin-top:2px;
+  }
+  .brain-header .bh-badge{
+    margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.2em;
+    text-transform:uppercase;padding:3px 8px;border-radius:4px;
+    background:rgba(212,168,90,.12);border:1px solid rgba(212,168,90,.3);
+    color:var(--gold-bright);
+  }
+
+  /* Stack + Tree columns */
+  .brain-cols{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;flex-shrink:0}
+  @media (max-width:900px){.brain-cols{grid-template-columns:1fr}}
+
+  /* Stack panel */
+  .brain-stack{
+    border:1px solid var(--border);border-radius:14px;
+    background:var(--panel);padding:16px 14px;display:flex;flex-direction:column;gap:0;
+  }
+  .stack-title{
+    font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--gold-soft);margin-bottom:12px;
+  }
+  .stack-layer{
+    display:flex;align-items:center;gap:10px;padding:7px 10px;
+    border-radius:8px;border:1px solid transparent;
+    transition:border-color .2s,background .2s;cursor:default;
+  }
+  .stack-layer:hover{border-color:var(--border-2);background:var(--card-hover)}
+  .stack-layer .sl-icon{
+    width:26px;height:26px;border-radius:6px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(212,168,90,.1);
+  }
+  .stack-layer .sl-icon svg{width:13px;height:13px;color:var(--gold)}
+  .stack-layer .sl-name{font-family:var(--mono);font-size:10px;color:var(--cream);letter-spacing:.08em}
+  .stack-layer .sl-role{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+  .stack-arrow{
+    display:flex;align-items:center;justify-content:center;
+    height:10px;color:rgba(212,168,90,.35);font-size:11px;
+  }
+  .stack-layer.sl-new{border-color:rgba(212,168,90,.25);background:rgba(212,168,90,.06)}
+  .stack-layer.sl-new .sl-name{color:var(--gold-bright)}
+
+  /* Cognitive Tree panel */
+  .brain-tree-panel{
+    border:1px solid var(--border);border-radius:14px;
+    background:var(--panel);padding:16px 14px;
+  }
+  .tree-title{
+    font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--gold-soft);margin-bottom:14px;
+  }
+  .tree-root{font-family:var(--mono);font-size:11px;color:var(--gold-bright);letter-spacing:.12em;margin-bottom:10px}
+  .tree-branch{margin-left:14px;border-left:1px solid var(--border);padding-left:10px}
+  .tree-node{
+    display:flex;align-items:flex-start;gap:8px;padding:5px 8px;
+    border-radius:7px;margin-bottom:2px;border:1px solid transparent;
+    transition:border-color .18s,background .18s;cursor:default;
+    position:relative;
+  }
+  .tree-node::before{
+    content:'';position:absolute;left:-11px;top:50%;
+    width:10px;height:1px;background:var(--border);
+  }
+  .tree-node:hover{border-color:var(--border-2);background:var(--card-hover)}
+  .tree-node .tn-dot{
+    width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;
+    background:var(--gold-dim);border:1px solid var(--gold-soft);
+    transition:background .2s;
+  }
+  .tree-node:hover .tn-dot{background:var(--gold)}
+  .tree-node.tn-highlight .tn-dot{background:var(--gold-bright);box-shadow:0 0 8px rgba(240,216,149,.45)}
+  .tree-node.tn-new .tn-dot{background:rgba(109,186,133,.8);border-color:#6dba85;box-shadow:0 0 7px rgba(109,186,133,.3)}
+  .tree-node .tn-label{font-family:var(--mono);font-size:10px;color:var(--cream);letter-spacing:.07em;line-height:1.4}
+  .tree-node .tn-desc{font-family:var(--sans);font-size:9px;color:var(--muted);line-height:1.4;margin-top:1px}
+  .tree-node .tn-badge{
+    margin-left:auto;flex-shrink:0;font-family:var(--mono);font-size:7.5px;
+    letter-spacing:.15em;text-transform:uppercase;padding:2px 6px;border-radius:3px;
+  }
+  .tn-badge.badge-new{background:rgba(109,186,133,.14);border:1px solid rgba(109,186,133,.35);color:#6dba85}
+  .tn-badge.badge-core{background:rgba(212,168,90,.1);border:1px solid rgba(212,168,90,.25);color:var(--gold)}
+  .tn-badge.badge-ultra{background:rgba(240,216,149,.12);border:1px solid rgba(240,216,149,.35);color:var(--gold-bright)}
+
+  .tree-sub-branch{margin-left:12px;border-left:1px solid rgba(180,140,70,.1);padding-left:10px;margin-top:2px}
+  .tree-section-label{
+    font-family:var(--mono);font-size:8.5px;letter-spacing:.25em;text-transform:uppercase;
+    color:var(--muted-2);padding:6px 8px 3px;
+  }
+
+  /* Video player */
+  .brain-video-wrap{
+    border:1px solid var(--border);border-radius:14px;overflow:hidden;
+    background:#060402;flex-shrink:0;position:relative;
+  }
+  .brain-video-header{
+    padding:12px 16px;border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:10px;
+  }
+  .brain-video-header .bvh-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px rgba(212,168,90,.5);animation:ariaFabPulse 2.2s ease-in-out infinite}
+  .brain-video-header .bvh-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  .brain-video-header .bvh-meta{margin-left:auto;font-family:var(--mono);font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+  .brain-video-player{
+    width:100%;aspect-ratio:16/9;display:block;
+    background:#040302;
+  }
+  .brain-video-player:focus{outline:none}
 </style>
 </head>
 <body>
@@ -1205,6 +1337,193 @@
       </div>
     </div>
 
+    <!-- VIEW: CORE BRAIN -->
+    <div class="view" id="view-brain">
+      <div class="brain-view">
+
+        <div class="brain-header">
+          <div class="bh-mark">A</div>
+          <div>
+            <div class="bh-title">ARIA Core Brain</div>
+            <div class="bh-sub">Adaptive Reconstructive Operational Cognition</div>
+          </div>
+          <div class="bh-badge">ULTRATHINK v1.0</div>
+        </div>
+
+        <div class="brain-cols">
+
+          <!-- ARIA FULL STACK -->
+          <div class="brain-stack">
+            <div class="stack-title">ARIA Full Stack</div>
+
+            <div class="stack-layer">
+              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+              <div><div class="sl-name">Frontend / UI</div><div class="sl-role">Face · Interface</div></div>
+            </div>
+            <div class="stack-arrow">↓</div>
+
+            <div class="stack-layer">
+              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.2 4.2l4.3 4.3M15.5 15.5l4.3 4.3M1 12h6M17 12h6M4.2 19.8l4.3-4.3M15.5 8.5l4.3-4.3"/></svg></div>
+              <div><div class="sl-name">LLM Cognitive Layer</div><div class="sl-role">Brain</div></div>
+            </div>
+            <div class="stack-arrow">↓</div>
+
+            <div class="stack-layer">
+              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-5 0v-15A2.5 2.5 0 019.5 2zM14.5 8A2.5 2.5 0 0117 10.5v9a2.5 2.5 0 01-5 0v-9A2.5 2.5 0 0114.5 8z"/></svg></div>
+              <div><div class="sl-name">Reasoning + Behavior + Trust</div><div class="sl-role">Guardrails · Safety</div></div>
+            </div>
+            <div class="stack-arrow">↓</div>
+
+            <div class="stack-layer">
+              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></div>
+              <div><div class="sl-name">RAG Retrieval Layer</div><div class="sl-role">Retrieval · Search</div></div>
+            </div>
+            <div class="stack-arrow">↓</div>
+
+            <div class="stack-layer">
+              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+              <div><div class="sl-name">Vector Memory Layer</div><div class="sl-role">Memory Index</div></div>
+            </div>
+            <div class="stack-arrow">↓</div>
+
+            <div class="stack-layer">
+              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+              <div><div class="sl-name">KB Knowledge Layer</div><div class="sl-role">Knowledge</div></div>
+            </div>
+            <div class="stack-arrow">↓</div>
+
+            <div class="stack-layer">
+              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16,18 22,12 16,6"/><polyline points="8,6 2,12 8,18"/></svg></div>
+              <div><div class="sl-name">Tools + Automation + Agents</div><div class="sl-role">Hands · Nervous System · Specialists</div></div>
+            </div>
+            <div class="stack-arrow">↓</div>
+
+            <div class="stack-layer">
+              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+              <div><div class="sl-name">Monitoring + Logs + Learning</div><div class="sl-role">Observability · Self-Checking</div></div>
+            </div>
+            <div class="stack-arrow">↓</div>
+
+            <div class="stack-layer sl-new">
+              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg></div>
+              <div><div class="sl-name">Storage + Infrastructure</div><div class="sl-role">Postgres · Redis · pgvector</div></div>
+            </div>
+          </div>
+
+          <!-- COGNITIVE TREE -->
+          <div class="brain-tree-panel">
+            <div class="tree-title">Reconstructive Intelligence Layer — Cognitive Tree</div>
+
+            <div class="tree-root">◈ Memory System</div>
+
+            <div class="tree-branch">
+              <div class="tree-node">
+                <div class="tn-dot"></div>
+                <div><div class="tn-label">Short-Term Memory</div><div class="tn-desc">Redis · Session · 24h TTL</div></div>
+                <div class="tn-badge badge-core">CORE</div>
+              </div>
+              <div class="tree-node">
+                <div class="tn-dot"></div>
+                <div><div class="tn-label">Long-Term Memory</div><div class="tn-desc">Postgres + pgvector · Tenant-isolated · Encrypted</div></div>
+                <div class="tn-badge badge-core">CORE</div>
+              </div>
+
+              <div class="tree-node tn-highlight" style="margin-top:6px;border-color:rgba(212,168,90,.3);background:rgba(212,168,90,.06)">
+                <div class="tn-dot"></div>
+                <div><div class="tn-label">► Reconstructive Intelligence Layer</div><div class="tn-desc">Sparse patterns · Dynamic rebuild · Verification-first</div></div>
+                <div class="tn-badge badge-ultra">ULTRATHINK</div>
+              </div>
+
+              <div class="tree-sub-branch">
+                <div class="tree-section-label">— Foundation Nodes</div>
+
+                <div class="tree-node">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Sparse Critical Memory</div><div class="tn-desc">Stores clues, causal links, operational patterns — not everything</div></div>
+                </div>
+                <div class="tree-node">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Procedural Intelligence</div><div class="tn-desc">How to think, troubleshoot, validate, escalate safely</div></div>
+                </div>
+                <div class="tree-node">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Dynamic Reconstruction</div><div class="tn-desc">Rebuilds solutions from sparse memory + live evidence + patterns</div></div>
+                </div>
+                <div class="tree-node">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Pattern Strengthening</div><div class="tn-desc">Repeated successful reasoning paths reinforce over time</div></div>
+                </div>
+                <div class="tree-node">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Selective Forgetting</div><div class="tn-desc">Low-value data decays; safety-critical data persists</div></div>
+                </div>
+                <div class="tree-node">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Confidence-Aware Cognition</div><div class="tn-desc">Every answer carries confidence scoring — never fakes certainty</div></div>
+                </div>
+                <div class="tree-node">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Trust-Centered Operational Intelligence</div><div class="tn-desc">Transparency, calm, reassurance — silence and false confidence damage trust</div></div>
+                </div>
+
+                <div class="tree-section-label" style="margin-top:8px">— ULTRATHINK Extensions</div>
+
+                <div class="tree-node tn-new">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Causal World Model</div><div class="tn-desc">Models cause-effect relationships in operational domain</div></div>
+                  <div class="tn-badge badge-new">NEW</div>
+                </div>
+                <div class="tree-node tn-new">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Evidence Verification Chain</div><div class="tn-desc">Validates reconstructed answers against multiple evidence sources</div></div>
+                  <div class="tn-badge badge-new">NEW</div>
+                </div>
+                <div class="tree-node tn-new">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Memory Decay Engine</div><div class="tn-desc">Weighted decay algorithm — operational value determines retention priority</div></div>
+                  <div class="tn-badge badge-new">NEW</div>
+                </div>
+                <div class="tree-node tn-new">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Pattern Reinforcement Loop</div><div class="tn-desc">Successful resolution paths strengthen procedural memory automatically</div></div>
+                  <div class="tn-badge badge-new">NEW</div>
+                </div>
+                <div class="tree-node tn-new">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Trust Signal Propagation</div><div class="tn-desc">Confidence scores flow through reasoning chain — no silent uncertainty</div></div>
+                  <div class="tn-badge badge-new">NEW</div>
+                </div>
+                <div class="tree-node tn-new">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Contextual Confidence Scoring</div><div class="tn-desc">Dynamic confidence per answer based on evidence density and contradiction detection</div></div>
+                  <div class="tn-badge badge-new">NEW</div>
+                </div>
+                <div class="tree-node tn-new">
+                  <div class="tn-dot"></div>
+                  <div><div class="tn-label">Adaptive Query Reformulation</div><div class="tn-desc">Rewrites retrieval queries based on prior failed or low-confidence results</div></div>
+                  <div class="tn-badge badge-new">NEW</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ARIA USAGE VIDEO -->
+        <div class="brain-video-wrap">
+          <div class="brain-video-header">
+            <div class="bvh-dot"></div>
+            <div class="bvh-label">ARIA · Usage Simulation</div>
+            <div class="bvh-meta">Internal Reference · ARIA Tab Only</div>
+          </div>
+          <video class="brain-video-player" controls preload="metadata" poster="">
+            <source src="assets/video/aria-usage-simulation.mp4" type="video/mp4">
+            <p style="padding:20px;font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center">Video unavailable in this environment.</p>
+          </video>
+        </div>
+
+      </div>
+    </div>
+
   </section>
 
   <!-- ================ RIGHT PANEL ================ -->
@@ -1284,6 +1603,7 @@
           <button class="qa-chip" data-ask="VPN diagnostic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>VPN Diagnostic</button>
           <button class="qa-chip" data-ask="reset my password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0110 0v3"/></svg>Reset Password</button>
           <button class="qa-chip" data-ask="show ops dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Ops Dashboard</button>
+          <button class="qa-chip" data-ask="show core brain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-5 0v-15A2.5 2.5 0 019.5 2z"/><path d="M14.5 8A2.5 2.5 0 0117 10.5v9a2.5 2.5 0 01-5 0v-9A2.5 2.5 0 0114.5 8z"/></svg>Core Brain</button>
         </div>
       </div>
      </div><!-- /.content-section -->
@@ -2490,6 +2810,7 @@ function classify(text){
   if (/(browser|edge|chrome|firefox)/.test(q) && !/(slow|laggy|cpu)/.test(q)) return 'kb:browser';
   // navigational
   if (/(ops|dashboard|operations|metrics)/.test(q)) return 'ops';
+  if (/(core.?brain|brain|ultrathink|cognitive|architecture|stack|memory.?layer|reconstructive)/.test(q)) return 'brain';
   // ESCALATION (catch before generic 'talk' / 'voice')
   if (/^(talk to (it|live agent|agent|human|tech support|support)|escalate|live agent|contact (it|support|tech))/.test(q)) return 'escalation';
   if (/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';
@@ -3036,6 +3357,12 @@ function handleUserInput(text){
     return;
   }
 
+  // /brain — show core brain view
+  if (/^\/?brain\b/.test(q)){
+    showView('brain');
+    return;
+  }
+
   // /capabilities — typo-tolerant
   if (/^\/?(capabilities|capability|cap|caps|abilities|features)\b/.test(q)){
     showView('chat');
@@ -3209,6 +3536,7 @@ function handleUserInput(text){
   // navigational — these don't archive (they're view changes)
   if (intent === 'ops'){ showView('ops'); return; }
   if (intent === 'voice'){ enterVoice(text); return; }
+  if (intent === 'brain'){ showView('brain'); return; }
 
   // === default intent: continuation phrases or generic chat (no archive) ===
   if (intent === 'default'){
@@ -3400,11 +3728,12 @@ function renderKBOnly(category, userText){
 }
 
 /* ============== VIEW SWITCHING ============== */
-const views = ['chat','voice','ops'];
+const views = ['chat','voice','ops','brain'];
 const topbarTexts = {
   chat: 'SUPPORT · ENTERPRISE · TIER ONE',
   voice: 'VOICE INTERACTION · SUITE 14',
   ops: 'ENTERPRISE OPERATIONS · LIVE',
+  brain: 'ARIA CORE BRAIN · ULTRATHINK v1.0',
 };
 function showView(name){
   views.forEach(v => document.getElementById('view-' + v).classList.toggle('active', v === name));
