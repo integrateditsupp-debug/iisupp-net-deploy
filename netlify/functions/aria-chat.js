@@ -196,7 +196,7 @@ exports.handler = async (event) => {
       }),
     }).catch(() => {}); // don't block on logging
 
-    return json(200, {
+    const responsePayload = {
       text: String(parsed.text || ''),
       emotion: parsed.emotion_detected || 'neutral',
       tone: parsed.tone_used || 'warm',
@@ -205,7 +205,36 @@ exports.handler = async (event) => {
       escalate: Boolean(parsed.escalate),
       category: parsed.issue_category || 'other',
       suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions.slice(0, 5).map(String) : [],
-    });
+    };
+
+    // ── Aperture Trace Emission (fire-and-forget) ──────────────────────────
+    const baseUrl = event.headers.host
+      ? `https://${event.headers.host}`
+      : (process.env.APP_URL || 'https://iisupp.net');
+    const lastUserMsg = cleanMsgs[cleanMsgs.length - 1]?.content || '';
+    const tracePayload = {
+      ts:           Date.now(),
+      sessionId:    body.sessionId || 'anon',
+      turnIndex:    cleanMsgs.filter(m => m.role === 'user').length,
+      userMsg:      lastUserMsg.slice(0, 2000),
+      ariaResp:     responsePayload.text.slice(0, 3000),
+      emotion:      responsePayload.emotion,
+      tone:         responsePayload.tone,
+      resolved:     responsePayload.resolved,
+      escalate:     responsePayload.escalate,
+      category:     responsePayload.category,
+      suggestions:  responsePayload.suggestions,
+      latencyMs:    0,   // not measurable server-side without start time in request
+      source:       'aria-chat',
+    };
+    fetch(`${baseUrl}/.netlify/functions/aria-trace`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(tracePayload),
+      keepalive: true,
+    }).catch(() => {}); // non-blocking — never fail the chat response for tracing
+
+    return json(200, responsePayload);
   } catch (err) {
     console.error('[aria-chat] error:', err.message);
     return json(500, { error: 'Service error. Call (647) 581-3182.' });

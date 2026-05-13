@@ -2420,6 +2420,22 @@ function appendMessage(html){
   // auto-scroll
   const body = document.getElementById('chatBody');
   body.scrollTo({ top: body.scrollHeight, behavior:'smooth' });
+
+  // ── Aperture Trace Emission ──────────────────────────────────────────────
+  // Fires after every ARIA response bubble, non-blocking.
+  if (html.includes('aria-block') && window._ariaTraceUserMsg) {
+    const respText = (wrap.textContent || '').replace(/^ARIA\s*/,'').trim();
+    _emitARIATrace({
+      ts:        Date.now(),
+      latencyMs: Date.now() - (window._ariaTraceStart || Date.now()),
+      userMsg:   window._ariaTraceUserMsg,
+      ariaResp:  respText.slice(0, 3000),
+      intent:    state.lastIntent || 'unknown',
+      source:    'aria-html',
+    });
+    window._ariaTraceUserMsg = null;
+  }
+
   return wrap;
 }
 
@@ -3287,7 +3303,69 @@ function fuzzyClassify(text){
   return null;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// APERTURE TRACE ENGINE — non-breaking, fire-and-forget trace emission.
+// Runs after every ARIA response so the local Aperture dashboard can show
+// live KPI scores and agent loop activity.
+// ═══════════════════════════════════════════════════════════════════════════
+let _ariaTraceSessionId = null;
+
+function _inferAgents(intent, respText) {
+  const r = (respText || '').toLowerCase();
+  const i = (intent  || '').toLowerCase();
+  const a = ['orchestrator', 'intent_agent'];
+  if (i.includes('kb:') || r.includes('knowledge base') || r.includes('article'))  a.push('kb_agent');
+  if (/because|pattern|hypothesis|caus|diagnosis/.test(r))                          a.push('reasoning_agent');
+  if (/verif|confirm|permission|before (i|we)|secure/.test(r))                      a.push('safety_agent');
+  if (/understand|right away|quick|frustrated|hear you/.test(r))                    a.push('psychology_agent');
+  if (r.includes('escalat') || r.includes('tier-2') || r.includes('hand off'))      a.push('escalation_agent');
+  if (r.includes('invoking') || r.includes('running') || r.includes('applying'))    a.push('automation_agent');
+  if (r.includes('noted') || r.includes('recorded') || r.includes('learned'))      a.push('learning_agent');
+  a.push('quality_agent', 'observability_agent');
+  return [...new Set(a)];
+}
+
+function _emitARIATrace(trace) {
+  if (!_ariaTraceSessionId) {
+    _ariaTraceSessionId = 'sess-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+  const full = {
+    ...trace,
+    sessionId:       _ariaTraceSessionId,
+    agentsInferred:  _inferAgents(trace.intent, trace.ariaResp),
+    sourceOrigin:    location.hostname,
+  };
+
+  // 1 · localStorage (same-origin tabs — works when local file:// on same browser)
+  try {
+    const log = JSON.parse(localStorage.getItem('aria_trace_log') || '[]');
+    log.unshift(full);
+    if (log.length > 200) log.length = 200;
+    localStorage.setItem('aria_trace_log',    JSON.stringify(log));
+    localStorage.setItem('aria_trace_latest', JSON.stringify(full));
+  } catch(e) {}
+
+  // 2 · BroadcastChannel (same-origin real-time — works when Aperture is on iisupp.net too)
+  try {
+    const bc = new BroadcastChannel('aria_live');
+    bc.postMessage({ type: 'trace', data: full });
+    bc.close();
+  } catch(e) {}
+
+  // 3 · Netlify Function (cross-origin — enables local file:// Aperture to poll)
+  fetch('/.netlify/functions/aria-trace', {
+    method:    'POST',
+    headers:   { 'Content-Type': 'application/json' },
+    body:      JSON.stringify(full),
+    keepalive: true,
+  }).catch(() => {}); // silent fail — never disrupt the chat
+}
+
 function handleUserInput(text){
+  // Capture timing for latency measurement
+  window._ariaTraceUserMsg = text;
+  window._ariaTraceStart   = Date.now();
+
   const cleanText = normalizeInput(text);
   const q = cleanText;
 
