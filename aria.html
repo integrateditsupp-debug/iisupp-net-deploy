@@ -3296,11 +3296,11 @@ function fuzzyClassify(text){
       if (lev(t, kw) === 1) return { intent: INTENT_KEYWORDS[kw], match: kw, distance: 1, heard: t };
     }
   }
-  // distance 2 — needs confirmation (skip short pairs)
+  // distance 2 — needs confirmation (skip short pairs; bumped to 5 to kill tell->tesla / test->tesla false-matches)
   for (const t of tokens){
-    if (t.length < 4) continue;
+    if (t.length < 5) continue;
     for (const kw of INTENT_KEYWORD_LIST){
-      if (kw.length < 4) continue;
+      if (kw.length < 5) continue;
       if (lev(t, kw) === 2) return { intent: INTENT_KEYWORDS[kw], match: kw, distance: 2, heard: t };
     }
   }
