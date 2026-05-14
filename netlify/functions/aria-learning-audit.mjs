@@ -17,7 +17,7 @@
 // Used by /aperture-learning.html dashboard.
 
 import { getStore } from '@netlify/blobs';
-import jwt from 'jsonwebtoken';
+import { verifyAperture } from './aperture-auth.mjs';
 
 const SESSIONS = 'aria-learning-sessions';
 
@@ -30,13 +30,9 @@ export default async (request) => {
   };
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
 
-  // JWT gate
-  const auth = request.headers.get('authorization') || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
-  const secret = process.env.APERTURE_JWT_SECRET;
-  if (!secret) return jsonResp(500, cors, { error: 'jwt secret not configured' });
-  try { jwt.verify(token, secret); }
-  catch { return jsonResp(401, cors, { error: 'unauthorized' }); }
+  // JWT gate via project auth helper
+  const claims = verifyAperture(request);
+  if (!claims) return jsonResp(401, cors, { error: 'auth required' });
 
   const url = new URL(request.url);
   const format = (url.searchParams.get('format') || 'json').toLowerCase();
