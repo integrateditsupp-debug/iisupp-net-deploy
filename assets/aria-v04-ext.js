@@ -140,6 +140,29 @@
       return;
     }
     if (newTopic && !currentTopic) currentTopic = newTopic;
+    // Pre-think acknowledgement — surfaces multiple agents in Aperture while ARIA's core reply spins up.
+    maybeInjectThinkAloud(text);
+  }
+
+  function maybeInjectThinkAloud(userText) {
+    var lower = (userText || '').toLowerCase().trim();
+    // Skip short msgs / yes-no / topic confirmations / triggers already handled
+    if (lower.length < 6) return;
+    if (/^(yes|no|y|n|ok|okay|thanks|thank you|cool|sure|nope|yep|nah)\b/.test(lower)) return;
+    if (ESCALATE_RE.test(lower) || VENDOR_RE.test(lower) || OUT_OF_SCOPE_RE.test(lower)) return;
+    // Choose interim based on user's intent type — each variant fires multiple agent signals.
+    var isQuestion = /^(what|why|when|where|how|can|do|does|is|are|will|should|who)\b/.test(lower) || lower.endsWith('?');
+    var isProblem = /\b(broken|not working|won.?t|cannot|can.?t|isn.?t|stuck|slow|crash|out of|low on|running out|error|fail|frozen|hang|black screen|blue screen|dead|down|missing)\b/.test(lower);
+    var msg;
+    if (isProblem) {
+      msg = "Okay, sorry to hear that. Let me check our knowledge base and research the best fix \u2014 running a quick diagnostic to verify what\u2019s going on.";
+    } else if (isQuestion) {
+      msg = "Good question. Let me look that up in our knowledge base and verify the right answer before I respond.";
+    } else {
+      msg = "Got it. Let me check this against our knowledge base and find the right next step for you.";
+    }
+    // Inject as an ARIA system message \u2014 this fires reasoning_agent + kb_agent + research_agent + troubleshooting (problem variant) + psychology + intent signals.
+    injectAriaSystemMsg(msg);
   }
 
   function detectTopic(lower) {
