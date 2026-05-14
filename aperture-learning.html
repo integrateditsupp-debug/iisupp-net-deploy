@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>ARIA Learning Monitor — Aperture</title>
+<style>
+  :root {
+    --bg: #0a0d12;
+    --panel: #11161e;
+    --panel2: #161c26;
+    --border: #1f2733;
+    --text: #d8e1ee;
+    --muted: #6b7a90;
+    --accent: #2dd4bf;
+    --accent2: #38bdf8;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+    --ok: #22c55e;
+    --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 var(--font);min-height:100vh}
+  a{color:var(--accent)}
+  /* LOGIN */
+  .login{max-width:360px;margin:14vh auto;padding:32px;background:var(--panel);border:1px solid var(--border);border-radius:14px}
+  .login h1{margin:0 0 6px;font-size:18px;letter-spacing:.5px}
+  .login p{margin:0 0 18px;color:var(--muted);font-size:13px}
+  .login label{display:block;color:var(--muted);font-size:12px;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.6px}
+  .login input{width:100%;padding:11px 12px;background:#0c1118;border:1px solid var(--border);border-radius:8px;color:var(--text);font:14px var(--font)}
+  .login input:focus{outline:none;border-color:var(--accent)}
+  .login button{margin-top:18px;width:100%;padding:11px;background:var(--accent);color:#001a16;border:0;border-radius:8px;font-weight:700;cursor:pointer;font:14px var(--font)}
+  .login .err{color:var(--bad);font-size:12px;margin-top:10px;min-height:14px}
+  /* DASH */
+  .dash{display:none;padding:14px 18px}
+  .dash.show{display:block}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px}
+  .brand{font-size:14px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text)}
+  .brand span{color:var(--accent)}
+  .top-actions{display:flex;gap:10px;align-items:center}
+  .btn{padding:7px 12px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;font:12px var(--font);cursor:pointer;text-decoration:none;display:inline-block}
+  .btn:hover{border-color:var(--accent)}
+  .btn-pri{background:var(--accent);color:#001a16;border:0;font-weight:700}
+  /* GRID */
+  .grid{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+  @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .card h2{margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
+  /* AUTONOMY GAUGE */
+  .gauge-big{font:700 42px/1 var(--font);color:var(--accent)}
+  .gauge-sub{color:var(--muted);font-size:12px;margin-top:4px}
+  .bar{position:relative;background:#0c1118;height:10px;border-radius:6px;overflow:hidden;margin-top:14px;border:1px solid var(--border)}
+  .bar-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .6s ease}
+  .breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+  .breakdown div{background:#0c1118;border:1px solid var(--border);padding:8px;border-radius:8px;text-align:center}
+  .breakdown div .v{font-size:18px;font-weight:700;color:var(--accent2)}
+  .breakdown div .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  /* AGENTS */
+  .agent-row{display:grid;grid-template-columns:130px 1fr 60px;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #0e131b}
+  .agent-row:last-child{border-bottom:0}
+  .agent-name{font:600 12px var(--mono);color:var(--text)}
+  .agent-name.born{color:var(--warn)}
+  .agent-bar{position:relative;background:#0c1118;height:8px;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+  .agent-bar-fill{position:absolute;top:0;left:0;height:100%;background:var(--accent);border-radius:4px;transition:width .4s ease}
+  .agent-bar-fill.warn{background:var(--warn)}
+  .agent-bar-fill.bad{background:var(--bad)}
+  .agent-count{text-align:right;color:var(--muted);font:12px var(--mono)}
+  /* CONVO FEED */
+  .feed{max-height:520px;overflow:auto;padding-right:6px}
+  .bit{padding:8px 10px;background:#0c1118;border:1px solid var(--border);border-radius:8px;margin-bottom:8px}
+  .bit.concerning{border-color:var(--bad);background:#1d0e10}
+  .bit-head{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--muted);margin-bottom:4px}
+  .bit-agent{color:var(--accent2);font-weight:700}
+  .bit-q{font-size:13px;margin:2px 0}
+  .bit-r{font-size:12px;color:var(--muted);margin-top:4px;padding-top:4px;border-top:1px dashed #1c2330}
+  .bit-tag{display:inline-block;padding:1px 6px;background:#0c1118;border:1px solid var(--border);border-radius:4px;font:10px var(--mono);color:var(--accent);margin-right:4px}
+  .bit-tag.warn{color:var(--warn);border-color:var(--warn)}
+  .bit-tag.bad{color:var(--bad);border-color:var(--bad)}
+  /* CONCERNS */
+  .concern-strip{margin-top:10px;background:#1d0e10;border:1px solid var(--bad);padding:10px 12px;border-radius:8px}
+  .concern-strip.zero{background:#0c1118;border-color:var(--ok)}
+  .concern-strip h3{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .concern-strip.zero h3{color:var(--ok)}
+  .concern-strip:not(.zero) h3{color:var(--bad)}
+  .pull{display:flex;align-items:flex-end;gap:14px;margin-bottom:6px}
+  .pull .num{font:700 32px var(--font);color:var(--text);line-height:1}
+  .pull .lab{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.6px;padding-bottom:4px}
+  .footer-hint{margin-top:18px;color:var(--muted);font-size:11px;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="login" id="loginCard">
+  <h1>Aperture · ARIA Learning Monitor</h1>
+  <p>Owner-only dashboard. Same login as Aperture admin.</p>
+  <label for="email">Email</label>
+  <input id="email" type="email" autocomplete="username" placeholder="ahmad.wasee@iisupp.net">
+  <label for="pwd">Password</label>
+  <input id="pwd" type="password" autocomplete="current-password">
+  <button id="loginBtn">Sign in</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<div class="dash" id="dash">
+  <div class="topbar">
+    <div class="brand">APERTURE · LEARNING <span id="trackerLive">●</span></div>
+    <div class="top-actions">
+      <span style="color:var(--muted);font:11px var(--mono);" id="lastUpdated"></span>
+      <button class="btn" onclick="refresh()">Refresh</button>
+      <button class="btn btn-pri" onclick="downloadAuditCsv()">Export Audit (Excel)</button>
+      <button class="btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>Autonomy progress</h2>
+        <div style="display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap">
+          <div>
+            <div class="gauge-big" id="autonomyVal">0%</div>
+            <div class="gauge-sub">towards fully self-sufficient ARIA</div>
+          </div>
+        </div>
+        <div class="bar"><div class="bar-fill" id="autonomyBar" style="width:0%"></div></div>
+        <div class="breakdown">
+          <div><div class="v" id="bdBits">0</div><div class="l">Bits</div></div>
+          <div><div class="v" id="bdAgents">0</div><div class="l">Agents</div></div>
+          <div><div class="v" id="bdDays">0</div><div class="l">Days run</div></div>
+          <div><div class="v" id="bdHealth">0</div><div class="l">Health</div></div>
+        </div>
+        <div class="concern-strip zero" id="concernStrip">
+          <div class="pull">
+            <div class="num" id="concernNum">0</div>
+            <div class="lab">concerning events in window</div>
+          </div>
+          <h3 id="concernHead">All clear</h3>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h2>Per-agent learning rate</h2>
+        <div id="agentList"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Live conversation feed (recent bits)</h2>
+        <div class="feed" id="feed"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-hint">Auto-refreshes every 15 seconds. Concerning bits = confidence&lt;0.3, UNKNOWN state, fetch errors, or new agent births.</div>
+</div>
+
+<script>
+const LS_KEY = 'aperture_jwt';
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const e = document.getElementById('email').value.trim();
+  const p = document.getElementById('pwd').value;
+  const err = document.getElementById('loginErr');
+  err.textContent = '';
+  if (!e || !p) { err.textContent = 'Email and password required.'; return; }
+  try {
+    const r = await fetch('/.netlify/functions/aperture-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: e, password: p })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.token) { err.textContent = j.error || 'Login failed.'; return; }
+    localStorage.setItem(LS_KEY, j.token);
+    showDash();
+  } catch (ex) {
+    err.textContent = 'Network error: ' + ex.message;
+  }
+});
+
+document.getElementById('pwd').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
+
+function logout() { localStorage.removeItem(LS_KEY); location.reload(); }
+
+function showDash() {
+  document.getElementById('loginCard').style.display = 'none';
+  document.getElementById('dash').classList.add('show');
+  refresh();
+  setInterval(refresh, 15000);
+}
+
+if (localStorage.getItem(LS_KEY)) showDash();
+
+async function authFetch(url) {
+  const t = localStorage.getItem(LS_KEY) || '';
+  const r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + t } });
+  if (r.status === 401) {
+    localStorage.removeItem(LS_KEY);
+    location.reload();
+    throw new Error('unauthorized');
+  }
+  return r;
+}
+
+let _refreshInflight = false;
+async function refresh() {
+  if (_refreshInflight) return;
+  _refreshInflight = true;
+  try {
+    const r = await authFetch('/.netlify/functions/aria-learning-audit?days=2');
+    const j = await r.json();
+    render(j);
+    document.getElementById('lastUpdated').textContent = 'updated ' + new Date().toLocaleTimeString();
+  } catch (e) {
+    console.warn(e);
+  } finally {
+    _refreshInflight = false;
+  }
+}
+
+function render(j) {
+  const auto = Math.max(0, Math.min(100, j.autonomy || 0));
+  document.getElementById('autonomyVal').textContent = auto + '%';
+  document.getElementById('autonomyBar').style.width = auto + '%';
+
+  const bd = j.autonomyBreakdown || {};
+  document.getElementById('bdBits').textContent = bd.bits || 0;
+  document.getElementById('bdAgents').textContent = bd.agents || 0;
+  document.getElementById('bdDays').textContent = bd.daysRunning || 0;
+  document.getElementById('bdHealth').textContent = bd.health || 0;
+
+  const concernNum = j.concernCount || 0;
+  const total = j.rowCount || 0;
+  const rate = j.concernRate || 0;
+  const strip = document.getElementById('concernStrip');
+  document.getElementById('concernNum').textContent = concernNum;
+  document.getElementById('concernHead').textContent = concernNum === 0 ? 'All clear' : (concernNum + ' of ' + total + ' bits concerning (' + rate + '%)');
+  strip.classList.toggle('zero', concernNum === 0);
+
+  // Per agent
+  const perAgent = j.perAgent || {};
+  const agentList = document.getElementById('agentList');
+  const max = Math.max(1, ...Object.values(perAgent).map(a => a.total));
+  const sorted = Object.entries(perAgent).sort((a,b)=>b[1].total-a[1].total);
+  agentList.innerHTML = '';
+  for (const [name, stats] of sorted) {
+    const row = document.createElement('div');
+    row.className = 'agent-row';
+    const pct = Math.round((stats.total / max) * 100);
+    const concernPct = stats.total ? (stats.concerning / stats.total) : 0;
+    const fillCls = concernPct > 0.5 ? 'bad' : concernPct > 0.2 ? 'warn' : '';
+    row.innerHTML = '<div class="agent-name ' + (name.startsWith('born_') ? 'born' : '') + '">' + escapeHtml(name) + '</div>' +
+      '<div class="agent-bar"><div class="agent-bar-fill ' + fillCls + '" style="width:' + pct + '%"></div></div>' +
+      '<div class="agent-count">' + stats.total + (stats.concerning ? ' <span style="color:var(--bad)">!</span>' : '') + '</div>';
+    agentList.appendChild(row);
+  }
+
+  // Feed
+  const feed = document.getElementById('feed');
+  feed.innerHTML = '';
+  const recent = (j.rows || []).slice(-30).reverse();
+  for (const b of recent) {
+    const div = document.createElement('div');
+    div.className = 'bit' + (b.concerning ? ' concerning' : '');
+    const time = new Date(b.timestamp).toLocaleTimeString();
+    const tags = '<span class="bit-tag">' + escapeHtml(b.state || '') + '</span>' +
+                 '<span class="bit-tag ' + (b.confidence < 0.3 ? 'bad' : (b.confidence < 0.7 ? 'warn' : '')) + '">c=' + (b.confidence || 0).toFixed(2) + '</span>' +
+                 (b.concerning ? '<span class="bit-tag bad">!</span>' : '');
+    div.innerHTML = '<div class="bit-head"><span class="bit-agent">' + escapeHtml(b.box) + '</span><span>' + time + ' · ' + tags + '</span></div>' +
+      '<div class="bit-q">' + escapeHtml(b.question) + '</div>' +
+      '<div class="bit-r">' + escapeHtml(b.response) + '</div>';
+    feed.appendChild(div);
+  }
+}
+
+async function downloadAuditCsv() {
+  const t = localStorage.getItem(LS_KEY) || '';
+  // Use anchor download trick with auth header — fetch then blob
+  const r = await fetch('/.netlify/functions/aria-learning-audit?format=csv&days=14', { headers: { 'Authorization': 'Bearer ' + t } });
+  if (!r.ok) { alert('Export failed: ' + r.status); return; }
+  const blob = await r.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'aria-audit-' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
