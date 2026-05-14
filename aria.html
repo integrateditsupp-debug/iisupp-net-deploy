@@ -3238,8 +3238,8 @@ function lev(a, b){
 function fuzzyCmd(input, candidates){
   if (!input) return null;
   if (candidates.includes(input)) return input;
-  if (input.length < 2) return null;
-  for (const c of candidates) if (lev(input, c) <= 1) return c;
+  if (input.length < 4) return null;
+  for (const c of candidates) { if (c.length < 4) continue; if (lev(input, c) <= 1) return c; }
   return null;
 }
 
