@@ -3288,15 +3288,19 @@ function fuzzyClassify(text){
   if (!tokens.length) return null;
   // exact
   for (const t of tokens) if (INTENT_KEYWORDS[t]) return { intent: INTENT_KEYWORDS[t], match: t, distance: 0 };
-  // distance 1
+  // distance 1 (require both token and keyword length >= 4 to prevent false matches like out->ooo)
   for (const t of tokens){
+    if (t.length < 4) continue;
     for (const kw of INTENT_KEYWORD_LIST){
+      if (kw.length < 4) continue;
       if (lev(t, kw) === 1) return { intent: INTENT_KEYWORDS[kw], match: kw, distance: 1, heard: t };
     }
   }
-  // distance 2 — needs confirmation
+  // distance 2 — needs confirmation (skip short pairs)
   for (const t of tokens){
+    if (t.length < 4) continue;
     for (const kw of INTENT_KEYWORD_LIST){
+      if (kw.length < 4) continue;
       if (lev(t, kw) === 2) return { intent: INTENT_KEYWORDS[kw], match: kw, distance: 2, heard: t };
     }
   }
