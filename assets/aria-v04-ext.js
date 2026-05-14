@@ -185,28 +185,62 @@
 
   // ============ END-CHAT + CONTACT-BACK BUTTONS ============
   function injectControls() {
-    if (document.getElementById('aria-v04-controls')) return;
-    const dock = document.createElement('div');
-    dock.id = 'aria-v04-controls';
-    dock.style.cssText = 'position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:8px;z-index:9999;font-family:Inter,system-ui,sans-serif;';
-    dock.innerHTML = `
-      <button id="aria-v04-end-btn" style="padding:10px 16px;background:rgba(248,113,113,0.12);border:1px solid #f87171;color:#f87171;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;border-radius:2px;">End Chat</button>
-      <button id="aria-v04-callback-btn" style="padding:10px 16px;background:rgba(45,212,191,0.12);border:1px solid #2dd4bf;color:#2dd4bf;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;border-radius:2px;">Contact Back</button>
-    `;
-    document.body.appendChild(dock);
+    if (document.getElementById('aria-v04-end-btn')) return;
+    var baseStyle = "font-family:'JetBrains Mono',ui-monospace,Consolas,monospace;font-size:9px;letter-spacing:1.98px;text-transform:uppercase;padding:6px 11px;cursor:pointer;border-radius:1px;line-height:1;";
+    var btnsHtml =
+      '<button id="aria-v04-end-btn" type="button" style="'+baseStyle+'background:rgba(248,113,113,0.10);border:1px solid #f87171;color:#f87171;">End Chat</button>' +
+      '<button id="aria-v04-callback-btn" type="button" style="'+baseStyle+'background:rgba(45,212,191,0.10);border:1px solid #2dd4bf;color:#2dd4bf;">Contact Back</button>';
 
-    document.getElementById('aria-v04-end-btn').onclick = () => {
-      const sess = getSession();
-      if (!sess) {
-        injectAriaSystemMsg('No active session to end. Send a message to start.');
-        return;
-      }
-      if (!confirm('End this chat now? You’ll get the session report by email.')) return;
+    var bar = document.querySelector('.history-bar');
+    if (bar) {
+      // Inline alongside HISTORY / CLEAR (smaller, matched style)
+      var inline = document.createElement('span');
+      inline.id = 'aria-v04-inline';
+      inline.style.cssText = 'display:inline-flex;gap:6px;margin-right:6px;align-items:center;';
+      inline.innerHTML = btnsHtml;
+      bar.insertBefore(inline, bar.firstChild);
+    } else {
+      // Fallback: fixed bottom-right dock
+      var dock = document.createElement('div');
+      dock.id = 'aria-v04-controls';
+      dock.style.cssText = 'position:fixed;bottom:18px;right:18px;display:flex;gap:6px;z-index:9999;font-family:Inter,system-ui,sans-serif;';
+      dock.innerHTML = btnsHtml;
+      document.body.appendChild(dock);
+    }
+
+    document.getElementById('aria-v04-end-btn').onclick = function() {
+      var sess = getSession();
+      if (!sess) { injectAriaSystemMsg('No active session to end. Send a message to start.'); return; }
+      if (!confirm('End this chat now? You will get the session report by email.')) return;
       injectAriaSystemMsg('Closing the chat. Your session report will arrive in your inbox shortly. Thanks for using ARIA.');
       endSession('user_ended', 'User clicked End Chat');
     };
+    document.getElementById('aria-v04-callback-btn').onclick = function() { openCallbackModal(); };
 
-    document.getElementById('aria-v04-callback-btn').onclick = () => openCallbackModal();
+    // Retry anchoring later if .history-bar wasn't ready yet (DOM may render after our wireUp).
+    if (!bar) {
+      var tries = 0;
+      var retry = setInterval(function() {
+        tries++;
+        var b = document.querySelector('.history-bar');
+        if (b && !document.getElementById('aria-v04-inline')) {
+          var inl = document.createElement('span');
+          inl.id = 'aria-v04-inline';
+          inl.style.cssText = 'display:inline-flex;gap:6px;margin-right:6px;align-items:center;';
+          // move existing fixed buttons into the bar
+          var endBtn = document.getElementById('aria-v04-end-btn');
+          var cbBtn = document.getElementById('aria-v04-callback-btn');
+          if (endBtn && cbBtn) {
+            inl.appendChild(endBtn);
+            inl.appendChild(cbBtn);
+            b.insertBefore(inl, b.firstChild);
+            var dockEl = document.getElementById('aria-v04-controls');
+            if (dockEl) dockEl.remove();
+          }
+        }
+        if (tries > 30 || document.getElementById('aria-v04-inline')) clearInterval(retry);
+      }, 500);
+    }
   }
 
   function openCallbackModal() {
