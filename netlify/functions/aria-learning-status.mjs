@@ -7,7 +7,7 @@
 // admin login.
 
 import { getStore } from '@netlify/blobs';
-import jwt from 'jsonwebtoken';
+import { verifyAperture } from './aperture-auth.mjs';
 
 const SESSIONS = 'aria-learning-sessions';
 const KB_LIVE = 'aria-kb-live';
@@ -22,13 +22,9 @@ export default async (request) => {
   };
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
 
-  // JWT gate (same as aperture endpoints)
-  const auth = request.headers.get('authorization') || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
-  const secret = process.env.APERTURE_JWT_SECRET;
-  if (!secret) return jsonResp(500, cors, { error: 'JWT secret not configured' });
-  try { jwt.verify(token, secret); }
-  catch { return jsonResp(401, cors, { error: 'unauthorized' }); }
+  // JWT gate via project auth helper
+  const claims = verifyAperture(request);
+  if (!claims) return jsonResp(401, cors, { error: 'auth required' });
 
   try {
     const sessions = getStore({ name: SESSIONS, consistency: 'strong' });
