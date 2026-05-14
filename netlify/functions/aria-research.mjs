@@ -1,4 +1,8 @@
-// aria-research v0.6 — symbolic state lookup + LIVE vendor fetch + bit-write to KB cache
+// aria-research v0.6.1 — symbolic state lookup + LIVE vendor fetch + bit-write to KB cache
+// v0.6.1 patch (Ahmad 2026-05-14 PM):
+//   - Quality gate: reject extracts with 0 query terms or nav-list patterns ("Popular articles" etc.)
+//   - Vendor-native search URLs for chrome/edge/onedrive/sharepoint/teams/office/safari/apple/salesforce
+//   - Trust > coverage: serving wrong content is worse than escalating per Garry Tan §1 user-trust
 // POST /.netlify/functions/aria-research  body: { query, state? }
 //   → { ok, state, title, steps, confidence, source, caveat }
 //
@@ -167,28 +171,30 @@ function detectState(query) {
 // ============= VENDOR WHITELIST + LIVE FETCH =============
 // Vendor map: kw matchers → support search URLs. Fetch returns relevant page text.
 const VENDORS = [
-  { name: 'chrome',     kws: ['chrome', 'google chrome', 'chrome browser'], search: 'https://www.google.com/search?q=site%3Asupport.google.com%2Fchrome+' },
-  { name: 'firefox',    kws: ['firefox', 'mozilla'], search: 'https://support.mozilla.org/en-US/search?q=' },
-  { name: 'edge',       kws: ['edge', 'microsoft edge'], search: 'https://www.google.com/search?q=site%3Asupport.microsoft.com+edge+' },
-  { name: 'safari',     kws: ['safari'], search: 'https://www.google.com/search?q=site%3Asupport.apple.com+safari+' },
-  { name: 'zoom',       kws: ['zoom', 'zoom meeting'], search: 'https://support.zoom.com/hc/en/search?query=' },
-  { name: 'teams',      kws: ['teams', 'microsoft teams', 'ms teams'], search: 'https://www.google.com/search?q=site%3Asupport.microsoft.com+teams+' },
-  { name: 'slack',      kws: ['slack'], search: 'https://slack.com/help/searchresults?query=' },
-  { name: 'dropbox',    kws: ['dropbox'], search: 'https://help.dropbox.com/search?query=' },
-  { name: 'onedrive',   kws: ['onedrive'], search: 'https://www.google.com/search?q=site%3Asupport.microsoft.com+onedrive+' },
-  { name: 'sharepoint', kws: ['sharepoint'], search: 'https://www.google.com/search?q=site%3Asupport.microsoft.com+sharepoint+' },
-  { name: 'office',     kws: ['microsoft office', 'office 365', 'm365', 'word', 'excel', 'powerpoint'], search: 'https://www.google.com/search?q=site%3Asupport.microsoft.com+' },
-  { name: 'apple',      kws: ['mac', 'macbook', 'imac', 'macos', 'apple', 'iphone', 'ipad'], search: 'https://www.google.com/search?q=site%3Asupport.apple.com+' },
-  { name: 'salesforce', kws: ['salesforce', 'sfdc'], search: 'https://help.salesforce.com/s/articleView?language=en_US&type=1&id=' },
-  { name: 'hubspot',    kws: ['hubspot'], search: 'https://knowledge.hubspot.com/search?term=' },
-  { name: 'quickbooks', kws: ['quickbooks', 'qbo', 'intuit quickbooks'], search: 'https://quickbooks.intuit.com/learn-support/en-us/help-search?searchString=' },
-  { name: 'adobe',      kws: ['adobe', 'acrobat', 'photoshop', 'illustrator', 'indesign', 'premiere'], search: 'https://www.google.com/search?q=site%3Ahelpx.adobe.com+' },
-  { name: 'github',     kws: ['github', 'gh'], search: 'https://docs.github.com/en/search?query=' },
-  { name: 'gitlab',     kws: ['gitlab'], search: 'https://docs.gitlab.com/search/?q=' },
-  { name: 'atlassian',  kws: ['jira', 'confluence', 'bitbucket', 'atlassian'], search: 'https://support.atlassian.com/search/?query=' },
-  { name: 'asana',      kws: ['asana'], search: 'https://asana.com/help/search?query=' },
-  { name: 'notion',     kws: ['notion'], search: 'https://www.notion.so/help/search?q=' },
-  { name: 'figma',      kws: ['figma'], search: 'https://help.figma.com/hc/en-us/search?query=' }
+  // v0.6.1: vendor-native search where it exists. Domains restricted to vendor's own KB
+  // so the URL extractor can validate hits.
+  { name: 'chrome',     kws: ['chrome', 'google chrome', 'chrome browser'], search: 'https://support.google.com/chrome/search?query=', host: 'support.google.com/chrome' },
+  { name: 'firefox',    kws: ['firefox', 'mozilla'], search: 'https://support.mozilla.org/en-US/search?q=', host: 'support.mozilla.org' },
+  { name: 'edge',       kws: ['edge', 'microsoft edge'], search: 'https://support.microsoft.com/en-us/search/results?query=', host: 'support.microsoft.com' },
+  { name: 'safari',     kws: ['safari'], search: 'https://support.apple.com/kb/index?page=search&type=organic&q=', host: 'support.apple.com' },
+  { name: 'zoom',       kws: ['zoom', 'zoom meeting'], search: 'https://support.zoom.com/hc/en/search?query=', host: 'support.zoom.com' },
+  { name: 'teams',      kws: ['teams', 'microsoft teams', 'ms teams'], search: 'https://support.microsoft.com/en-us/search/results?query=teams%20', host: 'support.microsoft.com' },
+  { name: 'slack',      kws: ['slack'], search: 'https://slack.com/help/searchresults?query=', host: 'slack.com/help' },
+  { name: 'dropbox',    kws: ['dropbox'], search: 'https://help.dropbox.com/search?query=', host: 'help.dropbox.com' },
+  { name: 'onedrive',   kws: ['onedrive'], search: 'https://support.microsoft.com/en-us/search/results?query=onedrive%20', host: 'support.microsoft.com' },
+  { name: 'sharepoint', kws: ['sharepoint'], search: 'https://support.microsoft.com/en-us/search/results?query=sharepoint%20', host: 'support.microsoft.com' },
+  { name: 'office',     kws: ['microsoft office', 'office 365', 'm365', 'word', 'excel', 'powerpoint'], search: 'https://support.microsoft.com/en-us/search/results?query=', host: 'support.microsoft.com' },
+  { name: 'apple',      kws: ['mac', 'macbook', 'imac', 'macos', 'apple', 'iphone', 'ipad'], search: 'https://support.apple.com/kb/index?page=search&type=organic&q=', host: 'support.apple.com' },
+  { name: 'salesforce', kws: ['salesforce', 'sfdc'], search: 'https://help.salesforce.com/s/global-search/%40uri?language=en_US&q=', host: 'help.salesforce.com' },
+  { name: 'hubspot',    kws: ['hubspot'], search: 'https://knowledge.hubspot.com/search?term=', host: 'knowledge.hubspot.com' },
+  { name: 'quickbooks', kws: ['quickbooks', 'qbo', 'intuit quickbooks'], search: 'https://quickbooks.intuit.com/learn-support/en-us/help-search?searchString=', host: 'quickbooks.intuit.com' },
+  { name: 'adobe',      kws: ['adobe', 'acrobat', 'photoshop', 'illustrator', 'indesign', 'premiere'], search: 'https://helpx.adobe.com/search.html?q=', host: 'helpx.adobe.com' },
+  { name: 'github',     kws: ['github', 'gh'], search: 'https://docs.github.com/en/search?query=', host: 'docs.github.com' },
+  { name: 'gitlab',     kws: ['gitlab'], search: 'https://docs.gitlab.com/search/?q=', host: 'docs.gitlab.com' },
+  { name: 'atlassian',  kws: ['jira', 'confluence', 'bitbucket', 'atlassian'], search: 'https://support.atlassian.com/search/?query=', host: 'support.atlassian.com' },
+  { name: 'asana',      kws: ['asana'], search: 'https://asana.com/help/search?query=', host: 'asana.com/help' },
+  { name: 'notion',     kws: ['notion'], search: 'https://www.notion.so/help/search?q=', host: 'notion.so/help' },
+  { name: 'figma',      kws: ['figma'], search: 'https://help.figma.com/hc/en-us/search?query=', host: 'help.figma.com' }
 ];
 
 function identifyVendor(query) {
@@ -278,32 +284,31 @@ async function fetchWithTimeout(url, ms) {
 }
 
 function extractFirstContentUrl(html, vendor) {
-  // Pull the first http(s) link that doesn't look like a search/tracking URL
+  // v0.6.1: prefer URLs on the vendor's expected host. If none found, return null
+  // (don't follow random off-domain links — better to fall through to graceful no-match).
   const urlRe = /https?:\/\/[^\s"'<>)]+/g;
   const seen = new Set();
+  const expectedHost = (vendor && vendor.host) || '';
   let m;
+  // Pass 1: vendor-host URLs that look like article pages
   while ((m = urlRe.exec(html)) !== null) {
     let u = m[0].replace(/&amp;/g, '&').replace(/[)>]+$/, '');
     if (seen.has(u)) continue;
     seen.add(u);
-    if (/google\.com\/(search|url|aclk|preferences|policies)/.test(u)) continue;
-    if (/gstatic\.com|googleusercontent|googleadservices|doubleclick|googletagmanager|googleapis/.test(u)) continue;
     if (u.length > 400) continue;
-    // Prefer support / help / docs / kb URLs
-    if (/(support|help|docs|kb|knowledge|article)/i.test(u)) return u;
-  }
-  // Fall back to first non-search link
-  seen.clear();
-  while ((m = urlRe.exec(html)) !== null) {
-    let u = m[0].replace(/&amp;/g, '&').replace(/[)>]+$/, '');
-    if (seen.has(u)) continue;
-    seen.add(u);
-    if (/google\.com|gstatic|googleusercontent|googleadservices|doubleclick/.test(u)) continue;
-    if (u.length > 400) continue;
+    if (expectedHost && u.indexOf(expectedHost) === -1) continue;
+    // Skip the search page itself + nav links
+    if (/[?&](query|q|search|term|searchString)=/i.test(u)) continue;
+    if (/\/(search|searchresults|index|home|popular|categories|topics|community)(\/|$|\?)/i.test(u)) continue;
     return u;
   }
   return null;
 }
+
+// v0.6.1: nav-list / TOC / category-page patterns. If a heading or body matches these,
+// it's not a real article — reject it to avoid serving "Popular articles" type junk.
+const NAV_PATTERNS = /^(popular articles?|topics?|categories|browse|all (articles?|topics)|frequently asked|help center|knowledge base|getting started|community|contact|home|index|table of contents|toc|search results?)$/i;
+const NAV_BODY_PATTERNS = /\b(view all articles|see all topics|browse all|popular articles|categories\s*$|table of contents|sign in|create an account|contact (us|support))\b/i;
 
 function extractBit(html, query) {
   // Strip script/style/svg
@@ -325,8 +330,11 @@ function extractBit(html, query) {
   while ((m = headingRe.exec(body)) !== null) {
     const headingText = stripTags(m[2]).trim();
     if (!headingText || headingText.length > 200) continue;
+    // v0.6.1 quality gate: skip nav/TOC/category headings
+    if (NAV_PATTERNS.test(headingText)) continue;
     const sectionText = stripTags(m[3]).trim();
-    if (!sectionText || sectionText.length < 30) continue;
+    if (!sectionText || sectionText.length < 60) continue;
+    if (NAV_BODY_PATTERNS.test(sectionText)) continue;
     const combined = (headingText + ' ' + sectionText).toLowerCase();
     let score = 0;
     for (const term of queryTerms) if (combined.indexOf(term) >= 0) score += 1;
@@ -337,16 +345,10 @@ function extractBit(html, query) {
     }
   }
 
-  if (!bestHeading || !bestBody) {
-    // Fallback: meta description or first paragraph
-    const metaDesc = (body.match(/<meta\s+name=["']description["'][^>]*content=["']([^"']{40,500})["']/i) || [])[1];
-    const firstP = (body.match(/<p[^>]*>([\s\S]{40,500}?)<\/p>/i) || [])[1];
-    const txt = stripTags(metaDesc || firstP || '').trim();
-    if (!txt) return null;
-    return {
-      heading: 'General guidance',
-      bit: compressToBit('General guidance', txt)
-    };
+  // v0.6.1 confidence floor: if no query terms appeared in any candidate, reject.
+  // Better to escalate than serve unrelated content.
+  if (bestScore < 1 || !bestHeading || !bestBody) {
+    return null;
   }
 
   return {
@@ -405,11 +407,11 @@ const LIBRARY = {
   'AUT.PW.RESET': { title: 'Password reset / locked out', steps: ['Go to https://passwordreset.microsoftonline.com (for M365) or the company SSO sign-in page → click "Forgot my password".','Confirm identity via phone / authenticator / backup email.','Choose a new password meeting policy: 12+ chars, mixed case, number, symbol. Avoid prior passwords.','After reset, sign out of EVERY device (Outlook on phone, Teams, OneDrive) and sign back in with the new password.','If locked out repeatedly: contact our helpdesk at (647) 581-3182 — admin can unlock from Entra/AD directly.'], confidence: 0.92 },
   'AUT.MFA.LOCK': { title: 'MFA / authenticator not working', steps: ['If you lost the phone with the authenticator: helpdesk must reset MFA from the admin console. Call (647) 581-3182.','If the authenticator is on a new phone: open Microsoft Authenticator → scan the QR from https://aka.ms/mfasetup after admin re-issues the enrollment.','If you have backup codes: use one to sign in, then re-enroll the authenticator.','If the code seems wrong: phone time is off. Settings → Date & time → enable automatic time. The TOTP code depends on accurate time.','For SMS fallback: confirm your phone number is current in https://account.microsoft.com → Security info.'], confidence: 0.85 },
   'PRT.OFFLINE': { title: 'Printer is offline / not showing', steps: ['Confirm the printer is powered on and connected to the same WiFi as your computer.','Settings → Bluetooth & devices → Printers & scanners → click the printer → "Open print queue" → Printer menu → uncheck "Use Printer Offline".','If it\'s still offline: remove and re-add the printer. Manufacturer website + model number gets you the latest driver.','For network printers: ping the printer\'s IP from Command Prompt. If no response, the printer dropped off the network — restart it.','If shared via a print server: try restarting the Print Spooler service (services.msc → Print Spooler → Restart).'], confidence: 0.88 },
-  'PRT.QUEUE.STUCK': { title: 'Print queue is stuck / jam', steps: ['Open print queue (Settings → Printers → printer → Open queue). Cancel all jobs.','If they won\'t clear: services.msc → Print Spooler → Stop. Open File Explorer → C:\\Windows\\System32\\spool\\PRINTERS → delete everything inside. Restart Print Spooler.','For paper jams: open the printer, follow the jam-clearing diagram on the printer (it usually lights up the jammed section).','For paper jams: open the printer, follow the jam-clearing diagram on the printer (it usually lights up the jammed section).','After clearing: send a test print from Notepad — simplest possible print to isolate driver issues.','If queue keeps getting stuck on the same job: that job is malformed. Re-create the PDF or recopy the document.'], confidence: 0.85 },
+  'PRT.QUEUE.STUCK': { title: 'Print queue is stuck / jam', steps: ['Open print queue (Settings → Printers → printer → Open queue). Cancel all jobs.','If they won\'t clear: services.msc → Print Spooler → Stop. Open File Explorer → C:\\Windows\\System32\\spool\\PRINTERS → delete everything inside. Restart Print Spooler.','For paper jams: open the printer, follow the jam-clearing diagram on the printer (it usually lights up the jammed section).','After clearing: send a test print from Notepad — simplest possible print to isolate driver issues.','If queue keeps getting stuck on the same job: that job is malformed. Re-create the PDF or recopy the document.'], confidence: 0.85 },
   'SEC.PHISH': { title: 'Suspicious email / link / phishing check', steps: ['DO NOT click the link or reply. Do not download attachments.','Hover the sender name to reveal the actual email address — phishing often uses look-alike domains (microsft.com vs microsoft.com).','Hover the link to see the destination URL. If it doesn\'t match what the text claims, it\'s suspicious.','If you must verify: open a new browser tab and navigate to the supposed sender\'s site directly (don\'t click the email link).','Forward the message to integrateditsupp@iisupp.net for review. Then delete from your inbox.'], confidence: 0.95 },
   'SEC.MALWARE': { title: 'Suspected virus / malware / ransomware', steps: ['Disconnect the device from the network immediately (turn off WiFi, unplug Ethernet) to prevent spread.','DO NOT shut down — many incident-response tools need a live state. Take a photo of any ransom note or pop-up.','Open Windows Security → Virus & threat protection → Quick scan first, then Full scan.','If ransomware (files renamed, ransom note present): DO NOT pay. Call (647) 581-3182 immediately. We have incident-response procedures.','After scan: change passwords for any account accessed on this device from a CLEAN device. Enable MFA everywhere.'], confidence: 0.92 },
   'VPN.AUTH.FAIL': { title: 'VPN authentication failed', steps: ['Confirm username + password are current. If you recently reset your password, the VPN may still have the old one cached — re-enter.','If MFA-protected: ensure you\'re approving the MFA prompt promptly (most VPNs time out at 30 sec).','Check the VPN client for an update. Old clients often fail against modern servers.','If your account was recently created: confirm with admin that VPN access was granted to your group.','Last resort: uninstall the VPN client, reboot, reinstall the latest version from our IT portal.'], confidence: 0.85 },
-  'VPN.NO.TUNNEL': { title: 'VPN connects but no internet / drops', steps: ['Disconnect + reconnect the VPN once. Sometimes the route table is corrupted on first connect.','Check split tunneling: if enabled, you should reach internet + corporate; if not, all traffic goes through corporate gateway.','In an admin Command Prompt: `ipconfig /all` — confirm the VPN adapter has an IP. If not, the tunnel isn\'t fully up.','If WiFi underneath is unstable, VPN drops will follow. Try ethernet.','If consistently dropping: collect the VPN client log (Help → Diagnostic Report) and send to helpdesk.'], confidence: 0.83 },
+  'VPN.NO.TUNNEL': { title: 'VPN connects but no internet / drops', steps: ['Disconnect + reconnect the VPN once. Sometimes the route table is corrupted on first connect.','Check split tunneling: if enabled, you should reach internet + corporate gateway; if not, all traffic goes through corporate gateway.','In an admin Command Prompt: `ipconfig /all` — confirm the VPN adapter has an IP. If not, the tunnel isn\'t fully up.','If WiFi underneath is unstable, VPN drops will follow. Try ethernet.','If consistently dropping: collect the VPN client log (Help → Diagnostic Report) and send to helpdesk.',], confidence: 0.83 },
   'CLOUD.SYNC': { title: 'OneDrive / SharePoint / Drive not syncing', steps: ['Right-click the cloud icon in the system tray → check for "Paused" or error indicators.','If paused: click → Resume sync. If error: click the error → follow the prompt.','For OneDrive specifically: Settings (cloud icon → gear → Settings) → Account tab → "Unlink this PC" → re-link with your account.','If a specific file is stuck: rename it (sometimes special characters like # or % block sync), or delete the local copy and let cloud re-download.','For files larger than 100 GB: OneDrive blocks them. Move to SharePoint document libraries instead.'], confidence: 0.85 },
   'SW.INSTALL.FAIL': { title: 'Software install failed', steps: ['Confirm the installer matches your OS architecture (x64 vs ARM64 vs x86). Win+R → "msinfo32" shows yours.','Right-click the installer → Run as administrator. UAC blocks many installers from regular accounts.','Check disk space: at least 10 GB free recommended for large installs.','Uninstall any previous version cleanly via Settings → Apps before reinstalling.','If you hit a specific MSI error code (e.g., 1603), search that exact code — most have known fixes documented.'], confidence: 0.82 },
   'SW.UPDATE.FAIL': { title: 'Windows / app update failed', steps: ['Settings → Windows Update → Update history. Find the failed update and note the KB number + error code.','Run the Windows Update Troubleshooter: Settings → Troubleshoot → Other → Windows Update → Run.','Disk Cleanup → "Clean up system files" → tick "Windows Update Cleanup". Clears stuck update files.','Manually: download the KB from the Microsoft Update Catalog (catalog.update.microsoft.com) and install the .msu.','If update loops: Settings → Update → Pause updates for 1 week → let the issue settle, then resume.'], confidence: 0.83 }
