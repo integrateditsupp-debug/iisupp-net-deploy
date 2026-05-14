@@ -30,593 +30,149 @@
       --ap-amber:     #fbbf24;
       --ap-green:     #4ade80;
     }
-
     * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: var(--ap-bg);
-      color: var(--ap-text);
-      font-family: 'Inter', system-ui, sans-serif;
-      font-size: 13px;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
+    html, body { margin: 0; padding: 0; background: var(--ap-bg); color: var(--ap-text); font-family: 'Inter', system-ui, sans-serif; font-size: 13px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
     .mono { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
-    .small-caps { font-variant-caps: all-small-caps; letter-spacing: 0.15em; }
 
     /* ==== top header ==== */
-    .ap-topbar {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      padding: 14px 24px;
-      border-bottom: 1px solid var(--ap-border);
-      background: var(--ap-bg);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      backdrop-filter: blur(8px);
-    }
-    .ap-logo {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      font-size: 11px;
-      color: var(--ap-text);
-    }
-    .ap-logo-mark {
-      width: 22px; height: 22px;
-      border: 1.5px solid var(--ap-teal);
-      position: relative;
-      transform: rotate(45deg);
-      display: inline-block;
-    }
-    .ap-logo-mark::before {
-      content:''; position: absolute; inset: 3px; border: 1px solid var(--ap-teal); opacity: 0.5;
-    }
+    .ap-topbar { display: flex; align-items: center; gap: 28px; padding: 14px 24px; border-bottom: 1px solid var(--ap-border); background: var(--ap-bg); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(8px); }
+    .ap-logo { display: inline-flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-weight: 600; letter-spacing: 0.2em; font-size: 11px; color: var(--ap-text); }
+    .ap-logo-mark { width: 22px; height: 22px; border: 1.5px solid var(--ap-teal); position: relative; transform: rotate(45deg); display: inline-block; }
+    .ap-logo-mark::before { content:''; position: absolute; inset: 3px; border: 1px solid var(--ap-teal); opacity: 0.5; }
     .ap-logo-text { display: inline-flex; align-items: center; gap: 8px; }
     .ap-logo-sub { color: var(--ap-text-3); font-weight: 400; }
-
-    .ap-nav-tabs {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      flex: 1;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      color: var(--ap-text-3);
-    }
-    .ap-nav-tabs a, .ap-nav-tabs span.tab {
-      color: var(--ap-text-3);
-      text-decoration: none;
-      padding: 6px 8px;
-      transition: color .2s;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
+    .ap-nav-tabs { display: flex; gap: 14px; align-items: center; flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: var(--ap-text-3); }
+    .ap-nav-tabs a, .ap-nav-tabs span.tab { color: var(--ap-text-3); text-decoration: none; padding: 6px 8px; transition: color .2s; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
     .ap-nav-tabs a:hover, .ap-nav-tabs span.tab:hover { color: var(--ap-text); }
     .ap-nav-tabs .tab-num { color: var(--ap-text-3); font-weight: 400; }
-    .ap-nav-tabs .tab-active {
-      color: var(--ap-teal);
-      border-top: 1px solid var(--ap-teal);
-      padding-top: 6px;
-      margin-top: -7px;
-    }
+    .ap-nav-tabs .tab-active { color: var(--ap-teal); border-top: 1px solid var(--ap-teal); padding-top: 6px; margin-top: -7px; }
     .ap-nav-tabs .tab-active .tab-num { color: var(--ap-teal); }
+    .ap-meta-stats { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--ap-text-3); }
 
-    .ap-meta-stats {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      color: var(--ap-text-3);
-    }
+    /* ==== badges ==== */
+    .ap-mode-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.28em; text-transform:uppercase; border-radius:1px; margin-right:8px; }
+    .ap-mode-live { background: rgba(74,222,128,0.1); border:1px solid var(--ap-green); color:var(--ap-green); }
+    .ap-mode-demo { background: rgba(251,191,36,0.1); border:1px solid var(--ap-amber); color:var(--ap-amber); }
+    .ap-mode-waiting { background: rgba(107,124,135,0.1); border:1px solid var(--ap-text-3); color:var(--ap-text-3); }
+    .ap-pulse { animation: ap-pulse 1.4s infinite; }
+    @keyframes ap-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
     /* ==== main container ==== */
     .ap-main { padding: 18px 24px 80px; }
     .ap-section { margin-bottom: 18px; }
 
-    /* ==== what-this-tab-is band ==== */
-    .ap-intro-band {
-      display: flex; align-items: flex-start; gap: 16px;
-      padding: 12px 0 6px 0;
-      font-size: 11.5px;
-      color: var(--ap-text-2);
-      line-height: 1.65;
-    }
-    .ap-intro-band .ap-tag-intro {
-      flex-shrink: 0;
-      padding: 4px 10px;
-      border: 1px solid var(--ap-border-2);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--ap-text);
-      background: var(--ap-surface);
-      margin-top: 2px;
-    }
+    .ap-intro-band { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0 6px 0; font-size: 11.5px; color: var(--ap-text-2); line-height: 1.65; }
+    .ap-intro-band .ap-tag-intro { flex-shrink: 0; padding: 4px 10px; border: 1px solid var(--ap-border-2); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ap-text); background: var(--ap-surface); margin-top: 2px; }
     .ap-intro-band strong { color: var(--ap-text); font-weight: 600; }
     .ap-intro-band .ap-hl-teal { color: var(--ap-teal); }
     .ap-intro-band .ap-hl-red { color: var(--ap-red); }
 
-    /* ==== scenario picker bar ==== */
-    .ap-scenario-bar {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      padding: 14px 0;
-      flex-wrap: wrap;
-    }
-    .ap-scenario-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--ap-text-3);
-    }
+    .ap-scenario-bar { display: flex; align-items: center; gap: 18px; padding: 14px 0; flex-wrap: wrap; }
+    .ap-scenario-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ap-text-3); }
     .ap-tier-group { display: inline-flex; align-items: center; gap: 6px; }
-    .ap-tier-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--ap-text-2);
-      font-weight: 600;
-      margin-right: 2px;
-    }
-    .ap-diff-btn {
-      padding: 5px 10px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      background: transparent;
-      border: 1px solid var(--ap-border-2);
-      color: var(--ap-text-3);
-      cursor: pointer;
-      transition: all .15s;
-      border-radius: 1px;
-    }
+    .ap-tier-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text-2); font-weight: 600; margin-right: 2px; }
+    .ap-diff-btn { padding: 5px 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; background: transparent; border: 1px solid var(--ap-border-2); color: var(--ap-text-3); cursor: pointer; transition: all .15s; border-radius: 1px; }
     .ap-diff-btn:hover { color: var(--ap-text); border-color: var(--ap-text-3); }
-    .ap-diff-btn.active {
-      background: var(--ap-teal-glow);
-      color: var(--ap-teal);
-      border-color: var(--ap-teal);
-    }
-
-    .ap-action-btn {
-      padding: 6px 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      background: transparent;
-      border: 1px solid var(--ap-border-2);
-      color: var(--ap-text-2);
-      cursor: pointer;
-      transition: all .15s;
-      border-radius: 1px;
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .ap-action-btn:hover {
-      color: var(--ap-teal);
-      border-color: var(--ap-teal);
-    }
-    .ap-action-btn.primary {
-      background: var(--ap-teal-glow);
-      color: var(--ap-teal);
-      border-color: var(--ap-teal);
-    }
-    .ap-timer {
-      margin-left: auto;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--ap-text-3);
-      letter-spacing: 0.05em;
-    }
+    .ap-diff-btn.active { background: var(--ap-teal-glow); color: var(--ap-teal); border-color: var(--ap-teal); }
+    .ap-action-btn { padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; background: transparent; border: 1px solid var(--ap-border-2); color: var(--ap-text-2); cursor: pointer; transition: all .15s; border-radius: 1px; display: inline-flex; align-items: center; gap: 6px; }
+    .ap-action-btn:hover { color: var(--ap-teal); border-color: var(--ap-teal); }
+    .ap-action-btn.primary { background: var(--ap-teal-glow); color: var(--ap-teal); border-color: var(--ap-teal); }
+    .ap-timer { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text-3); letter-spacing: 0.05em; }
     .ap-timer .ap-timer-val { font-size: 18px; color: var(--ap-teal); font-weight: 600; }
 
-    /* ==== active scenario heading ==== */
-    .ap-scenario-head {
-      padding-top: 4px;
-      margin-bottom: 16px;
-    }
-    .ap-scenario-head h2 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--ap-text);
-      margin: 0 0 12px 0;
-      letter-spacing: 0.02em;
-    }
-    .ap-scenario-head .ap-tier-hint {
-      color: var(--ap-text-3);
-      font-weight: 400;
-    }
+    .ap-scenario-head { padding-top: 4px; margin-bottom: 16px; }
+    .ap-scenario-head h2 { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--ap-text); margin: 0 0 12px 0; letter-spacing: 0.02em; }
+    .ap-scenario-head .ap-tier-hint { color: var(--ap-text-3); font-weight: 400; }
     .ap-tag-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .ap-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      background: var(--ap-surface);
-      border: 1px solid var(--ap-border);
-      color: var(--ap-text-2);
-      border-radius: 1px;
-    }
+    .ap-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; background: var(--ap-surface); border: 1px solid var(--ap-border); color: var(--ap-text-2); border-radius: 1px; }
     .ap-tag-key { color: var(--ap-text-3); }
     .ap-tag-val { color: var(--ap-text); font-weight: 500; }
-    .ap-tag-lead {
-      background: var(--ap-teal-glow);
-      border-color: var(--ap-teal);
-      color: var(--ap-teal);
-    }
+    .ap-tag-lead { background: var(--ap-teal-glow); border-color: var(--ap-teal); color: var(--ap-teal); }
     .ap-tag-lead .ap-tag-val { color: var(--ap-teal); }
 
-    /* ==== two-column main ==== */
-    .ap-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 22px;
-      align-items: flex-start;
-    }
-    @media (max-width: 1100px) {
-      .ap-grid { grid-template-columns: 1fr; }
-    }
+    .ap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: flex-start; }
+    @media (max-width: 1100px) { .ap-grid { grid-template-columns: 1fr; } }
 
-    /* ==== resolved card ==== */
-    .ap-card {
-      background: var(--ap-surface);
-      border: 1px solid var(--ap-border);
-      padding: 18px;
-      margin-bottom: 16px;
-      border-radius: 2px;
-    }
+    .ap-card { background: var(--ap-surface); border: 1px solid var(--ap-border); padding: 18px; margin-bottom: 16px; border-radius: 2px; }
     .ap-card-resolved { border-color: var(--ap-teal); position: relative; }
+    .ap-card-resolved.escalated { border-color: var(--ap-amber); }
     .ap-resolved-row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
-    .ap-resolved-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 5px 14px;
-      background: rgba(74, 222, 128, 0.12);
-      border: 1px solid var(--ap-green);
-      color: var(--ap-green);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      font-weight: 600;
-      border-radius: 1px;
-    }
-    .ap-resolved-meta {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--ap-text-2);
-    }
+    .ap-resolved-badge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; background: rgba(74, 222, 128, 0.12); border: 1px solid var(--ap-green); color: var(--ap-green); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; font-weight: 600; border-radius: 1px; }
+    .ap-resolved-badge.escalated { background: rgba(251,191,36,0.12); border-color: var(--ap-amber); color: var(--ap-amber); }
+    .ap-resolved-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text-2); }
     .ap-resolved-meta .v { color: var(--ap-teal); font-weight: 600; }
-    .ap-resolved-cause {
-      font-size: 12px;
-      color: var(--ap-text-2);
-      line-height: 1.65;
-      margin: 8px 0 14px;
-    }
+    .ap-resolved-cause { font-size: 12px; color: var(--ap-text-2); line-height: 1.65; margin: 8px 0 14px; }
     .ap-mix-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .ap-chip-mix {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      border-radius: 1px;
-      border: 1px solid var(--ap-border-2);
-    }
+    .ap-chip-mix { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; border-radius: 1px; border: 1px solid var(--ap-border-2); }
     .ap-chip-mix.neutral { background: var(--ap-surface-2); color: var(--ap-text-2); }
     .ap-chip-mix.warn { background: rgba(248, 113, 113, 0.07); border-color: var(--ap-red); color: var(--ap-red); }
     .ap-chip-mix .v { font-weight: 600; color: var(--ap-text); margin-left: 4px; }
-    .ap-chip-mix.warn .v { color: var(--ap-red); }
-    .ap-chip-mix .x { color: var(--ap-red); font-weight: 700; margin-right: 2px; }
 
-    /* ==== current stage card ==== */
-    .ap-stage-head {
-      display: flex; align-items: baseline; justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .ap-section-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--ap-text-3);
-    }
-    .ap-stage-progress-count {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      color: var(--ap-text-3);
-    }
+    .ap-section-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ap-text-3); }
+    .ap-stage-head, .ap-agents-head, .ap-fw-head, .ap-layers-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+    .ap-stage-progress-count { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ap-text-3); }
     .ap-stage-progress-count .a { color: var(--ap-teal); font-weight: 600; }
-    .ap-stage-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ap-text);
-      margin: 8px 0 16px;
-      letter-spacing: 0.01em;
-    }
-    .ap-progressbar {
-      height: 3px;
-      background: var(--ap-surface-2);
-      border-radius: 1px;
-      overflow: hidden;
-      position: relative;
-    }
-    .ap-progressbar-fill {
-      position: absolute;
-      top: 0; left: 0; bottom: 0;
-      background: var(--ap-teal);
-      width: 100%;
-      box-shadow: 0 0 8px var(--ap-teal-glow);
-    }
+    .ap-stage-text { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: var(--ap-text); margin: 8px 0 16px; letter-spacing: 0.01em; }
+    .ap-progressbar { height: 3px; background: var(--ap-surface-2); border-radius: 1px; overflow: hidden; position: relative; }
+    .ap-progressbar-fill { position: absolute; top: 0; left: 0; bottom: 0; background: var(--ap-teal); width: 0%; transition: width .4s ease; box-shadow: 0 0 8px var(--ap-teal-glow); }
 
-    /* ==== agents fired ==== */
-    .ap-agents-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
     .ap-agents-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-    .ap-chip-agent {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      background: var(--ap-surface-2);
-      border: 1px solid var(--ap-border-2);
-      color: var(--ap-text);
-      border-radius: 1px;
-      cursor: default;
-      transition: all .15s;
-    }
-    .ap-chip-agent:hover { border-color: var(--ap-teal); }
-    .ap-chip-agent .ap-chip-count {
-      font-size: 10px;
-      color: var(--ap-teal);
-      font-weight: 700;
-      margin-left: 4px;
-    }
+    .ap-chip-agent { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; background: var(--ap-surface-2); border: 1px solid var(--ap-border-2); color: var(--ap-text); border-radius: 1px; }
+    .ap-chip-agent .ap-chip-count { font-size: 10px; color: var(--ap-teal); font-weight: 700; margin-left: 4px; }
+    .ap-agents-empty { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text-3); }
 
-    /* ==== frameworks ==== */
-    .ap-fw-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
-    .ap-fw-lead-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--ap-text-3);
-      letter-spacing: 0.12em;
-    }
+    .ap-fw-lead-text { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ap-text-3); letter-spacing: 0.12em; }
     .ap-fw-lead-text .a { color: var(--ap-teal); font-weight: 600; }
-    .ap-fw-grid {
-      display: grid;
-      grid-template-columns: repeat(9, 1fr);
-      gap: 6px;
-    }
-    .ap-fw-cell {
-      padding: 10px 6px;
-      background: var(--ap-surface-2);
-      border: 1px solid var(--ap-border);
-      text-align: center;
-      cursor: pointer;
-      transition: all .15s;
-      border-radius: 1px;
-    }
-    .ap-fw-cell:hover { border-color: var(--ap-teal); }
-    .ap-fw-cell.active {
-      border-color: var(--ap-teal);
-      background: var(--ap-teal-glow);
-      box-shadow: 0 0 8px rgba(45, 212, 191, 0.25);
-    }
-    .ap-fw-roman {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--ap-text);
-      letter-spacing: 0.05em;
-    }
+    .ap-fw-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; }
+    .ap-fw-cell { padding: 10px 6px; background: var(--ap-surface-2); border: 1px solid var(--ap-border); text-align: center; transition: all .25s; border-radius: 1px; }
+    .ap-fw-cell.active { border-color: var(--ap-teal); background: var(--ap-teal-glow); box-shadow: 0 0 8px rgba(45, 212, 191, 0.25); }
+    .ap-fw-roman { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--ap-text); letter-spacing: 0.05em; }
     .ap-fw-cell.active .ap-fw-roman { color: var(--ap-teal); }
-    .ap-fw-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      color: var(--ap-text-3);
-      margin-top: 4px;
-      letter-spacing: 0.08em;
-    }
+    .ap-fw-name { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ap-text-3); margin-top: 4px; letter-spacing: 0.08em; }
     .ap-fw-cell.active .ap-fw-name { color: var(--ap-teal); }
 
-    /* ==== architecture layer usage ==== */
-    .ap-layers-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
-    .ap-layers-total {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--ap-text-3);
-    }
-    .ap-layer-row {
-      display: grid;
-      grid-template-columns: 180px 1fr 60px;
-      align-items: center;
-      gap: 12px;
-      padding: 7px 0;
-      border-bottom: 1px dashed var(--ap-border);
-    }
+    .ap-layers-total { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ap-text-3); }
+    .ap-layer-row { display: grid; grid-template-columns: 180px 1fr 60px; align-items: center; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--ap-border); }
     .ap-layer-row:last-child { border-bottom: none; }
     .ap-layer-name { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--ap-text); font-weight: 600; line-height: 1.3; }
-    .ap-layer-sub {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
-      color: var(--ap-text-3);
-      font-weight: 400;
-      margin-top: 2px;
-    }
-    .ap-layer-bar {
-      height: 6px;
-      background: var(--ap-surface-2);
-      border-radius: 1px;
-      overflow: hidden;
-      position: relative;
-    }
-    .ap-layer-bar-fill {
-      height: 100%;
-      background: var(--ap-teal);
-      box-shadow: 0 0 6px var(--ap-teal-glow);
-    }
-    .ap-layer-pct {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--ap-text);
-      text-align: right;
-      font-weight: 600;
-    }
+    .ap-layer-sub { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ap-text-3); font-weight: 400; margin-top: 2px; }
+    .ap-layer-bar { height: 6px; background: var(--ap-surface-2); border-radius: 1px; overflow: hidden; position: relative; }
+    .ap-layer-bar-fill { height: 100%; background: var(--ap-teal); width: 0%; transition: width .5s ease; box-shadow: 0 0 6px var(--ap-teal-glow); }
+    .ap-layer-pct { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text); text-align: right; font-weight: 600; }
 
-    /* ==== conversation pane ==== */
     .ap-conv-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
-    .ap-conv-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--ap-text);
-      font-weight: 600;
-      letter-spacing: 0.05em;
-    }
+    .ap-conv-title { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ap-text); font-weight: 600; letter-spacing: 0.05em; }
     .ap-conv-title .sub { color: var(--ap-text-3); font-weight: 400; }
-    .ap-conv-msgcount {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--ap-text-3);
-    }
-    .ap-conv-stream {
-      display: flex; flex-direction: column; gap: 8px;
-      max-height: 720px; overflow-y: auto;
-      padding-right: 4px;
-    }
+    .ap-conv-msgcount { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ap-text-3); }
+    .ap-conv-stream { display: flex; flex-direction: column; gap: 8px; max-height: 720px; overflow-y: auto; padding-right: 4px; }
     .ap-msg { display: flex; flex-direction: column; gap: 4px; max-width: 95%; }
-    .ap-msg-from {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
-      letter-spacing: 0.2em;
-      color: var(--ap-text-3);
-      text-transform: uppercase;
-      font-weight: 600;
-    }
+    .ap-msg-from { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; color: var(--ap-text-3); text-transform: uppercase; font-weight: 600; }
     .ap-msg-from.aria { color: var(--ap-teal); }
     .ap-msg-from.user { color: var(--ap-text-2); align-self: flex-end; }
-    .ap-msg-bubble {
-      padding: 12px 16px;
-      background: var(--ap-surface);
-      border: 1px solid var(--ap-border);
-      font-size: 12.5px;
-      line-height: 1.6;
-      color: var(--ap-text);
-      border-radius: 2px;
-    }
-    .ap-msg.user .ap-msg-bubble {
-      background: var(--ap-surface-2);
-      border-color: var(--ap-border-2);
-      align-self: flex-end;
-      max-width: 80%;
-    }
-    .ap-msg.aria .ap-msg-bubble strong { color: var(--ap-teal); font-weight: 600; }
+    .ap-msg-bubble { padding: 12px 16px; background: var(--ap-surface); border: 1px solid var(--ap-border); font-size: 12.5px; line-height: 1.6; color: var(--ap-text); border-radius: 2px; }
+    .ap-msg.user .ap-msg-bubble { background: var(--ap-surface-2); border-color: var(--ap-border-2); align-self: flex-end; max-width: 80%; }
     .ap-msg.user { align-items: flex-end; }
+    .ap-conv-waiting { text-align:center; padding:40px 20px; color: var(--ap-text-3); font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; }
 
-    /* ==== name/email modal ==== */
-    .ap-modal-bg {
-      position: fixed; inset: 0;
-      background: rgba(5, 8, 16, 0.92);
-      display: none;
-      align-items: center; justify-content: center;
-      z-index: 100;
-      backdrop-filter: blur(8px);
-    }
-    .ap-modal-bg.open { display: flex; }
-    .ap-modal {
-      background: var(--ap-surface);
-      border: 1px solid var(--ap-teal);
-      padding: 32px;
-      max-width: 480px;
-      width: calc(100% - 40px);
-      box-shadow: 0 0 60px rgba(45, 212, 191, 0.15);
-    }
-    .ap-modal h3 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      letter-spacing: 0.12em;
-      color: var(--ap-teal);
-      margin: 0 0 8px 0;
-      font-weight: 600;
-    }
-    .ap-modal p { font-size: 12.5px; color: var(--ap-text-2); margin: 0 0 20px; line-height: 1.6; }
-    .ap-modal label {
-      display: block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--ap-text-3);
-      margin-bottom: 6px;
-      margin-top: 14px;
-    }
-    .ap-modal input {
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--ap-surface-2);
-      border: 1px solid var(--ap-border-2);
-      color: var(--ap-text);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      border-radius: 1px;
-      outline: none;
-      transition: border-color .15s;
-    }
-    .ap-modal input:focus { border-color: var(--ap-teal); }
-    .ap-modal-cta {
-      margin-top: 24px;
-      padding: 10px 20px;
-      width: 100%;
-      background: var(--ap-teal-glow);
-      border: 1px solid var(--ap-teal);
-      color: var(--ap-teal);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 1px;
-      transition: all .15s;
-    }
-    .ap-modal-cta:hover { background: var(--ap-teal); color: var(--ap-bg); }
-    .ap-modal-consent { font-size: 10.5px; color: var(--ap-text-3); margin-top: 14px; line-height: 1.5; }
+    .ap-ticket-bar { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: var(--ap-surface); border: 1px solid var(--ap-teal); margin-bottom: 14px; font-family:'JetBrains Mono',monospace; font-size: 11px; letter-spacing: 0.06em; }
+    .ap-ticket-bar .lbl { color: var(--ap-text-3); }
+    .ap-ticket-bar .val { color: var(--ap-teal); font-weight: 600; }
+    .ap-ticket-bar .status { margin-left: auto; }
+    .ap-ticket-bar .status .live { color: var(--ap-green); }
 
-    /* ==== footer ==== */
-    .ap-footer {
-      margin-top: 60px;
-      padding: 24px;
-      border-top: 1px solid var(--ap-border);
-      text-align: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      color: var(--ap-text-3);
-    }
+    .ap-footer { margin-top: 60px; padding: 24px; border-top: 1px solid var(--ap-border); text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--ap-text-3); }
     .ap-footer a { color: var(--ap-teal); text-decoration: none; }
 
-    /* scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--ap-bg); }
     ::-webkit-scrollbar-thumb { background: var(--ap-border-2); border-radius: 1px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--ap-teal-dim); }
+
+    .hidden-block { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- ==== TOP HEADER ==== -->
   <header class="ap-topbar">
     <div class="ap-logo">
       <span class="ap-logo-mark"></span>
@@ -625,7 +181,6 @@
         <span class="ap-logo-sub">·  COGNITIVE ARCHITECTURE</span>
       </span>
     </div>
-
     <nav class="ap-nav-tabs" aria-label="Aperture tabs">
       <span class="tab" data-tab="01"><span class="tab-num">01</span> ARCHITECTURE</span>
       <span class="tab" data-tab="02"><span class="tab-num">02</span> AGENT LOOP</span>
@@ -638,117 +193,99 @@
       <span class="tab" data-tab="09"><span class="tab-num">09</span> ARIA · COMMERCIAL</span>
       <span class="tab" data-tab="10"><span class="tab-num">10</span> APERTURE · COMMERCIAL</span>
     </nav>
-
     <div class="ap-meta-stats" id="apMeta">486 FILES · 12 AGENTS · 9 FRAMEWORKS</div>
   </header>
 
-  <!-- ==== MAIN ==== -->
   <main class="ap-main">
 
-    <!-- ===== INTRO BAND ===== -->
     <section class="ap-section ap-intro-band">
       <span class="ap-tag-intro">WHAT THIS TAB IS</span>
-      <div>
-        Self-test harness. Pick one of 9 scenarios (3 tiers × 3 difficulties). Watch ARIA work the same scenario as a real chat conversation while the architecture diagnostics on the left track which agents fire, which frameworks lead, and which architecture layers carry the work. <strong>The headline question:</strong> does <span class="ap-hl-teal">Memory + Vector DB + KB</span> outweigh <span class="ap-hl-red">LLM</span>? If yes, the reconstructive-intelligence claim holds for this scenario.
+      <div id="apIntroText">
+        Live observability for ARIA. Open <a href="/aria" style="color:var(--ap-teal);">/aria</a> to start a real session — Aperture mirrors every reasoning step, agent fire, framework lead, and architecture layer it touches. Or press <span class="mono ap-hl-teal">START SIMULATION</span> below to run one of 9 demo scenarios.
       </div>
     </section>
 
-    <!-- ===== SCENARIO PICKER ===== -->
-    <section class="ap-section ap-scenario-bar">
-      <span class="ap-scenario-label">SCENARIO</span>
+    <!-- ===== LIVE TICKET BAR (shown only in live mode) ===== -->
+    <div class="ap-ticket-bar hidden-block" id="apTicketBar">
+      <span class="lbl">TICKET</span>
+      <span class="val mono" id="apTicketVal">—</span>
+      <span class="lbl">USER</span>
+      <span class="val mono" id="apTicketUser">—</span>
+      <span class="status">
+        <span class="lbl">STATUS</span>
+        <span class="live mono ap-pulse" id="apTicketStatus">● LIVE</span>
+      </span>
+    </div>
 
+    <!-- ===== SCENARIO PICKER (visible in demo mode) ===== -->
+    <section class="ap-section ap-scenario-bar" id="apScenarioBar">
+      <span class="ap-mode-badge ap-mode-demo">DEMO</span>
+      <span class="ap-scenario-label">SCENARIO</span>
       <div class="ap-tier-group" data-tier="L1">
         <span class="ap-tier-label">L1</span>
         <button class="ap-diff-btn" data-diff="easy">EASY</button>
-        <button class="ap-diff-btn" data-diff="mid">MID</button>
-        <button class="ap-diff-btn active" data-diff="hard">HARD</button>
+        <button class="ap-diff-btn active" data-diff="mid">MID</button>
+        <button class="ap-diff-btn" data-diff="hard">HARD</button>
       </div>
-
       <div class="ap-tier-group" data-tier="L2">
         <span class="ap-tier-label">L2</span>
         <button class="ap-diff-btn" data-diff="easy">EASY</button>
         <button class="ap-diff-btn" data-diff="mid">MID</button>
         <button class="ap-diff-btn" data-diff="hard">HARD</button>
       </div>
-
       <div class="ap-tier-group" data-tier="L3">
         <span class="ap-tier-label">L3</span>
         <button class="ap-diff-btn" data-diff="easy">EASY</button>
         <button class="ap-diff-btn" data-diff="mid">MID</button>
         <button class="ap-diff-btn" data-diff="hard">HARD</button>
       </div>
-
-      <button class="ap-action-btn primary" id="apRunBtn">↻ RUN AGAIN</button>
+      <button class="ap-action-btn primary" id="apRunBtn">▶ START SIMULATION</button>
       <button class="ap-action-btn" id="apResetBtn">RESET</button>
-
       <div class="ap-timer">
-        <span class="ap-timer-val" id="apTimer">10.3s</span>
-        <span class="mono"> / ~72s target</span>
+        <span class="ap-timer-val" id="apTimer">0ms</span>
+        <span class="mono"> / <span id="apTargetTimer">~38s</span> target</span>
       </div>
     </section>
 
-    <!-- ===== ACTIVE SCENARIO HEADING ===== -->
     <section class="ap-section ap-scenario-head">
-      <h2 id="apScenarioTitle">L1 <span class="ap-tier-hint">· Hard ·</span> VPN drops intermittently on hybrid setup</h2>
-      <div class="ap-tag-row">
-        <span class="ap-tag"><span class="ap-tag-key">industry</span><span class="ap-tag-val">finance</span></span>
-        <span class="ap-tag"><span class="ap-tag-key">role</span><span class="ap-tag-val">end_user</span></span>
-        <span class="ap-tag"><span class="ap-tag-key">environment</span><span class="ap-tag-val">prod</span></span>
-        <span class="ap-tag"><span class="ap-tag-key">pressure</span><span class="ap-tag-val">urgent</span></span>
-        <span class="ap-tag"><span class="ap-tag-key">history</span><span class="ap-tag-val">repeat</span></span>
-        <span class="ap-tag"><span class="ap-tag-key">trust</span><span class="ap-tag-val">fragile</span></span>
-        <span class="ap-tag ap-tag-lead"><span class="ap-tag-key">lead</span><span class="ap-tag-val">III First Principles</span></span>
+      <h2 id="apScenarioTitle"><span class="ap-tier-hint">Waiting for ARIA session — </span><span id="apScenarioTitleMain">no live session</span></h2>
+      <div class="ap-tag-row" id="apTagRow">
+        <span class="ap-tag"><span class="ap-tag-key">mode</span><span class="ap-tag-val" id="apModeTag">demo</span></span>
+        <span class="ap-tag"><span class="ap-tag-key">status</span><span class="ap-tag-val" id="apStatusTag">waiting</span></span>
       </div>
     </section>
 
-    <!-- ===== TWO-COLUMN MAIN ===== -->
     <section class="ap-grid">
-
-      <!-- ===== LEFT TRACK ===== -->
       <div class="ap-left">
 
-        <!-- ===== RESOLVED CARD ===== -->
-        <div class="ap-card ap-card-resolved">
+        <!-- ===== STATUS CARD (resolved/escalated/waiting) ===== -->
+        <div class="ap-card ap-card-resolved hidden-block" id="apStatusCard">
           <div class="ap-resolved-row">
-            <span class="ap-resolved-badge">✓ RESOLVED</span>
-            <span class="ap-resolved-meta">in <span class="v" id="apResolvedTime">10.3s</span> · target ~72s</span>
+            <span class="ap-resolved-badge" id="apStatusBadge">⏳ ACTIVE</span>
+            <span class="ap-resolved-meta">in <span class="v" id="apStatusTime">0s</span> · target <span id="apStatusTarget">~38s</span></span>
           </div>
-          <div class="ap-resolved-cause" id="apResolvedCause">
-            <strong style="color:var(--ap-text);">Cause:</strong> ISP route flap + idle-timeout combo. Mitigated client side; ISP ticket opened. Handoff packet to L2 with full trace.
-          </div>
-          <div class="ap-mix-row">
-            <span class="ap-chip-mix neutral">LLM dominated <span class="v">33%</span></span>
-            <span class="ap-chip-mix warn"><span class="x">×</span>Reconstructive <span class="v">26%</span> vs LLM <span class="v">33%</span> <span class="x">×</span> LLM-heavy</span>
-          </div>
+          <div class="ap-resolved-cause" id="apStatusCause"></div>
+          <div class="ap-mix-row" id="apStatusMix"></div>
         </div>
 
         <!-- ===== CURRENT STAGE ===== -->
         <div class="ap-card">
           <div class="ap-stage-head">
             <span class="ap-section-label">CURRENT STAGE</span>
-            <span class="ap-stage-progress-count"><span class="a" id="apStageNow">12</span> / <span id="apStageMax">12</span></span>
+            <span class="ap-stage-progress-count"><span class="a" id="apStageNow">0</span> / <span id="apStageMax">11</span></span>
           </div>
-          <div class="ap-stage-text" id="apStageText">STAR handoff to L2 + ISP ticket</div>
-          <div class="ap-progressbar"><div class="ap-progressbar-fill" id="apStageProgress" style="width:100%"></div></div>
+          <div class="ap-stage-text mono" id="apStageText">waiting — press start</div>
+          <div class="ap-progressbar"><div class="ap-progressbar-fill" id="apStageProgress"></div></div>
         </div>
 
         <!-- ===== AGENTS FIRED ===== -->
         <div class="ap-card">
           <div class="ap-agents-head">
             <span class="ap-section-label">AGENTS FIRED</span>
-            <span class="ap-stage-progress-count"><span id="apAgentsUnique">10</span> unique · <span id="apAgentsTotal">17</span> total</span>
+            <span class="ap-stage-progress-count"><span id="apAgentsUnique">0</span> unique · <span id="apAgentsTotal">0</span> total</span>
           </div>
           <div class="ap-agents-grid" id="apAgentsGrid">
-            <span class="ap-chip-agent">reasoning <span class="ap-chip-count">×4</span></span>
-            <span class="ap-chip-agent">intent <span class="ap-chip-count">×2</span></span>
-            <span class="ap-chip-agent">psychology <span class="ap-chip-count">×2</span></span>
-            <span class="ap-chip-agent">kb <span class="ap-chip-count">×2</span></span>
-            <span class="ap-chip-agent">automation <span class="ap-chip-count">×2</span></span>
-            <span class="ap-chip-agent">orchestrator <span class="ap-chip-count">×1</span></span>
-            <span class="ap-chip-agent">research <span class="ap-chip-count">×1</span></span>
-            <span class="ap-chip-agent">safety <span class="ap-chip-count">×1</span></span>
-            <span class="ap-chip-agent">escalation <span class="ap-chip-count">×1</span></span>
-            <span class="ap-chip-agent">quality <span class="ap-chip-count">×1</span></span>
+            <span class="ap-agents-empty">none yet — press start</span>
           </div>
         </div>
 
@@ -756,12 +293,12 @@
         <div class="ap-card">
           <div class="ap-fw-head">
             <span class="ap-section-label">FRAMEWORKS</span>
-            <span class="ap-fw-lead-text">lead: <span class="a" id="apFwLead">III First Principles</span></span>
+            <span class="ap-fw-lead-text">lead: <span class="a" id="apFwLead">—</span></span>
           </div>
           <div class="ap-fw-grid" id="apFwGrid">
             <div class="ap-fw-cell" data-fw="I"><div class="ap-fw-roman">I</div><div class="ap-fw-name">5 W's</div></div>
             <div class="ap-fw-cell" data-fw="II"><div class="ap-fw-roman">II</div><div class="ap-fw-name">STAR</div></div>
-            <div class="ap-fw-cell active" data-fw="III"><div class="ap-fw-roman">III</div><div class="ap-fw-name">First Principles</div></div>
+            <div class="ap-fw-cell" data-fw="III"><div class="ap-fw-roman">III</div><div class="ap-fw-name">First Principles</div></div>
             <div class="ap-fw-cell" data-fw="IV"><div class="ap-fw-roman">IV</div><div class="ap-fw-name">OKR</div></div>
             <div class="ap-fw-cell" data-fw="V"><div class="ap-fw-roman">V</div><div class="ap-fw-name">Eisenhower</div></div>
             <div class="ap-fw-cell" data-fw="VI"><div class="ap-fw-roman">VI</div><div class="ap-fw-name">DMAIC</div></div>
@@ -771,73 +308,14 @@
           </div>
         </div>
 
-        <!-- ===== ARCHITECTURE LAYER USAGE ===== -->
+        <!-- ===== LAYER USAGE ===== -->
         <div class="ap-card">
           <div class="ap-layers-head">
             <span class="ap-section-label">ARCHITECTURE LAYER USAGE</span>
-            <span class="ap-layers-total"><span id="apLayersTotal">109</span> units</span>
+            <span class="ap-layers-total"><span id="apLayersTotal">0</span> units</span>
           </div>
           <div id="apLayerRows">
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">LLM</div><div class="ap-layer-sub">thinking · reasoning · behavior</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:33%"></div></div>
-              <div class="ap-layer-pct">33.0%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">Memory</div><div class="ap-layer-sub">short · long · procedural · pattern</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:15.6%"></div></div>
-              <div class="ap-layer-pct">15.6%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">Automation</div><div class="ap-layer-sub">workflows · n8n</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:9.2%"></div></div>
-              <div class="ap-layer-pct">9.2%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">Vector DB</div><div class="ap-layer-sub">semantic memory · index</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:7.3%"></div></div>
-              <div class="ap-layer-pct">7.3%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">Tools</div><div class="ap-layer-sub">abilities · actions</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:7.3%"></div></div>
-              <div class="ap-layer-pct">7.3%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">Frontend/UI</div><div class="ap-layer-sub">user interaction</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:5.5%"></div></div>
-              <div class="ap-layer-pct">5.5%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">RAG</div><div class="ap-layer-sub">retrieval · search</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:4.6%"></div></div>
-              <div class="ap-layer-pct">4.6%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">Agents</div><div class="ap-layer-sub">specialized workers</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:3.7%"></div></div>
-              <div class="ap-layer-pct">3.7%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">Safety</div><div class="ap-layer-sub">guardrails · gates</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:3.7%"></div></div>
-              <div class="ap-layer-pct">3.7%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">KB</div><div class="ap-layer-sub">curated articles</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:3.7%"></div></div>
-              <div class="ap-layer-pct">3.7%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">Verifier</div><div class="ap-layer-sub">5-pass cognition</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:2.8%"></div></div>
-              <div class="ap-layer-pct">2.8%</div>
-            </div>
-            <div class="ap-layer-row">
-              <div><div class="ap-layer-name">Reconstruction</div><div class="ap-layer-sub">causal walker</div></div>
-              <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:2.8%"></div></div>
-              <div class="ap-layer-pct">2.8%</div>
-            </div>
+            <!-- rows rendered by JS -->
           </div>
         </div>
 
@@ -848,399 +326,481 @@
         <div class="ap-card">
           <div class="ap-conv-head">
             <span class="ap-conv-title">ARIA <span class="sub">·  conversation</span></span>
-            <span class="ap-conv-msgcount" id="apMsgCount">7 messages</span>
+            <span class="ap-conv-msgcount" id="apMsgCount">0 messages</span>
           </div>
           <div class="ap-conv-stream" id="apConvStream">
-
-            <div class="ap-msg user">
-              <span class="ap-msg-from user">USER</span>
-              <div class="ap-msg-bubble">VPN keeps dropping. Lost my session three times in an hour.</div>
+            <div class="ap-conv-waiting" id="apConvWaiting">
+              Waiting for ARIA session.<br>
+              <a href="/aria" style="color:var(--ap-teal);text-decoration:none;border-bottom:1px solid var(--ap-teal);">Open /aria</a>  to start one, or press START SIMULATION above for a demo.
             </div>
-
-            <div class="ap-msg aria">
-              <span class="ap-msg-from aria">ARIA</span>
-              <div class="ap-msg-bubble">Three drops in an hour is too many — let me look. You've had VPN issues twice this month, so I'm pulling that history first.</div>
-            </div>
-
-            <div class="ap-msg aria">
-              <span class="ap-msg-from aria">ARIA</span>
-              <div class="ap-msg-bubble">Honest answer: no playbook matches this exactly. I'm going first-principles — testing what MUST hold for VPN to stay up.</div>
-            </div>
-
-            <div class="ap-msg aria">
-              <span class="ap-msg-from aria">ARIA</span>
-              <div class="ap-msg-bubble">Running a quick ping + traceroute to the gateway. ~10 seconds. You don't have to do anything.</div>
-            </div>
-
-            <div class="ap-msg aria">
-              <span class="ap-msg-from aria">ARIA</span>
-              <div class="ap-msg-bubble"><strong>Two issues stacked:</strong> your ISP is flapping a route (not your fault, not in our control), AND the client's idle-timeout is short enough to drop on every flap. I can extend the timeout client-side to mask the ISP issue.</div>
-            </div>
-
-            <div class="ap-msg aria">
-              <span class="ap-msg-from aria">ARIA</span>
-              <div class="ap-msg-bubble">Timeout adjusted. That should hide the next 3-4 flaps. I'm also opening a ticket with your ISP and packaging this for L2 in case it recurs — you won't have to re-explain.</div>
-            </div>
-
-            <div class="ap-msg aria">
-              <span class="ap-msg-from aria">ARIA</span>
-              <div class="ap-msg-bubble"><strong>STAR handoff to L2 in your name.</strong> They'll have my full trace, hypotheses, and what I tried. If it drops again, ping them, not me.</div>
-            </div>
-
           </div>
         </div>
       </div>
-
     </section>
   </main>
 
-  <!-- ===== INTAKE MODAL (shown when integrated with /aria) ===== -->
-  <div class="ap-modal-bg" id="apIntakeModal">
-    <div class="ap-modal">
-      <h3>Before we troubleshoot</h3>
-      <p>I'll keep a session report and email it to you when we're done — so you have a copy of what we tried, what worked, and the handoff packet if it needs to escalate.</p>
-      <label for="apIntakeName">Your name</label>
-      <input type="text" id="apIntakeName" placeholder="Full name" autocomplete="name">
-      <label for="apIntakeEmail">Email</label>
-      <input type="email" id="apIntakeEmail" placeholder="you@company.com" autocomplete="email">
-      <button class="ap-modal-cta" id="apIntakeStart">START TROUBLESHOOTING</button>
-      <p class="ap-modal-consent">We'll only contact you about this session. By continuing you consent to receive a session report from <span class="mono">integrateditsupp@iisupp.net</span>.</p>
-    </div>
-  </div>
-
-  <!-- ===== FOOTER ===== -->
   <footer class="ap-footer">
-    APERTURE · BUILT BY <a href="/">INTEGRATED IT SUPPORT INC.</a> · ARIA COGNITIVE ARCHITECTURE · v0.1
+    APERTURE · BUILT BY <a href="/">INTEGRATED IT SUPPORT INC.</a> · ARIA COGNITIVE ARCHITECTURE · v0.2
   </footer>
 
-  <script>
-    // ============= SCENARIO DATA =============
-    const SCENARIOS = {
-      'L1-easy': {
-        title: 'L1 <span class="ap-tier-hint">· Easy ·</span> Outlook won\'t send', cause: 'Mail server blocked corporate cert. Re-pinned + cleared profile.',
-        timer: '4.1s', target: '~30s', lead: 'I 5 W\'s', leadCell: 'I', stageNow: 8, stageMax: 8, stageText: 'Confirm-resolve loop closed',
-        agentsUnique: 4, agentsTotal: 7, layersTotal: 38,
-        tags: { industry:'professional services', role:'end_user', environment:'prod', pressure:'low', history:'first', trust:'good' },
-        mix: { llmPct: 12, llmTier: 'low', reconPct: 38, banner: 'reconstruction-heavy ✓' },
-        layers: [['LLM',12],['Memory',18],['KB',22],['Verifier',8],['Tools',6],['Frontend/UI',5],['Reconstruction',12],['Safety',4],['RAG',3],['Agents',2],['Vector DB',2],['Automation',1]],
-        agents: [['kb',2],['reasoning',1],['safety',1],['quality',1],['intent',1],['orchestrator',1]],
-        messages: [
-          {from:'user', text:'Outlook is just spinning when I hit send.'},
-          {from:'aria', text:'Outlook hanging on send usually means an auth handshake stalled. Let me check your account state first.'},
-          {from:'aria', text:'Found it — corporate cert was re-pinned this morning. Your profile has an old fingerprint cached. 30-second fix.'},
-          {from:'aria', text:'Done. Restart Outlook and try sending. Should fire right away.'}
-        ]
-      },
-      'L1-mid': {
-        title: 'L1 <span class="ap-tier-hint">· Mid ·</span> Wi-Fi disconnects every ~15 minutes', cause: 'DHCP lease conflict on guest VLAN. Reset binding.',
-        timer: '7.6s', target: '~50s', lead: 'VI DMAIC', leadCell: 'VI', stageNow: 10, stageMax: 10, stageText: 'Verified stability over 3 lease cycles',
-        agentsUnique: 6, agentsTotal: 11, layersTotal: 67,
-        tags: { industry:'real estate', role:'end_user', environment:'prod', pressure:'medium', history:'occasional', trust:'good' },
-        mix: { llmPct: 22, llmTier: 'medium', reconPct: 31, banner: 'balanced' },
-        layers: [['LLM',22],['Memory',14],['KB',12],['Reconstruction',10],['Tools',8],['Automation',7],['Vector DB',6],['RAG',6],['Agents',5],['Frontend/UI',4],['Verifier',4],['Safety',2]],
-        agents: [['reasoning',3],['kb',2],['automation',2],['intent',1],['orchestrator',1],['quality',2]],
-        messages: [
-          {from:'user', text:'Wi-Fi keeps disconnecting every 15-ish minutes.'},
-          {from:'aria', text:'~15 minute interval is suspicious — that\'s a DHCP lease pattern. Let me check your DHCP binding.'},
-          {from:'aria', text:'Two devices have a conflicting binding on the guest VLAN. Resetting your lease + clearing the conflict.'},
-          {from:'aria', text:'Done. Watching for 3 lease cycles to confirm stability before I close this.'}
-        ]
-      },
-      'L1-hard': {
-        title: 'L1 <span class="ap-tier-hint">· Hard ·</span> VPN drops intermittently on hybrid setup', cause: 'ISP route flap + idle-timeout combo. Mitigated client side; ISP ticket opened. Handoff packet to L2 with full trace.',
-        timer: '10.3s', target: '~72s', lead: 'III First Principles', leadCell: 'III', stageNow: 12, stageMax: 12, stageText: 'STAR handoff to L2 + ISP ticket',
-        agentsUnique: 10, agentsTotal: 17, layersTotal: 109,
-        tags: { industry:'finance', role:'end_user', environment:'prod', pressure:'urgent', history:'repeat', trust:'fragile' },
-        mix: { llmPct: 33, llmTier: 'dominated', reconPct: 26, banner: 'LLM-heavy ×' },
-        layers: [['LLM',33],['Memory',15.6],['Automation',9.2],['Vector DB',7.3],['Tools',7.3],['Frontend/UI',5.5],['RAG',4.6],['Agents',3.7],['Safety',3.7],['KB',3.7],['Verifier',2.8],['Reconstruction',2.8]],
-        agents: [['reasoning',4],['intent',2],['psychology',2],['kb',2],['automation',2],['orchestrator',1],['research',1],['safety',1],['escalation',1],['quality',1]],
-        messages: [
-          {from:'user', text:'VPN keeps dropping. Lost my session three times in an hour.'},
-          {from:'aria', text:'Three drops in an hour is too many — let me look. You\'ve had VPN issues twice this month, so I\'m pulling that history first.'},
-          {from:'aria', text:'Honest answer: no playbook matches this exactly. I\'m going first-principles — testing what MUST hold for VPN to stay up.'},
-          {from:'aria', text:'Running a quick ping + traceroute to the gateway. ~10 seconds. You don\'t have to do anything.'},
-          {from:'aria', text:'<strong>Two issues stacked:</strong> your ISP is flapping a route (not your fault, not in our control), AND the client\'s idle-timeout is short enough to drop on every flap. I can extend the timeout client-side to mask the ISP issue.'},
-          {from:'aria', text:'Timeout adjusted. That should hide the next 3-4 flaps. I\'m also opening a ticket with your ISP and packaging this for L2 in case it recurs — you won\'t have to re-explain.'},
-          {from:'aria', text:'<strong>STAR handoff to L2 in your name.</strong> They\'ll have my full trace, hypotheses, and what I tried. If it drops again, ping them, not me.'}
-        ]
-      },
-      'L2-easy': {
-        title: 'L2 <span class="ap-tier-hint">· Easy ·</span> SharePoint site permissions misaligned',
-        cause: 'Group inheritance broke during last sync. Re-aligned + audit-logged.',
-        timer: '6.4s', target: '~40s', lead: 'IV OKR', leadCell: 'IV', stageNow: 9, stageMax: 9, stageText: 'Audit log written + user notified',
-        agentsUnique: 5, agentsTotal: 9, layersTotal: 54,
-        tags: { industry:'professional services', role:'admin', environment:'prod', pressure:'medium', history:'first', trust:'good' },
-        mix: { llmPct: 15, llmTier: 'low', reconPct: 34, banner: 'reconstruction ✓' },
-        layers: [['LLM',15],['Memory',16],['Automation',12],['KB',10],['Reconstruction',10],['Tools',9],['Vector DB',6],['Agents',5],['Safety',5],['RAG',5],['Verifier',5],['Frontend/UI',2]],
-        agents: [['automation',3],['kb',2],['reasoning',2],['safety',1],['orchestrator',1]],
-        messages: [
-          {from:'user', text:'Three users lost access to the Sales SharePoint site after this morning\'s sync.'},
-          {from:'aria', text:'Sync broke a group inheritance link. I can re-align without revoking anyone\'s individual permissions. Doing it now.'},
-          {from:'aria', text:'Done. Audit log written with the before/after state. Users can refresh — access should be back in <30s.'}
-        ]
-      },
-      'L2-mid': {
-        title: 'L2 <span class="ap-tier-hint">· Mid ·</span> M365 mailbox migration stuck at 87%',
-        cause: 'Throttling on source tenant. Auto-resumed after 4-hour backoff window.',
-        timer: '14.2s', target: '~90s', lead: 'VII Kaizen', leadCell: 'VII', stageNow: 14, stageMax: 14, stageText: 'Migration resumed, monitoring',
-        agentsUnique: 7, agentsTotal: 13, layersTotal: 88,
-        tags: { industry:'finance', role:'admin', environment:'prod', pressure:'urgent', history:'first', trust:'fragile' },
-        mix: { llmPct: 27, llmTier: 'medium', reconPct: 24, banner: 'mixed' },
-        layers: [['LLM',27],['Memory',13],['Automation',11],['Vector DB',9],['Tools',8],['Agents',7],['RAG',7],['KB',6],['Reconstruction',5],['Verifier',4],['Safety',2],['Frontend/UI',1]],
-        agents: [['automation',3],['reasoning',2],['research',2],['orchestrator',2],['kb',2],['safety',1],['quality',1]],
-        messages: [
-          {from:'user', text:'Mailbox migration sitting at 87% for over an hour. Six pilot users.'},
-          {from:'aria', text:'Microsoft throttled the source tenant — common at this size. I\'ll trigger backoff + auto-resume.'},
-          {from:'aria', text:'Resume scheduled. ETA 4 hours due to throttle window. I\'ll watch and notify you when it crosses 95%.'}
-        ]
-      },
-      'L2-hard': {
-        title: 'L2 <span class="ap-tier-hint">· Hard ·</span> Entra Conditional Access blocking sales team after policy update',
-        cause: 'Policy targeted wrong group due to dynamic membership lag. Reverted + named-group target applied.',
-        timer: '18.7s', target: '~120s', lead: 'V Eisenhower', leadCell: 'V', stageNow: 16, stageMax: 16, stageText: 'Policy reverted + report sent to IT director',
-        agentsUnique: 9, agentsTotal: 22, layersTotal: 138,
-        tags: { industry:'manufacturing', role:'admin', environment:'prod', pressure:'urgent', history:'first', trust:'fragile' },
-        mix: { llmPct: 31, llmTier: 'dominated', reconPct: 21, banner: 'LLM-heavy ×' },
-        layers: [['LLM',31],['Memory',12],['Automation',10],['Vector DB',9],['Tools',9],['Agents',7],['RAG',6],['Safety',6],['Reconstruction',4],['Verifier',3],['Frontend/UI',2],['KB',1]],
-        agents: [['reasoning',4],['safety',3],['automation',3],['research',3],['orchestrator',2],['escalation',2],['psychology',2],['kb',2],['quality',1]],
-        messages: [
-          {from:'user', text:'Whole sales team locked out. Policy change went live an hour ago.'},
-          {from:'aria', text:'Conditional Access can hit hard during dynamic-group lag. Reverting the policy first, then re-targeting cleanly.'},
-          {from:'aria', text:'Policy reverted — sales should be back in. Now I\'m re-applying with a static named group to avoid the lag entirely.'},
-          {from:'aria', text:'Done. Full incident report ready for your director. This was a Microsoft-side lag, not your config — that\'s in the report.'}
-        ]
-      },
-      'L3-easy': {
-        title: 'L3 <span class="ap-tier-hint">· Easy ·</span> Backup job failed three nights in a row',
-        cause: 'Storage account hit quota. Increased quota + alert threshold.',
-        timer: '11.2s', target: '~60s', lead: 'VI DMAIC', leadCell: 'VI', stageNow: 11, stageMax: 11, stageText: 'Backup verified on next run',
-        agentsUnique: 6, agentsTotal: 14, layersTotal: 92,
-        tags: { industry:'healthcare', role:'tech', environment:'prod', pressure:'medium', history:'recurring', trust:'good' },
-        mix: { llmPct: 19, llmTier: 'low', reconPct: 32, banner: 'reconstruction ✓' },
-        layers: [['LLM',19],['Memory',14],['Automation',13],['Vector DB',10],['Tools',9],['KB',8],['Reconstruction',8],['Agents',6],['RAG',5],['Safety',4],['Verifier',3],['Frontend/UI',1]],
-        agents: [['research',3],['reasoning',3],['automation',3],['kb',2],['orchestrator',2],['quality',1]],
-        messages: [
-          {from:'user', text:'Backup job has failed three nights in a row. Auditor breathing down my neck.'},
-          {from:'aria', text:'Three consecutive failures with no infrastructure changes usually = quota or credential. Pulling backup logs first.'},
-          {from:'aria', text:'Storage account at 99.2% capacity. Increasing quota + setting alert at 85% so this never reaches your dashboard again. Backup should run tonight cleanly.'}
-        ]
-      },
-      'L3-mid': {
-        title: 'L3 <span class="ap-tier-hint">· Mid ·</span> AD replication failing between two sites',
-        cause: 'DNS scavenging removed stale records too aggressively. Restored + tuned scavenging window.',
-        timer: '24.5s', target: '~180s', lead: 'VIII TOC', leadCell: 'VIII', stageNow: 19, stageMax: 19, stageText: 'Replication confirmed bi-directional',
-        agentsUnique: 8, agentsTotal: 26, layersTotal: 167,
-        tags: { industry:'gov / public sector', role:'tech', environment:'prod', pressure:'urgent', history:'first', trust:'fragile' },
-        mix: { llmPct: 36, llmTier: 'dominated', reconPct: 18, banner: 'LLM-heavy ×' },
-        layers: [['LLM',36],['Memory',11],['Vector DB',10],['Automation',9],['Tools',8],['Agents',7],['RAG',6],['Safety',5],['Research',4],['Verifier',2],['Reconstruction',1],['KB',1]],
-        agents: [['reasoning',6],['research',5],['safety',4],['automation',3],['orchestrator',3],['kb',2],['quality',2],['escalation',1]],
-        messages: [
-          {from:'user', text:'AD replication between Toronto and Calgary is failing. Started 2 hours ago.'},
-          {from:'aria', text:'This is an L3 pattern — I\'m starting with constraints theory. What\'s the slowest link in your replication chain? Pulling DNS + KCC status.'},
-          {from:'aria', text:'DNS scavenging cleaned out records the KCC was still relying on. Restoring records + tuning the scavenging window so this doesn\'t recur.'},
-          {from:'aria', text:'Replication verified bi-directional. Postmortem packaged for your team — focuses on the DNS scavenging policy that was too aggressive.'}
-        ]
-      },
-      'L3-hard': {
-        title: 'L3 <span class="ap-tier-hint">· Hard ·</span> Suspected ransomware-style file rename across SharePoint library',
-        cause: 'False alarm — legitimate bulk rename script run by a vendor. Verified safe + alerted vendor protocol gap.',
-        timer: '47.3s', target: '~300s', lead: 'IX AAR', leadCell: 'IX', stageNow: 24, stageMax: 24, stageText: 'Incident closed: false-positive, AAR written',
-        agentsUnique: 12, agentsTotal: 38, layersTotal: 244,
-        tags: { industry:'finance', role:'tech / security', environment:'prod', pressure:'critical', history:'first', trust:'fragile' },
-        mix: { llmPct: 42, llmTier: 'dominated', reconPct: 16, banner: 'LLM-heavy ×' },
-        layers: [['LLM',42],['Memory',10],['Safety',9],['Vector DB',8],['Tools',7],['Agents',6],['Automation',6],['Research',4],['RAG',3],['Verifier',2],['Reconstruction',2],['KB',1]],
-        agents: [['safety',8],['reasoning',7],['research',5],['escalation',4],['orchestrator',4],['automation',3],['psychology',2],['quality',2],['kb',1],['intent',1],['quality',1]],
-        messages: [
-          {from:'user', text:'Hundreds of files renamed across the Finance SharePoint in the last 10 minutes. Looks like ransomware.'},
-          {from:'aria', text:'This is critical-tier. Locking the library to read-only first to stop further changes. Pulling audit log + checking source IPs.'},
-          {from:'aria', text:'All renames came from one authenticated session — your audit vendor\'s service account. Pattern matches a bulk re-tagging script, not encryption. No file contents changed.'},
-          {from:'aria', text:'False positive confirmed. Files are safe. Re-opening the library write-access. Sending an AAR with the gap: vendor ran bulk-rename without notifying your team. Recommend tightening their service-account approval flow.'}
-        ]
-      }
-    };
+<script>
+(function () {
+  'use strict';
 
-    let currentTier = 'L1';
-    let currentDiff = 'hard';
+  // ============= DEFAULT (WAITING) STATE =============
+  const DEFAULT_LAYERS = [
+    ['LLM',           'thinking · reasoning · behavior', 0],
+    ['KB',            'curated articles', 0],
+    ['RAG',           'retrieval · search', 0],
+    ['Vector DB',     'semantic memory · index', 0],
+    ['Memory',        'short · long · procedural · pattern', 0],
+    ['Agents',        'specialized workers', 0],
+    ['Automation',    'workflows · n8n', 0],
+    ['Tools',         'abilities · actions', 0],
+    ['Safety',        'guardrails · verification', 0],
+    ['Evaluation',    'self-checking · testing', 0],
+    ['Storage',       'files · databases · archives', 0],
+    ['Frontend/UI',   'user interaction', 0]
+  ];
 
-    // ============= RENDER =============
-    function renderScenario(key) {
-      const s = SCENARIOS[key];
-      if (!s) return;
-
-      // title + tags
-      document.getElementById('apScenarioTitle').innerHTML = s.title;
-      const tagRow = document.querySelector('.ap-tag-row');
-      tagRow.innerHTML = '';
-      Object.entries(s.tags).forEach(([k,v]) => {
-        const span = document.createElement('span');
-        span.className = 'ap-tag';
-        span.innerHTML = `<span class="ap-tag-key">${k}</span><span class="ap-tag-val">${v}</span>`;
-        tagRow.appendChild(span);
-      });
-      const lead = document.createElement('span');
-      lead.className = 'ap-tag ap-tag-lead';
-      lead.innerHTML = `<span class="ap-tag-key">lead</span><span class="ap-tag-val">${s.lead}</span>`;
-      tagRow.appendChild(lead);
-
-      // resolved card
-      document.getElementById('apResolvedTime').textContent = s.timer;
-      document.getElementById('apResolvedCause').innerHTML = `<strong style="color:var(--ap-text);">Cause:</strong> ${s.cause}`;
-      const mixRow = document.querySelector('.ap-mix-row');
-      const reconClass = s.mix.banner.includes('×') || s.mix.banner.includes('LLM-heavy') ? 'warn' : 'neutral';
-      const sign = s.mix.banner.includes('×') ? '×' : '✓';
-      mixRow.innerHTML = `
-        <span class="ap-chip-mix neutral">LLM ${s.mix.llmTier} <span class="v">${s.mix.llmPct}%</span></span>
-        <span class="ap-chip-mix ${reconClass}"><span class="x">${sign}</span>Reconstructive <span class="v">${s.mix.reconPct}%</span> vs LLM <span class="v">${s.mix.llmPct}%</span> <span class="x">${sign}</span> ${s.mix.banner}</span>
+  function renderEmptyLayers() {
+    const rows = document.getElementById('apLayerRows');
+    rows.innerHTML = '';
+    DEFAULT_LAYERS.forEach(([name, sub, pct]) => {
+      const row = document.createElement('div');
+      row.className = 'ap-layer-row';
+      row.innerHTML = `
+        <div><div class="ap-layer-name">${name}</div><div class="ap-layer-sub">${sub}</div></div>
+        <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:0%"></div></div>
+        <div class="ap-layer-pct">0.0%</div>
       `;
+      rows.appendChild(row);
+    });
+  }
 
-      // timer
-      document.getElementById('apTimer').textContent = s.timer;
-      document.querySelector('.ap-timer').innerHTML = `<span class="ap-timer-val" id="apTimer">${s.timer}</span> <span class="mono"> / ${s.target} target</span>`;
+  // ============= DEMO SCENARIOS =============
+  const SCENARIOS = {
+    'L1-easy': { title:'L1 <span class="ap-tier-hint">· Easy ·</span> Outlook won\\'t send', cause:'Mail server blocked corporate cert. Re-pinned + cleared profile.', timer:'4.1s', target:'~30s', lead:'I 5 W\\'s', leadCell:'I', stageNow:8, stageMax:8, stageText:'Confirm-resolve loop closed', agentsUnique:4, agentsTotal:7, layersTotal:38, tags:{industry:'professional services',role:'end_user',environment:'prod',pressure:'low',history:'first',trust:'good'}, mix:{llmPct:12,llmTier:'low',reconPct:38,banner:'reconstruction-heavy ✓'}, layers:[['LLM',12],['Memory',18],['KB',22],['Evaluation',8],['Tools',6],['Frontend/UI',5],['Storage',12],['Safety',4],['RAG',3],['Agents',2],['Vector DB',2],['Automation',1]], agents:[['kb',2],['reasoning',1],['safety',1],['quality',1],['intent',1],['orchestrator',1]], messages:[
+      {from:'user',text:'Outlook is just spinning when I hit send.'},
+      {from:'aria',text:'Outlook hanging on send usually means an auth handshake stalled. Let me check your account state first.'},
+      {from:'aria',text:'Found it — corporate cert was re-pinned this morning. Your profile has an old fingerprint cached. 30-second fix.'},
+      {from:'aria',text:'Done. Restart Outlook and try sending. Should fire right away.'}
+    ]},
+    'L1-mid': { title:'L1 <span class="ap-tier-hint">· Mid ·</span> Outlook slow after Windows update', cause:'KB5xxxxx update corrupted search index. Index rebuild applied. Verified fast search.', timer:'7.6s', target:'~38s', lead:'I 5 W\\'s', leadCell:'I', stageNow:11, stageMax:11, stageText:'response · STAR summary', agentsUnique:9, agentsTotal:16, layersTotal:101, tags:{industry:'smb',role:'end_user',environment:'prod',pressure:'busy',history:'first_time',trust:'established'}, mix:{llmPct:22,llmTier:'dominated',reconPct:29,banner:'spine carried it ✓'}, layers:[['LLM',21.8],['Memory',16.8],['Evaluation',9.9],['Automation',8.9],['Safety',8.9],['KB',6.9],['Tools',6.9],['Frontend/UI',6.9],['Vector DB',5.0],['RAG',4.0],['Agents',2.5],['Storage',1.5]], agents:[['reasoning',4],['intent',2],['kb',2],['safety',2],['automation',2],['psychology',1],['learning',1],['quality',1],['observability',1]], messages:[
+      {from:'user',text:'Outlook is crawling since last night. Search is the worst.'},
+      {from:'aria',text:'Annoying — sorry about that. Quick question so I don\\'t waste your time: did Windows install any updates overnight?'},
+      {from:'user',text:'Yeah, I saw a restart prompt this morning.'},
+      {from:'aria',text:'That tracks. The update class touches the search index service. I\\'ve seen this exact pattern — three other tickets this month had the same trigger.'},
+      {from:'aria',text:'<strong>My read (high confidence):</strong> the search index got corrupted during the post-update service restart. Fix is a rebuild of the index — takes about 90 seconds and is fully reversible.'},
+      {from:'aria',text:'Starting the rebuild now. Outlook may flicker once.'},
+      {from:'aria',text:'Rebuild complete. Try a quick search to confirm — should be near-instant.'},
+      {from:'user',text:'Way faster. Thanks.'},
+      {from:'aria',text:'<strong>Summary:</strong> post-update index corruption — rebuilt the search index — verified responsive. I\\'ve strengthened the pattern memory so next time it\\'ll be a first-pass candidate.'}
+    ]},
+    'L1-hard': { title:'L1 <span class="ap-tier-hint">· Hard ·</span> VPN drops intermittently on hybrid setup', cause:'ISP route flap + idle-timeout combo. Mitigated client side; ISP ticket opened. Handoff packet to L2 with full trace.', timer:'10.3s', target:'~72s', lead:'III First Principles', leadCell:'III', stageNow:12, stageMax:12, stageText:'STAR handoff to L2 + ISP ticket', agentsUnique:10, agentsTotal:17, layersTotal:109, tags:{industry:'finance',role:'end_user',environment:'prod',pressure:'urgent',history:'repeat',trust:'fragile'}, mix:{llmPct:33,llmTier:'dominated',reconPct:26,banner:'LLM-heavy ×'}, layers:[['LLM',33],['Memory',15.6],['Automation',9.2],['Vector DB',7.3],['Tools',7.3],['Frontend/UI',5.5],['RAG',4.6],['Agents',3.7],['Safety',3.7],['KB',3.7],['Evaluation',3.7],['Storage',2.7]], agents:[['reasoning',4],['intent',2],['psychology',2],['kb',2],['automation',2],['orchestrator',1],['research',1],['safety',1],['escalation',1],['quality',1]], messages:[
+      {from:'user',text:'VPN keeps dropping. Lost my session three times in an hour.'},
+      {from:'aria',text:'Three drops in an hour is too many — let me look. You\\'ve had VPN issues twice this month, so I\\'m pulling that history first.'},
+      {from:'aria',text:'Honest answer: no playbook matches this exactly. I\\'m going first-principles — testing what MUST hold for VPN to stay up.'},
+      {from:'aria',text:'Running a quick ping + traceroute to the gateway. ~10 seconds. You don\\'t have to do anything.'},
+      {from:'aria',text:'<strong>Two issues stacked:</strong> your ISP is flapping a route (not your fault, not in our control), AND the client\\'s idle-timeout is short enough to drop on every flap. I can extend the timeout client-side to mask the ISP issue.'},
+      {from:'aria',text:'Timeout adjusted. That should hide the next 3-4 flaps. I\\'m also opening a ticket with your ISP and packaging this for L2 in case it recurs — you won\\'t have to re-explain.'},
+      {from:'aria',text:'<strong>STAR handoff to L2 in your name.</strong> They\\'ll have my full trace, hypotheses, and what I tried. If it drops again, ping them, not me.'}
+    ]},
+    'L2-easy':{title:'L2 <span class="ap-tier-hint">· Easy ·</span> SharePoint permissions misaligned',cause:'Group inheritance broke during sync. Re-aligned + audit-logged.',timer:'6.4s',target:'~40s',lead:'IV OKR',leadCell:'IV',stageNow:9,stageMax:9,stageText:'Audit log written + user notified',agentsUnique:5,agentsTotal:9,layersTotal:54,tags:{industry:'professional services',role:'admin',environment:'prod',pressure:'medium',history:'first',trust:'good'},mix:{llmPct:15,llmTier:'low',reconPct:34,banner:'reconstruction ✓'},layers:[['LLM',15],['Memory',16],['Automation',12],['KB',10],['Storage',10],['Tools',9],['Vector DB',6],['Agents',5],['Safety',5],['RAG',5],['Evaluation',5],['Frontend/UI',2]],agents:[['automation',3],['kb',2],['reasoning',2],['safety',1],['orchestrator',1]],messages:[{from:'user',text:'Three users lost access to the Sales SharePoint site after this morning\\'s sync.'},{from:'aria',text:'Sync broke a group inheritance link. I can re-align without revoking anyone\\'s individual permissions. Doing it now.'},{from:'aria',text:'Done. Audit log written with the before/after state. Users can refresh — access should be back in <30s.'}]},
+    'L2-mid':{title:'L2 <span class="ap-tier-hint">· Mid ·</span> M365 mailbox migration stuck at 87%',cause:'Throttling on source tenant. Auto-resumed after backoff window.',timer:'14.2s',target:'~90s',lead:'VII Kaizen',leadCell:'VII',stageNow:14,stageMax:14,stageText:'Migration resumed, monitoring',agentsUnique:7,agentsTotal:13,layersTotal:88,tags:{industry:'finance',role:'admin',environment:'prod',pressure:'urgent',history:'first',trust:'fragile'},mix:{llmPct:27,llmTier:'medium',reconPct:24,banner:'mixed'},layers:[['LLM',27],['Memory',13],['Automation',11],['Vector DB',9],['Tools',8],['Agents',7],['RAG',7],['KB',6],['Storage',5],['Evaluation',4],['Safety',2],['Frontend/UI',1]],agents:[['automation',3],['reasoning',2],['research',2],['orchestrator',2],['kb',2],['safety',1],['quality',1]],messages:[{from:'user',text:'Mailbox migration sitting at 87% for over an hour. Six pilot users.'},{from:'aria',text:'Microsoft throttled the source tenant — common at this size. I\\'ll trigger backoff + auto-resume.'},{from:'aria',text:'Resume scheduled. ETA 4 hours due to throttle window. I\\'ll watch and notify you when it crosses 95%.'}]},
+    'L2-hard':{title:'L2 <span class="ap-tier-hint">· Hard ·</span> Entra Conditional Access blocking sales team',cause:'Policy targeted wrong group due to dynamic membership lag. Reverted + named-group target applied.',timer:'18.7s',target:'~120s',lead:'V Eisenhower',leadCell:'V',stageNow:16,stageMax:16,stageText:'Policy reverted + report sent to IT director',agentsUnique:9,agentsTotal:22,layersTotal:138,tags:{industry:'manufacturing',role:'admin',environment:'prod',pressure:'urgent',history:'first',trust:'fragile'},mix:{llmPct:31,llmTier:'dominated',reconPct:21,banner:'LLM-heavy ×'},layers:[['LLM',31],['Memory',12],['Automation',10],['Vector DB',9],['Tools',9],['Agents',7],['RAG',6],['Safety',6],['Storage',4],['Evaluation',3],['Frontend/UI',2],['KB',1]],agents:[['reasoning',4],['safety',3],['automation',3],['research',3],['orchestrator',2],['escalation',2],['psychology',2],['kb',2],['quality',1]],messages:[{from:'user',text:'Whole sales team locked out. Policy change went live an hour ago.'},{from:'aria',text:'Conditional Access can hit hard during dynamic-group lag. Reverting the policy first, then re-targeting cleanly.'},{from:'aria',text:'Policy reverted — sales should be back in. Now I\\'m re-applying with a static named group to avoid the lag entirely.'},{from:'aria',text:'Done. Full incident report ready for your director. This was a Microsoft-side lag, not your config — that\\'s in the report.'}]},
+    'L3-easy':{title:'L3 <span class="ap-tier-hint">· Easy ·</span> Backup job failed three nights in a row',cause:'Storage account hit quota. Increased quota + alert threshold.',timer:'11.2s',target:'~60s',lead:'VI DMAIC',leadCell:'VI',stageNow:11,stageMax:11,stageText:'Backup verified on next run',agentsUnique:6,agentsTotal:14,layersTotal:92,tags:{industry:'healthcare',role:'tech',environment:'prod',pressure:'medium',history:'recurring',trust:'good'},mix:{llmPct:19,llmTier:'low',reconPct:32,banner:'reconstruction ✓'},layers:[['LLM',19],['Memory',14],['Automation',13],['Vector DB',10],['Tools',9],['KB',8],['Storage',8],['Agents',6],['RAG',5],['Safety',4],['Evaluation',3],['Frontend/UI',1]],agents:[['research',3],['reasoning',3],['automation',3],['kb',2],['orchestrator',2],['quality',1]],messages:[{from:'user',text:'Backup job has failed three nights in a row. Auditor breathing down my neck.'},{from:'aria',text:'Three consecutive failures with no infrastructure changes usually = quota or credential. Pulling backup logs first.'},{from:'aria',text:'Storage account at 99.2% capacity. Increasing quota + setting alert at 85% so this never reaches your dashboard again. Backup should run tonight cleanly.'}]},
+    'L3-mid':{title:'L3 <span class="ap-tier-hint">· Mid ·</span> AD replication failing between two sites',cause:'DNS scavenging removed stale records too aggressively. Restored + tuned scavenging window.',timer:'24.5s',target:'~180s',lead:'VIII TOC',leadCell:'VIII',stageNow:19,stageMax:19,stageText:'Replication confirmed bi-directional',agentsUnique:8,agentsTotal:26,layersTotal:167,tags:{industry:'gov / public sector',role:'tech',environment:'prod',pressure:'urgent',history:'first',trust:'fragile'},mix:{llmPct:36,llmTier:'dominated',reconPct:18,banner:'LLM-heavy ×'},layers:[['LLM',36],['Memory',11],['Vector DB',10],['Automation',9],['Tools',8],['Agents',7],['RAG',6],['Safety',5],['Storage',4],['Evaluation',2],['KB',1],['Frontend/UI',1]],agents:[['reasoning',6],['research',5],['safety',4],['automation',3],['orchestrator',3],['kb',2],['quality',2],['escalation',1]],messages:[{from:'user',text:'AD replication between Toronto and Calgary is failing. Started 2 hours ago.'},{from:'aria',text:'This is an L3 pattern — I\\'m starting with constraints theory. What\\'s the slowest link in your replication chain? Pulling DNS + KCC status.'},{from:'aria',text:'DNS scavenging cleaned out records the KCC was still relying on. Restoring records + tuning the scavenging window so this doesn\\'t recur.'},{from:'aria',text:'Replication verified bi-directional. Postmortem packaged for your team — focuses on the DNS scavenging policy that was too aggressive.'}]},
+    'L3-hard':{title:'L3 <span class="ap-tier-hint">· Hard ·</span> Suspected ransomware-style file rename in SharePoint',cause:'False alarm — vendor bulk-rename script. Verified safe + flagged vendor protocol gap.',timer:'47.3s',target:'~300s',lead:'IX AAR',leadCell:'IX',stageNow:24,stageMax:24,stageText:'Incident closed: false-positive, AAR written',agentsUnique:12,agentsTotal:38,layersTotal:244,tags:{industry:'finance',role:'tech / security',environment:'prod',pressure:'critical',history:'first',trust:'fragile'},mix:{llmPct:42,llmTier:'dominated',reconPct:16,banner:'LLM-heavy ×'},layers:[['LLM',42],['Memory',10],['Safety',9],['Vector DB',8],['Tools',7],['Agents',6],['Automation',6],['Storage',4],['RAG',3],['Evaluation',2],['KB',2],['Frontend/UI',1]],agents:[['safety',8],['reasoning',7],['research',5],['escalation',4],['orchestrator',4],['automation',3],['psychology',2],['quality',2],['kb',1],['intent',1]],messages:[{from:'user',text:'Hundreds of files renamed across the Finance SharePoint in the last 10 minutes. Looks like ransomware.'},{from:'aria',text:'This is critical-tier. Locking the library to read-only first to stop further changes. Pulling audit log + checking source IPs.'},{from:'aria',text:'All renames came from one authenticated session — your audit vendor\\'s service account. Pattern matches a bulk re-tagging script, not encryption. No file contents changed.'},{from:'aria',text:'False positive confirmed. Files are safe. Re-opening the library write-access. Sending an AAR with the gap: vendor ran bulk-rename without notifying your team. Recommend tightening their service-account approval flow.'}]}
+  };
 
-      // stage
-      document.getElementById('apStageNow').textContent = s.stageNow;
+  // ============= MODE STATE =============
+  const url = new URLSearchParams(window.location.search);
+  const liveSessionId = url.get('sid');
+  let mode = liveSessionId ? 'live' : 'waiting';
+  let currentTier = 'L1';
+  let currentDiff = 'mid';
+  let simAnimation = null;
+  let pollHandle = null;
+  let pollSince = 0;
+
+  // ============= INITIAL RENDER =============
+  renderEmptyLayers();
+  if (mode === 'live') {
+    enterLiveMode(liveSessionId);
+  } else {
+    enterWaitingMode();
+  }
+
+  // ============= WAITING MODE =============
+  function enterWaitingMode() {
+    mode = 'waiting';
+    document.getElementById('apTicketBar').classList.add('hidden-block');
+    document.getElementById('apScenarioBar').style.display = 'flex';
+    document.getElementById('apScenarioTitleMain').textContent = 'no live session';
+    document.getElementById('apScenarioTitle').querySelector('.ap-tier-hint').textContent = 'Waiting for ARIA session — ';
+    document.getElementById('apModeTag').textContent = 'demo · waiting';
+    document.getElementById('apStatusTag').textContent = 'waiting';
+    document.getElementById('apStageText').textContent = 'waiting — press start';
+    document.getElementById('apStageNow').textContent = '0';
+    document.getElementById('apStageMax').textContent = '11';
+    document.getElementById('apStageProgress').style.width = '0%';
+    document.getElementById('apAgentsUnique').textContent = '0';
+    document.getElementById('apAgentsTotal').textContent = '0';
+    document.getElementById('apAgentsGrid').innerHTML = '<span class="ap-agents-empty">none yet — press start</span>';
+    document.getElementById('apFwLead').textContent = '—';
+    document.querySelectorAll('.ap-fw-cell').forEach(c => c.classList.remove('active'));
+    document.getElementById('apLayersTotal').textContent = '0';
+    renderEmptyLayers();
+    document.getElementById('apMsgCount').textContent = '0 messages';
+    document.getElementById('apConvStream').innerHTML = `
+      <div class="ap-conv-waiting" id="apConvWaiting">
+        Waiting for ARIA session.<br>
+        <a href="/aria" style="color:var(--ap-teal);text-decoration:none;border-bottom:1px solid var(--ap-teal);">Open /aria</a>  to start one, or press START SIMULATION above for a demo.
+      </div>`;
+    document.getElementById('apTimer').textContent = '0ms';
+    document.getElementById('apStatusCard').classList.add('hidden-block');
+    document.getElementById('apTagRow').innerHTML = `
+      <span class="ap-tag"><span class="ap-tag-key">mode</span><span class="ap-tag-val">demo · waiting</span></span>
+      <span class="ap-tag"><span class="ap-tag-key">status</span><span class="ap-tag-val">waiting</span></span>`;
+  }
+
+  // ============= DEMO MODE — START SIMULATION =============
+  function startDemoSimulation() {
+    stopAnyAnimation();
+    const key = currentTier + '-' + currentDiff;
+    const s = SCENARIOS[key];
+    if (!s) return;
+
+    // Set up title + tags as demo
+    document.getElementById('apScenarioTitle').innerHTML = s.title;
+    const tagRow = document.getElementById('apTagRow');
+    tagRow.innerHTML = '';
+    const modeBadge = document.createElement('span');
+    modeBadge.className = 'ap-tag';
+    modeBadge.innerHTML = `<span class="ap-tag-key">mode</span><span class="ap-tag-val" style="color:var(--ap-amber)">demo · running</span>`;
+    tagRow.appendChild(modeBadge);
+    Object.entries(s.tags).forEach(([k, v]) => {
+      const span = document.createElement('span');
+      span.className = 'ap-tag';
+      span.innerHTML = `<span class="ap-tag-key">${k}</span><span class="ap-tag-val">${v}</span>`;
+      tagRow.appendChild(span);
+    });
+    const lead = document.createElement('span');
+    lead.className = 'ap-tag ap-tag-lead';
+    lead.innerHTML = `<span class="ap-tag-key">lead</span><span class="ap-tag-val">${s.lead}</span>`;
+    tagRow.appendChild(lead);
+
+    // Frameworks
+    document.querySelectorAll('.ap-fw-cell').forEach(c => c.classList.toggle('active', c.dataset.fw === s.leadCell));
+    document.getElementById('apFwLead').textContent = s.lead;
+
+    // Reset timer & start animating
+    const totalMs = (parseFloat(s.timer) * 1000) || 7600;
+    const startTs = Date.now();
+    document.getElementById('apTimer').textContent = '0ms';
+    document.getElementById('apTargetTimer').textContent = s.target;
+
+    // Animate messages
+    const stream = document.getElementById('apConvStream');
+    stream.innerHTML = '';
+    let msgIdx = 0;
+
+    function pushNextMsg() {
+      if (msgIdx >= s.messages.length) return;
+      const m = s.messages[msgIdx++];
+      const wrap = document.createElement('div');
+      wrap.className = 'ap-msg ' + m.from;
+      wrap.innerHTML = `<span class="ap-msg-from ${m.from}">${m.from.toUpperCase()}</span><div class="ap-msg-bubble">${m.text}</div>`;
+      stream.appendChild(wrap);
+      stream.scrollTop = stream.scrollHeight;
+      document.getElementById('apMsgCount').textContent = msgIdx + ' messages';
+    }
+
+    // Animate timer + stages + layers
+    const ticker = setInterval(() => {
+      const elapsed = Date.now() - startTs;
+      if (elapsed > totalMs) {
+        clearInterval(ticker);
+        completeDemo(s, totalMs);
+        return;
+      }
+      const t = elapsed / 1000;
+      document.getElementById('apTimer').textContent = t < 1 ? Math.round(elapsed) + 'ms' : t.toFixed(1) + 's';
+      // Stage progress
+      const stagePct = elapsed / totalMs;
+      document.getElementById('apStageProgress').style.width = (stagePct * 100) + '%';
+      document.getElementById('apStageNow').textContent = Math.min(s.stageMax, Math.ceil(stagePct * s.stageMax));
       document.getElementById('apStageMax').textContent = s.stageMax;
-      document.getElementById('apStageText').textContent = s.stageText;
-      document.getElementById('apStageProgress').style.width = (s.stageNow / s.stageMax * 100) + '%';
+      const labels = ['intent + triage', 'reasoning · KB lookup', 'evidence gather', 'response · verification', s.stageText];
+      document.getElementById('apStageText').textContent = labels[Math.min(labels.length - 1, Math.floor(stagePct * labels.length))];
+      // Agents grow
+      const agentsGoal = s.agentsTotal;
+      const agentsNow = Math.ceil(stagePct * agentsGoal);
+      const agentsUnique = Math.min(s.agentsUnique, Math.ceil(stagePct * s.agentsUnique));
+      document.getElementById('apAgentsUnique').textContent = agentsUnique;
+      document.getElementById('apAgentsTotal').textContent = agentsNow;
+      // Layers grow
+      animateLayers(s.layers, stagePct);
+      document.getElementById('apLayersTotal').textContent = Math.ceil(stagePct * s.layersTotal);
+    }, 80);
+    simAnimation = ticker;
 
-      // agents
-      document.getElementById('apAgentsUnique').textContent = s.agentsUnique;
-      document.getElementById('apAgentsTotal').textContent = s.agentsTotal;
+    // Push messages over the duration
+    const msgInterval = Math.max(400, totalMs / s.messages.length);
+    let i = 0;
+    const msgTicker = setInterval(() => {
+      pushNextMsg();
+      i++;
+      if (i >= s.messages.length) clearInterval(msgTicker);
+    }, msgInterval);
+
+    // Render agents at half-way
+    setTimeout(() => {
       const agentsGrid = document.getElementById('apAgentsGrid');
       agentsGrid.innerHTML = '';
-      s.agents.forEach(([name, count]) => {
-        const c = document.createElement('span');
-        c.className = 'ap-chip-agent';
-        c.innerHTML = `${name} <span class="ap-chip-count">×${count}</span>`;
-        agentsGrid.appendChild(c);
+      s.agents.forEach(([n, c]) => {
+        const span = document.createElement('span');
+        span.className = 'ap-chip-agent';
+        span.innerHTML = `${n} <span class="ap-chip-count">×${c}</span>`;
+        agentsGrid.appendChild(span);
       });
+    }, totalMs * 0.4);
+  }
 
-      // frameworks
-      document.getElementById('apFwLead').textContent = s.lead;
-      document.querySelectorAll('.ap-fw-cell').forEach(c => c.classList.toggle('active', c.dataset.fw === s.leadCell));
+  function animateLayers(layerData, pct) {
+    const layerSubs = {LLM:'thinking · reasoning · behavior',Memory:'short · long · procedural · pattern',Automation:'workflows · n8n','Vector DB':'semantic memory · index',Tools:'abilities · actions','Frontend/UI':'user interaction',RAG:'retrieval · search',Agents:'specialized workers',Safety:'guardrails · verification',KB:'curated articles',Evaluation:'self-checking · testing',Storage:'files · databases · archives',Research:'fact validation'};
+    const rows = document.getElementById('apLayerRows');
+    rows.innerHTML = '';
+    layerData.forEach(([n, p]) => {
+      const curP = (p * pct).toFixed(1);
+      const row = document.createElement('div');
+      row.className = 'ap-layer-row';
+      row.innerHTML = `<div><div class="ap-layer-name">${n}</div><div class="ap-layer-sub">${layerSubs[n] || ''}</div></div>
+        <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:${Math.min(100, curP * 2.5)}%"></div></div>
+        <div class="ap-layer-pct">${curP}%</div>`;
+      rows.appendChild(row);
+    });
+  }
 
-      // layers
-      document.getElementById('apLayersTotal').textContent = s.layersTotal;
-      const layerRows = document.getElementById('apLayerRows');
-      layerRows.innerHTML = '';
-      const layerSubs = {
-        'LLM':'thinking · reasoning · behavior',
-        'Memory':'short · long · procedural · pattern',
-        'Automation':'workflows · n8n',
-        'Vector DB':'semantic memory · index',
-        'Tools':'abilities · actions',
-        'Frontend/UI':'user interaction',
-        'RAG':'retrieval · search',
-        'Agents':'specialized workers',
-        'Safety':'guardrails · gates',
-        'KB':'curated articles',
-        'Verifier':'5-pass cognition',
-        'Reconstruction':'causal walker',
-        'Research':'fact validation'
-      };
-      s.layers.forEach(([name, pct]) => {
+  function completeDemo(s, totalMs) {
+    // Show resolved card
+    const card = document.getElementById('apStatusCard');
+    card.classList.remove('hidden-block');
+    document.getElementById('apStatusBadge').textContent = '✓ RESOLVED';
+    document.getElementById('apStatusBadge').className = 'ap-resolved-badge';
+    document.getElementById('apStatusTime').textContent = s.timer;
+    document.getElementById('apStatusTarget').textContent = s.target;
+    document.getElementById('apStatusCause').innerHTML = `<strong style="color:var(--ap-text);">Cause:</strong> ${s.cause}`;
+    document.getElementById('apStatusMix').innerHTML = `
+      <span class="ap-chip-mix neutral">LLM ${s.mix.llmTier} <span class="v">${s.mix.llmPct}%</span></span>
+      <span class="ap-chip-mix ${s.mix.banner.includes('×') ? 'warn' : 'neutral'}">Reconstructive <span class="v">${s.mix.reconPct}%</span> vs LLM <span class="v">${s.mix.llmPct}%</span> ${s.mix.banner}</span>`;
+    document.getElementById('apTimer').textContent = s.timer;
+    document.getElementById('apStageProgress').style.width = '100%';
+    document.getElementById('apStageNow').textContent = s.stageMax;
+    document.getElementById('apStageText').textContent = s.stageText;
+  }
+
+  function stopAnyAnimation() {
+    if (simAnimation) { clearInterval(simAnimation); simAnimation = null; }
+  }
+
+  // ============= LIVE MODE =============
+  function enterLiveMode(sid) {
+    mode = 'live';
+    document.getElementById('apScenarioBar').style.display = 'none';
+    document.getElementById('apTicketBar').classList.remove('hidden-block');
+    document.getElementById('apStatusCard').classList.add('hidden-block');
+    document.getElementById('apMsgCount').textContent = '0 messages';
+    document.getElementById('apConvStream').innerHTML = '<div class="ap-conv-waiting">Connecting to live session ' + sid + '…</div>';
+    pollSince = 0;
+    pollLive(sid);
+    pollHandle = setInterval(() => pollLive(sid), 1500);
+  }
+
+  async function pollLive(sid) {
+    try {
+      const r = await fetch('/.netlify/functions/aperture-session?sid=' + encodeURIComponent(sid) + '&since=' + pollSince, { cache: 'no-store' });
+      if (!r.ok) {
+        if (r.status === 404) {
+          document.getElementById('apConvStream').innerHTML = '<div class="ap-conv-waiting" style="color:var(--ap-amber)">Session not found.<br>Start a new one at <a href="/aria" style="color:var(--ap-teal);">/aria</a>.</div>';
+          clearInterval(pollHandle);
+        }
+        return;
+      }
+      const data = await r.json();
+      pollSince = data.since || pollSince;
+      renderLive(data);
+      if (data.meta && (data.meta.status === 'resolved' || data.meta.status === 'escalated')) {
+        clearInterval(pollHandle);
+      }
+    } catch (e) {
+      // silent retry
+    }
+  }
+
+  function renderLive(data) {
+    const meta = data.meta || {};
+    const derived = meta.derived || {};
+    const user = meta.user || {};
+    const status = meta.status || 'active';
+
+    // Ticket bar
+    document.getElementById('apTicketVal').textContent = meta.ticket || '—';
+    document.getElementById('apTicketUser').textContent = ((user.firstName||'') + ' ' + (user.lastName||'')).trim() || '—';
+    const statusEl = document.getElementById('apTicketStatus');
+    if (status === 'active') { statusEl.textContent = '● LIVE'; statusEl.className = 'live mono ap-pulse'; statusEl.style.color = 'var(--ap-green)'; }
+    else if (status === 'resolved') { statusEl.textContent = '✓ RESOLVED'; statusEl.className = 'live mono'; statusEl.style.color = 'var(--ap-green)'; }
+    else if (status === 'escalated') { statusEl.textContent = '⚠ ESCALATED'; statusEl.className = 'live mono'; statusEl.style.color = 'var(--ap-amber)'; }
+
+    // Title + tags
+    const cls = meta.classification || {};
+    const titleSubject = (meta.userIssue || (data.events && data.events.find(e => e.type === 'message_user')) || {});
+    const issueText = typeof titleSubject === 'string' ? titleSubject : (titleSubject.payload && titleSubject.payload.text) || 'Active session';
+    document.getElementById('apScenarioTitle').innerHTML = `${cls.tier || ''} <span class="ap-tier-hint">· ${cls.difficulty || 'classifying'} ·</span> ${escapeHtml(issueText.slice(0, 80))}`;
+    const tagRow = document.getElementById('apTagRow');
+    tagRow.innerHTML = '';
+    const modeBadge = document.createElement('span');
+    modeBadge.className = 'ap-tag';
+    modeBadge.innerHTML = `<span class="ap-tag-key">mode</span><span class="ap-tag-val" style="color:var(--ap-green)">live</span>`;
+    tagRow.appendChild(modeBadge);
+    const statusTag = document.createElement('span');
+    statusTag.className = 'ap-tag';
+    statusTag.innerHTML = `<span class="ap-tag-key">status</span><span class="ap-tag-val">${status}</span>`;
+    tagRow.appendChild(statusTag);
+    if (user.company) {
+      const comp = document.createElement('span');
+      comp.className = 'ap-tag';
+      comp.innerHTML = `<span class="ap-tag-key">company</span><span class="ap-tag-val">${escapeHtml(user.company)}</span>`;
+      tagRow.appendChild(comp);
+    }
+    if (derived.framework) {
+      const fw = document.createElement('span');
+      fw.className = 'ap-tag ap-tag-lead';
+      fw.innerHTML = `<span class="ap-tag-key">lead</span><span class="ap-tag-val">${derived.framework.roman} ${derived.framework.name}</span>`;
+      tagRow.appendChild(fw);
+    }
+
+    // Timer
+    const dur = derived.durationSec || (meta.startedAt ? Math.round((Date.now() - meta.startedAt) / 1000) : 0);
+    document.getElementById('apTimer').textContent = dur + 's';
+    document.getElementById('apTargetTimer').textContent = cls.tier === 'L3' ? '~180s' : cls.tier === 'L2' ? '~90s' : '~60s';
+
+    // Stage
+    const stage = derived.stage || { now: 0, max: 11, label: meta.status === 'active' ? 'thinking…' : meta.status };
+    document.getElementById('apStageNow').textContent = stage.now;
+    document.getElementById('apStageMax').textContent = stage.max;
+    document.getElementById('apStageText').textContent = stage.label;
+    document.getElementById('apStageProgress').style.width = ((stage.now / Math.max(1, stage.max)) * 100) + '%';
+
+    // Agents
+    const agents = derived.agents || [];
+    document.getElementById('apAgentsUnique').textContent = agents.length;
+    document.getElementById('apAgentsTotal').textContent = agents.reduce((a, [, v]) => a + v, 0);
+    const agentsGrid = document.getElementById('apAgentsGrid');
+    agentsGrid.innerHTML = '';
+    if (agents.length === 0) {
+      agentsGrid.innerHTML = '<span class="ap-agents-empty">awaiting first ARIA response</span>';
+    } else {
+      agents.forEach(([n, c]) => {
+        const span = document.createElement('span');
+        span.className = 'ap-chip-agent';
+        span.innerHTML = `${n} <span class="ap-chip-count">×${c}</span>`;
+        agentsGrid.appendChild(span);
+      });
+    }
+
+    // Framework
+    if (derived.framework) {
+      document.getElementById('apFwLead').textContent = derived.framework.roman + ' ' + derived.framework.name;
+      document.querySelectorAll('.ap-fw-cell').forEach(c => c.classList.toggle('active', c.dataset.fw === derived.framework.roman));
+    }
+
+    // Layers
+    const layers = derived.layers || [];
+    if (layers.length) {
+      const layerSubs = {LLM:'thinking · reasoning · behavior',Memory:'short · long · procedural · pattern',Automation:'workflows · n8n','Vector DB':'semantic memory · index',Tools:'abilities · actions','Frontend/UI':'user interaction',RAG:'retrieval · search',Agents:'specialized workers',Safety:'guardrails · verification',KB:'curated articles',Evaluation:'self-checking · testing',Storage:'files · databases · archives'};
+      const rows = document.getElementById('apLayerRows');
+      rows.innerHTML = '';
+      layers.forEach(([n, p]) => {
         const row = document.createElement('div');
         row.className = 'ap-layer-row';
-        row.innerHTML = `
-          <div><div class="ap-layer-name">${name}</div><div class="ap-layer-sub">${layerSubs[name] || ''}</div></div>
-          <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:${pct * 2.5}%"></div></div>
-          <div class="ap-layer-pct">${pct}%</div>
-        `;
-        layerRows.appendChild(row);
+        row.innerHTML = `<div><div class="ap-layer-name">${n}</div><div class="ap-layer-sub">${layerSubs[n] || ''}</div></div>
+          <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:${Math.min(100, p * 2.5)}%"></div></div>
+          <div class="ap-layer-pct">${p}%</div>`;
+        rows.appendChild(row);
       });
+      document.getElementById('apLayersTotal').textContent = derived.layerTotalUnits || '—';
+    }
 
-      // conversation
-      const stream = document.getElementById('apConvStream');
-      stream.innerHTML = '';
-      s.messages.forEach(m => {
+    // Conversation
+    const allMsgs = [];
+    // pull from all events on first poll, only new on subsequent
+    const newEvents = data.events || [];
+    const stream = document.getElementById('apConvStream');
+    if (data.totalEvents > 0 && stream.querySelector('.ap-conv-waiting')) stream.innerHTML = '';
+    newEvents.forEach(ev => {
+      if (ev.type === 'message_user' || ev.type === 'message_aria') {
+        const from = ev.type === 'message_user' ? 'user' : 'aria';
+        const text = (ev.payload && ev.payload.text) || '';
         const wrap = document.createElement('div');
-        wrap.className = 'ap-msg ' + m.from;
-        wrap.innerHTML = `
-          <span class="ap-msg-from ${m.from}">${m.from.toUpperCase()}</span>
-          <div class="ap-msg-bubble">${m.text}</div>
-        `;
+        wrap.className = 'ap-msg ' + from;
+        wrap.innerHTML = `<span class="ap-msg-from ${from}">${from.toUpperCase()}</span><div class="ap-msg-bubble">${escapeHtml(text)}</div>`;
         stream.appendChild(wrap);
-      });
-      document.getElementById('apMsgCount').textContent = s.messages.length + ' messages';
-    }
-
-    // ============= INTERACTIONS =============
-    function selectScenario(tier, diff) {
-      currentTier = tier;
-      currentDiff = diff;
-      // update buttons
-      document.querySelectorAll('.ap-tier-group').forEach(grp => {
-        const isThisTier = grp.dataset.tier === tier;
-        grp.querySelectorAll('.ap-diff-btn').forEach(btn => {
-          const isMatch = isThisTier && btn.dataset.diff === diff;
-          btn.classList.toggle('active', isMatch);
-        });
-      });
-      const key = `${tier}-${diff}`;
-      renderScenario(key);
-    }
-
-    document.querySelectorAll('.ap-tier-group').forEach(grp => {
-      const tier = grp.dataset.tier;
-      grp.querySelectorAll('.ap-diff-btn').forEach(btn => {
-        btn.addEventListener('click', () => selectScenario(tier, btn.dataset.diff));
-      });
-    });
-
-    document.getElementById('apRunBtn').addEventListener('click', () => {
-      // Re-run = re-render same scenario with subtle timer jitter
-      const key = `${currentTier}-${currentDiff}`;
-      const s = SCENARIOS[key];
-      if (!s) return;
-      const baseSec = parseFloat(s.timer);
-      const jitter = (Math.random() - 0.5) * 1.2;
-      const newSec = Math.max(1, baseSec + jitter).toFixed(1);
-      s.timer = newSec + 's';
-      renderScenario(key);
-    });
-
-    document.getElementById('apResetBtn').addEventListener('click', () => {
-      selectScenario('L1', 'hard');
-    });
-
-    // tab clicks (placeholder)
-    document.querySelectorAll('.ap-nav-tabs .tab').forEach(t => {
-      t.addEventListener('click', () => {
-        document.querySelectorAll('.ap-nav-tabs .tab').forEach(x => x.classList.remove('tab-active'));
-        t.classList.add('tab-active');
-      });
-    });
-
-    // intake modal — opens via ?intake=1 in URL OR by /aria handoff
-    function maybeShowIntake() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('intake') === '1') {
-        document.getElementById('apIntakeModal').classList.add('open');
       }
-    }
-    document.getElementById('apIntakeStart').addEventListener('click', () => {
-      const name = document.getElementById('apIntakeName').value.trim();
-      const email = document.getElementById('apIntakeEmail').value.trim();
-      if (!name || !email) { alert('Name and email required so we can send your session report.'); return; }
-      sessionStorage.setItem('aperture_user_name', name);
-      sessionStorage.setItem('aperture_user_email', email);
-      // POST to event endpoint to start session
-      fetch('/.netlify/functions/aperture-events', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event:'session_start', name, email, ts: Date.now() })
-      }).catch(()=>{});
-      document.getElementById('apIntakeModal').classList.remove('open');
-      // redirect to /aria with session id
-      const sid = 'sess_' + Math.random().toString(36).slice(2,11);
-      sessionStorage.setItem('aperture_session_id', sid);
-      window.location.href = '/aria?ap=' + sid;
     });
+    if (stream.childElementCount > 0) {
+      stream.scrollTop = stream.scrollHeight;
+      document.getElementById('apMsgCount').textContent = stream.querySelectorAll('.ap-msg').length + ' messages';
+    }
 
-    // init
-    selectScenario('L1', 'hard');
-    maybeShowIntake();
-  </script>
+    // Status card if resolved/escalated
+    if (status === 'resolved' || status === 'escalated') {
+      const card = document.getElementById('apStatusCard');
+      card.classList.remove('hidden-block');
+      card.classList.toggle('escalated', status === 'escalated');
+      const badge = document.getElementById('apStatusBadge');
+      badge.textContent = status === 'resolved' ? '✓ RESOLVED' : '⚠ ESCALATED';
+      badge.className = 'ap-resolved-badge' + (status === 'escalated' ? ' escalated' : '');
+      document.getElementById('apStatusTime').textContent = dur + 's';
+      document.getElementById('apStatusCause').innerHTML = `<strong style="color:var(--ap-text);">Outcome:</strong> ${escapeHtml(meta.summary || (status === 'resolved' ? 'Issue resolved by ARIA.' : 'Handed off — human will follow up.'))}`;
+      document.getElementById('apStatusMix').innerHTML = `<span class="ap-chip-mix neutral">Ticket <span class="v">${meta.ticket}</span></span><span class="ap-chip-mix neutral">Report emailed to <span class="v">${escapeHtml(user.email || '')}</span></span>`;
+    }
+  }
+
+  function escapeHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // ============= INTERACTIONS =============
+  document.querySelectorAll('.ap-tier-group').forEach(grp => {
+    const tier = grp.dataset.tier;
+    grp.querySelectorAll('.ap-diff-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentTier = tier;
+        currentDiff = btn.dataset.diff;
+        document.querySelectorAll('.ap-tier-group').forEach(g => g.querySelectorAll('.ap-diff-btn').forEach(b => b.classList.remove('active')));
+        btn.classList.add('active');
+      });
+    });
+  });
+
+  document.getElementById('apRunBtn').addEventListener('click', () => { startDemoSimulation(); });
+  document.getElementById('apResetBtn').addEventListener('click', () => { stopAnyAnimation(); enterWaitingMode(); });
+  document.querySelectorAll('.ap-nav-tabs .tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.ap-nav-tabs .tab').forEach(x => x.classList.remove('tab-active'));
+      t.classList.add('tab-active');
+    });
+  });
+
+  // Listen for session-start broadcasts from /aria's bridge
+  window.addEventListener('message', (ev) => {
+    if (!ev.data || ev.data.type !== 'aperture:session_start') return;
+    const sid = ev.data.sessionId;
+    if (sid) window.location.href = '/aperture?sid=' + encodeURIComponent(sid);
+  });
+
+})();
+</script>
 
 </body>
 </html>
