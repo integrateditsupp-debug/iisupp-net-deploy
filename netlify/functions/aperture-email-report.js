@@ -1,17 +1,19 @@
-// aperture-email-report v0.2 — sends post-session report via Gmail SMTP
-// Per Ahmad 2026-05-14 PM: email reports were failing with "535 Bad Credentials"
-// when using smtp-relay.gmail.com. v0.2 switches to direct smtp.gmail.com which
-// works with a standard Google App Password (no Workspace admin relay setup needed).
+// aperture-email-report v0.3 — sends post-session report
+// Per Ahmad 2026-05-14 PM: SMTP_APP_PASSWORD kept failing with 535 BadCredentials.
+// v0.3 prefers Resend HTTP API (no 2FA dance, no app password drama) and falls
+// back to direct Gmail SMTP if Resend isn't configured or fails.
 //
-// Required Netlify env vars:
-//   SMTP_APP_PASSWORD   — 16-char Google App Password from https://myaccount.google.com/apppasswords
-//                         (account MUST have 2FA enabled to generate one)
-//   SMTP_SENDER         — sender email (default: ahmad.wasee@iisupp.net)
-//   SMTP_HOST           — optional override (default: smtp.gmail.com)
-//   SMTP_PORT           — optional override (default: 465 SSL)
+// Required Netlify env vars (in priority order):
+//   RESEND_API_KEY    — preferred. Get one at https://resend.com (free 3000/month)
+//   RESEND_FROM       — verified sender like "Integrated IT Support <noreply@iisupp.net>"
+// Optional fallback (only used if Resend fails):
+//   SMTP_APP_PASSWORD — 16-char Google App Password (no spaces; account must have 2FA)
+//   SMTP_SENDER       — sender email (default: ahmad.wasee@iisupp.net)
+//   SMTP_HOST         — default: smtp.gmail.com
+//   SMTP_PORT         — default: 465 (SSL); 587 STARTTLS auto-fallback
 //
-// If SMTP_APP_PASSWORD is missing, function returns 202 with a queued note (no failure).
-// If credentials are bad, function returns 500 with the actual error.
+// Returns { ok:true, sent:true, via:'resend'|'smtp', ... } on success.
+// Returns 500 with full diagnostic if both paths fail.
 
 const nodemailer = require('nodemailer');
 
@@ -34,6 +36,48 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'to + sessionId required' }) };
   }
 
+  const today = new Date().toISOString().slice(0, 10);
+  const subject = `Issue - ${today}`;
+  const html = renderReport({ name, sessionId, summary, conversation, metrics, endedBy });
+  const text = textVersion(summary, endedBy);
+
+  const errors = [];
+
+  // ============= PATH 1: Resend (preferred) =============
+  const resendKey = process.env.RESEND_API_KEY;
+  const resendFrom = process.env.RESEND_FROM || 'Integrated IT Support <noreply@iisupp.net>';
+  if (resendKey) {
+    try {
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: resendFrom,
+          to: [to],
+          subject,
+          html,
+          text
+        })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.id) {
+        console.log('[aperture-email-report] sent via resend', { to, sessionId, msgId: j.id });
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, sent: true, via: 'resend', to, subject, msgId: j.id }) };
+      }
+      errors.push(`resend: ${r.status} ${JSON.stringify(j).slice(0, 200)}`);
+      console.warn('[aperture-email-report] resend failed', errors[errors.length - 1]);
+    } catch (e) {
+      errors.push(`resend: ${e.message}`);
+      console.warn('[aperture-email-report] resend exception', e.message);
+    }
+  } else {
+    errors.push('resend: RESEND_API_KEY not set');
+  }
+
+  // ============= PATH 2: Gmail SMTP fallback =============
   const smtpPass = process.env.SMTP_APP_PASSWORD;
   const senderEmail = process.env.SMTP_SENDER || 'ahmad.wasee@iisupp.net';
   const senderName = 'Integrated IT Support';
@@ -41,58 +85,44 @@ exports.handler = async (event) => {
   const smtpPort = parseInt(process.env.SMTP_PORT || '465', 10);
   const useSsl = smtpPort === 465;
 
-  if (!smtpPass) {
-    console.warn('[aperture-email-report] SMTP_APP_PASSWORD not set — would have emailed:', to, sessionId);
-    return {
-      statusCode: 202,
-      headers,
-      body: JSON.stringify({
-        ok: true,
-        queued: true,
-        note: 'SMTP not configured. Set SMTP_APP_PASSWORD env var in Netlify (16-char Google App Password from https://myaccount.google.com/apppasswords; requires 2FA on the sender account).'
-      })
-    };
-  }
-
-  const today = new Date().toISOString().slice(0, 10);
-  const subject = `Issue - ${today}`;
-  const html = renderReport({ name, sessionId, summary, conversation, metrics, endedBy });
-
-  // v0.2: try smtp.gmail.com (default) which works with any Google App Password.
-  // Fallback path: if 465 SSL fails, try 587 STARTTLS.
-  const tryConfigs = [
-    { host: smtpHost, port: smtpPort, secure: useSsl },
-    { host: smtpHost, port: 587, secure: false, requireTLS: true }
-  ];
-
-  let lastErr = null;
-  for (const cfg of tryConfigs) {
-    try {
-      const transporter = nodemailer.createTransport({
-        ...cfg,
-        auth: { user: senderEmail, pass: smtpPass }
-      });
-      const info = await transporter.sendMail({
-        from: `"${senderName}" <${senderEmail}>`,
-        to,
-        subject,
-        html,
-        text: textVersion(summary, endedBy)
-      });
-      console.log('[aperture-email-report] sent', { to, sessionId, host: cfg.host, port: cfg.port, msgId: info.messageId });
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, sent: true, to, subject, host: cfg.host, port: cfg.port, msgId: info.messageId }) };
-    } catch (e) {
-      lastErr = e;
-      console.warn('[aperture-email-report] cfg failed', { host: cfg.host, port: cfg.port, err: e.message });
+  if (smtpPass) {
+    const tryConfigs = [
+      { host: smtpHost, port: smtpPort, secure: useSsl },
+      { host: smtpHost, port: 587, secure: false, requireTLS: true }
+    ];
+    for (const cfg of tryConfigs) {
+      try {
+        const transporter = nodemailer.createTransport({
+          ...cfg,
+          auth: { user: senderEmail, pass: smtpPass.replace(/\s+/g, '') }  // strip spaces in case
+        });
+        const info = await transporter.sendMail({
+          from: `"${senderName}" <${senderEmail}>`,
+          to,
+          subject,
+          html,
+          text
+        });
+        console.log('[aperture-email-report] sent via smtp', { to, sessionId, host: cfg.host, port: cfg.port, msgId: info.messageId });
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, sent: true, via: 'smtp', to, subject, host: cfg.host, port: cfg.port, msgId: info.messageId }) };
+      } catch (e) {
+        errors.push(`smtp ${cfg.port}: ${e.message}`);
+        console.warn('[aperture-email-report] smtp cfg failed', { port: cfg.port, err: e.message });
+      }
     }
+  } else {
+    errors.push('smtp: SMTP_APP_PASSWORD not set');
   }
-  console.error('[aperture-email-report] all SMTP attempts failed:', lastErr && lastErr.message);
+
+  // ============= ALL PATHS FAILED =============
+  console.error('[aperture-email-report] all email paths failed:', errors);
   return {
     statusCode: 500,
     headers,
     body: JSON.stringify({
-      error: lastErr ? lastErr.message : 'unknown smtp error',
-      hint: 'If 535 BadCredentials: regenerate the Google App Password at https://myaccount.google.com/apppasswords (must be 2FA-protected sender account). Update SMTP_APP_PASSWORD env var in Netlify.'
+      error: 'all email paths failed',
+      attempts: errors,
+      hint: 'Resend (preferred): set RESEND_API_KEY + RESEND_FROM (verified domain). Or fix SMTP_APP_PASSWORD: regenerate at https://myaccount.google.com/apppasswords (no spaces, 2FA-on, sender account = SMTP_SENDER).'
     })
   };
 };
