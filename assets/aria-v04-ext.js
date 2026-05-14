@@ -501,7 +501,7 @@
 
     appendAriaResearchMessage('Let me check into that — one moment, please.', { source: 'uncertain-state', stage: 'open' });
 
-    try { maybeInjectResearchRecipe(userText); } catch (_) {}
+    // Research agent already kicked off by the original handleUserMessage path; do not dup-fire here.
 
     __ariaUncertainState.tWait = setTimeout(function () {
       if (!__ariaUncertainState || __ariaUncertainState.resolved) return;
