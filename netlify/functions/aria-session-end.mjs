@@ -1,68 +1,56 @@
-// aria-session-end — close session + email report
+// aria-session-end — V2 ESM function (auto-wires Netlify Blobs)
 // POST /.netlify/functions/aria-session-end
-// Body: { sessionId, status: 'resolved'|'escalated', summary? }
-// Returns: { ok: true, ticket, emailSent: true|false }
 
-const { getStore } = require('@netlify/blobs');
-let nodemailer;
-try { nodemailer = require('nodemailer'); } catch (e) { nodemailer = null; }
+import { getStore } from '@netlify/blobs';
+import nodemailer from 'nodemailer';
 
-exports.handler = async (event) => {
+export default async (request) => {
   const cors = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json'
   };
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: cors };
-  if (event.httpMethod !== 'POST') return { statusCode: 405, headers: cors, body: JSON.stringify({ error: 'POST only' }) };
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  if (request.method !== 'POST') return jsonResp(405, cors, { error: 'POST only' });
 
   let body;
-  try { body = JSON.parse(event.body || '{}'); }
-  catch (e) { return resp(400, cors, { error: 'invalid JSON' }); }
+  try { body = await request.json(); }
+  catch { return jsonResp(400, cors, { error: 'invalid JSON' }); }
 
   const { sessionId, status, summary, userIssue } = body;
   if (!sessionId || !['resolved', 'escalated'].includes(status)) {
-    return resp(400, cors, { error: 'sessionId and status (resolved|escalated) required' });
+    return jsonResp(400, cors, { error: 'sessionId + status (resolved|escalated) required' });
   }
 
   const sessions = getStore({ name: 'aria-sessions', consistency: 'strong' });
   const meta = await sessions.get(`${sessionId}/meta.json`, { type: 'json' });
-  if (!meta) return resp(404, cors, { error: 'session not found' });
+  if (!meta) return jsonResp(404, cors, { error: 'session not found' });
   const eventsRaw = (await sessions.get(`${sessionId}/events.jsonl`, { type: 'text' })) || '';
   const events = eventsRaw.split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
 
-  // Update meta to final state
   meta.status = status;
   meta.endedAt = Date.now();
   meta.summary = summary || meta.summary || null;
   meta.userIssue = userIssue || meta.userIssue || extractUserIssue(events);
   await sessions.setJSON(`${sessionId}/meta.json`, meta);
 
-  // Append final event
   await sessions.set(`${sessionId}/events.jsonl`,
     eventsRaw + JSON.stringify({ type: status, ts: Date.now(), payload: { summary, userIssue } }) + '\n');
 
-  // Build email
-  const today = new Date().toISOString().slice(0, 10);
   const subject = `Ticket ${meta.ticket}`;
-  const userName = meta.user.firstName + (meta.user.lastName ? (' ' + meta.user.lastName) : '');
   const userEmail = meta.user.email;
   const internalEmail = 'integrateditsupp@iisupp.net';
   const html = renderReport(meta, events);
 
-  // Send via Workspace SMTP relay if configured
   const smtpPass = process.env.SMTP_APP_PASSWORD;
   const senderEmail = process.env.SMTP_SENDER || 'ahmad.wasee@iisupp.net';
 
-  if (!smtpPass || !nodemailer) {
-    console.log('[aria-session-end] email queued (SMTP not yet wired):', meta.ticket, 'to', userEmail);
-    return resp(202, cors, {
-      ok: true,
-      ticket: meta.ticket,
-      emailSent: false,
-      queued: true,
-      reason: smtpPass ? 'nodemailer missing' : 'SMTP_APP_PASSWORD env var not set'
+  if (!smtpPass) {
+    console.log('[aria-session-end] SMTP not configured; report logged. Ticket:', meta.ticket, 'to:', userEmail);
+    return jsonResp(202, cors, {
+      ok: true, ticket: meta.ticket, emailSent: false, queued: true,
+      reason: 'SMTP_APP_PASSWORD env var not set'
     });
   }
 
@@ -74,7 +62,6 @@ exports.handler = async (event) => {
       requireTLS: true,
       auth: { user: senderEmail, pass: smtpPass }
     });
-
     await transporter.sendMail({
       from: `"Integrated IT Support" <${senderEmail}>`,
       to: userEmail,
@@ -83,15 +70,16 @@ exports.handler = async (event) => {
       html,
       text: textVersion(meta)
     });
-
-    return resp(200, cors, { ok: true, ticket: meta.ticket, emailSent: true, to: userEmail });
+    return jsonResp(200, cors, { ok: true, ticket: meta.ticket, emailSent: true, to: userEmail });
   } catch (e) {
     console.error('[aria-session-end] email send failed:', e.message);
-    return resp(500, cors, { ok: false, ticket: meta.ticket, emailSent: false, error: e.message });
+    return jsonResp(500, cors, { ok: false, ticket: meta.ticket, emailSent: false, error: e.message });
   }
 };
 
-function resp(status, cors, obj) { return { statusCode: status, headers: cors, body: JSON.stringify(obj) }; }
+function jsonResp(status, headers, obj) {
+  return new Response(JSON.stringify(obj), { status, headers });
+}
 
 function extractUserIssue(events) {
   const firstUserMsg = events.find(e => e.type === 'message_user');
@@ -140,17 +128,13 @@ function renderReport(meta, events) {
   const statusLabel = meta.status === 'resolved' ? 'RESOLVED' : 'ESCALATED';
   const durationSec = meta.endedAt && meta.startedAt ? Math.round((meta.endedAt - meta.startedAt) / 1000) : 0;
 
-  const niceName = (meta.user.firstName + ' ' + meta.user.lastName).trim();
-
   return `<!DOCTYPE html>
 <html><body style="margin:0;background:#050810;color:#d8e0e6;font-family:Inter,system-ui,sans-serif;padding:24px;">
 <table width="100%" cellpadding="0" cellspacing="0" style="max-width:680px;margin:0 auto;background:#050810;">
-
   <tr><td style="padding-bottom:18px;border-bottom:1px solid #1a2b35;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:#2dd4bf;">APERTURE · SESSION REPORT</div>
     <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#d8e0e6;margin-top:6px;letter-spacing:0.05em;">${meta.ticket}</div>
   </td></tr>
-
   <tr><td style="padding:22px 0 0 0;">
     <p style="font-size:14px;color:#d8e0e6;margin:0 0 16px 0;">Thank you for contacting Integrated IT Support Inc. via ARIA — AI.</p>
     <p style="font-size:13px;color:#d8e0e6;margin:0 0 8px 0;"><strong style="color:#98a8b3;">Your issue:</strong> ${escapeHtml(meta.userIssue || '(see transcript below)')}</p>
@@ -160,7 +144,6 @@ function renderReport(meta, events) {
       ? `<p style="padding:14px;background:#1f160a;border:1px solid #fbbf24;color:#fbbf24;font-size:12.5px;margin:0 0 20px 0;">We will be with you shortly. Someone will call you at <span style="color:#d8e0e6;font-family:'JetBrains Mono',monospace;">${escapeHtml(meta.user.phone || '')}</span>.</p>`
       : ''}
   </td></tr>
-
   <tr><td style="padding:0 0 18px 0;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:#6b7c87;text-transform:uppercase;margin-bottom:10px;">APERTURE METRICS</div>
     <table cellpadding="0" cellspacing="0" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:11px;">
@@ -171,21 +154,17 @@ function renderReport(meta, events) {
       <tr><td style="padding:5px 0;color:#98a8b3;">Agents fired</td><td style="padding:5px 0;color:#d8e0e6;">${derived.agentsUnique || '—'} unique · ${derived.agentsTotal || '—'} total</td></tr>
     </table>
   </td></tr>
-
   ${layersHtml ? `<tr><td style="padding:0 0 18px 0;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:#6b7c87;text-transform:uppercase;margin-bottom:10px;">ARCHITECTURE LAYER USAGE <span style="color:#6b7c87;text-transform:none;letter-spacing:0;">(derived from message signals)</span></div>
     <table cellpadding="0" cellspacing="0">${layersHtml}</table>
   </td></tr>` : ''}
-
   <tr><td style="padding:6px 0 12px 0;border-top:1px solid #1a2b35;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:#6b7c87;text-transform:uppercase;margin:14px 0 8px 0;">CONVERSATION</div>
     <table cellpadding="0" cellspacing="0" style="width:100%;">${convHtml}</table>
   </td></tr>
-
   <tr><td style="padding-top:32px;border-top:1px solid #1a2b35;font-size:11px;color:#6b7c87;text-align:center;font-family:'JetBrains Mono',monospace;letter-spacing:2px;">
     INTEGRATED IT SUPPORT INC.  ·  (647) 581-3182  ·  iisupp.net
   </td></tr>
-
 </table>
 </body></html>`;
 }
