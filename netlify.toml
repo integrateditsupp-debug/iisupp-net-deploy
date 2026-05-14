@@ -121,3 +121,8 @@
   from = "/government"
   to = "/government.html"
   status = 200
+
+[[redirects]]
+  from = "/aperture"
+  to = "/aperture.html"
+  status = 200
