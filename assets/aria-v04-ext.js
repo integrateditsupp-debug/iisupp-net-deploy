@@ -565,6 +565,14 @@
               n.style.display = 'none';
               setTimeout(function () { ariaUncertainEnter(lastUser); }, 50);
             }
+          } else if (txt.indexOf("don't have a confident match") >= 0 || txt.indexOf("do not have a confident match") >= 0) {
+            // Second no-match path: ARIA's 'Hmm I don't have a confident match' branch.
+            // Suppress + delegate to state machine so user gets the polite wait + helpdesk escalation.
+            var lastUser2 = window.__lastUserText || '';
+            if (lastUser2 && !/^\s*\/(help|capabilities|kb)\b/i.test(lastUser2)) {
+              n.style.display = 'none';
+              setTimeout(function () { ariaUncertainEnter(lastUser2); }, 50);
+            }
           }
         }
       }
