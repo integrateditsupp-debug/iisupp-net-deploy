@@ -227,7 +227,7 @@
       </span>
     </div>
     <div class="ap-page-title">06 · SIMULATION & LIVE OBSERVABILITY</div>
-    <div class="ap-meta-stats" id="apMeta">12 AGENTS · 9 FRAMEWORKS · 12 LAYERS</div>
+    <div class="ap-meta-stats" id="apMeta">14 AGENTS · 9 FRAMEWORKS · 12 LAYERS</div>
   </header>
 
   <main class="ap-main">
@@ -568,19 +568,28 @@
     document.getElementById('apStageText').textContent = stage.label;
     document.getElementById('apStageProgress').style.width = ((stage.now / Math.max(1, stage.max)) * 100) + '%';
 
-    const agents = derived.agents || [];
-    document.getElementById('apAgentsUnique').textContent = agents.length;
-    document.getElementById('apAgentsTotal').textContent = agents.reduce((a, [, v]) => a + v, 0);
+    const agentRegistry = derived.agentRegistry || derived.agents || [];
+    const _AGENT_LABELS = {"orchestrator":"Orchestrator","intent":"Intent","reasoning":"Reasoning","kb":"Knowledge Base","rag":"RAG Retrieval","vector":"Vector Memory","troubleshooting":"Troubleshooting","safety":"Safety","automation":"Automation","resolutionVerification":"Resolution Verify","escalation":"Escalation","emailReport":"Email Report","ticketing":"Ticketing","performanceAudit":"Performance Audit"};
+    const _ORDER = ['orchestrator','intent','reasoning','kb','rag','vector','troubleshooting','safety','automation','resolutionVerification','escalation','emailReport','ticketing','performanceAudit'];
+    const _fireMap = {};
+    agentRegistry.forEach(function(pair){ _fireMap[pair[0]] = pair[1] || 0; });
+    const _firedAgents = _ORDER.filter(function(k){ return (_fireMap[k]||0) > 0; });
+    document.getElementById('apAgentsUnique').textContent = _firedAgents.length;
+    document.getElementById('apAgentsTotal').textContent = _ORDER.reduce(function(a,k){ return a + (_fireMap[k]||0); }, 0);
     const agentsGrid = document.getElementById('apAgentsGrid');
     agentsGrid.innerHTML = '';
-    if (agents.length === 0) {
-      agentsGrid.innerHTML = '<span class="ap-agents-empty">awaiting first ARIA response</span>';
-    } else {
-      agents.forEach(([n, c]) => {
-        const span = document.createElement('span'); span.className = 'ap-chip-agent';
-        span.innerHTML = `${n} <span class="ap-chip-count">×${c}</span>`;
-        agentsGrid.appendChild(span);
-      });
+    _ORDER.forEach(function(k){
+      const v = _fireMap[k] || 0;
+      const chip = document.createElement('span');
+      chip.className = 'ap-chip-agent' + (v > 0 ? ' active' : ' dim');
+      chip.title = (_AGENT_LABELS[k] || k) + (v > 0 ? ' — fired ' + v + 'x' : ' — idle');
+      chip.style.cssText = v > 0
+        ? 'opacity:1;border-color:var(--ap-teal);background:var(--ap-teal-glow);'
+        : 'opacity:0.42;';
+      const lbl = _AGENT_LABELS[k] || k;
+      chip.innerHTML = '<span>' + lbl + '</span>' + (v > 0 ? '<span class="ap-chip-count">+' + v + '</span>' : '');
+      agentsGrid.appendChild(chip);
+    });
     }
 
     if (derived.framework) {
