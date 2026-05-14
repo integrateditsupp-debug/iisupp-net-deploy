@@ -477,4 +477,102 @@
   } else {
     wireUp();
   }
+
+
+  // ============= AROC §6: uncertainty UX state machine =============
+  // No-match user queries get a polite waiting state with timed escalation.
+  // NEVER dump the /help menu in response to a real question.
+  // Per Ahmad 2026-05-14 + project_aria_research_agent_law.md.
+  //   T+0:   "Let me check into that — one moment, please."
+  //   T+30s: "Still looking — give me one more moment."
+  //   T+90s: escalate to helpdesk + offer callback ticket.
+  //   Recipe arrives → cancel timers + deliver normally.
+
+  var __HELPDESK_NUMBER_DISPLAY = '(647) 581-3182';
+  var __HELPDESK_EMAIL_DISPLAY = 'integrateditsupp@iisupp.net';
+  var __ariaUncertainState = null;
+
+  function ariaUncertainEnter(userText) {
+    if (__ariaUncertainState) {
+      if (__ariaUncertainState.tWait) clearTimeout(__ariaUncertainState.tWait);
+      if (__ariaUncertainState.tEsc) clearTimeout(__ariaUncertainState.tEsc);
+    }
+    __ariaUncertainState = { startedAt: Date.now(), userText: userText, resolved: false, tWait: null, tEsc: null };
+
+    appendAriaResearchMessage('Let me check into that — one moment, please.', { source: 'uncertain-state', stage: 'open' });
+
+    try { maybeInjectResearchRecipe(userText); } catch (_) {}
+
+    __ariaUncertainState.tWait = setTimeout(function () {
+      if (!__ariaUncertainState || __ariaUncertainState.resolved) return;
+      appendAriaResearchMessage('Still looking into this — give me one more moment.', { source: 'uncertain-state', stage: 'wait' });
+    }, 30000);
+
+    __ariaUncertainState.tEsc = setTimeout(function () {
+      if (!__ariaUncertainState || __ariaUncertainState.resolved) return;
+      var msg = "Unfortunately I don't have much information on that yet.\n\n" +
+        'Our helpdesk can take it from here:\n' +
+        '• Phone: ' + __HELPDESK_NUMBER_DISPLAY + '\n' +
+        '• Email: ' + __HELPDESK_EMAIL_DISPLAY + '\n\n' +
+        'Would you like me to open a callback ticket so a technician reaches out?';
+      appendAriaResearchMessage(msg, { source: 'uncertain-state', stage: 'escalate' });
+      __ariaUncertainState = null;
+      try {
+        window.dispatchEvent(new CustomEvent('aria:agent-signal', { detail: { agents: ['escalation', 'observability'], reason: 'uncertain-90s-escalate' } }));
+      } catch (_) {}
+    }, 90000);
+  }
+
+  function ariaUncertainResolve() {
+    if (!__ariaUncertainState) return;
+    __ariaUncertainState.resolved = true;
+    if (__ariaUncertainState.tWait) clearTimeout(__ariaUncertainState.tWait);
+    if (__ariaUncertainState.tEsc) clearTimeout(__ariaUncertainState.tEsc);
+    __ariaUncertainState = null;
+  }
+
+  window.addEventListener('aria:assistant-message', function (e) {
+    if (!__ariaUncertainState) return;
+    if (e && e.detail && (e.detail.source === 'research-agent' || e.detail.source === 'kb-hit' || e.detail.source === 'live-vendor-fetch')) {
+      ariaUncertainResolve();
+    }
+  });
+
+  function __ariaInstallObserver() {
+    var chat = document.getElementById('chatMessages');
+    if (!chat) { setTimeout(__ariaInstallObserver, 500); return; }
+    var obs = new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        var m = muts[i];
+        for (var j = 0; j < m.addedNodes.length; j++) {
+          var n = m.addedNodes[j];
+          if (n.nodeType !== 1) continue;
+          var txt = (n.textContent || '');
+
+          var youEl = n.classList && (n.classList.contains('you-block') || n.classList.contains('you-bubble'))
+            ? n
+            : (n.querySelector ? n.querySelector('.you-block, .you-bubble, [class*="you-text"]') : null);
+          if (youEl) {
+            var t = (youEl.textContent || '').trim();
+            if (t && t.length > 0 && t.length < 1000) window.__lastUserText = t;
+          }
+
+          if (txt.indexOf("Here's what I can do") >= 0 &&
+              txt.indexOf('Slash commands') >= 0 &&
+              txt.indexOf('/kb') >= 0) {
+            var lastUser = window.__lastUserText || '';
+            if (lastUser && !/^\s*\/(help|capabilities|kb)\b/i.test(lastUser)) {
+              n.style.display = 'none';
+              setTimeout(function () { ariaUncertainEnter(lastUser); }, 50);
+            }
+          }
+        }
+      }
+    });
+    obs.observe(chat, { childList: true, subtree: true });
+  }
+  __ariaInstallObserver();
+
+  window.__ariaUncertainHook = ariaUncertainEnter;
+
 })();
