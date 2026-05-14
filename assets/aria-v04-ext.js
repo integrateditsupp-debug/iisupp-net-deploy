@@ -142,6 +142,8 @@
     if (newTopic && !currentTopic) currentTopic = newTopic;
     // Pre-think acknowledgement — surfaces multiple agents in Aperture while ARIA's core reply spins up.
     maybeInjectThinkAloud(text);
+    try { maybeInjectResearchRecipe(text); } catch (e) {}
+
   }
 
   function maybeInjectThinkAloud(userText) {
@@ -164,6 +166,85 @@
     // Inject as an ARIA system message \u2014 this fires reasoning_agent + kb_agent + research_agent + troubleshooting (problem variant) + psychology + intent signals.
     injectAriaSystemMsg(msg);
   }
+
+  // ============= AROC §4: symbolic operational state detection =============
+  // Maps user surface forms → canonical state code → research-agent recipe.
+  // Each regex uses word boundaries so e.g. "out of space" does NOT match "out of office".
+  const STATE_PATTERNS = {
+    'DISK.FULL':         /\b(out of (disk )?space|low on (disk )?space|no (disk )?space left|disk (is )?full|drive (is )?full|running (out of|low on) disk|low disk space|hard drive full|ssd (is )?full|c drive (is )?(full|out of space|low)|free up disk)\b/i,
+    'OS.SLOW.PERF':      /\b((computer|laptop|pc|machine) (is )?(slow|sluggish|laggy|crawling)|running slow|performance lag|takes forever|frozen|freezes|hang(s|ing))\b/i,
+    'OS.BOOT.FAIL':      /\b(won.?t boot|black screen|blue screen|bsod|stuck on boot|won.?t start|will not turn on)\b/i,
+    'NET.WIFI.AUTH':     /\b(wifi (won.?t|cannot|can.?t) connect|wifi (not )?working|wrong password.*wifi|wifi password|incorrect (network )?password|connection refused.*wifi)\b/i,
+    'NET.WIFI.NO.CONN':  /\b(can.?t connect to wifi|no wifi|no internet|wifi (is )?(down|broken|gone)|no network|disconnected|cannot reach internet)\b/i,
+    'NET.SLOW':          /\b((internet|network|wifi|connection) (is )?slow|slow internet|slow connection|bandwidth (issue|problem))\b/i,
+    'M365.OUTLOOK.SEND': /\b(outlook (won.?t|cannot|can.?t) send|email (won.?t|cannot|can.?t) send|stuck in outbox|cannot send (email|mail))\b/i,
+    'M365.OUTLOOK.RECV': /\b(outlook (not |won.?t |cannot |can.?t )?(receiv|getting)|email not (coming|arriving|received))\b/i,
+    'M365.OUTLOOK.OOO':  /\b(out of office|ooo|vacation responder|auto[-\s]?reply|automatic repl(y|ies)|outlook ooo|set ooo)\b/i,
+    'M365.OUTLOOK.OPEN': /\b(outlook (won.?t|cannot|can.?t) open|outlook crash|outlook hangs|outlook frozen|outlook not responding)\b/i,
+    'AUT.PW.RESET':      /\b(forgot (my )?password|need to reset (my )?password|password reset|reset password|cannot log ?in|locked out|account locked)\b/i,
+    'AUT.MFA.LOCK':      /\b(mfa (not )?working|2fa (not )?working|authenticator|lost (my )?phone|lost (my )?authenticator|cannot get (the )?code)\b/i,
+    'PRT.OFFLINE':       /\b(printer (is )?(offline|not (showing|working|connecting))|cannot (find|see) printer|printer not detected)\b/i,
+    'PRT.QUEUE.STUCK':   /\b(print queue (is )?stuck|print job (is )?stuck|cannot clear print queue|printer paused|jam(med)?)\b/i,
+    'SEC.PHISH':         /\b(suspicious (email|link|site|message)|phishing|is this (a )?scam|got a weird email|received .* link)\b/i,
+    'SEC.MALWARE':       /\b(virus|malware|infected|ransom(ware)?|trojan|spyware|popups|browser hijack)\b/i,
+    'VPN.AUTH.FAIL':     /\b(vpn (won.?t|cannot|can.?t) connect|vpn (authentication|auth) (failed|fail|error)|vpn login (failed|wrong))\b/i,
+    'VPN.NO.TUNNEL':     /\b(vpn (connected )?but no internet|vpn slow|tunnel (won.?t|cannot) (open|establish)|vpn drops?)\b/i,
+    'CLOUD.SYNC':        /\b(onedrive (not )?syncing|sharepoint (not )?syncing|dropbox (not )?syncing|google drive (not )?syncing|sync (error|failed|stuck))\b/i,
+    'SW.INSTALL.FAIL':   /\b((install|installation) (failed|error|stuck)|cannot install|setup (failed|error)|msi error|installer (crash|fail))\b/i,
+    'SW.UPDATE.FAIL':    /\b((update|upgrade) (failed|error|stuck)|windows update.*(fail|error|stuck)|cannot update|update loop)\b/i
+  };
+
+  function operationalStateOf(userText) {
+    var t = (userText || '').toLowerCase().trim();
+    if (!t || t.length < 5) return null;
+    for (var key in STATE_PATTERNS) { if (STATE_PATTERNS[key].test(t)) return key; }
+    return null;
+  }
+
+  function appendAriaResearchMessage(text, meta) {
+    var chat = document.getElementById('chatMessages');
+    if (!chat) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'fade-in';
+    wrap.innerHTML = '<div class="aria-block"><div class="aria-label">ARIA</div><div class="aria-text"></div></div>';
+    var tx = wrap.querySelector('.aria-text');
+    if (tx) { tx.style.whiteSpace = 'pre-wrap'; tx.textContent = text; }
+    chat.appendChild(wrap);
+    chat.scrollTop = chat.scrollHeight;
+    try {
+      var detail = Object.assign({ source: 'research-agent', text: text }, meta || {});
+      window.dispatchEvent(new CustomEvent('aria:assistant-message', { detail: detail }));
+      window.dispatchEvent(new CustomEvent('aria:agent-signal', { detail: { agents: ['research','reasoning','kb','troubleshooting'], state: (meta && meta.state) || null, confidence: (meta && meta.confidence) || 0 } }));
+    } catch (e) {}
+  }
+
+  var __ariaResearchInflight = false;
+  function maybeInjectResearchRecipe(userText) {
+    var state = operationalStateOf(userText);
+    if (!state) return;
+    if (__ariaResearchInflight) return;
+    __ariaResearchInflight = true;
+    var watchdog = setTimeout(function(){ __ariaResearchInflight = false; }, 30000);
+    fetch('/.netlify/functions/aria-research', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: userText, state: state })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      clearTimeout(watchdog);
+      __ariaResearchInflight = false;
+      if (!d || !d.ok || !d.steps || !d.steps.length) return;
+      var msg = 'Here is the path I would walk through with you:\n\n';
+      msg += d.title + '\n\n';
+      for (var i = 0; i < d.steps.length; i++) msg += (i+1) + '. ' + d.steps[i] + '\n';
+      if (d.caveat) msg += '\nNote: ' + d.caveat;
+      msg += '\n\nTell me which step needs more detail, or if you want me to escalate.';
+      setTimeout(function(){ appendAriaResearchMessage(msg, { state: state, confidence: d.confidence }); }, 1200);
+    })
+    .catch(function(){ clearTimeout(watchdog); __ariaResearchInflight = false; });
+  }
+
 
   function detectTopic(lower) {
     if (/\b(wifi|wi-fi|network|router|ethernet|connection)\b/.test(lower)) return 'network';
