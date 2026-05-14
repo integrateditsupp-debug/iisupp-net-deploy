@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#050810">
+<meta name="description" content="Integrated IT Support Inc. — AI-powered IT support 24/7 for Canadian small business. Talk to ARIA. Get a tech in 60 seconds.">
+<meta property="og:title" content="Integrated IT Support — AI IT support 24/7">
+<meta property="og:description" content="Talk to ARIA, our AI IT assistant. Get a real technician in 60 seconds. Toronto-based, Canada-wide.">
+<meta property="og:image" content="https://iisupp.net/icons/icon-512.png">
+<title>Integrated IT Support · AI IT Help 24/7</title>
+<link rel="icon" href="/icons/favicon.ico">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<style>
+  :root {
+    --bg: #050810;
+    --bg-card: #0a1219;
+    --border: #1a2b35;
+    --text: #d8e0e6;
+    --muted: #6b7c87;
+    --accent: #2dd4bf;
+    --accent2: #38bdf8;
+    --warn: #f59e0b;
+    --whatsapp: #25d366;
+    --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.55 var(--font);
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:active { opacity: .7; }
+  /* HEADER */
+  .header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(5,8,16,.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .brand-mark {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: grid; place-items: center;
+    font: 800 14px var(--mono);
+    color: #001a16;
+  }
+  .brand-name {
+    font: 700 13px var(--font);
+    letter-spacing: .3px;
+    line-height: 1.1;
+  }
+  .brand-name span { display: block; color: var(--muted); font-weight: 400; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .header-call {
+    background: var(--accent);
+    color: #001a16;
+    font: 700 12px var(--mono);
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  /* HERO */
+  .hero {
+    padding: 28px 18px 24px;
+    text-align: center;
+  }
+  .hero-tag {
+    display: inline-block;
+    padding: 5px 11px;
+    background: rgba(45,212,191,.1);
+    border: 1px solid rgba(45,212,191,.3);
+    color: var(--accent);
+    font: 600 11px var(--mono);
+    letter-spacing: 2px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    margin: 0 0 12px;
+    font: 800 30px/1.15 var(--font);
+    letter-spacing: -.5px;
+  }
+  .hero h1 b { color: var(--accent); font-weight: 800; }
+  .hero p {
+    margin: 0 auto 22px;
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 380px;
+  }
+  .hero-ctas {
+    display: grid; gap: 10px;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  .btn {
+    display: block;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font: 700 15px var(--font);
+    text-decoration: none;
+    text-align: center;
+    border: 0;
+    cursor: pointer;
+    width: 100%;
+  }
+  .btn-pri {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #001a16;
+  }
+  .btn-sec {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-wa {
+    background: var(--whatsapp);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-wa svg { width: 20px; height: 20px; }
+  /* SECTION */
+  section { padding: 32px 18px; border-top: 1px solid var(--border); }
+  .sec-tag { font: 700 10px var(--mono); letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin: 0 0 8px; }
+  .sec-h2 { margin: 0 0 18px; font: 800 24px/1.2 var(--font); letter-spacing: -.3px; }
+  /* SERVICES */
+  .svc-grid { display: grid; gap: 12px; }
+  .svc {
+    padding: 18px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .svc h3 {
+    margin: 0 0 6px;
+    font: 700 16px var(--font);
+    color: var(--accent);
+  }
+  .svc p { margin: 0; color: var(--muted); font-size: 14px; }
+  /* PRICING */
+  .price-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .price-row .name { font-weight: 700; }
+  .price-row .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .price-row .price { color: var(--accent); font: 700 15px var(--mono); white-space: nowrap; }
+  /* CONTACT */
+  .contact-card {
+    padding: 22px 18px;
+    background: linear-gradient(135deg, rgba(45,212,191,.08), rgba(56,189,248,.04));
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+  }
+  .contact-row { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+  .contact-row .icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(45,212,191,.15); display: grid; place-items: center; font-size: 18px; }
+  .contact-row a { color: var(--text); font: 600 15px var(--font); }
+  .contact-row .lab { font: 600 10px var(--mono); color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 2px; }
+  /* FOOTER */
+  footer {
+    padding: 28px 18px 60px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    background: #030610;
+  }
+  footer .brand-foot {
+    font: 700 13px var(--font);
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: .3px;
+  }
+  footer .links {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 18px;
+    margin: 14px 0;
+  }
+  footer .links a { color: var(--muted); font-size: 12px; }
+  footer .copy { margin-top: 14px; opacity: .8; }
+  /* DESKTOP-LINK FAB */
+  .desktop-link {
+    position: fixed; bottom: 14px; right: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 12px;
+    font: 600 11px var(--mono);
+    border-radius: 999px;
+    text-decoration: none;
+    z-index: 60;
+  }
+  /* HIDE FROM DESKTOP if mistakenly loaded — only show on mobile-width */
+  @media (min-width: 901px) {
+    body::before {
+      content: "View on mobile, or visit the desktop site →";
+      display: block; padding: 10px; background: var(--warn); color: #1a0e00; font-weight: 700; text-align: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="#top" class="brand">
+    <div class="brand-mark">IIS</div>
+    <div class="brand-name">Integrated IT Support<span>Toronto · Canada-wide</span></div>
+  </a>
+  <a class="header-call" href="tel:+16475813182">Call</a>
+</header>
+
+<main id="top">
+
+  <section class="hero" style="border-top:0">
+    <span class="hero-tag">AI IT support · 24/7</span>
+    <h1>Talk to ARIA.<br>Get a fix in <b>60 seconds.</b></h1>
+    <p>Our AI IT assistant solves the common stuff instantly. Real technicians take over when it matters.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-pri" href="/aria">Open ARIA →</a>
+      <a class="btn btn-wa" href="https://wa.me/16475813182?text=Hi%20Integrated%20IT%20Support%20-%20I%20need%20IT%20help">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp us
+      </a>
+      <a class="btn btn-sec" href="tel:+16475813182">Call (647) 581-3182</a>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-tag">Services</p>
+    <h2 class="sec-h2">What we fix</h2>
+    <div class="svc-grid">
+      <div class="svc"><h3>Computers & Laptops</h3><p>Slow, crashing, won't boot, screens, batteries, drives. Pickup or remote.</p></div>
+      <div class="svc"><h3>WiFi & Networks</h3><p>Bad signal, slow internet, mesh setups, business routers, cable runs.</p></div>
+      <div class="svc"><h3>Email & Office 365</h3><p>Outlook stuck, password reset, license rightsize, mail migration.</p></div>
+      <div class="svc"><h3>Cybersecurity</h3><p>Phishing checks, ransomware response, endpoint protection, password manager rollout.</p></div>
+      <div class="svc"><h3>Cloud & Backup</h3><p>OneDrive / SharePoint / Drive sync, immutable backups, restore drills.</p></div>
+      <div class="svc"><h3>Onsite & Remote</h3><p>Toronto, GTA, and Canada-wide remote. Same-day for urgent.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-tag">Pricing</p>
+    <h2 class="sec-h2">Simple, fair</h2>
+    <div class="price-row"><div><div class="name">Quick Fix</div><div class="sub">Single-issue, remote</div></div><div class="price">$59</div></div>
+    <div class="price-row"><div><div class="name">Standard Visit</div><div class="sub">Onsite, up to 1 hour</div></div><div class="price">$129</div></div>
+    <div class="price-row"><div><div class="name">Monthly Care</div><div class="sub">Per seat, all-you-need</div></div><div class="price">from $39/mo</div></div>
+    <div class="price-row"><div><div class="name">Business Retainer</div><div class="sub">Custom · talk to us</div></div><div class="price">→</div></div>
+  </section>
+
+  <section>
+    <p class="sec-tag">Why us</p>
+    <h2 class="sec-h2">No-BS IT</h2>
+    <div class="svc-grid">
+      <div class="svc"><h3>AI-first triage</h3><p>ARIA solves the easy 60% in seconds. You skip the wait.</p></div>
+      <div class="svc"><h3>Human escalation</h3><p>If ARIA can't fix it, a real Canadian technician picks up. Same number, same person.</p></div>
+      <div class="svc"><h3>Owner-run</h3><p>You talk to the founder, not a script-reader.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-tag">Contact</p>
+    <h2 class="sec-h2">Get help now</h2>
+    <div class="contact-card">
+      <div class="contact-row">
+        <div class="icon">📞</div>
+        <div><div class="lab">Phone · 24/7</div><a href="tel:+16475813182">(647) 581-3182</a></div>
+      </div>
+      <div class="contact-row">
+        <div class="icon">✉</div>
+        <div><div class="lab">Email</div><a href="mailto:integrateditsupp@iisupp.net">integrateditsupp@iisupp.net</a></div>
+      </div>
+      <div class="contact-row">
+        <div class="icon">💬</div>
+        <div><div class="lab">WhatsApp</div><a href="https://wa.me/16475813182?text=Hi%20Integrated%20IT%20Support%20-%20I%20need%20IT%20help">Chat with us</a></div>
+      </div>
+      <div class="contact-row">
+        <div class="icon">🤖</div>
+        <div><div class="lab">AI Assistant</div><a href="/aria">Open ARIA</a></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="brand-foot">Integrated IT Support Inc.</div>
+  <div>Toronto · Canada-wide IT support</div>
+  <div class="links">
+    <a href="/about.html">About</a>
+    <a href="/services">Services</a>
+    <a href="/aria">ARIA</a>
+    <a href="/plans">Plans</a>
+    <a href="/terms">Terms</a>
+  </div>
+  <div class="copy">© Integrated IT Support Inc.</div>
+</footer>
+
+<a class="desktop-link" href="/?desktop=1">Desktop site</a>
+
+<script>
+  // If user explicitly requested desktop, set a cookie and reload to root
+  (function(){
+    var p = new URLSearchParams(location.search);
+    if (p.get('desktop') === '1') {
+      document.cookie = 'view=desktop; path=/; max-age=' + (60*60*24*30);
+    }
+  })();
+</script>
+
+</body>
+</html>
