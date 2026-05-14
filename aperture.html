@@ -134,8 +134,89 @@
     ::-webkit-scrollbar-thumb:hover { background: var(--ap-teal-dim); }
     .hidden-block { display: none !important; }
   </style>
+
+<style id="aperture-gate-style">
+  body.aperture-locked > header,
+  body.aperture-locked > main,
+  body.aperture-locked > footer { filter: blur(10px); pointer-events: none; user-select: none; }
+  #aperture-login-gate {
+    position: fixed; inset: 0; z-index: 100000;
+    background: radial-gradient(ellipse at center, rgba(10,18,25,0.92) 0%, rgba(5,8,16,0.98) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  #aperture-login-gate .ag-box {
+    width: 360px; max-width: 90%; padding: 32px 28px;
+    background: #0a1219; border: 1px solid #2dd4bf;
+    box-shadow: 0 0 60px rgba(45,212,191,0.15), 0 0 0 1px rgba(45,212,191,0.08) inset;
+    border-radius: 2px;
+  }
+  #aperture-login-gate h2 {
+    margin: 0 0 6px 0; color: #2dd4bf;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; font-weight: 600;
+  }
+  #aperture-login-gate p.ag-sub {
+    margin: 0 0 22px 0; color: #98a8b3; font-size: 12.5px; line-height: 1.5;
+  }
+  #aperture-login-gate label {
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.22em; color: #98a8b3;
+    text-transform: uppercase; margin: 12px 0 4px 0;
+  }
+  #aperture-login-gate input {
+    width: 100%; padding: 10px 12px; background: #050810;
+    border: 1px solid #243a47; color: #d8e0e6;
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    border-radius: 1px; outline: none; transition: border-color .15s;
+  }
+  #aperture-login-gate input:focus { border-color: #2dd4bf; }
+  #aperture-login-gate button {
+    width: 100%; margin-top: 18px; padding: 11px;
+    background: #2dd4bf; color: #050810; border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    font-weight: 700; cursor: pointer; border-radius: 1px;
+    transition: opacity .15s;
+  }
+  #aperture-login-gate button:hover { opacity: 0.88; }
+  #aperture-login-gate button:disabled { opacity: 0.4; cursor: not-allowed; }
+  #aperture-login-gate .ag-err {
+    margin-top: 12px; color: #f87171; font-size: 11.5px;
+    font-family: 'JetBrains Mono', monospace; min-height: 14px;
+  }
+  #aperture-login-gate .ag-foot {
+    margin-top: 22px; padding-top: 14px; border-top: 1px solid #1a2b35;
+    color: #6b7c87; font-size: 10px; letter-spacing: 0.2em;
+    font-family: 'JetBrains Mono', monospace; text-transform: uppercase; text-align: center;
+  }
+  #aperture-logout-btn {
+    position: fixed; top: 12px; right: 14px; z-index: 200;
+    padding: 5px 10px; background: rgba(248,113,113,0.10);
+    border: 1px solid #f87171; color: #f87171;
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer;
+    border-radius: 1px; display: none;
+  }
+  body.aperture-unlocked #aperture-logout-btn { display: block; }
+</style>
 </head>
-<body>
+<body class="aperture-locked">
+<div id="aperture-login-gate">
+  <div class="ag-box">
+    <h2>APERTURE - ADMIN ACCESS</h2>
+    <p class="ag-sub">Sign in to view live ARIA sessions, tickets, and audits.</p>
+    <label>Email</label>
+    <input id="ag-email" type="email" autocomplete="email" />
+    <label>Password</label>
+    <input id="ag-pass" type="password" autocomplete="current-password" />
+    <button id="ag-submit" type="button">Sign In</button>
+    <div class="ag-err" id="ag-err"></div>
+    <div class="ag-foot">INTEGRATED IT SUPPORT INC.</div>
+  </div>
+</div>
+<button id="aperture-logout-btn" type="button">Log out</button>
+
 
   <header class="ap-topbar">
     <div class="ap-logo">
@@ -729,5 +810,81 @@
 })();
 </script>
 
+
+<script id="aperture-gate-script">
+(function(){
+  var TOKEN_KEY = 'aperture_token_v1';
+  function getToken(){ try { return JSON.parse(localStorage.getItem(TOKEN_KEY) || 'null'); } catch { return null; } }
+  function isValid(t){ return t && t.token && t.expiresAt && t.expiresAt > Date.now(); }
+  function setLockedClass(locked){
+    document.body.classList.toggle('aperture-locked', locked);
+    document.body.classList.toggle('aperture-unlocked', !locked);
+  }
+  function hideGate(){
+    var g = document.getElementById('aperture-login-gate');
+    if (g) g.remove();
+    setLockedClass(false);
+  }
+  function showGate(){
+    setLockedClass(true);
+    var g = document.getElementById('aperture-login-gate');
+    if (g) g.style.display = 'flex';
+  }
+  function clearToken(){ try { localStorage.removeItem(TOKEN_KEY); } catch {} }
+  // Patch fetch to inject Authorization header on /.netlify/functions/* calls
+  var _fetch = window.fetch;
+  window.fetch = function(input, init){
+    init = init || {};
+    var url = typeof input === 'string' ? input : (input && input.url) || '';
+    var t = getToken();
+    if (isValid(t) && /\/\.netlify\/functions\//.test(url)) {
+      init.headers = new Headers(init.headers || {});
+      init.headers.set('Authorization', 'Bearer ' + t.token);
+    }
+    return _fetch.call(this, input, init);
+  };
+
+  function init(){
+    var t = getToken();
+    if (isValid(t)) { hideGate(); return; }
+    showGate();
+    var submit = document.getElementById('ag-submit');
+    var emailEl = document.getElementById('ag-email');
+    var passEl = document.getElementById('ag-pass');
+    var errEl = document.getElementById('ag-err');
+    if (emailEl && !emailEl.value) emailEl.value = 'integrateditsupp@iisupp.net';
+    function go(){
+      var email = (emailEl.value||'').trim();
+      var password = passEl.value||'';
+      if (!email || !password) { errEl.textContent = 'enter email and password'; return; }
+      errEl.textContent = '';
+      submit.disabled = true; submit.textContent = 'Signing in...';
+      _fetch('/.netlify/functions/aperture-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+      }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, status: r.status, body: d }; }); })
+        .then(function(res){
+          if (res.ok && res.body && res.body.token) {
+            try { localStorage.setItem(TOKEN_KEY, JSON.stringify(res.body)); } catch {}
+            hideGate();
+          } else {
+            errEl.textContent = (res.body && res.body.error) || ('error ' + res.status);
+            submit.disabled = false; submit.textContent = 'Sign In';
+          }
+        }).catch(function(e){
+          errEl.textContent = 'network error'; submit.disabled = false; submit.textContent = 'Sign In';
+        });
+    }
+    submit.addEventListener('click', go);
+    passEl.addEventListener('keydown', function(e){ if (e.key === 'Enter') go(); });
+    emailEl.addEventListener('keydown', function(e){ if (e.key === 'Enter') passEl.focus(); });
+    var lo = document.getElementById('aperture-logout-btn');
+    if (lo) lo.addEventListener('click', function(){ clearToken(); location.reload(); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
 </body>
 </html>
