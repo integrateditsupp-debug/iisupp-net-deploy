@@ -318,13 +318,13 @@
 
   // ============= DEMO SCENARIOS (subset; full set in v0.2) =============
   const SCENARIOS = {
-    'L1-easy': { title:'L1 · Easy · Outlook won\\'t send', cause:'Mail server blocked corporate cert. Re-pinned + cleared profile.', timer:'4.1s', target:'~30s', lead:'I 5 W\\'s', leadCell:'I', stageNow:8, stageMax:8, stageText:'Confirm-resolve loop closed', layersTotal:38,
+    'L1-easy': { title:'L1 · Easy · Outlook wont send', cause:'Mail server blocked corporate cert. Re-pinned + cleared profile.', timer:'4.1s', target:'~30s', lead:'I 5 Ws', leadCell:'I', stageNow:8, stageMax:8, stageText:'Confirm-resolve loop closed', layersTotal:38,
       tags:{industry:'professional services',role:'end_user',environment:'prod',pressure:'low',history:'first',trust:'good'},
       layers:[['LLM',12],['Memory',18],['KB',22],['Evaluation',8],['Tools',6],['Frontend/UI',5],['Storage',12],['Safety',4],['RAG',3],['Agents',2],['Vector DB',2],['Automation',1]],
       agents:[['kb',2],['reasoning',1],['safety',1],['quality',1],['intent',1],['orchestrator',1]],
       messages:[{from:'user',text:'Outlook is just spinning when I hit send.'},{from:'aria',text:'Outlook hanging on send usually means an auth handshake stalled. Let me check your account state.'},{from:'aria',text:'Corporate cert was re-pinned this morning. Your profile has an old fingerprint cached. 30-second fix.'},{from:'aria',text:'Done. Restart Outlook and try sending. Should fire right away.'}]
     },
-    'L1-mid': { title:'L1 · Mid · Outlook slow after Windows update', cause:'KB5xxxxx update corrupted search index. Index rebuild applied.', timer:'7.6s', target:'~38s', lead:'I 5 W\\'s', leadCell:'I', stageNow:11, stageMax:11, stageText:'response · STAR summary', layersTotal:101,
+    'L1-mid': { title:'L1 · Mid · Outlook slow after Windows update', cause:'KB5xxxxx update corrupted search index. Index rebuild applied.', timer:'7.6s', target:'~38s', lead:'I 5 Ws', leadCell:'I', stageNow:11, stageMax:11, stageText:'response · STAR summary', layersTotal:101,
       tags:{industry:'smb',role:'end_user',environment:'prod',pressure:'busy',history:'first_time',trust:'established'},
       layers:[['LLM',21.8],['Memory',16.8],['Evaluation',9.9],['Automation',8.9],['Safety',8.9],['KB',6.9],['Tools',6.9],['Frontend/UI',6.9],['Vector DB',5.0],['RAG',4.0],['Agents',2.5],['Storage',1.5]],
       agents:[['reasoning',4],['intent',2],['kb',2],['safety',2],['automation',2],['psychology',1],['learning',1],['quality',1],['observability',1]],
