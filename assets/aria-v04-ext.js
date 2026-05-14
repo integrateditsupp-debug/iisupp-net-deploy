@@ -99,6 +99,7 @@
     // signal Aperture to reset
     try { localStorage.removeItem('aria_active_session'); } catch {}
     clearIdle();
+    setTimeout(resetChatUI, 1800);
   }
 
   // ============ ESCALATION / VENDOR / OUT-OF-SCOPE / TOPIC ============
@@ -172,7 +173,7 @@
       setTimeout(() => {
         try { window.ARIAperture && window.ARIAperture.forceModal && window.ARIAperture.forceModal(); } catch {}
         currentTopic = newTopic;
-      }, 1200);
+      }, 2200);
       return true;
     }
     if (/^(no|n|nope|nah|stay)\b/.test(lower)) {
@@ -181,6 +182,41 @@
       return true;
     }
     return false;
+  }
+
+  // ============ CHAT RESET / HISTORY ARCHIVE ============
+  function pushToHistory() {
+    try {
+      var chat = document.getElementById('chatMessages');
+      if (!chat) return;
+      var sess = getSession();
+      var entry = {
+        ts: Date.now(),
+        ticket: sess && sess.ticket,
+        user: sess && sess.user,
+        html: chat.innerHTML
+      };
+      var raw = localStorage.getItem('aria_v04_chat_history') || '[]';
+      var arr = JSON.parse(raw);
+      arr.unshift(entry);
+      if (arr.length > 20) arr.length = 20;
+      localStorage.setItem('aria_v04_chat_history', JSON.stringify(arr));
+    } catch (e) { console.warn('[aria-v04] pushToHistory failed', e); }
+  }
+
+  function resetChatUI() {
+    pushToHistory();
+    try { window.archiveCurrentChat && window.archiveCurrentChat(); } catch (e) {}
+    var chat = document.getElementById('chatMessages');
+    if (chat) {
+      var welcome = chat.querySelector('.fade-in');
+      var welcomeClone = welcome ? welcome.cloneNode(true) : null;
+      chat.innerHTML = '';
+      if (welcomeClone) chat.appendChild(welcomeClone);
+    }
+    currentTopic = null;
+    pendingTopicChange = null;
+    clearIdle();
   }
 
   // ============ END-CHAT + CONTACT-BACK BUTTONS ============
