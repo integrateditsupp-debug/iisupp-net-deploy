@@ -37,7 +37,7 @@ exports.handler = async (event) => {
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const subject = `Issue - ${today}`;
+  const subject = body.subjectOverride || `Issue - ${today}`;
   const html = renderReport({ name, sessionId, summary, conversation, metrics, endedBy });
   const text = textVersion(summary, endedBy);
 
