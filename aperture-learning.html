@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+undefined<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -914,5 +914,271 @@ function v(id){return el(id).value.trim();}
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
 
+
+<!-- ========= APL BOOST: Autonomy + Tickets + SLA + Live Agents + Nudge (2026-05-15) ========= -->
+<style>
+#apl-boost{padding:14px 20px 4px;display:grid;grid-template-columns:1.2fr 1.4fr 1.2fr 1.2fr;gap:14px;background:transparent;border-bottom:1px solid #1f2435}
+@media(max-width:1100px){#apl-boost{grid-template-columns:1fr 1fr}}
+.apl-c{background:linear-gradient(180deg,rgba(20,28,48,.7),rgba(12,16,28,.7));border:1px solid #1f2a44;border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.apl-c::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#22e1ff,transparent);opacity:.35}
+.apl-h{font:600 10px/1 ui-monospace,monospace;color:#22e1ff;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.apl-h .apl-tag{font-size:8px;letter-spacing:1px;color:#d4af37}
+.apl-big{font:700 28px/1 ui-monospace,monospace;color:#fff;margin-bottom:6px}
+.apl-sub{font:11px/1.4 system-ui,sans-serif;color:#8a93a8}
+.apl-bar{height:6px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;margin:8px 0 6px}
+.apl-bar > div{height:100%;background:linear-gradient(90deg,#22e1ff,#d4af37);transition:width .6s ease;border-radius:4px}
+.apl-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.apl-stat{background:rgba(0,0,0,.3);border:1px solid #1f2a44;border-radius:6px;padding:9px 6px;text-align:center;cursor:pointer;transition:all .15s}
+.apl-stat:hover{border-color:#22e1ff;background:rgba(34,225,255,.06)}
+.apl-stat .n{font:700 22px ui-monospace,monospace;color:#fff;line-height:1.1}
+.apl-stat .l{font:600 9px ui-monospace,monospace;letter-spacing:1.2px;color:#7a8398;text-transform:uppercase;margin-top:2px}
+.apl-stat.esc .n{color:#ff8a1f}.apl-stat.res .n{color:#10ddb0}.apl-stat.inp .n{color:#d4af37}
+.apl-sla-row{display:flex;justify-content:space-between;font:11px/1.6 ui-monospace,monospace;color:#cfd6e6;padding:3px 0}
+.apl-sla-row .ok{color:#10ddb0}.apl-sla-row .warn{color:#ff8a1f}.apl-sla-row .bad{color:#ff4d6b}
+.apl-live{max-height:120px;overflow:auto}
+.apl-live-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.04);font:11px ui-monospace,monospace;color:#cfd6e6}
+.apl-live-row:last-child{border:none}
+.apl-dot{width:6px;height:6px;border-radius:50%;background:#10ddb0;box-shadow:0 0 8px #10ddb0;animation:apl-pulse 1.6s ease-in-out infinite;flex-shrink:0}
+.apl-live-row .nm{flex:1;color:#fff;font-weight:600;letter-spacing:.5px}
+.apl-live-row .ag{color:#7a8398;font-size:10px}
+.apl-nudge{background:rgba(212,175,55,.1);border:1px solid #d4af37;color:#d4af37;padding:3px 8px;border-radius:4px;font:600 9px ui-monospace,monospace;letter-spacing:1px;cursor:pointer;transition:all .12s}
+.apl-nudge:hover{background:#d4af37;color:#000}
+.apl-empty{text-align:center;color:#5d6478;font:10px ui-monospace,monospace;letter-spacing:1px;padding:14px 0}
+@keyframes apl-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#apl-modal-bg{display:none;position:fixed;inset:0;background:rgba(5,8,15,.85);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;padding:24px}
+#apl-modal-bg.show{display:flex}
+#apl-modal{background:linear-gradient(180deg,#0e1422,#0a0e1a);border:1px solid #22e1ff;border-radius:12px;padding:24px;max-width:780px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 60px rgba(34,225,255,.08)}
+#apl-modal h2{font:600 13px ui-monospace,monospace;color:#22e1ff;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+#apl-modal .x{position:absolute;top:14px;right:18px;color:#7a8398;font-size:20px;cursor:pointer;background:none;border:none}
+.apl-tk{background:rgba(0,0,0,.3);border:1px solid #1f2a44;border-radius:6px;padding:12px 14px;margin-bottom:8px;font:12px ui-monospace,monospace;color:#cfd6e6}
+.apl-tk b{color:#fff}
+.apl-tk .meta{font-size:10px;color:#7a8398;margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.apl-tk .pri{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:1px;margin-left:6px}
+.apl-tk .pri.critical{background:rgba(255,77,107,.2);color:#ff4d6b;border:1px solid #ff4d6b}
+.apl-tk .pri.high{background:rgba(255,138,31,.2);color:#ff8a1f;border:1px solid #ff8a1f}
+.apl-tk .pri.normal{background:rgba(34,225,255,.15);color:#22e1ff;border:1px solid #22e1ff}
+.apl-tk .pri.low{background:rgba(125,135,160,.15);color:#9aa3b8;border:1px solid #4a5168}
+.apl-tk-btns{display:flex;gap:8px;margin-top:8px}
+.apl-tk-btns button{padding:5px 11px;background:rgba(34,225,255,.08);border:1px solid #22e1ff;color:#22e1ff;border-radius:4px;font:600 9px ui-monospace,monospace;letter-spacing:1px;cursor:pointer}
+.apl-tk-btns button:hover{background:#22e1ff;color:#000}
+</style>
+
+<div id="apl-modal-bg" onclick="if(event.target.id==='apl-modal-bg')aplCloseModal()">
+  <div id="apl-modal" style="position:relative">
+    <button class="x" onclick="aplCloseModal()">&times;</button>
+    <h2 id="apl-modal-title">Tickets</h2>
+    <div id="apl-modal-body"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  if (window.__APL_BOOST_LOADED__) return;
+  window.__APL_BOOST_LOADED__ = true;
+  const ESC_API = '/.netlify/functions/aria-escalation';
+  const STAT_API = '/.netlify/functions/aria-learning-status';
+
+  function waitTopbar(cb,tries){
+    tries = tries || 0;
+    const app = document.getElementById('app');
+    const tb = app ? app.querySelector('.topbar') : null;
+    if (tb) { cb(tb); return; }
+    if (tries > 100) return;
+    setTimeout(function(){waitTopbar(cb, tries+1);}, 250);
+  }
+
+  waitTopbar(function(tb){
+    const box = document.createElement('div');
+    box.id = 'apl-boost';
+    box.innerHTML = `
+      <div class="apl-c">
+        <div class="apl-h"><span>ARIA Autonomy</span><span class="apl-tag" id="apl-autonomy-target">Target: 95%</span></div>
+        <div class="apl-big" id="apl-autonomy-val">0%</div>
+        <div class="apl-bar"><div id="apl-autonomy-bar" style="width:0%"></div></div>
+        <div class="apl-sub" id="apl-autonomy-note">0 of 0 tickets resolved without human</div>
+      </div>
+      <div class="apl-c">
+        <div class="apl-h"><span>Tickets</span><span class="apl-tag">Click any to investigate</span></div>
+        <div class="apl-stat-row">
+          <div class="apl-stat" onclick="aplOpenTickets('all')"><div class="n" id="apl-tix-logged">—</div><div class="l">Logged</div></div>
+          <div class="apl-stat inp" onclick="aplOpenTickets('in-progress')"><div class="n" id="apl-tix-inprog">—</div><div class="l">In Progress</div></div>
+          <div class="apl-stat res" onclick="aplOpenTickets('resolved')"><div class="n" id="apl-tix-res">—</div><div class="l">Resolved</div></div>
+          <div class="apl-stat esc" onclick="aplOpenTickets('esc')"><div class="n" id="apl-tix-esc">—</div><div class="l">Escalated</div></div>
+        </div>
+      </div>
+      <div class="apl-c">
+        <div class="apl-h"><span>SLA Performance</span><span class="apl-tag">30min - 2bd</span></div>
+        <div class="apl-sla-row"><span>First-Call Resolution</span><span id="apl-fcr" class="ok">100%</span></div>
+        <div class="apl-sla-row"><span>Avg Response Time</span><span id="apl-resp" class="ok">— min</span></div>
+        <div class="apl-sla-row"><span>Avg Resolution (escalated)</span><span id="apl-rest" class="ok">— h</span></div>
+        <div class="apl-sla-row"><span>Target: respond 30m-1h, resolve 1-2bd</span><span id="apl-sla-ok" class="ok">ON TRACK</span></div>
+      </div>
+      <div class="apl-c">
+        <div class="apl-h"><span>Live: Agents Working</span><span class="apl-tag" id="apl-active-count">0 active</span></div>
+        <div class="apl-live" id="apl-active"><div class="apl-empty">Waiting for activity...</div></div>
+      </div>
+    `;
+    tb.parentNode.insertBefore(box, tb.nextSibling);
+    pollAll();
+    setInterval(pollAll, 4000);
+  });
+
+  async function safeFetch(url, opts) {
+    try { const r = await fetch(url, opts || {}); if (!r.ok) return null; return await r.json(); }
+    catch(e) { return null; }
+  }
+
+  let LAST_TICKETS = [];
+  let LAST_CHAT = [];
+
+  async function pollAll(){
+    const [tix, stat, chat] = await Promise.all([
+      safeFetch(ESC_API + '?action=tickets'),
+      safeFetch(STAT_API),
+      safeFetch(ESC_API + '?action=chatlog')
+    ]);
+    LAST_TICKETS = (tix && (tix.tickets || tix.index || tix)) || [];
+    if (!Array.isArray(LAST_TICKETS)) LAST_TICKETS = [];
+    LAST_CHAT = (chat && (chat.messages || chat.log || chat)) || [];
+    if (!Array.isArray(LAST_CHAT)) LAST_CHAT = [];
+    renderStats(stat || {});
+    renderActive();
+  }
+
+  function renderStats(stat){
+    const t = LAST_TICKETS;
+    const logged = t.length;
+    const resolved = t.filter(x => x && (x.status === 'resolved' || x.status === 'closed')).length;
+    const escalated = t.filter(x => x && (x.status === 'escalated' || x.status === 'awaiting-human' || x.status === 'awaiting_human')).length;
+    const inProgress = Math.max(0, logged - resolved - escalated);
+
+    const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    set('apl-tix-logged', logged);
+    set('apl-tix-inprog', inProgress);
+    set('apl-tix-res', resolved);
+    set('apl-tix-esc', escalated);
+
+    const autonomy = logged === 0 ? 0 : Math.round((resolved / logged) * 100);
+    set('apl-autonomy-val', autonomy + '%');
+    const bar = document.getElementById('apl-autonomy-bar');
+    if (bar) bar.style.width = autonomy + '%';
+    set('apl-autonomy-note', resolved + ' of ' + logged + ' tickets resolved without human');
+
+    const fcr = logged === 0 ? 100 : Math.round((resolved / logged) * 100);
+    const fcrEl = document.getElementById('apl-fcr');
+    if (fcrEl) {
+      fcrEl.textContent = fcr + '%';
+      fcrEl.className = fcr >= 90 ? 'ok' : (fcr >= 70 ? 'warn' : 'bad');
+    }
+    const resolvedT = t.filter(x => x && x.status === 'resolved' && x.createdAt && x.updatedAt);
+    if (resolvedT.length) {
+      const avgMin = resolvedT.reduce((s, x) => s + (new Date(x.updatedAt) - new Date(x.createdAt)), 0) / resolvedT.length / 60000;
+      const respEl = document.getElementById('apl-resp');
+      if (respEl) {
+        respEl.textContent = Math.max(1, Math.round(avgMin)) + ' min';
+        respEl.className = avgMin <= 60 ? 'ok' : (avgMin <= 120 ? 'warn' : 'bad');
+      }
+    }
+    const escResolved = t.filter(x => x && x.status === 'resolved' && (x.escalatedAt || x.priority === 'critical' || x.priority === 'high'));
+    if (escResolved.length) {
+      const avgH = escResolved.reduce((s, x) => s + (new Date(x.updatedAt || Date.now()) - new Date(x.createdAt)), 0) / escResolved.length / 3600000;
+      const restEl = document.getElementById('apl-rest');
+      if (restEl) {
+        restEl.textContent = avgH.toFixed(1) + ' h';
+        restEl.className = avgH <= 16 ? 'ok' : (avgH <= 48 ? 'warn' : 'bad');
+      }
+    }
+    const slaEl = document.getElementById('apl-sla-ok');
+    if (slaEl) {
+      if (escalated === 0 && logged > 0) { slaEl.textContent = 'EXCELLENT'; slaEl.className = 'ok'; }
+      else if (fcr >= 80) { slaEl.textContent = 'ON TRACK'; slaEl.className = 'ok'; }
+      else if (fcr >= 60) { slaEl.textContent = 'AT RISK'; slaEl.className = 'warn'; }
+      else { slaEl.textContent = 'BREACHED'; slaEl.className = 'bad'; }
+    }
+  }
+
+  function renderActive(){
+    const now = Date.now();
+    const active = {};
+    LAST_CHAT.forEach(function(m){
+      if (!m) return;
+      const tsRaw = m.ts || m.timestamp || m.t;
+      const ts = typeof tsRaw === 'string' ? new Date(tsRaw).getTime() : Number(tsRaw);
+      const agent = m.from || m.agent || m.a;
+      if (!agent || !ts) return;
+      const age = now - ts;
+      if (age < 180000) {
+        if (!active[agent] || age < active[agent].age) active[agent] = { age, kind: m.kind || m.k || 'msg' };
+      }
+    });
+    const list = Object.entries(active).sort(function(a,b){return a[1].age - b[1].age;});
+    const cnt = document.getElementById('apl-active-count');
+    if (cnt) cnt.textContent = list.length + ' active';
+    const wrap = document.getElementById('apl-active');
+    if (!wrap) return;
+    if (!list.length) { wrap.innerHTML = '<div class="apl-empty">No agents active in last 3 min</div>'; return; }
+    wrap.innerHTML = list.map(function(pair){
+      const agent = pair[0]; const info = pair[1];
+      return '<div class="apl-live-row"><span class="apl-dot"></span><span class="nm">' + esc(agent) + '</span><span class="ag">' + Math.round(info.age/1000) + 's</span><button class="apl-nudge" onclick="aplNudge(\'' + esc(agent).replace(/'/g, '\\\'') + '\')">NUDGE</button></div>';
+    }).join('');
+  }
+
+  window.aplNudge = async function(agent){
+    const btn = event && event.target;
+    if (btn) { btn.disabled = true; btn.textContent = 'SENT'; }
+    await safeFetch(ESC_API + '?action=chatpost', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: 'nudge', agent: agent, from: 'operator', to: agent, message: 'OPERATOR NUDGE - status check, please proceed or report blocker', ts: Date.now() })
+    });
+    setTimeout(pollAll, 600);
+  };
+
+  window.aplOpenTickets = function(filter){
+    const tList = LAST_TICKETS.filter(function(t){
+      if (!t) return false;
+      if (filter === 'all') return true;
+      if (filter === 'in-progress') return t.status !== 'resolved' && t.status !== 'closed' && t.status !== 'escalated' && t.status !== 'awaiting-human' && t.status !== 'awaiting_human';
+      if (filter === 'resolved') return t.status === 'resolved' || t.status === 'closed';
+      if (filter === 'esc' || filter === 'escalated') return t.status === 'escalated' || t.status === 'awaiting-human' || t.status === 'awaiting_human';
+      return true;
+    });
+    document.getElementById('apl-modal-title').textContent = filter.toUpperCase().replace(/-/g, ' ') + ' TICKETS (' + tList.length + ')';
+    const body = document.getElementById('apl-modal-body');
+    if (!tList.length) { body.innerHTML = '<div class="apl-empty">No tickets in this category.</div>'; }
+    else {
+      body.innerHTML = tList.slice(0, 40).map(function(t){
+        const pri = (t.priority || 'normal').toLowerCase();
+        const summary = esc(t.issue || t.summary || t.title || t.id || 'untitled');
+        const userEmail = esc(t.userEmail || t.email || 'unknown');
+        const status = esc(t.status || 'open');
+        const created = t.createdAt ? new Date(t.createdAt).toLocaleString() : '—';
+        return '<div class="apl-tk"><b>' + esc(t.id || '?') + '</b><span class="pri ' + pri + '">' + pri + '</span><br><span style="color:#cfd6e6">' + summary + '</span><div class="meta">USER: ' + userEmail + ' STATUS: ' + status + ' CREATED: ' + created + '</div><div class="apl-tk-btns"><button onclick="aplViewTicket(\'' + esc(t.id).replace(/'/g, '\\\'') + '\')">VIEW FULL REPORT</button><button onclick="aplOpenEmail(\'' + userEmail + '\',\'' + esc(t.id) + '\')">EMAIL USER</button></div></div>';
+      }).join('');
+    }
+    document.getElementById('apl-modal-bg').classList.add('show');
+  };
+
+  window.aplViewTicket = async function(id){
+    const body = document.getElementById('apl-modal-body');
+    body.innerHTML = '<div class="apl-empty">Loading...</div>';
+    const r = await safeFetch(ESC_API + '?action=ticket&id=' + encodeURIComponent(id));
+    if (!r) { body.innerHTML = '<div class="apl-empty">Could not load ticket.</div>'; return; }
+    const t = r.ticket || r;
+    document.getElementById('apl-modal-title').textContent = 'TICKET ' + (t.id || id);
+    body.innerHTML = '<pre style="background:#000;color:#cfd6e6;padding:14px;border-radius:6px;border:1px solid #1f2a44;overflow:auto;font:11px ui-monospace,monospace;max-height:60vh">' + esc(JSON.stringify(t, null, 2)) + '</pre>';
+  };
+
+  window.aplOpenEmail = function(email, id){
+    const subject = encodeURIComponent('Re: Your support ticket ' + id);
+    const body = encodeURIComponent('Hi,\\n\\nFollowing up on your ARIA support session (' + id + ').\\n\\n- Integrated IT Support');
+    window.open('mailto:' + email + '?subject=' + subject + '&body=' + body, '_blank');
+  };
+
+  window.aplCloseModal = function(){ document.getElementById('apl-modal-bg').classList.remove('show'); };
+
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+})();
+</script>
+<!-- ========= /APL BOOST ========= -->
 </body>
 </html>
