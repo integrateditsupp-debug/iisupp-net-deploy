@@ -73,6 +73,26 @@ exports.handler = async (event) => {
       }
       errors.push(`resend: ${r.status} ${JSON.stringify(j).slice(0, 200)}`);
       console.warn('[aperture-email-report] resend failed', errors[errors.length - 1]);
+      // Auto-fallback: if domain not verified, retry with Resend's pre-verified onboarding domain.
+      // (Note: this only delivers to the email address that owns the Resend account.)
+      const isDomainErr = r.status === 403 || (j && JSON.stringify(j).toLowerCase().includes('not verified'));
+      if (isDomainErr) {
+        try {
+          const r2 = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ from: 'Integrated IT Support <onboarding@resend.dev>', to: [to], subject, html, text })
+          });
+          const j2 = await r2.json().catch(() => ({}));
+          if (r2.ok && j2.id) {
+            console.log('[aperture-email-report] sent via resend (onboarding fallback)', { to, sessionId, msgId: j2.id });
+            return { statusCode: 200, headers, body: JSON.stringify({ ok: true, sent: true, via: 'resend-onboarding', to, subject, msgId: j2.id, note: 'sent from onboarding@resend.dev because your domain is not verified in Resend; verify at https://resend.com/domains for production sender' }) };
+          }
+          errors.push(`resend-onboarding: ${r2.status} ${JSON.stringify(j2).slice(0, 200)}`);
+        } catch (e2) {
+          errors.push(`resend-onboarding: ${e2.message}`);
+        }
+      }
     } catch (e) {
       errors.push(`resend: ${e.message}`);
       console.warn('[aperture-email-report] resend exception', e.message);
