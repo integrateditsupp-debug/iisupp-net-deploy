@@ -45,7 +45,11 @@ exports.handler = async (event) => {
 
   // ============= PATH 1: Resend (preferred) =============
   const resendKey = process.env.RESEND_API_KEY;
-  const resendFrom = process.env.RESEND_FROM || 'Integrated IT Support <noreply@iisupp.net>';
+  const rawFrom = process.env.RESEND_FROM || 'Integrated IT Support <noreply@iisupp.net>';
+  const resendFrom = sanitizeFrom(rawFrom);
+  if (resendFrom !== rawFrom) {
+    console.warn('[aperture-email-report] RESEND_FROM had invalid format, sanitized:', { original: rawFrom, used: resendFrom });
+  }
   if (resendKey) {
     try {
       const r = await fetch('https://api.resend.com/emails', {
@@ -173,4 +177,18 @@ function textVersion(summary, endedBy) {
 
 function escapeHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Resend requires "email@example.com" or "Name <email@example.com>". Anything else 422s.
+function sanitizeFrom(s) {
+  s = String(s || '').trim();
+  if (/^[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+$/.test(s)) return s;
+  if (/^[^<>]+<\s*[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+\s*>$/.test(s)) return s;
+  const m = s.match(/[\w.!#$%&'*+/=?^`{|}~-]+@[\w-]+(?:\.[\w-]+)+/);
+  if (m) {
+    const email = m[0];
+    const name = s.replace(m[0], '').replace(/[<>]/g, '').trim() || 'Integrated IT Support';
+    return name + ' <' + email + '>';
+  }
+  return 'Integrated IT Support <noreply@iisupp.net>';
 }
