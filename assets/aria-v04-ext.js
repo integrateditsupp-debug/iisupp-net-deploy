@@ -494,6 +494,16 @@
 
   function ariaUncertainEnter(userText) {
     try { clearIdle(); } catch(_) {}
+    try {
+      if (window.__ariaIdleGuard) clearInterval(window.__ariaIdleGuard);
+      window.__ariaIdleGuard = setInterval(function(){
+        if (!__ariaUncertainState || __ariaUncertainState.resolved) {
+          if (window.__ariaIdleGuard) { clearInterval(window.__ariaIdleGuard); window.__ariaIdleGuard = null; }
+          return;
+        }
+        try { clearIdle(); } catch(_) {}
+      }, 8000);
+    } catch(_) {}
     if (__ariaUncertainState) {
       if (__ariaUncertainState.tWait) clearTimeout(__ariaUncertainState.tWait);
       if (__ariaUncertainState.tEsc) clearTimeout(__ariaUncertainState.tEsc);
