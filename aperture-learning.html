@@ -30,7 +30,7 @@ a{color:var(--cy);text-decoration:none}
 .logo .lo-mark{width:42px;height:42px;background:linear-gradient(135deg,#a855f7,#22e1ff);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:flex;align-items:center;justify-content:center;color:#000;font-weight:800;font-family:var(--mono);font-size:18px;letter-spacing:1px}
 .logo .lo-txt h1{font-family:var(--mono);font-size:15px;letter-spacing:4px;color:#fff;text-shadow:0 0 12px rgba(34,225,255,.5)}
 .logo .lo-txt .lo-sub{font-family:var(--mono);font-size:9px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-top:2px}
-.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
 .kpi{background:linear-gradient(135deg,rgba(10,17,36,.6),rgba(13,22,45,.4));border:1px solid var(--brd);padding:10px 14px;border-radius:5px;position:relative;overflow:hidden}
 .kpi::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:var(--cy);box-shadow:0 0 8px var(--cy)}
 .kpi .k-lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);text-transform:uppercase;margin-bottom:4px}
@@ -73,6 +73,12 @@ a{color:var(--cy);text-decoration:none}
 .seat-typing{animation:typing .7s ease-in-out infinite}
 .scan-line{animation:scan 8s linear infinite}
 .orb{animation:orb 3s ease-in-out infinite}
+@keyframes walk1{0%,100%{transform:translate(0,0)}25%{transform:translate(140px,8px)}50%{transform:translate(280px,0)}75%{transform:translate(140px,-8px)}}
+@keyframes walk2{0%,100%{transform:translate(0,0)}25%{transform:translate(-110px,12px)}50%{transform:translate(-220px,0)}75%{transform:translate(-110px,-8px)}}
+.walker{transition:transform 200ms}
+.walker.w1{animation:walk1 24s ease-in-out infinite}
+.walker.w2{animation:walk2 30s ease-in-out infinite}
+.walker.w3{animation:walk1 36s ease-in-out infinite reverse;animation-delay:-12s}
 
 /* AGENT NAMES */
 .seat-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px}
@@ -127,7 +133,7 @@ a{color:var(--cy);text-decoration:none}
 .tkt-iss{font-size:12px;color:var(--txt);line-height:1.4}
 
 /* COMMS — BITS */
-.comms{max-height:340px;overflow-y:auto;padding-right:6px}
+.comms{max-height:600px;overflow-y:auto;padding-right:6px}
 .comms::-webkit-scrollbar{width:5px}
 .comms::-webkit-scrollbar-track{background:transparent}
 .comms::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px}
@@ -219,6 +225,7 @@ a{color:var(--cy);text-decoration:none}
       <div class="kpi"><div class="k-lbl">Total Agents</div><div class="k-val" id="kpi-agents">—</div><div class="k-delta">active</div></div>
       <div class="kpi"><div class="k-lbl">Tasks in Progress</div><div class="k-val" id="kpi-tasks">—</div><div class="k-delta" id="kpi-tasks-d">live</div></div>
       <div class="kpi"><div class="k-lbl">Tickets Resolved</div><div class="k-val" id="kpi-resolved">—</div><div class="k-delta" id="kpi-resolved-d">+0 today</div></div>
+      <div class="kpi" style="border-left-color:#a855f7"><div class="k-lbl">ARIA Autonomy</div><div class="k-val" id="kpi-autonomy">â</div><div class="k-delta" id="kpi-autonomy-d">% to fully autonomous</div></div>
       <div class="kpi"><div class="k-lbl">System Health</div><div class="k-val" id="kpi-health">—</div><div class="k-delta" id="kpi-health-d">optimal</div></div>
     </div>
     <div class="clock">
@@ -273,18 +280,28 @@ a{color:var(--cy);text-decoration:none}
         </g>
 
         <!-- central ARIA hologram orb -->
-        <g transform="translate(550,200)">
+        <g transform="translate(550,200)" id="aria-orb" style="cursor:pointer">
           <circle r="60" fill="url(#hglow)" class="orb"/>
           <circle r="32" fill="none" stroke="#22e1ff" stroke-width="1" opacity=".6"/>
           <circle r="42" fill="none" stroke="#22e1ff" stroke-width=".5" opacity=".4"/>
           <circle r="52" fill="none" stroke="#a855f7" stroke-width=".5" opacity=".3"/>
           <!-- ARIA face silhouette -->
-          <ellipse cx="0" cy="-8" rx="18" ry="22" fill="none" stroke="#22e1ff" stroke-width="1.5" opacity=".8"/>
-          <circle cx="-6" cy="-10" r="2" fill="#22e1ff"/>
-          <circle cx="6" cy="-10" r="2" fill="#22e1ff"/>
-          <path d="M-8 -2 Q0 2 8 -2" stroke="#22e1ff" stroke-width="1" fill="none" opacity=".7"/>
+          <circle r="22" fill="rgba(10,21,48,.7)" stroke="#22e1ff" stroke-width="1.2"/>
+          <g><ellipse rx="22" ry="7" fill="none" stroke="#22e1ff" stroke-width=".6" opacity=".75"/><ellipse rx="22" ry="14" fill="none" stroke="#22e1ff" stroke-width=".4" opacity=".5"/><ellipse rx="7" ry="22" fill="none" stroke="#22e1ff" stroke-width=".6" opacity=".75"/><ellipse rx="14" ry="22" fill="none" stroke="#22e1ff" stroke-width=".4" opacity=".5"/><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/></g>
+          <circle r="22" fill="none" stroke="#a855f7" stroke-width=".6" opacity=".7"><animate attributeName="r" values="22;26;22" dur="2.5s" repeatCount="indefinite"/></circle>
+          <circle cx="0" cy="0" r="3" fill="#22e1ff" opacity=".9"><animate attributeName="opacity" values=".9;.4;.9" dur="2s" repeatCount="indefinite"/></circle>
           <text y="76" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#22e1ff" letter-spacing="3">ARIA · CORE</text>
           <text y="90" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#7587a8" letter-spacing="1">orchestrator</text>
+        </g>
+        <g id="aria-stats-overlay" opacity="0" pointer-events="none" font-family="JetBrains Mono,monospace" style="transition:opacity 300ms ease">
+          <text x="550" y="92" text-anchor="middle" font-size="8" fill="#a855f7" letter-spacing="2">AUTONOMY</text>
+          <text x="550" y="112" text-anchor="middle" font-size="20" fill="#fff" font-weight="300" id="aria-overlay-autonomy">â</text>
+          <text x="425" y="195" text-anchor="end" font-size="8" fill="#22e1ff" letter-spacing="2">VELOCITY</text>
+          <text x="425" y="214" text-anchor="end" font-size="14" fill="#fff" id="aria-overlay-velocity">â</text>
+          <text x="675" y="195" text-anchor="start" font-size="8" fill="#10ddb0" letter-spacing="2">HEALTH</text>
+          <text x="675" y="214" text-anchor="start" font-size="14" fill="#fff" id="aria-overlay-health">â</text>
+          <text x="550" y="298" text-anchor="middle" font-size="8" fill="#ffb53d" letter-spacing="2">RESOLVED</text>
+          <text x="550" y="316" text-anchor="middle" font-size="14" fill="#fff" id="aria-overlay-solved">â</text>
         </g>
 
         <!-- left side rooms -->
@@ -325,6 +342,9 @@ a{color:var(--cy);text-decoration:none}
           <circle cx="680" cy="140" r="1" fill="#22e1ff" class="seat-active" style="animation-delay:.6s"/>
         </g>
 
+        <g class="walker w1" transform="translate(280,490)"><ellipse cx="0" cy="-2" rx="5" ry="6" fill="#243a52" stroke="#22e1ff" stroke-width=".8"/><circle cx="0" cy="-3" r="2" fill="#22e1ff" opacity=".8"/><path d="M-6 4 Q-6 -2 0 -2 Q6 -2 6 4 L6 10 L-6 10 Z" fill="#162242" stroke="#22e1ff" stroke-width=".5"/></g>
+        <g class="walker w2" transform="translate(820,500)"><ellipse cx="0" cy="-2" rx="5" ry="6" fill="#243a52" stroke="#a855f7" stroke-width=".8"/><circle cx="0" cy="-3" r="2" fill="#a855f7" opacity=".8"/><path d="M-6 4 Q-6 -2 0 -2 Q6 -2 6 4 L6 10 L-6 10 Z" fill="#162242" stroke="#a855f7" stroke-width=".5"/></g>
+        <g class="walker w3" transform="translate(540,510)"><ellipse cx="0" cy="-2" rx="5" ry="6" fill="#243a52" stroke="#10ddb0" stroke-width=".8"/><circle cx="0" cy="-3" r="2" fill="#10ddb0" opacity=".8"/><path d="M-6 4 Q-6 -2 0 -2 Q6 -2 6 4 L6 10 L-6 10 Z" fill="#162242" stroke="#10ddb0" stroke-width=".5"/></g>
         <!-- AGENTS ROW (front workstations) -->
         <g id="agent-stations"></g>
       </svg>
@@ -513,6 +533,7 @@ function showApp(){
   el('login').style.display='none';el('app').style.display='block';
   initStations();initExteriors();updateClock();setInterval(updateClock,1000);
   loadAll();POLL=setInterval(loadAll,4000);
+  setTimeout(function(){const _o=document.getElementById('aria-orb');const _ov=document.getElementById('aria-stats-overlay');if(_o&&_ov){_o.addEventListener('mouseenter',function(){_ov.setAttribute('opacity','1');});_o.addEventListener('mouseleave',function(){_ov.setAttribute('opacity','0');});}},800);
   CINEMA_TIMER=setInterval(()=>{if(!document.hidden)showCinema();},120000);
   document.addEventListener('keydown',e=>{if(e.key==='Escape')hideCinema();});
 }
@@ -697,6 +718,10 @@ function renderKPIs(s,t,c){
   el('kpi-tasks').textContent=inprog;
   el('kpi-resolved').textContent=resolved.toLocaleString();
   el('kpi-health').textContent=healthPct+'%';
+  const _auto=Math.round((s.autonomy||0)*100);
+  const _elA=el('kpi-autonomy');if(_elA)_elA.textContent=_auto+'%';
+  const _ov={'aria-overlay-autonomy':_auto+'%','aria-overlay-velocity':(s.velocity24h||0)+' /d','aria-overlay-health':healthPct+'%','aria-overlay-solved':resolved};
+  Object.entries(_ov).forEach(function(p){const _e=el(p[0]);if(_e)_e.textContent=p[1];});
   el('kpi-health-d').textContent=healthPct>95?'OPTIMAL':healthPct>80?'NOMINAL':'DEGRADED';
   el('success-num').textContent=s.velocity24h||0;
   el('success-delta').textContent='Velocity · 24h window';
