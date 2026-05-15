@@ -497,7 +497,7 @@ if(TOKEN) showApp();
 function doLogin(){
   const u=v('user'),p=v('pass');
   el('login-err').textContent='';
-  fetch('/.netlify/functions/aperture-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})})
+  fetch('/.netlify/functions/aperture-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:u,password:p})})
     .then(r=>r.json()).then(j=>{
       if(j.token){TOKEN=j.token;localStorage.setItem('aperture_jwt',TOKEN);showApp();}
       else el('login-err').textContent=j.error||'Authentication failed';
