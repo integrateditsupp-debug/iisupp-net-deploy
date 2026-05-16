@@ -120,7 +120,7 @@ export default async (request) => {
   }
 
   // Path 3: graceful no-match
-  return firstPrinciplesReason(query, cors);
+  return diagnosticFirst(query, cors);
 };
 
 function jsonResp(status, headers, obj) {
@@ -546,6 +546,107 @@ function firstPrinciplesReason(q, cors) {
     caveat: "Structured guess using ARIA's CS-fundamentals blueprint, not a vetted recipe. Try each step in order.",
     fiveW: fw
   });
+}
+
+// === ARIA Diagnostic-First v2 (Ahmad 2026-05-16) ===
+// Frameworks ARIA is certified in. Reasoner references these as guardrails.
+const FRAMEWORKS = {
+  FIVE_W_PLUS_H: {
+    use: "Start every diagnostic with these. Ask for any W that is missing before troubleshooting.",
+    questions: [
+      "WHAT app/system is affected?",
+      "WHO is affected (just you or everyone)?",
+      "WHERE in the stack (app, OS, network, auth, hardware, SaaS)?",
+      "WHEN did it start (and what changed right before)?",
+      "WHY do you suspect a cause (recent install, update, password reset)?",
+      "HOW often (always, intermittent, once)?"
+    ]
+  },
+  OSI_7_LAYER: {
+    use: "Isolate where in the network stack an issue lives. Test bottom-up.",
+    layers: [
+      "L1 Physical: cable, NIC port, link light",
+      "L2 Data-link: MAC, VLAN, switch port",
+      "L3 Network: IP, gateway, ARP, NAT, routing",
+      "L4 Transport: TCP/UDP ports, firewall rules",
+      "L5-7 Session/Presentation/App: TLS, DNS, HTTP, app protocol"
+    ]
+  },
+  ITIL_REQUEST_TYPE: {
+    use: "Classify the ask BEFORE troubleshooting. Each type has a different workflow.",
+    types: [
+      "INCIDENT: unplanned interruption - restore service ASAP",
+      "SERVICE REQUEST: standard ask (new account, password reset, new device)",
+      "PROBLEM: root cause behind repeated incidents",
+      "CHANGE: planned modification with approval"
+    ]
+  },
+  SOFTWARE_LIFECYCLE: {
+    use: "Identify which stage of the app lifecycle failed. Most fixes target the failed stage.",
+    stages: ["Install/setup", "Configuration", "Authentication/sign-in", "In-use operation", "Update", "Failure", "Repair/reset", "Uninstall"]
+  },
+  RCA_5_WHYS: {
+    use: "Drill from symptom to root cause by asking why iteratively.",
+    template: ["Why does X happen?", "Why does that cause happen?", "Why does THAT cause happen?", "...up to 5 times.", "Stop when answer is a process, policy, or system root cause."]
+  },
+  FAULT_DOMAIN: {
+    use: "Choose the first place to look. Same as PRIMITIVES.layers.",
+    domains: ["APP - one app misbehaving", "OS - everything weird", "NETWORK - anything that touches network", "AUTH - sign-in or permission", "HW - device-specific", "SAAS - cloud service"]
+  },
+  GARRY_TAN_SHIP: {
+    use: "Filter every change before shipping to production.",
+    questions: ["What creates the most user trust?", "What makes the product clearer in 5 seconds?", "What reduces friction to payment or signup?", "What improves the demo/trial experience?", "What can ship safely today without breaking the site?"]
+  },
+  BIT_NATIVE_KB: {
+    use: "Every KB chunk stands alone. ARIA retrieves one bit and answers. No cross-chunk dependencies.",
+    rule: "Each chunk = title + 3-7 lines + own escalation trigger. No cross-chunk references."
+  }
+};
+function detectGaps(query) {
+  const q = (query || "").toLowerCase().trim();
+  const hasApp = Object.values(PRIMITIVES.layers).some(rx => rx.test(q));
+  const hasWhen = /\b(after|since|today|yesterday|last (?:week|month|day)|just now|always|suddenly|started|began|recently)\b/i.test(q);
+  const hasWho = /\b(everyone|all (?:users|of us)|whole (?:team|office)|just me|my)\b/i.test(q);
+  const hasSymptom = /\b(error|broken|wont|cant|fail|crash|slow|stuck|frozen|hang|down|gone|missing|not working)\b/i.test(q);
+  const wordCount = q.split(/\s+/).filter(Boolean).length;
+  return {
+    hasApp, hasWhen, hasWho, hasSymptom, wordCount,
+    missing: [
+      !hasApp && { w: "WHAT", q: "Which app or system is this about? (Outlook, Chrome, Wi-Fi, login, printer, etc.)" },
+      !hasWhen && { w: "WHEN", q: "When did this start? Did anything change right before - a Windows update, a new install, a password change, a new device?" },
+      !hasWho && { w: "WHO", q: "Is this just you, or is everyone in your office hitting the same thing?" },
+      !hasSymptom && { w: "WHAT-SYMPTOM", q: "What exactly is the symptom? (Error message, frozen screen, slow response, no connection...)" }
+    ].filter(Boolean),
+    layerHint: (() => { for (const [name, rx] of Object.entries(PRIMITIVES.layers)) if (rx.test(q)) return name; return "UNKNOWN"; })()
+  };
+}
+function diagnosticFirst(query, cors) {
+  const gaps = detectGaps(query);
+  const tooVague = gaps.wordCount < 8 && gaps.missing.length >= 2;
+  const noApp = !gaps.hasApp && !gaps.hasSymptom;
+  if (tooVague || noApp) {
+    const ask = gaps.missing[0];
+    const askWhich = ask ? ask.w : "WHAT";
+    const askQuestion = ask ? ask.q : "Which app or system is this about?";
+    return jsonResp(200, cors, {
+      ok: true,
+      state: "DIAGNOSING_" + askWhich,
+      title: "Diagnostic question first (5W framework)",
+      steps: [
+        "Before troubleshooting, ARIA needs one detail to point you at the right fix.",
+        askQuestion,
+        "Examples: 'Outlook wont open after the latest update' or 'Wi-Fi connected but no internet, started this morning' or 'the team server is down for everyone'.",
+        "Tip: the more specific (app name, exact error, what you were doing), the faster ARIA can fix it."
+      ],
+      confidence: 1.0,
+      source: "diagnostic-interview-v1",
+      framework: "5W_PLUS_H",
+      askNext: askQuestion,
+      gaps: gaps.missing.map(m => m.w),
+      layerHint: gaps.layerHint
+    });
+  }
+  return firstPrinciplesReason(query, cors);
 }
 
 const LIBRARY = {
