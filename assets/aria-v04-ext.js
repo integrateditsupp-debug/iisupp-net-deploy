@@ -234,7 +234,13 @@
     .then(function(d){
       clearTimeout(watchdog);
       __ariaResearchInflight = false;
-      if (!d || !d.ok || !d.steps || !d.steps.length) return;
+      if (d && d.state && d.state.indexOf('DIAGNOSING_') === 0 && d.askNext) {
+    try { appendAriaResearchMessage(d.askNext); } catch(_) {}
+    try { if (typeof clearIdle === 'function') clearIdle(); } catch(_) {}
+    try { if (window.__ariaUncertainState) window.__ariaUncertainState.resolved = true; } catch(_) {}
+    return;
+  }
+  if (!d || !d.ok || !d.steps || !d.steps.length) return;
       var msg = 'Here is the path I would walk through with you:\n\n';
       msg += d.title + '\n\n';
       for (var i = 0; i < d.steps.length; i++) msg += (i+1) + '. ' + d.steps[i] + '\n';
