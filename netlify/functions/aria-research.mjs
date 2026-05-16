@@ -43,6 +43,14 @@ export default async (request) => {
   if (!query && !stateHint) return jsonResp(400, cors, { error: 'query or state required' });
 
   // Path 1: curated state hash (instant, zero cost)
+  
+  // Diagnostic-First gate: block premature KB hit when user has not described a symptom
+  try {
+    var __gaps = (typeof detectGaps === 'function') ? detectGaps(query) : null;
+    if (__gaps && !__gaps.hasSymptom && __gaps.wordCount <= 3 && !stateHint) {
+      return diagnosticFirst(query, cors);
+    }
+  } catch(_) {}
   const detected = stateHint || detectState(query);
   const recipe = LIBRARY[detected];
   if (recipe) {
@@ -621,33 +629,60 @@ function detectGaps(query) {
   };
 }
 function diagnosticFirst(query, cors) {
-  const gaps = detectGaps(query);
-  const tooVague = gaps.wordCount < 8 && gaps.missing.length >= 2;
-  const noApp = !gaps.hasApp && !gaps.hasSymptom;
-  if (tooVague || noApp) {
-    const ask = gaps.missing[0];
-    const askWhich = ask ? ask.w : "WHAT";
-    const askQuestion = ask ? ask.q : "Which app or system is this about?";
+  // Phase-aware diagnostic engine v3 (Ahmad 2026-05-16): lessons not scripts.
+  // Each phase teaches ARIA WHICH W to ask, not what answer to give.
+  var q = (query || '').toLowerCase().trim();
+  var gaps = detectGaps(q);
+  var wordCount = gaps.wordCount;
+  // Identify named app if any (for polite name-callback)
+  var appMatch = /\b(outlook|word|excel|powerpoint|teams|zoom|slack|chrome|edge|firefox|safari|adobe|onedrive|sharepoint|onenote|onedrive|sharepoint|m365|office)\b/i.exec(q);
+  var appName = appMatch ? (appMatch[1].charAt(0).toUpperCase() + appMatch[1].slice(1)) : null;
+
+  // LESSON 1: GREETING phase - user sent <=2 words, no app, no symptom
+  if (!gaps.hasApp && !gaps.hasSymptom && wordCount <= 2) {
+    var openers = ['Hi - happy to help.', 'Hey, sure thing.', 'Got it - happy to assist.'];
+    var msg = openers[Math.floor(Math.random()*openers.length)] + ' What is the issue you are running into today?';
     return jsonResp(200, cors, {
-      ok: true,
-      state: "DIAGNOSING_" + askWhich,
-      title: "Diagnostic question first (5W framework)",
-      steps: [
-        "Before troubleshooting, ARIA needs one detail to point you at the right fix.",
-        askQuestion,
-        "Examples: 'Outlook wont open after the latest update' or 'Wi-Fi connected but no internet, started this morning' or 'the team server is down for everyone'.",
-        "Tip: the more specific (app name, exact error, what you were doing), the faster ARIA can fix it."
-      ],
-      confidence: 1.0,
-      source: "diagnostic-interview-v1",
-      framework: "5W_PLUS_H",
-      askNext: askQuestion,
-      gaps: gaps.missing.map(m => m.w),
-      layerHint: gaps.layerHint
+      ok: true, state: 'DIAGNOSING_GREETING', title: 'Open WHAT', steps: [msg],
+      confidence: 1.0, source: 'diagnostic-interview-v3', framework: '5W_PLUS_H',
+      askNext: msg, phase: 'GREETING', appliedLesson: 'POLITE_OPEN_WHAT'
     });
   }
+
+  // LESSON 2: APP_NAMED only - user said app name (or 1-3 words referring to one) but no symptom
+  if (appName && !gaps.hasSymptom && wordCount <= 4) {
+    var msg = 'Got it - ' + appName + '. What is it with ' + appName + ' that you need help with? Anything specific - slow, crashing, will not open, showing an error, a feature you cannot find, or something else?';
+    return jsonResp(200, cors, {
+      ok: true, state: 'DIAGNOSING_SYMPTOM_FOR_APP', title: 'Ask SYMPTOM for ' + appName, steps: [msg],
+      confidence: 1.0, source: 'diagnostic-interview-v3', framework: '5W_PLUS_H',
+      askNext: msg, phase: 'APP_NAMED', appliedLesson: 'NEVER_GUESS_BEFORE_SYMPTOM'
+    });
+  }
+
+  // LESSON 3: APP missing entirely - user described something vague (help / broken / not working)
+  if (!gaps.hasApp && wordCount <= 6) {
+    var msg = 'Understood. Which app, system, or service is this about? For example: Outlook, Chrome, Wi-Fi, login, printer, OneDrive, Teams - or describe what you were doing when it broke.';
+    return jsonResp(200, cors, {
+      ok: true, state: 'DIAGNOSING_WHAT', title: 'Ask WHAT (app/system)', steps: [msg],
+      confidence: 1.0, source: 'diagnostic-interview-v3', framework: '5W_PLUS_H',
+      askNext: msg, phase: 'NO_APP_NAMED', appliedLesson: 'ESTABLISH_SUBJECT_FIRST'
+    });
+  }
+
+  // LESSON 4: APP + SYMPTOM but no trigger/timing - ask WHEN
+  if (gaps.hasApp && gaps.hasSymptom && !gaps.hasWhen && wordCount <= 8) {
+    var msg = 'Understood. When did this start - was there a Windows update, a new install, a password change, a network move, or did it just happen out of nowhere?';
+    return jsonResp(200, cors, {
+      ok: true, state: 'DIAGNOSING_WHEN', title: 'Ask WHEN (trigger)', steps: [msg],
+      confidence: 1.0, source: 'diagnostic-interview-v3', framework: '5W_PLUS_H',
+      askNext: msg, phase: 'SYMPTOM_NAMED', appliedLesson: 'TRIGGER_IS_THE_BIGGEST_CLUE'
+    });
+  }
+
+  // LESSON 5: Enough info - hand off to KB/reasoner
   return firstPrinciplesReason(query, cors);
 }
+
 
 const LIBRARY = {
   'DISK.FULL': { title: 'C drive / disk is out of space', steps: ['Open Settings → System → Storage. Check which drive is full.','Click "Temporary files" → tick Recycle Bin, Temporary files, Delivery Optimization Files → Remove.','Open Storage Sense (toggle on) → Run Storage Sense now. This frees Windows.old + cache.','In File Explorer, right-click the drive → Properties → Disk Cleanup → "Clean up system files" → tick everything safe.','If still under 10% free: move Downloads + OneDrive cache to another drive, or run "wmic logicaldisk get caption, freespace" to confirm.'], confidence: 0.92 },
