@@ -1,4 +1,4 @@
-undefined<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1180,5 +1180,20 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 })();
 </script>
 <!-- ========= /APL BOOST ========= -->
+
+<script>
+/* APL Boost v2 - filter resolved, click-to-details, fix undefined */
+(function(){
+  if (window.__APL_BOOST_V2__) return; window.__APL_BOOST_V2__ = true;
+  function styleInject(){ if (document.getElementById("apl-boost-css")) return; var s=document.createElement("style"); s.id="apl-boost-css"; s.textContent = [".list-row{cursor:pointer;transition:background .15s ease;}",".list-row:hover{background:rgba(255,255,255,0.04);}","#apl-resolved-section{margin-top:18px;padding:14px;border:1px solid rgba(50,200,150,.25);border-radius:10px;background:rgba(20,40,30,.25);}","#apl-resolved-section h4{margin:0 0 8px;color:#3fd29a;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;}","#apl-resolved-list{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;}","#apl-resolved-list .list-row{opacity:.85;}"].join(" "); document.head.appendChild(s); }
+  function ensureResolvedSection(){ var existing=document.getElementById("apl-resolved-section"); if (existing) return existing; var nl=document.getElementById("notif-list"); if (!nl) return null; var sec=document.createElement("div"); sec.id="apl-resolved-section"; sec.innerHTML = "<h4>RESOLVED <span id=apl-resolved-count style=\"color:#8a8;font-weight:normal;font-size:11px\">(0)</span></h4><div id=apl-resolved-list></div>"; nl.parentNode.appendChild(sec); return sec; }
+  function getTicketId(row){ var m=(row.textContent||"").match(/TKT-[0-9-]+/); return m?m[0]:null; }
+  function wireRow(row){ if (row.__aplWired) return; row.__aplWired=true; row.style.cursor="pointer"; row.addEventListener("click", function(){ var tid=getTicketId(row); if (tid && typeof window.aplViewTicket==="function") { try { window.aplViewTicket(tid); return; } catch(_){} } if (typeof window.aplOpenTickets==="function") { try { window.aplOpenTickets(); } catch(_){} } }); }
+  function sweep(){ var nl=document.getElementById("notif-list"); if (!nl) return; ensureResolvedSection(); var rl=document.getElementById("apl-resolved-list"); var rows=Array.from(nl.querySelectorAll(".list-row")); rows.forEach(function(row){ var text=(row.textContent||"").toLowerCase(); if (text.indexOf("ticket resolved")>=0) { if (rl && row.parentNode!==rl) rl.appendChild(row); } else { wireRow(row); } }); var count=rl?rl.children.length:0; var badge=document.getElementById("apl-resolved-count"); if (badge) badge.textContent="("+count+")"; var nb=document.getElementById("notif-badge"); if (nb) nb.textContent=nl.querySelectorAll(".list-row").length; }
+  function hook(fnName){ if (!window[fnName] || window["__hooked_"+fnName]) return; window["__hooked_"+fnName]=true; var orig=window[fnName]; window[fnName]=function(){ var r=orig.apply(this, arguments); try { sweep(); } catch(_){} return r; }; }
+  function init(){ styleInject(); hook("renderNotif"); hook("renderTickets"); sweep(); setInterval(sweep, 5000); }
+  if (document.readyState==="loading") document.addEventListener("DOMContentLoaded", init); else setTimeout(init, 300);
+})();
+</script>
 </body>
 </html>
