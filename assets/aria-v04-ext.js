@@ -603,46 +603,75 @@
 
 })();
 
-// === Diagnostic-First runtime hook (Ahmad 2026-05-16) ===
-// Wraps submitAsk so every user message hits aria-research FIRST.
-// If response is DIAGNOSING_*, render the clarifying question.
+
+// === Diagnostic-First runtime hook v3 (Ahmad 2026-05-16) ===
+// - Wraps submitAsk: every user msg hits aria-research first
+// - Renders DIAGNOSING as a single question bubble
+// - Renders KB/reasoner steps as ONE consolidated guide (staged, not 8 bubbles at once)
+// - Kills all canned setTimeouts so no "still looking" / topic-switch fires after a real answer
 (function(){
-  if (window.__ARIA_DIAG_HOOK_LOADED__) return;
-  window.__ARIA_DIAG_HOOK_LOADED__ = true;
-  function appendAriaBubble(text){
+  if (window.__ARIA_DIAG_HOOK_V3__) return;
+  window.__ARIA_DIAG_HOOK_V3__ = true;
+  function appendBubble(text){
     try {
-      var chat = document.getElementById('chatMessages'); if (!chat) return;
-      var wrap = document.createElement('div');
-      wrap.className = 'aria-block fade-in';
+      var chat = document.getElementById("chatMessages"); if (!chat) return;
+      var wrap = document.createElement("div");
+      wrap.className = "aria-block fade-in";
       wrap.innerHTML = '<div class="aria-label">ARIA</div><div class="aria-text"></div>';
-      wrap.querySelector('.aria-text').textContent = text;
+      wrap.querySelector(".aria-text").textContent = text;
       chat.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
     } catch(_) {}
   }
-  function stopCannedFlow(){
-    try { if (typeof clearIdle === 'function') clearIdle(); } catch(_){}
+  function appendGuide(title, steps, caveat){
+    try {
+      var chat = document.getElementById("chatMessages"); if (!chat) return;
+      var wrap = document.createElement("div");
+      wrap.className = "aria-block fade-in";
+      var html = '<div class="aria-label">ARIA</div><div class="aria-text"><div style="font-weight:600;margin-bottom:8px;">'+ escapeHtml(title) +'</div><ol style="margin:0 0 0 18px;padding:0;line-height:1.55;">';
+      (steps||[]).slice(0, 10).forEach(function(s){ html += '<li style="margin:4px 0;">'+ escapeHtml(s) +'</li>'; });
+      html += '</ol>';
+      if (caveat) html += '<div style="margin-top:10px;font-size:12px;opacity:.75;font-style:italic;">'+ escapeHtml(caveat) +'</div>';
+      html += '</div>';
+      wrap.innerHTML = html;
+      chat.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
+    } catch(_) {}
+  }
+  function escapeHtml(s){ return String(s||"").replace(/[&<>"\']/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"})[c]; }); }
+  function killCannedFlow(){
+    // Hard-stop every timer the chat scheduled
+    try { if (typeof clearIdle === "function") clearIdle(); } catch(_){}
     try { if (window.__ariaUncertainState) window.__ariaUncertainState.resolved = true; } catch(_){}
+    // Brute force: clear the highest few setTimeout IDs
+    try {
+      var maxId = setTimeout(function(){}, 0);
+      clearTimeout(maxId);
+      for (var i = Math.max(0, maxId - 30); i <= maxId; i++) { try { clearTimeout(i); } catch(_){} }
+    } catch(_){}
+    // Hide any topic-switch dialog already rendered
+    try {
+      var topicBlock = Array.from(document.querySelectorAll(".aria-block")).find(function(b){ return /switch topics\?/i.test(b.textContent||""); });
+      if (topicBlock) topicBlock.style.display = "none";
+    } catch(_){}
   }
   var origSubmitAsk = window.submitAsk;
   window.submitAsk = function(text){
-    var q = (text == null ? (document.getElementById('askInput') || {}).value : text) || '';
+    var q = (text == null ? (document.getElementById("askInput") || {}).value : text) || "";
     q = String(q).trim();
     if (!q) return origSubmitAsk && origSubmitAsk.apply(this, arguments);
     var responded = false;
     try {
-      fetch('/.netlify/functions/aria-research', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
+      fetch("/.netlify/functions/aria-research", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
         body: JSON.stringify({query: q})
       }).then(function(r){return r.json();}).then(function(d){
-        if (responded) return; responded = true;
-        if (d && d.state && String(d.state).indexOf('DIAGNOSING_') === 0 && d.askNext) {
-          stopCannedFlow();
-          appendAriaBubble(d.askNext);
-        } else if (d && d.ok && d.title && d.steps && d.steps.length && d.confidence >= 0.5) {
-          stopCannedFlow();
-          appendAriaBubble(d.title);
-          d.steps.slice(0, 8).forEach(function(s){ appendAriaBubble(s); });
+        if (responded || !d) return; responded = true;
+        if (d.state && String(d.state).indexOf("DIAGNOSING_") === 0 && d.askNext) {
+          killCannedFlow();
+          appendBubble(d.askNext);
+        } else if (d.ok && d.title && d.steps && d.steps.length && d.confidence >= 0.5) {
+          killCannedFlow();
+          appendGuide(d.title, d.steps, d.caveat);
         }
       }).catch(function(){});
     } catch(_) {}
