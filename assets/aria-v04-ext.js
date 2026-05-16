@@ -602,3 +602,50 @@
   window.__ariaUncertainHook = ariaUncertainEnter;
 
 })();
+
+// === Diagnostic-First runtime hook (Ahmad 2026-05-16) ===
+// Wraps submitAsk so every user message hits aria-research FIRST.
+// If response is DIAGNOSING_*, render the clarifying question.
+(function(){
+  if (window.__ARIA_DIAG_HOOK_LOADED__) return;
+  window.__ARIA_DIAG_HOOK_LOADED__ = true;
+  function appendAriaBubble(text){
+    try {
+      var chat = document.getElementById('chatMessages'); if (!chat) return;
+      var wrap = document.createElement('div');
+      wrap.className = 'aria-block fade-in';
+      wrap.innerHTML = '<div class="aria-label">ARIA</div><div class="aria-text"></div>';
+      wrap.querySelector('.aria-text').textContent = text;
+      chat.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
+    } catch(_) {}
+  }
+  function stopCannedFlow(){
+    try { if (typeof clearIdle === 'function') clearIdle(); } catch(_){}
+    try { if (window.__ariaUncertainState) window.__ariaUncertainState.resolved = true; } catch(_){}
+  }
+  var origSubmitAsk = window.submitAsk;
+  window.submitAsk = function(text){
+    var q = (text == null ? (document.getElementById('askInput') || {}).value : text) || '';
+    q = String(q).trim();
+    if (!q) return origSubmitAsk && origSubmitAsk.apply(this, arguments);
+    var responded = false;
+    try {
+      fetch('/.netlify/functions/aria-research', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({query: q})
+      }).then(function(r){return r.json();}).then(function(d){
+        if (responded) return; responded = true;
+        if (d && d.state && String(d.state).indexOf('DIAGNOSING_') === 0 && d.askNext) {
+          stopCannedFlow();
+          appendAriaBubble(d.askNext);
+        } else if (d && d.ok && d.title && d.steps && d.steps.length && d.confidence >= 0.5) {
+          stopCannedFlow();
+          appendAriaBubble(d.title);
+          d.steps.slice(0, 8).forEach(function(s){ appendAriaBubble(s); });
+        }
+      }).catch(function(){});
+    } catch(_) {}
+    return origSubmitAsk && origSubmitAsk.apply(this, arguments);
+  };
+})();
