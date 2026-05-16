@@ -120,15 +120,7 @@ export default async (request) => {
   }
 
   // Path 3: graceful no-match
-  return jsonResp(200, cors, {
-    ok: true,
-    state: detected || 'UNKNOWN',
-    title: null,
-    steps: [],
-    confidence: 0.0,
-    source: 'no-match',
-    caveat: 'No curated recipe matched and no vendor was identified. Recommend specialist escalation.'
-  });
+  return firstPrinciplesReason(query, cors);
 };
 
 function jsonResp(status, headers, obj) {
@@ -487,6 +479,75 @@ function bitToSteps(bit) {
 }
 
 // ============= CURATED RECIPE LIBRARY (unchanged from v0.5) =============
+// === ARIA First-Principles Reasoner v1 (Ahmad 2026-05-16) ===
+// Hard-coded CS fundamentals + 5W framework. Fires when KB + vendor-fetch miss.
+const PRIMITIVES = {
+  layers: {
+    APP:     /\b(outlook|word|excel|powerpoint|teams|zoom|slack|chrome|edge|firefox|safari|adobe|onedrive|sharepoint|app|application|software|program)\b/i,
+    OS:      /\b(windows|mac|macos|linux|os|operating system|boot|startup|shutdown|crash|blue screen|bsod|update|driver|registry)\b/i,
+    NETWORK: /\b(network|internet|wifi|wi-?fi|ethernet|vpn|dns|dhcp|ip|tcp|udp|port|firewall|router|gateway|subnet|connection)\b/i,
+    AUTH:    /\b(password|login|sign[ -]?in|sso|mfa|2fa|authenticator|account|session|token|expired|locked|permission|access denied)\b/i,
+    HW:      /\b(monitor|screen|display|keyboard|mouse|webcam|camera|usb|hdmi|battery|laptop|pc|computer|hardware|device|cable)\b/i,
+    SAAS:    /\b(m365|microsoft 365|office 365|google|workspace|saas|cloud|tenant|license|subscription|seat|admin|console)\b/i
+  },
+  lifecycle: ['installed','configured','launched','authenticated','used','updated','failed','repaired','uninstalled'],
+  generic_fns: ['start/stop','restart','logs','config','cache','auth-token','network-io','file-io','permissions'],
+  hypotheses: {
+    APP: ['Restart the application (fully quit and reopen).','Sign out and back in to refresh auth tokens.','Clear the app cache (Teams/Slack/Chrome each have a cache folder under %APPDATA% or %LOCALAPPDATA%).','Repair or reinstall (Settings > Apps > app > Modify > Quick Repair if available).','Try the web version of the app to isolate desktop-client issues.'],
+    OS: ['Reboot first - clears stuck processes, locks, and services.','Settings > Windows Update > install pending updates.','Event Viewer (eventvwr.msc) > Windows Logs > Application + System > find Error events around when it broke.','Device Manager > look for yellow warning icons > update those drivers.','Elevated cmd: sfc /scannow and DISM /Online /Cleanup-Image /RestoreHealth (repairs system files).'],
+    NETWORK: ['ipconfig /flushdns then /release then /renew (resets DNS and DHCP lease).','Try a different network (phone hotspot). If it works there, your current network is the problem.','Ping the gateway > ping 1.1.1.1 > ping google.com. The first step that fails tells you the layer (gateway / ISP / DNS).','Disable VPN or firewall temporarily to rule out.','speedtest.net to confirm bandwidth is actually what you pay for.'],
+    AUTH: ['Sign out everywhere then back in (portal.office.com > top-right > Sign out everywhere).','Verify your MFA method works - open Authenticator, confirm you can read the code.','Check password expiry: account.activedirectory.windowsazure.com/changepassword.aspx','Clear cached credentials: Control Panel > Credential Manager > remove entries for the affected service.','Try incognito/private browser to bypass cached cookies and sessions.'],
+    HW: ['Swap the cable. Cables fail more often than people think.','Try a different port on the PC.','Test the device on another machine to isolate hardware vs PC issue.','Device Manager > find the device > Update Driver or Uninstall + reboot.','Check power/battery health (Task Manager > Performance, or powercfg /batteryreport for laptops).'],
+    SAAS: ['Check the service status page (admin.microsoft.com > Health > Service Health, or status.zoom.us, status.slack.com).','Confirm your license is assigned (portal.office.com > Subscriptions; admins use Admin Center).','Sign out + back in via incognito to refresh tenant context.','Conditional Access: a recent CA policy may be blocking sign-in. Admin can check Entra sign-in logs.','Verify you are signed in with the right account (work M365 vs personal MSA).']
+  }
+};
+function applyFiveW(q) {
+  const lower = (q || '').toLowerCase();
+  const whoMulti = /\b(everyone|everybody|all users|whole team|company[- ]wide)\b/i.test(lower);
+  const trigger = (/\bafter (?:update|reboot|install|password change|migration|wifi|signin)\w*/i.exec(lower) || [])[0] || (/\b(suddenly|today|just now|always|randomly|since (?:yesterday|last week|today))\b/i.exec(lower) || [])[0] || 'unknown trigger (ask: when did this start?)';
+  let layer = 'APP', score = 0;
+  for (const [name, rx] of Object.entries(PRIMITIVES.layers)) {
+    const m = lower.match(new RegExp(rx.source, 'gi'));
+    if (m && m.length > score) { score = m.length; layer = name; }
+  }
+  return {
+    who: whoMulti ? 'multiple users (scope: company / service-side)' : 'single user (scope: local device)',
+    what: (q || '').slice(0, 120),
+    where: layer,
+    when: trigger,
+    why: 'Hypotheses generated from CS primitives at the ' + layer + ' layer.'
+  };
+}
+function firstPrinciplesReason(q, cors) {
+  const fw = applyFiveW(q || '');
+  const hyps = PRIMITIVES.hypotheses[fw.where] || PRIMITIVES.hypotheses.OS;
+  const clarify = {
+    APP: 'Did this start after the app was updated, after you signed in fresh, or out of nowhere?',
+    OS: 'Did anything change recently - Windows Update, new install, driver update?',
+    NETWORK: 'Are you on Wi-Fi, Ethernet, or VPN? Does it work from a phone hotspot?',
+    AUTH: 'Did your password expire, did you switch phones for MFA, or change devices recently?',
+    HW: 'Does the issue follow the device when you move it to another PC, or stay on this PC?',
+    SAAS: 'Does it affect just you, or everyone in your org? Did a recent admin change happen?'
+  }[fw.where];
+  const steps = [
+    'Scope: ' + fw.who + '. ' + (fw.who.indexOf('multiple') >= 0 ? 'If broad, likely service-side or company network - check status pages first.' : 'Isolate by trying the same action on a second device or account.'),
+    'Trigger: ' + fw.when + '. The #1 clue in any IT issue is what changed right before it broke.',
+    ...hyps.slice(0, 4),
+    'CLARIFYING QUESTION: ' + clarify + ' Reply with that detail and ARIA will narrow it further.',
+    'If none of these resolve it, this is L2 - call (647) 581-3182 or email integrateditsupp@iisupp.net.'
+  ];
+  return jsonResp(200, cors, {
+    ok: true,
+    state: 'REASONED_' + fw.where,
+    title: 'No exact KB match - reasoning from first principles (' + fw.where.toLowerCase() + ' layer)',
+    steps: steps,
+    confidence: 0.55,
+    source: 'first-principles-reasoner-v1',
+    caveat: "Structured guess using ARIA's CS-fundamentals blueprint, not a vetted recipe. Try each step in order.",
+    fiveW: fw
+  });
+}
+
 const LIBRARY = {
   'DISK.FULL': { title: 'C drive / disk is out of space', steps: ['Open Settings → System → Storage. Check which drive is full.','Click "Temporary files" → tick Recycle Bin, Temporary files, Delivery Optimization Files → Remove.','Open Storage Sense (toggle on) → Run Storage Sense now. This frees Windows.old + cache.','In File Explorer, right-click the drive → Properties → Disk Cleanup → "Clean up system files" → tick everything safe.','If still under 10% free: move Downloads + OneDrive cache to another drive, or run "wmic logicaldisk get caption, freespace" to confirm.'], confidence: 0.92 },
   'OS.SLOW.PERF': { title: 'Computer is slow / sluggish', steps: ['Press Ctrl+Shift+Esc → open Task Manager → Performance tab. Check CPU, Memory, Disk, Network for anything stuck at 100%.','If Memory is at 100%: Processes tab → sort by Memory → end the top non-essential process.','If Disk is at 100%: same Processes tab → sort by Disk → check for SearchIndexer, Windows Update, antivirus scan. Pause antivirus full scan if running.','Settings → Apps → Startup → disable everything not essential (browsers, chat apps, etc.). Reboot.','If still slow: Settings → System → Recovery → "Reset this PC" → "Keep my files" is the last-resort fix.'], confidence: 0.90 },
