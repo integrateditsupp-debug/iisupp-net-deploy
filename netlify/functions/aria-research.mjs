@@ -46,9 +46,12 @@ export default async (request) => {
   
   // Diagnostic-First gate: block premature KB hit when user has not described a symptom
   try {
-    var __gaps = (typeof detectGaps === 'function') ? detectGaps(query) : null;
-    if (__gaps && !__gaps.hasSymptom && __gaps.wordCount <= 3 && !stateHint) {
-      return diagnosticFirst(query, cors);
+    var __nQuery = (typeof normalizeQuery === 'function') ? normalizeQuery(query) : query;
+    var __hist = (body && body.history) ? body.history : [];
+    var __mergedQ = (__hist.map(function(h){return (h.text||'')}).join(' ') + ' ' + __nQuery).trim();
+    var __gaps = (typeof detectGaps === 'function') ? detectGaps(__mergedQ) : null;
+    if (__gaps && !__gaps.hasSymptom && __gaps.wordCount <= 5 && !stateHint) {
+      return diagnosticFirst(query, cors, __hist);
     }
   } catch(_) {}
   const detected = stateHint || detectState(query);
@@ -610,6 +613,54 @@ const FRAMEWORKS = {
     rule: "Each chunk = title + 3-7 lines + own escalation trigger. No cross-chunk references."
   }
 };
+
+// === ARIA v4 (2026-05-16): typo tolerance + persona detection ===
+function normalizeQuery(q) {
+  if (!q) return q;
+  var TYPO = {
+    'chrme':'chrome','chorme':'chrome','crome':'chrome','chromy':'chrome',
+    'outloook':'outlook','oulook':'outlook','outlok':'outlook','outloo':'outlook',
+    'wfi':'wifi','wif':'wifi','wirless':'wireless','wirles':'wireless',
+    'pasword':'password','passwrd':'password','passowrd':'password','pwd':'password',
+    'expird':'expired','expred':'expired','expird':'expired',
+    'reciveing':'receiving','recieving':'receiving','recive':'receive',
+    'pritner':'printer','prnter':'printer','printr':'printer',
+    'explrer':'explorer','explorr':'explorer','explore':'explorer',
+    'edg':'edge','firefx':'firefox','firfox':'firefox','safri':'safari',
+    'teamz':'teams','zom':'zoom','slak':'slack',
+    'mircosoft':'microsoft','microoft':'microsoft','m365':'m365','o365':'office 365',
+    'onderive':'onedrive','onedirve':'onedrive','sharpeoint':'sharepoint',
+    'cant':"can't",'wont':"won't",'dont':"don't",'doesnt':"doesn't",
+    'crashing':'crash','crashed':'crash','crashs':'crash',
+    'updaet':'update','udpate':'update','intsall':'install','isntall':'install',
+    'netowrk':'network','interent':'internet','enternet':'internet'
+  };
+  return q.toLowerCase().split(/(\s+)/).map(function(w){
+    var clean = w.replace(/[^a-z\u0027]/g,'');
+    return TYPO[clean] ? w.replace(clean, TYPO[clean]) : w;
+  }).join("");
+}
+
+function detectPersona(q, history) {
+  var text = ((history||[]).map(function(h){return h.text||'';}).join(' ') + ' ' + (q||'')).toLowerCase();
+  if (/\b(tcp|udp|dns|dhcp|nat|cidr|subnet|gpo|ou=|entra|aad|adfs|saml|oauth|sso|kerberos|spf|dkim|dmarc|handshake|tls|ssl|cert|cipher|tcp\/ip|gpresult|dsregcmd|gpupdate|nslookup|tracert|ping|ipconfig|conntrack|iptables|firewall|psexec|rdp|registry|regedit|wmi|powershell|cmdlet)\b/i.test(text)) return 'TECH';
+  if (/\b(sorry to bother|please help|i do not know|i don't know|the box|that thing|the thing|do not understand|what is this|what does that mean|please can you|kindly)\b/i.test(text)) return 'ELDER';
+  var wc = (q||'').trim().split(/\s+/).filter(Boolean).length;
+  if (wc > 18) return 'VERBOSE';
+  return 'DEFAULT';
+}
+
+function tonedAsk(baseMsg, persona) {
+  if (persona === 'TECH') {
+    // Drop pleasantries, peer tone
+    return baseMsg.replace(/^(Hi|Hello|Hey|Got it|Understood)[^A-Z]*-\s*/i, '').replace(/happy to (help|assist)\.?\s*/i, '');
+  }
+  if (persona === 'ELDER') {
+    // Soften and slow down
+    return 'No worries at all - happy to walk through this together. ' + baseMsg.replace(/^(Hi|Hello|Hey|Got it|Understood)\s*-\s*/i, '').replace(/happy to (help|assist)\.?\s*/i, '');
+  }
+  return baseMsg;
+}
 function detectGaps(query) {
   const q = (query || "").toLowerCase().trim();
   const hasApp = Object.values(PRIMITIVES.layers).some(rx => rx.test(q));
@@ -628,59 +679,54 @@ function detectGaps(query) {
     layerHint: (() => { for (const [name, rx] of Object.entries(PRIMITIVES.layers)) if (rx.test(q)) return name; return "UNKNOWN"; })()
   };
 }
-function diagnosticFirst(query, cors) {
-  // Phase-aware diagnostic engine v3 (Ahmad 2026-05-16): lessons not scripts.
-  // Each phase teaches ARIA WHICH W to ask, not what answer to give.
-  var q = (query || '').toLowerCase().trim();
-  var gaps = detectGaps(q);
+function diagnosticFirst(query, cors, history) {
+  // v4: typo-normalize + persona-aware tone + history merge
+  var rawQ = String(query || '').trim();
+  var nQ = normalizeQuery(rawQ);
+  // Merge with history for cross-turn gap detection
+  var historyText = (history && history.length) ? history.map(function(h){return (h.text||'')}).join(' ') : '';
+  var merged = (historyText + ' ' + nQ).trim();
+  var gaps = detectGaps(merged);
+  var persona = detectPersona(rawQ, history);
   var wordCount = gaps.wordCount;
-  // Identify named app if any (for polite name-callback)
-  var appMatch = /\b(outlook|word|excel|powerpoint|teams|zoom|slack|chrome|edge|firefox|safari|adobe|onedrive|sharepoint|onenote|onedrive|sharepoint|m365|office)\b/i.exec(q);
-  var appName = appMatch ? (appMatch[1].charAt(0).toUpperCase() + appMatch[1].slice(1)) : null;
+  var appMatch = /\b(outlook|word|excel|powerpoint|teams|zoom|slack|chrome|edge|firefox|safari|adobe|onedrive|sharepoint|onenote|m365|office)\b/i.exec(merged);
+  var appName = appMatch ? (appMatch[1].charAt(0).toUpperCase()+appMatch[1].slice(1)) : null;
 
-  // LESSON 1: GREETING phase - user sent <=2 words, no app, no symptom
+  // VERBOSE bypass: long msg with full info -> skip asking, go reason
+  if (persona === 'VERBOSE' && gaps.hasApp && gaps.hasSymptom) {
+    return firstPrinciplesReason(nQ, cors);
+  }
+
+  // LESSON 1: GREETING
   if (!gaps.hasApp && !gaps.hasSymptom && wordCount <= 2) {
-    var openers = ['Hi - happy to help.', 'Hey, sure thing.', 'Got it - happy to assist.'];
-    var msg = openers[Math.floor(Math.random()*openers.length)] + ' What is the issue you are running into today?';
-    return jsonResp(200, cors, {
-      ok: true, state: 'DIAGNOSING_GREETING', title: 'Open WHAT', steps: [msg],
-      confidence: 1.0, source: 'diagnostic-interview-v3', framework: '5W_PLUS_H',
-      askNext: msg, phase: 'GREETING', appliedLesson: 'POLITE_OPEN_WHAT'
-    });
+    var msg = 'Hi - happy to help. What is the issue you are running into today?';
+    msg = tonedAsk(msg, persona);
+    return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_GREETING', title:'Open WHAT', steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'GREETING', appliedLesson:'POLITE_OPEN_WHAT', persona:persona });
   }
 
-  // LESSON 2: APP_NAMED only - user said app name (or 1-3 words referring to one) but no symptom
-  if (appName && !gaps.hasSymptom && wordCount <= 4) {
-    var msg = 'Got it - ' + appName + '. What is it with ' + appName + ' that you need help with? Anything specific - slow, crashing, will not open, showing an error, a feature you cannot find, or something else?';
-    return jsonResp(200, cors, {
-      ok: true, state: 'DIAGNOSING_SYMPTOM_FOR_APP', title: 'Ask SYMPTOM for ' + appName, steps: [msg],
-      confidence: 1.0, source: 'diagnostic-interview-v3', framework: '5W_PLUS_H',
-      askNext: msg, phase: 'APP_NAMED', appliedLesson: 'NEVER_GUESS_BEFORE_SYMPTOM'
-    });
+  // LESSON 2: APP_NAMED only
+  if (appName && !gaps.hasSymptom && wordCount <= 5) {
+    var msg = 'Got it - ' + appName + '. What is it with ' + appName + ' that you need help with? Anything specific - slow, crashing, will not open, showing an error, or something else?';
+    msg = tonedAsk(msg, persona);
+    return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_SYMPTOM_FOR_APP', title:'Ask SYMPTOM for '+appName, steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'APP_NAMED', appliedLesson:'NEVER_GUESS_BEFORE_SYMPTOM', persona:persona });
   }
 
-  // LESSON 3: APP missing entirely - user described something vague (help / broken / not working)
+  // LESSON 3: no app at all
   if (!gaps.hasApp && wordCount <= 6) {
-    var msg = 'Understood. Which app, system, or service is this about? For example: Outlook, Chrome, Wi-Fi, login, printer, OneDrive, Teams - or describe what you were doing when it broke.';
-    return jsonResp(200, cors, {
-      ok: true, state: 'DIAGNOSING_WHAT', title: 'Ask WHAT (app/system)', steps: [msg],
-      confidence: 1.0, source: 'diagnostic-interview-v3', framework: '5W_PLUS_H',
-      askNext: msg, phase: 'NO_APP_NAMED', appliedLesson: 'ESTABLISH_SUBJECT_FIRST'
-    });
+    var msg = 'Understood. Which app, system, or service is this about? For example - Outlook, Chrome, Wi-Fi, login, printer, OneDrive, Teams - or describe what you were doing when it broke.';
+    msg = tonedAsk(msg, persona);
+    return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_WHAT', title:'Ask WHAT', steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'NO_APP_NAMED', appliedLesson:'ESTABLISH_SUBJECT_FIRST', persona:persona });
   }
 
-  // LESSON 4: APP + SYMPTOM but no trigger/timing - ask WHEN
-  if (gaps.hasApp && gaps.hasSymptom && !gaps.hasWhen && wordCount <= 8) {
+  // LESSON 4: app + symptom, no trigger
+  if (gaps.hasApp && gaps.hasSymptom && !gaps.hasWhen && wordCount <= 10) {
     var msg = 'Understood. When did this start - was there a Windows update, a new install, a password change, a network move, or did it just happen out of nowhere?';
-    return jsonResp(200, cors, {
-      ok: true, state: 'DIAGNOSING_WHEN', title: 'Ask WHEN (trigger)', steps: [msg],
-      confidence: 1.0, source: 'diagnostic-interview-v3', framework: '5W_PLUS_H',
-      askNext: msg, phase: 'SYMPTOM_NAMED', appliedLesson: 'TRIGGER_IS_THE_BIGGEST_CLUE'
-    });
+    msg = tonedAsk(msg, persona);
+    return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_WHEN', title:'Ask WHEN', steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'SYMPTOM_NAMED', appliedLesson:'TRIGGER_IS_THE_BIGGEST_CLUE', persona:persona });
   }
 
-  // LESSON 5: Enough info - hand off to KB/reasoner
-  return firstPrinciplesReason(query, cors);
+  // LESSON 5: enough info, hand off
+  return firstPrinciplesReason(nQ, cors);
 }
 
 
