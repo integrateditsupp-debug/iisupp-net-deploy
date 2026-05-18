@@ -678,3 +678,48 @@
     return origSubmitAsk && origSubmitAsk.apply(this, arguments);
   };
 })();
+
+// === ARIA Polish v1 (Ahmad 2026-05-16) ===
+(function(){
+  if (window.__ARIA_POLISH_V1__) return;
+  window.__ARIA_POLISH_V1__ = true;
+  function pickBestVoice() {
+    var voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+    if (!voices.length) return null;
+    var prefs = [/Microsoft\s+(Aria|Jenny|Sonia|Libby).*Online.*Natural/i,/Google\s+US\s+English/i,/Samantha/i,/Neural/i,/Natural/i,/Premium/i,/Online/i,/en-US/i,/en-GB/i];
+    for (var i = 0; i < prefs.length; i++) { var v = voices.find(function(x){ return prefs[i].test(x.name || "") || prefs[i].test(x.voiceURI || ""); }); if (v) return v; }
+    return voices[0];
+  }
+  var chosenVoice = null;
+  function ensureVoice() { if (chosenVoice) return chosenVoice; chosenVoice = pickBestVoice(); return chosenVoice; }
+  if (window.speechSynthesis) { speechSynthesis.addEventListener("voiceschanged", function(){ chosenVoice = pickBestVoice(); }); setTimeout(ensureVoice, 500); }
+  var OrigUtt = window.SpeechSynthesisUtterance;
+  if (OrigUtt && !OrigUtt.__aria_hooked) {
+    var Wrapped = function(text) { var u = new OrigUtt(text); try { var v = ensureVoice(); if (v) u.voice = v; u.rate = 1.02; u.pitch = 1.0; } catch(_) {} return u; };
+    Wrapped.prototype = OrigUtt.prototype; Wrapped.__aria_hooked = true; window.SpeechSynthesisUtterance = Wrapped;
+  }
+  function injectYouBubble(text) {
+    try { var chat = document.getElementById("chatMessages"); if (!chat) return; var wrap = document.createElement("div"); wrap.className = "you-block fade-in"; wrap.innerHTML = '<div class="you-label">YOU</div><div class="you-text"></div>'; wrap.querySelector(".you-text").textContent = text; chat.appendChild(wrap); chat.scrollTop = chat.scrollHeight; } catch(_) {}
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR && !SR.__aria_hooked) {
+    var OrigSR = SR;
+    var WrapSR = function() { var instance = new OrigSR(); var origAdd = instance.addEventListener.bind(instance); instance.addEventListener = function(type, fn, opts) { if (type === "result") { var wrapped = function(ev) { try { var last = ev.results[ev.results.length-1]; if (last && last.isFinal) injectYouBubble(last[0].transcript); } catch(_) {} return fn.apply(this, arguments); }; return origAdd(type, wrapped, opts); } return origAdd(type, fn, opts); }; return instance; };
+    window.SpeechRecognition = WrapSR; window.webkitSpeechRecognition = WrapSR; OrigSR.__aria_hooked = true;
+  }
+  function gateResolveButtons() {
+    var inApp = window.__ARIA_APP_MODE__ === true || window.__ARIA_EXT_MODE__ === true;
+    if (inApp) return;
+    var candidates = document.querySelectorAll("button, .btn, .recommended-btn, [data-action=resolve]");
+    candidates.forEach(function(el){
+      var txt = (el.textContent || "").toLowerCase();
+      if (txt.indexOf("resolve it for me") >= 0 || txt.indexOf("resolve for me") >= 0) {
+        if (el.__aria_gated) return; el.__aria_gated = true;
+        el.disabled = true; el.style.opacity = "0.45"; el.style.cursor = "not-allowed";
+        el.title = "Auto-resolve requires the ARIA desktop app or Chrome extension. Web supports guided fixes only.";
+        el.addEventListener("click", function(e){ e.preventDefault(); e.stopImmediatePropagation(); var chat = document.getElementById("chatMessages"); if (!chat) return; var msg = document.createElement("div"); msg.className = "aria-block fade-in"; msg.innerHTML = '<div class="aria-label">ARIA</div><div class="aria-text">Auto-resolve runs through the ARIA desktop app or Chrome extension - it needs access to your machine that the web sandbox does not allow. I can still walk you through the steps here, or grab the app from iisupp.net/extension.</div>'; chat.appendChild(msg); chat.scrollTop = chat.scrollHeight; }, true);
+      }
+    });
+  }
+  setInterval(gateResolveButtons, 2500); setTimeout(gateResolveButtons, 500);
+})();
