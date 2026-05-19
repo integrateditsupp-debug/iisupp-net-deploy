@@ -699,28 +699,28 @@ function diagnosticFirst(query, cors, history) {
 
   // LESSON 1: GREETING
   if (!gaps.hasApp && !gaps.hasSymptom && wordCount <= 2) {
-    var msg = 'Hi - happy to help. What is the issue you are running into today?';
+    var msg = 'Hi! What can I help you with today?';
     msg = tonedAsk(msg, persona);
     return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_GREETING', title:'Open WHAT', steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'GREETING', appliedLesson:'POLITE_OPEN_WHAT', persona:persona });
   }
 
   // LESSON 2: APP_NAMED only
   if (appName && !gaps.hasSymptom && wordCount <= 5) {
-    var msg = 'Got it - ' + appName + '. What is it with ' + appName + ' that you need help with? Anything specific - slow, crashing, will not open, showing an error, or something else?';
+    var msg = 'Of course — what is ' + appName + ' doing? Slow, crashing, will not open, showing an error, or something else?';
     msg = tonedAsk(msg, persona);
     return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_SYMPTOM_FOR_APP', title:'Ask SYMPTOM for '+appName, steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'APP_NAMED', appliedLesson:'NEVER_GUESS_BEFORE_SYMPTOM', persona:persona });
   }
 
   // LESSON 3: no app at all
   if (!gaps.hasApp && wordCount <= 6) {
-    var msg = 'Understood. Which app, system, or service is this about? For example - Outlook, Chrome, Wi-Fi, login, printer, OneDrive, Teams - or describe what you were doing when it broke.';
+    var msg = 'Sorry to hear that. Which app or service is acting up — Outlook, Chrome, Wi-Fi, login, printer, OneDrive, Teams, or something else?';
     msg = tonedAsk(msg, persona);
     return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_WHAT', title:'Ask WHAT', steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'NO_APP_NAMED', appliedLesson:'ESTABLISH_SUBJECT_FIRST', persona:persona });
   }
 
   // LESSON 4: app + symptom, no trigger
   if (gaps.hasApp && gaps.hasSymptom && !gaps.hasWhen && wordCount <= 10) {
-    var msg = 'Understood. When did this start - was there a Windows update, a new install, a password change, a network move, or did it just happen out of nowhere?';
+    var msg = 'When did this start — any recent change like a Windows update, a new install, a password reset, or a network change?';
     msg = tonedAsk(msg, persona);
     return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_WHEN', title:'Ask WHEN', steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'SYMPTOM_NAMED', appliedLesson:'TRIGGER_IS_THE_BIGGEST_CLUE', persona:persona });
   }
