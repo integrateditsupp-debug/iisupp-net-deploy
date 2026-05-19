@@ -48,7 +48,7 @@ export default async (request) => {
   try {
     var __nQuery = (typeof normalizeQuery === 'function') ? normalizeQuery(query) : query;
     var __hist = (body && body.history) ? body.history : [];
-    var __mergedQ = (__hist.map(function(h){return (h.text||'')}).join(' ') + ' ' + __nQuery).trim();
+    var __mergedQ = (__hist.filter(function(h){return h && h.role==='user'}).map(function(h){return (h.text||'')}).join(' ') + ' ' + __nQuery).trim();
     var __gaps = (typeof detectGaps === 'function') ? detectGaps(__mergedQ) : null;
     if (__gaps && !__gaps.hasSymptom && __gaps.wordCount <= 5 && !stateHint) {
       return diagnosticFirst(query, cors, __hist);
@@ -684,7 +684,7 @@ function diagnosticFirst(query, cors, history) {
   var rawQ = String(query || '').trim();
   var nQ = normalizeQuery(rawQ);
   // Merge with history for cross-turn gap detection
-  var historyText = (history && history.length) ? history.map(function(h){return (h.text||'')}).join(' ') : '';
+  var historyText = (history && history.length) ? history.filter(function(h){return h && h.role==='user'}).map(function(h){return (h.text||'')}).join(' ') : '';
   var merged = (historyText + ' ' + nQ).trim();
   var gaps = detectGaps(merged);
   var persona = detectPersona(rawQ, history);
