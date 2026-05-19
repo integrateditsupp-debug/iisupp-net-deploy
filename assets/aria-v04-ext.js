@@ -147,6 +147,7 @@
   }
 
   function maybeInjectThinkAloud(userText) {
+    return; // disabled per Ahmad 2026-05-16
     var lower = (userText || '').toLowerCase().trim();
     // Skip short msgs / yes-no / topic confirmations / triggers already handled
     if (lower.length < 6) return;
@@ -722,4 +723,33 @@
     });
   }
   setInterval(gateResolveButtons, 2500); setTimeout(gateResolveButtons, 500);
+})();
+
+
+// ARIA Polish v2
+(function(){
+  if (window.__ARIA_POLISH_V2__) return;
+  window.__ARIA_POLISH_V2__ = true;
+  window.__ariaVoiceMode = false;
+  if (window.speechSynthesis && !speechSynthesis.__aria_gated) {
+    speechSynthesis.__aria_gated = true;
+    var origSpeak = speechSynthesis.speak.bind(speechSynthesis);
+    speechSynthesis.speak = function(utt) { if (!window.__ariaVoiceMode) return; return origSpeak(utt); };
+  }
+  function wireMic() {
+    var mic = document.querySelector("[id*=mic i], .mic, .tap-to-speak, [aria-label*=speak i]");
+    if (mic && !mic.__aria_voice_wired) { mic.__aria_voice_wired = true; mic.addEventListener("click", function(){ window.__ariaVoiceMode = true; }); }
+    var inp = document.getElementById("askInput");
+    if (inp && !inp.__aria_text_wired) { inp.__aria_text_wired = true; inp.addEventListener("keydown", function(e){ if (e.key === "Enter") window.__ariaVoiceMode = false; }); }
+  }
+  setInterval(wireMic, 1500); setTimeout(wireMic, 400);
+  function patchInjector(){
+    if (typeof window.injectAriaSystemMsg === "function" && !window.injectAriaSystemMsg.__aria_filtered) {
+      var orig = window.injectAriaSystemMsg;
+      var BAD = ["Got it. Let me check","Good question. Let me look","Let me check into that","Still looking into this","have much information","Unfortunately I","Okay, sorry to hear"];
+      window.injectAriaSystemMsg = function(text) { var s = String(text || ""); for (var i = 0; i < BAD.length; i++) { if (s.indexOf(BAD[i]) >= 0) return; } return orig.apply(this, arguments); };
+      window.injectAriaSystemMsg.__aria_filtered = true;
+    }
+  }
+  setInterval(patchInjector, 1500); setTimeout(patchInjector, 200);
 })();
