@@ -753,3 +753,36 @@
   }
   setInterval(patchInjector, 1500); setTimeout(patchInjector, 200);
 })();
+
+
+// === ARIA Polish v3 ===
+(function(){
+  if (window.__ARIA_POLISH_V3__) return; window.__ARIA_POLISH_V3__ = true;
+  window.__aria_diagnosing_until = 0;
+  function setup(){
+    var chat = document.getElementById("chatMessages");
+    if (!chat || chat.__aria_v3_observed) return;
+    chat.__aria_v3_observed = true;
+    var obs = new MutationObserver(function(muts){
+      if (Date.now() > window.__aria_diagnosing_until) return;
+      muts.forEach(function(m){
+        m.addedNodes.forEach(function(n){
+          if (n.nodeType !== 1) return;
+          var txt = (n.textContent || "").toLowerCase();
+          if (txt.indexOf("from the iis knowledge base") >= 0 || (txt.indexOf("clear cache") >= 0 && txt.indexOf("reset settings") >= 0)) { try { n.remove(); } catch(_) {} }
+        });
+      });
+    });
+    obs.observe(chat, {childList: true});
+  }
+  setTimeout(setup, 500); setInterval(setup, 2000);
+  var origSubmit = window.submitAsk;
+  if (origSubmit && !origSubmit.__aria_v3_marker) {
+    var wrapped = function(text){
+      try { var q = String(text || (document.getElementById("askInput") || {}).value || "").trim(); if (q && q.split(/\s+/).length < 6) window.__aria_diagnosing_until = Date.now() + 4500; } catch(_){}
+      return origSubmit.apply(this, arguments);
+    };
+    wrapped.__aria_v3_marker = true;
+    window.submitAsk = wrapped;
+  }
+})();
