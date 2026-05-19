@@ -131,7 +131,7 @@ export default async (request) => {
   }
 
   // Path 3: graceful no-match
-  return diagnosticFirst(query, cors);
+  return diagnosticFirst(query, cors, (body && body.history) ? body.history : []);
 };
 
 function jsonResp(status, headers, obj) {
@@ -666,7 +666,7 @@ function detectGaps(query) {
   const hasApp = Object.values(PRIMITIVES.layers).some(rx => rx.test(q));
   const hasWhen = /\b(after|since|today|yesterday|last (?:week|month|day)|just now|always|suddenly|started|began|recently)\b/i.test(q);
   const hasWho = /\b(everyone|all (?:users|of us)|whole (?:team|office)|just me|my)\b/i.test(q);
-  const hasSymptom = /\b(error|broken|wont|cant|fail|crash|slow|stuck|frozen|hang|down|gone|missing|not working)\b/i.test(q);
+  const hasSymptom = /\b(error|broken|wont|cant|fail|crash(?:ing|ed|es)?|slow(?:ing|ed)?|stuck|frozen|freez(?:ing|es)?|hang(?:ing|s)?|lag(?:ging)?|down|gone|missing|not working|not loading|not opening|wont open|wont load|blue screen|bsod|spinning|glitch(?:ing|y)?|loop(?:ing)?|restart(?:ing)?|reboot(?:ing|s)?|disconnect(?:ing|ed|s)?|drop(?:ping|s)?)\b/i.test(q);
   const wordCount = q.split(/\s+/).filter(Boolean).length;
   return {
     hasApp, hasWhen, hasWho, hasSymptom, wordCount,
