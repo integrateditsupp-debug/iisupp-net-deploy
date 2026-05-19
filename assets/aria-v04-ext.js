@@ -824,3 +824,54 @@
   }
   setInterval(tryGreet, 700);
 })();
+
+
+// === ARIA Polish v5: multi-turn history ===
+(function(){
+  if (window.__ARIA_POLISH_V5__) return; window.__ARIA_POLISH_V5__ = true;
+  window.__ariaHistory = window.__ariaHistory || [];
+  // Reset on session start (when start button clicked)
+  function reset(){ window.__ariaHistory = []; }
+  setTimeout(function(){
+    var startBtn = Array.from(document.querySelectorAll("button")).find(function(b){ return /start.*troubleshoot/i.test(b.textContent||""); });
+    if (startBtn && !startBtn.__v5_reset) { startBtn.__v5_reset = true; startBtn.addEventListener("click", reset, true); }
+  }, 500);
+  // Monkey-patch fetch to inject history into aria-research POST body
+  if (!window.fetch.__aria_v5_wrapped) {
+    var origFetch = window.fetch.bind(window);
+    window.fetch = function(url, opts) {
+      try {
+        if (typeof url === "string" && url.indexOf("aria-research") >= 0 && opts && opts.method === "POST" && opts.body) {
+          var b = JSON.parse(opts.body);
+          if (b && b.query && !b.history) {
+            b.history = (window.__ariaHistory || []).slice(-6);
+            opts.body = JSON.stringify(b);
+            // Track current user msg
+            window.__ariaHistory.push({role: "user", text: b.query});
+            if (window.__ariaHistory.length > 20) window.__ariaHistory = window.__ariaHistory.slice(-20);
+          }
+        }
+      } catch(_){}
+      return origFetch(url, opts);
+    };
+    window.fetch.__aria_v5_wrapped = true;
+  }
+  // Also capture ARIA replies for context (use MutationObserver on chat)
+  function observeReplies(){
+    var chat = document.getElementById("chatMessages"); if (!chat || chat.__v5_obs) return;
+    chat.__v5_obs = true;
+    new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes.forEach(function(n){
+          if (n.nodeType !== 1) return;
+          var isAria = n.classList && n.classList.contains("aria-block");
+          if (isAria) {
+            var txt = (n.querySelector(".aria-text") || {}).textContent || "";
+            if (txt) { window.__ariaHistory.push({role: "aria", text: txt}); if (window.__ariaHistory.length > 20) window.__ariaHistory = window.__ariaHistory.slice(-20); }
+          }
+        });
+      });
+    }).observe(chat, {childList: true});
+  }
+  setInterval(observeReplies, 1500); setTimeout(observeReplies, 400);
+})();
