@@ -2397,6 +2397,35 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
   h3 { font-size: 1.1rem !important; }
   p { font-size: 0.9rem !important; }
 }
+
+/* === MOBILE FIT POLISH v2 (2026-05-20) — Tailwind utility overrides === */
+@media (max-width: 720px) {
+  [class*="text-7xl"] { font-size: 1.7rem !important; line-height: 1.06 !important; }
+  [class*="text-6xl"] { font-size: 1.55rem !important; line-height: 1.06 !important; }
+  [class*="text-5xl"] { font-size: 1.5rem !important; line-height: 1.06 !important; }
+  [class*="text-4xl"] { font-size: 1.3rem !important; line-height: 1.15 !important; }
+  [class*="text-3xl"] { font-size: 1.15rem !important; line-height: 1.2 !important; }
+  [class*="text-2xl"] { font-size: 1.05rem !important; line-height: 1.25 !important; }
+  [class*="px-10"], [class*="px-12"], [class*="px-16"] { padding-left: 12px !important; padding-right: 12px !important; }
+  [class*="px-8"] { padding-left: 10px !important; padding-right: 10px !important; }
+  [class*="py-12"], [class*="py-16"], [class*="py-20"], [class*="py-24"] { padding-top: 24px !important; padding-bottom: 24px !important; }
+  nav.fixed { flex-wrap: wrap !important; gap: 6px !important; padding: 8px 10px !important; }
+  nav.fixed > * { min-width: 0 !important; flex-shrink: 1 !important; }
+  .hero-section { padding: 80px 12px 32px !important; }
+  .hero-section h1 span { font-size: 0.85em !important; line-height: 1.1 !important; }
+  .hero-section p { font-size: 0.85rem !important; }
+  section, footer, header { word-wrap: break-word !important; overflow-wrap: break-word !important; }
+}
+@media (max-width: 480px) {
+  [class*="text-7xl"], [class*="text-5xl"] { font-size: 1.35rem !important; }
+  [class*="text-6xl"] { font-size: 1.4rem !important; }
+  [class*="text-4xl"] { font-size: 1.2rem !important; }
+  [class*="text-3xl"] { font-size: 1.05rem !important; }
+  nav.fixed { padding: 6px 8px !important; }
+  .hero-section { padding: 76px 10px 28px !important; }
+  .hero-section h1 { font-size: 1.3rem !important; }
+  .hero-section h1 span { font-size: 0.8em !important; }
+}
 </style>
 
 
