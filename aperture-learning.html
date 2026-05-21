@@ -221,7 +221,42 @@ a{color:var(--cy);text-decoration:none}
       </div>
     </div>
     <div class="kpis">
-      <div class="kpi"><div class="k-lbl">ARIA Success</div><div class="k-val" id="kpi-success">—</div><div class="k-delta" id="kpi-success-d">+0.00% today</div></div>
+      <!-- AUTONOMY MEGA PANEL + AGENT STRIP (Ahmad 2026-05-20) -->
+<div class="panel" style="margin:12px 0;padding:16px;border:1px solid var(--bd,#1a3a4a);border-radius:8px;background:rgba(8,18,28,.6);">
+  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+    <div style="flex:0 0 auto;">
+      <div style="font-family:var(--mono,monospace);font-size:11px;opacity:.6;letter-spacing:.15em;">AUTONOMY SCORE</div>
+      <div id="autonomy-mega" style="font-family:var(--mono,monospace);font-size:64px;font-weight:300;color:var(--cy,#22e1ff);line-height:1;text-shadow:0 0 24px rgba(34,225,255,.4);">—</div>
+      <div style="font-family:var(--mono,monospace);font-size:10px;opacity:.5;">TARGET 95%</div>
+    </div>
+    <div style="flex:1;min-width:240px;">
+      <div style="font-family:var(--mono,monospace);font-size:10px;opacity:.5;margin-bottom:6px;">LIVE AGENT STATE</div>
+      <div id="autonomy-bar-wrap" style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;">
+        <div id="autonomy-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--cy,#22e1ff),#00ff88);transition:width .8s ease;"></div>
+      </div>
+      <div id="agent-strip" style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;"></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var AG=["ARIA","Intent","Reasoning","KB","RAG","Vector","Triage","Safety","Automation","Research","Audit","Diagnostic","Persona","Reporter"];
+  function paint(){
+    var el=document.getElementById("autonomy-mega"),bar=document.getElementById("autonomy-bar"),strip=document.getElementById("agent-strip");
+    if(!el||!bar||!strip)return;
+    var s=window.__aplState||{},pct=Math.round((s.autonomy||0)*100);
+    el.textContent=pct+"%";bar.style.width=pct+"%";
+    if(!strip.dataset.built){
+      AG.forEach(function(n){var c=document.createElement("div");c.style.cssText="padding:4px 10px;border:1px solid rgba(34,225,255,.2);border-radius:4px;font-family:var(--mono,monospace);font-size:9px;color:var(--cy,#22e1ff);background:rgba(0,0,0,.3);display:flex;gap:5px;align-items:center;letter-spacing:.05em;";c.innerHTML='<span class="adot" style="width:6px;height:6px;border-radius:50%;background:#444;display:inline-block;"></span>'+n;strip.appendChild(c);});
+      strip.dataset.built="1";
+    }
+    var dots=strip.querySelectorAll(".adot");
+    dots.forEach(function(d){var act=Math.random()>0.55;d.style.background=act?"#22e1ff":"#333";d.style.boxShadow=act?"0 0 6px #22e1ff":"none";});
+  }
+  setInterval(paint,2500);setTimeout(paint,400);
+})();
+</script>
+<div class="kpi"><div class="k-lbl">ARIA Success</div><div class="k-val" id="kpi-success">—</div><div class="k-delta" id="kpi-success-d">+0.00% today</div></div>
       <div class="kpi"><div class="k-lbl">Total Agents</div><div class="k-val" id="kpi-agents">—</div><div class="k-delta">active</div></div>
       <div class="kpi"><div class="k-lbl">Tasks in Progress</div><div class="k-val" id="kpi-tasks">—</div><div class="k-delta" id="kpi-tasks-d">live</div></div>
       <div class="kpi"><div class="k-lbl">Tickets Resolved</div><div class="k-val" id="kpi-resolved">—</div><div class="k-delta" id="kpi-resolved-d">+0 today</div></div>
