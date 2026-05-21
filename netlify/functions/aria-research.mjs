@@ -529,6 +529,15 @@ function applyFiveW(q) {
     why: 'Hypotheses generated from CS primitives at the ' + layer + ' layer.'
   };
 }
+// === 20s SPECIALIST AGENT JUMP-IN (Ahmad 2026-05-20) ===
+function specialistProposals(query) {
+  const q = String(query||'').toLowerCase();
+  const out = [];
+  out.push({ name: 'OSI Network Agent', framework: 'OSI 7-layer', proposal: /vpn|dns|wifi|internet|ping|443|tcp|http|ip|network|connection/.test(q) ? 'Layer-by-layer check: physical (cable/wifi indicator) -> IP (ipconfig /all) -> DNS (nslookup) -> transport (telnet host 443) -> app (browser). Where does it first break?' : 'Apply OSI lens: identify the lowest layer involved (file/disk/memory/network) before assuming an app bug.' });
+  out.push({ name: 'ITIL Process Agent', framework: 'ITIL Incident', proposal: 'Triage as incident. Who is affected (single user / group / org)? Business impact (low/med/high)? What changed in last 24h? That triage decides next move.' });
+  out.push({ name: 'RCA 5-Whys Agent', framework: 'Root Cause Analysis', proposal: 'Ask why 5 times to find the root. Example: app crashes -> why? Out of memory -> why? Leak in module X -> why? Missing patch since Tue update -> why? Auto-update disabled -> why? Group policy override. The 5th why is the fix-point.' });
+  return out;
+}
 function firstPrinciplesReason(q, cors) {
   const fw = applyFiveW(q || '');
   const hyps = PRIMITIVES.hypotheses[fw.where] || PRIMITIVES.hypotheses.OS;
@@ -550,6 +559,7 @@ function firstPrinciplesReason(q, cors) {
   return jsonResp(200, cors, {
     ok: true,
     state: 'REASONED_' + fw.where,
+    proposals: specialistProposals(query),
     title: 'No exact KB match - reasoning from first principles (' + fw.where.toLowerCase() + ' layer)',
     steps: steps,
     confidence: 0.55,
