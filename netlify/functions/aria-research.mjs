@@ -565,7 +565,7 @@ function applyFiveW(q) {
   };
 }
 // === 20s SPECIALIST AGENT JUMP-IN (Ahmad 2026-05-20) ===
-function specialistProposals(q) {
+function specialistProposals(query) {
   const q = String(query||'').toLowerCase();
   const out = [];
   out.push({ name: 'OSI Network Agent', framework: 'OSI 7-layer', proposal: /vpn|dns|wifi|internet|ping|443|tcp|http|ip|network|connection/.test(q) ? 'Layer-by-layer check: physical (cable/wifi indicator) -> IP (ipconfig /all) -> DNS (nslookup) -> transport (telnet host 443) -> app (browser). Where does it first break?' : 'Apply OSI lens: identify the lowest layer involved (file/disk/memory/network) before assuming an app bug.' });
