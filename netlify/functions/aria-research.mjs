@@ -319,6 +319,20 @@ const STATE_PATTERNS = {
   'PRINTER.OFFLINE2':/\bprint(er)?\b[^.]{0,30}(offline|wont print|cant print|paused)\b/i,
   'PRINTER.QUALITY':/\bprint(er)?\b[^.]{0,30}(streak|lines|smear|faded|blurry|spots|missing color)\b/i,
   'BACKUP.CHECK':/\b(backup|onedrive backup|time machine).{0,30}(last|when|status|verify)\b/i,
+
+  // === 2026-05-22 PM expansion ===
+  'POWER.NO_BOOT.V2':/\b(computer|pc|laptop|machine|desktop|mac|imac|macbook|tower)\s+(wont|won't|will not|doesnt|doesn't|cant|cannot|is not|isnt|aint)\s+(turn|turning|power|powering|start|starting|boot|booting|come|coming|wake|waking)\b/i,
+  'POWER.NO_BOOT.V3':/\b(pc|computer|laptop|machine|desktop|mac|imac|macbook|tower)\s+(is dead|dead|no power|wont start|won't start|wont boot|won't boot|wont come on|wont wake|nothing happens)\b/i,
+  'POWER.NO_BOOT.V4':/\b(my\s+)?(computer|pc|laptop|machine|desktop|mac|imac|macbook|tower)[\s\S]{0,30}(turn|power|start|boot)\s*(on|up)\b/i,
+  'MFA.LOST':/\b(lost|new|broken|cant access|cannot access|missing|forgot|forgotten)\b[^.]{0,30}(phone|authenticator|mfa|2fa|two.?factor|code|token)\b/i,
+  'PWD.RESET':/\b(reset|change|forgot|forgotten|new)\b[^.]{0,15}(password|pw|pass|passwd)\b/i,
+  'PWD.LOCKED':/\b(locked out|account locked|too many attempts|account suspended)\b/i,
+  'PDF.OPEN':/\b(pdf|adobe|acrobat)\b[^.]{0,30}(wont open|cant open|broken|crash)\b/i,
+  'GITHUB.AUTH':/\b(github|git)\b[^.]{0,30}(authentication|auth|login|signin|push|pull|clone)\b[^.]{0,30}(failed|denied|wont|error)\b/i,
+  'NEW.LAPTOP':/\b(new laptop|new pc|new computer|new mac|first time setup|setup new)\b/i,
+  'EXTERNAL.MONITOR':/\b(external monitor|second screen|extended display|2nd monitor)\b[^.]{0,30}(not working|black|no signal|not detected)\b/i,
+  'CALENDAR.SYNC':/\b(calendar|meetings|invites)\b[^.]{0,30}(not syncing|wont sync|missing|stuck)\b/i,
+  'OFFICE.ACTIVATION2':/\b(office|word|excel|powerpoint).{0,30}(activation|activate|product key|not activated|unlicensed)\b/i,
 };
 
 function detectState(query) {
@@ -985,4 +999,19 @@ const LIBRARY = {
   'PRINTER.OFFLINE2':{ title:'Printer offline / wont print', steps:['Power off printer 30 sec, back on.','Settings > Printers -> printer -> Open queue -> cancel stuck jobs.','Printer paired to right Wi-Fi? Print self-test from printer panel.','Set as default: Settings > Printers -> click printer -> Set as default.','Remove + re-add: Settings > Printers > Remove device -> add again.','Spooler restart: services.msc -> Print Spooler -> Restart.'], confidence: 0.82 },
   'PRINTER.QUALITY':{ title:'Print quality bad (streaks/lines)', steps:['From printer panel: maintenance -> clean print heads (laser: clean toner; inkjet: head clean cycle).','Print test page from panel.','Ink levels: if low, replace cartridge.','Paper jam or roller dust: power off, open access door, inspect, gentle wipe.','Drum (laser): if streaks repeat, drum unit may be EOL.','If under warranty: contact vendor support.'], confidence: 0.78 },
   'BACKUP.CHECK':{ title:'Verify backup is current', steps:['OneDrive: Settings -> Backup -> Manage Backup -> confirm Desktop/Documents/Pictures checked.','OneDrive: cloud icon -> verify Up to date status.','Mac Time Machine: System Settings -> Time Machine -> last backup time.','If last backup > 24h old, force a backup: TM -> Back Up Now.','Mission-critical files: have a second backup (external drive + cloud).'], confidence: 0.78 }
+,
+
+  // === 2026-05-22 PM expansion ===
+  'POWER.NO_BOOT.V2':{ title:'Computer wont turn on / no power', steps:['Power confirmation: outlet live? Test with lamp.','Cable seated firmly at BOTH ends.','Laptop: remove battery (if removable), hold power 30 sec, reinsert + AC, try power.','Desktop: PSU rocker switch ON (|). Surge protector ON.','Different outlet or different cable.','External monitor on laptop: see picture? Then screen fault.','Fan? LED? Silence = PSU/board. LED but no display = video/RAM.','If still: L2 hardware - call (647) 581-3182.'], confidence: 0.85 },
+  'POWER.NO_BOOT.V3':{ title:'PC dead / no power', steps:['Same as POWER.NO_BOOT — confirm power source first.','Different outlet, hold power button 30 sec.','Listen for ANY fan or click on power press.','Completely silent = PSU (desktop) or charging board (laptop).','Lights but no display = RAM/GPU. Reseat (desktop).','Hardware = L2: call (647) 581-3182.'], confidence: 0.85 },
+  'POWER.NO_BOOT.V4':{ title:'Computer wont power on', steps:['Power source test. Different outlet.','Cable both ends seated.','Hold power button 30 sec.','Laptop battery + AC isolation test.','Listen for fans/lights.','L2 if no signs of life: hardware - call (647) 581-3182.'], confidence: 0.83 },
+  'MFA.LOST':{ title:'Lost / broken MFA device', steps:['Check for backup codes (Authenticator setup usually offers these).','Backup method registered?','Work account: IT can reset MFA in M365 admin.','Personal Microsoft: account.microsoft.com -> Security -> two-step.','Google: g.co/recover.','24h delay possible.'], confidence: 0.85 },
+  'PWD.RESET':{ title:'Reset / forgot password', steps:['Self-service: portal.office.com (Microsoft) or accounts.google.com.','Verify via registered phone/email/MFA.','Pick new password meeting policy.','Update in OS keychain.','Update in mail/calendar/Teams/Slack apps.','Web: sign out everywhere, sign back in.'], confidence: 0.85 },
+  'PWD.LOCKED':{ title:'Account locked', steps:['Wait 15-30 min — most accounts auto-unlock.','Urgent: contact IT to manually unlock.','When unlocked: reset password to prevent re-lock.','Update password EVERYWHERE before retrying sign-in.','Repeated locks: find the app/service using old cached password.'], confidence: 0.83 },
+  'PDF.OPEN':{ title:'PDF wont open', steps:['Different PDF reader (Edge has built-in).','Right-click PDF -> Open with -> Adobe Reader.','Update Adobe: Help -> Check for updates.','Disable Protected View: Edit > Preferences > Security (Enhanced) -> uncheck.','PDF corrupted: ask sender to re-send.','Repair Reader: Settings > Apps > Adobe Reader > Repair.'], confidence: 0.78 },
+  'GITHUB.AUTH':{ title:'GitHub auth failed', steps:['Use PAT (Personal Access Token) not password for HTTPS.','Generate PAT: github.com -> Settings -> Developer Settings -> PAT -> Generate.','Use PAT as password when prompted.','SSH: ssh-keygen + add public key to github.com/settings/keys.','Test: ssh -T git@github.com.','gh auth login -- interactive.'], confidence: 0.85 },
+  'NEW.LAPTOP':{ title:'New laptop / PC first time setup', steps:['Run all updates first.','Install company VPN client + sign in.','Install M365 apps (office.com -> Install Office).','Sign into OneDrive — back up Desktop/Documents/Pictures.','Browser + sign in to sync.','Install Teams / Slack / Zoom.','Set up printer.','Test VPN + email + key business app.'], confidence: 0.85 },
+  'EXTERNAL.MONITOR':{ title:'External monitor not detected', steps:['Different HDMI/DisplayPort cable.','Different port on laptop/monitor.','Win+P -> Extend or Duplicate.','Mac: Sys Pref > Displays > Detect Displays (hold Option).','Update GPU driver.','Test monitor on another computer.','Dock issue? Try direct connect.'], confidence: 0.80 },
+  'CALENDAR.SYNC':{ title:'Calendar not syncing', steps:['Sign out + back in.','Send/Receive (Outlook) to force sync.','Web client (outlook.office.com) — invite there? If yes, desktop issue.','Shared calendars: re-add (File > Open > Other Users Folder).','Mobile: remove + re-add account.','Mailbox near full can block — clean.'], confidence: 0.78 },
+  'OFFICE.ACTIVATION2':{ title:'Office not activated', steps:['Open any Office app -> File > Account.','Sign out -> sign back in with work email.','Activation: choose Sign in -> wait.','Org: license may need to be assigned by IT.','Verify in admin portal that license assigned.'], confidence: 0.80 }
 };
