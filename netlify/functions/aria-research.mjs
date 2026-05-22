@@ -284,6 +284,11 @@ const STATE_PATTERNS = {
   'PERIPHERAL.WEBCAM':/\b(webcam|camera)\b[^.]{0,40}(not detected|not found|driver|wont work)\b/i,
   'MOBILE.WIFI':/\b(iphone|android|mobile|phone)\b[^.]{0,40}(wifi|wi-fi|wireless)\b/i,
   'MOBILE.EMAIL':/\b(iphone|android|mobile|phone)\b[^.]{0,40}(email|mail|outlook|gmail).{0,40}(not working|wont sync|not syncing)\b/i,
+
+  // === 2026-05-20 PM L1 power/boot gap-fill ===
+  'POWER.NO_BOOT':/\b(wont|won't|not|cant|cannot|doesnt|doesn't|will not)\s+(turn on|power on|start up|boot up|come on|wake up|wake)\b|\b(computer|pc|laptop|machine|desktop)\s+(dead|wont start|no power|no lights|nothing happens|not powering|not turning)\b/i,
+  'SCREEN.BLACK':/\b(screen|monitor|display)\b[^.]{0,40}(black|blank|nothing|no signal|no display)\b/i,
+  'PWR.BATTERY':/\b(battery|charger|charging|power cord|adapter)\b[^.]{0,40}(not working|dead|wont charge|not charging|drained)\b/i,
 };
 
 function detectState(query) {
@@ -560,7 +565,7 @@ function applyFiveW(q) {
   };
 }
 // === 20s SPECIALIST AGENT JUMP-IN (Ahmad 2026-05-20) ===
-function specialistProposals(query) {
+function specialistProposals(q) {
   const q = String(query||'').toLowerCase();
   const out = [];
   out.push({ name: 'OSI Network Agent', framework: 'OSI 7-layer', proposal: /vpn|dns|wifi|internet|ping|443|tcp|http|ip|network|connection/.test(q) ? 'Layer-by-layer check: physical (cable/wifi indicator) -> IP (ipconfig /all) -> DNS (nslookup) -> transport (telnet host 443) -> app (browser). Where does it first break?' : 'Apply OSI lens: identify the lowest layer involved (file/disk/memory/network) before assuming an app bug.' });
@@ -589,7 +594,7 @@ function firstPrinciplesReason(q, cors) {
   return jsonResp(200, cors, {
     ok: true,
     state: 'REASONED_' + fw.where,
-    proposals: specialistProposals(query),
+    proposals: specialistProposals(q),
     title: 'No exact KB match - reasoning from first principles (' + fw.where.toLowerCase() + ' layer)',
     steps: steps,
     confidence: 0.55,
@@ -913,4 +918,10 @@ const LIBRARY = {
   'PERIPHERAL.WEBCAM':{ title:'Webcam not detected', steps:['Different USB port; close all other apps using camera.','Device Manager > Cameras / Imaging devices -> Update driver (or Uninstall then reboot).','Privacy: Settings > Privacy > Camera -> apps allowed.','Vendor app (Logi Capture, Brio etc.) for diagnostics.','Try the webcam on another machine to isolate.'] },
   'MOBILE.WIFI':{ title:'Phone WiFi not connecting', steps:['Forget network -> rejoin with password.','Toggle WiFi off+on / Airplane mode on+off.','Restart router (30 sec off).','Settings > General > Reset > Reset Network Settings (iOS) / Settings > System > Reset (Android).','Update phone OS.','If only your phone affected: re-add WiFi password fresh.'] },
   'MOBILE.EMAIL':{ title:'Phone email not syncing', steps:['Force-close mail app; reopen.','Settings > Mail / Accounts -> verify account signed in.','For Exchange/365: remove + re-add account.','Server-side: check status.office.com for outage.','Update Mail app or use webmail to isolate device issue.'] }
+,
+
+  // === 2026-05-20 PM L1 power/boot gap-fill ===
+  'POWER.NO_BOOT':{ title:'Computer wont turn on / no power', steps:['Power confirmation: is the outlet live? Plug something else (lamp, phone charger) into the same outlet.','Cable check: power cable seated firmly at BOTH ends (wall + back of PC / laptop brick).','Laptop: if removable battery, pop it out, hold power button 30 sec (drains residual), re-insert battery + AC, try power.','Desktop: confirm PSU rocker switch on back is ON (|), not O. Wall surge protector ON.','Try a different outlet or different power cable to isolate.','Laptop: try AC only (no battery) and battery only (no AC) to find which is the failure.','External monitor on a laptop: HDMI to TV - if you see picture, screen is the fault not the machine.','Listen + look: any fan spin? any LED on the case? Total silence = PSU or board. Any LED but no display = video / RAM.','If still: this is hardware - call (647) 581-3182 or email integrateditsupp@iisupp.net for L2.'], confidence: 0.85 },
+  'SCREEN.BLACK':{ title:'Black screen / no display (PC is on)', steps:['Fans + LEDs on but nothing on screen? Confirm monitor is ON + correct input (HDMI 1 vs DisplayPort).','Try a different cable. HDMI cables fail silently.','Laptop: press Win + Ctrl + Shift + B (Windows graphics driver reset).','Connect external monitor: if external works -> internal display / lid sensor / cable fault.','Boot to safe mode: hold Shift while powering on.','Reseat RAM + GPU (desktop): power off, unplug, open case, press RAM clips out + back in, reseat GPU.','If still black: L2 hardware - call (647) 581-3182.'], confidence: 0.82 },
+  'PWR.BATTERY':{ title:'Battery / charger not working', steps:['Try a different outlet to rule out wall.','Inspect cable for kinks or damage at both ends.','Different charger / adapter to isolate.','Laptop: clean charging port - lint blocks contact. Compressed air or wooden toothpick.','Windows: Settings > System > Power & Battery -> Battery health. If < 50% = EOL.','Mac: Apple menu -> About this Mac -> System Report -> Power -> Cycle Count + Condition.','If port physically loose: L2 hardware - call (647) 581-3182.'], confidence: 0.83 }
 };
