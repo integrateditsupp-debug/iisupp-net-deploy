@@ -1,0 +1,311 @@
+<!--
+  aperture-office-view.html
+  Drop-in section for aperture-learning.html.
+  Renders a stylized 2D office "HQ" with two zones:
+    - ARIA WING (left): 13 agent desks
+    - OPENCODE WING (right): bridge + executor desks
+  Each desk pulses based on /api/mesh-events activity. No external assets.
+  Cyber-noir matches your existing Command Center v3 style.
+-->
+<style>
+  .office-host {
+    width:100%;
+    background:linear-gradient(180deg,#070b14 0%,#0a0e1a 60%,#11161f 100%);
+    border:1px solid #1f2937;
+    border-radius:12px;
+    padding:24px 20px 28px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    color:#e5e7eb;
+    box-shadow:0 0 60px rgba(34,211,238,0.05) inset;
+  }
+  .office-title {
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:18px;
+  }
+  .office-title h2 { margin:0;font-size:14px;letter-spacing:0.15em;color:#9ca3af; }
+  .office-title .live-dot {
+    display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:#22d3ee;box-shadow:0 0 12px #22d3ee;
+    animation:livepulse 1.6s infinite;margin-right:6px;
+  }
+  @keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .office-stats { font-size:11px;color:#6b7280; }
+  .office-stats span { color:#22d3ee;margin:0 4px; }
+
+  .office-floor {
+    display:grid;grid-template-columns:1fr 1fr;gap:18px;
+  }
+  @media (max-width:780px){ .office-floor{grid-template-columns:1fr;} }
+
+  .wing {
+    background:rgba(15,23,42,0.5);
+    border:1px solid #1e293b;
+    border-radius:10px;
+    padding:16px 14px;
+    position:relative;overflow:hidden;
+  }
+  .wing::before {
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse at top,rgba(34,211,238,0.06),transparent 70%);
+    pointer-events:none;
+  }
+  .wing h3 {
+    margin:0 0 14px;font-size:12px;letter-spacing:0.18em;
+    color:#94a3b8;border-bottom:1px solid #1e293b;padding-bottom:8px;
+  }
+  .wing.aria h3 { color:#22d3ee; }
+  .wing.opencode h3 { color:#fbbf24; }
+
+  .desk-grid {
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;
+  }
+
+  .desk {
+    background:linear-gradient(135deg,#0f172a,#0a101c);
+    border:1px solid #1e293b;border-radius:8px;
+    padding:10px 10px 8px;position:relative;overflow:hidden;
+    transition:border-color 0.4s,transform 0.4s;
+    min-height:84px;
+  }
+  .desk.working {
+    border-color:#22d3ee;
+    box-shadow:0 0 16px rgba(34,211,238,0.25);
+  }
+  .desk.error {
+    border-color:#ef4444;
+    box-shadow:0 0 16px rgba(239,68,68,0.25);
+  }
+  .desk.idle { opacity:0.55; }
+
+  .desk .nameplate {
+    font-size:10px;font-weight:600;letter-spacing:0.05em;
+    color:#e5e7eb;text-transform:uppercase;margin-bottom:4px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .desk .role {
+    font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.1em;
+    margin-bottom:6px;
+  }
+  .desk .monitor {
+    background:#000;border:1px solid #1e293b;border-radius:3px;
+    padding:4px 5px;font-size:9px;font-family:monospace;
+    color:#22d3ee;height:32px;overflow:hidden;
+    line-height:1.3;word-break:break-all;
+  }
+  .desk.opencode .monitor { color:#fbbf24; }
+  .desk.idle .monitor { color:#475569; }
+  .desk .status-dot {
+    position:absolute;top:8px;right:8px;
+    width:6px;height:6px;border-radius:50%;
+    background:#475569;
+  }
+  .desk.working .status-dot {
+    background:#22d3ee;box-shadow:0 0 8px #22d3ee;
+    animation:livepulse 1.2s infinite;
+  }
+  .desk.error .status-dot { background:#ef4444;box-shadow:0 0 8px #ef4444; }
+  .desk .count {
+    position:absolute;bottom:6px;right:8px;
+    font-size:9px;color:#64748b;
+  }
+
+  /* HQ exterior strip â purely cinematic */
+  .skyline {
+    height:38px;margin-top:18px;border-radius:6px;overflow:hidden;
+    background:linear-gradient(180deg,#020617 0%,#0f172a 100%);
+    border:1px solid #1e293b;position:relative;
+  }
+  .skyline svg { width:100%;height:100%;display:block; }
+  .skyline .star {
+    position:absolute;background:#fff;width:1px;height:1px;border-radius:50%;
+    animation:twinkle 4s infinite;
+  }
+  @keyframes twinkle { 0%,100%{opacity:0.3} 50%{opacity:1} }
+</style>
+
+<div class="office-host" id="office-host">
+  <div class="office-title">
+    <h2><span class="live-dot"></span>ARIA Â· HQ FLOOR PLAN Â· LIVE</h2>
+    <div class="office-stats">
+      desks <span id="office-desks">0</span> Â·
+      working <span id="office-working">0</span> Â·
+      events 5m <span id="office-events">0</span> Â·
+      bridge <span id="office-bridge">offline</span>
+    </div>
+  </div>
+
+  <div class="office-floor">
+    <div class="wing aria">
+      <h3>ARIA WING â CLOUD AGENTS</h3>
+      <div class="desk-grid" id="aria-desks"></div>
+    </div>
+    <div class="wing opencode">
+      <h3>OPENCODE WING â LOCAL EXECUTORS</h3>
+      <div class="desk-grid" id="opencode-desks"></div>
+    </div>
+  </div>
+
+  <div class="skyline" aria-hidden="true">
+    <svg viewBox="0 0 600 38" preserveAspectRatio="none">
+      <rect x="0" y="0" width="600" height="38" fill="#020617"/>
+      <g fill="#0f172a">
+        <rect x="10" y="14" width="22" height="24"/>
+        <rect x="40" y="6"  width="18" height="32"/>
+        <rect x="66" y="18" width="28" height="20"/>
+        <rect x="100" y="10" width="22" height="28"/>
+        <rect x="128" y="20" width="14" height="18"/>
+        <rect x="150" y="4"  width="20" height="34"/>
+        <rect x="178" y="14" width="26" height="24"/>
+        <rect x="212" y="20" width="18" height="18"/>
+        <rect x="234" y="8"  width="22" height="30"/>
+        <rect x="262" y="16" width="30" height="22"/>
+        <rect x="298" y="10" width="18" height="28"/>
+        <rect x="322" y="20" width="22" height="18"/>
+        <rect x="350" y="6"  width="18" height="32"/>
+        <rect x="376" y="14" width="28" height="24"/>
+        <rect x="410" y="18" width="20" height="20"/>
+        <rect x="436" y="10" width="22" height="28"/>
+        <rect x="464" y="20" width="16" height="18"/>
+        <rect x="486" y="4"  width="22" height="34"/>
+        <rect x="514" y="14" width="26" height="24"/>
+        <rect x="546" y="20" width="18" height="18"/>
+        <rect x="570" y="10" width="22" height="28"/>
+      </g>
+      <g fill="#fbbf24">
+        <rect x="14" y="20" width="3" height="3"/>
+        <rect x="44" y="14" width="3" height="3"/>
+        <rect x="106" y="16" width="3" height="3"/>
+        <rect x="154" y="12" width="3" height="3"/>
+        <rect x="182" y="22" width="3" height="3"/>
+        <rect x="240" y="16" width="3" height="3"/>
+        <rect x="354" y="14" width="3" height="3"/>
+        <rect x="382" y="22" width="3" height="3"/>
+        <rect x="442" y="18" width="3" height="3"/>
+        <rect x="492" y="12" width="3" height="3"/>
+        <rect x="520" y="22" width="3" height="3"/>
+        <rect x="574" y="18" width="3" height="3"/>
+      </g>
+    </svg>
+    <span class="star" style="left:8%;top:8px"></span>
+    <span class="star" style="left:22%;top:4px;animation-delay:1s"></span>
+    <span class="star" style="left:45%;top:6px;animation-delay:2s"></span>
+    <span class="star" style="left:62%;top:3px;animation-delay:0.5s"></span>
+    <span class="star" style="left:78%;top:8px;animation-delay:1.4s"></span>
+    <span class="star" style="left:92%;top:5px;animation-delay:2.6s"></span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const ARIA_HOST = document.getElementById('aria-desks');
+  const OC_HOST   = document.getElementById('opencode-desks');
+  const STAT_DESKS  = document.getElementById('office-desks');
+  const STAT_WORK   = document.getElementById('office-working');
+  const STAT_EVENTS = document.getElementById('office-events');
+  const STAT_BRIDGE = document.getElementById('office-bridge');
+
+  const FIVE_MIN = 5 * 60 * 1000;
+
+  // Static role map â adjust if registry adds agents
+  const ROLE_MAP = {
+    'aria-research': 'Researcher',
+    'aria-escalation': 'Escalator',
+    'aria-first-principles': 'Reasoner',
+    'aria-diagnostic': 'Analyst',
+    'aria-persona': 'Persona',
+    'council-architect': 'Architect',
+    'council-coder': 'Coder',
+    'council-reviewer': 'Reviewer',
+    'council-tester': 'Tester',
+    'council-security': 'Security',
+    'audit-agent': 'Gatekeeper',
+    'aperture-monitor': 'Observer',
+    'self-learning-loop': 'Background',
+    'opencode-coder': 'Code Exec',
+    'claude-sdk-subagent': 'Deep Exec'
+  };
+
+  function deskHTML(agent, lastEvent, count, isOpenCode) {
+    const status = lastEvent
+      ? (lastEvent.success === false ? 'error' : (Date.now() - (lastEvent.ts||0) < 60000 ? 'working' : 'idle'))
+      : 'idle';
+    const role = ROLE_MAP[agent.id] || agent.type || 'Agent';
+    const monitor = lastEvent
+      ? (lastEvent.kind === 'mesh-hop'
+          ? `â hop ${lastEvent.hop ?? '?'} Â· conf ${(lastEvent.confidence||0).toFixed(2)}`
+          : (lastEvent.kind || 'event'))
+      : 'awaiting work...';
+    return `
+      <div class="desk ${status} ${isOpenCode?'opencode':''}" data-agent="${agent.id}">
+        <div class="status-dot"></div>
+        <div class="nameplate">${agent.id}</div>
+        <div class="role">${role}</div>
+        <div class="monitor">${monitor}</div>
+        <div class="count">${count||0}Ã</div>
+      </div>
+    `;
+  }
+
+  async function refresh() {
+    let registry = null, events = null;
+    try {
+      [registry, events] = await Promise.all([
+        fetch('/mesh-registry.json').then(r=>r.json()).catch(()=>({agents:[]})),
+        fetch('/api/mesh-events?since=' + (Date.now() - FIVE_MIN) + '&limit=400').then(r=>r.json()).catch(()=>({events:[],stats:{}}))
+      ]);
+    } catch (e) {
+      console.warn('[office-view] fetch fail', e);
+      return;
+    }
+
+    // Index events by agentId
+    const byAgent = {};
+    for (const e of (events.events||[])) {
+      if (!e.agentId) continue;
+      const id = String(e.agentId).replace(/^bridge:/, 'opencode-bridge:');
+      if (!byAgent[id]) byAgent[id] = [];
+      byAgent[id].push(e);
+    }
+    for (const id of Object.keys(byAgent)) byAgent[id].sort((a,b)=>b.ts-a.ts);
+
+    // Bridge heartbeat detection
+    const bridgeEvents = (events.events||[]).filter(e => String(e.agentId||'').startsWith('bridge:'));
+    const recentBridge = bridgeEvents.find(e => (Date.now() - e.ts) < 90000);
+    STAT_BRIDGE.textContent = recentBridge ? 'online' : 'offline';
+    STAT_BRIDGE.style.color = recentBridge ? '#22d3ee' : '#ef4444';
+
+    // Partition agents into wings
+    const ariaAgents = [];
+    const ocAgents = [];
+    for (const a of (registry.agents||[])) {
+      if (a.type === 'external-executor' || a.id === 'opencode-coder' || a.id === 'claude-sdk-subagent') {
+        ocAgents.push(a);
+      } else {
+        ariaAgents.push(a);
+      }
+    }
+
+    // Synthetic bridge desk on OpenCode side
+    if (recentBridge) {
+      ocAgents.unshift({ id: recentBridge.agentId, type: 'external-executor' });
+      ROLE_MAP[recentBridge.agentId] = 'Bridge Host';
+    }
+
+    function render(host, list, isOpenCode) {
+      host.innerHTML = list.map(a => {
+        const evts = byAgent[a.id] || [];
+        return deskHTML(a, evts[0], evts.length, isOpenCode);
+      }).join('');
+    }
+    render(ARIA_HOST, ariaAgents, false);
+    render(OC_HOST, ocAgents, true);
+
+    STAT_DESKS.textContent = ariaAgents.length + ocAgents.length;
+    STAT_WORK.textContent  = document.querySelectorAll('.desk.working').length;
+    STAT_EVENTS.textContent = (events.events||[]).length;
+  }
+
+  refresh();
+  setInterval(refresh, 5000);
+})();
+</script>
