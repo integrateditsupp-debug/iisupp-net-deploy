@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-05-23",
+  "version": "1.1.0",
+  "updated": "2026-05-24",
   "topology": "mesh",
   "description": "ARIA agent mesh registry. Ruflo-inspired. Every agent registered here is callable via aria-mesh-router. Add new agents by appending to agents[] and pushing.",
   "agents": [
@@ -8,226 +8,500 @@
       "id": "aria-research",
       "type": "researcher",
       "status": "active",
-      "capabilities": ["vendor-lookup", "kb-write", "bit-format", "live-fetch"],
+      "capabilities": [
+        "vendor-lookup",
+        "kb-write",
+        "bit-format",
+        "live-fetch"
+      ],
       "endpoint": "/.netlify/functions/aria-research",
       "method": "POST",
       "confidence_threshold": 0.7,
-      "weight": 1.0,
+      "weight": 1,
       "tier": "L1",
-      "input_schema": { "query": "string", "state": "string?", "context": "object?" },
-      "output_schema": { "answer": "string", "confidence": "number", "sources": "array", "kbWritten": "boolean?" },
+      "input_schema": {
+        "query": "string",
+        "state": "string?",
+        "context": "object?"
+      },
+      "output_schema": {
+        "answer": "string",
+        "confidence": "number",
+        "sources": "array",
+        "kbWritten": "boolean?"
+      },
       "description": "Live vendor fetch + bit-format KB writer. Curated library v1.",
-      "tags": ["research", "kb"]
+      "tags": [
+        "research",
+        "kb"
+      ]
     },
     {
       "id": "aria-escalation",
       "type": "escalator",
       "status": "active",
-      "capabilities": ["3-agent-research-pool", "human-handoff", "ticket-create"],
+      "capabilities": [
+        "3-agent-research-pool",
+        "human-handoff",
+        "ticket-create"
+      ],
       "endpoint": "/.netlify/functions/aria-escalation",
       "method": "POST",
       "confidence_threshold": 0.5,
       "weight": 0.8,
       "tier": "L2",
-      "input_schema": { "query": "string", "history": "array?", "reason": "string?" },
-      "output_schema": { "answer": "string", "escalated": "boolean", "ticketId": "string?" },
+      "input_schema": {
+        "query": "string",
+        "history": "array?",
+        "reason": "string?"
+      },
+      "output_schema": {
+        "answer": "string",
+        "escalated": "boolean",
+        "ticketId": "string?"
+      },
       "description": "Action-dispatched escalation with live 3-agent research pool.",
-      "tags": ["escalation", "human"]
+      "tags": [
+        "escalation",
+        "human"
+      ]
     },
     {
       "id": "aria-first-principles",
       "type": "reasoner",
       "status": "active",
-      "capabilities": ["8-step-recipe", "5w-clarify", "primitives-blueprint"],
+      "capabilities": [
+        "8-step-recipe",
+        "5w-clarify",
+        "primitives-blueprint"
+      ],
       "endpoint": "/.netlify/functions/aria-first-principles",
       "method": "POST",
       "confidence_threshold": 0.55,
       "weight": 0.9,
       "tier": "L1",
-      "input_schema": { "query": "string", "context": "object?" },
-      "output_schema": { "recipe": "array", "clarifyingQuestion": "string?", "confidence": "number" },
+      "input_schema": {
+        "query": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "recipe": "array",
+        "clarifyingQuestion": "string?",
+        "confidence": "number"
+      },
       "description": "KB-miss safety net. Returns 8-step recipe + 5W clarifier instead of dead-end no-match.",
-      "tags": ["reasoning", "fallback"]
+      "tags": [
+        "reasoning",
+        "fallback"
+      ]
     },
     {
       "id": "aria-diagnostic",
       "type": "analyst",
       "status": "active",
-      "capabilities": ["5w-h-clarify", "osi-mapping", "rca-5whys", "framework-routing"],
+      "capabilities": [
+        "5w-h-clarify",
+        "osi-mapping",
+        "rca-5whys",
+        "framework-routing"
+      ],
       "endpoint": "/.netlify/functions/aria-diagnostic",
       "method": "POST",
       "confidence_threshold": 0.6,
       "weight": 0.85,
       "tier": "L1",
-      "input_schema": { "query": "string", "persona": "string?" },
-      "output_schema": { "clarifyingQuestion": "string", "framework": "string", "nextAgent": "string?" },
+      "input_schema": {
+        "query": "string",
+        "persona": "string?"
+      },
+      "output_schema": {
+        "clarifyingQuestion": "string",
+        "framework": "string",
+        "nextAgent": "string?"
+      },
       "description": "Asks 5W clarifying Q on vague queries BEFORE answering. 8 frameworks hard-coded.",
-      "tags": ["diagnostic", "frontline"]
+      "tags": [
+        "diagnostic",
+        "frontline"
+      ]
     },
     {
       "id": "aria-persona",
       "type": "wrapper",
       "status": "active",
-      "capabilities": ["typo-normalize", "tone-detect", "verbose-bypass"],
+      "capabilities": [
+        "typo-normalize",
+        "tone-detect",
+        "verbose-bypass"
+      ],
       "endpoint": "/.netlify/functions/aria-persona",
       "method": "POST",
       "confidence_threshold": 0.5,
       "weight": 0.7,
       "tier": "L0",
-      "input_schema": { "query": "string", "history": "array?" },
-      "output_schema": { "persona": "string", "normalizedQuery": "string", "tonedAnswer": "string?" },
+      "input_schema": {
+        "query": "string",
+        "history": "array?"
+      },
+      "output_schema": {
+        "persona": "string",
+        "normalizedQuery": "string",
+        "tonedAnswer": "string?"
+      },
       "description": "Detect TECH/ELDER/VERBOSE/DEFAULT. Wrap answers in persona tone.",
-      "tags": ["persona", "preproc"]
+      "tags": [
+        "persona",
+        "preproc"
+      ]
     },
     {
       "id": "council-architect",
       "type": "council",
       "status": "active",
-      "capabilities": ["system-design", "adr", "topology-choice"],
+      "capabilities": [
+        "system-design",
+        "adr",
+        "topology-choice"
+      ],
       "endpoint": "/.netlify/functions/council-architect",
       "method": "POST",
       "confidence_threshold": 0.65,
       "weight": 0.8,
       "tier": "L2",
-      "input_schema": { "task": "string", "constraints": "object?" },
-      "output_schema": { "design": "string", "tradeoffs": "array" },
+      "input_schema": {
+        "task": "string",
+        "constraints": "object?"
+      },
+      "output_schema": {
+        "design": "string",
+        "tradeoffs": "array"
+      },
       "description": "Council v0.5 â architect persona.",
-      "tags": ["council", "design"]
+      "tags": [
+        "council",
+        "design"
+      ]
     },
     {
       "id": "council-coder",
       "type": "council",
       "status": "active",
-      "capabilities": ["code-gen", "refactor", "debug"],
+      "capabilities": [
+        "code-gen",
+        "refactor",
+        "debug"
+      ],
       "endpoint": "/.netlify/functions/council-coder",
       "method": "POST",
       "confidence_threshold": 0.65,
       "weight": 0.85,
       "tier": "L2",
-      "input_schema": { "task": "string", "files": "array?" },
-      "output_schema": { "diff": "string", "explanation": "string" },
+      "input_schema": {
+        "task": "string",
+        "files": "array?"
+      },
+      "output_schema": {
+        "diff": "string",
+        "explanation": "string"
+      },
       "description": "Council v0.5 â coder persona. Will delegate to OpenCode in Phase 2.",
-      "tags": ["council", "code"]
+      "tags": [
+        "council",
+        "code"
+      ]
     },
     {
       "id": "council-reviewer",
       "type": "council",
       "status": "active",
-      "capabilities": ["code-review", "security-audit", "perf-check"],
+      "capabilities": [
+        "code-review",
+        "security-audit",
+        "perf-check"
+      ],
       "endpoint": "/.netlify/functions/council-reviewer",
       "method": "POST",
       "confidence_threshold": 0.65,
       "weight": 0.75,
       "tier": "L2",
-      "input_schema": { "diff": "string", "context": "string?" },
-      "output_schema": { "issues": "array", "approved": "boolean" },
+      "input_schema": {
+        "diff": "string",
+        "context": "string?"
+      },
+      "output_schema": {
+        "issues": "array",
+        "approved": "boolean"
+      },
       "description": "Council v0.5 â reviewer persona.",
-      "tags": ["council", "review"]
+      "tags": [
+        "council",
+        "review"
+      ]
     },
     {
       "id": "council-tester",
       "type": "council",
       "status": "active",
-      "capabilities": ["test-plan", "scenario-gen", "regress-check"],
+      "capabilities": [
+        "test-plan",
+        "scenario-gen",
+        "regress-check"
+      ],
       "endpoint": "/.netlify/functions/council-tester",
       "method": "POST",
       "confidence_threshold": 0.65,
       "weight": 0.75,
       "tier": "L2",
-      "input_schema": { "feature": "string", "code": "string?" },
-      "output_schema": { "tests": "array", "coverage": "number" },
+      "input_schema": {
+        "feature": "string",
+        "code": "string?"
+      },
+      "output_schema": {
+        "tests": "array",
+        "coverage": "number"
+      },
       "description": "Council v0.5 â tester persona.",
-      "tags": ["council", "test"]
+      "tags": [
+        "council",
+        "test"
+      ]
     },
     {
       "id": "council-security",
       "type": "council",
       "status": "active",
-      "capabilities": ["threat-model", "secret-scan", "compliance"],
+      "capabilities": [
+        "threat-model",
+        "secret-scan",
+        "compliance"
+      ],
       "endpoint": "/.netlify/functions/council-security",
       "method": "POST",
       "confidence_threshold": 0.7,
       "weight": 0.9,
       "tier": "L2",
-      "input_schema": { "context": "string", "scope": "string?" },
-      "output_schema": { "risks": "array", "blockers": "array" },
+      "input_schema": {
+        "context": "string",
+        "scope": "string?"
+      },
+      "output_schema": {
+        "risks": "array",
+        "blockers": "array"
+      },
       "description": "Council v0.5 â security architect.",
-      "tags": ["council", "security"]
+      "tags": [
+        "council",
+        "security"
+      ]
     },
     {
       "id": "audit-agent",
       "type": "gatekeeper",
       "status": "active",
-      "capabilities": ["hmac-sign", "command-gate", "approval-log"],
+      "capabilities": [
+        "hmac-sign",
+        "command-gate",
+        "approval-log"
+      ],
       "endpoint": "/.netlify/functions/audit-agent",
       "method": "POST",
       "confidence_threshold": 0.95,
-      "weight": 1.0,
+      "weight": 1,
       "tier": "L2",
-      "input_schema": { "command": "string", "agentId": "string", "rationale": "string" },
-      "output_schema": { "approved": "boolean", "signature": "string", "auditId": "string" },
+      "input_schema": {
+        "command": "string",
+        "agentId": "string",
+        "rationale": "string"
+      },
+      "output_schema": {
+        "approved": "boolean",
+        "signature": "string",
+        "auditId": "string"
+      },
       "description": "Audit-agent. Gates every Phase A remote-control command. HMAC-signed.",
-      "tags": ["security", "audit"]
+      "tags": [
+        "security",
+        "audit"
+      ]
     },
     {
       "id": "aperture-monitor",
       "type": "observer",
       "status": "active",
-      "capabilities": ["event-collect", "metrics-render", "report-email"],
+      "capabilities": [
+        "event-collect",
+        "metrics-render",
+        "report-email"
+      ],
       "endpoint": "/.netlify/functions/aperture-monitor",
       "method": "POST",
       "confidence_threshold": 0.5,
       "weight": 0.5,
       "tier": "L0",
-      "input_schema": { "scope": "string?", "window": "string?" },
-      "output_schema": { "events": "array", "metrics": "object" },
+      "input_schema": {
+        "scope": "string?",
+        "window": "string?"
+      },
+      "output_schema": {
+        "events": "array",
+        "metrics": "object"
+      },
       "description": "Aperture observability agent. Reads mesh-events + ARIA sessions.",
-      "tags": ["observability"]
+      "tags": [
+        "observability"
+      ]
     },
     {
       "id": "self-learning-loop",
       "type": "background",
       "status": "active",
-      "capabilities": ["agent-conversation", "kb-promote", "bit-write"],
+      "capabilities": [
+        "agent-conversation",
+        "kb-promote",
+        "bit-write"
+      ],
       "endpoint": "/.netlify/functions/aria-self-learning",
       "method": "POST",
       "confidence_threshold": 0.5,
       "weight": 0.4,
       "tier": "L0",
-      "input_schema": { "topics": "array?", "trigger": "string?" },
-      "output_schema": { "newKBs": "number", "promoted": "number" },
+      "input_schema": {
+        "topics": "array?",
+        "trigger": "string?"
+      },
+      "output_schema": {
+        "newKBs": "number",
+        "promoted": "number"
+      },
       "description": "20-agent bit-format loop. Cron every 6h. ARIA self-grows. $0.",
-      "tags": ["learning", "background"]
+      "tags": [
+        "learning",
+        "background"
+      ]
     },
     {
       "id": "opencode-coder",
       "type": "external-executor",
       "status": "planned",
-      "capabilities": ["code-write", "test-run", "git-commit", "75-llm-providers"],
+      "capabilities": [
+        "code-write",
+        "test-run",
+        "git-commit",
+        "75-llm-providers"
+      ],
       "endpoint": "local://opencode",
       "method": "CLI",
       "confidence_threshold": 0.75,
       "weight": 0.95,
       "tier": "L3",
-      "input_schema": { "task": "string", "repo": "string", "branch": "string?" },
-      "output_schema": { "diff": "string", "commit": "string?", "tests_pass": "boolean" },
+      "input_schema": {
+        "task": "string",
+        "repo": "string",
+        "branch": "string?"
+      },
+      "output_schema": {
+        "diff": "string",
+        "commit": "string?",
+        "tests_pass": "boolean"
+      },
       "description": "OpenCode (SST). Terminal Go agent. 75+ LLM providers. Runs locally on Ahmad's machine. Phase 2 wiring.",
-      "tags": ["external", "code", "autonomous"]
+      "tags": [
+        "external",
+        "code",
+        "autonomous"
+      ]
     },
     {
       "id": "claude-sdk-subagent",
       "type": "external-executor",
       "status": "planned",
-      "capabilities": ["plan-mode", "explore", "code-write", "deep-research"],
+      "capabilities": [
+        "plan-mode",
+        "explore",
+        "code-write",
+        "deep-research"
+      ],
       "endpoint": "local://claude-task",
       "method": "SDK",
       "confidence_threshold": 0.8,
-      "weight": 1.0,
+      "weight": 1,
       "tier": "L3",
-      "input_schema": { "subagent_type": "string", "prompt": "string" },
-      "output_schema": { "result": "string", "files_changed": "array" },
+      "input_schema": {
+        "subagent_type": "string",
+        "prompt": "string"
+      },
+      "output_schema": {
+        "result": "string",
+        "files_changed": "array"
+      },
       "description": "Claude Agent SDK Task tool. Spawn specialized subagents on demand for L3 problems. Phase 2 wiring.",
-      "tags": ["external", "claude", "deep"]
+      "tags": [
+        "external",
+        "claude",
+        "deep"
+      ]
+    },
+    {
+      "id": "openclaw-assistant",
+      "type": "external-executor",
+      "status": "active",
+      "capabilities": [
+        "send-email",
+        "manage-calendar",
+        "check-flights",
+        "monitor-websites",
+        "telegram-bridge",
+        "persistent-memory",
+        "overnight-tasks"
+      ],
+      "endpoint": "https://openclaw.iisupp.net/api/v1/task",
+      "method": "POST",
+      "confidence_threshold": 0.7,
+      "weight": 0.9,
+      "tier": "L3",
+      "input_schema": {
+        "task": "string",
+        "channel": "string?"
+      },
+      "output_schema": {
+        "ok": "boolean",
+        "messageId": "string?",
+        "summary": "string"
+      },
+      "description": "OpenClaw personal assistant (steipete). Live on droplet, port 18789, proxied via openclaw.iisupp.net. Telegram @IISUPP_bot.",
+      "tags": [
+        "personal-assistant",
+        "openclaw",
+        "telegram"
+      ]
+    },
+    {
+      "id": "openclaw-cron",
+      "type": "background",
+      "status": "active",
+      "capabilities": [
+        "overnight-task",
+        "recurring-check",
+        "monitor-trigger"
+      ],
+      "endpoint": "https://openclaw.iisupp.net/api/v1/cron",
+      "method": "POST",
+      "confidence_threshold": 0.6,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "schedule": "string",
+        "task": "string"
+      },
+      "output_schema": {
+        "scheduled": "boolean",
+        "nextRun": "string"
+      },
+      "description": "Schedules recurring or overnight tasks inside OpenClaw.",
+      "tags": [
+        "scheduler",
+        "openclaw"
+      ]
     }
   ],
   "router_policy": {
@@ -239,12 +513,34 @@
     "always_log_to": "mesh-events"
   },
   "phases": {
-    "diagnose": ["aria-persona", "aria-diagnostic"],
-    "research": ["aria-research", "council-architect"],
-    "reason": ["aria-first-principles", "council-architect"],
-    "reason": ["aria-first-principles", "council-architect"],
-    "execute": ["audit-agent", "council-coder", "opencode-coder", "claude-sdk-subagent"],
-    "verify": ["council-reviewer", "council-tester", "council-security"],
-    "observe": ["aperture-monitor", "self-learning-loop"]
+    "diagnose": [
+      "aria-persona",
+      "aria-diagnostic"
+    ],
+    "research": [
+      "aria-research",
+      "council-architect"
+    ],
+    "reason": [
+      "aria-first-principles",
+      "council-architect"
+    ],
+    "execute": [
+      "audit-agent",
+      "council-coder",
+      "opencode-coder",
+      "claude-sdk-subagent",
+      "openclaw-assistant"
+    ],
+    "verify": [
+      "council-reviewer",
+      "council-tester",
+      "council-security"
+    ],
+    "observe": [
+      "aperture-monitor",
+      "self-learning-loop",
+      "openclaw-cron"
+    ]
   }
 }
