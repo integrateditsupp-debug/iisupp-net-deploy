@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
-  "updated": "2026-05-24",
+  "version": "1.2.0",
+  "updated": "2026-05-25",
   "topology": "mesh",
   "description": "ARIA agent mesh registry. Ruflo-inspired. Every agent registered here is callable via aria-mesh-router. Add new agents by appending to agents[] and pushing.",
   "agents": [
@@ -502,6 +502,215 @@
         "scheduler",
         "openclaw"
       ]
+    },
+    {
+      "id": "aria-verifier",
+      "type": "verifier",
+      "status": "active",
+      "capabilities": [
+        "evidence-check",
+        "contradiction-check",
+        "safety-gate",
+        "confidence-calibration",
+        "fabrication-guard"
+      ],
+      "endpoint": "/.netlify/functions/aria-verifier",
+      "method": "POST",
+      "confidence_threshold": 0.7,
+      "weight": 0.95,
+      "tier": "L1",
+      "input_schema": {
+        "query": "string",
+        "answer": "string?",
+        "context": "object?"
+      },
+      "output_schema": {
+        "verified": "boolean",
+        "confidence": "number",
+        "checks": "object",
+        "issues": "array",
+        "recommendation": "string"
+      },
+      "description": "AROC 6 reconstruction-verification gate. Deterministic, $0, no external calls. Scores every candidate answer on evidence, contradiction, safety, scope, fabrication and calibration before delivery; weak or unsafe answers fall through to escalation. Flip status to active to enable live verify-phase routing.",
+      "tags": [
+        "verify",
+        "safety",
+        "aroc"
+      ]
+    },
+    {
+      "id": "aria-intake",
+      "type": "triage",
+      "status": "active",
+      "capabilities": [
+        "intent-detect",
+        "tier-classify",
+        "urgency-detect",
+        "signal-extract",
+        "clarify-question"
+      ],
+      "endpoint": "/.netlify/functions/aria-intake",
+      "method": "POST",
+      "confidence_threshold": 0.6,
+      "weight": 0.9,
+      "tier": "L0",
+      "input_schema": {
+        "query": "string",
+        "history": "array?",
+        "context": "object?"
+      },
+      "output_schema": {
+        "intent": "string",
+        "tier": "string",
+        "difficulty": "string",
+        "urgency": "string",
+        "signals": "object",
+        "nextAgent": "string",
+        "confidence": "number"
+      },
+      "description": "Understand-first triage gate. Deterministic, $0, zero-LLM. Classifies intent, tier, difficulty, urgency and extracts signals (systems, error codes) before any expensive agent fires; asks one clarifying question on vague input. Flip status to active to enable live diagnose-phase routing.",
+      "tags": [
+        "triage",
+        "intake",
+        "frontline"
+      ]
+    },
+    {
+      "id": "aria-pattern-router",
+      "type": "router",
+      "status": "active",
+      "capabilities": [
+        "signal-extract",
+        "symbolic-state",
+        "pattern-match",
+        "recipe-recall",
+        "fallthrough-signal"
+      ],
+      "endpoint": "/.netlify/functions/aria-pattern-router",
+      "method": "POST",
+      "confidence_threshold": 0.7,
+      "weight": 0.9,
+      "tier": "L0",
+      "input_schema": {
+        "query": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "state": "string",
+        "shortCode": "string?",
+        "recipe": "array?",
+        "confidence": "number",
+        "fallthrough": "boolean"
+      },
+      "description": "AROC 4/5 pattern-first router. Deterministic, $0, zero-LLM. Hashes the query to a compressed symbolic operational state, matches a seeded hot-pattern dictionary, and returns an O(1) curated recipe when confident; below threshold sets fallthrough so the mesh cascades to research/RAG/LLM. The wedge that cuts latency, cost and hallucination. Flip status to active to enable live routing.",
+      "tags": [
+        "router",
+        "pattern-first",
+        "aroc"
+      ]
+    },
+    {
+      "id": "aria-evolution-report",
+      "type": "reporter",
+      "status": "active",
+      "capabilities": [
+        "evolution-digest",
+        "audit-rollup",
+        "concern-flag",
+        "email-report"
+      ],
+      "endpoint": "/.netlify/functions/aria-evolution-report",
+      "method": "POST",
+      "confidence_threshold": 0.5,
+      "weight": 0.6,
+      "tier": "L0",
+      "input_schema": {
+        "trigger": "string?"
+      },
+      "output_schema": {
+        "subject": "string",
+        "evolved": "boolean",
+        "summary": "object",
+        "sent": "boolean"
+      },
+      "description": "Monitoring/reporting agent. Reads the self-learning state + live KBs + mesh-events, computes what ARIA evolved (new bits, KBs, agents, patterns) and any auditor/verifier concerns, and emails Ahmad an 'ARIA evolved' digest. Deterministic, no LLM. Dormant unless RESEND_API_KEY set; GET is JWT-gated dry-run, POST with x-aria-evolve-secret sends. Cron it (e.g. daily) to keep a human in the loop on the road to full autonomy.",
+      "tags": [
+        "observability",
+        "reporting",
+        "evolution"
+      ]
+    },
+    {
+      "id": "aria-llm-governor",
+      "type": "gate",
+      "status": "active",
+      "capabilities": [
+        "spend-cap",
+        "sla-gate",
+        "one-shot-llm",
+        "cost-ledger",
+        "cap-breach-alert",
+        "kill-switch"
+      ],
+      "endpoint": "/.netlify/functions/aria-llm-governor",
+      "method": "POST",
+      "confidence_threshold": 0.99,
+      "weight": 1,
+      "tier": "L0",
+      "input_schema": {
+        "query": "string",
+        "issueKey": "string",
+        "tier": "string",
+        "elapsedMs": "number",
+        "patternFallthrough": "boolean",
+        "researchEmpty": "boolean",
+        "estCostUsd": "number?",
+        "repeatedBreach": "boolean?"
+      },
+      "output_schema": {
+        "permit": "boolean",
+        "code": "string",
+        "reason": "string",
+        "ledger": "object?"
+      },
+      "description": "Cost/SLA gate encoding Ahmad's hard rules 2-4 (2026-05-25). EVERY potential LLM call must route through here. Permits a call ONLY if pattern+KB+research are exhausted AND the request is breaching SLA (L1 60s/L2 90s/L3 180s, 0.8x factor) AND month-to-date spend is under ARIA_LLM_MONTHLY_CAP_USD ($10) AND this issue has never used an LLM (one-shot). On permit: locks the issue, charges the ledger, emails Ahmad why. At cap: hard refuse + back-to-back 3-min alerts (aria-governor-alert-cron) until acknowledged/raised. GET (JWT) exposes ledger+SLA+kill-switch to Aperture. Deterministic, never calls an LLM itself, $0.",
+      "tags": [
+        "governor",
+        "cost",
+        "safety",
+        "gate"
+      ]
+    },
+    {
+      "id": "aria-reverify",
+      "type": "verifier",
+      "status": "active",
+      "capabilities": [
+        "freshness-check",
+        "industry-standard-recheck",
+        "stale-requeue",
+        "kb-audit"
+      ],
+      "endpoint": "/.netlify/functions/aria-reverify",
+      "method": "POST",
+      "confidence_threshold": 0.6,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "trigger": "string?"
+      },
+      "output_schema": {
+        "scanned": "number",
+        "stale": "number",
+        "requeued": "number",
+        "requeueTopics": "array"
+      },
+      "description": "Every-2-weeks KB freshness cross-check (Ahmad 2026-05-25). Walks the live bit-KB, scores each bit against the review horizon (ARIA_KB_FRESH_DAYS, default 90), and re-queues stale topics into the learning loop so agents research them again from current free sources. Fires on the 1st & 15th via aria-reverify-cron. Deterministic, no LLM, $0. GET is a JWT dry-run.",
+      "tags": [
+        "verify",
+        "freshness",
+        "audit"
+      ]
     }
   ],
   "router_policy": {
@@ -513,7 +722,12 @@
     "always_log_to": "mesh-events"
   },
   "phases": {
+    "gate": [
+      "aria-llm-governor"
+    ],
     "diagnose": [
+      "aria-intake",
+      "aria-pattern-router",
       "aria-persona",
       "aria-diagnostic"
     ],
@@ -533,6 +747,8 @@
       "openclaw-assistant"
     ],
     "verify": [
+      "aria-verifier",
+      "aria-reverify",
       "council-reviewer",
       "council-tester",
       "council-security"
@@ -540,6 +756,8 @@
     "observe": [
       "aperture-monitor",
       "self-learning-loop",
+      "aria-evolution-report",
+      "aria-reverify",
       "openclaw-cron"
     ]
   }

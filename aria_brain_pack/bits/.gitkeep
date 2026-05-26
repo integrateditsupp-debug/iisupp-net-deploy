@@ -1,0 +1,2 @@
+# Live learned bits land here when you run: node scripts/kb-pull.mjs
+# Tracked so the path exists on every clone. Pulled bit files are .json.

@@ -15,3 +15,21 @@ This pack does not copy vendor KB articles. It converts trusted IT support conce
 
 ## Recommended Next Step
 Paste `/prompts/CLAUDE_CODE_MASTER_PROMPT.md` into Claude Code and attach this folder. Ask Claude Code to implement the KB loader, validation, retrieval, and ARIA response logic without changing your existing UI unless necessary.
+
+---
+
+## `/bits/` — live learned KB mirror (added 2026-05-25, rule 7)
+
+This pack is now also **ARIA's local owned brain** for the continuous learning loop.
+The agents learn every 15 minutes into a cloud blob store (`aria-kb-live`); since
+serverless can't write to your PC, you pull that down here:
+
+```powershell
+$env:ARIA_AUDIT_SECRET = "<value from Netlify env>"
+node scripts/kb-pull.mjs        # writes aria_brain_pack/bits/*.json + manifest.json
+```
+
+Automate with a daily Windows Task Scheduler job to keep it fresh. The canonical local
+path is recorded in `aria-architecture/local-kb-location.json`. The reverify agent
+(1st & 15th of each month) re-checks bit freshness vs. industry standard and re-queues
+stale topics for the agents to research again.

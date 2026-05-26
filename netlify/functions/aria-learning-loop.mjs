@@ -136,8 +136,12 @@ export default async (request) => {
     };
     log.push(bit);
 
-    // Feed back into KB-LIVE so future user queries can reach this bit
-    const slug = `learn-${agent.name}-${slugify(topic)}`.slice(0, 60);
+    // Feed back into KB-LIVE so future user queries can reach this bit.
+    // NOTE (2026-05-25): slug now includes a short content hash of the response so
+    // genuinely-new insights ACCUMULATE instead of overwriting the same agent+topic
+    // file (the old `learn-<agent>-<topic>` key capped distinct KBs at a few hundred).
+    // Identical answers still collapse to one file (idempotent dedup).
+    const slug = `learn-${agent.name}-${slugify(topic)}-${hash6(bit.r)}`.slice(0, 72);
     try {
       await kbLive.set(`${slug}.json`, JSON.stringify({
         heading: `${agent.name}: ${topic}`,
@@ -311,6 +315,15 @@ function spawnAgent(topic) {
 
 function slugify(s) {
   return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+}
+
+// Tiny stable hash (djb2 -> base36, 6 chars) so distinct answers earn distinct KB keys
+// while identical answers dedupe. No deps, deterministic, $0.
+function hash6(s) {
+  let h = 5381;
+  const str = String(s || '');
+  for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+  return h.toString(36).slice(0, 6);
 }
 
 function trim(s, n) {

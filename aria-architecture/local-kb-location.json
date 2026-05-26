@@ -1,0 +1,14 @@
+{
+  "schema": "aria.local-kb-location/v1",
+  "recorded": "2026-05-25",
+  "rule": "Hard rule 7 (Ahmad): the bit-KB must live on Ahmad's machine at a known location.",
+  "canonical_local_path": "aria_brain_pack/",
+  "live_bits_path": "aria_brain_pack/bits/",
+  "curated_base_file": "assets/aria-kb-local-bundle-v2.json",
+  "cloud_source_store": "aria-kb-live",
+  "export_endpoint": "/.netlify/functions/aria-kb-export",
+  "puller": "scripts/kb-pull.mjs",
+  "refresh": "Run scripts/kb-pull.mjs (daily Task Scheduler job recommended).",
+  "reverify": "aria-reverify re-checks freshness on the 1st & 15th and re-queues stale topics.",
+  "note": "Serverless functions cannot write to the local disk; the loop writes to the aria-kb-live blob store and the puller mirrors it here so Ahmad owns a versioned local copy."
+}
