@@ -3651,10 +3651,23 @@ function handleUserInput(text){
       setTimeout(() => renderGuided(state.lastIntent), 200);
       return;
     }
-    if (/(thank|thanks|cheers)/.test(q)){
-      renderConversational("You're welcome.", text); return;
+    if (/(thank|thanks|thanx|thx|\bty\b|cheers|appreciate)/.test(q)){
+      renderConversational("You're welcome — anything else I can help with?", text); return;
     }
-    if (/^(hi|hello|hey)\b/.test(q)){
+    // capability — "what can you do?", "how can you help?" (checked before identity so "what are you capable of" lands here)
+    if (/(what (can|do) you do|what can you help|how (can|do) you help|what are you (capable|able)|what are your (capabilities|abilities|features))/.test(q)){
+      renderConversational("I handle IT support — Outlook & email, VPN, Wi-Fi, passwords & sign-in, printers, BitLocker, Teams, OneDrive and more, with answers pulled from the IIS knowledge base. Type /capabilities for the full list, or just tell me what's broken.", text); return;
+    }
+    // identity — "are you AI / a bot / human?", "who/what are you?"
+    if (/\b(are|r) (you|u) (a |an )?(ai|a\.?i\.?|bot|robot|human|real|a person|a machine|chat ?gpt|gpt|sentient|alive)\b/.test(q)
+        || /^(who|what)('?s| is| are| r)? ?(you|u|this|aria)\b/.test(q)){
+      renderConversational("I'm ARIA — IIS's AI support assistant. I'm an AI, not a human: I triage and resolve IT issues and surface answers from the IIS knowledge base. What can I help you with?", text); return;
+    }
+    // smalltalk
+    if (/(how are you|how'?s it going|how do you do|what'?s up|how are things)/.test(q)){
+      renderConversational("Running smoothly, thanks for asking. What can I help you with?", text); return;
+    }
+    if (/^(hi|hii+|hey+|hello+|heya|hiya|yo|howdy|sup|hi there|hey there|greetings|good (morning|afternoon|evening)|morning|afternoon|evening)\b/.test(q)){
       renderConversational("Hi — I'm ARIA. What can I help with?", text); return;
     }
     // === fuzzy fallback — guess intent from typo'd / accented words ===
