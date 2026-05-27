@@ -1,329 +1,982 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
-<meta name="theme-color" content="#050810">
-<meta name="description" content="Integrated IT Support Inc. — AI-powered IT support 24/7 for Canadian small business. Talk to ARIA. Get a tech in 60 seconds.">
-<meta property="og:title" content="Integrated IT Support — AI IT support 24/7">
-<meta property="og:description" content="Talk to ARIA, our AI IT assistant. Get a real technician in 60 seconds. Toronto-based, Canada-wide.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noarchive, nosnippet">
+<meta name="theme-color" content="#050505">
+<meta name="description" content="Integrated IT Support Inc. — distinguished, AI-powered IT support. Managed retainers, private engagement, and ARIA, our 24/7 AI senior technician. Whitby · Ontario · Global.">
+<meta property="og:title" content="Integrated IT Support | Distinguished Technical Services">
+<meta property="og:description" content="Managed IT, private engagement, and ARIA — your 24/7 AI senior technician. Whitby · Ontario · Global.">
 <meta property="og:image" content="https://iisupp.net/icons/icon-512.png">
-<title>Integrated IT Support · AI IT Help 24/7</title>
-<link rel="icon" href="/icons/favicon.ico">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>Integrated IT Support | Distinguished Technical Services</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/assets/aria-core.css">
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital@0;1&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
   :root {
-    --bg: #050810;
-    --bg-card: #0a1219;
-    --border: #1a2b35;
-    --text: #d8e0e6;
-    --muted: #6b7c87;
-    --accent: #2dd4bf;
-    --accent2: #38bdf8;
-    --warn: #f59e0b;
+    --gold: #c5a059;
+    --gold-light: #f1dca7;
+    --gold-dark: #b38728;
+    --gold-grad: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%);
+    --bg: #050505;
+    --bg2: #080808;
+    --line: rgba(197,160,89,0.20);
+    --line-soft: rgba(255,255,255,0.06);
+    --txt: #ffffff;
+    --txt-soft: rgba(243,236,217,0.78);
+    --txt-dim: rgba(255,255,255,0.40);
     --whatsapp: #25d366;
-    --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --serif: 'Cinzel', Georgia, serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
   }
+
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; padding: 0; max-width: 100vw; overflow-x: hidden; }
   body {
     background: var(--bg);
-    color: var(--text);
-    font: 16px/1.55 var(--font);
+    color: var(--txt);
+    font: 15px/1.6 var(--font);
     min-height: 100vh;
-    overflow-x: hidden;
     padding-bottom: env(safe-area-inset-bottom);
+    -webkit-font-smoothing: antialiased;
   }
-  a { color: var(--accent); text-decoration: none; }
-  a:active { opacity: .7; }
-  /* HEADER */
-  .header {
+  a { color: var(--gold); text-decoration: none; }
+  h1, h2, h3, h4, .serif { font-family: var(--serif); }
+  img, video, iframe { max-width: 100%; }
+  .gold { color: var(--gold); }
+  .eyebrow { display:block; color: var(--gold); font: 700 9px/1 var(--font); letter-spacing: 0.5em; text-transform: uppercase; margin-bottom: 12px; }
+  .gold-text { background: linear-gradient(to right, var(--gold), var(--gold-light)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* ===== HEADER / NAV ===== */
+  .hdr {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(5,8,16,.92);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(5,5,5,0.92);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line-soft);
+    padding-top: calc(10px + env(safe-area-inset-top));
   }
-  .brand {
-    display: flex; align-items: center; gap: 10px;
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .i-logo { position: relative; width: 34px; height: 34px; flex: none; display: grid; place-items: center; }
+  .i-logo .i-letter { font-family: var(--serif); font-weight: 700; font-size: 22px; color: var(--gold-light); line-height: 1; }
+  .i-logo .i-helpdesk { position: absolute; width: 17px; height: 17px; right: -5px; bottom: -2px; color: var(--gold); }
+  .brand-txt { display: flex; flex-direction: column; min-width: 0; }
+  .brand-txt .l1 { font: 700 10px/1.15 var(--serif); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+  .brand-txt .l2 { font: 700 6.5px/1 var(--font); letter-spacing: 0.26em; text-transform: uppercase; color: var(--gold); opacity: 0.8; margin-top: 3px; white-space: nowrap; }
+  .hdr-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+  .hdr-sc {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 7px 12px; color: var(--gold-light);
+    font: 700 9px/1 var(--font); letter-spacing: 0.18em; text-transform: uppercase;
+    background: rgba(197,160,89,0.05);
   }
-  .brand-mark {
-    width: 32px; height: 32px;
-    border-radius: 6px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: grid; place-items: center;
-    font: 800 14px var(--mono);
-    color: #001a16;
+  .hdr-sc svg { width: 13px; height: 13px; }
+  .menu-btn { display: grid; gap: 4px; background: none; border: 1px solid var(--line); border-radius: 8px; padding: 9px 8px; cursor: pointer; }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: var(--gold); }
+
+  /* ===== SLIDE MENU ===== */
+  .nav-overlay {
+    position: fixed; inset: 0; z-index: 60;
+    background: rgba(0,0,0,0.97);
+    backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
   }
-  .brand-name {
-    font: 700 13px var(--font);
-    letter-spacing: .3px;
-    line-height: 1.1;
-  }
-  .brand-name span { display: block; color: var(--muted); font-weight: 400; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
-  .header-call {
-    background: var(--accent);
-    color: #001a16;
-    font: 700 12px var(--mono);
-    padding: 8px 12px;
-    border-radius: 8px;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  /* HERO */
-  .hero {
-    padding: 28px 18px 24px;
-    text-align: center;
-  }
-  .hero-tag {
-    display: inline-block;
-    padding: 5px 11px;
-    background: rgba(45,212,191,.1);
-    border: 1px solid rgba(45,212,191,.3);
-    color: var(--accent);
-    font: 600 11px var(--mono);
-    letter-spacing: 2px;
-    border-radius: 999px;
-    margin-bottom: 14px;
-    text-transform: uppercase;
-  }
-  .hero h1 {
-    margin: 0 0 12px;
-    font: 800 30px/1.15 var(--font);
-    letter-spacing: -.5px;
-  }
-  .hero h1 b { color: var(--accent); font-weight: 800; }
-  .hero p {
-    margin: 0 auto 22px;
-    color: var(--muted);
-    font-size: 15px;
-    max-width: 380px;
-  }
-  .hero-ctas {
-    display: grid; gap: 10px;
-    max-width: 340px;
-    margin: 0 auto;
-  }
-  .btn {
-    display: block;
-    padding: 14px 16px;
-    border-radius: 10px;
-    font: 700 15px var(--font);
-    text-decoration: none;
-    text-align: center;
-    border: 0;
-    cursor: pointer;
-    width: 100%;
-  }
-  .btn-pri {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #001a16;
-  }
-  .btn-sec {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-  .btn-wa {
-    background: var(--whatsapp);
-    color: #fff;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .btn-wa svg { width: 20px; height: 20px; }
-  /* SECTION */
-  section { padding: 32px 18px; border-top: 1px solid var(--border); }
-  .sec-tag { font: 700 10px var(--mono); letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin: 0 0 8px; }
-  .sec-h2 { margin: 0 0 18px; font: 800 24px/1.2 var(--font); letter-spacing: -.3px; }
-  /* SERVICES */
-  .svc-grid { display: grid; gap: 12px; }
-  .svc {
-    padding: 18px 16px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-  }
-  .svc h3 {
-    margin: 0 0 6px;
-    font: 700 16px var(--font);
-    color: var(--accent);
-  }
-  .svc p { margin: 0; color: var(--muted); font-size: 14px; }
-  /* PRICING */
-  .price-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    padding: 14px 16px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 10px;
-  }
-  .price-row .name { font-weight: 700; }
-  .price-row .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .price-row .price { color: var(--accent); font: 700 15px var(--mono); white-space: nowrap; }
-  /* CONTACT */
-  .contact-card {
-    padding: 22px 18px;
-    background: linear-gradient(135deg, rgba(45,212,191,.08), rgba(56,189,248,.04));
-    border: 1px solid var(--accent);
-    border-radius: 14px;
-  }
-  .contact-row { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
-  .contact-row .icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(45,212,191,.15); display: grid; place-items: center; font-size: 18px; }
-  .contact-row a { color: var(--text); font: 600 15px var(--font); }
-  .contact-row .lab { font: 600 10px var(--mono); color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 2px; }
-  /* FOOTER */
-  footer {
-    padding: 28px 18px 60px;
-    border-top: 1px solid var(--border);
-    text-align: center;
-    color: var(--muted);
-    font-size: 12px;
-    background: #030610;
-  }
-  footer .brand-foot {
-    font: 700 13px var(--font);
-    color: var(--text);
-    margin-bottom: 8px;
-    letter-spacing: .3px;
-  }
-  footer .links {
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 18px;
-    margin: 14px 0;
-  }
-  footer .links a { color: var(--muted); font-size: 12px; }
-  footer .copy { margin-top: 14px; opacity: .8; }
-  /* DESKTOP-LINK FAB */
-  .desktop-link {
-    position: fixed; bottom: 14px; right: 14px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 8px 12px;
-    font: 600 11px var(--mono);
-    border-radius: 999px;
-    text-decoration: none;
-    z-index: 60;
-  }
-  /* HIDE FROM DESKTOP if mistakenly loaded — only show on mobile-width */
-  @media (min-width: 901px) {
-    body::before {
-      content: "View on mobile, or visit the desktop site →";
-      display: block; padding: 10px; background: var(--warn); color: #1a0e00; font-weight: 700; text-align: center;
-    }
+  .nav-overlay.active { opacity: 1; pointer-events: auto; }
+  .nav-overlay a { font: 700 13px/1 var(--serif); letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.62); padding: 11px 0; }
+  .nav-overlay a.acc { color: var(--gold); }
+  .nav-sep { width: 60px; height: 1px; background: var(--line); margin: 8px 0; }
+  .nav-close { position: absolute; top: calc(18px + env(safe-area-inset-top)); right: 20px; background: none; border: none; color: var(--gold); font-size: 30px; line-height: 1; cursor: pointer; }
+
+  /* ===== SECTION SHELL ===== */
+  section { padding: 52px 16px; border-top: 1px solid var(--line-soft); position: relative; }
+  .sec-head { text-align: center; margin-bottom: 30px; }
+  .sec-head h2 { margin: 0 0 10px; font: 700 26px/1.2 var(--serif); letter-spacing: 0.04em; text-transform: uppercase; }
+  .sec-head p { margin: 0 auto; max-width: 460px; color: var(--txt-dim); font-size: 11px; letter-spacing: 0.06em; line-height: 1.7; overflow-wrap: anywhere; }
+  .hero .lead, .hero .sub { overflow-wrap: anywhere; }
+  .sec-head p.tracking { text-transform: uppercase; letter-spacing: 0.18em; }
+
+  /* ===== HERO ===== */
+  .hero { text-align: center; padding: 56px 18px 50px; border-top: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(197,160,89,0.10) 0%, transparent 70%); }
+  .hero h1 { margin: 0 0 18px; font-family: var(--font); font-weight: 900; font-size: clamp(22px, 7.4vw, 34px); line-height: 1.06; letter-spacing: -0.02em; text-transform: uppercase; overflow-wrap: anywhere; word-break: break-word; }
+  .hero h1 .accent { display: block; font-style: italic; margin-top: 6px;
+    background: linear-gradient(to right, var(--gold), var(--gold-light)); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 18px rgba(197,160,89,0.25)); }
+  .hero .lead { max-width: 420px; margin: 0 auto 14px; color: var(--txt-dim); font-size: 11px; letter-spacing: 0.08em; line-height: 1.7; text-transform: uppercase; }
+  .hero .sub { max-width: 380px; margin: 0 auto 26px; color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 0.08em; line-height: 1.7; text-transform: uppercase; }
+  .hero-cta { display: inline-block; font: 700 9px/1 var(--font); letter-spacing: 0.4em; text-transform: uppercase; color: #fff; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+
+  /* ===== BUTTONS ===== */
+  .btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%;
+    padding: 15px 16px; border: 0; border-radius: 12px; cursor: pointer;
+    font: 700 11px/1 var(--font); letter-spacing: 0.18em; text-transform: uppercase; text-align: center; }
+  .btn-gold { background: var(--gold-grad); color: #050505; }
+  .btn-ghost { background: rgba(255,255,255,0.02); border: 1px solid var(--line); color: var(--gold-light); }
+  .btn-wa { background: var(--whatsapp); color: #fff; }
+  .btn-wa svg { width: 18px; height: 18px; }
+
+  /* ===== SERVICE CENTER ===== */
+  .sc-card { max-width: 480px; margin: 0 auto; background: linear-gradient(180deg, rgba(20,16,11,0.5), rgba(8,8,8,0.7));
+    border: 1px solid var(--line); border-radius: 20px; padding: 16px; }
+  .sc-hero-cta { display: flex; align-items: center; gap: 12px; width: 100%; padding: 18px 18px;
+    border: 0; border-radius: 14px; cursor: pointer; color: #050505; background: var(--gold-grad);
+    font-family: var(--font); margin-bottom: 16px; }
+  .sc-hero-cta .ico { font-size: 22px; }
+  .sc-hero-cta .txt { flex: 1; text-align: left; font: 700 15px/1 var(--font); letter-spacing: 0.02em; }
+  .sc-hero-cta .arr { font-size: 18px; font-weight: 700; }
+  .sc-label { display: flex; align-items: center; gap: 10px; margin: 18px 4px 12px; }
+  .sc-label span { font: 700 9px/1 var(--mono); letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
+  .sc-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .sc-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .sc-tile { background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 12px; text-align: center; cursor: pointer; color: #fff; font-family: var(--font); }
+  .sc-tile-ico { font-size: 24px; }
+  .sc-tile-title { font: 600 13px/1.2 var(--font); margin-top: 8px; }
+  .sc-tile-sub { font-size: 10px; color: var(--txt-dim); margin-top: 3px; }
+  .sc-emergency { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 14px 16px;
+    border: 1px solid rgba(239,68,68,0.4); border-radius: 14px; background: rgba(239,68,68,0.06); position: relative; overflow: hidden; }
+  .sc-emergency .ico { font-size: 20px; }
+  .sc-emergency .txt { flex: 1; }
+  .sc-emergency .txt strong { display: block; font: 700 13px/1.2 var(--font); color: #fff; }
+  .sc-emergency .txt span { font-size: 11px; color: var(--txt-dim); }
+  .sc-emergency .arr { color: #ef4444; font-weight: 700; }
+  .sc-pair { display: grid; gap: 10px; }
+  .sc-action { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px;
+    background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 14px; cursor: pointer; color: #fff; font-family: var(--font); text-align: left; }
+  .sc-action .ico { font-size: 24px; flex: none; }
+  .sc-action .title { font: 600 14px/1.2 var(--font); }
+  .sc-action .sub { font-size: 11px; color: var(--txt-dim); margin-top: 3px; }
+  .sc-perks { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .sc-perk { background: rgba(255,255,255,0.015); border: 1px solid var(--line-soft); border-radius: 12px;
+    padding: 13px 8px; text-align: center; color: #fff; }
+  .sc-perk .ico { font-size: 18px; }
+  .sc-perk .title { font: 600 11px/1.2 var(--font); margin-top: 6px; }
+  .sc-perk .sub { font-size: 9px; color: var(--txt-dim); margin-top: 2px; }
+
+  /* ===== PRICING ===== */
+  .track { max-width: 480px; margin: 0 auto 40px; }
+  .track-head { text-align: center; margin-bottom: 22px; }
+  .track-eyebrow { display: block; color: var(--gold); font: 700 9px/1 var(--mono); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 8px; }
+  .track-title { margin: 0 0 8px; font: 700 22px/1.2 var(--serif); text-transform: uppercase; letter-spacing: 0.03em; }
+  .track-title .accent { color: var(--gold); }
+  .track-sub { margin: 0 auto; max-width: 340px; color: var(--txt-dim); font-size: 12px; line-height: 1.6; }
+  .pcard { border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-bottom: 14px;
+    background: linear-gradient(180deg, rgba(20,16,11,0.55), rgba(11,9,7,0.85)); }
+  .pcard.featured { border-color: rgba(197,160,89,0.55); box-shadow: 0 0 40px rgba(197,160,89,0.08); }
+  .pcard-badge { display: inline-flex; align-items: center; gap: 7px; font: 700 9px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 12px; }
+  .pcard-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+  .pcard-name { margin: 0 0 4px; font: 700 19px/1.2 var(--serif); }
+  .pcard-scale { font-size: 11px; color: var(--txt-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+  .pcard-price { margin: 10px 0 12px; font: 700 17px/1.2 var(--mono); color: var(--gold-light); }
+  .pcard-tag { font-size: 13px; color: var(--txt-soft); line-height: 1.6; }
+  .pcard ul { list-style: none; margin: 14px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line-soft); display: flex; flex-direction: column; gap: 8px; }
+  .pcard ul li { position: relative; padding-left: 16px; font-size: 12.5px; color: var(--txt-soft); line-height: 1.5; }
+  .pcard ul li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 6px rgba(197,160,89,0.55); }
+  .pcard-positioning { margin-top: 14px; padding: 12px 14px; border-left: 2px solid var(--gold); background: rgba(197,160,89,0.05); border-radius: 0 8px 8px 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; line-height: 1.55; color: rgba(243,236,217,0.7); }
+  .pcard-cta { display: block; width: 100%; margin-top: 14px; padding: 13px; text-align: center; border: 1px solid var(--line); border-radius: 10px; color: var(--gold-light); font: 700 10px/1 var(--font); letter-spacing: 0.18em; text-transform: uppercase; background: rgba(197,160,89,0.04); }
+  .pcard-buy { display: block; width: 100%; margin-top: 10px; padding: 13px; text-align: center; border: 0; border-radius: 10px; color: #050505; font: 700 10px/1 var(--font); letter-spacing: 0.16em; text-transform: uppercase; background: var(--gold-grad); cursor: pointer; font-family: var(--font); }
+  .pcard-note { margin-top: 9px; font-size: 9.5px; color: var(--txt-dim); line-height: 1.5; text-align: center; }
+  .project-card { max-width: 480px; margin: 6px auto 0; border: 1px solid var(--line); border-radius: 16px; padding: 18px; background: rgba(8,8,8,0.7); }
+  .project-card h4 { margin: 0; font: 700 15px/1.2 var(--serif); }
+  .project-card .head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+  .project-card .head span { font: 700 8px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--line); border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
+  .project-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line-soft); font-size: 12.5px; }
+  .project-row span:first-child { color: var(--txt-soft); }
+  .project-row span:last-child { color: var(--gold-light); font-family: var(--mono); white-space: nowrap; font-weight: 500; }
+  .private-note { max-width: 420px; margin: 8px auto 0; text-align: center; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; color: rgba(243,236,217,0.55); line-height: 1.6; }
+
+  /* ===== STRATEGIC IMPACT ===== */
+  .impact-grid { display: grid; gap: 12px; max-width: 480px; margin: 0 auto; }
+  .impact-quote { text-align: center; color: var(--gold-light); font-style: italic; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; margin: 14px auto 24px; max-width: 420px; line-height: 1.7; }
+  .impact-tile { border: 1px solid var(--line); border-radius: 16px; padding: 20px 18px; background: linear-gradient(180deg, rgba(20,16,11,0.5), rgba(8,8,8,0.7)); }
+  .impact-tile .impact-icon { font-size: 22px; color: var(--gold); margin-bottom: 12px; }
+  .impact-tile h3 { margin: 0 0 8px; font: 700 16px/1.25 var(--serif); }
+  .impact-lead { font-size: 12.5px; color: var(--gold-light); line-height: 1.5; margin: 0 0 10px; }
+  .impact-outcome { font-size: 12.5px; color: var(--txt-soft); line-height: 1.6; }
+
+  /* ===== FRAMEWORKS ===== */
+  .fw-grid { display: grid; gap: 10px; max-width: 480px; margin: 0 auto; }
+  .fw-card { width: 100%; text-align: left; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,0.015); cursor: pointer; overflow: hidden; font-family: var(--font); color: #fff; }
+  .fw-head { display: flex; align-items: center; gap: 14px; padding: 16px 16px; }
+  .fw-icon { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 10px; font-family: var(--serif); font-size: 16px; color: var(--gold-light); }
+  .fw-title-wrap { flex: 1; min-width: 0; }
+  .fw-title { font: 600 14px/1.2 var(--font); }
+  .fw-tagline { font-size: 11px; color: var(--txt-dim); margin-top: 3px; }
+  .fw-toggle { width: 20px; height: 20px; flex: none; position: relative; }
+  .fw-toggle::before, .fw-toggle::after { content: ""; position: absolute; background: var(--gold); transition: opacity 0.2s; }
+  .fw-toggle::before { left: 4px; right: 4px; top: 9px; height: 2px; }
+  .fw-toggle::after { top: 4px; bottom: 4px; left: 9px; width: 2px; }
+  .fw-card.fw-open .fw-toggle::after { opacity: 0; }
+  .fw-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
+  .fw-card.fw-open .fw-body { grid-template-rows: 1fr; }
+  .fw-body-inner { overflow: hidden; }
+  .fw-body-inner p { margin: 0; padding: 0 16px 16px; font-size: 12.5px; color: var(--txt-soft); line-height: 1.65; }
+
+  /* ===== ARIA HUB ===== */
+  .aria-feats { display: grid; gap: 10px; max-width: 460px; margin: 0 auto 22px; }
+  .aria-feat { border: 1px solid var(--line); border-radius: 14px; padding: 16px; background: rgba(255,255,255,0.02); }
+  .aria-feat h4 { margin: 0 0 6px; font: 700 13px/1.2 var(--serif); letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-light); }
+  .aria-feat p { margin: 0; font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  .aria-ctas { display: grid; gap: 10px; max-width: 380px; margin: 0 auto 22px; }
+  .frame-box { max-width: 480px; margin: 0 auto; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #070604; box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 40px rgba(197,160,89,0.08); }
+  .frame-box iframe { width: 100%; height: 620px; border: 0; display: block; background: #070604; }
+  .frame-cap { text-align: center; color: rgba(255,255,255,0.3); font: 700 9px/1 var(--font); letter-spacing: 0.35em; text-transform: uppercase; margin-top: 14px; }
+
+  /* lazy iframe placeholder */
+  .lazyframe { position: relative; cursor: pointer; }
+  .lazyframe .lz-poster { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 280px; text-align: center; padding: 30px; }
+  .lazyframe .lz-poster .lz-play { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--gold-grad); color: #050505; font-size: 22px; }
+  .lazyframe .lz-poster .lz-label { font: 700 10px/1.4 var(--font); letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-light); }
+
+  /* ===== CINEMATICS ===== */
+  .cine-frame { max-width: 480px; margin: 0 auto; border: 1px solid rgba(197,160,89,0.35); border-radius: 16px; overflow: hidden; background: #0a0908; box-shadow: 0 0 50px rgba(197,160,89,0.10); }
+  .cine-frame video { width: 100%; display: block; background: #000; }
+
+  /* ===== CAPABILITIES ===== */
+  .cap-grid { display: grid; gap: 12px; max-width: 480px; margin: 0 auto 24px; }
+  .cap-card { border: 1px solid var(--line); border-radius: 14px; padding: 16px; background: linear-gradient(180deg, rgba(20,16,11,0.6), rgba(11,9,7,0.85)); }
+  .cap-card-h { font: 700 12px/1.2 var(--serif); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-light); margin: 0 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line-soft); }
+  .cap-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .cap-card li { position: relative; padding-left: 14px; font-size: 11.5px; color: var(--txt-soft); line-height: 1.55; }
+  .cap-card li::before { content: ""; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 6px rgba(197,160,89,0.55); }
+  .cap-download { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border: 1px solid rgba(241,220,167,0.5); border-radius: 999px; background: rgba(241,220,167,0.08); color: var(--gold-light); font: 500 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; }
+
+  /* ===== REVOLUTION ===== */
+  .rev-grid { display: grid; gap: 10px; max-width: 480px; margin: 0 auto 24px; }
+  .rev-row { display: flex; gap: 12px; align-items: flex-start; padding: 13px 14px; border: 1px solid rgba(197,160,89,0.10); border-radius: 10px; background: rgba(255,255,255,0.012); }
+  .rev-row .arr { font-family: var(--serif); font-size: 17px; color: var(--gold); flex: none; line-height: 1.3; }
+  .rev-row div { font-size: 12.5px; color: var(--txt-soft); line-height: 1.6; }
+  .rev-row b { color: var(--gold-light); font-weight: 600; }
+  .rev-close { text-align: center; max-width: 420px; margin: 0 auto; padding-top: 16px; border-top: 1px solid var(--line); }
+  .rev-close p { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 16px; color: rgba(243,236,217,0.6); margin: 5px 0; line-height: 1.5; }
+  .rev-close .strong { color: var(--gold-light); font-style: normal; font-weight: 500; font-size: 19px; }
+
+  /* ===== COURSES ===== */
+  .courses-badge { display: inline-block; margin-top: 20px; padding: 10px 18px; border: 1px solid var(--line-soft); color: var(--txt-dim); font: 400 11px/1 var(--serif); letter-spacing: 0.2em; text-transform: uppercase; }
+
+  /* ===== FOOTER ===== */
+  footer { padding: 44px 18px calc(120px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line-soft); text-align: center; background: #030303; }
+  .foot-logo { width: 44px; height: 44px; margin: 0 auto 14px; position: relative; display: grid; place-items: center; }
+  .foot-logo .i-letter { font-family: var(--serif); font-weight: 700; font-size: 28px; color: var(--gold-light); }
+  .foot-logo .i-helpdesk { position: absolute; width: 20px; height: 20px; right: -7px; bottom: -2px; color: var(--gold); }
+  footer .name { font: 700 14px/1.2 var(--serif); letter-spacing: 0.2em; text-transform: uppercase; }
+  footer .addr { font: 700 9px/1.4 var(--font); letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-top: 8px; }
+  footer .phone { display: block; margin: 18px 0 4px; font: 300 28px/1 var(--font); letter-spacing: -0.01em; color: var(--gold); }
+  footer .director { font: 700 8px/1 var(--font); letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+  footer .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 16px; margin: 22px 0 14px; }
+  footer .links a { color: rgba(255,255,255,0.5); font: 400 9px/1.4 var(--font); letter-spacing: 0.25em; text-transform: uppercase; }
+  footer .copy { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); line-height: 1.7; }
+
+  /* ===== FAB STACK ===== */
+  .fab-stack { position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 70; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+  .fab { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,0.45); border: none; cursor: pointer; }
+  .fab-wa { background: var(--whatsapp); }
+  .fab-wa svg { width: 28px; height: 28px; fill: #fff; }
+  .fab-aria { width: auto; height: 54px; border-radius: 999px; padding: 0 18px; gap: 8px; display: inline-flex; align-items: center; background: linear-gradient(135deg, #0a0805, #1a140a); border: 1px solid var(--line); color: var(--gold-light); font: 700 11px/1 var(--font); letter-spacing: 0.2em; text-transform: uppercase; }
+  .fab-aria .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .fab-chat { background: var(--gold-grad); color: #050505; }
+  .fab-chat svg { width: 24px; height: 24px; }
+  .desktop-pill { position: fixed; left: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 70; background: rgba(8,8,8,0.85); border: 1px solid var(--line-soft); color: var(--txt-dim); padding: 8px 12px; font: 400 9px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; border-radius: 999px; }
+
+  /* ===== SERVICE CENTER MODAL ===== */
+  .sc-modal { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: none; flex-direction: column; }
+  .sc-modal.active { display: flex; }
+  .sc-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; padding-top: calc(14px + env(safe-area-inset-top)); border-bottom: 1px solid var(--line); background: #050505; }
+  .sc-modal-head h4 { margin: 0; font: 700 13px/1 var(--serif); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-light); }
+  .sc-modal-close { background: none; border: none; color: var(--gold); font-size: 28px; line-height: 1; cursor: pointer; }
+  .sc-modal iframe { flex: 1; width: 100%; border: 0; background: #050505; }
+
+  /* ===== CHAT WIDGET ===== */
+  .chat-window { position: fixed; left: 12px; right: 12px; bottom: calc(80px + env(safe-area-inset-bottom)); z-index: 80; max-width: 400px; margin: 0 auto;
+    background: #0a0805; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; }
+  .chat-window.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, rgba(197,160,89,0.08), transparent); }
+  .chat-header h4 { margin: 0; font: 700 13px/1 var(--serif); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-light); }
+  .chat-close-btn { background: none; border: none; color: var(--gold); cursor: pointer; display: grid; place-items: center; }
+  .chat-body { padding: 16px; max-height: 64vh; overflow-y: auto; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font: 600 9px/1 var(--font); letter-spacing: 0.16em; text-transform: uppercase; color: var(--txt-dim); margin-bottom: 6px; }
+  .form-group input, .form-group textarea { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--line-soft); border-radius: 10px; color: #fff; font: 400 14px/1.4 var(--font); }
+  .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--gold); }
+  .form-group input.invalid, .form-group textarea.invalid { border-color: #ef4444; }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+  .error-msg { display: none; color: #ef4444; font-size: 11px; margin-top: 5px; }
+  .chat-submit-btn { width: 100%; padding: 14px; border: 0; border-radius: 10px; background: var(--gold-grad); color: #050505; font: 700 11px/1 var(--font); letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; }
+  .chat-submit-btn:disabled { opacity: 0.6; }
+  .chat-success { flex-direction: column; align-items: center; text-align: center; gap: 14px; padding: 10px 4px; }
+  .chat-success .check-circle { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(197,160,89,0.12); color: var(--gold); }
+  .chat-success p { font-size: 13px; color: var(--txt-soft); line-height: 1.6; }
+
+  @media (min-width: 768px) {
+    .hero h1 { font-size: 40px; }
+    .sc-perks { gap: 10px; }
   }
 </style>
 </head>
 <body>
 
-<header class="header">
-  <a href="#top" class="brand">
-    <div class="brand-mark">IIS</div>
-    <div class="brand-name">Integrated IT Support<span>Toronto · Canada-wide</span></div>
+<!-- ===== HEADER ===== -->
+<header class="hdr">
+  <a href="#top" class="brand" aria-label="Integrated IT Support — home">
+    <span class="i-logo" aria-hidden="true">
+      <span class="i-letter">I</span>
+      <svg class="i-helpdesk" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19a9 9 0 0 1 18 0"/><circle cx="16" cy="14" r="5"/><rect x="6" y="18" width="3.2" height="5" rx="1.1"/><rect x="22.8" y="18" width="3.2" height="5" rx="1.1"/></svg>
+    </span>
+    <span class="brand-txt"><span class="l1">Integrated IT Support</span><span class="l2">A Distinguished Network</span></span>
   </a>
-  <a class="header-call" href="tel:+16475813182">Call</a>
+  <div class="hdr-actions">
+    <a href="#service-center" class="hdr-sc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Service</a>
+    <button class="menu-btn" onclick="toggleMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </div>
 </header>
+
+<!-- ===== SLIDE MENU ===== -->
+<div id="navMenu" class="nav-overlay">
+  <button class="nav-close" onclick="toggleMenu()" aria-label="Close menu">&times;</button>
+  <a href="#solutions" onclick="toggleMenu()">Pricing</a>
+  <a href="/services.html" class="acc" onclick="toggleMenu()">Services</a>
+  <a href="/aria?view=plans" class="acc" onclick="toggleMenu()">Plans</a>
+  <div class="nav-sep"></div>
+  <a href="#methodology" onclick="toggleMenu()">Methodology</a>
+  <a href="/purchase-tech.html" class="acc" onclick="toggleMenu()">Purchase Tech</a>
+  <div class="nav-sep"></div>
+  <a href="/aria.html" class="acc" onclick="toggleMenu()">ARIA</a>
+  <a href="#service-center" onclick="toggleMenu()">Service Center</a>
+  <div class="nav-sep"></div>
+  <a href="#aria-demo" onclick="toggleMenu()">ARIA Demo</a>
+  <a href="#portfolio" onclick="toggleMenu()">Portfolio</a>
+  <a href="/about.html" onclick="toggleMenu()">About Us</a>
+  <div class="nav-sep"></div>
+  <a href="tel:+16475813182" onclick="toggleMenu()">Connect with Senior Director</a>
+  <a href="mailto:ahmad.wasee@iisupp.net?subject=Private Consultation Request" class="acc" onclick="toggleMenu()">Request Consultation</a>
+</div>
 
 <main id="top">
 
-  <section class="hero" style="border-top:0">
-    <span class="hero-tag">AI IT support · 24/7</span>
-    <h1>Talk to ARIA.<br>Get a fix in <b>60 seconds.</b></h1>
-    <p>Our AI IT assistant solves the common stuff instantly. Real technicians take over when it matters.</p>
-    <div class="hero-ctas">
-      <a class="btn btn-pri" href="/aria">Open ARIA →</a>
-      <a class="btn btn-wa" href="https://wa.me/16475813182?text=Hi%20Integrated%20IT%20Support%20-%20I%20need%20IT%20help">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        WhatsApp us
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <span class="eyebrow" style="letter-spacing:0.55em;">Whitby • Ontario • Global</span>
+    <h1>Integrated IT Support<span class="accent">Preventative Aid</span></h1>
+    <p class="lead">We don't just fix problems — we ensure your operations run smoothly and consistently.</p>
+    <p class="sub">System-driven · outcome-owned · second-order thinking applied before a single change is made.</p>
+    <a href="#service-center" class="hero-cta">The Analytical Framework</a>
+  </section>
+
+  <!-- ===== SERVICE CENTER ===== -->
+  <section id="service-center">
+    <div class="sec-head">
+      <span class="eyebrow">Powered by AI</span>
+      <h2>Service <span class="gold">Center</span></h2>
+      <p class="tracking">AI diagnostics · guided fixes · equipment · 24/7 live escalation</p>
+    </div>
+    <div class="sc-card">
+      <button class="sc-hero-cta" onclick="openPortal('chat')">
+        <span class="ico">🌐</span><span class="txt">Get IT Support</span><span class="arr">→</span>
+      </button>
+
+      <div class="sc-label"><span>Quick Actions</span></div>
+      <div class="sc-tiles">
+        <button class="sc-tile" onclick="openPortal('diagnostics')"><div class="sc-tile-ico">💾</div><div class="sc-tile-title">Diagnostics</div><div class="sc-tile-sub">Health &amp; specs</div></button>
+        <button class="sc-tile" onclick="openPortal('relaunch')"><div class="sc-tile-ico">🔄</div><div class="sc-tile-title">Re-launch</div><div class="sc-tile-sub">Kill &amp; reopen</div></button>
+        <button class="sc-tile" onclick="openPortal('screenshot')"><div class="sc-tile-ico">📷</div><div class="sc-tile-title">Error Analysis</div><div class="sc-tile-sub">Screenshot AI</div></button>
+        <button class="sc-tile" onclick="openPortal('ticket')"><div class="sc-tile-ico">🎫</div><div class="sc-tile-title">Log Ticket</div><div class="sc-tile-sub">Submit request</div></button>
+      </div>
+
+      <a class="sc-emergency" href="tel:6475813182">
+        <span class="ico">🚨</span>
+        <div class="txt"><strong>System down?</strong><span>Call (647) 581-3182 · 24/7</span></div>
+        <span class="arr">→</span>
       </a>
-      <a class="btn btn-sec" href="tel:+16475813182">Call (647) 581-3182</a>
+
+      <div class="sc-label"><span>Purchase &amp; Business</span></div>
+      <div class="sc-pair">
+        <button class="sc-action" onclick="openPortal('purchase')"><span class="ico">🛒</span><div><div class="title">Purchase IT Equipment</div><div class="sub">Laptops, peripherals, hardware</div></div></button>
+        <button class="sc-action" onclick="openPortal('ticket')"><span class="ico">🏢</span><div><div class="title">Business Consultation</div><div class="sub">Office IT setup &amp; review</div></div></button>
+      </div>
+
+      <div class="sc-label"><span>Perks &amp; Plans</span></div>
+      <div class="sc-perks">
+        <div class="sc-perk"><div class="ico">🤝</div><div class="title">Referral</div><div class="sub">$25 off per friend</div></div>
+        <div class="sc-perk"><div class="ico">♻️</div><div class="title">Trade-In</div><div class="sub">We buy old devices</div></div>
+        <a class="sc-perk" href="#solutions"><div class="ico">📄</div><div class="title">View Plans</div><div class="sub">From $1.5K / mo</div></a>
+      </div>
     </div>
   </section>
 
-  <section>
-    <p class="sec-tag">Services</p>
-    <h2 class="sec-h2">What we fix</h2>
-    <div class="svc-grid">
-      <div class="svc"><h3>Computers & Laptops</h3><p>Slow, crashing, won't boot, screens, batteries, drives. Pickup or remote.</p></div>
-      <div class="svc"><h3>WiFi & Networks</h3><p>Bad signal, slow internet, mesh setups, business routers, cable runs.</p></div>
-      <div class="svc"><h3>Email & Office 365</h3><p>Outlook stuck, password reset, license rightsize, mail migration.</p></div>
-      <div class="svc"><h3>Cybersecurity</h3><p>Phishing checks, ransomware response, endpoint protection, password manager rollout.</p></div>
-      <div class="svc"><h3>Cloud & Backup</h3><p>OneDrive / SharePoint / Drive sync, immutable backups, restore drills.</p></div>
-      <div class="svc"><h3>Onsite & Remote</h3><p>Toronto, GTA, and Canada-wide remote. Same-day for urgent.</p></div>
+  <!-- ===== PRICING ===== -->
+  <section id="solutions" style="background:var(--bg2);">
+    <div class="sec-head">
+      <span class="eyebrow">Engagement Models</span>
+      <h2>Pricing <span class="gold">Options</span></h2>
+      <p class="tracking">Tap any tier for full detail. The middle tier is the most selected.</p>
+    </div>
+
+    <!-- TRACK 1 -->
+    <div class="track">
+      <div class="track-head">
+        <span class="track-eyebrow">Track 1</span>
+        <h3 class="track-title">Business &amp; <span class="accent">Enterprise</span></h3>
+        <p class="track-sub">Managed retainers sized to the operational consequence of your environment.</p>
+      </div>
+
+      <div class="pcard">
+        <span class="pcard-badge"><span class="dot"></span>Tier 1 · Operational Foundation</span>
+        <h4 class="pcard-name">Operational Foundation</h4>
+        <div class="pcard-scale">Small Business · 1–10 Users</div>
+        <div class="pcard-price">$6,000 – $10,000 / mo</div>
+        <p class="pcard-tag">Fully managed IT for a lean team — proactive monitoring, patching, and Microsoft 365 administration.</p>
+        <ul>
+          <li>Fully managed IT environment</li>
+          <li>Business-hours helpdesk support</li>
+          <li>Monthly system health audit</li>
+          <li>Security monitoring &amp; patch management</li>
+          <li>Microsoft 365 administration</li>
+        </ul>
+        <div class="pcard-positioning">One IT emergency handled externally costs $500 – $2,000 alone. This retainer prevents ten of them per month. You are not buying support — you are buying the absence of downtime.</div>
+        <a href="#" class="pcard-cta" data-email-template="tier1">✉ Email to Inquire</a>
+        <button type="button" class="pcard-buy" data-buy-options='{"title":"Tier 1 — Operational Foundation","options":[{"id":"tier1-deposit","name":"Tier 1 · Deposit to start","price":"2000.00","description":"Deposit against Tier 1 · Operational Foundation monthly retainer"},{"id":"tier1-first-month","name":"Tier 1 · First Month (lower tier)","price":"6000.00","description":"Tier 1 first-month retainer at lower bound ($6,000)"},{"id":"tier1-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+      </div>
+
+      <div class="pcard featured">
+        <span class="pcard-badge"><span class="dot"></span>Tier 2 · Most Selected</span>
+        <h4 class="pcard-name">Business Continuity</h4>
+        <div class="pcard-scale">Mid-Size Business · 11–50 Users</div>
+        <div class="pcard-price">$14,000 – $24,000 / mo</div>
+        <p class="pcard-tag">Priority SLA, dedicated senior analyst, and disaster recovery planning baked in. Most selected.</p>
+        <ul>
+          <li>Everything in Tier 1</li>
+          <li>Priority SLA — 1 hour response or less</li>
+          <li>Quarterly executive IT report · OKR-aligned</li>
+          <li>Active Directory &amp; identity management</li>
+          <li>Vendor coordination fully handled</li>
+          <li>Disaster recovery planning &amp; testing</li>
+          <li>Dedicated senior analyst on account</li>
+        </ul>
+        <div class="pcard-positioning">Your competitors are one ransomware attack away from two weeks of downtime. Your operations are not. That difference is worth more than this retainer every single month it does not happen.</div>
+        <a href="#" class="pcard-cta" data-email-template="tier2">✉ Email to Inquire</a>
+        <button type="button" class="pcard-buy" data-buy-options='{"title":"Tier 2 — Business Continuity","options":[{"id":"tier2-deposit","name":"Tier 2 · Deposit to start","price":"4000.00","description":"Deposit against Tier 2 · Business Continuity monthly retainer"},{"id":"tier2-first-month","name":"Tier 2 · First Month (lower tier)","price":"14000.00","description":"Tier 2 first-month retainer at lower bound ($14,000)"},{"id":"tier2-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+      </div>
+
+      <div class="pcard">
+        <span class="pcard-badge"><span class="dot"></span>Tier 3 · Enterprise Operations</span>
+        <h4 class="pcard-name">Enterprise Operations</h4>
+        <div class="pcard-scale">Corporate · 51–200+ Users · Multi-Location</div>
+        <div class="pcard-price">$30,000 – $60,000 / mo</div>
+        <p class="pcard-tag">24/7 monitoring, Major Incident Management, Six Sigma auditing, and named senior analyst.</p>
+        <ul>
+          <li>Everything in Tiers 1 &amp; 2</li>
+          <li>24/7 monitoring &amp; incident response</li>
+          <li>Major Incident Management — RBC &amp; Raymond James standard</li>
+          <li>Six Sigma process auditing · quarterly</li>
+          <li>PHIPA · PIPEDA · SOC-aligned compliance docs</li>
+          <li>SharePoint &amp; Microsoft 365 architecture support</li>
+          <li>Monthly C-suite IT risk &amp; roadmap briefing</li>
+          <li>Named senior analyst permanently assigned</li>
+        </ul>
+        <div class="pcard-positioning">The same operational standard maintained inside Raymond James trading floors and Ontario Health provincial systems. You are not hiring an IT company — you are hiring the person who kept those organizations running when failure was not an option.</div>
+        <a href="#" class="pcard-cta" data-email-template="tier3">✉ Email to Inquire</a>
+        <button type="button" class="pcard-buy" data-buy-options='{"title":"Tier 3 — Enterprise Operations","options":[{"id":"tier3-deposit","name":"Tier 3 · Deposit to start","price":"10000.00","description":"Deposit against Tier 3 · Enterprise Operations monthly retainer"},{"id":"tier3-first-month","name":"Tier 3 · First Month (lower tier)","price":"30000.00","description":"Tier 3 first-month retainer at lower bound ($30,000)"},{"id":"tier3-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+      </div>
+
+      <div class="project-card">
+        <div class="head"><h4>Project Work</h4><span>Fixed Scope</span></div>
+        <div class="project-row"><span>IT Infrastructure Audit</span><span>$7,500 – $15,000</span></div>
+        <div class="project-row"><span>Cloud Migration</span><span>$15,000 – $60,000</span></div>
+        <div class="project-row"><span>Microsoft 365 Full Deployment</span><span>$10,500 – $24,000</span></div>
+        <div class="project-row"><span>SharePoint Build &amp; Configuration</span><span>$12,000 – $36,000</span></div>
+        <div class="project-row"><span>Cybersecurity Assessment</span><span>$9,000 – $22,500</span></div>
+        <div class="project-row"><span>Disaster Recovery Build</span><span>$15,000 – $45,000</span></div>
+        <div class="project-row"><span>AI Agent Setup &amp; Integration</span><span>$24,000 – $75,000</span></div>
+        <div class="project-row"><span>Hourly — Out-of-Scope (Remote)</span><span>$555 – $675 / hr</span></div>
+        <div class="project-row"><span>Hourly — Out-of-Scope (On-Site)</span><span>$925 – $1,125 / hr</span></div>
+      </div>
+    </div>
+
+    <!-- TRACK 2 -->
+    <div class="track">
+      <div class="track-head">
+        <span class="track-eyebrow">Track 2</span>
+        <h3 class="track-title">Private <span class="accent">Engagement</span></h3>
+        <p class="track-sub">For individuals, families &amp; personal technology. Technology should work for you — not against you.</p>
+      </div>
+
+      <div class="pcard">
+        <span class="pcard-badge"><span class="dot"></span>Home Foundations</span>
+        <h4 class="pcard-name">Home Foundations</h4>
+        <div class="pcard-scale">Diagnostics · Setup · Tuning</div>
+        <div class="pcard-price">$1,250 – $3,500 · flat</div>
+        <p class="pcard-tag">Core services that restore, configure and optimize the technology you already own.</p>
+        <ul>
+          <li>Diagnostics &amp; Repair — $1,500 – $2,500 flat</li>
+          <li>Home Network Setup &amp; Optimization — $2,000 – $3,500</li>
+          <li>Device Setup &amp; Performance Tuning — $1,250 – $2,000</li>
+        </ul>
+        <div class="pcard-positioning">Every hour is documented and closed against an outcome — not a ticket number. The same precision you would expect inside a corporate environment, delivered at your kitchen table.</div>
+        <a href="#" class="pcard-cta" data-email-template="private">✉ Email to Inquire</a>
+        <button type="button" class="pcard-buy" data-buy-options='{"title":"Home Foundations","options":[{"id":"home-diagnostics","name":"Diagnostics & Repair","price":"1500.00","description":"Home Foundations · Diagnostics & Repair"},{"id":"home-network","name":"Home Network Setup","price":"2000.00","description":"Home Foundations · Home Network Setup & Optimization"},{"id":"home-tune","name":"Device Setup & Tuning","price":"1250.00","description":"Home Foundations · Device Setup & Performance Tuning"},{"id":"home-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Pick a service</button>
+        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+      </div>
+
+      <div class="pcard">
+        <span class="pcard-badge"><span class="dot"></span>Recovery &amp; Security</span>
+        <h4 class="pcard-name">Recovery &amp; Security</h4>
+        <div class="pcard-scale">Data · Digital Safety</div>
+        <div class="pcard-price">$2,000 – $5,000 · flat</div>
+        <p class="pcard-tag">When data is lost or a household's digital footprint needs hardening.</p>
+        <ul>
+          <li>Data Recovery — $2,500 – $5,000 flat</li>
+          <li>Digital Security Audit — Personal — $2,000 – $4,000</li>
+          <li>Credential &amp; device hygiene review</li>
+          <li>Cloud &amp; backup strategy for the household</li>
+        </ul>
+        <div class="pcard-positioning">The difference between a data loss incident that is recovered discreetly and one that ends in a call to your bank is the speed and discipline of the response. That standard does not change because the environment is a home office.</div>
+        <a href="#" class="pcard-cta" data-email-template="private">✉ Email to Inquire</a>
+        <button type="button" class="pcard-buy" data-buy-options='{"title":"Recovery & Security","options":[{"id":"recovery-data","name":"Data Recovery","price":"2500.00","description":"Recovery & Security · Data Recovery (lower bound)"},{"id":"recovery-audit","name":"Digital Security Audit","price":"2000.00","description":"Recovery & Security · Personal Digital Security Audit (lower bound)"},{"id":"recovery-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Pick a service</button>
+        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+      </div>
+
+      <div class="pcard">
+        <span class="pcard-badge"><span class="dot"></span>Monthly Home IT</span>
+        <h4 class="pcard-name">Monthly Home IT</h4>
+        <div class="pcard-scale">Always-On Support</div>
+        <div class="pcard-price">$1,500 – $3,000 / mo</div>
+        <p class="pcard-tag">A senior technician on retainer for the household — selective availability.</p>
+        <ul>
+          <li>Priority remote response for all household devices</li>
+          <li>Quarterly on-site tune and audit</li>
+          <li>Identity, backup &amp; password manager oversight</li>
+          <li>Annual digital security review</li>
+        </ul>
+        <div class="pcard-positioning">Private Engagement is selective. Availability is limited to ensure every client — business or individual — receives the full standard of care IIS is known for.</div>
+        <a href="#" class="pcard-cta" data-email-template="private">✉ Email to Inquire</a>
+        <button type="button" class="pcard-buy" data-buy-options='{"title":"Monthly Home IT","options":[{"id":"monthly-home-deposit","name":"Deposit to start","price":"750.00","description":"Monthly Home IT · deposit to start retainer"},{"id":"monthly-home-first","name":"First Month (lower tier)","price":"1500.00","description":"Monthly Home IT · first month at lower bound ($1,500)"},{"id":"monthly-home-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+      </div>
+
+      <p class="private-note">Private Engagement is selective. Availability is limited to ensure every client — business or individual — receives the full standard of care IIS is known for.</p>
     </div>
   </section>
 
-  <section>
-    <p class="sec-tag">Pricing</p>
-    <h2 class="sec-h2">Simple, fair</h2>
-    <div class="price-row"><div><div class="name">Quick Fix</div><div class="sub">Single-issue, remote</div></div><div class="price">$59</div></div>
-    <div class="price-row"><div><div class="name">Standard Visit</div><div class="sub">Onsite, up to 1 hour</div></div><div class="price">$129</div></div>
-    <div class="price-row"><div><div class="name">Monthly Care</div><div class="sub">Per seat, all-you-need</div></div><div class="price">from $39/mo</div></div>
-    <div class="price-row"><div><div class="name">Business Retainer</div><div class="sub">Custom · talk to us</div></div><div class="price">→</div></div>
-  </section>
-
-  <section>
-    <p class="sec-tag">Why us</p>
-    <h2 class="sec-h2">No-BS IT</h2>
-    <div class="svc-grid">
-      <div class="svc"><h3>AI-first triage</h3><p>ARIA solves the easy 60% in seconds. You skip the wait.</p></div>
-      <div class="svc"><h3>Human escalation</h3><p>If ARIA can't fix it, a real Canadian technician picks up. Same number, same person.</p></div>
-      <div class="svc"><h3>Owner-run</h3><p>You talk to the founder, not a script-reader.</p></div>
+  <!-- ===== STRATEGIC IMPACT ===== -->
+  <section id="portfolio">
+    <div class="sec-head">
+      <span class="eyebrow">Proof of Execution</span>
+      <h2>Industries <span class="gold">We've Moved</span></h2>
+      <p>Sectors where IIS has operated at the level that matters — where the stakes are real, the margins for error are zero, and outcomes are measured in business continuity, not closed tickets.</p>
+    </div>
+    <p class="impact-quote">"We don't just fix problems — we ensure your operations run smoothly and consistently."</p>
+    <div class="impact-grid">
+      <div class="impact-tile"><i class="fas fa-chart-line impact-icon"></i><h3>Global Finance</h3><p class="impact-lead">Operational continuity across multi-timezone financial infrastructure.</p><div class="impact-outcome">A single hour of downtime is not an inconvenience — it is a liability. Trading desks, compliance reporting and executive workflows kept live through market hours with white-glove application support and tightly tuned ServiceNow queues.</div></div>
+      <div class="impact-tile"><i class="fas fa-heart-pulse impact-icon"></i><h3>Healthcare &amp; Medical Infrastructure</h3><p class="impact-lead">Compliant, secured, and stabilized IT systems for medical environments.</p><div class="impact-outcome">Data integrity is not a feature — it is a legal and ethical obligation tied directly to patient outcomes. PHIPA-compliant digital health platforms delivered across Ontario Health at provincial scale.</div></div>
+      <div class="impact-tile"><i class="fas fa-gavel impact-icon"></i><h3>Legal &amp; Professional Services</h3><p class="impact-lead">Fortress-level IT environments built for firms where confidentiality is currency.</p><div class="impact-outcome">Document integrity is non-negotiable and a single breach ends careers and reputations. Worldox, NetDocs, ACL and enterprise DMS migrations executed without a single document-integrity incident.</div></div>
+      <div class="impact-tile"><i class="fas fa-building impact-icon"></i><h3>Real Estate &amp; Property Development</h3><p class="impact-lead">High-velocity IT operations managed for property firms where deal cycles move fast.</p><div class="impact-outcome">CRM reliability determines commission. A dropped connection during negotiation is not an option. Document pipelines and remote team coordination engineered for zero friction — so offers, closings and on-site inspections never wait on technology.</div></div>
+      <div class="impact-tile"><i class="fas fa-cart-shopping impact-icon"></i><h3>Retail &amp; E-Commerce</h3><p class="impact-lead">Systems that hold under peak demand — because peak season never asks if you're ready.</p><div class="impact-outcome">Every minute of downtime is a direct subtraction from the bottom line. POS lanes stabilized, inventory systems kept in sync, and digital storefronts monitored through the busiest trading windows.</div></div>
+      <div class="impact-tile"><i class="fas fa-user-graduate impact-icon"></i><h3>Education &amp; Institutional Infrastructure</h3><p class="impact-lead">Scalable, secure, and compliant environments deployed across multi-location institutions.</p><div class="impact-outcome">Hundreds of users, thousands of devices, and data that legally cannot be compromised — ever. Lab operations, identity and access, onboarding, and disaster-recovery planning delivered for Seneca, George Brown, and public-sector environments built to scale without losing control.</div></div>
     </div>
   </section>
 
-  <section>
-    <p class="sec-tag">Contact</p>
-    <h2 class="sec-h2">Get help now</h2>
-    <div class="contact-card">
-      <div class="contact-row">
-        <div class="icon">📞</div>
-        <div><div class="lab">Phone · 24/7</div><a href="tel:+16475813182">(647) 581-3182</a></div>
-      </div>
-      <div class="contact-row">
-        <div class="icon">✉</div>
-        <div><div class="lab">Email</div><a href="mailto:integrateditsupp@iisupp.net">integrateditsupp@iisupp.net</a></div>
-      </div>
-      <div class="contact-row">
-        <div class="icon">💬</div>
-        <div><div class="lab">WhatsApp</div><a href="https://wa.me/16475813182?text=Hi%20Integrated%20IT%20Support%20-%20I%20need%20IT%20help">Chat with us</a></div>
-      </div>
-      <div class="contact-row">
-        <div class="icon">🤖</div>
-        <div><div class="lab">AI Assistant</div><a href="/aria">Open ARIA</a></div>
-      </div>
+  <!-- ===== METHODOLOGY — 9 FRAMEWORKS ===== -->
+  <section id="methodology" style="background:var(--bg2);">
+    <div class="sec-head">
+      <span class="eyebrow">Brand Authority · Trust · Differentiation</span>
+      <h2>How We Think. <span class="gold">How We Execute.</span></h2>
+      <p>Nine proprietary operational frameworks applied to every engagement — so nothing is reactive, nothing is improvised, and every outcome is repeatable.</p>
+    </div>
+    <div class="fw-grid" id="frameworkGrid">
+      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅰ</div><div class="fw-title-wrap"><div class="fw-title">5 W's Analysis</div><div class="fw-tagline">Who · What · When · Where · Why</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Applied to every IT problem before any action is taken. Eliminates assumptions and ensures the right problem is being solved — not just the visible symptom.</p></div></div></button>
+      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅱ</div><div class="fw-title-wrap"><div class="fw-title">STAR Framework</div><div class="fw-tagline">Situation · Task · Action · Result</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Structures every client engagement and outcome delivery. Ensures every interaction is documented, measurable, and repeatable — no engagement lives only in someone's head.</p></div></div></button>
+      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅲ</div><div class="fw-title-wrap"><div class="fw-title">First Principles Thinking</div><div class="fw-tagline">Break problems down to fundamental truths</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by Elon Musk and Jeff Bezos — strips every problem down to its fundamental truths rather than inherited assumptions. Applied at IIS to rethink IT solutions from the ground up instead of defaulting to what has always been done. Forces better, faster, cheaper answers.</p></div></div></button>
+      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅳ</div><div class="fw-title-wrap"><div class="fw-title">OKR Framework</div><div class="fw-tagline">Objectives &amp; Key Results</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by Google, Amazon and Intel to align entire organizations to measurable goals. Applied at IIS to ensure every service delivered is tied to a client's real business objective — not just a closed ticket. Outcome accountability at every level.</p></div></div></button>
+      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅴ</div><div class="fw-title-wrap"><div class="fw-title">Eisenhower Matrix</div><div class="fw-tagline">Urgency vs. Importance</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by executives and elite operators to ruthlessly prioritize what gets done, when, and by whom. Applied at IIS to triage client issues, internal operations, and strategic decisions with precision — never reactive, always deliberate.</p></div></div></button>
+      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅵ</div><div class="fw-title-wrap"><div class="fw-title">Six Sigma / DMAIC</div><div class="fw-tagline">Define · Measure · Analyze · Improve · Control</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>The methodology used by GE, Motorola and Amazon to reduce defects to near zero. Applied at IIS to eliminate recurring IT failures, reduce error rates, and deliver consistent, predictable service quality at scale.</p></div></div></button>
+      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅶ</div><div class="fw-title-wrap"><div class="fw-title">Kaizen</div><div class="fw-tagline">Continuous Improvement — every day, every call</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Toyota's philosophy of relentless, incremental daily improvement embedded into every process. Every service call, every system audit and every client interaction is reviewed for what can be done better the next time. Excellence is not an event — it is a standard.</p></div></div></button>
+      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅷ</div><div class="fw-title-wrap"><div class="fw-title">Theory of Constraints</div><div class="fw-tagline">Remove the single bottleneck first</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Developed by Eli Goldratt — identifies the single bottleneck limiting an organization's performance and eliminates it before moving to the next. Applied at IIS to systematically remove whatever is slowing down client operations, response times or internal throughput — one constraint at a time until flow is frictionless.</p></div></div></button>
+      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅸ</div><div class="fw-title-wrap"><div class="fw-title">After Action Review</div><div class="fw-tagline">Military-grade debrief — no blame, only improvement</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by elite units and top-tier organizations after every significant operation. Applied at IIS after every major deployment, incident or project: What was supposed to happen? What actually happened? Why was there a difference? What do we change? No blame — only improvement.</p></div></div></button>
+    </div>
+  </section>
+
+  <!-- ===== ARIA HUB ===== -->
+  <section id="aria" style="background:radial-gradient(700px 400px at 50% 0%, rgba(197,160,89,0.10), transparent 65%), var(--bg);">
+    <div class="sec-head">
+      <span class="eyebrow">New · Premium</span>
+      <h2>Meet <span class="gold">ARIA</span></h2>
+      <p class="tracking">Your AI browsing companion — safer, smarter, and more confident, wherever you go. Activate hands-free with "ARIA, Assist!"</p>
+    </div>
+    <div class="aria-feats">
+      <div class="aria-feat"><h4>Decision support</h4><p>Shopping, budgeting, markets, tech — short first, deeper only if you ask.</p></div>
+      <div class="aria-feat"><h4>Calm protection</h4><p>Scam guard, habit awareness, privacy summaries — non-judgmental, in your control.</p></div>
+      <div class="aria-feat"><h4>Everywhere</h4><p>Website, Chrome extension, and mobile app — one companion, same memory.</p></div>
+    </div>
+    <div class="aria-ctas">
+      <a href="/aria.html" class="btn btn-gold">Open ARIA</a>
+      <button type="button" id="ariaInstallChrome" class="btn btn-ghost">Install Chrome Extension</button>
+      <button type="button" id="ariaInstallMobile" class="btn btn-ghost">Get Mobile App</button>
+    </div>
+    <div class="frame-box lazyframe" data-src="/aria.html" data-h="640">
+      <div class="lz-poster"><span class="lz-play">▶</span><span class="lz-label">Tap to load the live ARIA preview</span></div>
+    </div>
+    <p class="frame-cap">Preview · Full ARIA experience at <a href="/aria.html">aria.html</a></p>
+  </section>
+
+  <!-- ===== CINEMATICS ===== -->
+  <section id="aria-cinematics" style="background:radial-gradient(700px 400px at 50% 0%, rgba(197,160,89,0.08), transparent 65%), #050402;">
+    <div class="sec-head">
+      <span class="eyebrow">Cinematic</span>
+      <h2>ARIA <span class="gold">in motion</span></h2>
+      <p>A stats-and-purpose reel from the ARIA design studio — what working with ARIA feels like, and why it matters. Audio on, headphones recommended.</p>
+    </div>
+    <div class="cine-frame">
+      <video controls preload="metadata" playsinline poster="/icons/icon-512.png">
+        <source src="/assets/video/aria-stats-and-purpose.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div style="text-align:center;margin-top:18px;"><a href="/aria-cinema.html" class="hero-cta">Open Full Cinema →</a></div>
+  </section>
+
+  <!-- ===== CAPABILITIES ===== -->
+  <section id="aria-capabilities" style="background:radial-gradient(700px 400px at 50% 0%, rgba(197,160,89,0.05), transparent 65%), #060503;">
+    <div class="sec-head">
+      <span class="eyebrow">Capabilities</span>
+      <h2>What ARIA does <span class="gold">today</span></h2>
+      <p>A live snapshot of what ARIA is shipping right now — verified, tested, deployed. There is much more to ARIA coming soon.</p>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card"><div class="cap-card-h">Customer support</div><ul><li>Plain-language IT answers in 5 W's + STAR style</li><li>Confirm-resolve loop — Yes / Still broken / Talk to human</li><li>Escalates only after trying first</li><li>Speech output with 9-state globe animation</li></ul></div>
+      <div class="cap-card"><div class="cap-card-h">Tech support · L1 — L3</div><ul><li>72 verified articles — Browser · Email · M365 · MFA · OneDrive · VPN · Wi-Fi · Windows · macOS · Webcam · Bluetooth · USB</li><li>21 admin-tier articles — AD · Azure AD · BitLocker · Intune · Malware · BYOD · VIP support · Asset</li><li>11 architect-tier articles — DR · PKI · Cloud · SSO · Endpoint EDR</li></ul></div>
+      <div class="cap-card"><div class="cap-card-h">Knowledge base</div><ul><li>Token-overlap retrieval, 90+ hard routing rules</li><li>Severity- and audience-aware (end-user / admin / technician)</li><li>21/21 verified test queries pass top-1</li></ul></div>
+      <div class="cap-card"><div class="cap-card-h">Policies / procedures</div><ul><li>Upload .txt .md .pdf .csv .html — stored locally on the user's device</li><li>Doc-name boost — "Per BYOD Policy 2026" wins over generic advice</li><li>Soft-delete preserves prior versions for ARIA's reference</li></ul></div>
+      <div class="cap-card"><div class="cap-card-h">Voice / chat</div><ul><li>Cinematic black-and-gold UI with 9 reasoning frameworks</li><li>Browser-native TTS, prioritized neural-voice picker</li><li>Free Mode (everyone) + Custom Company Mode (admin only)</li></ul></div>
+      <div class="cap-card"><div class="cap-card-h">Security / privacy</div><ul><li>License-gated Settings — only IT admin can upload company docs</li><li>All uploaded data stays in the browser, never sent to any server</li><li>5-device cap per license, fingerprint-tracked</li><li>§10 admin notes hidden from end-user audience</li></ul></div>
+    </div>
+    <div style="text-align:center;">
+      <a href="/assets/aria-capabilities.csv" download="ARIA-capabilities.csv" class="cap-download"><span>↓</span> Download full capability sheet (.csv)</a>
+    </div>
+  </section>
+
+  <!-- ===== REVOLUTION ===== -->
+  <section id="aria-revolution" style="background:radial-gradient(800px 450px at 50% 0%, rgba(197,160,89,0.10), transparent 60%), #050402;">
+    <div class="sec-head">
+      <span class="eyebrow">The Chain Reaction</span>
+      <h2>How ARIA <span class="gold">revolutionizes</span> support</h2>
+      <p>ARIA is not a chatbot. It is a senior IT technician that learned your company in minutes — and never sleeps, never forgets, never escalates without trying first.</p>
+    </div>
+    <div class="rev-grid">
+      <div class="rev-row"><span class="arr">→</span><div><b>No slip-ups.</b> Fewer security breaches. ARIA cites your policy verbatim — never fabricates an answer that costs an audit.</div></div>
+      <div class="rev-row"><span class="arr">→</span><div><b>No delays.</b> Fewer late payments, missed trades, dropped client responses. Instant retrieval replaces the L1 ticket queue.</div></div>
+      <div class="rev-row"><span class="arr">→</span><div><b>Communication barriers fall.</b> ARIA speaks the user's language — plain English for end-users, code blocks for admins. Same engine, audience-aware.</div></div>
+      <div class="rev-row"><span class="arr">→</span><div><b>Productivity compounds.</b> IT focuses on architecture, not password resets. Every employee gets 24/7 expertise.</div></div>
+      <div class="rev-row"><span class="arr">→</span><div><b>Support scales without headcount.</b> One ARIA serves every employee. Onboard a new hire? They walk in fluent in your runbooks on day one.</div></div>
+      <div class="rev-row"><span class="arr">→</span><div><b>Decision-makers see what's recurring.</b> Unanswered queries logged for KB review — your training signal becomes the company's IQ.</div></div>
+      <div class="rev-row"><span class="arr">→</span><div><b>Reduced dependency on overloaded teams.</b> Self-serve from 72 articles plus your own documentation, before a human is paged.</div></div>
+      <div class="rev-row"><span class="arr">→</span><div><b>Customer experience compounds.</b> Faster, more consistent answers means happier users — and the chain reaction reaches every department they touch.</div></div>
+    </div>
+    <div class="rev-close">
+      <p>ARIA is not just another support tool.</p>
+      <p class="strong">It is the start of a faster, safer, smarter service environment.</p>
+    </div>
+  </section>
+
+  <!-- ===== ARIA DEMO ===== -->
+  <section id="aria-demo" style="background:radial-gradient(700px 400px at 50% 0%, rgba(197,160,89,0.06), transparent 65%), #060606;">
+    <div class="sec-head">
+      <span class="eyebrow">Watch How It Works</span>
+      <h2>ARIA <span class="gold">Demo</span></h2>
+      <p>See ARIA in action — an 80-second pitch showing how we replace expensive IT departments with one AI senior tech, available 24/7.</p>
+    </div>
+    <div class="frame-box lazyframe" data-src="/aria-pitch/" data-h="430">
+      <div class="lz-poster"><span class="lz-play">▶</span><span class="lz-label">Tap to play the ARIA pitch</span></div>
+    </div>
+    <div style="text-align:center;margin-top:18px;"><a href="/aria-pitch/" target="_blank" class="hero-cta">Open Full Screen →</a></div>
+  </section>
+
+  <!-- ===== COURSES ===== -->
+  <section id="courses">
+    <div class="sec-head" style="margin-bottom:0;">
+      <span class="eyebrow">Coming Soon</span>
+      <h2>AI Courses &amp; <span class="gold">Development</span></h2>
+      <p>Hands-on training programs for IT teams looking to deploy AI in real-world business environments — Q3 2026.</p>
+      <span class="courses-badge">Notify Me — Coming Q3 2026</span>
     </div>
   </section>
 
 </main>
 
+<!-- ===== FOOTER ===== -->
 <footer>
-  <div class="brand-foot">Integrated IT Support Inc.</div>
-  <div>Toronto · Canada-wide IT support</div>
+  <a href="#top" class="foot-logo" aria-label="Return to home">
+    <span class="i-letter">I</span>
+    <svg class="i-helpdesk" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19a9 9 0 0 1 18 0"/><circle cx="16" cy="14" r="5"/><rect x="6" y="18" width="3.2" height="5" rx="1.1"/><rect x="22.8" y="18" width="3.2" height="5" rx="1.1"/></svg>
+  </a>
+  <div class="name">Integrated IT Support</div>
+  <div class="addr">30 Fothergill Court, Whitby, ON L1P 2L4</div>
+  <a href="tel:+16475813182" class="phone">(647) 581-3182</a>
+  <div class="director">Ahmad W. • Senior Director</div>
   <div class="links">
-    <a href="/about.html">About</a>
-    <a href="/services">Services</a>
-    <a href="/aria">ARIA</a>
-    <a href="/plans">Plans</a>
-    <a href="/terms">Terms</a>
+    <a href="/about.html">About Us</a>
+    <a href="/services.html">Services</a>
+    <a href="/aria.html">ARIA</a>
+    <a href="/copyright.html">Copyright</a>
+    <a href="/terms.html">Terms</a>
   </div>
-  <div class="copy">© Integrated IT Support Inc.</div>
+  <div class="copy">© Integrated IT Support Inc.<br>Whitby · Ontario · Canada-wide</div>
 </footer>
 
-<a class="desktop-link" href="/?desktop=1">Desktop site</a>
+<!-- ===== SERVICE CENTER MODAL ===== -->
+<div class="sc-modal" id="scModal">
+  <div class="sc-modal-head">
+    <h4>IISupport — Service Center</h4>
+    <button class="sc-modal-close" onclick="closePortal()" aria-label="Close">&times;</button>
+  </div>
+  <iframe id="scIframe" src="about:blank" allow="microphone; clipboard-write" title="IISupport ServiceCenter"></iframe>
+</div>
+
+<!-- ===== CHAT WIDGET ===== -->
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header"><h4>Contact Us</h4><button class="chat-close-btn" id="chatClose" aria-label="Close"><i data-lucide="x"></i></button></div>
+  <div class="chat-body">
+    <div id="chatFormContainer">
+      <form class="chat-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="contact">
+        <input type="hidden" name="subject" value="URGENT - Lead - New Contact Form Submission (mobile)">
+        <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
+        <div class="form-group"><label for="cf-name">Full Name</label><input type="text" id="cf-name" name="name" required placeholder="Your full name"><div class="error-msg" id="nameError">Please enter your name.</div></div>
+        <div class="form-group"><label for="cf-email">Email Address</label><input type="email" id="cf-email" name="email" required placeholder="you@example.com"><div class="error-msg" id="emailError">Please enter a valid email address.</div></div>
+        <div class="form-group"><label for="cf-phone">Phone Number</label><input type="tel" id="cf-phone" name="phone" placeholder="(123) 456-7890"></div>
+        <div class="form-group"><label for="cf-description">Description of Issue</label><textarea id="cf-description" name="description" required placeholder="How can we help?"></textarea><div class="error-msg" id="descError">Please describe your issue.</div></div>
+        <button type="submit" class="chat-submit-btn" id="chatSubmitBtn">Submit</button>
+      </form>
+    </div>
+    <div id="chatSuccessContainer" class="chat-success" style="display:none;"><div class="check-circle"><i data-lucide="check"></i></div><p>Thank you! <span id="successName"></span>, we will be in touch shortly. If urgent, call us at <a href="tel:+16475813182" style="color:var(--gold);text-decoration:underline;white-space:nowrap;">(647) 581-3182</a>.</p></div>
+  </div>
+</div>
+
+<!-- ===== FAB STACK ===== -->
+<div class="fab-stack">
+  <a class="fab fab-wa" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+     href="https://wa.me/16475813182?text=Hi%20%E2%80%94%20please%20contact%20me%20by%20phone.%20I%27d%20love%20to%20hear%20more%20about%20your%20services%20and%20want%20to%20sign%20up%20for%20a%20contract%20or%20use%20ARIA%20for%20my%20business.">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.464 3.488"/></svg>
+  </a>
+  <a href="/aria.html" class="fab fab-aria" aria-label="Open ARIA"><span class="dot"></span><span>ARIA</span></a>
+  <button class="fab fab-chat" id="chatFab" aria-label="Contact us"><i data-lucide="message-circle"></i></button>
+</div>
+
+<a class="desktop-pill" href="/?desktop=1">Desktop site</a>
 
 <script>
-  // If user explicitly requested desktop, set a cookie and reload to root
+  // ===== Mobile menu =====
+  function toggleMenu() { document.getElementById('navMenu').classList.toggle('active'); }
+
+  // ===== Force-desktop cookie (set when arriving via the Desktop site pill) =====
   (function(){
     var p = new URLSearchParams(location.search);
     if (p.get('desktop') === '1') {
       document.cookie = 'view=desktop; path=/; max-age=' + (60*60*24*30);
     }
   })();
+
+  // ===== Service Center modal (same portal as desktop) =====
+  var PORTAL_URL = 'https://ii-support-portal-wd05qh.abacusai.app';
+  function openPortal(panel) {
+    var modal = document.getElementById('scModal');
+    var iframe = document.getElementById('scIframe');
+    iframe.src = PORTAL_URL + '?panel=' + panel;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePortal() {
+    var modal = document.getElementById('scModal');
+    var iframe = document.getElementById('scIframe');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(function(){ iframe.src = 'about:blank'; }, 300);
+  }
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closePortal(); });
+
+  // ===== Framework accordion =====
+  (function(){
+    var grid = document.getElementById('frameworkGrid');
+    if (!grid) return;
+    grid.addEventListener('click', function(e){
+      var card = e.target.closest('.fw-card');
+      if (!card) return;
+      var open = card.classList.toggle('fw-open');
+      card.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  })();
+
+  // ===== Lazy iframe loaders (ARIA hub + pitch) =====
+  (function(){
+    document.querySelectorAll('.lazyframe').forEach(function(box){
+      box.addEventListener('click', function(){
+        if (box.dataset.loaded) return;
+        box.dataset.loaded = '1';
+        var f = document.createElement('iframe');
+        f.src = box.dataset.src;
+        f.loading = 'lazy';
+        f.setAttribute('allow', 'microphone; clipboard-write; fullscreen');
+        f.setAttribute('allowfullscreen', '');
+        f.style.width = '100%';
+        f.style.height = (box.dataset.h || '600') + 'px';
+        f.style.border = '0';
+        f.style.display = 'block';
+        box.innerHTML = '';
+        box.appendChild(f);
+      });
+    });
+  })();
+
+  // ===== Email template prefill (pricing cards) =====
+  (function(){
+    var RECIPIENT = 'ahmad.wasee@iisupp.net';
+    var templates = {
+      'tier1': { subject: 'Managed IT Inquiry — Tier 1 · Operational Foundation',
+        body: 'Hello Integrated IT Support Inc.,\n\nI am interested in the Tier 1 — Operational Foundation managed IT retainer for my small business.\n\nBusiness Details\nBusiness Name:\nContact Name:\nPhone Number:\nEmail Address:\nNumber of Users/Devices (1–10):\n\nCurrent IT Environment:\n(e.g., Microsoft 365, on-prem, hybrid, mixed)\n\nTop 3 IT pain points right now:\n1.\n2.\n3.\n\nPreferred Start Date:\n\nPlease review and advise on next steps.\n\nThank you,\n[Your Name]' },
+      'tier2': { subject: 'Managed IT Inquiry — Tier 2 · Business Continuity',
+        body: 'Hello Integrated IT Support Inc.,\n\nI am interested in the Tier 2 — Business Continuity managed IT retainer for my organization.\n\nBusiness Details\nBusiness Name:\nContact Name:\nPhone Number:\nEmail Address:\nNumber of Users/Devices (11–50):\n\nCurrent IT Environment:\n\nPriority Areas:\n☐ Priority SLA — 1-hour response\n☐ Active Directory / Identity\n☐ Disaster Recovery Planning\n☐ Vendor Coordination\n☐ Executive IT Reporting\n\nPreferred Start Date:\n\nPlease confirm availability and next steps.\n\nThank you,\n[Your Name]' },
+      'tier3': { subject: 'Managed IT Inquiry — Tier 3 · Enterprise Operations',
+        body: 'Hello Integrated IT Support Inc.,\n\nI am interested in the Tier 3 — Enterprise Operations managed IT retainer.\n\nBusiness Details\nBusiness Name:\nContact Name:\nPhone Number:\nEmail Address:\nNumber of Users/Devices (51–200+):\nLocations:\n\nEnvironment:\n☐ Microsoft 365 / SharePoint Architecture\n☐ 24/7 Monitoring & Incident Response\n☐ Compliance: PHIPA / PIPEDA / SOC\n☐ Major Incident Management\n☐ C-Suite Risk Reporting\n\nPreferred Start Date:\n\nPlease provide next steps to schedule an introductory call.\n\nThank you,\n[Your Name]' },
+      'private': { subject: 'Private Engagement Inquiry — Personal / Family IT',
+        body: 'Hello Integrated IT Support Inc.,\n\nI would like to inquire about Private Engagement services.\n\nContact Information\nName:\nPhone:\nEmail:\nCity:\n\nService of Interest:\n☐ Diagnostics & Repair\n☐ Home Network Setup & Optimization\n☐ Data Recovery\n☐ Device Setup & Performance Tuning\n☐ Digital Security Audit — Personal\n☐ Monthly Home IT Support\n\nDescription of need:\n\nPreferred Contact Time:\n\nThank you,\n[Your Name]' }
+    };
+    document.querySelectorAll('[data-email-template]').forEach(function(el){
+      var tpl = templates[el.dataset.emailTemplate];
+      if (!tpl) return;
+      el.href = 'mailto:' + RECIPIENT + '?subject=' + encodeURIComponent(tpl.subject) + '&body=' + encodeURIComponent(tpl.body);
+    });
+  })();
+
+  // ===== Chat widget =====
+  (function(){
+    var fab = document.getElementById('chatFab'), win = document.getElementById('chatWindow'),
+        closeBtn = document.getElementById('chatClose'), form = document.getElementById('contactForm'),
+        formContainer = document.getElementById('chatFormContainer'), successContainer = document.getElementById('chatSuccessContainer'),
+        submitBtn = document.getElementById('chatSubmitBtn');
+    fab.addEventListener('click', function(){ win.classList.toggle('visible'); });
+    closeBtn.addEventListener('click', function(){ win.classList.remove('visible'); });
+    function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      form.querySelectorAll('.invalid').forEach(function(el){ el.classList.remove('invalid'); });
+      form.querySelectorAll('.error-msg').forEach(function(el){ el.style.display = 'none'; });
+      var name = document.getElementById('cf-name'), email = document.getElementById('cf-email'), desc = document.getElementById('cf-description'), valid = true;
+      if (!name.value.trim()) { name.classList.add('invalid'); document.getElementById('nameError').style.display = 'block'; valid = false; }
+      if (!validEmail(email.value)) { email.classList.add('invalid'); document.getElementById('emailError').style.display = 'block'; valid = false; }
+      if (!desc.value.trim()) { desc.classList.add('invalid'); document.getElementById('descError').style.display = 'block'; valid = false; }
+      if (!valid) return;
+      submitBtn.disabled = true; submitBtn.textContent = 'Sending...';
+      try {
+        var fd = new FormData(form);
+        var resp = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(fd).toString() });
+        if (!resp.ok) throw new Error('Submission failed: ' + resp.status);
+        document.getElementById('successName').textContent = name.value.trim();
+        formContainer.style.display = 'none';
+        successContainer.style.display = 'flex';
+        if (window.lucide) lucide.createIcons();
+      } catch (err) {
+        submitBtn.disabled = false; submitBtn.textContent = 'Submit';
+        alert('Sorry, something went wrong sending your message. Please try again, email ahmad.wasee@iisupp.net, or call (647) 581-3182.');
+      }
+    });
+  })();
+
+  // ===== ARIA install CTAs =====
+  (function(){
+    var chromeBtn = document.getElementById('ariaInstallChrome'), mobileBtn = document.getElementById('ariaInstallMobile');
+    if (chromeBtn) chromeBtn.addEventListener('click', function(){ window.location.href = '/extension.html'; });
+    if (mobileBtn) mobileBtn.addEventListener('click', function(){
+      if (window.ARIA && typeof window.ARIA.installPWA === 'function') window.ARIA.installPWA();
+      else window.location.href = '/aria.html';
+    });
+  })();
+
+  // ===== Purchase buttons (same premium-modal + Stripe flow as desktop) =====
+  (function(){
+    function waitForAria(cb){ if (window.ARIA) return cb(); setTimeout(function(){ waitForAria(cb); }, 80); }
+    waitForAria(function(){
+      document.querySelectorAll('[data-buy-options]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var data; try { data = JSON.parse(btn.getAttribute('data-buy-options')); } catch(_) { return; }
+          var optionsHtml = data.options.map(function(opt, i){
+            if (opt.quote) {
+              return '<button type="button" class="aria-buy-option" data-quote="1" style="display:block;width:100%;margin-bottom:10px;padding:14px;border-radius:14px;border:1px solid rgba(212,175,55,0.25);background:rgba(0,0,0,0.35);color:#f3ecd9;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;"><b style="color:#f1dca7;display:block;margin-bottom:3px;">Request a custom quote</b><span style="opacity:.65;font-size:11.5px;">Email Integrated IT Support with your environment details for a precise quote.</span></button>';
+            }
+            return '<button type="button" class="aria-buy-option" data-idx="'+i+'" style="display:block;width:100%;margin-bottom:10px;padding:14px;border-radius:14px;border:1px solid rgba(212,175,55,0.25);background:rgba(0,0,0,0.35);color:#f3ecd9;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;"><b style="color:#f1dca7;display:block;margin-bottom:3px;">'+opt.name+' — $'+opt.price+' CAD</b><span style="opacity:.65;font-size:11.5px;">'+(opt.description||'')+'</span></button>';
+          }).join('');
+          var modal = window.ARIA.showPremiumModal({
+            title: data.title,
+            body: '<p style="opacity:.75;margin-bottom:14px;">Select how you would like to proceed. All payments are handled securely; Integrated IT Support will confirm scope before work begins.</p>' + optionsHtml + '<p class="small-note" style="margin-top:10px;">Payments confirm purchase request. Final service scope may require confirmation before work begins.</p>'
+          });
+          var root = document.querySelector('.aria-premium-modal');
+          if (!root) return;
+          root.querySelectorAll('.aria-buy-option').forEach(function(btn2){
+            btn2.addEventListener('click', function(){
+              if (btn2.dataset.quote) {
+                modal.close();
+                window.location.href = 'mailto:ahmad.wasee@iisupp.net?subject=' + encodeURIComponent('Custom Quote Request — ' + data.title) + '&body=' + encodeURIComponent('Please provide a custom quote for ' + data.title + '.\n\nEnvironment details:\n- Users / devices:\n- Locations:\n- Current stack:\n- Timeline:\n\nThank you.');
+                return;
+              }
+              var opt = data.options[Number(btn2.dataset.idx)];
+              modal.close();
+              window.ARIA.showPremiumModal({
+                title: 'Confirm: ' + opt.name,
+                body: '<p>You are about to purchase <b>'+opt.name+'</b> for <b>$'+opt.price+' CAD</b>.</p><p style="opacity:.7;font-size:12.5px;">After secure checkout, Integrated IT Support will email you to confirm scope.</p><button class="aria-stripe-pay" data-id="'+opt.id+'" data-name="'+(opt.name||"").replace(/"/g,"&quot;")+'" data-price="'+opt.price+'" data-desc="'+((opt.description||"").replace(/"/g,"&quot;"))+'" style="margin-top:16px;display:block;width:100%;padding:14px 20px;background:linear-gradient(135deg,#635bff 0%,#5046e4 100%);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.04em;box-shadow:0 4px 14px rgba(99,91,255,.35);">Pay $'+opt.price+' CAD with Stripe</button><p class="small-note" style="margin-top:10px;">Payments confirm purchase request. Final service scope may require confirmation before work begins.</p>'
+              });
+            });
+          });
+        });
+      });
+    });
+  })();
+
+  // ===== Stripe checkout handler (same endpoint as desktop) =====
+  (function(){
+    document.addEventListener('click', async function(e){
+      var btn = e.target.closest('.aria-stripe-pay');
+      if (!btn) return;
+      e.preventDefault();
+      if (btn.dataset.busy === '1') return;
+      btn.dataset.busy = '1';
+      var origLabel = btn.textContent;
+      btn.textContent = 'Connecting to Stripe...';
+      btn.style.filter = 'brightness(.8)';
+      try {
+        var r = await fetch('/.netlify/functions/stripe-checkout', {
+          method: 'POST', headers: {'content-type':'application/json'},
+          body: JSON.stringify({ priceData: {
+            amount_cents: Math.round(parseFloat(btn.dataset.price) * 100),
+            currency: 'cad', product_name: btn.dataset.name,
+            description: btn.dataset.desc || '', id: btn.dataset.id } })
+        });
+        var j = await r.json();
+        if (j.url) { window.location.href = j.url; }
+        else { alert(j.error || 'Could not start checkout. Call (647) 581-3182.'); btn.textContent = origLabel; btn.style.filter=''; btn.dataset.busy = ''; }
+      } catch (err) {
+        alert('Network error. Call (647) 581-3182.'); btn.textContent = origLabel; btn.style.filter=''; btn.dataset.busy = '';
+      }
+    });
+  })();
+
+  // Render lucide icons
+  if (window.lucide) lucide.createIcons();
 </script>
+<script src="/assets/aria-core.js" defer></script>
 
 </body>
 </html>
