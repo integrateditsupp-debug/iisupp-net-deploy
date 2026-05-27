@@ -3,1232 +3,709 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ARIA Command Center · IIS</title>
+<meta name="robots" content="noindex,nofollow">
+<title>ARIA · Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#040611;--bg2:#080d1c;--panel:#0a1124;--panel2:#0d162d;--brd:#1c2a48;--brd2:#2a3b5e;--txt:#dde6f5;--mut:#7587a8;--dim:#9badc8;--cy:#22e1ff;--cy2:#0fbed8;--vi:#a855f7;--vi2:#7c3aed;--ok:#10ddb0;--wn:#ffb53d;--er:#ff4d6b;--crit:#ff2150;--high:#ff8a1f;--norm:#3b82f6;--low:#64748b;--mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Inter',system-ui,sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at top,rgba(34,225,255,.08),transparent 60%),radial-gradient(ellipse at bottom right,rgba(168,85,247,.06),transparent 50%);pointer-events:none;z-index:0}
-body::after{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(34,225,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(34,225,255,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
-a{color:var(--cy);text-decoration:none}
-
-/* LOGIN */
-#login{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-#login .card{background:rgba(10,17,36,.7);backdrop-filter:blur(20px);border:1px solid var(--brd);padding:40px;max-width:420px;width:100%;border-radius:6px;box-shadow:0 0 80px rgba(34,225,255,.08),inset 0 1px 0 rgba(255,255,255,.04)}
-#login h1{font-family:var(--mono);font-size:14px;letter-spacing:4px;color:var(--cy);margin-bottom:6px;text-shadow:0 0 12px rgba(34,225,255,.4)}
-#login .sub{font-family:var(--mono);font-size:10px;color:var(--mut);letter-spacing:2px;margin-bottom:28px;text-transform:uppercase}
-#login input{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--brd2);color:var(--txt);padding:14px;font-family:var(--mono);font-size:13px;margin-bottom:12px;border-radius:3px;outline:none;transition:border-color 200ms,box-shadow 200ms}
-#login input:focus{border-color:var(--cy);box-shadow:0 0 0 3px rgba(34,225,255,.1)}
-#login button{width:100%;background:linear-gradient(135deg,var(--cy),var(--cy2));border:none;color:#000;padding:14px;font-family:var(--mono);font-size:12px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;border-radius:3px;font-weight:700;transition:transform 100ms,box-shadow 200ms}
-#login button:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(34,225,255,.3)}
-#login .err{color:var(--er);font-size:11px;margin-top:10px;min-height:16px;font-family:var(--mono)}
-
-/* APP */
-#app{display:none;position:relative;z-index:1;padding:18px;max-width:1920px;margin:0 auto}
-.topbar{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;padding:12px 18px;background:rgba(10,17,36,.6);backdrop-filter:blur(14px);border:1px solid var(--brd);border-radius:6px;margin-bottom:16px}
-.logo{display:flex;align-items:center;gap:14px}
-.logo .lo-mark{width:42px;height:42px;background:linear-gradient(135deg,#a855f7,#22e1ff);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:flex;align-items:center;justify-content:center;color:#000;font-weight:800;font-family:var(--mono);font-size:18px;letter-spacing:1px}
-.logo .lo-txt h1{font-family:var(--mono);font-size:15px;letter-spacing:4px;color:#fff;text-shadow:0 0 12px rgba(34,225,255,.5)}
-.logo .lo-txt .lo-sub{font-family:var(--mono);font-size:9px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-top:2px}
-.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-.kpi{background:linear-gradient(135deg,rgba(10,17,36,.6),rgba(13,22,45,.4));border:1px solid var(--brd);padding:10px 14px;border-radius:5px;position:relative;overflow:hidden}
-.kpi::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:var(--cy);box-shadow:0 0 8px var(--cy)}
-.kpi .k-lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);text-transform:uppercase;margin-bottom:4px}
-.kpi .k-val{font-family:var(--mono);font-size:22px;color:#fff;font-weight:300;line-height:1}
-.kpi .k-delta{font-family:var(--mono);font-size:9px;color:var(--ok);margin-top:3px;letter-spacing:1px}
-.kpi .k-delta.neg{color:var(--er)}
-.clock{text-align:right;font-family:var(--mono)}
-.clock .c-date{font-size:12px;color:var(--dim);letter-spacing:2px}
-.clock .c-time{font-size:18px;color:var(--cy);letter-spacing:2px;margin-top:2px;text-shadow:0 0 10px rgba(34,225,255,.5)}
-.btn{background:transparent;border:1px solid var(--brd2);color:var(--txt);padding:6px 12px;font-family:var(--mono);font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px;text-transform:uppercase;transition:all 200ms}
-.btn:hover{border-color:var(--cy);color:var(--cy);box-shadow:0 0 12px rgba(34,225,255,.15)}
-
-/* GRID */
-.layout{display:grid;grid-template-columns:300px 1fr 300px;gap:14px;margin-bottom:14px}
-.layout-mid{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:14px;margin-bottom:14px}
-.panel{background:linear-gradient(135deg,rgba(10,17,36,.7),rgba(8,13,28,.5));backdrop-filter:blur(10px);border:1px solid var(--brd);border-radius:6px;padding:14px;position:relative;overflow:hidden}
-.panel::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cy),transparent);opacity:.4}
-.panel h2{font-family:var(--mono);font-size:11px;letter-spacing:2.5px;color:var(--cy);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
-.panel h2 .badge{background:var(--er);color:#fff;font-size:9px;padding:2px 6px;border-radius:2px;letter-spacing:1px}
-.panel h2 .badge.green{background:var(--ok);color:#000}
-.panel h2 .badge.mute{background:var(--brd2);color:var(--dim)}
-
-/* OFFICE — central panel, big */
-.office{background:linear-gradient(180deg,#040814 0%,#080d20 100%);border:1px solid var(--brd);border-radius:6px;padding:0;overflow:hidden;position:relative;min-height:520px}
-.office .o-head{position:absolute;top:0;left:0;right:0;padding:12px 16px;background:linear-gradient(180deg,rgba(8,13,28,.9),transparent);font-family:var(--mono);font-size:11px;letter-spacing:2.5px;color:var(--cy);z-index:5;display:flex;justify-content:space-between;text-transform:uppercase}
-.office .o-head .o-status{color:var(--ok);display:flex;align-items:center;gap:6px}
-.office .o-head .o-status::before{content:"";width:6px;height:6px;background:var(--ok);border-radius:50%;box-shadow:0 0 8px var(--ok);animation:pulse 1.4s ease-in-out infinite}
-.office-svg{display:block;width:100%;height:520px}
-.office .o-graffiti{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);font-family:var(--mono);font-size:36px;font-weight:800;letter-spacing:4px;color:var(--vi);text-shadow:0 0 40px var(--vi),0 0 80px var(--vi);transition:transform 600ms cubic-bezier(.2,1.4,.4,1),opacity 600ms;opacity:0;pointer-events:none;z-index:10;text-align:center;line-height:1.2}
-.office .o-graffiti.show{transform:translate(-50%,-50%) scale(1);opacity:1}
-
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes typing{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-@keyframes scan{0%{transform:translateY(0)}100%{transform:translateY(100%)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-@keyframes orb{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.1);opacity:1}}
-@keyframes drift{from{transform:translateX(-20px)}to{transform:translateX(calc(100vw + 20px))}}
-.seat-active{animation:pulse 1.6s ease-in-out infinite}
-.seat-typing{animation:typing .7s ease-in-out infinite}
-.scan-line{animation:scan 8s linear infinite}
-.orb{animation:orb 3s ease-in-out infinite}
-@keyframes walk1{0%,100%{transform:translate(0,0)}25%{transform:translate(140px,8px)}50%{transform:translate(280px,0)}75%{transform:translate(140px,-8px)}}
-@keyframes walk2{0%,100%{transform:translate(0,0)}25%{transform:translate(-110px,12px)}50%{transform:translate(-220px,0)}75%{transform:translate(-110px,-8px)}}
-.walker{transition:transform 200ms}
-.walker.w1{animation:walk1 24s ease-in-out infinite}
-.walker.w2{animation:walk2 30s ease-in-out infinite}
-.walker.w3{animation:walk1 36s ease-in-out infinite reverse;animation-delay:-12s}
-
-/* AGENT NAMES */
-.seat-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px}
-
-/* LISTS */
-.list-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px dashed rgba(28,42,72,.7);font-size:12px}
-.list-row:last-child{border-bottom:none}
-.list-row .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:6px;box-shadow:0 0 6px currentColor}
-.list-row .dot.crit{background:var(--crit);color:var(--crit)}
-.list-row .dot.high{background:var(--high);color:var(--high)}
-.list-row .dot.norm{background:var(--norm);color:var(--norm)}
-.list-row .dot.low{background:var(--low);color:var(--low)}
-.list-row .dot.ok{background:var(--ok);color:var(--ok)}
-.list-row .ttl{flex:1;line-height:1.4}
-.list-row .ttl b{color:#fff;font-weight:500}
-.list-row .ts{font-family:var(--mono);font-size:10px;color:var(--mut);flex-shrink:0}
-
-/* WORKLOAD BARS */
-.wl-row{display:grid;grid-template-columns:130px 1fr 38px;align-items:center;gap:10px;padding:5px 0;font-family:var(--mono);font-size:10px}
-.wl-name{color:var(--txt)}
-.wl-bar{height:6px;background:rgba(0,0,0,.4);border:1px solid var(--brd);border-radius:3px;overflow:hidden;position:relative}
-.wl-bar>div{height:100%;background:linear-gradient(90deg,var(--ok),var(--cy));transition:width 600ms ease;box-shadow:0 0 8px currentColor}
-.wl-bar.warn>div{background:linear-gradient(90deg,var(--wn),var(--high))}
-.wl-bar.crit>div{background:linear-gradient(90deg,var(--er),var(--crit))}
-.wl-pct{font-family:var(--mono);font-size:10px;color:var(--cy);text-align:right}
-.wl-pct.warn{color:var(--wn)}
-.wl-pct.crit{color:var(--er)}
-
-/* GAUGE */
-.gauge{text-align:center;padding:6px 0}
-.gauge .num{font-family:var(--mono);font-size:38px;color:var(--cy);font-weight:300;line-height:1;text-shadow:0 0 16px rgba(34,225,255,.5)}
-.gauge .lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);text-transform:uppercase;margin-top:6px}
-.gauge .delta{font-family:var(--mono);font-size:10px;color:var(--ok);margin-top:4px}
-.gauge .ring{position:relative;width:100px;height:100px;margin:0 auto 8px}
-.gauge .ring svg{transform:rotate(-90deg)}
-.gauge .ring .v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:18px;color:#fff}
-
-/* TICKETS */
-.tkt{background:rgba(13,22,45,.6);border:1px solid var(--brd);border-left:3px solid var(--norm);padding:9px 12px;margin-bottom:6px;border-radius:3px;cursor:pointer;transition:all 200ms}
-.tkt:hover{border-left-width:5px;padding-left:14px}
-.tkt.crit{border-left-color:var(--crit);box-shadow:0 0 12px rgba(255,33,80,.15)}
-.tkt.high{border-left-color:var(--high)}
-.tkt.normal{border-left-color:var(--norm)}
-.tkt.low{border-left-color:var(--low)}
-.tkt-h{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:10px;margin-bottom:4px}
-.tkt-id{color:var(--mut)}
-.tkt-pri{font-size:9px;padding:1px 6px;border-radius:2px;letter-spacing:1px;text-transform:uppercase}
-.tkt-pri.crit{background:var(--crit);color:#fff}
-.tkt-pri.high{background:var(--high);color:#000}
-.tkt-pri.normal{background:var(--norm);color:#fff}
-.tkt-pri.low{background:var(--low);color:#fff}
-.tkt-iss{font-size:12px;color:var(--txt);line-height:1.4}
-
-/* COMMS — BITS */
-.comms{max-height:600px;overflow-y:auto;padding-right:6px}
-.comms::-webkit-scrollbar{width:5px}
-.comms::-webkit-scrollbar-track{background:transparent}
-.comms::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px}
-.bit-row{padding:9px 10px;margin-bottom:8px;background:rgba(8,13,28,.6);border:1px solid var(--brd);border-radius:4px;border-left:2px solid var(--cy);transition:all 200ms}
-.bit-row:hover{border-left-width:4px;background:rgba(13,22,45,.8)}
-.bit-row .bit-h{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--mut);margin-bottom:5px}
-.bit-row .bit-h .bit-ts{color:var(--cy)}
-.bit-row .bit-from{color:var(--cy);font-family:var(--mono);font-size:11px;margin-right:4px}
-.bit-row .bit-to{color:var(--vi);font-family:var(--mono);font-size:11px}
-.bit-row .bit-code{font-family:var(--mono);font-size:10px;color:var(--mut);background:rgba(0,0,0,.4);padding:5px 8px;border-radius:2px;margin:5px 0;letter-spacing:1px;word-break:break-all}
-.bit-row .bit-trans{font-size:11px;color:var(--txt);font-style:italic;border-left:2px solid var(--vi);padding-left:8px;margin-top:4px;line-height:1.4}
-.bit-row .bit-en{font-size:11px;color:var(--dim);margin-top:4px;line-height:1.4}
-.bit-row.priority{border-left-color:var(--er);box-shadow:0 0 12px rgba(255,77,107,.1)}
-.bit-input{display:flex;gap:6px;margin-top:10px}
-.bit-input input{flex:1;background:rgba(0,0,0,.4);border:1px solid var(--brd2);color:var(--txt);padding:8px 10px;font-family:var(--mono);font-size:11px;border-radius:3px;outline:none}
-.bit-input input:focus{border-color:var(--cy)}
-.bit-input button{background:linear-gradient(135deg,var(--cy),var(--cy2));border:none;color:#000;padding:8px 14px;font-family:var(--mono);font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px;font-weight:700}
-
-/* THINKING */
-.think{padding:10px;background:rgba(8,13,28,.6);border:1px solid var(--brd);border-radius:4px}
-.think .th-task{color:var(--cy);font-family:var(--mono);font-size:10px;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
-.think .th-task .th-task-val{color:var(--txt);font-size:11px;text-transform:none;letter-spacing:0;font-family:var(--sans);margin-top:3px;display:block}
-.think .th-list{font-size:11px;color:var(--dim);line-height:1.7}
-.think .th-list b{color:var(--cy);margin-right:6px}
-
-/* AGENT WORKLOAD THRESHOLD */
-.thresh-line{position:absolute;top:0;bottom:0;width:1px;background:var(--er);right:20%;opacity:.5}
-
-/* EXTERIORS */
-.exteriors{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:14px 0}
-.ext-card{position:relative;height:160px;border-radius:6px;overflow:hidden;border:1px solid var(--brd);cursor:pointer;transition:all 300ms;background:linear-gradient(180deg,#0c1932 0%,#040611 100%)}
-.ext-card:hover{border-color:var(--cy);box-shadow:0 0 24px rgba(34,225,255,.2)}
-.ext-card .ext-svg{width:100%;height:100%}
-.ext-card .ext-lbl{position:absolute;bottom:8px;left:10px;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--cy);text-transform:uppercase;text-shadow:0 0 6px rgba(0,0,0,.9)}
-.ext-card .ext-sub{position:absolute;bottom:8px;right:10px;font-family:var(--mono);font-size:9px;color:var(--mut);text-transform:uppercase}
-
-/* CINEMATIC OVERLAY */
-#cinema{display:none;position:fixed;inset:0;background:#000;z-index:1000;align-items:center;justify-content:center;flex-direction:column}
-#cinema.show{display:flex;animation:fadeIn 800ms ease}
-#cinema svg{width:100%;max-width:1400px;height:auto}
-#cinema .c-txt{position:absolute;top:30px;left:30px;font-family:var(--mono);color:var(--cy)}
-#cinema .c-txt .c-title{font-size:14px;letter-spacing:4px;text-transform:uppercase}
-#cinema .c-txt .c-sub{font-size:10px;color:var(--mut);margin-top:5px;letter-spacing:2px}
-#cinema .c-close{position:absolute;top:30px;right:30px;background:transparent;border:1px solid var(--cy);color:var(--cy);padding:8px 14px;font-family:var(--mono);font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-/* FOOTER */
-.footer{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:14px 18px;background:rgba(10,17,36,.6);backdrop-filter:blur(14px);border:1px solid var(--brd);border-radius:6px;font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mut);text-align:center}
-.footer .f-cell{display:flex;align-items:center;justify-content:center;gap:8px}
-.footer .f-cell::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:pulse 1.6s ease-in-out infinite}
-.footer .f-cell b{color:var(--ok);letter-spacing:1px}
-
-/* EMPTY */
-.empty{font-family:var(--mono);font-size:10px;color:var(--mut);text-align:center;padding:20px 0;letter-spacing:1px}
-
-@media(max-width:1400px){
-.layout,.layout-mid{grid-template-columns:1fr}
-.exteriors{grid-template-columns:repeat(2,1fr)}
-.kpis{grid-template-columns:repeat(3,1fr)}
+/* ============================================================================
+   ARIA Command Center — redesign (Emil-Kowalski-inspired: restraint, hierarchy,
+   purposeful motion). Login flow, the live ARIA data contract, and the shared
+   spider-web mesh embed are all preserved. Single accent, hairline borders,
+   spring motion, count-ups, full prefers-reduced-motion support.
+   ============================================================================ */
+:root{
+  --bg:#06080e; --bg-soft:#080b13;
+  --surface:#0b0f1a; --surface-2:#0e1320; --surface-3:#11182a;
+  --line:rgba(255,255,255,.07); --line-2:rgba(255,255,255,.12);
+  --txt:#e8edf6; --txt-2:#9aa7bd; --txt-3:#62718b;
+  --accent:#22e1ff; --accent-2:#0fb8d8; --accent-ink:#04141a;
+  --ok:#34d399; --warn:#fbbf24; --crit:#fb7185; --info:#7aa2ff; --violet:#a78bfa;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --r:14px; --r-sm:9px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 48px -28px rgba(0,0,0,.8);
 }
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{overflow-x:hidden;line-height:1.5}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(120% 80% at 50% -10%,rgba(34,225,255,.07),transparent 55%),radial-gradient(90% 70% at 100% 100%,rgba(167,139,250,.05),transparent 55%)}
+a{color:var(--accent);text-decoration:none}
+::selection{background:rgba(34,225,255,.25);color:#fff}
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:6px;border:2px solid transparent;background-clip:content-box}
+*::-webkit-scrollbar-track{background:transparent}
+
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--txt-3)}
+
+/* focus a11y */
+a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* ── LOGIN ─────────────────────────────────────────────────────────── */
+#login{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+#login .card{width:100%;max-width:392px;background:linear-gradient(180deg,rgba(14,19,32,.9),rgba(11,15,26,.85));backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:18px;padding:38px 34px;box-shadow:var(--shadow);animation:rise .7s var(--ease) both}
+#login .mark{width:46px;height:46px;border-radius:13px;background:linear-gradient(140deg,var(--accent),var(--violet));display:flex;align-items:center;justify-content:center;color:var(--accent-ink);font-weight:700;font-size:22px;margin-bottom:22px;box-shadow:0 8px 28px -8px rgba(34,225,255,.6)}
+#login h1{font-size:19px;font-weight:600;letter-spacing:-.01em}
+#login .sub{font-family:var(--mono);font-size:11px;color:var(--txt-3);letter-spacing:.08em;margin:6px 0 26px}
+#login label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);margin:0 0 7px}
+#login input{width:100%;background:rgba(0,0,0,.32);border:1px solid var(--line-2);color:var(--txt);padding:13px 14px;font-size:14px;margin-bottom:16px;border-radius:10px;outline:none;transition:border-color .2s,box-shadow .2s}
+#login input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(34,225,255,.12)}
+#login button{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none;color:var(--accent-ink);padding:13px;font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:.02em;cursor:pointer;border-radius:10px;transition:transform .14s var(--ease),box-shadow .25s,filter .2s}
+#login button:hover{transform:translateY(-1px);box-shadow:0 12px 30px -10px rgba(34,225,255,.55)}
+#login button:active{transform:translateY(0) scale(.99)}
+#login .err{color:var(--crit);font-size:12px;margin-top:12px;min-height:17px;font-family:var(--mono)}
+
+/* ── APP SHELL ─────────────────────────────────────────────────────── */
+#app{display:none;position:relative;z-index:1;max-width:1480px;margin:0 auto;padding:20px 24px 56px}
+@media(max-width:760px){#app{padding:16px 14px 40px}}
+
+.topbar{display:flex;align-items:center;gap:18px;padding:14px 4px 22px;border-bottom:1px solid var(--line);margin-bottom:26px}
+.brand{display:flex;align-items:center;gap:13px}
+.brand .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--accent),var(--violet));display:flex;align-items:center;justify-content:center;color:var(--accent-ink);font-weight:700;font-size:18px;box-shadow:0 6px 22px -8px rgba(34,225,255,.6)}
+.brand h1{font-size:16px;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+.brand .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);margin-top:2px}
+.spacer{flex:1}
+.pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:6px 12px;border-radius:999px;border:1px solid var(--line-2);color:var(--txt-2);background:rgba(255,255,255,.02)}
+.pill .led{width:7px;height:7px;border-radius:50%;background:var(--txt-3)}
+.pill.live{color:var(--ok);border-color:rgba(52,211,153,.4)}
+.pill.live .led{background:var(--ok);box-shadow:0 0 9px var(--ok);animation:breathe 2s var(--ease) infinite}
+.pill.down{color:var(--warn);border-color:rgba(251,191,36,.4)}
+.pill.down .led{background:var(--warn);animation:breathe 1.2s var(--ease) infinite}
+.clock{font-family:var(--mono);font-size:13px;color:var(--txt-2);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.ghost-btn{background:transparent;border:1px solid var(--line-2);color:var(--txt-2);padding:8px 14px;font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;border-radius:9px;transition:all .18s var(--ease)}
+.ghost-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+/* ── PANELS / GRID ─────────────────────────────────────────────────── */
+.panel{background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);position:relative;animation:rise .6s var(--ease) both}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.panel-h h2{font-size:13px;font-weight:600;letter-spacing:-.005em;color:var(--txt)}
+.panel-h .hint{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3)}
+.chip{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.08em;padding:3px 9px;border-radius:999px;border:1px solid var(--line-2);color:var(--txt-2)}
+.chip.ok{color:var(--ok);border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.07)}
+.chip.warn{color:var(--warn);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.07)}
+.chip.crit{color:var(--crit);border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.08)}
+.chip.accent{color:var(--accent);border-color:rgba(34,225,255,.35);background:rgba(34,225,255,.07)}
+
+.grid{display:grid;gap:16px;margin-bottom:16px}
+.g-stats{grid-template-columns:repeat(4,1fr)}
+.g-ops{grid-template-columns:1.35fr 1fr 1fr}
+.g-intel{grid-template-columns:1.2fr 1.4fr 1fr}
+@media(max-width:1100px){.g-stats{grid-template-columns:repeat(2,1fr)}.g-ops,.g-intel{grid-template-columns:1fr}}
+@media(max-width:560px){.g-stats{grid-template-columns:1fr}}
+
+/* stat cards */
+.stat{padding:18px 20px;overflow:hidden}
+.stat .label{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-3);margin-bottom:14px}
+.stat .num{font-size:42px;font-weight:600;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.stat .num .unit{font-size:20px;font-weight:500;color:var(--txt-2);margin-left:2px}
+.stat .meta{font-family:var(--mono);font-size:11px;color:var(--txt-2);margin-top:11px;letter-spacing:.02em}
+.stat .meta b{color:var(--txt)}
+.stat .accent{color:var(--accent)}
+.bar{height:5px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:14px}
+.bar>span{display:block;height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width 1s var(--ease)}
+.split{display:flex;gap:18px;margin-top:13px}
+.split .s{flex:1}
+.split .s .v{font-family:var(--mono);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.split .s .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3);margin-top:3px}
+.split .s.esc .v{color:var(--warn)} .split .s.res .v{color:var(--ok)}
+
+/* mesh wrapper */
+.mesh-wrap{padding:18px 20px 20px}
+.mesh-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.mesh-bar .lead{display:flex;align-items:center;gap:11px}
+.mesh-bar .lead .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+
+/* lists */
+.rows{display:flex;flex-direction:column}
+.row{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
+.row:last-child{border-bottom:none}
+.row:hover{background:rgba(255,255,255,.02)}
+.row .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.dot.crit{background:var(--crit);box-shadow:0 0 7px var(--crit)} .dot.high{background:var(--warn);box-shadow:0 0 7px var(--warn)}
+.dot.norm{background:var(--info)} .dot.ok{background:var(--ok)} .dot.low{background:var(--txt-3)}
+.row .body{flex:1;min-width:0}
+.row .body .t{color:var(--txt);line-height:1.45}
+.row .body .t b{font-weight:600}
+.row .sub{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);margin-top:3px;letter-spacing:.02em}
+.row .ts{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);flex-shrink:0;font-variant-numeric:tabular-nums}
+.tappable{cursor:pointer;border-radius:8px;margin:0 -8px;padding-left:8px;padding-right:8px;transition:background .15s}
+.tappable:hover{background:rgba(34,225,255,.05)}
+
+/* ticket priority tag */
+.pri{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:5px;flex-shrink:0}
+.pri.critical{background:rgba(251,113,133,.16);color:var(--crit)} .pri.high{background:rgba(251,191,36,.16);color:var(--warn)}
+.pri.normal{background:rgba(122,162,255,.16);color:var(--info)} .pri.low{background:rgba(255,255,255,.07);color:var(--txt-2)}
+
+/* sla rows */
+.kv{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--txt-2)}
+.kv .v{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
+.kv .v.ok{color:var(--ok)} .kv .v.warn{color:var(--warn)} .kv .v.bad{color:var(--crit)}
+
+/* agent activity */
+.agent-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.agent-row:last-child{border-bottom:none}
+.agent-row .led{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);flex-shrink:0;animation:breathe 1.8s var(--ease) infinite}
+.agent-row .nm{flex:1;font-weight:500;color:var(--txt)}
+.agent-row .age{font-family:var(--mono);font-size:10.5px;color:var(--txt-3)}
+.mini-btn{background:transparent;border:1px solid var(--line-2);color:var(--txt-2);padding:3px 9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;border-radius:6px;cursor:pointer;transition:all .15s}
+.mini-btn:hover{border-color:var(--accent);color:var(--accent)}
+.mini-btn:disabled{opacity:.5;cursor:default}
+
+/* roster chips */
+.roster{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.r-chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.03em;color:var(--txt-2);background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:7px;padding:4px 9px}
+.r-chip .led{width:5px;height:5px;border-radius:50%;background:var(--txt-3)}
+.r-chip.born .led{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.r-chip.born{color:var(--txt);border-color:rgba(34,225,255,.28)}
+
+/* learning telemetry tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.tile{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
+.tile .v{font-family:var(--mono);font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
+.tile .k{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3);margin-top:6px}
+
+/* comms bit stream */
+.comms{max-height:330px;overflow-y:auto;margin:-4px -6px 0;padding:4px 6px}
+.bit{padding:11px 12px;margin-bottom:9px;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;border-left:2px solid var(--accent);transition:border-color .2s,background .2s}
+.bit:hover{background:rgba(34,225,255,.04)}
+.bit.alert{border-left-color:var(--crit)}
+.bit .h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:11px;margin-bottom:6px}
+.bit .h .route{color:var(--accent)} .bit .h .route .to{color:var(--violet)}
+.bit .h .ts{color:var(--txt-3);font-variant-numeric:tabular-nums}
+.bit .hash{font-family:var(--mono);font-size:9.5px;color:var(--txt-3);letter-spacing:.06em;background:rgba(0,0,0,.3);border-radius:5px;padding:3px 7px;margin-bottom:6px;word-break:break-all}
+.bit .msg{font-size:12.5px;color:var(--txt);line-height:1.5}
+.composer{display:flex;gap:8px;margin-top:12px}
+.composer input{flex:1;background:rgba(0,0,0,.3);border:1px solid var(--line-2);color:var(--txt);padding:10px 12px;font-family:var(--mono);font-size:12px;border-radius:9px;outline:none;transition:border-color .2s}
+.composer input:focus{border-color:var(--accent)}
+.composer button{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none;color:var(--accent-ink);padding:10px 16px;font-weight:600;font-size:12px;cursor:pointer;border-radius:9px;transition:transform .14s var(--ease)}
+.composer button:active{transform:scale(.97)}
+
+/* sparkline */
+.spark{width:100%;height:54px;margin-top:8px;display:block}
+
+/* empty */
+.empty{font-family:var(--mono);font-size:11px;color:var(--txt-3);text-align:center;padding:26px 0;letter-spacing:.04em}
+
+/* footer */
+.footer{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:26px;padding-top:18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--txt-3)}
+.footer a{color:var(--txt-2)}.footer a:hover{color:var(--accent)}
+
+/* modal */
+#modal-bg{display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,6,12,.78);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:24px;animation:fade .25s var(--ease)}
+#modal-bg.show{display:flex}
+#modal{width:100%;max-width:720px;max-height:82vh;overflow-y:auto;background:linear-gradient(180deg,var(--surface-3),var(--surface));border:1px solid var(--line-2);border-radius:18px;padding:26px;box-shadow:0 40px 90px rgba(0,0,0,.7);position:relative;animation:rise .35s var(--ease)}
+#modal h3{font-size:15px;font-weight:600;margin-bottom:16px;font-family:var(--mono);letter-spacing:.04em}
+#modal .x{position:absolute;top:18px;right:20px;background:none;border:none;color:var(--txt-3);font-size:22px;cursor:pointer;line-height:1;transition:color .15s}
+#modal .x:hover{color:var(--txt)}
+#modal pre{background:rgba(0,0,0,.45);border:1px solid var(--line);border-radius:10px;padding:16px;font-family:var(--mono);font-size:11.5px;color:var(--txt-2);overflow:auto;max-height:56vh;line-height:1.6}
+
+/* motion */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes breathe{0%,100%{opacity:1}50%{opacity:.35}}
+.stagger>*{animation:rise .6s var(--ease) both}
+.stagger>*:nth-child(2){animation-delay:.06s}.stagger>*:nth-child(3){animation-delay:.12s}.stagger>*:nth-child(4){animation-delay:.18s}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 </style>
 </head>
 <body>
 
+<!-- ── LOGIN ─────────────────────────────────────────────────────────── -->
 <div id="login">
   <div class="card">
-    <h1>ARIA COMMAND CENTER</h1>
-    <div class="sub">Headquarters · Access Required</div>
-    <input id="user" type="text" placeholder="Operator ID" autocomplete="username">
-    <input id="pass" type="password" placeholder="Access Key" autocomplete="current-password">
-    <button onclick="doLogin()">AUTHENTICATE</button>
+    <div class="mark">A</div>
+    <h1>ARIA Command Center</h1>
+    <div class="sub">Restricted · operator access required</div>
+    <label for="user">Operator ID</label>
+    <input id="user" type="text" placeholder="you@iisupp.net" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+    <label for="pass">Access key</label>
+    <input id="pass" type="password" placeholder="••••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Authenticate</button>
     <div class="err" id="login-err"></div>
   </div>
 </div>
 
+<!-- ── APP ───────────────────────────────────────────────────────────── -->
 <div id="app">
 
-  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="logo">
-      <div class="lo-mark">A</div>
-      <div class="lo-txt">
-        <h1>ARIA</h1>
-        <div class="lo-sub">Headquarters Command Center · AI Operations Hub</div>
+    <div class="brand">
+      <div class="mark">A</div>
+      <div>
+        <h1>ARIA Command Center</h1>
+        <div class="tag">Autonomous IT operations · live</div>
       </div>
     </div>
-    <div class="kpis">
-      <!-- AUTONOMY MEGA PANEL + AGENT STRIP (Ahmad 2026-05-20) -->
-<div class="panel" style="margin:12px 0;padding:16px;border:1px solid var(--bd,#1a3a4a);border-radius:8px;background:rgba(8,18,28,.6);">
-  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
-    <div style="flex:0 0 auto;">
-      <div style="font-family:var(--mono,monospace);font-size:11px;opacity:.6;letter-spacing:.15em;">AUTONOMY SCORE</div>
-      <div id="autonomy-mega" style="font-family:var(--mono,monospace);font-size:64px;font-weight:300;color:var(--cy,#22e1ff);line-height:1;text-shadow:0 0 24px rgba(34,225,255,.4);">—</div>
-      <div style="font-family:var(--mono,monospace);font-size:10px;opacity:.5;">TARGET 95%</div>
-    </div>
-    <div style="flex:1;min-width:240px;">
-      <div style="font-family:var(--mono,monospace);font-size:10px;opacity:.5;margin-bottom:6px;">LIVE AGENT STATE</div>
-      <div id="autonomy-bar-wrap" style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;">
-        <div id="autonomy-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--cy,#22e1ff),#00ff88);transition:width .8s ease;"></div>
-      </div>
-      <div id="agent-strip" style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;"></div>
-    </div>
+    <div class="spacer"></div>
+    <span class="pill" id="conn"><span class="led"></span><span id="conn-txt">Connecting…</span></span>
+    <span class="clock" id="clock">—</span>
+    <button class="ghost-btn" onclick="logout()">Sign out</button>
   </div>
-</div>
-<script>
-(function(){
-  var AG=["ARIA","Intent","Reasoning","KB","RAG","Vector","Triage","Safety","Automation","Research","Audit","Diagnostic","Persona","Reporter"];
-  function paint(){
-    var el=document.getElementById("autonomy-mega"),bar=document.getElementById("autonomy-bar"),strip=document.getElementById("agent-strip");
-    if(!el||!bar||!strip)return;
-    var s=window.__aplState||{},pct=Math.round((s.autonomy||0)*100);
-    el.textContent=pct+"%";bar.style.width=pct+"%";
-    if(!strip.dataset.built){
-      AG.forEach(function(n){var c=document.createElement("div");c.style.cssText="padding:4px 10px;border:1px solid rgba(34,225,255,.2);border-radius:4px;font-family:var(--mono,monospace);font-size:9px;color:var(--cy,#22e1ff);background:rgba(0,0,0,.3);display:flex;gap:5px;align-items:center;letter-spacing:.05em;";c.innerHTML='<span class="adot" style="width:6px;height:6px;border-radius:50%;background:#444;display:inline-block;"></span>'+n;strip.appendChild(c);});
-      strip.dataset.built="1";
-    }
-    var dots=strip.querySelectorAll(".adot");
-    dots.forEach(function(d){var act=Math.random()>0.55;d.style.background=act?"#22e1ff":"#333";d.style.boxShadow=act?"0 0 6px #22e1ff":"none";});
-  }
-  setInterval(paint,2500);setTimeout(paint,400);
-})();
-</script>
-<div class="kpi"><div class="k-lbl">ARIA Success</div><div class="k-val" id="kpi-success">—</div><div class="k-delta" id="kpi-success-d">+0.00% today</div></div>
-      <div class="kpi"><div class="k-lbl">Total Agents</div><div class="k-val" id="kpi-agents">—</div><div class="k-delta">active</div></div>
-      <div class="kpi"><div class="k-lbl">Tasks in Progress</div><div class="k-val" id="kpi-tasks">—</div><div class="k-delta" id="kpi-tasks-d">live</div></div>
-      <div class="kpi"><div class="k-lbl">Tickets Resolved</div><div class="k-val" id="kpi-resolved">—</div><div class="k-delta" id="kpi-resolved-d">+0 today</div></div>
-      <div class="kpi" style="border-left-color:#a855f7"><div class="k-lbl">ARIA Autonomy</div><div class="k-val" id="kpi-autonomy">â</div><div class="k-delta" id="kpi-autonomy-d">% to fully autonomous</div></div>
-      <div class="kpi"><div class="k-lbl">System Health</div><div class="k-val" id="kpi-health">—</div><div class="k-delta" id="kpi-health-d">optimal</div></div>
+
+  <!-- HERO STATS -->
+  <div class="grid g-stats stagger" id="stat-band">
+    <div class="panel stat">
+      <div class="label">Autonomy <span class="eyebrow" id="auto-target">· target 95%</span></div>
+      <div class="num" id="auto-num">—<span class="unit">%</span></div>
+      <div class="bar"><span id="auto-bar"></span></div>
+      <div class="meta" id="auto-note">Resolved without a human</div>
     </div>
-    <div class="clock">
-      <div class="c-date" id="clock-date">—</div>
-      <div class="c-time" id="clock-time">—</div>
-      <button class="btn" style="margin-top:6px" onclick="logout()">Sign Out</button>
+    <div class="panel stat">
+      <div class="label">Tickets</div>
+      <div class="num" id="tix-open">—</div>
+      <div class="meta">open right now</div>
+      <div class="split">
+        <div class="s res"><div class="v" id="tix-res">—</div><div class="k">Resolved</div></div>
+        <div class="s esc"><div class="v" id="tix-esc">—</div><div class="k">Escalated</div></div>
+        <div class="s"><div class="v" id="tix-logged">—</div><div class="k">Logged</div></div>
+      </div>
+    </div>
+    <div class="panel stat">
+      <div class="label">Knowledge</div>
+      <div class="num" id="bits-num">—</div>
+      <div class="meta"><b id="kb-live">—</b> live KB entries · <span id="queue-depth">—</span> queued</div>
+    </div>
+    <div class="panel stat">
+      <div class="label">Agents</div>
+      <div class="num" id="agents-active">—<span class="unit" id="agents-roster"></span></div>
+      <div class="meta">active now · <span id="agents-born">0</span> evolved this run</div>
     </div>
   </div>
 
-  <!-- ROW 1: Notif | Office | Human Review -->
-  <div class="layout">
-    <div class="panel">
-      <h2>Notification Board <span class="badge" id="notif-badge">0</span></h2>
-      <div id="notif-list"><div class="empty">No notifications</div></div>
-    </div>
-
-    <div class="office">
-      <div class="o-head">
-        <div>Live Agent Office · Inside ARIA Headquarters</div>
-        <div class="o-status">Realtime</div>
-      </div>
-      <svg class="office-svg" viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0c1530"/><stop offset="100%" stop-color="#040814"/></linearGradient>
-          <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a1530"/><stop offset="100%" stop-color="#060c1c"/></linearGradient>
-          <radialGradient id="hglow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#22e1ff" stop-opacity=".8"/><stop offset="60%" stop-color="#22e1ff" stop-opacity=".15"/><stop offset="100%" stop-color="#22e1ff" stop-opacity="0"/></radialGradient>
-          <linearGradient id="desk" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#162242"/><stop offset="100%" stop-color="#0a1228"/></linearGradient>
-          <radialGradient id="screen" cx="50%" cy="50%"><stop offset="0%" stop-color="#22e1ff" stop-opacity=".5"/><stop offset="100%" stop-color="#22e1ff" stop-opacity="0"/></radialGradient>
-          <pattern id="hex" width="40" height="46" patternUnits="userSpaceOnUse">
-            <path d="M0 23 L10 6 L30 6 L40 23 L30 40 L10 40 Z" fill="none" stroke="#1c2a48" stroke-width=".5" opacity=".3"/>
-          </pattern>
-        </defs>
-
-        <rect width="1100" height="520" fill="url(#floor)"/>
-        <rect width="1100" height="240" fill="url(#wall)"/>
-        <rect width="1100" height="520" fill="url(#hex)" opacity=".5"/>
-
-        <!-- horizon glow -->
-        <ellipse cx="550" cy="280" rx="450" ry="40" fill="url(#hglow)" opacity=".4"/>
-
-        <!-- floor grid -->
-        <g stroke="#1c2a48" stroke-width=".5" opacity=".4">
-          <line x1="0" y1="280" x2="1100" y2="280"/>
-          <line x1="0" y1="340" x2="1100" y2="340"/>
-          <line x1="0" y1="400" x2="1100" y2="400"/>
-          <line x1="0" y1="460" x2="1100" y2="460"/>
-          <line x1="200" y1="280" x2="100" y2="520"/>
-          <line x1="400" y1="280" x2="350" y2="520"/>
-          <line x1="600" y1="280" x2="600" y2="520"/>
-          <line x1="800" y1="280" x2="850" y2="520"/>
-          <line x1="1000" y1="280" x2="1100" y2="520"/>
-        </g>
-
-        <!-- central ARIA hologram orb -->
-        <g transform="translate(550,200)" id="aria-orb" style="cursor:pointer">
-          <circle r="60" fill="url(#hglow)" class="orb"/>
-          <circle r="32" fill="none" stroke="#22e1ff" stroke-width="1" opacity=".6"/>
-          <circle r="42" fill="none" stroke="#22e1ff" stroke-width=".5" opacity=".4"/>
-          <circle r="52" fill="none" stroke="#a855f7" stroke-width=".5" opacity=".3"/>
-          <!-- ARIA face silhouette -->
-          <circle r="22" fill="rgba(10,21,48,.7)" stroke="#22e1ff" stroke-width="1.2"/>
-          <g><ellipse rx="22" ry="7" fill="none" stroke="#22e1ff" stroke-width=".6" opacity=".75"/><ellipse rx="22" ry="14" fill="none" stroke="#22e1ff" stroke-width=".4" opacity=".5"/><ellipse rx="7" ry="22" fill="none" stroke="#22e1ff" stroke-width=".6" opacity=".75"/><ellipse rx="14" ry="22" fill="none" stroke="#22e1ff" stroke-width=".4" opacity=".5"/><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/></g>
-          <circle r="22" fill="none" stroke="#a855f7" stroke-width=".6" opacity=".7"><animate attributeName="r" values="22;26;22" dur="2.5s" repeatCount="indefinite"/></circle>
-          <circle cx="0" cy="0" r="3" fill="#22e1ff" opacity=".9"><animate attributeName="opacity" values=".9;.4;.9" dur="2s" repeatCount="indefinite"/></circle>
-          <text y="76" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#22e1ff" letter-spacing="3">ARIA · CORE</text>
-          <text y="90" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#7587a8" letter-spacing="1">orchestrator</text>
-        </g>
-        <g id="aria-stats-overlay" opacity="0" pointer-events="none" font-family="JetBrains Mono,monospace" style="transition:opacity 300ms ease">
-          <text x="550" y="92" text-anchor="middle" font-size="8" fill="#a855f7" letter-spacing="2">AUTONOMY</text>
-          <text x="550" y="112" text-anchor="middle" font-size="20" fill="#fff" font-weight="300" id="aria-overlay-autonomy">â</text>
-          <text x="425" y="195" text-anchor="end" font-size="8" fill="#22e1ff" letter-spacing="2">VELOCITY</text>
-          <text x="425" y="214" text-anchor="end" font-size="14" fill="#fff" id="aria-overlay-velocity">â</text>
-          <text x="675" y="195" text-anchor="start" font-size="8" fill="#10ddb0" letter-spacing="2">HEALTH</text>
-          <text x="675" y="214" text-anchor="start" font-size="14" fill="#fff" id="aria-overlay-health">â</text>
-          <text x="550" y="298" text-anchor="middle" font-size="8" fill="#ffb53d" letter-spacing="2">RESOLVED</text>
-          <text x="550" y="316" text-anchor="middle" font-size="14" fill="#fff" id="aria-overlay-solved">â</text>
-        </g>
-
-        <!-- left side rooms -->
-        <g transform="translate(80,90)">
-          <rect width="140" height="100" fill="rgba(13,22,45,.5)" stroke="#1c2a48" stroke-width="1" rx="3"/>
-          <text x="70" y="20" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#7587a8" letter-spacing="2">MEETING · ROOM</text>
-          <rect x="20" y="35" width="100" height="40" fill="none" stroke="#22e1ff" stroke-width=".5" opacity=".5" rx="2"/>
-          <circle cx="45" cy="55" r="3" fill="#22e1ff" opacity=".8"/>
-          <circle cx="70" cy="55" r="3" fill="#a855f7" opacity=".8"/>
-          <circle cx="95" cy="55" r="3" fill="#10ddb0" opacity=".8"/>
-        </g>
-
-        <!-- right side: server rack -->
-        <g transform="translate(880,90)">
-          <rect width="140" height="100" fill="rgba(13,22,45,.5)" stroke="#1c2a48" stroke-width="1" rx="3"/>
-          <text x="70" y="20" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#7587a8" letter-spacing="2">SERVER · BAY</text>
-          <g transform="translate(20,30)">
-            <rect width="100" height="8" fill="#0a1228" stroke="#1c2a48"/>
-            <circle cx="92" cy="4" r="1.5" fill="#10ddb0" class="seat-active"/>
-            <rect y="12" width="100" height="8" fill="#0a1228" stroke="#1c2a48"/>
-            <circle cx="92" cy="16" r="1.5" fill="#22e1ff" class="seat-active"/>
-            <rect y="24" width="100" height="8" fill="#0a1228" stroke="#1c2a48"/>
-            <circle cx="92" cy="28" r="1.5" fill="#a855f7"/>
-            <rect y="36" width="100" height="8" fill="#0a1228" stroke="#1c2a48"/>
-            <circle cx="92" cy="40" r="1.5" fill="#ffb53d" class="seat-active"/>
-            <rect y="48" width="100" height="8" fill="#0a1228" stroke="#1c2a48"/>
-            <circle cx="92" cy="52" r="1.5" fill="#10ddb0"/>
-          </g>
-        </g>
-
-        <!-- floating data particles -->
-        <g opacity=".5">
-          <circle cx="200" cy="150" r="1" fill="#22e1ff" class="seat-active"/>
-          <circle cx="320" cy="120" r="1" fill="#a855f7" class="seat-active" style="animation-delay:.4s"/>
-          <circle cx="850" cy="180" r="1" fill="#22e1ff" class="seat-active" style="animation-delay:.8s"/>
-          <circle cx="780" cy="130" r="1" fill="#10ddb0" class="seat-active" style="animation-delay:.2s"/>
-          <circle cx="450" cy="160" r="1" fill="#a855f7" class="seat-active" style="animation-delay:1s"/>
-          <circle cx="680" cy="140" r="1" fill="#22e1ff" class="seat-active" style="animation-delay:.6s"/>
-        </g>
-
-        <g class="walker w1" transform="translate(280,490)"><ellipse cx="0" cy="-2" rx="5" ry="6" fill="#243a52" stroke="#22e1ff" stroke-width=".8"/><circle cx="0" cy="-3" r="2" fill="#22e1ff" opacity=".8"/><path d="M-6 4 Q-6 -2 0 -2 Q6 -2 6 4 L6 10 L-6 10 Z" fill="#162242" stroke="#22e1ff" stroke-width=".5"/></g>
-        <g class="walker w2" transform="translate(820,500)"><ellipse cx="0" cy="-2" rx="5" ry="6" fill="#243a52" stroke="#a855f7" stroke-width=".8"/><circle cx="0" cy="-3" r="2" fill="#a855f7" opacity=".8"/><path d="M-6 4 Q-6 -2 0 -2 Q6 -2 6 4 L6 10 L-6 10 Z" fill="#162242" stroke="#a855f7" stroke-width=".5"/></g>
-        <g class="walker w3" transform="translate(540,510)"><ellipse cx="0" cy="-2" rx="5" ry="6" fill="#243a52" stroke="#10ddb0" stroke-width=".8"/><circle cx="0" cy="-3" r="2" fill="#10ddb0" opacity=".8"/><path d="M-6 4 Q-6 -2 0 -2 Q6 -2 6 4 L6 10 L-6 10 Z" fill="#162242" stroke="#10ddb0" stroke-width=".5"/></g>
-        <!-- AGENTS ROW (front workstations) -->
-        <g id="agent-stations"></g>
-      </svg>
-      <div class="o-graffiti" id="graffiti"></div>
-    </div>
-
-    <div class="panel">
-      <h2>Human Review Board <span class="badge mute" id="review-badge">0</span></h2>
-      <div id="review-list"><div class="empty">No items pending</div></div>
-    </div>
-  </div>
-
-  <!-- ROW 2: History | Workload+Thinking | Audit+Report -->
-  <div class="layout">
-    <div class="panel">
-      <h2>History Board · Caveman Log</h2>
-      <div id="history-list"><div class="empty">No events yet</div></div>
-    </div>
-
-    <div class="panel">
-      <h2>Agent Workload Threshold <span class="badge mute" id="wl-badge">spawn @ 80%</span></h2>
-      <div id="workload-list"></div>
-    </div>
-
-    <div class="panel">
-      <h2>Audit Agent <span class="badge green">running</span></h2>
-      <div id="audit-list">
-        <div class="wl-row" style="grid-template-columns:1fr auto"><div class="wl-name">Security Check</div><div class="wl-pct" id="aud-sec">98%</div></div>
-        <div class="wl-row" style="grid-template-columns:1fr auto"><div class="wl-name">Data Integrity</div><div class="wl-pct" id="aud-data">99%</div></div>
-        <div class="wl-row" style="grid-template-columns:1fr auto"><div class="wl-name">Performance</div><div class="wl-pct" id="aud-perf">97%</div></div>
-        <div class="wl-row" style="grid-template-columns:1fr auto"><div class="wl-name">Agent Compliance</div><div class="wl-pct" id="aud-comp">100%</div></div>
-        <div class="wl-row" style="grid-template-columns:1fr auto"><div class="wl-name">Task Accuracy</div><div class="wl-pct" id="aud-acc">98%</div></div>
-        <div class="wl-row" style="grid-template-columns:1fr auto;border-top:1px solid var(--brd);margin-top:8px;padding-top:8px"><div class="wl-name" style="color:var(--cy)">Overall Score</div><div class="wl-pct" id="aud-overall" style="font-size:14px">98%</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ROW 3: Complaints | Thinking+Comms | Tickets+Report -->
-  <div class="layout-mid">
-    <div class="panel">
-      <h2>Complaint Board <button class="btn" style="padding:3px 8px" onclick="submitComplaint()">+ Submit</button></h2>
-      <div id="complaint-list"></div>
-    </div>
-
-    <div class="panel" style="min-height:400px">
-      <h2>Live Agent Communications · BIT Stream</h2>
-      <div class="think" style="margin-bottom:10px">
-        <div class="th-task">Agent Thinking Preview <span class="th-task-val" id="think-current">Idle · awaiting input</span></div>
-        <div class="th-list" id="think-process">
-          <div><b>›</b> Monitoring escalation queue</div>
-          <div><b>›</b> Indexing knowledge base</div>
-          <div><b>›</b> Standing by for tickets</div>
+  <!-- AGENT MESH (shared topology with Aperture) -->
+  <div class="panel mesh-wrap" style="animation-delay:.1s">
+    <div class="mesh-bar">
+      <div class="lead"><span class="dot"></span>
+        <div>
+          <div style="font-size:13px;font-weight:600">Agent Mesh · live topology</div>
+          <div class="eyebrow" style="margin-top:3px">Same web rendered on Aperture · shared event bus</div>
         </div>
       </div>
-      <div class="comms" id="comms-feed"><div class="empty">Awaiting agent activity...</div></div>
-      <div class="bit-input">
-        <input type="text" id="bit-input" placeholder="@agent type message..." onkeydown="if(event.key==='Enter')postBit()">
-        <button onclick="postBit()">SEND</button>
-      </div>
+      <a class="ghost-btn" href="/aperture" target="_blank" rel="noopener">Open in Aperture ↗</a>
     </div>
+    <div data-aria-mesh-web data-accent="#22e1ff"></div>
+  </div>
 
-    <div class="panel">
-      <h2>Tickets Logged by ARIA <span class="badge mute" id="tkt-badge">0 open</span></h2>
-      <div id="tkt-list"><div class="empty">No tickets logged</div></div>
+  <!-- OPERATIONS -->
+  <div class="grid g-ops">
+    <div class="panel" style="animation-delay:.06s">
+      <div class="panel-h"><h2>Live tickets</h2><span class="chip" id="tkt-chip">—</span></div>
+      <div class="rows" id="tkt-list"><div class="empty">No tickets logged</div></div>
+    </div>
+    <div class="panel" style="animation-delay:.12s">
+      <div class="panel-h"><h2>SLA performance</h2><span class="chip" id="sla-chip">—</span></div>
+      <div class="kv"><span class="k">First-contact resolution</span><span class="v ok" id="sla-fcr">—</span></div>
+      <div class="kv"><span class="k">Avg response time</span><span class="v" id="sla-resp">—</span></div>
+      <div class="kv"><span class="k">Avg resolution (escalated)</span><span class="v" id="sla-rest">—</span></div>
+      <div class="kv"><span class="k">Target · respond ≤1h, resolve ≤2bd</span><span class="v ok" id="sla-state">—</span></div>
+    </div>
+    <div class="panel" style="animation-delay:.18s">
+      <div class="panel-h"><h2>Agents working</h2><span class="chip accent" id="active-chip">0 active</span></div>
+      <div class="rows" id="active-list"><div class="empty">No agent activity in last 3 min</div></div>
     </div>
   </div>
 
-  <!-- ROW 4: Report -->
-  <div class="layout-mid">
-    <div class="panel">
-      <h2>Report Agent <span class="badge green">scheduled</span></h2>
-      <div style="font-size:11px;color:var(--dim);line-height:1.6">
-        <div style="margin-bottom:10px">Daily report sent <b style="color:#fff">tomorrow 8:00 AM</b></div>
-        <div style="margin-bottom:6px;font-family:var(--mono);font-size:10px;color:var(--mut);letter-spacing:1px">REPORT CONTENT</div>
-        <div>✓ All Tickets</div>
-        <div>✓ Human Review Items</div>
-        <div>✓ High Impact Issues</div>
-        <div>✓ Agent Workload</div>
-        <div>✓ System Performance</div>
-        <button class="btn" style="margin-top:12px;width:100%;padding:8px" onclick="sendReportNow()">SEND NOW</button>
+  <!-- INTELLIGENCE -->
+  <div class="grid g-intel">
+    <div class="panel" style="animation-delay:.06s">
+      <div class="panel-h"><h2>Learning loop</h2><span class="chip ok" id="loop-chip">running</span></div>
+      <div class="tiles">
+        <div class="tile"><div class="v" id="loop-bits">—</div><div class="k">Bits learned</div></div>
+        <div class="tile"><div class="v" id="loop-kb">—</div><div class="k">Live KBs</div></div>
+        <div class="tile"><div class="v" id="loop-queue">—</div><div class="k">In queue</div></div>
+      </div>
+      <div class="eyebrow" style="margin-bottom:8px">Currently studying</div>
+      <div class="rows" id="loop-now"><div class="empty">Idle · awaiting topics</div></div>
+      <div class="eyebrow" style="margin:16px 0 8px">Agent roster</div>
+      <div class="roster" id="roster"><div class="empty">—</div></div>
+    </div>
+
+    <div class="panel" style="animation-delay:.12s">
+      <div class="panel-h"><h2>Live agent comms</h2><span class="hint">BIT stream</span></div>
+      <div class="comms" id="comms"><div class="empty">Awaiting agent activity…</div></div>
+      <div class="composer">
+        <input id="composer-in" type="text" placeholder="@agent message…" onkeydown="if(event.key==='Enter')postBit()">
+        <button onclick="postBit()">Send</button>
       </div>
     </div>
 
-    <div class="panel">
-      <h2>ARIA Success Rate</h2>
-      <div class="gauge"><div class="num" id="success-num">—</div><div class="lbl">Bits / day (24h)</div><div class="delta" id="success-delta">+0 vs yesterday</div></div>
-      <div style="margin-top:14px">
-        <div class="wl-row" style="grid-template-columns:1fr auto"><div class="wl-name" style="font-size:11px">Autonomy</div><div class="wl-pct" id="rs-autonomy">—</div></div>
-        <div class="wl-row" style="grid-template-columns:1fr auto"><div class="wl-name" style="font-size:11px">Resolution Rate</div><div class="wl-pct" id="rs-resolution">—</div></div>
-        <div class="wl-row" style="grid-template-columns:1fr auto"><div class="wl-name" style="font-size:11px">Health</div><div class="wl-pct" id="rs-health">—</div></div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>System Health</h2>
-      <div class="gauge"><div class="num" id="health-num">—</div><div class="lbl">% concern-free</div></div>
-      <svg viewBox="0 0 280 60" style="width:100%;margin-top:8px">
-        <polyline id="health-spark" fill="none" stroke="#22e1ff" stroke-width="1.5" points="0,30 30,28 60,32 90,25 120,28 150,22 180,25 210,18 240,20 280,15"/>
-        <polyline fill="none" stroke="rgba(34,225,255,.3)" stroke-width=".5" stroke-dasharray="2,3" points="0,30 280,30"/>
+    <div class="panel" style="animation-delay:.18s">
+      <div class="panel-h"><h2>System health</h2><span class="chip ok" id="health-chip">—</span></div>
+      <div class="num" id="health-num" style="font-size:38px;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums">—<span class="unit" style="font-size:18px;color:var(--txt-2)">%</span></div>
+      <div class="meta" style="font-family:var(--mono);font-size:11px;color:var(--txt-2);margin-top:9px">concern-free operation</div>
+      <svg class="spark" viewBox="0 0 280 54" preserveAspectRatio="none">
+        <polyline fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1" stroke-dasharray="2 4" points="0,27 280,27"/>
+        <polyline id="spark" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points=""/>
       </svg>
+      <div class="eyebrow" style="margin:16px 0 8px">Recent activity</div>
+      <div class="rows" id="timeline"><div class="empty">No events yet</div></div>
+      <button class="ghost-btn" style="width:100%;margin-top:14px" onclick="sendReportNow()">Send operations report now</button>
     </div>
   </div>
 
-  <!-- EXTERIOR THUMBNAILS -->
-  <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:2.5px;color:var(--cy);text-transform:uppercase;margin:24px 0 10px">ARIA Headquarters · Exterior Views</h2>
-  <div class="exteriors" id="exteriors"></div>
-
-  <!-- FOOTER -->
   <div class="footer">
-    <div class="f-cell">Invisible Shield: <b>ACTIVE</b></div>
-    <div class="f-cell">Security Status: <b>MAXIMUM</b></div>
-    <div class="f-cell">Protection Level: <b>99.99%</b></div>
+    <span>ARIA Command Center · IIS · <span id="build-id">v2</span></span>
+    <span><a href="/aperture" target="_blank" rel="noopener">Aperture</a> · <a href="https://iisupp.net" target="_blank" rel="noopener">iisupp.net</a> · refresh 4s</span>
   </div>
+</div>
 
-  <!-- CINEMATIC OVERLAY -->
-  <div id="cinema">
-    <div class="c-txt">
-      <div class="c-title">ARIA HQ · Exterior Cinematic Mode</div>
-      <div class="c-sub" id="cinema-sub">Aerial Approach · Energy Shield Active</div>
-    </div>
-    <button class="c-close" onclick="hideCinema()">EXIT [ESC]</button>
-    <svg id="cinema-svg" viewBox="0 0 1400 700" preserveAspectRatio="xMidYMid meet"></svg>
-  </div>
-
+<!-- modal -->
+<div id="modal-bg" onclick="if(event.target.id==='modal-bg')closeModal()">
+  <div id="modal"><button class="x" onclick="closeModal()">&times;</button><h3 id="modal-title">Ticket</h3><div id="modal-body"></div></div>
 </div>
 
 <script>
-let TOKEN=localStorage.getItem('aperture_jwt')||'';
-let POLL=null;
-let CINEMA_TIMER=null;
-let LAST_WORKLOAD={};
-let AGENT_COUNTER={};
-let GRAFFITI_COOLDOWN=0;
-let HEALTH_HISTORY=[];
+/* ============================================================================
+   Live wiring — unchanged data contract:
+   - aperture-auth (login)              token key: aperture_jwt
+   - aria-learning-status (Bearer)      real ARIA telemetry
+   - aria-escalation?action=tickets|chatlog|ticket|chatpost
+   - aperture-email-report (POST)
+   ============================================================================ */
+let TOKEN = localStorage.getItem('aperture_jwt') || '';
+let POLL = null;
+const HEALTH_HIST = [];
 
-const AGENT_DEFS={
-  ARIA:{n:'ARIA',role:'Orchestrator',color:'#22e1ff',x:550,y:430,desc:'core brain'},
-  research_1:{n:'Research Agent #1',role:'Strict Matcher',color:'#3b82f6',x:200,y:380,desc:'R1 · strict'},
-  research_2:{n:'Research Agent #2',role:'Fuzzy Matcher',color:'#a855f7',x:340,y:430,desc:'R2 · fuzzy'},
-  research_3:{n:'Research Agent #3',role:'Vendor Live-Fetch',color:'#10ddb0',x:760,y:430,desc:'R3 · vendor'},
-  security:{n:'Security Agent',role:'Threat Monitor',color:'#ff4d6b',x:150,y:460,desc:'security'},
-  audit:{n:'Audit Agent',role:'Integrity Check',color:'#ffb53d',x:450,y:460,desc:'audit'},
-  automation:{n:'Automation Agent',role:'Workflow Engine',color:'#22e1ff',x:680,y:460,desc:'automation'},
-  human_review:{n:'Human Review Agent',role:'Escalation Liaison',color:'#a855f7',x:900,y:460,desc:'human review'},
-  complaint:{n:'Complaint Handler',role:'Feedback Triage',color:'#10ddb0',x:1000,y:430,desc:'complaints'}
+const AGENT_LABELS = {
+  l1:'L1 Helpdesk', l2:'L2 Support', l3:'L3 Engineer', security:'Security', networking:'Network',
+  hardware:'Hardware', software:'Software', saas:'SaaS', m365:'M365', automation:'Automation',
+  ai_eng:'AI Eng', prompt_eng:'Prompt Eng', business_ops:'Business Ops', audit:'Audit',
+  revenue_opp:'Revenue', ux:'UX', kb:'Knowledge', memory:'Memory', rca:'RCA', escalation:'Escalation',
+  R1:'Research #1', R2:'Research #2', R3:'Research #3', ARIA:'ARIA', 'research-pool':'Research Pool',
+  user:'User', 'support-team':'Support', operator:'Operator', system:'System', 'all-agents':'All agents'
+};
+const KIND_META = {
+  escalation:{label:'Escalation raised', dot:'crit'},
+  'no-solution':{label:'Awaiting human review', dot:'high'},
+  resolved:{label:'Ticket resolved', dot:'ok'},
+  solution:{label:'Solution found', dot:'norm'},
+  spawn:{label:'Agent spawned', dot:'norm'},
+  nudge:{label:'Operator nudge', dot:'low'},
+  msg:{label:'Agent message', dot:'low'}
 };
 
-const AGENT_LABELS={
-  l1:'L1 Helpdesk',l2:'L2 Support',l3:'L3 Engineer',
-  security:'Security',networking:'Network',hardware:'Hardware',
-  software:'Software',saas:'SaaS',m365:'M365',
-  automation:'Automation',ai_eng:'AI Eng',prompt_eng:'Prompt Eng',
-  business_ops:'Business Ops',audit:'Audit',revenue_opp:'Revenue',
-  ux:'UX',kb:'Knowledge',memory:'Memory',rca:'RCA',escalation:'Escalation',
-  R1:'Research #1',R2:'Research #2',R3:'Research #3',
-  ARIA:'ARIA','research-pool':'Research Pool',user:'User','support-team':'Support'
-};
+if (TOKEN) showApp();
 
-const CAVEMAN={
-  escalation:['ARIA SEND ROCK TO HUNTER. HUNTER LOOK.','NEW PROBLEM. ARIA YELL. RESEARCH HEAR.','BIG ISSUE. THREE HUNTER GO.'],
-  start:['HUNTER GO LOOK IN BUSH. SEARCH.','RESEARCH SNIFF GROUND. FIND TRAIL.','EYES OPEN. EARS WIDE. HUNT.'],
-  solution:['HUNTER FIND FIX. MUCH SMART.','ANSWER GROW IN BRAIN. GOOD.','SOLUTION FOUND. FIRE WARM.'],
-  halt:['OTHER HUNTER STOP. ONE WIN.','REST HUNTER. CHIEF SPEAK.','ALL GO HOME. WIN TIME.'],
-  resolved:['TRIBE HAPPY. EMAIL FLY OUT.','PROBLEM DEAD. USER SMILE.','FIRE OUT. GOOD DAY.'],
-  'no-solution':['HUNTER LOST. CALL HUMAN. HUMAN HELP.','BRAIN SMALL TODAY. NEED BIG BRAIN.','NO TRACK. WAIT HUMAN.']
-};
-
-if(TOKEN) showApp();
-
+/* ── auth ─────────────────────────────────────────────────────────── */
 function doLogin(){
-  const u=v('user'),p=v('pass');
-  el('login-err').textContent='';
-  fetch('/.netlify/functions/aperture-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:u,password:p})})
-    .then(r=>r.json()).then(j=>{
-      if(j.token){TOKEN=j.token;localStorage.setItem('aperture_jwt',TOKEN);showApp();}
-      else el('login-err').textContent=j.error||'Authentication failed';
-    }).catch(()=>{el('login-err').textContent='Network error';});
+  const u = val('user'), p = val('pass');
+  $('login-err').textContent = '';
+  fetch('/.netlify/functions/aperture-auth', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ email:u, password:p })
+  }).then(r=>r.json()).then(j=>{
+    if (j.token){ TOKEN=j.token; localStorage.setItem('aperture_jwt',TOKEN); showApp(); }
+    else $('login-err').textContent = j.error || 'Authentication failed';
+  }).catch(()=>{ $('login-err').textContent='Network error'; });
 }
 function logout(){
-  TOKEN='';localStorage.removeItem('aperture_jwt');
-  if(POLL)clearInterval(POLL);
-  if(CINEMA_TIMER)clearInterval(CINEMA_TIMER);
-  el('app').style.display='none';el('login').style.display='flex';
+  TOKEN=''; localStorage.removeItem('aperture_jwt');
+  if (POLL) clearInterval(POLL);
+  $('app').style.display='none'; $('login').style.display='flex';
 }
 function showApp(){
-  el('login').style.display='none';el('app').style.display='block';
-  initStations();initExteriors();updateClock();setInterval(updateClock,1000);
-  loadAll();POLL=setInterval(loadAll,4000);
-  setTimeout(function(){const _o=document.getElementById('aria-orb');const _ov=document.getElementById('aria-stats-overlay');if(_o&&_ov){_o.addEventListener('mouseenter',function(){_ov.setAttribute('opacity','1');});_o.addEventListener('mouseleave',function(){_ov.setAttribute('opacity','0');});}},800);
-  CINEMA_TIMER=setInterval(()=>{if(!document.hidden)showCinema();},120000);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')hideCinema();});
+  $('login').style.display='none'; $('app').style.display='block';
+  tickClock(); setInterval(tickClock,1000);
+  loadAll(); POLL=setInterval(loadAll,4000);
 }
-function updateClock(){
+function tickClock(){
   const d=new Date();
-  el('clock-date').textContent=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
-  el('clock-time').textContent=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  $('clock').textContent = d.toLocaleDateString('en-US',{month:'short',day:'numeric'}).toUpperCase()
+    +'  '+ d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
 }
 
-function initStations(){
-  const g=document.getElementById('agent-stations');
-  let h='';
-  Object.entries(AGENT_DEFS).forEach(([k,a])=>{
-    if(k==='ARIA')return;
-    h+=`<g id="seat-${k}" transform="translate(${a.x},${a.y})">
-      <rect x="-32" y="0" width="64" height="32" rx="2" fill="url(#desk)" stroke="${a.color}" stroke-width=".5" opacity=".8"/>
-      <rect x="-22" y="-18" width="44" height="18" rx="1.5" fill="#0a1228" stroke="${a.color}" stroke-width=".7"/>
-      <circle cx="0" cy="-9" r="4" fill="url(#screen)" class="seat-typing"/>
-      <line x1="-18" y1="-12" x2="-8" y2="-12" stroke="${a.color}" stroke-width=".4" opacity=".6"/>
-      <line x1="-18" y1="-8" x2="-12" y2="-8" stroke="${a.color}" stroke-width=".4" opacity=".5"/>
-      <line x1="-18" y1="-4" x2="-10" y2="-4" stroke="${a.color}" stroke-width=".4" opacity=".4"/>
-      <!-- avatar -->
-      <g transform="translate(0,-32)">
-        <ellipse cx="0" cy="-2" rx="6" ry="7" fill="#243a52" stroke="${a.color}" stroke-width="1" class="seat-active"/>
-        <circle cx="0" cy="-3" r="2.5" fill="${a.color}" opacity=".7"/>
-        <path d="M-7 4 Q-7 -2 0 -2 Q7 -2 7 4 L7 10 L-7 10 Z" fill="#162242" stroke="${a.color}" stroke-width=".7"/>
-      </g>
-      <text x="0" y="48" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="${a.color}" letter-spacing="1">${a.n.toUpperCase()}</text>
-      <text x="0" y="58" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="6.5" fill="#7587a8">${a.desc}</text>
-    </g>`;
-  });
-  g.innerHTML=h;
-}
-
-function initExteriors(){
-  const views=[
-    {l:'Aerial Top View',s:'Drone · 1200ft',sky:'#0c1a3a',mt:'#0a0f24'},
-    {l:'Left Angle · Sunset',s:'Golden Hour',sky:'#3a1f5a',mt:'#1a0c30'},
-    {l:'Right Angle · Night',s:'02:14 Local',sky:'#040818',mt:'#0a1228'},
-    {l:'Front Approach',s:'Main Gate',sky:'#0a1a3a',mt:'#060e22'},
-    {l:'Energy Shield · Active',s:'Field Visible',sky:'#1a0c3a',mt:'#0c0820'}
-  ];
-  const c=el('exteriors');
-  c.innerHTML=views.map((v,i)=>`<div class="ext-card" onclick="showCinema(${i})">
-    <svg class="ext-svg" viewBox="0 0 240 160" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="sky${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${v.sky}"/><stop offset="100%" stop-color="#040611"/></linearGradient>
-        <radialGradient id="shield${i}" cx="50%" cy="80%"><stop offset="0%" stop-color="#22e1ff" stop-opacity=".3"/><stop offset="80%" stop-color="#22e1ff" stop-opacity=".05"/><stop offset="100%" stop-color="#22e1ff" stop-opacity="0"/></radialGradient>
-      </defs>
-      <rect width="240" height="160" fill="url(#sky${i})"/>
-      ${i===0?`<polygon points="0,80 240,80 240,160 0,160" fill="${v.mt}" opacity=".7"/>`:`<polygon points="0,110 60,80 100,95 150,70 200,90 240,75 240,160 0,160" fill="${v.mt}" opacity=".8"/>`}
-      <ellipse cx="120" cy="130" rx="100" ry="30" fill="url(#shield${i})"/>
-      <!-- HQ building -->
-      ${i===0?
-        `<g transform="translate(120,100)"><circle r="40" fill="none" stroke="#22e1ff" stroke-width=".5" opacity=".5"/><circle r="30" fill="#0a1530" stroke="#22e1ff" stroke-width="1"/><circle r="20" fill="#162242" stroke="#a855f7" stroke-width=".7"/><circle r="8" fill="#22e1ff" opacity=".6"/><line x1="-30" y1="0" x2="30" y2="0" stroke="#22e1ff" stroke-width=".3"/><line x1="0" y1="-30" x2="0" y2="30" stroke="#22e1ff" stroke-width=".3"/></g>`
-        :
-        `<g transform="translate(120,135)"><path d="M-50 0 L-30 -50 L0 -55 L30 -50 L50 0 Z" fill="#0a1530" stroke="#22e1ff" stroke-width="1"/><path d="M-30 -50 L-30 -25 L30 -25 L30 -50" fill="none" stroke="#22e1ff" stroke-width=".5"/><rect x="-8" y="-50" width="16" height="50" fill="#162242" stroke="#a855f7"/><circle cx="0" cy="-30" r="3" fill="#22e1ff" opacity=".8"/><line x1="-50" y1="0" x2="50" y2="0" stroke="#a855f7" stroke-width=".5"/><circle cx="-25" cy="-15" r="1" fill="#22e1ff"/><circle cx="25" cy="-15" r="1" fill="#22e1ff"/><circle cx="0" cy="-45" r="1" fill="#10ddb0"/></g>`
-      }
-      <!-- shield dome -->
-      <path d="M20 130 Q120 30 220 130" fill="none" stroke="#22e1ff" stroke-width=".7" opacity=".4"/>
-      <path d="M30 130 Q120 50 210 130" fill="none" stroke="#a855f7" stroke-width=".4" opacity=".3"/>
-      <!-- drones -->
-      <circle cx="60" cy="50" r="1.5" fill="#22e1ff" opacity=".9"><animate attributeName="cx" from="60" to="180" dur="8s" repeatCount="indefinite"/></circle>
-      <circle cx="180" cy="40" r="1.5" fill="#a855f7" opacity=".9"><animate attributeName="cx" from="180" to="60" dur="10s" repeatCount="indefinite"/></circle>
-      <!-- stars -->
-      <circle cx="40" cy="20" r=".7" fill="#fff" opacity=".7"/>
-      <circle cx="80" cy="30" r=".5" fill="#fff" opacity=".5"/>
-      <circle cx="160" cy="15" r=".7" fill="#fff" opacity=".7"/>
-      <circle cx="200" cy="35" r=".5" fill="#fff" opacity=".6"/>
-    </svg>
-    <div class="ext-lbl">${v.l}</div>
-    <div class="ext-sub">${v.s}</div>
-  </div>`).join('');
-}
-
-function showCinema(viewIdx){
-  el('cinema').classList.add('show');
-  const subs=['Aerial Top View · Drone 1200ft','Left Approach · Sunset','Right Angle · Night Cycle','Front Gate · Main Approach','Energy Shield Visualization'];
-  el('cinema-sub').textContent=subs[viewIdx||0]||subs[0];
-  el('cinema-svg').innerHTML=renderCinemaScene(viewIdx||0);
-  setTimeout(()=>{if(viewIdx===undefined)hideCinema();},20000);
-}
-function hideCinema(){el('cinema').classList.remove('show');}
-
-function renderCinemaScene(i){
-  return `<defs>
-    <linearGradient id="csky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a0c3a"/><stop offset="50%" stop-color="#040818"/><stop offset="100%" stop-color="#040611"/></linearGradient>
-    <radialGradient id="cmoon" cx="80%" cy="20%"><stop offset="0%" stop-color="#22e1ff" stop-opacity=".6"/><stop offset="100%" stop-color="#22e1ff" stop-opacity="0"/></radialGradient>
-    <radialGradient id="cshield" cx="50%" cy="80%"><stop offset="0%" stop-color="#22e1ff" stop-opacity=".4"/><stop offset="60%" stop-color="#22e1ff" stop-opacity=".1"/><stop offset="100%" stop-color="#22e1ff" stop-opacity="0"/></radialGradient>
-  </defs>
-  <rect width="1400" height="700" fill="url(#csky)"/>
-  <!-- stars -->
-  ${Array.from({length:80}).map(()=>`<circle cx="${Math.random()*1400}" cy="${Math.random()*300}" r="${Math.random()*1.2+.3}" fill="#fff" opacity="${Math.random()*.7+.3}"><animate attributeName="opacity" values=".3;1;.3" dur="${2+Math.random()*3}s" repeatCount="indefinite"/></circle>`).join('')}
-  <!-- moon -->
-  <circle cx="1120" cy="120" r="60" fill="url(#cmoon)"/>
-  <circle cx="1120" cy="120" r="40" fill="#0a1230" stroke="#22e1ff" stroke-width="1.5" opacity=".8"/>
-  <!-- mountains far -->
-  <polygon points="0,500 200,380 400,440 600,360 800,420 1000,370 1200,420 1400,390 1400,700 0,700" fill="#080d20" opacity=".7"/>
-  <!-- mountains near -->
-  <polygon points="0,560 100,500 280,540 450,470 650,510 850,460 1050,520 1250,490 1400,540 1400,700 0,700" fill="#0a1530" opacity=".9"/>
-  <!-- river -->
-  <path d="M0 620 Q300 600 600 640 T1400 620 L1400 700 L0 700 Z" fill="#0c1932"/>
-  <path d="M0 620 Q300 600 600 640 T1400 620" fill="none" stroke="#22e1ff" stroke-width="1" opacity=".5"/>
-  <!-- shield dome -->
-  <ellipse cx="700" cy="560" rx="450" ry="40" fill="url(#cshield)"/>
-  <path d="M250 560 Q700 200 1150 560" fill="none" stroke="#22e1ff" stroke-width="1.2" opacity=".5"/>
-  <path d="M280 560 Q700 260 1120 560" fill="none" stroke="#a855f7" stroke-width=".8" opacity=".4"/>
-  <path d="M310 560 Q700 320 1090 560" fill="none" stroke="#22e1ff" stroke-width=".4" opacity=".3"/>
-  <!-- HQ MAIN BUILDING -->
-  <g transform="translate(700,560)">
-    <!-- ground -->
-    <ellipse cx="0" cy="0" rx="300" ry="20" fill="#0a1228" stroke="#22e1ff" stroke-width=".7" opacity=".5"/>
-    <!-- main mass -->
-    <path d="M-220 0 L-180 -180 L-100 -240 L0 -260 L100 -240 L180 -180 L220 0 Z" fill="#0a1530" stroke="#22e1ff" stroke-width="1.5"/>
-    <!-- rings -->
-    <path d="M-200 -30 L-160 -160 L160 -160 L200 -30" fill="none" stroke="#a855f7" stroke-width=".8" opacity=".7"/>
-    <path d="M-180 -90 L-150 -180 L150 -180 L180 -90" fill="none" stroke="#22e1ff" stroke-width=".6" opacity=".6"/>
-    <!-- central tower -->
-    <rect x="-30" y="-260" width="60" height="260" fill="#162242" stroke="#22e1ff" stroke-width="1"/>
-    <rect x="-22" y="-250" width="44" height="6" fill="#22e1ff" opacity=".8"/>
-    <rect x="-22" y="-235" width="44" height="6" fill="#a855f7" opacity=".6"/>
-    <rect x="-22" y="-220" width="44" height="6" fill="#22e1ff" opacity=".7"/>
-    <rect x="-22" y="-200" width="44" height="4" fill="#10ddb0" opacity=".5"/>
-    <rect x="-22" y="-150" width="44" height="4" fill="#22e1ff" opacity=".6"/>
-    <rect x="-22" y="-100" width="44" height="4" fill="#a855f7" opacity=".5"/>
-    <!-- top beacon -->
-    <circle cx="0" cy="-275" r="6" fill="#22e1ff"><animate attributeName="opacity" values=".4;1;.4" dur="2s" repeatCount="indefinite"/></circle>
-    <line x1="0" y1="-280" x2="0" y2="-340" stroke="#22e1ff" stroke-width=".5" opacity=".4"/>
-    <!-- side windows lit -->
-    ${Array.from({length:30}).map((_,k)=>{const x=(Math.random()*360)-180;const y=(Math.random()*-180)-20;return `<rect x="${x}" y="${y}" width="3" height="2" fill="#22e1ff" opacity="${Math.random()*.7+.3}"/>`;}).join('')}
-    <!-- glow rings around base -->
-    <ellipse cx="0" cy="0" rx="280" ry="14" fill="none" stroke="#22e1ff" stroke-width=".5" opacity=".4"><animate attributeName="rx" values="280;320;280" dur="4s" repeatCount="indefinite"/></ellipse>
-    <ellipse cx="0" cy="0" rx="240" ry="12" fill="none" stroke="#a855f7" stroke-width=".4" opacity=".3"><animate attributeName="rx" values="240;280;240" dur="3s" repeatCount="indefinite"/></ellipse>
-  </g>
-  <!-- drones -->
-  <g><circle r="3" fill="#22e1ff" opacity=".9"><animateMotion path="M-30 250 Q700 100 1430 250" dur="14s" repeatCount="indefinite"/></circle><circle r="3" fill="#a855f7" opacity=".9"><animateMotion path="M1430 220 Q700 180 -30 220" dur="18s" repeatCount="indefinite"/></circle></g>
-  <!-- trees silhouette -->
-  ${Array.from({length:12}).map((_,k)=>{const x=k*120+30;return `<path d="M${x} 590 L${x-8} 560 L${x-3} 560 L${x-3} 555 L${x+3} 555 L${x+3} 560 L${x+8} 560 Z" fill="#040818"/>`;}).join('')}
-  <!-- title overlay (HUD) -->
-  <g transform="translate(50,650)" font-family="JetBrains Mono,monospace" fill="#22e1ff" opacity=".7">
-    <text font-size="11" letter-spacing="3">CLASSIFIED · ARIA HQ · 47.8° N 122.3° W</text>
-    <text x="0" y="14" font-size="9" letter-spacing="2" fill="#7587a8">ENERGY SHIELD ACTIVE · 99.99% PROTECTION · DRONE PERIMETER ENGAGED</text>
-  </g>`;
-}
-
+/* ── data load ───────────────────────────────────────────────────── */
 async function loadAll(){
-  const headers={'Authorization':'Bearer '+TOKEN};
-  try{
-    const [sR,tR,cR]=await Promise.all([
+  const headers = { 'Authorization':'Bearer '+TOKEN };
+  let ok = true;
+  try {
+    const [sR,tR,cR] = await Promise.all([
       fetch('/.netlify/functions/aria-learning-status',{headers}),
       fetch('/.netlify/functions/aria-escalation?action=tickets'),
       fetch('/.netlify/functions/aria-escalation?action=chatlog')
     ]);
-    if(sR.status===401){logout();return;}
-    const status=await sR.json().catch(()=>({}));
-    const tickets=await tR.json().catch(()=>({tickets:[]}));
-    const chat=await cR.json().catch(()=>({messages:[]}));
-    renderKPIs(status,tickets,chat);
-    renderWorkload(status);
-    renderTickets(tickets.tickets||[]);
-    renderComms(chat.messages||[]);
-    renderHistory(chat.messages||[]);
-    renderNotif(chat.messages||[],tickets.tickets||[]);
-    renderReview(tickets.tickets||[]);
-    renderComplaints();
-    renderHealthSpark(status);
-    checkAutoSpawn(status);
-  }catch(e){console.warn('loadAll',e);}
+    if (sR.status === 401){ logout(); return; }
+    const status  = await sR.json().catch(()=>({}));
+    const tickets = (await tR.json().catch(()=>({}))).tickets || [];
+    const msgs    = (await cR.json().catch(()=>({}))).messages || [];
+    renderStats(status, tickets);
+    renderLearning(status);
+    renderTickets(tickets);
+    renderSLA(tickets);
+    renderActive(msgs);
+    renderComms(msgs);
+    renderTimeline(msgs);
+    renderHealth(tickets);
+  } catch(e){ ok=false; }
+  setConn(ok);
+}
+function setConn(live){
+  const p=$('conn'); p.className = 'pill '+(live?'live':'down');
+  $('conn-txt').textContent = live ? 'Live · connected' : 'Reconnecting…';
 }
 
-function renderKPIs(s,t,c){
-  const tickets=t.tickets||[];
-  const resolved=tickets.filter(x=>x.status==='resolved').length;
-  const inprog=tickets.filter(x=>x.status==='escalated'||x.status==='solved').length;
-  const agentsObj=normalizeAgents(s.agents);
-  const totalAgents=Object.keys(agentsObj).length+9;
-  const successPct=Math.round(((1-(s.concernRate||0))*100)*100)/100;
-  const healthPct=Math.round((1-(s.concernRate||0))*1000)/10;
-  el('kpi-success').textContent=successPct+'%';
-  el('kpi-success-d').textContent=(s.autonomy?'+'+(s.autonomy*100).toFixed(2):'+0.00')+'% today';
-  el('kpi-agents').textContent=totalAgents;
-  el('kpi-tasks').textContent=inprog;
-  el('kpi-resolved').textContent=resolved.toLocaleString();
-  el('kpi-health').textContent=healthPct+'%';
-  const _auto=Math.round((s.autonomy||0)*100);
-  const _elA=el('kpi-autonomy');if(_elA)_elA.textContent=_auto+'%';
-  const _ov={'aria-overlay-autonomy':_auto+'%','aria-overlay-velocity':(s.velocity24h||0)+' /d','aria-overlay-health':healthPct+'%','aria-overlay-solved':resolved};
-  Object.entries(_ov).forEach(function(p){const _e=el(p[0]);if(_e)_e.textContent=p[1];});
-  el('kpi-health-d').textContent=healthPct>95?'OPTIMAL':healthPct>80?'NOMINAL':'DEGRADED';
-  el('success-num').textContent=s.velocity24h||0;
-  el('success-delta').textContent='Velocity · 24h window';
-  el('rs-autonomy').textContent=Math.round((s.autonomy||0)*100)+'%';
-  el('rs-resolution').textContent=tickets.length?Math.round(resolved/tickets.length*100)+'%':'—';
-  el('rs-health').textContent=healthPct+'%';
-  el('health-num').textContent=healthPct+'%';
-  HEALTH_HISTORY.push(healthPct);if(HEALTH_HISTORY.length>20)HEALTH_HISTORY.shift();
+/* ── render: hero stats ──────────────────────────────────────────── */
+function renderStats(s, t){
+  const logged   = t.length;
+  const resolved = t.filter(x=>x && (x.status==='resolved'||x.status==='closed')).length;
+  const escal    = t.filter(x=>x && (x.status==='escalated'||x.status==='awaiting-human'||x.status==='awaiting_human')).length;
+  const open     = Math.max(0, logged - resolved);
+  const autonomy = logged ? Math.round(resolved/logged*100) : null;
+
+  countTo('auto-num', autonomy==null?0:autonomy, '%');
+  $('auto-bar').style.width = (autonomy||0)+'%';
+  $('auto-note').innerHTML = autonomy==null ? 'Awaiting first ticket'
+    : '<b>'+resolved+'</b> of <b>'+logged+'</b> resolved without a human';
+
+  countTo('tix-open', open);
+  countTo('tix-res', resolved); countTo('tix-esc', escal); countTo('tix-logged', logged);
+
+  const bits = num(s.totalBits), kb = num(s.kbLiveCount), q = num(s.queueDepth);
+  countTo('bits-num', bits); countTo('kb-live', kb);
+  $('queue-depth').textContent = q;
+
+  const roster = Array.isArray(s.agents) ? s.agents.length : 0;
+  const activeNow = Array.isArray(s.agents) ? s.agents.filter(a=>a && a.born).length : 0;
+  countTo('agents-active', activeNow || roster);
+  $('agents-roster').textContent = roster ? ' / '+roster : '';
+  $('agents-born').textContent = num(s.newAgentsBorn);
 }
 
-function normalizeAgents(agents){
-  // Fix [object object] bug: handle either {name:number} or {name:{count}} shape
-  if(!agents||typeof agents!=='object')return{};
-  const out={};
-  for(const k of Object.keys(agents)){
-    const v=agents[k];
-    if(typeof v==='number')out[k]=v;
-    else if(v&&typeof v==='object')out[k]=v.count||v.bits||v.value||0;
-    else out[k]=Number(v)||0;
-  }
-  return out;
-}
+/* ── render: learning loop ───────────────────────────────────────── */
+function renderLearning(s){
+  countTo('loop-bits', num(s.totalBits));
+  countTo('loop-kb', num(s.kbLiveCount));
+  countTo('loop-queue', num(s.queueDepth));
 
-function renderWorkload(s){
-  const agents=normalizeAgents(s.agents);
-  // include core 9 with synthetic-but-stable workload from bit counts
-  const all={...agents};
-  Object.keys(AGENT_DEFS).forEach(k=>{if(!(k in all))all[k]=0;});
-  const max=Math.max(20,...Object.values(all));
-  const rows=Object.entries(all).sort((a,b)=>b[1]-a[1]).slice(0,14).map(([k,v])=>{
-    const pct=Math.min(100,Math.round(v/max*100));
-    const cls=pct>80?'crit':pct>60?'warn':'';
-    const label=AGENT_LABELS[k]||AGENT_DEFS[k]?.n||k;
-    return `<div class="wl-row"><div class="wl-name">${escH(label)}</div><div class="wl-bar ${cls}"><div style="width:${pct}%"></div></div><div class="wl-pct ${cls}">${pct}%</div></div>`;
-  }).join('');
-  el('workload-list').innerHTML=rows||'<div class="empty">Initializing agents...</div>';
-  LAST_WORKLOAD=all;
-}
-
-function renderTickets(t){
-  el('tkt-badge').textContent=t.filter(x=>x.status!=='resolved').length+' open';
-  if(!t.length){el('tkt-list').innerHTML='<div class="empty">No tickets logged</div>';return;}
-  el('tkt-list').innerHTML=t.slice(0,8).map(x=>{
-    const cls=x.priority||'normal';
-    return `<div class="tkt ${cls}" onclick="viewTkt('${x.id}')">
-      <div class="tkt-h"><span class="tkt-id">${escH(x.id)}</span><span class="tkt-pri ${cls}">${escH(cls)}</span></div>
-      <div class="tkt-iss">${escH((x.issue||'').slice(0,60))}</div>
-    </div>`;
-  }).join('');
-}
-
-function renderComms(msgs){
-  if(!msgs.length){el('comms-feed').innerHTML='<div class="empty">Awaiting agent activity...</div>';return;}
-  const box=el('comms-feed');
-  const wasBottom=box.scrollHeight-box.scrollTop-box.clientHeight<60;
-  const html=msgs.slice(-20).reverse().map(m=>{
-    const ts=new Date(m.ts||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-    const fromL=AGENT_LABELS[m.from]||m.from||'?';
-    const toL=AGENT_LABELS[m.to]||m.to||'?';
-    const bits=textToBits(m.text||'');
-    const priCls=(m.kind==='escalation'||m.kind==='no-solution')?'priority':'';
-    return `<div class="bit-row ${priCls}">
-      <div class="bit-h"><span><span class="bit-from">@${escH(fromL)}</span> → <span class="bit-to">@${escH(toL)}</span></span><span class="bit-ts">${ts}</span></div>
-      <div class="bit-code">${bits}</div>
-      <div class="bit-trans">› ${escH(m.text||'').slice(0,140)}</div>
-    </div>`;
-  }).join('');
-  box.innerHTML=html;
-  if(wasBottom)box.scrollTop=0;
-  // update thinking preview from latest msg
-  const last=msgs[msgs.length-1];
-  if(last){el('think-current').textContent=last.text?.slice(0,80)||'';}
-}
-
-function textToBits(t){
-  // compact hex-ish stream representation (not literal binary of text — that'd be too long)
-  const seed=hashStr(t||'');let r=seed,s='';
-  for(let i=0;i<5;i++){r=(r*1103515245+12345)>>>0;s+=r.toString(2).slice(-4)+' ';}
-  return s.trim()+' ... ['+(t.length<24?(t||'').slice(0,16).replace(/[^\w ]/g,'').toUpperCase():'BIT-STREAM')+']';
-}
-function hashStr(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return h>>>0;}
-
-function renderHistory(msgs){
-  if(!msgs.length){el('history-list').innerHTML='<div class="empty">No events yet</div>';return;}
-  const cave=msgs.slice(-12).reverse().map(m=>{
-    const ts=new Date(m.ts||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
-    const dotCls=m.kind==='escalation'||m.kind==='no-solution'?'crit':m.kind==='solution'||m.kind==='resolved'?'ok':'norm';
-    const opts=CAVEMAN[m.kind]||['THING HAPPEN. TRIBE SEE.'];
-    const phrase=opts[hashStr(m.text||'')%opts.length];
-    return `<div class="list-row"><div class="dot ${dotCls}"></div><div class="ttl"><b>${ts}</b> · ${escH(phrase)}</div></div>`;
-  }).join('');
-  el('history-list').innerHTML=cave;
-}
-
-function renderNotif(msgs,tickets){
-  const recent=msgs.slice(-6).reverse();
-  const items=[];
-  recent.forEach(m=>{
-    if(m.kind==='escalation')items.push({lbl:'High Priority Ticket',ts:m.ts,cls:'crit',tag:m.ticketId});
-    else if(m.kind==='no-solution')items.push({lbl:'Awaiting Human Review',ts:m.ts,cls:'high',tag:m.ticketId});
-    else if(m.kind==='resolved')items.push({lbl:'Ticket Resolved',ts:m.ts,cls:'ok',tag:m.ticketId});
-    else if(m.kind==='solution')items.push({lbl:'Solution Found',ts:m.ts,cls:'norm',tag:m.ticketId});
-  });
-  el('notif-badge').textContent=items.filter(x=>x.cls==='crit'||x.cls==='high').length;
-  if(!items.length){el('notif-list').innerHTML='<div class="empty">No notifications</div>';return;}
-  el('notif-list').innerHTML=items.slice(0,8).map(i=>{
-    const ts=new Date(i.ts||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
-    return `<div class="list-row"><div class="dot ${i.cls}"></div><div class="ttl"><b>${escH(i.lbl)}</b>${i.tag?' · <span style="font-family:var(--mono);font-size:10px;color:var(--mut)">#'+escH(i.tag)+'</span>':''}</div><div class="ts">${ts}</div></div>`;
-  }).join('');
-}
-
-function renderReview(tickets){
-  const review=tickets.filter(x=>x.status==='awaiting-human'||x.priority==='critical');
-  el('review-badge').textContent=review.length+' pending';
-  if(!review.length){el('review-list').innerHTML='<div class="empty">No items pending</div>';return;}
-  el('review-list').innerHTML=review.slice(0,6).map(t=>{
-    const cls=t.priority||'normal';
-    const ts=new Date(t.createdAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
-    return `<div class="list-row"><div class="dot ${cls==='critical'?'crit':cls==='high'?'high':'norm'}"></div><div class="ttl"><b>${escH((t.issue||'').slice(0,40))}</b></div><div class="ts">${ts}</div></div>`;
-  }).join('');
-}
-
-const COMPLAINTS_STATE=[];
-function renderComplaints(){
-  const seeds=[
-    {who:'Data Analyst',what:'Slow query response time',pri:'high'},
-    {who:'Support Agent',what:'Too many escalations',pri:'normal'},
-    {who:'Automation Agent',what:'Need more API access',pri:'low'},
-    {who:'Code Auditor',what:'Too many false positives',pri:'normal'}
-  ];
-  const all=[...COMPLAINTS_STATE,...seeds];
-  el('complaint-list').innerHTML=all.slice(0,5).map(c=>{
-    const dc=c.pri==='high'?'crit':c.pri==='normal'?'norm':'low';
-    return `<div class="list-row"><div class="dot ${dc}"></div><div class="ttl"><b>${escH(c.who)}</b> · ${escH(c.what)}</div></div>`;
-  }).join('')||'<div class="empty">No complaints</div>';
-}
-function submitComplaint(){
-  const w=prompt('Complaint?');
-  if(w){COMPLAINTS_STATE.unshift({who:'You',what:w,pri:'normal'});renderComplaints();}
-}
-
-function renderHealthSpark(s){
-  if(HEALTH_HISTORY.length<2)return;
-  const pts=HEALTH_HISTORY.map((v,i)=>{const x=(i/(HEALTH_HISTORY.length-1))*280;const y=60-(v-80)/20*50;return `${x},${Math.max(5,Math.min(55,y))}`;}).join(' ');
-  el('health-spark').setAttribute('points',pts);
-}
-
-function checkAutoSpawn(s){
-  if(GRAFFITI_COOLDOWN>Date.now())return;
-  for(const[k,v]of Object.entries(LAST_WORKLOAD)){
-    const max=Math.max(20,...Object.values(LAST_WORKLOAD));
-    const pct=Math.round(v/max*100);
-    if(pct>80&&!AGENT_COUNTER[k]){
-      AGENT_COUNTER[k]=(AGENT_COUNTER[k]||1)+1;
-      const newId=k+'_'+AGENT_COUNTER[k];
-      flashGraffiti('NEW AGENT INITIALIZED','RESEARCH_AGENT_'+String(AGENT_COUNTER[k]).padStart(2,'0'));
-      // post to chatlog
-      fetch('/.netlify/functions/aria-escalation?action=chatpost',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:'system',to:'all-agents',kind:'spawn',text:`Workload threshold exceeded on ${k} (${pct}%). Spawning ${newId}.`})}).catch(()=>{});
-      GRAFFITI_COOLDOWN=Date.now()+90000;
-      return;
-    }
-  }
-}
-function flashGraffiti(line1,line2){
-  const g=el('graffiti');
-  g.innerHTML=`${line1}<br><span style="color:#22e1ff">${line2}</span>`;
-  g.classList.add('show');
-  setTimeout(()=>g.classList.remove('show'),3500);
-}
-
-function postBit(){
-  const v=el('bit-input').value.trim();if(!v)return;
-  const mAt=v.match(/^@(\S+)\s+(.+)/);
-  const to=mAt?mAt[1]:'all-agents';
-  const text=mAt?mAt[2]:v;
-  fetch('/.netlify/functions/aria-escalation?action=chatpost',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:'operator',to,kind:'msg',text})}).then(()=>{el('bit-input').value='';loadAll();});
-}
-
-function sendReportNow(){
-  alert('Report queued. Will arrive at your registered email shortly.');
-  fetch('/.netlify/functions/aperture-email-report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:'integrateditsupp@gmail.com',name:'Ahmad',sessionId:'manual-report-'+Date.now(),summary:'Manual report triggered from ARIA Command Center.',endedBy:'user',subjectOverride:'ARIA · Daily Operations Report · '+new Date().toISOString().slice(0,10)})}).catch(()=>{});
-}
-
-function viewTkt(id){
-  fetch('/.netlify/functions/aria-escalation?action=ticket&id='+encodeURIComponent(id)).then(r=>r.json()).then(j=>{if(j.ticket)alert(JSON.stringify(j.ticket,null,2));});
-}
-
-function el(id){return document.getElementById(id);}
-function v(id){return el(id).value.trim();}
-function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-</script>
-
-
-<!-- ========= APL BOOST: Autonomy + Tickets + SLA + Live Agents + Nudge (2026-05-15) ========= -->
-<style>
-#apl-boost{padding:14px 20px 4px;display:grid;grid-template-columns:1.2fr 1.4fr 1.2fr 1.2fr;gap:14px;background:transparent;border-bottom:1px solid #1f2435}
-@media(max-width:1100px){#apl-boost{grid-template-columns:1fr 1fr}}
-.apl-c{background:linear-gradient(180deg,rgba(20,28,48,.7),rgba(12,16,28,.7));border:1px solid #1f2a44;border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
-.apl-c::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#22e1ff,transparent);opacity:.35}
-.apl-h{font:600 10px/1 ui-monospace,monospace;color:#22e1ff;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.apl-h .apl-tag{font-size:8px;letter-spacing:1px;color:#d4af37}
-.apl-big{font:700 28px/1 ui-monospace,monospace;color:#fff;margin-bottom:6px}
-.apl-sub{font:11px/1.4 system-ui,sans-serif;color:#8a93a8}
-.apl-bar{height:6px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;margin:8px 0 6px}
-.apl-bar > div{height:100%;background:linear-gradient(90deg,#22e1ff,#d4af37);transition:width .6s ease;border-radius:4px}
-.apl-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
-.apl-stat{background:rgba(0,0,0,.3);border:1px solid #1f2a44;border-radius:6px;padding:9px 6px;text-align:center;cursor:pointer;transition:all .15s}
-.apl-stat:hover{border-color:#22e1ff;background:rgba(34,225,255,.06)}
-.apl-stat .n{font:700 22px ui-monospace,monospace;color:#fff;line-height:1.1}
-.apl-stat .l{font:600 9px ui-monospace,monospace;letter-spacing:1.2px;color:#7a8398;text-transform:uppercase;margin-top:2px}
-.apl-stat.esc .n{color:#ff8a1f}.apl-stat.res .n{color:#10ddb0}.apl-stat.inp .n{color:#d4af37}
-.apl-sla-row{display:flex;justify-content:space-between;font:11px/1.6 ui-monospace,monospace;color:#cfd6e6;padding:3px 0}
-.apl-sla-row .ok{color:#10ddb0}.apl-sla-row .warn{color:#ff8a1f}.apl-sla-row .bad{color:#ff4d6b}
-.apl-live{max-height:120px;overflow:auto}
-.apl-live-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.04);font:11px ui-monospace,monospace;color:#cfd6e6}
-.apl-live-row:last-child{border:none}
-.apl-dot{width:6px;height:6px;border-radius:50%;background:#10ddb0;box-shadow:0 0 8px #10ddb0;animation:apl-pulse 1.6s ease-in-out infinite;flex-shrink:0}
-.apl-live-row .nm{flex:1;color:#fff;font-weight:600;letter-spacing:.5px}
-.apl-live-row .ag{color:#7a8398;font-size:10px}
-.apl-nudge{background:rgba(212,175,55,.1);border:1px solid #d4af37;color:#d4af37;padding:3px 8px;border-radius:4px;font:600 9px ui-monospace,monospace;letter-spacing:1px;cursor:pointer;transition:all .12s}
-.apl-nudge:hover{background:#d4af37;color:#000}
-.apl-empty{text-align:center;color:#5d6478;font:10px ui-monospace,monospace;letter-spacing:1px;padding:14px 0}
-@keyframes apl-pulse{0%,100%{opacity:1}50%{opacity:.4}}
-#apl-modal-bg{display:none;position:fixed;inset:0;background:rgba(5,8,15,.85);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;padding:24px}
-#apl-modal-bg.show{display:flex}
-#apl-modal{background:linear-gradient(180deg,#0e1422,#0a0e1a);border:1px solid #22e1ff;border-radius:12px;padding:24px;max-width:780px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 60px rgba(34,225,255,.08)}
-#apl-modal h2{font:600 13px ui-monospace,monospace;color:#22e1ff;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
-#apl-modal .x{position:absolute;top:14px;right:18px;color:#7a8398;font-size:20px;cursor:pointer;background:none;border:none}
-.apl-tk{background:rgba(0,0,0,.3);border:1px solid #1f2a44;border-radius:6px;padding:12px 14px;margin-bottom:8px;font:12px ui-monospace,monospace;color:#cfd6e6}
-.apl-tk b{color:#fff}
-.apl-tk .meta{font-size:10px;color:#7a8398;margin-top:4px;letter-spacing:1px;text-transform:uppercase}
-.apl-tk .pri{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:1px;margin-left:6px}
-.apl-tk .pri.critical{background:rgba(255,77,107,.2);color:#ff4d6b;border:1px solid #ff4d6b}
-.apl-tk .pri.high{background:rgba(255,138,31,.2);color:#ff8a1f;border:1px solid #ff8a1f}
-.apl-tk .pri.normal{background:rgba(34,225,255,.15);color:#22e1ff;border:1px solid #22e1ff}
-.apl-tk .pri.low{background:rgba(125,135,160,.15);color:#9aa3b8;border:1px solid #4a5168}
-.apl-tk-btns{display:flex;gap:8px;margin-top:8px}
-.apl-tk-btns button{padding:5px 11px;background:rgba(34,225,255,.08);border:1px solid #22e1ff;color:#22e1ff;border-radius:4px;font:600 9px ui-monospace,monospace;letter-spacing:1px;cursor:pointer}
-.apl-tk-btns button:hover{background:#22e1ff;color:#000}
-</style>
-
-<div id="apl-modal-bg" onclick="if(event.target.id==='apl-modal-bg')aplCloseModal()">
-  <div id="apl-modal" style="position:relative">
-    <button class="x" onclick="aplCloseModal()">&times;</button>
-    <h2 id="apl-modal-title">Tickets</h2>
-    <div id="apl-modal-body"></div>
-  </div>
-</div>
-
-<script>
-(function(){
-  if (window.__APL_BOOST_LOADED__) return;
-  window.__APL_BOOST_LOADED__ = true;
-  const ESC_API = '/.netlify/functions/aria-escalation';
-  const STAT_API = '/.netlify/functions/aria-learning-status';
-
-  function waitTopbar(cb,tries){
-    tries = tries || 0;
-    const app = document.getElementById('app');
-    const tb = app ? app.querySelector('.topbar') : null;
-    if (tb) { cb(tb); return; }
-    if (tries > 100) return;
-    setTimeout(function(){waitTopbar(cb, tries+1);}, 250);
-  }
-
-  waitTopbar(function(tb){
-    const box = document.createElement('div');
-    box.id = 'apl-boost';
-    box.innerHTML = `
-      <div class="apl-c">
-        <div class="apl-h"><span>ARIA Autonomy</span><span class="apl-tag" id="apl-autonomy-target">Target: 95%</span></div>
-        <div class="apl-big" id="apl-autonomy-val">0%</div>
-        <div class="apl-bar"><div id="apl-autonomy-bar" style="width:0%"></div></div>
-        <div class="apl-sub" id="apl-autonomy-note">0 of 0 tickets resolved without human</div>
-      </div>
-      <div class="apl-c">
-        <div class="apl-h"><span>Tickets</span><span class="apl-tag">Click any to investigate</span></div>
-        <div class="apl-stat-row">
-          <div class="apl-stat" onclick="aplOpenTickets('all')"><div class="n" id="apl-tix-logged">—</div><div class="l">Logged</div></div>
-          <div class="apl-stat inp" onclick="aplOpenTickets('in-progress')"><div class="n" id="apl-tix-inprog">—</div><div class="l">In Progress</div></div>
-          <div class="apl-stat res" onclick="aplOpenTickets('resolved')"><div class="n" id="apl-tix-res">—</div><div class="l">Resolved</div></div>
-          <div class="apl-stat esc" onclick="aplOpenTickets('esc')"><div class="n" id="apl-tix-esc">—</div><div class="l">Escalated</div></div>
-        </div>
-      </div>
-      <div class="apl-c">
-        <div class="apl-h"><span>SLA Performance</span><span class="apl-tag">30min - 2bd</span></div>
-        <div class="apl-sla-row"><span>First-Call Resolution</span><span id="apl-fcr" class="ok">100%</span></div>
-        <div class="apl-sla-row"><span>Avg Response Time</span><span id="apl-resp" class="ok">— min</span></div>
-        <div class="apl-sla-row"><span>Avg Resolution (escalated)</span><span id="apl-rest" class="ok">— h</span></div>
-        <div class="apl-sla-row"><span>Target: respond 30m-1h, resolve 1-2bd</span><span id="apl-sla-ok" class="ok">ON TRACK</span></div>
-      </div>
-      <div class="apl-c">
-        <div class="apl-h"><span>Live: Agents Working</span><span class="apl-tag" id="apl-active-count">0 active</span></div>
-        <div class="apl-live" id="apl-active"><div class="apl-empty">Waiting for activity...</div></div>
-      </div>
-    `;
-    tb.parentNode.insertBefore(box, tb.nextSibling);
-    pollAll();
-    setInterval(pollAll, 4000);
-  });
-
-  async function safeFetch(url, opts) {
-    try { const r = await fetch(url, opts || {}); if (!r.ok) return null; return await r.json(); }
-    catch(e) { return null; }
-  }
-
-  let LAST_TICKETS = [];
-  let LAST_CHAT = [];
-
-  async function pollAll(){
-    const [tix, stat, chat] = await Promise.all([
-      safeFetch(ESC_API + '?action=tickets'),
-      safeFetch(STAT_API),
-      safeFetch(ESC_API + '?action=chatlog')
-    ]);
-    LAST_TICKETS = (tix && (tix.tickets || tix.index || tix)) || [];
-    if (!Array.isArray(LAST_TICKETS)) LAST_TICKETS = [];
-    LAST_CHAT = (chat && (chat.messages || chat.log || chat)) || [];
-    if (!Array.isArray(LAST_CHAT)) LAST_CHAT = [];
-    renderStats(stat || {});
-    renderActive();
-  }
-
-  function renderStats(stat){
-    const t = LAST_TICKETS;
-    const logged = t.length;
-    const resolved = t.filter(x => x && (x.status === 'resolved' || x.status === 'closed')).length;
-    const escalated = t.filter(x => x && (x.status === 'escalated' || x.status === 'awaiting-human' || x.status === 'awaiting_human')).length;
-    const inProgress = Math.max(0, logged - resolved - escalated);
-
-    const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
-    set('apl-tix-logged', logged);
-    set('apl-tix-inprog', inProgress);
-    set('apl-tix-res', resolved);
-    set('apl-tix-esc', escalated);
-
-    const autonomy = logged === 0 ? 0 : Math.round((resolved / logged) * 100);
-    set('apl-autonomy-val', autonomy + '%');
-    const bar = document.getElementById('apl-autonomy-bar');
-    if (bar) bar.style.width = autonomy + '%';
-    set('apl-autonomy-note', resolved + ' of ' + logged + ' tickets resolved without human');
-
-    const fcr = logged === 0 ? 100 : Math.round((resolved / logged) * 100);
-    const fcrEl = document.getElementById('apl-fcr');
-    if (fcrEl) {
-      fcrEl.textContent = fcr + '%';
-      fcrEl.className = fcr >= 90 ? 'ok' : (fcr >= 70 ? 'warn' : 'bad');
-    }
-    const resolvedT = t.filter(x => x && x.status === 'resolved' && x.createdAt && x.updatedAt);
-    if (resolvedT.length) {
-      const avgMin = resolvedT.reduce((s, x) => s + (new Date(x.updatedAt) - new Date(x.createdAt)), 0) / resolvedT.length / 60000;
-      const respEl = document.getElementById('apl-resp');
-      if (respEl) {
-        respEl.textContent = Math.max(1, Math.round(avgMin)) + ' min';
-        respEl.className = avgMin <= 60 ? 'ok' : (avgMin <= 120 ? 'warn' : 'bad');
-      }
-    }
-    const escResolved = t.filter(x => x && x.status === 'resolved' && (x.escalatedAt || x.priority === 'critical' || x.priority === 'high'));
-    if (escResolved.length) {
-      const avgH = escResolved.reduce((s, x) => s + (new Date(x.updatedAt || Date.now()) - new Date(x.createdAt)), 0) / escResolved.length / 3600000;
-      const restEl = document.getElementById('apl-rest');
-      if (restEl) {
-        restEl.textContent = avgH.toFixed(1) + ' h';
-        restEl.className = avgH <= 16 ? 'ok' : (avgH <= 48 ? 'warn' : 'bad');
-      }
-    }
-    const slaEl = document.getElementById('apl-sla-ok');
-    if (slaEl) {
-      if (escalated === 0 && logged > 0) { slaEl.textContent = 'EXCELLENT'; slaEl.className = 'ok'; }
-      else if (fcr >= 80) { slaEl.textContent = 'ON TRACK'; slaEl.className = 'ok'; }
-      else if (fcr >= 60) { slaEl.textContent = 'AT RISK'; slaEl.className = 'warn'; }
-      else { slaEl.textContent = 'BREACHED'; slaEl.className = 'bad'; }
-    }
-  }
-
-  function renderActive(){
-    const now = Date.now();
-    const active = {};
-    LAST_CHAT.forEach(function(m){
-      if (!m) return;
-      const tsRaw = m.ts || m.timestamp || m.t;
-      const ts = typeof tsRaw === 'string' ? new Date(tsRaw).getTime() : Number(tsRaw);
-      const agent = m.from || m.agent || m.a;
-      if (!agent || !ts) return;
-      const age = now - ts;
-      if (age < 180000) {
-        if (!active[agent] || age < active[agent].age) active[agent] = { age, kind: m.kind || m.k || 'msg' };
-      }
-    });
-    const list = Object.entries(active).sort(function(a,b){return a[1].age - b[1].age;});
-    const cnt = document.getElementById('apl-active-count');
-    if (cnt) cnt.textContent = list.length + ' active';
-    const wrap = document.getElementById('apl-active');
-    if (!wrap) return;
-    if (!list.length) { wrap.innerHTML = '<div class="apl-empty">No agents active in last 3 min</div>'; return; }
-    wrap.innerHTML = list.map(function(pair){
-      const agent = pair[0]; const info = pair[1];
-      return '<div class="apl-live-row"><span class="apl-dot"></span><span class="nm">' + esc(agent) + '</span><span class="ag">' + Math.round(info.age/1000) + 's</span><button class="apl-nudge" onclick="aplNudge(\'' + esc(agent).replace(/'/g, '\\\'') + '\')">NUDGE</button></div>';
-    }).join('');
-  }
-
-  window.aplNudge = async function(agent){
-    const btn = event && event.target;
-    if (btn) { btn.disabled = true; btn.textContent = 'SENT'; }
-    await safeFetch(ESC_API + '?action=chatpost', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ kind: 'nudge', agent: agent, from: 'operator', to: agent, message: 'OPERATOR NUDGE - status check, please proceed or report blocker', ts: Date.now() })
-    });
-    setTimeout(pollAll, 600);
-  };
-
-  window.aplOpenTickets = function(filter){
-    const tList = LAST_TICKETS.filter(function(t){
-      if (!t) return false;
-      if (filter === 'all') return true;
-      if (filter === 'in-progress') return t.status !== 'resolved' && t.status !== 'closed' && t.status !== 'escalated' && t.status !== 'awaiting-human' && t.status !== 'awaiting_human';
-      if (filter === 'resolved') return t.status === 'resolved' || t.status === 'closed';
-      if (filter === 'esc' || filter === 'escalated') return t.status === 'escalated' || t.status === 'awaiting-human' || t.status === 'awaiting_human';
-      return true;
-    });
-    document.getElementById('apl-modal-title').textContent = filter.toUpperCase().replace(/-/g, ' ') + ' TICKETS (' + tList.length + ')';
-    const body = document.getElementById('apl-modal-body');
-    if (!tList.length) { body.innerHTML = '<div class="apl-empty">No tickets in this category.</div>'; }
-    else {
-      body.innerHTML = tList.slice(0, 40).map(function(t){
-        const pri = (t.priority || 'normal').toLowerCase();
-        const summary = esc(t.issue || t.summary || t.title || t.id || 'untitled');
-        const userEmail = esc(t.userEmail || t.email || 'unknown');
-        const status = esc(t.status || 'open');
-        const created = t.createdAt ? new Date(t.createdAt).toLocaleString() : '—';
-        return '<div class="apl-tk"><b>' + esc(t.id || '?') + '</b><span class="pri ' + pri + '">' + pri + '</span><br><span style="color:#cfd6e6">' + summary + '</span><div class="meta">USER: ' + userEmail + ' STATUS: ' + status + ' CREATED: ' + created + '</div><div class="apl-tk-btns"><button onclick="aplViewTicket(\'' + esc(t.id).replace(/'/g, '\\\'') + '\')">VIEW FULL REPORT</button><button onclick="aplOpenEmail(\'' + userEmail + '\',\'' + esc(t.id) + '\')">EMAIL USER</button></div></div>';
+  const now = $('loop-now');
+  if (s.lastTopic || s.lastAgent){
+    now.innerHTML = '<div class="row"><div class="dot ok"></div><div class="body">'
+      + '<div class="t"><b>'+esc(s.lastTopic||'—')+'</b></div>'
+      + '<div class="sub">'+esc(label(s.lastAgent)||'learning agent')
+      + (s.sessionStarted?' · since '+timeAgo(s.sessionStarted):'')+'</div></div></div>';
+    // recent bits underneath
+    const bits = (s.recentBits||[]).slice(-5).reverse();
+    if (bits.length){
+      now.innerHTML += bits.map(b=>{
+        const topic = b.topic || b.title || b.text || b.insight || (typeof b==='string'?b:'bit recorded');
+        const who = label(b.agent || b.from || b.by);
+        const ts = b.ts || b.at || b.time;
+        return '<div class="row"><div class="dot norm"></div><div class="body"><div class="t">'+esc(String(topic).slice(0,90))
+          +'</div><div class="sub">'+esc(who||'agent')+(ts?' · '+timeAgo(ts):'')+'</div></div></div>';
       }).join('');
     }
-    document.getElementById('apl-modal-bg').classList.add('show');
-  };
+  } else now.innerHTML = '<div class="empty">Idle · awaiting topics</div>';
 
-  window.aplViewTicket = async function(id){
-    const body = document.getElementById('apl-modal-body');
-    body.innerHTML = '<div class="apl-empty">Loading...</div>';
-    const r = await safeFetch(ESC_API + '?action=ticket&id=' + encodeURIComponent(id));
-    if (!r) { body.innerHTML = '<div class="apl-empty">Could not load ticket.</div>'; return; }
-    const t = r.ticket || r;
-    document.getElementById('apl-modal-title').textContent = 'TICKET ' + (t.id || id);
-    body.innerHTML = '<pre style="background:#000;color:#cfd6e6;padding:14px;border-radius:6px;border:1px solid #1f2a44;overflow:auto;font:11px ui-monospace,monospace;max-height:60vh">' + esc(JSON.stringify(t, null, 2)) + '</pre>';
-  };
+  const roster = Array.isArray(s.agents)?s.agents:[];
+  $('roster').innerHTML = roster.length
+    ? roster.slice(0,24).map(a=>'<span class="r-chip'+(a.born?' born':'')+'"><span class="led"></span>'
+        +esc(label(a.name)||a.name||'agent')+'</span>').join('')
+    : '<div class="empty">Roster initialising…</div>';
+}
 
-  window.aplOpenEmail = function(email, id){
-    const subject = encodeURIComponent('Re: Your support ticket ' + id);
-    const body = encodeURIComponent('Hi,\\n\\nFollowing up on your ARIA support session (' + id + ').\\n\\n- Integrated IT Support');
-    window.open('mailto:' + email + '?subject=' + subject + '&body=' + body, '_blank');
-  };
+/* ── render: tickets ─────────────────────────────────────────────── */
+function renderTickets(t){
+  const open = t.filter(x=>x && x.status!=='resolved' && x.status!=='closed');
+  $('tkt-chip').textContent = open.length+' open';
+  $('tkt-chip').className = 'chip '+(open.length?'warn':'ok');
+  const list = (t.length? t.slice().reverse().slice(0,8) : []);
+  if (!list.length){ $('tkt-list').innerHTML='<div class="empty">No tickets logged</div>'; return; }
+  $('tkt-list').innerHTML = list.map(x=>{
+    const pri = (x.priority||'normal').toLowerCase();
+    const dot = pri==='critical'?'crit':pri==='high'?'high':pri==='low'?'low':'norm';
+    const issue = x.issue || x.summary || x.title || x.id || 'untitled';
+    return '<div class="row tappable" onclick="viewTicket(\''+esc(String(x.id)).replace(/'/g,"\\'")+'\')">'
+      +'<div class="dot '+dot+'"></div><div class="body"><div class="t">'+esc(String(issue).slice(0,72))+'</div>'
+      +'<div class="sub">'+esc(String(x.id||''))+(x.userEmail?' · '+esc(x.userEmail):'')+'</div></div>'
+      +'<span class="pri '+pri+'">'+esc(pri)+'</span></div>';
+  }).join('');
+}
 
-  window.aplCloseModal = function(){ document.getElementById('apl-modal-bg').classList.remove('show'); };
+/* ── render: SLA ─────────────────────────────────────────────────── */
+function renderSLA(t){
+  const logged = t.length;
+  const resolved = t.filter(x=>x && (x.status==='resolved'||x.status==='closed'));
+  const escal = t.filter(x=>x && (x.status==='escalated'||x.status==='awaiting-human'||x.status==='awaiting_human')).length;
+  const fcr = logged ? Math.round(resolved.length/logged*100) : 100;
+  setKV('sla-fcr', fcr+'%', fcr>=90?'ok':fcr>=70?'warn':'bad');
 
-  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-})();
+  const timed = resolved.filter(x=>x.createdAt && x.updatedAt);
+  if (timed.length){
+    const m = timed.reduce((a,x)=>a+(new Date(x.updatedAt)-new Date(x.createdAt)),0)/timed.length/60000;
+    setKV('sla-resp', Math.max(1,Math.round(m))+' min', m<=60?'ok':m<=120?'warn':'bad');
+  } else setKV('sla-resp','—','');
+
+  const escDone = resolved.filter(x=>x.escalatedAt || x.priority==='critical' || x.priority==='high');
+  if (escDone.length){
+    const h = escDone.reduce((a,x)=>a+(new Date(x.updatedAt||Date.now())-new Date(x.createdAt)),0)/escDone.length/3600000;
+    setKV('sla-rest', h.toFixed(1)+' h', h<=16?'ok':h<=48?'warn':'bad');
+  } else setKV('sla-rest','—','');
+
+  let state, cls;
+  if (escal===0 && logged>0){ state='Excellent'; cls='ok'; }
+  else if (fcr>=80){ state='On track'; cls='ok'; }
+  else if (fcr>=60){ state='At risk'; cls='warn'; }
+  else { state='Breached'; cls='bad'; }
+  setKV('sla-state', state, cls);
+  const chip=$('sla-chip'); chip.textContent=state; chip.className='chip '+(cls==='bad'?'crit':cls);
+}
+
+/* ── render: active agents (chatlog, last 3 min) ─────────────────── */
+function renderActive(msgs){
+  const now=Date.now(), active={};
+  msgs.forEach(m=>{
+    if(!m) return;
+    const tsRaw=m.ts||m.timestamp||m.t, ts=typeof tsRaw==='string'?new Date(tsRaw).getTime():Number(tsRaw);
+    const agent=m.from||m.agent||m.a;
+    if(!agent||!ts) return;
+    const age=now-ts;
+    if(age<180000 && (!active[agent]||age<active[agent])) active[agent]=age;
+  });
+  const list=Object.entries(active).sort((a,b)=>a[1]-b[1]);
+  $('active-chip').textContent=list.length+' active';
+  if(!list.length){ $('active-list').innerHTML='<div class="empty">No agent activity in last 3 min</div>'; return; }
+  $('active-list').innerHTML=list.map(([a,age])=>
+    '<div class="agent-row"><span class="led"></span><span class="nm">'+esc(label(a)||a)+'</span>'
+    +'<span class="age">'+Math.round(age/1000)+'s</span>'
+    +'<button class="mini-btn" onclick="nudge(\''+esc(a).replace(/'/g,"\\'")+'\',this)">Nudge</button></div>').join('');
+}
+
+/* ── render: comms BIT stream ────────────────────────────────────── */
+function renderComms(msgs){
+  if(!msgs.length){ $('comms').innerHTML='<div class="empty">Awaiting agent activity…</div>'; return; }
+  const box=$('comms'); const atTop=box.scrollTop<40;
+  box.innerHTML = msgs.slice(-18).reverse().map(m=>{
+    const ts=fmtTime(m.ts||m.timestamp||Date.now());
+    const from=label(m.from)||m.from||'?', to=label(m.to)||m.to||'?';
+    const text=(m.text||m.message||'').toString();
+    const alert=(m.kind==='escalation'||m.kind==='no-solution')?' alert':'';
+    return '<div class="bit'+alert+'"><div class="h"><span class="route">@'+esc(from)+' <span style="color:var(--txt-3)">→</span> <span class="to">@'+esc(to)+'</span></span><span class="ts">'+ts+'</span></div>'
+      +'<div class="hash">'+bitHash(text)+'</div>'
+      +'<div class="msg">'+esc(text.slice(0,160))+'</div></div>';
+  }).join('');
+  if(atTop) box.scrollTop=0;
+}
+
+/* ── render: activity timeline ───────────────────────────────────── */
+function renderTimeline(msgs){
+  const items=msgs.filter(m=>m && KIND_META[m.kind] && m.kind!=='msg').slice(-8).reverse();
+  if(!items.length){ $('timeline').innerHTML='<div class="empty">No events yet</div>'; return; }
+  $('timeline').innerHTML=items.map(m=>{
+    const meta=KIND_META[m.kind]||KIND_META.msg;
+    return '<div class="row"><div class="dot '+meta.dot+'"></div><div class="body"><div class="t">'+esc(meta.label)
+      +(m.ticketId?' <span class="sub" style="display:inline">#'+esc(m.ticketId)+'</span>':'')+'</div></div>'
+      +'<span class="ts">'+fmtTime(m.ts||m.timestamp||Date.now())+'</span></div>';
+  }).join('');
+}
+
+/* ── render: system health ───────────────────────────────────────── */
+function renderHealth(t){
+  const logged=t.length;
+  const resolved=t.filter(x=>x && (x.status==='resolved'||x.status==='closed')).length;
+  const escal=t.filter(x=>x && (x.status==='escalated'||x.status==='awaiting-human'||x.status==='awaiting_human')).length;
+  // concern-free proxy: high when resolved share high & few escalations open
+  let h = logged ? Math.round((resolved/logged)*100) : 100;
+  h = Math.max(0, h - escal*4);
+  countTo('health-num', h, '%');
+  const chip=$('health-chip');
+  const tier = h>=95?['Optimal','ok']:h>=80?['Nominal','ok']:h>=60?['Watch','warn']:['Degraded','crit'];
+  chip.textContent=tier[0]; chip.className='chip '+tier[1];
+  HEALTH_HIST.push(h); if(HEALTH_HIST.length>24) HEALTH_HIST.shift();
+  if(HEALTH_HIST.length>1){
+    const pts=HEALTH_HIST.map((v,i)=>{
+      const x=(i/(HEALTH_HIST.length-1))*280;
+      const y=52-(Math.max(0,Math.min(100,v))/100)*48;
+      return x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+    $('spark').setAttribute('points',pts);
+  }
+}
+
+/* ── actions ─────────────────────────────────────────────────────── */
+function viewTicket(id){
+  openModal('Ticket '+id, '<div class="empty">Loading…</div>');
+  fetch('/.netlify/functions/aria-escalation?action=ticket&id='+encodeURIComponent(id))
+    .then(r=>r.json()).then(j=>{
+      const tk=j.ticket||j;
+      $('modal-body').innerHTML='<pre>'+esc(JSON.stringify(tk,null,2))+'</pre>';
+    }).catch(()=>{ $('modal-body').innerHTML='<div class="empty">Could not load ticket.</div>'; });
+}
+function nudge(agent, btn){
+  if(btn){ btn.disabled=true; btn.textContent='Sent'; }
+  fetch('/.netlify/functions/aria-escalation?action=chatpost',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ kind:'nudge', from:'operator', to:agent,
+      text:'OPERATOR NUDGE — status check, please proceed or report blocker', ts:Date.now() })
+  }).then(()=>setTimeout(loadAll,600)).catch(()=>{});
+}
+function postBit(){
+  const v=val('composer-in'); if(!v) return;
+  const m=v.match(/^@(\S+)\s+(.+)/);
+  const to=m?m[1]:'all-agents', text=m?m[2]:v;
+  fetch('/.netlify/functions/aria-escalation?action=chatpost',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ from:'operator', to, kind:'msg', text })
+  }).then(()=>{ $('composer-in').value=''; loadAll(); }).catch(()=>{});
+}
+function sendReportNow(){
+  fetch('/.netlify/functions/aperture-email-report',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ to:'integrateditsupp@gmail.com', name:'Ahmad',
+      sessionId:'manual-report-'+Date.now(), summary:'Manual report triggered from ARIA Command Center.',
+      endedBy:'user', subjectOverride:'ARIA · Operations Report · '+new Date().toISOString().slice(0,10) })
+  }).catch(()=>{});
+  openModal('Report queued','<div style="color:var(--txt-2);font-size:13px;line-height:1.6">An operations report has been queued and will arrive at your registered email shortly.</div>');
+}
+function openModal(title, html){ $('modal-title').textContent=title; $('modal-body').innerHTML=html; $('modal-bg').classList.add('show'); }
+function closeModal(){ $('modal-bg').classList.remove('show'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+/* ── helpers ─────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function val(id){ return ($(id).value||'').trim(); }
+function num(v){ return Number(v)||0; }
+function label(k){ return AGENT_LABELS[k] || (k? String(k).replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):''); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function setKV(id,text,cls){ const e=$(id); if(!e) return; e.textContent=text; e.className='v'+(cls?' '+cls:''); }
+function fmtTime(ts){ return new Date(typeof ts==='string'?ts:Number(ts)).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}); }
+function timeAgo(ts){
+  const d=Date.now()-(typeof ts==='string'?new Date(ts).getTime():Number(ts));
+  if(d<60000) return Math.round(d/1000)+'s ago';
+  if(d<3600000) return Math.round(d/60000)+'m ago';
+  if(d<86400000) return Math.round(d/3600000)+'h ago';
+  return Math.round(d/86400000)+'d ago';
+}
+function bitHash(t){ // compact, on-brand bit-stream chip (not literal binary)
+  let h=0; for(let i=0;i<t.length;i++){ h=((h<<5)-h)+t.charCodeAt(i); h|=0; }
+  let r=h>>>0, s='';
+  for(let i=0;i<6;i++){ r=(r*1103515245+12345)>>>0; s+=('0000'+(r&0xffff).toString(16)).slice(-4)+' '; }
+  return s.trim();
+}
+const REDUCE = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COUNT_STATE = {};
+function countTo(id, target, suffix){
+  const e=$(id); if(!e) return;
+  suffix = suffix || '';
+  const from = COUNT_STATE[id]||0;
+  COUNT_STATE[id]=target;
+  if(REDUCE || from===target){ render(target); return; }
+  const t0=performance.now(), dur=600;
+  (function step(now){
+    const k=Math.min(1,(now-t0)/dur), e2=1-Math.pow(1-k,3);
+    render(Math.round(from+(target-from)*e2));
+    if(k<1) requestAnimationFrame(step);
+  })(t0);
+  function render(v){ e.innerHTML = v + (suffix?'<span class="unit">'+suffix+'</span>':''); }
+}
 </script>
-<!-- ========= /APL BOOST ========= -->
 
-<script>
-/* APL Boost v2 - filter resolved, click-to-details, fix undefined */
-(function(){
-  if (window.__APL_BOOST_V2__) return; window.__APL_BOOST_V2__ = true;
-  function styleInject(){ if (document.getElementById("apl-boost-css")) return; var s=document.createElement("style"); s.id="apl-boost-css"; s.textContent = [".list-row{cursor:pointer;transition:background .15s ease;}",".list-row:hover{background:rgba(255,255,255,0.04);}","#apl-resolved-section{margin-top:18px;padding:14px;border:1px solid rgba(50,200,150,.25);border-radius:10px;background:rgba(20,40,30,.25);}","#apl-resolved-section h4{margin:0 0 8px;color:#3fd29a;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;}","#apl-resolved-list{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;}","#apl-resolved-list .list-row{opacity:.85;}"].join(" "); document.head.appendChild(s); }
-  function ensureResolvedSection(){ var existing=document.getElementById("apl-resolved-section"); if (existing) return existing; var nl=document.getElementById("notif-list"); if (!nl) return null; var sec=document.createElement("div"); sec.id="apl-resolved-section"; sec.innerHTML = "<h4>RESOLVED <span id=apl-resolved-count style=\"color:#8a8;font-weight:normal;font-size:11px\">(0)</span></h4><div id=apl-resolved-list></div>"; nl.parentNode.appendChild(sec); return sec; }
-  function getTicketId(row){ var m=(row.textContent||"").match(/TKT-[0-9-]+/); return m?m[0]:null; }
-  function wireRow(row){ if (row.__aplWired) return; row.__aplWired=true; row.style.cursor="pointer"; row.addEventListener("click", function(){ var tid=getTicketId(row); if (tid && typeof window.aplViewTicket==="function") { try { window.aplViewTicket(tid); return; } catch(_){} } if (typeof window.aplOpenTickets==="function") { try { window.aplOpenTickets(); } catch(_){} } }); }
-  function sweep(){ var nl=document.getElementById("notif-list"); if (!nl) return; ensureResolvedSection(); var rl=document.getElementById("apl-resolved-list"); var rows=Array.from(nl.querySelectorAll(".list-row")); rows.forEach(function(row){ var text=(row.textContent||"").toLowerCase(); if (text.indexOf("ticket resolved")>=0) { if (rl && row.parentNode!==rl) rl.appendChild(row); } else { wireRow(row); } }); var count=rl?rl.children.length:0; var badge=document.getElementById("apl-resolved-count"); if (badge) badge.textContent="("+count+")"; var nb=document.getElementById("notif-badge"); if (nb) nb.textContent=nl.querySelectorAll(".list-row").length; }
-  function hook(fnName){ if (!window[fnName] || window["__hooked_"+fnName]) return; window["__hooked_"+fnName]=true; var orig=window[fnName]; window[fnName]=function(){ var r=orig.apply(this, arguments); try { sweep(); } catch(_){} return r; }; }
-  function init(){ styleInject(); hook("renderNotif"); hook("renderTickets"); sweep(); setInterval(sweep, 5000); }
-  if (document.readyState==="loading") document.addEventListener("DOMContentLoaded", init); else setTimeout(init, 300);
-})();
-</script>
+<!-- ARIA MESH SPIDER-WEB — shared component (also embedded on /aperture) -->
+<script src="/assets/aria-mesh-web.js" defer></script>
 </body>
 </html>

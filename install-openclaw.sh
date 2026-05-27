@@ -1,54 +1,61 @@
 #!/usr/bin/env bash
-# install-openclaw.sh â one-shot OpenClaw self-host installer.
-# Usage on droplet (must be root or have sudo):
-#   curl -fsSL https://iisupp.net/install-openclaw.sh | sudo bash
-# OR (after pulling): sudo bash install-openclaw.sh
+# install-openclaw.sh — corrected OpenClaw self-host installer.
 #
-# What it does (zero interaction):
-#   1. Installs Docker + docker-compose if missing
-#   2. Clones openclaw/openclaw to /opt/openclaw
-#   3. Generates .env with provided defaults + prompts for any missing
-#   4. Starts the stack
-#   5. Sets up Caddy reverse proxy at openclaw.iisupp.net (auto HTTPS via Let's Encrypt)
-#   6. Wires Telegram bot @IISUPP_bot
-#   7. Prints health check URL
+#   curl -fsSL https://iisupp.net/install-openclaw.sh | sudo -E bash
+#   OR (after pulling):  sudo -E bash install-openclaw.sh
 #
-# Env vars expected (export before running, or it'll prompt):
-#   ANTHROPIC_API_KEY       â your existing Anthropic key
-#   TELEGRAM_BOT_TOKEN      â from @BotFather (already have one)
-#   TELEGRAM_OWNER_CHAT_ID  â your chat ID (1870218558)
-#   OPENCLAW_TOKEN          â random secret for mesh bridge auth (will generate if blank)
-#   PUBLIC_DOMAIN           â e.g. openclaw.iisupp.net (CNAME this to droplet first)
+# WHY THIS WAS REWRITTEN (2026-05-27):
+#   The previous version assumed OpenClaw was a Docker Compose stack and proxied
+#   Caddy to port 8080. Both were wrong. OpenClaw (steipete, github.com/openclaw/
+#   openclaw) is an **npm CLI** that runs a Gateway daemon on **port 18789**.
+#   The old script cloned the repo, found no docker-compose.yml, exited with
+#   "no docker-compose.yml found", and the daemon never started — so the mesh
+#   router's calls to https://openclaw.iisupp.net/... always failed and no agents
+#   were ever spawned. This version installs it the supported way.
+#
+# What it does:
+#   1. Installs Node.js LTS (+ npm) if missing — OpenClaw's only hard dependency
+#   2. Installs the OpenClaw CLI globally:  npm i -g openclaw@latest
+#   3. Brings up the Gateway daemon:        openclaw onboard --install-daemon
+#   4. Installs/points Caddy at the CORRECT port (18789) for openclaw.iisupp.net
+#   5. Health-checks http://127.0.0.1:18789/ and prints next steps
+#
+# Env vars (export before running, or accept defaults):
+#   ANTHROPIC_API_KEY       — your Anthropic key (OpenClaw reads it during onboard)
+#   PUBLIC_DOMAIN           — default openclaw.iisupp.net (CNAME -> droplet first)
+#   OPENCLAW_PORT           — default 18789 (only change if you remap the gateway)
+#
+# NOTE: `openclaw onboard` is a GUIDED setup. On a fresh box it may prompt for
+#   model/provider keys and which chat channels to connect (Telegram @IISUPP_bot,
+#   WhatsApp, Slack, …). If you need a fully unattended install, pre-seed the
+#   OpenClaw config or run `openclaw onboard` once interactively, then this script
+#   is safe to re-run idempotently. Channel pairing (e.g. Telegram) is done from
+#   the dashboard at http://127.0.0.1:18789/ or `openclaw channels` — NOT via a
+#   .env file (that was the old, incorrect assumption).
 
 set -euo pipefail
-INSTALL_DIR=/opt/openclaw
 LOG_FILE=/var/log/openclaw-install.log
+OPENCLAW_PORT="${OPENCLAW_PORT:-18789}"
+PUBLIC_DOMAIN="${PUBLIC_DOMAIN:-openclaw.iisupp.net}"
 
 log() { echo "[$(date +%T)] $*" | tee -a "$LOG_FILE"; }
 
 require_root() {
   if [ "$(id -u)" -ne 0 ]; then
-    echo "Run as root or with sudo." >&2
+    echo "Run as root or with sudo (use 'sudo -E' to keep your exported env vars)." >&2
     exit 1
   fi
 }
 
-install_docker() {
-  if command -v docker >/dev/null 2>&1; then
-    log "Docker already installed: $(docker --version)"
-    return
+install_node() {
+  if command -v node >/dev/null 2>&1; then
+    log "Node already installed: $(node --version)"
+  else
+    log "Installing Node.js LTS (NodeSource)…"
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+    apt-get install -y nodejs
   fi
-  log "Installing Docker..."
-  apt-get update -y
-  apt-get install -y ca-certificates curl gnupg lsb-release
-  install -m 0755 -d /etc/apt/keyrings
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-  chmod a+r /etc/apt/keyrings/docker.gpg
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
-    > /etc/apt/sources.list.d/docker.list
-  apt-get update -y
-  apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-  systemctl enable --now docker
+  log "npm: $(npm --version)"
 }
 
 install_caddy() {
@@ -56,87 +63,40 @@ install_caddy() {
     log "Caddy already installed: $(caddy version | head -1)"
     return
   fi
-  log "Installing Caddy..."
-  apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
+  log "Installing Caddy…"
+  apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl
   curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
   curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
   apt-get update -y
   apt-get install -y caddy
 }
 
-clone_openclaw() {
-  if [ -d "$INSTALL_DIR/.git" ]; then
-    log "OpenClaw already cloned; pulling latest..."
-    cd "$INSTALL_DIR"
-    git pull --ff-only
+install_openclaw() {
+  log "Installing OpenClaw CLI globally…"
+  npm install -g openclaw@latest
+  log "OpenClaw version: $(openclaw --version 2>/dev/null || echo 'installed')"
+}
+
+start_gateway() {
+  log "Bringing up the OpenClaw Gateway daemon (openclaw onboard --install-daemon)…"
+  log "If this step prompts, complete the guided setup once; re-running the script afterward is safe."
+  # --install-daemon registers OpenClaw as a managed background service.
+  if openclaw onboard --install-daemon; then
+    log "Gateway daemon install/onboard completed."
   else
-    log "Cloning openclaw/openclaw..."
-    git clone https://github.com/openclaw/openclaw.git "$INSTALL_DIR"
+    log "WARN: 'openclaw onboard --install-daemon' returned non-zero — it may need an interactive run."
+    log "      Run 'openclaw onboard' manually on this host, then 'openclaw start' (or re-run this script)."
   fi
-}
-
-prompt_if_blank() {
-  local var="$1"
-  local prompt="$2"
-  local current="${!var:-}"
-  if [ -z "$current" ]; then
-    read -rp "$prompt: " value
-    eval "$var='$value'"
-  fi
-}
-
-write_env() {
-  log "Writing $INSTALL_DIR/.env ..."
-  : "${ANTHROPIC_API_KEY:?ANTHROPIC_API_KEY required}"
-  : "${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN required}"
-  : "${TELEGRAM_OWNER_CHAT_ID:?TELEGRAM_OWNER_CHAT_ID required}"
-  : "${PUBLIC_DOMAIN:=openclaw.iisupp.net}"
-  if [ -z "${OPENCLAW_TOKEN:-}" ]; then
-    OPENCLAW_TOKEN=$(head -c 24 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 32)
-    log "Generated OPENCLAW_TOKEN (32 chars)"
-  fi
-  cat > "$INSTALL_DIR/.env" <<EOF
-# Generated by install-openclaw.sh on $(date)
-ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
-TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
-TELEGRAM_OWNER_USERNAME=rome4n
-TELEGRAM_OWNER_CHAT_ID=$TELEGRAM_OWNER_CHAT_ID
-OPENCLAW_TOKEN=$OPENCLAW_TOKEN
-PUBLIC_URL=https://$PUBLIC_DOMAIN
-TIMEZONE=America/Toronto
-# Customer-bot defaults (override per CUSTOMER-INBOUND-BOT.md when ready)
-ENABLE_CUSTOMER_PERSONA=false
-CUSTOMER_FAQ_PATH=/data/customer-faq.md
-EOF
-  chmod 600 "$INSTALL_DIR/.env"
-  log "Wrote .env (chmod 600). Token starts with: ${OPENCLAW_TOKEN:0:6}***"
-  echo ""
-  echo "==> SAVE THIS OPENCLAW_TOKEN â paste into Netlify env vars + bridge-poller env:"
-  echo "    OPENCLAW_TOKEN=$OPENCLAW_TOKEN"
-  echo ""
-}
-
-start_stack() {
-  log "Starting OpenClaw docker stack..."
-  cd "$INSTALL_DIR"
-  if [ -f docker-compose.yml ] || [ -f compose.yaml ]; then
-    docker compose up -d
-  else
-    log "ERROR: no docker-compose.yml found in $INSTALL_DIR"
-    log "OpenClaw repo structure may differ â check $INSTALL_DIR contents and run install manually"
-    exit 1
-  fi
-  log "Waiting 15s for stack to come up..."
-  sleep 15
-  docker compose ps
+  # Best-effort start in case the daemon isn't auto-started
+  openclaw start >/dev/null 2>&1 || true
 }
 
 configure_caddy() {
-  local domain="${PUBLIC_DOMAIN:-openclaw.iisupp.net}"
-  log "Configuring Caddy reverse proxy for $domain ..."
+  log "Configuring Caddy reverse proxy for $PUBLIC_DOMAIN → 127.0.0.1:$OPENCLAW_PORT …"
+  mkdir -p /etc/caddy/Caddyfile.d /var/log/caddy
   cat > /etc/caddy/Caddyfile.d/openclaw.conf <<EOF
-$domain {
-    reverse_proxy localhost:8080
+$PUBLIC_DOMAIN {
+    reverse_proxy 127.0.0.1:$OPENCLAW_PORT
     encode gzip
     log {
         output file /var/log/caddy/openclaw-access.log
@@ -144,53 +104,59 @@ $domain {
     }
 }
 EOF
-  if ! grep -q "import Caddyfile.d/" /etc/caddy/Caddyfile 2>/dev/null; then
-    mkdir -p /etc/caddy/Caddyfile.d
+  if ! grep -q "import /etc/caddy/Caddyfile.d/" /etc/caddy/Caddyfile 2>/dev/null; then
     echo "import /etc/caddy/Caddyfile.d/*.conf" >> /etc/caddy/Caddyfile
   fi
-  systemctl reload caddy || systemctl restart caddy
-  log "Caddy reloaded. HTTPS auto-provisions on first request."
+  systemctl reload caddy 2>/dev/null || systemctl restart caddy
+  log "Caddy reloaded. HTTPS auto-provisions on first request to https://$PUBLIC_DOMAIN/"
 }
 
-connect_telegram() {
-  log "Telegram bot already configured via .env. Bot will auto-connect on container start."
-  log "Try sending 'hi' to @IISUPP_bot from your Telegram to verify."
+health_check() {
+  log "Health-checking the gateway on http://127.0.0.1:$OPENCLAW_PORT/ …"
+  for i in $(seq 1 15); do
+    if curl -fsS -o /dev/null "http://127.0.0.1:$OPENCLAW_PORT/" 2>/dev/null; then
+      log "OK — gateway responding on port $OPENCLAW_PORT."
+      return 0
+    fi
+    sleep 2
+  done
+  log "WARN: gateway not responding on port $OPENCLAW_PORT yet."
+  log "      Check with: openclaw status   |   journalctl -u openclaw -e   |   openclaw logs"
+  return 1
 }
 
 print_summary() {
-  local domain="${PUBLIC_DOMAIN:-openclaw.iisupp.net}"
   echo ""
   echo "============================================"
-  echo " OpenClaw install complete"
+  echo " OpenClaw install finished"
   echo "============================================"
-  echo " Public URL:  https://$domain"
-  echo " Admin UI:    https://$domain/admin"
-  echo " Logs:        cd $INSTALL_DIR && docker compose logs -f"
-  echo " Restart:     cd $INSTALL_DIR && docker compose restart"
-  echo " Stop:        cd $INSTALL_DIR && docker compose down"
-  echo ""
-  echo " Telegram:    @IISUPP_bot â message rome4n (chat_id 1870218558)"
-  echo " Bridge:      mesh-router â /api/mesh-task-queue â local://openclaw"
+  echo " Local dashboard : http://127.0.0.1:$OPENCLAW_PORT/   (SSH-tunnel to reach it)"
+  echo " Public URL      : https://$PUBLIC_DOMAIN/"
+  echo " Status / logs   : openclaw status   |   openclaw logs   |   journalctl -u openclaw -e"
   echo ""
   echo " NEXT:"
-  echo "   1. Test bot â send 'hi' to @IISUPP_bot, should reply"
-  echo "   2. Add OPENCLAW_TOKEN (printed above) to Netlify env vars + bridge-poller.mjs env"
-  echo "   3. Cont with CUSTOMER-INBOUND-BOT.md if you want the lead-gen persona"
+  echo "   1. If onboard didn't finish, run interactively:  openclaw onboard"
+  echo "   2. Connect Telegram (@IISUPP_bot) from the dashboard or 'openclaw channels'."
+  echo "   3. Confirm the mesh registry endpoint matches OpenClaw's real task API:"
+  echo "      registry has https://$PUBLIC_DOMAIN/api/v1/task — verify that path"
+  echo "      exists in OpenClaw (check 'openclaw' docs / dashboard API). If OpenClaw"
+  echo "      has no REST task endpoint, drive it via a channel (Telegram) instead and"
+  echo "      update aria-mesh-router's openclaw-assistant endpoint accordingly."
+  echo "   4. Make sure the droplet firewall allows 80/443 (Caddy) but NOT 18789 publicly."
   echo "============================================"
 }
 
 main() {
   require_root
-  mkdir -p "$(dirname "$LOG_FILE")"
-  : > "$LOG_FILE"
+  mkdir -p "$(dirname "$LOG_FILE")"; : > "$LOG_FILE"
   log "Starting OpenClaw install. Log: $LOG_FILE"
-  install_docker
+  apt-get update -y
+  install_node
   install_caddy
-  clone_openclaw
-  write_env
-  start_stack
+  install_openclaw
+  start_gateway
   configure_caddy
-  connect_telegram
+  health_check || true
   print_summary
 }
 

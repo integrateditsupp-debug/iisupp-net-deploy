@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#d4af37">
+<title>Shop &amp; Concierge Procurement | Integrated IT Support</title>
+<meta name="description" content="Curated technology, expert recommendations, and white-glove setup. Buy through our portal or shop trusted partners — backed by IIS advisory and configuration.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;900&display=swap');
+:root{ --luxury-gold:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#b38728 100%); --deep-slate:#050505; }
+*{box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--deep-slate);color:#fff;margin:0;overflow-x:hidden}
+h1,h2,h3,h4,.logo-text{font-family:'Cinzel',serif}
+a{text-decoration:none}
+.gold-glow{text-shadow:0 0 25px rgba(197,160,89,.5)}
+.gold-text{color:transparent;background:var(--luxury-gold);-webkit-background-clip:text;background-clip:text}
+.glass-panel{background:rgba(255,255,255,.02);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);transition:all .5s ease}
+.glass-panel:hover{background:rgba(255,255,255,.04);border-color:rgba(197,160,89,.3)}
+.eyebrow{font-size:8px;letter-spacing:.5em;text-transform:uppercase;color:#c5a059;font-weight:700;display:block}
+
+/* nav */
+nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05)}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:9px;font-weight:700;letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.nav-links a{transition:color .3s}
+.nav-links a:hover{color:#c5a059}
+.nav-links a.active{color:#c5a059}
+.nav-cta{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:var(--luxury-gold);color:#050505;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.2em;transition:all .3s;border-radius:2px}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(197,160,89,.4)}
+.mobile-menu-btn{display:none;background:none;border:1px solid rgba(197,160,89,.4);color:#c5a059;padding:8px 10px;cursor:pointer}
+.mobile-menu-btn span{display:block;width:20px;height:2px;background:#c5a059;margin:4px 0}
+.mobile-nav{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);backdrop-filter:blur(20px);z-index:55;flex-direction:column;align-items:center;justify-content:center;gap:30px}
+.mobile-nav.active{display:flex}
+.mobile-nav a{font-family:'Cinzel',serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.4em;color:rgba(255,255,255,.6)}
+.mobile-nav a:hover{color:#c5a059}
+.mobile-nav .close{position:absolute;top:24px;right:24px;background:none;border:none;color:#c5a059;font-size:28px;cursor:pointer}
+@media(max-width:1024px){nav{padding:16px 20px}.nav-links,.nav-cta{display:none}.mobile-menu-btn{display:block}}
+
+/* reusable card */
+.card{position:relative;background:linear-gradient(155deg,rgba(197,160,89,.04),rgba(255,255,255,.02) 60%,rgba(0,0,0,0));border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:26px 28px;transition:transform .5s cubic-bezier(.22,1,.36,1),border-color .4s,box-shadow .5s;overflow:hidden}
+.card:hover{transform:translateY(-3px);border-color:rgba(197,160,89,.5);box-shadow:0 18px 42px rgba(0,0,0,.5),0 0 32px rgba(197,160,89,.12)}
+.card h4{font-size:13.5px;letter-spacing:.18em;text-transform:uppercase;color:#fff;margin:0 0 10px;font-weight:700}
+.card:hover h4{color:#f1dca7}
+.card p{font-size:11.5px;line-height:1.7;color:rgba(255,255,255,.55);margin:0}
+.kind{font-size:7.5px;letter-spacing:.3em;text-transform:uppercase;color:#c5a059;border:1px solid rgba(197,160,89,.35);padding:3px 8px;white-space:nowrap}
+.btn-gold{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border:1px solid rgba(197,160,89,.45);background:rgba(197,160,89,.05);color:#c5a059;font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;transition:all .3s;cursor:pointer;border-radius:2px}
+.btn-gold:hover{color:#050505;background:var(--luxury-gold);border-color:transparent;box-shadow:0 6px 20px rgba(197,160,89,.28);transform:translateY(-1px)}
+.btn-gold:disabled{opacity:.55;cursor:wait}
+.btn-solid{background:var(--luxury-gold);color:#050505;border:none}
+.btn-solid:hover{color:#050505;box-shadow:0 8px 28px rgba(197,160,89,.4)}
+
+/* fee model */
+.fee-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:860px){.fee-grid{grid-template-columns:1fr}}
+.fee-card{position:relative;background:rgba(197,160,89,.04);border:1px solid rgba(197,160,89,.22);border-radius:8px;padding:28px 26px}
+.fee-card .pct{font-family:'Cinzel',serif;font-size:46px;font-weight:700;line-height:1}
+.fee-card .lbl{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#f1dca7;margin:10px 0 12px;font-weight:700}
+.fee-card .desc{font-size:11.5px;line-height:1.7;color:rgba(255,255,255,.6)}
+
+/* estimator */
+.est{background:rgba(255,255,255,.02);border:1px solid rgba(197,160,89,.25);border-radius:10px;padding:34px}
+.est label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.25em;color:rgba(255,255,255,.55);margin-bottom:8px;font-weight:700}
+.est input,.est select{width:100%;padding:13px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#fff;font-family:'Inter',sans-serif;font-size:14px}
+.est input:focus,.est select:focus{outline:none;border-color:rgba(197,160,89,.6)}
+.est .field{margin-bottom:20px}
+.breakdown{border-top:1px dashed rgba(197,160,89,.3);margin-top:8px;padding-top:18px}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13px;color:rgba(255,255,255,.7)}
+.brow .v{font-family:'Cinzel',serif;color:#f1dca7;font-variant-numeric:tabular-nums}
+.brow.total{border-top:1px solid rgba(197,160,89,.4);margin-top:8px;padding-top:14px;font-size:15px;color:#fff}
+.brow.total .v{font-size:22px;color:transparent;background:var(--luxury-gold);-webkit-background-clip:text;background-clip:text}
+.setup-opt{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer}
+.setup-opt:last-child{border-bottom:none}
+.setup-opt input{width:18px;height:18px;margin-top:2px;accent-color:#c5a059;flex:0 0 auto}
+.setup-opt .t{font-size:12.5px;color:#fff;font-weight:600}
+.setup-opt .d{font-size:10.5px;color:rgba(255,255,255,.5);margin-top:3px;line-height:1.5}
+.setup-opt .pr{margin-left:auto;font-family:'Cinzel',serif;color:#f1dca7;white-space:nowrap;font-size:13px}
+
+.section-head{text-align:center;max-width:760px;margin:0 auto 48px}
+.section-head h2{font-size:clamp(1.75rem,3.5vw,2.4rem);letter-spacing:.06em;text-transform:uppercase;margin:14px 0 16px}
+.section-head p{color:rgba(255,255,255,.5);font-size:12.5px;line-height:1.8}
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}}
+.footnote{font-size:10px;line-height:1.7;color:rgba(255,255,255,.35);letter-spacing:.04em}
+#estWrap{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+#partnerGrid,#waysGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:900px){#estWrap{grid-template-columns:1fr}#partnerGrid,#waysGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){#partnerGrid,#waysGrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" style="display:flex;align-items:center;gap:18px;color:inherit">
+    <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid #c5a059;position:relative"><div style="position:absolute;inset:4px;border:1px solid rgba(197,160,89,.3)"></div><span style="color:#c5a059;font-weight:700;font-size:20px" class="logo-text">I</span></div>
+    <div style="display:flex;flex-direction:column"><span style="font-size:18px;font-weight:700;letter-spacing:.3em;text-transform:uppercase" class="logo-text">Integrated IT Support</span><span style="font-size:9px;letter-spacing:.5em;color:#c5a059;text-transform:uppercase;opacity:.8">A Distinguished Network</span></div>
+  </a>
+  <div class="nav-links">
+    <a href="/shop.html" class="active">Shop</a>
+    <a href="/purchase-tech.html">Purchase Tech</a>
+    <a href="/services.html">Services</a>
+    <a href="/#solutions">Pricing</a>
+    <a href="/aria.html">ARIA</a>
+    <a href="/about.html">About</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="#estimator" class="nav-cta"><i class="fas fa-gem"></i> Start a build</a>
+    <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mnav">
+  <button class="close" onclick="toggleMenu()">&times;</button>
+  <a href="/shop.html" onclick="toggleMenu()" style="color:#c5a059">Shop</a>
+  <a href="/purchase-tech.html" onclick="toggleMenu()">Purchase Tech</a>
+  <a href="/services.html" onclick="toggleMenu()">Services</a>
+  <a href="/#solutions" onclick="toggleMenu()">Pricing</a>
+  <a href="/aria.html" onclick="toggleMenu()">ARIA</a>
+  <a href="/about.html" onclick="toggleMenu()">About</a>
+  <a href="tel:+16475813182" onclick="toggleMenu()">(647) 581-3182</a>
+</div>
+
+<!-- HERO -->
+<section style="padding:190px 24px 70px;position:relative;overflow:hidden;text-align:center">
+  <div style="position:absolute;inset:0;background:radial-gradient(circle at center,rgba(197,160,89,.08) 0%,transparent 70%);pointer-events:none"></div>
+  <div style="max-width:920px;margin:0 auto;position:relative;z-index:1">
+    <span class="eyebrow" style="margin-bottom:18px">The IIS Shop · Concierge Procurement</span>
+    <h1 style="font-size:clamp(2.4rem,6vw,4.2rem);font-weight:900;letter-spacing:-.02em;line-height:1.02;margin:0 0 22px" class="logo-text">Buy the <span class="gold-text gold-glow" style="font-style:italic">right thing</span>, the first time.</h1>
+    <p style="max-width:640px;margin:0 auto 30px;color:rgba(255,255,255,.55);font-size:13px;letter-spacing:.04em;line-height:1.8">Tell us what you need. We research the market, recommend the best option for your budget and use-case, and handle the buy — then optionally set it up and configure it so it works the day it arrives. Or shop our trusted partners yourself, below.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="#estimator" class="btn-gold btn-solid">Estimate my build</a>
+      <a href="#partners" class="btn-gold">Shop partners</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS / FEE MODEL -->
+<section id="how" style="padding:70px 24px;background:#080808">
+  <div style="max-width:1080px;margin:0 auto">
+    <div class="section-head">
+      <span class="eyebrow">How our concierge model works</span>
+      <h2>Transparent fees. <span class="gold-text" style="font-style:italic">No surprises.</span></h2>
+      <p>We invest dedicated time and expertise to bring you the best of the best — genuinely worth your money. Our pricing is simple and disclosed up front, every time.</p>
+    </div>
+    <div class="fee-grid reveal">
+      <div class="fee-card">
+        <div class="pct gold-text">20%</div>
+        <div class="lbl">Advisory &amp; Consultation</div>
+        <div class="desc">Covers expert recommendations, sourcing research, and administrative handling. Applied when we advise on or manage what you should buy — so you get a vetted decision, not guesswork.</div>
+      </div>
+      <div class="fee-card">
+        <div class="pct gold-text">15%</div>
+        <div class="lbl">Portal Curation</div>
+        <div class="desc">Charged on any item purchased through our portal. It reflects the time and effort we dedicate to curating, vetting and standing behind the best options worth your money.</div>
+      </div>
+      <div class="fee-card">
+        <div class="pct gold-text">+ Setup</div>
+        <div class="lbl">Setup &amp; Configuration</div>
+        <div class="desc">Optional white-glove setup at our listed rates — added at checkout with a single checkbox. We configure the device, migrate data and hand it over ready to work.</div>
+      </div>
+    </div>
+    <p class="footnote" style="text-align:center;margin-top:26px;max-width:760px;margin-left:auto;margin-right:auto">Fees shown are applied to the estimated item value and any selected services. Final hardware pricing and availability are confirmed by written quote before any purchase is made on your behalf. Setup rates are starting estimates; complex environments are quoted individually.</p>
+  </div>
+</section>
+
+<!-- ESTIMATOR -->
+<section id="estimator" style="padding:90px 24px">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-head">
+      <span class="eyebrow">Instant estimate</span>
+      <h2>Build your <span class="gold-text" style="font-style:italic">concierge order</span></h2>
+      <p>Enter what you're after and your target item budget. We'll calculate your all-in concierge cost in real time, then take a secure deposit to begin sourcing.</p>
+    </div>
+    <div class="reveal" id="estWrap">
+      <!-- inputs -->
+      <div class="est">
+        <div class="field">
+          <label for="e-item">What are we sourcing?</label>
+          <input id="e-item" type="text" placeholder="e.g. MacBook Pro 14&quot; M-series, 1TB">
+        </div>
+        <div class="field">
+          <label for="e-budget">Estimated item budget (USD)</label>
+          <input id="e-budget" type="number" min="0" step="50" value="2000" inputmode="numeric">
+        </div>
+        <div class="field" style="margin-bottom:8px">
+          <label>Add setup &amp; configuration?</label>
+          <div id="setupOpts"></div>
+        </div>
+      </div>
+      <!-- breakdown -->
+      <div class="est" style="display:flex;flex-direction:column">
+        <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#c5a059;font-weight:700;margin-bottom:6px">Your estimate</div>
+        <div class="breakdown" style="border-top:none;padding-top:6px;flex:1">
+          <div class="brow"><span>Item (your budget)</span><span class="v" id="b-item">$0.00</span></div>
+          <div class="brow"><span>Portal curation · 15%</span><span class="v" id="b-cur">$0.00</span></div>
+          <div class="brow"><span>Advisory &amp; consultation · 20%</span><span class="v" id="b-adv">$0.00</span></div>
+          <div class="brow"><span>Setup &amp; configuration</span><span class="v" id="b-setup">$0.00</span></div>
+          <div class="brow total"><span>Estimated all-in</span><span class="v" id="b-total">$0.00</span></div>
+        </div>
+        <div style="margin-top:18px">
+          <div class="brow" style="background:rgba(197,160,89,.06);border:1px solid rgba(197,160,89,.25);border-radius:6px;padding:12px 14px">
+            <span style="font-size:12px">Deposit to start sourcing today</span>
+            <span class="v" id="b-deposit" style="font-size:18px">$0.00</span>
+          </div>
+          <p class="footnote" style="margin:10px 0 14px">The deposit collects our advisory + curation fee (and any selected setup). The hardware itself is confirmed by quote before we buy — your deposit is credited toward your order.</p>
+          <button class="btn-gold btn-solid" id="payBtn" style="width:100%;padding:15px" onclick="startCheckout()">Pay deposit &amp; begin · <span id="payAmt">$0.00</span></button>
+          <div style="text-align:center;margin-top:12px"><a href="/purchase-tech.html" style="color:rgba(255,255,255,.45);font-size:10px;letter-spacing:.2em;text-transform:uppercase">Prefer a free quote first? Submit a request →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS / AFFILIATE -->
+<section id="partners" style="padding:90px 24px;background:#080808;position:relative">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-head">
+      <span class="eyebrow">Prefer to buy it yourself?</span>
+      <h2>Shop our <span class="gold-text" style="font-style:italic">trusted partners</span></h2>
+      <p>Hand-picked platforms we recommend. Buy direct — or have us choose and manage it for you (advisory fee applies). Either way you get the right gear, worth your money.</p>
+    </div>
+    <div id="partnerGrid"></div>
+    <p style="text-align:center;font-size:9px;text-transform:uppercase;letter-spacing:.25em;color:rgba(255,255,255,.3);margin-top:30px">Some links are affiliate partnerships — buying through them supports IIS at no extra cost to you.</p>
+  </div>
+</section>
+
+<!-- MORE WAYS TO WORK WITH US -->
+<section style="padding:90px 24px">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-head">
+      <span class="eyebrow">More ways to work with us</span>
+      <h2>Beyond the <span class="gold-text" style="font-style:italic">single purchase</span></h2>
+      <p>Recurring value, protection, and savings — additional services that keep your technology (and budget) performing.</p>
+    </div>
+    <div id="waysGrid"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="padding:70px 40px;border-top:1px solid rgba(255,255,255,.05)">
+  <div style="max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:30px">
+    <div><p class="logo-text" style="font-size:18px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 6px">Integrated IT Support</p><p style="color:rgba(255,255,255,.2);font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700">30 Fothergill Court, Whitby, ON L1P 2L4</p></div>
+    <div style="text-align:right"><a href="tel:+16475813182" style="font-size:26px;font-weight:300;color:#c5a059">(647) 581-3182</a><p style="color:rgba(255,255,255,.2);font-size:8px;text-transform:uppercase;font-weight:700;margin-top:4px">Ahmad W. · Senior Director</p></div>
+  </div>
+  <div style="max-width:1100px;margin:30px auto 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.05);text-align:center">
+    <a href="/terms.html" style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5)">Terms</a>
+    <span style="color:rgba(255,255,255,.2);margin:0 10px">·</span>
+    <a href="/copyright.html" style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5)">© Integrated IT Support Inc.</a>
+    <p class="footnote" style="max-width:780px;margin:18px auto 0">Advisory (20%) and portal curation (15%) fees, and setup rates, are disclosed before purchase and are non-refundable once sourcing or service work has begun. Affiliate links may earn IIS a commission at no additional cost to you. E&amp;OE.</p>
+  </div>
+</footer>
+
+<script>
+function toggleMenu(){ document.getElementById('mnav').classList.toggle('active'); }
+
+/* ── EDIT THESE — fee rates & setup pricing (starting estimates) ───────── */
+var ADVISORY_RATE = 0.20;   // 20% advisory / consultation / admin
+var CURATION_RATE = 0.15;   // 15% portal curation
+var SETUP_TIERS = [
+  { id:'none',     name:'No setup — I\'ll configure it myself',                              cents:0 },
+  { id:'basic',    name:'Basic device setup — OS, updates, accounts, essentials',            cents:14900 },
+  { id:'standard', name:'Standard — data migration, email, security, printers',              cents:34900 },
+  { id:'premium',  name:'Premium — full business onboarding, MDM enrolment, on-site option', cents:69900 }
+];
+
+/* ── EDIT THESE — affiliate partners (swap "#" for your affiliate links) ── */
+var PARTNERS = [
+  { name:'Amazon',          kind:'Associates · ~3-4%',  desc:'Widest catalogue of laptops, monitors, peripherals and accessories — the most established affiliate program on the web.', url:'#' },
+  { name:'Apple',           kind:'Affiliate',           desc:'MacBook, iPad, Studio Display and accessories for creative, executive and developer workflows.', url:'#' },
+  { name:'Dell',            kind:'Affiliate · ~3-6%',   desc:'XPS, Latitude and Precision lines — strong business laptops, workstations and warranties.', url:'#' },
+  { name:'Lenovo',          kind:'Affiliate · ~5-8%',   desc:'ThinkPad reliability and value across business and performance ranges.', url:'#' },
+  { name:'B&H Photo',       kind:'Affiliate',           desc:'Pro-grade hardware for designers, photographers and video editors — often tax-advantaged.', url:'#' },
+  { name:'Newegg',          kind:'Affiliate · ~1-3%',   desc:'Deep catalogue for custom builds, GPUs, SSDs and networking gear.', url:'#' }
+];
+
+/* ── EDIT THESE — additional revenue streams ──────────────────────────── */
+var WAYS = [
+  { tag:'Recurring', title:'Managed IT Plans', desc:'Proactive monitoring, helpdesk and security on a predictable monthly retainer. The reliable backbone of every business.', cta:'View plans', url:'/#solutions' },
+  { tag:'AI', title:'ARIA Subscription', desc:'Your always-on AI IT assistant — triage, fixes and escalation, 24/7. Personal, Pro and Business tiers.', cta:'See ARIA', url:'/aria.html' },
+  { tag:'Protection', title:'Protection &amp; Care Plans', desc:'Extended warranty, accidental damage cover and priority replacement on hardware bought through us.', cta:'Add protection', url:'#estimator' },
+  { tag:'Trade-in', title:'Trade-In &amp; Buyback', desc:'Turn old devices into credit toward your next build. We assess, wipe and responsibly recycle or resell.', cta:'Get a value', url:'mailto:ahmad.wasee@iisupp.net?subject=Trade-in%20valuation' },
+  { tag:'Referral', title:'Referral Rewards', desc:'Refer a business and earn account credit when they onboard. The compliment that pays you back.', cta:'Refer someone', url:'mailto:ahmad.wasee@iisupp.net?subject=Referral' },
+  { tag:'Flexible', title:'Financing &amp; Leasing', desc:'Spread the cost of hardware and setup across manageable terms for qualifying business clients.', cta:'Ask about terms', url:'mailto:ahmad.wasee@iisupp.net?subject=Financing%20enquiry' }
+];
+
+function fmt(c){ return '$'+(c/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+/* render setup options */
+(function(){
+  var box=document.getElementById('setupOpts');
+  box.innerHTML=SETUP_TIERS.map(function(s,i){
+    return '<label class="setup-opt"><input type="radio" name="setup" value="'+i+'"'+(i===0?' checked':'')+' onchange="calc()">'
+      +'<span><span class="t">'+s.name.replace(/'/g,'&#39;')+'</span></span>'
+      +'<span class="pr">'+(s.cents?fmt(s.cents):'Free')+'</span></label>';
+  }).join('');
+})();
+
+/* render partners */
+document.getElementById('partnerGrid').innerHTML=PARTNERS.map(function(p){
+  return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px"><h4>'+p.name+'</h4><span class="kind">'+p.kind+'</span></div>'
+    +'<p>'+p.desc+'</p><a href="'+p.url+'" target="_blank" rel="noopener sponsored" class="btn-gold" style="margin-top:14px">Shop '+p.name+' <i class="fas fa-arrow-up-right-from-square"></i></a></div>';
+}).join('');
+
+/* render ways */
+document.getElementById('waysGrid').innerHTML=WAYS.map(function(w){
+  return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px"><h4>'+w.title+'</h4><span class="kind">'+w.tag+'</span></div>'
+    +'<p>'+w.desc+'</p><a href="'+w.url+'" class="btn-gold" style="margin-top:14px">'+w.cta+'</a></div>';
+}).join('');
+
+/* estimator math */
+function currentSetup(){ var r=document.querySelector('input[name="setup"]:checked'); return SETUP_TIERS[r?+r.value:0]; }
+function depositCents(){
+  var budget=Math.max(0, Math.round((parseFloat(document.getElementById('e-budget').value)||0)*100));
+  var cur=Math.round(budget*CURATION_RATE);
+  var adv=Math.round(budget*ADVISORY_RATE);
+  var setup=currentSetup().cents;
+  return { budget:budget, cur:cur, adv:adv, setup:setup, total:budget+cur+adv+setup, deposit:cur+adv+setup };
+}
+function calc(){
+  var d=depositCents();
+  document.getElementById('b-item').textContent=fmt(d.budget);
+  document.getElementById('b-cur').textContent=fmt(d.cur);
+  document.getElementById('b-adv').textContent=fmt(d.adv);
+  document.getElementById('b-setup').textContent=fmt(d.setup);
+  document.getElementById('b-total').textContent=fmt(d.total);
+  document.getElementById('b-deposit').textContent=fmt(d.deposit);
+  document.getElementById('payAmt').textContent=fmt(d.deposit);
+}
+document.getElementById('e-budget').addEventListener('input',calc);
+calc();
+
+/* stripe checkout — charges the concierge deposit (advisory + curation + setup) */
+async function startCheckout(){
+  var btn=document.getElementById('payBtn');
+  var d=depositCents();
+  if(d.deposit<50){ alert('Enter an item budget to calculate your deposit.'); return; }
+  var item=(document.getElementById('e-item').value||'technology').trim().slice(0,120);
+  var setup=currentSetup();
+  if(btn.disabled) return; btn.disabled=true; var orig=btn.innerHTML; btn.innerHTML='Opening secure checkout…';
+  var desc='Concierge deposit for: '+item+'. Curation 15% ('+fmt(d.cur)+') + Advisory 20% ('+fmt(d.adv)+')'
+    +(setup.cents?' + Setup ('+setup.name+', '+fmt(setup.cents)+')':'')+'. Credited toward final order; hardware confirmed by quote.';
+  try{
+    var r=await fetch('/.netlify/functions/stripe-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({priceData:{amount_cents:d.deposit,currency:'usd',product_name:'IIS Concierge Procurement — Deposit',description:desc,id:'iis-concierge-'+Date.now()}})});
+    var data=await r.json();
+    if(data&&data.url){ window.location=data.url; return; }
+    throw new Error((data&&data.error)||'Checkout failed');
+  }catch(e){
+    btn.disabled=false; btn.innerHTML=orig;
+    alert('Could not start checkout: '+(e.message||e)+'\nPlease email ahmad.wasee@iisupp.net to complete your order.');
+  }
+}
+
+/* scroll reveal */
+(function(){
+  if(!('IntersectionObserver' in window)){ document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in');}); return; }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+})();
+</script>
+</body>
+</html>
