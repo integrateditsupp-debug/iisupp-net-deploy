@@ -35,6 +35,7 @@
     --font: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --serif: 'Cinzel', Georgia, serif;
     --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -48,12 +49,17 @@
     padding-bottom: env(safe-area-inset-bottom);
     -webkit-font-smoothing: antialiased;
   }
+  body.gate-locked { overflow: hidden; height: 100vh; }
   a { color: var(--gold); text-decoration: none; }
   h1, h2, h3, h4, .serif { font-family: var(--serif); }
   img, video, iframe { max-width: 100%; }
   .gold { color: var(--gold); }
   .eyebrow { display:block; color: var(--gold); font: 700 9px/1 var(--font); letter-spacing: 0.5em; text-transform: uppercase; margin-bottom: 12px; }
   .gold-text { background: linear-gradient(to right, var(--gold), var(--gold-light)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* ===== SCROLL-REVEAL (Emil-style: short, eased, transform+opacity only) ===== */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.7s var(--ease); transition-delay: var(--rd, 0ms); will-change: opacity, transform; }
+  .reveal.reveal-in { opacity: 1; transform: none; }
 
   /* ===== HEADER / NAV ===== */
   .hdr {
@@ -116,12 +122,15 @@
     filter: drop-shadow(0 0 18px rgba(197,160,89,0.25)); }
   .hero .lead { max-width: 420px; margin: 0 auto 14px; color: var(--txt-dim); font-size: 11px; letter-spacing: 0.08em; line-height: 1.7; text-transform: uppercase; }
   .hero .sub { max-width: 380px; margin: 0 auto 26px; color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 0.08em; line-height: 1.7; text-transform: uppercase; }
-  .hero-cta { display: inline-block; font: 700 9px/1 var(--font); letter-spacing: 0.4em; text-transform: uppercase; color: #fff; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .hero-cta { display: inline-block; font: 700 9px/1 var(--font); letter-spacing: 0.4em; text-transform: uppercase; color: #fff; border-bottom: 1px solid var(--line); padding-bottom: 8px; transition: color 0.3s ease; }
+  .hero-cta:active { color: var(--gold); }
 
   /* ===== BUTTONS ===== */
   .btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%;
     padding: 15px 16px; border: 0; border-radius: 12px; cursor: pointer;
-    font: 700 11px/1 var(--font); letter-spacing: 0.18em; text-transform: uppercase; text-align: center; }
+    font: 700 11px/1 var(--font); letter-spacing: 0.18em; text-transform: uppercase; text-align: center;
+    transition: transform 0.18s var(--ease), filter 0.18s ease; }
+  .btn:active { transform: scale(0.98); }
   .btn-gold { background: var(--gold-grad); color: #050505; }
   .btn-ghost { background: rgba(255,255,255,0.02); border: 1px solid var(--line); color: var(--gold-light); }
   .btn-wa { background: var(--whatsapp); color: #fff; }
@@ -132,7 +141,8 @@
     border: 1px solid var(--line); border-radius: 20px; padding: 16px; }
   .sc-hero-cta { display: flex; align-items: center; gap: 12px; width: 100%; padding: 18px 18px;
     border: 0; border-radius: 14px; cursor: pointer; color: #050505; background: var(--gold-grad);
-    font-family: var(--font); margin-bottom: 16px; }
+    font-family: var(--font); margin-bottom: 16px; transition: transform 0.18s var(--ease), box-shadow 0.25s ease; box-shadow: 0 0 0 rgba(197,160,89,0); }
+  .sc-hero-cta:active { transform: scale(0.985); box-shadow: 0 10px 30px rgba(197,160,89,0.25); }
   .sc-hero-cta .ico { font-size: 22px; }
   .sc-hero-cta .txt { flex: 1; text-align: left; font: 700 15px/1 var(--font); letter-spacing: 0.02em; }
   .sc-hero-cta .arr { font-size: 18px; font-weight: 700; }
@@ -141,20 +151,23 @@
   .sc-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   .sc-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .sc-tile { background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 14px;
-    padding: 16px 12px; text-align: center; cursor: pointer; color: #fff; font-family: var(--font); }
+    padding: 16px 12px; text-align: center; cursor: pointer; color: #fff; font-family: var(--font); transition: transform 0.18s var(--ease), border-color 0.25s ease, background 0.25s ease; }
+  .sc-tile:active { transform: scale(0.97); border-color: var(--gold); background: rgba(197,160,89,0.05); }
   .sc-tile-ico { font-size: 24px; }
   .sc-tile-title { font: 600 13px/1.2 var(--font); margin-top: 8px; }
   .sc-tile-sub { font-size: 10px; color: var(--txt-dim); margin-top: 3px; }
   .sc-emergency { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 14px 16px;
     border: 1px solid rgba(239,68,68,0.4); border-radius: 14px; background: rgba(239,68,68,0.06); position: relative; overflow: hidden; }
-  .sc-emergency .ico { font-size: 20px; }
+  .sc-emergency .ico { font-size: 20px; animation: emPulse 2.4s ease-in-out infinite; }
+  @keyframes emPulse { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.12); } }
   .sc-emergency .txt { flex: 1; }
   .sc-emergency .txt strong { display: block; font: 700 13px/1.2 var(--font); color: #fff; }
   .sc-emergency .txt span { font-size: 11px; color: var(--txt-dim); }
   .sc-emergency .arr { color: #ef4444; font-weight: 700; }
   .sc-pair { display: grid; gap: 10px; }
   .sc-action { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px;
-    background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 14px; cursor: pointer; color: #fff; font-family: var(--font); text-align: left; }
+    background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 14px; cursor: pointer; color: #fff; font-family: var(--font); text-align: left; transition: transform 0.18s var(--ease), border-color 0.25s ease; }
+  .sc-action:active { transform: scale(0.985); border-color: var(--gold); }
   .sc-action .ico { font-size: 24px; flex: none; }
   .sc-action .title { font: 600 14px/1.2 var(--font); }
   .sc-action .sub { font-size: 11px; color: var(--txt-dim); margin-top: 3px; }
@@ -165,30 +178,52 @@
   .sc-perk .title { font: 600 11px/1.2 var(--font); margin-top: 6px; }
   .sc-perk .sub { font-size: 9px; color: var(--txt-dim); margin-top: 2px; }
 
-  /* ===== PRICING ===== */
-  .track { max-width: 480px; margin: 0 auto 40px; }
+  /* ===== PRICING — CARD FLIP DECK ===== */
+  .track { max-width: 460px; margin: 0 auto 40px; }
   .track-head { text-align: center; margin-bottom: 22px; }
   .track-eyebrow { display: block; color: var(--gold); font: 700 9px/1 var(--mono); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 8px; }
   .track-title { margin: 0 0 8px; font: 700 22px/1.2 var(--serif); text-transform: uppercase; letter-spacing: 0.03em; }
   .track-title .accent { color: var(--gold); }
   .track-sub { margin: 0 auto; max-width: 340px; color: var(--txt-dim); font-size: 12px; line-height: 1.6; }
-  .pcard { border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-bottom: 14px;
-    background: linear-gradient(180deg, rgba(20,16,11,0.55), rgba(11,9,7,0.85)); }
-  .pcard.featured { border-color: rgba(197,160,89,0.55); box-shadow: 0 0 40px rgba(197,160,89,0.08); }
-  .pcard-badge { display: inline-flex; align-items: center; gap: 7px; font: 700 9px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 12px; }
-  .pcard-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 8px var(--gold); }
-  .pcard-name { margin: 0 0 4px; font: 700 19px/1.2 var(--serif); }
-  .pcard-scale { font-size: 11px; color: var(--txt-dim); text-transform: uppercase; letter-spacing: 0.08em; }
-  .pcard-price { margin: 10px 0 12px; font: 700 17px/1.2 var(--mono); color: var(--gold-light); }
-  .pcard-tag { font-size: 13px; color: var(--txt-soft); line-height: 1.6; }
-  .pcard ul { list-style: none; margin: 14px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line-soft); display: flex; flex-direction: column; gap: 8px; }
-  .pcard ul li { position: relative; padding-left: 16px; font-size: 12.5px; color: var(--txt-soft); line-height: 1.5; }
-  .pcard ul li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 6px rgba(197,160,89,0.55); }
-  .pcard-positioning { margin-top: 14px; padding: 12px 14px; border-left: 2px solid var(--gold); background: rgba(197,160,89,0.05); border-radius: 0 8px 8px 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; line-height: 1.55; color: rgba(243,236,217,0.7); }
-  .pcard-cta { display: block; width: 100%; margin-top: 14px; padding: 13px; text-align: center; border: 1px solid var(--line); border-radius: 10px; color: var(--gold-light); font: 700 10px/1 var(--font); letter-spacing: 0.18em; text-transform: uppercase; background: rgba(197,160,89,0.04); }
-  .pcard-buy { display: block; width: 100%; margin-top: 10px; padding: 13px; text-align: center; border: 0; border-radius: 10px; color: #050505; font: 700 10px/1 var(--font); letter-spacing: 0.16em; text-transform: uppercase; background: var(--gold-grad); cursor: pointer; font-family: var(--font); }
-  .pcard-note { margin-top: 9px; font-size: 9.5px; color: var(--txt-dim); line-height: 1.5; text-align: center; }
-  .project-card { max-width: 480px; margin: 6px auto 0; border: 1px solid var(--line); border-radius: 16px; padding: 18px; background: rgba(8,8,8,0.7); }
+
+  .price-deck { display: grid; gap: 16px; perspective: 1600px; }
+  .deck-slot { position: relative; height: 520px; }
+  .deck-card { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.7s var(--ease); }
+  .deck-slot.is-flipped .deck-card { transform: rotateY(180deg); }
+  .deck-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border: 1px solid rgba(197,160,89,0.35); border-radius: 16px; padding: 22px 18px;
+    display: flex; flex-direction: column; overflow: hidden;
+    background: linear-gradient(155deg, rgba(197,160,89,0.06), rgba(11,9,7,0.92) 55%);
+    box-shadow: 0 22px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .deck-face::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at top right, rgba(197,160,89,0.12), transparent 60%); pointer-events:none; }
+  .deck-front.featured, .deck-slot.featured .deck-face { border-color: rgba(197,160,89,0.55); }
+  .deck-badge { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 7px; align-self: flex-start;
+    font: 700 9px/1.3 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-light);
+    border: 1px solid rgba(197,160,89,0.45); background: rgba(197,160,89,0.06); padding: 6px 11px; border-radius: 999px; margin-bottom: 14px; }
+  .deck-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+  .deck-name { position: relative; z-index: 1; margin: 0 0 5px; font: 700 19px/1.2 var(--serif); }
+  .deck-scale { position: relative; z-index: 1; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--txt-dim); }
+  .deck-price { position: relative; z-index: 1; margin: 12px 0 14px; font: 700 18px/1.2 var(--serif); color: var(--gold-light); text-shadow: 0 0 20px rgba(197,160,89,0.22); }
+  .deck-price-sm { position: relative; z-index: 1; font: 500 13px/1.2 var(--mono); color: var(--gold); margin-bottom: 12px; }
+  .deck-tagline { position: relative; z-index: 1; font-size: 13px; color: var(--txt-soft); line-height: 1.6; }
+  .deck-hint { position: relative; z-index: 1; margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(197,160,89,0.15);
+    display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center;
+    font: 700 8.5px/1 var(--font); letter-spacing: 0.35em; text-transform: uppercase; color: rgba(197,160,89,0.75); }
+  .deck-hint svg { width: 14px; height: 14px; }
+  .deck-back { transform: rotateY(180deg); background: linear-gradient(155deg, rgba(197,160,89,0.08), rgba(10,10,10,0.98) 55%); border-color: rgba(197,160,89,0.55); padding: 0; }
+  .deck-back-scroll { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 18px 18px; position: relative; z-index: 1; }
+  .deck-back ul { list-style: none; margin: 4px 0 12px; padding: 0; }
+  .deck-back li { position: relative; padding: 7px 0 7px 14px; font-size: 11.5px; line-height: 1.5; color: var(--txt-soft); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .deck-back li::before { content:''; position: absolute; left: 0; top: 13px; width: 7px; height: 1px; background: var(--gold); }
+  .deck-positioning { margin: 12px 0 14px; padding: 12px 14px; border-left: 2px solid var(--gold); background: rgba(197,160,89,0.05); border-radius: 0 8px 8px 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; line-height: 1.55; color: rgba(243,236,217,0.7); }
+  .deck-cta { display: block; width: 100%; margin-top: 8px; padding: 12px; text-align: center; border: 1px solid rgba(197,160,89,0.5); border-radius: 10px; color: var(--gold-light); font: 700 9.5px/1 var(--font); letter-spacing: 0.2em; text-transform: uppercase; background: rgba(197,160,89,0.04); }
+  .deck-cta-buy { display: block; width: 100%; margin-top: 8px; padding: 12px; text-align: center; border: 0; border-radius: 10px; color: #050505; font: 700 9.5px/1 var(--font); letter-spacing: 0.16em; text-transform: uppercase; background: var(--gold-grad); cursor: pointer; font-family: var(--font); }
+  .deck-pay-note { margin-top: 8px; font-size: 9px; color: var(--txt-dim); line-height: 1.5; text-align: center; }
+  .deck-flip-back { position: absolute; top: 12px; right: 12px; z-index: 3; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(197,160,89,0.45); background: rgba(5,5,5,0.7); color: var(--gold); display: grid; place-items: center; cursor: pointer; font-size: 15px; }
+
+  .project-card { max-width: 460px; margin: 6px auto 0; border: 1px solid var(--line); border-radius: 16px; padding: 18px; background: rgba(8,8,8,0.7); }
   .project-card h4 { margin: 0; font: 700 15px/1.2 var(--serif); }
   .project-card .head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
   .project-card .head span { font: 700 8px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--line); border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
@@ -208,18 +243,19 @@
 
   /* ===== FRAMEWORKS ===== */
   .fw-grid { display: grid; gap: 10px; max-width: 480px; margin: 0 auto; }
-  .fw-card { width: 100%; text-align: left; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,0.015); cursor: pointer; overflow: hidden; font-family: var(--font); color: #fff; }
+  .fw-card { width: 100%; text-align: left; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,0.015); cursor: pointer; overflow: hidden; font-family: var(--font); color: #fff; transition: border-color 0.25s ease; }
+  .fw-card.fw-open { border-color: rgba(197,160,89,0.45); }
   .fw-head { display: flex; align-items: center; gap: 14px; padding: 16px 16px; }
   .fw-icon { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 10px; font-family: var(--serif); font-size: 16px; color: var(--gold-light); }
   .fw-title-wrap { flex: 1; min-width: 0; }
   .fw-title { font: 600 14px/1.2 var(--font); }
   .fw-tagline { font-size: 11px; color: var(--txt-dim); margin-top: 3px; }
   .fw-toggle { width: 20px; height: 20px; flex: none; position: relative; }
-  .fw-toggle::before, .fw-toggle::after { content: ""; position: absolute; background: var(--gold); transition: opacity 0.2s; }
+  .fw-toggle::before, .fw-toggle::after { content: ""; position: absolute; background: var(--gold); transition: opacity 0.25s ease, transform 0.25s ease; }
   .fw-toggle::before { left: 4px; right: 4px; top: 9px; height: 2px; }
   .fw-toggle::after { top: 4px; bottom: 4px; left: 9px; width: 2px; }
-  .fw-card.fw-open .fw-toggle::after { opacity: 0; }
-  .fw-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
+  .fw-card.fw-open .fw-toggle::after { opacity: 0; transform: rotate(90deg); }
+  .fw-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s var(--ease); }
   .fw-card.fw-open .fw-body { grid-template-rows: 1fr; }
   .fw-body-inner { overflow: hidden; }
   .fw-body-inner p { margin: 0; padding: 0 16px 16px; font-size: 12.5px; color: var(--txt-soft); line-height: 1.65; }
@@ -230,19 +266,31 @@
   .aria-feat h4 { margin: 0 0 6px; font: 700 13px/1.2 var(--serif); letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-light); }
   .aria-feat p { margin: 0; font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.6; }
   .aria-ctas { display: grid; gap: 10px; max-width: 380px; margin: 0 auto 22px; }
-  .frame-box { max-width: 480px; margin: 0 auto; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #070604; box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 40px rgba(197,160,89,0.08); }
-  .frame-box iframe { width: 100%; height: 620px; border: 0; display: block; background: #070604; }
+  .frame-box { max-width: 480px; margin: 0 auto; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #070604; box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 40px rgba(197,160,89,0.08); position: relative; }
+  .frame-box iframe { width: 100%; border: 0; display: block; background: #070604; }
+  .frame-box.frame-16x9 { aspect-ratio: 16 / 9; max-height: 60vh; }
+  .frame-box.frame-16x9 iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
   .frame-cap { text-align: center; color: rgba(255,255,255,0.3); font: 700 9px/1 var(--font); letter-spacing: 0.35em; text-transform: uppercase; margin-top: 14px; }
 
-  /* lazy iframe placeholder */
-  .lazyframe { position: relative; cursor: pointer; }
-  .lazyframe .lz-poster { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 280px; text-align: center; padding: 30px; }
-  .lazyframe .lz-poster .lz-play { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--gold-grad); color: #050505; font-size: 22px; }
-  .lazyframe .lz-poster .lz-label { font: 700 10px/1.4 var(--font); letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-light); }
+  /* loading shimmer skeleton (replaces tap-to-play) */
+  .frame-skeleton { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: linear-gradient(180deg, #0b0906, #070604); }
+  .frame-skeleton .sk-ring { width: 46px; height: 46px; border-radius: 50%; border: 2px solid rgba(197,160,89,0.22); border-top-color: var(--gold); animation: skSpin 0.9s linear infinite; }
+  @keyframes skSpin { to { transform: rotate(360deg); } }
+  .frame-skeleton .sk-label { font: 700 9px/1 var(--font); letter-spacing: 0.3em; text-transform: uppercase; color: rgba(197,160,89,0.7); }
+  .frame-skeleton::after { content:''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(197,160,89,0.06) 50%, transparent 70%); transform: translateX(-100%); animation: skShimmer 1.6s ease-in-out infinite; }
+  @keyframes skShimmer { to { transform: translateX(100%); } }
+  .frame-box.loaded .frame-skeleton { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 
   /* ===== CINEMATICS ===== */
-  .cine-frame { max-width: 480px; margin: 0 auto; border: 1px solid rgba(197,160,89,0.35); border-radius: 16px; overflow: hidden; background: #0a0908; box-shadow: 0 0 50px rgba(197,160,89,0.10); }
-  .cine-frame video { width: 100%; display: block; background: #000; }
+  .cine-frame { max-width: 480px; margin: 0 auto; border: 1px solid rgba(197,160,89,0.35); border-radius: 16px; overflow: hidden; background: #0a0908; box-shadow: 0 0 50px rgba(197,160,89,0.10); position: relative; aspect-ratio: 16 / 9; }
+  .cine-frame video { width: 100%; height: 100%; display: block; background: #000; object-fit: cover; }
+  .cine-play { position: absolute; inset: 0; margin: auto; width: 72px; height: 72px; border-radius: 50%; border: 0; cursor: pointer;
+    background: var(--gold-grad); color: #050505; display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 0 rgba(197,160,89,0.5);
+    transition: transform 0.2s var(--ease), opacity 0.3s ease; animation: cinePulse 2.6s ease-in-out infinite; }
+  .cine-play::after { content:''; width: 0; height: 0; border-left: 18px solid #050505; border-top: 11px solid transparent; border-bottom: 11px solid transparent; margin-left: 5px; }
+  .cine-play:active { transform: scale(0.92); }
+  @keyframes cinePulse { 0%,100%{ box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 0 rgba(197,160,89,0.45); } 50%{ box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 14px rgba(197,160,89,0); } }
+  .cine-frame.playing .cine-play { opacity: 0; pointer-events: none; transform: scale(0.6); }
 
   /* ===== CAPABILITIES ===== */
   .cap-grid { display: grid; gap: 12px; max-width: 480px; margin: 0 auto 24px; }
@@ -281,7 +329,8 @@
 
   /* ===== FAB STACK ===== */
   .fab-stack { position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 70; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
-  .fab { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,0.45); border: none; cursor: pointer; }
+  .fab { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,0.45); border: none; cursor: pointer; transition: transform 0.18s var(--ease); }
+  .fab:active { transform: scale(0.92); }
   .fab-wa { background: var(--whatsapp); }
   .fab-wa svg { width: 28px; height: 28px; fill: #fff; }
   .fab-aria { width: auto; height: 54px; border-radius: 999px; padding: 0 18px; gap: 8px; display: inline-flex; align-items: center; background: linear-gradient(135deg, #0a0805, #1a140a); border: 1px solid var(--line); color: var(--gold-light); font: 700 11px/1 var(--font); letter-spacing: 0.2em; text-transform: uppercase; }
@@ -302,7 +351,7 @@
   /* ===== CHAT WIDGET ===== */
   .chat-window { position: fixed; left: 12px; right: 12px; bottom: calc(80px + env(safe-area-inset-bottom)); z-index: 80; max-width: 400px; margin: 0 auto;
     background: #0a0805; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.6);
-    opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; }
+    opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity 0.25s ease, transform 0.25s var(--ease); }
   .chat-window.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
   .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, rgba(197,160,89,0.08), transparent); }
   .chat-header h4 { margin: 0; font: 700 13px/1 var(--serif); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-light); }
@@ -321,13 +370,136 @@
   .chat-success .check-circle { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(197,160,89,0.12); color: var(--gold); }
   .chat-success p { font-size: 13px; color: var(--txt-soft); line-height: 1.6; }
 
+  /* ===== FINGERPRINT BIOMETRIC GATEWAY ===== */
+  #gateway { position: fixed; inset: 0; z-index: 10000; display: flex; background: #000; cursor: pointer; }
+  #gateway.hidden-gate { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+  .door { flex: 1; background: #050505; height: 100vh; height: 100dvh; transition: transform 1s cubic-bezier(0.7, 0, 0.3, 1); position: relative; display: flex; align-items: center; overflow: hidden; }
+  .door-left { justify-content: flex-end; border-right: 1px solid rgba(197,160,89,0.2); }
+  .door-right { justify-content: flex-start; border-left: 1px solid rgba(197,160,89,0.2); }
+  .portal-half { width: 76px; height: 58vh; border: 5px double var(--gold); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background: rgba(0,0,0,0.95); box-shadow: 0 0 40px rgba(197,160,89,0.1); }
+  .door-left .portal-half { border-right: none; border-radius: 4px 0 0 4px; }
+  .door-right .portal-half { border-left: none; border-radius: 0 4px 4px 0; }
+  .huge-i { font-family: var(--serif); font-size: 30vh; color: rgba(197,160,89,0.8); font-weight: bold; position: absolute; top: 50%; transform: translateY(-50%); line-height: 1; pointer-events: none; }
+  .door-left .huge-i { right: -16px; }
+  .door-right .huge-i { left: -16px; }
+  .inner-branding-container { position: absolute; bottom: 36px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; pointer-events: none; }
+  .door-left .inner-branding-container { right: 0; }
+  .door-right .inner-branding-container { left: 0; }
+  .brand-main { font-family: var(--serif); font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: #fff; }
+  .brand-sub { font-size: 6px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-top: 5px; }
+  .interaction-suite { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 120; display: flex; flex-direction: column; align-items: center; pointer-events: auto; transition: opacity 0.5s ease; }
+  .handle-row { display: flex; gap: 26px; margin-bottom: 16px; }
+  .handle { width: 6px; height: 84px; background: var(--gold-grad); border-radius: 10px; box-shadow: 0 0 20px rgba(197,160,89,0.2); }
+  .enter-text { font-family: var(--serif); color: #fff; font-size: 13px; letter-spacing: 0.5em; text-transform: uppercase; font-weight: 700; text-shadow: 0 0 10px rgba(255,255,255,0.3); margin-top: 28px; }
+  #gateway.open .door-left { transform: translateX(-100%); }
+  #gateway.open .door-right { transform: translateX(100%); }
+  #gateway.open .interaction-suite { opacity: 0; pointer-events: none; }
+
+  .biometric-overlay { position: absolute; inset: 0; z-index: 115; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; opacity: 0; background: rgba(0,0,0,0); backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); transition: opacity 0.55s ease, backdrop-filter 0.55s ease, -webkit-backdrop-filter 0.55s ease, background 0.55s ease; }
+  .biometric-overlay.bio-visible { opacity: 1; background: rgba(5,5,5,0.55); backdrop-filter: blur(14px) saturate(130%); -webkit-backdrop-filter: blur(14px) saturate(130%); }
+  .biometric-overlay.bio-fade-out { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); background: rgba(0,0,0,0); transition: opacity 0.4s ease, backdrop-filter 0.4s ease, -webkit-backdrop-filter 0.4s ease, background 0.4s ease; }
+  .bio-core { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; }
+  .bio-fingerprint { width: 168px; height: 168px; color: var(--gold); filter: drop-shadow(0 0 34px rgba(197,160,89,0.45)); animation: bioPulse 1.6s ease-in-out infinite; }
+  .bio-fingerprint path { stroke: currentColor; stroke-width: 1.4; fill: none; stroke-linecap: round; stroke-dasharray: 140; stroke-dashoffset: 140; animation: bioTrace 1.6s cubic-bezier(0.65,0,0.35,1) forwards; }
+  .bio-fingerprint path:nth-child(1){animation-delay:0s}.bio-fingerprint path:nth-child(2){animation-delay:.08s}.bio-fingerprint path:nth-child(3){animation-delay:.16s}.bio-fingerprint path:nth-child(4){animation-delay:.24s}.bio-fingerprint path:nth-child(5){animation-delay:.32s}.bio-fingerprint path:nth-child(6){animation-delay:.4s}.bio-fingerprint path:nth-child(7){animation-delay:.48s}.bio-fingerprint path:nth-child(8){animation-delay:.56s}.bio-fingerprint path:nth-child(9){animation-delay:.64s}.bio-fingerprint path:nth-child(10){animation-delay:.72s}
+  @keyframes bioTrace { to { stroke-dashoffset: 0; } }
+  @keyframes bioPulse { 0%,100%{ filter: drop-shadow(0 0 18px rgba(197,160,89,0.25)); transform: scale(1); } 50%{ filter: drop-shadow(0 0 32px rgba(197,160,89,0.55)); transform: scale(1.03); } }
+  .bio-scanline { position: absolute; left: 50%; top: 16px; transform: translateX(-50%); width: 176px; height: 2px; background: linear-gradient(90deg, transparent, rgba(241,220,167,0.98), transparent); box-shadow: 0 0 18px rgba(241,220,167,0.7), 0 0 32px rgba(197,160,89,0.45); opacity: 0; animation: bioScan 1.5s cubic-bezier(0.22,0.61,0.36,1) 0.1s forwards; }
+  @keyframes bioScan { 0%{ transform: translate(-50%,0); opacity:0; } 10%{ opacity:1; } 90%{ opacity:1; } 100%{ transform: translate(-50%, 168px); opacity:0; } }
+  .bio-ring { position: absolute; inset: 0; border: 1px solid rgba(197,160,89,0); border-radius: 50%; animation: bioRing 1.5s cubic-bezier(0.4,0,0.2,1) 0.35s forwards; }
+  @keyframes bioRing { 0%{ transform: scale(0.65); border-color: rgba(197,160,89,0); } 40%{ border-color: rgba(197,160,89,0.55); } 100%{ transform: scale(1.18); border-color: rgba(197,160,89,0); } }
+  .bio-decode { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; font-family: 'Courier New', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.15em; color: rgba(241,220,167,0.85); text-shadow: 0 0 10px rgba(197,160,89,0.75), 0 0 22px rgba(5,5,5,0.9); white-space: nowrap; opacity: 0; animation: bioDecodeShow 0.4s ease 0.15s forwards; }
+  @keyframes bioDecodeShow { from{opacity:0} to{opacity:1} }
+  .bio-decode.bio-decode-hide { animation: bioDecodeHide 0.35s ease forwards; }
+  @keyframes bioDecodeHide { from{opacity:1} to{opacity:0} }
+  .bio-unlocked { margin-top: 26px; font-family: var(--font); font-size: 10px; letter-spacing: 0.55em; text-transform: uppercase; color: var(--gold-light); font-weight: 300; opacity: 0; transform: translateY(6px); text-shadow: 0 0 18px rgba(197,160,89,0.35); }
+  .bio-unlocked.bio-show { opacity: 1; transform: translateY(0); transition: opacity 0.4s ease, transform 0.5s var(--ease); }
+  .bio-unlocked .bio-dot { display: inline-block; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; margin: 0 8px 2px; vertical-align: middle; box-shadow: 0 0 8px rgba(197,160,89,0.7); }
+
   @media (min-width: 768px) {
     .hero h1 { font-size: 40px; }
     .sc-perks { gap: 10px; }
   }
+
+  /* Respect reduced-motion: no entrance choreography, no looping pulses */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .deck-card, .fw-body, .frame-box.loaded .frame-skeleton { transition: none !important; }
+    .sc-emergency .ico, .fab-aria .dot, .cine-play, .bio-fingerprint, .bio-fingerprint path, .bio-scanline, .bio-ring, .frame-skeleton .sk-ring, .frame-skeleton::after { animation: none !important; }
+    .bio-fingerprint path { stroke-dashoffset: 0 !important; }
+  }
 </style>
 </head>
-<body>
+<body class="gate-locked">
+
+<!-- ===== FINGERPRINT BIOMETRIC GATEWAY (tap anywhere to enter) ===== -->
+<div id="gateway" onclick="openGateway()">
+  <div class="door door-left"><div class="portal-half"><span class="huge-i">I</span><div class="inner-branding-container"><div class="brand-main">Integrated IT Support</div><div class="brand-sub">A Distinguished Network</div></div></div></div>
+  <div class="interaction-suite"><div class="handle-row"><div class="handle"></div><div class="handle"></div></div><div class="enter-text">Enter</div></div>
+  <div class="door door-right"><div class="portal-half"><span class="huge-i">I</span><div class="inner-branding-container"><div class="brand-main">Integrated IT Support</div><div class="brand-sub">A Distinguished Network</div></div></div></div>
+
+  <div class="biometric-overlay" id="bioOverlay" aria-hidden="true">
+    <div class="bio-core">
+      <div class="bio-ring"></div>
+      <svg class="bio-fingerprint" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M60 18 C 40 18, 26 34, 26 58 C 26 72, 28 86, 34 100"/>
+        <path d="M60 26 C 44 26, 34 40, 34 58 C 34 72, 36 84, 42 96"/>
+        <path d="M60 34 C 50 34, 42 44, 42 58 C 42 70, 44 82, 50 94"/>
+        <path d="M60 42 C 54 42, 50 48, 50 58 C 50 70, 52 82, 58 92"/>
+        <path d="M60 50 C 58 50, 58 54, 58 60 C 58 72, 60 84, 66 92"/>
+        <path d="M74 94 C 70 82, 68 72, 68 60 C 68 50, 66 46, 62 44"/>
+        <path d="M82 90 C 78 80, 76 70, 76 58 C 76 42, 68 34, 60 34"/>
+        <path d="M90 82 C 86 72, 84 64, 84 58 C 84 40, 72 28, 60 28"/>
+        <path d="M96 72 C 94 66, 92 62, 92 58 C 92 36, 78 22, 60 22"/>
+        <path d="M40 58 C 40 46, 48 38, 60 38"/>
+      </svg>
+      <div class="bio-scanline"></div>
+      <div class="bio-decode" id="bioDecode" aria-hidden="true">DECODING</div>
+    </div>
+    <div class="bio-unlocked" id="bioUnlocked">Unlocked<span class="bio-dot" aria-hidden="true"></span>Access Granted</div>
+  </div>
+</div>
+
+<!-- Gateway logic isolated in its own script so it can never be blocked by an
+     error elsewhere — a locked body must always be able to unlock. -->
+<script>
+  (function(){
+    var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.openGateway = function(){
+      var g = document.getElementById('gateway');
+      if (!g || g.classList.contains('open')) return;
+      if (typeof window.__clearBioTimers === 'function') window.__clearBioTimers();
+      var bio = document.getElementById('bioOverlay');
+      if (bio) bio.classList.add('bio-fade-out');
+      g.classList.add('open');
+      document.body.classList.remove('gate-locked');
+      setTimeout(function(){ g.classList.add('hidden-gate'); }, 1000);
+      setTimeout(function(){ g.style.display = 'none'; }, 1400);
+    };
+    var g = document.getElementById('gateway');
+    if (!g) { document.body.classList.remove('gate-locked'); return; }
+    if (REDUCED) { window.openGateway(); return; }
+    var bio = document.getElementById('bioOverlay'), unlocked = document.getElementById('bioUnlocked'), decode = document.getElementById('bioDecode');
+    var startTimer, decodeTimer, unlockTimer, gateTimer;
+    var tokens = ['DECODING','SCANNING','MATCHING','VERIFY · 37%','VERIFY · 68%','VERIFY · 91%','HASH · A6F2','HASH · D19C','AUTHORIZING','CLEARANCE'];
+    var idx = 0;
+    window.__clearBioTimers = function(){ clearTimeout(startTimer); clearInterval(decodeTimer); clearTimeout(unlockTimer); clearTimeout(gateTimer); };
+    function begin(){
+      startTimer = setTimeout(function(){
+        if (bio) bio.classList.add('bio-visible');
+        if (decode){ decode.textContent = tokens[0]; decodeTimer = setInterval(function(){ idx = (idx+1) % tokens.length; decode.textContent = tokens[idx]; }, 140); }
+      }, 400);
+      unlockTimer = setTimeout(function(){
+        clearInterval(decodeTimer);
+        if (decode){ decode.textContent = 'VERIFIED'; decode.classList.add('bio-decode-hide'); }
+        if (unlocked) unlocked.classList.add('bio-show');
+      }, 1500);
+      gateTimer = setTimeout(window.openGateway, 2300);
+    }
+    if (document.readyState === 'complete') begin(); else window.addEventListener('load', begin);
+    setTimeout(function(){ if (!g.classList.contains('open')) window.openGateway(); }, 4000); // failsafe
+  })();
+</script>
 
 <!-- ===== HEADER ===== -->
 <header class="hdr">
@@ -369,21 +541,21 @@
 
   <!-- ===== HERO ===== -->
   <section class="hero">
-    <span class="eyebrow" style="letter-spacing:0.55em;">Whitby • Ontario • Global</span>
-    <h1>Integrated IT Support<span class="accent">Preventative Aid</span></h1>
-    <p class="lead">We don't just fix problems — we ensure your operations run smoothly and consistently.</p>
-    <p class="sub">System-driven · outcome-owned · second-order thinking applied before a single change is made.</p>
-    <a href="#service-center" class="hero-cta">The Analytical Framework</a>
+    <span class="eyebrow reveal" style="letter-spacing:0.55em;">Whitby • Ontario • Global</span>
+    <h1 class="reveal" style="--rd:80ms;">Integrated IT Support<span class="accent">Preventative Aid</span></h1>
+    <p class="lead reveal" style="--rd:160ms;">We don't just fix problems — we ensure your operations run smoothly and consistently.</p>
+    <p class="sub reveal" style="--rd:220ms;">System-driven · outcome-owned · second-order thinking applied before a single change is made.</p>
+    <a href="#service-center" class="hero-cta reveal" style="--rd:280ms;">The Analytical Framework</a>
   </section>
 
   <!-- ===== SERVICE CENTER ===== -->
   <section id="service-center">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="eyebrow">Powered by AI</span>
       <h2>Service <span class="gold">Center</span></h2>
       <p class="tracking">AI diagnostics · guided fixes · equipment · 24/7 live escalation</p>
     </div>
-    <div class="sc-card">
+    <div class="sc-card reveal">
       <button class="sc-hero-cta" onclick="openPortal('chat')">
         <span class="ico">🌐</span><span class="txt">Get IT Support</span><span class="arr">→</span>
       </button>
@@ -417,85 +589,123 @@
     </div>
   </section>
 
-  <!-- ===== PRICING ===== -->
+  <!-- ===== PRICING — CARD FLIP DECK ===== -->
   <section id="solutions" style="background:var(--bg2);">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="eyebrow">Engagement Models</span>
       <h2>Pricing <span class="gold">Options</span></h2>
-      <p class="tracking">Tap any tier for full detail. The middle tier is the most selected.</p>
+      <p class="tracking">Tap any card to flip it and reveal the full detail. The middle tier is the most selected.</p>
     </div>
 
     <!-- TRACK 1 -->
     <div class="track">
-      <div class="track-head">
+      <div class="track-head reveal">
         <span class="track-eyebrow">Track 1</span>
         <h3 class="track-title">Business &amp; <span class="accent">Enterprise</span></h3>
         <p class="track-sub">Managed retainers sized to the operational consequence of your environment.</p>
       </div>
 
-      <div class="pcard">
-        <span class="pcard-badge"><span class="dot"></span>Tier 1 · Operational Foundation</span>
-        <h4 class="pcard-name">Operational Foundation</h4>
-        <div class="pcard-scale">Small Business · 1–10 Users</div>
-        <div class="pcard-price">$6,000 – $10,000 / mo</div>
-        <p class="pcard-tag">Fully managed IT for a lean team — proactive monitoring, patching, and Microsoft 365 administration.</p>
-        <ul>
-          <li>Fully managed IT environment</li>
-          <li>Business-hours helpdesk support</li>
-          <li>Monthly system health audit</li>
-          <li>Security monitoring &amp; patch management</li>
-          <li>Microsoft 365 administration</li>
-        </ul>
-        <div class="pcard-positioning">One IT emergency handled externally costs $500 – $2,000 alone. This retainer prevents ten of them per month. You are not buying support — you are buying the absence of downtime.</div>
-        <a href="#" class="pcard-cta" data-email-template="tier1">✉ Email to Inquire</a>
-        <button type="button" class="pcard-buy" data-buy-options='{"title":"Tier 1 — Operational Foundation","options":[{"id":"tier1-deposit","name":"Tier 1 · Deposit to start","price":"2000.00","description":"Deposit against Tier 1 · Operational Foundation monthly retainer"},{"id":"tier1-first-month","name":"Tier 1 · First Month (lower tier)","price":"6000.00","description":"Tier 1 first-month retainer at lower bound ($6,000)"},{"id":"tier1-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
-        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+      <div class="price-deck stagger">
+        <div class="deck-slot reveal">
+          <div class="deck-card">
+            <div class="deck-face deck-front">
+              <span class="deck-badge"><span class="dot"></span>Tier 1 · Operational Foundation</span>
+              <h4 class="deck-name">Operational Foundation</h4>
+              <div class="deck-scale">Small Business · 1–10 Users</div>
+              <div class="deck-price">$6,000 – $10,000 / mo</div>
+              <p class="deck-tagline">Fully managed IT for a lean team — proactive monitoring, patching, and Microsoft 365 administration.</p>
+              <div class="deck-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7l-1.5 9L3 3z"/><path d="M16 8l5 5-5 5"/></svg>Tap to reveal detail</div>
+            </div>
+            <div class="deck-face deck-back">
+              <button class="deck-flip-back" type="button" aria-label="Flip back">↩</button>
+              <div class="deck-back-scroll">
+                <span class="deck-badge"><span class="dot"></span>Tier 1</span>
+                <div class="deck-price-sm">$6,000 – $10,000 / mo</div>
+                <ul>
+                  <li>Fully managed IT environment</li>
+                  <li>Business-hours helpdesk support</li>
+                  <li>Monthly system health audit</li>
+                  <li>Security monitoring &amp; patch management</li>
+                  <li>Microsoft 365 administration</li>
+                </ul>
+                <div class="deck-positioning">One IT emergency handled externally costs $500 – $2,000 alone. This retainer prevents ten of them per month. You are not buying support — you are buying the absence of downtime.</div>
+                <a href="#" class="deck-cta" data-email-template="tier1">✉ Email to Inquire</a>
+                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Tier 1 — Operational Foundation","options":[{"id":"tier1-deposit","name":"Tier 1 · Deposit to start","price":"2000.00","description":"Deposit against Tier 1 · Operational Foundation monthly retainer"},{"id":"tier1-first-month","name":"Tier 1 · First Month (lower tier)","price":"6000.00","description":"Tier 1 first-month retainer at lower bound ($6,000)"},{"id":"tier1-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="deck-slot featured reveal">
+          <div class="deck-card">
+            <div class="deck-face deck-front featured">
+              <span class="deck-badge"><span class="dot"></span>Tier 2 · Most Selected</span>
+              <h4 class="deck-name">Business Continuity</h4>
+              <div class="deck-scale">Mid-Size Business · 11–50 Users</div>
+              <div class="deck-price">$14,000 – $24,000 / mo</div>
+              <p class="deck-tagline">Priority SLA, dedicated senior analyst, and disaster recovery planning baked in. Most selected.</p>
+              <div class="deck-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7l-1.5 9L3 3z"/><path d="M16 8l5 5-5 5"/></svg>Tap to reveal detail</div>
+            </div>
+            <div class="deck-face deck-back">
+              <button class="deck-flip-back" type="button" aria-label="Flip back">↩</button>
+              <div class="deck-back-scroll">
+                <span class="deck-badge"><span class="dot"></span>Tier 2 · Most Selected</span>
+                <div class="deck-price-sm">$14,000 – $24,000 / mo</div>
+                <ul>
+                  <li>Everything in Tier 1</li>
+                  <li>Priority SLA — 1 hour response or less</li>
+                  <li>Quarterly executive IT report · OKR-aligned</li>
+                  <li>Active Directory &amp; identity management</li>
+                  <li>Vendor coordination fully handled</li>
+                  <li>Disaster recovery planning &amp; testing</li>
+                  <li>Dedicated senior analyst on account</li>
+                </ul>
+                <div class="deck-positioning">Your competitors are one ransomware attack away from two weeks of downtime. Your operations are not. That difference is worth more than this retainer every single month it does not happen.</div>
+                <a href="#" class="deck-cta" data-email-template="tier2">✉ Email to Inquire</a>
+                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Tier 2 — Business Continuity","options":[{"id":"tier2-deposit","name":"Tier 2 · Deposit to start","price":"4000.00","description":"Deposit against Tier 2 · Business Continuity monthly retainer"},{"id":"tier2-first-month","name":"Tier 2 · First Month (lower tier)","price":"14000.00","description":"Tier 2 first-month retainer at lower bound ($14,000)"},{"id":"tier2-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="deck-slot reveal">
+          <div class="deck-card">
+            <div class="deck-face deck-front">
+              <span class="deck-badge"><span class="dot"></span>Tier 3 · Enterprise Operations</span>
+              <h4 class="deck-name">Enterprise Operations</h4>
+              <div class="deck-scale">Corporate · 51–200+ Users · Multi-Location</div>
+              <div class="deck-price">$30,000 – $60,000 / mo</div>
+              <p class="deck-tagline">24/7 monitoring, Major Incident Management, Six Sigma auditing, and named senior analyst.</p>
+              <div class="deck-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7l-1.5 9L3 3z"/><path d="M16 8l5 5-5 5"/></svg>Tap to reveal detail</div>
+            </div>
+            <div class="deck-face deck-back">
+              <button class="deck-flip-back" type="button" aria-label="Flip back">↩</button>
+              <div class="deck-back-scroll">
+                <span class="deck-badge"><span class="dot"></span>Tier 3</span>
+                <div class="deck-price-sm">$30,000 – $60,000 / mo</div>
+                <ul>
+                  <li>Everything in Tiers 1 &amp; 2</li>
+                  <li>24/7 monitoring &amp; incident response</li>
+                  <li>Major Incident Management — RBC &amp; Raymond James standard</li>
+                  <li>Six Sigma process auditing · quarterly</li>
+                  <li>PHIPA · PIPEDA · SOC-aligned compliance docs</li>
+                  <li>SharePoint &amp; Microsoft 365 architecture support</li>
+                  <li>Monthly C-suite IT risk &amp; roadmap briefing</li>
+                  <li>Named senior analyst permanently assigned</li>
+                </ul>
+                <div class="deck-positioning">The same operational standard maintained inside Raymond James trading floors and Ontario Health provincial systems. You are not hiring an IT company — you are hiring the person who kept those organizations running when failure was not an option.</div>
+                <a href="#" class="deck-cta" data-email-template="tier3">✉ Email to Inquire</a>
+                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Tier 3 — Enterprise Operations","options":[{"id":"tier3-deposit","name":"Tier 3 · Deposit to start","price":"10000.00","description":"Deposit against Tier 3 · Enterprise Operations monthly retainer"},{"id":"tier3-first-month","name":"Tier 3 · First Month (lower tier)","price":"30000.00","description":"Tier 3 first-month retainer at lower bound ($30,000)"},{"id":"tier3-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="pcard featured">
-        <span class="pcard-badge"><span class="dot"></span>Tier 2 · Most Selected</span>
-        <h4 class="pcard-name">Business Continuity</h4>
-        <div class="pcard-scale">Mid-Size Business · 11–50 Users</div>
-        <div class="pcard-price">$14,000 – $24,000 / mo</div>
-        <p class="pcard-tag">Priority SLA, dedicated senior analyst, and disaster recovery planning baked in. Most selected.</p>
-        <ul>
-          <li>Everything in Tier 1</li>
-          <li>Priority SLA — 1 hour response or less</li>
-          <li>Quarterly executive IT report · OKR-aligned</li>
-          <li>Active Directory &amp; identity management</li>
-          <li>Vendor coordination fully handled</li>
-          <li>Disaster recovery planning &amp; testing</li>
-          <li>Dedicated senior analyst on account</li>
-        </ul>
-        <div class="pcard-positioning">Your competitors are one ransomware attack away from two weeks of downtime. Your operations are not. That difference is worth more than this retainer every single month it does not happen.</div>
-        <a href="#" class="pcard-cta" data-email-template="tier2">✉ Email to Inquire</a>
-        <button type="button" class="pcard-buy" data-buy-options='{"title":"Tier 2 — Business Continuity","options":[{"id":"tier2-deposit","name":"Tier 2 · Deposit to start","price":"4000.00","description":"Deposit against Tier 2 · Business Continuity monthly retainer"},{"id":"tier2-first-month","name":"Tier 2 · First Month (lower tier)","price":"14000.00","description":"Tier 2 first-month retainer at lower bound ($14,000)"},{"id":"tier2-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
-        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
-      </div>
-
-      <div class="pcard">
-        <span class="pcard-badge"><span class="dot"></span>Tier 3 · Enterprise Operations</span>
-        <h4 class="pcard-name">Enterprise Operations</h4>
-        <div class="pcard-scale">Corporate · 51–200+ Users · Multi-Location</div>
-        <div class="pcard-price">$30,000 – $60,000 / mo</div>
-        <p class="pcard-tag">24/7 monitoring, Major Incident Management, Six Sigma auditing, and named senior analyst.</p>
-        <ul>
-          <li>Everything in Tiers 1 &amp; 2</li>
-          <li>24/7 monitoring &amp; incident response</li>
-          <li>Major Incident Management — RBC &amp; Raymond James standard</li>
-          <li>Six Sigma process auditing · quarterly</li>
-          <li>PHIPA · PIPEDA · SOC-aligned compliance docs</li>
-          <li>SharePoint &amp; Microsoft 365 architecture support</li>
-          <li>Monthly C-suite IT risk &amp; roadmap briefing</li>
-          <li>Named senior analyst permanently assigned</li>
-        </ul>
-        <div class="pcard-positioning">The same operational standard maintained inside Raymond James trading floors and Ontario Health provincial systems. You are not hiring an IT company — you are hiring the person who kept those organizations running when failure was not an option.</div>
-        <a href="#" class="pcard-cta" data-email-template="tier3">✉ Email to Inquire</a>
-        <button type="button" class="pcard-buy" data-buy-options='{"title":"Tier 3 — Enterprise Operations","options":[{"id":"tier3-deposit","name":"Tier 3 · Deposit to start","price":"10000.00","description":"Deposit against Tier 3 · Enterprise Operations monthly retainer"},{"id":"tier3-first-month","name":"Tier 3 · First Month (lower tier)","price":"30000.00","description":"Tier 3 first-month retainer at lower bound ($30,000)"},{"id":"tier3-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
-        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
-      </div>
-
-      <div class="project-card">
+      <div class="project-card reveal">
         <div class="head"><h4>Project Work</h4><span>Fixed Scope</span></div>
         <div class="project-row"><span>IT Infrastructure Audit</span><span>$7,500 – $15,000</span></div>
         <div class="project-row"><span>Cloud Migration</span><span>$15,000 – $60,000</span></div>
@@ -511,159 +721,196 @@
 
     <!-- TRACK 2 -->
     <div class="track">
-      <div class="track-head">
+      <div class="track-head reveal">
         <span class="track-eyebrow">Track 2</span>
         <h3 class="track-title">Private <span class="accent">Engagement</span></h3>
         <p class="track-sub">For individuals, families &amp; personal technology. Technology should work for you — not against you.</p>
       </div>
 
-      <div class="pcard">
-        <span class="pcard-badge"><span class="dot"></span>Home Foundations</span>
-        <h4 class="pcard-name">Home Foundations</h4>
-        <div class="pcard-scale">Diagnostics · Setup · Tuning</div>
-        <div class="pcard-price">$1,250 – $3,500 · flat</div>
-        <p class="pcard-tag">Core services that restore, configure and optimize the technology you already own.</p>
-        <ul>
-          <li>Diagnostics &amp; Repair — $1,500 – $2,500 flat</li>
-          <li>Home Network Setup &amp; Optimization — $2,000 – $3,500</li>
-          <li>Device Setup &amp; Performance Tuning — $1,250 – $2,000</li>
-        </ul>
-        <div class="pcard-positioning">Every hour is documented and closed against an outcome — not a ticket number. The same precision you would expect inside a corporate environment, delivered at your kitchen table.</div>
-        <a href="#" class="pcard-cta" data-email-template="private">✉ Email to Inquire</a>
-        <button type="button" class="pcard-buy" data-buy-options='{"title":"Home Foundations","options":[{"id":"home-diagnostics","name":"Diagnostics & Repair","price":"1500.00","description":"Home Foundations · Diagnostics & Repair"},{"id":"home-network","name":"Home Network Setup","price":"2000.00","description":"Home Foundations · Home Network Setup & Optimization"},{"id":"home-tune","name":"Device Setup & Tuning","price":"1250.00","description":"Home Foundations · Device Setup & Performance Tuning"},{"id":"home-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Pick a service</button>
-        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+      <div class="price-deck stagger">
+        <div class="deck-slot reveal">
+          <div class="deck-card">
+            <div class="deck-face deck-front">
+              <span class="deck-badge"><span class="dot"></span>Home Foundations</span>
+              <h4 class="deck-name">Home Foundations</h4>
+              <div class="deck-scale">Diagnostics · Setup · Tuning</div>
+              <div class="deck-price">$1,250 – $3,500 · flat</div>
+              <p class="deck-tagline">Core services that restore, configure and optimize the technology you already own.</p>
+              <div class="deck-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7l-1.5 9L3 3z"/><path d="M16 8l5 5-5 5"/></svg>Tap to reveal detail</div>
+            </div>
+            <div class="deck-face deck-back">
+              <button class="deck-flip-back" type="button" aria-label="Flip back">↩</button>
+              <div class="deck-back-scroll">
+                <span class="deck-badge"><span class="dot"></span>Home Foundations</span>
+                <ul>
+                  <li>Diagnostics &amp; Repair — $1,500 – $2,500 flat</li>
+                  <li>Home Network Setup &amp; Optimization — $2,000 – $3,500</li>
+                  <li>Device Setup &amp; Performance Tuning — $1,250 – $2,000</li>
+                </ul>
+                <div class="deck-positioning">Every hour is documented and closed against an outcome — not a ticket number. The same precision you would expect inside a corporate environment, delivered at your kitchen table.</div>
+                <a href="#" class="deck-cta" data-email-template="private">✉ Email to Inquire</a>
+                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Home Foundations","options":[{"id":"home-diagnostics","name":"Diagnostics & Repair","price":"1500.00","description":"Home Foundations · Diagnostics & Repair"},{"id":"home-network","name":"Home Network Setup","price":"2000.00","description":"Home Foundations · Home Network Setup & Optimization"},{"id":"home-tune","name":"Device Setup & Tuning","price":"1250.00","description":"Home Foundations · Device Setup & Performance Tuning"},{"id":"home-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Pick a service</button>
+                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="deck-slot reveal">
+          <div class="deck-card">
+            <div class="deck-face deck-front">
+              <span class="deck-badge"><span class="dot"></span>Recovery &amp; Security</span>
+              <h4 class="deck-name">Recovery &amp; Security</h4>
+              <div class="deck-scale">Data · Digital Safety</div>
+              <div class="deck-price">$2,000 – $5,000 · flat</div>
+              <p class="deck-tagline">When data is lost or a household's digital footprint needs hardening.</p>
+              <div class="deck-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7l-1.5 9L3 3z"/><path d="M16 8l5 5-5 5"/></svg>Tap to reveal detail</div>
+            </div>
+            <div class="deck-face deck-back">
+              <button class="deck-flip-back" type="button" aria-label="Flip back">↩</button>
+              <div class="deck-back-scroll">
+                <span class="deck-badge"><span class="dot"></span>Recovery &amp; Security</span>
+                <ul>
+                  <li>Data Recovery — $2,500 – $5,000 flat</li>
+                  <li>Digital Security Audit — Personal — $2,000 – $4,000</li>
+                  <li>Credential &amp; device hygiene review</li>
+                  <li>Cloud &amp; backup strategy for the household</li>
+                </ul>
+                <div class="deck-positioning">The difference between a data loss incident that is recovered discreetly and one that ends in a call to your bank is the speed and discipline of the response. That standard does not change because the environment is a home office.</div>
+                <a href="#" class="deck-cta" data-email-template="private">✉ Email to Inquire</a>
+                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Recovery & Security","options":[{"id":"recovery-data","name":"Data Recovery","price":"2500.00","description":"Recovery & Security · Data Recovery (lower bound)"},{"id":"recovery-audit","name":"Digital Security Audit","price":"2000.00","description":"Recovery & Security · Personal Digital Security Audit (lower bound)"},{"id":"recovery-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Pick a service</button>
+                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="deck-slot reveal">
+          <div class="deck-card">
+            <div class="deck-face deck-front">
+              <span class="deck-badge"><span class="dot"></span>Monthly Home IT</span>
+              <h4 class="deck-name">Monthly Home IT</h4>
+              <div class="deck-scale">Always-On Support</div>
+              <div class="deck-price">$1,500 – $3,000 / mo</div>
+              <p class="deck-tagline">A senior technician on retainer for the household — selective availability.</p>
+              <div class="deck-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7l-1.5 9L3 3z"/><path d="M16 8l5 5-5 5"/></svg>Tap to reveal detail</div>
+            </div>
+            <div class="deck-face deck-back">
+              <button class="deck-flip-back" type="button" aria-label="Flip back">↩</button>
+              <div class="deck-back-scroll">
+                <span class="deck-badge"><span class="dot"></span>Monthly Home IT</span>
+                <div class="deck-price-sm">$1,500 – $3,000 / mo</div>
+                <ul>
+                  <li>Priority remote response for all household devices</li>
+                  <li>Quarterly on-site tune and audit</li>
+                  <li>Identity, backup &amp; password manager oversight</li>
+                  <li>Annual digital security review</li>
+                </ul>
+                <div class="deck-positioning">Private Engagement is selective. Availability is limited to ensure every client — business or individual — receives the full standard of care IIS is known for.</div>
+                <a href="#" class="deck-cta" data-email-template="private">✉ Email to Inquire</a>
+                <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Monthly Home IT","options":[{"id":"monthly-home-deposit","name":"Deposit to start","price":"750.00","description":"Monthly Home IT · deposit to start retainer"},{"id":"monthly-home-first","name":"First Month (lower tier)","price":"1500.00","description":"Monthly Home IT · first month at lower bound ($1,500)"},{"id":"monthly-home-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
+                <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="pcard">
-        <span class="pcard-badge"><span class="dot"></span>Recovery &amp; Security</span>
-        <h4 class="pcard-name">Recovery &amp; Security</h4>
-        <div class="pcard-scale">Data · Digital Safety</div>
-        <div class="pcard-price">$2,000 – $5,000 · flat</div>
-        <p class="pcard-tag">When data is lost or a household's digital footprint needs hardening.</p>
-        <ul>
-          <li>Data Recovery — $2,500 – $5,000 flat</li>
-          <li>Digital Security Audit — Personal — $2,000 – $4,000</li>
-          <li>Credential &amp; device hygiene review</li>
-          <li>Cloud &amp; backup strategy for the household</li>
-        </ul>
-        <div class="pcard-positioning">The difference between a data loss incident that is recovered discreetly and one that ends in a call to your bank is the speed and discipline of the response. That standard does not change because the environment is a home office.</div>
-        <a href="#" class="pcard-cta" data-email-template="private">✉ Email to Inquire</a>
-        <button type="button" class="pcard-buy" data-buy-options='{"title":"Recovery & Security","options":[{"id":"recovery-data","name":"Data Recovery","price":"2500.00","description":"Recovery & Security · Data Recovery (lower bound)"},{"id":"recovery-audit","name":"Digital Security Audit","price":"2000.00","description":"Recovery & Security · Personal Digital Security Audit (lower bound)"},{"id":"recovery-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Pick a service</button>
-        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
-      </div>
-
-      <div class="pcard">
-        <span class="pcard-badge"><span class="dot"></span>Monthly Home IT</span>
-        <h4 class="pcard-name">Monthly Home IT</h4>
-        <div class="pcard-scale">Always-On Support</div>
-        <div class="pcard-price">$1,500 – $3,000 / mo</div>
-        <p class="pcard-tag">A senior technician on retainer for the household — selective availability.</p>
-        <ul>
-          <li>Priority remote response for all household devices</li>
-          <li>Quarterly on-site tune and audit</li>
-          <li>Identity, backup &amp; password manager oversight</li>
-          <li>Annual digital security review</li>
-        </ul>
-        <div class="pcard-positioning">Private Engagement is selective. Availability is limited to ensure every client — business or individual — receives the full standard of care IIS is known for.</div>
-        <a href="#" class="pcard-cta" data-email-template="private">✉ Email to Inquire</a>
-        <button type="button" class="pcard-buy" data-buy-options='{"title":"Monthly Home IT","options":[{"id":"monthly-home-deposit","name":"Deposit to start","price":"750.00","description":"Monthly Home IT · deposit to start retainer"},{"id":"monthly-home-first","name":"First Month (lower tier)","price":"1500.00","description":"Monthly Home IT · first month at lower bound ($1,500)"},{"id":"monthly-home-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
-        <div class="pcard-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>
-      </div>
-
-      <p class="private-note">Private Engagement is selective. Availability is limited to ensure every client — business or individual — receives the full standard of care IIS is known for.</p>
+      <p class="private-note reveal">Private Engagement is selective. Availability is limited to ensure every client — business or individual — receives the full standard of care IIS is known for.</p>
     </div>
   </section>
 
   <!-- ===== STRATEGIC IMPACT ===== -->
   <section id="portfolio">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="eyebrow">Proof of Execution</span>
       <h2>Industries <span class="gold">We've Moved</span></h2>
       <p>Sectors where IIS has operated at the level that matters — where the stakes are real, the margins for error are zero, and outcomes are measured in business continuity, not closed tickets.</p>
     </div>
-    <p class="impact-quote">"We don't just fix problems — we ensure your operations run smoothly and consistently."</p>
-    <div class="impact-grid">
-      <div class="impact-tile"><i class="fas fa-chart-line impact-icon"></i><h3>Global Finance</h3><p class="impact-lead">Operational continuity across multi-timezone financial infrastructure.</p><div class="impact-outcome">A single hour of downtime is not an inconvenience — it is a liability. Trading desks, compliance reporting and executive workflows kept live through market hours with white-glove application support and tightly tuned ServiceNow queues.</div></div>
-      <div class="impact-tile"><i class="fas fa-heart-pulse impact-icon"></i><h3>Healthcare &amp; Medical Infrastructure</h3><p class="impact-lead">Compliant, secured, and stabilized IT systems for medical environments.</p><div class="impact-outcome">Data integrity is not a feature — it is a legal and ethical obligation tied directly to patient outcomes. PHIPA-compliant digital health platforms delivered across Ontario Health at provincial scale.</div></div>
-      <div class="impact-tile"><i class="fas fa-gavel impact-icon"></i><h3>Legal &amp; Professional Services</h3><p class="impact-lead">Fortress-level IT environments built for firms where confidentiality is currency.</p><div class="impact-outcome">Document integrity is non-negotiable and a single breach ends careers and reputations. Worldox, NetDocs, ACL and enterprise DMS migrations executed without a single document-integrity incident.</div></div>
-      <div class="impact-tile"><i class="fas fa-building impact-icon"></i><h3>Real Estate &amp; Property Development</h3><p class="impact-lead">High-velocity IT operations managed for property firms where deal cycles move fast.</p><div class="impact-outcome">CRM reliability determines commission. A dropped connection during negotiation is not an option. Document pipelines and remote team coordination engineered for zero friction — so offers, closings and on-site inspections never wait on technology.</div></div>
-      <div class="impact-tile"><i class="fas fa-cart-shopping impact-icon"></i><h3>Retail &amp; E-Commerce</h3><p class="impact-lead">Systems that hold under peak demand — because peak season never asks if you're ready.</p><div class="impact-outcome">Every minute of downtime is a direct subtraction from the bottom line. POS lanes stabilized, inventory systems kept in sync, and digital storefronts monitored through the busiest trading windows.</div></div>
-      <div class="impact-tile"><i class="fas fa-user-graduate impact-icon"></i><h3>Education &amp; Institutional Infrastructure</h3><p class="impact-lead">Scalable, secure, and compliant environments deployed across multi-location institutions.</p><div class="impact-outcome">Hundreds of users, thousands of devices, and data that legally cannot be compromised — ever. Lab operations, identity and access, onboarding, and disaster-recovery planning delivered for Seneca, George Brown, and public-sector environments built to scale without losing control.</div></div>
+    <p class="impact-quote reveal">"We don't just fix problems — we ensure your operations run smoothly and consistently."</p>
+    <div class="impact-grid stagger">
+      <div class="impact-tile reveal"><i class="fas fa-chart-line impact-icon"></i><h3>Global Finance</h3><p class="impact-lead">Operational continuity across multi-timezone financial infrastructure.</p><div class="impact-outcome">A single hour of downtime is not an inconvenience — it is a liability. Trading desks, compliance reporting and executive workflows kept live through market hours with white-glove application support and tightly tuned ServiceNow queues.</div></div>
+      <div class="impact-tile reveal"><i class="fas fa-heart-pulse impact-icon"></i><h3>Healthcare &amp; Medical Infrastructure</h3><p class="impact-lead">Compliant, secured, and stabilized IT systems for medical environments.</p><div class="impact-outcome">Data integrity is not a feature — it is a legal and ethical obligation tied directly to patient outcomes. PHIPA-compliant digital health platforms delivered across Ontario Health at provincial scale.</div></div>
+      <div class="impact-tile reveal"><i class="fas fa-gavel impact-icon"></i><h3>Legal &amp; Professional Services</h3><p class="impact-lead">Fortress-level IT environments built for firms where confidentiality is currency.</p><div class="impact-outcome">Document integrity is non-negotiable and a single breach ends careers and reputations. Worldox, NetDocs, ACL and enterprise DMS migrations executed without a single document-integrity incident.</div></div>
+      <div class="impact-tile reveal"><i class="fas fa-building impact-icon"></i><h3>Real Estate &amp; Property Development</h3><p class="impact-lead">High-velocity IT operations managed for property firms where deal cycles move fast.</p><div class="impact-outcome">CRM reliability determines commission. A dropped connection during negotiation is not an option. Document pipelines and remote team coordination engineered for zero friction — so offers, closings and on-site inspections never wait on technology.</div></div>
+      <div class="impact-tile reveal"><i class="fas fa-cart-shopping impact-icon"></i><h3>Retail &amp; E-Commerce</h3><p class="impact-lead">Systems that hold under peak demand — because peak season never asks if you're ready.</p><div class="impact-outcome">Every minute of downtime is a direct subtraction from the bottom line. POS lanes stabilized, inventory systems kept in sync, and digital storefronts monitored through the busiest trading windows.</div></div>
+      <div class="impact-tile reveal"><i class="fas fa-user-graduate impact-icon"></i><h3>Education &amp; Institutional Infrastructure</h3><p class="impact-lead">Scalable, secure, and compliant environments deployed across multi-location institutions.</p><div class="impact-outcome">Hundreds of users, thousands of devices, and data that legally cannot be compromised — ever. Lab operations, identity and access, onboarding, and disaster-recovery planning delivered for Seneca, George Brown, and public-sector environments built to scale without losing control.</div></div>
     </div>
   </section>
 
   <!-- ===== METHODOLOGY — 9 FRAMEWORKS ===== -->
   <section id="methodology" style="background:var(--bg2);">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="eyebrow">Brand Authority · Trust · Differentiation</span>
       <h2>How We Think. <span class="gold">How We Execute.</span></h2>
       <p>Nine proprietary operational frameworks applied to every engagement — so nothing is reactive, nothing is improvised, and every outcome is repeatable.</p>
     </div>
-    <div class="fw-grid" id="frameworkGrid">
-      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅰ</div><div class="fw-title-wrap"><div class="fw-title">5 W's Analysis</div><div class="fw-tagline">Who · What · When · Where · Why</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Applied to every IT problem before any action is taken. Eliminates assumptions and ensures the right problem is being solved — not just the visible symptom.</p></div></div></button>
-      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅱ</div><div class="fw-title-wrap"><div class="fw-title">STAR Framework</div><div class="fw-tagline">Situation · Task · Action · Result</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Structures every client engagement and outcome delivery. Ensures every interaction is documented, measurable, and repeatable — no engagement lives only in someone's head.</p></div></div></button>
-      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅲ</div><div class="fw-title-wrap"><div class="fw-title">First Principles Thinking</div><div class="fw-tagline">Break problems down to fundamental truths</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by Elon Musk and Jeff Bezos — strips every problem down to its fundamental truths rather than inherited assumptions. Applied at IIS to rethink IT solutions from the ground up instead of defaulting to what has always been done. Forces better, faster, cheaper answers.</p></div></div></button>
-      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅳ</div><div class="fw-title-wrap"><div class="fw-title">OKR Framework</div><div class="fw-tagline">Objectives &amp; Key Results</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by Google, Amazon and Intel to align entire organizations to measurable goals. Applied at IIS to ensure every service delivered is tied to a client's real business objective — not just a closed ticket. Outcome accountability at every level.</p></div></div></button>
-      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅴ</div><div class="fw-title-wrap"><div class="fw-title">Eisenhower Matrix</div><div class="fw-tagline">Urgency vs. Importance</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by executives and elite operators to ruthlessly prioritize what gets done, when, and by whom. Applied at IIS to triage client issues, internal operations, and strategic decisions with precision — never reactive, always deliberate.</p></div></div></button>
-      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅵ</div><div class="fw-title-wrap"><div class="fw-title">Six Sigma / DMAIC</div><div class="fw-tagline">Define · Measure · Analyze · Improve · Control</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>The methodology used by GE, Motorola and Amazon to reduce defects to near zero. Applied at IIS to eliminate recurring IT failures, reduce error rates, and deliver consistent, predictable service quality at scale.</p></div></div></button>
-      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅶ</div><div class="fw-title-wrap"><div class="fw-title">Kaizen</div><div class="fw-tagline">Continuous Improvement — every day, every call</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Toyota's philosophy of relentless, incremental daily improvement embedded into every process. Every service call, every system audit and every client interaction is reviewed for what can be done better the next time. Excellence is not an event — it is a standard.</p></div></div></button>
-      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅷ</div><div class="fw-title-wrap"><div class="fw-title">Theory of Constraints</div><div class="fw-tagline">Remove the single bottleneck first</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Developed by Eli Goldratt — identifies the single bottleneck limiting an organization's performance and eliminates it before moving to the next. Applied at IIS to systematically remove whatever is slowing down client operations, response times or internal throughput — one constraint at a time until flow is frictionless.</p></div></div></button>
-      <button class="fw-card" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅸ</div><div class="fw-title-wrap"><div class="fw-title">After Action Review</div><div class="fw-tagline">Military-grade debrief — no blame, only improvement</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by elite units and top-tier organizations after every significant operation. Applied at IIS after every major deployment, incident or project: What was supposed to happen? What actually happened? Why was there a difference? What do we change? No blame — only improvement.</p></div></div></button>
+    <div class="fw-grid stagger" id="frameworkGrid">
+      <button class="fw-card reveal" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅰ</div><div class="fw-title-wrap"><div class="fw-title">5 W's Analysis</div><div class="fw-tagline">Who · What · When · Where · Why</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Applied to every IT problem before any action is taken. Eliminates assumptions and ensures the right problem is being solved — not just the visible symptom.</p></div></div></button>
+      <button class="fw-card reveal" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅱ</div><div class="fw-title-wrap"><div class="fw-title">STAR Framework</div><div class="fw-tagline">Situation · Task · Action · Result</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Structures every client engagement and outcome delivery. Ensures every interaction is documented, measurable, and repeatable — no engagement lives only in someone's head.</p></div></div></button>
+      <button class="fw-card reveal" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅲ</div><div class="fw-title-wrap"><div class="fw-title">First Principles Thinking</div><div class="fw-tagline">Break problems down to fundamental truths</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by Elon Musk and Jeff Bezos — strips every problem down to its fundamental truths rather than inherited assumptions. Applied at IIS to rethink IT solutions from the ground up instead of defaulting to what has always been done. Forces better, faster, cheaper answers.</p></div></div></button>
+      <button class="fw-card reveal" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅳ</div><div class="fw-title-wrap"><div class="fw-title">OKR Framework</div><div class="fw-tagline">Objectives &amp; Key Results</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by Google, Amazon and Intel to align entire organizations to measurable goals. Applied at IIS to ensure every service delivered is tied to a client's real business objective — not just a closed ticket. Outcome accountability at every level.</p></div></div></button>
+      <button class="fw-card reveal" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅴ</div><div class="fw-title-wrap"><div class="fw-title">Eisenhower Matrix</div><div class="fw-tagline">Urgency vs. Importance</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by executives and elite operators to ruthlessly prioritize what gets done, when, and by whom. Applied at IIS to triage client issues, internal operations, and strategic decisions with precision — never reactive, always deliberate.</p></div></div></button>
+      <button class="fw-card reveal" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅵ</div><div class="fw-title-wrap"><div class="fw-title">Six Sigma / DMAIC</div><div class="fw-tagline">Define · Measure · Analyze · Improve · Control</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>The methodology used by GE, Motorola and Amazon to reduce defects to near zero. Applied at IIS to eliminate recurring IT failures, reduce error rates, and deliver consistent, predictable service quality at scale.</p></div></div></button>
+      <button class="fw-card reveal" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅶ</div><div class="fw-title-wrap"><div class="fw-title">Kaizen</div><div class="fw-tagline">Continuous Improvement — every day, every call</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Toyota's philosophy of relentless, incremental daily improvement embedded into every process. Every service call, every system audit and every client interaction is reviewed for what can be done better the next time. Excellence is not an event — it is a standard.</p></div></div></button>
+      <button class="fw-card reveal" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅷ</div><div class="fw-title-wrap"><div class="fw-title">Theory of Constraints</div><div class="fw-tagline">Remove the single bottleneck first</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Developed by Eli Goldratt — identifies the single bottleneck limiting an organization's performance and eliminates it before moving to the next. Applied at IIS to systematically remove whatever is slowing down client operations, response times or internal throughput — one constraint at a time until flow is frictionless.</p></div></div></button>
+      <button class="fw-card reveal" type="button" aria-expanded="false"><div class="fw-head"><div class="fw-icon">Ⅸ</div><div class="fw-title-wrap"><div class="fw-title">After Action Review</div><div class="fw-tagline">Military-grade debrief — no blame, only improvement</div></div><div class="fw-toggle"></div></div><div class="fw-body"><div class="fw-body-inner"><p>Used by elite units and top-tier organizations after every significant operation. Applied at IIS after every major deployment, incident or project: What was supposed to happen? What actually happened? Why was there a difference? What do we change? No blame — only improvement.</p></div></div></button>
     </div>
   </section>
 
   <!-- ===== ARIA HUB ===== -->
   <section id="aria" style="background:radial-gradient(700px 400px at 50% 0%, rgba(197,160,89,0.10), transparent 65%), var(--bg);">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="eyebrow">New · Premium</span>
       <h2>Meet <span class="gold">ARIA</span></h2>
       <p class="tracking">Your AI browsing companion — safer, smarter, and more confident, wherever you go. Activate hands-free with "ARIA, Assist!"</p>
     </div>
-    <div class="aria-feats">
-      <div class="aria-feat"><h4>Decision support</h4><p>Shopping, budgeting, markets, tech — short first, deeper only if you ask.</p></div>
-      <div class="aria-feat"><h4>Calm protection</h4><p>Scam guard, habit awareness, privacy summaries — non-judgmental, in your control.</p></div>
-      <div class="aria-feat"><h4>Everywhere</h4><p>Website, Chrome extension, and mobile app — one companion, same memory.</p></div>
+    <div class="aria-feats stagger">
+      <div class="aria-feat reveal"><h4>Decision support</h4><p>Shopping, budgeting, markets, tech — short first, deeper only if you ask.</p></div>
+      <div class="aria-feat reveal"><h4>Calm protection</h4><p>Scam guard, habit awareness, privacy summaries — non-judgmental, in your control.</p></div>
+      <div class="aria-feat reveal"><h4>Everywhere</h4><p>Website, Chrome extension, and mobile app — one companion, same memory.</p></div>
     </div>
     <div class="aria-ctas">
       <a href="/aria.html" class="btn btn-gold">Open ARIA</a>
       <button type="button" id="ariaInstallChrome" class="btn btn-ghost">Install Chrome Extension</button>
       <button type="button" id="ariaInstallMobile" class="btn btn-ghost">Get Mobile App</button>
     </div>
-    <div class="frame-box lazyframe" data-src="/aria.html" data-h="640">
-      <div class="lz-poster"><span class="lz-play">▶</span><span class="lz-label">Tap to load the live ARIA preview</span></div>
+    <div class="frame-box autoframe reveal" data-src="/aria.html" data-h="min(640px, 78vh)">
+      <div class="frame-skeleton"><span class="sk-ring"></span><span class="sk-label">Loading ARIA</span></div>
     </div>
-    <p class="frame-cap">Preview · Full ARIA experience at <a href="/aria.html">aria.html</a></p>
+    <p class="frame-cap">Live preview · Full ARIA experience at <a href="/aria.html">aria.html</a></p>
   </section>
 
   <!-- ===== CINEMATICS ===== -->
   <section id="aria-cinematics" style="background:radial-gradient(700px 400px at 50% 0%, rgba(197,160,89,0.08), transparent 65%), #050402;">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="eyebrow">Cinematic</span>
       <h2>ARIA <span class="gold">in motion</span></h2>
       <p>A stats-and-purpose reel from the ARIA design studio — what working with ARIA feels like, and why it matters. Audio on, headphones recommended.</p>
     </div>
-    <div class="cine-frame">
-      <video controls preload="metadata" playsinline poster="/icons/icon-512.png">
+    <div class="cine-frame reveal" id="cineFrame">
+      <video id="cineVid" preload="metadata" playsinline poster="/icons/icon-512.png">
         <source src="/assets/video/aria-stats-and-purpose.mp4" type="video/mp4">
       </video>
+      <button class="cine-play" id="cinePlay" aria-label="Play film"></button>
     </div>
     <div style="text-align:center;margin-top:18px;"><a href="/aria-cinema.html" class="hero-cta">Open Full Cinema →</a></div>
   </section>
 
   <!-- ===== CAPABILITIES ===== -->
   <section id="aria-capabilities" style="background:radial-gradient(700px 400px at 50% 0%, rgba(197,160,89,0.05), transparent 65%), #060503;">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="eyebrow">Capabilities</span>
       <h2>What ARIA does <span class="gold">today</span></h2>
       <p>A live snapshot of what ARIA is shipping right now — verified, tested, deployed. There is much more to ARIA coming soon.</p>
     </div>
-    <div class="cap-grid">
-      <div class="cap-card"><div class="cap-card-h">Customer support</div><ul><li>Plain-language IT answers in 5 W's + STAR style</li><li>Confirm-resolve loop — Yes / Still broken / Talk to human</li><li>Escalates only after trying first</li><li>Speech output with 9-state globe animation</li></ul></div>
-      <div class="cap-card"><div class="cap-card-h">Tech support · L1 — L3</div><ul><li>72 verified articles — Browser · Email · M365 · MFA · OneDrive · VPN · Wi-Fi · Windows · macOS · Webcam · Bluetooth · USB</li><li>21 admin-tier articles — AD · Azure AD · BitLocker · Intune · Malware · BYOD · VIP support · Asset</li><li>11 architect-tier articles — DR · PKI · Cloud · SSO · Endpoint EDR</li></ul></div>
-      <div class="cap-card"><div class="cap-card-h">Knowledge base</div><ul><li>Token-overlap retrieval, 90+ hard routing rules</li><li>Severity- and audience-aware (end-user / admin / technician)</li><li>21/21 verified test queries pass top-1</li></ul></div>
-      <div class="cap-card"><div class="cap-card-h">Policies / procedures</div><ul><li>Upload .txt .md .pdf .csv .html — stored locally on the user's device</li><li>Doc-name boost — "Per BYOD Policy 2026" wins over generic advice</li><li>Soft-delete preserves prior versions for ARIA's reference</li></ul></div>
-      <div class="cap-card"><div class="cap-card-h">Voice / chat</div><ul><li>Cinematic black-and-gold UI with 9 reasoning frameworks</li><li>Browser-native TTS, prioritized neural-voice picker</li><li>Free Mode (everyone) + Custom Company Mode (admin only)</li></ul></div>
-      <div class="cap-card"><div class="cap-card-h">Security / privacy</div><ul><li>License-gated Settings — only IT admin can upload company docs</li><li>All uploaded data stays in the browser, never sent to any server</li><li>5-device cap per license, fingerprint-tracked</li><li>§10 admin notes hidden from end-user audience</li></ul></div>
+    <div class="cap-grid stagger">
+      <div class="cap-card reveal"><div class="cap-card-h">Customer support</div><ul><li>Plain-language IT answers in 5 W's + STAR style</li><li>Confirm-resolve loop — Yes / Still broken / Talk to human</li><li>Escalates only after trying first</li><li>Speech output with 9-state globe animation</li></ul></div>
+      <div class="cap-card reveal"><div class="cap-card-h">Tech support · L1 — L3</div><ul><li>72 verified articles — Browser · Email · M365 · MFA · OneDrive · VPN · Wi-Fi · Windows · macOS · Webcam · Bluetooth · USB</li><li>21 admin-tier articles — AD · Azure AD · BitLocker · Intune · Malware · BYOD · VIP support · Asset</li><li>11 architect-tier articles — DR · PKI · Cloud · SSO · Endpoint EDR</li></ul></div>
+      <div class="cap-card reveal"><div class="cap-card-h">Knowledge base</div><ul><li>Token-overlap retrieval, 90+ hard routing rules</li><li>Severity- and audience-aware (end-user / admin / technician)</li><li>21/21 verified test queries pass top-1</li></ul></div>
+      <div class="cap-card reveal"><div class="cap-card-h">Policies / procedures</div><ul><li>Upload .txt .md .pdf .csv .html — stored locally on the user's device</li><li>Doc-name boost — "Per BYOD Policy 2026" wins over generic advice</li><li>Soft-delete preserves prior versions for ARIA's reference</li></ul></div>
+      <div class="cap-card reveal"><div class="cap-card-h">Voice / chat</div><ul><li>Cinematic black-and-gold UI with 9 reasoning frameworks</li><li>Browser-native TTS, prioritized neural-voice picker</li><li>Free Mode (everyone) + Custom Company Mode (admin only)</li></ul></div>
+      <div class="cap-card reveal"><div class="cap-card-h">Security / privacy</div><ul><li>License-gated Settings — only IT admin can upload company docs</li><li>All uploaded data stays in the browser, never sent to any server</li><li>5-device cap per license, fingerprint-tracked</li><li>§10 admin notes hidden from end-user audience</li></ul></div>
     </div>
     <div style="text-align:center;">
       <a href="/assets/aria-capabilities.csv" download="ARIA-capabilities.csv" class="cap-download"><span>↓</span> Download full capability sheet (.csv)</a>
@@ -672,22 +919,22 @@
 
   <!-- ===== REVOLUTION ===== -->
   <section id="aria-revolution" style="background:radial-gradient(800px 450px at 50% 0%, rgba(197,160,89,0.10), transparent 60%), #050402;">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="eyebrow">The Chain Reaction</span>
       <h2>How ARIA <span class="gold">revolutionizes</span> support</h2>
       <p>ARIA is not a chatbot. It is a senior IT technician that learned your company in minutes — and never sleeps, never forgets, never escalates without trying first.</p>
     </div>
-    <div class="rev-grid">
-      <div class="rev-row"><span class="arr">→</span><div><b>No slip-ups.</b> Fewer security breaches. ARIA cites your policy verbatim — never fabricates an answer that costs an audit.</div></div>
-      <div class="rev-row"><span class="arr">→</span><div><b>No delays.</b> Fewer late payments, missed trades, dropped client responses. Instant retrieval replaces the L1 ticket queue.</div></div>
-      <div class="rev-row"><span class="arr">→</span><div><b>Communication barriers fall.</b> ARIA speaks the user's language — plain English for end-users, code blocks for admins. Same engine, audience-aware.</div></div>
-      <div class="rev-row"><span class="arr">→</span><div><b>Productivity compounds.</b> IT focuses on architecture, not password resets. Every employee gets 24/7 expertise.</div></div>
-      <div class="rev-row"><span class="arr">→</span><div><b>Support scales without headcount.</b> One ARIA serves every employee. Onboard a new hire? They walk in fluent in your runbooks on day one.</div></div>
-      <div class="rev-row"><span class="arr">→</span><div><b>Decision-makers see what's recurring.</b> Unanswered queries logged for KB review — your training signal becomes the company's IQ.</div></div>
-      <div class="rev-row"><span class="arr">→</span><div><b>Reduced dependency on overloaded teams.</b> Self-serve from 72 articles plus your own documentation, before a human is paged.</div></div>
-      <div class="rev-row"><span class="arr">→</span><div><b>Customer experience compounds.</b> Faster, more consistent answers means happier users — and the chain reaction reaches every department they touch.</div></div>
+    <div class="rev-grid stagger">
+      <div class="rev-row reveal"><span class="arr">→</span><div><b>No slip-ups.</b> Fewer security breaches. ARIA cites your policy verbatim — never fabricates an answer that costs an audit.</div></div>
+      <div class="rev-row reveal"><span class="arr">→</span><div><b>No delays.</b> Fewer late payments, missed trades, dropped client responses. Instant retrieval replaces the L1 ticket queue.</div></div>
+      <div class="rev-row reveal"><span class="arr">→</span><div><b>Communication barriers fall.</b> ARIA speaks the user's language — plain English for end-users, code blocks for admins. Same engine, audience-aware.</div></div>
+      <div class="rev-row reveal"><span class="arr">→</span><div><b>Productivity compounds.</b> IT focuses on architecture, not password resets. Every employee gets 24/7 expertise.</div></div>
+      <div class="rev-row reveal"><span class="arr">→</span><div><b>Support scales without headcount.</b> One ARIA serves every employee. Onboard a new hire? They walk in fluent in your runbooks on day one.</div></div>
+      <div class="rev-row reveal"><span class="arr">→</span><div><b>Decision-makers see what's recurring.</b> Unanswered queries logged for KB review — your training signal becomes the company's IQ.</div></div>
+      <div class="rev-row reveal"><span class="arr">→</span><div><b>Reduced dependency on overloaded teams.</b> Self-serve from 72 articles plus your own documentation, before a human is paged.</div></div>
+      <div class="rev-row reveal"><span class="arr">→</span><div><b>Customer experience compounds.</b> Faster, more consistent answers means happier users — and the chain reaction reaches every department they touch.</div></div>
     </div>
-    <div class="rev-close">
+    <div class="rev-close reveal">
       <p>ARIA is not just another support tool.</p>
       <p class="strong">It is the start of a faster, safer, smarter service environment.</p>
     </div>
@@ -695,20 +942,20 @@
 
   <!-- ===== ARIA DEMO ===== -->
   <section id="aria-demo" style="background:radial-gradient(700px 400px at 50% 0%, rgba(197,160,89,0.06), transparent 65%), #060606;">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="eyebrow">Watch How It Works</span>
       <h2>ARIA <span class="gold">Demo</span></h2>
       <p>See ARIA in action — an 80-second pitch showing how we replace expensive IT departments with one AI senior tech, available 24/7.</p>
     </div>
-    <div class="frame-box lazyframe" data-src="/aria-pitch/" data-h="430">
-      <div class="lz-poster"><span class="lz-play">▶</span><span class="lz-label">Tap to play the ARIA pitch</span></div>
+    <div class="frame-box frame-16x9 autoframe reveal" data-src="/aria-pitch/">
+      <div class="frame-skeleton"><span class="sk-ring"></span><span class="sk-label">Loading pitch</span></div>
     </div>
     <div style="text-align:center;margin-top:18px;"><a href="/aria-pitch/" target="_blank" class="hero-cta">Open Full Screen →</a></div>
   </section>
 
   <!-- ===== COURSES ===== -->
   <section id="courses">
-    <div class="sec-head" style="margin-bottom:0;">
+    <div class="sec-head reveal" style="margin-bottom:0;">
       <span class="eyebrow">Coming Soon</span>
       <h2>AI Courses &amp; <span class="gold">Development</span></h2>
       <p>Hands-on training programs for IT teams looking to deploy AI in real-world business environments — Q3 2026.</p>
@@ -780,6 +1027,8 @@
 <a class="desktop-pill" href="/?desktop=1">Desktop site</a>
 
 <script>
+  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // ===== Mobile menu =====
   function toggleMenu() { document.getElementById('navMenu').classList.toggle('active'); }
 
@@ -809,6 +1058,24 @@
   }
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closePortal(); });
 
+  // ===== Pricing card flip (tap front to flip, tap ↩ or outside CTA to flip back) =====
+  (function(){
+    document.querySelectorAll('.price-deck').forEach(function(deck){
+      deck.addEventListener('click', function(e){
+        var slot = e.target.closest('.deck-slot');
+        if (!slot) return;
+        if (e.target.closest('.deck-flip-back')) { slot.classList.remove('is-flipped'); return; }
+        // let real CTAs (email / buy) work without flipping back
+        if (e.target.closest('a, .deck-cta-buy')) return;
+        // ignore taps inside the scroll area of an already-open back (so users can read/scroll)
+        if (slot.classList.contains('is-flipped') && e.target.closest('.deck-back-scroll')) return;
+        var wasOpen = slot.classList.contains('is-flipped');
+        deck.querySelectorAll('.deck-slot.is-flipped').forEach(function(s){ s.classList.remove('is-flipped'); });
+        if (!wasOpen) slot.classList.add('is-flipped');
+      });
+    });
+  })();
+
   // ===== Framework accordion =====
   (function(){
     var grid = document.getElementById('frameworkGrid');
@@ -821,25 +1088,50 @@
     });
   })();
 
-  // ===== Lazy iframe loaders (ARIA hub + pitch) =====
+  // ===== Scroll-reveal with subtle per-group stagger =====
   (function(){
-    document.querySelectorAll('.lazyframe').forEach(function(box){
-      box.addEventListener('click', function(){
-        if (box.dataset.loaded) return;
-        box.dataset.loaded = '1';
-        var f = document.createElement('iframe');
-        f.src = box.dataset.src;
-        f.loading = 'lazy';
-        f.setAttribute('allow', 'microphone; clipboard-write; fullscreen');
-        f.setAttribute('allowfullscreen', '');
-        f.style.width = '100%';
-        f.style.height = (box.dataset.h || '600') + 'px';
-        f.style.border = '0';
-        f.style.display = 'block';
-        box.innerHTML = '';
-        box.appendChild(f);
+    if (REDUCED) { document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('reveal-in'); }); return; }
+    // stagger: children of .stagger get an incremental reveal delay
+    document.querySelectorAll('.stagger').forEach(function(group){
+      var i = 0;
+      group.querySelectorAll(':scope > .reveal').forEach(function(el){
+        el.style.setProperty('--rd', Math.min(i * 70, 350) + 'ms'); i++;
       });
     });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('reveal-in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  })();
+
+  // ===== Auto-load iframes when scrolled into view (fitted, no manual play) =====
+  (function(){
+    var frames = document.querySelectorAll('.autoframe');
+    if (!frames.length) return;
+    function load(box){
+      if (box.dataset.loaded) return;
+      box.dataset.loaded = '1';
+      var f = document.createElement('iframe');
+      f.src = box.dataset.src;
+      f.loading = 'lazy';
+      f.setAttribute('allow', 'microphone; clipboard-write; fullscreen');
+      f.setAttribute('allowfullscreen', '');
+      if (!box.classList.contains('frame-16x9') && box.dataset.h) f.style.height = box.dataset.h;
+      f.addEventListener('load', function(){ box.classList.add('loaded'); });
+      box.appendChild(f);
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if (e.isIntersecting){ load(e.target); io.unobserve(e.target); } });
+    }, { rootMargin: '300px 0px' });
+    frames.forEach(function(f){ io.observe(f); });
+  })();
+
+  // ===== Cinema play affordance =====
+  (function(){
+    var frame = document.getElementById('cineFrame'), vid = document.getElementById('cineVid'), btn = document.getElementById('cinePlay');
+    if (!frame || !vid || !btn) return;
+    btn.addEventListener('click', function(){ vid.setAttribute('controls',''); vid.play(); frame.classList.add('playing'); });
+    vid.addEventListener('play', function(){ vid.setAttribute('controls',''); frame.classList.add('playing'); });
   })();
 
   // ===== Email template prefill (pricing cards) =====
