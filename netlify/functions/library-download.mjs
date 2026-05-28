@@ -70,7 +70,8 @@ export default async (request) => {
     const tagline = mode === 'peek'
       ? `<div class="mode">Preview (30%) · credited toward full access — reply to your receipt</div>`
       : `<div class="mode ok">Full access · yours to keep</div>`;
-    return guide(c.title, tagline + body, sid, entitled.length > 1 ? sid : null);
+    var kbNo = 'KB' + (1000000 + (id.split('').reduce(function (a, ch) { return (a * 31 + ch.charCodeAt(0)) >>> 0; }, 7) % 9000000));
+    return guide(c.title, tagline + body, sid, kbNo);
   }
 
   // Index of everything in this order
@@ -110,6 +111,8 @@ pre{background:#0d1117;color:#e6edf3;padding:14px 16px;border-radius:8px;overflo
 code{background:#eee;padding:1px 5px;border-radius:4px;font-size:13px}
 .mode{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a6d2f;background:#faf4e6;border:1px solid #ead9b0;border-radius:6px;padding:8px 12px;display:inline-block;margin:0 0 18px}
 .mode.ok{color:#1f7a4d;background:#eef9f1;border-color:#bfe6cd}
+.kb-bc{font-size:11px;color:#8a6d2f;letter-spacing:.04em;margin-bottom:4px}
+.kb-id{font-size:11px;color:#999;margin:2px 0 16px;border-bottom:1px solid #eee;padding-bottom:14px}
 .peek-cut{margin-top:26px;padding:18px 20px;border:1px dashed var(--gold);border-radius:8px;background:#faf4e6;font-size:14px}
 .lib{list-style:none;padding:0}.lib li{border:1px solid #eee;border-radius:8px;padding:14px 16px;margin:8px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .lib a{color:#0a0a0a;font-weight:600;text-decoration:none}.lib .fmt{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:.08em}
@@ -122,8 +125,12 @@ footer{padding:22px 48px 40px;border-top:1px solid #eee;color:#999;font-size:12p
 <footer>© Integrated IT Support Inc. · Original material licensed for your use — please don't redistribute. · ${esc(EMAIL)} · (647) 581-3182</footer>
 </div></body></html>`;
 }
-function guide(title, inner, sid) {
-  return resp(200, shell(title, `<h1>${esc(title)}</h1><p class="muted"><a href="/library-download?session_id=${encodeURIComponent(sid)}">← All your items</a></p>${inner}`));
+function guide(title, inner, sid, kbNo) {
+  var head = '<div class="kb-bc">Home / IIS Knowledge Base / IT &amp; AI Guides</div>' +
+    '<h1>' + esc(title) + '</h1>' +
+    '<div class="kb-id">' + esc(kbNo || 'KB0000000') + ' &middot; v1.0 (Latest Version) &middot; <span style="color:#b8954f">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>' +
+    '<p class="muted" style="margin-top:-6px"><a href="/library-download?session_id=' + encodeURIComponent(sid) + '">&larr; All your items</a></p>';
+  return resp(200, shell(title, head + inner));
 }
 function page(status, title, inner) {
   return resp(status, shell(title, `<h1>${esc(title)}</h1>${inner}`));

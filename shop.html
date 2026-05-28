@@ -318,6 +318,9 @@ async function finderUnlock(){
 .cat-card .c-media{margin:-22px -22px 6px;height:158px;overflow:hidden;background:#0a0a0a;border-bottom:1px solid rgba(197,160,89,.15)}
 .cat-card .c-media img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
 .cat-card.has-media:hover .c-media img{transform:scale(1.07)}
+.cat-card.is-soon{opacity:.6;filter:grayscale(.5)}
+.cat-card .price.soon{color:#9aa3b8;background:none;-webkit-background-clip:initial;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+.cat-card .price.quote{color:#d8bd84;background:none;-webkit-background-clip:initial;font-size:14px}
 .shop-search{max-width:640px;margin:0 auto 30px;position:relative}
 .shop-search input{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(197,160,89,.3);border-radius:10px;color:#fff;padding:15px 18px;font-family:'Inter',sans-serif;font-size:15px}
 .shop-search input:focus{outline:none;border-color:#d8bd84;box-shadow:0 0 0 3px rgba(197,160,89,.12)}
@@ -344,6 +347,41 @@ async function finderUnlock(){
     res.innerHTML=hits.length?'<div class="cat-grid">'+hits.map(IIS_CATALOG.renderCard).join('')+'</div>':'<p style="text-align:center;color:rgba(255,255,255,.45);padding:34px 0;font-size:13px">No matches. Try a broader term — or use the <a href="#finder" style="color:#d8bd84">$40 Finder’s-Fee</a> and we’ll hunt it down for you.</p>';
   };
 })();
+</script>
+
+<!-- CONCIERGE ORDER MODAL -->
+<div id="co-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,4,4,.82);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px" onclick="if(event.target.id==='co-modal')coClose()">
+  <div style="max-width:560px;width:100%;background:linear-gradient(180deg,#0e0e0e,#080808);border:1px solid rgba(197,160,89,.3);border-radius:14px;padding:32px;position:relative">
+    <button onclick="coClose()" style="position:absolute;top:12px;right:18px;background:none;border:none;color:#888;font-size:24px;cursor:pointer">&times;</button>
+    <span class="eyebrow">Concierge order</span>
+    <h3 id="co-title" style="font-family:'Cinzel',serif;color:#f1dca7;font-size:20px;margin:8px 0 6px">Item</h3>
+    <p style="color:rgba(255,255,255,.55);font-size:12.5px;line-height:1.7;margin:0 0 18px">Tell us what you need. We source the best option — often something rare — confirm a quote, handle the purchase, and deliver it white-glove. You only ever deal with us.</p>
+    <div id="co-form">
+      <input id="co-name" placeholder="Full name" style="width:100%;margin-bottom:10px;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:14px">
+      <input id="co-email" type="email" placeholder="Email" style="width:100%;margin-bottom:10px;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:14px">
+      <input id="co-addr" placeholder="Shipping address" style="width:100%;margin-bottom:10px;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:14px">
+      <textarea id="co-notes" placeholder="Specs, preferences, budget, timeline…" style="width:100%;min-height:80px;margin-bottom:12px;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;resize:vertical"></textarea>
+      <button class="btn-gold btn-solid" onclick="coSubmit()" style="width:100%">Submit order request</button>
+      <p style="color:rgba(255,255,255,.35);font-size:10px;margin-top:10px">We reply within one business day with options &amp; a quote. Payment is taken securely once you approve — you’ll never see where we source it.</p>
+    </div>
+    <div id="co-done" style="display:none;text-align:center;padding:8px 0">
+      <div style="font-size:36px;color:#d8bd84">✓</div>
+      <h3 style="font-family:'Cinzel',serif;color:#f1dca7;margin:10px 0">Request on its way</h3>
+      <p style="color:rgba(255,255,255,.6);font-size:13px;line-height:1.6">Send the email draft we just opened and we’ll take it from there — sourcing something worth your while. Prefer we call? <a href="tel:+16475813182" style="color:#d8bd84">(647) 581-3182</a>.</p>
+    </div>
+  </div>
+</div>
+<script>
+var _coItem=null;
+window.openConcierge=function(p){ _coItem=p; document.getElementById('co-title').textContent=p.title; document.getElementById('co-form').style.display=''; document.getElementById('co-done').style.display='none'; document.getElementById('co-modal').style.display='flex'; };
+function coClose(){ document.getElementById('co-modal').style.display='none'; }
+function coSubmit(){
+  var g=function(id){return (document.getElementById(id).value||'').trim();};
+  var subj=encodeURIComponent('Concierge order · '+(_coItem?_coItem.title:'Item'));
+  var body=encodeURIComponent('Item: '+(_coItem?_coItem.title:'')+'\n\nName: '+g('co-name')+'\nEmail: '+g('co-email')+'\nShipping address: '+g('co-addr')+'\nSpecs / preferences: '+g('co-notes')+'\n\n(Sent from the iisupp.net Shop)');
+  window.location.href='mailto:ahmad.wasee@iisupp.net?subject='+subj+'&body='+body;
+  document.getElementById('co-form').style.display='none'; document.getElementById('co-done').style.display='block';
+}
 </script>
 
 <!-- FOOTER -->

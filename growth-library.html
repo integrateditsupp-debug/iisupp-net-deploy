@@ -66,6 +66,9 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
 #gl-q-hint{display:block;text-align:center;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:10px}
 .cat-card .c-media{margin:-22px -22px 6px;height:158px;overflow:hidden;background:#0a0a0a;border-bottom:1px solid rgba(197,160,89,.15)}
 .cat-card .c-media img{width:100%;height:100%;object-fit:cover}
+.cat-card.is-soon{opacity:.6;filter:grayscale(.5)}
+.cat-card .price.soon{color:#9aa3b8;background:none;-webkit-background-clip:initial;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+.cat-card .price.quote{color:#d8bd84;background:none;-webkit-background-clip:initial;font-size:14px}
 
 /* grid + cards (shared with Shop via iis-catalog.renderCard) */
 .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1180px;margin:0 auto}
@@ -148,8 +151,7 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
     <p style="max-width:660px;margin:0 auto 14px;color:rgba(255,255,255,.58);font-size:13.5px;line-height:1.75">Practical, original intelligence you can use the <b style="color:#d8bd84;font-weight:600">same day</b> — to solve real problems faster, turn a skill into income, run leaner, and sharpen how you actually think. Every pack is built to <b style="color:#d8bd84;font-weight:600">compound</b>: learn it, apply it, package it, and let it pay you back.</p>
     <p style="color:#c5a059;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;max-width:620px;margin:0 auto">You don’t rise by consuming more — you rise by operating better. This is where that starts.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px">
-      <a href="#vault" class="nav-cta" style="display:inline-flex">Start learning</a>
-      <a href="#access" class="c-btn">I have an access code</a>
+      <a href="#vault" class="nav-cta" style="display:inline-flex">Enter the vault</a>
     </div>
   </div>
 </section>
