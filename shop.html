@@ -254,6 +254,32 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
   </div>
 </section>
 
+<!-- FINDER'S FEE -->
+<section id="finder" style="padding:24px 24px 0">
+  <div style="max-width:1000px;margin:0 auto;border:1px solid rgba(197,160,89,.28);border-radius:14px;padding:38px 34px;background:radial-gradient(120% 140% at 100% 0%,rgba(197,160,89,.10),transparent 60%)">
+    <span class="eyebrow" style="margin-bottom:12px">Finder's Fee · we do the hunting</span>
+    <h2 class="logo-text" style="font-size:clamp(1.5rem,3.2vw,2.1rem);letter-spacing:.05em;text-transform:uppercase;margin:0 0 12px">Can't find it? <span class="gold-text" style="font-style:italic">We will.</span></h2>
+    <p style="max-width:660px;color:rgba(255,255,255,.62);font-size:12.5px;line-height:1.8;margin:0 0 18px">Tell us what you're hunting for — a specific device, a hard-to-find part, the best supplier, a tool, a deal, or a straight answer. Our team does the legwork and hands you the vetted source. Flat <b style="color:#f1dca7">$40</b> to unlock each find — you're paying for our time and judgment, not the public information itself.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input id="finder-q" type="text" placeholder="e.g. cheapest legit source for a Lenovo X1 Carbon Gen 12, 32GB" style="flex:1;min-width:260px;padding:13px 14px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:13px">
+      <button class="btn-gold btn-solid" id="finder-btn" onclick="finderUnlock()">Unlock the find · $40</button>
+    </div>
+    <p style="color:rgba(255,255,255,.35);font-size:10px;margin-top:12px">After payment we email your vetted source/answer (typically within one business day). Original, legal research only — we won't paywall something that's trivially free.</p>
+  </div>
+</section>
+<script>
+async function finderUnlock(){
+  var qEl=document.getElementById('finder-q'), q=(qEl.value||'').trim();
+  if(!q){ qEl.focus(); return; }
+  var btn=document.getElementById('finder-btn'); if(btn.disabled) return; var o=btn.innerHTML; btn.disabled=true; btn.innerHTML='Opening secure checkout…';
+  try{
+    var r=await fetch('/.netlify/functions/stripe-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({successPath:'/unlock.html',priceData:{amount_cents:4000,currency:'usd',product_name:"IIS Finder's Fee — Sourced Result",description:('Find request: '+q).slice(0,480),id:'finder-'+Date.now()}})});
+    var d=await r.json(); if(d&&d.url){ window.location=d.url; return; } throw new Error((d&&d.error)||'Checkout failed');
+  }catch(e){ btn.disabled=false; btn.innerHTML=o; alert('Could not start checkout: '+(e.message||e)+'\nEmail ahmad.wasee@iisupp.net'); }
+}
+</script>
+
 <!-- SHOP CATALOG (rendered from /assets/iis-catalog.js) -->
 <section id="catalog" style="padding:30px 24px 90px">
   <div style="max-width:1180px;margin:0 auto">

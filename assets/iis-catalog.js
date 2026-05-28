@@ -250,20 +250,26 @@
   function byId(id) { return PRODUCTS.concat(BUNDLES).filter(function (p) { return p.id === id; })[0] || null; }
   function audienceBadges(arr) { return (arr || []).map(function (a) { return '<span class="aud aud-' + a + '">' + (AUD[a] || a) + '</span>'; }).join(''); }
 
-  // Stripe checkout for a paid product/bundle (reuses existing /stripe-checkout priceData path).
-  async function buy(id) {
+  function previewCents(p) { return Math.max(100, Math.round((p.priceCents || 0) * 0.30)); }
+  // Stripe checkout. mode 'full' (default) buys the product; 'peek' buys the paid
+  // 30% preview — a teaser of what's inside, credited toward full access on request.
+  async function buy(id, mode) {
     var p = byId(id); if (!p) return;
-    var btn = document.querySelector('[data-buy="' + id + '"]');
+    mode = (mode === 'peek') ? 'peek' : 'full';
+    var amount = (mode === 'peek') ? previewCents(p) : p.priceCents;
+    var btn = document.querySelector('[data-buy="' + id + '-' + mode + '"]') || document.querySelector('[data-buy="' + id + '"]');
     var orig = btn ? btn.innerHTML : '';
     if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = 'Opening secure checkout…'; }
     try {
       var r = await fetch('/.netlify/functions/stripe-checkout', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ successPath: META.successUrl, priceData: {
-          amount_cents: p.priceCents, currency: 'usd',
-          product_name: 'IIS · ' + p.title,
-          description: (p.blurb || '').slice(0, 180) + ' [' + (p.format || 'digital') + ']',
-          id: p.id
+          amount_cents: amount, currency: 'usd',
+          product_name: 'IIS · ' + p.title + (mode === 'peek' ? ' — Preview peek (30%)' : ''),
+          description: (mode === 'peek'
+            ? 'Paid preview of "' + p.title + '" — a teaser of what\'s inside. Credited toward full access; reply to your receipt to apply it.'
+            : (p.blurb || '').slice(0, 165)) + ' [' + (p.format || 'digital') + ']',
+          id: p.id + '-' + mode
         } })
       });
       var data = await r.json();
@@ -277,22 +283,18 @@
 
   // Render a catalog card (used by both Shop and Growth Library).
   function renderCard(p) {
-    var locked = !p.free;
-    var priceTag = p.free ? '<span class="price free">Free</span>' : '<span class="price">' + money(p.priceCents) + '</span>';
+    var priceTag = '<span class="price">' + money(p.priceCents) + '</span>';
     var fmt = p.format ? '<span class="fmt">' + esc(p.format) + '</span>' : '';
     var actions = '';
     if (p.url) {
       actions = '<a class="c-btn" href="' + esc(p.url) + '">' + esc(p.cta || 'Open') + ' →</a>';
-    } else if (p.free && p.preview) {
-      actions = '<a class="c-btn solid" href="' + esc(p.preview) + '" target="_blank" rel="noopener">Open free →</a>';
     } else {
-      actions = '<button class="c-btn solid" data-buy="' + esc(p.id) + '" onclick="IIS_CATALOG.buy(\'' + esc(p.id) + '\')">' +
-        (locked ? 'Unlock · ' + money(p.priceCents) : 'Get it') + '</button>';
-      if (p.preview) actions += '<a class="c-btn" href="' + esc(p.preview) + '" target="_blank" rel="noopener">Preview</a>';
+      actions = '<button class="c-btn" data-buy="' + esc(p.id) + '-peek" onclick="IIS_CATALOG.buy(\'' + esc(p.id) + '\',\'peek\')" title="A teaser, credited toward full access">Peek · ' + money(previewCents(p)) + '</button>' +
+        '<button class="c-btn solid" data-buy="' + esc(p.id) + '-full" onclick="IIS_CATALOG.buy(\'' + esc(p.id) + '\',\'full\')">Unlock · ' + money(p.priceCents) + '</button>';
     }
     return '' +
       '<article class="cat-card' + (p.featured ? ' is-featured' : '') + '" data-cat="' + esc(p.category || '') + '" data-aud="' + (p.audience || []).join(' ') + '">' +
-        (locked ? '<span class="lock" title="Premium">⚿</span>' : '') +
+        (p.url ? '' : '<span class="lock" title="Premium · unlock to access">⚿</span>') +
         '<div class="c-top">' + audienceBadges(p.audience) + fmt + '</div>' +
         '<h4>' + esc(p.title) + '</h4>' +
         '<p class="c-blurb">' + esc(p.blurb) + '</p>' +
