@@ -42,10 +42,13 @@ export default async (request) => {
   const mode = m ? m[2] : 'full';
   const baseId = m ? m[1] : tier;
 
-  // Finder's-fee / concierge / tech-service purchases aren't library products.
-  if (/^finder-/.test(baseId) || /^iis-concierge/.test(baseId) || baseId === 'tech-service' || baseId === '') {
+  // Finder's-fee / concierge / device / tech-service purchases aren't library products.
+  if (/^finder-/.test(baseId) || /^inv-/.test(baseId) || /^iis-concierge/.test(baseId) || baseId === 'tech-service' || baseId === '') {
+    var kindMsg = /^finder-/.test(baseId) ? 'vetted source/answer'
+      : /^inv-/.test(baseId) ? 'pickup or delivery details for your device'
+      : 'confirmation and next steps';
     return page(200, 'Thank you — payment received', `
-      <p>Your payment is confirmed. This purchase is fulfilled by our team directly — you'll receive your ${/^finder-/.test(baseId) ? 'vetted source/answer' : 'confirmation and next steps'} by email, typically within one business day.</p>
+      <p>Your payment is confirmed. This purchase is fulfilled by our team directly — you'll receive your ${kindMsg} by email, typically within one business day.</p>
       <p>Need it sooner? Email <a href="mailto:${EMAIL}">${EMAIL}</a> or call (647) 581-3182 with your receipt.</p>`);
   }
 

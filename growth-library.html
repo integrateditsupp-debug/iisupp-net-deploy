@@ -60,6 +60,12 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
 .filt{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.55);font-family:'Cinzel',serif;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;padding:9px 16px;cursor:pointer;border-radius:3px;transition:all .25s}
 .filt:hover{color:#f1dca7;border-color:rgba(197,160,89,.35)}
 .filt.is-active{color:#050505;background:var(--luxury-gold);border-color:transparent}
+.gl-search{max-width:640px;margin:0 auto 22px}
+.gl-search input{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(197,160,89,.3);border-radius:10px;color:#fff;padding:15px 18px;font-family:'Inter',sans-serif;font-size:15px}
+.gl-search input:focus{outline:none;border-color:#d8bd84;box-shadow:0 0 0 3px rgba(197,160,89,.12)}
+#gl-q-hint{display:block;text-align:center;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:10px}
+.cat-card .c-media{margin:-22px -22px 6px;height:158px;overflow:hidden;background:#0a0a0a;border-bottom:1px solid rgba(197,160,89,.15)}
+.cat-card .c-media img{width:100%;height:100%;object-fit:cover}
 
 /* grid + cards (shared with Shop via iis-catalog.renderCard) */
 .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1180px;margin:0 auto}
@@ -138,9 +144,9 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
   <div style="max-width:920px;margin:0 auto;position:relative;z-index:1">
     <span class="vault-badge"><i class="fas fa-lock" style="font-size:9px"></i> Private intelligence vault</span>
     <h1 style="font-size:clamp(2.6rem,6.5vw,4.6rem);font-weight:900;letter-spacing:-.02em;line-height:1;margin:0 0 22px" class="logo-text">Growth <span class="gold-text gold-glow" style="font-style:italic">Library</span></h1>
-    <p style="max-width:680px;margin:0 auto 16px;color:rgba(255,255,255,.62);font-size:15px;line-height:1.7">Practical AI, IT and automation knowledge built for modern work. <b style="color:#f1dca7;font-weight:600">Learn faster. Solve smarter. Build systems that save time.</b></p>
-    <p style="max-width:620px;margin:0 auto 14px;color:rgba(255,255,255,.5);font-size:12.5px;line-height:1.7">Original guides, videos, scripts, agents, templates and knowledge-base packs created by Integrated IT Support.</p>
-    <p style="color:#c5a059;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700">Built for people who want to learn — and systems that need intelligence.</p>
+    <p style="max-width:700px;margin:0 auto 16px;color:rgba(255,255,255,.72);font-size:17px;line-height:1.7">This isn’t content. It’s <b style="color:#f1dca7;font-weight:600">leverage</b>. Most people spend a lifetime stuck in “limited mode” — numbed by comfort, reacting instead of building, never touching their real potential. The Growth Library is the unlock.</p>
+    <p style="max-width:660px;margin:0 auto 14px;color:rgba(255,255,255,.58);font-size:13.5px;line-height:1.75">Practical, original intelligence you can use the <b style="color:#d8bd84;font-weight:600">same day</b> — to solve real problems faster, turn a skill into income, run leaner, and sharpen how you actually think. Every pack is built to <b style="color:#d8bd84;font-weight:600">compound</b>: learn it, apply it, package it, and let it pay you back.</p>
+    <p style="color:#c5a059;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;max-width:620px;margin:0 auto">You don’t rise by consuming more — you rise by operating better. This is where that starts.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px">
       <a href="#vault" class="nav-cta" style="display:inline-flex">Start learning</a>
       <a href="#access" class="c-btn">I have an access code</a>
@@ -172,6 +178,7 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
     <h2>Explore the <span class="gold-text" style="font-style:italic">collection</span></h2>
     <p>The few resources serious operators actually keep. Peek inside any pack for 30%, or unlock the full treasure instantly — your peek credits toward full access.</p>
   </div>
+  <div class="gl-search"><input id="gl-q" type="search" placeholder="Search the library — topic, tool, problem…" oninput="glSearch(this.value)" aria-label="Search the library"><span id="gl-q-hint"></span></div>
   <div class="filters" id="filters"></div>
   <div class="cat-grid" id="vault-grid"></div>
   <p class="footnote" style="margin-top:34px">All materials are original, IIS-branded works built from public knowledge and real workplace use-cases. Inspired by publicly available AI/IT education trends — not affiliated with or endorsed by any third-party brand. Prices are introductory and may change.</p>
@@ -212,6 +219,14 @@ function toggleMenu(){ document.getElementById('mnav').classList.toggle('active'
 var GRID = document.getElementById('vault-grid');
 var FILTERS = document.getElementById('filters');
 function renderGrid(cards){ GRID.innerHTML = cards.map(IIS_CATALOG.renderCard).join(''); }
+function glSearch(q){
+  q=(q||'').trim(); var hint=document.getElementById('gl-q-hint');
+  if(!q){ document.querySelectorAll('.filt').forEach(function(b){b.classList.remove('is-active');}); var a=document.querySelector('.filt[data-filt="all"]'); if(a)a.classList.add('is-active'); renderGrid(IIS_CATALOG.forCategory('all')); hint.textContent=''; return; }
+  var hits=IIS_CATALOG.search(q,{physical:false});
+  document.querySelectorAll('.filt').forEach(function(b){b.classList.remove('is-active');});
+  hint.textContent=hits.length+' result'+(hits.length===1?'':'s')+' for “'+q+'”';
+  GRID.innerHTML=hits.length?hits.map(IIS_CATALOG.renderCard).join(''):'<p style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,.45);padding:30px 0">No matches — try a broader term.</p>';
+}
 (function init(){
   // filter chips
   FILTERS.innerHTML = ['all'].concat(IIS_CATALOG.glCategories).map(function(c,i){
