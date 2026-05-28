@@ -179,13 +179,13 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
 
 <!-- ACCESS GATE -->
 <section id="access" style="padding:70px 24px">
-  <div class="shead"><span class="eyebrow">Members & buyers</span><h2>Unlock your <span class="gold-text" style="font-style:italic">downloads</span></h2></div>
+  <div class="shead"><span class="eyebrow">Already purchased?</span><h2>Open your <span class="gold-text" style="font-style:italic">downloads</span></h2></div>
   <div class="gate reveal">
-    <p style="color:rgba(255,255,255,.6);font-size:12.5px;line-height:1.7;margin:0 0 18px">Purchased a pack, bundle, or All-Access membership? Enter the access code from your receipt email to reveal your download area. No code yet? Pick any item above and check out — your code arrives instantly.</p>
-    <input id="access-code" type="text" placeholder="ACCESS CODE" autocomplete="off" onkeydown="if(event.key==='Enter')tryAccess()">
-    <div style="margin-top:14px"><button class="c-btn solid" onclick="tryAccess()">Unlock library</button></div>
-    <div class="g-msg" id="access-msg"></div>
-    <div id="access-area" style="display:none;margin-top:20px"></div>
+    <p style="color:rgba(255,255,255,.6);font-size:13px;line-height:1.7;margin:0 0 20px">Every purchase comes with a <b style="color:#d8bd84">secure personal link</b> — shown on your confirmation page right after checkout and emailed on your receipt. It verifies your order and opens your guides (read or print to PDF, anytime). No code to lose, nothing shared.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <a class="c-btn solid" href="/growth-library.html#vault">Browse &amp; unlock a pack</a>
+      <a class="c-btn" href="mailto:ahmad.wasee@iisupp.net?subject=Resend%20my%20Growth%20Library%20link">Lost your link? Email us</a>
+    </div>
   </div>
 </section>
 
@@ -227,30 +227,8 @@ function filterTo(cat, btn){
   document.getElementById('vault').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-/* ── EDIT THIS — member/buyer access code (MVP gate). Phase 2: verify against
-   a Stripe purchase via a Netlify function instead of a shared code. ──────── */
-var ACCESS_CODE = 'IIS-GROWTH';
-function tryAccess(){
-  var v=(document.getElementById('access-code').value||'').trim().toUpperCase();
-  var msg=document.getElementById('access-msg'), area=document.getElementById('access-area');
-  if(v===ACCESS_CODE){
-    msg.textContent='Access granted. Your downloads are below.'; msg.className='g-msg g-ok';
-    area.style.display='block';
-    area.innerHTML = '<div class="cat-grid" style="margin-top:6px">' +
-      IIS_CATALOG.all().map(function(p){
-        var link = p.file || p.preview;
-        return '<div class="cat-card"><div class="c-top">'+(p.format?'<span class="fmt">'+IIS_CATALOG.esc(p.format)+'</span>':'')+'</div>'+
-          '<h4>'+IIS_CATALOG.esc(p.title)+'</h4>'+
-          (link ? '<a class="c-btn solid" href="'+IIS_CATALOG.esc(link)+'" target="_blank" rel="noopener">Download</a>'
-                : '<span class="c-btn" style="cursor:default;opacity:.6">Preparing…</span>')+
-          '</div>';
-      }).join('') + '</div>' +
-      '<p class="footnote" style="margin-top:16px">Items marked “Preparing…” are being finalized — you’ll be emailed the moment they’re ready.</p>';
-  } else {
-    msg.textContent='That code didn’t match. Check your receipt email, or contact '+IIS_CATALOG.meta.email+'.'; msg.className='g-msg g-bad';
-    area.style.display='none';
-  }
-}
+/* Downloads are delivered via the Stripe-verified link (/library-download) shown
+   on the confirmation page and receipt — no shared code (prevents leaks). */
 
 /* scroll reveal */
 (function(){
