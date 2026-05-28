@@ -273,8 +273,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
     </div>
     <div class="panel stat">
       <div class="label">Agents</div>
-      <div class="num" id="agents-active">—<span class="unit" id="agents-roster"></span></div>
-      <div class="meta">active now · <span id="agents-born">0</span> evolved this run</div>
+      <div class="num" id="agents-active">—</div>
+      <div class="meta">in ARIA roster · <span id="agents-born">0</span> evolved this run</div>
     </div>
   </div>
 
@@ -471,9 +471,7 @@ function renderStats(s, t){
   $('queue-depth').textContent = q;
 
   const roster = Array.isArray(s.agents) ? s.agents.length : 0;
-  const activeNow = Array.isArray(s.agents) ? s.agents.filter(a=>a && a.born).length : 0;
-  countTo('agents-active', activeNow || roster);
-  $('agents-roster').textContent = roster ? ' / '+roster : '';
+  countTo('agents-active', roster);
   $('agents-born').textContent = num(s.newAgentsBorn);
 }
 
