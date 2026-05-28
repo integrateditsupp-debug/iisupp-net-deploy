@@ -17,6 +17,20 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "microphone=(self), camera=(), geolocation=(self)"
 
+# Internal-only paths — blocked from public access (return 404)
+[[redirects]]
+  from = "/docs/*"
+  to = "/index.html"
+  status = 404
+[[redirects]]
+  from = "/backups/*"
+  to = "/index.html"
+  status = 404
+[[redirects]]
+  from = "/archive/*"
+  to = "/index.html"
+  status = 404
+
 [[redirects]]
   from = "/shop"
   to = "/shop.html"
