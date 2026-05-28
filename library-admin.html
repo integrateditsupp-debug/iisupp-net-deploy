@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Product Studio · IIS (internal)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{--gold:#b8954f}
+*{box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#eee;margin:0;padding:0}
+.wrap{max-width:1080px;margin:0 auto;padding:34px 24px 80px}
+h1{font-family:'Cinzel',serif;color:#d8bd84;font-size:24px;letter-spacing:.06em;margin:0 0 4px}
+.sub{color:#888;font-size:12px;margin:0 0 26px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}@media(max-width:880px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#9a9a9a;margin:14px 0 5px;font-weight:600}
+input,textarea,select{width:100%;background:#111;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:6px;font-family:'Inter',sans-serif;font-size:14px}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold)}
+textarea{min-height:70px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chips{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}.chips label{display:inline-flex;align-items:center;gap:6px;margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:#ccc}.chips input{width:auto}
+button{background:linear-gradient(135deg,#b8954f,#d8bd84 50%,#9c7322);color:#1a1407;border:none;padding:12px 20px;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border-radius:6px;cursor:pointer;margin-top:18px}
+button.ghost{background:transparent;border:1px solid #2a2a2a;color:#bbb}
+pre{background:#0d1117;color:#d6e2ee;border:1px solid #20262e;border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;overflow:auto;white-space:pre-wrap;max-height:340px}
+.card{background:#0e0e0e;border:1px solid #222;border-radius:10px;padding:20px}
+.note{font-size:11px;color:#777;line-height:1.6;margin-top:10px}
+h2{font-family:'Cinzel',serif;color:#d8bd84;font-size:14px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 12px}
+.copybar{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.tag{font-size:10px;color:var(--gold);border:1px solid #333;border-radius:4px;padding:3px 8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Product Studio</h1>
+  <p class="sub">Internal · create a Growth Library / Shop product. Fill it in → copy the two blocks into <code>assets/iis-catalog.js</code> and <code>netlify/functions/_library-content.mjs</code>. <span class="tag">noindex</span></p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>1 · Research (optional)</h2>
+      <label>Topic / keyword you're targeting</label>
+      <input id="kw" placeholder="e.g. intune device enrollment troubleshooting">
+      <button class="ghost" onclick="genPrompt()">Generate research prompt</button>
+      <label style="margin-top:14px">Paste into Claude/ChatGPT to draft the product</label>
+      <pre id="prompt" style="max-height:200px">—</pre>
+    </div>
+
+    <div class="card">
+      <h2>2 · Define the product</h2>
+      <div class="row"><div><label>id (kebab, gl-…)</label><input id="f-id" placeholder="gl-intune-kb"></div><div><label>Price (USD)</label><input id="f-price" type="number" value="49"></div></div>
+      <label>Title</label><input id="f-title" placeholder="Intune Device Enrollment KB">
+      <label>Blurb (one strong line)</label><input id="f-blurb">
+      <label>Long description</label><textarea id="f-long"></textarea>
+      <label>What's inside (one per line)</label><textarea id="f-inside"></textarea>
+      <div class="row">
+        <div><label>Category</label><select id="f-cat"></select></div>
+        <div><label>Shop section</label><select id="f-sec"></select></div>
+      </div>
+      <label>Audience</label>
+      <div class="chips" id="f-aud"></div>
+      <div class="row"><div><label>Format</label><input id="f-format" value="PDF + AI-readable KB"></div><div><label>Upsell</label><select id="f-upsell"><option value="service">service</option><option value="aria">aria</option></select></div></div>
+      <label>Tags (comma)</label><input id="f-tags">
+      <label>SEO terms (comma)</label><input id="f-seo">
+      <div class="row"><div><label>Related ids (comma)</label><input id="f-related"></div><div><label>Bundle id (optional)</label><input id="f-bundle"></div></div>
+      <div class="chips" style="margin-top:14px"><label><input type="checkbox" id="f-featured"> Featured</label></div>
+      <button onclick="gen()">Generate blocks ↓</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:26px">
+    <h2>3 · Paste into <code>assets/iis-catalog.js</code> → PRODUCTS[]</h2>
+    <div class="copybar"><button class="ghost" onclick="copyEl('out-cat')">Copy</button></div>
+    <pre id="out-cat">— fill the form and press Generate —</pre>
+    <h2 style="margin-top:24px">4 · Paste into <code>netlify/functions/_library-content.mjs</code> → CONTENT{}</h2>
+    <div class="copybar"><button class="ghost" onclick="copyEl('out-content')">Copy</button></div>
+    <pre id="out-content">— fill the form and press Generate —</pre>
+    <p class="note">After pasting, commit + deploy. The product then appears in Shop + Growth Library automatically and sells via Stripe (peek 30% + full). Content delivers through the verified /library-download link. Set price/SEO with the $500M lens: who buys, why today, what it bundles into, can it become a membership / team-license / AI-system product.</p>
+  </div>
+</div>
+
+<script src="/assets/iis-catalog.js"></script>
+<script>
+function $(id){return document.getElementById(id);}
+// populate selects + audience from the live catalog
+(function(){
+  $('f-cat').innerHTML=IIS_CATALOG.glCategories.map(function(c){return '<option>'+c+'</option>';}).join('');
+  $('f-sec').innerHTML=IIS_CATALOG.shopSections.map(function(s){return '<option value="'+s.id+'">'+s.title+'</option>';}).join('');
+  $('f-aud').innerHTML=Object.keys(IIS_CATALOG.audience).map(function(a){return '<label><input type="checkbox" value="'+a+'" '+(a==='human'?'checked':'')+'> '+IIS_CATALOG.audience[a]+'</label>';}).join('');
+})();
+function genPrompt(){
+  var kw=($('kw').value||'a practical IT/AI topic').trim();
+  $('prompt').textContent=
+'Create an ORIGINAL, sellable digital product for Integrated IT Support about: "'+kw+'".\n'+
+'It must be our own work (no copied/copyrighted material). Output:\n'+
+'1) A searchable title (use the real search term).\n'+
+'2) A one-line blurb that makes a buyer feel they NEED it.\n'+
+'3) A 2-3 sentence description.\n'+
+'4) "What\'s inside": 6-8 concrete, practical bullets.\n'+
+'5) The full guide content (real steps/checklists/templates), and a 30% PEEK excerpt.\n'+
+'6) 3 SEO search terms, target audience (human/business/IT/AI), and a fair USD price.\n'+
+'Tone: premium, practical, honest — no fake guarantees. Frame so it can grow into a bundle, membership, and team/MSP license.';
+}
+function val(id){return ($(id).value||'').trim();}
+function arr(id){return val(id).split(',').map(function(s){return s.trim();}).filter(Boolean);}
+function lines(id){return val(id).split('\n').map(function(s){return s.trim();}).filter(Boolean);}
+function aud(){return [].slice.call(document.querySelectorAll('#f-aud input:checked')).map(function(c){return c.value;});}
+function q(s){return "'"+String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"'";}
+function qa(a){return '['+a.map(q).join(', ')+']';}
+function gen(){
+  var id=val('f-id')||'gl-new-product';
+  var cents=Math.round((parseFloat(val('f-price'))||0)*100);
+  var obj=
+'    {\n'+
+'      id: '+q(id)+',\n'+
+'      title: '+q(val('f-title'))+',\n'+
+'      blurb: '+q(val('f-blurb'))+',\n'+
+'      long: '+q(val('f-long'))+',\n'+
+'      inside: '+qa(lines('f-inside'))+',\n'+
+'      priceCents: '+cents+', category: '+q(val('f-cat'))+', section: '+q(val('f-sec'))+',\n'+
+'      audience: '+qa(aud())+', format: '+q(val('f-format'))+',\n'+
+'      tags: '+qa(arr('f-tags'))+',\n'+
+'      seo: '+qa(arr('f-seo'))+',\n'+
+'      free: false, featured: '+($('f-featured').checked?'true':'false')+',\n'+
+'      preview: null, file: null,\n'+
+'      related: '+qa(arr('f-related'))+', bundle: '+(val('f-bundle')?q(val('f-bundle')):'null')+', upsell: '+q(val('f-upsell'))+'\n'+
+'    },';
+  $('out-cat').textContent=obj;
+  var insideUL=lines('f-inside').map(function(i){return '<li>'+i.replace(/</g,'&lt;')+'</li>';}).join('');
+  var content=
+"  "+q(id)+": {\n"+
+"    title: "+q(val('f-title'))+",\n"+
+"    format: "+q(val('f-format'))+",\n"+
+"    peek: `\n<h2>"+(val('f-title')||'Overview')+"</h2>\n<p>"+(val('f-blurb')||'')+"</p>\n<ul>"+insideUL+"</ul>\n${peekNote}`,\n"+
+"    full: `\n<h2>Overview</h2>\n<p>"+(val('f-long')||val('f-blurb')||'')+"</p>\n<h2>What's inside</h2>\n<ul>"+insideUL+"</ul>\n<!-- TODO: paste the full original content here -->`\n"+
+"  },";
+  $('out-content').textContent=content;
+}
+function copyEl(id){var t=$(id).textContent;navigator.clipboard&&navigator.clipboard.writeText(t);var b=event.target;var o=b.textContent;b.textContent='Copied';setTimeout(function(){b.textContent=o;},1200);}
+genPrompt();
+</script>
+</body>
+</html>

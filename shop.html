@@ -222,10 +222,10 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
     <div class="section-head">
       <span class="eyebrow">Prefer to buy it yourself?</span>
       <h2>Shop our <span class="gold-text" style="font-style:italic">trusted partners</span></h2>
-      <p>Hand-picked platforms we recommend. Buy direct — or have us choose and manage it for you (advisory fee applies). Either way you get the right gear, worth your money.</p>
+      <p>Hand-picked platforms we recommend. <b style="color:#d8bd84">Direct links are coming soon</b> — for now these are our genuine picks, and we can source any of them for you (advisory fee applies). Either way you get the right gear, worth your money.</p>
     </div>
     <div id="partnerGrid"></div>
-    <p style="text-align:center;font-size:9px;text-transform:uppercase;letter-spacing:.25em;color:rgba(255,255,255,.3);margin-top:30px">Some links are affiliate partnerships — buying through them supports IIS at no extra cost to you.</p>
+    <p style="text-align:center;font-size:9px;text-transform:uppercase;letter-spacing:.25em;color:rgba(255,255,255,.3);margin-top:30px">Affiliate partnerships coming soon — they’ll support IIS at no extra cost to you.</p>
   </div>
 </section>
 
@@ -283,9 +283,8 @@ async function finderUnlock(){
 <!-- SHOP CATALOG (rendered from /assets/iis-catalog.js) -->
 <section id="catalog" style="padding:30px 24px 90px">
   <div style="max-width:1180px;margin:0 auto">
-    <div class="section-head"><span class="eyebrow">The Shop</span><h2>AI tools, KB packs &amp; <span class="gold-text" style="font-style:italic">digital products</span></h2><p>Instant-access digital products. Physical devices &amp; managed services are sourced through the concierge flow and our service plans above.</p></div>
-    <div class="filters" id="shop-filters"></div>
-    <div class="cat-grid" id="shop-catalog"></div>
+    <div class="section-head"><span class="eyebrow">The Shop</span><h2>Everything, in one <span class="gold-text" style="font-style:italic">hub</span></h2><p>Physical, digital, service, subscription — each clearly labeled. Instant-access digital products unlock at checkout; devices &amp; services route through the concierge flow above.</p></div>
+    <div id="shop-sections"></div>
   </div>
 </section>
 
@@ -318,12 +317,14 @@ async function finderUnlock(){
 <script src="/assets/iis-catalog.js"></script>
 <script>
 (function(){
-  var grid=document.getElementById('shop-catalog'), filt=document.getElementById('shop-filters');
-  function render(list){ grid.innerHTML=list.map(IIS_CATALOG.renderCard).join(''); }
-  var cats=['all','Featured','For Humans','For AI Systems','Knowledge Base Packs','AI Skills','AI Agents & Prompting','Business Automation','Premium Bundles'];
-  filt.innerHTML=cats.map(function(c,i){return '<button class="filt'+(i===0?' is-active':'')+'" data-c="'+IIS_CATALOG.esc(c)+'" onclick="shopFilter(this)">'+(c==='all'?'All':IIS_CATALOG.esc(c))+'</button>';}).join('');
-  window.shopFilter=function(btn){ document.querySelectorAll('#shop-filters .filt').forEach(function(b){b.classList.toggle('is-active',b===btn);}); render(IIS_CATALOG.forCategory(btn.dataset.c)); };
-  render(IIS_CATALOG.forCategory('all'));
+  var wrap=document.getElementById('shop-sections');
+  wrap.innerHTML=IIS_CATALOG.shopSections.map(function(sec){
+    var items=IIS_CATALOG.forSection(sec.id), inner;
+    if(items.length){ inner='<div class="cat-grid">'+items.map(IIS_CATALOG.renderCard).join('')+'</div>'; }
+    else if(sec.id==='growth-library'){ inner='<div class="cat-grid"><div class="cat-card"><div class="c-top"><span class="aud aud-human">For Humans</span><span class="aud aud-ai">For AI Systems</span></div><h4>The Growth Library</h4><p class="c-blurb">Original guides, scripts, agents &amp; AI-readable KB packs — the full learning vault.</p><div class="c-foot"><span></span><span class="c-actions"><a class="c-btn solid" href="/growth-library.html">Enter the vault →</a></span></div></div></div>'; }
+    else { inner='<p style="color:rgba(255,255,255,.3);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:4px 0 0">More coming soon.</p>'; }
+    return '<div style="margin:0 0 46px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(197,160,89,.18);padding-bottom:10px;margin-bottom:20px"><h3 style="font-family:\'Cinzel\',serif;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:#f1dca7;margin:0">'+IIS_CATALOG.esc(sec.title)+'</h3><span style="font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35)">'+IIS_CATALOG.esc(sec.note||'')+'</span></div>'+inner+'</div>';
+  }).join('');
 })();
 </script>
 
@@ -386,10 +387,14 @@ function fmt(c){ return '$'+(c/100).toLocaleString('en-US',{minimumFractionDigit
   }).join('');
 })();
 
-/* render partners */
+/* render partners — affiliate links coming soon: greyed + non-clickable */
 document.getElementById('partnerGrid').innerHTML=PARTNERS.map(function(p){
-  return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px"><h4>'+p.name+'</h4><span class="kind">'+p.kind+'</span></div>'
-    +'<p>'+p.desc+'</p><a href="'+p.url+'" target="_blank" rel="noopener sponsored" class="btn-gold" style="margin-top:14px">Shop '+p.name+' <i class="fas fa-arrow-up-right-from-square"></i></a></div>';
+  var soon = !p.url || p.url==='#';
+  var action = soon
+    ? '<span class="btn-gold" style="margin-top:14px;opacity:.45;cursor:not-allowed;pointer-events:none;filter:grayscale(1)">Coming soon</span>'
+    : '<a href="'+p.url+'" target="_blank" rel="noopener sponsored" class="btn-gold" style="margin-top:14px">Shop '+p.name+' <i class="fas fa-arrow-up-right-from-square"></i></a>';
+  return '<div class="card"'+(soon?' style="opacity:.72;filter:grayscale(.45)"':'')+'><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px"><h4>'+p.name+'</h4><span class="kind">'+(soon?'Coming soon':p.kind)+'</span></div>'
+    +'<p>'+p.desc+'</p>'+action+'</div>';
 }).join('');
 
 /* render ways */

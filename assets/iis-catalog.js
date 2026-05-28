@@ -296,7 +296,8 @@
       '<article class="cat-card' + (p.featured ? ' is-featured' : '') + '" data-cat="' + esc(p.category || '') + '" data-aud="' + (p.audience || []).join(' ') + '">' +
         (p.url ? '' : '<span class="lock" title="Premium · unlock to access">⚿</span>') +
         '<div class="c-top">' + audienceBadges(p.audience) + fmt + '</div>' +
-        '<h4>' + esc(p.title) + '</h4>' +
+        (p.url ? '<h4>' + esc(p.title) + '</h4>'
+               : '<h4><a href="/product.html?id=' + esc(p.id) + '" style="color:inherit;text-decoration:none">' + esc(p.title) + '</a></h4>') +
         '<p class="c-blurb">' + esc(p.blurb) + '</p>' +
         (p.inside ? '<ul class="c-inside">' + p.inside.slice(0, 4).map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul>' : '') +
         '<div class="c-foot">' + priceTag + '<span class="c-actions">' + actions + '</span></div>' +

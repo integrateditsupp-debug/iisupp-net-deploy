@@ -2352,6 +2352,45 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
       </div>
     </section>
 
+    <!-- ─────────── GROWTH ROADMAP / REVENUE STREAMS ─────────── -->
+    <section id="roadmap" class="py-24 px-6 md:px-10" style="background:linear-gradient(180deg,#060606,#0a0908);">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+          <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-4">The Ecosystem We're Building</span>
+          <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">Growth <span class="text-[#c5a059]">Roadmap</span></h2>
+          <p class="text-white/50 max-w-2xl mx-auto leading-relaxed text-sm">One company, many compounding ways to create value — for people, businesses, and AI systems. Each stream feeds the next.</p>
+        </div>
+        <div style="position:relative;padding-left:28px;">
+          <div style="position:absolute;left:7px;top:6px;bottom:6px;width:1px;background:linear-gradient(180deg,#c5a059,rgba(197,160,89,.15));"></div>
+          <div id="roadmap-list"></div>
+        </div>
+      </div>
+      <script>
+        (function(){
+          var S=[
+            {t:'Managed IT & Support',d:'Proactive monitoring, helpdesk & security on monthly retainers.',s:'Live'},
+            {t:'Concierge Tech Procurement',d:'We source the right hardware — advisory + curation + optional setup.',s:'Live'},
+            {t:'ARIA — AI IT Assistant',d:'Always-on AI triage, fixes & escalation. Personal, Pro & Business tiers.',s:'Live'},
+            {t:'Growth Library',d:'Original guides, scripts, agents & AI-readable KB packs — digital products.',s:'Live'},
+            {t:"Finder's Fee",d:'Paid research — we hunt down the vetted source or part you need.',s:'Live'},
+            {t:'Content + Open-Source Distribution',d:'YouTube + free toolkits that funnel attention into the ecosystem.',s:'Building'},
+            {t:'Memberships & MSP/Team Licensing',d:'All-Access bundles and licensing of our KBs to other support teams.',s:'Next'},
+            {t:'Enterprise & AI-Platform Licensing',d:'Our AI-readable knowledge sold to businesses and AI systems at scale.',s:'Vision'}
+          ];
+          var col={Live:'#10b981',Building:'#f59e0b',Next:'#c5a059',Vision:'#7a8398'};
+          document.getElementById('roadmap-list').innerHTML=S.map(function(x){
+            var c=col[x.s]||'#c5a059';
+            return '<div style="position:relative;padding:0 0 26px 26px;">'
+              +'<span style="position:absolute;left:-25px;top:3px;width:14px;height:14px;border-radius:50%;background:#0a0908;border:2px solid '+c+';box-shadow:0 0 10px '+c+'66;"></span>'
+              +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">'
+              +'<span style="font-family:\'Cinzel\',serif;font-size:14px;letter-spacing:.04em;color:#fff;">'+x.t+'</span>'
+              +'<span style="font-size:8px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:'+c+';border:1px solid '+c+'66;border-radius:999px;padding:2px 9px;">'+x.s+'</span></div>'
+              +'<p style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin:0;">'+x.d+'</p></div>';
+          }).join('');
+        })();
+      </script>
+    </section>
+
     <style>
       .aria-demo-frame {
         position: relative;

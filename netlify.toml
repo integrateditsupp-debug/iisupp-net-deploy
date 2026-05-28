@@ -34,6 +34,14 @@
   to = "/unlock.html"
   status = 200
 [[redirects]]
+  from = "/product"
+  to = "/product.html"
+  status = 200
+[[redirects]]
+  from = "/studio"
+  to = "/library-admin.html"
+  status = 200
+[[redirects]]
   from = "/about"
   to = "/about.html"
   status = 200
