@@ -18,6 +18,22 @@
     Permissions-Policy = "microphone=(self), camera=(), geolocation=(self)"
 
 [[redirects]]
+  from = "/shop"
+  to = "/shop.html"
+  status = 200
+[[redirects]]
+  from = "/growth-library"
+  to = "/growth-library.html"
+  status = 200
+[[redirects]]
+  from = "/library"
+  to = "/growth-library.html"
+  status = 200
+[[redirects]]
+  from = "/unlock"
+  to = "/unlock.html"
+  status = 200
+[[redirects]]
   from = "/about"
   to = "/about.html"
   status = 200

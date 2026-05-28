@@ -62,7 +62,11 @@ exports.handler = async (event) => {
       planName: productName,
       kind: 'tech-service'
     };
-    successUrl = origin + '/?checkout=success&session_id={CHECKOUT_SESSION_ID}';
+    // Optional: callers may pass a relative successPath (e.g. "/unlock.html") to
+    // land digital buyers on a delivery page. Defaults to homepage (unchanged).
+    successUrl = origin + (typeof body.successPath === 'string' && body.successPath.charAt(0) === '/'
+      ? body.successPath + (body.successPath.indexOf('?') >= 0 ? '&' : '?') + 'checkout=success&session_id={CHECKOUT_SESSION_ID}'
+      : '/?checkout=success&session_id={CHECKOUT_SESSION_ID}');
     cancelUrl  = origin + '/?checkout=canceled';
   } else {
     // Branch 2: existing ARIA tier subscription

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Your Downloads | Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+:root{--luxury-gold:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#b38728 100%)}
+*{box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#050505;color:#fff;margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+h1,h2,h3{font-family:'Cinzel',serif}
+.gold-text{color:transparent;background:var(--luxury-gold);-webkit-background-clip:text;background-clip:text}
+.wrap{max-width:680px;width:100%;text-align:center}
+.check{width:74px;height:74px;border-radius:50%;background:var(--luxury-gold);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;color:#050505;font-size:34px}
+.card{background:rgba(255,255,255,.02);border:1px solid rgba(197,160,89,.25);border-radius:14px;padding:38px 30px}
+input{width:260px;max-width:80%;padding:13px 14px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-size:15px;text-align:center;letter-spacing:.1em}
+input:focus{outline:none;border-color:rgba(197,160,89,.6)}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 22px;background:var(--luxury-gold);color:#050505;font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;border:none;border-radius:6px;cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;border:1px solid rgba(197,160,89,.4);color:#c5a059}
+.msg{font-size:12px;margin-top:14px;min-height:18px}.ok{color:#9fe7c7}.bad{color:#fb7185}
+.dl{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid rgba(255,255,255,.08);border-radius:8px;margin-top:8px;text-align:left;font-size:12.5px}
+.dl a{color:#c5a059;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(197,160,89,.4);padding:7px 12px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="check">✓</div>
+    <h1 style="font-size:26px;letter-spacing:.04em;margin:0 0 12px">Thank you — <span class="gold-text" style="font-style:italic">you’re in</span>.</h1>
+    <p id="intro" style="color:rgba(255,255,255,.6);font-size:13.5px;line-height:1.7;margin:0 auto 22px;max-width:520px">Your purchase is confirmed. Your access code and downloads have been emailed to you. Enter the code below to open your downloads now.</p>
+    <input id="code" type="text" placeholder="ACCESS CODE" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
+    <div style="margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn" onclick="unlock()">Open my downloads</button>
+      <a class="btn ghost" href="/growth-library.html">Back to library</a>
+    </div>
+    <div class="msg" id="msg"></div>
+    <div id="area" style="display:none;margin-top:18px"></div>
+    <p style="color:rgba(255,255,255,.35);font-size:11px;margin-top:22px">Trouble? Email <a href="mailto:ahmad.wasee@iisupp.net" style="color:#c5a059">ahmad.wasee@iisupp.net</a> or call <a href="tel:+16475813182" style="color:#c5a059">(647) 581-3182</a> with your receipt.</p>
+  </div>
+</div>
+<script src="/assets/iis-catalog.js"></script>
+<script>
+var ACCESS_CODE='IIS-GROWTH'; // EDIT — Phase 2: verify against the Stripe session instead.
+if(location.search.indexOf('checkout=success')>=0){ document.getElementById('intro').innerHTML='Payment received — your purchase is confirmed. Your access code is on its way by email. Enter it below to open your downloads.'; }
+function unlock(){
+  var v=(document.getElementById('code').value||'').trim().toUpperCase();
+  var msg=document.getElementById('msg'), area=document.getElementById('area');
+  if(v===ACCESS_CODE){
+    msg.textContent='Access granted.'; msg.className='msg ok'; area.style.display='block';
+    area.innerHTML=IIS_CATALOG.all().map(function(p){
+      var link=p.file||p.preview;
+      return '<div class="dl"><span>'+IIS_CATALOG.esc(p.title)+'</span>'+(link?'<a href="'+IIS_CATALOG.esc(link)+'" target="_blank" rel="noopener">Download</a>':'<span style="color:rgba(255,255,255,.35);font-size:10px">Emailed when ready</span>')+'</div>';
+    }).join('');
+  } else { msg.textContent='That code didn’t match. Check your receipt email.'; msg.className='msg bad'; area.style.display='none'; }
+}
+</script>
+</body>
+</html>
