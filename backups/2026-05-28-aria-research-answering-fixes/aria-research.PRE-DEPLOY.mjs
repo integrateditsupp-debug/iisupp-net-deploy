@@ -42,31 +42,15 @@ export default async (request) => {
   const stateHint = (body.state || '').toString().toUpperCase().trim();
   if (!query && !stateHint) return jsonResp(400, cors, { error: 'query or state required' });
 
-  // ── Conversational layer (Ahmad 2026-05-26) ──────────────────────────────
-  // Runs BEFORE any KB/pattern/research logic so ARIA behaves like a real
-  // assistant instead of dumping the same first-principles block on every turn.
-  // Handles: directives that reshape the previous answer ("keep it short",
-  // "explain more", "simpler"), social turns (hi/thanks/ok/bye), and vague asks
-  // ("help", "help with browsing the web") — fixing the repeat-and-ignore bug.
-  // Deterministic, zero cost, zero LLM. Returns null for real issue queries.
-  try {
-    const __ci = conversationalIntercept(query, (body && body.history) ? body.history : [], cors);
-    if (__ci) return __ci;
-  } catch (_) { /* never let the convo layer break the research path */ }
-
   // Path 1: curated state hash (instant, zero cost)
-
+  
   // Diagnostic-First gate: block premature KB hit when user has not described a symptom
   try {
     var __nQuery = (typeof normalizeQuery === 'function') ? normalizeQuery(query) : query;
     var __hist = (body && body.history) ? body.history : [];
     var __mergedQ = (__hist.filter(function(h){return h && h.role==='user'}).map(function(h){return (h.text||'')}).join(' ') + ' ' + __nQuery).trim();
     var __gaps = (typeof detectGaps === 'function') ? detectGaps(__mergedQ) : null;
-    // Only ask a clarifying question when we DON'T already recognise the issue.
-    // If detectState matches a known scenario (printer, Teams audio, slow PC, VPN…),
-    // skip the interview and answer it directly.
-    var __known = detectState(query) || detectState(__nQuery);
-    if (__gaps && !__gaps.hasSymptom && __gaps.wordCount <= 5 && !stateHint && !__known) {
+    if (__gaps && !__gaps.hasSymptom && __gaps.wordCount <= 5 && !stateHint) {
       return diagnosticFirst(query, cors, __hist);
     }
   } catch(_) {}
@@ -633,94 +617,6 @@ function specialistProposals(query) {
   out.push({ name: 'RCA 5-Whys Agent', framework: 'Root Cause Analysis', proposal: 'Ask why 5 times to find the root. Example: app crashes -> why? Out of memory -> why? Leak in module X -> why? Missing patch since Tue update -> why? Auto-update disabled -> why? Group policy override. The 5th why is the fix-point.' });
   return out;
 }
-// ── Conversational intelligence layer v1 (Ahmad 2026-05-26) ────────────────
-// Makes ARIA understand the *kind* of turn it's in (directive / social / vague /
-// real issue) before it troubleshoots. Pure, deterministic, $0.
-function lastAssistantAnswer(history) {
-  if (!Array.isArray(history)) return '';
-  for (let i = history.length - 1; i >= 0; i--) {
-    const h = history[i] || {};
-    const role = (h.role || h.from || '').toLowerCase();
-    if (role === 'assistant' || role === 'aria' || role === 'bot') {
-      const t = h.text || h.content || (Array.isArray(h.steps) ? h.steps.join('\n') : '');
-      if (t) return String(t);
-    }
-  }
-  return '';
-}
-function answerToSteps(text) {
-  return String(text || '')
-    .split(/\n+/)
-    .map(s => s.replace(/^\s*\d+[\.\)]\s*/, '').trim())
-    .filter(Boolean)
-    // drop the boilerplate tail so reshaping doesn't keep re-emitting it
-    .filter(s => !/^if (none|this does not)/i.test(s) && !/clarifying question/i.test(s) && !/call \(647\)/i.test(s) && !/^scope:/i.test(s) && !/^trigger:/i.test(s));
-}
-function convoReply(cors, text, state) {
-  return jsonResp(200, cors, {
-    ok: true, state: 'CONVO.' + state, title: null,
-    steps: [text], confidence: 0.9, source: 'conversational-layer-v1',
-    caveat: null, conversational: true, ts: Date.now()
-  });
-}
-function convoSteps(cors, title, steps, state) {
-  return jsonResp(200, cors, {
-    ok: true, state: 'CONVO.' + state, title,
-    steps: steps.length ? steps : ["Tell me the issue you're seeing and I'll give you just the key steps."],
-    confidence: 0.85, source: 'conversational-layer-v1', caveat: null, conversational: true, ts: Date.now()
-  });
-}
-function conversationalIntercept(rawQ, history, cors) {
-  const q = String(rawQ || '').toLowerCase().trim();
-  if (!q) return null;
-  const wc = q.split(/\s+/).filter(Boolean).length;
-  const hasSymptom = /\b(error|wont|won'?t|can'?t|cant|cannot|not (work|connect|load|open|sync|sending|receiv|print)|fail|broke|broken|slow|crash|stuck|froze|frozen|offline|denied|blue screen|black screen|bsod|locked|expired|missing|disconnect|no (internet|sound|audio|signal|connection|power|video|display))\b/.test(q);
-
-  // 1) SOCIAL / CHITCHAT — never dump troubleshooting on a greeting or a thank-you.
-  if (/^(hi|hey+|hello|yo|hiya|good (morning|afternoon|evening))\b[\s!,.?]*$/.test(q))
-    return convoReply(cors, "Hi — I'm ARIA, your IT support assistant. What's going on with your device or account today?", 'greeting');
-  if (/^(thanks?|thank (you|u|ya|yall|you all)|thx|tysm|ty|cheers|much appreciated|appreciate (it|you|this|that))\b/.test(q) && !hasSymptom)
-    return convoReply(cors, "You're welcome! If anything else comes up, just tell me what's happening and I'll walk you through it.", 'thanks');
-  if (wc <= 3 && /^(ok|okay|k|kk|got it|sure|alright|cool|sounds good|will do|yep|yeah|right)\b[\s!,.]*$/.test(q))
-    return convoReply(cors, "Great. Did that sort it out, or should we try the next step?", 'ack');
-  if (wc <= 5 && /\b(bye|goodbye|that'?s all|i'?m done|nothing else|no thanks)\b/.test(q))
-    return convoReply(cors, "Take care — reach out anytime your tech gives you trouble.", 'bye');
-
-  // 2) DIRECTIVES that reshape the PREVIOUS answer (the "keep solutions short" bug).
-  const wantShort  = /\b(keep (it|solutions?|them|answers?|this) short|shorter|too long|tl;?dr|be brief|in brief|concise|just (the )?steps|less detail|cut it down|summari[sz]e|shorten)\b/.test(q);
-  const wantSimple = /\b(simpler|simple terms|plain english|explain like i'?m|eli5|i'?m not technical|dumb it down|easier|less technical|in layman)\b/.test(q);
-  const wantMore   = /\b(explain more|more detail|in detail|elaborate|go deeper|expand|why does|how come|tell me more)\b/.test(q);
-  if ((wantShort || wantSimple || wantMore) && !hasSymptom) {
-    const steps = answerToSteps(lastAssistantAnswer(history));
-    if (steps.length) {
-      if (wantShort) {
-        const trimmed = steps.slice(0, 3).map(s => s.length > 95 ? s.slice(0, 92).replace(/[\s,;:.\-]+\S*$/, '') + '…' : s);
-        return convoSteps(cors, 'Shorter version', trimmed, 'shorten');
-      }
-      if (wantSimple) return convoSteps(cors, 'In plain terms', steps.slice(0, 4), 'simplify');
-      return convoSteps(cors, 'Here it is with a bit more detail', steps, 'expand');
-    }
-    // Nothing prior to reshape — acknowledge the preference and ask for the issue.
-    if (wantShort)  return convoReply(cors, "Sure — I'll keep it short. What's the issue? Tell me what's happening and I'll give you just the key steps.", 'shorten-noctx');
-    if (wantSimple) return convoReply(cors, "Of course — I'll keep it plain and simple. What are you running into?", 'simplify-noctx');
-    return convoReply(cors, "Happy to go deeper — what's the issue you'd like me to explain?", 'expand-noctx');
-  }
-
-  // 3) VAGUE / capability asks — ask one focused question instead of dumping generic steps.
-  if (/\b(what can you (do|help (me )?with)|who are you|what are you|how do you work)\b/.test(q))
-    return convoReply(cors, "I'm ARIA — I troubleshoot IT issues: Windows/Mac, Wi-Fi & VPN, email & Outlook, Teams/Zoom, sign-in & MFA, printers, slow PCs and more. Describe the problem and I'll walk you through the fix, step by step.", 'capabilities');
-  if (wc <= 4 && /^(help|i need help|can you help|help me|assist( me)?|support|i have (a|an) (issue|problem))\b/.test(q) && !hasSymptom)
-    return convoReply(cors, "Absolutely — what are you running into? For example: an app crashing, Wi-Fi/VPN trouble, email, sign-in/password, a printer, or a slow PC. Tell me what's happening and on which device.", 'vague-help');
-  // "help with browsing the web", "help me with email" — name the area, ask for the symptom.
-  if (/\bhelp (me |us )?(with|on|about)\b/.test(q) && wc <= 8 && !hasSymptom) {
-    const topic = q.replace(/^.*help (me |us )?(with|on|about)\s+/, '').replace(/[?.!]+$/, '').replace(/\bplease\b/, '').trim();
-    if (topic && topic.split(/\s+/).length <= 6)
-      return convoReply(cors, `Sure — I can help with ${topic}. What exactly is happening? For instance: is there an error, is it not loading, running slow, or crashing? The more specific you are, the faster I'll get you fixed.`, 'help-with');
-  }
-
-  return null; // not a conversational turn — fall through to KB / pattern / research
-}
-
 function firstPrinciplesReason(q, cors) {
   const fw = applyFiveW(q || '');
   const hyps = PRIMITIVES.hypotheses[fw.where] || PRIMITIVES.hypotheses.OS;
@@ -859,7 +755,7 @@ function detectGaps(query) {
   const hasApp = Object.values(PRIMITIVES.layers).some(rx => rx.test(q));
   const hasWhen = /\b(after|since|today|yesterday|last (?:week|month|day)|just now|always|suddenly|started|began|recently)\b/i.test(q);
   const hasWho = /\b(everyone|all (?:users|of us)|whole (?:team|office)|just me|my)\b/i.test(q);
-  const hasSymptom = /\b(error|broken|won'?t|can'?t|cant|wont|couldn'?t|doesn'?t|isn'?t|fail|crash(?:ing|ed|es)?|slow(?:ing|ed)?|stuck|frozen|freez(?:ing|es)?|hang(?:ing|s)?|lag(?:ging)?|down|gone|missing|not (?:work|connect|load|open|print|sync|respond)(?:ing)?|not working|not loading|not opening|blue screen|black screen|bsod|spinning|beach ?ball|glitch(?:ing|y)?|loop(?:ing)?|restart(?:ing)?|reboot(?:ing|s)?|disconnect(?:ing|ed|s)?|drop(?:ping|s)?|no (?:sound|audio|signal|internet|connection|power|video|display)|won'?t print)\b/i.test(q);
+  const hasSymptom = /\b(error|broken|wont|cant|fail|crash(?:ing|ed|es)?|slow(?:ing|ed)?|stuck|frozen|freez(?:ing|es)?|hang(?:ing|s)?|lag(?:ging)?|down|gone|missing|not working|not loading|not opening|wont open|wont load|blue screen|bsod|spinning|glitch(?:ing|y)?|loop(?:ing)?|restart(?:ing)?|reboot(?:ing|s)?|disconnect(?:ing|ed|s)?|drop(?:ping|s)?)\b/i.test(q);
   const wordCount = q.split(/\s+/).filter(Boolean).length;
   return {
     hasApp, hasWhen, hasWho, hasSymptom, wordCount,
@@ -906,7 +802,7 @@ function diagnosticFirst(query, cors, history) {
 
   // LESSON 3: no app at all
   if (!gaps.hasApp && wordCount <= 6) {
-    var msg = (gaps.hasSymptom ? 'Sorry to hear that. ' : 'Happy to help. ') + 'Which app or service is this about — Outlook, Chrome, Wi-Fi, login, printer, OneDrive, Teams, or something else?';
+    var msg = 'Sorry to hear that. Which app or service is acting up — Outlook, Chrome, Wi-Fi, login, printer, OneDrive, Teams, or something else?';
     msg = tonedAsk(msg, persona);
     return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_WHAT', title:'Ask WHAT', steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'NO_APP_NAMED', appliedLesson:'ESTABLISH_SUBJECT_FIRST', persona:persona });
   }
