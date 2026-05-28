@@ -157,7 +157,7 @@ function jsonResp(status, headers, obj) {
 // ============= SYMBOLIC STATE DETECTOR =============
 const STATE_PATTERNS = {
   'DISK.FULL':           /\b(out of (disk )?space|low on (disk )?space|no (disk )?space left|disk (is )?full|drive (is )?full|running (out of|low on) disk|low disk space|hard drive full|ssd (is )?full|c drive (is )?(full|out of space|low)|free up disk)\b/i,
-  'OS.SLOW.PERF':        /\b((computer|laptop|pc|machine) (is )?(slow|sluggish|laggy|crawling|frozen|freezes|hang(s|ing)?)|running slow|performance lag|takes forever)\b/i,
+  'OS.SLOW.PERF':        /\b((computer|laptop|pc|machine|mac|macbook|imac|desktop)\b[^.]{0,18}(slow|sluggish|laggy|crawling|frozen|freezes|hang(s|ing)?)|running slow|performance lag|takes forever)\b/i,
   'OS.BOOT.FAIL':        /\b(won.?t boot|black screen|blue screen|bsod|stuck on boot|won.?t start|will not turn on)\b/i,
   'NET.WIFI.AUTH':       /\b(wifi (won.?t|cannot|can.?t) connect|wifi (not )?working|wrong password.*wifi|wifi password|incorrect (network )?password|connection refused.*wifi)\b/i,
   'NET.WIFI.NO.CONN':    /\b(can.?t connect to wifi|no wifi|no internet|wifi (is )?(down|broken|gone)|no network|disconnected|cannot reach internet)\b/i,
@@ -232,7 +232,7 @@ const STATE_PATTERNS = {
   'VPN.WONT.CONNECT':           /\b(vpn (wont|cant|fail).{0,15}connect|cant connect to vpn|vpn (timeout|connection refused))\b/i,
   'VPN.DROPS':           /\b(vpn (keeps|frequently).{0,15}(disconnect|drop)|vpn (unstable|reconnects))\b/i,
   'VPN.SLOW':           /\b(vpn (very )?slow|vpn (connection|speed) slow)\b/i,
-  'VPN.INSTALL':           /\b(install vpn|vpn (setup|installation|new) (client|laptop))\b/i,
+  'VPN.INSTALL':           /\b(install (a |the )?vpn|set ?up (a |the )?vpn|configure (a |the )?vpn|vpn (setup|installation|set ?up|config|new (client|laptop))|how (do i|to)\b[^.]{0,14}vpn)\b/i,
   'PRT.DRIVER':           /\b(printer driver (install|missing|setup)|install printer|add (network )?printer)\b/i,
   'PRT.DEFAULT':           /\b(default printer (keeps changing|wrong|reverts|switches))\b/i,
   'PRT.QUALITY':           /\b(print(s|er)? (quality|blurry|streaks|faint|blank|ghosting|wrong colors))\b/i,
