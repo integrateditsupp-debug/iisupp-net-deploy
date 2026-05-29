@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Internal / admin surfaces — keep out of search indexes (defense-in-depth; not access control).
+Disallow: /aria_memory/
+Disallow: /design-handoff/
+Disallow: /aria-voice-agent/
+Disallow: /aria-pitch/
+Disallow: /openclaw/
+Disallow: /aria-architecture/
+Disallow: /aria_brain_pack/
+Disallow: /aperture
+Disallow: /aperture-learning
+Disallow: /aperture-office-view
+Disallow: /aperture-mesh-web
+Disallow: /command-center
+Disallow: /agents
+Disallow: /studio
+Disallow: /library-admin
+Disallow: /lead-radar
+Disallow: /docs/
+Disallow: /backups/
+Disallow: /archive/

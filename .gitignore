@@ -37,3 +37,13 @@ aria_brain_pack/pull.log
 # publish dir = "." → must never be committed/served publicly.
 .claude/
 
+# Internal-only docs/source — publish dir = "." would serve these publicly (security audit 2026-05-29).
+# aria_memory/recon leaked the env-var inventory + siteId; voice-agent system prompt enables jailbreak recon.
+aria_memory/
+design-handoff/
+aria-voice-agent/
+aria-pitch/
+openclaw/
+ARIA Demo.html
+ARIA Concept.html
+

@@ -34,6 +34,43 @@
   to = "/index.html"
   status = 404
   force = true
+# Internal-only paths blocked from public access (security audit 2026-05-29). These also stay
+# gitignored/untracked; the 404 rules are defense-in-depth in case a file is ever re-added.
+[[redirects]]
+  from = "/aria_memory/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/design-handoff/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/aria-voice-agent/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/aria-pitch/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/openclaw/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/aria-architecture/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/aria_brain_pack/*"
+  to = "/index.html"
+  status = 404
+  force = true
 
 [[redirects]]
   from = "/shop"
