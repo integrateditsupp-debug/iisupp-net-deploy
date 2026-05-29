@@ -30,6 +30,35 @@ h2{font-family:'Cinzel',serif;color:#d8bd84;font-size:14px;letter-spacing:.1em;t
 </style>
 </head>
 <body>
+<!-- Admin gate (security audit 2026-05-29): require the Aperture login before showing the
+     Product Studio. Client-side gate (content is still in source) — for hardening, server-gate
+     or remove from the public deploy. Reuses the aperture_jwt token. -->
+<div id="admin-gate" style="position:fixed;inset:0;z-index:99999;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif">
+  <form id="admin-gate-form" style="background:#0e0e0e;border:1px solid #222;border-radius:12px;padding:30px 28px;width:330px">
+    <div style="font-family:'Cinzel',serif;color:#d8bd84;font-size:18px;margin:0 0 4px">Product Studio</div>
+    <div style="color:#888;font-size:12px;margin:0 0 20px">Internal · admin sign-in required</div>
+    <input id="ag-email" type="email" autocomplete="username" placeholder="admin email" style="width:100%;background:#111;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:6px;font-size:14px;margin-bottom:10px">
+    <input id="ag-pass" type="password" autocomplete="current-password" placeholder="password" style="width:100%;background:#111;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:6px;font-size:14px">
+    <button type="submit" style="width:100%;background:linear-gradient(135deg,#b8954f,#d8bd84 50%,#9c7322);color:#1a1407;border:none;padding:11px;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border-radius:6px;cursor:pointer;margin-top:16px">Unlock</button>
+    <div id="ag-err" style="color:#fb7185;font-size:12px;min-height:16px;margin-top:10px"></div>
+  </form>
+</div>
+<script>
+(function(){
+  var gate=document.getElementById('admin-gate');
+  if(localStorage.getItem('aperture_jwt')){ gate.remove(); return; }
+  document.getElementById('admin-gate-form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var err=document.getElementById('ag-err'); err.textContent='';
+    fetch('/.netlify/functions/aperture-auth',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:document.getElementById('ag-email').value.trim(),password:document.getElementById('ag-pass').value})})
+      .then(function(r){return r.json();}).then(function(j){
+        if(j.token){ localStorage.setItem('aperture_jwt',j.token); gate.remove(); }
+        else err.textContent=j.error||'Authentication failed';
+      }).catch(function(){ err.textContent='Network error'; });
+  });
+})();
+</script>
 <div class="wrap">
   <h1>Product Studio</h1>
   <p class="sub">Internal · create a Growth Library / Shop product. Fill it in → copy the two blocks into <code>assets/iis-catalog.js</code> and <code>netlify/functions/_library-content.mjs</code>. <span class="tag">noindex</span></p>
