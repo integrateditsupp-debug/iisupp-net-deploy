@@ -10,7 +10,9 @@
 //   GET /.netlify/functions/aria-lead-radar           -> JSON digest
 //   GET /.netlify/functions/aria-lead-radar?html=1     -> rendered HTML page
 //   GET /.netlify/functions/aria-lead-radar?debug=1    -> JSON + diagnostics
-// Also runs on a daily cron (config.schedule) to validate the feed.
+// The daily validation cron lives in aria-lead-radar-cron.mjs (a Netlify function cannot be
+// both an HTTP endpoint AND a scheduled function — the cron run has no Request, so new URL()
+// would throw). This file is HTTP-only.
 
 const CB_NEW_CSV = 'https://canadabuys.canada.ca/opendata/pub/newTenderNotice-nouvelAvisAppelOffres.csv';
 
@@ -34,25 +36,32 @@ const HIGH_VALUE = [
   'systems integration', 'managed it', 'disaster recovery',
 ];
 
-// ---- tiny CSV reader (handles quoted fields + escaped quotes) ------------------
-function parseCSVLine(line) {
-  const out = [];
-  let cur = '', inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
+// ---- record-aware CSV reader -------------------------------------------------
+// CanadaBuys quotes the description fields, which contain embedded newlines, so a single
+// logical record spans many physical lines. We must track quote state across newlines and
+// only end a record on a newline that occurs OUTSIDE quotes (splitting on \n first shreds
+// every record so only column 0 survives — that was the "only title maps" bug).
+function parseCSV(text) {
+  text = text.replace(/^﻿/, ''); // strip BOM
+  const records = [];
+  let row = [], cur = '', inQ = false;
+  const endField = () => { row.push(cur); cur = ''; };
+  const endRow = () => { endField(); if (row.length > 1 || row[0] !== '') records.push(row); row = []; };
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
     if (inQ) {
       if (c === '"') {
-        if (line[i + 1] === '"') { cur += '"'; i++; }
+        if (text[i + 1] === '"') { cur += '"'; i++; }
         else inQ = false;
       } else cur += c;
-    } else {
-      if (c === '"') inQ = true;
-      else if (c === ',') { out.push(cur); cur = ''; }
-      else cur += c;
-    }
+    } else if (c === '"') { inQ = true; }
+    else if (c === ',') { endField(); }
+    else if (c === '\n') { endRow(); }
+    else if (c === '\r') { if (text[i + 1] === '\n') i++; endRow(); }
+    else cur += c;
   }
-  out.push(cur);
-  return out;
+  if (cur !== '' || row.length) endRow();
+  return records;
 }
 
 async function fetchText(url, ms = 45000) {
@@ -76,42 +85,53 @@ function esc(s) {
 // ---- core: fetch + filter CanadaBuys ------------------------------------------
 async function collectMatches() {
   const csv = await fetchText(CB_NEW_CSV);
-  const lines = csv.split(/\r?\n/).filter(Boolean);
-  if (!lines.length) return { matches: [], scanned: 0 };
-  const header = parseCSVLine(lines[0]);
-  const ci = (name) => header.findIndex((h) => h.trim().toLowerCase() === name.toLowerCase());
+  const records = parseCSV(csv);
+  if (records.length < 2) return { matches: [], scanned: 0 };
+  const header = records[0].map((h) => h.trim());
+  const ci = (name) => header.findIndex((h) => h.toLowerCase() === name.toLowerCase());
   const pick = (...names) => { for (const n of names) { const a = ci(n); if (a >= 0) return a; } return -1; };
 
+  // Real CanadaBuys header names (verified against the live feed during the 2026-05-29 audit).
   const idxTitle = pick('title-titre-eng', 'title-eng');
   const idxDesc = pick('tenderDescription-descriptionAppelOffres-eng', 'description-eng');
-  const idxOrg = pick('contactInfoOrganization-coordonneesOrganisation-eng', 'end-user-entity-eng', 'procurementCategory-categorieApprovisionnement');
-  const idxClose = pick('tenderClosingDate-appelOffresDateCloture', 'expiryDate-dateExpiration');
+  const idxOrg = pick('contractingEntityName-nomEntitContractante-eng', 'endUserEntitiesName-nomEntitesUtilisateurFinal-eng');
+  const idxClose = pick('tenderClosingDate-appelOffresDateCloture');
   const idxUrl = pick('noticeURL-URLavis-eng', 'url-eng');
-  const idxRegion = pick('regionsOfDelivery-regionsLivraison-eng', 'regionsOfOpportunity-regionDebouches-eng');
+  const idxRef = pick('referenceNumber-numeroReference', 'solicitationNumber-numeroSollicitation');
+  const idxRegion = pick('regionsOfDelivery-regionsLivraison-eng', 'regionsOfOpportunity-regionAppelOffres-eng');
+  const idxCity = pick('contractingEntityAddressCity-villeAdresseEntitContractante-eng');
+  const idxProv = pick('contractingEntityAddressProvince-provinceAdresseEntitContractante-eng');
 
   const get = (cols, i) => (i >= 0 && i < cols.length ? (cols[i] || '').trim() : '');
+  const fmtDate = (s) => (s ? String(s).split('T')[0] : ''); // ISO timestamp -> date
 
   const matches = [];
-  for (let i = 1; i < lines.length; i++) {
-    const cols = parseCSVLine(lines[i]);
-    if (cols.length < 3) continue;
+  for (let r = 1; r < records.length; r++) {
+    const cols = records[r];
+    if (cols.length < header.length) continue; // skip any malformed/short record
     const title = get(cols, idxTitle);
     const desc = get(cols, idxDesc);
     const hay = (title + ' ' + desc).toLowerCase();
     if (!KEYWORDS.some((k) => hay.includes(k))) continue;
+    const region = get(cols, idxRegion) || [get(cols, idxCity), get(cols, idxProv)].filter(Boolean).join(', ');
+    const ref = get(cols, idxRef);
+    // Most new-notice rows have no direct noticeURL; fall back to a CanadaBuys search on the
+    // reference number so every lead is click-through-able (lands on the official portal).
+    const url = get(cols, idxUrl) || (ref ? 'https://canadabuys.canada.ca/en/tender-opportunities?search_filter=' + encodeURIComponent(ref) : '');
     matches.push({
       title,
       org: get(cols, idxOrg),
-      region: get(cols, idxRegion),
-      close: get(cols, idxClose),
-      url: get(cols, idxUrl),
+      region,
+      close: fmtDate(get(cols, idxClose)),
+      ref,
+      url,
       hot: HIGH_VALUE.some((k) => hay.includes(k)),
     });
   }
 
   // hot first, then soonest closing date
   matches.sort((a, b) => (b.hot - a.hot) || String(a.close).localeCompare(String(b.close)));
-  return { matches, scanned: lines.length - 1 };
+  return { matches, scanned: records.length - 1 };
 }
 
 // ---- static link sets ---------------------------------------------------------
@@ -232,6 +252,3 @@ export default async (req) => {
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=900' },
   });
 };
-
-// daily validation run (the live value is the always-fresh endpoint/page above)
-export const config = { schedule: '@daily' };
