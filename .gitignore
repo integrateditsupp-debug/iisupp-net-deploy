@@ -9,3 +9,27 @@ assets/video/*
 node_modules/
 .env
 
+# Internal governance / bid / sales artifacts — NOT for public deployment.
+# Public versions of policies are at /governance/* (HTML) and /downloads/governance/* (.docx).
+# publish dir = "." → anything tracked at root is publicly served, so keep the raw folder local.
+Project AEGIS - Governance/
+
+# Stale recovery artifacts from earlier sandbox git operations
+assets/aria-core.js.restored
+clean-git.bat
+aegis-push.bat
+aegis-push.ps1
+aegis-push-wrapper.bat
+aegis-push.log
+
+# Confidential — prospect PII / sales-ops working files. publish dir = "." → never deploy publicly.
+USA Outreach/
+
+# Internal briefings + local build/helper artifacts — keep on this machine, not for public deploy.
+MORNING-BRIEFING-*.md
+.netlify/
+AHMAD-*.cmd
+PUSH-*.cmd
+Company Logo.jpeg
+aria_brain_pack/pull.log
+
