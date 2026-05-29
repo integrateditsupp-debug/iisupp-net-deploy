@@ -184,11 +184,11 @@
       blurb: 'A field manual for living well: emotional control, balance over comfort, building yourself, and legacy.',
       long: 'An original IIS book on the principles of a well-lived life — emotional intelligence as controlled, purposeful action; discomfort with real upside over dopamine; balance over the two comfort traps; building yourself first; pain as a tool you choose to stop; and living with the grain of nature. Currently being written.',
       inside: ['The mindset that breaks "limited mode"', 'Emotional intelligence, earned through experience', 'Balance over the two comfort traps', 'Build yourself first', 'Pain as a tool for success', 'Legacy over chasing everything'],
-      priceCents: 0, category: 'Mindset & Life', section: 'guides',
-      audience: ['human'], format: 'Book · PDF (in progress)',
-      tags: ['mindset','self mastery','emotional intelligence','balance','life'],
-      seo: ['emotional intelligence book','self mastery','how to live well'],
-      free: false, comingSoon: true, featured: false,
+      priceCents: 9700, category: 'Mindset & Life', section: 'guides',
+      audience: ['human'], format: 'Book · 9 chapters · PDF',
+      tags: ['mindset','self mastery','emotional intelligence','balance','life','discipline'],
+      seo: ['emotional intelligence book','self mastery','how to live well','discipline and balance'],
+      free: false, featured: true,
       preview: null, file: null, related: [], bundle: null, upsell: 'aria'
     }
   ];
