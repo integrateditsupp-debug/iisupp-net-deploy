@@ -87,6 +87,10 @@
   from = "/extension"
   to = "/extension.html"
   status = 200
+[[redirects]]
+  from = "/lead-radar"
+  to = "/lead-radar.html"
+  status = 200
 
 # --- Governance / AEGIS public library ---
 [[redirects]]
