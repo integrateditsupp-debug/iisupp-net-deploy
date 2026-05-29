@@ -51,7 +51,7 @@ async function fetchYahoo(query: string): Promise<NewsItem[]> {
   const feed = `https://feeds.finance.yahoo.com/rss/2.0/headline?s=${encodeURIComponent(symbol)}&region=US&lang=en-US`;
   try {
     const res = await fetch(feed, {
-      headers: { "User-Agent": "iisupport.net/1.0 (+https://iisupport.net)" },
+      headers: { "User-Agent": "iisupp.net/1.0 (+https://iisupp.net)" },
     });
     if (!res.ok) return [];
     const xml = await res.text();
@@ -93,7 +93,7 @@ async function fetchSecEdgar(_query: string): Promise<NewsItem[]> {
   try {
     const res = await fetch(feed, {
       headers: {
-        "User-Agent": "iisupport.net contact@iisupport.net",
+        "User-Agent": "iisupp.net contact@iisupp.net",
         Accept: "application/atom+xml",
       },
     });

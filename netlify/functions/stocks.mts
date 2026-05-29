@@ -22,7 +22,7 @@ type StockPayload = {
 
 const YH_HEADERS = {
   "User-Agent":
-    "Mozilla/5.0 (compatible; IISupport-ARIA/1.0; +https://iisupport.net)",
+    "Mozilla/5.0 (compatible; IISupport-ARIA/1.0; +https://iisupp.net)",
   Accept: "application/json",
 };
 

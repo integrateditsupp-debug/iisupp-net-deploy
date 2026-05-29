@@ -27,7 +27,7 @@ const DEFAULT_STATE: MonitorState = {
 
 async function sendAlert(subject: string, html: string): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESEND_FROM || "ARIA Monitor <noreply@iisupport.net>";
+  const fromEmail = process.env.RESEND_FROM || "ARIA Monitor <noreply@iisupp.net>";
   if (!apiKey) {
     console.error("[aria-monitor] RESEND_API_KEY missing - alert NOT sent");
     return;

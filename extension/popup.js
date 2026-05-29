@@ -138,7 +138,7 @@ document.getElementById("comparePrices").addEventListener("click", async () => {
 });
 
 document.getElementById("openSite").addEventListener("click", () => {
-  chrome.tabs.create({ url: "https://iisupport.net/aria.html" });
+  chrome.tabs.create({ url: "https://iisupp.net/aria.html" });
 });
 
 addMessage("aria", "Hi — I'm ARIA. Ask me a question, or use the quick actions above.");

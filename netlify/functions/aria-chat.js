@@ -183,7 +183,7 @@ exports.handler = async (event) => {
 
     // Fire-and-forget: log conversation to /aria-learn for self-learning
     const sessionId = body.sessionId || 'anon-' + Date.now();
-    fetch(`${event.headers.host ? 'https://' + event.headers.host : process.env.APP_URL || 'https://iisupport.net'}/.netlify/functions/aria-learn`, {
+    fetch(`${event.headers.host ? 'https://' + event.headers.host : process.env.APP_URL || 'https://iisupp.net'}/.netlify/functions/aria-learn`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({

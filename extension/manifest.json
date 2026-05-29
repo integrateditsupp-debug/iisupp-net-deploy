@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "ARIA follows your browsing with intelligent, privacy-aware support — reminders, search, trading news, tech triage.",
   "permissions": ["storage", "notifications", "alarms", "activeTab", "scripting"],
-  "host_permissions": ["https://iisupport.net/*", "https://*.iisupport.net/*"],
+  "host_permissions": ["https://iisupp.net/*", "https://*.iisupp.net/*"],
   "action": {
     "default_popup": "popup.html",
     "default_title": "ARIA Assistant"

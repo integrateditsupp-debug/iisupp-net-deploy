@@ -60,7 +60,7 @@ export default async (req: Request) => {
   }
 
   const apiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESEND_FROM || "ARIA Calls <noreply@iisupport.net>";
+  const fromEmail = process.env.RESEND_FROM || "ARIA Calls <noreply@iisupp.net>";
   const salesTo = process.env.SALES_NOTIFY_EMAIL || "integrateditsupp@gmail.com";
   if (apiKey) {
     const tagBits: string[] = [];

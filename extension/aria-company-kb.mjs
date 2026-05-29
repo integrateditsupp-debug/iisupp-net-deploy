@@ -20,7 +20,7 @@
 //
 // Privacy
 // -------
-//   All data is browser-local (IndexedDB on the iisupport.net origin).
+//   All data is browser-local (IndexedDB on the iisupp.net origin).
 //   Never transmitted to any server. Per-device.
 //
 // Supported file types (Stage 1)

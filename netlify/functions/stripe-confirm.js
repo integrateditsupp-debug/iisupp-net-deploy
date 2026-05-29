@@ -57,7 +57,7 @@ exports.handler = async (event) => {
 async function sendWelcomeEmail(email, license, plan) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return;
-  const fromEmail = process.env.RESEND_FROM || 'ARIA <noreply@iisupport.net>';
+  const fromEmail = process.env.RESEND_FROM || 'ARIA <noreply@iisupp.net>';
 
   const html = `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#000;color:#f5f5f0;padding:40px;">
     <div style="max-width:600px;margin:0 auto;border:1px solid #c5a059;border-radius:12px;padding:32px;background:#0a0a0a;">
@@ -68,7 +68,7 @@ async function sendWelcomeEmail(email, license, plan) {
       <p style="font-size:14px;color:#aaa;margin-top:8px;">Save this. You'll need it to activate ARIA on each device.</p>
       <h2 style="color:#c5a059;font-size:18px;margin-top:32px;">Quick Start</h2>
       <ol style="font-size:15px;line-height:1.8;">
-        <li>Visit <a href="https://iisupport.net/aria" style="color:#c5a059;">iisupport.net/aria</a> on any device</li>
+        <li>Visit <a href="https://iisupp.net/aria" style="color:#c5a059;">iisupp.net/aria</a> on any device</li>
         <li>Activate with the license above</li>
         <li>Tap the mic and start talking — ARIA's ready to help 24/7</li>
       </ol>
@@ -76,7 +76,7 @@ async function sendWelcomeEmail(email, license, plan) {
       <p style="font-size:15px;line-height:1.6;">📞 <a href="tel:6475813182" style="color:#c5a059;">(647) 581-3182</a> — 24/7 support<br>
       ✉️ <a href="mailto:ahmad.wasee@iisupp.net" style="color:#c5a059;">ahmad.wasee@iisupp.net</a></p>
       <p style="font-size:12px;color:#888;margin-top:32px;border-top:1px solid #333;padding-top:16px;">
-      Integrated IT Support Inc. · iisupport.net · 647-581-3182<br>
+      Integrated IT Support Inc. · iisupp.net · 647-581-3182<br>
       ARIA — Senior IT Helpdesk in your pocket.</p>
     </div></body></html>`;
 

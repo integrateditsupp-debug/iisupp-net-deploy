@@ -1,6 +1,6 @@
 import type { Context, Config } from "@netlify/functions";
 
-const ARIA_SYSTEM_PROMPT = `You are ARIA, a real-time intelligent assistant for IISupport (iisupport.net).
+const ARIA_SYSTEM_PROMPT = `You are ARIA, a real-time intelligent assistant for IISupport (iisupp.net).
 
 Your role is to help users think, decide, and act clearly across any type of request.
 
@@ -89,7 +89,7 @@ const STOCK_HINT = /\b(stock|stocks|share price|share prices|ticker|quote|nasdaq
 
 const YH_HEADERS = {
   "User-Agent":
-    "Mozilla/5.0 (compatible; IISupport-ARIA/1.0; +https://iisupport.net)",
+    "Mozilla/5.0 (compatible; IISupport-ARIA/1.0; +https://iisupp.net)",
   Accept: "application/json",
 };
 

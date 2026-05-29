@@ -63,7 +63,7 @@ version: 1.0
 ## 5. Resolution Steps
 **If you have NOT interacted with it:**
 1. In Outlook → select message → Home tab → **Report** dropdown → "Report Phishing".
-2. Or: forward email as attachment to your IT phishing inbox (e.g., `phishing@iisupport.net`) — drag-drop into a new message to preserve headers.
+2. Or: forward email as attachment to your IT phishing inbox (e.g., `phishing@iisupp.net`) — drag-drop into a new message to preserve headers.
 3. After reporting, delete from Inbox AND Deleted Items.
 4. Block the sender if pattern continues (Junk → Block Sender).
 

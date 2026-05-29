@@ -2,7 +2,7 @@
 // endpoints (trading-news + aria-search) and schedules privacy-safe reminder
 // alarms.
 
-const ARIA_ORIGIN = "https://iisupport.net";
+const ARIA_ORIGIN = "https://iisupp.net";
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === "ARIA_QUERY") {
@@ -75,7 +75,7 @@ async function handleAriaQuery(query) {
   } catch {
     return {
       text:
-        "ARIA could not reach its data sources right now. Try again, or open iisupport.net/aria.html.",
+        "ARIA could not reach its data sources right now. Try again, or open iisupp.net/aria.html.",
     };
   }
 }

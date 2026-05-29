@@ -33,7 +33,7 @@ exports.handler = async (event) => {
   if (!isValidEmail(email)) return j(400, { error: 'Please enter a valid email address.', field: 'email' });
 
   const apiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESEND_FROM || 'ARIA Sales <noreply@iisupport.net>';
+  const fromEmail = process.env.RESEND_FROM || 'ARIA Sales <noreply@iisupp.net>';
   const salesTo = process.env.SALES_NOTIFY_EMAIL || 'ahmad.wasee@iisupp.net';
 
   if (!apiKey) {
@@ -124,7 +124,7 @@ function renderSalesHtml(d) {
       </table>
       <p style="font-size:12px;color:#888;margin-top:24px;border-top:1px solid #333;padding-top:14px;">
         Reply directly to this email to reach the lead — Reply-To is set to ${esc(d.email)}.<br>
-        Integrated IT Support Inc. · iisupport.net · ${esc(SUPPORT_PHONE)}
+        Integrated IT Support Inc. · iisupp.net · ${esc(SUPPORT_PHONE)}
       </p>
     </div></body></html>`;
 }
@@ -139,7 +139,7 @@ function renderReplyHtml(d) {
       <p style="font-size:14px;line-height:1.7;color:#f5f5f0;">📞 <a href="tel:6475813182" style="color:#c5a059;text-decoration:none;">${esc(SUPPORT_PHONE)}</a><br>
       ✉️ <a href="mailto:ahmad.wasee@iisupp.net" style="color:#c5a059;text-decoration:none;">ahmad.wasee@iisupp.net</a></p>
       <p style="font-size:12px;color:#888;margin-top:32px;border-top:1px solid #333;padding-top:16px;">
-        Integrated IT Support Inc. · iisupport.net · ${esc(SUPPORT_PHONE)}<br>
+        Integrated IT Support Inc. · iisupp.net · ${esc(SUPPORT_PHONE)}<br>
         ARIA — Premium AI Browsing Companion.
       </p>
     </div></body></html>`;

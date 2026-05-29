@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   ARIA CORE — shared logic for iisupport.net
+   ARIA CORE — shared logic for iisupp.net
    - PayPal checkout rendering
    - Premium modal
    - Real response engine (router)
