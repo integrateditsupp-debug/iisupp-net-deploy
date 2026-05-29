@@ -200,6 +200,13 @@
   }
   body.aperture-unlocked #aperture-logout-btn { display: block; }
 </style>
+<style id="aperture-lift-v1">
+/* LIFT v1 (2026-05-25) — additive Emil-Kowalski tactility + a11y. Structure/login untouched. */
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #2dd4bf;outline-offset:3px;border-radius:2px;}
+.ap-action-btn,.ap-diff-btn,#aperture-login-gate button,#aperture-logout-btn{transition:transform .16s cubic-bezier(0.22,1,0.36,1),opacity .15s ease,background .2s ease,border-color .2s ease,color .2s ease,box-shadow .25s ease;}
+.ap-action-btn:active,.ap-diff-btn:active,#aperture-login-gate button:active,#aperture-logout-btn:active{transform:scale(.97);}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
+</style>
 </head>
 <body class="aperture-locked">
 <div id="aperture-login-gate">
@@ -361,6 +368,11 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- ARIA MESH SPIDER-WEB (added 2026-05-25) — live agent-mesh topology -->
+    <section class="ap-section" id="apMeshWeb" style="margin-top:26px;">
+      <div data-aria-mesh-web data-accent="#2dd4bf"></div>
     </section>
   </main>
 
@@ -894,5 +906,8 @@
   else init();
 })();
 </script>
+
+<!-- ARIA MESH SPIDER-WEB component (added 2026-05-25) -->
+<script src="/assets/aria-mesh-web.js" defer></script>
 </body>
 </html>
