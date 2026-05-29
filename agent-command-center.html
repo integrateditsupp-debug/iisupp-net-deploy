@@ -284,7 +284,7 @@
     if(!text){ toast('Type an instruction'); return; }
     $('cmd-send').disabled = true;
     fetch('/api/mesh-task-queue',{
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
       body:JSON.stringify({ target:target, source:'command-center', requestedBy:'aperture-admin',
         payload:{ instruction:text, priority:$('cmd-priority').value } })
     }).then(function(r){return r.json();}).then(function(j){

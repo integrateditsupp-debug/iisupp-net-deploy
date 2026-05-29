@@ -11,6 +11,7 @@
 // Auth: simple shared-token via header `x-bridge-token` (env BRIDGE_TOKEN). Required for claim/done/fail.
 
 import { getStore } from '@netlify/blobs';
+import { verifyAperture } from './aperture-auth.mjs';
 
 const STORE = 'aria-mesh-queue';
 const KEY = 'queue.json';
@@ -96,7 +97,12 @@ export default async (req, _context) => {
   }
 
   if (req.method === 'POST') {
-    // enqueue
+    // enqueue — gated (security audit 2026-05-29): was open to anyone. Allow either the bridge
+    // token (local poller) OR a valid Aperture admin JWT (the command-center console). No
+    // server-side caller enqueues, so this does not break the mesh-router.
+    if (!authOk(req) && !verifyAperture(req)) {
+      return new Response(JSON.stringify({ ok: false, reason: 'unauthorized' }), { status: 401, headers: { 'content-type': 'application/json' } });
+    }
     let body = {};
     try { body = await req.json(); } catch (_) {}
     if (!body.target) {

@@ -71,6 +71,11 @@
   to = "/index.html"
   status = 404
   force = true
+[[redirects]]
+  from = "/library-admin.html"
+  to = "/index.html"
+  status = 404
+  force = true
 
 [[redirects]]
   from = "/shop"
@@ -94,8 +99,9 @@
   status = 200
 [[redirects]]
   from = "/studio"
-  to = "/library-admin.html"
-  status = 200
+  to = "/index.html"
+  status = 404
+  force = true
 [[redirects]]
   from = "/about"
   to = "/about.html"
