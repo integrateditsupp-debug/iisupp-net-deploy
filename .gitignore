@@ -33,3 +33,7 @@ PUSH-*.cmd
 Company Logo.jpeg
 aria_brain_pack/pull.log
 
+# Local Claude Code config (personal machine settings; settings.local.json holds a secret).
+# publish dir = "." → must never be committed/served publicly.
+.claude/
+
