@@ -91,6 +91,14 @@
   from = "/lead-radar"
   to = "/lead-radar.html"
   status = 200
+[[redirects]]
+  from = "/command-center"
+  to = "/agent-command-center.html"
+  status = 200
+[[redirects]]
+  from = "/agents"
+  to = "/agent-command-center.html"
+  status = 200
 
 # --- Governance / AEGIS public library ---
 [[redirects]]
