@@ -501,3 +501,88 @@
 
 /* Locked / coming-soon books */
 .iis-book.is-locked .iis-book__peek { display: none; }
+
+/* Concierge-book hint under the buy row */
+.iis-book-note {
+  margin-top: 7px;
+  font: 500 9.5px/1.4 "Inter", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: 0.04em;
+  color: rgba(244, 233, 200, 0.42);
+  text-align: center;
+}
+
+/* ============================================================================
+ * CONCIERGE BOOK ORDER MODAL — fee breakdown, optional services, T&C gate.
+ * ========================================================================== */
+.iis-bk-modal {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background: rgba(4, 8, 16, 0.78);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  animation: iis-bk-fade 0.2s ease;
+}
+@keyframes iis-bk-fade { from { opacity: 0; } to { opacity: 1; } }
+.iis-bk-card {
+  position: relative;
+  width: 100%; max-width: 440px;
+  max-height: 90vh; overflow-y: auto;
+  background: linear-gradient(180deg, #11172b 0%, #0b1020 100%);
+  border: 1px solid rgba(200, 168, 96, 0.35);
+  border-radius: 12px;
+  padding: 30px 28px 26px;
+  color: #f4e9c8;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+.iis-bk-x {
+  position: absolute; top: 12px; right: 14px;
+  width: 32px; height: 32px; line-height: 30px;
+  background: none; border: none; color: rgba(244, 233, 200, 0.55);
+  font-size: 26px; cursor: pointer; border-radius: 6px;
+}
+.iis-bk-x:hover { color: #f4e9c8; background: rgba(244, 233, 200, 0.08); }
+.iis-bk-head { margin-bottom: 18px; padding-right: 24px; }
+.iis-bk-ey { font-size: 9.5px; letter-spacing: 0.26em; text-transform: uppercase; color: #d3aa54; font-weight: 700; }
+.iis-bk-head h3 { font: 600 19px/1.25 "Cormorant Garamond", Georgia, serif; margin: 6px 0 2px; color: #f4e9c8; }
+.iis-bk-head p { margin: 0; font-size: 12px; color: rgba(244, 233, 200, 0.55); }
+.iis-bk-rows { border-top: 1px solid rgba(244, 233, 200, 0.12); padding-top: 12px; }
+.iis-bk-rows .r, .iis-bk-svc-wrap .r {
+  display: flex; justify-content: space-between; gap: 12px;
+  font-size: 12.5px; color: rgba(244, 233, 200, 0.78);
+  padding: 5px 0;
+}
+.iis-bk-rows .r span:last-child { color: #f4e9c8; font-variant-numeric: tabular-nums; }
+.iis-bk-svc-wrap { margin-top: 14px; border-top: 1px solid rgba(244, 233, 200, 0.12); padding-top: 12px; }
+.iis-bk-lbl { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(244, 233, 200, 0.5); margin-bottom: 8px; }
+.iis-bk-svc {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; cursor: pointer; border-bottom: 1px solid rgba(244, 233, 200, 0.06);
+}
+.iis-bk-svc input { width: 16px; height: 16px; margin-top: 2px; accent-color: #c8a046; flex: 0 0 auto; }
+.iis-bk-svc .t { font-size: 12.5px; color: #f4e9c8; flex: 1 1 auto; }
+.iis-bk-svc .t small { display: block; font-size: 10.5px; color: rgba(244, 233, 200, 0.5); margin-top: 2px; }
+.iis-bk-svc .pr { color: #f0d488; font-weight: 600; white-space: nowrap; font-size: 12.5px; }
+.iis-bk-svc-wrap .r.sub { color: rgba(244, 233, 200, 0.5); padding-top: 8px; }
+.iis-bk-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin: 16px 0 14px; padding-top: 14px;
+  border-top: 1px solid rgba(200, 168, 96, 0.3);
+}
+.iis-bk-total span:first-child { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(244, 233, 200, 0.6); }
+.iis-bk-total span:last-child { font: 700 24px/1 "Cormorant Garamond", Georgia, serif; color: #f0d488; font-variant-numeric: tabular-nums; }
+.iis-bk-tnc { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; margin-bottom: 16px; }
+.iis-bk-tnc input { width: 16px; height: 16px; margin-top: 2px; accent-color: #c8a046; flex: 0 0 auto; }
+.iis-bk-tnc span { font-size: 11.5px; line-height: 1.55; color: rgba(244, 233, 200, 0.7); }
+.iis-bk-tnc a { color: #d3aa54; }
+.iis-bk-go {
+  width: 100%; padding: 13px; border-radius: 4px;
+  background: linear-gradient(180deg, #f0d488 0%, #c89a3d 100%);
+  border: 1px solid #e9c97b; color: #1a1407;
+  font: 700 12px/1 "Inter", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+  transition: filter 0.2s ease, transform 0.15s ease;
+}
+.iis-bk-go:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.iis-bk-go:disabled { opacity: 0.4; cursor: not-allowed; }
+.iis-bk-fine { margin: 12px 0 0; font-size: 10.5px; line-height: 1.6; color: rgba(244, 233, 200, 0.45); }

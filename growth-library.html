@@ -188,6 +188,17 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
   <p class="footnote" style="margin-top:34px">All materials are original, IIS-branded works built from public knowledge and real workplace use-cases. Inspired by publicly available AI/IT education trends — not affiliated with or endorsed by any third-party brand. Prices are introductory and may change.</p>
 </section>
 
+<!-- TOP-SELLING BOOKS — concierge: we source real bestsellers for the customer -->
+<section id="topbooks" style="padding:46px 24px 56px;background:#080808;border-top:1px solid rgba(197,160,89,.20)">
+  <div class="shead">
+    <span class="eyebrow">Beyond our own library</span>
+    <h2>Top-selling <span class="gold-text" style="font-style:italic">books</span> — we source them for you</h2>
+    <p>Real bestsellers on AI, the future, the mind, money and more. You see the vendor price; we source it, handle delivery, and bring it to your door — supplier handled, hassle removed. Sourcing fees are shown clearly at checkout.</p>
+  </div>
+  <div class="iis-bookshelf" id="books-grid" style="max-width:1180px;margin:0 auto"></div>
+  <p class="footnote" style="margin-top:30px">We are an independent reseller/concierge: titles are sourced from third-party vendors and are not affiliated with or endorsed by their authors or publishers. Final delivery is estimated at checkout and reconciled to actual cost. See <a href="/terms.html#procurement" style="color:#c5a059">procurement terms</a>.</p>
+</section>
+
 <!-- ALL-ACCESS — centered showcase at the end of the collection -->
 <section id="allaccess" style="padding:30px 24px 80px;background:#080808">
   <div class="shead"><span class="eyebrow">One key opens everything</span><h2>The <span class="gold-text" style="font-style:italic">All-Access</span> pass</h2><p>Every pack in the library, plus a year of new releases — one purchase, no add-ons.</p></div>
@@ -259,6 +270,9 @@ function glSearch(q){
     return '<button class="filt'+(i===0?' is-active':'')+'" data-filt="'+IIS_CATALOG.esc(c)+'" onclick="filterTo(this.dataset.filt,this)">'+IIS_CATALOG.esc(label)+'</button>';
   }).join('');
   renderGrid(IIS_CATALOG.forCategory('all'));
+  // Top-selling books we source (concierge)
+  var booksGrid = document.getElementById('books-grid');
+  if (booksGrid && IIS_CATALOG.books) booksGrid.innerHTML = IIS_CATALOG.books.map(IIS_CATALOG.renderBook).join('');
   // All-Access pass — rendered once, centered at the end
   var aa = IIS_CATALOG.byId('bundle-allaccess');
   var aaGrid = document.getElementById('allaccess-grid');

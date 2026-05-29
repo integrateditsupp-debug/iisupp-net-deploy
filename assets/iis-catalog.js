@@ -317,10 +317,67 @@
     { id: 'co-phone-case', kind: 'concierge', section: 'order-concierge', category: 'Order Through Us', title: 'Trending Phone Case', blurb: 'A standout, in-demand case — we order it in and deliver it to your door.', audience: ['human'], format: 'Sourced to order', tags: ['phone case','iphone','samsung','trending','accessory'], seo: ['trending phone case','iphone case'] }
   ];
 
+  /* ---- TOP-SELLING BOOKS (concierge procurement) -----------------------
+     Real best-sellers we source for the customer. We show the vendor list
+     price; at checkout we add a flat supply fee + a % admin fee, plus an
+     estimated delivery (reconciled after). Supplier is never shown. */
+  var BOOK_SUPPLY_FEE_CENTS = 4000;   // flat per-order supply/sourcing fee
+  var BOOK_ADMIN_RATE = 0.15;         // admin + processing + suggestion fee
+  var BOOK_SERVICES = [
+    { id: 'consult', label: '30-min consultation with IIS', note: 'Talk through how to apply it to your work or stack.', cents: 7900 },
+    { id: 'setup',   label: 'Setup & configuration',        note: 'If your order includes a tool/device that needs installing.', cents: 9900 }
+  ];
+  var BOOKS = [
+    { id: 'tsb-ai-genesis', kind: 'book', topic: 'Artificial Intelligence', theme: 'theme-cobalt',
+      title: 'Genesis: Artificial Intelligence, Hope, and the Human Spirit', author: 'Kissinger, Schmidt & Mundie',
+      blurb: 'Three of the sharpest minds on technology and statecraft on what machine intelligence means for how we know, decide, and stay human.',
+      priceCents: 3200, estDeliveryCents: 599 },
+    { id: 'tsb-future-nexus', kind: 'book', topic: 'The Future', theme: 'theme-navy',
+      title: 'Nexus: A Brief History of Information Networks', author: 'Yuval Noah Harari',
+      blurb: 'From the Stone Age to AI — how the stories and systems we use to share information have shaped power, and where they take us next.',
+      priceCents: 3500, estDeliveryCents: 599 },
+    { id: 'tsb-quantum-supremacy', kind: 'book', topic: 'Quantum Computing', theme: 'theme-plum',
+      title: 'Quantum Supremacy', author: 'Michio Kaku',
+      blurb: 'How quantum computers will crack problems classical machines never could — medicine, energy, AI — explained for the curious, not the PhD.',
+      priceCents: 3000, estDeliveryCents: 599 },
+    { id: 'tsb-psych-body', kind: 'book', topic: 'Psychology', theme: 'theme-wine',
+      title: 'The Body Keeps the Score', author: 'Bessel van der Kolk, M.D.',
+      blurb: 'The landmark work on trauma and the body — how stress reshapes us and the science of getting it back. One of the best-selling psychology books of the decade.',
+      priceCents: 1900, estDeliveryCents: 599 },
+    { id: 'tsb-fitness-outlive', kind: 'book', topic: 'Fitness & Longevity', theme: 'theme-emerald',
+      title: 'Outlive: The Science and Art of Longevity', author: 'Peter Attia, M.D.',
+      blurb: 'A practical playbook for adding healthy years — training, nutrition, sleep and the habits that decide how you actually age.',
+      priceCents: 3200, estDeliveryCents: 599 },
+    { id: 'tsb-finance-money', kind: 'book', topic: 'Finance', theme: 'theme-amber',
+      title: 'The Psychology of Money', author: 'Morgan Housel',
+      blurb: 'Nineteen short stories on why smart people do strange things with money — and the few quiet habits that actually build wealth.',
+      priceCents: 2000, estDeliveryCents: 599 },
+    { id: 'tsb-growth-atomic', kind: 'book', topic: 'Personal Growth', theme: 'theme-rust',
+      title: 'Atomic Habits', author: 'James Clear',
+      blurb: 'The #1 system for getting 1% better every day — tiny changes, remarkable results. The growth book people keep coming back to.',
+      priceCents: 2700, estDeliveryCents: 599 },
+    { id: 'tsb-happy-build', kind: 'book', topic: 'Happiness', theme: 'theme-slate',
+      title: 'Build the Life You Want', author: 'Arthur C. Brooks & Oprah Winfrey',
+      blurb: 'A science-backed guide to getting happier — not by changing your circumstances, but by managing how you respond to them.',
+      priceCents: 2800, estDeliveryCents: 599 }
+  ];
+
   /* ---- HELPERS ---------------------------------------------------------- */
   function money(cents) { return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+  function money2(cents) { return '$' + (Math.round(cents) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  // Fee math: (item + est delivery + $40 supply) x 1.15 admin; services added after (not marked up).
+  function bookTotals(p, serviceIds) {
+    var item = p.priceCents || 0, delivery = p.estDeliveryCents || 0;
+    var procurement = item + delivery + BOOK_SUPPLY_FEE_CENTS;
+    var admin = Math.round(procurement * BOOK_ADMIN_RATE);
+    var services = (serviceIds || []).reduce(function (s, id) {
+      var svc = BOOK_SERVICES.filter(function (x) { return x.id === id; })[0];
+      return s + (svc ? svc.cents : 0);
+    }, 0);
+    return { item: item, delivery: delivery, supply: BOOK_SUPPLY_FEE_CENTS, admin: admin, services: services, total: procurement + admin + services };
+  }
   function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-  function byId(id) { return PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE).filter(function (p) { return p.id === id; })[0] || null; }
+  function byId(id) { return PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE, BOOKS).filter(function (p) { return p.id === id; })[0] || null; }
   function audienceBadges(arr) { return (arr || []).map(function (a) { return '<span class="aud aud-' + a + '">' + (AUD[a] || a) + '</span>'; }).join(''); }
 
   function previewCents(p) { return Math.max(100, Math.round((p.priceCents || 0) * 0.30)); }
@@ -423,15 +480,24 @@
     return n > 26 ? ' iis-book__title--xlong' : n > 15 ? ' iis-book__title--long' : '';
   }
   function renderBook(p) {
+    var isBook = p.kind === 'book';                 // concierge top-selling book (vs digital vault product)
     var aud = bookAudience(p);
-    var theme = bookTheme(p);
+    var theme = isBook ? (p.theme || bookTheme(p)) : bookTheme(p);
+    var capLabel = isBook ? p.topic : aud.label;    // caption + cover series + back pill
+    var pillCls = isBook ? 'everyone' : aud.cls;
+    var authorLine = isBook ? (p.author || META.brand) : META.brand;
     var letter = esc(String(p.title || '?').trim().charAt(0).toUpperCase());
-    var href = '/product.html?id=' + esc(p.id);
+    var href = isBook ? '#' : ('/product.html?id=' + esc(p.id));
+    var frontOnclick = isBook ? (' onclick="IIS_CATALOG.orderBook(\'' + esc(p.id) + '\');return false;"') : '';
     var summary = esc(p.blurb || String(p.long || '').slice(0, 220));
     var locked = !!p.comingSoon;
 
-    var priceHtml, actions;
-    if (p.comingSoon) {
+    var priceHtml, actions, note = '';
+    if (isBook) {
+      priceHtml = '<span class="iis-book__price">' + money(p.priceCents) + '</span>';
+      actions = '<button class="iis-book__open" onclick="IIS_CATALOG.orderBook(\'' + esc(p.id) + '\')">Order through us &rarr;</button>';
+      note = '<div class="iis-book-note">Vendor price — sourcing fees shown at checkout</div>';
+    } else if (p.comingSoon) {
       priceHtml = '<span class="iis-book__price" style="font-size:12px;letter-spacing:.08em">IN PROGRESS</span>';
       actions = '<a class="iis-book__open" href="' + href + '">Notify me &rarr;</a>';
     } else if (p.url) {
@@ -447,16 +513,16 @@
     }
 
     return '' +
-      '<div class="iis-book-cell" data-cat="' + esc(p.category || '') + '" data-aud="' + (p.audience || []).join(' ') + '">' +
+      '<div class="iis-book-cell" data-cat="' + esc(p.category || p.topic || '') + '" data-aud="' + (p.audience || []).join(' ') + '">' +
         '<div class="iis-book ' + theme + (locked ? ' is-locked' : '') + '" tabindex="0" role="group" aria-label="' + esc(p.title) + '">' +
-          '<a class="iis-book__face iis-book__front" href="' + href + '" aria-label="' + esc(p.title) + '">' +
-            '<div class="iis-book__series">' + esc(aud.label) + '</div>' +
+          '<a class="iis-book__face iis-book__front" href="' + href + '"' + frontOnclick + ' aria-label="' + esc(p.title) + '">' +
+            '<div class="iis-book__series">' + esc(capLabel) + '</div>' +
             '<h3 class="iis-book__title' + bookTitleClass(p.title) + '">' + esc(p.title) + '</h3>' +
-            '<div class="iis-book__author">' + esc(META.brand) + '</div>' +
+            '<div class="iis-book__author">' + esc(authorLine) + '</div>' +
             '<div class="iis-book__crest" data-letter="' + letter + '">' + letter + '</div>' +
           '</a>' +
           '<div class="iis-book__face iis-book__back">' +
-            '<span class="iis-book__audience iis-book__audience--' + aud.cls + '">' + esc(aud.label) + '</span>' +
+            '<span class="iis-book__audience iis-book__audience--' + pillCls + '">' + esc(capLabel) + '</span>' +
             '<h4 class="iis-book__back-title">' + esc(p.title) + '</h4>' +
             '<p class="iis-book__summary">' + summary + '</p>' +
             '<div class="iis-book__meta">' + priceHtml + '</div>' +   // price stays on the back; buttons live below the book
@@ -466,15 +532,100 @@
           '<div class="iis-book__edge-top" aria-hidden="true"></div>' +
           '<div class="iis-book__edge-bottom" aria-hidden="true"></div>' +
         '</div>' +
-        '<div class="iis-book-cap">' + esc(aud.label) + '</div>' +
-        '<div class="iis-book-buy">' + priceHtml + actions + '</div>' +
+        '<div class="iis-book-cap">' + esc(capLabel) + '</div>' +
+        '<div class="iis-book-buy">' + priceHtml + actions + '</div>' + note +
       '</div>';
+  }
+
+  // ----- CONCIERGE BOOK ORDER (modal + Stripe checkout) --------------------
+  function bookModalHtml(p) {
+    var t = bookTotals(p, []);
+    var svc = BOOK_SERVICES.map(function (s) {
+      return '<label class="iis-bk-svc"><input type="checkbox" data-svc="' + s.id + '">' +
+        '<span class="t">' + esc(s.label) + '<small>' + esc(s.note) + '</small></span>' +
+        '<span class="pr">' + money2(s.cents) + '</span></label>';
+    }).join('');
+    return '<div class="iis-bk-card" role="dialog" aria-modal="true" aria-label="Order ' + esc(p.title) + '">' +
+      '<button class="iis-bk-x" data-close aria-label="Close">&times;</button>' +
+      '<div class="iis-bk-head"><span class="iis-bk-ey">Concierge order</span><h3>' + esc(p.title) + '</h3><p>' + esc(p.author || '') + '</p></div>' +
+      '<div class="iis-bk-rows">' +
+        '<div class="r"><span>Item — vendor price</span><span>' + money2(t.item) + '</span></div>' +
+        '<div class="r"><span>Delivery — estimate (reconciled to actual)</span><span>' + money2(t.delivery) + '</span></div>' +
+        '<div class="r"><span>Supply &amp; sourcing fee</span><span>' + money2(t.supply) + '</span></div>' +
+        '<div class="r"><span>Admin · processing · suggestion (15%)</span><span id="iisbk-admin">' + money2(t.admin) + '</span></div>' +
+      '</div>' +
+      '<div class="iis-bk-svc-wrap"><div class="iis-bk-lbl">Want a hand? (optional — not part of the 15%)</div>' + svc +
+        '<div class="r sub"><span>Selected services</span><span id="iisbk-services">' + money2(0) + '</span></div></div>' +
+      '<div class="iis-bk-total"><span>Charged today</span><span id="iisbk-total">' + money2(t.total) + '</span></div>' +
+      '<label class="iis-bk-tnc"><input type="checkbox" id="iisbk-tnc"><span>I agree to the <a href="/terms.html#procurement" target="_blank" rel="noopener">concierge procurement terms</a>: vendor price + $40 supply fee + 15% admin/processing, delivery estimated now &amp; reconciled, sourced &amp; delivered by IIS.</span></label>' +
+      '<button class="iis-bk-go" id="iisbk-go" disabled>Proceed to secure checkout</button>' +
+      '<p class="iis-bk-fine">You enter your shipping address at checkout. We place the order, then email your confirmation. Setup / consultation are separate from the 15% fee.</p>' +
+    '</div>';
+  }
+  function orderBook(id) {
+    var p = byId(id); if (!p || p.kind !== 'book') return;
+    var overlay = document.createElement('div');
+    overlay.className = 'iis-bk-modal';
+    overlay.innerHTML = bookModalHtml(p);
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+    function close() { overlay.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); }
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    document.addEventListener('keydown', onKey);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay || (e.target.closest && e.target.closest('[data-close]'))) close(); });
+    var svcInputs = [].slice.call(overlay.querySelectorAll('[data-svc]'));
+    var tnc = overlay.querySelector('#iisbk-tnc');
+    var go = overlay.querySelector('#iisbk-go');
+    function selectedIds() { return svcInputs.filter(function (i) { return i.checked; }).map(function (i) { return i.getAttribute('data-svc'); }); }
+    function recompute() {
+      var t = bookTotals(p, selectedIds());
+      overlay.querySelector('#iisbk-services').textContent = money2(t.services);
+      overlay.querySelector('#iisbk-total').textContent = money2(t.total);
+      go.disabled = !tnc.checked;
+    }
+    svcInputs.forEach(function (i) { i.addEventListener('change', recompute); });
+    tnc.addEventListener('change', recompute);
+    go.addEventListener('click', function () { if (tnc.checked) startBookCheckout(p, selectedIds(), go); });
+    recompute();
+  }
+  async function startBookCheckout(p, serviceIds, btn) {
+    var t = bookTotals(p, serviceIds);
+    var svcLabels = (serviceIds || []).map(function (id) { var s = BOOK_SERVICES.filter(function (x) { return x.id === id; })[0]; return s ? s.label : id; });
+    var orig = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Opening secure checkout…'; }
+    try {
+      var r = await fetch('/.netlify/functions/stripe-checkout', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          successPath: '/unlock.html',
+          collectShipping: true,
+          priceData: {
+            amount_cents: t.total, currency: 'usd',
+            product_name: 'IIS Concierge · ' + p.title,
+            description: ('We source & deliver "' + p.title + '" to you — item + estimated delivery + $40 supply + 15% admin/processing.' + (svcLabels.length ? (' Add-ons: ' + svcLabels.join(', ') + '.') : '')).slice(0, 480),
+            id: p.id
+          },
+          meta: {
+            kind: 'book-order', book: p.title, author: p.author || '',
+            item_cents: t.item, delivery_cents: t.delivery, supply_cents: t.supply,
+            admin_cents: t.admin, services_cents: t.services, services: svcLabels.join(', ')
+          }
+        })
+      });
+      var data = await r.json();
+      if (data && data.url) { window.location = data.url; return; }
+      throw new Error((data && data.error) || 'Checkout failed');
+    } catch (e) {
+      if (btn) { btn.disabled = false; btn.textContent = orig || 'Proceed to secure checkout'; }
+      alert('Could not start checkout: ' + (e.message || e) + '\nEmail ' + META.email + ' to complete your order.');
+    }
   }
 
   window.IIS_CATALOG = {
     meta: META, glCategories: GL_CATEGORIES, shopSections: SHOP_SECTIONS, audience: AUD,
-    products: PRODUCTS, bundles: BUNDLES, bridges: BRIDGES, inventory: INVENTORY, concierge: CONCIERGE,
-    money: money, esc: esc, byId: byId, buy: buy, order: order, renderCard: renderCard, renderBook: renderBook, previewCents: previewCents,
+    products: PRODUCTS, bundles: BUNDLES, bridges: BRIDGES, inventory: INVENTORY, concierge: CONCIERGE, books: BOOKS,
+    money: money, money2: money2, esc: esc, byId: byId, buy: buy, order: order, renderCard: renderCard, renderBook: renderBook, previewCents: previewCents,
+    bookTotals: bookTotals, bookServices: BOOK_SERVICES, orderBook: orderBook,
     // convenience filters
     all: function () { return PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE); },
     forSection: function (sid) { return PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE, BRIDGES).filter(function (p) { return p.section === sid; }); },

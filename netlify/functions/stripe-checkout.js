@@ -62,6 +62,13 @@ exports.handler = async (event) => {
       planName: productName,
       kind: 'tech-service'
     };
+    // Callers may attach extra metadata (e.g. concierge book-order fee breakdown).
+    // Values must be strings; this can set kind:'book-order' which the webhook acts on.
+    if (body.meta && typeof body.meta === 'object') {
+      Object.keys(body.meta).forEach(function (k) {
+        if (body.meta[k] != null && String(body.meta[k]) !== '') metadata[k] = String(body.meta[k]).slice(0, 480);
+      });
+    }
     // Optional: callers may pass a relative successPath (e.g. "/unlock.html") to
     // land digital buyers on a delivery page. Defaults to homepage (unchanged).
     successUrl = origin + (typeof body.successPath === 'string' && body.successPath.charAt(0) === '/'
@@ -87,7 +94,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams = {
       mode: mode,
       line_items: lineItems,
       success_url: successUrl,
@@ -95,7 +102,13 @@ exports.handler = async (event) => {
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
       metadata: metadata,
-    });
+    };
+    // Concierge/physical orders collect a shipping address + phone so we can fulfil.
+    if (body.collectShipping) {
+      sessionParams.shipping_address_collection = { allowed_countries: ['US', 'CA'] };
+      sessionParams.phone_number_collection = { enabled: true };
+    }
+    const session = await stripe.checkout.sessions.create(sessionParams);
     return j(200, { url: session.url, id: session.id });
   } catch (err) {
     console.error('[stripe-checkout] error:', err.message);
