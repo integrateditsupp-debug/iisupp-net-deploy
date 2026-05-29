@@ -674,7 +674,9 @@ function conversationalIntercept(rawQ, history, cors) {
   const q = String(rawQ || '').toLowerCase().trim();
   if (!q) return null;
   const wc = q.split(/\s+/).filter(Boolean).length;
-  const hasSymptom = /\b(error|wont|won'?t|can'?t|cant|cannot|not (work|connect|load|open|sync|sending|receiv|print)|fail|broke|broken|slow|crash|stuck|froze|frozen|offline|denied|blue screen|black screen|bsod|locked|expired|missing|disconnect|no (internet|sound|audio|signal|connection|power|video|display))\b/.test(q);
+  const hasSymptom = /\b(error|wont|won'?t|can'?t|cant|cannot|not (work|connect|load|open|sync|sending|receiv|print)|fail|broke|broken|slow|crash|stuck|froze|frozen|offline|denied|blue screen|black screen|bsod|locked|expired|missing|disconnect|no (internet|sound|audio|signal|connection|power|video|display))\b/.test(q)
+    // power / boot / startup symptoms (the "need help with my pc, not turning on" gap, 2026-05-29)
+    || /\b(turn(s|ing)? (on|off)|won'?t (turn|start|boot|power|wake|come on)|not (turning|starting|booting|powering|responding|coming on)|no (boot|display|power|signal)|wont boot|boot(s|ing)? ?(up|loop)?|power(s|ing)? (on|up)|dead|black ?screen|hangs?|reboot(s|ing|ed)?|restart(s|ing|ed)? (itself|randomly)|blank screen|no lights?)\b/.test(q);
 
   // 1) SOCIAL / CHITCHAT — never dump troubleshooting on a greeting or a thank-you.
   if (/^(hi|hey+|hello|yo|hiya|good (morning|afternoon|evening))\b[\s!,.?]*$/.test(q))
