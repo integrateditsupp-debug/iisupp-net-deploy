@@ -63,8 +63,8 @@ function triage(query, history, context) {
   const complexity = signals.systems.length + signals.errorCodes.length + (tier === 'L3' ? 2 : tier === 'L2' ? 1 : 0);
   const difficulty = complexity >= 3 ? 'hard' : complexity >= 1 ? 'mid' : 'easy';
 
-  // routing recommendation
-  let recommendedPhase = 'diagnose', nextAgent = 'aria-diagnostic';
+  // routing recommendation (default targets a real active agent, not the planned aria-diagnostic)
+  let recommendedPhase = 'research', nextAgent = 'aria-research';
   if (intent === 'escalation') { recommendedPhase = 'execute'; nextAgent = 'aria-escalation'; }
   else if (intent === 'pricing' || intent === 'service') { recommendedPhase = 'research'; nextAgent = 'aria-research'; }
   else if (intent === 'troubleshoot') { recommendedPhase = 'research'; nextAgent = 'aria-research'; }

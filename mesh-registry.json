@@ -69,7 +69,7 @@
     {
       "id": "aria-first-principles",
       "type": "reasoner",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "8-step-recipe",
         "5w-clarify",
@@ -93,12 +93,13 @@
       "tags": [
         "reasoning",
         "fallback"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function aria-first-principles (audit 2026-05-29)"
     },
     {
       "id": "aria-diagnostic",
       "type": "analyst",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "5w-h-clarify",
         "osi-mapping",
@@ -123,12 +124,13 @@
       "tags": [
         "diagnostic",
         "frontline"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function aria-diagnostic (audit 2026-05-29)"
     },
     {
       "id": "aria-persona",
       "type": "wrapper",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "typo-normalize",
         "tone-detect",
@@ -152,12 +154,13 @@
       "tags": [
         "persona",
         "preproc"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function aria-persona (audit 2026-05-29)"
     },
     {
       "id": "council-architect",
       "type": "council",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "system-design",
         "adr",
@@ -180,12 +183,13 @@
       "tags": [
         "council",
         "design"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function council-architect (audit 2026-05-29)"
     },
     {
       "id": "council-coder",
       "type": "council",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "code-gen",
         "refactor",
@@ -208,12 +212,13 @@
       "tags": [
         "council",
         "code"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function council-coder (audit 2026-05-29)"
     },
     {
       "id": "council-reviewer",
       "type": "council",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "code-review",
         "security-audit",
@@ -236,12 +241,13 @@
       "tags": [
         "council",
         "review"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function council-reviewer (audit 2026-05-29)"
     },
     {
       "id": "council-tester",
       "type": "council",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "test-plan",
         "scenario-gen",
@@ -264,12 +270,13 @@
       "tags": [
         "council",
         "test"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function council-tester (audit 2026-05-29)"
     },
     {
       "id": "council-security",
       "type": "council",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "threat-model",
         "secret-scan",
@@ -292,12 +299,13 @@
       "tags": [
         "council",
         "security"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function council-security (audit 2026-05-29)"
     },
     {
       "id": "audit-agent",
       "type": "gatekeeper",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "hmac-sign",
         "command-gate",
@@ -322,12 +330,13 @@
       "tags": [
         "security",
         "audit"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function audit-agent (audit 2026-05-29)"
     },
     {
       "id": "aperture-monitor",
       "type": "observer",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "event-collect",
         "metrics-render",
@@ -349,12 +358,13 @@
       "description": "Aperture observability agent. Reads mesh-events + ARIA sessions.",
       "tags": [
         "observability"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function aperture-monitor (audit 2026-05-29)"
     },
     {
       "id": "self-learning-loop",
       "type": "background",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "agent-conversation",
         "kb-promote",
@@ -377,7 +387,8 @@
       "tags": [
         "learning",
         "background"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function aria-self-learning (audit 2026-05-29)"
     },
     {
       "id": "opencode-coder",
@@ -444,7 +455,7 @@
     {
       "id": "openclaw-assistant",
       "type": "external-executor",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "send-email",
         "manage-calendar",
@@ -473,12 +484,13 @@
         "personal-assistant",
         "openclaw",
         "telegram"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function task (audit 2026-05-29)"
     },
     {
       "id": "openclaw-cron",
       "type": "background",
-      "status": "active",
+      "status": "planned",
       "capabilities": [
         "overnight-task",
         "recurring-check",
@@ -501,7 +513,8 @@
       "tags": [
         "scheduler",
         "openclaw"
-      ]
+      ],
+      "_note": "auto-flipped: no backing function cron (audit 2026-05-29)"
     },
     {
       "id": "aria-verifier",
