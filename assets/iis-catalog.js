@@ -459,7 +459,7 @@
             '<span class="iis-book__audience iis-book__audience--' + aud.cls + '">' + esc(aud.label) + '</span>' +
             '<h4 class="iis-book__back-title">' + esc(p.title) + '</h4>' +
             '<p class="iis-book__summary">' + summary + '</p>' +
-            '<div class="iis-book__meta">' + priceHtml + actions + '</div>' +
+            '<div class="iis-book__meta">' + priceHtml + '</div>' +   // price stays on the back; buttons live below the book
           '</div>' +
           '<div class="iis-book__spine" aria-hidden="true"><span class="iis-book__spine-text">' + esc(p.title) + '</span></div>' +
           '<div class="iis-book__pages" aria-hidden="true"></div>' +
@@ -467,6 +467,7 @@
           '<div class="iis-book__edge-bottom" aria-hidden="true"></div>' +
         '</div>' +
         '<div class="iis-book-cap">' + esc(aud.label) + '</div>' +
+        '<div class="iis-book-buy">' + priceHtml + actions + '</div>' +
       '</div>';
   }
 

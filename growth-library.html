@@ -188,6 +188,12 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
   <p class="footnote" style="margin-top:34px">All materials are original, IIS-branded works built from public knowledge and real workplace use-cases. Inspired by publicly available AI/IT education trends — not affiliated with or endorsed by any third-party brand. Prices are introductory and may change.</p>
 </section>
 
+<!-- ALL-ACCESS — centered showcase at the end of the collection -->
+<section id="allaccess" style="padding:30px 24px 80px;background:#080808">
+  <div class="shead"><span class="eyebrow">One key opens everything</span><h2>The <span class="gold-text" style="font-style:italic">All-Access</span> pass</h2><p>Every pack in the library, plus a year of new releases — one purchase, no add-ons.</p></div>
+  <div id="allaccess-grid" style="max-width:300px;margin:34px auto 0"></div>
+</section>
+
 <!-- ACCESS GATE -->
 <section id="access" style="padding:70px 24px">
   <div class="shead"><span class="eyebrow">Already purchased?</span><h2>Open your <span class="gold-text" style="font-style:italic">downloads</span></h2></div>
@@ -222,7 +228,8 @@ function toggleMenu(){ document.getElementById('mnav').classList.toggle('active'
 /* render filters + grid from the shared catalog */
 var GRID = document.getElementById('vault-grid');
 var FILTERS = document.getElementById('filters');
-function renderGrid(cards){ GRID.innerHTML = cards.map(IIS_CATALOG.renderBook).join(''); }
+/* All-Access is showcased on its own, centered at the end — keep it out of the grid. */
+function renderGrid(cards){ GRID.innerHTML = cards.filter(function(p){return p.id!=='bundle-allaccess';}).map(IIS_CATALOG.renderBook).join(''); }
 /* Mobile: tap a book to flip to its back (desktop uses :hover). Delegated on the
    grid so it keeps working after filter/search re-renders. Peek/Unlock taps pass through. */
 (function(){
@@ -243,7 +250,7 @@ function glSearch(q){
   var hits=IIS_CATALOG.search(q,{physical:false});
   document.querySelectorAll('.filt').forEach(function(b){b.classList.remove('is-active');});
   hint.textContent=hits.length+' result'+(hits.length===1?'':'s')+' for “'+q+'”';
-  GRID.innerHTML=hits.length?hits.map(IIS_CATALOG.renderBook).join(''):'<p style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,.45);padding:30px 0">No matches — try a broader term.</p>';
+  GRID.innerHTML=hits.length?hits.filter(function(p){return p.id!=='bundle-allaccess';}).map(IIS_CATALOG.renderBook).join(''):'<p style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,.45);padding:30px 0">No matches — try a broader term.</p>';
 }
 (function init(){
   // filter chips
@@ -252,6 +259,10 @@ function glSearch(q){
     return '<button class="filt'+(i===0?' is-active':'')+'" data-filt="'+IIS_CATALOG.esc(c)+'" onclick="filterTo(this.dataset.filt,this)">'+IIS_CATALOG.esc(label)+'</button>';
   }).join('');
   renderGrid(IIS_CATALOG.forCategory('all'));
+  // All-Access pass — rendered once, centered at the end
+  var aa = IIS_CATALOG.byId('bundle-allaccess');
+  var aaGrid = document.getElementById('allaccess-grid');
+  if (aa && aaGrid) aaGrid.innerHTML = IIS_CATALOG.renderBook(aa);
 })();
 function filterTo(cat, btn){
   document.querySelectorAll('.filt').forEach(function(b){ b.classList.toggle('is-active', b.dataset.filt===cat); });

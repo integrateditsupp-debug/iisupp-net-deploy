@@ -20,8 +20,10 @@
   max-width: 240px;
   margin: 0 auto;
   --book-depth: 36px;
-  /* Pose A (ref 1): stands nearly upright, turned just enough to reveal the SPINE on the left. */
-  --rest-x: 6deg;
+  /* Pose A (ref 1): stands nearly upright, turned to reveal the SPINE on the left.
+     rest-x kept tiny so the view is near eye-level — a downward tilt makes the
+     spine's top edge poke past the cover's top-left corner. */
+  --rest-x: 1deg;
   --rest-y: 23deg;
   transform-style: preserve-3d;
   transform: perspective(1700px) rotateX(var(--rest-x)) rotateY(var(--rest-y));
@@ -40,7 +42,7 @@
    (the live Growth Library wraps each book in a cell with a caption). */
 .iis-book:nth-child(even),
 .iis-book-cell:nth-child(even) .iis-book {
-  --rest-x: 8deg;
+  --rest-x: 2deg;
   --rest-y: 33deg;
 }
 
@@ -460,6 +462,21 @@
   text-transform: uppercase;
   color: rgba(220, 196, 130, 0.78);
   text-align: center;
+}
+
+/* Price + Peek/Unlock live BELOW the book (not on the back cover) */
+.iis-book-buy {
+  margin-top: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.iis-book-buy .iis-book__price {
+  font: 700 16px/1 "Cormorant Garamond", "Georgia", serif;
+  color: #f0d488;
+  margin-right: 2px;
 }
 
 /* AI-systems audience pill colour (back cover) */
