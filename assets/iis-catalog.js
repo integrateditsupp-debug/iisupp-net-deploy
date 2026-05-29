@@ -400,10 +400,80 @@
       '</article>';
   }
 
+  // ----- 3D BOOK RENDERER (Growth Library vault) ---------------------------
+  // Each product becomes a physical "book": cover (front) + summary/commerce
+  // (back, flips on hover/tap) + an audience caption beneath ("who it's for").
+  var BOOK_THEMES = ['theme-navy', 'theme-emerald', 'theme-wine', 'theme-ink', 'theme-rust',
+                     'theme-forest', 'theme-cobalt', 'theme-amber', 'theme-slate', 'theme-plum'];
+  function bookTheme(p) {                       // stable djb2 hash of id → palette
+    var s = String(p.id || ''), h = 5381;
+    for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return BOOK_THEMES[h % BOOK_THEMES.length];
+  }
+  function bookAudience(p) {
+    var a = p.audience || [];
+    if (a.indexOf('human') >= 0)    return { label: 'For Humans',     cls: 'humans' };
+    if (a.indexOf('it') >= 0)       return { label: 'For IT Teams',   cls: 'it' };
+    if (a.indexOf('business') >= 0) return { label: 'For Operators',  cls: 'business' };
+    if (a.indexOf('ai') >= 0)       return { label: 'For AI Systems', cls: 'ai' };
+    return { label: 'For Everyone', cls: 'everyone' };
+  }
+  function bookTitleClass(t) {
+    var n = String(t || '').length;
+    return n > 26 ? ' iis-book__title--xlong' : n > 15 ? ' iis-book__title--long' : '';
+  }
+  function renderBook(p) {
+    var aud = bookAudience(p);
+    var theme = bookTheme(p);
+    var letter = esc(String(p.title || '?').trim().charAt(0).toUpperCase());
+    var href = '/product.html?id=' + esc(p.id);
+    var summary = esc(p.blurb || String(p.long || '').slice(0, 220));
+    var locked = !!p.comingSoon;
+
+    var priceHtml, actions;
+    if (p.comingSoon) {
+      priceHtml = '<span class="iis-book__price" style="font-size:12px;letter-spacing:.08em">IN PROGRESS</span>';
+      actions = '<a class="iis-book__open" href="' + href + '">Notify me &rarr;</a>';
+    } else if (p.url) {
+      priceHtml = '<span class="iis-book__price">' + (p.priceCents != null ? money(p.priceCents) : '') + '</span>';
+      actions = '<a class="iis-book__open" href="' + esc(p.url) + '">' + esc(p.cta || 'Open') + ' &rarr;</a>';
+    } else {
+      priceHtml = '<span class="iis-book__price">' + money(p.priceCents) + '</span>';
+      actions =
+        '<span class="iis-book__actions">' +
+          '<button class="iis-book__peek" data-buy="' + esc(p.id) + '-peek" onclick="IIS_CATALOG.buy(\'' + esc(p.id) + '\',\'peek\')" title="A teaser, credited toward full access">Peek ' + money(previewCents(p)) + '</button>' +
+          '<button class="iis-book__open" data-buy="' + esc(p.id) + '-full" onclick="IIS_CATALOG.buy(\'' + esc(p.id) + '\',\'full\')">Unlock</button>' +
+        '</span>';
+    }
+
+    return '' +
+      '<div class="iis-book-cell" data-cat="' + esc(p.category || '') + '" data-aud="' + (p.audience || []).join(' ') + '">' +
+        '<div class="iis-book ' + theme + (locked ? ' is-locked' : '') + '" tabindex="0" role="group" aria-label="' + esc(p.title) + '">' +
+          '<a class="iis-book__face iis-book__front" href="' + href + '" aria-label="' + esc(p.title) + '">' +
+            '<div class="iis-book__series">' + esc(aud.label) + '</div>' +
+            '<h3 class="iis-book__title' + bookTitleClass(p.title) + '">' + esc(p.title) + '</h3>' +
+            '<div class="iis-book__author">' + esc(META.brand) + '</div>' +
+            '<div class="iis-book__crest" data-letter="' + letter + '">' + letter + '</div>' +
+          '</a>' +
+          '<div class="iis-book__face iis-book__back">' +
+            '<span class="iis-book__audience iis-book__audience--' + aud.cls + '">' + esc(aud.label) + '</span>' +
+            '<h4 class="iis-book__back-title">' + esc(p.title) + '</h4>' +
+            '<p class="iis-book__summary">' + summary + '</p>' +
+            '<div class="iis-book__meta">' + priceHtml + actions + '</div>' +
+          '</div>' +
+          '<div class="iis-book__spine" aria-hidden="true"><span class="iis-book__spine-text">' + esc(p.title) + '</span></div>' +
+          '<div class="iis-book__pages" aria-hidden="true"></div>' +
+          '<div class="iis-book__edge-top" aria-hidden="true"></div>' +
+          '<div class="iis-book__edge-bottom" aria-hidden="true"></div>' +
+        '</div>' +
+        '<div class="iis-book-cap">' + esc(aud.label) + '</div>' +
+      '</div>';
+  }
+
   window.IIS_CATALOG = {
     meta: META, glCategories: GL_CATEGORIES, shopSections: SHOP_SECTIONS, audience: AUD,
     products: PRODUCTS, bundles: BUNDLES, bridges: BRIDGES, inventory: INVENTORY, concierge: CONCIERGE,
-    money: money, esc: esc, byId: byId, buy: buy, order: order, renderCard: renderCard, previewCents: previewCents,
+    money: money, esc: esc, byId: byId, buy: buy, order: order, renderCard: renderCard, renderBook: renderBook, previewCents: previewCents,
     // convenience filters
     all: function () { return PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE); },
     forSection: function (sid) { return PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE, BRIDGES).filter(function (p) { return p.section === sid; }); },

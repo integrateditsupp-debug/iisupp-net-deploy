@@ -10,6 +10,8 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/library-books.css?v=1">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;900&display=swap');
 :root{ --luxury-gold:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#b38728 100%); --deep-slate:#050505; }
@@ -182,7 +184,7 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
   </div>
   <div class="gl-search"><input id="gl-q" type="search" placeholder="Search the library — topic, tool, problem…" oninput="glSearch(this.value)" aria-label="Search the library"><span id="gl-q-hint"></span></div>
   <div class="filters" id="filters"></div>
-  <div class="cat-grid" id="vault-grid"></div>
+  <div class="iis-bookshelf" id="vault-grid" style="max-width:1180px;margin:0 auto"></div>
   <p class="footnote" style="margin-top:34px">All materials are original, IIS-branded works built from public knowledge and real workplace use-cases. Inspired by publicly available AI/IT education trends — not affiliated with or endorsed by any third-party brand. Prices are introductory and may change.</p>
 </section>
 
@@ -220,14 +222,28 @@ function toggleMenu(){ document.getElementById('mnav').classList.toggle('active'
 /* render filters + grid from the shared catalog */
 var GRID = document.getElementById('vault-grid');
 var FILTERS = document.getElementById('filters');
-function renderGrid(cards){ GRID.innerHTML = cards.map(IIS_CATALOG.renderCard).join(''); }
+function renderGrid(cards){ GRID.innerHTML = cards.map(IIS_CATALOG.renderBook).join(''); }
+/* Mobile: tap a book to flip to its back (desktop uses :hover). Delegated on the
+   grid so it keeps working after filter/search re-renders. Peek/Unlock taps pass through. */
+(function(){
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  GRID.addEventListener('click', function(ev){
+    var book = ev.target.closest('.iis-book'); if(!book) return;
+    if (ev.target.closest('.iis-book__open') || ev.target.closest('.iis-book__peek')) return;
+    if (!book.classList.contains('is-flipped')){
+      ev.preventDefault();
+      GRID.querySelectorAll('.iis-book.is-flipped').forEach(function(b){ if(b!==book) b.classList.remove('is-flipped'); });
+      book.classList.add('is-flipped');
+    }
+  });
+})();
 function glSearch(q){
   q=(q||'').trim(); var hint=document.getElementById('gl-q-hint');
   if(!q){ document.querySelectorAll('.filt').forEach(function(b){b.classList.remove('is-active');}); var a=document.querySelector('.filt[data-filt="all"]'); if(a)a.classList.add('is-active'); renderGrid(IIS_CATALOG.forCategory('all')); hint.textContent=''; return; }
   var hits=IIS_CATALOG.search(q,{physical:false});
   document.querySelectorAll('.filt').forEach(function(b){b.classList.remove('is-active');});
   hint.textContent=hits.length+' result'+(hits.length===1?'':'s')+' for “'+q+'”';
-  GRID.innerHTML=hits.length?hits.map(IIS_CATALOG.renderCard).join(''):'<p style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,.45);padding:30px 0">No matches — try a broader term.</p>';
+  GRID.innerHTML=hits.length?hits.map(IIS_CATALOG.renderBook).join(''):'<p style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,.45);padding:30px 0">No matches — try a broader term.</p>';
 }
 (function init(){
   // filter chips
