@@ -871,7 +871,21 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
             var intro = document.createElement("section");
             intro.id = "company-intro";
             intro.className = "py-20 px-6 md:px-10 border-t border-[#c5a059]/15";
-            intro.innerHTML = '<div class="max-w-4xl mx-auto text-center"><p class="text-[10px] tracking-[0.3em] uppercase mb-4" style="color:#c5a059">WELCOME</p><h2 class="text-3xl md:text-4xl font-bold mb-8" style="font-family:Cinzel,serif">Welcome to <span style="color:#c5a059">Integrated IT Support Inc.</span></h2><p class="text-base md:text-lg leading-relaxed text-white/80">Our #1 objective and vision is to eliminate IT cost that just does not make sense — saving you not only money but time. Face it: a business runs to bring in revenue, not cut it. Who actually uses ITIL, Six Sigma and the many other skills obtained to help companies? Not many. Our goal is to bring you 21+ years of diverse IT experience across many industries, led by our CEO Ahmad Wasee, and importantly help you save time, effort, money — and stay focused on your goals, not worrying about IT at all. Take a look at some of our examples, apps, recent accomplishments, and much more down the pipeline. Welcome to the future, where AI helps you take over your challenges.</p></div>';
+            intro.innerHTML =
+                  '<div class="max-w-5xl mx-auto">'
+                +   '<div class="text-center mb-10">'
+                +     '<p class="text-[10px] tracking-[0.3em] uppercase mb-4" style="color:#c5a059">WELCOME</p>'
+                +     '<h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family:Cinzel,serif">Welcome to <span style="color:#c5a059">Integrated IT Support Inc.</span></h2>'
+                +     '<p class="text-base md:text-lg leading-relaxed text-white/70 max-w-2xl mx-auto">We remove the IT costs that do not make sense — so you save money, save time, and stay focused on growing your business.</p>'
+                +   '</div>'
+                +   '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 max-w-4xl mx-auto">'
+                +     '<div class="rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="text-2xl mb-3">💰</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Cut wasteful IT spend</h3><p class="text-sm leading-relaxed text-white/60">We eliminate the IT costs that do not make sense — saving you money and time.</p></div>'
+                +     '<div class="rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="text-2xl mb-3">🎯</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Focus on what grows revenue</h3><p class="text-sm leading-relaxed text-white/60">A business runs to bring money in, not bleed it out. We own your IT so you do not have to think about it.</p></div>'
+                +     '<div class="rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="text-2xl mb-3">🏆</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">21+ years of real expertise</h3><p class="text-sm leading-relaxed text-white/60">Diverse, cross-industry experience led by our CEO Ahmad Wasee — ITIL, Six Sigma and more, actually applied, not just framed on a wall.</p></div>'
+                +     '<div class="rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="text-2xl mb-3">🤖</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Built on AI</h3><p class="text-sm leading-relaxed text-white/60">Welcome to the future, where AI helps you take on your challenges before they become problems.</p></div>'
+                +   '</div>'
+                +   '<div class="text-center mt-10"><a href="#introducing-aria" class="inline-block text-[10px] tracking-[0.4em] uppercase font-bold border-b border-[#c5a059]/40 pb-2 transition hover:text-white" style="color:#c5a059">See our apps, examples &amp; recent work ↓</a></div>'
+                + '</div>';
             var aria = document.createElement("section");
             aria.id = "introducing-aria";
             aria.className = "py-20 px-6 md:px-10 border-t border-[#c5a059]/15";
