@@ -162,8 +162,11 @@ exports.handler = async (event) => {
 
     if (!r.ok) {
       const err = await r.text();
-      console.error('[aria-chat] Anthropic:', r.status, err.slice(0, 300));
-      return json(502, { error: 'AI temporarily unavailable. Call (647) 581-3182.' });
+      console.error('[aria-chat] Anthropic error:', r.status, 'model:', model, 'body:', err.slice(0, 500));
+      const hint = r.status === 404 ? `model not found: ${model}` :
+                   r.status === 401 ? 'invalid API key' :
+                   r.status === 529 ? 'Anthropic overloaded' : `HTTP ${r.status}`;
+      return json(502, { error: `AI temporarily unavailable (${hint}). Call (647) 581-3182.` });
     }
 
     const data = await r.json();
@@ -231,7 +234,6 @@ exports.handler = async (event) => {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(tracePayload),
-      keepalive: true,
     }).catch(() => {}); // non-blocking — never fail the chat response for tracing
 
     return json(200, responsePayload);

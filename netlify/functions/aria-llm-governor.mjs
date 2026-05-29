@@ -122,7 +122,11 @@ function mk(permit, code, reason, extra) { return { permit, code, reason, ...ext
 // ---- alert email (the "ARIA used the LLM for X — why" note, and cap-reached note) ----
 async function sendAlert(kind, detail) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM || 'ARIA <onboarding@resend.dev>';
+  // Resilience (Ahmad 2026-05-26): a malformed RESEND_FROM (e.g. "ARIA Sales iisupp.net"
+  // with no "@") makes Resend 422 EVERY send — which silently kills the rule-3/rule-4
+  // "contact Ahmad" alerts. Validate it; fall back to the verified iisupp.net sender.
+  const rawFrom = (process.env.RESEND_FROM || '').trim();
+  const from = /\S+@\S+\.\S+/.test(rawFrom) ? rawFrom : 'ARIA <aria@iisupp.net>';
   const to = process.env.ARIA_LLM_ALERT_TO || process.env.EVOLUTION_REPORT_TO || process.env.SALES_NOTIFY_EMAIL || 'integrateditsupp@gmail.com';
   if (!apiKey) return { sent: false, reason: 'RESEND_API_KEY not set (dormant)' };
   const subject = kind === 'cap'
@@ -199,10 +203,16 @@ export default async (request) => {
   // ---- commit: reconcile real cost after an authorized call ----
   if (action === 'commit') {
     const ledger = rolledLedger(await safeJson(store, LEDGER_KEY, null));
-    const delta = parseFloat(body.actualCostUsd);
-    if (Number.isFinite(delta)) {
-      // we pre-charged estCost at authorize time; adjust by the difference if provided
-      ledger.spendUsd = Math.max(0, ledger.spendUsd + delta);
+    const actual = parseFloat(body.actualCostUsd);
+    if (Number.isFinite(actual)) {
+      // We PRE-CHARGED the estimate at authorize time (issues[key].costUsd). To avoid
+      // double-counting, charge only the DELTA between actual and that pre-charge.
+      // (Ahmad fix 2026-05-26: previously added the full actual on top of the estimate,
+      // which counted spend ~2x — fail-safe for the cap, but the ledger over-reported.)
+      const issues = await safeJson(store, ISSUES_KEY, {});
+      const key = String(body.issueKey || body.query || '').trim().slice(0, 200);
+      const preCharged = (key && issues[key] && Number.isFinite(issues[key].costUsd)) ? issues[key].costUsd : 0;
+      ledger.spendUsd = Math.max(0, ledger.spendUsd + (actual - preCharged));
       await safeSet(store, LEDGER_KEY, ledger);
     }
     return jr({ ok: true, action, spendUsd: ledger.spendUsd });
