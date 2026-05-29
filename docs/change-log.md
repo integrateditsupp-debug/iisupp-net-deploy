@@ -6,6 +6,10 @@ Backups: `/backups/YYYY-MM-DD-description/` · Archive: `/archive/deprecated/` �
 
 ---
 
+## 2026-05-29 — "The Unstubborn Life" book shipped (deploy 180cdb5, LIVE)
+- Wrote the full original 9-chapter manuscript (universal self-mastery framing) into `_library-content.mjs` (full + 30% peek); delivered via the verified gated download.
+- Catalog `gl-book-living-well` un-greyed → $97, featured, no longer "in progress". Verified live + paywall-protected. Price editable.
+
 ## 2026-05-28 — ARIA brain / answering fixes (deploy 9afa734, LIVE)
 - **Root causes found:** live `aria-research.mjs` was an OLDER build missing the conversational/diagnostic layer (it sat uncommitted); + routing bugs made it ask "which app?"/"sorry to hear that" for clearly-recognizable issues.
 - **Fixes:** diagnostic gate no longer intercepts when `detectState()` already recognises the issue; symptom detection now apostrophe-tolerant (`won't`) + covers "no audio/sound/video", "won't print", "black screen"; "thanks so much" → social reply; "Sorry to hear that" only on a real symptom; broadened slow-PC + VPN-setup patterns. Shipped the conversational layer + diagnostic-first v4.
