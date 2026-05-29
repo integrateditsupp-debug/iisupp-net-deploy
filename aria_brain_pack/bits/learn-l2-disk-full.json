@@ -1,0 +1,11 @@
+{
+  "key": "learn-l2-disk-full.json",
+  "heading": "l2: disk full",
+  "body": "Open Settings → System → Storage. Check which drive is full. Click \"Temporary files\" → tick Recycle Bin, Temporary files, Delivery Optimization Files → Remove.\n\nAsked by: l2 | Topic: disk full | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "root cause investigation steps for disk full?",
+  "created_at": "2026-05-14T20:14:52.857Z",
+  "agent": "l2",
+  "topic": "disk full"
+}

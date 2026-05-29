@@ -1,0 +1,11 @@
+{
+  "key": "learn-software-vpn-slow.json",
+  "heading": "software: vpn slow",
+  "body": "Disconnect + reconnect the VPN once. Sometimes the route table is corrupted on first connect. Check split tunneling: if enabled, you should reach internet + corporate gateway; if not, all traffic goe…\n\nAsked by: software | Topic: vpn slow | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "silent deploy script for vpn slow?",
+  "created_at": "2026-05-14T20:15:07.760Z",
+  "agent": "software",
+  "topic": "vpn slow"
+}

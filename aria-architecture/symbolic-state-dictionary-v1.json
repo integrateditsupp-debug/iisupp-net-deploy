@@ -1,0 +1,493 @@
+{
+  "schema": "aria-symbolic-state-dictionary/v1",
+  "version": "1.0.0",
+  "generated": "2026-05-14",
+  "purpose": "Per AROC §4. Extends aria-research.mjs LIBRARY with 51 net-new operational state codes mapped to KB-agent's 136-article bundle. OPS imports this into the research agent's STATE_PATTERNS + LIBRARY maps.",
+  "carry_forward_law": [
+    "project_aria_aroc_extension_law.md",
+    "project_aria_reconstructive_recognition.md",
+    "feedback_kb_bit_native_style.md",
+    "project_aria_research_agent_law.md"
+  ],
+  "merge_policy": "additive — never overwrite existing entries in aria-research.mjs LIBRARY. If a state already exists there, this file's entry is informational only (KB mapping).",
+  "existing_states_for_reference": [
+    "DISK.FULL", "OS.SLOW.PERF", "OS.BOOT.FAIL",
+    "NET.WIFI.AUTH", "NET.WIFI.NO.CONN", "NET.SLOW",
+    "M365.OUTLOOK.SEND", "M365.OUTLOOK.RECV", "M365.OUTLOOK.OOO", "M365.OUTLOOK.OPEN",
+    "AUT.PW.RESET", "AUT.MFA.LOCK",
+    "PRT.OFFLINE", "PRT.QUEUE.STUCK",
+    "SEC.PHISH", "SEC.MALWARE",
+    "VPN.AUTH.FAIL", "VPN.NO.TUNNEL",
+    "CLOUD.SYNC", "SW.INSTALL.FAIL", "SW.UPDATE.FAIL"
+  ],
+  "states": {
+    "M365.OUTLOOK.OUTBOX": {
+      "pattern": "\\b(outbox stuck|email stuck|stuck in outbox|outbox not sending|email won.?t send|sending forever|attachment too large)\\b",
+      "kb_ids": ["l1-outlook-004"],
+      "title": "Outlook stuck in Outbox — email won't send",
+      "short_code": "O-OUT-01",
+      "long_form": "M365.OUTLOOK.OUTBOX",
+      "to_human": "Email pending in Outbox folder. Causes: oversized attachment, offline mode, password expired, profile corrupted.",
+      "confidence": 0.85
+    },
+    "M365.TEAMS.AUDIO.MEETING": {
+      "pattern": "\\b(cant hear (in )?teams|teams (no )?audio|teams mic|teams cant be heard|teams meeting audio)\\b",
+      "kb_ids": ["l1-teams-003", "l1-teams-001", "l1-meeting-audio-001"],
+      "title": "Teams meeting — can't hear or be heard",
+      "short_code": "T-AUD-01",
+      "long_form": "M365.TEAMS.AUDIO.MEETING",
+      "to_human": "Teams call audio failure. Causes: device selection wrong in Teams, OS mic permission off, hardware mute on, Bluetooth profile flip.",
+      "confidence": 0.88
+    },
+    "M365.SHAREDMBX.SEND": {
+      "pattern": "\\b(shared mailbox.*(cant|won.?t) send|send as (denied|failed)|cant send (as|from) shared|send on behalf)\\b",
+      "kb_ids": ["l1-email-002"],
+      "title": "Shared mailbox can read but can't send",
+      "short_code": "S-SND-01",
+      "long_form": "M365.SHAREDMBX.SEND",
+      "to_human": "User has access to shared mailbox but Send As / Send on Behalf permission missing or stale.",
+      "confidence": 0.87
+    },
+    "M365.LICENSE.INVALID": {
+      "pattern": "\\b(license isn.?t valid|product is unlicensed|office activation|word excel greyed|subscription expired|cant verify office)\\b",
+      "kb_ids": ["l1-m365-003", "l1-m365-002"],
+      "title": "M365 license invalid / features greyed out",
+      "short_code": "M-LIC-01",
+      "long_form": "M365.LICENSE.INVALID",
+      "to_human": "Office app activation failure. Causes: cached stale credentials, license unassigned, sign-in needs refresh.",
+      "confidence": 0.86
+    },
+    "CAM.LOCKED.BY.APP": {
+      "pattern": "\\b(camera in use|camera being used|cant access camera|webcam locked|another app.*camera)\\b",
+      "kb_ids": ["l1-camera-003", "l1-webcam-001"],
+      "title": "Camera locked by another app",
+      "short_code": "C-LCK-01",
+      "long_form": "CAM.LOCKED.BY.APP",
+      "to_human": "Camera held by Teams/Zoom/browser tab/Snap Camera background process. Release lock + retry in new app.",
+      "confidence": 0.88
+    },
+    "CAM.VIRTUAL.BG.FAIL": {
+      "pattern": "\\b(virtual background|background blur|background filter|background not working|cant change background|teams background|zoom background)\\b",
+      "kb_ids": ["l1-webcam-002"],
+      "title": "Virtual background not working in Teams/Zoom",
+      "short_code": "C-BG-01",
+      "long_form": "CAM.VIRTUAL.BG.FAIL",
+      "to_human": "Virtual background fails. Causes: hardware below spec, GPU accel off, app permissions missing, poor lighting.",
+      "confidence": 0.82
+    },
+    "BT.HANDSHAKE.FAIL": {
+      "pattern": "\\b(airpods (wont|cant) connect|bluetooth paired not connected|headphones connected no sound|bluetooth keeps disconnecting|bluetooth reconnect)\\b",
+      "kb_ids": ["l1-bluetooth-002", "l1-bluetooth-001"],
+      "title": "Bluetooth headset paired but won't connect",
+      "short_code": "B-HSK-01",
+      "long_form": "BT.HANDSHAKE.FAIL",
+      "to_human": "Bluetooth pairing exists but connection fails. Causes: profile flip (HFP vs A2DP), pairing memory full, hardware reset needed.",
+      "confidence": 0.86
+    },
+    "AUDIO.MTG.WRONG.DEVICE": {
+      "pattern": "\\b(wrong (mic|microphone|speaker)|cant be heard.*meeting|mic not working in meeting|audio device meeting)\\b",
+      "kb_ids": ["l1-meeting-audio-001"],
+      "title": "Meeting picked wrong mic or speaker",
+      "short_code": "A-DEV-01",
+      "long_form": "AUDIO.MTG.WRONG.DEVICE",
+      "to_human": "Meeting app device selection points to wrong endpoint. Fix in app's device settings.",
+      "confidence": 0.88
+    },
+    "ZOOM.START.FAIL": {
+      "pattern": "\\b(zoom (wont|cant) (start|open|launch)|zoom black screen|zoom crashes|zoom stuck loading)\\b",
+      "kb_ids": ["l1-zoom-002"],
+      "title": "Zoom won't start / black screen",
+      "short_code": "Z-START-01",
+      "long_form": "ZOOM.START.FAIL",
+      "to_human": "Zoom launch failure. Causes: GPU accel conflict, camera/screen-recording permission missing, conflicting apps, stale install.",
+      "confidence": 0.85
+    },
+    "SLACK.VOICE.JOIN.FAIL": {
+      "pattern": "\\b(slack huddle (wont|cant)|cant join slack call|discord voice not working|slack audio missing|huddle no sound)\\b",
+      "kb_ids": ["l1-slack-001"],
+      "title": "Slack / Discord huddle won't connect",
+      "short_code": "SL-VC-01",
+      "long_form": "SLACK.VOICE.JOIN.FAIL",
+      "to_human": "Voice chat join fails. Causes: app mic/cam permission, RTC server unreachable, other app holding mic, region setting wrong.",
+      "confidence": 0.84
+    },
+    "NOTIF.MISSING": {
+      "pattern": "\\b(missed notifications?|not getting (notified|pinged)|teams notifications? off|slack quiet|missed teams ping)\\b",
+      "kb_ids": ["l1-notifications-001"],
+      "title": "Missing notifications — Teams/Slack/Outlook",
+      "short_code": "N-MIS-01",
+      "long_form": "NOTIF.MISSING",
+      "to_human": "Notifications not arriving. Causes: OS Focus/DND on, app notif settings off, presence is Away, battery optimization aggressive (Android).",
+      "confidence": 0.83
+    },
+    "AUT.LOCKOUT.AFTER.PWCHG": {
+      "pattern": "\\b(locked out after password change|account keeps locking|phone (keeps|still) asks?(ing)? for old password|sync new password)\\b",
+      "kb_ids": ["l1-password-002"],
+      "title": "Locked out after password change",
+      "short_code": "A-LOCK-01",
+      "long_form": "AUT.LOCKOUT.AFTER.PWCHG",
+      "to_human": "One device still using old password locks account on each retry. Common: phone email, VPN, browser cache, Outlook desktop.",
+      "confidence": 0.88
+    },
+    "AUT.ACCOUNT.STATE": {
+      "pattern": "\\b(account (is )?(disabled|locked|expired)|too many sign-in attempts|aad_unauthorized|aadsts\\d+|sign-in blocked)\\b",
+      "kb_ids": ["l1-account-state-002"],
+      "title": "Sign-in error — disabled vs locked vs expired",
+      "short_code": "A-STATE-01",
+      "long_form": "AUT.ACCOUNT.STATE",
+      "to_human": "Sign-in rejected. Disabled = admin action. Locked = retry threshold hit. Expired = rotate password. Blocked = Conditional Access.",
+      "confidence": 0.89
+    },
+    "AUT.SSO.LOOP": {
+      "pattern": "\\b(sso (loop|loops|redirect loop)|saml loop|sign-in bouncing|too many redirects|okta redirect|microsoft login loop)\\b",
+      "kb_ids": ["l1-browser-003"],
+      "title": "SSO sign-in keeps redirecting",
+      "short_code": "A-SSO-01",
+      "long_form": "AUT.SSO.LOOP",
+      "to_human": "SAML/OAuth loops between IdP and app. Causes: stale cookies, blocked third-party cookies, extension interference, clock drift.",
+      "confidence": 0.85
+    },
+    "MFA.LOST.AUTHENTICATOR": {
+      "pattern": "\\b(lost (my )?phone.*(mfa|authenticator|2fa)|new phone.*mfa|authenticator (app )?(gone|missing)|cant get (the )?code)\\b",
+      "kb_ids": ["l1-mfa-002"],
+      "title": "Lost authenticator phone — recover MFA",
+      "short_code": "M-LOST-01",
+      "long_form": "MFA.LOST.AUTHENTICATOR",
+      "to_human": "Authenticator unavailable. Recovery: backup codes, alternate verification (SSPR), or admin reset.",
+      "confidence": 0.87
+    },
+    "DISPLAY.SCALE.WRONG": {
+      "pattern": "\\b(monitor blurry|text too (small|big)|wrong resolution|scaling issue|4k.*blurry|everything tiny)\\b",
+      "kb_ids": ["l1-display-002"],
+      "title": "Monitor blurry / wrong scaling",
+      "short_code": "D-SCL-01",
+      "long_form": "DISPLAY.SCALE.WRONG",
+      "to_human": "Display rendering wrong. Causes: not at native resolution, scaling % mismatch across monitors, DPI-unaware app.",
+      "confidence": 0.86
+    },
+    "DISPLAY.NOT.DETECTED": {
+      "pattern": "\\b(external monitor not detected|second monitor not working|monitor not showing|cant detect display)\\b",
+      "kb_ids": ["l1-display-001"],
+      "title": "External monitor not detected",
+      "short_code": "D-DET-01",
+      "long_form": "DISPLAY.NOT.DETECTED",
+      "to_human": "Monitor not recognized by OS. Causes: cable, port, driver, OS display detection cache.",
+      "confidence": 0.85
+    },
+    "KBD.LAYOUT.WRONG": {
+      "pattern": "\\b(keyboard typing wrong|wrong characters|@ types as|keyboard language|input language|azerty)\\b",
+      "kb_ids": ["l1-keyboard-002"],
+      "title": "Keyboard typing wrong characters",
+      "short_code": "K-LAY-01",
+      "long_form": "KBD.LAYOUT.WRONG",
+      "to_human": "Input language switched accidentally (Win+Space or Cmd+Space hotkey). Switch back or remove unused languages.",
+      "confidence": 0.88
+    },
+    "INPUT.DEAD": {
+      "pattern": "\\b(keyboard not working|mouse not working|keyboard dead|mouse frozen|no input)\\b",
+      "kb_ids": ["l1-input-001"],
+      "title": "Keyboard / mouse not responding",
+      "short_code": "I-DEAD-01",
+      "long_form": "INPUT.DEAD",
+      "to_human": "USB/Bluetooth input device unresponsive. Try different USB port, fresh batteries, reseat dongle, reboot.",
+      "confidence": 0.85
+    },
+    "PRT.NOT.FOUND": {
+      "pattern": "\\b(printer not found|cant find printer|network printer missing|add printer (empty|nothing)|printer disappeared)\\b",
+      "kb_ids": ["l1-printer-004"],
+      "title": "Can't find printer in list",
+      "short_code": "P-FIND-01",
+      "long_form": "PRT.NOT.FOUND",
+      "to_human": "Network printer not appearing in Add Printer flow. Add by IP from printer's network config page.",
+      "confidence": 0.86
+    },
+    "PRT.SLEEP.OFFLINE": {
+      "pattern": "\\b(printer offline after (sleep|wake|reboot)|printer disconnected after|use printer offline|printer ip changed)\\b",
+      "kb_ids": ["l1-printer-005"],
+      "title": "Printer offline after PC wake / reboot",
+      "short_code": "P-SLP-01",
+      "long_form": "PRT.SLEEP.OFFLINE",
+      "to_human": "Printer marked offline due to spooler crash or IP change. Restart spooler service or re-add by current IP.",
+      "confidence": 0.86
+    },
+    "VPN.CONNECTED.NO.ACCESS": {
+      "pattern": "\\b(vpn connected (but )?(cant|no) (reach|access)|cant reach intranet|file share not accessible vpn|vpn (no )?(dns|resources))\\b",
+      "kb_ids": ["l1-vpn-007"],
+      "title": "VPN connected but can't reach intranet",
+      "short_code": "V-NOACC-01",
+      "long_form": "VPN.CONNECTED.NO.ACCESS",
+      "to_human": "Tunnel up but DNS resolution / routing broken. Test internal ping, flush DNS, check split-tunnel config.",
+      "confidence": 0.85
+    },
+    "VPN.SLOW": {
+      "pattern": "\\b(vpn (is )?slow|slow on vpn|vpn throttle|everything slow.*vpn|vpn bandwidth)\\b",
+      "kb_ids": ["l1-vpn-008"],
+      "title": "VPN connected but slow",
+      "short_code": "V-SLW-01",
+      "long_form": "VPN.SLOW",
+      "to_human": "VPN throttle. Causes: TCP-over-TCP, distant gateway, full-tunnel routing big traffic, AV inspection.",
+      "confidence": 0.83
+    },
+    "NET.ETH.UNIDENT": {
+      "pattern": "\\b(unidentified network|ethernet no internet|public network ethernet|169\\.254|apipa)\\b",
+      "kb_ids": ["l1-network-002"],
+      "title": "Ethernet 'Unidentified network'",
+      "short_code": "N-ETH-01",
+      "long_form": "NET.ETH.UNIDENT",
+      "to_human": "DHCP didn't respond. APIPA address assigned (169.254). Renew IP or fix link layer.",
+      "confidence": 0.86
+    },
+    "NET.WIFI.CONNECTED.NO.NET": {
+      "pattern": "\\b(wifi connected (but )?no internet|no internet secured|limited connectivity|connected without internet|captive portal)\\b",
+      "kb_ids": ["l1-wifi-002"],
+      "title": "Wi-Fi connected but no internet",
+      "short_code": "W-CNI-01",
+      "long_form": "NET.WIFI.CONNECTED.NO.NET",
+      "to_human": "Wi-Fi link up, no internet. Causes: captive portal not accepted, DHCP/DNS issue, ISP outage, clock drift breaking SSL.",
+      "confidence": 0.85
+    },
+    "NET.INT.NONE": {
+      "pattern": "\\b(no internet at all|internet down|cant reach any (site|web)|nothing loading)\\b",
+      "kb_ids": ["l1-internet-001"],
+      "title": "No internet at all",
+      "short_code": "N-NONE-01",
+      "long_form": "NET.INT.NONE",
+      "to_human": "Total internet loss. Check router, ISP, physical cable, restart sequence.",
+      "confidence": 0.86
+    },
+    "NET.INT.INTERMITTENT": {
+      "pattern": "\\b(intermittent (internet|wifi|drops)|wifi drops|keeps disconnecting|connection unstable)\\b",
+      "kb_ids": ["l1-internet-003"],
+      "title": "Internet drops intermittently",
+      "short_code": "N-INT-01",
+      "long_form": "NET.INT.INTERMITTENT",
+      "to_human": "Connection drops periodically. Check signal strength, channel interference, router uptime, power saving on adapter.",
+      "confidence": 0.82
+    },
+    "SYNC.ONEDRIVE.PAUSED": {
+      "pattern": "\\b(onedrive (paused|stuck|red x|processing changes)|onedrive sync (paused|broken)|sync icon spinning)\\b",
+      "kb_ids": ["l1-onedrive-004", "l1-onedrive-001"],
+      "title": "OneDrive sync paused / stuck",
+      "short_code": "S-OD-01",
+      "long_form": "SYNC.ONEDRIVE.PAUSED",
+      "to_human": "OneDrive sync halted. Causes: metered network setting, single bad file blocking queue, account auth stale.",
+      "confidence": 0.86
+    },
+    "SYNC.ONEDRIVE.KFM": {
+      "pattern": "\\b(known folder move|kfm|desktop (not )?(syncing|in onedrive)|documents not in onedrive|protect your folders)\\b",
+      "kb_ids": ["l1-onedrive-005"],
+      "title": "OneDrive Known Folder Move issues",
+      "short_code": "S-KFM-01",
+      "long_form": "SYNC.ONEDRIVE.KFM",
+      "to_human": "Desktop/Documents/Pictures redirection failure. Files moved to OneDrive\\Desktop etc but sync state inconsistent.",
+      "confidence": 0.82
+    },
+    "SYNC.ONEDRIVE.PATH": {
+      "pattern": "\\b(path too long|file name (too|contains)|cannot sync file|invalid character.*file|400 character)\\b",
+      "kb_ids": ["l1-onedrive-006"],
+      "title": "OneDrive can't sync — path too long or illegal chars",
+      "short_code": "S-PATH-01",
+      "long_form": "SYNC.ONEDRIVE.PATH",
+      "to_human": "File blocked from sync by Windows path rules. Rename to remove illegal chars or shorten path.",
+      "confidence": 0.87
+    },
+    "SYNC.CLOUD.PHONE": {
+      "pattern": "\\b(icloud (sync|photos) stuck|google photos backup waiting|onedrive mobile stuck|photos not uploading)\\b",
+      "kb_ids": ["l1-sync-001"],
+      "title": "Phone cloud sync stuck (iCloud / Google / OneDrive mobile)",
+      "short_code": "S-PHONE-01",
+      "long_form": "SYNC.CLOUD.PHONE",
+      "to_human": "Mobile cloud sync stalled. Causes: Wi-Fi-only setting, storage full, background permission killed, clock skew.",
+      "confidence": 0.85
+    },
+    "FILE.RECOVERY": {
+      "pattern": "\\b(deleted file|recover file|file gone|where did my file go|onedrive recycle)\\b",
+      "kb_ids": ["l1-file-recovery-001"],
+      "title": "Recover a deleted file",
+      "short_code": "F-REC-01",
+      "long_form": "FILE.RECOVERY",
+      "to_human": "Recover deleted file from local Recycle Bin, OneDrive Recycle Bin, Version history, or restore point.",
+      "confidence": 0.85
+    },
+    "FILE.LOCKED.OFFICE": {
+      "pattern": "\\b(file (is )?locked for editing|cant open (excel|word|powerpoint)|file is in use|protected view|file format not valid|file is corrupt)\\b",
+      "kb_ids": ["l1-files-001"],
+      "title": "Office file won't open",
+      "short_code": "F-LCK-01",
+      "long_form": "FILE.LOCKED.OFFICE",
+      "to_human": "Word/Excel/PowerPoint file inaccessible. Causes: real co-author lock, stale ~$ lock file, corruption, Protected View.",
+      "confidence": 0.86
+    },
+    "FILE.SHARED.NOACCESS": {
+      "pattern": "\\b(cant open (shared|sharepoint|onedrive|drive) file|access denied.*shared|request access|403 forbidden.*file)\\b",
+      "kb_ids": ["l1-fileshare-001"],
+      "title": "Can't open a shared file",
+      "short_code": "F-SHR-01",
+      "long_form": "FILE.SHARED.NOACCESS",
+      "to_human": "Shared link gives access denied. Causes: wrong account signed in, link type mismatch, sharing scope too narrow, Conditional Access.",
+      "confidence": 0.84
+    },
+    "MAIL.MOBILE.SETUP": {
+      "pattern": "\\b(setup (work )?(email|mail) on phone|outlook mobile setup|work email on (iphone|android))\\b",
+      "kb_ids": ["l1-mobile-email-001"],
+      "title": "Set up work email on phone",
+      "short_code": "M-MOB-01",
+      "long_form": "MAIL.MOBILE.SETUP",
+      "to_human": "Configure work mail on iOS/Android. Outlook app preferred for M365; native Mail also works.",
+      "confidence": 0.84
+    },
+    "DEVICE.NEW.SETUP": {
+      "pattern": "\\b(new laptop|first time setup|fresh windows|new device setup|just got a (laptop|computer))\\b",
+      "kb_ids": ["l1-newdevice-001"],
+      "title": "New device first-boot setup",
+      "short_code": "D-NEW-01",
+      "long_form": "DEVICE.NEW.SETUP",
+      "to_human": "Fresh laptop initial config: sign-in, M365, OneDrive, VPN, browser, apps, security.",
+      "confidence": 0.83
+    },
+    "DEVICE.LOST.STOLEN": {
+      "pattern": "\\b((lost|stolen) (laptop|phone|device)|missing laptop|company device stolen|find my device)\\b",
+      "kb_ids": ["l1-security-001"],
+      "title": "Lost or stolen company device",
+      "short_code": "D-LOST-01",
+      "long_form": "DEVICE.LOST.STOLEN",
+      "to_human": "Device missing. Immediate: remote wipe via Intune, revoke sessions in Entra, change password, file ticket.",
+      "confidence": 0.92
+    },
+    "SOFT.INSTALL.REQUEST": {
+      "pattern": "\\b(install (software|app)|i need (software|app)|how do I install|software installation request)\\b",
+      "kb_ids": ["l1-software-install-001"],
+      "title": "Software installation request",
+      "short_code": "I-REQ-01",
+      "long_form": "SOFT.INSTALL.REQUEST",
+      "to_human": "User needs new software. Route via Software Center / Company Portal or open ticket for IT approval.",
+      "confidence": 0.82
+    },
+    "SOFT.INSTALL.BLOCKED": {
+      "pattern": "\\b(cant install|administrator privileges required|smartscreen blocked|cant run on your pc|cannot be opened.*verified)\\b",
+      "kb_ids": ["l1-software-install-002"],
+      "title": "Software install blocked",
+      "short_code": "I-BLK-01",
+      "long_form": "SOFT.INSTALL.BLOCKED",
+      "to_human": "Install blocked by UAC, SmartScreen, Gatekeeper, or architecture mismatch. Diagnose by error wording.",
+      "confidence": 0.85
+    },
+    "CONF.AV.ROOM": {
+      "pattern": "\\b(conference room (av|audio|video)|meeting room (av|tv|screen)|boardroom (av|display))\\b",
+      "kb_ids": ["l1-conference-001"],
+      "title": "Conference room AV not working",
+      "short_code": "AV-ROOM-01",
+      "long_form": "CONF.AV.ROOM",
+      "to_human": "Boardroom display/audio failure. Source select, HDMI handshake, room PC sign-in, cable check.",
+      "confidence": 0.82
+    },
+    "CAL.OOO.SETUP": {
+      "pattern": "\\b(set up out of office|configure ooo|how to set ooo|vacation responder setup)\\b",
+      "kb_ids": ["l1-calendar-002"],
+      "title": "Set up out of office",
+      "short_code": "C-OOO-01",
+      "long_form": "CAL.OOO.SETUP",
+      "to_human": "OOO/auto-reply setup. Outlook File → Automatic Replies. Set internal + external text + date range.",
+      "confidence": 0.87
+    },
+    "CAL.INVITE.MISSING": {
+      "pattern": "\\b(meeting invite (missing|not received)|cant find calendar event|duplicate meeting|event shows twice|meeting on wrong calendar)\\b",
+      "kb_ids": ["l1-calendar-003"],
+      "title": "Meeting invite missing or duplicating",
+      "short_code": "C-INV-01",
+      "long_form": "CAL.INVITE.MISSING",
+      "to_human": "Calendar event issue. Check spam folder, account routing, duplicate cal subscription, shared cal sync.",
+      "confidence": 0.83
+    },
+    "CAL.OUTLOOK.GENERIC": {
+      "pattern": "\\b(outlook calendar (not |wont )?(syncing|working|showing)|calendar view broken)\\b",
+      "kb_ids": ["l1-calendar-001"],
+      "title": "Outlook calendar generic issues",
+      "short_code": "C-CAL-01",
+      "long_form": "CAL.OUTLOOK.GENERIC",
+      "to_human": "Outlook calendar misbehaving. Repair profile, force sync, recreate view.",
+      "confidence": 0.80
+    },
+    "MFA.SETUP": {
+      "pattern": "\\b(set up (mfa|2fa|authenticator)|enroll mfa|register authenticator|first time mfa)\\b",
+      "kb_ids": ["l1-mfa-001"],
+      "title": "Set up MFA / authenticator",
+      "short_code": "M-SETUP-01",
+      "long_form": "MFA.SETUP",
+      "to_human": "First-time MFA enrollment. aka.ms/mfasetup or vendor-specific (Okta Verify, Duo, Authy, etc.).",
+      "confidence": 0.85
+    },
+    "BROWSER.LOAD.FAIL": {
+      "pattern": "\\b(pages (not |wont )?(load|loading)|browser stuck|cant reach (any|some) sites|connection timed out browser)\\b",
+      "kb_ids": ["l1-browser-001"],
+      "title": "Browser pages not loading",
+      "short_code": "B-LOAD-01",
+      "long_form": "BROWSER.LOAD.FAIL",
+      "to_human": "Browser can't load pages. DNS, proxy, antivirus filter, extensions, profile corruption.",
+      "confidence": 0.82
+    },
+    "BROWSER.DEFAULT.REVERTS": {
+      "pattern": "\\b(default browser keeps reverting|chrome wont stay default|edge keeps opening|links open in wrong browser|reset default browser)\\b",
+      "kb_ids": ["l1-browser-002"],
+      "title": "Default browser keeps reverting",
+      "short_code": "B-DEF-01",
+      "long_form": "BROWSER.DEFAULT.REVERTS",
+      "to_human": "Default browser doesn't stick. Re-set in Default Apps; fix Outlook/Teams to use system default for links.",
+      "confidence": 0.84
+    },
+    "OS.WIN.UPDATE.REVERT": {
+      "pattern": "\\b(update keeps rolling back|undoing changes|couldn.?t complete the updates|update keeps reverting|update fails repeatedly)\\b",
+      "kb_ids": ["l1-windows-008", "l1-windows-007"],
+      "title": "Windows Update keeps rolling back",
+      "short_code": "O-WUR-01",
+      "long_form": "OS.WIN.UPDATE.REVERT",
+      "to_human": "Windows Update phase 2/3 failure. Disk space, driver incompatibility, .NET error, system file corruption.",
+      "confidence": 0.83
+    },
+    "OS.MAC.SPOTLIGHT": {
+      "pattern": "\\b(spotlight (not |wont )?(finding|working)|mac search broken|cant search files mac|mdutil)\\b",
+      "kb_ids": ["l1-mac-002"],
+      "title": "Mac Spotlight broken",
+      "short_code": "O-SPL-01",
+      "long_form": "OS.MAC.SPOTLIGHT",
+      "to_human": "Spotlight index corrupted. Reindex via Privacy panel toggle or `sudo mdutil -E /`.",
+      "confidence": 0.84
+    },
+    "OS.MAC.MAIL.PWCHG": {
+      "pattern": "\\b(mac mail not syncing|mail (wont|cant) sign in|keychain.*mail|exchange account.*mac.*password)\\b",
+      "kb_ids": ["l1-mac-003"],
+      "title": "Mac Mail stopped syncing after password change",
+      "short_code": "O-MAC-MAIL-01",
+      "long_form": "OS.MAC.MAIL.PWCHG",
+      "to_human": "Keychain holds old password. Delete email server entries from Keychain Access, re-sign-in.",
+      "confidence": 0.85
+    },
+    "CLOCK.DRIFT": {
+      "pattern": "\\b(clock (is )?wrong|time (is )?off|cert(ificate)? (date|invalid)|your connection is not private|kerberos.*clock|time sync failed)\\b",
+      "kb_ids": ["l1-clock-001"],
+      "title": "Clock drift breaking sign-ins / SSL",
+      "short_code": "T-DRIFT-01",
+      "long_form": "CLOCK.DRIFT",
+      "to_human": "System clock off real time, breaking SSL certs, Kerberos auth, and SAML tokens. Resync to NTP.",
+      "confidence": 0.86
+    },
+    "OS.WIN7.LEGACY": {
+      "pattern": "\\b(windows 7|win 7|still on windows 7|legacy windows|old windows machine)\\b",
+      "kb_ids": ["l1-windows-legacy-001"],
+      "title": "Windows 7 isolation + migration",
+      "short_code": "L-WIN7-01",
+      "long_form": "OS.WIN7.LEGACY",
+      "to_human": "Windows 7 EOL. Isolate from network until migrated; plan upgrade path.",
+      "confidence": 0.82
+    },
+    "MAC.LEGACY.STUCK": {
+      "pattern": "\\b(stuck on (catalina|mojave|high sierra)|old macos|mac 10\\.15|cant update macos)\\b",
+      "kb_ids": ["l1-mac-legacy-001"],
+      "title": "Older macOS stuck (10.15 etc.)",
+      "short_code": "L-MAC-01",
+      "long_form": "MAC.LEGACY.STUCK",
+      "to_human": "Old macOS unable to upgrade. Check hardware compatibility, free space, then run Software Update.",
+      "confidence": 0.80
+    }
+  }
+}
