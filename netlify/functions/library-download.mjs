@@ -68,7 +68,7 @@ export default async (request) => {
     const c = CONTENT[id];
     const body = mode === 'peek' ? c.peek : c.full;
     const tagline = mode === 'peek'
-      ? `<div class="mode">Preview (30%) · credited toward full access — reply to your receipt</div>`
+      ? `<div class="mode">Preview (30%) · credited toward full access</div>${unlockCta(id)}`
       : `<div class="mode ok">Full access · yours to keep</div>`;
     var kbNo = 'KB' + (1000000 + (id.split('').reduce(function (a, ch) { return (a * 31 + ch.charCodeAt(0)) >>> 0; }, 7) % 9000000));
     return guide(c.title, tagline + body, sid, kbNo);
@@ -80,7 +80,7 @@ export default async (request) => {
     return `<li><a href="/library-download?session_id=${encodeURIComponent(sid)}&id=${encodeURIComponent(x)}">${esc(c.title)}</a> <span class="fmt">${esc(c.format || '')}</span></li>`;
   }).join('');
   const modeLine = mode === 'peek'
-    ? `<p class="mode">You purchased the <b>30% preview</b>. Reply to your receipt to credit it toward full access.</p>`
+    ? `<p class="mode">You purchased the <b>30% preview</b> — it's credited toward full access.</p>${unlockCta(baseId)}`
     : `<p class="mode ok">Full access — open, read, and print to PDF anytime from this link.</p>`;
   return page(200, 'Your Growth Library', `${modeLine}<p>Tap any item to open it. Use your browser's <b>Print → Save as PDF</b> to keep a copy.</p><ul class="lib">${rows}</ul><p class="muted">Keep this link — it's tied to your paid order. Trouble? <a href="mailto:${EMAIL}">${EMAIL}</a>.</p>`);
 };
@@ -89,6 +89,15 @@ export const config = { path: '/library-download' };
 
 /* ---------- rendering ---------- */
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+// One-click upgrade from a paid 30% peek to full access. Deep-links to the vault, which
+// surfaces a "finish unlocking" bar that opens full checkout — no email round-trip.
+// (Ahmad 2026-06-01: closes the peek->full revenue dead-end.)
+function unlockCta(pid) {
+  const safe = encodeURIComponent(String(pid || ''));
+  if (!safe) return '';
+  return `<div style="margin:14px 0 22px"><a href="/growth-library.html?unlock=${safe}#vault" style="display:inline-block;background:#b8954f;color:#1a1407;padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:12px">Unlock full access now →</a> <span class="muted" style="margin-left:10px;font-size:12px">your preview price is credited</span></div>`;
+}
 
 function shell(title, inner) {
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${esc(title)} · ${BRAND}</title>

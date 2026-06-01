@@ -653,4 +653,39 @@
       }).filter(function (x) { return x.score > 0; }).sort(function (a, b) { return b.score - a.score; }).map(function (x) { return x.p; });
     }
   };
+
+  // ----- PEEK -> FULL UPGRADE DEEP-LINK (Ahmad 2026-06-01) ------------------
+  // A buyer who paid for the 30% preview lands here from the delivery page via
+  // ?unlock=<id>. Show a one-click "finish unlocking" bar that opens full checkout —
+  // converting a peek into a full sale with no email round-trip. No surprise charge:
+  // the bar requires an explicit click.
+  function handleUnlockDeepLink() {
+    try {
+      var uid = new URLSearchParams(location.search).get('unlock');
+      if (!uid) return;
+      var p = byId(uid);
+      if (!p || !p.priceCents) return;
+      if (document.getElementById('iis-unlock-bar')) return;
+      var bar = document.createElement('div');
+      bar.id = 'iis-unlock-bar';
+      bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:linear-gradient(90deg,#0a0a0a,#1a1407);color:#f1dca7;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;box-shadow:0 -8px 30px rgba(0,0,0,.45);font-family:system-ui,-apple-system,sans-serif';
+      var msg = document.createElement('span');
+      msg.style.cssText = 'font-size:14px;line-height:1.4';
+      msg.innerHTML = 'Finish unlocking <b>' + esc(p.title) + '</b> — your preview is credited toward full access.';
+      var go = document.createElement('button');
+      go.textContent = 'Unlock full access · ' + money(p.priceCents);
+      go.style.cssText = 'background:#b8954f;color:#1a1407;border:none;padding:11px 22px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;letter-spacing:.04em';
+      go.onclick = function () { buy(uid, 'full'); };
+      var x = document.createElement('button');
+      x.textContent = '✕'; x.title = 'Dismiss';
+      x.style.cssText = 'background:transparent;color:#f1dca7;border:none;cursor:pointer;font-size:16px;opacity:.7;line-height:1';
+      x.onclick = function () { bar.remove(); };
+      bar.appendChild(msg); bar.appendChild(go); bar.appendChild(x);
+      document.body.appendChild(bar);
+      var card = document.querySelector('[data-buy="' + uid + '-full"]');
+      if (card && card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (_) {}
+  }
+  if (document.readyState !== 'loading') setTimeout(handleUnlockDeepLink, 400);
+  else document.addEventListener('DOMContentLoaded', function () { setTimeout(handleUnlockDeepLink, 400); });
 })();

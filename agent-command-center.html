@@ -85,6 +85,20 @@
   .badge.done{background:rgba(52,211,153,.16);color:var(--ok)}
   .badge.failed{background:rgba(251,113,133,.16);color:var(--crit)}
   .task .tgt{font-weight:700} .task .pl{color:var(--txt2);margin-top:3px;font-family:var(--mono);font-size:10.5px}
+  /* agent<->ARIA conversation transcript */
+  .convo-stats{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:13px;font-family:var(--mono);font-size:11px;color:var(--txt2)}
+  .convo-stats b{color:var(--accent);font-size:15px;font-weight:800}
+  .convo{max-height:440px;overflow:auto;display:flex;flex-direction:column;gap:14px;padding-right:4px}
+  .turn{border-left:2px solid var(--line2);padding-left:12px}
+  .turn .ask{font-size:12.5px;line-height:1.5;color:var(--txt)}
+  .turn .ask .who{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);margin-right:7px}
+  .turn .ans{font-size:12.5px;line-height:1.55;color:var(--txt2);margin-top:6px;background:rgba(45,212,191,.05);border:1px solid rgba(45,212,191,.14);border-radius:9px;padding:8px 11px}
+  .turn .ans .who{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-right:7px}
+  .turn .cref{font-family:var(--mono);font-size:9.5px;color:var(--accent2);opacity:.8;margin-bottom:5px}
+  .turn .cmeta{font-family:var(--mono);font-size:9.5px;color:var(--txt3);margin-top:6px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .cbadge{font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:5px}
+  .cbadge.hi{background:rgba(52,211,153,.16);color:var(--ok)} .cbadge.mid{background:rgba(251,191,36,.16);color:var(--warn)} .cbadge.lo{background:rgba(251,113,133,.16);color:var(--crit)}
+  .cbadge.st{background:rgba(34,225,255,.12);color:var(--accent2)}
   /* command console */
   .console select,.console textarea{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--line2);color:var(--txt);border-radius:10px;padding:11px 13px;font-size:13px;font-family:var(--sans);outline:none}
   .console select:focus,.console textarea:focus{border-color:var(--accent)}
@@ -149,6 +163,19 @@
     </div>
   </div>
 
+  <div class="panel">
+    <h2>ARIA learning conversation <span class="live"><span class="dot"></span></span></h2>
+    <div class="convo-stats" id="convo-stats">
+      <span><b id="cs-bits">–</b> bits learned</span>
+      <span><b id="cs-kb">–</b> retrievable (served to users)</span>
+      <span><b id="cs-agents">–</b> agents</span>
+      <span><b id="cs-born">–</b> self-spawned</span>
+      <span><b id="cs-success">–</b> answer rate</span>
+    </div>
+    <div class="convo-stats" id="audit-line" style="opacity:.85;margin-top:-6px"></div>
+    <div class="convo" id="convo"><div class="empty">loading agent ⇄ ARIA exchanges… (admin token required)</div></div>
+  </div>
+
   <div class="panel console">
     <h2>Instruct an agent</h2>
     <select id="cmd-target"><option value="">— select an agent —</option></select>
@@ -185,6 +212,7 @@
   var TOKEN = localStorage.getItem('aperture_jwt') || '';
   var REGISTRY = [];
   var pollTimer = null;
+  var convoTimer = null;
 
   function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2600); }
   function authHeaders(){ return { 'Authorization':'Bearer '+TOKEN }; }
@@ -206,6 +234,7 @@
   $('logout').addEventListener('click', function(){
     TOKEN=''; localStorage.removeItem('aperture_jwt');
     if(pollTimer) clearInterval(pollTimer);
+    if(convoTimer) clearInterval(convoTimer);
     $('app').style.display='none'; $('login').style.display='flex';
   });
   function showApp(){ $('login').style.display='none'; $('app').style.display='block'; boot(); }
@@ -276,6 +305,45 @@
     }).catch(function(){ $('queue').innerHTML='<div class="empty">task-queue unreachable</div>'; });
   }
 
+  /* ---------- agent <-> ARIA conversation (learning loop) ---------- */
+  function confBadge(c){
+    var n = (typeof c==='number') ? c : 0;
+    var cls = n>=0.7 ? 'hi' : (n>=0.4 ? 'mid' : 'lo');
+    return '<span class="cbadge '+cls+'">conf '+(Math.round(n*100))+'%</span>';
+  }
+  function loadConversation(){
+    return fetch('/.netlify/functions/aria-learning-status',{headers:authHeaders(),cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw new Error('status '+r.status); return r.json(); })
+      .then(function(j){
+        $('cs-bits').textContent  = j.totalBits!=null ? j.totalBits : '–';
+        $('cs-kb').textContent    = j.indexedCount!=null ? j.indexedCount : (j.kbLiveCount!=null ? j.kbLiveCount : '–');
+        $('cs-agents').textContent= (j.agents&&j.agents.length!=null) ? j.agents.length : '–';
+        $('cs-born').textContent  = j.newAgentsBorn!=null ? j.newAgentsBorn : '–';
+        var sa = j.selfAudit;
+        $('cs-success').textContent = (sa && sa.successRate!=null) ? (Math.round(sa.successRate*100)+'%') : '–';
+        if(sa){
+          var d = sa.delta;
+          var trend = d ? (' · trend '+(d.successRate>=0?'+':'')+Math.round(d.successRate*100)+'pp, '+(d.indexed>=0?'+':'')+d.indexed+' retrievable') : '';
+          var de = (sa.deadEnds&&sa.deadEnds.length) ? (' · re-queued '+sa.requeued+' dead-ends: '+esc(sa.deadEnds.slice(0,4).join(', '))) : ' · no dead-ends';
+          $('audit-line').innerHTML = '<span>last self-audit '+fmtTime(Date.parse(sa.ranAt))+trend+de+'</span>';
+        } else { $('audit-line').innerHTML=''; }
+        var bits = (j.recentBits||[]).filter(function(b){ return b && b.q && !b.event; });
+        if(!bits.length){ $('convo').innerHTML='<div class="empty">no exchanges yet — the loop runs every 15 min</div>'; return; }
+        var html = bits.slice().reverse().map(function(b){
+          var st = b.s && b.s!=='UNKNOWN' ? '<span class="cbadge st">'+esc(b.s)+'</span>' : '';
+          var nxt = b.n ? '<span>↦ next: '+esc(b.n)+'</span>' : '';
+          var fu = b.f ? '<span class="cbadge st">follow-up</span>' : '';
+          var ref = (b.ref && b.ref.a) ? '<div class="cref">↳ builds on '+esc(b.ref.a)+(b.ref.t?(': '+esc(b.ref.t)):'')+'</div>' : '';
+          return '<div class="turn">'+ref+
+            '<div class="ask"><span class="who">'+esc(b.a||'agent')+'</span>'+esc(b.q)+'</div>'+
+            '<div class="ans"><span class="who">ARIA</span>'+esc(b.r||'…')+'</div>'+
+            '<div class="cmeta">'+fu+confBadge(b.c)+st+'<span>'+fmtTime(b.t)+'</span>'+nxt+'</div></div>';
+        }).join('');
+        $('convo').innerHTML = html;
+      })
+      .catch(function(){ $('convo').innerHTML='<div class="empty">conversation unreachable — admin token may have expired (sign out + back in)</div>'; });
+  }
+
   /* ---------- dispatch instruction ---------- */
   $('cmd-send').addEventListener('click', function(){
     var target = $('cmd-target').value;
@@ -316,13 +384,16 @@
     });
   });
 
-  $('refresh').addEventListener('click', function(){ loadEvents(); loadQueue(); });
+  $('refresh').addEventListener('click', function(){ loadEvents(); loadQueue(); loadConversation(); });
 
   /* ---------- boot ---------- */
   function boot(){
-    loadRegistry().then(loadEvents).then(loadQueue);
+    loadRegistry().then(loadEvents).then(loadQueue).then(loadConversation);
     if(pollTimer) clearInterval(pollTimer);
     pollTimer = setInterval(function(){ loadEvents(); loadQueue(); }, 6000);
+    // Conversation polls slower — the loop only writes new bits every 15 min.
+    if(convoTimer) clearInterval(convoTimer);
+    convoTimer = setInterval(loadConversation, 30000);
   }
   if(TOKEN){ showApp(); }
 })();

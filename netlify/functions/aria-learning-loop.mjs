@@ -115,24 +115,41 @@ export default async (request) => {
   const startAgents = state.roster.length;
   const log = [];
   const newKbBits = [];
+  const indexAdds = []; // retrieval-index entries so aria-research can SERVE these bits
 
   for (let i = 0; i < cycles; i++) {
+    // Capture the prior turn BEFORE it's overwritten, so an agent can build on it.
+    const prevAgent = state.lastAgent || null;
+    const prevTopic = state.lastTopic || null;
+
     const next = pickNextTurn(state);
     if (!next) break; // queue exhausted, no agent able to ask
 
     const { agent, topic } = next;
-    const question = renderQuestion(agent, topic);
-    const ariaResp = await askAria(question, topic);
+
+    // Every 3rd turn, make it a real CONVERSATION instead of isolated Q&As: the agent
+    // asks a follow-up that explicitly builds on the previous agent's exchange (deeper
+    // root cause / what's missing / does it scale). The ARIA-facing topic stays clean
+    // (prevTopic) so retrieval still matches. (Ahmad 2026-06-01)
+    const isFollowup = (i % 3 === 2) && prevAgent && prevTopic && prevAgent !== agent.name;
+    const effTopic = isFollowup ? prevTopic : topic;
+    const question = isFollowup
+      ? renderFollowup(agent, prevAgent, prevTopic)
+      : renderQuestion(agent, topic);
+    const ariaResp = await askAria(question, effTopic);
 
     // Bit-format the exchange
     const bit = {
       a: agent.name,
       q: trim(question, MAX_BIT_Q),
       r: trim(ariaResp.text, MAX_BIT_R),
-      n: deriveNextTopic(topic, agent, ariaResp),
+      n: deriveNextTopic(effTopic, agent, ariaResp),
       s: ariaResp.state || 'UNKNOWN',
       c: ariaResp.confidence || 0,
-      t: Date.now()
+      t: Date.now(),
+      tp: effTopic, // topic, so aria-self-audit can group dead-ends without re-deriving
+      ref: (prevAgent && prevAgent !== agent.name) ? { a: prevAgent, t: prevTopic } : null,
+      f: isFollowup ? 1 : 0
     };
     log.push(bit);
 
@@ -141,26 +158,39 @@ export default async (request) => {
     // genuinely-new insights ACCUMULATE instead of overwriting the same agent+topic
     // file (the old `learn-<agent>-<topic>` key capped distinct KBs at a few hundred).
     // Identical answers still collapse to one file (idempotent dedup).
-    const slug = `learn-${agent.name}-${slugify(topic)}-${hash6(bit.r)}`.slice(0, 72);
+    const slug = `learn-${agent.name}-${slugify(effTopic)}-${hash6(bit.r)}`.slice(0, 72);
     try {
       await kbLive.set(`${slug}.json`, JSON.stringify({
-        heading: `${agent.name}: ${topic}`,
-        body: bit.r + '\n\n' + 'Asked by: ' + agent.name + ' | Topic: ' + topic + ' | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.',
+        heading: `${agent.name}: ${effTopic}`,
+        body: bit.r + '\n\n' + 'Asked by: ' + agent.name + ' | Topic: ' + effTopic + ' | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.',
         source_url: null,
         vendor: 'aria-learning',
         query_seed: question,
         created_at: new Date().toISOString(),
         agent: agent.name,
-        topic
+        topic: effTopic
       }), { contentType: 'application/json' });
       newKbBits.push(slug);
+      // Only index REAL answers — never let "No curated answer." / stubs become
+      // retrievable, or aria-research could serve a non-answer (AROC §1 trust gate).
+      if (isRealAnswer(bit.r)) {
+        indexAdds.push({
+          key: `${slug}.json`,
+          topic: effTopic,
+          agent: agent.name,
+          kw: `${effTopic} ${agent.name} ${bit.r}`.toLowerCase().slice(0, 200),
+          c: bit.c || 0,
+          promoted: false,
+          t: bit.t
+        });
+      }
     } catch (_) {}
 
     // Update active state
     state.history.push(bit);
     if (state.history.length > MAX_HISTORY) state.history.shift();
     state.bitsLearned = (state.bitsLearned || 0) + 1;
-    state.lastTopic = topic;
+    state.lastTopic = effTopic;
     state.lastAgent = agent.name;
 
     // Queue the derived next topic for future cycles
@@ -169,8 +199,8 @@ export default async (request) => {
     }
 
     // Detect "blocked topic" — ARIA gave a no-match AND no agent in roster owns this domain
-    if (ariaResp.state === 'UNKNOWN' && shouldSpawnAgent(state, topic)) {
-      const newAgent = spawnAgent(topic);
+    if (ariaResp.state === 'UNKNOWN' && shouldSpawnAgent(state, effTopic)) {
+      const newAgent = spawnAgent(effTopic);
       state.roster.push(newAgent);
       state.newAgentsBorn = (state.newAgentsBorn || 0) + 1;
       log.push({ event: 'agent-born', name: newAgent.name, role: newAgent.role, t: Date.now() });
@@ -183,6 +213,25 @@ export default async (request) => {
     if (state.queue.length === 0) {
       state.queue.push(SEED_TOPICS[Math.floor(Math.random() * SEED_TOPICS.length)]);
     }
+  }
+
+  // Merge new entries into the retrieval index (kb-index.json) so aria-research can
+  // SERVE what was just learned. Read-modify-write is best-effort; the daily promote
+  // job rebuilds this index authoritatively. Capped + deduped by key. (Ahmad 2026-06-01)
+  if (indexAdds.length) {
+    try {
+      let idx = (await kbLive.get('kb-index.json', { type: 'json' })) || { entries: [] };
+      if (!Array.isArray(idx.entries)) idx.entries = [];
+      const seen = new Set(idx.entries.map(e => e.key));
+      for (const add of indexAdds) {
+        if (seen.has(add.key)) continue;
+        idx.entries.push(add);
+        seen.add(add.key);
+      }
+      if (idx.entries.length > 6000) idx.entries = idx.entries.slice(-6000); // drop oldest
+      idx.updatedAt = new Date().toISOString();
+      await kbLive.set('kb-index.json', JSON.stringify(idx), { contentType: 'application/json' });
+    } catch (_) {}
   }
 
   // Persist state
@@ -238,6 +287,24 @@ function renderQuestion(agent, topic) {
   if (!templates.length) return `What is the cheapest path to fix ${topic}?`;
   const t = templates[Math.floor(Math.random() * templates.length)];
   return t.replace(/\$\{seed\}/g, topic);
+}
+
+// Conversational follow-up: the current agent reacts to the PREVIOUS agent's exchange.
+// Stays answerable by aria-research (the topic keyword is preserved) while reading like
+// a real back-and-forth in the monitor. (Ahmad 2026-06-01)
+const FOLLOWUP_TEMPLATES = [
+  'building on what ${prevAgent} said, what is the deeper root cause of ${prev}?',
+  'what would ${curAgent} add to ${prevAgent}’s take on ${prev}?',
+  'is the ${prev} fix enough, or what breaks it at scale?',
+  'what does ${prevAgent} miss about ${prev} that ${curAgent} would catch?',
+  'cheapest way to PREVENT ${prev} from recurring after ${prevAgent}’s fix?'
+];
+function renderFollowup(agent, prevAgent, prevTopic) {
+  const t = FOLLOWUP_TEMPLATES[Math.floor(Math.random() * FOLLOWUP_TEMPLATES.length)];
+  return t
+    .replace(/\$\{prev\}/g, prevTopic)
+    .replace(/\$\{prevAgent\}/g, prevAgent)
+    .replace(/\$\{curAgent\}/g, agent.name);
 }
 
 async function askAria(question, topic) {
@@ -329,4 +396,13 @@ function hash6(s) {
 function trim(s, n) {
   s = String(s || '');
   return s.length > n ? s.slice(0, n - 1) + '…' : s;
+}
+
+// A bit is only worth indexing if ARIA actually answered. Filters out the loop's
+// no-match placeholders, fetch errors, and too-short stubs.
+function isRealAnswer(r) {
+  const s = String(r || '').trim();
+  if (s.length < 25) return false;
+  if (/^(no curated answer|no-response|fetch-error|no response)/i.test(s)) return false;
+  return true;
 }

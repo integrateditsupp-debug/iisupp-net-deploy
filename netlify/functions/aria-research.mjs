@@ -146,12 +146,77 @@ export default async (request) => {
     }
   }
 
+  // Path 2.5: ARIA's OWN learned bits (closes the read-back loop, Ahmad 2026-06-01).
+  // The 15-min learning loop has been writing learn-* bits into aria-kb-live for weeks,
+  // but NOTHING ever read them back at query time — the knowledge was write-only and
+  // ARIA never actually got smarter to a user. This serves the best topical match from
+  // the accumulated study BEFORE falling to the generic diagnostic interview. Strictly
+  // additive: only runs when curated library + vendor fetch both miss, so it cannot
+  // regress any existing answer. $0 — reads one index blob + at most one bit blob.
+  try {
+    const learned = await tryLearnedBits(query, cors);
+    if (learned) return learned;
+  } catch (_) { /* never let the learned-bit path break research */ }
+
   // Path 3: graceful no-match
   return diagnosticFirst(query, cors, (body && body.history) ? body.history : []);
 };
 
 function jsonResp(status, headers, obj) {
   return new Response(JSON.stringify(obj), { status, headers });
+}
+
+// ============= LEARNED-BIT RETRIEVAL (read-back loop) =============
+// Reads the compact index (kb-index.json) maintained by aria-learning-loop +
+// aria-learning-promote, keyword-scores it against the query, and returns the single
+// best learned bit if there's a real topical match. Trust > coverage (AROC §1): a
+// 2-token minimum + promoted-bonus prevents serving a stray, irrelevant bit.
+async function tryLearnedBits(query, cors) {
+  const q = String(query || '').toLowerCase().trim();
+  if (q.length < 4) return null;
+
+  let index;
+  try {
+    const kb = getStore({ name: 'aria-kb-live', consistency: 'strong' });
+    index = await kb.get('kb-index.json', { type: 'json' });
+  } catch (_) { return null; }
+  if (!index || !Array.isArray(index.entries) || !index.entries.length) return null;
+
+  const qTokens = q.split(/\W+/).filter(w => w.length > 2);
+  if (!qTokens.length) return null;
+  const qSet = [...new Set(qTokens)];
+
+  let best = null;
+  for (const e of index.entries) {
+    const hay = (e.kw || '').toLowerCase();
+    if (!hay) continue;
+    let hits = 0;
+    for (const t of qSet) if (hay.includes(t)) hits++;
+    if (!hits) continue;
+    const score = hits + (e.promoted ? 1.5 : 0) + (e.c || 0);
+    if (!best || score > best.score) best = { e, score, hits };
+  }
+  // Need a genuine topical match — not one stray word.
+  if (!best || best.hits < 2) return null;
+
+  let bit;
+  try {
+    const kb = getStore({ name: 'aria-kb-live', consistency: 'strong' });
+    bit = await kb.get(best.e.key, { type: 'json' });
+  } catch (_) { return null; }
+  if (!bit || !bit.body) return null;
+
+  const topic = String(best.e.topic || '').toUpperCase().replace(/[^A-Z0-9]+/g, '_').slice(0, 28);
+  return jsonResp(200, cors, {
+    ok: true,
+    state: 'LEARN.' + (topic || 'TOPIC'),
+    title: bit.heading || ('ARIA learned: ' + (best.e.topic || 'this topic')),
+    steps: bitToSteps(bit.body),
+    confidence: best.e.promoted ? 0.66 : 0.6,
+    source: 'aria-self-learned' + (best.e.promoted ? '-promoted' : ''),
+    caveat: 'This answer comes from ARIA’s autonomous learning loop, not a vetted vendor doc. Confirm before any irreversible step — if it does not resolve in two tries, that is an L2 escalation: call (647) 581-3182.',
+    learnedBy: best.e.agent || null
+  });
 }
 
 // ============= SYMBOLIC STATE DETECTOR =============

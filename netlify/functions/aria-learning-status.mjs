@@ -53,6 +53,15 @@ export default async (request) => {
       kbLiveCount = (list && list.blobs && list.blobs.length) || 0;
     } catch (_) {}
 
+    // Retrievable (read-back) bit count + latest self-audit smarter-signal.
+    let indexedCount = 0;
+    try {
+      const idx = await kbLive.get('kb-index.json', { type: 'json' });
+      indexedCount = (idx && Array.isArray(idx.entries) && idx.entries.length) || 0;
+    } catch (_) {}
+    let selfAudit = null;
+    try { selfAudit = await sessions.get('self-audit-last.json', { type: 'json' }); } catch (_) {}
+
     return jsonResp(200, cors, {
       ok: true,
       totalBits: state ? state.bitsLearned : 0,
@@ -64,6 +73,8 @@ export default async (request) => {
       lastTopic: state ? state.lastTopic : null,
       lastAgent: state ? state.lastAgent : null,
       kbLiveCount,
+      indexedCount,
+      selfAudit,
       sessionStarted: state ? state.born : null
     });
   } catch (e) {

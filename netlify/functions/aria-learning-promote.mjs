@@ -129,8 +129,38 @@ const handler = async () => {
     };
   }
 
+  // Job 4: Rebuild the retrieval index (kb-index.json) authoritatively from the
+  // surviving bits so aria-research serves only what still exists, with fresh
+  // promoted flags. This is the read-back loop ARIA depends on. (Ahmad 2026-06-01)
+  let indexed = 0;
+  try {
+    const finalList = await kbLive.list({ prefix: 'learn-' });
+    const blobs = (finalList && finalList.blobs) || [];
+    const entries = [];
+    for (const b of blobs) {
+      try {
+        const d = await kbLive.get(b.key, { type: 'json' });
+        if (!d || !d.body) continue;
+        const bodyTrim = String(d.body).trim();
+        // Skip no-match placeholders / stubs so only real answers are retrievable.
+        if (bodyTrim.length < 25 || /^(no curated answer|no-response|fetch-error|no response)/i.test(bodyTrim)) continue;
+        entries.push({
+          key: b.key,
+          topic: d.topic || '',
+          agent: d.agent || '',
+          kw: `${d.topic || ''} ${d.agent || ''} ${d.body || ''}`.toLowerCase().slice(0, 200),
+          c: 0,
+          promoted: !!d.promoted,
+          t: Date.parse(d.created_at) || 0
+        });
+      } catch (_) {}
+    }
+    await kbLive.set('kb-index.json', JSON.stringify({ entries, rebuiltAt: new Date().toISOString() }), { contentType: 'application/json' });
+    indexed = entries.length;
+  } catch (_) {}
+
   const elapsed = Date.now() - start;
-  const summary = { ok: true, scanned, promoted, deduped, dropped, elapsedMs: elapsed, ranAt: new Date().toISOString() };
+  const summary = { ok: true, scanned, promoted, deduped, dropped, indexed, elapsedMs: elapsed, ranAt: new Date().toISOString() };
 
   // Log to sessions store so status endpoint can show it
   try {
