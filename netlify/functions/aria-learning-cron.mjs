@@ -14,8 +14,6 @@
 //
 // Schedule: every 15 minutes.
 
-import { schedule } from '@netlify/functions';
-
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 const handler = async () => {
@@ -40,6 +38,13 @@ const handler = async () => {
   };
 };
 
-// Cron format: minute hour day month dow
-// Every 15 minutes: */15 * * * *
-export default schedule('*/15 * * * *', handler);
+// Every 15 minutes. (Ahmad 2026-06-01) MUST declare the schedule via
+// `export const config = { schedule }` — the legacy `export default schedule(...)`
+// wrapper was silently NOT registered by Netlify on this site (only aria-monitor, which
+// used config.schedule, ever fired), so this loop never ran autonomously. Verified via
+// deploy.function_schedules listing only aria-monitor.
+export default async () => {
+  await handler();
+  return new Response('ok', { headers: { 'content-type': 'text/plain' } });
+};
+export const config = { schedule: '*/15 * * * *' };

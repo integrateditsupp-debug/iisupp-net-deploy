@@ -5,8 +5,6 @@
 // aria-learning-promote (03:00) rebuilds the retrieval index, so the audit grades
 // against fresh data. Cost: $0 (deterministic, no LLM).
 
-import { schedule } from '@netlify/functions';
-
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 const handler = async () => {
@@ -20,5 +18,10 @@ const handler = async () => {
   }
 };
 
-// Nightly at 03:30 UTC (after promote at 03:00).
-export default schedule('30 3 * * *', handler);
+// Nightly at 03:30 UTC (after promote at 03:00). (Ahmad 2026-06-01) Use config.schedule —
+// the legacy schedule() wrapper is not registered by Netlify on this site.
+export default async () => {
+  await handler();
+  return new Response('ok', { headers: { 'content-type': 'text/plain' } });
+};
+export const config = { schedule: '30 3 * * *' };

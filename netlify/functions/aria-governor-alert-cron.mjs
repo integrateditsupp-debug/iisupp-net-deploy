@@ -10,7 +10,6 @@
 // Cost: $0 (deterministic; only sends mail when actually breached). Dormant-safe: no
 // RESEND_API_KEY -> it just no-ops.
 
-import { schedule } from '@netlify/functions';
 import { getStore } from '@netlify/blobs';
 
 const STORE = 'aria-llm-governor';
@@ -61,5 +60,10 @@ const handler = async () => {
   }
 };
 
-// Every 3 minutes.
-export default schedule('*/3 * * * *', handler);
+// Every 3 minutes. (Ahmad 2026-06-01) Use config.schedule — the legacy schedule()
+// wrapper was not registered by Netlify here.
+export default async () => {
+  await handler();
+  return new Response('ok', { headers: { 'content-type': 'text/plain' } });
+};
+export const config = { schedule: '*/3 * * * *' };

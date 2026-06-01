@@ -7,8 +7,6 @@
 //
 // Cost: $0 (the report function is deterministic, no LLM).
 
-import { schedule } from '@netlify/functions';
-
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 const handler = async () => {
@@ -26,5 +24,10 @@ const handler = async () => {
   }
 };
 
-// Daily at 12:00 UTC.
-export default schedule('0 12 * * *', handler);
+// Daily at 12:00 UTC. (Ahmad 2026-06-01) Use config.schedule — the legacy schedule()
+// wrapper was not being registered by Netlify on this site.
+export default async () => {
+  await handler();
+  return new Response('ok', { headers: { 'content-type': 'text/plain' } });
+};
+export const config = { schedule: '0 12 * * *' };

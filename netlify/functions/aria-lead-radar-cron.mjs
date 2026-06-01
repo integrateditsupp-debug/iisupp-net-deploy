@@ -5,8 +5,6 @@
 // fetches the endpoint once a day to confirm the CanadaBuys feed still parses and to surface
 // breakage in logs. Cost: $0 (deterministic, no LLM).
 
-import { schedule } from '@netlify/functions';
-
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 const handler = async () => {
@@ -23,5 +21,10 @@ const handler = async () => {
   }
 };
 
-// Once a day at 06:00 UTC.
-export default schedule('0 6 * * *', handler);
+// Once a day at 06:00 UTC. (Ahmad 2026-06-01) Use config.schedule — the legacy
+// schedule() wrapper was not registered by Netlify here.
+export default async () => {
+  await handler();
+  return new Response('ok', { headers: { 'content-type': 'text/plain' } });
+};
+export const config = { schedule: '0 6 * * *' };
