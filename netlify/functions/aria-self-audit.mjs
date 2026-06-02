@@ -55,16 +55,24 @@ export default async (request) => {
   // 2. Classify success per topic. A turn "succeeded" if ARIA gave a real, recognised,
   //    non-trivial-confidence answer.
   const byTopic = {};
+  const sampleQ = {}; // topic -> a representative question, for the gap backlog
   let attempts = 0, answered = 0;
   for (const b of bits) {
     const tp = String(b.tp || '').toLowerCase().trim();
     if (!tp) continue; // older bits without a topic tag — skip
     attempts++;
-    const ok = isRealAnswer(b.r) && b.s !== 'UNKNOWN' && (b.c || 0) >= 0.4;
+    // (2026-06-02) Echo-chamber fix: a CONVO.* dialog move ("Happy to help, which app?")
+    // or a REASONED_* first-principles GUESS is NOT a real answer — they used to pass this
+    // gate (state≠UNKNOWN, conf 0.9) and inflate successRate, hiding that ARIA hadn't
+    // actually learned the topic. Count them as failures so they surface as gaps.
+    const st = String(b.s || '');
+    const isDialogOrGuess = /^CONVO\./i.test(st) || /^REASONED_/i.test(st);
+    const ok = isRealAnswer(b.r) && st !== 'UNKNOWN' && !isDialogOrGuess && (b.c || 0) >= 0.4;
     if (ok) answered++;
     if (!byTopic[tp]) byTopic[tp] = { att: 0, ok: 0 };
     byTopic[tp].att++;
     if (ok) byTopic[tp].ok++;
+    if (!sampleQ[tp] && b.q) sampleQ[tp] = String(b.q).slice(0, 160);
   }
   const successRate = attempts ? +(answered / attempts).toFixed(3) : 0;
 
@@ -92,6 +100,42 @@ export default async (request) => {
     }
   } catch (_) {}
 
+  // 4b. Durable GAP LEDGER (2026-06-02) — the free path to ARIA actually getting smarter.
+  //   Re-queueing dead-ends (step 4) just makes the loop re-ask topics it can't answer
+  //   without an LLM, so they circle forever with no record for a human. This ledger
+  //   instead accumulates a ranked "author these KB articles" backlog:
+  //     strikes  = how many audit runs in a row ARIA has FAILED this topic (resets to 0
+  //                and the gap is cleared the moment ARIA answers it from real KB)
+  //     asks     = cumulative times agents have raised it
+  //     sampleQ  = a representative question, so the human knows what to write
+  //   Deterministic, $0 — once the top gaps are authored into curated KB, the loop can
+  //   finally answer them and they drop off the list. That is the loop closing for real.
+  let topGaps = [];
+  try {
+    let ledger = await sessions.get('learning-gaps.json', { type: 'json' });
+    if (!ledger || typeof ledger !== 'object' || !ledger.gaps) ledger = { gaps: {} };
+    const nowIso = new Date().toISOString();
+    for (const [tp, v] of Object.entries(byTopic)) {
+      if (v.ok > 0) {
+        // ARIA answered this topic from real KB this window → gap resolved, clear it.
+        delete ledger.gaps[tp];
+      } else if (v.att >= 1) {
+        const cur = ledger.gaps[tp] || { firstSeen: nowIso, strikes: 0, asks: 0 };
+        cur.strikes += 1;          // another audit run with zero real answers
+        cur.asks += v.att;
+        cur.lastSeen = nowIso;
+        if (sampleQ[tp]) cur.sampleQ = sampleQ[tp];
+        ledger.gaps[tp] = cur;
+      }
+    }
+    ledger.updatedAt = nowIso;
+    await sessions.set('learning-gaps.json', JSON.stringify(ledger), { contentType: 'application/json' });
+    topGaps = Object.entries(ledger.gaps)
+      .map(([topic, v]) => ({ topic, strikes: v.strikes, asks: v.asks, sampleQ: v.sampleQ || '', firstSeen: v.firstSeen }))
+      .sort((a, b) => (b.strikes - a.strikes) || (b.asks - a.asks))
+      .slice(0, 20);
+  } catch (_) {}
+
   // 5. How many bits are actually RETRIEVABLE (the read-back index).
   let indexed = 0;
   try {
@@ -107,7 +151,7 @@ export default async (request) => {
     indexed: indexed - (prev.indexed || 0)
   } : null;
 
-  const summary = { ok: true, ranAt: new Date().toISOString(), days, attempts, answered, successRate, deadEnds, requeued, indexed, delta };
+  const summary = { ok: true, ranAt: new Date().toISOString(), days, attempts, answered, successRate, deadEnds, requeued, indexed, delta, topGaps, openGaps: topGaps.length };
   try { await sessions.set('self-audit-last.json', JSON.stringify(summary), { contentType: 'application/json' }); } catch (_) {}
 
   // 7. Announce on the mesh event bus so the command center surfaces it (best effort).
@@ -116,7 +160,7 @@ export default async (request) => {
     await fetch(`https://${host}/api/mesh-events`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ kind: 'self-audit', agentId: 'aria-self-audit', successRate, deadEnds: deadEnds.length, requeued, indexed, ts: Date.now() })
+      body: JSON.stringify({ kind: 'self-audit', agentId: 'aria-self-audit', successRate, deadEnds: deadEnds.length, requeued, indexed, openGaps: topGaps.length, topGap: topGaps[0] ? topGaps[0].topic : null, ts: Date.now() })
     });
   } catch (_) {}
 

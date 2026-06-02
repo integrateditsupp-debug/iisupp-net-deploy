@@ -98,6 +98,14 @@ export default async (request) => {
   const sessions = getStore({ name: SESSIONS, consistency: 'strong' });
   const kbLive = getStore({ name: KB_LIVE, consistency: 'strong' });
 
+  // ?purge=1 — one-time cleanup after the echo-chamber audit (2026-06-02). Sweeps the
+  // junk bits that the old loop banked as "knowledge" (its own clarifying questions,
+  // generic first-principles boilerplate, no-match stubs) out of the live store and
+  // rebuilds kb-index.json from only the surviving real answers. Idempotent.
+  if (url.searchParams.get('purge') === '1') {
+    return new Response(JSON.stringify(await purgeJunk(kbLive)), { status: 200, headers: cors });
+  }
+
   let state;
   if (reset) {
     state = freshState();
@@ -158,38 +166,55 @@ export default async (request) => {
     // genuinely-new insights ACCUMULATE instead of overwriting the same agent+topic
     // file (the old `learn-<agent>-<topic>` key capped distinct KBs at a few hundred).
     // Identical answers still collapse to one file (idempotent dedup).
+    // (2026-06-02) Echo-chamber audit: 90% of "learned" bits were non-content — ARIA
+    // banking its own clarifying questions (conf 0.9) and generic first-principles
+    // boilerplate as knowledge. Decide ONCE, up front, whether this exchange is worth
+    // persisting at all. If it isn't, we write NOTHING — no junk file, no index entry.
+    //  - isDialogMove: "Happy to help, which app?" — a conversational turn, not a fact.
+    //  - isGuess: first-principles structured guess — a live fallback, never banked.
+    //  - isRealAnswer: not a "No curated answer." / error / too-short stub.
+    const isDialogMove = ariaResp.conversational || /^CONVO\./.test(ariaResp.state || '');
+    const isGuess = /first-principles-reasoner/.test(ariaResp.source || '');
+    const worthKeeping = isRealAnswer(bit.r) && !isDialogMove && !isGuess;
+
+    // Feed REAL answers back into KB-LIVE so future user queries can reach this bit.
+    // NOTE (2026-05-25): slug includes a short content hash so genuinely-new insights
+    // ACCUMULATE while identical answers collapse to one file (idempotent dedup).
     const slug = `learn-${agent.name}-${slugify(effTopic)}-${hash6(bit.r)}`.slice(0, 72);
-    try {
-      await kbLive.set(`${slug}.json`, JSON.stringify({
-        heading: `${agent.name}: ${effTopic}`,
-        body: bit.r + '\n\n' + 'Asked by: ' + agent.name + ' | Topic: ' + effTopic + ' | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.',
-        source_url: null,
-        vendor: 'aria-learning',
-        query_seed: question,
-        created_at: new Date().toISOString(),
-        agent: agent.name,
-        topic: effTopic
-      }), { contentType: 'application/json' });
-      newKbBits.push(slug);
-      // Only index REAL answers — never let "No curated answer." / stubs become
-      // retrievable, or aria-research could serve a non-answer (AROC §1 trust gate).
-      if (isRealAnswer(bit.r)) {
+    if (worthKeeping) {
+      try {
+        await kbLive.set(`${slug}.json`, JSON.stringify({
+          heading: `${agent.name}: ${effTopic}`,
+          body: bit.r + '\n\n' + 'Asked by: ' + agent.name + ' | Topic: ' + effTopic + ' | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.',
+          source_url: null,
+          vendor: 'aria-learning',
+          query_seed: question,
+          created_at: new Date().toISOString(),
+          agent: agent.name,
+          topic: effTopic
+        }), { contentType: 'application/json' });
+        newKbBits.push(slug);
         indexAdds.push({
           key: `${slug}.json`,
           topic: effTopic,
           agent: agent.name,
           kw: `${effTopic} ${agent.name} ${bit.r}`.toLowerCase().slice(0, 200),
+          bodyHash: hash6(bit.r), // cross-topic dedup: collapse near-identical bodies
           c: bit.c || 0,
           promoted: false,
           t: bit.t
         });
-      }
-    } catch (_) {}
+      } catch (_) {}
+    } else {
+      state.skipped = (state.skipped || 0) + 1; // observability: how much slop we rejected
+    }
 
     // Update active state
     state.history.push(bit);
     if (state.history.length > MAX_HISTORY) state.history.shift();
-    state.bitsLearned = (state.bitsLearned || 0) + 1;
+    // Count only bits we actually BANKED — the old counter incremented on every turn,
+    // inflating "bitsLearned" to ~10x the real number of facts retained. (2026-06-02)
+    if (worthKeeping) state.bitsLearned = (state.bitsLearned || 0) + 1;
     state.lastTopic = effTopic;
     state.lastAgent = agent.name;
 
@@ -223,10 +248,16 @@ export default async (request) => {
       let idx = (await kbLive.get('kb-index.json', { type: 'json' })) || { entries: [] };
       if (!Array.isArray(idx.entries)) idx.entries = [];
       const seen = new Set(idx.entries.map(e => e.key));
+      // Cross-body dedup: if a body with this exact hash is already indexed (under any
+      // topic/agent), don't index a second copy — 60 "Scope: single user…" clones used to
+      // all land as distinct retrievable entries. (2026-06-02)
+      const seenBody = new Set(idx.entries.map(e => e.bodyHash).filter(Boolean));
       for (const add of indexAdds) {
         if (seen.has(add.key)) continue;
+        if (add.bodyHash && seenBody.has(add.bodyHash)) continue;
         idx.entries.push(add);
         seen.add(add.key);
+        if (add.bodyHash) seenBody.add(add.bodyHash);
       }
       if (idx.entries.length > 6000) idx.entries = idx.entries.slice(-6000); // drop oldest
       idx.updatedAt = new Date().toISOString();
@@ -256,6 +287,7 @@ export default async (request) => {
     sessionFile: 'active.json',
     logFile: `log/${today}.jsonl`,
     newKbBits: newKbBits.length,
+    skipped: state.skipped || 0, // exchanges rejected by the trust gate (dialog/guess/stub)
     sampleBits: log.slice(-5)
   }), { status: 200, headers: cors });
 };
@@ -318,8 +350,22 @@ async function askAria(question, topic) {
     });
     if (!r.ok) return { text: 'no-response', state: 'UNKNOWN', confidence: 0 };
     const j = await r.json();
-    const text = (j.steps && j.steps.length) ? j.steps.slice(0, 2).join(' ') : (j.title || 'No curated answer.');
-    return { text, state: j.state || 'UNKNOWN', confidence: j.confidence || 0 };
+    // Capture the SUBSTANTIVE steps, not just the first two. For the first-principles
+    // reasoner steps[0,1] are generic Scope/Trigger boilerplate (identical across every
+    // topic) while the real diagnostic value is in the hypotheses that follow — the old
+    // slice(0,2) threw the value away and kept the noise. Join up to the bit budget and
+    // drop the canned clarifying-question / L2 footer lines. (Ahmad 2026-06-02)
+    const rawSteps = Array.isArray(j.steps) ? j.steps : [];
+    const useful = rawSteps.filter(s =>
+      !/^CLARIFYING QUESTION:/i.test(s) && !/^If none of these resolve/i.test(s));
+    const text = useful.length ? useful.join(' ') : (j.title || 'No curated answer.');
+    return {
+      text,
+      state: j.state || 'UNKNOWN',
+      confidence: j.confidence || 0,
+      source: j.source || '',
+      conversational: j.conversational === true
+    };
   } catch (e) {
     return { text: 'fetch-error', state: 'UNKNOWN', confidence: 0 };
   }
@@ -405,4 +451,62 @@ function isRealAnswer(r) {
   if (s.length < 25) return false;
   if (/^(no curated answer|no-response|fetch-error|no response)/i.test(s)) return false;
   return true;
+}
+
+// Signature of a junk body that the OLD loop banked as knowledge. Used by ?purge=1 to
+// recognize the ~90% non-content already sitting in the live store. (2026-06-02)
+function isJunkBody(body) {
+  const s = String(body || '').trim();
+  if (!isRealAnswer(s.split('\n')[0])) return true;          // stub / too short / no-match
+  // Conversational dialog moves — ARIA's greetings & "which app is this about?" clarifiers.
+  // Real KB answers open with content ("Microsoft 365…", "Confirm…", "DO NOT…", "Go to…"),
+  // never a greeting, so a greeting-prefix is a safe junk signature. Catches the dynamic
+  // clarifiers too ("Of course — what is OneDrive doing?"). (2026-06-02)
+  if (/^(Hi|Hey|Hello|Sure|Of course|Happy to|Absolutely|Great|Glad|No problem|Sorry|Take care|You're|You’re|Got it|Thanks|Thank you)\b[ ,—-]/i.test(s)) return true;
+  if (/^Scope: .*Isolate by trying the same action/i.test(s)) return true; // first-principles boilerplate
+  if (/^Scope: .*check status pages first/i.test(s)) return true;
+  return false;
+}
+
+// One-time sweep: delete junk learn-* bits from the live store and rebuild kb-index.json
+// from the survivors. Returns a report. (2026-06-02)
+async function purgeJunk(kbLive) {
+  let removed = 0, kept = 0, scanned = 0;
+  const survivors = [];
+  let cursor;
+  do {
+    const page = await kbLive.list({ prefix: 'learn-', cursor });
+    cursor = page.cursor;
+    for (const { key } of page.blobs) {
+      scanned++;
+      let doc;
+      try { doc = await kbLive.get(key, { type: 'json' }); } catch { continue; }
+      if (!doc) continue;
+      if (isJunkBody(doc.body)) {
+        try { await kbLive.delete(key); removed++; } catch (_) {}
+      } else {
+        kept++;
+        survivors.push({
+          key,
+          topic: doc.topic || '',
+          agent: doc.agent || '',
+          kw: `${doc.topic || ''} ${doc.agent || ''} ${doc.body || ''}`.toLowerCase().slice(0, 200),
+          bodyHash: hash6(String(doc.body || '').split('\n')[0]),
+          c: 0, promoted: false, t: Date.parse(doc.created_at || '') || 0
+        });
+      }
+    }
+  } while (cursor);
+  // Rebuild the index from survivors, collapsing identical bodies.
+  const seenBody = new Set();
+  const entries = [];
+  for (const e of survivors) {
+    if (e.bodyHash && seenBody.has(e.bodyHash)) continue;
+    if (e.bodyHash) seenBody.add(e.bodyHash);
+    entries.push(e);
+  }
+  try {
+    await kbLive.set('kb-index.json', JSON.stringify({ entries, updatedAt: new Date().toISOString(), rebuiltBy: 'purge' }), { contentType: 'application/json' });
+  } catch (_) {}
+  return { ok: true, action: 'purge', scanned, removed, kept, indexed: entries.length };
 }

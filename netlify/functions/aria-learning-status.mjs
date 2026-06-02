@@ -75,6 +75,11 @@ export default async (request) => {
       kbLiveCount,
       indexedCount,
       selfAudit,
+      // Surfaced for the command center (2026-06-02): the ranked "author these KB
+      // articles" backlog, and how much self-echoed slop the trust gate rejected.
+      topGaps: (selfAudit && selfAudit.topGaps) || [],
+      openGaps: (selfAudit && selfAudit.openGaps) || 0,
+      skippedSlop: state ? (state.skipped || 0) : 0,
       sessionStarted: state ? state.born : null
     });
   } catch (e) {
