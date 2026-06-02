@@ -177,7 +177,11 @@ export default async (request) => {
     //  - isRealAnswer: not a "No curated answer." / error / too-short stub.
     const isDialogMove = ariaResp.conversational || /^CONVO\./.test(ariaResp.state || '');
     const isGuess = /first-principles-reasoner/.test(ariaResp.source || '');
-    const worthKeeping = isRealAnswer(bit.r) && !isDialogMove && !isGuess;
+    // CONTENT-based guard (2026-06-02, found on live): clarifiers like "Happy to help.
+    // Which app is this about?" also arrive via NON-conversational paths (state
+    // DIAGNOSING_WHAT, conf 1.0), so a state/flag-only gate misses them. isJunkBody keys
+    // off the TEXT (greeting prefix / generic boilerplate), catching them from any path.
+    const worthKeeping = isRealAnswer(bit.r) && !isDialogMove && !isGuess && !isJunkBody(bit.r);
 
     // Feed REAL answers back into KB-LIVE so future user queries can reach this bit.
     // NOTE (2026-05-25): slug includes a short content hash so genuinely-new insights
@@ -473,9 +477,13 @@ async function groundWithLLM(question, topic, apiKey) {
     'Be accurate and specific to real IT/M365/Windows/networking practice. Prefer numbered steps.',
     'If the question is vague, not a real IT question, or you are not confident of a correct answer, reply with EXACTLY the single word: SKIP. Never guess or invent.'
   ].join(' ');
+  // Defensive (2026-06-02): the stored ANTHROPIC_API_KEY has a stray backslash+newline
+  // from a wrapped paste, which makes Headers.append throw "invalid header value". Anthropic
+  // keys contain no whitespace or backslashes, so stripping them reconstructs the real key.
+  const cleanKey = String(apiKey || '').replace(/[\s\\]/g, '');
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    headers: { 'x-api-key': cleanKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({
       model, max_tokens: 400, system,
       messages: [{ role: 'user', content: `Topic: ${topic}\nQuestion: ${question}` }]
@@ -584,6 +592,10 @@ function isJunkBody(body) {
   // never a greeting, so a greeting-prefix is a safe junk signature. Catches the dynamic
   // clarifiers too ("Of course — what is OneDrive doing?"). (2026-06-02)
   if (/^(Hi|Hey|Hello|Sure|Of course|Happy to|Absolutely|Great|Glad|No problem|Sorry|Take care|You're|You’re|Got it|Thanks|Thank you)\b[ ,—-]/i.test(s)) return true;
+  // Stock clarifier phrasings — catch them by content too, since they reach the loop via
+  // several states (CONVO.*, DIAGNOSING_WHAT, …), not just a greeting prefix. (2026-06-02)
+  if (/which app or service is this about/i.test(s)) return true;
+  if (/what (are you running into|exactly is happening|is .{1,30} doing)\b/i.test(s)) return true;
   if (/^Scope: .*Isolate by trying the same action/i.test(s)) return true; // first-principles boilerplate
   if (/^Scope: .*check status pages first/i.test(s)) return true;
   return false;
