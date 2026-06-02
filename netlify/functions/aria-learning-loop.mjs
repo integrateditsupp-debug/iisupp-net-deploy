@@ -462,8 +462,11 @@ async function askAria(question, topic) {
 // returned token usage (rates default to Haiku 4.5; override via env). (Ahmad #2, 2026-06-02)
 async function groundWithLLM(question, topic, apiKey) {
   const model = process.env.ARIA_LEARN_MODEL || 'claude-haiku-4-5-20251001';
-  const inRate = parseFloat(process.env.ARIA_LEARN_IN_RATE || '1') / 1e6;   // $/input token
-  const outRate = parseFloat(process.env.ARIA_LEARN_OUT_RATE || '5') / 1e6; // $/output token
+  // Per-million-token rates, chosen by model family so cost stays accurate whatever model
+  // is configured (env overrides win). Over-estimating is fail-safe for the cap.
+  const fam = /opus/i.test(model) ? [15, 75] : /sonnet/i.test(model) ? [3, 15] : [1, 5]; // [in,out] $/M; default Haiku
+  const inRate = (parseFloat(process.env.ARIA_LEARN_IN_RATE || '') || fam[0]) / 1e6;
+  const outRate = (parseFloat(process.env.ARIA_LEARN_OUT_RATE || '') || fam[1]) / 1e6;
   const system = [
     'You are ARIA, writing a concise internal IT-support knowledge-base entry for a Canadian MSP (Integrated IT Support).',
     'A support specialist asked the question below. Answer it as vetted, reusable KB guidance: a tight set of concrete steps or a short paragraph (max ~140 words, no preamble, no sign-off).',
