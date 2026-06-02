@@ -90,6 +90,7 @@ export default async (request) => {
     'Cache-Control': 'no-store'
   };
 
+  const t0 = Date.now(); // soft time budget — skip the LLM grounding pass on slow runs
   const url = new URL(request.url);
   const cycles = Math.min(parseInt(url.searchParams.get('cycles') || '8', 10), 50);
   const reset = url.searchParams.get('reset') === '1';
@@ -124,6 +125,7 @@ export default async (request) => {
   const log = [];
   const newKbBits = [];
   const indexAdds = []; // retrieval-index entries so aria-research can SERVE these bits
+  const gaps = [];      // genuine knowledge gaps (ARIA couldn't answer) → LLM grounding pass
 
   for (let i = 0; i < cycles; i++) {
     // Capture the prior turn BEFORE it's overwritten, so an agent can build on it.
@@ -207,6 +209,12 @@ export default async (request) => {
       } catch (_) {}
     } else {
       state.skipped = (state.skipped || 0) + 1; // observability: how much slop we rejected
+      // A genuine KNOWLEDGE gap = ARIA gave no real answer AND it wasn't just a
+      // conversational turn (a greeting isn't something to learn). These are the topics
+      // worth spending a governed LLM call on below. (2026-06-02)
+      if (!isDialogMove && effTopic && question) {
+        gaps.push({ topic: effTopic, question, agent: agent.name });
+      }
     }
 
     // Update active state
@@ -237,6 +245,81 @@ export default async (request) => {
     // If queue is dry, replenish with a fresh seed
     if (state.queue.length === 0) {
       state.queue.push(SEED_TOPICS[Math.floor(Math.random() * SEED_TOPICS.length)]);
+    }
+  }
+
+  // === LLM GROUNDING PASS (Ahmad approved #2, 2026-06-02) ===
+  // For the genuine knowledge gaps this run surfaced, spend ONE governed LLM call each to
+  // produce a real, vetted KB answer — the only way the loop learns something it didn't
+  // already have, instead of echoing its own templates. Every call is gated by
+  // aria-llm-governor (kill switch, monthly cap, dedicated learning sub-cap, one-shot per
+  // topic) so it cannot run away or starve the user-facing budget. Dormant-safe: with no
+  // ANTHROPIC_API_KEY it simply skips. Bounded to PER_RUN per invocation for speed/cost.
+  let llmLearned = 0;
+  const llmKey = process.env.ANTHROPIC_API_KEY;
+  const perRun = Math.max(0, parseInt(process.env.ARIA_LEARN_LLM_PER_RUN || '1', 10) || 0);
+  const timeBudgetMs = parseInt(process.env.ARIA_LEARN_TIME_BUDGET_MS || '7000', 10);
+  const slowRun = (Date.now() - t0) > timeBudgetMs;
+  if (slowRun && gaps.length) log.push({ event: 'llm-skip', why: 'time-budget', elapsedMs: Date.now() - t0, t: Date.now() });
+  if (llmKey && perRun > 0 && gaps.length && !slowRun) {
+    // De-dupe gaps by topic, prefer the first occurrence (keeps its question).
+    const uniq = [];
+    const seenTopic = new Set();
+    for (const g of gaps) {
+      const k = slugify(g.topic);
+      if (seenTopic.has(k)) continue;
+      seenTopic.add(k);
+      uniq.push(g);
+    }
+    for (const g of uniq.slice(0, perRun)) {
+      try {
+        // 1. Authorize (read-only check — does NOT charge or lock yet).
+        const auth = await fetch(`${ARIA_BASE}/.netlify/functions/aria-llm-governor`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'authorize-learning', topic: g.topic, estCostUsd: 0.005 })
+        }).then(r => r.json()).catch(() => null);
+        if (!auth || !auth.permit) {
+          log.push({ event: 'llm-skip', topic: g.topic, why: auth ? auth.code : 'governor-unreachable', t: Date.now() });
+          continue;
+        }
+        // 2. Make the one authorized call.
+        const ans = await groundWithLLM(g.question, g.topic, llmKey);
+        // 3. Commit the ACTUAL cost (charges + locks one-shot only now).
+        await fetch(`${ARIA_BASE}/.netlify/functions/aria-llm-governor`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'commit-learning', topic: g.topic, actualCostUsd: ans.costUsd })
+        }).catch(() => {});
+        // 4. Store ONLY if the model gave a real answer (it returns SKIP when unsure, so
+        //    we never bank a hallucination or a non-answer).
+        if (ans.text && !/^skip\b/i.test(ans.text) && isRealAnswer(ans.text)) {
+          const bitBody = ans.text + '\n\nLearned by ARIA (model: ' + ans.model + '). If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.';
+          const slug = `learn-llm-${slugify(g.topic)}-${hash6(ans.text)}`.slice(0, 72);
+          await kbLive.set(`${slug}.json`, JSON.stringify({
+            heading: `${g.topic}`,
+            body: bitBody,
+            source_url: null,
+            vendor: 'aria-llm-learning',
+            query_seed: g.question,
+            model: ans.model,
+            created_at: new Date().toISOString(),
+            agent: 'llm',
+            topic: g.topic
+          }), { contentType: 'application/json' });
+          newKbBits.push(slug);
+          indexAdds.push({
+            key: `${slug}.json`, topic: g.topic, agent: 'llm',
+            kw: `${g.topic} ${ans.text}`.toLowerCase().slice(0, 200),
+            bodyHash: hash6(ans.text), c: 0.7, promoted: false, t: Date.now()
+          });
+          llmLearned++;
+          state.bitsLearned = (state.bitsLearned || 0) + 1;
+          log.push({ event: 'llm-learn', topic: g.topic, chars: ans.text.length, cost: ans.costUsd, t: Date.now() });
+        } else {
+          log.push({ event: 'llm-skip', topic: g.topic, why: 'model-skip', t: Date.now() });
+        }
+      } catch (e) {
+        log.push({ event: 'llm-error', topic: g.topic, err: String(e && e.message || e), t: Date.now() });
+      }
     }
   }
 
@@ -288,6 +371,8 @@ export default async (request) => {
     logFile: `log/${today}.jsonl`,
     newKbBits: newKbBits.length,
     skipped: state.skipped || 0, // exchanges rejected by the trust gate (dialog/guess/stub)
+    gapsFound: gaps.length,      // genuine knowledge gaps this run
+    llmLearned,                  // gaps the governed LLM pass turned into real KB bits
     sampleBits: log.slice(-5)
   }), { status: 200, headers: cors });
 };
@@ -369,6 +454,39 @@ async function askAria(question, topic) {
   } catch (e) {
     return { text: 'fetch-error', state: 'UNKNOWN', confidence: 0 };
   }
+}
+
+// Ground a genuine knowledge gap with ONE Anthropic call. Returns { text, costUsd, model }.
+// The system prompt forces a CONCISE, vetted answer or the literal token "SKIP" when the
+// model isn't confident — so we never bank a hallucination. Cost is computed from the
+// returned token usage (rates default to Haiku 4.5; override via env). (Ahmad #2, 2026-06-02)
+async function groundWithLLM(question, topic, apiKey) {
+  const model = process.env.ARIA_LEARN_MODEL || 'claude-haiku-4-5-20251001';
+  const inRate = parseFloat(process.env.ARIA_LEARN_IN_RATE || '1') / 1e6;   // $/input token
+  const outRate = parseFloat(process.env.ARIA_LEARN_OUT_RATE || '5') / 1e6; // $/output token
+  const system = [
+    'You are ARIA, writing a concise internal IT-support knowledge-base entry for a Canadian MSP (Integrated IT Support).',
+    'A support specialist asked the question below. Answer it as vetted, reusable KB guidance: a tight set of concrete steps or a short paragraph (max ~140 words, no preamble, no sign-off).',
+    'Be accurate and specific to real IT/M365/Windows/networking practice. Prefer numbered steps.',
+    'If the question is vague, not a real IT question, or you are not confident of a correct answer, reply with EXACTLY the single word: SKIP. Never guess or invent.'
+  ].join(' ');
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({
+      model, max_tokens: 400, system,
+      messages: [{ role: 'user', content: `Topic: ${topic}\nQuestion: ${question}` }]
+    })
+  });
+  if (!r.ok) {
+    const err = await r.text().catch(() => '');
+    throw new Error(`anthropic ${r.status}: ${err.slice(0, 120)}`);
+  }
+  const data = await r.json();
+  const text = ((data.content && data.content[0] && data.content[0].text) || '').trim();
+  const u = data.usage || {};
+  const costUsd = +(((u.input_tokens || 0) * inRate) + ((u.output_tokens || 0) * outRate)).toFixed(6);
+  return { text, costUsd, model };
 }
 
 function deriveNextTopic(topic, agent, ariaResp) {

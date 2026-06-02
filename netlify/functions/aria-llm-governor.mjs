@@ -76,6 +76,14 @@ function rolledLedger(ledger) {
   }
   return ledger;
 }
+// Dedicated sub-cap for autonomous learning (rule 4 extension, 2026-06-02). Reserves a
+// small slice of the monthly budget for background learning so it can never consume the
+// user-facing one-shot allowance. Never exceeds the global effective cap.
+function learnCap(ledger) {
+  const v = parseFloat(process.env.ARIA_LEARN_LLM_CAP_USD || '2');
+  const sub = Number.isFinite(v) && v >= 0 ? v : 2;
+  return Math.min(sub, effectiveCap(ledger));
+}
 function effectiveCap(ledger) {
   const base = cap();
   const override = (ledger && ledger.capOverrideUsd) || 0;
@@ -165,6 +173,7 @@ export default async (request) => {
       ok: true,
       cap: { planCapUsd: cap(), effectiveCapUsd: limit, capOverrideUsd: ledger.capOverrideUsd || 0 },
       spend: { month: ledger.month, spendUsd: ledger.spendUsd, calls: ledger.calls, remainingUsd: Math.max(0, limit - ledger.spendUsd) },
+      learning: { spendUsd: ledger.learnSpendUsd || 0, capUsd: learnCap(ledger), remainingUsd: Math.max(0, learnCap(ledger) - (ledger.learnSpendUsd || 0)) },
       sla: SLA_MS, breachFactor: BREACH_FACTOR,
       oneShotIssues: Object.keys(issues).length,
       capAlert: alert, killSwitch: kill
@@ -198,6 +207,49 @@ export default async (request) => {
       await safeSet(store, KILL_KEY, { on, since: Date.now() });
       return jr({ ok: true, action, killSwitch: { on } });
     }
+  }
+
+  // ---- LEARNING path (2026-06-02, Ahmad approved #2) ----
+  // The autonomous learning loop is NOT a user issue with an SLA — the standard gate
+  // (free-path-exhausted AND breaching) would never permit it. But rule 3 (one-shot per
+  // topic) and rule 4 (spend cap) still apply, PLUS a dedicated learning SUB-CAP so
+  // background learning can never starve the user-facing one-shot budget.
+  // Contract is check-then-commit: authorize-learning only READS (so a transient LLM
+  // failure never permanently locks a topic); commit-learning charges + locks one-shot
+  // AFTER a real answer comes back. Single-threaded 15-min cron → race is negligible.
+  if (action === 'authorize-learning' || action === 'commit-learning') {
+    const ledger = rolledLedger(await safeJson(store, LEDGER_KEY, null));
+    const issues = await safeJson(store, ISSUES_KEY, {});
+    const killState = await safeJson(store, KILL_KEY, { on: false });
+    const killed = !!killState.on || process.env.ARIA_LLM_KILL === '1';
+    const topic = String(body.topic || body.query || '').trim().slice(0, 120).toLowerCase();
+    const key = 'learn:' + topic;
+    const est = Math.max(0, parseFloat(body.estCostUsd) || 0.005);
+    const lcap = learnCap(ledger);
+    const glimit = effectiveCap(ledger);
+    const learnSpend = ledger.learnSpendUsd || 0;
+
+    if (action === 'authorize-learning') {
+      if (!topic) return jr(mk(false, 'no-topic', 'topic required', {}));
+      if (killed) return jr(mk(false, 'kill-switch', 'LLM hard-disabled (kill switch). No learning calls.', { key }));
+      if (issues[key]) return jr(mk(false, 'one-shot-exhausted', 'This topic already used its one learning LLM call.', { key }));
+      if (learnSpend + est > lcap) return jr(mk(false, 'learn-cap-reached', `Learning sub-cap reached ($${learnSpend.toFixed(2)} of $${lcap.toFixed(2)}). No more autonomous learning calls this month.`, { key, learnSpend, lcap }));
+      if ((ledger.spendUsd || 0) + est > glimit) return jr(mk(false, 'cap-reached', `Monthly LLM cap reached ($${(ledger.spendUsd || 0).toFixed(2)} of $${glimit.toFixed(2)}).`, { key, capReached: true }));
+      return jr(mk(true, 'permit-learning', 'One learning LLM call authorized for this topic (commit after the answer returns).', { key, learnSpend, lcap, spend: ledger.spendUsd || 0, glimit }));
+    }
+
+    // commit-learning: charge the ACTUAL cost to both the global ledger and the learning
+    // sub-ledger, and lock the topic one-shot so it is never re-spent.
+    const actual = parseFloat(body.actualCostUsd);
+    if (Number.isFinite(actual) && actual > 0) {
+      ledger.spendUsd = Math.max(0, (ledger.spendUsd || 0) + actual);
+      ledger.learnSpendUsd = Math.max(0, learnSpend + actual);
+      ledger.calls = (ledger.calls || 0) + 1;
+      if (topic) issues[key] = { ts: Date.now(), reason: 'learning LLM call (one-shot)', costUsd: actual };
+      await safeSet(store, LEDGER_KEY, ledger);
+      await safeSet(store, ISSUES_KEY, issues);
+    }
+    return jr({ ok: true, action, spendUsd: ledger.spendUsd, learnSpendUsd: ledger.learnSpendUsd || 0, learnCapUsd: lcap });
   }
 
   // ---- commit: reconcile real cost after an authorized call ----
