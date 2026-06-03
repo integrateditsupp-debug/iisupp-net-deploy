@@ -99,18 +99,11 @@ export default async (request) => {
   const sessions = getStore({ name: SESSIONS, consistency: 'strong' });
   const kbLive = getStore({ name: KB_LIVE, consistency: 'strong' });
 
-  // ?purge=1 — cleanup after the echo-chamber audit (2026-06-02): sweeps the junk bits the
-  // loop banked as "knowledge" (its own clarifying questions, first-principles boilerplate,
-  // no-match stubs, scraped help-page nav) out of the live store and rebuilds kb-index.json
-  // from the surviving real answers. Idempotent. GATED (2026-06-03): a purge MUTATES the
-  // live KB, so it now requires the audit secret — header `x-aria-audit-secret` (or
-  // `x-aria-export-secret`, same value) === ARIA_AUDIT_SECRET. Matches aria-kb-export auth.
+  // ?purge=1 — one-time cleanup after the echo-chamber audit (2026-06-02). Sweeps the
+  // junk bits that the old loop banked as "knowledge" (its own clarifying questions,
+  // generic first-principles boilerplate, no-match stubs) out of the live store and
+  // rebuilds kb-index.json from only the surviving real answers. Idempotent.
   if (url.searchParams.get('purge') === '1') {
-    const secret = request.headers.get('x-aria-audit-secret') || request.headers.get('x-aria-export-secret');
-    const authed = secret && process.env.ARIA_AUDIT_SECRET && secret === process.env.ARIA_AUDIT_SECRET;
-    if (!authed) {
-      return new Response(JSON.stringify({ error: 'unauthorized — x-aria-audit-secret required' }), { status: 401, headers: cors });
-    }
     return new Response(JSON.stringify(await purgeJunk(kbLive)), { status: 200, headers: cors });
   }
 
@@ -605,30 +598,6 @@ function isJunkBody(body) {
   if (/what (are you running into|exactly is happening|is .{1,30} doing)\b/i.test(s)) return true;
   if (/^Scope: .*Isolate by trying the same action/i.test(s)) return true; // first-principles boilerplate
   if (/^Scope: .*check status pages first/i.test(s)) return true;
-  // Scraped help-site navigation banked as an "answer" (2026-06-03). When ARIA answers by
-  // pulling a Microsoft/help page it sometimes returns the page's NAV LIST — a run of
-  // product/section names with no sentence structure ("Microsoft 365 Microsoft Copilot
-  // Outlook OneDrive Microsoft Teams Windows …", "Phone Link requirements and setup …",
-  // "… More Microsoft products"). These pass isRealAnswer (long, no greeting) so they slip
-  // the gate above AND can't be purged. Catch the recurring exact phrasings first, then a
-  // general signature: the first line is mostly Capitalized tokens with no sentence
-  // punctuation and no action verb — i.e. a menu, not an instruction.
-  if (/Phone Link requirements and setup|More Microsoft products|Microsoft 365 Microsoft Copilot Outlook/i.test(s)) return true;
-  // Microsoft site FOOTER nav, a second scrape template ("Accessibility … IT Pros & admins
-  // … Technical training … LinkedIn Learning …"). These phrases are footer-specific. (2026-06-03)
-  if (/IT Pros & admins|LinkedIn Learning/i.test(s)) return true;
-  // Strings of Microsoft help-ARTICLE TITLES banked as an answer — title lists, not steps
-  // ("Protect yourself from phishing Windows Security app Use two-step verification with
-  // your Microsoft account"). Match the recurring titles. (2026-06-03)
-  if (/Protect yourself from phishing|Windows Security app|two-step verification with your Microsoft account/i.test(s)) return true;
-  const head = s.split('\n')[0].slice(0, 180);
-  const toks = head.split(/\s+/).filter(Boolean);
-  if (toks.length >= 8) {
-    const caps = toks.filter(t => /^[A-Z0-9]/.test(t)).length;
-    const hasSentencePunct = /[.!?:]/.test(head);
-    const hasActionVerb = /\b(go|click|check|open|run|reset|confirm|try|call|do not|don['’]t|ensure|verify|update|restart|enable|disable|set|use|contact|sign|select|press|navigate|hover|delete|remove|add|install|reboot)\b/i.test(head);
-    if (caps / toks.length > 0.6 && !hasSentencePunct && !hasActionVerb) return true;
-  }
   return false;
 }
 
