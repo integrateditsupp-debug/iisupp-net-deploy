@@ -40,7 +40,8 @@
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;width:100%;overflow:hidden}
+  html,body{min-height:100%;width:100%;overflow-x:hidden}
+  html{height:100%}
   body{
     background:
       radial-gradient(ellipse 70% 50% at 30% 55%, rgba(80,55,20,.18), transparent 70%),
@@ -78,19 +79,22 @@
 
   /* ============== LAYOUT ============== */
   .app{
-    height:100%;
+    height:100dvh;
+    min-height:620px;
     display:grid;
-    grid-template-columns: 244px 1fr 580px;
+    grid-template-columns:minmax(0,1fr) minmax(360px,560px);
+    grid-template-rows:auto auto minmax(0,1fr);
     gap:18px;
     padding:60px 22px 22px;
     position:relative;z-index:1;
+    overflow:hidden;
   }
   /* embed-friendly: collapse padding/gaps when host iframe is short */
   @media (max-height:820px){
     .app{padding:50px 18px 18px;gap:14px}
   }
   @media (max-height:720px){
-    .app{padding:44px 16px 16px;gap:12px;grid-template-columns:228px 1fr 540px}
+    .app{padding:44px 16px 16px;gap:12px;grid-template-columns:minmax(0,1fr) minmax(340px,520px)}
     .topbar{top:14px;font-size:10px}
   }
   .topbar{
@@ -111,6 +115,7 @@
     position:relative;overflow:hidden;
     border:1px solid var(--border);border-radius:18px;
     background:var(--panel);
+    min-height:0;min-width:0;
   }
   .view{
     position:absolute;inset:0;
@@ -173,7 +178,7 @@
 
   /* ====== CHAT VIEW ====== */
   .browser-body{
-    flex:1;padding:14px 8px 68px;overflow-y:auto;
+    flex:1;padding:14px 8px 118px;overflow-y:auto;
     scroll-behavior:smooth;
   }
   .browser-body::-webkit-scrollbar{width:7px}
@@ -646,10 +651,12 @@
   }
   .topic-chip:hover{background:rgba(60,42,18,.55);border-color:var(--border-glow);color:var(--gold-bright)}
 
-  /* chat history bar (bottom-right of left/chat panel) */
+  /* chat action row under the centered input dock */
   .history-bar{
-    position:absolute;bottom:14px;right:18px;
-    display:flex;gap:6px;z-index:30;
+    position:relative;
+    display:flex;gap:8px;z-index:30;
+    justify-content:center;align-items:center;
+    flex-wrap:wrap;
   }
   .history-toggle, .history-clear{
     font-family:var(--mono);font-size:9px;letter-spacing:.22em;
@@ -669,7 +676,7 @@
   }
   .history-toggle .caret{font-size:10px;line-height:1;margin-left:2px}
   .history-dropdown{
-    display:none;position:absolute;bottom:100%;right:0;margin-bottom:6px;
+    display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:6px;
     width:300px;max-height:260px;overflow-y:auto;
     background:rgba(15,11,6,.96);
     border:1px solid var(--border-2);border-radius:10px;
@@ -729,31 +736,36 @@
   @keyframes wave{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
 
   /* ====== DASHBOARD VIEW ====== */
-  .ops-body{padding:18px;display:flex;flex-direction:column;gap:14px;height:100%}
+  .ops-body{padding:18px;display:flex;flex-direction:column;gap:14px;height:100%;overflow:auto}
   .ops-banner{
     border:1px solid var(--border);border-radius:14px;
-    padding:18px 22px;display:grid;grid-template-columns:1.5fr auto auto auto auto;gap:24px;
+    padding:18px 22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:16px;
     background:var(--card);align-items:center;
   }
+  .ops-banner > div:first-child{grid-column:1 / -1}
   .ops-banner .title{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;font-weight:500}
   .ops-banner .head{font-family:var(--serif);font-size:22px;color:var(--cream-2);font-weight:500}
   .ops-banner .head em{font-style:italic;color:var(--gold-bright);font-weight:500}
   .ops-stat{text-align:right}
   .ops-stat .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase}
   .ops-stat .val{font-family:var(--serif);font-size:22px;color:var(--cream-2);margin-top:4px;font-weight:500}
-  .ops-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;flex:1;min-height:0}
-  .tier{border:1px solid var(--border);border-radius:14px;padding:18px 18px 14px;background:var(--panel-2);display:flex;flex-direction:column}
+  .ops-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;flex:0 0 auto;min-height:max-content}
+  .tier{border:1px solid var(--border);border-radius:14px;padding:18px 18px 14px;background:var(--panel-2);display:flex;flex-direction:column;min-height:0}
   .tier .label{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;font-weight:500}
   .tier .heading{font-family:var(--serif);font-size:18px;color:var(--cream-2);margin-bottom:18px;line-height:1.25;font-weight:500}
-  .tier .items{display:flex;flex-direction:column;gap:10px;flex:1}
-  .tier-item{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:rgba(20,15,8,.5);transition:all .2s}
+  .tier .items{display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
+  .tier-item{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:rgba(20,15,8,.5);transition:all .2s;min-width:0}
   .tier-item:hover{border-color:var(--border-2);background:rgba(34,25,13,.6)}
-  .tier-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:7px;background:rgba(60,42,18,.4);color:var(--gold)}
+  .tier-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:7px;background:rgba(60,42,18,.4);color:var(--gold);font-family:var(--mono);font-size:9px;letter-spacing:.08em;font-weight:700}
   .tier-icon svg{width:15px;height:15px}
   .tier-item .name{font-size:13px;color:var(--cream)}
   .tier-item .avg{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:2px}
   .tier-item .delta{font-family:var(--mono);font-size:11px;color:var(--gold-bright);letter-spacing:.05em;font-weight:500}
   .tier-item .delta.stable,.tier-item .delta.zero{color:var(--green)}
+  .tier-item .delta.watch{color:#e0a060}
+  .tier-summary{margin-top:12px;border-top:1px dashed rgba(180,140,70,.16);padding-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tier-summary span{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);line-height:1.35}
+  .tier-summary strong{display:block;font-family:var(--serif);font-size:17px;letter-spacing:0;color:var(--cream-2);line-height:1;margin-bottom:3px}
   .tier-actions{display:flex;justify-content:center;gap:10px;margin-top:14px}
   .tier-btn{padding:7px 16px;border:1px solid var(--border-2);border-radius:999px;background:transparent;color:var(--gold);font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;font-weight:500}
   .tier-btn:hover{background:rgba(60,42,18,.4)}
@@ -765,8 +777,8 @@
     background:var(--panel);
     padding:18px 18px 16px;
     display:flex;flex-direction:column;
-    overflow:hidden;position:relative;
-    min-height:0;
+    overflow-x:hidden;overflow-y:auto;position:relative;
+    min-height:0;min-width:0;
   }
   /* 60 / 40 vertical split — ARIA dominant, content below */
   #rightDefault{display:flex;flex-direction:column;flex:1;min-height:0;gap:0}
@@ -778,6 +790,7 @@
   .aria-section > .input-row{flex-shrink:0}
   .aria-section > .globe-area{flex:1 1 0;min-height:0}
   .content-section > .divider,
+  .content-section > .it-pulse,
   .content-section > .status-panel,
   .content-section > .insights,
   .content-section > .quick-actions{flex-shrink:0}
@@ -952,6 +965,51 @@
   .status-head .led.green{background:var(--green);box-shadow:0 0 8px var(--green)}
   .status-head .led.amber{background:var(--gold-bright);box-shadow:0 0 8px var(--gold-bright)}
   .status-text{color:var(--cream);font-size:12px;line-height:1.5}
+  .it-pulse{
+    border:1px solid var(--border);border-radius:11px;
+    background:rgba(15,11,6,.5);padding:11px 13px;margin-bottom:10px;
+  }
+  .pulse-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
+  .pulse-card{
+    display:grid;grid-template-columns:54px minmax(0,1fr);gap:9px;align-items:center;
+    min-width:0;text-decoration:none;color:inherit;
+    border:1px solid var(--border);border-radius:9px;background:rgba(20,14,7,.42);
+    padding:7px;transition:border-color .2s,background .2s,transform .2s;
+  }
+  .pulse-card:hover{border-color:var(--border-glow);background:rgba(34,25,13,.62);transform:translateY(-1px)}
+  .pulse-thumb{
+    height:48px;border-radius:7px;position:relative;overflow:hidden;
+    border:1px solid rgba(212,168,90,.18);
+    background:radial-gradient(circle at 30% 25%,rgba(240,216,149,.55),transparent 24%),linear-gradient(135deg,#271909,#090705);
+  }
+  .pulse-thumb::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(120deg,transparent 0 38%,rgba(255,255,255,.14) 42%,transparent 50% 100%);
+    opacity:.45;
+  }
+  .pulse-thumb::after{
+    content:attr(data-mark);position:absolute;right:7px;bottom:5px;
+    font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:#f0d895;text-shadow:0 0 12px rgba(240,216,149,.55);
+  }
+  .pulse-bank{background:radial-gradient(circle at 68% 35%,rgba(45,212,191,.34),transparent 28%),linear-gradient(135deg,#10212a,#130d06)}
+  .pulse-cyber{background:radial-gradient(circle at 30% 30%,rgba(109,186,133,.38),transparent 30%),linear-gradient(135deg,#151f13,#0c0805)}
+  .pulse-chip{background:radial-gradient(circle at 62% 28%,rgba(90,150,255,.32),transparent 28%),linear-gradient(135deg,#0d1627,#150d05)}
+  .pulse-fact{background:radial-gradient(circle at 38% 32%,rgba(240,216,149,.42),transparent 30%),linear-gradient(135deg,#231506,#070504)}
+  .pulse-copy{min-width:0}
+  .pulse-tag{font-family:var(--mono);font-size:7.5px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+  .pulse-title{font-size:11.5px;line-height:1.25;color:var(--cream-2);font-weight:600}
+  .pulse-meta{font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;margin-top:5px}
+  .sla-panel{
+    border:1px solid var(--border);border-radius:11px;
+    background:rgba(15,11,6,.5);padding:11px 13px;margin-bottom:10px;
+  }
+  .sla-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .sla-cell{
+    border:1px solid var(--border);border-radius:8px;background:rgba(20,14,7,.42);
+    padding:8px 9px;min-width:0;
+  }
+  .sla-cell .v{font-family:var(--serif);font-size:17px;line-height:1;color:var(--cream-2);font-weight:500}
+  .sla-cell .k{font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-top:5px;line-height:1.3}
   .issue-list{display:flex;flex-direction:column;gap:6px}
   .issue-row{
     display:flex;align-items:flex-start;gap:8px;
@@ -985,6 +1043,7 @@
     background:rgba(20,14,7,.45);color:var(--cream);
     font-size:11.5px;cursor:pointer;transition:all .2s;text-align:left;
     font-family:var(--sans);
+    min-width:0;line-height:1.25;
   }
   .qa-chip:hover{border-color:var(--border-glow);background:rgba(34,25,13,.65);transform:translateY(-1px)}
   .qa-chip svg{width:13px;height:13px;color:var(--gold);flex-shrink:0}
@@ -1062,162 +1121,49 @@
   .fade-in{animation:fadeIn .55s ease forwards;opacity:0}
   @keyframes fadeIn{to{opacity:1}}
 
-  @media (max-width:1100px){
-    .app{grid-template-columns:1fr;grid-template-rows:auto auto;height:auto;min-height:100vh;overflow-y:auto;padding-top:54px}
+  @media (max-height:820px) and (min-width:901px){
+    .right{padding:14px}
+    .right-head{margin-bottom:10px}
+    #rightDefault{display:block!important;flex:0 0 auto;min-height:0}
+    .aria-section,.content-section{display:flex;flex-direction:column;flex:0 0 auto;min-height:0}
+    .content-section{margin-top:8px}
+    .live-row{margin-bottom:8px}
+    .stats-top{gap:6px;margin-bottom:8px}
+    .stat-box{min-height:58px;padding:7px 8px}
+    .stat-box .num{font-size:14px}
+    .stat-box .lbl{font-size:6.8px;letter-spacing:.14em}
+    .aria-section > .globe-area{grid-template-columns:64px minmax(0,1fr) 64px;gap:6px;height:132px;min-height:132px;max-height:132px;margin:4px 0 6px;overflow:hidden}
+    .side-stats{gap:5px}
+    .side-stat{padding:5px 7px}
+    .side-stat .icon{display:none}
+    .side-stat .num{font-size:12px}
+    .side-stat .lbl{display:none}
+    .globe-wrap,.globe-stage,.globe{overflow:hidden}
+    .globe-stage{width:min(100%, 160px);height:132px;max-height:132px}
+    .speak-area{margin:2px 0 8px}
+    .speak-label{font-size:15px;margin-bottom:6px}
+    .mic-btn{width:46px;height:46px}
+    .mic-btn svg{width:18px;height:18px}
+    .divider{margin-bottom:8px}
+    .status-panel,.sla-panel,.it-pulse,.insights{padding:9px 11px;margin-bottom:8px}
+    .pulse-grid{grid-template-columns:1fr 1fr;gap:6px}
+    .pulse-card{grid-template-columns:42px minmax(0,1fr);gap:7px;padding:6px}
+    .pulse-thumb{height:40px}
+    .pulse-title{font-size:10.5px}
+    .pulse-tag,.pulse-meta{font-size:6.8px;letter-spacing:.12em}
+    .sla-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .sla-cell .v{font-size:14px}
+    .sla-cell .k{font-size:6.8px;letter-spacing:.12em}
+    .quick-actions{padding:9px 11px}
+  }
+
+  @media (max-width:900px){
+    .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto;height:auto;min-height:100vh;overflow:visible;padding-top:54px}
     body{overflow:auto;height:auto;min-height:100vh}
     .stats-top{grid-template-columns:repeat(4,1fr)}
-    .right{position:relative}
+    .left{height:clamp(520px,70dvh,700px)}
+    .right{position:relative;min-height:720px;overflow:visible}
   }
-
-  /* ====== CORE BRAIN VIEW ====== */
-  .brain-view{
-    display:flex;flex-direction:column;height:100%;overflow-y:auto;
-    padding:22px 22px 28px;gap:22px;
-    scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;
-  }
-  .brain-view::-webkit-scrollbar{width:4px}
-  .brain-view::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:4px}
-
-  .brain-header{
-    display:flex;align-items:center;gap:12px;padding-bottom:14px;
-    border-bottom:1px solid var(--border-2);flex-shrink:0;
-  }
-  .brain-header .bh-mark{
-    width:32px;height:32px;border-radius:8px;flex-shrink:0;
-    background:linear-gradient(155deg,#f0d895 0%,#d4a85a 50%,#8a6020 100%);
-    display:flex;align-items:center;justify-content:center;
-    font-family:var(--serif);font-weight:700;color:#1a1208;font-size:16px;
-  }
-  .brain-header .bh-title{
-    font-family:var(--mono);font-size:11px;letter-spacing:.28em;
-    text-transform:uppercase;color:var(--gold);
-  }
-  .brain-header .bh-sub{
-    font-family:var(--mono);font-size:9px;letter-spacing:.22em;
-    text-transform:uppercase;color:var(--muted);margin-top:2px;
-  }
-  .brain-header .bh-badge{
-    margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.2em;
-    text-transform:uppercase;padding:3px 8px;border-radius:4px;
-    background:rgba(212,168,90,.12);border:1px solid rgba(212,168,90,.3);
-    color:var(--gold-bright);
-  }
-
-  /* Stack + Tree columns */
-  .brain-cols{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;flex-shrink:0}
-  @media (max-width:900px){.brain-cols{grid-template-columns:1fr}}
-  @media (max-width:720px){
-    .app{padding:48px 8px 8px}
-    .left,.right{padding:12px;border-radius:10px}
-    .stats-top{grid-template-columns:repeat(2,1fr)!important;gap:8px;margin-bottom:10px}
-    .qa-grid{grid-template-columns:1fr;gap:8px}
-    .brain-cols{grid-template-columns:1fr!important;gap:12px}
-    .brain-tree-panel{max-width:100%}
-    .input-row{flex-wrap:wrap}
-    .input-row>input{min-width:0;flex:1 1 60%}
-    body{overflow-x:hidden}
-    h1,h2{font-size:1.1rem}
-    .panel,.card{padding:10px!important}
-  }
-  @media (max-width:480px){
-    .stats-top{grid-template-columns:repeat(2,1fr)!important}
-    .quick-actions{gap:8px}
-    .speak-area{padding:8px}
-  }
-
-  /* Stack panel */
-  .brain-stack{
-    border:1px solid var(--border);border-radius:14px;
-    background:var(--panel);padding:16px 14px;display:flex;flex-direction:column;gap:0;
-  }
-  .stack-title{
-    font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;
-    color:var(--gold-soft);margin-bottom:12px;
-  }
-  .stack-layer{
-    display:flex;align-items:center;gap:10px;padding:7px 10px;
-    border-radius:8px;border:1px solid transparent;
-    transition:border-color .2s,background .2s;cursor:default;
-  }
-  .stack-layer:hover{border-color:var(--border-2);background:var(--card-hover)}
-  .stack-layer .sl-icon{
-    width:26px;height:26px;border-radius:6px;flex-shrink:0;
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(212,168,90,.1);
-  }
-  .stack-layer .sl-icon svg{width:13px;height:13px;color:var(--gold)}
-  .stack-layer .sl-name{font-family:var(--mono);font-size:10px;color:var(--cream);letter-spacing:.08em}
-  .stack-layer .sl-role{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
-  .stack-arrow{
-    display:flex;align-items:center;justify-content:center;
-    height:10px;color:rgba(212,168,90,.35);font-size:11px;
-  }
-  .stack-layer.sl-new{border-color:rgba(212,168,90,.25);background:rgba(212,168,90,.06)}
-  .stack-layer.sl-new .sl-name{color:var(--gold-bright)}
-
-  /* Cognitive Tree panel */
-  .brain-tree-panel{
-    border:1px solid var(--border);border-radius:14px;
-    background:var(--panel);padding:16px 14px;
-  }
-  .tree-title{
-    font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;
-    color:var(--gold-soft);margin-bottom:14px;
-  }
-  .tree-root{font-family:var(--mono);font-size:11px;color:var(--gold-bright);letter-spacing:.12em;margin-bottom:10px}
-  .tree-branch{margin-left:14px;border-left:1px solid var(--border);padding-left:10px}
-  .tree-node{
-    display:flex;align-items:flex-start;gap:8px;padding:5px 8px;
-    border-radius:7px;margin-bottom:2px;border:1px solid transparent;
-    transition:border-color .18s,background .18s;cursor:default;
-    position:relative;
-  }
-  .tree-node::before{
-    content:'';position:absolute;left:-11px;top:50%;
-    width:10px;height:1px;background:var(--border);
-  }
-  .tree-node:hover{border-color:var(--border-2);background:var(--card-hover)}
-  .tree-node .tn-dot{
-    width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;
-    background:var(--gold-dim);border:1px solid var(--gold-soft);
-    transition:background .2s;
-  }
-  .tree-node:hover .tn-dot{background:var(--gold)}
-  .tree-node.tn-highlight .tn-dot{background:var(--gold-bright);box-shadow:0 0 8px rgba(240,216,149,.45)}
-  .tree-node.tn-new .tn-dot{background:rgba(109,186,133,.8);border-color:#6dba85;box-shadow:0 0 7px rgba(109,186,133,.3)}
-  .tree-node .tn-label{font-family:var(--mono);font-size:10px;color:var(--cream);letter-spacing:.07em;line-height:1.4}
-  .tree-node .tn-desc{font-family:var(--sans);font-size:9px;color:var(--muted);line-height:1.4;margin-top:1px}
-  .tree-node .tn-badge{
-    margin-left:auto;flex-shrink:0;font-family:var(--mono);font-size:7.5px;
-    letter-spacing:.15em;text-transform:uppercase;padding:2px 6px;border-radius:3px;
-  }
-  .tn-badge.badge-new{background:rgba(109,186,133,.14);border:1px solid rgba(109,186,133,.35);color:#6dba85}
-  .tn-badge.badge-core{background:rgba(212,168,90,.1);border:1px solid rgba(212,168,90,.25);color:var(--gold)}
-  .tn-badge.badge-ultra{background:rgba(240,216,149,.12);border:1px solid rgba(240,216,149,.35);color:var(--gold-bright)}
-
-  .tree-sub-branch{margin-left:12px;border-left:1px solid rgba(180,140,70,.1);padding-left:10px;margin-top:2px}
-  .tree-section-label{
-    font-family:var(--mono);font-size:8.5px;letter-spacing:.25em;text-transform:uppercase;
-    color:var(--muted-2);padding:6px 8px 3px;
-  }
-
-  /* Video player */
-  .brain-video-wrap{
-    border:1px solid var(--border);border-radius:14px;overflow:hidden;
-    background:#060402;flex-shrink:0;position:relative;
-  }
-  .brain-video-header{
-    padding:12px 16px;border-bottom:1px solid var(--border);
-    display:flex;align-items:center;gap:10px;
-  }
-  .brain-video-header .bvh-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px rgba(212,168,90,.5);animation:ariaFabPulse 2.2s ease-in-out infinite}
-  .brain-video-header .bvh-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
-  .brain-video-header .bvh-meta{margin-left:auto;font-family:var(--mono);font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
-  .brain-video-player{
-    width:100%;aspect-ratio:16/9;display:block;
-    background:#040302;
-  }
-  .brain-video-player:focus{outline:none}
 </style>
   <link rel="canonical" href="https://iisupp.net/aria">
   <meta property="og:type" content="website">
@@ -1238,10 +1184,11 @@
     --ap-teal:#2dd4bf; --ap-teal-glow:rgba(45,212,191,.18); --ap-amber:#fbbf24; --ap-red:#fb7185; --ap-green:#4ade80;
     --ap-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
   }
-  /* 3-column shell with a full-width scenario band on top (desktop only) */
-  @media (min-width:1101px){
-    .app{grid-template-columns:300px minmax(0,1fr) 560px;grid-template-rows:auto minmax(0,1fr)}
+  /* 2-column shell with public-safe monitoring bands on top (desktop only) */
+  @media (min-width:901px){
+    .app{grid-template-columns:minmax(0,1fr) minmax(380px,560px);grid-template-rows:auto auto minmax(0,1fr)}
     .ap-band{grid-column:1 / -1}
+    .ap-rail{grid-column:1 / -1}
   }
   /* ---- scenario band (top, full width) ---- */
   .ap-band{background:var(--ap-surface);border:1px solid var(--ap-border);border-radius:14px;padding:13px 16px;min-width:0}
@@ -1255,9 +1202,16 @@
   .ap-tag{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;font-family:var(--ap-mono);font-size:10px;background:var(--ap-surface-2);border:1px solid var(--ap-border);color:var(--ap-text-2);border-radius:2px}
   .ap-tag-key{color:var(--ap-text-3)} .ap-tag-val{color:var(--ap-text);font-weight:500}
   .ap-tag-lead{background:var(--ap-teal-glow);border-color:var(--ap-teal)} .ap-tag-lead .ap-tag-val{color:var(--ap-teal)}
-  /* ---- left rail ---- */
-  .ap-rail{display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto;padding-right:3px}
-  .ap-rail::-webkit-scrollbar{width:6px}
+  /* ---- public-safe monitoring strip ---- */
+  .ap-rail{
+    display:grid;
+    grid-template-columns:minmax(220px,.7fr) minmax(260px,.85fr) minmax(340px,1.35fr);
+    gap:12px;
+    min-width:0;
+    min-height:0;
+    overflow:hidden;
+  }
+  .ap-rail::-webkit-scrollbar{height:6px}
   .ap-rail::-webkit-scrollbar-thumb{background:var(--ap-border-2);border-radius:8px}
   .ap-card{background:var(--ap-surface);border:1px solid var(--ap-border);border-radius:10px;padding:13px}
   .ap-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -1267,33 +1221,35 @@
   .ap-stage-text{font-family:var(--ap-mono);font-size:12px;font-weight:500;color:var(--ap-text);margin:6px 0 12px}
   .ap-progressbar{height:3px;background:var(--ap-surface-2);border-radius:1px;overflow:hidden}
   .ap-progressbar-fill{height:100%;background:var(--ap-teal);box-shadow:0 0 8px var(--ap-teal-glow);transition:width .5s ease}
-  .ap-agents-grid{display:flex;flex-wrap:wrap;gap:6px}
-  .ap-chip-agent{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;font-family:var(--ap-mono);font-size:10px;background:var(--ap-surface-2);border:1px solid var(--ap-border-2);color:var(--ap-text);border-radius:2px}
-  .ap-chip-agent.on{border-color:var(--ap-teal);background:var(--ap-teal-glow)}
-  .ap-chip-count{font-size:9.5px;color:var(--ap-teal);font-weight:700}
   .ap-fw-grid{display:flex;flex-wrap:wrap;gap:5px}
   .ap-fw-cell{min-width:30px;text-align:center;padding:5px 4px;background:var(--ap-surface-2);border:1px solid var(--ap-border);border-radius:2px;font-family:var(--ap-mono);font-size:11px;font-weight:700;color:var(--ap-text-2);transition:all .2s}
   .ap-fw-cell.on{border-color:var(--ap-teal);background:var(--ap-teal-glow);color:var(--ap-teal);box-shadow:0 0 8px rgba(45,212,191,.25)}
-  .ap-layer-row{display:grid;grid-template-columns:84px 1fr 42px;align-items:center;gap:8px;padding:4px 0;font-family:var(--ap-mono);font-size:10px}
+  .ap-layer-row{display:grid;grid-template-columns:minmax(70px,84px) 1fr 42px;align-items:center;gap:8px;padding:3px 0;font-family:var(--ap-mono);font-size:10px}
   .ap-layer-name{color:var(--ap-text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .ap-layer-bar{height:5px;background:var(--ap-surface-2);border-radius:1px;overflow:hidden}
   .ap-layer-bar-fill{height:100%;background:var(--ap-teal);box-shadow:0 0 6px var(--ap-teal-glow);transition:width .5s ease}
   .ap-layer-pct{text-align:right;color:var(--ap-text-2);font-weight:600}
-  .ap-recon{display:flex;flex-wrap:wrap;gap:6px}
-  .ap-recon span{font-family:var(--ap-mono);font-size:10px;padding:4px 9px;border-radius:2px;background:var(--ap-teal-glow);border:1px solid rgba(45,212,191,.3);color:var(--ap-teal)}
-  .ap-conv-stream{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;padding-right:3px}
-  .ap-msg{display:flex;flex-direction:column;gap:3px}
-  .ap-msg.user{align-items:flex-end}
-  .ap-msg-from{font-family:var(--ap-mono);font-size:9px;letter-spacing:.2em;color:var(--ap-text-3);text-transform:uppercase;font-weight:600}
-  .ap-msg-from.aria{color:var(--ap-teal)}
-  .ap-msg-bubble{padding:9px 12px;background:var(--ap-surface-2);border:1px solid var(--ap-border);font-size:11.5px;line-height:1.55;color:var(--ap-text);border-radius:4px}
-  .ap-msg.user .ap-msg-bubble{max-width:88%}
   /* relocated chat input dock (was under "Tap to speak") */
-  .chat-dock{position:absolute;left:16px;right:128px;bottom:12px;z-index:25}
-  .chat-dock .input-row{margin-bottom:0}
-  @media (max-width:1100px){
-    .chat-dock{position:static;left:auto;right:auto;bottom:auto;margin:10px 4px 4px}
-    .ap-rail{max-height:none}
+  .chat-dock{
+    position:absolute;left:50%;bottom:12px;z-index:25;
+    width:min(100% - 32px, 760px);
+    transform:translateX(-50%);
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .chat-dock .input-row{margin:0;width:100%;box-shadow:0 10px 26px rgba(0,0,0,.35)}
+  #aria-v04-inline{display:inline-flex!important;gap:8px!important;margin-right:0!important;align-items:center;flex-wrap:wrap;justify-content:center}
+  #aria-v04-end-btn,#aria-v04-callback-btn{border-radius:7px!important}
+  @media (max-width:900px){
+    .chat-dock{position:static;left:auto;right:auto;bottom:auto;width:auto;transform:none;margin:10px 4px 4px}
+    .ap-rail{grid-template-columns:1fr;max-height:none;overflow:visible}
+    .ap-card{padding:12px}
+  }
+  @media (max-width:520px){
+    .pulse-grid{grid-template-columns:1fr}
+  }
+  @media (min-width:901px){
+    #apLayerRows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+    .ap-card:nth-child(3){padding-bottom:10px}
   }
 </style>
 
@@ -1318,16 +1274,12 @@
     </div>
   </header>
 
-  <!-- ================ APERTURE MONITORING RAIL (left) ================ -->
-  <aside class="ap-rail" id="apRail" aria-label="ARIA live monitoring">
+  <!-- ================ APERTURE MONITORING STRIP (top) ================ -->
+  <aside class="ap-rail" id="apRail" aria-label="ARIA live status">
     <div class="ap-card">
       <div class="ap-card-head"><span class="ap-section-label">Current Stage</span><span class="ap-count"><span class="a" id="apStageNow">13</span> / <span id="apStageMax">13</span></span></div>
       <div class="ap-stage-text" id="apStageText">Response · STAR summary</div>
       <div class="ap-progressbar"><div class="ap-progressbar-fill" id="apStageFill" style="width:100%"></div></div>
-    </div>
-    <div class="ap-card">
-      <div class="ap-card-head"><span class="ap-section-label">Agents Fired</span><span class="ap-count"><span class="a" id="apAgentsUnique">11</span> unique · <span id="apAgentsTotal">25</span> total</span></div>
-      <div class="ap-agents-grid" id="apAgentsGrid"></div>
     </div>
     <div class="ap-card">
       <div class="ap-card-head"><span class="ap-section-label">Frameworks</span><span class="ap-count">lead: <span class="a" id="apFwLead">V Eisenhower</span></span></div>
@@ -1336,16 +1288,6 @@
     <div class="ap-card">
       <div class="ap-card-head"><span class="ap-section-label">Architecture Layer Usage</span><span class="ap-count"><span id="apLayersTotal">134</span> units</span></div>
       <div id="apLayerRows"></div>
-    </div>
-    <div class="ap-card">
-      <div class="ap-card-head"><span class="ap-section-label">Reconstructive Intelligence</span><span class="ap-count">5 in use</span></div>
-      <div class="ap-recon">
-        <span>sparse memory recall</span><span>pattern strengthening</span><span>4-gate verification</span><span>trust-centered recall</span><span>causal world model</span>
-      </div>
-    </div>
-    <div class="ap-card">
-      <div class="ap-card-head"><span class="ap-section-label">Simulated Exchange · How ARIA Speaks</span><span class="ap-count" id="apMsgCount">3 / 3</span></div>
-      <div class="ap-conv-stream" id="apConvStream"></div>
     </div>
   </aside>
 
@@ -1395,18 +1337,17 @@
           </div>
         </div>
 
-        <div class="history-bar">
-          <button class="history-toggle" id="historyToggle">HISTORY <span class="count" id="historyCount">0</span><span class="caret">▾</span></button>
-          <button class="history-clear" id="historyClear" title="Clear archived chats only — does not affect the current chat">CLEAR</button>
-          <div class="history-dropdown" id="historyDropdown">
-            <div class="history-empty">No archived chats</div>
-          </div>
-        </div>
-
         <div class="chat-dock">
           <div class="input-row">
             <input id="askInput" placeholder="Ask ARIA anything…" autocomplete="off" />
             <button class="send-btn" id="sendBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+          </div>
+          <div class="history-bar">
+            <button class="history-toggle" id="historyToggle">HISTORY <span class="count" id="historyCount">0</span><span class="caret">▾</span></button>
+            <button class="history-clear" id="historyClear" title="Clear archived chats only — does not affect the current chat">CLEAR</button>
+            <div class="history-dropdown" id="historyDropdown">
+              <div class="history-empty">No archived chats</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1449,229 +1390,56 @@
         </div>
         <div class="ops-grid">
           <div class="tier">
-            <div class="label">TIER 01 · FOUNDATION</div>
+            <div class="label">TIER 01 - FOUNDATION</div>
             <div class="heading">First-touch resolutions in seconds</div>
             <div class="items">
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0110 0v3"/></svg></div><div><div class="name">Password reset</div><div class="avg">AVG · 4.2s</div></div><div class="delta">+18%</div></div>
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></div><div><div class="name">Printer reconnect</div><div class="avg">AVG · 9.0s</div></div><div class="delta">+11%</div></div>
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1"/></svg></div><div><div class="name">Wi-Fi troubleshooting</div><div class="avg">AVG · 12.4s</div></div><div class="delta">+22%</div></div>
+              <div class="tier-item"><div class="tier-icon">01</div><div><div class="name">Password reset</div><div class="avg">AVG - 4.2s</div></div><div class="delta">+18%</div></div>
+              <div class="tier-item"><div class="tier-icon">02</div><div><div class="name">Printer reconnect</div><div class="avg">AVG - 9.0s</div></div><div class="delta">+11%</div></div>
+              <div class="tier-item"><div class="tier-icon">03</div><div><div class="name">Wi-Fi troubleshooting</div><div class="avg">AVG - 12.4s</div></div><div class="delta">+22%</div></div>
+              <div class="tier-item"><div class="tier-icon">04</div><div><div class="name">Browser cache reset</div><div class="avg">AVG - 7.6s</div></div><div class="delta">+16%</div></div>
+              <div class="tier-item"><div class="tier-icon">05</div><div><div class="name">OneDrive sync fix</div><div class="avg">AVG - 18.8s</div></div><div class="delta">+15%</div></div>
+              <div class="tier-item"><div class="tier-icon">06</div><div><div class="name">MFA enrollment</div><div class="avg">AVG - 28.0s</div></div><div class="delta">+21%</div></div>
+              <div class="tier-item"><div class="tier-icon">07</div><div><div class="name">Teams audio/video</div><div class="avg">AVG - 15.2s</div></div><div class="delta">+13%</div></div>
+              <div class="tier-item"><div class="tier-icon">08</div><div><div class="name">Account unlock</div><div class="avg">AVG - 6.8s</div></div><div class="delta stable">99%</div></div>
             </div>
+            <div class="tier-summary"><span><strong>2,041</strong>self-serve closes</span><span><strong>96%</strong>first touch</span></div>
             <div class="tier-actions"><button class="tier-btn">AUDIT</button><button class="tier-btn deploy">+ DEPLOY</button></div>
           </div>
           <div class="tier">
-            <div class="label">TIER 02 · OPERATIONS</div>
+            <div class="label">TIER 02 - OPERATIONS</div>
             <div class="heading">Network and desktop fleet at scale</div>
             <div class="items">
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div><div class="name">VPN troubleshooting</div><div class="avg">AVG · 24.1s</div></div><div class="delta">+9%</div></div>
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></div><div><div class="name">Mailbox sync repair</div><div class="avg">AVG · 31.0s</div></div><div class="delta">+14%</div></div>
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114 0M1.42 9a16 16 0 0121.16 0"/><circle cx="12" cy="20" r="1"/></svg></div><div><div class="name">Network mapping</div><div class="avg">AVG · 46.2s</div></div><div class="delta">+6%</div></div>
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg></div><div><div class="name">Driver repair</div><div class="avg">AVG · 38.4s</div></div><div class="delta">+19%</div></div>
+              <div class="tier-item"><div class="tier-icon">01</div><div><div class="name">VPN troubleshooting</div><div class="avg">AVG - 24.1s</div></div><div class="delta">+9%</div></div>
+              <div class="tier-item"><div class="tier-icon">02</div><div><div class="name">Mailbox sync repair</div><div class="avg">AVG - 31.0s</div></div><div class="delta">+14%</div></div>
+              <div class="tier-item"><div class="tier-icon">03</div><div><div class="name">Network mapping</div><div class="avg">AVG - 46.2s</div></div><div class="delta">+6%</div></div>
+              <div class="tier-item"><div class="tier-icon">04</div><div><div class="name">Driver repair</div><div class="avg">AVG - 38.4s</div></div><div class="delta">+19%</div></div>
+              <div class="tier-item"><div class="tier-icon">05</div><div><div class="name">Endpoint patching</div><div class="avg">AVG - 01:12</div></div><div class="delta">+10%</div></div>
+              <div class="tier-item"><div class="tier-icon">06</div><div><div class="name">BitLocker recovery</div><div class="avg">AVG - 34.6s</div></div><div class="delta">+8%</div></div>
+              <div class="tier-item"><div class="tier-icon">07</div><div><div class="name">Intune compliance</div><div class="avg">AVG - 01:44</div></div><div class="delta stable">98%</div></div>
+              <div class="tier-item"><div class="tier-icon">08</div><div><div class="name">Access permissions</div><div class="avg">AVG - 02:18</div></div><div class="delta">+17%</div></div>
             </div>
+            <div class="tier-summary"><span><strong>1,622</strong>fleet actions</span><span><strong>14</strong>runbooks live</span></div>
             <div class="tier-actions"><button class="tier-btn">AUDIT</button><button class="tier-btn deploy">+ DEPLOY</button></div>
           </div>
           <div class="tier">
-            <div class="label">TIER 03 · INFRASTRUCTURE</div>
+            <div class="label">TIER 03 - INFRASTRUCTURE</div>
             <div class="heading">Server, security and recovery class incidents</div>
             <div class="items">
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg></div><div><div class="name">Server monitoring</div><div class="avg">24/7 ACTIVE</div></div><div class="delta stable">STABLE</div></div>
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="name">Threat isolation</div><div class="avg">AVG · 1.8s</div></div><div class="delta zero">0 INCIDENTS</div></div>
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0110 0v3"/></svg></div><div><div class="name">Directory repair</div><div class="avg">AVG · 02:14</div></div><div class="delta">+4%</div></div>
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg></div><div><div class="name">Infrastructure diagnostics</div><div class="avg">AVG · 03:48</div></div><div class="delta">+12%</div></div>
-              <div class="tier-item"><div class="tier-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/></svg></div><div><div class="name">Remote system recovery</div><div class="avg">AVG · 08:21</div></div><div class="delta">+7%</div></div>
+              <div class="tier-item"><div class="tier-icon">01</div><div><div class="name">Server monitoring</div><div class="avg">24/7 ACTIVE</div></div><div class="delta stable">STABLE</div></div>
+              <div class="tier-item"><div class="tier-icon">02</div><div><div class="name">Threat isolation</div><div class="avg">AVG - 1.8s</div></div><div class="delta zero">0 INCIDENTS</div></div>
+              <div class="tier-item"><div class="tier-icon">03</div><div><div class="name">Directory repair</div><div class="avg">AVG - 02:14</div></div><div class="delta">+4%</div></div>
+              <div class="tier-item"><div class="tier-icon">04</div><div><div class="name">Infrastructure diagnostics</div><div class="avg">AVG - 03:48</div></div><div class="delta">+12%</div></div>
+              <div class="tier-item"><div class="tier-icon">05</div><div><div class="name">Remote system recovery</div><div class="avg">AVG - 08:21</div></div><div class="delta">+7%</div></div>
+              <div class="tier-item"><div class="tier-icon">06</div><div><div class="name">PKI certificate renewal</div><div class="avg">AVG - 05:42</div></div><div class="delta watch">WATCH</div></div>
+              <div class="tier-item"><div class="tier-icon">07</div><div><div class="name">SSO federation repair</div><div class="avg">AVG - 06:10</div></div><div class="delta">+9%</div></div>
+              <div class="tier-item"><div class="tier-icon">08</div><div><div class="name">Backup restore test</div><div class="avg">LAST - 19 MIN</div></div><div class="delta stable">PASS</div></div>
             </div>
+            <div class="tier-summary"><span><strong>555</strong>L3 checks</span><span><strong>0</strong>P1 active</span></div>
             <div class="tier-actions"><button class="tier-btn">AUDIT</button><button class="tier-btn deploy">+ DEPLOY</button></div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- VIEW: CORE BRAIN -->
-    <div class="view" id="view-brain">
-      <div class="brain-view">
-
-        <div class="brain-header">
-          <div class="bh-mark">A</div>
-          <div>
-            <div class="bh-title">ARIA Core Brain</div>
-            <div class="bh-sub">Adaptive Reconstructive Operational Cognition</div>
-          </div>
-          <div class="bh-badge">ULTRATHINK v1.0</div>
-        </div>
-
-        <div class="brain-cols">
-
-          <!-- ARIA FULL STACK -->
-          <div class="brain-stack">
-            <div class="stack-title">ARIA Full Stack</div>
-
-            <div class="stack-layer">
-              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-              <div><div class="sl-name">Frontend / UI</div><div class="sl-role">Face · Interface</div></div>
-            </div>
-            <div class="stack-arrow">↓</div>
-
-            <div class="stack-layer">
-              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.2 4.2l4.3 4.3M15.5 15.5l4.3 4.3M1 12h6M17 12h6M4.2 19.8l4.3-4.3M15.5 8.5l4.3-4.3"/></svg></div>
-              <div><div class="sl-name">LLM Cognitive Layer</div><div class="sl-role">Brain</div></div>
-            </div>
-            <div class="stack-arrow">↓</div>
-
-            <div class="stack-layer">
-              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-5 0v-15A2.5 2.5 0 019.5 2zM14.5 8A2.5 2.5 0 0117 10.5v9a2.5 2.5 0 01-5 0v-9A2.5 2.5 0 0114.5 8z"/></svg></div>
-              <div><div class="sl-name">Reasoning + Behavior + Trust</div><div class="sl-role">Guardrails · Safety</div></div>
-            </div>
-            <div class="stack-arrow">↓</div>
-
-            <div class="stack-layer">
-              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></div>
-              <div><div class="sl-name">RAG Retrieval Layer</div><div class="sl-role">Retrieval · Search</div></div>
-            </div>
-            <div class="stack-arrow">↓</div>
-
-            <div class="stack-layer">
-              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
-              <div><div class="sl-name">Vector Memory Layer</div><div class="sl-role">Memory Index</div></div>
-            </div>
-            <div class="stack-arrow">↓</div>
-
-            <div class="stack-layer">
-              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
-              <div><div class="sl-name">KB Knowledge Layer</div><div class="sl-role">Knowledge</div></div>
-            </div>
-            <div class="stack-arrow">↓</div>
-
-            <div class="stack-layer">
-              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16,18 22,12 16,6"/><polyline points="8,6 2,12 8,18"/></svg></div>
-              <div><div class="sl-name">Tools + Automation + Agents</div><div class="sl-role">Hands · Nervous System · Specialists</div></div>
-            </div>
-            <div class="stack-arrow">↓</div>
-
-            <div class="stack-layer">
-              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-              <div><div class="sl-name">Monitoring + Logs + Learning</div><div class="sl-role">Observability · Self-Checking</div></div>
-            </div>
-            <div class="stack-arrow">↓</div>
-
-            <div class="stack-layer sl-new">
-              <div class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg></div>
-              <div><div class="sl-name">Storage + Infrastructure</div><div class="sl-role">Postgres · Redis · pgvector</div></div>
-            </div>
-          </div>
-
-          <!-- COGNITIVE TREE -->
-          <div class="brain-tree-panel">
-            <div class="tree-title">Reconstructive Intelligence Layer — Cognitive Tree</div>
-
-            <div class="tree-root">◈ Memory System</div>
-
-            <div class="tree-branch">
-              <div class="tree-node">
-                <div class="tn-dot"></div>
-                <div><div class="tn-label">Short-Term Memory</div><div class="tn-desc">Redis · Session · 24h TTL</div></div>
-                <div class="tn-badge badge-core">CORE</div>
-              </div>
-              <div class="tree-node">
-                <div class="tn-dot"></div>
-                <div><div class="tn-label">Long-Term Memory</div><div class="tn-desc">Postgres + pgvector · Tenant-isolated · Encrypted</div></div>
-                <div class="tn-badge badge-core">CORE</div>
-              </div>
-
-              <div class="tree-node tn-highlight" style="margin-top:6px;border-color:rgba(212,168,90,.3);background:rgba(212,168,90,.06)">
-                <div class="tn-dot"></div>
-                <div><div class="tn-label">► Reconstructive Intelligence Layer</div><div class="tn-desc">Sparse patterns · Dynamic rebuild · Verification-first</div></div>
-                <div class="tn-badge badge-ultra">ULTRATHINK</div>
-              </div>
-
-              <div class="tree-sub-branch">
-                <div class="tree-section-label">— Foundation Nodes</div>
-
-                <div class="tree-node">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Sparse Critical Memory</div><div class="tn-desc">Stores clues, causal links, operational patterns — not everything</div></div>
-                </div>
-                <div class="tree-node">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Procedural Intelligence</div><div class="tn-desc">How to think, troubleshoot, validate, escalate safely</div></div>
-                </div>
-                <div class="tree-node">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Dynamic Reconstruction</div><div class="tn-desc">Rebuilds solutions from sparse memory + live evidence + patterns</div></div>
-                </div>
-                <div class="tree-node">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Pattern Strengthening</div><div class="tn-desc">Repeated successful reasoning paths reinforce over time</div></div>
-                </div>
-                <div class="tree-node">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Selective Forgetting</div><div class="tn-desc">Low-value data decays; safety-critical data persists</div></div>
-                </div>
-                <div class="tree-node">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Confidence-Aware Cognition</div><div class="tn-desc">Every answer carries confidence scoring — never fakes certainty</div></div>
-                </div>
-                <div class="tree-node">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Trust-Centered Operational Intelligence</div><div class="tn-desc">Transparency, calm, reassurance — silence and false confidence damage trust</div></div>
-                </div>
-
-                <div class="tree-section-label" style="margin-top:8px">— ULTRATHINK Extensions</div>
-
-                <div class="tree-node tn-new">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Causal World Model</div><div class="tn-desc">Models cause-effect relationships in operational domain</div></div>
-                  <div class="tn-badge badge-new">NEW</div>
-                </div>
-                <div class="tree-node tn-new">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Evidence Verification Chain</div><div class="tn-desc">Validates reconstructed answers against multiple evidence sources</div></div>
-                  <div class="tn-badge badge-new">NEW</div>
-                </div>
-                <div class="tree-node tn-new">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Memory Decay Engine</div><div class="tn-desc">Weighted decay algorithm — operational value determines retention priority</div></div>
-                  <div class="tn-badge badge-new">NEW</div>
-                </div>
-                <div class="tree-node tn-new">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Pattern Reinforcement Loop</div><div class="tn-desc">Successful resolution paths strengthen procedural memory automatically</div></div>
-                  <div class="tn-badge badge-new">NEW</div>
-                </div>
-                <div class="tree-node tn-new">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Trust Signal Propagation</div><div class="tn-desc">Confidence scores flow through reasoning chain — no silent uncertainty</div></div>
-                  <div class="tn-badge badge-new">NEW</div>
-                </div>
-                <div class="tree-node tn-new">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Contextual Confidence Scoring</div><div class="tn-desc">Dynamic confidence per answer based on evidence density and contradiction detection</div></div>
-                  <div class="tn-badge badge-new">NEW</div>
-                </div>
-                <div class="tree-node tn-new">
-                  <div class="tn-dot"></div>
-                  <div><div class="tn-label">Adaptive Query Reformulation</div><div class="tn-desc">Rewrites retrieval queries based on prior failed or low-confidence results</div></div>
-                  <div class="tn-badge badge-new">NEW</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ARIA USAGE VIDEO -->
-        <div class="brain-video-wrap">
-          <div class="brain-video-header">
-            <div class="bvh-dot"></div>
-            <div class="bvh-label">ARIA · Usage Simulation</div>
-            <div class="bvh-meta">Internal Reference · ARIA Tab Only</div>
-          </div>
-          <video class="brain-video-player" controls preload="metadata" poster="">
-            <source src="assets/video/aria-usage-simulation.mp4" type="video/mp4">
-            <p style="padding:20px;font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center">Video unavailable in this environment.</p>
-          </video>
-        </div>
-
-      </div>
-    </div>
-
   </section>
 
   <!-- ================ RIGHT PANEL ================ -->
@@ -1729,9 +1497,41 @@
      <div class="content-section">
       <div class="divider"></div>
 
+      <div class="it-pulse" id="itPulsePanel">
+        <div class="status-head"><span class="led green"></span><span>GLOBAL IT PULSE</span></div>
+        <div class="pulse-grid">
+          <a class="pulse-card" href="https://www.investing.com/news/economy-news/ecb-to-ask-banks-for-targeted-measures-to-counter-ai-risk-4723629" target="_blank" rel="noopener">
+            <div class="pulse-thumb pulse-bank" data-mark="ECB"></div>
+            <div class="pulse-copy"><div class="pulse-tag">Jun 3 - AI risk</div><div class="pulse-title">European banks pushed toward practical AI defense measures.</div><div class="pulse-meta">Reuters</div></div>
+          </a>
+          <a class="pulse-card" href="https://www.gartner.com/en/newsroom/press-releases/2026-06-02-gartner-identifies-four-critical-threats-requiring-urgent-improvements-from-cybersecurity-leaders" target="_blank" rel="noopener">
+            <div class="pulse-thumb pulse-cyber" data-mark="SEC"></div>
+            <div class="pulse-copy"><div class="pulse-tag">Jun 2 - cyber</div><div class="pulse-title">AI app compromise flagged as a critical enterprise threat.</div><div class="pulse-meta">Gartner</div></div>
+          </a>
+          <a class="pulse-card" href="https://ca.investing.com/news/stock-market-news/nvidia-launches-new-chip-to-bring-ai-directly-to-personal-computers-4667868" target="_blank" rel="noopener">
+            <div class="pulse-thumb pulse-chip" data-mark="AI PC"></div>
+            <div class="pulse-copy"><div class="pulse-tag">Jun 1 - devices</div><div class="pulse-title">AI agents move closer to laptops and desktops, not only cloud.</div><div class="pulse-meta">Reuters</div></div>
+          </a>
+          <div class="pulse-card" role="group" aria-label="Interesting IT fact">
+            <div class="pulse-thumb pulse-fact" data-mark="FACT"></div>
+            <div class="pulse-copy"><div class="pulse-tag">IT fact</div><div class="pulse-title">The first webcam watched a coffee pot so researchers avoided empty trips.</div><div class="pulse-meta">Cambridge lore</div></div>
+          </div>
+        </div>
+      </div>
+
       <div class="status-panel" id="statusPanel">
         <div class="status-head"><span class="led green" id="statusLed"></span><span id="statusTitle">SYSTEM STATUS</span></div>
         <div class="status-text" id="statusText">All systems are operational, no local end issues I have access to were detected.</div>
+      </div>
+
+      <div class="sla-panel" id="slaPanel">
+        <div class="status-head"><span class="led green"></span><span>ARIA SLA &amp; OUTCOMES</span></div>
+        <div class="sla-grid">
+          <div class="sla-cell"><div class="v">11.4s</div><div class="k">Mean resolve</div></div>
+          <div class="sla-cell"><div class="v">99.998%</div><div class="k">Service uptime</div></div>
+          <div class="sla-cell"><div class="v">4,218</div><div class="k">24h resolved</div></div>
+          <div class="sla-cell"><div class="v">72</div><div class="k">Verified KBs</div></div>
+        </div>
       </div>
 
       <div class="insights" id="insightsPanel" title="Click to read full article">
@@ -1747,7 +1547,14 @@
           <button class="qa-chip" data-ask="VPN diagnostic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>VPN Diagnostic</button>
           <button class="qa-chip" data-ask="reset my password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0110 0v3"/></svg>Reset Password</button>
           <button class="qa-chip" data-ask="show ops dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Ops Dashboard</button>
-          <button class="qa-chip" data-ask="show core brain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-5 0v-15A2.5 2.5 0 019.5 2z"/><path d="M14.5 8A2.5 2.5 0 0117 10.5v9a2.5 2.5 0 01-5 0v-9A2.5 2.5 0 0114.5 8z"/></svg>Core Brain</button>
+          <button class="qa-chip" data-ask="teams audio not working"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1M12 18v5M8 23h8"/></svg>Teams Audio</button>
+          <button class="qa-chip" data-ask="onedrive not syncing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H7a5 5 0 010-10 6 6 0 0111.4-2.4A4.5 4.5 0 0117.5 19z"/></svg>OneDrive Sync</button>
+          <button class="qa-chip" data-ask="mfa authenticator issue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2M10 6h4"/></svg>MFA Help</button>
+          <button class="qa-chip" data-ask="bitlocker recovery key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="14" r="4"/><path d="M11 14h11M16 14v-3M20 14v-2"/></svg>BitLocker Key</button>
+          <button class="qa-chip" data-ask="printer queue stuck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Printer Queue</button>
+          <button class="qa-chip" data-ask="browser cache issue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>Browser Cache</button>
+          <button class="qa-chip" data-ask="computer running slow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Slow Computer</button>
+          <button class="qa-chip" data-ask="phishing email security scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Security Scan</button>
         </div>
       </div>
      </div><!-- /.content-section -->
@@ -2903,17 +2710,7 @@ const INTENT_TO_CAT = {
 function kbForIntent(intent){
   const cat = INTENT_TO_CAT[intent];
   if (!cat) return null;
-  // Some intents are narrower than their category. Prefer an article that actually matches
-  // the specific topic; if the category has nothing relevant, show NO card rather than a
-  // misleading one — e.g. "set my out of office" must not surface "Outlook not receiving
-  // new emails" just because both sit in the outlook category. (2026-06-03)
-  const SPECIFIC = { outlook_ooo: /out.?of.?office|automatic repl|auto.?repl|away message|vacation/i };
-  const inCat = ARIA_KB.filter(a => a.cat === cat);
-  const re = SPECIFIC[intent];
-  if (re){
-    return inCat.find(a => re.test((a.title||'') + ' ' + (a.id||'') + ' ' + (a.summary||'') + ' ' + (a.body||''))) || null;
-  }
-  return inCat.find(a => a.tier === 'L1') || inCat[0] || null;
+  return ARIA_KB.find(a => a.cat === cat && a.tier === 'L1') || ARIA_KB.find(a => a.cat === cat);
 }
 
 function mdToHTML(md){
@@ -2980,7 +2777,6 @@ function classify(text){
   if (/(browser|edge|chrome|firefox)/.test(q) && !/(slow|laggy|cpu)/.test(q)) return 'kb:browser';
   // navigational
   if (/(ops|dashboard|operations|metrics)/.test(q)) return 'ops';
-  if (/(core.?brain|brain|ultrathink|cognitive|architecture|stack|memory.?layer|reconstructive)/.test(q)) return 'brain';
   // ESCALATION (catch before generic 'talk' / 'voice')
   if (/^(talk to (it|live agent|agent|human|tech support|support)|escalate|live agent|contact (it|support|tech))/.test(q)) return 'escalation';
   if (/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';
@@ -3024,7 +2820,7 @@ const TIER_SCOPE_RE = /(\bhalf\b|everyone|every user|all (?:our |the )?(?:users|
 const TIER_TARGET = { L1:'~60s', L2:'~90s', L3:'~180s' };
 const TIER_DIFF   = { L1:'Easy', L2:'Mid', L3:'Hard' };
 // intents that are NOT support issues (navigation / off-topic) — no tier shown
-const NON_ISSUE_INTENTS = new Set(['ops','brain','voice','escalation','shopping','news','weather','trade','quote']);
+const NON_ISSUE_INTENTS = new Set(['ops','voice','escalation','shopping','news','weather','trade','quote']);
 // language that signals a generic (no-keyword) message is actually a problem report
 const ISSUE_HINT_RE = /(won'?t|can'?t|cannot|couldn'?t|not working|doesn'?t work|isn'?t working|broken|down|error|fail(?:ed|ing|s)?|crash|frozen|stuck|unable|no access|denied|missing|lost|gone|locked|slow|disconnect|drop(?:ped|ping|s)?|not syncing|out of sync|conflict|unreachable|timeout|blue ?screen|not responding)/i;
 
@@ -3658,9 +3454,11 @@ function handleUserInput(text){
     return;
   }
 
-  // /brain — show core brain view
+  // /brain is intentionally private; show public-safe operations instead.
   if (/^\/?brain\b/.test(q)){
-    showView('brain');
+    showView('ops');
+    appendMessage(youBubble(text));
+    setTimeout(() => appendMessage(ariaBubble("Internal architecture is private.", "I can show public-safe operations, SLAs, and troubleshooting coverage instead.", '')), 200);
     return;
   }
 
@@ -3837,7 +3635,6 @@ function handleUserInput(text){
   // navigational — these don't archive (they're view changes)
   if (intent === 'ops'){ showView('ops'); return; }
   if (intent === 'voice'){ enterVoice(text); return; }
-  if (intent === 'brain'){ showView('brain'); return; }
 
   // === default intent: continuation phrases or generic chat (no archive) ===
   if (intent === 'default'){
@@ -3915,10 +3712,7 @@ function handleUserInput(text){
   const isShift = prev && !sameIntent && state.introCleared
                && intent !== 'escalation'
                && intent !== 'default';
-  // Open the pivot on a fresh shift; if a pivot is ALREADY pending and the user raises YET
-  // ANOTHER distinct topic (not a finish/switch reply), re-point it at the newest topic so
-  // we never silently drop it or keep referencing a stale one. (3-topic-chain fix 2026-06-03)
-  if (isShift && (!state.pendingPivot || state.pendingPivot.to !== intent)){
+  if (isShift && !state.pendingPivot){
     state.pendingPivot = { from: prev, to: intent, text };
     appendMessage(youBubble(text));
     setTimeout(() => {
@@ -4045,12 +3839,11 @@ function renderKBOnly(category, userText){
 }
 
 /* ============== VIEW SWITCHING ============== */
-const views = ['chat','voice','ops','brain'];
+const views = ['chat','voice','ops'];
 const topbarTexts = {
   chat: 'SUPPORT · ENTERPRISE · TIER ONE',
   voice: 'VOICE INTERACTION · SUITE 14',
   ops: 'ENTERPRISE OPERATIONS · LIVE',
-  brain: 'ARIA CORE BRAIN · ULTRATHINK v1.0',
 };
 function showView(name){
   views.forEach(v => document.getElementById('view-' + v).classList.toggle('active', v === name));
@@ -4225,39 +4018,21 @@ if (_prefill){
       quote:"Half our cloud users lost group memberships overnight. On-prem AD looks fine.",
       tags:{industry:"healthcare",role:"technician",environment:"regulated",pressure:"outage",history:"chronic",trust:"fragile"},
       lead:"V", stageNow:13, stageMax:13, stageText:"Response · STAR summary", layersTotal:134,
-      agents:[["reasoning",7],["automation",6],["kb",3],["intent",2],["safety",2],["orchestrator",1],["research",1],["learning",1],["observability",1],["quality",1],["escalation",1]],
-      layers:[["LLM",20.1],["Memory",14.9],["Tools",12.7],["Automation",11.9],["Storage",7.5],["Safety",6.7],["Evaluation",6.7],["Vector DB",6.0],["KB",5.2],["Frontend/UI",3.7],["RAG",2.2],["Agents",2.2]],
-      messages:[
-        {from:"user",text:"Half our cloud users lost group memberships overnight. On-prem AD looks fine."},
-        {from:"aria",text:"Outage — regulated tenant. Switching to emergency mode and tightening the compliance gate before anything moves."},
-        {from:"aria",text:"Pulling history: identity sync has been chronic here. Three prior incidents in 18 months — patterns suggest pipeline-side, not AD-side."}
-      ]
+      layers:[["LLM",20.1],["Memory",14.9],["Tools",12.7],["Automation",11.9],["Storage",7.5],["Safety",6.7],["Evaluation",6.7],["Vector DB",6.0],["KB",5.2],["Frontend/UI",3.7],["RAG",2.2]],
     },
     "L2-mid": {
       tier:"L2", diff:"Mid", title:"VPN connectivity — repeat drops",
       quote:"VPN keeps dropping every few minutes.",
       tags:{industry:"finance",role:"end user",environment:"prod",pressure:"busy",history:"repeat",trust:"established"},
       lead:"III", stageNow:11, stageMax:11, stageText:"Mitigated client-side · ISP ticket", layersTotal:109,
-      agents:[["reasoning",4],["intent",2],["kb",2],["automation",2],["safety",1],["orchestrator",1],["research",1],["escalation",1],["quality",1]],
-      layers:[["LLM",33],["Memory",15.6],["Automation",9.2],["Tools",7.3],["Vector DB",7.3],["Frontend/UI",5.5],["RAG",4.6],["Agents",3.7],["Safety",3.7],["KB",3.7],["Evaluation",3.7],["Storage",2.7]],
-      messages:[
-        {from:"user",text:"VPN keeps dropping every few minutes."},
-        {from:"aria",text:"Too many drops to ignore — pulling your history and running a quick ping + traceroute to the gateway."},
-        {from:"aria",text:"Two issues stacked: ISP route flap + idle-timeout too short. Extending the timeout client-side and opening an ISP ticket."}
-      ]
+      layers:[["LLM",33],["Memory",15.6],["Automation",9.2],["Tools",7.3],["Vector DB",7.3],["Frontend/UI",5.5],["RAG",4.6],["Safety",3.7],["KB",3.7],["Evaluation",3.7],["Storage",2.7]],
     },
     "L1-easy": {
       tier:"L1", diff:"Easy", title:"Password / sign-in reset",
       quote:"I'm locked out of my account.",
       tags:{industry:"professional services",role:"end user",environment:"prod",pressure:"low",history:"first",trust:"good"},
       lead:"I", stageNow:8, stageMax:8, stageText:"Confirm-resolve loop closed", layersTotal:38,
-      agents:[["kb",2],["reasoning",1],["safety",1],["quality",1],["intent",1],["orchestrator",1]],
-      layers:[["LLM",12],["Memory",18],["KB",22],["Evaluation",8],["Tools",6],["Frontend/UI",5],["Storage",12],["Safety",4],["RAG",3],["Agents",2],["Vector DB",2],["Automation",1]],
-      messages:[
-        {from:"user",text:"I'm locked out of my account."},
-        {from:"aria",text:"No problem — verifying your identity, then I'll reset the sign-in and clear the lockout."},
-        {from:"aria",text:"Done. Try signing in now; it should go straight through."}
-      ]
+      layers:[["LLM",12],["Memory",18],["KB",22],["Evaluation",8],["Tools",6],["Frontend/UI",5],["Storage",12],["Safety",4],["RAG",3],["Vector DB",2],["Automation",1]],
     }
   };
 
@@ -4287,12 +4062,6 @@ if (_prefill){
     }
     setText("apStageNow", scn.stageNow); setText("apStageMax", scn.stageMax); setText("apStageText", scn.stageText);
     var sf=document.getElementById("apStageFill"); if(sf) sf.style.width = Math.round((scn.stageNow/Math.max(1,scn.stageMax))*100)+"%";
-    var ag=document.getElementById("apAgentsGrid");
-    if(ag){
-      ag.innerHTML = scn.agents.map(function(a){ return '<span class="ap-chip-agent on">'+esc(a[0])+'<span class="ap-chip-count">×'+a[1]+'</span></span>'; }).join("");
-      setText("apAgentsUnique", scn.agents.length);
-      setText("apAgentsTotal", scn.agents.reduce(function(s,a){return s+a[1];},0));
-    }
     var fw=document.getElementById("apFwGrid");
     if(fw){ fw.innerHTML = FW_ORDER.map(function(r){ return '<div class="ap-fw-cell'+(r===scn.lead?" on":"")+'" title="'+esc(FW[r])+'">'+r+'</div>'; }).join(""); }
     setText("apFwLead", scn.lead+" "+(FW[scn.lead]||""));
@@ -4305,13 +4074,6 @@ if (_prefill){
       }).join("");
     }
     setText("apLayersTotal", scn.layersTotal);
-    var cs=document.getElementById("apConvStream");
-    if(cs){
-      cs.innerHTML = scn.messages.map(function(m){
-        return '<div class="ap-msg '+m.from+'"><span class="ap-msg-from '+m.from+'">'+(m.from==="aria"?"ARIA":"USER")+'</span><div class="ap-msg-bubble">'+esc(m.text)+'</div></div>';
-      }).join("");
-      setText("apMsgCount", scn.messages.length+" / "+scn.messages.length);
-    }
   }
 
   // hook called by setTierBand() when a user reports an issue
