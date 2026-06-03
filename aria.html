@@ -80,7 +80,7 @@
   .app{
     height:100%;
     display:grid;
-    grid-template-columns: 1fr 580px;
+    grid-template-columns: 244px 1fr 580px;
     gap:18px;
     padding:60px 22px 22px;
     position:relative;z-index:1;
@@ -90,7 +90,7 @@
     .app{padding:50px 18px 18px;gap:14px}
   }
   @media (max-height:720px){
-    .app{padding:44px 16px 16px;gap:12px;grid-template-columns:1fr 540px}
+    .app{padding:44px 16px 16px;gap:12px;grid-template-columns:228px 1fr 540px}
     .topbar{top:14px;font-size:10px}
   }
   .topbar{
@@ -173,7 +173,7 @@
 
   /* ====== CHAT VIEW ====== */
   .browser-body{
-    flex:1;padding:14px 8px 56px;overflow-y:auto;
+    flex:1;padding:14px 8px 68px;overflow-y:auto;
     scroll-behavior:smooth;
   }
   .browser-body::-webkit-scrollbar{width:7px}
@@ -1230,7 +1230,115 @@
 
 <div class="topbar"><span id="topbarText">SUPPORT · ENTERPRISE · TIER ONE</span></div>
 
+<style id="surround-v2">
+  /* ===== Aperture monitoring rail (left column) ===== */
+  :root{ --mon-teal:#2dd4bf; --mon-teal-dim:rgba(45,212,191,.16); }
+  .monrail{
+    display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto;
+    border:1px solid var(--border);border-radius:18px;background:var(--panel);
+    padding:14px 12px;
+  }
+  .monrail::-webkit-scrollbar{width:6px}
+  .monrail::-webkit-scrollbar-thumb{background:rgba(45,212,191,.22);border-radius:8px}
+  .mon-card{border:1px solid var(--border);border-radius:12px;padding:11px 12px;background:rgba(12,18,24,.4)}
+  .mon-head{display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:9px}
+  .mon-head .mon-count{color:var(--mon-teal)}
+  /* agents fired */
+  .mon-chips{display:flex;flex-wrap:wrap;gap:5px}
+  .mon-chip{font-family:var(--mono);font-size:9.5px;padding:3px 7px;border-radius:6px;
+    background:var(--mon-teal-dim);border:1px solid rgba(45,212,191,.28);color:var(--mon-teal)}
+  .mon-chip .x{opacity:.6;margin-left:3px}
+  /* frameworks */
+  .mon-fw{display:flex;flex-wrap:wrap;gap:4px}
+  .mon-fw span{font-family:var(--mono);font-size:9px;min-width:22px;text-align:center;
+    padding:3px 0;border-radius:5px;border:1px solid var(--border);color:var(--muted)}
+  .mon-fw span.on{border-color:var(--mon-teal);color:var(--mon-teal);background:var(--mon-teal-dim);
+    box-shadow:0 0 8px rgba(45,212,191,.25)}
+  /* architecture layer bars */
+  .mon-layer{display:grid;grid-template-columns:78px 1fr 34px;align-items:center;gap:7px;margin:5px 0;
+    font-family:var(--mono);font-size:9.5px;color:var(--cream-2)}
+  .mon-bar{height:5px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden}
+  .mon-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--mon-teal),#14b8a6);border-radius:4px}
+  .mon-layer .pct{text-align:right;color:var(--muted)}
+  /* tier band (top of chat) */
+  .tier-band{display:none;align-items:flex-start;gap:10px;margin:0 0 14px;padding:11px 13px;
+    border:1px solid rgba(45,212,191,.3);border-left:3px solid var(--mon-teal);border-radius:10px;
+    background:linear-gradient(90deg,rgba(45,212,191,.08),rgba(45,212,191,.02))}
+  .tier-band.show{display:flex}
+  .tier-chip{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.08em;
+    padding:4px 9px;border-radius:7px;flex-shrink:0;color:#04140f}
+  .tier-chip.L1{background:#4ade80} .tier-chip.L2{background:#fbbf24} .tier-chip.L3{background:#fb7185;color:#1a0608}
+  .tier-main{min-width:0}
+  .tier-title{font-size:13px;font-weight:600;color:var(--cream-2);line-height:1.3}
+  .tier-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--muted);margin-top:3px;text-transform:uppercase}
+  .tier-quote{font-size:11.5px;color:var(--muted);margin-top:5px;font-style:italic;
+    overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  /* relocated chat input dock (was under "Tap to speak") */
+  .chat-dock{position:absolute;left:16px;right:128px;bottom:12px;z-index:25}
+  .chat-dock .input-row{margin-bottom:0}
+  @media (max-width:1100px){
+    .monrail{display:none}
+    .chat-dock{position:static;left:auto;right:auto;bottom:auto;margin:10px 4px 4px}
+  }
+</style>
+
 <div class="app">
+
+  <!-- ================ APERTURE MONITORING RAIL ================ -->
+  <aside class="monrail" id="monRail" aria-label="ARIA live monitoring">
+    <div class="mon-card">
+      <div class="mon-head"><span>Agents Fired</span><span class="mon-count" id="monAgentCount">11</span></div>
+      <div class="mon-chips" id="monAgents">
+        <span class="mon-chip">reasoning<span class="x">×7</span></span>
+        <span class="mon-chip">automation<span class="x">×6</span></span>
+        <span class="mon-chip">kb<span class="x">×3</span></span>
+        <span class="mon-chip">intent<span class="x">×2</span></span>
+        <span class="mon-chip">safety<span class="x">×2</span></span>
+        <span class="mon-chip">orchestrator<span class="x">×1</span></span>
+        <span class="mon-chip">research<span class="x">×1</span></span>
+        <span class="mon-chip">learning<span class="x">×1</span></span>
+        <span class="mon-chip">observability<span class="x">×1</span></span>
+        <span class="mon-chip">quality<span class="x">×1</span></span>
+        <span class="mon-chip">escalation<span class="x">×1</span></span>
+      </div>
+    </div>
+    <div class="mon-card">
+      <div class="mon-head"><span>Frameworks</span><span class="mon-count">IX</span></div>
+      <div class="mon-fw" id="monFw">
+        <span>I</span><span>II</span><span>III</span><span>IV</span><span class="on">V</span>
+        <span>VI</span><span>VII</span><span>VIII</span><span>IX</span>
+      </div>
+    </div>
+    <div class="mon-card">
+      <div class="mon-head"><span>Architecture Layer Usage</span><span class="mon-count">134u</span></div>
+      <div id="monLayers">
+        <div class="mon-layer"><span>LLM</span><div class="mon-bar"><i style="width:20.1%"></i></div><span class="pct">20.1%</span></div>
+        <div class="mon-layer"><span>Memory</span><div class="mon-bar"><i style="width:14.9%"></i></div><span class="pct">14.9%</span></div>
+        <div class="mon-layer"><span>Tools</span><div class="mon-bar"><i style="width:12.7%"></i></div><span class="pct">12.7%</span></div>
+        <div class="mon-layer"><span>Automation</span><div class="mon-bar"><i style="width:11.9%"></i></div><span class="pct">11.9%</span></div>
+        <div class="mon-layer"><span>Storage</span><div class="mon-bar"><i style="width:7.5%"></i></div><span class="pct">7.5%</span></div>
+        <div class="mon-layer"><span>Safety</span><div class="mon-bar"><i style="width:6.7%"></i></div><span class="pct">6.7%</span></div>
+        <div class="mon-layer"><span>Evaluation</span><div class="mon-bar"><i style="width:6.7%"></i></div><span class="pct">6.7%</span></div>
+        <div class="mon-layer"><span>Vector DB</span><div class="mon-bar"><i style="width:6.0%"></i></div><span class="pct">6.0%</span></div>
+        <div class="mon-layer"><span>KB</span><div class="mon-bar"><i style="width:5.2%"></i></div><span class="pct">5.2%</span></div>
+        <div class="mon-layer"><span>Frontend/UI</span><div class="mon-bar"><i style="width:3.7%"></i></div><span class="pct">3.7%</span></div>
+        <div class="mon-layer"><span>RAG</span><div class="mon-bar"><i style="width:2.2%"></i></div><span class="pct">2.2%</span></div>
+        <div class="mon-layer"><span>Agents</span><div class="mon-bar"><i style="width:2.2%"></i></div><span class="pct">2.2%</span></div>
+      </div>
+    </div>
+    <div class="mon-card">
+      <div class="mon-head"><span>Reconstructive Intelligence</span><span class="mon-count">5</span></div>
+      <div class="mon-chips">
+        <span class="mon-chip">sparse memory recall</span>
+        <span class="mon-chip">pattern strengthening</span>
+        <span class="mon-chip">4-gate verification</span>
+        <span class="mon-chip">trust-centered recall</span>
+        <span class="mon-chip">causal world model</span>
+      </div>
+    </div>
+  </aside>
 
   <!-- ================ LEFT PANEL ================ -->
   <section class="left">
@@ -1266,6 +1374,14 @@
         </div>
 
         <div class="browser-body" id="chatBody">
+          <div class="tier-band" id="tierBand">
+            <span class="tier-chip L1" id="tierChip">L1</span>
+            <div class="tier-main">
+              <div class="tier-title" id="tierTitle">—</div>
+              <div class="tier-sub" id="tierSub">—</div>
+              <div class="tier-quote" id="tierQuote"></div>
+            </div>
+          </div>
           <div class="session-meta" id="sessionMeta">SESSION · #2861 · L1 · INCIDENT</div>
           <div id="chatMessages">
             <!-- intro -->
@@ -1283,6 +1399,13 @@
           <button class="history-clear" id="historyClear" title="Clear archived chats only — does not affect the current chat">CLEAR</button>
           <div class="history-dropdown" id="historyDropdown">
             <div class="history-empty">No archived chats</div>
+          </div>
+        </div>
+
+        <div class="chat-dock">
+          <div class="input-row">
+            <input id="askInput" placeholder="Ask ARIA anything…" autocomplete="off" />
+            <button class="send-btn" id="sendBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
           </div>
         </div>
       </div>
@@ -1600,10 +1723,6 @@
         <button class="mic-btn" id="micBtn" title="Tap to speak"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3M8 22h8"/></svg></button>
       </div>
 
-      <div class="input-row">
-        <input id="askInput" placeholder="Ask ARIA anything…" autocomplete="off" />
-        <button class="send-btn" id="sendBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
-      </div>
      </div><!-- /.aria-section -->
 
      <div class="content-section">
@@ -2867,6 +2986,78 @@ function classify(text){
   return 'default';
 }
 
+/* ============== L1 / L2 / L3 ISSUE CLASSIFIER ============== */
+// Map a reported issue (text + already-classified intent) to a support tier.
+const TIER_BY_INTENT = {
+  // L3 — infrastructure / security / identity / org-wide class
+  'kb:active-directory':'L3','kb:m365':'L3','kb:networking':'L3','kb:windows':'L3',
+  'kb:macos':'L3','kb:permissions':'L3','kb:security':'L3',
+  // L2 — operations / network / multi-user class
+  'vpn':'L2','mail':'L2','outlook_ooo':'L2','kb:onedrive':'L2','kb:teams':'L2',
+  'kb:mfa':'L2','kb:performance':'L2','printer':'L2','kb:bitlocker':'L2',
+  // L1 — first-touch / single-user class
+  'password':'L1','wifi':'L1','kb:bluetooth':'L1','kb:usb':'L1','kb:webcam':'L1','kb:browser':'L1',
+};
+const TIER_TITLE = {
+  'kb:active-directory':'Active Directory / account lockout','kb:m365':'Microsoft 365 / licensing',
+  'kb:networking':'Network infrastructure fault','kb:windows':'Windows boot / stop error',
+  'kb:macos':'macOS startup fault','kb:permissions':'File share / permissions',
+  'kb:security':'Security incident','vpn':'VPN connectivity','mail':'Mail / inbox issue',
+  'outlook_ooo':'Outlook out-of-office','kb:onedrive':'OneDrive sync conflict','kb:teams':'Microsoft Teams issue',
+  'kb:mfa':'MFA / authenticator','kb:performance':'Performance degradation','printer':'Printing issue',
+  'kb:bitlocker':'BitLocker recovery','password':'Password / sign-in','wifi':'Wi-Fi / connectivity',
+  'kb:bluetooth':'Bluetooth device','kb:usb':'USB / external device','kb:webcam':'Camera / webcam','kb:browser':'Browser issue',
+};
+// scope words that escalate an issue (org-wide / data-loss raise the tier + difficulty)
+const TIER_SCOPE_RE = /(\bhalf\b|everyone|every user|all (?:our |the )?(?:users|staff|employees|machines)|company[- ]?wide|org(?:anization)?[- ]?wide|tenant[- ]?wide|entire (?:office|company|team|department|fleet)|fleet|overnight|multiple (?:users|people|machines)|several (?:users|people)|whole (?:team|office|department|building|floor)|site (?:is )?down|outage|nobody can|no one can|can'?t .* (?:anyone|anybody)|production (?:is )?down|servers? (?:are )?down|data ?loss|lost .* (?:data|files|access)|breach|ransom)/i;
+const TIER_TARGET = { L1:'~60s', L2:'~90s', L3:'~180s' };
+const TIER_DIFF   = { L1:'Easy', L2:'Mid', L3:'Hard' };
+// intents that are NOT support issues (navigation / off-topic) — no tier shown
+const NON_ISSUE_INTENTS = new Set(['ops','brain','voice','escalation','shopping','news','weather','trade','quote']);
+// language that signals a generic (no-keyword) message is actually a problem report
+const ISSUE_HINT_RE = /(won'?t|can'?t|cannot|couldn'?t|not working|doesn'?t work|isn'?t working|broken|down|error|fail(?:ed|ing|s)?|crash|frozen|stuck|unable|no access|denied|missing|lost|gone|locked|slow|disconnect|drop(?:ped|ping|s)?|not syncing|out of sync|conflict|unreachable|timeout|blue ?screen|not responding)/i;
+
+function classifyTier(text, intent){
+  // generic but clearly-an-incident messages start at L2 (operational) before scope escalation
+  let tier = TIER_BY_INTENT[intent] || (intent === 'default' ? 'L2' : 'L1');
+  let escalated = false;
+  if (TIER_SCOPE_RE.test(text)){
+    escalated = true;
+    if (tier === 'L1') tier = 'L2';
+    else if (tier === 'L2') tier = 'L3';
+  }
+  let title = TIER_TITLE[intent];
+  if (!title){
+    // fall back to first words of what the user actually said
+    const words = text.trim().replace(/\s+/g,' ').split(' ').slice(0,8).join(' ');
+    title = words ? words.charAt(0).toUpperCase() + words.slice(1) : 'IT issue';
+  }
+  const diff = escalated ? 'Hard' : TIER_DIFF[tier];
+  return { tier, diff, title, target: TIER_TARGET[tier], scope: escalated };
+}
+
+function setTierBand(text, intent){
+  if (NON_ISSUE_INTENTS.has(intent)) return;        // navigation / off-topic → no tier
+  // a generic message only counts as an incident if it reads like a problem
+  if (intent === 'default' && !ISSUE_HINT_RE.test(text) && !TIER_SCOPE_RE.test(text)) return;
+  const c = classifyTier(text, intent);
+  window._ariaTier = c.tier;
+  const band  = document.getElementById('tierBand');
+  const chip  = document.getElementById('tierChip');
+  const title = document.getElementById('tierTitle');
+  const sub   = document.getElementById('tierSub');
+  const quote = document.getElementById('tierQuote');
+  if (!band) return;
+  chip.className = 'tier-chip ' + c.tier;
+  chip.textContent = c.tier;
+  title.textContent = c.title;
+  sub.textContent = `${c.diff} · ${c.target} · ${c.scope ? 'ESCALATED' : 'INCIDENT'}`;
+  quote.textContent = '"' + text.trim().slice(0,160) + '"';
+  band.classList.add('show');
+  const meta = document.getElementById('sessionMeta');
+  if (meta) meta.textContent = `SESSION · #${(state && state.sessionId) || 2861} · ${c.tier} · ${c.scope ? 'ESCALATED' : 'INCIDENT'}`;
+}
+
 const TECHNICAL_INTENTS = ['outlook_ooo','mail','vpn','password','wifi','printer'];
 const EXTERNAL_INTENTS  = ['shopping','news','weather','trade','quote'];
 
@@ -2889,7 +3080,7 @@ function intentLabel(intent){
 /* ============== RENDER FUNCTIONS ============== */
 function newSession(){
   state.sessionId++;
-  document.getElementById('sessionMeta').textContent = `SESSION · #${state.sessionId} · L1 · INCIDENT`;
+  document.getElementById('sessionMeta').textContent = `SESSION · #${state.sessionId} · ${window._ariaTier || 'L1'} · INCIDENT`;
   document.getElementById('urlText').textContent = `aria.iisupp.net/session/${state.sessionId}`;
 }
 
@@ -3076,7 +3267,7 @@ function renderArticle(insight){
   // wire back
   node.querySelectorAll('[data-back-chat]').forEach(b => b.addEventListener('click', () => {
     document.getElementById('urlText').textContent = `aria.iisupp.net/session/${state.sessionId}`;
-    document.getElementById('sessionMeta').textContent = `SESSION · #${state.sessionId} · L1 · INCIDENT`;
+    document.getElementById('sessionMeta').textContent = `SESSION · #${state.sessionId} · ${window._ariaTier || 'L1'} · INCIDENT`;
     node.remove();
   }));
   node.querySelectorAll('[data-share-article]').forEach(b => b.addEventListener('click', () => {
@@ -3439,6 +3630,9 @@ function handleUserInput(text){
   }
 
   const intent = classify(cleanText);
+
+  // L1/L2/L3 — tag the reported issue at the top of the surround (skip slash commands)
+  if (!/^\//.test(q)){ try { setTierBand(text, intent); } catch(e){} }
 
   // /kb <query> — direct KB search command (typo-tolerant: /kb /kn /knowledge kb)
   if (/^\/?(kb|kn|knowledge)\s|^\/?(kb|kn|knowledge)$/.test(q)){
