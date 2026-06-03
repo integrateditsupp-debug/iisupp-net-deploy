@@ -99,11 +99,18 @@ export default async (request) => {
   const sessions = getStore({ name: SESSIONS, consistency: 'strong' });
   const kbLive = getStore({ name: KB_LIVE, consistency: 'strong' });
 
-  // ?purge=1 — one-time cleanup after the echo-chamber audit (2026-06-02). Sweeps the
-  // junk bits that the old loop banked as "knowledge" (its own clarifying questions,
-  // generic first-principles boilerplate, no-match stubs) out of the live store and
-  // rebuilds kb-index.json from only the surviving real answers. Idempotent.
+  // ?purge=1 — cleanup after the echo-chamber audit (2026-06-02): sweeps the junk bits the
+  // loop banked as "knowledge" (its own clarifying questions, first-principles boilerplate,
+  // no-match stubs, scraped help-page nav) out of the live store and rebuilds kb-index.json
+  // from the surviving real answers. Idempotent. GATED (2026-06-03): a purge MUTATES the
+  // live KB, so it now requires the audit secret — header `x-aria-audit-secret` (or
+  // `x-aria-export-secret`, same value) === ARIA_AUDIT_SECRET. Matches aria-kb-export auth.
   if (url.searchParams.get('purge') === '1') {
+    const secret = request.headers.get('x-aria-audit-secret') || request.headers.get('x-aria-export-secret');
+    const authed = secret && process.env.ARIA_AUDIT_SECRET && secret === process.env.ARIA_AUDIT_SECRET;
+    if (!authed) {
+      return new Response(JSON.stringify({ error: 'unauthorized — x-aria-audit-secret required' }), { status: 401, headers: cors });
+    }
     return new Response(JSON.stringify(await purgeJunk(kbLive)), { status: 200, headers: cors });
   }
 

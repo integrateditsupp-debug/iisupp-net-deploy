@@ -2903,7 +2903,17 @@ const INTENT_TO_CAT = {
 function kbForIntent(intent){
   const cat = INTENT_TO_CAT[intent];
   if (!cat) return null;
-  return ARIA_KB.find(a => a.cat === cat && a.tier === 'L1') || ARIA_KB.find(a => a.cat === cat);
+  // Some intents are narrower than their category. Prefer an article that actually matches
+  // the specific topic; if the category has nothing relevant, show NO card rather than a
+  // misleading one — e.g. "set my out of office" must not surface "Outlook not receiving
+  // new emails" just because both sit in the outlook category. (2026-06-03)
+  const SPECIFIC = { outlook_ooo: /out.?of.?office|automatic repl|auto.?repl|away message|vacation/i };
+  const inCat = ARIA_KB.filter(a => a.cat === cat);
+  const re = SPECIFIC[intent];
+  if (re){
+    return inCat.find(a => re.test((a.title||'') + ' ' + (a.id||'') + ' ' + (a.summary||'') + ' ' + (a.body||''))) || null;
+  }
+  return inCat.find(a => a.tier === 'L1') || inCat[0] || null;
 }
 
 function mdToHTML(md){
@@ -3905,7 +3915,10 @@ function handleUserInput(text){
   const isShift = prev && !sameIntent && state.introCleared
                && intent !== 'escalation'
                && intent !== 'default';
-  if (isShift && !state.pendingPivot){
+  // Open the pivot on a fresh shift; if a pivot is ALREADY pending and the user raises YET
+  // ANOTHER distinct topic (not a finish/switch reply), re-point it at the newest topic so
+  // we never silently drop it or keep referencing a stale one. (3-topic-chain fix 2026-06-03)
+  if (isShift && (!state.pendingPivot || state.pendingPivot.to !== intent)){
     state.pendingPivot = { from: prev, to: intent, text };
     appendMessage(youBubble(text));
     setTimeout(() => {

@@ -133,12 +133,12 @@
       return;
     }
 
-    // 4. topic change detection (simple keyword domain check)
+    // 4. topic change detection — DISABLED 2026-06-03. aria.html owns topic switching via
+    //    its native pendingPivot "Switch topics?" card (archive-to-History model). Running
+    //    a SECOND detector here double-fired prompts and confused 3-topic chains (the
+    //    screenshot bug). The surround now defers to the native flow for ALL topic logic;
+    //    we only keep light currentTopic context for escalation/vendor routing above.
     const newTopic = detectTopic(lower);
-    if (currentTopic && newTopic && currentTopic !== newTopic) {
-      askTopicChangeConfirm(newTopic);
-      return;
-    }
     if (newTopic && !currentTopic) currentTopic = newTopic;
     // Pre-think acknowledgement — surfaces multiple agents in Aperture while ARIA's core reply spins up.
     maybeInjectThinkAloud(text);
@@ -189,7 +189,7 @@
     'SEC.PHISH':         /\b(suspicious (email|link|site|message)|phishing|is this (a )?scam|got a weird email|received .* link)\b/i,
     'SEC.MALWARE':       /\b(virus|malware|infected|ransom(ware)?|trojan|spyware|popups|browser hijack)\b/i,
     'VPN.AUTH.FAIL':     /\b(vpn (won.?t|cannot|can.?t) connect|vpn (authentication|auth) (failed|fail|error)|vpn login (failed|wrong))\b/i,
-    'VPN.NO.TUNNEL':     /\b(vpn (connected )?but no internet|vpn slow|tunnel (won.?t|cannot) (open|establish)|vpn drops?)\b/i,
+    'VPN.NO.TUNNEL':     /\b(vpn (connected )?but no internet|vpn slow|tunnel (won.?t|cannot) (open|establish)|vpn (drop|drops|dropping|disconnects?|keeps (dropping|disconnecting)))\b/i,
     'CLOUD.SYNC':        /\b(onedrive (not )?syncing|sharepoint (not )?syncing|dropbox (not )?syncing|google drive (not )?syncing|sync (error|failed|stuck))\b/i,
     'SW.INSTALL.FAIL':   /\b((install|installation) (failed|error|stuck)|cannot install|setup (failed|error)|msi error|installer (crash|fail))\b/i,
     'SW.UPDATE.FAIL':    /\b((update|upgrade) (failed|error|stuck)|windows update.*(fail|error|stuck)|cannot update|update loop)\b/i
@@ -793,7 +793,7 @@
   if (window.__ARIA_POLISH_V4__) return; window.__ARIA_POLISH_V4__ = true;
   function captureName(){
     var startBtn = Array.from(document.querySelectorAll("button")).find(function(b){ return /start.*troubleshoot/i.test(b.textContent||""); });
-    if (startBtn && !startBtn.__cap) { startBtn.__cap = true; startBtn.addEventListener("click", function(){ var f = document.getElementById("apF_first"); if (f && f.value) try { localStorage.setItem("aria_user_first", f.value.trim()); sessionStorage.setItem("aria_turn_count", "0"); } catch(_){} }, true); }
+    if (startBtn && !startBtn.__cap) { startBtn.__cap = true; startBtn.addEventListener("click", function(){ window.__aria_greeted_session = false; var f = document.getElementById("apF_first"); if (f && f.value) try { localStorage.setItem("aria_user_first", f.value.trim()); sessionStorage.setItem("aria_turn_count", "0"); } catch(_){} }, true); }
   }
   setInterval(captureName, 1000); setTimeout(captureName, 300);
   var origSubmit = window.submitAsk;
@@ -805,21 +805,27 @@
     wrapped.__aria_v4_marker = true;
     window.submitAsk = wrapped;
   }
+  // Greet EXACTLY ONCE per session, on the opener bubble only, and only with a real first
+  // name. The old version greeted whatever was the LAST aria-block each 700ms tick, so every
+  // ARIA reply got its own "Hello {name} —" (the screenshot's repeated greeting); it also
+  // greeted with the company name pulled from the intake field. (Fixed 2026-06-03.)
+  function looksLikeOrg(name){
+    return /integrated|support|\biis\b|\binc\b|\bllc\b|company|helpdesk|\badmin\b|\bit\b/i.test(name);
+  }
   function tryGreet(){
-    if (window.__aria_turn !== 1) return;
-    var first = ""; try { first = localStorage.getItem("aria_user_first") || ""; } catch(_){}
-    if (!first) return;
+    if (window.__aria_greeted_session) return;
+    var first = ""; try { first = (localStorage.getItem("aria_user_first") || "").trim(); } catch(_){}
+    if (!first || first.length > 24 || looksLikeOrg(first)) return; // no real first name → no greeting
     var chat = document.getElementById("chatMessages"); if (!chat) return;
     var blocks = chat.querySelectorAll(".aria-block");
     if (!blocks.length) return;
-    var last = blocks[blocks.length - 1];
-    if (last.__greeted) return;
-    var textEl = last.querySelector(".aria-text");
+    var opener = blocks[0]; // greet the session opener only, never later replies
+    var textEl = opener.querySelector(".aria-text");
     if (!textEl) return;
     var cur = (textEl.textContent || "").trim();
     if (!cur) return;
-    if (cur.toLowerCase().indexOf("hello " + first.toLowerCase()) === 0) { last.__greeted = true; return; }
-    last.__greeted = true;
+    window.__aria_greeted_session = true; // one and done, even if already greeted
+    if (cur.toLowerCase().indexOf("hello " + first.toLowerCase()) === 0) return;
     textEl.textContent = "Hello " + first + " — " + cur.charAt(0).toLowerCase() + cur.slice(1);
   }
   setInterval(tryGreet, 700);
