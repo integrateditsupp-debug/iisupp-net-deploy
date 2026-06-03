@@ -13,15 +13,21 @@
 // Bit format for solutions: { a, q, r, n, s, c, t } (agent, question, result, notes, source, confidence, ts)
 
 import { getStore } from '@netlify/blobs';
+import { verifyAperture } from './aperture-auth.mjs';
 
 const PRIORITY_RANK = { critical: 4, high: 3, normal: 2, low: 1 };
 const ETA_BY_PRIORITY = { critical: 180, high: 360, normal: 600, low: 1200 }; // seconds
+const ADMIN_ACTIONS = new Set(['tickets', 'ticket', 'chatlog', 'chatpost', 'update']);
 
 export default async (req, ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors() });
   const url = new URL(req.url);
-  const action = url.searchParams.get('action') || (await safeBody(req)).action || 'tickets';
   const body = req.method === 'POST' ? await safeBody(req) : {};
+  const action = url.searchParams.get('action') || body.action || 'tickets';
+
+  if (ADMIN_ACTIONS.has(action) && !verifyAperture(req)) {
+    return json({ error: 'admin authorization required' }, 401);
+  }
 
   try {
     if (action === 'escalate') return await actEscalate(body);
@@ -313,7 +319,7 @@ function cors() {
   return {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
 }

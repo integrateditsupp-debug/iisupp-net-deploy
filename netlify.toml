@@ -227,3 +227,16 @@
   from = "/aperture"
   to = "/aperture.html"
   status = 200
+[[redirects]]
+  from = "/aperture/"
+  to = "/aperture.html"
+  status = 200
+
+[[redirects]]
+  from = "/aperture-learning"
+  to = "/aperture-learning.html"
+  status = 200
+[[redirects]]
+  from = "/aperture-learning/"
+  to = "/aperture-learning.html"
+  status = 200

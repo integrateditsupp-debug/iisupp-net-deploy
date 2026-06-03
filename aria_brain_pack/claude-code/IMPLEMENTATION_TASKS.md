@@ -1,5 +1,11 @@
 # Claude Code Implementation Tasks
 
+## Codex Coordination Note - 2026-06-03
+Codex is currently handling the Aperture command-center polish and admin gate:
+- Added Netlify Edge Basic Auth for `/aperture`, `/aperture-learning`, and command-center routes using `APERTURE_ADMIN_EMAIL` + `APERTURE_ADMIN_PASSWORD`.
+- Tightened dashboard-only `aria-escalation` actions so ticket/chat reads and operator posts require the Aperture bearer token.
+- Added the command-center visual stage to `aperture-learning.html` while preserving the existing page structure and live data contract.
+
 ## Phase 1 — Safe Integration
 - [ ] Add `/aria_brain_pack` to project.
 - [ ] Create `lib/kb/loadKnowledgeBase.ts` or equivalent.

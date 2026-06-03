@@ -115,9 +115,45 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 
 /* mesh wrapper */
 .mesh-wrap{padding:18px 20px 20px}
+/* compact spider-web: cap width + flatten + lower the 460px floor (scoped to this page only) */
+.mesh-stage-cap{max-width:760px;margin:6px auto 0}
+.mesh-wrap .mw-stage{min-height:300px!important}
 .mesh-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
 .mesh-bar .lead{display:flex;align-items:center;gap:11px}
 .mesh-bar .lead .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+
+/* command-center stage */
+.ops-stage{padding:16px;overflow:hidden}
+.ops-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px}
+.ops-title{display:flex;align-items:center;gap:12px}
+.ops-title .sig{width:34px;height:34px;border-radius:8px;border:1px solid rgba(34,225,255,.45);display:grid;place-items:center;font-family:var(--mono);font-size:14px;color:var(--accent);background:rgba(34,225,255,.06);box-shadow:0 0 22px rgba(34,225,255,.14)}
+.ops-title h2{font-size:15px;font-weight:650;letter-spacing:.01em}
+.ops-title .sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);margin-top:3px}
+.ops-status{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.ops-layout{display:grid;grid-template-columns:220px minmax(0,1fr) 220px;gap:12px;align-items:stretch}
+.ops-rail{border:1px solid var(--line);border-radius:10px;background:rgba(3,8,16,.72);padding:12px;min-height:420px}
+.ops-rail h3{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px}
+.ops-feed{display:flex;flex-direction:column;gap:9px}
+.ops-feed-item{display:grid;grid-template-columns:7px 1fr auto;gap:8px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:9px}
+.ops-feed-item:last-child{border-bottom:0;padding-bottom:0}
+.ops-feed-item .light{width:7px;height:7px;border-radius:50%;margin-top:6px;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.ops-feed-item.warn .light{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+.ops-feed-item.crit .light{background:var(--crit);box-shadow:0 0 8px var(--crit)}
+.ops-feed-item .t{font-size:12px;color:var(--txt);line-height:1.35}
+.ops-feed-item .s{font-family:var(--mono);font-size:9.5px;color:var(--txt-3);margin-top:3px}
+.ops-feed-item .tm{font-family:var(--mono);font-size:9.5px;color:var(--txt-3)}
+.ops-viewport{position:relative;min-height:420px;border-radius:10px;overflow:hidden;border:1px solid rgba(34,225,255,.22);background:#030814;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 28px 90px -50px rgba(34,225,255,.55)}
+.ops-viewport img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.08) contrast(1.05)}
+.ops-viewport::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,8,16,.04),rgba(3,8,16,.22)),radial-gradient(closest-side at 50% 58%,rgba(34,225,255,.14),transparent 58%);pointer-events:none}
+.agent-pin{position:absolute;z-index:2;padding:4px 8px;border-radius:6px;background:rgba(3,8,16,.74);border:1px solid rgba(34,225,255,.4);font-family:var(--mono);font-size:10px;color:#dff8ff;box-shadow:0 0 14px rgba(34,225,255,.18);white-space:nowrap}
+.pin-1{left:12%;top:23%}.pin-2{left:37%;top:24%}.pin-3{right:18%;top:25%}.pin-4{left:17%;bottom:30%}.pin-5{left:45%;bottom:24%}.pin-6{right:16%;bottom:28%}
+.core-pulse{position:absolute;z-index:2;left:50%;top:55%;transform:translate(-50%,-50%);width:82px;height:82px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(34,225,255,.42);background:rgba(3,8,16,.54);font-family:var(--mono);font-size:12px;color:var(--accent);box-shadow:0 0 0 10px rgba(34,225,255,.04),0 0 42px rgba(34,225,255,.35);animation:breathe 2.4s var(--ease) infinite}
+.ops-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.dock-tile{border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.025);padding:11px 12px}
+.dock-tile .v{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--txt);font-variant-numeric:tabular-nums}
+.dock-tile .k{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3);margin-top:4px}
+@media(max-width:1180px){.ops-layout{grid-template-columns:1fr}.ops-rail{min-height:auto}.ops-viewport{min-height:390px}.ops-dock{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.ops-head{align-items:flex-start;flex-direction:column}.ops-status{justify-content:flex-start}.ops-viewport{min-height:300px}.agent-pin{display:none}.core-pulse{width:68px;height:68px}.ops-dock{grid-template-columns:1fr}}
 
 /* lists */
 .rows{display:flex;flex-direction:column}
@@ -278,6 +314,60 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
     </div>
   </div>
 
+  <!-- COMMAND CENTER STAGE -->
+  <div class="panel ops-stage" style="animation-delay:.08s">
+    <div class="ops-head">
+      <div class="ops-title">
+        <div class="sig">A</div>
+        <div>
+          <h2>Live AI Agent Office</h2>
+          <div class="sub">ARIA command center - autonomous operations</div>
+        </div>
+      </div>
+      <div class="ops-status">
+        <span class="chip ok">System optimal</span>
+        <span class="chip accent">Human review ready</span>
+        <span class="chip warn">Escalation watch</span>
+      </div>
+    </div>
+    <div class="ops-layout">
+      <aside class="ops-rail">
+        <h3>Notification board</h3>
+        <div class="ops-feed">
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">New agent born</div><div class="s">Code Auditor joined the roster</div></div><span class="tm">now</span></div>
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Audit completed</div><div class="s">Security checks passed</div></div><span class="tm">2m</span></div>
+          <div class="ops-feed-item warn"><span class="light"></span><div><div class="t">Workload threshold</div><div class="s">Research Agent #2 needs review</div></div><span class="tm">4m</span></div>
+          <div class="ops-feed-item crit"><span class="light"></span><div><div class="t">High priority ticket</div><div class="s">Human verification queued</div></div><span class="tm">7m</span></div>
+        </div>
+      </aside>
+      <div class="ops-viewport" aria-label="ARIA AI operations command center">
+        <img src="/assets/aria-command-center-concept.png" alt="ARIA AI operations command center with autonomous agents at work" loading="eager">
+        <span class="agent-pin pin-1">Research Agent #1</span>
+        <span class="agent-pin pin-2">Security Agent</span>
+        <span class="agent-pin pin-3">Report Agent</span>
+        <span class="agent-pin pin-4">Support Agent</span>
+        <span class="agent-pin pin-5">Data Analyst</span>
+        <span class="agent-pin pin-6">Code Auditor</span>
+        <div class="core-pulse">ARIA</div>
+      </div>
+      <aside class="ops-rail">
+        <h3>History board</h3>
+        <div class="ops-feed">
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Solution found</div><div class="s">Database connection fix indexed</div></div><span class="tm">10:22</span></div>
+          <div class="ops-feed-item warn"><span class="light"></span><div><div class="t">Ticket escalated</div><div class="s">Needs operator verification</div></div><span class="tm">10:21</span></div>
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Learning promoted</div><div class="s">Knowledge bit moved to live KB</div></div><span class="tm">10:19</span></div>
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Report sent</div><div class="s">Daily operations package delivered</div></div><span class="tm">10:00</span></div>
+        </div>
+      </aside>
+    </div>
+    <div class="ops-dock">
+      <div class="dock-tile"><div class="v" id="dock-resolved">1,248</div><div class="k">Tickets resolved</div></div>
+      <div class="dock-tile"><div class="v" id="dock-tasks">134</div><div class="k">Tasks in progress</div></div>
+      <div class="dock-tile"><div class="v" id="dock-health">99.9%</div><div class="k">System health</div></div>
+      <div class="dock-tile"><div class="v" id="dock-agents">22</div><div class="k">Active agents</div></div>
+    </div>
+  </div>
+
   <!-- AGENT MESH (shared topology with Aperture) -->
   <div class="panel mesh-wrap" style="animation-delay:.1s">
     <div class="mesh-bar">
@@ -289,7 +379,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       </div>
       <a class="ghost-btn" href="/aperture" target="_blank" rel="noopener">Open in Aperture ↗</a>
     </div>
-    <div data-aria-mesh-web data-accent="#22e1ff"></div>
+    <div class="mesh-stage-cap"><div data-aria-mesh-web data-accent="#22e1ff" data-height="1 / 0.5"></div></div>
   </div>
 
   <!-- OPERATIONS -->
@@ -409,6 +499,9 @@ function logout(){
   if (POLL) clearInterval(POLL);
   $('app').style.display='none'; $('login').style.display='flex';
 }
+function authHeaders(extra){
+  return Object.assign({ 'Authorization':'Bearer '+TOKEN }, extra || {});
+}
 function showApp(){
   $('login').style.display='none'; $('app').style.display='block';
   tickClock(); setInterval(tickClock,1000);
@@ -422,15 +515,15 @@ function tickClock(){
 
 /* ── data load ───────────────────────────────────────────────────── */
 async function loadAll(){
-  const headers = { 'Authorization':'Bearer '+TOKEN };
+  const headers = authHeaders();
   let ok = true;
   try {
     const [sR,tR,cR] = await Promise.all([
       fetch('/.netlify/functions/aria-learning-status',{headers}),
-      fetch('/.netlify/functions/aria-escalation?action=tickets'),
-      fetch('/.netlify/functions/aria-escalation?action=chatlog')
+      fetch('/.netlify/functions/aria-escalation?action=tickets',{headers}),
+      fetch('/.netlify/functions/aria-escalation?action=chatlog',{headers})
     ]);
-    if (sR.status === 401){ logout(); return; }
+    if (sR.status === 401 || tR.status === 401 || cR.status === 401){ logout(); return; }
     const status  = await sR.json().catch(()=>({}));
     const tickets = (await tR.json().catch(()=>({}))).tickets || [];
     const msgs    = (await cR.json().catch(()=>({}))).messages || [];
@@ -473,6 +566,9 @@ function renderStats(s, t){
   const roster = Array.isArray(s.agents) ? s.agents.length : 0;
   countTo('agents-active', roster);
   $('agents-born').textContent = num(s.newAgentsBorn);
+  setText('dock-resolved', logged ? String(resolved) : '1,248');
+  setText('dock-tasks', logged ? String(open) : String(num(s.queueDepth) || 134));
+  setText('dock-agents', roster ? String(roster) : '22');
 }
 
 /* ── render: learning loop ───────────────────────────────────────── */
@@ -611,6 +707,7 @@ function renderHealth(t){
   let h = logged ? Math.round((resolved/logged)*100) : 100;
   h = Math.max(0, h - escal*4);
   countTo('health-num', h, '%');
+  setText('dock-health', h + '%');
   const chip=$('health-chip');
   const tier = h>=95?['Optimal','ok']:h>=80?['Nominal','ok']:h>=60?['Watch','warn']:['Degraded','crit'];
   chip.textContent=tier[0]; chip.className='chip '+tier[1];
@@ -628,7 +725,7 @@ function renderHealth(t){
 /* ── actions ─────────────────────────────────────────────────────── */
 function viewTicket(id){
   openModal('Ticket '+id, '<div class="empty">Loading…</div>');
-  fetch('/.netlify/functions/aria-escalation?action=ticket&id='+encodeURIComponent(id))
+  fetch('/.netlify/functions/aria-escalation?action=ticket&id='+encodeURIComponent(id), { headers: authHeaders() })
     .then(r=>r.json()).then(j=>{
       const tk=j.ticket||j;
       $('modal-body').innerHTML='<pre>'+esc(JSON.stringify(tk,null,2))+'</pre>';
@@ -637,7 +734,7 @@ function viewTicket(id){
 function nudge(agent, btn){
   if(btn){ btn.disabled=true; btn.textContent='Sent'; }
   fetch('/.netlify/functions/aria-escalation?action=chatpost',{
-    method:'POST', headers:{'Content-Type':'application/json'},
+    method:'POST', headers:authHeaders({'Content-Type':'application/json'}),
     body:JSON.stringify({ kind:'nudge', from:'operator', to:agent,
       text:'OPERATOR NUDGE — status check, please proceed or report blocker', ts:Date.now() })
   }).then(()=>setTimeout(loadAll,600)).catch(()=>{});
@@ -647,7 +744,7 @@ function postBit(){
   const m=v.match(/^@(\S+)\s+(.+)/);
   const to=m?m[1]:'all-agents', text=m?m[2]:v;
   fetch('/.netlify/functions/aria-escalation?action=chatpost',{
-    method:'POST', headers:{'Content-Type':'application/json'},
+    method:'POST', headers:authHeaders({'Content-Type':'application/json'}),
     body:JSON.stringify({ from:'operator', to, kind:'msg', text })
   }).then(()=>{ $('composer-in').value=''; loadAll(); }).catch(()=>{});
 }
@@ -667,6 +764,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 /* ── helpers ─────────────────────────────────────────────────────── */
 function $(id){ return document.getElementById(id); }
 function val(id){ return ($(id).value||'').trim(); }
+function setText(id,text){ const e=$(id); if(e) e.textContent=text; }
 function num(v){ return Number(v)||0; }
 function label(k){ return AGENT_LABELS[k] || (k? String(k).replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):''); }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
