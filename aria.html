@@ -1231,112 +1231,121 @@
 <div class="topbar"><span id="topbarText">SUPPORT · ENTERPRISE · TIER ONE</span></div>
 
 <style id="surround-v2">
-  /* ===== Aperture monitoring rail (left column) ===== */
-  :root{ --mon-teal:#2dd4bf; --mon-teal-dim:rgba(45,212,191,.16); }
-  .monrail{
-    display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto;
-    border:1px solid var(--border);border-radius:18px;background:var(--panel);
-    padding:14px 12px;
+  /* ===== Aperture-faithful monitoring surround (additive · namespaced .ap-*) ===== */
+  :root{
+    --ap-surface:#0a1219; --ap-surface-2:#0d1824; --ap-border:#1a2b35; --ap-border-2:#243a47;
+    --ap-text:#d8e0e6; --ap-text-2:#98a8b3; --ap-text-3:#6b7c87;
+    --ap-teal:#2dd4bf; --ap-teal-glow:rgba(45,212,191,.18); --ap-amber:#fbbf24; --ap-red:#fb7185; --ap-green:#4ade80;
+    --ap-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
   }
-  .monrail::-webkit-scrollbar{width:6px}
-  .monrail::-webkit-scrollbar-thumb{background:rgba(45,212,191,.22);border-radius:8px}
-  .mon-card{border:1px solid var(--border);border-radius:12px;padding:11px 12px;background:rgba(12,18,24,.4)}
-  .mon-head{display:flex;align-items:center;justify-content:space-between;
-    font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--muted);margin-bottom:9px}
-  .mon-head .mon-count{color:var(--mon-teal)}
-  /* agents fired */
-  .mon-chips{display:flex;flex-wrap:wrap;gap:5px}
-  .mon-chip{font-family:var(--mono);font-size:9.5px;padding:3px 7px;border-radius:6px;
-    background:var(--mon-teal-dim);border:1px solid rgba(45,212,191,.28);color:var(--mon-teal)}
-  .mon-chip .x{opacity:.6;margin-left:3px}
-  /* frameworks */
-  .mon-fw{display:flex;flex-wrap:wrap;gap:4px}
-  .mon-fw span{font-family:var(--mono);font-size:9px;min-width:22px;text-align:center;
-    padding:3px 0;border-radius:5px;border:1px solid var(--border);color:var(--muted)}
-  .mon-fw span.on{border-color:var(--mon-teal);color:var(--mon-teal);background:var(--mon-teal-dim);
-    box-shadow:0 0 8px rgba(45,212,191,.25)}
-  /* architecture layer bars */
-  .mon-layer{display:grid;grid-template-columns:78px 1fr 34px;align-items:center;gap:7px;margin:5px 0;
-    font-family:var(--mono);font-size:9.5px;color:var(--cream-2)}
-  .mon-bar{height:5px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden}
-  .mon-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--mon-teal),#14b8a6);border-radius:4px}
-  .mon-layer .pct{text-align:right;color:var(--muted)}
-  /* tier band (top of chat) */
-  .tier-band{display:none;align-items:flex-start;gap:10px;margin:0 0 14px;padding:11px 13px;
-    border:1px solid rgba(45,212,191,.3);border-left:3px solid var(--mon-teal);border-radius:10px;
-    background:linear-gradient(90deg,rgba(45,212,191,.08),rgba(45,212,191,.02))}
-  .tier-band.show{display:flex}
-  .tier-chip{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.08em;
-    padding:4px 9px;border-radius:7px;flex-shrink:0;color:#04140f}
-  .tier-chip.L1{background:#4ade80} .tier-chip.L2{background:#fbbf24} .tier-chip.L3{background:#fb7185;color:#1a0608}
-  .tier-main{min-width:0}
-  .tier-title{font-size:13px;font-weight:600;color:var(--cream-2);line-height:1.3}
-  .tier-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--muted);margin-top:3px;text-transform:uppercase}
-  .tier-quote{font-size:11.5px;color:var(--muted);margin-top:5px;font-style:italic;
-    overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  /* 3-column shell with a full-width scenario band on top (desktop only) */
+  @media (min-width:1101px){
+    .app{grid-template-columns:300px minmax(0,1fr) 560px;grid-template-rows:auto minmax(0,1fr)}
+    .ap-band{grid-column:1 / -1}
+  }
+  /* ---- scenario band (top, full width) ---- */
+  .ap-band{background:var(--ap-surface);border:1px solid var(--ap-border);border-radius:14px;padding:13px 16px;min-width:0}
+  .ap-band-row{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+  .ap-band-tier{font-family:var(--ap-mono);font-weight:700;font-size:12px;letter-spacing:.1em;padding:3px 9px;border-radius:3px;color:#04140f}
+  .ap-band-tier.L1{background:var(--ap-green)} .ap-band-tier.L2{background:var(--ap-amber)} .ap-band-tier.L3{background:var(--ap-red);color:#1a0608}
+  .ap-band-diff{font-family:var(--ap-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ap-text-3)}
+  .ap-band-title{font-family:var(--ap-mono);font-size:14px;font-weight:600;color:var(--ap-text);margin:0;letter-spacing:.02em;min-width:0}
+  .ap-band-quote{font-family:var(--ap-mono);font-size:11px;color:var(--ap-teal);margin-top:7px;opacity:.92}
+  .ap-tag-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+  .ap-tag{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;font-family:var(--ap-mono);font-size:10px;background:var(--ap-surface-2);border:1px solid var(--ap-border);color:var(--ap-text-2);border-radius:2px}
+  .ap-tag-key{color:var(--ap-text-3)} .ap-tag-val{color:var(--ap-text);font-weight:500}
+  .ap-tag-lead{background:var(--ap-teal-glow);border-color:var(--ap-teal)} .ap-tag-lead .ap-tag-val{color:var(--ap-teal)}
+  /* ---- left rail ---- */
+  .ap-rail{display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto;padding-right:3px}
+  .ap-rail::-webkit-scrollbar{width:6px}
+  .ap-rail::-webkit-scrollbar-thumb{background:var(--ap-border-2);border-radius:8px}
+  .ap-card{background:var(--ap-surface);border:1px solid var(--ap-border);border-radius:10px;padding:13px}
+  .ap-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .ap-section-label{font-family:var(--ap-mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ap-text-3)}
+  .ap-count{font-family:var(--ap-mono);font-size:10px;color:var(--ap-text-3);white-space:nowrap}
+  .ap-count .a{color:var(--ap-teal);font-weight:700}
+  .ap-stage-text{font-family:var(--ap-mono);font-size:12px;font-weight:500;color:var(--ap-text);margin:6px 0 12px}
+  .ap-progressbar{height:3px;background:var(--ap-surface-2);border-radius:1px;overflow:hidden}
+  .ap-progressbar-fill{height:100%;background:var(--ap-teal);box-shadow:0 0 8px var(--ap-teal-glow);transition:width .5s ease}
+  .ap-agents-grid{display:flex;flex-wrap:wrap;gap:6px}
+  .ap-chip-agent{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;font-family:var(--ap-mono);font-size:10px;background:var(--ap-surface-2);border:1px solid var(--ap-border-2);color:var(--ap-text);border-radius:2px}
+  .ap-chip-agent.on{border-color:var(--ap-teal);background:var(--ap-teal-glow)}
+  .ap-chip-count{font-size:9.5px;color:var(--ap-teal);font-weight:700}
+  .ap-fw-grid{display:flex;flex-wrap:wrap;gap:5px}
+  .ap-fw-cell{min-width:30px;text-align:center;padding:5px 4px;background:var(--ap-surface-2);border:1px solid var(--ap-border);border-radius:2px;font-family:var(--ap-mono);font-size:11px;font-weight:700;color:var(--ap-text-2);transition:all .2s}
+  .ap-fw-cell.on{border-color:var(--ap-teal);background:var(--ap-teal-glow);color:var(--ap-teal);box-shadow:0 0 8px rgba(45,212,191,.25)}
+  .ap-layer-row{display:grid;grid-template-columns:84px 1fr 42px;align-items:center;gap:8px;padding:4px 0;font-family:var(--ap-mono);font-size:10px}
+  .ap-layer-name{color:var(--ap-text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ap-layer-bar{height:5px;background:var(--ap-surface-2);border-radius:1px;overflow:hidden}
+  .ap-layer-bar-fill{height:100%;background:var(--ap-teal);box-shadow:0 0 6px var(--ap-teal-glow);transition:width .5s ease}
+  .ap-layer-pct{text-align:right;color:var(--ap-text-2);font-weight:600}
+  .ap-recon{display:flex;flex-wrap:wrap;gap:6px}
+  .ap-recon span{font-family:var(--ap-mono);font-size:10px;padding:4px 9px;border-radius:2px;background:var(--ap-teal-glow);border:1px solid rgba(45,212,191,.3);color:var(--ap-teal)}
+  .ap-conv-stream{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;padding-right:3px}
+  .ap-msg{display:flex;flex-direction:column;gap:3px}
+  .ap-msg.user{align-items:flex-end}
+  .ap-msg-from{font-family:var(--ap-mono);font-size:9px;letter-spacing:.2em;color:var(--ap-text-3);text-transform:uppercase;font-weight:600}
+  .ap-msg-from.aria{color:var(--ap-teal)}
+  .ap-msg-bubble{padding:9px 12px;background:var(--ap-surface-2);border:1px solid var(--ap-border);font-size:11.5px;line-height:1.55;color:var(--ap-text);border-radius:4px}
+  .ap-msg.user .ap-msg-bubble{max-width:88%}
   /* relocated chat input dock (was under "Tap to speak") */
   .chat-dock{position:absolute;left:16px;right:128px;bottom:12px;z-index:25}
   .chat-dock .input-row{margin-bottom:0}
   @media (max-width:1100px){
-    .monrail{display:none}
     .chat-dock{position:static;left:auto;right:auto;bottom:auto;margin:10px 4px 4px}
+    .ap-rail{max-height:none}
   }
 </style>
 
 <div class="app">
 
-  <!-- ================ APERTURE MONITORING RAIL ================ -->
-  <aside class="monrail" id="monRail" aria-label="ARIA live monitoring">
-    <div class="mon-card">
-      <div class="mon-head"><span>Agents Fired</span><span class="mon-count" id="monAgentCount">11</span></div>
-      <div class="mon-chips" id="monAgents">
-        <span class="mon-chip">reasoning<span class="x">×7</span></span>
-        <span class="mon-chip">automation<span class="x">×6</span></span>
-        <span class="mon-chip">kb<span class="x">×3</span></span>
-        <span class="mon-chip">intent<span class="x">×2</span></span>
-        <span class="mon-chip">safety<span class="x">×2</span></span>
-        <span class="mon-chip">orchestrator<span class="x">×1</span></span>
-        <span class="mon-chip">research<span class="x">×1</span></span>
-        <span class="mon-chip">learning<span class="x">×1</span></span>
-        <span class="mon-chip">observability<span class="x">×1</span></span>
-        <span class="mon-chip">quality<span class="x">×1</span></span>
-        <span class="mon-chip">escalation<span class="x">×1</span></span>
+  <!-- ================ APERTURE SCENARIO BAND (top, full width) ================ -->
+  <header class="ap-band" id="apBand">
+    <div class="ap-band-row">
+      <span class="ap-band-tier L3" id="apTier">L3</span>
+      <span class="ap-band-diff" id="apDiff">Hard</span>
+      <h2 class="ap-band-title" id="apTitle">Hybrid identity sync conflict (cloud vs on-prem AD)</h2>
+    </div>
+    <div class="ap-band-quote" id="apQuote">user: "Half our cloud users lost group memberships overnight. On-prem AD looks fine."</div>
+    <div class="ap-tag-row" id="apTags">
+      <span class="ap-tag"><span class="ap-tag-key">industry</span><span class="ap-tag-val">healthcare</span></span>
+      <span class="ap-tag"><span class="ap-tag-key">role</span><span class="ap-tag-val">technician</span></span>
+      <span class="ap-tag"><span class="ap-tag-key">environment</span><span class="ap-tag-val">regulated</span></span>
+      <span class="ap-tag"><span class="ap-tag-key">pressure</span><span class="ap-tag-val">outage</span></span>
+      <span class="ap-tag"><span class="ap-tag-key">history</span><span class="ap-tag-val">chronic</span></span>
+      <span class="ap-tag"><span class="ap-tag-key">trust</span><span class="ap-tag-val">fragile</span></span>
+      <span class="ap-tag ap-tag-lead"><span class="ap-tag-key">lead</span><span class="ap-tag-val">V Eisenhower</span></span>
+    </div>
+  </header>
+
+  <!-- ================ APERTURE MONITORING RAIL (left) ================ -->
+  <aside class="ap-rail" id="apRail" aria-label="ARIA live monitoring">
+    <div class="ap-card">
+      <div class="ap-card-head"><span class="ap-section-label">Current Stage</span><span class="ap-count"><span class="a" id="apStageNow">13</span> / <span id="apStageMax">13</span></span></div>
+      <div class="ap-stage-text" id="apStageText">Response · STAR summary</div>
+      <div class="ap-progressbar"><div class="ap-progressbar-fill" id="apStageFill" style="width:100%"></div></div>
+    </div>
+    <div class="ap-card">
+      <div class="ap-card-head"><span class="ap-section-label">Agents Fired</span><span class="ap-count"><span class="a" id="apAgentsUnique">11</span> unique · <span id="apAgentsTotal">25</span> total</span></div>
+      <div class="ap-agents-grid" id="apAgentsGrid"></div>
+    </div>
+    <div class="ap-card">
+      <div class="ap-card-head"><span class="ap-section-label">Frameworks</span><span class="ap-count">lead: <span class="a" id="apFwLead">V Eisenhower</span></span></div>
+      <div class="ap-fw-grid" id="apFwGrid"></div>
+    </div>
+    <div class="ap-card">
+      <div class="ap-card-head"><span class="ap-section-label">Architecture Layer Usage</span><span class="ap-count"><span id="apLayersTotal">134</span> units</span></div>
+      <div id="apLayerRows"></div>
+    </div>
+    <div class="ap-card">
+      <div class="ap-card-head"><span class="ap-section-label">Reconstructive Intelligence</span><span class="ap-count">5 in use</span></div>
+      <div class="ap-recon">
+        <span>sparse memory recall</span><span>pattern strengthening</span><span>4-gate verification</span><span>trust-centered recall</span><span>causal world model</span>
       </div>
     </div>
-    <div class="mon-card">
-      <div class="mon-head"><span>Frameworks</span><span class="mon-count">IX</span></div>
-      <div class="mon-fw" id="monFw">
-        <span>I</span><span>II</span><span>III</span><span>IV</span><span class="on">V</span>
-        <span>VI</span><span>VII</span><span>VIII</span><span>IX</span>
-      </div>
-    </div>
-    <div class="mon-card">
-      <div class="mon-head"><span>Architecture Layer Usage</span><span class="mon-count">134u</span></div>
-      <div id="monLayers">
-        <div class="mon-layer"><span>LLM</span><div class="mon-bar"><i style="width:20.1%"></i></div><span class="pct">20.1%</span></div>
-        <div class="mon-layer"><span>Memory</span><div class="mon-bar"><i style="width:14.9%"></i></div><span class="pct">14.9%</span></div>
-        <div class="mon-layer"><span>Tools</span><div class="mon-bar"><i style="width:12.7%"></i></div><span class="pct">12.7%</span></div>
-        <div class="mon-layer"><span>Automation</span><div class="mon-bar"><i style="width:11.9%"></i></div><span class="pct">11.9%</span></div>
-        <div class="mon-layer"><span>Storage</span><div class="mon-bar"><i style="width:7.5%"></i></div><span class="pct">7.5%</span></div>
-        <div class="mon-layer"><span>Safety</span><div class="mon-bar"><i style="width:6.7%"></i></div><span class="pct">6.7%</span></div>
-        <div class="mon-layer"><span>Evaluation</span><div class="mon-bar"><i style="width:6.7%"></i></div><span class="pct">6.7%</span></div>
-        <div class="mon-layer"><span>Vector DB</span><div class="mon-bar"><i style="width:6.0%"></i></div><span class="pct">6.0%</span></div>
-        <div class="mon-layer"><span>KB</span><div class="mon-bar"><i style="width:5.2%"></i></div><span class="pct">5.2%</span></div>
-        <div class="mon-layer"><span>Frontend/UI</span><div class="mon-bar"><i style="width:3.7%"></i></div><span class="pct">3.7%</span></div>
-        <div class="mon-layer"><span>RAG</span><div class="mon-bar"><i style="width:2.2%"></i></div><span class="pct">2.2%</span></div>
-        <div class="mon-layer"><span>Agents</span><div class="mon-bar"><i style="width:2.2%"></i></div><span class="pct">2.2%</span></div>
-      </div>
-    </div>
-    <div class="mon-card">
-      <div class="mon-head"><span>Reconstructive Intelligence</span><span class="mon-count">5</span></div>
-      <div class="mon-chips">
-        <span class="mon-chip">sparse memory recall</span>
-        <span class="mon-chip">pattern strengthening</span>
-        <span class="mon-chip">4-gate verification</span>
-        <span class="mon-chip">trust-centered recall</span>
-        <span class="mon-chip">causal world model</span>
-      </div>
+    <div class="ap-card">
+      <div class="ap-card-head"><span class="ap-section-label">Simulated Exchange · How ARIA Speaks</span><span class="ap-count" id="apMsgCount">3 / 3</span></div>
+      <div class="ap-conv-stream" id="apConvStream"></div>
     </div>
   </aside>
 
@@ -1374,14 +1383,6 @@
         </div>
 
         <div class="browser-body" id="chatBody">
-          <div class="tier-band" id="tierBand">
-            <span class="tier-chip L1" id="tierChip">L1</span>
-            <div class="tier-main">
-              <div class="tier-title" id="tierTitle">—</div>
-              <div class="tier-sub" id="tierSub">—</div>
-              <div class="tier-quote" id="tierQuote"></div>
-            </div>
-          </div>
           <div class="session-meta" id="sessionMeta">SESSION · #2861 · L1 · INCIDENT</div>
           <div id="chatMessages">
             <!-- intro -->
@@ -3042,18 +3043,8 @@ function setTierBand(text, intent){
   if (intent === 'default' && !ISSUE_HINT_RE.test(text) && !TIER_SCOPE_RE.test(text)) return;
   const c = classifyTier(text, intent);
   window._ariaTier = c.tier;
-  const band  = document.getElementById('tierBand');
-  const chip  = document.getElementById('tierChip');
-  const title = document.getElementById('tierTitle');
-  const sub   = document.getElementById('tierSub');
-  const quote = document.getElementById('tierQuote');
-  if (!band) return;
-  chip.className = 'tier-chip ' + c.tier;
-  chip.textContent = c.tier;
-  title.textContent = c.title;
-  sub.textContent = `${c.diff} · ${c.target} · ${c.scope ? 'ESCALATED' : 'INCIDENT'}`;
-  quote.textContent = '"' + text.trim().slice(0,160) + '"';
-  band.classList.add('show');
+  // drive the full Aperture scenario band + left-rail panels (defined below)
+  if (typeof window.renderApScenario === 'function') window.renderApScenario(c, intent, text);
   const meta = document.getElementById('sessionMeta');
   if (meta) meta.textContent = `SESSION · #${(state && state.sessionId) || 2861} · ${c.tier} · ${c.scope ? 'ESCALATED' : 'INCIDENT'}`;
 }
@@ -4204,5 +4195,120 @@ if (_prefill){
 
 <script src="/assets/aria-aperture-bridge.js" defer></script>
   <script src="/assets/aria-v04-ext.js"></script>
+
+<script>
+/* ===== Aperture surround engine — populates the scenario band + left-rail panels.
+   Additive: only writes to #ap* elements; default = image #2 (L3 hybrid-identity). ===== */
+(function(){
+  "use strict";
+  var FW = { I:"5 Ws", II:"STAR", III:"First Principles", IV:"OKR", V:"Eisenhower", VI:"DMAIC", VII:"Kaizen", VIII:"TOC", IX:"AAR" };
+  var FW_ORDER = ["I","II","III","IV","V","VI","VII","VIII","IX"];
+  var LAYER_SUB = {LLM:"thinking · reasoning",Memory:"short · long · pattern",Tools:"abilities · actions",Automation:"workflows · n8n",Storage:"files · databases",Safety:"guardrails","Evaluation":"self-checking","Vector DB":"semantic memory",KB:"curated articles","Frontend/UI":"user interaction",RAG:"retrieval · search",Agents:"specialized workers"};
+
+  var SCENARIOS = {
+    "L3-hard": {
+      tier:"L3", diff:"Hard",
+      title:"Hybrid identity sync conflict (cloud vs on-prem AD)",
+      quote:"Half our cloud users lost group memberships overnight. On-prem AD looks fine.",
+      tags:{industry:"healthcare",role:"technician",environment:"regulated",pressure:"outage",history:"chronic",trust:"fragile"},
+      lead:"V", stageNow:13, stageMax:13, stageText:"Response · STAR summary", layersTotal:134,
+      agents:[["reasoning",7],["automation",6],["kb",3],["intent",2],["safety",2],["orchestrator",1],["research",1],["learning",1],["observability",1],["quality",1],["escalation",1]],
+      layers:[["LLM",20.1],["Memory",14.9],["Tools",12.7],["Automation",11.9],["Storage",7.5],["Safety",6.7],["Evaluation",6.7],["Vector DB",6.0],["KB",5.2],["Frontend/UI",3.7],["RAG",2.2],["Agents",2.2]],
+      messages:[
+        {from:"user",text:"Half our cloud users lost group memberships overnight. On-prem AD looks fine."},
+        {from:"aria",text:"Outage — regulated tenant. Switching to emergency mode and tightening the compliance gate before anything moves."},
+        {from:"aria",text:"Pulling history: identity sync has been chronic here. Three prior incidents in 18 months — patterns suggest pipeline-side, not AD-side."}
+      ]
+    },
+    "L2-mid": {
+      tier:"L2", diff:"Mid", title:"VPN connectivity — repeat drops",
+      quote:"VPN keeps dropping every few minutes.",
+      tags:{industry:"finance",role:"end user",environment:"prod",pressure:"busy",history:"repeat",trust:"established"},
+      lead:"III", stageNow:11, stageMax:11, stageText:"Mitigated client-side · ISP ticket", layersTotal:109,
+      agents:[["reasoning",4],["intent",2],["kb",2],["automation",2],["safety",1],["orchestrator",1],["research",1],["escalation",1],["quality",1]],
+      layers:[["LLM",33],["Memory",15.6],["Automation",9.2],["Tools",7.3],["Vector DB",7.3],["Frontend/UI",5.5],["RAG",4.6],["Agents",3.7],["Safety",3.7],["KB",3.7],["Evaluation",3.7],["Storage",2.7]],
+      messages:[
+        {from:"user",text:"VPN keeps dropping every few minutes."},
+        {from:"aria",text:"Too many drops to ignore — pulling your history and running a quick ping + traceroute to the gateway."},
+        {from:"aria",text:"Two issues stacked: ISP route flap + idle-timeout too short. Extending the timeout client-side and opening an ISP ticket."}
+      ]
+    },
+    "L1-easy": {
+      tier:"L1", diff:"Easy", title:"Password / sign-in reset",
+      quote:"I'm locked out of my account.",
+      tags:{industry:"professional services",role:"end user",environment:"prod",pressure:"low",history:"first",trust:"good"},
+      lead:"I", stageNow:8, stageMax:8, stageText:"Confirm-resolve loop closed", layersTotal:38,
+      agents:[["kb",2],["reasoning",1],["safety",1],["quality",1],["intent",1],["orchestrator",1]],
+      layers:[["LLM",12],["Memory",18],["KB",22],["Evaluation",8],["Tools",6],["Frontend/UI",5],["Storage",12],["Safety",4],["RAG",3],["Agents",2],["Vector DB",2],["Automation",1]],
+      messages:[
+        {from:"user",text:"I'm locked out of my account."},
+        {from:"aria",text:"No problem — verifying your identity, then I'll reset the sign-in and clear the lockout."},
+        {from:"aria",text:"Done. Try signing in now; it should go straight through."}
+      ]
+    }
+  };
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+  function setText(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+  function pickKey(c){
+    var k = c.tier+"-"+(c.diff||"").toLowerCase();
+    if (SCENARIOS[k]) return k;
+    var byTier = Object.keys(SCENARIOS).filter(function(x){return SCENARIOS[x].tier===c.tier;});
+    return byTier.length ? byTier[0] : "L3-hard";
+  }
+
+  function render(scn, c, userText){
+    if(!scn) return;
+    var tierEl=document.getElementById("apTier");
+    if(tierEl){ tierEl.className="ap-band-tier "+scn.tier; tierEl.textContent=scn.tier; }
+    setText("apDiff", (c&&c.scope)?"Hard · escalated":scn.diff);
+    setText("apTitle", (c && c.title && c.title!=="IT issue") ? c.title : scn.title);
+    setText("apQuote", 'user: "'+ (userText? userText.trim().slice(0,150) : scn.quote) +'"');
+    var tagRow=document.getElementById("apTags");
+    if(tagRow){
+      var t=scn.tags||{}, html="";
+      Object.keys(t).forEach(function(k){ html+='<span class="ap-tag"><span class="ap-tag-key">'+esc(k)+'</span><span class="ap-tag-val">'+esc(t[k])+'</span></span>'; });
+      html+='<span class="ap-tag ap-tag-lead"><span class="ap-tag-key">lead</span><span class="ap-tag-val">'+esc(scn.lead)+' '+esc(FW[scn.lead]||"")+'</span></span>';
+      tagRow.innerHTML=html;
+    }
+    setText("apStageNow", scn.stageNow); setText("apStageMax", scn.stageMax); setText("apStageText", scn.stageText);
+    var sf=document.getElementById("apStageFill"); if(sf) sf.style.width = Math.round((scn.stageNow/Math.max(1,scn.stageMax))*100)+"%";
+    var ag=document.getElementById("apAgentsGrid");
+    if(ag){
+      ag.innerHTML = scn.agents.map(function(a){ return '<span class="ap-chip-agent on">'+esc(a[0])+'<span class="ap-chip-count">×'+a[1]+'</span></span>'; }).join("");
+      setText("apAgentsUnique", scn.agents.length);
+      setText("apAgentsTotal", scn.agents.reduce(function(s,a){return s+a[1];},0));
+    }
+    var fw=document.getElementById("apFwGrid");
+    if(fw){ fw.innerHTML = FW_ORDER.map(function(r){ return '<div class="ap-fw-cell'+(r===scn.lead?" on":"")+'" title="'+esc(FW[r])+'">'+r+'</div>'; }).join(""); }
+    setText("apFwLead", scn.lead+" "+(FW[scn.lead]||""));
+    var lr=document.getElementById("apLayerRows");
+    if(lr){
+      lr.innerHTML = scn.layers.map(function(l){
+        return '<div class="ap-layer-row"><div class="ap-layer-name" title="'+esc(LAYER_SUB[l[0]]||"")+'">'+esc(l[0])+'</div>'+
+          '<div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:'+Math.min(100,l[1]*3)+'%"></div></div>'+
+          '<div class="ap-layer-pct">'+l[1]+'%</div></div>';
+      }).join("");
+    }
+    setText("apLayersTotal", scn.layersTotal);
+    var cs=document.getElementById("apConvStream");
+    if(cs){
+      cs.innerHTML = scn.messages.map(function(m){
+        return '<div class="ap-msg '+m.from+'"><span class="ap-msg-from '+m.from+'">'+(m.from==="aria"?"ARIA":"USER")+'</span><div class="ap-msg-bubble">'+esc(m.text)+'</div></div>';
+      }).join("");
+      setText("apMsgCount", scn.messages.length+" / "+scn.messages.length);
+    }
+  }
+
+  // hook called by setTierBand() when a user reports an issue
+  window.renderApScenario = function(classification, intent, userText){
+    render(SCENARIOS[pickKey(classification)], classification, userText);
+  };
+
+  function boot(){ render(SCENARIOS["L3-hard"], null, null); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+</script>
 </body>
 </html>
