@@ -598,6 +598,30 @@ function isJunkBody(body) {
   if (/what (are you running into|exactly is happening|is .{1,30} doing)\b/i.test(s)) return true;
   if (/^Scope: .*Isolate by trying the same action/i.test(s)) return true; // first-principles boilerplate
   if (/^Scope: .*check status pages first/i.test(s)) return true;
+  // Scraped help-site navigation banked as an "answer" (2026-06-03). When ARIA answers by
+  // pulling a Microsoft/help page it sometimes returns the page's NAV LIST — a run of
+  // product/section names with no sentence structure ("Microsoft 365 Microsoft Copilot
+  // Outlook OneDrive Microsoft Teams Windows …", "Phone Link requirements and setup …",
+  // "… More Microsoft products"). These pass isRealAnswer (long, no greeting) so they slip
+  // the gate above AND can't be purged. Catch the recurring exact phrasings first, then a
+  // general signature: the first line is mostly Capitalized tokens with no sentence
+  // punctuation and no action verb — i.e. a menu, not an instruction.
+  if (/Phone Link requirements and setup|More Microsoft products|Microsoft 365 Microsoft Copilot Outlook/i.test(s)) return true;
+  // Microsoft site FOOTER nav, a second scrape template ("Accessibility … IT Pros & admins
+  // … Technical training … LinkedIn Learning …"). These phrases are footer-specific. (2026-06-03)
+  if (/IT Pros & admins|LinkedIn Learning/i.test(s)) return true;
+  // Strings of Microsoft help-ARTICLE TITLES banked as an answer — title lists, not steps
+  // ("Protect yourself from phishing Windows Security app Use two-step verification with
+  // your Microsoft account"). Match the recurring titles. (2026-06-03)
+  if (/Protect yourself from phishing|Windows Security app|two-step verification with your Microsoft account/i.test(s)) return true;
+  const head = s.split('\n')[0].slice(0, 180);
+  const toks = head.split(/\s+/).filter(Boolean);
+  if (toks.length >= 8) {
+    const caps = toks.filter(t => /^[A-Z0-9]/.test(t)).length;
+    const hasSentencePunct = /[.!?:]/.test(head);
+    const hasActionVerb = /\b(go|click|check|open|run|reset|confirm|try|call|do not|don['’]t|ensure|verify|update|restart|enable|disable|set|use|contact|sign|select|press|navigate|hover|delete|remove|add|install|reboot)\b/i.test(head);
+    if (caps / toks.length > 0.6 && !hasSentencePunct && !hasActionVerb) return true;
+  }
   return false;
 }
 
