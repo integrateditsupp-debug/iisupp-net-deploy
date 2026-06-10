@@ -250,6 +250,21 @@
       audience: ['business', 'it'], cta: 'Browse services', url: '/services.html'
     },
     {
+      id: 'br-overflow-pilot', section: 'tech-support', kind: 'service',
+      title: 'Remote L1-L3 Overflow Support Pilot', blurb: 'A scoped support pilot for teams with queue pressure, M365/user-support backlog, or weak escalation hygiene.',
+      audience: ['business', 'it'], cta: 'Stage pilot', url: '/?contact=1&subject=Request%20Overflow%20Support%20Pilot&desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20queue%20pressure%3A%0ATools%20used%20today%3A%0AWhat%20coverage%20is%20needed%3A%0AApproval%20boundaries%20or%20sensitive%20systems%3A'
+    },
+    {
+      id: 'br-helpdesk-impl', section: 'tech-support', kind: 'service',
+      title: 'AI Help Desk Blueprint Implementation', blurb: 'A practical service package for cleaner ticket intake, stronger escalation notes, and AI-ready knowledge reuse.',
+      audience: ['business', 'it', 'ai'], cta: 'Stage implementation', url: '/?contact=1&subject=Request%20AI%20Help%20Desk%20Blueprint%20Implementation&desc=I%20want%20help%20implementing%20the%20AI%20Help%20Desk%20Blueprint.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20ticket%20pain%3A%0ASystems%20used%20today%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%3A'
+    },
+    {
+      id: 'br-m365-tuneup', section: 'tech-support', kind: 'service',
+      title: 'M365 Security & Productivity Tune-Up', blurb: 'A focused Microsoft 365 cleanup for identity, devices, Teams, SharePoint, onboarding, and everyday admin friction.',
+      audience: ['business', 'it'], cta: 'Stage tune-up', url: '/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A'
+    },
+    {
       id: 'br-purchase-tech', section: 'recommended', kind: 'physical',
       title: 'Concierge Device Sourcing', blurb: 'Tell us the need & budget — we recommend, source and (optionally) set it up. Personal or business.',
       audience: ['human', 'business'], cta: 'Open Purchase Tech', url: '/purchase-tech.html'

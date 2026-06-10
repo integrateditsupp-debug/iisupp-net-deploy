@@ -74,8 +74,9 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
   var upsell = p.upsell==='aria'
     ? '<a class="c-btn" href="/aria.html">Want it automated? Meet ARIA →</a>'
     : '<a class="c-btn" href="/services.html">Want it done for you? See services →</a>';
-  var implementationBand = p.id==='gl-helpdesk-blueprint'
-    ? '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+  var implementationBands = {
+    'gl-helpdesk-blueprint':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
         '<div class="eyebrow" style="margin-bottom:10px">Need it built with you?</div>'+
         '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the blueprint into an IIS implementation plan</h2>'+
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the blueprint as the operating asset, then move into a scoped IIS engagement for ticket intake, triage, escalation quality, knowledge-base structure, and pilot rollout.</p>'+
@@ -89,8 +90,25 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit first</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This stays value-first and does not hard-commit public pricing, staffing, or tool claims.</p>'+
+      '</div>',
+    'gl-m365-kb':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need the cleanup, not just the pack?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the M365 pack into a scoped cleanup sprint</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the knowledge pack as the operating reference, then move into an IIS M365 Security and Productivity Tune-Up for the admin review, risk list, and cleanup priorities.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">SMBs, clinics, schools, and internal IT teams already living in Microsoft 365 but struggling with admin drift.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">A prioritized cleanup list across identity, devices, collaboration, onboarding/offboarding, and the most painful recurring tickets.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a clean first sprint when they know M365 is messy but are not ready for a broad managed-services decision.</p></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>'+
+          '<a class="c-btn" href="/?contact=1&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step practical and scoped without implying long-term retention, licensing resale, or public fixed pricing.</p>'+
       '</div>'
-    : '';
+  };
+  var implementationBand = implementationBands[p.id] || '';
   root.innerHTML =
     '<a href="/shop.html" class="eyebrow" style="color:rgba(255,255,255,.45);margin-bottom:22px">← Shop</a>'+
     '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px">'+badges+(p.format?' <span class="aud" style="border-color:rgba(255,255,255,.1)">'+esc(p.format)+'</span>':'')+'</div>'+
