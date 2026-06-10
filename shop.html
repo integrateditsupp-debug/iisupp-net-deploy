@@ -91,6 +91,17 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
 #partnerGrid,#waysGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 @media(max-width:900px){#estWrap{grid-template-columns:1fr}#partnerGrid,#waysGrid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){#partnerGrid,#waysGrid{grid-template-columns:1fr}}
+.route-band{padding:0 24px 70px}
+.route-shell{max-width:1100px;margin:0 auto;border:1px solid rgba(197,160,89,.24);border-radius:16px;padding:34px 28px;background:radial-gradient(120% 180% at 0% 0%,rgba(197,160,89,.12),transparent 58%),rgba(255,255,255,.02)}
+.route-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:22px}
+.route-card{border:1px solid rgba(197,160,89,.16);border-radius:12px;padding:22px 20px;background:linear-gradient(155deg,rgba(197,160,89,.05),rgba(255,255,255,.02) 60%,transparent)}
+.route-card h3{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#f1dca7;margin:0 0 10px}
+.route-card p{font-size:11.5px;line-height:1.7;color:rgba(255,255,255,.58);margin:0 0 14px}
+.route-card .mini{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.route-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.route-btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid rgba(197,160,89,.4);background:rgba(197,160,89,.05);color:#c5a059;font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;border-radius:999px;transition:all .3s}
+.route-btn:hover{color:#050505;background:var(--luxury-gold);border-color:transparent;box-shadow:0 6px 18px rgba(197,160,89,.3)}
+@media(max-width:900px){.route-grid{grid-template-columns:1fr}}
 </style>
   <link rel="canonical" href="https://iisupp.net/shop">
   <meta property="og:type" content="website">
@@ -244,6 +255,65 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
       <p>Recurring value, protection, and savings — additional services that keep your technology (and budget) performing.</p>
     </div>
     <div id="waysGrid"></div>
+  </div>
+</section>
+
+<section class="route-band">
+  <div class="route-shell">
+    <div class="section-head" style="margin-bottom:0">
+      <span class="eyebrow">Not buying hardware today?</span>
+      <h2>Take the <span class="gold-text" style="font-style:italic">better-fit path</span></h2>
+      <p>The shop should not trap visitors in hardware logic when their real need is scoping, an audit, or a practical digital pack. These paths keep revenue options visible.</p>
+    </div>
+    <div class="route-grid">
+      <div class="route-card">
+        <h3>Scope the project</h3>
+        <p>Use the homepage intake when the buyer needs a short human conversation about support, cleanup, rollout, or implementation work.</p>
+        <div class="route-actions">
+          <a class="route-btn" href="/?contact=1&amp;subject=Book%20a%20scoping%20call&amp;desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A">Stage scoping call</a>
+          <span class="mini">Human-led path</span>
+        </div>
+      </div>
+      <div class="route-card">
+        <h3>Request the audit</h3>
+        <p>Route operations-heavy visitors into the AI Workflow Audit instead of losing them inside the procurement flow.</p>
+        <div class="route-actions">
+          <a class="route-btn" href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0ATools%20we%20use%20today%3A">Stage audit request</a>
+          <span class="mini">ARIA path</span>
+        </div>
+      </div>
+      <div class="route-card">
+        <h3>Buy a practical pack</h3>
+        <p>Send self-serve buyers into the Growth Library with the AI Help Desk Automation Blueprint already in focus.</p>
+        <div class="route-actions">
+          <a class="route-btn" href="/product.html?id=gl-helpdesk-blueprint">Open the blueprint</a>
+          <span class="mini">Product-led path</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:0 24px 26px;background:#080808">
+  <div style="max-width:1100px;margin:0 auto;border:1px solid rgba(197,160,89,.24);border-radius:14px;padding:30px 28px;background:
+    radial-gradient(140% 150% at 100% 0%,rgba(197,160,89,.12),transparent 56%),
+    linear-gradient(150deg,rgba(255,255,255,.02),rgba(255,255,255,.01));">
+    <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:24px;align-items:start">
+      <div>
+        <span class="eyebrow" style="margin-bottom:12px">Featured digital product</span>
+        <h2 class="logo-text" style="font-size:clamp(1.55rem,3.6vw,2.4rem);letter-spacing:.05em;text-transform:uppercase;margin:0 0 12px">AI Help Desk <span class="gold-text" style="font-style:italic">Automation Blueprint</span></h2>
+        <p style="margin:0 0 14px;color:rgba(255,255,255,.62);font-size:13px;line-height:1.85">For buyers who are not really shopping for hardware, but are trying to reduce repetitive support work, improve ticket quality, and design an AI-assisted help desk the right way.</p>
+        <ul style="margin:0;padding-left:20px;color:rgba(255,255,255,.54);font-size:12.5px;line-height:1.9">
+          <li>Triage model, escalation notes, and KB structure.</li>
+          <li>Practical pack first, implementation support second.</li>
+          <li>Fits the same ARIA and support-retainer lane IIS is already building.</li>
+        </ul>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="/product.html?id=gl-helpdesk-blueprint" class="btn-gold btn-solid" style="text-align:center">View product details</a>
+        <a href="/?contact=1&amp;subject=Request%20AI%20Help%20Desk%20Blueprint%20Implementation&amp;desc=I%20want%20help%20implementing%20the%20AI%20Help%20Desk%20Blueprint.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20ticket%20pain%3A%0ASystems%20used%20today%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%3A" class="btn-gold" style="text-align:center">Stage implementation request</a>
+      </div>
+    </div>
   </div>
 </section>
 

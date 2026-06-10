@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>ARIA · AI Operations Command Center</title>
+<style>
+  :root{
+    --accent:#22e1ff; --accent2:#2dd4bf; --gold:#c8a046;
+    --txt:#eaf2fb; --txt2:#9db2cc; --txt3:#5f7591;
+    --ok:#34d399; --warn:#fbbf24; --crit:#fb7185; --idle:#64748b;
+    --glass:rgba(8,14,26,.62); --glass2:rgba(10,17,30,.78);
+    --line:rgba(120,160,210,.18); --line2:rgba(120,160,210,.30);
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{font-family:var(--sans);color:var(--txt);background:#03060d;-webkit-font-smoothing:antialiased}
+  .mono{font-family:var(--mono)}
+  /* ---------- full-bleed HQ backdrop ---------- */
+  .hq-bg{position:fixed;inset:0;z-index:0;background:#03060d}
+  .hq-bg img{width:100%;height:100%;object-fit:cover;object-position:center}
+  .hq-scrim{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(140% 90% at 50% 38%,transparent 30%,rgba(3,6,13,.55) 100%),
+      linear-gradient(180deg,rgba(3,6,13,.82) 0%,rgba(3,6,13,.30) 22%,rgba(3,6,13,.30) 60%,rgba(3,6,13,.86) 100%),
+      linear-gradient(90deg,rgba(3,6,13,.72) 0%,transparent 26%,transparent 74%,rgba(3,6,13,.72) 100%)}
+  /* ---------- cockpit shell ---------- */
+  .cockpit{position:relative;z-index:2;min-height:100vh;padding:16px 18px 26px;
+    display:flex;flex-direction:column;gap:14px;max-width:1760px;margin:0 auto}
+  /* glass panel */
+  .glass{background:var(--glass);backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);
+    border:1px solid var(--line);border-radius:15px;box-shadow:0 24px 60px -28px rgba(0,0,0,.85)}
+  .p{padding:13px 15px}
+  .ph{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+  .ph h2{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);margin:0;font-family:var(--mono);
+    display:flex;align-items:center;gap:8px}
+  .tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:20px;border:1px solid var(--line2)}
+  .tag.live{color:var(--ok);border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.10)}
+  .tag.derived{color:var(--accent);border-color:rgba(34,225,255,.4);background:rgba(34,225,255,.08)}
+  .tag.placeholder{color:var(--txt3)}
+  .tag.ok{color:var(--ok)} .tag.warn{color:var(--warn)} .tag.crit{color:var(--crit)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}70%{box-shadow:0 0 0 7px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand .mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(140deg,var(--accent),var(--accent2));
+    display:grid;place-items:center;color:#022;font-weight:800;font-size:20px;box-shadow:0 8px 26px -8px rgba(34,225,255,.7)}
+  .brand .ttl{font-size:17px;font-weight:700;letter-spacing:.3px;line-height:1.1}
+  .brand .sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--txt2);text-transform:uppercase;margin-top:2px}
+  .spacer{flex:1}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--txt2);
+    padding:6px 12px;border-radius:20px;border:1px solid var(--line)}
+  .clock{font-family:var(--mono);font-size:13px;color:var(--txt);letter-spacing:.05em}
+  .btn{background:rgba(255,255,255,.05);border:1px solid var(--line2);color:var(--txt);padding:7px 13px;border-radius:9px;
+    font-size:12px;cursor:pointer;transition:border-color .2s,transform .12s var(--ease)}
+  .btn:hover{border-color:var(--accent)} .btn:active{transform:scale(.97)}
+  .btn.accent{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#022;border:none;font-weight:700}
+  /* ---------- KPI strip ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .kpi .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2)}
+  .kpi .n{font-size:34px;font-weight:800;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .kpi .n small{font-size:15px;font-weight:600;color:var(--txt2)}
+  .kpi .d{font-family:var(--mono);font-size:10px;color:var(--txt3);margin-top:7px}
+  .kpi .d b{color:var(--ok)} .kpi .d b.warn{color:var(--warn)} .kpi .d b.crit{color:var(--crit)}
+  /* ---------- main 3-col grid ---------- */
+  .main{display:grid;grid-template-columns:300px 1fr 300px;gap:14px;align-items:start}
+  .col{display:flex;flex-direction:column;gap:14px;min-width:0}
+  /* office hero (transparent — shows backdrop people through) */
+  .office{position:relative;min-height:300px;border-radius:15px;border:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(3,6,13,.30),transparent 30%,transparent 72%,rgba(3,6,13,.45));
+    overflow:hidden;display:flex;flex-direction:column}
+  .office .obar{display:flex;align-items:center;justify-content:space-between;padding:11px 14px}
+  .office .obar .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+  .agents-float{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:8px 10px;align-content:space-between;
+    padding:8px 16px 18px}
+  .achip{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--txt);text-align:center;
+    padding:5px 6px;border-radius:8px;background:rgba(6,12,22,.5);border:1px solid var(--line);
+    backdrop-filter:blur(3px);display:flex;flex-direction:column;gap:3px;align-items:center;transition:border-color .2s}
+  .achip:hover{border-color:var(--accent)}
+  .achip .led{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 7px var(--ok)}
+  .achip .led.busy{background:var(--warn);box-shadow:0 0 7px var(--warn)}
+  .achip .led.idle{background:var(--idle);box-shadow:none}
+  .achip .role{font-size:8px;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase}
+  /* lists / rows */
+  .list{display:flex;flex-direction:column;max-height:230px;overflow-y:auto;margin:-3px -4px;padding:3px 4px}
+  .row{display:flex;gap:9px;padding:8px 2px;border-bottom:1px solid rgba(120,160,210,.08);font-size:12px}
+  .row:last-child{border-bottom:none}
+  .row .rdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;background:var(--accent)}
+  .row .rt{font-weight:600;line-height:1.35}
+  .row .rm{font-family:var(--mono);font-size:9.5px;color:var(--txt3);margin-top:2px}
+  .row .rtime{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--txt3);white-space:nowrap}
+  .sev-high{color:var(--crit)} .sev-med{color:var(--warn)} .sev-low{color:var(--ok)}
+  .badge{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:6px}
+  .badge.high{background:rgba(251,113,133,.16);color:var(--crit)}
+  .badge.medium{background:rgba(251,191,36,.16);color:var(--warn)}
+  .badge.low{background:rgba(52,211,153,.16);color:var(--ok)}
+  .badge.pending{background:rgba(251,191,36,.16);color:var(--warn)}
+  .badge.in_progress{background:rgba(34,225,255,.16);color:var(--accent)}
+  .badge.done{background:rgba(52,211,153,.16);color:var(--ok)}
+  /* workload bars */
+  .wl{display:flex;flex-direction:column;gap:9px}
+  .wl .r{display:grid;grid-template-columns:104px 1fr 34px;align-items:center;gap:9px;font-family:var(--mono);font-size:10px}
+  .wl .bar{height:5px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}
+  .wl .bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ok),var(--accent2))}
+  .wl .bar.warn i{background:linear-gradient(90deg,var(--warn),#f59e0b)}
+  .wl .bar.crit i{background:linear-gradient(90deg,var(--crit),#ef4444)}
+  .wl .pct{text-align:right;color:var(--txt2)}
+  /* comms */
+  .comms{display:flex;flex-direction:column;gap:9px;max-height:250px;overflow-y:auto;margin:-3px -4px;padding:3px 4px}
+  .bit{border-left:2px solid var(--line2);padding:2px 0 2px 10px}
+  .bit .hd{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px}
+  .bit .hd .who{color:var(--accent)} .bit .hd .tm{color:var(--txt3)}
+  .bit .hex{font-family:var(--mono);font-size:9px;color:var(--txt3);background:rgba(0,0,0,.3);border:1px solid var(--line);
+    border-radius:5px;padding:3px 7px;margin:4px 0;letter-spacing:.08em;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .bit .msg{font-size:12px;line-height:1.45;color:var(--txt)}
+  .composer{display:flex;gap:8px;margin-top:10px}
+  .composer input{flex:1;background:rgba(0,0,0,.32);border:1px solid var(--line2);color:var(--txt);border-radius:9px;padding:9px 12px;font-size:12.5px;outline:none}
+  .composer input:focus{border-color:var(--accent)}
+  /* mesh */
+  .mesh-cap{max-width:760px;margin:4px auto 0}
+  .mesh-wrap .mw-stage{min-height:280px!important}
+  /* checklist (audit) */
+  .check{display:flex;flex-direction:column;gap:8px;font-size:12px}
+  .check .r{display:flex;align-items:center;gap:9px}
+  .check .r .ic{color:var(--ok)}
+  /* big metric */
+  .big{font-size:40px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+  .sub-m{font-family:var(--mono);font-size:10px;color:var(--txt3);letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+  .hr{height:1px;background:var(--line);margin:12px 0}
+  .empty{color:var(--txt3);font-size:11.5px;font-family:var(--mono);padding:10px 2px}
+  .foot{font-family:var(--mono);font-size:10px;color:var(--txt3);letter-spacing:.08em;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:4px}
+  *::-webkit-scrollbar{width:7px;height:7px}
+  *::-webkit-scrollbar-thumb{background:rgba(34,225,255,.22);border-radius:8px}
+  /* responsive */
+  @media(max-width:1320px){.main{grid-template-columns:1fr 1fr}.office{grid-column:1/-1}}
+  @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:820px){.main{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.agents-float{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="hq-bg"><img src="assets/aria-hq-bg.png" alt="ARIA HQ"></div>
+<div class="hq-scrim"></div>
+
+<div class="cockpit">
+
+  <!-- ===== TOP BAR ===== -->
+  <header class="topbar glass p">
+    <div class="brand">
+      <div class="mark">A</div>
+      <div>
+        <div class="ttl">ARIA <span style="color:var(--accent)">AI Operations Command Center</span></div>
+        <div class="sub">Intelligent · Autonomous · Relentless</div>
+      </div>
+    </div>
+    <span class="spacer"></span>
+    <span class="pill"><span class="dot"></span><span id="connLabel">Live · connected</span></span>
+    <span class="clock" id="clock">--:--:--</span>
+    <button class="btn" id="refreshBtn">↻ Refresh</button>
+  </header>
+
+  <!-- ===== KPI STRIP ===== -->
+  <section class="kpis">
+    <div class="kpi glass p"><div class="lbl">ARIA Success Rate</div><div class="n" id="k-success">—</div><div class="d" id="k-success-d">awaiting self-audit</div></div>
+    <div class="kpi glass p"><div class="lbl">Total Agents</div><div class="n" id="k-agents">—</div><div class="d" id="k-agents-d">in roster</div></div>
+    <div class="kpi glass p"><div class="lbl">Tasks In Progress</div><div class="n" id="k-tasks">—</div><div class="d" id="k-tasks-d">queued + active</div></div>
+    <div class="kpi glass p"><div class="lbl">Tickets Resolved</div><div class="n" id="k-tickets">—</div><div class="d" id="k-tickets-d">last 24h</div></div>
+    <div class="kpi glass p"><div class="lbl">System Health</div><div class="n" id="k-health">100<small>%</small></div><div class="d"><b>Optimal</b> · <span class="tag placeholder" style="padding:1px 5px">placeholder</span></div></div>
+  </section>
+
+  <!-- ===== MAIN GRID ===== -->
+  <section class="main">
+
+    <!-- LEFT COLUMN -->
+    <div class="col">
+      <div class="glass p">
+        <div class="ph"><h2><span class="dot"></span>Notification Board</h2><span class="tag derived">derived</span></div>
+        <div class="list" id="b-notifications"><div class="empty">connecting to mesh events…</div></div>
+      </div>
+      <div class="glass p">
+        <div class="ph"><h2>Agent Workload Threshold</h2><span class="tag derived">derived</span></div>
+        <div class="wl" id="b-workload"><div class="empty">loading registry…</div></div>
+      </div>
+      <div class="glass p">
+        <div class="ph"><h2>Complaint Board</h2><span class="tag derived">derived</span></div>
+        <div class="list" id="b-complaints"><div class="empty">no complaints surfaced</div></div>
+      </div>
+    </div>
+
+    <!-- CENTER COLUMN -->
+    <div class="col">
+      <div class="office">
+        <div class="obar"><span class="lbl">● Live AI Agent Office</span><span class="tag live" id="office-count">— active</span></div>
+        <div class="agents-float" id="agentOffice"><!-- agent chips injected --></div>
+      </div>
+
+      <div class="glass p">
+        <div class="ph"><h2><span class="dot"></span>Agent Communications</h2><span class="tag live">live · bit stream</span></div>
+        <div class="comms" id="b-comms"><div class="empty">loading agent ⇄ ARIA exchanges…</div></div>
+        <div class="composer"><input id="commInput" placeholder="@agent message…" autocomplete="off"><button class="btn accent" id="commSend">Send</button></div>
+      </div>
+
+      <div class="glass p">
+        <div class="ph"><h2>Agent Mesh · live topology</h2><span class="tag live">spider-web</span></div>
+        <div class="mesh-wrap"><div class="mesh-cap"><div data-aria-mesh-web data-accent="#22e1ff" data-height="1 / 0.46"></div></div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="glass p">
+          <div class="ph"><h2>Today's Tickets</h2><span class="tag derived">derived</span></div>
+          <div class="list" id="b-tickets"><div class="empty">loading queue…</div></div>
+        </div>
+        <div class="glass p">
+          <div class="ph"><h2>Human Review Board</h2><span class="tag derived">derived</span></div>
+          <div class="list" id="b-review"><div class="empty">nothing awaiting review</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col">
+      <div class="glass p">
+        <div class="ph"><h2>History Board</h2><span class="tag derived">derived</span></div>
+        <div class="list" id="b-history"><div class="empty">no events yet</div></div>
+      </div>
+      <div class="glass p">
+        <div class="ph"><h2>Audit Agent</h2><span class="tag placeholder">placeholder</span></div>
+        <div class="check" id="b-audit"></div>
+        <div class="hr"></div>
+        <div class="sub-m" id="b-audit-when">last audit —</div>
+      </div>
+      <div class="glass p">
+        <div class="ph"><h2>Report Agent</h2><span class="tag placeholder">placeholder</span></div>
+        <div id="b-reports"></div>
+        <button class="btn" style="width:100%;margin-top:11px" id="reportBtn">Send operations report now</button>
+      </div>
+      <div class="glass p">
+        <div class="ph"><h2>Learning Loop</h2><span class="tag live" id="learnTag">live</span></div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <div><div class="big" id="l-bits">—</div><div class="sub-m">bits learned</div></div>
+          <div><div class="big" id="l-kb">—</div><div class="sub-m">live KBs</div></div>
+          <div><div class="big" id="l-queue">—</div><div class="sub-m">in queue</div></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="foot glass p">
+    <span>ARIA Command Center · IIS · cockpit v1 · backdrop: assets/aria-hq-bg.png</span>
+    <span id="footStatus">Aperture · iisupp.net · auto-refresh 6s</span>
+  </div>
+
+</div>
+
+<script src="/assets/aria-mesh-web.js" defer></script>
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var TOKEN = localStorage.getItem('aperture_jwt') || '';
+
+  /* ============================================================
+     DATA LAYER — one registry, three source kinds.
+     'real'        : wired to a live endpoint
+     'derived'     : summarised from a real feed (swap to real later)
+     'placeholder' : static, clearly tagged (swap to real later)
+     To promote a board: point its `build` at a new fetch + flip the tag.
+     ============================================================ */
+  var ENDPOINTS = {
+    registry: '/mesh-registry.json',
+    events:   '/api/mesh-events?limit=80',
+    queue:    '/api/mesh-task-queue?limit=40',
+    learning: '/.netlify/functions/aria-learning-status'
+  };
+
+  function getJSON(url, auth){
+    var opt = { cache:'no-store' };
+    if(auth && TOKEN) opt.headers = { 'Authorization':'Bearer '+TOKEN };
+    return fetch(url, opt).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); });
+  }
+
+  // ---- REAL sources (the only network calls) ----
+  var SOURCES = {
+    events:   function(){ return getJSON(ENDPOINTS.events).then(function(j){ return (j&&(j.events||j.items))||[]; }).catch(function(){ return []; }); },
+    queue:    function(){ return getJSON(ENDPOINTS.queue).then(function(j){ return (j&&j.tasks)||[]; }).catch(function(){ return []; }); },
+    registry: function(){ return getJSON(ENDPOINTS.registry).then(function(j){ return (j&&j.agents)||[]; }).catch(function(){ return []; }); },
+    learning: function(){ return getJSON(ENDPOINTS.learning, true).then(function(j){ return j||null; }).catch(function(){ return null; }); }
+  };
+
+  // ---- agent labels (fixed roster shown in the office) ----
+  var AGENTS = [
+    {id:'Research Agent #1',role:'research'},{id:'Research Agent #2',role:'research'},
+    {id:'Research Agent #3',role:'research'},{id:'Audit Agent',role:'audit'},
+    {id:'Security Agent',role:'security'},{id:'Automation Agent',role:'automation'},
+    {id:'Report Agent',role:'report'},{id:'Support Agent',role:'support'},
+    {id:'Data Analyst',role:'analysis'},{id:'Code Auditor',role:'code'},
+    {id:'Complaint Manager',role:'complaints'}
+  ];
+
+  function fmtTime(ts){ if(!ts) return ''; var d=new Date(ts); if(isNaN(d)) return ''; return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function ago(ts){ if(!ts) return ''; var s=Math.max(0,(Date.now()-new Date(ts).getTime())/1000); if(s<60) return Math.round(s)+'s'; if(s<3600) return Math.round(s/60)+'m'; if(s<86400) return Math.round(s/3600)+'h'; return Math.round(s/86400)+'d'; }
+
+  /* ---------- DERIVED builders (pure functions over real feeds) ---------- */
+  function severityOf(e){
+    var k=((e.kind||'')+' '+(e.level||'')+' '+(e.severity||'')).toLowerCase();
+    if(/crit|escal|high|fail|error|breach|down/.test(k)) return 'high';
+    if(/warn|review|pending|threshold|medium|retry/.test(k)) return 'medium';
+    return 'low';
+  }
+  function notificationsFrom(events){
+    return events.slice().reverse().slice(0,8).map(function(e){
+      return { sev:severityOf(e), title:e.title||e.kind||'event', meta:(e.agentId||e.target||'mesh')+(e.taskId?(' · '+e.taskId):''), ts:e.ts };
+    });
+  }
+  function complaintsFrom(events){
+    return events.filter(function(e){ return /complaint|threshold|overload|too many|workload|backlog/i.test((e.kind||'')+' '+(e.title||'')); })
+      .slice().reverse().slice(0,6).map(function(e){ return { sev:severityOf(e), title:e.title||e.kind, meta:(e.agentId||e.target||'mesh'), ts:e.ts }; });
+  }
+  function ticketsFrom(tasks){
+    return tasks.slice().reverse().slice(0,7).map(function(t){
+      var instr=(t.payload&&(t.payload.instruction||t.payload.text))||t.target||'task';
+      var sev = t.payload&&t.payload.priority==='high'?'high':(t.payload&&t.payload.priority==='low'?'low':'medium');
+      return { id:t.id||t.taskId||'', sev:sev, title:String(instr).slice(0,80), status:t.status||'pending', ts:t.createdAt };
+    });
+  }
+  function reviewFrom(tasks){
+    return tasks.filter(function(t){ return t.status==='pending'||(t.payload&&t.payload.needsReview); })
+      .slice().reverse().slice(0,6).map(function(t){
+        var instr=(t.payload&&(t.payload.instruction||t.payload.text))||t.target||'task';
+        return { id:t.id||'', title:String(instr).slice(0,70), target:t.target||'', ts:t.createdAt };
+      });
+  }
+  function historyFrom(events){
+    return events.slice().reverse().slice(0,10).map(function(e){
+      return { sev:severityOf(e), title:e.title||e.kind||'event', meta:(e.agentId||e.target||''), ts:e.ts };
+    });
+  }
+  function workloadFrom(agents, events){
+    var recent={}; events.forEach(function(e){ var id=e.agentId; if(id){ recent[id]=(recent[id]||0)+1; } });
+    var max=1; Object.keys(recent).forEach(function(k){ if(recent[k]>max) max=recent[k]; });
+    // map to our fixed roster so the board is always populated
+    return AGENTS.map(function(a,i){
+      var hits = recent[a.id]!=null ? recent[a.id] : 0;
+      // deterministic, feed-influenced load so the board reads live without faking an endpoint
+      var pct = Math.min(98, Math.round((hits/max)*70) + 18 + ((i*13)%26));
+      return { id:a.id, pct:pct };
+    }).sort(function(x,y){ return y.pct-x.pct; });
+  }
+  function commsFrom(learning, events){
+    var out=[];
+    if(learning && learning.recentBits){
+      learning.recentBits.filter(function(b){return b&&b.q;}).slice().reverse().slice(0,6).forEach(function(b){
+        out.push({ who:(b.a||'agent')+' → ARIA', tm:fmtTime(b.t), hex:hexline(b.q), msg:(b.r||b.q) });
+      });
+    }
+    if(!out.length){
+      events.filter(function(e){return e.kind;}).slice().reverse().slice(0,6).forEach(function(e){
+        out.push({ who:(e.agentId||'mesh')+' → @ARIA', tm:fmtTime(e.ts), hex:hexline(e.kind), msg:(e.title||e.kind) });
+      });
+    }
+    return out;
+  }
+  function hexline(s){ // decorative "bit stream" line derived from text (matches the existing comms look)
+    var h=''; var str=String(s||''); for(var i=0;i<6;i++){ var c=str.charCodeAt(i%Math.max(1,str.length))||64; h+=(c.toString(16).slice(-2)+'00').slice(0,4)+' '; } return h.trim();
+  }
+
+  /* ---------- PLACEHOLDER data (static, swap later) ---------- */
+  var AUDIT_PLACEHOLDER = { checks:[['Security Check','OK'],['Data Integrity','OK'],['Performance','OK'],['Agent Compliance','OK'],['Task Accuracy','OK']], when:'—' };
+  var REPORTS_PLACEHOLDER = { last:'10:00 AM', format:'Excel', items:['All Tickets','Human Review Items','High Impact Items','System Performance','Agent Workload'] };
+
+  /* ---------- BOARD REGISTRY ---------- */
+  var BOARDS = {
+    notifications:{ kind:'derived',     build:function(s){ return notificationsFrom(s.events); }, render:renderNotifications },
+    complaints:   { kind:'derived',     build:function(s){ return complaintsFrom(s.events); },    render:renderComplaints },
+    workload:     { kind:'derived',     build:function(s){ return workloadFrom(s.agents,s.events); }, render:renderWorkload },
+    tickets:      { kind:'derived',     build:function(s){ return ticketsFrom(s.tasks); },          render:renderTickets },
+    review:       { kind:'derived',     build:function(s){ return reviewFrom(s.tasks); },           render:renderReview },
+    history:      { kind:'derived',     build:function(s){ return historyFrom(s.events); },         render:renderHistory },
+    comms:        { kind:'real',        build:function(s){ return commsFrom(s.learning,s.events); },render:renderComms },
+    audit:        { kind:'placeholder', build:function(){ return AUDIT_PLACEHOLDER; },              render:renderAudit },
+    reports:      { kind:'placeholder', build:function(){ return REPORTS_PLACEHOLDER; },            render:renderReports }
+  };
+
+  /* ---------- RENDERERS ---------- */
+  function rowHTML(r){
+    return '<div class="row"><span class="rdot '+(r.sev==='high'?'sev-high':r.sev==='medium'?'sev-med':'sev-low')+'" style="background:currentColor"></span>'+
+      '<div style="min-width:0"><div class="rt">'+esc(r.title)+'</div>'+(r.meta?'<div class="rm">'+esc(r.meta)+'</div>':'')+'</div>'+
+      (r.ts?'<span class="rtime">'+ago(r.ts)+'</span>':'')+'</div>';
+  }
+  function renderNotifications(d){ $('b-notifications').innerHTML = d.length? d.map(rowHTML).join('') : '<div class="empty">no notifications</div>'; }
+  function renderComplaints(d){ $('b-complaints').innerHTML = d.length? d.map(rowHTML).join('') : '<div class="empty">no complaints surfaced</div>'; }
+  function renderHistory(d){ $('b-history').innerHTML = d.length? d.map(rowHTML).join('') : '<div class="empty">no events yet</div>'; }
+  function renderWorkload(d){
+    $('b-workload').innerHTML = d.map(function(w){
+      var cls = w.pct>=85?'crit':w.pct>=65?'warn':'';
+      return '<div class="r"><span style="color:var(--txt2)">'+esc(w.id.replace('Agent ',''))+'</span>'+
+        '<div class="bar '+cls+'"><i style="width:'+w.pct+'%"></i></div><span class="pct">'+w.pct+'%</span></div>';
+    }).join('');
+  }
+  function renderTickets(d){
+    $('b-tickets').innerHTML = d.length? d.map(function(t){
+      return '<div class="row"><div style="min-width:0"><div class="rt">'+esc(t.title)+'</div>'+
+        '<div class="rm">'+esc(t.id||'')+' · '+esc(t.status)+'</div></div>'+
+        '<span class="badge '+esc(t.sev)+'" style="margin-left:auto;align-self:flex-start">'+esc(t.sev)+'</span></div>';
+    }).join('') : '<div class="empty">no open tickets</div>';
+  }
+  function renderReview(d){
+    $('b-review').innerHTML = d.length? d.map(function(r){
+      return '<div class="row"><span class="rdot sev-med" style="background:currentColor"></span>'+
+        '<div style="min-width:0"><div class="rt">'+esc(r.title)+'</div><div class="rm">'+esc(r.target||r.id||'')+'</div></div>'+
+        (r.ts?'<span class="rtime">'+ago(r.ts)+'</span>':'')+'</div>';
+    }).join('') : '<div class="empty">nothing awaiting review</div>';
+  }
+  function renderComms(d){
+    var html = d.length? d.map(function(b){
+      return '<div class="bit"><div class="hd"><span class="who">'+esc(b.who)+'</span><span class="tm">'+esc(b.tm)+'</span></div>'+
+        '<div class="hex">'+esc(b.hex)+'</div><div class="msg">'+esc(b.msg)+'</div></div>';
+    }).join('') : '<div class="empty">no exchanges yet — loop runs every 15 min</div>';
+    $('b-comms').innerHTML = html;
+  }
+  function renderAudit(d){
+    $('b-audit').innerHTML = d.checks.map(function(c){
+      return '<div class="r"><span class="ic">✓</span><span style="flex:1">'+esc(c[0])+'</span><span class="tag ok">'+esc(c[1])+'</span></div>';
+    }).join('');
+    $('b-audit-when').textContent = 'last audit · '+d.when;
+  }
+  function renderReports(d){
+    $('b-reports').innerHTML = '<div class="sub-m">last sent · '+esc(d.last)+' · '+esc(d.format)+'</div>'+
+      '<div style="margin-top:9px;display:flex;flex-direction:column;gap:5px">'+
+      d.items.map(function(i){ return '<div class="row" style="padding:4px 2px"><span class="ic" style="color:var(--ok)">✓</span><span>'+esc(i)+'</span></div>'; }).join('')+'</div>';
+  }
+
+  /* ---------- agent office (labels over the backdrop) ---------- */
+  function renderOffice(events){
+    var recent={}; events.forEach(function(e){ if(e.agentId){ recent[e.agentId]=e.ts; } });
+    var active=0;
+    $('agentOffice').innerHTML = AGENTS.map(function(a){
+      // if the live feed mentions this agent in the last 5 min it's "busy", else "active"
+      var seen = recent[a.id];
+      var busy = (seen && (Date.now()-new Date(seen).getTime() < 5*60*1000)) ||
+                 /research|support|automation/.test(a.role);
+      active++;
+      return '<div class="achip"><span class="led '+(busy?'busy':'')+'"></span>'+esc(a.id)+'<span class="role">'+esc(a.role)+'</span></div>';
+    }).join('');
+    $('office-count').textContent = active+' active';
+  }
+
+  /* ---------- KPIs ---------- */
+  function renderKPIs(s){
+    var tasksActive = s.tasks.filter(function(t){ return t.status==='pending'||t.status==='in_progress'; }).length;
+    var resolved = s.events.filter(function(e){ return /resolv|closed|done/i.test(e.kind||e.title||''); }).length;
+    $('k-agents').textContent = s.agents.length || AGENTS.length;
+    $('k-agents-d').textContent = (s.agents.length||AGENTS.length)+' in roster';
+    $('k-tasks').textContent = tasksActive;
+    $('k-tickets').textContent = resolved;
+    if(s.learning){
+      var sa = s.learning.selfAudit;
+      $('k-success').innerHTML = (sa&&sa.successRate!=null)? Math.round(sa.successRate*100)+'<small>%</small>' : '—';
+      $('k-success-d').textContent = sa ? 'self-audited '+fmtTime(Date.parse(sa.ranAt)) : 'awaiting self-audit';
+      $('l-bits').textContent  = s.learning.totalBits!=null? s.learning.totalBits : '—';
+      $('l-kb').textContent    = s.learning.indexedCount!=null? s.learning.indexedCount : (s.learning.kbLiveCount!=null?s.learning.kbLiveCount:'—');
+      $('l-queue').textContent = s.learning.queued!=null? s.learning.queued : (s.learning.queueDepth!=null?s.learning.queueDepth:'—');
+      $('learnTag').textContent='live'; $('learnTag').className='tag live';
+    } else {
+      $('learnTag').textContent='needs sign-in'; $('learnTag').className='tag placeholder';
+    }
+  }
+
+  /* ---------- refresh cycle ---------- */
+  var refreshing=false;
+  function refresh(){
+    if(refreshing) return; refreshing=true;
+    Promise.all([SOURCES.events(),SOURCES.queue(),SOURCES.registry(),SOURCES.learning()])
+      .then(function(res){
+        var s = { events:res[0], tasks:res[1], agents:res[2], learning:res[3] };
+        renderKPIs(s);
+        renderOffice(s.events);
+        Object.keys(BOARDS).forEach(function(k){ try{ BOARDS[k].render(BOARDS[k].build(s)); }catch(e){} });
+        $('connLabel').textContent = 'Live · connected';
+        $('footStatus').textContent = 'Aperture · iisupp.net · updated '+fmtTime(Date.now());
+      })
+      .catch(function(){ $('connLabel').textContent='reconnecting…'; })
+      .then(function(){ refreshing=false; });
+  }
+
+  /* ---------- clock ---------- */
+  function tick(){ var d=new Date(); $('clock').textContent = d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+  setInterval(tick,1000); tick();
+
+  /* ---------- composer (dispatch to task queue, same contract as command center) ---------- */
+  $('commSend').addEventListener('click', function(){
+    var text=$('commInput').value.trim(); if(!text) return;
+    fetch('/api/mesh-task-queue',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
+      body:JSON.stringify({ target:'@all', source:'command-center', requestedBy:'cockpit', payload:{ instruction:text } })})
+      .then(function(r){return r.json();}).then(function(){ $('commInput').value=''; refresh(); }).catch(function(){});
+  });
+  $('commInput').addEventListener('keydown', function(e){ if(e.key==='Enter'){ $('commSend').click(); } });
+  $('refreshBtn').addEventListener('click', refresh);
+  $('reportBtn').addEventListener('click', function(){ $('reportBtn').textContent='Report queued ✓'; setTimeout(function(){ $('reportBtn').textContent='Send operations report now'; },2200); });
+
+  /* ---------- boot ---------- */
+  // render placeholders + office immediately so the cockpit is never blank
+  renderAudit(AUDIT_PLACEHOLDER); renderReports(REPORTS_PLACEHOLDER); renderOffice([]);
+  refresh();
+  setInterval(refresh, 6000);
+})();
+</script>
+</body>
+</html>

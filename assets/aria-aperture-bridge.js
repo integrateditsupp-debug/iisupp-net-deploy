@@ -52,6 +52,33 @@
     try { localStorage.removeItem(LS_KEY); } catch {}
   }
 
+  async function readJsonSafe(response) {
+    const text = await response.text();
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { error: text.slice(0, 160) || 'non-JSON response' };
+    }
+  }
+
+  function makeLocalTicket() {
+    return 'ARIA-LOCAL-' + Date.now().toString(36).toUpperCase().slice(-6);
+  }
+
+  function startLocalSession(data, reason) {
+    session = {
+      sessionId: 'local_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-5),
+      ticket: makeLocalTicket(),
+      user: data,
+      startedAt: Date.now(),
+      localOnly: true,
+      fallbackReason: String(reason || 'session endpoint unavailable').slice(0, 180)
+    };
+    saveSession();
+    return session;
+  }
+
   // =========================== INTAKE MODAL ===========================
   function injectModal() {
     if (document.getElementById('apIntakeOverlay')) return;
@@ -128,17 +155,21 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
-        const j = await r.json();
-        if (!r.ok || !j.sessionId) throw new Error(j.error || 'session creation failed');
+        const j = await readJsonSafe(r);
+        if (!r.ok || !j || !j.sessionId) {
+          const msg = (j && (j.error || j.detail)) || `session endpoint returned ${r.status}`;
+          throw new Error(msg);
+        }
         session = { sessionId: j.sessionId, ticket: j.ticket, user: data, startedAt: Date.now() };
         saveSession(); // fires storage event in other tabs
         overlay.remove();
         showTicketBanner(j.ticket);
         startWatching();
       } catch (e) {
-        submit.disabled = false;
-        submit.textContent = 'Start troubleshooting →';
-        $('apF_err').textContent = 'Could not create ticket: ' + (e.message || e);
+        const local = startLocalSession(data, e.message || e);
+        overlay.remove();
+        showTicketBanner(local.ticket);
+        startWatching();
       }
     });
   }
@@ -249,6 +280,7 @@
   // =========================== API ===========================
   function sendEvent(type, payload) {
     if (!session || !session.sessionId) return;
+    if (session.localOnly) return;
     fetch(API.event, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -260,12 +292,21 @@
     if (!session || !session.sessionId || endingInProgress) return;
     endingInProgress = true;
     const ticket = session.ticket;
+    if (session.localOnly) {
+      showCloseBanner(status, ticket, false, true);
+      setTimeout(() => {
+        clearSessionStorage();
+        endingInProgress = false;
+        seenHashes.clear();
+      }, 2500);
+      return;
+    }
     fetch(API.sessionEnd, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId: session.sessionId, status, summary: summary || '' })
-    }).then(r => r.json()).then(j => {
-      showCloseBanner(status, ticket, !!j.emailSent);
+    }).then(readJsonSafe).then(j => {
+      showCloseBanner(status, ticket, !!(j && j.emailSent), false);
       // Clear localStorage AFTER a short delay so Aperture has time to fetch final state
       setTimeout(() => {
         clearSessionStorage(); // fires storage event → Aperture resets
@@ -275,7 +316,7 @@
     }).catch(() => { endingInProgress = false; });
   }
 
-  function showCloseBanner(status, ticket, emailSent) {
+  function showCloseBanner(status, ticket, emailSent, localOnly) {
     const c = status === 'resolved' ? '#4ade80' : '#fbbf24';
     const lbl = status === 'resolved' ? 'RESOLVED' : 'ESCALATED';
     const existing = document.getElementById('apCloseBanner'); if (existing) existing.remove();
@@ -285,7 +326,7 @@
     b.innerHTML = `
       <div style="color:${c};font-weight:700;letter-spacing:0.18em;">${lbl}</div>
       <div style="color:#d8e0e6;margin-top:4px;">${escapeHtml(ticket || '')}</div>
-      <div style="color:#6b7c87;margin-top:8px;font-size:10.5px;letter-spacing:0;">${emailSent ? 'Report emailed to you + integrateditsupp@iisupp.net.' : 'Report queued; will email once SMTP env is set.'}</div>
+      <div style="color:#6b7c87;margin-top:8px;font-size:10.5px;letter-spacing:0;">${localOnly ? 'Local session closed. No email sent because the ticket endpoint was unavailable.' : (emailSent ? 'Report emailed to you + integrateditsupp@iisupp.net.' : 'Report queued; will email once SMTP env is set.')}</div>
     `;
     document.body.appendChild(b);
     setTimeout(() => { b.style.transition='opacity 1s'; b.style.opacity='0'; setTimeout(()=>b.remove(), 1200); }, 9000);

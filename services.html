@@ -477,10 +477,23 @@
         .cta-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(197,160,89,0.4); }
         .cta-btn-secondary { background: transparent; color: #f1dca7; border: 1px solid rgba(197,160,89,0.4); }
         .cta-btn-secondary:hover { background: rgba(197,160,89,0.08); border-color: #c5a059; transform: translateY(-1px); }
+        .route-band { padding: 0 24px 54px; }
+        .route-shell { max-width: 1180px; margin: 0 auto; border: 1px solid rgba(197,160,89,0.24); border-radius: 16px; padding: 34px 28px; background: radial-gradient(120% 180% at 0% 0%, rgba(197,160,89,0.12), transparent 58%), rgba(255,255,255,0.02); }
+        .route-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 22px; }
+        .route-card { border: 1px solid rgba(197,160,89,0.16); border-radius: 12px; padding: 22px 20px; background: linear-gradient(155deg, rgba(197,160,89,0.05), rgba(255,255,255,0.02) 60%, transparent); }
+        .route-card h3 { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: #f1dca7; margin: 0 0 10px; }
+        .route-card p { font-size: 11.5px; line-height: 1.7; color: rgba(255,255,255,0.58); margin: 0 0 14px; }
+        .route-card .mini { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+        .route-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .route-btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border: 1px solid rgba(197,160,89,0.4); background: rgba(197,160,89,0.05); color: #c5a059; font-family: 'Cinzel', serif; font-size: 8.5px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; border-radius: 999px; transition: all 0.3s; text-decoration: none; }
+        .route-btn:hover { color: #050505; background: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); border-color: transparent; box-shadow: 0 6px 18px rgba(197,160,89,0.3); }
         @media (max-width: 768px) {
             .svc-cat-tick { max-width: 40px; }
             .svc-cat-title { font-size: 11px; letter-spacing: 0.3em; }
             .cta-btn { min-width: 100%; }
+        }
+        @media (max-width: 900px) {
+            .route-grid { grid-template-columns: 1fr; }
         }
     </style>
   <link rel="canonical" href="https://iisupp.net/services">
@@ -592,6 +605,42 @@
             <h1 class="text-4xl md:text-6xl font-black tracking-tighter leading-none mb-8 logo-text">OUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic">Services</span></h1>
             <p class="max-w-2xl mx-auto text-white/50 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-6">From your website to your firewall, from a single laptop to a multi-site network — Integrated IT Support handles the full spectrum. Transparent pricing. No surprises.</p>
             <p class="text-[#f1dca7] text-[10px] tracking-[0.4em] uppercase font-bold italic">Ready to start? Call (647) 581-3182</p>
+        </div>
+    </section>
+
+    <section class="route-band">
+        <div class="route-shell">
+            <div class="max-w-3xl mx-auto text-center">
+                <span class="text-[#c5a059] tracking-[0.5em] text-[9px] uppercase mb-5 block font-bold">Best Next Step</span>
+                <h2 class="text-3xl md:text-5xl font-black tracking-tighter leading-none mb-6 logo-text">Choose the <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] italic">right entry point</span></h2>
+                <p class="text-white/50 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed">Most buyers do not need a vague quote request. Start with the path that matches the real problem: scope the work, map the workflow, or review the strongest product-led pack first.</p>
+            </div>
+            <div class="route-grid">
+                <div class="route-card">
+                    <h3>Book a scoping call</h3>
+                    <p>Best for support cleanup, Microsoft 365 work, website fixes, office move readiness, or any service issue that already feels real and urgent.</p>
+                    <div class="route-actions">
+                        <a class="route-btn" href="/?contact=1&amp;subject=Book%20a%20scoping%20call&amp;desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Stage scoping call</a>
+                        <span class="mini">Service-led path</span>
+                    </div>
+                </div>
+                <div class="route-card">
+                    <h3>Request the AI workflow audit</h3>
+                    <p>Best when the real pain is repeated manual work, scattered documents, messy intake, or a process that wastes hours every week.</p>
+                    <div class="route-actions">
+                        <a class="route-btn" href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit request</a>
+                        <span class="mini">ARIA path</span>
+                    </div>
+                </div>
+                <div class="route-card">
+                    <h3>Open the help desk blueprint</h3>
+                    <p>Best for teams comparing options before implementation and for buyers who want a practical pack tied directly to ARIA and support delivery.</p>
+                    <div class="route-actions">
+                        <a class="route-btn" href="/product.html?id=gl-helpdesk-blueprint">Review the blueprint</a>
+                        <span class="mini">Product-led path</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 

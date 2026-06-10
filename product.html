@@ -74,6 +74,23 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
   var upsell = p.upsell==='aria'
     ? '<a class="c-btn" href="/aria.html">Want it automated? Meet ARIA →</a>'
     : '<a class="c-btn" href="/services.html">Want it done for you? See services →</a>';
+  var implementationBand = p.id==='gl-helpdesk-blueprint'
+    ? '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need it built with you?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the blueprint into an IIS implementation plan</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the blueprint as the operating asset, then move into a scoped IIS engagement for ticket intake, triage, escalation quality, knowledge-base structure, and pilot rollout.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">MSP owners, IT managers, internal support leads, and teams drowning in repeated L1 questions.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Ticket intake model, routing matrix, escalation templates, KB structure, and a pilot rollout checklist.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a safer first step than buying tooling blind or adding headcount before support structure is ready.</p></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/?contact=1&subject=Request%20AI%20Help%20Desk%20Blueprint%20Implementation&desc=I%20want%20help%20implementing%20the%20AI%20Help%20Desk%20Blueprint.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20ticket%20pain%3A%0ASystems%20used%20today%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%3A">Stage implementation request</a>'+
+          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit first</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This stays value-first and does not hard-commit public pricing, staffing, or tool claims.</p>'+
+      '</div>'
+    : '';
   root.innerHTML =
     '<a href="/shop.html" class="eyebrow" style="color:rgba(255,255,255,.45);margin-bottom:22px">← Shop</a>'+
     '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px">'+badges+(p.format?' <span class="aud" style="border-color:rgba(255,255,255,.1)">'+esc(p.format)+'</span>':'')+'</div>'+
@@ -83,7 +100,8 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
     '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 30px"><span style="font-family:\'Cinzel\',serif;font-size:30px" class="gold-text">'+money(p.priceCents)+'</span><div style="display:flex;gap:10px;flex-wrap:wrap">'+actions+'</div></div>'+
     (insideList?'<h2 style="font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:#f1dca7;margin:30px 0 12px">What’s inside</h2><ul style="color:rgba(255,255,255,.65);font-size:14px;line-height:1.9;padding-left:20px">'+insideList+'</ul>':'')+
     (bundleList?'<h2 style="font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:#f1dca7;margin:30px 0 12px">Included in this bundle</h2>'+bundleList:'')+
-    '<div style="margin:34px 0;padding:20px 22px;border:1px dashed rgba(197,160,89,.35);border-radius:10px;background:rgba(197,160,89,.04);font-size:13px;color:rgba(255,255,255,.6)"><b style="color:#d8bd84">Peek before you commit.</b> The 30% preview shows the structure and a real section — credited toward full access (reply to your receipt). Full unlock includes every step, templates, and the AI-readable version. '+upsell+'</div>';
+    '<div style="margin:34px 0;padding:20px 22px;border:1px dashed rgba(197,160,89,.35);border-radius:10px;background:rgba(197,160,89,.04);font-size:13px;color:rgba(255,255,255,.6)"><b style="color:#d8bd84">Peek before you commit.</b> The 30% preview shows the structure and a real section — credited toward full access (reply to your receipt). Full unlock includes every step, templates, and the AI-readable version. '+upsell+'</div>'+
+    implementationBand;
   // related
   var rel=(p.related||[]).map(IIS_CATALOG.byId).filter(Boolean);
   if(rel.length){

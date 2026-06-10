@@ -28,13 +28,45 @@ const KEYWORDS = [
   'device management', 'laptop', 'desktop', 'workstation', 'printer', 'telephony',
   'voip', 'unified communications', 'managed it', 'systems integration',
   'system integration', 'integrator', 'it professional services',
+  'artificial intelligence', 'ai solution', 'ai implementation', 'automation',
+  'workflow automation', 'chatbot', 'knowledge base', 'document automation',
+  'website', 'web design', 'web redesign', 'web development', 'wordpress',
+  'office relocation', 'office move', 'move-in', 'workstation deployment',
+  'meeting room', 'audio visual', 'av setup', 'user onboarding',
+  'level 3 support', 'l3 support', 'systems administrator', 'network administrator',
+  'overflow support', 'field services', 'deskside support', 'onsite support',
 ];
 
 const HIGH_VALUE = [
   'managed services', 'managed service', 'cybersecurity', 'cyber security',
   'cloud', 'microsoft 365', 'm365', 'office 365', 'azure', 'infrastructure',
   'systems integration', 'managed it', 'disaster recovery',
+  'artificial intelligence', 'ai implementation', 'workflow automation',
+  'office relocation', 'workstation deployment', 'level 3 support',
+  'l3 support', 'web redesign',
 ];
+
+const STRONG_IT_SIGNALS = [
+  'information technology', 'it services', 'it support', 'help desk', 'helpdesk',
+  'managed services', 'technical support', 'service desk', 'cybersecurity',
+  'cyber security', 'microsoft 365', 'm365', 'office 365', 'azure', 'endpoint',
+  'active directory', 'identity', 'intune', 'managed it', 'systems integration',
+  'it professional services', 'artificial intelligence', 'ai solution',
+  'ai implementation', 'workflow automation', 'chatbot', 'website',
+  'web design', 'web redesign', 'web development', 'office relocation',
+  'office move', 'workstation deployment', 'level 3 support', 'l3 support',
+  'deskside support', 'onsite support',
+];
+
+const NON_IT_NOISE = [
+  'construction', 'renovation', 'repairs', 'repair work', 'garage',
+  'parking lot', 'roofing', 'road', 'bridge', 'trail', 'paving',
+  'building envelope', 'washroom', 'mechanical', 'electrical contractor',
+  'spectrometer', 'laboratory equipment', 'lab equipment', 'scientific instrument',
+  'research instrument',
+];
+
+const TITLE_EXCLUDE = ['spectrometer', 'chromatograph', 'microscope', 'analyzer'];
 
 // ---- record-aware CSV reader -------------------------------------------------
 // CanadaBuys quotes the description fields, which contain embedded newlines, so a single
@@ -112,7 +144,9 @@ async function collectMatches() {
     const title = get(cols, idxTitle);
     const desc = get(cols, idxDesc);
     const hay = (title + ' ' + desc).toLowerCase();
+    if (TITLE_EXCLUDE.some((k) => title.toLowerCase().includes(k))) continue;
     if (!KEYWORDS.some((k) => hay.includes(k))) continue;
+    if (NON_IT_NOISE.some((k) => hay.includes(k)) && !STRONG_IT_SIGNALS.some((k) => hay.includes(k))) continue;
     const region = get(cols, idxRegion) || [get(cols, idxCity), get(cols, idxProv)].filter(Boolean).join(', ');
     const ref = get(cols, idxRef);
     // Most new-notice rows have no direct noticeURL; fall back to a CanadaBuys search on the
@@ -137,15 +171,23 @@ async function collectMatches() {
 // ---- static link sets ---------------------------------------------------------
 const PORTALS = [
   { name: 'MERX (Canada-wide)', url: 'https://www.merx.com/public/solicitations/open?keywords=managed%20IT%20services' },
+  { name: 'MERX - AI / automation', url: 'https://www.merx.com/public/solicitations/open?keywords=artificial%20intelligence%20automation' },
+  { name: 'MERX - website redesign', url: 'https://www.merx.com/public/solicitations/open?keywords=website%20redesign' },
   { name: 'Ontario Tenders Portal', url: 'https://ontariotenders.app.jaggaer.com/esop/nac-host/public/web/login.html' },
   { name: 'CanadaBuys (federal)', url: 'https://canadabuys.canada.ca/en/tender-opportunities' },
+  { name: 'CanadaBuys - help desk', url: 'https://canadabuys.canada.ca/en/tender-opportunities?search_filter=help%20desk' },
+  { name: 'CanadaBuys - AI', url: 'https://canadabuys.canada.ca/en/tender-opportunities?search_filter=artificial%20intelligence' },
+  { name: 'CanadaBuys - website', url: 'https://canadabuys.canada.ca/en/tender-opportunities?search_filter=website' },
   { name: 'BC Bid', url: 'https://www.bcbid.gov.bc.ca/' },
   { name: 'Biddingo (public sector)', url: 'https://www.biddingo.com/' },
 ];
 const JOB_BOARDS = [
   { name: 'Indeed — IT manager / contract', url: 'https://ca.indeed.com/jobs?q=IT+manager+contract&l=Remote' },
+  { name: 'Indeed - remote help desk contract', url: 'https://ca.indeed.com/jobs?q=remote+help+desk+contract' },
+  { name: 'Indeed - L3 support contract', url: 'https://ca.indeed.com/jobs?q=L3+support+contract&l=Remote' },
   { name: 'Indeed — government IT', url: 'https://ca.indeed.com/jobs?q=information+technology+government' },
   { name: 'LinkedIn — IT gov contract', url: 'https://www.linkedin.com/jobs/search/?keywords=IT%20government%20contract' },
+  { name: 'LinkedIn - office move IT support', url: 'https://www.linkedin.com/jobs/search/?keywords=office%20move%20IT%20support' },
 ];
 
 // ---- HTML render --------------------------------------------------------------

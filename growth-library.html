@@ -111,6 +111,17 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
 .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none}}
+.route-band{padding:0 24px 34px}
+.route-shell{max-width:1100px;margin:0 auto;border:1px solid rgba(197,160,89,.22);border-radius:16px;padding:34px 28px;background:radial-gradient(120% 180% at 0% 0%,rgba(197,160,89,.12),transparent 58%),rgba(255,255,255,.02)}
+.route-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:22px}
+.route-card{border:1px solid rgba(197,160,89,.16);border-radius:12px;padding:22px 20px;background:linear-gradient(155deg,rgba(197,160,89,.05),rgba(255,255,255,.02) 60%,transparent)}
+.route-card h3{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#f1dca7;margin:0 0 10px}
+.route-card p{font-size:11.5px;line-height:1.7;color:rgba(255,255,255,.58);margin:0 0 14px}
+.route-card .mini{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.route-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.route-btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid rgba(197,160,89,.4);background:rgba(197,160,89,.05);color:#c5a059;font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;border-radius:999px;transition:all .3s}
+.route-btn:hover{color:#050505;background:var(--luxury-gold);border-color:transparent;box-shadow:0 6px 18px rgba(197,160,89,.3)}
+@media(max-width:900px){.route-grid{grid-template-columns:1fr}}
 </style>
   <link rel="canonical" href="https://iisupp.net/growth-library">
   <meta property="og:type" content="website">
@@ -160,6 +171,7 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
     <p style="color:#c5a059;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;max-width:620px;margin:0 auto">You don’t rise by consuming more — you rise by operating better. This is where that starts.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px">
       <a href="#vault" class="nav-cta" style="display:inline-flex">Enter the vault</a>
+      <a href="#helpdesk-spotlight" class="c-btn" style="display:inline-flex">See the lead product</a>
     </div>
   </div>
 </section>
@@ -179,6 +191,82 @@ nav{position:fixed;width:100%;z-index:50;padding:22px 40px;display:flex;justify-
     </div>
   </div>
   <p style="text-align:center;color:rgba(255,255,255,.4);font-size:11px;letter-spacing:.1em;margin-top:22px">Practical intelligence packs — for people <span style="color:#c5a059">and</span> systems.</p>
+</section>
+
+<section class="route-band">
+  <div class="route-shell">
+    <div class="shead" style="margin-bottom:0">
+      <span class="eyebrow">Turn this into revenue</span>
+      <h2>Pick the <span class="gold-text" style="font-style:italic">next move</span></h2>
+      <p>Some visitors need a pack right now. Others need an audit or a short scoping conversation before they buy. This band keeps those paths obvious.</p>
+    </div>
+    <div class="route-grid">
+      <div class="route-card">
+        <h3>Need implementation help?</h3>
+        <p>Use the homepage intake and stage a short scoping call around the exact workflow, support desk, or documentation problem you want solved.</p>
+        <div class="route-actions">
+          <a class="route-btn" href="/?contact=1&amp;subject=Book%20a%20scoping%20call&amp;desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A">Stage scoping call</a>
+          <span class="mini">Service path</span>
+        </div>
+      </div>
+      <div class="route-card">
+        <h3>Need a workflow mapped first?</h3>
+        <p>Request the AI Workflow Audit when the process is still messy and you need the best next automation or ARIA use case identified.</p>
+        <div class="route-actions">
+          <a class="route-btn" href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0ATools%20we%20use%20today%3A">Stage audit request</a>
+          <span class="mini">Audit path</span>
+        </div>
+      </div>
+      <div class="route-card">
+        <h3>Need the strongest pack first?</h3>
+        <p>The AI Help Desk Automation Blueprint is the current lead product because it ties directly into ARIA, support retainers, and repeatable delivery.</p>
+        <div class="route-actions">
+          <a class="route-btn" href="#helpdesk-spotlight">See the blueprint</a>
+          <span class="mini">Product path</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="helpdesk-spotlight" style="padding:20px 24px 30px;background:#080808">
+  <div style="max-width:1100px;margin:0 auto;border:1px solid rgba(197,160,89,.25);border-radius:16px;padding:36px 30px;background:
+    radial-gradient(140% 160% at 0% 0%,rgba(197,160,89,.14),transparent 58%),
+    linear-gradient(145deg,rgba(255,255,255,.02),rgba(255,255,255,.01));">
+    <div style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:28px;align-items:start">
+      <div>
+        <span class="eyebrow" style="margin-bottom:12px">Featured product path</span>
+        <h2 style="margin:0 0 14px;font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.08">AI Help Desk <span class="gold-text" style="font-style:italic">Automation Blueprint</span></h2>
+        <p style="margin:0 0 16px;color:rgba(255,255,255,.66);font-size:14px;line-height:1.85">A practical digital pack for IT leaders and MSPs who want less Level 1 noise, cleaner escalation notes, and a better AI-ready support structure before they buy more tooling or add headcount.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 18px">
+          <div style="padding:14px 16px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">
+            <p style="margin:0 0 7px;color:#f1dca7;font-size:11px;letter-spacing:.14em;text-transform:uppercase">Built for</p>
+            <p style="margin:0;color:rgba(255,255,255,.62);font-size:13px;line-height:1.7">MSP owners, IT managers, internal support leads, and teams trying to improve triage quality fast.</p>
+          </div>
+          <div style="padding:14px 16px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">
+            <p style="margin:0 0 7px;color:#f1dca7;font-size:11px;letter-spacing:.14em;text-transform:uppercase">Implementation ladder</p>
+            <p style="margin:0;color:rgba(255,255,255,.62);font-size:13px;line-height:1.7">Start with the pack, then step into the audit or the IIS implementation offer when the buyer wants help building it.</p>
+          </div>
+        </div>
+        <ul style="margin:0;padding-left:20px;color:rgba(255,255,255,.58);font-size:13px;line-height:1.9">
+          <li>Ticket intake fields that improve routing and summaries.</li>
+          <li>L1/L2/L3 triage logic and escalation templates.</li>
+          <li>Knowledge-base structure for people and AI systems.</li>
+          <li>Pilot rollout, QA, and KPI starter checklist.</li>
+        </ul>
+      </div>
+      <div style="padding:20px 20px 18px;border:1px solid rgba(197,160,89,.22);border-radius:12px;background:rgba(0,0,0,.26)">
+        <p style="margin:0 0 10px;color:#c5a059;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700">Why it converts</p>
+        <p style="margin:0 0 16px;color:rgba(255,255,255,.66);font-size:13px;line-height:1.8">This is the cleanest bridge between Growth Library product revenue and ARIA service revenue. It sells a concrete operating asset first, then gives IIS a credible implementation path.</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <a href="/product.html?id=gl-helpdesk-blueprint" class="nav-cta" style="display:inline-flex;justify-content:center">Open product page</a>
+          <a href="/?contact=1&amp;subject=Request%20AI%20Help%20Desk%20Blueprint%20Implementation&amp;desc=I%20want%20help%20implementing%20the%20AI%20Help%20Desk%20Blueprint.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20ticket%20pain%3A%0ASystems%20used%20today%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%3A" class="c-btn" style="display:inline-flex;justify-content:center">Stage implementation request</a>
+          <a href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A" class="c-btn" style="display:inline-flex;justify-content:center">Stage audit instead</a>
+        </div>
+        <p style="margin:14px 0 0;color:rgba(255,255,255,.38);font-size:10px;line-height:1.7">Public price posture still belongs to Ahmad. This section stays value-first and does not hard-commit a final public price.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- VAULT -->
@@ -283,6 +371,21 @@ function glSearch(q){
   var aa = IIS_CATALOG.byId('bundle-allaccess');
   var aaGrid = document.getElementById('allaccess-grid');
   if (aa && aaGrid) aaGrid.innerHTML = IIS_CATALOG.renderBook(aa);
+  var params = new URLSearchParams(window.location.search);
+  var q = params.get('q');
+  if (!q && params.get('focus') === 'helpdesk') {
+    q = 'help desk automation blueprint';
+    setTimeout(function(){
+      var spotlight = document.getElementById('helpdesk-spotlight');
+      if (spotlight) spotlight.scrollIntoView({behavior:'smooth',block:'start'});
+    }, 120);
+  }
+  if (q) {
+    var input = document.getElementById('gl-q');
+    if (input) input.value = q;
+    glSearch(q);
+    setTimeout(function(){ document.getElementById('vault').scrollIntoView({behavior:'smooth',block:'start'}); }, 180);
+  }
 })();
 function filterTo(cat, btn){
   document.querySelectorAll('.filt').forEach(function(b){ b.classList.toggle('is-active', b.dataset.filt===cat); });

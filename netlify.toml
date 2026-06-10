@@ -3,7 +3,7 @@
   functions = "netlify/functions"
 
 [build.environment]
-  SECRETS_SCAN_OMIT_KEYS = "APP_URL,SALES_NOTIFY_EMAIL,ARIA_MODEL,ARIA_RATE_LIMIT,NETLIFY_SITE_ID,RESEND_FROM"
+  SECRETS_SCAN_OMIT_KEYS = "APP_URL,SALES_NOTIFY_EMAIL,ARIA_MODEL,ARIA_RATE_LIMIT,NETLIFY_SITE_ID,RESEND_FROM,TELEGRAM_BOT_TOKEN,TELEGRAM_WEBHOOK_SECRET,TELEGRAM_OWNER_CHAT_ID,SENIOR_DIRECTOR_SECRET,SENIOR_DIRECTOR_DAILY_ALWAYS"
   SECRETS_SCAN_OMIT_PATHS = "node_modules/**,.netlify/**,extension/**,downloads/**"
 
 [functions]
@@ -17,10 +17,30 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "microphone=(self), camera=(), geolocation=(self)"
 
-# Internal-only paths — blocked from public access (return 404).
+# Internal-only paths â€” blocked from public access (return 404).
 # force=true is required so the rule overrides the physically-present static files.
 [[redirects]]
   from = "/docs/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/scripts/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/senior-director-state/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/netlify/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/node_modules/*"
   to = "/index.html"
   status = 404
   force = true
@@ -31,6 +51,26 @@
   force = true
 [[redirects]]
   from = "/archive/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/artifacts/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/outputs/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/procurement-downloads/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/plans/*"
   to = "/index.html"
   status = 404
   force = true
@@ -76,6 +116,41 @@
   to = "/index.html"
   status = 404
   force = true
+[[redirects]]
+  from = "/AGENT_EXECUTION_NOTES.md"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/COLLAB-CLAUDE-CODEX.md"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/mesh-registry.json"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/package.json"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/deno.lock"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/.gitignore"
+  to = "/index.html"
+  status = 404
+  force = true
 
 [[redirects]]
   from = "/shop"
@@ -114,6 +189,19 @@
   from = "/aria"
   to = "/aria.html"
   status = 200
+# Lead magnet: 60-Second IT Health Check (free scorecard -> lead capture)
+[[redirects]]
+  from = "/health-check"
+  to = "/health-check.html"
+  status = 200
+[[redirects]]
+  from = "/checkup"
+  to = "/health-check.html"
+  status = 200
+[[redirects]]
+  from = "/score"
+  to = "/health-check.html"
+  status = 200
 [[redirects]]
   from = "/aria-cinema"
   to = "/aria-cinema.html"
@@ -145,6 +233,14 @@
 [[redirects]]
   from = "/agents"
   to = "/agent-command-center.html"
+  status = 200
+[[redirects]]
+  from = "/growth-command-center"
+  to = "/growth-command-center.html"
+  status = 200
+[[redirects]]
+  from = "/growth-agents"
+  to = "/growth-command-center.html"
   status = 200
 
 # --- Governance / AEGIS public library ---

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>IIS Growth Command Center</title>
+<style>
+  :root{
+    --bg:#050810;--surface:#0a1219;--surface2:#0d1824;--line:#1a2b35;--line2:#243a47;
+    --text:#d8e0e6;--muted:#98a8b3;--dim:#6b7c87;--teal:#2dd4bf;--cyan:#22e1ff;
+    --gold:#c8a046;--amber:#fbbf24;--green:#4ade80;--red:#f87171;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:Inter,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5}
+  button,input,select,textarea{font:inherit}
+  .mono{font-family:var(--mono)}
+  #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(900px 420px at 50% 0,rgba(45,212,191,.11),transparent 62%),var(--bg)}
+  .login-box{width:min(420px,100%);border:1px solid var(--teal);background:var(--surface);padding:32px;border-radius:2px;box-shadow:0 0 60px rgba(45,212,191,.12)}
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--teal);font-weight:700}
+  h1{margin:8px 0 6px;font-size:22px;letter-spacing:.02em}
+  .sub{color:var(--muted);margin:0 0 24px}
+  label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin:13px 0 5px}
+  input{width:100%;background:#050810;border:1px solid var(--line2);color:var(--text);padding:11px 12px;border-radius:2px;outline:none}
+  input:focus{border-color:var(--teal)}
+  .btn{border:1px solid var(--line2);background:transparent;color:var(--text);padding:9px 13px;border-radius:2px;cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+  .btn:hover{border-color:var(--teal);color:var(--teal)}
+  .btn.primary{background:var(--teal);border-color:var(--teal);color:#041214;font-weight:700}
+  .login-box .btn{width:100%;margin-top:18px}
+  .err{min-height:16px;margin-top:12px;color:var(--red);font-family:var(--mono);font-size:11px}
+  #app{display:none}
+  .top{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:18px;padding:14px 22px;border-bottom:1px solid var(--line);background:rgba(5,8,16,.92);backdrop-filter:blur(10px)}
+  .brand{font-family:var(--mono);letter-spacing:.25em;text-transform:uppercase;font-weight:700;font-size:12px}
+  .brand span{color:var(--teal)}
+  .top-title{flex:1;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+  .live{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 14px rgba(74,222,128,.7)}
+  main{padding:20px 22px 70px;max-width:1480px;margin:0 auto}
+  .kpis{display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+  .kpi{border:1px solid var(--line);background:var(--surface);padding:14px;border-radius:2px;min-height:92px}
+  .kpi .num{font-size:28px;font-weight:800;line-height:1;color:var(--text)}
+  .kpi .label{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:10px}
+  .kpi .hint{font-size:11px;color:var(--dim);margin-top:5px}
+  .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start}
+  .span{grid-column:1/-1}
+  .panel{border:1px solid var(--line);background:var(--surface);border-radius:2px;padding:16px;margin-bottom:16px}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  h2{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .pill{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line2);color:var(--muted);padding:3px 8px;border-radius:2px}
+  .pill.ok{border-color:rgba(74,222,128,.45);color:var(--green)}
+  .pill.warn{border-color:rgba(251,191,36,.55);color:var(--amber)}
+  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .agent{border:1px solid var(--line);background:var(--surface2);padding:12px;border-radius:2px;min-height:122px}
+  .agent h3{margin:0 0 6px;font-size:13px}
+  .agent p{margin:0;color:var(--muted);font-size:12px}
+  .agent .meta{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:10px;text-transform:uppercase;letter-spacing:.12em}
+  table{width:100%;border-collapse:collapse;table-layout:fixed}
+  th,td{border-bottom:1px solid rgba(36,58,71,.65);padding:9px 8px;text-align:left;vertical-align:top}
+  th{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  td{font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis}
+  td a{color:var(--cyan);text-decoration:none}
+  td a:hover{text-decoration:underline}
+  .status{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+  .list{display:grid;gap:9px}
+  .item{border:1px solid var(--line);background:var(--surface2);padding:11px;border-radius:2px}
+  .item strong{display:block;margin-bottom:3px}
+  .item span{color:var(--muted);font-size:12px}
+  .debrief{white-space:pre-wrap;color:var(--muted);font-size:12px;max-height:330px;overflow:auto;border:1px solid var(--line);background:#070b12;padding:12px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  @media(max-width:1100px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.top-title{text-align:left}}
+  @media(max-width:640px){main{padding:14px}.top{padding:12px;flex-wrap:wrap}.kpis,.cards{grid-template-columns:1fr}.top-title{order:3;flex-basis:100%}}
+</style>
+</head>
+<body>
+<section id="login">
+  <form class="login-box" id="login-form">
+    <div class="eyebrow">IIS Growth</div>
+    <h1>Command Center</h1>
+    <p class="sub">Agent-led revenue, leads, tenders, AI, websites, offshore support, and daily decisions.</p>
+    <label>Email</label>
+    <input id="email" type="email" autocomplete="username" placeholder="integrateditsupp@iisupp.net">
+    <label>Password</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <button class="btn primary" type="submit">Unlock</button>
+    <div class="err" id="login-err"></div>
+  </form>
+</section>
+
+<section id="app">
+  <header class="top">
+    <div class="brand">IIS <span>Growth</span></div>
+    <div class="top-title">Revenue Operations Command Center</div>
+    <span class="live"><span class="dot"></span><span id="sync">Live</span></span>
+    <button class="btn" id="refresh">Refresh</button>
+    <button class="btn" id="logout">Sign out</button>
+  </header>
+  <main>
+    <section class="kpis">
+      <div class="kpi"><div class="num" id="k-agents">-</div><div class="label">Growth agents</div><div class="hint">Codex + mesh visible</div></div>
+      <div class="kpi"><div class="num" id="k-leads">-</div><div class="label">Tender matches</div><div class="hint">Lead Radar live</div></div>
+      <div class="kpi"><div class="num" id="k-hot">-</div><div class="label">Hot leads</div><div class="hint">High-value keywords</div></div>
+      <div class="kpi"><div class="num" id="k-pending">-</div><div class="label">Queued tasks</div><div class="hint">Codex/Claude/agents</div></div>
+      <div class="kpi"><div class="num" id="k-decisions">-</div><div class="label">CEO decisions</div><div class="hint">Approval gates only</div></div>
+    </section>
+
+    <section class="panel span">
+      <div class="panel-head">
+        <h2>Growth Agents</h2>
+        <span class="pill ok">No-send mode</span>
+      </div>
+      <div class="cards" id="agents"></div>
+    </section>
+
+    <section class="grid">
+      <div>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Lead Radar / Tenders</h2>
+            <span class="pill" id="lead-meta">Loading</span>
+          </div>
+          <table>
+            <thead><tr><th style="width:40%">Opportunity</th><th>Buyer</th><th style="width:13%">Close</th><th style="width:13%">Status</th></tr></thead>
+            <tbody id="lead-rows"><tr><td colspan="4">Loading...</td></tr></tbody>
+          </table>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Growth Streams</h2>
+            <span class="pill">Revenue map</span>
+          </div>
+          <div class="list" id="streams"></div>
+        </section>
+      </div>
+
+      <div>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>CEO Decisions</h2>
+            <span class="pill warn">Approval only</span>
+          </div>
+          <div class="list" id="decisions"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Agent Queue</h2>
+            <span class="pill" id="queue-meta">Loading</span>
+          </div>
+          <div class="list" id="queue"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="panel span">
+      <div class="panel-head">
+        <h2>Daily Debrief</h2>
+        <div class="actions">
+          <a class="btn" href="/lead-radar" target="_blank" rel="noopener">Lead Radar</a>
+          <a class="btn" href="/command-center" target="_blank" rel="noopener">Mesh Center</a>
+        </div>
+      </div>
+      <div class="debrief" id="debrief">Loading Director digest...</div>
+    </section>
+  </main>
+</section>
+
+<script>
+(function(){
+  var TOKEN = localStorage.getItem('aperture_jwt') || '';
+  var growthIds = ['senior-director-agent','contract-scout-agent','local-business-lead-agent','ai-opportunity-agent','tender-review-agent','corporate-expansion-agent','outreach-prep-agent','offshore-support-strategy-agent','revenue-ideas-agent'];
+  var streams = [
+    ['Remote L1-L3 Support','Monthly remote help desk, desktop, M365, endpoint, server, security, escalation.'],
+    ['Website Leads','Companies with no website, weak website, broken website, or poor online presence.'],
+    ['AI Implementation','AI support agents, AI search, reporting, onboarding, documentation, workflow automation.'],
+    ['Move-In / Overflow','Office openings, workstation deployment, AV rooms, onboarding, project overflow.'],
+    ['Government Tenders','CanadaBuys, MERX, Ontario Tenders, municipal portals, bid/no-bid reviews.'],
+    ['Offshore Support','Lower-cost L1-L3 and AI assistance delivery with IIS quality control.'],
+    ['Revenue Ideas','Approve, reject, research more, or save for later. No fake guarantees.']
+  ];
+  function $(id){return document.getElementById(id)}
+  function esc(s){return String(s == null ? '' : s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function authHeaders(){return {'Authorization':'Bearer '+TOKEN,'Content-Type':'application/json'}}
+  function login(e){
+    e.preventDefault();
+    $('login-err').textContent = '';
+    fetch('/.netlify/functions/aperture-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('email').value.trim(),password:$('password').value})})
+      .then(function(r){return r.json()}).then(function(j){
+        if(j.token){TOKEN=j.token;localStorage.setItem('aperture_jwt',TOKEN);showApp()}
+        else $('login-err').textContent = j.error || 'Authentication failed';
+      }).catch(function(){ $('login-err').textContent = 'Network error'; });
+  }
+  function showApp(){ $('login').style.display='none'; $('app').style.display='block'; refresh(); }
+  function renderStaticStreams(){
+    $('streams').innerHTML = streams.map(function(s){return '<div class="item"><strong>'+esc(s[0])+'</strong><span>'+esc(s[1])+'</span></div>'}).join('');
+  }
+  function loadRegistry(){
+    return fetch('/mesh-registry.json',{cache:'no-store'}).then(function(r){return r.json()}).then(function(reg){
+      var agents = (reg.agents || []).filter(function(a){return growthIds.indexOf(a.id) >= 0});
+      $('k-agents').textContent = agents.length;
+      $('agents').innerHTML = agents.map(function(a){
+        return '<div class="agent"><h3>'+esc(a.id)+'</h3><p>'+esc(a.description || '').slice(0,150)+'</p><div class="meta">'+esc(a.status)+' / '+esc(a.type)+' / '+esc(a.tier)+'</div></div>';
+      }).join('');
+    });
+  }
+  function loadLeadRadar(){
+    return fetch('/.netlify/functions/aria-lead-radar',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){
+      $('k-leads').textContent = d.count || 0;
+      $('k-hot').textContent = d.hot || 0;
+      $('lead-meta').textContent = (d.scanned || 0) + ' scanned';
+      var rows = (d.matches || []).slice(0,10).map(function(m){
+        return '<tr><td>'+(m.url?'<a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.title)+'</a>':esc(m.title))+'</td><td>'+esc(m.org)+'</td><td>'+esc(m.close)+'</td><td><span class="status">'+(m.hot?'hot':'review')+'</span></td></tr>';
+      }).join('');
+      $('lead-rows').innerHTML = rows || '<tr><td colspan="4">No matching tenders in latest CanadaBuys batch.</td></tr>';
+    });
+  }
+  function loadDirector(){
+    return fetch('/api/senior-director-agent',{headers:{'Authorization':'Bearer '+TOKEN},cache:'no-store'}).then(function(r){
+      if(!r.ok) throw new Error('unauthorized');
+      return r.json();
+    }).then(function(j){
+      var d = j.digest || {};
+      var q = d.queue || {};
+      $('k-pending').textContent = q.pending || 0;
+      $('queue-meta').textContent = (q.recent || 0) + ' recent';
+      var pending = q.newestPending || [];
+      $('queue').innerHTML = pending.length ? pending.map(function(t){
+        return '<div class="item"><strong>'+esc(t.target)+'</strong><span>'+esc((t.payload && t.payload.instruction) || '').slice(0,220)+'</span></div>';
+      }).join('') : '<div class="item"><strong>Queue clear</strong><span>No pending growth tasks visible in the Netlify queue.</span></div>';
+      var attention = ((d.events || {}).attention || []);
+      var decisions = [];
+      if(attention.length) decisions = attention.map(function(e){return (e.kind || 'attention') + ' ' + (e.error || '')});
+      if(((d.policy || {}).requiresApproval || []).length) decisions.push('Approval gates active: external sends, spend, final submissions, legal commitments, security/credential changes.');
+      $('k-decisions').textContent = attention.length;
+      $('decisions').innerHTML = decisions.map(function(x){return '<div class="item"><strong>Decision / Gate</strong><span>'+esc(x)+'</span></div>'}).join('') || '<div class="item"><strong>No CEO blocker</strong><span>Agents may continue safe no-cost research and drafting.</span></div>';
+      $('debrief').textContent = [
+        'Generated: ' + (d.generatedAt || new Date().toISOString()),
+        '',
+        'Agents: ' + ((d.agents || {}).active || 0) + '/' + ((d.agents || {}).total || 0) + ' active',
+        'Queue: ' + (q.pending || 0) + ' pending, ' + (q.failed || 0) + ' failed',
+        'Lead Radar: ' + (((d.leads || {}).count) || 0) + ' matches, ' + (((d.leads || {}).hot) || 0) + ' hot',
+        '',
+        'Top 3 actions:',
+        '1. Review highest-fit L1-L3, website, AI, tender, or move-in lead.',
+        '2. Prepare no-send outreach or bid/no-bid brief for Ahmad approval.',
+        '3. Keep ARIA/site reliability and growth portal clean before external push.'
+      ].join('\\n');
+    }).catch(function(){
+      $('k-pending').textContent = '-';
+      $('k-decisions').textContent = '-';
+      $('queue').innerHTML = '<div class="item"><strong>Sign in again</strong><span>Director API needs Aperture admin token.</span></div>';
+      $('decisions').innerHTML = '<div class="item"><strong>Unknown</strong><span>Could not load Director digest.</span></div>';
+      $('debrief').textContent = 'Director digest unavailable. Sign out and back in if the token expired.';
+    });
+  }
+  function refresh(){
+    $('sync').textContent = 'Syncing';
+    renderStaticStreams();
+    Promise.allSettled([loadRegistry(),loadLeadRadar(),loadDirector()]).then(function(){
+      $('sync').textContent = 'Live';
+    });
+  }
+  $('login-form').addEventListener('submit', login);
+  $('logout').addEventListener('click', function(){localStorage.removeItem('aperture_jwt'); TOKEN=''; $('app').style.display='none'; $('login').style.display='flex';});
+  $('refresh').addEventListener('click', refresh);
+  if(TOKEN) showApp();
+})();
+</script>
+</body>
+</html>

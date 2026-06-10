@@ -92,9 +92,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 
 .grid{display:grid;gap:16px;margin-bottom:16px}
 .g-stats{grid-template-columns:repeat(4,1fr)}
+.g-director{grid-template-columns:1.05fr 1.2fr 1fr}
 .g-ops{grid-template-columns:1.35fr 1fr 1fr}
 .g-intel{grid-template-columns:1.2fr 1.4fr 1fr}
-@media(max-width:1100px){.g-stats{grid-template-columns:repeat(2,1fr)}.g-ops,.g-intel{grid-template-columns:1fr}}
+@media(max-width:1100px){.g-stats{grid-template-columns:repeat(2,1fr)}.g-director,.g-ops,.g-intel{grid-template-columns:1fr}}
 @media(max-width:560px){.g-stats{grid-template-columns:1fr}}
 
 /* stat cards */
@@ -193,6 +194,24 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .mini-btn:hover{border-color:var(--accent);color:var(--accent)}
 .mini-btn:disabled{opacity:.5;cursor:default}
 
+/* Senior Director visibility */
+.director-card{border-color:rgba(34,225,255,.13)}
+.director-hero{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.director-metric{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.022);padding:12px 13px;min-width:0}
+.director-metric .v{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;color:var(--txt)}
+.director-metric .k{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3);margin-top:7px;white-space:normal}
+.director-metric.hot .v{color:var(--warn)}
+.director-list{display:flex;flex-direction:column;gap:9px}
+.director-item{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);padding:10px 11px;font-size:12.5px;line-height:1.45}
+.director-item .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.director-item .name{font-weight:600;color:var(--txt)}
+.director-item .sub{font-family:var(--mono);font-size:10px;color:var(--txt-3);margin-top:4px;letter-spacing:.02em}
+.director-item a{color:var(--accent)}
+.director-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.director-note{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);line-height:1.6;margin-top:10px}
+@media(max-width:680px){.director-hero{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.director-hero{grid-template-columns:1fr}}
+
 /* roster chips */
 .roster{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
 .r-chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.03em;color:var(--txt-2);background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:7px;padding:4px 9px}
@@ -232,6 +251,40 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .footer{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:26px;padding-top:18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--txt-3)}
 .footer a{color:var(--txt-2)}.footer a:hover{color:var(--accent)}
 
+/* Reference command-center first viewport */
+@media (min-width:1000px){
+  #app.reference-command{max-width:none;padding:0 0 40px}
+  #app.reference-command .topbar,
+  #app.reference-command #stat-band{display:none}
+  #app.reference-command .ops-stage{
+    min-height:100dvh;padding:0;border:0;border-radius:0;background:#02070f;box-shadow:none;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  #app.reference-command .ops-head,
+  #app.reference-command .ops-rail,
+  #app.reference-command .ops-dock,
+  #app.reference-command .agent-pin,
+  #app.reference-command .core-pulse{display:none}
+  #app.reference-command .ops-layout{display:block;width:100%;height:100dvh}
+  #app.reference-command .ops-viewport{
+    width:100%;height:100dvh;min-height:0;border:0;border-radius:0;background:#02070f;box-shadow:none;
+  }
+  #app.reference-command .ops-viewport img{object-fit:contain;background:#02070f;filter:none}
+  #app.reference-command .ops-viewport::after{display:none}
+  #app.reference-command .command-exit{display:block}
+  #app.reference-command > .mesh-wrap,
+  #app.reference-command > .grid,
+  #app.reference-command > .footer{max-width:1480px;margin-left:auto;margin-right:auto}
+  #app.reference-command > .mesh-wrap{margin-top:18px}
+}
+.command-exit{
+  display:none;position:fixed;right:18px;top:16px;z-index:20;
+  background:rgba(2,7,15,.72);border:1px solid rgba(34,225,255,.28);color:var(--accent);
+  padding:8px 12px;border-radius:8px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;cursor:pointer;backdrop-filter:blur(10px);
+}
+.command-exit:hover{border-color:var(--accent);box-shadow:0 0 24px rgba(34,225,255,.16)}
+
 /* modal */
 #modal-bg{display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,6,12,.78);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:24px;animation:fade .25s var(--ease)}
 #modal-bg.show{display:flex}
@@ -269,6 +322,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 
 <!-- ── APP ───────────────────────────────────────────────────────────── -->
 <div id="app">
+  <button class="command-exit" onclick="logout()">Sign out</button>
 
   <div class="topbar">
     <div class="brand">
@@ -311,6 +365,52 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       <div class="label">Agents</div>
       <div class="num" id="agents-active">—</div>
       <div class="meta">in ARIA roster · <span id="agents-born">0</span> evolved this run</div>
+    </div>
+  </div>
+
+  <!-- SENIOR DIRECTOR VISIBILITY -->
+  <div class="grid g-director" id="director-band">
+    <div class="panel director-card" style="animation-delay:.04s">
+      <div class="panel-h">
+        <h2>Senior Director Agent</h2>
+        <span class="chip accent" id="director-status">loading</span>
+      </div>
+      <div class="eyebrow" id="director-updated">Operating board sync pending</div>
+      <div class="director-hero">
+        <div class="director-metric"><div class="v" id="director-agents">-</div><div class="k">Agents active</div></div>
+        <div class="director-metric"><div class="v" id="director-queue">-</div><div class="k">Queued work</div></div>
+        <div class="director-metric hot"><div class="v" id="director-hot">-</div><div class="k">Hot leads</div></div>
+        <div class="director-metric"><div class="v" id="director-scanned">-</div><div class="k">Sources scanned</div></div>
+      </div>
+      <div class="director-actions">
+        <button class="ghost-btn" onclick="directorBrief()">Generate Director brief</button>
+        <a class="ghost-btn" href="/growth-command-center" target="_blank" rel="noopener">Open Growth Center</a>
+      </div>
+      <div class="director-note" id="director-mission">Mission: grow IIS revenue and profit while protecting approval gates.</div>
+    </div>
+
+    <div class="panel director-card" style="animation-delay:.08s">
+      <div class="panel-h">
+        <h2>Lead radar and actions</h2>
+        <span class="chip" id="director-lead-chip">-</span>
+      </div>
+      <div class="director-list" id="director-leads">
+        <div class="empty">Waiting for Director lead scan...</div>
+      </div>
+    </div>
+
+    <div class="panel director-card" style="animation-delay:.12s">
+      <div class="panel-h">
+        <h2>Work and approval gates</h2>
+        <span class="chip ok" id="director-attention-chip">watching</span>
+      </div>
+      <div class="director-list" id="director-work">
+        <div class="empty">Waiting for Director queue...</div>
+      </div>
+      <div class="eyebrow" style="margin:14px 0 8px">Requires Ahmad</div>
+      <div class="director-list" id="director-approvals">
+        <div class="empty">Approval policy loading...</div>
+      </div>
     </div>
   </div>
 
@@ -458,7 +558,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
    - aria-escalation?action=tickets|chatlog|ticket|chatpost
    - aperture-email-report (POST)
    ============================================================================ */
-let TOKEN = localStorage.getItem('aperture_jwt') || '';
+function readApertureToken(){
+  let raw = '';
+  try { raw = localStorage.getItem('aperture_jwt') || localStorage.getItem('aperture_token_v1') || ''; } catch {}
+  if (!raw) return '';
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.token) return parsed.token;
+  } catch {}
+  return raw;
+}
+let TOKEN = readApertureToken();
 let POLL = null;
 const HEALTH_HIST = [];
 
@@ -489,13 +599,23 @@ function doLogin(){
   fetch('/.netlify/functions/aperture-auth', {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({ email:u, password:p })
-  }).then(r=>r.json()).then(j=>{
-    if (j.token){ TOKEN=j.token; localStorage.setItem('aperture_jwt',TOKEN); showApp(); }
-    else $('login-err').textContent = j.error || 'Authentication failed';
+  }).then(async r=>{
+    const text = await r.text();
+    let j = {};
+    try { j = text ? JSON.parse(text) : {}; } catch { j = { error:text || 'non-JSON response' }; }
+    if (r.ok && j.token){
+      TOKEN=j.token;
+      localStorage.setItem('aperture_jwt',TOKEN);
+      localStorage.removeItem('aperture_token_v1');
+      showApp();
+    }
+    else $('login-err').textContent = j.error || ('Authentication failed ('+r.status+')');
   }).catch(()=>{ $('login-err').textContent='Network error'; });
 }
 function logout(){
-  TOKEN=''; localStorage.removeItem('aperture_jwt');
+  TOKEN='';
+  localStorage.removeItem('aperture_jwt');
+  localStorage.removeItem('aperture_token_v1');
   if (POLL) clearInterval(POLL);
   $('app').style.display='none'; $('login').style.display='flex';
 }
@@ -518,15 +638,17 @@ async function loadAll(){
   const headers = authHeaders();
   let ok = true;
   try {
-    const [sR,tR,cR] = await Promise.all([
+    const [sR,tR,cR,dR] = await Promise.all([
       fetch('/.netlify/functions/aria-learning-status',{headers}),
       fetch('/.netlify/functions/aria-escalation?action=tickets',{headers}),
-      fetch('/.netlify/functions/aria-escalation?action=chatlog',{headers})
+      fetch('/.netlify/functions/aria-escalation?action=chatlog',{headers}),
+      fetch('/api/senior-director-agent',{headers}).catch((e)=>({ ok:false, status:0, error:e }))
     ]);
     if (sR.status === 401 || tR.status === 401 || cR.status === 401){ logout(); return; }
     const status  = await sR.json().catch(()=>({}));
     const tickets = (await tR.json().catch(()=>({}))).tickets || [];
     const msgs    = (await cR.json().catch(()=>({}))).messages || [];
+    const director = dR && dR.ok ? (await dR.json().catch(()=>({}))).digest : null;
     renderStats(status, tickets);
     renderLearning(status);
     renderTickets(tickets);
@@ -535,6 +657,7 @@ async function loadAll(){
     renderComms(msgs);
     renderTimeline(msgs);
     renderHealth(tickets);
+    renderDirector(director, dR);
   } catch(e){ ok=false; }
   setConn(ok);
 }
@@ -569,6 +692,74 @@ function renderStats(s, t){
   setText('dock-resolved', logged ? String(resolved) : '1,248');
   setText('dock-tasks', logged ? String(open) : String(num(s.queueDepth) || 134));
   setText('dock-agents', roster ? String(roster) : '22');
+}
+
+/* ---- render: Senior Director visibility ------------------------------------ */
+function renderDirector(d, response){
+  const statusChip = $('director-status');
+  if (!d) {
+    const code = response && typeof response.status !== 'undefined' ? response.status : 'offline';
+    statusChip.textContent = code === 404 ? 'not deployed' : 'attention';
+    statusChip.className = 'chip warn';
+    $('director-updated').textContent = 'Director API unavailable on this deployment';
+    $('director-agents').textContent = '-';
+    $('director-queue').textContent = '-';
+    $('director-hot').textContent = '-';
+    $('director-scanned').textContent = '-';
+    $('director-lead-chip').textContent = 'no feed';
+    $('director-lead-chip').className = 'chip warn';
+    $('director-leads').innerHTML = '<div class="empty">Director feed unavailable. Check deployment and Aperture auth.</div>';
+    $('director-work').innerHTML = '<div class="empty">No Director queue visible from this page.</div>';
+    $('director-approvals').innerHTML = '<div class="director-item"><div class="name">Hard stop remains active</div><div class="sub">No spend, outreach, final tenders, contracts, or irreversible actions without Ahmad.</div></div>';
+    return;
+  }
+
+  statusChip.textContent = 'operational';
+  statusChip.className = 'chip ok';
+  $('director-updated').textContent = 'Updated ' + timeAgo(d.generatedAt || Date.now());
+  $('director-agents').textContent = (d.agents?.active ?? 0) + '/' + (d.agents?.total ?? 0);
+  $('director-queue').textContent = d.queue?.pending ?? 0;
+  $('director-hot').textContent = d.leads?.hot ?? 0;
+  $('director-scanned').textContent = d.leads?.scanned ?? 0;
+  $('director-mission').textContent = (d.policy?.mission || [])[0] || 'Mission: grow IIS revenue and profit while protecting approval gates.';
+
+  const leadCount = d.leads?.count ?? 0;
+  const leadChip = $('director-lead-chip');
+  leadChip.textContent = leadCount + ' lead' + (leadCount === 1 ? '' : 's');
+  leadChip.className = 'chip ' + ((d.leads?.hot || 0) ? 'warn' : 'ok');
+  const leads = Array.isArray(d.leads?.matches) ? d.leads.matches.slice(0, 5) : [];
+  $('director-leads').innerHTML = leads.length ? leads.map((m)=>{
+    const close = m.close ? 'closes ' + esc(m.close) : 'closing date pending';
+    const org = m.org ? esc(m.org) : 'unknown buyer';
+    const title = esc(m.title || 'Untitled opportunity');
+    const url = m.url ? esc(m.url) : '';
+    return '<div class="director-item"><div class="top"><div><div class="name">'
+      + (url ? '<a href="'+url+'" target="_blank" rel="noopener">'+title+'</a>' : title)
+      + '</div><div class="sub">'+org+' - '+close+'</div></div>'
+      + (m.hot ? '<span class="chip warn">hot</span>' : '<span class="chip">review</span>')
+      + '</div></div>';
+  }).join('') : '<div class="empty">No current lead-radar matches. Director continues scanning.</div>';
+
+  const pending = Array.isArray(d.queue?.newestPending) ? d.queue.newestPending.slice(-4).reverse() : [];
+  const attention = Array.isArray(d.events?.attention) ? d.events.attention.slice(-3).reverse() : [];
+  const attentionChip = $('director-attention-chip');
+  attentionChip.textContent = attention.length ? attention.length + ' attention' : 'clear';
+  attentionChip.className = 'chip ' + (attention.length ? 'warn' : 'ok');
+  const workRows = [];
+  pending.forEach((t)=>{
+    workRows.push('<div class="director-item"><div class="name">'+esc(t.target || 'agent')+'</div><div class="sub">'
+      + esc((t.payload?.instruction || '').slice(0, 180) || 'Pending task') + '</div></div>');
+  });
+  attention.forEach((e)=>{
+    workRows.push('<div class="director-item"><div class="name">'+esc(e.kind || 'attention')+'</div><div class="sub">'
+      + esc(e.error || e.agentId || 'Review required') + '</div></div>');
+  });
+  $('director-work').innerHTML = workRows.length ? workRows.join('') : '<div class="empty">No pending dispatches or attention events.</div>';
+
+  const approvals = Array.isArray(d.policy?.requiresApproval) ? d.policy.requiresApproval.slice(0, 4) : [];
+  $('director-approvals').innerHTML = approvals.length ? approvals.map((a)=>
+    '<div class="director-item"><div class="name">Requires approval</div><div class="sub">'+esc(a)+'</div></div>'
+  ).join('') : '<div class="director-item"><div class="name">Default approval gate</div><div class="sub">Ahmad approval required before spend, outreach, public commitments, credentials, or final paperwork.</div></div>';
 }
 
 /* ── render: learning loop ───────────────────────────────────────── */
@@ -756,6 +947,41 @@ function sendReportNow(){
       endedBy:'user', subjectOverride:'ARIA · Operations Report · '+new Date().toISOString().slice(0,10) })
   }).catch(()=>{});
   openModal('Report queued','<div style="color:var(--txt-2);font-size:13px;line-height:1.6">An operations report has been queued and will arrive at your registered email shortly.</div>');
+}
+function directorBrief(){
+  openModal('Senior Director brief','<div class="empty">Generating Director brief...</div>');
+  fetch('/api/senior-director-agent',{
+    method:'POST',
+    headers:authHeaders({'Content-Type':'application/json'}),
+    body:JSON.stringify({ action:'brief', notifyTelegram:false })
+  }).then(async r=>{
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok || !j.digest){
+      $('modal-body').innerHTML = '<div class="empty">Director brief unavailable. Check deployment, Aperture auth, or Senior Director function.</div>';
+      return;
+    }
+    const d = j.digest;
+    const briefLeads = (d.leads?.matches || []).slice(0,5).map((m,i)=>(i+1)+'. '+(m.hot?'HOT ':'')+(m.title||'Untitled')+(m.org?' - '+m.org:'')+(m.close?' - closes '+m.close:''));
+    const briefTasks = (d.queue?.newestPending || []).slice(-5).map(t=>'- '+(t.target||'agent')+': '+((t.payload?.instruction||'').slice(0,140)));
+    const lines = [
+      'Generated: '+(d.generatedAt || 'now'),
+      '',
+      'Agents: '+(d.agents?.active ?? 0)+'/'+(d.agents?.total ?? 0)+' active',
+      'Queue: '+(d.queue?.pending ?? 0)+' pending, '+(d.queue?.failed ?? 0)+' failed in recent tasks',
+      'Lead Radar: '+(d.leads?.count ?? 0)+' matches, '+(d.leads?.hot ?? 0)+' hot, '+(d.leads?.scanned ?? 0)+' scanned',
+      '',
+      'Top leads:',
+      ...(briefLeads.length ? briefLeads : ['none']),
+      '',
+      'Pending work:',
+      ...(briefTasks.length ? briefTasks : ['none']),
+      '',
+      'Approval gates stay active: no spend, outreach, final paperwork, credentials, or irreversible commitments without Ahmad.'
+    ];
+    $('modal-body').innerHTML = '<pre>'+esc(lines.join('\n'))+'</pre>';
+  }).catch(()=>{
+    $('modal-body').innerHTML = '<div class="empty">Director brief unavailable.</div>';
+  });
 }
 function openModal(title, html){ $('modal-title').textContent=title; $('modal-body').innerHTML=html; $('modal-bg').classList.add('show'); }
 function closeModal(){ $('modal-bg').classList.remove('show'); }

@@ -9,9 +9,9 @@ assets/video/*
 node_modules/
 .env
 
-# Internal governance / bid / sales artifacts — NOT for public deployment.
+# Internal governance / bid / sales artifacts â€” NOT for public deployment.
 # Public versions of policies are at /governance/* (HTML) and /downloads/governance/* (.docx).
-# publish dir = "." → anything tracked at root is publicly served, so keep the raw folder local.
+# publish dir = "." â†’ anything tracked at root is publicly served, so keep the raw folder local.
 Project AEGIS - Governance/
 
 # Stale recovery artifacts from earlier sandbox git operations
@@ -22,10 +22,10 @@ aegis-push.ps1
 aegis-push-wrapper.bat
 aegis-push.log
 
-# Confidential — prospect PII / sales-ops working files. publish dir = "." → never deploy publicly.
+# Confidential â€” prospect PII / sales-ops working files. publish dir = "." â†’ never deploy publicly.
 USA Outreach/
 
-# Internal briefings + local build/helper artifacts — keep on this machine, not for public deploy.
+# Internal briefings + local build/helper artifacts â€” keep on this machine, not for public deploy.
 MORNING-BRIEFING-*.md
 .netlify/
 AHMAD-*.cmd
@@ -34,13 +34,17 @@ Company Logo.jpeg
 aria_brain_pack/pull.log
 
 # Local Claude Code config (personal machine settings; settings.local.json holds a secret).
-# publish dir = "." → must never be committed/served publicly.
+# publish dir = "." â†’ must never be committed/served publicly.
 .claude/
 
-# Internal-only docs/source — publish dir = "." would serve these publicly (security audit 2026-05-29).
+# Internal-only docs/source â€” publish dir = "." would serve these publicly (security audit 2026-05-29).
 # aria_memory/recon leaked the env-var inventory + siteId; voice-agent system prompt enables jailbreak recon.
 aria_memory/
 design-handoff/
+# Agent coordination logs - local-only working files, never serve at root (publish=".").
+AGENT_EXECUTION_NOTES.md
+COLLAB-CLAUDE-CODEX.md
+senior-director-state/
 aria-voice-agent/
 aria-pitch/
 openclaw/

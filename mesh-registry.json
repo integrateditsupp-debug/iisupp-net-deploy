@@ -724,6 +724,406 @@
         "freshness",
         "audit"
       ]
+    },
+    {
+      "id": "senior-director-agent",
+      "type": "orchestrator",
+      "status": "active",
+      "capabilities": [
+        "company-growth-orchestration",
+        "agent-management",
+        "telegram-owner-briefing",
+        "lead-radar-digest",
+        "task-delegation",
+        "site-update-triage",
+        "codex-claude-handoff",
+        "no-cost-governance",
+        "growth-orchestration",
+        "remote-l1-l3-contracts",
+        "website-leads",
+        "ai-implementation-leads",
+        "corporate-expansion-watch",
+        "offshore-support-strategy",
+        "daily-executive-debrief",
+        "workspace-stewardship",
+        "agent-retirement-routing",
+        "agent-care-reporting"
+      ],
+      "endpoint": "/.netlify/functions/senior-director-agent",
+      "method": "POST",
+      "confidence_threshold": 0.95,
+      "weight": 1,
+      "tier": "L0",
+      "input_schema": {
+        "action": "status|brief|agents|assign|notify",
+        "target": "string?",
+        "instruction": "string?",
+        "text": "string?"
+      },
+      "output_schema": {
+        "ok": "boolean",
+        "digest": "object?",
+        "task": "object?",
+        "telegram": "object?"
+      },
+      "description": "Owner-facing no-cost company-growth orchestrator. Coordinates ARIA/site work, remote L1-L3 support contracts, website leads, AI implementation leads, corporate move-in/overflow work, offshore support strategy, tender review, workspace stewardship, agent retirement/learning handoffs, Codex/Claude handoffs, and Telegram owner alerts. It may queue/draft/triage without spend, but requires Ahmad approval for purchases, paid APIs, external outreach, destructive cleanup, agent retirement, credential/security changes, legal commitments, final submissions, penalties, or public reputation-sensitive claims.",
+      "tags": [
+        "orchestrator",
+        "growth",
+        "telegram",
+        "lead-radar",
+        "codex",
+        "claude",
+        "governance"
+      ]
+    },
+    {
+      "id": "workspace-steward-agent",
+      "type": "operations",
+      "status": "active",
+      "capabilities": [
+        "workspace-cleanup-scan",
+        "agent-retirement-review",
+        "learning-handoff-routing",
+        "high-token-compaction",
+        "stale-task-review",
+        "agent-rename-recommendations",
+        "agent-care-reporting",
+        "non-destructive-cleanup"
+      ],
+      "endpoint": "local://scripts/workspace-cleanup-agent.mjs",
+      "method": "LOCAL_SCHEDULED",
+      "confidence_threshold": 0.85,
+      "weight": 0.8,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string?",
+        "scope": "workspace|agents|tasks|logs|handoffs?",
+        "approval": "boolean?"
+      },
+      "output_schema": {
+        "cleanupBoard": "string",
+        "retirementPlan": "string",
+        "knowledgeHandoff": "string",
+        "careReport": "string",
+        "approvalRequired": "array"
+      },
+      "description": "Local no-cost Workspace Steward. Scans old agents, old tasks, large chats/logs, duplicate drafts, rushed work trails, and unclear agent names. It captures learning first, recommends the best receiving agent to the Senior Director, reports agent load/recognition needs, and prepares cleanup/retirement proposals. It never deletes, archives, clears logs, renames production IDs, or removes agents without Ahmad approval.",
+      "tags": [
+        "operations",
+        "cleanup",
+        "agent-management",
+        "handoff",
+        "governance",
+        "senior-director",
+        "codex-side"
+      ]
+    },
+    {
+      "id": "contract-scout-agent",
+      "type": "researcher",
+      "status": "planned",
+      "capabilities": [
+        "contract-search",
+        "remote-l1-l3",
+        "msp-opportunities",
+        "overflow-support",
+        "public-sources"
+      ],
+      "endpoint": "local://senior-director-worker",
+      "method": "LOCAL_QUEUE",
+      "confidence_threshold": 0.7,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "brief": "string",
+        "rows": "array?",
+        "decisions": "array?",
+        "nextActions": "array?"
+      },
+      "description": "Finds remote L1-L3 IT support, MSP, help desk, cybersecurity, AI, website, deployment, and overflow contracts. Produces no-send fit briefs and safe next actions.",
+      "tags": [
+        "growth",
+        "lead-generation",
+        "senior-director",
+        "codex-side"
+      ]
+    },
+    {
+      "id": "local-business-lead-agent",
+      "type": "researcher",
+      "status": "planned",
+      "capabilities": [
+        "no-website-detection",
+        "weak-website-detection",
+        "local-business-research",
+        "smb-targeting"
+      ],
+      "endpoint": "local://senior-director-worker",
+      "method": "LOCAL_QUEUE",
+      "confidence_threshold": 0.7,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "brief": "string",
+        "rows": "array?",
+        "decisions": "array?",
+        "nextActions": "array?"
+      },
+      "description": "Finds small and mid-sized businesses with no website, weak website, weak online presence, or no visible IT support. Produces website/support lead rows.",
+      "tags": [
+        "growth",
+        "lead-generation",
+        "senior-director",
+        "codex-side"
+      ]
+    },
+    {
+      "id": "ai-opportunity-agent",
+      "type": "researcher",
+      "status": "planned",
+      "capabilities": [
+        "ai-implementation",
+        "workflow-automation",
+        "kb-automation",
+        "customer-service-automation"
+      ],
+      "endpoint": "local://senior-director-worker",
+      "method": "LOCAL_QUEUE",
+      "confidence_threshold": 0.7,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "brief": "string",
+        "rows": "array?",
+        "decisions": "array?",
+        "nextActions": "array?"
+      },
+      "description": "Finds AI implementation opportunities for SMB, mid-market, and enterprise buyers. Ranks by business pain, budget likelihood, margin, and first safe action.",
+      "tags": [
+        "growth",
+        "lead-generation",
+        "senior-director",
+        "codex-side"
+      ]
+    },
+    {
+      "id": "tender-review-agent",
+      "type": "analyst",
+      "status": "planned",
+      "capabilities": [
+        "canadabuys",
+        "merx",
+        "ontario-tenders",
+        "municipal-tenders",
+        "bid-no-bid"
+      ],
+      "endpoint": "local://senior-director-worker",
+      "method": "LOCAL_QUEUE",
+      "confidence_threshold": 0.7,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "brief": "string",
+        "rows": "array?",
+        "decisions": "array?",
+        "nextActions": "array?"
+      },
+      "description": "Reviews procurement sources and creates bid/no-bid briefs, required document checklists, missing requirements, risks, and Ahmad approval items.",
+      "tags": [
+        "growth",
+        "lead-generation",
+        "senior-director",
+        "codex-side"
+      ]
+    },
+    {
+      "id": "corporate-expansion-agent",
+      "type": "researcher",
+      "status": "planned",
+      "capabilities": [
+        "office-expansion",
+        "move-in-support",
+        "workstation-deployment",
+        "overflow-it",
+        "toronto-commercial-real-estate"
+      ],
+      "endpoint": "local://senior-director-worker",
+      "method": "LOCAL_QUEUE",
+      "confidence_threshold": 0.7,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "brief": "string",
+        "rows": "array?",
+        "decisions": "array?",
+        "nextActions": "array?"
+      },
+      "description": "Tracks office openings, relocations, commercial expansions, busy internal IT teams, and move-in/overflow support opportunities.",
+      "tags": [
+        "growth",
+        "lead-generation",
+        "senior-director",
+        "codex-side"
+      ]
+    },
+    {
+      "id": "business-development-agent",
+      "type": "growth",
+      "status": "active",
+      "capabilities": [
+        "linkedin-lead-queue",
+        "public-web-lead-research",
+        "sales-profiling",
+        "follow-up-cadence",
+        "obtained-lead-handoff",
+        "no-send-outreach"
+      ],
+      "endpoint": "local://scripts/business-development-agent.mjs",
+      "method": "LOCAL_SCHEDULED",
+      "confidence_threshold": 0.75,
+      "weight": 0.85,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "dailyBrief": "string",
+        "obtainedLeads": "array",
+        "followUpsDue": "array",
+        "searchPlays": "array",
+        "approvalGates": "array"
+      },
+      "description": "No-cost business-development agent for LinkedIn/public-web lead queues, sales profiling, IT-support fit, customer-service tone, 7-day and 21-day no-send follow-up reminders, and the `Obtained Leads - contact now` handoff. Never scrapes LinkedIn, never sends externally, never uses paid features, and never contacts Raymond James.",
+      "tags": [
+        "growth",
+        "lead-generation",
+        "sales",
+        "senior-director",
+        "codex-side",
+        "no-send"
+      ]
+    },
+    {
+      "id": "outreach-prep-agent",
+      "type": "writer",
+      "status": "planned",
+      "capabilities": [
+        "no-send-drafts",
+        "follow-up-sequences",
+        "call-scripts",
+        "capability-notes"
+      ],
+      "endpoint": "local://senior-director-worker",
+      "method": "LOCAL_QUEUE",
+      "confidence_threshold": 0.7,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "brief": "string",
+        "rows": "array?",
+        "decisions": "array?",
+        "nextActions": "array?"
+      },
+      "description": "Creates short, direct, professional no-send outreach drafts and follow-up sequences for Ahmad approval. Never sends externally.",
+      "tags": [
+        "growth",
+        "lead-generation",
+        "senior-director",
+        "codex-side"
+      ]
+    },
+    {
+      "id": "offshore-support-strategy-agent",
+      "type": "strategist",
+      "status": "planned",
+      "capabilities": [
+        "offshore-support",
+        "l1-l3-delivery",
+        "qa-process",
+        "security-controls",
+        "pricing-model"
+      ],
+      "endpoint": "local://senior-director-worker",
+      "method": "LOCAL_QUEUE",
+      "confidence_threshold": 0.7,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "brief": "string",
+        "rows": "array?",
+        "decisions": "array?",
+        "nextActions": "array?"
+      },
+      "description": "Builds the offshore L1-L3 and AI-assistance delivery model: sourcing, QA, security, escalation, pricing, pilot packages, and risk controls.",
+      "tags": [
+        "growth",
+        "lead-generation",
+        "senior-director",
+        "codex-side"
+      ]
+    },
+    {
+      "id": "revenue-ideas-agent",
+      "type": "strategist",
+      "status": "planned",
+      "capabilities": [
+        "service-ideas",
+        "product-ranking",
+        "margin-model",
+        "decision-tracking"
+      ],
+      "endpoint": "local://senior-director-worker",
+      "method": "LOCAL_QUEUE",
+      "confidence_threshold": 0.7,
+      "weight": 0.7,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "brief": "string",
+        "rows": "array?",
+        "decisions": "array?",
+        "nextActions": "array?"
+      },
+      "description": "Suggests revenue ideas only with demand evidence and ranks them by speed to revenue, margin, difficulty, risk, staffing, target buyer, and first action.",
+      "tags": [
+        "growth",
+        "lead-generation",
+        "senior-director",
+        "codex-side"
+      ]
     }
   ],
   "router_policy": {
@@ -753,6 +1153,7 @@
       "council-architect"
     ],
     "execute": [
+      "senior-director-agent",
       "audit-agent",
       "council-coder",
       "opencode-coder",
@@ -767,11 +1168,29 @@
       "council-security"
     ],
     "observe": [
+      "senior-director-agent",
       "aperture-monitor",
       "self-learning-loop",
       "aria-evolution-report",
       "aria-reverify",
-      "openclaw-cron"
+      "openclaw-cron",
+      "workspace-steward-agent"
+    ],
+    "growth": [
+      "senior-director-agent",
+      "aria-research",
+      "aria-evolution-report",
+      "aria-reverify",
+      "openclaw-assistant",
+      "workspace-steward-agent",
+      "contract-scout-agent",
+      "local-business-lead-agent",
+      "ai-opportunity-agent",
+      "tender-review-agent",
+      "corporate-expansion-agent",
+      "outreach-prep-agent",
+      "offshore-support-strategy-agent",
+      "revenue-ideas-agent"
     ]
   }
 }

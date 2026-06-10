@@ -166,6 +166,22 @@ function jsonResp(status, headers, obj) {
   return new Response(JSON.stringify(obj), { status, headers });
 }
 
+function learnedDomains(text) {
+  const s = String(text || '').toLowerCase();
+  const out = [];
+  const add = (name) => { if (!out.includes(name)) out.push(name); };
+  if (/\b(vpn|tunnel|remote access|gateway|split tunneling)\b/.test(s)) add('vpn');
+  if (/\b(wi-?fi|wifi|wireless|router|ethernet|network|internet|dns|dhcp|ip address|connection|disconnect|dropping|drops?)\b/.test(s)) add('network');
+  if (/\b(outlook|email|mailbox|smtp|imap|exchange)\b/.test(s)) add('email');
+  if (/\b(password|login|sign[ -]?in|mfa|2fa|authenticator|account|locked)\b/.test(s)) add('auth');
+  if (/\b(printer|print|spooler|toner|scanner)\b/.test(s)) add('printer');
+  if (/\b(onedrive|sharepoint|dropbox|google drive|sync)\b/.test(s)) add('sync');
+  if (/\b(windows|mac|macos|pc|laptop|boot|bsod|update|driver|disk|cpu|ram)\b/.test(s)) add('endpoint');
+  if (/\b(teams|zoom|slack|meeting|camera|microphone|audio|video)\b/.test(s)) add('collaboration');
+  if (/\b(phishing|malware|virus|security|ransomware|suspicious)\b/.test(s)) add('security');
+  return out;
+}
+
 // ============= LEARNED-BIT RETRIEVAL (read-back loop) =============
 // Reads the compact index (kb-index.json) maintained by aria-learning-loop +
 // aria-learning-promote, keyword-scores it against the query, and returns the single
@@ -182,22 +198,26 @@ async function tryLearnedBits(query, cors) {
   } catch (_) { return null; }
   if (!index || !Array.isArray(index.entries) || !index.entries.length) return null;
 
-  const qTokens = q.split(/\W+/).filter(w => w.length > 2);
+  const qTokens = q.split(/\W+/).filter(w => w.length > 2 && !STOPWORDS.has(w));
   if (!qTokens.length) return null;
   const qSet = [...new Set(qTokens)];
+  const qDomains = learnedDomains(q);
 
   let best = null;
   for (const e of index.entries) {
     const hay = (e.kw || '').toLowerCase();
     if (!hay) continue;
+    const entryDomains = learnedDomains([e.topic, e.agent, e.kw, e.heading].filter(Boolean).join(' '));
+    if (qDomains.length && !entryDomains.some(d => qDomains.includes(d))) continue;
+    const hayTokens = new Set(hay.split(/\W+/).filter(w => w.length > 2 && !STOPWORDS.has(w)));
     let hits = 0;
-    for (const t of qSet) if (hay.includes(t)) hits++;
+    for (const t of qSet) if (hayTokens.has(t)) hits++;
     if (!hits) continue;
     const score = hits + (e.promoted ? 1.5 : 0) + (e.c || 0);
-    if (!best || score > best.score) best = { e, score, hits };
+    if (!best || score > best.score) best = { e, score, hits, entryDomains };
   }
   // Need a genuine topical match — not one stray word.
-  if (!best || best.hits < 2) return null;
+  if (!best || best.hits < (qDomains.length ? 2 : 3)) return null;
 
   let bit;
   try {
@@ -205,6 +225,10 @@ async function tryLearnedBits(query, cors) {
     bit = await kb.get(best.e.key, { type: 'json' });
   } catch (_) { return null; }
   if (!bit || !bit.body) return null;
+  if (qDomains.length) {
+    const bitDomains = learnedDomains([bit.heading, bit.body, best.e.topic, best.e.kw].filter(Boolean).join(' '));
+    if (!bitDomains.some(d => qDomains.includes(d))) return null;
+  }
 
   const topic = String(best.e.topic || '').toUpperCase().replace(/[^A-Z0-9]+/g, '_').slice(0, 28);
   return jsonResp(200, cors, {
@@ -238,7 +262,7 @@ const STATE_PATTERNS = {
   'SEC.PHISH':           /\b(suspicious (email|link|site|message)|phishing|is this (a )?scam|got a weird email|received .* link)\b/i,
   'SEC.MALWARE':         /\b(virus|malware|infected|ransom(ware)?|trojan|spyware|popups|browser hijack)\b/i,
   'VPN.AUTH.FAIL':       /\b(vpn (won.?t|cannot|can.?t) connect|vpn (authentication|auth) (failed|fail|error)|vpn login (failed|wrong))\b/i,
-  'VPN.NO.TUNNEL':       /\b(vpn (connected )?but no internet|vpn slow|tunnel (won.?t|cannot) (open|establish)|vpn drops?)\b/i,
+  'VPN.NO.TUNNEL':       /\b(vpn (connected )?but no internet|vpn slow|tunnel (won.?t|cannot) (open|establish)|vpn (drop|drops|dropping|disconnects?|keeps (dropping|disconnecting)))\b/i,
   'CLOUD.SYNC':          /\b(onedrive (not )?syncing|sharepoint (not )?syncing|dropbox (not )?syncing|google drive (not )?syncing|sync (error|failed|stuck))\b/i,
   'SW.INSTALL.FAIL':     /\b((install|installation) (failed|error|stuck)|cannot install|setup (failed|error)|msi error|installer (crash|fail))\b/i,
   'SW.UPDATE.FAIL':      /\b((update|upgrade) (failed|error|stuck)|windows update.*(fail|error|stuck)|cannot update|update loop)\b/i,
@@ -258,7 +282,7 @@ const STATE_PATTERNS = {
   'SLACK.HUDDLE':           /\b(slack huddle (audio|mic|video|cant join))\b/i,
   'SLACK.FILE':           /\b(slack (file|upload|attach).{0,15}(fail|error|stuck|cant))\b/i,
   'CHROME.UPDATE':           /\b(chrome (wont|cant|fail).{0,15}update|chrome (version|out of date))\b/i,
-  'CHROME.CRASH':           /\b(chrome (crash|freeze|hang|stop working)|chrome wont open)\b/i,
+  'CHROME.CRASH':           /\b(chrome (crash|freeze|hang|stop working)|chrome (won'?t|wont|will not|cannot|can'?t|is not|isn'?t|not) (open|opening|launch|launching|start|starting|run|running))\b/i,
   'CHROME.RESET':           /\b(reset chrome|chrome (reset|restore) settings|chrome restore)\b/i,
   'CHROME.EXT':           /\b(chrome (extension|addon|plugin).{0,20}(break|broken|issue|problem|cant))\b/i,
   'CHROME.BOOKMARKS':           /\b(chrome bookmarks (gone|missing|disappeared|lost))\b/i,

@@ -66,12 +66,6 @@ function timingSafeEqual(a: string, b: string): boolean {
 
 export const config: Config = {
   path: [
-    '/aperture',
-    '/aperture/',
-    '/aperture.html',
-    '/aperture-learning',
-    '/aperture-learning/',
-    '/aperture-learning.html',
     '/command-center',
     '/command-center/',
     '/agents',

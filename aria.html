@@ -130,7 +130,7 @@
   .view::-webkit-scrollbar-track{background:transparent}
 
   /* ====== BROWSER FRAME ====== */
-  .browser-frame{padding:14px 16px 0;display:flex;flex-direction:column;height:100%}
+  .browser-frame{padding:14px 16px 0;display:flex;flex-direction:column;height:100%;min-width:0;position:relative;overflow:hidden}
   .browser-bar{
     display:flex;align-items:center;gap:10px;
     padding:8px 12px;
@@ -178,9 +178,12 @@
 
   /* ====== CHAT VIEW ====== */
   .browser-body{
-    flex:1;padding:14px 8px 118px;overflow-y:auto;
+    flex:1;padding:14px 8px 160px;overflow-y:auto;overflow-x:hidden;
     scroll-behavior:smooth;
+    min-width:0;
   }
+  .browser-frame:not(.active-chat) .browser-body{padding-bottom:220px}
+  #chatMessages{max-width:100%;min-width:0;overflow-x:hidden}
   .browser-body::-webkit-scrollbar{width:7px}
   .browser-body::-webkit-scrollbar-thumb{background:rgba(180,140,70,.2);border-radius:8px}
   .session-meta{
@@ -201,12 +204,12 @@
     color:var(--cream-2);font-size:14px;
     max-width:80%;
   }
-  .aria-block{display:flex;gap:14px;margin-bottom:18px}
+  .aria-block{display:flex;gap:14px;margin-bottom:18px;max-width:100%;min-width:0;overflow:hidden}
   .aria-tag{
     font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--gold);
     text-transform:uppercase;padding-top:8px;flex-shrink:0;width:46px;font-weight:500;
   }
-  .aria-content{flex:1;min-width:0}
+  .aria-content{flex:1;min-width:0;max-width:100%;overflow:hidden}
   .aria-headline{
     font-family:var(--serif);font-weight:500;
     font-size:17px;line-height:1.25;letter-spacing:-.005em;
@@ -218,34 +221,52 @@
   .aria-sub{color:var(--muted);font-size:13px;margin-bottom:18px}
 
   .choice-grid{
-    display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0 0;
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 0;
+    width:100%;max-width:100%;overflow:hidden;
   }
   /* unique "ticket-stub" silhouette via asymmetric corners — pair mirrors itself */
   .choice{
     background:var(--card);border:1px solid var(--border);
     border-radius:20px 4px 20px 4px;
-    padding:12px 14px 11px;
+    padding:10px 12px 9px;
     cursor:pointer;transition:all .2s ease;
     position:relative;
     display:flex;flex-direction:column;
+    min-width:0;max-width:100%;overflow:hidden;
+    isolation:isolate;
+    min-height:108px;
+    animation:choiceFloat 5.5s ease-in-out infinite;
+  }
+  .choice::before{
+    content:"";position:absolute;inset:-1px;z-index:-1;opacity:.32;pointer-events:none;
+    background:
+      radial-gradient(circle at 18% 14%,rgba(240,216,149,.22),transparent 34%),
+      linear-gradient(115deg,transparent 0 36%,rgba(212,168,90,.08) 48%,transparent 62%);
+    transform:translateX(-18%);
+    animation:choiceSheen 4.8s ease-in-out infinite;
   }
   .choice.recommended{border-radius:4px 20px 4px 20px}
+  .choice.recommended{animation-delay:.35s}
+  .choice.recommended::before{animation-delay:.55s}
   .choice:hover{
     border-color:var(--border-glow);background:var(--card-hover);
-    transform:translateY(-2px);
+    transform:translateY(-2px) scale(1.012);
     box-shadow:0 8px 24px rgba(0,0,0,.4), 0 0 0 1px rgba(212,168,90,.18) inset;
   }
+  .choice:focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px}
   .choice .num{
-    font-family:var(--serif);font-style:italic;font-size:24px;
+    font-family:var(--serif);font-style:italic;font-size:21px;
     color:var(--gold-bright);font-weight:500;line-height:1;
     text-shadow:0 0 12px rgba(240,216,149,.32);
   }
   .choice .badge{
     position:absolute;top:10px;right:12px;
-    padding:4px 11px;border:1px solid rgba(212,168,90,.55);border-radius:999px;
-    font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--gold-bright);
+    max-width:calc(100% - 74px);
+    padding:3px 8px;border:1px solid rgba(212,168,90,.55);border-radius:999px;
+    font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--gold-bright);
     text-transform:uppercase;font-weight:700;
     text-shadow:0 0 10px rgba(240,216,149,.35);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   .choice.recommended .badge{
     background:linear-gradient(155deg,#fff0c8 0%,#f0d895 35%,#d4a85a 100%);
@@ -260,13 +281,33 @@
     border-radius:4px 20px 4px 20px;
   }
   .choice h3{
-    font-family:var(--serif);font-weight:500;font-size:14px;
-    color:var(--cream-2);margin-top:8px;margin-bottom:5px;letter-spacing:-.005em;line-height:1.25;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-family:var(--serif);font-weight:600;font-size:14px;
+    color:var(--cream-2);margin-top:7px;margin-bottom:3px;letter-spacing:-.005em;line-height:1.16;
+    white-space:normal;overflow-wrap:anywhere;
   }
-  .choice p{color:var(--muted);font-size:11.5px;line-height:1.45;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .choice .tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-  .choice .pill{font-size:8px;padding:3px 7px}
+  .choice p{color:var(--muted);font-size:10.5px;line-height:1.35;flex:1;white-space:normal;overflow-wrap:anywhere;max-height:2.8em;overflow:hidden}
+  .choice .tags{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+  .choice .pill{font-size:7.5px;padding:3px 6px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @keyframes choiceFloat{
+    0%,100%{box-shadow:0 0 0 rgba(212,168,90,0)}
+    50%{box-shadow:0 10px 24px rgba(0,0,0,.22),0 0 28px rgba(212,168,90,.08)}
+  }
+  @keyframes choiceSheen{
+    0%,100%{opacity:.18;transform:translateX(-26%)}
+    50%{opacity:.42;transform:translateX(14%)}
+  }
+  @media (max-width:1180px){
+    .choice-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:980px){
+    .choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width:760px){
+    .choice-grid{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .choice,.choice::before{animation:none!important}
+  }
   .pill{
     display:inline-flex;align-items:center;gap:6px;
     padding:5px 11px;border:1px solid var(--border-2);border-radius:999px;
@@ -613,6 +654,120 @@
     font-family:var(--sans);font-size:11.5px;cursor:pointer;transition:all .2s;
   }
   .followup-chip:hover{background:rgba(60,42,18,.6);border-color:var(--border-glow);transform:translateY(-1px)}
+
+  /* support snapshot - compact triage handoff under issue replies */
+  .support-snapshot{
+    margin-top:14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:linear-gradient(160deg, rgba(28,21,12,.62), rgba(15,11,6,.5));
+    padding:12px 14px;
+    max-width:560px;
+  }
+  .support-snapshot-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .support-snapshot-title{
+    font-family:var(--mono);
+    font-size:9.5px;
+    letter-spacing:.24em;
+    color:var(--gold);
+    text-transform:uppercase;
+    font-weight:600;
+  }
+  .support-snapshot-tier{
+    flex-shrink:0;
+    padding:4px 9px;
+    border:1px solid var(--border-2);
+    border-radius:999px;
+    font-family:var(--mono);
+    font-size:9px;
+    letter-spacing:.18em;
+    color:var(--cream-2);
+    background:rgba(20,14,7,.55);
+    text-transform:uppercase;
+  }
+  .support-snapshot-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+  }
+  .support-snapshot-cell{
+    min-width:0;
+    border:1px solid rgba(180,140,70,.14);
+    border-radius:9px;
+    padding:8px 9px;
+    background:rgba(20,14,7,.38);
+  }
+  .support-snapshot-cell .k{
+    font-family:var(--mono);
+    font-size:8px;
+    letter-spacing:.2em;
+    color:var(--muted);
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+  .support-snapshot-cell .v{
+    color:var(--cream-2);
+    font-size:11.5px;
+    line-height:1.35;
+    overflow-wrap:anywhere;
+  }
+  .support-snapshot-body{
+    margin-top:9px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:8px;
+  }
+  .support-snapshot-list{
+    border:1px solid rgba(180,140,70,.12);
+    border-radius:9px;
+    padding:9px 10px;
+    background:rgba(15,11,6,.36);
+    min-width:0;
+  }
+  .support-snapshot-list strong{
+    display:block;
+    font-family:var(--mono);
+    font-size:8.5px;
+    letter-spacing:.2em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:5px;
+  }
+  .support-snapshot-list span{
+    display:block;
+    color:var(--cream);
+    font-size:11.5px;
+    line-height:1.45;
+  }
+  .support-snapshot-actions{
+    margin-top:9px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .snapshot-copy{
+    padding:6px 10px;
+    border:1px solid var(--border-2);
+    border-radius:7px;
+    background:rgba(20,14,7,.6);
+    color:var(--gold);
+    cursor:pointer;
+    font-family:var(--mono);
+    font-size:9px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    transition:all .2s;
+  }
+  .snapshot-copy:hover{border-color:var(--border-glow);background:rgba(60,42,18,.55);color:var(--gold-bright)}
+  @media (max-width:760px){
+    .support-snapshot-grid,.support-snapshot-body{grid-template-columns:1fr}
+    .support-snapshot-actions{justify-content:flex-start}
+  }
 
   /* /capabilities + /help styling */
   .caps-group{border:1px solid var(--border);border-radius:9px;background:rgba(20,14,7,.4);margin-top:8px;padding:0}
@@ -1231,16 +1386,21 @@
   .ap-layer-pct{text-align:right;color:var(--ap-text-2);font-weight:600}
   /* relocated chat input dock (was under "Tap to speak") */
   .chat-dock{
-    position:absolute;left:50%;bottom:12px;z-index:25;
-    width:min(100% - 32px, 760px);
-    transform:translateX(-50%);
+    position:absolute;left:50%;top:50%;bottom:auto;z-index:25;
+    width:min(100% - 48px, 640px);
+    transform:translate(-50%,-50%);
     display:flex;flex-direction:column;gap:8px;
+    transition:top .28s ease,bottom .28s ease,transform .28s ease,width .2s ease;
+  }
+  .browser-frame.active-chat .chat-dock{
+    top:auto;bottom:12px;
+    transform:translateX(-50%);
   }
   .chat-dock .input-row{margin:0;width:100%;box-shadow:0 10px 26px rgba(0,0,0,.35)}
   #aria-v04-inline{display:inline-flex!important;gap:8px!important;margin-right:0!important;align-items:center;flex-wrap:wrap;justify-content:center}
   #aria-v04-end-btn,#aria-v04-callback-btn{border-radius:7px!important}
   @media (max-width:900px){
-    .chat-dock{position:static;left:auto;right:auto;bottom:auto;width:auto;transform:none;margin:10px 4px 4px}
+    .chat-dock,.browser-frame.active-chat .chat-dock{position:static;left:auto;right:auto;top:auto;bottom:auto;width:min(100%,640px);transform:none;margin:10px auto 4px}
     .ap-rail{grid-template-columns:1fr;max-height:none;overflow:visible}
     .ap-card{padding:12px}
   }
@@ -1553,6 +1713,7 @@
           <button class="qa-chip" data-ask="bitlocker recovery key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="14" r="4"/><path d="M11 14h11M16 14v-3M20 14v-2"/></svg>BitLocker Key</button>
           <button class="qa-chip" data-ask="printer queue stuck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Printer Queue</button>
           <button class="qa-chip" data-ask="browser cache issue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>Browser Cache</button>
+          <button class="qa-chip" data-ask="chrome is not opening"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg>Chrome Launch</button>
           <button class="qa-chip" data-ask="computer running slow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Slow Computer</button>
           <button class="qa-chip" data-ask="phishing email security scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Security Scan</button>
         </div>
@@ -2173,6 +2334,8 @@ document.addEventListener('click', e => {
   // learning-loop send button
   const lb = e.target.closest('[data-send-unknowns]');
   if (lb){ flushUnknowns(); }
+  const snapCopy = e.target.closest('[data-copy-snapshot]');
+  if (snapCopy){ copySupportSnapshot(snapCopy); }
 });
 // (no initial renderHistoryDropdown() — chatHistory let-declared further down;
 //  HTML default already shows "No archived chats" / count = 0)
@@ -2295,10 +2458,18 @@ function archiveCurrentChat(){
     ts: new Date().toISOString()
   });
   // reset current
-  messagesEl.innerHTML = '';
+  messagesEl.innerHTML = `
+            <div class="aria-block fade-in" id="introBlock">
+              <div class="aria-tag">ARIA</div>
+              <div class="aria-content">
+                <div class="aria-headline">How can I help you today?</div>
+              </div>
+            </div>
+          `;
   state.thread = [];
   state.introCleared = false;
   state.lastIntent = null;
+  document.querySelector('.browser-frame')?.classList.remove('active-chat');
   renderHistoryDropdown();
 }
 
@@ -2331,6 +2502,7 @@ function restoreFromHistory(id){
   document.getElementById('chatMessages').innerHTML = item.html;
   state.lastIntent = item.intent;
   state.introCleared = true;
+  document.querySelector('.browser-frame')?.classList.add('active-chat');
   // remove restored item from history (it's now the active chat)
   chatHistory = chatHistory.filter(h => h.id !== id);
   renderHistoryDropdown();
@@ -2358,10 +2530,14 @@ function timeAgo(d){
 
 const messagesEl = () => document.getElementById('chatMessages');
 function appendMessage(html){
+  const isUserMessage = html.includes('you-block');
   if (!state.introCleared){
     const intro = document.getElementById('introBlock');
     if (intro) intro.remove();
     state.introCleared = true;
+  }
+  if (isUserMessage){
+    document.querySelector('.browser-frame')?.classList.add('active-chat');
   }
   const wrap = document.createElement('div');
   wrap.className = 'fade-in';
@@ -2602,6 +2778,39 @@ const FOLLOWUPS = {
   'kb:m365':        ['Check license status', 'Reactivate Office', 'Talk to live agent'],
   'kb:onboarding':  ['Pre-stage device', 'Send welcome email', 'Generate temp password'],
   'kb:browser':     ['Clear cache', 'Reset settings', 'Try a different browser'],
+};
+
+const CHROME_OPEN_ARTICLE = {
+  id:'l1-browser-chrome-wont-open',
+  tier:'L1',
+  cat:'browser',
+  title:"Chrome won't open / won't launch",
+  summary:'Fast checks for a stuck Chrome process, corrupt profile, extension crash, or broken shortcut.',
+  body:`# Chrome won't open
+
+## 1. Quick restart
+1. Press Ctrl+Shift+Esc to open Task Manager.
+2. End every Google Chrome / chrome.exe process.
+3. Open Chrome again from the Start menu, not the old shortcut.
+
+## 2. Try a clean launch
+1. Press Win+R.
+2. Type: chrome.exe --disable-extensions
+3. If Chrome opens, disable extensions one by one.
+
+## 3. Repair the profile
+1. Press Win+R.
+2. Open: %LOCALAPPDATA%\\Google\\Chrome\\User Data
+3. Rename the Default folder to Default.old.
+4. Launch Chrome again. Sign in to restore synced bookmarks.
+
+## 4. Update or reinstall
+1. Download Chrome from google.com/chrome.
+2. Run the installer over the existing install.
+3. If it still fails, uninstall Chrome, reboot, then reinstall.
+
+## 5. Escalate
+If Chrome still will not open after the clean profile test, ARIA should check Windows event logs and endpoint security blocks.`
 };
 
 function followupHTML(intent){
@@ -2855,6 +3064,109 @@ function setTierBand(text, intent){
   if (meta) meta.textContent = `SESSION · #${(state && state.sessionId) || 2861} · ${c.tier} · ${c.scope ? 'ESCALATED' : 'INCIDENT'}`;
 }
 
+const SNAPSHOT_FIRST_STEP = {
+  outlook_ooo:'Confirm date range and audience before changing Automatic Replies.',
+  mail:'Check Outlook/Mail sync, quota, and recent error text before changing profile settings.',
+  vpn:'Run read-only tunnel, DNS, and gateway checks before resetting the client.',
+  password:'Verify identity and MFA path before issuing or rotating credentials.',
+  wifi:'Confirm whether Wi-Fi, DNS, or the whole internet path is failing.',
+  printer:'Check queue, spooler, and printer reachability before clearing jobs.',
+  'kb:windows':'Capture stop code or boot screen before repair steps.',
+  'kb:onedrive':'Pause changes and identify the conflicted file or sync location.',
+  'kb:teams':'Confirm device selection, app cache state, and whether browser Teams works.',
+  'kb:mfa':'Verify backup method and sign-in risk before re-enrollment.',
+  'kb:bluetooth':'Confirm pairing state, battery, and whether another device works.',
+  'kb:webcam':'Check camera privacy permission and whether the camera works in another app.',
+  'kb:usb':'Check Device Manager and Disk Management before formatting anything.',
+  'kb:performance':'Capture CPU, RAM, disk, startup apps, and recent install/update timing.',
+  'kb:security':'Preserve evidence, disconnect only if risk is active, and escalate quickly.',
+  'kb:bitlocker':'Locate the recovery-key source before attempting repeated unlocks.',
+  'kb:macos':'Capture the exact startup screen before resets or reinstall paths.',
+  'kb:networking':'Check gateway, DNS, DHCP lease, and whether multiple users are affected.',
+  'kb:permissions':'Confirm user, folder path, group membership, and exact access error.',
+  'kb:active-directory':'Check lockout source, password expiry, and recent sign-in risk.',
+  'kb:m365':'Confirm license, activation state, account, and tenant-wide impact.',
+  'kb:onboarding':'Confirm user, device, apps, licenses, and target start/end date.',
+  'kb:browser':'Check process state, profile, extensions, and whether another browser works.'
+};
+
+const SNAPSHOT_COLLECT = {
+  mail:'email address, error text, mailbox size, affected device, when it started',
+  vpn:'VPN client, gateway/region, error text, home/office network, affected users',
+  password:'username, MFA method, locked/expired status, callback phone, urgency',
+  wifi:'SSID, device, location, error text, other affected users, speed/drop timing',
+  printer:'printer name, location, queue status, error text, affected users',
+  'kb:security':'sender/file/link details, screenshot, affected account, time observed',
+  'kb:bitlocker':'device name, recovery key ID, user, tenant, screenshot of prompt',
+  'kb:permissions':'resource path, user/group, requested access level, business reason'
+};
+
+function snapshotImpact(text, tierInfo){
+  if (tierInfo.scope) return 'Multiple users, outage, data-loss, or security signal';
+  if (tierInfo.tier === 'L3') return 'Admin or infrastructure-level support likely';
+  if (tierInfo.tier === 'L2') return 'Operational issue; may need technician review';
+  return 'Single-user first-touch issue';
+}
+
+function snapshotCollectFor(intent){
+  return SNAPSHOT_COLLECT[intent] || 'user, device, app/service, error text, when it started, screenshot if available';
+}
+
+function supportSnapshotHTML(text, intent){
+  if (NON_ISSUE_INTENTS.has(intent)) return '';
+  const tierInfo = classifyTier(text, intent);
+  const firstStep = SNAPSHOT_FIRST_STEP[intent] || 'Confirm scope, exact symptom, and business impact before making changes.';
+  const trigger = tierInfo.scope
+    ? 'Escalate now if production, data, security, or multiple users are affected.'
+    : 'Escalate after two safe attempts fail, admin access is needed, or the issue blocks work.';
+  const collect = snapshotCollectFor(intent);
+  const title = tierInfo.title || intentLabel(intent);
+  const brief = [
+    `ARIA support snapshot`,
+    `Issue: ${title}`,
+    `Tier: ${tierInfo.tier}`,
+    `Impact: ${snapshotImpact(text, tierInfo)}`,
+    `Safe first step: ${firstStep}`,
+    `Collect: ${collect}`,
+    `Escalation trigger: ${trigger}`,
+    `User text: ${String(text || '').trim()}`
+  ].join('\n');
+  return `
+    <div class="support-snapshot">
+      <div class="support-snapshot-head">
+        <div class="support-snapshot-title">Support Snapshot</div>
+        <div class="support-snapshot-tier">${escapeHTML(tierInfo.tier)} · ${escapeHTML(tierInfo.diff)}</div>
+      </div>
+      <div class="support-snapshot-grid">
+        <div class="support-snapshot-cell"><div class="k">Issue</div><div class="v">${escapeHTML(title)}</div></div>
+        <div class="support-snapshot-cell"><div class="k">Impact</div><div class="v">${escapeHTML(snapshotImpact(text, tierInfo))}</div></div>
+        <div class="support-snapshot-cell"><div class="k">Target</div><div class="v">${escapeHTML(tierInfo.target)}</div></div>
+      </div>
+      <div class="support-snapshot-body">
+        <div class="support-snapshot-list"><strong>Safe first step</strong><span>${escapeHTML(firstStep)}</span></div>
+        <div class="support-snapshot-list"><strong>Collect before handoff</strong><span>${escapeHTML(collect)}</span></div>
+      </div>
+      <div class="support-snapshot-list" style="margin-top:8px"><strong>Escalation trigger</strong><span>${escapeHTML(trigger)}</span></div>
+      <div class="support-snapshot-actions">
+        <button class="snapshot-copy" type="button" data-copy-snapshot="${escapeHTML(encodeURIComponent(brief))}">Copy Ticket Brief</button>
+      </div>
+    </div>`;
+}
+
+function copySupportSnapshot(button){
+  try {
+    const text = decodeURIComponent(button.getAttribute('data-copy-snapshot') || '');
+    navigator.clipboard.writeText(text).then(() => {
+      const old = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(() => { button.textContent = old; }, 1600);
+    }).catch(() => {
+      button.textContent = 'Copy unavailable';
+      setTimeout(() => { button.textContent = 'Copy Ticket Brief'; }, 1600);
+    });
+  } catch (_) {}
+}
+
 const TECHNICAL_INTENTS = ['outlook_ooo','mail','vpn','password','wifi','printer'];
 const EXTERNAL_INTENTS  = ['shopping','news','weather','trade','quote'];
 
@@ -2866,6 +3178,23 @@ function intentLabel(intent){
     password:'Password / Sign-in',
     wifi:'Wi-Fi / Network',
     printer:'Printer',
+    'kb:windows':'Windows boot / stop error',
+    'kb:onedrive':'OneDrive sync conflict',
+    'kb:teams':'Microsoft Teams issue',
+    'kb:mfa':'MFA / authenticator',
+    'kb:bluetooth':'Bluetooth device',
+    'kb:webcam':'Camera / webcam',
+    'kb:usb':'USB / external device',
+    'kb:performance':'Performance degradation',
+    'kb:security':'Security incident',
+    'kb:bitlocker':'BitLocker recovery',
+    'kb:macos':'macOS startup fault',
+    'kb:networking':'Network infrastructure fault',
+    'kb:permissions':'File share / permissions',
+    'kb:active-directory':'Active Directory / account lockout',
+    'kb:m365':'Microsoft 365 / licensing',
+    'kb:onboarding':'Onboarding / offboarding',
+    'kb:browser':'Browser / Chrome issue',
     shopping:'Shopping',
     news:'News',
     weather:'Weather',
@@ -2908,6 +3237,7 @@ function renderTechnical(intent, userText){
     </div>
     <div class="aria-text" style="margin-top:14px"><strong style="color:var(--gold-bright);font-weight:500">Note:</strong> ${kb.note}</div>
     ${kbExtra}
+    ${supportSnapshotHTML(userText, intent)}
     ${followupHTML(intent)}
   `;
 
@@ -3428,6 +3758,24 @@ function handleUserInput(text){
 
   const intent = classify(cleanText);
 
+  // If an older topic-switch prompt is waiting, a clear new issue should route now.
+  if (state.pendingPivot){
+    const pending = state.pendingPivot;
+    if (/^(finish current|finish|stay|continue current|keep going)$/i.test(q)){
+      appendMessage(youBubble(text));
+      resolvePivot('finish');
+      return;
+    }
+    if (/^(switch now|switch|change topic|jump|yes|y)$/i.test(q)){
+      appendMessage(youBubble(text));
+      resolvePivot('switch');
+      return;
+    }
+    if (intent !== 'default' && intent !== pending.from){
+      state.pendingPivot = null;
+    }
+  }
+
   // L1/L2/L3 — tag the reported issue at the top of the surround (skip slash commands)
   if (!/^\//.test(q)){ try { setTierBand(text, intent); } catch(e){} }
 
@@ -3826,14 +4174,18 @@ function handleEscalation(choice, ctx){
 function renderKBOnly(category, userText){
   appendMessage(youBubble(userText));
   // search by category, fall back to free-text
-  const hits = ARIA_KB.filter(a => a.cat === category).slice(0, 3);
+  const chromeOpen = category === 'browser' && (
+    (/\b(chrome|google chrome)\b/i.test(userText) && /\b(won'?t|wont|will not|is not|isn'?t|not|cant|can'?t|cannot)\b.{0,24}\b(open|opening|launch|launching|start|starting|run|running)\b/i.test(userText)) ||
+    /\b(open|opening|launch|launching|start|starting|run|running)\b.{0,24}\b(chrome|google chrome)\b/i.test(userText)
+  );
+  const hits = chromeOpen ? [CHROME_OPEN_ARTICLE] : ARIA_KB.filter(a => a.cat === category).slice(0, 3);
   const final = hits.length ? hits : kbSearch(userText, 3);
   setTimeout(() => {
     if (!final.length){
       appendMessage(ariaBubble("Hmm, nothing in the KB matches that yet.", "Try /kb plus a keyword to search the full library."));
       return;
     }
-    appendMessage(ariaBubble(final[0].title, '', `<div class="aria-text">From the IIS knowledge base:</div>${final.map(kbCard).join('')}${followupHTML('kb:'+category)}`));
+    appendMessage(ariaBubble(final[0].title, '', `<div class="aria-text">From the IIS knowledge base:</div>${final.map(kbCard).join('')}${supportSnapshotHTML(userText, 'kb:'+category)}${followupHTML('kb:'+category)}`));
     speak(final[0].title);
   }, 250);
 }

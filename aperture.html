@@ -833,9 +833,32 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 
 <script id="aperture-gate-script">
 (function(){
-  var TOKEN_KEY = 'aperture_token_v1';
-  function getToken(){ try { return JSON.parse(localStorage.getItem(TOKEN_KEY) || 'null'); } catch { return null; } }
-  function isValid(t){ return t && t.token && t.expiresAt && t.expiresAt > Date.now(); }
+  var TOKEN_KEY = 'aperture_jwt';
+  var LEGACY_TOKEN_KEY = 'aperture_token_v1';
+  function jwtExpiresAt(token){
+    try {
+      var p = token.split('.')[1];
+      var json = atob(p.replace(/-/g, '+').replace(/_/g, '/'));
+      var body = JSON.parse(decodeURIComponent(Array.prototype.map.call(json, function(c){
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join('')));
+      return body && body.exp ? body.exp * 1000 : 0;
+    } catch (_) { return 0; }
+  }
+  function readStoredAuth(){
+    var raw = null;
+    try { raw = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+    if (!raw) {
+      try { raw = localStorage.getItem(LEGACY_TOKEN_KEY); } catch (_) {}
+    }
+    if (!raw) return null;
+    try {
+      var parsed = JSON.parse(raw);
+      if (parsed && parsed.token) return { token: parsed.token, expiresAt: parsed.expiresAt || jwtExpiresAt(parsed.token) };
+    } catch (_) {}
+    return { token: raw, expiresAt: jwtExpiresAt(raw) };
+  }
+  function isValid(t){ return t && t.token && (!t.expiresAt || t.expiresAt > Date.now()); }
   function setLockedClass(locked){
     document.body.classList.toggle('aperture-locked', locked);
     document.body.classList.toggle('aperture-unlocked', !locked);
@@ -850,13 +873,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
     var g = document.getElementById('aperture-login-gate');
     if (g) g.style.display = 'flex';
   }
-  function clearToken(){ try { localStorage.removeItem(TOKEN_KEY); } catch {} }
+  function clearToken(){
+    try { localStorage.removeItem(TOKEN_KEY); } catch {}
+    try { localStorage.removeItem(LEGACY_TOKEN_KEY); } catch {}
+  }
   // Patch fetch to inject Authorization header on /.netlify/functions/* calls
   var _fetch = window.fetch;
   window.fetch = function(input, init){
     init = init || {};
     var url = typeof input === 'string' ? input : (input && input.url) || '';
-    var t = getToken();
+    var t = readStoredAuth();
     if (isValid(t) && /\/\.netlify\/functions\//.test(url)) {
       init.headers = new Headers(init.headers || {});
       init.headers.set('Authorization', 'Bearer ' + t.token);
@@ -865,7 +891,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
   };
 
   function init(){
-    var t = getToken();
+    var t = readStoredAuth();
     if (isValid(t)) { hideGate(); return; }
     showGate();
     var submit = document.getElementById('ag-submit');
@@ -883,10 +909,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, password: password })
-      }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, status: r.status, body: d }; }); })
+      }).then(function(r){
+        return r.text().then(function(text){
+          var d = {};
+          try { d = text ? JSON.parse(text) : {}; }
+          catch (_) { d = { error: text || 'non-JSON response' }; }
+          return { ok: r.ok, status: r.status, body: d };
+        });
+      })
         .then(function(res){
           if (res.ok && res.body && res.body.token) {
-            try { localStorage.setItem(TOKEN_KEY, JSON.stringify(res.body)); } catch {}
+            try {
+              localStorage.setItem(TOKEN_KEY, res.body.token);
+              localStorage.removeItem(LEGACY_TOKEN_KEY);
+            } catch {}
             hideGate();
           } else {
             errEl.textContent = (res.body && res.body.error) || ('error ' + res.status);

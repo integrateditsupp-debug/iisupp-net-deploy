@@ -188,6 +188,7 @@
     'PRT.QUEUE.STUCK':   /\b(print queue (is )?stuck|print job (is )?stuck|cannot clear print queue|printer paused|jam(med)?)\b/i,
     'SEC.PHISH':         /\b(suspicious (email|link|site|message)|phishing|is this (a )?scam|got a weird email|received .* link)\b/i,
     'SEC.MALWARE':       /\b(virus|malware|infected|ransom(ware)?|trojan|spyware|popups|browser hijack)\b/i,
+    'BROWSER.OPEN.FAIL': /\b((chrome|edge|firefox|browser) (won.?t|wont|will not|cannot|can.?t|is not|isn.?t|not) (open|opening|launch|launching|start|starting|run|running)|(open|launch|start|run) (chrome|edge|firefox|browser))\b/i,
     'VPN.AUTH.FAIL':     /\b(vpn (won.?t|cannot|can.?t) connect|vpn (authentication|auth) (failed|fail|error)|vpn login (failed|wrong))\b/i,
     'VPN.NO.TUNNEL':     /\b(vpn (connected )?but no internet|vpn slow|tunnel (won.?t|cannot) (open|establish)|vpn (drop|drops|dropping|disconnects?|keeps (dropping|disconnecting)))\b/i,
     'CLOUD.SYNC':        /\b(onedrive (not )?syncing|sharepoint (not )?syncing|dropbox (not )?syncing|google drive (not )?syncing|sync (error|failed|stuck))\b/i,
@@ -258,6 +259,7 @@
     if (/\b(vpn|firewall|tunnel|remote access)\b/.test(lower)) return 'vpn';
     if (/\b(email|outlook|gmail|smtp|imap|inbox)\b/.test(lower)) return 'email';
     if (/\b(password|login|sign in|mfa|2fa|authentication)\b/.test(lower)) return 'auth';
+    if (/\b(chrome|edge|firefox|browser)\b/.test(lower)) return 'browser';
     if (/\b(printer|print|toner|cartridge|scanner)\b/.test(lower)) return 'printer';
     if (/\b(slow|crash|freeze|blue screen|reboot|boot)\b/.test(lower)) return 'performance';
     if (/\b(install|update|license|software|app)\b/.test(lower)) return 'software';

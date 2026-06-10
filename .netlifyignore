@@ -1,0 +1,46 @@
+# Local/private workspace state. The Netlify publish directory is the repo root,
+# so keep operating notes and automation state out of public deploys.
+.git/
+.netlify/
+.claude/
+.codex-observer/
+.codex-temp-cdp/
+.codex-temp-py/
+node_modules/
+
+AGENT_EXECUTION_NOTES.md
+COLLAB-CLAUDE-CODEX.md
+senior-director-state/
+
+# Internal source, bid, procurement, and sales working files.
+procurement-downloads/
+outputs/
+artifacts/
+backups/
+archive/
+docs/
+scripts/
+openclaw/
+aria_memory/
+design-handoff/
+aria-voice-agent/
+aria-pitch/
+aria-architecture/
+aria_brain_pack/
+Project AEGIS - Governance/
+USA Outreach/
+
+# Local helper commands and recovery artifacts.
+AHMAD-*.cmd
+PUSH-*.cmd
+*.log
+quickstart.py
+install-openclaw.sh
+clean-git.bat
+aegis-push.bat
+aegis-push.ps1
+aegis-push-wrapper.bat
+
+# Local screenshots / QA captures.
+aria-local-1280x720.png
+aria-login-fixed-local.png
