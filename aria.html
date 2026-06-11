@@ -4351,8 +4351,19 @@ if (_prefill){
 
 </script>
 
-<script src="/assets/aria-aperture-bridge.js" defer></script>
-  <script src="/assets/aria-v04-ext.js"></script>
+<script>
+(function(){
+  if (!window.MutationObserver || window.__ARIA_SAFE_MUTATION_OBSERVER__) return;
+  window.__ARIA_SAFE_MUTATION_OBSERVER__ = true;
+  var originalObserve = window.MutationObserver.prototype.observe;
+  window.MutationObserver.prototype.observe = function(target, options) {
+    if (!target || typeof target.nodeType !== 'number') return;
+    return originalObserve.call(this, target, options || {});
+  };
+})();
+</script>
+<script src="/assets/aria-aperture-bridge.js?v=20260611-mobile-polish" defer></script>
+  <script src="/assets/aria-v04-ext.js?v=20260611-mobile-polish"></script>
 
 <script>
 /* ===== Aperture surround engine — populates the scenario band + left-rail panels.

@@ -195,9 +195,13 @@
   }
 
   // =========================== WATCH CHAT ===========================
+  function canObserveNode(node) {
+    return !!(node && typeof node.nodeType === 'number' && typeof node.addEventListener === 'function');
+  }
+
   function startWatching() {
     const chat = document.getElementById('chatMessages');
-    if (!chat) {
+    if (!canObserveNode(chat)) {
       // Retry after a beat
       setTimeout(startWatching, 500);
       return;

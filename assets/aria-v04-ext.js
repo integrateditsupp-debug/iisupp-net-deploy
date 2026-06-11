@@ -23,6 +23,10 @@
   const VENDOR_RE = /\b(call (microsoft|apple|google|samsung|dell|hp|lenovo|cisco|netgear|asus|acer|sony|brother|canon|epson|adobe|autodesk|sage|quickbooks|intuit|salesforce|zoom|slack|dropbox|box))\b/i;
   const OUT_OF_SCOPE_RE = /\b(make me a sandwich|book a flight|stock price|weather|sports score|movie recommendation|order food)\b/i;
 
+  function canObserveNode(node) {
+    return !!(node && typeof node.nodeType === 'number' && typeof node.addEventListener === 'function');
+  }
+
   // ============ SCOPE INTRO ============
   const ARIA_CAN_HELP_WITH = [
     'Wi-Fi, VPN, network connectivity',
@@ -462,7 +466,7 @@
 
     // Also watch for new user messages appearing in DOM (covers programmatic submits)
     const chat = document.getElementById('chatMessages');
-    if (chat) {
+    if (canObserveNode(chat)) {
       const obs = new MutationObserver(muts => {
         for (const m of muts) {
           for (const n of m.addedNodes) {
@@ -561,7 +565,7 @@
 
   function __ariaInstallObserver() {
     var chat = document.getElementById('chatMessages');
-    if (!chat) { setTimeout(__ariaInstallObserver, 500); return; }
+    if (!canObserveNode(chat)) { setTimeout(__ariaInstallObserver, 500); return; }
     var obs = new MutationObserver(function (muts) {
       for (var i = 0; i < muts.length; i++) {
         var m = muts[i];
@@ -763,7 +767,7 @@
   window.__aria_diagnosing_until = 0;
   function setup(){
     var chat = document.getElementById("chatMessages");
-    if (!chat || chat.__aria_v3_observed) return;
+    if (!canObserveNode(chat) || chat.__aria_v3_observed) return;
     chat.__aria_v3_observed = true;
     var obs = new MutationObserver(function(muts){
       if (Date.now() > window.__aria_diagnosing_until) return;
@@ -860,7 +864,7 @@
   }
   // Also capture ARIA replies for context (use MutationObserver on chat)
   function observeReplies(){
-    var chat = document.getElementById("chatMessages"); if (!chat || chat.__v5_obs) return;
+    var chat = document.getElementById("chatMessages"); if (!canObserveNode(chat) || chat.__v5_obs) return;
     chat.__v5_obs = true;
     new MutationObserver(function(muts){
       muts.forEach(function(m){

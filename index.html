@@ -31,6 +31,17 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/aria-core.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        (function(){
+            if (!window.MutationObserver || window.__IIS_SAFE_MUTATION_OBSERVER__) return;
+            window.__IIS_SAFE_MUTATION_OBSERVER__ = true;
+            var originalObserve = window.MutationObserver.prototype.observe;
+            window.MutationObserver.prototype.observe = function(target, options) {
+                if (!target || typeof target.nodeType !== 'number') return;
+                return originalObserve.call(this, target, options || {});
+            };
+        })();
+    </script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
@@ -540,12 +551,20 @@
         .chat-close-btn:hover { opacity: 0.7; }
         .chat-close-btn svg { color: #c5a059; width: 20px; height: 20px; }
         .chat-body { padding: 20px; overflow-y: auto; flex: 1; }
+        .chat-context { margin-bottom: 16px; padding: 14px 15px; border: 1px solid rgba(197,160,89,0.18); border-radius: 10px; background: linear-gradient(145deg, rgba(197,160,89,0.10), rgba(255,255,255,0.02) 72%); }
+        .chat-context.hidden { display: none; }
+        .chat-context .eyebrow { display: block; margin-bottom: 8px; color: rgba(241,220,167,0.9); font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; font-weight: 700; }
+        .chat-context strong { display: block; color: #f5e7bf; font-size: 14px; line-height: 1.5; margin-bottom: 6px; }
+        .chat-context p { margin: 0; color: rgba(255,255,255,0.62); font-size: 11px; line-height: 1.75; }
+        .chat-context-list { margin: 10px 0 0; padding-left: 18px; color: rgba(255,255,255,0.55); font-size: 10px; line-height: 1.7; }
+        .chat-context-list li + li { margin-top: 4px; }
         .chat-form .form-group { margin-bottom: 16px; }
         .chat-form label { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 600; }
         .chat-form input, .chat-form textarea { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; transition: border-color 0.2s; box-sizing: border-box; }
         .chat-form input:focus, .chat-form textarea:focus { outline: none; border-color: rgba(197, 160, 89, 0.5); }
         .chat-form input.invalid, .chat-form textarea.invalid { border-color: #e74c3c; }
         .chat-form textarea { resize: vertical; min-height: 80px; }
+        .chat-form .form-note { margin-top: 6px; color: rgba(255,255,255,0.4); font-size: 10px; line-height: 1.6; }
         .chat-form .error-msg { font-size: 10px; color: #e74c3c; margin-top: 4px; display: none; }
         .chat-submit-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #c5a059, #b38728); border: none; border-radius: 6px; color: #050505; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; cursor: pointer; transition: opacity 0.2s, transform 0.2s; }
         .chat-submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
@@ -689,6 +708,7 @@
         .price-track-head .track-title { font-family: 'Cinzel', serif; font-size: clamp(0.95rem, 1.5vw, 1.15rem); letter-spacing: 0.3em; text-transform: uppercase; color: #fff; margin: 0 0 8px; font-weight: 700; }
         .price-track-head .track-title .accent { color: #c5a059; font-style: italic; }
         .price-track-head .track-sub { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.4); max-width: 620px; margin: 0 auto; }
+        .pricing-guide-mobile { display: none; }
 
         .price-deck {
             display: grid;
@@ -935,17 +955,46 @@
             .deck-name { font-size: 14px; letter-spacing: 0.14em; }
         }
         @media (max-width: 768px) {
-            .price-deck { grid-template-columns: 1fr; gap: 14px; padding: 8px 0 20px; perspective: none; }
+            .price-track { margin-bottom: 42px; }
+            .price-track-head { margin-bottom: 18px; }
+            .price-track-head .track-eyebrow { font-size: 7px; letter-spacing: 0.28em; margin-bottom: 7px; }
+            .price-track-head .track-title { font-size: 1rem; letter-spacing: 0.14em; }
+            .price-track-head .track-sub { font-size: 8px; letter-spacing: 0.12em; line-height: 1.55; }
+            .pricing-guide { letter-spacing: 0.14em !important; font-size: 8px !important; line-height: 1.65 !important; }
+            .pricing-footer-guide { font-size: 7.5px !important; letter-spacing: 0.12em !important; line-height: 1.6 !important; margin-top: 18px !important; }
+            .pricing-guide-desktop { display: none; }
+            .pricing-guide-mobile { display: inline; }
+            .price-deck { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 4px 0 18px; perspective: 1100px; }
             .price-deck.is-decked .deck-slot,
             .price-deck.is-decked .deck-slot[data-deck="1"],
             .price-deck.is-decked .deck-slot[data-deck="2"],
             .price-deck.is-decked .deck-slot[data-deck="3"] { transform: none; }
-            .price-deck.is-decked .deck-slot.is-flipped { transform: translateY(-4px); }
-            .deck-slot { min-height: 420px; }
+            .price-deck.is-decked .deck-slot.is-flipped { transform: none; }
+            .deck-slot { min-height: 176px; }
+            .deck-slot.is-flipped { grid-column: 1 / -1; min-height: 380px; }
             .deck-slot:hover .deck-card { transform: none; }
             .deck-slot.is-flipped .deck-card { transform: rotateY(180deg); }
+            .deck-face { padding: 10px 7px; }
+            .deck-badge { font-size: 6px; letter-spacing: 0.08em; padding: 4px 5px; margin-bottom: 8px; gap: 4px; line-height: 1.2; }
+            .deck-badge .dot { width: 3px; height: 3px; }
+            .deck-name { font-size: 8.5px; letter-spacing: 0.05em; line-height: 1.25; margin-bottom: 6px; }
+            .deck-scale { font-size: 6.5px; letter-spacing: 0.06em; line-height: 1.35; margin-bottom: 8px; }
+            .deck-price { font-size: 9px; letter-spacing: 0.01em; line-height: 1.2; margin-bottom: 8px; text-shadow: none; }
+            .deck-price-sm { font-size: 9.5px; letter-spacing: 0.04em; margin-bottom: 10px; }
+            .deck-front .deck-tagline { display: none; }
+            .deck-front .deck-hint { font-size: 6.5px; letter-spacing: 0.16em; padding-top: 8px; }
+            .deck-back { padding: 14px 12px; }
+            .deck-back li { font-size: 9px; letter-spacing: 0.03em; line-height: 1.5; padding: 5px 0 5px 12px; }
+            .deck-positioning { font-size: 9px; line-height: 1.5; padding: 10px 12px; margin: 8px 0 10px; }
+            .deck-cta,
+            .deck-cta-buy { font-size: 8px; letter-spacing: 0.12em; padding: 10px 11px; }
             .project-grid { grid-template-columns: 1fr; }
-            .project-card { padding: 22px 20px; }
+            .project-card { padding: 18px 14px; }
+            .project-card-head h4 { font-size: 10px; letter-spacing: 0.14em; }
+            .project-card-head span { font-size: 7px; letter-spacing: 0.18em; }
+            .project-grid div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; font-size: 9px; line-height: 1.45; }
+            .project-grid div span:last-child { font-size: 8.5px; letter-spacing: 0.02em; }
+            .private-note { font-size: 9px; padding: 14px 12px; }
         }
 
         /* --- CREDENTIALS BAND (front-and-center trust signals) --- */
@@ -1094,6 +1143,29 @@
             .sc-info-box h5 { font-size: 10px; }
             .sc-info-box p { font-size: 8px; }
             .sc-modal-container { width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh; }
+            .sc-card { padding: 22px 14px; border-radius: 12px; }
+            .sc-hero-cta { padding: 13px 12px; margin-bottom: 18px; gap: 9px; font-size: 10px; letter-spacing: 0.14em; }
+            .sc-section-label { margin: 16px 0 9px; gap: 8px; font-size: 7px; letter-spacing: 0.24em; }
+            .sc-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-bottom: 16px; }
+            .sc-tile { padding: 10px 5px; border-radius: 8px; }
+            .sc-tile-icon { font-size: 16px; margin-bottom: 5px; }
+            .sc-tile-title { font-size: 7px; letter-spacing: 0.08em; line-height: 1.25; }
+            .sc-tile-sub { display: none; }
+            .sc-emergency-row { padding: 12px 11px; gap: 9px; margin: 14px 0 16px; }
+            .sc-emergency-pulse { left: 10px; }
+            .sc-emergency-icon { margin-left: 10px; font-size: 18px; }
+            .sc-emergency-text strong { font-size: 9px; letter-spacing: 0.12em; }
+            .sc-emergency-text span { font-size: 8px; letter-spacing: 0.04em; }
+            .sc-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+            .sc-action-card { padding: 12px 9px; gap: 8px; border-radius: 8px; }
+            .sc-action-icon { font-size: 17px; }
+            .sc-action-title { font-size: 8px; letter-spacing: 0.08em; line-height: 1.3; }
+            .sc-action-sub { font-size: 7px; line-height: 1.35; }
+            .sc-perks { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+            .sc-perk { padding: 10px 5px; border-radius: 8px; }
+            .sc-perk-icon { font-size: 15px; margin-bottom: 4px; }
+            .sc-perk-title { font-size: 7px; letter-spacing: 0.08em; }
+            .sc-perk-sub { font-size: 7px; letter-spacing: 0; line-height: 1.25; }
         }
         @media (max-width: 480px) {
             nav .flex.items-center.gap-6 .flex.flex-col span:first-child { font-size: 10px; letter-spacing: 0.08em; }
@@ -1120,6 +1192,15 @@
             .bio-unlocked { font-size: 9px; letter-spacing: 0.45em; margin-top: 22px; }
             .sc-grid-5 { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
             .sc-grid-btn { padding: 8px; }
+            #service-center { padding-left: 12px; padding-right: 12px; }
+            .sc-card { padding: 18px 10px; }
+            .sc-tile-title, .sc-action-title, .sc-perk-title { letter-spacing: 0.04em; }
+            .deck-slot { min-height: 166px; }
+            .deck-slot.is-flipped { min-height: 390px; }
+            .deck-name { font-size: 8px; }
+            .deck-price { font-size: 8.2px; }
+            .deck-price-sm { font-size: 8.8px; }
+            .deck-badge { font-size: 5.6px; padding: 4px; }
         }
 
         /* --- HERO SECTION (tightened, no more giant gap) --- */
@@ -1524,7 +1605,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <div class="text-center mb-16">
                 <span class="text-[#c5a059] tracking-[0.5em] text-[8px] uppercase font-bold block mb-3">Engagement Models</span>
                 <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">Pricing <span class="text-[#c5a059]">Options</span></h2>
-                <p class="text-white/30 uppercase tracking-[0.3em] text-[10px] max-w-xl mx-auto">Hover any tier for detail. Cards consolidate into a deck after scroll-in — the middle tier is the most selected.</p>
+                <p class="pricing-guide text-white/30 uppercase tracking-[0.3em] text-[10px] max-w-xl mx-auto"><span class="pricing-guide-desktop">Hover any tier for detail. Cards consolidate into a deck after scroll-in — the middle tier is the most selected.</span><span class="pricing-guide-mobile">Tap any tier for detail. Three options stay visible so pricing is easy to compare.</span></p>
             </div>
 
             <!-- TRACK 1 — BUSINESS & ENTERPRISE -->
@@ -1767,7 +1848,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                 <p class="private-note">Private Engagement is selective. Availability is limited to ensure every client — business or individual — receives the full standard of care IIS is known for.</p>
             </div>
 
-            <p style="text-align:center; font-size:9px; text-transform:uppercase; letter-spacing:0.25em; color:rgba(255,255,255,0.35); margin-top:28px;">Hover any card to flip. Tap on mobile. Email templates prefill — edit to fit your environment.</p>
+            <p class="pricing-footer-guide" style="text-align:center; font-size:9px; text-transform:uppercase; letter-spacing:0.25em; color:rgba(255,255,255,0.35); margin-top:28px;"><span class="pricing-guide-desktop">Hover any card to flip. Email templates prefill — edit to fit your environment.</span><span class="pricing-guide-mobile">Tap a card to expand details. Email templates prefill — edit before sending.</span></p>
         </div>
     </section>
 
@@ -2043,9 +2124,10 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
               #aria-cinema .cn-nav { display:none; }
               #aria-cinema .cn-meta-row { flex-direction:column; align-items:flex-start; gap:12px; }
               #aria-cinema { padding:34px 12px; }
-              #aria-cinema .cn-title { font-size:42px; margin-bottom:18px; }
+              #aria-cinema .cn-title { font-size:34px; margin-bottom:14px; }
               #aria-cinema .cn-header { margin-bottom:22px; }
-              #aria-cinema .cn-meta-row { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:16px; font-size:9px; }
+              #aria-cinema .cn-meta-row { flex-direction:column; align-items:flex-start; gap:8px; margin-bottom:14px; font-size:8px; letter-spacing:.12em; }
+              #aria-cinema .cn-meta-row > div:last-child { display:none; }
               #aria-cinema .cn-meta-row .cn-left { gap:10px; }
               #aria-cinema .cn-player { box-shadow:0 22px 42px -22px rgba(0,0,0,0.75); }
               #aria-cinema .cn-bigplay { background:linear-gradient(to top, rgba(10,10,11,.38), rgba(10,10,11,.04)); pointer-events:none; }
@@ -2308,10 +2390,14 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         margin-top: 14px;
       }
       @media (max-width: 720px) {
-        #aria-capabilities { padding-top: 44px !important; padding-bottom: 44px !important; }
-        #aria-capabilities .cap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; margin-bottom: 24px !important; }
+        #aria-capabilities { padding-top: 34px !important; padding-bottom: 36px !important; }
+        #aria-capabilities .text-center { margin-bottom: 20px !important; }
+        #aria-capabilities .text-center span { font-size: 7px !important; letter-spacing: .24em !important; margin-bottom: 8px !important; }
+        #aria-capabilities h2 { letter-spacing: .12em !important; margin-bottom: 10px !important; }
+        #aria-capabilities .text-center p { font-size: 11px !important; line-height: 1.55 !important; max-width: 320px !important; }
+        #aria-capabilities .cap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; margin-bottom: 18px !important; }
         #aria-capabilities .cap-card {
-          min-height: 148px;
+          min-height: 122px;
           padding: 0;
           position: relative;
           transform-style: preserve-3d;
@@ -2333,11 +2419,11 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
           justify-content: center;
           text-align: center;
           margin: 0;
-          padding: 16px 10px 24px;
+          padding: 13px 8px 21px;
           border-bottom: 0;
-          font-size: 11px;
-          line-height: 1.35;
-          letter-spacing: .11em;
+          font-size: 9px;
+          line-height: 1.3;
+          letter-spacing: .08em;
         }
         #aria-capabilities .cap-card-h::after {
           content: "Tap";
@@ -2346,21 +2432,21 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
           bottom: 10px;
           transform: translateX(-50%);
           font: 700 7px/1 'Inter', sans-serif;
-          letter-spacing: .22em;
+          letter-spacing: .16em;
           text-transform: uppercase;
           color: rgba(241,220,167,.42);
         }
         #aria-capabilities .cap-card-list {
           transform: rotateY(180deg);
           overflow: auto;
-          padding: 12px 11px;
-          gap: 5px;
+          padding: 10px 9px;
+          gap: 4px;
           background: linear-gradient(180deg, rgba(20,16,11,.88), rgba(9,7,5,.96));
         }
         #aria-capabilities .cap-card-list li {
-          font-size: 9.4px;
-          line-height: 1.45;
-          padding-left: 10px;
+          font-size: 8.6px;
+          line-height: 1.38;
+          padding-left: 9px;
         }
         #aria-capabilities .cap-card-list li::before { width: 4px; height: 4px; top: 6px; }
         #aria-capabilities .cap-download { width: 100%; justify-content: center; padding: 11px 12px; font-size: 8px; letter-spacing: .12em; }
@@ -2403,10 +2489,14 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
       .rev-close p { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 18px; color: rgba(243,236,217,0.62); margin: 4px 0; line-height: 1.5; }
       .rev-close-strong { color: #f1dca7 !important; font-style: normal !important; font-weight: 500; letter-spacing: 0.02em; font-size: 22px !important; }
       @media (max-width: 720px) {
-        #aria-revolution { padding-top: 44px !important; padding-bottom: 44px !important; }
-        #aria-revolution .rev-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; margin-bottom: 24px !important; }
+        #aria-revolution { padding-top: 34px !important; padding-bottom: 36px !important; }
+        #aria-revolution .text-center { margin-bottom: 20px !important; }
+        #aria-revolution .text-center span { font-size: 7px !important; letter-spacing: .24em !important; margin-bottom: 8px !important; }
+        #aria-revolution h2 { letter-spacing: .12em !important; margin-bottom: 10px !important; }
+        #aria-revolution .text-center p { font-size: 11px !important; line-height: 1.55 !important; max-width: 320px !important; }
+        #aria-revolution .rev-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; margin-bottom: 18px !important; }
         #aria-revolution .rev-row {
-          min-height: 132px;
+          min-height: 116px;
           padding: 0;
           display: block;
           position: relative;
@@ -2422,7 +2512,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
           border-radius: 10px;
-          padding: 12px 10px;
+          padding: 10px 8px;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -2431,16 +2521,16 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         #aria-revolution .rev-front b {
           color: #f1dca7;
           font-family: 'Cinzel', serif;
-          font-size: 10.5px;
-          line-height: 1.35;
-          letter-spacing: .08em;
+          font-size: 9.2px;
+          line-height: 1.3;
+          letter-spacing: .06em;
           text-transform: uppercase;
         }
         #aria-revolution .rev-front small {
           margin-top: 8px;
           color: rgba(241,220,167,.42);
           font: 700 7px/1 'Inter', sans-serif;
-          letter-spacing: .22em;
+          letter-spacing: .16em;
           text-transform: uppercase;
         }
         #aria-revolution .rev-back {
@@ -2450,12 +2540,12 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
           text-align: left;
           background: linear-gradient(180deg, rgba(20,16,11,.88), rgba(9,7,5,.96));
           color: rgba(243,236,217,.78);
-          font-size: 9.5px;
-          line-height: 1.48;
+          font-size: 8.8px;
+          line-height: 1.4;
         }
         #aria-revolution .rev-close { padding-top: 0; }
-        #aria-revolution .rev-close p { font-size: 15px !important; }
-        #aria-revolution .rev-close-strong { font-size: 17px !important; }
+        #aria-revolution .rev-close p { font-size: 13px !important; }
+        #aria-revolution .rev-close-strong { font-size: 15px !important; }
       }
       .route-section { padding: 88px 24px; background: linear-gradient(180deg, #060606, #090806); border-top: 1px solid rgba(197,160,89,0.18); border-bottom: 1px solid rgba(197,160,89,0.18); }
       .route-shell { max-width: 1120px; margin: 0 auto; border: 1px solid rgba(197,160,89,0.22); border-radius: 18px; padding: 42px 28px; background: radial-gradient(120% 180% at 0% 0%, rgba(197,160,89,0.12), transparent 58%), rgba(255,255,255,0.02); box-shadow: 0 22px 60px rgba(0,0,0,0.28); }
@@ -2678,6 +2768,22 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
   .hero-section h1 { font-size: 1.3rem !important; }
   .hero-section h1 span { font-size: 0.8em !important; }
 }
+
+/* === MOBILE PRICING LOCK (2026-06-11) === */
+@media (max-width: 768px) {
+  #solutions .price-deck {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 4px 0 18px !important;
+    perspective: 1100px !important;
+  }
+  #solutions .deck-slot { min-height: 166px !important; transform: none !important; }
+  #solutions .deck-slot.is-flipped { grid-column: 1 / -1 !important; min-height: 390px !important; }
+  #solutions .deck-slot:hover .deck-card { transform: none !important; }
+  #solutions .deck-slot.is-flipped .deck-card { transform: rotateY(180deg) !important; }
+  #solutions .deck-price { font-size: 8.2px !important; letter-spacing: 0.01em !important; line-height: 1.2 !important; text-shadow: none !important; }
+  #solutions .deck-price-sm { font-size: 8.8px !important; letter-spacing: 0.04em !important; }
+}
 </style>
 
 
@@ -2728,12 +2834,18 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         <div class="chat-header"><h4 class="logo-text">Contact Us</h4><button class="chat-close-btn" id="chatClose" aria-label="Close contact form"><i data-lucide="x"></i></button></div>
         <div class="chat-body">
             <div id="chatFormContainer">
+                <div class="chat-context hidden" id="chatContext" aria-live="polite">
+                    <span class="eyebrow">Request staged</span>
+                    <strong id="chatContextTitle">General contact request</strong>
+                    <p id="chatContextNote">Tell IIS what feels urgent, what result you want, and the best next step for follow-up.</p>
+                    <ul class="chat-context-list" id="chatContextList"></ul>
+                </div>
                 <form class="chat-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-                    <input type="hidden" name="form-name" value="contact"><input type="hidden" id="cf-subject" name="subject" value="URGENT - Lead - New Contact Form Submission from %{formName}"><p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
+                    <input type="hidden" name="form-name" value="contact"><input type="hidden" id="cf-subject" name="subject" value="General contact request"><input type="hidden" id="cf-topic" name="request_topic" value=""><input type="hidden" id="cf-entry-page" name="entry_page" value=""><input type="hidden" id="cf-entry-url" name="entry_url" value=""><p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
                     <div class="form-group"><label for="cf-name">Full Name</label><input type="text" id="cf-name" name="name" required placeholder="Your full name"><div class="error-msg" id="nameError">Please enter your name.</div></div>
                     <div class="form-group"><label for="cf-email">Email Address</label><input type="email" id="cf-email" name="email" required placeholder="you@example.com"><div class="error-msg" id="emailError">Please enter a valid email address.</div></div>
                     <div class="form-group"><label for="cf-phone">Phone Number</label><input type="tel" id="cf-phone" name="phone" placeholder="(123) 456-7890"></div>
-                    <div class="form-group"><label for="cf-description">Description of Issue</label><textarea id="cf-description" name="description" required placeholder="How can we help?"></textarea><div class="error-msg" id="descError">Please describe your issue.</div></div>
+                    <div class="form-group"><label for="cf-description" id="cf-description-label">Description of Issue</label><textarea id="cf-description" name="description" required placeholder="How can we help?"></textarea><div class="form-note" id="cf-description-note">Include the problem, the timeline, and what a useful next step should look like.</div><div class="error-msg" id="descError">Please describe your issue.</div></div>
                     <button type="submit" class="chat-submit-btn" id="chatSubmitBtn">Submit</button>
                 </form>
             </div>
@@ -3005,9 +3117,10 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
 
             // Touch / tap flipping — on devices without hover, tap toggles the card.
             const mql = window.matchMedia('(hover: none), (pointer: coarse)');
+            const compactMql = window.matchMedia('(max-width: 768px)');
             decks.forEach(function(deck) {
                 deck.addEventListener('click', function(e) {
-                    if (!mql.matches) return;
+                    if (!mql.matches && !compactMql.matches) return;
                     const slot = e.target.closest('.deck-slot');
                     if (!slot) return;
                     // Let the CTA link behave normally
@@ -3152,22 +3265,125 @@ Thank you,
 
         // Chat widget
         (function() {
-            const fab = document.getElementById('chatFab'); const win = document.getElementById('chatWindow'); const closeBtn = document.getElementById('chatClose'); const form = document.getElementById('contactForm'); const formContainer = document.getElementById('chatFormContainer'); const successContainer = document.getElementById('chatSuccessContainer'); const submitBtn = document.getElementById('chatSubmitBtn'); const subjectField = document.getElementById('cf-subject'); const descField = document.getElementById('cf-description');
+            const fab = document.getElementById('chatFab'); const win = document.getElementById('chatWindow'); const closeBtn = document.getElementById('chatClose'); const form = document.getElementById('contactForm'); const formContainer = document.getElementById('chatFormContainer'); const successContainer = document.getElementById('chatSuccessContainer'); const submitBtn = document.getElementById('chatSubmitBtn'); const subjectField = document.getElementById('cf-subject'); const descField = document.getElementById('cf-description'); const nameField = document.getElementById('cf-name'); const topicField = document.getElementById('cf-topic'); const entryPageField = document.getElementById('cf-entry-page'); const entryUrlField = document.getElementById('cf-entry-url'); const contextBox = document.getElementById('chatContext'); const contextTitle = document.getElementById('chatContextTitle'); const contextNote = document.getElementById('chatContextNote'); const contextList = document.getElementById('chatContextList'); const descLabel = document.getElementById('cf-description-label'); const descNote = document.getElementById('cf-description-note');
             function showChatWidget() { if (!win.classList.contains('hidden')) return; win.classList.remove('hidden'); requestAnimationFrame(() => win.classList.add('visible')); }
             function hideChatWidget() { win.classList.remove('visible'); win.classList.add('hidden'); }
             fab.addEventListener('click', function() { const h = win.classList.contains('hidden'); if (h) { showChatWidget(); } else { hideChatWidget(); } });
             closeBtn.addEventListener('click', hideChatWidget);
             function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
             function clearErrors() { form.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid')); form.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none'); }
+            const REQUEST_PRESETS = [
+                {
+                    match: /book a scoping call/i,
+                    label: 'What should IIS prepare for the call?',
+                    placeholder: 'Company:\nTeam size:\nBest time to reach me:\nWhat I need help with:\nWhat is time-sensitive:',
+                    note: 'This keeps the call scoped around the real business issue instead of a vague quote request.',
+                    help: 'Share the problem, what feels urgent, and how IIS should reach you.',
+                    button: 'Stage scoping call',
+                    bullets: ['Company or team', 'What feels urgent', 'Best way and time to reach you']
+                },
+                {
+                    match: /ai workflow audit/i,
+                    label: 'What workflow should be reviewed first?',
+                    placeholder: 'Team:\nMost repetitive process:\nEstimated hours lost per week:\nTools we use today:\nWhat success would look like:',
+                    note: 'Use this when the pain is repeated manual work, scattered handoffs, or messy intake.',
+                    help: 'Name one repetitive workflow, the tools involved, and what a better path should look like.',
+                    button: 'Stage audit request',
+                    bullets: ['One repetitive workflow', 'Hours lost or friction today', 'Current tools or systems']
+                },
+                {
+                    match: /overflow support pilot/i,
+                    label: 'What support pressure should IIS review?',
+                    placeholder: 'Company:\nTeam size:\nCurrent queue pressure:\nTools used today:\nWhat coverage is needed:\nApproval boundaries or sensitive systems:',
+                    note: 'Use this when support load is real and the buyer needs scoped queue relief without a full managed-services decision.',
+                    help: 'Share the queue pressure, tools in play, and any boundaries around access or sensitive systems.',
+                    button: 'Stage pilot request',
+                    bullets: ['Queue pressure or ticket backlog', 'Tools used today', 'Coverage needed first']
+                },
+                {
+                    match: /ai help desk blueprint implementation/i,
+                    label: 'What support flow should improve first?',
+                    placeholder: 'Company:\nTeam size:\nCurrent ticket pain:\nSystems used today:\nWhat a better support flow would look like:',
+                    note: 'Use this when the team needs better intake, stronger escalation notes, and cleaner knowledge reuse.',
+                    help: 'Describe the support pain, what systems exist today, and what a better flow should accomplish.',
+                    button: 'Stage implementation request',
+                    bullets: ['Current ticket pain', 'Systems used today', 'What better support flow looks like']
+                },
+                {
+                    match: /m365 security and productivity tune-up/i,
+                    label: 'What Microsoft 365 friction should be cleaned up first?',
+                    placeholder: 'Company:\nTeam size:\nBiggest M365 friction today:\nAdmin areas that feel messy:\nWhat needs to improve first:',
+                    note: 'Use this when Microsoft 365 runs the business but the admin and user reality still feels messy.',
+                    help: 'Share the biggest M365 friction, the admin areas that feel loose, and what improvement matters first.',
+                    button: 'Stage tune-up request',
+                    bullets: ['Biggest M365 friction', 'Messy admin areas', 'Priority improvement']
+                },
+                {
+                    match: /ai workflow quick-win sprint/i,
+                    label: 'What repetitive process should the sprint fix first?',
+                    placeholder: 'Company:\nTeam size:\nMost repetitive process today:\nEstimated hours lost per week:\nTools used today:\nWhat success would look like first:',
+                    note: 'Use this when one repetitive process is clearly wasting time and the buyer wants a short implementation-first sprint.',
+                    help: 'Name the first process to fix, the tools involved, and the result that would make the sprint worthwhile.',
+                    button: 'Stage sprint request',
+                    bullets: ['One repetitive process', 'Hours lost per week', 'Success outcome for the first sprint']
+                },
+                {
+                    match: /website \+ ai intake conversion fix/i,
+                    label: 'What website or intake friction should be fixed first?',
+                    placeholder: 'Company:\nWebsite URL:\nBiggest conversion or intake friction today:\nCurrent CTA or booking path:\nPages that need the most help:\nWhat a better next step should look like:',
+                    note: 'Use this when the offer is unclear, the CTA path is muddy, or lead capture breaks before a real conversation starts.',
+                    help: 'Share the current website path, where buyers fall off, and what the next step should feel like instead.',
+                    button: 'Stage conversion fix',
+                    bullets: ['Website or page URL', 'Biggest conversion leak', 'Current CTA or booking path']
+                }
+            ];
+            const FALLBACK_PRESET = {
+                label: 'Description of Issue',
+                placeholder: 'How can we help?',
+                note: 'Tell IIS what feels urgent, what result you want, and the best next step for follow-up.',
+                help: 'Include the problem, the timeline, and what a useful next step should look like.',
+                button: 'Submit',
+                bullets: ['What the problem is', 'Any time sensitivity', 'Preferred follow-up path']
+            };
+            function getPreset(subject) {
+                return REQUEST_PRESETS.find(function(preset) { return preset.match.test(subject || ''); }) || FALLBACK_PRESET;
+            }
+            function renderChecklist(items) {
+                if (!contextList) return;
+                contextList.innerHTML = '';
+                items.forEach(function(item) {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    contextList.appendChild(li);
+                });
+            }
+            function applyChatPreset() {
+                const subject = (subjectField && subjectField.value.trim()) || 'General contact request';
+                const preset = getPreset(subject);
+                const shouldShowContext = !!(requestedSubject || requestedDesc || params.get('contact'));
+                if (topicField) topicField.value = subject;
+                if (entryPageField) entryPageField.value = window.location.pathname;
+                if (entryUrlField) entryUrlField.value = window.location.href;
+                if (contextBox) contextBox.classList.toggle('hidden', !shouldShowContext);
+                if (contextTitle) contextTitle.textContent = subject;
+                if (contextNote) contextNote.textContent = preset.note;
+                if (descLabel) descLabel.textContent = preset.label;
+                if (descField && !descField.value.trim()) descField.placeholder = preset.placeholder;
+                if (descNote) descNote.textContent = preset.help;
+                if (submitBtn) submitBtn.textContent = preset.button;
+                renderChecklist(preset.bullets);
+            }
             const params = new URLSearchParams(window.location.search);
             const requestedSubject = params.get('subject');
             const requestedDesc = params.get('desc');
-            if (requestedSubject && subjectField) subjectField.value = requestedSubject;
+            if (subjectField) subjectField.value = requestedSubject || 'General contact request';
             if (requestedDesc && descField && !descField.value.trim()) descField.value = requestedDesc;
+            applyChatPreset();
             if (params.get('contact') || requestedSubject || requestedDesc) {
                 setTimeout(function() {
                     showChatWidget();
-                    if (descField) descField.focus({ preventScroll: true });
+                    if (requestedDesc && nameField) nameField.focus({ preventScroll: true });
+                    else if (descField) descField.focus({ preventScroll: true });
                 }, 1700);
             }
             form.addEventListener('submit', async function(e) {

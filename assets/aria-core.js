@@ -1127,32 +1127,32 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       "#vision-roadmap .rm-dream cite{display:block;margin-top:22px;font-family:Inter,sans-serif;font-size:11px;font-style:normal;color:rgba(255,255,255,.55);letter-spacing:.32em;text-transform:uppercase}" +
       "#vision-roadmap .rm-motto{text-align:center;margin:40px auto 0;max-width:600px;color:rgba(255,255,255,.55);font-size:13px;font-style:italic;letter-spacing:.04em;line-height:1.6}" +
       "@media (max-width:720px){" +
-        "#vision-roadmap{padding:64px 16px 84px}" +
-        "#vision-roadmap .rm-head{margin-bottom:42px}" +
-        "#vision-roadmap .rm-tag{font-size:9px;letter-spacing:.24em;margin-bottom:10px}" +
-        "#vision-roadmap h2{font-size:30px;line-height:1.12}" +
-        "#vision-roadmap .rm-sub{font-size:13px;line-height:1.65}" +
+        "#vision-roadmap{padding:48px 14px 66px}" +
+        "#vision-roadmap .rm-head{margin-bottom:30px}" +
+        "#vision-roadmap .rm-tag{font-size:8px;letter-spacing:.22em;margin-bottom:8px}" +
+        "#vision-roadmap h2{font-size:25px;line-height:1.12}" +
+        "#vision-roadmap .rm-sub{font-size:11px;line-height:1.52}" +
         "#vision-roadmap .rm-tree{left:50%;width:88px;opacity:.56;transform:translateX(-50%)}" +
         "#vision-roadmap .rm-stone::before{display:block;width:28%}" +
         "#vision-roadmap .rm-stone.left::before{right:50%;background:linear-gradient(270deg,rgba(241,220,167,.62),rgba(241,220,167,0))}" +
         "#vision-roadmap .rm-stone.right::before{left:50%;background:linear-gradient(90deg,rgba(241,220,167,.62),rgba(241,220,167,0))}" +
-        "#vision-roadmap .rm-stones{gap:40px;padding-top:10px}" +
-        "#vision-roadmap .rm-stone{grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr);gap:7px;align-items:center;max-width:100%;margin:0 auto}" +
+        "#vision-roadmap .rm-stones{gap:26px;padding-top:6px}" +
+        "#vision-roadmap .rm-stone{grid-template-columns:minmax(0,1fr) 38px minmax(0,1fr);gap:6px;align-items:center;max-width:100%;margin:0 auto}" +
         "#vision-roadmap .rm-stone.left .rm-card{grid-column:1;text-align:right}" +
         "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left}" +
         "#vision-roadmap .rm-stone.left .rm-spacer{display:block;grid-column:3}" +
         "#vision-roadmap .rm-stone.right .rm-spacer{display:block;grid-column:1}" +
-        "#vision-roadmap .rm-node{grid-column:2;grid-row:auto;width:30px;height:30px;font-size:8.5px;margin-top:0}" +
-        "#vision-roadmap .rm-card{padding:8px 5px}" +
-        "#vision-roadmap .rm-card h3{font-size:13px;line-height:1.28;overflow-wrap:anywhere}" +
-        "#vision-roadmap .rm-card p{font-size:10.8px;line-height:1.55;overflow-wrap:anywhere}" +
-        "#vision-roadmap .rm-badge{font-size:8.5px;letter-spacing:.12em;padding:3px 7px;max-width:100%;white-space:normal}" +
-        "#vision-roadmap .rm-stone.current .rm-card h3{font-size:16px}" +
-        "#vision-roadmap .rm-dream{margin-top:56px;padding:34px 10px}" +
-        "#vision-roadmap .rm-dream .rm-star{width:56px;height:56px;margin-bottom:22px;font-size:25px}" +
-        "#vision-roadmap .rm-dream blockquote{font-size:16px;line-height:1.65}" +
-        "#vision-roadmap .rm-dream cite{font-size:9px;letter-spacing:.2em}" +
-        "#vision-roadmap .rm-motto{font-size:12px;line-height:1.6}" +
+        "#vision-roadmap .rm-node{grid-column:2;grid-row:auto;width:28px;height:28px;font-size:8px;margin-top:0}" +
+        "#vision-roadmap .rm-card{padding:6px 4px}" +
+        "#vision-roadmap .rm-card h3{font-size:11.3px;line-height:1.22;margin-bottom:5px;overflow-wrap:anywhere}" +
+        "#vision-roadmap .rm-card p{font-size:9.4px;line-height:1.38;overflow-wrap:anywhere}" +
+        "#vision-roadmap .rm-badge{font-size:7px;letter-spacing:.1em;padding:2px 5px;margin-top:6px;max-width:100%;white-space:normal}" +
+        "#vision-roadmap .rm-stone.current .rm-card h3{font-size:13px}" +
+        "#vision-roadmap .rm-dream{margin-top:42px;padding:28px 8px}" +
+        "#vision-roadmap .rm-dream .rm-star{width:48px;height:48px;margin-bottom:18px;font-size:22px}" +
+        "#vision-roadmap .rm-dream blockquote{font-size:14px;line-height:1.55}" +
+        "#vision-roadmap .rm-dream cite{font-size:8px;letter-spacing:.16em}" +
+        "#vision-roadmap .rm-motto{font-size:10.5px;line-height:1.55}" +
       "}";
     var s = document.createElement("style");
     s.id = "rm-style";
