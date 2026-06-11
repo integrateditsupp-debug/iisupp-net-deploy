@@ -179,6 +179,20 @@
       related: ['gl-prompt-workflows', 'gl-ai-agent-starter'], bundle: 'bundle-ai-automation', upsell: 'aria'
     },
     {
+      id: 'gl-website-checklist',
+      title: 'Small Business Website Improvement Checklist',
+      blurb: 'A practical buyer-side checklist for weak websites, muddy offers, and intake paths that leak leads.',
+      long: 'A concise website-conversion checklist for owners and operators who know the site is underperforming but do not need a vague agency process. Covers clarity, CTA paths, trust, lead capture, booking friction, mobile reality, and where an AI intake assistant can improve follow-up.',
+      inside: ['Homepage clarity and above-the-fold offer check', 'CTA, quote, booking, and contact-path review', 'Trust, proof, and buyer-friction checklist', 'Mobile conversion and intake-form review', 'AI intake and follow-up opportunity prompts', 'Prioritization worksheet for what to fix first'],
+      priceCents: 2900, category: 'Business Automation', section: 'guides',
+      audience: ['business', 'human'], format: 'Checklist PDF + priority worksheet',
+      tags: ['website improvement checklist', 'website conversion checklist', 'lead capture checklist', 'ai intake checklist'],
+      seo: ['small business website checklist', 'website conversion checklist', 'lead capture improvement checklist'],
+      free: false, password: true, featured: true,
+      preview: null, file: null,
+      related: ['gl-ai-agent-starter', 'gl-nocode-kit', 'gl-prompt-workflows'], bundle: null, upsell: 'service'
+    },
+    {
       id: 'gl-book-living-well',
       title: 'The Unstubborn Life — Balance, Mastery & the Natural Path',
       blurb: 'A field manual for living well: emotional control, balance over comfort, building yourself, and legacy.',
@@ -263,6 +277,16 @@
       id: 'br-m365-tuneup', section: 'tech-support', kind: 'service',
       title: 'M365 Security & Productivity Tune-Up', blurb: 'A focused Microsoft 365 cleanup for identity, devices, Teams, SharePoint, onboarding, and everyday admin friction.',
       audience: ['business', 'it'], cta: 'Stage tune-up', url: '/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A'
+    },
+    {
+      id: 'br-quick-win', section: 'tech-support', kind: 'service',
+      title: 'AI Workflow Quick-Win Sprint', blurb: 'A scoped AI workflow sprint for one repetitive process that is wasting hours every week.',
+      audience: ['business', 'ai'], cta: 'Stage sprint', url: '/?contact=1&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A'
+    },
+    {
+      id: 'br-website-intake-fix', section: 'tech-support', kind: 'service',
+      title: 'Website + AI Intake Conversion Fix', blurb: 'A focused website cleanup for buyers whose offer, CTA path, or lead intake is leaking opportunities.',
+      audience: ['business', 'human', 'ai'], cta: 'Stage fix', url: '/?contact=1&subject=Request%20Website%20%2B%20AI%20Intake%20Conversion%20Fix&desc=I%20want%20to%20stage%20a%20Website%20%2B%20AI%20Intake%20Conversion%20Fix.%0A%0ACompany%3A%0AWebsite%20URL%3A%0ABiggest%20conversion%20or%20intake%20friction%20today%3A%0ACurrent%20CTA%20or%20booking%20path%3A%0APages%20that%20need%20the%20most%20help%3A%0AWhat%20a%20better%20next%20step%20should%20look%20like%3A'
     },
     {
       id: 'br-purchase-tech', section: 'recommended', kind: 'physical',
