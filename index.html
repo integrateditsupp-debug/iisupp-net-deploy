@@ -2042,7 +2042,19 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
               #aria-cinema .cn-header { flex-wrap:wrap; gap:10px; }
               #aria-cinema .cn-nav { display:none; }
               #aria-cinema .cn-meta-row { flex-direction:column; align-items:flex-start; gap:12px; }
-              #aria-cinema .cn-strip { grid-template-columns:repeat(2,1fr); }
+              #aria-cinema { padding:34px 12px; }
+              #aria-cinema .cn-title { font-size:42px; margin-bottom:18px; }
+              #aria-cinema .cn-header { margin-bottom:22px; }
+              #aria-cinema .cn-meta-row { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:16px; font-size:9px; }
+              #aria-cinema .cn-meta-row .cn-left { gap:10px; }
+              #aria-cinema .cn-player { box-shadow:0 22px 42px -22px rgba(0,0,0,0.75); }
+              #aria-cinema .cn-bigplay { background:linear-gradient(to top, rgba(10,10,11,.38), rgba(10,10,11,.04)); pointer-events:none; }
+              #aria-cinema .cn-bigplay .cn-ring { width:54px; height:54px; background:rgba(0,0,0,.14); opacity:.72; }
+              #aria-cinema .cn-bigplay svg { width:18px; height:18px; }
+              #aria-cinema .cn-strip { grid-template-columns:repeat(2,1fr); margin-top:18px; }
+              #aria-cinema .cn-strip > div { padding:12px 10px; }
+              #aria-cinema .cn-strip .cn-v { font-size:22px; }
+              #aria-cinema .cn-footer { flex-wrap:wrap; gap:8px; margin-top:20px; }
             }
           </style>
           <div class="cn-stage">
@@ -2062,7 +2074,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
               <div>Press <b style="color:var(--cn-fg)">SPACE</b> to play</div>
             </div>
             <div class="cn-player" id="cn-player">
-              <video id="cn-vid" preload="metadata" playsinline>
+              <video id="cn-vid" preload="auto" muted autoplay loop playsinline>
                 <source src="/assets/video/aria-stats-and-purpose.mp4" type="video/mp4" />
               </video>
               <div class="cn-corners"><span class="cn-bl"></span><span class="cn-br"></span></div>
@@ -2219,7 +2231,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+        <div class="cap-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
           <div class="cap-card"><div class="cap-card-h">Customer support</div><ul class="cap-card-list"><li>Plain-language IT answers in 5 W's + STAR style</li><li>Confirm-resolve loop — Yes / Still broken / Talk to human</li><li>Escalates only after trying first</li><li>Speech output with 9-state globe animation</li></ul></div>
           <div class="cap-card"><div class="cap-card-h">Tech support · L1 — L3</div><ul class="cap-card-list"><li>72 verified articles — Browser · Email · M365 · MFA · OneDrive · VPN · Wi-Fi · Windows · macOS · Webcam · Bluetooth · USB</li><li>21 admin-tier articles — AD · Azure AD · BitLocker · Intune · Malware · BYOD · VIP support · Asset</li><li>11 architect-tier articles — DR · PKI · Cloud · SSO · Endpoint EDR</li></ul></div>
           <div class="cap-card"><div class="cap-card-h">Knowledge base</div><ul class="cap-card-list"><li>Token-overlap retrieval, 90+ hard routing rules</li><li>Severity- and audience-aware (end-user / admin / technician)</li><li>21/21 verified test queries pass top-1</li></ul></div>
@@ -2295,6 +2307,64 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         color: rgba(243,236,217,0.50);
         margin-top: 14px;
       }
+      @media (max-width: 720px) {
+        #aria-capabilities { padding-top: 44px !important; padding-bottom: 44px !important; }
+        #aria-capabilities .cap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; margin-bottom: 24px !important; }
+        #aria-capabilities .cap-card {
+          min-height: 148px;
+          padding: 0;
+          position: relative;
+          transform-style: preserve-3d;
+          transition: transform .48s ease, border-color .25s ease;
+          cursor: pointer;
+        }
+        #aria-capabilities .cap-card.is-flipped { transform: rotateY(180deg); }
+        #aria-capabilities .cap-card-h,
+        #aria-capabilities .cap-card-list {
+          position: absolute;
+          inset: 0;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          border-radius: 14px;
+        }
+        #aria-capabilities .cap-card-h {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          margin: 0;
+          padding: 16px 10px 24px;
+          border-bottom: 0;
+          font-size: 11px;
+          line-height: 1.35;
+          letter-spacing: .11em;
+        }
+        #aria-capabilities .cap-card-h::after {
+          content: "Tap";
+          position: absolute;
+          left: 50%;
+          bottom: 10px;
+          transform: translateX(-50%);
+          font: 700 7px/1 'Inter', sans-serif;
+          letter-spacing: .22em;
+          text-transform: uppercase;
+          color: rgba(241,220,167,.42);
+        }
+        #aria-capabilities .cap-card-list {
+          transform: rotateY(180deg);
+          overflow: auto;
+          padding: 12px 11px;
+          gap: 5px;
+          background: linear-gradient(180deg, rgba(20,16,11,.88), rgba(9,7,5,.96));
+        }
+        #aria-capabilities .cap-card-list li {
+          font-size: 9.4px;
+          line-height: 1.45;
+          padding-left: 10px;
+        }
+        #aria-capabilities .cap-card-list li::before { width: 4px; height: 4px; top: 6px; }
+        #aria-capabilities .cap-download { width: 100%; justify-content: center; padding: 11px 12px; font-size: 8px; letter-spacing: .12em; }
+      }
     </style>
 
     <!-- ─── REVOLUTION / BENEFITS — why decision-makers should switch ─── -->
@@ -2307,7 +2377,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             ARIA is not a chatbot. It is a senior IT technician that learned your company in minutes — and never sleeps, never forgets, never escalates without trying first.
           </p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 mb-12">
+        <div class="rev-grid grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 mb-12">
           <div class="rev-row"><span class="rev-arrow">→</span><div><b>No slip-ups.</b> Fewer security breaches. ARIA cites your policy verbatim — never fabricates an answer that costs an audit.</div></div>
           <div class="rev-row"><span class="rev-arrow">→</span><div><b>No delays.</b> Fewer late payments, missed trades, dropped client responses. Instant retrieval replaces the L1 ticket queue.</div></div>
           <div class="rev-row"><span class="rev-arrow">→</span><div><b>Communication barriers fall.</b> ARIA speaks the user's language — plain English for end-users, code blocks for admins. Same engine, audience-aware.</div></div>
@@ -2332,6 +2402,61 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
       .rev-close { text-align: center; padding-top: 12px; border-top: 1px solid rgba(197,160,89,0.20); }
       .rev-close p { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 18px; color: rgba(243,236,217,0.62); margin: 4px 0; line-height: 1.5; }
       .rev-close-strong { color: #f1dca7 !important; font-style: normal !important; font-weight: 500; letter-spacing: 0.02em; font-size: 22px !important; }
+      @media (max-width: 720px) {
+        #aria-revolution { padding-top: 44px !important; padding-bottom: 44px !important; }
+        #aria-revolution .rev-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; margin-bottom: 24px !important; }
+        #aria-revolution .rev-row {
+          min-height: 132px;
+          padding: 0;
+          display: block;
+          position: relative;
+          transform-style: preserve-3d;
+          transition: transform .48s ease, border-color .25s ease;
+          cursor: pointer;
+        }
+        #aria-revolution .rev-row.is-flipped { transform: rotateY(180deg); }
+        #aria-revolution .rev-arrow { display: none; }
+        #aria-revolution .rev-face {
+          position: absolute;
+          inset: 0;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          border-radius: 10px;
+          padding: 12px 10px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          text-align: center;
+        }
+        #aria-revolution .rev-front b {
+          color: #f1dca7;
+          font-family: 'Cinzel', serif;
+          font-size: 10.5px;
+          line-height: 1.35;
+          letter-spacing: .08em;
+          text-transform: uppercase;
+        }
+        #aria-revolution .rev-front small {
+          margin-top: 8px;
+          color: rgba(241,220,167,.42);
+          font: 700 7px/1 'Inter', sans-serif;
+          letter-spacing: .22em;
+          text-transform: uppercase;
+        }
+        #aria-revolution .rev-back {
+          transform: rotateY(180deg);
+          overflow: auto;
+          align-items: flex-start;
+          text-align: left;
+          background: linear-gradient(180deg, rgba(20,16,11,.88), rgba(9,7,5,.96));
+          color: rgba(243,236,217,.78);
+          font-size: 9.5px;
+          line-height: 1.48;
+        }
+        #aria-revolution .rev-close { padding-top: 0; }
+        #aria-revolution .rev-close p { font-size: 15px !important; }
+        #aria-revolution .rev-close-strong { font-size: 17px !important; }
+      }
       .route-section { padding: 88px 24px; background: linear-gradient(180deg, #060606, #090806); border-top: 1px solid rgba(197,160,89,0.18); border-bottom: 1px solid rgba(197,160,89,0.18); }
       .route-shell { max-width: 1120px; margin: 0 auto; border: 1px solid rgba(197,160,89,0.22); border-radius: 18px; padding: 42px 28px; background: radial-gradient(120% 180% at 0% 0%, rgba(197,160,89,0.12), transparent 58%), rgba(255,255,255,0.02); box-shadow: 0 22px 60px rgba(0,0,0,0.28); }
       .route-head { text-align: center; max-width: 760px; margin: 0 auto 26px; }
@@ -2511,7 +2636,8 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
   h3 { font-size: 1.2rem !important; }
   p { font-size: 0.95rem !important; }
   .container, [class*="max-w-"] { max-width: 100% !important; }
-  img, video, iframe { max-width: 100% !important; height: auto !important; }
+  img, video { max-width: 100% !important; }
+  iframe { max-width: 100% !important; }
   button, .btn, a.button { white-space: normal !important; }
 }
 @media (max-width: 480px) {
@@ -2630,6 +2756,78 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             setTimeout(() => { g.classList.add('hidden-gate'); }, 1100);
             setTimeout(() => { g.style.display = 'none'; }, 1500);
         }
+
+        (function mobileAriaPolish() {
+            function isMobile() {
+                return window.matchMedia && window.matchMedia('(max-width: 720px)').matches;
+            }
+            function makeRevCards() {
+                if (!isMobile()) return;
+                document.querySelectorAll('#aria-revolution .rev-row:not([data-mobile-flip])').forEach(function(row) {
+                    const original = row.querySelector('div');
+                    if (!original) return;
+                    const bold = original.querySelector('b');
+                    const title = bold ? bold.textContent.trim() : original.textContent.trim();
+                    const detail = original.textContent.replace(title, '').trim();
+                    row.setAttribute('data-mobile-flip', '1');
+                    row.setAttribute('tabindex', '0');
+                    row.setAttribute('role', 'button');
+                    row.setAttribute('aria-label', title + ' details');
+                    row.innerHTML = '';
+                    const front = document.createElement('span');
+                    front.className = 'rev-face rev-front';
+                    const frontTitle = document.createElement('b');
+                    frontTitle.textContent = title;
+                    const hint = document.createElement('small');
+                    hint.textContent = 'Tap';
+                    front.appendChild(frontTitle);
+                    front.appendChild(hint);
+                    const back = document.createElement('span');
+                    back.className = 'rev-face rev-back';
+                    back.textContent = detail || title;
+                    row.appendChild(front);
+                    row.appendChild(back);
+                });
+            }
+            function wireFlipCards() {
+                if (!isMobile()) return;
+                makeRevCards();
+                document.querySelectorAll('#aria-capabilities .cap-card, #aria-revolution .rev-row').forEach(function(card) {
+                    if (card.dataset.flipReady) return;
+                    card.dataset.flipReady = '1';
+                    if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
+                    if (!card.hasAttribute('role')) card.setAttribute('role', 'button');
+                    card.addEventListener('click', function() { card.classList.toggle('is-flipped'); });
+                    card.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            card.classList.toggle('is-flipped');
+                        }
+                    });
+                });
+            }
+            function startCinemaPreview() {
+                const vid = document.getElementById('cn-vid');
+                if (!vid) return;
+                vid.muted = true;
+                vid.setAttribute('muted', '');
+                vid.setAttribute('playsinline', '');
+                const play = function() {
+                    if (vid.play) vid.play().catch(function() {});
+                };
+                vid.addEventListener('loadeddata', play, { once: true });
+                play();
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    wireFlipCards();
+                    startCinemaPreview();
+                });
+            } else {
+                wireFlipCards();
+                startCinemaPreview();
+            }
+        })();
 
         // --- BIOMETRIC ENTRY SEQUENCE ---
         // 1.0s after load -> fingerprint fades in with blurred background, "decoding" text
