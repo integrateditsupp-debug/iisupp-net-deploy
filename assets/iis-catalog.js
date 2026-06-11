@@ -279,9 +279,19 @@
       audience: ['business', 'it'], cta: 'Stage tune-up', url: '/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A'
     },
     {
+      id: 'br-workflow-audit', section: 'tech-support', kind: 'service',
+      title: 'AI Workflow Audit', blurb: 'A discovery-first review for teams losing time to repeated handoffs, messy intake, and scattered process knowledge.',
+      audience: ['business', 'ai'], cta: 'Stage audit', url: '/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A'
+    },
+    {
       id: 'br-quick-win', section: 'tech-support', kind: 'service',
       title: 'AI Workflow Quick-Win Sprint', blurb: 'A scoped AI workflow sprint for one repetitive process that is wasting hours every week.',
       audience: ['business', 'ai'], cta: 'Stage sprint', url: '/?contact=1&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A'
+    },
+    {
+      id: 'br-office-move', section: 'tech-support', kind: 'service',
+      title: 'Office Move / Property IT Readiness', blurb: 'A scoped readiness path for office openings, expansions, workspace refreshes, and tenant move-in support pressure.',
+      audience: ['business', 'human'], cta: 'Stage readiness', url: '/?contact=1&subject=Request%20Office%20Move%20%2F%20Property%20IT%20Readiness&desc=I%20want%20to%20stage%20Office%20Move%20%2F%20Property%20IT%20Readiness.%0A%0ACompany%3A%0ASite%20or%20project%20location%3A%0AMove%2C%20opening%2C%20refresh%2C%20or%20expansion%20timeline%3A%0ATeam%20size%20or%20users%20affected%3A%0AKey%20technology%20areas%20in%20scope%3A%0AExternal%20vendors%20or%20building%20dependencies%3A%0ABiggest%20day-one%20readiness%20risk%3A'
     },
     {
       id: 'br-website-intake-fix', section: 'tech-support', kind: 'service',
