@@ -147,7 +147,7 @@
       tags: ['help desk automation', 'ai knowledge base for support teams', 'technical support SOP'],
       seo: ['help desk automation', 'AI knowledge base for support teams', 'technical support SOP'],
       free: false, password: true, featured: true,
-      preview: null, file: null,
+      preview: '/downloads/library/ai-help-desk-automation-blueprint-preview.html', file: null,
       related: ['gl-m365-kb', 'gl-ai-agent-starter'], bundle: 'bundle-ai-automation', upsell: 'aria'
     },
     {
@@ -189,7 +189,7 @@
       tags: ['website improvement checklist', 'website conversion checklist', 'lead capture checklist', 'ai intake checklist'],
       seo: ['small business website checklist', 'website conversion checklist', 'lead capture improvement checklist'],
       free: false, password: true, featured: true,
-      preview: null, file: null,
+      preview: '/downloads/library/small-business-website-improvement-checklist-preview.html', file: null,
       related: ['gl-ai-agent-starter', 'gl-nocode-kit', 'gl-prompt-workflows'], bundle: null, upsell: 'service'
     },
     {

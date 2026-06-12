@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c5a059">
+<title>AI Workflow Audit Preview | Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+:root{
+  --bg:#060606;
+  --panel:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.7);
+  --muted:rgba(255,255,255,.45);
+  --gold:#c5a059;
+  --gold-soft:#f1dca7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(180deg,#080808 0%,#050505 100%);
+}
+a{text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 22px 72px}
+.toplink{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.eyebrow{display:block;margin-bottom:12px;color:var(--gold);font-size:10px;letter-spacing:.32em;text-transform:uppercase;font-weight:800}
+.hero{
+  margin-top:20px;
+  border:1px solid rgba(197,160,89,.24);
+  border-radius:18px;
+  padding:42px 34px;
+  background:
+    radial-gradient(120% 140% at 100% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:26px}
+.logo{font-family:'Cinzel',serif;font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.02;margin:0 0 16px}
+.gold{color:var(--gold-soft)}
+.lede{margin:0 0 18px;color:var(--text);font-size:15px;line-height:1.85;max-width:720px}
+.tagrow{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.tag{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{
+  height:100%;
+  border:1px solid rgba(197,160,89,.18);
+  border-radius:14px;
+  padding:20px 18px;
+  background:rgba(0,0,0,.24);
+}
+.panel p{margin:0 0 12px;color:var(--text);font-size:13px;line-height:1.8}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 18px;
+  border-radius:8px;
+  border:1px solid rgba(197,160,89,.4);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:rgba(197,160,89,.06);
+}
+.btn.primary{background:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%);color:#1a1407;border-color:transparent}
+.grid-two,.grid-three{display:grid;gap:16px;margin-top:24px}
+.grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px 18px 16px;
+  background:var(--panel);
+}
+.card h2,.card h3{margin:0 0 10px;font-family:'Cinzel',serif}
+.card h2{font-size:1.3rem}
+.card h3{font-size:1rem}
+.card p{margin:0;color:var(--text);font-size:13px;line-height:1.8}
+.checklist,.steps{
+  margin:14px 0 0;
+  padding-left:18px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.notice{
+  margin-top:26px;
+  padding:16px 18px;
+  border-left:3px solid var(--gold);
+  background:rgba(197,160,89,.07);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.mini{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width: 900px){
+  .hero-grid,.grid-two,.grid-three{grid-template-columns:1fr}
+  .hero{padding:30px 20px}
+  .wrap{padding:20px 16px 54px}
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="toplink" href="/services.html">Back to services</a>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Sample Preview</span>
+          <h1 class="logo">AI <span class="gold">Workflow Audit</span></h1>
+          <p class="lede">This preview shows how IIS frames the audit before a buyer requests a scoping call. It stays discovery-first: map one workflow, isolate the friction, separate human-only work from AI-suitable work, and recommend the safest next move without pretending the team needs a giant automation program.</p>
+          <div class="tagrow">
+            <span class="tag">For operations teams</span>
+            <span class="tag">For admin-heavy workflows</span>
+            <span class="tag">For AI-first discovery</span>
+          </div>
+          <div class="btnrow">
+            <a class="btn primary" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit request</a>
+            <a class="btn" href="/services.html">Open services page</a>
+          </div>
+        </div>
+        <aside class="panel">
+          <span class="eyebrow" style="margin-bottom:10px">What this preview proves</span>
+          <p>The offer is specific enough to share safely. Buyers can see the operating posture before a live call: IIS diagnoses one workflow, ranks the waste, and recommends a practical pilot path instead of selling a vague AI transformation.</p>
+          <p>This keeps the audit value-first without publishing hard pricing, unsupported time-saved claims, or deep implementation promises before the workflow is reviewed.</p>
+          <p class="mini">The full audit remains scoped to the real team, systems, and approval boundaries.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">Inside the offer</span>
+        <h2>What the buyer actually gets</h2>
+        <ul class="checklist">
+          <li>One workflow mapped clearly enough to act on.</li>
+          <li>Friction ranking across intake, handoffs, repeated questions, and document scatter.</li>
+          <li>Human-only versus AI-suitable step review.</li>
+          <li>Practical next-step recommendation: quick-win sprint, website intake cleanup, help-desk work, or no action yet.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best fit</span>
+        <h2>Who should start here</h2>
+        <ul class="checklist">
+          <li>Operations leaders dealing with recurring admin friction and unclear ownership.</li>
+          <li>Clinic, finance, legal, project, or back-office teams losing time to repeated follow-up and scattered files.</li>
+          <li>Owners who want a sane first AI step before committing to implementation work.</li>
+          <li>Internal IT or support-adjacent teams trying to reduce repeated questions before building a larger assistant.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:24px">
+      <span class="eyebrow">Sample section</span>
+      <h2>What the first audit pass reviews</h2>
+      <p>This is a representative slice of the audit structure. The live version expands each area into workflow notes, decision gates, tool constraints, and a recommendation on what should be improved first.</p>
+      <div class="grid-three">
+        <div class="card">
+          <h3>Intake friction</h3>
+          <p>Where requests enter the business, what is missing at the start, and which repeated clarifications slow the team down before real work begins.</p>
+        </div>
+        <div class="card">
+          <h3>Follow-up burden</h3>
+          <p>Which reminders, status checks, summary requests, or coordination loops keep landing on the same people every week.</p>
+        </div>
+        <div class="card">
+          <h3>Document scatter</h3>
+          <p>What lives in inboxes, chats, shared drives, and informal notes instead of in one reusable operating path.</p>
+        </div>
+      </div>
+      <div class="notice">
+        Typical escalation triggers include approval-sensitive workflows, unclear source-of-truth data, privacy-heavy inputs, or any process where the wrong automation would create more risk than value.
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">What stays scoped</span>
+        <h2>Reserved for live discovery</h2>
+        <ul class="steps">
+          <li>The exact workflow map with tools, owners, and time-loss estimate.</li>
+          <li>Process-specific AI-suitable versus human-only boundary decisions.</li>
+          <li>Any implementation sequence, timeline, or workflow-specific pricing posture.</li>
+          <li>Detailed recommendations tied to the buyer's systems, data sensitivity, and internal approvals.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best next move</span>
+        <h2>Use the right lane after the audit</h2>
+        <ul class="steps">
+          <li>Use the Quick-Win Sprint when one workflow is already obvious and the team wants a short build-first engagement.</li>
+          <li>Use the Website + AI Intake Conversion Fix when the biggest problem is weak website intake or poor CTA flow.</li>
+          <li>Use the AI Help Desk Blueprint when support noise, intake quality, or escalation structure is the real bottleneck.</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn primary" href="/?contact=1&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage quick-win sprint</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

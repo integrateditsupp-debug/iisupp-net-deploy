@@ -84,7 +84,7 @@ const SIMPLE_L1_L2 = [
   'help desk', 'helpdesk', 'service desk', 'desktop support', 'technical support',
   'it support', 'managed it', 'managed services', 'microsoft 365', 'm365',
   'office 365', 'endpoint', 'laptop', 'desktop', 'workstation', 'printer',
-  'network support', 'wifi', 'wi-fi', 'hardware', 'software support',
+  'network support', 'wifi', 'wi-fi', 'software support', 'support renewal',
   'device management', 'intune', 'onboarding', 'offboarding'
 ];
 
@@ -93,7 +93,8 @@ const L3_REMOTE = [
   'system administrator', 'network administrator', 'cloud support',
   'azure administrator', 'security support', 'endpoint security',
   'firewall', 'backup', 'disaster recovery', 'server support',
-  'active directory', 'entra', 'identity', 'sso', 'mdm', 'intune',
+  'active directory', 'entra id', 'identity management', 'identity and access',
+  'single sign-on', 'sso', 'mdm', 'intune',
   'cybersecurity assessment', 'security assessment'
 ];
 
@@ -132,6 +133,13 @@ const COMPLEX_SKIP = [
   'custom software development', 'application modernization',
   'hospital information system', 'electronic medical record', 'emr',
   'multi-year transformation'
+];
+
+const PROCUREMENT_NOISE = [
+  'spares', 'spare parts', 'containers', 'furniture', 'chairs', 'tractor',
+  'trailer', 'vehicle', 'utility vehicle', 'conduit', 'spectrometer',
+  'cleaning kits', 'accessories', 'diagnostic imaging', 'veterinary care',
+  'laboratory animal science', 'refueling center', 'pipeline'
 ];
 
 const GROWTH_STREAMS = [
@@ -233,20 +241,51 @@ function leadKey(lead) {
   return String(lead.ref || lead.url || `${lead.title || ''}|${lead.org || ''}|${lead.close || ''}`).slice(0, 240);
 }
 
+function normalizeMatchText(value) {
+  return ` ${String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()} `;
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function matchesKeyword(hay, keyword) {
+  const normalized = normalizeMatchText(keyword).trim();
+  if (!normalized) return false;
+  return new RegExp(`(^| )${escapeRegExp(normalized)}( |$)`).test(hay);
+}
+
+function findKeywords(hay, keywords) {
+  return keywords.filter((keyword) => matchesKeyword(hay, keyword));
+}
+
 function classifyLead(lead) {
-  const hay = [lead.title, lead.org, lead.region, lead.close, lead.ref, lead.url].filter(Boolean).join(' ').toLowerCase();
-  const stop = STOP_AND_ASK.filter((k) => hay.includes(k));
-  const complex = COMPLEX_SKIP.filter((k) => hay.includes(k));
-  const simple = SIMPLE_L1_L2.filter((k) => hay.includes(k));
-  const l3 = L3_REMOTE.filter((k) => hay.includes(k));
-  const website = WEBSITE_LEAD.filter((k) => hay.includes(k));
-  const ai = AI_LEAD.filter((k) => hay.includes(k));
-  const move = MOVE_IN_OVERFLOW.filter((k) => hay.includes(k));
+  const hay = normalizeMatchText([lead.title, lead.org, lead.region, lead.close, lead.ref, lead.url].filter(Boolean).join(' '));
+  const stop = findKeywords(hay, STOP_AND_ASK);
+  const complex = findKeywords(hay, COMPLEX_SKIP);
+  const procurementNoise = findKeywords(hay, PROCUREMENT_NOISE);
+  const simple = findKeywords(hay, SIMPLE_L1_L2);
+  const l3 = findKeywords(hay, L3_REMOTE);
+  const website = findKeywords(hay, WEBSITE_LEAD);
+  const ai = findKeywords(hay, AI_LEAD);
+  const move = findKeywords(hay, MOVE_IN_OVERFLOW);
 
   if (stop.length) {
     return {
       level: 'owner_review_required',
       reason: `Possible irreversible/legal/penalty condition: ${stop.slice(0, 3).join(', ')}`,
+      allowed: false
+    };
+  }
+  if (procurementNoise.length && !website.length && !ai.length && !move.length && !simple.length && !l3.length) {
+    return {
+      level: 'skip_noncore_goods',
+      stream: 'Parked / Non-Core Goods',
+      reason: `Looks like physical goods/equipment procurement, not IIS service work: ${procurementNoise.slice(0, 4).join(', ')}`,
       allowed: false
     };
   }
@@ -470,13 +509,16 @@ function parseLogSummary(text) {
 function parseLeadSummary(text) {
   const leads = text.split(/\r?\n/).map((line) => {
     try { return JSON.parse(line); } catch { return null; }
-  }).filter(Boolean);
+  }).filter(Boolean).map((item) => {
+    const currentClassification = item.lead ? classifyLead(item.lead) : (item.classification || {});
+    return { ...item, currentClassification };
+  });
   return {
     total: leads.length,
-    qualified: leads.filter((l) => l.classification?.allowed).length,
-    review: leads.filter((l) => l.classification?.level === 'review_light').length,
-    skipped: leads.filter((l) => l.classification?.level === 'skip_complex').length,
-    approval: leads.filter((l) => l.classification?.level === 'owner_review_required').length,
+    qualified: leads.filter((l) => l.currentClassification?.allowed).length,
+    review: leads.filter((l) => l.currentClassification?.level === 'review_light').length,
+    skipped: leads.filter((l) => ['skip_complex', 'skip_noncore_goods'].includes(l.currentClassification?.level)).length,
+    approval: leads.filter((l) => l.currentClassification?.level === 'owner_review_required').length,
     hot: leads.filter((l) => l.lead?.hot).length,
     recent: leads.slice(-5)
   };
@@ -694,7 +736,7 @@ function formatLeadBullets(summary) {
   if (!summary.recent.length) return '- No leads recorded yet.';
   return summary.recent.map((item) => {
     const lead = item.lead || {};
-    const cls = item.classification || {};
+    const cls = item.currentClassification || item.classification || {};
     const reason = String(cls.reason || 'no reason').replace('Looks above L1/L2 scope:', 'Looks complex or commitment-heavy:');
     return `- ${cls.level || 'review'}: ${lead.title || 'Untitled'} (${lead.org || 'unknown org'}) - ${reason}${lead.url ? ` - ${lead.url}` : ''}`;
   }).join('\n');
@@ -703,10 +745,21 @@ function formatLeadBullets(summary) {
 function buildOperatingBoard({ hb, repo, logSummary, leadSummary, recentNotes, growthNotes, mcpReport, cleanupBoard, retirementPlan, careReport }) {
   const changed = repo.status ? repo.status.split('\n').filter(Boolean).length : 0;
   const approvalItems = [
-    leadSummary.approval ? `${leadSummary.approval} lead(s) need owner approval before pursuit.` : null,
+    'Direct-contact first-send queue: `WD Numeric Corporate Services`, `Tangs Accounting Services`, and `Global Health Physiotherapy Clinic` are already approved-to-transmit. Next live action is to send them when an email/contact surface is available.',
+    'Jason Brown / Hines follow-up: approved for Friday, 2026-06-12 only if Jason has not replied first. Use `senior-director-state/hines-jason-brown-friday-send-checklist-2026-06-11.md`.',
+    'Approved-to-publish slices: staged operations conversion slice, homepage contact-intake context upgrade, and staged Growth Library conversion slice. Next live action is deploy/publish when the production publish surface is available.',
+    'New local-only overflow conversion slice: `senior-director-state/staged-overflow-conversion-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
+    'New local-only ARIA deployment-path slice: `senior-director-state/staged-aria-conversion-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
+    'New local-only Help Desk Blueprint sample-preview slice: `senior-director-state/staged-helpdesk-blueprint-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
+    'New local-only Website Checklist sample-preview slice: `senior-director-state/staged-website-checklist-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
+    'New local-only Office Move readiness preview slice: `senior-director-state/staged-office-move-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
+    'New local-only AI Workflow Audit preview slice: `senior-director-state/staged-ai-workflow-audit-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
+    'Workspace cleanup posture: summary-only cleanup pass is approved. Destructive cleanup remains blocked.',
+    'Samsung ProCare tender posture: park as no-bid unless a real no-cost compliant OEM/partner path appears.',
+    'RBC supplier registration path: pursue-now approved in principle, but Ahmad must confirm the correct postal code before any `Create Account` or certification step.',
     hb.openclawReadiness?.authExpired ? 'OpenClaw/Claude OAuth is expired; Ahmad or a signed-in desktop session may need to refresh auth.' : null,
-    changed > 120 ? `Repo has ${changed} changed files; deployment grouping should be reviewed before any production publish.` : null,
-    /Retirement Candidates|Approval Required Before|Retiring agents/i.test(`${retirementPlan}\n${cleanupBoard}`) ? 'Workspace steward has cleanup/retirement recommendations; Director should review before any destructive action.' : null
+    changed > 120 ? `Repo has ${changed} changed files; deployment grouping should still be reviewed before any production publish.` : null,
+    /Retirement Candidates|Approval Required Before|Retiring agents/i.test(`${retirementPlan}\n${cleanupBoard}`) ? 'Workspace steward has cleanup/retirement recommendations; destructive action stays blocked until a later keep/archive/delete review.' : null
   ].filter(Boolean);
 
   return [

@@ -212,7 +212,7 @@ const GROWTH_PRODUCTS = [
 ].map(([title, buyer, problem, price]) => ({ title, buyer, problem, price }));
 
 const SEED_CONTACTS = [
-  ['Jason Brown', 'Hines', 'Senior Director at Hines; accepted connection; CIBC Square ecosystem.', 'commercial real estate / enterprise operations', 'accepted', '2026-06-09', 'linkedin', 'Send warm accepted-connection follow-up and attach/offer one-pager only after Ahmad approves final send.'],
+  ['Jason Brown', 'Hines', 'Senior Director at Hines; accepted connection; CIBC Square ecosystem.', 'commercial real estate / enterprise operations', 'accepted', '2026-06-09', 'linkedin', 'Hold until Friday, 2026-06-12 unless he replies first. Use the Friday-ready send checklist for the next send decision.'],
   ['Azim Lila', 'Financial services / digital strategy', 'AI, disruption, financial inclusion; past CIBC Director / Senior Manager Digital Strategy; free message sent.', 'financial services / AI transformation', 'message_sent', '2026-06-09', 'linkedin', 'Follow up in 7 days if no reply.'],
   ['Steve Lariviere', 'Hines', 'Operations Engineer at Hines; CIBC Square operations signal.', 'commercial real estate operations', 'connection_requested', '2026-06-09', 'linkedin', 'Check acceptance before messaging.'],
   ['David Hoffman', 'Hines', 'General Manager - CIBC SQUARE at Hines.', 'commercial real estate operations', 'connection_requested', '2026-06-09', 'linkedin', 'Check acceptance before messaging.'],
@@ -381,6 +381,24 @@ function revenueScoreContact(contact) {
   return score;
 }
 
+function nextMoveLabel(contact) {
+  if (contact.name === 'Jason Brown' && contact.company === 'Hines' && contact.status === 'accepted') {
+    return 'hold until Friday, 2026-06-12 unless he replies first; then use the Friday-ready send checklist';
+  }
+  if (contact.status === 'accepted') return 'prepare/send Ahmad-approved warm follow-up';
+  if (contact.status === 'message_sent') return 'watch for reply, then 7-day follow-up';
+  return 'check acceptance or use visible no-cost LinkedIn action';
+}
+
+function bestLeadNextText(contact) {
+  if (contact.name === 'Jason Brown' && contact.company === 'Hines' && contact.status === 'accepted') {
+    return 'hold until Friday, 2026-06-12 unless he replies first; Friday-ready send checklist is prepared';
+  }
+  if (contact.status === 'accepted') return 'Ahmad-approved warm follow-up';
+  if (contact.status === 'message_sent') return 'watch for reply and prepare 7-day follow-up draft';
+  return 'check acceptance or visible no-cost action only';
+}
+
 function pickOffer(contact) {
   const text = `${contact.company || ''} ${contact.signal || ''} ${contact.segment || ''}`.toLowerCase();
   if (/(hines|cibc square|property|commercial real estate|tenant|construction|move)/.test(text)) return REVENUE_OFFERS.find((offer) => offer.name.startsWith('Office Move'));
@@ -455,7 +473,7 @@ function renderRevenueSprint(contacts, leadQueueEntries, today) {
       `   - Status: ${contact.status}`,
       `   - Best offer: ${offer.name}`,
       `   - Signal: ${contact.signal}`,
-      `   - Next move: ${contact.status === 'accepted' ? 'prepare/send Ahmad-approved warm follow-up' : contact.status === 'message_sent' ? 'watch for reply, then 7-day follow-up' : 'check acceptance or use visible no-cost LinkedIn action'}`
+      `   - Next move: ${nextMoveLabel(contact)}`
     ].join('\n')).join('\n\n') : '- No near-warm contacts above threshold right now.',
     '',
     '## Public Tender / Bid Leads Worth Reviewing',
@@ -699,7 +717,7 @@ function renderCommandUpdate(contacts, leadQueueEntries, today) {
     ...revenueOpps,
     '',
     '## 2. Best lead today',
-    bestLead ? `- ${bestLead.contact.name} (${bestLead.contact.company}) - score ${bestLead.score}. Best offer: ${bestLead.offer.name}. Next: ${bestLead.contact.status === 'accepted' ? 'Ahmad-approved warm follow-up' : bestLead.contact.status === 'message_sent' ? 'watch for reply and prepare 7-day follow-up draft' : 'check acceptance or visible no-cost action only'}.` : '- No qualified lead above threshold.',
+    bestLead ? `- ${bestLead.contact.name} (${bestLead.contact.company}) - score ${bestLead.score}. Best offer: ${bestLead.offer.name}. Next: ${bestLeadNextText(bestLead.contact)}.` : '- No qualified lead above threshold.',
     '',
     '## 3. Best contract/tender today',
     bestTender ? `- ${bestTender.lead.title} - ${bestTender.lead.org}. Close: ${bestTender.lead.close || 'unknown'}. Score: ${bestTender.revenueScore}. Action: prepare bid/no-bid brief before any submission. ${bestTender.lead.url || ''}` : '- No tender lead above threshold.',
@@ -719,7 +737,7 @@ function renderCommandUpdate(contacts, leadQueueEntries, today) {
     '- CEO final-action rule: drafts should be taken as close as possible to the final Send/Connect action, then left for Ahmad approval/click.',
     '',
     '## 8. Proposal drafts prepared',
-    '- Not submitted. Next proposal draft should be for the highest-fit tender or Jason/Hines office-readiness angle after Ahmad approves direction.',
+    '- Not submitted. The Jason Brown / Hines Friday-ready follow-up packet is prepared. Next bid/proposal packaging should focus on the highest-fit tender after Ahmad reviews posture.',
     '',
     '## 9. Risks / approvals needed',
     '- Ahmad approval required before the final irreversible button: Send, Connect when it sends externally, Submit, Apply, Complete, signature/certification, pricing commitment, paid tool, public claim, account creation, production-risk publish, deletion, move, archive, or Git history change.',
@@ -727,8 +745,8 @@ function renderCommandUpdate(contacts, leadQueueEntries, today) {
     '',
     "## 10. Tomorrow's first 3 actions",
     '- Check LinkedIn accepted connections and move any accepted buyer into Obtained Leads.',
-    '- Prepare one tight Ahmad-approved message for Jason Brown around office/property IT readiness or AI help desk blueprint.',
-    '- Build the first Growth Library product outline: AI Help Desk Automation Blueprint, then connect it to ARIA and Shop.',
+    '- If Jason Brown has not replied by Friday, 2026-06-12, use the prepared Hines send checklist for the CEO `Send` / `Hold` decision.',
+    '- Review the staged Website Checklist preview slice and choose publish or hold local only.',
     ''
   ].join('\n');
 }
