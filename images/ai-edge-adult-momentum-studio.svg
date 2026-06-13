@@ -1,0 +1,106 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg2" x1="140" y1="90" x2="1440" y2="920" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#081321"/>
+      <stop offset="0.42" stop-color="#102743"/>
+      <stop offset="1" stop-color="#080A12"/>
+    </linearGradient>
+    <radialGradient id="dawn" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1180 310) rotate(90) scale(340 340)">
+      <stop stop-color="#FFE2AF"/>
+      <stop offset="0.42" stop-color="#D6A355" stop-opacity="0.76"/>
+      <stop offset="1" stop-color="#D6A355" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panel2" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#16335B" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#0B111C" stop-opacity="0.72"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#A2F6FF"/>
+      <stop offset="1" stop-color="#4AA4FF"/>
+    </linearGradient>
+    <linearGradient id="gold2" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFE7B8"/>
+      <stop offset="0.55" stop-color="#D2A35A"/>
+      <stop offset="1" stop-color="#896122"/>
+    </linearGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg2)"/>
+  <rect width="1600" height="1000" fill="url(#dawn)"/>
+
+  <g opacity="0.94">
+    <circle cx="124" cy="110" r="2.2" fill="#FFFFFF"/>
+    <circle cx="216" cy="92" r="1.8" fill="#8FD8FF"/>
+    <circle cx="356" cy="124" r="2.1" fill="#FFFFFF"/>
+    <circle cx="526" cy="86" r="1.7" fill="#B2E7FF"/>
+    <circle cx="730" cy="118" r="2.1" fill="#FFFFFF"/>
+    <circle cx="952" cy="84" r="2.2" fill="#8FD8FF"/>
+    <circle cx="1164" cy="118" r="2.1" fill="#FFFFFF"/>
+    <circle cx="1322" cy="90" r="1.8" fill="#A8D9FF"/>
+    <circle cx="1458" cy="136" r="2.2" fill="#FFFFFF"/>
+  </g>
+
+  <path d="M0 782C160 734 282 722 440 746C598 770 706 834 864 834C1010 834 1124 764 1262 736C1392 710 1490 722 1600 770V1000H0V782Z" fill="#0A1320"/>
+  <path d="M0 840C154 808 288 808 434 824C624 846 742 900 900 900C1038 900 1136 842 1264 820C1390 800 1492 806 1600 840V1000H0V840Z" fill="#0B1019"/>
+
+  <g>
+    <rect x="230" y="176" width="284" height="530" rx="28" fill="#080C14" fill-opacity="0.5" stroke="#A4E9FF" stroke-opacity="0.18"/>
+    <rect x="262" y="226" width="220" height="46" rx="16" fill="url(#panel2)" stroke="#A4E9FF" stroke-opacity="0.28"/>
+    <text x="286" y="255" fill="#F5F7FF" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="2">TODAY'S RHYTHM</text>
+    <g opacity="0.95">
+      <rect x="270" y="308" width="204" height="52" rx="16" fill="#0B1422" fill-opacity="0.78" stroke="#FFDBAD" stroke-opacity="0.18"/>
+      <rect x="286" y="325" width="18" height="18" rx="5" fill="url(#gold2)"/>
+      <path d="M291 334L297 340L307 326" stroke="#0C111B" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="322" y="340" fill="#F0F4FF" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">Lead the project</text>
+      <rect x="270" y="376" width="204" height="52" rx="16" fill="#0B1422" fill-opacity="0.78" stroke="#7FDEFF" stroke-opacity="0.18"/>
+      <rect x="286" y="393" width="18" height="18" rx="5" fill="url(#teal)"/>
+      <path d="M291 402L297 408L307 394" stroke="#0C111B" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="322" y="408" fill="#F0F4FF" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">Care for the team</text>
+      <rect x="270" y="444" width="204" height="52" rx="16" fill="#0B1422" fill-opacity="0.78" stroke="#7FDEFF" stroke-opacity="0.18"/>
+      <rect x="286" y="461" width="18" height="18" rx="5" fill="url(#gold2)"/>
+      <path d="M291 470L297 476L307 462" stroke="#0C111B" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="322" y="476" fill="#F0F4FF" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">Build the next skill</text>
+      <rect x="270" y="512" width="204" height="52" rx="16" fill="#0B1422" fill-opacity="0.78" stroke="#FFDBAD" stroke-opacity="0.18"/>
+      <rect x="286" y="529" width="18" height="18" rx="5" fill="url(#teal)"/>
+      <path d="M291 538L297 544L307 530" stroke="#0C111B" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="322" y="544" fill="#F0F4FF" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">Keep home in order</text>
+    </g>
+  </g>
+
+  <g filter="url(#soft)" opacity="0.24">
+    <ellipse cx="1046" cy="760" rx="180" ry="34" fill="#D4A75A"/>
+  </g>
+
+  <g>
+    <circle cx="1168" cy="314" r="170" fill="#FFD8A4" fill-opacity="0.1"/>
+    <path d="M1110 168L1138 136L1172 156" stroke="#FFD8A4" stroke-opacity="0.5" stroke-width="4" stroke-linecap="round"/>
+    <path d="M1222 170L1254 144L1284 172" stroke="#89DBFF" stroke-opacity="0.46" stroke-width="4" stroke-linecap="round"/>
+    <rect x="924" y="190" width="344" height="170" rx="26" fill="#070A11" fill-opacity="0.34" stroke="#B1D8FF" stroke-opacity="0.14"/>
+    <circle cx="1094" cy="274" r="64" fill="#5BC9FF" fill-opacity="0.12" stroke="#84E8FF" stroke-opacity="0.32"/>
+    <circle cx="1180" cy="274" r="64" fill="#D6A355" fill-opacity="0.1" stroke="#FFDCAE" stroke-opacity="0.32"/>
+    <path d="M1038 274C1062 232 1112 220 1152 244C1182 262 1196 298 1186 332" stroke="#84E8FF" stroke-opacity="0.88" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1128 246C1170 224 1218 236 1246 270C1270 298 1272 340 1254 366" stroke="#FFDCAE" stroke-opacity="0.74" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="1116" cy="302" r="12" fill="#9BEFFF"/>
+    <circle cx="1208" cy="292" r="10" fill="#FFDDA0"/>
+  </g>
+
+  <g>
+    <path d="M990 766C1004 678 1054 620 1118 592C1160 574 1204 576 1244 600C1296 632 1334 692 1350 778L1328 782C1310 708 1278 658 1236 630C1202 608 1162 606 1126 624C1068 652 1026 706 1012 770L990 766Z" fill="#111826"/>
+    <circle cx="1174" cy="548" r="72" fill="#111826"/>
+    <path d="M1132 530C1154 498 1194 486 1228 492C1242 536 1242 590 1218 616C1176 610 1144 584 1132 530Z" fill="#183252"/>
+  </g>
+
+  <g opacity="0.92">
+    <rect x="858" y="650" width="446" height="176" rx="24" fill="#090D14" fill-opacity="0.74" stroke="#D8B165" stroke-opacity="0.24"/>
+    <rect x="888" y="686" width="146" height="14" rx="7" fill="#A3F4FF" fill-opacity="0.82"/>
+    <rect x="888" y="718" width="280" height="12" rx="6" fill="#D6A355" fill-opacity="0.84"/>
+    <rect x="888" y="748" width="222" height="10" rx="5" fill="#C2D8FF" fill-opacity="0.42"/>
+    <rect x="888" y="776" width="176" height="10" rx="5" fill="#C2D8FF" fill-opacity="0.3"/>
+    <rect x="1142" y="700" width="126" height="86" rx="18" fill="#142642" fill-opacity="0.92" stroke="#A2F6FF" stroke-opacity="0.26"/>
+    <path d="M1174 730H1236" stroke="#A2F6FF" stroke-width="6" stroke-linecap="round"/>
+    <path d="M1174 754H1220" stroke="#FFDCA8" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -234,6 +234,34 @@
       related: ['gl-ai-edge-starter', 'gl-helpdesk-blueprint', 'gl-nocode-kit'], bundle: null, upsell: 'aria'
     },
     {
+      id: 'gl-ai-edge-family-studio',
+      title: 'AI Edge Family Learning Studio',
+      blurb: 'A premium guided AI learning track for tutors, parents, and capable students who want safe, imaginative, structured growth instead of scattered screen time.',
+      long: 'AI Edge Family Learning Studio helps adults guide children into better thinking, better questions, stronger writing, clearer research habits, and more confident project-building with AI. It is designed for tutors, homeschool families, enrichment programs, and parents who want AI to feel inspiring, safe, and academically useful.',
+      inside: ['Parent and tutor setup guide', 'Question-building and curiosity prompts for kids', 'Safe-use boundaries for research, writing, and projects', 'Lesson maps for reading, writing, science, and creative work', 'Short project prompts that turn learning into making', 'Secure personal delivery link for ongoing access'],
+      priceCents: 7900, category: 'AI Skills', section: 'guides',
+      audience: ['human'], format: 'Guide + lesson maps + parent/tutor prompts',
+      tags: ['ai for kids learning', 'ai tutor guide', 'parents teaching kids ai', 'tutor ai lesson plans'],
+      seo: ['AI learning for families', 'AI tutor guide for parents', 'how to teach kids AI safely'],
+      free: false, password: true, featured: true, image: '/images/ai-edge-family-learning-studio.svg',
+      preview: null, file: null,
+      related: ['gl-ai-edge-starter', 'gl-prompt-workflows', 'gl-ai-edge-adult-momentum'], bundle: null, upsell: 'service'
+    },
+    {
+      id: 'gl-ai-edge-adult-momentum',
+      title: 'AI Edge Adult Momentum Studio',
+      blurb: 'A premium AI-guided planning and execution system for adults who want to carry meaningful responsibilities with more clarity, calm, and joyful follow-through.',
+      long: 'AI Edge Adult Momentum Studio helps adults use AI to organize work, learning, home admin, creative projects, and personal responsibilities without turning life into another noisy productivity system. It is structured for people who want steadier momentum, better decisions, and more room for meaningful work.',
+      inside: ['Responsibility and energy mapping worksheet', 'AI planning prompts for work, home, and personal projects', 'Decision-support templates for complex weeks', 'Project breakdowns that stay human and realistic', 'Weekly rhythm and reflection structure', 'Secure personal delivery link for ongoing access'],
+      priceCents: 14900, category: 'AI Skills', section: 'guides',
+      audience: ['human', 'business'], format: 'Guide + planning system + prompt pack',
+      tags: ['ai for adults planning', 'ai life organization', 'ai project planning', 'ai responsibility system'],
+      seo: ['AI planning system for adults', 'AI project organization guide', 'use AI for meaningful work'],
+      free: false, password: true, featured: true, image: '/images/ai-edge-adult-momentum-studio.svg',
+      preview: null, file: null,
+      related: ['gl-ai-edge-pro-playbook', 'gl-ai-edge-starter', 'gl-website-checklist'], bundle: null, upsell: 'service'
+    },
+    {
       id: 'gl-book-living-well',
       title: 'The Unstubborn Life — Balance, Mastery & the Natural Path',
       blurb: 'A field manual for living well: emotional control, balance over comfort, building yourself, and legacy.',

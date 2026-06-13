@@ -7,7 +7,7 @@
 export const BUNDLE_ITEMS = {
   'bundle-it-mastery': ['gl-l1-it-bible', 'gl-m365-kb', 'gl-win11-kb', 'gl-outlook-fix'],
   'bundle-ai-automation': ['gl-ai-agent-starter', 'gl-prompt-workflows', 'gl-helpdesk-blueprint', 'gl-nocode-kit'],
-  'bundle-allaccess': ['gl-l1-it-bible', 'gl-m365-kb', 'gl-ai-agent-starter', 'gl-prompt-workflows', 'gl-win11-kb', 'gl-outlook-fix', 'gl-helpdesk-blueprint', 'gl-cyber-basics', 'gl-nocode-kit', 'gl-ai-edge-starter', 'gl-ai-edge-pro-playbook']
+  'bundle-allaccess': ['gl-l1-it-bible', 'gl-m365-kb', 'gl-ai-agent-starter', 'gl-prompt-workflows', 'gl-win11-kb', 'gl-outlook-fix', 'gl-helpdesk-blueprint', 'gl-cyber-basics', 'gl-nocode-kit', 'gl-ai-edge-starter', 'gl-ai-edge-pro-playbook', 'gl-ai-edge-family-studio', 'gl-ai-edge-adult-momentum']
 };
 
 const peekNote = '<div class="peek-cut"><b>This is the 30% preview.</b> The full unlock adds every step, the copy-paste templates, the admin-only procedures, and the AI-readable version. Reply to your receipt to credit this preview toward full access.</div>';
@@ -485,6 +485,169 @@ When you answer:
 </ul>
 <h2>When to move into IIS implementation</h2>
 <p>Move into a scoped sprint when the team has one clear workflow, one responsible owner, and a clear definition of what “working” means. That is the moment where implementation creates leverage instead of confusion.</p>`
+  },
+
+  'gl-ai-edge-family-studio': {
+    title: 'AI Edge Family Learning Studio',
+    format: 'Guide + lesson maps + parent/tutor prompts',
+    peek: `
+<h2>Teach curiosity before tools</h2>
+<p>The strongest AI learning path for children does not begin with hype. It begins with wonder, questions, observation, and safe guidance from an adult who stays present. This studio helps tutors and parents turn AI into a thoughtful learning companion instead of passive entertainment.</p>
+<h2>The family setup lens</h2>
+<ol>
+  <li><b>Pick the role.</b> Parent, tutor, homeschool guide, or enrichment mentor.</li>
+  <li><b>Pick the learner.</b> Reading age, curiosity level, confidence, and interests.</li>
+  <li><b>Pick the outcome.</b> Better questions, clearer writing, stronger research, or a finished project.</li>
+  <li><b>Keep the adult present.</b> The child explores. The adult frames, checks, and reflects.</li>
+</ol>
+${peekNote}`,
+    full: `
+<h2>Teach curiosity before tools</h2>
+<p>AI Edge Family Learning Studio is for adults guiding children into stronger thinking. It keeps the mood imaginative and future-facing while staying grounded in structure, safe use, and real learning outcomes.</p>
+<h2>Who this is for</h2>
+<ul>
+  <li>Tutors who want more engaging lesson flow.</li>
+  <li>Parents buying a premium learning guide for their child.</li>
+  <li>Homeschool and enrichment households building modern study habits.</li>
+  <li>Older children and teens who are ready to build, write, and research with guidance.</li>
+</ul>
+<h2>The family learning framework</h2>
+<ol>
+  <li><b>Wonder</b> - ask what the learner is curious about right now.</li>
+  <li><b>Question</b> - turn that curiosity into a better question.</li>
+  <li><b>Explore</b> - use AI to compare ideas, surface vocabulary, or generate options.</li>
+  <li><b>Make</b> - create something: a story, summary, science note, sketch plan, or mini project.</li>
+  <li><b>Reflect</b> - ask what was learned, what was surprising, and what should be checked.</li>
+</ol>
+<h2>Safe-use rules for adults guiding children</h2>
+<ul>
+  <li>Keep an adult present for sign-in, permissions, and publishing.</li>
+  <li>Use AI to support thinking, not to replace original effort.</li>
+  <li>Verify facts together when using AI for research or homework support.</li>
+  <li>Do not upload private school records, IDs, or sensitive family information.</li>
+  <li>Teach the child to say where AI helped and what was still their own work.</li>
+</ul>
+<h2>Four lesson lanes</h2>
+<h3>1. Reading and understanding</h3>
+<pre>You are helping a student understand a topic clearly.
+Ask one question at a time.
+Use plain language first, then add stronger words after the student understands.
+End by asking the student to explain it back in their own words.</pre>
+<h3>2. Writing and storytelling</h3>
+<pre>Help me turn this idea into a better story.
+Ask about the character, problem, and ending first.
+Then give three possible story directions.
+Do not write the whole story for me unless I ask.
+Help me improve what I write.</pre>
+<h3>3. Science and projects</h3>
+<pre>Help us build a short project plan for this science topic.
+Give materials, steps, one safety note, and what we should observe.
+Keep it simple enough for a child with an adult nearby.</pre>
+<h3>4. Tutor support</h3>
+<pre>You are my tutoring assistant.
+I will tell you the student's age, level, and the topic.
+Help me design a 25-minute session:
+1. warm-up question
+2. main explanation
+3. practice prompt
+4. reflection question
+Keep it encouraging and structured.</pre>
+<h2>Short project ideas</h2>
+<ul>
+  <li>Turn a child's question into a 3-slide explainer.</li>
+  <li>Build a one-page research card on animals, space, or inventions.</li>
+  <li>Create a family reading companion that explains hard words in plain language.</li>
+  <li>Plan a mini presentation where the child teaches back what they learned.</li>
+</ul>
+<h2>Adult reflection prompts</h2>
+<ol>
+  <li>Did the child become more curious or just consume more output?</li>
+  <li>Did AI support thinking, or did it try to replace it?</li>
+  <li>What should the next lesson deepen: vocabulary, structure, confidence, or creativity?</li>
+</ol>
+<h2>When to move up</h2>
+<p>If the family or tutor wants a more personalized structure, move into a guided setup session with IIS. If the learner is already comfortable asking better questions, the next step is project depth, not more novelty.</p>`
+  },
+
+  'gl-ai-edge-adult-momentum': {
+    title: 'AI Edge Adult Momentum Studio',
+    format: 'Guide + planning system + prompt pack',
+    peek: `
+<h2>Carry more with less friction</h2>
+<p>Adults do not need more noise. They need a way to use AI for planning, decision support, project movement, and life administration without losing judgment or joy. This studio turns AI into a calm thinking partner for real responsibility.</p>
+<h2>The momentum lens</h2>
+<ol>
+  <li><b>Name what matters.</b> Work, family, health routines, learning, or creative commitments.</li>
+  <li><b>Map the drag.</b> Where does friction, delay, or mental clutter show up?</li>
+  <li><b>Ask for structure.</b> Use AI to break down, prioritize, and simplify.</li>
+  <li><b>Stay human.</b> Keep decisions, approvals, and values in your hands.</li>
+</ol>
+${peekNote}`,
+    full: `
+<h2>Carry more with less friction</h2>
+<p>AI Edge Adult Momentum Studio is for adults who want to use AI to support meaningful responsibility. It is designed to make planning, learning, home administration, leadership, and project movement feel cleaner and more sustainable.</p>
+<h2>Where this helps most</h2>
+<ul>
+  <li>Busy professionals balancing work and home admin.</li>
+  <li>Founders and operators carrying too many open loops.</li>
+  <li>Adults building a new skill, portfolio, or personal project.</li>
+  <li>People who want more structure without turning life into rigid productivity theater.</li>
+</ul>
+<h2>The adult momentum framework</h2>
+<ol>
+  <li><b>Responsibilities</b> - list what you are truly accountable for.</li>
+  <li><b>Joy sources</b> - identify what work or projects feel energizing when done well.</li>
+  <li><b>Drag points</b> - note what keeps stalling or scattering your attention.</li>
+  <li><b>AI support role</b> - choose where AI should help: planning, sorting, drafting, clarifying, or reflecting.</li>
+  <li><b>Weekly rhythm</b> - build a simple cadence that keeps momentum visible.</li>
+</ol>
+<h2>Prompt patterns for adults</h2>
+<h3>1. Responsibility map</h3>
+<pre>You are my planning assistant.
+Help me organize my current responsibilities.
+First ask me for:
+- my main roles
+- what is time-sensitive
+- what feels heavy
+- what I actually want to move forward this week
+Then give me:
+1. the priorities
+2. the hidden drag points
+3. one calm, realistic sequence for this week</pre>
+<h3>2. Project breakdown</h3>
+<pre>Help me turn this project into a clear path.
+Break it into phases, then the next five actions.
+Show what requires deep focus, what can be delegated, and what should wait.</pre>
+<h3>3. Meaningful routine design</h3>
+<pre>I want a routine that helps me handle responsibility and still feel alive.
+Build a weekly rhythm around work, learning, health, home, and one joyful project.
+Keep it realistic. Do not over-schedule.</pre>
+<h3>4. Decision support</h3>
+<pre>I need help thinking through this choice.
+Summarize the decision, list the tradeoffs, identify what is reversible, and tell me what information is still missing.</pre>
+<h2>Good first uses</h2>
+<ul>
+  <li>Weekly planning with fewer open loops.</li>
+  <li>Breaking down a project that keeps getting postponed.</li>
+  <li>Sorting family, work, and personal commitments into a realistic rhythm.</li>
+  <li>Turning a vague goal into a 30-day learning or build plan.</li>
+</ul>
+<h2>Boundaries that keep this healthy</h2>
+<ul>
+  <li>AI does not replace your judgment, values, or close relationships.</li>
+  <li>Do not use AI to make legal, financial, or medical decisions without proper review.</li>
+  <li>Keep private documents and sensitive records in approved systems only.</li>
+  <li>Review the plan yourself before acting on it.</li>
+</ul>
+<h2>Weekly reflection</h2>
+<ol>
+  <li>What responsibility moved forward?</li>
+  <li>What felt lighter?</li>
+  <li>What still needs a better system?</li>
+  <li>What brought energy or meaning that should stay in the week?</li>
+</ol>
+<h2>When to move up</h2>
+<p>If one workflow is clearly worth building for real, move into an IIS AI workflow sprint. If the need is personal structure, keep the system simple and deepen the rhythm before you add more tools.</p>`
   },
 
   'gl-book-living-well': {

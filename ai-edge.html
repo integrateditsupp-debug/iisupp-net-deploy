@@ -80,6 +80,23 @@
   .bullet{margin:12px 0 0;padding-left:18px;color:var(--muted-2);font-size:12px;line-height:1.8}
   .price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
   .topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .audience-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .audience-card{
+    border:1px solid rgba(197,160,89,.22);border-radius:24px;overflow:hidden;background:
+      linear-gradient(180deg, rgba(18,18,20,.96), rgba(8,8,9,.98));
+    box-shadow:0 20px 60px rgba(0,0,0,.22)
+  }
+  .audience-media{aspect-ratio:16/10;background:#09111c;overflow:hidden;border-bottom:1px solid rgba(197,160,89,.14)}
+  .audience-media img{display:block;width:100%;height:100%;object-fit:cover}
+  .audience-body{padding:20px 20px 22px}
+  .audience-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .audience-pill{
+    display:inline-flex;align-items:center;border:1px solid rgba(197,160,89,.3);border-radius:999px;padding:6px 10px;
+    color:#f1dca7;background:rgba(197,160,89,.06);font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700
+  }
+  .audience-title{margin:0 0 10px;font-family:'Cinzel',serif;font-size:1.2rem;letter-spacing:.08em;text-transform:uppercase}
+  .audience-copy{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+  .audience-list{margin:14px 0 0;padding-left:18px;color:var(--muted-2);font-size:11.5px;line-height:1.82}
   .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
   .cta{
     display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:12px 18px;border-radius:999px;
@@ -90,7 +107,7 @@
   .cta.solid{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#b38728 100%);color:#050505;border-color:transparent}
   .footer-note{max-width:1180px;margin:22px auto 0;padding:0 8px;color:var(--muted-2);font-size:12px;line-height:1.8;text-align:center}
   @media (max-width: 960px){
-    .two-up,.price-grid,.topic-grid{grid-template-columns:1fr}
+    .two-up,.price-grid,.topic-grid,.audience-grid{grid-template-columns:1fr}
     .shell{padding:22px 14px 54px}
     .hero,.section{padding:20px}
   }
@@ -121,10 +138,63 @@
         <span class="strip-pill">Interactive learning</span>
         <span class="strip-pill">Recurring membership</span>
         <span class="strip-pill">Premium deployment</span>
+        <span class="strip-pill">Family learning</span>
+        <span class="strip-pill">Adult momentum</span>
       </div>
       <div class="cta-row">
         <a class="cta solid" href="/health-check.html">Start with the scorecard</a>
         <a class="cta" href="/product.html?id=gl-ai-edge-starter">Open the starter</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Two premium tracks <em>buyers can feel</em></h2>
+      <p>These audience-specific offers sit near the top on purpose. One is built for tutors and parents guiding children with taste, imagination, and safe structure. The other is built for adults using AI to carry real responsibility with more clarity, steadiness, and joy.</p>
+      <div class="audience-grid">
+        <article class="audience-card">
+          <div class="audience-media">
+            <img src="/images/ai-edge-family-learning-studio.svg" alt="AI Edge Family Learning Studio artwork" loading="lazy">
+          </div>
+          <div class="audience-body">
+            <div class="audience-top">
+              <span class="audience-pill">Tutors + Parents</span>
+              <span class="audience-pill">$79 unlock</span>
+            </div>
+            <h3 class="audience-title">AI Edge Family Learning Studio</h3>
+            <p class="audience-copy">A premium guided learning track for tutors, homeschool families, enrichment leaders, and parents buying a high-quality AI learning experience for their kids. It keeps the mood imaginative and future-facing while teaching better questions, better research, better writing, and better project-making.</p>
+            <ul class="audience-list">
+              <li>Lesson maps for reading, writing, science, and creative projects</li>
+              <li>Parent and tutor prompts that keep the adult in the guiding role</li>
+              <li>Safe-use structure so AI supports learning instead of replacing it</li>
+            </ul>
+            <div class="cta-row">
+              <a class="cta solid" href="/product.html?id=gl-ai-edge-family-studio">Open family studio</a>
+              <a class="cta" href="/?contact=1&subject=Request%20Family%20AI%20Learning%20Session&desc=I%20want%20to%20stage%20a%20Family%20AI%20Learning%20Session.%0A%0AParent%20or%20tutor%20name%3A%0AStudent%20age%20or%20range%3A%0ALearning%20goals%3A%0ATopics%20or%20interests%3A%0AHow%20you%20want%20AI%20to%20help%3A">Stage guided session</a>
+            </div>
+          </div>
+        </article>
+        <article class="audience-card">
+          <div class="audience-media">
+            <img src="/images/ai-edge-adult-momentum-studio.svg" alt="AI Edge Adult Momentum Studio artwork" loading="lazy">
+          </div>
+          <div class="audience-body">
+            <div class="audience-top">
+              <span class="audience-pill">Adults + Operators</span>
+              <span class="audience-pill">$149 unlock</span>
+            </div>
+            <h3 class="audience-title">AI Edge Adult Momentum Studio</h3>
+            <p class="audience-copy">A premium AI-guided planning and execution system for adults who want to take on meaningful responsibilities without losing calm or joy. It helps organize work, home administration, learning, projects, and decision-making in a way that feels clean, elevated, and deeply useful.</p>
+            <ul class="audience-list">
+              <li>Responsibility and energy mapping for real weeks, not fantasy schedules</li>
+              <li>AI planning prompts for work, home, personal projects, and skill-building</li>
+              <li>Reflection and rhythm tools that keep momentum human and sustainable</li>
+            </ul>
+            <div class="cta-row">
+              <a class="cta solid" href="/product.html?id=gl-ai-edge-adult-momentum">Open adult studio</a>
+              <a class="cta" href="/?contact=1&subject=Request%20Adult%20Momentum%20AI%20Session&desc=I%20want%20to%20stage%20an%20Adult%20Momentum%20AI%20Session.%0A%0AName%3A%0AMain%20roles%20or%20responsibilities%3A%0ABiggest%20friction%20today%3A%0AProjects%20or%20goals%20I%20want%20to%20move%20forward%3A%0AHow%20I%20want%20AI%20to%20help%3A">Stage guided session</a>
+            </div>
+          </div>
+        </article>
       </div>
     </section>
 
