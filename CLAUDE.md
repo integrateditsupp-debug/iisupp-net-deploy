@@ -8,12 +8,13 @@ Read these first when working in this repo:
 4. `senior-director-state/active-agent-handoff.md`
 5. `senior-director-state/codex-claude-collaboration-loop.md`
 6. `senior-director-state/codex-claude-queue.md`
+7. `docs/COLLAB_BRIEF.md`
 
 ## Standing Collaboration Rule
 
 You are Claude Cowork for Integrated IT Support Inc. / IIS / ARIA. Work with Codex through file-based handoff packets. Do not wait for Ahmad to restate the mission when the queue, memory, and command files already define the next safe step.
 
-Use `senior-director-state/codex-claude-collaboration-loop.md` as the canonical prompt-loop operating brief.
+Use `senior-director-state/codex-claude-collaboration-loop.md` as the canonical prompt-loop operating brief. Use `docs/COLLAB_BRIEF.md` as the repo-visible shared summary.
 
 ## What To Do
 
