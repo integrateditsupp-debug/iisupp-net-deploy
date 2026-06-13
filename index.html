@@ -30,6 +30,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/aria-core.css">
+    <link rel="stylesheet" href="/assets/ai-edge.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         (function(){
@@ -558,6 +559,10 @@
         .chat-context p { margin: 0; color: rgba(255,255,255,0.62); font-size: 11px; line-height: 1.75; }
         .chat-context-list { margin: 10px 0 0; padding-left: 18px; color: rgba(255,255,255,0.55); font-size: 10px; line-height: 1.7; }
         .chat-context-list li + li { margin-top: 4px; }
+        .chat-context-panel { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(197,160,89,0.14); }
+        .chat-context-panel span { display: block; margin-bottom: 5px; color: rgba(241,220,167,0.72); font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; }
+        .chat-context-panel p { color: rgba(255,255,255,0.52); font-size: 10px; line-height: 1.7; }
+        .chat-context-panel .chat-context-list { margin-top: 8px; font-size: 9.5px; color: rgba(255,255,255,0.5); }
         .chat-form .form-group { margin-bottom: 16px; }
         .chat-form label { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 600; }
         .chat-form input, .chat-form textarea { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; transition: border-color 0.2s; box-sizing: border-box; }
@@ -1490,6 +1495,55 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <p class="max-w-2xl mx-auto text-white/40 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-6">We don't just fix problems — we ensure your operations run smoothly and consistently.</p>
             <p class="max-w-xl mx-auto text-white/30 text-[10px] md:text-[11px] tracking-wider uppercase font-light leading-relaxed mb-10">System-driven · outcome-owned · second-order thinking applied before a single change is made.</p>
             <a href="#service-center" class="text-[9px] tracking-[0.5em] uppercase font-bold border-b border-[#c5a059]/40 pb-2 hover:text-[#c5a059] transition">The Analytical Framework</a>
+        </div>
+    </section>
+
+    <section class="ai-edge-band">
+        <div class="ai-edge-shell">
+            <div class="ai-edge-head">
+                <div>
+                    <div class="ai-edge-eyebrow">New revenue lane</div>
+                    <h2 class="ai-edge-title">AI Edge <em>starts small</em>. scales fast.</h2>
+                    <p class="ai-edge-copy">This is the IIS AI learning and implementation lane: a guided first diagnosis, practical paid learning, and higher-trust deployment or support when the buyer is ready.</p>
+                    <p class="ai-edge-copy">It is designed to feel calm, premium, and useful for buyers who want to learn clearly and apply what fits their real work.</p>
+                    <div class="ai-edge-actions">
+                        <a class="ai-edge-btn is-solid" href="/ai-edge.html">Open AI Edge</a>
+                        <a class="ai-edge-btn" href="/product.html?id=gl-ai-edge-starter">See the starter</a>
+                    </div>
+                </div>
+                <div class="ai-edge-side">
+                    <div class="ai-edge-metric">
+                        <h3>Best entry</h3>
+                        <strong>Free to premium</strong>
+                        <p>Cheap information stays cheap. Interactive guidance costs more. Real implementation costs much more.</p>
+                    </div>
+                    <div class="ai-edge-note">
+                        <h3>Why it stands out</h3>
+                        <p>Interactive outputs, saved artifacts, better structure, and a direct path into IIS delivery make this feel more useful than a static AI course.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="ai-edge-grid">
+                <article class="ai-edge-card">
+                    <div class="ai-edge-card-top"><span class="ai-edge-badge">Free lead magnet</span><span class="ai-edge-price">$0</span></div>
+                    <h3>AI Readiness Scorecard</h3>
+                    <p>Fast diagnosis that tells a buyer where AI can save time first.</p>
+                </article>
+                <article class="ai-edge-card">
+                    <div class="ai-edge-card-top"><span class="ai-edge-badge">Low-ticket</span><span class="ai-edge-price">$29-$79</span></div>
+                    <h3>AI Edge Starter</h3>
+                    <p>Short practical learning with templates and simple live examples.</p>
+                </article>
+                <article class="ai-edge-card">
+                    <div class="ai-edge-card-top"><span class="ai-edge-badge">Deployment</span><span class="ai-edge-price">$2.5K+</span></div>
+                    <h3>AI Agent Deployment Sprint</h3>
+                    <p>Working implementation for businesses that want outcomes, not just information.</p>
+                </article>
+            </div>
+            <div class="ai-edge-foot">
+                <div class="ai-edge-foot-note">Need-to-know: guided first step, paid playbooks, premium implementation.</div>
+                <a class="ai-edge-mini-link" href="/ai-edge.html">Open AI Edge</a>
+            </div>
         </div>
     </section>
 
@@ -2562,8 +2616,22 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
       .route-cta:hover { transform: translateY(-1px); border-color: rgba(241,220,167,0.75); box-shadow: 0 10px 24px rgba(0,0,0,0.24); }
       .route-cta-solid { background: linear-gradient(135deg,#b8954f,#d8bd84 50%,#9c7322); color: #1a1407; border-color: transparent; }
       .route-note { color: rgba(243,236,217,0.42); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+      .route-proof-shell { margin-top: 28px; padding-top: 24px; border-top: 1px solid rgba(197,160,89,0.16); }
+      .route-proof-head { display: flex; justify-content: space-between; gap: 18px; align-items: end; margin-bottom: 16px; }
+      .route-proof-head span { color: #f1dca7; font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; }
+      .route-proof-head p { margin: 0; max-width: 620px; color: rgba(243,236,217,0.58); font-size: 12px; line-height: 1.7; text-align: right; }
+      .route-proof-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+      .route-proof-card { border: 1px solid rgba(197,160,89,0.16); border-radius: 14px; padding: 20px 18px; background: linear-gradient(165deg, rgba(255,255,255,0.02), rgba(197,160,89,0.07)); }
+      .route-proof-tag { display: inline-block; margin-bottom: 10px; color: rgba(241,220,167,0.52); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; }
+      .route-proof-card h3 { margin: 0 0 10px; font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: #f3e1b2; }
+      .route-proof-card p { margin: 0 0 14px; color: rgba(243,236,217,0.6); font-size: 12px; line-height: 1.7; }
+      .route-proof-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+      .route-proof-note { color: rgba(243,236,217,0.4); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
       @media (max-width: 900px) {
         .route-grid { grid-template-columns: 1fr; }
+        .route-proof-head { display: block; }
+        .route-proof-head p { max-width: none; margin-top: 8px; text-align: left; }
+        .route-proof-grid { grid-template-columns: 1fr; }
       }
     </style>
 
@@ -2633,6 +2701,41 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
               <span class="route-note">Product-led path</span>
             </div>
           </article>
+        </div>
+        <div class="route-proof-shell">
+          <div class="route-proof-head">
+            <span>Need proof before the call?</span>
+            <p>These three previews support the fastest-close IIS offers and let cautious buyers see real scope before they ask for time.</p>
+          </div>
+          <div class="route-proof-grid">
+            <article class="route-proof-card">
+              <span class="route-proof-tag">Workflow discovery</span>
+              <h3>AI Workflow Audit</h3>
+              <p>Show one real audit section, then let the buyer stage the repetitive process that is wasting time now.</p>
+              <div class="route-proof-actions">
+                <a class="route-cta" href="/downloads/library/ai-workflow-audit-preview.html">View audit preview</a>
+                <a class="route-cta route-cta-solid" href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit request</a>
+              </div>
+            </article>
+            <article class="route-proof-card">
+              <span class="route-proof-tag">M365 cleanup</span>
+              <h3>M365 Tune-Up Preview</h3>
+              <p>Give Microsoft 365 buyers a proof-first route into admin cleanup, security basics, and recurring user-support friction.</p>
+              <div class="route-proof-actions">
+                <a class="route-cta" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View sample preview</a>
+                <a class="route-cta route-cta-solid" href="/?contact=1&amp;subject=Book%20an%20M365%20scoping%20call&amp;desc=I%20want%20to%20book%20a%20short%20M365%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20is%20breaking%20or%20slowing%20us%20down%20in%20M365%3A%0ABest%20time%20to%20reach%20me%3A">Stage M365 scoping call</a>
+              </div>
+            </article>
+            <article class="route-proof-card">
+              <span class="route-proof-tag">Support overflow</span>
+              <h3>Overflow Support Pilot</h3>
+              <p>Let overloaded teams review the pilot shape before they commit to a ticket-pressure conversation with IIS.</p>
+              <div class="route-proof-actions">
+                <a class="route-cta" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View sample preview</a>
+                <a class="route-cta route-cta-solid" href="/?contact=1&amp;subject=Book%20an%20overflow%20support%20scoping%20call&amp;desc=I%20want%20to%20book%20a%20short%20overflow%20support%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhere%20tickets%20are%20piling%20up%3A%0AWhat%20support%20systems%20we%20use%20today%3A%0ABest%20time%20to%20reach%20me%3A">Stage overflow call</a>
+              </div>
+            </article>
+          </div>
         </div>
       </div>
     </section>
@@ -2839,6 +2942,11 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                     <strong id="chatContextTitle">General contact request</strong>
                     <p id="chatContextNote">Tell IIS what feels urgent, what result you want, and the best next step for follow-up.</p>
                     <ul class="chat-context-list" id="chatContextList"></ul>
+                    <div class="chat-context-panel">
+                        <span id="chatContextPromiseLabel">What happens next</span>
+                        <p id="chatContextPromiseNote">IIS reviews this as a scoped request, not a generic inbox note.</p>
+                        <ul class="chat-context-list" id="chatContextPromiseList"></ul>
+                    </div>
                 </div>
                 <form class="chat-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
                     <input type="hidden" name="form-name" value="contact"><input type="hidden" id="cf-subject" name="subject" value="General contact request"><input type="hidden" id="cf-topic" name="request_topic" value=""><input type="hidden" id="cf-entry-page" name="entry_page" value=""><input type="hidden" id="cf-entry-url" name="entry_url" value=""><p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
@@ -3265,7 +3373,7 @@ Thank you,
 
         // Chat widget
         (function() {
-            const fab = document.getElementById('chatFab'); const win = document.getElementById('chatWindow'); const closeBtn = document.getElementById('chatClose'); const form = document.getElementById('contactForm'); const formContainer = document.getElementById('chatFormContainer'); const successContainer = document.getElementById('chatSuccessContainer'); const submitBtn = document.getElementById('chatSubmitBtn'); const subjectField = document.getElementById('cf-subject'); const descField = document.getElementById('cf-description'); const nameField = document.getElementById('cf-name'); const topicField = document.getElementById('cf-topic'); const entryPageField = document.getElementById('cf-entry-page'); const entryUrlField = document.getElementById('cf-entry-url'); const contextBox = document.getElementById('chatContext'); const contextTitle = document.getElementById('chatContextTitle'); const contextNote = document.getElementById('chatContextNote'); const contextList = document.getElementById('chatContextList'); const descLabel = document.getElementById('cf-description-label'); const descNote = document.getElementById('cf-description-note');
+            const fab = document.getElementById('chatFab'); const win = document.getElementById('chatWindow'); const closeBtn = document.getElementById('chatClose'); const form = document.getElementById('contactForm'); const formContainer = document.getElementById('chatFormContainer'); const successContainer = document.getElementById('chatSuccessContainer'); const submitBtn = document.getElementById('chatSubmitBtn'); const subjectField = document.getElementById('cf-subject'); const descField = document.getElementById('cf-description'); const nameField = document.getElementById('cf-name'); const topicField = document.getElementById('cf-topic'); const entryPageField = document.getElementById('cf-entry-page'); const entryUrlField = document.getElementById('cf-entry-url'); const contextBox = document.getElementById('chatContext'); const contextTitle = document.getElementById('chatContextTitle'); const contextNote = document.getElementById('chatContextNote'); const contextList = document.getElementById('chatContextList'); const contextPromiseLabel = document.getElementById('chatContextPromiseLabel'); const contextPromiseNote = document.getElementById('chatContextPromiseNote'); const contextPromiseList = document.getElementById('chatContextPromiseList'); const descLabel = document.getElementById('cf-description-label'); const descNote = document.getElementById('cf-description-note');
             function showChatWidget() { if (!win.classList.contains('hidden')) return; win.classList.remove('hidden'); requestAnimationFrame(() => win.classList.add('visible')); }
             function hideChatWidget() { win.classList.remove('visible'); win.classList.add('hidden'); }
             fab.addEventListener('click', function() { const h = win.classList.contains('hidden'); if (h) { showChatWidget(); } else { hideChatWidget(); } });
@@ -3280,7 +3388,10 @@ Thank you,
                     note: 'This keeps the call scoped around the real business issue instead of a vague quote request.',
                     help: 'Share the problem, what feels urgent, and how IIS should reach you.',
                     button: 'Stage scoping call',
-                    bullets: ['Company or team', 'What feels urgent', 'Best way and time to reach you']
+                    bullets: ['Company or team', 'What feels urgent', 'Best way and time to reach you'],
+                    promiseLabel: 'What happens after you send this',
+                    promiseNote: 'IIS treats this like a short scoped-call request, not a broad sales inquiry or pricing commitment.',
+                    promiseSteps: ['Review the problem and urgency first', 'Reply with the cleanest next conversation path', 'Keep the first call narrow before any larger proposal']
                 },
                 {
                     match: /ai workflow audit/i,
@@ -3289,16 +3400,22 @@ Thank you,
                     note: 'Use this when the pain is repeated manual work, scattered handoffs, or messy intake.',
                     help: 'Name one repetitive workflow, the tools involved, and what a better path should look like.',
                     button: 'Stage audit request',
-                    bullets: ['One repetitive workflow', 'Hours lost or friction today', 'Current tools or systems']
+                    bullets: ['One repetitive workflow', 'Hours lost or friction today', 'Current tools or systems'],
+                    promiseLabel: 'What happens after you send this',
+                    promiseNote: 'IIS reviews the first workflow and uses it to judge whether audit-first or build-first is the safer next move.',
+                    promiseSteps: ['Review the workflow, tools, and wasted time', 'Map the most credible first automation path', 'Reply with a scoped audit or sprint recommendation']
                 },
                 {
-                    match: /overflow support pilot/i,
+                    match: /(overflow support pilot|overflow support scoping call)/i,
                     label: 'What support pressure should IIS review?',
                     placeholder: 'Company:\nTeam size:\nCurrent queue pressure:\nTools used today:\nWhat coverage is needed:\nApproval boundaries or sensitive systems:',
                     note: 'Use this when support load is real and the buyer needs scoped queue relief without a full managed-services decision.',
                     help: 'Share the queue pressure, tools in play, and any boundaries around access or sensitive systems.',
-                    button: 'Stage pilot request',
-                    bullets: ['Queue pressure or ticket backlog', 'Tools used today', 'Coverage needed first']
+                    button: 'Stage support request',
+                    bullets: ['Queue pressure or ticket backlog', 'Tools used today', 'Coverage needed first'],
+                    promiseLabel: 'What happens after you send this',
+                    promiseNote: 'IIS treats this as a scoped queue-relief request and keeps the first response focused on safe pilot coverage.',
+                    promiseSteps: ['Review the current support pressure and systems in scope', 'Check what issue types are safe to cover first', 'Reply with a pilot-shaped next step instead of a broad MSP pitch']
                 },
                 {
                     match: /ai help desk blueprint implementation/i,
@@ -3307,16 +3424,22 @@ Thank you,
                     note: 'Use this when the team needs better intake, stronger escalation notes, and cleaner knowledge reuse.',
                     help: 'Describe the support pain, what systems exist today, and what a better flow should accomplish.',
                     button: 'Stage implementation request',
-                    bullets: ['Current ticket pain', 'Systems used today', 'What better support flow looks like']
+                    bullets: ['Current ticket pain', 'Systems used today', 'What better support flow looks like'],
+                    promiseLabel: 'What happens after you send this',
+                    promiseNote: 'IIS reviews this as a support-flow implementation request, with the first reply anchored to intake, triage, and escalation discipline.',
+                    promiseSteps: ['Review the current ticket and intake friction', 'Identify the first support-flow improvement lane', 'Reply with a scoped implementation next step']
                 },
                 {
-                    match: /m365 security and productivity tune-up/i,
+                    match: /(m365 security and productivity tune-up|m365 scoping call)/i,
                     label: 'What Microsoft 365 friction should be cleaned up first?',
                     placeholder: 'Company:\nTeam size:\nBiggest M365 friction today:\nAdmin areas that feel messy:\nWhat needs to improve first:',
                     note: 'Use this when Microsoft 365 runs the business but the admin and user reality still feels messy.',
                     help: 'Share the biggest M365 friction, the admin areas that feel loose, and what improvement matters first.',
-                    button: 'Stage tune-up request',
-                    bullets: ['Biggest M365 friction', 'Messy admin areas', 'Priority improvement']
+                    button: 'Stage M365 request',
+                    bullets: ['Biggest M365 friction', 'Messy admin areas', 'Priority improvement'],
+                    promiseLabel: 'What happens after you send this',
+                    promiseNote: 'IIS treats this as a cleanup-first Microsoft 365 request and keeps the first reply centered on the biggest admin or user drag.',
+                    promiseSteps: ['Review the stated M365 friction and messy admin areas', 'Judge the fastest cleanup-first next step', 'Reply with a tune-up or short scoping path']
                 },
                 {
                     match: /ai workflow quick-win sprint/i,
@@ -3325,7 +3448,10 @@ Thank you,
                     note: 'Use this when one repetitive process is clearly wasting time and the buyer wants a short implementation-first sprint.',
                     help: 'Name the first process to fix, the tools involved, and the result that would make the sprint worthwhile.',
                     button: 'Stage sprint request',
-                    bullets: ['One repetitive process', 'Hours lost per week', 'Success outcome for the first sprint']
+                    bullets: ['One repetitive process', 'Hours lost per week', 'Success outcome for the first sprint'],
+                    promiseLabel: 'What happens after you send this',
+                    promiseNote: 'IIS reviews this as an implementation-first request and uses the first process named to keep the sprint tight.',
+                    promiseSteps: ['Review the first repetitive process and current tools', 'Check whether the process is sprint-ready now', 'Reply with a scoped sprint or audit-first recommendation']
                 },
                 {
                     match: /website \+ ai intake conversion fix/i,
@@ -3334,7 +3460,10 @@ Thank you,
                     note: 'Use this when the offer is unclear, the CTA path is muddy, or lead capture breaks before a real conversation starts.',
                     help: 'Share the current website path, where buyers fall off, and what the next step should feel like instead.',
                     button: 'Stage conversion fix',
-                    bullets: ['Website or page URL', 'Biggest conversion leak', 'Current CTA or booking path']
+                    bullets: ['Website or page URL', 'Biggest conversion leak', 'Current CTA or booking path'],
+                    promiseLabel: 'What happens after you send this',
+                    promiseNote: 'IIS treats this as a scoped conversion-fix request and keeps the first reply focused on the clearest leak in the current path.',
+                    promiseSteps: ['Review the current page path and conversion leak', 'Identify the first buyer-facing fix worth scoping', 'Reply with a narrow next-step recommendation instead of a vague redesign pitch']
                 }
             ];
             const FALLBACK_PRESET = {
@@ -3343,7 +3472,10 @@ Thank you,
                 note: 'Tell IIS what feels urgent, what result you want, and the best next step for follow-up.',
                 help: 'Include the problem, the timeline, and what a useful next step should look like.',
                 button: 'Submit',
-                bullets: ['What the problem is', 'Any time sensitivity', 'Preferred follow-up path']
+                bullets: ['What the problem is', 'Any time sensitivity', 'Preferred follow-up path'],
+                promiseLabel: 'What happens after you send this',
+                promiseNote: 'IIS reviews the issue, the urgency, and the requested next step before replying.',
+                promiseSteps: ['Review the stated problem and urgency', 'Decide the best scoped follow-up path', 'Reply without assuming a broad commitment']
             };
             function getPreset(subject) {
                 return REQUEST_PRESETS.find(function(preset) { return preset.match.test(subject || ''); }) || FALLBACK_PRESET;
@@ -3355,6 +3487,15 @@ Thank you,
                     const li = document.createElement('li');
                     li.textContent = item;
                     contextList.appendChild(li);
+                });
+            }
+            function renderPromiseList(items) {
+                if (!contextPromiseList) return;
+                contextPromiseList.innerHTML = '';
+                (items || []).forEach(function(item) {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    contextPromiseList.appendChild(li);
                 });
             }
             function applyChatPreset() {
@@ -3372,6 +3513,9 @@ Thank you,
                 if (descNote) descNote.textContent = preset.help;
                 if (submitBtn) submitBtn.textContent = preset.button;
                 renderChecklist(preset.bullets);
+                if (contextPromiseLabel) contextPromiseLabel.textContent = preset.promiseLabel || 'What happens next';
+                if (contextPromiseNote) contextPromiseNote.textContent = preset.promiseNote || FALLBACK_PRESET.promiseNote;
+                renderPromiseList(preset.promiseSteps || FALLBACK_PRESET.promiseSteps);
             }
             const params = new URLSearchParams(window.location.search);
             const requestedSubject = params.get('subject');

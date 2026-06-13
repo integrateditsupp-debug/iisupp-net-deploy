@@ -6,14 +6,13 @@
    the right section/category, audience badge, price, and a working Stripe
    checkout button. This IS the scalable "product creation engine".
 
-   Delivery model (MVP, no-new-backend):
+   Delivery model:
      - free:true            -> preview/download opens directly
      - paid                 -> Stripe Checkout (existing /stripe-checkout priceData)
                                on success Stripe redirects to /unlock.html
-     - password:true        -> after purchase, buyers use the access code IIS
-                               sends them to unlock member/bundle downloads on
-                               /unlock.html (client gate today; harden to a
-                               purchase-verified backend in Phase 2).
+     - digital library item -> /library-download verifies the paid Stripe session
+                               and serves the entitled content through a secure
+                               personal access link.
 
    Prices are STARTING prices in USD cents — edit freely.
    ============================================================================ */
@@ -77,7 +76,7 @@
       tags: ['microsoft 365', 'm365 support', 'help desk knowledge base', 'sop'],
       seo: ['microsoft 365 support guide', 'help desk knowledge base', 'm365 troubleshooting kb'],
       free: false, password: true, featured: true,
-      preview: null, file: null,
+      preview: '/downloads/library/m365-security-productivity-tune-up-preview.html', file: null,
       related: ['gl-outlook-fix', 'gl-l1-it-bible', 'gl-helpdesk-blueprint'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
     {
@@ -179,6 +178,20 @@
       related: ['gl-prompt-workflows', 'gl-ai-agent-starter'], bundle: 'bundle-ai-automation', upsell: 'aria'
     },
     {
+      id: 'gl-meeting-sop-pack',
+      title: 'Meeting-to-SOP AI Pack',
+      blurb: 'Turn scattered meeting notes, missed follow-up, and SOP drift into one cleaner operating rhythm.',
+      long: 'A practical pack for teams that keep losing action items after meetings, juggling notes across tools, and rebuilding the same follow-up from scratch. It gives operators a clear note-to-action structure, meeting-summary prompts, SOP handoff patterns, approval-safe follow-up templates, and a simple path into a real implementation sprint when the team wants the workflow built for them.',
+      inside: ['Meeting note capture and cleanup structure', 'Action-item extraction and owner-routing prompts', 'Follow-up summary and next-step templates', 'SOP handoff pattern for recurring meetings or client work', 'Approval-safe review checklist before anything is sent', 'Simple implementation ladder into a scoped IIS sprint'],
+      priceCents: 9700, category: 'Business Automation', section: 'guides',
+      audience: ['business', 'human'], format: 'PDF + templates + prompt pack',
+      tags: ['meeting notes ai', 'follow-up automation', 'sop handoff', 'meeting summary workflow'],
+      seo: ['AI meeting notes workflow', 'meeting follow-up automation', 'SOP handoff templates'],
+      free: false, password: true, featured: true,
+      preview: '/downloads/library/meeting-to-sop-ai-pack-preview.html', file: null,
+      related: ['gl-prompt-workflows', 'gl-nocode-kit', 'gl-ai-agent-starter'], bundle: null, upsell: 'aria'
+    },
+    {
       id: 'gl-website-checklist',
       title: 'Small Business Website Improvement Checklist',
       blurb: 'A practical buyer-side checklist for weak websites, muddy offers, and intake paths that leak leads.',
@@ -191,6 +204,34 @@
       free: false, password: true, featured: true,
       preview: '/downloads/library/small-business-website-improvement-checklist-preview.html', file: null,
       related: ['gl-ai-agent-starter', 'gl-nocode-kit', 'gl-prompt-workflows'], bundle: null, upsell: 'service'
+    },
+    {
+      id: 'gl-ai-edge-starter',
+      title: 'AI Edge Starter',
+      blurb: 'A polished first step for operators and teams who want to learn AI clearly, ask better questions, and apply one useful win fast.',
+      long: 'AI Edge Starter is the practical foundation layer for buyers who want more than scattered tips but are not ready for a bigger implementation engagement. It combines guided framing, prompt patterns, safe-use rules, and simple applied exercises that make AI feel useful right away.',
+      inside: ['AI opportunity framing worksheet', 'Prompt patterns for everyday business use', 'Safe-first AI usage checklist', 'Simple workflow examples for admin, support, and operations', 'Short action plan for the first useful win', 'Secure personal delivery link for ongoing access'],
+      priceCents: 4900, category: 'AI Skills', section: 'guides',
+      audience: ['business', 'human'], format: 'Guide + templates + worksheet',
+      tags: ['ai starter', 'learn ai for business', 'ai basics for teams', 'practical ai guide'],
+      seo: ['AI starter guide', 'learn AI for business teams', 'practical AI training'],
+      free: false, password: true, featured: true,
+      preview: null, file: null,
+      related: ['gl-prompt-workflows', 'gl-ai-edge-pro-playbook', 'gl-ai-agent-starter'], bundle: null, upsell: 'aria'
+    },
+    {
+      id: 'gl-ai-edge-pro-playbook',
+      title: 'AI Edge Pro Playbook',
+      blurb: 'A deeper operational playbook for teams ready to turn guided learning into stronger systems, repeatable outputs, and a cleaner path to implementation.',
+      long: 'AI Edge Pro Playbook is built for operators who already see the opportunity and want better structure. It helps them define the right use case, design cleaner prompts and assistant patterns, organize rollout boundaries, and move toward a scoped implementation without confusion.',
+      inside: ['Use-case scoring and rollout map', 'Prompt-system patterns for teams', 'Assistant and workflow design templates', 'Approval, risk, and quality-control guardrails', 'Implementation-prep checklist for a real sprint', 'Secure personal delivery link for ongoing access'],
+      priceCents: 19900, category: 'AI Agents & Prompting', section: 'guides',
+      audience: ['business', 'human', 'ai'], format: 'Playbook + templates + rollout map',
+      tags: ['ai playbook', 'ai implementation guide', 'prompt systems for teams', 'ai workflow design'],
+      seo: ['AI implementation playbook', 'prompt systems for teams', 'AI workflow design guide'],
+      free: false, password: true, featured: true,
+      preview: null, file: null,
+      related: ['gl-ai-edge-starter', 'gl-helpdesk-blueprint', 'gl-nocode-kit'], bundle: null, upsell: 'aria'
     },
     {
       id: 'gl-book-living-well',

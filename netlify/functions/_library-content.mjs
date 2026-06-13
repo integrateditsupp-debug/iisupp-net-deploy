@@ -7,7 +7,7 @@
 export const BUNDLE_ITEMS = {
   'bundle-it-mastery': ['gl-l1-it-bible', 'gl-m365-kb', 'gl-win11-kb', 'gl-outlook-fix'],
   'bundle-ai-automation': ['gl-ai-agent-starter', 'gl-prompt-workflows', 'gl-helpdesk-blueprint', 'gl-nocode-kit'],
-  'bundle-allaccess': ['gl-l1-it-bible', 'gl-m365-kb', 'gl-ai-agent-starter', 'gl-prompt-workflows', 'gl-win11-kb', 'gl-outlook-fix', 'gl-helpdesk-blueprint', 'gl-cyber-basics', 'gl-nocode-kit']
+  'bundle-allaccess': ['gl-l1-it-bible', 'gl-m365-kb', 'gl-ai-agent-starter', 'gl-prompt-workflows', 'gl-win11-kb', 'gl-outlook-fix', 'gl-helpdesk-blueprint', 'gl-cyber-basics', 'gl-nocode-kit', 'gl-ai-edge-starter', 'gl-ai-edge-pro-playbook']
 };
 
 const peekNote = '<div class="peek-cut"><b>This is the 30% preview.</b> The full unlock adds every step, the copy-paste templates, the admin-only procedures, and the AI-readable version. Reply to your receipt to credit this preview toward full access.</div>';
@@ -350,6 +350,141 @@ Action: gather yesterday's new emails →
 <pre>SUMMARIZE: "Summarize into urgent / waiting / FYI, 5 lines max."
 EXTRACT: "From this form text, output JSON: name, need, urgency, budget."
 DRAFT: "Write a friendly confirmation referencing their {need}."</pre>`
+  },
+
+  'gl-ai-edge-starter': {
+    title: 'AI Edge Starter',
+    format: 'Guide + templates + worksheet',
+    peek: `
+<h2>Start with one practical question</h2>
+<p>The fastest way to make AI useful is to stop treating it like a magic box and start treating it like a guided assistant for one real problem. This starter pack helps a buyer identify that first problem, frame it clearly, and turn it into a useful first win without getting buried in jargon.</p>
+<h2>The first three questions</h2>
+<ol>
+  <li><b>What keeps repeating?</b> Choose one repeated task, question, or bottleneck.</li>
+  <li><b>What would “better” look like?</b> Faster response, cleaner output, less follow-up, fewer mistakes.</li>
+  <li><b>What stays human?</b> Approval, sensitive judgment, and anything with legal, payment, or reputation risk.</li>
+</ol>
+<p>This is the mindset that keeps AI helpful instead of chaotic.</p>
+${peekNote}`,
+    full: `
+<h2>Start with one practical question</h2>
+<p>AI Edge Starter helps a buyer move from vague curiosity into a clear first use case. The goal is not to “adopt AI” in the abstract. The goal is to reduce one recurring point of drag and learn from that result.</p>
+<h2>The first-use worksheet</h2>
+<ol>
+  <li>Name the repeated task or question.</li>
+  <li>Write down who currently does it.</li>
+  <li>Estimate how often it happens each week.</li>
+  <li>Write what “better” would look like in plain language.</li>
+  <li>Mark what still requires human approval.</li>
+</ol>
+<h2>Good first wins</h2>
+<ul>
+  <li>Email cleanup and draft replies.</li>
+  <li>Meeting recap and action-item extraction.</li>
+  <li>Support question triage and knowledge lookup.</li>
+  <li>Lead-intake cleanup and first response.</li>
+  <li>Document rewriting for clarity and consistency.</li>
+</ul>
+<h2>Prompt pattern: ask, then act</h2>
+<pre>You are my operations assistant.
+Goal: help me clean up one repeated process.
+First, ask me the fewest questions needed to understand:
+- what keeps repeating
+- who is involved
+- what a good result looks like
+- what must still be approved by a person
+Then give me:
+1. the likely first AI use case
+2. a simple workflow
+3. one safe first test</pre>
+<h2>Safe-use rules</h2>
+<ul>
+  <li>Do not send, submit, publish, or promise anything without review.</li>
+  <li>Do not paste private client or employee data into the wrong tool.</li>
+  <li>Keep a short approval checklist for anything external-facing.</li>
+  <li>Measure the result after the first week.</li>
+</ul>
+<h2>The first-win plan</h2>
+<ol>
+  <li>Run the task manually one last time and capture the steps.</li>
+  <li>Use AI to improve the wording, structure, or summarization first.</li>
+  <li>Test on a low-risk case.</li>
+  <li>Keep a before-and-after note.</li>
+  <li>Decide whether the next move is repeat use, deeper playbook work, or an implementation sprint.</li>
+</ol>
+<h2>When to move up</h2>
+<p>If the team wants reusable prompt systems, better guardrails, or a structured rollout path, move into the AI Edge Pro Playbook. If the first use case is already obvious and time-sensitive, move into a scoped IIS sprint instead.</p>`
+  },
+
+  'gl-ai-edge-pro-playbook': {
+    title: 'AI Edge Pro Playbook',
+    format: 'Playbook + templates + rollout map',
+    peek: `
+<h2>From useful experiment to operating system</h2>
+<p>The Pro Playbook is for teams that already see the opportunity and now need structure. The difference at this level is not more hype or more tools. It is better framing, stronger guardrails, clearer rollout steps, and outputs that can survive contact with real work.</p>
+<h2>The four layers of a serious AI rollout</h2>
+<ol>
+  <li><b>Use-case fit</b> — what is worth improving first.</li>
+  <li><b>Prompt system</b> — how the AI should think, ask, and format.</li>
+  <li><b>Approval boundary</b> — what stays human.</li>
+  <li><b>Implementation path</b> — what happens after the proof.</li>
+</ol>
+${peekNote}`,
+    full: `
+<h2>From useful experiment to operating system</h2>
+<p>AI Edge Pro Playbook is for teams moving beyond first use. It helps operators choose the right problem, design better prompt systems, define human approval boundaries, and prepare for a real implementation sprint without overbuilding.</p>
+<h2>Use-case scoring</h2>
+<p>Score each candidate workflow on five factors:</p>
+<ol>
+  <li>Repetition volume</li>
+  <li>Output consistency need</li>
+  <li>Approval sensitivity</li>
+  <li>Time savings potential</li>
+  <li>Ease of rollout</li>
+</ol>
+<p>Start with the workflow that scores high on repetition and time savings, but low to medium on approval sensitivity.</p>
+<h2>Prompt-system template</h2>
+<pre>You are the AI assistant for [team or company].
+Your job is to help with [specific workflow].
+Stay inside this context:
+{approved facts, policies, reference material}
+
+Before acting:
+1. confirm the task
+2. ask for any missing required detail
+3. flag anything that needs human review
+
+When you answer:
+- keep it concise
+- format it for immediate use
+- never invent policy, numbers, or commitments
+- hand off when confidence is low</pre>
+<h2>Approval and guardrails</h2>
+<ul>
+  <li>No autonomous send, publish, payment, legal promise, or security change.</li>
+  <li>Use a short review checklist before anything external-facing leaves the system.</li>
+  <li>Separate safe internal drafts from production actions.</li>
+  <li>Keep a human owner for every workflow.</li>
+</ul>
+<h2>Rollout map</h2>
+<ol>
+  <li>Design the use case and knowledge inputs.</li>
+  <li>Draft the prompt system and output format.</li>
+  <li>Test on historical examples.</li>
+  <li>Soft-launch with approval on every output.</li>
+  <li>Measure quality, speed, and friction.</li>
+  <li>Decide whether to keep, tune, or implement more deeply.</li>
+</ol>
+<h2>Common team patterns</h2>
+<ul>
+  <li>Support triage + knowledge retrieval.</li>
+  <li>Meeting recap + action routing.</li>
+  <li>Client intake + summary cleanup.</li>
+  <li>Operations drafting + internal SOP creation.</li>
+  <li>Website and lead-response improvement.</li>
+</ul>
+<h2>When to move into IIS implementation</h2>
+<p>Move into a scoped sprint when the team has one clear workflow, one responsible owner, and a clear definition of what “working” means. That is the moment where implementation creates leverage instead of confusion.</p>`
   },
 
   'gl-book-living-well': {

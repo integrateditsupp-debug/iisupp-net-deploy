@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c5a059">
+<title>Remote L1-L3 Overflow Support Pilot Preview | Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+:root{
+  --bg:#060606;
+  --panel:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.7);
+  --muted:rgba(255,255,255,.45);
+  --gold:#c5a059;
+  --gold-soft:#f1dca7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(180deg,#080808 0%,#050505 100%);
+}
+a{text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 22px 72px}
+.toplink{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.eyebrow{display:block;margin-bottom:12px;color:var(--gold);font-size:10px;letter-spacing:.32em;text-transform:uppercase;font-weight:800}
+.hero{
+  margin-top:20px;
+  border:1px solid rgba(197,160,89,.24);
+  border-radius:18px;
+  padding:42px 34px;
+  background:
+    radial-gradient(120% 140% at 100% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:26px}
+.logo{font-family:'Cinzel',serif;font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.02;margin:0 0 16px}
+.gold{color:var(--gold-soft)}
+.lede{margin:0 0 18px;color:var(--text);font-size:15px;line-height:1.85;max-width:720px}
+.tagrow{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.tag{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{
+  height:100%;
+  border:1px solid rgba(197,160,89,.18);
+  border-radius:14px;
+  padding:20px 18px;
+  background:rgba(0,0,0,.24);
+}
+.panel p{margin:0 0 12px;color:var(--text);font-size:13px;line-height:1.8}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 18px;
+  border-radius:8px;
+  border:1px solid rgba(197,160,89,.4);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:rgba(197,160,89,.06);
+}
+.btn.primary{background:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%);color:#1a1407;border-color:transparent}
+.grid-two,.grid-three{display:grid;gap:16px;margin-top:24px}
+.grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px 18px 16px;
+  background:var(--panel);
+}
+.card h2,.card h3{margin:0 0 10px;font-family:'Cinzel',serif}
+.card h2{font-size:1.3rem}
+.card h3{font-size:1rem}
+.card p{margin:0;color:var(--text);font-size:13px;line-height:1.8}
+.checklist,.steps{
+  margin:14px 0 0;
+  padding-left:18px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.notice{
+  margin-top:26px;
+  padding:16px 18px;
+  border-left:3px solid var(--gold);
+  background:rgba(197,160,89,.07);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.mini{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width: 900px){
+  .hero-grid,.grid-two,.grid-three{grid-template-columns:1fr}
+  .hero{padding:30px 20px}
+  .wrap{padding:20px 16px 54px}
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="toplink" href="/services.html">Back to services</a>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Sample Preview</span>
+          <h1 class="logo">Remote L1-L3 <span class="gold">Overflow Support Pilot</span></h1>
+          <p class="lede">This preview shows how IIS frames short-term overflow coverage before a buyer commits to a larger support model. The offer stays deliberately tight: absorb agreed ticket pressure, clean up handoff quality, and give the owner a daily view of where support risk is building.</p>
+          <div class="tagrow">
+            <span class="tag">For busy internal IT teams</span>
+            <span class="tag">For MSP overflow</span>
+            <span class="tag">For short scoped pilots</span>
+          </div>
+          <div class="btnrow">
+            <a class="btn primary" href="/?contact=1&subject=Request%20Remote%20L1-L3%20Overflow%20Support%20Pilot&desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20queue%20or%20support%20pressure%3A%0ATools%20used%20today%3A%0AIssue%20types%20safe%20to%20delegate%20first%3A%0AWhat%20a%20successful%20two-week%20pilot%20would%20look%20like%3A">Stage pilot request</a>
+            <a class="btn" href="/product.html?id=gl-helpdesk-blueprint">Open blueprint</a>
+          </div>
+        </div>
+        <aside class="panel">
+          <span class="eyebrow" style="margin-bottom:10px">What this preview proves</span>
+          <p>Buyers can see a concrete overflow-support posture before a live call: IIS works inside agreed ticket lanes, improves note quality and escalation discipline, and keeps privileged or irreversible actions under client approval.</p>
+          <p>This gives the fastest-close IIS service a cleaner trust ladder without publishing final pricing, SLA promises, 24/7 claims, or unsupported bench-depth language.</p>
+          <p class="mini">The live pilot still depends on the buyer's tooling, support mix, approval boundaries, and current queue pressure.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">Inside the pilot</span>
+        <h2>What the buyer actually gets</h2>
+        <ul class="checklist">
+          <li>Short queue or issue-pattern review before live support starts.</li>
+          <li>Scoped overflow coverage for agreed issue types instead of a broad outsourcing leap.</li>
+          <li>Cleaner triage, escalation notes, and recurring-issue visibility.</li>
+          <li>Daily owner summary that highlights open pressure, repeat issues, and follow-up risk.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best fit</span>
+        <h2>Who should start here</h2>
+        <ul class="checklist">
+          <li>Internal IT managers whose senior staff keep getting dragged into routine tickets.</li>
+          <li>MSP owners who need short-term capacity relief without creating a messy subcontracting lane.</li>
+          <li>Operations-heavy businesses with Microsoft 365, user-support, onboarding, and endpoint pressure.</li>
+          <li>Move-in, rollout, or post-change teams that need controlled day-one or hypercare coverage.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:24px">
+      <span class="eyebrow">Sample section</span>
+      <h2>What a two-week pilot reviews and tracks</h2>
+      <p>This is a representative slice of the pilot structure. The live version expands the exact ticket types, hours, and approval boundaries after a short scoping conversation.</p>
+      <div class="grid-three">
+        <div class="card">
+          <h3>Queue pressure</h3>
+          <p>Ticket volume, response lag, repeat user issues, and which issue types are safe to absorb first without forcing risky system changes.</p>
+        </div>
+        <div class="card">
+          <h3>Handoff quality</h3>
+          <p>Escalation notes, missing context, recurring follow-up gaps, and where triage quality is making senior staff redo simple work.</p>
+        </div>
+        <div class="card">
+          <h3>Owner visibility</h3>
+          <p>Daily summary structure, recurring-risk themes, and where the team needs better documentation, workflow cleanup, or automation next.</p>
+        </div>
+      </div>
+      <div class="notice">
+        Privileged access, production changes, tenant-wide actions, and any irreversible work stay under buyer approval. This preview shows pilot posture, not a managed-services replacement promise.
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">What stays scoped</span>
+        <h2>Reserved for live discovery</h2>
+        <ul class="steps">
+          <li>The exact support tools, hours, issue boundaries, and escalation ownership map.</li>
+          <li>Detailed pricing, timeline, and any follow-on monthly coverage posture.</li>
+          <li>Claims around SLA, staffing depth, 24/7 coverage, or regulated-environment support that need explicit proof first.</li>
+          <li>Any client-specific security, compliance, or production-change commitments.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best next move</span>
+        <h2>Use the right lane after the pilot</h2>
+        <ul class="steps">
+          <li>Use the AI Help Desk Blueprint when the deeper problem is triage design, KB structure, or escalation workflow before live support coverage.</li>
+          <li>Use the M365 Security &amp; Productivity Tune-Up when repeated queue pain is really tenant drift, identity cleanup, or collaboration friction.</li>
+          <li>Use the AI Workflow Audit when the real issue is broader operational process waste outside the support desk itself.</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn primary" href="/?contact=1&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

@@ -173,6 +173,10 @@
   to = "/product.html"
   status = 200
 [[redirects]]
+  from = "/ai-edge"
+  to = "/ai-edge.html"
+  status = 200
+[[redirects]]
   from = "/studio"
   to = "/index.html"
   status = 404

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Start Here | Integrated IT Support</title>
+<meta name="description" content="Choose the clearest first step with IIS: scope the work, map the workflow, or start with a practical pack.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/ai-edge.css">
+<style>
+  :root{
+    --bg:#050505;
+    --panel:#0f0f10;
+    --panel-soft:#151515;
+    --card:#121213;
+    --line:rgba(197,160,89,.22);
+    --line-strong:rgba(197,160,89,.46);
+    --gold:#c5a059;
+    --gold-soft:#f1dca7;
+    --text:#f5f1e8;
+    --muted:rgba(245,241,232,.68);
+    --muted-2:rgba(245,241,232,.5);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:
+    radial-gradient(circle at top, rgba(197,160,89,.12), transparent 34%),
+    linear-gradient(180deg, #080808 0%, #050505 100%);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+  }
+  a{color:inherit;text-decoration:none}
+  .site-shell{min-height:100vh;padding:32px 18px 72px}
+  .topbar{
+    max-width:1180px;margin:0 auto 24px;padding:16px 18px;
+    border:1px solid var(--line);border-radius:16px;
+    background:rgba(8,8,8,.72);backdrop-filter:blur(10px);
+    display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;align-items:center;gap:12px;font-family:'Cinzel',serif;
+    letter-spacing:.12em;text-transform:uppercase;
+  }
+  .brand-mark{
+    width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
+    background:linear-gradient(145deg, #f6e6bc 0%, #c5a059 55%, #77541d 100%);
+    color:#050505;font-size:18px;font-weight:700;
+  }
+  .topnav{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .topnav a{padding:8px 0}
+  .hero{
+    max-width:1180px;margin:0 auto;padding:42px 24px 28px;border:1px solid var(--line);
+    border-radius:28px;background:
+      linear-gradient(180deg, rgba(18,18,19,.94), rgba(9,9,10,.98)),
+      radial-gradient(circle at top right, rgba(197,160,89,.18), transparent 28%);
+    position:relative;overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:auto -10% -30% auto;width:320px;height:320px;border-radius:50%;
+    background:radial-gradient(circle, rgba(197,160,89,.18), transparent 70%);
+    pointer-events:none;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;color:var(--gold);
+    font-size:11px;letter-spacing:.34em;text-transform:uppercase;font-weight:700;
+  }
+  .eyebrow::before{
+    content:"";width:42px;height:1px;background:linear-gradient(90deg, transparent, var(--gold));
+  }
+  h1{
+    margin:0 0 18px;font-family:'Cinzel',serif;font-size:clamp(2.3rem,5.8vw,4.7rem);
+    line-height:.98;letter-spacing:.04em;text-transform:uppercase;
+  }
+  .hero p{
+    max-width:760px;margin:0 0 18px;color:var(--muted);font-size:16px;line-height:1.8;
+  }
+  .hero-note{
+    max-width:820px;padding:16px 18px;border:1px solid rgba(197,160,89,.18);border-radius:16px;
+    background:rgba(197,160,89,.05);color:var(--muted);font-size:13px;line-height:1.8;
+  }
+  .section{
+    max-width:1180px;margin:24px auto 0;
+    border:1px solid var(--line);border-radius:24px;background:rgba(9,9,10,.86);
+    padding:24px;
+  }
+  .section h2{
+    margin:0 0 10px;font-family:'Cinzel',serif;font-size:clamp(1.35rem,3.6vw,2.3rem);
+    letter-spacing:.08em;text-transform:uppercase;
+  }
+  .section > p{margin:0 0 22px;color:var(--muted);font-size:15px;line-height:1.8}
+  .path-grid{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;
+  }
+  .path-card,.proof-card,.lane-card{
+    border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg, rgba(21,21,21,.96), rgba(11,11,12,.98));
+    padding:20px;display:flex;flex-direction:column;gap:14px;
+  }
+  .path-top,.proof-top,.lane-top{
+    display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+    color:var(--gold);font-size:10px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;
+  }
+  .path-card h3,.proof-card h3,.lane-card h3{
+    margin:0;font-family:'Cinzel',serif;font-size:1.12rem;letter-spacing:.04em;text-transform:uppercase;line-height:1.3;
+  }
+  .path-card p,.proof-card p,.lane-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.75}
+  .mini-list{
+    margin:0;padding-left:18px;color:var(--muted-2);font-size:12px;line-height:1.75;
+  }
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;
+    padding:11px 16px;border-radius:999px;border:1px solid var(--line-strong);
+    color:var(--gold);background:rgba(197,160,89,.05);font-family:'Cinzel',serif;
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;transition:.2s ease;
+  }
+  .btn:hover{background:var(--gold);color:#050505;border-color:transparent}
+  .btn.solid{background:var(--gold);color:#050505}
+  .proof-grid,.lane-grid{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;
+  }
+  .ladder-grid{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;
+  }
+  .footer-note{
+    max-width:1180px;margin:22px auto 0;padding:0 8px;color:var(--muted-2);font-size:12px;line-height:1.8;text-align:center;
+  }
+  @media (max-width:960px){
+    .path-grid,.proof-grid,.lane-grid,.ladder-grid{grid-template-columns:1fr}
+    .site-shell{padding:22px 14px 54px}
+    .hero,.section{padding:20px}
+  }
+  @media (max-width:640px){
+    .topbar{padding:14px}
+    .topnav{gap:10px;font-size:11px;letter-spacing:.1em}
+    .actions{flex-direction:column}
+    .btn{width:100%}
+  }
+</style>
+</head>
+<body>
+  <div class="site-shell">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">IIS</div>
+        <div>Integrated IT Support</div>
+      </div>
+      <div class="topnav">
+        <a href="/services.html">Services</a>
+        <a href="/shop.html">Shop</a>
+        <a href="/growth-library.html">Growth Library</a>
+        <a href="/aria.html">ARIA</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Start with the right scope</div>
+      <h1>Choose the clearest first move</h1>
+      <p>Not every buyer should land on the same path. Some need a short scoping conversation right away. Others need a workflow mapped before implementation. Others want a practical pack they can review first without committing to a broad rollout.</p>
+      <p>This page keeps those first moves obvious across IIS, ARIA, Services, Shop, and the Growth Library so buyers do not disappear into the wrong lane.</p>
+      <div class="hero-note">Public-safe posture only: no pricing promises, no unsupported SLA claims, no fake partnership posture, and no broad deployment commitment implied by this guide.</div>
+    </section>
+
+    <section class="ai-edge-band">
+      <div class="ai-edge-shell">
+        <div class="ai-edge-head">
+          <div>
+            <div class="ai-edge-eyebrow">AI Edge route</div>
+            <h2 class="ai-edge-title">Start cheap. <em>Go deeper</em> only when ready.</h2>
+            <p class="ai-edge-copy">AI Edge gives buyers a cleaner first step when they want AI help but are not ready for a broad service conversation. Start with a guided first route, move into a practical entry product, then step into more advanced interactive help or deployment.</p>
+            <div class="ai-edge-actions">
+              <a class="ai-edge-btn is-solid" href="/health-check.html">Start the scorecard</a>
+              <a class="ai-edge-btn" href="/product.html?id=gl-ai-edge-starter">Open the starter</a>
+            </div>
+          </div>
+          <div class="ai-edge-side">
+            <div class="ai-edge-metric">
+              <h3>Buyer fit</h3>
+              <strong>Low-friction first</strong>
+              <p>Good for curious buyers, cautious teams, and people who want proof before they buy a larger IIS engagement.</p>
+            </div>
+            <div class="ai-edge-note">
+              <h3>Pricing shape</h3>
+              <p>Basic information should stay cheap. Advanced guidance and implementation should feel clearly more premium.</p>
+            </div>
+          </div>
+        </div>
+        <div class="ai-edge-grid">
+          <article class="ai-edge-card">
+            <div class="ai-edge-card-top"><span class="ai-edge-badge">Free</span><span class="ai-edge-price">$0</span></div>
+            <h3>Readiness Scorecard</h3>
+            <p>Quick answer on where AI can help first.</p>
+          </article>
+          <article class="ai-edge-card">
+            <div class="ai-edge-card-top"><span class="ai-edge-badge">Basic</span><span class="ai-edge-price">$29-$79</span></div>
+            <h3>Starter</h3>
+            <p>Simple practical guidance for immediate value.</p>
+          </article>
+          <article class="ai-edge-card">
+            <div class="ai-edge-card-top"><span class="ai-edge-badge">Advanced</span><span class="ai-edge-price">$149+</span></div>
+            <h3>Interactive playbook</h3>
+            <p>Better outputs, stronger templates, and a route to real deployment.</p>
+          </article>
+        </div>
+        <div class="ai-edge-foot">
+          <div class="ai-edge-foot-note">This route is designed to stay simple, calm, and easy for a buyer to continue.</div>
+          <a class="ai-edge-mini-link" href="/ai-edge.html">See the full ladder</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>The 3 starting paths</h2>
+      <p>These are the three entry points IIS should keep repeating. They cover service-led buyers, audit-led buyers, and proof-first buyers without forcing everyone through the same CTA.</p>
+      <div class="path-grid">
+        <article class="path-card">
+          <div class="path-top"><span>Service-led</span><span>Human conversation</span></div>
+          <h3>Book a scoping call</h3>
+          <p>Use this when the pain is already real: support backlog, messy Microsoft 365 admin, website friction, onboarding issues, office move readiness, or implementation work that needs a quick human read.</p>
+          <ul class="mini-list">
+            <li>Best for urgent or clearly defined service problems</li>
+            <li>Keeps the ask narrow instead of asking for a vague quote</li>
+            <li>Works across support, M365, website, and move-readiness lanes</li>
+          </ul>
+          <div class="actions">
+            <a class="btn solid" href="/?contact=1&amp;subject=Book%20a%20scoping%20call&amp;desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A%0ATools%20or%20systems%20in%20scope%3A">Stage scoping call</a>
+          </div>
+        </article>
+
+        <article class="path-card">
+          <div class="path-top"><span>ARIA-led</span><span>Map first</span></div>
+          <h3>Request the AI Workflow Audit</h3>
+          <p>Use this when the real issue is repeated manual work, scattered documents, messy handoffs, weak intake, or support processes that need the best first automation path identified before implementation.</p>
+          <ul class="mini-list">
+            <li>Best for teams comparing AI use cases before buying delivery</li>
+            <li>Creates one concrete first pilot instead of a broad AI promise</li>
+            <li>Feeds naturally into ARIA setup, workflow work, or implementation help</li>
+          </ul>
+          <div class="actions">
+            <a class="btn solid" href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit request</a>
+            <a class="btn" href="/downloads/library/ai-workflow-audit-preview.html">View audit preview</a>
+          </div>
+        </article>
+
+        <article class="path-card">
+          <div class="path-top"><span>Product-led</span><span>Proof first</span></div>
+          <h3>Start with a practical pack</h3>
+          <p>Use this when the buyer wants to see structure before booking live help. Start with the AI Help Desk Automation Blueprint or another proof-first pack, then move into scoped implementation or support delivery if needed.</p>
+          <ul class="mini-list">
+            <li>Best for self-serve buyers or cautious teams</li>
+            <li>Builds trust before asking for a service conversation</li>
+            <li>Creates a clean product-to-service ladder for ARIA and IIS work</li>
+          </ul>
+          <div class="actions">
+            <a class="btn solid" href="/product.html?id=gl-helpdesk-blueprint">Open the blueprint</a>
+            <a class="btn" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">View sample preview</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Proof-first preview shelf</h2>
+      <p>These previews help buyers judge fit before they buy a pack or ask for a scoped sprint. They are public-safe trust layers, not public pricing or guarantee pages.</p>
+      <div class="proof-grid">
+        <article class="proof-card">
+          <div class="proof-top"><span>Support systems</span><span>ARIA bridge</span></div>
+          <h3>AI Help Desk Automation Blueprint</h3>
+          <p>For IT leaders, MSPs, clinics, schools, and support teams trying to reduce L1 noise and tighten escalation quality before buying live coverage.</p>
+          <div class="actions">
+            <a class="btn solid" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">View sample preview</a>
+            <a class="btn" href="/product.html?id=gl-helpdesk-blueprint">Open product page</a>
+          </div>
+        </article>
+
+        <article class="proof-card">
+          <div class="proof-top"><span>M365 cleanup</span><span>Fast-cash lane</span></div>
+          <h3>M365 Security and Productivity Tune-Up</h3>
+          <p>For buyers who know their tenant is messy but are not ready for a broad MSP commitment. The preview shows the review posture and the first cleanup angles.</p>
+          <div class="actions">
+            <a class="btn solid" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View sample preview</a>
+            <a class="btn" href="/?contact=1&amp;subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&amp;desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up</a>
+          </div>
+        </article>
+
+        <article class="proof-card">
+          <div class="proof-top"><span>Workflow waste</span><span>Build-first lane</span></div>
+          <h3>AI Workflow Quick-Win Sprint</h3>
+          <p>For teams that already know one repetitive process is burning hours and want a short implementation-first sprint instead of another broad AI strategy discussion.</p>
+          <div class="actions">
+            <a class="btn solid" href="/downloads/library/ai-workflow-quick-win-sprint-preview.html">View sprint preview</a>
+            <a class="btn" href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&amp;desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint</a>
+          </div>
+        </article>
+
+        <article class="proof-card">
+          <div class="proof-top"><span>Weak sites</span><span>Conversion path</span></div>
+          <h3>Website and AI Intake Conversion Fix</h3>
+          <p>For businesses whose offer path, CTA logic, or lead capture breaks before the visitor reaches a real conversation.</p>
+          <div class="actions">
+            <a class="btn solid" href="/downloads/library/small-business-website-improvement-checklist-preview.html">View sample preview</a>
+            <a class="btn" href="/?contact=1&amp;subject=Request%20Website%20%2B%20AI%20Intake%20Conversion%20Fix&amp;desc=I%20want%20to%20stage%20a%20Website%20%2B%20AI%20Intake%20Conversion%20Fix.%0A%0ACompany%3A%0AWebsite%20URL%3A%0ABiggest%20conversion%20or%20intake%20friction%20today%3A%0ACurrent%20CTA%20or%20booking%20path%3A%0APages%20that%20need%20the%20most%20help%3A%0AWhat%20a%20better%20next%20step%20should%20look%20like%3A">Stage conversion fix</a>
+          </div>
+        </article>
+
+        <article class="proof-card">
+          <div class="proof-top"><span>Overflow</span><span>Coverage now</span></div>
+          <h3>Remote L1-L3 Overflow Support Pilot</h3>
+          <p>For teams that already feel the queue pressure and need a short, scoped pilot instead of a long managed-services decision.</p>
+          <div class="actions">
+            <a class="btn solid" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View sample preview</a>
+            <a class="btn" href="/?contact=1&amp;subject=Request%20Remote%20L1-L3%20Overflow%20Support%20Pilot&amp;desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20queue%20or%20support%20pressure%3A%0ATools%20used%20today%3A%0AIssue%20types%20safe%20to%20delegate%20first%3A%0AWhat%20a%20successful%20two-week%20pilot%20would%20look%20like%3A">Stage pilot</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Use the lane that matches the buyer</h2>
+      <p>IIS does not need one generic CTA. It needs the right CTA for the pain already visible in the conversation or the page context.</p>
+      <div class="lane-grid">
+        <article class="lane-card">
+          <div class="lane-top"><span>ARIA visitors</span><span>Automation interest</span></div>
+          <h3>Show the AI path without overpromising</h3>
+          <p>ARIA should route buyers into the audit, the blueprint, or a scoped call. It should not imply a broad deployment commitment just because the demo feels strong.</p>
+        </article>
+        <article class="lane-card">
+          <div class="lane-top"><span>Service visitors</span><span>Urgent work</span></div>
+          <h3>Keep the service ask tight</h3>
+          <p>Support, M365, website, and move-readiness buyers should see a scoped conversation path first. The site should make that feel deliberate, not like a fallback contact form.</p>
+        </article>
+        <article class="lane-card">
+          <div class="lane-top"><span>Growth Library buyers</span><span>Proof before services</span></div>
+          <h3>Let the pack earn the service conversation</h3>
+          <p>Preview-first trust layers help cautious buyers self-qualify. The best next step becomes obvious after they see the structure and tone of a real pack section.</p>
+        </article>
+        <article class="lane-card">
+          <div class="lane-top"><span>Partner and overflow leads</span><span>Guardrail-heavy</span></div>
+          <h3>Use the partner-safe lane where needed</h3>
+          <p>For MSP, consultancy, or behind-the-scenes delivery conversations, keep the language scoped and relationship-safe. No reseller or staffing-depth claim should appear by accident.</p>
+          <div class="actions">
+            <a class="btn" href="/downloads/library/msp-partner-overflow-coverage-preview.html">View partner preview</a>
+            <a class="btn" href="/downloads/library/office-move-property-it-readiness-preview.html">View readiness preview</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Make the second step obvious</h2>
+      <p>The first scoped win should not leave the buyer wondering what comes next. These ladders show how a useful first move can turn into a tighter implementation or recurring ownership path without implying a broad commitment too early.</p>
+      <div class="ladder-grid">
+        <article class="lane-card">
+          <div class="lane-top"><span>Audit first</span><span>Then build</span></div>
+          <h3>Map one workflow, then ship one useful sprint</h3>
+          <p>Buyers who start with the AI Workflow Audit usually need one practical build next, not a giant AI roadmap. The clean follow-through is: audit the mess, ship one quick-win workflow, then keep ownership light and deliberate.</p>
+          <ul class="mini-list">
+            <li>Request the AI Workflow Audit</li>
+            <li>Stage the AI Workflow Quick-Win Sprint</li>
+            <li>Preview the Monthly AI Support Plan only after the first workflow lands</li>
+          </ul>
+          <div class="actions">
+            <a class="btn solid" href="/downloads/library/ai-workflow-quick-win-sprint-preview.html">View sprint preview</a>
+            <a class="btn" href="/downloads/library/monthly-ai-support-plan-preview.html">View monthly support</a>
+          </div>
+        </article>
+
+        <article class="lane-card">
+          <div class="lane-top"><span>Support cleanup</span><span>Then coverage</span></div>
+          <h3>Use the blueprint to sharpen overflow coverage</h3>
+          <p>Teams buried in support noise do not need a vague managed-services pitch first. The safer ladder is: prove the intake and escalation structure, run a narrow overflow pilot, then decide whether ongoing monthly ownership is worth it.</p>
+          <ul class="mini-list">
+            <li>Start with the AI Help Desk Automation Blueprint</li>
+            <li>Stage the Remote L1-L3 Overflow Support Pilot</li>
+            <li>Keep the Monthly AI Support Plan as the recurring follow-on only if the pilot earns it</li>
+          </ul>
+          <div class="actions">
+            <a class="btn solid" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View pilot preview</a>
+            <a class="btn" href="/downloads/library/monthly-ai-support-plan-preview.html">View monthly support</a>
+          </div>
+        </article>
+
+        <article class="lane-card">
+          <div class="lane-top"><span>Cleanup or conversion</span><span>Then cadence</span></div>
+          <h3>Turn one scoped fix into steady ownership only if it helps</h3>
+          <p>M365 cleanup, website conversion fixes, and other practical service wins should lead to a clearer next decision, not an automatic retainer ask. The site should show that IIS can scope the first problem, solve it, and only then discuss a lighter monthly support rhythm.</p>
+          <ul class="mini-list">
+            <li>Book a scoping call for the urgent issue</li>
+            <li>Use a tune-up or conversion fix as the first proof point</li>
+            <li>Show the Monthly AI Support Plan as the optional keep-it-owned path afterward</li>
+          </ul>
+          <div class="actions">
+            <a class="btn solid" href="/?contact=1&amp;subject=Book%20a%20scoping%20call&amp;desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A%0ATools%20or%20systems%20in%20scope%3A">Stage scoping call</a>
+            <a class="btn" href="/downloads/library/monthly-ai-support-plan-preview.html">View monthly support</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      This route guide is intentionally practical. It exists to help buyers choose the right first step and to help IIS keep the conversion path narrow, credible, and easy to approve for publish.
+    </div>
+  </div>
+</body>
+</html>

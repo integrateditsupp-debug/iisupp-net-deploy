@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#c5a059">
+<title>AI Edge | Integrated IT Support</title>
+<meta name="description" content="AI Edge by Integrated IT Support: guided AI learning, applied playbooks, implementation support, and a clear path from first question to real workflow change.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/ai-edge.css">
+<style>
+  :root{
+    --bg:#050505;
+    --panel:#0f0f10;
+    --line:rgba(197,160,89,.22);
+    --gold:#c5a059;
+    --gold-soft:#f1dca7;
+    --text:#f5f1e8;
+    --muted:rgba(245,241,232,.68);
+    --muted-2:rgba(245,241,232,.48);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:
+    radial-gradient(circle at top, rgba(197,160,89,.13), transparent 30%),
+    linear-gradient(180deg, #080808 0%, #050505 100%);color:var(--text);font-family:'Inter',sans-serif}
+  a{text-decoration:none;color:inherit}
+  .shell{min-height:100vh;padding:28px 18px 72px}
+  .topbar{
+    max-width:1180px;margin:0 auto 24px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;
+    background:rgba(8,8,8,.74);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-family:'Cinzel',serif;letter-spacing:.12em;text-transform:uppercase}
+  .brand-mark{
+    width:40px;height:40px;border-radius:10px;display:grid;place-items:center;
+    background:linear-gradient(145deg,#f6e6bc 0%,#c5a059 55%,#77541d 100%);color:#050505;font-size:18px;font-weight:700
+  }
+  .nav{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .nav a{padding:8px 0}
+  .hero{
+    max-width:1180px;margin:0 auto 24px;padding:38px 24px 30px;border:1px solid var(--line);border-radius:28px;background:
+      linear-gradient(180deg, rgba(18,18,19,.95), rgba(9,9,10,.98)),
+      radial-gradient(circle at top right, rgba(197,160,89,.18), transparent 28%);position:relative;overflow:hidden
+  }
+  .hero::after{
+    content:"";position:absolute;inset:auto -10% -32% auto;width:360px;height:360px;border-radius:50%;
+    background:radial-gradient(circle, rgba(197,160,89,.18), transparent 70%);pointer-events:none
+  }
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;color:var(--gold);font-size:11px;letter-spacing:.34em;text-transform:uppercase;font-weight:700}
+  .eyebrow::before{content:"";width:42px;height:1px;background:linear-gradient(90deg, transparent, var(--gold))}
+  h1{
+    margin:0 0 16px;font-family:'Cinzel',serif;font-size:clamp(2.4rem,6vw,4.8rem);line-height:.96;letter-spacing:.04em;text-transform:uppercase
+  }
+  h1 em,h2 em{font-style:italic;color:transparent;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#b38728 100%);-webkit-background-clip:text;background-clip:text}
+  .hero p{max-width:780px;margin:0 0 14px;color:var(--muted);font-size:15px;line-height:1.82}
+  .hero-strip{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:20px
+  }
+  .strip-pill{
+    border:1px solid rgba(197,160,89,.26);border-radius:999px;padding:8px 12px;background:rgba(197,160,89,.06);
+    color:#f1dca7;font-size:10px;letter-spacing:.16em;text-transform:uppercase
+  }
+  .section{
+    max-width:1180px;margin:24px auto 0;border:1px solid var(--line);border-radius:24px;background:rgba(9,9,10,.88);padding:24px
+  }
+  .section h2{
+    margin:0 0 10px;font-family:'Cinzel',serif;font-size:clamp(1.4rem,3.6vw,2.5rem);letter-spacing:.08em;text-transform:uppercase
+  }
+  .section > p{margin:0 0 20px;color:var(--muted);font-size:15px;line-height:1.82}
+  .two-up{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}
+  .info-card{
+    border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg, rgba(21,21,21,.96), rgba(11,11,12,.98));padding:20px
+  }
+  .info-card h3{
+    margin:0 0 10px;font-family:'Cinzel',serif;font-size:1rem;letter-spacing:.12em;text-transform:uppercase;color:#f1dca7
+  }
+  .info-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+  .bullet{margin:12px 0 0;padding-left:18px;color:var(--muted-2);font-size:12px;line-height:1.8}
+  .price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+  .cta{
+    display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:12px 18px;border-radius:999px;
+    border:1px solid rgba(197,160,89,.42);background:rgba(197,160,89,.06);color:#c5a059;font-family:'Cinzel',serif;
+    font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;transition:.2s ease
+  }
+  .cta:hover{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#b38728 100%);color:#050505;border-color:transparent}
+  .cta.solid{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#b38728 100%);color:#050505;border-color:transparent}
+  .footer-note{max-width:1180px;margin:22px auto 0;padding:0 8px;color:var(--muted-2);font-size:12px;line-height:1.8;text-align:center}
+  @media (max-width: 960px){
+    .two-up,.price-grid,.topic-grid{grid-template-columns:1fr}
+    .shell{padding:22px 14px 54px}
+    .hero,.section{padding:20px}
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div>AI Edge</div>
+      </div>
+      <div class="nav">
+        <a href="/index.html">Home</a>
+        <a href="/services.html">Services</a>
+        <a href="/shop.html">Shop</a>
+        <a href="/growth-library.html">Growth Library</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Integrated learning and deployment</div>
+      <h1>AI Edge <em>learn fast</em>. deploy for real.</h1>
+      <p>AI Edge is the IIS learning and implementation lane for teams and operators who want to understand AI clearly, apply it safely, and grow into stronger systems over time. It starts with a practical first diagnosis, moves into guided playbooks, and opens into implementation support when the buyer is ready.</p>
+      <p>The structure stays simple on purpose: an easy first step, a stronger paid learning layer, and higher-trust implementation help when real workflow change matters.</p>
+      <div class="hero-strip">
+        <span class="strip-pill">Free lead magnet</span>
+        <span class="strip-pill">Interactive learning</span>
+        <span class="strip-pill">Recurring membership</span>
+        <span class="strip-pill">Premium deployment</span>
+      </div>
+      <div class="cta-row">
+        <a class="cta solid" href="/health-check.html">Start with the scorecard</a>
+        <a class="cta" href="/product.html?id=gl-ai-edge-starter">Open the starter</a>
+      </div>
+    </section>
+
+    <section class="ai-edge-band">
+      <div class="ai-edge-shell">
+        <div class="ai-edge-head">
+          <div>
+            <div class="ai-edge-eyebrow">Why this works</div>
+            <h2 class="ai-edge-title">A high-trust <em>learning path</em></h2>
+            <p class="ai-edge-copy">AI Edge is built around guided learning, structured application, and real business context. Buyers can explore at a comfortable pace, build confidence, and move into deeper help without leaving the IIS ecosystem.</p>
+            <p class="ai-edge-copy">The result feels professional, calm, and useful from the first click instead of overwhelming or overly technical.</p>
+          </div>
+          <div class="ai-edge-side">
+            <div class="ai-edge-metric">
+              <h3>Best fit</h3>
+              <strong>Ops-heavy SMBs</strong>
+              <p>Owners, operations managers, IT leads, support teams, and businesses buried in repetitive work, intake friction, and repeated questions.</p>
+            </div>
+            <div class="ai-edge-note">
+              <h3>Moat</h3>
+              <p>Structured guidance, reusable artifacts, implementation path, and managed follow-through. It feels closer to an operating system for learning and action than a static information product.</p>
+            </div>
+          </div>
+        </div>
+        <div class="ai-edge-grid">
+          <article class="ai-edge-card">
+            <div class="ai-edge-card-top"><span class="ai-edge-badge">Entry</span><span class="ai-edge-price">Free</span></div>
+            <h3>AI Readiness Scorecard</h3>
+            <p>Quick diagnosis that segments the buyer and points them to the right first automation, prompt, support, or document lane.</p>
+            <ul class="ai-edge-list">
+              <li>6-question assessment</li>
+              <li>Personalized opportunity summary</li>
+              <li>Email capture and next-step routing</li>
+            </ul>
+          </article>
+          <article class="ai-edge-card">
+            <div class="ai-edge-card-top"><span class="ai-edge-badge">Foundation</span><span class="ai-edge-price">$29-$79</span></div>
+            <h3>AI Edge Starter</h3>
+            <p>Low-friction practical learning for buyers who want clear direction, strong examples, and a useful first win.</p>
+            <ul class="ai-edge-list">
+              <li>Prompt packs</li>
+              <li>Workflow examples</li>
+              <li>Simple live sandboxes</li>
+            </ul>
+          </article>
+          <article class="ai-edge-card">
+            <div class="ai-edge-card-top"><span class="ai-edge-badge">Applied</span><span class="ai-edge-price">$149-$299</span></div>
+            <h3>AI Edge Pro Playbook</h3>
+            <p>More advanced, more interactive, and built for real operators who want sharper systems, stronger outputs, and a cleaner path to implementation.</p>
+            <ul class="ai-edge-list">
+              <li>Deeper templates</li>
+              <li>Saved outputs and progress</li>
+              <li>Business-ready prompt and agent specs</li>
+            </ul>
+          </article>
+        </div>
+        <div class="ai-edge-foot">
+          <div class="ai-edge-foot-note">Begin with guided learning. Move into applied playbooks. Step into implementation only when the next level is clear.</div>
+          <a class="ai-edge-mini-link" href="/product.html?id=gl-ai-edge-pro-playbook">Open the pro playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ladder">
+      <h2>The price ladder</h2>
+      <p>Keep the front door easy, keep the middle useful, and price the advanced layers according to the depth, support, and operational value they create.</p>
+      <div class="price-grid">
+        <div class="ai-edge-price-card">
+          <h4>Free</h4>
+          <strong>$0</strong>
+          <p>AI Readiness Scorecard and guided first-step routing to capture leads and point buyers in the right direction quickly.</p>
+        </div>
+        <div class="ai-edge-price-card">
+          <h4>Starter</h4>
+          <strong>$29-$79</strong>
+          <p>Practical entry product for buyers who want useful learning, better questions, and a confident first move.</p>
+        </div>
+        <div class="ai-edge-price-card">
+          <h4>Pro Playbook</h4>
+          <strong>$149-$299</strong>
+          <p>Interactive applied guidance with deeper templates, stronger structure, and more business-ready outputs.</p>
+        </div>
+        <div class="ai-edge-price-card">
+          <h4>Membership</h4>
+          <strong>$99-$399/mo</strong>
+          <p>Solo, team, and business access with updated playbooks, template drops, and continuing learning support.</p>
+        </div>
+        <div class="ai-edge-price-card">
+          <h4>Deployment Sprint</h4>
+          <strong>$2.5K-$15K+</strong>
+          <p>Done-with-you AI workflow or agent deployment with setup, handoff, and one practical first outcome in scope.</p>
+        </div>
+        <div class="ai-edge-price-card">
+          <h4>Care Plan</h4>
+          <strong>$500-$2.5K/mo</strong>
+          <p>Ongoing tuning, prompt cleanup, usage review, change requests, and operational stewardship.</p>
+        </div>
+      </div>
+      <div class="cta-row">
+        <a class="cta solid" href="/product.html?id=gl-ai-edge-starter">Buy the starter</a>
+        <a class="cta" href="/product.html?id=gl-ai-edge-pro-playbook">Buy the pro playbook</a>
+        <a class="cta" href="/?contact=1&subject=Request%20AI%20Edge%20consultation&desc=I%20want%20to%20stage%20an%20AI%20Edge%20consultation.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20AI%20or%20workflow%20problem%20today%3A%0AWhat%20we%20want%20to%20improve%20first%3A">Stage a consultation</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>First topics to build</h2>
+      <p>Do not sprawl at launch. Start with the highest-demand practical lanes and make them feel premium, simple, and immediately useful.</p>
+      <div class="topic-grid">
+        <div class="info-card">
+          <h3>Prompt systems for teams</h3>
+          <p>Show teams how to standardize prompting, reduce rework, and get better outputs from ChatGPT, Claude, Gemini, and Copilot.</p>
+          <ul class="bullet">
+            <li>Prompt writing for real work</li>
+            <li>Reusable prompt libraries</li>
+            <li>Quality-control patterns</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>AI workflow automation</h3>
+          <p>Focus on repetitive office, admin, support, and document flows that already waste time every week.</p>
+          <ul class="bullet">
+            <li>Intake and triage</li>
+            <li>Meeting follow-up</li>
+            <li>SOP and document handling</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>AI agents for operations</h3>
+          <p>Turn one repetitive business process into a working assistant or agent path with a clear before-and-after story.</p>
+          <ul class="bullet">
+            <li>Internal assistant patterns</li>
+            <li>Agent specs and recipes</li>
+            <li>SMB deployment examples</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>Support and intake AI</h3>
+          <p>Bridge directly into ARIA and the existing IIS support stack where trust, triage, and follow-through already matter.</p>
+          <ul class="bullet">
+            <li>Support intake audits</li>
+            <li>Help desk prompt systems</li>
+            <li>Knowledge routing and escalation</li>
+          </ul>
+        </div>
+      </div>
+      <div class="cta-row">
+        <a class="cta solid" href="/growth-library.html">Open the Growth Library</a>
+        <a class="cta" href="/services.html">See implementation services</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Recommended build order</h2>
+      <p>Ship the fastest proof and the clearest revenue steps first. Do not wait for the full stack before showing the lane.</p>
+      <div class="two-up">
+        <div class="info-card">
+          <h3>Phase 1</h3>
+          <p>Launch the lead magnet and the cheap starter first so visitors can understand the lane immediately and buy without needing a sales call.</p>
+          <ul class="bullet">
+            <li>AI Readiness Scorecard</li>
+            <li>AI Edge Starter</li>
+            <li>Top-of-page route bands across key pages</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>Phase 2</h3>
+          <p>Then add the stronger interactive middle and the implementation ladder so advanced buyers can spend more without leaving the funnel.</p>
+          <ul class="bullet">
+            <li>AI Edge Pro Playbook</li>
+            <li>Membership tiers</li>
+            <li>Deployment Sprint and Care Plan</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">Digital purchases route through Stripe checkout and secure personal delivery links. Service and implementation lanes stay approval-safe and scoped before any production work begins.</p>
+  </div>
+</body>
+</html>
