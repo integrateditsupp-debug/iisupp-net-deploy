@@ -736,6 +736,13 @@ Local outputs:
 - `senior-director-state/trend-radar/trend-radar-summary.md`
 - `senior-director-state/trend-radar/audit-log.jsonl`
 
+Current research pack:
+
+- `docs/TREND-RADAR-TOP-100-2026.md`
+- This is a directional top-100 long-life demand keyword list, not an exact search-volume ranking.
+- It uses public source anchors, buyer-intent logic, IIS / ARIA fit, and longevity scoring.
+- The local Trend Radar has processed those 100 candidates into review-gated JSON, CSV, Markdown, and ARIA pending-bit queue outputs.
+
 Current limits:
 
 - manual/CSV input only
