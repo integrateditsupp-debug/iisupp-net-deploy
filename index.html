@@ -1352,7 +1352,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
 <body class="overflow-hidden">
 
     <!-- ====== BACKGROUND I SCROLL-MORPH STAGE ====== -->
-    <div class="bg-i-stage" id="bgIStage" aria-hidden="true">
+    <div class="bg-i-stage bg-i-hide" id="bgIStage" aria-hidden="true">
         <div class="bg-i-layer is-active" data-layer="default">
             <img src="/images/logo.png" alt="" aria-hidden="true" draggable="false">
         </div>
@@ -3193,6 +3193,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             let current = 'default';
             function setLayer(name) {
                 if (name === current) return;
+                stage.classList.toggle('bg-i-hide', name === 'default');
                 Object.keys(layers).forEach(function(k) { layers[k].classList.toggle('is-active', k === name); });
                 current = name;
             }
