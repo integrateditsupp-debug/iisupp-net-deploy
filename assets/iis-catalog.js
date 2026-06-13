@@ -61,7 +61,7 @@
       audience: ['human', 'it', 'business'], format: 'PDF + AI-readable KB',
       tags: ['it support', 'help desk', 'troubleshooting', 'level 1', 'desktop support'],
       seo: ['level 1 IT support guide', 'help desk troubleshooting guide', 'desktop support troubleshooting'],
-      free: false, password: true, featured: true,
+      free: false, password: true, featured: true, trendScore: 90,
       preview: '/downloads/library/l1-it-support-bible-preview.html', file: null,
       related: ['gl-win11-kb', 'gl-outlook-fix', 'gl-m365-kb'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
@@ -75,7 +75,7 @@
       audience: ['ai', 'business', 'it'], format: 'SOP PDF + AI-readable KB (JSON)',
       tags: ['microsoft 365', 'm365 support', 'help desk knowledge base', 'sop'],
       seo: ['microsoft 365 support guide', 'help desk knowledge base', 'm365 troubleshooting kb'],
-      free: false, password: true, featured: true,
+      free: false, password: true, featured: true, trendScore: 88,
       preview: '/downloads/library/m365-security-productivity-tune-up-preview.html', file: null,
       related: ['gl-outlook-fix', 'gl-l1-it-bible', 'gl-helpdesk-blueprint'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
@@ -89,7 +89,7 @@
       audience: ['business', 'human'], format: 'PDF + prompt templates',
       tags: ['ai agents for business', 'ai automation small business', 'ai agent templates'],
       seo: ['AI agents for business', 'AI automation for small business', 'AI agent templates'],
-      free: false, password: true, featured: true,
+      free: false, password: true, featured: true, trendScore: 84,
       preview: null, file: null,
       related: ['gl-prompt-workflows', 'gl-nocode-kit', 'gl-helpdesk-blueprint'], bundle: 'bundle-ai-automation', upsell: 'aria'
     },
@@ -103,7 +103,7 @@
       audience: ['human', 'business'], format: 'PDF + prompt library',
       tags: ['prompt engineering for beginners', 'claude ai course', 'chatgpt for work', 'ai tools for productivity'],
       seo: ['prompt engineering for beginners', 'Claude AI course', 'ChatGPT for work', 'AI tools for productivity'],
-      free: false, password: true, featured: true,
+      free: false, password: true, featured: true, trendScore: 88,
       preview: '/downloads/library/prompt-engineering-preview.html', file: null,
       related: ['gl-ai-agent-starter', 'gl-nocode-kit'], bundle: 'bundle-ai-automation', upsell: 'aria'
     },
@@ -117,7 +117,7 @@
       audience: ['human', 'it', 'ai'], format: 'PDF + AI-readable KB',
       tags: ['windows troubleshooting checklist', 'windows 11 support', 'desktop support'],
       seo: ['Windows troubleshooting checklist', 'Windows 11 support guide', 'desktop support troubleshooting'],
-      free: false, password: true, featured: false,
+      free: false, password: true, featured: false, trendScore: 78,
       preview: null, file: null,
       related: ['gl-l1-it-bible', 'gl-outlook-fix'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
@@ -131,7 +131,7 @@
       audience: ['human', 'it'], format: 'PDF + AI-readable KB',
       tags: ['outlook troubleshooting guide', 'outlook not opening', 'outlook fix'],
       seo: ['Outlook troubleshooting guide', 'Outlook not opening fix', 'Outlook help desk guide'],
-      free: false, password: true, featured: false,
+      free: false, password: true, featured: false, trendScore: 74,
       preview: null, file: null,
       related: ['gl-m365-kb', 'gl-win11-kb'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
@@ -145,7 +145,7 @@
       audience: ['business', 'ai', 'it'], format: 'PDF blueprint + diagrams',
       tags: ['help desk automation', 'ai knowledge base for support teams', 'technical support SOP'],
       seo: ['help desk automation', 'AI knowledge base for support teams', 'technical support SOP'],
-      free: false, password: true, featured: true,
+      free: false, password: true, featured: true, trendScore: 86,
       preview: '/downloads/library/ai-help-desk-automation-blueprint-preview.html', file: null,
       related: ['gl-m365-kb', 'gl-ai-agent-starter'], bundle: 'bundle-ai-automation', upsell: 'aria'
     },
@@ -159,7 +159,7 @@
       audience: ['business', 'human'], format: 'PDF + quiz',
       tags: ['cybersecurity awareness training', 'security awareness', 'employee security training'],
       seo: ['cybersecurity awareness training', 'employee security awareness training'],
-      free: false, password: true, featured: false,
+      free: false, password: true, featured: false, trendScore: 62,
       preview: null, file: null,
       related: ['gl-l1-it-bible', 'gl-m365-kb'], bundle: 'bundle-ai-automation', upsell: 'service'
     },
@@ -173,7 +173,7 @@
       audience: ['human', 'business'], format: 'PDF + templates + prompt packs',
       tags: ['no-code automation', 'ai workflow automation', 'business automation scripts'],
       seo: ['no-code automation', 'AI workflow automation', 'business automation scripts'],
-      free: false, password: true, featured: false,
+      free: false, password: true, featured: false, trendScore: 83,
       preview: null, file: null,
       related: ['gl-prompt-workflows', 'gl-ai-agent-starter'], bundle: 'bundle-ai-automation', upsell: 'aria'
     },
@@ -187,7 +187,7 @@
       audience: ['business', 'human'], format: 'PDF + templates + prompt pack',
       tags: ['meeting notes ai', 'follow-up automation', 'sop handoff', 'meeting summary workflow'],
       seo: ['AI meeting notes workflow', 'meeting follow-up automation', 'SOP handoff templates'],
-      free: false, password: true, featured: true,
+      free: false, password: true, featured: true, trendScore: 80,
       preview: '/downloads/library/meeting-to-sop-ai-pack-preview.html', file: null,
       related: ['gl-prompt-workflows', 'gl-nocode-kit', 'gl-ai-agent-starter'], bundle: null, upsell: 'aria'
     },
@@ -201,63 +201,63 @@
       audience: ['business', 'human'], format: 'Checklist PDF + priority worksheet',
       tags: ['website improvement checklist', 'website conversion checklist', 'lead capture checklist', 'ai intake checklist'],
       seo: ['small business website checklist', 'website conversion checklist', 'lead capture improvement checklist'],
-      free: false, password: true, featured: true,
+      free: false, password: true, featured: true, trendScore: 96,
       preview: '/downloads/library/small-business-website-improvement-checklist-preview.html', file: null,
       related: ['gl-ai-agent-starter', 'gl-nocode-kit', 'gl-prompt-workflows'], bundle: null, upsell: 'service'
     },
     {
       id: 'gl-ai-edge-starter',
       title: 'AI Edge Starter',
-      blurb: 'A polished first step for operators and teams who want to learn AI clearly, ask better questions, and apply one useful win fast.',
-      long: 'AI Edge Starter is the practical foundation layer for buyers who want more than scattered tips but are not ready for a bigger implementation engagement. It combines guided framing, prompt patterns, safe-use rules, and simple applied exercises that make AI feel useful right away.',
-      inside: ['AI opportunity framing worksheet', 'Prompt patterns for everyday business use', 'Safe-first AI usage checklist', 'Simple workflow examples for admin, support, and operations', 'Short action plan for the first useful win', 'Secure personal delivery link for ongoing access'],
+      blurb: 'Learn AI fast. Use it right. Get one real win first.',
+      long: 'AI Edge Starter gives you the clean first step. It shows where AI fits, how to ask better, and how to get one useful result without chaos.',
+      inside: ['See where AI fits first', 'Use better prompts for daily work', 'Follow safe-use rules', 'Try simple work examples', 'Pick one fast win', 'Get secure delivery access'],
       priceCents: 4900, category: 'AI Skills', section: 'guides',
       audience: ['business', 'human'], format: 'Guide + templates + worksheet',
       tags: ['ai starter', 'learn ai for business', 'ai basics for teams', 'practical ai guide'],
       seo: ['AI starter guide', 'learn AI for business teams', 'practical AI training'],
-      free: false, password: true, featured: true,
+      free: false, password: true, featured: true, trendScore: 97,
       preview: null, file: null,
       related: ['gl-prompt-workflows', 'gl-ai-edge-pro-playbook', 'gl-ai-agent-starter'], bundle: null, upsell: 'aria'
     },
     {
       id: 'gl-ai-edge-pro-playbook',
       title: 'AI Edge Pro Playbook',
-      blurb: 'A deeper operational playbook for teams ready to turn guided learning into stronger systems, repeatable outputs, and a cleaner path to implementation.',
-      long: 'AI Edge Pro Playbook is built for operators who already see the opportunity and want better structure. It helps them define the right use case, design cleaner prompts and assistant patterns, organize rollout boundaries, and move toward a scoped implementation without confusion.',
-      inside: ['Use-case scoring and rollout map', 'Prompt-system patterns for teams', 'Assistant and workflow design templates', 'Approval, risk, and quality-control guardrails', 'Implementation-prep checklist for a real sprint', 'Secure personal delivery link for ongoing access'],
+      blurb: 'Go deeper. Build cleaner systems. Move toward real rollout.',
+      long: 'AI Edge Pro Playbook is for teams ready for the next step. Pick the right use case. Build better prompt systems. Set clean rollout rules.',
+      inside: ['Score the best use case', 'Build team prompt systems', 'Use assistant templates', 'Set risk and approval rules', 'Prep for a real sprint', 'Get secure delivery access'],
       priceCents: 19900, category: 'AI Agents & Prompting', section: 'guides',
       audience: ['business', 'human', 'ai'], format: 'Playbook + templates + rollout map',
       tags: ['ai playbook', 'ai implementation guide', 'prompt systems for teams', 'ai workflow design'],
       seo: ['AI implementation playbook', 'prompt systems for teams', 'AI workflow design guide'],
-      free: false, password: true, featured: true,
+      free: false, password: true, featured: true, trendScore: 93,
       preview: null, file: null,
       related: ['gl-ai-edge-starter', 'gl-helpdesk-blueprint', 'gl-nocode-kit'], bundle: null, upsell: 'aria'
     },
     {
       id: 'gl-ai-edge-family-studio',
       title: 'AI Edge Family Learning Studio',
-      blurb: 'A premium guided AI learning track for tutors, parents, and capable students who want safe, imaginative, structured growth instead of scattered screen time.',
-      long: 'AI Edge Family Learning Studio helps adults guide children into better thinking, better questions, stronger writing, clearer research habits, and more confident project-building with AI. It is designed for tutors, homeschool families, enrichment programs, and parents who want AI to feel inspiring, safe, and academically useful.',
-      inside: ['Parent and tutor setup guide', 'Question-building and curiosity prompts for kids', 'Safe-use boundaries for research, writing, and projects', 'Lesson maps for reading, writing, science, and creative work', 'Short project prompts that turn learning into making', 'Secure personal delivery link for ongoing access'],
+      blurb: 'For parents, tutors, and kids. Learn AI safe. Ask better. Build more.',
+      long: 'AI Edge Family Learning Studio helps adults guide kids with AI the right way. Better questions. Better writing. Better research. Better projects. Adult stays in charge.',
+      inside: ['Parent and tutor setup', 'Kid question prompts', 'Safe-use rules', 'Lesson maps for core subjects', 'Short project ideas', 'Get secure delivery access'],
       priceCents: 7900, category: 'AI Skills', section: 'guides',
       audience: ['human'], format: 'Guide + lesson maps + parent/tutor prompts',
       tags: ['ai for kids learning', 'ai tutor guide', 'parents teaching kids ai', 'tutor ai lesson plans'],
       seo: ['AI learning for families', 'AI tutor guide for parents', 'how to teach kids AI safely'],
-      free: false, password: true, featured: true, image: '/images/ai-edge-family-learning-studio.svg',
+      free: false, password: true, featured: true, trendScore: 100, image: '/images/ai-edge-family-slides/family-slide-01.jpg',
       preview: null, file: null,
       related: ['gl-ai-edge-starter', 'gl-prompt-workflows', 'gl-ai-edge-adult-momentum'], bundle: null, upsell: 'service'
     },
     {
       id: 'gl-ai-edge-adult-momentum',
       title: 'AI Edge Adult Momentum Studio',
-      blurb: 'A premium AI-guided planning and execution system for adults who want to carry meaningful responsibilities with more clarity, calm, and joyful follow-through.',
-      long: 'AI Edge Adult Momentum Studio helps adults use AI to organize work, learning, home admin, creative projects, and personal responsibilities without turning life into another noisy productivity system. It is structured for people who want steadier momentum, better decisions, and more room for meaningful work.',
-      inside: ['Responsibility and energy mapping worksheet', 'AI planning prompts for work, home, and personal projects', 'Decision-support templates for complex weeks', 'Project breakdowns that stay human and realistic', 'Weekly rhythm and reflection structure', 'Secure personal delivery link for ongoing access'],
+      blurb: 'For adults with real pressure. Plan better. Move faster. Stay calm.',
+      long: 'AI Edge Adult Momentum Studio helps adults use AI for work, home, learning, and projects without noise. Sort the mess. Choose the next move. Keep momentum steady.',
+      inside: ['Map roles and pressure points', 'Use AI planning prompts', 'Break projects into steps', 'Make cleaner decisions', 'Build a weekly rhythm', 'Get secure delivery access'],
       priceCents: 14900, category: 'AI Skills', section: 'guides',
       audience: ['human', 'business'], format: 'Guide + planning system + prompt pack',
       tags: ['ai for adults planning', 'ai life organization', 'ai project planning', 'ai responsibility system'],
       seo: ['AI planning system for adults', 'AI project organization guide', 'use AI for meaningful work'],
-      free: false, password: true, featured: true, image: '/images/ai-edge-adult-momentum-studio.svg',
+      free: false, password: true, featured: true, trendScore: 98, image: '/images/ai-edge-adult-slides/adult-slide-01.jpg',
       preview: null, file: null,
       related: ['gl-ai-edge-pro-playbook', 'gl-ai-edge-starter', 'gl-website-checklist'], bundle: null, upsell: 'service'
     },
@@ -271,7 +271,7 @@
       audience: ['human'], format: 'Book · 9 chapters · PDF',
       tags: ['mindset','self mastery','emotional intelligence','balance','life','discipline'],
       seo: ['emotional intelligence book','self mastery','how to live well','discipline and balance'],
-      free: false, featured: true,
+      free: false, featured: false, comingSoon: true, trendScore: 28,
       preview: null, file: null, related: [], bundle: null, upsell: 'aria'
     }
   ];
@@ -299,11 +299,11 @@
     {
       id: 'bundle-allaccess', title: 'Growth Library — All-Access (12 months)',
       blurb: 'Every current product, plus everything we publish for a year. Built to compound.',
-      items: PRODUCTS.map(function (p) { return p.id; }),
+      items: PRODUCTS.filter(function (p) { return !p.comingSoon; }).map(function (p) { return p.id; }),
       priceCents: 200000, category: 'Premium Bundles', section: 'bundles',
       audience: ['business', 'human', 'ai', 'it'], format: 'All-access · 12 months',
       tags: ['all access', 'membership'], seo: ['IT and AI learning library'],
-      featured: true, password: true, membership: true
+      featured: true, password: true, membership: true, trendScore: 89
     }
   ];
 
@@ -496,6 +496,15 @@
   }
   function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   function byId(id) { return PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE, BOOKS).filter(function (p) { return p.id === id; })[0] || null; }
+  function trendScoreOf(p) { return Number((p && p.trendScore) || 0); }
+  function sortByTrend(list) {
+    return (list || []).slice().sort(function (a, b) {
+      if (!!a.comingSoon !== !!b.comingSoon) return a.comingSoon ? 1 : -1;
+      if (trendScoreOf(a) !== trendScoreOf(b)) return trendScoreOf(b) - trendScoreOf(a);
+      if (!!a.featured !== !!b.featured) return a.featured ? -1 : 1;
+      return String(a.title || '').localeCompare(String(b.title || ''));
+    });
+  }
   function audienceBadges(arr) { return (arr || []).map(function (a) { return '<span class="aud aud-' + a + '">' + (AUD[a] || a) + '</span>'; }).join(''); }
 
   function previewCents(p) { return Math.max(100, Math.round((p.priceCents || 0) * 0.30)); }
@@ -745,15 +754,15 @@
     money: money, money2: money2, esc: esc, byId: byId, buy: buy, order: order, renderCard: renderCard, renderBook: renderBook, previewCents: previewCents,
     bookTotals: bookTotals, bookServices: BOOK_SERVICES, orderBook: orderBook,
     // convenience filters
-    all: function () { return PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE); },
-    forSection: function (sid) { return PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE, BRIDGES).filter(function (p) { return p.section === sid; }); },
+    all: function () { return sortByTrend(PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE)); },
+    forSection: function (sid) { return sortByTrend(PRODUCTS.concat(BUNDLES, INVENTORY, CONCIERGE, BRIDGES).filter(function (p) { return p.section === sid; })); },
     forCategory: function (cat) {
       var list = PRODUCTS.concat(BUNDLES);
-      if (!cat || cat === 'all') return list;
-      if (cat === 'Featured') return list.filter(function (p) { return p.featured; });
-      if (cat === 'For Humans') return list.filter(function (p) { return (p.audience || []).indexOf('human') >= 0; });
-      if (cat === 'For AI Systems') return list.filter(function (p) { return (p.audience || []).indexOf('ai') >= 0; });
-      return list.filter(function (p) { return p.category === cat; });
+      if (!cat || cat === 'all') return sortByTrend(list);
+      if (cat === 'Featured') return sortByTrend(list.filter(function (p) { return p.featured; }));
+      if (cat === 'For Humans') return sortByTrend(list.filter(function (p) { return (p.audience || []).indexOf('human') >= 0; }));
+      if (cat === 'For AI Systems') return sortByTrend(list.filter(function (p) { return (p.audience || []).indexOf('ai') >= 0; }));
+      return sortByTrend(list.filter(function (p) { return p.category === cat; }));
     },
     // Unified keyword search across title/blurb/long/tags/seo/category/audience/format.
     // `opts.physical=false` to exclude devices (e.g. Growth Library = digital only).
@@ -768,7 +777,12 @@
         var score = 0;
         terms.forEach(function (t) { if (hay.indexOf(t) >= 0) score += 1; if (title.indexOf(t) >= 0) score += 2; });
         return { p: p, score: score };
-      }).filter(function (x) { return x.score > 0; }).sort(function (a, b) { return b.score - a.score; }).map(function (x) { return x.p; });
+      }).filter(function (x) { return x.score > 0; }).sort(function (a, b) {
+        if (!!a.p.comingSoon !== !!b.p.comingSoon) return a.p.comingSoon ? 1 : -1;
+        if (b.score !== a.score) return b.score - a.score;
+        if (trendScoreOf(a.p) !== trendScoreOf(b.p)) return trendScoreOf(b.p) - trendScoreOf(a.p);
+        return String(a.p.title || '').localeCompare(String(b.p.title || ''));
+      }).map(function (x) { return x.p; });
     }
   };
 

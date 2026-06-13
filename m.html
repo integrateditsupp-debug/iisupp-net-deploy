@@ -328,17 +328,18 @@
   footer .copy { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); line-height: 1.7; }
 
   /* ===== FAB STACK ===== */
-  .fab-stack { position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 70; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
-  .fab { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,0.45); border: none; cursor: pointer; transition: transform 0.18s var(--ease); }
+  .fab-stack { position: fixed; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 70; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .fab { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 8px 24px rgba(0,0,0,0.45); border: none; cursor: pointer; transition: transform 0.18s var(--ease); }
   .fab:active { transform: scale(0.92); }
   .fab-wa { background: var(--whatsapp); }
-  .fab-wa svg { width: 28px; height: 28px; fill: #fff; }
-  .fab-aria { width: auto; height: 54px; border-radius: 999px; padding: 0 18px; gap: 8px; display: inline-flex; align-items: center; background: linear-gradient(135deg, #0a0805, #1a140a); border: 1px solid var(--line); color: var(--gold-light); font: 700 11px/1 var(--font); letter-spacing: 0.2em; text-transform: uppercase; }
-  .fab-aria .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); animation: pulse 2s infinite; }
+  .fab-wa svg { width: 24px; height: 24px; fill: #fff; }
+  .fab-aria { width: auto; height: 48px; border-radius: 999px; padding: 0 14px; gap: 7px; display: inline-flex; align-items: center; background: linear-gradient(135deg, #0a0805, #1a140a); border: 1px solid var(--line); color: var(--gold-light); font: 700 10px/1 var(--font); letter-spacing: 0.18em; text-transform: uppercase; }
+  .fab-aria .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .fab-chat { background: var(--gold-grad); color: #050505; }
-  .fab-chat svg { width: 24px; height: 24px; }
+  .fab-chat svg { width: 20px; height: 20px; }
   .desktop-pill { position: fixed; left: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 70; background: rgba(8,8,8,0.85); border: 1px solid var(--line-soft); color: var(--txt-dim); padding: 8px 12px; font: 400 9px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; border-radius: 999px; }
+  #service-center { display: none !important; }
 
   /* ===== SERVICE CENTER MODAL ===== */
   .sc-modal { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: none; flex-direction: column; }
@@ -478,8 +479,8 @@
       if (bio) bio.classList.add('bio-fade-out');
       g.classList.add('open');
       document.body.classList.remove('gate-locked');
-      setTimeout(function(){ g.classList.add('hidden-gate'); }, 1000);
-      setTimeout(function(){ g.style.display = 'none'; }, 1400);
+      setTimeout(function(){ g.classList.add('hidden-gate'); }, 720);
+      setTimeout(function(){ g.style.display = 'none'; }, 980);
     };
     var g = document.getElementById('gateway');
     if (!g) { document.body.classList.remove('gate-locked'); return; }
@@ -492,17 +493,17 @@
     function begin(){
       startTimer = setTimeout(function(){
         if (bio) bio.classList.add('bio-visible');
-        if (decode){ decode.textContent = tokens[0]; decodeTimer = setInterval(function(){ idx = (idx+1) % tokens.length; decode.textContent = tokens[idx]; }, 140); }
-      }, 400);
+        if (decode){ decode.textContent = tokens[0]; decodeTimer = setInterval(function(){ idx = (idx+1) % tokens.length; decode.textContent = tokens[idx]; }, 90); }
+      }, 120);
       unlockTimer = setTimeout(function(){
         clearInterval(decodeTimer);
         if (decode){ decode.textContent = 'VERIFIED'; decode.classList.add('bio-decode-hide'); }
         if (unlocked) unlocked.classList.add('bio-show');
-      }, 1500);
-      gateTimer = setTimeout(window.openGateway, 2300);
+      }, 760);
+      gateTimer = setTimeout(window.openGateway, 980);
     }
     if (document.readyState === 'complete') begin(); else window.addEventListener('load', begin);
-    setTimeout(function(){ if (!g.classList.contains('open')) window.openGateway(); }, 4000); // failsafe
+    setTimeout(function(){ if (!g.classList.contains('open')) window.openGateway(); }, 2200); // failsafe
   })();
 </script>
 
@@ -516,7 +517,7 @@
     <span class="brand-txt"><span class="l1">Integrated IT Support</span><span class="l2">A Distinguished Network</span></span>
   </a>
   <div class="hdr-actions">
-    <a href="#service-center" class="hdr-sc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Service</a>
+    <a href="/ai-edge.html" class="hdr-sc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18 12 6l8 12"/><path d="M7 14h10"/></svg>AI Edge</a>
     <button class="menu-btn" onclick="toggleMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
   </div>
 </header>
@@ -532,8 +533,8 @@
   <a href="/shop.html" class="acc" onclick="toggleMenu()">Shop</a>
   <a href="/growth-library.html" class="acc" onclick="toggleMenu()">Growth Library</a>
   <div class="nav-sep"></div>
+  <a href="/ai-edge.html" class="acc" onclick="toggleMenu()">AI Edge</a>
   <a href="/aria.html" class="acc" onclick="toggleMenu()">ARIA</a>
-  <a href="#service-center" onclick="toggleMenu()">Service Center</a>
   <div class="nav-sep"></div>
   <a href="#aria-demo" onclick="toggleMenu()">ARIA Demo</a>
   <a href="#portfolio" onclick="toggleMenu()">Portfolio</a>
@@ -551,7 +552,7 @@
     <h1 class="reveal" style="--rd:80ms;">Integrated IT Support<span class="accent">Preventative Aid</span></h1>
     <p class="lead reveal" style="--rd:160ms;">We don't just fix problems — we ensure your operations run smoothly and consistently.</p>
     <p class="sub reveal" style="--rd:220ms;">System-driven · outcome-owned · second-order thinking applied before a single change is made.</p>
-    <a href="#service-center" class="hero-cta reveal" style="--rd:280ms;">The Analytical Framework</a>
+    <a href="/ai-edge.html" class="hero-cta reveal" style="--rd:280ms;">Open AI Edge</a>
   </section>
 
   <!-- ===== SERVICE CENTER ===== -->
@@ -694,14 +695,14 @@
                 <ul>
                   <li>Everything in Tiers 1 &amp; 2</li>
                   <li>24/7 monitoring &amp; incident response</li>
-                  <li>Major Incident Management — RBC &amp; Raymond James standard</li>
+                  <li>Major Incident Management — banking and provincial-health standard</li>
                   <li>Six Sigma process auditing · quarterly</li>
                   <li>PHIPA · PIPEDA · SOC-aligned compliance docs</li>
                   <li>SharePoint &amp; Microsoft 365 architecture support</li>
                   <li>Monthly C-suite IT risk &amp; roadmap briefing</li>
                   <li>Named senior analyst permanently assigned</li>
                 </ul>
-                <div class="deck-positioning">The same operational standard maintained inside Raymond James trading floors and Ontario Health provincial systems. You are not hiring an IT company — you are hiring the person who kept those organizations running when failure was not an option.</div>
+                <div class="deck-positioning">The same operational discipline maintained inside enterprise banking floors and Ontario Health provincial systems. You are not hiring a generic IT company — you are hiring the operator who kept high-accountability environments running when failure was not an option.</div>
                 <a href="#" class="deck-cta" data-email-template="tier3">✉ Email to Inquire</a>
                 <button type="button" class="deck-cta-buy" data-buy-options='{"title":"Tier 3 — Enterprise Operations","options":[{"id":"tier3-deposit","name":"Tier 3 · Deposit to start","price":"10000.00","description":"Deposit against Tier 3 · Enterprise Operations monthly retainer"},{"id":"tier3-first-month","name":"Tier 3 · First Month (lower tier)","price":"30000.00","description":"Tier 3 first-month retainer at lower bound ($30,000)"},{"id":"tier3-quote","name":"Request Custom Quote","quote":true}]}'>Purchase · Deposit or Month 1</button>
                 <div class="deck-pay-note">Payments confirm purchase request. Final service scope may require confirmation before work begins.</div>

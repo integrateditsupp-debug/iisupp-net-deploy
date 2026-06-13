@@ -34,6 +34,12 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
 .cat-card .c-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:6px}
 .cat-card .price{font-family:'Cinzel',serif;font-size:16px;color:transparent;background:var(--luxury-gold);-webkit-background-clip:text;background-clip:text}.cat-card .price.free{color:#9fe7c7;background:none;-webkit-background-clip:initial}
 .c-actions{display:flex;gap:6px}.cat-card .c-btn{padding:8px 12px;font-size:8px;letter-spacing:.18em}
+.hero-media-stack{position:relative;margin:0 0 24px;border:1px solid rgba(197,160,89,.18);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(15,18,27,.86),rgba(7,8,11,.96));aspect-ratio:16/9}
+.hero-media-stack .promo-video,.hero-media-stack .slide-frame,.hero-media-stack .slide-frame img{position:absolute;inset:0;width:100%;height:100%}
+.hero-media-stack .promo-video{object-fit:cover;opacity:.5}
+.hero-media-stack .slide-frame{background:linear-gradient(180deg,rgba(6,9,18,.05),rgba(6,9,18,.55))}
+.hero-media-stack .slide-frame img{object-fit:cover;opacity:.96;transition:opacity .7s ease, transform 6s ease;transform:scale(1.02)}
+.hero-media-stack .media-pill{position:absolute;left:18px;bottom:18px;z-index:2;padding:8px 12px;border-radius:999px;border:1px solid rgba(241,220,167,.34);background:rgba(6,9,18,.66);color:#f1dca7;font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
 @media(max-width:640px){nav{padding:14px 16px}nav>a{gap:10px!important;min-width:0}nav>a .logo-text{font-size:12px!important;letter-spacing:.16em!important;line-height:1.25}main#product{padding:116px 16px 70px!important}main#product h1{font-size:clamp(1.65rem,9vw,2.2rem)!important;line-height:1.12!important}main#product h2{font-size:1.35rem!important;line-height:1.25!important}main#product [style*="grid-template-columns:repeat(auto-fit"]{grid-template-columns:1fr!important;gap:10px!important}main#product [style*="padding:22px 24px"]{padding:18px 16px!important;border-radius:10px!important}.cat-card{padding:16px}.cat-card .c-media{margin:-16px -16px 4px;height:120px}.cat-card .c-top{gap:5px}.cat-card h4{font-size:12px;line-height:1.35}.cat-card .c-foot{align-items:flex-start;flex-direction:column}.cat-card .c-actions,.c-actions{width:100%;flex-direction:column}.c-btn{width:100%;min-height:42px;padding:12px 14px;font-size:9px;letter-spacing:.1em;text-align:center}.aud{font-size:7px;letter-spacing:.13em}.cat-card .fmt{margin-left:0}}
 </style>
   <link rel="canonical" href="https://iisupp.net/product">
@@ -62,16 +68,69 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
   var id=new URLSearchParams(location.search).get('id');
   var p=id&&IIS_CATALOG.byId(id);
   var root=document.getElementById('product');
+  var mediaSets = {
+    'gl-ai-edge-family-studio': {
+      pill: 'Family learning',
+      poster: '/images/ai-edge-family-slides/family-slide-01.jpg',
+      slides: ['/images/ai-edge-family-slides/family-slide-01.jpg','/images/ai-edge-family-slides/family-slide-02.jpg','/images/ai-edge-family-slides/family-slide-03.jpg','/images/ai-edge-family-slides/family-slide-04.jpg','/images/ai-edge-family-slides/family-slide-05.jpg','/images/ai-edge-family-slides/family-slide-06.jpg','/images/ai-edge-family-slides/family-slide-07.jpg','/images/ai-edge-family-slides/family-slide-08.jpg','/images/ai-edge-family-slides/family-slide-09.jpg','/images/ai-edge-family-slides/family-slide-10.jpg']
+    },
+    'gl-ai-edge-adult-momentum': {
+      pill: 'Adult momentum',
+      poster: '/images/ai-edge-adult-slides/adult-slide-01.jpg',
+      slides: ['/images/ai-edge-adult-slides/adult-slide-01.jpg','/images/ai-edge-adult-slides/adult-slide-02.jpg','/images/ai-edge-adult-slides/adult-slide-03.jpg','/images/ai-edge-adult-slides/adult-slide-04.jpg','/images/ai-edge-adult-slides/adult-slide-05.jpg','/images/ai-edge-adult-slides/adult-slide-06.jpg','/images/ai-edge-adult-slides/adult-slide-07.jpg','/images/ai-edge-adult-slides/adult-slide-08.jpg','/images/ai-edge-adult-slides/adult-slide-09.jpg','/images/ai-edge-adult-slides/adult-slide-10.jpg']
+    }
+  };
   if(!p){ root.innerHTML='<div style="text-align:center"><h1 style="font-size:28px">Product not found</h1><p style="color:rgba(255,255,255,.5);margin:14px 0 24px">That item isn’t in the catalog.</p><a class="c-btn solid" href="/shop.html">Browse the Shop</a></div>'; return; }
   document.title=p.title+' | Integrated IT Support';
   var esc=IIS_CATALOG.esc, money=IIS_CATALOG.money;
+  function renderHeroMedia(product){
+    var media = mediaSets[product.id];
+    if (media) {
+      return '<div class="hero-media-stack">'+
+        '<video class="promo-video" autoplay muted loop playsinline preload="metadata" poster="'+esc(media.poster)+'"><source src="/images/ai-edge-promo-loop.mp4" type="video/mp4"></video>'+
+        '<div class="slide-frame"><img class="hero-slide" data-product-slides="'+esc(product.id)+'" src="'+esc(media.poster)+'" alt="'+esc(product.title)+' scenes"></div>'+
+        '<span class="media-pill">'+esc(media.pill)+'</span>'+
+      '</div>';
+    }
+    return product.image
+      ? '<div style="margin:0 0 24px;border:1px solid rgba(197,160,89,.18);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(15,18,27,.86),rgba(7,8,11,.96))"><img src="'+esc(product.image)+'" alt="'+esc(product.title)+'" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover"></div>'
+      : '';
+  }
+  function startSlides(){
+    function nextIndex(pool, current){
+      if (pool.length < 2) return 0;
+      var idx = Math.floor(Math.random() * pool.length);
+      while (idx === current) idx = Math.floor(Math.random() * pool.length);
+      return idx;
+    }
+    document.querySelectorAll('.hero-slide').forEach(function(img){
+      var productId = img.getAttribute('data-product-slides');
+      var media = mediaSets[productId];
+      if (!media || !media.slides || !media.slides.length) return;
+      var current = Math.floor(Math.random() * media.slides.length);
+      img.src = media.slides[current];
+      window.setInterval(function(){
+        current = nextIndex(media.slides, current);
+        img.style.opacity = '0';
+        img.style.transform = 'scale(1.05)';
+        window.setTimeout(function(){
+          img.src = media.slides[current];
+          img.style.opacity = '1';
+          img.style.transform = 'scale(1.02)';
+        }, 260);
+      }, 3400);
+    });
+  }
   var badges=(p.audience||[]).map(function(a){return '<span class="aud aud-'+a+'">'+(IIS_CATALOG.audience[a]||a)+'</span>';}).join(' ');
   var isBundle=!!p.items;
   var insideList=(p.inside||[]).map(function(i){return '<li>'+esc(i)+'</li>';}).join('');
   var bundleList=isBundle?'<ul style="columns:2;gap:20px">'+p.items.map(function(x){var c=IIS_CATALOG.byId(x);return c?'<li style="margin:4px 0">'+esc(c.title)+'</li>':'';}).join('')+'</ul>':'';
   var peek=Math.max(1,Math.round((p.priceCents||0)*0.30));
-  var actions='<button class="c-btn solid" data-buy="'+esc(p.id)+'-full" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'full\')">Unlock full · '+money(p.priceCents)+'</button>'+
-    '<button class="c-btn" data-buy="'+esc(p.id)+'-peek" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'peek\')" title="A 30% teaser, credited toward full access">Peek inside · '+money(peek)+'</button>';
+  var actions = p.comingSoon
+    ? '<button class="c-btn solid" disabled aria-disabled="true">Coming soon</button>'
+    : '<button class="c-btn solid" data-buy="'+esc(p.id)+'-full" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'full\')">Unlock full · '+money(p.priceCents)+'</button>'+
+      '<button class="c-btn" data-buy="'+esc(p.id)+'-peek" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'peek\')" title="A 30% teaser, credited toward full access">Peek inside · '+money(peek)+'</button>';
+  var priceLabel = p.comingSoon ? 'Coming soon' : money(p.priceCents);
   var upsell = p.upsell==='aria'
     ? '<a class="c-btn" href="/aria.html">Want it automated? Meet ARIA →</a>'
     : '<a class="c-btn" href="/services.html">Want it done for you? See services →</a>';
@@ -226,9 +285,9 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
       '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
         '<div class="eyebrow" style="margin-bottom:10px">Want a guided family or tutor setup?</div>'+
         '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the studio into a live learning session</h2>'+
-        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the studio as the premium learning guide, then move into a short IIS-guided setup session when a parent, tutor, or enrichment lead wants a more personalized plan for one learner or a small group.</p>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the studio first. Then book a guided setup if a parent or tutor wants a plan for one learner or a small group.</p>'+
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
-          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Parents, tutors, homeschool guides, and small enrichment programs who want modern AI learning with adult stewardship.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Parents, tutors, homeschool guides, and small learning groups.</p></div>'+
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">A clearer learning plan, topic-specific prompt structure, and safer boundaries for how AI supports the child.</p></div>'+
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It creates a premium first step before a family or tutor commits to a bigger ongoing learning program.</p></div>'+
         '</div>'+
@@ -236,15 +295,15 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<a class="c-btn solid" href="/?contact=1&subject=Request%20Family%20AI%20Learning%20Session&desc=I%20want%20to%20stage%20a%20Family%20AI%20Learning%20Session.%0A%0AParent%20or%20tutor%20name%3A%0AStudent%20age%20or%20range%3A%0ALearning%20goals%3A%0ATopics%20or%20interests%3A%0AHow%20you%20want%20AI%20to%20help%3A">Stage guided session</a>'+
           '<a class="c-btn" href="/ai-edge.html">Open AI Edge</a>'+
         '</div>'+
-        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the offer educational, adult-guided, and safe without promising outcomes that depend on the learner.</p>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">Adult guides. Child learns. AI supports. Build, your future starts now. Invest in yourself.</p>'+
       '</div>',
     'gl-ai-edge-adult-momentum':
       '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
         '<div class="eyebrow" style="margin-bottom:10px">Want a guided momentum setup?</div>'+
         '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the studio into a live planning and systems session</h2>'+
-        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the studio as the planning framework, then move into a short IIS-guided setup session when an adult wants help structuring responsibilities, projects, or a cleaner weekly rhythm with AI support.</p>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the studio first. Then book a guided setup if you want help sorting roles, projects, or weekly rhythm with AI.</p>'+
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
-          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Busy adults, founders, operators, and professionals carrying real responsibility across work, home, and personal growth.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Busy adults, founders, operators, and professionals.</p></div>'+
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">A clearer responsibility map, better project breakdowns, and a realistic rhythm for meaningful work.</p></div>'+
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives adults a premium planning layer before they try to build deeper automation or workflow systems.</p></div>'+
         '</div>'+
@@ -252,7 +311,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<a class="c-btn solid" href="/?contact=1&subject=Request%20Adult%20Momentum%20AI%20Session&desc=I%20want%20to%20stage%20an%20Adult%20Momentum%20AI%20Session.%0A%0AName%3A%0AMain%20roles%20or%20responsibilities%3A%0ABiggest%20friction%20today%3A%0AProjects%20or%20goals%20I%20want%20to%20move%20forward%3A%0AHow%20I%20want%20AI%20to%20help%3A">Stage guided session</a>'+
           '<a class="c-btn" href="/ai-edge.html">Open AI Edge</a>'+
         '</div>'+
-        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the offer grounded in planning, organization, and reflection without making health, financial, or autonomous-decision claims.</p>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">You stay in charge. AI helps sort and move. Build, your future starts now. Invest in yourself.</p>'+
       '</div>'
   };
   var implementationBand = implementationBands[p.id] || '';
@@ -346,9 +405,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
       '</div>'
   };
   var routeBackBand = routeBackBands[p.id] || defaultRouteBand;
-  var heroMedia = p.image
-    ? '<div style="margin:0 0 24px;border:1px solid rgba(197,160,89,.18);border-radius:16px;overflow:hidden;background:linear-gradient(180deg,rgba(15,18,27,.86),rgba(7,8,11,.96))"><img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover"></div>'
-    : '';
+  var heroMedia = renderHeroMedia(p);
   root.innerHTML =
     heroMedia +
     '<a href="/shop.html" class="eyebrow" style="color:rgba(255,255,255,.45);margin-bottom:22px">← Shop</a>'+
@@ -356,7 +413,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
     '<h1 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:900;letter-spacing:-.01em;line-height:1.05;margin:0 0 16px">'+esc(p.title)+'</h1>'+
     '<p style="font-size:16px;color:rgba(255,255,255,.7);line-height:1.7;max-width:680px;margin:0 0 18px">'+esc(p.blurb)+'</p>'+
     (p.long?'<p style="font-size:14px;color:rgba(255,255,255,.55);line-height:1.8;max-width:720px;margin:0 0 26px">'+esc(p.long)+'</p>':'')+
-    '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 30px"><span style="font-family:\'Cinzel\',serif;font-size:30px" class="gold-text">'+money(p.priceCents)+'</span><div style="display:flex;gap:10px;flex-wrap:wrap">'+actions+'</div></div>'+
+    '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 30px"><span style="font-family:\'Cinzel\',serif;font-size:30px" class="gold-text">'+priceLabel+'</span><div style="display:flex;gap:10px;flex-wrap:wrap">'+actions+'</div></div>'+
     previewBand +
     (insideList?'<h2 style="font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:#f1dca7;margin:30px 0 12px">What’s inside</h2><ul style="color:rgba(255,255,255,.65);font-size:14px;line-height:1.9;padding-left:20px">'+insideList+'</ul>':'')+
     (bundleList?'<h2 style="font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:#f1dca7;margin:30px 0 12px">Included in this bundle</h2>'+bundleList:'')+
@@ -368,6 +425,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
   if(rel.length){
     root.innerHTML+='<h2 style="font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:#f1dca7;margin:40px 0 16px">Pairs well with</h2><div class="cat-grid">'+rel.map(IIS_CATALOG.renderCard).join('')+'</div>';
   }
+  startSlides();
 })();
 </script>
 </body>

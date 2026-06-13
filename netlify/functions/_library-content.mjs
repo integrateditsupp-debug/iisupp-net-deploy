@@ -492,7 +492,7 @@ When you answer:
     format: 'Guide + lesson maps + parent/tutor prompts',
     peek: `
 <h2>Teach curiosity before tools</h2>
-<p>The strongest AI learning path for children does not begin with hype. It begins with wonder, questions, observation, and safe guidance from an adult who stays present. This studio helps tutors and parents turn AI into a thoughtful learning companion instead of passive entertainment.</p>
+<p>Start with curiosity. Keep the adult present. Let AI help the child think, not coast.</p>
 <h2>The family setup lens</h2>
 <ol>
   <li><b>Pick the role.</b> Parent, tutor, homeschool guide, or enrichment mentor.</li>
@@ -503,7 +503,7 @@ When you answer:
 ${peekNote}`,
     full: `
 <h2>Teach curiosity before tools</h2>
-<p>AI Edge Family Learning Studio is for adults guiding children into stronger thinking. It keeps the mood imaginative and future-facing while staying grounded in structure, safe use, and real learning outcomes.</p>
+<p>AI Edge Family Learning Studio is for adults guiding children into stronger thinking. Keep it safe. Keep it creative. Keep the adult in charge.</p>
 <h2>Who this is for</h2>
 <ul>
   <li>Tutors who want more engaging lesson flow.</li>
@@ -574,7 +574,7 @@ Keep it encouraging and structured.</pre>
     format: 'Guide + planning system + prompt pack',
     peek: `
 <h2>Carry more with less friction</h2>
-<p>Adults do not need more noise. They need a way to use AI for planning, decision support, project movement, and life administration without losing judgment or joy. This studio turns AI into a calm thinking partner for real responsibility.</p>
+<p>Adults do not need more noise. They need cleaner planning. This studio helps AI support real work without taking over.</p>
 <h2>The momentum lens</h2>
 <ol>
   <li><b>Name what matters.</b> Work, family, health routines, learning, or creative commitments.</li>
@@ -585,7 +585,7 @@ Keep it encouraging and structured.</pre>
 ${peekNote}`,
     full: `
 <h2>Carry more with less friction</h2>
-<p>AI Edge Adult Momentum Studio is for adults who want to use AI to support meaningful responsibility. It is designed to make planning, learning, home administration, leadership, and project movement feel cleaner and more sustainable.</p>
+<p>AI Edge Adult Momentum Studio is for adults who want cleaner planning, steadier action, and less drag. You stay in charge. AI helps sort and move.</p>
 <h2>Where this helps most</h2>
 <ul>
   <li>Busy professionals balancing work and home admin.</li>

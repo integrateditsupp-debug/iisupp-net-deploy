@@ -4,6 +4,7 @@ assets/video/*
 !assets/video/aria-stats-and-purpose.mp4
 *.mp4
 !assets/video/aria-stats-and-purpose.mp4
+!images/ai-edge-promo-loop.mp4
 *.mov
 *.zip
 node_modules/
@@ -51,4 +52,3 @@ openclaw/
 ARIA Demo.html
 ARIA Concept.html
 library-admin.html
-

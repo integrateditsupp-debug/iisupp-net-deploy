@@ -81,13 +81,48 @@
   .price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
   .topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
   .audience-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .showcase-media{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:stretch
+  }
+  .showcase-frame{
+    position:relative;overflow:hidden;border-radius:22px;border:1px solid rgba(197,160,89,.18);
+    background:linear-gradient(180deg, rgba(7,10,18,.98), rgba(5,5,6,.98));min-height:360px
+  }
+  .showcase-frame video{
+    display:block;width:100%;height:100%;object-fit:cover;filter:saturate(1.06) contrast(1.04) brightness(.96)
+  }
+  .showcase-frame::after{
+    content:"";position:absolute;inset:0;background:
+      linear-gradient(180deg, rgba(4,6,12,.04), rgba(4,6,12,.5) 68%, rgba(4,6,12,.76)),
+      radial-gradient(circle at 18% 18%, rgba(241,220,167,.16), transparent 28%);
+    pointer-events:none
+  }
+  .showcase-copy{
+    border:1px solid rgba(197,160,89,.18);border-radius:22px;padding:22px;
+    background:linear-gradient(180deg, rgba(18,18,20,.96), rgba(8,8,9,.98))
+  }
+  .showcase-copy h3{
+    margin:12px 0 10px;font-family:'Cinzel',serif;font-size:1.3rem;letter-spacing:.08em;text-transform:uppercase
+  }
+  .showcase-copy p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.8}
+  .showcase-list{margin:14px 0 0;padding-left:18px;color:var(--muted-2);font-size:11.5px;line-height:1.82}
   .audience-card{
     border:1px solid rgba(197,160,89,.22);border-radius:24px;overflow:hidden;background:
       linear-gradient(180deg, rgba(18,18,20,.96), rgba(8,8,9,.98));
     box-shadow:0 20px 60px rgba(0,0,0,.22)
   }
-  .audience-media{aspect-ratio:16/10;background:#09111c;overflow:hidden;border-bottom:1px solid rgba(197,160,89,.14)}
+  .audience-media{aspect-ratio:16/10;background:#09111c;overflow:hidden;border-bottom:1px solid rgba(197,160,89,.14);position:relative}
   .audience-media img{display:block;width:100%;height:100%;object-fit:cover}
+  .audience-media .slide-frame{position:absolute;inset:0}
+  .audience-media .slide-frame{background:linear-gradient(180deg,rgba(4,6,12,.08),rgba(4,6,12,.6))}
+  .audience-media .slide-frame img{
+    width:100%;height:100%;object-fit:cover;opacity:.96;transition:opacity .7s ease, transform 6s ease;transform:scale(1.02)
+  }
+  .audience-media .media-pill{
+    position:absolute;left:16px;bottom:16px;z-index:2;padding:7px 10px;border-radius:999px;
+    border:1px solid rgba(241,220,167,.34);background:rgba(4,6,12,.66);color:#f1dca7;
+    font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700
+  }
   .audience-body{padding:20px 20px 22px}
   .audience-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
   .audience-pill{
@@ -107,9 +142,10 @@
   .cta.solid{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#b38728 100%);color:#050505;border-color:transparent}
   .footer-note{max-width:1180px;margin:22px auto 0;padding:0 8px;color:var(--muted-2);font-size:12px;line-height:1.8;text-align:center}
   @media (max-width: 960px){
-    .two-up,.price-grid,.topic-grid,.audience-grid{grid-template-columns:1fr}
+    .two-up,.price-grid,.topic-grid,.audience-grid,.showcase-media{grid-template-columns:1fr}
     .shell{padding:22px 14px 54px}
     .hero,.section{padding:20px}
+    .showcase-frame{min-height:260px}
   }
 </style>
 </head>
@@ -129,10 +165,10 @@
     </div>
 
     <section class="hero">
-      <div class="eyebrow">Integrated learning and deployment</div>
+      <div class="eyebrow">Learn. Build. Move.</div>
       <h1>AI Edge <em>learn fast</em>. deploy for real.</h1>
-      <p>AI Edge is the IIS learning and implementation lane for teams and operators who want to understand AI clearly, apply it safely, and grow into stronger systems over time. It starts with a practical first diagnosis, moves into guided playbooks, and opens into implementation support when the buyer is ready.</p>
-      <p>The structure stays simple on purpose: an easy first step, a stronger paid learning layer, and higher-trust implementation help when real workflow change matters.</p>
+      <p>AI Edge teaches AI in a clean way. Learn first. Use it right. Build real value after.</p>
+      <p>Start small. Buy deeper help when ready. Move into real setup when the work matters.</p>
       <div class="hero-strip">
         <span class="strip-pill">Free lead magnet</span>
         <span class="strip-pill">Interactive learning</span>
@@ -148,12 +184,38 @@
     </section>
 
     <section class="section">
+      <h2>AI Edge <em>preview</em></h2>
+      <p>One fast look first. Then choose the track that fits. Family for kids and guided learning. Adult for work, focus, and momentum.</p>
+      <div class="showcase-media">
+        <div class="showcase-frame">
+          <video autoplay muted loop playsinline preload="metadata" poster="/images/ai-edge-adult-slides/adult-slide-01.jpg">
+            <source src="/images/ai-edge-promo-loop.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="showcase-copy">
+          <span class="audience-pill">At the top on purpose</span>
+          <h3>See the feel before you buy</h3>
+          <p>This is the shared AI Edge preview loop. It sits above the premium tracks so buyers understand the mood, quality, and direction before they choose Family or Adult.</p>
+          <p>Short first. Clean first. Then the right lane.</p>
+          <ul class="showcase-list">
+            <li>Shared promo loop placed above both premium tracks</li>
+            <li>Separate Family and Adult slides stay inside their own track only</li>
+            <li>Clear path into the right paid product</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
       <h2>Two premium tracks <em>buyers can feel</em></h2>
-      <p>These audience-specific offers sit near the top on purpose. One is built for tutors and parents guiding children with taste, imagination, and safe structure. The other is built for adults using AI to carry real responsibility with more clarity, steadiness, and joy.</p>
+      <p>Family first for kids. Adult first for grown work. Easy to find. Easy to choose.</p>
       <div class="audience-grid">
         <article class="audience-card">
           <div class="audience-media">
-            <img src="/images/ai-edge-family-learning-studio.svg" alt="AI Edge Family Learning Studio artwork" loading="lazy">
+            <div class="slide-frame">
+              <img class="audience-slide" data-slideset="family" src="/images/ai-edge-family-slides/family-slide-01.jpg" alt="AI Edge Family Learning Studio scenes" loading="lazy">
+            </div>
+            <span class="media-pill">Family learning</span>
           </div>
           <div class="audience-body">
             <div class="audience-top">
@@ -161,11 +223,11 @@
               <span class="audience-pill">$79 unlock</span>
             </div>
             <h3 class="audience-title">AI Edge Family Learning Studio</h3>
-            <p class="audience-copy">A premium guided learning track for tutors, homeschool families, enrichment leaders, and parents buying a high-quality AI learning experience for their kids. It keeps the mood imaginative and future-facing while teaching better questions, better research, better writing, and better project-making.</p>
+            <p class="audience-copy">For parents, tutors, and kids ready to learn with AI the right way. Ask better questions. Learn faster. Build real things.</p>
             <ul class="audience-list">
-              <li>Lesson maps for reading, writing, science, and creative projects</li>
-              <li>Parent and tutor prompts that keep the adult in the guiding role</li>
-              <li>Safe-use structure so AI supports learning instead of replacing it</li>
+              <li>Lesson maps for reading, writing, science, and projects</li>
+              <li>Adult stays in charge</li>
+              <li>AI helps learning, not cheating</li>
             </ul>
             <div class="cta-row">
               <a class="cta solid" href="/product.html?id=gl-ai-edge-family-studio">Open family studio</a>
@@ -175,7 +237,10 @@
         </article>
         <article class="audience-card">
           <div class="audience-media">
-            <img src="/images/ai-edge-adult-momentum-studio.svg" alt="AI Edge Adult Momentum Studio artwork" loading="lazy">
+            <div class="slide-frame">
+              <img class="audience-slide" data-slideset="adult" src="/images/ai-edge-adult-slides/adult-slide-01.jpg" alt="AI Edge Adult Momentum Studio scenes" loading="lazy">
+            </div>
+            <span class="media-pill">Adult momentum</span>
           </div>
           <div class="audience-body">
             <div class="audience-top">
@@ -183,11 +248,11 @@
               <span class="audience-pill">$149 unlock</span>
             </div>
             <h3 class="audience-title">AI Edge Adult Momentum Studio</h3>
-            <p class="audience-copy">A premium AI-guided planning and execution system for adults who want to take on meaningful responsibilities without losing calm or joy. It helps organize work, home administration, learning, projects, and decision-making in a way that feels clean, elevated, and deeply useful.</p>
+            <p class="audience-copy">For adults with real work, real goals, and real pressure. Plan better. Move faster. Stay calm.</p>
             <ul class="audience-list">
-              <li>Responsibility and energy mapping for real weeks, not fantasy schedules</li>
-              <li>AI planning prompts for work, home, personal projects, and skill-building</li>
-              <li>Reflection and rhythm tools that keep momentum human and sustainable</li>
+              <li>Map work, home, and goals</li>
+              <li>Use AI to sort, plan, and move</li>
+              <li>Keep momentum human and steady</li>
             </ul>
             <div class="cta-row">
               <a class="cta solid" href="/product.html?id=gl-ai-edge-adult-momentum">Open adult studio</a>
@@ -204,18 +269,18 @@
           <div>
             <div class="ai-edge-eyebrow">Why this works</div>
             <h2 class="ai-edge-title">A high-trust <em>learning path</em></h2>
-            <p class="ai-edge-copy">AI Edge is built around guided learning, structured application, and real business context. Buyers can explore at a comfortable pace, build confidence, and move into deeper help without leaving the IIS ecosystem.</p>
-            <p class="ai-edge-copy">The result feels professional, calm, and useful from the first click instead of overwhelming or overly technical.</p>
+            <p class="ai-edge-copy">This path stays simple. Learn first. Practice next. Buy deeper help when needed.</p>
+            <p class="ai-edge-copy">No messy jargon. No random steps. Clear lane. Clear next move.</p>
           </div>
           <div class="ai-edge-side">
             <div class="ai-edge-metric">
               <h3>Best fit</h3>
               <strong>Ops-heavy SMBs</strong>
-              <p>Owners, operations managers, IT leads, support teams, and businesses buried in repetitive work, intake friction, and repeated questions.</p>
+              <p>Owners, operators, IT leads, support teams, parents, and tutors.</p>
             </div>
             <div class="ai-edge-note">
               <h3>Moat</h3>
-              <p>Structured guidance, reusable artifacts, implementation path, and managed follow-through. It feels closer to an operating system for learning and action than a static information product.</p>
+              <p>Clear structure. Reusable tools. Real support path. It feels alive, not dead content.</p>
             </div>
           </div>
         </div>
@@ -306,7 +371,7 @@
       <div class="topic-grid">
         <div class="info-card">
           <h3>Prompt systems for teams</h3>
-          <p>Show teams how to standardize prompting, reduce rework, and get better outputs from ChatGPT, Claude, Gemini, and Copilot.</p>
+      <p>Teach teams how to prompt better and waste less time.</p>
           <ul class="bullet">
             <li>Prompt writing for real work</li>
             <li>Reusable prompt libraries</li>
@@ -315,7 +380,7 @@
         </div>
         <div class="info-card">
           <h3>AI workflow automation</h3>
-          <p>Focus on repetitive office, admin, support, and document flows that already waste time every week.</p>
+      <p>Fix repeat work in admin, support, docs, and intake.</p>
           <ul class="bullet">
             <li>Intake and triage</li>
             <li>Meeting follow-up</li>
@@ -324,7 +389,7 @@
         </div>
         <div class="info-card">
           <h3>AI agents for operations</h3>
-          <p>Turn one repetitive business process into a working assistant or agent path with a clear before-and-after story.</p>
+      <p>Turn one repeat process into a working assistant.</p>
           <ul class="bullet">
             <li>Internal assistant patterns</li>
             <li>Agent specs and recipes</li>
@@ -333,7 +398,7 @@
         </div>
         <div class="info-card">
           <h3>Support and intake AI</h3>
-          <p>Bridge directly into ARIA and the existing IIS support stack where trust, triage, and follow-through already matter.</p>
+      <p>Connect straight into ARIA and the IIS support stack.</p>
           <ul class="bullet">
             <li>Support intake audits</li>
             <li>Help desk prompt systems</li>
@@ -349,11 +414,11 @@
 
     <section class="section">
       <h2>Recommended build order</h2>
-      <p>Ship the fastest proof and the clearest revenue steps first. Do not wait for the full stack before showing the lane.</p>
+      <p>Ship the easy win first. Add deeper layers after.</p>
       <div class="two-up">
         <div class="info-card">
           <h3>Phase 1</h3>
-          <p>Launch the lead magnet and the cheap starter first so visitors can understand the lane immediately and buy without needing a sales call.</p>
+          <p>Launch the free check and the starter first. Let people understand fast and buy fast.</p>
           <ul class="bullet">
             <li>AI Readiness Scorecard</li>
             <li>AI Edge Starter</li>
@@ -362,7 +427,7 @@
         </div>
         <div class="info-card">
           <h3>Phase 2</h3>
-          <p>Then add the stronger interactive middle and the implementation ladder so advanced buyers can spend more without leaving the funnel.</p>
+          <p>Add the deeper playbook and service ladder next. Let serious buyers go bigger.</p>
           <ul class="bullet">
             <li>AI Edge Pro Playbook</li>
             <li>Membership tiers</li>
@@ -372,7 +437,60 @@
       </div>
     </section>
 
-    <p class="footer-note">Digital purchases route through Stripe checkout and secure personal delivery links. Service and implementation lanes stay approval-safe and scoped before any production work begins.</p>
+    <p class="footer-note">Stripe handles paid unlocks. Service work stays scoped first. Build, your future starts now. Invest in yourself.</p>
   </div>
+  <script>
+    (function(){
+      var slideSets = {
+        family: [
+          '/images/ai-edge-family-slides/family-slide-01.jpg',
+          '/images/ai-edge-family-slides/family-slide-02.jpg',
+          '/images/ai-edge-family-slides/family-slide-03.jpg',
+          '/images/ai-edge-family-slides/family-slide-04.jpg',
+          '/images/ai-edge-family-slides/family-slide-05.jpg',
+          '/images/ai-edge-family-slides/family-slide-06.jpg',
+          '/images/ai-edge-family-slides/family-slide-07.jpg',
+          '/images/ai-edge-family-slides/family-slide-08.jpg',
+          '/images/ai-edge-family-slides/family-slide-09.jpg',
+          '/images/ai-edge-family-slides/family-slide-10.jpg'
+        ],
+        adult: [
+          '/images/ai-edge-adult-slides/adult-slide-01.jpg',
+          '/images/ai-edge-adult-slides/adult-slide-02.jpg',
+          '/images/ai-edge-adult-slides/adult-slide-03.jpg',
+          '/images/ai-edge-adult-slides/adult-slide-04.jpg',
+          '/images/ai-edge-adult-slides/adult-slide-05.jpg',
+          '/images/ai-edge-adult-slides/adult-slide-06.jpg',
+          '/images/ai-edge-adult-slides/adult-slide-07.jpg',
+          '/images/ai-edge-adult-slides/adult-slide-08.jpg',
+          '/images/ai-edge-adult-slides/adult-slide-09.jpg',
+          '/images/ai-edge-adult-slides/adult-slide-10.jpg'
+        ]
+      };
+      function nextIndex(pool, current){
+        if(pool.length < 2) return 0;
+        var idx = Math.floor(Math.random() * pool.length);
+        while(idx === current){ idx = Math.floor(Math.random() * pool.length); }
+        return idx;
+      }
+      document.querySelectorAll('.audience-slide').forEach(function(img){
+        var key = img.getAttribute('data-slideset');
+        var pool = slideSets[key] || [];
+        if(!pool.length) return;
+        var current = Math.floor(Math.random() * pool.length);
+        img.src = pool[current];
+        window.setInterval(function(){
+          current = nextIndex(pool, current);
+          img.style.opacity = '0';
+          img.style.transform = 'scale(1.05)';
+          window.setTimeout(function(){
+            img.src = pool[current];
+            img.style.opacity = '1';
+            img.style.transform = 'scale(1.02)';
+          }, 260);
+        }, 3400);
+      });
+    })();
+  </script>
 </body>
 </html>
