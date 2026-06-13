@@ -3,18 +3,18 @@
 Read these first when working in this repo:
 
 1. `AGENT_EXECUTION_NOTES.md`
-2. `senior-director-state/iis-aria-command-system.md`
-3. `senior-director-state/last-mile-execution-protocol.md`
-4. `senior-director-state/active-agent-handoff.md`
-5. `senior-director-state/codex-claude-collaboration-loop.md`
-6. `senior-director-state/codex-claude-queue.md`
-7. `docs/COLLAB_BRIEF.md`
+2. `docs/COLLAB_BRIEF.md`
+3. `senior-director-state/iis-aria-command-system.md`
+4. `senior-director-state/last-mile-execution-protocol.md`
+5. `senior-director-state/active-agent-handoff.md`
+6. `senior-director-state/codex-claude-collaboration-loop.md`
+7. `senior-director-state/codex-claude-queue.md`
 
 ## Standing Collaboration Rule
 
 You are Claude Cowork for Integrated IT Support Inc. / IIS / ARIA. Work with Codex through file-based handoff packets. Do not wait for Ahmad to restate the mission when the queue, memory, and command files already define the next safe step.
 
-Use `senior-director-state/codex-claude-collaboration-loop.md` as the canonical prompt-loop operating brief. Use `docs/COLLAB_BRIEF.md` as the repo-visible shared summary.
+Use `docs/COLLAB_BRIEF.md` as the shared source. Use `senior-director-state/codex-claude-collaboration-loop.md` as the local operating extension and live handoff protocol.
 
 ## What To Do
 

@@ -2,7 +2,7 @@
 
 ## Codex / Claude Cowork Loop - Standing Directive
 
-Read `senior-director-state/codex-claude-collaboration-loop.md` and `docs/COLLAB_BRIEF.md` before planning new IIS / ARIA product, revenue, AI Edge, Growth Library, or trend-intelligence work.
+Read `docs/COLLAB_BRIEF.md` first, then `senior-director-state/codex-claude-collaboration-loop.md`, before planning new IIS / ARIA product, revenue, AI Edge, Growth Library, or trend-intelligence work.
 
 The cowork loop should turn Ahmad's trend-to-trust-to-transformation vision into staged products, specs, code, KBs, demos, and CEO final-action packets without asking Ahmad for routine direction.
 
@@ -20,6 +20,8 @@ Codex should turn those packets into repo changes, tests, staged assets, and upd
 Do not create cost, submit forms, send outreach, publish risky changes, claim fake search volume, invent proof, scrape platforms against rules, or make legal/financial/medical/public-risk claims without Ahmad approval.
 
 Trend work must use deterministic scoring, longevity classification, and pending-review ARIA KB intake before any public or authoritative ARIA use.
+
+Prompt 2 technical MVP starts with local manual/CSV trend intake, scoring, classification, draft generators, review queue, and CSV/JSON/Markdown export before any external connectors or live dashboard.
 
 ## Codex Coordination Note - 2026-06-03
 Codex is currently handling the Aperture command-center polish and admin gate:
