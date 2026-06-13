@@ -677,6 +677,41 @@ Safe next automation step:
 
 - build a local `collab-loop-supervisor` that watches `senior-director-state/codex-claude-queue.md`, writes assigned packets, and never performs external actions. It should only prepare the next prompt or local task until Ahmad approves any risky final action.
 
+## Loop Engineer Layer
+
+Loop Engineer is now the preferred coordination surface for `/goal`, `/loops`, and loops that prompt other loops.
+
+Read:
+
+- `docs/LOOP-ENGINEER.md`
+- `senior-director-state/loop-engineer/loop-board.md`
+- `senior-director-state/loop-engineer/claude-next-prompt.md`
+- `senior-director-state/loop-engineer/codex-next-prompt.md`
+
+Run:
+
+```bash
+node scripts/loop-engineer.mjs
+```
+
+Current loops:
+
+- `trend-radar-loop`
+- `product-pack-loop`
+- `aria-behavior-loop`
+- `website-conversion-loop`
+- `revenue-opportunity-loop`
+- `claude-strategy-loop`
+- `qa-safety-loop`
+- `codex-build-loop`
+
+Current reality:
+
+- The loop board and prompts can be generated locally.
+- Claude/Codex can use the board to continue without Ahmad restating the mission.
+- True always-on execution still needs an authenticated local bridge that starts available agent sessions.
+- The bridge must never bypass CEO final-action gates.
+
 ## Handoff Packet
 
 Every Codex/Claude loop should produce:

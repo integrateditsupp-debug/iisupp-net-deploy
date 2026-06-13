@@ -2,7 +2,7 @@
 
 ## Codex / Claude Cowork Loop - Standing Directive
 
-Read `docs/COLLAB_BRIEF.md` first, then `senior-director-state/codex-claude-collaboration-loop.md`, before planning new IIS / ARIA product, revenue, AI Edge, Growth Library, or trend-intelligence work.
+Read `docs/COLLAB_BRIEF.md` first, then `docs/LOOP-ENGINEER.md`, `senior-director-state/loop-engineer/loop-board.md`, and `senior-director-state/codex-claude-collaboration-loop.md`, before planning new IIS / ARIA product, revenue, AI Edge, Growth Library, loop-engineering, or trend-intelligence work.
 
 The cowork loop should turn Ahmad's trend-to-trust-to-transformation vision into staged products, specs, code, KBs, demos, and CEO final-action packets without asking Ahmad for routine direction.
 
@@ -24,6 +24,8 @@ Trend work must use deterministic scoring, longevity classification, and pending
 Prompt 2 technical MVP starts with local manual/CSV trend intake, scoring, classification, draft generators, review queue, and CSV/JSON/Markdown export before any external connectors or live dashboard.
 
 Prompt 3 content/product/community work starts with review-gated product plans, templates, community prompts, dashboard copy, email/social drafts, CTA language, and ethical conversion rules. Public product pages, Stripe links, email sends, community launch, donation collection, and public claims require Ahmad review.
+
+Loop Engineer is now the priority control layer. Run `node scripts/loop-engineer.mjs` to refresh `/goal`, `/loops`, next Claude prompt, and next Codex prompt before choosing new safe work.
 
 ## Codex Coordination Note - 2026-06-03
 Codex is currently handling the Aperture command-center polish and admin gate:
