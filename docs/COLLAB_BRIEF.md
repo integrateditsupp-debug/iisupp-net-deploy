@@ -344,6 +344,250 @@ Generated demos must include:
 - conversion goal
 - privacy note
 
+## Content, Product, Community, And Ethical Conversion Contract
+
+Prompt 3 adds the user-facing experience layer. It must preserve the full idea without making IIS / ARIA sound manipulative, desperate, anti-scam, or pressure-based.
+
+Every trend becomes a user journey:
+
+```text
+attention -> awareness -> trust -> skill -> transformation -> community -> long-term value
+```
+
+Do not frame it as "trend -> buy something." Frame it as:
+
+```text
+You noticed this because something in it matters. Understand it, separate hype from value, then turn attention into a skill, tool, decision, workflow, asset, or growth path.
+```
+
+Trend content flow:
+
+1. Attention Hook
+2. Emotional Mirror
+3. Truth Layer
+4. Practical Explanation
+5. Opportunity Layer
+6. Demo Invitation
+7. Choice-Based Offer
+8. Long-Term Growth Path
+
+Tone:
+
+- human
+- clean
+- wise
+- confident
+- direct
+- premium
+- strong but humble
+- inspiring but practical
+- not corny
+- not fake motivational
+- not manipulative
+- not desperate
+- not overhyped
+
+Use language such as:
+
+- Here is what is really happening.
+- Here is why people care.
+- Here is the useful part.
+- Here is the risk.
+- Here is the better path.
+- You can choose what fits you.
+- If you want to build from this, start here.
+- Turn attention into ability.
+- Turn curiosity into skill.
+- Turn a trend into an asset.
+
+Avoid language such as:
+
+- Guaranteed success
+- Get rich quick
+- Secret hack nobody knows
+- This will change your life overnight
+- You are behind if you do not buy this
+- Limited time only, unless it is true
+- Everyone is doing this, unless proven
+
+Product types:
+
+- PDF guide
+- mini-book
+- checklist
+- template pack
+- prompt pack
+- AI agent starter kit
+- automation blueprint
+- troubleshooting guide
+- AI-readable KB pack
+- video lesson
+- mini-course
+- demo tool
+- business audit
+- website audit
+- workflow audit
+- consultation
+- done-for-you implementation
+- community challenge
+- Growth Library bundle
+
+Growth Library positioning:
+
+```text
+Practical intelligence packs for people, businesses, and AI systems.
+```
+
+Growth Library is not just courses. It is a premium practical intelligence vault for humans and AI systems.
+
+For humans:
+
+- Learn AI
+- Learn automation
+- Learn IT support
+- Learn troubleshooting
+- Learn prompt engineering
+- Learn Microsoft 365 support
+- Learn cybersecurity basics
+- Learn workflow design
+- Learn business systems
+
+For AI systems:
+
+- AI-readable KB packs
+- SOPs
+- escalation flows
+- troubleshooting trees
+- ticket triage packs
+- help desk automation knowledge
+- support agent training materials
+
+First product plans:
+
+1. Level 1 IT Support Troubleshooting Bible
+2. Microsoft 365 Help Desk KB Pack
+3. AI Agent Starter Kit for Small Business
+4. Prompt Engineering for Workflows
+5. Windows 11 Troubleshooting KB
+6. Outlook Fix Guide
+7. AI Help Desk Automation Blueprint
+8. Cybersecurity Basics for Employees
+9. No-Code Automation Kit
+
+Each product plan must include:
+
+- title
+- subtitle
+- target customer
+- why it sells
+- what it includes
+- free preview idea
+- 10-minute demo idea
+- price range
+- upsell path
+- related IIS service
+- related ARIA feature
+- community challenge
+- SEO keywords
+- review status
+
+Product page template:
+
+- product title
+- one-line promise
+- who it is for
+- problem it solves
+- what is included
+- preview/sample
+- skill level
+- time to complete
+- format
+- price
+- FAQ
+- privacy note when needed
+- related products
+- DIY path
+- done-for-you path
+- ARIA support path
+- IIS implementation path
+- community path
+
+External product bridge template:
+
+1. What is trending?
+2. Why people want it.
+3. What emotion it speaks to.
+4. What value it actually gives.
+5. What is hype.
+6. What to consider before buying.
+7. Smarter alternatives.
+8. What the same money could build.
+9. IIS / ARIA / Growth Library related path.
+10. Clear disclosure of any service, referral, or concierge fee.
+11. Free user choice.
+
+Required bridge message:
+
+```text
+If you still want the product, that is your choice. Our role is to help you see the full picture before you spend.
+```
+
+Community content should reward growth, not noise:
+
+- helpfulness
+- consistency
+- useful answers
+- completed learning paths
+- shared builds
+- kindness
+- practical contribution
+
+Avoid ego-based ranking.
+
+Dashboard copy should make users feel progress:
+
+- Your Growth Path
+- Skills Started
+- Skills Completed
+- Demos Tried
+- Tools Built
+- Time Invested
+- Knowledge Unlocked
+- Next Best Step
+- Your Builder Level
+- Your Practical Wins
+- Continue Your Path
+
+Journey levels:
+
+- Beginner
+- Builder
+- Skilled
+- Advanced
+- Creator
+- Leader
+
+Donation layer copy must be honest:
+
+```text
+Optional contribution: Support digital literacy, AI education, and practical learning resources. We will only claim impact that we can actually track and verify.
+```
+
+Ethical conversion philosophy:
+
+- free trust-building content
+- low-cost products
+- premium Growth Library
+- ARIA tools
+- IIS services
+- consultation
+- done-for-you implementation
+- community membership
+- enterprise packages
+- transparent referral or concierge fees
+
+The user should always feel informed, respected, free to choose, and more capable after interacting.
+
 ## Review Rules
 
 Generated assets must enter review before public use.
@@ -505,3 +749,29 @@ Current limits:
 Next best build step:
 
 - Add a local admin dashboard page that reads the JSON output and shows trends, scores, filters, generated ideas, risk flags, review status, and export links.
+
+Prompt 3 starter code:
+
+- `scripts/content-product-community-mvp.mjs`
+
+Run:
+
+```bash
+node scripts/content-product-community-mvp.mjs
+```
+
+Local outputs:
+
+- `senior-director-state/content-product-community/content-system.json`
+- `senior-director-state/content-product-community/content-system.md`
+- `senior-director-state/content-product-community/product-plans.csv`
+- `senior-director-state/content-product-community/review-queue.json`
+
+Current limits:
+
+- templates and first 9 product plans only
+- no public page publish
+- no Stripe/checkout creation
+- no email/social send
+- no community launch
+- no donation collection

@@ -23,6 +23,8 @@ Trend work must use deterministic scoring, longevity classification, and pending
 
 Prompt 2 technical MVP starts with local manual/CSV trend intake, scoring, classification, draft generators, review queue, and CSV/JSON/Markdown export before any external connectors or live dashboard.
 
+Prompt 3 content/product/community work starts with review-gated product plans, templates, community prompts, dashboard copy, email/social drafts, CTA language, and ethical conversion rules. Public product pages, Stripe links, email sends, community launch, donation collection, and public claims require Ahmad review.
+
 ## Codex Coordination Note - 2026-06-03
 Codex is currently handling the Aperture command-center polish and admin gate:
 - Added Netlify Edge Basic Auth for `/aperture`, `/aperture-learning`, and command-center routes using `APERTURE_ADMIN_EMAIL` + `APERTURE_ADMIN_PASSWORD`.
