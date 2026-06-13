@@ -1,5 +1,24 @@
 # Claude Code Implementation Tasks
 
+## Codex / Claude Cowork Loop - Standing Directive
+
+Read `senior-director-state/codex-claude-collaboration-loop.md` before planning new IIS / ARIA product, revenue, AI Edge, Growth Library, or trend-intelligence work.
+
+The cowork loop should turn Ahmad's trend-to-trust-to-transformation vision into staged products, specs, code, KBs, demos, and CEO final-action packets without asking Ahmad for routine direction.
+
+Claude Cowork should return compact task packets for Codex:
+- objective
+- reasoning
+- files to create/update
+- safest first build slice
+- approval gates
+- risks
+- next prompt
+
+Codex should turn those packets into repo changes, tests, staged assets, and updated handoff notes.
+
+Do not create cost, submit forms, send outreach, publish risky changes, claim fake search volume, invent proof, scrape platforms against rules, or make legal/financial/medical/public-risk claims without Ahmad approval.
+
 ## Codex Coordination Note - 2026-06-03
 Codex is currently handling the Aperture command-center polish and admin gate:
 - Added Netlify Edge Basic Auth for `/aperture`, `/aperture-learning`, and command-center routes using `APERTURE_ADMIN_EMAIL` + `APERTURE_ADMIN_PASSWORD`.
