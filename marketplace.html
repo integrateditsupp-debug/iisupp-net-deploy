@@ -39,6 +39,12 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
 .notice{max-width:1120px;margin:-18px auto 60px;padding:22px 24px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,rgba(197,160,89,.13),rgba(255,255,255,.035));box-shadow:0 24px 80px rgba(0,0,0,.38)}
 .notice strong{color:var(--gold2)}
 .notice p{margin:0;color:rgba(255,255,255,.68);font-size:13px;line-height:1.85}
+.route-grid{max-width:1120px;margin:0 auto 54px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:0 24px}
+.route-card{border:1px solid rgba(197,160,89,.18);border-radius:24px;padding:22px;background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(197,160,89,.045));box-shadow:0 20px 70px rgba(0,0,0,.32);display:flex;flex-direction:column;gap:12px}
+.route-card h3{font-family:Cinzel,serif;font-size:22px;line-height:1.08;margin:0;color:#fff}
+.route-card p{margin:0;color:rgba(255,255,255,.64);font-size:13px;line-height:1.8}
+.route-points{display:grid;gap:8px;margin-top:auto}
+.route-points span{font-size:10px;line-height:1.7;color:rgba(255,255,255,.7);padding:9px 11px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(0,0,0,.18)}
 .section{padding:40px 24px 82px}
 .wrap{max-width:1220px;margin:0 auto}
 .section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}
@@ -96,8 +102,8 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
 .submit-btn{grid-column:1/-1;min-height:48px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#060400;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:900;cursor:pointer}
 .submit-btn:disabled{opacity:.58;cursor:wait}
 .footer{padding:48px 24px;text-align:center;border-top:1px solid rgba(197,160,89,.14);color:rgba(255,255,255,.42);font-size:11px;line-height:1.7}
-@media(max-width:1050px){.trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-board{grid-template-columns:1fr}.nav{padding:16px 22px}.brand-title{font-size:14px}.nav-links{gap:4px}.nav-links a{font-size:8px;padding:8px}}
-@media(max-width:720px){.nav{position:relative;align-items:flex-start;flex-direction:column}.brand{min-width:0}.nav-links{justify-content:flex-start}.hero{padding:60px 18px 48px;min-height:auto}.hero h1{font-size:clamp(2.4rem,16vw,4rem)}.notice{margin:0 16px 34px}.section{padding:34px 16px 58px}.section-head{display:block}.trend-grid{grid-template-columns:1fr}.trend-visual{height:160px}.meta{grid-template-columns:1fr}.btn{width:100%;max-width:340px}.brand-title{letter-spacing:.18em}.request-shell{margin:0 16px 34px;padding:18px}.request-grid,.request-form{grid-template-columns:1fr}.field{grid-column:1/-1}}
+@media(max-width:1050px){.trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-board{grid-template-columns:1fr}.route-grid{grid-template-columns:1fr 1fr}.nav{padding:16px 22px}.brand-title{font-size:14px}.nav-links{gap:4px}.nav-links a{font-size:8px;padding:8px}}
+@media(max-width:720px){.nav{position:relative;align-items:flex-start;flex-direction:column}.brand{min-width:0}.nav-links{justify-content:flex-start}.hero{padding:60px 18px 48px;min-height:auto}.hero h1{font-size:clamp(2.4rem,16vw,4rem)}.notice{margin:0 16px 34px}.route-grid{grid-template-columns:1fr;padding:0 16px;margin-bottom:34px}.section{padding:34px 16px 58px}.section-head{display:block}.trend-grid{grid-template-columns:1fr}.trend-visual{height:160px}.meta{grid-template-columns:1fr}.btn{width:100%;max-width:340px}.brand-title{letter-spacing:.18em}.request-shell{margin:0 16px 34px;padding:18px}.request-grid,.request-form{grid-template-columns:1fr}.field{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -191,18 +197,52 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
       <div class="hero-inner">
         <span class="eyebrow">Trend radar to quote-first marketplace</span>
         <h1>Marketplace for <em>long-life demand</em>.</h1>
-        <p>This is the new public content from the trend work: outside-AI product lanes with durable search demand, real buyer use-cases, and quote-first sourcing.</p>
-        <p>Short path: see the item lane, understand why it matters, request a sourcing quote. No fake checkout. No hidden promise.</p>
+        <p>This is the public trend-to-revenue bridge: durable product lanes, real buyer use-cases, and a quote-first sourcing path that stays transparent before payment.</p>
+        <p>Short path: pick the lane, request a sourcing check, or route back into Growth Library or Services if you need a digital pack or done-with-you implementation instead.</p>
         <div class="hero-actions">
+          <a class="btn solid" href="#marketplace-request">Request sourcing check</a>
           <a class="btn solid" href="#viral-long-life">See trend lanes</a>
-          <a class="btn" href="mailto:ahmad.wasee@iisupp.net?subject=Marketplace%20sourcing%20request&body=I%20want%20a%20Marketplace%20sourcing%20quote.%0A%0AProduct%20lane%3A%0ABudget%3A%0AShipping%20region%3A%0ADeadline%3A%0AImportant%20requirements%3A">Request quote</a>
+          <a class="btn" href="/services.html">Need implementation help</a>
         </div>
       </div>
     </section>
 
     <aside class="notice">
-      <p><strong>Welcome to our drop-shipping style Marketplace.</strong> We curate high-demand products and services from vendors worldwide. Please confirm shipping, warranty, taxes, duties, and availability for your region before ordering. When you buy through our bridging page, IIS may add a <strong>20% sourcing/admin fee</strong> for research, curation, coordination, and order handling.</p>
+      <p><strong>This is a quote-first sourcing desk, not instant checkout.</strong> IIS checks shipping region, warranty, returns, taxes, duties, and final landed cost before payment. When a buyer wants IIS to coordinate the sourcing path, the final quote may include a <strong>20% sourcing/admin fee</strong> for research, curation, coordination, and order handling.</p>
     </aside>
+
+    <section class="route-grid" aria-label="Marketplace route selection">
+      <article class="route-card">
+        <span class="eyebrow">Route 1</span>
+        <h3>Source a physical product.</h3>
+        <p>Best when the buyer wants IIS to shortlist, region-check, and coordinate a real item before any payment request appears.</p>
+        <div class="route-points">
+          <span>Final quote before payment.</span>
+          <span>Vendor/source disclosure included.</span>
+          <span><a class="mini-btn solid" href="#marketplace-request">Open sourcing form</a></span>
+        </div>
+      </article>
+      <article class="route-card">
+        <span class="eyebrow">Route 2</span>
+        <h3>Buy a practical digital pack.</h3>
+        <p>Best when the buyer needs a checklist, workflow kit, or implementation preview instead of a sourced hardware/product bundle.</p>
+        <div class="route-points">
+          <span>Self-serve proof-first packs.</span>
+          <span>Fastest path for audit-first buyers.</span>
+          <span><a class="mini-btn solid" href="/growth-library.html">Open Growth Library</a></span>
+        </div>
+      </article>
+      <article class="route-card">
+        <span class="eyebrow">Route 3</span>
+        <h3>Need done-with-you execution instead?</h3>
+        <p>Best when the buyer really needs service delivery: website fixes, AI workflow implementation, support overflow, or M365 cleanup.</p>
+        <div class="route-points">
+          <span>Routes back to real IIS service offers.</span>
+          <span>Prevents mismatched Marketplace leads.</span>
+          <span><a class="mini-btn solid" href="/services.html">Open Services</a></span>
+        </div>
+      </article>
+    </section>
 
     <section class="request-shell" id="marketplace-request">
       <div class="request-grid">
@@ -259,6 +299,15 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
           <li>Automatic ordering is allowed only when it follows vendor terms and the buyer-approved quote.</li>
         </ul>
       </div>
+      <div class="panel" style="margin-top:18px">
+        <h3>Need a service, audit, or implementation instead?</h3>
+        <p>Some visitors do not need a sourced physical product at all. If the real need is workflow automation, AI intake, support overflow, or a practical digital pack, route them back into the strongest IIS monetization paths instead of forcing them through Marketplace.</p>
+        <div class="card-actions">
+          <a class="mini-btn solid" href="/services.html">Open Services</a>
+          <a class="mini-btn" href="/growth-library.html">Open Growth Library</a>
+          <a class="mini-btn" href="/ai-edge.html">Open AI Edge</a>
+        </div>
+      </div>
     </section>
 
     <section class="section" id="viral-long-life">
@@ -279,7 +328,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>For outages, camping, home office backup, routers, laptops, and medical-device peace of mind.</p>
               <div class="meta"><div><b>Price lane</b><span>$299-$2,499 + 20%</span></div><div><b>Buyer</b><span>Home, small office, travel</span></div></div>
               <div class="chips"><span>portable power station</span><span>home backup battery</span><span>solar generator</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Portable%20Power%20Station">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Portable%20Power%20Station">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -290,7 +339,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>Clean air, smoke season, allergies, pets, office comfort, and simple visibility into indoor air.</p>
               <div class="meta"><div><b>Price lane</b><span>$99-$799 + 20%</span></div><div><b>Buyer</b><span>Families, renters, offices</span></div></div>
               <div class="chips"><span>air purifier</span><span>air quality monitor</span><span>allergy room filter</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Air%20Quality%20Bundle">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Air%20Quality%20Bundle">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -301,7 +350,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>For remote workers who sit too long and want movement without a full gym habit.</p>
               <div class="meta"><div><b>Price lane</b><span>$199-$1,200 + 20%</span></div><div><b>Buyer</b><span>Remote work, creators</span></div></div>
               <div class="chips"><span>walking pad</span><span>under desk treadmill</span><span>standing desk</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Walking%20Pad%20Desk%20Setup">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Walking%20Pad%20Desk%20Setup">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -312,7 +361,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>Sleep, readiness, activity, and habit visibility for people who want less screen, more signal.</p>
               <div class="meta"><div><b>Price lane</b><span>$149-$499 + 20%</span></div><div><b>Buyer</b><span>Adults, executives, athletes</span></div></div>
               <div class="chips"><span>smart ring</span><span>sleep tracker</span><span>health wearable</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Smart%20Ring%20Tracker">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Smart%20Ring%20Tracker">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -323,7 +372,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>Camera, mic, light, desk arm, capture tools, and setup guidance for people starting content seriously.</p>
               <div class="meta"><div><b>Price lane</b><span>$99-$1,499 + 20%</span></div><div><b>Buyer</b><span>Creators, coaches, small biz</span></div></div>
               <div class="chips"><span>creator kit</span><span>podcast microphone</span><span>video lighting</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Creator%20Studio%20Kit">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Creator%20Studio%20Kit">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -334,7 +383,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>GPS tracker, smart feeder, camera, water fountain, and pet-safe convenience products.</p>
               <div class="meta"><div><b>Price lane</b><span>$49-$499 + 20%</span></div><div><b>Buyer</b><span>Pet owners, apartments</span></div></div>
               <div class="chips"><span>pet tracker</span><span>automatic feeder</span><span>pet camera</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Pet%20Tech%20Bundle">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Pet%20Tech%20Bundle">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -345,7 +394,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>Dash cam, MagSafe mount, battery monitor, emergency charger, and clean cable setup.</p>
               <div class="meta"><div><b>Price lane</b><span>$79-$599 + 20%</span></div><div><b>Buyer</b><span>Drivers, families, fleets</span></div></div>
               <div class="chips"><span>dash cam</span><span>magsafe car mount</span><span>car emergency kit</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Dash%20Cam%20Car%20Kit">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Dash%20Cam%20Car%20Kit">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -356,7 +405,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>E-bike shortlist, lock, helmet, phone mount, repair kit, and buyer-fit comparison.</p>
               <div class="meta"><div><b>Price lane</b><span>$799-$3,999 + 20%</span></div><div><b>Buyer</b><span>Commuters, students, seniors</span></div></div>
               <div class="chips"><span>ebike</span><span>electric bike</span><span>commuter bike gear</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20E-Bike%20Commuter%20Setup">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20E-Bike%20Commuter%20Setup">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -367,7 +416,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>Robotics, coding board, workbook, parent guide, and safe learning path for ambitious kids.</p>
               <div class="meta"><div><b>Price lane</b><span>$49-$399 + 20%</span></div><div><b>Buyer</b><span>Parents, tutors, schools</span></div></div>
               <div class="chips"><span>stem kit</span><span>robotics for kids</span><span>ai learning for kids</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Kids%20STEM%20Learning%20Kit">Source this</a><a class="mini-btn" href="/ai-edge.html">AI Edge fit</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Kids%20STEM%20Learning%20Kit">Start sourcing check</a><a class="mini-btn" href="/ai-edge.html">AI Edge fit</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -378,7 +427,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>Countertop filters, bottles, shower filters, and practical home wellness upgrades.</p>
               <div class="meta"><div><b>Price lane</b><span>$39-$599 + 20%</span></div><div><b>Buyer</b><span>Families, renters, travel</span></div></div>
               <div class="chips"><span>water filter</span><span>filtered showerhead</span><span>hydration bottle</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Water%20Filter%20Setup">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Water%20Filter%20Setup">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -389,7 +438,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>Robot vacuum, smart plugs, smart lock, indoor camera, and setup checklist.</p>
               <div class="meta"><div><b>Price lane</b><span>$199-$1,499 + 20%</span></div><div><b>Buyer</b><span>Busy homes, rentals, offices</span></div></div>
               <div class="chips"><span>robot vacuum</span><span>smart lock</span><span>home automation</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Robot%20Vacuum%20Smart%20Home">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Robot%20Vacuum%20Smart%20Home">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
           <article class="trend-card">
@@ -400,7 +449,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
               <p>Weighted backpack, walking plan, recovery tools, and safe beginner path. Practical, not flashy.</p>
               <div class="meta"><div><b>Price lane</b><span>$49-$399 + 20%</span></div><div><b>Buyer</b><span>Adults, beginners, commuters</span></div></div>
               <div class="chips"><span>rucking backpack</span><span>weighted walking</span><span>fitness starter kit</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Rucking%20Fitness%20Pack">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Rucking%20Fitness%20Pack">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
             </div>
           </article>
         </div>
