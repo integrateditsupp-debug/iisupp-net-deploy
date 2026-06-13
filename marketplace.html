@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#c5a059">
+<title>Marketplace | Integrated IT Support</title>
+<meta name="description" content="IIS Marketplace: curated long-life trending products and services sourced through Integrated IT Support with clear fees, region checks, and quote-first buying.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c5a059;--gold2:#f1dca7;--ink:#050505;--panel:#0b0905;--line:rgba(197,160,89,.22);--muted:rgba(255,255,255,.56)}
+*{box-sizing:border-box}
+body{margin:0;background:#030303;color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 20% 10%,rgba(197,160,89,.16),transparent 34%),radial-gradient(circle at 88% 32%,rgba(49,119,151,.11),transparent 32%),linear-gradient(180deg,#050505 0%,#0b0803 48%,#030303 100%);z-index:-2}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(197,160,89,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(197,160,89,.045) 1px,transparent 1px);background-size:76px 76px;mask-image:radial-gradient(circle at center,black,transparent 74%);z-index:-1}
+.logo{font-family:Cinzel,serif}
+.gold{color:var(--gold2)}
+.eyebrow{display:block;color:var(--gold);font-size:10px;letter-spacing:.38em;text-transform:uppercase;font-weight:800}
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 42px;background:rgba(0,0,0,.86);backdrop-filter:blur(18px);border-bottom:1px solid rgba(197,160,89,.16)}
+.brand{display:flex;align-items:center;gap:18px;min-width:260px}
+.brand-mark{width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold2);font-family:Cinzel,serif;font-size:20px;font-weight:800;box-shadow:inset 0 0 0 4px rgba(197,160,89,.08)}
+.brand-title{font-family:Cinzel,serif;font-size:17px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;line-height:1.25}
+.brand-sub{font-size:8px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-top:4px}
+.nav-links{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.nav-links a{padding:10px 12px;border:1px solid transparent;color:rgba(255,255,255,.58);font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:800}
+.nav-links a:hover,.nav-links a.active{color:#050505;background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:rgba(255,255,255,.12)}
+.hero{min-height:78vh;display:grid;place-items:center;padding:150px 24px 70px;text-align:center;position:relative}
+.hero-inner{max-width:1040px;margin:auto}
+.hero h1{font-family:Cinzel,serif;font-size:clamp(3rem,8vw,7.6rem);line-height:.92;letter-spacing:-.05em;margin:24px 0 22px}
+.hero h1 em{font-style:italic;color:var(--gold2);text-shadow:0 0 32px rgba(197,160,89,.28)}
+.hero p{max-width:760px;margin:0 auto 16px;color:rgba(255,255,255,.64);font-size:15px;line-height:1.9}
+.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:13px 18px;border:1px solid rgba(197,160,89,.38);border-radius:999px;color:var(--gold2);font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:800}
+.btn.solid{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#060400;border-color:transparent}
+.notice{max-width:1120px;margin:-18px auto 60px;padding:22px 24px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,rgba(197,160,89,.13),rgba(255,255,255,.035));box-shadow:0 24px 80px rgba(0,0,0,.38)}
+.notice strong{color:var(--gold2)}
+.notice p{margin:0;color:rgba(255,255,255,.68);font-size:13px;line-height:1.85}
+.section{padding:40px 24px 82px}
+.wrap{max-width:1220px;margin:0 auto}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}
+.section-head h2{font-family:Cinzel,serif;font-size:clamp(1.8rem,4vw,3.6rem);line-height:1;margin:10px 0 0}
+.section-head p{max-width:560px;color:var(--muted);font-size:13px;line-height:1.8;margin:0}
+.trend-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.trend-card{position:relative;overflow:hidden;border:1px solid rgba(197,160,89,.18);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(197,160,89,.045) 52%,rgba(0,0,0,.34));box-shadow:0 22px 70px rgba(0,0,0,.42);min-height:100%;display:flex;flex-direction:column}
+.trend-visual{height:178px;position:relative;overflow:hidden;border-bottom:1px solid rgba(197,160,89,.18);background:radial-gradient(circle at 30% 25%,rgba(241,220,167,.42),transparent 16%),radial-gradient(circle at 70% 40%,rgba(64,142,170,.32),transparent 19%),linear-gradient(145deg,#100c06,#071016 54%,#020202)}
+.trend-visual:before{content:"";position:absolute;inset:18px;border:1px solid rgba(241,220,167,.28);border-radius:24px;box-shadow:inset 0 0 30px rgba(197,160,89,.12)}
+.visual-art{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:86px;height:86px;color:var(--gold2);filter:drop-shadow(0 0 24px rgba(241,220,167,.42))}
+.visual-art *{vector-effect:non-scaling-stroke}
+.visual-label{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);padding:6px 10px;border:1px solid rgba(241,220,167,.26);border-radius:999px;background:rgba(0,0,0,.35);color:rgba(241,220,167,.9);font-size:8px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;white-space:nowrap}
+.trend-card:nth-child(3n+1) .trend-visual{background:radial-gradient(circle at 25% 25%,rgba(241,220,167,.42),transparent 18%),radial-gradient(circle at 72% 60%,rgba(72,164,213,.25),transparent 23%),linear-gradient(135deg,#151006,#041018)}
+.trend-card:nth-child(3n+2) .trend-visual{background:radial-gradient(circle at 72% 22%,rgba(241,220,167,.34),transparent 18%),radial-gradient(circle at 18% 70%,rgba(75,195,142,.24),transparent 24%),linear-gradient(145deg,#07130f,#130c05)}
+.trend-card:nth-child(3n+3) .trend-visual{background:radial-gradient(circle at 50% 18%,rgba(241,220,167,.38),transparent 18%),radial-gradient(circle at 34% 78%,rgba(113,113,255,.18),transparent 26%),linear-gradient(145deg,#070712,#151008)}
+.trend-body{padding:18px;display:flex;flex-direction:column;gap:12px;flex:1}
+.trend-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.score,.tag{font-size:8px;letter-spacing:.18em;text-transform:uppercase;font-weight:800;border:1px solid rgba(197,160,89,.28);border-radius:999px;padding:7px 9px;color:var(--gold2);white-space:nowrap}
+.score{background:rgba(197,160,89,.1)}
+.trend-card h3{font-family:Cinzel,serif;font-size:17px;letter-spacing:.04em;line-height:1.24;margin:0;color:#fff}
+.trend-card p{color:rgba(255,255,255,.62);font-size:12px;line-height:1.75;margin:0}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
+.meta div{border:1px solid rgba(255,255,255,.075);border-radius:14px;padding:10px;background:rgba(0,0,0,.18)}
+.meta b{display:block;color:var(--gold);font-size:8px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:5px}
+.meta span{display:block;color:rgba(255,255,255,.72);font-size:11px;line-height:1.35}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:6px 8px;background:rgba(255,255,255,.025)}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.mini-btn{font-size:8px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;border:1px solid rgba(197,160,89,.3);border-radius:999px;padding:10px 12px;color:var(--gold2)}
+.mini-btn.solid{background:rgba(197,160,89,.18)}
+.ad-board{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}
+.panel{border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.035);padding:24px}
+.panel h3{font-family:Cinzel,serif;margin:0 0 12px;font-size:20px;color:var(--gold2)}
+.panel p,.panel li{color:rgba(255,255,255,.62);font-size:13px;line-height:1.85}
+.panel ul{margin:0;padding-left:18px}
+.keyword-list{display:flex;gap:8px;flex-wrap:wrap}
+.keyword-list span{border:1px solid rgba(197,160,89,.26);border-radius:999px;padding:9px 11px;color:rgba(255,255,255,.72);font-size:10px}
+.source-list a{color:var(--gold2);text-decoration:underline;text-decoration-color:rgba(197,160,89,.38);text-underline-offset:4px}
+.request-shell{max-width:1120px;margin:0 auto 58px;padding:24px;border:1px solid var(--line);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(197,160,89,.045));box-shadow:0 24px 80px rgba(0,0,0,.34)}
+.request-grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:22px;align-items:start}
+.steps{display:grid;gap:10px;margin-top:18px}
+.step{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:13px;border:1px solid rgba(197,160,89,.14);border-radius:16px;background:rgba(0,0,0,.2)}
+.step b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:rgba(197,160,89,.16);color:var(--gold2);font-family:Cinzel,serif}
+.step span{font-size:12px;color:rgba(255,255,255,.64);line-height:1.65}
+.request-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:grid;gap:7px}
+.field.full{grid-column:1/-1}
+.field label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800}
+.field input,.field select,.field textarea{width:100%;border:1px solid rgba(197,160,89,.22);border-radius:14px;background:rgba(0,0,0,.28);color:#fff;padding:12px 13px;font:500 13px/1.3 Inter,sans-serif}
+.field textarea{min-height:106px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold2);box-shadow:0 0 0 3px rgba(197,160,89,.12)}
+.terms-row{grid-column:1/-1;display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start;padding:12px;border:1px solid rgba(255,255,255,.075);border-radius:14px;background:rgba(0,0,0,.2);color:rgba(255,255,255,.62);font-size:12px;line-height:1.65}
+.terms-row input{width:16px;height:16px;margin-top:2px;accent-color:var(--gold)}
+.form-status{grid-column:1/-1;min-height:20px;color:var(--gold2);font-size:12px;line-height:1.6}
+.submit-btn{grid-column:1/-1;min-height:48px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#060400;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:900;cursor:pointer}
+.submit-btn:disabled{opacity:.58;cursor:wait}
+.footer{padding:48px 24px;text-align:center;border-top:1px solid rgba(197,160,89,.14);color:rgba(255,255,255,.42);font-size:11px;line-height:1.7}
+@media(max-width:1050px){.trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-board{grid-template-columns:1fr}.nav{padding:16px 22px}.brand-title{font-size:14px}.nav-links{gap:4px}.nav-links a{font-size:8px;padding:8px}}
+@media(max-width:720px){.nav{position:relative;align-items:flex-start;flex-direction:column}.brand{min-width:0}.nav-links{justify-content:flex-start}.hero{padding:60px 18px 48px;min-height:auto}.hero h1{font-size:clamp(2.4rem,16vw,4rem)}.notice{margin:0 16px 34px}.section{padding:34px 16px 58px}.section-head{display:block}.trend-grid{grid-template-columns:1fr}.trend-visual{height:160px}.meta{grid-template-columns:1fr}.btn{width:100%;max-width:340px}.brand-title{letter-spacing:.18em}.request-shell{margin:0 16px 34px;padding:18px}.request-grid,.request-form{grid-template-columns:1fr}.field{grid-column:1/-1}}
+</style>
+</head>
+<body>
+  <svg class="visual-symbols" aria-hidden="true" style="display:none">
+    <symbol id="icon-power" viewBox="0 0 96 96">
+      <rect x="20" y="30" width="56" height="42" rx="8" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M34 30v-6h28v6M40 42h14l-9 16h14l-18 22 6-18H34z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M64 48h7M64 58h7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-air" viewBox="0 0 96 96">
+      <rect x="26" y="22" width="44" height="56" rx="10" fill="none" stroke="currentColor" stroke-width="3"/>
+      <circle cx="48" cy="50" r="13" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M18 30c9-7 18-7 27 0M18 43c8-5 16-5 24 0M72 34c7 0 12 2 16 7M72 50c6 0 10 2 14 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-walk" viewBox="0 0 96 96">
+      <path d="M18 70h60c5 0 8 3 8 7H10c0-4 3-7 8-7z" fill="none" stroke="currentColor" stroke-width="3"/>
+      <circle cx="48" cy="22" r="6" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M48 30l-8 17 13 6 9 15M41 48l-10 18M52 37l14 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-ring" viewBox="0 0 96 96">
+      <circle cx="48" cy="48" r="29" fill="none" stroke="currentColor" stroke-width="3"/>
+      <circle cx="48" cy="48" r="18" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/>
+      <path d="M48 14v8M48 74v8M14 48h8M74 48h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="70" cy="26" r="4" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-mic" viewBox="0 0 96 96">
+      <rect x="38" y="16" width="20" height="40" rx="10" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M26 44c0 14 8 24 22 24s22-10 22-24M48 68v14M34 82h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M38 28h20M38 40h20" stroke="currentColor" stroke-width="2" opacity=".55"/>
+    </symbol>
+    <symbol id="icon-pet" viewBox="0 0 96 96">
+      <circle cx="31" cy="33" r="8" fill="none" stroke="currentColor" stroke-width="3"/>
+      <circle cx="48" cy="25" r="8" fill="none" stroke="currentColor" stroke-width="3"/>
+      <circle cx="65" cy="33" r="8" fill="none" stroke="currentColor" stroke-width="3"/>
+      <circle cx="38" cy="48" r="7" fill="none" stroke="currentColor" stroke-width="3"/>
+      <circle cx="58" cy="48" r="7" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M30 70c2-15 12-23 18-23s16 8 18 23c1 8-5 11-12 7-4-2-8-2-12 0-7 4-13 1-12-7z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-car" viewBox="0 0 96 96">
+      <path d="M22 55l8-20h36l8 20M18 55h60v18H18z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="32" cy="73" r="7" fill="none" stroke="currentColor" stroke-width="3"/>
+      <circle cx="64" cy="73" r="7" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M34 35l-5 20M62 35l5 20M38 24h20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-bike" viewBox="0 0 96 96">
+      <circle cx="27" cy="66" r="15" fill="none" stroke="currentColor" stroke-width="3"/>
+      <circle cx="69" cy="66" r="15" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M27 66l16-28 13 28H27l21-18h17M48 48l-5-10h-8M61 31h12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-stem" viewBox="0 0 96 96">
+      <rect x="27" y="30" width="42" height="35" rx="8" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M48 30V18M40 18h16M35 65v10M61 65v10M22 44h5M69 44h5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="40" cy="47" r="4" fill="currentColor"/>
+      <circle cx="56" cy="47" r="4" fill="currentColor"/>
+      <path d="M39 57h18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-water" viewBox="0 0 96 96">
+      <path d="M48 14c16 19 24 31 24 44 0 14-10 25-24 25S24 72 24 58c0-13 8-25 24-44z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M34 58h28M37 68h22M42 39c4-4 8-8 12-13" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+    </symbol>
+    <symbol id="icon-home" viewBox="0 0 96 96">
+      <path d="M18 48l30-25 30 25M28 46v32h40V46" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M40 78V58h16v20M36 33c7-6 17-6 24 0M42 41c4-3 8-3 12 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-ruck" viewBox="0 0 96 96">
+      <path d="M32 28c0-8 6-14 16-14s16 6 16 14M30 28h36c6 0 10 5 10 11v39H20V39c0-6 4-11 10-11z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M20 50h56M36 60h24M30 28v-8M66 28v-8M29 78v8M67 78v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+  </svg>
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="/">
+      <div class="brand-mark">I</div>
+      <div>
+        <div class="brand-title">Integrated IT Support</div>
+        <div class="brand-sub">A Distinguished Network</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/services.html">Services</a>
+      <a href="/shop.html">Shop</a>
+      <a class="active" href="/marketplace.html">Marketplace</a>
+      <a href="/ai-edge.html">AI Edge</a>
+      <a href="/growth-library.html">Growth Library</a>
+      <a href="/about.html">About</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <span class="eyebrow">Trend radar to quote-first marketplace</span>
+        <h1>Marketplace for <em>long-life demand</em>.</h1>
+        <p>This is the new public content from the trend work: outside-AI product lanes with durable search demand, real buyer use-cases, and quote-first sourcing.</p>
+        <p>Short path: see the item lane, understand why it matters, request a sourcing quote. No fake checkout. No hidden promise.</p>
+        <div class="hero-actions">
+          <a class="btn solid" href="#viral-long-life">See trend lanes</a>
+          <a class="btn" href="mailto:ahmad.wasee@iisupp.net?subject=Marketplace%20sourcing%20request&body=I%20want%20a%20Marketplace%20sourcing%20quote.%0A%0AProduct%20lane%3A%0ABudget%3A%0AShipping%20region%3A%0ADeadline%3A%0AImportant%20requirements%3A">Request quote</a>
+        </div>
+      </div>
+    </section>
+
+    <aside class="notice">
+      <p><strong>Welcome to our drop-shipping style Marketplace.</strong> We curate high-demand products and services from vendors worldwide. Please confirm shipping, warranty, taxes, duties, and availability for your region before ordering. When you buy through our bridging page, IIS may add a <strong>20% sourcing/admin fee</strong> for research, curation, coordination, and order handling.</p>
+    </aside>
+
+    <section class="request-shell" id="marketplace-request">
+      <div class="request-grid">
+        <div>
+          <span class="eyebrow">Bridge checkout flow</span>
+          <h2 class="logo" style="font-size:clamp(1.8rem,4vw,3.25rem);line-height:1;margin:12px 0;color:#fff">Check first. Pay after approval.</h2>
+          <p style="color:rgba(255,255,255,.64);font-size:13px;line-height:1.85;margin:0">This is the correct order path. The buyer gives destination details first. IIS checks vendor shipping and final landed cost. Stripe payment opens only after the buyer sees the final quote, vendor/source details, warranty/return notes, and agrees.</p>
+          <div class="steps">
+            <div class="step"><b>1</b><span>Buyer selects item lane and enters email, country, city, and postal code.</span></div>
+            <div class="step"><b>2</b><span>IIS checks vendor availability, shipping region, warranty, returns, taxes, duties, and final total.</span></div>
+            <div class="step"><b>3</b><span>Buyer receives final quote with vendor/source disclosure and Stripe checkout link.</span></div>
+            <div class="step"><b>4</b><span>After payment, IIS places the approved order and forwards material vendor updates.</span></div>
+          </div>
+        </div>
+        <form class="request-form" id="marketplaceForm">
+          <div class="field full">
+            <label for="marketItem">Product lane</label>
+            <select id="marketItem" name="item" required>
+              <option value="">Choose one</option>
+              <option>Portable Power Station Kit</option>
+              <option>Air Purifier + Indoor Sensor Bundle</option>
+              <option>Walking Pad + Standing Desk Setup</option>
+              <option>Smart Ring / Health Tracker</option>
+              <option>Creator Studio Starter Kit</option>
+              <option>Pet Tech Care Bundle</option>
+              <option>Dash Cam + Car Smart Kit</option>
+              <option>E-Bike Commuter Setup</option>
+              <option>Kids STEM + AI Learning Kit</option>
+              <option>Water Filter + Hydration Setup</option>
+              <option>Robot Vacuum Smart Home Kit</option>
+              <option>Rucking + Simple Fitness Pack</option>
+            </select>
+          </div>
+          <div class="field"><label for="marketName">Full name</label><input id="marketName" name="name" autocomplete="name" required></div>
+          <div class="field"><label for="marketEmail">Email</label><input id="marketEmail" name="email" type="email" autocomplete="email" required></div>
+          <div class="field"><label for="marketPhone">Phone optional</label><input id="marketPhone" name="phone" autocomplete="tel"></div>
+          <div class="field"><label for="marketCountry">Country</label><input id="marketCountry" name="country" autocomplete="country-name" required></div>
+          <div class="field"><label for="marketCity">City</label><input id="marketCity" name="city" autocomplete="address-level2" required></div>
+          <div class="field"><label for="marketPostal">Postal code</label><input id="marketPostal" name="postalCode" autocomplete="postal-code" required></div>
+          <div class="field full"><label for="marketBudget">Budget or target price optional</label><input id="marketBudget" name="budget" placeholder="Example: under $500 CAD all-in"></div>
+          <div class="field full"><label for="marketNotes">Important notes</label><textarea id="marketNotes" name="notes" placeholder="Deadline, preferred brand, must-have features, delivery restrictions, warranty needs."></textarea></div>
+          <label class="terms-row"><input id="marketTerms" name="acceptedTerms" type="checkbox" required><span>I understand IIS will check vendor availability before payment. I will see the final price, vendor/source details, warranty/return notes, and terms before any Stripe payment is requested.</span></label>
+          <button class="submit-btn" type="submit">Request sourcing check</button>
+          <div class="form-status" id="marketStatus" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+      <div class="panel" style="margin-top:18px">
+        <h3>Marketplace terms before payment</h3>
+        <ul>
+          <li>IIS acts as a sourcing and coordination bridge, not the manufacturer.</li>
+          <li>The buyer receives final price, vendor/source details, shipping limits, warranty notes, return notes, and the IIS sourcing/admin fee before Stripe checkout.</li>
+          <li>Payment is requested only after the buyer approves the final quote.</li>
+          <li>Material vendor updates are forwarded to the buyer. IIS does not rewrite required legal, warranty, safety, payment, or delivery notices.</li>
+          <li>Automatic ordering is allowed only when it follows vendor terms and the buyer-approved quote.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="viral-long-life">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Ad-ready product lanes</span>
+            <h2>Viral now. Useful later.</h2>
+          </div>
+          <p>These are not two-day meme products. They sit inside repeat needs: home comfort, wellness, productivity, safety, mobility, pets, learning, and creator work.</p>
+        </div>
+        <div class="trend-grid">
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-power"></use></svg><span class="visual-label">Power</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 94</span><span class="tag">Home backup</span></div>
+              <h3>Portable Power Station Kit</h3>
+              <p>For outages, camping, home office backup, routers, laptops, and medical-device peace of mind.</p>
+              <div class="meta"><div><b>Price lane</b><span>$299-$2,499 + 20%</span></div><div><b>Buyer</b><span>Home, small office, travel</span></div></div>
+              <div class="chips"><span>portable power station</span><span>home backup battery</span><span>solar generator</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Portable%20Power%20Station">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-air"></use></svg><span class="visual-label">Air quality</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 91</span><span class="tag">Air quality</span></div>
+              <h3>Air Purifier + Indoor Sensor Bundle</h3>
+              <p>Clean air, smoke season, allergies, pets, office comfort, and simple visibility into indoor air.</p>
+              <div class="meta"><div><b>Price lane</b><span>$99-$799 + 20%</span></div><div><b>Buyer</b><span>Families, renters, offices</span></div></div>
+              <div class="chips"><span>air purifier</span><span>air quality monitor</span><span>allergy room filter</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Air%20Quality%20Bundle">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-walk"></use></svg><span class="visual-label">Movement</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 90</span><span class="tag">Work fitness</span></div>
+              <h3>Walking Pad + Standing Desk Setup</h3>
+              <p>For remote workers who sit too long and want movement without a full gym habit.</p>
+              <div class="meta"><div><b>Price lane</b><span>$199-$1,200 + 20%</span></div><div><b>Buyer</b><span>Remote work, creators</span></div></div>
+              <div class="chips"><span>walking pad</span><span>under desk treadmill</span><span>standing desk</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Walking%20Pad%20Desk%20Setup">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-ring"></use></svg><span class="visual-label">Wearable</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 89</span><span class="tag">Wearables</span></div>
+              <h3>Smart Ring / Health Tracker</h3>
+              <p>Sleep, readiness, activity, and habit visibility for people who want less screen, more signal.</p>
+              <div class="meta"><div><b>Price lane</b><span>$149-$499 + 20%</span></div><div><b>Buyer</b><span>Adults, executives, athletes</span></div></div>
+              <div class="chips"><span>smart ring</span><span>sleep tracker</span><span>health wearable</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Smart%20Ring%20Tracker">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-mic"></use></svg><span class="visual-label">Creator</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 88</span><span class="tag">Creator kit</span></div>
+              <h3>Creator Studio Starter Kit</h3>
+              <p>Camera, mic, light, desk arm, capture tools, and setup guidance for people starting content seriously.</p>
+              <div class="meta"><div><b>Price lane</b><span>$99-$1,499 + 20%</span></div><div><b>Buyer</b><span>Creators, coaches, small biz</span></div></div>
+              <div class="chips"><span>creator kit</span><span>podcast microphone</span><span>video lighting</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Creator%20Studio%20Kit">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-pet"></use></svg><span class="visual-label">Pet care</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 87</span><span class="tag">Pet tech</span></div>
+              <h3>Pet Tech Care Bundle</h3>
+              <p>GPS tracker, smart feeder, camera, water fountain, and pet-safe convenience products.</p>
+              <div class="meta"><div><b>Price lane</b><span>$49-$499 + 20%</span></div><div><b>Buyer</b><span>Pet owners, apartments</span></div></div>
+              <div class="chips"><span>pet tracker</span><span>automatic feeder</span><span>pet camera</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Pet%20Tech%20Bundle">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-car"></use></svg><span class="visual-label">Car safety</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 86</span><span class="tag">Car safety</span></div>
+              <h3>Dash Cam + Car Smart Kit</h3>
+              <p>Dash cam, MagSafe mount, battery monitor, emergency charger, and clean cable setup.</p>
+              <div class="meta"><div><b>Price lane</b><span>$79-$599 + 20%</span></div><div><b>Buyer</b><span>Drivers, families, fleets</span></div></div>
+              <div class="chips"><span>dash cam</span><span>magsafe car mount</span><span>car emergency kit</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Dash%20Cam%20Car%20Kit">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-bike"></use></svg><span class="visual-label">Mobility</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 85</span><span class="tag">Mobility</span></div>
+              <h3>E-Bike Commuter Setup</h3>
+              <p>E-bike shortlist, lock, helmet, phone mount, repair kit, and buyer-fit comparison.</p>
+              <div class="meta"><div><b>Price lane</b><span>$799-$3,999 + 20%</span></div><div><b>Buyer</b><span>Commuters, students, seniors</span></div></div>
+              <div class="chips"><span>ebike</span><span>electric bike</span><span>commuter bike gear</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20E-Bike%20Commuter%20Setup">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-stem"></use></svg><span class="visual-label">STEM</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 84</span><span class="tag">Kids build</span></div>
+              <h3>Kids STEM + AI Learning Kit</h3>
+              <p>Robotics, coding board, workbook, parent guide, and safe learning path for ambitious kids.</p>
+              <div class="meta"><div><b>Price lane</b><span>$49-$399 + 20%</span></div><div><b>Buyer</b><span>Parents, tutors, schools</span></div></div>
+              <div class="chips"><span>stem kit</span><span>robotics for kids</span><span>ai learning for kids</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Kids%20STEM%20Learning%20Kit">Source this</a><a class="mini-btn" href="/ai-edge.html">AI Edge fit</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-water"></use></svg><span class="visual-label">Water</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 83</span><span class="tag">Home water</span></div>
+              <h3>Water Filter + Hydration Setup</h3>
+              <p>Countertop filters, bottles, shower filters, and practical home wellness upgrades.</p>
+              <div class="meta"><div><b>Price lane</b><span>$39-$599 + 20%</span></div><div><b>Buyer</b><span>Families, renters, travel</span></div></div>
+              <div class="chips"><span>water filter</span><span>filtered showerhead</span><span>hydration bottle</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Water%20Filter%20Setup">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-home"></use></svg><span class="visual-label">Smart home</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 82</span><span class="tag">Smart home</span></div>
+              <h3>Robot Vacuum Smart Home Kit</h3>
+              <p>Robot vacuum, smart plugs, smart lock, indoor camera, and setup checklist.</p>
+              <div class="meta"><div><b>Price lane</b><span>$199-$1,499 + 20%</span></div><div><b>Buyer</b><span>Busy homes, rentals, offices</span></div></div>
+              <div class="chips"><span>robot vacuum</span><span>smart lock</span><span>home automation</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Robot%20Vacuum%20Smart%20Home">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+          <article class="trend-card">
+            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-ruck"></use></svg><span class="visual-label">Rucking</span></div>
+            <div class="trend-body">
+              <div class="trend-top"><span class="score">Durability 81</span><span class="tag">Fitness gear</span></div>
+              <h3>Rucking + Simple Fitness Pack</h3>
+              <p>Weighted backpack, walking plan, recovery tools, and safe beginner path. Practical, not flashy.</p>
+              <div class="meta"><div><b>Price lane</b><span>$49-$399 + 20%</span></div><div><b>Buyer</b><span>Adults, beginners, commuters</span></div></div>
+              <div class="chips"><span>rucking backpack</span><span>weighted walking</span><span>fitness starter kit</span></div>
+              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Rucking%20Fitness%20Pack">Source this</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ad-board">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Google Ads starting map</span>
+            <h2>What to advertise first.</h2>
+          </div>
+          <p>Start with buyer pain, not product hype. Each ad should promise fit, sourcing help, and region check.</p>
+        </div>
+        <div class="ad-board">
+          <div class="panel">
+            <h3>Best first campaigns</h3>
+            <ul>
+              <li>Home backup and air quality: urgent, practical, high trust, good quote value.</li>
+              <li>Walking pad and creator kit: strong daily-use angle for remote workers and small business.</li>
+              <li>Kids STEM and AI learning: connects Marketplace to AI Edge without mixing the paid tracks.</li>
+              <li>Dash cam and pet tech: clear problem, easy buyer understanding, lower-friction quote.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Keyword bank</h3>
+            <div class="keyword-list">
+              <span>portable power station Canada</span>
+              <span>best air purifier for home</span>
+              <span>walking pad desk setup</span>
+              <span>creator kit for beginners</span>
+              <span>dash cam installation help</span>
+              <span>kids STEM learning kit</span>
+              <span>pet camera automatic feeder</span>
+              <span>smart home setup help</span>
+              <span>ebike commuter gear</span>
+              <span>health wearable smart ring</span>
+            </div>
+          </div>
+        </div>
+        <div class="ad-board">
+          <div class="panel">
+            <h3>Why these make sense</h3>
+            <p>Shopify's 2026 product trend list points to durable categories like skincare/wellness, vehicle accessories, bedding, cycling, kitchen appliances, and essential lifestyle products. It also notes dash cams above 100,000 monthly searches and multi-year e-bike growth.</p>
+            <p>McKinsey's wellness research frames wellness as a large resilient market, with US wellness spend above $500B annually and younger consumers buying broader categories including health-tracking devices, massage tools, mindfulness apps, and sleep hygiene.</p>
+          </div>
+          <div class="panel source-list">
+            <h3>Research links</h3>
+            <ul>
+              <li><a href="https://www.shopify.com/blog/trending-products" target="_blank" rel="noopener">Shopify trending products 2026</a></li>
+              <li><a href="https://explodingtopics.com/blog/trending-products" target="_blank" rel="noopener">Exploding Topics 44 trending products 2026</a></li>
+              <li><a href="https://www.mckinsey.com/industries/consumer-packaged-goods/our-insights/future-of-wellness-trends" target="_blank" rel="noopener">McKinsey Future of Wellness 2025</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="logo gold" style="letter-spacing:.28em;text-transform:uppercase;font-weight:800">Integrated IT Support Marketplace</div>
+    <p>Quote-first sourcing. Vendor terms apply. Region, shipping, warranty, taxes, and duties must be checked before order approval.</p>
+  </footer>
+  <script>
+  (function(){
+    var form = document.getElementById('marketplaceForm');
+    var item = document.getElementById('marketItem');
+    var status = document.getElementById('marketStatus');
+    document.querySelectorAll('.trend-card .mini-btn.solid').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        var card = btn.closest('.trend-card');
+        var title = card && card.querySelector('h3') ? card.querySelector('h3').textContent.trim() : '';
+        if (title) item.value = title;
+        document.getElementById('marketplace-request').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(function(){ document.getElementById('marketName').focus(); }, 450);
+      });
+    });
+    if (!form) return;
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      status.textContent = '';
+      var btn = form.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'Sending check...';
+      var payload = {
+        item: item.value,
+        name: document.getElementById('marketName').value,
+        email: document.getElementById('marketEmail').value,
+        phone: document.getElementById('marketPhone').value,
+        country: document.getElementById('marketCountry').value,
+        city: document.getElementById('marketCity').value,
+        postalCode: document.getElementById('marketPostal').value,
+        budget: document.getElementById('marketBudget').value,
+        notes: document.getElementById('marketNotes').value,
+        acceptedTerms: document.getElementById('marketTerms').checked,
+        source: 'marketplace-page'
+      };
+      try {
+        var res = await fetch('/.netlify/functions/marketplace-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        var data = await res.json().catch(function(){ return {}; });
+        if (!res.ok) throw new Error(data.error || 'Could not submit request.');
+        status.textContent = data.message || 'Sourcing check received. IIS will confirm before payment.';
+        form.reset();
+      } catch (err) {
+        status.textContent = (location.hostname === 'localhost')
+          ? 'Preview mode: this form sends on Netlify deploy. No payment is taken here.'
+          : (err.message || 'Could not submit. Please email ahmad.wasee@iisupp.net.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Request sourcing check';
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -52,7 +52,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
 <body>
 <nav>
   <a href="/" style="display:flex;align-items:center;gap:14px;color:inherit"><div style="width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:1px solid #c5a059;position:relative"><span style="color:#c5a059;font-weight:700;font-size:18px" class="logo-text">I</span></div><span style="font-size:15px;font-weight:700;letter-spacing:.26em;text-transform:uppercase" class="logo-text">Integrated IT Support</span></a>
-  <div class="nav-links"><a href="/shop.html">Shop</a><a href="/growth-library.html">Growth Library</a><a href="/services.html">Services</a><a href="/aria.html">ARIA</a></div>
+  <div class="nav-links"><a href="/shop.html">Shop</a><a href="/marketplace.html">Marketplace</a><a href="/growth-library.html">Growth Library</a><a href="/services.html">Services</a><a href="/aria.html">ARIA</a></div>
 </nav>
 
 <main id="product" style="max-width:980px;margin:0 auto;padding:140px 24px 90px"></main>
@@ -135,6 +135,18 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
     ? '<a class="c-btn" href="/aria.html">Want it automated? Meet ARIA →</a>'
     : '<a class="c-btn" href="/services.html">Want it done for you? See services →</a>';
   var previewBands = {
+    'gl-prompt-workflows':
+      '<div style="margin:26px 0 0;padding:20px 22px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Free sample preview</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">See the workflow-first prompt posture before you unlock the full pack</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames prompt engineering for real operations: define the job, the evidence, the output shape, and the review boundary so the answer is usable instead of generic.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/downloads/library/prompt-engineering-preview.html">View sample section</a>'+
+          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
+          '<a class="c-btn" href="/downloads/library/ai-workflow-quick-win-sprint-preview.html">View sprint preview</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public productivity guarantee, autonomous-send claim, or regulated-work shortcut is added to the sample. It is a trust-building preview only.</p>'+
+      '</div>',
     'gl-website-checklist':
       '<div style="margin:26px 0 0;padding:20px 22px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
         '<div class="eyebrow" style="margin-bottom:10px">Free sample preview</div>'+
@@ -167,6 +179,29 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<a class="c-btn" href="/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public price, compliance claim, or licensing-reseller posture is added to the sample. It is a trust-building preview only.</p>'+
+      '</div>',
+    'gl-cyber-basics':
+      '<div style="margin:26px 0 0;padding:20px 22px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Free sample preview</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">See the training posture before you unlock the full pack</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS keeps security-awareness training practical: focus on the daily employee habits that actually reduce avoidable risk, keep the reporting path clear, and avoid pretending a short pack replaces a full security program.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/downloads/library/cybersecurity-basics-preview.html">View sample section</a>'+
+          '<a class="c-btn" href="/?contact=1&subject=Request%20Security%20Awareness%20Setup&desc=I%20want%20to%20stage%20a%20Security%20Awareness%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20security%20behavior%20or%20training%20gap%20today%3A%0AAny%20recent%20phishing%20or%20account-risk%20issues%3A%0AWhat%20the%20team%20needs%20to%20improve%20first%3A">Stage security review</a>'+
+          '<a class="c-btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View M365 preview</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public compliance guarantee, cyber-insurance shortcut, or incident-response claim is added to the sample. It is a trust-building preview only.</p>'+
+      '</div>',
+    'gl-nocode-kit':
+      '<div style="margin:26px 0 0;padding:20px 22px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Free sample preview</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">See the workflow-first posture before you unlock the full kit</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames the first no-code automation decision: choose one repetitive workflow, keep the approval boundaries visible, and avoid pretending every admin task should become a live automation on day one.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/downloads/library/no-code-automation-kit-preview.html">View sample section</a>'+
+          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public savings guarantee, connector-depth claim, or autonomous-send posture is added to the sample. It is a trust-building preview only.</p>'+
       '</div>',
     'gl-meeting-sop-pack':
       '<div style="margin:26px 0 0;padding:20px 22px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
@@ -214,22 +249,38 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step practical and scoped without implying long-term retention, licensing resale, or public fixed pricing.</p>'+
       '</div>',
-    'gl-ai-agent-starter':
+    'gl-cyber-basics':
       '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
-        '<div class="eyebrow" style="margin-bottom:10px">Want a real first implementation step?</div>'+
-        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the starter kit into a scoped AI workflow sprint</h2>'+
-        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the kit to choose the safest first use-case, then move into an IIS AI Workflow Quick-Win Sprint for one practical workflow, one cleaner path, and adoption notes the team can keep using.</p>'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need team rollout help, not just the pack?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the security pack into a scoped awareness cleanup</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the pack as the operating guide, then move into a short IIS security-awareness setup when the buyer wants the reporting path, employee reminders, and first-round training focus cleaned up without pretending it is a full compliance program.</p>'+
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
-          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Owners, operators, and internal teams that already know one repetitive process is wasting time every week.</p></div>'+
-          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">One mapped workflow, one better AI-assisted path, and SOP or adoption guidance instead of vague automation theory.</p></div>'+
-          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It keeps the first step short and practical before a buyer commits to a broader AI roadmap or implementation program.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">SMBs, clinics, schools, firms, and lean teams where employee habits are the easiest place to tighten security first.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">A clearer reporting path, a tighter employee awareness focus, and practical notes on what belongs in training versus later admin cleanup.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a safer first step than jumping straight into a larger security engagement or making public compliance assumptions.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint request</a>'+
-          '<a class="c-btn" href="/downloads/library/ai-workflow-quick-win-sprint-preview.html">View sprint preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit first</a>'+
+          '<a class="c-btn solid" href="/?contact=1&subject=Request%20Security%20Awareness%20Setup&desc=I%20want%20to%20stage%20a%20Security%20Awareness%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20security%20behavior%20or%20training%20gap%20today%3A%0AAny%20recent%20phishing%20or%20account-risk%20issues%3A%0AWhat%20the%20team%20needs%20to%20improve%20first%3A">Stage security review</a>'+
+          '<a class="c-btn" href="/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage M365 tune-up</a>'+
         '</div>'+
-        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This stays practical and scoped without implying autonomous operation, deep integration promises, or fixed ROI claims.</p>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step practical and scoped without implying audit readiness, cyber-insurance acceptance, or guaranteed risk reduction.</p>'+
+      '</div>',
+    'gl-ai-agent-starter':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Free sample preview</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">See the safe-first AI agent posture before unlocking the full kit</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">This sample page shows how IIS frames the first AI-agent decision: which workflows are safe enough to start with, what still needs human review, and how the buyer moves from curiosity into one scoped audit or sprint without hype.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Owners, operators, and internal teams that know repeated questions, intake, follow-up, or task chasing are wasting hours every week.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">What it proves</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">IIS is not selling fantasy agents. The preview shows approval gates, risk checks, and the difference between safe first workflows and work that still needs a human in the loop.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why preview first</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It lets the buyer judge the thinking before they commit to the full pack, an audit, or a small implementation sprint.</p></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/downloads/library/ai-agent-starter-kit-preview.html">View sample section</a>'+
+          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit first</a>'+
+          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint request</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public ROI promise, autonomous-send claim, or deep integration promise is added to the sample. It is a trust-building preview only.</p>'+
       '</div>',
     'gl-nocode-kit':
       '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+

@@ -3,9 +3,10 @@
  *  - Logs subscription lifecycle events (existing behaviour).
  *  - On checkout.session.completed for a concierge book order
  *    (metadata.kind === 'book-order'), sends two emails via Resend:
- *      1) the customer: a branded "thank you for choosing us" confirmation;
- *      2) IIS ops: a fulfilment order with the customer's shipping address and
- *         our contact info (supplier is never referenced).
+ *      1) the customer: a branded confirmation;
+ *      2) IIS ops: a fulfilment order with the customer's shipping address.
+ *    Vendor/source disclosure must happen in the quote or order summary before
+ *    payment when a third-party vendor materially fulfils the order.
  *    Email failures are logged but never fail the webhook.
  */
 const Stripe = require('stripe');
@@ -83,7 +84,7 @@ async function handleBookOrder(stripe, sessionObj) {
     addr.country
   ].filter(Boolean).join('<br>') || '(no address on file — follow up with customer)';
 
-  // 1) Customer — branded thank-you (supplier never mentioned)
+  // 1) Customer: branded thank-you with transparent sourcing language.
   if (email) {
     const html = shell(`
       <h1 style="margin:0 0 14px;font:600 22px/1.2 Georgia,serif;color:#0b1f3a">Thank you for choosing us</h1>
@@ -94,6 +95,7 @@ async function handleBookOrder(stripe, sessionObj) {
         <tr><td style="padding:6px 0;color:#555">Total paid</td><td style="padding:6px 0;text-align:right;font-weight:700;color:#0b1f3a">${total}</td></tr>
       </table>
       <p>Delivery is estimated today and reconciled to the final shipping cost once your order ships — we'll make it right either way. You'll get tracking as soon as it's on the move.</p>
+      <p style="font-size:12px;color:#777">If a third-party vendor fulfils any part of the order, the material vendor/source details and terms must be disclosed in the order summary or tracking handoff.</p>
       <p>Questions? Just reply to this email or call ${META.phone}.</p>
       <p style="margin-top:22px">Warmly,<br><strong>${META.brand}</strong></p>
     `);
@@ -102,10 +104,10 @@ async function handleBookOrder(stripe, sessionObj) {
     console.warn('[stripe-webhook] book-order had no customer email; skipped customer mail');
   }
 
-  // 2) IIS ops — fulfilment order (our contact + customer's shipping address)
+  // 2) IIS ops: fulfilment order with compliance reminder.
   const opsHtml = shell(`
     <h1 style="margin:0 0 6px;font:600 20px/1.2 Georgia,serif;color:#0b1f3a">New book order to fulfil</h1>
-    <p style="margin:0 0 16px;color:#555">Place the order with our vendor and ship to the address below. Bill IIS contact details on any paperwork that reaches the customer.</p>
+    <p style="margin:0 0 16px;color:#555">Place the order with the approved vendor and ship to the address below. Do not misrepresent IIS or the buyer. Use IIS contact details only where vendor terms allow, and forward material vendor updates to the customer.</p>
     <h3 style="margin:14px 0 4px;color:#0b1f3a">${esc(m.book || 'Item')}</h3>
     <p style="margin:0 0 14px;color:#555">${esc(m.author || '')}</p>
     <table style="width:100%;border-collapse:collapse;font-size:14px">
