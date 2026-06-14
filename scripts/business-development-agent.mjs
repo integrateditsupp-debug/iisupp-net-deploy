@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { publishAgentReport } from './autonomy-supervisor-core.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const STATE_DIR = path.join(ROOT, 'senior-director-state');
@@ -591,6 +592,7 @@ function renderCommandSystem() {
     '- Draft, organize, score, build, improve, and show Ahmad what is ready.',
     '- Default execution mode: complete the task to the CEO final-action point. Ahmad should only need to click, sign, submit, send, approve, accept, or reject.',
     '- Ask for approval only when action affects money, reputation, legal exposure, external contact, contracts, submissions, account creation, pricing commitments, or deletion.',
+    '- Interpret short action words like `continue`, `proceed`, `do it`, and `keep going` as authority to continue under the standing IIS/ARIA mission, current queue, and memory without asking Ahmad to restate the vision.',
     '',
     '## Non-Negotiable Rules',
     '- No Raymond James contact, targeting, scraping, references, or lead sourcing.',
@@ -600,6 +602,8 @@ function renderCommandSystem() {
     '- No platform abuse, anti-spam violations, privacy violations, copyright misuse, or Canadian compliance shortcuts.',
     '- No fake partnerships or unsupported claims involving OpenAI, Anthropic, Microsoft, Google, schools, governments, banks, or any company.',
     '- Do not delete website features, products, checkout flows, AI logic, pages, backend functions, or hidden logic unless a backup exists and Ahmad approves.',
+    '- Keep cost, approval, send, submit, account-creation, auth, and risky-publish blockers visible until Ahmad acts on them or explicitly parks them.',
+    '- While waiting on Ahmad-only actions, keep building the next list: more revenue opportunities, more conversion improvements, more prep packets, more supplier-entry lanes, and more cleanup or handoff recommendations.',
     '',
     '## CEO Final-Action Protocol',
     '- Forms and portals: open the opportunity, read requirements, fill every known field that does not create cost/legal exposure, attach prepared files when appropriate, validate required fields, leave the browser on the final Submit/Send/Apply/Complete step, and record what Ahmad must click.',
@@ -608,6 +612,7 @@ function renderCommandSystem() {
     '- Website/product work: implement, test, and prepare publish notes. Stop only before deleting features, changing checkout/payment behavior, or publishing if the change affects reputation, pricing, legal claims, or irreversible production state.',
     '- Cleanup: scan, group, summarize, and prepare archive/delete lists. Stop before deleting, moving, compressing, clearing logs, or changing Git history.',
     '- Escalate only with a clear CEO action: "Ahmad click Submit", "Ahmad click Send", "Ahmad approve/sign", "Ahmad accept/reject", or "Ahmad approve cleanup/delete list".',
+    '- Mirror live approvals and blockers into the active handoff surface so another active agent can carry them forward without context loss.',
     '',
     '## Primary Revenue Lanes',
     '- Remote L1/L2/L3 overflow support and MSP help.',
@@ -730,6 +735,7 @@ function renderCommandUpdate(contacts, leadQueueEntries, today) {
     '',
     '## 6. Website improvement needed',
     '- Add clearer service package pathways from ARIA/Growth Library/Services into one action: book a scoping call, request AI workflow audit, or buy/download a practical pack. Preserve checkout and existing features.',
+    '- Keep adding proof-first trust layers for the fastest-close offers. The newest local-only gate is the Overflow Support Pilot sample preview.',
     '',
     '## 7. Outreach drafts prepared',
     `- Draft file ready: ${REVENUE_DRAFTS_FILE}`,
@@ -746,7 +752,7 @@ function renderCommandUpdate(contacts, leadQueueEntries, today) {
     "## 10. Tomorrow's first 3 actions",
     '- Check LinkedIn accepted connections and move any accepted buyer into Obtained Leads.',
     '- If Jason Brown has not replied by Friday, 2026-06-12, use the prepared Hines send checklist for the CEO `Send` / `Hold` decision.',
-    '- Review the staged Website Checklist preview slice and choose publish or hold local only.',
+    '- Review the staged Overflow Support Pilot preview slice and choose publish or hold local only.',
     ''
   ].join('\n');
 }
@@ -764,6 +770,9 @@ function renderLastMileProtocol() {
     '- Fill the form, draft and stage the message, prepare the files, build the package, test the page, or organize the cleanup list.',
     '- Leave the browser, file, portal, draft, or checklist at the exact place where Ahmad can make the CEO final action quickly.',
     '- Record the exact CEO action needed in plain language.',
+    '- If Ahmad says `continue`, `proceed`, or `do it`, continue under the standing mission and current queue. Do not ask him to restate the objective.',
+    '- Keep cost, approval, send, submit, account-creation, auth, and risky-publish blockers visible until Ahmad acts on them or explicitly parks them.',
+    '- While waiting on Ahmad-only actions, keep adding the next revenue, conversion, supplier, tender, and cleanup opportunities.',
     '',
     '## CEO Final Actions',
     '- Submit',
@@ -793,6 +802,7 @@ function renderLastMileProtocol() {
     '- Why it matters for revenue/profit.',
     '- The exact CEO final action Ahmad must take.',
     '- Any risk in one sentence.',
+    '- Where the mirrored active handoff list lives so another active agent can pick it up immediately.',
     ''
   ].join('\n');
 }
@@ -1003,6 +1013,43 @@ async function run() {
 
   await appendQueue('Daily business-development queue ready', summary);
   await appendExecutionNote(summary);
+  await publishAgentReport({
+    agentId: 'business-development-agent',
+    label: 'Business Development Agent',
+    summary: 'Daily no-send business-development queue refreshed and routed into the autonomous board.',
+    metrics: {
+      trackedContacts: crm.contacts.length,
+      obtainedLeads: obtainedCount,
+      pendingConnections: pendingCount,
+      strategicFollows: followedCount,
+      tenderLeadCount
+    },
+    artifacts: [
+      CRM_FILE,
+      DAILY_BRIEF_FILE,
+      OBTAINED_MD_FILE,
+      REVENUE_SPRINT_FILE,
+      REVENUE_DRAFTS_FILE,
+      COMMAND_UPDATE_FILE,
+      ARIA_PACKAGES_FILE,
+      GROWTH_LIBRARY_ENGINE_FILE,
+      LAST_MILE_PROTOCOL_FILE
+    ],
+    readyActions: [
+      obtainedCount ? `${obtainedCount} warm lead(s) are staged for Ahmad-only send/hold review.` : null
+    ].filter(Boolean),
+    nextActions: [
+      pendingCount ? `Check ${pendingCount} pending connection request(s) for acceptance.` : null,
+      followedCount ? `Revisit ${followedCount} strategic follow(s) on cadence.` : null,
+      tenderLeadCount ? `Review ${tenderLeadCount} tender/public lead(s) for bid/no-bid posture.` : null
+    ].filter(Boolean),
+    focusAreas: [
+      'warm-lead follow-up',
+      'remote-l1-l3-overflow-support',
+      'ai-workflow-audit',
+      'website-conversion'
+    ]
+  });
   console.log(summary);
 }
 

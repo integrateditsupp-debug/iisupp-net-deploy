@@ -1,819 +1,355 @@
-# Codex / Claude Collaboration Brief
+# IIS / ARIA — Codex × Cowork Collaboration Brief
+## "Trend → Trust → Transformation" Ecosystem
 
-Updated: 2026-06-13
+**Owner:** Ahmad Wasee — Founder, Integrated IT Support Inc.
+**Created:** 2026-06-03 by Cowork (Sonnet)
+**Recommended repo path:** `docs/COLLAB_BRIEF.md` (covered by the existing `docs/*` 404 redirect in `netlify.toml` — internal-only)
+**Mirror outputs path:** `outputs/codex-collab/COLLAB_BRIEF.md`
 
-Purpose: keep Codex and Claude Cowork aligned on IIS / ARIA work without requiring Ahmad to repeat the vision every session. This is the shared source Claude should use; local command files extend it with live run state.
+---
 
-This file is internal operating guidance. Netlify currently redirects `/docs/*` to a 404 page, so this is not a public website page.
+## 0 · Why this file exists
 
-## Master Vision
+Two agents are now working on IIS / ARIA in parallel:
 
-Build IIS / ARIA into a trend-to-trust-to-transformation ecosystem.
+- **Codex** (ChatGPT Codex CLI) — direct local repo access, ships HTML/MJS/CSS/JSON to the live site, writes governance/design-handoff docs, runs `git`/`node`/`netlify` natively, manages `aria_brain_pack/bits/` autonomous learning output.
+- **Cowork** (Anthropic Claude / Sonnet, occasionally Opus 4.8 for harder reasoning) — out-of-repo work: LinkedIn / lead research / cold outreach / capability statements / memory / observation / strategy docs. No direct repo write.
 
-The system watches what people care about, scores whether it matters, then turns useful demand into:
+This file is the **single source of truth** both agents read so we don't fork the vision, duplicate work, or violate locked constraints. Whoever edits this file appends a changelog entry at the top of §11 — never silently rewrites.
 
-- AI Edge learning paths
-- ARIA knowledge bits
-- Growth Library products
-- short demos
-- service offers
-- scripts and templates
-- support guides
-- business-development assets
-- CEO final-action packets
+---
 
-The brand should feel premium, clean, intelligent, human, practical, and quietly powerful. Do not make it feel desperate, fake, scammy, combative, or copied.
+## 1 · Master vision (Ahmad, verbatim)
 
-## Locked Constraints
+> Build an AI-powered intelligence platform that watches trends, understands why people care about them, predicts which trends have short-term or long-term value, and turns those trends into practical IIS/ARIA assets such as: content · demos · guides · digital products · Growth Library products · AI-readable knowledge packs · AI agents · automation kits · business services · IT support packages · ARIA features · community learning paths · paid implementation offers.
+>
+> The platform should not only chase trends. It should turn trends into assets.
+>
+> The system must understand that people are often attracted first by emotional drivers (power, status, recognition, validation, curiosity, belonging, identity, beauty, lifestyle, aspiration, desire, security, knowledge, growth, transformation, fear of falling behind, hope of becoming better) — but must not trap people in shallow desire. Use attention as the doorway, then guide users toward deeper value: truth · trust · practical learning · skill-building · self-reliance · mastery · discipline · better decisions · ethical ambition · community · long-term usefulness · personal transformation.
+>
+> **Strategic flow:** Hook with attention. Reveal truth. Offer practical value. Build trust. Show a better path. Give the user choice. Convert through value. Retain through progress and community.
 
-- Spend $0 unless Ahmad approves.
-- Do not send, submit, publish risky changes, pay, create accounts, certify, sign, delete, or make irreversible commitments without Ahmad.
-- Do not fabricate search volume, testimonials, partnerships, proof, experience, or credentials.
-- Do not scrape platforms against rules.
-- Do not create legal, medical, financial, safety, regulatory, public-claims, donation, or privacy exposure without human review.
-- Keep public copy simple and need-to-know unless Ahmad asks for detail.
-- Preserve website visual stability unless the task is explicitly a design change.
-- No Raymond James involvement.
+### Brand feel
+Premium · clean · intelligent · futuristic · honest · human · practical · confident · elegant · not desperate · not fake · not overhyped · not gimmicky · quietly powerful · corporate luxury with warmth · Apple-level simple where possible · strong enough for businesses · clear enough for normal users. **The brand should feel like a quiet leader.**
 
-## Agent Split
+### Core positioning
+> "We help people understand what is rising, what matters, what is useful, and what can be turned into skill, systems, services, or opportunity."
 
-Codex owns:
+---
 
-- live repo changes
-- code implementation
-- tests and verification
-- ARIA KB/product integration
-- website/product staging
-- command-state updates
-- CEO final-action packets
+## 2 · Locked constraints (NEVER violate)
 
-Claude Cowork owns:
+Both agents inherit these. They override anything in §1 that would conflict.
 
-- outside-the-repo strategy
-- product architecture
-- trend framing
-- offer design
-- content direction
-- critique and risk review
-- compact task prompts back to Codex
+1. **$0 default spend** until first paying client closes. No paid LLM call, no paid scraper, no new subscription. $100 hard cap with explicit per-action approval. Anthropic Partner application FROZEN (drafted, not submitted).
+2. **HARD RULE** — `/aperture-learning.html` login + ARIA chat MUST keep working after every deploy. Rollback on regression. Verify both URLs post-publish.
+3. **Visual stability** — don't change look/theme/fonts/copy on iisupp.net unless explicitly approved as improvement.
+4. **Netlify auto-publish OFF** — every deploy needs the manual Publish click in `app.netlify.com/sites/iisupp/deploys`.
+5. **Standing mission** (locked 2026-05-29, never re-ask) — hunt MERX / CanadaBuys / Ontario Tenders + business + IT roles autonomously, zero cost.
+6. **Ethical design rules** (Ahmad explicit) — NO dark patterns, fake scarcity, fabricated testimonials, fake partnerships, fake search volume, manipulation of vulnerable users, hidden fees, shame-based selling, unrealistic financial promises, copyrighted material reproduction, illegal data collection, ToS-violating scraping, or high-risk advice without human review.
+7. **Human review gate** before publishing: high-risk claims · paid offers · donation claims · external product referrals · legal/financial/health-related content · all public-facing content (default: queue for Ahmad, not auto-ship).
+8. **Garry Tan filter** on every ARIA / site change: (a) trust · (b) clarity-in-5-seconds · (c) friction-to-payment · (d) demo/trial · (e) ships safely today.
+9. **No fabricated experience.** When listing past work, use Ahmad's real history only (resume in `outputs/Ahmad Wasee_AI Engineer Resume.docx`). Anthropic credentials = the real Anthropic Academy completions (Claude 101, Claude Code 101, Cowork, Code in Action, AI Fluency, + Building with the Claude API in progress). Partner = "application in review" until accepted.
 
-Conflict rule: Codex owns the live repo. If strategy conflicts with implementation reality, Codex chooses the safest repo-consistent path and records the reason.
+---
 
-## Main Modules
+## 3 · The 16-module ecosystem — mapped to existing IIS infrastructure
 
-1. Trend Intelligence Engine
-2. Trend Longevity Predictor
-3. Trend Opportunity Scoring Engine
-4. Trend-to-Asset Mapper
-5. Ethical Content Engine
-6. Demo Gateway
-7. Growth Library Product Engine
-8. ARIA Integration Engine
-9. IIS Service Offer Engine
-10. External Product Bridge
-11. Personalized Progress Dashboard
-12. Community Growth Layer
-13. Donation / Social Good Layer
-14. Admin Command Center
-15. Human Review Layer
-16. Cost and Approval Gate
+Ahmad's spec is preserved verbatim in the prompt he pasted. Below is how each module **maps to existing files/agents** so neither of us builds duplicate infrastructure.
 
-Do not build duplicate systems. Extend existing Lead Radar, Growth Library, ARIA trial, Aperture/admin, and `aria_brain_pack/bits/` patterns where practical.
+| # | Module | Existing infrastructure | Target file / agent | Status |
+|---|--------|------------------------|---------------------|--------|
+| 1 | Trend Intelligence Engine | Lead Radar pattern (CanadaBuys CSV poller) | new: `netlify/functions/trend-radar.mjs` (mirror Lead Radar pattern) | TO BUILD (Codex) |
+| 2 | Trend Longevity Predictor | none | new: `netlify/functions/trend-longevity.mjs` — heuristic until LLM funded | TO BUILD (Codex) |
+| 3 | Trend Opportunity Scoring | none | new: `lib/trend-score.mjs` (pure formula, no LLM) | TO BUILD (Cowork drafts, Codex ships) |
+| 4 | Trend-to-Asset Mapper | none | new: `lib/trend-asset-map.mjs` — table-driven, no LLM | TO BUILD (Cowork drafts) |
+| 5 | Ethical Content Engine | none | new: `netlify/functions/draft-content.mjs` — template-driven first, LLM later when funded | TO BUILD (Codex) |
+| 6 | Demo Gateway | partial — ARIA chat trial pattern exists | extend `aria.html` trial UX + new: `assets/demo-gateway.js` | EXTEND (Codex) |
+| 7 | Growth Library Product Engine | LIVE — `assets/iis-catalog.js`, `growth-library.html` | extend with auto-generated trend products → review queue | EXTEND (Codex) |
+| 8 | ARIA Integration Engine | LIVE — `aria-research.mjs`, `aria-llm-governor.mjs`, `aria_brain_pack/` | new entries into `aria_brain_pack/bits/` per trend (Codex's autonomous learning loop already does this — extend prompt to include trend context) | EXTEND (Codex) |
+| 9 | IIS Service Offer Engine | partial — capability copy on iisupp.net | new: `lib/service-offers.json` table mapping trends → services | TO BUILD (Cowork drafts) |
+| 10 | External Product Bridge | none | new: `netlify/functions/external-product-bridge.mjs` + new section in `iis-catalog.js` for "wiser alternative" cards. 20% concierge fee disclosed on the page. | TO BUILD (Codex), copy drafted by Cowork |
+| 11 | Personalized Progress Dashboard | partial — `/aperture-learning.html` is owner-only; need a *user-facing* dashboard | new: `user-dashboard.html` + `netlify/functions/user-progress.mjs` | DEFERRED until Phase 2 (needs auth — security-sensitive) |
+| 12 | Community Growth Layer | none | DEFERRED — needs accounts. Hold until Phase 2 / 3. Codex's commit messages already mention "Full multi-user accounts + ARIA SSO + subscriptions + admin portal (security-sensitive; build via Stripe Customer Portal + webhook as a dedicated tested phase)" — that's the gate. | DEFERRED |
+| 13 | Donation / Social Good Layer | none | new: `donate.html` + Stripe Payment Link (already have env var pattern) | DEFERRED — needs Stripe configuration + ethical clarity on where money goes (Ahmad must specify recipient first) |
+| 14 | Admin Command Center | LIVE — `/aperture-learning.html`, "Agent Command Center" Codex shipped (commit 63c1183) | extend with trend tiles + revenue tiles + cost tiles | EXTEND (Codex) |
+| 15 | AI Agent Layer | LIVE — mesh registry has 13 agents (Codex de-ghosted in d54ad49); `aria_brain_pack/bits/` learning loop already running | spec the 13 trend agents listed below as roles, not necessarily separate processes — wrap in existing learning loop | EXTEND (Codex) |
+| 16 | Human Review Layer | partial — change-log.md + restore-notes.md system | extend to a `docs/REVIEW_QUEUE.md` that Codex appends to and Ahmad approves | TO BUILD (Codex) |
 
-## Trend Opportunity Score
+**Read this table top-down before building anything.** If a module is `LIVE` or `EXTEND`, the right move is to add to the existing code path — don't build a parallel system.
 
-Use a deterministic 0-100 score. Store the breakdown, not only the total.
+---
 
-Default weights:
+## 4 · Trend scoring formula (concrete, no LLM)
 
-- Attention: 10
-- Velocity: 10
-- Longevity: 10
-- Usefulness: 12
-- Revenue Potential: 12
-- IIS Fit: 10
-- ARIA Fit: 10
-- Growth Library Fit: 8
-- Trust Potential: 8
-- Distribution Fit: 5
-- Defensibility: 5
-- Legal Risk penalty: up to -10
-- Ethical Risk penalty: up to -10
-- Saturation Risk penalty: up to -8
-- Build Difficulty penalty: up to -7
-- Cost Risk penalty: up to -5
+Ahmad gave a formula skeleton. Locking the math here so both agents score the same way:
 
-If source data is missing, label the score `estimated` and explain what evidence is missing.
-
-## Longevity Classifier
-
-Use one class per trend:
-
-- Flash: days to weeks
-- Seasonal: tied to event or calendar cycle
-- Medium: 1-6 months
-- Long: 6-24 months
-- Structural-Shift: durable market or behavior change
-
-Use rule-based classification first. LLMs can explain but should not silently override rules.
-
-## ARIA KB Intake
-
-Trend knowledge must be bit-native:
-
-- path: `aria_brain_pack/bits/learn-trend-*.json`
-- required fields: `id`, `title`, `category`, `problem`, `audience`, `short_answer`, `baby_steps`, `evidence`, `trend_score`, `score_breakdown`, `longevity`, `review_status`, `created_at`, `updated_at`
-- default `review_status`: `pending`
-- allowed review states: `pending`, `approved`, `rejected`, `needs_update`
-
-ARIA must not serve unapproved trend content as authoritative support guidance.
-
-## Phases
-
-Phase 1 - $0 now:
-
-- scoring formula
-- longevity classifier
-- trend radar model
-- review queue
-- three demo candidates
-- Growth Library mapping
-- ARIA pending-bit intake
-- manual keyword input
-- CSV import
-- local JSON/CSV/Markdown export
-- admin dashboard specification
-
-Phase 2 - after first paying client or Ahmad approval:
-
-- paid data/API experiments
-- dashboard
-- community features
-- richer ingestion
-- advanced admin workflows
-- demo gateway integration
-- Shop integration
-- ARIA usage analytics only if privacy-compliant and consent-based
-
-Phase 3 - revenue-funded:
-
-- scaled automation
-- partner bridges
-- ads
-- larger community/donation systems
-- enterprise analytics and licensing
-- multi-agent workflows with authenticated scheduler/bridge
-
-## Technical MVP Contract
-
-Prompt 2 turns the strategy into a buildable MVP. The first version must let IIS:
-
-1. Input or import trending keywords.
-2. Pull trend data only from compliant sources.
-3. Score each trend.
-4. Classify trend longevity.
-5. Generate product ideas.
-6. Generate content outlines.
-7. Generate demo ideas.
-8. Suggest Growth Library products.
-9. Suggest IIS service offers.
-10. Suggest ARIA feature connections.
-11. Queue everything for human review.
-12. Export CSV, JSON, Markdown, and website-ready copy.
-13. Display it in an admin dashboard.
-
-First safe build slice:
-
-- local manual/CSV keyword intake
-- deterministic scoring
-- rule-based longevity classification
-- generated draft product/content/demo suggestions
-- review queue
-- JSON/CSV/Markdown exports
-- no external APIs
-- no public publish
-
-## Technical Architecture
-
-Text diagram:
-
-```text
-Manual keyword entry / CSV upload
-  -> Trend Intake
-  -> Optional compliant source connectors
-  -> Raw data store
-  -> Normalized trend records
-  -> Deterministic scoring + longevity classification
-  -> Product/content/demo/service/ARIA suggestion generators
-  -> Human review queue
-  -> Admin dashboard + filters + export
-  -> Approved assets only: Growth Library, Shop, ARIA KB, website, demos
+```
+TrendOpportunityScore =
+  + 0.20 * Attention            (0-100, raw mentions or search volume normalized)
+  + 0.15 * Velocity             (0-100, week-over-week growth)
+  + 0.20 * Longevity            (0-100, classifier output — see §5)
+  + 0.15 * Usefulness           (0-100, expert tag: practical / educational / motivational)
+  + 0.10 * RevenuePotential     (0-100, IIS service-fit × price tier)
+  + 0.05 * IISFit               (0-100, matches our delivery capabilities)
+  + 0.05 * ARIAFit              (0-100, becomes a KB article or skill)
+  + 0.05 * GrowthLibraryFit     (0-100, becomes a digital product)
+  + 0.05 * TrustPotential       (0-100, can be backed with honest sources)
+  - 0.15 * LegalRisk            (0-100)
+  - 0.15 * EthicalRisk          (0-100)
+  - 0.10 * SaturationRisk       (0-100)
+  - 0.10 * BuildDifficulty      (0-100)
+  - 0.10 * CostRisk             (0-100)
 ```
 
-Low-cost stack:
+Result: −60 to +100. Score ≥ 60 → auto-suggest to Ahmad. Score 40–59 → queue for human review. Score < 40 → discard.
 
-- Current repo first: static/admin pages, Node scripts, Netlify functions where needed.
-- Backend first slice: Node `.mjs` scripts and JSON files in `senior-director-state/trend-radar/`.
-- Later backend: Node Express or Python FastAPI only when the local MVP proves useful.
-- Database later: PostgreSQL or Supabase PostgreSQL after revenue or Ahmad approval.
-- AI later: LLM generation behind review gates; no hidden keys, no hardcoded secrets.
+Every score must come with **why**: which inputs drove it. Build `lib/trend-score.mjs` to return `{ score, breakdown: {input: weighted_contribution} }` so reasons are auditable.
 
-## Database Schema Target
+---
 
-Design for these future tables. The local MVP can mirror them as JSON files first.
+## 5 · Trend longevity classifier (heuristic, no LLM)
 
-- `users`
-- `admin_users`
-- `trend_keywords`
-- `trend_sources`
-- `trend_raw_data`
-- `trend_normalized_data`
-- `trend_scores`
-- `trend_classifications`
-- `generated_products`
-- `generated_content`
-- `generated_demos`
-- `growth_library_suggestions`
-- `iis_service_suggestions`
-- `aria_feature_suggestions`
-- `review_queue`
-- `audit_logs`
-- `api_usage_logs`
-- `cost_logs`
-- `risk_flags`
+Five types per Ahmad's spec:
 
-Every record should include:
+| Type | Signal patterns | Asset fit |
+|------|----------------|-----------|
+| **Flash** (hours-weeks) | single platform, no industry mentions, viral creator origin | short-form post, hot-take, 1-screen demo |
+| **Seasonal** (returns yearly) | tied to date keywords (tax, holiday, school, weather, sport, product launch cycle) | landing page that reactivates yearly, scheduled republish |
+| **Medium-Term** (3 mo – 2 yr) | crosses 2+ platforms, picked up by trade press, vendor announcements | landing page, mini-product, SEO content, service offer |
+| **Long-Term** (3 – 10 yr) | regulatory / structural / multi-vendor adoption | community, training, ARIA module, IIS service line |
+| **Structural Shift** | covered by mainstream + academic + government | core IIS / ARIA pillar (e.g. "AI in IT support" itself) |
 
-- `id`
-- `created_at`
-- `updated_at`
-- `source`
-- `status`
-- `confidence_score`
-- `review_status`
-- `notes`
+Classifier rules (`lib/trend-longevity.mjs`):
+1. If trend tokens match a seasonal calendar entry → Seasonal.
+2. If trend appears on ≥ 3 distinct platforms (Google Trends + Reddit + news) → at least Medium-Term.
+3. If trend has industry analyst coverage (Gartner / Forrester / equivalent) OR regulatory action → Long-Term minimum.
+4. If trend changes ≥ 2 of {how-people-work, how-money-flows, how-decisions-are-made} → Structural Shift.
+5. Default → Flash.
 
-## API Endpoint Target
+---
 
-Do not build all endpoints before the local script proves value. Target endpoints:
+## 6 · ARIA KB intake — turn every trend into a bit
 
-- `POST /api/trends/keywords`
-- `POST /api/trends/upload`
-- `GET /api/trends`
-- `GET /api/trends/:id`
-- `POST /api/trends/:id/score`
-- `POST /api/trends/:id/generate`
-- `GET /api/review-queue`
-- `PATCH /api/review-queue/:id`
-- `GET /api/trends/export.csv`
-- `GET /api/trends/export.json`
-- `GET /api/trends/export.md`
-- `GET /api/audit-logs`
-- `GET /api/cost-logs`
+This is the answer to Ahmad's last line: *"See if a lot of what you will create can somehow be fed into ARIA as well in form of KB or anything other ways that ARIA is structured."*
 
-All write endpoints require admin auth, rate limits, audit logs, and review gating.
+ARIA already reads from `aria_brain_pack/bits/learn-*.json` (276 bits and growing — Codex's autonomous learning loop generates them). **Every trend should produce one or more bits.**
 
-## Admin UI Target
-
-Pages:
-
-- Trend Radar dashboard
-- Keyword input / CSV upload
-- Trend detail
-- Review queue
-- Product ideas
-- Content outlines
-- Demo ideas
-- Risk flags
-- Exports
-- Cost/API usage logs
-
-Components:
-
-- trend table
-- score badge
-- longevity badge
-- source chip
-- review status selector
-- risk flag panel
-- product idea card
-- content outline card
-- demo idea card
-- export toolbar
-- filters and search
-
-## Backend Services
-
-- keyword intake service
-- CSV parser
-- compliant source connector service
-- normalization service
-- scoring service
-- longevity classifier
-- product generator
-- content outline generator
-- demo generator
-- review queue service
-- export service
-- audit logger
-- cost logger
-- risk flagger
-
-## Generation Rules
-
-Content must follow:
-
-1. Hook
-2. Truth
-3. Practical value
-4. Personal relevance
-5. Empowerment
-6. Offer
-7. Long-term path
-
-Generated demos must include:
-
-- demo title
-- value shown
-- input required
-- output preview
-- 10-minute limit
-- free vs paid boundary
-- upgrade path
-- cost estimate
-- conversion goal
-- privacy note
-
-## Content, Product, Community, And Ethical Conversion Contract
-
-Prompt 3 adds the user-facing experience layer. It must preserve the full idea without making IIS / ARIA sound manipulative, desperate, anti-scam, or pressure-based.
-
-Every trend becomes a user journey:
-
-```text
-attention -> awareness -> trust -> skill -> transformation -> community -> long-term value
+### Bit format (canonical — preserve compatibility with existing bits)
+```json
+{
+  "key": "trend-{slug}-{shorthash}.json",
+  "heading": "{category}: {short title}",
+  "body": "{What it is. Why it matters. What to do. Where to escalate.}\n\nAsked by: trend-agent | Topic: {topic} | If this is outside our scope, that is a referral — call (647) 581-3182.",
+  "source_url": "{primary source URL}",
+  "vendor": "iis-trend",
+  "query_seed": "{the user question this answers}",
+  "created_at": "{ISO timestamp}",
+  "agent": "trend-{role}",
+  "topic": "{normalized topic tag}",
+  "trend_score": 78,
+  "longevity": "Medium-Term",
+  "review_status": "pending"
+}
 ```
 
-Do not frame it as "trend -> buy something." Frame it as:
-
-```text
-You noticed this because something in it matters. Understand it, separate hype from value, then turn attention into a skill, tool, decision, workflow, asset, or growth path.
-```
-
-Trend content flow:
-
-1. Attention Hook
-2. Emotional Mirror
-3. Truth Layer
-4. Practical Explanation
-5. Opportunity Layer
-6. Demo Invitation
-7. Choice-Based Offer
-8. Long-Term Growth Path
-
-Tone:
-
-- human
-- clean
-- wise
-- confident
-- direct
-- premium
-- strong but humble
-- inspiring but practical
-- not corny
-- not fake motivational
-- not manipulative
-- not desperate
-- not overhyped
-
-Use language such as:
-
-- Here is what is really happening.
-- Here is why people care.
-- Here is the useful part.
-- Here is the risk.
-- Here is the better path.
-- You can choose what fits you.
-- If you want to build from this, start here.
-- Turn attention into ability.
-- Turn curiosity into skill.
-- Turn a trend into an asset.
-
-Avoid language such as:
-
-- Guaranteed success
-- Get rich quick
-- Secret hack nobody knows
-- This will change your life overnight
-- You are behind if you do not buy this
-- Limited time only, unless it is true
-- Everyone is doing this, unless proven
-
-Product types:
-
-- PDF guide
-- mini-book
-- checklist
-- template pack
-- prompt pack
-- AI agent starter kit
-- automation blueprint
-- troubleshooting guide
-- AI-readable KB pack
-- video lesson
-- mini-course
-- demo tool
-- business audit
-- website audit
-- workflow audit
-- consultation
-- done-for-you implementation
-- community challenge
-- Growth Library bundle
-
-Growth Library positioning:
-
-```text
-Practical intelligence packs for people, businesses, and AI systems.
-```
-
-Growth Library is not just courses. It is a premium practical intelligence vault for humans and AI systems.
-
-For humans:
-
-- Learn AI
-- Learn automation
-- Learn IT support
-- Learn troubleshooting
-- Learn prompt engineering
-- Learn Microsoft 365 support
-- Learn cybersecurity basics
-- Learn workflow design
-- Learn business systems
-
-For AI systems:
-
-- AI-readable KB packs
-- SOPs
-- escalation flows
-- troubleshooting trees
-- ticket triage packs
-- help desk automation knowledge
-- support agent training materials
-
-First product plans:
-
-1. Level 1 IT Support Troubleshooting Bible
-2. Microsoft 365 Help Desk KB Pack
-3. AI Agent Starter Kit for Small Business
-4. Prompt Engineering for Workflows
-5. Windows 11 Troubleshooting KB
-6. Outlook Fix Guide
-7. AI Help Desk Automation Blueprint
-8. Cybersecurity Basics for Employees
-9. No-Code Automation Kit
-
-Each product plan must include:
-
-- title
-- subtitle
-- target customer
-- why it sells
-- what it includes
-- free preview idea
-- 10-minute demo idea
-- price range
-- upsell path
-- related IIS service
-- related ARIA feature
-- community challenge
-- SEO keywords
-- review status
-
-Product page template:
-
-- product title
-- one-line promise
-- who it is for
-- problem it solves
-- what is included
-- preview/sample
-- skill level
-- time to complete
-- format
-- price
-- FAQ
-- privacy note when needed
-- related products
-- DIY path
-- done-for-you path
-- ARIA support path
-- IIS implementation path
-- community path
-
-External product bridge template:
-
-1. What is trending?
-2. Why people want it.
-3. What emotion it speaks to.
-4. What value it actually gives.
-5. What is hype.
-6. What to consider before buying.
-7. Smarter alternatives.
-8. What the same money could build.
-9. IIS / ARIA / Growth Library related path.
-10. Clear disclosure of any service, referral, or concierge fee.
-11. Free user choice.
-
-Required bridge message:
-
-```text
-If you still want the product, that is your choice. Our role is to help you see the full picture before you spend.
-```
-
-Community content should reward growth, not noise:
-
-- helpfulness
-- consistency
-- useful answers
-- completed learning paths
-- shared builds
-- kindness
-- practical contribution
-
-Avoid ego-based ranking.
-
-Dashboard copy should make users feel progress:
-
-- Your Growth Path
-- Skills Started
-- Skills Completed
-- Demos Tried
-- Tools Built
-- Time Invested
-- Knowledge Unlocked
-- Next Best Step
-- Your Builder Level
-- Your Practical Wins
-- Continue Your Path
-
-Journey levels:
-
-- Beginner
-- Builder
-- Skilled
-- Advanced
-- Creator
-- Leader
-
-Donation layer copy must be honest:
-
-```text
-Optional contribution: Support digital literacy, AI education, and practical learning resources. We will only claim impact that we can actually track and verify.
-```
-
-Ethical conversion philosophy:
-
-- free trust-building content
-- low-cost products
-- premium Growth Library
-- ARIA tools
-- IIS services
-- consultation
-- done-for-you implementation
-- community membership
-- enterprise packages
-- transparent referral or concierge fees
-
-The user should always feel informed, respected, free to choose, and more capable after interacting.
-
-## Review Rules
-
-Generated assets must enter review before public use.
-
-Review statuses:
-
-- Draft
-- Needs review
-- Approved
-- Rejected
-- Needs edits
-- Published
-- Archived
-
-Flag for review when content includes:
-
-- money claims
-- health claims
-- legal claims
-- tax claims
-- investment claims
-- donation claims
-- external product fees
-- affiliate/referral links
-- strong psychological persuasion language
-- sensitive user data
-- copyright risk
-- brand partnership claims
-
-## Testing Checklist
-
-- manual keywords import correctly
-- CSV upload/import handles missing fields
-- same input produces same score
-- score breakdown totals are explainable
-- longevity rules are deterministic
-- generated suggestions stay draft/review-gated
-- exports are valid CSV, JSON, and Markdown
-- no API keys are exposed
-- no external source is called unless explicitly enabled
-- risky categories create review flags
-- ARIA KB content remains pending until approved
-
-## Security Checklist
-
-- no secrets in code
-- `.env` for future keys
-- admin-only dashboard
-- role-based access later
-- audit logs for review/publish actions
-- rate limits for APIs
-- no sensitive personal data without consent
-- privacy notes on demos
-- cost logs for paid APIs
-- human review before public publishing
-
-## Agent Workflow
-
-1. Trend Intelligence Agent prepares candidate trends and evidence.
-2. Scoring Agent applies deterministic formula and classifier.
-3. Product Agent maps trends to products, demos, services, ARIA, and Growth Library.
-4. Legal/Safety Review Agent flags risk.
-5. Codex implements local files, scripts, UI, tests, and exports.
-6. Claude Cowork critiques strategy and sends compact packets.
-7. Ahmad only receives final-action items or real blockers.
-
-## Collaboration Loop Reality
-
-The loop is designed as a governed recursive handoff, not an uncontrolled infinite agent.
-
-What is solved now:
-
-- shared source: `docs/COLLAB_BRIEF.md`
-- live queue: `senior-director-state/codex-claude-queue.md`
-- local operating extension: `senior-director-state/codex-claude-collaboration-loop.md`
-- execution log: `AGENT_EXECUTION_NOTES.md`
-- CEO final-action gates are explicit
-- Codex and Claude can continue from files without Ahmad restating the mission
-
-What is not automatic yet:
-
-- Codex cannot independently keep Claude running unless Claude local-agent mode or another authenticated bridge is active.
-- Claude cannot independently run Codex unless a trusted local scheduler/bridge launches Codex with repo context.
-- A true always-on loop needs a supervised worker that reads the queue, starts the available agent, records the packet, and stops at approval gates.
-
-Safe next automation step:
-
-- build a local `collab-loop-supervisor` that watches `senior-director-state/codex-claude-queue.md`, writes assigned packets, and never performs external actions. It should only prepare the next prompt or local task until Ahmad approves any risky final action.
-
-## Loop Engineer Layer
-
-Loop Engineer is now the preferred coordination surface for `/goal`, `/loops`, and loops that prompt other loops.
-
-Read:
-
-- `docs/LOOP-ENGINEER.md`
-- `senior-director-state/loop-engineer/loop-board.md`
-- `senior-director-state/loop-engineer/claude-next-prompt.md`
-- `senior-director-state/loop-engineer/codex-next-prompt.md`
-
-Run:
-
-```bash
-node scripts/loop-engineer.mjs
-```
-
-Current loops:
-
-- `trend-radar-loop`
-- `product-pack-loop`
-- `aria-behavior-loop`
-- `website-conversion-loop`
-- `revenue-opportunity-loop`
-- `claude-strategy-loop`
-- `qa-safety-loop`
-- `codex-build-loop`
-
-Current reality:
-
-- The loop board and prompts can be generated locally.
-- Claude/Codex can use the board to continue without Ahmad restating the mission.
-- True always-on execution still needs an authenticated local bridge that starts available agent sessions.
-- The bridge must never bypass CEO final-action gates.
-
-## Handoff Packet
-
-Every Codex/Claude loop should produce:
-
-- `round_id`
-- `owner`
-- `objective`
-- `context_read`
-- `what_changed`
-- `evidence`
-- `next_best_task`
-- `files_to_touch`
-- `approval_gates`
-- `risks`
-- `question_for_cowork`
-- `recommended_next_prompt`
-
-Write detailed working context to:
-
-- `AGENT_EXECUTION_NOTES.md`
-- `senior-director-state/codex-claude-queue.md`
-- `senior-director-state/active-agent-handoff.md`
-- `senior-director-state/iis-aria-command-update.md`
-- `senior-director-state/ceo-approval-required.md`
-- `senior-director-state/autonomous-execution-board.md`
-
-## Session Start Protocol
-
-1. Read this file first: `docs/COLLAB_BRIEF.md`.
-2. Read `AGENT_EXECUTION_NOTES.md`.
-3. Read `senior-director-state/iis-aria-command-system.md`.
-4. Read `senior-director-state/last-mile-execution-protocol.md`.
-5. Read `senior-director-state/active-agent-handoff.md`.
-6. Read `senior-director-state/codex-claude-collaboration-loop.md`.
-7. Read `senior-director-state/codex-claude-queue.md`.
-
-Then continue the safest next task without asking Ahmad for routine direction.
-
-## Starter Code Now Present
-
-Codex started Prompt 2 with a local no-cost script:
-
-- `scripts/trend-radar-mvp.mjs`
-
-Run:
-
-```bash
-node scripts/trend-radar-mvp.mjs
-```
-
-Local outputs:
-
-- `senior-director-state/trend-radar/keywords.csv`
-- `senior-director-state/trend-radar/trend-radar.json`
-- `senior-director-state/trend-radar/trend-radar.csv`
-- `senior-director-state/trend-radar/review-queue.json`
-- `senior-director-state/trend-radar/trend-radar-summary.md`
-- `senior-director-state/trend-radar/audit-log.jsonl`
-
-Current research pack:
-
-- `docs/TREND-RADAR-TOP-100-2026.md`
-- This is a directional top-100 long-life demand keyword list, not an exact search-volume ranking.
-- It uses public source anchors, buyer-intent logic, IIS / ARIA fit, and longevity scoring.
-- The local Trend Radar has processed those 100 candidates into review-gated JSON, CSV, Markdown, and ARIA pending-bit queue outputs.
-
-Current limits:
-
-- manual/CSV input only
-- deterministic heuristic scoring only
-- no Google Trends / Pytrends yet
-- no external APIs yet
-- no LLM generation yet
-- no public dashboard yet
-- no publish path
-
-Next best build step:
-
-- Add a local admin dashboard page that reads the JSON output and shows trends, scores, filters, generated ideas, risk flags, review status, and export links.
-
-Prompt 3 starter code:
-
-- `scripts/content-product-community-mvp.mjs`
-
-Run:
-
-```bash
-node scripts/content-product-community-mvp.mjs
-```
-
-Local outputs:
-
-- `senior-director-state/content-product-community/content-system.json`
-- `senior-director-state/content-product-community/content-system.md`
-- `senior-director-state/content-product-community/product-plans.csv`
-- `senior-director-state/content-product-community/review-queue.json`
-
-Current limits:
-
-- templates and first 9 product plans only
-- no public page publish
-- no Stripe/checkout creation
-- no email/social send
-- no community launch
-- no donation collection
+### Rules
+- Bit-native (per `[[feedback-kb-bit-native-style]]`): each bit stands alone, own escalation trigger, no cross-bit dependencies.
+- `review_status: pending` blocks ARIA from serving it until a human approves (sets `approved`). Codex's autonomous loop should respect this gate.
+- One trend can produce 1–5 bits: a What-is, a Why-now, a How-to, a Risks, an Offer-path. Skip the ones not relevant.
+- Source URL mandatory if any factual claim is made. No source = bit gets `review_status: needs_source`.
+
+### Demo Gateway integration
+When ARIA serves a `trend-*` bit, the response footer auto-appends:
+> "Want the full guide? Open the 10-min demo: /demo/{topic}"
+
+Demo Gateway (`assets/demo-gateway.js` per §3 row 6) honors the 10-minute limit + watermark + upgrade prompt.
+
+---
+
+## 7 · Agent work split (Codex vs Cowork)
+
+### Codex owns (live repo, direct ship)
+- Root `.html` files (aria.html, aperture-learning.html, growth-library.html, etc.)
+- `netlify/functions/*.mjs`, `netlify/edge-functions/*.ts`
+- `assets/*.js`, `assets/*.css`
+- `knowledge-base/**` and `aria_brain_pack/bits/**`
+- `governance/`, `design-handoff/`, `docs/change-log.md`, `docs/deletion-log.md`, `docs/restore-notes.md`
+- `netlify.toml`, `.gitignore`
+- Verifying live URLs post-deploy ("Verified LIVE (10/10):" pattern)
+- Commits as Ahmad (local git config) — recognizable by `Category: action (audit YYYY-MM-DD)` subject
+
+### Cowork owns (everything outside the live repo)
+- LinkedIn page setup (drafted in `outputs/HANDOFF.md` §8 — needs Chrome MCP to drive)
+- Lead research (Apollo / web search / capability briefs)
+- Cold email drafts + cadence (per `[[feedback-email-draft-style]]`)
+- Capability Statement PDF for gov procurement
+- Memory management (`spaces/feba329b-…/memory/**`) — load-bearing across sessions
+- Strategy docs, observation reports (Codex Playbook), handoff docs
+- This file (COLLAB_BRIEF.md) updates
+- Drafting JSON / JS modules in `outputs/` for Codex to optionally adopt — never auto-ship to live repo
+
+### Shared / joint
+- **This file** (`docs/COLLAB_BRIEF.md`) — both agents read on session start, both append to §11
+- `docs/REVIEW_QUEUE.md` (Codex appends, Cowork audits, Ahmad approves)
+- ARIA KB bit format (§6) — anyone generating a bit follows it
+- Locked constraints (§2) — both enforce
+
+### Conflict resolution
+- If both agents touch the same file: **Codex wins** (it has direct repo access; Cowork's draft becomes a reference). Cowork drafts in `outputs/` first.
+- If both produce a trend bit for the same topic: keep the one with the higher `trend_score`; archive the other in `archive/deprecated/`.
+- If unsure: queue in `docs/REVIEW_QUEUE.md`, wait for Ahmad.
+
+---
+
+## 8 · Phased roadmap (respects spend lockdown)
+
+### Phase 1 — Zero-cost foundation (now → first paying client)
+All free-tier compute, deterministic logic, human review gate.
+- [ ] `lib/trend-score.mjs` — formula from §4, pure function, unit tests
+- [ ] `lib/trend-longevity.mjs` — classifier from §5, no LLM
+- [ ] `netlify/functions/trend-radar.mjs` — Google Trends RSS + Reddit `/r/*` JSON + Hacker News API + Indeed search results (pattern from Lead Radar). Daily cron. JSON + HTML endpoints.
+- [ ] Extend `aria_brain_pack/bits/` schema to include `trend_score` / `longevity` / `review_status` (additive — keeps existing bits valid)
+- [ ] `docs/REVIEW_QUEUE.md` — Codex appends, Ahmad approves, approved items flip `review_status` from `pending` to `approved` and get included in the KB bundle build
+- [ ] One demo per top-3 trends → static HTML demos under `/demo/{slug}`, 10-min trial gate reusing ARIA's existing pattern
+- [ ] Codex Playbook + this file maintained (Cowork side)
+
+### Phase 2 — Low-cost expansion (first paying client signs)
+$10/mo cap (still under your $100 hard cap), introduces governed LLM use.
+- [ ] Ethical Content Engine — LLM-drafted content, ALWAYS queued for human review, $5/mo governed cap
+- [ ] Trend longevity v2 — LLM-grounded longevity check on the top 5 trends weekly
+- [ ] External Product Bridge — concierge intake form, 20% disclosure card, Stripe Payment Link for the service fee
+- [ ] Personalized Progress Dashboard — needs auth; rebuild on Stripe Customer Portal first
+- [ ] Anthropic Partner application submitted (was frozen)
+
+### Phase 3 — Revenue-funded scale
+Multiple clients, recurring revenue, marketing budget unlocked.
+- [ ] Community Layer — accounts, profiles, leaderboards
+- [ ] Trend Agent fleet — 13 specialized agents from Ahmad's spec, each as a Cowork scheduled task or Codex netlify scheduled function
+- [ ] Donation Layer — only if Ahmad has chosen a real recipient + transparency reporting
+- [ ] User-facing Trend Dashboard — premium tier
+
+---
+
+## 9 · Standing work inventory (live as of 2026-06-03)
+
+### Codex queue (in-repo, Codex's lane)
+1. Reconcile the 360 uncommitted changes Codex has in flight — commit in coherent groups per `change-log.md` discipline
+2. Build Phase 1 §8 items in the order listed
+3. Extend `docs/REVIEW_QUEUE.md` workflow
+4. Verify live URLs after each deploy (HARD RULE)
+
+### Cowork queue (out-of-repo, my lane)
+1. Drive LinkedIn Company Page setup (text already drafted in `outputs/HANDOFF.md` §8 — needs Chrome MCP)
+2. Draft Capability Statement PDF for gov procurement
+3. Draft `lib/trend-score.mjs` content + `lib/service-offers.json` table content (Codex ships)
+4. Monitor Codex Playbook weekly (`outputs/codex-observer/`)
+5. Cold outreach round 2 (Apollo credits reset June 7) — draft pre-given-value emails per `[[feedback-email-draft-style]]`
+6. Keep this file synchronized with reality after major changes
+
+### Joint queue (handoff or both)
+1. Decide donation recipient (Ahmad-only decision) → unblock Phase 2 row 4
+2. Decide demo bandwidth (Codex builds demos, Cowork drafts copy)
+3. ARIA KB bit format extension (Codex implements schema change, Cowork drafts the first 20 trend bits as reference)
+
+---
+
+## 10 · Ethical design rules — formalized
+
+Both agents must independently enforce. Any output that fails a check goes to `docs/REVIEW_QUEUE.md` instead of shipping.
+
+| Rule | Check |
+|------|-------|
+| No fabricated facts | Every claim has a source URL or is marked "opinion" |
+| No dark patterns | No fake countdown, fake scarcity, fake social proof |
+| No fake testimonials | Only real client quotes (none yet — that's fine, don't invent) |
+| No fake partnerships | Anthropic = "Partner Network application in review" until accepted |
+| Disclose all fees | 20% concierge fee shown BEFORE checkout, not after |
+| Respect platform ToS | No scraping LinkedIn, no scraping Indeed beyond public search results |
+| Human review for risk | Legal / financial / health content always goes to review queue |
+| No shame selling | Aspirational language only; "you can build" not "you're falling behind" |
+| Truthful experience | Use Ahmad's real resume only (`outputs/Ahmad Wasee_AI Engineer Resume.docx`) |
+| Cost transparency | Every demo session logs token use; user sees their consumption |
+
+---
+
+## 11 · Update log (append at top — never silently rewrite)
+
+### 2026-06-13 — Cowork (Sonnet)
+**Loops Engineering added as the operating system.** New companion file `docs/LOOPS_SPEC.md` (mirror in `outputs/codex-collab/LOOPS_SPEC.md`) makes "every recurring agent task is a loop with a goal, budget, verification, and on-failure" the law. Slash-commands `/goal` and `/loops` introduced; bootstrap set of 7 YAML loops drafted at `outputs/codex-collab/loops-drafts/`. See §13 below for the summary. Codex's queue: implement §10 of LOOPS_SPEC. Ahmad's directive: "loop engineer should be our focus... times that by 100." Both agents inherit. Triggered by TikTok upload of Claude Code's founder + Ahmad's /loops /goal direction.
+
+### 2026-06-03 16:30 ET — Cowork (Sonnet)
+Initial creation. Drop into `docs/COLLAB_BRIEF.md` when Codex is between commits. Locks current state of spend rule, hard rule, visual stability, agent split, and trend scoring formula. Phase 1 roadmap committed. Awaits Codex's first edit (e.g. acknowledgment that Phase 1 items are on Codex's plate).
+
+---
+
+## 13 · Loops Engineering (first-class) — summary
+
+**Source of truth:** `docs/LOOPS_SPEC.md`. This section is the compact reference; read the spec for the full contract.
+
+### Why
+A one-shot prompt is the wrong unit of work. A **loop** — goal + budget + verification + spawn rules + on-failure — is. Claude Code's founder's design pattern (per Ahmad's TikTok upload): agents shouldn't sleep. They sit in a loop, iterate toward a measurable goal, and **spawn other loops** when a sub-problem deserves its own scope.
+
+### What changes
+- Every recurring task in IIS becomes a registered loop in `loops/registry.json` + a YAML record at `loops/{id}.yaml`.
+- One top-level goal at a time, in `loops/CURRENT_GOAL.md`. Every loop traces back via a `serves:` field.
+- Two slash-commands: `/goal` (set/read top goal), `/loops` (list/run/pause/kill/graph/ledger/budget).
+- 8 loop classes: **Hunter · Enricher · Drafter · Verifier · Observer · Ledger · Gatekeeper · Demo.**
+- Spawn safety: max depth 4, budget descends to children, stop-tokens propagate, cycle detection on add, human-review gate inheritable.
+- Two privileged gatekeepers always running: `spend-gatekeeper` (pauses any loop that breaches $0/cap) and `hard-rule-gatekeeper` (curls aperture + ARIA every 30 min, auto-rollback on failure).
+
+### The 100x test (when we declare it working)
+5 loops running with ≥0.9 success rate · zero HARD-RULE regressions · daily artifacts shipping · Ahmad <30 min/day driving · total spend <$5/week. All five for 7 consecutive days.
+
+### Bootstrap loops drafted at `outputs/codex-collab/loops-drafts/` (Codex copies into `loops/` in repo)
+1. `lead-radar.yaml` — daily gov tender Hunter wrapping `aria-lead-radar.mjs`
+2. `aria-self-learn.yaml` — wraps Codex's existing bits-generation loop with explicit goal + caps
+3. `hard-rule-gatekeeper.yaml` — aperture/ARIA verifier with auto-rollback
+4. `spend-gatekeeper.yaml` — continuous $0 enforcement
+5. `goal-alignment.yaml` — daily drift check
+6. `codex-observer.yaml` — Cowork's Codex Playbook scheduled
+7. `tender-enrich.yaml` — child of lead-radar, fires on score≥60
+8. `CURRENT_GOAL.md` — the top-level goal seed text
+
+### Codex's queue from LOOPS_SPEC §10
+1. Create `loops/` dir + `registry.json` + `cli/loops.mjs` + `cli/goal.mjs` (Node, no deps)
+2. Add `npm run loops` / `npm run goal` to package.json
+3. Copy CURRENT_GOAL.md from drafts → `loops/CURRENT_GOAL.md`
+4. Copy the 7 YAML drafts → `loops/` (review each for fit before committing)
+5. Convert `aria-lead-radar.mjs` to read its config from `loops/lead-radar.yaml`
+6. Formalize the autonomous-bits loop under `loops/aria-self-learn.yaml`
+7. Wire `spend-gatekeeper` + `hard-rule-gatekeeper` as Netlify scheduled functions (continuous)
+8. Append to `docs/change-log.md` per Codex's house style
+9. Append to `docs/COLLAB_BRIEF.md` §11 confirming implementation date
+
+### Cowork's queue
+1. LOOPS_SPEC.md — DONE
+2. 7 seed YAML drafts — DONE
+3. CURRENT_GOAL.md seed — DONE
+4. This §13 update — DONE
+5. `project_loops_engineering.md` memory entry — DONE
+6. Observer integration into Codex Playbook so deltas surface new loops automatically (next session)
+7. Authoring more loop YAMLs as the operating system matures
+
+---
+
+## 12 · How to use this file
+
+### When Cowork starts a session
+Read this file first. If anything in §2 or §7 conflicts with the session request, push back on the request.
+
+### When Codex starts a session
+Same. Ahmad will paste this file into Codex sessions until both agents have native access.
+
+### When either agent finishes substantial work
+Append a one-line entry at the top of §11 (date, agent, what changed). Don't bury edits.
+
+### When Ahmad approves a queue item
+Move from `docs/REVIEW_QUEUE.md` to `change-log.md`. Update `review_status` on the corresponding bit/asset.
+
+### When the vision evolves
+Edit §1 carefully — preserve original prompt verbatim, append clarifications below as "Vision addendum YYYY-MM-DD."
+
+---
+
+**End of brief. Both agents: build to this, push back on violations, append updates honestly.**

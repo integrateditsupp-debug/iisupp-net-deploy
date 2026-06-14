@@ -3,6 +3,12 @@ import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  APPROVED_PUBLISH_SUMMARY,
+  LOCAL_ONLY_STAGED_REVIEW_FILES,
+  approvalTextForReview
+} from './staged-review-files.mjs';
+import { publishAgentReport, runAutonomySupervisor } from './autonomy-supervisor-core.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const STATE_DIR = path.join(ROOT, 'senior-director-state');
@@ -747,16 +753,11 @@ function buildOperatingBoard({ hb, repo, logSummary, leadSummary, recentNotes, g
   const approvalItems = [
     'Direct-contact first-send queue: `WD Numeric Corporate Services`, `Tangs Accounting Services`, and `Global Health Physiotherapy Clinic` are already approved-to-transmit. Next live action is to send them when an email/contact surface is available.',
     'Jason Brown / Hines follow-up: approved for Friday, 2026-06-12 only if Jason has not replied first. Use `senior-director-state/hines-jason-brown-friday-send-checklist-2026-06-11.md`.',
-    'Approved-to-publish slices: staged operations conversion slice, homepage contact-intake context upgrade, and staged Growth Library conversion slice. Next live action is deploy/publish when the production publish surface is available.',
-    'New local-only overflow conversion slice: `senior-director-state/staged-overflow-conversion-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
-    'New local-only ARIA deployment-path slice: `senior-director-state/staged-aria-conversion-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
-    'New local-only Help Desk Blueprint sample-preview slice: `senior-director-state/staged-helpdesk-blueprint-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
-    'New local-only Website Checklist sample-preview slice: `senior-director-state/staged-website-checklist-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
-    'New local-only Office Move readiness preview slice: `senior-director-state/staged-office-move-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
-    'New local-only AI Workflow Audit preview slice: `senior-director-state/staged-ai-workflow-audit-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.',
+    APPROVED_PUBLISH_SUMMARY,
+    ...LOCAL_ONLY_STAGED_REVIEW_FILES.map(approvalTextForReview),
     'Workspace cleanup posture: summary-only cleanup pass is approved. Destructive cleanup remains blocked.',
     'Samsung ProCare tender posture: park as no-bid unless a real no-cost compliant OEM/partner path appears.',
-    'RBC supplier registration path: pursue-now approved in principle, but Ahmad must confirm the correct postal code before any `Create Account` or certification step.',
+    'RBC supplier registration path: live portal open and partially prefilled with verified IIS company/contact fields. Remaining Ahmad-only steps are CAPTCHA, any attestation/certification choices, account credentials, and the final `Register` click.',
     hb.openclawReadiness?.authExpired ? 'OpenClaw/Claude OAuth is expired; Ahmad or a signed-in desktop session may need to refresh auth.' : null,
     changed > 120 ? `Repo has ${changed} changed files; deployment grouping should still be reviewed before any production publish.` : null,
     /Retirement Candidates|Approval Required Before|Retiring agents/i.test(`${retirementPlan}\n${cleanupBoard}`) ? 'Workspace steward has cleanup/retirement recommendations; destructive action stays blocked until a later keep/archive/delete review.' : null
@@ -1159,6 +1160,33 @@ async function tick(reason = 'interval') {
     state.lastMissionBrief = now;
   }
   await writeJson(path.join(STATE_DIR, 'worker-state.json'), state);
+  await publishAgentReport({
+    agentId: 'senior-director-worker',
+    label: 'Senior Director Worker',
+    summary: 'Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.',
+    metrics: {
+      openclawReachable: hb.openclaw ? 1 : 0,
+      lastLeadScanAt: state.lastLeadScan || 0,
+      lastMcpScanAt: state.lastMcpScan || 0,
+      lastOperatingCycleAt: state.lastOperatingCycle || 0,
+      lastMissionBriefAt: state.lastMissionBrief || 0
+    },
+    artifacts: [
+      HEARTBEAT_FILE,
+      OPERATING_BOARD_FILE,
+      APPROVALS_FILE,
+      COMMAND_UPDATE_FILE
+    ],
+    nextActions: [
+      'Continue autonomous safe work and only escalate true Ahmad final-action gates.'
+    ],
+    focusAreas: ['director-orchestration', 'lead-radar', 'approval-gating']
+  });
+  try {
+    await runAutonomySupervisor({ trigger: `senior-director-worker:${reason}`, writeTelemetry: false });
+  } catch (error) {
+    await log('autonomy supervisor failed', { reason, error: error?.message || String(error) });
+  }
 }
 
 async function main() {

@@ -6,6 +6,19 @@ Backups: `/backups/YYYY-MM-DD-description/` · Archive: `/archive/deprecated/` �
 
 ---
 
+## 2026-06-13 — Loops Engineering bootstrap (Cowork, $0 cost, Codex idle)
+
+- **What:** Every recurring agent task is now a registered loop with explicit goal, budget, verification, spawn rules, and on-failure handling. Operating system shift triggered by Ahmad's "loop engineer" direction + Claude Code's founder video.
+- **Spec:** `docs/LOOPS_SPEC.md` (canonical contract — 12 sections).
+- **Master brief updated:** `docs/COLLAB_BRIEF.md` §13 — Loops Engineering as first-class operating concept.
+- **Added:** `loops/` directory with 7 seed YAML loops (lead-radar, aria-self-learn, hard-rule-gatekeeper, spend-gatekeeper, goal-alignment, codex-observer, tender-enrich), `loops/registry.json` (all idle), `loops/CURRENT_GOAL.md` (top goal: $1M ARR by 2027-06), `loops/cli/loops.mjs` (zero-dep Node CLI), `loops/cli/goal.mjs`, `loops/lib/load-yaml.mjs`, `loops/README.md`.
+- **Smoke tested:** `loops list/show/graph/budget/pause/resume/ledger` all working. `goal` print working. Schema validator on `loops add` enforces the 9 locked rules.
+- **NOT touched:** `aria.html`, `aperture.html`, `aperture-learning.html` (HARD RULE). `package.json` (Codex has uncommitted edits — Codex adds `npm run loops` + `npm run goal` scripts when it next touches it).
+- **Files:** `loops/**`, `docs/LOOPS_SPEC.md`, `docs/COLLAB_BRIEF.md` (updated §13).
+- **Risk:** none — all additive, no existing functionality changed. Loops are `idle` (not running) until each runner is wired by Codex.
+- **Next (Codex queue):** Implement runners at `netlify/functions/loop-runner-{id}.mjs`. Wire `hard-rule-gatekeeper` + `spend-gatekeeper` as Netlify scheduled functions. Add `npm run loops` + `npm run goal` scripts to `package.json`. Append confirmation entry to `docs/COLLAB_BRIEF.md` §11.
+
+---
 ## 2026-05-29 — "The Unstubborn Life" book shipped (deploy 180cdb5, LIVE)
 - Wrote the full original 9-chapter manuscript (universal self-mastery framing) into `_library-content.mjs` (full + 30% peek); delivered via the verified gated download.
 - Catalog `gl-book-living-well` un-greyed → $97, featured, no longer "in progress". Verified live + paywall-protected. Price editable.
