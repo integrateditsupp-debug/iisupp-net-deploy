@@ -219,6 +219,20 @@
   .aria-text{color:var(--cream);font-size:13px;line-height:1.55;margin-bottom:6px}
   .aria-text em{color:var(--cream-2);font-style:italic}
   .aria-sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .aria-thinking{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:11px 14px;border:1px solid var(--border);
+    border-radius:12px;background:rgba(26,18,8,.48);
+    color:var(--cream);font-size:12.5px;
+  }
+  .aria-thinking .dots{display:inline-flex;gap:4px;align-items:center}
+  .aria-thinking .dots span{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--gold-bright);opacity:.8;
+    animation:dotPulse 1.1s ease-in-out infinite;
+  }
+  .aria-thinking .dots span:nth-child(2){animation-delay:.16s}
+  .aria-thinking .dots span:nth-child(3){animation-delay:.32s}
 
   .choice-grid{
     display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 0;
@@ -1728,8 +1742,14 @@
 
       <div class="conversion-panel" id="conversionPanel">
         <div class="status-head"><span class="led amber"></span><span>DEPLOYMENT PATHS</span></div>
-        <div class="conversion-sub">When the ARIA demo proves the concept, move into one scoped next step instead of a broad undefined rollout.</div>
+        <div class="conversion-sub">When the ARIA demo proves the concept, move into one scoped next step instead of a broad undefined rollout. The shared guide keeps scoping, audit, and pack-first buyers on the right path.</div>
         <div class="conversion-grid">
+          <a class="conversion-card" href="/start-here.html">
+            <div class="conversion-top"><span>Guide</span><span>All paths</span></div>
+            <div class="conversion-title">Choose the safest first move</div>
+            <div class="conversion-copy">Open the shared Start Here guide when the buyer likes ARIA but still needs the clearest first step between scoping, workflow mapping, or a proof-first pack.</div>
+            <div class="conversion-cta">Open start guide <span>&rarr;</span></div>
+          </a>
           <a class="conversion-card" href="/product.html?id=gl-helpdesk-blueprint">
             <div class="conversion-top"><span>Blueprint</span><span>L1 noise first</span></div>
             <div class="conversion-title">Reduce repetitive ticket load</div>
@@ -1747,6 +1767,12 @@
             <div class="conversion-title">Stage overflow support coverage</div>
             <div class="conversion-copy">Use the overflow pilot when the queue is already heavy and the team needs scoped live triage, M365 support, and cleaner escalation notes now.</div>
             <div class="conversion-cta">Stage overflow pilot <span>&rarr;</span></div>
+          </a>
+          <a class="conversion-card" href="/downloads/library/monthly-ai-support-plan-preview.html">
+            <div class="conversion-top"><span>Retainer</span><span>Keep improving</span></div>
+            <div class="conversion-title">Keep ARIA useful every month</div>
+            <div class="conversion-copy">Use the Monthly AI Support Plan when the first ARIA workflow, KB, or prompt system is already live but nobody owns the cleanup, updates, QA, or next-step backlog.</div>
+            <div class="conversion-cta">Preview monthly plan <span>&rarr;</span></div>
           </a>
         </div>
       </div>
@@ -2448,6 +2474,181 @@ function flushUnknowns(){
 /* ============== AUTO-UPDATE — fetch manifest, swap KB / caps when newer ============== */
 const ARIA_VERSION = { kb: 1, caps: 1 };
 const UPDATE_MANIFEST_URL = 'https://iisupp.net/aria/v1/manifest.json';
+const CLIENT_UPDATE_WATCH = ['/aria.html', '/assets/aria-v04-ext.js', '/sw.js', '/manifest.webmanifest'];
+const CLIENT_UPDATE_POLL_MS = 2 * 60 * 1000;
+const CLIENT_UPDATE_DISMISS_KEY = 'aria_client_update_dismissed';
+const clientUpdateState = {
+  baselineSignature: null,
+  pendingSignature: null,
+  promptOpen: false,
+  registration: null,
+  controllerReloadBound: false
+};
+
+function isAppSurface(){
+  try {
+    return !!(
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+      window.navigator.standalone === true ||
+      String(document.referrer || '').indexOf('android-app://') === 0 ||
+      /(wv|electron|capacitor|cordova|reactnative)/i.test(navigator.userAgent || '')
+    );
+  } catch(_) {
+    return false;
+  }
+}
+
+async function fetchClientStamp(path){
+  try {
+    const glue = path.indexOf('?') >= 0 ? '&' : '?';
+    const res = await fetch(path + glue + '__aria_probe=' + Date.now(), {
+      method: 'HEAD',
+      cache: 'no-store'
+    });
+    if (!res.ok) return path + ':miss';
+    return [
+      path,
+      res.headers.get('etag') || '',
+      res.headers.get('last-modified') || '',
+      res.headers.get('content-length') || ''
+    ].join('|');
+  } catch(_) {
+    return path + ':err';
+  }
+}
+
+async function buildClientSignature(){
+  const parts = await Promise.all(CLIENT_UPDATE_WATCH.map(fetchClientStamp));
+  return parts.join('::');
+}
+
+function dismissedClientSignature(){
+  try { return sessionStorage.getItem(CLIENT_UPDATE_DISMISS_KEY) || ''; } catch(_) { return ''; }
+}
+
+function rememberDismissedClientSignature(signature){
+  try { sessionStorage.setItem(CLIENT_UPDATE_DISMISS_KEY, signature); } catch(_) {}
+}
+
+function clearDismissedClientSignature(){
+  try { sessionStorage.removeItem(CLIENT_UPDATE_DISMISS_KEY); } catch(_) {}
+}
+
+function bindControllerReload(){
+  if (clientUpdateState.controllerReloadBound || !('serviceWorker' in navigator)) return;
+  clientUpdateState.controllerReloadBound = true;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    location.reload();
+  }, { once:true });
+}
+
+function updatePromptCopy(){
+  if (isAppSurface()){
+    return {
+      title: 'ARIA update ready',
+      body: 'ARIA has a new patch ready. Please relaunch the application to load the latest fixes and conversation improvements.',
+      apply: 'Update Now'
+    };
+  }
+  return {
+    title: 'ARIA update ready',
+    body: 'ARIA has to reboot to load the latest fixes. Please refresh your browser when you are ready.',
+    apply: 'Update Now'
+  };
+}
+
+function closeClientUpdatePrompt(remember){
+  const prompt = document.getElementById('ariaClientUpdatePrompt');
+  if (prompt) prompt.remove();
+  clientUpdateState.promptOpen = false;
+  if (remember && clientUpdateState.pendingSignature){
+    rememberDismissedClientSignature(clientUpdateState.pendingSignature);
+  }
+}
+
+async function applyClientUpdateNow(){
+  const prompt = document.getElementById('ariaClientUpdatePrompt');
+  const status = prompt ? prompt.querySelector('[data-aria-update-status]') : null;
+  const applyBtn = prompt ? prompt.querySelector('[data-aria-update-apply]') : null;
+  const laterBtn = prompt ? prompt.querySelector('[data-aria-update-later]') : null;
+  if (applyBtn) applyBtn.disabled = true;
+  if (laterBtn) laterBtn.disabled = true;
+  if (status) status.textContent = isAppSurface() ? 'Restarting ARIA…' : 'Refreshing ARIA…';
+  clearDismissedClientSignature();
+  try {
+    const reg = clientUpdateState.registration || await navigator.serviceWorker.getRegistration();
+    if (reg){
+      clientUpdateState.registration = reg;
+      bindControllerReload();
+      await reg.update().catch(() => {});
+      if (reg.waiting){
+        reg.waiting.postMessage({ type:'SKIP_WAITING' });
+        setTimeout(() => location.reload(), 1500);
+        return;
+      }
+    }
+  } catch(_) {}
+  location.reload();
+}
+
+function showClientUpdatePrompt(signature, source){
+  if (!signature) return;
+  if (dismissedClientSignature() === signature) return;
+  clientUpdateState.pendingSignature = signature;
+  if (clientUpdateState.promptOpen){
+    const body = document.querySelector('#ariaClientUpdatePrompt [data-aria-update-body]');
+    if (body) body.textContent = updatePromptCopy().body;
+    return;
+  }
+  clientUpdateState.promptOpen = true;
+  const copy = updatePromptCopy();
+  const wrap = document.createElement('div');
+  wrap.id = 'ariaClientUpdatePrompt';
+  wrap.style.cssText = 'position:fixed;inset:0;z-index:250;display:grid;place-items:center;background:rgba(5,5,5,.62);backdrop-filter:blur(6px);padding:18px;';
+  wrap.innerHTML = `
+    <div style="width:min(460px,100%);border:1px solid rgba(212,168,90,.32);border-radius:16px;background:linear-gradient(180deg,rgba(18,13,7,.98),rgba(10,8,5,.98));box-shadow:0 18px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(212,168,90,.08);padding:18px 18px 16px;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Patch Available</div>
+      <div style="font-family:var(--serif);font-size:28px;line-height:1.08;color:var(--cream-2);margin-bottom:10px;">${escapeHTML(copy.title)}</div>
+      <div data-aria-update-body style="color:var(--cream);font-size:13px;line-height:1.6;margin-bottom:14px;">${escapeHTML(copy.body)}</div>
+      <div style="color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;">Source · ${escapeHTML(source || 'live patch channel')}</div>
+      <div data-aria-update-status style="min-height:16px;color:var(--gold-bright);font-size:12px;margin-bottom:12px;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;">
+        <button type="button" data-aria-update-later style="padding:10px 16px;border-radius:999px;border:1px solid rgba(212,168,90,.28);background:transparent;color:var(--cream);font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;">Later</button>
+        <button type="button" data-aria-update-apply style="padding:10px 16px;border-radius:999px;border:1px solid rgba(212,168,90,.45);background:linear-gradient(180deg,#f0d89a 0%,#d4a85a 52%,#8a6020 100%);color:#1a1208;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;font-weight:700;">${escapeHTML(copy.apply)}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap);
+  wrap.querySelector('[data-aria-update-later]').addEventListener('click', () => closeClientUpdatePrompt(true));
+  wrap.querySelector('[data-aria-update-apply]').addEventListener('click', () => { void applyClientUpdateNow(); });
+}
+
+async function primeClientUpdateMonitor(){
+  if (!navigator.onLine) return;
+  if (!clientUpdateState.baselineSignature){
+    clientUpdateState.baselineSignature = await buildClientSignature();
+    return;
+  }
+  const nextSignature = await buildClientSignature();
+  if (!nextSignature || nextSignature === clientUpdateState.baselineSignature) return;
+  showClientUpdatePrompt(nextSignature, 'network patch');
+}
+
+function watchServiceWorkerRegistration(reg){
+  if (!reg) return;
+  clientUpdateState.registration = reg;
+  if (reg.waiting){
+    showClientUpdatePrompt('service-worker-waiting', 'service worker');
+  }
+  reg.addEventListener('updatefound', () => {
+    const worker = reg.installing;
+    if (!worker) return;
+    worker.addEventListener('statechange', () => {
+      if (worker.state === 'installed' && navigator.serviceWorker.controller){
+        showClientUpdatePrompt('service-worker-installed', 'service worker');
+      }
+    });
+  });
+}
 
 async function checkForUpdates(){
   if (!navigator.onLine) return;
@@ -2475,6 +2676,12 @@ async function checkForUpdates(){
 }
 checkForUpdates();
 setInterval(checkForUpdates, 5 * 60 * 1000);  // every 5 minutes when online
+primeClientUpdateMonitor();
+setInterval(primeClientUpdateMonitor, CLIENT_UPDATE_POLL_MS);
+window.addEventListener('online', () => {
+  checkForUpdates();
+  primeClientUpdateMonitor();
+});
 
 function resolvePivot(choice){
   const p = state.pendingPivot;
@@ -2601,6 +2808,14 @@ function appendMessage(html){
   wrap.style.marginBottom = '18px';
   wrap.innerHTML = html;
   messagesEl().appendChild(wrap);
+  try {
+    if (isUserMessage){
+      state.thread.push({ role:'user', text:(wrap.textContent || '').replace(/^YOU\s*/i, '').trim() });
+    } else if (html.includes('aria-block')){
+      state.thread.push({ role:'assistant', text:(wrap.textContent || '').replace(/^ARIA\s*/i, '').trim() });
+    }
+    if (state.thread.length > 40) state.thread = state.thread.slice(-40);
+  } catch(_) {}
   // auto-scroll
   const body = document.getElementById('chatBody');
   body.scrollTo({ top: body.scrollHeight, behavior:'smooth' });
@@ -2634,6 +2849,34 @@ function ariaBubble(headline, body, extras = ''){
       ${headline ? `<div class="aria-headline">${headline}</div>` : ''}
       ${body ? `<div class="aria-text">${body}</div>` : ''}
       ${extras}
+    </div>
+  </div>`;
+}
+
+function appendTransientMessage(html){
+  if (!state.introCleared){
+    const intro = document.getElementById('introBlock');
+    if (intro) intro.remove();
+    state.introCleared = true;
+  }
+  const wrap = document.createElement('div');
+  wrap.className = 'fade-in';
+  wrap.style.marginBottom = '18px';
+  wrap.innerHTML = html;
+  messagesEl().appendChild(wrap);
+  const body = document.getElementById('chatBody');
+  body.scrollTo({ top: body.scrollHeight, behavior:'smooth' });
+  return wrap;
+}
+
+function ariaThinkingBubble(text = 'Checking the safest path...'){
+  return `<div class="aria-block aria-transient">
+    <div class="aria-tag">ARIA</div>
+    <div class="aria-content">
+      <div class="aria-thinking">
+        <span>${escapeHTML(text)}</span>
+        <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+      </div>
     </div>
   </div>`;
 }
@@ -2701,6 +2944,34 @@ const KB = {
       { title:'Locate the Mail process', sub:'Sort by Memory — find the row marked Not Responding.', screenshot: genericSS('Mail','412 MB · NOT RESPONDING') },
       { title:'End the unresponsive task', sub:'Right-click → End Task.', screenshot: genericSS('End Task','Mail.exe terminated') },
       { title:'Relaunch Mail', sub:'Open Mail again — inbox will resync automatically.', screenshot: genericSS('Mail','Inbox synced · 1,204 msgs') },
+    ]
+  },
+  mail_open: {
+    label:"Outlook · Won't Open",
+    headline:'I can either guide you step-by-step,<br/>or help verify the safest Outlook startup path.',
+    sub:'First ARIA should confirm the exact behavior, then keep the next step short and reversible.',
+    note:"<em>Nothing risky happens first</em> — ARIA starts by confirming whether Outlook is frozen, crashing, showing an error, or failing silently.",
+    autoTime:'14.8s',
+    audit:[
+      ['14:42:08','info','Permission token validated · device-2861-MX'],
+      ['14:42:09','info','Outlook startup path checked'],
+      ['14:42:11','warn','Possible hung Outlook process or add-in conflict detected'],
+      ['14:42:15','ok',  'Safe startup test prepared'],
+      ['14:42:23','ok',  'Next approved action ready'],
+    ],
+    summary:{ time:'14.8 s', actions:'5', down:'18', cost:'$0.00' },
+    confirmCard:`
+      <div class="preview-pane">
+        <div class="preview-head"><img src="https://www.google.com/s2/favicons?domain=outlook.com&sz=64" alt=""/><span>OUTLOOK · STARTUP CHECK</span></div>
+        <div class="preview-body" style="display:flex;align-items:center;justify-content:space-between;color:var(--cream);font-size:13px">
+          <span>Startup path isolated · safe test ready</span><span style="color:var(--green)">✓ no profile change yet</span>
+        </div>
+      </div>`,
+    walk:[
+      { title:'Confirm what Outlook does', sub:'Does it do nothing, freeze, crash, or show an error?', screenshot: genericSS('Outlook startup','Open / freeze / error?') },
+      { title:'Close any stuck Outlook process', sub:'Task Manager → end Outlook only if it is still hanging.', screenshot: genericSS('Task Manager','OUTLOOK.EXE · not responding') },
+      { title:'Try Safe Mode', sub:'Hold Ctrl while opening Outlook, or run outlook.exe /safe.', screenshot: genericSS('Safe Mode','Open Outlook in safe mode?') },
+      { title:'Use the result to pick the next fix', sub:'If Safe Mode works, the next step is usually an add-in check.', screenshot: genericSS('Next step','Add-ins vs profile vs Office repair') },
     ]
   },
   vpn: {
@@ -2813,6 +3084,7 @@ const KB = {
 /* contextual follow-up chips — appended to every technical / kb reply */
 const FOLLOWUPS = {
   outlook_ooo: ['Set Slack status to away', 'Cancel my next meeting', 'Forward urgent mail to a delegate'],
+  mail_open:   ['Try Outlook Safe Mode', 'Close stuck Outlook process', 'Check recent Outlook error'],
   mail:        ['Rebuild my Outlook profile', 'Check mailbox quota', 'Set Out of Office'],
   vpn:         ['Run network diagnostic', 'Reinstall VPN client', 'Check gateway certificate'],
   password:    ['Set up MFA', 'Add a backup phone', 'Review my recent sign-ins'],
@@ -2870,8 +3142,80 @@ const CHROME_OPEN_ARTICLE = {
 If Chrome still will not open after the clean profile test, ARIA should check Windows event logs and endpoint security blocks.`
 };
 
-function followupHTML(intent){
-  const list = FOLLOWUPS[intent];
+const OUTLOOK_OPEN_ARTICLE = {
+  id:'l1-outlook-open-001',
+  tier:'L1',
+  cat:'outlook',
+  title:"Outlook won't open / launch / stops responding",
+  summary:'Fast, safe checks for a stuck Outlook process, add-in problem, Safe Mode test, or startup error.',
+  body:`# Outlook won't open
+
+## 1. First confirm the symptom
+1. Does Outlook do nothing, freeze, crash, or show an error?
+2. If there is an error, capture the exact wording.
+
+## 2. Close a stuck Outlook process
+1. Press Ctrl+Shift+Esc to open Task Manager.
+2. Look for Outlook or OUTLOOK.EXE.
+3. If it is stuck, end only that Outlook process.
+4. Try opening Outlook again.
+
+## 3. Try Outlook Safe Mode
+1. Hold Ctrl while opening Outlook.
+2. Or press Win+R and run: outlook.exe /safe
+3. If Safe Mode works, an add-in is the likely cause.
+
+## 4. If Safe Mode works
+1. In Outlook, go to File -> Options -> Add-ins.
+2. At the bottom, choose COM Add-ins -> Go.
+3. Clear the add-ins, restart Outlook, then re-enable one at a time if needed.
+
+## 5. If Outlook still will not open
+1. Note the error text or whether it freezes silently.
+2. Then decide between Office repair, profile review, or technician handoff.`
+};
+
+function isOutlookLaunchIssue(text){
+  const q = String(text || '').toLowerCase();
+  return /\boutlook\b/.test(q) && /\b((won'?t|wont|will not|cannot|can.?t|not) (open|opening|launch|launching|start|starting|run|running)|crash|crashes|crashing|hang|hangs|hanging|freeze|freezes|freezing|frozen|not responding)\b/.test(q);
+}
+
+function issueVariant(intent, text){
+  if (intent === 'mail' && isOutlookLaunchIssue(text)) return 'mail_open';
+  return intent;
+}
+
+function mailOpenClarifierQuestion(){
+  return 'Before I suggest a fix, what happens when you open Outlook right now: nothing happens, it freezes, it closes itself, or you get an error?';
+}
+
+function mailOpenSymptomSignal(text){
+  const q = String(text || '').toLowerCase();
+  if (!q) return '';
+  if (/\b(nothing happens|does nothing|no response|wont open|won't open|will not open|not opening|not launching|not starting|fails to open|silent)\b/.test(q)) return 'silent';
+  if (/\b(freeze|freezes|freezing|frozen|hang|hangs|hanging|not responding|spinning)\b/.test(q)) return 'freeze';
+  if (/\b(crash|crashes|crashing|closes itself|shuts down|disappears)\b/.test(q)) return 'crash';
+  if (/\b(error|message|code|popup|prompt|warning)\b/.test(q)) return 'error';
+  return '';
+}
+
+function printerClarifierQuestion(){
+  return 'Before I suggest a fix, what kind of printer problem is it: offline, queue stuck, paper jam, poor print quality, or an error on screen or on the printer?';
+}
+
+function printerIssueSignal(text){
+  const q = String(text || '').toLowerCase();
+  if (!q) return '';
+  if (/\b(offline|not found|not showing|not detected|cannot find|can't find|cant find)\b/.test(q)) return 'offline';
+  if (/\b(queue|queued|spooler|stuck|paused|pending)\b/.test(q)) return 'queue';
+  if (/\b(jam|paper jam|out of paper|tray)\b/.test(q)) return 'jam';
+  if (/\b(streak|faded|blurry|smudge|quality|lines|toner|ink)\b/.test(q)) return 'quality';
+  if (/\b(error|code|message|warning|prompt)\b/.test(q)) return 'error';
+  return '';
+}
+
+function followupHTML(intent, text){
+  const list = FOLLOWUPS[issueVariant(intent, text)] || FOLLOWUPS[intent];
   if (!list) return '';
   return `<div class="followups">${list.map(t => `<button class="followup-chip" data-followup="${escapeHTML(t)}">${escapeHTML(t)}</button>`).join('')}</div>`;
 }
@@ -2965,7 +3309,7 @@ function kbSearch(query, limit = 5){
 }
 
 const INTENT_TO_CAT = {
-  outlook_ooo:'outlook', mail:'outlook', vpn:'vpn',
+  outlook_ooo:'outlook', mail:'outlook', mail_open:'outlook', vpn:'vpn',
   password:'passwords', wifi:'wifi', printer:'printers',
   'kb:windows':'windows','kb:onedrive':'onedrive','kb:teams':'teams','kb:mfa':'mfa',
   'kb:bluetooth':'bluetooth','kb:webcam':'webcam','kb:usb':'usb','kb:performance':'performance',
@@ -2973,8 +3317,10 @@ const INTENT_TO_CAT = {
   'kb:permissions':'permissions','kb:active-directory':'active-directory','kb:m365':'m365',
   'kb:onboarding':'onboarding','kb:browser':'browser'
 };
-function kbForIntent(intent){
-  const cat = INTENT_TO_CAT[intent];
+function kbForIntent(intent, text){
+  const variant = issueVariant(intent, text);
+  if (variant === 'mail_open') return OUTLOOK_OPEN_ARTICLE;
+  const cat = INTENT_TO_CAT[variant] || INTENT_TO_CAT[intent];
   if (!cat) return null;
   return ARIA_KB.find(a => a.cat === cat && a.tier === 'L1') || ARIA_KB.find(a => a.cat === cat);
 }
@@ -3018,6 +3364,8 @@ function classify(text){
   if (/(bitlocker|recovery key)/.test(q)) return 'kb:bitlocker';
   // out-of-office is unambiguous
   if (/(out of office|ooo|automatic repl|auto.?reply|auto.?responder|vacation|away message)/.test(q)) return 'outlook_ooo';
+  // Outlook launch/open failures should route into the mail diagnostic path, not generic fallback
+  if (/\boutlook\b/.test(q) && /\b((won'?t|wont|will not|cannot|can.?t|isn'?t|is not|not) (open|opening|launch|launching|start|starting|run|running)|crash|crashes|crashing|hang|hangs|hanging|freeze|freezes|freezing|frozen|not responding)\b/.test(q)) return 'mail';
 
   // === CORE TECHNICAL ===
   if (/(mail|email|inbox|outlook)/.test(q)) return /out of office|ooo|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';
@@ -3066,7 +3414,7 @@ const TIER_BY_INTENT = {
   'kb:active-directory':'L3','kb:m365':'L3','kb:networking':'L3','kb:windows':'L3',
   'kb:macos':'L3','kb:permissions':'L3','kb:security':'L3',
   // L2 — operations / network / multi-user class
-  'vpn':'L2','mail':'L2','outlook_ooo':'L2','kb:onedrive':'L2','kb:teams':'L2',
+  'vpn':'L2','mail':'L2','mail_open':'L2','outlook_ooo':'L2','kb:onedrive':'L2','kb:teams':'L2',
   'kb:mfa':'L2','kb:performance':'L2','printer':'L2','kb:bitlocker':'L2',
   // L1 — first-touch / single-user class
   'password':'L1','wifi':'L1','kb:bluetooth':'L1','kb:usb':'L1','kb:webcam':'L1','kb:browser':'L1',
@@ -3075,7 +3423,7 @@ const TIER_TITLE = {
   'kb:active-directory':'Active Directory / account lockout','kb:m365':'Microsoft 365 / licensing',
   'kb:networking':'Network infrastructure fault','kb:windows':'Windows boot / stop error',
   'kb:macos':'macOS startup fault','kb:permissions':'File share / permissions',
-  'kb:security':'Security incident','vpn':'VPN connectivity','mail':'Mail / inbox issue',
+  'kb:security':'Security incident','vpn':'VPN connectivity','mail':'Mail / inbox issue','mail_open':'Outlook will not open',
   'outlook_ooo':'Outlook out-of-office','kb:onedrive':'OneDrive sync conflict','kb:teams':'Microsoft Teams issue',
   'kb:mfa':'MFA / authenticator','kb:performance':'Performance degradation','printer':'Printing issue',
   'kb:bitlocker':'BitLocker recovery','password':'Password / sign-in','wifi':'Wi-Fi / connectivity',
@@ -3113,16 +3461,18 @@ function setTierBand(text, intent){
   if (NON_ISSUE_INTENTS.has(intent)) return;        // navigation / off-topic → no tier
   // a generic message only counts as an incident if it reads like a problem
   if (intent === 'default' && !ISSUE_HINT_RE.test(text) && !TIER_SCOPE_RE.test(text)) return;
-  const c = classifyTier(text, intent);
+  const displayIntent = issueVariant(intent, text);
+  const c = classifyTier(text, displayIntent);
   window._ariaTier = c.tier;
   // drive the full Aperture scenario band + left-rail panels (defined below)
-  if (typeof window.renderApScenario === 'function') window.renderApScenario(c, intent, text);
+  if (typeof window.renderApScenario === 'function') window.renderApScenario(c, displayIntent, text);
   const meta = document.getElementById('sessionMeta');
   if (meta) meta.textContent = `SESSION · #${(state && state.sessionId) || 2861} · ${c.tier} · ${c.scope ? 'ESCALATED' : 'INCIDENT'}`;
 }
 
 const SNAPSHOT_FIRST_STEP = {
   outlook_ooo:'Confirm date range and audience before changing Automatic Replies.',
+  mail_open:'Confirm whether Outlook freezes, crashes, shows an error, or does nothing before changing any profile or Office settings.',
   mail:'Check Outlook/Mail sync, quota, and recent error text before changing profile settings.',
   vpn:'Run read-only tunnel, DNS, and gateway checks before resetting the client.',
   password:'Verify identity and MFA path before issuing or rotating credentials.',
@@ -3148,6 +3498,7 @@ const SNAPSHOT_FIRST_STEP = {
 };
 
 const SNAPSHOT_COLLECT = {
+  mail_open:'exact Outlook behavior, error text, whether Safe Mode works, affected device, when it started',
   mail:'email address, error text, mailbox size, affected device, when it started',
   vpn:'VPN client, gateway/region, error text, home/office network, affected users',
   password:'username, MFA method, locked/expired status, callback phone, urgency',
@@ -3170,14 +3521,15 @@ function snapshotCollectFor(intent){
 }
 
 function supportSnapshotHTML(text, intent){
-  if (NON_ISSUE_INTENTS.has(intent)) return '';
-  const tierInfo = classifyTier(text, intent);
-  const firstStep = SNAPSHOT_FIRST_STEP[intent] || 'Confirm scope, exact symptom, and business impact before making changes.';
+  const variant = issueVariant(intent, text);
+  if (NON_ISSUE_INTENTS.has(variant)) return '';
+  const tierInfo = classifyTier(text, variant);
+  const firstStep = SNAPSHOT_FIRST_STEP[variant] || SNAPSHOT_FIRST_STEP[intent] || 'Confirm scope, exact symptom, and business impact before making changes.';
   const trigger = tierInfo.scope
     ? 'Escalate now if production, data, security, or multiple users are affected.'
     : 'Escalate after two safe attempts fail, admin access is needed, or the issue blocks work.';
-  const collect = snapshotCollectFor(intent);
-  const title = tierInfo.title || intentLabel(intent);
+  const collect = snapshotCollectFor(variant);
+  const title = tierInfo.title || intentLabel(variant);
   const brief = [
     `ARIA support snapshot`,
     `Issue: ${title}`,
@@ -3224,13 +3576,14 @@ function copySupportSnapshot(button){
   } catch (_) {}
 }
 
-const TECHNICAL_INTENTS = ['outlook_ooo','mail','vpn','password','wifi','printer'];
+const TECHNICAL_INTENTS = ['outlook_ooo','mail','mail_open','vpn','password','wifi','printer'];
 const EXTERNAL_INTENTS  = ['shopping','news','weather','trade','quote'];
 
 function intentLabel(intent){
   return ({
     outlook_ooo:'Outlook · Out of Office',
     mail:'Mail / Inbox',
+    mail_open:"Outlook won't open",
     vpn:'VPN connection',
     password:'Password / Sign-in',
     wifi:'Wi-Fi / Network',
@@ -3260,6 +3613,18 @@ function intentLabel(intent){
   })[intent] || 'Chat';
 }
 
+function likelyCauseSummary(intent){
+  return ({
+    outlook_ooo:'This looks like a standard Outlook settings request, not a break-fix incident.',
+    mail:'This looks like an Outlook or mailbox issue. The fastest first move is to confirm whether Outlook is failing to open, sync, or send.',
+    mail_open:'This looks like an Outlook startup issue. The fastest first move is to confirm whether Outlook freezes, crashes, shows an error, or silently fails to open.',
+    vpn:'This looks like a connection-path issue, so ARIA should confirm device, network, and VPN scope before deeper changes.',
+    password:'This looks like a sign-in or account-state issue rather than a device failure.',
+    wifi:'This looks like a local or shared network-path issue, so ARIA should isolate device versus network quickly.',
+    printer:'This looks like a printer, queue, or device-connection issue that usually resolves with one safe first check.'
+  })[intent] || 'ARIA has a likely issue path and will keep the first response short until you choose how to proceed.';
+}
+
 /* ============== RENDER FUNCTIONS ============== */
 function newSession(){
   state.sessionId++;
@@ -3268,23 +3633,40 @@ function newSession(){
 }
 
 function renderTechnical(intent, userText){
-  const kb = KB[intent] || KB.default;
+  const issueIntent = issueVariant(intent, userText);
+  if (issueIntent === 'mail_open' && window.__ARIA_DIAGNOSTIC_PREVIEW__ && window.__ARIA_DIAGNOSTIC_PREVIEW__.phase === 'awaiting_mail_open_symptom'){
+    appendMessage(youBubble(userText));
+    appendMessage(ariaBubble("Let's narrow that down.", mailOpenClarifierQuestion()));
+    speak(mailOpenClarifierQuestion());
+    state.lastIntent = issueIntent;
+    return;
+  }
+  const kb = KB[issueIntent] || KB[intent] || KB.default;
   newSession();
 
   // pull a richer real article from the embedded KB if one matches
-  const kbArticle = kbForIntent(intent);
+  const kbArticle = kbForIntent(issueIntent, userText);
+  const causeSummary = likelyCauseSummary(issueIntent);
   const kbExtra = kbArticle ? `<div class="aria-text" style="margin-top:14px"><strong style="color:var(--gold-bright);font-weight:500">From IIS knowledge base:</strong></div>${kbCard(kbArticle)}` : '';
+  const collapsedDetails = `
+    <details style="margin-top:12px">
+      <summary style="cursor:pointer;opacity:.86">Need more context first?</summary>
+      <div class="aria-text" style="margin-top:10px">${escapeHTML(causeSummary)}</div>
+      ${kbExtra}
+      <div style="margin-top:10px">${supportSnapshotHTML(userText, issueIntent)}</div>
+      ${followupHTML(issueIntent, userText)}
+    </details>`;
 
   const choicesHTML = `
     <div class="choice-grid">
-      <div class="choice" data-choice="guided" data-intent="${intent}">
+      <div class="choice" data-choice="guided" data-intent="${issueIntent}">
         <div class="num">01</div>
         <span class="badge">GUIDED</span>
         <h3>Walk me through it</h3>
         <p>ARIA narrates each step with on-screen markers. You stay in control of the keyboard and mouse.</p>
         <div class="tags"><span class="pill">EST · 2 MIN</span><span class="pill">YOU IN CONTROL</span></div>
       </div>
-      <div class="choice recommended" data-choice="auto" data-intent="${intent}">
+      <div class="choice recommended" data-choice="auto" data-intent="${issueIntent}">
         <div class="num">02</div>
         <span class="badge">RECOMMENDED</span>
         <h3>Resolve it for me</h3>
@@ -3292,20 +3674,23 @@ function renderTechnical(intent, userText){
         <div class="tags"><span class="pill">EST · ${kb.autoTime}</span><span class="pill">FULL AUDIT TRAIL</span></div>
       </div>
     </div>
-    <div class="aria-text" style="margin-top:14px"><strong style="color:var(--gold-bright);font-weight:500">Note:</strong> ${kb.note}</div>
-    ${kbExtra}
-    ${supportSnapshotHTML(userText, intent)}
-    ${followupHTML(intent)}
+    <div class="aria-text" style="margin-top:14px"><strong style="color:var(--gold-bright);font-weight:500">Safe start:</strong> ${kb.note}</div>
+    ${collapsedDetails}
   `;
 
   appendMessage(youBubble(userText));
+  const thinking = appendTransientMessage(ariaThinkingBubble('Checking the safest path...'));
   setTimeout(() => {
-    appendMessage(ariaBubble(kb.headline, kb.sub, choicesHTML));
+    thinking?.remove();
+    appendMessage(ariaBubble(kb.headline, escapeHTML(causeSummary), `<div class="aria-sub">${kb.sub}</div>`));
     speak(stripTags(kb.headline) + '. ' + kb.sub);
-    wireChoices();
-  }, 350);
+    setTimeout(() => {
+      appendMessage(ariaBubble('Choose how you want me to handle it.', 'Nothing changes until you choose a path.', choicesHTML));
+      wireChoices();
+    }, 520);
+  }, 520);
 
-  state.lastIntent = intent;
+  state.lastIntent = issueIntent;
 }
 
 function renderConversational(text, userText){
@@ -3765,6 +4150,7 @@ function _emitARIATrace(trace) {
 }
 
 function handleUserInput(text){
+  window.__ARIA_DIAGNOSTIC_PREVIEW__ = null;
   // Capture timing for latency measurement
   window._ariaTraceUserMsg = text;
   window._ariaTraceStart   = Date.now();
@@ -4325,7 +4711,7 @@ function ensureRecognition(){
     document.getElementById('voiceQuote').textContent = '"' + text + '"';
     if (e.results[e.results.length-1].isFinal){
       const final = text.trim();
-      if (final){ addTranscript('YOU','--:--', final, false); handleUserInput(final); showView('chat'); }
+      if (final){ addTranscript('YOU','--:--', final, false); void submitAsk(final); showView('chat'); }
     }
   };
   recognition.onend = () => {
@@ -4339,8 +4725,102 @@ function ensureRecognition(){
 /* ============== EVENT WIRING ============== */
 const askInput = document.getElementById('askInput');
 const sendBtn = document.getElementById('sendBtn');
-function submitAsk(){
-  let v = askInput.value.trim();
+window.__ARIA_PRIMARY_PREFLIGHT__ = true;
+
+function buildResearchHistory(){
+  return (state.thread || []).slice(-12).map(function(turn){
+    return {
+      role: turn.role === 'assistant' ? 'assistant' : 'user',
+      content: String(turn.text || '').trim()
+    };
+  }).filter(function(turn){ return turn.content; });
+}
+
+async function runPrimaryResearchPreflight(v){
+  if (!window.fetch || /^\s*\//.test(v)) return false;
+  const classifiedIntent = typeof classify === 'function' ? classify(v) : 'default';
+  const carryIntent = window.__ARIA_DIAGNOSTIC_PREVIEW__ && state.lastIntent && state.lastIntent !== 'default'
+    ? state.lastIntent
+    : null;
+  const intent = carryIntent || classifiedIntent;
+  const issueIntent = issueVariant(intent, v);
+  if (!intent || intent === 'default' || intent === 'ops' || intent === 'voice' || intent === 'escalation') return false;
+  if (issueIntent === 'mail_open' && !carryIntent){
+    showView('chat');
+    window.__ARIA_DIAGNOSTIC_PREVIEW__ = { intent:issueIntent, text:v, phase:'awaiting_mail_open_symptom' };
+    try { setTierBand(v, issueIntent); } catch(_) {}
+    appendMessage(youBubble(v));
+    const thinking = appendTransientMessage(ariaThinkingBubble('Checking the safest path...'));
+    setTimeout(() => {
+      thinking?.remove();
+      appendMessage(ariaBubble("Let's narrow that down.", mailOpenClarifierQuestion()));
+      speak(mailOpenClarifierQuestion());
+    }, 420);
+    state.lastIntent = issueIntent;
+    return true;
+  }
+  if (issueIntent === 'printer' && !carryIntent && !printerIssueSignal(v)){
+    showView('chat');
+    window.__ARIA_DIAGNOSTIC_PREVIEW__ = { intent:issueIntent, text:v, phase:'awaiting_printer_symptom' };
+    try { setTierBand(v, issueIntent); } catch(_) {}
+    appendMessage(youBubble(v));
+    const thinking = appendTransientMessage(ariaThinkingBubble('Checking the safest printer path...'));
+    setTimeout(() => {
+      thinking?.remove();
+      appendMessage(ariaBubble("Let's narrow that down.", printerClarifierQuestion()));
+      speak(printerClarifierQuestion());
+    }, 420);
+    state.lastIntent = issueIntent;
+    return true;
+  }
+  if (carryIntent === 'mail_open' && window.__ARIA_DIAGNOSTIC_PREVIEW__ && window.__ARIA_DIAGNOSTIC_PREVIEW__.phase === 'awaiting_mail_open_symptom' && !mailOpenSymptomSignal(v)){
+    showView('chat');
+    appendMessage(youBubble(v));
+    appendMessage(ariaBubble("I still need the exact startup behavior first.", mailOpenClarifierQuestion()));
+    speak(mailOpenClarifierQuestion());
+    state.lastIntent = carryIntent;
+    return true;
+  }
+  if (carryIntent === 'printer' && window.__ARIA_DIAGNOSTIC_PREVIEW__ && window.__ARIA_DIAGNOSTIC_PREVIEW__.phase === 'awaiting_printer_symptom' && !printerIssueSignal(v)){
+    showView('chat');
+    appendMessage(youBubble(v));
+    appendMessage(ariaBubble("I still need the printer symptom first.", printerClarifierQuestion()));
+    speak(printerClarifierQuestion());
+    state.lastIntent = carryIntent;
+    return true;
+  }
+  try {
+    const res = await fetch('/.netlify/functions/aria-research', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        query: v,
+        stateHint: intent,
+        history: buildResearchHistory()
+      })
+    });
+    if (!res.ok) return false;
+    const d = await res.json();
+    if (String((d && d.state) || '').indexOf('DIAGNOSING_') === 0 && d.askNext){
+      showView('chat');
+      window.__ARIA_DIAGNOSTIC_PREVIEW__ = { intent:issueIntent, text:v, phase:'research_followup' };
+      try { setTierBand(v, issueIntent); } catch(_) {}
+      appendMessage(youBubble(v));
+      appendMessage(ariaBubble("Let's narrow that down.", d.askNext));
+      speak(stripTags(d.askNext));
+      state.lastIntent = issueIntent;
+      return true;
+    }
+  } catch(_) {}
+  return false;
+}
+
+async function submitAsk(text){
+  let v = text == null ? askInput.value.trim() : String(text).trim();
+  const classifiedIntent = typeof classify === 'function' ? classify(v) : 'default';
+  const carryIntent = window.__ARIA_DIAGNOSTIC_PREVIEW__ && state.lastIntent && state.lastIntent !== 'default'
+    ? state.lastIntent
+    : null;
   if (!v) return;
   // BUG FIX 6: cap input length, strip pure-punctuation submissions
   if (v.length > 800) v = v.slice(0, 800) + '…';
@@ -4348,12 +4828,24 @@ function submitAsk(){
     askInput.value = '';
     return;  // pure punctuation — silently ignore
   }
+  if (await runPrimaryResearchPreflight(v)){
+    askInput.value = '';
+    return;
+  }
+  if (carryIntent && classifiedIntent === 'default'){
+    showView('chat');
+    window.__ARIA_DIAGNOSTIC_PREVIEW__ = null;
+    try { setTierBand(v, carryIntent); } catch(_) {}
+    renderTechnical(carryIntent, v);
+    askInput.value = '';
+    return;
+  }
   showView('chat');
   handleUserInput(v);
   askInput.value = '';
 }
 sendBtn.addEventListener('click', submitAsk);
-askInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitAsk(); });
+askInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') void submitAsk(); });
 
 document.getElementById('micBtn').addEventListener('click', () => {
   const r = ensureRecognition();
@@ -4391,7 +4883,12 @@ if (/[?&]test=1\b/.test(location.search)){
 /* PWA: register service worker (silent fail on file://) */
 if ('serviceWorker' in navigator){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.register('sw.js').then((reg) => {
+      watchServiceWorkerRegistration(reg);
+      setInterval(() => {
+        reg.update().catch(() => {});
+      }, CLIENT_UPDATE_POLL_MS);
+    }).catch(() => {});
   });
 }
 
@@ -4401,7 +4898,7 @@ const _prefill = _qs.get('prefill');
 if (_prefill){
   setTimeout(() => {
     askInput.value = _prefill;
-    handleUserInput(_prefill);
+    void submitAsk(_prefill);
     askInput.value = '';
   }, 1000);
 }
@@ -4496,8 +4993,28 @@ if (_prefill){
     setText("apLayersTotal", scn.layersTotal);
   }
 
+  function diagnosticScenario(c, userText){
+    return {
+      tier:(c && c.tier) || "L2",
+      diff:(c && c.diff) || "Mid",
+      title:(c && c.title && c.title !== "IT issue") ? c.title : "Technical issue under review",
+      quote:userText || "Tell me what changed and what you see.",
+      tags:{industry:"finance",role:"end user",environment:"prod",pressure:"active",history:"triage",trust:"established"},
+      lead:"I",
+      stageNow:2,
+      stageMax:5,
+      stageText:"Clarifying symptom before choosing a fix",
+      layersTotal:74,
+      layers:[["LLM",26],["Memory",17],["KB",13],["Frontend/UI",9],["Evaluation",8],["Tools",7],["RAG",6],["Safety",5],["Automation",4]]
+    };
+  }
+
   // hook called by setTierBand() when a user reports an issue
   window.renderApScenario = function(classification, intent, userText){
+    if (window.__ARIA_DIAGNOSTIC_PREVIEW__) {
+      render(diagnosticScenario(classification, userText), classification, userText);
+      return;
+    }
     render(SCENARIOS[pickKey(classification)], classification, userText);
   };
 

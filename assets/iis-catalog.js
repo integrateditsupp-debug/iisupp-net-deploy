@@ -90,7 +90,7 @@
       tags: ['ai agents for business', 'ai automation small business', 'ai agent templates'],
       seo: ['AI agents for business', 'AI automation for small business', 'AI agent templates'],
       free: false, password: true, featured: true, trendScore: 84,
-      preview: null, file: null,
+      preview: '/downloads/library/ai-agent-starter-kit-preview.html', file: null,
       related: ['gl-prompt-workflows', 'gl-nocode-kit', 'gl-helpdesk-blueprint'], bundle: 'bundle-ai-automation', upsell: 'aria'
     },
     {
@@ -118,7 +118,7 @@
       tags: ['windows troubleshooting checklist', 'windows 11 support', 'desktop support'],
       seo: ['Windows troubleshooting checklist', 'Windows 11 support guide', 'desktop support troubleshooting'],
       free: false, password: true, featured: false, trendScore: 78,
-      preview: null, file: null,
+      preview: '/downloads/library/cybersecurity-basics-preview.html', file: null,
       related: ['gl-l1-it-bible', 'gl-outlook-fix'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
     {
@@ -132,7 +132,7 @@
       tags: ['outlook troubleshooting guide', 'outlook not opening', 'outlook fix'],
       seo: ['Outlook troubleshooting guide', 'Outlook not opening fix', 'Outlook help desk guide'],
       free: false, password: true, featured: false, trendScore: 74,
-      preview: null, file: null,
+      preview: '/downloads/library/outlook-fix-guide-preview.html', file: null,
       related: ['gl-m365-kb', 'gl-win11-kb'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
     {
@@ -174,7 +174,7 @@
       tags: ['no-code automation', 'ai workflow automation', 'business automation scripts'],
       seo: ['no-code automation', 'AI workflow automation', 'business automation scripts'],
       free: false, password: true, featured: false, trendScore: 83,
-      preview: null, file: null,
+      preview: '/downloads/library/no-code-automation-kit-preview.html', file: null,
       related: ['gl-prompt-workflows', 'gl-ai-agent-starter'], bundle: 'bundle-ai-automation', upsell: 'aria'
     },
     {

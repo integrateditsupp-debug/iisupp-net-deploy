@@ -54,34 +54,29 @@ export default async (request) => {
     if (__ci) return __ci;
   } catch (_) { /* never let the convo layer break the research path */ }
 
-  // Path 1: curated state hash (instant, zero cost)
+  const history = (body && body.history) ? body.history : [];
+  const diag = buildDiagnosticMemory(query, history, stateHint);
 
-  // Diagnostic-First gate: block premature KB hit when user has not described a symptom
-  try {
-    var __nQuery = (typeof normalizeQuery === 'function') ? normalizeQuery(query) : query;
-    var __hist = (body && body.history) ? body.history : [];
-    var __mergedQ = (__hist.filter(function(h){return h && h.role==='user'}).map(function(h){return (h.text||'')}).join(' ') + ' ' + __nQuery).trim();
-    var __gaps = (typeof detectGaps === 'function') ? detectGaps(__mergedQ) : null;
-    // Only ask a clarifying question when we DON'T already recognise the issue.
-    // If detectState matches a known scenario (printer, Teams audio, slow PC, VPN…),
-    // skip the interview and answer it directly.
-    var __known = detectState(query) || detectState(__nQuery);
-    if (__gaps && !__gaps.hasSymptom && __gaps.wordCount <= 5 && !stateHint && !__known) {
-      return diagnosticFirst(query, cors, __hist);
-    }
-  } catch(_) {}
-  const detected = stateHint || detectState(query);
+  // ARIA should interview first, then solve. Even when a known state exists,
+  // ask the highest-value missing question if the root-cause picture is still weak.
+  if (shouldStayInDiagnosticFlow(diag, stateHint)) {
+    return diagnosticFirst(query, cors, history, diag);
+  }
+
+  // Path 1: curated state hash (instant, zero cost) after diagnostic memory is strong enough
+  const detected = stateHint || diag.state || detectState(query);
   const recipe = LIBRARY[detected];
   if (recipe) {
     const confidence = stateHint ? 0.92 : (recipe.confidence ?? 0.85);
-    return jsonResp(200, cors, {
-      ok: true,
+    return supportPlanResponse({
+      cors,
       state: detected,
       title: recipe.title,
       steps: recipe.steps,
       confidence,
       source: 'curated-library-v1',
-      caveat: confidence < 0.7 ? 'Confidence is moderate — confirm before acting on irreversible steps.' : null
+      caveat: confidence < 0.7 ? 'Confidence is moderate — confirm before acting on irreversible steps.' : null,
+      diag
     });
   }
 
@@ -96,15 +91,16 @@ export default async (request) => {
       const kb = getStore({ name: 'aria-kb-live', consistency: 'strong' });
       const cached = await kb.get(`${slug}.json`, { type: 'json' });
       if (cached && cached.body && cached.created_at && (Date.now() - new Date(cached.created_at).getTime()) < LIVE_KB_TTL_MS) {
-        return jsonResp(200, cors, {
-          ok: true,
+        return supportPlanResponse({
+          cors,
           state: liveState,
           title: cached.heading || vendor.name + ' — ' + slug.replace(/-/g, ' '),
           steps: bitToSteps(cached.body),
           confidence: 0.72,
           source: 'live-vendor-cache',
           caveat: 'Cached from a prior live fetch — confirm current vendor docs before acting on irreversible steps.',
-          source_url: cached.source_url || null
+          source_url: cached.source_url || null,
+          diag
         });
       }
     } catch (_) { /* cache failure is non-fatal */ }
@@ -133,15 +129,16 @@ export default async (request) => {
         console.warn('[aria-research v0.6] kb cache write failed', String(e && e.message || e));
       }
 
-      return jsonResp(200, cors, {
-        ok: true,
+      return supportPlanResponse({
+        cors,
         state: liveState,
         title: fetchResult.heading || vendor.name + ' — research',
         steps: bitToSteps(fetchResult.bit),
         confidence: 0.7,
         source: 'live-vendor-fetch',
         caveat: 'This was researched live from ' + vendor.name + ' support docs. Verify before acting on irreversible steps.',
-        source_url: fetchResult.url
+        source_url: fetchResult.url,
+        diag
       });
     }
   }
@@ -154,12 +151,12 @@ export default async (request) => {
   // additive: only runs when curated library + vendor fetch both miss, so it cannot
   // regress any existing answer. $0 — reads one index blob + at most one bit blob.
   try {
-    const learned = await tryLearnedBits(query, cors);
+    const learned = await tryLearnedBits(query, cors, diag);
     if (learned) return learned;
   } catch (_) { /* never let the learned-bit path break research */ }
 
   // Path 3: graceful no-match
-  return diagnosticFirst(query, cors, (body && body.history) ? body.history : []);
+  return diagnosticFirst(query, cors, history, diag);
 };
 
 function jsonResp(status, headers, obj) {
@@ -187,7 +184,7 @@ function learnedDomains(text) {
 // aria-learning-promote, keyword-scores it against the query, and returns the single
 // best learned bit if there's a real topical match. Trust > coverage (AROC §1): a
 // 2-token minimum + promoted-bonus prevents serving a stray, irrelevant bit.
-async function tryLearnedBits(query, cors) {
+async function tryLearnedBits(query, cors, diag) {
   const q = String(query || '').toLowerCase().trim();
   if (q.length < 4) return null;
 
@@ -231,15 +228,15 @@ async function tryLearnedBits(query, cors) {
   }
 
   const topic = String(best.e.topic || '').toUpperCase().replace(/[^A-Z0-9]+/g, '_').slice(0, 28);
-  return jsonResp(200, cors, {
-    ok: true,
+  return supportPlanResponse({
+    cors,
     state: 'LEARN.' + (topic || 'TOPIC'),
     title: bit.heading || ('ARIA learned: ' + (best.e.topic || 'this topic')),
     steps: bitToSteps(bit.body),
     confidence: best.e.promoted ? 0.66 : 0.6,
     source: 'aria-self-learned' + (best.e.promoted ? '-promoted' : ''),
-    caveat: 'This answer comes from ARIA’s autonomous learning loop, not a vetted vendor doc. Confirm before any irreversible step — if it does not resolve in two tries, that is an L2 escalation: call (647) 581-3182.',
-    learnedBy: best.e.agent || null
+    caveat: 'This answer comes from ARIA’s autonomous learning loop, not a vetted vendor doc. Confirm before any irreversible step.',
+    diag: diag || buildDiagnosticMemory(query, [], '')
   });
 }
 
@@ -254,7 +251,7 @@ const STATE_PATTERNS = {
   'M365.OUTLOOK.SEND':   /\b(outlook (won.?t|cannot|can.?t) send|email (won.?t|cannot|can.?t) send|stuck in outbox|cannot send (email|mail))\b/i,
   'M365.OUTLOOK.RECV':   /\b(outlook (not |won.?t |cannot |can.?t )?(receiv|getting)|email not (coming|arriving|received))\b/i,
   'M365.OUTLOOK.OOO':    /\b(out of office|ooo|vacation responder|auto[-\s]?reply|automatic repl(y|ies)|outlook ooo|set ooo)\b/i,
-  'M365.OUTLOOK.OPEN':   /\b(outlook (won.?t|cannot|can.?t) open|outlook crash|outlook hangs|outlook frozen|outlook not responding)\b/i,
+  'M365.OUTLOOK.OPEN':   /\b(outlook (won.?t|wont|will not|cannot|can.?t|isn.?t|is not|not) (open|opening|launch|launching|start|starting|run|running)|outlook crash|outlook crashes|outlook hangs|outlook hanging|outlook frozen|outlook freeze|outlook not responding)\b/i,
   'AUT.PW.RESET':        /\b(forgot (my )?password|need to reset (my )?password|password reset|reset password|cannot log ?in|locked out|account locked)\b/i,
   'AUT.MFA.LOCK':        /\b(mfa (not )?working|2fa (not )?working|authenticator|lost (my )?phone|lost (my )?authenticator|cannot get (the )?code)\b/i,
   'PRT.OFFLINE':         /\b(printer (is )?(offline|not (showing|working|connecting))|cannot (find|see) printer|printer not detected)\b/i,
@@ -682,7 +679,7 @@ const PRIMITIVES = {
     OS:      /\b(windows|mac|macos|linux|os|operating system|boot|startup|shutdown|crash|blue screen|bsod|update|driver|registry)\b/i,
     NETWORK: /\b(network|internet|wifi|wi-?fi|ethernet|vpn|dns|dhcp|ip|tcp|udp|port|firewall|router|gateway|subnet|connection)\b/i,
     AUTH:    /\b(password|login|sign[ -]?in|sso|mfa|2fa|authenticator|account|session|token|expired|locked|permission|access denied)\b/i,
-    HW:      /\b(monitor|screen|display|keyboard|mouse|webcam|camera|usb|hdmi|battery|laptop|pc|computer|hardware|device|cable)\b/i,
+    HW:      /\b(monitor|screen|display|keyboard|mouse|webcam|camera|usb|hdmi|battery|laptop|pc|computer|hardware|device|cable|printer|print|printing|spooler|scanner)\b/i,
     SAAS:    /\b(m365|microsoft 365|office 365|google|workspace|saas|cloud|tenant|license|subscription|seat|admin|console)\b/i
   },
   lifecycle: ['installed','configured','launched','authenticated','used','updated','failed','repaired','uninstalled'],
@@ -812,8 +809,9 @@ function conversationalIntercept(rawQ, history, cors) {
   return null; // not a conversational turn — fall through to KB / pattern / research
 }
 
-function firstPrinciplesReason(q, cors) {
-  const fw = applyFiveW(q || '');
+function firstPrinciplesReason(q, cors, memo) {
+  const fw = (memo && memo.fiveW) || applyFiveW(q || '');
+  const diag = memo || buildDiagnosticMemory(q, [], '');
   const hyps = PRIMITIVES.hypotheses[fw.where] || PRIMITIVES.hypotheses.OS;
   const clarify = {
     APP: 'Did this start after the app was updated, after you signed in fresh, or out of nowhere?',
@@ -824,22 +822,24 @@ function firstPrinciplesReason(q, cors) {
     SAAS: 'Does it affect just you, or everyone in your org? Did a recent admin change happen?'
   }[fw.where];
   const steps = [
-    'Scope: ' + fw.who + '. ' + (fw.who.indexOf('multiple') >= 0 ? 'If broad, likely service-side or company network - check status pages first.' : 'Isolate by trying the same action on a second device or account.'),
-    'Trigger: ' + fw.when + '. The #1 clue in any IT issue is what changed right before it broke.',
-    ...hyps.slice(0, 4),
-    'CLARIFYING QUESTION: ' + clarify + ' Reply with that detail and ARIA will narrow it further.',
-    'If none of these resolve it, this is L2 - call (647) 581-3182 or email integrateditsupp@iisupp.net.'
+    likelyCauseLine(diag, 'first-principles-reasoner-v2'),
+    'Step 1: Confirm scope. ' + (fw.who.indexOf('multiple') >= 0 ? 'If multiple users are affected, check service health or shared-network status first.' : 'If possible, try the same action on another device or account to confirm whether this is local or broader.'),
+    'Step 2: Confirm trigger. ' + fw.when + '. The most useful clue is what changed right before it broke.',
+    'Step 3: Try the safest high-probability fix path. ' + simplifyStep(hyps[0]),
+    'Step 4: If that fails, move to the next isolation step. ' + simplifyStep(hyps[1]),
+    'Step 5: Reply with this detail so ARIA can narrow the root cause further: ' + clarify,
   ];
   return jsonResp(200, cors, {
     ok: true,
     state: 'REASONED_' + fw.where,
-    proposals: specialistProposals(q),
+    proposals: specialistProposals(diag.app || q),
     title: 'No exact KB match - reasoning from first principles (' + fw.where.toLowerCase() + ' layer)',
     steps: steps,
     confidence: 0.55,
-    source: 'first-principles-reasoner-v1',
+    source: 'first-principles-reasoner-v2',
     caveat: "Structured guess using ARIA's CS-fundamentals blueprint, not a vetted recipe. Try each step in order.",
-    fiveW: fw
+    fiveW: fw,
+    diagnosticMemory: diag
   });
 }
 
@@ -950,7 +950,7 @@ function detectGaps(query) {
   const hasApp = Object.values(PRIMITIVES.layers).some(rx => rx.test(q));
   const hasWhen = /\b(after|since|today|yesterday|last (?:week|month|day)|just now|always|suddenly|started|began|recently)\b/i.test(q);
   const hasWho = /\b(everyone|all (?:users|of us)|whole (?:team|office)|just me|my)\b/i.test(q);
-  const hasSymptom = /\b(error|broken|won'?t|can'?t|cant|wont|couldn'?t|doesn'?t|isn'?t|fail|crash(?:ing|ed|es)?|slow(?:ing|ed)?|stuck|frozen|freez(?:ing|es)?|hang(?:ing|s)?|lag(?:ging)?|down|gone|missing|not (?:work|connect|load|open|print|sync|respond)(?:ing)?|not working|not loading|not opening|blue screen|black screen|bsod|spinning|beach ?ball|glitch(?:ing|y)?|loop(?:ing)?|restart(?:ing)?|reboot(?:ing|s)?|disconnect(?:ing|ed|s)?|drop(?:ping|s)?|no (?:sound|audio|signal|internet|connection|power|video|display)|won'?t print)\b/i.test(q);
+  const hasSymptom = /\b(error|broken|won'?t|can'?t|cant|wont|couldn'?t|doesn'?t|isn'?t|fail|crash(?:ing|ed|es)?|slow(?:ing|ed)?|stuck|frozen|freez(?:ing|es)?|hang(?:ing|s)?|lag(?:ging)?|down|gone|missing|launch(?:ing)?|start(?:ing)?|run(?:ning)?|not (?:work|connect|load|open|launch|start|run|print|sync|respond)(?:ing)?|not working|not loading|not opening|not launching|not starting|blue screen|black screen|bsod|spinning|beach ?ball|glitch(?:ing|y)?|loop(?:ing)?|restart(?:ing)?|reboot(?:ing|s)?|disconnect(?:ing|ed|s)?|drop(?:ping|s)?|no (?:sound|audio|signal|internet|connection|power|video|display)|won'?t print)\b/i.test(q);
   const wordCount = q.split(/\s+/).filter(Boolean).length;
   return {
     hasApp, hasWhen, hasWho, hasSymptom, wordCount,
@@ -963,7 +963,172 @@ function detectGaps(query) {
     layerHint: (() => { for (const [name, rx] of Object.entries(PRIMITIVES.layers)) if (rx.test(q)) return name; return "UNKNOWN"; })()
   };
 }
-function diagnosticFirst(query, cors, history) {
+
+function historyUserText(history) {
+  return Array.isArray(history)
+    ? history.filter(function(h){ return h && (h.role === 'user' || h.from === 'user'); }).map(function(h){ return h.text || h.content || ''; }).join(' ')
+    : '';
+}
+
+function extractFirstMatch(text, patterns) {
+  for (var i = 0; i < patterns.length; i++) {
+    var match = patterns[i].exec(text);
+    if (match && match[0]) return match[0].trim();
+  }
+  return null;
+}
+
+function extractBehavior(text) {
+  const q = String(text || '').toLowerCase();
+  if (/\b(nothing happens|does nothing|no response|will not open|won'?t open|not opening|not launching|not starting)\b/.test(q)) return 'no response';
+  if (/\b(freez(?:e|es|ing|en)|hang(?:s|ing)?|not responding|spinning)\b/.test(q)) return 'freezes or hangs';
+  if (/\b(crash(?:es|ing|ed)?|opens then closes|closes immediately|shuts down)\b/.test(q)) return 'crashes';
+  if (/\b(error|code|message|popup|prompt|warning|denied)\b/.test(q)) return 'shows an error or prompt';
+  return null;
+}
+
+function buildDiagnosticMemory(query, history, stateHint) {
+  const rawQ = String(query || '').trim();
+  const normalized = normalizeQuery(rawQ);
+  const merged = (historyUserText(history) + ' ' + normalized).trim();
+  const lower = merged.toLowerCase();
+  const gaps = detectGaps(merged);
+  const fiveW = applyFiveW(merged);
+  const appMatch = /\b(outlook|word|excel|powerpoint|teams|zoom|slack|chrome|edge|firefox|safari|adobe|onedrive|sharepoint|onenote|m365|office|wifi|wi-fi|vpn|printer|print|printing|spooler|scanner|windows|mac|laptop|computer|pc|browser|email|mail|login|password)\b/i.exec(merged);
+  const recentChange = extractFirstMatch(lower, [
+    /\bafter [^.!?]{0,80}\b/,
+    /\bsince [^.!?]{0,80}\b/,
+    /\brecent(?:ly)? [^.!?]{0,80}\b/,
+    /\b(new|changed|updated|reset) [^.!?]{0,80}\b/
+  ]);
+  const when = extractFirstMatch(lower, [
+    /\b(today|yesterday|this morning|this afternoon|last night|last week|just now|recently|since [^.!?]{0,60}|after [^.!?]{0,60}|always|suddenly)\b/,
+  ]);
+  const scope = /\b(everyone|everybody|all users|whole team|whole office|company[- ]wide)\b/.test(lower)
+    ? 'multiple users'
+    : (/\b(just me|only me|my machine|my laptop|my pc|my computer)\b/.test(lower) ? 'single user' : null);
+  const frequency = extractFirstMatch(lower, [
+    /\b(every time|every day|every morning|every login|all the time|often|frequently|sometimes|randomly|intermittent(?:ly)?|keeps happening|again and again)\b/
+  ]);
+  const errorText = extractFirstMatch(rawQ, [
+    /"[^"]{3,120}"/,
+    /'[^']{3,120}'/,
+    /\b(?:error|code|message|warning|prompt)\b[^.!?\n]{0,120}/i,
+    /\b0x[0-9a-f]{3,10}\b/i
+  ]);
+  const state = stateHint || detectState(normalized) || detectState(merged);
+  const recurring = /\b(often|frequently|intermittent|randomly|keeps|again|always|recurring|repeat|repeatedly)\b/.test(lower);
+  const symptom = extractFirstMatch(lower, [
+    /\b(won'?t [^.!?]{0,40}|can'?t [^.!?]{0,40}|not [a-z ]{0,30}(?:working|loading|opening|launching|starting|responding|connecting|printing|syncing)|slow|crashing|frozen|stuck|offline|missing|disconnecting|drops?)\b/,
+    /\b(error|warning|prompt|denied|blue screen|black screen|no internet|no connection|no sound|no display)\b/
+  ]);
+  const currentBehavior = extractBehavior(lower);
+  return {
+    app: appMatch ? (/^(print|printing|spooler|scanner)$/i.test(appMatch[1]) ? 'printer' : appMatch[1]) : null,
+    symptom,
+    currentBehavior,
+    errorText,
+    when,
+    recentChange,
+    scope,
+    frequency,
+    recurring,
+    state,
+    layerHint: gaps.layerHint || fiveW.where,
+    hasApp: gaps.hasApp,
+    hasSymptom: gaps.hasSymptom,
+    wordCount: gaps.wordCount,
+    fiveW
+  };
+}
+
+function nextDiagnosticQuestion(mem, persona) {
+  if (!mem.app) {
+    return 'Which app, system, or device is this about? For example Outlook, Wi-Fi, VPN, printer, login, or your computer itself.';
+  }
+  if (!mem.hasSymptom || !mem.symptom) {
+    if (/^(printer|print|printing|spooler|scanner)$/i.test(mem.app || '')) {
+      return 'What kind of printer problem is it: offline, queue stuck, paper jam, poor print quality, or an error on screen or on the printer?';
+    }
+    return 'What exactly is happening with ' + mem.app + '? For example: nothing happens, it freezes, it crashes, or it shows an error.';
+  }
+  if (/^M365\.OUTLOOK\.OPEN$/i.test(mem.state || '') && !mem.currentBehavior) {
+    return 'When you open Outlook, what happens exactly: nothing happens, it freezes, it closes right away, or you see an error?';
+  }
+  if (/^printer$/i.test(mem.app || '') && !mem.currentBehavior) {
+    return 'What kind of printer problem is it: offline, queue stuck, paper jam, poor print quality, or an error on screen or on the printer?';
+  }
+  if (/^BROWSER\.OPEN\.FAIL$/i.test(mem.state || '') && !mem.currentBehavior) {
+    return 'When you open the browser, what happens exactly: nothing happens, it freezes, it closes right away, or you see an error?';
+  }
+  if (!mem.when && !mem.recentChange) {
+    return 'When did this start, and did anything change right before it happened, like an update, password reset, restart, or new install?';
+  }
+  if (!mem.scope && /^(NETWORK|AUTH|SAAS)$/i.test(mem.layerHint || '')) {
+    return 'Is this just happening to you, or is anyone else seeing the same problem?';
+  }
+  if (mem.recurring && !mem.frequency) {
+    return 'How often does it happen: every time, sometimes, once a day, or only after something specific?';
+  }
+  if (!mem.errorText && /shows an error or prompt/.test(mem.currentBehavior || '')) {
+    return 'Please tell me the exact error message or code you see, word for word if possible.';
+  }
+  return null;
+}
+
+function shouldStayInDiagnosticFlow(mem, stateHint) {
+  if (stateHint) return false;
+  if (!mem.hasApp || !mem.app) return true;
+  if (!mem.hasSymptom || !mem.symptom) return true;
+  if (mem.wordCount <= 5 && (!mem.when || !mem.currentBehavior)) return true;
+  if (mem.recurring && !mem.frequency) return true;
+  if (/^(M365\.OUTLOOK\.OPEN|BROWSER\.OPEN\.FAIL)$/i.test(mem.state || '') && !mem.currentBehavior) return true;
+  if (/^(NETWORK|AUTH|SAAS)$/i.test(mem.layerHint || '') && !mem.scope && mem.wordCount <= 14) return true;
+  return false;
+}
+
+function simplifyStep(step) {
+  return String(step || '')
+    .replace(/^If\s+/i, 'If ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function likelyCauseLine(diag, source) {
+  if (diag.state === 'M365.OUTLOOK.OPEN') return 'Most likely cause: Outlook is failing during launch because of a bad add-in, a stuck profile setting, or a cached Office issue.';
+  if (diag.state === 'BROWSER.OPEN.FAIL') return 'Most likely cause: the browser is failing during launch because of a bad extension, a damaged profile, or a local app problem.';
+  if (/AUTH/i.test(diag.layerHint || '')) return 'Most likely cause: this is an account, session, or authentication problem rather than a hardware failure.';
+  if (/NETWORK/i.test(diag.layerHint || '')) return 'Most likely cause: this is a connection-path issue, so we should isolate device, network, and service scope in that order.';
+  if (source === 'live-vendor-fetch' || source === 'live-vendor-cache') return 'Most likely cause: vendor guidance matched this issue pattern closely enough to try a short safe fix path first.';
+  return 'Most likely cause: ARIA has enough context now to try the safest high-probability fix path first.';
+}
+
+function supportPlanResponse(args) {
+  const diag = args.diag || {};
+  const babySteps = (args.steps || []).slice(0, 4).map(simplifyStep);
+  const out = [];
+  out.push(likelyCauseLine(diag, args.source));
+  if (diag.scope) out.push('Scope: ' + diag.scope + '.');
+  if (diag.when || diag.recentChange) out.push('What changed: ' + (diag.recentChange || diag.when) + '.');
+  babySteps.forEach(function(step, idx) {
+    out.push('Step ' + (idx + 1) + ': ' + step);
+  });
+  out.push('If one step fails, stop there and tell ARIA exactly what happened so it can narrow the root cause.');
+  return jsonResp(200, args.cors, {
+    ok: true,
+    state: args.state,
+    title: args.title,
+    steps: out,
+    confidence: args.confidence,
+    source: args.source,
+    caveat: args.caveat || null,
+    source_url: args.source_url || null,
+    diagnosticMemory: diag,
+    proposals: specialistProposals(diag.app || diag.state || '')
+  });
+}
+
+function diagnosticFirst(query, cors, history, memo) {
   // v4: typo-normalize + persona-aware tone + history merge
   var rawQ = String(query || '').trim();
   var nQ = normalizeQuery(rawQ);
@@ -973,12 +1138,35 @@ function diagnosticFirst(query, cors, history) {
   var gaps = detectGaps(merged);
   var persona = detectPersona(rawQ, history);
   var wordCount = gaps.wordCount;
-  var appMatch = /\b(outlook|word|excel|powerpoint|teams|zoom|slack|chrome|edge|firefox|safari|adobe|onedrive|sharepoint|onenote|m365|office)\b/i.exec(merged);
-  var appName = appMatch ? (appMatch[1].charAt(0).toUpperCase()+appMatch[1].slice(1)) : null;
+  var appMatch = /\b(outlook|word|excel|powerpoint|teams|zoom|slack|chrome|edge|firefox|safari|adobe|onedrive|sharepoint|onenote|m365|office|printer|print|printing|spooler|scanner)\b/i.exec(merged);
+  var rawAppName = appMatch ? appMatch[1] : null;
+  var appName = rawAppName ? (/^(print|printing|spooler|scanner)$/i.test(rawAppName) ? 'Printer' : (rawAppName.charAt(0).toUpperCase()+rawAppName.slice(1))) : null;
+  var launchComplaint = /\b(nothing happens|does nothing|no response|will not open|won'?t open|not opening|not launching|not starting|freez(?:e|es|ing|en)|hang(?:s|ing)?|crash(?:es|ing|ed)?|error|prompt|warning)\b/i.test(merged);
+  var mem = memo || buildDiagnosticMemory(query, history, '');
+
+  var bestQuestion = nextDiagnosticQuestion(mem, persona);
+  if (bestQuestion) {
+    var shaped = tonedAsk(bestQuestion, persona);
+    return jsonResp(200, cors, {
+      ok:true,
+      state:'DIAGNOSING_NEXT_BEST_QUESTION',
+      title:'Clarify the issue',
+      steps:[shaped],
+      confidence:1.0,
+      source:'diagnostic-memory-v1',
+      framework:'5W_PLUS_H',
+      askNext:shaped,
+      phase:'MEMORY_GAP',
+      appliedLesson:'QUESTION_BEFORE_SOLUTION',
+      persona:persona,
+      diagnosticMemory:mem,
+      proposals:specialistProposals(mem.app || query)
+    });
+  }
 
   // VERBOSE bypass: long msg with full info -> skip asking, go reason
   if (persona === 'VERBOSE' && gaps.hasApp && gaps.hasSymptom) {
-    return firstPrinciplesReason(nQ, cors);
+    return firstPrinciplesReason(nQ, cors, mem);
   }
 
   // LESSON 1: GREETING
@@ -989,7 +1177,7 @@ function diagnosticFirst(query, cors, history) {
   }
 
   // LESSON 2: APP_NAMED only
-  if (appName && !gaps.hasSymptom && wordCount <= 5) {
+  if (appName && !gaps.hasSymptom && !launchComplaint && wordCount <= 5) {
     var msg = 'Of course — what is ' + appName + ' doing? Slow, crashing, will not open, showing an error, or something else?';
     msg = tonedAsk(msg, persona);
     return jsonResp(200, cors, { ok:true, state:'DIAGNOSING_SYMPTOM_FOR_APP', title:'Ask SYMPTOM for '+appName, steps:[msg], confidence:1.0, source:'diagnostic-interview-v4', framework:'5W_PLUS_H', askNext:msg, phase:'APP_NAMED', appliedLesson:'NEVER_GUESS_BEFORE_SYMPTOM', persona:persona });
@@ -1010,7 +1198,7 @@ function diagnosticFirst(query, cors, history) {
   }
 
   // LESSON 5: enough info, hand off
-  return firstPrinciplesReason(nQ, cors);
+  return firstPrinciplesReason(nQ, cors, mem);
 }
 
 

@@ -15,9 +15,9 @@
   const SESSION_END_URL = '/.netlify/functions/aria-session-end';
   const CONTACT_BACK_URL = '/.netlify/functions/aria-contact-back';
 
-  const IDLE_FIRST_MS = 60000;   // 30s -> "are you there?"
-  const IDLE_SECOND_MS = 120000; // +120s -> "please reply"
-  const IDLE_END_MS = 120000; // +120s -> drop chat
+  const IDLE_FIRST_MS = 180000;   // wait before nudging while user reads the support card
+  const IDLE_SECOND_MS = 180000;  // one polite reminder
+  const IDLE_END_MS = 180000;     // then close only after extended silence
 
   const ESCALATE_RE = /\b(get me (a )?(person|human|real)|live agent|live person|transfer me|escalate|speak to (a )?(human|person|real)|talk to (a )?(human|person|tech|technician)|need (a )?human|call me|call back|callback)\b/i;
   const VENDOR_RE = /\b(call (microsoft|apple|google|samsung|dell|hp|lenovo|cisco|netgear|asus|acer|sony|brother|canon|epson|adobe|autodesk|sage|quickbooks|intuit|salesforce|zoom|slack|dropbox|box))\b/i;
@@ -50,15 +50,15 @@
   }
 
   function startIdle() {
+    if (!getSession()) return;
     clearIdle();
     idleTimers.push(setTimeout(() => {
       if (idleStage !== 0) return;
       idleStage = 1;
-      injectAriaSystemMsg('Hello, are you there?');
       idleTimers.push(setTimeout(() => {
         if (idleStage !== 1) return;
         idleStage = 2;
-        injectAriaSystemMsg('Please reply so that I can help you.');
+        injectAriaSystemMsg('If you still need help, reply when you are ready.');
         idleTimers.push(setTimeout(() => {
           if (idleStage !== 2) return;
           idleStage = 3;
@@ -75,7 +75,7 @@
     if (!chat) return;
     const wrap = document.createElement('div');
     wrap.className = 'fade-in';
-    wrap.innerHTML = '<div class="aria-block"><div class="aria-label">ARIA</div><div class="aria-text"></div></div>';
+    wrap.innerHTML = '<div class="aria-block"><div class="aria-tag">ARIA</div><div class="aria-content"><div class="aria-text"></div></div></div>';
     wrap.querySelector('.aria-text').textContent = text;
     chat.appendChild(wrap);
     chat.scrollTop = chat.scrollHeight;
@@ -109,8 +109,22 @@
   // ============ ESCALATION / VENDOR / OUT-OF-SCOPE / TOPIC ============
   let currentTopic = null;
 
+  function shouldResetExpiredConversation() {
+    try {
+      const chat = document.getElementById('chatMessages');
+      if (!chat) return false;
+      const text = String(chat.textContent || '');
+      return !getSession() && /Please re-engage with Integrated IT Support Inc/i.test(text);
+    } catch (_) {
+      return false;
+    }
+  }
+
   function handleUserMessage(text) {
     if (!text) return;
+    if (shouldResetExpiredConversation()) {
+      resetChatUI();
+    }
     clearIdle();
     setTimeout(startIdle, 500);   // restart idle countdown after ARIA replies
 
@@ -185,7 +199,7 @@
     'M365.OUTLOOK.SEND': /\b(outlook (won.?t|cannot|can.?t) send|email (won.?t|cannot|can.?t) send|stuck in outbox|cannot send (email|mail))\b/i,
     'M365.OUTLOOK.RECV': /\b(outlook (not |won.?t |cannot |can.?t )?(receiv|getting)|email not (coming|arriving|received))\b/i,
     'M365.OUTLOOK.OOO':  /\b(out of office|ooo|vacation responder|auto[-\s]?reply|automatic repl(y|ies)|outlook ooo|set ooo)\b/i,
-    'M365.OUTLOOK.OPEN': /\b(outlook (won.?t|cannot|can.?t) open|outlook crash|outlook hangs|outlook frozen|outlook not responding)\b/i,
+    'M365.OUTLOOK.OPEN': /\b(outlook (won.?t|wont|will not|cannot|can.?t|isn.?t|is not|not) (open|opening|launch|launching|start|starting|run|running)|outlook crash|outlook crashes|outlook hangs|outlook hanging|outlook frozen|outlook freeze|outlook not responding)\b/i,
     'AUT.PW.RESET':      /\b(forgot (my )?password|need to reset (my )?password|password reset|reset password|cannot log ?in|locked out|account locked)\b/i,
     'AUT.MFA.LOCK':      /\b(mfa (not )?working|2fa (not )?working|authenticator|lost (my )?phone|lost (my )?authenticator|cannot get (the )?code)\b/i,
     'PRT.OFFLINE':       /\b(printer (is )?(offline|not (showing|working|connecting))|cannot (find|see) printer|printer not detected)\b/i,
@@ -212,7 +226,7 @@
     if (!chat) return;
     var wrap = document.createElement('div');
     wrap.className = 'fade-in';
-    wrap.innerHTML = '<div class="aria-block"><div class="aria-label">ARIA</div><div class="aria-text"></div></div>';
+    wrap.innerHTML = '<div class="aria-block"><div class="aria-tag">ARIA</div><div class="aria-content"><div class="aria-text"></div></div></div>';
     var tx = wrap.querySelector('.aria-text');
     if (tx) { tx.style.whiteSpace = 'pre-wrap'; tx.textContent = text; }
     chat.appendChild(wrap);
@@ -222,6 +236,17 @@
       window.dispatchEvent(new CustomEvent('aria:assistant-message', { detail: detail }));
       window.dispatchEvent(new CustomEvent('aria:agent-signal', { detail: { agents: ['research','reasoning','kb','troubleshooting'], state: (meta && meta.state) || null, confidence: (meta && meta.confidence) || 0 } }));
     } catch (e) {}
+  }
+
+  function buildUncertainFollowUp(userText) {
+    var lower = String(userText || '').toLowerCase();
+    if (/\boutlook\b/.test(lower)) {
+      return 'While I verify the right fix, tell me what happens when you open Outlook: nothing happens, it freezes, or you see an error?';
+    }
+    if (/\b(chrome|edge|firefox|browser)\b/.test(lower)) {
+      return 'While I verify the right fix, tell me what happens when you open the browser: nothing happens, it freezes, or you see an error?';
+    }
+    return 'While I verify the right fix, tell me what you see right now: an error message, a frozen screen, or no response at all?';
   }
 
   var __ariaResearchInflight = false;
@@ -449,6 +474,9 @@
   // ============ WIRE-UP ============
   function wireUp() {
     injectControls();
+    if (shouldResetExpiredConversation()) {
+      resetChatUI();
+    }
 
     // Hook the chat input — listen to user submits via Enter and form submission.
     const input = document.getElementById('askInput');
@@ -482,7 +510,6 @@
       obs.observe(chat, { childList: true });
     }
 
-    startIdle();
   }
 
   if (document.readyState === 'loading') {
@@ -523,28 +550,29 @@
     }
     __ariaUncertainState = { startedAt: Date.now(), userText: userText, resolved: false, tWait: null, tEsc: null };
 
-    appendAriaResearchMessage('Let me check into that — one moment, please.', { source: 'uncertain-state', stage: 'open' });
+    appendAriaResearchMessage('I am checking the best support path for that now.', { source: 'uncertain-state', stage: 'open' });
 
     // Research agent already kicked off by the original handleUserMessage path; do not dup-fire here.
 
     __ariaUncertainState.tWait = setTimeout(function () {
       if (!__ariaUncertainState || __ariaUncertainState.resolved) return;
-      appendAriaResearchMessage('Still looking into this — give me one more moment.', { source: 'uncertain-state', stage: 'wait' });
-    }, 30000);
+      appendAriaResearchMessage(buildUncertainFollowUp(userText), { source: 'uncertain-state', stage: 'wait' });
+    }, 12000);
 
     __ariaUncertainState.tEsc = setTimeout(function () {
       if (!__ariaUncertainState || __ariaUncertainState.resolved) return;
-      var msg = "Unfortunately I don't have much information on that yet.\n\n" +
-        'Our helpdesk can take it from here:\n' +
+      var msg = "I do not want to guess here.\n\n" +
+        'Fastest next step:\n' +
         '• Phone: ' + __HELPDESK_NUMBER_DISPLAY + '\n' +
         '• Email: ' + __HELPDESK_EMAIL_DISPLAY + '\n\n' +
-        'Would you like me to open a callback ticket so a technician reaches out?';
+        'Issue summary: ' + userText + '\n\n' +
+        'If you want, I can prepare a callback ticket draft for approval so a technician can reach out with the right context.';
       appendAriaResearchMessage(msg, { source: 'uncertain-state', stage: 'escalate' });
       __ariaUncertainState = null;
       try {
         window.dispatchEvent(new CustomEvent('aria:agent-signal', { detail: { agents: ['escalation', 'observability'], reason: 'uncertain-90s-escalate' } }));
       } catch (_) {}
-    }, 90000);
+    }, 45000);
   }
 
   function ariaUncertainResolve() {
@@ -624,7 +652,7 @@
       var chat = document.getElementById("chatMessages"); if (!chat) return;
       var wrap = document.createElement("div");
       wrap.className = "aria-block fade-in";
-      wrap.innerHTML = '<div class="aria-label">ARIA</div><div class="aria-text"></div>';
+      wrap.innerHTML = '<div class="aria-tag">ARIA</div><div class="aria-content"><div class="aria-text"></div></div>';
       wrap.querySelector(".aria-text").textContent = text;
       chat.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
     } catch(_) {}
@@ -634,14 +662,31 @@
       var chat = document.getElementById("chatMessages"); if (!chat) return;
       var wrap = document.createElement("div");
       wrap.className = "aria-block fade-in";
-      var html = '<div class="aria-label">ARIA</div><div class="aria-text"><div style="font-weight:600;margin-bottom:8px;">'+ escapeHtml(title) +'</div><ol style="margin:0 0 0 18px;padding:0;line-height:1.55;">';
-      (steps||[]).slice(0, 10).forEach(function(s){ html += '<li style="margin:4px 0;">'+ escapeHtml(s) +'</li>'; });
+      var lead = (steps || []).slice(0, 3);
+      var rest = (steps || []).slice(3, 8);
+      var html = '<div class="aria-tag">ARIA</div><div class="aria-content"><div class="aria-text"><div style="font-weight:600;margin-bottom:8px;">'+ escapeHtml(title) +'</div><ol style="margin:0 0 0 18px;padding:0;line-height:1.55;">';
+      lead.forEach(function(s){ html += '<li style="margin:4px 0;">'+ escapeHtml(s) +'</li>'; });
       html += '</ol>';
+      if (rest.length) {
+        html += '<details style="margin-top:10px;"><summary style="cursor:pointer;opacity:.85;">Show next steps</summary><ol style="margin:8px 0 0 18px;padding:0;line-height:1.55;" start="4">';
+        rest.forEach(function(s, idx){ html += '<li value="'+ (idx + 4) +'" style="margin:4px 0;">'+ escapeHtml(s) +'</li>'; });
+        html += '</ol></details>';
+      }
       if (caveat) html += '<div style="margin-top:10px;font-size:12px;opacity:.75;font-style:italic;">'+ escapeHtml(caveat) +'</div>';
-      html += '</div>';
+      html += '</div></div>';
       wrap.innerHTML = html;
       chat.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
     } catch(_) {}
+  }
+  function shouldDeferToPrimaryUI(text){
+    try {
+      if (!text || /^\s*\//.test(text)) return false;
+      if (typeof window.classify !== "function") return false;
+      var intent = window.classify(String(text));
+      return !!intent && intent !== "default" && intent !== "ops" && intent !== "voice" && intent !== "escalation";
+    } catch(_) {
+      return false;
+    }
   }
   function escapeHtml(s){ return String(s||"").replace(/[&<>"\']/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"})[c]; }); }
   function killCannedFlow(){
@@ -665,6 +710,7 @@
     var q = (text == null ? (document.getElementById("askInput") || {}).value : text) || "";
     q = String(q).trim();
     if (!q) return origSubmitAsk && origSubmitAsk.apply(this, arguments);
+    if (window.__ARIA_PRIMARY_PREFLIGHT__) return origSubmitAsk && origSubmitAsk.apply(this, arguments);
     var responded = false;
     try {
       fetch("/.netlify/functions/aria-research", {
@@ -673,6 +719,7 @@
         body: JSON.stringify({query: q})
       }).then(function(r){return r.json();}).then(function(d){
         if (responded || !d) return; responded = true;
+        if (shouldDeferToPrimaryUI(q)) return;
         if (d.state && String(d.state).indexOf("DIAGNOSING_") === 0 && d.askNext) {
           killCannedFlow();
           appendBubble(d.askNext);
@@ -724,7 +771,7 @@
         if (el.__aria_gated) return; el.__aria_gated = true;
         el.disabled = true; el.style.opacity = "0.45"; el.style.cursor = "not-allowed";
         el.title = "Auto-resolve requires the ARIA desktop app or Chrome extension. Web supports guided fixes only.";
-        el.addEventListener("click", function(e){ e.preventDefault(); e.stopImmediatePropagation(); var chat = document.getElementById("chatMessages"); if (!chat) return; var msg = document.createElement("div"); msg.className = "aria-block fade-in"; msg.innerHTML = '<div class="aria-label">ARIA</div><div class="aria-text">Auto-resolve runs through the ARIA desktop app or Chrome extension - it needs access to your machine that the web sandbox does not allow. I can still walk you through the steps here, or grab the app from iisupp.net/extension.</div>'; chat.appendChild(msg); chat.scrollTop = chat.scrollHeight; }, true);
+        el.addEventListener("click", function(e){ e.preventDefault(); e.stopImmediatePropagation(); var chat = document.getElementById("chatMessages"); if (!chat) return; var msg = document.createElement("div"); msg.className = "aria-block fade-in"; msg.innerHTML = '<div class="aria-tag">ARIA</div><div class="aria-content"><div class="aria-text">Auto-resolve runs through the ARIA desktop app or Chrome extension - it needs access to your machine that the web sandbox does not allow. I can still walk you through the steps here, or grab the app from iisupp.net/extension.</div></div>'; chat.appendChild(msg); chat.scrollTop = chat.scrollHeight; }, true);
       }
     });
   }
@@ -850,11 +897,11 @@
         if (typeof url === "string" && url.indexOf("aria-research") >= 0 && opts && opts.method === "POST" && opts.body) {
           var b = JSON.parse(opts.body);
           if (b && b.query && !b.history) {
-            b.history = (window.__ariaHistory || []).slice(-6);
+            b.history = (window.__ariaHistory || []).slice(-12);
             opts.body = JSON.stringify(b);
             // Track current user msg
             window.__ariaHistory.push({role: "user", text: b.query});
-            if (window.__ariaHistory.length > 20) window.__ariaHistory = window.__ariaHistory.slice(-20);
+            if (window.__ariaHistory.length > 30) window.__ariaHistory = window.__ariaHistory.slice(-30);
           }
         }
       } catch(_){}
@@ -873,7 +920,7 @@
           var isAria = n.classList && n.classList.contains("aria-block");
           if (isAria) {
             var txt = (n.querySelector(".aria-text") || {}).textContent || "";
-            if (txt) { window.__ariaHistory.push({role: "aria", text: txt}); if (window.__ariaHistory.length > 20) window.__ariaHistory = window.__ariaHistory.slice(-20); }
+            if (txt) { window.__ariaHistory.push({role: "aria", text: txt}); if (window.__ariaHistory.length > 30) window.__ariaHistory = window.__ariaHistory.slice(-30); }
           }
         });
       });

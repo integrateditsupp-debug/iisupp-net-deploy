@@ -1083,7 +1083,7 @@
         .mobile-nav-sep { width: 64px; height: 1px; background: rgba(197,160,89,0.28); margin: 6px 0; }
         .nav-groups { display: flex; align-items: center; justify-content: flex-start; gap: 10px; flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; }
         .nav-group { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-width: 64px; text-align: center; font-family: 'Inter', sans-serif; font-size: 8px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.42); line-height: 1; }
-        .nav-group a, .nav-group span.nav-disabled { color: rgba(255,255,255,0.74); transition: color 0.3s; text-decoration: none; }
+        .nav-group a, .nav-group span.nav-disabled { color: rgba(255,255,255,0.86); transition: color 0.3s, text-shadow 0.3s; text-decoration: none; }
         .nav-group a:hover { color: #c5a059; }
         .nav-group .nav-accent { color: #c5a059; }
         .nav-group .nav-accent:hover { color: #f1dca7; }
@@ -1228,14 +1228,189 @@
 
         /* --- HERO SECTION (tightened, no more giant gap) --- */
         .hero-section {
-            min-height: 64vh;
+            min-height: 74vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding-top: 120px;
-            padding-bottom: 56px;
+            padding-bottom: 70px;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(197,160,89,0.16), transparent 26%),
+                radial-gradient(circle at 82% 36%, rgba(91,165,204,0.10), transparent 30%),
+                linear-gradient(180deg, #050505, #080604 64%, #050505);
         }
-        @media (max-width: 768px) { .hero-section { min-height: 62vh; padding-top: 110px; padding-bottom: 40px; } }
+        .hero-section > div.text-center { display: none !important; }
+        .welcome-shell {
+            width: min(1180px, 100%);
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.72fr);
+            gap: 42px;
+            align-items: center;
+            z-index: 2;
+            position: relative;
+        }
+        .welcome-copy { text-align: left; }
+        .welcome-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border: 1px solid rgba(197,160,89,0.24);
+            border-radius: 999px;
+            color: #f1dca7;
+            background: rgba(197,160,89,0.08);
+            font-size: 9px;
+            letter-spacing: 0.38em;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+        .welcome-kicker::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #c5a059;
+            box-shadow: 0 0 18px rgba(197,160,89,0.9);
+        }
+        .welcome-title {
+            font-size: clamp(3rem, 7.5vw, 7.5rem);
+            line-height: 0.86;
+            letter-spacing: -0.07em;
+            margin: 0 0 26px;
+            max-width: 900px;
+        }
+        .welcome-title .gold-word {
+            display: inline-block;
+            color: transparent;
+            background: linear-gradient(120deg, #c5a059, #f1dca7 50%, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-style: italic;
+            text-shadow: 0 0 46px rgba(197,160,89,0.24);
+        }
+        .welcome-lead {
+            max-width: 700px;
+            color: rgba(255,255,255,0.64);
+            font-size: 14px;
+            line-height: 1.9;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin: 0 0 22px;
+        }
+        .welcome-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+        .welcome-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 13px 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(197,160,89,0.34);
+            color: #f1dca7;
+            font-size: 9px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+        .welcome-action.is-solid {
+            color: #050505;
+            background: linear-gradient(135deg, #c5a059, #f1dca7);
+            border-color: transparent;
+        }
+        .welcome-stage {
+            position: relative;
+            min-height: 430px;
+            border: 1px solid rgba(197,160,89,0.18);
+            border-radius: 34px;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 50% 35%, rgba(241,220,167,0.23), transparent 28%),
+                linear-gradient(145deg, rgba(255,255,255,0.055), rgba(0,0,0,0.38));
+            box-shadow: 0 28px 90px rgba(0,0,0,0.48);
+        }
+        .welcome-orb {
+            position: absolute;
+            left: 50%;
+            top: 42%;
+            transform: translate(-50%, -50%);
+            width: 210px;
+            height: 210px;
+            border-radius: 999px;
+            border: 1px solid rgba(241,220,167,0.28);
+            background: radial-gradient(circle at 34% 30%, rgba(255,255,255,0.32), rgba(197,160,89,0.12) 34%, transparent 68%);
+            box-shadow: 0 0 90px rgba(197,160,89,0.22), inset 0 0 60px rgba(197,160,89,0.12);
+            animation: welcomeFloat 6s ease-in-out infinite;
+        }
+        .welcome-orb::before,
+        .welcome-orb::after {
+            content: '';
+            position: absolute;
+            inset: 28px;
+            border: 1px solid rgba(241,220,167,0.28);
+            border-radius: 999px;
+            transform: rotate(28deg) scaleX(1.45);
+        }
+        .welcome-orb::after {
+            border-color: rgba(91,165,204,0.26);
+            transform: rotate(-34deg) scaleX(1.28);
+        }
+        .welcome-orb span {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            font-family: 'Cinzel', serif;
+            font-size: 76px;
+            color: #f1dca7;
+            text-shadow: 0 0 34px rgba(197,160,89,0.45);
+        }
+        @keyframes welcomeFloat {
+            0%, 100% { transform: translate(-50%, -50%) scale(0.98); }
+            50% { transform: translate(-50%, -54%) scale(1.04); }
+        }
+        .welcome-stat {
+            position: absolute;
+            border: 1px solid rgba(197,160,89,0.18);
+            border-radius: 18px;
+            background: rgba(0,0,0,0.34);
+            backdrop-filter: blur(12px);
+            padding: 13px 14px;
+            min-width: 148px;
+        }
+        .welcome-stat b {
+            display: block;
+            font-family: 'Cinzel', serif;
+            color: #fff;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+        .welcome-stat span {
+            display: block;
+            color: #c5a059;
+            font-size: 8px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+        .welcome-stat.one { left: 24px; top: 30px; }
+        .welcome-stat.two { right: 24px; top: 90px; }
+        .welcome-stat.three { left: 34px; bottom: 48px; }
+        .welcome-stat.four { right: 30px; bottom: 28px; }
+        @media (max-width: 960px) {
+            .welcome-shell { grid-template-columns: 1fr; gap: 28px; }
+            .welcome-stage { min-height: 320px; }
+        }
+        @media (max-width: 768px) {
+            .hero-section { min-height: 62vh; padding-top: 110px; padding-bottom: 40px; }
+            .welcome-title { font-size: clamp(2.4rem, 15vw, 4.5rem); }
+            .welcome-lead { font-size: 12px; letter-spacing: 0.05em; }
+            .welcome-action { width: 100%; }
+            .welcome-stage { min-height: 280px; border-radius: 24px; }
+            .welcome-orb { width: 158px; height: 158px; }
+            .welcome-orb span { font-size: 58px; }
+            .welcome-stat { position: relative; display: inline-block; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important; min-width: 126px; margin: 8px; }
+        }
 
         /* --- NAV I LOGO WITH HELPDESK MORPH (hover) --- */
         .nav-home-link { text-decoration: none; color: inherit; }
@@ -1469,8 +1644,8 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             </div>
             <span class="nav-divider"></span>
             <div class="nav-group nav-group-collapsible">
-                <a href="#portfolio">Portfolio</a>
-                <a href="/about.html">About Us</a>
+                <a href="#portfolio" class="nav-accent">Portfolio</a>
+                <a href="/about.html" class="nav-accent">About Us</a>
             </div>
         </div>
         <div class="nav-actions">
@@ -1507,6 +1682,26 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
 
     <!-- ====== HERO ====== -->
     <section class="hero-section relative overflow-hidden px-6">
+        <div class="welcome-shell">
+            <div class="welcome-copy">
+                <span class="welcome-kicker">Whitby / Ontario / Global</span>
+                <h1 class="welcome-title logo-text">Welcome to Integrated IT Support Inc. <span class="gold-word">Preventative Aid</span></h1>
+                <p class="welcome-lead">We keep work moving before problems become expensive. IT support, AI guidance, automation, and practical systems built for calm operators.</p>
+                <p class="welcome-lead" style="color:rgba(255,255,255,0.46)">System-driven. Outcome-owned. Clean decisions before a single change is made.</p>
+                <div class="welcome-actions">
+                    <a class="welcome-action is-solid" href="/services.html">Explore services</a>
+                    <a class="welcome-action" href="/marketplace.html">Open marketplace</a>
+                    <a class="welcome-action" href="#solutions">Pick a plan</a>
+                </div>
+            </div>
+            <div class="welcome-stage" aria-hidden="true">
+                <div class="welcome-orb"><span>I</span></div>
+                <div class="welcome-stat one"><b>24/7</b><span>Support mindset</span></div>
+                <div class="welcome-stat two"><b>AI</b><span>Guided growth</span></div>
+                <div class="welcome-stat three"><b>M365</b><span>Business systems</span></div>
+                <div class="welcome-stat four"><b>Trust</b><span>Before action</span></div>
+            </div>
+        </div>
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(197,160,89,0.08)_0%,_transparent_70%)]"></div>
         <div class="text-center z-10 relative">
             <span class="text-[#c5a059] tracking-[0.7em] text-[9px] uppercase mb-10 block font-bold">Whitby • Ontario • Global</span>
@@ -2889,6 +3084,12 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
   .hero-section { padding: 76px 10px 28px !important; }
   .hero-section h1 { font-size: 1.3rem !important; }
   .hero-section h1 span { font-size: 0.8em !important; }
+}
+
+@media (max-width: 640px) {
+  .hero-section .welcome-title { font-size: clamp(2.35rem, 15vw, 4rem) !important; line-height: 0.9 !important; letter-spacing: -0.055em !important; }
+  .hero-section .welcome-title span { font-size: 0.95em !important; }
+  .hero-section .welcome-lead { font-size: 0.78rem !important; padding: 0 !important; }
 }
 
 /* === MOBILE PRICING LOCK (2026-06-11) === */

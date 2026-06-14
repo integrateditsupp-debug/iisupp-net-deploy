@@ -1,7 +1,7 @@
 // Bump this version on each deploy to force returning visitors to flush the
 // old cache and pick up the new aria-trial widget + kb-index. The fetch
 // strategy is network-first, so cache only matters when offline.
-const CACHE_NAME = "iisupport-v4";
+const CACHE_NAME = "iisupport-v5";
 const PRECACHE = ["/", "/aria.html", "/about.html", "/purchase-tech.html", "/manifest.webmanifest", "/favicon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -20,6 +20,13 @@ self.addEventListener("activate", (event) => {
     )
   );
   self.clients.claim();
+});
+
+self.addEventListener("message", (event) => {
+  if (!event || !event.data) return;
+  if (event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("fetch", (event) => {
