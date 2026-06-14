@@ -157,6 +157,10 @@
   to = "/shop.html"
   status = 200
 [[redirects]]
+  from = "/marketplace"
+  to = "/marketplace.html"
+  status = 200
+[[redirects]]
   from = "/growth-library"
   to = "/growth-library.html"
   status = 200

@@ -4,87 +4,151 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#c5a059">
-<title>Marketplace | Integrated IT Support</title>
-<meta name="description" content="IIS Marketplace: curated long-life trending products and services sourced through Integrated IT Support with clear fees, region checks, and quote-first buying.">
+<title>Bridged Marketplace | Integrated IT Support</title>
+<meta name="description" content="IIS/ARIA Bridged Marketplace: trusted high-end tech, AI services, business services, viral products, and long-term value picks with clear 20% admin fee.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--gold:#c5a059;--gold2:#f1dca7;--ink:#050505;--panel:#0b0905;--line:rgba(197,160,89,.22);--muted:rgba(255,255,255,.56)}
+:root{
+  --gold:#c5a059;
+  --gold2:#f3dfaa;
+  --ink:#030303;
+  --panel:#0b0905;
+  --panel2:#101010;
+  --line:rgba(197,160,89,.22);
+  --line2:rgba(255,255,255,.08);
+  --text:#fffaf0;
+  --muted:rgba(255,255,255,.62);
+  --soft:rgba(255,255,255,.44);
+  --cyan:#72d8ff;
+  --green:#80f0bd;
+}
 *{box-sizing:border-box}
-body{margin:0;background:#030303;color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+html{scroll-behavior:smooth}
+body{margin:0;background:#030303;color:var(--text);font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 20% 10%,rgba(197,160,89,.16),transparent 34%),radial-gradient(circle at 88% 32%,rgba(49,119,151,.11),transparent 32%),linear-gradient(180deg,#050505 0%,#0b0803 48%,#030303 100%);z-index:-2}
-body:after{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(197,160,89,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(197,160,89,.045) 1px,transparent 1px);background-size:76px 76px;mask-image:radial-gradient(circle at center,black,transparent 74%);z-index:-1}
+button,input,select,textarea{font:inherit}
+body:before{
+  content:"";position:fixed;inset:0;z-index:-3;pointer-events:none;
+  background:
+    radial-gradient(circle at 16% 7%,rgba(197,160,89,.2),transparent 31%),
+    radial-gradient(circle at 83% 22%,rgba(85,188,255,.13),transparent 28%),
+    radial-gradient(circle at 54% 82%,rgba(197,160,89,.13),transparent 34%),
+    linear-gradient(180deg,#020202 0%,#0b0803 48%,#030303 100%);
+}
+body:after{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.78;
+  background-image:
+    linear-gradient(rgba(197,160,89,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(197,160,89,.04) 1px,transparent 1px);
+  background-size:82px 82px;
+  mask-image:radial-gradient(circle at center,black,transparent 76%);
+}
 .logo{font-family:Cinzel,serif}
 .gold{color:var(--gold2)}
-.eyebrow{display:block;color:var(--gold);font-size:10px;letter-spacing:.38em;text-transform:uppercase;font-weight:800}
-.nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 42px;background:rgba(0,0,0,.86);backdrop-filter:blur(18px);border-bottom:1px solid rgba(197,160,89,.16)}
-.brand{display:flex;align-items:center;gap:18px;min-width:260px}
-.brand-mark{width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold2);font-family:Cinzel,serif;font-size:20px;font-weight:800;box-shadow:inset 0 0 0 4px rgba(197,160,89,.08)}
-.brand-title{font-family:Cinzel,serif;font-size:17px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;line-height:1.25}
+.eyebrow{display:block;color:var(--gold);font-size:10px;letter-spacing:.34em;text-transform:uppercase;font-weight:900}
+.nav{position:sticky;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 34px;background:rgba(0,0,0,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(197,160,89,.16)}
+.brand{display:flex;align-items:center;gap:16px;min-width:260px}
+.brand-mark{width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold2);font-family:Cinzel,serif;font-size:20px;font-weight:800;box-shadow:inset 0 0 0 4px rgba(197,160,89,.08),0 0 26px rgba(197,160,89,.13)}
+.brand-title{font-family:Cinzel,serif;font-size:16px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;line-height:1.25}
 .brand-sub{font-size:8px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-top:4px}
-.nav-links{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
-.nav-links a{padding:10px 12px;border:1px solid transparent;color:rgba(255,255,255,.58);font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:800}
-.nav-links a:hover,.nav-links a.active{color:#050505;background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:rgba(255,255,255,.12)}
-.hero{min-height:78vh;display:grid;place-items:center;padding:150px 24px 70px;text-align:center;position:relative}
-.hero-inner{max-width:1040px;margin:auto}
-.hero h1{font-family:Cinzel,serif;font-size:clamp(3rem,8vw,7.6rem);line-height:.92;letter-spacing:-.05em;margin:24px 0 22px}
-.hero h1 em{font-style:italic;color:var(--gold2);text-shadow:0 0 32px rgba(197,160,89,.28)}
-.hero p{max-width:760px;margin:0 auto 16px;color:rgba(255,255,255,.64);font-size:15px;line-height:1.9}
-.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:13px 18px;border:1px solid rgba(197,160,89,.38);border-radius:999px;color:var(--gold2);font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:800}
+.nav-links{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.nav-links a,.cart-open{padding:10px 12px;border:1px solid transparent;color:rgba(255,255,255,.58);font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:900;background:transparent;cursor:pointer}
+.nav-links a:hover,.nav-links a.active,.cart-open:hover{color:#050505;background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:rgba(255,255,255,.12)}
+.cart-open{border-color:rgba(197,160,89,.25);color:var(--gold2)}
+.hero{position:relative;min-height:86vh;display:grid;place-items:center;padding:94px 24px 58px;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:11% 6% auto auto;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(243,223,170,.22),transparent 64%);filter:blur(3px);animation:pulse 6s ease-in-out infinite}
+.hero:after{content:"";position:absolute;left:8%;bottom:8%;width:220px;height:220px;border:1px solid rgba(197,160,89,.16);border-radius:44px;transform:rotate(18deg);box-shadow:0 0 80px rgba(197,160,89,.1)}
+@keyframes pulse{0%,100%{transform:scale(.96);opacity:.75}50%{transform:scale(1.06);opacity:1}}
+.hero-inner{position:relative;z-index:1;max-width:1160px;width:100%;text-align:center}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;text-align:left;margin-top:28px}
+.hero h1{font-family:Cinzel,serif;font-size:clamp(3.2rem,7.6vw,7.9rem);line-height:.88;letter-spacing:-.055em;margin:18px 0 18px;text-align:center}
+.hero h1 em{font-style:italic;color:var(--gold2);text-shadow:0 0 36px rgba(197,160,89,.3)}
+.hero-lead{max-width:870px;margin:0 auto;color:rgba(255,255,255,.68);font-size:16px;line-height:1.85;text-align:center}
+.search-card{border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(197,160,89,.045));box-shadow:0 28px 90px rgba(0,0,0,.45);padding:24px}
+.search-row{display:grid;grid-template-columns:1fr auto;gap:10px;margin:18px 0}
+.search-row input{width:100%;min-height:58px;border:1px solid rgba(197,160,89,.28);border-radius:999px;background:rgba(0,0,0,.36);color:#fff;padding:0 20px;font-weight:700}
+.search-row input:focus{outline:none;border-color:var(--gold2);box-shadow:0 0 0 4px rgba(197,160,89,.13)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:13px 18px;border:1px solid rgba(197,160,89,.38);border-radius:999px;color:var(--gold2);font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;background:transparent;cursor:pointer}
 .btn.solid{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#060400;border-color:transparent}
-.notice{max-width:1120px;margin:-18px auto 60px;padding:22px 24px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,rgba(197,160,89,.13),rgba(255,255,255,.035));box-shadow:0 24px 80px rgba(0,0,0,.38)}
+.btn.cyan{border-color:rgba(114,216,255,.35);color:#bcecff}
+.quick-actions{display:flex;gap:8px;flex-wrap:wrap}
+.quick-actions button{border:1px solid rgba(255,255,255,.08);border-radius:999px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.68);padding:9px 11px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;cursor:pointer}
+.quick-actions button:hover{border-color:var(--gold);color:var(--gold2)}
+.hero-visual{position:relative;min-height:390px;border:1px solid rgba(197,160,89,.18);border-radius:34px;background:radial-gradient(circle at 48% 35%,rgba(243,223,170,.25),transparent 31%),linear-gradient(145deg,rgba(255,255,255,.06),rgba(0,0,0,.35));overflow:hidden;box-shadow:0 28px 90px rgba(0,0,0,.5)}
+.hero-visual .orb{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:230px;height:230px;border-radius:50%;border:1px solid rgba(243,223,170,.26);background:radial-gradient(circle at 36% 32%,rgba(255,255,255,.34),rgba(197,160,89,.13) 28%,transparent 62%);box-shadow:0 0 90px rgba(197,160,89,.22),inset 0 0 60px rgba(197,160,89,.15)}
+.hero-visual .orb:before,.hero-visual .orb:after{content:"";position:absolute;inset:25px;border:1px solid rgba(114,216,255,.22);border-radius:50%;transform:rotate(35deg) scaleX(1.35)}
+.hero-visual .orb:after{transform:rotate(-24deg) scaleX(1.25);border-color:rgba(243,223,170,.3)}
+.hero-visual .a{position:absolute;inset:0;display:grid;place-items:center;font-family:Cinzel,serif;font-size:86px;color:var(--gold2);text-shadow:0 0 30px rgba(197,160,89,.4)}
+.signal{position:absolute;border:1px solid rgba(197,160,89,.16);border-radius:18px;background:rgba(0,0,0,.32);backdrop-filter:blur(12px);padding:13px 14px;min-width:150px}
+.signal b{display:block;font-family:Cinzel,serif;color:#fff;font-size:20px;margin-bottom:2px}
+.signal span{display:block;color:var(--gold);font-size:8px;letter-spacing:.24em;text-transform:uppercase;font-weight:900}
+.signal.one{left:22px;top:24px}.signal.two{right:22px;top:78px}.signal.three{left:36px;bottom:48px}.signal.four{right:28px;bottom:28px}
+.notice{max-width:1220px;margin:0 auto 28px;padding:18px 22px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,rgba(197,160,89,.13),rgba(255,255,255,.035));box-shadow:0 24px 80px rgba(0,0,0,.38)}
+.notice p{margin:0;color:rgba(255,255,255,.68);font-size:13px;line-height:1.8}
 .notice strong{color:var(--gold2)}
-.notice p{margin:0;color:rgba(255,255,255,.68);font-size:13px;line-height:1.85}
-.route-grid{max-width:1120px;margin:0 auto 54px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:0 24px}
-.route-card{border:1px solid rgba(197,160,89,.18);border-radius:24px;padding:22px;background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(197,160,89,.045));box-shadow:0 20px 70px rgba(0,0,0,.32);display:flex;flex-direction:column;gap:12px}
-.route-card h3{font-family:Cinzel,serif;font-size:22px;line-height:1.08;margin:0;color:#fff}
-.route-card p{margin:0;color:rgba(255,255,255,.64);font-size:13px;line-height:1.8}
-.route-points{display:grid;gap:8px;margin-top:auto}
-.route-points span{font-size:10px;line-height:1.7;color:rgba(255,255,255,.7);padding:9px 11px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(0,0,0,.18)}
-.section{padding:40px 24px 82px}
-.wrap{max-width:1220px;margin:0 auto}
+.section{padding:58px 24px}
+.wrap{max-width:1240px;margin:0 auto}
 .section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}
-.section-head h2{font-family:Cinzel,serif;font-size:clamp(1.8rem,4vw,3.6rem);line-height:1;margin:10px 0 0}
-.section-head p{max-width:560px;color:var(--muted);font-size:13px;line-height:1.8;margin:0}
-.trend-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.trend-card{position:relative;overflow:hidden;border:1px solid rgba(197,160,89,.18);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(197,160,89,.045) 52%,rgba(0,0,0,.34));box-shadow:0 22px 70px rgba(0,0,0,.42);min-height:100%;display:flex;flex-direction:column}
-.trend-visual{height:178px;position:relative;overflow:hidden;border-bottom:1px solid rgba(197,160,89,.18);background:radial-gradient(circle at 30% 25%,rgba(241,220,167,.42),transparent 16%),radial-gradient(circle at 70% 40%,rgba(64,142,170,.32),transparent 19%),linear-gradient(145deg,#100c06,#071016 54%,#020202)}
-.trend-visual:before{content:"";position:absolute;inset:18px;border:1px solid rgba(241,220,167,.28);border-radius:24px;box-shadow:inset 0 0 30px rgba(197,160,89,.12)}
-.visual-art{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:86px;height:86px;color:var(--gold2);filter:drop-shadow(0 0 24px rgba(241,220,167,.42))}
-.visual-art *{vector-effect:non-scaling-stroke}
-.visual-label{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);padding:6px 10px;border:1px solid rgba(241,220,167,.26);border-radius:999px;background:rgba(0,0,0,.35);color:rgba(241,220,167,.9);font-size:8px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;white-space:nowrap}
-.trend-card:nth-child(3n+1) .trend-visual{background:radial-gradient(circle at 25% 25%,rgba(241,220,167,.42),transparent 18%),radial-gradient(circle at 72% 60%,rgba(72,164,213,.25),transparent 23%),linear-gradient(135deg,#151006,#041018)}
-.trend-card:nth-child(3n+2) .trend-visual{background:radial-gradient(circle at 72% 22%,rgba(241,220,167,.34),transparent 18%),radial-gradient(circle at 18% 70%,rgba(75,195,142,.24),transparent 24%),linear-gradient(145deg,#07130f,#130c05)}
-.trend-card:nth-child(3n+3) .trend-visual{background:radial-gradient(circle at 50% 18%,rgba(241,220,167,.38),transparent 18%),radial-gradient(circle at 34% 78%,rgba(113,113,255,.18),transparent 26%),linear-gradient(145deg,#070712,#151008)}
-.trend-body{padding:18px;display:flex;flex-direction:column;gap:12px;flex:1}
-.trend-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.score,.tag{font-size:8px;letter-spacing:.18em;text-transform:uppercase;font-weight:800;border:1px solid rgba(197,160,89,.28);border-radius:999px;padding:7px 9px;color:var(--gold2);white-space:nowrap}
-.score{background:rgba(197,160,89,.1)}
-.trend-card h3{font-family:Cinzel,serif;font-size:17px;letter-spacing:.04em;line-height:1.24;margin:0;color:#fff}
-.trend-card p{color:rgba(255,255,255,.62);font-size:12px;line-height:1.75;margin:0}
-.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
-.meta div{border:1px solid rgba(255,255,255,.075);border-radius:14px;padding:10px;background:rgba(0,0,0,.18)}
-.meta b{display:block;color:var(--gold);font-size:8px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:5px}
-.meta span{display:block;color:rgba(255,255,255,.72);font-size:11px;line-height:1.35}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chips span{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:6px 8px;background:rgba(255,255,255,.025)}
-.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
-.mini-btn{font-size:8px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;border:1px solid rgba(197,160,89,.3);border-radius:999px;padding:10px 12px;color:var(--gold2)}
-.mini-btn.solid{background:rgba(197,160,89,.18)}
-.ad-board{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}
-.panel{border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.035);padding:24px}
-.panel h3{font-family:Cinzel,serif;margin:0 0 12px;font-size:20px;color:var(--gold2)}
-.panel p,.panel li{color:rgba(255,255,255,.62);font-size:13px;line-height:1.85}
+.section-head h2{font-family:Cinzel,serif;font-size:clamp(2rem,4.5vw,4.2rem);line-height:.98;margin:10px 0 0}
+.section-head p{max-width:590px;color:var(--muted);font-size:13px;line-height:1.85;margin:0}
+.category-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:13px}
+.category-card{position:relative;overflow:hidden;border:1px solid rgba(197,160,89,.18);border-radius:22px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(197,160,89,.04));padding:16px;min-height:172px;cursor:pointer;text-align:left;transition:transform .25s,border-color .25s,background .25s}
+.category-card:hover,.category-card.active{transform:translateY(-3px);border-color:rgba(243,223,170,.55);background:linear-gradient(145deg,rgba(197,160,89,.16),rgba(255,255,255,.055))}
+.cat-icon{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;margin-bottom:14px;background:radial-gradient(circle at 32% 25%,rgba(243,223,170,.36),rgba(197,160,89,.09));border:1px solid rgba(197,160,89,.25);color:var(--gold2);font-size:24px}
+.category-card h3{font-family:Cinzel,serif;font-size:16px;line-height:1.1;margin:0 0 8px}
+.category-card p{margin:0;color:rgba(255,255,255,.55);font-size:11px;line-height:1.55}
+.cat-meta{position:absolute;right:12px;bottom:12px;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:900}
+.toolbar{position:sticky;top:84px;z-index:30;max-width:1240px;margin:10px auto 34px;border:1px solid rgba(197,160,89,.16);border-radius:24px;background:rgba(5,5,5,.84);backdrop-filter:blur(18px);padding:14px;display:grid;grid-template-columns:1.2fr repeat(5,minmax(130px,.5fr));gap:10px}
+.toolbar input,.toolbar select{border:1px solid rgba(197,160,89,.2);border-radius:14px;background:rgba(255,255,255,.04);color:#fff;padding:12px 13px;font-size:12px}
+.toolbar select option{background:#080808;color:#fff}
+.toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--gold2)}
+.market-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.item-card{position:relative;overflow:hidden;border:1px solid rgba(197,160,89,.18);border-radius:26px;background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(197,160,89,.035) 50%,rgba(0,0,0,.36));box-shadow:0 24px 80px rgba(0,0,0,.42);display:flex;flex-direction:column;min-height:100%}
+.item-art{height:178px;position:relative;overflow:hidden;background:radial-gradient(circle at 28% 24%,rgba(243,223,170,.4),transparent 20%),radial-gradient(circle at 72% 62%,rgba(114,216,255,.26),transparent 24%),linear-gradient(145deg,#100c06,#061018 56%,#020202);border-bottom:1px solid rgba(197,160,89,.15)}
+.item-art:before{content:"";position:absolute;inset:20px;border:1px solid rgba(243,223,170,.22);border-radius:30px;box-shadow:inset 0 0 40px rgba(197,160,89,.12)}
+.item-art .shape{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:98px;height:98px;border-radius:30px;border:1px solid rgba(243,223,170,.34);background:linear-gradient(145deg,rgba(243,223,170,.22),rgba(114,216,255,.08));display:grid;place-items:center;font-size:34px;color:var(--gold2);box-shadow:0 0 60px rgba(197,160,89,.26)}
+.badge-row{position:absolute;left:14px;top:14px;display:flex;gap:6px;flex-wrap:wrap;z-index:1}
+.badge{font-size:7px;letter-spacing:.13em;text-transform:uppercase;font-weight:900;border:1px solid rgba(243,223,170,.28);border-radius:999px;padding:6px 8px;background:rgba(0,0,0,.44);color:var(--gold2)}
+.item-body{padding:18px;display:flex;flex-direction:column;gap:12px;flex:1}
+.type-line{display:flex;align-items:center;justify-content:space-between;gap:10px;color:rgba(255,255,255,.48);font-size:8px;letter-spacing:.18em;text-transform:uppercase;font-weight:900}
+.type-line span:last-child{color:var(--green)}
+.item-card h3{font-family:Cinzel,serif;font-size:20px;line-height:1.12;margin:0;color:#fff}
+.item-card p{margin:0;color:rgba(255,255,255,.63);font-size:12px;line-height:1.7}
+.vendor{border:1px solid rgba(255,255,255,.075);border-radius:16px;padding:10px 11px;background:rgba(0,0,0,.2);font-size:11px;color:rgba(255,255,255,.62);line-height:1.45}
+.vendor b{color:var(--gold2)}
+.scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.score{border:1px solid rgba(197,160,89,.18);border-radius:14px;padding:9px 8px;background:rgba(0,0,0,.18)}
+.score b{display:block;color:var(--gold);font-size:8px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
+.score span{font-family:Cinzel,serif;font-size:18px;color:#fff}
+.price-box{display:grid;gap:7px;border:1px solid rgba(197,160,89,.2);border-radius:16px;padding:12px;background:rgba(197,160,89,.075)}
+.price-line{display:flex;align-items:center;justify-content:space-between;gap:12px;color:rgba(255,255,255,.66);font-size:12px}
+.price-line.total{color:#fff;font-weight:900;border-top:1px solid rgba(197,160,89,.18);padding-top:8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:6px 8px;background:rgba(255,255,255,.025)}
+.why{display:grid;gap:8px;margin-top:auto}
+.why div{border:1px solid rgba(255,255,255,.075);border-radius:14px;padding:10px;background:rgba(0,0,0,.16);font-size:11px;color:rgba(255,255,255,.62);line-height:1.55}
+.why b{display:block;color:var(--gold);font-size:8px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini-btn{border:1px solid rgba(197,160,89,.3);border-radius:999px;background:transparent;color:var(--gold2);padding:11px 10px;font-size:8px;letter-spacing:.13em;text-transform:uppercase;font-weight:900;cursor:pointer;text-align:center}
+.mini-btn.solid{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#080500;border-color:transparent}
+.mini-btn:hover{filter:brightness(1.12)}
+.rails{display:grid;gap:30px}
+.rail{border:1px solid rgba(197,160,89,.14);border-radius:30px;background:rgba(255,255,255,.025);padding:18px}
+.rail h3{margin:0 0 14px;font-family:Cinzel,serif;font-size:24px;color:var(--gold2)}
+.rail-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.mini-listing{border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:14px;background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(0,0,0,.18));display:grid;gap:9px}
+.mini-listing b{font-family:Cinzel,serif;font-size:15px;line-height:1.15}
+.mini-listing span{font-size:10px;color:rgba(255,255,255,.55);line-height:1.5}
+.trust-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(197,160,89,.035));padding:24px;box-shadow:0 20px 70px rgba(0,0,0,.28)}
+.panel h3{font-family:Cinzel,serif;font-size:24px;line-height:1.05;margin:0 0 12px;color:var(--gold2)}
+.panel p,.panel li{color:rgba(255,255,255,.64);font-size:13px;line-height:1.8}
 .panel ul{margin:0;padding-left:18px}
-.keyword-list{display:flex;gap:8px;flex-wrap:wrap}
-.keyword-list span{border:1px solid rgba(197,160,89,.26);border-radius:999px;padding:9px 11px;color:rgba(255,255,255,.72);font-size:10px}
-.source-list a{color:var(--gold2);text-decoration:underline;text-decoration-color:rgba(197,160,89,.38);text-underline-offset:4px}
-.request-shell{max-width:1120px;margin:0 auto 58px;padding:24px;border:1px solid var(--line);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(197,160,89,.045));box-shadow:0 24px 80px rgba(0,0,0,.34)}
-.request-grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:22px;align-items:start}
+.request-shell{max-width:1240px;margin:0 auto 58px;padding:24px;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(197,160,89,.04));box-shadow:0 24px 80px rgba(0,0,0,.34)}
+.request-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:22px;align-items:start}
 .steps{display:grid;gap:10px;margin-top:18px}
 .step{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:13px;border:1px solid rgba(197,160,89,.14);border-radius:16px;background:rgba(0,0,0,.2)}
 .step b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:rgba(197,160,89,.16);color:var(--gold2);font-family:Cinzel,serif}
@@ -92,87 +156,57 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
 .request-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .field{display:grid;gap:7px}
 .field.full{grid-column:1/-1}
-.field label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800}
+.field label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:900}
 .field input,.field select,.field textarea{width:100%;border:1px solid rgba(197,160,89,.22);border-radius:14px;background:rgba(0,0,0,.28);color:#fff;padding:12px 13px;font:500 13px/1.3 Inter,sans-serif}
-.field textarea{min-height:106px;resize:vertical}
+.field textarea{min-height:112px;resize:vertical}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold2);box-shadow:0 0 0 3px rgba(197,160,89,.12)}
 .terms-row{grid-column:1/-1;display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start;padding:12px;border:1px solid rgba(255,255,255,.075);border-radius:14px;background:rgba(0,0,0,.2);color:rgba(255,255,255,.62);font-size:12px;line-height:1.65}
 .terms-row input{width:16px;height:16px;margin-top:2px;accent-color:var(--gold)}
 .form-status{grid-column:1/-1;min-height:20px;color:var(--gold2);font-size:12px;line-height:1.6}
 .submit-btn{grid-column:1/-1;min-height:48px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#060400;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:900;cursor:pointer}
 .submit-btn:disabled{opacity:.58;cursor:wait}
-.footer{padding:48px 24px;text-align:center;border-top:1px solid rgba(197,160,89,.14);color:rgba(255,255,255,.42);font-size:11px;line-height:1.7}
-@media(max-width:1050px){.trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-board{grid-template-columns:1fr}.route-grid{grid-template-columns:1fr 1fr}.nav{padding:16px 22px}.brand-title{font-size:14px}.nav-links{gap:4px}.nav-links a{font-size:8px;padding:8px}}
-@media(max-width:720px){.nav{position:relative;align-items:flex-start;flex-direction:column}.brand{min-width:0}.nav-links{justify-content:flex-start}.hero{padding:60px 18px 48px;min-height:auto}.hero h1{font-size:clamp(2.4rem,16vw,4rem)}.notice{margin:0 16px 34px}.route-grid{grid-template-columns:1fr;padding:0 16px;margin-bottom:34px}.section{padding:34px 16px 58px}.section-head{display:block}.trend-grid{grid-template-columns:1fr}.trend-visual{height:160px}.meta{grid-template-columns:1fr}.btn{width:100%;max-width:340px}.brand-title{letter-spacing:.18em}.request-shell{margin:0 16px 34px;padding:18px}.request-grid,.request-form{grid-template-columns:1fr}.field{grid-column:1/-1}}
+.cart-drawer{position:fixed;right:18px;top:92px;bottom:18px;width:min(430px,calc(100vw - 36px));z-index:60;transform:translateX(calc(100% + 28px));transition:transform .28s ease;border:1px solid rgba(197,160,89,.24);border-radius:28px;background:rgba(5,5,5,.94);backdrop-filter:blur(18px);box-shadow:0 28px 90px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden}
+.cart-drawer.open{transform:translateX(0)}
+.cart-head{display:flex;justify-content:space-between;align-items:center;padding:18px 18px;border-bottom:1px solid rgba(197,160,89,.15)}
+.cart-head h3{font-family:Cinzel,serif;margin:0;color:var(--gold2)}
+.cart-close{border:1px solid rgba(255,255,255,.1);background:transparent;color:#fff;border-radius:999px;width:34px;height:34px;cursor:pointer}
+.cart-items{padding:14px;display:grid;gap:10px;overflow:auto;flex:1}
+.cart-item{border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:12px;background:rgba(255,255,255,.035);display:grid;gap:8px}
+.cart-item b{font-family:Cinzel,serif;font-size:15px}
+.cart-item span{font-size:11px;color:rgba(255,255,255,.58);line-height:1.45}
+.cart-item button{justify-self:start;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:transparent;color:rgba(255,255,255,.62);font-size:8px;text-transform:uppercase;letter-spacing:.12em;padding:7px 9px;cursor:pointer}
+.cart-total{padding:16px 18px;border-top:1px solid rgba(197,160,89,.15);display:grid;gap:8px}
+.cart-total div{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.66)}
+.cart-total div:last-of-type{font-weight:900;color:#fff;font-size:15px}
+.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.76);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:22px}
+.modal.open{display:flex}
+.modal-card{width:min(900px,100%);max-height:88vh;overflow:auto;border:1px solid rgba(197,160,89,.24);border-radius:30px;background:#070707;box-shadow:0 30px 120px rgba(0,0,0,.7)}
+.modal-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:22px;border-bottom:1px solid rgba(197,160,89,.15)}
+.modal-top h3{font-family:Cinzel,serif;font-size:28px;margin:0;color:var(--gold2)}
+.modal-body{padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.modal-box{border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:16px;background:rgba(255,255,255,.035)}
+.modal-box b{display:block;color:var(--gold);font-size:9px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}
+.modal-box p{margin:0;color:rgba(255,255,255,.64);font-size:13px;line-height:1.75}
+.footer{padding:52px 24px;text-align:center;border-top:1px solid rgba(197,160,89,.14);color:rgba(255,255,255,.42);font-size:11px;line-height:1.7}
+@media(max-width:1120px){
+  .hero-grid,.trust-grid,.request-grid{grid-template-columns:1fr}
+  .category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .market-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rail-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .toolbar{grid-template-columns:1fr 1fr;top:74px}
+  .nav{padding:16px 20px}.brand-title{font-size:13px}.brand{min-width:210px}
+}
+@media(max-width:740px){
+  .nav{position:relative;align-items:flex-start;flex-direction:column}.brand{min-width:0}.nav-links{justify-content:flex-start}
+  .hero{padding:48px 16px}.hero h1{font-size:clamp(2.55rem,16vw,4.1rem)}
+  .hero-lead{text-align:left;font-size:14px}.hero-grid{gap:16px}.hero-visual{min-height:280px}.hero-visual .orb{width:170px;height:170px}.hero-visual .a{font-size:62px}.signal{position:relative;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;display:inline-block;margin:8px;min-width:126px}
+  .search-row{grid-template-columns:1fr}.btn{width:100%}
+  .section{padding:40px 16px}.section-head{display:block}.category-grid,.market-grid,.rail-row,.toolbar{grid-template-columns:1fr}.toolbar{position:relative;top:auto;margin:0 16px 26px}
+  .scores{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.modal-body{grid-template-columns:1fr}.request-shell{margin:0 16px 42px;padding:18px}.request-form{grid-template-columns:1fr}.field{grid-column:1/-1}
+}
 </style>
 </head>
 <body>
-  <svg class="visual-symbols" aria-hidden="true" style="display:none">
-    <symbol id="icon-power" viewBox="0 0 96 96">
-      <rect x="20" y="30" width="56" height="42" rx="8" fill="none" stroke="currentColor" stroke-width="3"/>
-      <path d="M34 30v-6h28v6M40 42h14l-9 16h14l-18 22 6-18H34z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M64 48h7M64 58h7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="icon-air" viewBox="0 0 96 96">
-      <rect x="26" y="22" width="44" height="56" rx="10" fill="none" stroke="currentColor" stroke-width="3"/>
-      <circle cx="48" cy="50" r="13" fill="none" stroke="currentColor" stroke-width="3"/>
-      <path d="M18 30c9-7 18-7 27 0M18 43c8-5 16-5 24 0M72 34c7 0 12 2 16 7M72 50c6 0 10 2 14 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="icon-walk" viewBox="0 0 96 96">
-      <path d="M18 70h60c5 0 8 3 8 7H10c0-4 3-7 8-7z" fill="none" stroke="currentColor" stroke-width="3"/>
-      <circle cx="48" cy="22" r="6" fill="none" stroke="currentColor" stroke-width="3"/>
-      <path d="M48 30l-8 17 13 6 9 15M41 48l-10 18M52 37l14 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    </symbol>
-    <symbol id="icon-ring" viewBox="0 0 96 96">
-      <circle cx="48" cy="48" r="29" fill="none" stroke="currentColor" stroke-width="3"/>
-      <circle cx="48" cy="48" r="18" fill="none" stroke="currentColor" stroke-width="3" opacity=".55"/>
-      <path d="M48 14v8M48 74v8M14 48h8M74 48h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="70" cy="26" r="4" fill="currentColor"/>
-    </symbol>
-    <symbol id="icon-mic" viewBox="0 0 96 96">
-      <rect x="38" y="16" width="20" height="40" rx="10" fill="none" stroke="currentColor" stroke-width="3"/>
-      <path d="M26 44c0 14 8 24 22 24s22-10 22-24M48 68v14M34 82h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-      <path d="M38 28h20M38 40h20" stroke="currentColor" stroke-width="2" opacity=".55"/>
-    </symbol>
-    <symbol id="icon-pet" viewBox="0 0 96 96">
-      <circle cx="31" cy="33" r="8" fill="none" stroke="currentColor" stroke-width="3"/>
-      <circle cx="48" cy="25" r="8" fill="none" stroke="currentColor" stroke-width="3"/>
-      <circle cx="65" cy="33" r="8" fill="none" stroke="currentColor" stroke-width="3"/>
-      <circle cx="38" cy="48" r="7" fill="none" stroke="currentColor" stroke-width="3"/>
-      <circle cx="58" cy="48" r="7" fill="none" stroke="currentColor" stroke-width="3"/>
-      <path d="M30 70c2-15 12-23 18-23s16 8 18 23c1 8-5 11-12 7-4-2-8-2-12 0-7 4-13 1-12-7z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-    </symbol>
-    <symbol id="icon-car" viewBox="0 0 96 96">
-      <path d="M22 55l8-20h36l8 20M18 55h60v18H18z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-      <circle cx="32" cy="73" r="7" fill="none" stroke="currentColor" stroke-width="3"/>
-      <circle cx="64" cy="73" r="7" fill="none" stroke="currentColor" stroke-width="3"/>
-      <path d="M34 35l-5 20M62 35l5 20M38 24h20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="icon-bike" viewBox="0 0 96 96">
-      <circle cx="27" cy="66" r="15" fill="none" stroke="currentColor" stroke-width="3"/>
-      <circle cx="69" cy="66" r="15" fill="none" stroke="currentColor" stroke-width="3"/>
-      <path d="M27 66l16-28 13 28H27l21-18h17M48 48l-5-10h-8M61 31h12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    </symbol>
-    <symbol id="icon-stem" viewBox="0 0 96 96">
-      <rect x="27" y="30" width="42" height="35" rx="8" fill="none" stroke="currentColor" stroke-width="3"/>
-      <path d="M48 30V18M40 18h16M35 65v10M61 65v10M22 44h5M69 44h5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="40" cy="47" r="4" fill="currentColor"/>
-      <circle cx="56" cy="47" r="4" fill="currentColor"/>
-      <path d="M39 57h18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="icon-water" viewBox="0 0 96 96">
-      <path d="M48 14c16 19 24 31 24 44 0 14-10 25-24 25S24 72 24 58c0-13 8-25 24-44z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M34 58h28M37 68h22M42 39c4-4 8-8 12-13" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".7"/>
-    </symbol>
-    <symbol id="icon-home" viewBox="0 0 96 96">
-      <path d="M18 48l30-25 30 25M28 46v32h40V46" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M40 78V58h16v20M36 33c7-6 17-6 24 0M42 41c4-3 8-3 12 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="icon-ruck" viewBox="0 0 96 96">
-      <path d="M32 28c0-8 6-14 16-14s16 6 16 14M30 28h36c6 0 10 5 10 11v39H20V39c0-6 4-11 10-11z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M20 50h56M36 60h24M30 28v-8M66 28v-8M29 78v8M67 78v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-    </symbol>
-  </svg>
   <nav class="nav" aria-label="Primary">
     <a class="brand" href="/">
       <div class="brand-mark">I</div>
@@ -189,355 +223,601 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
       <a href="/ai-edge.html">AI Edge</a>
       <a href="/growth-library.html">Growth Library</a>
       <a href="/about.html">About</a>
+      <button class="cart-open" type="button" data-open-cart>Cart <span id="cartCount">0</span></button>
     </div>
   </nav>
 
   <main>
-    <section class="hero">
+    <section class="hero" id="top">
       <div class="hero-inner">
-        <span class="eyebrow">Trend radar to quote-first marketplace</span>
-        <h1>Marketplace for <em>long-life demand</em>.</h1>
-        <p>This is the public trend-to-revenue bridge: durable product lanes, real buyer use-cases, and a quote-first sourcing path that stays transparent before payment.</p>
-        <p>Short path: pick the lane, request a sourcing check, or route back into Growth Library or Services if you need a digital pack or done-with-you implementation instead.</p>
-        <div class="hero-actions">
-          <a class="btn solid" href="#marketplace-request">Request sourcing check</a>
-          <a class="btn solid" href="#viral-long-life">See trend lanes</a>
-          <a class="btn" href="/services.html">Need implementation help</a>
+        <span class="eyebrow" style="text-align:center">IIS / ARIA Bridged Marketplace</span>
+        <h1>Shop the future through a <em>trusted bridge</em>.</h1>
+        <p class="hero-lead">Pick what you would like to shop for. Search by keyword or choose a category, and we will show trusted products and services researched, ranked, and organized for you.</p>
+        <div class="hero-grid">
+          <div class="search-card">
+            <span class="eyebrow">Start here</span>
+            <h2 class="logo" style="font-size:34px;line-height:1.02;margin:12px 0 8px">Search by keyboard. Or choose a lane.</h2>
+            <p style="margin:0;color:var(--muted);line-height:1.8;font-size:13px">High-end tech, AI services, automation, cybersecurity, creator tools, smart office gear, and long-term viral products. Clear pricing. Clear fee. No hidden pressure.</p>
+            <div class="search-row">
+              <input id="heroSearch" type="search" placeholder="Search AI services, laptops, automation, websites, cybersecurity, viral products...">
+              <button class="btn solid" type="button" id="heroSearchBtn">Search Marketplace</button>
+            </div>
+            <div class="quick-actions" aria-label="Quick marketplace filters">
+              <button type="button" data-quick="trending">View Trending</button>
+              <button type="button" data-quick="top-sold">View Top Sold Signals</button>
+              <button type="button" data-quick="AI Services">View AI Services</button>
+              <button type="button" data-quick="High-End Tech">View High-End Tech</button>
+              <button type="button" data-quick="Long-Term Value">Long-Term Value</button>
+            </div>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="orb"><div class="a">A</div></div>
+            <div class="signal one"><b>20%</b><span>Transparent fee</span></div>
+            <div class="signal two"><b>92</b><span>Trust signal</span></div>
+            <div class="signal three"><b>AI</b><span>Compare before buy</span></div>
+            <div class="signal four"><b>Vendor</b><span>IIS trust layer</span></div>
+          </div>
         </div>
       </div>
     </section>
 
     <aside class="notice">
-      <p><strong>This is a quote-first sourcing desk, not instant checkout.</strong> IIS checks shipping region, warranty, returns, taxes, duties, and final landed cost before payment. When a buyer wants IIS to coordinate the sourcing path, the final quote may include a <strong>20% sourcing/admin fee</strong> for research, curation, coordination, and order handling.</p>
+      <p><strong>Transparent bridge model:</strong> Vendor products and third-party services stay vendor-owned. IIS/ARIA adds research, comparison, listing management, coordination, and a clearly disclosed 20% admin/curation fee. Final vendor/source, shipping, warranty, refund terms, taxes, duties, and service scope must be confirmed before payment.</p>
     </aside>
 
-    <section class="route-grid" aria-label="Marketplace route selection">
-      <article class="route-card">
-        <span class="eyebrow">Route 1</span>
-        <h3>Source a physical product.</h3>
-        <p>Best when the buyer wants IIS to shortlist, region-check, and coordinate a real item before any payment request appears.</p>
-        <div class="route-points">
-          <span>Final quote before payment.</span>
-          <span>Vendor/source disclosure included.</span>
-          <span><a class="mini-btn solid" href="#marketplace-request">Open sourcing form</a></span>
+    <section class="section" id="categories">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Choose the shelf</span>
+            <h2>What would you like to shop for?</h2>
+          </div>
+          <p>Each category separates researched products from researched services, then shows vendor price, IIS fee, total, trust score, trend score, and long-term value.</p>
         </div>
-      </article>
-      <article class="route-card">
-        <span class="eyebrow">Route 2</span>
-        <h3>Buy a practical digital pack.</h3>
-        <p>Best when the buyer needs a checklist, workflow kit, or implementation preview instead of a sourced hardware/product bundle.</p>
-        <div class="route-points">
-          <span>Self-serve proof-first packs.</span>
-          <span>Fastest path for audit-first buyers.</span>
-          <span><a class="mini-btn solid" href="/growth-library.html">Open Growth Library</a></span>
+        <div class="category-grid" id="categoryGrid"></div>
+      </div>
+    </section>
+
+    <div class="toolbar" aria-label="Marketplace filters">
+      <input id="marketSearch" type="search" placeholder="Search products, services, vendors, tags...">
+      <select id="categoryFilter"><option value="all">All categories</option></select>
+      <select id="typeFilter">
+        <option value="all">Products + services</option>
+        <option value="product">Products only</option>
+        <option value="service">Services only</option>
+        <option value="digital">Digital only</option>
+        <option value="consultation">Consultation only</option>
+      </select>
+      <select id="sortFilter">
+        <option value="featured">Featured first</option>
+        <option value="trust">Most trusted</option>
+        <option value="trend">Highest trend</option>
+        <option value="value">Long-term value</option>
+        <option value="price-low">Price low to high</option>
+        <option value="price-high">Price high to low</option>
+      </select>
+      <select id="priceFilter">
+        <option value="all">Any price</option>
+        <option value="under250">Under $250</option>
+        <option value="250to1000">$250-$1,000</option>
+        <option value="1000plus">$1,000+</option>
+      </select>
+      <button class="btn solid" type="button" id="resetFilters">Reset</button>
+    </div>
+
+    <section class="section" id="featured">
+      <div class="wrap rails" id="featureRails"></div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow" id="resultEyebrow">Marketplace results</span>
+            <h2 id="resultTitle">Top trusted products and services</h2>
+          </div>
+          <p id="resultNote">Search or choose a category. Products and services stay separated so the buyer does not get lost.</p>
         </div>
-      </article>
-      <article class="route-card">
-        <span class="eyebrow">Route 3</span>
-        <h3>Need done-with-you execution instead?</h3>
-        <p>Best when the buyer really needs service delivery: website fixes, AI workflow implementation, support overflow, or M365 cleanup.</p>
-        <div class="route-points">
-          <span>Routes back to real IIS service offers.</span>
-          <span>Prevents mismatched Marketplace leads.</span>
-          <span><a class="mini-btn solid" href="/services.html">Open Services</a></span>
+        <div class="rail" style="margin-bottom:22px">
+          <h3>Top Researched Products</h3>
+          <div class="market-grid" id="productGrid"></div>
         </div>
-      </article>
+        <div class="rail">
+          <h3>Top Researched Services</h3>
+          <div class="market-grid" id="serviceGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="trust">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Why shop through IIS / ARIA?</span>
+            <h2>The value is the bridge.</h2>
+          </div>
+          <p>People do not need more random links. They need cleaner choices, honest pricing, useful comparisons, and help matching a product or service to the real need.</p>
+        </div>
+        <div class="trust-grid">
+          <div class="panel">
+            <h3>Trust layer</h3>
+            <ul>
+              <li>We research before listing.</li>
+              <li>We separate hype from real value.</li>
+              <li>We show clear vendor price, IIS fee, and total.</li>
+              <li>We disclose third-party vendor status and avoid fake partnership claims.</li>
+              <li>We help compare before buying.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>ARIA marketplace assistant</h3>
+            <p>ARIA helps users ask: what should I buy, what is worth it, what is cheaper but still good, what is premium, what is long-term, and what may just be hype. ARIA should guide, not pressure.</p>
+            <div class="actions" style="margin-top:14px">
+              <button class="mini-btn solid" type="button" data-aria-question="Compare my options before I buy.">Ask ARIA to compare</button>
+              <button class="mini-btn" type="button" data-aria-question="Help me choose the best value option.">Find best value</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="request-shell" id="marketplace-request">
       <div class="request-grid">
         <div>
-          <span class="eyebrow">Bridge checkout flow</span>
-          <h2 class="logo" style="font-size:clamp(1.8rem,4vw,3.25rem);line-height:1;margin:12px 0;color:#fff">Check first. Pay after approval.</h2>
-          <p style="color:rgba(255,255,255,.64);font-size:13px;line-height:1.85;margin:0">This is the correct order path. The buyer gives destination details first. IIS checks vendor shipping and final landed cost. Stripe payment opens only after the buyer sees the final quote, vendor/source details, warranty/return notes, and agrees.</p>
+          <span class="eyebrow">Verified checkout request</span>
+          <h2 class="logo" style="font-size:clamp(2rem,4vw,3.6rem);line-height:1;margin:12px 0">Ready to buy or source?</h2>
+          <p style="color:var(--muted);font-size:13px;line-height:1.85">Submit the item or cart. IIS checks vendor availability, shipping/service region, final vendor/source, warranty/refund terms, taxes/duties, and final total. Then we send the payment link for approval.</p>
           <div class="steps">
-            <div class="step"><b>1</b><span>Buyer selects item lane and enters email, country, city, and postal code.</span></div>
-            <div class="step"><b>2</b><span>IIS checks vendor availability, shipping region, warranty, returns, taxes, duties, and final total.</span></div>
-            <div class="step"><b>3</b><span>Buyer receives final quote with vendor/source disclosure and Stripe checkout link.</span></div>
-            <div class="step"><b>4</b><span>After payment, IIS places the approved order and forwards material vendor updates.</span></div>
+            <div class="step"><b>1</b><span>Customer chooses item, service, or full cart.</span></div>
+            <div class="step"><b>2</b><span>IIS checks the vendor, price, delivery/service region, and risks.</span></div>
+            <div class="step"><b>3</b><span>Buyer receives final quote with 20% fee disclosed before payment.</span></div>
+            <div class="step"><b>4</b><span>Payment and fulfillment happen only after buyer approval.</span></div>
           </div>
         </div>
         <form class="request-form" id="marketplaceForm">
           <div class="field full">
-            <label for="marketItem">Product lane</label>
-            <select id="marketItem" name="item" required>
-              <option value="">Choose one</option>
-              <option>Portable Power Station Kit</option>
-              <option>Air Purifier + Indoor Sensor Bundle</option>
-              <option>Walking Pad + Standing Desk Setup</option>
-              <option>Smart Ring / Health Tracker</option>
-              <option>Creator Studio Starter Kit</option>
-              <option>Pet Tech Care Bundle</option>
-              <option>Dash Cam + Car Smart Kit</option>
-              <option>E-Bike Commuter Setup</option>
-              <option>Kids STEM + AI Learning Kit</option>
-              <option>Water Filter + Hydration Setup</option>
-              <option>Robot Vacuum Smart Home Kit</option>
-              <option>Rucking + Simple Fitness Pack</option>
-            </select>
+            <label for="marketItem">Item, service, or cart request</label>
+            <input id="marketItem" name="item" required placeholder="Example: AI Customer Support Agent Setup, Premium AI Laptop Workstation, or full cart">
           </div>
-          <div class="field"><label for="marketName">Full name</label><input id="marketName" name="name" autocomplete="name" required></div>
-          <div class="field"><label for="marketEmail">Email</label><input id="marketEmail" name="email" type="email" autocomplete="email" required></div>
-          <div class="field"><label for="marketPhone">Phone optional</label><input id="marketPhone" name="phone" autocomplete="tel"></div>
-          <div class="field"><label for="marketCountry">Country</label><input id="marketCountry" name="country" autocomplete="country-name" required></div>
-          <div class="field"><label for="marketCity">City</label><input id="marketCity" name="city" autocomplete="address-level2" required></div>
-          <div class="field"><label for="marketPostal">Postal code</label><input id="marketPostal" name="postalCode" autocomplete="postal-code" required></div>
-          <div class="field full"><label for="marketBudget">Budget or target price optional</label><input id="marketBudget" name="budget" placeholder="Example: under $500 CAD all-in"></div>
-          <div class="field full"><label for="marketNotes">Important notes</label><textarea id="marketNotes" name="notes" placeholder="Deadline, preferred brand, must-have features, delivery restrictions, warranty needs."></textarea></div>
-          <label class="terms-row"><input id="marketTerms" name="acceptedTerms" type="checkbox" required><span>I understand IIS will check vendor availability before payment. I will see the final price, vendor/source details, warranty/return notes, and terms before any Stripe payment is requested.</span></label>
-          <button class="submit-btn" type="submit">Request sourcing check</button>
+          <div class="field">
+            <label for="marketName">Name</label>
+            <input id="marketName" name="name" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="marketEmail">Email</label>
+            <input id="marketEmail" name="email" type="email" required autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="marketPhone">Phone</label>
+            <input id="marketPhone" name="phone" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="marketCountry">Country</label>
+            <input id="marketCountry" name="country" required autocomplete="country-name" placeholder="Canada">
+          </div>
+          <div class="field">
+            <label for="marketCity">City</label>
+            <input id="marketCity" name="city" required autocomplete="address-level2">
+          </div>
+          <div class="field">
+            <label for="marketPostal">Postal / zip code</label>
+            <input id="marketPostal" name="postalCode" required autocomplete="postal-code">
+          </div>
+          <div class="field full">
+            <label for="marketBudget">Budget or target total</label>
+            <input id="marketBudget" name="budget" placeholder="Optional">
+          </div>
+          <div class="field full">
+            <label for="marketNotes">What matters most?</label>
+            <textarea id="marketNotes" name="notes" placeholder="Example: best value, premium only, fast shipping, for small business, for home office, compare before buying..."></textarea>
+          </div>
+          <label class="terms-row">
+            <input type="checkbox" id="marketTerms" required>
+            <span>I understand IIS/ARIA is a bridge and trust layer. The 20% admin/curation fee is disclosed. Vendor/source, shipping, warranty, returns, taxes, duties, and scope must be confirmed before payment.</span>
+          </label>
           <div class="form-status" id="marketStatus" role="status" aria-live="polite"></div>
+          <button class="submit-btn" type="submit">Request verified checkout</button>
         </form>
       </div>
-      <div class="panel" style="margin-top:18px">
-        <h3>Marketplace terms before payment</h3>
-        <ul>
-          <li>IIS acts as a sourcing and coordination bridge, not the manufacturer.</li>
-          <li>The buyer receives final price, vendor/source details, shipping limits, warranty notes, return notes, and the IIS sourcing/admin fee before Stripe checkout.</li>
-          <li>Payment is requested only after the buyer approves the final quote.</li>
-          <li>Material vendor updates are forwarded to the buyer. IIS does not rewrite required legal, warranty, safety, payment, or delivery notices.</li>
-          <li>Automatic ordering is allowed only when it follows vendor terms and the buyer-approved quote.</li>
-        </ul>
-      </div>
-      <div class="panel" style="margin-top:18px">
-        <h3>Need a service, audit, or implementation instead?</h3>
-        <p>Some visitors do not need a sourced physical product at all. If the real need is workflow automation, AI intake, support overflow, or a practical digital pack, route them back into the strongest IIS monetization paths instead of forcing them through Marketplace.</p>
-        <div class="card-actions">
-          <a class="mini-btn solid" href="/services.html">Open Services</a>
-          <a class="mini-btn" href="/growth-library.html">Open Growth Library</a>
-          <a class="mini-btn" href="/ai-edge.html">Open AI Edge</a>
-        </div>
-      </div>
     </section>
 
-    <section class="section" id="viral-long-life">
+    <section class="section" id="system">
       <div class="wrap">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Ad-ready product lanes</span>
-            <h2>Viral now. Useful later.</h2>
+            <span class="eyebrow">Built-in operating model</span>
+            <h2>Vendor, admin, trend, and checkout flow.</h2>
           </div>
-          <p>These are not two-day meme products. They sit inside repeat needs: home comfort, wellness, productivity, safety, mobility, pets, learning, and creator work.</p>
+          <p>This is the MVP surface. The backend path stays review-gated: approve listings, verify vendors, then send payment links only when the buyer can see the final total.</p>
         </div>
-        <div class="trend-grid">
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-power"></use></svg><span class="visual-label">Power</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 94</span><span class="tag">Home backup</span></div>
-              <h3>Portable Power Station Kit</h3>
-              <p>For outages, camping, home office backup, routers, laptops, and medical-device peace of mind.</p>
-              <div class="meta"><div><b>Price lane</b><span>$299-$2,499 + 20%</span></div><div><b>Buyer</b><span>Home, small office, travel</span></div></div>
-              <div class="chips"><span>portable power station</span><span>home backup battery</span><span>solar generator</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Portable%20Power%20Station">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-air"></use></svg><span class="visual-label">Air quality</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 91</span><span class="tag">Air quality</span></div>
-              <h3>Air Purifier + Indoor Sensor Bundle</h3>
-              <p>Clean air, smoke season, allergies, pets, office comfort, and simple visibility into indoor air.</p>
-              <div class="meta"><div><b>Price lane</b><span>$99-$799 + 20%</span></div><div><b>Buyer</b><span>Families, renters, offices</span></div></div>
-              <div class="chips"><span>air purifier</span><span>air quality monitor</span><span>allergy room filter</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Air%20Quality%20Bundle">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-walk"></use></svg><span class="visual-label">Movement</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 90</span><span class="tag">Work fitness</span></div>
-              <h3>Walking Pad + Standing Desk Setup</h3>
-              <p>For remote workers who sit too long and want movement without a full gym habit.</p>
-              <div class="meta"><div><b>Price lane</b><span>$199-$1,200 + 20%</span></div><div><b>Buyer</b><span>Remote work, creators</span></div></div>
-              <div class="chips"><span>walking pad</span><span>under desk treadmill</span><span>standing desk</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Walking%20Pad%20Desk%20Setup">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-ring"></use></svg><span class="visual-label">Wearable</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 89</span><span class="tag">Wearables</span></div>
-              <h3>Smart Ring / Health Tracker</h3>
-              <p>Sleep, readiness, activity, and habit visibility for people who want less screen, more signal.</p>
-              <div class="meta"><div><b>Price lane</b><span>$149-$499 + 20%</span></div><div><b>Buyer</b><span>Adults, executives, athletes</span></div></div>
-              <div class="chips"><span>smart ring</span><span>sleep tracker</span><span>health wearable</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Smart%20Ring%20Tracker">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-mic"></use></svg><span class="visual-label">Creator</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 88</span><span class="tag">Creator kit</span></div>
-              <h3>Creator Studio Starter Kit</h3>
-              <p>Camera, mic, light, desk arm, capture tools, and setup guidance for people starting content seriously.</p>
-              <div class="meta"><div><b>Price lane</b><span>$99-$1,499 + 20%</span></div><div><b>Buyer</b><span>Creators, coaches, small biz</span></div></div>
-              <div class="chips"><span>creator kit</span><span>podcast microphone</span><span>video lighting</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Creator%20Studio%20Kit">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-pet"></use></svg><span class="visual-label">Pet care</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 87</span><span class="tag">Pet tech</span></div>
-              <h3>Pet Tech Care Bundle</h3>
-              <p>GPS tracker, smart feeder, camera, water fountain, and pet-safe convenience products.</p>
-              <div class="meta"><div><b>Price lane</b><span>$49-$499 + 20%</span></div><div><b>Buyer</b><span>Pet owners, apartments</span></div></div>
-              <div class="chips"><span>pet tracker</span><span>automatic feeder</span><span>pet camera</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Pet%20Tech%20Bundle">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-car"></use></svg><span class="visual-label">Car safety</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 86</span><span class="tag">Car safety</span></div>
-              <h3>Dash Cam + Car Smart Kit</h3>
-              <p>Dash cam, MagSafe mount, battery monitor, emergency charger, and clean cable setup.</p>
-              <div class="meta"><div><b>Price lane</b><span>$79-$599 + 20%</span></div><div><b>Buyer</b><span>Drivers, families, fleets</span></div></div>
-              <div class="chips"><span>dash cam</span><span>magsafe car mount</span><span>car emergency kit</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Dash%20Cam%20Car%20Kit">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-bike"></use></svg><span class="visual-label">Mobility</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 85</span><span class="tag">Mobility</span></div>
-              <h3>E-Bike Commuter Setup</h3>
-              <p>E-bike shortlist, lock, helmet, phone mount, repair kit, and buyer-fit comparison.</p>
-              <div class="meta"><div><b>Price lane</b><span>$799-$3,999 + 20%</span></div><div><b>Buyer</b><span>Commuters, students, seniors</span></div></div>
-              <div class="chips"><span>ebike</span><span>electric bike</span><span>commuter bike gear</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20E-Bike%20Commuter%20Setup">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-stem"></use></svg><span class="visual-label">STEM</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 84</span><span class="tag">Kids build</span></div>
-              <h3>Kids STEM + AI Learning Kit</h3>
-              <p>Robotics, coding board, workbook, parent guide, and safe learning path for ambitious kids.</p>
-              <div class="meta"><div><b>Price lane</b><span>$49-$399 + 20%</span></div><div><b>Buyer</b><span>Parents, tutors, schools</span></div></div>
-              <div class="chips"><span>stem kit</span><span>robotics for kids</span><span>ai learning for kids</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Kids%20STEM%20Learning%20Kit">Start sourcing check</a><a class="mini-btn" href="/ai-edge.html">AI Edge fit</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-water"></use></svg><span class="visual-label">Water</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 83</span><span class="tag">Home water</span></div>
-              <h3>Water Filter + Hydration Setup</h3>
-              <p>Countertop filters, bottles, shower filters, and practical home wellness upgrades.</p>
-              <div class="meta"><div><b>Price lane</b><span>$39-$599 + 20%</span></div><div><b>Buyer</b><span>Families, renters, travel</span></div></div>
-              <div class="chips"><span>water filter</span><span>filtered showerhead</span><span>hydration bottle</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Water%20Filter%20Setup">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-home"></use></svg><span class="visual-label">Smart home</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 82</span><span class="tag">Smart home</span></div>
-              <h3>Robot Vacuum Smart Home Kit</h3>
-              <p>Robot vacuum, smart plugs, smart lock, indoor camera, and setup checklist.</p>
-              <div class="meta"><div><b>Price lane</b><span>$199-$1,499 + 20%</span></div><div><b>Buyer</b><span>Busy homes, rentals, offices</span></div></div>
-              <div class="chips"><span>robot vacuum</span><span>smart lock</span><span>home automation</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Robot%20Vacuum%20Smart%20Home">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-          <article class="trend-card">
-            <div class="trend-visual"><svg class="visual-art" viewBox="0 0 96 96"><use href="#icon-ruck"></use></svg><span class="visual-label">Rucking</span></div>
-            <div class="trend-body">
-              <div class="trend-top"><span class="score">Durability 81</span><span class="tag">Fitness gear</span></div>
-              <h3>Rucking + Simple Fitness Pack</h3>
-              <p>Weighted backpack, walking plan, recovery tools, and safe beginner path. Practical, not flashy.</p>
-              <div class="meta"><div><b>Price lane</b><span>$49-$399 + 20%</span></div><div><b>Buyer</b><span>Adults, beginners, commuters</span></div></div>
-              <div class="chips"><span>rucking backpack</span><span>weighted walking</span><span>fitness starter kit</span></div>
-              <div class="card-actions"><a class="mini-btn solid" href="mailto:ahmad.wasee@iisupp.net?subject=Quote%20-%20Rucking%20Fitness%20Pack">Start sourcing check</a><a class="mini-btn" href="#ad-board">Ad angle</a></div>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="ad-board">
-      <div class="wrap">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Google Ads starting map</span>
-            <h2>What to advertise first.</h2>
-          </div>
-          <p>Start with buyer pain, not product hype. Each ad should promise fit, sourcing help, and region check.</p>
-        </div>
-        <div class="ad-board">
+        <div class="trust-grid">
           <div class="panel">
-            <h3>Best first campaigns</h3>
-            <ul>
-              <li>Home backup and air quality: urgent, practical, high trust, good quote value.</li>
-              <li>Walking pad and creator kit: strong daily-use angle for remote workers and small business.</li>
-              <li>Kids STEM and AI learning: connects Marketplace to AI Edge without mixing the paid tracks.</li>
-              <li>Dash cam and pet tech: clear problem, easy buyer understanding, lower-friction quote.</li>
-            </ul>
+            <h3>Vendor submission flow</h3>
+            <p>Vendors submit name, product/service, price, images, link, fulfillment method, service area, delivery time, refund policy, and trust documents. IIS reviews before any public listing.</p>
+            <a class="btn" href="mailto:ahmad.wasee@iisupp.net?subject=Vendor%20Marketplace%20Submission">Submit vendor product</a>
           </div>
           <div class="panel">
-            <h3>Keyword bank</h3>
-            <div class="keyword-list">
-              <span>portable power station Canada</span>
-              <span>best air purifier for home</span>
-              <span>walking pad desk setup</span>
-              <span>creator kit for beginners</span>
-              <span>dash cam installation help</span>
-              <span>kids STEM learning kit</span>
-              <span>pet camera automatic feeder</span>
-              <span>smart home setup help</span>
-              <span>ebike commuter gear</span>
-              <span>health wearable smart ring</span>
-            </div>
+            <h3>Admin dashboard flow</h3>
+            <p>Admin needs listing creation, CSV import, approval/reject, badge control, trust/trend/viral/value scores, price edits, fee calculation, quote requests, orders, clicks, conversion, and revenue from admin fees.</p>
+            <a class="btn" href="/ceo-action-console.html">Open approval console</a>
           </div>
-        </div>
-        <div class="ad-board">
           <div class="panel">
-            <h3>Why these make sense</h3>
-            <p>Shopify's 2026 product trend list points to durable categories like skincare/wellness, vehicle accessories, bedding, cycling, kitchen appliances, and essential lifestyle products. It also notes dash cams above 100,000 monthly searches and multi-year e-bike growth.</p>
-            <p>McKinsey's wellness research frames wellness as a large resilient market, with US wellness spend above $500B annually and younger consumers buying broader categories including health-tracking devices, massage tools, mindfulness apps, and sleep hygiene.</p>
+            <h3>Trend engine input</h3>
+            <p>Trend Radar suggests categories, vendor research, related IIS service, related ARIA feature, related Growth Library product, trend score, viral score, long-term value, trust risk, and suggested badge.</p>
+            <a class="btn" href="/growth-library.html">Open Growth Library</a>
           </div>
-          <div class="panel source-list">
-            <h3>Research links</h3>
-            <ul>
-              <li><a href="https://www.shopify.com/blog/trending-products" target="_blank" rel="noopener">Shopify trending products 2026</a></li>
-              <li><a href="https://explodingtopics.com/blog/trending-products" target="_blank" rel="noopener">Exploding Topics 44 trending products 2026</a></li>
-              <li><a href="https://www.mckinsey.com/industries/consumer-packaged-goods/our-insights/future-of-wellness-trends" target="_blank" rel="noopener">McKinsey Future of Wellness 2025</a></li>
-            </ul>
+          <div class="panel">
+            <h3>Research anchors</h3>
+            <p>Initial categories are anchored to durable public demand themes from Shopify trend reports, Exploding Topics product trend lists, and McKinsey wellness research, then filtered through IIS/ARIA fit and trust risk.</p>
+            <p style="font-size:11px;color:rgba(255,255,255,.46)">Signals are directional. IIS sales data will replace external trend signals as orders arrive.</p>
           </div>
         </div>
       </div>
     </section>
   </main>
 
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Marketplace cart">
+    <div class="cart-head">
+      <h3>Your bridge cart</h3>
+      <button class="cart-close" type="button" data-close-cart aria-label="Close cart">x</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-total">
+      <div><span>Vendor subtotal</span><b id="cartSubtotal">$0</b></div>
+      <div><span>IIS admin fee</span><b id="cartFees">$0</b></div>
+      <div><span>Estimated total</span><b id="cartGrand">$0</b></div>
+      <button class="btn solid" type="button" id="requestCart">Request checkout link</button>
+      <p style="margin:0;color:rgba(255,255,255,.45);font-size:11px;line-height:1.55">No payment is taken from this drawer. External vendor orders require final quote approval.</p>
+    </div>
+  </aside>
+
+  <div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-label="Marketplace item details">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div>
+          <span class="eyebrow" id="modalCategory">Marketplace detail</span>
+          <h3 id="modalTitle">Item</h3>
+        </div>
+        <button class="cart-close" type="button" id="modalClose" aria-label="Close details">x</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div style="padding:0 22px 22px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn solid" type="button" id="modalAdd">Add to cart</button>
+        <button class="btn" type="button" id="modalBuy">Buy now</button>
+      </div>
+    </div>
+  </div>
+
   <footer class="footer">
-    <div class="logo gold" style="letter-spacing:.28em;text-transform:uppercase;font-weight:800">Integrated IT Support Marketplace</div>
-    <p>Quote-first sourcing. Vendor terms apply. Region, shipping, warranty, taxes, and duties must be checked before order approval.</p>
+    <div class="logo gold" style="letter-spacing:.28em;text-transform:uppercase;font-weight:900">Integrated IT Support Bridged Marketplace</div>
+    <p>Vendor products/services are third-party unless stated otherwise. IIS/ARIA researches, organizes, compares, and coordinates. Final terms are confirmed before payment.</p>
   </footer>
-  <script>
-  (function(){
-    var form = document.getElementById('marketplaceForm');
-    var item = document.getElementById('marketItem');
-    var status = document.getElementById('marketStatus');
-    document.querySelectorAll('.trend-card .mini-btn.solid').forEach(function(btn){
-      btn.addEventListener('click', function(e){
-        e.preventDefault();
-        var card = btn.closest('.trend-card');
-        var title = card && card.querySelector('h3') ? card.querySelector('h3').textContent.trim() : '';
-        if (title) item.value = title;
-        document.getElementById('marketplace-request').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setTimeout(function(){ document.getElementById('marketName').focus(); }, 450);
+
+<script>
+(function(){
+  var feeRate = 0.20;
+  var categories = [
+    { id:'AI Services', icon:'AI', desc:'Agents, chatbots, workflows, content systems, support automation.' },
+    { id:'High-End Tech', icon:'LT', desc:'Premium laptops, workstations, monitors, office gear, networking.' },
+    { id:'Business Automation', icon:'AU', desc:'CRM, email, quote, intake, calendar, reports, ticketing.' },
+    { id:'IT Support Services', icon:'IT', desc:'Remote support, Microsoft 365, Windows, onboarding, help desk.' },
+    { id:'Website and Digital Presence', icon:'WEB', desc:'Websites, landing pages, lead forms, ecommerce, booking.' },
+    { id:'Cybersecurity Services', icon:'SEC', desc:'MFA, phishing training, hardening, email security, awareness.' },
+    { id:'Viral / Trending Products', icon:'VIR', desc:'Creator gear, smart home, health tech, mobility, pet tech.' },
+    { id:'Long-Term Value', icon:'LTV', desc:'Tools that save time, build skill, or keep value after hype.' },
+    { id:'Growth Library Digital Products', icon:'GL', desc:'Guides, prompt packs, KB packs, templates, blueprints.' },
+    { id:'Premium Bundles', icon:'PB', desc:'Curated product plus service bundles for serious buyers.' },
+    { id:'ARIA Services', icon:'AR', desc:'ARIA setup, support agent pathways, AI assistant upgrades.' },
+    { id:'Vendor Services', icon:'VS', desc:'Trusted outside vendors with IIS review and coordination.' }
+  ];
+
+  var items = [
+    item('ai-support-agent','AI Customer Support Agent Setup','service','AI Services','IIS/ARIA with approved AI tool stack',1200,'ARIA Pick','Set up a customer-support AI agent path with intake, routing, safe answers, escalation, and human handoff.',93,95,91,88,['AI agent','support','business essential'],'Businesses needing faster customer support without losing human control.','High demand, direct business value, and strong fit with IIS/ARIA operations.','Requires good knowledge base and safe escalation rules.'),
+    item('ai-workflow-automation','AI Workflow Automation Build','service','Business Automation','IIS/ARIA + Microsoft/Google/Zapier/Make stack as fit',850,'Business Essential','Automate intake, status updates, email routing, quote prep, reminders, and reporting.',91,94,89,86,['workflow automation','AI operations','save time'],'Teams doing repetitive admin work.','Automation is a long-life demand lane with measurable time savings.','Scope must be mapped before build. Some apps may need paid plans.'),
+    item('ai-lead-research','AI Lead Research Agent','service','AI Services','IIS/ARIA research workflow with approved data sources',950,'Growth Pick','Build a lead research and daily brief workflow for sales, tenders, local businesses, or vendor targets.',90,92,88,84,['lead radar','sales','research'],'Small businesses that need pipeline without hiring more admin.','Connects Trend Radar, revenue ops, and practical sales execution.','No scraping or platform abuse. Source rules must be respected.'),
+    item('chatgpt-claude-onboarding','AI Tools Team Onboarding','service','AI Services','OpenAI / Anthropic / Microsoft tools plus IIS setup support',380,'Best Value','Choose, configure, and train a small team on safe daily AI use, prompt habits, and practical workflows.',88,93,86,80,['ChatGPT','Claude','team training'],'Families, professionals, small businesses, tutors, creators.','AI learning and adoption remain high-demand and long-life.','Tool subscriptions are separate when required.'),
+    item('premium-ai-laptop','Premium AI Laptop Workstation','product','High-End Tech','Vendor shortlist: Dell, Lenovo, Apple, ASUS, HP',1899,'Premium Pick','A serious laptop shortlist for AI learning, business work, creator tools, and long-term productivity.',91,88,92,78,['laptop','AI PC','workstation'],'Buyers who want power, durability, and fewer mistakes choosing specs.','High-end tech stays useful beyond hype when matched to workload.','Final model, warranty, shipping, and taxes must be confirmed.'),
+    item('creator-studio-kit','Creator Studio Starter Kit','product','Viral / Trending Products','Vendor shortlist: Elgato, Rode, DJI, Insta360, Logitech',899,'Creator Favorite','Camera, mic, light, mount, capture tools, and setup guidance for serious content creation.',88,90,86,83,['creator kit','video','podcast'],'Creators, coaches, small businesses, educators.','Creator economy tools remain practical when paired with a setup plan.','Compatibility depends on laptop, room, platform, and budget.'),
+    item('business-mesh-wifi','Business Mesh Wi-Fi Kit','product','High-End Tech','Vendor shortlist: Ubiquiti, TP-Link Omada, ASUS, Netgear',499,'IIS Researched','Reliable office/home office Wi-Fi kit with setup guidance and coverage planning.',92,82,91,72,['networking','wifi','office'],'Small offices, home offices, clinics, retail, studios.','Connectivity problems create repeat support demand and strong product fit.','May require cabling, placement testing, or ISP checks.'),
+    item('portable-power-station','Portable Power Station Kit','product','Long-Term Value','Vendor shortlist: EcoFlow, Jackery, Anker, Bluetti',999,'Long-Term Pick','Backup battery lane for outages, routers, laptops, medical-device peace of mind, travel, and small offices.',90,89,93,82,['power station','backup','solar generator'],'Homes, small offices, travelers, emergency planning.','Durable demand tied to resilience, weather, remote work, and preparedness.','Battery size, wattage, warranty, shipping rules, and duties matter.'),
+    item('smart-office-bundle','Smart Office Productivity Bundle','product','High-End Tech','Vendor shortlist: Dell, Logitech, Anker, BenQ, Ugreen',699,'Best Value','Monitor, dock, webcam, headset, keyboard, lighting, and cable setup for a cleaner workstation.',89,85,90,74,['monitor','dock','webcam','office'],'Remote workers, founders, sales teams, support teams.','Workstation upgrades improve daily output and pair well with IIS setup.','Needs device compatibility check before ordering.'),
+    item('m365-automation-pack','Microsoft 365 Automation Pack','digital','Growth Library Digital Products','IIS Growth Library',97,'Digital Pick','Templates and baby-step instructions for Outlook, Teams, SharePoint, Power Automate, and admin workflows.',87,90,88,79,['M365','Power Automate','templates'],'Small business owners and admins who need fast wins.','Microsoft 365 remains a long-life business platform with high support demand.','Digital delivery only. Implementation help is separate.'),
+    item('crm-intake-quote','CRM Intake + Quote Automation','service','Business Automation','IIS/ARIA with HubSpot, Zoho, Airtable, Notion, or Google stack',1050,'Revenue Pick','Turn lead forms into organized records, follow-ups, quotes, reminders, and simple reporting.',90,87,89,78,['CRM','quote','lead intake'],'Service businesses and small teams losing leads in email.','Direct revenue impact and repeatable service package.','CRM subscription and field cleanup may be needed.'),
+    item('remote-it-support-bundle','Remote IT Support Starter Bundle','service','IT Support Services','Integrated IT Support Inc.',250,'IIS Pick','Remote support block for Windows, Microsoft 365, Outlook, printer, device setup, and small business issues.',94,79,86,68,['help desk','M365','Windows'],'Home office users, small teams, busy professionals.','Core IIS service with practical buyer need and low friction.','Some issues require admin access or onsite service.'),
+    item('mfa-security-setup','MFA + Email Security Setup','service','Cybersecurity Services','Integrated IT Support Inc. with Microsoft/Google security tools',450,'Security Pick','Turn on MFA, review sign-in risk, harden email, and create a simple phishing-aware checklist.',93,86,92,76,['MFA','phishing','email security'],'Small businesses, nonprofits, consultants, families.','Security basics have long-term demand and high trust value.','No guarantee of full protection. Best as part of ongoing controls.'),
+    item('ai-landing-page','AI Landing Page + Booking System','service','Website and Digital Presence','IIS/ARIA web build lane',950,'Conversion Pick','Build a clean landing page, booking path, lead form, and optional AI assistant entry point.',88,85,86,75,['landing page','booking','lead capture'],'Professionals, tutors, contractors, new offers.','Combines web demand, AI interest, and direct conversion support.','Content and offer clarity are required before build.'),
+    item('smart-ring-health','Smart Ring / Health Tracker Shortlist','product','Viral / Trending Products','Vendor shortlist: Oura, Samsung, RingConn, Ultrahuman',349,'Viral Now','Sleep, readiness, activity, and health tracking lane for buyers who want less screen and more signal.',86,91,82,84,['smart ring','sleep tracker','wearable'],'Adults, executives, athletes, wellness buyers.','Wearables keep attention when tied to daily health behavior.','Medical claims, sizing, subscriptions, and privacy terms must be checked.'),
+    item('air-quality-bundle','Air Purifier + Indoor Sensor Bundle','product','Long-Term Value','Vendor shortlist: Coway, Levoit, Airthings, Dyson',399,'Home Essential','Cleaner air and indoor visibility for smoke season, allergies, pets, home office, and family comfort.',89,86,90,73,['air purifier','air quality','allergies'],'Families, renters, offices, pet owners.','Home wellness and air quality have durable demand.','Room size, filter cost, noise, and warranty matter.'),
+    item('walking-pad-desk','Walking Pad + Standing Desk Setup','product','Viral / Trending Products','Vendor shortlist: WalkingPad, FlexiSpot, Urevo, Vari',699,'Top Sold Signal','Movement-first desk setup for remote workers who sit too long and want simple daily discipline.',85,88,84,82,['walking pad','standing desk','remote work'],'Remote workers, creators, students, executives.','Search interest and daily-use value make this more than a quick trend.','Noise, weight limit, space, and warranty need checking.'),
+    item('kids-stem-ai-kit','Kids STEM + AI Learning Kit','product','Long-Term Value','Vendor shortlist: Raspberry Pi, micro:bit, LEGO Education, Arduino',249,'Family Pick','Robotics, coding board, parent guide, and safe learning path for ambitious kids and tutors.',88,87,91,77,['STEM','kids AI','robotics'],'Parents, tutors, schools, homeschool families.','Connects long-life education demand with AI Edge Family.','Age fit and supervision required.'),
+    item('ai-edge-family','AI Edge Family Studio','digital','ARIA Services','Integrated IT Support Inc.',49,'ARIA Pick','Family learning path that helps kids and parents learn AI safely, creatively, and with direction.',89,92,90,80,['AI learning','family','kids'],'Parents, tutors, students, families.','AI education is a strong long-life demand lane and internal IIS product fit.','Digital learning product. No school certification claim.'),
+    item('ai-edge-adult','AI Edge Adult Momentum Studio','digital','ARIA Services','Integrated IT Support Inc.',79,'Momentum Pick','Adult AI learning path for responsibility, productivity, career growth, and better daily execution.',88,90,89,78,['AI learning','adult','productivity'],'Adults, professionals, creators, founders.','Practical AI adoption is a high-demand skill gap.','Results depend on practice and execution.'),
+    item('pet-tech-care','Pet Tech Care Bundle','product','Viral / Trending Products','Vendor shortlist: Whistle, Petlibro, Furbo, Eufy',299,'Trend Pick','GPS tracker, smart feeder, pet camera, water fountain, and practical pet convenience tools.',84,82,80,70,['pet tech','smart feeder','pet camera'],'Pet owners, apartments, travelers.','Pet convenience products have repeat consumer demand.','App subscriptions, privacy, and pet safety need review.'),
+    item('dash-cam-smart-car','Dash Cam + Smart Car Kit','product','Long-Term Value','Vendor shortlist: Garmin, Nextbase, Vantrue, Anker',299,'Safety Pick','Dash cam, mount, battery monitor, emergency charger, and clean cable plan.',87,84,88,71,['dash cam','car safety','driver tech'],'Drivers, families, fleet owners.','Clear practical use case, safety angle, and strong buyer understanding.','Installation, local road laws, and warranty must be reviewed.')
+  ];
+
+  var cart = JSON.parse(localStorage.getItem('iisMarketplaceCart') || '[]');
+  var state = { category:'all', type:'all', sort:'featured', price:'all', query:'' };
+  var activeDetail = null;
+
+  function item(id,title,type,category,vendor,price,badge,summary,trust,trend,value,viral,tags,bestFor,why,risks){
+    return { id:id,title:title,type:type,category:category,vendor:vendor,price:price,badge:badge,summary:summary,trust:trust,trend:trend,value:value,viral:viral,tags:tags,bestFor:bestFor,why:why,risks:risks,featured: Math.round((trust+trend+value+viral)/4) };
+  }
+  function money(n){ return '$' + Math.round(n).toLocaleString('en-CA'); }
+  function fee(n){ return n * feeRate; }
+  function total(n){ return n + fee(n); }
+  function iconFor(type){ return type === 'service' ? 'SRV' : type === 'digital' ? 'DIG' : type === 'consultation' ? 'CON' : 'TECH'; }
+  function safe(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  function init(){
+    renderCategories();
+    renderFilters();
+    renderRails();
+    renderResults();
+    renderCart();
+    bindEvents();
+  }
+
+  function renderCategories(){
+    var grid = document.getElementById('categoryGrid');
+    grid.innerHTML = categories.map(function(c){
+      var count = items.filter(function(i){ return i.category === c.id; }).length;
+      return '<button class="category-card" type="button" data-category="'+safe(c.id)+'">'+
+        '<div class="cat-icon">'+safe(c.icon)+'</div>'+
+        '<h3>'+safe(c.id)+'</h3>'+
+        '<p>'+safe(c.desc)+'</p>'+
+        '<span class="cat-meta">'+count+' items</span>'+
+      '</button>';
+    }).join('');
+  }
+
+  function renderFilters(){
+    var select = document.getElementById('categoryFilter');
+    select.innerHTML = '<option value="all">All categories</option>' + categories.map(function(c){ return '<option value="'+safe(c.id)+'">'+safe(c.id)+'</option>'; }).join('');
+  }
+
+  function renderRails(){
+    var railDefs = [
+      { title:'Top Popular Today', filter:function(i){ return i.trend >= 88; } },
+      { title:'Top Sold Signals', filter:function(i){ return /Top Sold|Best Value|Home Essential|Premium Pick/.test(i.badge); } },
+      { title:'Viral Right Now', filter:function(i){ return i.viral >= 80; } },
+      { title:'Long-Term Strong Trends', filter:function(i){ return i.value >= 90; } },
+      { title:'AI Services Worth Watching', filter:function(i){ return i.category === 'AI Services' || i.category === 'ARIA Services'; } },
+      { title:'Business Tools That Save Time', filter:function(i){ return i.category === 'Business Automation' || i.category === 'IT Support Services' || i.category === 'Cybersecurity Services'; } }
+    ];
+    document.getElementById('featureRails').innerHTML = railDefs.map(function(rail){
+      var picked = items.filter(rail.filter).sort(function(a,b){ return b.featured - a.featured; }).slice(0,4);
+      return '<div class="rail"><h3>'+safe(rail.title)+'</h3><div class="rail-row">'+picked.map(function(i){
+        return '<button class="mini-listing" type="button" data-detail="'+safe(i.id)+'">'+
+          '<span>'+safe(i.badge)+' / '+safe(i.category)+'</span>'+
+          '<b>'+safe(i.title)+'</b>'+
+          '<span>'+money(total(i.price))+' total with 20% IIS fee</span>'+
+        '</button>';
+      }).join('')+'</div></div>';
+    }).join('');
+  }
+
+  function currentItems(){
+    var q = state.query.trim().toLowerCase();
+    return items.filter(function(i){
+      if (state.category !== 'all' && i.category !== state.category) return false;
+      if (state.type !== 'all' && i.type !== state.type) return false;
+      if (state.price === 'under250' && total(i.price) >= 250) return false;
+      if (state.price === '250to1000' && (total(i.price) < 250 || total(i.price) > 1000)) return false;
+      if (state.price === '1000plus' && total(i.price) < 1000) return false;
+      if (q) {
+        var hay = [i.title,i.type,i.category,i.vendor,i.summary,i.badge,i.bestFor,i.why,i.risks].concat(i.tags).join(' ').toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    }).sort(function(a,b){
+      if (state.sort === 'trust') return b.trust - a.trust;
+      if (state.sort === 'trend') return b.trend - a.trend;
+      if (state.sort === 'value') return b.value - a.value;
+      if (state.sort === 'price-low') return total(a.price) - total(b.price);
+      if (state.sort === 'price-high') return total(b.price) - total(a.price);
+      return b.featured - a.featured;
+    });
+  }
+
+  function renderResults(){
+    var list = currentItems();
+    document.querySelectorAll('.category-card').forEach(function(card){ card.classList.toggle('active', card.dataset.category === state.category); });
+    document.getElementById('resultEyebrow').textContent = state.category === 'all' ? 'Marketplace results' : state.category;
+    document.getElementById('resultTitle').textContent = state.category === 'all' ? 'Top trusted products and services' : 'Top trusted ' + state.category;
+    document.getElementById('resultNote').textContent = list.length + ' researched listing' + (list.length === 1 ? '' : 's') + ' matched. Fee shown before checkout.';
+    var productTypes = ['product','digital'];
+    var products = list.filter(function(i){ return productTypes.indexOf(i.type) >= 0; });
+    var services = list.filter(function(i){ return productTypes.indexOf(i.type) < 0; });
+    document.getElementById('productGrid').innerHTML = products.length ? products.map(card).join('') : empty('No product listings matched yet.');
+    document.getElementById('serviceGrid').innerHTML = services.length ? services.map(card).join('') : empty('No service listings matched yet.');
+  }
+
+  function empty(text){ return '<div class="panel" style="grid-column:1/-1"><p>'+safe(text)+'</p></div>'; }
+
+  function card(i){
+    return '<article class="item-card">'+
+      '<div class="badge-row"><span class="badge">'+safe(i.badge)+'</span><span class="badge">'+safe(i.type)+'</span></div>'+
+      '<div class="item-art"><div class="shape">'+safe(iconFor(i.type))+'</div></div>'+
+      '<div class="item-body">'+
+        '<div class="type-line"><span>'+safe(i.category)+'</span><span>'+safe(i.vendor.indexOf('IIS') >= 0 ? 'IIS direct' : 'third-party bridge')+'</span></div>'+
+        '<h3>'+safe(i.title)+'</h3>'+
+        '<p>'+safe(i.summary)+'</p>'+
+        '<div class="vendor"><b>Vendor/source:</b> '+safe(i.vendor)+'</div>'+
+        '<div class="scores"><div class="score"><b>Trust</b><span>'+i.trust+'</span></div><div class="score"><b>Trend</b><span>'+i.trend+'</span></div><div class="score"><b>Long term</b><span>'+i.value+'</span></div></div>'+
+        '<div class="price-box">'+
+          '<div class="price-line"><span>Vendor price</span><b>'+money(i.price)+'</b></div>'+
+          '<div class="price-line"><span>IIS admin fee 20%</span><b>'+money(fee(i.price))+'</b></div>'+
+          '<div class="price-line total"><span>Total customer price</span><b>'+money(total(i.price))+'</b></div>'+
+        '</div>'+
+        '<div class="tags">'+i.tags.map(function(t){return '<span>'+safe(t)+'</span>';}).join('')+'</div>'+
+        '<div class="why"><div><b>Best for</b>'+safe(i.bestFor)+'</div><div><b>Why listed</b>'+safe(i.why)+'</div><div><b>Risks / notes</b>'+safe(i.risks)+'</div></div>'+
+        '<div class="actions">'+
+          '<button class="mini-btn solid" type="button" data-add="'+safe(i.id)+'">Add to cart</button>'+
+          '<button class="mini-btn" type="button" data-buy="'+safe(i.id)+'">Buy now</button>'+
+          '<button class="mini-btn" type="button" data-detail="'+safe(i.id)+'">View details</button>'+
+          '<button class="mini-btn" type="button" data-compare="'+safe(i.id)+'">Compare</button>'+
+        '</div>'+
+      '</div>'+
+    '</article>';
+  }
+
+  function bindEvents(){
+    document.getElementById('heroSearchBtn').addEventListener('click', function(){
+      state.query = document.getElementById('heroSearch').value;
+      document.getElementById('marketSearch').value = state.query;
+      renderResults();
+      document.getElementById('results').scrollIntoView({ behavior:'smooth' });
+    });
+    document.getElementById('heroSearch').addEventListener('keydown', function(e){ if(e.key === 'Enter') document.getElementById('heroSearchBtn').click(); });
+    document.getElementById('marketSearch').addEventListener('input', function(e){ state.query = e.target.value; renderResults(); });
+    document.getElementById('categoryFilter').addEventListener('change', function(e){ state.category = e.target.value; renderResults(); });
+    document.getElementById('typeFilter').addEventListener('change', function(e){ state.type = e.target.value; renderResults(); });
+    document.getElementById('sortFilter').addEventListener('change', function(e){ state.sort = e.target.value; renderResults(); });
+    document.getElementById('priceFilter').addEventListener('change', function(e){ state.price = e.target.value; renderResults(); });
+    document.getElementById('resetFilters').addEventListener('click', function(){
+      state = { category:'all', type:'all', sort:'featured', price:'all', query:'' };
+      document.getElementById('marketSearch').value = '';
+      document.getElementById('categoryFilter').value = 'all';
+      document.getElementById('typeFilter').value = 'all';
+      document.getElementById('sortFilter').value = 'featured';
+      document.getElementById('priceFilter').value = 'all';
+      renderResults();
+    });
+    document.querySelectorAll('[data-quick]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var val = btn.dataset.quick;
+        if (val === 'trending') state.sort = 'trend';
+        else if (val === 'top-sold') state.query = 'Top Sold';
+        else if (val === 'Long-Term Value') state.sort = 'value';
+        else state.category = val;
+        document.getElementById('categoryFilter').value = state.category;
+        document.getElementById('sortFilter').value = state.sort;
+        document.getElementById('marketSearch').value = state.query;
+        renderResults();
+        document.getElementById('results').scrollIntoView({ behavior:'smooth' });
       });
     });
-    if (!form) return;
+    document.addEventListener('click', function(e){
+      var cat = e.target.closest('[data-category]');
+      if (cat) { state.category = cat.dataset.category; document.getElementById('categoryFilter').value = state.category; renderResults(); document.getElementById('results').scrollIntoView({behavior:'smooth'}); }
+      var add = e.target.closest('[data-add]');
+      if (add) addToCart(add.dataset.add, false);
+      var buy = e.target.closest('[data-buy]');
+      if (buy) addToCart(buy.dataset.buy, true);
+      var detail = e.target.closest('[data-detail]');
+      if (detail) openDetail(detail.dataset.detail);
+      var compare = e.target.closest('[data-compare]');
+      if (compare) compareItem(compare.dataset.compare);
+    });
+    document.querySelectorAll('[data-open-cart]').forEach(function(btn){ btn.addEventListener('click', openCart); });
+    document.querySelector('[data-close-cart]').addEventListener('click', closeCart);
+    document.getElementById('requestCart').addEventListener('click', requestCart);
+    document.getElementById('modalClose').addEventListener('click', closeDetail);
+    document.getElementById('detailModal').addEventListener('click', function(e){ if(e.target.id === 'detailModal') closeDetail(); });
+    document.getElementById('modalAdd').addEventListener('click', function(){ if(activeDetail) addToCart(activeDetail.id, false); });
+    document.getElementById('modalBuy').addEventListener('click', function(){ if(activeDetail) addToCart(activeDetail.id, true); });
+    document.querySelectorAll('[data-aria-question]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        document.getElementById('marketItem').value = 'ARIA marketplace question: ' + btn.dataset.ariaQuestion;
+        document.getElementById('marketNotes').value = 'Please compare options and recommend the best fit before I buy.';
+        document.getElementById('marketplace-request').scrollIntoView({behavior:'smooth'});
+      });
+    });
+    bindForm();
+  }
+
+  function addToCart(id, open){
+    var found = items.find(function(i){ return i.id === id; });
+    if (!found) return;
+    var existing = cart.find(function(i){ return i.id === id; });
+    if (existing) existing.qty += 1;
+    else cart.push({ id:id, qty:1 });
+    saveCart();
+    renderCart();
+    if (open) openCart();
+  }
+  function removeFromCart(id){
+    cart = cart.filter(function(i){ return i.id !== id; });
+    saveCart();
+    renderCart();
+  }
+  function saveCart(){ localStorage.setItem('iisMarketplaceCart', JSON.stringify(cart)); }
+  function cartLines(){
+    return cart.map(function(c){
+      var found = items.find(function(i){ return i.id === c.id; });
+      return found ? Object.assign({}, found, { qty:c.qty }) : null;
+    }).filter(Boolean);
+  }
+  function renderCart(){
+    var lines = cartLines();
+    document.getElementById('cartCount').textContent = lines.reduce(function(s,i){ return s + i.qty; }, 0);
+    document.getElementById('cartItems').innerHTML = lines.length ? lines.map(function(i){
+      return '<div class="cart-item"><b>'+safe(i.title)+'</b><span>'+safe(i.vendor)+'</span><span>Qty '+i.qty+' / '+money(total(i.price) * i.qty)+' estimated total</span><button type="button" onclick="window.__iisRemoveCart(\''+safe(i.id)+'\')">Remove</button></div>';
+    }).join('') : '<p style="color:rgba(255,255,255,.55);font-size:13px;line-height:1.7">Cart is empty. Add a product or service to request a verified checkout.</p>';
+    var subtotal = lines.reduce(function(s,i){ return s + i.price * i.qty; },0);
+    var fees = subtotal * feeRate;
+    document.getElementById('cartSubtotal').textContent = money(subtotal);
+    document.getElementById('cartFees').textContent = money(fees);
+    document.getElementById('cartGrand').textContent = money(subtotal + fees);
+  }
+  window.__iisRemoveCart = removeFromCart;
+  function openCart(){ document.getElementById('cartDrawer').classList.add('open'); }
+  function closeCart(){ document.getElementById('cartDrawer').classList.remove('open'); }
+
+  function requestCart(){
+    var lines = cartLines();
+    if (!lines.length) return;
+    var subtotal = lines.reduce(function(s,i){ return s + i.price * i.qty; },0);
+    var text = lines.map(function(i){ return i.qty + ' x ' + i.title + ' (' + money(total(i.price) * i.qty) + ' total estimate)'; }).join('; ');
+    document.getElementById('marketItem').value = 'Cart request: ' + text;
+    document.getElementById('marketBudget').value = 'Estimated total ' + money(subtotal + subtotal * feeRate) + ' including 20% IIS fee';
+    document.getElementById('marketNotes').value = 'Please verify vendor/source, shipping or service area, warranty/refund terms, taxes/duties, and final checkout link before payment.';
+    closeCart();
+    document.getElementById('marketplace-request').scrollIntoView({ behavior:'smooth' });
+  }
+
+  function openDetail(id){
+    var i = items.find(function(x){ return x.id === id; });
+    if (!i) return;
+    activeDetail = i;
+    document.getElementById('modalCategory').textContent = i.category + ' / ' + i.badge;
+    document.getElementById('modalTitle').textContent = i.title;
+    document.getElementById('modalBody').innerHTML =
+      box('Overview', i.summary) +
+      box('Vendor information', i.vendor + '. Third-party vendor status is disclosed unless IIS is the direct seller.') +
+      box('Price breakdown', 'Vendor price ' + money(i.price) + '. IIS admin/curation fee 20% ' + money(fee(i.price)) + '. Total customer price ' + money(total(i.price)) + '.') +
+      box('Why it is trending', 'Trend score ' + i.trend + ', viral score ' + i.viral + '. This is a demand signal, not a guarantee.') +
+      box('Why IIS/ARIA listed it', i.why) +
+      box('Best for', i.bestFor) +
+      box('Risks / things to know', i.risks) +
+      box('Fulfillment notes', 'Final vendor/source, shipping/service area, taxes, duties, warranty, refund policy, and delivery timing must be confirmed before payment.');
+    document.getElementById('detailModal').classList.add('open');
+  }
+  function box(title, body){ return '<div class="modal-box"><b>'+safe(title)+'</b><p>'+safe(body)+'</p></div>'; }
+  function closeDetail(){ document.getElementById('detailModal').classList.remove('open'); activeDetail = null; }
+
+  function compareItem(id){
+    var i = items.find(function(x){ return x.id === id; });
+    if (!i) return;
+    document.getElementById('marketItem').value = 'Compare before buying: ' + i.title;
+    document.getElementById('marketNotes').value = 'Please compare this with 2-3 alternatives. Focus on trust, price, long-term value, risks, and best fit.';
+    document.getElementById('marketplace-request').scrollIntoView({ behavior:'smooth' });
+  }
+
+  function bindForm(){
+    var form = document.getElementById('marketplaceForm');
+    var status = document.getElementById('marketStatus');
     form.addEventListener('submit', async function(e){
       e.preventDefault();
       status.textContent = '';
       var btn = form.querySelector('button[type="submit"]');
       btn.disabled = true;
-      btn.textContent = 'Sending check...';
+      btn.textContent = 'Sending request...';
+      var lines = cartLines();
+      var subtotal = lines.reduce(function(s,i){ return s + i.price * i.qty; },0);
       var payload = {
-        item: item.value,
+        item: document.getElementById('marketItem').value,
         name: document.getElementById('marketName').value,
         email: document.getElementById('marketEmail').value,
         phone: document.getElementById('marketPhone').value,
@@ -547,28 +827,35 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
         budget: document.getElementById('marketBudget').value,
         notes: document.getElementById('marketNotes').value,
         acceptedTerms: document.getElementById('marketTerms').checked,
-        source: 'marketplace-page'
+        source: 'bridged-marketplace-page',
+        cartItems: lines.map(function(i){ return { id:i.id, title:i.title, type:i.type, category:i.category, vendor:i.vendor, qty:i.qty, vendorPrice:i.price, adminFee:fee(i.price), total:total(i.price) }; }),
+        cartSubtotal: subtotal,
+        cartAdminFee: subtotal * feeRate,
+        cartTotal: subtotal + subtotal * feeRate
       };
       try {
         var res = await fetch('/.netlify/functions/marketplace-request', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body:JSON.stringify(payload)
         });
         var data = await res.json().catch(function(){ return {}; });
         if (!res.ok) throw new Error(data.error || 'Could not submit request.');
-        status.textContent = data.message || 'Sourcing check received. IIS will confirm before payment.';
+        status.textContent = data.message || 'Request received. IIS will verify before payment.';
         form.reset();
       } catch (err) {
         status.textContent = (location.hostname === 'localhost')
-          ? 'Preview mode: this form sends on Netlify deploy. No payment is taken here.'
+          ? 'Preview mode: this form sends after Netlify deploy. No payment is taken here.'
           : (err.message || 'Could not submit. Please email ahmad.wasee@iisupp.net.');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Request sourcing check';
+        btn.textContent = 'Request verified checkout';
       }
     });
-  })();
-  </script>
+  }
+
+  init();
+})();
+</script>
 </body>
 </html>

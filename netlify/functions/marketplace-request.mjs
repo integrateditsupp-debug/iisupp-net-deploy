@@ -27,6 +27,10 @@ export default async (request) => {
     postalCode: clean(body.postalCode, 40),
     budget: clean(body.budget, 80),
     notes: clean(body.notes, 2500),
+    cartItems: Array.isArray(body.cartItems) ? body.cartItems.slice(0, 20).map(cleanCartItem).filter(Boolean) : [],
+    cartSubtotal: moneyNumber(body.cartSubtotal),
+    cartAdminFee: moneyNumber(body.cartAdminFee),
+    cartTotal: moneyNumber(body.cartTotal),
     acceptedTerms: body.acceptedTerms === true,
     source: clean(body.source || 'marketplace', 200),
     createdAt: new Date().toISOString(),
@@ -79,6 +83,7 @@ async function notify(lead) {
     <p><b>Ship check:</b> ${esc(lead.city)}, ${esc(lead.country)} ${esc(lead.postalCode)}</p>
     <p><b>Budget:</b> ${esc(lead.budget || 'not provided')}</p>
     <p><b>Notes:</b><br>${esc(lead.notes || 'none').replace(/\n/g, '<br>')}</p>
+    ${lead.cartItems.length ? `<h2>Cart</h2>${cartHtml(lead)}` : ''}
     <hr>
     <p><b>Required before payment:</b> confirm vendor ships to the region, final landed cost, vendor/source disclosure, warranty/return terms, and buyer approval. Then send Stripe checkout.</p>
   `);
@@ -127,6 +132,59 @@ function json(status, headers, body) {
 
 function clean(v, max) {
   return String(v == null ? '' : v).trim().slice(0, max);
+}
+
+function moneyNumber(v) {
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) / 100 : 0;
+}
+
+function cleanCartItem(row) {
+  if (!row || typeof row !== 'object') return null;
+  const title = clean(row.title, 180);
+  if (!title) return null;
+  return {
+    id: clean(row.id, 80),
+    title,
+    type: clean(row.type, 40),
+    category: clean(row.category, 120),
+    vendor: clean(row.vendor, 240),
+    qty: Math.max(1, Math.min(99, Math.round(Number(row.qty || 1)) || 1)),
+    vendorPrice: moneyNumber(row.vendorPrice),
+    adminFee: moneyNumber(row.adminFee),
+    total: moneyNumber(row.total)
+  };
+}
+
+function dollars(n) {
+  return '$' + Math.round(Number(n || 0)).toLocaleString('en-CA');
+}
+
+function cartHtml(lead) {
+  const rows = lead.cartItems.map((i) => `
+    <tr>
+      <td style="padding:8px;border-bottom:1px solid #2a2418;">${esc(i.qty)} x ${esc(i.title)}<br><small>${esc(i.category)} / ${esc(i.vendor)}</small></td>
+      <td style="padding:8px;border-bottom:1px solid #2a2418;text-align:right;">${esc(dollars(i.vendorPrice))}</td>
+      <td style="padding:8px;border-bottom:1px solid #2a2418;text-align:right;">${esc(dollars(i.adminFee))}</td>
+      <td style="padding:8px;border-bottom:1px solid #2a2418;text-align:right;">${esc(dollars(i.total * i.qty))}</td>
+    </tr>
+  `).join('');
+  return `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr>
+          <th align="left" style="padding:8px;border-bottom:1px solid #c5a059;">Item</th>
+          <th align="right" style="padding:8px;border-bottom:1px solid #c5a059;">Vendor</th>
+          <th align="right" style="padding:8px;border-bottom:1px solid #c5a059;">IIS fee</th>
+          <th align="right" style="padding:8px;border-bottom:1px solid #c5a059;">Total</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p><b>Estimated vendor subtotal:</b> ${esc(dollars(lead.cartSubtotal))}<br>
+    <b>Estimated IIS admin fee:</b> ${esc(dollars(lead.cartAdminFee))}<br>
+    <b>Estimated total:</b> ${esc(dollars(lead.cartTotal))}</p>
+  `;
 }
 
 function esc(s) {
