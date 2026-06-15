@@ -872,17 +872,38 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
             intro.id = "company-intro";
             intro.className = "py-20 px-6 md:px-10 border-t border-[#c5a059]/15";
             intro.innerHTML =
-                  '<div class="max-w-5xl mx-auto">'
+                  '<style>'
+                +   '#company-intro .ci-eyebrow{display:inline-flex;align-items:center;justify-content:center;gap:9px}'
+                +   '#company-intro .ci-dot{width:8px;height:8px;border-radius:999px;background:#c5a059;box-shadow:0 0 12px #c5a059;animation:ciPulse 1.8s ease-in-out infinite}'
+                +   '@keyframes ciPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(1.6)}}'
+                +   '#company-intro .ci-card{position:relative;overflow:hidden;opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease,border-color .3s ease,box-shadow .3s ease}'
+                +   '#company-intro.in .ci-card{opacity:1;transform:none}'
+                +   '#company-intro.in .ci-card:nth-child(1){transition-delay:.04s}'
+                +   '#company-intro.in .ci-card:nth-child(2){transition-delay:.12s}'
+                +   '#company-intro.in .ci-card:nth-child(3){transition-delay:.20s}'
+                +   '#company-intro.in .ci-card:nth-child(4){transition-delay:.28s}'
+                +   '#company-intro .ci-card:hover{box-shadow:0 18px 50px rgba(0,0,0,.45);transform:translateY(-4px)}'
+                +   '#company-intro .ci-card::after{content:"";position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(120deg,transparent 32%,rgba(241,220,167,.10) 50%,transparent 68%);transform:translateX(-130%);pointer-events:none}'
+                +   '#company-intro .ci-card:hover::after{animation:ciSheen 1.05s ease}'
+                +   '@keyframes ciSheen{to{transform:translateX(130%)}}'
+                +   '#company-intro .ci-icon{display:inline-block;animation:ciFloat 4.5s ease-in-out infinite}'
+                +   '#company-intro .ci-card:nth-child(2) .ci-icon{animation-delay:.6s}'
+                +   '#company-intro .ci-card:nth-child(3) .ci-icon{animation-delay:1.2s}'
+                +   '#company-intro .ci-card:nth-child(4) .ci-icon{animation-delay:1.8s}'
+                +   '@keyframes ciFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}'
+                +   '@media (prefers-reduced-motion:reduce){#company-intro .ci-card{opacity:1;transform:none}#company-intro .ci-dot,#company-intro .ci-icon{animation:none}}'
+                + '</style>'
+                + '<div class="max-w-5xl mx-auto">'
                 +   '<div class="text-center mb-10">'
-                +     '<p class="text-[10px] tracking-[0.3em] uppercase mb-4" style="color:#c5a059">WELCOME</p>'
+                +     '<p class="ci-eyebrow text-[10px] tracking-[0.3em] uppercase mb-4" style="color:#c5a059"><span class="ci-dot"></span>WELCOME</p>'
                 +     '<h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family:Cinzel,serif">Welcome to <span style="color:#c5a059">Integrated IT Support Inc.</span></h2>'
                 +     '<p class="text-base md:text-lg leading-relaxed text-white/70 max-w-2xl mx-auto">We remove the IT costs that do not make sense — so you save money, save time, and stay focused on growing your business.</p>'
                 +   '</div>'
                 +   '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 max-w-4xl mx-auto">'
-                +     '<div class="rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="text-2xl mb-3">💰</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Cut wasteful IT spend</h3><p class="text-sm leading-relaxed text-white/60">We eliminate the IT costs that do not make sense — saving you money and time.</p></div>'
-                +     '<div class="rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="text-2xl mb-3">🎯</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Focus on what grows revenue</h3><p class="text-sm leading-relaxed text-white/60">A business runs to bring money in, not bleed it out. We own your IT so you do not have to think about it.</p></div>'
-                +     '<div class="rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="text-2xl mb-3">🏆</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">21+ years of real expertise</h3><p class="text-sm leading-relaxed text-white/60">Diverse, cross-industry experience led by our CEO Ahmad Wasee — ITIL, Six Sigma and more, actually applied, not just framed on a wall.</p></div>'
-                +     '<div class="rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="text-2xl mb-3">🤖</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Built on AI</h3><p class="text-sm leading-relaxed text-white/60">Welcome to the future, where AI helps you take on your challenges before they become problems.</p></div>'
+                +     '<div class="ci-card rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="ci-icon text-2xl mb-3">💰</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Cut wasteful IT spend</h3><p class="text-sm leading-relaxed text-white/60">We eliminate the IT costs that do not make sense — saving you money and time.</p></div>'
+                +     '<div class="ci-card rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="ci-icon text-2xl mb-3">🎯</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Focus on what grows revenue</h3><p class="text-sm leading-relaxed text-white/60">A business runs to bring money in, not bleed it out. We own your IT so you do not have to think about it.</p></div>'
+                +     '<div class="ci-card rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="ci-icon text-2xl mb-3">🏆</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif"><span class="ci-count" data-to="21">0</span>+ years of real expertise</h3><p class="text-sm leading-relaxed text-white/60">Diverse, cross-industry experience led by our CEO Ahmad Wasee — ITIL, Six Sigma and more, actually applied, not just framed on a wall.</p></div>'
+                +     '<div class="ci-card rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="ci-icon text-2xl mb-3">🤖</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Built on AI</h3><p class="text-sm leading-relaxed text-white/60">Welcome to the future, where AI helps you take on your challenges before they become problems.</p></div>'
                 +   '</div>'
                 +   '<div class="text-center mt-10"><a href="#introducing-aria" class="inline-block text-[10px] tracking-[0.4em] uppercase font-bold border-b border-[#c5a059]/40 pb-2 transition hover:text-white" style="color:#c5a059">See our apps, examples &amp; recent work ↓</a></div>'
                 + '</div>';
@@ -895,12 +916,32 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
             if (ariaPreviewShell) {
                 ariaPreviewShell.innerHTML = '<div style="display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:20px;padding:22px;background:linear-gradient(165deg,rgba(255,255,255,.03),rgba(197,160,89,.08));align-items:stretch"><div style="padding:4px 2px"><span style="display:inline-block;margin-bottom:10px;color:rgba(241,220,167,.68);font-size:10px;letter-spacing:.24em;text-transform:uppercase">Proof before rollout</span><h3 style="margin:0 0 12px;color:#f1dca7;font-family:Cinzel,serif;font-size:26px;line-height:1.2;text-transform:uppercase">Show ARIA clearly, then route the next move.</h3><p style="margin:0 0 16px;color:rgba(255,255,255,.72);font-size:14px;line-height:1.8">Use a stable product proof instead of a brittle inline app frame. Buyers can open ARIA directly, watch the guided reel, or move into the route guide without guessing.</p><div style="display:grid;gap:10px;margin-bottom:18px"><div style="padding:12px 14px;border:1px solid rgba(197,160,89,.16);border-radius:14px;background:rgba(0,0,0,.18)"><div style="margin-bottom:5px;color:rgba(241,220,167,.5);font-size:9px;letter-spacing:.2em;text-transform:uppercase">Live surface</div><div style="color:rgba(255,255,255,.84);font-size:12px;line-height:1.6;font-weight:600">Open the full ARIA experience when the buyer wants the real product.</div></div><div style="padding:12px 14px;border:1px solid rgba(197,160,89,.16);border-radius:14px;background:rgba(0,0,0,.18)"><div style="margin-bottom:5px;color:rgba(241,220,167,.5);font-size:9px;letter-spacing:.2em;text-transform:uppercase">Film-first trust</div><div style="color:rgba(255,255,255,.84);font-size:12px;line-height:1.6;font-weight:600">Use the cinema reel when the buyer needs a calm guided overview first.</div></div><div style="padding:12px 14px;border:1px solid rgba(197,160,89,.16);border-radius:14px;background:rgba(0,0,0,.18)"><div style="margin-bottom:5px;color:rgba(241,220,167,.5);font-size:9px;letter-spacing:.2em;text-transform:uppercase">Revenue routing</div><div style="color:rgba(255,255,255,.84);font-size:12px;line-height:1.6;font-weight:600">Move them into the route guide, audit lane, or blueprint without vague follow-up.</div></div></div><div style="display:flex;flex-wrap:wrap;gap:10px"><a href=\"/aria.html\" style=\"display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:999px;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;text-decoration:none;font-family:Cinzel,serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;font-weight:700\">Open ARIA</a><a href=\"/aria-cinema.html\" style=\"display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:999px;border:1px solid rgba(197,160,89,.28);background:rgba(197,160,89,.06);color:#f1dca7;text-decoration:none;font-family:Cinzel,serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase\">Watch the reel</a><a href=\"/start-here.html\" style=\"display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:999px;border:1px solid rgba(197,160,89,.28);background:rgba(197,160,89,.06);color:#f1dca7;text-decoration:none;font-family:Cinzel,serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase\">Open route guide</a></div></div><div style="display:flex;flex-direction:column;gap:12px"><div style="overflow:hidden;border-radius:16px;border:1px solid rgba(197,160,89,.18);background:#070604"><video preload=\"metadata\" autoplay muted loop playsinline controls poster=\"/icons/icon-512.png\" style=\"width:100%;height:100%;min-height:360px;display:block;background:#070604;object-fit:cover\"><source src=\"/assets/video/aria-stats-and-purpose.mp4\" type=\"video/mp4\"></video></div><div style=\"padding:0 4px 2px\"><div style=\"margin-bottom:6px;color:rgba(241,220,167,.62);font-size:10px;letter-spacing:.22em;text-transform:uppercase\">Stable preview</div><p style=\"margin:0;color:rgba(255,255,255,.62);font-size:12px;line-height:1.7\">Stats and purpose reel for positioning, trust, and the next click.</p></div></div></div>';
             }
-            parent.insertBefore(intro, sc);
+            var aiEdge = document.querySelector(".ai-edge-band");
+            if (aiEdge && aiEdge.parentNode) { aiEdge.parentNode.insertBefore(intro, aiEdge); }
+            else { parent.insertBefore(intro, sc); }
             parent.insertBefore(aria, sc);
             ["aria-cinematics","aria-capabilities","aria-revolution","aria-demo"].forEach(function(id){
                      var el = document.getElementById(id);
                      if (el) parent.insertBefore(el, sc);
             });
+            (function () {
+                     function reveal() {
+                            intro.classList.add("in");
+                            var cnt = intro.querySelector(".ci-count");
+                            if (cnt && !cnt.getAttribute("data-done")) {
+                                   cnt.setAttribute("data-done", "1");
+                                   var to = parseInt(cnt.getAttribute("data-to"), 10) || 0, cur = 0;
+                                   var step = Math.max(1, Math.round(to / 28));
+                                   var t = setInterval(function () { cur += step; if (cur >= to) { cur = to; clearInterval(t); } cnt.textContent = cur; }, 34);
+                            }
+                     }
+                     if ("IntersectionObserver" in window) {
+                            var io = new IntersectionObserver(function (es) {
+                                   es.forEach(function (e) { if (e.isIntersecting) { reveal(); io.disconnect(); } });
+                            }, { threshold: 0.18 });
+                            io.observe(intro);
+                     } else { reveal(); }
+            })();
      }
      if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", init);
