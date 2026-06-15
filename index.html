@@ -1522,14 +1522,21 @@
 iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; }
 @media (max-width:1100px) { iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 900px !important; } }
 
-/* Pull the big gold-framed panels inward so their side borders frame content
-   instead of hugging the page edges (the "two gold lines" issue). */
-.ai-edge-shell { max-width: 1040px; margin-left: auto; margin-right: auto; }
-#introducing-aria .rounded-2xl { max-width: 1010px; margin-left: auto; margin-right: auto; }
-.aria-demo-frame { max-width: 1010px; margin-left: auto; margin-right: auto; }
-.route-shell { max-width: 1040px; margin-left: auto; margin-right: auto; }
+/* Gold frame near the page edges, content smaller and inset so the gold
+   border no longer overlaps content. Panels span near full width; their
+   inner content gets generous side padding to sit inside the lines. */
 @media (min-width: 1024px){
-  .ai-edge-band, #introducing-aria, #aria-demo, #next-move.route-section { padding-left: 40px; padding-right: 40px; }
+  /* panels (and their wrappers) reach close to the page side edges */
+  .ai-edge-band, #introducing-aria, #aria-demo, #next-move.route-section { padding-left: 14px; padding-right: 14px; }
+  #introducing-aria .max-w-6xl, #aria-demo .max-w-5xl { max-width: none !important; }
+  .ai-edge-shell, #introducing-aria .rounded-2xl, .aria-demo-frame, .route-shell {
+    max-width: none !important; margin-left: auto; margin-right: auto;
+  }
+  /* shrink content inside the frame -> clear gap to the gold lines */
+  .ai-edge-shell { padding-left: 60px; padding-right: 60px; }
+  #introducing-aria .rounded-2xl { padding-left: 48px; padding-right: 48px; }
+  .route-shell { padding-left: 60px; padding-right: 60px; }
+  .aria-demo-frame { padding-left: 44px; padding-right: 44px; }
 }
 </style>
 </head>
