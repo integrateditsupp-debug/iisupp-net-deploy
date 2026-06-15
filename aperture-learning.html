@@ -501,6 +501,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
     </div>
   </div>
 
+  <!-- LIVE AGENT ACTIVITY (mesh) -->
+  <div class="grid" style="grid-template-columns:1fr">
+    <div class="panel" style="animation-delay:.06s">
+      <div class="panel-h"><h2>Live agent activity · what each agent is doing</h2><span class="chip accent" id="mesh-chip">—</span></div>
+      <div class="rows" id="mesh-list" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));display:grid;gap:8px"><div class="empty">Awaiting mesh activity…</div></div>
+    </div>
+  </div>
+
   <!-- INTELLIGENCE -->
   <div class="grid g-intel">
     <div class="panel" style="animation-delay:.06s">
@@ -638,17 +646,19 @@ async function loadAll(){
   const headers = authHeaders();
   let ok = true;
   try {
-    const [sR,tR,cR,dR] = await Promise.all([
+    const [sR,tR,cR,dR,mR] = await Promise.all([
       fetch('/.netlify/functions/aria-learning-status',{headers}),
       fetch('/.netlify/functions/aria-escalation?action=tickets',{headers}),
       fetch('/.netlify/functions/aria-escalation?action=chatlog',{headers}),
-      fetch('/api/senior-director-agent',{headers}).catch((e)=>({ ok:false, status:0, error:e }))
+      fetch('/api/senior-director-agent',{headers}).catch((e)=>({ ok:false, status:0, error:e })),
+      fetch('/api/mesh-events?limit=60',{headers}).catch((e)=>({ ok:false, status:0, error:e }))
     ]);
     if (sR.status === 401 || tR.status === 401 || cR.status === 401){ logout(); return; }
     const status  = await sR.json().catch(()=>({}));
     const tickets = (await tR.json().catch(()=>({}))).tickets || [];
     const msgs    = (await cR.json().catch(()=>({}))).messages || [];
     const director = dR && dR.ok ? (await dR.json().catch(()=>({}))).digest : null;
+    const mesh = mR && mR.ok ? (await mR.json().catch(()=>({}))) : {};
     renderStats(status, tickets);
     renderLearning(status);
     renderTickets(tickets);
@@ -658,6 +668,7 @@ async function loadAll(){
     renderTimeline(msgs);
     renderHealth(tickets);
     renderDirector(director, dR);
+    renderMeshActivity(mesh.events||[], status.agents, mesh.stats);
   } catch(e){ ok=false; }
   setConn(ok);
 }
@@ -792,6 +803,43 @@ function renderLearning(s){
     ? roster.slice(0,24).map(a=>'<span class="r-chip'+(a.born?' born':'')+'"><span class="led"></span>'
         +esc(label(a.name)||a.name||'agent')+'</span>').join('')
     : '<div class="empty">Roster initialising…</div>';
+}
+
+/* ── render: live agent activity (mesh) ──────────────────────────── */
+function renderMeshActivity(events, roster, stats){
+  const list = $('mesh-list'), chip = $('mesh-chip');
+  const nowTs = Date.now();
+  // latest event per agent
+  const byAgent = {};
+  (events||[]).forEach(e=>{
+    if (!e || !e.agentId) return;
+    const cur = byAgent[e.agentId];
+    if (!cur || (e.ts||0) > (cur.ts||0)) byAgent[e.agentId] = e;
+  });
+  // fold in roster agents that have no recent mesh event (so the full fleet shows)
+  (Array.isArray(roster)?roster:[]).forEach(a=>{
+    const id = a && (a.name || a.id);
+    if (id && !byAgent[id]) byAgent[id] = { agentId:id, ts:0, kind:'idle', success:true, role:a.role };
+  });
+  const counts = (stats && stats.agentCounts) || {};
+  const rows = Object.values(byAgent).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const activeCount = rows.filter(r=>r.ts && (nowTs - r.ts) < 180000).length;
+  chip.textContent = activeCount + ' active · ' + rows.length + ' agents';
+  chip.className = 'chip ' + (activeCount ? 'accent' : '');
+  if (!rows.length){ list.innerHTML = '<div class="empty">No agent activity yet · mesh idle</div>'; return; }
+  list.innerHTML = rows.slice(0,24).map(r=>{
+    const age = r.ts ? (nowTs - r.ts) : Infinity;
+    const dot = !r.ts ? 'low' : age<120000 ? 'ok' : age<300000 ? 'high' : 'norm';
+    const name = esc(label(r.agentId) || r.agentId);
+    const n = counts[r.agentId] ? (' · '+counts[r.agentId]+' events/24h') : '';
+    const action = (r.kind==='idle')
+      ? 'idle · standing by'
+      : esc(String(r.kind||'event')) + (r.hop?(' · hop '+r.hop):'') + (r.success===false?' · retry':'');
+    const when = r.ts ? timeAgo(r.ts) : 'no run in 24h';
+    return '<div class="row"><div class="dot '+dot+'"></div><div class="body">'
+      + '<div class="t"><b>'+name+'</b></div>'
+      + '<div class="sub">'+action+' · '+when+n+'</div></div></div>';
+  }).join('');
 }
 
 /* ── render: tickets ─────────────────────────────────────────────── */
