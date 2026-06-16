@@ -525,7 +525,8 @@
   root.AriaBrain = api;
 })(typeof window !== 'undefined' ? window : this);
 
-/* ARIA brain adapter — wires AriaBrain into the live aria.html chat UI.
+/* ARIA brain adapter (premium look) — renders AriaBrain output inside ARIA's own
+   native message styling (aria-block / aria-tag / aria-content, you-block / you-bubble).
    GATED: only activates with ?brain=new (or window.__ARIA_NEW_BRAIN=true). */
 (function () {
   if (window.__AB_ADAPTER) return; window.__AB_ADAPTER = 1;
@@ -540,32 +541,33 @@
     if (send) { var s2 = send.cloneNode(true); send.parentNode.replaceChild(s2, send); send = s2; }
     var session = window.AriaBrain.newSession();
     var st = document.createElement('style'); st.textContent =
-      '.abrow{margin:10px 0}.abrow.you{display:flex}'
-      + '.abyou{margin-left:auto;max-width:80%;background:#1b1c20;border:1px solid #26282e;color:#dfe1e6;padding:9px 12px;border-radius:12px;font-size:14px}'
-      + '.abaria{max-width:90%;color:#e9dfc4;font-size:14px;line-height:1.55}'
-      + '.abaria .say{margin-bottom:4px}'
-      + '.abq{color:#cda85c;font-weight:500;margin:6px 0 8px}'
-      + '.abopts{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 2px}'
-      + '.abopt{font-size:13px;color:#e9dfc4;background:#14130d;border:1px solid #2c2718;border-radius:18px;padding:7px 13px;cursor:pointer}'
-      + '.abopt:hover{border-color:#cda85c;color:#f4ead0}'
-      + '.absteps{counter-reset:s;margin:8px 0 2px;padding:0;list-style:none}'
-      + '.absteps li{position:relative;padding:6px 0 6px 24px;border-bottom:1px solid #1c1a14;font-size:13.5px;color:#ded3b8}'
-      + '.absteps li:before{content:counter(s);counter-increment:s;position:absolute;left:0;top:6px;width:17px;height:17px;border-radius:50%;background:#cda85c;color:#191307;font:600 10px sans-serif;display:flex;align-items:center;justify-content:center}'
-      + '.abesc{margin-top:10px;font-size:12.5px;color:#9a937f;border-left:2px solid #3a3320;padding-left:10px}'
-      + '.abtail{margin-top:8px;font-size:12.5px;color:#8f886f;font-style:italic}'
-      + '.abnew{font:600 10px ui-monospace,monospace;letter-spacing:.12em;color:#0e0a04;background:#cda85c;border-radius:5px;padding:3px 8px;display:inline-block;margin:2px 0 6px}';
+      '.aria-content .ab-say{margin:0 0 6px}'
+      + '.aria-content .ab-ask{margin:8px 0 10px}'
+      + '.ab-opts{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px}'
+      + '.ab-opt{font-size:13px;color:#e9dfc4;background:rgba(201,168,92,.08);border:1px solid #3a3320;border-radius:18px;padding:7px 14px;cursor:pointer;transition:.15s}'
+      + '.ab-opt:hover{border-color:#cda85c;background:rgba(201,168,92,.16);color:#f6ecd2}'
+      + '.ab-steps{counter-reset:s;margin:10px 0 2px;padding:0;list-style:none}'
+      + '.ab-steps li{position:relative;padding:7px 0 7px 28px;border-bottom:1px solid rgba(201,168,92,.12);font-size:13.5px;line-height:1.5;color:#ded3b8}'
+      + '.ab-steps li:last-child{border-bottom:0}'
+      + '.ab-steps li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:6px;width:19px;height:19px;border-radius:50%;background:#cda85c;color:#191307;font:600 11px sans-serif;display:flex;align-items:center;justify-content:center}'
+      + '.ab-esc{margin-top:11px;font-size:12.5px;color:#b9b09a;border-left:2px solid #3a3320;padding-left:11px}'
+      + '.ab-tail{margin-top:9px;font-size:12.5px;color:#8f886f;font-style:italic}';
     document.head.appendChild(st);
-    var banner = document.createElement('div'); banner.className = 'abrow'; banner.innerHTML = '<span class="abnew">NEW BRAIN · PREVIEW</span>'; cm.appendChild(banner);
-    function youBubble(text){ var d=document.createElement('div'); d.className='abrow you'; var b=document.createElement('div'); b.className='abyou'; b.textContent=text; d.appendChild(b); cm.appendChild(d); cm.scrollTop=cm.scrollHeight; }
+    function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e; }
+    function youBubble(text){
+      var b=el('div','you-block'); b.appendChild(el('div','you-label','You')); b.appendChild(el('div','you-bubble',text));
+      cm.appendChild(b); cm.scrollTop=cm.scrollHeight;
+    }
     function ariaBubble(r){
-      var d=document.createElement('div'); d.className='abrow'; var box=document.createElement('div'); box.className='abaria'; d.appendChild(box);
-      if(r.say){ var s=document.createElement('div'); s.className='say'; s.textContent=r.say; box.appendChild(s); }
-      if(r.ask){ var q=document.createElement('div'); q.className='abq'; q.textContent=r.ask; box.appendChild(q); }
-      if(r.options){ var o=document.createElement('div'); o.className='abopts'; r.options.forEach(function(opt){ var c=document.createElement('span'); c.className='abopt'; c.textContent=opt; c.onclick=function(){ submit(opt); }; o.appendChild(c); }); box.appendChild(o); }
-      if(r.steps){ var ol=document.createElement('ol'); ol.className='absteps'; r.steps.forEach(function(x){ var li=document.createElement('li'); li.textContent=x; ol.appendChild(li); }); box.appendChild(ol); }
-      if(r.escalate){ var e=document.createElement('div'); e.className='abesc'; e.textContent='If that does not resolve it: '+r.escalate; box.appendChild(e); }
-      if(r.tail){ var t=document.createElement('div'); t.className='abtail'; t.textContent=r.tail; box.appendChild(t); }
-      cm.appendChild(d); cm.scrollTop=cm.scrollHeight;
+      var b=el('div','aria-block fade-in'); b.appendChild(el('div','aria-tag','ARIA'));
+      var c=el('div','aria-content');
+      if(r.say) c.appendChild(el('div','ab-say', r.say));
+      if(r.ask) c.appendChild(el('div','aria-headline ab-ask', r.ask));
+      if(r.options){ var o=el('div','ab-opts'); r.options.forEach(function(opt){ var chip=el('span','ab-opt',opt); chip.onclick=function(){ submit(opt); }; o.appendChild(chip); }); c.appendChild(o); }
+      if(r.steps){ var ol=el('ol','ab-steps'); r.steps.forEach(function(x){ ol.appendChild(el('li',null,x)); }); c.appendChild(ol); }
+      if(r.escalate) c.appendChild(el('div','ab-esc','If that does not resolve it: '+r.escalate));
+      if(r.tail) c.appendChild(el('div','ab-tail', r.tail));
+      b.appendChild(c); cm.appendChild(b); cm.scrollTop=cm.scrollHeight;
     }
     function submit(text){ if(!text||!text.trim()) return; youBubble(text); if(window.aexRun){ try{ window.aexRun(text); }catch(e){} } var r=window.AriaBrain.handleTurn(session,text); setTimeout(function(){ ariaBubble(r); }, 260); }
     inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); var v=inp.value; inp.value=''; submit(v); } });
