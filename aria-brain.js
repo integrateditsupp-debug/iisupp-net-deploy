@@ -224,7 +224,7 @@
     },
     {
       id: 'disk', label: 'Disk full / low space', tier: 'L1',
-      signals: [['disk full', 5], ['storage full', 5], ['low disk', 5], ['out of space', 5], ['c drive', 3], ['disk space', 4], ['storage', 2], ['cleanup', 2]],
+      signals: [['disk full', 5], ['storage full', 5], ['low disk', 5], ['out of space', 5], ['disk space', 4], ['c drive', 4], ['full', 3], ['disk', 3], ['storage', 2], ['cleanup', 2]],
       apps: ['disk'],
       clarifier: {
         q: 'Where is space running out?',
@@ -306,6 +306,111 @@
       ],
       escalate: 'If CPU/Disk/RAM all look normal but it\'s still slow, escalate — could be failing storage (check drive health) or a deeper OS issue.'
     }
+    ,
+    {
+      id: 'vpn', label: 'VPN won\'t connect / keeps dropping', tier: 'L2',
+      signals: [['vpn', 5], ['anyconnect', 4], ['globalprotect', 4], ['forticlient', 4], ['remote access', 3]],
+      apps: ['vpn'],
+      clarifier: { q: 'What is the VPN doing?', options: ['Won\'t connect at all', 'Connects then drops', 'Connected but can\'t reach work resources', 'Login / authentication fails'] },
+      branches: [
+        { when: ['won\'t connect', 'wont connect', 'can\'t connect', 'cant connect', 'no connect', 'stuck connecting'], cause: 'The VPN client can\'t establish the tunnel.', steps: ['Confirm your internet works without the VPN (open any website).', 'Fully quit and reopen the VPN client, then sign in again.', 'Check the VPN address/profile is the exact one IT gave you.', 'Reboot once — a stale network adapter often blocks the tunnel.'] },
+        { when: ['drop', 'drops', 'disconnect', 'keeps', 'unstable', 'reconnect'], cause: 'The tunnel is unstable — usually the underlying Wi-Fi or power settings.', steps: ['Test on a wired connection or closer to the router — weak Wi-Fi drops the VPN.', 'Device Manager -> your network adapter -> Properties -> Power Management -> uncheck "Allow the computer to turn off this device".', 'Turn off a second network (e.g., Wi-Fi while on Ethernet) so it doesn\'t switch mid-session.'] },
+        { when: ['can\'t reach', 'cant reach', 'resources', 'shares', 'cant access', 'can\'t access', 'mapped drive', 'intranet'], cause: 'Tunnel is up but routing/DNS to work resources is off.', steps: ['Disconnect and reconnect the VPN to refresh routes.', 'Open Command Prompt -> run  ipconfig /flushdns .', 'Try the resource by IP vs by name to separate DNS from routing, and share the result with IT.'] },
+        { when: ['auth', 'login', 'password', 'mfa', 'credentials', 'sign in', 'sign-in'], cause: 'Authentication to the VPN is failing.', steps: ['Re-enter your username exactly as IT specified.', 'Complete the MFA prompt if one appears (check your Authenticator app).', 'If it still rejects valid credentials, your VPN account or certificate may need a reset by IT.'] }
+      ],
+      escalate: 'If reconnect, reboot, and DNS flush don\'t fix it, escalate with the exact client name + error — could be a certificate, gateway, or account-policy issue.'
+    },
+    {
+      id: 'teams', label: 'Microsoft Teams audio / video / join', tier: 'L1',
+      signals: [['teams', 5], ['cant hear', 3], ['camera not', 3], ['mic not', 3], ['cant join', 3]],
+      apps: ['teams'],
+      clarifier: { q: 'What is Teams doing?', options: ['No mic / they can\'t hear me', 'No sound / I can\'t hear them', 'Camera not working', 'Can\'t join or it crashes'] },
+      branches: [
+        { when: ['mic', 'microphone', 'can\'t hear me', 'cant hear me', 'no one can hear'], cause: 'Teams isn\'t using the right microphone or lacks permission.', steps: ['In a call -> "..." -> Settings -> Devices -> pick the correct Microphone and speak to see the level move.', 'Windows Settings -> Privacy & security -> Microphone -> allow Microsoft Teams.', 'Unplug/replug a USB headset, or fully restart Teams (tray icon -> Quit, reopen).'] },
+        { when: ['no sound', 'can\'t hear', 'cant hear them', 'speaker', 'no audio'], cause: 'Output device or volume is the issue.', steps: ['Teams -> Settings -> Devices -> set the correct Speaker, then "Make a test call".', 'Windows volume icon -> confirm the right output device and that it isn\'t muted.', 'Restart Teams if the device list looks wrong.'] },
+        { when: ['camera', 'webcam', 'video'], cause: 'Camera not selected or blocked.', steps: ['Teams -> Settings -> Devices -> choose the correct Camera (preview should appear).', 'Windows Settings -> Privacy & security -> Camera -> allow Microsoft Teams.', 'Close other apps holding the camera (Zoom, Camera app), then retry.'] },
+        { when: ['join', 'crash', 'won\'t open', 'wont open', 'freezes', 'stuck'], cause: 'Teams app is stuck — usually a cache issue.', steps: ['Fully quit Teams: right-click the tray icon -> Quit.', 'Clear the cache: delete the contents of  %appdata%\\Microsoft\\Teams  (new Teams: %localappdata%\\Packages\\MSTeams_*).', 'Reopen Teams and sign in again.'] }
+      ],
+      escalate: 'If devices are correct and a cache-clear doesn\'t help, escalate — could be a driver, headset hardware, or org-policy issue.'
+    },
+    {
+      id: 'onedrive', label: 'OneDrive not syncing', tier: 'L1',
+      signals: [['onedrive', 5], ['one drive', 5], ['not syncing', 3], ['sync error', 4]],
+      apps: ['onedrive'],
+      clarifier: { q: 'What\'s happening with OneDrive?', options: ['Stuck "syncing" / spinning', 'Sync paused or error', 'Files missing / not updating', 'Sign-in / account issue'] },
+      branches: [
+        { when: ['stuck', 'spinning', 'processing', 'forever', 'hung'], cause: 'OneDrive sync is stuck.', steps: ['Click the OneDrive cloud icon (system tray) -> if it says Paused, Resume.', 'Quit OneDrive (cloud icon -> gear -> Quit OneDrive), then reopen it from Start.', 'A single large or open file can block it — close Office apps and let it catch up.'] },
+        { when: ['paused', 'error', 'red', 'failed'], cause: 'Sync is paused or erroring.', steps: ['OneDrive icon -> read the error; "Resume syncing" if paused.', 'Make sure you\'re signed in (icon -> gear -> Settings -> Account).', 'Check you have free disk and are under your storage quota (the error usually says which).'] },
+        { when: ['missing', 'not updating', 'old version', 'not showing', 'gone'], cause: 'Files aren\'t reflecting the latest sync.', steps: ['In File Explorer, confirm the file shows a green check (synced) vs a cloud (online-only).', 'Right-click the folder -> "Always keep on this device" if you need it offline.', 'Check the same file on onedrive.com to see where the newest copy is.'] },
+        { when: ['sign in', 'sign-in', 'account', 'login', 'wrong account'], cause: 'OneDrive account/sign-in problem.', steps: ['OneDrive -> gear -> Settings -> Account -> confirm it\'s the correct work account.', 'If wrong, "Unlink this PC" and sign back in with the right account.', 'Re-enter credentials/MFA if prompted.'] }
+      ],
+      escalate: 'If unlink/relink and resume don\'t fix it, escalate — could be known-folder-move, quota, or tenant policy.'
+    },
+    {
+      id: 'mfa', label: 'MFA / Authenticator not working', tier: 'L1',
+      signals: [['authenticator', 5], ['mfa', 4], ['2fa', 4], ['verification code', 4], ['not getting code', 4], ['approve sign', 4]],
+      apps: ['password'],
+      clarifier: { q: 'What\'s happening with the verification?', options: ['No prompt / no code arrives', 'Code is rejected', 'New phone / lost device', 'Too many / unexpected prompts'] },
+      branches: [
+        { when: ['no prompt', 'no code', 'not getting', 'didn\'t get', 'didnt get', 'nothing comes'], cause: 'The MFA prompt or code isn\'t reaching you.', steps: ['Open the Microsoft Authenticator app manually and check for a pending approval.', 'Confirm the phone has signal/Wi-Fi and notifications are on for Authenticator.', 'Use a backup method (text or call) via "Other ways to verify" if offered.'] },
+        { when: ['rejected', 'wrong code', 'invalid', 'expired', 'not accepted'], cause: 'Codes are refused — usually a clock-sync issue.', steps: ['On the phone, set Date & Time to "Set automatically" — TOTP codes fail if the clock drifts.', 'Enter the code quickly (they rotate every 30 seconds).', 'In Authenticator, confirm you\'re on the correct work account.'] },
+        { when: ['new phone', 'lost', 'lost device', 'replaced', 'broke', 'reset phone'], cause: 'MFA is tied to a device you no longer have.', steps: ['Use a remaining method (backup codes, text, or an old trusted device) to get in.', 'Then go to aka.ms/mfasetup and add the new phone\'s Authenticator.', 'If you have no working method, an admin must reset your MFA registration.'] },
+        { when: ['too many', 'spam', 'keeps asking', 'unexpected', 'repeated', 'didn\'t start'], cause: 'Repeated prompts — do not approve any you didn\'t start.', steps: ['Do NOT approve a prompt you didn\'t trigger — it can mean someone has your password.', 'Change your password now if you suspect that.', 'Tell IT so they can review sign-in logs and lock it down.'] }
+      ],
+      escalate: 'Lost all methods or seeing unexpected prompts? Escalate to identity admin immediately for an MFA reset and account review.'
+    },
+    {
+      id: 'browser', label: 'Browser slow / pages won\'t load / crashing', tier: 'L1',
+      signals: [['browser', 5], ['chrome', 5], ['firefox', 5], ['edge', 4], ['page won\'t load', 4], ['website won\'t load', 4]],
+      apps: ['browser'],
+      clarifier: { q: 'What is the browser doing?', options: ['Pages won\'t load at all', 'Very slow / freezing', 'One site fails, others work', 'Crashes or won\'t open'] },
+      branches: [
+        { when: ['won\'t load', 'wont load', 'can\'t load', 'cant load', 'no internet', 'nothing loads'], cause: 'Likely connectivity or DNS, not the browser itself.', steps: ['Try another site — if all fail, it\'s the network (see the Wi-Fi/internet help).', 'Open Command Prompt -> run  ipconfig /flushdns .', 'Open an Incognito/InPrivate window to rule out extensions and cache.'] },
+        { when: ['slow', 'freezing', 'laggy', 'memory', 'high cpu'], cause: 'Too many tabs/extensions or a stale cache.', steps: ['Clear cache: Ctrl+Shift+Delete -> Cached images and files -> Clear.', 'Disable heavy or unknown extensions (menu -> Extensions).', 'Close unused tabs and update the browser (menu -> Help -> About).'] },
+        { when: ['one site', 'certain site', 'this site', 'specific', 'only on'], cause: 'A single-site issue — cache, cookies, or the site itself.', steps: ['Hard refresh the page: Ctrl+F5.', 'Clear cookies for that site (lock icon -> Site settings -> Clear data).', 'Open the site in another browser to tell if it\'s the site or your browser.'] },
+        { when: ['crash', 'won\'t open', 'wont open', 'closes', 'freezes on open'], cause: 'Browser profile or extension is corrupt.', steps: ['Close all browser windows (Task Manager -> End task if needed), then reopen.', 'Launch without extensions (Incognito/InPrivate) to test.', 'If it persists, reset browser settings or create a new profile.'] }
+      ],
+      escalate: 'If a clean profile + network checks both fail, escalate — could be proxy, certificate, or a pushed-policy/extension issue.'
+    },
+    {
+      id: 'bitlocker', label: 'BitLocker recovery key prompt', tier: 'L2',
+      signals: [['bitlocker', 5], ['recovery key', 5], ['recovery screen', 4], ['asking for key', 4]],
+      apps: ['bitlocker'],
+      clarifier: { q: 'Where are you seeing it?', options: ['Blue BitLocker screen at boot', 'After a Windows/BIOS update', 'I don\'t have the key', 'It comes back every boot'] },
+      branches: [
+        { when: ['boot', 'startup', 'recovery screen', 'at start', 'blue screen asking'], cause: 'BitLocker tripped and wants the 48-digit recovery key.', steps: ['Note the Key ID on screen (first 8 characters).', 'Get the key: work device -> sign in at aka.ms/myrecoverykey, or give IT that Key ID.', 'Enter the 48-digit key to unlock and boot.'] },
+        { when: ['update', 'bios', 'firmware'], cause: 'A firmware/secure-boot change triggered BitLocker.', steps: ['Enter the recovery key once to get in (see where to find it above).', 'It usually won\'t reprompt afterward; if a BIOS change caused it, IT can suspend/resume BitLocker to re-seal it.'] },
+        { when: ['don\'t have', 'dont have', 'no key', 'can\'t find', 'lost key'], cause: 'You need to retrieve the recovery key.', steps: ['Work device: aka.ms/myrecoverykey signed in with your work account, or contact IT with the Key ID on screen.', 'Personal device: account.microsoft.com/devices -> the device -> BitLocker keys.', 'Without any key the drive cannot be unlocked — IT/recovery is required.'] },
+        { when: ['every boot', 'keeps', 'again', 'each time'], cause: 'BitLocker re-prompts every start — protection isn\'t re-sealing.', steps: ['Get in with the key, then have IT suspend/resume BitLocker (or run manage-bde to re-enable protectors).', 'A failing TPM or a pending BIOS setting can cause this — flag it to IT.'] }
+      ],
+      escalate: 'If the recovery key can\'t be found or it loops every boot, escalate to IT — needs the key from the directory and a TPM/BIOS check.'
+    },
+    {
+      id: 'bluescreen', label: 'PC crashing / blue screen / restarts', tier: 'L2',
+      signals: [['blue screen', 5], ['bsod', 5], ['keeps restarting', 4], ['stop code', 4], ['keeps crashing', 4]],
+      apps: [],
+      clarifier: { q: 'When does it crash?', options: ['Random / anytime', 'During one specific app or task', 'On startup / boot loop', 'After a recent update or new hardware'] },
+      branches: [
+        { when: ['random', 'anytime', 'no pattern', 'out of nowhere'], cause: 'Random crashes — often a driver, memory, or overheating.', steps: ['Note the stop code on the blue screen (e.g., "MEMORY_MANAGEMENT") — it points at the cause.', 'Run Windows Memory Diagnostic (search it in Start) to test RAM.', 'Make sure vents/fans are clear; update graphics + chipset drivers.'] },
+        { when: ['one app', 'specific', 'during', 'when i', 'a game', 'task'], cause: 'A single app or its driver triggers it.', steps: ['Update or reinstall that app and its related driver (e.g., GPU driver for a game/CAD app).', 'Note whether the same stop code appears each time and share it with IT.'] },
+        { when: ['boot', 'startup', 'loop', 'won\'t start', 'wont start', 'before login'], cause: 'Boot-time crash — needs recovery options.', steps: ['Power on/off 3 times to trigger Automatic Repair -> Advanced options.', 'Try Startup Repair, then Safe Mode (Advanced options -> Startup Settings).', 'If it began after a change, use System Restore to a point before it.'] },
+        { when: ['update', 'new hardware', 'after install', 'added', 'driver'], cause: 'A recent update/driver/hardware change caused it.', steps: ['Boot to Safe Mode and uninstall the recent update or roll back the driver (Device Manager -> device -> Driver -> Roll Back).', 'Reseat or remove newly added hardware (RAM, dock) and test.'] }
+      ],
+      escalate: 'Repeated blue screens with a consistent stop code, or boot loops Startup Repair can\'t fix, go to IT — likely hardware (RAM/disk) or a bad driver.'
+    },
+    {
+      id: 'audio', label: 'No sound / audio not working', tier: 'L1',
+      signals: [['no sound', 5], ['no audio', 5], ['sound not working', 5], ['speakers', 3], ['headphones', 3]],
+      apps: [],
+      clarifier: { q: 'Where is the sound missing?', options: ['Everywhere on the PC', 'Only in headphones / a device', 'Only in one app', 'Output is dead (mic still works)'] },
+      branches: [
+        { when: ['everywhere', 'all', 'whole', 'nothing', 'completely', 'no sound at all'], cause: 'No output device selected or the audio service stalled.', steps: ['Click the volume icon -> confirm the correct output device and that it isn\'t muted.', 'Right-click the volume icon -> Sound settings -> pick the right Output device.', 'Restart the audio service: Win+R -> services.msc -> "Windows Audio" -> Restart.'] },
+        { when: ['headphone', 'headset', 'device', 'usb', 'bluetooth', 'plugged'], cause: 'The headset/device isn\'t the active output.', steps: ['Replug the headset; for Bluetooth, re-pair it (Settings -> Bluetooth).', 'Sound settings -> set the headset as the Output device.', 'Try another port or cable to rule out hardware.'] },
+        { when: ['one app', 'only in', 'specific app', 'this program'], cause: 'That app is muted or pointed at the wrong device.', steps: ['Right-click volume -> Open Volume mixer -> make sure that app isn\'t muted or low.', 'In the app\'s own audio settings, pick the correct output device.', 'Restart the app.'] },
+        { when: ['mic works', 'only output', 'can talk', 'they hear me', 'output'], cause: 'Output device specifically is wrong or disabled.', steps: ['Sound settings -> Output -> select the right device and click Test.', 'If the device is missing: Device Manager -> Sound -> enable/update the audio driver.', 'Reboot if the device still doesn\'t appear.'] }
+      ],
+      escalate: 'If no output device appears at all after a driver update + reboot, escalate — likely an audio driver or hardware fault.'
+    },
   ];
 
   // generic low-confidence triage (no canned dump; asks a smart question)
