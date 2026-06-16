@@ -532,7 +532,7 @@
   if (window.__AB_ADAPTER) return; window.__AB_ADAPTER = 1;
   function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
   ready(function () {
-    if (!/[?&]brain=new/.test(location.search) && !window.__ARIA_NEW_BRAIN) return;
+    if (/[?&]brain=old/.test(location.search)) return;  // FLIPPED: new brain is default for everyone; ?brain=old falls back to the old engine
     var cm = document.getElementById('chatMessages');
     var inp = document.getElementById('askInput');
     var send = document.getElementById('sendBtn');
