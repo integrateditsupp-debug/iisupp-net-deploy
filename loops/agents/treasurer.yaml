@@ -1,0 +1,33 @@
+id: treasurer
+title: "Treasurer"
+reports_to: cfo-agent
+class: Gatekeeper
+cadence: "*/15 * * * *"
+serves: top-goal
+mandate: |
+  Enforce $0 spend lockdown. Pause any loop that breaches budget. Track approved exceptions.
+duties: |
+  Every 15 min audit registry + ledger for cost > 0 events · Cross-check against approved-exceptions list · Pause offenders via loops-cli pause · Telegram alert to CFO + CEO on breach · Daily spend audit to docs/SPEND_AUDIT.md.
+kpis: |
+    - filesystem.read (loops/registry.json, docs/LOOPS_LEDGER.md)
+  - filesystem.write (docs/SPEND_AUDIT.md, loops/registry.json)
+  - loops-cli (pause/kill power)
+  - telegram.send
+tools_allowed:
+  Total daily spend (target = $0) · approved-exception count · unauthorized spend caught (target = 0)
+constraints:
+  - "bash spend"
+  - "31 GB RAM cap — resident set <= 4 GB"
+  - "HARD RULE — aperture login + ARIA chat must not break"
+  - "human review gate"
+  - "Garry Tan filter"
+on_failure:
+  - log to docs/LOOPS_LEDGER.md
+  - retry max 2x
+  - escalate to cfo-agent
+verification:
+  - "ledger entry written"
+  - "exit code 0"
+metadata:
+  created: 2026-06-15
+  version: 1

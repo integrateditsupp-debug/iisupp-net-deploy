@@ -1,0 +1,32 @@
+id: demand-gen
+title: "Demand Gen Manager"
+reports_to: cmo-agent
+class: Hunter
+cadence: "*/15 * * * *"
+serves: top-goal
+mandate: |
+  Trend Radar continuous scanning. Feed Marketing pipeline. Campaign planning.
+duties: |
+  Every 15 min trend scan (Google Trends, Reddit, HN, Indeed) · Score per LOOPS_SPEC §4 formula · Forward high-fit trends to Content Strategist · Campaign planning + channel mix · Monthly campaign retrospective · Track lead source attribution.
+kpis: |
+    - fetch
+  - filesystem.read (loops/registry.json)
+  - filesystem.write (outputs/trend-radar/, docs/REVIEW_QUEUE.md)
+tools_allowed:
+  Trends scanned/day · trends-to-product conversion · campaign ROI · cost per qualified lead
+constraints:
+  - "bash spend"
+  - "31 GB RAM cap — resident set <= 4 GB"
+  - "HARD RULE — aperture login + ARIA chat must not break"
+  - "human review gate"
+  - "Garry Tan filter"
+on_failure:
+  - log to docs/LOOPS_LEDGER.md
+  - retry max 2x
+  - escalate to cmo-agent
+verification:
+  - "ledger entry written"
+  - "exit code 0"
+metadata:
+  created: 2026-06-15
+  version: 1

@@ -1,0 +1,47 @@
+id: lead-radar
+title: "Gov + biz IT lead radar"
+serves: top-goal
+goal: |
+  Each day pull the CanadaBuys "new tender notice" CSV + MERX search results +
+  Ontario Tenders RSS. Filter by 40+ IT-keyword list. Score each match 0-100.
+  HOT-flag any score >= 60. Dedup against /backups/lead-radar/seen.json.
+  Emit at most 5 hot matches/day as one digest email + append to REVIEW_QUEUE.md.
+  Stop conditions: 30 days zero hits → escalate; owner kill-switch.
+owner: codex
+cadence: "0 13 * * *"             # 09:00 ET daily
+budget:
+  cost_usd_per_run: 0
+  time_seconds_max: 60
+  llm_tokens_max: 0
+inputs:
+  - https://canadabuys.canada.ca/opendata/pub/newTenderNotice-nouvelAvisAppelOffres.csv
+  - /backups/lead-radar/seen.json
+outputs:
+  - aria_brain_pack/bits/learn-trend-tender-{slug}.json   # review_status: pending
+  - docs/REVIEW_QUEUE.md            # appended rows
+  - email digest via Resend
+tools_allowed:
+  - fetch
+  - filesystem.write
+  - email.resend
+constraints:
+  - "$0 spend"
+  - "Garry Tan filter on the email digest layout"
+  - "human review gate before LIVE publish of any tender follow-up content"
+  - "HARD RULE untouched"
+spawns:
+  - id: tender-enrich
+    when: "match.score >= 60"
+verification:
+  - "seen.json bytes increased OR digest body says 'no fresh matches'"
+  - "no HTTP errors from upstream CSV in run log"
+  - "REVIEW_QUEUE.md new rows have non-empty title + url"
+on_failure:
+  - log to docs/LOOPS_LEDGER.md
+  - retry max 2 times with 5-min backoff
+  - escalate to Ahmad via Telegram if 3rd failure within 24h
+metadata:
+  created: 2026-06-13
+  version: 1
+  source: LOOPS_SPEC.md §8b
+  wraps_existing: netlify/functions/aria-lead-radar.mjs

@@ -1,0 +1,31 @@
+id: privacy-officer
+title: "Privacy Officer"
+reports_to: cco-agent
+class: Verifier
+cadence: "0 12 * * *"
+serves: top-goal
+mandate: |
+  PIPEDA + PHIPA + GDPR posture. Data retention. Privacy impact assessments.
+duties: |
+  Daily noon scan of data flows · PII inventory maintenance · Retention policy enforcement · DSR (data subject request) handling · PIA for new features · Annual privacy audit · Privacy training for human users.
+kpis: |
+    - filesystem.read
+  - filesystem.write (docs/PRIVACY_POSTURE.md, docs/REVIEW_QUEUE.md)
+tools_allowed:
+  Privacy incidents (target 0) · DSR SLA · retention compliance · PIA coverage
+constraints:
+  - "bash spend"
+  - "31 GB RAM cap — resident set <= 4 GB"
+  - "HARD RULE — aperture login + ARIA chat must not break"
+  - "human review gate"
+  - "Garry Tan filter"
+on_failure:
+  - log to docs/LOOPS_LEDGER.md
+  - retry max 2x
+  - escalate to cco-agent
+verification:
+  - "ledger entry written"
+  - "exit code 0"
+metadata:
+  created: 2026-06-15
+  version: 1

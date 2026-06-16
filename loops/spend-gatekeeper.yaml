@@ -1,0 +1,42 @@
+id: spend-gatekeeper
+title: "Spend-lockdown gatekeeper"
+serves: top-goal
+goal: |
+  Continuously audit every loop's run cost. Sum across all loops per day.
+  Pause any loop whose cumulative day spend > its budget OR whose run
+  triggered cost > 0 without explicit approval flag in registry.
+  Stop conditions: none — runs forever until Ahmad lifts the lockdown.
+owner: codex
+cadence: "*/15 * * * *"            # every 15 min
+budget:
+  cost_usd_per_run: 0
+  time_seconds_max: 20
+  llm_tokens_max: 0
+inputs:
+  - docs/LOOPS_LEDGER.md
+  - loops/registry.json
+outputs:
+  - pause action on offending loops (via /loops pause <id>)
+  - docs/SPEND_AUDIT.md
+  - Telegram alert if any loop tried to spend without approval
+tools_allowed:
+  - filesystem.read
+  - filesystem.write
+  - loops-cli
+  - telegram.send
+constraints:
+  - "higher privilege — can pause any loop including itself"
+  - "approved exception requires Ahmad's signed entry in loops/registry.json"
+  - "default cap: $0/loop/run, $0/day total"
+spawns: []
+verification:
+  - "SPEND_AUDIT.md updated within last 15 min"
+  - "no loop running today has cost > 0 unless approved: true"
+on_failure:
+  - if audit can't run: alert Ahmad, do not auto-resume
+  - if a loop refuses pause: kill it via /loops kill <id>
+metadata:
+  created: 2026-06-13
+  version: 1
+  source: LOOPS_SPEC.md §8e
+  priority: highest

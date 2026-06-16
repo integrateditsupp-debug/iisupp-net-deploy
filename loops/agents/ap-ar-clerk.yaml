@@ -1,0 +1,32 @@
+id: ap-ar-clerk
+title: "AP/AR Clerk"
+reports_to: cfo-agent
+class: Drafter
+cadence: "0 21 * * *"
+serves: top-goal
+mandate: |
+  Invoice generation + payment tracking + vendor payment scheduling.
+duties: |
+  Daily 21:00 ET pull AR aging from Stripe · Generate invoices via Stripe API (no auto-send) · Send to AE for client review · Track AP via vendor list · Alert CFO on 30/60/90-day buckets · Month-end AR/AP report.
+kpis: |
+    - stripe-api (read + draft only, no charge)
+  - filesystem.read
+  - filesystem.write (docs/financials/ar-aging.md)
+tools_allowed:
+  DSO · AR aging mix · AP on-time rate · invoice cycle time
+constraints:
+  - "bash spend"
+  - "31 GB RAM cap — resident set <= 4 GB"
+  - "HARD RULE — aperture login + ARIA chat must not break"
+  - "human review gate"
+  - "Garry Tan filter"
+on_failure:
+  - log to docs/LOOPS_LEDGER.md
+  - retry max 2x
+  - escalate to cfo-agent
+verification:
+  - "ledger entry written"
+  - "exit code 0"
+metadata:
+  created: 2026-06-15
+  version: 1

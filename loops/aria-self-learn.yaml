@@ -1,0 +1,45 @@
+id: aria-self-learn
+title: "ARIA autonomous KB self-learning"
+serves: top-goal
+goal: |
+  Every 6 hours, scan ARIA chat audit log for queries that returned a generic
+  fallback or low-confidence answer. For each, generate 1-3 candidate bits in
+  aria_brain_pack/bits/ following the canonical schema (LOOPS_SPEC §1).
+  All new bits are review_status: pending. Max 50 bits/day.
+  Stop when 50 bits/day reached OR fallback rate drops below 5%.
+owner: codex
+cadence: "0 */6 * * *"            # every 6 hours
+budget:
+  cost_usd_per_run: 0
+  time_seconds_max: 180
+  llm_tokens_max: 0                # Phase 1 = template-driven; Phase 2 = governed LLM after revenue
+inputs:
+  - netlify/functions/aria-audit-ledger output
+  - knowledge-base/_meta/manifest.json
+outputs:
+  - aria_brain_pack/bits/learn-{agent}-{topic}-{shortid}.json
+  - docs/REVIEW_QUEUE.md            # one row per batch of bits emitted
+tools_allowed:
+  - filesystem.read
+  - filesystem.write
+constraints:
+  - "$0 spend Phase 1"
+  - "bit-native style (each bit standalone with own escalation trigger)"
+  - "no bit goes LIVE without review_status: approved"
+  - "schema validation must pass — reject bits missing required fields"
+spawns:
+  - id: bit-source-verifier
+    when: "bit.source_url != null"
+verification:
+  - "every new bit passes JSON schema validation"
+  - "every new bit has review_status: pending"
+  - "no duplicate keys vs existing bits/ directory"
+on_failure:
+  - log to docs/LOOPS_LEDGER.md
+  - retry max 2 times
+  - escalate via Telegram if bits stop being generated for 24h
+metadata:
+  created: 2026-06-13
+  version: 1
+  source: LOOPS_SPEC.md §8c
+  wraps_existing: Codex's autonomous learning loop generating 276 bits/14d as of 2026-06-03

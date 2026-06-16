@@ -1,0 +1,40 @@
+id: goal-alignment
+title: "Daily goal-alignment auditor"
+serves: top-goal
+goal: |
+  Once a day at 06:00 ET, read CURRENT_GOAL.md. For each loop in registry.json,
+  verify its serves: field points to top-goal AND its goal: paragraph mentions
+  at least one sub-goal token. Flag misalignment in LOOPS_ALIGNMENT.md.
+  Stop conditions: none — daily forever.
+owner: joint                       # either Codex or Cowork can run; first to wake handles it
+cadence: "0 10 * * *"              # 06:00 ET daily
+budget:
+  cost_usd_per_run: 0
+  time_seconds_max: 30
+  llm_tokens_max: 0
+inputs:
+  - loops/CURRENT_GOAL.md
+  - loops/registry.json
+  - loops/*.yaml
+outputs:
+  - docs/LOOPS_ALIGNMENT.md        # daily snapshot, append-only
+  - REVIEW_QUEUE entry if drift detected (loops not serving top-goal)
+tools_allowed:
+  - filesystem.read
+  - filesystem.write
+constraints:
+  - "$0 spend"
+  - "this is a soft gate — it flags drift, doesn't pause loops"
+  - "Ahmad approves any loop that legitimately diverges (e.g. infra maintenance)"
+spawns: []
+verification:
+  - "alignment file updated today"
+  - "every loop has a non-empty serves: AND its goal: text references a sub-goal"
+on_failure:
+  - log to LOOPS_LEDGER.md
+  - retry once
+  - on second failure: notify Ahmad (not urgent)
+metadata:
+  created: 2026-06-13
+  version: 1
+  source: LOOPS_SPEC.md §8g

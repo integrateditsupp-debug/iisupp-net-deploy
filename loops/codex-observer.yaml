@@ -1,0 +1,45 @@
+id: codex-observer
+title: "Codex working-style observer"
+serves: top-goal
+goal: |
+  Every working-day at 09:00 and 17:00, run observe-codex.mjs (--since=2d).
+  Compare today's playbook to yesterday's. Flag any new patterns:
+  new directories, churn-size shifts, new commit verbs, missed audit-tag commits.
+  Emit summary into outputs/codex-observer/playbook-delta.md so Cowork
+  can absorb Codex's evolving style and stay coordinated.
+  Stop conditions: 7 consecutive runs with no new patterns → cadence to weekly.
+owner: cowork                      # Cowork lane (out-of-repo observation)
+cadence: "0 13,21 * * 1-5"         # 09:00 + 17:00 ET, Mon-Fri
+budget:
+  cost_usd_per_run: 0
+  time_seconds_max: 60
+  llm_tokens_max: 0
+inputs:
+  - iisupp-net-deploy/.git
+  - outputs/codex-observer/observe-codex.mjs
+  - prior .codex-observer/codex-playbook.md
+outputs:
+  - .codex-observer/codex-playbook.md (rolling)
+  - .codex-observer/last-scan.json
+  - outputs/codex-observer/playbook-delta.md (new patterns only)
+tools_allowed:
+  - bash (git log / git show only)
+  - filesystem.read
+  - filesystem.write
+constraints:
+  - "READ-ONLY — never edits Codex's code, never commits, never pushes"
+  - "if .git/index.lock exists, wait 30s + retry; abort after 3 retries"
+spawns: []
+verification:
+  - "playbook file's generatedAt timestamp updated"
+  - "exit code 0"
+  - "playbook contains at least one Codex commit if Codex committed in window"
+on_failure:
+  - log to LOOPS_LEDGER.md
+  - retry once with 60s delay
+  - escalate: maybe Codex auth config changed
+metadata:
+  created: 2026-06-13
+  version: 1
+  source: LOOPS_SPEC.md §8d
+  wraps_existing: outputs/codex-observer/observe-codex.mjs

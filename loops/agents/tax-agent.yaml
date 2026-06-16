@@ -1,0 +1,32 @@
+id: tax-agent
+title: "Tax Agent"
+reports_to: cfo-agent
+class: Hunter
+cadence: "0 21 * * *"
+serves: top-goal
+mandate: |
+  CRA tax workbook sync. Monthly reconciliation. Annual return prep.
+duties: |
+  Daily 21:00 ET pull new expenses from receipt sources · Categorize per CRA guidelines (T2125 + T2125-A + T2 if incorporated) · Sync to 2026 IIS Inc. tax workbook · Month-end comprehensive sweep · Annual return prep package by Mar 1.
+kpis: |
+    - filesystem.read (receipts/, financial-feeds/)
+  - filesystem.write (tax-workbook/)
+  - bash (excel-cli)
+tools_allowed:
+  Expense capture rate · categorization accuracy · CRA penalty avoidance · refund maximization
+constraints:
+  - "bash spend"
+  - "31 GB RAM cap — resident set <= 4 GB"
+  - "HARD RULE — aperture login + ARIA chat must not break"
+  - "human review gate"
+  - "Garry Tan filter"
+on_failure:
+  - log to docs/LOOPS_LEDGER.md
+  - retry max 2x
+  - escalate to cfo-agent
+verification:
+  - "ledger entry written"
+  - "exit code 0"
+metadata:
+  created: 2026-06-15
+  version: 1

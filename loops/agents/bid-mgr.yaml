@@ -1,0 +1,32 @@
+id: bid-mgr
+title: "Bid Manager"
+reports_to: coo-agent
+class: Enricher
+cadence: "event-driven"
+serves: top-goal
+mandate: |
+  Enrich HOT tenders. Pull eval criteria, value, required certs. Draft fit analysis.
+duties: |
+  Fetch full solicitation page · Extract eval criteria + estimated value + required certs + deadline · IIS-fit score 0-100 from capability matrix · Brief summary in outputs/tender-briefs/ · Append to KB bit · Flag iis_fit >= 80 to AE.
+kpis: |
+    - fetch
+  - filesystem.read (knowledge-base/capabilities/)
+  - filesystem.write (outputs/tender-briefs/, aria_brain_pack/bits/)
+tools_allowed:
+  Tenders enriched · iis_fit accuracy · time-to-brief · AE acceptance rate
+constraints:
+  - "bash spend"
+  - "31 GB RAM cap — resident set <= 4 GB"
+  - "HARD RULE — aperture login + ARIA chat must not break"
+  - "human review gate"
+  - "Garry Tan filter"
+on_failure:
+  - log to docs/LOOPS_LEDGER.md
+  - retry max 2x
+  - escalate to coo-agent
+verification:
+  - "ledger entry written"
+  - "exit code 0"
+metadata:
+  created: 2026-06-15
+  version: 1

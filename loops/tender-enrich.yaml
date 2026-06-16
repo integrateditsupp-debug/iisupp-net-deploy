@@ -1,0 +1,46 @@
+id: tender-enrich
+title: "Tender enrichment (child of lead-radar)"
+serves: top-goal
+goal: |
+  When lead-radar emits a match with score >= 60, this loop fetches the
+  full solicitation page, extracts evaluation criteria, estimated value,
+  required certifications, deadline. Scores IIS-fit (0-100) based on
+  capability match. Writes enriched record back into the tender's bit
+  + appends a one-page summary into outputs/tender-briefs/{ref}.md.
+  Stop conditions: target tender's closing date passed, or owner kill.
+owner: codex
+cadence: event-driven              # triggered by lead-radar.spawns
+budget:
+  cost_usd_per_run: 0
+  time_seconds_max: 90
+  llm_tokens_max: 0                # template extraction Phase 1; LLM Phase 2 if revenue
+inputs:
+  - parent match record from lead-radar
+  - knowledge-base/capabilities/iis-capability-matrix.json   (TO BUILD)
+outputs:
+  - update aria_brain_pack/bits/learn-trend-tender-{ref}.json with enrichment fields
+  - outputs/tender-briefs/{ref}.md (human-readable one-pager)
+  - REVIEW_QUEUE row if iis_fit >= 80
+tools_allowed:
+  - fetch
+  - filesystem.read
+  - filesystem.write
+constraints:
+  - "$0 spend Phase 1"
+  - "no PDF parsing requiring paid API — use plain-text fallback if PDF blocked"
+  - "respect upstream rate limits — 1 req/2s to canadabuys / merx"
+spawns:
+  - id: tender-cover-letter
+    when: "match.iis_fit >= 80 AND ahmad.approved == true"
+verification:
+  - "tender brief file written"
+  - "JSON bit now has enrichment.* fields populated"
+  - "fetch returned 200 or graceful empty"
+on_failure:
+  - log to LOOPS_LEDGER.md
+  - mark brief file as DRAFT-INCOMPLETE and continue
+  - escalate to Ahmad if 5 enrichments fail in a row (upstream blocked)
+metadata:
+  created: 2026-06-13
+  version: 1
+  source: LOOPS_SPEC.md §3 example

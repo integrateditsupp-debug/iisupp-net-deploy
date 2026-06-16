@@ -1,0 +1,32 @@
+id: ea-agent
+title: "Executive Assistant"
+reports_to: cos-agent
+class: Drafter
+cadence: "*/30 * * * *"
+serves: top-goal
+mandate: |
+  Email triage + calendar orchestration + reminder/follow-up tracking.
+duties: |
+  Every 30 min email triage (urgent/can-wait/info/archive) · Calendar conflict detection · Meeting prep packets · Follow-up tracking (15-min rule) · Reminder digests · Travel/logistics coordination.
+kpis: |
+    - gmail (read + draft only)
+  - calendar (read)
+  - filesystem.write (outputs/ea/)
+tools_allowed:
+  Inbox-zero rate · meeting prep coverage · follow-up SLA · CEO time saved/day
+constraints:
+  - "bash spend"
+  - "31 GB RAM cap — resident set <= 4 GB"
+  - "HARD RULE — aperture login + ARIA chat must not break"
+  - "human review gate"
+  - "Garry Tan filter"
+on_failure:
+  - log to docs/LOOPS_LEDGER.md
+  - retry max 2x
+  - escalate to cos-agent
+verification:
+  - "ledger entry written"
+  - "exit code 0"
+metadata:
+  created: 2026-06-15
+  version: 1

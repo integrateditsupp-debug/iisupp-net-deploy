@@ -1,0 +1,48 @@
+id: hard-rule-gatekeeper
+title: "HARD RULE gatekeeper (aperture login + ARIA chat must work)"
+serves: top-goal
+goal: |
+  After every Netlify deploy (and every 30 min as a safety net) fetch:
+    https://iisupp.net/aperture-learning.html  (200 + login form present)
+    https://iisupp.net/aria                    (chat input + responds to "hi")
+  If either check fails, auto-rollback to the last known-good deploy
+  via Netlify API restoreSiteDeploy + alert Ahmad immediately.
+  Stop conditions: none — this loop must run forever.
+owner: codex                       # Codex has Netlify API access
+cadence: "*/30 * * * *"            # every 30 minutes, plus webhook on deploy
+budget:
+  cost_usd_per_run: 0
+  time_seconds_max: 30
+  llm_tokens_max: 0
+inputs:
+  - Netlify deploy webhook
+  - manual /loops run hard-rule-gatekeeper for ad-hoc check
+outputs:
+  - docs/LOOPS_LEDGER.md           # one row per check
+  - emergency rollback via Netlify API on failure
+  - Telegram alert + Resend email on failure
+tools_allowed:
+  - fetch
+  - netlify-api
+  - email.resend
+  - telegram.send
+constraints:
+  - "this loop has higher privilege than all others — it can pause/kill any loop"
+  - "no human-review gate (it IS the gate)"
+  - "MUST NEVER itself touch aperture.html / aria.html source files"
+spawns:
+  - id: incident-postmortem
+    when: "rollback was triggered"
+verification:
+  - "both URLs returned 200"
+  - "aperture page contains the login form selector"
+  - "aria page chat input responds within 5s to test message 'hi'"
+on_failure:
+  - if check fails: trigger rollback IMMEDIATELY, do not retry
+  - if rollback fails: alert Ahmad both channels + leave site at current state
+  - log every failure regardless
+metadata:
+  created: 2026-06-13
+  version: 1
+  source: LOOPS_SPEC.md §8f
+  priority: highest
