@@ -411,6 +411,85 @@
       ],
       escalate: 'If no output device appears at all after a driver update + reboot, escalate — likely an audio driver or hardware fault.'
     },
+    ,
+    {
+      id: 'office_activation', label: 'Office says unlicensed / activation', tier: 'L1',
+      signals: [['unlicensed', 5], ['activation', 5], ['product activation', 5], ['activate office', 5], ['license expired', 4], ['account notice', 3]],
+      apps: ['office'],
+      clarifier: { q: 'What does the message say?', options: ['"Product deactivated" / unlicensed', 'Asks me to sign in', 'Subscription expired', 'Only in one Office app'] },
+      branches: [
+        { when: ['deactivated', 'unlicensed', 'not activated', 'cant be verified'], cause: 'Office lost its license state — usually a sign-in or cached-credential issue.', steps: ['Open any Office app -> File -> Account -> confirm it shows the correct work account; if not, sign out and back in.', 'Close all Office apps, reopen, and let it re-check the license.', 'Still off? Windows Settings -> Accounts -> Access work or school -> confirm the account is connected.'] },
+        { when: ['sign in', 'sign-in', 'login', 'asks me'], cause: 'Office needs to re-authenticate.', steps: ['File -> Account -> Sign in with your work email + password (and MFA).', 'If sign-in loops, remove the account under Settings -> Access work or school, then re-add and reopen Office.'] },
+        { when: ['expired', 'subscription', 'renew', 'no longer'], cause: 'The Microsoft 365 subscription/license may be unassigned.', steps: ['Confirm with IT that an M365 license is assigned to your account.', 'Once assigned, File -> Account -> sign out/in to pull the new license.'] },
+        { when: ['one app', 'only', 'excel only', 'word only', 'specific'], cause: 'A single Office app is stuck on license state.', steps: ['Close that app fully (Task Manager if needed) and reopen.', 'Run an Office Quick Repair: Settings -> Apps -> Microsoft 365 -> Modify -> Quick Repair.'] }
+      ],
+      escalate: 'If a correct, licensed account still shows unlicensed after sign-out/in + Quick Repair, escalate — likely a licensing/assignment issue in the tenant.'
+    },
+    {
+      id: 'email_mobile', label: 'Email / Outlook on phone not syncing', tier: 'L1',
+      signals: [['on my phone', 5], ['iphone', 5], ['android', 4], ['phone', 3], ['mobile', 4], ['outlook app', 3]],
+      apps: ['outlook'],
+      clarifier: { q: 'What is the phone doing?', options: ['Not receiving new mail', 'Asks for password repeatedly', 'Can\'t add the account', 'Calendar/contacts not syncing'] },
+      branches: [
+        { when: ['not receiving', 'no new mail', 'not updating', 'stopped', 'no email'], cause: 'The mobile mail app stopped syncing.', steps: ['Open the Outlook (or Mail) app -> pull down to refresh.', 'Confirm the phone has internet and the app has background refresh + notifications enabled (phone Settings -> the app).', 'Remove and re-add the account in the Outlook app if it stays stale.'] },
+        { when: ['password', 'keeps asking', 'credentials', 'sign in loop'], cause: 'Saved credentials are stale, often after a password change.', steps: ['Re-enter the current password when prompted; complete MFA.', 'Remove the account from the mail app and add it back fresh (use the work email + new password).'] },
+        { when: ['cant add', 'can\'t add', 'won\'t add', 'setup', 'add account'], cause: 'Account setup is failing on the phone.', steps: ['Use the official Microsoft Outlook app and choose "Exchange / Office 365", not generic IMAP.', 'Make sure you complete any MFA/approval prompt during setup.', 'If it blocks, IT may require the device be enrolled (Intune/Company Portal).'] },
+        { when: ['calendar', 'contacts', 'not syncing'], cause: 'Calendar/contacts sync is off for the account.', steps: ['In the Outlook app -> account settings -> enable Calendar and Contacts sync.', 'On iPhone, also check Settings -> Calendars/Contacts -> the account toggle is on.'] }
+      ],
+      escalate: 'If a fresh re-add + correct password still fail, escalate — could be a conditional-access, device-compliance (Intune), or mailbox issue.'
+    },
+    {
+      id: 'display', label: 'Monitor / second screen / display issue', tier: 'L1',
+      signals: [['monitor', 5], ['second screen', 5], ['second monitor', 5], ['dual monitor', 5], ['display', 4], ['external screen', 5], ['resolution', 3], ['no signal', 4]],
+      apps: [],
+      clarifier: { q: 'What is the display doing?', options: ['Second monitor not detected', 'Shows "No signal"', 'Wrong resolution / blurry', 'Flickering / black-outs'] },
+      branches: [
+        { when: ['not detected', 'not detecting', 'wont detect', 'missing', 'only one'], cause: 'Windows isn\'t seeing the second display.', steps: ['Settings -> System -> Display -> Multiple displays -> "Detect".', 'Reseat the video cable at both ends; try a different port (HDMI/DisplayPort/USB-C).', 'Press Win+P -> choose Extend. Update the graphics driver if it still won\'t show.'] },
+        { when: ['no signal', 'blank', 'black', 'nothing on'], cause: 'The monitor isn\'t getting a signal.', steps: ['Confirm the monitor input source matches the cable (monitor menu -> Input).', 'Swap cable/port; test the monitor on another device to rule out the panel.', 'On a laptop, Win+P -> Extend/Duplicate to push output to it.'] },
+        { when: ['resolution', 'blurry', 'fuzzy', 'too big', 'scaling', 'zoomed'], cause: 'Resolution or scaling is off.', steps: ['Settings -> System -> Display -> set the Recommended resolution.', 'Adjust Scale (100-150%) to taste.', 'Update the graphics driver if the recommended resolution isn\'t available.'] },
+        { when: ['flicker', 'flickering', 'blackout', 'cuts out', 'goes black'], cause: 'Cable, refresh rate, or driver instability.', steps: ['Replace the video cable (a common cause).', 'Settings -> Display -> Advanced display -> lower the refresh rate, then retest.', 'Update the graphics driver.'] }
+      ],
+      escalate: 'If detect + cable swap + driver update all fail, escalate — could be a faulty port, dock, GPU, or the monitor itself.'
+    },
+    {
+      id: 'usb_device', label: 'USB device not recognized', tier: 'L1',
+      signals: [['usb', 4], ['not recognized', 4], ['not detected', 3], ['unknown device', 4], ['device not', 3], ['wont recognize', 4]],
+      apps: [],
+      clarifier: { q: 'What kind of device?', options: ['USB flash drive / external disk', 'Headset / webcam / mic', 'Dock / hub', 'Other USB device'] },
+      branches: [
+        { when: ['flash', 'drive', 'external disk', 'usb stick', 'thumb', 'hard drive'], cause: 'A USB storage device isn\'t mounting.', steps: ['Try another USB port (use a rear port on a desktop, direct not through a hub).', 'Open Disk Management (Win+X) -> see if the drive appears without a letter; assign a drive letter.', 'Test the drive on another PC to tell device vs port.'] },
+        { when: ['headset', 'webcam', 'mic', 'camera', 'audio'], cause: 'A USB peripheral isn\'t initializing.', steps: ['Replug into a different port; avoid unpowered hubs.', 'Device Manager -> find the device (or "Unknown device") -> Update driver; or uninstall it and replug to reinstall.', 'Check the app is allowed to use it (Settings -> Privacy -> Microphone/Camera).'] },
+        { when: ['dock', 'hub', 'docking'], cause: 'A dock/hub isn\'t enumerating devices.', steps: ['Unplug the dock from power and the PC for 20s, then reconnect (power first, then the PC cable).', 'Update the dock firmware/driver from the maker\'s site.', 'Plug the device directly into the PC to confirm it\'s the dock.'] },
+        { when: ['other', 'not sure', 'unknown'], cause: 'Generic USB recognition issue.', steps: ['Try a different port and cable.', 'Device Manager -> Action -> Scan for hardware changes.', 'Reboot once; if "Unknown device" persists, update/reinstall its driver.'] }
+      ],
+      escalate: 'If the device fails on multiple ports and another PC, it\'s likely the device/cable — replace; otherwise escalate for driver/port diagnosis.'
+    },
+    {
+      id: 'mapped_drive', label: 'Network / mapped drive disconnected', tier: 'L2',
+      signals: [['mapped drive', 5], ['network drive', 5], ['shared drive', 4], ['z drive', 4], ['red x', 3], ['cant access drive', 3], ['shared folder', 4]],
+      apps: [],
+      clarifier: { q: 'What\'s happening with the drive?', options: ['Red X / shows disconnected', 'Asks for a password', '"Path not found" / gone', 'Very slow to open'] },
+      branches: [
+        { when: ['red x', 'disconnected', 'reconnect', 'not connected'], cause: 'The mapped drive shows disconnected but usually reconnects on access.', steps: ['Double-click the drive — the red X often clears once you open it.', 'If not: Command Prompt -> run  net use  to see it, then  net use Z: /delete  and remap it.', 'On VPN, make sure the VPN is connected before accessing the drive.'] },
+        { when: ['password', 'credentials', 'asks for'], cause: 'Stored credentials for the share are stale.', steps: ['Re-enter your current work credentials when prompted (tick "Remember").', 'Clear old ones: Control Panel -> Credential Manager -> Windows Credentials -> remove the stale server entry, then reconnect.'] },
+        { when: ['path not found', 'gone', 'missing', 'not found', 'cannot find'], cause: 'The path/share is unreachable.', steps: ['Confirm you\'re on the network/VPN that hosts the share.', 'Try the UNC path directly (Win+R -> \\\\server\\share).', 'If the server name doesn\'t resolve, flush DNS (ipconfig /flushdns) and retest; if still gone, the share may have moved — check with IT.'] },
+        { when: ['slow', 'takes long', 'laggy', 'freezes opening'], cause: 'Slow access to the share.', steps: ['Test on wired/closer Wi-Fi or a stronger VPN link.', 'Avoid opening huge folders directly; map deeper to the subfolder you need.', 'If everyone is slow, it\'s a server/network issue for IT.'] }
+      ],
+      escalate: 'If remap + credential clear don\'t restore it, escalate — could be a file-server, DFS, permissions, or VPN-routing issue.'
+    },
+    {
+      id: 'office_crash', label: 'Excel / Word / Office app crashing', tier: 'L1',
+      signals: [['excel', 5], ['word crash', 5], ['powerpoint', 4], ['office crash', 5], ['not responding', 3], ['keeps crashing', 3]],
+      apps: ['office'],
+      clarifier: { q: 'What is the Office app doing?', options: ['Crashes on open', 'Freezes / "Not responding"', 'Crashes on a specific file', 'Won\'t open at all'] },
+      branches: [
+        { when: ['on open', 'when i open', 'opening', 'startup', 'launch'], cause: 'An add-in or corrupt state crashes it at launch.', steps: ['Open it in Safe Mode: hold Ctrl while launching (or Win+R -> excel /safe).', 'If stable in Safe Mode: File -> Options -> Add-ins -> COM Add-ins -> Go -> uncheck all -> restart.', 'Then run Quick Repair: Settings -> Apps -> Microsoft 365 -> Modify -> Quick Repair.'] },
+        { when: ['freeze', 'not responding', 'hangs', 'spinning'], cause: 'The app hangs — often a large file, add-in, or printer default.', steps: ['Wait 30s (big files recalc); if stuck, Task Manager -> End task and reopen.', 'Disable COM add-ins (File -> Options -> Add-ins).', 'Set a simple default printer — a broken default printer can hang Office on save/print.'] },
+        { when: ['specific file', 'one file', 'this document', 'certain', 'particular'], cause: 'One file is corrupt or heavy.', steps: ['Open the app first, then File -> Open -> pick the file -> the arrow next to Open -> "Open and Repair".', 'Copy contents into a new blank file if repair fails.', 'For Excel, check for huge ranges/volatile formulas bloating it.'] },
+        { when: ['won\'t open', 'wont open', 'nothing', 'no response'], cause: 'The app won\'t start at all.', steps: ['Task Manager -> End any lingering instance, then reopen.', 'Try Safe Mode (Win+R -> word /safe).', 'Run Quick Repair, then Online Repair if needed (Settings -> Apps -> Microsoft 365 -> Modify).'] }
+      ],
+      escalate: 'If Safe Mode + Quick/Online Repair both fail, escalate — could be a profile, GPO add-in push, or a reinstall is needed.'
+    },
   ];
 
   // generic low-confidence triage (no canned dump; asks a smart question)
