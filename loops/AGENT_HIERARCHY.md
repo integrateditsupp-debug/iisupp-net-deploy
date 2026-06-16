@@ -11,6 +11,7 @@
 - **$0 default spend.** Every agent inherits the spend lockdown. No paid API without CEO approval per action.
 - **HARD RULE.** No agent may break aperture login or ARIA chat. Verify post-deploy.
 - **Manual Netlify publish.** Every agent that ships code stops at the Publish click.
+- **Idle = improve (PRE-APPROVED, locked 2026-06-15).** When an agent is idle, the queue is empty, and the CEO is not being waited on, the CoS delegates all agents to brainstorm + action improvements to their own area — without asking. Allowed only if $0, no penalty risk, and no damage to vision/path/tools/features/functions/apps. Run like an efficient multimillion-dollar business; never idle.
 - **Communication channel:** all agents read `docs/COLLAB_BRIEF.md` + `docs/LOOPS_SPEC.md` on session start. Status writes to `docs/LOOPS_LEDGER.md`.
 
 ---
