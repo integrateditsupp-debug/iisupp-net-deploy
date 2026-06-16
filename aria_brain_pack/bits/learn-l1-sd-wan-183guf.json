@@ -1,0 +1,11 @@
+{
+  "key": "learn-l1-sd-wan-183guf.json",
+  "heading": "l1: sd-wan",
+  "body": "Scope: single user (scope: local device). Isolate by trying the same action on a second device or account. Trigger: unknown trigger (ask: when did this start?). The #1 clue in any IT issue is what ch…\n\nAsked by: l1 | Topic: sd-wan | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "most common cause of sd-wan that l1 sees?",
+  "created_at": "2026-06-01T12:30:15.740Z",
+  "agent": "l1",
+  "topic": "sd-wan"
+}

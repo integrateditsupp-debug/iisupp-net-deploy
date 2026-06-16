@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c5a059">
+<title>Cybersecurity Basics Preview | Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+:root{
+  --bg:#060606;
+  --panel:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.7);
+  --muted:rgba(255,255,255,.45);
+  --gold:#c5a059;
+  --gold-soft:#f1dca7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(180deg,#080808 0%,#050505 100%);
+}
+a{text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 22px 72px}
+.toplink{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.eyebrow{display:block;margin-bottom:12px;color:var(--gold);font-size:10px;letter-spacing:.32em;text-transform:uppercase;font-weight:800}
+.hero{
+  margin-top:20px;
+  border:1px solid rgba(197,160,89,.24);
+  border-radius:18px;
+  padding:42px 34px;
+  background:
+    radial-gradient(120% 140% at 100% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:26px}
+.logo{font-family:'Cinzel',serif;font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.02;margin:0 0 16px}
+.gold{color:var(--gold-soft)}
+.lede{margin:0 0 18px;color:var(--text);font-size:15px;line-height:1.85;max-width:720px}
+.tagrow{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.tag{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{
+  height:100%;
+  border:1px solid rgba(197,160,89,.18);
+  border-radius:14px;
+  padding:20px 18px;
+  background:rgba(0,0,0,.24);
+}
+.panel p{margin:0 0 12px;color:var(--text);font-size:13px;line-height:1.8}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 18px;
+  border-radius:8px;
+  border:1px solid rgba(197,160,89,.4);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:rgba(197,160,89,.06);
+}
+.btn.primary{background:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%);color:#1a1407;border-color:transparent}
+.grid-two,.grid-three{display:grid;gap:16px;margin-top:24px}
+.grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px 18px 16px;
+  background:var(--panel);
+}
+.card h2,.card h3{margin:0 0 10px;font-family:'Cinzel',serif}
+.card h2{font-size:1.3rem}
+.card h3{font-size:1rem}
+.card p{margin:0;color:var(--text);font-size:13px;line-height:1.8}
+.checklist,.steps{
+  margin:14px 0 0;
+  padding-left:18px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.notice{
+  margin-top:26px;
+  padding:16px 18px;
+  border-left:3px solid var(--gold);
+  background:rgba(197,160,89,.07);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.mini{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width: 900px){
+  .hero-grid,.grid-two,.grid-three{grid-template-columns:1fr}
+  .hero{padding:30px 20px}
+  .wrap{padding:20px 16px 54px}
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="toplink" href="/growth-library.html">Back to growth library</a>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Sample Preview</span>
+          <h1 class="logo">Cybersecurity Basics for <span class="gold">Employees</span></h1>
+          <p class="lede">This preview shows how IIS keeps security-awareness training practical: short enough for busy teams, clear enough for non-technical staff, and scoped around the daily habits that actually reduce avoidable risk. It is built to create better employee judgment, not to pretend a short guide replaces a full security program.</p>
+          <div class="tagrow">
+            <span class="tag">For SMB teams</span>
+            <span class="tag">For clinics and schools</span>
+            <span class="tag">For simple first training</span>
+          </div>
+          <div class="btnrow">
+            <a class="btn primary" href="/?contact=1&subject=Request%20Security%20Awareness%20Setup&desc=I%20want%20to%20stage%20a%20Security%20Awareness%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20security%20behavior%20or%20training%20gap%20today%3A%0AAny%20recent%20phishing%20or%20account-risk%20issues%3A%0AWhat%20the%20team%20needs%20to%20improve%20first%3A">Stage security review</a>
+            <a class="btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View M365 preview</a>
+          </div>
+        </div>
+        <aside class="panel">
+          <span class="eyebrow" style="margin-bottom:10px">What this preview proves</span>
+          <p>Good security awareness does not start with jargon. It starts with the most common employee mistakes: rushed clicks, weak reporting habits, password shortcuts, and unsafe attachment behavior.</p>
+          <p>This keeps the trust layer clean: no public promise of audit readiness, no cyber-insurance implication, and no suggestion that a one-page pack replaces technical controls, monitoring, or incident response.</p>
+          <p class="mini">The live rollout still depends on the buyer's systems, reporting path, training cadence, and how employee issues should escalate.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">Inside the pack</span>
+        <h2>What the buyer actually gets</h2>
+        <ul class="checklist">
+          <li>A plain-language guide to phishing, passwords, MFA, attachments, suspicious links, public Wi-Fi, and device safety.</li>
+          <li>A short quiz concept and reporting reminders that help a small team turn vague awareness into a repeatable habit.</li>
+          <li>Clear separation between what employees should do immediately and what should escalate to IT, management, or a provider.</li>
+          <li>A calmer first step for buyers who know staff behavior is a risk but are not ready to buy a broad security engagement.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best fit</span>
+        <h2>Who should start here</h2>
+        <ul class="checklist">
+          <li>Lean teams that need simple employee guidance instead of a heavy LMS or policy project.</li>
+          <li>Clinics, schools, law/accounting firms, and service businesses where one bad click can create expensive drag.</li>
+          <li>Owners or operations leads who want a cleaner training and reporting posture before deeper admin cleanup.</li>
+          <li>Teams deciding whether the next need is awareness cleanup, M365 hygiene, or a broader support review.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:24px">
+      <span class="eyebrow">Sample section</span>
+      <h2>Phishing red flags employees should catch fast</h2>
+      <p>This is a representative slice. The live pack expands it into fuller guidance and quiz prompts, but the posture stays the same: help the employee slow down, check the basics, and escalate quickly when something feels wrong instead of guessing.</p>
+      <div class="grid-three">
+        <div class="card">
+          <h3>Pressure and urgency</h3>
+          <p>If the message pushes the employee to act immediately, hide the issue, or bypass the usual approval path, treat that as a warning sign first, not a normal business shortcut.</p>
+        </div>
+        <div class="card">
+          <h3>Links and attachments</h3>
+          <p>Do not trust the button text alone. Check the sender, the destination, the file type, and whether the request makes sense before opening anything that could expose credentials or malware risk.</p>
+        </div>
+        <div class="card">
+          <h3>Escalate early</h3>
+          <p>Employees do not need to prove a message is malicious before reporting it. The safer habit is simple: stop, capture the concern, and escalate quickly to the right owner.</p>
+        </div>
+      </div>
+      <div class="notice">
+        Escalation triggers include credential entry on a suspicious page, financial-request emails, payroll changes, shared mailbox compromise risk, suspicious MFA prompts, or any message that looks internal but feels off.
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">What stays scoped</span>
+        <h2>Reserved for live discovery</h2>
+        <ul class="steps">
+          <li>The buyer's exact reporting path, mailbox process, device posture, and who owns incident decisions.</li>
+          <li>Any tenant-level security controls, policy work, admin cleanup, or tool changes that depend on live environment facts.</li>
+          <li>Training cadence, certification language, or compliance requirements that should not be guessed publicly.</li>
+          <li>Anything that belongs in a real technical assessment, not a product page or sample training preview.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best next move</span>
+        <h2>Use the right lane after the preview</h2>
+        <ul class="steps">
+          <li>Use Security Awareness Setup when the team needs a cleaner first-round employee posture and reporting path.</li>
+          <li>Use the M365 Tune-Up when the employee risk is tied to messy admin, identity, onboarding, or collaboration hygiene.</li>
+          <li>Use a broader support review when security questions are really symptoms of repeated operational confusion.</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn primary" href="/?contact=1&subject=Request%20Security%20Awareness%20Setup&desc=I%20want%20to%20stage%20a%20Security%20Awareness%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20security%20behavior%20or%20training%20gap%20today%3A%0AAny%20recent%20phishing%20or%20account-risk%20issues%3A%0AWhat%20the%20team%20needs%20to%20improve%20first%3A">Stage security review</a>
+          <a class="btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View M365 preview</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

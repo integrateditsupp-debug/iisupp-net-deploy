@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noarchive, nosnippet">
+  <meta name="theme-color" content="#0a1219">
+  <title>Aperture · ARIA Cognitive Architecture</title>
+  <meta name="description" content="Aperture — live observability dashboard for ARIA. Watch the AI think, route, and resolve. By Integrated IT Support Inc.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+    :root {
+      --ap-bg:#050810; --ap-surface:#0a1219; --ap-surface-2:#0d1824; --ap-border:#1a2b35; --ap-border-2:#243a47;
+      --ap-text:#d8e0e6; --ap-text-2:#98a8b3; --ap-text-3:#6b7c87;
+      --ap-teal:#2dd4bf; --ap-teal-2:#14b8a6; --ap-teal-dim:#0e7a70; --ap-teal-glow:rgba(45, 212, 191, 0.18);
+      --ap-red:#f87171; --ap-amber:#fbbf24; --ap-green:#4ade80;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--ap-bg); color: var(--ap-text); font-family: 'Inter', system-ui, sans-serif; font-size: 13px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+    .ap-topbar { display: flex; align-items: center; gap: 28px; padding: 14px 24px; border-bottom: 1px solid var(--ap-border); background: var(--ap-bg); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(8px); }
+    .ap-logo { display: inline-flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-weight: 600; letter-spacing: 0.2em; font-size: 11px; color: var(--ap-text); }
+    .ap-logo-mark { width: 22px; height: 22px; border: 1.5px solid var(--ap-teal); position: relative; transform: rotate(45deg); display: inline-block; }
+    .ap-logo-mark::before { content:''; position: absolute; inset: 3px; border: 1px solid var(--ap-teal); opacity: 0.5; }
+    .ap-logo-text { display: inline-flex; align-items: center; gap: 8px; }
+    .ap-logo-sub { color: var(--ap-text-3); font-weight: 400; }
+    .ap-page-title { flex:1; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.28em; color: var(--ap-text); text-align:center; text-transform: uppercase; }
+    .ap-page-title .sub { color: var(--ap-text-3); font-weight: 400; }
+    .ap-meta-stats { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--ap-text-3); }
+    .ap-mode-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.28em; text-transform:uppercase; border-radius:1px; margin-right:8px; }
+    .ap-mode-live { background: rgba(74,222,128,0.1); border:1px solid var(--ap-green); color:var(--ap-green); }
+    .ap-mode-demo { background: rgba(251,191,36,0.1); border:1px solid var(--ap-amber); color:var(--ap-amber); }
+    .ap-mode-waiting { background: rgba(107,124,135,0.1); border:1px solid var(--ap-text-3); color:var(--ap-text-3); }
+    .ap-pulse { animation: ap-pulse 1.4s infinite; }
+    @keyframes ap-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .ap-main { padding: 18px 24px 80px; }
+    .ap-section { margin-bottom: 18px; }
+    .ap-intro-band { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0 6px 0; font-size: 11.5px; color: var(--ap-text-2); line-height: 1.65; }
+    .ap-intro-band .ap-tag-intro { flex-shrink: 0; padding: 4px 10px; border: 1px solid var(--ap-border-2); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ap-text); background: var(--ap-surface); margin-top: 2px; }
+    .ap-intro-band strong { color: var(--ap-text); font-weight: 600; }
+    .ap-intro-band .ap-hl-teal { color: var(--ap-teal); }
+
+    .ap-scenario-bar { display: flex; align-items: center; gap: 18px; padding: 14px 0; flex-wrap: wrap; }
+    .ap-scenario-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ap-text-3); }
+    .ap-tier-group { display: inline-flex; align-items: center; gap: 6px; }
+    .ap-tier-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text-2); font-weight: 600; margin-right: 2px; }
+    .ap-diff-btn { padding: 5px 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; background: transparent; border: 1px solid var(--ap-border-2); color: var(--ap-text-3); cursor: pointer; transition: all .15s; border-radius: 1px; }
+    .ap-diff-btn:hover { color: var(--ap-text); border-color: var(--ap-text-3); }
+    .ap-diff-btn.active { background: var(--ap-teal-glow); color: var(--ap-teal); border-color: var(--ap-teal); }
+    .ap-action-btn { padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; background: transparent; border: 1px solid var(--ap-border-2); color: var(--ap-text-2); cursor: pointer; transition: all .15s; border-radius: 1px; display: inline-flex; align-items: center; gap: 6px; }
+    .ap-action-btn:hover { color: var(--ap-teal); border-color: var(--ap-teal); }
+    .ap-action-btn.primary { background: var(--ap-teal-glow); color: var(--ap-teal); border-color: var(--ap-teal); }
+    .ap-timer { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text-3); letter-spacing: 0.05em; }
+    .ap-timer .ap-timer-val { font-size: 18px; color: var(--ap-teal); font-weight: 600; }
+    .ap-scenario-head { padding-top: 4px; margin-bottom: 16px; }
+    .ap-scenario-head h2 { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--ap-text); margin: 0 0 12px 0; letter-spacing: 0.02em; }
+    .ap-scenario-head .ap-tier-hint { color: var(--ap-text-3); font-weight: 400; }
+    .ap-tag-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ap-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; background: var(--ap-surface); border: 1px solid var(--ap-border); color: var(--ap-text-2); border-radius: 1px; }
+    .ap-tag-key { color: var(--ap-text-3); }
+    .ap-tag-val { color: var(--ap-text); font-weight: 500; }
+    .ap-tag-lead { background: var(--ap-teal-glow); border-color: var(--ap-teal); color: var(--ap-teal); }
+    .ap-tag-lead .ap-tag-val { color: var(--ap-teal); }
+    .ap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: flex-start; }
+    @media (max-width: 1100px) { .ap-grid { grid-template-columns: 1fr; } }
+    .ap-card { background: var(--ap-surface); border: 1px solid var(--ap-border); padding: 18px; margin-bottom: 16px; border-radius: 2px; }
+    .ap-card-resolved { border-color: var(--ap-teal); position: relative; }
+    .ap-card-resolved.escalated { border-color: var(--ap-amber); }
+    .ap-resolved-row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
+    .ap-resolved-badge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; background: rgba(74, 222, 128, 0.12); border: 1px solid var(--ap-green); color: var(--ap-green); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; font-weight: 600; border-radius: 1px; }
+    .ap-resolved-badge.escalated { background: rgba(251,191,36,0.12); border-color: var(--ap-amber); color: var(--ap-amber); }
+    .ap-resolved-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text-2); }
+    .ap-resolved-meta .v { color: var(--ap-teal); font-weight: 600; }
+    .ap-resolved-cause { font-size: 12px; color: var(--ap-text-2); line-height: 1.65; margin: 8px 0 14px; }
+    .ap-mix-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .ap-chip-mix { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; border-radius: 1px; border: 1px solid var(--ap-border-2); }
+    .ap-chip-mix.neutral { background: var(--ap-surface-2); color: var(--ap-text-2); }
+    .ap-chip-mix.warn { background: rgba(248, 113, 113, 0.07); border-color: var(--ap-red); color: var(--ap-red); }
+    .ap-chip-mix .v { font-weight: 600; color: var(--ap-text); margin-left: 4px; }
+    .ap-section-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ap-text-3); }
+    .ap-stage-head, .ap-agents-head, .ap-fw-head, .ap-layers-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+    .ap-stage-progress-count { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ap-text-3); }
+    .ap-stage-progress-count .a { color: var(--ap-teal); font-weight: 600; }
+    .ap-stage-text { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: var(--ap-text); margin: 8px 0 16px; letter-spacing: 0.01em; }
+    .ap-progressbar { height: 3px; background: var(--ap-surface-2); border-radius: 1px; overflow: hidden; position: relative; }
+    .ap-progressbar-fill { position: absolute; top: 0; left: 0; bottom: 0; background: var(--ap-teal); width: 0%; transition: width .4s ease; box-shadow: 0 0 8px var(--ap-teal-glow); }
+    .ap-agents-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ap-chip-agent { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; background: var(--ap-surface-2); border: 1px solid var(--ap-border-2); color: var(--ap-text); border-radius: 1px; }
+    .ap-chip-agent .ap-chip-count { font-size: 10px; color: var(--ap-teal); font-weight: 700; margin-left: 4px; }
+    .ap-agents-empty { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text-3); }
+    .ap-fw-lead-text { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ap-text-3); letter-spacing: 0.12em; }
+    .ap-fw-lead-text .a { color: var(--ap-teal); font-weight: 600; }
+    .ap-fw-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; }
+    .ap-fw-cell { padding: 10px 6px; background: var(--ap-surface-2); border: 1px solid var(--ap-border); text-align: center; transition: all .25s; border-radius: 1px; }
+    .ap-fw-cell.active { border-color: var(--ap-teal); background: var(--ap-teal-glow); box-shadow: 0 0 8px rgba(45, 212, 191, 0.25); }
+    .ap-fw-roman { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--ap-text); letter-spacing: 0.05em; }
+    .ap-fw-cell.active .ap-fw-roman { color: var(--ap-teal); }
+    .ap-fw-name { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ap-text-3); margin-top: 4px; letter-spacing: 0.08em; }
+    .ap-fw-cell.active .ap-fw-name { color: var(--ap-teal); }
+    .ap-layers-total { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ap-text-3); }
+    .ap-layer-row { display: grid; grid-template-columns: 180px 1fr 60px; align-items: center; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--ap-border); }
+    .ap-layer-row:last-child { border-bottom: none; }
+    .ap-layer-name { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--ap-text); font-weight: 600; line-height: 1.3; }
+    .ap-layer-sub { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ap-text-3); font-weight: 400; margin-top: 2px; }
+    .ap-layer-bar { height: 6px; background: var(--ap-surface-2); border-radius: 1px; overflow: hidden; position: relative; }
+    .ap-layer-bar-fill { height: 100%; background: var(--ap-teal); width: 0%; transition: width .5s ease; box-shadow: 0 0 6px var(--ap-teal-glow); }
+    .ap-layer-pct { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ap-text); text-align: right; font-weight: 600; }
+    .ap-conv-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+    .ap-conv-title { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ap-text); font-weight: 600; letter-spacing: 0.05em; }
+    .ap-conv-title .sub { color: var(--ap-text-3); font-weight: 400; }
+    .ap-conv-msgcount { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ap-text-3); }
+    .ap-conv-stream { display: flex; flex-direction: column; gap: 8px; max-height: 720px; overflow-y: auto; padding-right: 4px; }
+    .ap-msg { display: flex; flex-direction: column; gap: 4px; max-width: 95%; }
+    .ap-msg-from { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; color: var(--ap-text-3); text-transform: uppercase; font-weight: 600; }
+    .ap-msg-from.aria { color: var(--ap-teal); }
+    .ap-msg-from.user { color: var(--ap-text-2); align-self: flex-end; }
+    .ap-msg-bubble { padding: 12px 16px; background: var(--ap-surface); border: 1px solid var(--ap-border); font-size: 12.5px; line-height: 1.6; color: var(--ap-text); border-radius: 2px; }
+    .ap-msg.user .ap-msg-bubble { background: var(--ap-surface-2); border-color: var(--ap-border-2); align-self: flex-end; max-width: 80%; }
+    .ap-msg.user { align-items: flex-end; }
+    .ap-conv-waiting { text-align:center; padding:40px 20px; color: var(--ap-text-3); font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; line-height: 1.8; }
+    .ap-ticket-bar { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: var(--ap-surface); border: 1px solid var(--ap-teal); margin-bottom: 14px; font-family:'JetBrains Mono',monospace; font-size: 11px; letter-spacing: 0.06em; }
+    .ap-ticket-bar .lbl { color: var(--ap-text-3); }
+    .ap-ticket-bar .val { color: var(--ap-teal); font-weight: 600; }
+    .ap-ticket-bar .status { margin-left: auto; }
+    .ap-ticket-bar .status .live { color: var(--ap-green); }
+    .ap-footer { margin-top: 60px; padding: 24px; border-top: 1px solid var(--ap-border); text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--ap-text-3); }
+    .ap-footer a { color: var(--ap-teal); text-decoration: none; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--ap-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--ap-border-2); border-radius: 1px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--ap-teal-dim); }
+    .hidden-block { display: none !important; }
+  </style>
+
+<style id="aperture-gate-style">
+  body.aperture-locked > header,
+  body.aperture-locked > main,
+  body.aperture-locked > footer { filter: blur(10px); pointer-events: none; user-select: none; }
+  #aperture-login-gate {
+    position: fixed; inset: 0; z-index: 100000;
+    background: radial-gradient(ellipse at center, rgba(10,18,25,0.92) 0%, rgba(5,8,16,0.98) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  #aperture-login-gate .ag-box {
+    width: 360px; max-width: 90%; padding: 32px 28px;
+    background: #0a1219; border: 1px solid #2dd4bf;
+    box-shadow: 0 0 60px rgba(45,212,191,0.15), 0 0 0 1px rgba(45,212,191,0.08) inset;
+    border-radius: 2px;
+  }
+  #aperture-login-gate h2 {
+    margin: 0 0 6px 0; color: #2dd4bf;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; font-weight: 600;
+  }
+  #aperture-login-gate p.ag-sub {
+    margin: 0 0 22px 0; color: #98a8b3; font-size: 12.5px; line-height: 1.5;
+  }
+  #aperture-login-gate label {
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.22em; color: #98a8b3;
+    text-transform: uppercase; margin: 12px 0 4px 0;
+  }
+  #aperture-login-gate input {
+    width: 100%; padding: 10px 12px; background: #050810;
+    border: 1px solid #243a47; color: #d8e0e6;
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    border-radius: 1px; outline: none; transition: border-color .15s;
+  }
+  #aperture-login-gate input:focus { border-color: #2dd4bf; }
+  #aperture-login-gate button {
+    width: 100%; margin-top: 18px; padding: 11px;
+    background: #2dd4bf; color: #050810; border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    font-weight: 700; cursor: pointer; border-radius: 1px;
+    transition: opacity .15s;
+  }
+  #aperture-login-gate button:hover { opacity: 0.88; }
+  #aperture-login-gate button:disabled { opacity: 0.4; cursor: not-allowed; }
+  #aperture-login-gate .ag-err {
+    margin-top: 12px; color: #f87171; font-size: 11.5px;
+    font-family: 'JetBrains Mono', monospace; min-height: 14px;
+  }
+  #aperture-login-gate .ag-foot {
+    margin-top: 22px; padding-top: 14px; border-top: 1px solid #1a2b35;
+    color: #6b7c87; font-size: 10px; letter-spacing: 0.2em;
+    font-family: 'JetBrains Mono', monospace; text-transform: uppercase; text-align: center;
+  }
+  #aperture-logout-btn {
+    position: fixed; top: 12px; right: 14px; z-index: 200;
+    padding: 5px 10px; background: rgba(248,113,113,0.10);
+    border: 1px solid #f87171; color: #f87171;
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer;
+    border-radius: 1px; display: none;
+  }
+  body.aperture-unlocked #aperture-logout-btn { display: block; }
+</style>
+<style id="aperture-lift-v1">
+/* LIFT v1 (2026-05-25) — additive Emil-Kowalski tactility + a11y. Structure/login untouched. */
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #2dd4bf;outline-offset:3px;border-radius:2px;}
+.ap-action-btn,.ap-diff-btn,#aperture-login-gate button,#aperture-logout-btn{transition:transform .16s cubic-bezier(0.22,1,0.36,1),opacity .15s ease,background .2s ease,border-color .2s ease,color .2s ease,box-shadow .25s ease;}
+.ap-action-btn:active,.ap-diff-btn:active,#aperture-login-gate button:active,#aperture-logout-btn:active{transform:scale(.97);}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
+</style>
+</head>
+<body class="aperture-locked">
+<div id="aperture-login-gate">
+  <div class="ag-box">
+    <h2>APERTURE - ADMIN ACCESS</h2>
+    <p class="ag-sub">Sign in to view live ARIA sessions, tickets, and audits.</p>
+    <label>Email</label>
+    <input id="ag-email" type="email" autocomplete="email" />
+    <label>Password</label>
+    <input id="ag-pass" type="password" autocomplete="current-password" />
+    <button id="ag-submit" type="button">Sign In</button>
+    <div class="ag-err" id="ag-err"></div>
+    <div class="ag-foot">INTEGRATED IT SUPPORT INC.</div>
+  </div>
+</div>
+<button id="aperture-logout-btn" type="button">Log out</button>
+
+
+  <header class="ap-topbar">
+    <div class="ap-logo">
+      <span class="ap-logo-mark"></span>
+      <span class="ap-logo-text">
+        <span>APERTURE</span>
+        <span class="ap-logo-sub">·  ARIA COGNITIVE ARCHITECTURE</span>
+      </span>
+    </div>
+    <div class="ap-page-title">06 · SIMULATION & LIVE OBSERVABILITY</div>
+    <div class="ap-meta-stats" id="apMeta">14 AGENTS · 9 FRAMEWORKS · 12 LAYERS</div>
+  </header>
+
+  <main class="ap-main">
+
+    <section class="ap-section ap-intro-band">
+      <span class="ap-tag-intro">WHAT THIS PAGE IS</span>
+      <div id="apIntroText">
+        Live observability for ARIA. Keep this page open in a tab — when a user starts a session at <span class="mono ap-hl-teal">/aria</span> in any tab, Aperture auto-detects it and mirrors every reasoning step, agent fire, framework lead, and architecture layer in real time. When ARIA resolves or escalates, the report is captured + emailed + this page resets. Use <span class="mono ap-hl-teal">START SIMULATION</span> below to preview a demo scenario.
+      </div>
+    </section>
+
+    <div class="ap-ticket-bar hidden-block" id="apTicketBar">
+      <span class="lbl">TICKET</span>
+      <span class="val mono" id="apTicketVal">—</span>
+      <span class="lbl">USER</span>
+      <span class="val mono" id="apTicketUser">—</span>
+      <span class="status">
+        <span class="lbl">STATUS</span>
+        <span class="live mono ap-pulse" id="apTicketStatus">● LIVE</span>
+      </span>
+    </div>
+
+    <section class="ap-section ap-scenario-bar" id="apScenarioBar">
+      <span class="ap-mode-badge ap-mode-demo" id="apModeBadge">DEMO</span>
+      <span class="ap-scenario-label">SCENARIO</span>
+      <div class="ap-tier-group" data-tier="L1">
+        <span class="ap-tier-label">L1</span>
+        <button class="ap-diff-btn" data-diff="easy">EASY</button>
+        <button class="ap-diff-btn active" data-diff="mid">MID</button>
+        <button class="ap-diff-btn" data-diff="hard">HARD</button>
+      </div>
+      <div class="ap-tier-group" data-tier="L2">
+        <span class="ap-tier-label">L2</span>
+        <button class="ap-diff-btn" data-diff="easy">EASY</button>
+        <button class="ap-diff-btn" data-diff="mid">MID</button>
+        <button class="ap-diff-btn" data-diff="hard">HARD</button>
+      </div>
+      <div class="ap-tier-group" data-tier="L3">
+        <span class="ap-tier-label">L3</span>
+        <button class="ap-diff-btn" data-diff="easy">EASY</button>
+        <button class="ap-diff-btn" data-diff="mid">MID</button>
+        <button class="ap-diff-btn" data-diff="hard">HARD</button>
+      </div>
+      <button class="ap-action-btn primary" id="apRunBtn">▶ START SIMULATION</button>
+      <button class="ap-action-btn" id="apResetBtn">RESET</button>
+      <div class="ap-timer">
+        <span class="ap-timer-val" id="apTimer">0ms</span>
+        <span class="mono"> / <span id="apTargetTimer">~38s</span> target</span>
+      </div>
+    </section>
+
+    <section class="ap-section ap-scenario-head">
+      <h2 id="apScenarioTitle"><span class="ap-tier-hint" id="apTitlePrefix">Waiting for ARIA session — </span><span id="apScenarioTitleMain">no live session</span></h2>
+      <div class="ap-tag-row" id="apTagRow">
+        <span class="ap-tag"><span class="ap-tag-key">mode</span><span class="ap-tag-val" id="apModeTag">demo · waiting</span></span>
+        <span class="ap-tag"><span class="ap-tag-key">status</span><span class="ap-tag-val" id="apStatusTag">waiting</span></span>
+      </div>
+    </section>
+
+    <section class="ap-grid">
+      <div class="ap-left">
+
+        <div class="ap-card ap-card-resolved hidden-block" id="apStatusCard">
+          <div class="ap-resolved-row">
+            <span class="ap-resolved-badge" id="apStatusBadge">⏳ ACTIVE</span>
+            <span class="ap-resolved-meta">in <span class="v" id="apStatusTime">0s</span> · target <span id="apStatusTarget">~38s</span></span>
+          </div>
+          <div class="ap-resolved-cause" id="apStatusCause"></div>
+          <div class="ap-mix-row" id="apStatusMix"></div>
+        </div>
+
+        <div class="ap-card">
+          <div class="ap-stage-head">
+            <span class="ap-section-label">CURRENT STAGE</span>
+            <span class="ap-stage-progress-count"><span class="a" id="apStageNow">0</span> / <span id="apStageMax">11</span></span>
+          </div>
+          <div class="ap-stage-text mono" id="apStageText">waiting — press start</div>
+          <div class="ap-progressbar"><div class="ap-progressbar-fill" id="apStageProgress"></div></div>
+        </div>
+
+        <div class="ap-card">
+          <div class="ap-agents-head">
+            <span class="ap-section-label">AGENTS FIRED</span>
+            <span class="ap-stage-progress-count"><span id="apAgentsUnique">0</span> unique · <span id="apAgentsTotal">0</span> total</span>
+          </div>
+          <div class="ap-agents-grid" id="apAgentsGrid">
+            <span class="ap-agents-empty">none yet — press start</span>
+          </div>
+        </div>
+
+        <div class="ap-card">
+          <div class="ap-fw-head">
+            <span class="ap-section-label">FRAMEWORKS</span>
+            <span class="ap-fw-lead-text">lead: <span class="a" id="apFwLead">—</span></span>
+          </div>
+          <div class="ap-fw-grid" id="apFwGrid">
+            <div class="ap-fw-cell" data-fw="I"><div class="ap-fw-roman">I</div><div class="ap-fw-name">5 W's</div></div>
+            <div class="ap-fw-cell" data-fw="II"><div class="ap-fw-roman">II</div><div class="ap-fw-name">STAR</div></div>
+            <div class="ap-fw-cell" data-fw="III"><div class="ap-fw-roman">III</div><div class="ap-fw-name">First Principles</div></div>
+            <div class="ap-fw-cell" data-fw="IV"><div class="ap-fw-roman">IV</div><div class="ap-fw-name">OKR</div></div>
+            <div class="ap-fw-cell" data-fw="V"><div class="ap-fw-roman">V</div><div class="ap-fw-name">Eisenhower</div></div>
+            <div class="ap-fw-cell" data-fw="VI"><div class="ap-fw-roman">VI</div><div class="ap-fw-name">DMAIC</div></div>
+            <div class="ap-fw-cell" data-fw="VII"><div class="ap-fw-roman">VII</div><div class="ap-fw-name">Kaizen</div></div>
+            <div class="ap-fw-cell" data-fw="VIII"><div class="ap-fw-roman">VIII</div><div class="ap-fw-name">TOC</div></div>
+            <div class="ap-fw-cell" data-fw="IX"><div class="ap-fw-roman">IX</div><div class="ap-fw-name">AAR</div></div>
+          </div>
+        </div>
+
+        <div class="ap-card">
+          <div class="ap-layers-head">
+            <span class="ap-section-label">ARCHITECTURE LAYER USAGE</span>
+            <span class="ap-layers-total"><span id="apLayersTotal">0</span> units</span>
+          </div>
+          <div id="apLayerRows"></div>
+        </div>
+
+      </div>
+
+      <div class="ap-right">
+        <div class="ap-card">
+          <div class="ap-conv-head">
+            <span class="ap-conv-title">ARIA <span class="sub">·  conversation</span></span>
+            <span class="ap-conv-msgcount" id="apMsgCount">0 messages</span>
+          </div>
+          <div class="ap-conv-stream" id="apConvStream">
+            <div class="ap-conv-waiting" id="apConvWaiting">
+              Waiting for an ARIA session.<br><br>
+              When someone starts chatting at <span class="mono" style="color:var(--ap-teal);">/aria</span>, Aperture switches to LIVE mode automatically.<br><br>
+              Or press <span class="mono" style="color:var(--ap-teal);">▶ START SIMULATION</span> above to run a demo.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARIA MESH SPIDER-WEB (added 2026-05-25) — live agent-mesh topology -->
+    <section class="ap-section" id="apMeshWeb" style="margin-top:26px;">
+      <div data-aria-mesh-web data-accent="#2dd4bf"></div>
+    </section>
+  </main>
+
+  <footer class="ap-footer">
+    APERTURE · <a href="/">INTEGRATED IT SUPPORT INC.</a> · v0.3
+  </footer>
+
+<script>
+(function(){
+  'use strict';
+
+  const LS_KEY = 'aria_active_session';
+  const POLL_INTERVAL_MS = 1500;
+  const RESET_DELAY_MS = 9000; // Show resolved/escalated for N seconds then reset to waiting
+
+  const DEFAULT_LAYERS = [
+    ['LLM','thinking · reasoning · behavior',0],['KB','curated articles',0],['RAG','retrieval · search',0],
+    ['Vector DB','semantic memory · index',0],['Memory','short · long · procedural · pattern',0],
+    ['Agents','specialized workers',0],['Automation','workflows · n8n',0],['Tools','abilities · actions',0],
+    ['Safety','guardrails · verification',0],['Evaluation','self-checking · testing',0],
+    ['Storage','files · databases · archives',0],['Frontend/UI','user interaction',0]
+  ];
+
+  function renderEmptyLayers() {
+    const rows = document.getElementById('apLayerRows');
+    rows.innerHTML = '';
+    DEFAULT_LAYERS.forEach(([name, sub]) => {
+      const row = document.createElement('div');
+      row.className = 'ap-layer-row';
+      row.innerHTML = `<div><div class="ap-layer-name">${name}</div><div class="ap-layer-sub">${sub}</div></div>
+        <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:0%"></div></div>
+        <div class="ap-layer-pct">0.0%</div>`;
+      rows.appendChild(row);
+    });
+  }
+
+  // ============= DEMO SCENARIOS (subset; full set in v0.2) =============
+  const SCENARIOS = {
+    'L1-easy': { title:'L1 · Easy · Outlook wont send', cause:'Mail server blocked corporate cert. Re-pinned + cleared profile.', timer:'4.1s', target:'~30s', lead:'I 5 Ws', leadCell:'I', stageNow:8, stageMax:8, stageText:'Confirm-resolve loop closed', layersTotal:38,
+      tags:{industry:'professional services',role:'end_user',environment:'prod',pressure:'low',history:'first',trust:'good'},
+      layers:[['LLM',12],['Memory',18],['KB',22],['Evaluation',8],['Tools',6],['Frontend/UI',5],['Storage',12],['Safety',4],['RAG',3],['Agents',2],['Vector DB',2],['Automation',1]],
+      agents:[['kb',2],['reasoning',1],['safety',1],['quality',1],['intent',1],['orchestrator',1]],
+      messages:[{from:'user',text:'Outlook is just spinning when I hit send.'},{from:'aria',text:'Outlook hanging on send usually means an auth handshake stalled. Let me check your account state.'},{from:'aria',text:'Corporate cert was re-pinned this morning. Your profile has an old fingerprint cached. 30-second fix.'},{from:'aria',text:'Done. Restart Outlook and try sending. Should fire right away.'}]
+    },
+    'L1-mid': { title:'L1 · Mid · Outlook slow after Windows update', cause:'KB5xxxxx update corrupted search index. Index rebuild applied.', timer:'7.6s', target:'~38s', lead:'I 5 Ws', leadCell:'I', stageNow:11, stageMax:11, stageText:'response · STAR summary', layersTotal:101,
+      tags:{industry:'smb',role:'end_user',environment:'prod',pressure:'busy',history:'first_time',trust:'established'},
+      layers:[['LLM',21.8],['Memory',16.8],['Evaluation',9.9],['Automation',8.9],['Safety',8.9],['KB',6.9],['Tools',6.9],['Frontend/UI',6.9],['Vector DB',5.0],['RAG',4.0],['Agents',2.5],['Storage',1.5]],
+      agents:[['reasoning',4],['intent',2],['kb',2],['safety',2],['automation',2],['psychology',1],['learning',1],['quality',1],['observability',1]],
+      messages:[{from:'user',text:'Outlook is crawling since last night. Search is the worst.'},{from:'aria',text:'Annoying — sorry about that. Quick question: did Windows install updates overnight?'},{from:'user',text:'Yeah, I saw a restart prompt this morning.'},{from:'aria',text:'That tracks. The update class touches the search index service.'},{from:'aria',text:'My read (high confidence): the search index got corrupted during the post-update service restart. Fix is a rebuild — about 90 seconds.'},{from:'aria',text:'Starting the rebuild now. Outlook may flicker once.'},{from:'aria',text:'Rebuild complete. Try a quick search.'},{from:'user',text:'Way faster. Thanks.'},{from:'aria',text:'Summary: post-update index corruption — rebuilt — verified responsive.'}]
+    },
+    'L1-hard': { title:'L1 · Hard · VPN drops intermittently', cause:'ISP route flap + idle-timeout combo. Mitigated client side; ISP ticket opened.', timer:'10.3s', target:'~72s', lead:'III First Principles', leadCell:'III', stageNow:12, stageMax:12, stageText:'STAR handoff to L2 + ISP ticket', layersTotal:109,
+      tags:{industry:'finance',role:'end_user',environment:'prod',pressure:'urgent',history:'repeat',trust:'fragile'},
+      layers:[['LLM',33],['Memory',15.6],['Automation',9.2],['Vector DB',7.3],['Tools',7.3],['Frontend/UI',5.5],['RAG',4.6],['Agents',3.7],['Safety',3.7],['KB',3.7],['Evaluation',3.7],['Storage',2.7]],
+      agents:[['reasoning',4],['intent',2],['psychology',2],['kb',2],['automation',2],['orchestrator',1],['research',1],['safety',1],['escalation',1],['quality',1]],
+      messages:[{from:'user',text:'VPN keeps dropping. Lost my session three times in an hour.'},{from:'aria',text:'Three drops in an hour is too many. Pulling your history first.'},{from:'aria',text:'No playbook matches this exactly. Going first-principles.'},{from:'aria',text:'Running a quick ping + traceroute to the gateway.'},{from:'aria',text:'Two issues stacked: ISP route flap + idle-timeout too short. Extending timeout client-side.'},{from:'aria',text:'Timeout adjusted. Opening a ticket with your ISP.'},{from:'aria',text:'STAR handoff to L2 in your name. If it drops again, ping them.'}]
+    }
+  };
+
+  // ============= MODE STATE =============
+  let mode = 'waiting'; // 'waiting' | 'live' | 'demo'
+  let currentTier = 'L1', currentDiff = 'mid';
+  let simAnimation = null;
+  let pollHandle = null;
+  let pollSince = 0;
+  let currentSid = null;
+  let resetTimer = null;
+
+  renderEmptyLayers();
+
+  // ============= WAITING =============
+  function enterWaitingMode() {
+    if (pollHandle) { clearInterval(pollHandle); pollHandle = null; }
+    if (resetTimer) { clearTimeout(resetTimer); resetTimer = null; }
+    if (simAnimation) { clearInterval(simAnimation); simAnimation = null; }
+    mode = 'waiting';
+    currentSid = null;
+    pollSince = 0;
+
+    document.getElementById('apTicketBar').classList.add('hidden-block');
+    document.getElementById('apScenarioBar').style.display = 'flex';
+    document.getElementById('apModeBadge').textContent = 'DEMO';
+    document.getElementById('apModeBadge').className = 'ap-mode-badge ap-mode-demo';
+    document.getElementById('apTitlePrefix').textContent = 'Waiting for ARIA session — ';
+    document.getElementById('apScenarioTitleMain').textContent = 'no live session';
+    document.getElementById('apStageText').textContent = 'waiting — press start or open /aria';
+    document.getElementById('apStageNow').textContent = '0';
+    document.getElementById('apStageMax').textContent = '11';
+    document.getElementById('apStageProgress').style.width = '0%';
+    document.getElementById('apAgentsUnique').textContent = '0';
+    document.getElementById('apAgentsTotal').textContent = '0';
+    document.getElementById('apAgentsGrid').innerHTML = '<span class="ap-agents-empty">none yet — waiting</span>';
+    document.getElementById('apFwLead').textContent = '—';
+    document.querySelectorAll('.ap-fw-cell').forEach(c => c.classList.remove('active'));
+    document.getElementById('apLayersTotal').textContent = '0';
+    renderEmptyLayers();
+    document.getElementById('apMsgCount').textContent = '0 messages';
+    document.getElementById('apConvStream').innerHTML = `
+      <div class="ap-conv-waiting">
+        Waiting for an ARIA session.<br><br>
+        When someone starts chatting at <span class="mono" style="color:var(--ap-teal);">/aria</span>, Aperture switches to LIVE mode automatically.<br><br>
+        Or press <span class="mono" style="color:var(--ap-teal);">▶ START SIMULATION</span> above to run a demo.
+      </div>`;
+    document.getElementById('apTimer').textContent = '0ms';
+    document.getElementById('apStatusCard').classList.add('hidden-block');
+    document.getElementById('apStatusCard').classList.remove('escalated');
+    document.getElementById('apTagRow').innerHTML = `
+      <span class="ap-tag"><span class="ap-tag-key">mode</span><span class="ap-tag-val">demo · waiting</span></span>
+      <span class="ap-tag"><span class="ap-tag-key">status</span><span class="ap-tag-val">waiting</span></span>`;
+  }
+
+  // ============= LIVE MODE =============
+  function enterLiveMode(sid) {
+    if (pollHandle) clearInterval(pollHandle);
+    if (resetTimer) { clearTimeout(resetTimer); resetTimer = null; }
+    if (simAnimation) { clearInterval(simAnimation); simAnimation = null; }
+    mode = 'live';
+    currentSid = sid;
+    pollSince = 0;
+
+    document.getElementById('apScenarioBar').style.display = 'none';
+    document.getElementById('apTicketBar').classList.remove('hidden-block');
+    document.getElementById('apStatusCard').classList.add('hidden-block');
+    document.getElementById('apStatusCard').classList.remove('escalated');
+    document.getElementById('apMsgCount').textContent = '0 messages';
+    document.getElementById('apConvStream').innerHTML = '<div class="ap-conv-waiting">Connecting to live session ' + escapeHtml(sid) + '…</div>';
+
+    pollLive();
+    pollHandle = setInterval(pollLive, POLL_INTERVAL_MS);
+  }
+
+  async function pollLive() {
+    if (!currentSid) return;
+    try {
+      const r = await fetch('/.netlify/functions/aperture-session?sid=' + encodeURIComponent(currentSid) + '&since=0', { cache: 'no-store' });
+      if (!r.ok) {
+        if (r.status === 404) {
+          // session disappeared — back to waiting
+          enterWaitingMode();
+          clearInterval(pollHandle);
+        }
+        return;
+      }
+      const data = await r.json();
+      renderLive(data);
+      if (data.meta && (data.meta.status === 'resolved' || data.meta.status === 'escalated')) {
+        clearInterval(pollHandle);
+        pollHandle = null;
+        scheduleReset();
+      }
+    } catch {}
+  }
+
+  function scheduleReset() {
+    if (resetTimer) clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      enterWaitingMode();
+    }, RESET_DELAY_MS);
+  }
+
+  function renderLive(data) {
+    const meta = data.meta || {};
+    const derived = meta.derived || {};
+    const user = meta.user || {};
+    const status = meta.status || 'active';
+
+    document.getElementById('apTicketVal').textContent = meta.ticket || '—';
+    document.getElementById('apTicketUser').textContent = ((user.firstName||'') + ' ' + (user.lastName||'')).trim() || '—';
+    const statusEl = document.getElementById('apTicketStatus');
+    if (status === 'active') { statusEl.textContent = '● LIVE'; statusEl.className = 'live mono ap-pulse'; statusEl.style.color = 'var(--ap-green)'; }
+    else if (status === 'resolved') { statusEl.textContent = '✓ RESOLVED'; statusEl.className = 'live mono'; statusEl.style.color = 'var(--ap-green)'; }
+    else if (status === 'escalated') { statusEl.textContent = '⚠ ESCALATED'; statusEl.className = 'live mono'; statusEl.style.color = 'var(--ap-amber)'; }
+
+    const cls = meta.classification || {};
+    const firstUserEvt = (data.events || []).find(e => e.type === 'message_user');
+    const issueText = (meta.userIssue) || (firstUserEvt && firstUserEvt.payload && firstUserEvt.payload.text) || 'Active session';
+    document.getElementById('apTitlePrefix').textContent = (cls.tier || 'classifying') + ' · ' + (cls.difficulty || '—') + ' · ';
+    document.getElementById('apScenarioTitleMain').textContent = issueText.slice(0, 90);
+
+    const tagRow = document.getElementById('apTagRow');
+    tagRow.innerHTML = '';
+    const modeTag = document.createElement('span'); modeTag.className = 'ap-tag';
+    modeTag.innerHTML = `<span class="ap-tag-key">mode</span><span class="ap-tag-val" style="color:var(--ap-green)">live</span>`;
+    tagRow.appendChild(modeTag);
+    const statusTag = document.createElement('span'); statusTag.className = 'ap-tag';
+    statusTag.innerHTML = `<span class="ap-tag-key">status</span><span class="ap-tag-val">${status}</span>`;
+    tagRow.appendChild(statusTag);
+    if (user.company) {
+      const c = document.createElement('span'); c.className = 'ap-tag';
+      c.innerHTML = `<span class="ap-tag-key">company</span><span class="ap-tag-val">${escapeHtml(user.company)}</span>`;
+      tagRow.appendChild(c);
+    }
+    if (derived.framework) {
+      const fw = document.createElement('span'); fw.className = 'ap-tag ap-tag-lead';
+      fw.innerHTML = `<span class="ap-tag-key">lead</span><span class="ap-tag-val">${derived.framework.roman} ${derived.framework.name}</span>`;
+      tagRow.appendChild(fw);
+    }
+
+    const dur = derived.durationSec || (meta.startedAt ? Math.round((Date.now() - meta.startedAt) / 1000) : 0);
+    document.getElementById('apTimer').textContent = dur + 's';
+    document.getElementById('apTargetTimer').textContent = cls.tier === 'L3' ? '~180s' : cls.tier === 'L2' ? '~90s' : '~60s';
+
+    const stage = derived.stage || { now: 0, max: 11, label: 'thinking…' };
+    document.getElementById('apStageNow').textContent = stage.now;
+    document.getElementById('apStageMax').textContent = stage.max;
+    document.getElementById('apStageText').textContent = stage.label;
+    document.getElementById('apStageProgress').style.width = ((stage.now / Math.max(1, stage.max)) * 100) + '%';
+
+    const agentRegistry = derived.agentRegistry || derived.agents || [];
+    const _AGENT_LABELS = {"orchestrator":"Orchestrator","intent":"Intent","reasoning":"Reasoning","kb":"Knowledge Base","rag":"RAG Retrieval","vector":"Vector Memory","troubleshooting":"Troubleshooting","safety":"Safety","automation":"Automation","resolutionVerification":"Resolution Verify","escalation":"Escalation","emailReport":"Email Report","ticketing":"Ticketing","performanceAudit":"Performance Audit"};
+    const _ORDER = ['orchestrator','intent','reasoning','kb','rag','vector','troubleshooting','safety','automation','resolutionVerification','escalation','emailReport','ticketing','performanceAudit'];
+    const _fireMap = {};
+    agentRegistry.forEach(function(pair){ _fireMap[pair[0]] = pair[1] || 0; });
+    const _firedAgents = _ORDER.filter(function(k){ return (_fireMap[k]||0) > 0; });
+    document.getElementById('apAgentsUnique').textContent = _firedAgents.length;
+    document.getElementById('apAgentsTotal').textContent = _ORDER.reduce(function(a,k){ return a + (_fireMap[k]||0); }, 0);
+    const agentsGrid = document.getElementById('apAgentsGrid');
+    agentsGrid.innerHTML = '';
+    _ORDER.forEach(function(k){
+      const v = _fireMap[k] || 0;
+      const chip = document.createElement('span');
+      chip.className = 'ap-chip-agent' + (v > 0 ? ' active' : ' dim');
+      chip.title = (_AGENT_LABELS[k] || k) + (v > 0 ? ' — fired ' + v + 'x' : ' — idle');
+      chip.style.cssText = v > 0
+        ? 'opacity:1;border-color:var(--ap-teal);background:var(--ap-teal-glow);'
+        : 'opacity:0.42;';
+      const lbl = _AGENT_LABELS[k] || k;
+      chip.innerHTML = '<span>' + lbl + '</span>' + (v > 0 ? '<span class="ap-chip-count">+' + v + '</span>' : '');
+      agentsGrid.appendChild(chip);
+    });
+
+    if (derived.framework) {
+      document.getElementById('apFwLead').textContent = derived.framework.roman + ' ' + derived.framework.name;
+      document.querySelectorAll('.ap-fw-cell').forEach(c => c.classList.toggle('active', c.dataset.fw === derived.framework.roman));
+    }
+
+    const layers = derived.layers || [];
+    if (layers.length) {
+      const layerSubs = {LLM:'thinking · reasoning · behavior',Memory:'short · long · procedural · pattern',Automation:'workflows · n8n','Vector DB':'semantic memory · index',Tools:'abilities · actions','Frontend/UI':'user interaction',RAG:'retrieval · search',Agents:'specialized workers',Safety:'guardrails · verification',KB:'curated articles',Evaluation:'self-checking · testing',Storage:'files · databases · archives'};
+      const rows = document.getElementById('apLayerRows');
+      rows.innerHTML = '';
+      layers.forEach(([n, p]) => {
+        const row = document.createElement('div');
+        row.className = 'ap-layer-row';
+        row.innerHTML = `<div><div class="ap-layer-name">${n}</div><div class="ap-layer-sub">${layerSubs[n] || ''}</div></div>
+          <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:${Math.min(100, p * 2.5)}%"></div></div>
+          <div class="ap-layer-pct">${p}%</div>`;
+        rows.appendChild(row);
+      });
+      document.getElementById('apLayersTotal').textContent = derived.layerTotalUnits || '—';
+    }
+
+    // Conversation — re-render fully from events for simplicity
+    const allMsgs = (data.events || []).filter(e => e.type === 'message_user' || e.type === 'message_aria');
+    const stream = document.getElementById('apConvStream');
+    if (allMsgs.length > 0) {
+      stream.innerHTML = '';
+      allMsgs.forEach(ev => {
+        const from = ev.type === 'message_user' ? 'user' : 'aria';
+        const text = (ev.payload && ev.payload.text) || '';
+        const wrap = document.createElement('div');
+        wrap.className = 'ap-msg ' + from;
+        wrap.innerHTML = `<span class="ap-msg-from ${from}">${from.toUpperCase()}</span><div class="ap-msg-bubble">${escapeHtml(text)}</div>`;
+        stream.appendChild(wrap);
+      });
+      stream.scrollTop = stream.scrollHeight;
+      document.getElementById('apMsgCount').textContent = allMsgs.length + ' messages';
+    }
+
+    if (status === 'resolved' || status === 'escalated') {
+      const card = document.getElementById('apStatusCard');
+      card.classList.remove('hidden-block');
+      card.classList.toggle('escalated', status === 'escalated');
+      const badge = document.getElementById('apStatusBadge');
+      badge.textContent = status === 'resolved' ? '✓ RESOLVED' : '⚠ ESCALATED';
+      badge.className = 'ap-resolved-badge' + (status === 'escalated' ? ' escalated' : '');
+      document.getElementById('apStatusTime').textContent = dur + 's';
+      document.getElementById('apStatusCause').innerHTML = `<strong style="color:var(--ap-text);">Outcome:</strong> ${escapeHtml(meta.summary || (status === 'resolved' ? 'Issue resolved by ARIA.' : 'Handed off — human will follow up.'))}`;
+      document.getElementById('apStatusMix').innerHTML = `<span class="ap-chip-mix neutral">Ticket <span class="v">${meta.ticket}</span></span><span class="ap-chip-mix neutral">Report sent to <span class="v">${escapeHtml(user.email || '')}</span></span><span class="ap-chip-mix neutral">Auto-reset in ${RESET_DELAY_MS/1000}s</span>`;
+    }
+  }
+
+  // ============= DEMO SIMULATION =============
+  function startDemoSimulation() {
+    if (simAnimation) clearInterval(simAnimation);
+    if (resetTimer) { clearTimeout(resetTimer); resetTimer = null; }
+    mode = 'demo';
+    const key = currentTier + '-' + currentDiff;
+    const s = SCENARIOS[key];
+    if (!s) return;
+
+    document.getElementById('apTicketBar').classList.add('hidden-block');
+    document.getElementById('apStatusCard').classList.add('hidden-block');
+    document.getElementById('apModeBadge').textContent = 'DEMO · RUNNING';
+    document.getElementById('apTitlePrefix').textContent = '';
+    document.getElementById('apScenarioTitleMain').innerHTML = s.title;
+
+    const tagRow = document.getElementById('apTagRow');
+    tagRow.innerHTML = '';
+    Object.entries(s.tags).forEach(([k, v]) => {
+      const span = document.createElement('span'); span.className = 'ap-tag';
+      span.innerHTML = `<span class="ap-tag-key">${k}</span><span class="ap-tag-val">${v}</span>`;
+      tagRow.appendChild(span);
+    });
+    const lead = document.createElement('span'); lead.className = 'ap-tag ap-tag-lead';
+    lead.innerHTML = `<span class="ap-tag-key">lead</span><span class="ap-tag-val">${s.lead}</span>`;
+    tagRow.appendChild(lead);
+
+    document.querySelectorAll('.ap-fw-cell').forEach(c => c.classList.toggle('active', c.dataset.fw === s.leadCell));
+    document.getElementById('apFwLead').textContent = s.lead;
+
+    const totalMs = (parseFloat(s.timer) * 1000) || 7600;
+    const startTs = Date.now();
+    document.getElementById('apTimer').textContent = '0ms';
+    document.getElementById('apTargetTimer').textContent = s.target;
+    document.getElementById('apMsgCount').textContent = '0 messages';
+
+    const stream = document.getElementById('apConvStream');
+    stream.innerHTML = '';
+    let msgIdx = 0;
+    const msgInterval = Math.max(400, totalMs / (s.messages.length + 1));
+    const msgTicker = setInterval(() => {
+      if (msgIdx >= s.messages.length) { clearInterval(msgTicker); return; }
+      const m = s.messages[msgIdx++];
+      const wrap = document.createElement('div');
+      wrap.className = 'ap-msg ' + m.from;
+      wrap.innerHTML = `<span class="ap-msg-from ${m.from}">${m.from.toUpperCase()}</span><div class="ap-msg-bubble">${m.text}</div>`;
+      stream.appendChild(wrap);
+      stream.scrollTop = stream.scrollHeight;
+      document.getElementById('apMsgCount').textContent = msgIdx + ' messages';
+    }, msgInterval);
+
+    simAnimation = setInterval(() => {
+      const elapsed = Date.now() - startTs;
+      if (elapsed > totalMs) {
+        clearInterval(simAnimation); simAnimation = null;
+        completeDemo(s);
+        return;
+      }
+      const t = elapsed / 1000;
+      document.getElementById('apTimer').textContent = t < 1 ? Math.round(elapsed) + 'ms' : t.toFixed(1) + 's';
+      const stagePct = elapsed / totalMs;
+      document.getElementById('apStageProgress').style.width = (stagePct * 100) + '%';
+      document.getElementById('apStageNow').textContent = Math.min(s.stageMax, Math.ceil(stagePct * s.stageMax));
+      document.getElementById('apStageMax').textContent = s.stageMax;
+      const labels = ['intent + triage','reasoning · KB lookup','evidence gather','response · verification', s.stageText];
+      document.getElementById('apStageText').textContent = labels[Math.min(labels.length - 1, Math.floor(stagePct * labels.length))];
+      const agentsGoal = s.agents.reduce((a, [, v]) => a + v, 0);
+      const agentsNow = Math.ceil(stagePct * agentsGoal);
+      const agentsUnique = Math.min(s.agents.length, Math.ceil(stagePct * s.agents.length));
+      document.getElementById('apAgentsUnique').textContent = agentsUnique;
+      document.getElementById('apAgentsTotal').textContent = agentsNow;
+      animateLayers(s.layers, stagePct);
+      document.getElementById('apLayersTotal').textContent = Math.ceil(stagePct * s.layersTotal);
+    }, 80);
+
+    setTimeout(() => {
+      const agentsGrid = document.getElementById('apAgentsGrid');
+      agentsGrid.innerHTML = '';
+      s.agents.forEach(([n, c]) => {
+        const span = document.createElement('span'); span.className = 'ap-chip-agent';
+        span.innerHTML = `${n} <span class="ap-chip-count">×${c}</span>`;
+        agentsGrid.appendChild(span);
+      });
+    }, totalMs * 0.4);
+  }
+
+  function animateLayers(layerData, pct) {
+    const layerSubs = {LLM:'thinking · reasoning · behavior',Memory:'short · long · procedural · pattern',Automation:'workflows · n8n','Vector DB':'semantic memory · index',Tools:'abilities · actions','Frontend/UI':'user interaction',RAG:'retrieval · search',Agents:'specialized workers',Safety:'guardrails · verification',KB:'curated articles',Evaluation:'self-checking · testing',Storage:'files · databases · archives'};
+    const rows = document.getElementById('apLayerRows');
+    rows.innerHTML = '';
+    layerData.forEach(([n, p]) => {
+      const curP = (p * pct).toFixed(1);
+      const row = document.createElement('div');
+      row.className = 'ap-layer-row';
+      row.innerHTML = `<div><div class="ap-layer-name">${n}</div><div class="ap-layer-sub">${layerSubs[n] || ''}</div></div>
+        <div class="ap-layer-bar"><div class="ap-layer-bar-fill" style="width:${Math.min(100, curP * 2.5)}%"></div></div>
+        <div class="ap-layer-pct">${curP}%</div>`;
+      rows.appendChild(row);
+    });
+  }
+
+  function completeDemo(s) {
+    const card = document.getElementById('apStatusCard');
+    card.classList.remove('hidden-block', 'escalated');
+    document.getElementById('apStatusBadge').textContent = '✓ RESOLVED';
+    document.getElementById('apStatusBadge').className = 'ap-resolved-badge';
+    document.getElementById('apStatusTime').textContent = s.timer;
+    document.getElementById('apStatusTarget').textContent = s.target;
+    document.getElementById('apStatusCause').innerHTML = `<strong style="color:var(--ap-text);">Cause:</strong> ${s.cause}`;
+    document.getElementById('apStatusMix').innerHTML = `<span class="ap-chip-mix neutral">DEMO scenario — no email sent</span>`;
+    document.getElementById('apTimer').textContent = s.timer;
+    document.getElementById('apStageProgress').style.width = '100%';
+    document.getElementById('apStageNow').textContent = s.stageMax;
+    document.getElementById('apStageText').textContent = s.stageText;
+  }
+
+  function escapeHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // ============= INTERACTIONS =============
+  document.querySelectorAll('.ap-tier-group').forEach(grp => {
+    const tier = grp.dataset.tier;
+    grp.querySelectorAll('.ap-diff-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentTier = tier; currentDiff = btn.dataset.diff;
+        document.querySelectorAll('.ap-tier-group').forEach(g => g.querySelectorAll('.ap-diff-btn').forEach(b => b.classList.remove('active')));
+        btn.classList.add('active');
+      });
+    });
+  });
+  document.getElementById('apRunBtn').addEventListener('click', () => { startDemoSimulation(); });
+  document.getElementById('apResetBtn').addEventListener('click', () => { enterWaitingMode(); });
+
+  // ============= AUTO-DETECT ACTIVE ARIA SESSION =============
+  function detectActiveSession() {
+    try {
+      const raw = localStorage.getItem('aria_active_session');
+      if (!raw) return null;
+      const s = JSON.parse(raw);
+      return (s && s.sessionId) ? s.sessionId : null;
+    } catch { return null; }
+  }
+
+  function onStorageEvent(ev) {
+    if (ev.key !== 'aria_active_session') return;
+    const newSid = detectActiveSession();
+    if (newSid && newSid !== currentSid) {
+      enterLiveMode(newSid);
+    } else if (!newSid && mode === 'live') {
+      // Session ended — but the live polling will pick up the resolved/escalated state first.
+      // If we get a sudden clear here, schedule reset.
+      if (!resetTimer) scheduleReset();
+    }
+  }
+  window.addEventListener('storage', onStorageEvent);
+
+  // URL param ?sid= takes priority for explicit linking
+  const url = new URLSearchParams(window.location.search);
+  const explicit = url.get('sid');
+  if (explicit) {
+    enterLiveMode(explicit);
+  } else {
+    const detected = detectActiveSession();
+    if (detected) enterLiveMode(detected);
+    else enterWaitingMode();
+  }
+
+  // Periodic localStorage poll (covers cases where storage event doesn't fire — same-tab updates, etc.)
+  setInterval(() => {
+    const detected = detectActiveSession();
+    if (detected && detected !== currentSid && mode !== 'live') {
+      enterLiveMode(detected);
+    }
+  }, 2000);
+
+})();
+</script>
+
+
+<script id="aperture-gate-script">
+(function(){
+  var TOKEN_KEY = 'aperture_token_v1';
+  function getToken(){ try { return JSON.parse(localStorage.getItem(TOKEN_KEY) || 'null'); } catch { return null; } }
+  function isValid(t){ return t && t.token && t.expiresAt && t.expiresAt > Date.now(); }
+  function setLockedClass(locked){
+    document.body.classList.toggle('aperture-locked', locked);
+    document.body.classList.toggle('aperture-unlocked', !locked);
+  }
+  function hideGate(){
+    var g = document.getElementById('aperture-login-gate');
+    if (g) g.remove();
+    setLockedClass(false);
+  }
+  function showGate(){
+    setLockedClass(true);
+    var g = document.getElementById('aperture-login-gate');
+    if (g) g.style.display = 'flex';
+  }
+  function clearToken(){ try { localStorage.removeItem(TOKEN_KEY); } catch {} }
+  // Patch fetch to inject Authorization header on /.netlify/functions/* calls
+  var _fetch = window.fetch;
+  window.fetch = function(input, init){
+    init = init || {};
+    var url = typeof input === 'string' ? input : (input && input.url) || '';
+    var t = getToken();
+    if (isValid(t) && /\/\.netlify\/functions\//.test(url)) {
+      init.headers = new Headers(init.headers || {});
+      init.headers.set('Authorization', 'Bearer ' + t.token);
+    }
+    return _fetch.call(this, input, init);
+  };
+
+  function init(){
+    var t = getToken();
+    if (isValid(t)) { hideGate(); return; }
+    showGate();
+    var submit = document.getElementById('ag-submit');
+    var emailEl = document.getElementById('ag-email');
+    var passEl = document.getElementById('ag-pass');
+    var errEl = document.getElementById('ag-err');
+    if (emailEl && !emailEl.value) emailEl.value = 'integrateditsupp@iisupp.net';
+    function go(){
+      var email = (emailEl.value||'').trim();
+      var password = passEl.value||'';
+      if (!email || !password) { errEl.textContent = 'enter email and password'; return; }
+      errEl.textContent = '';
+      submit.disabled = true; submit.textContent = 'Signing in...';
+      _fetch('/.netlify/functions/aperture-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+      }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, status: r.status, body: d }; }); })
+        .then(function(res){
+          if (res.ok && res.body && res.body.token) {
+            try { localStorage.setItem(TOKEN_KEY, JSON.stringify(res.body)); } catch {}
+            hideGate();
+          } else {
+            errEl.textContent = (res.body && res.body.error) || ('error ' + res.status);
+            submit.disabled = false; submit.textContent = 'Sign In';
+          }
+        }).catch(function(e){
+          errEl.textContent = 'network error'; submit.disabled = false; submit.textContent = 'Sign In';
+        });
+    }
+    submit.addEventListener('click', go);
+    passEl.addEventListener('keydown', function(e){ if (e.key === 'Enter') go(); });
+    emailEl.addEventListener('keydown', function(e){ if (e.key === 'Enter') passEl.focus(); });
+    var lo = document.getElementById('aperture-logout-btn');
+    if (lo) lo.addEventListener('click', function(){ clearToken(); location.reload(); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+
+<!-- ARIA MESH SPIDER-WEB component (added 2026-05-25) -->
+<script src="/assets/aria-mesh-web.js" defer></script>
+</body>
+</html>

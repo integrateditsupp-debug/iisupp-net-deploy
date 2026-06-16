@@ -1,0 +1,11 @@
+{
+  "key": "learn-ai_eng-phishing-1vayqz.json",
+  "heading": "ai_eng: phishing",
+  "body": "DO NOT click the link or reply. Do not download attachments. Hover the sender name to reveal the actual email address — phishing often uses look-alike domains (microsft.com vs microsoft.com). Hover t…\n\nAsked by: ai_eng | Topic: phishing | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "rag pattern for phishing?",
+  "created_at": "2026-06-05T02:06:01.516Z",
+  "agent": "ai_eng",
+  "topic": "phishing"
+}

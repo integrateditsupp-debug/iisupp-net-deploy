@@ -1,0 +1,11 @@
+{
+  "key": "learn-born_mdm-sd-wan-vcyf9a.json",
+  "heading": "born_mdm: sd-wan",
+  "body": "Go to https://passwordreset.microsoftonline.com (for M365) or the company SSO sign-in page → click \"Forgot my password\". Confirm identity via phone / authenticator / backup email. Asked by: security …\n\nAsked by: born_mdm | Topic: sd-wan | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "what is the cheapest fix for mdm enrollment?",
+  "created_at": "2026-06-02T07:05:34.449Z",
+  "agent": "born_mdm",
+  "topic": "sd-wan"
+}

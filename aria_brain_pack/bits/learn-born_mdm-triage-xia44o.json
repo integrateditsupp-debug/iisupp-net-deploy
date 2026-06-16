@@ -1,0 +1,11 @@
+{
+  "key": "learn-born_mdm-triage-xia44o.json",
+  "heading": "born_mdm: triage",
+  "body": "Scope: single user (scope: local device). Isolate by trying the same action on a second device or account. Trigger: today. The #1 clue in any IT issue is what changed right before it broke. Asked by:…\n\nAsked by: born_mdm | Topic: triage | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "is the triage fix enough, or what breaks it at scale?",
+  "created_at": "2026-06-01T08:18:13.068Z",
+  "agent": "born_mdm",
+  "topic": "triage"
+}

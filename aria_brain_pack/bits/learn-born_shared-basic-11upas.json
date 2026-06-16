@@ -1,0 +1,11 @@
+{
+  "key": "learn-born_shared-basic-11upas.json",
+  "heading": "born_shared: basic",
+  "body": "Scope: single user (scope: local device). Isolate by trying the same action on a second device or account. Trigger: today. The #1 clue in any IT issue is what changed right before it broke.\n\nAsked by: born_shared | Topic: basic | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "who pays for solving shared drive sync today?",
+  "created_at": "2026-06-01T05:31:52.797Z",
+  "agent": "born_shared",
+  "topic": "basic"
+}

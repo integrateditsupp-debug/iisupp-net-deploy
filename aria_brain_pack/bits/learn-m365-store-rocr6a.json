@@ -1,0 +1,11 @@
+{
+  "key": "learn-m365-store-rocr6a.json",
+  "heading": "m365: store",
+  "body": "Which app, system, or device is this about? For example Outlook, Wi-Fi, VPN, printer, login, or your computer itself.\n\nAsked by: m365 | Topic: store | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "security baseline change for store?",
+  "created_at": "2026-06-13T05:48:01.939Z",
+  "agent": "m365",
+  "topic": "store"
+}

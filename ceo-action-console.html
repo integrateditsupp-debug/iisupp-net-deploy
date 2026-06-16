@@ -1,0 +1,1386 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IIS CEO Action Console</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f4;
+      --ink: #17211c;
+      --muted: #5f6a63;
+      --panel: #ffffff;
+      --line: #dce3dc;
+      --accent: #1f6b57;
+      --accent-2: #295f98;
+      --warn: #965f16;
+      --danger: #9b2d30;
+      --done: #2f6f42;
+      --shadow: 0 14px 38px rgba(23, 33, 28, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 14px;
+      align-items: stretch;
+      margin-bottom: 14px;
+    }
+
+    .hero,
+    .status-strip,
+    .live-panel,
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 3.1rem);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .hero p,
+    .empty,
+    .action-detail {
+      color: var(--muted);
+    }
+
+    .hero p {
+      max-width: 78ch;
+      margin: 10px 0 0;
+      font-size: 1rem;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 82px;
+      background: #fbfcfa;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.75rem;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .control-row {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 0 14px;
+      background: color-mix(in srgb, var(--bg), transparent 6%);
+      backdrop-filter: blur(10px);
+    }
+
+    .live-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 12px;
+      margin: 0 0 14px;
+      padding: 14px;
+    }
+
+    .live-panel h2,
+    .live-panel h3 {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .live-panel h2 {
+      font-size: 1rem;
+    }
+
+    .live-panel h3 {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .live-panel p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .activity-list {
+      display: grid;
+      gap: 8px;
+      max-height: 170px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .activity-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      background: #fbfcfa;
+      font-size: 0.84rem;
+    }
+
+    .activity-item b {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+
+    .search,
+    .select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      min-height: 42px;
+      padding: 0 12px;
+      font: inherit;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      border-color: var(--accent);
+      outline: none;
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn.blue {
+      background: var(--accent-2);
+      border-color: var(--accent-2);
+      color: #fff;
+    }
+
+    .btn.warn {
+      border-color: #edc384;
+      color: var(--warn);
+      background: #fff7e8;
+    }
+
+    .btn.accept {
+      border-color: #8fb9d8;
+      color: #1d557c;
+      background: #edf6ff;
+    }
+
+    .btn.reject,
+    .btn.danger {
+      border-color: #e1a1a3;
+      color: var(--danger);
+      background: #fff1f1;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .rail {
+      position: sticky;
+      top: 70px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .rail a,
+    .legend {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .rail a.active {
+      background: #e8f2ee;
+      border-color: #a7c9bd;
+      color: #164f41;
+    }
+
+    .legend {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .dotline {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .dot.done {
+      background: var(--done);
+    }
+
+    .dot.hold {
+      background: var(--warn);
+    }
+
+    .dot.agent {
+      background: var(--accent-2);
+    }
+
+    .dot.approve {
+      background: #244f8f;
+    }
+
+    .dot.accept {
+      background: #1d7290;
+    }
+
+    .dot.reject {
+      background: var(--danger);
+    }
+
+    .sections {
+      display: grid;
+      gap: 14px;
+    }
+
+    .section {
+      overflow: clip;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfa;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    .section-count {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .cards {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .action-card {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) minmax(260px, 0.55fr);
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .rank {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: #eef5f1;
+      color: #174c3f;
+      font-weight: 900;
+    }
+
+    .action-title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #f1f4f0;
+      color: #445047;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .tag.gate {
+      background: #fff2dc;
+      color: #7b4d11;
+    }
+
+    .action-detail {
+      margin: 0;
+      font-size: 0.91rem;
+    }
+
+    .next-box {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+      border-left: 1px solid var(--line);
+      padding-left: 12px;
+    }
+
+    .next-box p {
+      margin: 0;
+      font-size: 0.87rem;
+      color: var(--muted);
+    }
+
+    .next-box b {
+      color: var(--ink);
+    }
+
+    .links,
+    .actions,
+    .note-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .note-box {
+      display: grid;
+      gap: 7px;
+      margin-top: 2px;
+    }
+
+    .contract-box {
+      display: grid;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fbfcfa;
+    }
+
+    .failure-note {
+      display: block;
+      border: 1px solid #d47b7f;
+      border-left: 4px solid var(--danger);
+      border-radius: 8px;
+      padding: 9px;
+      background: #fff4f4;
+      color: #7f2226;
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .contract-brief {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .brief-cell {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .brief-cell b {
+      display: block;
+      color: var(--ink);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .field-control {
+      display: grid;
+      gap: 4px;
+    }
+
+    .field-control label {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .field-control input,
+    .field-control textarea,
+    .field-control select {
+      width: 100%;
+      min-height: 38px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.84rem;
+    }
+
+    .field-control textarea {
+      min-height: 68px;
+      resize: vertical;
+    }
+
+    .note-box label {
+      color: var(--ink);
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .note-input {
+      width: 100%;
+      min-height: 72px;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      resize: vertical;
+      font: inherit;
+      font-size: 0.86rem;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .note-input:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(31, 107, 87, 0.12);
+    }
+
+    .saved-note {
+      display: none;
+      padding: 7px 8px;
+      border-left: 3px solid var(--accent-2);
+      background: #f6f9fc;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .saved-note.visible {
+      display: block;
+    }
+
+    .copy-area {
+      display: none;
+      width: 100%;
+      min-height: 92px;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      resize: vertical;
+      font: inherit;
+      font-size: 0.86rem;
+    }
+
+    .copy-area.visible {
+      display: block;
+    }
+
+    .card-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      color: var(--muted);
+    }
+
+    .card-status::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--line);
+    }
+
+    .action-card.done {
+      border-color: #a8cdb1;
+      background: #f5fbf6;
+    }
+
+    .action-card.hold {
+      border-color: #edc384;
+      background: #fffbf2;
+    }
+
+    .action-card.agent {
+      border-color: #acc6df;
+      background: #f4f8fd;
+    }
+
+    .action-card.approve {
+      border-color: #aebfe2;
+      background: #f3f6ff;
+    }
+
+    .action-card.accept {
+      border-color: #9fcfe0;
+      background: #f0f9fc;
+    }
+
+    .action-card.reject {
+      border-color: #e1a1a3;
+      background: #fff4f4;
+    }
+
+    .action-card.failed_submit {
+      border-color: #d47b7f;
+      background: #fff0f0;
+    }
+
+    .action-card.done .card-status::before {
+      background: var(--done);
+    }
+
+    .action-card.hold .card-status::before {
+      background: var(--warn);
+    }
+
+    .action-card.agent .card-status::before {
+      background: var(--accent-2);
+    }
+
+    .action-card.approve .card-status::before {
+      background: #244f8f;
+    }
+
+    .action-card.accept .card-status::before {
+      background: #1d7290;
+    }
+
+    .action-card.reject .card-status::before {
+      background: var(--danger);
+    }
+
+    .action-card.failed_submit .card-status::before {
+      background: var(--danger);
+    }
+
+    .footer-note {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      text-align: center;
+    }
+
+    .proceed-bar {
+      position: sticky;
+      bottom: 0;
+      z-index: 12;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto auto;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 -10px 26px rgba(23, 33, 28, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .proceed-bar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .proceed-bar strong {
+      color: var(--ink);
+    }
+
+    .toast {
+      min-height: 20px;
+      color: var(--accent);
+      font-size: 0.84rem;
+      font-weight: 900;
+      text-align: right;
+    }
+
+    @media (max-width: 980px) {
+      .topbar,
+      .live-panel,
+      .layout,
+      .action-card {
+        grid-template-columns: 1fr;
+      }
+
+      .rail {
+        position: static;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .legend {
+        grid-column: 1 / -1;
+      }
+
+      .next-box {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        padding-left: 0;
+        padding-top: 10px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        padding: 12px;
+      }
+
+      .status-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .control-row {
+        grid-template-columns: 1fr;
+      }
+
+      .proceed-bar {
+        grid-template-columns: 1fr;
+      }
+
+      .toast {
+        text-align: left;
+      }
+
+      .rail {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .contract-brief,
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .links,
+      .actions,
+      .note-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <section class="hero">
+        <p class="eyebrow">IIS command screen</p>
+        <h1>CEO Action Console</h1>
+        <p>Everything that needs your final click appears here. Open the surface, do the final action, then mark a decision. Saving a note on an open item sends it to the agent lane and removes it from the active queue.</p>
+      </section>
+      <aside class="status-strip" id="metrics" aria-label="Action metrics"></aside>
+    </div>
+
+    <div class="control-row">
+      <input id="search" class="search" type="search" placeholder="Search actions, companies, portals, leads">
+      <select id="statusFilter" class="select" aria-label="Status filter">
+        <option value="open">Open only</option>
+        <option value="all">All statuses</option>
+        <option value="approve">Approved</option>
+        <option value="accept">Accepted</option>
+        <option value="reject">Rejected</option>
+        <option value="submit_authorized">Submit Authorized</option>
+        <option value="failed_submit">Failed Submit</option>
+        <option value="done">Done</option>
+        <option value="hold">Hold</option>
+        <option value="agent">Needs Agent</option>
+      </select>
+      <button class="btn" id="refreshBtn" type="button">Refresh</button>
+    </div>
+
+    <section class="live-panel" id="livePanel" aria-label="Live agent activity">
+      <div>
+        <p class="eyebrow">Live action</p>
+        <h2 id="liveTitle">Agent lane warming up</h2>
+        <p id="liveSummary">Loading saved decisions and current handoff state.</p>
+      </div>
+      <div>
+        <h3>Latest saved decisions</h3>
+        <div class="activity-list" id="activityList"></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <nav class="rail" id="rail" aria-label="Action sections"></nav>
+      <div class="sections" id="sections"></div>
+    </div>
+
+    <div class="proceed-bar" aria-label="Proceed with saved CEO decisions">
+      <p id="proceedSummary"><strong>Proceed lane:</strong> loading saved decisions.</p>
+      <button class="btn" id="openQueueBtn" type="button">Active queue</button>
+      <button class="btn primary" id="proceedBtn" type="button">Proceed</button>
+      <div class="toast" id="toast" aria-live="polite"></div>
+    </div>
+
+    <p class="footer-note">Local only. This console saves notes to <code>senior-director-state/ceo-action-console-state.json</code> when served by the local console server.</p>
+  </main>
+
+  <template id="metricTemplate">
+    <div class="metric">
+      <strong></strong>
+      <span></span>
+    </div>
+  </template>
+
+  <script>
+    const stateKey = "iis-ceo-action-console-state";
+    let consoleData = { sections: [] };
+    let consoleState = { actions: {}, notes: [] };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+    async function api(path, options) {
+      const response = await fetch(path, options);
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+      return response.json();
+    }
+
+    async function loadData() {
+      try {
+        consoleData = await api("/api/console-data");
+      } catch {
+        consoleData = await fetch("senior-director-state/ceo-action-console-data.json", { cache: "no-store" }).then((r) => r.json());
+      }
+
+      try {
+        consoleState = await api("/api/state");
+      } catch {
+        consoleState = JSON.parse(localStorage.getItem(stateKey) || "{\"actions\":{},\"notes\":[]}");
+      }
+    }
+
+    function actionById(id) {
+      return allActions().find((action) => action.id === id) || {};
+    }
+
+    function noteFor(id) {
+      return consoleState.actions?.[id]?.note || "";
+    }
+
+    function contractStateFor(id) {
+      return consoleState.contracts?.[id] || { fields: {}, status: "queued" };
+    }
+
+    async function saveAction(id, status) {
+      const stamp = new Date().toISOString();
+      const action = actionById(id);
+      const card = document.querySelector(`[data-id="${CSS.escape(id)}"]`);
+      const note = card?.querySelector(".note-input")?.value.trim() || noteFor(id);
+      const actionState = { status, updatedAt: stamp, note, title: action.title || id };
+      consoleState.actions = { ...(consoleState.actions || {}), [id]: actionState };
+      const noteEvent = { actionId: id, title: action.title || id, status, note, at: stamp };
+      consoleState.notes = [...(consoleState.notes || []), noteEvent].slice(-200);
+
+      try {
+        consoleState = await api("/api/state", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ actions: { [id]: actionState }, notes: [noteEvent] })
+        });
+      } catch {
+        localStorage.setItem(stateKey, JSON.stringify(consoleState));
+      }
+      if (status !== "open") {
+        $("#statusFilter").value = "open";
+      }
+      showToast(status === "agent" ? "Sent to agent lane" : `${statusLabel(status)} saved`);
+      render();
+    }
+
+    async function saveNote(id) {
+      const nextStatus = statusFor(id) === "open" ? "agent" : statusFor(id);
+      await saveAction(id, nextStatus);
+    }
+
+    function decisionSummary() {
+      const actions = allActions();
+      const counts = actions.reduce((acc, action) => {
+        const status = statusFor(action.id);
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {});
+      return {
+        open: counts.open || 0,
+        approve: counts.approve || 0,
+        accept: counts.accept || 0,
+        reject: counts.reject || 0,
+        done: counts.done || 0,
+        hold: counts.hold || 0,
+        agent: counts.agent || 0
+      };
+    }
+
+    function showToast(message) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => {
+        toast.textContent = "";
+      }, 2200);
+    }
+
+    async function saveProceed() {
+      const stamp = new Date().toISOString();
+      const summary = decisionSummary();
+      const proceed = {
+        requestedAt: stamp,
+        summary,
+        instruction: "CEO clicked Proceed. Agents should read saved item decisions and notes, continue all approved/accepted/done/needs-agent work, park rejected/held work, and stop only at true final gates."
+      };
+      const proceedEvent = {
+        actionId: "console-proceed",
+        title: "CEO Proceed",
+        status: "proceed",
+        note: `${summary.approve + summary.accept + summary.done + summary.agent} item(s) ready for agent continuation. ${summary.open} still open.`,
+        at: stamp
+      };
+      consoleState.proceed = proceed;
+      consoleState.notes = [...(consoleState.notes || []), proceedEvent].slice(-200);
+
+      try {
+        consoleState = await api("/api/state", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ proceed, notes: [proceedEvent] })
+        });
+      } catch {
+        localStorage.setItem(stateKey, JSON.stringify(consoleState));
+      }
+
+      $("#statusFilter").value = "open";
+      showToast("Proceed saved for agents");
+      render();
+    }
+
+    function collectContractFields(id) {
+      const card = document.querySelector(`[data-id="${CSS.escape(id)}"]`);
+      const fields = {};
+      card?.querySelectorAll("[data-contract-field]").forEach((input) => {
+        fields[input.dataset.contractField] = input.value.trim();
+      });
+      const status = card?.querySelector("[data-contract-status]")?.value || "queued";
+      return { fields, status };
+    }
+
+    async function saveContract(id, nextStatus = null, authorize = false) {
+      const action = actionById(id);
+      const stamp = new Date().toISOString();
+      const collected = collectContractFields(id);
+      const current = contractStateFor(id);
+      const status = nextStatus || collected.status || current.status || "queued";
+      const contractState = {
+        ...current,
+        fields: { ...(current.fields || {}), ...(collected.fields || {}) },
+        status,
+        title: action.title || id,
+        sourceActionId: action.sourceActionId || "",
+        updatedAt: stamp,
+        authorization: authorize
+          ? {
+              type: "fill_and_submit_live_form",
+              authorizedAt: stamp,
+              instruction: "Use only saved dashboard fields for this specific item. Fill the live form and click submit only if no new cost, legal, certification, credential, upload, or unknown field appears."
+            }
+          : current.authorization || null
+      };
+      consoleState.contracts = { ...(consoleState.contracts || {}), [id]: contractState };
+
+      const statusForAction = authorize ? "submit_authorized" : statusFor(id);
+      const actionState = {
+        ...(consoleState.actions?.[id] || {}),
+        status: statusForAction === "open" ? "agent" : statusForAction,
+        updatedAt: stamp,
+        note: noteFor(id),
+        title: action.title || id
+      };
+      consoleState.actions = { ...(consoleState.actions || {}), [id]: actionState };
+      const event = {
+        actionId: id,
+        title: action.title || id,
+        status: authorize ? "submit_authorized" : "contract_fields_saved",
+        note: authorize ? "CEO authorized live form fill + submit from saved dashboard fields." : "Contract/bid fields saved.",
+        at: stamp
+      };
+      consoleState.notes = [...(consoleState.notes || []), event].slice(-200);
+
+      try {
+        consoleState = await api("/api/state", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ actions: { [id]: actionState }, contracts: { [id]: contractState }, notes: [event] })
+        });
+      } catch {
+        localStorage.setItem(stateKey, JSON.stringify(consoleState));
+      }
+
+      $("#statusFilter").value = "open";
+      showToast(authorize ? "Live submit authorized for agent" : "Contract fields saved");
+      render();
+    }
+
+    function allActions() {
+      return (consoleData.sections || []).flatMap((section) => (section.actions || []).map((action) => ({ ...action, sectionId: section.id })));
+    }
+
+    function statusFor(id) {
+      return consoleState.actions?.[id]?.status || "open";
+    }
+
+    function renderMetrics() {
+      const root = $("#metrics");
+      const actions = allActions();
+      const open = actions.filter((action) => statusFor(action.id) === "open").length;
+      const done = actions.filter((action) => statusFor(action.id) === "done").length;
+      const positive = actions.filter((action) => ["approve", "accept", "submit_authorized"].includes(statusFor(action.id))).length;
+      const blocked = actions.filter((action) => ["hold", "reject", "agent", "failed_submit"].includes(statusFor(action.id))).length;
+      const metrics = [
+        [open, "Open final-click items"],
+        [done, "Marked done"],
+        [positive, "Approved / accepted"],
+        [blocked, "Hold / reject / failed / agent"]
+      ];
+      root.innerHTML = "";
+      const template = $("#metricTemplate");
+      metrics.forEach(([value, label]) => {
+        const node = template.content.cloneNode(true);
+        $("strong", node).textContent = value;
+        $("span", node).textContent = label;
+        root.appendChild(node);
+      });
+    }
+
+    function renderLivePanel() {
+      const actions = allActions();
+      const events = [...(consoleState.notes || [])].reverse().slice(0, 8);
+      const needsAgent = actions.filter((action) => statusFor(action.id) === "agent");
+      const approved = actions.filter((action) => ["approve", "accept"].includes(statusFor(action.id)));
+      const open = actions.filter((action) => statusFor(action.id) === "open");
+      const liveTitle = $("#liveTitle");
+      const liveSummary = $("#liveSummary");
+      const activityList = $("#activityList");
+
+      if (needsAgent.length) {
+        liveTitle.textContent = `${needsAgent.length} item${needsAgent.length === 1 ? "" : "s"} waiting on agent lane`;
+        liveSummary.textContent = "Agents should read the notes, take the next no-cost reversible step, and return only at a true final gate.";
+      } else if (approved.length) {
+        liveTitle.textContent = `${approved.length} approved or accepted item${approved.length === 1 ? "" : "s"} ready to advance`;
+        liveSummary.textContent = "Agents should move these forward to prep, draft, publish staging, or the next CEO final-click point.";
+      } else {
+        liveTitle.textContent = `${open.length} open item${open.length === 1 ? "" : "s"} waiting for CEO decision`;
+        liveSummary.textContent = "Research and prep agents keep working in the background while this screen captures decisions.";
+      }
+
+      activityList.innerHTML = "";
+      if (!events.length) {
+        const empty = document.createElement("div");
+        empty.className = "activity-item";
+        empty.innerHTML = "<b>No saved decisions yet</b>Save a note on an open item or click Needs Agent to send it back to the agent lane.";
+        activityList.appendChild(empty);
+        return;
+      }
+
+      events.forEach((event) => {
+        const item = document.createElement("div");
+        item.className = "activity-item";
+        const note = event.note ? `<br>Note: ${escapeHtml(event.note)}` : "";
+        item.innerHTML = `<b>${escapeHtml(statusLabel(event.status))}: ${escapeHtml(event.title || event.actionId)}</b>${new Date(event.at).toLocaleString()}${note}`;
+        activityList.appendChild(item);
+      });
+    }
+
+    function renderProceedBar() {
+      const summary = decisionSummary();
+      const ready = summary.approve + summary.accept + summary.done + summary.agent;
+      const parked = summary.reject + summary.hold;
+      const lastProceed = consoleState.proceed?.requestedAt
+        ? ` Last proceed: ${new Date(consoleState.proceed.requestedAt).toLocaleString()}.`
+        : "";
+      $("#proceedSummary").innerHTML = `<strong>Proceed lane:</strong> ${ready} ready for agents, ${parked} parked, ${summary.open} still open.${lastProceed}`;
+    }
+
+    function renderRail() {
+      const root = $("#rail");
+      root.innerHTML = "";
+      (consoleData.sections || []).forEach((section) => {
+        const openCount = (section.actions || []).filter((action) => statusFor(action.id) === "open").length;
+        const link = document.createElement("a");
+        link.href = `#${section.id}`;
+        link.textContent = `${section.title} (${openCount})`;
+        root.appendChild(link);
+      });
+      const legend = document.createElement("div");
+      legend.className = "legend";
+      legend.innerHTML = `
+        <div class="dotline"><span class="dot"></span>Open means Ahmad final action needed</div>
+        <div class="dotline"><span class="dot done"></span>Done means agent can continue</div>
+        <div class="dotline"><span class="dot hold"></span>Hold means do not chase yet</div>
+        <div class="dotline"><span class="dot agent"></span>Save note / Needs Agent sends work to agent lane</div>
+        <div class="dotline"><span class="dot approve"></span>Approve means approved, prep final gate</div>
+        <div class="dotline"><span class="dot accept"></span>Accept means yes, move forward</div>
+        <div class="dotline"><span class="dot reject"></span>Reject means stop and park</div>
+      `;
+      root.appendChild(legend);
+    }
+
+    function actionMatches(action, query, statusFilter) {
+      const status = statusFor(action.id);
+      if (statusFilter === "open" && status !== "open") return false;
+      if (["done", "hold", "agent", "approve", "accept", "reject", "submit_authorized", "failed_submit"].includes(statusFilter) && status !== statusFilter) return false;
+      if (!query) return true;
+      const haystack = [
+        action.title,
+        action.group,
+        action.type,
+        action.detail,
+        action.ahmadAction,
+        action.agentContinuation,
+        action.finalGate
+      ].join(" ").toLowerCase();
+      return haystack.includes(query.toLowerCase());
+    }
+
+    function renderSections() {
+      const root = $("#sections");
+      const query = $("#search").value.trim();
+      const statusFilter = $("#statusFilter").value;
+      root.innerHTML = "";
+
+      (consoleData.sections || []).forEach((section) => {
+        const actions = (section.actions || []).filter((action) => actionMatches(action, query, statusFilter));
+        const sectionNode = document.createElement("section");
+        sectionNode.className = "section";
+        sectionNode.id = section.id;
+        sectionNode.innerHTML = `
+          <div class="section-head">
+            <h2>${section.title}</h2>
+            <span class="section-count">${actions.length} shown</span>
+          </div>
+          <div class="cards"></div>
+        `;
+        const cards = $(".cards", sectionNode);
+
+        if (!actions.length) {
+          const empty = document.createElement("p");
+          empty.className = "empty";
+          empty.style.padding = "0 12px 12px";
+          empty.textContent = "Nothing shown under this filter.";
+          cards.appendChild(empty);
+        }
+
+        actions.forEach((action) => cards.appendChild(renderAction(action)));
+        root.appendChild(sectionNode);
+      });
+    }
+
+    function renderAction(action) {
+      const status = statusFor(action.id);
+      const savedNote = noteFor(action.id);
+      const contractState = contractStateFor(action.id);
+      const contractBlock = action.contractBrief ? renderContractBlock(action, contractState) : "";
+      const card = document.createElement("article");
+      card.className = `action-card ${status === "open" ? "" : status}`;
+      card.dataset.id = action.id;
+
+      const links = (action.links || []).map((link) => `<a class="btn blue" href="${link.url}" target="_blank" rel="noreferrer">${link.label}</a>`).join("");
+      const copyBlock = action.copyText ? `
+        <button class="btn" data-copy="${action.id}" type="button">Copy draft</button>
+        <textarea class="copy-area" id="copy-${action.id}" readonly>${escapeHtml(action.copyText)}</textarea>
+      ` : "";
+
+      card.innerHTML = `
+        <div class="rank">${action.priority || "-"}</div>
+        <div>
+          <div class="card-status">${statusLabel(status)}</div>
+          <h3 class="action-title">${escapeHtml(action.title)}</h3>
+          <div class="tags">
+            <span class="tag">${escapeHtml(action.group || "Action")}</span>
+            <span class="tag">${escapeHtml(action.type || "work")}</span>
+            <span class="tag gate">${escapeHtml(action.finalGate || "Final gate")}</span>
+          </div>
+          <p class="action-detail">${escapeHtml(action.detail || "")}</p>
+        </div>
+        <div class="next-box">
+          <p><b>Ahmad:</b> ${escapeHtml(action.ahmadAction || "Review and choose next action.")}</p>
+          <p><b>Agent after:</b> ${escapeHtml(action.agentContinuation || "Continue from saved status.")}</p>
+          ${contractBlock}
+          <div class="note-box">
+            <label for="note-${escapeHtml(action.id)}">Notes / tweaks for agent</label>
+            <textarea class="note-input" id="note-${escapeHtml(action.id)}" placeholder="Type tweaks or instructions. Saving this on an open item sends it to the agent lane.">${escapeHtml(savedNote)}</textarea>
+            <div class="saved-note ${savedNote ? "visible" : ""}">Saved note: ${escapeHtml(savedNote)}</div>
+            <div class="note-actions">
+              <button class="btn" data-save-note="${action.id}" type="button">Save note to agent</button>
+            </div>
+          </div>
+          <div class="links">${links}${copyBlock}</div>
+          <div class="actions">
+            <button class="btn blue" data-status="approve" type="button">Approve</button>
+            <button class="btn accept" data-status="accept" type="button">Accept</button>
+            <button class="btn reject" data-status="reject" type="button">Reject</button>
+            <button class="btn primary" data-status="done" type="button">Done</button>
+            <button class="btn warn" data-status="hold" type="button">Hold</button>
+            <button class="btn" data-status="agent" type="button">Needs Agent</button>
+            <button class="btn danger" data-status="open" type="button">Reset</button>
+          </div>
+        </div>
+      `;
+
+      $$("[data-status]", card).forEach((button) => {
+        button.addEventListener("click", () => saveAction(action.id, button.dataset.status));
+      });
+
+      const saveNoteButton = $(`[data-save-note="${action.id}"]`, card);
+      if (saveNoteButton) {
+        saveNoteButton.addEventListener("click", async () => {
+          await saveNote(action.id);
+          saveNoteButton.textContent = "Sent to agent";
+          setTimeout(() => (saveNoteButton.textContent = "Save note to agent"), 1500);
+        });
+      }
+
+      const saveContractButton = $(`[data-save-contract="${action.id}"]`, card);
+      if (saveContractButton) {
+        saveContractButton.addEventListener("click", () => saveContract(action.id));
+      }
+
+      const authorizeSubmitButton = $(`[data-authorize-submit="${action.id}"]`, card);
+      if (authorizeSubmitButton) {
+        authorizeSubmitButton.addEventListener("click", () => saveContract(action.id, "submit_authorized", true));
+      }
+
+      const copyButton = $(`[data-copy="${action.id}"]`, card);
+      if (copyButton) {
+        copyButton.addEventListener("click", async () => {
+          const area = $(`#copy-${CSS.escape(action.id)}`, card);
+          area.classList.add("visible");
+          area.select();
+          try {
+            await navigator.clipboard.writeText(action.copyText);
+            copyButton.textContent = "Copied";
+          } catch {
+            document.execCommand("copy");
+            copyButton.textContent = "Copied";
+          }
+          setTimeout(() => (copyButton.textContent = "Copy draft"), 1800);
+        });
+      }
+
+      return card;
+    }
+
+    function renderContractBlock(action, contractState) {
+      const brief = action.contractBrief || {};
+      const fields = contractState.fields || {};
+      const status = contractState.status || brief.currentStatus || "queued";
+      const failure = contractState.failure || {};
+      const statusOptions = action.bidStatusOptions || ["queued", "fields_needed", "submit_authorized", "submitted", "under_review", "approved", "won", "rejected", "failed_submit", "needs_info", "parked"];
+      const briefRows = [
+        ["Who", brief.organization || "Unknown"],
+        ["Amount", brief.estimatedValue || "Unknown / to confirm"],
+        ["Term", brief.termLength || "Unknown / to confirm"],
+        ["Extensions", brief.extensions || "Unknown / to confirm"],
+        ["Timeline", brief.timeline || "Not listed"],
+        ["Live status", status]
+      ].map(([label, value]) => `<div class="brief-cell"><b>${escapeHtml(label)}</b>${escapeHtml(value)}</div>`).join("");
+
+      const fieldRows = (action.formFields || []).map((field) => {
+        const value = fields[field.key] || "";
+        const label = `${field.label}${field.required ? " *" : ""}`;
+        const input = field.type === "textarea"
+          ? `<textarea data-contract-field="${escapeHtml(field.key)}" placeholder="${escapeHtml(label)}">${escapeHtml(value)}</textarea>`
+          : `<input data-contract-field="${escapeHtml(field.key)}" type="${escapeHtml(field.type || "text")}" value="${escapeHtml(value)}" placeholder="${escapeHtml(label)}">`;
+        return `<div class="field-control"><label>${escapeHtml(label)}</label>${input}</div>`;
+      }).join("");
+
+      const options = statusOptions.map((option) => `<option value="${escapeHtml(option)}" ${option === status ? "selected" : ""}>${escapeHtml(option.replaceAll("_", " "))}</option>`).join("");
+
+      return `
+        <div class="contract-box">
+          ${status === "failed_submit" || failure.message ? `<div class="failure-note">Failed to submit: ${escapeHtml(failure.message || "Agent could not complete the live form.")} ${failure.nextStep ? `Next: ${escapeHtml(failure.nextStep)}` : ""}</div>` : ""}
+          <div class="contract-brief">${briefRows}</div>
+          <div class="field-grid">
+            <div class="field-control">
+              <label>Contract/bid live status</label>
+              <select data-contract-status>${options}</select>
+            </div>
+            ${fieldRows}
+          </div>
+          <div class="actions">
+            <button class="btn" data-save-contract="${action.id}" type="button">Save bid fields</button>
+            <button class="btn primary" data-authorize-submit="${action.id}" type="button">Authorize fill + submit</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function statusLabel(status) {
+      if (status === "done") return "Done";
+      if (status === "hold") return "Hold";
+      if (status === "agent") return "Needs Agent";
+      if (status === "approve") return "Approved";
+      if (status === "accept") return "Accepted";
+      if (status === "reject") return "Rejected";
+      if (status === "submit_authorized") return "Submit Authorized";
+      if (status === "failed_submit") return "Failed Submit";
+      return "Open";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function render() {
+      renderMetrics();
+      renderLivePanel();
+      renderProceedBar();
+      renderRail();
+      renderSections();
+    }
+
+    $("#search").addEventListener("input", render);
+    $("#statusFilter").addEventListener("change", render);
+    $("#openQueueBtn").addEventListener("click", () => {
+      $("#statusFilter").value = "open";
+      render();
+    });
+    $("#proceedBtn").addEventListener("click", saveProceed);
+    $("#refreshBtn").addEventListener("click", async () => {
+      await loadData();
+      render();
+    });
+
+    loadData().then(render).catch((error) => {
+      $("#sections").innerHTML = `<section class="section"><div class="section-head"><h2>Console load failed</h2></div><div class="cards"><p class="empty">${escapeHtml(error.message)}</p></div></section>`;
+    });
+  </script>
+</body>
+</html>

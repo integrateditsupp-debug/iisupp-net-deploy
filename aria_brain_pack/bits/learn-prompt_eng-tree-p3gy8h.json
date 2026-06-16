@@ -1,0 +1,11 @@
+{
+  "key": "learn-prompt_eng-tree-p3gy8h.json",
+  "heading": "prompt_eng: tree",
+  "body": "Disconnect the device from the network immediately (turn off WiFi, unplug Ethernet) to prevent spread. DO NOT shut down — many incident-response tools need a live state. Take a photo of any ransom no…\n\nAsked by: prompt_eng | Topic: tree | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "cheapest way to PREVENT tree from recurring after ai_eng’s fix?",
+  "created_at": "2026-06-09T02:04:23.957Z",
+  "agent": "prompt_eng",
+  "topic": "tree"
+}

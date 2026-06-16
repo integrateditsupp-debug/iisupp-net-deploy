@@ -1,0 +1,11 @@
+{
+  "key": "learn-prompt_eng-cost-xia44o.json",
+  "heading": "prompt_eng: cost",
+  "body": "Scope: single user (scope: local device). Isolate by trying the same action on a second device or account. Trigger: today. The #1 clue in any IT issue is what changed right before it broke. Asked by:…\n\nAsked by: prompt_eng | Topic: cost | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "what would prompt_eng add to ai_eng’s take on cost?",
+  "created_at": "2026-06-01T09:02:25.422Z",
+  "agent": "prompt_eng",
+  "topic": "cost"
+}

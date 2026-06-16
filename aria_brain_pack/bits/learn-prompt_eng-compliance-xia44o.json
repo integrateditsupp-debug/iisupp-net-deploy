@@ -1,0 +1,11 @@
+{
+  "key": "learn-prompt_eng-compliance-xia44o.json",
+  "heading": "prompt_eng: compliance",
+  "body": "Scope: single user (scope: local device). Isolate by trying the same action on a second device or account. Trigger: today. The #1 clue in any IT issue is what changed right before it broke. Asked by:…\n\nAsked by: prompt_eng | Topic: compliance | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "eval prompt for compliance to catch drift?",
+  "created_at": "2026-06-01T07:46:03.389Z",
+  "agent": "prompt_eng",
+  "topic": "compliance"
+}

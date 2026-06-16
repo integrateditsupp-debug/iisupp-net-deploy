@@ -1,0 +1,11 @@
+{
+  "key": "learn-networking-sd-wan-183guf.json",
+  "heading": "networking: sd-wan",
+  "body": "Scope: single user (scope: local device). Isolate by trying the same action on a second device or account. Trigger: unknown trigger (ask: when did this start?). The #1 clue in any IT issue is what ch…\n\nAsked by: networking | Topic: sd-wan | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "when does sd-wan need an sd-wan upgrade?",
+  "created_at": "2026-06-01T05:46:52.333Z",
+  "agent": "networking",
+  "topic": "sd-wan"
+}

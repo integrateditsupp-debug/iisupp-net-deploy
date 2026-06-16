@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c5a059">
+<title>Prompt Engineering for Workflows Preview | Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+:root{
+  --bg:#060606;
+  --panel:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.7);
+  --muted:rgba(255,255,255,.45);
+  --gold:#c5a059;
+  --gold-soft:#f1dca7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(180deg,#080808 0%,#050505 100%);
+}
+a{text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 22px 72px}
+.toplink{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.eyebrow{display:block;margin-bottom:12px;color:var(--gold);font-size:10px;letter-spacing:.32em;text-transform:uppercase;font-weight:800}
+.hero{
+  margin-top:20px;
+  border:1px solid rgba(197,160,89,.24);
+  border-radius:18px;
+  padding:42px 34px;
+  background:
+    radial-gradient(120% 140% at 100% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:26px}
+.logo{font-family:'Cinzel',serif;font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.02;margin:0 0 16px}
+.gold{color:var(--gold-soft)}
+.lede{margin:0 0 18px;color:var(--text);font-size:15px;line-height:1.85;max-width:720px}
+.tagrow{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.tag{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{
+  height:100%;
+  border:1px solid rgba(197,160,89,.18);
+  border-radius:14px;
+  padding:20px 18px;
+  background:rgba(0,0,0,.24);
+}
+.panel p{margin:0 0 12px;color:var(--text);font-size:13px;line-height:1.8}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 18px;
+  border-radius:8px;
+  border:1px solid rgba(197,160,89,.4);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:rgba(197,160,89,.06);
+}
+.btn.primary{background:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%);color:#1a1407;border-color:transparent}
+.grid-two,.grid-three{display:grid;gap:16px;margin-top:24px}
+.grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px 18px 16px;
+  background:var(--panel);
+}
+.card h2,.card h3{margin:0 0 10px;font-family:'Cinzel',serif}
+.card h2{font-size:1.3rem}
+.card h3{font-size:1rem}
+.card p{margin:0;color:var(--text);font-size:13px;line-height:1.8}
+.checklist,.steps{
+  margin:14px 0 0;
+  padding-left:18px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.notice{
+  margin-top:26px;
+  padding:16px 18px;
+  border-left:3px solid var(--gold);
+  background:rgba(197,160,89,.07);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.mini{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width: 900px){
+  .hero-grid,.grid-two,.grid-three{grid-template-columns:1fr}
+  .hero{padding:30px 20px}
+  .wrap{padding:20px 16px 54px}
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="toplink" href="/growth-library.html">Back to growth library</a>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Sample Preview</span>
+          <h1 class="logo">Prompt Engineering for <span class="gold">Workflows</span></h1>
+          <p class="lede">This preview shows how IIS frames prompt engineering as an operating skill, not a novelty trick. The goal is to make AI outputs clearer, safer, and easier to reuse across real work: support notes, intake summaries, follow-up drafts, research prep, workflow handoffs, and first-pass documentation.</p>
+          <div class="tagrow">
+            <span class="tag">For operators and admins</span>
+            <span class="tag">For support and workflow teams</span>
+            <span class="tag">For reusable prompt systems</span>
+          </div>
+          <div class="btnrow">
+            <a class="btn primary" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit request</a>
+            <a class="btn" href="/downloads/library/no-code-automation-kit-preview.html">View workflow kit</a>
+          </div>
+        </div>
+        <aside class="panel">
+          <span class="eyebrow" style="margin-bottom:10px">What this preview proves</span>
+          <p>Good prompts are not just longer prompts. They define the job, the context, the evidence to use, the output format, and the review boundary so the answer is actually usable by a team.</p>
+          <p>This keeps the trust layer clean: no public claim that prompting alone fixes broken workflows, no hidden autonomous-send posture, and no suggestion that regulated or high-risk work should skip human review.</p>
+          <p class="mini">The live prompt system still depends on the buyer's tools, source data, approval rules, and what should remain human-controlled.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">Inside the pack</span>
+        <h2>What the buyer actually gets</h2>
+        <ul class="checklist">
+          <li>A practical framework for role, context, task, constraints, evidence, and output formatting.</li>
+          <li>Reusable prompt structures for business ops, IT support, documentation, follow-up, research, and workflow drafting.</li>
+          <li>Prompt QA rules that keep outputs grounded, short enough to use, and easier to review before anything is sent or committed.</li>
+          <li>A cleaner ladder into an audit or sprint when the buyer wants prompts embedded into one real workflow instead of left as a document.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best fit</span>
+        <h2>Who should start here</h2>
+        <ul class="checklist">
+          <li>Teams already using AI tools but still getting vague, messy, or hard-to-review outputs.</li>
+          <li>Owners, admins, or support teams who repeat the same prompts but lack a reusable standard.</li>
+          <li>Operators who need AI to produce owner-ready drafts, summaries, or notes instead of generic essays.</li>
+          <li>Any buyer deciding whether prompt cleanup is enough or whether the workflow itself needs redesign.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:24px">
+      <span class="eyebrow">Sample section</span>
+      <h2>What a stronger prompt structure actually changes</h2>
+      <p>This is a representative slice. The live pack expands it into reusable templates, but the main posture stays the same: specify the output so the result can move into action instead of becoming another block of text someone has to rewrite.</p>
+      <div class="grid-three">
+        <div class="card">
+          <h3>Set the operating role</h3>
+          <p>Tell the model what job it is doing, who the audience is, and what kind of work product is expected so the output starts from the right operating posture.</p>
+        </div>
+        <div class="card">
+          <h3>Define the evidence and constraints</h3>
+          <p>State which facts to use, what not to invent, what tone to keep, and which approval or compliance boundaries still matter before the answer becomes real work.</p>
+        </div>
+        <div class="card">
+          <h3>Force the useful format</h3>
+          <p>Ask for bullets, action tables, next-step drafts, issue summaries, or SOP deltas so the output lands in a form the team can actually use without cleanup.</p>
+        </div>
+      </div>
+      <div class="notice">
+        Escalation triggers include legal or regulated wording, external commitments, sensitive HR or finance content, records-retention issues, or any request to auto-send without a human review checkpoint.
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">What stays scoped</span>
+        <h2>Reserved for live discovery</h2>
+        <ul class="steps">
+          <li>The exact tools, source documents, and prompt libraries already in use across the buyer's team.</li>
+          <li>Any authenticated integration, production write-back, or assistant behavior that goes beyond draft output.</li>
+          <li>Regulated content posture, privacy boundaries, and system-specific review rules that need buyer facts first.</li>
+          <li>Detailed rollout scope, implementation support, or pricing that should be set in live discovery instead of guessed publicly.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best next move</span>
+        <h2>Use the right lane after the preview</h2>
+        <ul class="steps">
+          <li>Use the AI Workflow Audit when the prompts are weak because the workflow itself is still unclear or messy.</li>
+          <li>Use the No-Code Automation Kit when the buyer wants prompt quality tied to one repetitive admin or operations workflow.</li>
+          <li>Use the AI Workflow Quick-Win Sprint when one repeated prompt-heavy process is already obvious and ready to improve first.</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn primary" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit request</a>
+          <a class="btn" href="/downloads/library/ai-workflow-quick-win-sprint-preview.html">View sprint preview</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

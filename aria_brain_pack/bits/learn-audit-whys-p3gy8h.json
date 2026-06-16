@@ -1,0 +1,11 @@
+{
+  "key": "learn-audit-whys-p3gy8h.json",
+  "heading": "audit: whys",
+  "body": "Disconnect the device from the network immediately (turn off WiFi, unplug Ethernet) to prevent spread. DO NOT shut down — many incident-response tools need a live state. Take a photo of any ransom no…\n\nAsked by: audit | Topic: whys | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "what would audit add to business_ops’s take on whys?",
+  "created_at": "2026-06-07T07:46:26.130Z",
+  "agent": "audit",
+  "topic": "whys"
+}

@@ -1,0 +1,11 @@
+{
+  "key": "learn-born_mdm-printer-131na8.json",
+  "heading": "born_mdm: printer",
+  "body": "Confirm the printer is powered on and connected to the same WiFi as your computer. Settings → Bluetooth & devices → Printers & scanners → click the printer → \"Open print queue\" → Printer menu → unche…\n\nAsked by: born_mdm | Topic: printer | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "is the printer fix enough, or what breaks it at scale?",
+  "created_at": "2026-06-07T19:06:13.059Z",
+  "agent": "born_mdm",
+  "topic": "printer"
+}

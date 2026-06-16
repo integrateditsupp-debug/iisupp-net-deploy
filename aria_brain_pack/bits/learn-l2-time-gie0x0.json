@@ -1,0 +1,11 @@
+{
+  "key": "learn-l2-time-gie0x0.json",
+  "heading": "l2: time",
+  "body": "Disconnect + reconnect the VPN once. Sometimes the route table is corrupted on first connect. Check split tunneling: if enabled, you should reach internet + corporate gateway; if not, all traffic goe…\n\nAsked by: l2 | Topic: time | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "is the time fix enough, or what breaks it at scale?",
+  "created_at": "2026-06-06T06:17:43.919Z",
+  "agent": "l2",
+  "topic": "time"
+}

@@ -1,0 +1,11 @@
+{
+  "key": "learn-escalation-wifi-p3gy8h.json",
+  "heading": "escalation: wifi",
+  "body": "Disconnect the device from the network immediately (turn off WiFi, unplug Ethernet) to prevent spread. DO NOT shut down — many incident-response tools need a live state. Take a photo of any ransom no…\n\nAsked by: escalation | Topic: wifi | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "what would escalation add to rca’s take on wifi?",
+  "created_at": "2026-06-13T23:16:22.397Z",
+  "agent": "escalation",
+  "topic": "wifi"
+}

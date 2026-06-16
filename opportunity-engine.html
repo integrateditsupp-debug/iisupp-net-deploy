@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IIS Opportunity Engine</title>
+  <style>
+    :root {
+      --bg: #f6f7f2;
+      --panel: #ffffff;
+      --ink: #17201b;
+      --muted: #647069;
+      --line: #d8ddd4;
+      --green: #1f7a4f;
+      --gold: #a06c19;
+      --red: #a33b32;
+      --blue: #235a84;
+      --shadow: 0 14px 36px rgba(23, 32, 27, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    header {
+      padding: 26px clamp(16px, 4vw, 44px) 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcf8;
+    }
+
+    .topline {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      max-width: 760px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    button, .link-button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    button.primary {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    main {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 18px clamp(12px, 3vw, 44px) 48px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 245px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .rail, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .rail {
+      position: sticky;
+      top: 10px;
+      padding: 10px;
+    }
+
+    .tab {
+      width: 100%;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .tab.active {
+      background: #edf4ef;
+      border-color: #c8d8ce;
+      color: #123f2b;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(130px, 170px));
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      padding: 10px;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+      display: grid;
+      gap: 10px;
+    }
+
+    .card-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .title {
+      margin: 0 0 4px;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .org {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #fafbf7;
+    }
+
+    .score {
+      display: grid;
+      grid-template-columns: repeat(3, 58px);
+      gap: 6px;
+      text-align: center;
+    }
+
+    .score div {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 7px 5px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .score strong {
+      display: block;
+      font-size: 18px;
+      color: var(--ink);
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .meta b {
+      display: block;
+      color: var(--ink);
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    details {
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .draft {
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: #fbfcf8;
+      color: #26312b;
+      white-space: pre-wrap;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .status-new { border-left: 4px solid var(--blue); }
+    .status-queued, .status-needs_review { border-left: 4px solid var(--gold); }
+    .status-ready_to_submit { border-left: 4px solid var(--green); }
+    .status-submitted { border-left: 4px solid #59666b; }
+    .status-follow_up_needed { border-left: 4px solid #8053a8; }
+    .status-ignored { border-left: 4px solid var(--red); opacity: 0.72; }
+
+    .empty {
+      padding: 40px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    dialog {
+      width: min(760px, calc(100vw - 24px));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0;
+      box-shadow: var(--shadow);
+    }
+
+    dialog::backdrop { background: rgba(15, 22, 18, 0.45); }
+
+    .modal-head, .modal-body, .modal-foot { padding: 14px; }
+    .modal-head { border-bottom: 1px solid var(--line); }
+    .modal-foot { border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 8px; }
+
+    @media (max-width: 920px) {
+      .topline { display: grid; }
+      .actions { justify-content: flex-start; }
+      .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .layout { grid-template-columns: 1fr; }
+      .rail { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+      .tab { margin: 0; }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .card-head { grid-template-columns: 1fr; }
+      .score { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      header { padding: 18px 12px 12px; }
+      main { padding: 12px 10px 32px; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .rail { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr; }
+      .meta { grid-template-columns: 1fr; }
+      button, .link-button { width: 100%; }
+      .card-actions { display: grid; grid-template-columns: 1fr 1fr; }
+      .card-actions .link-button { grid-column: span 2; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topline">
+      <div>
+        <h1>Opportunity Engine</h1>
+        <p class="sub">Find money. Score fit. Prepare the next step. Stop before final submit, send, apply, contact, pay, sign, or certify.</p>
+      </div>
+      <div class="actions">
+        <a class="link-button" href="senior-director-state/opportunity-engine/opportunities.json" target="_blank" rel="noreferrer">Open DB</a>
+        <button id="exportBtn">Export Review State</button>
+        <button class="primary" id="refreshBtn">Reload</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="metrics" id="metrics"></section>
+    <section class="layout">
+      <nav class="rail" id="tabs"></nav>
+      <section class="panel">
+        <div class="filters">
+          <input id="search" placeholder="Search title, company, source, tags">
+          <select id="typeFilter">
+            <option value="">All types</option>
+          </select>
+          <select id="minPriority">
+            <option value="0">Any priority</option>
+            <option value="7">Priority 7+</option>
+            <option value="8">Priority 8+</option>
+            <option value="9">Priority 9+</option>
+          </select>
+          <select id="sortBy">
+            <option value="priority">Sort: priority</option>
+            <option value="newest">Sort: newest</option>
+            <option value="difficulty">Sort: easiest</option>
+          </select>
+        </div>
+        <div class="list" id="list"></div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="exportDialog">
+    <div class="modal-head"><strong>Export this review state</strong></div>
+    <div class="modal-body">
+      <p class="sub">Dashboard changes save in this browser. Export this JSON when you want Codex/Claude to write it back to disk.</p>
+      <textarea id="exportBox" rows="14"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button id="copyExport">Copy</button>
+      <button id="closeExport">Close</button>
+    </div>
+  </dialog>
+
+  <script>
+    const DB_URL = "senior-director-state/opportunity-engine/opportunities.json";
+    const STORE_KEY = "iis-opportunity-engine-state-v1";
+    const sections = [
+      ["new", "New Opportunities"],
+      ["high_priority", "High Priority"],
+      ["ready_to_submit", "Ready to Submit"],
+      ["needs_review", "Needs My Review"],
+      ["submitted", "Submitted"],
+      ["follow_up_needed", "Follow-Up Needed"],
+      ["ignored", "Ignored / Not Relevant"],
+      ["career", "Personal Career Growth"],
+      ["business", "Business Contracts"],
+      ["vendor", "Vendor Portals to Register On"]
+    ];
+
+    let rawItems = [];
+    let view = "new";
+    let localState = loadState();
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+      catch { return {}; }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORE_KEY, JSON.stringify(localState));
+    }
+
+    function mergedItem(item) {
+      return { ...item, ...(localState[item.id] || {}) };
+    }
+
+    function allItems() {
+      return rawItems.map(mergedItem);
+    }
+
+    function sectionItems(key) {
+      const items = allItems();
+      if (key === "high_priority") return items.filter((item) => item.priorityScore >= 8 && item.status !== "ignored");
+      if (key === "career") return items.filter((item) => item.type === "job" && item.status !== "ignored");
+      if (key === "business") return items.filter((item) => ["contract", "tender", "lead", "partnership"].includes(item.type) && item.status !== "ignored");
+      if (key === "vendor") return items.filter((item) => item.type === "vendor registration" && item.status !== "ignored");
+      return items.filter((item) => item.status === key);
+    }
+
+    function statusLabel(status) {
+      return String(status || "new").replace(/_/g, " ");
+    }
+
+    function setStatus(id, status) {
+      localState[id] = { ...(localState[id] || {}), status, statusUpdatedAt: new Date().toISOString() };
+      if (status === "follow_up_needed") {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        localState[id].nextReminderAt = date.toISOString();
+      }
+      saveState();
+      render();
+    }
+
+    async function loadDb() {
+      const response = await fetch(`${DB_URL}?t=${Date.now()}`);
+      const payload = await response.json();
+      rawItems = payload.items || [];
+      if (!sectionItems(view).length && sectionItems("high_priority").length) view = "high_priority";
+      render();
+    }
+
+    function renderMetrics(items = allItems()) {
+      const rows = [
+        ["Total", items.length],
+        ["High", items.filter((item) => item.priorityScore >= 8 && item.status !== "ignored").length],
+        ["Ready", items.filter((item) => item.status === "ready_to_submit").length],
+        ["Review", items.filter((item) => item.status === "needs_review").length],
+        ["Follow-up", items.filter((item) => item.status === "follow_up_needed").length],
+        ["Vendor", items.filter((item) => item.type === "vendor registration").length]
+      ];
+      document.getElementById("metrics").innerHTML = rows.map(([label, value]) => `
+        <div class="metric"><strong>${value}</strong><span>${label}</span></div>
+      `).join("");
+    }
+
+    function renderTabs() {
+      document.getElementById("tabs").innerHTML = sections.map(([key, label]) => `
+        <button class="tab ${view === key ? "active" : ""}" data-view="${key}">
+          <span>${label}</span><span class="count">${sectionItems(key).length}</span>
+        </button>
+      `).join("");
+      document.querySelectorAll("[data-view]").forEach((button) => {
+        button.addEventListener("click", () => {
+          view = button.dataset.view;
+          render();
+        });
+      });
+    }
+
+    function renderFilters() {
+      const typeFilter = document.getElementById("typeFilter");
+      const current = typeFilter.value;
+      const types = [...new Set(allItems().map((item) => item.type).filter(Boolean))].sort();
+      typeFilter.innerHTML = `<option value="">All types</option>${types.map((type) => `<option value="${type}">${type}</option>`).join("")}`;
+      typeFilter.value = current;
+    }
+
+    function filteredItems() {
+      const query = document.getElementById("search").value.trim().toLowerCase();
+      const type = document.getElementById("typeFilter").value;
+      const minPriority = Number(document.getElementById("minPriority").value || 0);
+      const sortBy = document.getElementById("sortBy").value;
+      let items = sectionItems(view).filter((item) => {
+        const haystack = `${item.title} ${item.organization} ${item.sourceName} ${(item.tags || []).join(" ")}`.toLowerCase();
+        return (!query || haystack.includes(query)) &&
+          (!type || item.type === type) &&
+          Number(item.priorityScore || 0) >= minPriority;
+      });
+      items.sort((a, b) => {
+        if (sortBy === "newest") return String(b.lastSeenAt).localeCompare(String(a.lastSeenAt));
+        if (sortBy === "difficulty") return (a.difficultyScore || 99) - (b.difficultyScore || 99);
+        return (b.priorityScore || 0) - (a.priorityScore || 0);
+      });
+      return items;
+    }
+
+    function safe(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[char]));
+    }
+
+    function renderList() {
+      const items = filteredItems();
+      const list = document.getElementById("list");
+      if (!items.length) {
+        list.innerHTML = `<div class="empty">No items here. Run the research/review scripts or change filters.</div>`;
+        return;
+      }
+      list.innerHTML = items.map((item) => `
+        <article class="card status-${safe(item.status)}">
+          <div class="card-head">
+            <div>
+              <h2 class="title">${safe(item.title)}</h2>
+              <div class="org">${safe(item.organization)} | ${safe(item.sourceName)} | ${safe(statusLabel(item.status))}</div>
+            </div>
+            <div class="score" aria-label="scores">
+              <div><strong>${item.priorityScore || "-"}</strong>Priority</div>
+              <div><strong>${item.difficultyScore || "-"}</strong>Difficulty</div>
+              <div><strong>${item.revenueOrGrowthPotential || "-"}</strong>Growth</div>
+            </div>
+          </div>
+          <div class="badges">
+            <span class="badge">${safe(item.type)}</span>
+            ${(item.tags || []).slice(0, 6).map((tag) => `<span class="badge">${safe(tag)}</span>`).join("")}
+          </div>
+          <div class="meta">
+            <div><b>Deadline</b>${safe(item.deadline || "not found")}</div>
+            <div><b>Value / Salary</b>${safe(item.estimatedValueOrSalary || "not found")}</div>
+            <div><b>Location</b>${safe(item.locationOrRemote || "not found")}</div>
+            <div><b>Reminder</b>${safe(item.nextReminderAt ? item.nextReminderAt.slice(0, 10) : "not set")}</div>
+          </div>
+          <p>${safe(item.whyRelevant)}</p>
+          <p><strong>Next:</strong> ${safe(item.recommendedNextStep)}</p>
+          <details>
+            <summary>Summary, draft, documents</summary>
+            <div class="draft">${safe(item.summary || "No summary yet.")}</div>
+            <div class="draft">${safe(item.draftMessage || "Run review agent to draft.")}</div>
+            <div class="draft"><strong>Required:</strong> ${safe((item.requiredDocuments || []).join(", ") || "not set")}<br><strong>Missing:</strong> ${safe((item.missingInformation || []).join(", ") || "none listed")}</div>
+          </details>
+          <div class="card-actions">
+            <button data-action="needs_review" data-id="${safe(item.id)}">Review</button>
+            <button data-action="ready_to_submit" data-id="${safe(item.id)}">Queue</button>
+            <button data-action="submitted" data-id="${safe(item.id)}">Mark Submitted</button>
+            <button data-action="follow_up_needed" data-id="${safe(item.id)}">Follow Up Later</button>
+            <button data-action="ignored" data-id="${safe(item.id)}">Ignore</button>
+            <button data-action="saved" data-id="${safe(item.id)}">Save for Future</button>
+            <a class="link-button" href="${safe(item.sourceLink)}" target="_blank" rel="noreferrer">Open Source</a>
+          </div>
+        </article>
+      `).join("");
+      list.querySelectorAll("[data-action]").forEach((button) => {
+        button.addEventListener("click", () => setStatus(button.dataset.id, button.dataset.action));
+      });
+    }
+
+    function render() {
+      renderMetrics();
+      renderTabs();
+      renderFilters();
+      renderList();
+    }
+
+    document.getElementById("refreshBtn").addEventListener("click", loadDb);
+    document.getElementById("search").addEventListener("input", renderList);
+    document.getElementById("typeFilter").addEventListener("change", renderList);
+    document.getElementById("minPriority").addEventListener("change", renderList);
+    document.getElementById("sortBy").addEventListener("change", renderList);
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      document.getElementById("exportBox").value = JSON.stringify({ exportedAt: new Date().toISOString(), localState }, null, 2);
+      document.getElementById("exportDialog").showModal();
+    });
+    document.getElementById("closeExport").addEventListener("click", () => document.getElementById("exportDialog").close());
+    document.getElementById("copyExport").addEventListener("click", async () => {
+      await navigator.clipboard.writeText(document.getElementById("exportBox").value);
+    });
+
+    loadDb().catch((error) => {
+      document.getElementById("list").innerHTML = `<div class="empty">Database not loaded: ${safe(error.message)}</div>`;
+    });
+  </script>
+</body>
+</html>

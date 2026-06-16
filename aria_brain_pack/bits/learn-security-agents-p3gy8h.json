@@ -1,0 +1,11 @@
+{
+  "key": "learn-security-agents-p3gy8h.json",
+  "heading": "security: agents",
+  "body": "Disconnect the device from the network immediately (turn off WiFi, unplug Ethernet) to prevent spread. DO NOT shut down — many incident-response tools need a live state. Take a photo of any ransom no…\n\nAsked by: security | Topic: agents | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "cheapest way to PREVENT agents from recurring after l3’s fix?",
+  "created_at": "2026-06-02T18:45:32.662Z",
+  "agent": "security",
+  "topic": "agents"
+}

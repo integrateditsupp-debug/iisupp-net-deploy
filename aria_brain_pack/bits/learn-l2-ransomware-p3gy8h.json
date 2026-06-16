@@ -1,0 +1,11 @@
+{
+  "key": "learn-l2-ransomware-p3gy8h.json",
+  "heading": "l2: ransomware",
+  "body": "Disconnect the device from the network immediately (turn off WiFi, unplug Ethernet) to prevent spread. DO NOT shut down — many incident-response tools need a live state. Take a photo of any ransom no…\n\nAsked by: l2 | Topic: ransomware | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "tooling l2 needs for ransomware that l1 lacks?",
+  "created_at": "2026-06-13T19:46:52.565Z",
+  "agent": "l2",
+  "topic": "ransomware"
+}

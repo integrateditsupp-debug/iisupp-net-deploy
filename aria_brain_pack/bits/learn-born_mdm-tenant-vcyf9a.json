@@ -1,0 +1,11 @@
+{
+  "key": "learn-born_mdm-tenant-vcyf9a.json",
+  "heading": "born_mdm: tenant",
+  "body": "Go to https://passwordreset.microsoftonline.com (for M365) or the company SSO sign-in page → click \"Forgot my password\". Confirm identity via phone / authenticator / backup email. Asked by: security …\n\nAsked by: born_mdm | Topic: tenant | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "what is the cheapest fix for mdm enrollment?",
+  "created_at": "2026-06-09T02:45:39.285Z",
+  "agent": "born_mdm",
+  "topic": "tenant"
+}

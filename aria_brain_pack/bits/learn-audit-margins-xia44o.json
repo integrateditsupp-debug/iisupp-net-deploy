@@ -1,0 +1,11 @@
+{
+  "key": "learn-audit-margins-xia44o.json",
+  "heading": "audit: margins",
+  "body": "Scope: single user (scope: local device). Isolate by trying the same action on a second device or account. Trigger: today. The #1 clue in any IT issue is what changed right before it broke. Asked by:…\n\nAsked by: audit | Topic: margins | If this does not resolve in two attempts, that is an L2 escalation — call (647) 581-3182.",
+  "source_url": null,
+  "vendor": "aria-learning",
+  "query_seed": "is the margins fix enough, or what breaks it at scale?",
+  "created_at": "2026-06-01T07:46:03.767Z",
+  "agent": "audit",
+  "topic": "margins"
+}

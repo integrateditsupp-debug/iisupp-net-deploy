@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c5a059">
+<title>AI Agent Starter Kit Preview | Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+:root{
+  --bg:#060606;
+  --panel:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.7);
+  --muted:rgba(255,255,255,.45);
+  --gold:#c5a059;
+  --gold-soft:#f1dca7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(180deg,#080808 0%,#050505 100%);
+}
+a{text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:32px 22px 72px}
+.toplink{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.eyebrow{display:block;margin-bottom:12px;color:var(--gold);font-size:10px;letter-spacing:.32em;text-transform:uppercase;font-weight:800}
+.hero{
+  margin-top:20px;
+  border:1px solid rgba(197,160,89,.24);
+  border-radius:18px;
+  padding:42px 34px;
+  background:
+    radial-gradient(120% 140% at 100% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:26px}
+.logo{font-family:'Cinzel',serif;font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.02;margin:0 0 16px}
+.gold{color:var(--gold-soft)}
+.lede{margin:0 0 18px;color:var(--text);font-size:15px;line-height:1.85;max-width:720px}
+.tagrow{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.tag{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{
+  height:100%;
+  border:1px solid rgba(197,160,89,.18);
+  border-radius:14px;
+  padding:20px 18px;
+  background:rgba(0,0,0,.24);
+}
+.panel p{margin:0 0 12px;color:var(--text);font-size:13px;line-height:1.8}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 18px;
+  border-radius:8px;
+  border:1px solid rgba(197,160,89,.4);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:rgba(197,160,89,.06);
+}
+.btn.primary{background:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%);color:#1a1407;border-color:transparent}
+.grid-two,.grid-three{display:grid;gap:16px;margin-top:24px}
+.grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px 18px 16px;
+  background:var(--panel);
+}
+.card h2,.card h3{margin:0 0 10px;font-family:'Cinzel',serif}
+.card h2{font-size:1.3rem}
+.card h3{font-size:1rem}
+.card p{margin:0;color:var(--text);font-size:13px;line-height:1.8}
+.checklist,.steps{
+  margin:14px 0 0;
+  padding-left:18px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.notice{
+  margin-top:26px;
+  padding:16px 18px;
+  border-left:3px solid var(--gold);
+  background:rgba(197,160,89,.07);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.mini{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width: 900px){
+  .hero-grid,.grid-two,.grid-three{grid-template-columns:1fr}
+  .hero{padding:30px 20px}
+  .wrap{padding:20px 16px 54px}
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="toplink" href="/growth-library.html">Back to growth library</a>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Sample Preview</span>
+          <h1 class="logo">AI Agent Starter <span class="gold">Kit</span></h1>
+          <p class="lede">This preview is built to calm buyers down before they spend. It shows how IIS frames the first AI-agent decision: start with one bounded workflow, protect the approval points, and avoid pretending that every repetitive task should become an autonomous agent on day one.</p>
+          <div class="tagrow">
+            <span class="tag">For small business owners</span>
+            <span class="tag">For operations-heavy teams</span>
+            <span class="tag">For safe first AI use cases</span>
+          </div>
+          <div class="btnrow">
+            <a class="btn primary" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit request</a>
+            <a class="btn" href="/downloads/library/ai-workflow-quick-win-sprint-preview.html">View sprint preview</a>
+          </div>
+        </div>
+        <aside class="panel">
+          <span class="eyebrow" style="margin-bottom:10px">What this preview proves</span>
+          <p>The value is not "AI agents everywhere." The value is choosing one workflow that is repetitive enough to matter, safe enough to pilot, and structured enough to review without creating silent risk.</p>
+          <p>The preview keeps the trust layer clear: no false autonomous-send claims, no hidden data-movement promises, and no assumption that private customer, HR, finance, or legal work should be delegated first.</p>
+          <p class="mini">The live build still depends on the buyer's process, tools, data sensitivity, and approval posture.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">Inside the kit</span>
+        <h2>What the buyer actually gets</h2>
+        <ul class="checklist">
+          <li>A safe-first workflow filter for deciding whether a task should stay human, become AI-assisted, or move into a later-stage build.</li>
+          <li>A short list of practical first agent patterns: intake cleanup, FAQ response prep, follow-up drafting, task extraction, and knowledge lookup support.</li>
+          <li>Approval-gate language for work that still needs human review before anything is sent, committed, or changed in a system.</li>
+          <li>A simple ladder into an AI Workflow Audit or a Quick-Win Sprint when the buyer wants the first workflow mapped and staged for real use.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best fit</span>
+        <h2>Who should start here</h2>
+        <ul class="checklist">
+          <li>Small businesses repeating the same intake, follow-up, FAQ, or document-prep work every week.</li>
+          <li>Operators and admins who want one useful AI step before they commit to a broader automation project.</li>
+          <li>Teams experimenting with AI already but lacking clear workflow boundaries, risk filters, and approval rules.</li>
+          <li>Leaders who need a calmer first map before they let a tool touch customer communication or internal process flow.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:24px">
+      <span class="eyebrow">Sample section</span>
+      <h2>How IIS scores a first AI-agent use case</h2>
+      <p>This is a representative starter screen. The live pack expands it, but the point stays the same: do not start with the most sensitive workflow. Start with the most repetitive workflow that still tolerates review.</p>
+      <div class="grid-three">
+        <div class="card">
+          <h3>Good first fit</h3>
+          <p>FAQ cleanup, intake summarization, meeting action extraction, recurring task prep, internal knowledge lookup, and owner-ready draft responses with human review before send.</p>
+        </div>
+        <div class="card">
+          <h3>Needs tighter controls</h3>
+          <p>Quote support, customer follow-up drafting, hiring-screen support, finance summaries, or workflow updates that touch multiple systems and still need approval boundaries.</p>
+        </div>
+        <div class="card">
+          <h3>Do later or keep human-led</h3>
+          <p>Anything involving final legal wording, payroll, disciplinary action, health data, bank movement, irrevocable commitments, or autonomous external sending without review.</p>
+        </div>
+      </div>
+      <div class="notice">
+        If the workflow touches regulated data, external commitments, or system write-back without a review checkpoint, the preview posture is to slow down, map the process properly, and keep a human approval step in the loop.
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">What stays scoped</span>
+        <h2>Reserved for live discovery</h2>
+        <ul class="steps">
+          <li>The exact workflow volume, system access, and source documents already in use across the buyer's team.</li>
+          <li>Whether the first implementation should stay prompt-led, become tool-assisted, or move into a fuller ARIA-style support path.</li>
+          <li>Any authenticated integration, account creation, tool selection, or production permission boundary.</li>
+          <li>Detailed pricing, rollout support, and ongoing maintenance posture beyond the first mapped workflow.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best next move</span>
+        <h2>Use the right lane after the preview</h2>
+        <ul class="steps">
+          <li>Use the AI Workflow Audit when the buyer still needs help choosing the first workflow and ranking the real opportunity.</li>
+          <li>Use the AI Workflow Quick-Win Sprint when one repetitive process is already obvious and the team wants a first implementation step.</li>
+          <li>Use ARIA or a broader IIS implementation only after the first workflow and review posture are clear enough to support safely.</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn primary" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit request</a>
+          <a class="btn" href="/start-here.html">Open the 3-path guide</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>
