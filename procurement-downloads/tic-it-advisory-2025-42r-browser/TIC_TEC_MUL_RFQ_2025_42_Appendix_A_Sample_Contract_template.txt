@@ -1,0 +1,900 @@
+INFORMATION TECHNOLOGY &
+MANAGEMENT CONSULTING PROFESSIONAL SERVICES AGREEMENT
+TABLE OF CONTENTS
+____________________________________________________________________________________________
+No.	Heading	Page
+Definitions	1
+1.1	General	1
+1.2	Meaning of “record”	2
+Services	2
+2.1	Provision of services	2
+2.2	Term	2
+2.3	Supply of various items	2
+2.4	Standard of care	2
+2.5	Standards in relation to persons performing Services	2
+2.6	Instructions by Province	2
+2.7	Confirmation of non-written instructions	2
+2.8	Effectiveness of non-written instructions	2
+2.9	Applicable laws and policies	3
+Payment	3
+3.1	Fees and expenses	3
+3.2	Statements of accounts	3
+3.3	Withholding of amounts	3
+3.4	Appropriation	3
+3.5	Currency	3
+3.6	Non-resident income tax	3
+3.7	Prohibition against committing money	4
+3.8	Refunds of taxes	4
+Representations and Warranties	4
+Privacy, Security and Confidentiality	4
+5.1 	Privacy	4
+5.2	Security	4
+5.3	Confidentiality	5
+5.4	Public announcements	5
+5.5	Restrictions on promotion	5
+Material and Intellectual Property	5
+6.1	Access to Material	5
+6.2	Ownership and delivery of Material	5
+6.3	Matters respecting intellectual property	5
+6.4	Rights in relation to Incorporated Material	6
+6.5	Right of Province to negotiate license of Produced Material	6
+Records and Report	6
+7.1	Work reporting	6
+7.2	Time and expense records	6
+Audit	6
+Indemnity and Insurance	6
+9.1	Indemnity	7
+9.2	Monetary limitations of indemnity	7
+9.3	Exceptions to monetary limitations	7
+9.4	Province to notify Contractor of Loss	7
+9.5	Third-party intellectual property infringement claims	7
+9.6	Insurance	7
+9.7	Workers compensation	7
+9.8	Personal optional protection	7
+9.9	Evidence of coverage	8
+Force Majeure	8
+10.1	Definitions relating to force majeure	8
+10.2	Consequence of Event of Force Majeure	8
+10.3	Duties of Affected Party	8
+Default and Termination	8
+11.1	Definitions relating to default and termination	9
+11.2	Province’s options on default	9
+11.3	Delay not a waiver	9
+11.4	Province’s right to terminate other than for default	9
+11.5	Payment consequences of termination	9
+11.6	Discharge of liability	9
+11.7	Notice in relation to Events of Default	9
+Dispute Resolution	10
+12.1	Dispute resolution process	10
+12.2	Location of arbitration or mediation	10
+12.3	Costs of arbitration or mediation	10
+Miscellaneous	10
+13.1	Delivery of notices	10
+13.2	Change of address or fax number	10
+13.3	Assignment	11
+13.4	Subcontracting	11
+13.5	Waiver	11
+13.6	Modifications	11
+13.7	Entire agreement	11
+13.8	Survival of certain provisions	11
+13.9	Schedules	11
+13.10	Independent contractor	11
+13.11	Personnel not to be employees of Province	12
+13.12	Key Personnel	12
+13.13	Pertinent Information	12
+13.14	Conflict of interest	12
+13.15	Time	12
+13.16	Conflicts among provisions	12
+13.17	Agreement not permit nor fetter	12
+13.18	Remainder not affected by invalidity	12
+13.19	Further assurances	13
+13.20	Additional terms	13
+13.21	Tax Verification……………………...………………………………………………….13
+13.22 	Governing law	13
+Interpretation	13
+Execution and Delivery of Agreement	13
+SCHEDULE A – SERVICES
+Part 1 - Term
+Part 2 - Services
+Part 3 - Related Documentation
+Part 4 - Key Personnel
+SCHEDULE B – FEES AND EXPENSES
+Part 1 - Maximum Amount Payable
+Part 2 - Fees
+Part 3 - Expenses
+Part 4 - Statements of Account
+Part 5 - Payments Due
+SCHEDULE C – APPROVED SUBCONTRACTOR(S) 
+SCHEDULE D – INSURANCE 
+SCHEDULE E – PRIVACY PROTECTION SCHEDULE 
+SCHEDULE F – ADDITIONAL TERMS 
+SCHEDULE G – SECURITY SCHEDULE 
+SCHEDULE H – TAX VERIFICATION
+THIS AGREEMENT is dated for reference the ___day of ____________, 20__.
+BETWEEN:
+@LEGAL NAME AND, IF APPLICABLE, DESCRIPTION, OF CONTRACTOR (the “Contractor”) with the following specified address and fax number:
+@ADDRESS
+@POSTAL CODE
+@FAX NUMBER
+AND:
+HIS MAJESTY THE KING IN RIGHT OF THE PROVINCE OF BRITISH COLUMBIA, as represented by __________________________ (the “Province”) with the following specified address and fax number:
+[Identify the responsible minister, public officer or organizational unit for entering into the contract on behalf of the Province.  For example, “the Minister of Finance”, “the Premier”, “the Information and Privacy Commissioner”, the “Financial Institutions Commission”, etc.   It is customary and preferable to refer to the responsible minister unless the contract relates to matters which are independent from any minister (such as contracts entered into by officers of the Legislature).   Occasionally, contracts are entered into which are the responsibility of more than one minister, in which case more than one minister may be referenced.  Legal advice should be obtained if the contract writer is unclear on who should be named as the Province’s representative.  Delete this instruction after completing the description of the Province]
+@ADDRESS
+@POSTAL CODE
+@FAX NUMBER
+The Province wishes to retain the Contractor to provide the services specified in Schedule A and, in consideration for the remuneration set out in Schedule B, the Contractor has agreed to provide those services, on the terms and conditions set out in this Agreement.  
+As a result, the Province and the Contractor agree as follows:
+1	DEFINITIONS
+General
+1.1	In this Agreement, unless the context otherwise requires:
+ “Business Day” means a day, other than a Saturday or Sunday, on which Provincial government offices are open for normal business in British Columbia; 
+“Incorporated Material” means any material in existence prior to the start of the Term or developed independently of this Agreement, and that is incorporated or embedded in the Produced Material by the Contractor or a Subcontractor;  
+“Material” means the Produced Material and the Received Material; 
+“Produced Material” means records, software and other material, whether complete or not, that, as a result of this Agreement, are produced or provided by the Contractor or a Subcontractor and includes the Incorporated Material;   
+“Received Material” means records, software and other material, whether complete or not, that, as a result of this Agreement, are received by the Contractor or a Subcontractor from the Province or any other person; 
+“Services” means the services described in Part 2 of Schedule A;
+“Subcontractor” means a person described in paragraph (a) or (b) of section 13.4; and
+“Term” means the term of the Agreement described in Part 1 of Schedule A subject to that term ending earlier in accordance with this Agreement.
+Meaning of “record”
+1.2	The definition of “record” in the Interpretation Act is incorporated into this Agreement and “records” will bear a corresponding meaning.
+2	SERVICES
+Provision of services
+2.1	The Contractor must provide the Services in accordance with this Agreement.  
+Term
+2.2	Regardless of the date of execution or delivery of this Agreement, the Contractor must provide the Services during the Term. 
+Supply of various items
+2.3	Unless the parties otherwise agree in writing, the Contractor must supply and pay for all labour, materials, equipment, tools, facilities, approvals and licenses necessary or advisable to perform the Contractor’s obligations under this Agreement, including the license under section 6.4.
+Standard of care 
+2.4	Unless otherwise specified in this Agreement, the Contractor must perform the Services to a standard of care, skill, and diligence maintained by persons providing, on a commercial basis, services similar to the Services.
+Standards in relation to persons performing Services
+2.5	The Contractor must ensure that all persons employed or retained to perform the Services are qualified and competent to perform them and are properly trained, instructed and supervised.
+Instructions by Province
+2.6	The Province may from time to time give the Contractor reasonable instructions (in writing or otherwise) as to the performance of the Services.  The Contractor must comply with those instructions but, unless otherwise specified in this Agreement, the Contractor may determine the manner in which the instructions are carried out.
+Confirmation of non-written instructions
+2.7	If the Province provides an instruction under section 2.6 other than in writing, the Contractor may request that the instruction be confirmed by the Province in writing, which request the Province must comply with as soon as it is reasonably practicable to do so.
+Effectiveness of non-written instructions
+2.8	Requesting written confirmation of an instruction under section 2.7 does not relieve the Contractor from complying with the instruction at the time the instruction was given. 
+Applicable laws and policies
+2.9	In the performance of the Contractor’s obligations under this Agreement, the Contractor must comply with all applicable laws, and any policies communicated by the Province regarding access to and/or attendance at facilities owned, controlled or occupied by the Province.  For greater certainty and without in any way limiting section 13.4, the Contractor must ensure that all of its employees, agents and Subcontractors comply with all such laws and policies in their performance of any obligations under this Agreement.
+3	PAYMENT
+Fees and expenses
+3.1	If the Contractor complies with this Agreement, then the Province must pay to the Contractor at the times and on the conditions set out in Schedule B:
+(a)	the fees described in that Schedule; 
+(b)	the expenses, if any, described in that Schedule if they are supported, where applicable, by proper receipts and, in the Province’s opinion, are necessarily incurred by the Contractor in providing the Services; and
+(c )	any applicable taxes payable by the Province under law or agreement with the relevant taxation authorities on the fees and expenses described in paragraphs (a) and (b) .
+The Province is not obliged to pay to the Contractor more than the “Maximum Amount” specified in Schedule B on account of fees and expenses.
+Statements of accounts
+3.2	In order to obtain payment of any fees and expenses under this Agreement, the Contractor must submit to the Province a written statement of account in a form satisfactory to the Province upon completion of the Services or at other times described in Schedule B.
+Withholding of amounts
+3.3	Without limiting section 9.1, the Province may withhold from any payment due to the Contractor an amount sufficient to indemnify in whole or in part the Province and its employees and agents against any liens or other third-party claims that have arisen or could arise in connection with the provision of the Services.  An amount withheld under this section must be promptly paid by the Province to the Contractor upon the basis for withholding the amount having been fully resolved to the satisfaction of the Province. 
+Appropriation
+3.4	The Province’s obligation to pay money to the Contractor is subject to the Financial Administration Act, which makes that obligation subject to an appropriation being available in the fiscal year of the Province during which payment becomes due.
+Currency
+3.5	Unless otherwise specified in this Agreement, all references to money are to Canadian dollars.
+Non-resident income tax
+3.6	If the Contractor is not a resident in Canada, the Contractor acknowledges that the Province may be required by law to withhold income tax from the fees described in Schedule B and then to remit that tax to the Receiver General of Canada on the Contractor’s behalf.
+Prohibition against committing money
+3.7	Without limiting section 13.10(a), the Contractor must not in relation to performing the Contractor’s obligations under this Agreement commit or purport to commit the Province to pay any money except as may be expressly provided for in this Agreement. 
+Refunds of taxes
+3.8	The Contractor must:
+apply for, and use reasonable efforts to obtain, any available refund, credit, rebate or remission of federal, provincial or other tax or duty imposed on the Contractor as a result of this Agreement that the Province has paid or reimbursed to the Contractor or agreed to pay or reimburse to the Contractor under this Agreement; and
+immediately on receiving, or being credited with, any amount applied for under paragraph (a), remit that amount to the Province. 
+4	REPRESENTATIONS AND WARRANTIES
+4.1	As at the date this Agreement is executed and delivered by, or on behalf of, the parties, the Contractor represents and warrants to the Province as follows:
+except to the extent the Contractor has previously disclosed otherwise in writing to the Province, 
+(i)	all information, statements, documents and reports furnished or submitted by the Contractor to the Province in connection with this Agreement (including as part of any competitive process resulting in this Agreement being entered into) are in all material respects true and correct, 
+(ii)	the Contractor has sufficient trained staff, facilities, materials, appropriate equipment and approved subcontractual or other agreements in place and available to enable the Contractor to fully perform the Services and to grant any licenses under this Agreement, and
+(iii)	the Contractor holds all permits, licenses, approvals and statutory authorities issued by any government or government agency that are necessary for the performance of the Contractor’s obligations under this Agreement; and 
+if the Contractor is not an individual,
+(i)	the Contractor has the power and capacity to enter into this Agreement and to observe, perform and comply with the terms of this Agreement and all necessary corporate or other proceedings have been taken and done to authorize the execution and delivery of this Agreement by, or on behalf of, the Contractor, and
+(ii)	this Agreement has been legally and properly executed by, or on behalf of, the Contractor and is legally binding upon and enforceable against the Contractor in accordance with its terms except as enforcement may be limited by bankruptcy, insolvency or other laws affecting the rights of creditors generally and except that equitable remedies may be granted only in the discretion of a court of competent jurisdiction.
+5	PRIVACY, SECURITY AND CONFIDENTIALITY 
+Privacy
+5.1 	The Contractor must comply with the Privacy Protection Schedule attached as Schedule E. 
+Security
+5.2	The Contractor must:
+(a)	make reasonable security arrangements to protect the Material from unauthorized access, collection, use, disclosure, alteration or disposal; and
+(b)	comply with the Security Schedule attached as Schedule G.
+Confidentiality
+5.3	The Contractor must treat as confidential all information in the Material and all other information accessed or obtained by the Contractor or a Subcontractor (whether verbally, electronically or otherwise) as a result of this Agreement, and not permit its disclosure or use without the Province’s prior written consent except:
+(a)	as required to perform the Contractor’s obligations under this Agreement or to comply with applicable laws;
+(b)	if it is information that is generally known to the public other than as result of a breach of this Agreement; or
+(c)	if it is information in any Incorporated Material.
+Public announcements 
+5.4	Any public announcement relating to this Agreement will be arranged by the Province and, if such consultation is reasonably practicable, after consultation with the Contractor.  
+Restrictions on promotion
+5.5	The Contractor, must not, without the prior written approval of the Province, refer for promotional purposes to the Province being a customer of the Contractor or the Province having entered into this Agreement.
+6	MATERIAL AND INTELLECTUAL PROPERTY
+Access to Material
+6.1	If the Contractor receives a request for access to any of the Material from a person other than the Province, and this Agreement does not require or authorize the Contractor to provide that access, the Contractor must promptly advise the person to make the request to the Province.
+Ownership and delivery of Material
+6.2	The Province exclusively owns all property rights in the Material which are not intellectual property rights.  The Contractor must deliver any Material to the Province immediately upon the Province's request.
+Matters respecting intellectual property
+6.3	The Province exclusively owns all intellectual property rights, including copyright, in:
+(a)	Received Material that the Contractor receives from the Province; and
+(b)	Produced Material, other than any Incorporated Material.
+Upon the Province’s request, the Contractor must deliver to the Province documents satisfactory to the Province that irrevocably waive in the Province's favour any moral rights which the Contractor (or employees of the Contractor) or a Subcontractor (or employees of a Subcontractor) may have in the Produced Material and that confirm the vesting in the Province of the copyright in the Produced Material, other than any Incorporated Material.
+Rights in relation to Incorporated Material
+6.4	Upon any Incorporated Material being embedded or incorporated in the Produced Material and to the extent that it remains so embedded or incorporated, the Contractor grants to the Province:
+a non-exclusive, perpetual, irrevocable, royalty-free, worldwide license to exercise, in respect of that Incorporated Material, the rights set out in the Copyright Act (Canada), including the right to use, reproduce, modify, publish and distribute that Incorporated Material; and
+the right to sublicense or assign to third-parties any or all of the rights granted to the Province under section 6.4(a).
+Right of Province to negotiate license of Produced Material
+6.5	After the end of the Term, the Province in its sole discretion, may negotiate with the Contractor to provide the Contractor a license (which may be exclusive or non-exclusive) for the Contractor to use, reproduce, modify or distribute some or all of the Produced Material.
+7	RECORDS AND REPORTS 
+Work reporting
+7.1	Upon the Province’s request, the Contractor must fully inform the Province of all work done by the Contractor or a Subcontractor in connection with providing the Services.
+Time and expense records
+7.2	If Schedule B provides for the Contractor to be paid fees at a daily or hourly rate or for the Contractor to be paid or reimbursed for expenses, the Contractor must maintain time records and books of account, invoices, receipts and vouchers of expenses in support of those payments, in form and content satisfactory to the Province.  Unless otherwise specified in this Agreement, the Contractor must retain such documents for a period of not less than seven years after this Agreement ends.
+8	AUDIT
+8.1	In addition to any other rights of inspection the Province may have under statute or otherwise, the Province may at any reasonable time and on reasonable notice to the Contractor, enter on the Contractor’s premises to inspect and, at the Province's discretion, copy any of the Material and the Contractor must permit, and provide reasonable assistance to, the exercise by the Province of the Province's rights under this section.   
+9	INDEMNITY AND INSURANCE
+Indemnity
+9.1	The Contractor must indemnify and save harmless the Province and the Province's employees and agents from any loss, claim (including any claim of infringement of third-party intellectual property rights), damage award, action, cause of action, cost or expense that the Province or any of the Province's employees or agents may sustain, incur, suffer or be put to at any time, either before or after this Agreement ends, (each a “Loss”) to the extent the Loss is directly or indirectly caused or contributed to by
+ any act or omission by the Contractor or by any of the Contractor’s agents, employees, officers, directors or Subcontractors in connection with this Agreement; or
+any representation or warranty of the Contractor being or becoming untrue or incorrect.
+Monetary limitations of indemnity
+9.2	The indemnification by the Contractor pursuant to section 9.1 is limited to:
+ (a)	$2,000,000 per Loss; and
+ (b)	$4,000,000 in the aggregate for all Losses.
+Exceptions to monetary limitations
+9.3	The limitations set out in section 9.2 do not apply to a Loss resulting from or relating to any of the following: 
+(a)	bodily injury or damage to real property or tangible personal property;
+(b)	third-party intellectual property rights; or
+(c)	a breach of section 5.1, 5.2, 5.3 or 6.1 of this Agreement.
+Province to notify Contractor of Loss
+9.4	To claim indemnification for a Loss pursuant to section 9.1, the Province must notify the Contractor in writing of the Loss as soon as reasonably practicable after the Province becomes aware of the Loss provided that a failure by the Province to provide such notification will not invalidate the claim unless the Contractor is materially prejudiced by that failure.
+Third-party intellectual property infringement claims
+9.5	If the Loss is on the basis of a third-party claim that any element of the Material infringes the intellectual property rights of any person,
+(a)	then, without limiting section 9.1, the Contractor must defend the Province against that claim at the Contractor’s expense and the Contractor must pay all associated costs, damages and legal fees that a court or arbitrator finally awards or are included in a settlement agreed to by the Contractor; and
+(b)	the Province must cooperate with the Contractor in the defence of the claim and, where appropriate in the discretion of the Province, will allow the Contractor to appoint and instruct counsel and otherwise control the defence and any related settlement negotiations.
+Insurance
+9.6	The Contractor must comply with the Insurance Schedule attached as Schedule D.
+Workers compensation
+9.7	Without limiting the generality of section 2.9, the Contractor must comply with, and must ensure that any Subcontractors comply with, all applicable occupational health and safety laws in relation to the performance of the Contractor’s obligations under this Agreement, including the Workers Compensation Act in British Columbia or similar laws in other jurisdictions.
+Personal optional protection
+9.8	The Contractor must apply for and maintain personal optional protection insurance (consisting of income replacement and medical care coverage) during the Term at the Contractor’s expense if: 
+(a)	the Contractor is an individual or a partnership of individuals and does not have the benefit of mandatory workers compensation coverage under the Workers Compensation Act or similar laws in other jurisdictions; and
+(b)	such personal optional protection insurance is available for the Contractor from WorkSafeBC or other sources.
+Evidence of coverage
+9.9	Within 10 Business Days of being requested to do so by the Province, the Contractor must provide the Province with evidence of the Contractor’s compliance with sections 9.7 and 9.8. 
+10	FORCE MAJEURE
+Definitions relating to force majeure
+10.1	In this section and sections 10.2 and 10.3:  
+(a)	“Event of Force Majeure” means one of the following events:
+(i)	a natural disaster, fire, flood, storm, epidemic or power failure,
+(ii)	a war (declared and undeclared), insurrection or act of terrorism or piracy,
+a strike (including illegal work stoppage or slowdown) or lockout, or
+a freight embargo
+if the event prevents a party from performing the party’s obligations in accordance with this Agreement and is beyond the reasonable control of that party; and 
+(b)		“Affected Party” means a party prevented from performing the party’s obligations in accordance with this Agreement by an Event of Force Majeure.
+Consequence of Event of Force Majeure
+10.2	An Affected Party is not liable to the other party for any failure or delay in the performance of the Affected Party’s obligations under this Agreement resulting from an Event of Force Majeure and any time periods for the performance of such obligations are automatically extended for the duration of the Event of Force Majeure provided that the Affected Party complies with the requirements of section 10.3.
+Duties of Affected Party
+10.3	An Affected Party must promptly notify the other party in writing upon the occurrence of the Event of Force Majeure and make all reasonable efforts to prevent, control or limit the effect of the Event of Force Majeure so as to resume compliance with the Affected Party’s obligations under this Agreement as soon as possible.  
+11	DEFAULT AND TERMINATION
+Definitions relating to default and termination
+11.1	In this section and sections 11.2 to 11.4: 
+(a)	“Event of Default” means any of the following:
+(i)	an Insolvency Event,
+the Contractor fails to perform any of the Contractor’s obligations under this Agreement, or
+any representation or warranty made by the Contractor in this Agreement is untrue or incorrect; and
+(b)		“Insolvency Event” means any of the following:
+(i)	an order is made, a resolution is passed or a petition is filed, for the Contractor's liquidation or winding up,
+(ii)	the Contractor commits an act of bankruptcy, makes an assignment for the benefit of the Contractor’s creditors or otherwise acknowledges the Contractor’s insolvency,
+a bankruptcy petition is filed or presented against the Contractor or a proposal under the Bankruptcy and Insolvency Act (Canada) is made by the Contractor,
+(iv)	a compromise or arrangement is proposed in respect of the Contractor under the Companies' Creditors Arrangement Act (Canada),
+(v)	a receiver or receiver-manager is appointed for any of the Contractor’s property, or
+(vi)	the Contractor ceases, in the Province’s reasonable opinion, to carry on business as a going concern.
+Province’s options on default
+11.2	On the happening of an Event of Default, or at any time thereafter, the Province may, at its option, elect to do any one or more of the following:
+by written notice to the Contractor, require that the Event of Default be remedied within a time period specified in the notice;
+pursue any remedy or take any other action available to it at law or in equity; or
+by written notice to the Contractor, terminate this Agreement with immediate effect or on a future date specified in the notice, subject to the expiration of any time period specified under section 11.2(a).
+Delay not a waiver 
+11.3	No failure or delay on the part of the Province to exercise its rights in relation to an Event of Default will constitute a waiver by the Province of such rights.
+Province’s right to terminate other than for default
+11.4	In addition to the Province’s right to terminate this Agreement under section 11.2(c) on the happening of an Event of Default, the Province may terminate this Agreement for any reason by giving at least 10 days' written notice of termination to the Contractor.
+Payment consequences of termination
+11.5	Unless Schedule B otherwise provides, if the Province terminates this Agreement under section 11.4:
+the Province must, within 30 days of such termination, pay to the Contractor any unpaid portion of the fees and expenses described in Schedule B which corresponds with the portion of the Services that was completed to the Province’s satisfaction before termination of this Agreement; and
+the Contractor must, within 30 days of such termination, repay to the Province any paid portion of the fees and expenses described in Schedule B which corresponds with the portion of the Services that the Province has notified the Contractor in writing was not completed to the Province’s satisfaction before termination of this Agreement.
+Discharge of liability
+11.6	The payment by the Province of the amount described in section 11.5(a) discharges the Province from all liability to make payments to the Contractor under this Agreement.
+Notice in relation to Events of Default
+11.7	If the Contractor becomes aware that an Event of Default has occurred or anticipates that an Event of Default is likely to occur, the Contractor must promptly notify the Province of the particulars of the Event of Default or anticipated Event of Default.  A notice under this section as to the occurrence of an Event of Default must also specify the steps the Contractor proposes to take to address, or prevent recurrence of, the Event of Default.   A notice under this section as to an anticipated Event of Default must specify the steps the Contractor proposes to take to prevent the occurrence of the anticipated Event of Default.
+12	DISPUTE RESOLUTION
+Dispute resolution process
+12.1	In the event of any dispute between the parties arising out of or in connection with this Agreement, the following dispute resolution process will apply unless the parties otherwise agree in writing:
+ (a)	the parties must initially attempt to resolve the dispute through collaborative negotiation;
+ (b)	if the dispute is not resolved through collaborative negotiation within 15 Business Days of the dispute arising, the parties must then attempt to resolve the dispute through mediation; and
+ (c)	if the dispute is not resolved through mediation within 30 Business Days of the commencement of mediation, the dispute must be referred to and finally determined by arbitration under the Arbitration Act and:
+(i)	the arbitration will be administered by the Vancouver International Arbitration Centre and will be conducted in accordance with its Rules of Arbitration;
+(ii)	there will be a single arbitrator; and
+(iii)	British Columbia law is the applicable law.
+Location of arbitration or mediation
+12.2	Unless the parties otherwise agree in writing, an arbitration or mediation under section 12.1 will be held in Victoria, British Columbia.
+Costs of arbitration or mediation
+12.3	Unless the parties otherwise agree in writing or, in the case of an arbitration, the arbitrator otherwise orders, 	the parties must share equally the costs of a arbitration or mediation under section 12.1 other than those costs relating to the production of expert evidence or representation by counsel. 
+13	MISCELLANEOUS
+Delivery of notices
+13.1	Any notice contemplated by this Agreement, to be effective, must be in writing and delivered as follows: 
+ (a)	by fax to the addressee's fax number specified on the first page of this Agreement, in which case it will be deemed to be received on the day of transmittal unless transmitted after the normal business hours of the addressee or on a day that is not a Business Day, in which cases it will be deemed to be received on the next following Business Day; 
+(b)	by hand to the addressee's address specified on the first page of this Agreement, in which case it will be deemed to be received on the day of its delivery; or
+by prepaid post to the addressee's address specified on the first page of this Agreement, in which case if mailed during any period when normal postal services prevail, it will be deemed to be received on the fifth Business  Day after its mailing.
+Change of address or fax number
+13.2	Either party may from time to time give notice to the other party of a substitute address or fax number, which from the date such notice is given will supersede for purposes of section 13.1 any previous address or fax number specified for the party giving the notice.
+Assignment 
+13.3	The Contractor must not assign any of the Contractor’s rights or obligations under this Agreement without the Province’s prior written consent.  Upon providing written notice to the Contractor, the Province may assign to any person any of the Province’s rights under this Agreement and may assign to any “government corporation”, as defined in the Financial Administration Act, any of the Province’s obligations under this Agreement
+Subcontracting
+13.4.	The Contractor must not subcontract any of the Contractor’s obligations under this Agreement to any person without the Province’s prior written consent, excepting persons listed in the attached Schedule C.  No subcontract, whether consented to or not, relieves the Contractor from any obligations under this Agreement.  The Contractor must ensure that:
+any  person retained by the Contractor to perform obligations under this Agreement; and
+any person retained by a person described in paragraph (a) to perform those obligations
+fully complies with this Agreement in performing the subcontracted obligations.
+Waiver
+13.5	A waiver of any term or breach of this Agreement is effective only if it is in writing and signed by, or on behalf of, the waiving party and is not a waiver of any other term or breach.
+Modifications 
+13.6	No modification of this Agreement is effective unless it is in writing and signed by, or on behalf of, the parties.
+Entire agreement
+13.7	This Agreement (including any modification of it) constitutes the entire agreement between the parties as to performance of the Services.
+Survival of certain provisions
+13.8	Sections 2.9, 3.1 to 3.4, 3.7, 3.8, 5.1 to 5.5, 6.1 to 6.5, 7.1, 7.2, 8.1, 9.1 to 9.6, 9.9, 10.1 to 10.3, 11.2, 11.3, 11.5, 11.6, 12.1 to 12.3, 13.1, 13.2, 13.8, and 13.10, any accrued but unpaid payment obligations, and any other sections of this Agreement (including schedules) which, by their terms or nature, are intended to survive the completion of the Services or termination of this Agreement, will continue in force indefinitely subject to any applicable limitation period prescribed by law, even after this Agreement ends.
+Schedules
+13.9	The schedules to this Agreement (including any appendices or other documents attached to, or incorporated by reference into, those schedules) are part of this Agreement.
+Independent contractor
+13.10	In relation to the performance of the Contractor’s obligations under this Agreement, the Contractor is an independent contractor and not: 
+(a)	an employee or partner of the Province; or 
+(b)	an agent of the Province except as may be expressly provided for in this Agreement. 
+The Contractor must not act or purport to act contrary to this section.  
+Personnel not to be employees of Province
+13.11	The Contractor must not do anything that would result in personnel hired or used by the Contractor or a Subcontractor in relation to providing the Services being considered employees of the Province. 
+Key Personnel
+13.12	If one or more individuals are specified as “Key Personnel” of the Contractor in Part 4 of Schedule A, the Contractor must cause those individuals to perform the Services on the Contractor’s behalf, unless the Province otherwise approves in writing, which approval must not be unreasonably withheld.
+Pertinent information
+13.13	The Province must make available to the Contractor all information in the Province’s possession which the Province considers pertinent to the performance of the Services.
+Conflict of interest
+13.14	The Contractor must not provide any services to any person in circumstances which, in the Province’s reasonable opinion, could give rise to a conflict of interest between the Contractor’s duties to that person and the Contractor’s duties to the Province under this Agreement.
+Time
+13.15	Time is of the essence in this Agreement and, without limitation, will remain of the essence after any modification or extension of this Agreement, whether or not expressly restated in the document effecting the modification or extension.
+Conflicts among provisions
+13.16	Conflicts among provisions of this Agreement will be resolved as follows:
+ (a)	a provision in the body of this Agreement will prevail over any conflicting provision in, attached to or incorporated by reference into a schedule, unless that conflicting provision expressly states otherwise; and
+ (b)	a provision in a schedule will prevail over any conflicting provision in a document attached to, or incorporated by reference into a schedule, unless the schedule expressly states otherwise.
+Agreement not permit nor fetter 
+13.17	This Agreement does not operate as a permit, license, approval or other statutory authority which the Contractor may be required to obtain from the Province or any of its agencies in order to provide the Services.  Nothing in this Agreement is to be construed as interfering with, or fettering in any manner, the exercise by the Province or its agencies of any statutory, prerogative, executive or legislative power or duty.
+Remainder not affected by invalidity
+13.18	If any provision of this Agreement or the application of it to any person or circumstance is invalid or unenforceable to any extent, the remainder of this Agreement and the application of such provision to any other person or circumstance will not be affected or impaired and will be valid and enforceable to the extent permitted by law.
+Further assurances
+13.19	Each party must perform the acts, execute and deliver the writings, and give the assurances as may be reasonably necessary to give full effect to this Agreement.
+Additional terms
+13.20	Any additional terms set out in the attached Schedule F apply to this Agreement.
+Tax Verification
+13.21 	Any terms set out in the attached Schedule H apply to this Agreement.
+Governing law
+13.22	This Agreement is governed by, and is to be interpreted and construed in accordance with, the laws applicable in British Columbia.
+14	INTERPRETATION
+14.1	In this Agreement:
+“includes” and “including” are not intended to be limiting;
+(b)	unless the context otherwise requires, references to sections by number are to sections of this Agreement;
+(c)	the Contractor and the Province are referred to as "the parties" and each of them as a “party”; 
+(d)	“attached” means attached to this Agreement when used in relation to a schedule; 
+(e)	unless otherwise specified, a reference to a statute by name means the statute of British Columbia by that name, as amended or replaced from time to time; 
+the headings have been inserted for convenience of reference only and are not intended to describe, enlarge or restrict the scope or meaning of this Agreement or any provision of it; 
+“person” includes an individual, partnership, corporation or legal entity of any nature; and 
+unless the context otherwise requires, words expressed in the singular include the plural and vice versa.
+15	EXECUTION AND DELIVERY OF AGREEMENT
+15.1	This Agreement may be entered into by a separate copy of this Agreement being executed by, or on behalf of, each party and that executed copy being delivered to the other party by a method provided for in section 13.1 or any other method agreed to by the parties.
+The parties have executed this Agreement as follows:
+Schedule A – Services
+[Instructions are red and italicized. All bracketed instructions must be deleted prior to use of Schedules.  Leave in black font.  Examples of contract language are “quoted,” remove quotation marks prior to use.]  
+[A form of Schedule A must always be attached to the General Service Agreement.]
+PART 1.	TERM:
+1.	Subject to section 2 of this Part 1, [delete if no extension option to be provided for in 2.]  The term of this Agreement commences on ________________ and ends on _______________.
+2.	[Specify any option to extend the term here or delete.]
+PART 2.  	SERVICES:  
+[Include a detailed description of all aspects of the services, using the following sub-headings, as applicable.  Use as much space as required.]
+Outputs 
+[Deliverables or the services purchased.  Includes a delivery schedule, formats, quantity and specific or technical requirements. Use mandatory language:  “The Contractor must…”]
+Inputs  
+[Resource commitments that produce the outputs. Includes staff qualifications and time, materials, equipment, facilities, volunteer time.  Extract inputs from the proposal, a statement of work or as negotiated.  Use mandatory language: “The Contractor must…”]
+Outcomes  
+[Expected results flowing from the contracted services.  Do not list inputs, outputs or other mandatory contract requirements or deliverables in this section as the Contractor is not warranting that “outcomes” will be achieved] 
+Through the delivery of the Services the Province wishes to realize the following outcomes and, without limiting the obligation of the Contractor to comply with other provisions of this Part, the Contractor must use commercially reasonable efforts to achieve them:
+[Insert a list of outcomes here or insert “See attached Outcomes” here and attach list of outcomes in separate document labeled “Outcomes” attached at the end of this Schedule.]
+The parties acknowledge that the Contractor does not warrant that these outcomes will be achieved.
+Reporting requirements 
+[Report formats, instructions, and frequency. Reports must include delivery dates and quantities of the outputs.]
+PART 3.	RELATED DOCUMENTATION:   
+[Add to the Agreement various scope-of-work documentation that is intended by the parties to be contractual.  If no additional documentation is to be included state “Not applicable” under section 1. and move on to Part 4.]
+1.	The Contractor must perform the Services in accordance with the obligations set out in this Schedule A including any engagement letter, Solicitation document excerpt, proposal excerpt or other documentation attached as an Appendix to, or specified as being incorporated by reference in, this Schedule.  
+[If physically attaching documentation use the following section 2.]
+2.	The following are Appendices to this Schedule A:
+Appendix 1 – Engagement Letter     	ATTACHED:  NOT APPLICABLE
+Appendix 2 – Solicitation document excerpt   	ATTACHED: Error! Bookmark not defined. NOT APPLICABLE
+Appendix 3 – Proposal excerpt          	ATTACHED: Error! Bookmark not defined. NOT APPLICABLE
+Appendix 4 – [specify]         	ATTACHED:  NOT APPLICABLE
+[If incorporating documents by reference use the following section 2.]
+2.	The following documentation is incorporated by reference into this Schedule A:
+[insert detailed description of relevant documentation and specify those pages or sections to be incorporated]
+PART 4		KEY PERSONNEL:  
+[If no Key Personnel state “not applicable” but if Key Personnel provision is desired as referenced in section 13.12, include the following section 1.]
+1.	The Key Personnel of the Contractor are as follows:
+(a)	
+(b)	
+(c)	
+Schedule B – Fees and Expenses
+[A customized form of Schedule B is always attached to the GSA.]
+1.   MAXIMUM AMOUNT PAYABLE:
+Maximum Amount: Despite sections 2 and 3 of this Schedule, $_________ is the maximum amount which the Province is obliged to pay to the Contractor for fees and expenses under this Agreement (exclusive of any applicable taxes described in section 3.1(c) of this Agreement). 
+2.   FEES:  [Choose one or a combination of the following and delete the rest.]
+Daily Rate
+Fees: at a rate of $____ per day (based on a day of ___ hours) for those days during the Term when the Contractor provides the Services. If the Contractor provides the Services for less than the required hours on any day, then fees for that day will be reduced proportionally. 
+Hourly Rate
+Fees: at a rate of $____ per hour for those hours during the Term when the Contractor provides the Services. 
+Rate per Unit/Deliverable
+Fees: at a rate of $____ for each [unit/deliverable] provided by the Contractor as Services during the Term up to ___ [units/deliverables]. 
+Flat Rate
+Fees: $__ for performing the Services during the Term. 
+3.   EXPENSES:
+Expenses:  [If the Contractor is not to be paid for any expenses, delete paragraphs (a) to (c) below and insert “None.”]
+travel, accommodation and meal expenses for travel greater than _______ [insert “32 kilometers” or other agreed distance] away from ____________ [insert place in which Contractor is located or other agreed location] on the same basis as the Province pays its ___________ [insert “Group I” or “Group II” or ? to complete this paragraph] employees when they are on travel status; and
+the Contractor’s actual long distance telephone, fax, postage and other identifiable communication expenses; and
+ [Describe here if any other type of expense to be permitted.] 
+excluding goods and services tax (“GST”) or other applicable tax paid or payable by the Contractor on expenses described in (a) to (c) above [change to “(a) and (b) above” if (c) is to be deleted above] to the extent that the Contractor is entitled to claim credits (including GST input tax credits), rebates, refunds or remissions of the tax from the relevant taxation authorities.
+4.   STATEMENTS OF ACCOUNT:  
+[If daily, hourly or unit rate use the following section 4.]
+Statements of Account: In order to obtain payment of any fees and expenses under this Agreement for [insert description of billing period here- see examples below] (each a "Billing Period"), the Contractor must deliver to the Province on a date after the Billing Period (each a "Billing Date"), a written statement of account in a form satisfactory to the Province containing: 
+[Examples of billing period descriptions: "a period from and including the 1st day of a month to and including the last day of that month" OR "a period from and including the 15th day of a month to and including the 14th day of the next month"]
+the Contractor’s legal name and address;
+the date of the statement, and the Billing Period to which the statement pertains;
+the Contractor’s calculation of all fees claimed for  that Billing Period, including a declaration by the Contractor of 
+[Choose one of the following: 
+ For Daily Rate situations 
+-"all hours worked on each day during the Billing Period";
+For Hourly Rate situations  
+-"all hours worked during the Billing Period"; 
+For Rate per Unit/Deliverable situations 
+- "all (units/deliverables) provided during the Billing Period"]
+for which the Contractor claims fees and a description of the applicable fee rates;
+a chronological listing, in reasonable detail, of any expenses claimed by the Contractor for the Billing Period with receipts attached, if applicable, and, if the Contractor is claiming reimbursement of any GST or other applicable taxes paid or payable by the Contractor in relation to those expenses, a description of any credits, rebates, refunds or remissions the Contractor is entitled to from the relevant taxation authorities in relation to those taxes;
+the Contractor’s calculation of any applicable taxes payable by the Province in relation to the Services for the Billing Period;
+a description of this Agreement;
+a statement number for identification; and
+any other billing information reasonably requested by the Province. 
+[If flat rate, use the following section 4.]
+Statement of Account: In order to obtain payment of any fees and expenses under this Agreement, the Contractor must deliver to the Province at the end of the Term or, if the Contractor completes the Services before that time, on the completion of the Services, a written statement of account in a form satisfactory to the Province containing: 
+the Contractor’s legal name and address;
+the date of the statement;
+the Contractor’s calculation of all fees claimed under this Agreement, including a declaration that the Services for which the Contractor claims fees have been completed;
+a chronological listing, in reasonable detail, of any expenses claimed by the Contractor with receipts attached, if applicable, and, if the Contractor is claiming reimbursement of any GST or other applicable taxes paid or payable by the Contractor in relation to those expenses, a description of any credits, rebates, refunds or remissions the Contractor is entitled to from the relevant taxation authorities in relation to those taxes;
+the Contractor’s calculation of all applicable taxes payable by the Province in relation to the Services;
+a description of this Agreement to which the statement relates;
+a statement number for identification; and
+any other billing information reasonably requested by the Province. 
+5.   PAYMENTS DUE:
+Payments Due: Within 30 days of the Province’s receipt of the Contractor’s written statement of account delivered in accordance with this Schedule, the Province must pay the Contractor the fees and expenses (plus all applicable taxes), claimed in the statement if they are in accordance with this Schedule.  Statements of account or contract invoices offering an early payment discount may be paid by the Province as required to obtain the discount.
+Schedule C – Approved Subcontractor(s)
+[Approving subcontractors using Schedule C is optional.  
+If the Province is willing to approve certain named subcontractors at the time of entering into the Agreement, the approved subcontractors can be listed here.  
+If not, then insert “Not applicable.” under the “Schedule C – Approved Subcontractor(s)” heading above.
+All bracketed instructions must be deleted.]
+Schedule D – Insurance
+[Schedule D must be used without modification, unless Risk Management Branch has been consulted concerning the modification.  All bracketed instructions must be deleted.]
+1.	The Contractor must, without limiting the Contractor's obligation or liabilities and at the Contractor's own expense, purchase and maintain throughout the Term the following insurances with insurers licensed in Canada in forms and amounts acceptable to the Province:
+(a)	Commercial General Liability in an amount not less than $2,000,000 inclusive per occurrence against bodily injury, personal injury and property damage and including liability assumed under this Agreement and this insurance must: 
+(i)	include the Province as an additional insured,
+be endorsed to provide the Province with 30 days advance written notice of cancellation or material change, and
+(iii)	include a cross liability clause; and
+(b)	Professional Errors and Omissions Liability insuring the Contractor’s liability resulting from errors or omissions in the performance of the Services in an amount per occurrence, and in the aggregate, calculated as follows:
+(i)	not less than $1,000,000, if the “Maximum Amount” set out in Schedule B is less than $500,000; and
+(ii)	not less than $2,000,000, if the “Maximum Amount” set out in Schedule B is $500,000 or greater.
+2.	All insurance described in section 1 of this Schedule must:
+(a)	be primary; and
+(b)	not require the sharing of any loss by any insurer of the Province.
+3.    The Contractor must provide the Province with evidence of all required insurance as follows:
+ (a)	within 10 Business Days of commencement of the Services, the Contractor must provide to the Province evidence of all required insurance in the form of a completed Province of British Columbia Certificate of Insurance;
+if any required insurance policy expires before the end of the Term, the Contractor must provide, within 10 Business Days of the policy’s expiration, evidence of a new or renewal policy meeting the requirements of the expired insurance in the form of a completed Province of British Columbia Certificate of Insurance; and
+despite paragraph (a) or (b) above, if requested by the Province at any time, the Contractor must provide to the Province certified copies of the required insurance policies.
+4.	Despite section 1(b) of this Schedule, if in the Province’s sole discretion, the Province has approved in writing either a fronted self-insurance program or a duly licensed captive insurer as an alternative to the Professional Liability Insurance requirement set out in section 1(b), then the Contractor must maintain throughout the Term that alternative in accordance with the terms of the approval.
+Schedule E – Privacy Protection Schedule
+[This Schedule E must be used without modification subject to the following:
+Schedule E is not required to be used at all if the Agreement does not involve "personal information" (as defined in the Freedom of Information and Protection of Privacy Act) or, if it does involve personal information, the Province will not own or control that personal information.  In those situations, all of Schedule E can be deleted and replaced with the words “Not applicable” under the “Schedule E – Privacy Protection Schedule” heading above.
+An alternative version of Schedule E may only be used if authorized by the Privacy, Compliance and Training Branch, Ministry of Citizens’ Services under the circumstances described on the  Privacy Protection Schedule site
+If the contract involves cloud services and personal information, the privacy protection schedule for cloud services provides terms that are more appropriately applicable for cloud applications. 
+All bracketed instructions must be deleted.]
+Definitions
+In this Schedule,
+“Act” means the Freedom of Information and Protection of Privacy Act including any regulation made under it;
+“contact information” means information to enable an individual at a place of business to be contacted and includes the name, position name or title, business telephone number, business address, business email or business fax number of the individual;
+“personal information” means recorded information about an identifiable individual, other than contact information, collected or created by the Contractor as a result of the Agreement or any previous agreement between the Province and the Contractor dealing with the same subject matter as the Agreement;
+“privacy course” means the Province’s online privacy and information sharing training course or another course approved by the Province; and
+“public body” means “public body” as defined in the Act;
+“third party request for disclosure” means a subpoena, warrant, order, demand or request from an authority inside or outside of Canada for the unauthorized disclosure of personal information to which the Act applies;
+“service provider” means a person retained under a contract to perform services for a public body; and
+“unauthorized disclosure of personal information” means disclosure of, production of or the provision of access to personal information to which the Act applies, if that disclosure, production or access is not authorized by the Act.
+Purpose
+The purpose of this Schedule is to:
+enable the Province to comply with the Province’s statutory obligations under the Act with respect to personal information; and
+ensure that, as a service provider, the Contractor is aware of and complies with the Contractor’s statutory obligations under the Act with respect to personal information.
+Acknowledgements
+The Contractor acknowledges and agrees that
+it is a service provider and, as such, the requirements and restrictions established by Part 3 of the Act apply to the Contractor in respect of personal information;
+unless the Agreement otherwise specifies, all personal information in the custody of the Contractor is and remains under the control of the Province; and
+unless the Agreement otherwise specifies or the Province otherwise directs in writing, the Contractor may only collect, use, disclose or store personal information that relates directly to and is necessary for the performance of the Contractor’s obligations, or the exercise of the Contractor’s rights, under the Agreement.
+Collection of Personal Information 
+Unless the Agreement otherwise specifies or the Province otherwise directs in writing, the Contractor may only collect or create personal information that relates directly to and is necessary for the performance of the Contractor’s obligations, or the exercise of the Contractor’s rights, under the Agreement.
+The Contractor must collect personal information directly from the individual the information is about unless:
+(a)	the Province provides personal information to the Contractor;
+(b)	the Agreement otherwise specifies; or
+(c)	the Province otherwise directs in writing.
+Where the Contractor collects personal information directly from the individual the information is about, the Contractor must tell that individual:
+the purpose for collecting it;
+the legal authority for collecting it; and
+the contact information of the individual designated by the Province to answer questions about the Contractor’s collection of personal information.
+Privacy Training
+The Contractor must ensure that each individual who will provide services under the Agreement that involve the access, collection or creation of personal information will complete, at the Contractor’s expense, the privacy course prior to that individual providing those services.  
+The requirement in section 7 will only apply to individuals who have not previously completed the privacy course.
+Accuracy of Personal Information
+The Contractor must make every reasonable effort to ensure the accuracy and completeness of any personal information to be used by the Contractor or the Province to make a decision that directly affects the individual the information is about.
+Requests for Access to Information
+If the Contractor receives a request for access to information from a person other than the Province, the Contractor must promptly advise the person to make the request to the Province unless the Agreement expressly requires the Contractor to provide such access. If the Province has advised the Contractor of the name or title and contact information of an official of the Province to whom such requests are to be made, the Contractor must also promptly provide that official’s name or title and contact information to the person making the request.
+Correction of Personal Information
+Within 5 Business Days of receiving a written direction from the Province to correct or annotate any personal information, the Contractor must annotate or correct the information in accordance with the direction.
+When issuing a written direction under section 11, the Province must advise the Contractor of the date the correction request was received by the Province in order that the Contractor may comply with section 13.
+Within 5 Business Days of correcting or annotating any personal information under section 11, the Contractor must provide the corrected or annotated information to any party to whom, within one year prior to the date the correction request was received by the Province, the Contractor disclosed the information being corrected or annotated.
+If the Contractor receives a request for correction of personal information from a person other than the Province, the Contractor must promptly advise the person to make the request to the Province and, if the Province has advised the Contractor of the name or title and contact information of an official of the Province to whom such requests are to be made, the Contractor must also promptly provide that official’s name or title and contact information to the person making the request.
+Protection of Personal Information
+Without limiting any other provision of the Agreement, the Contractor must protect personal information by making reasonable security arrangements against such risks as unauthorized access, collection, use, disclosure or disposal, including without limitation by ensuring that the integrity of the personal information is preserved.  Without limiting the general nature of the foregoing sentence, the Contractor will ensure that all personal information is securely segregated from any information under the control of the Contractor or third parties to prevent unintended mixing of personal information with other information or access to personal information by unauthorized persons and to enable personal information to be identified and separated from the information of the Contractor or third parties.
+Storage of and Access to Personal Information
+The Contractor must comply with the requirements under the Act concerning storage of personal information outside of Canada, including, if required by the Province, by supporting the Province with completion of such assessments as may be required by law. 
+The Contractor must not change the location where personal information is stored without receiving prior authorization of the Province in writing. 
+Without limiting any other provision of the Agreement, the Contractor will implement and maintain an access log documenting all access to personal information, including a list of all persons that access any personal information.  The Contractor will provide a copy of the access log to the Province upon request.
+Retention of Personal Information
+Unless the Agreement otherwise specifies, the Contractor must retain personal information until directed by the Province in writing to dispose of it or deliver it as specified in the direction.
+Use of Personal Information
+Unless the Province otherwise directs in writing, the Contractor may only use personal information if that use is for the performance of the Contractor’s obligations, or the exercise of the Contractor’s rights, under the Agreement. For clarity, unless the Agreement otherwise specifies or the Province otherwise directs in writing, the Contractor must not anonymize, aggregate or otherwise alter or modify personal information, including by converting personal information into non-personal information, or analyze personal information (whether by manual or automated means) for any purpose, including for the purpose of developing insights, conclusions or other information from personal information.
+Metadata
+Where the Contractor has or generates metadata as a result of services provided to the Province, where that metadata is personal information, the Contractor will:
+not use it or disclose it to any other party except where the Agreement otherwise specifies; and
+remove or destroy individual identifiers, if practicable.  
+Disclosure of Personal Information
+Unless the Province otherwise directs in writing, the Contractor may only disclose personal information to any person other than the Province if the disclosure is for the performance of the Contractor’s obligations, or the exercise of the Contractor’s rights, under the Agreement.
+If in relation to personal information, the Contractor:
+receives a third-party request for disclosure;
+receives a request to disclose, produce or provide access that the Contractor knows or has reason to suspect is for the purpose of responding to a third-party request for disclosure; or
+has reason to suspect that an unauthorized disclosure of personal information has occurred in response to a third-party request for disclosure,
+subject to section 24, the Contractor must immediately notify the Province.  
+If the Contractor receives a third-party request described in section 23(a) or (b) but is unable to notify the Province as required by section 23, the Contractor must instead:
+use its best efforts to direct the party making the third-party request to the Province;
+provide the Province with reasonable assistance to contest the third-party request; and 
+	take reasonable steps to challenge the third party-request, including by presenting evidence with respect to: 
+the control of personal information by the Province as a public body under the Act; 
+the application of the Act to the Contractor as a service provider to the Province; 
+the conflict between the Act and the third-party request; and 
+the potential for the Contractor to be liable for an offence under the Act as a result of complying with the third-party request. 
+Notice of Unauthorized Disclosure
+In addition to any obligation the Contractor may have to provide the notification contemplated by section 30.5 of the Act, if the Contractor knows that there has been an unauthorized disclosure of personal information, the Contractor must immediately notify the Province.
+Compliance with the Act and Directions
+The Contractor must in relation to personal information comply with:
+the requirements of the Act applicable to the Contractor as a service provider, including any regulation made under the Act and the terms of this Schedule; and
+any direction given by the Province under this Schedule.
+The Contractor acknowledges that it is familiar with the requirements of the Act governing personal information that are applicable to it as a service provider.
+The Contractor will provide the Province with such information as may be reasonably requested by the Province to assist the Province in confirming the Contractor’s compliance with this Schedule.
+Notice of Non-Compliance
+If for any reason the Contractor does not comply, or anticipates that it will be unable to comply in any respect, with any provision in this Schedule, the Contractor must promptly notify the Province of the particulars of the non-compliance or anticipated non-compliance and what steps it proposes to take to address, or prevent recurrence of, the non-compliance or anticipated non-compliance.
+Termination of Agreement
+In addition to any other rights of termination which the Province may have under the Agreement or otherwise at law, the Province may, subject to any provisions in the Agreement establishing mandatory cure periods for defaults by the Contractor, terminate the Agreement by giving written notice of such termination to the Contractor, upon any failure of the Contractor to comply with this Schedule in a material respect.
+Interpretation
+In this Schedule, references to sections by number are to sections of this Schedule unless otherwise specified in this Schedule.
+Any reference to “Contractor” in this Schedule includes any subcontractor or agent retained by the Contractor to perform obligations under the Agreement and the Contractor must ensure that any such subcontractors and agents comply with the requirements of the Act applicable to them.
+The obligations of the Contractor in this Schedule will survive the termination of the Agreement.
+If a provision of the Agreement (including any direction given by the Province under this Schedule) conflicts with a requirement of the Act, including any regulation made under the Act, the conflicting provision of the Agreement (or direction) will be inoperative to the extent of the conflict. 
+The Contractor must comply with the provisions of this Schedule despite any conflicting provision of the Agreement or the law of any jurisdiction outside Canada. 
+Nothing in this Schedule requires the Contractor to contravene the law of any jurisdiction outside Canada unless such contravention is required to comply with the Act.
+Schedule F – Additional Terms
+[Adding additional terms using Schedule F is optional. 
+If additional terms are to be included in the Agreement, they must first be drafted or reviewed by Ministry legal counsel and then can be listed here.
+If not, then insert “Not applicable” under the “Schedule F – Additional Terms” heading above.
+All bracketed instructions must be deleted.]
+Schedule G – Security Schedule
+[This Schedule G must be used if the Contractor will be required under this Agreement to either 
+treat any information as confidential; or
+preserve the integrity or availability of any record.
+For greater certainty, Schedule G must be used if the Privacy Protection Schedule is required. 
+Schedule G must be used without modification unless Ministry legal counsel drafts or advises on the modification.  In addition, the Ministry Information Security Officer (or, if the Services are for shared services, the OCIO Information Security Branch) must approve any modification proposing: 
+alternate security requirements (which must be warranted and not introduce indefensible information security risk); or 
+additional obligations (for example, enhanced security screening, or for particularly sensitive personal information) to be attached as Appendix G1.
+For guidance related to Schedule G, please contact the OCIO at OCIOSecurity@gov.bc.ca.
+All bracketed instructions must be deleted.]
+Definitions
+In this Schedule: 
+“Device” means any device to manage, operate or provide the Services or to connect to any Systems or any Province system or network, or that is capable of storing any Protected Information, and includes any workstation or handheld device the Contractor authorizes Personnel to use in relation to this Agreement;
+“Facilities” means the physical locations (excluding those of the Province) the Contractor uses to provide the Services, or to house Systems or records containing Protected Information; 
+“Least Privilege” means the principle requiring that each subject in a system be granted the most restrictive set of privileges (or lowest clearance) needed for the performance of authorized tasks so as to limit the damage that can result from accident, error or unauthorized use;
+“Need-to-Know” means the principle where access is restricted to authorized individuals whose duties require such access and not merely because of status, rank or office;
+“Personnel” means all individuals hired or used by the Contractor and Subcontractors to perform the Contractor’s obligations under this Agreement, including unpaid volunteers and the Contractor or a Subcontractor if an individual;
+“Policies” means the intentions and directions of an organization or part of it, as expressed in record form by its top management (including, for example, policies, directions, standards, practices, procedures and guidelines);
+“Protected Information” means any and all:
+”personal information” as defined in the Privacy Protection Schedule if attached; 
+information and records of information the Contractor is required to treat as confidential under this Agreement; and
+records, the integrity or availability of which are to be preserved by the Contractor under this Agreement, which in the case of records not falling within (i) or (ii), are marked or instructed by the Province to be so preserved or otherwise treated as “Protected Information” under this Agreement;
+“Security Event Logs” means any logs (also known as audit records) of events, notifications or alerts that any component of any Device or other device (not limited to security device), or any Systems or other system or software is technically capable of producing in relation to its status, functions and activities that may be used for such purposes as security investigations, auditing, monitoring and determining security incidents (examples of components capable of producing such logs include firewalls, intrusion prevention systems, routers, switches, content filtering, network traffic flow logs, networks, authentication services, directory services, dynamic host configuration protocols, dynamic naming services, hardware platforms, virtualization platforms, servers, operating systems, web servers, databases, applications, application firewalls);
+“Systems” means any systems, subsystems, equipment, infrastructure, networks, management networks, servers, hardware and software the Contractor uses in relation to this Agreement, including for managing, operating or providing the Services, but excluding any the Province owns or makes available to the Contractor for the Contractor to use in relation to this Agreement;
+“Tenancy” means those components of the Systems that:
+directly access and store Protected Information,
+relate to Protected Information or the Province’s tenancy activities, or
+are customer facing and managed by the Province in its use of the Services; and
+“Tenancy Security Event Logs” means Security Event Logs that relate to Tenancy,  including: 
+log-on/log-off information about Province user activities, and
+application logs, web server log, file server logs, database logs of applications, web servers, file servers or database servers or any other logs that directly store, access or contain Protected Information.
+Additional obligations
+The Contractor must comply with Appendix G1 if attached.
+PERSONNEL
+Confidentiality agreements
+The Contractor must not permit any person the Contractor hires or uses to access or obtain any Protected Information unless that person is contractually bound to the Contractor in writing to keep Protected Information confidential on terms no less protective than the terms applicable to the Contractor under this Agreement.
+Personnel security screening
+The Contractor may only permit individual Personnel to have access to any Protected Information or other asset of the Province (including to any system, network or device the Province makes available to the Contractor) in relation to this Agreement, if, after:
+verifying their identity and relevant education, professional qualifications and employment history;
+completing a criminal record check that is updated at least every five years;
+requiring Personnel to proactively disclose criminal offences to the Contractor unless prohibited by applicable law; 
+performing any additional screening this Agreement or applicable law may require; and
+performing any additional background checks the Contractor considers appropriate, 
+the Contractor is satisfied that the individual does not constitute an unreasonable security risk.  
+If any criminal record check or proactive disclosure reveals a prior criminal offence or pending criminal matter, the Contractor must make a reasonable determination of whether the applicable person constitutes an unreasonable security risk, taking into consideration the duties of the individual and the type and sensitivity of information to which the individual may be exposed.
+If the Contractor is an individual, the Province may subject the Contractor to the screening requirements in this Schedule.
+Personnel information security training 
+Unless otherwise specified in this Agreement, the Contractor must ensure all Personnel complete any relevant information security training, at the Contractor’s expense, before they provide any Services, or receive or are given access to any Protected Information or any system, device or secure facility of the Province, and thereafter at least annually.
+Security contact 
+If not set out elsewhere in this Agreement, the Contractor (but not a Subcontractor) must provide in writing to the Province the contact information for the individual who will coordinate compliance by the Contractor and all Subcontractors and act as a direct contact for the Province on matters relating to this Schedule.
+Supply chain 
+The Contractor must ensure that the security requirements of those in its upstream and downstream supply chain are documented, followed, reviewed, and updated on an ongoing basis as applicable to this Agreement.
+GENERAL POLICIES AND PRACTICES
+Information security policy 
+The Contractor must have an information security Policy that is:
+based on recognized industry standards; and
+reviewed and updated at least every three years.
+Compliance and Standard for Security Controls 
+Unless this Agreement otherwise specifies, the Contractor must apply controls and security management practices to manage or operate Protected Information and Systems, Devices, and Facilities that are compliant with or equivalent to the following Province’s Policies accessible at https://www2.gov.bc.ca/gov/content/governments/services-for-government/policies-procedures:
+“Information Security Policy”; 
+government wide IM/IT Standards; and
+sector or ministry specific IM/IT Standards, if any applicable to the Province ministry, agency or other representative receiving the Services. 
+Contractor security risk assessments 
+The Contractor must undertake a security threat and risk assessment against an industry security standard before placing any new or materially changed Systems or services into production.  
+Change control and management 
+The Contractor must:
+implement and maintain change control processes for Facilities, Systems and Devices in line with applicable security best practices to reduce security-related risks with respect to implemented significant changes; and
+ensure that adequate testing of any change is completed before the change is put into production.
+Backups and restores 
+The Contractor must ensure that:
+it has a backup Policy that is followed and is reviewed, updated and tested at least annually; 
+backups are taken and tested in accordance with the Contractor’s backup Policy, but in any event at least annually; and
+frequency and completeness of backups is based on reasonable industry practice.
+Business continuity plan and disaster recovery plan 
+The Contractor must ensure that it has a documented business continuity plan and a disaster recovery plan that is reviewed at least annually.
+The Contractor must ensure that Facilities and Systems are protected from loss, damage or other occurrence, including fire and environmental hazards and power interruptions, that may result in any of those Facilities and Systems being unavailable when required to provide the Services.
+Security Incident Response and Management 
+The Contractor must ensure that it has a security incident management Policy and response plan that is reviewed at least annually.
+PROTECTED INFORMATION AND DATA SECURITY
+Encryption 
+The Contractor must ensure that: 
+encryption of data at rest is implemented and is maintained in effect, uninterrupted, and active at all times, even in the case of equipment or technology failure, for all Protected Information stored on Systems and Devices; and
+encryption end-to-end is implemented for all Protected Information in transit.
+No storage on unencrypted portable media
+The Contractor must ensure that no Protected Information is stored on portable media for transport outside of the Facilities or Systems without both the prior written approval of the Province and ensuring that the portable media and the Protected Information are encrypted.
+Encryption standard
+For sections 18 and 19, encryption must comply with the Province’s “Cryptographic Standards for Information Protection” accessible at https://www2.gov.bc.ca/gov/content/governments/services-for-government/policies-procedures.
+Isolation controls and logical isolation of data 
+The Contractor must implement and maintain the logical isolation of Protected Information, in effect, uninterrupted, and active at all times, even in the case of equipment or technology failure.
+ACCESS AND AUTHENTICATION
+User Identifiers
+The Contractor must assign and ensure that user identifiers are unique and personal for log in to Systems and Devices.
+Access
+The Contractor must implement, follow, and regularly review and update, access control Policies that address, without limitation, onboarding, off-boarding, transition between roles, regular access reviews, limit and control use of administrator privileges and inactivity timeouts for Facilities, Systems and Devices within the Contractor’s control. 
+The Contactor must ensure that all access to Protected Information and to Facilities, Systems and Devices is based Least Privilege and Need-to-Know” based on role and responsibilities.  The Contractor must identify and segregate conflicting duties and areas of responsibility to reduce incidents of fraud and other abuse.
+The Contractor must verify an individual’s identity before assigning the individual a unique identifier that would give them access to Facilities, Systems or Devices. 
+The Contractor must implement a formal user registration process for Personnel that includes: 
+verification of access levels; 
+creating and maintaining records of access privileges;
+audit processes; and 
+actions to ensure access is not given before approval is granted by the Contractor. 
+The Contractor must maintain a current and accurate inventory of computer accounts and review the inventory on a regular basis to identify dormant, fictitious or unused accounts.  
+The Contractor must implement a monitoring process to oversee, manage and review Personnel access rights and roles at regular intervals.
+The Contractor must ensure that all Systems and Devices:
+are configured in alignment with industry standards;
+enforce a limit of consecutive invalid logon attempts by a user during a predetermined time period; 
+automatically lock the applicable account and Systems after failed logon failures;
+limit the number of concurrent sessions;
+prevent further access to Systems by initiating a session lock; and
+provide the capability of disconnecting or disabling remote access to the Systems.
+Authentication
+The Contractor must use or require complex passwords or personal identification numbers (PINs) that are not shared, default or blank and that are encrypted (not displayed) when entered, biometric accesses, keys, smart cards, other logical or access controls, or combinations of them, to control access to Protected Information and to Systems and Devices.
+The Contractor must ensure that Systems for password-based authentication:
+enforce minimum password complexity, including requiring passwords to be case sensitive, contain a minimum of eight characters and a combination of upper-case letters, lower-case letters, numbers, and/or special characters;
+change authentication passwords regularly at predetermined intervals, but at a minimum semi-annually;
+store and transmit only encrypted representations of passwords;
+enforce password minimum and maximum lifetime restrictions; 
+prohibit password reuse;
+prevent reuse of identifiers; and
+disable the identifier after ninety days of inactivity.
+Highly sensitive Protected Information
+If this Agreement or the Province under this Agreement indicates that any Protected Information is highly sensitive, the Contractor must also ensure that Systems enforce with respect to that Protected Information: 
+two-factor authentication for access;
+enhanced logging that logs all accesses;
+request based access; and 
+no standing access rights.
+SECURITY EVENT LOGS
+Log generation, log retention and monitoring 
+The Contractor must ensure that logging of Security Event Logs is enabled on all applicable Systems components
+The Contractor must retain Security Event Logs for the Systems online for a minimum of 90 days and either online or off-line for an additional period of time adequate to enable the Contractor to conduct effective security investigations into suspected or actual security incidents.
+The Contractor must retain Tenancy Security Event Logs online for a minimum of 90 days and either:
+such additional period of time as the Province may instruct; or 
+ensure that the Tenancy offers the technical capability for the Province to retain the Tenancy Security Event Logs,
+to enable the Province to comply with an information schedule approved under the Information Management Act or other retention period required by law.
+Upon the Province’s request, the Contractor must ensure that the Tenancy offers the technical capability for the Province to enable or configure the forwarding, extraction, backup of Tenancy Security Event Logs from the Tenancy to the Province’s security information and event management system or to an external log storage and retention system.
+The Contractor must review Security Event Logs regularly to detect potential security incidents, using automated tools or equivalent processes for the monitoring, review, correlating and alerting of Security Event Logs.
+PROVINCE PROPERTY
+Access to Province facilities, systems or networks
+If the Province makes available any facilities, systems, networks or devices for use of the Contractor in relation to this Agreement, the Contractor must comply with, and permit access on its behalf only by those authorized Personnel who have been instructed to comply with, the Province’s Policies then applicable to their acceptable use, access and protection accessible at https://www2.gov.bc.ca/gov/content/governments/services-for-government/policies-procedures, including:
+“Appropriate Use Policy” (as also referenced in chapter 12 of the Province’s “Core Policy and Procedures Manual”); 
+“Information Security Policy”;
+government wide IM/IT Standards; and
+sector or ministry specific IM/IT Standards, if any applicable to the Province ministry, agency or other representative receiving the Services.
+The Province has the rights to:
+not make any particular Province facility, system, network or device available before the Contractor or individual Personnel or both agree to a form of agreement acceptable to the Province on acceptable use, protection of, and access to, such facility, system, network or device, or at all;
+not permit connection to any particular Province system or network until satisfied with the controls applied and the security status of the Device to be connected;
+keep facilities access logs and Security Event Logs, and to otherwise monitor and analyze use of Province facilities, systems and networks to verify compliance, investigate suspected or actual breaches or information incidents and protect the Province’s assets, including records, in compliance with applicable laws, including the Freedom of Information and Protection of Privacy Act and Information Management Act, and the Province’s Policies; and
+limit or revoke access to any Province systems, facility or device at its discretion.
+Application development 
+If the Services include software development, the Contractor must ensure that the applications and programming interfaces are developed according to industry standards and Province’s Policies applicable to application development standards.  The Contractor must use secure application development practices for the development of the software.
+FACILITIES, SYSTEMS, DATABASE AND DEVICE SECURITY
+Physical security 
+The Contractor must ensure that adequate physical controls and processes are implemented to ensure that only authorized persons have physical access to the Facilities and Systems.
+The Contractor must develop, document, and disseminate a physical and environmental protection Policy that it reviews at least annually.
+The Contractor must review physical access logs at least once monthly.
+The Contractor must ensure that physical security of any Systems or Facilities being used or capable of being used to house Protected Information meets a standard as would be reasonably expected to provide adequate protection based on the value of the data being protected and the environment in which the Systems or Facilities are located.  At a minimum, this should include:
+hardening of the perimeter of the Facilities; 
+physical separation of public and restricted spaces;
+Intrusion Alarm System (IAS) partitioned to ensure areas containing Protected Information are protected at all times;
+Access Control Systems (ACS) and/or Key Management processes; and
+visitor and identity management processes – including access logs and identification badges.
+Separation of production from test environments 
+The Contractor must not use any production data in any development, test or training environments used for the Services without the Province’s prior written consent.  If the Province gives such consent, the production data must, at minimum, be obfuscated (for example, by using data masking functionality). 
+The Contractor must keep its development, test and training environments separate from its production environments used for the Services at all times, even in case of failure.
+Systems (including servers) hardening
+The Contractor must:
+harden all Systems against attack and misuse, using appropriate security best practices for the hardening of the specific deployed platform, before placing those Systems into production; 
+ensure that all unsecured and unneeded ports, services, applications, protocols and network communicating applications are uninstalled or disabled on all Systems;  
+applying Least Privilege, ensure that the Contractor only configures and makes operational ports, services, applications, protocols and network communicating applications based on the functional requirements of the respective Systems;
+ensure that default passwords and shared accounts are not used for any Systems; and
+in relation to Systems, implement server hardening using configuration security best practices (for example, Center for Internet Security, Inc. (CIS) Benchmarks or equivalent) for any server operating systems, server virtualization, server middleware (for example, web servers and database servers) and application servers.
+Perimeter controls (firewall and intrusion prevention system) and network security 
+The Contractor must:
+implement stateful packet inspection firewalls to control traffic flow to and from Systems and Tenancy at all times, and configure the stateful packet inspection firewalls applying security best practices and Least Privilege;
+implement an intrusion prevention System to control and filter traffic flow leaving and entering Systems and Tenancy at all times, and configure the intrusion prevention System applying security best practices; and
+implement a secure network perimeter and network segmentation for Systems, with ingress and egress points that are known and controlled.
+Application firewall 
+The Contractor must implement application layer firewalls on Systems:
+at  such level of protection as the Province may instruct ; and  
+to detect and mitigate application attacks (for example, brute force, OWASP Top 10, SQL injection, cross site scripting). 
+Management network 
+The Contractor must ensure that for any Systems:
+the management network remains logically separated from any other zone and is not directly accessible from the Internet; 
+the management network is internally segmented, with each server’s dedicated network interface on its own segmented network and that interfaces on the management network do not have visibility to each other; and
+all access to the management network is strictly controlled and exclusively enforced though a secure access gateway, bastion host or equivalent.
+Remote management and secure access gateway 
+The Contractor must perform any remote management of Systems or Devices in a secure manner, using encrypted communication channels and adequate access controls.
+Database security 
+The Contractor must ensure that for any Systems:
+database maintenance utilities that bypass controls are restricted and monitored;
+there is a formal approval process in place for handling requests for disclosure of database contents or for database access, including steps to evaluate privacy impacts and security risks of such requests; and
+methods to check and maintain the integrity of the data are implemented (for example, consistency checks and checksums).
+For database security, the Contractor must implement logical isolation and encryption of Protected Information.
+Device security and antivirus scanning
+The Contractor must ensure all Devices: 
+have antivirus and malware protection as appropriate for the particular Device active at all times;
+are configured to perform antivirus scans at least once per week; 
+have host based firewall configured, enabled and active at all times; and
+have all patches and appropriate security updates installed for the operating system and all installed software.
+VULNERABILITY PREVENTION, SCANNING AND MANAGEMENT
+Proactive management
+The Contractor must:
+obtain information in a timely basis about technical vulnerabilities relating to Systems and Devices; and
+implement processes to stay current with security threats.
+Patching
+The Contractor must patch all Systems regularly in line with security best practices and ensure that current software, operating systems and application patching levels are maintained.
+The Contractor must ensure that all Systems have all patches installed on a regular schedule, within the time frame recommended by the manufacturer unless the Province otherwise consents in writing.  
+The Contractor must ensure that vulnerabilities are remedied and patches installed on an accelerated basis for zero-day, critical and high vulnerabilities.  For zero-day vulnerabilities, the Contractor must implement appropriate mitigation measures promptly on notification of the zero-day vulnerability.  The Contractor must remediate zero-day, high and critical vulnerabilities through patching, decommission, or compensating controls. 
+The Contractor must patch high vulnerabilities within 30 days or less of discovery and patch medium vulnerabilities within 90 days or less of discovery.
+Vulnerability Scanning
+The Contractor must ensure that a vulnerability scan is completed on components of all Systems:
+with any identified vulnerabilities remedied, before being placed into production; and
+on a regular schedule, set at a minimum of one scan per quarter, unless the Province otherwise consents in writing.
+Web application vulnerability scanning
+The Contractor must ensure that a vulnerability scan is completed on any web applications used for Tenancy or in any other Systems: 
+and on any major changes to such web applications, with any identified vulnerabilities remedied, before being placed into production; and
+on a regular schedule, set at a minimum of one scan per quarter, unless the Province otherwise consents in writing.
+Antivirus and malware scanning
+The Contractor must ensure that all Systems servers: 
+have antivirus and malware protection configured, active and enabled at all times;
+have antivirus and malware definitions updated at least once a day; and 
+are configured to undergo a full anti-virus scan for latent infections (to detect infections missed by the real-time agent) at least once a week.
+DISPOSALS 
+Asset disposal 
+The Contractor must ensure that all disposals of assets used in providing or relating to the Services are done in a secure manner that ensures that Protected Information cannot be recovered.
+Asset management
+The Contractor must have asset management and disposal Policies that are followed, and reviewed and updated regularly in line with security best practices, and that address hardware, software and other critical business assets.
+The Contractor must keep an asset management inventory that includes the name of the System, location, purpose, owner, and criticality, with assets added to inventory on commission and removed on decommission.
+Information destruction and disposal
+Unless this Agreement otherwise specifies, the Contractor must retain all records containing Protected Information in the Contractor’s possession until instructed by the Province in writing to dispose or deliver them as instructed. 
+The Contractor must securely erase:
+records that contain Protected Information and Tenancy Security Event Logs when instructed in writing by the Province; and
+any backup, transitory and extra copies of records that contain Protected Information or Tenancy Security Event Logs when no longer needed in relation to this Agreement.
+The Contractor must ensure that Protected Information and Tenancy Security Event Logs on magnetic media are securely wiped by overwriting using procedures and adequate media wiping solutions, degaussing, or other method in line with security best practices for disposal of media.
+NOTICES, INCIDENTS AND INVESTIGATIONS
+Notice of demands for disclosure 
+In addition to any obligation the Contractor may have to notify or assist the Province under applicable law or this Agreement, including the Privacy Protection Schedule if attached, if the Contractor is required  (including under an enactment or a subpoena, warrant, order, demand or other request from a court, government agency or other legal authority) to produce, provide access to or otherwise disclose any Protected Information, the Contractor must, unless prohibited by applicable law, immediately notify and provide reasonable assistance to the Province so the Province may seek a protective order or other remedy to prevent or limit the disclosure.  
+E-discovery and legal holds
+The Contractor must fully co-operate with the Province to enable the Province to comply with e-discovery and legal hold obligations.
+Incidents
+In addition to any obligation the Contractor may have under applicable law, including the Freedom of Information and Protection of Privacy Act, or this Agreement, if, during or after the Term, the Contractor discovers a suspected or actual unwanted or unexpected event or series of events that threaten the privacy or security of Protected Information (including its unauthorized access, collection, use, disclosure, alteration, storage or disposal) or Tenancy, whether accidental or deliberate, the Contractor must:
+immediately report the particulars of such incident to, and follow the instructions of, the Province, confirming any oral report with a notice in writing to the Province as soon as reasonably practicable (if unable to contact the Province’s contract manager or other designated contact for this Agreement, the Contractor must follow the procedure for reporting and managing information incidents on the Province’s website at https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/information-security/information-incidents; and
+make every reasonable effort to recover the records containing Protected Information and contain and remediate such incident, following such reasonable instructions as the Province may give.
+Investigations support and security investigations
+The Contractor must: 
+conduct security investigations in the case of incidents (including any security breach or compromise) affecting Devices, Facilities, Systems, Tenancy or Protected Information, collecting evidence, undertaking forensic activities and taking such other actions as needed;
+provide the Province with any related investigation reports, which the Contractor may sanitize first;
+upon the Province’s request, provide the Province with any logs relating to such investigation reports as validation/confirmation of such investigation, which the Contractor may sanitize first; and 
+maintain a chain of custody in all such security investigations it undertakes.
+Upon the Province’s request, the Contractor must: 
+provide investigative support to the Province to enable the Province to conduct its own security investigations into incidents (including security breaches or compromises) affecting the Tenancy or Protected Information;
+provide the Province with timely access via an on-line, real-time GUI (Graphic User Interface) facility to any Tenancy Security Event Logs and to other Security Event Logs for Systems (the latter of which the Contractor may sanitize first to mask or remove, for example, data pertaining to the Contractor’s customers) to assist the Province in conducting the Province’s security investigations, or in case of technical limitations,  other method acceptable to the Province (for example, on-site visits to enable direct access to those Security Event Logs). 
+The Contractor must work with and support the Province if the Province needs assistance in legal proceedings in relation to security investigations related to Protected Information or Tenancy.
+Province Security Threat and Risk Assessment (“STRA”) support 
+The Contractor must, via its technical and security resources, support the Province in completing a STRA for the Services and to otherwise assess the risks associated with the Services, including by providing all information and documentation (for example, architecture diagrams, service architecture, controls architecture and technical information), which the Contractor may sanitize first and that the Province may reasonably require for such purpose. 
+Notification of changes 
+The Contractor must notify the Province of any changes to its security Policies, management practices and security controls described in this Agreement that may potentially negatively impact the security of Tenancy, Protected Information, or those Systems providing the Services. 
+Compliance verification 
+Upon the Province’s request, the Contractor must provide, at no additional cost, the following security reports to the Province at least every six months during the Term:
+vulnerability scan reports of those Systems providing the Services; and
+patch status reports for those Systems providing the Services.
+In addition to any other rights of inspection the Province may have under this Agreement or under statute, the Province has the rights, at any reasonable time and on reasonable notice to the Contractor, to:
+request the Contractor to verify compliance with this Schedule and to keep security controls documentation or records to support compliance; and
+enter on the Contractor premises and Facilities to inspect and to validate the Contractor’s compliance with the security obligations under this Agreement  
+The Contractor must permit, and provide reasonable assistance to, the exercise by the Province of the Province’s rights under this section.  If any non-compliance or deficiency is found, the Province may (in addition to any other rights it may have) require the Contractor, at the Contractor’s expense, to develop and implement a corrective action plan within a reasonable time.
+Notice of non-compliance
+If for any reason the Contractor does not comply, or anticipates that it will be unable to comply, with a provision in this Schedule in any respect, the Contractor must promptly notify the Province of the particulars of the non-compliance or anticipated non-compliance and what steps it proposes to take to address, or prevent recurrence of, the non-compliance or anticipated non-compliance.
+MISCELLANEOUS
+Interpretation
+In this Schedule, unless otherwise specified, references to sections by number are to sections of this Schedule.
+Any reference to the “Contractor” in this Schedule includes any subcontractor or agent retained by the Contractor to perform obligations under this Agreement and the Contractor must ensure that any such subcontractors and agents comply with this Schedule.
+Any reference to a specified Policy refers to it as may be revised or replaced from time to time.  
+If a provision of this Schedule conflicts with a documented process required by this Schedule to be created or maintained by the Contractor, the provision of the Schedule will prevail to the extent of the conflict.
+Referenced documents
+Policies and other documents of the Province referenced in this Schedule may be updated or replaced by the Province from time to time without notice, and if not found at the hyperlink or URL provided or via the Province’s main website at http://www.gov.bc.ca, be obtained from the Province’s contact for this Agreement.
+Survival
+Sections 63, 66, 67, 68, 69, 70, and 71 and other obligations of the Contractor in this Schedule which, by their terms or nature, are intended to survive the completion of the Services or the termination of this Agreement, will continue in force indefinitely subject to any applicable limitation period prescribed by law, even after this Agreement ends.
+Schedule G – Appendix G1 – Additional Security Obligations
+
+[If additional security obligations are to be added using Appendix G1, they must be drafted or advised on by Ministry legal counsel, and approved by the Ministry Information Security Officer (or, if the Services are for shared services, the OCIO Information Security Branch), in accordance with the Schedule G instructions.  
+If no additional security obligations are to be added, then delete this Appendix G1.
+All bracketed instructions must be deleted.]
+Schedule H – Tax Verification Schedule 
+[Schedule H must be attached to the Agreement unless one or more of the following applies: 
+the value of the Agreement (including but not limited to all anticipated fees and expenses) is less than $100,000, including any options to extend or renew;
+the Agreement is being entered into in response to an unforeseen emergency;
+the Agreement is being directly awarded on the basis that the Contractor is the only vendor qualified to provide the services;
+No modifications may be made to the definition of ‘Tax Verification Letter’ in this Schedule without the authorization of the Income Taxation Branch, Revenue Division of the Ministry of Finance.  The Ministry of Finance authorizes other modifications to be made to this Schedule if appropriate for the applicable contract, but only if the Province’s legal counsel has drafted or advised on the modifications.
+If not required, all of Schedule H can be deleted and “Not applicable” inserted under the heading above.
+Contact the Income Taxation Branch, Revenue Division, Ministry of Finance for additional guidance on the tax verification requirement.
+All bracketed instructions in red must be deleted.]
+In this Schedule: 
+“Tax Verification Letter” means a letter issued by the Province of British Columbia’s Ministry of Finance verifying that the Contractor meets its applicable B.C. corporate income tax filing obligations and provincial sales tax (PST) filing and payment obligations; and
+“Valid” means that the Tax Verification Letter’s period of validity, as indicated on the Tax Verification Letter, has not ended.
+As a condition of entering into this Agreement, the Contractor provided to the Province a Valid Tax Verification Letter.
+Upon request by the Province, the Contractor must provide the Province with a new Valid Tax Verification Letter.  Notwithstanding any other provision of this Agreement, the Contractor acknowledges and agrees that any extension or renewal of this Agreement is conditional upon the Province having, or receiving from the Contractor in response to a request from the Province, a Valid Tax Verification Letter prior to any such extension or renewal.
+
+[TABLE 1]
+For Administrative Purposes Only / | For Administrative Purposes Only /
+/ Ministry Contract No.:	____________________ / Requisition No.: __________________________ / Solicitation No.(if applicable): 	______________ / Commodity Code: _________________________ /  / Contractor Information /  / Supplier Name: ___________________________ / Supplier No.:	___________________________ / Telephone No.:	 ___________________________ / E-mail Address: ___________________________ / Website: _________________________________ / | / Financial Information /  / Client:			____________ / Responsibility Centre:		____________ / Service Line:		____________ / STOB:			____________ / Project:		____________ /  / Template version:  September 16, 2022 / Corporate Contract Template issued by OCG under TB Directive 1/23 /
+
+[TABLE 2]
+SIGNED on the  _____ day of / _______________, 20__ by the Contractor / (or, if not an individual, on its behalf by its authorized signatory or signatories): /  / 	 / 	 / Signature(s)	 /  / 	 / Print Name(s)	 / 	 / 	 / Print Title(s) | SIGNED on the _____ day of  / ________________, 20__ / on behalf of the Province by its duly / authorized representative:  /  /  / 	 / Signature	 /  / ______________________	 / Print Name	 / 	 / __________________________	 / Print Title /  /

@@ -1,0 +1,196 @@
+ 
+Reference: RFSQ-0586 
+Information Management Technology Consulting Services 
+Amendment Questions and Answers  
+ 
+ Page 1 of 5 
+ 
+AMENDMENT:   
+The following questions and answers are provided to all interested Proponents. Where possible, 
+similar questions asked by multiple proponents were consolidated into a single question. 
+Question 1: How interconnected are the GOS ministries in regard to their IT.  
+Response:  Information Technology Division (ITD) supports up to 17 ministries in 
+executive government. Interconnection between each ministry is present in our 
+one government approach.  
+Question 2: Are future projects from this RFSQ going to be a collaboration between ITD and 
+the ministries that need services? 
+Response:  A bit of both. For example: i f a  ministry is in need of a data architect 
+ITD would procure for the ministry. ITD provides o ne point of contact for the 
+ministries.  
+Question 3: What are your current data warehousing capabilities?  
+Response: The current data warehousing is managed and delivered as a service 
+through ITD and our technology platforms provider. Warehousing is 
+predominantly built with the IBM Infosphere products and DB2 is data base 
+backing the data warehouse.  
+Question 4: W hat do you use for ETL tools?  
+Response: Enterprise platform uses the IBM Infosphere suite. The reporting tool 
+is IBM Cognos, however GOS has the capability of using Power BI.  The 
+Enterprise GIS platform is an on-premise deployment of the enterprise GIS 
+solution from ESRI. We use SAFE Software’s FME tools and vendor supplied 
+solutions to design and build ETL to automate and improve workflows for spatial 
+data.    
+Question 5: W ith the existing solution, what are your gaps?  
+Response: We have an existing vendor in place to modernize and support the 
+toolset. GOS is aware of some gaps, the top areas currently being considered 
+include improved data masking, data cataloguing, data quality management and 
+real-time access to data. 
+Question 6: D ata Governance, ETL loading from what?  I.e.: Flat files.  
+Response: Currently there are multiple ministries with different business 
+applications resulting in different data sources such as DB2, Oracle, SQL Server, 
+GOS also has API based connections.  
+Question 7: H ave you considered migration to cloud?  
+ 
+Reference: RFSQ-0586 
+Information Management Technology Consulting Services 
+Amendment Questions and Answers  
+ 
+ Page 2 of 5 
+ 
+Response: Cloud is a consideration, GOS currently has a presence in both the 
+cloud and on prem. GOS is working with current service providers to determine 
+when moving to cloud is appropriate.  
+Question 8: W ho is your cloud provider(s)?  
+Response: Microsoft Azure is currently part of the formally supported enterprise 
+services. There are also some third-party systems that use Amazon Web 
+Services and GOS currently has some cloud services running in Oracle Cloud. 
+Additional cloud services are being reviewed. 
+Question 9: C an you talk about 2 year and 5-year goals?  
+Response:  GOS envisions being seen as a leader providing better services to our 
+citizens, businesses and industries. The dynamically changing landscape is 
+driving the need for system enhancement. GOS is looking to grow their service 
+offering while maintaining current state and enhance as GOS works towards 
+modern analytics. This includes promoting data driven decision making. 
+Question 10: D
+ o you have any POCs in place to modernize?  
+Response: Nothing currently is underway.  
+Question 11: Would modernization fall under this RFSQ?  
+Response: The RFP together with the RFSQ provides the approach to the 
+modernization of the platform and data practices.  
+Question 12: A re you looking for support for core databases?  
+Response: We do have a team in place for support and through this RFSQ are 
+looking for additional services to complement and extend our in-house 
+capabilities. 
+Question 13: I s GOS looking to segregate ministry data and security as part of the 
+requirements? 
+Response: GO S currently has segregation in place.  
+Question 14: Are you open to new software and upgrades?  
+ 
+Reference: RFSQ-0586 
+Information Management Technology Consulting Services 
+Amendment Questions and Answers  
+ 
+ Page 3 of 5 
+ 
+Response: The scope of the RFP is intended to include the existing solution.  As 
+GOS becomes aware of needs and changes, we are open to bringing new 
+technology in. GOS does need to ensure as any change is implemented the 
+workflow is maintained. This RFSQ is part of a bigger envisioned operating 
+model (refer to the diagram and discussion in the RFSQ for additional details). 
+The RFP is focused on the technology platform sustainment and evolution.  This 
+RFSQ is intended to provide additional consulting capabilities. While technology 
+is part of the equation, there are non-technology areas such as governance, 
+culture and practices as well.  New technologies would need to be coordinated 
+with GOS, the platform provider and the ministries. 
+Question 15: W ould this be open to crown corporations to leverage?  
+Response: Language has been included for their ability to leverage.  
+Question 16: Can you explain local knowledge and what GOS is looking for?  
+Response: Refer to Section D.2.  Knowledge of public service organizations, 
+ideally Saskatchewan, or other Canadian provincial entities would be beneficial 
+to note in your response. 
+Question 17: H ow does the scope of work requested in this RFSQ align with RFP Information 
+Management Platform recently issued?   
+Response: The focus of the R FP is to maintain and sustain the existing platform 
+and services, along with identifying gaps and working towards modernization. 
+Within that, GOS envisions additional work to fall into the 6 areas identified in 
+the RFSQ. The RFSQ is to help GOS with resources and to provide the ability to 
+acquire these in a timely manner.  
+Question 18: C an a vendor respond to and potentially be successful on all 6 categories? 
+Response:  Yes, a vendor can be considered for any or all of the 6 categories.  
+Question 19: Where is the most effort or focus areas of the 6 categories?  
+Response: GOS is not sure where the initial focus will be. GOS recognizes gaps in 
+our tool offering and as a result business transformation is potentially needed. 
+Several ministries are looking for support moving from aging tools to newer 
+tool(s).  
+Question 20: Do  you see policy work that might need occur?  
+Response: Yes, in response to the responsible use of AI, consideration is needed. 
+GOS requires a framework. 
+Question 21: I f you are selected as a qualified vendor in the categories, what is the 
+contract/bidding process? Are the qualified vendors required to submit a formal 
+proposal?  
+ 
+Reference: RFSQ-0586 
+Information Management Technology Consulting Services 
+Amendment Questions and Answers  
+ 
+ Page 4 of 5 
+ 
+Response: Each project leveraging the RFSQ will post a competition to the pre-
+qualified list. The amount of work required for a proposal will depend on the 
+complexity of the project and details required. That is, a short-term engagement 
+may not need as comprehensive of a response as a longer-term engagement. It 
+will be situation dependent. 
+Question 22: A re you open to offsite resources?   
+Response: As long as the mandatory requirements and alignment to Appendix G 
+– Information Security are met, the Service Provider can propose the delivery 
+model that aligns with the requirements of the RFSQ and subsequent 
+competitions. For proposed support resources that reside outside of Canada, 
+specific and detailed descriptions of how the mandatory security requirements 
+can be met will be a critical part of your response. Support will be required 
+7/24. 
+Question 23: D
+ o you have projects in mind that would be accessing the RFSQ? How much do 
+you see multiple business units advancing one capability?  
+Response: GO S has a one government approach, however each ministry is in a 
+different place on their analytics journey. Analytic success is tied directly into 
+business outcomes. The ministries will, however, work together to define the 
+standards.  
+Question 24: W hat is the data governance/ management frameworks that are in place? 
+Response: The enterprise data governance framework is in the concept stage 
+and will need to be formalized. Some ministries have established data 
+governance within the bounds of their organization. The intention is to 
+incorporate/extend the enterprise data governance framework within the 
+overall IT governance framework currently being implemented. 
+Question 25: A re there any data catalogs/ metadata management tools currently in place? 
+Response: Some ministries are using basic approaches, some use data modeling 
+tools.  We would look to further define "enterprise" tools with the winning 
+proponent of the RFP process. 
+Question 26: W hat are the current master data management practices and/or tools currently 
+in place?  
+Response: T here is no master data management initiative or tools in place.  
+Question 27: How is data quality managed, tracked and reported?  
+Response: Data quality is currently managed by each individual ministry. An 
+enterprise tool is not in place but has been highlighted as a possible service to 
+add to the technology platform. 
+Question 28:  A re you open to team arrangements?  
+ 
+Reference: RFSQ-0586 
+Information Management Technology Consulting Services 
+Amendment Questions and Answers  
+ 
+ Page 5 of 5 
+ 
+Response:  It would depend on the engagement and the specific opportunit y, 
+however GOS is open to any proposal submitted.  
+Question 29: Do you see business transformation Organizational Change Management (OCM) 
+as being stand alone to projects from the RFSQ or being completed with the RFP? 
+Response:  OCM is critical, GOS has different organizations at different maturity 
+levels and envision this to be a part of both the transformation that is taking place 
+as part of the RFP and projects from the RFSQ.  
+Question 30: Question D.4.2 requests the proponents to indicate "experience working within 
+a multi- vendor environment to achieve common outcomes". Can you please 
+define "vendor" in the context of this question? 
+Response: A  v endor can be any non-GOS organization that is providing products 
+or services in the data management domain. 
+Question 31: I n Section F - Response Guidelines on page 26/32 of the RFSQ, it states "Each 
+Response should include a Submission Form (Appendix B)". Can you please 
+confirm this was supposed to refer to appendix D and not appendix B.  
+Response: Correct, this is a typo. Ap
+ pendix D is the Submission form. 
+Question 32: Besides experience in Microsoft Power BI solutions, is GOS looking for 
+experience in other Microsoft offerings such as SharePoint Online and Microsoft 
+Purview?  
+Resp
+onse: GOS is interested in proponent familiarity with any Microsoft 
+products associated with information and data management. 
+END OF AMM ENDMENT  
+ 

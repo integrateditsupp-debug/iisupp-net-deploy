@@ -1,0 +1,553 @@
+ 
+ 
+Please  Note: 
+◽  Uncommon  is  not  providing  information  about  its  current  vendor  relationship  as  part  of  this  process.  Vendors  should  propose  their  approach  based  on  the  requirements  and  environment  description  in  the  RFP.  ◽  All  RFP  materials  must  be  downloaded  directly  from  a  publicly  posted  website,  and  cannot  be  sent  individually.  ◽  The  list  below  represents  all  questions  submitted  by  the  deadline.  If  a  question  does  not  have  an  answer,  Uncommon  is  still  working  on  gathering  or  developing  an  answer.  Uncommon  will  publish  an  updated  Q&A  Addendum  by  Monday,  June  8. 
+Offerors'  Conference  recording  and  transcript 
+     Asking  Vendor Question Answer 
+Q-1  EduTech-Group  
+What  is  the  timeline  for  multi-state  licensing  documentation?  
+State  licensing  must  be  in  place  by  the  time  the  work  starts,  including  any  transitionary  work  that  may  be  required.  Proof  that  this  licensing  will  be  in  place  in  the  required  time  must  be  provided  before  a  contract  can  be  signed.  
+Q-2  EduTech-Group  
+I'm  looking  to  see  what  ongoing  evaluation/process  improvement  cycle  you  have  imagined  aside  from  the  SLA  reviews  I  saw  in  the  RFP.  We  typically  meet  with  support  teams  and  separately,  Leadership  teams  at  client  schools  with  this  focus.  Would  you,  for  example,  prefer  we  do  that  with  your  client  schools,  or  will  we  meet  with  Uncommon  Schools  stakeholders,  or  a  mixture  of  both?  
+These  meetings  would  all  be  with  Home  Office  staff;  Uncommon  does  not  expect  the  vendor  to  have  school  facing  evaluations  of  service.  
+Q-3  AlphaIT  
+Please  confirm  whether  licenses  for  all  three  states  are  required  
+State  licensing  must  be  in  place  by  the  time  the  work  starts,  including  any  transitionary  work  that  may  be  required.  Proof  that  this  licensing  will  be  in  place  in  the  required  time  must  be  provided  before  a  contract  can  be  signed.  
+Q-4  AlphaIT  
+Confirm  whether  the  required  business  licenses  are  mandatory  at  the  time  of  proposal  submission  or  may  be  obtained  prior  to  the  contract  start  date?  See  Q-1  
+Q-5  AlphaIT  
+Confirm  whether  copies  of  licenses  and  certificates  must  be  submitted  with  the  proposal  
+Documentation  of  the  number  of  engineers  holding  a  certification  directly  related  to  their  role  must  be  submitted  with  the  proposal  (relating  to  RFP  Section  5.2).  See  Q-1  for  state  licensing.  
+Q-6  Inspiroz  
+Current  staffing  model:  Can  Uncommon  provide  details  on  the  current  MSP's  on-site  staffing  model,  including  the  approximate  number  of  on-site  technician  days  per  week  (in  aggregate  and  by  region)?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP  and  their  experience  working  with  educational  organizations.  
+Q-7  Inspiroz  
+School  count  confirmation:  Section  1.2  lists  63  locations  and  section  3.5  and  6.1  references  52  schools.  Can  Uncommon  explain  the  difference  between  the  52  schools  notated  and  the  list  having  63  locations?  
+The  discrepancy  is  caused  by  the  regional  offices;  Uncommon  has  one  regional  office  in  each  of  the  five  cities  it  operates  in,  plus  the  Home  Office.  All  locations,  including  regional  offices,  are  included  in  the  scope  of  this  RFP.  Please  refer  to  Appendix  A  for  the  full  list  of  schools  and  regional  offices.  
+Q-8  Inspiroz  
+Current  service  delivery  model:  Can  Uncommon  describe  the  current  service  delivery  structure,  including  what  is  working  well  and  where  gaps  exist?  How  does  Uncommon’s  internal  IT  team  interface  with  the  current  MSP?  What’s  working  well?  What  friction  points  exist  that  impact  the  end-user  experience?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-9  Inspiroz  
+Existing  SLAs:  Can  Uncommon  share  the  incumbent’s  existing  SLAs  and  how  they’re  being  enforced?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP  and  their  experience  working  with  educational  organizations.  
+Q-10  Inspiroz  
+Data  center  ownership:  Are  the  Virginia  and  New  York  data  centers  referenced  in  Section  4.1  owned  and  operated  by  Uncommon,  or  are  they  owned/operated  by  the  incumbent  vendor  or  a  colocation  provider?  Will  the  selected  vendor  be  expected  to  manage  or  relocate  these  facilities?  
+The  data  centers  are  owned  and  managed  by  the  incumbent.  The  vendor  will  be  expected  to  supply  redundant  data  center  capabilities  and  manage  the  transition  to  these  facilities.  
+Q-11  Inspiroz  
+Equipment  ownership  and  leases:  Does  any  infrastructure  equipment  (firewalls,  switches,  servers,  controllers,  etc.)  belong  to  or  is  leased  through  the  incumbent  vendor?  If  so,  what  is  the  expected  disposition  of  that  equipment  during  transition?   
+Q-12  Inspiroz  
+SOC  2  Type  II  as  a  qualification  threshold:  Section  3.4  states  the  vendor  "shall  maintain  SOC  2  Type  II  certification."  Q11  asks  proposers  to  "provide  proof"  of  SOC  2  Type  II  or  ISO  27001.  Will  a  vendor  that  does  not  currently  hold  SOC  2  Type  II  or  ISO  27001  certification  at  the  time  of  proposal  submission  be  disqualified,  or  will  Uncommon  consider  a  vendor  that  can  demonstrate  it  is  actively  pursuing  readiness  assessment  and/or  certification?  
+The  vendor  must  provide  an  auditor's  attestation  of  SOC  2  compliance  with  the  proposal.  A  full  SOC  2  report  must  be  provided  by  all  finalists  at  the  time  of  the  finalist  presentation.  All  services,  systems,  and  infrastructure  related  to  the  proposal  must  be  covered  under  the  vendor's  SOC  2  audit.  If  this  requirement  is  a  concern,  please  notify  the  project  manager  via  the  email  in  the  RFP.  
+Q-13  Inspiroz  
+If  Uncommon  decides  to  split  the  services.  Would  a  vendor  without  SOC-2  be  able  to  perform  one  side  of  the  services?  
+Any  part  of  the  vendor  that  has  access  to  student  data  should  be  SOC  2  certified;  this  includes  both  sides  of  the  RFP:  end  user  support  and  enterprise  infrastructure  management  
+Q-14  Inspiroz  
+SOC  2  scope:  Does  the  SOC  2  Type  II  requirement  apply  to  the  vendor's  entire  organization,  or  specifically  to  the  services  and  infrastructure  that  would  be  in  scope  for  this  See  Q-12  
+contract  (e.g.,  data  center  operations,  NOC,  service  desk)?  
+Q-15  Inspiroz  
+Sub-service  provider  certifications:  Q11  references  sub-service  providers  for  SOC/MDR.  If  a  proposer's  primary  MDR/EDR  partner  (e.g.,  CrowdStrike)  holds  SOC  2  Type  II  certification,  does  that  satisfy  the  SOC  2  Type  II  requirement?  No.  See  Q-12  
+Q-16  Inspiroz  
+EDR  platform  flexibility:  Section  3.7  lists  SentinelOne  as  a  current  technology  partner.  Is  the  selected  vendor  required  to  continue  using  SentinelOne  as  the  EDR  platform,  or  would  Uncommon  consider  an  alternative  EDR  solution  with  an  appropriately  timed  transition?  
+Yes,  the  vendor  is  required  to  continue  using  SentinelOne.  Uncommon  has  a  3-year  contract  procured  through  the  E-Rate  Cybersecurity  Pilot  program.  
+Q-17  Inspiroz  
+Network  equipment  stack:  Can  Uncommon  provide  an  inventory  of  the  current  network  equipment  stack  by  manufacturer  and  model  category  (switches,  routers,  firewalls,  wireless  access  points,  controllers)?   
+Q-18  Inspiroz  
+NOC/SOC  geographic  requirements:  Q15  asks  whether  the  SOC  is  US-based.  What  is  the  reason  and/or  requirement  behind  this  question?  
+After  further  review,  vendors  can  disregard  the  part  of  the  question  that  asks  whether  their  SOC  is  US  based.  The  rest  of  the  question  should  still  be  answered  by  the  vendor.  
+Q-19  Inspiroz  
+Background  check  scope:  Section  3.3  states  all  individuals  "assigned  to  this  contract"  must  submit  to  background  checks.  Does  this  apply  only  to  personnel  who  will  be  physically  on-site  at  Uncommon  locations,  or  does  it  extend  to  all  remote  staff  (service  desk  agents,  NOC  engineers,  etc.)  who  may  access  Uncommon  systems?  
+This  only  applies  to  staff  that  will  be  physically  onsite  in  a  school.  
+Q-20  Inspiroz  
+Driver's  license  requirement:  Section  5.5  requires  on-site  technicians  to  have  a  valid  driver's  license.  In  regions  served  by  public  transit  (particularly  New  York  City),  would  Uncommon  accept  demonstrated  ability  to  travel  reliably  between  sites  by  public  transportation  in  lieu  of  a  driver's  license?  
+Yes,  for  regular  onsite  visits.  The  vendor  must  also  demonstrate  the  ability  to  move  equipment  between  sites  in  NYC  such  as  switches,  routers,  laptops  and  any  other  equipment  that  may  need  to  be  moved  from  one  site  to  another.  
+Q-21  Inspiroz  
+Covered  equipment  definition:  Section  3.5  references  "covered  equipment."  For  the  purposes  of  inventory  and  support  obligations,  is  there  a  specific  list  of  additional  equipment  to  be  covered  besides  Uncommon  endpoints  and  classroom  technology?  
+No;  this  refers  only  to  Uncommon  managed  staff  and  student  endpoints  (Windows  and  Apple).  Uncommon  uses  Asset  Panda  for  managing  its  Chromebook  inventory.  
+Q-22  Inspiroz  
+Apple/iPad  presence:  The  RFP  references  Windows  laptops  and  Chromebooks.  Are  there  any  Apple  devices  (iPads/MacBooks/iPhones)  in  the  environment?  
+The  majority  of  Uncommon's  devices  are  Windows  and  Chromebooks.  Uncommon  does  have  several  programs  (for  example  Media  Production)  that  use  MacBooks  and  Uncommon  does  use  iPads  for  operational  purposes  like  building  sign  in  kiosks.  All  Apple  devices  are  managed  via  JAMF  and  the  vendor  would  be  expected  to  manage  those  as  well.  
+Q-23  Inspiroz  
+Workday  integration  scope:  Section  3.4  references  a  Workday-to-Entra  integration.  Can  Uncommon  clarify  the  expected  scope  of  Workday-related  services?  Is  the  vendor  responsible  for  maintaining  this  integration,  or  only  for  consuming  the  data  output  for  account  provisioning?  
+That  is  an  example  of  the  type  of  evidence  Uncommon  is  looking  for;  the  vendor  is  not  expected  to  manage  any  Workday  integrations  as  part  of  this  RFP.  
+Q-24  Inspiroz  
+Onboarding  period  and  billing:  The  timeline  shows  a  potential  award  in  October  2026  with  a  contract  start  date  of  July  1,  2027.  Does  the  "contract  start  date"  represent  the  go-live  date  for  full  service  delivery?  When  do  you  expect  transition  activities  to  start  with  the  outgoing  vendor?  Knowing  Uncommon’s  focus  on  not  disrupting  education,  what,  if  any,  access  will  be  available  to  the  schools  before  the  school  year  ends  for  site  surveys,  walkthroughs,  etc.?  What  do  you  expect  the  transition  timeline  to  be  for  the  outgoing  vendor?  
+Uncommon  is  looking  for  the  vendor  to  provide  that  guidance  as  part  of  their  bid.  Based  on  past  experience  onboarding  clients,  the  vendor  should  create  that  guidance  and  timeline  in  order  to  'go-live'  by  July  1,  2027.  Transition  activities  can  begin  as  soon  as  a  contract  is  signed.  
+Q-25  Inspiroz  
+Project  vs.  managed  services  boundary:  Section  3.6  asks  vendors  to  define  what  constitutes  a  project  vs.  managed  services  scope.  Has  Uncommon  established  its  own  criteria  or  thresholds  (e.g.,  hours,  cost,  number  of  affected  sites)  that  it  would  like  vendors  to  align  with?  
+Uncommon  does  not  have  documented  criteria;  Uncommon  is  looking  for  how  the  vendor  currently  thinks  about  or  manages  that  boundary.  
+Q-26  Netrix  
+Form  6  requires  that  we  disclose  if  we've  made  an  application  pursuant  to  "The  Public  Works  Contractor  Registration  Act"  which  specifically  applies  to:  construction,  reconstruction,  demolition,  alteration,  custom  fabrication,  duct  cleaning,  or  repair  work,  or  maintenance  work,  including  painting,  and  decorating,  done  under  contract  and  paid  for  in  whole  or  in  part  out  of  the  funds  of  a  public  body,  except  work  performed  under  a  rehabilitation  program.  “Public  work”  shall  also  mean  construction,  reconstruction,  demolition,  alteration,  custom  fabrication,  duct  cleaning,  or  repair  work,  done  on  any  property  or  premises,  whether  or  not  the  work  is  paid  for  from  public  funds,  if,  at  the  time  of  the  entering  into  of  the  contract  the  property  or  premises  is  owned  by  the  public  body.  Because  this  RFP  does  not  involve  any  of  those  Services,  there  should  not  be  a  need  for  any  Vendor  bidding  on  this  project  to  apply  for  certification  under  this  Act.  Can  we  ask  Uncommon  to  confirm  that  Vendors  submitting  proposals  in  response  to  this  RFP  do  not  need  to  submit  an  Application  for  Public  Works  Contractor  Registration?  
+Vendors  may  answer  "N/A"  to  question  #5  on  Form  6.  Uncommon  agrees  that  the  scope  of  this  RFP  does  not  include  any  work  that  would  be  managed  under  current  prevailing  wage  law  in  NJ,  therefore  that  answer  will  not  be  disqualifying.  
+Q-27  Netrix  
+Will  a  new  MSA  and/or  contract  be  required  for  vendors  with  an  existing,  current  contract?  
+Yes,  Uncommon's  goal  for  this  RFP  is  to  sign  a  new  MSA,  regardless  of  existing  current  contracts.  
+Q-28  Netrix  
+In  Section  9.1  of  the  RFP,  Uncommon  provides  that  "the  Terms  and  Conditions  in  Section  10  are  all  considered  part  of  the  final  agreement."  However,  Section  10  appears  to  address  only  the  Submission  Requirements  and  we  would  like  to  confirm  that  there  are  no  additional  "Terms  and  Conditions"  applicable  to  Section  10  that  we  need  to  be  aware  of.  Uncommon  may  consider  the  submission  requirements  themselves  to  be  the  "Terms  and  Conditions",  and  we  just  want  to  confirm  that  is  accurate.  Confirming  there  are  no  additional  terms  in  Section  10.  
+Q-29  Netrix  
+When  looking  at  the  desired  format  spelled  out  in  section  10.1,  it  is  unclear  where  some  parts  of  sections  3,  4,  and  5  fit  into  where  you  would  expect  to  see  some  of  these  items.  For  section  5  (as  it's  spelled  out  in  section  10.1),  is  the  desire  for  this  section  to  be  ONLY  responses  to  RFP  section  3?  
+Yes,  the  Technical  Proposal  (Section  5  of  the  submission)  should  be  a  response  to  the  Scope  of  Services  (Section  3  from  the  RFP).  Please  address  these  subsections  in  the  order  they  appear  in  the  RFP,  and  clearly  refer  to  each  subsection  number  (i.e.  Scope  of  Services  3.5)  in  the  answer.  Under  Section  3.3,  the  only  evidence  required  is  documentation  showing  how  many  engineers  hold  certifications  related  to  their  role.  The  rest  of  Section  3.3  and  Sections  4  and  5  are  informational  only  and  do  not  require  a  response.  
+Q-30  Netrix  
+Where  would  you  like  to  see  an  overview  of  the  company,  or  do  you  even  want  one?  
+An  overview  of  the  company  is  not  needed  for  the  written  proposal.  
+Q-31  Netrix  
+For  RFP  section  3.3,  5(all)  and  9(all),  are  these  just  FYI  or  does  the  RFP  need  a  response  to  these?  Example:  For  Section  5  Vendor  Qualifications,  etc.  we  see  a  direct  relationship  between  some  of  these  requirements  and  the  questions  in  the  vendor  questionnaire.  However,  not  ALL  of  these  requirements  seem  to  be  encapsulated  in  the  questionnaire.  Would  you  like  us  to  submit  additional  documentation  that  addresses  section  5?  If  so,  where?  Same  question  for  Section  9  
+As  noted  in  Section  9  of  the  RFP,  submitting  a  proposal  is  inherently  an  acknowledgement  of  all  the  requirements  listed  within  that  section  and  no  further  response  is  required.  See  Q-29  for  the  remaining  context.  
+Q-32  Netrix  
+Where  should  proprietary  information  be  included:  at  the  end  of  the  proposal  as  an  appendix  or  a  separate  document/PDF?  
+Proprietary  materials  should  be  included  as  a  separate  PDF.  
+Q-33  Netrix  
+6.3D  ends  with  Q22  but  6.3E  goes  to  Q23  then  Q22,  and  then  6.4  starts  with  Q24  when  it  really  should  be  Q25  and  then  the  numbers  should  proceed  sequentially.  Would  you  like  us  to  respond  as  is  or  will  a  revised  questionnaire  be  released?  
+For  the  questions  in  section  6.3E,  please  use  the  updated  numbers  below  (including  the  subsection  number)  to  give  them  a  unique  ID.  For  all  other  questions,  please  use  the  numbers  listed  in  the  RFP.  6.3E-Q23  6.3E-Q22  
+Q-34  Netrix  
+For  responses  to  questionnaire,  would  you  like  it  in  a  table  format  or  in-line  with  the  RFP  questions  
+Please  submit  responses  to  the  questionnaire  in  a  table  format.  
+Q-35  Netrix  
+Server  maintenance  and  management  -  Is  there  hosted  servers/storage  that  should  be  factored  into  the  proposal?  
+Yes,  there  is  currently  a  SAN  that  hosts  SMB  file  shares  used  by  schools  plus  several  AD  controllers.  There  are  also  a  small  handful  of  virtual  servers  that  host  software  like  our  bell  scheduling  software.  
+Q-36  Netrix  
+Should  we  list  out  supported  third  party  applications  that  are  included  within  the  formal  cost  proposal?  Or  should  that  be  separated  from  the  primary  cost  proposal?  
+All  third  party  applications  used  by  the  vendor  should  be  included  in  the  formal  cost  proposal.  This  includes  any  security,  management  or  other  tools  used  by  the  vendor  to  meet  the  stated  requirements.  The  pricing  structure  should  also  be  clear  (i.e.,  per  endpoint  cost  or  site  licence  cost)  
+Q-37  Netrix  
+What  are  the  minimum  onsite  visit  requirements?  (Cadence,  hours  of  service,  key  operational/academic  programming  moments)  
+The  minimum  named  in  the  RFP  is  once  per  month,  with  the  expectation  that  the  vendor  will  make  a  recommended  visit  frequency  based  on  their  resource  availability  in  a  given  region  and  their  experience  with  school  needs.  
+Q-38  Netrix  
+Is  there  a  requirement  for  on-site  presence  during  CBT  testing?  
+CBT  (computer  based  testing  which  includes  state  testing,  APs,  Regents,  etc)  support  costs  are  negotiated  separately  from  the  regular  onsite  cadence  and  may  include  onsite  support  at  one  or  more  sites  during  the  testing  period.  The  vendor  should  state  what  types  of  support  (e.g.,  onsite,  conference  bridge,  etc)  they  are  able  to  provide  during  CBT  and  what  each  level  of  support  costs.  
+Q-39  Netrix  
+What  is  the  count  of  devices/types  that  should  be  used  to  calculate  monitoring  pricing?   
+Q-40  Netrix  
+What  should  be  included  in  the  device  depot  services  (Cost  Proposal,  Tab  B,  line  6)  
+The  addition  of  Depot  Services  (a  central  repair  facility)  in  the  RFP  was  a  mistake.  All  staff  laptops  are  fully  covered  under  warranty  for  any  damage;  the  vendor  will  need  to  coordinate  those  repairs  with  Dell.  The  vendor  should  make  a  recommendation  in  the  RFP  based  on  Uncommon's  scale  and  their  experiences  on  the  best  way  to  handle  repair/warranty  mgmt,  imaging/provisioning,  decommissioning/disposal,  and  other  device  lifecycle  management  needs.  Price  these  services  accordingly  and  list  any  assumptions  in  the  Assumptions  tab  in  the  Cost  Proposal  spreadsheet.  
+Q-41  Netrix  
+Are  there  any  other  devices  that  should  factor  into  support  costs  besides  staff  laptops  &  student  chromebooks  (ie,  iPads,  student  PCs,  Macs)?  See  Q-71  
+Q-42  Netrix  
+What  is  the  5-year  growth  plan  for  Uncommon  (new  schools,  students/staff,  etc.)?   
+Q-43  Netrix  
+Section  3.5,  End  User  Support  -  Types  of  Evidence  "Vendor  shall  maintain  an  accurate  inventory  of  all  covered  equipment  in  an  electronic  database  readable  by  designated  USI  staff"  -  what  does  "covered  equipment"  entail?  See  Q-21  
+Q-44  Netrix  
+What  is  the  difference  between  3.5  "Provide  SLAs  and  recent  performance  analysis."  and  6.2  "Please  share  your  current  SLAs  for  both  end-user  support  and  NOC  issues."  By  "end-user"  customer  care  support?  
+In  section  3.5,  a  recent  performance  analysis  is  named  as  one  type  of  evidence  Uncommon  would  consider;  it's  not  an  explicit  requirement.  The  question  in  6.2  is  requesting  12  months  of  data  for  both  end  user  support  and  the  vendor's  NOC  
+Q-45  Netrix  
+Is  the  expectation  that  the  offeror  has  a  valid  Soc  2/Type  2  when  applying?  As  long  as  it's  held  by  the  time  contract  is  signed?  Or  July  1,  2027  when  services  begin?  See  Q-12  
+Q-46  Netrix  
+What's  the  preferred  method  to  provide  sample  communication?  Can  it  be  a  link  to  a  document  (Google,  for  example),  an  attached  PDF/Excel  Doc,  etc.?  
+Any  proprietary  materials  should  be  added  as  a  separate  PDF,  in  alignment  with  Q-32.  All  other  supplementary  materials  can  be  included  in  an  appendix  at  the  end  of  the  proposal  document.  
+Q-47  CAI  
+Section  6.2  (Q10)  requires  the  responding  MSPs  to  provide  SLA  performance  data.  What  is  Uncommon's  approximate  monthly  ticket  volume,  broken  down  by  priority  tier  and  service  type  (remote  service  desk  vs.  on-site  dispatch)?  What  is  the  current  first  contact  resolution  (FCR)  rate?  
+Uncommon's  current  ticket  volume  is  approximately  9,000  formally  logged  tickets  annually  across  all  schools.  However,  Uncommon  believes  this  figure  significantly  understates  actual  support  volume,  as  Uncommon's  current  model  relies  heavily  on  onsite  technician  presence  and  a  substantial  portion  of  issues  are  resolved  informally  without  being  entered  into  the  ticketing  system.  Vendors  should  not  rely  on  this  figure  as  a  basis  for  staffing  assumptions.  
+Q-48  CAI  
+If  Uncommon  is  able,  please  provide  the  most  recent  12  months  of  ticket  data  for  analysis.  See  Q-47  
+Q-49  CAI  
+Section  4.1  references  Cisco  and  Juniper  as  current  vendor  relationships  (Section  3.7).  Can  Uncommon  describe  the  current  network  infrastructure  by  make  and  model  across  firewalls,  core,  distribution,  and  access  layer?  
+Core  switches  at  each  site  are  Cisco  and  access  switches  are  Juniper.  Both  firewalls  are  Cisco.  
+Q-50  CAI  
+Section  4.1  references  Cisco  and  Juniper  as  current  vendor  relationships  (Section  3.7).  Specifically,  how  is  the  Cisco  vs.  Juniper  split  deployed  across  the  environment?  See  Q-49  
+Q-51  CAI  
+Section  4.1  references  ~3,200  staff  laptops.  What  MDM/endpoint  management  platform  is  currently  in  use  (e.g.,  Microsoft  Intune,  JAMF,  SCCM)?  
+Uncommon  uses  a  combination  of  Intune  for  Windows  Policy  and  JAMF  for  Macbook  policy.  Uncommon  also  uses  Kaseya  for  remote  support  and  management  tasks.  
+Q-52  CAI  
+Section  4.1  references  ~3,200  staff  laptops.  Is  the  new  MSP  expected  to  maintain  the  existing  platform  or  propose  a  replacement  as  part  of  their  solution?  
+Uncommon  is  open  to  change  the  tools  listed  in  Q-51.  The  vendor  would  need  to  provide  a  high  level  plan,  timeline  and  additional  costs  (if  any)  to  make  the  change.  
+Q-53  CAI  
+Section  4.1  references  ~19,000  student  Chromebooks,  and  Section  3.4  references  Google  Workspace  management.  Who  is  currently  responsible  for  managing  student  Chromebooks  via  Google  Admin  Console  —  the  incumbent  MSP  or  internal  Uncommon  IT  staff?  
+The  vendor  would  be  responsible  for  managing  Chromebooks  in  the  Google  Admin  Console.  This  largely  consists  of  (but  is  not  limited  to)  pushing  apps  and  making  policy  changes  as  requested  by  Uncommon  IT.  
+Q-54  CAI  
+Section  4.1  references  ~19,000  student  Chromebooks,  and  Section  3.4  references  Google  Workspace  management.  Is  Chromebook  MDM  explicitly  in  scope  for  the  new  MSP?  Yes  (see  Q-53  for  more  detail)  
+Q-55  CAI  
+Section  3.4  requires  management  of  Active  Directory  domain  controllers.  Can  Uncommon  describe  the  current  AD  architecture  —  single  or  multi-domain/forest?  Are  all  school  locations  domain-joined?  Are  there  any  standalone  or  workgroup  environments  at  any  sites?  
+Uncommon  has  a  single  domain  and  all  schools  are  domain  joined.  There  are  no  standalone  or  workgroup  environments  at  any  site.  
+Q-56  CAI  
+Section  3.5  references  ongoing  service  desk  operations.  What  ITSM  or  ticketing  platform  is  
+The  vendor  would  be  responsible  for  having  their  own  ticketing  system.  
+currently  in  use  or  is  the  vendor  to  bring  their  own?  
+Q-57  CAI  
+Can  Uncommon  confirm  whether  the  incumbent  MSP  has  support  responsibility  for  the  entire  and  existing  operating  environment  (Enterprise  Management  and  End  User  Management),  or  just  some  aspects  or  locations?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-58  CAI  
+Section  3.4  requires  processing  staff  account  updates  from  data  sent  daily  by  Uncommon.  What  HR  system  is  Uncommon  using  as  the  source  of  truth  for  staff  lifecycle  events  (e.g.,  Workday,  ADP)?  Is  there  an  existing  automated  integration  between  that  system  and  Entra  ID/Active  Directory,  or  is  this  a  manual  process  today?  
+Uncommon  uses  Workday  as  the  source  of  truth  for  staff  lifecycle  events.  Parts  of  the  process  are  automated  (AD,  Onelogin  and  Google  account  creation,  some  provisioning)  and  some  parts  (full  M365  and  AD  provisioning,  location  and  role  changes,  account  deactivation)  are  scripted  and  managed  by  the  incumbent  MSP.  Uncommon's  long  term  goal  is  full  automation.  
+Q-59  CAI  
+Section  3.7  lists  SentinelOne  as  a  current  vendor  relationship.  Is  SentinelOne  currently  deployed  as  the  enterprise  EDR  across  all  endpoints  and  servers?  What  SIEM  or  SOC  arrangement,  if  any,  is  currently  in  place,  and  is  the  new  MSP  expected  to  maintain  or  replace  it?  
+Uncommon  currently  has  a  multi-year  contract  with  SentinelOne  and  it  is  deployed  to  all  staff  endpoints.  Events  are  managed  by  a  SOC  that  is  managed  by  Uncommon's  MSP.  The  new  vendor  is  expected  to  manage  those  alerts.  
+Q-60  CAI  
+Section  3.4  and  Section  6.3  (Q21)  require  management  of  an  immutable  backup  solution.  What  backup  platform  is  currently  deployed  (e.g.,  Veeam,  Rubrik,  Cohesity)?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-61  CAI  
+Section  3.10  outlines  offboarding  obligations  for  the  outgoing  vendor.  Does  the  current  incumbent's  contract  include  a  formal  transition-out  obligation?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-62  CAI  
+Section  3.10  requires  the  selected  vendor  to  produce  a  detailed  onboarding  plan  including  documentation.  What  is  the  current  state  of  environment  documentation  (network  diagrams,  runbooks,  asset  inventories,  and  credentials)?  Will  this  documentation  be  provided  to  awarded  vendors  only,  or  made  available  earlier  to  facilitate  accurate  proposal  development?  
+The  onboarding  plan  should  be  a  "desired"  plan  from  the  vendor's  perspective.  List  assumptions  you  are  making  in  drafting  the  plan  (e.g.  the  incumbent  vendor  is  fully  cooperative,  network  diagrams  are  complete  and  up-to-date,  etc).  
+Q-63  CAI  
+Section  3.5  requires  on-site  visits  to  all  52  school  locations.  How  many  on-site  technician  FTEs  does  the  current  solution  staff  across  all  five  regions?  Please  break  down  by  region  (Brooklyn/NYC,  Newark,  Camden,  Rochester,  Boston)  if  possible.  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-64  CAI  
+Section  3.5  asks  vendors  to  propose  an  on-site  (non  break/fix)  visit  frequency.  What  is  the  current  on-site  visit  cadence  at  each  school?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-65  CAI  
+Section  3.3  requires  24x7x365  monitoring  of  managed  infrastructure.  What  are  Uncommon's  standard  operational  hours  for  end-user  support  across  all  regions?  
+Uncommon's  standard  operating  hours  for  end-user  support  are  7:00am-7:00pm  ET  for  all  regions.  
+Q-66  CAI  
+Section  3.3  requires  24x7x365  monitoring  of  managed  infrastructure.  Are  there  specific  early  morning  (before  7am)  or  extended  evening  (after  6pm)  support  requirements  at  any  school  or  home  office  locations?  No.  
+Q-67  CAI  
+Section  3.4  requires  maintaining  a  VPN  system  for  end  users  to  access  hosted  resources  off-campus.  What  VPN  platform  is  currently  in  use?  F5  is  Uncommon's  current  VPN  solution.  
+Q-68  CAI  
+Section  3.4  requires  maintaining  a  VPN  system  for  end  users  to  access  hosted  resources  off-campus.  Is  the  new  MSP  expected  to  maintain  the  current  VPN  platform,  or  may  we  propose  an  alternative  solution?  Uncommon  is  open  to  an  alternate  solution.  
+Q-69  CAI  
+Section  3.4  and  Section  6.3  (Q18)  address  OS  and  third-party  patching.  What  patch  management  tooling  is  currently  in  use  (e.g.,  WSUS,  Intune,  third-party  RMM)?  
+Uncommon  currently  uses  Intune  for  Windows  and  JAMF  for  MacOS.  
+Q-70  CAI  
+Section  3.4  and  Section  6.3  (Q18)  address  OS  and  third-party  patching.  Is  there  an  existing  approved  patching  cadence  or  maintenance  window  schedule  the  new  MSP  should  plan  to  adopt?  
+The  cadence  is  currently  managed  by  the  incumbent  MSP.  The  selected  vendor  will  be  expected  to  propose  and  implement  a  patching  schedule  consistent  with  industry  best  practices  as  well  as  their  own  experience  when  considering  out-of-band  updates.  
+Q-71  CAI  
+Section  3.5  requires  management  and  support  of  classroom  technology  including  WAPs  and  projectors.  Beyond  WAPs  and  projectors,  what  additional  classroom  technology  is  in  scope  (e.g.,  interactive  whiteboards,  document  cameras,  classroom  PA/AV  systems,  vape  detectors  per  Section  3.9),  and  is  a  complete  classroom  technology  inventory  available  for  review?  
+The  list  of  supported  classroom  technology  is  WAPs,  projectors  and  document  cams.  Any  other  technology  (including  all  the  ones  listed  in  the  question)  are  considered  'best  effort'  only.  Uncommon  has  a  third  party  technology  policy  that  is  communicated  to  schools  which  clearly  states  that  if  a  school  requires  advanced  support  for  any  of  those  devices,  they  must  work  with  the  manufacturer  directly.  
+Q-72  CAI  
+Section  3.5  and  5.5  address  staffing  requirements.  Is  there  an  expectation  or  preference  that  the  new  provider  will  rebadge/inherit  current  vendor  or  Uncommon  personnel  as  part  of  transition?  
+No,  there  is  no  expectation  or  preference  for  this.  Uncommon  staff  has  been  and  will  continue  to  be  distinct  from  MSP  staff.  
+Q-73  CAI  
+Section  3.7  lists  Microsoft,  Dell,  Cisco,  Juniper,  and  SentinelOne  as  current  vendor  relationships.  Are  these  contracts  currently  held  in  Uncommon's  name,  the  incumbent  MSP's  name,  or  a  mix?  What  transition  steps  are  required,  and  will  the  new  MSP  be  expected  to  assume,  negotiate,  or  replicate  these  agreements?  
+It  is  a  mix.  Uncommon  has  no  specific  requirements  outside  of  the  equipment/services  continuing  to  function  as  expected.  The  vendor  should  make  a  recommendation  based  on  their  experience.  
+Q-74  CAI  
+Section  3.7  lists  Microsoft,  Dell,  Cisco,  Juniper,  and  SentinelOne  as  current  vendor  relationships.  What  transition  steps  are  required  with  the  current  vendors  such  as  See  Q-73.  
+Microsoft,  Juniper,  Dell,  Cisco,  etc.?  i.e.  Would  the  new  MSP  be  expected  to  assume,  negotiate,  or  replicate  these  agreements?  
+Q-75  CAI  
+Section  3.4  requires  a  dedicated  operations  center  providing  24x7  monitoring.  What  network  monitoring  platform  is  currently  in  use  at  Uncommon  (e.g.,  SolarWinds,  PRTG,  Meraki  Dashboard,  or  other)?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  Uncommon  does  not  have  a  preference  for  or  dependency  on  any  specific  incumbent  monitoring  platform.  
+Q-76  CAI  
+Section  3.4  requires  a  dedicated  operations  center  providing  24x7  monitoring.  Is  the  new  MSP  expected  to  adopt  and  integrate  with  Uncommon's  existing  monitoring  tooling,  or  implement  their  own  NOC  stack  with  data  shared  to  Uncommon?  
+The  new  MSP  is  expected  to  implement  their  own  NOC  stack.  
+Q-77  CAI  
+What  is  the  total  number  of  Windows,  Linux,  MacOS  computers,  Ipads?   
+Q-78  CAI  
+What  is  the  Internet  Connectivity  speed  of  each  data  center?  (100Mbps,  500Mbps,  1GBps,  10GBps,  etc.)   
+Q-79  CAI  
+What  is  the  total  number  of  users  with  email  addresses?  
+Every  staff  and  student  has  an  email  address  as  it's  a  primary  identifier  in  Uncommon's  IAM  systems.  
+Q-80  CAI  
+What  is  the  backend  core  switching  speed?  (1GB,  10GB,  40GB,  100GB,  etc.)   
+Q-81  CAI  
+What  is  the  total  number  of  Cloud  VM’s?  (For  example,  total  number  of  EC2  instances  in  AWS?,  GCP,  Azure,  etc.)  
+This  is  outside  the  scope  of  this  RFP;  Uncommon  IT  staff  manages  and  maintains  all  cloud  services  (outside  M365  and  Google  Workspace).  
+Q-82  CAI  
+Regarding  Log/SIEM  collection:  How  many  gigabytes  per  day  are  collected  currently?  (5GB,  10GB,  20GB,  50GB,  etc.)   
+Q-83  CAI  
+Is  there  an  asset  management  tool  in  place  today?  If  so,  does  it  do  auto  discovery?  
+Uncommon  currently  owns  and  uses  Asset  Panda  for  Chromebook  inventory  management.  The  incumbent  supplies  a  system  for  laptops  and  infrastructure  devices.  The  vendor  should  plan  on  bringing  a  solution  for  non-Chromebook  assets.  
+Q-84  CAI  
+Should  their  own  vendor  bring  asset  management  platform?   
+Q-85  CAI  
+Is  there  an  CMDB  in  place  today?  If  so,  how  does  it  stay  current?   
+Q-86  
+Charter  Tech  Solutions  
+Managed  network  device  counts.  Can  you  share  rough  order-of-magnitude  counts  for  managed  network  infrastructure  (access  switches,  core  switches,  routers,  wireless  access  points)  by  building.   
+Q-87  
+Charter  Tech  Solutions  
+Co-located  buildings  and  shared-facility  exclusions.  Are  any  of  the  52  sites  shared  facilities  where  a  third  party  manages  portions  of  the  network,  the  physical  security  stack,  or  the  WAN  handoff.  Common  cases  are  landlord-managed  cameras,  access  control  panels,  or  shared-tenant  building  services  
+Each  Uncommon  school  manages  its  own  facilities,  including  building  management  systems,  access  control  and  cameras.  Each  of  those  systems  are  managed  by  Uncommon's  Facilities  team.  These  systems  do  connect  to  Uncommon's  production  network  and  the  vendor  will  be  expected  to  work  with  Uncommon's  Facilities  team  when  they  install,  upgrade  or  perform  maintenance  on  these  systems  to  assign  network  resources  and  troubleshoot  issues.  There  are  a  few  schools  in  Brooklyn  that  are  co-located  with  DOE  schools;  the  above  is  still  true  for  those  schools.  
+Q-88  
+Charter  Tech  Solutions  
+Network-attached  endpoints  beyond  switching  and  wireless:  Can  you  provide  a  rough  order-of-magnitude  of  network-attached  printers,  IP  cameras,  door  access  controllers,  AV  and  Smart  Board  control  systems,  building  automation,  and  similar  endpoints.  If  any  subset  is  excluded,  please  name  the  exclusions.   
+Q-89  
+Charter  Tech  Solutions  
+Incumbent  and  transition.  Section  4  references  transition  pricing,  and  Guy  confirmed  Tuesday  that  an  incumbent  is  potentially  in  place.  Please  confirm  (a)  whether  an  incumbent  MSP  is  currently  delivering  these  services,  (b)  whether  the  incumbent  has  been  notified  of  the  RFP,  and  (c)  the  level  of  cooperation  bidders  should  plan  for  during  cutover  (knowledge  transfer,  runbook  handoff,  credentials,  asset  inventory  exports).  
+There  is  an  incumbent.  They  are  aware  of  the  RFP.  Full  cooperation  is  expected.  
+Q-90  
+Charter  Tech  Solutions  
+Ticket  volume  baseline.  Mark  mentioned  the  team  could  share  ticket  data.  For  staff  sizing,  the  most  useful  cuts  would  be  (a)  monthly  ticket  counts  for  the  trailing  6  to  12  months,  (b)  split  by  school-level  vs.  enterprise-level,  (c)  priority  mix  (P1  through  P4),  and  (d)  average  MTTR  by  priority.  If  category-level  data  is  available  (laptop,  network,  AV,  account  access,  etc.),  even  better.  See  Q-47  
+Q-91  
+Charter  Tech  Solutions  
+Internal  IT  team  interface.  Section  3  frames  the  MSP  as  augmenting  Uncommon's  internal  Data  &  IT  team.  Can  you  share  (a)  the  headcount  and  role  mix  of  the  internal  team  that  the  MSP  will  interface  with,  (b)  the  published  end-user  routing  matrix  Marc  referenced,  and  (c)  the  systems  where  ticket  transfer  between  teams  is  expected  (single  shared  queue,  federated  APIs,  manual  handoff).  
+The  internal  support  team  has  a  staff  of  8.  They  are  focused  on  instructional  support  and  guidance.  The  knowledgebase  is  internal  and  not  publicly  accessible  but  has  roughly  1,300  articles  and  is  actively  maintained  by  said  support  team.  Ticket  transfers  are  manual;  in  cases  where  users  are  referred  from  one  support  team  to  the  other,  a  new  ticket  must  be  created.  In  practice,  most  users  know  which  team  they  need  for  a  given  question;  the  operational  overlap  between  the  two  teams  is  narrow.  Examples  of  overlap:  1.  A  user  reaches  out  to  the  MSP  to  have  software  installed  but  it's  not  yet  approved.  The  MSP  would  need  to  work  with  Uncommon  IT  to  approve  and  install  said  app.  2.  A  user  reaches  out  to  Uncommon  IT  Support  because  they  cannot  log  into  our  SIS.  After  troubleshooting,  it's  determined  to  be  a  laptop  issue  
+and  needs  to  be  referred  to  the  MSP  for  further  troubleshooting.  
+Q-92  
+Charter  Tech  Solutions  
+Artifacts  and  evidence  inside  a  single  PDF.  Section  5  calls  for  one  PDF.  For  supporting  artifacts  (communication  style  guides,  sample  SLA  reports,  NOC  dashboard  screenshots,  playbooks,  customer-success  case  studies),  do  you  want  them  embedded  as  additional  pages  of  the  same  PDF,  or  are  hosted  links  to  controlled-access  copies  acceptable.  If  links  are  acceptable,  are  link-gating  mechanisms  (Google  Drive  view-only,  password-protected  SharePoint)  preferred  over  open  links.   
+Q-93  
+Charter  Tech  Solutions  
+SOC  2  Type  II  documentation.  Can  this  be  in  place  by  the  time  of  contract  start?  Or  at  the  proposal  stage,  See  Q-12  
+Q-94  
+Charter  Tech  Solutions  
+should  the  SOC  2  Type  II  report  itself  be  included  in  the  submission,  or  is  the  auditor's  attestation  letter  sufficient?  
+For  submission,  the  attestation  letter  is  sufficient.  In  the  finalist/contracting  stage,  Uncommon  will  want  to  see  the  entire  report  to  confirm  appropriate  controls.  
+Q-95  
+Charter  Tech  Solutions  
+Proprietary  information  handling.  Guy  confirmed  the  review  is  conducted  only  by  Uncommon  employees,  which  is  helpful.  Two  clarifications:  (a)  does  any  portion  of  the  submission,  including  the  proprietary  section,  pass  through  a  third-party  reviewer  (outside  consultant,  advisor,  board  observer)  at  any  phase,  and  No,  Uncommon  is  the  only  party  reviewing  proposals.  
+Q-96  
+Charter  Tech  Solutions  
+(b)  what  is  the  retention  and  disposition  policy  for  proprietary  materials  after  the  award  decision.   
+Q-97  
+Charter  Tech  Solutions  
+Five-year  growth  trajectory.  To  size  NOC  capacity,  regional  onsite  footprint,  and  asset  lifecycle  planning,  what  is  the  planned  trajectory  through  2031  (new  school  openings,  projected  staff  and  enrollment  growth,  geographic  expansion).  See  Q-42  
+Q-98  
+Charter  Tech  Solutions  
+Reference  format.  Section  5.4  directs  to  Form  C  for  customer  references.  Should  references  reflect  engagements  at  comparable  scale  (multi-state,  multi-site  K-12)  only,  or  are  single-network  or  smaller-scale  references  in  scope  as  long  as  the  technical  environment  is  analogous.  
+Section  5.4  of  the  RFP  provides  the  necessary  information.  
+Q-99  Golden  Five  Who  is  the  incumbent  MSP?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  
+Q-100  Golden  Five  
+What  portions  of  the  scope  are  currently  outsourced  versus  managed  internally?  
+All  services  requested  in  this  RFP  are  provided  by  the  incumbent.  
+Q-101  Golden  Five  
+What  internal  staffing  levels  exist  today  (Help  Desk,  Infrastructure,  Security,  Network,  Applications,  PMO)?  
+All  services  requested  in  this  RFP  are  provided  by  the  incumbent.  
+Q-102  Golden  Five  
+What  service  delivery  challenges  exist  today  that  the  new  MSP  should  address?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-103  Golden  Five  
+How  many  physical  servers  and  virtual  servers  exist  across  both  data  centers?  
+All  services  requested  in  this  RFP  are  provided  by  the  incumbent.  Uncommon  would  expect  the  MSP  to  provide  appropriate  services  to  support  the  requirements  of  this  RFP.  
+Q-104  Golden  Five  
+What  virtualization  platform  is  used  (VMware,  Hyper-V,  Nutanix,  etc.)?  
+All  services  requested  in  this  RFP  are  provided  by  the  incumbent.  Uncommon  would  expect  the  MSP  to  provide  appropriate  services  to  support  the  requirements  of  this  RFP.  
+Q-105  Golden  Five  What  is  the  current  storage  platform?  
+Uncommon  currently  has  significant  storage  across  multiple  platforms:  Google  Drive,  Microsoft  OneDrive  and  a  SAN  hosted  in  Uncommon's  data  center.  
+Q-106  Golden  Five  
+Are  there  any  cloud-hosted  servers  (Azure,  AWS,  Google  Cloud)?  
+This  is  outside  the  scope  of  this  RFP;  Uncommon  IT  staff  manages  and  maintains  all  cloud  services  (outside  M365  and  Google  Workspace).  
+Q-107  Golden  Five  
+What  applications  are  hosted  in  the  Virginia  and  New  York  data  centers?  
+There  are  a  handful  of  virtual  servers  hosting  applications  like  Uncommon's  bell  scheduling  system  and  current  file  share  auditing  server.  There  is  also  a  SAN  that  hosts  Uncommon's  enterprise  Shared  Drive  shares.  
+Q-108  Golden  Five  
+Can  Uncommon  provide:  •  Network  topology  diagrams?  •  WAN  diagrams?  •  Data  center  architecture  diagrams?   
+Q-109  Golden  Five  
+How  many:  •  Cisco  switches?  •  Juniper  devices?  •  Firewalls?  •  Wireless  access  points?   
+Q-110  Golden  Five  What  firewall  platforms  are  currently  deployed?  
+This  is  managed  by  the  MSP.  Uncommon  would  expect  each  vendor  to  have  the  necessary  tools  in  place  to  support  the  monitoring  of  its  infrastructure.  
+Q-111  Golden  Five  Are  SD-WAN  solutions  in  use  today?  
+This  is  managed  by  the  MSP.  Uncommon  would  expect  each  vendor  to  have  the  necessary  tools  in  place  to  support  the  monitoring  of  its  infrastructure.  
+Q-112  Golden  Five  
+What  network  monitoring  tools  are  currently  deployed?  
+This  is  managed  by  the  MSP.  Uncommon  would  expect  each  vendor  to  have  the  necessary  tools  in  place  to  support  the  monitoring  of  its  infrastructure.  
+Q-113  Golden  Five  
+Can  Uncommon  provide  endpoint  counts  by  operating  system?  How  many:  •  Windows  laptops?  •  Mac  devices?  •  iPads?  •  Android  devices?   
+Q-114  Golden  Five  
+What  percentage  of  staff  devices  are  refreshed  annually?  
+Staff  devices  are  on  a  3-year  replacement  cycle.  Given  variations  in  purchasing  from  year-to-year,  it  is  not  
+exactly  1/3  of  devices  per  year  but  that  can  be  a  good  assumption  to  use.  
+Q-115  Golden  Five  
+What  is  the  expected  onsite  visit  frequency  per  school?  
+Vendors  should  make  a  recommendation  based  on  their  experience  
+Q-116  Golden  Five  
+Are  there  minimum  onsite  staffing  requirements  per  region?  
+Vendors  should  make  a  recommendation  based  on  their  experience  
+Q-117  Golden  Five  
+Does  Uncommon  expect:  •  Dedicated  onsite  technicians?  •  Shared  regional  technicians?  •  Hybrid  model?  
+Vendors  should  make  a  recommendation  based  on  their  experience  
+Q-118  Golden  Five  
+Are  any  technicians  currently  stationed  full-time  at  schools?  No.  
+Q-119  Golden  Five  
+What  are  the  expected  business  hours  for  onsite  support?   
+Q-120  Golden  Five  
+Are  after-hours  events,  board  meetings,  or  testing  periods  expected  to  require  onsite  presence?  
+After  hours  onsite  user  support  is  not  expected.  There  are  occasions  where  after  hours  onsite  engineering  may  be  required  for  things  like  mid-year  networking  changes  or  major  technology  roll-outs.  
+Q-121  Golden  Five  
+Can  Uncommon  provide:  •  Annual  ticket  volume?  •  Monthly  average  ticket  volume?  •  Ticket  volume  by  priority?  See  Q-47  
+Q-122  Golden  Five  
+What  are  current  SLA  targets  and  actual  performance  metrics?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-123  Golden  Five  
+What  percentage  of  tickets  are  resolved  remotely?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-124  Golden  Five  
+Is  Uncommon  expecting  the  MSP  to  provide  MDR/SOC  services  or  manage  existing  security  tools?  
+Yes,  it  is  expected  that  the  MSP  will  provide  MDR/SOC.  The  vendor  will  likely  have  different  platforms  within  their  SOC  and  Uncommon  would  expect  those  to  be  used.  The  exception  is  the  SentinelOne,  Bullwall,  and  Abnormal  AI  platforms.  Uncommon  has  multi-year  contracts  with  these  vendors.  The  MSP  would  be  expected  to  run  SentinelOne  and  Bullwall.  Uncommon  manages  Abnormal  AI  internally.  
+Q-125  Golden  Five  What  security  tools  are  currently  deployed?  
+SentinelOne,  Bullwall  Ransomcare,  and  Abnormal  AI  web  filter  platform.  
+Q-126  Golden  Five  
+Is  SentinelOne  already  licensed  and  operational?  Yes.  Q-127  Golden  Five  Is  Microsoft  Defender  being  used?  No.  Uncommon  uses  SentinelOne  EDR.  Q-128  Golden  Five  Is  Microsoft  Sentinel  deployed?  Microsoft  Sentinel  is  not  deployed.  
+Q-129  Golden  Five  
+Are  third-party  SIEM  platforms  currently  in  use?  Uncommon  does  not  employ  a  third-party  SIEM  
+Q-130  Golden  Five  
+Have  there  been  any  major  cybersecurity  incidents  within  the  past  three  years?  
+Uncommon  had  1  major  incident  related  to  staff  account  takeover  approximately  18  months  ago.  Since  then  Uncommon  has  not  had  any  due  to  security  hardening  that  was  implemented.  
+Q-131  Golden  Five  
+What  are  the  current  RTO  and  RPO  expectations  for  critical  systems?   
+Q-132  Golden  Five  Is  there  an  existing  incident  response  plan?  
+Uncommon  expects  the  vendor  to  recommend  a  plan  based  on  their  expertise  and  experience.  This  may  or  may  not  match  what  is  currently  in  place.  
+Q-133  Golden  Five  
+Does  Uncommon  currently  conduct:  •  Vulnerability  assessments?  •  Penetration  testing?  •  Security  awareness  training  
+Yes  for  all,  but  it  is  managed  by  Uncommon's  internal  team  and  is  not  in  scope  for  this  RFP.  
+Q-134  Golden  Five  
+What  is  the  authoritative  source  for  identity  management  (HRIS)?  
+Workday  is  the  authoritative  source  for  staff  accounts.  PowerSchool  (SIS)  is  the  authoritative  source  for  student  accounts.  
+Q-135  Golden  Five  
+Is  Workday  currently  used  for  employee  lifecycle  management?  Yes,  Workday  is  a  source  system  for  all  staff  accounts.  
+Q-136  Golden  Five  
+What  identity  synchronization  tools  are  currently  deployed?  
+Uncommon  uses  OneLogin  for  its  IAM,  AD  for  Microsoft  management,  Google  Directory  for  Google  management.  
+Q-137  Golden  Five  
+Are  provisioning  and  deprovisioning  processes  automated  today?  
+Uncommon  has  a  mix  of  automated  and  manual  processes  currently  in  place.  Uncommon  has  worked  recently  to  improve  the  consistency  and  quality  of  the  data  available  to  fully  automate.  The  goal  is  full  automation.  
+Q-138  Golden  Five  
+Approximately  how  many  employee  onboarding/offboarding  transactions  occur  monthly?  
+Onboarding:  A  straight  average  of  the  last  12  months  shows  Uncommon  onboards  98  staff  members  per  month.  -  However,  accounting  for  the  outlier  of  August  where  Uncommon  hires  the  majority  of  its  new  teachers,  the  average  is  57  new  hires  each  month.  -  In  August  2025,  540  new  staff  members  were  onboarded.   Termination:  An  average  of  the  last  12  months  shows  Uncommon  terminates  74  staff  members  per  month  -  However,  there  are  2  outliers  in  the  months  of  June  and  August.  Excluding  those  months,  the  average  is  41  terminations  for  all  the  other  months.  -  In  August  2025,  153  staff  were  terminated.  -  In  June  2025,  311  staff  were  terminated.  
+Q-139  Golden  Five  
+What  Microsoft  licensing  model  is  currently  used?  M365  A3  
+Q-140  Golden  Five  
+How  many  Microsoft  365  licenses  are  managed?  Uncommon  has  3,140  M365  A3  licenses  for  staff.  Q-141  Golden  Five  Are  GCC  or  GCC  High  environments  required?  No,  Government  Community  Cloud  is  not  required.  Q-142  Golden  Five  What  Google  Workspace  edition  is  deployed?  Google  Workspace  for  Education  Enterprise  
+Q-143  Golden  Five  
+How  many  Google  Workspace  student  accounts  are  managed?  
+Uncommon  serves  staff,  student,  and  resource  accounts  on  Google.  For  the  purposes  of  the  RFP,  assume  25,000  active  accounts  on  Google.  
+Q-144  Golden  Five  
+What  third-party  integrations  exist  with  Microsoft  365  and  Google  Workspace?  
+There  are  many;  Uncommon  uses  user  data  in  both  systems  for  many  purposes.  In  most  cases,  the  integrations  are  created  and  managed  by  Uncommon  staff.  In  cases  where  the  MSP  needs  to  build  one,  it  is  usually  considered  a  project  and  scoped  outside  the  normal  MSP  roles  and  responsibilities.  In  short,  this  does  not  need  to  be  included  in  the  proposed  pricing  structure.  
+Q-145  Golden  Five  
+Can  Uncommon  provide  counts  for:  •  Interactive  displays?  •  Projectors?  •  Classroom  audio  systems?  •  Document  cameras?  •  Digital  signage?  
+Each  location  is  allowed  to  choose  the  best  devices  to  meet  their  specific  needs.  The  MSP  is  not  expected  to  manage  these  systems  outside  of  making  sure  a  segregated  network  is  available  to  the  device.  
+Q-146  Golden  Five  
+Are  classroom  AV  systems  standardized  across  regions?  
+No,  each  location  is  allowed  to  choose  the  best  devices  to  meet  their  specific  needs.  The  MSP  is  not  expected  to  manage  these  systems  beyond  a  best  effort.  
+Q-147  Golden  Five  
+Is  support  expected  on  a  best-effort  basis  or  full  break/fix  responsibility?  See  Q-71  
+Q-148  Golden  Five  
+What  asset  management  platform  is  currently  used?  
+For  staff  and  student  laptops,  the  asset  management  solution  is  provided  by  the  incumbent.  The  vendor  would  need  to  include  their  own  solution  in  their  pricing  structure.  Q-149  Golden  Five  Is  there  a  centralized  CMDB?   
+Q-150  Golden  Five  
+Are  endpoint  inventories  currently  accurate  and  audited?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-151  Golden  Five  
+What  percentage  of  assets  are  currently  under  manufacturer  support?  100%  with  the  exception  of  Chromebooks  and  iPads  
+Q-152  Golden  Five  
+What  backup  platforms  are  currently  deployed?  
+Since  each  vendor  will  set  up  their  data  center  differently,  Uncommon  expects  the  vendor  to  make  a  recommendation  based  on  their  experiences.  
+Q-153  Golden  Five  What  systems  are  currently  backed  up?  
+Since  each  vendor  will  set  up  their  data  center  differently,  Uncommon  expects  the  vendor  to  make  a  recommendation  based  on  their  experiences.  
+Q-154  Golden  Five  What  is  the  current  backup  retention  policy?  
+The  vendor  should  make  a  recommendation  based  on  their  experience.  Q-155  Golden  Five  Are  immutable  backups  already  implemented?  Yes.  
+Q-156  Golden  Five  
+What  were  the  results  of  the  most  recent  DR  test?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-157  Golden  Five  
+How  frequently  are  restoration  tests  performed?  
+The  vendor  should  make  a  recommendation  based  on  their  experience.  
+Q-158  Golden  Five  What  is  the  annual  budget  allocated?  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-159  Golden  Five  
+Should  cybersecurity  tooling  costs  be  included  in  the  recurring  fee  or  priced  separately?  
+Unsure  what  "tooling"  means.  If  it's  setting  up  and/or  migrating  a  new  platform,  that  would  likely  be  a  project  and  be  a  one-time  fee.  The  maint  &  support  to  keep  the  platform  updated  would  typically  be  a  recurring  charge.  
+Q-160  Golden  Five  
+Should  Microsoft  licensing  procurement  be  included  in  pricing  or  billed  directly  by  Microsoft?  
+Yes,  the  vendor  should  be  the  purchasing  agent.  The  bill  would  come  to  the  vendor  and  then  the  amount  would  be  billed  directly  to  each  location  based  on  their  usage.  
+Q-161  Golden  Five  
+Are  hardware  procurement  and  refresh  activities  expected  to  be  included  in  the  managed  service  fee?  
+Uncommon  performs  the  bulk  of  its  procurement  and  refresh  activities  during  the  summer  and  the  cost  for  managing  those  projects  can  be  negotiated  separately  outside  of  the  managed  service  agreement.  During  the  operational  school  year,  however,  hardware  procurement  and  refresh  activities  (which  occur  on  a  much  smaller  scale)  should  be  included  in  the  managed  services  fee.  
+Q-162  Canon  
+How  many  physical  and/or  virtual  servers  are  hosted  across  the  two  data  centers  (Virginia  and  New  York)?  What  operating  systems  and  hypervisors  are  currently  in  use  (e.g.,  VMware,  Hyper-V,  Proxmox)?  Approximately  how  many  are  production  systems  vs.  development  or  staging?  See  Q-107  
+Q-163  Canon  
+Are  the  data  centers  in  Virginia  and  New  York  co-location  facilities  leased  by  Uncommon,  or  are  they  owned/operated  by  the  current  MSP?  Will  the  incoming  vendor  be  expected  to  assume  any  co-location  contracts,  cage  access  agreements,  or  data  center  relationships?  See  Q-10  
+Q-164  Canon  
+Is  the  Active  Directory  environment  a  single  forest/single  domain,  or  a  multi-domain/multi-forest  structure?  Approximately  how  many  AD  objects  (users,  computers,  GPOs)  are  currently  in  the  environment?  See  Q-55  
+Q-165  Canon  
+What  M365  licensing  tier  is  currently  in  use  (E1,  E3,  or  E5)?  Are  services  such  as  Microsoft  Defender  for  Endpoint,  Intune,  and  Azure  AD  P2/Entra  ID  Governance  currently  licensed  and  actively  deployed?  See  Q-139  and  Q-140  
+Q-166  Canon  
+Is  Google  Workspace  used  by  staff,  students,  or  both?  What  edition  is  currently  in  use  (e.g.,  Education  Fundamentals,  Education  Standard,  Education  Plus,  or  Teaching  &  Learning  Upgrade)?  Approximately  how  many  active  Google  Workspace  accounts  are  in  scope?  See  Q-142,  Q-143,  and  Q-144  
+Q-167  Canon  
+What  is  the  current  PSA/ticketing  system,  RMM  platform,  and  documentation  tool  in  use  today  (e.g.,  ConnectWise  Manage,  Autotask,  N-central,  NinjaRMM,  IT  Glue,  Confluence)?  Is  Uncommon  expecting  the  incoming  vendor  to  adopt  these  same  tools,  or  is  the  vendor  permitted  to  propose  its  own  platform  with  a  data  migration  plan?  See  Q-56  
+Q-168  Canon  
+SentinelOne  is  listed  as  a  managed  vendor  relationship.  Is  SentinelOne  the  currently  deployed  EDR  platform?  Is  MDR  currently  active,  and  if  so,  is  it  delivered  by  a  third-party  SOC  or  managed  in-house  by  the  current  MSP?  Will  the  incoming  vendor  be  expected  to  retain  SentinelOne,  or  may  they  propose  an  alternative  EDR/MDR  stack?  See  Q-124  
+Q-169  Canon  
+What  backup  platform  is  currently  in  use  (e.g.,  Veeam,  Acronis,  Datto,  Zerto)?  Is  backup  storage  on-premise,  cloud-based,  or  both?  Does  the  current  solution  qualify  as  an  immutable  backup  per  the  RFP  requirement,  or  will  the  incoming  vendor  need  to  implement  a  new  solution?  See  Q-60  
+Q-170  Canon  
+Are  the  EVPL  circuits  connecting  schools  and  regional  offices  to  the  Virginia  data  center  managed  by  the  current  MSP,  or  by  Uncommon  directly?  Will  the  incoming  vendor  be  expected  to  manage  carrier  relationships,  circuit  escalations,  and  renewals?  
+They  are  managed  by  the  incumbent  and  the  vendor  will  be  expected  to  manage  all  of  those.  
+Q-171  Canon  
+The  scope  includes  facilitating  replacement  and  procurement  of  new  devices.  Is  the  vendor  expected  to  act  as  a  Value  Added  Reseller  (VAR)  and  hold  paper  for  hardware  purchases,  or  is  the  vendor  expected  to  manage  the  process  while  Uncommon  purchases  hardware  directly?  Are  there  preferred  procurement  vehicles  (e.g.,  state  contracts,  co-ops)  Uncommon  currently  uses?  
+Uncommon's  preference  is  for  the  vendor  to  act  as  a  VAR.  To  the  greatest  extent  possible,  the  vendor  should  maximize  savings  for  Uncommon  through  appropriate  procurement  vehicles  (e.g.,  an  OMNIA  contract).  
+Q-172  Canon  
+Section  3.2  states  E-rate  services  are  out  of  scope.  Can  Uncommon  confirm  which  specific  services  are  currently  E-rate  funded  (e.g.,  internet  circuits,  network  equipment  management,  managed  Wi-Fi)  so  vendors  can  ensure  their  proposals  contain  no  overlap  with  or  gap  in  E-rate-covered  services?  
+The  purpose  of  section  3.2  is  to  state  that  Uncommon  does  not  need  the  vendor  to  provide  E-Rate  consulting  services.  Uncommon  works  with  a  consultant  to  apply  for  E-Rate  funding  for  all  eligible  Category  1  and  Category  2  services  and  to  manage  the  reimbursement  process.  The  vendor  will  manage  the  services/hardware  purchased  through  E-Rate.  
+Q-173  Canon  
+The  RFP  references  approximately  19,000  student  Chromebooks.  Are  these  devices  in  scope  for  Google  Admin  Console  management  (policy  enforcement,  app  deployment,  device  enrollment),  break/fix  support,  and/or  reimaging  under  this  contract?  To  what  degree  is  the  vendor  expected  to  manage  the  student  Google  Workspace  domain  vs.  Uncommon  managing  it  directly?  See  Q-53  and  Q-71  
+Q-174  Canon  
+What  VoIP  platform  is  currently  deployed  across  Uncommon  locations?  How  many  handsets  or  users  are  in  scope  across  all  63  locations?  Is  VoIP  troubleshooting  limited  to  end-user  support,  or  is  the  vendor  expected  to  manage  the  telephony  platform  itself?  
+The  current  solution  is  Asterisk  hosted  in  Uncommon's  data  center.  Uncommon  is  beginning  to  roll  out  Zoom  Phone  this  year  and  anticipates  most  schools  will  be  running  on  Zoom  Phone  by  the  time  the  contract  begins.  The  vendor  is  expected  to  manage  the  telephony  platform  as  well  as  manage  all  handsets  and  dial  plans.  You  can  assume  every  classroom  and  office  has  a  handset.  
+Q-175  Canon  
+What  wireless  access  point  vendor  and  management  platform  is  currently  deployed  across  schools  (e.g.,  Cisco  Meraki,  Juniper  Mist,  Aruba,  Ubiquiti)?  Approximately  how  many  WAPs  are  in  the  environment  across  all  sites?  Are  WAPs  managed  under  E-rate  and  therefore  excluded  from  this  scope?  
+Management  of  all  E-Rate  services/hardware  is  part  of  the  RFP  scope.  See  Q-172.  
+Q-176  Canon  
+Approximately  how  many  printers  are  across  all  63  locations?  Is  printer  management  limited  to  break/fix  troubleshooting  and  support,  or  does  it  include  proactive  fleet  management,  supply  ordering,  and  procurement  facilitation?  
+Uncommon  currently  uses  PaperCut,  a  cloud  based  print  management  platform.  The  vendor  will  be  expected  to  manage  that  platform  (or  include  in  their  pricing  their  own  print  management  solution).  Management  is  limited  to  break/fix  troubleshooting  and  support  as  well  as  procurement.  Schools  manage  their  own  supplies  (paper,  toner,  etc)  or  have  a  separate  contract  for  fleet  management.  
+Q-177  Canon  
+What  types  of  classroom  technology  are  currently  deployed  across  school  sites  (e.g.,  interactive  whiteboards,  projectors,  document  cameras,  AV  receivers)?  Are  these  assets  tracked  in  a  central  inventory,  and  are  they  district-purchased  or  individually  school-purchased?  See  Q-71  
+Q-178  Canon  
+What  is  the  current  on-site  visit  frequency  per  school  under  the  existing  MSP  arrangement?  Is  there  a  minimum  frequency  Uncommon  expects  to  see  proposed,  or  is  the  vendor  given  full  latitude  to  recommend  a  model  provided  SLAs  are  met?  See  Q-37  
+Q-179  Canon  
+How  many  on-site  technicians  does  the  current  MSP  have  deployed,  and  how  are  they  distributed  across  the  five  regions  (Brooklyn,  Newark,  Camden,  Rochester,  Boston)?  Understanding  the  current  model  would  help  vendors  right-size  their  staffing  proposals  without  over-  or  under-bidding.  See  Q-63  
+Q-180  Canon  
+Does  Uncommon  require  that  the  incoming  vendor  station  dedicated  full-time  technicians  at  specific  regional  offices  (hub  model),  or  is  a  mobile  dispatch  model  acceptable  provided  that  SLAs  and  scheduled  visit  frequency  are  met?   
+Q-181  Canon  
+Can  Uncommon  share  average  monthly  ticket  and  call  volume  for  the  current  service  desk?  A  breakdown  by  priority  tier  (Outage,  Urgent,  High,  Normal,  Low)  or  by  issue  category  See  Q-47  
+(hardware,  software,  account,  connectivity)  would  assist  vendors  in  accurately  staffing  and  pricing  the  helpdesk  component.  
+Q-182  Canon  
+Beyond  the  24/7  NOC  monitoring  requirement,  what  are  Uncommon's  expectations  for  after-hours  end-user  support?  For  example,  are  evening  events,  weekend  activities,  or  extended  school  programming  expected  to  be  covered  under  base  fees  or  priced  separately?  See  Q-120  
+Q-183  Canon  
+Is  there  any  expectation  or  preference  that  the  incoming  vendor  offer  employment  to  existing  MSP  technicians  currently  servicing  Uncommon  locations?  Are  there  any  state  or  local  labor  regulations  (e.g.,  successor  employer  provisions  in  NY  or  NJ)  that  may  apply  to  this  transition?  See  Q-72  
+Q-184  Canon  
+How  many  Computer  Based  Testing  events  (state  tests,  AP  exams,  Regents,  SATs,  PSATs)  occur  per  year  across  the  52  schools?  Is  there  a  master  testing  calendar  available  to  vendors?  Are  these  events  expected  to  be  covered  exclusively  by  on-site  technicians,  or  may  remote  support  supplement?  See  Q-38  
+Q-185  Canon  
+Does  this  contract  trigger  New  Jersey  Prevailing  Wage  Act  requirements  for  the  on-site  technicians  working  at  NJ  school  locations?  If  so,  will  Uncommon  provide  the  applicable  prevailing  wage  determinations,  or  is  the  vendor  expected  to  obtain  these  independently?  See  Q-26  
+Q-186  Canon  
+The  RFP  requires  all  individuals  (including  subcontractors)  to  pass  Uncommon  background  checks  at  the  vendor's  expense  before  performing  any  services.  Can  Uncommon  describe  its  background  check  process:  what  screening  is  performed,  who  administers  it,  what  the  typical  turnaround  time  is,  and  whether  pre-approved  screening  equivalents  are  accepted  (e.g.,  FBI  fingerprinting  already  on  file)?   
+Q-187  Canon  
+The  Multi-Year  Pricing  tab  of  the  Cost  Proposal  workbook  contains  an  unfilled  placeholder:  [INSERT  ESCALATION  CAP,  e.g.,  CPI  +  1%  or  4%,  whichever  is  less].  Please  confirm  the  maximum  not-to-exceed  annual  escalation  rate  that  vendors  must  apply  for  Years  2  through  5,  so  that  proposals  are  comparable.  That  should  read  "Lesser  of  CPI  or  4%".  
+Q-188  Canon  
+The  RFP  references  5-year  pricing  but  does  not  explicitly  define  the  base  contract  period  and  option  year  structure.  Is  this  a  single  5-year  base  contract,  a  1-year  base  with  four  annual  renewal  options,  or  another  structure?  
+Year  1  is  the  base.  Referencing  Q-187,  each  year  of  the  contract,  the  actual  cost  increase  would  be  determined  by  the  "Lesser  of  CPI  or  4%"  cap.  The  start  of  each  contract  year  is  not  a  renewal  but  an  adjustment  period.  
+Please  confirm  the  base  term  and  the  number  and  duration  of  renewal  options.  
+Q-189  Canon  
+Can  Uncommon  share  the  approximate  current  annual  spend  on  managed  IT  services  (Enterprise  and  End  User  combined),  even  as  a  broad  range?  This  helps  vendors  calibrate  competitive  and  realistic  pricing  rather  than  relying  on  pure  estimation.  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  Vendors  are  encouraged  to  address  this  topic  in  their  proposals  based  on  the  requirements  outlined  in  the  RFP.  
+Q-190  Canon  
+Section  3.10  requires  onboarding  costs  to  be  included  as  one-time  fixed-price  items.  Does  Uncommon  have  a  budget  ceiling  or  target  range  for  onboarding/transition  costs,  or  are  these  entirely  vendor-defined?  Understanding  this  helps  vendors  determine  how  to  scope  transition  activities.  
+The  onboarding  plan  should  be  a  "desired"  plan  from  the  vendor's  perspective.  List  assumptions  you  are  making  in  drafting  the  plan  (e.g.  the  incumbent  vendor  is  fully  cooperative,  network  diagrams  are  complete  and  up-to-date,  etc)  and  price  accordingly.  
+Q-191  Canon  
+Can  Uncommon  clarify  the  expected  split  between  work  covered  under  the  base  monthly  fee  and  work  that  would  be  billed  as  project  T&M?  For  example,  is  a  summer  break  network  refresh  at  15  schools  considered  included  in  base  fees  or  a  separately  billable  project?  Guidance  on  this  distinction  will  help  vendors  complete  the  Project  Mgmt  tab  accurately.  
+Larger  scale  projects  such  as  a  summer  break  network  refresh  are  expected  to  be  scoped  as  a  project  and  managed  outside  the  scope  of  the  managed  services  agreement.  In  the  RFP,  Uncommon  asks  vendors  to  share  how  they  approach  the  distinction  more  generally.  
+Q-192  Canon  
+Can  Uncommon  identify  the  current  managed  services  provider?  Knowing  the  incumbent  helps  vendors  assess  transition  complexity,  potential  conflicts  of  interest,  and  the  degree  of  cooperation  likely  during  the  knowledge  transfer  period.  
+This  question  falls  outside  the  scope  of  information  Uncommon  will  be  providing  during  the  RFP  process.  
+Q-193  Canon  
+The  timeline  shows  a  vendor  selection  target  of  October  30,  2026,  and  a  contract  start  of  July  1,  2027,  a  gap  of  approximately  nine  months.  Can  Uncommon  clarify  the  reason  for  this  lead  time?  Are  any  pre-onboarding  or  pre-start  activities  expected  or  compensated  during  this  window,  or  is  July  1,  2027  a  hard  start  with  no  pre-work?  
+The  time  before  the  contract  start  date  is  to  allow  for  any  potential  transition  work  that  is  needed,  and  will  be  compensated.  July  1,  2027  is  not  expected  to  be  a  hard  start  date  without  pre-work.  
+Q-194  Canon  
+What  is  the  current  state  of  environment  documentation  (network  diagrams,  server  runbooks,  configuration  records,  asset  inventories)?  Will  the  incumbent  be  contractually  required  to  deliver  a  structured  documentation  package  to  the  incoming  vendor,  or  should  vendors  plan  for  a  documentation  gap  and  include  knowledge-capture  activities  in  their  transition  plan?   
+Q-195  Canon  
+Is  Uncommon  planning  a  parallel  or  co-managed  operation  period  during  the  transition,  where  both  the  outgoing  and  incoming  vendors  are  active  simultaneously?  If  so,  for  how  long,  and  how  will  responsibilities   
+be  divided?  Will  transition  costs  be  evaluated  separately  from  ongoing  service  costs  in  the  scoring?  
+Q-196  Canon  
+The  Table  of  Contents  identifies  Appendix  A  as  the  Master  Site  List,  while  Section  10.1  (Submission  Requirements)  identifies  Appendix  A  as  the  Cost  Summary.  Can  Uncommon  clarify  the  correct  labeling  so  proposals  are  organized  consistently  and  not  inadvertently  disqualified  on  formatting  grounds?  
+Appendix  A  of  the  RFP  is  for  the  vendors'  use  as  a  refernot  be  included  in  the  submission.  The  submission  requSection  10  of  the  RFP  will  not  follow  the  same  structure  submission,  Appendix  A  should  be  the  cost  summary.  
+Q-197  Canon  
+Section  3.1  states  vendors  may  propose  for  one  or  both  service  areas.  In  the  evaluation  process,  will  proposals  covering  only  one  area  be  scored  on  equal  footing  with  full-scope  proposals,  or  will  full-scope  proposals  receive  preference  in  scoring?   
+Q-198  Canon  
+Section  8.1  references  finalist  presentations  in  September  2026.  Can  Uncommon  provide  guidance  on  the  expected  format,  duration,  required  participants  (e.g.,  must  a  technical  lead  attend),  and  whether  demonstrations  of  tools  or  NOC  environments  will  be  expected?   
+Q-199  Canon  
+Q11  requires  proof  of  SOC  2  Type  II  certification  at  proposal  submission.  If  a  vendor's  current  audit  period  has  ended  and  a  renewal  audit  is  in  progress,  will  a  bridge  letter  from  the  auditing  firm  or  an  interim  audit  report  be  acceptable  in  lieu  of  a  current  certificate?  
+Yes,  a  bridge  letter  is  sufficient  given  that  a  full  report  is  provided  before  a  contract  is  signed.  
+Q-200  Canon  
+The  New  Jersey  Required  Forms  document  references  Form  8  (Russia/Belarus  Disclosure)  by  title  only;  the  full  form  content  was  not  included  in  the  provided  document.  Where  can  vendors  obtain  the  complete  Form  8?   
+Q-201  Canon  
+If  two  vendors  submit  a  joint  proposal  with  one  designated  as  the  primary  vendor,  is  the  sub-vendor's  cost  included  in  the  primary  vendor's  cost  proposal  workbook,  or  should  the  sub-vendor  submit  a  separate  cost  file?  Should  the  sub-vendor  also  complete  the  New  Jersey  required  forms  independently?  See  Section  7.1.  
+Q-202  Canon  
+Section  10.3  states  that  confidential  proposal  materials  must  be  segregated  and  accompanied  by  an  executed  Non-Disclosure  Agreement  for  Confidential  Materials.  Can  Uncommon  provide  the  NDA  template,  or  must  vendors  supply  their  own?   
+Q-203  Canon  
+Does  Uncommon  currently  carry  its  own  cyber  liability  insurance  policy?  Understanding  this  will  help  vendors  clarify  where  their  coverage  obligations  begin  and  end,  particularly  with  respect  to  the  ransomware/extortion  payment  coverage  requirement  in  Section  9.2.  Yes.  
+Q-204  Canon  
+Section  9.2  lists  ransomware/extortion  payments  as  a  required  coverage  element  under  the  vendor's  cyber  liability  policy.  Can  Uncommon  confirm  whether  it  expects  the  vendor's  policy  to  cover  the  actual  payment  of  ransoms,  or  merely  to  cover  incident  response  costs,  notification  costs,  and  regulatory  defense  arising  from  a  ransomware  attack?  
+Uncommon's  cyber  insurance  will  cover  any  attacks  that  are  specifically  directed  at  Uncommon.  The  vendor's  cyber  liability  insurance  would  cover  any  attacks  directed  at  the  vendor  or  vendor's  other  customers  where  the  attack  has  a  negative  impact  on  Uncommon's  operations.  For  example,  if  the  vendor  is  successfully  compromised  by  a  ransomware  attack  such  that  Uncommon's  operations  are  impacted,  the  vendor's  liability  insurance  would  cover  any  ransom  payment  or  other  remediation  costs  or  short-term  transfer  of  Uncommon's  operations  to  another  vendor  while  remediation  is  under  way.  
+Q-205  Canon  
+Is  Uncommon  currently  operating  under  a  publicly  posted  Data  Privacy  and  Security  Agreement  (DPSA)  with  the  current  MSP  per  NYS  Ed  Law  2-d  requirements?  Will  the  incoming  vendor  be  expected  to  execute  a  new  DPSA  from  Day  1  of  the  contract,  and  will  Uncommon's  legal  team  provide  a  template,  or  is  the  vendor  expected  to  draft  it?   
+Q-206  Canon  
+Section  9.2  references  the  NJ  Data  Protection  Act  (S332,  effective  January  2025).  Can  Uncommon  clarify  whether  it  expects  the  vendor  to  serve  as  a  data  controller  or  data  processor  under  this  framework,  and  what  specific  operational  obligations  Uncommon  is  expecting  the  vendor  to  implement  or  document?   
+Q-207  Canon  
+The  selected  vendor  will  be  required  to  execute  a  FERPA-compliant  DPA  and  sign  the  Parents'  Bill  of  Rights.  Will  Uncommon  provide  its  own  DPA  and  Parents'  Bill  of  Rights  templates  for  review  during  the  proposal  stage,  or  will  these  be  negotiated  post-award?  Uncommon  will  provide  these  post-award.  
+Q-208  Canon  
+The  Vendor  Questionnaire  (Q12/Q14)  asks  how  vendors  handle  subprocessors  that  do  not  have  compliant  DPAs.  Does  Uncommon  have  an  approved  subprocessor  list  or  a  preferred  DPA  template  that  vendors  are  expected  to  push  down  to  their  subprocessors,  or  is  compliance  methodology  entirely  vendor-defined?   
+Q-209  Canon  
+Section  9.2  requires  broad  indemnification  with  no  stated  liability  cap.  Given  that  Section  9.1  confirms  Uncommon  will  prepare  and  negotiate  a  contract  with  the  selected  vendor,  is  Uncommon  open  to  negotiating  a  mutual  aggregate  liability  cap  (e.g.,  fees  paid  in  the  preceding  12  months),  with  carve-outs  for  gross  negligence  and  willful  misconduct?   
+Q-210  Canon  
+Section  9.2  states  Uncommon  may  terminate  the  contract  for  repeated  failures  to  meet  SLAs,  but  does  not  define  repeated  or  specify  a  cure  period.  Can  Uncommon  clarify:  (a)  how   
+many  consecutive  SLA  failures  constitute  repeated  failures;  and  (b)  whether  a  written  cure  notice  and  remediation  plan  opportunity  will  be  provided  before  termination  is  exercised?  
+Q-211  Canon  
+Section  2.10  permits  Uncommon  to  terminate  the  contract  at  fiscal  year-end  with  60  days  notice  if  funds  are  not  appropriated.  Will  Uncommon  consider  including  a  wind-down  provision  that  compensates  the  vendor  for  pre-committed  resources  or  stranded  costs  in  the  event  of  a  funding-driven  termination?     

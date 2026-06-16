@@ -1,0 +1,219 @@
+APPENDIX B 
+Resource Qualification Form
+Resource’s Degrees, Certificates, Diplomas or Professional Designations
+TI Corp will accept on-the-job training and work experience in lieu of degrees, certificates, diplomas, or professional designations if details are provided that clearly illustrate the equivalency of this work training/experience to the body of knowledge obtained via the degrees, certificates, diplomas, and/or professional designations cited below.
+OnBase Administrator
+An individual providing Services in this role must have at least ONE of the following certifications:
+Hyland OnBase Administrator Expert (previously OCASA: OnBase Certified Advanced System Administrator) certification
+Hyland OnBase Professional certifications in Workflow and WorkView
+Hyland OnBase Support Engineer certification
+OnBase Consultant Professional (Previously OCI: OnBase Certified Installer) certification
+Preference will be given to those individuals that have the broadest level of certification.
+Corporate Technology Trainer
+An individual providing Services in this role will have a bachelor’s degree majoring in an Information Technology discipline such as:
+Information sciences
+Information technology
+Computer science
+Software engineering
+combined with certification or training, experience, working knowledge, skills and abilities in one or more professional adult training disciplines such as:
+Learning and development
+Corporate training
+IT user skills
+Microsoft 365 Developer
+An individual providing Services in this role will have ONE or more of the following certifications:
+Microsoft 365 Certified Developer Associate
+Power Platform Fundamentals
+Power Platform Functional Consultant Associate
+Microsoft Dynamics 365
+Preference will be given to those individuals that have the broadest level of certification. 
+Senior IT Project Manager
+An individual providing Services in this role will have a diploma or degree in Project Management or, alternatively, a diploma or degree in Business Administration in combination with a project management certification such as:
+Certified Associate in Project Management (CAPM) 
+Certified Project Management Professional (PMP)
+Project Management Competence Certification
+Senior Business Analyst
+An individual providing Services in this role will have a diploma or degree in Business Administration or Information Technology discipline in combination with a Business Analyst certification such as:
+Certified Business Analyst Professional (CBAP)
+IIBA Certification of Competency in Business Analysis (CCBA)
+International Qualification Board for Business Analysis (IQBBA) certifications
+Business Analyst
+An individual providing Services in this role will have a diploma in Business Administration or Information Technology discipline in combination with a Business Analyst certification such as:
+IIBA Entry Certificate in Business Analysis (ECBA)
+Certified Business Analyst Professional (CBAP)
+Enterprise, Technical, and Solutions Architect
+An individual providing Services in this role will have a diploma or degree in Business Administration or Information Technology discipline in combination with Information Technology certifications. 
+Preference will be given to those individuals that have the broadest level of certification.
+Technical Analyst
+An individual providing Services in this role will have a diploma or degree in Computer Science or Information Technology discipline combined with Information Technology certifications such as:
+CompTIA A+ 
+Microsoft Certified: Modern Desktop Administrator
+Preference will be given to those individuals that have the broadest level of certification.
+Hyland Solution Architect
+An individual providing Services in this role must have Hyland certification and/or workplace training equivalent to at least ONE certification in the OnBase Consultant Series combined with Hyland certifications and/or equivalent workplace training from of at least TWO of the following OnBase Certification series:
+OnBase Administrator Series (Associate, Professional, and/or Expert Level)
+OnBase Workflow Series (Associate, Professional, and/or Expert Level)
+OnBase WorkView Series (Associate, Professional, and/or Expert Level)
+OnBase Support Specialist
+Hyland Developer Specialist
+Preference will be given to those individuals that have the broadest level of certification.
+Response Guideline 1
+Resource’s Experience 
+The Resource must have experience working in a similar environment delivering work scope and complexity similar to that of the Services described in this MUL RFQ.  Following are the minimum experience requirements for each of the Service Areas represented in this MUL RFQ.  Additional years of experience beyond the minimum will result in additional points being awarded.
+OnBase Administrator
+The Corporation’s preference is for Resources with a minimum of five (5) years of demonstrated experience providing OnBase Administration, configuration, and engineering services for OnBase EP5 Global Cloud Services solutions.
+Corporate Technology Trainer
+The Corporation’s preference is for Resources with a minimum of five (5) years demonstrated experience delivering IT adult training and documentation with some of this experience gained producing deliverables using Microsoft Office and Visio tools.  Preference will be given to individuals with experience providing these services to the BC Government’s Ministry of Transportation and Infrastructure (MOTI), and additional years of experience beyond the minimum providing services to MOTI will result in additional points being awarded.
+Microsoft 365 Developer
+The Corporation’s preference is for Resources with a minimum of three (3) years demonstrated experience working as a Microsoft 365 Developer.
+Senior IT Project Manager
+The Corporation’s preference is for Resources with a minimum five (5) years demonstrated experience working as a project manager in an IT environment with some of this experience gained producing deliverables using Microsoft Office and Project Management tools.  Preference will be given to individuals with experience providing these services to the BC Government’s Ministry of Transportation and Infrastructure (MOTI), and additional years of experience beyond the minimum providing services to MOTI will result in additional points being awarded.
+Senior Business Analyst
+The Corporation’s preference is for Resources with a minimum five (5) years of demonstrated experience working as a Senior Business Analyst with some of this experience gained producing deliverables using Microsoft Office, Visio, and Project Management tools.  Preference will be given to individuals with experience providing these services to the BC Government’s Ministry of Transportation and Infrastructure (MOTI), and additional years of experience beyond the minimum providing services to MOTI will result in additional points being awarded.
+Business Analyst
+The Corporation’s preference is for Resources with a minimum three (3) years of demonstrated experience working as a Business Analyst with some of this experience gained producing deliverables using Microsoft Office and Visio tools.  Preference will be given to individuals with experience providing these services to the BC Government’s Ministry of Transportation and Infrastructure (MOTI), and additional years of experience beyond the minimum providing services to MOTI will result in additional points being awarded.
+Enterprise, Technical, and Solutions Architect
+The Corporation prefers Resources with a minimum ten (10) years demonstrated experience working as an Enterprise Architect with some of this experience gained producing deliverables using Microsoft Office, Visio, and Project Management tools.  Preference will be given to individuals with experience providing these services to the BC Government’s Ministry of Transportation and Infrastructure (MOTI), and additional years of experience beyond the minimum providing services to MOTI will result in additional points being awarded.
+Technical Analyst
+The Corporation’s preference is for Resources with a minimum of three (3) years’ demonstrated experience as a Desktop Support Analyst and/or IT Support Specialist.  Preference will be given to individuals with experience using JIRA by Atlassian.
+Hyland Solutions Architect
+The Corporation’s preference is for Resources with a minimum of three years’ demonstrated experience as a Hyland Solutions Architect.  .
+Service Area Credentials
+With specific reference to the delivery of the services required, provide a summary of the individual’s qualifications for the following subject matter categories, with attention to demonstration of the individual’s direct assignments/role(s) in the selected Service Area. (Please provide a separate Response Guideline #3 for each Service Area being applied for – this answer may be used for shortlisting future Competition Notices).
+On Base Administrator
+Corporate Technology Trainer
+Microsoft 365 Developer
+Senior IT Project Manager
+Senior Business Analyst
+Business Analyst
+Enterprise, Technical, and Solutions Architect
+Technical Analyst
+Highland Solutions Architect
+Work Samples
+For each Advisor proposed to provide Services in the following Service Areas:
+Corporate Technology Trainer
+Senior IT Project Manager
+Senior Business Analyst
+Business Analyst
+Enterprise, Technical, and Solutions Architect
+Include two (2) sample deliverables for which the Resource was the primary author that was related to the implementation of a complex system. These work samples should be reflective of the quality of the Resource’s work and must relate to the types of services and deliverables described in this MUL RFQ for the Service Area.
+TI Corp will not evaluate more than two samples per Resource. If a response contains more than two samples for a single Resource, the two most recent samples will be evaluated.  However, if more than one Resource (separate Appendix B) is proposed, the Corporation expects two samples for each Resource.
+TI Corp will base the evaluation of the samples on the organization, clarity and relevance to the types of services and deliverables described in this MUL RFQ for the applicable Service Area as well as to how the samples demonstrate the Advisor’s cited experience and skills.
+Do not include any information specific to the sample projects that may be considered proprietary or that was delivered under non-disclosure.
+Hourly Rate
+MULRFQ Appendix C 
+Submission Declaration
+[Only for email and hand delivery submission]
+For purposes of this advisory: (i) the word “RFx” means that certain type of procurement or information gathering process identified in the “overview” menu tab of the BC Bid application to which You are submitting a response; (ii) Your response to the RFx, regardless of the opportunity  type, is referred to as Your “Submission”; (iii) the submitting party is referred to as “You” or “Your”; and (iv) each of the defined terms in this paragraph are cross-referenced to defined terms set out in the applicable RFx. 
+You are about to make a Submission to an RFx. By submitting the Submission, You agree:
+To the BC Bid Terms and Conditions of Use located here; 
+to all of the terms and conditions of the RFx, including any applicable process rules pertaining to the RFx that are located in the “process rules” section of the BC Bid application; and
+affirm and declare that Your authorized representative’s name being signed, or an image of that signature being affixed on this form, will constitute Your legally binding signature.
+________________________________________________________________________
+SIGNATURE OF YOUR AUTHORIZED REPRESENTATIVE
+________________________________________________________________________
+PRINT YOUR NAME
+________________________________________________________________________
+PRINT NAME OF YOUR AUTHORIZED REPRESENTATIVE
+DATE: ___________________________________________________________________
+
+[TABLE 1]
+Response to Request for  / Qualifications No.  / TIC TEC MUL RFQ 2025 42 R  / Information Technology Advisors
+
+[TABLE 2]
+Part 1: Instructions for Respondents
+Submit one Resource Qualification Form for each Resource you are proposing. For example, if you are proposing three Resources you will copy this entire Resource Qualification Form three times, complete a template for each Resource, and submit all three in your Response. / Areas for Respondents to enter text are identified with red text fields. Click on the field and you can start entering text. The fields should expand to accommodate your text. / Note: Any personal information (as defined in the British Columbia Freedom of Information and Protection of Privacy Act (“FOIPPA”)) provided on this Response to the Request for Qualifications (RFQ) is being collected pursuant to section 26(c) of FOIPPA and will be used to assess the Respondent’s response and suitability for placement on the Multi-Use List. If you have any questions about the collection or use of this personal information, please contact, procurement@ticorp.ca
+
+[TABLE 3]
+Respondent Identification (Not for Evaluation) | Respondent Identification (Not for Evaluation) | Respondent Identification (Not for Evaluation)
+Respondent Legal Name, as well as “Doing Business as Name”, if applicable | Respondent Legal Name, as well as “Doing Business as Name”, if applicable | 
+Respondent Primary Office Address  / (Add all details relating to the street address. Do not use a P.O. Box) | Respondent Primary Office Address  / (Add all details relating to the street address. Do not use a P.O. Box) | 
+Respondent Toll-free Telephone Number, if applicable | Respondent Toll-free Telephone Number, if applicable | 
+Respondent Website Address, if applicable | Respondent Website Address, if applicable | 
+Authorized Representative’s Name | Authorized Representative’s Name | 
+Authorized Representative’s Title | Authorized Representative’s Title | 
+Authorized Representative’s Email Address | Authorized Representative’s Email Address | 
+Authorized Representative’s Phone Number | Authorized Representative’s Phone Number | 
+Respondent Contact Information (Not for evaluation) | Respondent Contact Information (Not for evaluation) | Respondent Contact Information (Not for evaluation)
+If the Respondent would like someone other than the authorized representative identified in Part 2 to receive any future communications regarding this Proposal, please identify that person below. | If the Respondent would like someone other than the authorized representative identified in Part 2 to receive any future communications regarding this Proposal, please identify that person below. | If the Respondent would like someone other than the authorized representative identified in Part 2 to receive any future communications regarding this Proposal, please identify that person below.
+Respondent Contact’s Name |  | 
+Respondent Contact’s Title |  | 
+Respondent Contact’s email Address |  | 
+Respondent Contact’s Phone Number |  | 
+Respondent Contact’s Address |  | 
+
+[TABLE 4]
+Part 2: Resource Identification | Part 2: Resource Identification
+Please identify the name of the proposed Resource below. | Please identify the name of the proposed Resource below.
+Resource’s Name
+
+[TABLE 5]
+Part 3: Minimum Overall Score Required | Part 3: Minimum Overall Score Required
+In addition to meeting or exceeding any minimum scores associated with individual response guidelines in the Resource Qualification Form, the Resource is required to meet or exceed the following minimum overall score to pass stage two of the evaluation process: | 60%
+
+[TABLE 6]
+Part 4: Desirable Qualifications and Response Guidelines
+The following parts of this Resource Qualification Form describe the qualifications that a Resource should have. / “Response guidelines” are included throughout this template to help guide Respondents regarding what to include in their Response. Respondents should follow the instruction in the response guidelines and provide a response to all response guidelines. The response guidelines are not intended to be comprehensive and Respondent’s should use their own judgement in determining what information to provide to demonstrate that they meet or exceed the desirable qualifications.
+
+[TABLE 7]
+Response Guideline 1 - Certifications | Response Guideline 1 - Certifications | Points Available | Points Available | Minimum Score
+Response Guideline 1 - Certifications | Response Guideline 1 - Certifications | 15 | 15 | N/A
+Instructions for Respondents: | Instructions for Respondents: | Instructions for Respondents: | Instructions for Respondents: | Instructions for Respondents:
+Using the table below, identify the degrees, diplomas, certificates or designations that the Resource possesses to help demonstrate how the Resource meets or exceeds the qualifications described for the Service Area the Resource is applying as described in Section 1 above. | Using the table below, identify the degrees, diplomas, certificates or designations that the Resource possesses to help demonstrate how the Resource meets or exceeds the qualifications described for the Service Area the Resource is applying as described in Section 1 above. | Using the table below, identify the degrees, diplomas, certificates or designations that the Resource possesses to help demonstrate how the Resource meets or exceeds the qualifications described for the Service Area the Resource is applying as described in Section 1 above. | Using the table below, identify the degrees, diplomas, certificates or designations that the Resource possesses to help demonstrate how the Resource meets or exceeds the qualifications described for the Service Area the Resource is applying as described in Section 1 above. | Using the table below, identify the degrees, diplomas, certificates or designations that the Resource possesses to help demonstrate how the Resource meets or exceeds the qualifications described for the Service Area the Resource is applying as described in Section 1 above.
+Degree, Diploma, Certificate or Designation | Issuing Institution or Association | Issuing Institution or Association | Date Conferred or Awarded | Date Conferred or Awarded
+
+
+
+
+
+
+[TABLE 8]
+Response Guideline 2  / Demonstrated Experience | Points Available | Minimum Score
+Response Guideline 2  / Demonstrated Experience | 40 | N/A
+Instructions for Respondents: | Instructions for Respondents: | Instructions for Respondents:
+Demonstrated Experience: / Using the tables below, provide examples to identify and describe three projects that the Resource has led or has had a significant role in the project deliverables and how they fulfill the experience requirements indicated in Section 2 above applicable to the Service Area for which the Resource is applying / Client name, project scope and budget, duration of engagement and the level of effort of the individual was engaged in the assignment similar to the Services described in this RFQ; / List of demonstrated experience as related to the applicable Service Area list above.   / Information provided should clearly demonstrate the Resource has the minimum number of years’ experience as described.   / The Corporation may consider Work Samples provided in response to Guideline 4. | Demonstrated Experience: / Using the tables below, provide examples to identify and describe three projects that the Resource has led or has had a significant role in the project deliverables and how they fulfill the experience requirements indicated in Section 2 above applicable to the Service Area for which the Resource is applying / Client name, project scope and budget, duration of engagement and the level of effort of the individual was engaged in the assignment similar to the Services described in this RFQ; / List of demonstrated experience as related to the applicable Service Area list above.   / Information provided should clearly demonstrate the Resource has the minimum number of years’ experience as described.   / The Corporation may consider Work Samples provided in response to Guideline 4. | Demonstrated Experience: / Using the tables below, provide examples to identify and describe three projects that the Resource has led or has had a significant role in the project deliverables and how they fulfill the experience requirements indicated in Section 2 above applicable to the Service Area for which the Resource is applying / Client name, project scope and budget, duration of engagement and the level of effort of the individual was engaged in the assignment similar to the Services described in this RFQ; / List of demonstrated experience as related to the applicable Service Area list above.   / Information provided should clearly demonstrate the Resource has the minimum number of years’ experience as described.   / The Corporation may consider Work Samples provided in response to Guideline 4.
+
+[TABLE 9]
+Project 1 | Project 1 | Project 1 | Project 1
+Project Name
+Start Date | End Date
+Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ | Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ | Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ | Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ
+ |  |  | 
+Project 2 | Project 2 | Project 2 | Project 2
+Project Name
+Start Date | End Date
+Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ | Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ | Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ | Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ
+ |  |  | 
+
+[TABLE 10]
+Project 3 | Project 3 | Project 3 | Project 3
+Project Name
+Start Date | End Date
+Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ | Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ | Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ | Project Description / In the field below describe the project activities the Resource has been involved with including: / a brief description. / the Resource’s role; and / how the project represents similar scope and complexity or relevance to the Services, as defined in this RFQ
+ |  |  | 
+
+[TABLE 11]
+Response Guideline 3  / Unique Expertise | Points Available | Minimum Score
+Response Guideline 3  / Unique Expertise | 30 | N/A
+Instructions for Respondents: | Instructions for Respondents: | Instructions for Respondents:
+Provide a narrative describing unique expertise outside of the qualifications and experience provided above.    / | Provide a narrative describing unique expertise outside of the qualifications and experience provided above.    / | Provide a narrative describing unique expertise outside of the qualifications and experience provided above.    /
+
+
+[TABLE 12]
+Response Guideline 4 / Work Samples | Points Available | Minimum Score
+Response Guideline 4 / Work Samples | N/A | N/A
+Instructions for Respondents: / Work samples will be used for proof of competency and validation of information provided in above Response Guidelines.  Work samples may also be used for supporting scores in the applicable previous sections. | Instructions for Respondents: / Work samples will be used for proof of competency and validation of information provided in above Response Guidelines.  Work samples may also be used for supporting scores in the applicable previous sections. | Instructions for Respondents: / Work samples will be used for proof of competency and validation of information provided in above Response Guidelines.  Work samples may also be used for supporting scores in the applicable previous sections.
+Work samples for each Resource should be submitted in a separate file/document from rest of proposal and clearly marked with: / The Advisor’s Name / The Service Area to which the Work Sample applies / If this section does not apply, indicate by N/A (ie. OnBase, Microsoft 365) | Work samples for each Resource should be submitted in a separate file/document from rest of proposal and clearly marked with: / The Advisor’s Name / The Service Area to which the Work Sample applies / If this section does not apply, indicate by N/A (ie. OnBase, Microsoft 365) | Work samples for each Resource should be submitted in a separate file/document from rest of proposal and clearly marked with: / The Advisor’s Name / The Service Area to which the Work Sample applies / If this section does not apply, indicate by N/A (ie. OnBase, Microsoft 365)
+
+
+[TABLE 13]
+Response Guideline 5 / Resume | Points Available | Minimum Score
+Response Guideline 5 / Resume | N/A | N/A
+Instructions for Respondents: / A resume will be used for clarification and/or verification of information provided in above Response Guidelines.  The Resume may also be used for supporting scores in the previous sections: | Instructions for Respondents: / A resume will be used for clarification and/or verification of information provided in above Response Guidelines.  The Resume may also be used for supporting scores in the previous sections: | Instructions for Respondents: / A resume will be used for clarification and/or verification of information provided in above Response Guidelines.  The Resume may also be used for supporting scores in the previous sections:
+Provide a resume with the following information: / Full name, title/position in their organization, name of the organization, primary location, and corporate affiliations, if any; / Education, training and professional designations; / Complete chronology of employment history; and / Summary of professional skills, abilities and work experience relevant to the Services required as part of this RFQ. / The resume should be limited to four (4) pages | Provide a resume with the following information: / Full name, title/position in their organization, name of the organization, primary location, and corporate affiliations, if any; / Education, training and professional designations; / Complete chronology of employment history; and / Summary of professional skills, abilities and work experience relevant to the Services required as part of this RFQ. / The resume should be limited to four (4) pages | Provide a resume with the following information: / Full name, title/position in their organization, name of the organization, primary location, and corporate affiliations, if any; / Education, training and professional designations; / Complete chronology of employment history; and / Summary of professional skills, abilities and work experience relevant to the Services required as part of this RFQ. / The resume should be limited to four (4) pages
+
+
+[TABLE 14]
+Response Guideline 6 / Hourly Rate | Points Available | Minimum Score
+Response Guideline 6 / Hourly Rate | 15 | N/A
+Instructions for Respondents: / Hourly rates may be used for short-listing invitees for future Competition Notices due to budget funds available. | Instructions for Respondents: / Hourly rates may be used for short-listing invitees for future Competition Notices due to budget funds available. | Instructions for Respondents: / Hourly rates may be used for short-listing invitees for future Competition Notices due to budget funds available.
+The Respondent should quote an all-inclusive hourly rate for the Resource, including all fees and disbursements (business and administration overhead, profit, payroll, incidentals, travel expenses and disbursements, and routine out-of-pocket costs).  / Response Guideline: This page should be submitted in a separate file/document from rest of proposal and clearly marked Hourly Rate. | The Respondent should quote an all-inclusive hourly rate for the Resource, including all fees and disbursements (business and administration overhead, profit, payroll, incidentals, travel expenses and disbursements, and routine out-of-pocket costs).  / Response Guideline: This page should be submitted in a separate file/document from rest of proposal and clearly marked Hourly Rate. | The Respondent should quote an all-inclusive hourly rate for the Resource, including all fees and disbursements (business and administration overhead, profit, payroll, incidentals, travel expenses and disbursements, and routine out-of-pocket costs).  / Response Guideline: This page should be submitted in a separate file/document from rest of proposal and clearly marked Hourly Rate.

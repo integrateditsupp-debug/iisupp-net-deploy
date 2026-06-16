@@ -1,0 +1,1429 @@
+ Uncommon Schools 
+ Request for Proposals (RFP) 
+ For Managed IT Services 
+ RFP # [2026-06-USI] 
+ All questions about this RFP must be directed in writing to: 
+ Alex Welsh, Project Manager Uncommon Schools, Inc. 
+ Email:  msp.rfp.2026@uncommonschools.org 
+ Proposing Begins:  May 13, 2026  Proposals Due:  June 23, 2026 at 3pm Eastern Time 
+ Table of Contents 
+ RFP 
+ ●  Section 1: Introduction & Organization Overview 
+ ●  Section 2: RFP Process & Timeline 
+ ●  Section 3: Scope of Services 
+ ●  Section 4: Technical Environment 
+ ●  Section 5: Vendor Qualifications & Requirements 
+ ●  Section 6: Vendor Questionnaire 
+ ●  Section 7: Pricing 
+ ●  Section 8: Evaluation Criteria 
+ ●  Section 9: Contract & Legal Requirements 
+ ●  Section 10: Submission Requirements 
+ Appendix 
+ ●  Appendix A: Master Site List 
+ Forms 
+ ●  Form A: Bid/Proposal Response Form 
+ ●  Form B: Felony Conviction Notification 
+ ●  Form C: References 
+ Section 1: Introduction & Organization 
+ Overview 
+ 1.1 Purpose 
+ Uncommon Schools, Inc. (Uncommon or USI) is issuing this Request for Proposals (RFP) for 
+ cost-effective IT managed services to meet the business and operational needs of its schools, 
+ regional teams, and Home Office (HO). Uncommon is conducting a competitive procurement 
+ process to evaluate the market and identify the best managed services partner for the 
+ organization going forward. All vendors will be evaluated equally under this process. 
+ Uncommon Schools, Inc., in its capacity as the Charter Management Organization ("CMO") 
+ across affiliated schools, is managing this public competitive contract opportunity on behalf of 
+ and representing the respective needs of all affiliated schools, LEAs, regions, and offices as 
+ listed in Appendix A, and in accordance with the applicable procurement requirements for public 
+ charter schools in the states of New Jersey, New York, and Massachusetts and through the 
+ federal Department of Education under the following provisions: 
+ ●  Federal Procurement Code Uniform Guidance (2 CFR Part 200.317 et seq.) 
+ ●  New Jersey Public School Contracts Law (6A:23A-22.5, N.J.S.A. 18A:18A-1 et seq.) 
+ ●  New Jersey Administrative Code (N.J.A.C. 5:34 et seq.) 
+ ●  Uniform Procurement Act under Massachusetts General Laws (Chapter 30b), only 
+ where applicable to Commonwealth Charter Schools 
+ ●  NY State Charter School Law (Article 56, Education Law sections 2850-2857) 
+ Specific to North Star Academy Charter School of Newark and Camden Prep Renaissance 
+ School in New Jersey, the Qualified Purchasing Agent (“QPA”) and/or an approved delegate for 
+ each LEA has been consulted in the writing of this RFP and will participate in the evaluation of 
+ qualifying offers to ensure compliance with New Jersey procurement requirements and school 
+ interests. Specific to Roxbury Prep Charter School in Massachusetts, the MCPPO and/or an 
+ approved delegate has been consulted in the writing of this RFP, will be present at the proposal 
+ opening, and will participate in the evaluation of qualifying offers to ensure compliance with 
+ Massachusetts procurement requirements and school interests. 
+ Scope of services includes but is not limited to: 
+ a. Enterprise Infrastructure Administration and Maintenance 
+ b. Cloud Software and Device Management 
+ c. Security and Compliance 
+ d. End User Support 
+ e. On-Site Support 
+ f. Classroom Technology Support 
+ g. End User Device Management 
+ h. Printer Management 
+ i. Documentation and Inventory Management 
+ j. Systems Design and Recommendations 
+ k. Business Continuity and Disaster Recovery Planning 
+ l. Project Management Services 
+ m. Multi-Vendor Support and Advocacy 
+ 1.2 About Uncommon Schools 
+ Uncommon Schools is a nonprofit charter management organization that operates 63 locations 
+ across 5 regions: New York City, NY; Newark, NJ; Camden, NJ; Rochester; NY; and Boston, 
+ MA. Uncommon serves approximately 20,000 students and employs approximately 2,800 staff 
+ across its school network and Home Office. Uncommon utilizes a dual leadership model where 
+ Principals manage instructional staff and focus on coaching while Directors of Operation 
+ manage operational staff and focus on the school’s daily operation. A full list of locations, staff, 
+ and students is available in  Appendix A  . 
+ Uncommon's mission is to start and manage outstanding urban public schools that close the 
+ opportunity gap and prepare low-income students for success in college and beyond. Our 
+ schools serve students in grades [PreK–12], and our technology environment must support the 
+ full complexity of that mission — from classroom instruction to school operations to home office 
+ functions. 
+ City  Staff  Students 
+ Brooklyn, NY  ~1,110  ~7,800 
+ Newark, NJ  ~6,800  ~835 
+ Rochester, NY  ~3,050  ~360 
+ Boston, MA  ~210  ~1,200 
+ Camden, NJ  ~1,560  ~225 
+ New York, NY 
+ (network office) 
+ ~275  n/a 
+ 1.3 Strategic Context 
+ Our strategic ambition is to lead the best and highest-performing PK-12 schools in the nation — 
+ closing the college completion gap, providing a path to economic freedom, and extending our 
+ impact to students nationally and around the world. As one of the largest school systems in the 
+ country, achieving this requires that every operational decision support what happens in 
+ classrooms. 
+ Reliable, secure, and scalable technology infrastructure is a prerequisite for academic 
+ excellence. This procurement reflects that priority. We are seeking a managed services partner 
+ with deep technical expertise, demonstrated experience in large PK-12 environments, and the 
+ operational capacity to support an organization of our scale and complexity. 
+ 1.4 Key Outcomes 
+ The key outcomes of this procurement include: 
+ ●  Cost efficiency — Demonstrated value relative to current spend, with transparent pricing 
+ and measurable return on investment 
+ ●  Capability alignment — A vendor whose core competencies match the scope and 
+ complexity of services required 
+ ●  Contractual accountability — Clearly defined service expectations, performance 
+ standards, and remedies for non-performance 
+ ●  Operational reliability — Consistent, school-centered technology support that minimizes 
+ disruption and enables student and staff success 
+ Section 2: RFP Process & Timeline 
+ 2.1 RFP Calendar 
+ Event  Date 
+ RFP Issued  May 13, 2026 
+ Offeror’s Conference  May 27, 2026 at 2:30pm Eastern Time 
+ Deadline for Written Questions  May 29, 2026 
+ Responses to Questions Posted  June 2, 2026 
+ Proposals Due  June 23, 2026 at 3:00pm Eastern Time 
+ Proposal Opening  June 23, 2026 at 3:00pm Eastern Time 
+ Finalists Notified  August 2026 
+ Finalist Presentations  September 2026 
+ Target Date for Vendor Selection  October 30, 2026 
+ Target Contract Start  July 1, 2027 
+ By submitting a proposal, the Offeror warrants that it has reviewed and agreed to the 
+ timeline for award and contract start date set forth above. 
+ 2.2 Offeror's Conference 
+ Uncommon Schools will host a virtual Offeror's Conference for all Offerors. Participation is 
+ strongly encouraged but not mandatory. The conference provides an opportunity for Offerors to 
+ ask questions about this RFP, clarify scope and requirements, and ensure a shared 
+ understanding of the procurement process before proposals are submitted. All Offerors will 
+ receive the same information regardless of attendance. 
+ Date and Access 
+ Detail  Information 
+ Date  May 27, 2026 
+ Time  2:30pm Eastern Time 
+ Format  Virtual 
+ Duration  Approximately 90 minutes 
+ Access  Meeting ID:  936 8765 3670 
+ Zoom Link:  https://uncommonschools.zoom.us/j/93687653670?from=addon 
+ Agenda 
+ Time  Topic 
+ 2:30–2:45  Welcome, introductions, and procurement process overview 
+ 2:45–3:30  RFP document walkthrough — scope of services, technical 
+ environment, pricing structure, and evaluation criteria 
+ 3:30–3:50  Open Q&A 
+ 3:50–4:00  Closing remarks, next steps, and written Q&A deadline reminder 
+ Important Rules 
+ ●  All invited Offerors will participate in the same session simultaneously. Separate 
+ sessions will not be held. 
+ ●  Oral responses provided during the Offeror's Conference are for clarification purposes 
+ only and do not constitute a formal amendment to the RFP. Only written questions and 
+ written answers are binding. 
+ ●  Questions raised during the conference must be submitted in writing through the process 
+ described in Section 2.3 by the written Q&A deadline in order to receive a formal, 
+ binding response. 
+ ●  All written questions and Uncommon's responses will be compiled into an addendum 
+ and distributed to all Offerors simultaneously, including those who did not attend the 
+ conference. 
+ ●  Where a question or clarification requires a change to the RFP, a formal addendum will 
+ be issued. Offerors are responsible for reviewing all addenda issued during the proposal 
+ window. 
+ Preparation 
+ Offerors are encouraged to review this RFP document thoroughly prior to the Offeror's 
+ Conference and to come prepared with specific questions about scope, technical requirements, 
+ pricing structure, and submission requirements. The conference is most valuable when Offerors 
+ arrive with focused questions that go beyond what is already addressed in the document. 
+ 2.3 Q&A Process 
+ All questions regarding this RFP must be submitted in writing by email to the designated project 
+ contact listed on the cover page, no later than the written Q&A deadline listed in Section 2.1. 
+ Questions submitted after this deadline will not receive a response. 
+ Questions must be submitted in writing via email with the subject line: Uncommon Schools RFP 
+ # 2026-06-USI — Q&A Submission. Uncommon will not be bound by verbal responses to 
+ questions at any stage of this process. 
+ All written questions and Uncommon's responses will be compiled and distributed to all Offerors 
+ simultaneously as a formal addendum to this RFP, regardless of which Offeror submitted the 
+ question. Addenda will be distributed via email to all invited Offerors. Offerors are responsible 
+ for reviewing all addenda before submitting their proposal. 
+ Where a question or clarification requires a change to the RFP, a formal written addendum will 
+ be issued. Written questions, responses, clarifications, and changes will all be published publicly 
+ alongside the RFP under “Current Legal Notices and Documents” at  uncommonschools.org  , 
+ northstaracademy.org  , and  camden-prep.org  . It is the Offeror's responsibility to check for 
+ updates 
+ Uncommon shall not be bound by any oral interpretation or clarification of RFP documents at 
+ any stage of this process. 
+ 2.4 Submission Instructions 
+ Offerors shall submit one (1) electronic copy of their written proposal in PDF format to the email 
+ address listed on the cover page. Cost proposals (Appendices A and B) must be submitted 
+ electronically in MS Excel and a signed PDF format separately from the written response. 
+ Proposals must be received no later than the closing date and time listed above. Late proposals 
+ will not be accepted. 
+ All proposals must include the RFP Cover Sheet with an authorized signature. Proposals 
+ received without a signed cover sheet may be disqualified. 
+ Uncommon is not responsible for the Offeror’s failure to send the proposal prior to the allotted 
+ time or for any technology issues, internet access failure, or other circumstances that cause a 
+ vendor’s proposal to be sent or received beyond the date and time set forth herein. 
+ More detail on submission guidelines and instructions is found in Section 10. 
+ 2.5 Proposal Opening 
+ Uncommon Schools will host a virtual Proposal Opening for all Offerors. Participation is strongly 
+ encouraged but not mandatory. Uncommon will not open any Proposal prior to the beginning of 
+ this meeting. All submitted Proposals will be publicly acknowledged and accounted for to 
+ maintain transparency. 
+ Date and Access 
+ Detail  Information 
+ Date  June 23, 2026 
+ Time  3:00pm Eastern Time 
+ Format  Virtual 
+ Duration  Approximately 60 minutes 
+ Access  Meeting ID:  960 6900 9680 
+ Zoom Link: https://uncommonschools.zoom.us/j/96069009680?from=addon 
+ 2.6 Uncommon Rights 
+ Uncommon reserves the right to: 
+ ●  Reject any or all proposals, or waive any irregularities or informalities 
+ ●  Issue subsequent Requests for Proposals 
+ ●  Award the contract in part or in whole 
+ ●  Cancel or amend this RFP prior to the proposal due date 
+ ●  Appoint a selection committee to review proposals 
+ ●  Seek the assistance of outside technical experts in proposal evaluation 
+ ●  Approve or disapprove the use of particular subcontractors 
+ ●  Establish a shortlist of Offerors eligible for finalist presentations 
+ ●  Negotiate with any, all, or none of the Offerors 
+ ●  Award a contract to one or more Offerors 
+ ●  Choose not to award a contract if not in Uncommon's best interest 
+ ●  Award to the vendor that, in Uncommon's opinion, is most responsive and responsible; 
+ price alone will not be the determining factor 
+ 2.7 No Contact Policy 
+ Once this RFP has been issued, vendors, contractors, or their representatives shall not 
+ communicate with any Uncommon staff other than the designated project contact listed on the 
+ cover page. Any such communication shall disqualify the vendor from responding to this RFP. 
+ Uncommon staff, other than the designated project contact, shall not communicate with vendors 
+ or their representatives about this procurement once the RFP has been issued. 
+ 2.8 Alternative Proposals 
+ Offerors submitting conforming proposals may also submit alternative proposals as complete, 
+ separate offers if the alternative proposals offer technical improvements or modifications that 
+ are to the overall benefit of Uncommon. Alternative proposals  must be clearly labeled as an 
+ alternate and clearly describe the differences between it and the main proposal.  Uncommon 
+ reserves the right to accept or reject any alternative proposal. 
+ 2.9 Proposal Binding Period 
+ By submitting a proposal, each Offeror agrees that its proposal shall remain valid and may not 
+ be withdrawn for a period of one hundred twenty (120) calendar days after the proposal closing 
+ date and time. 
+ 2.10 Availability of Funds / Funding Out Clause 
+ The obligations of Uncommon under any award resulting from this RFP are subject to the 
+ availability of funds lawfully appropriated for this purpose. Uncommon may, during the contract 
+ period, terminate or discontinue services at the end of its then-current fiscal year upon sixty (60) 
+ days prior written notice to the selected vendor, provided that: 
+ ●  The lack of appropriated funds is the reason for termination; and 
+ ●  Uncommon agrees not to replace the terminated services with services of similar 
+ function from another vendor in the succeeding funding period. 
+ No agreement will be considered that does not include this funding-out provision. 
+
+ Section 3: Scope of Services 
+ 3.1 Overview 
+ USI is soliciting proposals for the following service areas. Vendors may propose for one or both 
+ areas of service. If submitting a joint proposal, one vendor must be designated as the primary 
+ vendor and will be responsible for the relationship with all other vendors listed as sub-vendors. 
+ Vendors shall include in their proposal evidence that their organization meets the requirements 
+ stated below. The evidence can include but should not be limited to the examples listed in each 
+ section. 
+ ●  Enterprise Managed Services  : Infrastructure administration,  systems management, 
+ cloud services, security, and compliance 
+ ●  End User Service and Support  : Service desk support  (phone and ticket-based), on-site 
+ technical services, and device management and support 
+ 3.2 E-Rate 
+ All services covered by E-rate funding are not included in this RFP. Any E-rate services will be 
+ covered by a separate proposal to maintain compliance with FCC program guidelines. 
+ 3.3 General Service Requirements 
+ The following general service requirements apply across all service areas: 
+ ●  All prices must clearly delineate all costs and be line-itemized where applicable 
+ ●  All managed equipment and associated infrastructure services must be monitored 
+ 24x7x365 
+ ●  Uncommon’s environment (including but not limited to all production network, servers 
+ and services)  availability is expected to be 99.9% excluding scheduled maintenance 
+ ●  All individuals assigned to this contract must submit to background checks at the 
+ vendor's expense and may only perform service upon successful clearance 
+ ●  Uncommon reserves the right to refuse any individual from performing services under 
+ this contract 
+ ●  The vendor is expected to provide appropriate representation at required meetings at no 
+ additional charge, including: ad hoc meetings, weekly status meetings, monthly 
+ meetings, quarterly emerging technology reviews with vendor senior leadership, and 
+ post-resolution meetings following system outages or emergency support 
+ ●  USI will not be directly billed for ancillary costs including but not limited to: physical 
+ movement of equipment within a building, travel time, cell phone costs, office supplies, 
+ required background checks, attendance at meetings, transportation, overtime, and 
+ training or certification costs 
+ ●  Sites may be added or removed at USI's discretion during the course of the contract 
+ ●  All enterprise engineers must be certified in their respective fields (i.e. Microsoft, Cisco, 
+ etc.). 
+ 3.4 Enterprise Managed Services 
+ The following minimum responsibilities are required to fully manage USI's environment through 
+ lifecycle management: 
+ Monitoring/Management 
+ ●  Dedicated operations center providing 24x7 monitoring and troubleshooting of any 
+ issues 
+ ●  Provide capacity management for all core services including Active Directory, DHCP, 
+ DNS, and TCP/IP addressing 
+ ●  Manage Active Directory domain controllers including OS updates, patching, and daily 
+ operations including user administration and password management across all locations 
+ ●  Monitor and maintain the Active Directory forest; perform regular health checks and 
+ deliver monthly health check reports with corrective actions 
+ ●  Provide recovery of services for incidents and outages 
+ ●  Develop, improve, and maintain automated monitoring services, threshold monitoring, 
+ and alert notification 
+ ●  Perform backup and recovery of all systems according to best practices for both 
+ on-premise and cloud systems 
+ ●  Vendor will maintain a standard procedure for managing outages including owning 
+ communication to relevant stakeholders 
+ Types of Evidence 
+ ●  A communication plan for outages 
+ ●  Example communication sent to stakeholders 
+ ●  Your strategy to maintain AD 
+ ●  Your NOC SLAs and SOP for outages 
+ ●  The tools available to your NOC for monitoring and notifications 
+ Design 
+ ●  The vendor shall proactively design and engineer the infrastructure to maintain the 
+ highest practical levels of reliability and efficiency. 
+ ○  This includes evaluating current architecture, identifying improvement 
+ opportunities, and recommending and implementing changes consistent with 
+ Uncommon's operational needs. 
+ ●  The vendor shall maintain a qualified engineering team with demonstrated expertise in 
+ Uncommon's environment. 
+ ●  The vendor shall design, implement, and maintain a comprehensive security architecture 
+ that protects Uncommon's infrastructure, data, and users across all locations — 
+ including data centers, cloud environments and school sites 
+ ●  The vendor will perform, as needed, changes and additions to the infrastructure  to 
+ accommodate new services and devices 
+ ●  The vendor will partner with Uncommon to recommend and implement infrastructure 
+ guidelines, standards, policies, and procedures 
+ Types of Evidence 
+ ●  Examples of network topographies you’ve designed, built and/or managed 
+ ●  Examples of proposals you’ve made to help organizations mature their infrastructure 
+ and/or pay down tech debt 
+ ●  Qualifications currently held by your network engineers 
+ Asset Management 
+ ●  Manage all infrastructure assets whether in the data center, in schools, or at remote 
+ location 
+ ●  Maintain documentation of systems architecture reflecting the most current state of USI's 
+ on-premise, cloud, and school systems, accessible by designated USI staff that are 
+ managed by the vendor 
+ ●  Maintain an accurate inventory of all equipment (e.g., switches, routers, servers, 
+ firewalls, etc) including production and spare units at all USI locations 
+ ●  Manage the full lifecycle of all infrastructure components, including proactive firmware 
+ and OS updates to supported versions, tracking End-of-Life (EOL) dates, and facilitating 
+ replacement and procurement of new devices 
+ Types of Evidence 
+ ●  What asset management tools are available to your team 
+ ●  Your strategy for keeping production networking equipment firmware/OS up to date 
+ ●  Examples of documentation you maintain for other environments 
+ Cybersecurity 
+ The selected vendor must provide comprehensive cybersecurity services aligned with the NIST 
+ Cybersecurity Framework (CSF). This scope includes: 
+ ●  24/7/365 Managed Detection & Response (MDR): Continuous monitoring and triage of 
+ all managed endpoints, servers, and network infrastructure. 
+ ●  Tenant Governance (Microsoft & Google): Operational management of security policies, 
+ conditional access, and other configuration for Microsoft 365 and Google Workspace as 
+ needed. 
+ ●  Threat Remediation: Execution of remediation actions (e.g.,investigating scope and 
+ severity, account lockdowns, policy adjustments, etc). 
+ ●  EDR Operations: Full management of the Endpoint Detection and Response (EDR) 
+ stack, with defined authority to isolate infected endpoints immediately upon threat 
+ detection. 
+ ●  Vulnerability & Lifecycle Management: Maintenance of a documented patching schedule 
+ for all OS and third-party applications, including an "emergency" track for Zero-Day 
+ exploits. 
+ ●  Data Resilience: Management of an Immutable Backup solution for all servers hosted by 
+ the MSP, as described in the RFP with quarterly restoration testing to ensure recovery 
+ from ransomware or catastrophic data loss. 
+ ●  Security Advisory (vCISO): Proactive recommendations for security posture 
+ improvements that balance K-12 regulatory requirements (FERPA/COPPA/NYS Ed Law 
+ 2-d) with public school budget constraints. 
+ ●  Compliance Standard: The vendor shall maintain SOC 2 Type II certification and provide 
+ Uncommon with the most recent audit report annually. 
+ Types of Evidence 
+ ●  What security tools are available to your clients, both at the endpoint and at the network 
+ level? 
+ ●  What backup systems do you employ for hosted and cloud-based servers and services? 
+ ●  Your SOP for compromised machines and/or accounts 
+ ●  Your OS patching philosophy/strategy 
+ Identity and Access Management 
+ ●  Process all staff account updates and changes (permission updates, name changes, 
+ location updates, etc) based on data sent daily from Uncommon 
+ ●  Manage M365 licensing procurement and assignment 
+ ●  Troubleshoot student access issues with Google and Clever and escalate to Uncommon 
+ as necessary 
+ ●  All account management (including the vendor’s own in regards to service and 
+ engineering accounts) should follow either the principle of least privilege or zero trust 
+ framework 
+ Types of Evidence 
+ ●  What identity providers you have expertise in 
+ ●  What experience you have automating account creation and provisioning 
+ Cloud Services 
+ ●  Manage Google Workspace environment including app configuration, staff and student 
+ policies and integrations as requested by Uncommon IT 
+ ●  Manage Microsoft environment including Azure/AD integration, exchange, staff policies 
+ and integrations as requested by Uncommon IT 
+ Types of Evidence 
+ ●  What integrations you’ve set up (e.g., Workday → Entra) 
+ ●  What your strategy is for maintaining a certain security posture in a cloud based service 
+ like Google Workspace 
+ Applications and Systems 
+ ●  Maintain self-serve software portal for staff 
+ ●  Maintain staff laptop image/configuration and conduct annual review with Uncommon 
+ ●  Work with Uncommon D&IT to approve and implement platforms/services requested by 
+ users 
+ ●  Partner in vetting and selecting new platforms/services 
+ ●  Maintain and support two Sharepoint sites 
+ ●  Maintain a VPN system for end users to access hosted resources while off-campus 
+ ●  Manage and support our content based web filter 
+ 3.5 End User Service and Support 
+ USI is requesting proposals for the support of USI-owned desktops, laptops, mobile devices, 
+ VOIP phones, peripherals, and end user support. USI is seeking a complete turnkey solution 
+ whereby the vendor manages day-to-day support functions in conjunction with USI oversight. 
+ Key Requirements 
+ ●  All individuals assigned to this contract must submit to background checks at the 
+ vendor's expense and may only perform service upon successful clearance 
+ ●  On-site staff must adhere to USI dress code guidelines, which require business casual 
+ dress. 
+ ●  Vendor must maintain an appropriate level of core staff that supports USI service 
+ performance goals, SLAs, and response times; staff placement will be mutually decided; 
+ every effort should be made to maintain the same core staff for the term of the contract; 
+ all staff changes require immediate notification to USI 
+ ●  Vendor shall maintain an accurate inventory of all covered equipment in an electronic 
+ database readable by designated USI staff 
+ Types of Evidence 
+ ●  Your staffing levels in each region we operate in 
+ ●  Your current SLAs and a recent performance analysis 
+ ●  What inventory tools are available for endpoint devices 
+ School-Level Service Delivery 
+ Uncommon operates 52 schools across 5 regions. On-site services are a critical component of 
+ service delivery for the school network. The selected vendor must: 
+ ●  Conduct scheduled on-site visits to each school on a regular basis (proposed frequency 
+ should be part of proposal) 
+ ●  Coordinate all on-site visit scheduling with the school's Director of Operations (DOO), 
+ who serves as the primary school-level point of contact for MSP technicians 
+ ●  Conduct on-site visits in a manner that minimizes disruption to the school day and 
+ reflects an understanding of the school environment 
+ ●  Ensure that all on-site staff adhere to USI dress code and conduct guidelines and treat 
+ school staff, students, and leaders with professionalism at all times 
+ ●  Manage and support all classroom technology, including WAPs, projectors, etc. 
+ ●  Partner with regions to develop support plans and logistics for Computer Based Testing 
+ (state testing, AP tests, regents, SATs, etc) 
+ Types of Evidence 
+ ●  The types of classroom technology you are prepared to support, either fully or best effort 
+ ●  Your current onsite schedule/frequency for other clients 
+ ●  What training or qualifications your onsite engineers have 
+ ●  Your support SLAs and/or escalation protocols 
+ 3.6 Project and Change Management 
+ ●  Perform project work in school buildings during breaks and after hours (summer, winter 
+ and spring break as well as holidays) 
+ ●  Provide clear criteria and definition of what constitutes a project vs. work that is included 
+ under the scope of the master agreement 
+ ●  USI takes very seriously the education of its students and the impact of service 
+ interruption on end users, and therefore takes change management very seriously. The 
+ service provider must detail their internal change control processes. All changes must be 
+ documented including: 
+ ○  Scope of change and reason for change 
+ ○  Communication plan 
+ ○  Change testing and validation plan 
+ ○  Risk assessment 
+ ○  Implementation plan with measurable milestones 
+ ○  Back-out and contingency plan, including conditions under which it must be 
+ implemented 
+ ○  Plan and test results must be approved by USI prior to implementation 
+ ○  Documentation of any problems encountered and deviations from the original 
+ plan 
+ ○  Plan for post-change support 
+ ○  Lessons learned 
+ Types of Evidence 
+ ●  Your change management process 
+ ●  Examples of large scale projects you’ve performed in schools 
+ ●  What project management resources (human and/or technology) are available to 
+ manage large scale projects 
+ ●  What resources are available during breaks and after hours, when needed 
+ 3.7 Vendor and Contract Management 
+ ●  Manage the relationship with our major technology partners including contracts, 
+ escalations, licensing and procurement: 
+ ○  Microsoft 
+ ○  Dell 
+ ○  Cisco 
+ ○  Juniper 
+ ○  SentinelOne 
+ ●  Periodically, vendor will perform market research for ancillary services such as web 
+ filtering, spam filtering or cloud printing and make recommendations 
+ ○  In the cases where Uncommon decides to transition to a different provider for 
+ one of these ancillary services, the vendor will manage integration and 
+ configuration 
+ ○  The vendor will also manage any system updates and troubleshooting or 
+ escalation with the service provider as needed 
+ ●  Partner with Uncommon on an as-needed basis to manage specific issues, 
+ implementations, and other vendor-related work 
+ Types of Evidence 
+ ●  A list of vendors you have an established relationship with 
+ 3.8 Staff Transition and Knowledge Management 
+ ●  Document processes for knowledge transfer for staff transitions 
+ ●  Produce, on demand, documentation for any processes pertinent to supporting the 
+ environment 
+ 3.9 Thought Partnership and Strategic Planning 
+ ●  Provide actionable recommendations to enhance infrastructure and architecture with the 
+ goals of improving reliability, redundancy, and performance while reducing costs. 
+ Recommendations must be tailored to Uncommon IT's specific context and remain 
+ realistic within established budget constraints. 
+ ●  Stay current on industry trends, emerging technologies, the evolving threat landscape, 
+ and provide timely guidance on how these developments may impact Uncommon IT's 
+ environment and/or create competitive opportunities. 
+ ●  Develop and maintain a multi-year technology roadmap aligned with Uncommon IT's 
+ business objectives, revisiting and updating it no less than annually or as organizational 
+ priorities evolve. 
+ ●  Gather and report on emerging technology trends in schools with context and 
+ recommendations for management (for example, bathroom vape detectors) 
+ 3.10 Vendor Onboarding and Offboarding 
+ Onboarding 
+ The selected vendor must provide a detailed onboarding plan that includes at minimum: 
+ ●  Scope of work 
+ ●  Communication plan 
+ ●  Coordination plan with the current vendor (if applicable) 
+ ●  Detailed schedule of activities 
+ ●  Expected service interruptions, including anticipated dates and durations 
+ ●  Risk analysis and risk register 
+ ●  Knowledge transfer and training plan 
+ ●  Resource management plan 
+ ●  Documentation 
+ Onboarding costs must be included in the cost proposal and listed as one-time fixed-price costs. 
+ Offboarding 
+ At the conclusion of any contract with USI, the selected vendor commits to the following 
+ offboarding obligations: 
+ ●  Provide complete documentation of USI's environment, configurations, credentials, 
+ network diagrams, and asset inventories within 45 days of contract termination notice 
+ ●  Provide transition assistance for a period of 90 days following contract end, including 
+ cooperation with and support of any incoming vendor 
+ ●  Return all USI data in a usable format and certify deletion of vendor-held copies within 
+ 30 days of contract end 
+ ●  Take no action that would degrade service quality or harm USI's environment during the 
+ transition period 
+ ●  These obligations apply regardless of the reason for contract termination 
+ Section 4: Technical Environment 
+ 4.1 Current Environment Overview 
+ Uncommon's Information Technology Department encompasses Support, Engineering, Data 
+ Management, Business Intelligence, and Project Management functions. 
+ Uncommon is primarily a Microsoft Windows environment. The current technology environment 
+ supports approximately: 
+ Category  Count 
+ Staff Laptops  ~3,200 
+ Student Chromebooks  ~19,000 
+ Total Staff  ~3,000 
+ Total Students  ~20,000 
+ Network Infrastructure 
+ Our network is laid out as follows: 
+ ●  Each school has at least 1Gb fiber for primary internet and telephony services 
+ ●  Each school has a 100Mb cable circuit for backup and guest network traffic 
+ ●  All traffic from every school and regional office is routed back to a data center in Virginia 
+ via EVPL and then to the internet via redundant firewalls 
+ ●  All traffic to hosted servers is routed to a New York data center which also has redundant 
+ firewalls 
+ ●  Each data center provides backup internet service for the other 
+ Section 5: Vendor Qualifications & 
+ Requirements 
+ 5.1 Minimum Qualifications 
+ The primary attributes USI seeks in a vendor include but are not limited to: 
+ ●  Demonstrated, verifiable capability to provide support and maintenance services similar 
+ to those described in this RFP 
+ ●  Company business and financial performance history consistent with solid, stable, and 
+ reliable operations over a multi-year period 
+ ●  Existing, stable staff of highly trained professionals with a demonstrated successful track 
+ record of customer service and the technical skills necessary to support the products 
+ and services described in this RFP 
+ ●  Experience providing managed infrastructure services for K-12, public, and/or 
+ government entities 
+ ●  Experience providing on-site engineering for K-12, public, and/or government entities 
+ ●  Experience providing Service Desk support for K-12, public, and/or government entities 
+ ●  Understanding of federal funds solicitation guidelines and policies 
+ ●  Proven record of implementing industry best practices, reducing costs, and increasing 
+ service levels 
+ ●  Evidence of a comprehensive Equal Employment Opportunity (EEO) policy and a history 
+ of compliance with federal and state non-discrimination laws in hiring and subcontracting 
+ 5.2 Licenses, Certifications & Financial Requirements 
+ ●  Each offeror and personnel performing services must be properly licensed to do 
+ business in applicable states New York, New Jersey, and Massachusetts 
+ ●  Each offeror must complete all required forms at the end of this document 
+ ●  Each offeror must submit with their proposal a copy of and maintain appropriate licenses 
+ and certificates during the term of the contract; failure to maintain these requirements 
+ shall be cause for immediate termination 
+ 5.3 Subcontractor Requirements 
+ ●  The vendor shall notify Uncommon in writing if subcontractors will be used. 
+ ●  The vendor shall list the portion of work each subcontractor is to perform and assume 
+ complete responsibility for that subcontractor's portion. 
+ ●  No subcontractor may be engaged unless that subcontractor and each of its employees 
+ providing services certifies in writing agreement to guard the confidentiality of USI's 
+ proprietary information to the same standard of care as binds the prime vendor under 
+ this contract. 
+ 5.4 Customer References 
+ Please provide at least three (3) references for the services proposed. References must meet 
+ the following criteria: 
+ ●  Services must have been provided within the last three (3) years 
+ ●  All referenced organizations should have business processes and needs similar to or 
+ exceeding those of Uncommon in terms of functionality, complexity, and transaction 
+ volume 
+ ●  At least one reference should be from a K-12 school or charter organization, serving 
+ 10,000 or more students across multiple sites. 
+ ●  Additional references can be from organizations of at least 20,000 users with 5000 or 
+ more devices. 
+ For each reference, provide: 
+ ●  Customer name and address 
+ ●  Contact name, phone number, and email 
+ ●  Time period of engagement 
+ ●  Services provided 
+ ●  Number of students and school sites (if relevant) 
+ ●  Number and type users supported 
+ ●  Service Delivery Model (How did this reference receive service) 
+ 5.5 Staff Qualifications 
+ Support Technician Minimum Qualifications: 
+ ●  Knowledge of and experience repairing desktop, laptop, mobile devices, VOIP, 
+ peripherals, and related equipment 
+ ●  Must have A+ and Net+ certification or equivalent work experience 
+ ●  Must have a valid driver's license and ability to travel to any site within assigned region 
+ ●  Ability to lift and/or move computer equipment 
+ ●  Interpersonal skills necessary to work effectively with all levels of USI staff in a school 
+ environment 
+ ●  Must pass Uncommon background checks 
+ ●  Must be covered under the vendor’s crime policy 
+ Customer Service Desk Agent Minimum Qualifications: 
+ ●  Strong decision making, problem solving, and analytical skills 
+ ●  Strong organizational skills with emphasis on detail and follow-up 
+ ●  Ability to troubleshoot technology and connectivity problems 
+ ●  Positive attitude; ability to exercise patience and professionalism during stressful 
+ situations 
+ Section 6: Vendor Questionnaire 
+ All vendors must answer all questions. Robust answers including evidence and examples will 
+ score substantively higher than those without. 
+ 6.1 Company & Experience 
+ Q1. Describe your organization, ownership structure, size, and years in operation. 
+ Q2. Describe your current client-to-staff ratios and explain how your current operational 
+ capacity supports taking on a client of Uncommon's size (52 schools, ~2,800 staff) without 
+ degrading service to existing clients. 
+ Q3. How many K-12 school districts or charter school clients do you currently serve? List 
+ the school districts, their student population size, and the number of locations serviced. 
+ Q4. Describe your experience in states where Uncommon operates: New York, New 
+ Jersey, and Massachusetts. 
+ 6.2 Service Delivery Model 
+ Q5. Describe your service desk structure, including staffing model, hours of coverage, tier 
+ levels, and escalation paths. 
+ Q6. Describe your Network Operations Center (NOC) including connectivity/blend, HVAC, 
+ power, redundancy (2N power, N+1 blend/ac/battery/etc.), security and compliance, and fire 
+ suppression. Additionally, describe the staffing model and coverage for 24x7 monitoring 
+ and escalation paths. 
+ Q7. How do you manage and schedule on-site technician visits to school locations? How 
+ do you coordinate with school-level staff (e.g., Directors of Operations, Vice Principals, 
+ Office Managers)? 
+ Q8. Please share two to three examples of moderately complex user facing documentation 
+ with us that are representative of your documentation and communication style. 
+ Q9. Provide an example of how your team provided support to resolve an unexpected 
+ urgent issue. What was the scenario? How did the team approach getting to resolution? 
+ What was the solution proposed? 
+ Q10. Please share your current SLAs for both end-user support and NOC issues in a table 
+ similar to the one below. Provide SLA performance data from the past 12 months for at 
+ least one comparable client, showing target vs. actual performance by priority tier. How do 
+ you measure, track, and report on SLA performance to clients? 
+ Priority  SLA - Resolution  SLA - First Reply  Description 
+ Outage  x hours  x mins  Wide scale business outage or significant 
+ impact to business; multiple 
+ sites/customers down. For example, a 
+ network or infrastructure systems are 
+ down, carrier outages, key servers down 
+ in the data center or high circuit 
+ utilization issues creating poor 
+ performance for majority of 
+ users. 
+ Urgent  x business day  x hours  Time-sensitive issues important to 
+ productivity or causing a significant 
+ customer concern, and general single-user 
+ issues. 
+ High  x business days  x hours  Issues that don't have a significant business 
+ impact include software installs or 
+ upgrades, report requests, quality issues on 
+ phones, and hardware fulfillment requests 
+ depending on vendor availability. 
+ Normal  x business days  x hours  This includes adding new users, security 
+ group membership changes, distribution list 
+ membership changes, and user 
+ terminations. 
+ Low  x business days  Billing issues, project updates (which 
+ should be updated a minimum of every 30 
+ days), scheduled outages/maintenance with 
+ customers, and internal activities that are 
+ not customer affecting or generally 
+ time-sensitive. 
+ 6.3 Cybersecurity & Data Protection 
+ A. Governance & Compliance 
+ Q11. Provide proof of SOC 2 Type II or ISO 27001 certification. If you utilize a sub-service 
+ provider for SOC/MDR services, provide their certifications as well. 
+ Q12. Describe the specific steps you take when onboarding a new New York K-12 client 
+ under Ed Law 2-d, including how you identify which of your tools and subprocessors 
+ require disclosure. How do you handle a situation where a subprocessor you rely on does 
+ not have a compliant DPA? 
+ Q13. Provide details on your Cyber Errors & Omissions insurance coverage limits. Confirm 
+ that your current coverage meets or exceeds the minimums specified in Section 9.2 of this 
+ RFP. If it does not, describe how you would address this gap prior to contract execution. 
+ Q14. Describe the specific steps you take to bring a new K-12 client into compliance with 
+ NYS Ed Law 2-d, including the public posting requirement. Describe any gaps in your 
+ current compliance posture relative to NJ S332 and how you are addressing them. If a 
+ subprocessor you rely on does not have a compliant DPA, how do you handle that? 
+ B. Monitoring & Threat Detection 
+ Q15. Describe your SOC (Security Operations Center) model. Is it 24/7/365? Is it 
+ US-based? 
+ Q16. Describe your MDR/EDR stack. 
+ Q17. Define your SLA for: 
+ ●  Critical Security Alert Detection 
+ ●  Notification to USI IT Team 
+ ●  Initial Threat Containment (e.g., endpoint isolation) 
+ C. Vulnerability & Lifecycle Management 
+ Q18. Describe your patching cadence for Critical, High, and Medium vulnerabilities. What is 
+ your process/strategy around  "Zero-Day" exploits outside of the standard patch cycle? 
+ Q19. What is your strategy for managing the security for non-standard endpoints (e.g., 
+ classroom IoT, interactive whiteboards, security cameras)? 
+ D. Incident Response & Recovery 
+ Q20. Describe the first four steps your team would take if Uncommon experienced a 
+ ransomware event at 2:00 a.m. on a school day. Who is notified, in what order, and by what 
+ method? At what point would you recommend involving law enforcement or a forensic 
+ retainer? 
+ Q21. Describe your Immutable Backup strategy. How do you ensure backups are isolated 
+ and cannot be encrypted or deleted during a domain-wide compromise? 
+ Q22. Define your commitment to RTO (Recovery Time Objective) and RPO (Recovery 
+ Point Objective) for core school systems. 
+ E. Identity & Awareness 
+ Q23. Describe the security framework and tooling your staff would use to secure, manage, 
+ and audit privileged access to Uncommon servers and network equipment. Does your 
+ organization enforce MFA or Zero Trust principles for privileged access? Do you utilize an 
+ Enterprise Privileged Access Management (EPAM) solution for storing and rotating 
+ privileged credentials? Detail your audit logging capabilities for all privileged access 
+ sessions. 
+ Q22. How do you manage and enforce MFA across a dual-tenant (Microsoft/Google) 
+ environment? In a K-12 environment, what challenges do you see? 
+ 6.4 Communication 
+ Q24. Uncommon Schools places a high priority on communication. Provide two examples 
+ of written communication you have sent to end users in the past year — one routine and 
+ one during an active incident or outage. Do not summarize them; include the actual 
+ communication but redact client information or other identifying or sensitive information. 
+ Q25. Describe your communication cadence with school-level staff () during a non-urgent 
+ period. How do you ensure school leadership feels informed without being overwhelmed? 
+ Q26. Describe a situation where a communication failure on your team's part caused or 
+ worsened a client issue. As a result, what corrective actions did you take to reduce the 
+ chance of communication failures? 
+ 6.5 Technical Capabilities 
+ Q27. Describe your experience managing a K-12 Microsoft Windows/Active Directory 
+ environment of comparable scale to Uncommon's, as described in Section 4. What were 
+ the biggest challenges you faced and how did you manage them? 
+ Q28. Describe your experience managing a Google Workspace environment including 
+ experience with the Admin Console, any scripting capabilities, experience managing the 
+ Directory, and experience with managing the user-lifecycle in light of changes to Google’s 
+ licensing model. 
+ Q29. List all tools and systems you would use to provide the services in this proposal, and 
+ indicate whether these are included in the cost proposal. 
+ Q30. Describe your approach to infrastructure lifecycle management, including how you 
+ identify and recommend efficiencies and cost savings for clients. 
+ Q31. Describe your approach to emerging technologies, including how you incorporate AI 
+ and automation into your service delivery. 
+ 6.6 Performance & Accountability 
+ Q32. Describe a situation where you failed to meet a client's expectations and how you 
+ handled it. 
+ Q33. Describe your escalation process when a client issue is not resolved within expected 
+ timeframes. Provide a specific example and include any internal debrief processes. 
+ Q34. Describe a time you advised a client not to pursue a strategy they expressed interest 
+ in. 
+ 6.7 Transition & Onboarding 
+ Q35. How will you know when you are fully onboarded? 
+ Q36. Describe how you would approach knowledge transfer and transition from the 
+ incumbent vendor? 
+ Q37. Describe in specific terms what your offboarding process looks like in practice. What 
+ does the documentation package you hand to an incoming vendor typically contain? What 
+ have been the biggest challenges you've encountered during a client transition, and how 
+ did you handle them? 
+ Beyond the attributes and experience shared in the preceding answers, please describe and 
+ provide documentation to support any additional qualifications or services you offer that would 
+ bring value to Uncommon, and whether each is included in the submitted cost proposal. 
+ Section 7: Pricing 
+ 7.1 Cost Proposal Instructions 
+ Overview and Instructions 
+ Proposal Structure:  Proposers may submit pricing for  one or both service areas. If submitting 
+ for a single area, complete only the applicable tab(s) in the workbook and leave the others 
+ blank. If submitting a joint proposal, the primary vendor must submit a single integrated cost 
+ proposal covering both areas, with all sub-vendors identified in the Assumptions tab. 
+ Proposers must complete all required tabs of the Cost Proposal Workbook in their entirety. 
+ Incomplete cost proposals may be deemed non-responsive and disqualified from further 
+ evaluation. 
+ The Cost Proposal is organized into two separately priced areas: 
+ •  Section A — Enterprise Managed Services 
+ •  Section B — End User Service and Support 
+ Pricing for each area must be submitted as a fixed monthly recurring fee per service category, 
+ along with any applicable one-time or non-recurring costs. Year 1 pricing must be firm and fixed. 
+ Pricing for Years 2 through 5 must reflect either (a) firm fixed pricing or (b) a not-to-exceed 
+ annual escalation rate as specified on the Multi-Year Pricing tab of the workbook. 
+ All fees quoted in this section are understood to cover the full scope described in Section 3 
+ (Scope of Services) of this RFP, including all labor, materials, overhead, profit, and any other 
+ costs necessary to deliver the required services. 
+ Cost Proposal Workbook 
+ All cost proposal data must be submitted using the posted Microsoft Excel workbook: 
+ Uncommon MSP RFP -Cost Proposal.xlsx  . Do not substitute alternative formats (  note  : a PDF 
+ of the cost proposal that includes the required signatures is required in addition to the Excel 
+ file). The workbook contains the following tabs, which must be completed as indicated: 
+ Workbook Tab  Purpose 
+ Summary  Auto-populates from all other tabs. Do not enter data here — review 
+ only. 
+ A - Enterprise Managed  Section A pricing: monthly recurring fees for all infrastructure and 
+ managed service categories. 
+ B - End User Support  Section B pricing: monthly recurring fees for service desk, onsite, 
+ device, and testing support. 
+ Project Mgmt  Monthly PM retainer fee and/or hourly T&M rate schedule. 
+ Workbook Tab  Purpose 
+ Offboarding  Declare whether offboarding transition costs are included in base 
+ fees or priced separately. 
+ Multi-Year Pricing  State escalation methodology for Years 2–5 (fixed rate or 
+ not-to-exceed % increase). 
+ Assumptions  Required exhibit: staffing model, coverage hours, scope 
+ inclusions/exclusions, and other mandatory disclosures. 
+ Cost Summary 
+ The Cost Summary is generated automatically from Sections A, B, and C of the workbook. 
+ Proposers do not enter data on the Summary tab  . Annual  totals reflect twelve (12) monthly 
+ recurring fees plus any applicable one-time costs for that year. Review the Summary tab after 
+ completing all detail tabs to confirm figures are accurate before submission. 
+ Section A — Enterprise Managed Services & Project Management 
+ Provide a fixed monthly fee for each service category on the 'A - Enterprise Managed' tab. Fees 
+ must reflect all staffing, management, tooling, licensing (where applicable), overhead, and 
+ service delivery costs for the full scope defined in Section 3.4 of this RFP. Annual totals and the 
+ 5-Year Total auto-calculate from the monthly fees entered. Enter Year 1  firm fixed  monthly fees 
+ for each service category. Enter Years 2–5 fees or leave blank  if using the escalation rate 
+ method on the Multi-Year Pricing tab  . 
+ Project Management Tab 
+ Project and change management work performed outside of day-to-day managed service 
+ operations must be priced separately on the 'C - Project Mgmt' tab. This includes break-week 
+ projects (summer, winter, and spring), large-scale implementations, and changes subject to the 
+ formal change control process described in Section 3.6 of this RFP. 
+ Proposers must clearly indicate on the workbook tab and in the Assumptions Exhibit whether 
+ project management is included in base monthly fees or priced on a time-and-materials basis. 
+ Proposers may not leave this section blank. 
+ Enter the monthly PM retainer fee (enter $0 if T&M only). Enter hourly rates for break-week, 
+ after-hours, and emergency project work — these rates will be incorporated into the contract. 
+ Section B — End User Service and Support 
+ Provide a fixed monthly fee for each service category on the 'B - End User Support' tab. Fees 
+ must reflect all staffing, scheduling, management, and service delivery costs for the full scope 
+ defined in Section 3.5 of this RFP. Onsite visit frequency must be stated in the Assumptions tab 
+ and should align with the proposed schedule described in the Scope of Services. Enter Year 1 
+ firm fixed  monthly fees for each service category.  Enter Years 2–5 fees or leave blank  if using 
+ the escalation rate method on the Multi-Year Pricing tab  . 
+ Multi-Year Pricing 
+ Year 1 pricing must be firm and fixed for the initial contract term. For Years 2 through 5, indicate 
+ your pricing approach using one of the two methods on the Multi-Year Pricing tab of the 
+ workbook. Proposers may not leave multi-year pricing blank or state that pricing is “to be 
+ negotiated.” 
+ Method 1 — Fixed Annual Pricing: Provide firm, fixed monthly fees for each year directly in the 
+ Section A, B, and C tabs. 
+ Method 2 — Annual Escalation Rate: State the not-to-exceed percentage rate by which all fees 
+ will increase each year, not to exceed [INSERT CAP, e.g., 4% or CPI + 1%, whichever is less]. 
+ Note: Escalation rates must be applied consistently across all service categories. Mixed 
+ escalation rates are not permitted without written justification in the Assumptions tab. 
+ Offboarding Costs 
+ Section 3.10 of this RFP requires the selected vendor to provide 90 days of transition 
+ assistance, complete environment documentation within 45 days of contract termination notice, 
+ and return all USI data within 30 days of contract end. These are contractual obligations and not 
+ optional. 
+ Proposers must declare on the Offboarding tab of the workbook whether these costs are 
+ included in the base monthly fee or will be invoiced separately. Proposals that do not address 
+ offboarding costs will be subject to clarification requests. 
+ For each obligation, indicate Y (included in base fee) or N (separately priced) and provide the 
+ quoted cost if separately priced. The Summary tab pulls the total automatically. 
+ Required Attachment: Assumptions Exhibit 
+ Each Proposer must complete the Assumptions tab of the workbook as part of the Cost 
+ Proposal. The Assumptions Exhibit is a mandatory, scored component of the proposal. 
+ Proposals submitted without a completed Assumptions tab will be deemed non-responsive. 
+ The Assumptions tab must address all required elements for each proposed service area. 
+ Stated assumptions establish the scope baseline from which contract adjustments and 
+ offboarding obligations will be administered. 
+ Complete all required exhibit elements. Address staffing model, coverage hours, geographic 
+ coverage, volume assumptions, scope inclusions and exclusions, cybersecurity tooling, 
+ escalation methodology, offboarding cost treatment, and key subcontractors. 
+ Proposers may also include additional assumptions in the designated section at the bottom of 
+ the Assumptions tab. Additional assumptions may provide context for proposed pricing — for 
+ example, dependencies on USI, transition conditions, or environmental prerequisites. However, 
+ additional assumptions may not exclude, reduce, or redefine any obligation stated in Section 3 
+ (Scope of Services) of this RFP. USI reserves the right to seek clarification on any assumption 
+ prior to award. 
+ 7.2 Pricing Requirements 
+ ●  All prices must clearly delineate all costs and be line-itemized by service category 
+ ●  Vendors must itemize any one-time costs (e.g., transition-in costs) separately from 
+ recurring costs 
+ ●  Vendors must describe the cost driver (e.g. # of users, device count) used to determine 
+ the Monthly Recurring Charge 
+ ●  Vendors must identify any services not included in the base proposal and provide pricing 
+ for those services separately 
+ ●  Price is one determining factor in the contract award;  Uncommon is seeking the best 
+ overall value 
+ Section 8: Evaluation Criteria 
+ 8.1 Evaluation Process Overview 
+ Proposals will be evaluated through a two-phase process: 
+ Phase I: Written Proposal Evaluation  All proposals  will be reviewed for completeness and 
+ compliance. Compliant proposals will be scored by the Vendor Selection Committee using a 
+ normed numerical rubric Vendors may be asked to clarify specific sections; responses to 
+ clarification requests will be included in the overall scoring. 
+ Following Phase I, the Vendor Selection Committee will identify a shortlist of finalist vendors 
+ who will be invited to participate in Phase II. 
+ Phase II: Finalist Presentations  Finalist vendors  will be invited to deliver formal presentations 
+ to the Vendor Selection Committee. Presentations will be evaluated using a scorecard that 
+ includes both the criteria from Phase I and presentation-specific criteria including team quality, 
+ communication, and demonstrated understanding of Uncommon's environment. 
+ Following presentations, the Vendor Selection Committee will conduct reference checks on 
+ finalist vendors before making a final recommendation. 
+ 8.2 Evaluation Criteria & Weights 
+ Proposals will be scored based on the following criteria: 
+ Category  Weight 
+ Proposed Solution & Technical Requirements 
+ ●  Technical & Cybersecurity Capability (20%) 
+ ●  Infrastructure Management (15%) 
+ 35% 
+ Cost & Value  25% 
+ Vendor Qualifications & Experience 
+ ●  Service Delivery Model & Responsiveness (10%) 
+ ●  School Environment Fit (10%) 
+ 20% 
+ Strategic Alignment & Capacity 
+ ●  Strategic Partnership & Thought Leadership 
+ (10%) 
+ ●  Communication & Transparency (10%) 
+ 20% 
+ 8.3 Preliminary Evaluation 
+ A preliminary evaluation will determine whether each proposal is complete and compliant with 
+ the instructions in this RFP. Proposals that are incomplete or do not comply with the instructions 
+ or terms and conditions may be rejected and excluded from further consideration. 
+ Proposals which include limited responses to requirements such as "concur" or "will comply" 
+ without substantive explanation will receive lower scores than proposals that demonstrate a 
+ genuine understanding of the requirements and include specific plans to meet or exceed them. 
+ Detailed scoring descriptors for each criterion are maintained internally by the Vendor Selection 
+ Committee and are not published as part of this RFP. 
+ 8.4 Basis of Award 
+ Uncommon is seeking the vendor proposal and demonstrated services that will deliver the 
+ highest quality services most closely aligned with the goals and direction of Uncommon, while 
+ delivering the best value with all factors considered. The Vendor Selection Committee will 
+ present its recommendation to Uncommon IT Leadership for approval. 
+ Following the complete evaluation process, Uncommon will begin contract negotiations with the 
+ chosen vendor. 
+ Section 9: Contract & Legal Requirements 
+ 9.1 Overview 
+ The selected vendor will be required to execute a contract with Uncommon Schools, Inc. 
+ Uncommon will prepare and negotiate a contract with the selected vendor. The RFP document, 
+ the vendor's proposal, and the Terms and Conditions in Section 10 are all considered part of the 
+ final agreement. 
+ Uncommon reserves the right to add terms and conditions during contract negotiations, 
+ provided they are within the scope of the RFP and do not affect the proposal evaluation. 
+ By submitting a proposal and entering into a contract, the vendor warrants that it has read and 
+ understands the requirements set forth herein and agrees to comply with all stated requirements 
+ and provisions.  The vendor further understands that the contract will be between the vendor 
+ and Uncommon on each school’s behalf and general invoices will be submitted to Uncommon. 
+ However, each school may avail itself of the pricing and services set forth in the agreement 
+ directly as needed and, subject to the contract’s requirements, vendors may be asked to provide 
+ such services directly. All pricing and services will be in accordance with all applicable 
+ purchasing laws, rules and regulations depending on the individual school’s location. 
+ 9.2 Required Contract Provisions 
+ The selected vendor must agree to the following as conditions of contract: 
+ ●  Performance against the SLAs:  SLAs will be evaluated  at the end of each calendar 
+ month. Each SLA will be evaluated independently. Uncommon may terminate the 
+ contract due to repeated failures to meet SLAs. 
+ ●  FERPA Data Processing Agreement  : The selected vendor  will execute a 
+ FERPA-compliant data processing agreement that explicitly governs the handling, 
+ storage, access, return, and deletion of student data. The vendor must sign the Parents’ 
+ Bill of Rights and a Supplemental Information form. 
+ ●  COPPA Compliance:  Vendor warrants that all services  comply with the Children’s 
+ Online Privacy Protection Act (COPPA). Vendor shall only collect student data for the 
+ School’s educational purposes and shall not use such data for any commercial or 
+ secondary purpose. 
+ ●  State data privacy compliance  : The selected vendor  must comply with all applicable 
+ federal and state student data privacy laws, including New York Education Law § 2-d 
+ and Part 121 regulations, the New Jersey Student Online Privacy Protection Act 
+ (A4978), the New Jersey Data Protection Act (S332, effective January 2025), and 
+ Massachusetts Student Records Regulations (603 CMR 23.00). Vendors should note 
+ that New York § 2-d requires execution of a Data Privacy and Security Agreement that 
+ will be posted publicly on Uncommon's website, and that vendor contracts will include 
+ breach notification timelines more stringent than the standard 30-day window. 
+ State-specific data processing agreements will be required as a condition of contract 
+ award. 
+ ●  NJ Political Contribution Disclosure:  For services  impacting New Jersey entities, the 
+ successful Offeror must submit a Chapter 271 Political Contribution Disclosure Form at 
+ least ten (10) days prior to contract award. Failure to provide this disclosure timely may 
+ disqualify the proposal. 
+ ●  Insurance minimums  : 
+ ○  Commercial General Liability (CGL)  : $2 million 
+ ○  Errors and Omissions  : $2 million per occurrence /  $4 million aggregate 
+ ○  Technology Cyber Liability  (see sub-bullets): $3M  per occurrence / $5 million 
+ aggregate 
+ ■  Data breach notification costs 
+ ■  Ransomware/extortion payments 
+ ■  Regulatory defense and penalties (FERPA-relevant) 
+ ■  Third-party liability for client data exposure 
+ ○  Workers’ Compensation  : As required by applicable law in New York, 
+ Massachusetts, and New Jersey 
+ ○  Commercial Auto Liability  : $1 million combined single  limit 
+ ○  Additional Insured  : Uncommon Schools must be named as an additional 
+ insured on the CGL and cyber policies. 
+ ○  Waiver of Subrogation  : Required on all applicable policies. 
+ ○  30-day notice of cancellation  : Vendor must notify Uncommon if any policy is 
+ cancelled or materially changed. 
+ ○  Certificate of Insurance  : Delivery is required within 10 business days of contract 
+ execution, and annually at renewal. 
+ ○  Umbrella/Excess Liability  : $2 million umbrella/excess liability coverage 
+ ●  Offboarding and transition obligations  :  The primary obligation during offboarding is to 
+ ensure uninterrupted operational services for Uncommon Schools. The vendor must provide 
+ all necessary transition support for a minimum of 90 days post-termination, cooperating fully 
+ with the designated successor vendor until Uncommon conﬁrms operational handover is 
+ complete. This assistance includes the prompt return of all USI data in a usable format and a 
+ written certiﬁcation that all vendor-held copies have been permanently deleted within 30 
+ days following the contract end. 
+ ●  Background check compliance  : All individuals, including  any subcontractors, assigned 
+ to perform services under this contract must pass Uncommon Schools criminal 
+ background checks at the vendor's expense prior to performing any services at 
+ Uncommon locations. 
+ ●  Indemnification  : The Vendor shall assume all risk  of, and responsibility for, and agrees 
+ to indemnify, defend and save harmless Uncommon Schools, each member school at 
+ any specific site at which work under the Agreement is being done, and the agents, 
+ employees and members of each, from and against any and all claims demands, suits, 
+ actions, recoveries, judgments, and costs and expenses (including but not limited to, 
+ reasonable attorney’s fees) in connection with loss of life or property or injury or damage 
+ to any person, body or property, which arise from, or result directly or indirectly from: (i) 
+ the work  and/or materials supplied under the contract; (ii) vendor’s or any subcontractor 
+ of vendor’s intentional or negligent acts or omissions; or (iii) the vendor’s or any 
+ subcontractor of vendor’s violation of , or failure to comply with, any applicable law, 
+ statute, rule, regulation, ordinance or code which results in, or has the potential to result 
+ in, any adverse finding or penalty assessed against Uncommon Schools or its member 
+ schools by any government agency or subdivision thereof. This indemnification 
+ obligation is in addition to and not limited by the insurance obligation contained in the 
+ agreement. 
+ 9.3 Vendor Management & Governance 
+ The selected vendor agrees to the following ongoing governance requirements: 
+ ●  Designate named account contacts for the Uncommon relationship, including a primary 
+ account manager and technical escalation contact 
+ ●  Participate in regular governance cadence including: weekly operational check-ins, 
+ monthly performance reviews, and quarterly strategic reviews with vendor senior 
+ leadership 
+ ●  Provide monthly SLA performance reports to USI IT leadership in a format approved by 
+ USI 
+ ●  Notify USI immediately and in writing of any changes to key account personnel 
+ 9.4 Offer Protests 
+ Any Offeror wishing to protest the award of this contract must submit a written protest to the 
+ Project Manager within five (5) business days of the notification of award. Uncommon Schools 
+ will review the protest and issue a final written decision. 
+ Section 10: Submission Requirements 
+ 10.1 Proposal Format 
+ Proposals must be organized in the following order, with sections clearly labeled: 
+ ●  Section 1: RFP Cover Sheet (signed) 
+ ●  Section 2:  Form A: Proposal Response Form 
+ ●  Section 3: Table of Contents 
+ ●  Section 4: Executive Summary 
+ ●  Section 5: Technical Proposal 
+ ●  Section 6: Forms  B  and  C 
+ ●  Section 7: Questionnaire Answers 
+ ○  If your answers include any confidential materials, label as such and redact as 
+ needed to protect privacy 
+ ●  Appendix A: Separately: Cost Summary (MS Excel format and signed PDF) 
+ ●  Appendix B: Separately: New Jersey required Forms 1-11 (downloaded separately) 
+ 10.2 Submission Deadline & Method 
+ Proposals must be received no later than  Tuesday,  June 23, 2026 at 3:00pm Eastern Time  . 
+ Submit electronically to:  msp.rfp.2026@uncommonschools.org  Subject line: Uncommon Schools 
+ Managed Services RFP # [2026-06-USI] 
+ Written proposal: PDF format 
+ Cost proposal: MS Excel (submitted separately) and signed PDF of the cost proposal 
+ Late proposals will not be accepted. Proposals received by telephone or fax will not be 
+ accepted. 
+ It is the responsibility of the offerors to monitor the publishing locations listed in Section 2 and 
+ review all published addenda and include all relevant responses and information in the 
+ proposal. 
+ There shall be no charge for the preparation of proposals. 
+ The proposals will be publicly opened via virtual conference on June 23rd, 2026. A link to the 
+ opening conference will be provided to all Offerors who submitted a proposal via separate email. 
+ Interested parties may also request the link to the conference by emailing 
+ msp.rfp.2026@uncommonschools.org  at least twenty-four  (24) hours prior to the date on which 
+ the proposal opening is scheduled. In accordance with New Jersey public records law, except 
+ for designated proprietary information, each proposal will be made available to the public or any 
+ interested vendor for review upon request. 
+ 10.3 Proprietary Information 
+ Any portion of the proposal that the Offeror considers confidential or proprietary must be 
+ explicitly marked as such on each pertinent page and segregated from the remainder of the 
+ proposal, accompanied by an executed Non-Disclosure Agreement for Confidential Materials. 
+ A statement that the entire proposal is proprietary is not acceptable and will result in a request 
+ to remove such a statement before the proposal can be evaluated. 
+ All proposals become the property of Uncommon. 
+ Appendix A: Master Site List 
+ City  Network  Name  Grade 
+ Span 
+ Students  Staff 
+ Boston  Roxbury Prep  Roxbury Prep Dorchester  MS  343  45 
+ Boston  Roxbury Prep  Roxbury Prep Proctor Street  MS  287  42 
+ Boston  Roxbury Prep  Roxbury Prep High School  HS  568  103 
+ Boston  Roxbury Prep  Roxbury Prep Regional Office  16 
+ Camden  Camden Prep  Camden Prep Pre-K  PK  ~30  ~8 
+ Camden  Camden Prep  Camden Prep Copewood 
+ Elementary School 
+ ES  351  46 
+ Camden  Camden Prep  Camden Prep Mt. Ephraim 
+ Elementary School 
+ ES  232  30 
+ Camden  Camden Prep  Camden Prep Copewood 
+ Middle School 
+ MS  324  35 
+ Camden  Camden Prep  Camden Prep Mt. Ephraim 
+ Middle School 
+ MS  253  35 
+ Camden  Camden Prep  Camden Prep High School  HS  393  62 
+ Camden  Camden Prep  Camden Prep Regional Office  11 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Bed-Stuy Pre-K  PK  49  8 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Crown Heights 
+ Pre-K 
+ PK  78  18 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Excellence Pre-K  PK  60  11 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Brownsville North 
+ Elementary School 
+ ES  362  46 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Brownsville South 
+ Elementary School 
+ ES  400  48 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Bed-Stuy West 
+ Elementary School 
+ ES  316  40 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Canarsie 
+ Elementary School 
+ ES  449  48 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Crown Heights 
+ Elementary School 
+ ES  273  43 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Excellence Boys 
+ Elementary School 
+ ES  172  35 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Excellence Girls 
+ Elementary School 
+ ES  162  29 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Kings Elementary 
+ School 
+ ES  400  48 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Williamsburg 
+ Elementary School 
+ ES  252  35 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Bed-Stuy East 
+ Middle School 
+ MS  286  42 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Brownsville North 
+ Middle School 
+ MS  341  40 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Brownsville South 
+ Middle School 
+ MS  308  41 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Bed-Stuy West 
+ Middle School 
+ MS  368  38 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Canarsie Middle 
+ School 
+ MS  361  36 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Excellence Boys 
+ Middle School 
+ MS  199  33 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Excellence Girls 
+ Middle School 
+ MS  170  30 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Kings Middle 
+ School 
+ MS  358  40 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Ocean Hill Middle 
+ School 
+ MS  233  34 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Williamsburg Middle 
+ School 
+ MS  207  40 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Collegiate Charter 
+ High School 
+ HS  454  70 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Charter High 
+ School 
+ HS  456  81 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Leadership Charter 
+ High School 
+ HS  472  78 
+ Brooklyn  Uncommon 
+ NYC 
+ Uncommon Preparatory Charter 
+ High School 
+ HS  566  77 
+ Brooklyn  Uncommon 
+ NYC 
+ Brooklyn Regional Office  17 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Alexander 
+ Street Elementary School 
+ ES  483  54 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Fairmount 
+ Elementary School 
+ ES  460  50 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Liberty 
+ Elementary School 
+ ES  452  52 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Lincoln 
+ Park Elementary School 
+ ES  468  46 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Vailsburg 
+ Elementary School 
+ ES  467  50 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy West Side 
+ Park Elementary School 
+ ES  464  51 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Independence Park 
+ Elementary School 
+ ES  ~60  ~10 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Clinton Hill 
+ Middle School 
+ MS  364  46 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Central 
+ Avenue Middle School 
+ MS  375  40 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Downtown 
+ Middle School 
+ MS  378  42 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Lincoln 
+ Park Middle School 
+ MS  389  48 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Vailsburg 
+ Middle School 
+ MS  380  46 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy West Side 
+ Park Middle School 
+ MS  371  51 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy Lincoln 
+ Park High School 
+ HS  826  121 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ North Star Academy 
+ Washington Park High School 
+ HS  881  122 
+ Newark  North Star 
+ Academy 
+ Charter School 
+ Newark Regional Office  10 
+ Rochester  Rochester Prep 
+ Charter School 
+ Rochester Prep Andrews 
+ Campus Elementary School 
+ ES  435  50 
+ Rochester  Rochester Prep 
+ Charter School 
+ Rochester Prep Jay Campus 
+ Elementary School 
+ ES  442  43 
+ Rochester  Rochester Prep 
+ Charter School 
+ Rochester Prep St. Jacob 
+ Campus Elementary School 
+ ES  398  47 
+ Rochester  Rochester Prep 
+ Charter School 
+ Rochester Prep Brooks Campus 
+ Middle School 
+ MS  390  38 
+ Rochester  Rochester Prep 
+ Charter School 
+ Rochester Prep Chili Campus 
+ Middle School 
+ MS  370  40 
+ Rochester  Rochester Prep 
+ Charter School 
+ Rochester Prep St. Jacob 
+ Campus Middle School 
+ MS  376  33 
+ Rochester  Rochester Prep 
+ Charter School 
+ Rochester Prep High School  HS  630  97 
+ Rochester  Rochester Prep 
+ Charter School 
+ Rochester Regional Office  9 
+ NYC  Home Office  275 
+ Form A: Proposal Response Form 
+ RFP # [2026-06-USI]  RFP Title: Uncommon Schools Managed  Services RFP  Due Date: 
+ June 23, 2026  prior to: 3:00 pm Eastern Time 
+ Please Note: Late proposals  will not  be accepted. 
+ See Section 10 for submission format and requirements. 
+ Address proposal to: Alex Welsh, Agile Project Manager  msp.rfp.2026@uncommonschools.org 
+ OFFEROR IDENTIFICATION  (Please print information clearly.) 
+ Firm Name:  Date: 
+ Address:  Phone: 
+ City/St/Zip:  Email: 
+ PROPOSAL RESPONSE FORM 
+ The undersigned, in submitting this Proposal and endorsement of same, represents that he/she 
+ is authorized to obligate his/her firm, that he/she is an equal opportunity employer and will not 
+ discriminate with regard to race, religion, color, national origin, age, sex, or handicap unrelated 
+ to job performance of this Proposal; and that he/she has read this entire Proposal package, is 
+ aware of the covenants contained herein and will abide by and adhere to the expressed 
+ requirements in  all  sections of this Proposal. 
+ Firm:  (OFFICIAL Firm Name) 
+ By:  (Original Signature) 
+ Name:  (Typed or Printed Name) 
+ Title:  (Typed or Printed Title) 
+ Address: 
+ City/ST/Zip: 
+ Phone #: 
+ Email: 
+ Taxpayer Identification #: 
+ You MUST sign the Proposal Response Form in order for your Proposal to be accepted. 
+ Form B: Felony Conviction Notification 
+ This notice is not required of a PUBLICLY HELD corporation. 
+ I, the undersigned agent for the firm named below, certify that the information concerning 
+ notification of felony convictions has been reviewed by me and the following information 
+ furnished is true to the best of my knowledge. 
+ Firm's Name: 
+ Authorized Company Official's Name (please print clearly): 
+ ☐  My firm is a publicly held corporation; therefore, this reporting requirement is not applicable. 
+ Signature of Company Official:  Date: 
+ ☐  My firm is not owned nor operated by anyone who has been convicted of a felony. 
+ Signature of Company Official:  Date: 
+ ☐  My firm is owned or operated by the following individual(s) who has/have been convicted of a 
+ felony: 
+ Name of Felon(s): 
+ Details of Conviction(s): 
+ Signature of Company Official: 
+ NOTE: Name and signature of company official should be the same as on the affidavit (Form A). 
+ Vendor is responsible for the performance of the persons, employees and/or sub-contractors 
+ Vendor assigns to provide services for Uncommon Schools pursuant to this Bid/Proposal on any 
+ and all Uncommon Schools campuses or facilities. Vendor will not assign individuals to provide 
+ services at an Uncommon Schools campus or facility who have a history of violent, 
+ unacceptable, or grossly negligent behavior or who have a felony conviction, without the prior 
+ written consent of Uncommon Schools. 
+ Form C: References 
+ 1.  Company Name: 
+ Address: 
+ Business Phone: 
+ Contact Person: 
+ Description of 
+ services: 
+ 2.  Company Name: 
+ Address: 
+ Business Phone: 
+ Contact Person: 
+ Description of services: 
+ 3.  Company Name: 
+ Address: 
+ Business Phone: 
+ Contact Person: 
+ Description of services: 

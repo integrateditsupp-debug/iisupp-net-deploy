@@ -1,0 +1,1101 @@
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Request for Supplier Qualifications (RFSQ) 
+Prequalification  
+ 
+For  
+Information Management Technology Consulting 
+Services 
+ 
+Request for Supplier Qualifications No.: RFSQ-0586-1  
+Issued Date: September 13, 2023 
+Response Deadline Date: February 29, 2028  
+ 
+ 
+Note:  This RFSQ is a continuous onboarding process. The prequalified supplier(s) from RFSQ-0586 will 
+not be required to submit a response to this continuous response process.  
+  
+Page 2 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+TABLE OF CONTENTS 
+PART 1 - INVITATION AND RESPONSE INSTRUCTIONS .......................................................................... 3 
+1.1 Invitation to Proponents .................................................................................................................... 3 
+1.2 RFSQ Contact ...................................................................................................................................... 4 
+1.3 Type of Agreement for Deliverables .................................................................................................. 4 
+1.4 RFSQ Timetable .................................................................................................................................. 5 
+1.5 Responses .......................................................................................................................................... 5 
+PART 2 - EVALUATION OF RESPONSES ................................................................................................ 8 
+2.1 Stages of Evaluation ........................................................................................................................... 8 
+2.2 Stage I – Requirements ...................................................................................................................... 8 
+2.3 Stage II – Written Evaluation ............................................................................................................. 8 
+2.4 Ranking and Selection ........................................................................................................................ 8 
+2.5 Stage III – Interviews/Presentations and Reference Checks .............................................................. 8 
+PART 3 - TERMS AND CONDITIONS OF THE RFSQ PROCESS ................................................................ 10 
+3.1 General Information and Instructions ............................................................................................. 10 
+3.2 Communication after Issuance of RFSQ ........................................................................................... 11 
+3.3 Notification and Debriefing .............................................................................................................. 12 
+3.4 Conflict of Interest and Prohibited Conduct .................................................................................... 12 
+3.5 Confidential Information .................................................................................................................. 14 
+3.6 Procurement Process Non-binding .................................................................................................. 15 
+3.7 Governing Law and Interpretation ................................................................................................... 15 
+APPENDIX A - RFSQ PARTICULARS .................................................................................................... 16 
+APPENDIX C - FORM OF AGREEMENT ................................................................................................ 27 
+APPENDIX D - MANDATORY REQUIREMENTS & SUBMISSION FORM .................................................. 28 
+APPENDIX E - DEFINITIONS ............................................................................................................... 30 
+APPENDIX F - ITD ENVIRONMENT ..................................................................................................... 31 
+APPENDIX G - INFORMATION SECURITY ............................................................................................ 31 
+APPENDIX H - INFRASTRUCTURE AND ARCHITECTURE ....................................................................... 31 
+APPENDIX I – RATED CRITERIA .......................................................................................................... 31 
+APPENDIX J – NOT REQUIRED ........................................................................................................... 31 
+APPENDIX K – NOT REQUIRED .......................................................................................................... 31 
+APPENDIX L – REFERENCE COPY OF RFP-0575.................................................................................... 31 
+Page 3 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+PART 1 - INVITATION AND RESPONSE INSTRUCTIONS 
+1.1 Invitation to Proponents 
+This Request for Supplier Qualifications (RFSQ) is an invitation by the Government of Saskatchewan 
+(GOS) to prospective Proponents to pre-qualify for the provision of Information Management 
+Technology Consulting Services on an “as required” basis.  
+The Ministry of SaskBuilds and Procurement (SBP) helps build strong communities and a strong 
+economy through the design and delivery of infrastructure, procurement, IT and logistics services and 
+solutions for the Government of Saskatchewan. The ministry procures, manages and operates critical 
+infrastructure government relies on to deliver essential public services for citizens. The Information 
+Technology Division (ITD) within SBP facilitates the provisioning of secure business applications and 
+technologies through vendor partners in support of the delivery of government services in the public 
+interest.  
+The current Government of Saskatchewan contract for technical services related to operational 
+reporting and analytics is expiring and the ministry requires related consulting services to continue to be 
+delivered. ITD seeks to support the government organizations it serves with the goal to enhance the 
+quality of decision making for government programs and delivery of services to citizens through 
+continuous improvements to data management and analytics. 
+The intent of this RFSQ is to have a list of prequalified consultants where GOS can efficiently acquire 
+data management and analytics consulting services. These services will be provided by industry 
+specialists or subject matter experts that have the capability to provide advice and consulting to address 
+GOS data management needs as they are identified. To be clear, this process is to establish a list of pre-
+qualified vendors, no financial commitments are being made in this RFSQ; subsequent competitive 
+processes will follow as needs are identified. 
+Proponents are invited to provide submissions, in accordance with the terms, conditions and proposal 
+response format as specified in this RFSQ, for the pre-qualification of one (1) or more of the following 
+categories of consulting services as further described in Appendix A - RFSQ Particulars, Section B – The 
+Deliverables. The high-level service categories include: 
+1. Data Governance 
+2. Business Transformation 
+3. Data Management Support 
+4. Analytics: Reporting and Business Intelligence (BI) Dashboards 
+5. Advanced Analytics: Data Science, AI/ML  
+6. Data Integration and Interoperability 
+Important Notice to Proponents: 
+These services are intended to provide “add-on” consulting services that are related to and will support 
+the technology platform services to be acquired through the related procurement [RFP-0575 
+Information Management Technology Platform]. The “add-on” consulting services could range from 
+short term assistance for the Ministries on specific data topics to specific and larger data management 
+projects and initiatives. The details of how this RFSQ relates to the associated RFP are further described 
+in Appendix A – RFSQ Particulars, Section A – Background below.   
+Page 4 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+1.2 RFSQ Contact 
+Direct any questions regarding this competition to: 
+BTSProcurement@gov.sk.ca 
+Attention: Sheryl Plysiuk-Kolish, RFSQ-0586-1 
+Proponents and their representatives are not permitted to contact any employees, officers, agents, 
+elected or appointed officials or other representatives of GOS, other than the RFSQ Contact, concerning 
+matters regarding this RFSQ. Failure to adhere to this rule may result in the disqualification of the 
+Proponent and the rejection of the Proponent’s Response.   
+Inquiries and their Responses may be posted on the website sasktenders.ca at the sole discretion of the 
+GOS, without revealing the source of the inquiry.  
+1.3 Type of Agreement for Deliverables  
+Selected Proponents may be invited to enter into an agreement in the form set out in Appendix C (the 
+“Master Terms and Conditions”), which will govern the potential subsequent agreement of the 
+Deliverables pursuant to invitational second stage competitive processes.   
+Responses will be evaluated in accordance with the evaluation process set out in Part 2 of the RFSQ. 
+Based on the evaluation of Responses, those that meet the pass threshold outlined in Section D of 
+Appendix A will be selected for inclusion on a prequalified list of suppliers that are eligible to participate 
+in an invitational second stage competitive process for the potential provision of the Deliverables to GOS 
+ministries, agencies, crown corporations, First Nations schools, and municipalities, academia, schools, or 
+health care organizations (MASH).  
+Proponents that have not passed the threshold, and are not qualified through this process, may be 
+eligible to re-qualify.  
+1.3.1 Continuous Prequalification Process 
+This pre-qualification will be posted to SaskTenders as a continuous onboarding process for additional 
+Respondents of RFSQ-0586, for the remaining length of the RFSQ term. The same terms and conditions, 
+qualifications, requirements and evaluation processes set out in the initial RFSQ document will apply to 
+all Respondents. In this onboarding RFSQ, evaluation and selection of Respondents will occur quarterly 
+or at the discretion of GOS from the Issue Date of RFSQ onboarding until the onboarding process ends. 
+The onboarding process is expected to continue until six (6) months prior to expiration of the RFSQ 
+term, and questions will be answered continuously through the onboarding process. 
+Respondents that are not qualified through this process, will not be eligible to re-qualify until three (3) 
+months after their last Submission. 
+The prequalified supplier list resulting from this prequalification process will be in effect from the date 
+of commencement for five (5) years.  
+The GOS reserves the right to remove prequalified supplier(s) that do not perform in accordance with 
+the requirements set out in the second-stage competition(s) and in their response.  
+ 
+ 
+Page 5 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+The prequalified supplier list will be utilized with the following process for usage: 
+• For orders up to $25,000 
+Public entities may contact one supplier on the list for the supply of consulting services. 
+However, it is recommended that more than one (1) supplier on the list be contacted for a 
+quote so that pricing and offerings can be compared. The supplier should be selected based on 
+best value to government.  
+• For orders from $25,001 to $75,000 
+Public entities are required to contact a minimum of three (3) suppliers on the list for a quote 
+for the supply of consulting services. The supplier should be selected based on best value to 
+government. 
+• For orders over $75,001+ 
+Public entities are required to contact all suppliers on the list within an applicable category, for a 
+quote for the supply of consulting services. The supplier should be selected based on best value 
+to government.  
+Proponents which are prequalified pursuant to this RFSQ are not guaranteed any volume of goods or 
+service subsequent to this RFSQ, as all orders will be on an “as required basis”.  
+GOS reserves the right to engage other suppliers through additional competitive processes should it be 
+deemed in the best interest of GOS to do so. 
+As part of the GOS audit process, prequalified suppliers may be required to complete a survey at the end 
+of each term, in order to verify participation and usage. 
+1.4 RFSQ Timetable 
+Issue Date of RFSQ September 13, 2023 
+Deadline for Questions Ongoing 
+Deadline for Issuing Addenda Ongoing 
+Response Submission Deadline February 29, 2028 
+Rectification Period 3 days after notification 
+Anticipated Evaluation and Selection of Respondents  Ongoing quarterly or at the discretion of 
+GOS 
+The RFSQ timetable is tentative only and may be changed by GOS at any time. 
+1.5 Responses 
+1.5.1 Responses 
+Proponents must submit by email.   
+The GOS does not assume any responsibility for delayed or rejected Responses. Proponents 
+acknowledge that all risks associated with Responses are their sole responsibility, and that late 
+Responses, regardless of the reason, will be rejected. 
+If there are multiple Responses received from a Proponent, the last email copy submitted will prevail. 
+Page 6 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+The Initial Response Submission Date is outlined in Section 1.4 – RFSQ Timetable. 
+Responses by email: 
+One (1) electronic copy in .pdf, .doc or .docx, excel format, which includes the RFSQ reference number 
+and closing date, are to be forwarded to: 
+response@gov.sk.ca 
+The subject line of the email should contain the competition reference number, competition title and 
+company name (example: RFSQ 0586-Title-Company Name).  
+One (1) email, including attachments, should not be larger than 25MB or it may not be successfully 
+transmitted. It is recommended to send one (1) email, however, if sending multiple emails, provide clear 
+instructions on how the Submission is intended to be integrated.   
+Email submissions with links to a cloud-based storage system (i.e. Dropbox, Google Drive, OneDrive) will 
+not be accepted.  
+Executable file formats such as .exe will not be accepted. The preferred file formats are .pdf, .doc, .docx, 
+.xls and .xlsx.  
+The received time in the recipient’s email inbox will be the recorded date and time of Submission. The 
+GOS will provide confirmation of email receipt to Proponents via an automatic email message. If no 
+confirmation email is received, please contact 306-787-6871.  
+Prior to closing, GOS will maintain confidentiality of email Submissions subject to the GOS officials 
+opening an email for the purpose of identification. In the event that one (1) or more files cannot be 
+opened (e.g., are corrupted), the Proponent will not have an opportunity to resend such files after 
+closing. 
+For more information, refer to the document Guidelines for Proponent Responses via Email on 
+SaskTenders
+. 
+1.5.2 Responses to be Received on Time 
+Responses must be received at the email address set out above on or before the Response Deadline. 
+Responses received after the Response Deadline will not be accepted. 
+Onus and responsibility rests solely with the Proponent to submit its Response to the exact email 
+address indicated in this RFSQ on or before the Response Deadline. GOS does not accept any 
+responsibility for Responses submitted to any other email address by the Proponent or its delivery 
+agents. Proponents are advised to make Responses well before the deadline. Proponents making 
+Responses near the deadline do so at their own risk. 
+1.5.3 Amendment of Responses 
+Proponents may amend their Responses prior to the Response Deadline by submitting the amendment 
+to the email address set out above. Any amendment should clearly indicate the RFSQ title and number, 
+and which part of the Response the amendment is intended to amend or replace. 
+1.5.4 Withdrawal of Responses 
+At any time prior to the execution of a written Agreement for provision of the Deliverables, a Proponent 
+may withdraw a Response. To withdraw a Response, a notice of withdrawal must be received by the 
+Page 7 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+RFSQ Contact and should be signed by an authorized representative of the Proponent. GOS is under no 
+obligation to return withdrawn Responses. 
+[End of Part 1] 
+  
+Page 8 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+PART 2 - EVALUATION OF RESPONSES 
+2.1 Stages of Evaluation  
+GOS will conduct the evaluation of Responses in the following stages:  
+2.2 Stage I – Requirements 
+GOS will review Response components for administrative deficiencies and compliance with mandatory 
+requirements.   
+Administrative Deficiencies   
+If GOS determines that a proposal fails to meet any of the mandatory or submission requirements, GOS 
+may at its discretion offer a rectification process. If a proposal fails to satisfy any of the mandatory or 
+submission requirements, GOS may issue the proponent a rectification notice identifying the 
+deficiencies and providing the proponent an opportunity to rectify the deficiencies. If the proponent 
+fails to respond or to satisfy those mandatory or submission requirements within the Rectification 
+Period, the proposal will be assessed on the initial proposal or eliminated from the process at GOS’s 
+direction. The Rectification Period will begin to run from the date and time that GOS issues a 
+rectification notice to the proponent. The mandatory and submission requirements are set out in 
+Appendix D and Appendix A, Section F respectively.  
+ 
+GOS may eliminate mandatory requirements unmet by all Proponents. 
+2.3 Stage II – Written Evaluation  
+GOS will evaluate each qualified Response on the basis of the rated criteria as set out in Appendix A.  
+The term “requirement” “shall” “must” (or similar term used in this RFSQ) is used for convenience only 
+and is not intended to imply that any Response that does not exactly match or meet such a 
+“requirement” will necessarily be disqualified. Instead, as part of the evaluation process, Proponents, 
+goods, and services will be evaluated based on the extent to which, and how well, they are able to 
+satisfy the intent, fit for purpose, and substance of the “requirements” or “specifications” contained in 
+this RFSQ. 
+2.4 Ranking and Selection  
+Based on the evaluation of the Responses that meet the mandatory requirements in Stage II, GOS 
+intends to select the three (3) highest scoring Proponents, per category. GOS may choose to select 
+additional Proponents if their total score is within 10% of the highest scoring Proponent. GOS may                          select 
+fewer than the three (3) highest scoring Proponents per category by choosing not to select Proponents 
+with a total score that is not within 15% of the total score of the highest scoring Proponent. GOS will 
+determine how many Proponents, if any, will be included on the prequalified                    supplier list. 
+2.5 Stage III – Interviews/Presentations and Reference Checks 
+Top-ranked Proponent(s) may be invited to participate in the interview/presentation and reference 
+check stage. 
+Page 9 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+2.5.1 Interview/Presentation (Optional) 
+Top-ranked Proponent(s) may be required to attend an interview or make a presentation to the 
+Evaluation Team. The interview can include a presentation. Materials prepared by the top-ranked 
+Proponent for the interview/presentation shall be provided to the Evaluation Team. 
+The interview/presentation is intended to verify that the proposed approach or services meet all the 
+requirements and provides the Evaluation Team some exposure to the designated Proponent 
+organization or service team.  
+The interview/presentation may also be used to clarify any portion of the written Response, if required.  
+The Evaluation Team will ask questions about the contents of the Proponent or presentation for 
+clarification purposes. Clarifications made by the Proponent during the interview/presentation will 
+become part of the Proponent’s Response and may be included in any contract negotiations. 
+2.5.2 Reference Checks (Optional) 
+Reference checks may be completed for the Proponent and/or their proposed resources and sub-
+contractors. 
+During reference checks, GOS reserves the right to contact any of the Proponent’s customers who GOS 
+believes may be able to provide information about the Proponent that would be pertinent to this RFSQ. 
+The GOS reserves the right to conduct reference checks at any time during the RFSQ process. 
+Proponents who receive unfavourable references, in the opinion of the GOS, may have their proposal 
+rejected. 
+[End of Part 2]
+Page 10 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+PART 3 - TERMS AND CONDITIONS OF THE RFSQ PROCESS 
+3.1 General Information and Instructions 
+3.1.1 Proponents to Follow Instructions 
+Proponents should structure their Responses in accordance with the instructions in this RFSQ. Where 
+information is requested in this RFSQ, any response made in a Response should reference the applicable 
+section numbers of this RFSQ. 
+3.1.2 Responses in English 
+All Responses are to be in English only. 
+3.1.3 No Incorporation by Reference  
+The entire content of the Proponent’s Response should be submitted in a fixed form, and the content of 
+websites or other external documents referred to in the Proponent’s Response but not attached may 
+not be considered to form part of its Response. If Proponents wish to reference websites or external 
+documents, they should obtain the approval of the RFSQ Contact prior to the Response Date.  
+Proponents are responsible for ensuring that all external content that is referenced is accurate and are 
+to provide notice to GOS of any changes that may arise after Response. GOS may, at any time, require a 
+Proponent to provide a hard copy of some or all of the external content referenced. 
+3.1.4 References and Past Performance 
+In the evaluation process, GOS may consider information provided by the Proponent’s references and 
+may also consider information independently obtained by GOS about the Proponent or its Response in 
+the course of GOS’s own due diligence, including any previous dealings or experience, if any, with a 
+Proponent. GOS may contact any of the Proponent’s customers who GOS believes may be able to 
+provide information about the Proponent that would be pertinent to this RFSQ. 
+3.1.5 Information in RFSQ Only an Estimate 
+GOS and its advisers make no representation, warranty or guarantee as to the accuracy of the 
+information contained in this RFSQ or issued by way of addenda. Any quantities shown or data 
+contained in this RFSQ or provided by way of addenda are estimates only and are for the sole purpose of 
+indicating to Proponents the general scale and scope of the Deliverables. It is the Proponent’s 
+responsibility to obtain all the information necessary to prepare a Response to this RFSQ. 
+3.1.6 Proponents to Bear Their Own Costs 
+The Proponent will bear all costs associated with or incurred in the preparation and presentation of its 
+Response, including, if applicable, costs incurred for interviews or demonstrations. 
+3.1.7 Response to be Retained by GOS 
+GOS will not return the Response, or any accompanying documentation submitted by a Proponent. 
+Page 11 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+3.1.8 Trade Agreements 
+Proponents should note that procurements falling within the scope of one or more of: 
+• The New West Partnership Trade Agreement; 
+• The World Trade Organization Agreement on Government Procurement; 
+• Chapter 19 of the Canada – European Union Comprehensive Economic and Trade Agreement, 
+including its incorporation by reference into the Agreement on Trade Continuity between the 
+United Kingdom of Great Britain and Northern Ireland and Canada; 
+• Chapter 15 of the Comprehensive and Progressive Agreement for Trans-Pacific Partnership; or 
+• Chapter 5 of the Canadian Free Trade Agreement; 
+are subject to those trade agreements, but that the rights and obligations of the parties will be governed 
+by the specific terms of this RFSQ. 
+3.1.9 No Guarantee of Volume of Work or Exclusivity of Agreement 
+This RFSQ process will not result in any commitment by GOS to purchase any goods or services from any 
+Proponent. While GOS intends to conduct an invitational second-stage competitive process for the 
+procurement of the Deliverables, it is under no obligation to do so and GOS may, in its sole and absolute 
+discretion, choose not to proceed with a second-stage competitive process for the procurement of the 
+Deliverables. GOS makes no guarantee of the value or volume of Deliverables that may be required. Any 
+Agreement entered into pursuant to an invitational second-stage competitive process will not be an 
+exclusive contract for the provision of the described Deliverables. GOS may contract with others for 
+goods and services the same as or similar to the Deliverables or may obtain such goods and services 
+internally. 
+3.1.10 Evaluation Committee 
+Evaluation of Responses will be by a committee formed by the GOS, which may include employees, 
+consultants, and contractors of GOS. 
+3.2 Communication after Issuance of RFSQ 
+3.2.1 Proponents to Review RFSQ 
+Proponents should promptly examine all of the documents comprising this RFSQ and may direct 
+questions in writing or seek additional information to the RFSQ Contact on or before the Deadline for 
+Questions. No such communications are to be directed to anyone other than the RFSQ Contact. GOS is 
+under no obligation to provide additional information, and GOS is not responsible for any information 
+provided by or obtained from any source other than the RFSQ Contact. It is the responsibility of the 
+Proponent to seek clarification from the RFSQ Contact on any matter it considers to be unclear. GOS is 
+not responsible for any misunderstanding on the part of the Proponent concerning this RFSQ or its 
+process. 
+3.2.2 All New Information to Proponents by Way of Addenda 
+This RFSQ may be amended only by addendum in accordance with this section. If GOS, for any reason, 
+determines that it is necessary to provide additional information relating to this RFSQ, such information 
+Page 12 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+will be communicated to all Proponents by addendum. Any information obtained in a method other 
+than an addendum should not be relied upon. Each addendum forms an integral part of this RFSQ and 
+may contain important information, including significant changes to this RFSQ. Proponents are 
+responsible for obtaining all addenda issued by GOS. 
+3.2.3 Post-Deadline Addenda and Extension of Response Deadline 
+If GOS determines that it is necessary to issue an addendum after the Deadline for Issuing Addenda, GOS 
+may extend the Response Deadline for a reasonable period of time. 
+3.2.4 Verify, Clarify and Supplement 
+When evaluating Responses, GOS may at its sole discretion request further information from the 
+Proponent or third parties in order to verify, clarify or supplement the information provided in a 
+Response. The Response received by GOS shall, if accepted by GOS, form an integral part of the 
+Proponent’s Response. 
+GOS may consider information independently obtained by GOS about the Proponent or its Response in 
+the course of GOS’s own due diligence, including any previous dealings or experience by it or others, if 
+any, with a Proponent. 
+3.2.5 Time Disputes 
+In the event of a dispute regarding time, GOS’s time clock will govern. 
+3.3 Notification and Debriefing 
+3.3.1 Notification to Successful Proponents  
+The successful Proponents selected by GOS to be included on a prequalified suppliers list in accordance 
+with the process set out in the Evaluation of Responses (Part 2) will be so notified by GOS. 
+3.3.2 Notification to Other Proponents 
+Once the selected Proponents have been notified, the other Proponents will be notified by GOS of the 
+outcome of the RFSQ process. 
+3.3.3 Debriefing 
+Proponents who provide a Response may request a debriefing after receipt of a notification of the 
+outcome of the procurement process. All requests must be made in writing to the RFSQ Contact within 
+thirty (30) calendar days of such notification. The intent of the debriefing information session is to aid 
+the Proponent in presenting a better Response in subsequent procurement opportunities. 
+3.4 Conflict of Interest and Prohibited Conduct 
+3.4.1 Conflict of Interest 
+GOS may disqualify a Proponent or take any other action it deems appropriate in its sole discretion, for 
+any conduct, situation or circumstances, determined by GOS, in its sole and absolute discretion, to 
+constitute a Conflict of Interest.  
+Page 13 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+For the purposes of this RFSQ, “Conflict of Interest” includes any situation or circumstance where, in 
+relation to a GOS procurement competition, a participating Proponent has an unfair advantage, a 
+perception of an unfair advantage or engages in conduct, directly or indirectly, that may give it an unfair 
+advantage, including: 
+(a) having, or having access to, information in the preparation of its Response that is not available to 
+other Proponents, but such does not include information a Proponent may have obtained in the 
+past performance of a contract with a public entity, including GOS, that is not related to the 
+creation, implementation or evaluation of this or a related procurement competition;  
+(b) communicating with any person with a view to influencing preferred treatment in this procurement 
+competition (including but not limited to the lobbying of decision makers involved in this 
+procurement competition); or 
+(c) engaging in conduct that compromises, or could be seen to compromise, the integrity of the open 
+and competitive procurement competition or renders that competition non-competitive, less 
+competitive, or unfair. 
+All Proponents should advise GOS in writing whether it has any actual, potential or perceived Conflict of 
+Interest, and if so, the nature of each Conflict of Interest. A Proponent may, in the sole discretion of 
+GOS, be disqualified from this RFSQ process if a Proponent is found to have a Conflict of Interest. 
+3.4.2 Disqualification for Prohibited Conduct 
+GOS may disqualify a Proponent, terminate a contract subsequently entered into, or take such other 
+action it may deem appropriate if GOS, in its sole and absolute discretion, determines that the 
+Proponent has engaged in any conduct prohibited by this RFSQ. 
+3.4.3 Prohibited Proponent Communications 
+Proponents should not engage in any communications that could constitute a Conflict of Interest.  
+3.4.4 Proponent Not to Communicate with Media 
+Proponents should not at any time directly or indirectly communicate with the media in relation to this 
+RFSQ or any Agreement entered into pursuant to this RFSQ without first obtaining the written 
+permission of the RFSQ Contact. 
+3.4.5 No Lobbying 
+Proponents should not, in relation to this RFSQ or the evaluation and selection process, engage directly 
+or indirectly in any form of political or other lobbying whatsoever to influence the selection of the 
+Proponent(s). 
+3.4.6 Employee Responses 
+GOS employees (as a Proponent or a proposed resource) may be ineligible to enter into an Agreement. 
+3.4.7 Illegal or Unethical Conduct 
+Proponents are not to engage in any illegal business practices, including activities such as bid-rigging, 
+price-fixing, bribery, fraud, coercion or collusion. Proponents are not to engage in any unethical conduct, 
+including lobbying, as described above, or other inappropriate communications; offering gifts to any 
+Page 14 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+employees, officers, agents, elected or appointed officials or other representatives of GOS; 
+deceitfulness; providing Responses that contain misrepresentations or other misleading or inaccurate 
+information; or any other conduct that compromises or may be seen to compromise the competitive 
+process provided for in this RFSQ. 
+3.4.8 Past Performance or Past Conduct  
+GOS may prohibit a Proponent from participating in this or future procurement processes based on past 
+performance or based on inappropriate conduct in a prior procurement process, including but not 
+limited to the following:  
+(a) illegal or unethical conduct as described above;  
+(b) the refusal of the Proponent to honour its submitted pricing or other commitments; or  
+(c) any conduct, situation or circumstance determined by GOS, in its sole and absolute discretion, to 
+have constituted an undisclosed Conflict of Interest; 
+(d) or otherwise outlined in the CFTA. 
+3.5 Confidential Information 
+3.5.1 Confidential Information of GOS 
+All information provided by or obtained from GOS in any form in connection with this RFSQ either 
+before or after the issuance of this RFSQ 
+(a) is the sole property of GOS and must be treated as confidential; 
+(b) is not to be used for any purpose other than replying to this RFSQ and the performance of any 
+subsequent Agreement for the Deliverables; 
+(c) must not be disclosed without prior written authorization from GOS; and 
+(d) must be returned by the Proponent to GOS immediately upon the request of GOS. 
+3.5.2 Confidential Information of Proponent 
+Responses will be accepted in confidence, as they contain financial, commercial, scientific, technical 
+and/or labour relations information, except as may be otherwise provided herein. The confidentiality of 
+such information will be maintained by GOS, except as otherwise required by law or by order of a court 
+or tribunal, or by regulatory order of the Government of Saskatchewan, including but not limited to, the 
+Crown Investment Corporation of Saskatchewan and other agencies or ministries of government 
+including its boards, commissions or panels. Proponents are particularly advised that GOS is subject to 
+legal requirements that may require disclosure of Response information including, without limitation, 
+under The Freedom of Information and Protection of Privacy Act (Saskatchewan). Notwithstanding the 
+foregoing, GOS reporting requirements may result in the public disclosure of the Agreement to the 
+Successful Supplier(s).  
+Proponents are advised that their Responses will, as necessary, be disclosed, on a confidential basis, to 
+advisers retained by GOS, and/or to Crown corporations (as defined in The Crown Corporations Act, 
+1993) and GOS agencies or ministries, including its boards, commissions or panels, to advise or assist 
+with the RFSQ process, including the evaluation of responses. If a Proponent has any questions about 
+Page 15 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+the collection and use of personal information pursuant to this RFSQ, questions are to be submitted to 
+the RFSQ Contact. 
+3.6 Procurement Process Non-binding 
+3.6.1 No Contract A and No Claims 
+This procurement process is not intended to create and will not create a formal, legally binding bidding 
+process and will instead be governed by the law applicable to direct commercial negotiations. For 
+greater certainty and without limitation:  
+(a) this RFSQ will not give rise to any Contract A – based tendering law duties or any other legal 
+obligations arising out of any process contract or collateral contract; and  
+(b) neither the Proponent nor GOS will have the right to make any claims (in contract, tort, or 
+otherwise) against the other with respect to the award of a contract, failure to award a contract or 
+failure to honour a response provided in Response to this RFSQ. 
+3.6.2 Cancellation 
+GOS may cancel or amend the RFSQ process without liability at any time. 
+3.7 Governing Law and Interpretation 
+These Terms and Conditions of the RFSQ Process (Part 3): 
+(a) are intended to be interpreted broadly and independently (with no particular provision intended to 
+limit the scope of any other provision); 
+(b) are non-exhaustive and must not be construed as intending to limit the pre-existing rights of the 
+parties to engage in pre-contractual discussions in accordance with the common law governing 
+direct commercial negotiations; and 
+(c) are to be governed by and construed in accordance with the laws of the Province of Saskatchewan 
+and the federal laws of Canada applicable therein. 
+[End of Part 3] 
+  
+Page 16 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+APPENDIX A -  RFSQ PARTICULARS 
+A. BACKGROUND 
+The data management and analytics efforts within ITD have historically focused on establishing common 
+technology services for the executive Ministries within the Government of Saskatchewan. This included 
+the creation of the enterprise Operational Reporting Service (eORS) for establishing data repositories 
+with basic query and reporting capabilities. Advanced analytics capabilities have also been pursued 
+through cross-ministry collaboration. These investments have had various levels of adoption and 
+success.  
+Continued research into industry practices as well as participation in public service organization 
+discussions with peers across Canada have highlighted the need to focus beyond the delivery of 
+common technologies. The critical success factors in reaching data and analytics objectives require focus 
+in four key areas: 
+• Leadership and collaborative governance 
+• Organizational culture 
+• Data management competencies and capacity 
+• Service delivery and technology infrastructure 
+The current Government of Saskatchewan contract for service delivery and technology infrastructure for 
+the operational reporting and analytics (eORS) environment is expiring. The approach for continuing 
+these technical capabilities will include considerations for the broader set of critical capabilities 
+highlighted above. 
+In addition to meeting current service delivery objectives, the on-going reporting and analytics 
+capabilities of these services need to keep pace with innovation in both technical capabilities as well as 
+common processes. This includes recognizing the opportunities for efficiency benefits in establishing 
+common approaches and associated technical capabilities of managing data.  
+The continuous improvement in data management practices to maintain high data protection standards 
+and responsible use requires further investments in data governance. To date, the technical services 
+have focused on fundamental reporting, dashboards and analytics. Future value opportunities are 
+envisioned with a broader set of capabilities including data stewardship, data quality management, data 
+masking (anonymization), and advanced analysis. 
+These investments ultimately provide the ability to improve service delivery to the citizens in the 
+province, the effectiveness of government programs, and economic outcomes envisioned in the 2030 
+Saskatchewan Growth plan. 
+In support of the outcomes and objectives for improved data management, as well as expanding access 
+to IT Sector innovation and expertise, a new operating model has been envisioned within Saskatchewan. 
+This includes relationships and interactions between the respective government organizations, GOS ITD, 
+technology platform and data management and analytic consulting providers as depicted in the diagram 
+below: 
+Page 17 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+    
+This RFSQ-0586 Information Management Technology Consulting Services, as well as the associated RFP-
+0575 Information Management Technology Platform seeks to enable the proposed operating model as 
+depicted in the diagram that follows: 
+ 
+
+Page 18 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+ 
+ 
+Proponents are encouraged to refer to the associated RFP-0575 Information Management Technology 
+Platform to further understand the services expected under that Request for Proposals in context of this 
+RFSQ. The resulting pre-qualified lists from this procurement process are designed to facilitate ministry 
+requirements and allow users to obtain qualified support in a timely manner. 
+B. THE DELIVERABLES 
+The Government of Saskatchewan is seeking Proponents that can provide one (1) or more of the 
+following categories for Information Management Technology Consulting Services on an “as required” 
+basis: 
+B.1 Data Governance 
+B.2 Business Transformation 
+
+Page 19 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+B.3 Data Management Support 
+B.4 Analytics: Reporting and Business Intelligence (BI) Dashboards 
+B.5 Advanced analytics: Data Science, AI/ML  
+B.6 Data Integration and Interoperability 
+The “as required” services may range from short term consulting on specific topic areas to larger project 
+and initiative facilitation, participation and/or implementation. 
+For clarity, Proponents are encouraged to respond to each service category they feel qualified to 
+provide. Proponents do not have to respond to all categories to qualify. 
+A service overview of each category is provided below, with further requirements in the service specific 
+Appendix I – Rated Criteria Spreadsheet. 
+Proponents should note in responding to the specific sections, the follow criteria are considered 
+important: 
+• Experience: Experience in engagements related to the services and deliverables mentioned. 
+• Timeliness: The Successful Supplier(s) will be able to demonstrate their ability to conduct the 
+services in an efficient and timely manner, with particular attention to deadlines. This also 
+includes the ability to provide depth in capacity, having the necessary skillsets, and capability to 
+draw from. 
+• Understanding our Industry: The depth of knowledge of the industry (government sector) will 
+be an important part of providing quality service. 
+Services Overview 
+B.1 Data Governance 
+The Government of Saskatchewan is seeking qualified Proponents to perform “Data Governance” 
+related consulting services. This can include establishing direction, providing guidance oversight for the 
+on-going practices involving roles, responsibilities, policies, standards, processes, procedures for using 
+and managing data across the Government of Saskatchewan. Ultimately the efforts support evidence-
+based business decisions that achieve organizational outcomes. 
+The services and associated deliverables could include, but are not limited to:  
+a) Designing an organization's enterprise data management framework of roles, responsibilities 
+and practices, aligned with enterprise strategy and business architecture. 
+b) Guiding and enhancing the development of cross organizational data governance working 
+groups and decision authorities in charge of planning and determining initiative priorities 
+including making recommendations for specific data management projects. 
+c) Developing or refining data principles, policy, process/procedures (for legislative or regulatory 
+compliance), rules, standards, and best practices.  
+d) Facilitating, providing direction, guiding and assisting the development or refinement in one or 
+more of the following key data management practice areas, including but not limited to:  
+• Accountability and data stewardship – Establishing data trustees or custodians accountable 
+or responsible for managing data quality, protection, access, reuse, and lifecycles. Guiding 
+Page 20 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+business and Subject Matter Experts (SMEs) for co-ownership of responsibilities to deliver 
+and maintain service levels to meet Ministry requirements. 
+• Data privacy and protection - Engaging with the respective government organization and IT 
+Security team for aligning access controls, legislative and regulatory compliance, sensitivity 
+classification, data masking, data encryption, and backup/recovery processes. 
+• Data ethics – Ensuring and maintaining practices for the ethical use and management of 
+data, including: 
+o Data practices for collecting, generating, analyzing and disseminating data to ensure 
+compliance with regulatory requirements and rules for proper conduct. 
+o Addressing and recommending concepts of right and wrong conduct with collecting, 
+generating, analyzing and disseminating data owned by a citizen. 
+• Data inventories and metadata management – Establishing and publishing data catalogues 
+and information used to categorize, classify and describe data repositories. 
+• Data quality management – Establishing or directing efforts to assess, improve, and 
+implement maintenance controls to ensure data is current, accurate, complete, consistent, 
+unique, and trusted. 
+• Data lifecycle management – Facilitating or refining data retention, archival, and disposition 
+practices. 
+• Master data management – Facilitating, establishing and maintaining the core critical 
+common data within the respective organizations. 
+ 
+B.2 Business Transformation 
+The Government of Saskatchewan is seeking qualified Proponents to perform “Business Transformation” 
+consulting services associated with data management and analytics that enable change in business 
+operations to achieve desired business outcomes. 
+The services and associated deliverables can include but are not limited to:   
+a) Facilitating the development of innovative data strategies for current vs. future direction for 
+managing data, and strategic roadmaps that drive effectiveness and deliver against the services 
+and program outcomes of the Ministries. 
+b) Develop business cases and funding requests, based on experience and supplier’s success 
+stories, that identify business value opportunities within each Ministry data domain that 
+improves their data management practices, and use of data in achieving their program 
+objectives.  
+c) Performing data maturity assessments of current (‘as-is’) state capabilities with managing data 
+assets, and to specify the desired (‘to-be’) states that facilitate continuous improvement 
+towards required levels of data management and analytics capabilities. Perform tactical 
+planning to develop and maintain phased roadmaps of sequenced activities with dependencies 
+and relationships. 
+d) Assistance in increasing the maturity of current data cultures and data literacy, ensuring the 
+respective organization is using evidence based data to derive insights for decision-making. 
+e) Perform organizational change management (OCM) using concerted and collaborative efforts to 
+achieve maturing data management practices. This includes establishing change management 
+strategies, plans, educational materials and facilitating change across the Government of 
+Saskatchewan. 
+Page 21 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+f) Consulting, coaching, mentoring, educating, training on data management disciplines to data 
+practitioners within Ministries across the Government of Saskatchewan (as required). 
+B.3 Data Management Support 
+The Government of Saskatchewan is seeking qualified Proponents to perform “Data Management 
+Support” services that design, plan, monitor, and improve data management functions and/or support 
+specific projects and initiatives aligned to data management strategies.  
+The services and associated deliverables in support of specific business initiatives and project solutions 
+can include but are not limited to:   
+a) Expertise to introduce modern conceptual/logical architecture designs for data that utilizes 
+and/or influences defined GOS technology platform services (aligned with RFP-0575 Information 
+Management Technology Platform). This may include using current and/or establishing future 
+patterns and models such as data products, Data as a Product (DaaP), data pipelines, data 
+fabrics, data meshs, etc.  
+b) Developing an inventory of data assets by data domain (subject) and increase overall data 
+literacy and awareness. This includes documentation of architecture models, data assets and 
+catalogs, attributes (such as sensitivity classifications), business glossaries, data dictionaries, 
+information flows and data lineages. 
+B.4 Analytics: Reporting and Business Intelligence (BI) Dashboards 
+The Government of Saskatchewan is seeking qualified Proponents to provide services in support of 
+projects and initiatives focused on fundamental reporting, descriptive analytics, diagnostic analytics and 
+business intelligence dashboard development. Engaging with the respective government organization 
+and the GOS data management and analytics service teams, the services and associated deliverables can 
+include but are not limited to:   
+a) Aligning data architecture and data analysis services that support current GOS enterprise data 
+analytics service offerings (includes reporting and business intelligence dashboards). Consulting 
+can include influencing further technical platform capability development for GOS technology 
+platform services (provisioned through the associated RFP-0575 Information Management 
+Technology Platform). 
+b) Facilitating data preparation activities such as collection/capture/creation, discovery, 
+combining, structuring, organizing, enriching, profiling, transforming, consolidating, and curating 
+data in support of the analytics objectives. 
+c) Providing expertise, guidance and knowledge transfer to the business in the use of Descriptive 
+Analytics techniques (to describe the current situation and identify trends and patterns). 
+d) Providing expertise, guidance and knowledge transfer to the business in the use of Diagnostic 
+Analytics techniques (using historical data to discover the reasons for previous performance). 
+B.5 Advanced Analytics: Data Science, AI/ML  
+The Government of Saskatchewan is seeking qualified Proponents to provide services in support of 
+projects and initiatives focused on advanced analytics initiatives including use of predictive, prescriptive, 
+machine learning (ML) and/or artificial intelligence analytics capabilities. Engaging with the respective 
+government organization and the GOS data management and analytics service teams, the services and 
+associated deliverables can include but are not limited to: 
+Page 22 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+a) Aligning data architecture and advanced data analysis services that support current GOS 
+enterprise data analytics service offerings (includes reporting and business intelligence 
+dashboards). Consulting can include influencing further technical platform capability 
+development for GOS technology platform services (provisioned through the associated RFP-
+0575 Data Management and Technology Platform Services). 
+b) Facilitating data preparation activities such as collection/capture/creation, discovery, 
+combining, structuring, organizing, enriching, profiling, transforming, consolidating, and curating 
+data in support of the analytics objectives.  
+c) Providing expertise, guidance and knowledge transfer to the business in the use of current GOS 
+data science capabilities. 
+d) Providing expertise, guidance and knowledge transfer to the business in the use of Predictive 
+Analytics (using a variety of methods, such as forecasting, statistical modeling, analytical 
+modeling, cognitive analysis, sentiment analysis and machine learning). 
+e) Providing expertise, guidance and knowledge transfer to the business in the use of Prescriptive 
+Analytics (using artificial intelligence, machine learning, algorithms, and business rules). 
+B.6 Data Integration and Interoperability 
+The Government of Saskatchewan is seeking qualified Proponents to provide services in support of 
+projects and initiatives requiring data integration and/or data interoperability planning and 
+implementation. Engaging with our GOS Integration service team by aligning data architecture and data 
+analysis services that support our current enterprise data integration service offering, the services and 
+associated deliverables can include but are not limited to:   
+a) Planning and designing data integration and interoperability requirements. 
+b) Facilitating data preparation activities such as collection/capture/creation, discovery, 
+combining, structuring, organizing, enriching, profiling, transforming, consolidating, and curating 
+data in support of the analytics objectives.  
+c) Performing and supporting Extract, Transform, Load (ETL or ELT) processes. 
+d) Performing and supporting Enterprise Information Integration processes (consolidating or 
+amalgamating data). 
+e) Engaging GOS Enterprise Application Integration services (exchanging data between applications 
+using APIs, web services, service bus, etc.) as required. 
+MATERIAL DISCLOSURES 
+Once on the prequalified list, and after the invitational second stage competitive process (reference 
+PART 1 section 1.3.1), the Successful Supplier(s) will be required to enter into contract.  
+For all categories, vendors will be expected to be able to conduct services on site when required. Travel 
+costs will need to be pre-approved by GOS and paid out at current GOS rates. 
+C. MANDATORY REQUIREMENTS 
+The mandatory requirements are listed in APPENDIX D - MANDATORY REQUIREMENTS & SUBMISSION 
+FORM. 
+Page 23 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+D. RATED CRITERIA 
+The following is an overview of the categories and weighting for the rated criteria of the RFSQ.  
+Proponents who do not meet a minimum threshold score may not proceed to the next stage of the 
+evaluation process. 
+The following rated criteria need only be responded to once regardless of how many service categories 
+are included in your Submission. 
+D.1 Proponent Profile 5 5% 
+D.2 Local / Industry Knowledge  20 20% 
+D.3 Technical Knowledge  10 10% 
+D.4 Proposed Approach to Service  10 10% 
+The following rated criteria need to be responded to for each service category included in your 
+Submission 
+D.5 Experience and Qualifications 30 30% 
+D.6 Capacity to Deliver 15 15% 
+D.7 Value Add-ons and Innovation   10 10% 
+Total Points 100 100% 
+D.1  Proponent Profile (5 Points) 
+Each Proponent should provide the following in its Submission: 
+D.1.1 Provide a brief introduction and overview of your company and its partnerships; particularly as 
+they are related to the services outlined in Appendix A Section B Deliverables in this RFSQ. 
+D.1.2 Provide details of any and all subcontracting or partnership arrangements proposed by the 
+Proponent specifically relating to the provision of Services as described herein. Outline the nature of the 
+proposed involvement and the nature of the relationship. 
+D.1.3 Location of head office and any sub-offices. 
+NOTE: The information asked for above should be provided for all Proponents partners and sub-
+contractors included in Submission. 
+D.2  Local / Industry Knowledge (20 Points) 
+GOS and its Ministry stakeholders are interested in understanding the Service Provider’s experience with 
+the Government of Saskatchewan, or comparable entity, as it relates to the business of public service.  
+Specifically, proponents are asked to highlight any knowledge of existing Government of Saskatchewan 
+Ministries or Organizations, Programs or Operations.  
+In addition, the Service Provider's current knowledge of Federal or Provincial Acts and Regulations 
+pertaining to data is considered an asset as well. 
+Each Proponent should provide the following in its Submission: 
+Page 24 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+D.2.1 Outline your organization’s experience and knowledge of Government of Saskatchewan’s (or 
+comparable entity) business and operations. Indicate the relative timelines in which this experience and 
+knowledge has been acquired. 
+D.2.2 Outline your organization’s experience and knowledge of public service organizations (Federal, 
+Provincial, Municipal, Boards, Agencies or non -Profit). Indicate the relative timelines in which this 
+experience and knowledge has been acquired. 
+D.2.3 Outline your organization’s experience and knowledge of applicable Acts, Regulations, and 
+Policies (Federal or Provincial) relating to data management and protection. Indicate how recent this 
+knowledge has been acquired. 
+D.2.4 Outline your organization’s experience and knowledge of specific private industries you feel 
+are relevant to the services requested. 
+D.3  Technical Knowledge (10 Points) 
+GOS and its Ministry stakeholders are interested in understanding the Service Provider’s experience with 
+the Government of Saskatchewan data management and analytics technology platforms, as well as 
+knowledge modern and emerging technology capabilities and products in the solution industry. 
+Familiarity with GOS technology products is considered an asset. Each Proponent should provide the 
+following in its Submission: 
+D.3.1 Outline your organization's experience in implementing and supporting IBM Infosphere data 
+management and analytics solutions. 
+D.3.2 Outline your organization's experience in implementing and supportin g IBM Cognos data 
+management and analytics solutions. 
+D.3.3 Outline your organization's experience in implementing and supporting Microsoft Power BI 
+data management and analytics solutions. 
+D.3.4 Outline your organization's experience in implementing and supporting ESRI ArcGIS Enterprise 
+data management and analytics solutions. 
+D.3.5 Highlight any Gold Partner (or equivalent) status your organization has in any data 
+management and analytics solutions 
+D.4  Proposed Approach to Service (10 Points) 
+RFSQ Appendix A, Section B Background describes the roles of the primary stakeholder groups within 
+the envisioned operating model for a data management and analytics "ecosystem". This model includes 
+the government organizations (services consumers), a government oversight group (ITD), a technology 
+platform services provider, and the "as required" consulting services providers (this RFSQ).   
+As a consulting services provider, GOS is specifically interested in your organization's ability to develop 
+strong relationships and cross collaboration with key stakeholders within vendor community, ITD, 
+Ministries, Agencies.  
+Each Proponent should provide the following in its Submission: 
+D.4.1 Outline your approach for working within the envisioned operating model, indicating how you 
+would approach relationship management and/or initiative oversight and governance. 
+Page 25 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+D.4.2 Indicate your experience in working within a multi- vendor environment to a chieve common 
+outcomes and using Enterprise Technology Services defined within those environments. 
+D.5 to D.7 Service Categories Rated Criteria (total of 55 Points, each category) 
+As described in Appendix A Section B Deliverables, six categories of data management services 
+have been defined. These include: 
+B.1 Data Governance 
+B.2 Business Transformation 
+B.3 Data Management Support 
+B.4 Analytics: Reporting and Business Intelligence (BI) Dashboards 
+B.5 Advanced analytics: Data Science, AI/ML  
+B.6 Data Integration and Interoperability 
+Proponents are requested to respond to the rated criteria for any or all of the six categories in which 
+they have specific services that they can provide. Proponents do not have to respond to all categories. 
+Proponents are asked to respond to the specific categories in which they wish to qualify for. 
+Details of the rated criteria (D.5 -D.7) for each service category are available in the six sections 
+(individual tabs) of the Appendix I Rated Criteria Spreadsheet. 
+Generally, Responses that receive less than 70% of the points may be rejected after the evaluation of 
+the written Response. The Evaluation Team will determine how many Responses, if any, will be short-
+listed. 
+Any Response ranked at the lower end of the scale in any of the criteria may be rejected. 
+E. OTHER RATED CRITERIA 
+Optional Rated Criteria Category (See PART 2) Weighting (Points) 
+E.1 Interviews / Presentations 15 
+E.2 Reference Checks 15 
+Total Points 30 
+ 
+Details for Other Rated Criteria will be provided to top-ranked Proponents as outlined in PART 2 of this 
+RFSQ. 
+F. RESPONSE GUIDELINES 
+Responses should also include all the information requested, and be presented, in the order described 
+below: 
+Table of Contents 
+A listing of the Response contents with reference to the appropriate page number. Page numbering and 
+tabs are beneficial. 
+Page 26 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+Letter of Introduction 
+One page of introduction which should be dated and signed by an official authorized to negotiate, make 
+commitments and provide clarifications with respect to the response on behalf of the Proponent.    
+Executive Summary 
+Provide a summary of the key features of your response. 
+Forms 
+Submission Form 
+Each Response should include a Submission Form (Appendix B), or a document containing the 
+information requested by the Submission Form, completed and signed by an authorized representative 
+of the Proponent. 
+Rated Criteria 
+Proponents should include a response to each of the rated criteria (Section D of this Appendix and 
+Appendix I attached to this competition) completed according to the instructions contained in the form. 
+ 
+  
+Page 27 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+APPENDIX C -  FORM OF AGREEMENT   
+Proponents are asked to review Appendix C – Form of Agreement and state any requested deviations 
+to this appendix as part of their submission. Suppliers that hold an active Ministry of SaskBuilds and 
+Procurement (formerly Central Services) Master Terms and Conditions are not required to review this 
+Appendix. 
+  
+Page 28 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+APPENDIX D - MANDATORY REQUIREMENTS & SUBMISSION FORM 
+1. Mandatory Requirements  
+Proponents should complete the following table: 
+The Proponent agrees to the following: 
+ 
+ 
+Yes No Pg.# 
+Mandatory #1 - Service providers are required to review 
+Appendix C, Form of Agreement and agree to one of the 
+following: 
+1.Yes, you accept the terms and conditions as outlined in the 
+Appendix, or 
+2.You provide a markup with requested changes to the 
+Appendix, or 
+3.You advise that you have a current SaskBuilds and 
+Procurement (formerly Central Services) Master Terms and 
+Conditions and agree that it will be used for any engagement 
+resulting from this competition. 
+   
+Mandatory #2 - The Proponent confirms it has established 
+Information Security Policies, Standards, and Specifications 
+which align with ISO 27002:2013, or similar/equivalent, 
+industry recognized code of practice for information security 
+controls. These are outlined in Appendix G - Information 
+Security 
+   
+ 
+  
+Page 29 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+2. Proponent Information 
+ 
+Please fill out the following form, naming one person to be the proponent’s contact for the RFS process 
+and for any clarifications or communication that might be necessary.  
+Full Legal Name of Proponent:    
+Saskatchewan Business Registration Number:  
+(or equivalent)  
+  
+Any Other Relevant Name under which 
+Proponent Carries on Business:  
+  
+Street Address:    
+City, Province/State:    
+Postal Code:    
+Phone Number:    
+Company Website (if any):    
+Proponent Contact   
+Name and Title:  
+  
+Proponent Contact Phone:    
+Proponent Contact Email:    
+For reporting purposes only, businesses that meet all the below criteria are asked to check the following 
+box to declare as a Saskatchewan Business.  
+☐    -    Have a place of business in Saskatchewan. This place of business refers to an establishment 
+where regular business activities are conducted on a permanent basis, is clearly identified by 
+name and is accessible during normal business hours;  
+• Employ Saskatchewan residents or sole proprietorship owned by a Saskatchewan 
+resident; and  
+• Be a registered business in Saskatchewan with an Information Services Corporation 
+profile or equivalent.  
+Physical Address of Saskatchewan Office:  ☐Same as Above  
+☐Not Applicable  
+☐Address (Provide Street, City, Postal Code):  
+ 
+The Proponent acknowledges the RFSQ process will be governed by the terms and conditions of the 
+RFSQ, and that, among other things, such terms and conditions confirm that this procurement process 
+does not constitute a formal, legally binding bidding process (and for greater certainty, does not give 
+rise to a Contract A bidding process contract), and that no legal relationship or obligation regarding the 
+procurement of any good or service will be created between GOS and the Proponent unless and until  
+GOS and the Proponent execute a written Agreement for the Deliverables. 
+ 
+________________________________ ________________________________ 
+Signature of Proponent Representative Title of Proponent Representative 
+ 
+ 
+________________________________ ________________________________ 
+Name of Proponent Representative Date 
+Page 30 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+ 
+APPENDIX E -  DEFINITIONS 
+Throughout this RFSQ, the following definitions apply: 
+“Agreement” means the written contract between the top-ranked Proponent and His Majesty to 
+provide the services contemplated by this RFSQ. 
+“Client” (referring to ministry) means His Majesty the King in the right of the Province of Saskatchewan, 
+as represented by the Ministry of SaskBuilds and Procurement. 
+“Desirable” “Rated” “Should” means requirements that may have a degree of importance to be 
+objectives of this RFSQ and may be rated. 
+“Deliverables” means the functions, duties, tasks and responsibilities to be provided by the Proponent 
+as described in this RFSQ. 
+“Delivered Duty Paid” refers to a transaction where the seller pays for the total costs associated with 
+transporting goods and is fully responsible for the goods until they are received and transferred to the 
+buyer. This includes paying for costs, export and import duties, insurance and any other expenses 
+incurred during shipping of the goods. The risks and charges are with the seller of the goods until 
+delivery is made in the buyer’s country at an agreed-upon location.   
+“Entity” refers to the Government of Saskatchewan, the province or ministries are used for administrative 
+purposes and mean His Majesty the King in Right of the Province of Saskatchewan, as represented by the 
+Minister of SaskBuilds and Procurement. 
+“Evaluation Team” means the individuals who will evaluate the responses on behalf of the Government 
+of Saskatchewan. 
+“GST” means Goods and Services Tax (currently at 5%). 
+“Mandatory” means requirements that are imperative and must be met in order for the response to 
+receive consideration.  
+“Proponent” means an individual or a company that provides, or intends to provide, a response to this 
+RFSQ. 
+“PST” means Saskatchewan Provincial Sales Tax (currently 6%). 
+“Response” means the bid, proposal, or document provided by a Proponent in Response to the RFSQ. 
+“RFSQ” means Request for Supplier Qualifications.  
+“Successful Proponent” means the organization responding to this RFSQ who is determined to be 
+successful in this competition and has been added to the prequalified supplier list by GOS. 
+  
+ 
+ 
+ 
+Page 31 of 31 
+ 
+saskatchewan.ca | sasktenders.ca  
+ 
+ 
+ 
+APPENDIX F - ITD ENVIRONMENT  
+The above-mentioned Appendix may be found as an attached document to this Competition. It lists 
+ITD’s technology information environment and should be taken in consideration while building your 
+submission.  
+APPENDIX G - INFORMATION SECURITY  
+The above-mentioned Appendix may be found as an attached document to this Competition. It lists 
+ITD’s information security requirements and should be taken in consideration while building your 
+submission.  
+ 
+APPENDIX H - INFRASTRUCTURE AND ARCHITECTURE  
+The above-mentioned Appendix may be found as an attached document to this Competition. It 
+describes ITD’s considerations in regard to the Solution’s Infrastructure and Architecture requirements 
+and should be taken in consideration while building your submission.  
+ 
+APPENDIX I – RATED CRITERIA   
+Rates Requirements is an attached spreadsheet describing the evaluation criteria for the desired 
+elements of the solution/service from an information technology perspective. Your submission must 
+contain the completed document in order to be evaluated. 
+ 
+ 
+APPENDIX J – NOT REQUIRED  
+ 
+APPENDIX K – NOT REQUIRED  
+ 
+APPENDIX L – REFERENCE COPY OF RFP-0575  

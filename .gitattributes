@@ -1,0 +1,32 @@
+# Normalize line endings on commit. Windows checkouts get CRLF, Unix get LF.
+# Resolves the 86 "modified" phantom diffs caused by mixed CRLF/LF.
+
+* text=auto eol=lf
+
+# Force-text known source types
+*.html        text eol=lf
+*.css         text eol=lf
+*.js          text eol=lf
+*.mjs         text eol=lf
+*.ts          text eol=lf
+*.mts         text eol=lf
+*.json        text eol=lf
+*.md          text eol=lf
+*.yaml        text eol=lf
+*.yml         text eol=lf
+*.toml        text eol=lf
+*.sh          text eol=lf
+*.py          text eol=lf
+
+# PowerShell scripts keep CRLF for Windows
+*.ps1         text eol=crlf
+
+# Force-binary
+*.png         binary
+*.jpg         binary
+*.jpeg        binary
+*.pdf         binary
+*.docx        binary
+*.xlsx        binary
+*.zip         binary
+*.mp4         binary

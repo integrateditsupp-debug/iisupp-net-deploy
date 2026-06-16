@@ -1,0 +1,1502 @@
+
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+	<head>
+		<title>Public Download: BC Bid</title>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<link rel="stylesheet" href="/bare.aspx/en/css/default_style/buyer_ssbc_V2_0_140_20260525_p70984/revac74ac3faa5059878a581150b90e12b56727126762267869184/BC_BidR_15-164/css_default_style.css">
+<link rel="stylesheet" href="/dist/third-party/semantic-ui/semantic.min.css?v=20260525113358">
+<link rel="stylesheet" href="/dist/css/ivalua.min.css?v=20260525113354">
+<link rel="apple-touch-icon" sizes="180x180" href="/dist/image/apple-touch-icon.png?v=20260525113354">
+<link rel="icon" type="image/png" sizes="32x32" href="/dist/image/favicon-32x32.png?v=20260525113354">
+<link rel="icon" type="image/png" sizes="16x16" href="/dist/image/favicon-16x16.png?v=20260525113354"><style>:root {
+  --bas_action_bar_inside_footer: 0;
+  --bas_menu_position_beside_logo: 0;
+  --Bridge_HeaderTheme: Colored;
+  --FilterAdvancedControl_DefaultFrameType: Borderless;
+  --FilterControl_DefaultFrameType: EveryBorderNoBackground;
+  --Frame_DefaultFrameType: EveryBorderNoBackground;
+  --Frame_DefaultFrameTypeBrowse: HeaderBorder;
+  --Frame_DefaultFrameTypeNoTitle: Borderless;
+  --Frame_DefaultFrameTypeNoTitleBrowse: Borderless;
+  --MenuControl_RenderType: Button;
+  --palette_negative_color: #aa1d1d;
+  --palette_positive_color: #196719;
+  --palette_primary_color: #1a5a96;
+  --palette_secondary_color: #003366;
+  --palette_warning_color: #deb453;
+  --PanelControl_PanelTheme: Light;
+  --pbi_analysis_chart_palette: #27aeef, #ef9b20, #87bc45, #ea5545, #b33dc6, #bdcf32, #f46a9b, #edbf33, #ede15b, #0F6793, #2A2A72, #506180, #cc6100, #00C124, #e67e07, #1DDB38, #f4933b, #64E273, #f7ae72;
+  --pbi_cell_border_color: #ffffff;
+  --pbi_cell_hover_color: #cce3f5;
+  --pbi_cell_lvl_1_color: #90c2e7;
+  --pbi_cell_lvl_2_color: #90c2e7;
+  --pbi_cell_lvl_3_color: #b8e0ff;
+  --pbi_cell_lvl_4_color: #d6edff;
+  --pbi_cell_total_color: #b8e0ff;
+  --sample_color_picker: #1a5a96;
+  --StyleTemplate_LayoutTheme: Light;
+}
+.ui.frame.segment > .frame.header > .ui.header {
+  color: var(--palette_primary_color) !important;
+}
+.ui.frame.segment.frame4 {
+  border-top-color: #1a5a96;
+  /* default color if no color is assigned */
+
+}
+header > .iv-header .header-nav-bar.header-colored {
+  background-color: #1a5a96;
+}
+header > .iv-header .header-nav-bar.header-colored .menu_shading {
+  background-color: #1a5a96;
+}
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper {
+  background-color: #1a5a96;
+}
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper .right.menu > div:hover {
+  background-color: #206fb9 !important;
+}
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper .right.menu .accessibility-button-container > .ui.button {
+  color: #ffffff;
+}
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper .right.menu .ui.item .menu-profile,
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper .right.menu .ui.item .menu-notification {
+  color: #ffffff;
+}
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper .right.menu .ui.item > .ui.button {
+  color: #ffffff;
+}
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper .right.menu .ui.item .iv-menu-profile-button,
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper .right.menu .ui.item .iv-menu-notification-button {
+  color: #ffffff;
+}
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper .right.menu .notification-container .notification-bell-icon {
+  color: #ffffff;
+}
+.iv-mobile {
+  --background-color-header: #1a5a96;
+  --swiper-pagination-color: #1a5a96;
+}
+.iv-mobile .iv-header {
+  background-color: #1a5a96;
+}
+.iv-mobile .content_display_outer {
+  background-color: #1a5a96;
+}
+.iv-mobile .shopping-cart-container {
+  background: #1a5a96;
+}
+.iv-mobile .login_page_frame .iv-header {
+  background-color: #1a5a96;
+}
+.iv-mobile .login_page_frame .iv-header .ui.button {
+  background: #1a5a96;
+}
+.iv-mobile .login_page_frame .ui.button {
+  background: #1a5a96;
+}
+.iv-mobile .m_item_active::before {
+  background: #1a5a96;
+}
+.iv-mobile .m_item_link {
+  color: #7898cc;
+}
+.iv-mobile .m_item_link:visited {
+  color: #7898cc;
+}
+.iv-mobile .tab_container .ui.tabular.menu.horizontal .item.active .iv-tab-label,
+.iv-mobile .tab_container .ui.tabular.menu.horizontal .item.active {
+  border-top-color: #1a5a96;
+  color: #1a5a96;
+}
+.iv-mobile .m_menu_header_item_text,
+.iv-mobile .txt-menu-version {
+  color: #7898cc;
+}
+/* old way (still used)  - quick link buttons on dashboard */
+
+td.quick-container table td.quick-icon i.icon,
+td.quick-container table td.quick-icon span.fa {
+  color: #1a5a96;
+}
+.iv-quick-access .ui.button:not(.borderless):not(.icon) .icon {
+  color: #1a5a96;
+}
+/* Standard */
+
+.ui.primary.slider .inner .track-fill {
+  background-color: #1a5a96;
+}
+.ui.primary.inverted.slider .inner .track-fill {
+  background-color: #156fc4;
+}
+/* Basic */
+
+.ui.primary.slider.basic .inner .thumb {
+  background-color: #1a5a96;
+}
+.ui.primary.slider.basic .inner .thumb:hover,
+.ui.primary.slider.basic:focus .inner .thumb {
+  background-color: #156fc4;
+}
+/* Basic Inverted */
+
+.ui.primary.inverted.slider.basic .inner .thumb {
+  background-color: #156fc4;
+}
+.ui.primary.inverted.slider.basic .inner .thumb:hover,
+.ui.primary.inverted.slider.basic:focus .inner .thumb {
+  background-color: #156fc4;
+}
+/* Standard */
+
+.ui.secondary.slider .inner .track-fill {
+  background-color: #003366;
+}
+.ui.secondary.inverted.slider .inner .track-fill {
+  background-color: #00478f;
+}
+/* Basic */
+
+.ui.secondary.slider.basic .inner .thumb {
+  background-color: #003366;
+}
+.ui.secondary.slider.basic .inner .thumb:hover,
+.ui.secondary.slider.basic:focus .inner .thumb {
+  background-color: #00478f;
+}
+/* Basic Inverted */
+
+.ui.secondary.inverted.slider.basic .inner .thumb {
+  background-color: #00478f;
+}
+.ui.secondary.inverted.slider.basic .inner .thumb:hover,
+.ui.secondary.inverted.slider.basic:focus .inner .thumb {
+  background-color: #00478f;
+}
+.ui.toggle.checkbox input:checked ~ .box:before,
+.ui.toggle.checkbox input:checked ~ label:before {
+  background-color: #1a5a96 !important;
+}
+.ui.primary.button,
+.ui.primary.buttons .button {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #1a5a96 !important;
+  color: #ffffff !important;
+  border-color: #1a5a96 !important;
+}
+.ui.primary.button:hover,
+.ui.primary.buttons .button:hover {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #156fc4 !important;
+  color: #ffffff !important;
+  border-color: #156fc4 !important;
+}
+.ui.primary.button:focus,
+.ui.primary.buttons .button:focus {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #156fc4 !important;
+  color: #ffffff !important;
+  border-color: #156fc4 !important;
+}
+.ui.primary.button:active,
+.ui.primary.buttons .button:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #0d457a !important;
+  color: #ffffff !important;
+  border-color: #0d457a !important;
+}
+.ui.primary.button.active,
+.ui.primary.buttons .button.active,
+.ui.primary.button.active:active,
+.ui.primary.buttons .button.active:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #1a5a96 !important;
+  color: #ffffff !important;
+  border-color: #1a5a96 !important;
+}
+.ui.basic.primary.button,
+.ui.basic.primary.buttons .button {
+  background: transparent !important;
+  color: #1a5a96 !important;
+  box-shadow: none !important;
+  border: solid 1px #1a5a96 !important;
+}
+.ui.basic.primary.button:hover,
+.ui.basic.primary.buttons .button:hover {
+  background: transparent !important;
+  color: #156fc4 !important;
+  box-shadow: none !important;
+  border: solid 1px #156fc4 !important;
+}
+.ui.basic.primary.button:focus,
+.ui.basic.primary.buttons .button:focus {
+  background: transparent !important;
+  color: #156fc4 !important;
+  box-shadow: none !important;
+  border: solid 1px #156fc4 !important;
+}
+.ui.basic.primary.button:active,
+.ui.basic.primary.buttons .button:active {
+  background: transparent !important;
+  color: #0d457a !important;
+  box-shadow: none !important;
+  border: solid 1px #0d457a !important;
+}
+.ui.basic.primary.button.active,
+.ui.basic.primary.buttons .button.active,
+.ui.basic.primary.button.active:active,
+.ui.basic.primary.buttons .button.active:active {
+  background: transparent !important;
+  color: #1a5a96 !important;
+  box-shadow: none !important;
+  border: solid 1px #1a5a96 !important;
+}
+.ui.borderless.primary.button,
+.ui.borderless.primary.buttons .button {
+  background: transparent !important;
+  color: #1a5a96 !important;
+}
+.ui.borderless.primary.button:hover,
+.ui.borderless.primary.buttons .button:hover {
+  background: transparent !important;
+  color: #156fc4 !important;
+}
+.ui.borderless.primary.button:focus,
+.ui.borderless.primary.buttons .button:focus {
+  background: transparent !important;
+  color: #156fc4 !important;
+}
+.ui.borderless.primary.button:active,
+.ui.borderless.primary.buttons .button:active {
+  background: transparent !important;
+  color: #0d457a !important;
+}
+.ui.borderless.primary.button.active,
+.ui.borderless.primary.buttons .button.active,
+.ui.borderless.primary.button.active:active,
+.ui.borderless.primary.buttons .button.active:active {
+  background: transparent !important;
+  color: #1a5a96 !important;
+}
+/*
+	SECONDARY COLOR
+*/
+.ui.secondary.button,
+.ui.secondary.buttons .button {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #003366 !important;
+  color: #ffffff !important;
+  border-color: #003366 !important;
+}
+.ui.secondary.button:hover,
+.ui.secondary.buttons .button:hover {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #00478f !important;
+  color: #ffffff !important;
+  border-color: #00478f !important;
+}
+.ui.secondary.button:focus,
+.ui.secondary.buttons .button:focus {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #00478f !important;
+  color: #ffffff !important;
+  border-color: #00478f !important;
+}
+.ui.secondary.button:active,
+.ui.secondary.buttons .button:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #001933 !important;
+  color: #ffffff !important;
+  border-color: #001933 !important;
+}
+.ui.secondary.button.active,
+.ui.secondary.buttons .button.active,
+.ui.secondary.button.active:active,
+.ui.secondary.buttons .button.active:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #003366 !important;
+  color: #ffffff !important;
+  border-color: #003366 !important;
+}
+.ui.basic.secondary.button,
+.ui.basic.secondary.buttons .button {
+  background: transparent !important;
+  color: #003366 !important;
+  box-shadow: none !important;
+  border: solid 1px #003366 !important;
+}
+.ui.basic.secondary.button:hover,
+.ui.basic.secondary.buttons .button:hover {
+  background: transparent !important;
+  color: #00478f !important;
+  box-shadow: none !important;
+  border: solid 1px #00478f !important;
+}
+.ui.basic.secondary.button:focus,
+.ui.basic.secondary.buttons .button:focus {
+  background: transparent !important;
+  color: #00478f !important;
+  box-shadow: none !important;
+  border: solid 1px #00478f !important;
+}
+.ui.basic.secondary.button:active,
+.ui.basic.secondary.buttons .button:active {
+  background: transparent !important;
+  color: #001933 !important;
+  box-shadow: none !important;
+  border: solid 1px #001933 !important;
+}
+.ui.basic.secondary.button.active,
+.ui.basic.secondary.buttons .button.active,
+.ui.basic.secondary.button.active:active,
+.ui.basic.secondary.buttons .button.active:active {
+  background: transparent !important;
+  color: #003366 !important;
+  box-shadow: none !important;
+  border: solid 1px #003366 !important;
+}
+.ui.borderless.secondary.button,
+.ui.borderless.secondary.buttons .button {
+  background: transparent !important;
+  color: #003366 !important;
+}
+.ui.borderless.secondary.button:hover,
+.ui.borderless.secondary.buttons .button:hover {
+  background: transparent !important;
+  color: #00478f !important;
+}
+.ui.borderless.secondary.button:focus,
+.ui.borderless.secondary.buttons .button:focus {
+  background: transparent !important;
+  color: #00478f !important;
+}
+.ui.borderless.secondary.button:active,
+.ui.borderless.secondary.buttons .button:active {
+  background: transparent !important;
+  color: #001933 !important;
+}
+.ui.borderless.secondary.button.active,
+.ui.borderless.secondary.buttons .button.active,
+.ui.borderless.secondary.button.active:active,
+.ui.borderless.secondary.buttons .button.active:active {
+  background: transparent !important;
+  color: #003366 !important;
+}
+/*
+	POSITIVE COLOR
+*/
+.ui.positive.button,
+.ui.positive.buttons .button {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #196719 !important;
+  color: #ffffff !important;
+  border-color: #196719 !important;
+}
+.ui.positive.button:hover,
+.ui.positive.buttons .button:hover {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #218821 !important;
+  color: #ffffff !important;
+  border-color: #218821 !important;
+}
+.ui.positive.button:focus,
+.ui.positive.buttons .button:focus {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #218821 !important;
+  color: #ffffff !important;
+  border-color: #218821 !important;
+}
+.ui.positive.button:active,
+.ui.positive.buttons .button:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #0f3e0f !important;
+  color: #ffffff !important;
+  border-color: #0f3e0f !important;
+}
+.ui.positive.button.active,
+.ui.positive.buttons .button.active,
+.ui.positive.button.active:active,
+.ui.positive.buttons .button.active:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #196719 !important;
+  color: #ffffff !important;
+  border-color: #196719 !important;
+}
+.ui.basic.positive.button,
+.ui.basic.positive.buttons .button {
+  background: transparent !important;
+  color: #196719 !important;
+  box-shadow: none !important;
+  border: solid 1px #196719 !important;
+}
+.ui.basic.positive.button:hover,
+.ui.basic.positive.buttons .button:hover {
+  background: transparent !important;
+  color: #218821 !important;
+  box-shadow: none !important;
+  border: solid 1px #218821 !important;
+}
+.ui.basic.positive.button:focus,
+.ui.basic.positive.buttons .button:focus {
+  background: transparent !important;
+  color: #218821 !important;
+  box-shadow: none !important;
+  border: solid 1px #218821 !important;
+}
+.ui.basic.positive.button:active,
+.ui.basic.positive.buttons .button:active {
+  background: transparent !important;
+  color: #0f3e0f !important;
+  box-shadow: none !important;
+  border: solid 1px #0f3e0f !important;
+}
+.ui.basic.positive.button.active,
+.ui.basic.positive.buttons .button.active,
+.ui.basic.positive.button.active:active,
+.ui.basic.positive.buttons .button.active:active {
+  background: transparent !important;
+  color: #196719 !important;
+  box-shadow: none !important;
+  border: solid 1px #196719 !important;
+}
+.ui.borderless.positive.button,
+.ui.borderless.positive.buttons .button {
+  background: transparent !important;
+  color: #196719 !important;
+}
+.ui.borderless.positive.button:hover,
+.ui.borderless.positive.buttons .button:hover {
+  background: transparent !important;
+  color: #218821 !important;
+}
+.ui.borderless.positive.button:focus,
+.ui.borderless.positive.buttons .button:focus {
+  background: transparent !important;
+  color: #218821 !important;
+}
+.ui.borderless.positive.button:active,
+.ui.borderless.positive.buttons .button:active {
+  background: transparent !important;
+  color: #0f3e0f !important;
+}
+.ui.borderless.positive.button.active,
+.ui.borderless.positive.buttons .button.active,
+.ui.borderless.positive.button.active:active,
+.ui.borderless.positive.buttons .button.active:active {
+  background: transparent !important;
+  color: #196719 !important;
+}
+/*
+	NEGATIVE COLOR
+*/
+.ui.negative.button,
+.ui.negative.buttons .button {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #aa1d1d !important;
+  color: #ffffff !important;
+  border-color: #aa1d1d !important;
+}
+.ui.negative.button:hover,
+.ui.negative.buttons .button:hover {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #cd2323 !important;
+  color: #ffffff !important;
+  border-color: #cd2323 !important;
+}
+.ui.negative.button:focus,
+.ui.negative.buttons .button:focus {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #cd2323 !important;
+  color: #ffffff !important;
+  border-color: #cd2323 !important;
+}
+.ui.negative.button:active,
+.ui.negative.buttons .button:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #7e1616 !important;
+  color: #ffffff !important;
+  border-color: #7e1616 !important;
+}
+.ui.negative.button.active,
+.ui.negative.buttons .button.active,
+.ui.negative.button.active:active,
+.ui.negative.buttons .button.active:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #aa1d1d !important;
+  color: #ffffff !important;
+  border-color: #aa1d1d !important;
+}
+.ui.basic.negative.button,
+.ui.basic.negative.buttons .button {
+  background: transparent !important;
+  color: #aa1d1d !important;
+  box-shadow: none !important;
+  border: solid 1px #aa1d1d !important;
+}
+.ui.basic.negative.button:hover,
+.ui.basic.negative.buttons .button:hover {
+  background: transparent !important;
+  color: #cd2323 !important;
+  box-shadow: none !important;
+  border: solid 1px #cd2323 !important;
+}
+.ui.basic.negative.button:focus,
+.ui.basic.negative.buttons .button:focus {
+  background: transparent !important;
+  color: #cd2323 !important;
+  box-shadow: none !important;
+  border: solid 1px #cd2323 !important;
+}
+.ui.basic.negative.button:active,
+.ui.basic.negative.buttons .button:active {
+  background: transparent !important;
+  color: #7e1616 !important;
+  box-shadow: none !important;
+  border: solid 1px #7e1616 !important;
+}
+.ui.basic.negative.button.active,
+.ui.basic.negative.buttons .button.active,
+.ui.basic.negative.button.active:active,
+.ui.basic.negative.buttons .button.active:active {
+  background: transparent !important;
+  color: #aa1d1d !important;
+  box-shadow: none !important;
+  border: solid 1px #aa1d1d !important;
+}
+.ui.borderless.negative.button,
+.ui.borderless.negative.buttons .button {
+  background: transparent !important;
+  color: #aa1d1d !important;
+}
+.ui.borderless.negative.button:hover,
+.ui.borderless.negative.buttons .button:hover {
+  background: transparent !important;
+  color: #cd2323 !important;
+}
+.ui.borderless.negative.button:focus,
+.ui.borderless.negative.buttons .button:focus {
+  background: transparent !important;
+  color: #cd2323 !important;
+}
+.ui.borderless.negative.button:active,
+.ui.borderless.negative.buttons .button:active {
+  background: transparent !important;
+  color: #7e1616 !important;
+}
+.ui.borderless.negative.button.active,
+.ui.borderless.negative.buttons .button.active,
+.ui.borderless.negative.button.active:active,
+.ui.borderless.negative.buttons .button.active:active {
+  background: transparent !important;
+  color: #aa1d1d !important;
+}
+/*
+	WARNING COLOR
+*/
+.ui.warning.button,
+.ui.warning.buttons .button {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #deb453 !important;
+  color: #000000 !important;
+  border-color: #deb453 !important;
+}
+.ui.warning.button:hover,
+.ui.warning.buttons .button:hover {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #e5c375 !important;
+  color: #000000 !important;
+  border-color: #e5c375 !important;
+}
+.ui.warning.button:focus,
+.ui.warning.buttons .button:focus {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #e5c375 !important;
+  color: #000000 !important;
+  border-color: #e5c375 !important;
+}
+.ui.warning.button:active,
+.ui.warning.buttons .button:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #d5a129 !important;
+  color: #000000 !important;
+  border-color: #d5a129 !important;
+}
+.ui.warning.button.active,
+.ui.warning.buttons .button.active,
+.ui.warning.button.active:active,
+.ui.warning.buttons .button.active:active {
+  /*background: linear-gradient(lighten(@backgroundColor, 10%), @backgroundColor) !important;*/
+  background: #deb453 !important;
+  color: #000000 !important;
+  border-color: #deb453 !important;
+}
+.ui.basic.warning.button,
+.ui.basic.warning.buttons .button {
+  background: transparent !important;
+  color: #deb453 !important;
+  box-shadow: none !important;
+  border: solid 1px #deb453 !important;
+}
+.ui.basic.warning.button:hover,
+.ui.basic.warning.buttons .button:hover {
+  background: transparent !important;
+  color: #e5c375 !important;
+  box-shadow: none !important;
+  border: solid 1px #e5c375 !important;
+}
+.ui.basic.warning.button:focus,
+.ui.basic.warning.buttons .button:focus {
+  background: transparent !important;
+  color: #e5c375 !important;
+  box-shadow: none !important;
+  border: solid 1px #e5c375 !important;
+}
+.ui.basic.warning.button:active,
+.ui.basic.warning.buttons .button:active {
+  background: transparent !important;
+  color: #d5a129 !important;
+  box-shadow: none !important;
+  border: solid 1px #d5a129 !important;
+}
+.ui.basic.warning.button.active,
+.ui.basic.warning.buttons .button.active,
+.ui.basic.warning.button.active:active,
+.ui.basic.warning.buttons .button.active:active {
+  background: transparent !important;
+  color: #deb453 !important;
+  box-shadow: none !important;
+  border: solid 1px #deb453 !important;
+}
+.ui.borderless.warning.button,
+.ui.borderless.warning.buttons .button {
+  background: transparent !important;
+  color: #deb453 !important;
+}
+.ui.borderless.warning.button:hover,
+.ui.borderless.warning.buttons .button:hover {
+  background: transparent !important;
+  color: #e5c375 !important;
+}
+.ui.borderless.warning.button:focus,
+.ui.borderless.warning.buttons .button:focus {
+  background: transparent !important;
+  color: #e5c375 !important;
+}
+.ui.borderless.warning.button:active,
+.ui.borderless.warning.buttons .button:active {
+  background: transparent !important;
+  color: #d5a129 !important;
+}
+.ui.borderless.warning.button.active,
+.ui.borderless.warning.buttons .button.active,
+.ui.borderless.warning.button.active:active,
+.ui.borderless.warning.buttons .button.active:active {
+  background: transparent !important;
+  color: #deb453 !important;
+}
+/* MIXINS */
+/*  off styles  */
+
+.iv-selector .ui.dropdown.dropdown-selector > .menu .dropdown-footer > button {
+  color: #1a5a96 !important;
+}
+.main-nav.ui.menu.main .main-nav.ui.dropdown:hover {
+  color: #ffffff !important;
+}
+.main-nav.ui.menu.main .main-nav.ui.dropdown .main-nav.menu .item.selected-item.selected > a,
+.main-nav.ui.menu.main .main-nav.ui.dropdown .main-nav.menu .item.selected-item.selected > .ui.button {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.inverted.block-style.menu {
+  background: transparent;
+}
+.header-nav-bar.header-light .main-nav.ui.inverted.block-style.menu > .item.selected-menu {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.inverted.block-style.menu > .item.selected-menu > a,
+.header-nav-bar.header-light .main-nav.ui.inverted.block-style.menu > .item.selected-menu > .ui.button {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.pointing.menu > .item:hover,
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.pointing.menu > .item.selected-menu {
+  border-color: #1a5a96 !important;
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.pointing.menu > .item:hover > a,
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.pointing.menu > .item.selected-menu > a,
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.pointing.menu > .item:hover > .ui.button,
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.pointing.menu > .item.selected-menu > .ui.button {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu > a,
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu > .ui.button {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu:hover {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.outline.menu > .item:hover {
+  border-color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.outline.menu > .item:hover > .ui.button {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.outline.menu > .item.selected-menu {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.outline.menu > .item.selected-menu > a,
+.header-nav-bar.header-light .main-nav.ui.secondary.inverted.outline.menu > .item.selected-menu > .ui.button {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.inverted.block-style.menu {
+  background-color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.inverted.block-style.menu > .item {
+  color: #ffffff !important;
+  background-color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.inverted.block-style.menu > .item.active {
+  background-color: #2884da !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.inverted.block-style.menu > .item:hover {
+  background-color: #2884da !important;
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.inverted.block-style.menu > .item.selected-menu {
+  background-color: #2884da !important;
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.inverted.block-style.menu > .item.selected-menu > .ui.button {
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.inverted.block-style.menu > .item a,
+.header-nav-bar.header-colored .main-nav.ui.inverted.block-style.menu > .item > .ui.button {
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.pointing.menu {
+  background-color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.pointing.menu > .item {
+  background-color: #1a5a96 !important;
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.pointing.menu > .item.active {
+  background-color: #2884da !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.pointing.menu > .item:hover {
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.pointing.menu > .item.selected-menu {
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.pointing.menu > .item.selected-menu > a,
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.pointing.menu > .item.selected-menu > .ui.button {
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.pointing.menu > .item a,
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.pointing.menu > .item > .ui.button {
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu {
+  background-color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item {
+  color: #ffffff !important;
+  background-color: #398edd !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item:hover {
+  background-color: #65a7e4 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu:hover {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu > .ui.button.ui.button {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.outline.menu {
+  background-color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.outline.menu > .item {
+  color: #ffffff;
+  border-color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.outline.menu > .item:hover {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.outline.menu > .item:hover > .ui.button {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.outline.menu > .item.selected-menu {
+  color: #1a5a96 !important;
+  background-color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.outline.menu > .item.selected-menu > a {
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.outline.menu > .item.selected-menu > .ui.button {
+  color: #1a5a96 !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.outline.menu > .item > .ui.button {
+  color: #ffffff !important;
+}
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.outline.menu > .item a {
+  color: #1a5a96 !important;
+}
+.grid-summary-mode .grid-summary-container .grid-summary-count {
+  border: solid 2px #1a5a96 !important;
+}
+.iv-dcc-summary-view .iv-dcc-summary-container .iv-dcc-summary-view-count {
+  border: solid 2px #1a5a96 !important;
+}
+.html-popup header .header_popup_shading {
+  background-color: #1a5a96;
+}
+.tab_container.tab_horizontal .iv-tab-label:hover {
+  color: #1a5a96;
+}
+.tab_container .ui.tabular.menu.horizontal {
+  padding-left: 0;
+  margin-bottom: 0;
+}
+.tab_container .ui.tabular.menu.horizontal .item {
+  line-height: 1.25;
+}
+.tab_container .ui.tabular.menu.vertical .item.active {
+  color: #1a5a96 !important;
+}
+.tab_container .ui.tabular.menu.vertical .item.active:hover {
+  color: #2274c1;
+}
+body:not(.iv-mobile) .login_page_l_custom_box table a,
+body:not(.iv-mobile) .btn-login-custom {
+  color: #1a5a96;
+}
+.login_container .h1,
+.login_container .h2 {
+  color: #1a5a96;
+}
+
+.print-mode {
+  .ui.input, .grid
+   {
+     display: inherit !important;
+   }
+  .ui.input input[type=text] 
+   {
+      width: 102% !important;
+   }
+    .qst-question-desc
+  {
+   display: block !important;
+  }
+  .bpm-nav-panel
+  {
+    .ui.button.iv-button
+     {
+	   display: none !important;
+     }
+   }
+}
+#header_x_prxHeaderTitle_x_btnDocLink
+{
+display: none;
+}
+div.ul-file-upload .fa-eye,
+ul.ul-file-upload .fa-eye,
+div.ul-file-upload .fa-eye-slash,
+ul.ul-file-upload .fa-eye-slash
+{
+display: none;
+}
+
+div.ul-file-upload .iv-view-file,
+ul.ul-file-upload .iv-view-file
+{
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  color: black;
+}
+
+
+body.light .main-content .iv-content {
+    background: #f2f2f2;
+}
+
+.iv-grid div.iv.file .li-file-upload span[data-iv-role=label] {
+    display: inline-block !important;
+}
+
+.qst-tables .qst-mainsection-container,
+.qst-tables table.qst-mainsection-container {
+		.qst-main-title {
+		font-size: 1.3em !important;
+		display: inline-block;
+		width: 100%;
+		padding-right: 0em !important;
+	}
+}
+
+/* Addendum Check mark */
+#body_x_prxEtap_x_prxAction_x_prxThreadManage_x_tblThread button[data-field$="imgTreated"]
+{
+                color: #deb453;
+}
+
+/* My Pending Validations 'Results' */
+#body_x_webPartContainer_x_frm514e3f12-f09b-eb11-913f-00155dc41704 a[href$="wfl_task_browse"]
+{
+	color: #003366;
+
+}
+
+/* Suppliers --> Credentials */
+#body_x_grid_grd > tbody > tr > td[style="color:Red;font-weight:bold;"]
+{	
+	color: #D8292F !important;
+}
+
+/* Suppliers --> Qualifications --> Approved */
+#body_x_grdPanel_grd > tbody > tr > td[style="color:#00961E;"]
+{	
+	color: #2E8540 !important;
+}
+
+/* Suppliers --> Qualifications --> Pending */
+#body_x_grdPanel_grd > tbody > tr > td[style="color:#99bdff;"]
+
+{
+	color: #1a5a96 !important;
+}
+
+/* Suppliers --> Qualifications --> Ignored */
+#body_x_grdPanel_grd > tbody > tr > td[style="color:#FFCC00;"]
+{
+	color: #000000 !important;
+}
+
+/* Sourcing Project --> Prepare RFx --> Item --> header grid (far right) */
+th[style~="background-color:#AAAAAA;"]
+{
+                background-color: #606060 !important;
+                color:white; 
+}
+
+/* Multi selector with the 'X' icon displaying */
+i[class="fa-times-circle delete icon"]
+{
+color: #313132 !important;
+}
+
+body.print-mode .field .input.date>input {
+   width: 130px!important;
+}
+ 
+ /*Adjust appearance of account dropdown arrow*/
+button#header_x_prxHeaderLogInfo_x_btnLoginMenu.span.i.iv-page-fa-icon iv-page-fa-icon-user-arrow.fa-chevron-down.regular.icon, header>.iv-header .header-nav-bar .alerts-profile-wrapper .right.menu .ui.item i.iv-page-fa-icon-user-arrow {
+    opacity: 1 !important;
+    font-size: 1.3em;
+    font-weight: bolder !important;
+}
+ 
+    /*make default checkbox not-visible*/
+    body.print-mode .checkbox-control input[type="checkbox"],
+	.checkbox-control input[type="checkbox"] {
+        opacity: 0 !important;
+    }
+    
+    body.print-mode .checkbox-control input[type="checkbox"] label,
+
+	.checkbox-control input[type="checkbox"] label {
+        position: relative !important;
+        display: inline-block !important;
+        /*16px width of fake checkbox + 6px distance between fake checkbox and text*/
+        padding-left: 22px !important;
+        /*border-color: #606060 !important;*/
+		border-color: #D4D4D5 !important
+    }
+	
+	body.print-mode .checkbox-control input[type="checkbox"] label
+	{
+		padding-left:22px !important;
+	}
+    
+    /* control positioning for checkbox */
+	body.print-mode .checkbox-control input[type="checkbox"]+label::before,
+	body.print-mode .checkbox-control input[type="checkbox"]+label::after,
+    .checkbox-control input[type="checkbox"] label::before,
+    .checkbox-control input[type="checkbox"] label::after {
+        position: absolute !Important;
+        content: "";
+        /*Needed for the line-height to take effect*/
+        display: inline-block !important;
+    }
+
+    /*Outer box of the fake checkbox*/
+	body.print-mode .checkbox-control input[type="checkbox"]+label::before,
+    .checkbox-control input[type="checkbox"] label::before {
+        height: 16px !important;
+        width: 16px !important;
+        border: 1px solid #D4D4D5 !important;
+        left: 0px !important;
+        /*((24px line-height - 16px height of fake checkbox) / 2 )- 1px for the border
+        *to vertically center it. */
+        top: 3px !important;
+        color: #333 !important;
+    }
+
+	body.print-mode .checkbox-control input[type="checkbox"]+label::before {
+		top: 0 !important;
+	}
+
+    body.light.print-mode ui.checkbox input:checked~.box:before,
+    body.light.print-mode ui.checkbox input:checked~label:before,
+    body.light.print-mode .ui.checkbox label:before,
+    body.light .ui.checkbox input:checked~.box:before, 
+    body.light .ui.checkbox input:checked~label:before, 
+    body.light .ui.checkbox label:before,
+	body.accessibility.print-mode ui.checkbox input:checked~.box:before,
+    body.accessibility.print-mode ui.checkbox input:checked~label:before,
+    body.accessibility.print-mode .ui.checkbox label:before,
+    body.accessibility .ui.checkbox input:checked~.box:before, 
+    body.accessibility .ui.checkbox input:checked~label:before, 
+    body.accessibility .ui.checkbox label:before {
+        color: #606060 !important;
+    }
+
+	/*Checkmark of the fake checkbox*/
+	body.print-mode .checkbox-control input[type="checkbox"]>label::after,
+    .checkbox-control input[type="checkbox"] label::after {
+        height: 5px !important;
+        width: 9px !important;
+		color: #606060 !important;
+		content: "\2713" !important;
+        left: 4px !important;
+        top: 7px !important;
+		font-weight: 400;
+    }
+	
+    body.print-mode .ui.checkbox input:checked~.box:after,
+    body.print-mode .ui.checkbox input:checked~label:after,
+	.ui.checkbox input:checked~.box:after, 
+    .ui.checkbox input:checked~label:after {
+        content: '\2713' !important;
+        /*color: #606060 !important;*/
+    }
+	
+   body.print-mode .ui.checkbox input:checked~.box:after,
+   body.print-mode .ui.checkbox input:checked~label:after
+   {
+       content: '\2713' !important;
+       border: 0
+       /*transform: rotate(-45deg) !important*/
+   }
+    
+	/*Color of the readonly/disabled checkmark */
+    body.print-mode .checkbox-control input[type="checkbox"][disabled]+label::after,
+    body.print-mode .checkbox-control input[type="checkbox"][readonly]+label::after,
+    .checkbox-control input[type="checkbox"][disabled]+label::after,
+    .checkbox-control input[type="checkbox"][readonly]+label::after {
+    content: "\2713" !important;
+    color: #333 !important;
+    font-weight: 1000;
+    }
+    
+    
+	/*Adding focus styles on the outer-box of the fake checkbox*/
+	body.print-mode .checkbox-control input[type="checkbox"]:focus+label::before,
+    .checkbox-control input[type="checkbox"]:focus+label::before {
+        outline: #606060 auto 5px !Important;
+    }
+
+	/*Prevent usage of readonly/disabled checkbox */
+    body.print-mode .checkbox-control input[type=checkbox][readonly] label,
+    body.print-mode .checkbox-control input[type=checkbox][disabled] label,
+    .checkbox-control input[type=checkbox][readonly]+label,
+    .checkbox-control input[type=checkbox][disabled]+label {
+        pointer-events: none !important; 
+        border-color: #D4D4D5 !important;
+    }
+   
+	/*fill in disabled/readonly checkbox background*/
+    body.print-mode .ui.form div.field.readonly .checkbox label:before, 
+    body.print-mode .ui.form div.field.readonly .checkbox label:hover:before, 
+    body.print-mode .ui.form div.fields.readonly .checkbox label:before, 
+    body.print-mode .ui.form div.fields.readonly .checkbox label:hover:before, 
+    body.print-mode .checkbox-control input[type='checkbox'][readonly]+label::before, 
+    body.print-mode .checkbox-control input[type='checkbox'][disabled]+label::before,
+    .ui.form div.field.readonly .checkbox label:before, 
+    .ui.form div.field.readonly .checkbox label:hover:before, 
+    .ui.form div.fields.readonly .checkbox label:before, 
+    .ui.form div.fields.readonly .checkbox label:hover:before, 
+    .checkbox-control input[type=checkbox][readonly]+label::before, 
+    .checkbox-control input[type=checkbox][disabled]+label::before {
+        background-color: #C1C1C1 !important;
+        border: 1px solid #333 !important;
+    }
+
+body.light div[data-iv-pageurl="/usr/login_terms"] .ui.checkbox label::before { border-color: #000 !important}
+    
+/* workflow approved step green colour change*/
+div.wfl_main_container.wfl_rectangle.wfl_val.wfl_val_text {
+	background-color: #196719 !important;
+}
+
+/* Change link colour */
+.iv-grid-view tr th button,
+.iv.pager ul.pager.buttons .ui.button,
+.ui.form .iv-grid .ui.borderless.button:not(.icon),
+.iv-grid-view tr td a {
+	color: #1A5A96 !important;
+}
+
+/* change link colour's hover*/
+.iv-grid-view tr th button:hover,
+.iv.pager ul.pager.buttons .ui.button:hover,
+.ui.form .iv-grid .ui.borderless.button:not(.icon):hover,
+.iv-grid-view tr td a:hover,
+.iv-grid-view tr td a:active{
+	color: #2b4875 !important
+}
+
+/* change pagination active page colouring*/
+.iv.pager ul.pager.buttons .ui.button.active {
+	color: #fff !important;
+	background-color: #1A5A96 !important; 
+}
+ 
+.panel-light .iv-tab .ui.vertical.tabular.menu>li.tabcontrol:not(.active),
+.tab_container .ui.vertical.tabular.menu .tabcontrol {
+	color: #555555 !important;
+}
+
+/*Change colour of required *'s */
+.ui.form td.label.required:not(.readonly) label>span.label-field:after,
+.ui.form .field.required:not(.readonly):not(.no-label) span.label-field:after,
+.ui.form span.required-field{
+	color: #aa1d1d !important;
+}
+
+/*uploaded file blue text contrast adjustment*/
+div.file ul.ul-file-upload li.file_uploaded div.iv-file-button a.iv-download-file span {
+color: #40639C !important;
+}
+
+/* move the red env box */
+header > .iv-header .environmentBox {
+	right: 0;
+	left: auto;
+}
+
+.logo-wrapper.logo-wrapper .ui.image {
+    /* max-height: 80px; */
+    max-width: 130px !important;
+    max-height: 100px !important;
+    height: none;
+    width: none;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    right: -30px!important;
+}
+
+/* make the top header bar darker blue */
+header > .iv-header .header-inner-wrapper,
+header > .iv-header .header-nav-bar.header-colored .header-inner-wrapper .alerts-profile-wrapper {
+	background-color: #003366; /*dark blue*/
+	/*background-color: #cfcf5a;*/ /*yellow*/
+	/*background-color: #80b007*/ /*green*/
+	/*background-color: #b02907*/ /*red*/
+}
+
+/* add orange line */
+header > .iv-header .header-inner-wrapper {
+	border-bottom: 2px solid #fcba19;
+}
+
+/* restyle the main tabs */
+
+.main-nav.ui.menu.main.inverted.secondary.button-style {
+	min-height: 30px
+}
+/* strip out the old css pre-accessiblity changes */
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item {
+	background-color: transparent !important;
+	padding: 0em !important;
+	margin: 0 5px 0 0;
+	border: 0;
+}
+
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item:hover,
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu {
+	background-color: transparent !important;
+}
+		
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu .ui.button.ui.button,
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu:hover .ui.button.ui.button {
+	background-color: #fff !important;
+}
+
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu:hover > .ui.button.ui.button {
+	color: #003366 !important;
+}
+
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item > .ui.button {
+
+font-weight: 700;
+border-radius: 0px !important;
+padding-left: 7px;
+padding-right: 7px;
+}
+
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item:hover > .ui.button.ui.button {
+	background-color: #003366 !important;
+}
+
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item:hover > .ui.button.ui.button,
+.sub-menu > .item.submenu:hover > .icon,
+.sub-menu > .item.submenu.selected-item > .icon {
+	color: #fff !important;
+}
+
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item > .ui.button.button:focus {
+	background-color: #003366 !important;
+	box-shadow: inset 0px 0px 0px 2px rgba(205, 214, 226,1);
+}
+
+.header-nav-bar.header-colored .main-nav.ui.secondary.inverted.button-style.menu > .item.selected-menu > .ui.button.button:focus {
+	background-color: #fff !important;
+	color: #003366 !important;
+	box-shadow: inset 0px 0px 0px 2px rgba(205, 214, 226,1);
+}
+
+/* make the menu dropdown hover color orange */
+.main-nav.ui.menu.main .main-nav.ui.dropdown.selected-menu .main-nav.menu .item.selected-item > a,
+.main-nav.ui.menu.main .main-nav.ui.dropdown .main-nav.menu .item > a:hover,
+.main-nav.ui.menu.main .main-nav.ui.dropdown.selected-menu .main-nav.menu .item > a:hover,
+.main-nav.ui.menu.main .main-nav.ui.dropdown .main-nav.menu .item .item.submenu > a:hover,
+.main-nav.ui.menu.main .main-nav.ui.dropdown .main-nav.menu .item .item.submenu.selected-item a {
+	background-color: #E98300 !important;
+	color: #fff !Important;
+}
+
+.main-nav.ui.menu.main .main-nav.ui.dropdown .main-nav.menu .item .item.submenu .icon {
+	pointer-events: none;
+}
+
+-- Fix for QST
+-- START
+#body_x_tabc_rfi_prxrfi_x_prxRfi_x_phcAnswer #body_x_tabc_rfi_prxrfi_x_prxRfi_x_tabGroup_pages {
+ min-width:620px;
+}
+-- QST container
+#body_x_tabc_rfi_prxrfi_x_prxRfi_x_phcAnswer > tbody > tr:nth-child(2) > td {
+ min-width:845px;
+}
+
+/*
+#body_x_tabc_rfi_prxrfi_x_prxRfi_x_phcAnswer > tbody > tr > td{
+  display:flex;
+}*/
+
+
+.print-mode .ui.checkbox input[disabled]~label {
+    opacity: 1;
+}
+
+.sr-only{
+  font-size:1.3em;
+}
+
+.iv-phc-cell>.iv-button.ui.button:not(.borderless) {
+    margin-top: 20px;
+    margin-bottom: .5em;
+	margin-right: 20px;
+}
+
+
+-- END
+
+</style>
+						<script>var jsT0 = new Date().getTime();</script>
+						<noscript><META HTTP-EQUIV="Refresh" CONTENT="0; URL=/popup.aspx/en/usr/login?noscript_redirect=1"></noscript><script src="/dist/js/prototype_extended.min.js?v=20260525113354"  rel="prefetch"></script><script src="/bare.aspx/en/js/scope_script/buyer_ssbc_V2_0_140_20260525_p70984/8B7A832Aac74ac3faa5059878a581150b90e12b5/js_scope_script.js"  rel="prefetch"></script><script src="/dist/js/global_script.min.js?v=20260525113354"  ></script><script src="/dist/js/global_defer_script.min.js?v=20260525113354" defer ></script>
+<script>ivBaseHtmlControl.initAsync();</script><script src="/dist/js/bas/captcha_script.min.js?v=20260525113356"  ></script><script src="/dist/js/fil/download_public_script.min.js?v=20260525113356"  ></script>
+	</head><body id="bodyTag" class="iv-popup skin-BC_BidR_15-164 light"><form method="post" action="/popup.aspx/en/fil/download_public/8a82a871-465d-4a6b-a67a-a22def1a6071?file_context%5brfp%5d=212256&amp;file_context%5bcontainerUrl%5d=%2frfp%2frfp_info_extranet%2f212256%2f" id="mainForm" autocomplete="off" class="ui form">
+<div class="aspNetHidden">
+<input type="hidden" name="hdnUserValue" id="hdnUserValue" value="" />
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="" /></div>
+
+
+<script type="text/javascript">
+<!--
+Page_Init('mainForm');// -->
+</script>
+
+<script src="https://www.google.com/recaptcha/api.js?render=6LckweAnAAAAAP06dUhCg3zf0WTEXJNkV16V1EKw"></script><script>__ivHtmlControls = {};
+__ivHtmlControls['header_x_imgLogo']= {"readOnlyRendering":"disabledInput","controlID":"imgLogo","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_btnBack']= {"clientValidation":false,"iconAlign":"left","configurationContextRequired":false,"readOnlyRendering":"disabledInput","controlID":"btnBack","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_btnHistory']= {"clientValidation":false,"iconAlign":"left","configurationContextRequired":false,"readOnlyRendering":"disabledInput","controlID":"btnHistory","contextMenu":{"opts":{"theme":"v8"},"items":[],"controlid":"history_context_menu"},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_imgShoppingCart']= {"clientValidation":true,"excludeRequiredField":false,"iconAlign":"left","configurationContextRequired":false,"readOnlyRendering":"disabledInput","controlID":"imgShoppingCart","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_imgDysfunction']= {"readOnlyRendering":"disabledInput","controlID":"imgDysfunction","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_imgWord']= {"readOnlyRendering":"disabledInput","controlID":"imgWord","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_imgExcelExport']= {"readOnlyRendering":"disabledInput","controlID":"imgExcelExport","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_imgExcelImport']= {"readOnlyRendering":"disabledInput","controlID":"imgExcelImport","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_imgPrint']= {"onClick":"patchDownload();","clientValidation":false,"iconAlign":"left","configurationContextRequired":false,"readOnlyRendering":"disabledInput","controlID":"imgPrint","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_phcSpecControls']= {"inline":true,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"phcSpecControls","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['header_x__ctl0_x_btnDocLink']= {"clientValidation":true,"excludeRequiredField":false,"iconAlign":"left","configurationContextRequired":false,"readOnlyRendering":"disabledInput","controlID":"btnDocLink","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_plhActionBar']= {"inline":true,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"plhActionBar","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_plhNavigation']= {"inline":true,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"plhNavigation","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_plhState']= {"inline":true,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"plhState","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x__cmdClose']= {"onClick":"closeWindow();return false;","clientValidation":false,"iconAlign":"left","configurationContextRequired":false,"readOnlyRendering":"disabledInput","controlID":"_cmdClose","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_plhWorkflow']= {"inline":true,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"plhWorkflow","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x__plhcButtons']= {"inline":true,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"_plhcButtons","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_plhOtherActions']= {"inline":true,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"plhOtherActions","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_tdWflMessageTitle']= {"methods":{"OnPreSave":[],"OnSaving":[],"OnSaved":[]},"autoSave":false,"onSaving":[],"readOnlyRendering":"disabledInput","controlID":"tdWflMessageTitle","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_tblWfl']= {"inline":false,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"tblWfl","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_txtWflRefuseMessage']= {"step":-1.0,"methods":{"OnPreSave":[],"OnSaving":[],"OnSaved":[]},"range":false,"enabled":true,"autoPostBack":false,"dataType":"text","enabledValidateRequest":true,"clientValidation":true,"enableHtmlClientValidation":false,"autoSave":false,"onSaving":[],"validationGroup":"WflActionBarRefuse","filterTagValue":"\u003cli class=\u0022ui label tag-value\u0022 data-value=\u0022@{value}\u0022\u003e\u003cspan class=\u0022tag-text\u0022\u003e@{text}\u003c/span\u003e\u003cbutton type=\u0022button\u0022 class=\u0022ui borderless icon delete-filter button\u0022 tabindex=\u00220\u0022\u003e\u003ci aria-hidden=\u0022true\u0022 class=\u0022fa-times icon\u0022\u003e\u003c/i\u003e\u003cspan class=\u0022sr-only\u0022\u003eDelete @{text}\u003c/span\u003e\u003c/button\u003e\u003c/li\u003e","readOnlyRendering":"disabledInput","controlID":"txtWflRefuseMessage","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_PhcWflActionBar']= {"inline":true,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"PhcWflActionBar","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_btnWflRefuseCancel']= {"onClick":"wflRefuseCancel(event); return false;","clientValidation":false,"iconAlign":"left","configurationContextRequired":false,"readOnlyRendering":"disabledInput","controlID":"btnWflRefuseCancel","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['proxyActionBar_x_btnWflRefuseMessage']= {"onClick":"wflRefuseMessageClick(event); return false;","clientValidation":true,"validationGroup":"WflActionBarRefuse","excludeRequiredField":false,"iconAlign":"left","configurationContextRequired":false,"readOnlyRendering":"disabledInput","controlID":"btnWflRefuseMessage","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['body_x_plhMain']= {"inline":false,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"plhMain","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['body_x_plhCaptcha']= {"inline":false,"inColumn":false,"saveState":false,"readOnlyRendering":"disabledInput","controlID":"plhCaptcha","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['leftPanel']= {"collapsable":true,"preservePinnedState":false,"preserveWidth":false,"readOnlyRendering":"disabledInput","controlID":"leftPanel","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+__ivHtmlControls['rightPanel']= {"collapsable":true,"preservePinnedState":false,"preserveWidth":false,"readOnlyRendering":"disabledInput","controlID":"rightPanel","contextMenu":{"opts":{"theme":"v8"},"items":[]},"hidden":false,"triggerOf":[],"rules":{}};
+</script><script></script>
+			<div id="frame" class="html-popup" style="height:100%;">
+				<header>
+					<div id="headerContainer" class="iv-header"><div id="header_x" class="buc ">
+<table width="100%">
+<tr>
+	<td id="header_x_headerNavBar" class="header_shading header_popup_shading header-colored">
+		<div data-iv-role="field" class="iv-image no-label" data-iv-control="header_x_imgLogo" data-iv-control-type-name="imageControl" data-iv-updatepanelcontrol-postback="true"><img id="header_x_imgLogo" data-iv-role="control" class="default-image ui image" src="/bare.aspx/en/fil/download_public/6b7373df-88bd-480d-8daf-850d9191c9c6" alt="" /></div><img src="/dist/image/header_pics.gif" alt="" />
+	</td>
+</tr>
+<tr>
+	<td colspan="99" class="title_shading">
+	<div id="header_x__ctl0_x" class="buc ">
+<div class="header-location-bar">
+	<div class="location-bar ui top menu attached borderless title_shading">
+		<!-- History -->
+		<div class="main-actions">
+			<div id="historyNavMenu" class="history">
+				<a href="#" id="header_x__ctl0_x_btnBack" data-iv-role="field control" data-iv-control="header_x__ctl0_x_btnBack" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="iv-history-back icon-circle-button ui button iv-button icon borderless disable" tabindex="0" aria-disabled="true" data-html="&lt;p>Navigate to the previous page&lt;/p>" data-delay="True" data-hoverable="true" aria-describedby="fixedtipdiv"><i data-iv-role="icon" aria-hidden="true" class="fa-chevron-left icon"></i><span class="sr-only">Navigate to the previous page</span></a>
+				<button type="button" id="header_x__ctl0_x_btnHistory" data-iv-role="field control" data-iv-control="header_x__ctl0_x_btnHistory" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="iv-history-list icon-circle-button ui button iv-button icon borderless disable" tabindex="0" aria-disabled="true" data-html="&lt;p>Access to navigation history&lt;/p>" data-delay="True" data-hoverable="true" aria-describedby="fixedtipdiv" data-context-menu="click" aria-expanded="false"><i data-iv-role="icon" aria-hidden="true" class="fa-history icon"></i><span class="sr-only">Access to navigation history</span><i data-iv-role="icon" aria-hidden="true" class="icon fa-caret-down solid right"></i></button>
+			</div>
+		</div>
+		<!-- Title Section -->
+		<div class="ui item title-item">
+			<h1 class="maintitle">Public Download</h1>
+		</div>
+		<!--<div class="right menu">-->
+		<div class="misc-actions-wrapper">
+			<!-- loading gif item -->
+			<div id="__ivUpdateProgressAsync" class="hidden">
+				<div class="spinner" title="Loading ..."></div>
+			</div>
+			<!-- Search Item -->
+			<div class="misc-actions">
+			<!-- Cart Item -->
+			<!-- Audit Item -->
+			
+			<!-- Page Auto Check -->
+			
+			<!-- Alert Item -->
+			<!-- Allow Word Item -->
+			<!-- Allow Excel Export Item -->
+			<!-- Allow Excel Import Item -->
+			<!-- Allow Print & basebrowsecontrol Item -->
+			<div><a href="/print.aspx/en/fil/download_public/8a82a871-465d-4a6b-a67a-a22def1a6071?file_context%5brfp%5d=212256&amp;file_context%5bcontainerUrl%5d=%2frfp%2frfp_info_extranet%2f212256%2f" target="_blank" id="header_x__ctl0_x_imgPrint" data-iv-role="field control" data-iv-control="header_x__ctl0_x_imgPrint" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="iv-external-link ui button iv-button icon borderless" tabindex="0" aria-disabled="false" data-html="&lt;p>Print&lt;/p>" data-delay="True" data-hoverable="true" aria-describedby="fixedtipdiv"><i data-iv-role="icon" aria-hidden="true" class="fa-print icon"></i><span class="sr-only">Print</span></a></div>
+			<!-- Menu layout Item -->
+			<div id="menulayout"></div>
+			
+			<div id="header_x__ctl0_x_mainHeaderBlogControl"></div>
+				<!-- phcSpecControls Item -->
+				<div><div data-context-id="header_x__ctl0_x_phcSpecControls" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="header_x__ctl0_x_phcSpecControls" data-iv-updatepanelcontrol-postback="true" class="phc-table"></div></div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+	</td>
+</tr>
+</table></div>
+					</div>
+				</header>
+				<div class="wrapper"><div id="mainContentDiv" class="main-content">
+						<div class="panel-content">
+							<div class="action-bar"><div class="iv-ab-container" style="z-index:101;">
+<div id="proxyActionBar_x" class="buc ">
+<div id="action_bar_container" class="action_bar_overflow relative-position action_bar iv-ab">
+	<div class="iv-ab-btn-container ab-center">
+		
+		<div data-context-id="proxyActionBar_x_plhActionBar" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="proxyActionBar_x_plhActionBar" data-iv-updatepanelcontrol-postback="true" class="phc-table"><table role="presentation" data-iv-design-sortable-id="phc__bas_action_bar" id="proxyActionBar_x_plhActionBar" data-iv-role="placeholder" class="iv-actionbar phc"><tbody><tr><td class="iv-phc-cell top aligned"><div data-context-id="proxyActionBar_x_plhNavigation" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="proxyActionBar_x_plhNavigation" data-iv-updatepanelcontrol-postback="true" class="frame2 phc-table action-group"></div></td><td class="iv-phc-cell top aligned"><div data-context-id="proxyActionBar_x_plhState" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="proxyActionBar_x_plhState" data-iv-updatepanelcontrol-postback="true" class="frame2 phc-table action-group"><table role="presentation" data-iv-design-sortable-id="phc__bas_action_bar" id="proxyActionBar_x_plhState" data-iv-role="placeholder" class="frame2 phc"><tbody><tr><td class="iv-phc-cell top aligned"><button name="proxyActionBar:x:_cmdClose" type="submit" id="proxyActionBar_x__cmdClose" data-iv-role="field control" data-iv-control="proxyActionBar_x__cmdClose" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="ui button iv-button primary" tabindex="0" aria-disabled="false"><span data-iv-role="label">Close</span></button></td></tr></tbody></table></div></td><td class="iv-phc-cell top aligned"><div data-context-id="proxyActionBar_x_plhWorkflow" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="proxyActionBar_x_plhWorkflow" data-iv-updatepanelcontrol-postback="true" class="frame2 phc-table action-group"></div></td><td class="iv-phc-cell top aligned"><div data-context-id="proxyActionBar_x__plhcButtons" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="proxyActionBar_x__plhcButtons" data-iv-updatepanelcontrol-postback="true" class="frame2 phc-table action-group"></div></td><td class="iv-phc-cell top aligned"><div data-context-id="proxyActionBar_x_plhOtherActions" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="proxyActionBar_x_plhOtherActions" data-iv-updatepanelcontrol-postback="true" class="frame2 phc-table action-group"></div></td></tr></tbody></table></div>
+	</div>
+</div>
+
+<div id="proxyActionBar_x_divWflRefuseMessage" class="ui modal wfl-refuse-modal" data-iv-field-code="x" data-iv-control-type="ivalua.platform.bas.action_bar" data-iv-containerurl="/bas/action_bar">
+	<div class="header">
+		<div data-iv-role="field" class="field no-label iv-no-label iv-html-type" data-iv-control="proxyActionBar_x_tdWflMessageTitle" data-iv-control-type-name="labelControl" data-iv-updatepanelcontrol-postback="true"><div data-iv-role="controlWrapper" class="control-wrapper "><div id="proxyActionBar_x_tdWflMessageTitle" class="readonly txt_wfl_message_title">
+Reason  : 
+</div></div></div>
+	</div>
+	<div class="content">
+		<div data-context-id="proxyActionBar_x_tblWfl" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="proxyActionBar_x_tblWfl" data-iv-updatepanelcontrol-postback="true" class="phc-table"><table role="presentation" data-iv-design-sortable-id="phc__bas_action_bar" id="proxyActionBar_x_tblWfl" data-iv-role="placeholder" class="phc" style="width:100%;"><tbody><tr><td class="iv-phc-cell top aligned"><div data-iv-role="field" class="field no-label iv-no-label iv-text-type iv-textbox" data-iv-control="proxyActionBar_x_txtWflRefuseMessage" data-iv-control-type-name="textBoxControl" data-iv-updatepanelcontrol-postback="true"><div data-iv-role="controlWrapper" class="control-wrapper "><textarea class="txt_wfl_refuse_message" id="proxyActionBar_x_txtWflRefuseMessage" name="proxyActionBar:x:txtWflRefuseMessage" tabindex="0" data-validation="proxyActionBar_x_txtWflRefuseMessage" aria-label="Reason  : " title="Reason  : " data-iv-role="control" aria-multiline="true" cols="60" rows="3"></textarea></div></div></td></tr></tbody></table></div>
+		<input type="hidden" id="hdnMandatory" name="hdnMandatory" value="0" />
+		<input type="hidden" id="hdnWflAction" name="hdnWflAction" value="" />
+	</div>
+	<div class="actions">
+		<div data-context-id="proxyActionBar_x_PhcWflActionBar" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="proxyActionBar_x_PhcWflActionBar" data-iv-updatepanelcontrol-postback="true" class="phc-table"><table role="presentation" data-iv-design-sortable-id="phc__bas_action_bar" id="proxyActionBar_x_PhcWflActionBar" data-iv-role="placeholder" class="phc" style="display:inline-block;"><tbody><tr><td class="iv-phc-cell top aligned"><button name="proxyActionBar:x:btnWflRefuseCancel" type="submit" id="proxyActionBar_x_btnWflRefuseCancel" data-iv-role="field control" data-iv-control="proxyActionBar_x_btnWflRefuseCancel" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="iv-cancel ui button iv-button" tabindex="0" aria-disabled="false"><span data-iv-role="label">Cancel</span></button></td><td class="iv-phc-cell top aligned"><button name="proxyActionBar:x:btnWflRefuseMessage" type="submit" id="proxyActionBar_x_btnWflRefuseMessage" data-iv-role="field control" data-iv-control="proxyActionBar_x_btnWflRefuseMessage" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="ui button iv-button primary" tabindex="0" aria-disabled="false"><span data-iv-role="label">Confirm</span></button></td></tr></tbody></table></div>
+	</div>
+</div>
+</div>
+</div>
+							</div><div data-criticity="error" class="page-message-container ui message  error hidden" role="alert"><i class="icon fa-octagon-exclamation solid" aria-hidden="true"></i><button class="ui button borderless icon close" tabindex="0" type="button"><i aria-hidden="true" class="icon icon fa-times solid"></i><span class="sr-only">Close messages</span></button><ul class="header-alert-msg-list"></ul></div><div data-criticity="success" class="page-message-container ui message  success hidden" role="status"><i class="icon fa-check solid" aria-hidden="true"></i><button class="ui button borderless icon close" tabindex="0" type="button"><i aria-hidden="true" class="icon icon fa-times solid"></i><span class="sr-only">Close messages</span></button><ul class="header-alert-msg-list"></ul></div><div data-criticity="warning" class="page-message-container ui message  warning hidden" role="alert"><i class="icon fa-exclamation-triangle solid" aria-hidden="true"></i><button class="ui button borderless icon close" tabindex="0" type="button"><i aria-hidden="true" class="icon icon fa-times solid"></i><span class="sr-only">Close messages</span></button><ul class="header-alert-msg-list"></ul></div><div data-criticity="info" class="page-message-container ui message  info hidden" role="status"><i class="icon fa-info-circle solid" aria-hidden="true"></i><button class="ui button borderless icon close" tabindex="0" type="button"><i aria-hidden="true" class="icon icon fa-times solid"></i><span class="sr-only">Close messages</span></button><ul class="header-alert-msg-list"></ul></div>
+							<div id="content" class="iv-content">
+								<table width="100%" height="100%">
+									<tr>
+										<td valign="top"><input type="hidden" name="body:_ctl0"></input><div id="body_x" class="buc "><div data-context-id="body_x_plhMain" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="body_x_plhMain" data-iv-updatepanelcontrol-postback="true" class="phc-table"><table role="presentation" data-iv-design-sortable-id="phc__fil_download_public" id="body_x_plhMain" data-iv-role="placeholder" class="frame2 phc" style="margin: auto;"><tbody><tr><td class="iv-phc-cell top aligned"><div data-context-id="body_x_plhCaptcha" data-iv-role="field control container" data-iv-control-type-name="placeHolderControl" data-iv-control="body_x_plhCaptcha" data-iv-updatepanelcontrol-postback="true" class="phc-table"><table role="presentation" data-iv-design-sortable-id="phc__fil_download_public" id="body_x_plhCaptcha" data-iv-role="placeholder" class="frame2 phc" style="background:white; padding: 10px;"><tbody><tr><td class="iv-phc-cell top aligned"><div id="download_message" style="font-weight:bold; padding: 10px;"></div></td></tr><tr><td class="iv-phc-cell proxy-container top aligned"><div id="body_x_prxCaptcha_x" class="buc " data-id="8a82a871-465d-4a6b-a67a-a22def1a6071"><input type="hidden" id="captcha_response" name="captcha_response"></div></td></tr></tbody></table></div></td></tr></tbody></table></div></div><script>
+document.addEventListener("DOMContentLoaded", function () {
+	window.ivCaptcha.init({action: 'download_public', publicKey: '6LckweAnAAAAAP06dUhCg3zf0WTEXJNkV16V1EKw'});
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+	ivCaptcha.onSolved = function() { ivPublicDownloadCaptcha.verifyPublicDownloadCaptcha(); };
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+	setTimeout(function() { window.ivCaptcha.solve(); }, 200);
+});
+ivPublicDownloadCaptcha.setDownloadMessage('Checking your browser before starting the download...');</script>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div></div><div id="leftPanel" class="panel left collapsed " data-iv-control="leftPanel" data-iv-control-type-name="panelControl" data-iv-updatepanelcontrol-postback="true" role="complementary" data-iv-role="panel" data-pinned="false" aria-label="Left panel"><div class="panel-toggle hidden"><button name="leftPanel:btnPanelClose" type="button" id="leftPanel_btnPanelClose" data-iv-role="field control" data-iv-control="leftPanel_btnPanelClose" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="ui button iv-button icon borderless" tabindex="0" aria-disabled="false" data-action="close"><i data-iv-role="icon" aria-hidden="true" class="fa-angle-double-left icon"></i><span class="sr-only">Hide Tabs</span></button><button name="leftPanel:btnPanelOpen" type="button" id="leftPanel_btnPanelOpen" data-iv-role="field control" data-iv-control="leftPanel_btnPanelOpen" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="ui button iv-button icon borderless" tabindex="0" aria-disabled="false" data-action="open"><i data-iv-role="icon" aria-hidden="true" class="fa-angle-double-right icon"></i><span class="sr-only">Display Tabs</span></button></div><div class="panel-content"></div></div><div id="rightPanel" class="panel right collapsed " data-iv-control="rightPanel" data-iv-control-type-name="panelControl" data-iv-updatepanelcontrol-postback="true" role="complementary" data-iv-role="panel" data-pinned="false" aria-label="Right panel"><div class="panel-toggle hidden"><button name="rightPanel:btnPanelClose" type="button" id="rightPanel_btnPanelClose" data-iv-role="field control" data-iv-control="rightPanel_btnPanelClose" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="ui button iv-button icon borderless" tabindex="0" aria-disabled="false" data-action="close"><i data-iv-role="icon" aria-hidden="true" class="fa-angle-double-right icon"></i><span class="sr-only">Hide Tabs</span></button><button name="rightPanel:btnPanelOpen" type="button" id="rightPanel_btnPanelOpen" data-iv-role="field control" data-iv-control="rightPanel_btnPanelOpen" data-iv-control-type-name="buttonControl" data-iv-updatepanelcontrol-postback="true" class="ui button iv-button icon borderless" tabindex="0" aria-disabled="false" data-action="open"><i data-iv-role="icon" aria-hidden="true" class="fa-angle-double-left icon"></i><span class="sr-only">Display Tabs</span></button></div><div class="panel-content"></div></div>
+				</div><footer id="footerContainer" role="contentinfo"><div class="action-bar-bottom"></div><div id="footer" class="iv-footer"></div></footer>
+			</div>
+			<input type="hidden" id="CSRFToken" name="CSRFToken" value="s2L17b07JPRlnypAZ02CAZBc/nopCjpP5xP1osJTV9c=" />
+
+<script type="text/javascript">
+<!--
+ if(typeof(ivShoppingCart) !== 'undefined') { ivShoppingCart.updateItemCount('0'); } if (typeof ivActionGroup !== 'undefined'){ivActionGroup.checkGroupSeparatorVisibility();}$(document).ready(function() {GetTimezoneOffset();UrlPrefixClientCookie();adjustTo(document.getElementById('frame'));});__ivHtmlControls['header_x__ctl0_x_btnHistory']= {"clientValidation":false,"iconAlign":"left","configurationContextRequired":false,"readOnlyRendering":"disabledInput","controlID":"btnHistory","contextMenu":{"opts":{"theme":"v8","after":"#header_x__ctl0_x_btnHistory"},"items":[],"showUnderControl":"header_x__ctl0_x_btnHistory","controlid":"header_x__ctl0_x_btnHistory"},"hidden":false,"triggerOf":[],"rules":{}};ivNotificationMessage.removeMsgWithTimeout('success');// -->
+</script>
+</form>
+		<form id="hiddenForm" method="post" style="display:none;">
+			<input type="hidden" name="hiddenName" value=""/>
+			<input type="hidden" name="hiddenPass" value=""/>
+			<input type="hidden" name="hiddenOldPass" value=""/>
+			<input type="hidden" name="hiddenNewPass" value=""/>
+			<input type="hidden" name="hiddenConfimNewPass" value=""/>
+		</form><!--f2A8/TVT48urgFhyTmatQseMGQ==--></body>
+</html>

@@ -1,0 +1,964 @@
+TIC TEC MUL RFQ 2025 42R  IT Advisors  Page 1 of 28 
+ 
+ 
+TRANSPORTATION INVESTMENT CORPORATION 
+Multi-Use List Request for Qualifications 
+Information Technology Advisors REVISED 
+Opportunity ID: TIC TEC MULRFQ 2025 42 R 
+Issue Date: September 10, 2024 
+Initial Intake Date and Time (Pacific Time)  September 27, 2024 2:00:00 PM 
+MULRFQ Termination Date and Time (Pacific 
+Time): July 30, 2027 
+In order to be considered for the Initial Intake, a Response must be received before the 
+Initial Intake Response Date and Time identified above.  
+Suppliers may submit Responses after the Initial Intake Date and Time and those 
+Responses will be dealt with as described in section 3.5. 
+ 
+Delivery of Submissions 
+BC Bid Electronic Submission : Submit an electronic Submission using BC Bid. Submissions 
+must be in accordance with the requirements set out in the process rules of the subject RFx. 
+Only pre -authorized electronic bidders registered on the BC Bid system can make an 
+electronic submission using the BC Bid system. 
+Email Submission: Submit a Submission by email. Submissions by email must be 
+submitted to the email address specified below in accordance with the email 
+submission instructions set out in the process rules for the subject RF x. Include the 
+opportunity description and ID in the subject line of the email. 
+Procurement@ticorp.ca 
+ 
+Official Contact 
+procurement@ticorp.ca 
+
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 2 of 28 
+Table of Contents 
+1. SUMMARY OF THE OPPORTUNITY ............................................................................................... 4 
+2. DEFINITIONS USED IN THIS REQUEST FOR QUALIFICATIONS ......................................................... 5 
+3. THE TERMS AND CONDITIONS OF THIS REQUEST FOR QUALIFICATIONS ......................................... 8 
+3.1 Copyright .................................................................................................. 8 
+3.2 MULRFQ Termination Date ..................................................................... 8 
+3.3 Trade Agreements ................................................................................... 8 
+3.4 MULRFQ Amendments and Addenda .................................................... 8 
+3.5 Submission of Responses After the Initial Intake Date and Time ...... 9 
+3.6 Qualifications Review Committee .......................................................... 9 
+3.7 Review and Selection .............................................................................. 9 
+3.8 Responses ................................................................................................ 9 
+3.9 Expenses and Limitation of Liability ...................................................... 9 
+3.10 The MULRFQ is not a Contract ............................................................... 10 
+3.11 Changes to Response Wording .............................................................. 10 
+3.12 A Response may be withdrawn at any time. ......................................... 10 
+3.13 Modification of MULRFQ ......................................................................... 10 
+3.14 Qualified Suppliers to Advise of Changes ............................................. 10 
+3.15 Ownership of Responses ........................................................................ 11 
+3.16 Collection and Use of Personal Information ......................................... 11 
+3.17 Conflict of Interest, Unfair Advantage, Bias, and No Lobbying .......... 11 
+3.18 Reservation of Rights .............................................................................. 12 
+3.19 Acceptance of Terms and Conditions .................................................... 13 
+3.20 Submission of Responses ....................................................................... 13 
+3.21 Supplier Request for Participation in a Procurement .......................... 14 
+3.22 Enquiries to the Official Contact ............................................................ 15 
+4. BACKGROUND .......................................................................................................................... 16 
+4.1 Corporation Responsibility ..................................................................... 16 
+4.2 Background .............................................................................................. 16 
+5. SERVICES DESCRIPTION ............................................................................................................. 18 
+5.1 Services Description ................................................................................ 18 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 3 of 28 
+5.1.1 OnBase Administrator 18 
+5.1.2 Corporate Technology Trainer 18 
+5.1.3 Microsoft 365 Developer 18 
+5.1.4 Senior IT Project Manager 19 
+5.1.5 Senior Business Analyst 19 
+5.1.6 Business Analyst 20 
+5.1.7 Enterprise, Technical, and Solutions Architect 20 
+5.1.8 Technical Analyst 21 
+5.1.9 Hyland Solution Architect 21 
+6. HOW RESPONSES WILL BE EVALUATED ....................................................................................... 22 
+6.1 Evaluation Process .................................................................................. 22 
+6.1.1 Stage One: Evaluation of Mandatory Criteria 22 
+6.1.2 Stage Two: Evaluation of Desirable Qualifications 22 
+6.1.3 Stage Three: Reference Checks 23 
+6.1.4 Stage Four: Notification and Debriefings 24 
+7. HOW RESPONSES SHOULD BE ORGANIZED .................................................................................. 24 
+8. HOW THE MULTI-USE LIST OF QUALIFIED SUPPLIERS WILL BE USED .............................................. 24 
+8.1 Use of List ................................................................................................. 24 
+8.1.1 Use on a Non-exclusive "as, if and when Requested" Basis 24 
+8.1.2 Selection Methods 25 
+8.1.3 No Obligation to Contract or Use the Multi-use List 26 
+8.1.4 Form of Contract 26 
+8.1.5 Tax Verification Letter 26 
+8.1.6 Binding and Non-binding Competition Notices 26 
+ SAMPLE FORMS ........................................................................................................ 28 
+ RESOURCE QUALIFICATION FORM ............................................................................. 28 
+ SUBMISSION DECLARATION ...................................................................................... 28 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 4 of 28 
+1. Summary of the Opportunity 
+Transportation Investment Corporation (“TI Corp”) is seeking to identify and retain individual 
+advisors with significant experience for the provision of Information Technology Services to 
+support the Corporation on multiple projects including EDRMS, SharePoint Integration etc.  
+These individual advisors will be available to augment and complement existing expertise 
+within TI Corp and on project teams, if and when required. The Services are described in 
+greater detail in section 5 and the Appendices.   
+Interested Supplier s are invited to submit a Response to this Multi-Use List Request for 
+Qualifications (MULRFQ) for the opportunity to be evaluated to determine whether they are 
+eligible and qualified to be included on  the Transportation Investment Corporation (TI Corp.) 
+list of Qualified Suppliers to provide the specialized services described.  
+This MULRFQ is intended to identify and evaluate Qualified Resources by reviewing the 
+qualifications of specific employees , individual consultants, or subcontractors pr oposed by 
+Respondents 
+As described in section 8, on a non -exclusive “as, if and when requested” basis, only Qualified 
+Suppliers with active Qualified Resources will be sent and may respond to Competition Notices 
+that may issue from this MULRFQ.  No Competi tion Notices will be issued before the Initial 
+Intake.   
+Qualified Resources, as key personnel of the Contractor will be required to perform the Services 
+under any Contract that results from a Competition Notice that is issued under the MULRFQ 
+Interested Suppliers should familiarize themselves with the entirety of this MULRFQ and submit 
+a Response as described in section 7.  
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 5 of 28 
+2. Definitions used in this Request for Qualifications  
+Throughout this Multi-Use List Request for Qualifications, the following definitions will be used 
+(and the singular is interchangeable with the plural): 
+1. Definitions 
+Throughout this MULRFQ, the following definitions apply (and the singular is interchangeable 
+with the plural): 
+  
+“Addenda” means all additional information regarding this MULRFQ including Amendments to 
+the MULRFQ. The “Addenda” menu tab is located on the left margin of the specific opportunity 
+in the BC Bid application. Suppliers may need to select and set the symbol denoted as “>>”  to 
+reveal the menu tab items. 
+“Amendment” means a change to the MULRFQ that results in posting an updated version of 
+the MULRFQ. The amendment will indicate whether a Respondent is required to submit a new 
+Response to the MULRFQ. Amendments will be noted in the amendment reason section of the 
+“Overview” menu tab located on the left margin of the specific opportunity in the BC Bid 
+application. Suppliers may need to select and set the symbol denoted as “>>” to reveal the menu 
+tab items. 
+“BC Bid” means BC Bid located at https://www.bcbid.gov.bc.ca; or any replacement website. 
+“Closing Location” means, as applicable, the hard copy delivery location; email address; or BC 
+Bid for the submission of Responses as indicated on the cover page of the MULRFQ and in the 
+“delivery of submissions” section of the “overview” menu tab on BC Bid. 
+“Competition Notice ” means the TI Corp ’s standard request for proposals solicitation 
+document or such other custom solicitation document that is allowed by Core Policy for the TI 
+Corp’s use. 
+“Contract” means a written contract between the TI Corp and a Qualified Supplier in the form 
+referenced in a Competition Notice. 
+“Contractor” means a Qualified Supplier that has entered into a Contract. 
+“Government Electronic Mail System” means the electronic mail system of the Province. 
+“Initial Intake” means the initial intake and evaluation of Responses that are received before 
+the Initial Intake Date and Time . After the Initial Intake Date and Time , Responses will be 
+received on a continuous basis as further described in section 3.5. 
+“Initial Intake Date and Time ” means the date and time set out on the  cover page of the 
+MULRFQ and the “RFx general information” section of the “ overview” menu tab on BC Bid for 
+the MULRFQ that applies to the Initial Intake of Responses. 
+“Issue Date” means the date the MULRFQ was posted to BC Bid as set out in the “RFx general 
+information” section of the “ overview” menu tab; and as initially set ou t on the cover page to 
+the MULRFQ. 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 6 of 28 
+“MULRFQ” or “ Multi-Use List  Request for Qualifications ” means this solicitation process 
+described on BC Bid, including any attached or referenced appendices, schedules or exhibits 
+and as may be modified in writing from time to time by TI Corp by Addenda. 
+“Multi-Use List of Qualified Suppliers” or “Multi-Use List” means the Qualified Suppliers, that 
+have been determined by TI Corp to possess the qualifications described in this MULRFQ (or 
+any subsequent modifications thereof, if any) and that have satisfied any conditions set by TI 
+Corp for remaining on the Multi-use List. 
+“must” or “ mandatory” means a requirement that must be met in order for a Response to 
+receive consideration. 
+“Official Contact” means the individual set out on the cover page of the MULRFQ and named 
+on the “opportunity details” menu tab for the MULRFQ serving as the official MULRFQ contact 
+person for TI Corp. 
+“Province” means His Majesty the King in right of the Province of British Columbia and includes 
+TI Corp. 
+“Qualified Resource ” means a Resource that has been evaluated under this MULRFQ and 
+meets the qualifications described in this MULRFQ and any condition set by TI Corp  for 
+continuing to be considered qualified. 
+“Qualified Supplier ” means a Resp ondent that meets the qualifications described in this 
+MULRFQ and that has satisfied any conditions set by TI Corp for being added to, and staying 
+on, the Multi-use List. 
+“Resource” means an employee or subcontractor of a Respondent or Qualified Supplier that is 
+proposed in the Response or, if Resources are not evaluated in this MULRFQ, a Resource 
+proposed in response to a Competition Notice. 
+“Resource Qualification Form” means the Response Form that is used to solicit Resource 
+information for evaluation.  
+“Respondent” means a Supplier that submits a Response. 
+ “Response” means a written  response to the MULRFQ and includes the information and 
+documentation, if any, required by the applicable Response Form(s) that is submitted by a 
+Respondent or Qualified Supplier, as the case may be (see also “Submission”). 
+“Response Form” means the Appendix Qualification Form(s), and as applicable, the Appendix 
+B Resource Qualification Form, and any other document that is required to be submitted, if any, 
+as part of a Response, including, if applicable, the Submission Declaration Form. 
+“RFx” has the same meaning as MULRFQ as the term may appear in BC Bid, the Submission 
+Declaration or BC Bid pop-up advisories associated with a Response. 
+“Services” means the services described in the MULRFQ as set out in section Error! Reference s
+ource not found.. 
+“should” or “desirable” means a requirement having a significant degree of importance to the 
+objectives of this MULRFQ. 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 7 of 28 
+“Submission” as used in the Submission Declaration form and any pop-up advisories related to 
+this MULRFQ has the same meaning as Response. 
+“Submission Declaration Form means the form so identified and named in the MULRFQ for 
+use with Responses submitted by email or hard copy delivery if such submission methods are 
+allowed by the MULRFQ. 
+“Supplier” means a natural person or single legal entity (excluding its parents, subsidiaries, or 
+other affiliates) with the legal capacity to contract that seeks to supply or supplies goods or 
+services and includes, as the context may require, Respondents and Qualified Suppliers. 
+“Tax Verification Letter” means a letter issued by the Province’ s Ministry of Finance to verify 
+that, if required, a Qualified Supplier prior to becoming a Contractor, meets its applicable B.C. 
+corporate income tax filing obligations and provincial sales tax (PST) filing and payment 
+obligations. See, section 8.1.5. 
+“Termination Date ” means the date (including any modifications thereof) that marks the 
+termination and end of the period of validity for the MULRFQ and t he Multi-use List as set out 
+on the cover page of the MULRFQ and in the “RFx general information” section of the “overview” 
+menu tab in BC Bid.  
+“You” and “Your” as used in the Submission Declaration and any pop -up advisories related to 
+this MULRFQ has the same meaning as Respondent. 
+  
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 8 of 28 
+ 
+3. The Terms and Conditions of this Request for 
+Qualifications  
+3.1 Copyright 
+This document is subject to copyright and may be used, reproduced, modified, and distributed 
+to the extent necessary for the Supplier to prepare and submit a Response. 
+3.2 MULRFQ Termination Date 
+Unless terminated earlier, or extended, the MULRFQ and its perio d of validity ends and is 
+terminated on the date set out on the “overview” menu tab of BC Bid and the cover page of the 
+MULRFQ. 
+3.3 Trade Agreements 
+The Multi-Use List of Qualified Suppliers established under this MULRFQ may be used for 
+procurements covered by the following trade agreements: 
+a) New West Partnership Trade Agreement; 
+b) Canadian Free Trade Agreement; 
+c) Canada-European Union Comprehensive Economic and Trade Agreement; and 
+d) Canada-UK Trade Continuity Agreement. 
+3.4 MULRFQ Amendments and Addenda 
+It is the sole responsibility of the Respondents, Suppliers and Qualified Suppliers to check for 
+Addenda and Amendments on BC Bid. 
+Suppliers, Respondents and Qualified Suppliers are encouraged to become a registered user of 
+BC Bid and to subscribe to BC Bid’s email notification service in order to receive notices 
+regarding Amendments and procurements or other opportunities organized by commodity 
+codes selected by the registered user. BC Bid’s email notification service is an annual fee-based 
+subscription service, and the duration of the registration process may vary for different users. 
+Suppliers, Respondents and Qualified Suppliers  should refer to the BC Bid website for more 
+information. 
+Respondents, Suppliers and Qualified Suppliers should continually monitor the MULRFQ as 
+published on BC Bid in the event any Amendment or Addenda to the MULRFQ have the effect 
+of requiring a Respondent or Qualified Supplier to submit a new Respo nse to the MULRFQ in 
+lieu of any Response to the MULRFQ that a Respondent or Qualified Supplier  may have 
+submitted before such Amendment or Addenda. All Amendments will be noted in the 
+amendment reason section of the “overview” menu tab on BC Bid. All Addenda will be noted on 
+the “addenda” menu tab. 
+ 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 9 of 28 
+3.5 Submission of Responses After the Initial Intake Date and Time 
+Suppliers, Respondents and Qualified Suppliers may submit a Response at any time before the 
+MULRFQ Termination Date. 
+Any Response received after the Initial Intake  Date and Time will be subject to that Response 
+having been submitted  in the manner as outlined in this MULRFQ and will be evaluated and 
+considered for inclusion on the Multi-Use List within a reasonably short period of time after the 
+Response is received, accounting for TI Corp  to reasonably and pract icably convene a 
+qualifications review committee to evaluate such Response. 
+A Respondent who is not successful in becoming a Qualified Supplier may submit a new 
+Response after the Initial Intake Date and Time. TI Corp will evaluate all such new Response(s) 
+without consideration to any past Response(s) and consistent with the evaluation process 
+described in this MULRFQ. 
+If this MULRFQ is also intended to qualify Resources, Qualified Suppliers may submit additional 
+Resources for consideration by completing a new Resource Qualification Template (and any 
+other documents applicable to reviewing the qualifications of Resources) for the  new 
+Resource(s) for evaluation by TI Corp. 
+3.6 Qualifications Review Committee 
+Responses will be assessed by a qualifications review committee formed from time to time by 
+TI Corp. The qualifications review committee may change in composition from time-to-time and 
+may include contractors of the TI Corp. 
+3.7 Review and Selection 
+Responses will be assessed in light of the qualification review criteria. TI Corp will be under no 
+obligation to receive further information, whether written or oral, from any Respondent. 
+Responses will be assessed by a qualifications review committee formed from ti me to time by 
+TI Corp. The qualifications review committee may change in composition from time-to-time and 
+may include contractors of the TI Corp. 
+The qualifications review committee will evaluate Responses as described in section 
+ . 
+3.8 Responses 
+By submitting a Response, the Respondent agrees that such Response will be deemed to have 
+been submitted with all due authorization of the Respondent and that th e Respondent is 
+agreeing to the terms and conditions of the MULRFQ, including how procurements are 
+conducted under section 8 and the minimum time that a Qualified Supplier may have to 
+respond to a Competition Notice as set out in section 8.1.2. 
+3.9 Expenses and Limitation of Liability 
+Suppliers, Respondents and Qualified Suppliers  are solely responsible for their own expenses 
+in preparing a Response. TI Corp will not be liable to any Supplier, Respondent or Qualified 
+Supplier for any claims (in contract, tort or otherwise) including for costs or damages incurred 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 10 of 28 
+in preparing a Response, any errors or technical difficulties associated with transmitting 
+Responses by or email or hard-copy, or any other matter whatsoever. 
+Notwithstanding the foregoing, nothing in this section shall l imit the right of a Respondent or 
+Qualified Supplier to access and utilize the Bid Protest Mechanism established under the New 
+West Partnership Trade Agreement.  
+3.10 The MULRFQ is not a Contract 
+This MULRFQ is neither an offer nor an agreement to purchase any Services from any Supplier. 
+Nor is this MULRFQ an offer or an agreement to enter, or to select any Qualified Supplier to 
+enter into a Contract.  TI Corp is not bound to enter into a Contract with any Qualified Supplier. 
+Notice in writing to a Respondent that it has been identified as a Qualified Supplier will not give 
+the Respondent any legal or equitable rights or privileges relative to the Services that a 
+Qualified Supplier may render as a Contractor. Only if a Qualified Supplier and TI Corp enter 
+into a subsequent full written Contract will a Respondent acquire any legal or equitable rights 
+or privileges. TI Corp  makes no representations whatsoever with respect to the number of 
+Competition Notices or Contracts that may be issued under the MULRFQ. 
+3.11 Changes to Response Wording 
+The Respondent will not change the wording of its Response after the Response is submitted, 
+and no words or comments will be added to the Response unless requested by TI Corp. for 
+purposes of clarification. If the Respondent wis hes to amend its submitted Response , the 
+Respondent will need to withdraw the Response in accordance with below section 3.12 and 
+submit a new Response.  
+3.12 A Response may be withdrawn at any time. 
+A Respondent or Qualified Supplier may withdraw its Response, or as the case may be, withdraw 
+from the MULRFQ at any time by notifying the Official Contact in writing by email. 
+3.13 Modification of MULRFQ 
+TI Corp reserves the right to modify this MULRFQ at any time in its sole discretion, including 
+changing the MULRFQ Termination Date, or cancelling this MULRFQ. 
+3.14 Qualified Suppliers to Advise of Changes 
+Qualified Suppliers will promptly advise the Official Contact of any change in submitted 
+qualifications for the Qualified Supplier, or, if applicable, a Qualified Resource; point of contact 
+information for notices; business entity structure; business name; or other such changes that 
+would affect the Qualified Supplier’s or Qualified Resources. 
+If this MULRFQ is intended to qualify Resources and a Qualified Supplier no longer has any 
+Qualified Resources (e.g. because the last Qualified Resource  has left the Qualified Supplier’s 
+employment, has had its eligibility withdrawn by TI Corp, or is otherwise no longer available), 
+the Qualified Supplier is required to notify the Official Contact and will no longer be considered 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 11 of 28 
+a Qualified Supplier. Despite the foregoing, a Qualified Supplier can reapply to the MULRFQ by 
+submitting a new Response. 
+3.15 Ownership of Responses 
+All documents, including Responses, submitted to TI Corp become the property of the TI Corp. 
+They will be received and held in confidence by TI Corp, subject to the provisions of the Freedom 
+of Information and Protection of Privacy Act. Documents will not be returned to Respondents even 
+if the Response is withdrawn. For more information on the application of the Act, go to  
+http://www.cio.gov.bc.ca/cio/priv_leg/index.page. 
+3.16 Collection and Use of Personal Information 
+Respondents and Qualified Suppliers are solely responsible for familiarizing themselves with, 
+and ensuring that they comply with, the laws applicable to the collection and dissemination of 
+information, including resumes and other personal information concerning any Resources. If 
+this MULRFQ requests Respondents and Qualified Suppliers to provide TI Corp with personal 
+information of Resources, the Respondents or Qualified Suppliers will ensure that they have 
+obtained written consent from each of those Resources before forwarding such personal 
+information to TI Corp. Such written consents are to specify that the personal information may 
+be forwarded to TI Corp for the purposes of responding to this MULRFQ and used by TI Corp 
+for the purposes set out in the MULRFQ. TI Corp may, at any time, request the original consents 
+or copies of the original consents from  Respondents or Qualified  Suppliers, and upon such 
+request being made, Respondents or Qualified Suppliers will immediately supply such originals 
+or copies to TI Corp. 
+All Qualified Suppliers, including any of their Resources, expressly consent to their respective 
+names being published in a publicly facing manner on the Multi -Use List, if TI Corp , in its 
+discretion, decides to make such information public.  
+3.17 Conflict of Interest, Unfair Advantage, Bias, and No Lobbying 
+a) By submitting a Response, the Respondent confirms that the current or past employment 
+or other interests or relationships of the Respondent (including a Respondent’s 
+subcontractors and named personnel, if any) do not create or lead to any actual, potential 
+or perceived conflict of interest, unfair advantage, bias or reasonable apprehension of 
+bias that would favor the Respondent (including a Respondent’s subcontractors and 
+named personnel, if any) with respect to this procurement process. A Respondent may be 
+disqualified if the Respondent’s (including a Respondent’s subcontractors and named 
+personnel, if any) current or past corporate or other interests, may, in the TI Corp’s  
+opinion, give rise to an actual or potential conflict of interest , unfair advantage or 
+reasonable apprehension of bias that would favor the Respondent  (including a 
+Respondent’s subcontractors and named personnel, if any) and thereby import unfairness 
+into the Procurement process.  This incl udes, but is not limited to, involvement by a 
+Respondent (including a Respondent’s subcontractors and named personnel, if any) in the 
+preparation and administration of the MULRFQ or Competition Notices or a relationship 
+with any employee, contractor or representative of TI Corp involved in preparation of and 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 12 of 28 
+administration of the MULRFQ, Competition Notices  or participating on the evaluation 
+committee or in the administration of a Contract. 
+b) If a Respondent is in doubt as to whether there might be a conflict of interest, unfair 
+advantage or reasonable apprehension of bias, the Respondent should consult its own 
+advisors and notify and consult with the Official Contact prior to submitting a Response.  
+c) A Respondent must not attempt to influence the outcome of the  MULRFQ process by 
+engaging in lobbying activities. Any attempt by the Respondent to communicate for this 
+purpose directly or indirectly with any employee, contractor, or representative of TI Corp, 
+including members of the evaluation committee and any elected officials of TI Corp, or 
+with the media, may result in disqualification of the Respondent, and/or Qualified Supplier 
+as the case may be. 
+3.18 Reservation of Rights  
+In addition to any other discretionary rights or reserved rights, TI Corp reserves the right, in its 
+sole discretion to: 
+a) waive any non-material irregularity, defect, or deficiency in a Response; 
+b) request clarification(s) from a Respondent, or as applicable, a Qualified Supplier  with 
+respect to its Response, including clarification(s) with respect to its Response on non -
+material administrative matters (e.g., a matter that is not scored) or where Response 
+provisions are ambiguous, without any obligation to make such a request to an y other 
+Respondent, or as applicable, a Qualified Supplier, and consider such clarification(s) in 
+evaluating the Response; 
+c) reject any Response due to unsatisfactory references or unsatisfactory past performance 
+under contracts with TI Corp, or any material error, omission, or misrepresentation in the 
+Response; 
+d) exclude a Respondent, or as applicable, a Qualified Supplier from participation in the 
+MULRFQ, at any point in the MULRFQ process, or to exclude a  Qualified Supplier from 
+participation in a subsequent  procurement associated with a Competition Notice issued 
+under this MULRFQ, where there is supporting evidence, on grounds of one or more of 
+the following:  
+i) bankruptcy or insolvency;  
+ii) false declarations or misrepresentations;  
+iii) significant or persistent deficiencies in performance of any substantive requirement 
+or obligation under a prior contract or contracts with TI Corp;  
+iv) final judgments in respect of serious crimes or other serious offences;  
+v) professional misconduct or acts or omissions that adversely reflect on the 
+commercial integrity of the Respondent or Qualified Supplier; or 
+vi) engaging in conduct prohibited by the Competition Act  such as bid -rigging as 
+described in section 47 of th e Competition Act , or engaging in conspiracies, 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 13 of 28 
+agreements or arrangements between competitors as described in section 45 of the 
+Competition Act; 
+vii) failure to pay taxes; and  
+e) remove a Qualified Supplier from the Multi-Use List or, if applicable, remove a Qualified 
+Resource’s eligibility, for failing to meet the requirements for staying on the Multi-Use List 
+of Qualified Suppliers as set out in this MULRFQ, or as may be communicated by TI Corp 
+from time to time.  On request by su ch Qualified Supplier, TI Corp will provide written 
+reasons for the removal. 
+3.19 Acceptance of Terms and Conditions 
+Submitting a Response indicates acceptance of all the terms and conditions set out in the 
+MULRFQ, including all appendices, Addenda and these MULRFQ process rules.   
+A Response must be signed by a person authorized to sign on behalf of the Respondent:  
+a) For Responses submitted through BC Bid, clicking the “ I Agree and Submit”  button that 
+follows the pop -up advisory associated with Response submissi on constitutes the 
+signature of the Respondent and is acceptable without additional signature. By 
+submitting its Response electronically through BC Bid, the Respondent is agreeing to the 
+terms and conditions of the MULRFQ, and terms and conditions set out in the pop -up 
+advisory that BC Bid displays prior to Response submission.  
+b) For Responses submitted by hard copy to a physical address or Responses submitted by 
+email, Respondents must prepare and submit the Submission Declaration form that is 
+available for download and located in the “RFx documents” section of the “overview” menu 
+tab for the MULRFQ.  
+c) Should a Respondent elect to use submission methods (if allowed) other than submitting 
+through BC Bid, the Respondent consents to TI Corp taking such steps that are necessary 
+to input information from Respondent’s Response into BC Bid.  
+3.20 Submission of Responses 
+a) For electronic submissions (BC Bid or email), the following applies: 
+(i) The Respondent is solely responsible for ensuring that the complete electronic 
+Response, including all attachments, is received by the TI Corp; 
+(ii) The maximum size of any attachment uploaded to BC Bid electronically, is required to 
+be 500 MB or less; 
+(iii) The maximum size of each email attachment is required to be 20 MB or less 
+(Respondents are solely responsible for ensuring that email Response submissions 
+comply with any size restrictions imposed by the Respondents’ internet service provider); 
+(iv) Respondents should submit email Responses in a single email and avoid sending 
+multiple email submissions for the same opportunity.  If the file size of an electronic 
+submission exceeds the applicable maximum size, the Respondent may make multiple 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 14 of 28 
+submissions (BC Bid upload or multiple emails for the same opportunity) to reduce 
+attachment file size to be within the maximum applicable size; Respondents should 
+identify the order and number of emails making up the email Response submission (e.g. 
+“email 1 of 3, email 2 of 3…”); 
+(v) For email Response submissions sent through multiple emails TI Corp reserves the 
+right to seek clarification or reject the Response if TI Corp is unable to determine what 
+documents constitute the complete Response;  
+(vi) Attachments must not be compressed, must not contain a virus or malware, must not 
+be corrupted and must be able to be opened. Respondents submitting by electronic 
+submission are solely responsible for ensuring that any emails or attachments are not 
+corrupted. TI Corp may reject Responses that are compressed, cannot be opened or that 
+contain viruses or malware or corrupted attachments.  
+b) Respondents are encouraged to become a registered e -bidding user of BC Bid. Only 
+registered e-bidding users of BC Bid can make electronic Responses on BC Bid. BC Bid e-
+bidding is an annual fee-based subscription service and the duration of the registration 
+process for e-bidding may vary for different users. Respondents should refer to the BC Bid 
+website for further information 
+c) For email or  hard copy Response submissions, including any changes to a Response or 
+any withdrawal of a Response referred to in sections 3.11 and 3.12, the subject line of the 
+email and any attachment should  be clearly marked w ith the name of the Respondent, 
+the MULRFQ opportunity ID and the opportunity description.   
+d) The Respondent bears all risk associated with delivering its Response by electronic 
+submission, including but not limited to delays in transmission between the Respondent’s 
+computer and the Government Electronic Mail System or BC Bid. 
+e) While TI Corp may allow for email Response submissions, the Respondent acknowledges 
+that email transmissions may be  unreliable. The Respondent is solely responsible for 
+ensuring that i ts complete email Response submission and all attachments have been 
+received. If the Respondent receives any email confirmation from TI Corp  that is 
+associated with an email Response submission, despite the content of such email, any 
+such email will not serve to confirm that a complete, sufficient, or timely Response or 
+other related submission has been made by the Respondent or received by TI Corp.  
+f) An alternate submission method not  initially permitted by the MULRFQ may be made 
+available, at TI Corp’s discretion, before the MULRFQ Termination Date and Time, and it is 
+the Respondent’s sole responsibility for ensuring that a complete Response (and all 
+attachments) submitted using an ap proved alternate submission method is received by 
+TI Corp before the MULRFQ Termination Date and Time. TI Corp makes no guarantee that 
+an alternative submission method will be available or that the alternate method available 
+will ensure that a Respondent’s Response is received before the MULRFQ Termination 
+Date and Time. 
+3.21 Supplier Request for Participation in a Procurement 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 15 of 28 
+Where TI Corp rejects a Supplier’s request for participation in a procurement conducted under 
+section 8, TI Corp will promptly inform the Supplier and, on request of that Supplier, offer that 
+Supplier a debriefing regarding its decision. The debriefing will be, at the sole option of TI Corp, 
+by telephone conference or some other means. On request of the Supplier, TI Corp will 
+promptly provide a written explanation for its decision. 
+3.22 Enquiries to the Official Contact  
+Enquiries related to this MULRFQ including any requests for information or clarif ication may 
+only be directed in writing to the Official Contact using the “enquiries” interface or the email 
+address identified on the “opportunity details” menu tab. Information obtained from any other 
+source is not official and should not be relied upon. Enquiries and any responses providing new 
+information will be recorded and posted to BC Bid or otherwise distributed to Suppliers, 
+Respondents, and Qualified Suppliers . Despite the foregoing, TI Corp may choose in its sole 
+discretion not to respond, respond in whole or in part, or reformulate enquiries in whole or in 
+part. TI Corp  may in its sole discretion choose whether to post any such enquiries (as 
+reformulated if reformulated) and responses to BC Bid or otherwise distribute to Suppliers, 
+Respondents and Qualified Suppliers. 
+  
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 16 of 28 
+4. Background 
+4.1 Corporation Responsibility 
+TI Corp was established under the Transportation Investment Act. TI Corp became a subsidiary 
+of B.C. Transportation Finance Authority (BCTFA) on April 1, 2018, with a mandate to provide 
+enhanced oversight, management and delivery of major capital infrastructure projects.  
+Collectively referred to as “Assigned Major Projects”, those for which TI Corp is accountable to 
+the Ministry of Transportation and Infrastructure and the Ministry of Tourism, Arts, Culture and 
+Sport as of July 2022 include:  
+1. the Pattullo Bridge Replacement Project (PBR)  
+2. the Broadway Subway Project (BSP)  
+3. the Kicking Horse Canyon Project – Phase 4 (KHCP4)  
+4. Highway 99 Tunnel Program – includes the Fraser River Tunnel Project (FRTP), 
+Steveston Interchange Project (SIP) and the Transit and Cycling Improvements 
+(TCI)  
+5. Collections and Research Building (CRB)  
+6. Surrey Langley SkyTrain Project (SLS)  
+ 
+Additional major capital infrastructure projects may be assigned from time to time.  
+Assigned Major Project teams have been established to define technical design and 
+construction requirements, to manage the procurement processes to award design -build or 
+design-build-finance contracts , and to manage the contracts throughout project 
+implementation. TI Corp draws on both internal and external resources to plan and carry out 
+the delivery of its Assigned Major Projects. 
+4.2 Background 
+The primary focus of TI Corp’s mandate  to successfully deliver major capital infrastructure 
+projects includes consistent oversight  and management of these Assigned Major Projects .  
+Under the direction of TI Corp’s Chief Information Officer, the Information Management and 
+Technology (IM/IT) team ensures that TI Corp’s Assigned Major Project teams have the software 
+tools needed to accomplish this. 
+As a Public Sector corporation, TI Corp  uses the  cloud-powered Microsoft 365 productivity 
+platform applications and services hosted and delivered by the Office of the Chief Information 
+Officer (OCIO) of British Columbia. The OCIO also leads and oversees  strategy, policy and 
+standards for telecommunications, information technology, IT security and the management 
+of the IM/IT investment portfolio for the Province.  Additionally, TI Corp utilizes many other 
+custom solutions including commercial off-shelf third-party software. 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 17 of 28 
+As TI Corp’s mandate expands, so too does our need to replace, develop, upgrade and maintain 
+multiple applications and other third-party software tools.   
+TI Corp has procured and is deploying  a highly configurable Enterprise Content Management 
+platform called OnBase (by Hyland) which includes a n Electronic Document and Records 
+Management (EDRMS) module which TI Corp’s EDRMS Project Team is currently implementing.  
+TI Corp is also replatforming and/or upgrading  many of its existing software applications in 
+order to  provide the security, access, version control and audit functionality required to 
+appropriately support the organization’s IT infrastructure now and in the future.  Additionally, 
+TI Corp is working with KPMG to develop its enterprise technology roadmap span ning all IT 
+architectural domains including IM/IT security. 
+Therefore, there is a need for experienced and capable technical resources to assist TI Corp by 
+providing professional technical services on an as-required basis.   
+  
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 18 of 28 
+5. Services Description 
+This section describes the Services for which the list of Qualified Suppliers may be used. 
+5.1 Services Description 
+The following sub -sections list the Service Areas and details the types of project advisory 
+services that the Corporation may require from Qualified Suppliers. 
+5.1.1 OnBase Administrator 
+An individual providing Services in this role will utilize his/her hands-on experience with OnBase 
+EP5 delivered via Hyland’s Global Cloud Services (GCS) to support TI Corp’s staff in developing, 
+configuring, and maintaining TI Corp’s  OnBase solution .  OnBase Administration Services 
+include, but are not limited to troubleshooting end-user issues with the Unity and Web Clients 
+and employing the use of Hyland’s Diagnostic Console and Cloud Portal softwares for this 
+purpose when necessary , developing/updating Unity Forms , executing configuration and 
+administrative tasks using the Configuration and Thick Client softwares  via Hyland’s Citrix 
+Workspace, using OnBase Studio to develop/update automated workflows, ad-hoc and system 
+tasks, notifications, scripts, and WorkView objects/applications , an d s uggesting options to  
+mature, improve, and/or enhance the solution. 
+An individual providing Services in this role may also be called on to participate in EDRMS Project 
+activities such as  developing system design and specification documents , working with 
+stakeholders to develop and propose solutions and options based on functional requirements, 
+and training.  
+5.1.2 Corporate Technology Trainer 
+An individual providing Services in this role will utilize his/her advanced presentation and 
+instructor skills to develop, coordinate, and deliver training in the use of OnBase Unity and Web 
+client softwares.  Advisors will develop and maintain training materials for both initial system 
+deployment and onboarding as well as subsequent system upgrades ensure that trainees’ 
+learning experience is interactive, effective and accessible to all participants through in-person 
+and virtual platforms.  Although experience with OnBase is preferred, advisors are not required 
+to have existing OnBase experience; however, those without OnBase experience must have the 
+advanced skills neces sary to quickly develop and complete  a self-directed learning regime in 
+order to quickly acquire the knowledge and expertise necessary to develop and deliver 
+comprehensive, high-quality training support to the Corporation as needed.  Assignments may 
+also extend to other TI Corp software platforms if/as needed. 
+5.1.3 Microsoft 365 Developer 
+An individual providing Services in this role will utilize his/her comprehensive knowledge of and 
+experience with Microsoft’s Enterprise Online platform to lead the adoption, integration, and 
+customization of Microsoft 365 Enterprise Applications & Services  to streamline and/or 
+automate TI Corp business processes and improve productivity .   Assignments for advisors in 
+this role will include the design and implementation of integrated solutions that utilize any 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 19 of 28 
+combination of the Microsoft 365 Enterprise Applications & Services delivered and/or supported 
+by the OCIO, e.g. MS Teams, OneDrive, SharePoint, Planner, Power Apps, Power Automate, 
+Power BI , etc .  Assignments will also include ongoing support and troubleshooting , 
+maintenance, training, and updates as necessary to ensure these solutions remain healthy and 
+fully functional.  
+5.1.4 Senior IT Project Manager 
+An individual providing Services in this role will  apply his/her advanced project management 
+skills and experience to lead and manage complex IT projects that span multiple business units 
+and require interoperability between BC Government technologies, computing services and 
+hosting environments and Software -as-a-Service (SaaS) vendor technologies, computing 
+services, and hosting environments.  Assignments will include managing resources, schedules, 
+and financials throughout the project's life cycle  including management of issues, risks, and 
+project change requests to ensure successful and on-time project delivery.  This role requires a 
+strategic thinker with strong organizational , leadership,  and conflict management skills, a 
+collaborative approach to problem -solving, and extensive experience using  project 
+management tools.  Advisors will collaborate and coordinate with stakeholders both internal 
+and external to TI Corp having differing concerns and priorities and will report on project status 
+to senior management and executive stakeholders regularly.  Senior IT Project Manager 
+assignments will require familiarity with BC Public sector contract management and 
+procurement policies and procedures as well as a high degree of proficiency in both written 
+and oral communications; advisors must have an English language proficiency level1 equivalent 
+to or exceeding:  
+• American Council on the Teaching of Foreign Languages (ACTFL) = Advanced High 
+• Common European Framework of Reference for Languages (CEFR) Level = C1  
+• Interagency Language Roundtable (ILR) Scale = S4 W4 R4 L4 
+5.1.5 Senior Business Analyst 
+An individual providing Services in this role will leverage his/her extensive experience, superior 
+discovery, analysis and group facilitation expertise, and deep understanding of information 
+management processes to assist TI Corp with project planning and implementation, project 
+team oversight and facilitation , authoring of project artefacts  produced in accordance with 
+Software Deve lopment Life Cycle ( Waterfall, V -Model, etc. ) and Agile Methodologies.  
+Assignments require efficient self -directed individuals with strong organizational, leadership, 
+and conflict management skills, a collaborative approach to problem -solving, and extensi ve 
+experience working with diverse stakeholder groups.  Assignments will also require superior 
+documentation skills, extensive experience and skill in  enterprise business process re -
+engineering and related change management as well as knowledge of BC Gover nment 
+ 
+1 There are three very well -known language proficiency scales used around the world: the ACTFL scale, the CEFR scale, and the 
+ILR scale. Each scale measures linguistic abilities on various levels to reflect an individual's ability to communicate effectively in a 
+target language. 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 20 of 28 
+technology/data standards and information and records management requirements.  Advisors 
+will be tasked with  identification and documentation of existing business processes and 
+workflows, subsequent analysis and identification of process optimization  opportunities, and 
+business process re-engineering and automation across TI Corp’s business units.  Assignments 
+may also include developing IT solution acceptance criteria definitions, testing, group training, 
+implementation, maintenance, and Project Close out activities including documenting lessons 
+learned. 
+Senior Business Analyst assignments will require a n extremely high degree of proficiency in 
+both written and oral communications; advisors must have an English language proficiency 
+level equivalent to or exceeding:  
+• American Council on the Teaching of Foreign Languages (ACTFL) = Superior 
+• Common European Framework of Reference for Languages (CEFR) Level = C2  
+• Interagency Language Roundtable (ILR) Scale = S4+ W4+ R4+ L4+ 
+5.1.6 Business Analyst 
+An individual providing Services in this role will review and evaluate current business processes 
+to identify gaps, provide detailed business process diagrams, identify and document 
+requirements according to according to industry standard software delivery fr ameworks 
+including Software Development Life Cycle (Waterfall, V-Model, etc.) and Agile Methodologies, 
+and ensuring information privacy and data requirements are met.  This role will assist with 
+producing Security and Threat Risk Assessments (STRA), Privacy Impact Assessments (PIA) and 
+defining functional requirements and detailed workflow specifications including specific 
+acceptance test scripts and managing the user acceptance testing process.  Additional services 
+may include development of current solution architecture, solution abstracts, conceptual data 
+models, deployment plan documentation, business requirements documentation, liaising with 
+Commercial off the shelf (COTS) Vendors on possible changes to the COTS solution and 
+assistance with project planning and transition plans including end user training materials and 
+project close out activities. 
+5.1.7 Enterprise, Technical, and Solutions Architect 
+An individual providing Services in this role will utilize his/her extensive training, experience and 
+skills in the disciplines of IT Enterprise, Technical, and Solutions Architecture to  assist TI Corp 
+with translating its business requirements into IT capabilities by developing comprehensive 
+architectural models.  Advisors will identify and assess TI Corp’s current Enterprise Architecture, 
+measure it against TI Corp’s enterprise technology roadmap, identify and document gaps, and 
+propose gap resolution options.  An individual providing Services in this role will also utilize the 
+outcome of this assessment to continue development and maturation of TI Corp’s  enterprise 
+technology roadmap, consistent architecture methods, standards and tools, as well as overall 
+timelines and milestones related to implementation of the preceding .  Additionally, 
+assignments will include completing specifications for enterprise architect artefacts such as 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 21 of 28 
+reference architecture and conceptual architecture, providing input into the IM/IT Approved 
+Strategic Plan, and working with various IT project teams as a resource advisor. 
+5.1.8 Technical Analyst  
+An individual providing Services in this role will be tasked with providing technical support and 
+assistance with computing hardware, software, computer peripherals, digital office equipment, 
+and data network and working closely with various departments and project teams to ensure 
+the smooth operation of TI Corp’s  IT infrastructure.   Assignments will  also include 
+troubleshooting to resolve technical issues promptly, supporting and facilitating regular system 
+updates/patches and maintenance to ensure optimal performance and security, assisting with 
+the deployment and configuration of new hardware and software , and maintaining accurate 
+records of technical issues and resolutions in TI Corp’s ticketing system.  Additionally, advisors 
+will provide training and support to end users both virtually and onsite at various TI Corp offices 
+in the lower mainland, collaborate with other IT teams to address complex technical issues, and 
+provide support for s pecial technology projects such as workstation refreshes, boardroom 
+equipment refreshes, office moves, and new office installations as needed.  
+5.1.9 Hyland Solution Architect  
+An individual providing Services in this role will utilize his/her superior group facilitation a nd 
+business analysis skills in combination with his/her extensive knowledge and experience with 
+OnBase and all Hyland softwares that interoperate with OnBase EP5 delivered via Hyland’s 
+Global Cloud Services (GCS) to assist TI Corp with improving and maturi ng its OnBase GCS 
+deployment.  TI Corp’s current OnBase configuration supports the import, storage, and 
+retrieval of a subset of its assigned major project documents for a single assigned major project.  
+Upcoming phases of the EDRMS Project expand this con figuration to include new content 
+(document) types, file types, and automated workflows for multiple assigned major projects as 
+well as TI Corp’s centralized assigned major project services and corporate functions.  
+Assignments for advisors in this role wi ll include conducting a gap analysis of current OnBase 
+configuration, facilitating discovery workshops and executing analysis of current business 
+processes related to document management, and documenting proposals for future state 
+automation of these proce sses using the OnBase platform and other Hyland softwares that 
+interoperate with it.  Examples include, but are not limited to, Integrated Office Viewer, 
+Workflow, WorkView, ShareBase, OnBase Video, and Hyland Intelligent Document Processing. 
+ 
+  
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 22 of 28 
+6. How Responses will be Evaluated 
+6.1 Evaluation Process 
+TI Corp’s evaluation of Responses includes four stages as follows: 
+6.1.1 Stage One: Evaluation of Mandatory Criteria 
+Responses not clearly demonstrating that they meet the following mandatory  criteria will be 
+excluded from further consideration during the evaluation process: 
+Mandatory Criteria 
+The Response must be delivered in accordance with the delivery instructions on the cover page 
+of this MULRFQ and as may be set out “delivery of submissions” located in the “overview” menu 
+tab in BC Bid. 
+The Resource Qualifications Template (Appendix B) must be submitted as part of the Response 
+for each Resource being proposed (to a maximum of 3 resources per category). 
+Response must be in English 
+A Submission Declaration signed and prepared by Respondent for Responses submitted by 
+email or hard copy must be submitted as part of the Response.  
+The Response must be in writing and, if in electronic form, must be able to be opened and read 
+by TI Corp. If TI Corp. cannot read or open any attachment to a Response, the Response will be 
+rejected in its entirety. 
+6.1.2 Stage Two: Evaluation of Desirable Qualifications 
+Responses that meet all mandatory criteria will be further assessed against the desirable 
+qualifications. 
+The Corporation will evaluate Resource qualifications only. 
+The desirable qualifications for Resources are identified in the Respondent Qualification 
+Template. Response Guidelines, which provide guidance about what Respondents should 
+provide to demonstrate their Resources meet the qualifications are also provided in those 
+templates 
+TI Corp will evaluate the Respondent’s response to each response guideline and as sign points 
+based on how well the response demonstrates that the Respondent  or Resource, as the case 
+may be, meets or exceeds the associated desirable qualifications. 
+Each response guideline identifies how many points it is worth in the evaluation of desir able 
+qualifications and if it has a minimum score associated with it.  
+6.1.2.1    Resource’s Qualifications 
+If this MULRFQ is intended to qualify Resources, to pass this stage of the evaluation, Resources 
+are required to both: 
+1) Meet or exceed any minimum scores associ ated with individual response guidelines in 
+the Resource Qualification Template; and 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 23 of 28 
+2) Meet or exceed any minimum overall score identified in the Resource Qualification 
+Template. 
+Any Resource that does not meet the criteria above will not pass this stage and will receive no 
+further consideration. 
+If this MULRFQ is intended to qualify Resources,  and none of a Respondent’s Resources pass 
+this stage of the evaluation, the Respondent will not pass this stage of the evaluation. 
+6.1.3 Stage Three: Reference Checks 
+TI Corp may conduct reference checks on Respondents, including, if applicable, any Resources 
+proposed, that have passed stage two.  
+Reference checks may be conducted on the Respondent, and if applicable, proposed 
+Resources on a pass -fail basis. The Corporatio n may reject any Respondent or proposed 
+Resource for which references requested are not provided or if requested, the references, 
+in the Corporation’s sole opinion, are deemed to be unsatisfactory. If a Respondent was 
+allowed to propose Resources in the MU LRFQ and all the Resources proposed by the 
+Respondent fail the reference check, if any, the Respondent will be deemed to have failed 
+the reference check.  
+Any reference cannot be a contact internal to the Respondent’s or Resource’s organization e.g. 
+the referee cannot be a co -worker, supervisor, or other internal contact. Referees need to be 
+from a party that is not the Respondent  or the Resource . For each referee, the Respondent 
+should provide the following information:  
+a) Name of the referee and their organ ization, together with the position, mailing address, 
+telephone number and email address of the referee; and 
+b) Current relationship of the Respondent or Resource, if any, with the referee.  
+Failure to provide the referee  information set out above , if request ed, will result in the 
+Respondent, the Resource, or both the Respondent and the Resource , failing the reference 
+check. 
+In addition, TI Corp  reserves the right to contact references that were not provided by the 
+Respondent to obtain  references pertaining to the Respondent and Respondent Resource (if 
+applicable). This includes contacting substitute referees from the same reference company as 
+the one provided by the Respondent.  
+TI Corp  reserves the right, on a pass -fail basis, to reject any Resp ondent or, if applicable, 
+proposed Resource if any of these other references, if any, in TI Corp’s sole opinion, are deemed 
+to be unsatisfactory. 
+Stage three does not supersede any other reservation of rights in favour of TI Corp, including 
+any reservation of rights set out in section 3.18. 
+In addition to the Stage three reference check, TI Corp reserves the right to recheck Qualified 
+Supplier and Qualified Resource references, and to recheck proposed references in connection 
+with a particular Competition Notice. 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 24 of 28 
+6.1.4 Stage Four: Notification and Debriefings 
+Respondents will be notified as to whether  the Respondent has become a Qualified Supplier 
+and, if applicable, which proposed Resources have become Qualified Resources. 
+TI Corp will offer a debriefing to Respondents. The debriefing  will be at a mutually agreeable 
+time and, at the sole option of TI Corp, by telephone conference or some other means . On 
+request of the Respondent, TI Corp will promptly provide a written explanation for its decision. 
+7. How Responses should be organized 
+Responses should be organized as follows: 
+a) Respondents should take care to prepare and submit their Response in conformity with 
+the mandatory criteria table in section 6.1.1., i ncluding providing the Respondent 
+Qualifications Template  (Appendix A)  and, if this  MULRFQ is intended to also qualify 
+Resources, one Resource Qualification Template  (Appendix B) for each Resource being 
+proposed. 
+b) Additional attachments that should be included in a Response may be identified in the 
+Respondent Qualification Template and the Resource Qualification template. 
+c) Unless specifically requested by TI Corp, the Response should not include any additional 
+attachments or appendices. In its evaluations TI Corp may only consider material that is 
+included in the Response. TI Corp may not, for example, consider the content of a website 
+or online document even if the URL or a hyperlink to it is provided in the Response. 
+d) All pages should be consecutively numbered. 
+8. How the Multi-use List of Qualified Suppliers will be used 
+8.1 Use of List 
+This section describes how TI Corp may use the Multi-use List to select Qualified Suppliers to 
+deliver Services as Contractors. 
+Only Qualified Suppliers will be sent Competition Notices and allowed to participate in 
+procurements that may issue from this MULRFQ.  
+These rules are subject to change, from time to time, as TI Corp may deem necessary, with 
+notice to Qualified Suppliers posted as Addenda on BC Bid. 
+By submitting a Response, the Respondent agrees to the process below, including the minimum 
+time frame within which the Qualified Supplier, may have to respond to a Competition Notice 
+as set out in section 8.1.2.  
+8.1.1 Use on a Non-exclusive "as, if and when Requested" Basis 
+TI Corp may, in its sole discretion, from time to time, use the Multi-use List in connection with 
+the acquisition and provision of the Services described in the MULRFQ. 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 25 of 28 
+Qualified Suppliers may be contacted on a non -exclusive "as, if and when requested" basis to 
+compete on opportunities for the provision of Services in accordance with the  selection 
+methods set out in this section 8. The selection of a Qualified Supplier to serve as a Contractor 
+will not be based on the scores assigned to a Response associated with becoming a Qualified 
+Supplier under this MULRFQ, but will be based upon the requirements and evaluation criteria 
+included in a Competition Notice issued with respect to a specific project or assignment for 
+Services. 
+8.1.2 Selection Methods  
+TI Corp  may select a Qualified Supplier to act as a Contractor using the following selection 
+methods: 
+a) TI Corp will invite, by written Competition Notice, all Qualified Suppliers to compete to 
+supply the Services described in a given Competition Notice, except as otherwise provided 
+in section 8. 
+b)  No Competition Notices will be issued before the Initial Intake. 
+c) The Competition Notice will specify the requirements of a particular project or assignment 
+and the criteria upon which a Qualified Supplier will be evaluated. These criteria may 
+include, but not necessarily be limited to: 
+i) a Qualified Supplier's pricing;  
+ii) Resources proposed; and 
+iii) other requirements as detailed in the Competition Notice. 
+d) If this MULRFQ is intended to qualify Resources, Qualified Resources will be among the 
+Resources required to perform the Services under any Contract that results from the 
+MULRFQ. 
+e) A Qualified Supplier will have not less than te n calendar days from the date on which a 
+Competition Notice is issued by TI Corp (the actual response deadline to be specified in 
+the Competition Notice) to submit a written response to the Competition Notice. 
+f) TI Corp may directly negotiate a Contract with a supplier of TI Corp’s choice or a Qualified 
+Supplier where one or more of the following conditions applies: 
+i) only one Qualified Supplier has been qualified under the MULRFQ; 
+ii) an extreme urgency brought about by event unforeseeable by TI Corp and the 
+Services could not be obtained in time by means of a competitive process; 
+iii) a competitive process would interfere with the TI Corp’ s ability to maintain 
+security or order or to protect human, animal or plant life or health; 
+iv) the acquisition is of a confidential or privileged nature and disclosure through an 
+open bidding process could reasonably be expected to compromise government 
+confidentiality, cause economic disruption or be contrary to the public interest; or 
+v) other allowed grounds that may be provided for by applicable trade agreements 
+and policy. 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 26 of 28 
+8.1.3 No Obligation to Contract or Use the Multi-use List 
+TI Corp has no obligation to: 
+i) enter into a Contract with any one or more Qualified Supplier(s); or 
+ii) use the Multi-use List in an exclusive manner,  and reserves the right, in its sole 
+discretion to:  
+a) employ open competitions that include suppliers external to the Multi-use List of Qualified 
+Suppliers; and 
+b) otherwise engage suppliers external to the Multi-use of Qualified Suppliers in connection 
+with any project required by TI Corp. 
+8.1.4 Form of Contract 
+The Competition Notice will identify the form of the applicable Contract (or alternately select 
+contract clauses that may be applicable) that may result from it. Any Contract will be between 
+TI Corp and Qualified Supplier (as Contractor) and, as applicable, will name specific Qualified 
+Resources as key personnel who the Contrac tor will cause to perform the Services on the 
+Contractor’s behalf. 
+Contracts are likely to include terms and conditions similar to those included in the Province’s 
+standard “General Services Agreement”, “Information Technology & Management Consulting 
+Professional Services Agreement”, or “Financial Review and Assurance Services Agreement”. 
+Copies of these agreements can be found here. 
+The form of Contract will also require Suppliers to comply with TI Corp’s policies, as they may 
+be established and or updated from time to time.  
+Tools, Travel Location and Facilities  
+Projects will require Consultants to be available for contact vi a phone or email during the 
+Corporation’s standard business hours (8am-5pm Pacific Time) and may require Consultants to 
+attend meetings via MS Teams or work on site from time to time. Any pre -approved travel will 
+be reimbursed at the Provincial standard travel rates for Group I found here  
+Consultants should have access to standard office automation tools (i.e., e -mail, MS Word, MS 
+Excel, MS Teams and MS PowerPoint). MS Project may be required for certain assignments.  
+When required to work on -site Consultants may have access to a workspace that has a desk, 
+phone, and computer with LAN/WAN and Internet connectivity, as well as standard office 
+automation tools as necessary. 
+8.1.5 Tax Verification Letter  
+A Competition Notice will indicate whether a Tax Verification  Letter will be required as part of 
+Contract finalization. 
+8.1.6 Binding and Non-binding Competition Notices 
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 27 of 28 
+A Competition Notice may be a binding process that is intended to create what is known in 
+Canadian tendering law as “contract A” or it may be a negotiate d, non-binding process that is 
+not intended to create any contract A. 
+  
+ 
+   
+MUL RFQ 2025 42 R IT Advisory Services   Page 28 of 28 
+ 
+ 
+ Sample Forms 
+ 
+Document is available for download in the “RFx documents” section for the MUL RFQ 
+- Information and Technology and Management Consulting Professional Services 
+Agreement. 
+ Resource Qualification Form 
+ 
+Document is available for download in the “RFx documents” section for this MULRFQ. 
+ 
+ Submission Declaration 
+ 
+Document is available for download in the “RFx documents” section for this MULRFQ and 
+attached to Appendix B: Resource Qualification Form. (also attached to Appendix B) 
+ 
