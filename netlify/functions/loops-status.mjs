@@ -13,8 +13,8 @@ import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const __filename = fileURLToPath(import.meta.url);
-const REPO = resolve(dirname(__filename), '..', '..');
+const _here = fileURLToPath(import.meta.url);
+const REPO = resolve(dirname(_here), '..', '..');
 
 async function safeRead(rel, json = false) {
   try {

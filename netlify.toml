@@ -65,6 +65,18 @@
   status = 404
   force = true
 [[redirects]]
+  from = "/procurement-downloads/iis-capability-statement.pdf"
+  to = "/downloads/iis-capability-statement.pdf"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/procurement-downloads/iis-capability-statement.docx"
+  to = "/downloads/iis-capability-statement.docx"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/procurement-downloads/*"
   to = "/index.html"
   status = 404
