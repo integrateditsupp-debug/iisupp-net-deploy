@@ -37,7 +37,7 @@
           when: ['freeze', 'frozen', 'hang', 'hung', 'not responding', 'loading profile', 'stuck', 'spinning', 'profile screen'],
           cause: 'Outlook is hanging at launch — most often a stuck profile or a bad add-in.',
           steps: [
-            'Fully close Outlook: Task Manager (Ctrl+Shift+Esc) -> End task on any OUTLOOK.EXE.',
+            'End the stuck Outlook task: press Ctrl+Shift+Esc to open Task Manager -> Processes tab -> click "Microsoft Outlook" (or OUTLOOK.EXE) once to select it -> click "End task" at the bottom-right. Repeat for any other Outlook entries so none are left running.',
             'Hold Ctrl while reopening Outlook -> click Yes to start in Safe Mode. If it opens in Safe Mode, an add-in is the cause.',
             'In Safe Mode: File -> Options -> Add-ins -> Manage: COM Add-ins -> Go -> uncheck all -> OK -> restart normally.',
             'Still hanging at the profile? Press Win+R and run:  outlook.exe /resetnavpane',
@@ -48,7 +48,7 @@
           when: ['nothing', 'no response', 'nothing happens', 'blank screen', 'just sits'],
           cause: 'Outlook isn\'t launching at all — usually a stuck background process or a damaged profile.',
           steps: [
-            'Task Manager (Ctrl+Shift+Esc) -> End task on every OUTLOOK.EXE, then try again.',
+            'End every Outlook task: press Ctrl+Shift+Esc -> Processes tab -> click each "Microsoft Outlook" / OUTLOOK.EXE entry and hit "End task". Then try opening Outlook again.',
             'Win+R -> run:  outlook.exe /safe . If it opens, disable COM add-ins (File -> Options -> Add-ins).',
             'If nothing: Win+R -> run:  outlook.exe /resetnavpane',
             'Still nothing: Control Panel -> Mail -> Show Profiles -> create a new profile -> set default -> reopen.'
@@ -369,6 +369,20 @@
     session = session || newSession();
     session.turns++;
     var t = norm(text);
+
+    // 0) Farewell / thanks / resolved -> close warmly. Greeting -> friendly prompt. Never troubleshoot these.
+    var BYE = ['thank', 'thanks', 'appreciate', 'have a good', 'have a great', 'goodbye', 'good bye', 'see you', 'cheers', 'that worked', 'it worked', 'that fixed', 'all good', 'all set', 'thats all', 'that is all', 'nothing else', 'im good', 'i am good', 'we are good', 'resolved', 'good day'];
+    var CONT = ['still', 'wont', 'won t', 'not work', 'didnt', 'didn t', 'doesnt', 'doesn t', 'does not', 'no luck', 'broke', 'broken', 'same', 'again', 'nope', 'but it', 'fail', 'isnt', 'isn t', 'not fixed', 'cant', 'can t'];
+    var GREET = ['hi', 'hello', 'hey', 'yo', 'good morning', 'good afternoon', 'good evening'];
+    if ((anyHas(t, BYE) || t === 'bye' || t === 'no thanks') && !anyHas(t, CONT) && classify(t, {}).score < 4 && t.split(' ').length <= 8) {
+      session.stage = 'closed';
+      return { topic: session.topic, stage: 'closed', confidence: 'high',
+        say: 'Glad I could help \u2014 have a great day! If anything else comes up, just open ARIA and ask. I can also email you a short summary of this session if you would like one.' };
+    }
+    if (anyHas(t, GREET) && classify(t, {}).score < 4 && t.split(' ').length <= 4) {
+      return { topic: null, stage: 'greet', confidence: 'high',
+        say: 'Hi \u2014 I\'m ARIA. What can I help you sort out? Outlook, printing, Wi-Fi, a sign-in/password issue, a slow PC, or something else?' };
+    }
 
     // 1) Context first: if a topic is active, stay on it unless the user clearly switches topics.
     if (session.topic) {
