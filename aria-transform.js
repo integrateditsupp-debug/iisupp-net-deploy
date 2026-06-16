@@ -108,7 +108,7 @@
       var S=SC[pick(text)];
       document.getElementById('aexIcon').innerHTML=S.icon;
       var ml=document.getElementById('aexMl');if(ml)ml.textContent=S.mlbl;
-      execBox(S);
+      void 0; /* in-chat diagnostic box removed; orb morph is the cue */
       var lo=letterEl?letterEl.style.opacity:'';if(letterEl){letterEl.style.transition='opacity .4s';letterEl.style.opacity='.08';}
       lay('aexIcon');
       function at(ms,f){timers.push(setTimeout(f,ms));}

@@ -556,7 +556,7 @@
     function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e; }
     function youBubble(text){
       var b=el('div','you-block'); b.appendChild(el('div','you-label','You')); b.appendChild(el('div','you-bubble',text));
-      cm.appendChild(b); cm.scrollTop=cm.scrollHeight;
+      cm.appendChild(b); var _sc=document.getElementById('chatBody')||cm;_sc.scrollTop=_sc.scrollHeight;if(b&&b.scrollIntoView)b.scrollIntoView({block:'end'});
     }
     function ariaBubble(r){
       var b=el('div','aria-block fade-in'); b.appendChild(el('div','aria-tag','ARIA'));
@@ -567,7 +567,7 @@
       if(r.steps){ var ol=el('ol','ab-steps'); r.steps.forEach(function(x){ ol.appendChild(el('li',null,x)); }); c.appendChild(ol); }
       if(r.escalate) c.appendChild(el('div','ab-esc','If that does not resolve it: '+r.escalate));
       if(r.tail) c.appendChild(el('div','ab-tail', r.tail));
-      b.appendChild(c); cm.appendChild(b); cm.scrollTop=cm.scrollHeight;
+      b.appendChild(c); cm.appendChild(b); var _sc=document.getElementById('chatBody')||cm;_sc.scrollTop=_sc.scrollHeight;if(b&&b.scrollIntoView)b.scrollIntoView({block:'end'});
     }
     function submit(text){ if(!text||!text.trim()) return; youBubble(text); if(window.aexRun){ try{ window.aexRun(text); }catch(e){} } var r=window.AriaBrain.handleTurn(session,text); setTimeout(function(){ ariaBubble(r); }, 260); }
     inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); var v=inp.value; inp.value=''; submit(v); } });
