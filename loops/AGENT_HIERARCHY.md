@@ -11,8 +11,37 @@
 - **$0 default spend.** Every agent inherits the spend lockdown. No paid API without CEO approval per action.
 - **HARD RULE.** No agent may break aperture login or ARIA chat. Verify post-deploy.
 - **Manual Netlify publish.** Every agent that ships code stops at the Publish click.
-- **Idle = improve (PRE-APPROVED, locked 2026-06-15).** When an agent is idle, the queue is empty, and the CEO is not being waited on, the CoS delegates all agents to brainstorm + action improvements to their own area — without asking. Allowed only if $0, no penalty risk, and no damage to vision/path/tools/features/functions/apps. Run like an efficient multimillion-dollar business; never idle.
 - **Communication channel:** all agents read `docs/COLLAB_BRIEF.md` + `docs/LOOPS_SPEC.md` on session start. Status writes to `docs/LOOPS_LEDGER.md`.
+
+---
+
+## Director Standing Duty — Idle-Improvement Loop (LOCKED 2026-06-16)
+
+**Pre-approved standing directive from CEO. No "should I?" — just do.**
+
+Every Director Agent (CEO/COO/CTO/CFO/CMO/COS/CCO) runs an idle-check every cycle:
+
+**Trigger:** any direct report idle + queue empty + CEO not blocked/waiting.
+
+**Action:** Director immediately delegates idle reports to work on improvements within their existing duties + KPIs.
+
+**Allowed work without CEO ask:**
+- Brainstorm new ideas inside agent's mandate
+- Improve existing tasks, scripts, KB articles, drafts, dashboards
+- Research, content polish, outreach lists, KPI dashboards, internal tooling
+- Refactor, document, test, optimize existing assets
+
+**Hard constraints (all must hold or agent refuses):**
+- $0 cost — no paid APIs, no spend, no upgrades
+- No damage to vision, path, current tools, features, functions, apps
+- No legal/compliance/penalty/platform-abuse risk
+- No public-facing publish without HARD RULE + Garry Tan filter pass
+- No break of aperture login or ARIA chat
+- 31 GB RAM cap respected (per-agent ≤4 GB)
+
+**Reporting:** Director logs delegations to `docs/LOOPS_LEDGER.md`. CEO brief 06:00 ET surfaces top wins from overnight idle-improvement work.
+
+**Memory ref:** [[feedback-director-idle-improvement]]
 
 ---
 

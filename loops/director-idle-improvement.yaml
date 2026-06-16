@@ -1,0 +1,59 @@
+id: director-idle-improvement
+title: "Director idle-improvement delegator"
+serves: top-goal
+goal: |
+  When any direct report is idle AND the queue is empty AND the CEO is not
+  blocked/waiting, the Director Agent delegates the idle report to work on
+  improvements within their existing duties + KPIs. Pre-approved standing
+  directive (CEO grant 2026-06-16). No "should I?" ping — just dispatch.
+
+  Acceptable work: brainstorm new ideas inside agent's mandate, improve
+  existing tasks, refactor scripts, write KB articles, draft outreach,
+  build dashboards, research, document, test, optimize.
+
+  Refuse if: cost > $0, damages vision/path/tools/features/apps, creates
+  legal/penalty/compliance/platform-abuse risk, would publish public-facing
+  without HARD RULE + Garry Tan filter pass, or breaks aperture login or
+  ARIA chat. Refuse if RAM resident > 4 GB.
+owner: cowork
+cadence: "*/10 * * * *"            # every 10 min
+budget:
+  cost_usd_per_run: 0
+  time_seconds_max: 60
+  llm_tokens_max: 0
+inputs:
+  - loops/registry.json
+  - docs/LOOPS_LEDGER.md
+  - loops/agents/*.yaml
+outputs:
+  - delegation entries appended to docs/LOOPS_LEDGER.md tagged [idle-improve]
+  - improvement work products committed to repo with prefix [agent-id]
+  - daily roll-up in docs/c-suite/<role>-daily.md
+tools_allowed:
+  - filesystem.read
+  - filesystem.write
+  - loops-cli
+  - git.commit (additive only)
+constraints:
+  - "$0 cost — no paid APIs, no spend, no upgrades"
+  - "31 GB RAM cap, per-agent resident set <= 4 GB"
+  - "no damage to vision, path, tools, features, functions, apps"
+  - "no legal/compliance/penalty/platform-abuse risk"
+  - "no public-facing publish without HARD RULE + Garry Tan filter pass"
+  - "must not break aperture login or ARIA chat (verify post-deploy)"
+  - "must respect ethical email + outbound cadence rules"
+  - "no fake data, no fake testimonials, no unsupported claims"
+spawns: []
+verification:
+  - "delegation logged with target agent + work scope"
+  - "if work product shipped: smoke test + HARD RULE check pass"
+  - "if no idle agents: log 'all busy' tick"
+on_failure:
+  - "if delegated agent refuses (constraint violation): log refusal, do not retry"
+  - "if work product fails verification: rollback + flag in CEO brief"
+  - "if RAM resident > 4 GB: pause agent, free heap, retry next cycle"
+metadata:
+  created: 2026-06-16
+  version: 1
+  ceo_pre_approved: true
+  authority: "Ahmad standing grant 2026-06-16"
