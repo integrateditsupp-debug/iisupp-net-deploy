@@ -1,0 +1,456 @@
+/* ARIA reasoning engine v1 — clean, client-side, $0 (no API calls).
+   Fixes the live defects:
+     1) Ask ONE clarifying question, then WAIT. No more question + canned-dump in the same turn.
+     2) Context carryover: a follow-up answer branches WITHIN the active topic (no re-route to "computer slow").
+     3) Weighted intent classification (not first-keyword-wins) with an honest low-confidence path.
+     4) Honest about capability: ARIA guides; it does not execute on the user's device from the browser.
+   UI-agnostic: handleTurn(session, text) -> { say, ask, options, steps, escalate, stage, topic, confidence }.
+   The page adapter renders these; ARIA never claims a fix it did not perform.
+*/
+(function (root) {
+  'use strict';
+
+  // ---- text utils ----
+  function norm(s) {
+    return (s || '').toLowerCase()
+      .replace(/[’']/g, "'")
+      .replace(/[^a-z0-9\s\-\/\.]/g, ' ')
+      .replace(/\s+/g, ' ').trim();
+  }
+  function has(t, w) { return t.indexOf(w) >= 0; }
+  function anyHas(t, arr) { return arr.some(function (w) { return has(t, w); }); }
+
+  // ---- knowledge base ----
+  // Each topic: id, label, tier, signals (weighted), the ONE clarifier, branches keyed by answer-signals,
+  // a default guided path, and an escalation trigger. Steps are guidance the USER performs.
+  var TOPICS = [
+    {
+      id: 'outlook', label: 'Outlook won\'t open / crashing', tier: 'L1',
+      signals: [['outlook', 5], ['email client', 3], ['mail app', 2]],
+      apps: ['outlook'],
+      clarifier: {
+        q: 'When you open Outlook right now, which happens?',
+        options: ['Nothing happens', 'It freezes / hangs', 'It closes itself', 'I get an error message']
+      },
+      branches: [
+        {
+          when: ['freeze', 'frozen', 'hang', 'hung', 'not responding', 'loading profile', 'stuck', 'spinning', 'profile screen'],
+          cause: 'Outlook is hanging at launch — most often a stuck profile or a bad add-in.',
+          steps: [
+            'Fully close Outlook: Task Manager (Ctrl+Shift+Esc) -> End task on any OUTLOOK.EXE.',
+            'Hold Ctrl while reopening Outlook -> click Yes to start in Safe Mode. If it opens in Safe Mode, an add-in is the cause.',
+            'In Safe Mode: File -> Options -> Add-ins -> Manage: COM Add-ins -> Go -> uncheck all -> OK -> restart normally.',
+            'Still hanging at the profile? Press Win+R and run:  outlook.exe /resetnavpane',
+            'If it still hangs: Control Panel -> Mail -> Show Profiles -> add a new profile -> set as default -> reopen Outlook.'
+          ]
+        },
+        {
+          when: ['nothing', 'no response', 'nothing happens', 'blank screen', 'just sits'],
+          cause: 'Outlook isn\'t launching at all — usually a stuck background process or a damaged profile.',
+          steps: [
+            'Task Manager (Ctrl+Shift+Esc) -> End task on every OUTLOOK.EXE, then try again.',
+            'Win+R -> run:  outlook.exe /safe . If it opens, disable COM add-ins (File -> Options -> Add-ins).',
+            'If nothing: Win+R -> run:  outlook.exe /resetnavpane',
+            'Still nothing: Control Panel -> Mail -> Show Profiles -> create a new profile -> set default -> reopen.'
+          ]
+        },
+        {
+          when: ['error', 'message', 'code', 'cannot start', 'set of folders', 'odbc', '0x'],
+          cause: 'A specific startup error usually points to the data file or profile.',
+          steps: [
+            'Note the exact error text (it changes the fix).',
+            '"Cannot start... set of folders cannot be opened": Win+R -> run  outlook.exe /resetnavpane .',
+            'If it mentions a data file: Control Panel -> Mail -> Data Files -> select the .ost/.pst -> Settings -> and let it rebuild, or close Outlook and rename the .ost so it re-downloads.',
+            'Persisting? Create a fresh mail profile (Control Panel -> Mail -> Show Profiles).'
+          ]
+        },
+        {
+          when: ['close', 'closes itself', 'crash', 'disappear', 'shuts'],
+          cause: 'Outlook opens then crashes — typically an add-in or a corrupt navigation/profile state.',
+          steps: [
+            'Reopen holding Ctrl -> start in Safe Mode. Stable in Safe Mode = an add-in is crashing it.',
+            'File -> Options -> Add-ins -> COM Add-ins -> Go -> uncheck all -> restart.',
+            'If it still crashes: Win+R -> run  outlook.exe /resetnavpane .',
+            'Then run an Office Quick Repair: Settings -> Apps -> Microsoft 365 -> Modify -> Quick Repair.'
+          ]
+        }
+      ],
+      escalate: 'If a new profile and Quick Repair both fail, this is likely a corrupt .ost or an Exchange/M365 mailbox issue — hand to a technician with the exact error text.'
+    },
+    {
+      id: 'printer', label: 'Printer offline / won\'t print', tier: 'L1',
+      signals: [['printer', 5], ['print', 3], ['spooler', 4], ['print queue', 4], ['printing', 3]],
+      apps: ['printer'],
+      clarifier: {
+        q: 'What is the printer doing?',
+        options: ['Shows "Offline"', 'Jobs stuck in the queue', 'Error / nothing prints', 'Not found at all']
+      },
+      branches: [
+        {
+          when: ['offline', 'off line', 'greyed', 'grayed'],
+          cause: 'The printer shows Offline — usually a stuck status or connection drop.',
+          steps: [
+            'Settings -> Bluetooth & devices -> Printers & scanners -> open the printer -> uncheck "Use Printer Offline" if set.',
+            'Power-cycle the printer (off 15s, back on) and confirm it\'s on the same network/USB.',
+            'Remove and re-add the printer if it stays offline (Settings -> Printers & scanners -> Remove, then Add).'
+          ]
+        },
+        {
+          when: ['stuck', 'queue', 'pending', 'won\'t clear', 'wont clear', 'jam of jobs', 'documents'],
+          cause: 'The print spooler is hung with stuck jobs.',
+          steps: [
+            'Win+R -> services.msc -> find "Print Spooler" -> right-click -> Stop.',
+            'Open  C:\\Windows\\System32\\spool\\PRINTERS  and delete everything inside.',
+            'Back in services.msc -> Print Spooler -> Start. Try printing a test page.'
+          ]
+        },
+        {
+          when: ['error', 'nothing', 'won\'t print', 'wont print', 'blank'],
+          cause: 'Driver or connection problem.',
+          steps: [
+            'Print a Windows test page: Printers & scanners -> printer -> Printer properties -> Print Test Page.',
+            'If it fails: remove the printer, reboot, and reinstall the latest driver from the maker\'s site.',
+            'Check it\'s the default printer and not set to a disconnected port.'
+          ]
+        },
+        {
+          when: ['not found', 'missing', 'can\'t find', 'cant find', 'disappeared'],
+          cause: 'Windows can\'t see the printer.',
+          steps: [
+            'Confirm power + cable/Wi-Fi; print the printer\'s own network-config page to get its IP.',
+            'Settings -> Printers & scanners -> Add device -> if not listed, "Add manually" -> by TCP/IP using that IP.',
+            'On Wi-Fi, make sure the PC and printer are on the same network (not a guest SSID).'
+          ]
+        }
+      ],
+      escalate: 'If the spooler restart + driver reinstall both fail, escalate — could be a print server, GPO deployment, or port/firewall issue.'
+    },
+    {
+      id: 'wifi', label: 'Wi-Fi dropping / no internet', tier: 'L1',
+      signals: [['wifi', 5], ['wi-fi', 5], ['wireless', 4], ['internet', 3], ['network', 3], ['dropping', 3], ['no connection', 3]],
+      apps: ['wifi'],
+      clarifier: {
+        q: 'Which best describes it?',
+        options: ['Keeps dropping/reconnecting', 'Connected but no internet', 'Won\'t connect at all', 'Only some sites/apps fail']
+      },
+      branches: [
+        {
+          when: ['drop', 'dropping', 'reconnect', 'keeps', 'intermittent', 'unstable'],
+          cause: 'The wireless adapter or signal is unstable.',
+          steps: [
+            'Settings -> Network & internet -> Wi-Fi -> forget the network, then reconnect with the password.',
+            'Update the Wi-Fi adapter driver: Device Manager -> Network adapters -> your Wi-Fi -> Update driver.',
+            'Disable power saving on the adapter: Device Manager -> adapter -> Properties -> Power Management -> uncheck "Allow the computer to turn off this device".',
+            'Test closer to the router to rule out signal/interference.'
+          ]
+        },
+        {
+          when: ['no internet', 'connected but', 'limited', 'can\'t browse', 'cant browse', 'no access'],
+          cause: 'Connected to Wi-Fi but no IP/DNS path out.',
+          steps: [
+            'Open Command Prompt and run:  ipconfig /release  then  ipconfig /renew  then  ipconfig /flushdns .',
+            'Reboot the router/modem (off 30s).',
+            'If still none: Settings -> Network & internet -> Advanced -> Network reset (reboots and reinstalls adapters).'
+          ]
+        },
+        {
+          when: ['won\'t connect', 'wont connect', 'can\'t connect', 'cant connect', 'no networks', 'wrong password'],
+          cause: 'The adapter isn\'t joining the network.',
+          steps: [
+            'Confirm Wi-Fi is on (Airplane mode off) and you see the SSID.',
+            'Forget the network and re-enter the password (watch for a guest vs main SSID).',
+            'Update/reinstall the Wi-Fi driver; if no networks show at all, that\'s usually a driver/hardware switch.'
+          ]
+        },
+        {
+          when: ['some sites', 'certain', 'only', 'specific app', 'one app'],
+          cause: 'Selective failures point at DNS, a VPN, or a firewall/proxy.',
+          steps: [
+            'Try the failing site on another device on the same Wi-Fi to localize it.',
+            'Set DNS to 1.1.1.1 / 8.8.8.8 (Adapter -> Properties -> IPv4).',
+            'Disconnect any VPN/proxy and retest.'
+          ]
+        }
+      ],
+      escalate: 'If a network reset + driver update don\'t hold, escalate — could be router config, DHCP exhaustion, or an AP/controller issue.'
+    },
+    {
+      id: 'password', label: 'Account locked / password reset', tier: 'L1',
+      signals: [['locked out', 5], ['account locked', 5], ['locked', 3], ['password', 4], ['can\'t sign in', 4], ['cant sign in', 4], ['can\'t log in', 4], ['reset my password', 4], ['mfa', 2]],
+      apps: ['password'],
+      clarifier: {
+        q: 'What\'s happening at sign-in?',
+        options: ['Account is locked', 'Forgot / need a reset', 'Password rejected', 'MFA / verification fails']
+      },
+      branches: [
+        {
+          when: ['locked', 'too many', 'temporarily', 'disabled'],
+          cause: 'The account is locked, usually after failed attempts.',
+          steps: [
+            'Wait 15-30 min if it\'s an auto-lockout, then try once carefully (check Caps Lock / keyboard language).',
+            'Use the official self-service reset if your org has it (e.g., the company password-reset portal).',
+            'If you administer it: unlock in your directory (Active Directory Users & Computers -> account -> Unlock; or Entra admin center -> the user -> Unlock).'
+          ]
+        },
+        {
+          when: ['forgot', 'reset', 'new password', 'don\'t know', 'dont know'],
+          cause: 'Needs a password reset.',
+          steps: [
+            'Use your org\'s self-service reset portal if available.',
+            'No SSPR? An admin resets it: Entra admin center / AD -> the user -> Reset password -> require change at next sign-in.',
+            'After reset, update saved passwords on phone/Outlook so old ones stop locking the account.'
+          ]
+        },
+        {
+          when: ['rejected', 'wrong', 'incorrect', 'not accepted', 'keeps failing'],
+          cause: 'Password is being refused.',
+          steps: [
+            'Confirm Caps Lock and keyboard layout; type it into a visible field first.',
+            'Make sure no other device (phone mail, mapped drive) is hammering the old password.',
+            'If genuinely unknown, do a reset (above).'
+          ]
+        },
+        {
+          when: ['mfa', 'verification', 'code', 'authenticator', '2fa', 'verify'],
+          cause: 'Multi-factor step is failing.',
+          steps: [
+            'Check the time on the Authenticator phone is auto-set (TOTP codes fail if the clock drifts).',
+            'Use a backup method (text/call/backup codes) if offered.',
+            'If you lost the device, an admin must reset MFA registration for the account.'
+          ]
+        }
+      ],
+      escalate: 'If self-service and an admin reset both fail, escalate to identity admin — could be a sync, conditional-access, or federation problem.'
+    },
+    {
+      id: 'disk', label: 'Disk full / low space', tier: 'L1',
+      signals: [['disk full', 5], ['storage full', 5], ['low disk', 5], ['out of space', 5], ['c drive', 3], ['disk space', 4], ['storage', 2], ['cleanup', 2]],
+      apps: ['disk'],
+      clarifier: {
+        q: 'Where is space running out?',
+        options: ['Windows C: drive', 'OneDrive / cloud', 'A specific app or folder', 'Not sure']
+      },
+      branches: [
+        {
+          when: ['c drive', 'c:', 'windows', 'system', 'whole', 'computer'],
+          cause: 'The system drive is full — usually temp files, updates, and caches.',
+          steps: [
+            'Settings -> System -> Storage -> turn on Storage Sense, then "Cleanup recommendations".',
+            'Win+R -> cleanmgr -> select Temporary files, Delivery Optimization, Recycle Bin -> clean. Use "Clean up system files" for old Windows Update files.',
+            'Storage -> see what\'s biggest (Apps, Temporary, Other) and clear the heaviest.'
+          ]
+        },
+        {
+          when: ['onedrive', 'cloud', 'sync', 'sharepoint'],
+          cause: 'OneDrive is keeping files locally.',
+          steps: [
+            'Turn on Files On-Demand: OneDrive -> Settings -> Sync and back up -> Advanced -> Files On-Demand.',
+            'Right-click big synced folders -> "Free up space" to keep them cloud-only.'
+          ]
+        },
+        {
+          when: ['app', 'folder', 'game', 'specific', 'program'],
+          cause: 'One app/folder is hogging space.',
+          steps: [
+            'Settings -> Storage -> Apps to see per-app size; uninstall what you don\'t need.',
+            'Clear app caches (e.g., browser cache; Teams cache at %appdata%\\Microsoft\\Teams).'
+          ]
+        }
+      ],
+      escalate: 'If cleanup frees little and the drive refills fast, escalate — could be runaway logs, shadow copies, or a too-small disk needing imaging/upgrade.'
+    },
+    {
+      id: 'slow', label: 'Computer slow / sluggish', tier: 'L1',
+      signals: [['slow', 4], ['sluggish', 5], ['laggy', 4], ['freezing computer', 3], ['takes forever', 4], ['running slow', 5]],
+      // NOTE: 'freeze/freezes' is intentionally NOT a strong signal here so Outlook-freeze
+      // does not misroute to this topic. App context wins.
+      apps: [],
+      clarifier: {
+        q: 'When is it slow?',
+        options: ['All the time / since boot', 'Only one app', 'After it\'s been on a while', 'Started recently']
+      },
+      branches: [
+        {
+          when: ['all the time', 'boot', 'startup', 'always', 'since'],
+          cause: 'Something is loading at startup or a resource is pinned.',
+          steps: [
+            'Task Manager -> Performance: see if CPU, Memory, or Disk sits near 100%.',
+            'Task Manager -> Startup: disable heavy apps you don\'t need at boot, then reboot.',
+            'If Disk is pinned: check for a running antivirus full scan or Windows Update and let it finish.'
+          ]
+        },
+        {
+          when: ['one app', 'only when', 'specific', 'browser', 'this program'],
+          cause: 'A single app is the bottleneck.',
+          steps: [
+            'Task Manager -> sort by CPU/Memory -> confirm which app spikes.',
+            'Update or reinstall that app; for browsers, clear cache and disable heavy extensions.'
+          ]
+        },
+        {
+          when: ['a while', 'over time', 'gets slow', 'heats', 'hot'],
+          cause: 'Resource leak or thermal throttling over time.',
+          steps: [
+            'Reboot to confirm it\'s fixed fresh (leak), then watch Memory in Task Manager over time.',
+            'Make sure vents aren\'t blocked; check Memory tab for a process climbing steadily.'
+          ]
+        },
+        {
+          when: ['recently', 'started', 'after update', 'new'],
+          cause: 'A recent change introduced it.',
+          steps: [
+            'Think back to a recent install/update; uninstall the suspect or use System Restore to a point before it.',
+            'Run a quick malware scan (Windows Security -> Quick scan).'
+          ]
+        }
+      ],
+      escalate: 'If CPU/Disk/RAM all look normal but it\'s still slow, escalate — could be failing storage (check drive health) or a deeper OS issue.'
+    }
+  ];
+
+  // generic low-confidence triage (no canned dump; asks a smart question)
+  var TRIAGE = {
+    q: 'Let\'s pin it down. Which is closest to the problem?',
+    options: ['Email / Outlook', 'Printing', 'Wi-Fi / internet', 'Sign-in / password', 'Slow computer', 'Something else']
+  };
+
+  function scoreTopic(topic, t) {
+    var s = 0;
+    topic.signals.forEach(function (pair) { if (has(t, pair[0])) s += pair[1]; });
+    return s;
+  }
+
+  function classify(t, ctx) {
+    var ranked = TOPICS.map(function (tp) {
+      var s = scoreTopic(tp, t);
+      // context boost: if we were already on this topic, keep us there for follow-ups
+      if (ctx && ctx.topic === tp.id) s += 2;
+      return { topic: tp, score: s };
+    }).sort(function (a, b) { return b.score - a.score; });
+    return ranked[0];
+  }
+
+  function pickBranch(topic, t) {
+    for (var i = 0; i < topic.branches.length; i++) {
+      if (anyHas(t, topic.branches[i].when)) return topic.branches[i];
+    }
+    return null;
+  }
+
+  function topicById(id) { for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i].id === id) return TOPICS[i]; return null; }
+
+  var HONEST_TAIL = 'I\'m guiding you through this — I can\'t make changes on your device from here. Tell me what happens after a step and I\'ll adjust, or I can escalate to a technician.';
+
+  function newSession() { return { topic: null, stage: 'start', turns: 0 }; }
+
+  function answer(topic, branch, session) {
+    if (session) session.stage = 'answered';
+    return {
+      topic: topic.id, stage: 'answered', confidence: 'high',
+      say: branch.cause, steps: branch.steps, escalate: topic.escalate, tail: HONEST_TAIL
+    };
+  }
+  function askClarifier(topic, lead) {
+    return {
+      topic: topic.id, stage: 'awaiting', confidence: 'high',
+      say: lead, ask: topic.clarifier.q, options: topic.clarifier.options
+    };
+  }
+  function triageResult() {
+    return {
+      topic: null, stage: 'triage', confidence: 'low',
+      say: 'I want to get this right rather than guess.', ask: TRIAGE.q, options: TRIAGE.options
+    };
+  }
+
+  // Main entry. Returns a structured result the UI renders.
+  // RULE: never ask a question AND dump steps in the same turn. Ask-and-wait, or answer — never both.
+  function handleTurn(session, text) {
+    session = session || newSession();
+    session.turns++;
+    var t = norm(text);
+
+    // 1) Context first: if a topic is active, stay on it unless the user clearly switches topics.
+    if (session.topic) {
+      var cur = topicById(session.topic);
+      var fresh0 = classify(t, {});            // classify WITHOUT the context boost
+      var curScore = scoreTopic(cur, t);
+      var switching = fresh0.topic.id !== cur.id && fresh0.score >= 5 && fresh0.score > curScore;
+      if (!switching) {
+        var b = pickBranch(cur, t);
+        if (b) return answer(cur, b, session);                 // their answer/symptom -> real steps
+        if (session.stage === 'awaiting') {                    // answer didn't match -> ask once more, no dump
+          return {
+            topic: cur.id, stage: 'awaiting', confidence: 'medium',
+            say: 'Got it — to point you at the right fix:', ask: cur.clarifier.q, options: cur.clarifier.options
+          };
+        }
+        session.stage = 'awaiting';
+        return askClarifier(cur, 'Staying on ' + cur.label.toLowerCase() + ' — quick check:');
+      }
+    }
+
+    // 2) Fresh classification.
+    var best = classify(t, session);
+    if (!best || best.score < 4) { session.topic = null; session.stage = 'triage'; return triageResult(); }
+
+    var tp = best.topic; session.topic = tp.id;
+    var bn = pickBranch(tp, t);
+    if (bn) return answer(tp, bn, session);                    // symptom already clear -> answer now
+    session.stage = 'awaiting';
+    return askClarifier(tp, 'Sounds like ' + tp.label + '. One quick thing so I send you down the right path:');
+  }
+
+  var api = { newSession: newSession, handleTurn: handleTurn, classify: classify, _TOPICS: TOPICS };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  root.AriaBrain = api;
+})(typeof window !== 'undefined' ? window : this);
+
+/* ARIA brain adapter — wires AriaBrain into the live aria.html chat UI.
+   GATED: only activates with ?brain=new (or window.__ARIA_NEW_BRAIN=true). */
+(function () {
+  if (window.__AB_ADAPTER) return; window.__AB_ADAPTER = 1;
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  ready(function () {
+    if (!/[?&]brain=new/.test(location.search) && !window.__ARIA_NEW_BRAIN) return;
+    var cm = document.getElementById('chatMessages');
+    var inp = document.getElementById('askInput');
+    var send = document.getElementById('sendBtn');
+    if (!cm || !inp || !window.AriaBrain) return;
+    var inp2 = inp.cloneNode(true); inp.parentNode.replaceChild(inp2, inp); inp = inp2;
+    if (send) { var s2 = send.cloneNode(true); send.parentNode.replaceChild(s2, send); send = s2; }
+    var session = window.AriaBrain.newSession();
+    var st = document.createElement('style'); st.textContent =
+      '.abrow{margin:10px 0}.abrow.you{display:flex}'
+      + '.abyou{margin-left:auto;max-width:80%;background:#1b1c20;border:1px solid #26282e;color:#dfe1e6;padding:9px 12px;border-radius:12px;font-size:14px}'
+      + '.abaria{max-width:90%;color:#e9dfc4;font-size:14px;line-height:1.55}'
+      + '.abaria .say{margin-bottom:4px}'
+      + '.abq{color:#cda85c;font-weight:500;margin:6px 0 8px}'
+      + '.abopts{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 2px}'
+      + '.abopt{font-size:13px;color:#e9dfc4;background:#14130d;border:1px solid #2c2718;border-radius:18px;padding:7px 13px;cursor:pointer}'
+      + '.abopt:hover{border-color:#cda85c;color:#f4ead0}'
+      + '.absteps{counter-reset:s;margin:8px 0 2px;padding:0;list-style:none}'
+      + '.absteps li{position:relative;padding:6px 0 6px 24px;border-bottom:1px solid #1c1a14;font-size:13.5px;color:#ded3b8}'
+      + '.absteps li:before{content:counter(s);counter-increment:s;position:absolute;left:0;top:6px;width:17px;height:17px;border-radius:50%;background:#cda85c;color:#191307;font:600 10px sans-serif;display:flex;align-items:center;justify-content:center}'
+      + '.abesc{margin-top:10px;font-size:12.5px;color:#9a937f;border-left:2px solid #3a3320;padding-left:10px}'
+      + '.abtail{margin-top:8px;font-size:12.5px;color:#8f886f;font-style:italic}'
+      + '.abnew{font:600 10px ui-monospace,monospace;letter-spacing:.12em;color:#0e0a04;background:#cda85c;border-radius:5px;padding:3px 8px;display:inline-block;margin:2px 0 6px}';
+    document.head.appendChild(st);
+    var banner = document.createElement('div'); banner.className = 'abrow'; banner.innerHTML = '<span class="abnew">NEW BRAIN · PREVIEW</span>'; cm.appendChild(banner);
+    function youBubble(text){ var d=document.createElement('div'); d.className='abrow you'; var b=document.createElement('div'); b.className='abyou'; b.textContent=text; d.appendChild(b); cm.appendChild(d); cm.scrollTop=cm.scrollHeight; }
+    function ariaBubble(r){
+      var d=document.createElement('div'); d.className='abrow'; var box=document.createElement('div'); box.className='abaria'; d.appendChild(box);
+      if(r.say){ var s=document.createElement('div'); s.className='say'; s.textContent=r.say; box.appendChild(s); }
+      if(r.ask){ var q=document.createElement('div'); q.className='abq'; q.textContent=r.ask; box.appendChild(q); }
+      if(r.options){ var o=document.createElement('div'); o.className='abopts'; r.options.forEach(function(opt){ var c=document.createElement('span'); c.className='abopt'; c.textContent=opt; c.onclick=function(){ submit(opt); }; o.appendChild(c); }); box.appendChild(o); }
+      if(r.steps){ var ol=document.createElement('ol'); ol.className='absteps'; r.steps.forEach(function(x){ var li=document.createElement('li'); li.textContent=x; ol.appendChild(li); }); box.appendChild(ol); }
+      if(r.escalate){ var e=document.createElement('div'); e.className='abesc'; e.textContent='If that does not resolve it: '+r.escalate; box.appendChild(e); }
+      if(r.tail){ var t=document.createElement('div'); t.className='abtail'; t.textContent=r.tail; box.appendChild(t); }
+      cm.appendChild(d); cm.scrollTop=cm.scrollHeight;
+    }
+    function submit(text){ if(!text||!text.trim()) return; youBubble(text); if(window.aexRun){ try{ window.aexRun(text); }catch(e){} } var r=window.AriaBrain.handleTurn(session,text); setTimeout(function(){ ariaBubble(r); }, 260); }
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); var v=inp.value; inp.value=''; submit(v); } });
+    if(send) send.addEventListener('click', function(e){ e.preventDefault(); var v=inp.value; inp.value=''; submit(v); });
+    window.__abSubmit = submit;
+  });
+})();
