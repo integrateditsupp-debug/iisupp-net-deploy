@@ -1279,14 +1279,20 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   }
 
   function init() {
+    if (document.getElementById("vision-roadmap")) return;
+    // Prefer placement right under the hero — insert BEFORE the AI Edge band.
+    var aiEdge = document.querySelector(".ai-edge-band");
     var sc = document.getElementById("service-center");
     var ariaDemo = document.getElementById("aria-demo");
-    var anchor = ariaDemo || sc;
-    if (!anchor) return;
-    if (document.getElementById("vision-roadmap")) return;
     injectStyles();
     var section = buildRoadmap();
-    anchor.parentNode.insertBefore(section, anchor.nextSibling);
+    if (aiEdge && aiEdge.parentNode) {
+      aiEdge.parentNode.insertBefore(section, aiEdge);
+    } else {
+      var anchor = ariaDemo || sc;
+      if (!anchor) return;
+      anchor.parentNode.insertBefore(section, anchor.nextSibling);
+    }
 
     if ("IntersectionObserver" in window) {
       var io = new IntersectionObserver(function (entries) {
@@ -1603,6 +1609,4 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   if (document.getElementById('aria-trial-unlock-style')) return;
   var st = document.createElement('style');
   st.id = 'aria-trial-unlock-style';
-  st.textContent = `body.aria-trial-active.overflow-hidden, body.overflow-hidden.aria-trial-active { overflow-y: auto !important; overflow-x: hidden !important; } body.aria-trial-active #aria-trial-bar ~ * { /* let content scroll naturally */ }`;
-  document.head.appendChild(st);
-})();
+  st.textContent = `body.ari
