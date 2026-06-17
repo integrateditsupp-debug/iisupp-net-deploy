@@ -1088,6 +1088,10 @@
         .nav-group .nav-accent { color: #c5a059; }
         .nav-group .nav-accent:hover { color: #f1dca7; }
         .nav-group .nav-disabled { color: rgba(255,255,255,0.35); cursor: default; }
+        /* Ensure all nav links accept clicks even at narrow widths (Portfolio/About Us fix 2026-06-17) */
+        .nav-group-collapsible { display: flex !important; pointer-events: auto !important; opacity: 1 !important; }
+        .nav-group a, .desktop-nav-links a, .mobile-nav-overlay a { pointer-events: auto !important; cursor: pointer !important; }
+        nav.fixed { z-index: 110 !important; }
         .nav-divider { width: 1px; height: 32px; background: rgba(197,160,89,0.22); flex: 0 0 auto; }
         .nav-divider-inline { width: 28px; height: 1px; background: rgba(197,160,89,0.32); margin: 2px 0; }
         .nav-aria-block { gap: 6px; padding: 0 4px; }
@@ -1628,7 +1632,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
     </div>
 
     <!-- ====== NAV ====== -->
-    <nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+    <nav class="fixed w-full z-[110] py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
         <a href="/" class="flex items-center gap-6 nav-home-link" aria-label="Return to home">
             <div class="nav-i-logo" aria-hidden="true">
                 <span class="nav-i-letter logo-text">I</span>
