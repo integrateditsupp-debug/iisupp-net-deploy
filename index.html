@@ -1529,7 +1529,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
 @media (min-width: 1024px){
   /* panels (and their wrappers) sit inset from the page side edges so the
      gold border doesn't crowd the viewport */
-  .ai-edge-band, #introducing-aria, #aria-demo, #next-move.route-section { padding-left: 40px; padding-right: 40px; }
+  .ai-edge-band, #introducing-aria, #aria-demo, #next-move.route-section { padding-left: 72px; padding-right: 72px; }
   #introducing-aria .max-w-6xl, #aria-demo .max-w-5xl { max-width: 1280px !important; }
   .ai-edge-shell, #introducing-aria .rounded-2xl, .aria-demo-frame, .route-shell {
     max-width: 1280px !important; margin-left: auto; margin-right: auto;
@@ -1541,7 +1541,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
   .aria-demo-frame { padding-left: 44px; padding-right: 44px; }
 }
 @media (min-width: 1600px){
-  .ai-edge-band, #introducing-aria, #aria-demo, #next-move.route-section { padding-left: 80px; padding-right: 80px; }
+  .ai-edge-band, #introducing-aria, #aria-demo, #next-move.route-section { padding-left: 120px; padding-right: 120px; }
 }
 </style>
 </head>
@@ -1709,7 +1709,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
 
             <!-- 3 starter-service boxes -->
             <div class="hero-svc-grid max-w-5xl mx-auto mb-12 grid grid-cols-1 sm:grid-cols-3 gap-4 px-2">
-                <button type="button" class="hero-svc-card" data-stripe-id="tier1-first-month" data-stripe-name="Preventative IT Support · Tier 1 First Month" data-stripe-amount-cents="600000" data-stripe-desc="Tier 1 Operational Foundation first-month retainer ($6,000). Final scope confirmed before work begins.">
+                <a href="/services#tier1-operational-foundation" class="hero-svc-card">
                     <div class="hero-svc-icon" aria-hidden="true">
                         <svg viewBox="0 0 32 32" width="36" height="36"><path d="M16 3l11 4v9c0 7-4.7 11.3-11 13C9.7 27.3 5 23 5 16V7l11-4z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 16l3.5 3.5L21 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
@@ -1717,9 +1717,8 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                     <div class="hero-svc-rule"></div>
                     <span class="hero-svc-prefix">Starting at</span>
                     <div class="hero-svc-price"><strong>$6,000</strong><span>/mo</span></div>
-                    <span class="hero-svc-cta">Purchase</span>
-                </button>
-                <button type="button" class="hero-svc-card" data-stripe-id="ai-business-deposit" data-stripe-name="AI Business Automation · Deposit" data-stripe-amount-cents="250000" data-stripe-desc="AI Business Automation engagement deposit ($2,500). Scope confirmed before delivery starts.">
+                    <button type="button" class="hero-svc-cta" data-stripe-id="tier1-first-month" data-stripe-name="Preventative IT Support · Tier 1 First Month" data-stripe-amount-cents="600000" data-stripe-desc="Tier 1 Operational Foundation first-month retainer ($6,000). Final scope confirmed before work begins." onclick="event.stopPropagation();event.preventDefault();">Purchase</button></a>
+                <a href="/services#ai-services" class="hero-svc-card">
                     <div class="hero-svc-icon" aria-hidden="true">
                         <svg viewBox="0 0 32 32" width="36" height="36"><path d="M11 5h10a3 3 0 013 3v3a4 4 0 010 8v3a3 3 0 01-3 3H11a3 3 0 01-3-3v-3a4 4 0 010-8V8a3 3 0 013-3z" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="13" cy="14" r="1.2" fill="currentColor"/><circle cx="19" cy="14" r="1.2" fill="currentColor"/><path d="M13 20h6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
                     </div>
@@ -1727,9 +1726,8 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                     <div class="hero-svc-rule"></div>
                     <span class="hero-svc-prefix">Starting at</span>
                     <div class="hero-svc-price"><strong>$2,500</strong><span>/project</span></div>
-                    <span class="hero-svc-cta">Purchase</span>
-                </button>
-                <button type="button" class="hero-svc-card" data-stripe-id="website-ai-deposit" data-stripe-name="Website + AI Assistant Setup · Deposit" data-stripe-amount-cents="250000" data-stripe-desc="Website + AI Assistant Setup project deposit ($2,500). Scope confirmed before delivery starts.">
+                    <button type="button" class="hero-svc-cta" data-stripe-id="ai-business-deposit" data-stripe-name="AI Business Automation · Deposit" data-stripe-amount-cents="250000" data-stripe-desc="AI Business Automation engagement deposit ($2,500). Scope confirmed before delivery starts." onclick="event.stopPropagation();event.preventDefault();">Purchase</button></a>
+                <a href="/services#website-ai-intake" class="hero-svc-card">
                     <div class="hero-svc-icon" aria-hidden="true">
                         <svg viewBox="0 0 32 32" width="36" height="36"><rect x="4" y="6" width="24" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 26h10M16 22v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="12" r="1" fill="currentColor"/><circle cx="13" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/></svg>
                     </div>
@@ -1737,8 +1735,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                     <div class="hero-svc-rule"></div>
                     <span class="hero-svc-prefix">Starting at</span>
                     <div class="hero-svc-price"><strong>$2,500</strong><span>/project</span></div>
-                    <span class="hero-svc-cta">Purchase</span>
-                </button>
+                    <button type="button" class="hero-svc-cta" data-stripe-id="website-ai-deposit" data-stripe-name="Website + AI Assistant Setup · Deposit" data-stripe-amount-cents="250000" data-stripe-desc="Website + AI Assistant Setup project deposit ($2,500). Scope confirmed before delivery starts." onclick="event.stopPropagation();event.preventDefault();">Purchase</button></a>
             </div>
 
             <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-8">INTEGRATED IT SUPPORT <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic uppercase">Preventative Aid</span></h1>
@@ -1800,7 +1797,9 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         display: inline-block; padding: 8px 18px; border-radius: 4px;
         background: linear-gradient(135deg, #b8954f, #d8bd84 50%, #9c7322);
         color: #1a1407; font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+        border: none; cursor: pointer; font-family: inherit;
       }
+      .hero-svc-cta:hover { filter: brightness(1.08); }
 
 
 
@@ -2419,6 +2418,88 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         </div>
     </section>
 
+    <!-- ====== AI SERVICES TIERS ====== -->
+    <section id="ai-services" class="py-16 px-6 md:px-10 border-t border-[#c5a059]/15" style="background:#070605;">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+          <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-3">AI Services</span>
+          <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-3">AI <span class="text-[#c5a059]">tiers</span></h2>
+          <p class="text-white/55 max-w-2xl mx-auto leading-relaxed text-sm">From a short hands-on learning kit to a full enterprise AI agent build — pick the tier that matches the moment. Monthly maintenance keeps it improving after launch.</p>
+        </div>
+        <div class="ai-tier-grid">
+          <div class="ai-tier-card">
+            <h3 class="ai-tier-title">AI Learning</h3>
+            <p class="ai-tier-desc">Hands-on starter — pick one workflow, learn the prompt + agent pattern, leave with a reusable template.</p>
+            <div class="ai-tier-price"><strong>$2,500</strong><span>one-time</span></div>
+            <button type="button" class="ai-tier-cta" data-stripe-id="ai-learning" data-stripe-name="AI Learning" data-stripe-amount-cents="250000" data-stripe-desc="One-time AI Learning engagement — pick one workflow, learn the agent pattern, leave with a reusable template.">Purchase</button>
+          </div>
+          <div class="ai-tier-card">
+            <h3 class="ai-tier-title">AI Automation</h3>
+            <p class="ai-tier-desc">From learning to delivery — IIS builds one fully working automated workflow with documentation and handoff.</p>
+            <div class="ai-tier-price"><strong>$5,500</strong><span>one-time</span></div>
+            <button type="button" class="ai-tier-cta" data-stripe-id="ai-automation" data-stripe-name="AI Automation (Learn to Delivery)" data-stripe-amount-cents="550000" data-stripe-desc="One-time AI Automation engagement — IIS builds and delivers one working automated workflow with documentation.">Purchase</button>
+          </div>
+          <div class="ai-tier-card">
+            <h3 class="ai-tier-title">AI Agent Setup &amp; Integration</h3>
+            <p class="ai-tier-desc">Full multi-agent setup — design, integration, governance, training. Scope priced per environment.</p>
+            <div class="ai-tier-price"><strong>$24,000 &ndash; $75,000</strong><span>per engagement</span></div>
+            <button type="button" class="ai-tier-cta" data-stripe-id="ai-agent-setup-deposit" data-stripe-name="AI Agent Setup &amp; Integration — Deposit" data-stripe-amount-cents="500000" data-stripe-desc="Refundable engagement deposit ($5,000). Final scope and price confirmed before delivery starts.">Purchase deposit</button>
+          </div>
+        </div>
+        <div class="ai-maint-band">
+          <div class="ai-maint-head">
+            <span class="ai-maint-kicker">Monthly AI maintenance &amp; editing</span>
+            <p class="ai-maint-copy">Keep your agents tuned, prompts improving, and documentation current. Sized to fit the org.</p>
+          </div>
+          <div class="ai-maint-grid">
+            <div class="ai-maint-card">
+              <span class="ai-maint-tier">Small Business</span>
+              <div class="ai-maint-price"><strong>$3,000</strong><span>/mo</span></div>
+              <button type="button" class="ai-maint-cta" data-stripe-id="ai-maint-smb" data-stripe-name="AI Maintenance — Small Business" data-stripe-amount-cents="300000" data-stripe-desc="Monthly AI agent maintenance &amp; editing for small business (first month).">Purchase month 1</button>
+            </div>
+            <div class="ai-maint-card">
+              <span class="ai-maint-tier">Mid-Size</span>
+              <div class="ai-maint-price"><strong>$6,000</strong><span>/mo</span></div>
+              <button type="button" class="ai-maint-cta" data-stripe-id="ai-maint-mid" data-stripe-name="AI Maintenance — Mid-Size" data-stripe-amount-cents="600000" data-stripe-desc="Monthly AI agent maintenance &amp; editing for mid-size org (first month).">Purchase month 1</button>
+            </div>
+            <div class="ai-maint-card">
+              <span class="ai-maint-tier">Enterprise</span>
+              <div class="ai-maint-price"><strong>$14,000</strong><span>/mo</span></div>
+              <button type="button" class="ai-maint-cta" data-stripe-id="ai-maint-ent" data-stripe-name="AI Maintenance — Enterprise" data-stripe-amount-cents="1400000" data-stripe-desc="Monthly AI agent maintenance &amp; editing for enterprise (first month).">Purchase month 1</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .ai-tier-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+      @media (min-width: 768px) { .ai-tier-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+      .ai-tier-card { padding: 22px 20px; border: 1px solid rgba(197,160,89,0.28); border-radius: 14px; background: linear-gradient(160deg, rgba(255,255,255,.02), rgba(197,160,89,.05)); display: flex; flex-direction: column; gap: 10px; transition: transform .25s ease, border-color .25s ease; }
+      .ai-tier-card:hover { transform: translateY(-3px); border-color: rgba(241,220,167,0.6); }
+      .ai-tier-title { font-family: 'Cinzel', Georgia, serif; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: #f1dca7; margin: 0; }
+      .ai-tier-desc { font-size: 12px; color: rgba(243,236,217,.62); line-height: 1.65; margin: 0; flex: 1; }
+      .ai-tier-price { display: flex; align-items: baseline; gap: 6px; color: #fff; }
+      .ai-tier-price strong { font-family: 'Cinzel', Georgia, serif; font-size: 22px; font-weight: 700; letter-spacing: .02em; }
+      .ai-tier-price span { font-size: 10px; color: rgba(243,236,217,.55); letter-spacing: .12em; text-transform: uppercase; }
+      .ai-tier-cta { display: inline-block; padding: 9px 14px; border-radius: 4px; background: linear-gradient(135deg, #b8954f, #d8bd84 50%, #9c7322); color: #1a1407; font-size: 9px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; border: none; cursor: pointer; font-family: inherit; transition: filter .15s ease; }
+      .ai-tier-cta:hover { filter: brightness(1.08); }
+      .ai-maint-band { margin-top: 28px; padding: 22px 24px; border: 1px solid rgba(197,160,89,0.20); border-radius: 14px; background: rgba(197,160,89,0.04); }
+      .ai-maint-head { text-align: center; margin-bottom: 18px; }
+      .ai-maint-kicker { display: block; color: #c5a059; font-family: 'Cinzel', Georgia, serif; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; margin-bottom: 6px; }
+      .ai-maint-copy { color: rgba(243,236,217,.6); font-size: 12px; max-width: 560px; margin: 0 auto; line-height: 1.65; }
+      .ai-maint-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+      @media (min-width: 720px) { .ai-maint-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+      .ai-maint-card { padding: 16px 18px; border: 1px solid rgba(197,160,89,0.22); border-radius: 12px; background: rgba(10,8,5,0.55); display: flex; flex-direction: column; gap: 8px; }
+      .ai-maint-tier { color: #c5a059; font-size: 9px; letter-spacing: .26em; text-transform: uppercase; font-weight: 700; }
+      .ai-maint-price { display: flex; align-items: baseline; gap: 5px; color: #fff; }
+      .ai-maint-price strong { font-family: 'Cinzel', Georgia, serif; font-size: 19px; font-weight: 700; }
+      .ai-maint-price span { font-size: 10px; color: rgba(243,236,217,.55); letter-spacing: .1em; }
+      .ai-maint-cta { display: inline-block; padding: 8px 12px; border-radius: 4px; background: rgba(241,220,167,0.12); color: #f1dca7; font-size: 9px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; border: 1px solid rgba(241,220,167,0.5); cursor: pointer; font-family: inherit; transition: background .15s ease, color .15s ease; }
+      .ai-maint-cta:hover { background: rgba(241,220,167,0.22); }
+    </style>
+
+
     <!-- ====== STRATEGIC IMPACT ====== -->
     <section id="portfolio" class="py-32 px-10 bg-[#050505]">
         <div class="max-w-7xl mx-auto">
@@ -2625,7 +2706,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
     <aria-trial></aria-trial>
 
     <!-- ─── ARIA CINEMATICS — native MP4 videos rendered from the design ─── -->
-    <section id="aria-cinematics" class="py-24 px-6 md:px-10 border-t border-[#c5a059]/20" style="background:radial-gradient(900px 500px at 50% 0%, rgba(197,160,89,0.08), transparent 65%), #050402;">
+    <section id="aria-cinematics" class="py-14 px-6 md:px-10 border-t border-[#c5a059]/20" style="background:radial-gradient(900px 500px at 50% 0%, rgba(197,160,89,0.08), transparent 65%), #050402;">
       <div class="max-w-6xl mx-auto">
         <div class="text-center mb-10">
           <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-4">Cinematic</span>
@@ -2638,7 +2719,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         <section id="aria-cinema" class="cn-section">
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
-            #aria-cinema { --cn-bg:#0a0a0b;--cn-bg2:#111113;--cn-fg:#f4f1ea;--cn-dim:#8a857c;--cn-accent:oklch(72% 0.14 75);--cn-line:rgba(244,241,234,0.08); display:block; padding:60px 24px; color:var(--cn-fg); font-family:'JetBrains Mono',ui-monospace,monospace; background:radial-gradient(ellipse at center, var(--cn-bg2) 0%, var(--cn-bg) 70%); border:0; }
+            #aria-cinema { --cn-bg:#0a0a0b;--cn-bg2:#111113;--cn-fg:#f4f1ea;--cn-dim:#8a857c;--cn-accent:oklch(72% 0.14 75);--cn-line:rgba(244,241,234,0.08); display:block; padding:36px 24px; color:var(--cn-fg); font-family:'JetBrains Mono',ui-monospace,monospace; background:radial-gradient(ellipse at center, var(--cn-bg2) 0%, var(--cn-bg) 70%); border:0; }
             #aria-cinema *, #aria-cinema *::before, #aria-cinema *::after { box-sizing:border-box; }
             #aria-cinema .cn-stage { max-width:1160px; margin:0 auto; }
             #aria-cinema .cn-header { display:flex; justify-content:space-between; align-items:center; padding:18px 0; border-bottom:1px solid var(--cn-line); font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--cn-dim); margin-bottom:32px; }
@@ -2648,7 +2729,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             #aria-cinema .cn-nav span { opacity:0.6; }
             #aria-cinema .cn-kicker { font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--cn-dim); margin-bottom:14px; }
             #aria-cinema .cn-kicker::before { content:'— '; color:var(--cn-accent); }
-            #aria-cinema .cn-title { font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(48px,7vw,96px); line-height:0.95; letter-spacing:-0.01em; color:var(--cn-fg); margin:0 0 28px; font-weight:400; }
+            #aria-cinema .cn-title { font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(28px,4vw,52px); line-height:0.98; letter-spacing:-0.01em; color:var(--cn-fg); margin:0 0 18px; font-weight:400; }
             #aria-cinema .cn-title em { color:var(--cn-accent); font-style:normal; font-family:'JetBrains Mono',monospace; font-size:0.35em; vertical-align:super; letter-spacing:0.1em; }
             #aria-cinema .cn-meta-row { display:flex; justify-content:space-between; align-items:end; margin-bottom:24px; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--cn-dim); }
             #aria-cinema .cn-meta-row .cn-left { display:flex; gap:32px; flex-wrap:wrap; }
@@ -2814,6 +2895,28 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
           })();
           </script>
         </section>
+
+        <div class="aria-motion-details">
+          <div class="amd-card">
+            <span class="amd-kicker">Many roles, one AI</span>
+            <p>Technical analyst, service desk, incident manager, receptionist — many roles in one AI.</p>
+          </div>
+          <div class="amd-card">
+            <span class="amd-kicker">Cut support costs with ARIA</span>
+            <p>Always-on AI triage and escalation routing; humans approve fixes. Built to lower the cost of repeat support.</p>
+          </div>
+          <a href="/aria" class="amd-cta">Open the full ARIA experience →</a>
+        </div>
+        <style>
+          .aria-motion-details { margin: 28px auto 0; max-width: 1160px; display: grid; gap: 14px; grid-template-columns: 1fr; }
+          @media (min-width: 720px) { .aria-motion-details { grid-template-columns: 1fr 1fr auto; align-items: center; } }
+          .aria-motion-details .amd-card { padding: 14px 18px; border: 1px solid rgba(197,160,89,.18); border-radius: 12px; background: rgba(10,8,5,.55); }
+          .aria-motion-details .amd-kicker { display: block; color: #c5a059; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 6px; }
+          .aria-motion-details .amd-card p { margin: 0; color: rgba(255,255,255,.7); font-size: 12px; line-height: 1.6; }
+          .aria-motion-details .amd-cta { display: inline-flex; align-items: center; justify-content: center; padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(241,220,167,.55); background: rgba(241,220,167,.08); color: #f1dca7; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; text-decoration: none; transition: background .2s ease, border-color .2s ease; }
+          .aria-motion-details .amd-cta:hover { background: rgba(241,220,167,.18); border-color: rgba(241,220,167,.9); }
+        </style>
+
       </div>
     </section>
 
@@ -4440,17 +4543,18 @@ function animateSatellites(rootSel){
 })();
 </script>
 
+
+
 <script>
 (function(){
-  function fmt(c){return '$' + (c/100).toLocaleString();}
-  document.querySelectorAll('.hero-svc-card[data-stripe-amount-cents]').forEach(function(btn){
+  document.querySelectorAll('.hero-svc-cta[data-stripe-amount-cents]').forEach(function(btn){
     btn.addEventListener('click', async function(e){
       e.preventDefault();
+      e.stopPropagation();
       if (btn.disabled) return;
       btn.disabled = true;
-      var cta = btn.querySelector('.hero-svc-cta');
-      var orig = cta ? cta.textContent : '';
-      if (cta) cta.textContent = 'Connecting...';
+      var orig = btn.textContent;
+      btn.textContent = 'Connecting...';
       try {
         var r = await fetch('/.netlify/functions/stripe-checkout', {
           method:'POST',
@@ -4468,8 +4572,42 @@ function animateSatellites(rootSel){
         throw new Error((d && d.error) || 'Checkout failed');
       } catch(err){
         btn.disabled = false;
-        if (cta) cta.textContent = orig;
-        alert('Could not start checkout: ' + (err.message || err) + '\nPlease email ahmad.wasee@iisupp.net to complete purchase.');
+        btn.textContent = orig;
+        alert('Could not start checkout: ' + (err.message || err) + '\nEmail ahmad.wasee@iisupp.net to complete the purchase.');
+      }
+    });
+  });
+})();
+</script>
+
+<script>
+(function(){
+  document.querySelectorAll('.ai-tier-cta[data-stripe-amount-cents], .ai-maint-cta[data-stripe-amount-cents]').forEach(function(btn){
+    btn.addEventListener('click', async function(e){
+      e.preventDefault();
+      if (btn.disabled) return;
+      btn.disabled = true;
+      var orig = btn.textContent;
+      btn.textContent = 'Connecting...';
+      try {
+        var r = await fetch('/.netlify/functions/stripe-checkout', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({priceData:{
+            amount_cents: parseInt(btn.dataset.stripeAmountCents, 10),
+            currency: 'usd',
+            product_name: btn.dataset.stripeName,
+            description: btn.dataset.stripeDesc || '',
+            id: btn.dataset.stripeId
+          }})
+        });
+        var d = await r.json();
+        if (d && d.url) { window.location = d.url; return; }
+        throw new Error((d && d.error) || 'Checkout failed');
+      } catch(err){
+        btn.disabled = false;
+        btn.textContent = orig;
+        alert('Could not start checkout: ' + (err.message || err) + '\nEmail ahmad.wasee@iisupp.net to complete the purchase.');
       }
     });
   });
