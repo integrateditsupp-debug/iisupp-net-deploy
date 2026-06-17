@@ -954,7 +954,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   "use strict";
   if (window.self !== window.top) return;
   var PLANS_PATH = "/plans/";
-  var TRIAL_MS = 3 * 60 * 1000;
+  var TRIAL_MS = 20 * 60 * 1000;
   var KEY = "aria_trial_started_at";
   var ARIA_SECTION_IDS = ["aria-demo","ariaBrowser","chatBrowser","aria-browser"];
 
@@ -980,14 +980,83 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
     return m + ":" + (s < 10 ? "0" : "") + s;
   }
 
-  function getTrialStart() {
-    var s = null;
-    try { s = localStorage.getItem(KEY); } catch (e) {}
-    if (!s) {
-      s = Date.now().toString();
-      try { localStorage.setItem(KEY, s); } catch (e) {}
+  /* === per-email trial resume (v3 2026-06-17) ===================
+     getElapsed() returns total ms the active user has consumed so far,
+     including the current session. On unload / visibilitychange we
+     persist back to localStorage so re-entry resumes where they left off.
+     Anonymous users (no email yet) fall back to the legacy single-key
+     wall-clock start so trial still counts down even before sign-in.
+  */
+  var EMAIL_KEY  = "aria_user_email";
+  var PREFIX     = "aria_trial_consumed_";   // + lowercased email
+  var _sessionStart = Date.now();
+  var _baseConsumed = 0;
+
+  function getActiveEmail() {
+    try {
+      var v = localStorage.getItem(EMAIL_KEY);
+      return v ? String(v).trim().toLowerCase() : "";
+    } catch (e) { return ""; }
+  }
+  function readStoredConsumed() {
+    var email = getActiveEmail();
+    if (!email) {
+      // legacy anonymous fallback
+      try {
+        var s = localStorage.getItem(KEY);
+        if (!s) {
+          s = Date.now().toString();
+          localStorage.setItem(KEY, s);
+        }
+        return Math.max(0, Date.now() - (parseInt(s,10) || Date.now()));
+      } catch (e) { return 0; }
     }
-    return parseInt(s, 10) || Date.now();
+    try {
+      var v = parseInt(localStorage.getItem(PREFIX + email) || "0", 10);
+      return isFinite(v) && v > 0 ? v : 0;
+    } catch (e) { return 0; }
+  }
+  function getElapsed() {
+    return _baseConsumed + (Date.now() - _sessionStart);
+  }
+  function persistElapsed() {
+    var email = getActiveEmail();
+    if (!email) return;
+    try { localStorage.setItem(PREFIX + email, String(getElapsed())); } catch (e) {}
+  }
+  function rebaseFromStorage() {
+    _baseConsumed = readStoredConsumed();
+    _sessionStart = Date.now();
+  }
+  // Initial rebase (anonymous OR email already stored from prior visit)
+  rebaseFromStorage();
+
+  // Persist on lifecycle events
+  window.addEventListener("beforeunload", persistElapsed);
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) persistElapsed();
+  });
+  setInterval(persistElapsed, 5000);
+
+  // Rebase when caller signals user identity changed (onboarding submit)
+  window.addEventListener("aria-user-set", function () {
+    // Persist any current anonymous progress, then rebase under email
+    persistElapsed();
+    rebaseFromStorage();
+  });
+  // Storage event from other tab
+  window.addEventListener("storage", function (e) {
+    if (e.key === EMAIL_KEY || (e.key || "").indexOf(PREFIX) === 0) {
+      persistElapsed();
+      rebaseFromStorage();
+    }
+  });
+
+  // Back-compat shim: code below calls getTrialStart() and subtracts from
+  // Date.now() to compute elapsed. Return a virtual start such that
+  // (Date.now() - virtual) === getElapsed().
+  function getTrialStart() {
+    return Date.now() - getElapsed();
   }
 
   function injectStyles() {
@@ -1052,9 +1121,10 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   }
 
   function blurAriaSections() {
-    ARIA_SECTION_IDS.forEach(function (id) {
-      var el = document.getElementById(id);
-      if (!el) return;
+    var targets = ARIA_SECTION_IDS.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+    var frame = document.querySelector(".browser-frame");
+    if (frame && targets.indexOf(frame) < 0) targets.push(frame);
+    targets.forEach(function (el) {
       if (el.querySelector(".aria-locked-overlay")) return;
       el.classList.add("aria-locked");
       var overlay = document.createElement("div");
@@ -1199,13 +1269,14 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       "#vision-roadmap .rm-stone.done .rm-badge{background:rgba(34,197,94,.16);color:#86efac;border:1px solid rgba(34,197,94,.4)}" +
       "#vision-roadmap .rm-stone.current .rm-node{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;box-shadow:0 0 22px rgba(241,220,167,.7),inset 0 0 0 1.5px rgba(255,255,255,.25);animation:rmPulse 2.2s infinite}" +
       "#vision-roadmap .rm-stone.current .rm-card{border-color:rgba(241,220,167,.6);background:linear-gradient(165deg,#1a1410 0%,#251a12 100%);box-shadow:0 0 50px rgba(241,220,167,.18)}" +
-      "#vision-roadmap .rm-flip{perspective:900px;min-height:210px;max-width:340px;cursor:pointer;width:100%}" +
-      "#vision-roadmap .rm-flip-inner{position:relative;width:100%;min-height:210px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}" +
-      "#vision-roadmap .rm-flip:hover .rm-flip-inner,#vision-roadmap .rm-flip:focus-within .rm-flip-inner{transform:rotateY(180deg)}" +
-      "#vision-roadmap .rm-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;border:1px solid rgba(197,160,89,.22);background:linear-gradient(160deg,rgba(255,255,255,.02),rgba(197,160,89,.04));padding:18px 20px;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box}" +
+      "#vision-roadmap .rm-flip{perspective:900px;min-height:78px;max-width:340px;cursor:pointer;width:100%;transition:min-height .35s cubic-bezier(.4,0,.2,1)}" +
+      "#vision-roadmap .rm-flip-inner{position:relative;width:100%;min-height:78px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1),min-height .35s cubic-bezier(.4,0,.2,1)}" +
+      "#vision-roadmap .rm-flip:hover,#vision-roadmap .rm-flip:focus-within{min-height:220px}" +
+      "#vision-roadmap .rm-flip:hover .rm-flip-inner,#vision-roadmap .rm-flip:focus-within .rm-flip-inner{transform:rotateY(180deg);min-height:220px}" +
+      "#vision-roadmap .rm-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;border:1px solid rgba(197,160,89,.22);background:linear-gradient(160deg,rgba(255,255,255,.02),rgba(197,160,89,.04));padding:12px 16px;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box}" +
       "#vision-roadmap .rm-face.rm-back{transform:rotateY(180deg);background:linear-gradient(165deg,#1a1410 0%,#251a12 100%);border-color:rgba(241,220,167,.4)}" +
       "#vision-roadmap .rm-front h3{font-family:Cinzel,serif;font-size:15px;color:#f1dca7;margin:0 0 6px;letter-spacing:.03em;line-height:1.25;text-transform:uppercase}" +
-      "#vision-roadmap .rm-front .rm-hint{display:block;margin-top:8px;color:rgba(241,220,167,.4);font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}" +
+      "#vision-roadmap .rm-front .rm-hint{display:none}" +
       "#vision-roadmap .rm-back p{color:rgba(241,220,167,.92);font-size:12.5px;line-height:1.55;margin:0;overflow:auto;max-height:170px}" +
       "#vision-roadmap .rm-stone.done .rm-front{border-color:rgba(34,197,94,.35)}" +
       "#vision-roadmap .rm-stone.current .rm-front{border-color:rgba(241,220,167,.6)}" +
@@ -1298,9 +1369,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       var stone = document.createElement("div");
       stone.className = "rm-stone " + m.status + " " + side;
       var nodeContent = m.status === "done" ? "&#10003;" : (m.status === "current" ? "&#9203;" : String(i + 1));
-      var badge = m.status === "done" ? '<span class="rm-badge">Live</span>' :
-                  (m.status === "current" ? '<span class="rm-badge">In progress</span>' :
-                   '<span class="rm-badge">Coming</span>');
+      var badge = "";
       stone.innerHTML =
         '<div class="rm-card rm-flip" tabindex="0">' +
           '<div class="rm-flip-inner">' +

@@ -5174,5 +5174,119 @@ if (_prefill){
 </script>
 <script defer src="/aria-transform.js"></script>
 <script defer src="/aria-brain.js"></script>
+
+<script>
+/* === ARIA onboarding gate + log out + receipt email + user-set event
+       Added 2026-06-17 by Cowork. Wires the existing #ariaOnboard modal,
+       #aoForm, #ariaLogoutBtn. Also dispatches "aria-user-set" so the
+       trial-resume logic in aria-core.js rebases its timer per email. */
+(function () {
+  "use strict";
+  if (window.self !== window.top) return;
+
+  var STORAGE_USER   = "aria_user_profile";
+  var STORAGE_EMAIL  = "aria_user_email";
+  var ENDPOINT       = "/.netlify/functions/aria-receipt-email";
+
+  function $(id){ return document.getElementById(id); }
+
+  function readProfile() {
+    try {
+      var raw = localStorage.getItem(STORAGE_USER);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+  function writeProfile(p) {
+    try {
+      localStorage.setItem(STORAGE_USER, JSON.stringify(p));
+      if (p && p.email) localStorage.setItem(STORAGE_EMAIL, String(p.email).toLowerCase());
+    } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent("aria-user-set", { detail: p })); } catch (e) {}
+  }
+  function clearProfile() {
+    try {
+      localStorage.removeItem(STORAGE_USER);
+      localStorage.removeItem(STORAGE_EMAIL);
+    } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent("aria-user-clear")); } catch (e) {}
+  }
+
+  function showModal() {
+    var m = $("ariaOnboard"); if (!m) return;
+    m.classList.add("visible");
+    m.style.display = "flex";
+    var first = $("aoFirst"); if (first) setTimeout(function(){ try{first.focus();}catch(e){} }, 60);
+    var logout = $("ariaLogoutBtn"); if (logout) logout.hidden = true;
+  }
+  function hideModal() {
+    var m = $("ariaOnboard"); if (!m) return;
+    m.classList.remove("visible");
+    m.style.display = "none";
+    var logout = $("ariaLogoutBtn"); if (logout) logout.hidden = false;
+  }
+
+  function validEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s||"").trim()); }
+
+  function sendReceipt(p) {
+    if (!p || !p.email) return;
+    try {
+      fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: p.email,
+          firstName: p.firstName,
+          lastName:  p.lastName,
+          company:   p.company,
+          event:     "session_start",
+          ts:        new Date().toISOString()
+        })
+      }).catch(function(){});
+    } catch (e) {}
+  }
+
+  function onSubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var err = $("aoErr"); if (err) err.textContent = "";
+    var f = ($("aoFirst")||{}).value || "";
+    var l = ($("aoLast") ||{}).value || "";
+    var c = ($("aoCompany")||{}).value || "";
+    var em = ($("aoEmail")||{}).value || "";
+    f = f.trim(); l = l.trim(); c = c.trim(); em = em.trim();
+    if (!f || !l || !c || !em) { if (err) err.textContent = "All fields are required."; return; }
+    if (!validEmail(em))       { if (err) err.textContent = "Use a valid work email."; return; }
+    var profile = { firstName: f, lastName: l, company: c, email: em.toLowerCase(), startedAt: Date.now() };
+    writeProfile(profile);
+    sendReceipt(profile);
+    hideModal();
+  }
+
+  function onLogout() {
+    clearProfile();
+    showModal();
+  }
+
+  function init() {
+    var form = $("aoForm");
+    if (form) form.addEventListener("submit", onSubmit);
+    var lb = $("ariaLogoutBtn");
+    if (lb) lb.addEventListener("click", onLogout);
+    var p = readProfile();
+    if (p && p.email) {
+      // Already signed in this browser: hide modal, ensure email is current
+      writeProfile(p);  // re-dispatch aria-user-set so trial rebases
+      hideModal();
+    } else {
+      showModal();
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
 </body>
 </html>
