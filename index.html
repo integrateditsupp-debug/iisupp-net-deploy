@@ -3966,4 +3966,196 @@ Thank you,
                     button: 'Stage conversion fix',
                     bullets: ['Website or page URL', 'Biggest conversion leak', 'Current CTA or booking path'],
                     promiseLabel: 'What happens after you send this',
-                    prom
+                    promiseNote: 'IIS treats this as a scoped conversion-fix request and keeps the first reply focused on the clearest leak in the current path.',
+                    promiseSteps: ['Review the current page path and conversion leak', 'Identify the first buyer-facing fix worth scoping', 'Reply with a narrow next-step recommendation instead of a vague redesign pitch']
+                }
+            ];
+            const FALLBACK_PRESET = {
+                label: 'Description of Issue',
+                placeholder: 'How can we help?',
+                note: 'Tell IIS what feels urgent, what result you want, and the best next step for follow-up.',
+                help: 'Include the problem, the timeline, and what a useful next step should look like.',
+                button: 'Submit',
+                bullets: ['What the problem is', 'Any time sensitivity', 'Preferred follow-up path'],
+                promiseLabel: 'What happens after you send this',
+                promiseNote: 'IIS reviews the issue, the urgency, and the requested next step before replying.',
+                promiseSteps: ['Review the stated problem and urgency', 'Decide the best scoped follow-up path', 'Reply without assuming a broad commitment']
+            };
+            function getPreset(subject) {
+                return REQUEST_PRESETS.find(function(preset) { return preset.match.test(subject || ''); }) || FALLBACK_PRESET;
+            }
+            function renderChecklist(items) {
+                if (!contextList) return;
+                contextList.innerHTML = '';
+                items.forEach(function(item) {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    contextList.appendChild(li);
+                });
+            }
+            function renderPromiseList(items) {
+                if (!contextPromiseList) return;
+                contextPromiseList.innerHTML = '';
+                (items || []).forEach(function(item) {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    contextPromiseList.appendChild(li);
+                });
+            }
+            function applyChatPreset() {
+                const subject = (subjectField && subjectField.value.trim()) || 'General contact request';
+                const preset = getPreset(subject);
+                const shouldShowContext = !!(requestedSubject || requestedDesc || params.get('contact'));
+                if (topicField) topicField.value = subject;
+                if (entryPageField) entryPageField.value = window.location.pathname;
+                if (entryUrlField) entryUrlField.value = window.location.href;
+                if (contextBox) contextBox.classList.toggle('hidden', !shouldShowContext);
+                if (contextTitle) contextTitle.textContent = subject;
+                if (contextNote) contextNote.textContent = preset.note;
+                if (descLabel) descLabel.textContent = preset.label;
+                if (descField && !descField.value.trim()) descField.placeholder = preset.placeholder;
+                if (descNote) descNote.textContent = preset.help;
+                if (submitBtn) submitBtn.textContent = preset.button;
+                renderChecklist(preset.bullets);
+                if (contextPromiseLabel) contextPromiseLabel.textContent = preset.promiseLabel || 'What happens next';
+                if (contextPromiseNote) contextPromiseNote.textContent = preset.promiseNote || FALLBACK_PRESET.promiseNote;
+                renderPromiseList(preset.promiseSteps || FALLBACK_PRESET.promiseSteps);
+            }
+            const params = new URLSearchParams(window.location.search);
+            const requestedSubject = params.get('subject');
+            const requestedDesc = params.get('desc');
+            if (subjectField) subjectField.value = requestedSubject || 'General contact request';
+            if (requestedDesc && descField && !descField.value.trim()) descField.value = requestedDesc;
+            applyChatPreset();
+            if (params.get('contact') || requestedSubject || requestedDesc) {
+                setTimeout(function() {
+                    showChatWidget();
+                    if (requestedDesc && nameField) nameField.focus({ preventScroll: true });
+                    else if (descField) descField.focus({ preventScroll: true });
+                }, 1700);
+            }
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault(); clearErrors();
+                const name = document.getElementById('cf-name'); const email = document.getElementById('cf-email'); const desc = document.getElementById('cf-description'); let valid = true;
+                if (!name.value.trim()) { name.classList.add('invalid'); document.getElementById('nameError').style.display = 'block'; valid = false; }
+                if (!validateEmail(email.value)) { email.classList.add('invalid'); document.getElementById('emailError').style.display = 'block'; valid = false; }
+                if (!desc.value.trim()) { desc.classList.add('invalid'); document.getElementById('descError').style.display = 'block'; valid = false; }
+                if (!valid) return;
+                submitBtn.disabled = true; submitBtn.textContent = 'Sending...';
+                try {
+                    const fd = new FormData(form);
+                    const resp = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(fd).toString() });
+                    if (!resp.ok) throw new Error('Submission failed: ' + resp.status);
+                    document.getElementById('successName').textContent = name.value.trim();
+                    formContainer.style.display = 'none';
+                    successContainer.style.display = 'flex';
+                    lucide.createIcons();
+                } catch (err) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit';
+                    alert('Sorry, something went wrong sending your message. Please try again, email ahmad.wasee@iisupp.net, or call (647) 581-3182.');
+                }
+            });
+            lucide.createIcons();
+        })();
+
+        // ARIA install CTAs (bottom section)
+        (function(){
+            const chromeBtn = document.getElementById('ariaInstallChrome');
+            const mobileBtn = document.getElementById('ariaInstallMobile');
+            if (chromeBtn) chromeBtn.addEventListener('click', () => {
+                window.location.href = '/extension.html';
+            });
+            if (mobileBtn) mobileBtn.addEventListener('click', () => {
+                if (window.ARIA && typeof window.ARIA.installPWA === 'function') window.ARIA.installPWA();
+                else window.location.href = '/aria.html';
+            });
+        })();
+
+        // Purchase buttons — open a premium modal with plan options, each opening
+        // a confirmation + PayPal checkout via the shared ARIA core.
+        (function(){
+            function waitForAria(cb){ if (window.ARIA) return cb(); setTimeout(()=>waitForAria(cb), 80); }
+            waitForAria(function(){
+                document.querySelectorAll('[data-buy-options]').forEach(function(btn){
+                    btn.addEventListener('click', function(){
+                        let data; try { data = JSON.parse(btn.getAttribute('data-buy-options')); } catch(_) { return; }
+                        const optionsHtml = data.options.map(function(opt, i){
+                            if (opt.quote) {
+                                return '<button type="button" class="aria-buy-option" data-quote="1" style="display:block;width:100%;margin-bottom:10px;padding:14px;border-radius:14px;border:1px solid rgba(212,175,55,0.25);background:rgba(0,0,0,0.35);color:#f3ecd9;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;transition:all .2s ease;"><b style="color:#f1dca7;display:block;margin-bottom:3px;">Request a custom quote</b><span style="opacity:.65;font-size:11.5px;">Email Integrated IT Support with your environment details for a precise quote.</span></button>';
+                            }
+                            return '<button type="button" class="aria-buy-option" data-idx="'+i+'" style="display:block;width:100%;margin-bottom:10px;padding:14px;border-radius:14px;border:1px solid rgba(212,175,55,0.25);background:rgba(0,0,0,0.35);color:#f3ecd9;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;transition:all .2s ease;"><b style="color:#f1dca7;display:block;margin-bottom:3px;">'+opt.name+' — $'+opt.price+' CAD</b><span style="opacity:.65;font-size:11.5px;">'+(opt.description||'')+'</span></button>';
+                        }).join('');
+                        const modal = window.ARIA.showPremiumModal({
+                            title: data.title,
+                            body: '<p style="opacity:.75;margin-bottom:14px;">Select how you would like to proceed. All payments are handled by PayPal; Integrated IT Support will confirm scope before work begins.</p>' + optionsHtml + '<p class="small-note" style="margin-top:10px;">Payments confirm purchase request. Final service scope may require confirmation before work begins.</p>'
+                        });
+                        const root = document.querySelector('.aria-premium-modal');
+                        if (!root) return;
+                        root.querySelectorAll('.aria-buy-option').forEach(function(btn2){
+                            btn2.addEventListener('mouseenter', ()=>{ btn2.style.borderColor='rgba(212,175,55,0.55)'; btn2.style.background='rgba(212,175,55,0.08)'; });
+                            btn2.addEventListener('mouseleave', ()=>{ btn2.style.borderColor='rgba(212,175,55,0.25)'; btn2.style.background='rgba(0,0,0,0.35)'; });
+                            btn2.addEventListener('click', function(){
+                                if (btn2.dataset.quote) {
+                                    modal.close();
+                                    window.location.href = 'mailto:ahmad.wasee@iisupp.net?subject=' + encodeURIComponent('Custom Quote Request — ' + data.title) + '&body=' + encodeURIComponent('Please provide a custom quote for ' + data.title + '.\n\nEnvironment details:\n- Users / devices:\n- Locations:\n- Current stack:\n- Timeline:\n\nThank you.');
+                                    return;
+                                }
+                                const opt = data.options[Number(btn2.dataset.idx)];
+                                modal.close();
+                                const host = document.createElement('div');
+                                host.id = 'paypal-host-' + opt.id;
+                                const launch = window.ARIA.showPremiumModal({
+                                    title: 'Confirm: ' + opt.name,
+                                    body: '<p>You are about to purchase <b>'+opt.name+'</b> for <b>$'+opt.price+' CAD</b>.</p><p style="opacity:.7;font-size:12.5px;">After secure checkout, Integrated IT Support will email you to confirm scope.</p><button class="aria-stripe-pay" data-id="'+opt.id+'" data-name="'+(opt.name||"").replace(/"/g,"&quot;")+'" data-price="'+opt.price+'" data-desc="'+((opt.description||"").replace(/"/g,"&quot;"))+'" style="margin-top:16px;display:block;width:100%;padding:14px 20px;background:linear-gradient(135deg,#635bff 0%,#5046e4 100%);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.04em;box-shadow:0 4px 14px rgba(99,91,255,.35);transition:filter .2s">Pay $'+opt.price+' CAD with Stripe</button><p class="small-note" style="margin-top:10px;">Payments confirm purchase request. Final service scope may require confirmation before work begins.</p>'
+                                });
+                                setTimeout(function(){
+                                    const mount = document.getElementById('paypal-host-' + opt.id);
+                                    if (mount) window.ARIA.renderPayPal(mount, opt);
+                                }, 40);
+                            });
+                        });
+                    });
+                });
+            });
+        })();
+    </script>
+    <script src="/assets/aria-core.js" defer></script>
+    <script type="module" src="/assets/aria-trial.js"></script>
+
+<script>
+(function(){
+  document.addEventListener('click', async function(e){
+    var btn = e.target.closest('.aria-stripe-pay');
+    if (!btn) return;
+    e.preventDefault();
+    if (btn.dataset.busy === '1') return;
+    btn.dataset.busy = '1';
+    var origLabel = btn.textContent;
+    btn.textContent = 'Connecting to Stripe...';
+    btn.style.filter = 'brightness(.8)';
+    try {
+      var r = await fetch('/.netlify/functions/stripe-checkout', {
+        method: 'POST',
+        headers: {'content-type':'application/json'},
+        body: JSON.stringify({
+          priceData: {
+            amount_cents: Math.round(parseFloat(btn.dataset.price) * 100),
+            currency: 'cad',
+            product_name: btn.dataset.name,
+            description: btn.dataset.desc || '',
+            id: btn.dataset.id
+          }
+        })
+      });
+      var j = await r.json();
+      if (j.url) { window.location.href = j.url; }
+      else { alert(j.error || 'Could not start checkout. Call (647) 581-3182.'); btn.textContent = origLabel; btn.style.filter=''; btn.dataset.busy = ''; }
+    } catch (err) {
+      alert('Network error. Call (647) 581-3182.'); btn.textContent = origLabel; btn.style.filter=''; btn.dataset.busy = '';
+    }
+  });
+})();
+</script>
+</body>
+</html>
