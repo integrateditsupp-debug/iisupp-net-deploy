@@ -954,7 +954,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   "use strict";
   if (window.self !== window.top) return;
   var PLANS_PATH = "/plans/";
-  var TRIAL_MS = 20 * 60 * 1000;
+  var TRIAL_MS = 15 * 60 * 1000;
   var KEY = "aria_trial_started_at";
   var ARIA_SECTION_IDS = ["aria-demo","ariaBrowser","chatBrowser","aria-browser"];
 
@@ -980,17 +980,27 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
     return m + ":" + (s < 10 ? "0" : "") + s;
   }
 
-  /* === per-email trial resume (v3 2026-06-17) ===================
-     getElapsed() returns total ms the active user has consumed so far,
-     including the current session. On unload / visibilitychange we
-     persist back to localStorage so re-entry resumes where they left off.
-     Anonymous users (no email yet) fall back to the legacy single-key
-     wall-clock start so trial still counts down even before sign-in.
+  /* === trial state machine v4 (2026-06-17) ====================
+     Trial is INACTIVE until the user submits the "Before we troubleshoot"
+     form (which dispatches `aria-user-set`). Before that, ARIA is fully
+     accessible with no countdown bar and no lock.
+     On `aria-user-set`:
+       effectiveUsed = max(email_consumed, device_elapsed)
+       if effectiveUsed >= 15min → fire paywall (blurAriaSections)
+       else → start 15-min countdown from effectiveUsed
+     We track BOTH a per-email key AND a device-level key. A new email
+     CANNOT bypass an exhausted device — the device counter persists
+     across all email identities used on this browser.
   */
-  var EMAIL_KEY  = "aria_user_email";
-  var PREFIX     = "aria_trial_consumed_";   // + lowercased email
-  var _sessionStart = Date.now();
+  var EMAIL_KEY    = "aria_user_email";
+  var PREFIX       = "aria_trial_consumed_";          // + lowercased email
+  var DEVICE_KEY   = "aria_device_elapsed_ms";        // device-level accumulator
+  var _sessionStart = 0;     // 0 = trial not running
   var _baseConsumed = 0;
+  var _trialActive  = false;
+  var _expired      = false;
+  var _barBuilt     = false;
+  var _timerHandle  = null;
 
   function getActiveEmail() {
     try {
@@ -998,63 +1008,126 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       return v ? String(v).trim().toLowerCase() : "";
     } catch (e) { return ""; }
   }
-  function readStoredConsumed() {
-    var email = getActiveEmail();
-    if (!email) {
-      // legacy anonymous fallback
-      try {
-        var s = localStorage.getItem(KEY);
-        if (!s) {
-          s = Date.now().toString();
-          localStorage.setItem(KEY, s);
-        }
-        return Math.max(0, Date.now() - (parseInt(s,10) || Date.now()));
-      } catch (e) { return 0; }
-    }
+  function getEmailConsumed(email) {
+    if (!email) return 0;
     try {
       var v = parseInt(localStorage.getItem(PREFIX + email) || "0", 10);
       return isFinite(v) && v > 0 ? v : 0;
     } catch (e) { return 0; }
   }
+  function getDeviceElapsed() {
+    try {
+      var v = parseInt(localStorage.getItem(DEVICE_KEY) || "0", 10);
+      return isFinite(v) && v > 0 ? v : 0;
+    } catch (e) { return 0; }
+  }
   function getElapsed() {
+    if (!_trialActive && !_expired) return _baseConsumed;
+    if (!_sessionStart) return _baseConsumed;
     return _baseConsumed + (Date.now() - _sessionStart);
   }
   function persistElapsed() {
+    if (!_trialActive) return;
+    var elapsed = getElapsed();
     var email = getActiveEmail();
-    if (!email) return;
-    try { localStorage.setItem(PREFIX + email, String(getElapsed())); } catch (e) {}
+    try {
+      if (email) localStorage.setItem(PREFIX + email, String(elapsed));
+      var dev = getDeviceElapsed();
+      localStorage.setItem(DEVICE_KEY, String(Math.max(dev, elapsed)));
+    } catch (e) {}
   }
-  function rebaseFromStorage() {
-    _baseConsumed = readStoredConsumed();
-    _sessionStart = Date.now();
-  }
-  // Initial rebase (anonymous OR email already stored from prior visit)
-  rebaseFromStorage();
 
-  // Persist on lifecycle events
+  function startTrialFor(email) {
+    if (!email) return;
+    var emailConsumed  = getEmailConsumed(email);
+    var deviceConsumed = getDeviceElapsed();
+    var effective = Math.max(emailConsumed, deviceConsumed);
+    if (effective >= TRIAL_MS) {
+      // Already exhausted — gate immediately, no bar, no countdown
+      _expired = true;
+      _trialActive = false;
+      _baseConsumed = TRIAL_MS;
+      _sessionStart = Date.now();
+      try { localStorage.setItem(DEVICE_KEY, String(Math.max(deviceConsumed, TRIAL_MS))); } catch (e) {}
+      // Mark expired state on bar if previously built
+      var bar = document.getElementById("aria-trial-bar");
+      if (bar) {
+        bar.classList.add("expired");
+        var t = bar.querySelector(".atb-time"); if (t) t.textContent = "0:00";
+        var l = bar.querySelector(".atb-label"); if (l) l.textContent = "TRIAL ENDED";
+      }
+      blurAriaSections();
+      return;
+    }
+    _expired = false;
+    _baseConsumed = effective;
+    _sessionStart = Date.now();
+    _trialActive = true;
+    if (!_barBuilt) {
+      injectStyles();
+      buildBar(TRIAL_MS - effective);
+      _barBuilt = true;
+    } else {
+      var b2 = document.getElementById("aria-trial-bar");
+      if (b2) {
+        b2.classList.remove("expired");
+        var t2 = b2.querySelector(".atb-time"); if (t2) t2.textContent = fmt(TRIAL_MS - effective);
+      }
+    }
+    startTick();
+  }
+
+  function startTick() {
+    if (_timerHandle) clearTimeout(_timerHandle);
+    function tick() {
+      if (!_trialActive) return;
+      var elapsed = getElapsed();
+      var remaining = TRIAL_MS - elapsed;
+      var bar = document.getElementById("aria-trial-bar");
+      if (remaining <= 0) {
+        _trialActive = false;
+        _expired = true;
+        persistElapsed();
+        if (bar) {
+          bar.classList.add("expired");
+          var t = bar.querySelector(".atb-time"); if (t) t.textContent = "0:00";
+          var l = bar.querySelector(".atb-label"); if (l) l.textContent = "TRIAL ENDED";
+        }
+        blurAriaSections();
+        return;
+      }
+      if (bar) {
+        var t2 = bar.querySelector(".atb-time"); if (t2) t2.textContent = fmt(remaining);
+      }
+      _timerHandle = setTimeout(tick, 1000);
+    }
+    tick();
+  }
+
+  // Lifecycle persistence
   window.addEventListener("beforeunload", persistElapsed);
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) persistElapsed();
   });
   setInterval(persistElapsed, 5000);
 
-  // Rebase when caller signals user identity changed (onboarding submit)
-  window.addEventListener("aria-user-set", function () {
-    // Persist any current anonymous progress, then rebase under email
-    persistElapsed();
-    rebaseFromStorage();
+  // Triggered by the aperture-bridge form submit
+  window.addEventListener("aria-user-set", function (e) {
+    var email = (e && e.detail && e.detail.email) ? String(e.detail.email).toLowerCase() : getActiveEmail();
+    if (!email) return;
+    startTrialFor(email);
   });
-  // Storage event from other tab
+
+  // Cross-tab storage sync
   window.addEventListener("storage", function (e) {
-    if (e.key === EMAIL_KEY || (e.key || "").indexOf(PREFIX) === 0) {
+    if (e.key === EMAIL_KEY || (e.key || "").indexOf(PREFIX) === 0 || e.key === DEVICE_KEY) {
       persistElapsed();
-      rebaseFromStorage();
+      var em = getActiveEmail();
+      if (em) startTrialFor(em);
     }
   });
 
-  // Back-compat shim: code below calls getTrialStart() and subtracts from
-  // Date.now() to compute elapsed. Return a virtual start such that
-  // (Date.now() - virtual) === getElapsed().
+  // Back-compat shim for anything still calling getTrialStart()
   function getTrialStart() {
     return Date.now() - getElapsed();
   }
@@ -1181,25 +1254,14 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
     rewritePlansLinks();
     var p = location.pathname;
     if (p === PLANS_PATH || p === "/plans") return;
-    injectStyles();
-    var start = getTrialStart();
-    var remaining = TRIAL_MS - (Date.now() - start);
-    var bar = buildBar(Math.max(0, remaining));
-    var timeEl = bar.querySelector(".atb-time");
-    var labelEl = bar.querySelector(".atb-label");
-    function tick() {
-      var r = TRIAL_MS - (Date.now() - start);
-      if (r <= 0) {
-        bar.classList.add("expired");
-        labelEl.textContent = "TRIAL ENDED";
-        timeEl.textContent = "0:00";
-        blurAriaSections();
-        return;
-      }
-      timeEl.textContent = fmt(r);
-      setTimeout(tick, 1000);
+    // No styles, no bar, no lock until the user submits the bridge form.
+    // ARIA stays fully accessible in this "pre-trial" state.
+    var existing = getActiveEmail();
+    if (existing) {
+      // Returning visitor with stored identity: jump straight into trial state
+      injectStyles();
+      startTrialFor(existing);
     }
-    tick();
   }
 
   if (document.readyState === "loading") {
