@@ -1709,27 +1709,27 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
 
             <!-- 3 starter-service boxes -->
             <div class="hero-svc-grid max-w-5xl mx-auto mb-12 grid grid-cols-1 sm:grid-cols-3 gap-4 px-2">
-                <a href="/services" class="hero-svc-card">
+                <button type="button" class="hero-svc-card" data-stripe-id="tier1-first-month" data-stripe-name="Preventative IT Support · Tier 1 First Month" data-stripe-amount-cents="600000" data-stripe-desc="Tier 1 Operational Foundation first-month retainer ($6,000). Final scope confirmed before work begins.">
                     <div class="hero-svc-icon" aria-hidden="true">
                         <svg viewBox="0 0 32 32" width="36" height="36"><path d="M16 3l11 4v9c0 7-4.7 11.3-11 13C9.7 27.3 5 23 5 16V7l11-4z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 16l3.5 3.5L21 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
                     <h3 class="hero-svc-title">Preventative IT Support</h3>
                     <div class="hero-svc-rule"></div>
                     <span class="hero-svc-prefix">Starting at</span>
-                    <div class="hero-svc-price"><strong>$499</strong><span>/mo</span></div>
+                    <div class="hero-svc-price"><strong>$6,000</strong><span>/mo</span></div>
                     <span class="hero-svc-cta">Purchase</span>
-                </a>
-                <a href="/services" class="hero-svc-card">
+                </button>
+                <button type="button" class="hero-svc-card" data-stripe-id="ai-business-deposit" data-stripe-name="AI Business Automation · Deposit" data-stripe-amount-cents="250000" data-stripe-desc="AI Business Automation engagement deposit ($2,500). Scope confirmed before delivery starts.">
                     <div class="hero-svc-icon" aria-hidden="true">
                         <svg viewBox="0 0 32 32" width="36" height="36"><path d="M11 5h10a3 3 0 013 3v3a4 4 0 010 8v3a3 3 0 01-3 3H11a3 3 0 01-3-3v-3a4 4 0 010-8V8a3 3 0 013-3z" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="13" cy="14" r="1.2" fill="currentColor"/><circle cx="19" cy="14" r="1.2" fill="currentColor"/><path d="M13 20h6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
                     </div>
                     <h3 class="hero-svc-title">AI Business Automation</h3>
                     <div class="hero-svc-rule"></div>
                     <span class="hero-svc-prefix">Starting at</span>
-                    <div class="hero-svc-price"><strong>$1,500</strong><span>/project</span></div>
+                    <div class="hero-svc-price"><strong>$2,500</strong><span>/project</span></div>
                     <span class="hero-svc-cta">Purchase</span>
-                </a>
-                <a href="/services" class="hero-svc-card">
+                </button>
+                <button type="button" class="hero-svc-card" data-stripe-id="website-ai-deposit" data-stripe-name="Website + AI Assistant Setup · Deposit" data-stripe-amount-cents="250000" data-stripe-desc="Website + AI Assistant Setup project deposit ($2,500). Scope confirmed before delivery starts.">
                     <div class="hero-svc-icon" aria-hidden="true">
                         <svg viewBox="0 0 32 32" width="36" height="36"><rect x="4" y="6" width="24" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 26h10M16 22v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="12" r="1" fill="currentColor"/><circle cx="13" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/></svg>
                     </div>
@@ -1738,13 +1738,13 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                     <span class="hero-svc-prefix">Starting at</span>
                     <div class="hero-svc-price"><strong>$2,500</strong><span>/project</span></div>
                     <span class="hero-svc-cta">Purchase</span>
-                </a>
+                </button>
             </div>
 
             <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-8">INTEGRATED IT SUPPORT <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic uppercase">Preventative Aid</span></h1>
 
             <!-- Lively animated globe -->
-            <div id="heroAriaGlobe" class="hero-aria-globe" aria-hidden="true"><div class="globe-wrap" id="heroGlobeWrap"></div></div>
+            <div id="heroAriaGlobe" class="hero-aria-globe"><div class="globe-wrap" id="heroGlobeWrap" aria-hidden="true"></div><a class="hero-ask-aria" href="/aria"><span class="hero-ask-aria-dot" aria-hidden="true"></span>Ask ARIA <span aria-hidden="true">→</span></a></div>
 
             <p class="max-w-2xl mx-auto text-white/40 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-6">We don't just fix problems — we keep your operations running smoothly.</p>
             <p class="max-w-xl mx-auto text-white/30 text-[10px] md:text-[11px] tracking-wider uppercase font-light leading-relaxed mb-10">System-driven · outcome-owned · considered before every change.</p>
@@ -1755,16 +1755,23 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
     <style>
       /* === Hero starter-service boxes === */
       .hero-svc-card {
+        position: relative;
         display: flex; flex-direction: column; align-items: center; text-align: center;
         padding: 22px 18px 18px;
         border-radius: 14px;
-        border: 1px solid rgba(197,160,89,0.32);
-        background: linear-gradient(160deg, rgba(255,255,255,0.025), rgba(197,160,89,0.05) 60%, rgba(0,0,0,0.18));
+        border: 1px solid rgba(241,220,167,0.55);
+        background:
+          radial-gradient(120% 80% at 0% 0%, rgba(255,238,170,0.22), rgba(197,160,89,0.05) 35%, transparent 60%),
+          radial-gradient(120% 80% at 100% 0%, rgba(255,238,170,0.22), rgba(197,160,89,0.05) 35%, transparent 60%),
+          linear-gradient(160deg, rgba(255,255,255,0.025), rgba(197,160,89,0.05) 60%, rgba(0,0,0,0.18));
         color: #f1dca7;
+        font: inherit;
+        cursor: pointer;
         text-decoration: none;
         transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.04);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 22px rgba(241,220,167,0.10);
       }
+      .hero-svc-card[disabled] { opacity: 0.7; cursor: progress; }
       .hero-svc-card:hover {
         transform: translateY(-3px);
         border-color: rgba(241,220,167,0.7);
@@ -1796,6 +1803,32 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
       }
 
 
+
+      /* Globe wrapper + Ask ARIA chip */
+      #heroAriaGlobe { position: relative; }
+      .hero-ask-aria {
+        position: absolute; right: -4px; bottom: -2px;
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(15,12,7,0.85);
+        border: 1px solid rgba(241,220,167,0.55);
+        color: #f1dca7;
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+        text-decoration: none;
+        transition: border-color .2s ease, background .2s ease, transform .2s ease;
+        z-index: 5;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      }
+      .hero-ask-aria:hover { border-color: rgba(241,220,167,0.95); background: rgba(20,16,9,0.95); transform: translateY(-1px); }
+      .hero-ask-aria-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #f0d188; box-shadow: 0 0 8px #f0d188, 0 0 16px rgba(241,220,167,0.55);
+      }
+      @media (max-width: 768px) {
+        .hero-ask-aria { font-size: 10px; padding: 5px 10px; right: 0; bottom: 4px; }
+      }
       /* === ARIA globe — transplanted from /aria for the hero, scoped to #heroAriaGlobe === */
       #heroAriaGlobe { width: 280px; height: 280px; margin: 0 auto 32px; position: relative; }
       @media (min-width: 768px) { #heroAriaGlobe { width: 360px; height: 360px; margin-bottom: 40px; } }
@@ -4404,6 +4437,42 @@ function animateSatellites(rootSel){
   var heroSize = window.matchMedia && window.matchMedia('(min-width: 768px)').matches ? 360 : 280;
   document.getElementById('heroGlobeWrap').innerHTML = buildGlobe(heroSize, true);
   animateSatellites('#heroGlobeWrap');
+})();
+</script>
+
+<script>
+(function(){
+  function fmt(c){return '$' + (c/100).toLocaleString();}
+  document.querySelectorAll('.hero-svc-card[data-stripe-amount-cents]').forEach(function(btn){
+    btn.addEventListener('click', async function(e){
+      e.preventDefault();
+      if (btn.disabled) return;
+      btn.disabled = true;
+      var cta = btn.querySelector('.hero-svc-cta');
+      var orig = cta ? cta.textContent : '';
+      if (cta) cta.textContent = 'Connecting...';
+      try {
+        var r = await fetch('/.netlify/functions/stripe-checkout', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({priceData:{
+            amount_cents: parseInt(btn.dataset.stripeAmountCents, 10),
+            currency: 'usd',
+            product_name: btn.dataset.stripeName,
+            description: btn.dataset.stripeDesc || '',
+            id: btn.dataset.stripeId
+          }})
+        });
+        var d = await r.json();
+        if (d && d.url) { window.location = d.url; return; }
+        throw new Error((d && d.error) || 'Checkout failed');
+      } catch(err){
+        btn.disabled = false;
+        if (cta) cta.textContent = orig;
+        alert('Could not start checkout: ' + (err.message || err) + '\nPlease email ahmad.wasee@iisupp.net to complete purchase.');
+      }
+    });
+  });
 })();
 </script>
 </body>
