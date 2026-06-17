@@ -3537,9 +3537,19 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         <div class="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/5 text-center">
             <a href="/about.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">About Us</a>
             <span class="text-white/20 mx-2">•</span>
-            <a href="/copyright.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">© Integrated IT Support Inc. — Copyright &amp; Intellectual Property Disclaimer</a>
+            <a href="/governance/privacy" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Privacy</a>
             <span class="text-white/20 mx-2">•</span>
-            <a href="/terms.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Terms &amp; Conditions</a>
+            <a href="/terms.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Terms</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/governance/ai-use" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">AI Use Policy</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/governance/information-security" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Information Security</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/governance/incident-response" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Incident Response</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/governance/" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">All Policies</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/copyright.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">© IIS Inc.</a>
         </div>
     </footer>
 
@@ -4623,5 +4633,65 @@ function animateSatellites(rootSel){
   });
 })();
 </script>
+
+<!-- ───── Cookie consent banner (PIPEDA + GDPR friendly · 2026-06-17) ───── -->
+<style id="iis-cookie-style">
+  #iis-cookie-banner { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:100000;
+    width:min(720px,calc(100% - 24px)); background:rgba(10,8,5,0.96); backdrop-filter:blur(12px);
+    border:1px solid rgba(197,160,89,.45); border-radius:14px; padding:14px 18px;
+    font-family:Inter,sans-serif; color:rgba(255,255,255,.85); font-size:12.5px; line-height:1.55;
+    box-shadow:0 22px 60px rgba(0,0,0,.55); display:none; }
+  #iis-cookie-banner.visible { display:flex; flex-wrap:wrap; align-items:center; gap:14px; justify-content:space-between; }
+  #iis-cookie-banner p { margin:0; flex:1 1 320px; }
+  #iis-cookie-banner p a { color:#c5a059; text-decoration:none; border-bottom:1px dotted rgba(197,160,89,.5); }
+  #iis-cookie-banner p a:hover { color:#f1dca7; }
+  #iis-cookie-banner .iis-cb-actions { display:flex; gap:8px; flex-wrap:wrap }
+  #iis-cookie-banner button { font-family:Cinzel,serif; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+    font-weight:700; padding:8px 14px; border-radius:8px; cursor:pointer; border:1px solid rgba(197,160,89,.45);
+    background:transparent; color:#f1dca7; transition:background .15s,transform .15s; }
+  #iis-cookie-banner button.accept { background:linear-gradient(135deg,#c5a059,#f1dca7); color:#1a1410; border-color:transparent; }
+  #iis-cookie-banner button:hover { transform:translateY(-1px); }
+  @media (max-width:520px){ #iis-cookie-banner { padding:12px 14px; font-size:12px; } #iis-cookie-banner button { padding:7px 11px; font-size:10px; } }
+</style>
+<div id="iis-cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie preferences">
+  <p>We use essential cookies to operate this site, and optional analytics cookies to improve it. By accepting you consent to non-essential cookies. See our <a href="/governance/privacy">Privacy Policy</a>.</p>
+  <div class="iis-cb-actions">
+    <button type="button" id="iis-cb-essential" aria-label="Essential cookies only">Essential only</button>
+    <button type="button" id="iis-cb-accept" class="accept" aria-label="Accept all cookies">Accept all</button>
+  </div>
+</div>
+<script>
+(function(){
+  try {
+    var KEY = "iis_cookie_consent";
+    var stored = null;
+    try { stored = localStorage.getItem(KEY); } catch(e) {}
+    if (stored) return;  // already chose
+    function show(){
+      var b = document.getElementById("iis-cookie-banner");
+      if (b) b.classList.add("visible");
+    }
+    function save(val){
+      try { localStorage.setItem(KEY, JSON.stringify({choice:val, ts:Date.now()})); } catch(e){}
+      var b = document.getElementById("iis-cookie-banner");
+      if (b) b.classList.remove("visible");
+    }
+    function wire(){
+      var a = document.getElementById("iis-cb-accept");
+      var e = document.getElementById("iis-cb-essential");
+      if (a) a.addEventListener("click", function(){ save("all"); });
+      if (e) e.addEventListener("click", function(){ save("essential"); });
+      // Delay show 800ms so it doesn't interfere with the gateway intro
+      setTimeout(show, 800);
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", wire);
+    } else {
+      wire();
+    }
+  } catch(e) {}
+})();
+</script>
+
 </body>
 </html>
