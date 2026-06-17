@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0805">
+<title>Sample Client Scenarios — ARIA L1/L2/L3 — Integrated IT Support</title>
+<meta name="description" content="Three illustrative scenarios — L1 password lockout, L2 SharePoint permissions, L3 hybrid identity sync — showing ARIA's reasoning trail, KB retrieval, and resolution path on real Microsoft 365 problems.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body{font-family:Inter,sans-serif;background:#050505;color:#fff;margin:0;line-height:1.6}
+  .gold{color:#c5a059}
+  .h-cinzel{font-family:Cinzel,serif}
+  .mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+
+  header.ss-top{padding:22px 28px;border-bottom:1px solid rgba(197,160,89,.15);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  header.ss-top a{color:rgba(255,255,255,.6);font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
+  header.ss-top a:hover{color:#f1dca7}
+  header.ss-top .brand{color:#f1dca7;font-family:Cinzel,serif;letter-spacing:.18em;font-weight:700;font-size:14px}
+
+  .ss-hero{max-width:920px;margin:0 auto;padding:64px 24px 32px;text-align:center}
+  .ss-eyebrow{color:#c5a059;font-size:11px;letter-spacing:.32em;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+  .ss-hero h1{font-family:Cinzel,serif;font-size:clamp(2rem,5vw,3.4rem);font-weight:700;line-height:1.1;margin:0 0 18px}
+  .ss-hero h1 span{color:#c5a059}
+  .ss-hero p{color:rgba(255,255,255,.72);font-size:16px;max-width:680px;margin:0 auto 22px;line-height:1.7}
+  .ss-banner{display:inline-flex;align-items:center;gap:10px;background:rgba(197,160,89,.10);border:1px solid rgba(197,160,89,.30);color:#f1dca7;padding:9px 18px;border-radius:999px;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+  .ss-banner .dot{width:7px;height:7px;border-radius:50%;background:#c5a059;box-shadow:0 0 9px #c5a059}
+
+  /* Founder credibility block */
+  .fc{max-width:980px;margin:24px auto 56px;padding:0 24px}
+  .fc-card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.28);border-radius:18px;padding:28px 30px;display:grid;grid-template-columns:1fr;gap:22px}
+  @media (min-width:760px){.fc-card{grid-template-columns:auto 1fr;align-items:center}}
+  .fc-portrait{width:130px;height:130px;border-radius:14px;background:radial-gradient(circle at 30% 25%,#1a1410 0%,#000 70%);border:1px solid rgba(197,160,89,.4);display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-size:46px;color:#c5a059;font-weight:700;margin:0 auto}
+  .fc-body h3{font-family:Cinzel,serif;font-size:20px;color:#fff;margin:0 0 6px}
+  .fc-body h3 .gold{color:#c5a059}
+  .fc-role{color:rgba(255,255,255,.62);font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 14px}
+  .fc-creds{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+  .fc-creds span{background:rgba(197,160,89,.10);border:1px solid rgba(197,160,89,.28);color:#f1dca7;padding:5px 11px;border-radius:6px;font-size:11px;letter-spacing:.06em;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500}
+  .fc-body p{color:rgba(255,255,255,.78);font-size:14px;line-height:1.7;margin:0}
+  .fc-body p strong{color:#f1dca7;font-weight:600}
+
+  /* Scenario shells */
+  .sc-grid{max-width:1100px;margin:0 auto;padding:0 24px 80px;display:flex;flex-direction:column;gap:48px}
+  .sc{background:linear-gradient(165deg,#0a0805 0%,#100c08 100%);border:1px solid rgba(197,160,89,.22);border-radius:22px;overflow:hidden}
+  .sc-head{padding:24px 30px;border-bottom:1px solid rgba(197,160,89,.18);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px}
+  .sc-tier{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.22em;font-weight:700;padding:5px 12px;border-radius:6px}
+  .sc-tier.L1{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.35)}
+  .sc-tier.L2{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.35)}
+  .sc-tier.L3{background:rgba(251,113,133,.12);color:#fb7185;border:1px solid rgba(251,113,133,.35)}
+  .sc-time{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:rgba(255,255,255,.55);letter-spacing:.10em}
+  .sc-time strong{color:#f1dca7;font-weight:600}
+  .sc-title{font-family:Cinzel,serif;font-size:22px;color:#fff;margin:14px 30px 0;width:100%;flex-basis:100%;letter-spacing:.02em}
+
+  .sc-body{padding:28px 30px;display:grid;gap:24px;grid-template-columns:1fr}
+  @media (min-width:900px){.sc-body{grid-template-columns:1.2fr 1fr}}
+
+  .sc-section h4{font-family:Cinzel,serif;font-size:13px;letter-spacing:.20em;text-transform:uppercase;color:#c5a059;margin:0 0 12px;font-weight:700}
+  .sc-user-quote{background:rgba(0,0,0,.4);border-left:3px solid #c5a059;padding:14px 18px;font-style:italic;color:rgba(255,255,255,.84);font-size:14px;line-height:1.7;margin:0 0 18px;border-radius:6px}
+  .sc-user-quote .who{display:block;font-style:normal;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;font-family:'JetBrains Mono',ui-monospace,monospace}
+
+  .sc-trail{background:rgba(0,0,0,.35);border:1px solid rgba(197,160,89,.18);border-radius:12px;padding:18px 20px;margin:0 0 18px}
+  .sc-trail-row{display:flex;gap:10px;font-size:12.5px;line-height:1.65;color:rgba(255,255,255,.78);padding:5px 0;border-bottom:1px dashed rgba(197,160,89,.10)}
+  .sc-trail-row:last-child{border-bottom:0}
+  .sc-trail-row .key{color:#c5a059;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.06em;flex-shrink:0;min-width:74px;padding-top:1px;font-weight:600}
+
+  .sc-resp{background:linear-gradient(165deg,rgba(197,160,89,.07),rgba(45,212,191,.04));border:1px solid rgba(197,160,89,.28);border-radius:12px;padding:18px 22px;font-size:14px;line-height:1.7;color:rgba(255,255,255,.88)}
+  .sc-resp .who{display:flex;align-items:center;gap:8px;color:#c5a059;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;font-weight:700}
+  .sc-resp .who::before{content:'';width:6px;height:6px;border-radius:50%;background:#c5a059;box-shadow:0 0 8px #c5a059}
+  .sc-resp ol{margin:8px 0 0;padding-left:20px}
+  .sc-resp ol li{margin:0 0 8px;color:rgba(255,255,255,.82)}
+  .sc-resp code{background:rgba(0,0,0,.45);color:#f1dca7;padding:2px 7px;border-radius:5px;font-size:12.5px;font-family:'JetBrains Mono',ui-monospace,monospace}
+
+  .sc-outcome{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:14px 18px;margin-top:16px;font-size:13px;color:rgba(255,255,255,.82);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:baseline}
+  .sc-outcome strong{color:#4ade80;font-family:Cinzel,serif;font-size:14px;letter-spacing:.04em}
+  .sc-outcome .vs{font-size:11.5px;color:rgba(255,255,255,.55);letter-spacing:.08em}
+
+  .sc-try{padding:18px 30px 26px;background:rgba(0,0,0,.5);border-top:1px solid rgba(197,160,89,.15);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+  .sc-try p{margin:0;color:rgba(255,255,255,.65);font-size:13px;line-height:1.55;max-width:540px}
+  .sc-try p strong{color:#f1dca7}
+  .sc-try a{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;padding:11px 22px;border-radius:10px;font-family:Cinzel,serif;font-weight:700;letter-spacing:.14em;font-size:12px;text-transform:uppercase;text-decoration:none;transition:transform .15s,box-shadow .15s;white-space:nowrap}
+  .sc-try a:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(197,160,89,.4)}
+
+  /* CTA strip */
+  .ss-cta{max-width:1100px;margin:0 auto 80px;padding:0 24px}
+  .ss-cta-card{background:linear-gradient(135deg,rgba(197,160,89,.14),rgba(45,212,191,.06));border:1.5px solid rgba(197,160,89,.45);border-radius:22px;padding:36px 36px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;box-shadow:0 30px 70px rgba(197,160,89,.12)}
+  .ss-cta-card h3{font-family:Cinzel,serif;font-size:26px;color:#fff;margin:0 0 6px;letter-spacing:.02em}
+  .ss-cta-card h3 .gold{color:#c5a059}
+  .ss-cta-card p{color:rgba(255,255,255,.74);font-size:14px;margin:0;max-width:560px;line-height:1.6}
+  .ss-cta-card .actions{display:flex;flex-direction:column;gap:8px;min-width:240px}
+  .ss-cta-btn{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;padding:13px 20px;border-radius:12px;font-family:Cinzel,serif;font-weight:700;letter-spacing:.14em;font-size:12.5px;text-align:center;text-transform:uppercase;text-decoration:none;transition:transform .15s,box-shadow .15s}
+  .ss-cta-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(197,160,89,.5)}
+  .ss-cta-btn.alt{background:transparent;color:#f1dca7;border:1px solid rgba(197,160,89,.45)}
+  .ss-cta-btn.alt:hover{background:rgba(197,160,89,.08);box-shadow:none}
+
+  /* Compliance footer */
+  footer.ss-foot{max-width:1100px;margin:0 auto;padding:24px;color:rgba(255,255,255,.42);font-size:11.5px;line-height:1.6;text-align:center;border-top:1px solid rgba(197,160,89,.10)}
+  footer.ss-foot a{color:#c5a059;text-decoration:none;margin:0 6px}
+  footer.ss-foot a:hover{text-decoration:underline}
+  footer.ss-foot .note{margin-bottom:10px;color:rgba(255,255,255,.55)}
+  footer.ss-foot .note strong{color:#f1dca7}
+</style>
+</head>
+<body>
+
+<header class="ss-top">
+  <a href="/">&larr; Back to home</a>
+  <span class="brand">INTEGRATED IT SUPPORT</span>
+  <a href="/aria">Try ARIA live</a>
+</header>
+
+<section class="ss-hero">
+  <div class="ss-eyebrow">Sample Client Scenarios</div>
+  <h1>How ARIA handles real <span>L1, L2, and L3</span> problems</h1>
+  <p>Three illustrative scenarios drawn from common Microsoft 365 environments. Each shows ARIA's reasoning trail, the framework it applied, the KB article it pulled, and the resolution path. Try the same scenarios live on the trial page — same engine, same response.</p>
+  <div class="ss-banner"><span class="dot"></span>Illustrative samples — not specific real clients</div>
+</section>
+
+<!-- Founder credibility block -->
+<div class="fc">
+  <div class="fc-card">
+    <div class="fc-portrait">AW</div>
+    <div class="fc-body">
+      <h3>Built and operated by <span class="gold">Ahmad Wasee</span></h3>
+      <p class="fc-role">Founder · M365 Enterprise Administrator Expert · Hands-on L1 → L3 background</p>
+      <div class="fc-creds">
+        <span>MS-100 / MS-101</span>
+        <span>M365 Enterprise Admin</span>
+        <span>Service Desk Lead</span>
+        <span>Azure AD &amp; Intune</span>
+        <span>SharePoint / Teams Admin</span>
+        <span>Hybrid Identity</span>
+      </div>
+      <p>ARIA is not a generic chatbot wrapper. It runs on a 70+ article internal KB I built from <strong>real Microsoft 365, Azure AD, Intune, SharePoint, and hybrid-identity tickets</strong> I worked through over years on the desk. The reasoning trail you see in each scenario below is exactly how I trained ARIA to think — pull the right framework, narrow the scope, retrieve the relevant article, then act.</p>
+    </div>
+  </div>
+</div>
+
+<div class="sc-grid">
+
+  <!-- ============== L1 SCENARIO ============== -->
+  <article class="sc">
+    <div class="sc-head">
+      <span class="sc-tier L1">Level 1 · Tier-1 ticket</span>
+      <span class="sc-time">Resolved in <strong>6 min</strong> · standard queue avg 23 min</span>
+      <h2 class="sc-title">Locked-out user — MFA stuck on lost-device after phone replacement</h2>
+    </div>
+
+    <div class="sc-body">
+      <div>
+        <div class="sc-section">
+          <h4>What the user reports</h4>
+          <div class="sc-user-quote">
+            <span class="who">User · marketing coordinator</span>
+            "I got a new phone and now Outlook keeps asking me to approve sign-in from my old Authenticator. I don't have that device anymore — what do I do?"
+          </div>
+        </div>
+
+        <div class="sc-section">
+          <h4>ARIA's reasoning trail</h4>
+          <div class="sc-trail">
+            <div class="sc-trail-row"><span class="key">FRAMEWORK</span><span>5 W's — narrows scope to identity vs. mail-client issue.</span></div>
+            <div class="sc-trail-row"><span class="key">WHO</span><span>Single user · standard licensed M365 mailbox · not a shared/service account.</span></div>
+            <div class="sc-trail-row"><span class="key">WHAT</span><span>MFA challenge cannot be completed — registered Authenticator device is gone.</span></div>
+            <div class="sc-trail-row"><span class="key">WHEN</span><span>Started after phone replacement (last 24 h).</span></div>
+            <div class="sc-trail-row"><span class="key">WHY</span><span>Old MFA registration still bound to lost device · admin reset required.</span></div>
+            <div class="sc-trail-row"><span class="key">KB MATCH</span><span>Article AAD-MFA-08 · "Admin-initiated MFA reset → user re-registration via aka.ms/mfasetup".</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sc-section">
+          <h4>ARIA's response</h4>
+          <div class="sc-resp">
+            <div class="who">ARIA</div>
+            Here's the cleanest path. Two steps — one for IT, one for you.
+            <ol>
+              <li><strong>IT side (you can request via <code>helpdesk@</code>):</strong> Admin opens Entra ID → Users → your account → Authentication methods → click <code>Require re-register MFA</code>. Takes 30 seconds.</li>
+              <li><strong>Your side:</strong> Sign out of Outlook fully. Re-open. When prompted, browse to <code>https://aka.ms/mfasetup</code>, install Microsoft Authenticator on your new phone, scan the QR code, approve once. Done.</li>
+            </ol>
+            <p style="margin:14px 0 0;color:rgba(255,255,255,.65);font-size:12.5px">Want me to draft the IT request for you? Reply <code>yes</code> and I'll send the message in your tone with the right detail.</p>
+          </div>
+
+          <div class="sc-outcome">
+            <span><strong>Resolved · 6 min</strong> · user productive again, zero escalation</span>
+            <span class="vs">Typical Tier-1 queue: 23 min &middot; common L1 misroute to L2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-try">
+      <p><strong>Want to test this on ARIA right now?</strong> Open the trial and paste the user quote above — same engine, same KB, same response in seconds.</p>
+      <a href="/aria">Try this scenario live →</a>
+    </div>
+  </article>
+
+  <!-- ============== L2 SCENARIO ============== -->
+  <article class="sc">
+    <div class="sc-head">
+      <span class="sc-tier L2">Level 2 · Tier-2 admin task</span>
+      <span class="sc-time">Resolved in <strong>14 min</strong> · standard L2 avg 1h 12min</span>
+      <h2 class="sc-title">SharePoint inherited permissions broken — new hire missing on one departmental site only</h2>
+    </div>
+
+    <div class="sc-body">
+      <div>
+        <div class="sc-section">
+          <h4>What the admin reports</h4>
+          <div class="sc-user-quote">
+            <span class="who">Admin · IT lead, mid-size firm</span>
+            "We added Lin (new hire) to the Operations security group two days ago. She sees every SharePoint site except 'Operations · Procurement.' That site uses the same group. Group membership is correct on our end. Where do I look?"
+          </div>
+        </div>
+
+        <div class="sc-section">
+          <h4>ARIA's reasoning trail</h4>
+          <div class="sc-trail">
+            <div class="sc-trail-row"><span class="key">FRAMEWORK</span><span>First Principles — what controls SP access at the site, library, and item level?</span></div>
+            <div class="sc-trail-row"><span class="key">HYPOTHESIS A</span><span>Group sync lag (Azure AD → SharePoint) · ruled out: other sites show the group.</span></div>
+            <div class="sc-trail-row"><span class="key">HYPOTHESIS B</span><span>Site-level inheritance broken — admin once clicked "Stop Inheriting Permissions" on this site.</span></div>
+            <div class="sc-trail-row"><span class="key">HYPOTHESIS C</span><span>Conditional Access / sensitivity label override · low likelihood — only one site affected.</span></div>
+            <div class="sc-trail-row"><span class="key">KB MATCH</span><span>Article SP-PERM-11 · "Diagnose broken inheritance on a SharePoint site collection".</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sc-section">
+          <h4>ARIA's response</h4>
+          <div class="sc-resp">
+            <div class="who">ARIA · L2</div>
+            High-confidence diagnosis: site inheritance was broken at some point. Here is the verification path and the fix.
+            <ol>
+              <li><strong>Verify:</strong> Open the "Operations · Procurement" site → ⚙ Site settings → Site permissions. If you see "This site has unique permissions" instead of "Same as parent" → confirmed.</li>
+              <li><strong>Choose your fix:</strong>
+                <br>(a) <em>Add the group on this site only</em> — fastest. Add the Operations security group with the same role (Member / Edit).
+                <br>(b) <em>Restore inheritance</em> — cleaner long term, but check that no per-site exceptions will break.</li>
+              <li><strong>Verify (1 min):</strong> Have Lin clear her SharePoint cache (<code>Ctrl+F5</code> on the site) and confirm access.</li>
+            </ol>
+            <p style="margin:14px 0 0;color:rgba(255,255,255,.65);font-size:12.5px">I can also generate a PowerShell snippet to audit every site collection where inheritance is broken — want it?</p>
+          </div>
+
+          <div class="sc-outcome">
+            <span><strong>Resolved · 14 min</strong> · root cause confirmed, audit script delivered</span>
+            <span class="vs">Typical L2 routing: handoff to senior admin · 1h 12min average</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-try">
+      <p><strong>This is a real failure mode I've fixed dozens of times on the desk.</strong> The audit script ARIA generates catches it across the whole tenant in one pass.</p>
+      <a href="/aria">Try this scenario live →</a>
+    </div>
+  </article>
+
+  <!-- ============== L3 SCENARIO ============== -->
+  <article class="sc">
+    <div class="sc-head">
+      <span class="sc-tier L3">Level 3 · P1 incident · hybrid identity</span>
+      <span class="sc-time">Triaged in <strong>47 min</strong> · typical P1 escalation 4h+</span>
+      <h2 class="sc-title">Hybrid identity sync conflict — half of cloud users lost group memberships overnight</h2>
+    </div>
+
+    <div class="sc-body">
+      <div>
+        <div class="sc-section">
+          <h4>What the on-call admin reports</h4>
+          <div class="sc-user-quote">
+            <span class="who">On-call · regulated healthcare environment</span>
+            "Half our cloud users came in this morning with no group memberships. SharePoint sites are locked. Teams channels show empty rosters. On-prem AD looks fine. AAD Connect ran overnight. What changed?"
+          </div>
+        </div>
+
+        <div class="sc-section">
+          <h4>ARIA's reasoning trail</h4>
+          <div class="sc-trail">
+            <div class="sc-trail-row"><span class="key">FRAMEWORK</span><span>DMAIC — Define · Measure · Analyze · Improve · Control. P1 scope first, fix second.</span></div>
+            <div class="sc-trail-row"><span class="key">DEFINE</span><span>Symptom: cloud group memberships dropped. Scope: only objects originally synced from on-prem AD.</span></div>
+            <div class="sc-trail-row"><span class="key">MEASURE</span><span>Which AAD Connect sync run? Run history check via <code>Get-ADSyncConnectorRunStatus</code>. Look for <code>partition-deletion-threshold-exceeded</code>.</span></div>
+            <div class="sc-trail-row"><span class="key">ANALYZE</span><span>Most likely root: a botched merger / OU restructure on on-prem caused mass <code>objectGUID</code> change → soft-match collision → AAD Connect dropped memberships rather than corrupting.</span></div>
+            <div class="sc-trail-row"><span class="key">KB MATCH</span><span>Article AAD-HYB-07 · "Soft-match collision after AD OU restructure — recovery via targeted re-sync".</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sc-section">
+          <h4>ARIA's response</h4>
+          <div class="sc-resp">
+            <div class="who">ARIA · L3 P1</div>
+            Treat as a sync-rules incident, not a data loss. Containment first, then recovery.
+            <ol>
+              <li><strong>Containment (do this now):</strong> <code>Stop-ADSyncSyncCycle</code> on the AAD Connect server. Prevents further damage until we know what's writing.</li>
+              <li><strong>Diagnose:</strong> Run <code>Get-ADSyncConnectorRunStatus</code> and check the last 24h run history. Look for any run flagged <code>partition-deletion-threshold-exceeded</code> — that's the smoking gun for accidental mass deletion.</li>
+              <li><strong>Identify scope:</strong> In AAD Connect's Synchronization Service Manager → MA → search connector space for objects in <code>pending-export-delete</code> state. That's your impacted user list.</li>
+              <li><strong>Recover memberships:</strong> If on-prem AD is healthy (it is), re-enable sync and force a full import. Memberships re-flow from source-of-truth.</li>
+              <li><strong>Root cause (for the postmortem):</strong> Check on-prem OU activity 24h before the symptom. A bulk OU move or import of staged users from an acquired domain commonly triggers this.</li>
+            </ol>
+            <p style="margin:14px 0 0;color:rgba(255,255,255,.65);font-size:12.5px">I can generate a full incident-response runbook for this in your incident format — Aperture-ready, with timestamps. Want it?</p>
+          </div>
+
+          <div class="sc-outcome">
+            <span><strong>Triaged · 47 min</strong> · containment + recovery path defined</span>
+            <span class="vs">Typical P1 hybrid-identity escalation: 4h+ to senior consultant · $$$</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-try">
+      <p><strong>This is the exact scenario from our Aperture command-center demo (L3, Hard).</strong> The same reasoning fires in the live trial.</p>
+      <a href="/aria">Try this scenario live →</a>
+    </div>
+  </article>
+
+</div>
+
+<!-- Closing CTA -->
+<section class="ss-cta">
+  <div class="ss-cta-card">
+    <div>
+      <h3>Want to <span class="gold">test ARIA on your own scenario</span> right now?</h3>
+      <p>Open the trial, paste a real ticket or describe a workflow problem you'd want triaged. 15 free minutes — no card, no commitment. Same engine, same KB, same reasoning trail as the samples above.</p>
+    </div>
+    <div class="actions">
+      <a class="ss-cta-btn" href="/aria">Try ARIA live →</a>
+      <a class="ss-cta-btn alt" href="mailto:ahmad.wasee@iisupp.net?subject=Pilot%20program%20interest">Ask about a 30-day pilot</a>
+    </div>
+  </div>
+</section>
+
+<footer class="ss-foot">
+  <p class="note"><strong>Compliance note:</strong> The three scenarios above are illustrative samples built from common Microsoft 365 / Azure AD failure modes ARIA's KB covers. They do not name or describe specific client engagements. The reasoning trails, KB article IDs, and resolution paths are real — try them on the live trial to verify.</p>
+  <p>&copy; 2026 Integrated IT Support Inc. &middot; <a href="/">Home</a> &middot; <a href="/aria">Try ARIA</a> &middot; <a href="/plans">Plans</a> &middot; <a href="mailto:ahmad.wasee@iisupp.net">Contact</a></p>
+</footer>
+
+</body>
+</html>
