@@ -956,7 +956,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   var PLANS_PATH = "/plans/";
   var TRIAL_MS = 3 * 60 * 1000;
   var KEY = "aria_trial_started_at";
-  var ARIA_SECTION_IDS = ["aria-demo"];
+  var ARIA_SECTION_IDS = ["aria-demo","ariaBrowser","chatBrowser","aria-browser"];
 
   function rewritePlansLinks() {
     document.querySelectorAll("a").forEach(function (a) {
@@ -1016,6 +1016,22 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       ".aria-locked-cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(197,160,89,.4)}" +
       ".aria-locked-sub{margin-top:14px;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.08em}" +
       ".aria-locked-sub a{color:#c5a059;text-decoration:none}" +
+      ".aria-locked-card.tariff{max-width:580px;padding:24px 26px}" +
+      ".aria-locked-eyebrow{display:block;color:#c5a059;font-size:9px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;margin-bottom:10px}" +
+      ".aria-locked-card .arl-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0 14px}" +
+      "@media (max-width:520px){.aria-locked-card .arl-grid{grid-template-columns:1fr}}" +
+      ".aria-locked-card .arl-tile{border:1px solid rgba(197,160,89,.32);border-radius:12px;padding:14px 12px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:8px;text-align:center;position:relative}" +
+      ".aria-locked-card .arl-tile.featured{border-color:rgba(241,220,167,.75);background:rgba(241,220,167,.08)}" +
+      ".aria-locked-card .arl-tile.featured::before{content:\"RECOMMENDED\";position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#c5a059;color:#1a1407;padding:2px 9px;font-size:8px;letter-spacing:.18em;font-weight:800;border-radius:999px}" +
+      ".aria-locked-card .arl-tier{color:#c5a059;font-size:8px;letter-spacing:.28em;text-transform:uppercase;font-weight:700}" +
+      ".aria-locked-card .arl-price{color:#f1dca7;font-family:Cinzel,serif;font-size:20px;font-weight:700;margin:2px 0}" +
+      ".aria-locked-card .arl-period{color:rgba(243,236,217,.55);font-size:9px;letter-spacing:.12em}" +
+      ".aria-locked-card .arl-desc{color:rgba(255,255,255,.65);font-size:10.5px;line-height:1.45;min-height:30px}" +
+      ".aria-locked-card .arl-pick{margin-top:6px;background:linear-gradient(135deg,#b8954f,#d8bd84 50%,#9c7322);color:#1a1407;border:none;border-radius:6px;padding:7px 8px;font-family:Inter,sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;font-family:inherit}" +
+      ".aria-locked-card .arl-pick:hover{filter:brightness(1.08)}" +
+      ".aria-locked-card .arl-pick:disabled{opacity:.6;cursor:progress}" +
+      ".aria-locked-card .arl-seemore{display:inline-block;margin-top:6px;color:#f1dca7;font-size:10px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(241,220,167,.5);padding:8px 18px;border-radius:999px;background:rgba(15,12,7,.7)}" +
+      ".aria-locked-card .arl-seemore:hover{background:rgba(241,220,167,.18)}" +
       "#ariaFab.aria-locked-fab{filter:blur(4px) saturate(.7);opacity:.55;cursor:not-allowed !important;transition:filter .3s}";
     var s = document.createElement("style");
     s.id = "aria-trial-style";
@@ -1044,13 +1060,40 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       var overlay = document.createElement("div");
       overlay.className = "aria-locked-overlay";
       overlay.innerHTML =
-        '<div class="aria-locked-card">' +
-          '<h3>Your <span class="gold">trial</span> is up</h3>' +
-          '<p>Pick a plan to keep using ARIA. The rest of the site stays open — explore as much as you want.</p>' +
-          '<a class="aria-locked-cta" href="' + PLANS_PATH + '">VIEW PLANS →</a>' +
+        '<div class="aria-locked-card tariff">' +
+          '<span class="aria-locked-eyebrow">Trial ended · Time to commit</span>' +
+          '<h3>Continue with <span class="gold">ARIA</span></h3>' +
+          '<p>Pick a plan to keep chatting. The rest of the site stays open — explore as much as you want.</p>' +
+          '<div class="arl-grid">' +
+            '<div class="arl-tile"><span class="arl-tier">Personal</span><span class="arl-price">$599</span><span class="arl-period">/month</span><span class="arl-desc">For one user. Full chat + KB access.</span><button class="arl-pick" data-tier="personal">Pick Personal</button></div>' +
+            '<div class="arl-tile featured"><span class="arl-tier">Pro</span><span class="arl-price">$1,500</span><span class="arl-period">/month</span><span class="arl-desc">For consultants. Voice mode + receipts.</span><button class="arl-pick" data-tier="pro">Pick Pro</button></div>' +
+            '<div class="arl-tile"><span class="arl-tier">Small Biz</span><span class="arl-price">$156K</span><span class="arl-period">/year</span><span class="arl-desc">Up to 10 users. Company KB upload.</span><button class="arl-pick" data-tier="small_business">Pick SMB</button></div>' +
+          '</div>' +
+          '<a class="arl-seemore" href="' + PLANS_PATH + '">See all plans →</a>' +
           '<div class="aria-locked-sub">Or <a href="mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Sales%20Inquiry">talk to sales</a></div>' +
         '</div>';
       el.appendChild(overlay);
+      overlay.querySelectorAll(".arl-pick").forEach(function(btn){
+        btn.addEventListener("click", async function(){
+          if (btn.disabled) return;
+          btn.disabled = true;
+          var orig = btn.textContent;
+          btn.textContent = "Connecting...";
+          try {
+            var r = await fetch("/.netlify/functions/stripe-checkout", {
+              method:"POST", headers:{"Content-Type":"application/json"},
+              body: JSON.stringify({tier: btn.dataset.tier})
+            });
+            var d = await r.json();
+            if (d && d.url) { window.location = d.url; return; }
+            throw new Error((d && d.error) || "Checkout failed");
+          } catch(e){
+            btn.disabled = false;
+            btn.textContent = orig;
+            alert("Could not start checkout: " + (e.message || e) + "\nEmail ahmad.wasee@iisupp.net to complete the purchase.");
+          }
+        });
+      });
     });
     ["ariaFab","installAppButton"].forEach(function (id) {
       var el = document.getElementById(id);
