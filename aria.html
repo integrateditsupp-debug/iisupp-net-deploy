@@ -82,10 +82,10 @@
     height:100dvh;
     min-height:620px;
     display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(360px,560px);
+    grid-template-columns:minmax(0,1.4fr) minmax(280px,1fr);
     grid-template-rows:auto auto minmax(0,1fr);
-    gap:18px;
-    padding:60px 22px 22px;
+    gap:clamp(10px,1.4vw,18px);
+    padding:clamp(44px,5vh,60px) clamp(14px,2vw,22px) clamp(14px,2vw,22px);
     position:relative;z-index:1;
     overflow:hidden;
   }
@@ -94,7 +94,7 @@
     .app{padding:50px 18px 18px;gap:14px}
   }
   @media (max-height:720px){
-    .app{padding:44px 16px 16px;gap:12px;grid-template-columns:minmax(0,1fr) minmax(340px,520px)}
+    .app{padding:38px 14px 14px;gap:10px;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr)}
     .topbar{top:14px;font-size:10px}
   }
   .topbar{
@@ -1524,17 +1524,44 @@
   }
   /* 2-column shell with public-safe monitoring bands on top (desktop only) */
   @media (min-width:901px){
-    .app{grid-template-columns:minmax(0,1fr) minmax(380px,560px);grid-template-rows:auto auto minmax(0,1fr)}
+    .app{grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr);grid-template-rows:auto auto minmax(0,1fr)}
     .ap-band{grid-column:1 / -1}
     .ap-rail{grid-column:1 / -1}
   }
+  /* === SMART AUTO-FIT (added 2026-06-17): on narrow desktop (901-1279px)
+         flip to single column so chat browser always has full width.
+         Stats panel stacks below — discoverable but not crowding the chat. */
+  @media (min-width:901px) and (max-width:1279px){
+    .app{
+      grid-template-columns:minmax(0,1fr) !important;
+      grid-template-rows:auto auto auto auto !important;
+      height:auto; min-height:100vh;
+      overflow:auto;
+      padding-top:clamp(44px,5vh,60px);
+    }
+    body{ overflow:auto; height:auto; min-height:100vh; }
+    .ap-band, .ap-rail{ grid-column:1 / -1 }
+    .ap-rail{
+      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+      max-height:none; overflow:visible;
+    }
+    .browser-frame{ height:auto; min-height:clamp(520px,72vh,720px); }
+    .chat-dock{ position:relative !important; top:auto !important; bottom:auto !important;
+                left:auto !important; transform:none !important;
+                width:min(100%,680px) !important; margin:14px auto 8px; }
+  }
+  /* Very wide desktop (≥1600px): nudge chat even larger */
+  @media (min-width:1600px){
+    .app{ grid-template-columns:minmax(0,1.7fr) minmax(320px,1fr); padding:60px clamp(22px,3vw,40px) clamp(22px,3vw,40px); }
+  }
+
   /* ---- scenario band (top, full width) ---- */
   .ap-band{background:var(--ap-surface);border:1px solid var(--ap-border);border-radius:14px;padding:13px 16px;min-width:0}
   .ap-band-row{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
   .ap-band-tier{font-family:var(--ap-mono);font-weight:700;font-size:12px;letter-spacing:.1em;padding:3px 9px;border-radius:3px;color:#04140f}
   .ap-band-tier.L1{background:var(--ap-green)} .ap-band-tier.L2{background:var(--ap-amber)} .ap-band-tier.L3{background:var(--ap-red);color:#1a0608}
   .ap-band-diff{font-family:var(--ap-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ap-text-3)}
-  .ap-band-title{font-family:var(--ap-mono);font-size:14px;font-weight:600;color:var(--ap-text);margin:0;letter-spacing:.02em;min-width:0}
+  .ap-band-title{font-family:var(--ap-mono);font-size:clamp(12px,1.1vw,14px);font-weight:600;color:var(--ap-text);margin:0;letter-spacing:.02em;min-width:0;line-height:1.35}
   .ap-band-quote{font-family:var(--ap-mono);font-size:11px;color:var(--ap-teal);margin-top:7px;opacity:.92}
   .ap-tag-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
   .ap-tag{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;font-family:var(--ap-mono);font-size:10px;background:var(--ap-surface-2);border:1px solid var(--ap-border);color:var(--ap-text-2);border-radius:2px}
