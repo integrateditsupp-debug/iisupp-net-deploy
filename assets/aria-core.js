@@ -1143,11 +1143,11 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       "#vision-roadmap .rm-stone.visible{opacity:1;transform:translateY(0)}" +
       "#vision-roadmap .rm-card{background:none;border:none;border-radius:0;padding:14px 22px;box-shadow:none;transition:none}" +
       "#vision-roadmap .rm-card:hover{background:none;border:none;box-shadow:none}" +
-      "#vision-roadmap .rm-stone.left .rm-card{grid-column:1;text-align:right}" +
-      "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left}" +
+      "#vision-roadmap .rm-stone.left .rm-card{grid-column:1;text-align:right;justify-self:end}" +
+      "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left;justify-self:start}" +
       "#vision-roadmap .rm-stone.left .rm-spacer{grid-column:3}" +
       "#vision-roadmap .rm-stone.right .rm-spacer{grid-column:1}" +
-      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:11px;letter-spacing:.04em;position:relative}" +
+      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:10px;letter-spacing:.04em;position:relative}" +
       "#vision-roadmap .rm-card h3{font-family:Cinzel,serif;font-size:18px;color:#f1dca7;margin:0 0 8px;letter-spacing:.02em;line-height:1.25}" +
       "#vision-roadmap .rm-card p{color:rgba(241,220,167,.78);font-size:13.5px;line-height:1.65;margin:0}" +
       "#vision-roadmap .rm-badge{display:inline-block;margin-top:10px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-family:Cinzel,serif;font-weight:700;padding:3px 10px;border-radius:6px}" +
@@ -1156,8 +1156,8 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       "#vision-roadmap .rm-stone.done .rm-badge{background:rgba(34,197,94,.16);color:#86efac;border:1px solid rgba(34,197,94,.4)}" +
       "#vision-roadmap .rm-stone.current .rm-node{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;box-shadow:0 0 22px rgba(241,220,167,.7),inset 0 0 0 1.5px rgba(255,255,255,.25);animation:rmPulse 2.2s infinite}" +
       "#vision-roadmap .rm-stone.current .rm-card{border-color:rgba(241,220,167,.6);background:linear-gradient(165deg,#1a1410 0%,#251a12 100%);box-shadow:0 0 50px rgba(241,220,167,.18)}" +
-      "#vision-roadmap .rm-flip{perspective:900px;min-height:128px;cursor:pointer}" +
-      "#vision-roadmap .rm-flip-inner{position:relative;width:100%;min-height:128px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}" +
+      "#vision-roadmap .rm-flip{perspective:900px;min-height:170px;max-width:260px;cursor:pointer}" +
+      "#vision-roadmap .rm-flip-inner{position:relative;width:100%;min-height:170px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}" +
       "#vision-roadmap .rm-flip:hover .rm-flip-inner,#vision-roadmap .rm-flip:focus-within .rm-flip-inner{transform:rotateY(180deg)}" +
       "#vision-roadmap .rm-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;border:1px solid rgba(197,160,89,.22);background:linear-gradient(160deg,rgba(255,255,255,.02),rgba(197,160,89,.04));padding:14px 18px;display:flex;flex-direction:column;justify-content:center}" +
       "#vision-roadmap .rm-face.rm-back{transform:rotateY(180deg);background:linear-gradient(165deg,#1a1410 0%,#251a12 100%);border-color:rgba(241,220,167,.4)}" +
@@ -1197,7 +1197,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
         "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left}" +
         "#vision-roadmap .rm-stone.left .rm-spacer{display:block;grid-column:3}" +
         "#vision-roadmap .rm-stone.right .rm-spacer{display:block;grid-column:1}" +
-        "#vision-roadmap .rm-node{grid-column:2;grid-row:auto;width:28px;height:28px;font-size:8px;margin-top:0}" +
+        "#vision-roadmap .rm-node{grid-column:2;grid-row:auto;width:22px;height:22px;font-size:8px;margin-top:0}" +
         "#vision-roadmap .rm-card{padding:6px 4px}" +
         "#vision-roadmap .rm-card h3{font-size:11.3px;line-height:1.22;margin-bottom:5px;overflow-wrap:anywhere}" +
         "#vision-roadmap .rm-card p{font-size:9.4px;line-height:1.38;overflow-wrap:anywhere}" +
