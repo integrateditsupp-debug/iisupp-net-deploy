@@ -1239,20 +1239,20 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   function injectStyles() {
     if (document.getElementById("rm-style")) return;
     var css =
-      "#vision-roadmap{position:relative;padding:48px 20px 56px;max-width:1200px;margin:0 auto;overflow:hidden;z-index:2}" +
-      "#vision-roadmap .rm-head{text-align:center;max-width:760px;margin:0 auto 32px;position:relative;z-index:2}" +
+      "#vision-roadmap{position:relative;padding:28px 20px 36px;max-width:1200px;margin:0 auto;overflow:hidden;z-index:2}" +
+      "#vision-roadmap .rm-head{text-align:center;max-width:760px;margin:0 auto 18px;position:relative;z-index:2}" +
       "#vision-roadmap .rm-tag{color:#c5a059;font-size:11px;letter-spacing:.34em;margin:0 0 14px;text-transform:uppercase}" +
       "#vision-roadmap h2{font-family:Cinzel,serif;font-size:44px;font-weight:700;color:#fff;margin:0 0 18px;line-height:1.1}" +
       "#vision-roadmap h2 .rm-gold{color:#c5a059}" +
       "#vision-roadmap .rm-sub{color:rgba(255,255,255,.72);font-size:16px;line-height:1.6;margin:0}" +
       "#vision-roadmap .rm-track{position:relative}" +
-      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:24px;padding-top:12px}" +
+      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:10px;padding-top:6px}" +
       "#vision-roadmap .rm-tree{position:absolute;left:50%;top:0;width:240px;height:100%;transform:translateX(-50%);z-index:1;pointer-events:none}" +
       "#vision-roadmap .rm-stone::before{content:'';position:absolute;top:50%;height:1.5px;transform:translateY(-50%);z-index:1;pointer-events:none;box-shadow:0 0 6px rgba(241,220,167,.4)}" +
       "#vision-roadmap .rm-stone.left::before{right:50%;width:36%;background:linear-gradient(270deg,rgba(241,220,167,.85),rgba(241,220,167,0))}" +
       "#vision-roadmap .rm-stone.right::before{left:50%;width:36%;background:linear-gradient(90deg,rgba(241,220,167,.85),rgba(241,220,167,0))}" +
       "@media (max-width:720px){#vision-roadmap .rm-tree{display:block;left:50%;width:92px;opacity:.58}#vision-roadmap .rm-stone::before{display:block;width:30%}#vision-roadmap .rm-stone.left::before{right:50%;background:linear-gradient(270deg,rgba(241,220,167,.72),rgba(241,220,167,0))}#vision-roadmap .rm-stone.right::before{left:50%;background:linear-gradient(90deg,rgba(241,220,167,.72),rgba(241,220,167,0))}}" +
-      "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 64px 1fr;gap:14px;align-items:center;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
+      "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 64px 1fr;gap:14px;align-items:center;justify-items:stretch;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
       "#vision-roadmap .rm-stone.visible{opacity:1;transform:translateY(0)}" +
       "#vision-roadmap .rm-card{background:none;border:none;border-radius:0;padding:14px 22px;box-shadow:none;transition:none}" +
       "#vision-roadmap .rm-card:hover{background:none;border:none;box-shadow:none}" +
@@ -1260,7 +1260,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left;justify-self:start}" +
       "#vision-roadmap .rm-stone.left .rm-spacer{grid-column:3}" +
       "#vision-roadmap .rm-stone.right .rm-spacer{grid-column:1}" +
-      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:10px;letter-spacing:.04em;position:relative}" +
+      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;align-self:center;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:10px;letter-spacing:.04em;position:relative}" +
       "#vision-roadmap .rm-card h3{font-family:Cinzel,serif;font-size:18px;color:#f1dca7;margin:0 0 8px;letter-spacing:.02em;line-height:1.25}" +
       "#vision-roadmap .rm-card p{color:rgba(241,220,167,.78);font-size:13.5px;line-height:1.65;margin:0}" +
       "#vision-roadmap .rm-badge{display:inline-block;margin-top:10px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-family:Cinzel,serif;font-weight:700;padding:3px 10px;border-radius:6px}" +

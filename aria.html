@@ -5267,18 +5267,16 @@ if (_prefill){
   }
 
   function init() {
+    // Defer to aria-aperture-bridge.js (#apIntakeOverlay) as the primary gate.
+    // We only wire the optional Log-out button + re-dispatch aria-user-set so
+    // the per-email trial in aria-core.js stays in sync.
     var form = $("aoForm");
     if (form) form.addEventListener("submit", onSubmit);
     var lb = $("ariaLogoutBtn");
     if (lb) lb.addEventListener("click", onLogout);
     var p = readProfile();
-    if (p && p.email) {
-      // Already signed in this browser: hide modal, ensure email is current
-      writeProfile(p);  // re-dispatch aria-user-set so trial rebases
-      hideModal();
-    } else {
-      showModal();
-    }
+    if (p && p.email) writeProfile(p);  // rebase trial under stored email
+    hideModal();  // always hide — bridge controls the visible gate
   }
 
   if (document.readyState === "loading") {

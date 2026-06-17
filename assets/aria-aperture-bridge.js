@@ -162,11 +162,13 @@
         }
         session = { sessionId: j.sessionId, ticket: j.ticket, user: data, startedAt: Date.now() };
         saveSession(); // fires storage event in other tabs
+        try { if (data && data.email) { localStorage.setItem('aria_user_email', String(data.email).toLowerCase()); localStorage.setItem('aria_user_profile', JSON.stringify({firstName:data.firstName,lastName:data.lastName,company:data.company||'',email:String(data.email).toLowerCase(),startedAt:Date.now()})); window.dispatchEvent(new CustomEvent('aria-user-set', { detail: data })); } } catch(e) {}
         overlay.remove();
         showTicketBanner(j.ticket);
         startWatching();
       } catch (e) {
         const local = startLocalSession(data, e.message || e);
+        try { if (data && data.email) { localStorage.setItem('aria_user_email', String(data.email).toLowerCase()); localStorage.setItem('aria_user_profile', JSON.stringify({firstName:data.firstName,lastName:data.lastName,company:data.company||'',email:String(data.email).toLowerCase(),startedAt:Date.now()})); window.dispatchEvent(new CustomEvent('aria-user-set', { detail: data })); } } catch(e) {}
         overlay.remove();
         showTicketBanner(local.ticket);
         startWatching();
