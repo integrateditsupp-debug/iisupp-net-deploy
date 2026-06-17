@@ -1744,24 +1744,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-8">INTEGRATED IT SUPPORT <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic uppercase">Preventative Aid</span></h1>
 
             <!-- Lively animated globe -->
-            <div class="hero-globe" aria-hidden="true">
-                <div class="hero-globe-glow"></div>
-                <div class="hero-globe-sphere">
-                    <div class="hero-globe-grid"></div>
-                    <div class="hero-globe-grid alt"></div>
-                </div>
-                <div class="hero-globe-orbit"></div>
-                <div class="hero-globe-orbit alt"></div>
-                <div class="hero-globe-orbit ring3"></div>
-                <img class="hero-globe-logo" src="/images/logo.png" alt="" aria-hidden="true" draggable="false">
-                <span class="hero-globe-spark s1"></span>
-                <span class="hero-globe-spark s2"></span>
-                <span class="hero-globe-spark s3"></span>
-                <span class="hero-globe-spark s4"></span>
-                <span class="hero-globe-spark s5"></span>
-                <span class="hero-globe-spark s6"></span>
-                <span class="hero-globe-spark s7"></span>
-            </div>
+            <div id="heroAriaGlobe" class="hero-aria-globe" aria-hidden="true"><div class="globe-wrap" id="heroGlobeWrap"></div></div>
 
             <p class="max-w-2xl mx-auto text-white/40 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-6">We don't just fix problems — we keep your operations running smoothly.</p>
             <p class="max-w-xl mx-auto text-white/30 text-[10px] md:text-[11px] tracking-wider uppercase font-light leading-relaxed mb-10">System-driven · outcome-owned · considered before every change.</p>
@@ -1812,134 +1795,89 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         color: #1a1407; font-size: 9px; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase;
       }
 
-      /* === Animated globe — premium, lively, IIS-branded === */
-      .hero-globe {
-        position: relative; width: 280px; height: 280px;
-        margin: 0 auto 32px;
-        animation: heroGlobeFloat 5s ease-in-out infinite;
-      }
-      @media (min-width: 768px) { .hero-globe { width: 360px; height: 360px; margin-bottom: 40px; } }
-      .hero-globe-glow {
-        position: absolute; inset: -10%;
-        border-radius: 50%;
-        background: radial-gradient(circle at 50% 50%, rgba(241,220,167,0.28), rgba(197,160,89,0.10) 35%, transparent 65%);
-        filter: blur(8px);
-        animation: heroGlobePulse 4s ease-in-out infinite;
-        pointer-events: none;
-      }
-      .hero-globe-sphere {
-        position: absolute; inset: 14%;
-        border-radius: 50%;
-        background:
-          radial-gradient(circle at 32% 28%, rgba(255,238,200,0.70), rgba(241,220,167,0.30) 28%, rgba(197,160,89,0.22) 50%, rgba(60,42,18,0.55) 72%, rgba(10,8,5,0.97) 90%),
-          radial-gradient(circle at 70% 75%, rgba(91,165,204,0.22), transparent 55%);
-        box-shadow: inset -22px -30px 60px rgba(0,0,0,0.72),
-                    inset 22px 18px 70px rgba(255,238,200,0.22),
-                    0 0 90px rgba(241,220,167,0.36),
-                    0 0 170px rgba(197,160,89,0.18);
-        overflow: hidden;
-        animation: heroGlobeSpin 16s linear infinite;
-      }
-      .hero-globe-grid {
-        position: absolute; inset: 0; border-radius: 50%;
-        background:
-          repeating-linear-gradient(0deg, transparent 0 12px, rgba(241,220,167,0.22) 12px 13px),
-          repeating-linear-gradient(90deg, transparent 0 16px, rgba(241,220,167,0.18) 16px 17px);
-        mix-blend-mode: screen;
-        opacity: 0.75;
-      }
-      .hero-globe-grid.alt {
-        background:
-          repeating-linear-gradient(45deg, transparent 0 20px, rgba(91,165,204,0.22) 20px 21px),
-          repeating-linear-gradient(-45deg, transparent 0 26px, rgba(241,220,167,0.10) 26px 27px);
-        opacity: 0.55;
-        animation: heroGlobeShimmer 5s ease-in-out infinite;
-      }
-      .hero-globe-orbit {
-        position: absolute; inset: 0;
-        border-radius: 50%;
-        border: 1px solid rgba(241,220,167,0.5);
-        transform: rotate3d(1, 0, 0, 72deg);
-        box-shadow: 0 0 22px rgba(241,220,167,0.28);
-        animation: heroGlobeOrbit 9s linear infinite;
-      }
-      .hero-globe-orbit.alt {
-        inset: 6%;
-        border-color: rgba(91,165,204,0.42);
-        transform: rotate3d(1, 0.4, 0, 110deg);
-        animation-duration: 13s;
-        animation-direction: reverse;
-      }
-      .hero-globe-orbit.ring3 {
-        inset: -4%;
-        border-color: rgba(197,160,89,0.32);
-        transform: rotate3d(0.6, 1, 0, 60deg);
-        animation-duration: 18s;
-        box-shadow: 0 0 28px rgba(197,160,89,0.18);
-      }
-      /* IIS "I" logo blended on top of the globe */
-      .hero-globe-logo {
-        position: absolute;
-        top: 50%; left: 50%;
-        width: 56%; height: auto;
-        transform: translate(-50%, -50%);
-        opacity: 0.92;
-        mix-blend-mode: screen;
-        filter:
-          drop-shadow(0 0 14px rgba(241,220,167,0.6))
-          drop-shadow(0 0 28px rgba(197,160,89,0.45))
-          brightness(1.08);
-        pointer-events: none;
-        z-index: 3;
-        animation: heroGlobeLogoBreath 4.5s ease-in-out infinite;
-      }
-      .hero-globe-spark {
-        position: absolute; width: 5px; height: 5px; border-radius: 50%;
-        background: #fff7dc;
-        box-shadow: 0 0 12px #f1dca7, 0 0 28px rgba(241,220,167,0.7);
-        animation: heroGlobeSparkle 2.4s ease-in-out infinite;
-        z-index: 4;
-      }
-      .hero-globe-spark.s1 { left: 22%; top: 28%; animation-delay: 0s; }
-      .hero-globe-spark.s2 { right: 18%; top: 36%; animation-delay: 0.4s; }
-      .hero-globe-spark.s3 { left: 38%; bottom: 18%; animation-delay: 0.8s; }
-      .hero-globe-spark.s4 { right: 30%; bottom: 26%; animation-delay: 1.2s; }
-      .hero-globe-spark.s5 { left: 50%; top: 12%; animation-delay: 1.6s; }
-      .hero-globe-spark.s6 { right: 12%; bottom: 42%; animation-delay: 2.0s; }
-      .hero-globe-spark.s7 { left: 14%; top: 58%; animation-delay: 0.2s; }
-      @keyframes heroGlobeSpin {
-        from { background-position: 0 0, 0 0; transform: rotate(0deg); }
-        to   { background-position: 360px 0, 360px 0; transform: rotate(360deg); }
-      }
-      @keyframes heroGlobeOrbit {
-        from { transform: rotate3d(1, 0, 0, 72deg) rotateZ(0deg); }
-        to   { transform: rotate3d(1, 0, 0, 72deg) rotateZ(360deg); }
-      }
-      @keyframes heroGlobeFloat {
-        0%,100% { transform: translateY(0); }
-        50%     { transform: translateY(-10px); }
-      }
-      @keyframes heroGlobePulse {
-        0%,100% { opacity: 0.85; transform: scale(1); }
-        50%     { opacity: 1;    transform: scale(1.05); }
-      }
-      @keyframes heroGlobeShimmer {
-        0%,100% { opacity: 0.45; }
-        50%     { opacity: 0.7; }
-      }
-      @keyframes heroGlobeLogoBreath {
-        0%,100% { opacity: 0.88; filter: drop-shadow(0 0 14px rgba(241,220,167,0.55)) drop-shadow(0 0 28px rgba(197,160,89,0.4))  brightness(1.05); }
-        50%     { opacity: 0.98; filter: drop-shadow(0 0 22px rgba(241,220,167,0.85)) drop-shadow(0 0 40px rgba(197,160,89,0.65)) brightness(1.18); }
-      }
-      @keyframes heroGlobeSparkle {
-        0%,100% { opacity: 0.2; transform: scale(0.8); }
-        50%     { opacity: 1;   transform: scale(1.35); }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .hero-globe, .hero-globe-sphere, .hero-globe-orbit, .hero-globe-spark { animation: none !important; }
-      }
 
-      /* Road Ahead — handled by aria-core.js (#vision-roadmap), do not duplicate here. */
+      /* === ARIA globe — transplanted from /aria for the hero, scoped to #heroAriaGlobe === */
+      #heroAriaGlobe { width: 280px; height: 280px; margin: 0 auto 32px; position: relative; }
+      @media (min-width: 768px) { #heroAriaGlobe { width: 360px; height: 360px; margin-bottom: 40px; } }
+  .globe-wrap{position:relative;display:grid;place-items:center;height:100%;min-height:0;width:100%;overflow:visible}
+  .globe-stage{position:relative;width:min(100%, 380px);aspect-ratio:1/1;max-height:100%;display:grid;place-items:center}
+  .globe{width:100%;height:100%;display:block;overflow:visible}
+  .globe-letter{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+  .globe-letter .a{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(72px, 30%, 110px);
+    background:linear-gradient(176deg,
+      #fffaea 0%,
+      #fbe6b6 14%,
+      #f0d188 32%,
+      #d8a957 52%,
+      #ad7e30 74%,
+      #6e4a18 92%,
+      #3e2a0d 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    line-height:1;letter-spacing:-.025em;
+    filter:
+      drop-shadow(0 0 28px rgba(240,216,149,.60))
+      drop-shadow(0 0 56px rgba(212,168,90,.34))
+      drop-shadow(0 4px 8px rgba(0,0,0,.55))
+      drop-shadow(0 1px 0 rgba(255,245,220,.18));
+    position:relative;
+  }
+  .globe-letter .a::after{
+    content:"A";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(255,250,220,.65),transparent 32%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    pointer-events:none;letter-spacing:inherit;
+  }
+  .globe-letter .a::before{
+    content:"A";position:absolute;inset:0;
+    background:linear-gradient(0deg,rgba(0,0,0,.35),transparent 22%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    pointer-events:none;letter-spacing:inherit;mix-blend-mode:multiply;opacity:.6;
+  }
+  /* atmospheric breathing */
+  @keyframes atmosBreath{
+    0%,100%{opacity:.85;filter:drop-shadow(0 0 24px rgba(240,216,149,.55)) drop-shadow(0 0 48px rgba(212,168,90,.30)) drop-shadow(0 2px 4px rgba(0,0,0,.45))}
+    50%{opacity:1;filter:drop-shadow(0 0 32px rgba(240,216,149,.7)) drop-shadow(0 0 64px rgba(212,168,90,.45)) drop-shadow(0 2px 4px rgba(0,0,0,.45))}
+  }
+  .globe-letter .a{animation:atmosBreath 5s ease-in-out infinite}
+  /* radar sweep beam */
+  .city-halo{animation:cityPulse 3.4s ease-in-out infinite}
+  .city-halo-2{animation:cityPulse 3.4s ease-in-out .9s infinite}
+  .city-halo-3{animation:cityPulseFar 4.2s ease-in-out .4s infinite}
+  @keyframes cityPulse{
+    0%,100%{opacity:.10}
+    50%{opacity:.45}
+  }
+  @keyframes cityPulseFar{
+    0%,100%{opacity:.04}
+    50%{opacity:.20}
+  }
+  /* lens flare breathing */
+  .lens-flare{animation:flarePulse 4.6s ease-in-out infinite;transform-box:view-box;transform-origin:50% 50%}
+  .sun-marker{
+    position:absolute;font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+    color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:6px;
+    pointer-events:none;font-weight:500;
+  }
+  .sun-marker .sun-dot{
+    width:9px;height:9px;border-radius:50%;background:var(--gold-bright);
+    box-shadow:0 0 10px var(--gold-bright),0 0 24px rgba(240,216,149,.5);
+  }
+
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .globe-rotate,.globe-rotate-rev,.dots-pulse{
+    transform-box:view-box;transform-origin:50% 50%;
+  }
+  .globe-rotate{animation:spin 90s linear infinite}
+  .globe-rotate-rev{animation:spin 110s linear infinite reverse}
+  .dots-pulse > circle{animation:dotPulse 3.5s ease-in-out infinite}
+  @keyframes dotPulse{0%,100%{opacity:.7}50%{opacity:1}}
+  .fade-in{animation:fadeIn .55s ease forwards;opacity:0}
+
+      /* satellite orbit support */
+      #heroAriaGlobe .sat { opacity: 1; }
+/* Road Ahead — handled by aria-core.js (#vision-roadmap), do not duplicate here. */
       #road-ahead-DELETED { display:none; padding: 72px 24px 80px; background: linear-gradient(180deg,#050505,#08070a); position: relative; overflow: hidden; }
       .road-shell { max-width: 1080px; margin: 0 auto; text-align: center; position: relative; }
       .road-eyebrow {
@@ -4196,6 +4134,276 @@ Thank you,
       alert('Network error. Call (647) 581-3182.'); btn.textContent = origLabel; btn.style.filter=''; btn.dataset.busy = '';
     }
   });
+})();
+</script>
+
+<script>
+(function(){
+  // Hero ARIA globe — transplanted from /aria. Scoped via IIFE; only runs on pages with #heroGlobeWrap.
+  if (!document.getElementById('heroGlobeWrap')) return;
+function buildGlobe(size = 380, withSun = true){
+  const r = size / 2;
+  const cx = r, cy = r;
+  const sphereR = r * 0.66; // slightly tighter to leave room for atmosphere
+
+  // background constellation on sphere (front-facing only, depth-graded)
+  const dots = [];
+  const dotCount = 90;
+  for (let i = 0; i < dotCount; i++){
+    const phi = Math.acos(1 - 2 * (i + .5) / dotCount);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+    const x3 = Math.cos(theta) * Math.sin(phi);
+    const y3 = Math.sin(theta) * Math.sin(phi);
+    const z3 = Math.cos(phi);
+    if (z3 < -0.18) continue;
+    const x = cx + x3 * sphereR;
+    const y = cy + y3 * sphereR;
+    const dr = 0.6 + z3 * 1.5;
+    const opacity = 0.22 + z3 * 0.55;
+    const highlight = (i % 11 === 0);
+    dots.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${dr.toFixed(2)}" fill="${highlight ? '#fff5d6' : '#d4a85a'}" opacity="${opacity.toFixed(2)}"${highlight ? ' filter="url(#dotGlow)"' : ''}/>`);
+  }
+
+  // distant star field surrounding the sphere (sparse, low opacity, no rotation)
+  const stars = [];
+  const starCount = 60;
+  for (let i = 0; i < starCount; i++){
+    // place in annulus from sphereR*1.3 to r*0.98
+    const ang = (i * 137.5) * Math.PI / 180;
+    const dist = sphereR * 1.4 + ((i * 17) % (r * 0.5));
+    const sx = cx + Math.cos(ang) * dist;
+    const sy = cy + Math.sin(ang) * dist * 0.8;
+    if (sx < 0 || sx > size || sy < 0 || sy > size) continue;
+    const sr = 0.4 + ((i * 13) % 100) / 200;
+    const op = (0.18 + ((i * 31) % 100) / 250).toFixed(2);
+    const bright = (i % 9 === 0);
+    stars.push(`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${sr.toFixed(2)}" fill="${bright ? '#fff5d6' : '#d4a85a'}" opacity="${op}"${bright ? ' filter="url(#dotGlow)"' : ''}/>`);
+  }
+
+  // 8 latitude rings, opacity-graded toward equator
+  const lats = [];
+  for (let i = 1; i <= 7; i++){
+    const ratio = i / 8;
+    const ry = sphereR * Math.sin(ratio * Math.PI / 2);
+    const op = (0.10 + ratio * 0.10).toFixed(2);
+    lats.push(`<ellipse cx="${cx}" cy="${cy}" rx="${sphereR}" ry="${ry.toFixed(2)}" fill="none" stroke="rgba(212,168,90,${op})" stroke-width="0.5"/>`);
+  }
+
+  // 12 longitude meridians (perspective via cos)
+  const longs = [];
+  const longCount = 12;
+  for (let i = 0; i < longCount; i++){
+    const angle = (i / longCount) * Math.PI;
+    const rx = sphereR * Math.abs(Math.cos(angle));
+    const op = (0.08 + Math.abs(Math.sin(angle)) * 0.10).toFixed(2);
+    longs.push(`<ellipse cx="${cx}" cy="${cy}" rx="${Math.max(rx, 1.5).toFixed(2)}" ry="${sphereR}" fill="none" stroke="rgba(212,168,90,${op})" stroke-width="0.45"/>`);
+  }
+
+  // city anchors (lat, lon for major hubs)
+  const cities = [
+    {name:'NYC', lat: 40.7,  lon: -74.0},
+    {name:'LON', lat: 51.5,  lon: -0.1},
+    {name:'TYO', lat: 35.7,  lon: 139.7},
+    {name:'SYD', lat:-33.9,  lon: 151.2},
+    {name:'SAO', lat:-23.5,  lon: -46.6},
+    {name:'BER', lat: 52.5,  lon: 13.4},
+    {name:'SIN', lat:  1.3,  lon: 103.8},
+    {name:'DXB', lat: 25.2,  lon: 55.3},
+    {name:'JNB', lat:-26.2,  lon: 28.0},
+    {name:'LAX', lat: 34.0,  lon: -118.2},
+    {name:'MUM', lat: 19.1,  lon: 72.9},
+    {name:'TOR', lat: 43.7,  lon: -79.4},
+  ];
+  window.__globeCities = cities.map(c => {
+    const lat = c.lat * Math.PI/180;
+    const lon = c.lon * Math.PI/180;
+    const x3 = Math.cos(lat) * Math.sin(lon);
+    const y3 = -Math.sin(lat);
+    const z3 = Math.cos(lat) * Math.cos(lon);
+    return { ...c, x: cx + x3 * sphereR, y: cy + y3 * sphereR, z: z3 };
+  });
+  window.__globeMeta = { cx, cy, r, sphereR, size };
+
+  // city pin SVG (only front-facing; triple-halo pulse via CSS, tier-graded)
+  const cityPins = window.__globeCities.map((c, i) => {
+    if (c.z <= -0.05) return '';
+    const op = (0.5 + c.z * 0.5).toFixed(2);
+    const tier = (i % 3 === 0) ? 1.25 : 1.0; // some cities slightly larger
+    return `
+      <g opacity="${op}">
+        <circle class="city-halo-3" cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${(9 * tier).toFixed(1)}" fill="rgba(240,216,149,0.10)"/>
+        <circle class="city-halo" cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${(5.5 * tier).toFixed(1)}" fill="rgba(240,216,149,0.22)"/>
+        <circle class="city-halo-2" cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${(2.8 * tier).toFixed(1)}" fill="rgba(240,216,149,0.42)"/>
+        <circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${(1.4 * tier).toFixed(2)}" fill="#fff8dd" filter="url(#dotGlow)"/>
+      </g>`;
+  }).join('');
+
+  // lens-flare position (anchored to specular highlight roughly at upper-left of sphere)
+  const flareX = cx - sphereR * 0.36;
+  const flareY = cy - sphereR * 0.42;
+
+  // orbital satellite paths (two tilted ellipses around sphere)
+  const orbit1Rx = sphereR * 1.22;
+  const orbit1Ry = sphereR * 0.38;
+  const orbit2Rx = sphereR * 1.32;
+  const orbit2Ry = sphereR * 0.30;
+
+  // unique IDs per size so the right-panel + voice-view globes don't collide
+  const u = `g${size}`;
+
+  return `
+  <div class="globe-stage">
+  <svg class="globe" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <filter id="dotGlow" x="-200%" y="-200%" width="500%" height="500%">
+        <feGaussianBlur stdDeviation="1.4" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="atmosBlur-${u}" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="6"/>
+      </filter>
+      <radialGradient id="atmos-${u}" cx="50%" cy="50%" r="55%">
+        <stop offset="55%" stop-color="rgba(212,168,90,0)"/>
+        <stop offset="74%" stop-color="rgba(212,168,90,0.13)"/>
+        <stop offset="88%" stop-color="rgba(240,216,149,0.07)"/>
+        <stop offset="100%" stop-color="rgba(212,168,90,0)"/>
+      </radialGradient>
+      <radialGradient id="ambient-${u}" cx="50%" cy="65%" r="65%">
+        <stop offset="0%" stop-color="rgba(240,216,149,0.04)"/>
+        <stop offset="60%" stop-color="rgba(240,216,149,0.015)"/>
+        <stop offset="100%" stop-color="rgba(240,216,149,0)"/>
+      </radialGradient>
+      <radialGradient id="sphereDepth-${u}" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="rgba(15,10,4,0.97)"/>
+        <stop offset="40%" stop-color="rgba(28,18,7,0.85)"/>
+        <stop offset="70%" stop-color="rgba(48,32,14,0.55)"/>
+        <stop offset="92%" stop-color="rgba(72,50,22,0.30)"/>
+        <stop offset="100%" stop-color="rgba(96,68,32,0.10)"/>
+      </radialGradient>
+      <radialGradient id="sphereLight-${u}" cx="32%" cy="26%" r="42%">
+        <stop offset="0%" stop-color="rgba(255,242,200,0.34)"/>
+        <stop offset="38%" stop-color="rgba(240,216,149,0.10)"/>
+        <stop offset="100%" stop-color="rgba(212,168,90,0)"/>
+      </radialGradient>
+      <radialGradient id="sphereRim-${u}" cx="50%" cy="50%" r="50%">
+        <stop offset="86%" stop-color="rgba(240,216,149,0)"/>
+        <stop offset="95%" stop-color="rgba(240,216,149,0.32)"/>
+        <stop offset="100%" stop-color="rgba(240,216,149,0)"/>
+      </radialGradient>
+      <linearGradient id="sweepGrad-${u}" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="rgba(240,216,149,0)"/>
+        <stop offset="80%" stop-color="rgba(240,216,149,0)"/>
+        <stop offset="100%" stop-color="rgba(240,216,149,0.55)"/>
+      </linearGradient>
+      <radialGradient id="flareCore-${u}" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="rgba(255,250,225,0.85)"/>
+        <stop offset="60%" stop-color="rgba(240,216,149,0.25)"/>
+        <stop offset="100%" stop-color="rgba(240,216,149,0)"/>
+      </radialGradient>
+    </defs>
+
+    <!-- ambient ground glow (soft floor under sphere) -->
+    <ellipse cx="${cx}" cy="${(cy + sphereR * 0.95).toFixed(1)}" rx="${sphereR * 1.1}" ry="${sphereR * 0.18}" fill="url(#ambient-${u})"/>
+
+    <!-- distant star field (beyond sphere) -->
+    <g class="starfield">${stars.join('')}</g>
+
+    <!-- atmospheric halo -->
+    <circle cx="${cx}" cy="${cy}" r="${(sphereR * 1.38).toFixed(1)}" fill="url(#atmos-${u})"/>
+
+    <!-- orbital tracks (tilted) -->
+    <ellipse cx="${cx}" cy="${cy}" rx="${orbit1Rx.toFixed(1)}" ry="${orbit1Ry.toFixed(1)}" fill="none" stroke="rgba(212,168,90,0.10)" stroke-width="0.45" transform="rotate(-22 ${cx} ${cy})"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="${orbit2Rx.toFixed(1)}" ry="${orbit2Ry.toFixed(1)}" fill="none" stroke="rgba(212,168,90,0.07)" stroke-width="0.4" transform="rotate(28 ${cx} ${cy})" stroke-dasharray="3 5"/>
+
+    <!-- outer guidance rings -->
+    <circle cx="${cx}" cy="${cy}" r="${(sphereR * 1.22).toFixed(1)}" fill="none" stroke="rgba(212,168,90,0.06)" stroke-width="0.4" stroke-dasharray="2 6"/>
+    <circle cx="${cx}" cy="${cy}" r="${(sphereR * 1.10).toFixed(1)}" fill="none" stroke="rgba(212,168,90,0.10)" stroke-width="0.4"/>
+
+    <!-- sphere depth (deep core) -->
+    <circle cx="${cx}" cy="${cy}" r="${sphereR}" fill="url(#sphereDepth-${u})"/>
+
+    <!-- meridians (rotating slowly in reverse) -->
+    <g class="globe-rotate-rev">${longs.join('')}</g>
+
+    <!-- latitudes (static) -->
+    <g>${lats.join('')}</g>
+
+    <!-- equator emphasis -->
+    <ellipse cx="${cx}" cy="${cy}" rx="${sphereR}" ry="${(sphereR * 0.16).toFixed(2)}" fill="none" stroke="rgba(240,216,149,0.45)" stroke-width="0.7"/>
+
+    <!-- specular highlight (top-right key light) -->
+    <circle cx="${cx}" cy="${cy}" r="${sphereR}" fill="url(#sphereLight-${u})"/>
+
+    <!-- rim light -->
+    <circle cx="${cx}" cy="${cy}" r="${sphereR + 1}" fill="url(#sphereRim-${u})"/>
+
+    <!-- constellation dots (rotating slowly) -->
+    <g class="dots-pulse globe-rotate">${dots.join('')}</g>
+
+    <!-- city pins -->
+    <g id="cityPins-${u}">${cityPins}</g>
+
+    <!-- data arcs and packets -->
+    <g id="trafficArcs"></g>
+    <g id="trafficPackets"></g>
+
+    <!-- lens flare (anchored to specular highlight) -->
+    <g class="lens-flare" opacity="0.65">
+      <circle cx="${flareX.toFixed(1)}" cy="${flareY.toFixed(1)}" r="6" fill="url(#flareCore-${u})"/>
+      <line x1="${(flareX - 18).toFixed(1)}" y1="${flareY.toFixed(1)}" x2="${(flareX + 18).toFixed(1)}" y2="${flareY.toFixed(1)}" stroke="rgba(255,242,200,0.45)" stroke-width="0.5"/>
+      <line x1="${flareX.toFixed(1)}" y1="${(flareY - 18).toFixed(1)}" x2="${flareX.toFixed(1)}" y2="${(flareY + 18).toFixed(1)}" stroke="rgba(255,242,200,0.30)" stroke-width="0.4"/>
+      <circle cx="${flareX.toFixed(1)}" cy="${flareY.toFixed(1)}" r="1.5" fill="#fff8dd" filter="url(#dotGlow)"/>
+    </g>
+
+    <!-- orbital satellites (CSS animated along offset paths) -->
+    <g class="orbit-group" transform="rotate(-22 ${cx} ${cy})">
+      <circle class="sat sat-1" cx="${(cx + orbit1Rx).toFixed(1)}" cy="${cy}" r="1.6" fill="#fff5d6" filter="url(#dotGlow)"
+              style="--orbit-rx:${orbit1Rx.toFixed(1)}px;--orbit-ry:${orbit1Ry.toFixed(1)}px;--orbit-cx:${cx}px;--orbit-cy:${cy}px"/>
+    </g>
+    <g class="orbit-group" transform="rotate(28 ${cx} ${cy})">
+      <circle class="sat sat-2" cx="${(cx + orbit2Rx).toFixed(1)}" cy="${cy}" r="1.3" fill="#f0d895" filter="url(#dotGlow)"
+              style="--orbit-rx:${orbit2Rx.toFixed(1)}px;--orbit-ry:${orbit2Ry.toFixed(1)}px;--orbit-cx:${cx}px;--orbit-cy:${cy}px"/>
+    </g>
+  </svg>
+  <div class="globe-letter"><div class="a">A</div></div>
+  ${withSun ? `<div class="sun-marker" style="top:10%;right:4%"><span class="sun-dot"></span><span>SUN · 170° N17°</span></div>` : ''}
+  </div>
+  `;
+}
+
+function animateSatellites(rootSel){
+  const root = document.querySelector(rootSel);
+  if (!root) return;
+  const sats = root.querySelectorAll('.sat');
+  if (!sats.length) return;
+  const refs = Array.from(sats).map(el => {
+    const s = getComputedStyle(el);
+    return {
+      el,
+      rx: parseFloat(s.getPropertyValue('--orbit-rx')) || 0,
+      ry: parseFloat(s.getPropertyValue('--orbit-ry')) || 0,
+      cx: parseFloat(s.getPropertyValue('--orbit-cx')) || 0,
+      cy: parseFloat(s.getPropertyValue('--orbit-cy')) || 0,
+      period: el.classList.contains('sat-1') ? 14000 : 22000,
+      dir: el.classList.contains('sat-1') ? 1 : -1,
+      phase: Math.random() * Math.PI * 2
+    };
+  });
+  function tick(now){
+    refs.forEach(r => {
+      const t = ((now / r.period) * Math.PI * 2 * r.dir) + r.phase;
+      r.el.setAttribute('cx', (r.cx + Math.cos(t) * r.rx).toFixed(2));
+      r.el.setAttribute('cy', (r.cy + Math.sin(t) * r.ry).toFixed(2));
+    });
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+  // Render at hero size; satellite animation loop.
+  var heroSize = window.matchMedia && window.matchMedia('(min-width: 768px)').matches ? 360 : 280;
+  document.getElementById('heroGlobeWrap').innerHTML = buildGlobe(heroSize, true);
+  animateSatellites('#heroGlobeWrap');
 })();
 </script>
 </body>
