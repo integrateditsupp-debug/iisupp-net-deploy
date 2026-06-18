@@ -1546,10 +1546,9 @@
       grid-template-columns:repeat(3,minmax(0,1fr)) !important;
       max-height:none; overflow:visible;
     }
-    .browser-frame{ height:auto; min-height:clamp(520px,72vh,720px); }
-    .chat-dock{ position:relative !important; top:auto !important; bottom:auto !important;
-                left:auto !important; transform:none !important;
-                width:min(100%,680px) !important; margin:14px auto 8px; }
+    .browser-frame{ height:clamp(560px,78vh,820px); overflow:hidden; }
+    /* dock keeps its absolute centered → drop-to-bottom behavior at narrow desktop */
+    .chat-dock{ width:min(100% - 32px, 640px) !important; }
   }
   /* Very wide desktop (≥1600px): nudge chat even larger */
   @media (min-width:1600px){
