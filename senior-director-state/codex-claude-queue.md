@@ -103,3 +103,21 @@ Claude next best work:
 
 - Do not rework the ARIA Global IT Pulse or deployment path side rail unless Ahmad asks for fresh copy/art direction.
 - If scoring UI coverage, count this as closing the visible clutter/layout regression lane; remaining work should focus on true revenue gates, not this ARIA panel cleanup.
+
+## 2026-06-18 12:45 ET - Codex deployment drawer follow-up
+
+Ahmad still found the deployment path area too text-heavy after the first cleanup, so Codex collapsed it further.
+
+Shipped UI follow-up:
+
+- `aria.html` now shows only a compact `View deployment options` button by default inside the Deployment Paths panel.
+- The five deployment/revenue paths remain available, but they are hidden inside `#conversionOptions` until the user clicks the button.
+- The drawer uses explicit `hidden` + `aria-expanded` state instead of native `<details>`, because Browser QA showed native disclosure clicks were unreliable in this heavy ARIA page.
+- Mobile stacking was corrected so the decorative ARIA globe no longer sits above the deployment drawer tap target on narrow layouts.
+
+Validation to trust:
+
+- Inline script parser for `aria.html` passed: 11 scripts, 0 failures.
+- `git diff --check` passed.
+- Desktop Browser QA: closed state has 0 visible cards; clicking opens all 5 path links; no horizontal overflow; no current-version console warnings/errors.
+- 390px mobile Browser QA: closed state has 0 visible cards; tap target resolves to the deployment button text, not the globe; clicking opens all 5 path links; no horizontal overflow.

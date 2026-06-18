@@ -1216,23 +1216,37 @@
     background:linear-gradient(180deg,rgba(15,11,6,.55),rgba(22,16,9,.62));
     padding:11px 13px;margin-bottom:10px;
   }
-  .conversion-sub{color:var(--muted);font-size:11px;line-height:1.4;margin-bottom:8px}
-  .conversion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .conversion-toggle{
+    width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    border:1px solid rgba(212,168,90,.24);border-radius:999px;background:rgba(20,14,7,.44);
+    padding:8px 10px;cursor:pointer;color:var(--cream-2);
+    font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;
+    transition:border-color .2s,background .2s,box-shadow .2s;
+  }
+  .conversion-toggle:hover{
+    border-color:var(--border-glow);background:rgba(34,25,13,.62);
+    box-shadow:0 0 0 1px rgba(212,168,90,.1) inset;
+  }
+  .conversion-toggle:focus-visible{outline:2px solid rgba(240,216,149,.62);outline-offset:3px}
+  .conversion-toggle .hint{color:var(--gold-bright);white-space:nowrap}
+  .conversion-toggle[aria-expanded="true"]{border-radius:11px 11px 8px 8px;border-color:rgba(212,168,90,.34)}
+  .conversion-grid[hidden]{display:none}
+  .conversion-grid{display:grid;grid-template-columns:1fr;gap:5px;margin-top:6px}
   .conversion-card{
     display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;
     text-decoration:none;color:inherit;min-width:0;
     border:1px solid var(--border);border-radius:9px;background:rgba(20,14,7,.44);
-    padding:8px 9px;transition:border-color .2s,background .2s,transform .2s,box-shadow .2s;
+    padding:7px 9px;transition:border-color .2s,background .2s,transform .2s,box-shadow .2s;
   }
   .conversion-card.featured{
-    grid-column:1/-1;background:linear-gradient(135deg,rgba(39,28,13,.76),rgba(13,10,7,.68));
+    background:linear-gradient(135deg,rgba(39,28,13,.76),rgba(13,10,7,.68));
   }
   .conversion-card:hover{
     border-color:var(--border-glow);background:rgba(34,25,13,.66);transform:translateY(-1px);
     box-shadow:0 0 0 1px rgba(212,168,90,.12) inset;
   }
   .conversion-index{
-    width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+    width:20px;height:20px;border-radius:50%;display:grid;place-items:center;
     border:1px solid rgba(212,168,90,.34);background:rgba(212,168,90,.08);
     font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--gold-bright);
   }
@@ -1243,7 +1257,7 @@
     text-transform:uppercase;margin-bottom:3px;
   }
   .conversion-title{
-    font-family:var(--serif);font-size:14.5px;line-height:1.1;color:var(--cream-2);font-weight:500;
+    font-family:var(--serif);font-size:13.5px;line-height:1.1;color:var(--cream-2);font-weight:500;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   .conversion-cta{
@@ -1394,7 +1408,7 @@
     .sla-cell .v{font-size:14px}
     .sla-cell .k{font-size:6.8px;letter-spacing:.12em}
     .conversion-title{font-size:13px}
-    .conversion-top,.conversion-sub{font-size:7.5px}
+    .conversion-top,.conversion-toggle{font-size:7.5px}
     .quick-actions{padding:9px 11px}
   }
 
@@ -1423,6 +1437,9 @@
     .ap-rail{grid-column:1 / -1;min-width:0}
     .left{height:clamp(540px,76dvh,820px);min-height:min(540px,100dvh - 88px)}
     .right{height:auto;min-height:0;max-height:none;overflow:visible}
+    .aria-section{position:relative;z-index:1}
+    .content-section{position:relative;z-index:3}
+    .globe-wrap,.globe-stage,.globe{pointer-events:none}
     .browser-frame{height:100%;min-height:0}
   }
 
@@ -1728,7 +1745,6 @@
   @media (max-width:520px){
     .pulse-screen{min-height:124px}
     .pulse-slide{grid-template-columns:64px minmax(0,1fr)}
-    .conversion-grid{grid-template-columns:1fr}
     .ap-band-title{font-size:12px}
     .chat-dock{padding:10px 8px}
     .browser-body{padding-bottom:8px}
@@ -2084,8 +2100,10 @@
 
       <div class="conversion-panel" id="conversionPanel">
         <div class="status-head"><span class="led amber"></span><span>DEPLOYMENT PATHS</span></div>
-        <div class="conversion-sub">After the demo, pick one clean next step. No broad rollout menu, no messy decision tree.</div>
-        <div class="conversion-grid">
+        <button class="conversion-toggle" type="button" aria-expanded="false" aria-controls="conversionOptions">
+          <span>View deployment options</span><span class="hint">Click</span>
+        </button>
+        <div class="conversion-grid" id="conversionOptions" hidden>
           <a class="conversion-card featured" href="/start-here.html" aria-label="Open Start Here guide for all deployment paths">
             <span class="conversion-index">01</span>
             <span class="conversion-body"><span class="conversion-top">Guide / All paths</span><span class="conversion-title">Safest first move</span></span>
@@ -2627,6 +2645,19 @@ updateTargets();
   });
   showPulseSlide(0);
   startPulseTimer();
+})();
+
+/* ============== DEPLOYMENT PATH DRAWER ============== */
+(function initDeploymentDrawer(){
+  const toggle = document.querySelector('.conversion-toggle');
+  const drawer = document.getElementById('conversionOptions');
+  if (!toggle || !drawer) return;
+
+  toggle.addEventListener('click', () => {
+    const nextOpen = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
+    drawer.hidden = !nextOpen;
+  });
 })();
 
 /* ============== INSIGHTS ROTATOR ============== */
