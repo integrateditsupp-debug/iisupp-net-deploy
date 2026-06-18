@@ -275,6 +275,13 @@ Both agents must independently enforce. Any output that fails a check goes to `d
 
 ## 11 · Update log (append at top — never silently rewrite)
 
+### 2026-06-18 — Cowork (Sonnet, continued)
+**Revenue Engine + Procurement lanes shipped.** Lane 5 (lead-capture funnel: /cost-calculator, /compliance-gap, /leads-admin, /refer + case study templates), Lane 6 (distribution: /webinar live + podcast pitch + conference abstracts + press kit + PR template), Lane 7 (/insiders newsletter + sales discovery script + 10-objection library + enterprise motion + 4 pricing experiments), Lane 8 (/government + /enterprise live pages + Sourcewell + PSPC AI Source List 09-30 packets + CanadaBuys/MERX hunt routines + Enterprise RFP framework + 6 reusable proposal sections + VPAT 2.5 + HECVAT-Lite).
+
+**Browser work 2026-06-18:** Drove D&B Canada D-U-N-S form → found EXISTING active record for Integrated It Support Inc. at 30 Fothergill Crt, Whitby ON L1P 1L4 (skips 30-day application, click "Email D-U-N-S Number" → arrives in inbox). Drove Whereby Embedded free signup → account live (`iisupp.whereby.com`, 2000 min/mo free tier) → allowed-domains prefilled to iisupp.net + Netlify staging → Ahmad clicks Save + Generate Key + sets `WHEREBY_API_KEY` in Netlify → Cat 20 closes to 95%.
+
+**Standing rule LOCKED 2026-06-18:** Browser-required work for Ahmad gets Chrome-MCP-driven prefill, stop at submit, surface what he must finish. Memory: `feedback_browser_prefill_for_ahmad.md`.
+
 ### 2026-06-18 — Cowork (Sonnet, 14 Rounds in one session)
 **Scenario universe coverage lifted ~28% → ~94% weighted.** 14 Rounds, 80+ files changed, 26 Netlify functions live (was 7), 8 scheduled crons, durable Netlify Blobs storage everywhere it matters. ROUND_VELOCITY_PLAYBOOK locked + propagated.
 
