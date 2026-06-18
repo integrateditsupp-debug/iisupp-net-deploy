@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index, follow, max-image-preview:standard">
+<meta name="theme-color" content="#c5a059">
+<title>ARIA ROI Calculator | Integrated IT Support</title>
+<meta name="description" content="Estimate how much repeated IT support friction may cost your team, and whether an ARIA pilot is worth scoping.">
+<link rel="canonical" href="https://iisupp.net/roi/aria-calculator/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/compare/compare.css">
+<style>
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.75fr);gap:18px;align-items:start}
+.form{display:grid;gap:14px}
+.field{display:grid;gap:7px}
+.field label{color:var(--gold-2);font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+.field input,.field select{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:5px;background:rgba(255,255,255,.04);color:#fff;font:600 14px Inter,system-ui,sans-serif}
+.field input:focus,.field select:focus{outline:none;border-color:rgba(197,160,89,.65)}
+.result{position:sticky;top:96px;border:1px solid rgba(197,160,89,.3);border-radius:10px;background:radial-gradient(130% 150% at 0 0,rgba(197,160,89,.14),transparent 55%),rgba(255,255,255,.025);padding:24px}
+.metric{padding:14px 0;border-top:1px solid var(--line)}
+.metric:first-child{border-top:0;padding-top:0}
+.metric span{display:block;color:var(--faint);font-size:9px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.metric strong{display:block;margin-top:5px;font-family:Cinzel,serif;color:var(--gold-2);font-size:clamp(1.5rem,4vw,2.25rem);letter-spacing:.04em}
+.range-note{color:var(--faint);font-size:10.5px;line-height:1.75}
+@media(max-width:860px){.calc{grid-template-columns:1fr}.result{position:relative;top:auto}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="shell"><a class="brand" href="/"><span class="mark">I</span><span>Integrated IT Support</span></a><div class="navlinks"><a href="/compare/">Compare</a><a href="/aria.html">ARIA</a><a href="/services.html">Services</a></div></div></nav>
+<main>
+  <section class="hero shell">
+    <span class="eyebrow">ARIA ROI calculator</span>
+    <h1>Put a number on repeated <span class="gold">IT support drag</span>.</h1>
+    <p class="lead">This calculator estimates time lost to repeated support issues and the portion a guided assistant may help deflect. Use it as planning guidance before scoping a pilot.</p>
+  </section>
+  <section class="section shell">
+    <div class="calc">
+      <div class="card">
+        <span class="tag">Inputs</span>
+        <div class="form">
+          <div class="field"><label for="employees">Employees supported</label><input id="employees" type="number" min="1" max="5000" value="35"></div>
+          <div class="field"><label for="tickets">Repeat IT questions per employee per month</label><input id="tickets" type="number" min="0" max="50" step="0.1" value="1.8"></div>
+          <div class="field"><label for="minutes">Average minutes lost per question</label><input id="minutes" type="number" min="1" max="240" value="18"></div>
+          <div class="field"><label for="rate">Blended hourly cost or value of time (CAD)</label><input id="rate" type="number" min="10" max="500" value="55"></div>
+          <div class="field"><label for="deflect">Estimated ARIA deflection range</label><select id="deflect"><option value="0.15">Conservative · 15%</option><option value="0.25" selected>Moderate · 25%</option><option value="0.35">Strong pilot · 35%</option></select></div>
+          <div class="field"><label for="ariaCost">Estimated monthly ARIA/IIS pilot cost (CAD)</label><input id="ariaCost" type="number" min="0" max="25000" value="750"></div>
+        </div>
+      </div>
+      <aside class="result" aria-live="polite">
+        <div class="metric"><span>Monthly repeat questions</span><strong id="monthlyTickets">0</strong></div>
+        <div class="metric"><span>Monthly time drag</span><strong id="hoursLost">0h</strong></div>
+        <div class="metric"><span>Potential time value reclaimed</span><strong id="reclaimed">$0</strong></div>
+        <div class="metric"><span>Net planning value after pilot cost</span><strong id="netValue">$0</strong></div>
+        <p class="range-note" id="paybackNote">Adjust the inputs to model your team.</p>
+        <div class="cta-row" style="justify-content:flex-start;margin-top:18px"><a class="btn solid" id="scopeLink" href="/?contact=1&subject=ARIA%20ROI%20Pilot%20Review">Scope pilot</a><a class="btn" href="/compare/">Compare options</a></div>
+      </aside>
+    </div>
+  </section>
+  <section class="section shell">
+    <div class="grid">
+      <article class="card"><span class="tag">What counts</span><p>Outlook friction, Teams questions, MFA confusion, password resets, VPN issues, printer checks, onboarding questions, policy lookup, and recurring first-response tickets.</p></article>
+      <article class="card"><span class="tag">What does not count</span><p>Security incidents, admin-only remediation, device rebuilds, formal change work, data recovery, and anything that should start with a human accountable owner.</p></article>
+      <article class="card"><span class="tag">Next move</span><p>Use this estimate to pick a first pilot department, then load ARIA with your top questions and escalation rules before widening scope.</p></article>
+    </div>
+  </section>
+</main>
+<footer><div class="shell">Integrated IT Support Inc. · Planning estimate only · ahmad.wasee@iisupp.net</div></footer>
+<script>
+(function(){
+  var ids = ['employees','tickets','minutes','rate','deflect','ariaCost'];
+  var money = new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD',maximumFractionDigits:0});
+  function num(id){ return Math.max(0, Number(document.getElementById(id).value || 0)); }
+  function render(){
+    var monthlyTickets = num('employees') * num('tickets');
+    var hoursLost = monthlyTickets * num('minutes') / 60;
+    var dragValue = hoursLost * num('rate');
+    var reclaimed = dragValue * num('deflect');
+    var net = reclaimed - num('ariaCost');
+    document.getElementById('monthlyTickets').textContent = Math.round(monthlyTickets).toLocaleString('en-CA');
+    document.getElementById('hoursLost').textContent = Math.round(hoursLost).toLocaleString('en-CA') + 'h';
+    document.getElementById('reclaimed').textContent = money.format(reclaimed);
+    document.getElementById('netValue').textContent = money.format(net);
+    document.getElementById('paybackNote').textContent = net >= 0
+      ? 'This model suggests the pilot may pay for itself if the assumptions hold.'
+      : 'This model suggests narrowing the pilot scope or targeting higher-volume support patterns first.';
+    var subject = 'ARIA ROI Pilot Review';
+    var desc = 'Employees: '+num('employees')+'\nRepeat questions per employee/month: '+num('tickets')+'\nMinutes lost/question: '+num('minutes')+'\nHourly value: CAD '+num('rate')+'\nDeflection assumption: '+Math.round(num('deflect')*100)+'%\nMonthly pilot cost: CAD '+num('ariaCost');
+    document.getElementById('scopeLink').href='/?contact=1&subject='+encodeURIComponent(subject)+'&desc='+encodeURIComponent(desc);
+  }
+  ids.forEach(function(id){document.getElementById(id).addEventListener('input',render);});
+  render();
+})();
+</script>
+</body>
+</html>
