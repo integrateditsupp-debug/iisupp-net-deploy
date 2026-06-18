@@ -61,15 +61,35 @@ function parseFunctionRoutes() {
 
 function parseRobots() {
   const text = read(path.join(root, 'robots.txt'));
-  const allows = [];
-  const disallows = [];
+  const groups = [];
+  let current = { agents: [], allows: [], disallows: [] };
+  let hasRule = false;
   for (const line of text.split(/\r?\n/)) {
-    const allow = line.match(/^Allow:\s*(\S+)/i)?.[1];
-    const disallow = line.match(/^Disallow:\s*(\S+)/i)?.[1];
-    if (allow) allows.push(allow);
-    if (disallow) disallows.push(disallow);
+    const clean = line.replace(/#.*/, '').trim();
+    if (!clean) continue;
+    const agent = clean.match(/^User-agent:\s*(\S+)/i)?.[1];
+    if (agent) {
+      if (current.agents.length && hasRule) {
+        groups.push(current);
+        current = { agents: [], allows: [], disallows: [] };
+        hasRule = false;
+      }
+      current.agents.push(agent.toLowerCase());
+      continue;
+    }
+    const allow = clean.match(/^Allow:\s*(\S*)/i)?.[1];
+    const disallow = clean.match(/^Disallow:\s*(\S*)/i)?.[1];
+    if (allow !== undefined) {
+      hasRule = true;
+      if (allow) current.allows.push(allow);
+    }
+    if (disallow !== undefined) {
+      hasRule = true;
+      if (disallow) current.disallows.push(disallow);
+    }
   }
-  return { allows, disallows };
+  if (current.agents.length || hasRule) groups.push(current);
+  return groups.find((group) => group.agents.includes('*')) || { allows: [], disallows: [] };
 }
 
 function robotAllows(route, robots) {

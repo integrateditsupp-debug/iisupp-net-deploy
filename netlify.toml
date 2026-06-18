@@ -312,6 +312,10 @@
   to = "/governance/ai-use.html"
   status = 200
 [[redirects]]
+  from = "/ai-governance"
+  to = "/governance/ai-use.html"
+  status = 200
+[[redirects]]
   from = "/governance/code-of-conduct"
   to = "/governance/code-of-conduct.html"
   status = 200
