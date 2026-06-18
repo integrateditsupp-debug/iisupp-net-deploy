@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pricing Experiments · Admin</title>
+<meta name="robots" content="noindex">
+<style>body{font-family:system-ui;background:#0a0f1a;color:#e6f0ff;max-width:1100px;margin:30px auto;padding:24px;line-height:1.55}h1{color:#7afbff;margin:0 0 6px}h2{color:#7afbff;border-bottom:1px solid #2a3a55;padding-bottom:6px;margin-top:32px}input,select,textarea{background:#0e1626;color:#e6f0ff;border:1px solid #2a3a55;padding:8px;border-radius:4px;width:100%;box-sizing:border-box}button{background:#7afbff;color:#0a0f1a;border:0;padding:9px 16px;border-radius:5px;font-weight:600;cursor:pointer;margin-right:6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.box{background:#0e1626;border:1px solid #2a3a55;padding:18px;border-radius:8px}label{display:block;margin-top:10px;font-size:13px;color:#8aa3c9}pre{background:#0e1626;padding:14px;border-radius:6px;overflow:auto;font-size:12px}.row{display:flex;gap:8px;align-items:center;margin:6px 0}</style>
+</head><body>
+<h1>Pricing Experiments</h1>
+<p>Manage coupon experiments + monitor A/B test results. Admin token required for live data pulls.</p>
+
+<div class="box" style="margin:14px 0">
+<label>Admin token</label>
+<input id="admin" type="password" placeholder="APERTURE_ADMIN_PASSWORD value">
+</div>
+
+<h2>Welcome email A/B test results</h2>
+<button onclick="loadAB()">Load latest report</button>
+<div id="ab-results" style="margin-top:14px"></div>
+
+<h2>Active coupons (ARIA_COUPONS_JSON)</h2>
+<p style="color:#8aa3c9;font-size:13px">Edit in Netlify env vars, then run <code>scripts/stripe-coupon-mirror.mjs</code> to sync to Stripe.</p>
+<div id="coupons-display" class="box">
+<p style="color:#8aa3c9">Coupons live in env var only. Run from terminal:</p>
+<pre>STRIPE_SECRET_KEY=sk_... \\
+ARIA_COUPONS_JSON='[{"code":"BUILD25","pct":25,"duration":"once"}]' \\
+node scripts/stripe-coupon-mirror.mjs</pre>
+</div>
+
+<h2>Pricing tiers reference</h2>
+<div class="grid">
+  <div class="box"><strong>Personal</strong><br>$599/mo · single-user IT assistant</div>
+  <div class="box"><strong>Pro</strong><br>$1,500/mo · power-user + Pro features</div>
+  <div class="box"><strong>Small Business</strong><br>$156,000/yr · 1-20 staff org</div>
+  <div class="box"><strong>Mid Size</strong><br>$312,000/yr · 21-100 staff org</div>
+  <div class="box"><strong>Enterprise</strong><br>$625,000/yr · 100+ staff org, custom SLA</div>
+</div>
+
+<h2>Test ideas backlog</h2>
+<ul>
+  <li>Subscript "$/mo" vs "$/seat" on Personal tier</li>
+  <li>Annual upsell pill on Pro tier (15% off)</li>
+  <li>"Most popular" badge — Pro vs Small Business</li>
+  <li>Hover-flip card → static accordion on mobile</li>
+  <li>Founder-quote testimonial under pricing (no fake claims)</li>
+  <li>Stripe Apple Pay vs Card-only checkout (when STRIPE prod live)</li>
+</ul>
+
+<script>
+async function loadAB() {
+  const t = document.getElementById('admin').value;
+  const r = await fetch('/.netlify/functions/aria-welcome-ab-report', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ admin_token: t })
+  });
+  const j = await r.json();
+  const div = document.getElementById('ab-results');
+  if (!j.ok) { div.innerHTML = '<div class="box" style="color:#ff7e7e">' + (j.error || 'error') + '</div>'; return; }
+  div.innerHTML = '<div class="grid">' +
+    '<div class="box"><strong>Variant A: ' + j.variant_A.name + '</strong><br>Sent: ' + j.variant_A.sent +
+    '<br>Activated: ' + j.variant_A.activated + '<br>Conv: ' + j.variant_A.conv_rate + '%</div>' +
+    '<div class="box"><strong>Variant B: ' + j.variant_B.name + '</strong><br>Sent: ' + j.variant_B.sent +
+    '<br>Activated: ' + j.variant_B.activated + '<br>Conv: ' + j.variant_B.conv_rate + '%</div>' +
+    '</div><p style="margin-top:12px">Winner so far: <strong>' + j.winner + '</strong> · Sample: ' + j.sample_size + '</p>';
+}
+</script>
+</body></html>
