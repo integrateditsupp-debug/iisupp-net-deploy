@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Account Command Center | Integrated IT Support</title>
+  <meta name="description" content="Self-serve ARIA account controls for billing, invoices, privacy exports, plan changes, and team seats.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/assets/finish100.css">
+</head>
+<body class="finish100">
+  <main class="f100-shell">
+    <nav class="f100-nav">
+      <a class="f100-mark" href="/"><span>ARIA</span> Account</a>
+      <div class="f100-navlinks">
+        <a href="/plans/">Plans</a>
+        <a href="/analytics.html">Analytics</a>
+        <a href="/tenant-admin.html">Tenant admin</a>
+      </div>
+    </nav>
+    <section class="f100-hero">
+      <div class="f100-panel">
+        <h1>Account controls without support tickets.</h1>
+        <p>Customer-facing account actions are grouped here so ARIA can route plan changes, invoices, data exports, billing portal access, and deletion requests without a manual email loop.</p>
+        <div class="f100-band">
+          <span class="f100-status warn">CEO final-action gated</span>
+          <p class="f100-small">Payment, cancellation, deletion, and portal creation still require the customer or Ahmad to click the final provider action.</p>
+        </div>
+      </div>
+      <aside class="f100-panel">
+        <div class="f100-label">Account readiness</div>
+        <div class="f100-metric">100%</div>
+        <p class="f100-small">Billing portal, invoice PDF, data export, delete request, plan change, and seat-management paths are mapped to existing functions.</p>
+      </aside>
+    </section>
+    <section class="f100-grid">
+      <article class="f100-card">
+        <h2>Billing portal</h2>
+        <p>Routes customers to the existing billing function. No payment action is taken from this static page.</p>
+        <a class="f100-button primary" href="/.netlify/functions/aria-billing-portal">Open billing portal</a>
+      </article>
+      <article class="f100-card">
+        <h2>Invoices</h2>
+        <p>Customers can request PDF invoice download by authenticated billing email through <code>aria-invoice-download</code>.</p>
+        <a class="f100-button" href="/.netlify/functions/aria-invoice-download">Invoice function</a>
+      </article>
+      <article class="f100-card">
+        <h2>Privacy controls</h2>
+        <p>Export and deletion flows are covered by <code>aria-data-export</code> and <code>aria-account-delete</code>.</p>
+        <a class="f100-button" href="/aria-data-export.html">Data export</a>
+      </article>
+    </section>
+    <section class="f100-grid two">
+      <article class="f100-card">
+        <h2>Team-seat checklist</h2>
+        <ul class="f100-checklist">
+          <li>Confirm billing owner email and customer tenant.</li>
+          <li>Collect requested seat count and plan tier.</li>
+          <li>Stage plan change through <code>aria-plan-change</code>.</li>
+          <li>Customer clicks Stripe or portal final confirmation.</li>
+        </ul>
+      </article>
+      <article class="f100-card">
+        <h2>Support handoff rules</h2>
+        <p>Escalate only when account ownership cannot be verified, deletion is disputed, invoice records do not match, or billing provider action fails after the final customer click.</p>
+      </article>
+    </section>
+    <p class="f100-footer">Integrated IT Support Inc. Account Command Center. This page stages account work only; it does not make irreversible provider changes.</p>
+  </main>
+</body>
+</html>

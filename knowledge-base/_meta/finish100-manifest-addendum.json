@@ -1,0 +1,407 @@
+{
+  "version": "finish100-2026-06-18",
+  "generated": "2026-06-18T12:00:00Z",
+  "count": 40,
+  "records": [
+    {
+      "id": "l1-edu-001",
+      "title": "Student cannot access Google Classroom",
+      "category": "education",
+      "support_level": "L1",
+      "severity": "medium",
+      "path": "vertical-education/l1-edu-001.md",
+      "escalation_trigger": "Teacher confirms student enrollment but login or class visibility fails.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l1-edu-002",
+      "title": "Chromebook cannot enroll after powerwash",
+      "category": "education",
+      "support_level": "L1",
+      "severity": "medium",
+      "path": "vertical-education/l1-edu-002.md",
+      "escalation_trigger": "Device serial does not appear in the expected organizational unit.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l1-edu-003",
+      "title": "Student password reset with guardian present",
+      "category": "education",
+      "support_level": "L1",
+      "severity": "high",
+      "path": "vertical-education/l1-edu-003.md",
+      "escalation_trigger": "Identity proof is incomplete or requester is not authorized.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l1-edu-004",
+      "title": "Shared classroom projector audio missing",
+      "category": "education",
+      "support_level": "L1",
+      "severity": "low",
+      "path": "vertical-education/l1-edu-004.md",
+      "escalation_trigger": "Issue persists across devices and cables.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l1-edu-005",
+      "title": "Teacher cannot launch video meeting",
+      "category": "education",
+      "support_level": "L1",
+      "severity": "medium",
+      "path": "vertical-education/l1-edu-005.md",
+      "escalation_trigger": "Meeting policy blocks host creation or external guests.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-001",
+      "title": "FERPA-safe student data export request",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-education/l2-ferpa-001.md",
+      "escalation_trigger": "Requester authority or scope is unclear.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-002",
+      "title": "Accidental gradebook share",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "critical",
+      "path": "vertical-education/l2-ferpa-002.md",
+      "escalation_trigger": "External recipient or broad student access occurred.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-003",
+      "title": "Student account still active after withdrawal",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-education/l2-ferpa-003.md",
+      "escalation_trigger": "Account retains mailbox, drive, LMS, or SIS access.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-004",
+      "title": "LMS roster sync mismatch",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "medium",
+      "path": "vertical-education/l2-ferpa-004.md",
+      "escalation_trigger": "Multiple students or classes have incorrect enrollment.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-005",
+      "title": "Guardian portal identity dispute",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-education/l2-ferpa-005.md",
+      "escalation_trigger": "Guardian relationship or custody restriction is disputed.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-006",
+      "title": "OneDrive or Drive folder exposes student records",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "critical",
+      "path": "vertical-education/l2-ferpa-006.md",
+      "escalation_trigger": "Student records were shared outside the authorized group.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-007",
+      "title": "Student device lost with local files",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-education/l2-ferpa-007.md",
+      "escalation_trigger": "Encryption or remote wipe status cannot be proven.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-008",
+      "title": "Assessment platform outage during exam",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "critical",
+      "path": "vertical-education/l2-ferpa-008.md",
+      "escalation_trigger": "Many students cannot complete timed assessment.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-009",
+      "title": "Teacher mailbox compromised",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "critical",
+      "path": "vertical-education/l2-ferpa-009.md",
+      "escalation_trigger": "Mailbox contains student records or external forwarding rule.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ferpa-010",
+      "title": "EdTech vendor access review",
+      "category": "education",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-education/l2-ferpa-010.md",
+      "escalation_trigger": "Vendor can access student PII without current approval.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l1-ot-001",
+      "title": "Shop-floor barcode scanner cannot submit jobs",
+      "category": "manufacturing",
+      "support_level": "L1",
+      "severity": "medium",
+      "path": "vertical-manufacturing/l1-ot-001.md",
+      "escalation_trigger": "Multiple scanners fail or production line is blocked.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l1-ot-002",
+      "title": "Label printer missing production template",
+      "category": "manufacturing",
+      "support_level": "L1",
+      "severity": "medium",
+      "path": "vertical-manufacturing/l1-ot-002.md",
+      "escalation_trigger": "Wrong labels can ship product or break traceability.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l1-ot-003",
+      "title": "Operator kiosk stuck after Windows update",
+      "category": "manufacturing",
+      "support_level": "L1",
+      "severity": "high",
+      "path": "vertical-manufacturing/l1-ot-003.md",
+      "escalation_trigger": "Kiosk controls production workflow or line is down.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l1-ot-004",
+      "title": "MES terminal loses session every few minutes",
+      "category": "manufacturing",
+      "support_level": "L1",
+      "severity": "medium",
+      "path": "vertical-manufacturing/l1-ot-004.md",
+      "escalation_trigger": "Several terminals lose sessions at once.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l1-ot-005",
+      "title": "Warehouse handheld cannot sync inventory",
+      "category": "manufacturing",
+      "support_level": "L1",
+      "severity": "medium",
+      "path": "vertical-manufacturing/l1-ot-005.md",
+      "escalation_trigger": "Sync errors affect stock counts or shipping cut-off.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-001",
+      "title": "PLC programming workstation cannot reach controller",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "critical",
+      "path": "vertical-manufacturing/l2-ics-001.md",
+      "escalation_trigger": "Controller or production cell may be down.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-002",
+      "title": "HMI screen freezes during production run",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "critical",
+      "path": "vertical-manufacturing/l2-ics-002.md",
+      "escalation_trigger": "Operator cannot view or control process state.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-003",
+      "title": "SCADA historian stops collecting tags",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-manufacturing/l2-ics-003.md",
+      "escalation_trigger": "Batch traceability, quality, or compliance records are affected.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-004",
+      "title": "OT network switch shows port flapping",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-manufacturing/l2-ics-004.md",
+      "escalation_trigger": "Flapping port connects safety, PLC, HMI, or line equipment.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-005",
+      "title": "Vendor remote access requested for machine support",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-manufacturing/l2-ics-005.md",
+      "escalation_trigger": "Vendor wants unattended or broad access.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-006",
+      "title": "Unapproved USB device found on engineering station",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "critical",
+      "path": "vertical-manufacturing/l2-ics-006.md",
+      "escalation_trigger": "Unknown media touched OT or engineering workstation.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-007",
+      "title": "Patch reboot risk on production workstation",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-manufacturing/l2-ics-007.md",
+      "escalation_trigger": "Pending reboot may interrupt production.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-008",
+      "title": "Quality station cannot upload inspection results",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-manufacturing/l2-ics-008.md",
+      "escalation_trigger": "Quality records are blocked or batch release is delayed.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-009",
+      "title": "Time sync drift between OT systems",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-manufacturing/l2-ics-009.md",
+      "escalation_trigger": "Traceability timestamps or batch records disagree.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l2-ics-010",
+      "title": "ERP to MES order feed delayed",
+      "category": "manufacturing",
+      "support_level": "L2",
+      "severity": "high",
+      "path": "vertical-manufacturing/l2-ics-010.md",
+      "escalation_trigger": "Production orders are missing or duplicated.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-aadconnect-006-staging-server-failover",
+      "title": "AAD Connect staging server failover",
+      "category": "enterprise",
+      "support_level": "L3",
+      "severity": "critical",
+      "path": "tier3-hybrid/l3-aadconnect-006-staging-server-failover.md",
+      "escalation_trigger": "Primary sync server is down and cloud identity changes are stalled.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-exchange-006-hybrid-modern-auth-loop",
+      "title": "Exchange hybrid modern auth loop",
+      "category": "exchange",
+      "support_level": "L3",
+      "severity": "high",
+      "path": "tier3-hybrid/l3-exchange-006-hybrid-modern-auth-loop.md",
+      "escalation_trigger": "Outlook loops after hybrid auth or certificate change.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-saml-006-signing-cert-rollover",
+      "title": "SAML signing certificate rollover failure",
+      "category": "sso-saml",
+      "support_level": "L3",
+      "severity": "critical",
+      "path": "tier3-hybrid/l3-saml-006-signing-cert-rollover.md",
+      "escalation_trigger": "Users are locked out after IdP or SP certificate rollover.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-intune-006-autopilot-hybrid-join-timeout",
+      "title": "Autopilot hybrid join timeout",
+      "category": "endpoint",
+      "support_level": "L3",
+      "severity": "high",
+      "path": "tier3-hybrid/l3-intune-006-autopilot-hybrid-join-timeout.md",
+      "escalation_trigger": "Devices fail enrollment after domain join or connector timeout.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-dns-006-split-brain-m365-records",
+      "title": "Split-brain DNS breaks Microsoft 365 records",
+      "category": "dns",
+      "support_level": "L3",
+      "severity": "high",
+      "path": "tier3-hybrid/l3-dns-006-split-brain-m365-records.md",
+      "escalation_trigger": "Internal users resolve different records than external users.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-vpn-006-conditional-access-device-state",
+      "title": "VPN conditional access device-state mismatch",
+      "category": "vpn",
+      "support_level": "L3",
+      "severity": "high",
+      "path": "tier3-hybrid/l3-vpn-006-conditional-access-device-state.md",
+      "escalation_trigger": "Compliant devices fail VPN or SAML sign-in.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-pki-006-ndes-scep-profile-failure",
+      "title": "NDES SCEP certificate profile failure",
+      "category": "certificates",
+      "support_level": "L3",
+      "severity": "high",
+      "path": "tier3-hybrid/l3-pki-006-ndes-scep-profile-failure.md",
+      "escalation_trigger": "Managed devices cannot receive certificates for Wi-Fi or VPN.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-teams-006-direct-routing-sbc-down",
+      "title": "Teams Direct Routing SBC down",
+      "category": "teams",
+      "support_level": "L3",
+      "severity": "critical",
+      "path": "tier3-hybrid/l3-teams-006-direct-routing-sbc-down.md",
+      "escalation_trigger": "Inbound/outbound calling is unavailable for one or more offices.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-sharepoint-006-cross-tenant-migration-permission",
+      "title": "SharePoint cross-tenant migration permission failure",
+      "category": "sharepoint",
+      "support_level": "L3",
+      "severity": "high",
+      "path": "tier3-hybrid/l3-sharepoint-006-cross-tenant-migration-permission.md",
+      "escalation_trigger": "Migrated sites lose access or inherit wrong permissions.",
+      "last_updated": "2026-06-18"
+    },
+    {
+      "id": "l3-security-006-token-replay-investigation",
+      "title": "Token replay investigation in hybrid tenant",
+      "category": "security",
+      "support_level": "L3",
+      "severity": "critical",
+      "path": "tier3-hybrid/l3-security-006-token-replay-investigation.md",
+      "escalation_trigger": "Risky sign-ins show impossible travel, token reuse, or session persistence.",
+      "last_updated": "2026-06-18"
+    }
+  ]
+}

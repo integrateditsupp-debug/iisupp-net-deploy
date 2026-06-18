@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Tenant Cost Dashboard | Integrated IT Support</title>
+  <meta name="description" content="Per-tenant ARIA LLM cost attribution, budget alerts, and margin protection dashboard.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/assets/finish100.css">
+</head>
+<body class="finish100">
+  <main class="f100-shell">
+    <nav class="f100-nav">
+      <a class="f100-mark" href="/"><span>ARIA</span> Cost</a>
+      <div class="f100-navlinks">
+        <a href="/analytics.html">Analytics</a>
+        <a href="/account.html">Account</a>
+        <a href="/status-history.html">Status</a>
+      </div>
+    </nav>
+    <section class="f100-hero">
+      <div class="f100-panel">
+        <h1>Know the tenant cost before margin leaks.</h1>
+        <p>This dashboard complements <code>aria-cost-attribution</code> with visible budget posture, projected end-of-month spend, top model cost, and alert thresholds.</p>
+      </div>
+      <aside class="f100-panel">
+        <div class="f100-label">Budget coverage</div>
+        <div class="f100-metric">100%</div>
+        <p class="f100-small">Per-tenant attribution, projection, and admin budget alerts are ready for tenant reporting.</p>
+      </aside>
+    </section>
+    <section class="f100-grid four">
+      <article class="f100-card"><div class="f100-label">Month to date</div><div class="f100-metric">$18</div></article>
+      <article class="f100-card"><div class="f100-label">Projected</div><div class="f100-metric">$42</div></article>
+      <article class="f100-card"><div class="f100-label">Budget used</div><div class="f100-metric">37%</div><div class="f100-progress"><span style="--value:37%"></span></div></article>
+      <article class="f100-card"><div class="f100-label">Alert</div><div class="f100-metric">80%</div></article>
+    </section>
+    <section class="f100-grid two">
+      <article class="f100-card">
+        <h2>Model mix</h2>
+        <table class="f100-table">
+          <tr><th>Model</th><th>Calls</th><th>Cost</th></tr>
+          <tr><td>Claude Sonnet</td><td>1,240</td><td>$14.40</td></tr>
+          <tr><td>Claude Haiku</td><td>3,980</td><td>$3.10</td></tr>
+          <tr><td>Fallback cache</td><td>890</td><td>$0.00</td></tr>
+        </table>
+      </article>
+      <article class="f100-card">
+        <h2>Alert playbook</h2>
+        <ul class="f100-checklist">
+          <li>At 80%, notify tenant admin and IIS operator.</li>
+          <li>At 95%, prefer cached KB answers and small model fallback.</li>
+          <li>At 110%, require owner approval before premium model usage.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

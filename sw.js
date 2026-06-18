@@ -1,8 +1,29 @@
 // Bump this version on each deploy to force returning visitors to flush the
 // old cache and pick up the new aria-trial widget + kb-index. The fetch
 // strategy is network-first, so cache only matters when offline.
-const CACHE_NAME = "iisupport-v5";
-const PRECACHE = ["/", "/aria.html", "/about.html", "/purchase-tech.html", "/manifest.webmanifest", "/favicon.svg"];
+const CACHE_NAME = "iisupport-v6";
+const PRECACHE = [
+  "/",
+  "/aria.html",
+  "/about.html",
+  "/purchase-tech.html",
+  "/account.html",
+  "/analytics.html",
+  "/tenant-admin.html",
+  "/status-history.html",
+  "/white-label-admin.html",
+  "/screenshare-consent.html",
+  "/partner-application-checker.html",
+  "/write-gate-history.html",
+  "/iso-27001-readiness.html",
+  "/pipeda-readiness.html",
+  "/cost-dashboard.html",
+  "/offline.html",
+  "/assets/finish100.css",
+  "/assets/finish100-pages.js",
+  "/manifest.webmanifest",
+  "/favicon.svg"
+];
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -43,6 +64,6 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
         return res;
       })
-      .catch(() => caches.match(req).then((r) => r || caches.match("/")))
+      .catch(() => caches.match(req).then((r) => r || caches.match("/offline.html") || caches.match("/")))
   );
 });

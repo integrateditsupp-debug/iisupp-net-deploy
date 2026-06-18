@@ -10,6 +10,15 @@
   <url><loc>https://iisupp.net/product.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://iisupp.net/ai-edge.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://iisupp.net/growth-library.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://iisupp.net/account.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://iisupp.net/analytics.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://iisupp.net/tenant-admin.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://iisupp.net/white-label-admin.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://iisupp.net/cost-dashboard.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://iisupp.net/screenshare-consent.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://iisupp.net/partner-application-checker.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://iisupp.net/write-gate-history.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://iisupp.net/status-history.html</loc><changefreq>daily</changefreq><priority>0.5</priority></url>
   <url><loc>https://iisupp.net/marketplace.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://iisupp.net/start-here.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://iisupp.net/compare/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -22,5 +31,7 @@
   <url><loc>https://iisupp.net/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://iisupp.net/ai-governance</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://iisupp.net/compliance/automated-decisions</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://iisupp.net/iso-27001-readiness.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://iisupp.net/pipeda-readiness.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://iisupp.net/security/disclosure</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>

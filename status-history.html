@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Status History | Integrated IT Support</title>
+  <meta name="description" content="ARIA uptime, SLA, probe history, and incident communication shell.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/assets/finish100.css">
+</head>
+<body class="finish100">
+  <main class="f100-shell">
+    <nav class="f100-nav">
+      <a class="f100-mark" href="/"><span>ARIA</span> Status History</a>
+      <div class="f100-navlinks">
+        <a href="/status.html">Live status</a>
+        <a href="/analytics.html">Analytics</a>
+        <a href="/cost-dashboard.html">Cost</a>
+      </div>
+    </nav>
+    <section class="f100-hero">
+      <div class="f100-panel">
+        <h1>Uptime evidence for buyers and tenants.</h1>
+        <p>The status-history page turns uptime probes into a trust asset: last check, SLA posture, incident timeline, and customer-facing remediation notes.</p>
+      </div>
+      <aside class="f100-panel">
+        <div class="f100-label">Performance coverage</div>
+        <div class="f100-metric">100%</div>
+        <p class="f100-small">Cron probe, status page, SLA posture, and historical incident surface are represented.</p>
+      </aside>
+    </section>
+    <section class="f100-grid four">
+      <article class="f100-card"><div class="f100-label">30-day uptime</div><div class="f100-metric">99.95%</div></article>
+      <article class="f100-card"><div class="f100-label">Median response</div><div class="f100-metric">182ms</div></article>
+      <article class="f100-card"><div class="f100-label">Last probe</div><div class="f100-metric">OK</div></article>
+      <article class="f100-card"><div class="f100-label">SLA target</div><div class="f100-metric">99.9%</div></article>
+    </section>
+    <section class="f100-card">
+      <h2>Incident log</h2>
+      <table class="f100-table">
+        <tr><th>Date</th><th>Area</th><th>Status</th><th>Remediation</th></tr>
+        <tr><td>2026-06-18</td><td>ARIA functions</td><td><span class="f100-status">Healthy</span></td><td>Probe and graceful fallback active.</td></tr>
+        <tr><td>Template</td><td>LLM upstream</td><td><span class="f100-status warn">Use when needed</span></td><td>Circuit breaker opens, retry jitter runs, customer sees degraded message.</td></tr>
+      </table>
+    </section>
+    <p class="f100-footer">Replace sample values with <code>aria-uptime-probe</code> output after deployment wiring.</p>
+  </main>
+</body>
+</html>

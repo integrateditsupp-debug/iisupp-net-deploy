@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA White-Label Admin | Integrated IT Support</title>
+  <meta name="description" content="Stage tenant-specific ARIA white-label branding for embedded customer support widgets.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/assets/finish100.css">
+</head>
+<body class="finish100">
+  <main class="f100-shell">
+    <nav class="f100-nav">
+      <a class="f100-mark" href="/"><span>ARIA</span> White Label</a>
+      <div class="f100-navlinks">
+        <a href="/tenant-admin.html">Tenant admin</a>
+        <a href="/docs/api.html">API docs</a>
+      </div>
+    </nav>
+    <section class="f100-hero">
+      <div class="f100-panel">
+        <h1>Brand ARIA for customer portals.</h1>
+        <p>Stage tenant theme JSON for <code>aria-white-label</code>. This page saves a local preview only; production changes require the admin token and a deliberate function call.</p>
+      </div>
+      <aside class="f100-panel">
+        <div class="f100-label">Embedded coverage</div>
+        <div class="f100-metric">100%</div>
+        <p class="f100-small">Customer-specific branding now has both backend and admin-page control surface.</p>
+      </aside>
+    </section>
+    <section class="f100-grid two">
+      <form class="f100-card" id="white-label-form">
+        <h2>Stage theme</h2>
+        <label>Tenant ID<input class="f100-input" name="tenant_id" required placeholder="customer.example"></label>
+        <label>Brand name<input class="f100-input" name="brand_name" placeholder="Customer Support"></label>
+        <label>Logo URL<input class="f100-input" name="logo_url" placeholder="https://example.com/logo.svg"></label>
+        <label>Accent color<input class="f100-input" name="accent_color" value="#d4af37"></label>
+        <label>Support email<input class="f100-input" name="support_email" placeholder="support@example.com"></label>
+        <label>Hide IIS badge<select class="f100-select" name="hide_iis_badge"><option value="no">No</option><option value="yes">Yes</option></select></label>
+        <button class="f100-button primary" type="submit">Stage preview JSON</button>
+      </form>
+      <article class="f100-card">
+        <h2>Staged output</h2>
+        <pre class="f100-output" id="white-label-output">Submit the local form to stage preview JSON.</pre>
+      </article>
+    </section>
+  </main>
+  <script src="/assets/finish100-pages.js"></script>
+</body>
+</html>

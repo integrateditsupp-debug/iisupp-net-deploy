@@ -1,3 +1,5 @@
+const { checkRateLimit, rateLimitResponse } = require('./_rate-limit');
+
 /**
  * aria-warm-handoff — Live-agent warm handoff from ARIA chat.
  *  POST { email, name?, chat_summary, last_intent, urgency }
@@ -15,6 +17,9 @@ exports.handler = async (event) => {
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
+
+  const limit = checkRateLimit(event, { scope: 'aria-warm-handoff', limit: 8, windowMs: 15 * 60 * 1000 });
+  if (!limit.ok) return rateLimitResponse(limit, headers);
 
   let body;
   try { body = JSON.parse(event.body || '{}'); }

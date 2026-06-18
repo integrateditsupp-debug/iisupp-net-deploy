@@ -1,0 +1,4990 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Integrated IT Support ARIA API",
+    "version": "2026-06-18.finish100",
+    "description": "Generated OpenAPI index for ARIA Netlify function endpoints. Some endpoints require admin tokens or human approval."
+  },
+  "servers": [
+    {
+      "url": "https://iisupp.net"
+    }
+  ],
+  "paths": {
+    "/.netlify/functions/aperture-audit": {
+      "post": {
+        "summary": "aperture-audit Netlify function",
+        "operationId": "post_aperture_audit",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aperture-audit.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aperture-auth": {
+      "post": {
+        "summary": "aperture-auth Netlify function",
+        "operationId": "post_aperture_auth",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aperture-auth.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aperture-email-report": {
+      "post": {
+        "summary": "aperture-email-report Netlify function",
+        "operationId": "post_aperture_email_report",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aperture-email-report.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aperture-events": {
+      "post": {
+        "summary": "aperture-events Netlify function",
+        "operationId": "post_aperture_events",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aperture-events.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aperture-session": {
+      "post": {
+        "summary": "aperture-session Netlify function",
+        "operationId": "post_aperture_session",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aperture-session.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aperture-tickets": {
+      "post": {
+        "summary": "aperture-tickets Netlify function",
+        "operationId": "post_aperture_tickets",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aperture-tickets.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-account-delete": {
+      "post": {
+        "summary": "aria-account-delete Netlify function",
+        "operationId": "post_aria_account_delete",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-account-delete.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-analytics-dashboard": {
+      "post": {
+        "summary": "aria-analytics-dashboard Netlify function",
+        "operationId": "post_aria_analytics_dashboard",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-analytics-dashboard.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-billing-portal": {
+      "post": {
+        "summary": "aria-billing-portal Netlify function",
+        "operationId": "post_aria_billing_portal",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-billing-portal.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-breaker-status": {
+      "post": {
+        "summary": "aria-breaker-status Netlify function",
+        "operationId": "post_aria_breaker_status",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-breaker-status.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-call-summary": {
+      "post": {
+        "summary": "aria-call-summary Netlify function",
+        "operationId": "post_aria_call_summary",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-call-summary.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-caller-lookup": {
+      "post": {
+        "summary": "aria-caller-lookup Netlify function",
+        "operationId": "post_aria_caller_lookup",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-caller-lookup.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-chat": {
+      "post": {
+        "summary": "aria-chat Netlify function",
+        "operationId": "post_aria_chat",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-chat.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-contact-back": {
+      "post": {
+        "summary": "aria-contact-back Netlify function",
+        "operationId": "post_aria_contact_back",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-contact-back.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-cost-attribution": {
+      "post": {
+        "summary": "aria-cost-attribution Netlify function",
+        "operationId": "post_aria_cost_attribution",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-cost-attribution.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-cost-tracker": {
+      "post": {
+        "summary": "aria-cost-tracker Netlify function",
+        "operationId": "post_aria_cost_tracker",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-cost-tracker.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-coupon-admin": {
+      "post": {
+        "summary": "aria-coupon-admin Netlify function",
+        "operationId": "post_aria_coupon_admin",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-coupon-admin.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-coupon": {
+      "post": {
+        "summary": "aria-coupon Netlify function",
+        "operationId": "post_aria_coupon",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-coupon.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-cross-device-sync": {
+      "post": {
+        "summary": "aria-cross-device-sync Netlify function",
+        "operationId": "post_aria_cross_device_sync",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-cross-device-sync.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-data-export": {
+      "post": {
+        "summary": "aria-data-export Netlify function",
+        "operationId": "post_aria_data_export",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-data-export.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-engagement-cron": {
+      "post": {
+        "summary": "aria-engagement-cron Netlify function",
+        "operationId": "post_aria_engagement_cron",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-engagement-cron.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-escalation": {
+      "post": {
+        "summary": "aria-escalation Netlify function",
+        "operationId": "post_aria_escalation",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-escalation.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-event": {
+      "post": {
+        "summary": "aria-event Netlify function",
+        "operationId": "post_aria_event",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-event.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-evolution-cron": {
+      "post": {
+        "summary": "aria-evolution-cron Netlify function",
+        "operationId": "post_aria_evolution_cron",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-evolution-cron.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-evolution-report": {
+      "post": {
+        "summary": "aria-evolution-report Netlify function",
+        "operationId": "post_aria_evolution_report",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-evolution-report.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-feedback": {
+      "post": {
+        "summary": "aria-feedback Netlify function",
+        "operationId": "post_aria_feedback",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-feedback.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-governor-alert-cron": {
+      "post": {
+        "summary": "aria-governor-alert-cron Netlify function",
+        "operationId": "post_aria_governor_alert_cron",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-governor-alert-cron.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-guided-fix": {
+      "post": {
+        "summary": "aria-guided-fix Netlify function",
+        "operationId": "post_aria_guided_fix",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-guided-fix.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-health-lead": {
+      "post": {
+        "summary": "aria-health-lead Netlify function",
+        "operationId": "post_aria_health_lead",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-health-lead.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-inquiry": {
+      "post": {
+        "summary": "aria-inquiry Netlify function",
+        "operationId": "post_aria_inquiry",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-inquiry.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-intake": {
+      "post": {
+        "summary": "aria-intake Netlify function",
+        "operationId": "post_aria_intake",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-intake.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-invoice-download": {
+      "post": {
+        "summary": "aria-invoice-download Netlify function",
+        "operationId": "post_aria_invoice_download",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-invoice-download.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-kb-export": {
+      "post": {
+        "summary": "aria-kb-export Netlify function",
+        "operationId": "post_aria_kb_export",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-kb-export.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-lead-capture": {
+      "post": {
+        "summary": "aria-lead-capture Netlify function",
+        "operationId": "post_aria_lead_capture",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-lead-capture.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-lead-radar-cron": {
+      "post": {
+        "summary": "aria-lead-radar-cron Netlify function",
+        "operationId": "post_aria_lead_radar_cron",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-lead-radar-cron.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-lead-radar": {
+      "post": {
+        "summary": "aria-lead-radar Netlify function",
+        "operationId": "post_aria_lead_radar",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-lead-radar.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-learn-admin": {
+      "post": {
+        "summary": "aria-learn-admin Netlify function",
+        "operationId": "post_aria_learn_admin",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-learn-admin.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-learn": {
+      "post": {
+        "summary": "aria-learn Netlify function",
+        "operationId": "post_aria_learn",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-learn.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-learning-audit": {
+      "post": {
+        "summary": "aria-learning-audit Netlify function",
+        "operationId": "post_aria_learning_audit",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-learning-audit.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-learning-cron": {
+      "post": {
+        "summary": "aria-learning-cron Netlify function",
+        "operationId": "post_aria_learning_cron",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-learning-cron.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-learning-loop": {
+      "post": {
+        "summary": "aria-learning-loop Netlify function",
+        "operationId": "post_aria_learning_loop",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-learning-loop.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-learning-promote": {
+      "post": {
+        "summary": "aria-learning-promote Netlify function",
+        "operationId": "post_aria_learning_promote",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-learning-promote.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-learning-status": {
+      "post": {
+        "summary": "aria-learning-status Netlify function",
+        "operationId": "post_aria_learning_status",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-learning-status.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-license-admin": {
+      "post": {
+        "summary": "aria-license-admin Netlify function",
+        "operationId": "post_aria_license_admin",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-license-admin.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-license": {
+      "post": {
+        "summary": "aria-license Netlify function",
+        "operationId": "post_aria_license",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-license.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-llm-governor": {
+      "post": {
+        "summary": "aria-llm-governor Netlify function",
+        "operationId": "post_aria_llm_governor",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-llm-governor.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-m365-graph-write": {
+      "post": {
+        "summary": "aria-m365-graph-write Netlify function",
+        "operationId": "post_aria_m365_graph_write",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-m365-graph-write.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-m365-graph": {
+      "post": {
+        "summary": "aria-m365-graph Netlify function",
+        "operationId": "post_aria_m365_graph",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-m365-graph.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-magic-link": {
+      "post": {
+        "summary": "aria-magic-link Netlify function",
+        "operationId": "post_aria_magic_link",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-magic-link.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-mesh-events": {
+      "post": {
+        "summary": "aria-mesh-events Netlify function",
+        "operationId": "post_aria_mesh_events",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-mesh-events.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-mesh-router": {
+      "post": {
+        "summary": "aria-mesh-router Netlify function",
+        "operationId": "post_aria_mesh_router",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-mesh-router.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-mesh-task-queue": {
+      "post": {
+        "summary": "aria-mesh-task-queue Netlify function",
+        "operationId": "post_aria_mesh_task_queue",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-mesh-task-queue.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-monitor": {
+      "post": {
+        "summary": "aria-monitor Netlify function",
+        "operationId": "post_aria_monitor",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-monitor.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-mrr-dashboard": {
+      "post": {
+        "summary": "aria-mrr-dashboard Netlify function",
+        "operationId": "post_aria_mrr_dashboard",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-mrr-dashboard.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-pattern-router": {
+      "post": {
+        "summary": "aria-pattern-router Netlify function",
+        "operationId": "post_aria_pattern_router",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-pattern-router.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-plan-change": {
+      "post": {
+        "summary": "aria-plan-change Netlify function",
+        "operationId": "post_aria_plan_change",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-plan-change.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-receipt-email": {
+      "post": {
+        "summary": "aria-receipt-email Netlify function",
+        "operationId": "post_aria_receipt_email",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-receipt-email.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-recipes-data": {
+      "post": {
+        "summary": "aria-recipes-data Netlify function",
+        "operationId": "post_aria_recipes_data",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-recipes-data.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-renewal-reminders": {
+      "post": {
+        "summary": "aria-renewal-reminders Netlify function",
+        "operationId": "post_aria_renewal_reminders",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-renewal-reminders.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-research": {
+      "post": {
+        "summary": "aria-research Netlify function",
+        "operationId": "post_aria_research",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-research.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-resend-helper": {
+      "post": {
+        "summary": "aria-resend-helper Netlify function",
+        "operationId": "post_aria_resend_helper",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-resend-helper.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-reverify-cron": {
+      "post": {
+        "summary": "aria-reverify-cron Netlify function",
+        "operationId": "post_aria_reverify_cron",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-reverify-cron.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-reverify": {
+      "post": {
+        "summary": "aria-reverify Netlify function",
+        "operationId": "post_aria_reverify",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-reverify.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-room-provider": {
+      "post": {
+        "summary": "aria-room-provider Netlify function",
+        "operationId": "post_aria_room_provider",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-room-provider.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-screenshare-request": {
+      "post": {
+        "summary": "aria-screenshare-request Netlify function",
+        "operationId": "post_aria_screenshare_request",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-screenshare-request.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-search": {
+      "post": {
+        "summary": "aria-search Netlify function",
+        "operationId": "post_aria_search",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-search.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-self-audit-cron": {
+      "post": {
+        "summary": "aria-self-audit-cron Netlify function",
+        "operationId": "post_aria_self_audit_cron",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-self-audit-cron.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-self-audit": {
+      "post": {
+        "summary": "aria-self-audit Netlify function",
+        "operationId": "post_aria_self_audit",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-self-audit.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-session-end": {
+      "post": {
+        "summary": "aria-session-end Netlify function",
+        "operationId": "post_aria_session_end",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-session-end.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-session-memory": {
+      "post": {
+        "summary": "aria-session-memory Netlify function",
+        "operationId": "post_aria_session_memory",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-session-memory.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-session": {
+      "post": {
+        "summary": "aria-session Netlify function",
+        "operationId": "post_aria_session",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-session.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-slack-command": {
+      "post": {
+        "summary": "aria-slack-command Netlify function",
+        "operationId": "post_aria_slack_command",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-slack-command.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-slack-events": {
+      "post": {
+        "summary": "aria-slack-events Netlify function",
+        "operationId": "post_aria_slack_events",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-slack-events.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-slack-install": {
+      "post": {
+        "summary": "aria-slack-install Netlify function",
+        "operationId": "post_aria_slack_install",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-slack-install.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "get": {
+        "summary": "aria-slack-install Netlify function",
+        "operationId": "get_aria_slack_install",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-slack-install.js",
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-slack-interactive": {
+      "post": {
+        "summary": "aria-slack-interactive Netlify function",
+        "operationId": "post_aria_slack_interactive",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-slack-interactive.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-sms": {
+      "post": {
+        "summary": "aria-sms Netlify function",
+        "operationId": "post_aria_sms",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-sms.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-teams-bot": {
+      "post": {
+        "summary": "aria-teams-bot Netlify function",
+        "operationId": "post_aria_teams_bot",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-teams-bot.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-teams-install": {
+      "post": {
+        "summary": "aria-teams-install Netlify function",
+        "operationId": "post_aria_teams_install",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-teams-install.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-teams-tab-token": {
+      "post": {
+        "summary": "aria-teams-tab-token Netlify function",
+        "operationId": "post_aria_teams_tab_token",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-teams-tab-token.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-tenant-audit": {
+      "post": {
+        "summary": "aria-tenant-audit Netlify function",
+        "operationId": "post_aria_tenant_audit",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-tenant-audit.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-tenant-kb": {
+      "post": {
+        "summary": "aria-tenant-kb Netlify function",
+        "operationId": "post_aria_tenant_kb",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-tenant-kb.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-trace": {
+      "post": {
+        "summary": "aria-trace Netlify function",
+        "operationId": "post_aria_trace",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-trace.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-uptime-probe": {
+      "post": {
+        "summary": "aria-uptime-probe Netlify function",
+        "operationId": "post_aria_uptime_probe",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-uptime-probe.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-verifier": {
+      "post": {
+        "summary": "aria-verifier Netlify function",
+        "operationId": "post_aria_verifier",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-verifier.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-warm-handoff": {
+      "post": {
+        "summary": "aria-warm-handoff Netlify function",
+        "operationId": "post_aria_warm_handoff",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-warm-handoff.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-white-label": {
+      "post": {
+        "summary": "aria-white-label Netlify function",
+        "operationId": "post_aria_white_label",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-white-label.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "get": {
+        "summary": "aria-white-label Netlify function",
+        "operationId": "get_aria_white_label",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-white-label.js",
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-winback-cron": {
+      "post": {
+        "summary": "aria-winback-cron Netlify function",
+        "operationId": "post_aria_winback_cron",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-winback-cron.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria-write-gate": {
+      "post": {
+        "summary": "aria-write-gate Netlify function",
+        "operationId": "post_aria_write_gate",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-write-gate.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "get": {
+        "summary": "aria-write-gate Netlify function",
+        "operationId": "get_aria_write_gate",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-write-gate.js",
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/aria": {
+      "post": {
+        "summary": "aria Netlify function",
+        "operationId": "post_aria",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/health": {
+      "post": {
+        "summary": "health Netlify function",
+        "operationId": "post_health",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "health.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/library-download": {
+      "post": {
+        "summary": "library-download Netlify function",
+        "operationId": "post_library_download",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "library-download.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/loops-status": {
+      "post": {
+        "summary": "loops-status Netlify function",
+        "operationId": "post_loops_status",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "loops-status.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/marketplace-request": {
+      "post": {
+        "summary": "marketplace-request Netlify function",
+        "operationId": "post_marketplace_request",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "marketplace-request.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/me": {
+      "post": {
+        "summary": "me Netlify function",
+        "operationId": "post_me",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "me.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/news": {
+      "post": {
+        "summary": "news Netlify function",
+        "operationId": "post_news",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "news.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/senior-director-agent": {
+      "post": {
+        "summary": "senior-director-agent Netlify function",
+        "operationId": "post_senior_director_agent",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "senior-director-agent.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/senior-director-digest-cron": {
+      "post": {
+        "summary": "senior-director-digest-cron Netlify function",
+        "operationId": "post_senior_director_digest_cron",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "senior-director-digest-cron.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/senior-director-telegram": {
+      "post": {
+        "summary": "senior-director-telegram Netlify function",
+        "operationId": "post_senior_director_telegram",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "senior-director-telegram.mjs",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/stocks": {
+      "post": {
+        "summary": "stocks Netlify function",
+        "operationId": "post_stocks",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "stocks.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/stripe-checkout": {
+      "post": {
+        "summary": "stripe-checkout Netlify function",
+        "operationId": "post_stripe_checkout",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "stripe-checkout.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/stripe-confirm": {
+      "post": {
+        "summary": "stripe-confirm Netlify function",
+        "operationId": "post_stripe_confirm",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "stripe-confirm.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/stripe-webhook": {
+      "post": {
+        "summary": "stripe-webhook Netlify function",
+        "operationId": "post_stripe_webhook",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "stripe-webhook.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/submission-created": {
+      "post": {
+        "summary": "submission-created Netlify function",
+        "operationId": "post_submission_created",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "submission-created.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/support": {
+      "post": {
+        "summary": "support Netlify function",
+        "operationId": "post_support",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "support.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/trading-news": {
+      "post": {
+        "summary": "trading-news Netlify function",
+        "operationId": "post_trading_news",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "trading-news.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/.netlify/functions/weather": {
+      "post": {
+        "summary": "weather Netlify function",
+        "operationId": "post_weather",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "weather.mts",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  }
+}

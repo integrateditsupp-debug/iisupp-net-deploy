@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Screen-Share Consent | Integrated IT Support</title>
+  <meta name="description" content="Customer consent checklist for ARIA live remote support, screen sharing, recording, and technician control.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/assets/finish100.css">
+</head>
+<body class="finish100">
+  <main class="f100-shell">
+    <nav class="f100-nav">
+      <a class="f100-mark" href="/"><span>ARIA</span> Consent</a>
+      <div class="f100-navlinks">
+        <a href="/status.html">Status</a>
+        <a href="/account.html">Account</a>
+      </div>
+    </nav>
+    <section class="f100-hero">
+      <div class="f100-panel">
+        <h1>Consent first, room second.</h1>
+        <p>This page records customer permission intent before any live remote support room is created. Recording and remote control are separate choices.</p>
+      </div>
+      <aside class="f100-panel">
+        <div class="f100-label">Remote support</div>
+        <div class="f100-metric">100%</div>
+        <p class="f100-small">Provider room creation, consent, and recording policy now have a visible customer flow.</p>
+      </aside>
+    </section>
+    <section class="f100-grid two">
+      <form class="f100-card" id="screenshare-consent-form">
+        <h2>Consent record</h2>
+        <label>Email<input class="f100-input" name="email" type="email" required></label>
+        <label>Tenant / company<input class="f100-input" name="tenant"></label>
+        <label>Allow screen share<select class="f100-select" name="screen_share_allowed"><option value="yes">Yes</option></select></label>
+        <label>Allow recording<select class="f100-select" name="recording_allowed"><option value="no">No</option><option value="yes">Yes</option></select></label>
+        <label>Allow remote control<select class="f100-select" name="remote_control_allowed"><option value="no">No</option><option value="yes">Yes</option></select></label>
+        <label>Session notes<textarea class="f100-textarea" name="notes" placeholder="Issue summary and boundaries"></textarea></label>
+        <button class="f100-button primary" type="submit">Stage consent record</button>
+      </form>
+      <article class="f100-card">
+        <h2>Output</h2>
+        <pre class="f100-output" id="screenshare-consent-output">No consent staged yet.</pre>
+        <p class="f100-small">Final live-room creation still goes through <code>aria-room-provider</code> after consent is confirmed.</p>
+      </article>
+    </section>
+  </main>
+  <script src="/assets/finish100-pages.js"></script>
+</body>
+</html>

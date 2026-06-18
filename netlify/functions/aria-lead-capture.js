@@ -1,3 +1,5 @@
+const { checkRateLimit, rateLimitResponse } = require('./_rate-limit');
+
 /**
  * aria-lead-capture — Capture a "talk to sales" lead from the /aria chat.
  *  POST { name, email, company, phone?, message? }
@@ -15,6 +17,9 @@ exports.handler = async (event) => {
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
+
+  const limit = checkRateLimit(event, { scope: 'aria-lead-capture', limit: 12, windowMs: 15 * 60 * 1000 });
+  if (!limit.ok) return rateLimitResponse(limit, headers);
 
   let body;
   try { body = JSON.parse(event.body || '{}'); }

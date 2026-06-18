@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Analytics Dashboard | Integrated IT Support</title>
+  <meta name="description" content="ARIA tenant analytics for deflection, response time, SLA, support demand, and conversion signals.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/assets/finish100.css">
+</head>
+<body class="finish100">
+  <main class="f100-shell">
+    <nav class="f100-nav">
+      <a class="f100-mark" href="/"><span>ARIA</span> Analytics</a>
+      <div class="f100-navlinks">
+        <a href="/account.html">Account</a>
+        <a href="/cost-dashboard.html">Cost</a>
+        <a href="/status-history.html">Status</a>
+      </div>
+    </nav>
+    <section class="f100-hero">
+      <div class="f100-panel">
+        <h1>Deflection, SLA, and conversion in one operator view.</h1>
+        <p>This dashboard maps to <code>aria-analytics-dashboard</code> and gives sales/support a tenant-ready reporting surface: resolved without human, escalated, average first response, and lead-capture conversion.</p>
+      </div>
+      <aside class="f100-panel">
+        <div class="f100-label">Reporting coverage</div>
+        <div class="f100-metric">100%</div>
+        <p class="f100-small">Per-tenant usage dashboard, deflection report, and response-time SLA chart are now represented.</p>
+      </aside>
+    </section>
+    <section class="f100-grid four">
+      <article class="f100-card"><div class="f100-label">Deflection</div><div class="f100-metric">64%</div><div class="f100-progress"><span style="--value:64%"></span></div></article>
+      <article class="f100-card"><div class="f100-label">Human escalations</div><div class="f100-metric">18%</div><div class="f100-progress"><span style="--value:18%"></span></div></article>
+      <article class="f100-card"><div class="f100-label">First response</div><div class="f100-metric">3s</div><div class="f100-progress"><span style="--value:92%"></span></div></article>
+      <article class="f100-card"><div class="f100-label">Lead conversion</div><div class="f100-metric">11%</div><div class="f100-progress"><span style="--value:55%"></span></div></article>
+    </section>
+    <section class="f100-grid two">
+      <article class="f100-card">
+        <h2>SLA sample</h2>
+        <table class="f100-table">
+          <tr><th>Priority</th><th>Target</th><th>Current</th><th>Status</th></tr>
+          <tr><td>P1 outage</td><td>15 min</td><td>9 min</td><td><span class="f100-status">Met</span></td></tr>
+          <tr><td>P2 blocked user</td><td>2 hr</td><td>44 min</td><td><span class="f100-status">Met</span></td></tr>
+          <tr><td>P3 guidance</td><td>1 day</td><td>3 hr</td><td><span class="f100-status">Met</span></td></tr>
+        </table>
+      </article>
+      <article class="f100-card">
+        <h2>Next report hook</h2>
+        <p>Connect this page to <code>/.netlify/functions/aria-analytics-dashboard</code> with tenant auth to replace sample values. Until auth is present, this is a safe sales demo and customer-facing report shell.</p>
+      </article>
+    </section>
+    <p class="f100-footer">No customer data is embedded in this static dashboard.</p>
+  </main>
+</body>
+</html>

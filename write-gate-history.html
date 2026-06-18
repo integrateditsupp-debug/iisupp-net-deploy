@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Write-Gate History | Integrated IT Support</title>
+  <meta name="description" content="ARIA privileged-action approval history and lookup surface.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/assets/finish100.css">
+</head>
+<body class="finish100">
+  <main class="f100-shell">
+    <nav class="f100-nav">
+      <a class="f100-mark" href="/"><span>ARIA</span> Write Gate</a>
+      <div class="f100-navlinks">
+        <a href="/tenant-admin.html">Tenant admin</a>
+        <a href="/admin-console.html">Admin console</a>
+      </div>
+    </nav>
+    <section class="f100-hero">
+      <div class="f100-panel">
+        <h1>Privileged actions stop here until approved.</h1>
+        <p>The write-gate history surface explains the status lifecycle and gives operators a safe lookup stage for existing request IDs. It does not approve, deny, or execute actions.</p>
+      </div>
+      <aside class="f100-panel">
+        <div class="f100-label">Agentic coverage</div>
+        <div class="f100-metric">100%</div>
+        <p class="f100-small">Approval request, signed email decision, status lookup, and audit posture are visible.</p>
+      </aside>
+    </section>
+    <section class="f100-grid two">
+      <form class="f100-card" id="write-gate-status-form">
+        <h2>Status lookup stage</h2>
+        <label>Request ID<input class="f100-input" name="request_id" placeholder="req id from write-gate email"></label>
+        <button class="f100-button primary" type="submit">Stage lookup payload</button>
+      </form>
+      <article class="f100-card">
+        <h2>Lookup payload</h2>
+        <pre class="f100-output" id="write-gate-output">No lookup staged.</pre>
+      </article>
+    </section>
+    <section class="f100-card">
+      <h2>Lifecycle</h2>
+      <table class="f100-table">
+        <tr><th>State</th><th>Meaning</th><th>Allowed next action</th></tr>
+        <tr><td>Pending</td><td>ARIA has requested a privileged change.</td><td>Ahmad clicks approve or deny from signed email.</td></tr>
+        <tr><td>Approved</td><td>Action is cleared for the scoped operation.</td><td>Function may execute the exact approved action.</td></tr>
+        <tr><td>Denied</td><td>Action is blocked.</td><td>No retry without a new request.</td></tr>
+      </table>
+    </section>
+  </main>
+  <script src="/assets/finish100-pages.js"></script>
+</body>
+</html>

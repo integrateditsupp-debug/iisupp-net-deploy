@@ -28,6 +28,8 @@ handoff = client.request_handoff(
 )
 
 stats = client.mrr()
+report = client.analytics_snapshot(admin_token="admin-token")
+theme = client.white_label_theme("clinic.example")
 ```
 
 ## Async usage
@@ -70,8 +72,25 @@ asyncio.run(main())
 - `approval_approve(...)`
 - `approval_deny(...)`
 - `renewal_scan(...)`
+- `analytics_snapshot(...)`
+- `analytics_series(...)`
+- `winback_scan(...)`
+- `coupon_admin(...)`
+- `slack_authorize_url(...)`
+- `white_label_theme(...)`
+- `white_label_set(...)`
+- `cost_attribution_summary(...)`
+- `breaker_status(...)`
 
 Async variants use the same names prefixed with `a`, for example `acapture_lead(...)`, `amrr()`, and `arenewal_scan(...)`.
+
+## Examples
+
+Runnable examples live in `examples/`:
+
+- `capture_lead.py` stages a sales lead from a script.
+- `async_mrr.py` fetches revenue telemetry asynchronously.
+- `tenant_kb.py` submits tenant knowledge-base content.
 
 ## Development
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Any, Literal
+from urllib.parse import urlencode
 
 import httpx
 
@@ -36,10 +37,24 @@ class ARIA:
             response = client.post(url, json=payload or {})
         return self._decode(path, response)
 
+    def _get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+        query = "?" + urlencode(compact(params or {})) if params else ""
+        url = f"{self.base}/{path}{query}"
+        with httpx.Client(timeout=self.timeout, transport=self._transport) as client:
+            response = client.get(url)
+        return self._decode(path, response)
+
     async def _apost(self, path: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
         url = f"{self.base}/{path}"
         async with httpx.AsyncClient(timeout=self.timeout, transport=self._async_transport) as client:
             response = await client.post(url, json=payload or {})
+        return self._decode(path, response)
+
+    async def _aget(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+        query = "?" + urlencode(compact(params or {})) if params else ""
+        url = f"{self.base}/{path}{query}"
+        async with httpx.AsyncClient(timeout=self.timeout, transport=self._async_transport) as client:
+            response = await client.get(url)
         return self._decode(path, response)
 
     @staticmethod
@@ -241,6 +256,60 @@ class ARIA:
 
     async def arenewal_scan(self, dry_run: bool = False) -> dict[str, Any]:
         return await self._apost("aria-renewal-reminders", {"event": "scan", "dry_run": bool(dry_run)})
+
+    def analytics_snapshot(self, *, admin_token: str | None = None) -> dict[str, Any]:
+        return self._post("aria-analytics-dashboard", compact({"event": "snapshot", "admin_token": admin_token}))
+
+    async def aanalytics_snapshot(self, *, admin_token: str | None = None) -> dict[str, Any]:
+        return await self._apost("aria-analytics-dashboard", compact({"event": "snapshot", "admin_token": admin_token}))
+
+    def analytics_series(self, *, metric: str = "tickets", window: int = 30, admin_token: str | None = None) -> dict[str, Any]:
+        return self._post("aria-analytics-dashboard", compact({"event": "series", "metric": metric, "window": window, "admin_token": admin_token}))
+
+    async def aanalytics_series(self, *, metric: str = "tickets", window: int = 30, admin_token: str | None = None) -> dict[str, Any]:
+        return await self._apost("aria-analytics-dashboard", compact({"event": "series", "metric": metric, "window": window, "admin_token": admin_token}))
+
+    def winback_scan(self, customers: list[dict[str, Any]], *, min_score: int = 35, limit: int = 25) -> dict[str, Any]:
+        return self._post("aria-winback-cron", {"event": "scan", "customers": customers, "min_score": min_score, "limit": limit})
+
+    async def awinback_scan(self, customers: list[dict[str, Any]], *, min_score: int = 35, limit: int = 25) -> dict[str, Any]:
+        return await self._apost("aria-winback-cron", {"event": "scan", "customers": customers, "min_score": min_score, "limit": limit})
+
+    def coupon_admin(self, *, event: str = "list", admin_token: str, **payload: Any) -> dict[str, Any]:
+        return self._post("aria-coupon-admin", compact({"event": event, "admin_token": admin_token, **payload}))
+
+    async def acoupon_admin(self, *, event: str = "list", admin_token: str, **payload: Any) -> dict[str, Any]:
+        return await self._apost("aria-coupon-admin", compact({"event": event, "admin_token": admin_token, **payload}))
+
+    def slack_authorize_url(self, *, state: str = "install") -> dict[str, Any]:
+        return self._post("aria-slack-install", {"event": "authorize_url", "state": state})
+
+    async def aslack_authorize_url(self, *, state: str = "install") -> dict[str, Any]:
+        return await self._apost("aria-slack-install", {"event": "authorize_url", "state": state})
+
+    def white_label_theme(self, tenant_id: str) -> dict[str, Any]:
+        return self._get("aria-white-label", {"tenant_id": tenant_id, "format": "json"})
+
+    async def awhite_label_theme(self, tenant_id: str) -> dict[str, Any]:
+        return await self._aget("aria-white-label", {"tenant_id": tenant_id, "format": "json"})
+
+    def white_label_set(self, *, tenant_id: str, theme: dict[str, Any], admin_token: str) -> dict[str, Any]:
+        return self._post("aria-white-label", {"event": "set", "tenant_id": tenant_id, "theme": theme, "admin_token": admin_token})
+
+    async def awhite_label_set(self, *, tenant_id: str, theme: dict[str, Any], admin_token: str) -> dict[str, Any]:
+        return await self._apost("aria-white-label", {"event": "set", "tenant_id": tenant_id, "theme": theme, "admin_token": admin_token})
+
+    def cost_attribution_summary(self, *, tenant_id: str, month: str | None = None) -> dict[str, Any]:
+        return self._post("aria-cost-attribution", compact({"event": "tenant_summary", "tenant_id": tenant_id, "month": month}))
+
+    async def acost_attribution_summary(self, *, tenant_id: str, month: str | None = None) -> dict[str, Any]:
+        return await self._apost("aria-cost-attribution", compact({"event": "tenant_summary", "tenant_id": tenant_id, "month": month}))
+
+    def breaker_status(self) -> dict[str, Any]:
+        return self._post("aria-breaker-status", {"event": "status"})
+
+    async def abreaker_status(self) -> dict[str, Any]:
+        return await self._apost("aria-breaker-status", {"event": "status"})
 
 
 def compact(values: dict[str, Any], *, drop: set[str] | None = None) -> dict[str, Any]:

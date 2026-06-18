@@ -1,3 +1,6 @@
+const { withBreaker } = require('./_circuit-breaker');
+const { fetchWithRetry } = require('./_retry');
+
 /**
  * ARIA Helpdesk AI v2.0 — Emotional Intelligence + 25-Year Pro Mindset
  * - Senior helpdesk persona (L1/L2/L3)
@@ -145,7 +148,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
+    const r = await withBreaker('anthropic-messages', () => fetchWithRetry('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
@@ -158,6 +161,10 @@ exports.handler = async (event) => {
         system: SYSTEM_PROMPT,
         messages: cleanMsgs,
       }),
+    }, { attempts: 3, baseDelayMs: 250, maxDelayMs: 1600 }), {
+      failure_threshold: 3,
+      cooldown_ms: 45 * 1000,
+      request_timeout_ms: 28000
     });
 
     if (!r.ok) {
@@ -242,6 +249,7 @@ exports.handler = async (event) => {
     // Cat 13 graceful degraded mode — distinguish provider outage vs everything else
     const m = String(err.message || '').toLowerCase();
     const providerDown = m.includes('anthropic') || m.includes('overloaded') || m.includes('rate limit') ||
+                         m.includes('circuit_open') || m.includes('upstream_') ||
                          m.includes('502') || m.includes('503') || m.includes('504') ||
                          m.includes('timeout') || m.includes('fetch failed') || m.includes('econnreset');
     if (providerDown) {

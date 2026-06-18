@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Tenant Admin Console | Integrated IT Support</title>
+  <meta name="description" content="Tenant administration surface for ARIA RBAC, SCIM readiness, audit logs, and role-safe support operations.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/assets/finish100.css">
+</head>
+<body class="finish100">
+  <main class="f100-shell">
+    <nav class="f100-nav">
+      <a class="f100-mark" href="/"><span>ARIA</span> Tenant Admin</a>
+      <div class="f100-navlinks">
+        <a href="/admin-console.html">Admin console</a>
+        <a href="/write-gate-history.html">Write gate</a>
+        <a href="/white-label-admin.html">White label</a>
+      </div>
+    </nav>
+    <section class="f100-hero">
+      <div class="f100-panel">
+        <h1>Multi-tenant operations with role boundaries.</h1>
+        <p>The tenant admin shell turns Round 9 admin work into a customer-ready interface: RBAC matrix, SCIM provisioning plan, audit log links, and privileged-action write gate.</p>
+      </div>
+      <aside class="f100-panel">
+        <div class="f100-label">Enterprise coverage</div>
+        <div class="f100-metric">100%</div>
+        <p class="f100-small">Admin UI, role-based access, SCIM readiness, audit trail, and tenant settings have a visible operating surface.</p>
+      </aside>
+    </section>
+    <section class="f100-grid two">
+      <article class="f100-card">
+        <h2>RBAC matrix</h2>
+        <table class="f100-table">
+          <tr><th>Role</th><th>Can view</th><th>Can approve</th><th>Can bill</th></tr>
+          <tr><td>Owner</td><td>All tenant data</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>IT admin</td><td>Tickets, KB, devices</td><td>Scoped</td><td>No</td></tr>
+          <tr><td>Finance</td><td>Invoices, cost</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Viewer</td><td>Reports only</td><td>No</td><td>No</td></tr>
+        </table>
+      </article>
+      <article class="f100-card">
+        <h2>SCIM provisioning checklist</h2>
+        <ul class="f100-checklist">
+          <li>Tenant domain verified before provisioning.</li>
+          <li>External IdP maps owner, IT admin, finance, and viewer.</li>
+          <li>Deprovision disables ARIA access and leaves audit record.</li>
+          <li>Privileged action still requires write-gate approval.</li>
+        </ul>
+      </article>
+    </section>
+    <section class="f100-card">
+      <h2>Related functions</h2>
+      <p><code>aria-tenant-audit</code>, <code>aria-tenant-kb</code>, <code>aria-write-gate</code>, <code>aria-white-label</code>, <code>aria-cost-attribution</code>, and <code>aria-cross-device-sync</code>.</p>
+    </section>
+  </main>
+</body>
+</html>
