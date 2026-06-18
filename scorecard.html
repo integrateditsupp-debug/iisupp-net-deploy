@@ -7,21 +7,7 @@
 <meta name="description" content="A 2-minute AI readiness scorecard for your IT environment. 12 questions. Get a score + tailored next steps.">
 <meta property="og:title" content="AI Readiness Scorecard — Integrated IT Support">
 <meta property="og:description" content="Score your org's AI-readiness in 2 minutes. Free.">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Quiz",
-  "name": "AI Readiness Scorecard",
-  "url": "https://iisupp.net/scorecard",
-  "publisher": {
-    "@type": "Organization",
-    "name": "Integrated IT Support Inc.",
-    "url": "https://iisupp.net/"
-  },
-  "description": "A short scorecard that helps organizations assess AI readiness across IT support, security, data, and workflow maturity."
-}
-</script>
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/iis-favicon.png" type="image/png">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;line-height:1.5}
@@ -60,6 +46,38 @@
   .nav a:hover{color:#d4af37}
   @media(max-width:600px){h1{font-size:26px}.card{padding:22px}}
 </style>
+
+<meta property="og:title" content="AI Readiness Scorecard — IIS">
+<meta property="og:description" content="Free 12-Q AI readiness self-assessment.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://iisupp.net/scorecard">
+<meta property="og:image" content="https://iisupp.net/assets/aria-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Readiness Scorecard — IIS">
+<meta name="twitter:description" content="Free 12-Q AI readiness self-assessment.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AI Readiness Scorecard",
+  "description": "Free 12-Q AI readiness self-assessment.",
+  "url": "https://iisupp.net/scorecard",
+  "provider": {
+    "@type": "Organization",
+    "name": "Integrated IT Support Inc.",
+    "url": "https://iisupp.net",
+    "sameAs": [
+      "https://iisupp.net"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Whitby",
+      "addressRegion": "ON",
+      "addressCountry": "CA"
+    }
+  }
+}
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -233,6 +251,5 @@ function renderResult(root) {
 
 render();
 </script>
-<script defer src="/assets/aria-i18n-page-copy.js"></script>
 </body>
 </html>
