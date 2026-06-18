@@ -1,0 +1,335 @@
+openapi: 3.0.3
+info:
+  title: ARIA Public API
+  version: 1.0.0
+  description: |
+    Public API for ARIA — AI-powered IT support by Integrated IT Support Inc.
+    Base URL: https://iisupp.net/.netlify/functions
+  contact:
+    name: Ahmad Wasee
+    email: ahmad.wasee@iisupp.net
+    url: https://iisupp.net
+  license:
+    name: Commercial
+    url: https://iisupp.net/terms
+
+servers:
+  - url: https://iisupp.net/.netlify/functions
+    description: Production
+
+tags:
+  - name: leads
+  - name: chat
+  - name: account
+  - name: billing
+  - name: analytics
+  - name: integrations
+  - name: compliance
+
+paths:
+  /aria-lead-capture:
+    post:
+      tags: [leads]
+      summary: Capture a lead from any IIS surface
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email]
+              properties:
+                name: { type: string }
+                email: { type: string, format: email }
+                company: { type: string }
+                phone: { type: string }
+                message: { type: string }
+                source: { type: string, description: "e.g. scorecard, health-check, webinar-page, referral-page" }
+                last_intent: { type: string }
+      responses:
+        200: { description: Lead captured }
+        400: { description: Validation error }
+
+  /aria-warm-handoff:
+    post:
+      tags: [chat]
+      summary: Request a live agent handoff
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+                name: { type: string }
+                chat_summary: { type: string }
+                last_intent: { type: string }
+                urgency: { type: string, enum: [normal, urgent] }
+      responses:
+        200: { description: Handoff initiated }
+
+  /aria-data-export:
+    post:
+      tags: [account, compliance]
+      summary: PIPEDA Principle 9 / GDPR data export
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        200: { description: Export bundle URL returned }
+
+  /aria-account-delete:
+    post:
+      tags: [account, compliance]
+      summary: GDPR right-to-erasure account deletion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, confirm]
+              properties:
+                email: { type: string, format: email }
+                confirm: { type: string, enum: [DELETE-MY-DATA] }
+      responses:
+        200: { description: Account deleted }
+
+  /aria-billing-portal:
+    post:
+      tags: [billing]
+      summary: Generate Stripe customer portal session URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+                return_url: { type: string }
+      responses:
+        200:
+          description: Portal URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  url: { type: string }
+
+  /aria-invoice-download:
+    post:
+      tags: [billing]
+      summary: List or fetch a specific invoice URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+                invoice_id: { type: string, description: "If omitted, lists last 12 invoices" }
+      responses:
+        200: { description: Invoices }
+
+  /aria-plan-change:
+    post:
+      tags: [billing]
+      summary: Change subscription tier mid-cycle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, new_tier]
+              properties:
+                email: { type: string, format: email }
+                new_tier:
+                  type: string
+                  enum: [personal, pro, small_business, mid_size, enterprise]
+
+  /aria-magic-link:
+    post:
+      tags: [account]
+      summary: Passwordless sign-in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event: { type: string, enum: [request, verify] }
+                email: { type: string }
+                token: { type: string }
+
+  /aria-mrr-dashboard:
+    post:
+      tags: [analytics]
+      summary: Stripe-backed live MRR/ARR snapshot
+
+  /aria-analytics-dashboard:
+    post:
+      tags: [analytics]
+      summary: System metrics, tenant health, circuit breakers (admin token gated)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event: { type: string, enum: [snapshot, series, tenant_health, increment] }
+                admin_token: { type: string }
+
+  /aria-cost-tracker:
+    post:
+      tags: [analytics]
+      summary: LLM cost tracking (log + status + history)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event: { type: string, enum: [log, status, history] }
+
+  /aria-cost-attribution:
+    post:
+      tags: [analytics]
+      summary: Per-tenant LLM cost rollup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event: { type: string, enum: [log, tenant_summary, leaderboard] }
+
+  /aria-tenant-audit:
+    post:
+      tags: [compliance]
+      summary: Per-tenant audit log + scoped action policy
+
+  /aria-tenant-kb:
+    post:
+      tags: [compliance]
+      summary: Tenant-submitted knowledge base entries
+
+  /aria-feedback:
+    post:
+      tags: [chat]
+      summary: Per-message thumbs vote
+
+  /aria-write-gate:
+    post:
+      tags: [compliance]
+      summary: HMAC-gated approval flow for privileged actions
+
+  /aria-m365-graph:
+    post:
+      tags: [integrations]
+      summary: Read-only Microsoft Graph operations
+
+  /aria-m365-graph-write:
+    post:
+      tags: [integrations]
+      summary: Write-gated Microsoft Graph operations
+
+  /aria-coupon:
+    post:
+      tags: [billing]
+      summary: Validate or redeem a coupon code
+
+  /aria-room-provider:
+    post:
+      tags: [chat]
+      summary: Create one-time video room (Whereby / Daily / stub)
+
+  /aria-screenshare-request:
+    post:
+      tags: [chat]
+      summary: Request a screen-share session
+
+  /aria-cross-device-sync:
+    post:
+      tags: [chat]
+      summary: Authenticated cross-device session memory sync
+
+  /aria-session-memory:
+    post:
+      tags: [chat]
+      summary: Per-user session memory CRUD
+
+  /aria-slack-command:
+    post:
+      tags: [integrations]
+      summary: Slack /aria slash command receiver
+
+  /aria-slack-events:
+    post:
+      tags: [integrations]
+      summary: Slack Events API receiver (HMAC-verified)
+
+  /aria-slack-install:
+    get:
+      tags: [integrations]
+      summary: Slack OAuth installer
+
+  /aria-teams-bot:
+    post:
+      tags: [integrations]
+      summary: Microsoft Teams bot Framework receiver
+
+  /aria-white-label:
+    get:
+      tags: [integrations]
+      summary: Tenant theme (returns JSON or CSS)
+    post:
+      tags: [integrations]
+      summary: Set or list tenant themes (admin gated)
+
+  /aria-leads-inbox:
+    post:
+      tags: [leads]
+      summary: List leads across sources (admin token gated)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event: { type: string, enum: [list] }
+                admin_token: { type: string }
+                source: { type: string, nullable: true }
+                limit: { type: integer, default: 100 }
+
+  /aria-health-lead:
+    post:
+      tags: [leads]
+      summary: IT Health Check lead capture
+
+  /aria-renewal-reminders:
+    post:
+      tags: [billing]
+      summary: Scheduled scan for upcoming renewals
+
+components:
+  securitySchemes:
+    AdminToken:
+      type: apiKey
+      in: header
+      name: X-Admin-Token

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 27001 Readiness Self-Assessment — IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#e8e8e8;line-height:1.6;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:880px;margin:0 auto}
+  .crown{font-size:12px;letter-spacing:.18em;color:#d4af37;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+  h1{font-size:32px;margin-bottom:8px;color:#fff}
+  .sub{color:#888;font-size:14px;margin-bottom:24px}
+  h2{font-size:18px;color:#d4af37;margin:32px 0 14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+  .score-tile{background:#0f0f0f;border:1px solid #2a2a2a;border-radius:12px;padding:24px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+  .num{font-size:48px;font-weight:700;background:linear-gradient(135deg,#d4af37,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:ui-monospace,monospace;line-height:1}
+  .lbl{color:#888;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
+  .bar{height:4px;background:#1a1a1a;border-radius:2px;overflow:hidden;flex:1;min-width:200px}
+  .bar-fill{height:100%;background:linear-gradient(90deg,#d4af37,#f1dca7);width:0;transition:width 0.4s}
+  .domain{background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:14px}
+  .domain h3{color:#fff;font-size:16px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .domain .pct{font-size:14px;color:#d4af37;font-family:ui-monospace,monospace}
+  .domain .desc{color:#aaa;font-size:13px;margin-bottom:14px}
+  .control{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer;color:#ddd;font-size:13.5px;line-height:1.5}
+  .control input{margin-top:3px;accent-color:#d4af37;flex-shrink:0}
+  .control .ev{display:block;color:#777;font-size:11px;font-style:italic;margin-top:2px}
+  .actions{display:flex;gap:10px;margin-top:24px;justify-content:center;flex-wrap:wrap}
+  .btn{padding:11px 22px;border-radius:8px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-family:ui-monospace,monospace;cursor:pointer;font-weight:600;text-decoration:none;display:inline-block}
+  .btn-primary{background:linear-gradient(135deg,#d4af37,#f1dca7);color:#050505;border:none}
+  .btn-ghost{background:transparent;color:#aaa;border:1px solid #2a2a2a}
+  .btn-ghost:hover{background:#1a1a1a;color:#fff}
+  .footer-nav{text-align:center;margin-top:32px;border-top:1px solid #2a2a2a;padding-top:18px;color:#666;font-size:13px}
+  a{color:#d4af37}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">Compliance · ISO/IEC 27001:2022 Annex A</div>
+  <h1>ISO 27001 Readiness Self-Assessment</h1>
+  <p class="sub">Track your readiness against the ISO 27001:2022 Annex A controls. Progress saved in your browser. Export when you are ready to engage a certification body.</p>
+
+  <div class="score-tile">
+    <div><div class="num" id="overallScore">0%</div><div class="lbl">Overall readiness</div></div>
+    <div class="bar"><div class="bar-fill" id="overallBar"></div></div>
+  </div>
+
+  <h2>A.5 — Organizational controls</h2>
+  <div class="domain">
+    <h3>A.5 — Policy & governance <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Information security policies + roles + responsibilities</div>
+    <label class="control"><input type="checkbox" data-key="a5-1"><div>Information security policy approved by leadership <span class="ev">Signed + reviewed annually</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a5-2"><div>Roles + responsibilities for InfoSec defined <span class="ev">Org chart shows who owns what</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a5-3"><div>Segregation of duties enforced <span class="ev">Same person cannot code + deploy + approve</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a5-4"><div>Management commitment + InfoSec resources allocated <span class="ev">Documented annually</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a5-5"><div>Contact with authorities (regulators) documented <span class="ev">In incident response plan</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a5-6"><div>Contact with special interest groups (CERT, ISACs) <span class="ev">Membership or subscription</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a5-7"><div>Threat intelligence program in place <span class="ev">Monthly threat scan</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a5-8"><div>InfoSec in project management <span class="ev">Security review on every new project</span></div></label>
+  </div>
+
+  <h2>A.6 — People controls</h2>
+  <div class="domain">
+    <h3>A.6 — Personnel security <span class="pct" data-pct>0%</span></h3>
+    <label class="control"><input type="checkbox" data-key="a6-1"><div>Background screening for new hires with privileged access</div></label>
+    <label class="control"><input type="checkbox" data-key="a6-2"><div>Confidentiality / NDA agreements on file <span class="ev">Signed by every employee + contractor</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a6-3"><div>InfoSec awareness training annually <span class="ev">Documented attendance</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a6-4"><div>Disciplinary process for InfoSec violations defined</div></label>
+    <label class="control"><input type="checkbox" data-key="a6-5"><div>Information security responsibilities on offboarding <span class="ev">Onboarding/offboarding checklist</span></div></label>
+  </div>
+
+  <h2>A.7 — Physical controls</h2>
+  <div class="domain">
+    <h3>A.7 — Physical & environmental security <span class="pct" data-pct>0%</span></h3>
+    <label class="control"><input type="checkbox" data-key="a7-1"><div>Physical security perimeter for offices + server rooms</div></label>
+    <label class="control"><input type="checkbox" data-key="a7-2"><div>Physical entry controls (badges, locks, CCTV)</div></label>
+    <label class="control"><input type="checkbox" data-key="a7-3"><div>Clean desk + clean screen policy <span class="ev">Enforced + documented</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a7-4"><div>Equipment + cabling protected</div></label>
+    <label class="control"><input type="checkbox" data-key="a7-5"><div>Secure disposal of assets <span class="ev">Certified disposal, not landfill</span></div></label>
+  </div>
+
+  <h2>A.8 — Technological controls</h2>
+  <div class="domain">
+    <h3>A.8 — Access + identity <span class="pct" data-pct>0%</span></h3>
+    <label class="control"><input type="checkbox" data-key="a8-1"><div>User access provisioning + deprovisioning documented</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-2"><div>Privileged access management (PAM) <span class="ev">Just-in-time access where possible</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a8-3"><div>MFA enforced on admin accounts</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-4"><div>Information access restriction (least privilege)</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-5"><div>Access rights reviewed quarterly</div></label>
+  </div>
+
+  <div class="domain">
+    <h3>A.8 — Cryptography + secure development <span class="pct" data-pct>0%</span></h3>
+    <label class="control"><input type="checkbox" data-key="a8-6"><div>Encryption at rest + in transit <span class="ev">TLS 1.2+ everywhere</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a8-7"><div>Key management documented</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-8"><div>Secure development lifecycle <span class="ev">Code review + dependency scanning</span></div></label>
+    <label class="control"><input type="checkbox" data-key="a8-9"><div>Application security testing (SAST + DAST)</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-10"><div>Vulnerability disclosure program <span class="ev">/security/disclosure already live</span></div></label>
+  </div>
+
+  <div class="domain">
+    <h3>A.8 — Logging + monitoring <span class="pct" data-pct>0%</span></h3>
+    <label class="control"><input type="checkbox" data-key="a8-11"><div>Centralized logging in place</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-12"><div>Clock synchronization across systems</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-13"><div>Privileged operations monitored + alerted</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-14"><div>Anti-malware controls deployed</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-15"><div>Backup + recovery tested annually</div></label>
+  </div>
+
+  <div class="domain">
+    <h3>A.8 — Incident + continuity <span class="pct" data-pct>0%</span></h3>
+    <label class="control"><input type="checkbox" data-key="a8-16"><div>Incident response plan documented</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-17"><div>Business continuity + DR plan tested annually</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-18"><div>Supplier security reviewed before contract</div></label>
+    <label class="control"><input type="checkbox" data-key="a8-19"><div>Cloud services security assessment <span class="ev">For each major SaaS used</span></div></label>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="exportBtn">Export progress (JSON)</button>
+    <a class="btn btn-ghost" href="/soc2-readiness">SOC 2 Readiness</a>
+    <a class="btn btn-ghost" href="/security/disclosure">Vulnerability Disclosure</a>
+  </div>
+
+  <div class="footer-nav">
+    <p>Self-assessment, not a certification. ISO 27001 certification requires an accredited certification body audit.</p>
+    <p style="margin-top:8px;font-size:11px;color:#444">Cat 24 — Compliance · ISO 27001:2022 readiness v0.1 · 2026-06-18</p>
+  </div>
+</div>
+
+<script>
+  var KEY = 'iis_iso27001_readiness_v1';
+  var state = JSON.parse(localStorage.getItem(KEY) || '{}');
+  function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+  function update() {
+    var all = document.querySelectorAll('input[type=checkbox]');
+    var done = 0;
+    all.forEach(function(b){ if (state[b.dataset.key]) { b.checked = true; done++; } });
+    var pct = Math.round(done / all.length * 100);
+    document.getElementById('overallScore').textContent = pct + '%';
+    document.getElementById('overallBar').style.width = pct + '%';
+    document.querySelectorAll('.domain').forEach(function(d){
+      var boxes = d.querySelectorAll('input[type=checkbox]');
+      var dn = 0; boxes.forEach(function(b){ if (state[b.dataset.key]) dn++; });
+      var dp = boxes.length ? Math.round(dn / boxes.length * 100) : 0;
+      var el = d.querySelector('[data-pct]'); if (el) el.textContent = dp + '%';
+    });
+  }
+  document.querySelectorAll('input[type=checkbox]').forEach(function(b){
+    b.addEventListener('change', function(){ state[b.dataset.key] = b.checked; save(); update(); });
+  });
+  document.getElementById('exportBtn').addEventListener('click', function(){
+    var data = { framework: 'ISO 27001:2022', exported_at: new Date().toISOString(), state: state };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'iis-iso27001-readiness-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+  });
+  update();
+</script>
+</body>
+</html>
