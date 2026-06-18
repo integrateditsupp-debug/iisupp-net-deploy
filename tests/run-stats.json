@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.4",
+  "schema_version": "1.5",
   "label": "ARIA classifier + product autonomous loop",
   "last_run_at": "2026-06-18T07:00:00Z",
   "last_run_iso": "2026-06-18",
@@ -39,7 +39,7 @@
   "apps_covered": 200,
   "personas_covered": 8,
   "os_contexts": 10,
-  "last_round": 9,
+  "last_round": 13,
   "last_round_at": "2026-06-18T05:31:32Z",
   "round_6": {
     "shipped": [
@@ -101,5 +101,22 @@
         "cat_12_multi_tenant": "55% -> ~72% (with admin console)",
         "cat_13_failure_modes": "55% -> ~75%"
       }
-    },
-    
+    }
+  },
+  "round_13": {
+    "cowork": {
+      "shipped": [
+        "knowledge-base/vertical-legal/ (15 entries)",
+        "assets/aria-i18n-strings.js (5 locales)",
+        "aria-invoice-download.js",
+        "aria-room-provider.js"
+      ],
+      "categories_lifted": {
+        "cat_5_account_mgmt": "82 -> 88",
+        "cat_8_localization": "58 -> 75",
+        "cat_20_live_remote": "55 -> 72",
+        "cat_22_vertical_kb": "50 -> 62"
+      }
+    }
+  }
+}
