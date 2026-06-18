@@ -312,10 +312,6 @@
   to = "/governance/ai-use.html"
   status = 200
 [[redirects]]
-  from = "/ai-governance"
-  to = "/governance/ai-use.html"
-  status = 200
-[[redirects]]
   from = "/governance/code-of-conduct"
   to = "/governance/code-of-conduct.html"
   status = 200
@@ -375,6 +371,38 @@
   from = "/aperture-learning/"
   to = "/aperture-learning.html"
   status = 200
+
+
+# Rule 9 — kills + compliance hub merge (2026-06-18)
+# Fake-competitor page killed (Rule 7 — no fake proof)
+[[redirects]]
+  from = "/compare/aria-vs-msp-x"
+  to = "/compare/"
+  status = 301
+[[redirects]]
+  from = "/compare/aria-vs-msp-x/"
+  to = "/compare/"
+  status = 301
+[[redirects]]
+  from = "/compare/aria-vs-msp-x/index.html"
+  to = "/compare/"
+  status = 301
+
+# Webinar page killed until real webinar scheduled
+[[redirects]]
+  from = "/webinar"
+  to = "/book"
+  status = 301
+[[redirects]]
+  from = "/webinar.html"
+  to = "/book"
+  status = 301
+
+# Compliance hub: single entry point at /compliance/ — old standalones still accessible as tools
+[[redirects]]
+  from = "/compliance"
+  to = "/compliance/"
+  status = 301
 
 # IIS_CACHE_HEADERS — long cache static, short cache HTML
 [[headers]]

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Compliance & Trust — Integrated IT Support</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="ISO 27001, SOC 2, PIPEDA, and GDPR Article 22 readiness for ARIA + IIS. Self-assessment tools, control mappings, and policy disclosures.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://iisupp.net/compliance/">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#e8e8e8;line-height:1.6;padding:56px 20px;min-height:100vh}
+  .wrap{max-width:880px;margin:0 auto}
+  .crown{font-size:12px;letter-spacing:.18em;color:#d4af37;text-transform:uppercase;margin-bottom:8px}
+  h1{font-size:34px;margin-bottom:10px;color:#fff;line-height:1.2}
+  .sub{color:#aaa;font-size:15px;margin-bottom:36px;max-width:640px}
+  h2{font-size:18px;color:#d4af37;margin:40px 0 16px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .card{background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:22px;transition:border-color .2s,transform .2s;text-decoration:none;color:inherit;display:block}
+  .card:hover{border-color:#d4af37;transform:translateY(-2px)}
+  .card .tag{font-size:11px;letter-spacing:.12em;color:#d4af37;text-transform:uppercase;margin-bottom:8px;font-family:ui-monospace,monospace}
+  .card h3{font-size:16px;color:#fff;margin-bottom:8px;font-weight:600}
+  .card p{color:#aaa;font-size:13.5px;line-height:1.55}
+  .card .arrow{color:#d4af37;margin-top:14px;font-size:13px;font-family:ui-monospace,monospace}
+  .posture{background:#0f0f0f;border:1px solid #2a2a2a;border-radius:12px;padding:24px;margin:24px 0}
+  .posture .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1a1a1a;font-size:14px}
+  .posture .row:last-child{border:0}
+  .posture .row .l{color:#aaa}
+  .posture .row .v{color:#fff;font-family:ui-monospace,monospace;font-size:13px}
+  .posture .row .v.ok{color:#7afbff}
+  .posture .row .v.in-progress{color:#d4af37}
+  .links{margin-top:24px;display:flex;gap:14px;flex-wrap:wrap}
+  .links a{color:#d4af37;text-decoration:none;font-size:13.5px;border-bottom:1px solid transparent}
+  .links a:hover{border-bottom-color:#d4af37}
+  .footer{margin-top:56px;padding-top:24px;border-top:1px solid #1a1a1a;color:#666;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">Integrated IT Support · Trust Center</div>
+  <h1>Compliance &amp; Trust</h1>
+  <p class="sub">ARIA and Integrated IT Support meet enterprise procurement requirements across ISO 27001, SOC 2, PIPEDA, and GDPR Article 22. Below are our current posture, self-assessment tools, and policy disclosures.</p>
+
+  <h2>Current posture</h2>
+  <div class="posture">
+    <div class="row"><span class="l">Hosting</span><span class="v ok">Netlify (SOC 2 Type II)</span></div>
+    <div class="row"><span class="l">Data residency</span><span class="v ok">US/EU edge · Canadian tenant routing on request</span></div>
+    <div class="row"><span class="l">Encryption in transit</span><span class="v ok">TLS 1.2+ (monitored daily)</span></div>
+    <div class="row"><span class="l">Encryption at rest</span><span class="v ok">AES-256 (Netlify Blobs)</span></div>
+    <div class="row"><span class="l">PII redaction</span><span class="v ok">At the edge (email, SIN/SSN, card, phone)</span></div>
+    <div class="row"><span class="l">Tenant isolation</span><span class="v ok">Per-tenant audit logs · automated SOC 2 self-test</span></div>
+    <div class="row"><span class="l">Vulnerability disclosure</span><span class="v ok">Active program · <a style="color:#d4af37" href="/security/disclosure">security/disclosure</a></span></div>
+    <div class="row"><span class="l">SOC 2 audit</span><span class="v in-progress">Self-assessment complete · Type II planned on-award</span></div>
+    <div class="row"><span class="l">ISO 27001 certification</span><span class="v in-progress">Self-assessment complete · roadmap on-award</span></div>
+    <div class="row"><span class="l">PIPEDA compliance</span><span class="v ok">Self-assessment complete</span></div>
+    <div class="row"><span class="l">GDPR Article 22</span><span class="v ok">Automated-decision notice published</span></div>
+  </div>
+
+  <h2>Self-assessment tools</h2>
+  <div class="card-grid">
+    <a class="card" href="/soc2-readiness.html">
+      <div class="tag">SOC 2 · AICPA TSC</div>
+      <h3>SOC 2 Readiness Self-Assessment</h3>
+      <p>Track readiness across Common Criteria (CC1-CC9) + Availability, Confidentiality, Processing Integrity, Privacy. Progress saved locally. Export when engaging an auditor.</p>
+      <div class="arrow">Open tool →</div>
+    </a>
+    <a class="card" href="/compliance/iso-27001-readiness.html">
+      <div class="tag">ISO 27001 · Annex A</div>
+      <h3>ISO 27001 Readiness Self-Assessment</h3>
+      <p>Walk through Annex A controls: organizational (A.5), people (A.6), physical (A.7), technological (A.8). Score tracked per domain.</p>
+      <div class="arrow">Open tool →</div>
+    </a>
+    <a class="card" href="/compliance/pipeda-readiness.html">
+      <div class="tag">PIPEDA · Canada</div>
+      <h3>PIPEDA Readiness Self-Assessment</h3>
+      <p>Personal Information Protection and Electronic Documents Act self-assessment for Canadian organizations. 10 fair information principles.</p>
+      <div class="arrow">Open tool →</div>
+    </a>
+    <a class="card" href="/compliance/automated-decisions.html">
+      <div class="tag">GDPR Art. 22 · PIPEDA</div>
+      <h3>Automated Decision-Making Notice</h3>
+      <p>What ARIA decides automatically, what it doesn't, your rights under GDPR Article 22 and PIPEDA, opt-out path, model disclosure, audit logging.</p>
+      <div class="arrow">Read notice →</div>
+    </a>
+  </div>
+
+  <h2>Pre-filled questionnaires (for procurement)</h2>
+  <div class="links">
+    <a href="/compliance/CAIQ-Lite-prefilled.md">CAIQ-Lite (Cloud Security Alliance)</a>
+    <a href="/compliance/SIG-Lite-prefilled.md">SIG-Lite (Shared Assessments)</a>
+    <a href="/compliance/SOC2-controls-self-assessment.md">SOC 2 controls self-assessment</a>
+  </div>
+
+  <h2>Policies</h2>
+  <div class="links">
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/terms">Terms of Service</a>
+    <a href="/ai-governance">AI Governance</a>
+    <a href="/security/disclosure">Vulnerability Disclosure Program</a>
+    <a href="/.well-known/security.txt">security.txt</a>
+  </div>
+
+  <h2>How to request more</h2>
+  <p style="color:#aaa;font-size:14px;max-width:640px;margin-top:12px">
+    For SIG-Full, vendor risk questionnaires, DPAs, or a Type II report scoped to your procurement timeline:
+    email <a style="color:#d4af37" href="mailto:ahmad.wasee@iisupp.net">ahmad.wasee@iisupp.net</a>
+    or book a 15-min call at <a style="color:#d4af37" href="/book">iisupp.net/book</a>.
+  </p>
+
+  <div class="footer">
+    Integrated IT Support Inc. · D-U-N-S 241726397 · 30 Fothergill Crt, Whitby ON L1P 1L4, Canada<br>
+    Last updated 2026-06-18. Compliance posture verified daily via automated self-tests.
+  </div>
+</div>
+</body>
+</html>
