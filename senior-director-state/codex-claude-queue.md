@@ -121,3 +121,27 @@ Validation to trust:
 - `git diff --check` passed.
 - Desktop Browser QA: closed state has 0 visible cards; clicking opens all 5 path links; no horizontal overflow; no current-version console warnings/errors.
 - 390px mobile Browser QA: closed state has 0 visible cards; tap target resolves to the deployment button text, not the globe; clicking opens all 5 path links; no horizontal overflow.
+
+## 2026-06-18 12:55 ET - Codex ARIA action-row cleanup
+
+Ahmad asked to remove the ARIA demo outcomes module and put the handoff/sales CTAs into the chat controls instead of leaving them as floating page chrome.
+
+Shipped UI cleanup:
+
+- `aria.html` removes the `ARIA DEMO OUTCOMES` panel and its unused `sla-*` styling.
+- `aria.html` combines the side-rail decision area into `AI TIER + RIGHT PATH`, with compact L1/L2/L3 pills above a single `Choose right path` drawer button.
+- `aria.html` docks `Get a human` to the left of `End Chat` and docks `Talk to sales` immediately to the right of `Clear`, keeping the full control row compact on desktop.
+- Mobile controls intentionally wrap into two short rows without horizontal spill: first row has handoff + End/Contact, second row has History/Clear/Sales.
+
+Validation to trust:
+
+- Desktop Browser QA at 1280px: demo panel absent, `AI TIER + RIGHT PATH` visible, L1/L2/L3 pills present, `Choose right path` visible, action row order is `Get a human`, `End Chat/Contact Back`, `History`, `Clear`, `Talk to sales`, and no horizontal overflow.
+- Mobile Browser QA at 390px: all action buttons remain inside the viewport, no horizontal overflow, and the same DOM order is preserved.
+- `node --check assets/aria-v04-ext.js` passed.
+- Inline script parser for `aria.html` passed: 12 scripts, 0 failures.
+- `git diff --check` passed.
+
+Claude next best work:
+
+- Do not re-add the removed demo outcomes panel.
+- Treat the side rail as intentionally compact: tiers + one right-path chooser by default, path detail only on drawer open.

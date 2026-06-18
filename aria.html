@@ -1200,21 +1200,25 @@
   @media (prefers-reduced-motion:reduce){
     .pulse-slide,.pulse-video .bar,.pulse-ticker span{animation:none!important;transition:none!important}
   }
-  .sla-panel{
-    border:1px solid var(--border);border-radius:11px;
-    background:rgba(15,11,6,.5);padding:11px 13px;margin-bottom:10px;
-  }
-  .sla-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-  .sla-cell{
-    border:1px solid var(--border);border-radius:8px;background:rgba(20,14,7,.42);
-    padding:8px 9px;min-width:0;
-  }
-  .sla-cell .v{font-family:var(--serif);font-size:17px;line-height:1;color:var(--cream-2);font-weight:500}
-  .sla-cell .k{font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-top:5px;line-height:1.3}
   .conversion-panel{
     border:1px solid var(--border);border-radius:11px;
     background:linear-gradient(180deg,rgba(15,11,6,.55),rgba(22,16,9,.62));
     padding:11px 13px;margin-bottom:10px;
+  }
+  .path-tier-strip{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:7px;
+  }
+  .path-tier-pill{
+    border:1px solid rgba(212,168,90,.22);border-radius:8px;background:rgba(20,14,7,.38);
+    padding:6px 7px;min-width:0;
+  }
+  .path-tier-pill strong{
+    display:block;font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--gold-bright);
+    line-height:1;text-transform:uppercase;margin-bottom:3px;
+  }
+  .path-tier-pill span{
+    display:block;font-family:var(--mono);font-size:7px;letter-spacing:.1em;color:var(--muted);
+    text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   .conversion-toggle{
     width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -1399,14 +1403,11 @@
     .mic-btn{width:46px;height:46px}
     .mic-btn svg{width:18px;height:18px}
     .divider{margin-bottom:8px}
-    .status-panel,.sla-panel,.conversion-panel,.it-pulse,.insights{padding:9px 11px;margin-bottom:8px}
+    .status-panel,.conversion-panel,.it-pulse,.insights{padding:9px 11px;margin-bottom:8px}
     .pulse-screen{min-height:118px}
     .pulse-slide{grid-template-columns:62px minmax(0,1fr);gap:9px;padding:10px}
     .pulse-headline{font-size:14px}
     .pulse-summary{font-size:10px}
-    .sla-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-    .sla-cell .v{font-size:14px}
-    .sla-cell .k{font-size:6.8px;letter-spacing:.12em}
     .conversion-title{font-size:13px}
     .conversion-top,.conversion-toggle{font-size:7.5px}
     .quick-actions{padding:9px 11px}
@@ -1725,11 +1726,32 @@
     z-index:5;
   }
   .chat-dock .input-row{max-width:640px;margin:0 auto;width:100%;justify-content:center}
-  .chat-dock .history-bar{max-width:640px;margin:0 auto;width:100%;justify-content:center}
+  .chat-dock .history-bar{max-width:780px;margin:0 auto;width:100%;justify-content:center}
   /* .browser-frame.active-chat .chat-dock — no override needed; dock is always in-flow at bottom */
   .chat-dock .input-row{margin:0;width:100%;box-shadow:0 10px 26px rgba(0,0,0,.35)}
-  #aria-v04-inline{display:inline-flex!important;gap:8px!important;margin-right:0!important;align-items:center;flex-wrap:wrap;justify-content:center}
-  #aria-v04-end-btn,#aria-v04-callback-btn{border-radius:7px!important}
+  #aria-v04-inline{display:inline-flex!important;gap:6px!important;margin-right:0!important;align-items:center;flex-wrap:nowrap;justify-content:center}
+  #aria-v04-end-btn,#aria-v04-callback-btn{
+    border-radius:7px!important;padding:6px 10px!important;font-size:9px!important;letter-spacing:.2em!important;
+  }
+  .history-bar #ariaHandoffBtn,
+  .history-bar #ariaLeadBtn{
+    position:static!important;bottom:auto!important;right:auto!important;z-index:auto!important;
+    display:inline-flex!important;align-items:center!important;gap:6px!important;margin:0!important;
+    padding:6px 10px!important;border-radius:7px!important;box-shadow:none!important;transform:none!important;
+    font-family:var(--mono)!important;font-size:9px!important;letter-spacing:.22em!important;
+    line-height:1!important;text-transform:uppercase!important;min-height:28px!important;
+  }
+  .history-bar #ariaHandoffBtn{
+    order:-20;background:rgba(74,222,128,.08)!important;border:1px solid rgba(74,222,128,.45)!important;
+    color:#4ade80!important;backdrop-filter:blur(8px)!important;
+  }
+  .history-bar #aria-v04-inline{order:-10}
+  .history-bar .history-toggle{order:0}
+  .history-bar .history-clear{order:10}
+  .history-bar #ariaLeadBtn{
+    order:20;background:linear-gradient(135deg,rgba(197,160,89,.22),rgba(241,220,167,.16))!important;
+    border:1px solid rgba(197,160,89,.55)!important;color:var(--gold-bright)!important;
+  }
   @media (max-width:900px){
     .app{grid-template-areas:"band" "chat" "rail" "right"}
     .ap-band{grid-area:band;padding:10px 12px}
@@ -1737,6 +1759,7 @@
     .ap-rail{grid-area:rail}
     .right{grid-area:right}
     .chat-dock{padding:12px 12px}
+    .chat-dock .history-bar{max-width:640px}
     .ap-rail{grid-template-columns:1fr;max-height:none;overflow:visible}
     .ap-card{padding:12px}
     .ap-band-quote{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -1747,6 +1770,13 @@
     .pulse-slide{grid-template-columns:64px minmax(0,1fr)}
     .ap-band-title{font-size:12px}
     .chat-dock{padding:10px 8px}
+    .chat-dock .history-bar{gap:6px;max-width:100%}
+    #aria-v04-inline{width:auto}
+    #aria-v04-end-btn,#aria-v04-callback-btn,
+    .history-bar #ariaHandoffBtn,
+    .history-bar #ariaLeadBtn{
+      padding:6px 8px!important;font-size:8px!important;letter-spacing:.14em!important;
+    }
     .browser-body{padding-bottom:8px}
   }
   @media (min-width:901px){
@@ -2088,20 +2118,15 @@
         <div class="status-text" id="statusText">All systems are operational, no local end issues I have access to were detected.</div>
       </div>
 
-      <div class="sla-panel" id="slaPanel">
-        <div class="status-head"><span class="led green"></span><span>ARIA DEMO OUTCOMES</span></div>
-        <div class="sla-grid">
-          <div class="sla-cell"><div class="v">11.4s</div><div class="k">Guided step</div></div>
-          <div class="sla-cell"><div class="v">Ready</div><div class="k">Demo status</div></div>
-          <div class="sla-cell"><div class="v">7</div><div class="k">Support routes</div></div>
-          <div class="sla-cell"><div class="v">72</div><div class="k">Verified KBs</div></div>
-        </div>
-      </div>
-
       <div class="conversion-panel" id="conversionPanel">
-        <div class="status-head"><span class="led amber"></span><span>DEPLOYMENT PATHS</span></div>
+        <div class="status-head"><span class="led amber"></span><span>AI TIER + RIGHT PATH</span></div>
+        <div class="path-tier-strip" aria-label="AI support tiers">
+          <div class="path-tier-pill"><strong>L1</strong><span>Self-serve</span></div>
+          <div class="path-tier-pill"><strong>L2</strong><span>Ops assist</span></div>
+          <div class="path-tier-pill"><strong>L3</strong><span>Expert handoff</span></div>
+        </div>
         <button class="conversion-toggle" type="button" aria-expanded="false" aria-controls="conversionOptions">
-          <span>View deployment options</span><span class="hint">Click</span>
+          <span>Choose right path</span><span class="hint">Click</span>
         </button>
         <div class="conversion-grid" id="conversionOptions" hidden>
           <a class="conversion-card featured" href="/start-here.html" aria-label="Open Start Here guide for all deployment paths">
@@ -5784,6 +5809,50 @@ try{
   btn.addEventListener('click',pageHuman);
   setTimeout(function(){btn.classList.add('show');},20000);
   setInterval(function(){if(document.querySelector('.aria-locked-overlay'))btn.classList.add('show');},3000);
+})();
+</script>
+
+<script>
+(function(){
+  function dockActionButtons(){
+    var bar=document.querySelector('.history-bar');
+    var human=document.getElementById('ariaHandoffBtn');
+    var sales=document.getElementById('ariaLeadBtn');
+    if(!bar||!human||!sales)return false;
+
+    var inline=document.getElementById('aria-v04-inline');
+    var clear=document.getElementById('historyClear');
+
+    human.classList.add('show','aria-row-action');
+    sales.classList.add('show','aria-row-action');
+
+    if(human.parentNode!==bar){
+      bar.insertBefore(human, inline||bar.firstChild);
+    }else if(inline&&human.nextSibling!==inline){
+      bar.insertBefore(human, inline);
+    }
+
+    if(clear){
+      if(sales.parentNode!==bar||clear.nextSibling!==sales){
+        bar.insertBefore(sales, clear.nextSibling);
+      }
+    }else if(sales.parentNode!==bar){
+      bar.appendChild(sales);
+    }
+
+    return true;
+  }
+
+  var tries=0;
+  var timer=setInterval(function(){
+    tries++;
+    if(dockActionButtons()||tries>40)clearInterval(timer);
+  },250);
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',dockActionButtons);
+  }else{
+    dockActionButtons();
+  }
 })();
 </script>
 
