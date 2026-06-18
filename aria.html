@@ -182,7 +182,7 @@
     scroll-behavior:smooth;
     min-width:0;
   }
-  .browser-frame:not(.active-chat) .browser-body{padding-bottom:220px}
+  .browser-body{padding-bottom:120px}
   #chatMessages{max-width:100%;min-width:0;overflow-x:hidden}
   .browser-body::-webkit-scrollbar{width:7px}
   .browser-body::-webkit-scrollbar-thumb{background:rgba(180,140,70,.2);border-radius:8px}
@@ -1596,11 +1596,11 @@
   .ap-layer-pct{text-align:right;color:var(--ap-text-2);font-weight:600}
   /* relocated chat input dock (was under "Tap to speak") */
   .chat-dock{
-    position:absolute;left:50%;top:50%;bottom:auto;z-index:25;
+    position:absolute;left:50%;top:auto;bottom:12px;z-index:25;
     width:min(100% - 48px, 640px);
-    transform:translate(-50%,-50%);
+    transform:translateX(-50%);
     display:flex;flex-direction:column;gap:8px;
-    transition:top .28s ease,bottom .28s ease,transform .28s ease,width .2s ease;
+    transition:bottom .28s ease,transform .28s ease,width .2s ease;
   }
   .browser-frame.active-chat .chat-dock{
     top:auto;bottom:12px;
@@ -5290,7 +5290,7 @@ if (_prefill){
 
   function onLogout() {
     clearProfile();
-    showModal();
+    try { window.location.href = "/"; } catch (e) { window.location = "/"; }
   }
 
   function init() {
