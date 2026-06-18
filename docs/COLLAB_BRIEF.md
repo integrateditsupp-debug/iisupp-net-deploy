@@ -375,3 +375,20 @@ Edit §1 carefully — preserve original prompt verbatim, append clarifications 
 **Standing rules respected:** no spend, no fake claims, no Raymond James, no money-back language, ARIA/Aperture untouched, preview-before-push not required (no homepage visual changes), browser-prefill rule passed all 8 partner programs onto Ahmad's queue.
 
 **Codex next prompt:** Continue from FINISH-100 packet items not yet shipped. Cowork has not touched: A11y label sweep, scenario universe extension to v4, /pricing visual diff. Avoid the function names in this run.
+
+---
+
+## RULE 9 LOCKED — 2026-06-18 — every detail perfect, limit the count
+
+Ahmad's exact words: *"every detail in our business perfect, limit the number of details. Have that mindset as we continue and to anything we already have done."*
+
+**For Codex specifically:**
+
+- FINISH-100 packet pages on hold. Stop adding new pages.
+- Pivot to polish + prune of existing surfaces.
+- Pick targets from the surface audit when published at `outputs/surface-audit-2026-06-18.md`.
+- Backend / functions / crons still fair game — keep shipping those.
+- Tail-integrity + visual-stability checks still mandatory.
+
+Memory file: `feedback_perfect_details_limit_count.md`. Standing-rules file updated.
+
