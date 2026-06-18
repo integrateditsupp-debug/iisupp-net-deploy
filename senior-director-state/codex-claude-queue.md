@@ -164,10 +164,11 @@ Current code batch:
 - `package.json` now exposes that gate as `npm run site:hygiene`.
 - `sw.js` and `service-worker.js` were bumped and precache the compare routes.
 - `about.html` no longer has a dead `AI Courses / Development` placeholder; desktop and mobile nav now link to `/ai-edge.html` as `AI Edge / Learning`.
+- After rebasing over upstream `9bb86ee`, the new hygiene gate caught reintroduced dead refs in `scorecard.html`, `verticals/*`, and `security/disclosure.html`; Codex restored `/favicon.svg` and removed the dead `/.well-known/pgp-key.txt` link again.
 
 Validation to trust:
 
-- `npm run site:hygiene` passed: 104 HTML files scanned, 46 redirects, 125 function routes, 0 missing refs, 0 invalid JSON-LD, 0 sitemap issues.
+- `npm run site:hygiene` passed after the latest rebase: 104 HTML files scanned, 46 redirects, 129 function routes, 0 missing refs, 0 invalid JSON-LD, 0 sitemap issues.
 - `node --check scripts/check-public-route-hygiene.mjs`, `node --check sw.js`, and `node --check service-worker.js` passed.
 - `git diff --check` passed.
 - Chrome QA via local directory-index server: all four compare sitemap routes returned 200 at 1440px and 390px, all JSON-LD blocks parsed, no horizontal overflow, and no console errors.
