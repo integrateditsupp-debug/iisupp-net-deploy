@@ -4616,7 +4616,7 @@ function handleUserInput(text){
       return;
     }
     // Satisfaction / resolution phrases → receipt + close-out flow
-    if (/(resolved|all good|all set|all sorted|worked|works now|working now|fixed|that did it|problem solved|no more issues|good to go|all done|appreciate it|thanks (that|it) (worked|did))/i.test(q)){
+    if (looksLikeResolution(q)){
       showSatisfactionReceipt(text); return;
     }
     if (/(thank|thanks|thanx|thx|\bty\b|cheers|appreciate)/.test(q)){
@@ -5041,6 +5041,37 @@ document.getElementById('muteBtn').addEventListener('click', () => {
 });
 
 /* helpers */
+/* === Resolution intent classifier (expanded 2026-06-17) ===
+   Catches the full spectrum of casual phrasings users actually type when
+   their issue is resolved. Returns true ONLY if positive signal present
+   AND no negation context (so "still not fixed" correctly returns false).
+*/
+function looksLikeResolution(q){
+  var t = String(q || "").toLowerCase().trim();
+  if (!t) return false;
+
+  // Negation guard — if user expresses NEGATIVE state, this is NOT a resolution
+  var NEG = /\b(not|n['\u2019]?t|isn['\u2019]?t|wasn['\u2019]?t|aren['\u2019]?t|don['\u2019]?t|doesn['\u2019]?t|didn['\u2019]?t|cant|can['\u2019]?t|won['\u2019]?t|wouldn['\u2019]?t|couldn['\u2019]?t|never|nope|nah|negative|still\s+(broken|same|stuck|down|having|getting|happening|seeing|not|cant|can['\u2019]?t)|broke\s+again|came\s+back|happening\s+again|back\s+to\s+(square|broken)|worse|worst)\b/;
+  if (NEG.test(t)) {
+    // negation present, almost certainly not a resolution unless explicitly "no more issues" etc.
+    if (!/no (more |longer )?(issues?|problems?|errors?)|no\s+(issue|problem|error)\s+now|nothing\s+broken|not\s+broken\s+anymore/.test(t)) {
+      return false;
+    }
+  }
+
+  // Strong single-word positive signals
+  var POS_KEYWORDS = /\b(resolved?|solved?|solving|fixed|fixin|fixing|works?|worked|working|done|completed?|sorted|success(ful)?|perfect(ly)?|excellent|awesome|amazing|brilliant|fantastic|wonderful|cool|nice|sweet|sick|tight|smooth|clean|smashing|stellar|killer|lifesaver|slay|legit|fire|magic|magical|miracle|godsend|wizard|hero|legend|champ|champion|boss|guru|king|queen|mvp)\b/;
+
+  // Strong multi-word positive phrases
+  var POS_PHRASES = /(all (good|set|sorted|done|fixed|right|cleared|clear|better|smooth|working)|that (did|fixed|worked|works|nailed|got|solved) it|that\s+was\s+it|problem (solved|fixed|gone|cleared|sorted)|issue (resolved|solved|fixed|gone|cleared|sorted)|good to go|back to normal|back (online|up|running)|up\s+and\s+running|fine now|ok(ay)? now|now (working|fine|good|fixed)|works (now|perfectly|great|fine|like a charm|like a champ)|fixed (now|it|the issue|the problem)|thanks?\s+(a\s+lot|so much|very much|alot|so|much)|much appreciated|appreciate (you|it|this|that|your help)|thank\s+you(\s+(very\s+much|so\s+much|kindly|sir|maam|ma['\u2019]?am))?|got it (working|fixed|sorted)|10\s*\/\s*10|5\s*stars?|five\s*stars?|five\s*star|on\s+top|chefs?\s*kiss|chef['\u2019]?s\s*kiss|gold\s*star|nailed it|crushed it|killed it|smashed it|cracked it|that\s+helped|this\s+helped|that\s+(was\s+)?perfect|much better|way better|good now|great now|cleared up|cleared it|sorted out|figured (it )?out|got\s+it|in\s+the\s+clear|squared\s+away|squared\s+up|wrapped\s+up|wrap\s+it\s+up|close\s+(this|it|the\s+ticket)|case\s+closed|ticket\s+(closed|done|resolved)|end\s+(of\s+)?call|im\s+good|i\s+am\s+good|we['\u2019]?re\s+good|were\s+good|we\s+are\s+good|youre\s+(a\s+)?(star|legend|champ|lifesaver|the\s+best|amazing|incredible)|you\s+are\s+(a\s+)?(star|legend|champ|lifesaver|the\s+best|amazing|incredible)|that\s+took\s+care\s+of\s+it|did\s+the\s+trick|that['\u2019]?s\s+(it|the\s+one|better|perfect|great)|easy|too\s+easy|piece\s+of\s+cake|cake\s+walk|painless|smooth\s+sailing)/;
+
+  // Very short affirmations on their own (one or two tokens)
+  // e.g. "ty", "thx", "yep!", "fixed!", "perfect.", "thanks", "cheers", "👌"
+  var SHORT_AFFIRMS = /^(\s*(yep|yup|yeah|yes|y|ya|ok|okay|k|kk|aye|aight|alright|nice|cool|sweet|sick|sure|cheers|cool|good|great|perfect|amazing|awesome|brilliant|done|fixed|solved|resolved|works|working|thx|thanks|thanx|tysm|ty|tia|tyvm|ily|appreciate|grateful|gracias|merci|danke|salud|legend|legendary|kudos|w|win|gg|gjwp|gj|glhf|noted|copy|10\/10|5\/5|👌|👍|🙏|💯|🔥|✅|✔️|✓|🏆|🌟|⭐)+\s*[!.]*\s*)+$/;
+
+  return POS_KEYWORDS.test(t) || POS_PHRASES.test(t) || SHORT_AFFIRMS.test(t);
+}
+
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function stripTags(s){ return String(s).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); }
 
