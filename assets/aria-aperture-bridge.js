@@ -105,25 +105,70 @@
 
     const overlay = document.createElement('div');
     overlay.id = 'apIntakeOverlay';
+    
+/* === ARIA i18n stub (Cat 8 localization — 2026-06-18) === */
+const ARIA_I18N = {
+  en: {
+    title: 'Before we troubleshoot',
+    lead: 'ARIA will create a ticket and email you a session report. Takes 20 seconds. Required.',
+    first: 'First name *', last: 'Last name *',
+    email: 'Email *', phone: 'Phone *',
+    company: 'Company (optional)', license: 'License / Account # (optional)',
+    cta: 'Start troubleshooting \u2192',
+    consent: 'Your info is used only for this ticket and session report. We will email you and integrateditsupp@iisupp.net when ARIA resolves or escalates the issue.'
+  },
+  fr: {
+    title: 'Avant de d\u00e9panner',
+    lead: 'ARIA cr\u00e9era un ticket et vous enverra par courriel un rapport de session. 20 secondes. Obligatoire.',
+    first: 'Pr\u00e9nom *', last: 'Nom *',
+    email: 'Courriel *', phone: 'T\u00e9l\u00e9phone *',
+    company: 'Entreprise (facultatif)', license: 'Licence / N\u00b0 de compte (facultatif)',
+    cta: 'Commencer le d\u00e9pannage \u2192',
+    consent: 'Vos renseignements servent uniquement \u00e0 ce ticket et au rapport de session. Vous et integrateditsupp@iisupp.net recevrez un courriel lorsque ARIA r\u00e9soudra ou escaladera le probl\u00e8me.'
+  },
+  ar: {
+    title: '\u0642\u0628\u0644 \u0623\u0646 \u0646\u0628\u062f\u0623',
+    lead: '\u0633\u062a\u0646\u0634\u0626 ARIA \u062a\u0630\u0643\u0631\u0629 \u062f\u0639\u0645 \u0648\u062a\u0631\u0633\u0644 \u0644\u0643 \u062a\u0642\u0631\u064a\u0631 \u0627\u0644\u062c\u0644\u0633\u0629 \u0639\u0628\u0631 \u0627\u0644\u0628\u0631\u064a\u062f. 20 \u062b\u0627\u0646\u064a\u0629. \u0625\u0644\u0632\u0627\u0645\u064a.',
+    first: '\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0623\u0648\u0644 *', last: '\u0627\u0633\u0645 \u0627\u0644\u0639\u0627\u0626\u0644\u0629 *',
+    email: '\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a *', phone: '\u0627\u0644\u0647\u0627\u062a\u0641 *',
+    company: '\u0627\u0644\u0634\u0631\u0643\u0629 (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)', license: '\u0631\u062e\u0635\u0629 / \u0631\u0642\u0645 \u0627\u0644\u062d\u0633\u0627\u0628 (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)',
+    cta: '\u0627\u0628\u062f\u0623 \u0627\u0644\u062a\u0634\u062e\u064a\u0635 \u2192',
+    consent: '\u062a\u0633\u062a\u062e\u062f\u0645 \u0645\u0639\u0644\u0648\u0645\u0627\u062a\u0643 \u0641\u0642\u0637 \u0644\u0647\u0630\u0647 \u0627\u0644\u062a\u0630\u0643\u0631\u0629 \u0648\u062a\u0642\u0631\u064a\u0631 \u0627\u0644\u062c\u0644\u0633\u0629. \u0633\u064a\u0635\u0644\u0643 \u0625\u064a\u0645\u064a\u0644 \u0648integrateditsupp@iisupp.net \u0639\u0646\u062f\u0645\u0627 \u062a\u062d\u0644 ARIA \u0627\u0644\u0645\u0634\u0643\u0644\u0629 \u0623\u0648 \u062a\u0635\u0639\u062f\u0647\u0627.'
+  }
+};
+function ariaPickLocale() {
+  try {
+    var p = new URLSearchParams(location.search);
+    var q = p.get('lang');
+    if (q && ARIA_I18N[q.toLowerCase()]) return q.toLowerCase();
+    var l = localStorage.getItem('aria_lang');
+    if (l && ARIA_I18N[l]) return l;
+    var nav = (navigator.language || 'en').toLowerCase().split('-')[0];
+    return ARIA_I18N[nav] ? nav : 'en';
+  } catch { return 'en'; }
+}
+const __ARIA_LOCALE__ = ariaPickLocale();
+const __T__ = ARIA_I18N[__ARIA_LOCALE__] || ARIA_I18N.en;
+
     overlay.innerHTML = `
       <div id="apIntakeCard">
-        <h3>Before we troubleshoot</h3>
-        <p class="lead">ARIA will create a ticket and email you a session report. Takes 20 seconds. Required.</p>
+        <h3>${__T__.title}</h3>
+        <p class="lead">${__T__.lead}</p>
         <div class="row">
-          <div><label>First name *</label><input id="apF_first" type="text" autocomplete="given-name" /></div>
-          <div><label>Last name *</label><input id="apF_last" type="text" autocomplete="family-name" /></div>
+          <div><label>${__T__.first}</label><input id="apF_first" type="text" autocomplete="given-name" /></div>
+          <div><label>${__T__.last}</label><input id="apF_last" type="text" autocomplete="family-name" /></div>
         </div>
-        <label>Email *</label>
+        <label>${__T__.email}</label>
         <input id="apF_email" type="email" autocomplete="email" placeholder="you@company.com" />
-        <label>Phone *</label>
+        <label>${__T__.phone}</label>
         <input id="apF_phone" type="tel" autocomplete="tel" placeholder="(647) 555-1234" />
-        <label>Company (optional)</label>
+        <label>${__T__.company}</label>
         <input id="apF_company" type="text" autocomplete="organization" />
-        <label>License / Account # (optional)</label>
+        <label>${__T__.license}</label>
         <input id="apF_license" type="text" />
         <div class="err-msg" id="apF_err"></div>
-        <button class="cta" id="apF_submit">Start troubleshooting →</button>
-        <p class="consent">Your info is used only for this ticket and session report. We will email you and <code>integrateditsupp@iisupp.net</code> when ARIA resolves or escalates the issue.</p>
+        <button class="cta" id="apF_submit">${__T__.cta}</button>
+        <p class="consent">${__T__.consent.replace("integrateditsupp@iisupp.net", "<code>integrateditsupp@iisupp.net</code>")}</p>
       </div>
     `;
     document.body.appendChild(overlay);
