@@ -82,6 +82,21 @@
   status = 404
   force = true
 [[redirects]]
+  from = "/plans"
+  to = "/plans/index.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/plans/"
+  to = "/plans/index.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/plans/index.html"
+  to = "/plans/index.html"
+  status = 200
+  force = true
+[[redirects]]
   from = "/plans/*"
   to = "/index.html"
   status = 404

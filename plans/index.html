@@ -100,8 +100,9 @@
   <div style="text-align:center;max-width:760px;margin:0 auto 56px">
     <p style="color:#c5a059;font-size:11px;letter-spacing:.32em;margin-bottom:12px">CHOOSE YOUR ARIA</p>
     <h1 class="pf-h1" style="font-size:44px;font-weight:700;line-height:1.1;margin:0 0 16px">Plans built for <span class="gold">every stage</span></h1>
-    <p style="color:rgba(255,255,255,.7);font-size:16px;line-height:1.6">Start free on this site for 3 minutes. Pick the plan that matches your team. Stripe-secured checkout. Cancel anytime.</p>
+    <p style="color:rgba(255,255,255,.7);font-size:16px;line-height:1.6">Start free on this site for 15 minutes. Pick the plan that matches your team. Stripe-secured checkout. Cancel anytime.</p>
   </div>
+
   <div class="pf-grid">
     <div class="pf-card">
       <div class="pf-tier">Personal</div>
@@ -142,7 +143,7 @@
         <li>Dedicated success manager</li>
         <li>SSO, audit logs, role-based access</li>
         <li>4-hour incident response SLA</li>
-        <li>99.9% uptime guarantee</li>
+        <li>Uptime target documented in the final service scope</li>
       </ul>
       <button class="pf-cta" data-tier="small_business_y" data-name="Small Business">SUBSCRIBE</button>
     </div>
@@ -260,7 +261,7 @@
     <div id="pf-bid-view-warn1" hidden>
       <h2>Hold on &mdash; <span class="gold">deposit terms</span></h2>
       <div class="pf-modal-warn">
-        Once you submit this bid, a <strong>$3,000,000 deposit</strong> becomes non-refundable in case you back out of the deal. If a higher qualifying bid comes in within the open window, your deposit will be returned in full. Do you accept these terms?
+        Once you submit this bid, IIS will treat it as a serious acquisition inquiry and route it to private founder review. Any deposit, proof-of-funds requirement, exclusivity window, or binding term must be confirmed in a signed written agreement outside this page. Do you want to continue?
       </div>
       <label class="pf-check"><input type="checkbox" id="pf-w1-check"> I accept the deposit terms above.</label>
       <div class="pf-btn-row">
@@ -384,7 +385,7 @@
     var btn=this;btn.disabled=true;btn.textContent='SUBMITTING...';
     submitBidForm(true).then(function(res){
       if(res.ok){
-        document.getElementById('pf-bid-success-msg').innerHTML='Your <strong>qualifying offer</strong> is locked and recorded. The founder will contact you within 24 hours to arrange the $3,000,000 non-refundable deposit wire transfer. Both prompts have been logged with timestamps as proof of acceptance.';
+        document.getElementById('pf-bid-success-msg').innerHTML='Your <strong>qualifying offer inquiry</strong> is recorded for founder review. The founder will contact you to verify identity, proof of funds, and any written terms before anything becomes binding. Both prompts have been logged with timestamps as evidence of intent.';
         showView('success');
       }else{
         btn.disabled=false;btn.textContent='CONFIRM & PROCEED';

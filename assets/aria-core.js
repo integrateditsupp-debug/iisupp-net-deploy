@@ -892,6 +892,14 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
                 +   '#company-intro .ci-card:nth-child(4) .ci-icon{animation-delay:1.8s}'
                 +   '@keyframes ciFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}'
                 +   '@media (prefers-reduced-motion:reduce){#company-intro .ci-card{opacity:1;transform:none}#company-intro .ci-dot,#company-intro .ci-icon{animation:none}}'
+                +   '#company-intro .ci-card-flip{perspective:900px;min-height:128px}'
+                +   '#company-intro .ci-card-inner{position:relative;width:100%;height:128px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}'
+                +   '#company-intro .ci-card-flip:hover .ci-card-inner,#company-intro .ci-card-flip:focus-within .ci-card-inner{transform:rotateY(180deg)}'
+                +   '#company-intro .ci-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;border:1px solid rgba(197,160,89,.22);background:rgba(255,255,255,.02);padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}'
+                +   '#company-intro .ci-face.ci-back{transform:rotateY(180deg);background:linear-gradient(160deg,rgba(20,16,11,.92),rgba(8,7,5,.98));border-color:rgba(241,220,167,.5)}'
+                +   '#company-intro .ci-card-title{color:#c5a059;font-family:Cinzel,serif;font-size:12px;font-weight:700;letter-spacing:.04em;margin:0;line-height:1.2}'
+                +   '#company-intro .ci-back p{color:rgba(255,255,255,.78);font-size:11px;line-height:1.5;margin:0}'
+                +   '@media (prefers-reduced-motion:reduce){#company-intro .ci-card-flip:hover .ci-card-inner{transform:none}}'
                 + '</style>'
                 + '<div class="max-w-5xl mx-auto">'
                 +   '<div class="text-center mb-10">'
@@ -899,27 +907,17 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
                 +     '<h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family:Cinzel,serif">Welcome to <span style="color:#c5a059">Integrated IT Support Inc.</span></h2>'
                 +     '<p class="text-base md:text-lg leading-relaxed text-white/70 max-w-2xl mx-auto">We remove the IT costs that do not make sense — so you save money, save time, and stay focused on growing your business.</p>'
                 +   '</div>'
-                +   '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 max-w-4xl mx-auto">'
-                +     '<div class="ci-card rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="ci-icon text-2xl mb-3">💰</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Cut wasteful IT spend</h3><p class="text-sm leading-relaxed text-white/60">We eliminate the IT costs that do not make sense — saving you money and time.</p></div>'
-                +     '<div class="ci-card rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="ci-icon text-2xl mb-3">🎯</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Focus on what grows revenue</h3><p class="text-sm leading-relaxed text-white/60">A business runs to bring money in, not bleed it out. We own your IT so you do not have to think about it.</p></div>'
-                +     '<div class="ci-card rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="ci-icon text-2xl mb-3">🏆</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif"><span class="ci-count" data-to="21">0</span>+ years of real expertise</h3><p class="text-sm leading-relaxed text-white/60">Diverse, cross-industry experience led by our CEO Ahmad Wasee — ITIL, Six Sigma and more, actually applied, not just framed on a wall.</p></div>'
-                +     '<div class="ci-card rounded-xl border border-[#c5a059]/20 p-5 text-left transition hover:border-[#c5a059]/50" style="background:rgba(255,255,255,0.02)"><div class="ci-icon text-2xl mb-3">🤖</div><h3 class="text-base font-bold mb-1" style="color:#c5a059;font-family:Cinzel,serif">Built on AI</h3><p class="text-sm leading-relaxed text-white/60">Welcome to the future, where AI helps you take on your challenges before they become problems.</p></div>'
+                +   '<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto">'
+                +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">💰</div><h3 class="ci-card-title">Cut IT waste</h3></div><div class="ci-face ci-back"><p>We eliminate IT costs that do not make sense.</p></div></div></div>'
+                +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🎯</div><h3 class="ci-card-title">Focus on revenue</h3></div><div class="ci-face ci-back"><p>We own your IT so you do not have to think about it.</p></div></div></div>'
+                +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🏆</div><h3 class="ci-card-title"><span class="ci-count" data-to="15">15</span>+ years</h3></div><div class="ci-face ci-back"><p>ITIL, Six Sigma, cross-industry — actually applied, not framed on a wall.</p></div></div></div>'
+                +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🤖</div><h3 class="ci-card-title">Built on AI</h3></div><div class="ci-face ci-back"><p>AI helps you take on challenges before they become problems.</p></div></div></div>'
                 +   '</div>'
                 +   '<div class="text-center mt-10"><a href="#introducing-aria" class="inline-block text-[10px] tracking-[0.4em] uppercase font-bold border-b border-[#c5a059]/40 pb-2 transition hover:text-white" style="color:#c5a059">See our apps, examples &amp; recent work ↓</a></div>'
                 + '</div>';
-            var aria = document.createElement("section");
-            aria.id = "introducing-aria";
-            aria.className = "py-20 px-6 md:px-10 border-t border-[#c5a059]/15";
-            aria.innerHTML = '<div class="max-w-6xl mx-auto"><div class="text-center mb-10"><p class="text-[10px] tracking-[0.3em] uppercase mb-4" style="color:#c5a059">NEW · ALWAYS ON</p><h2 class="text-3xl md:text-4xl font-bold mb-6" style="font-family:Cinzel,serif">Introducing <span style="color:#c5a059">ARIA</span></h2><p class="text-base md:text-lg leading-relaxed text-white/80 max-w-3xl mx-auto">Technical analyst, service desk, incident manager, receptionist — many roles in one AI. Cut support costs with ARIA.</p></div><div class="rounded-2xl border border-[#c5a059]/30 overflow-hidden" style="background:#000"><iframe src="/aria" loading="lazy" title="ARIA — AI Technical Assistant" style="width:100%;height:1100px;border:0;display:block;background:#000"></iframe></div></div>';
-            aria.innerHTML = aria.innerHTML.replace('src="/aria"', 'src="/aria.html"');
-            var ariaPreviewShell = aria.querySelector('div.rounded-2xl');
-            if (ariaPreviewShell) {
-                ariaPreviewShell.innerHTML = '<div style="display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:20px;padding:22px;background:linear-gradient(165deg,rgba(255,255,255,.03),rgba(197,160,89,.08));align-items:stretch"><div style="padding:4px 2px"><span style="display:inline-block;margin-bottom:10px;color:rgba(241,220,167,.68);font-size:10px;letter-spacing:.24em;text-transform:uppercase">Proof before rollout</span><h3 style="margin:0 0 12px;color:#f1dca7;font-family:Cinzel,serif;font-size:26px;line-height:1.2;text-transform:uppercase">Show ARIA clearly, then route the next move.</h3><p style="margin:0 0 16px;color:rgba(255,255,255,.72);font-size:14px;line-height:1.8">Use a stable product proof instead of a brittle inline app frame. Buyers can open ARIA directly, watch the guided reel, or move into the route guide without guessing.</p><div style="display:grid;gap:10px;margin-bottom:18px"><div style="padding:12px 14px;border:1px solid rgba(197,160,89,.16);border-radius:14px;background:rgba(0,0,0,.18)"><div style="margin-bottom:5px;color:rgba(241,220,167,.5);font-size:9px;letter-spacing:.2em;text-transform:uppercase">Live surface</div><div style="color:rgba(255,255,255,.84);font-size:12px;line-height:1.6;font-weight:600">Open the full ARIA experience when the buyer wants the real product.</div></div><div style="padding:12px 14px;border:1px solid rgba(197,160,89,.16);border-radius:14px;background:rgba(0,0,0,.18)"><div style="margin-bottom:5px;color:rgba(241,220,167,.5);font-size:9px;letter-spacing:.2em;text-transform:uppercase">Film-first trust</div><div style="color:rgba(255,255,255,.84);font-size:12px;line-height:1.6;font-weight:600">Use the cinema reel when the buyer needs a calm guided overview first.</div></div><div style="padding:12px 14px;border:1px solid rgba(197,160,89,.16);border-radius:14px;background:rgba(0,0,0,.18)"><div style="margin-bottom:5px;color:rgba(241,220,167,.5);font-size:9px;letter-spacing:.2em;text-transform:uppercase">Revenue routing</div><div style="color:rgba(255,255,255,.84);font-size:12px;line-height:1.6;font-weight:600">Move them into the route guide, audit lane, or blueprint without vague follow-up.</div></div></div><div style="display:flex;flex-wrap:wrap;gap:10px"><a href=\"/aria.html\" style=\"display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:999px;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;text-decoration:none;font-family:Cinzel,serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;font-weight:700\">Open ARIA</a><a href=\"/aria-cinema.html\" style=\"display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:999px;border:1px solid rgba(197,160,89,.28);background:rgba(197,160,89,.06);color:#f1dca7;text-decoration:none;font-family:Cinzel,serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase\">Watch the reel</a><a href=\"/start-here.html\" style=\"display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:999px;border:1px solid rgba(197,160,89,.28);background:rgba(197,160,89,.06);color:#f1dca7;text-decoration:none;font-family:Cinzel,serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase\">Open route guide</a></div></div><div style="display:flex;flex-direction:column;gap:12px"><div style="overflow:hidden;border-radius:16px;border:1px solid rgba(197,160,89,.18);background:#070604"><video preload=\"metadata\" autoplay muted loop playsinline controls poster=\"/icons/icon-512.png\" style=\"width:100%;height:100%;min-height:360px;display:block;background:#070604;object-fit:cover\"><source src=\"/assets/video/aria-stats-and-purpose.mp4\" type=\"video/mp4\"></video></div><div style=\"padding:0 4px 2px\"><div style=\"margin-bottom:6px;color:rgba(241,220,167,.62);font-size:10px;letter-spacing:.22em;text-transform:uppercase\">Stable preview</div><p style=\"margin:0;color:rgba(255,255,255,.62);font-size:12px;line-height:1.7\">Stats and purpose reel for positioning, trust, and the next click.</p></div></div></div>';
-            }
             var aiEdge = document.querySelector(".ai-edge-band");
             if (aiEdge && aiEdge.parentNode) { aiEdge.parentNode.insertBefore(intro, aiEdge); }
             else { parent.insertBefore(intro, sc); }
-            parent.insertBefore(aria, sc);
             ["aria-cinematics","aria-capabilities","aria-revolution","aria-demo"].forEach(function(id){
                      var el = document.getElementById(id);
                      if (el) parent.insertBefore(el, sc);
@@ -956,9 +954,9 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   "use strict";
   if (window.self !== window.top) return;
   var PLANS_PATH = "/plans/";
-  var TRIAL_MS = 3 * 60 * 1000;
+  var TRIAL_MS = 15 * 60 * 1000;
   var KEY = "aria_trial_started_at";
-  var ARIA_SECTION_IDS = ["aria-demo"];
+  var ARIA_SECTION_IDS = ["aria-demo","ariaBrowser","chatBrowser","aria-browser"];
 
   function rewritePlansLinks() {
     document.querySelectorAll("a").forEach(function (a) {
@@ -982,14 +980,156 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
     return m + ":" + (s < 10 ? "0" : "") + s;
   }
 
-  function getTrialStart() {
-    var s = null;
-    try { s = localStorage.getItem(KEY); } catch (e) {}
-    if (!s) {
-      s = Date.now().toString();
-      try { localStorage.setItem(KEY, s); } catch (e) {}
+  /* === trial state machine v4 (2026-06-17) ====================
+     Trial is INACTIVE until the user submits the "Before we troubleshoot"
+     form (which dispatches `aria-user-set`). Before that, ARIA is fully
+     accessible with no countdown bar and no lock.
+     On `aria-user-set`:
+       effectiveUsed = max(email_consumed, device_elapsed)
+       if effectiveUsed >= 15min → fire paywall (blurAriaSections)
+       else → start 15-min countdown from effectiveUsed
+     We track BOTH a per-email key AND a device-level key. A new email
+     CANNOT bypass an exhausted device — the device counter persists
+     across all email identities used on this browser.
+  */
+  var EMAIL_KEY    = "aria_user_email";
+  var PREFIX       = "aria_trial_consumed_";          // + lowercased email
+  var DEVICE_KEY   = "aria_device_elapsed_ms";        // device-level accumulator
+  var _sessionStart = 0;     // 0 = trial not running
+  var _baseConsumed = 0;
+  var _trialActive  = false;
+  var _expired      = false;
+  var _barBuilt     = false;
+  var _timerHandle  = null;
+
+  function getActiveEmail() {
+    try {
+      var v = localStorage.getItem(EMAIL_KEY);
+      return v ? String(v).trim().toLowerCase() : "";
+    } catch (e) { return ""; }
+  }
+  function getEmailConsumed(email) {
+    if (!email) return 0;
+    try {
+      var v = parseInt(localStorage.getItem(PREFIX + email) || "0", 10);
+      return isFinite(v) && v > 0 ? v : 0;
+    } catch (e) { return 0; }
+  }
+  function getDeviceElapsed() {
+    try {
+      var v = parseInt(localStorage.getItem(DEVICE_KEY) || "0", 10);
+      return isFinite(v) && v > 0 ? v : 0;
+    } catch (e) { return 0; }
+  }
+  function getElapsed() {
+    if (!_trialActive && !_expired) return _baseConsumed;
+    if (!_sessionStart) return _baseConsumed;
+    return _baseConsumed + (Date.now() - _sessionStart);
+  }
+  function persistElapsed() {
+    if (!_trialActive) return;
+    var elapsed = getElapsed();
+    var email = getActiveEmail();
+    try {
+      if (email) localStorage.setItem(PREFIX + email, String(elapsed));
+      var dev = getDeviceElapsed();
+      localStorage.setItem(DEVICE_KEY, String(Math.max(dev, elapsed)));
+    } catch (e) {}
+  }
+
+  function startTrialFor(email) {
+    if (!email) return;
+    var emailConsumed  = getEmailConsumed(email);
+    var deviceConsumed = getDeviceElapsed();
+    var effective = Math.max(emailConsumed, deviceConsumed);
+    if (effective >= TRIAL_MS) {
+      // Already exhausted — gate immediately, no bar, no countdown
+      _expired = true;
+      _trialActive = false;
+      _baseConsumed = TRIAL_MS;
+      _sessionStart = Date.now();
+      try { localStorage.setItem(DEVICE_KEY, String(Math.max(deviceConsumed, TRIAL_MS))); } catch (e) {}
+      // Mark expired state on bar if previously built
+      var bar = document.getElementById("aria-trial-bar");
+      if (bar) {
+        bar.classList.add("expired");
+        var t = bar.querySelector(".atb-time"); if (t) t.textContent = "0:00";
+        var l = bar.querySelector(".atb-label"); if (l) l.textContent = "TRIAL ENDED";
+      }
+      blurAriaSections();
+      return;
     }
-    return parseInt(s, 10) || Date.now();
+    _expired = false;
+    _baseConsumed = effective;
+    _sessionStart = Date.now();
+    _trialActive = true;
+    if (!_barBuilt) {
+      injectStyles();
+      buildBar(TRIAL_MS - effective);
+      _barBuilt = true;
+    } else {
+      var b2 = document.getElementById("aria-trial-bar");
+      if (b2) {
+        b2.classList.remove("expired");
+        var t2 = b2.querySelector(".atb-time"); if (t2) t2.textContent = fmt(TRIAL_MS - effective);
+      }
+    }
+    startTick();
+  }
+
+  function startTick() {
+    if (_timerHandle) clearTimeout(_timerHandle);
+    function tick() {
+      if (!_trialActive) return;
+      var elapsed = getElapsed();
+      var remaining = TRIAL_MS - elapsed;
+      var bar = document.getElementById("aria-trial-bar");
+      if (remaining <= 0) {
+        _trialActive = false;
+        _expired = true;
+        persistElapsed();
+        if (bar) {
+          bar.classList.add("expired");
+          var t = bar.querySelector(".atb-time"); if (t) t.textContent = "0:00";
+          var l = bar.querySelector(".atb-label"); if (l) l.textContent = "TRIAL ENDED";
+        }
+        blurAriaSections();
+        return;
+      }
+      if (bar) {
+        var t2 = bar.querySelector(".atb-time"); if (t2) t2.textContent = fmt(remaining);
+      }
+      _timerHandle = setTimeout(tick, 1000);
+    }
+    tick();
+  }
+
+  // Lifecycle persistence
+  window.addEventListener("beforeunload", persistElapsed);
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) persistElapsed();
+  });
+  setInterval(persistElapsed, 5000);
+
+  // Triggered by the aperture-bridge form submit
+  window.addEventListener("aria-user-set", function (e) {
+    var email = (e && e.detail && e.detail.email) ? String(e.detail.email).toLowerCase() : getActiveEmail();
+    if (!email) return;
+    startTrialFor(email);
+  });
+
+  // Cross-tab storage sync
+  window.addEventListener("storage", function (e) {
+    if (e.key === EMAIL_KEY || (e.key || "").indexOf(PREFIX) === 0 || e.key === DEVICE_KEY) {
+      persistElapsed();
+      var em = getActiveEmail();
+      if (em) startTrialFor(em);
+    }
+  });
+
+  // Back-compat shim for anything still calling getTrialStart()
+  function getTrialStart() {
+    return Date.now() - getElapsed();
   }
 
   function injectStyles() {
@@ -1018,6 +1158,22 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       ".aria-locked-cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(197,160,89,.4)}" +
       ".aria-locked-sub{margin-top:14px;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.08em}" +
       ".aria-locked-sub a{color:#c5a059;text-decoration:none}" +
+      ".aria-locked-card.tariff{max-width:580px;padding:24px 26px}" +
+      ".aria-locked-eyebrow{display:block;color:#c5a059;font-size:9px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;margin-bottom:10px}" +
+      ".aria-locked-card .arl-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0 14px}" +
+      "@media (max-width:520px){.aria-locked-card .arl-grid{grid-template-columns:1fr}}" +
+      ".aria-locked-card .arl-tile{border:1px solid rgba(197,160,89,.32);border-radius:12px;padding:14px 12px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:8px;text-align:center;position:relative}" +
+      ".aria-locked-card .arl-tile.featured{border-color:rgba(241,220,167,.75);background:rgba(241,220,167,.08)}" +
+      ".aria-locked-card .arl-tile.featured::before{content:\"RECOMMENDED\";position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#c5a059;color:#1a1407;padding:2px 9px;font-size:8px;letter-spacing:.18em;font-weight:800;border-radius:999px}" +
+      ".aria-locked-card .arl-tier{color:#c5a059;font-size:8px;letter-spacing:.28em;text-transform:uppercase;font-weight:700}" +
+      ".aria-locked-card .arl-price{color:#f1dca7;font-family:Cinzel,serif;font-size:20px;font-weight:700;margin:2px 0}" +
+      ".aria-locked-card .arl-period{color:rgba(243,236,217,.55);font-size:9px;letter-spacing:.12em}" +
+      ".aria-locked-card .arl-desc{color:rgba(255,255,255,.65);font-size:10.5px;line-height:1.45;min-height:30px}" +
+      ".aria-locked-card .arl-pick{margin-top:6px;background:linear-gradient(135deg,#b8954f,#d8bd84 50%,#9c7322);color:#1a1407;border:none;border-radius:6px;padding:7px 8px;font-family:Inter,sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;font-family:inherit}" +
+      ".aria-locked-card .arl-pick:hover{filter:brightness(1.08)}" +
+      ".aria-locked-card .arl-pick:disabled{opacity:.6;cursor:progress}" +
+      ".aria-locked-card .arl-seemore{display:inline-block;margin-top:6px;color:#f1dca7;font-size:10px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(241,220,167,.5);padding:8px 18px;border-radius:999px;background:rgba(15,12,7,.7)}" +
+      ".aria-locked-card .arl-seemore:hover{background:rgba(241,220,167,.18)}" +
       "#ariaFab.aria-locked-fab{filter:blur(4px) saturate(.7);opacity:.55;cursor:not-allowed !important;transition:filter .3s}";
     var s = document.createElement("style");
     s.id = "aria-trial-style";
@@ -1038,21 +1194,49 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   }
 
   function blurAriaSections() {
-    ARIA_SECTION_IDS.forEach(function (id) {
-      var el = document.getElementById(id);
-      if (!el) return;
+    var targets = ARIA_SECTION_IDS.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+    var frame = document.querySelector(".browser-frame");
+    if (frame && targets.indexOf(frame) < 0) targets.push(frame);
+    targets.forEach(function (el) {
       if (el.querySelector(".aria-locked-overlay")) return;
       el.classList.add("aria-locked");
       var overlay = document.createElement("div");
       overlay.className = "aria-locked-overlay";
       overlay.innerHTML =
-        '<div class="aria-locked-card">' +
-          '<h3>Your <span class="gold">trial</span> is up</h3>' +
-          '<p>Pick a plan to keep using ARIA. The rest of the site stays open — explore as much as you want.</p>' +
-          '<a class="aria-locked-cta" href="' + PLANS_PATH + '">VIEW PLANS →</a>' +
+        '<div class="aria-locked-card tariff">' +
+          '<span class="aria-locked-eyebrow">Trial ended · Time to commit</span>' +
+          '<h3>Continue with <span class="gold">ARIA</span></h3>' +
+          '<p>Pick a plan to keep chatting. The rest of the site stays open — explore as much as you want.</p>' +
+          '<div class="arl-grid">' +
+            '<div class="arl-tile"><span class="arl-tier">Personal</span><span class="arl-price">$599</span><span class="arl-period">/month</span><span class="arl-desc">For one user. Full chat + KB access.</span><button class="arl-pick" data-tier="personal">Pick Personal</button></div>' +
+            '<div class="arl-tile featured"><span class="arl-tier">Pro</span><span class="arl-price">$1,500</span><span class="arl-period">/month</span><span class="arl-desc">For consultants. Voice mode + receipts.</span><button class="arl-pick" data-tier="pro">Pick Pro</button></div>' +
+            '<div class="arl-tile"><span class="arl-tier">Small Biz</span><span class="arl-price">$156K</span><span class="arl-period">/year</span><span class="arl-desc">Up to 10 users. Company KB upload.</span><button class="arl-pick" data-tier="small_business">Pick SMB</button></div>' +
+          '</div>' +
+          '<a class="arl-seemore" href="' + PLANS_PATH + '">See all plans →</a>' +
           '<div class="aria-locked-sub">Or <a href="mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Sales%20Inquiry">talk to sales</a></div>' +
         '</div>';
       el.appendChild(overlay);
+      overlay.querySelectorAll(".arl-pick").forEach(function(btn){
+        btn.addEventListener("click", async function(){
+          if (btn.disabled) return;
+          btn.disabled = true;
+          var orig = btn.textContent;
+          btn.textContent = "Connecting...";
+          try {
+            var r = await fetch("/.netlify/functions/stripe-checkout", {
+              method:"POST", headers:{"Content-Type":"application/json"},
+              body: JSON.stringify({tier: btn.dataset.tier})
+            });
+            var d = await r.json();
+            if (d && d.url) { window.location = d.url; return; }
+            throw new Error((d && d.error) || "Checkout failed");
+          } catch(e){
+            btn.disabled = false;
+            btn.textContent = orig;
+            alert("Could not start checkout: " + (e.message || e) + "\nEmail ahmad.wasee@iisupp.net to complete the purchase.");
+          }
+        });
+      });
     });
     ["ariaFab","installAppButton"].forEach(function (id) {
       var el = document.getElementById(id);
@@ -1070,25 +1254,14 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
     rewritePlansLinks();
     var p = location.pathname;
     if (p === PLANS_PATH || p === "/plans") return;
-    injectStyles();
-    var start = getTrialStart();
-    var remaining = TRIAL_MS - (Date.now() - start);
-    var bar = buildBar(Math.max(0, remaining));
-    var timeEl = bar.querySelector(".atb-time");
-    var labelEl = bar.querySelector(".atb-label");
-    function tick() {
-      var r = TRIAL_MS - (Date.now() - start);
-      if (r <= 0) {
-        bar.classList.add("expired");
-        labelEl.textContent = "TRIAL ENDED";
-        timeEl.textContent = "0:00";
-        blurAriaSections();
-        return;
-      }
-      timeEl.textContent = fmt(r);
-      setTimeout(tick, 1000);
+    // No styles, no bar, no lock until the user submits the bridge form.
+    // ARIA stays fully accessible in this "pre-trial" state.
+    var existing = getActiveEmail();
+    if (existing) {
+      // Returning visitor with stored identity: jump straight into trial state
+      injectStyles();
+      startTrialFor(existing);
     }
-    tick();
   }
 
   if (document.readyState === "loading") {
@@ -1128,28 +1301,28 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   function injectStyles() {
     if (document.getElementById("rm-style")) return;
     var css =
-      "#vision-roadmap{position:relative;padding:90px 20px 120px;max-width:1200px;margin:0 auto;overflow:hidden;z-index:2}" +
-      "#vision-roadmap .rm-head{text-align:center;max-width:760px;margin:0 auto 64px;position:relative;z-index:2}" +
+      "#vision-roadmap{position:relative;padding:28px 20px 36px;max-width:1200px;margin:0 auto;overflow:hidden;z-index:2}" +
+      "#vision-roadmap .rm-head{text-align:center;max-width:760px;margin:0 auto 18px;position:relative;z-index:2}" +
       "#vision-roadmap .rm-tag{color:#c5a059;font-size:11px;letter-spacing:.34em;margin:0 0 14px;text-transform:uppercase}" +
       "#vision-roadmap h2{font-family:Cinzel,serif;font-size:44px;font-weight:700;color:#fff;margin:0 0 18px;line-height:1.1}" +
       "#vision-roadmap h2 .rm-gold{color:#c5a059}" +
       "#vision-roadmap .rm-sub{color:rgba(255,255,255,.72);font-size:16px;line-height:1.6;margin:0}" +
       "#vision-roadmap .rm-track{position:relative}" +
-      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:60px;padding-top:24px}" +
+      "#vision-roadmap .rm-stones{position:relative;z-index:2;display:flex;flex-direction:column;gap:10px;padding-top:6px}" +
       "#vision-roadmap .rm-tree{position:absolute;left:50%;top:0;width:240px;height:100%;transform:translateX(-50%);z-index:1;pointer-events:none}" +
       "#vision-roadmap .rm-stone::before{content:'';position:absolute;top:50%;height:1.5px;transform:translateY(-50%);z-index:1;pointer-events:none;box-shadow:0 0 6px rgba(241,220,167,.4)}" +
       "#vision-roadmap .rm-stone.left::before{right:50%;width:36%;background:linear-gradient(270deg,rgba(241,220,167,.85),rgba(241,220,167,0))}" +
       "#vision-roadmap .rm-stone.right::before{left:50%;width:36%;background:linear-gradient(90deg,rgba(241,220,167,.85),rgba(241,220,167,0))}" +
       "@media (max-width:720px){#vision-roadmap .rm-tree{display:block;left:50%;width:92px;opacity:.58}#vision-roadmap .rm-stone::before{display:block;width:30%}#vision-roadmap .rm-stone.left::before{right:50%;background:linear-gradient(270deg,rgba(241,220,167,.72),rgba(241,220,167,0))}#vision-roadmap .rm-stone.right::before{left:50%;background:linear-gradient(90deg,rgba(241,220,167,.72),rgba(241,220,167,0))}}" +
-      "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 64px 1fr;gap:14px;align-items:center;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
+      "#vision-roadmap .rm-stone{display:grid;grid-template-columns:1fr 64px 1fr;gap:14px;align-items:center;justify-items:stretch;opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}" +
       "#vision-roadmap .rm-stone.visible{opacity:1;transform:translateY(0)}" +
       "#vision-roadmap .rm-card{background:none;border:none;border-radius:0;padding:14px 22px;box-shadow:none;transition:none}" +
       "#vision-roadmap .rm-card:hover{background:none;border:none;box-shadow:none}" +
-      "#vision-roadmap .rm-stone.left .rm-card{grid-column:1;text-align:right}" +
-      "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left}" +
+      "#vision-roadmap .rm-stone.left .rm-card{grid-column:1;text-align:right;justify-self:end}" +
+      "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left;justify-self:start}" +
       "#vision-roadmap .rm-stone.left .rm-spacer{grid-column:3}" +
       "#vision-roadmap .rm-stone.right .rm-spacer{grid-column:1}" +
-      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:11px;letter-spacing:.04em;position:relative}" +
+      "#vision-roadmap .rm-node{grid-column:2;justify-self:center;align-self:center;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-weight:700;font-size:10px;letter-spacing:.04em;position:relative}" +
       "#vision-roadmap .rm-card h3{font-family:Cinzel,serif;font-size:18px;color:#f1dca7;margin:0 0 8px;letter-spacing:.02em;line-height:1.25}" +
       "#vision-roadmap .rm-card p{color:rgba(241,220,167,.78);font-size:13.5px;line-height:1.65;margin:0}" +
       "#vision-roadmap .rm-badge{display:inline-block;margin-top:10px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-family:Cinzel,serif;font-weight:700;padding:3px 10px;border-radius:6px}" +
@@ -1158,6 +1331,18 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       "#vision-roadmap .rm-stone.done .rm-badge{background:rgba(34,197,94,.16);color:#86efac;border:1px solid rgba(34,197,94,.4)}" +
       "#vision-roadmap .rm-stone.current .rm-node{background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;box-shadow:0 0 22px rgba(241,220,167,.7),inset 0 0 0 1.5px rgba(255,255,255,.25);animation:rmPulse 2.2s infinite}" +
       "#vision-roadmap .rm-stone.current .rm-card{border-color:rgba(241,220,167,.6);background:linear-gradient(165deg,#1a1410 0%,#251a12 100%);box-shadow:0 0 50px rgba(241,220,167,.18)}" +
+      "#vision-roadmap .rm-flip{perspective:900px;min-height:78px;max-width:340px;cursor:pointer;width:100%;transition:min-height .35s cubic-bezier(.4,0,.2,1)}" +
+      "#vision-roadmap .rm-flip-inner{position:relative;width:100%;min-height:78px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1),min-height .35s cubic-bezier(.4,0,.2,1)}" +
+      "#vision-roadmap .rm-flip:hover,#vision-roadmap .rm-flip:focus-within{min-height:220px}" +
+      "#vision-roadmap .rm-flip:hover .rm-flip-inner,#vision-roadmap .rm-flip:focus-within .rm-flip-inner{transform:rotateY(180deg);min-height:220px}" +
+      "#vision-roadmap .rm-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;border:1px solid rgba(197,160,89,.22);background:linear-gradient(160deg,rgba(255,255,255,.02),rgba(197,160,89,.04));padding:12px 16px;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box}" +
+      "#vision-roadmap .rm-face.rm-back{transform:rotateY(180deg);background:linear-gradient(165deg,#1a1410 0%,#251a12 100%);border-color:rgba(241,220,167,.4)}" +
+      "#vision-roadmap .rm-front h3{font-family:Cinzel,serif;font-size:15px;color:#f1dca7;margin:0 0 6px;letter-spacing:.03em;line-height:1.25;text-transform:uppercase}" +
+      "#vision-roadmap .rm-front .rm-hint{display:none}" +
+      "#vision-roadmap .rm-back p{color:rgba(241,220,167,.92);font-size:12.5px;line-height:1.55;margin:0;overflow:auto;max-height:170px}" +
+      "#vision-roadmap .rm-stone.done .rm-front{border-color:rgba(34,197,94,.35)}" +
+      "#vision-roadmap .rm-stone.current .rm-front{border-color:rgba(241,220,167,.6)}" +
+      "@media (prefers-reduced-motion:reduce){#vision-roadmap .rm-flip:hover .rm-flip-inner{transform:none}}" +
       "#vision-roadmap .rm-stone.current .rm-card h3{color:#fff;font-size:20px}" +
       "#vision-roadmap .rm-stone.current .rm-badge{background:rgba(241,220,167,.16);color:#f1dca7;border:1px solid rgba(241,220,167,.5)}" +
       "@keyframes rmPulse{0%,100%{box-shadow:0 0 22px rgba(241,220,167,.7),inset 0 0 0 1.5px rgba(255,255,255,.25)}50%{box-shadow:0 0 36px rgba(241,220,167,1),inset 0 0 0 1.5px rgba(255,255,255,.4)}}" +
@@ -1188,7 +1373,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
         "#vision-roadmap .rm-stone.right .rm-card{grid-column:3;text-align:left}" +
         "#vision-roadmap .rm-stone.left .rm-spacer{display:block;grid-column:3}" +
         "#vision-roadmap .rm-stone.right .rm-spacer{display:block;grid-column:1}" +
-        "#vision-roadmap .rm-node{grid-column:2;grid-row:auto;width:28px;height:28px;font-size:8px;margin-top:0}" +
+        "#vision-roadmap .rm-node{grid-column:2;grid-row:auto;width:22px;height:22px;font-size:8px;margin-top:0}" +
         "#vision-roadmap .rm-card{padding:6px 4px}" +
         "#vision-roadmap .rm-card h3{font-size:11.3px;line-height:1.22;margin-bottom:5px;overflow-wrap:anywhere}" +
         "#vision-roadmap .rm-card p{font-size:9.4px;line-height:1.38;overflow-wrap:anywhere}" +
@@ -1246,11 +1431,14 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       var stone = document.createElement("div");
       stone.className = "rm-stone " + m.status + " " + side;
       var nodeContent = m.status === "done" ? "&#10003;" : (m.status === "current" ? "&#9203;" : String(i + 1));
-      var badge = m.status === "done" ? '<span class="rm-badge">Live</span>' :
-                  (m.status === "current" ? '<span class="rm-badge">In progress</span>' :
-                   '<span class="rm-badge">Coming</span>');
+      var badge = "";
       stone.innerHTML =
-        '<div class="rm-card"><h3>' + m.title + '</h3><p>' + m.desc + '</p>' + badge + '</div>' +
+        '<div class="rm-card rm-flip" tabindex="0">' +
+          '<div class="rm-flip-inner">' +
+            '<div class="rm-face rm-front"><h3>' + m.title + '</h3>' + badge + '<span class="rm-hint">Hover for detail</span></div>' +
+            '<div class="rm-face rm-back"><p>' + m.desc + '</p></div>' +
+          '</div>' +
+        '</div>' +
         '<div class="rm-node">' + nodeContent + '</div>' +
         '<div class="rm-spacer"></div>';
       stones.appendChild(stone);
@@ -1279,14 +1467,20 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   }
 
   function init() {
+    if (document.getElementById("vision-roadmap")) return;
+    // Prefer placement right under the hero — insert BEFORE the AI Edge band.
+    var aiEdge = document.querySelector(".ai-edge-band");
     var sc = document.getElementById("service-center");
     var ariaDemo = document.getElementById("aria-demo");
-    var anchor = ariaDemo || sc;
-    if (!anchor) return;
-    if (document.getElementById("vision-roadmap")) return;
     injectStyles();
     var section = buildRoadmap();
-    anchor.parentNode.insertBefore(section, anchor.nextSibling);
+    if (aiEdge && aiEdge.parentNode) {
+      aiEdge.parentNode.insertBefore(section, aiEdge);
+    } else {
+      var anchor = ariaDemo || sc;
+      if (!anchor) return;
+      anchor.parentNode.insertBefore(section, anchor.nextSibling);
+    }
 
     if ("IntersectionObserver" in window) {
       var io = new IntersectionObserver(function (entries) {
