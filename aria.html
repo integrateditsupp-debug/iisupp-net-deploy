@@ -178,12 +178,11 @@
 
   /* ====== CHAT VIEW ====== */
   .browser-body{
-    flex:1;padding:14px 8px 160px;overflow-y:auto;overflow-x:hidden;
+    flex:1;padding:14px 8px 16px;overflow-y:auto;overflow-x:hidden;
     scroll-behavior:smooth;
     min-width:0;
   }
-  .browser-frame:not(.active-chat) .browser-body{padding-bottom:220px}
-  .browser-frame.active-chat .browser-body{padding-bottom:14px}
+  .browser-body{padding-bottom:16px}
   #chatMessages{max-width:100%;min-width:0;overflow-x:hidden}
   .browser-body::-webkit-scrollbar{width:7px}
   .browser-body::-webkit-scrollbar-thumb{background:rgba(180,140,70,.2);border-radius:8px}
@@ -1547,8 +1546,7 @@
       max-height:none; overflow:visible;
     }
     .browser-frame{ height:clamp(560px,78vh,820px); overflow:hidden; }
-    /* dock keeps its absolute centered → drop-to-bottom behavior at narrow desktop */
-    .chat-dock{ width:min(100% - 32px, 640px) !important; }
+    /* dock is in-flow as a bottom section — no override needed */
   }
   /* Very wide desktop (≥1600px): nudge chat even larger */
   @media (min-width:1600px){
@@ -1596,21 +1594,24 @@
   .ap-layer-pct{text-align:right;color:var(--ap-text-2);font-weight:600}
   /* relocated chat input dock (was under "Tap to speak") */
   .chat-dock{
-    position:absolute;left:50%;top:50%;bottom:auto;z-index:25;
-    width:min(100% - 48px, 640px);
-    transform:translate(-50%,-50%);
+    position:relative;
+    flex:0 0 auto;
+    width:100%;
+    margin:0;
+    padding:14px 16px 14px;
+    background:linear-gradient(0deg, rgba(5,4,2,.98) 0%, rgba(5,4,2,.94) 100%);
+    border-top:1px solid rgba(197,160,89,.30);
     display:flex;flex-direction:column;gap:8px;
-    transition:top .28s ease,bottom .28s ease,transform .28s ease,width .2s ease;
+    z-index:5;
   }
-  .browser-frame.active-chat .chat-dock{
-    top:auto;bottom:12px;
-    transform:translateX(-50%);
-  }
+  .chat-dock .input-row{max-width:640px;margin:0 auto;width:100%}
+  .chat-dock .history-bar{max-width:640px;margin:0 auto;width:100%}
+  /* .browser-frame.active-chat .chat-dock — no override needed; dock is always in-flow at bottom */
   .chat-dock .input-row{margin:0;width:100%;box-shadow:0 10px 26px rgba(0,0,0,.35)}
   #aria-v04-inline{display:inline-flex!important;gap:8px!important;margin-right:0!important;align-items:center;flex-wrap:wrap;justify-content:center}
   #aria-v04-end-btn,#aria-v04-callback-btn{border-radius:7px!important}
   @media (max-width:900px){
-    .chat-dock,.browser-frame.active-chat .chat-dock{position:static;left:auto;right:auto;top:auto;bottom:auto;width:min(100%,640px);transform:none;margin:10px auto 4px}
+    .chat-dock{padding:12px 12px}
     .ap-rail{grid-template-columns:1fr;max-height:none;overflow:visible}
     .ap-card{padding:12px}
   }
@@ -1751,13 +1752,13 @@
       <div class="ops-body">
         <div class="ops-banner">
           <div>
-            <div class="title">GLOBAL OPERATIONS CENTER</div>
-            <div class="head"><em id="opsResolved">4,218</em> incidents resolved in the last 24 hours.</div>
+            <div class="title">ARIA DEMO OPERATIONS VIEW</div>
+            <div class="head"><em id="opsResolved">4,218</em> guided support paths prepared for review.</div>
           </div>
-          <div class="ops-stat"><div class="lbl">UPTIME</div><div class="val" id="opsUptime">99.998%</div></div>
-          <div class="ops-stat"><div class="lbl">MEAN RESOLVE</div><div class="val" id="opsResolve">11.4s</div></div>
-          <div class="ops-stat"><div class="lbl">AGENTS LIVE</div><div class="val" id="opsAgents">184</div></div>
-          <div class="ops-stat"><div class="lbl">REGIONS</div><div class="val">27</div></div>
+          <div class="ops-stat"><div class="lbl">DEMO STATUS</div><div class="val" id="opsUptime">Ready</div></div>
+          <div class="ops-stat"><div class="lbl">GUIDED STEP</div><div class="val" id="opsResolve">11.4s</div></div>
+          <div class="ops-stat"><div class="lbl">MODES</div><div class="val" id="opsAgents">4</div></div>
+          <div class="ops-stat"><div class="lbl">ROUTES</div><div class="val">7</div></div>
         </div>
         <div class="ops-grid">
           <div class="tier">
@@ -1896,11 +1897,11 @@
       </div>
 
       <div class="sla-panel" id="slaPanel">
-        <div class="status-head"><span class="led green"></span><span>ARIA SLA &amp; OUTCOMES</span></div>
+        <div class="status-head"><span class="led green"></span><span>ARIA DEMO OUTCOMES</span></div>
         <div class="sla-grid">
-          <div class="sla-cell"><div class="v">11.4s</div><div class="k">Mean resolve</div></div>
-          <div class="sla-cell"><div class="v">99.998%</div><div class="k">Service uptime</div></div>
-          <div class="sla-cell"><div class="v">4,218</div><div class="k">24h resolved</div></div>
+          <div class="sla-cell"><div class="v">11.4s</div><div class="k">Guided step</div></div>
+          <div class="sla-cell"><div class="v">Ready</div><div class="k">Demo status</div></div>
+          <div class="sla-cell"><div class="v">7</div><div class="k">Support routes</div></div>
           <div class="sla-cell"><div class="v">72</div><div class="k">Verified KBs</div></div>
         </div>
       </div>
@@ -4999,7 +5000,6 @@ async function submitAsk(text){
     ? state.lastIntent
     : null;
   if (!v) return;
-  activateChatDock();  // drop dock to bottom on first real send
   // BUG FIX 6: cap input length, strip pure-punctuation submissions
   if (v.length > 800) v = v.slice(0, 800) + '…';
   if (/^[\s!?.,;:'"`~@#$%^&*()_+\-={}\[\]|\\\/<>]+$/.test(v)){
