@@ -5455,5 +5455,94 @@ if (_prefill){
   }
 })();
 </script>
+
+<style>
+#ariaLeadBtn{position:fixed;bottom:18px;right:18px;z-index:8500;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#1a1410;padding:11px 18px;border-radius:999px;font-family:Cinzel,serif;font-size:11px;letter-spacing:.18em;font-weight:700;text-transform:uppercase;border:0;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.4),0 0 16px rgba(197,160,89,.35);display:none;align-items:center;gap:8px;transition:transform .15s}
+#ariaLeadBtn:hover{transform:translateY(-2px)}
+#ariaLeadBtn.show{display:inline-flex}
+#ariaLeadModal{position:fixed;inset:0;z-index:99000;background:rgba(5,4,2,.86);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:24px;font-family:Inter,sans-serif}
+#ariaLeadModal.open{display:flex}
+#ariaLeadModal .alm-card{width:min(480px,100%);background:linear-gradient(165deg,#0a0805,#15110a);border:1px solid rgba(197,160,89,.45);border-radius:18px;padding:28px;position:relative;color:#fff}
+#ariaLeadModal h3{font-family:Cinzel,serif;color:#fff;font-size:22px;margin:0 0 6px}
+#ariaLeadModal h3 .gold{color:#c5a059}
+#ariaLeadModal p{color:rgba(255,255,255,.7);font-size:13px;margin:0 0 18px}
+#ariaLeadModal label{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#c5a059;font-weight:600;margin:12px 0 4px}
+#ariaLeadModal input,#ariaLeadModal textarea{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.25);color:#fff;padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box;font-family:inherit}
+#ariaLeadModal input:focus,#ariaLeadModal textarea:focus{outline:none;border-color:#c5a059}
+#ariaLeadModal textarea{min-height:64px;resize:vertical}
+#ariaLeadModal .alm-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#ariaLeadModal .alm-submit{font-family:Cinzel,serif;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#1a1410;padding:12px 20px;border-radius:10px;font-weight:700;letter-spacing:.14em;font-size:12px;text-transform:uppercase;border:0;cursor:pointer;width:100%;margin-top:16px}
+#ariaLeadModal .alm-close{position:absolute;top:12px;right:14px;background:transparent;border:0;color:rgba(255,255,255,.55);font-size:22px;cursor:pointer}
+#ariaLeadModal .alm-status{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:12.5px;display:none}
+#ariaLeadModal .alm-status.ok{display:block;background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.3)}
+#ariaLeadModal .alm-status.err{display:block;background:rgba(251,113,133,.08);color:#fb7185;border:1px solid rgba(251,113,133,.3)}
+@media(max-width:520px){#ariaLeadModal .alm-row{grid-template-columns:1fr}}
+</style>
+<button id="ariaLeadBtn" type="button" onclick="document.getElementById('ariaLeadModal').classList.add('open')">Talk to sales</button>
+<div id="ariaLeadModal" role="dialog" aria-modal="true">
+  <div class="alm-card">
+    <button class="alm-close" aria-label="Close" onclick="document.getElementById('ariaLeadModal').classList.remove('open')">x</button>
+    <h3>Talk to <span class="gold">Ahmad</span> directly</h3>
+    <p>Founder of Integrated IT Support. Same-day reply, usually within hours.</p>
+    <form id="almForm" novalidate>
+      <div class="alm-row">
+        <div><label>Name</label><input id="alm-name" type="text" required></div>
+        <div><label>Company</label><input id="alm-company" type="text"></div>
+      </div>
+      <div class="alm-row">
+        <div><label>Work email</label><input id="alm-email" type="email" required></div>
+        <div><label>Phone (optional)</label><input id="alm-phone" type="tel"></div>
+      </div>
+      <label>What do you need?</label>
+      <textarea id="alm-msg"></textarea>
+      <button class="alm-submit" type="submit">Send to Ahmad &rarr;</button>
+      <div class="alm-status" id="alm-status"></div>
+    </form>
+  </div>
+</div>
+<script>
+(function(){
+setTimeout(function(){var b=document.getElementById('ariaLeadBtn');if(b)b.classList.add('show');},60000);
+setInterval(function(){if(document.querySelector('.aria-locked-overlay')){var b=document.getElementById('ariaLeadBtn');if(b)b.classList.add('show');}},3000);
+var form=document.getElementById('almForm');if(!form)return;
+form.addEventListener('submit',async function(e){
+e.preventDefault();
+var $=function(id){return document.getElementById(id);};
+var st=$('alm-status');st.className='alm-status';
+var btn=form.querySelector('.alm-submit');btn.disabled=true;btn.textContent='Sending...';
+var p={name:$('alm-name').value.trim(),company:$('alm-company').value.trim(),email:$('alm-email').value.trim(),phone:$('alm-phone').value.trim(),message:$('alm-msg').value.trim(),source:'/aria',last_intent:(window.state&&window.state.lastIntent)||''};
+if(!p.name||!p.email){st.className='alm-status err';st.textContent='Name and email required.';btn.disabled=false;btn.textContent='Send to Ahmad';return;}
+try{var r=await fetch('/.netlify/functions/aria-lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+var j=await r.json().catch(function(){return{};});
+if(r.ok&&j.ok){st.className='alm-status ok';st.textContent='Sent. Ahmad will reach out shortly.';btn.textContent='Sent';
+setTimeout(function(){document.getElementById('ariaLeadModal').classList.remove('open');},2400);}
+else{throw new Error(j.error||'HTTP '+r.status);}
+}catch(e){st.className='alm-status err';st.textContent='Could not send: '+(e.message||'error');btn.disabled=false;btn.textContent='Send to Ahmad';}
+});
+})();
+</script>
+
+
+<script>
+(function(){
+try{
+  if(sessionStorage.getItem('aria_welcome_back_shown'))return;
+  var raw=localStorage.getItem('aria_user_profile');
+  if(!raw)return;
+  var p=JSON.parse(raw);
+  if(!p||!p.email)return;
+  sessionStorage.setItem('aria_welcome_back_shown','1');
+  var fn=(p.firstName||p.email.split('@')[0]||'there').split(' ')[0];
+  function esc(s){return String(s||'').replace(/[<>&"]/g,function(c){return ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c];});}
+  var t=document.createElement('div');
+  t.id='ariaWelcomeBack';
+  t.style.cssText='position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9500;background:linear-gradient(165deg,rgba(10,8,5,.96),rgba(20,15,8,.96));border:1px solid rgba(197,160,89,.55);border-radius:14px;padding:14px 22px;color:#f1dca7;font-family:Inter,sans-serif;font-size:13px;box-shadow:0 22px 50px rgba(0,0,0,.6);display:flex;align-items:center;gap:12px;opacity:0;transition:opacity .45s ease,transform .45s ease;backdrop-filter:blur(8px)';
+  t.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:#c5a059;box-shadow:0 0 8px #c5a059"></span><span><strong style="color:#fff;font-family:Cinzel,serif;letter-spacing:.04em">Welcome back, '+esc(fn)+'</strong> &nbsp;&middot;&nbsp; <span style="opacity:.75">Picking up where you left off.</span></span>';
+  function attach(){document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(4px)';});setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(-8px)';setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},500);},4500);}
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',attach);}else{attach();}
+}catch(e){}
+})();
+</script>
+
 </body>
 </html>
