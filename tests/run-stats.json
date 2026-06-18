@@ -39,7 +39,7 @@
   "apps_covered": 200,
   "personas_covered": 8,
   "os_contexts": 10,
-  "last_round": 8,
+  "last_round": 9,
   "last_round_at": "2026-06-18T05:31:32Z",
   "round_6": {
     "shipped": [
@@ -85,6 +85,22 @@
       "cat_21_kg_memory": "50% -> ~72%",
       "cat_24_compliance": "75% -> ~88%",
       "process_velocity": "documented + propagated to all agents"
+    }
+  },
+  "round_9": {
+    "cowork": {
+      "shipped": [
+        "netlify/functions/_circuit-breaker.js (Cat 13)",
+        "netlify/functions/aria-analytics-dashboard.js (Cat 10)",
+        "netlify/functions/_prompt-injection-guard.js (Cat 9)",
+        "admin-console.html (Cat 12)"
+      ],
+      "categories_lifted": {
+        "cat_9_edge_cases": "70% -> ~80%",
+        "cat_10_reporting": "55% -> ~75%",
+        "cat_12_multi_tenant": "55% -> ~72% (with admin console)",
+        "cat_13_failure_modes": "55% -> ~75%"
+      }
     }
   }
 }
