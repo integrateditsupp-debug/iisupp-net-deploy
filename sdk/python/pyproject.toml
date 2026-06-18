@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "iisupp-aria"
+version = "0.1.0"
+description = "Python client for ARIA by Integrated IT Support Inc."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Integrated IT Support Inc." }]
+keywords = ["aria", "iisupp", "ai", "support", "helpdesk"]
+dependencies = ["httpx>=0.27"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://iisupp.net/docs/api"
+Repository = "https://github.com/integrateditsupp-debug/iisupp-net-deploy"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["iisupp_aria*"]
