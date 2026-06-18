@@ -80,6 +80,11 @@
       gap: 7px;
     }
 
+    .link-button[aria-disabled="true"] {
+      opacity: 0.58;
+      cursor: not-allowed;
+    }
+
     button.primary {
       background: var(--ink);
       color: #fff;
@@ -352,7 +357,7 @@
         <p class="sub">Find money. Score fit. Prepare the next step. Stop before final submit, send, apply, contact, pay, sign, or certify.</p>
       </div>
       <div class="actions">
-        <a class="link-button" href="senior-director-state/opportunity-engine/opportunities.json" target="_blank" rel="noreferrer">Open DB</a>
+        <a class="link-button" href="/ceo-action-console.html">CEO Console</a>
         <button id="exportBtn">Export Review State</button>
         <button class="primary" id="refreshBtn">Reload</button>
       </div>
@@ -401,6 +406,74 @@
   <script>
     const DB_URL = "senior-director-state/opportunity-engine/opportunities.json";
     const STORE_KEY = "iis-opportunity-engine-state-v1";
+    const FALLBACK_ITEMS = [
+      {
+        id: "public-overflow-support-pilot",
+        title: "Remote L1-L3 Overflow Support Pilot",
+        organization: "Integrated IT Support Inc.",
+        sourceName: "Public revenue lane",
+        sourceLink: "/services.html",
+        type: "lead",
+        status: "needs_review",
+        priorityScore: 8,
+        difficultyScore: 4,
+        revenueOrGrowthPotential: 8,
+        deadline: "rolling",
+        estimatedValueOrSalary: "Pilot / monthly retainer",
+        locationOrRemote: "Remote / Canada",
+        tags: ["overflow support", "M365", "helpdesk", "fast close"],
+        whyRelevant: "Fastest-fit IIS offer for teams with ticket pressure, onboarding/offboarding friction, or overloaded senior IT staff.",
+        recommendedNextStep: "Prepare one narrow scoping message and stop before external Send.",
+        summary: "Use this lane when a buyer has helpdesk overflow, M365 support friction, or escalation-quality pain.",
+        draftMessage: "Short draft angle: offer to review one anonymized queue sample and propose a two-week triage/support pilot.",
+        requiredDocuments: ["Offer one-pager", "15-minute scoping call prompt"],
+        missingInformation: ["Buyer-approved send target"]
+      },
+      {
+        id: "public-m365-tune-up",
+        title: "M365 Security and Productivity Tune-Up",
+        organization: "Integrated IT Support Inc.",
+        sourceName: "Public revenue lane",
+        sourceLink: "/scorecard.html",
+        type: "lead",
+        status: "needs_review",
+        priorityScore: 8,
+        difficultyScore: 5,
+        revenueOrGrowthPotential: 8,
+        deadline: "rolling",
+        estimatedValueOrSalary: "Fixed-fee assessment / cleanup sprint",
+        locationOrRemote: "Remote / Canada",
+        tags: ["M365", "security", "MFA", "governance"],
+        whyRelevant: "Strong repeatable offer for organizations already on Microsoft 365 without clean MFA, Teams, SharePoint, device, or onboarding governance.",
+        recommendedNextStep: "Route interested visitors to the scorecard and prepare a no-send follow-up around three recurring M365 headaches.",
+        summary: "Low-cost-to-deliver diagnostic lane that can convert into cleanup, admin, and recurring support.",
+        draftMessage: "Short draft angle: ask for three recurring M365 headaches and offer a prioritized cleanup checklist.",
+        requiredDocuments: ["Scorecard", "M365 tune-up checklist"],
+        missingInformation: ["Tenant/admin approval before any real lookup"]
+      },
+      {
+        id: "public-ai-workflow-quick-win",
+        title: "AI Workflow Quick-Win Sprint",
+        organization: "Integrated IT Support Inc.",
+        sourceName: "Public revenue lane",
+        sourceLink: "/ai-edge.html",
+        type: "lead",
+        status: "needs_review",
+        priorityScore: 8,
+        difficultyScore: 4,
+        revenueOrGrowthPotential: 8,
+        deadline: "rolling",
+        estimatedValueOrSalary: "Small pilot / implementation sprint",
+        locationOrRemote: "Remote / Canada",
+        tags: ["AI workflow", "operations", "SOP", "automation"],
+        whyRelevant: "Good fast-cash lane when a team has repeated handoffs, slow reporting, scattered docs, or internal support questions.",
+        recommendedNextStep: "Ask for one repetitive process wasting 3+ hours/week; stop before external Send.",
+        summary: "Package one practical assistant/workflow plus SOP and adoption plan.",
+        draftMessage: "Short draft angle: ask for the most annoying repetitive process and propose one practical AI sprint.",
+        requiredDocuments: ["AI Edge page", "Quick-win intake questions"],
+        missingInformation: ["Buyer process context"]
+      }
+    ];
     const sections = [
       ["new", "New Opportunities"],
       ["high_priority", "High Priority"],
@@ -415,6 +488,7 @@
     ];
 
     let rawItems = [];
+    let dbMode = "private";
     let view = "new";
     let localState = loadState();
 
@@ -460,9 +534,17 @@
     }
 
     async function loadDb() {
-      const response = await fetch(`${DB_URL}?t=${Date.now()}`);
-      const payload = await response.json();
-      rawItems = payload.items || [];
+      try {
+        const response = await fetch(`${DB_URL}?t=${Date.now()}`);
+        if (!response.ok) throw new Error(`private DB unavailable (${response.status})`);
+        const payload = await response.json();
+        rawItems = payload.items || [];
+        dbMode = "private";
+      } catch (error) {
+        rawItems = FALLBACK_ITEMS;
+        dbMode = "public-fallback";
+        console.info("Opportunity Engine using public fallback lanes:", error.message);
+      }
       if (!sectionItems(view).length && sectionItems("high_priority").length) view = "high_priority";
       render();
     }
@@ -478,7 +560,9 @@
       ];
       document.getElementById("metrics").innerHTML = rows.map(([label, value]) => `
         <div class="metric"><strong>${value}</strong><span>${label}</span></div>
-      `).join("");
+      `).join("") + (dbMode === "public-fallback" ? `
+        <div class="metric"><strong>SAFE</strong><span>Public fallback</span></div>
+      ` : "");
     }
 
     function renderTabs() {
@@ -604,7 +688,10 @@
     });
 
     loadDb().catch((error) => {
-      document.getElementById("list").innerHTML = `<div class="empty">Database not loaded: ${safe(error.message)}</div>`;
+      rawItems = FALLBACK_ITEMS;
+      dbMode = "public-fallback";
+      render();
+      console.info("Opportunity Engine fallback rendered:", error.message);
     });
   </script>
 </body>

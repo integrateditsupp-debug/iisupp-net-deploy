@@ -18,6 +18,7 @@ Disallow: /agents
 Disallow: /studio
 Disallow: /library-admin
 Disallow: /lead-radar
+Allow: /docs/api
 Disallow: /docs/
 Disallow: /backups/
 Disallow: /archive/

@@ -10,6 +10,17 @@
   node_bundler = "esbuild"
   external_node_modules = ["stripe", "@netlify/blobs"]
 
+[[redirects]]
+  from = "/docs/api"
+  to = "/docs/api.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/docs/api/"
+  to = "/docs/api.html"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -294,6 +305,10 @@
   status = 200
 [[redirects]]
   from = "/governance/ai-use"
+  to = "/governance/ai-use.html"
+  status = 200
+[[redirects]]
+  from = "/ai-governance"
   to = "/governance/ai-use.html"
   status = 200
 [[redirects]]

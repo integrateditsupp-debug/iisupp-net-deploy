@@ -3,7 +3,7 @@
  *  Cache key bumped per release. Runtime cache for /aria + /scorecard + /plans + /assets/*.
  *  Cat 11 — Mobile + responsive.
  */
-const CACHE_VERSION = 'iis-cache-v1.20260618';
+const CACHE_VERSION = 'iis-cache-v1.20260618b';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 
@@ -14,6 +14,7 @@ const STATIC_ASSETS = [
   '/scorecard',
   '/health-check',
   '/status',
+  '/docs/api',
   '/cost-calculator',
   '/compliance-gap',
   '/verticals/',
