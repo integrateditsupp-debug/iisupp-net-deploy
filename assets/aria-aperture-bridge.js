@@ -134,7 +134,26 @@ const ARIA_I18N = {
     company: '\u0627\u0644\u0634\u0631\u0643\u0629 (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)', license: '\u0631\u062e\u0635\u0629 / \u0631\u0642\u0645 \u0627\u0644\u062d\u0633\u0627\u0628 (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)',
     cta: '\u0627\u0628\u062f\u0623 \u0627\u0644\u062a\u0634\u062e\u064a\u0635 \u2192',
     consent: '\u062a\u0633\u062a\u062e\u062f\u0645 \u0645\u0639\u0644\u0648\u0645\u0627\u062a\u0643 \u0641\u0642\u0637 \u0644\u0647\u0630\u0647 \u0627\u0644\u062a\u0630\u0643\u0631\u0629 \u0648\u062a\u0642\u0631\u064a\u0631 \u0627\u0644\u062c\u0644\u0633\u0629. \u0633\u064a\u0635\u0644\u0643 \u0625\u064a\u0645\u064a\u0644 \u0648integrateditsupp@iisupp.net \u0639\u0646\u062f\u0645\u0627 \u062a\u062d\u0644 ARIA \u0627\u0644\u0645\u0634\u0643\u0644\u0629 \u0623\u0648 \u062a\u0635\u0639\u062f\u0647\u0627.'
+  ,
+  es: {
+    title: 'Antes de diagnosticar',
+    lead: 'ARIA creara un ticket y te enviara un reporte por correo. 20 segundos. Requerido.',
+    first: 'Nombre *', last: 'Apellido *',
+    email: 'Correo *', phone: 'Telefono *',
+    company: 'Empresa (opcional)', license: 'Licencia / N. de cuenta (opcional)',
+    cta: 'Comenzar diagnostico \u2192',
+    consent: 'Tu informacion se usa solo para este ticket y reporte. Recibiras correo de ARIA cuando se resuelva o escale.'
+  },
+  de: {
+    title: 'Vor der Fehlersuche',
+    lead: 'ARIA erstellt ein Ticket und sendet einen Sitzungsbericht per E-Mail. 20 Sekunden. Erforderlich.',
+    first: 'Vorname *', last: 'Nachname *',
+    email: 'E-Mail *', phone: 'Telefon *',
+    company: 'Firma (optional)', license: 'Lizenz / Kontonummer (optional)',
+    cta: 'Fehlersuche starten \u2192',
+    consent: 'Deine Daten werden nur fuer dieses Ticket und den Bericht verwendet. Du und integrateditsupp@iisupp.net erhalten E-Mails wenn ARIA loest oder eskaliert.'
   }
+}
 };
 function ariaPickLocale() {
   try {
