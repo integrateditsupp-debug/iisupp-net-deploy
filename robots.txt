@@ -55,4 +55,7 @@ Disallow: /
 User-agent: DotBot
 Disallow: /
 
+# AI/LLM knowledge base bulk export
+Allow: /assets/aria-kb-chunks.json
+
 Sitemap: https://iisupp.net/sitemap.xml
