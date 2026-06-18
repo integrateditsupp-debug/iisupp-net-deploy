@@ -1138,36 +1138,68 @@
     border:1px solid var(--border);border-radius:11px;
     background:rgba(15,11,6,.5);padding:11px 13px;margin-bottom:10px;
   }
-  .pulse-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
-  .pulse-card{
-    display:grid;grid-template-columns:54px minmax(0,1fr);gap:9px;align-items:center;
-    min-width:0;text-decoration:none;color:inherit;
-    border:1px solid var(--border);border-radius:9px;background:rgba(20,14,7,.42);
-    padding:7px;transition:border-color .2s,background .2s,transform .2s;
+  .pulse-tv{
+    margin-top:8px;border:1px solid rgba(212,168,90,.28);border-radius:14px;
+    background:linear-gradient(160deg,rgba(6,8,10,.92),rgba(21,14,7,.82));
+    box-shadow:inset 0 0 0 1px rgba(255,230,170,.035),inset 0 -18px 60px rgba(0,0,0,.36);
+    overflow:hidden;position:relative;
   }
-  .pulse-card:hover{border-color:var(--border-glow);background:rgba(34,25,13,.62);transform:translateY(-1px)}
-  .pulse-thumb{
-    height:48px;border-radius:7px;position:relative;overflow:hidden;
-    border:1px solid rgba(212,168,90,.18);
-    background:radial-gradient(circle at 30% 25%,rgba(240,216,149,.55),transparent 24%),linear-gradient(135deg,#271909,#090705);
+  .pulse-tv::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 4px);
+    mix-blend-mode:screen;
   }
-  .pulse-thumb::before{
-    content:"";position:absolute;inset:0;
-    background:linear-gradient(120deg,transparent 0 38%,rgba(255,255,255,.14) 42%,transparent 50% 100%);
-    opacity:.45;
+  .pulse-screen{
+    min-height:136px;position:relative;overflow:hidden;border-bottom:1px solid rgba(212,168,90,.16);
   }
-  .pulse-thumb::after{
-    content:attr(data-mark);position:absolute;right:7px;bottom:5px;
+  .pulse-slide{
+    position:absolute;inset:0;display:grid;grid-template-columns:78px minmax(0,1fr);gap:12px;
+    padding:13px 14px;opacity:0;transform:translateX(14px) scale(.985);
+    transition:opacity .45s ease,transform .45s ease;
+  }
+  .pulse-slide.is-active{opacity:1;transform:none;z-index:1}
+  .pulse-video{
+    border-radius:10px;position:relative;overflow:hidden;border:1px solid rgba(212,168,90,.22);
+    background:
+      radial-gradient(circle at 30% 26%,rgba(45,212,191,.35),transparent 22%),
+      radial-gradient(circle at 78% 72%,rgba(240,216,149,.35),transparent 24%),
+      linear-gradient(135deg,#10212a,#070504);
+  }
+  .pulse-video::before{
+    content:"";position:absolute;inset:12px;border-radius:50%;
+    border:1px solid rgba(240,216,149,.24);box-shadow:0 0 24px rgba(45,212,191,.12);
+  }
+  .pulse-video::after{
+    content:attr(data-mark);position:absolute;left:9px;bottom:8px;
     font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:#f0d895;text-shadow:0 0 12px rgba(240,216,149,.55);
   }
-  .pulse-bank{background:radial-gradient(circle at 68% 35%,rgba(45,212,191,.34),transparent 28%),linear-gradient(135deg,#10212a,#130d06)}
-  .pulse-cyber{background:radial-gradient(circle at 30% 30%,rgba(109,186,133,.38),transparent 30%),linear-gradient(135deg,#151f13,#0c0805)}
-  .pulse-chip{background:radial-gradient(circle at 62% 28%,rgba(90,150,255,.32),transparent 28%),linear-gradient(135deg,#0d1627,#150d05)}
-  .pulse-fact{background:radial-gradient(circle at 38% 32%,rgba(240,216,149,.42),transparent 30%),linear-gradient(135deg,#231506,#070504)}
-  .pulse-copy{min-width:0}
-  .pulse-tag{font-family:var(--mono);font-size:7.5px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
-  .pulse-title{font-size:11.5px;line-height:1.25;color:var(--cream-2);font-weight:600}
-  .pulse-meta{font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;margin-top:5px}
+  .pulse-video.cyber{background:radial-gradient(circle at 34% 30%,rgba(109,186,133,.36),transparent 27%),linear-gradient(135deg,#0f2118,#090705)}
+  .pulse-video.edge{background:radial-gradient(circle at 68% 28%,rgba(90,150,255,.32),transparent 25%),linear-gradient(135deg,#0d1627,#130b05)}
+  .pulse-video.ops{background:radial-gradient(circle at 42% 36%,rgba(240,216,149,.40),transparent 26%),linear-gradient(135deg,#231506,#070504)}
+  .pulse-video .bar{
+    position:absolute;left:14px;right:14px;height:3px;border-radius:999px;background:rgba(240,216,149,.2);
+    animation:pulseTvBars 4.8s ease-in-out infinite;
+  }
+  .pulse-video .bar:nth-child(1){top:24px;width:58%}
+  .pulse-video .bar:nth-child(2){top:38px;width:76%;animation-delay:.5s}
+  .pulse-video .bar:nth-child(3){top:52px;width:44%;animation-delay:1s}
+  .pulse-kicker{font-family:var(--mono);font-size:7.5px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:5px}
+  .pulse-headline{font-family:var(--serif);font-size:16px;line-height:1.05;color:var(--cream-2);font-weight:600;margin-bottom:6px}
+  .pulse-summary{font-size:11px;line-height:1.35;color:rgba(245,237,219,.72)}
+  .pulse-footer{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:7px 10px;background:rgba(4,3,2,.62);
+  }
+  .pulse-ticker{font-family:var(--mono);font-size:8px;letter-spacing:.15em;color:var(--muted);white-space:nowrap;overflow:hidden;text-transform:uppercase}
+  .pulse-ticker span{display:inline-block;animation:pulseTicker 18s linear infinite}
+  .pulse-dots{display:flex;align-items:center;gap:5px;flex:0 0 auto}
+  .pulse-dot{width:7px;height:7px;border:1px solid rgba(212,168,90,.5);border-radius:50%;background:transparent;padding:0;cursor:pointer}
+  .pulse-dot.is-active{background:var(--gold-bright);box-shadow:0 0 10px rgba(240,216,149,.65)}
+  @keyframes pulseTvBars{0%,100%{transform:scaleX(.72);opacity:.45}50%{transform:scaleX(1);opacity:.9}}
+  @keyframes pulseTicker{from{transform:translateX(0)}to{transform:translateX(-52%)}}
+  @media (prefers-reduced-motion:reduce){
+    .pulse-slide,.pulse-video .bar,.pulse-ticker span{animation:none!important;transition:none!important}
+  }
   .sla-panel{
     border:1px solid var(--border);border-radius:11px;
     background:rgba(15,11,6,.5);padding:11px 13px;margin-bottom:10px;
@@ -1184,30 +1216,39 @@
     background:linear-gradient(180deg,rgba(15,11,6,.55),rgba(22,16,9,.62));
     padding:11px 13px;margin-bottom:10px;
   }
-  .conversion-sub{color:var(--muted);font-size:11.5px;line-height:1.45;margin-bottom:8px}
-  .conversion-grid{display:grid;grid-template-columns:1fr;gap:7px}
+  .conversion-sub{color:var(--muted);font-size:11px;line-height:1.4;margin-bottom:8px}
+  .conversion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
   .conversion-card{
-    display:block;text-decoration:none;color:inherit;
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;
+    text-decoration:none;color:inherit;min-width:0;
     border:1px solid var(--border);border-radius:9px;background:rgba(20,14,7,.44);
-    padding:9px 10px;transition:border-color .2s,background .2s,transform .2s,box-shadow .2s;
+    padding:8px 9px;transition:border-color .2s,background .2s,transform .2s,box-shadow .2s;
+  }
+  .conversion-card.featured{
+    grid-column:1/-1;background:linear-gradient(135deg,rgba(39,28,13,.76),rgba(13,10,7,.68));
   }
   .conversion-card:hover{
     border-color:var(--border-glow);background:rgba(34,25,13,.66);transform:translateY(-1px);
     box-shadow:0 0 0 1px rgba(212,168,90,.12) inset;
   }
+  .conversion-index{
+    width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+    border:1px solid rgba(212,168,90,.34);background:rgba(212,168,90,.08);
+    font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--gold-bright);
+  }
+  .conversion-body{min-width:0}
   .conversion-top{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--gold);
-    text-transform:uppercase;margin-bottom:4px;
+    text-transform:uppercase;margin-bottom:3px;
   }
   .conversion-title{
-    font-family:var(--serif);font-size:16px;line-height:1.15;color:var(--cream-2);font-weight:500;
-    margin-bottom:3px;
+    font-family:var(--serif);font-size:14.5px;line-height:1.1;color:var(--cream-2);font-weight:500;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
-  .conversion-copy{color:var(--cream);font-size:11.5px;line-height:1.45}
   .conversion-cta{
-    display:inline-flex;align-items:center;gap:6px;margin-top:6px;
-    font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--gold-bright);text-transform:uppercase;
+    font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--gold-bright);text-transform:uppercase;
+    white-space:nowrap;
   }
   .issue-list{display:flex;flex-direction:column;gap:6px}
   .issue-row{
@@ -1345,16 +1386,15 @@
     .mic-btn svg{width:18px;height:18px}
     .divider{margin-bottom:8px}
     .status-panel,.sla-panel,.conversion-panel,.it-pulse,.insights{padding:9px 11px;margin-bottom:8px}
-    .pulse-grid{grid-template-columns:1fr 1fr;gap:6px}
-    .pulse-card{grid-template-columns:42px minmax(0,1fr);gap:7px;padding:6px}
-    .pulse-thumb{height:40px}
-    .pulse-title{font-size:10.5px}
-    .pulse-tag,.pulse-meta{font-size:6.8px;letter-spacing:.12em}
+    .pulse-screen{min-height:118px}
+    .pulse-slide{grid-template-columns:62px minmax(0,1fr);gap:9px;padding:10px}
+    .pulse-headline{font-size:14px}
+    .pulse-summary{font-size:10px}
     .sla-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
     .sla-cell .v{font-size:14px}
     .sla-cell .k{font-size:6.8px;letter-spacing:.12em}
-    .conversion-title{font-size:14px}
-    .conversion-copy,.conversion-sub{font-size:10.5px}
+    .conversion-title{font-size:13px}
+    .conversion-top,.conversion-sub{font-size:7.5px}
     .quick-actions{padding:9px 11px}
   }
 
@@ -1686,7 +1726,9 @@
     .ap-tag-row{max-height:68px;overflow:hidden}
   }
   @media (max-width:520px){
-    .pulse-grid{grid-template-columns:1fr}
+    .pulse-screen{min-height:124px}
+    .pulse-slide{grid-template-columns:64px minmax(0,1fr)}
+    .conversion-grid{grid-template-columns:1fr}
     .ap-band-title{font-size:12px}
     .chat-dock{padding:10px 8px}
     .browser-body{padding-bottom:8px}
@@ -1978,22 +2020,49 @@
 
       <div class="it-pulse" id="itPulsePanel">
         <div class="status-head"><span class="led green"></span><span>GLOBAL IT PULSE</span></div>
-        <div class="pulse-grid">
-          <a class="pulse-card" href="https://www.investing.com/news/economy-news/ecb-to-ask-banks-for-targeted-measures-to-counter-ai-risk-4723629" target="_blank" rel="noopener">
-            <div class="pulse-thumb pulse-bank" data-mark="ECB"></div>
-            <div class="pulse-copy"><div class="pulse-tag">Jun 3 - AI risk</div><div class="pulse-title">European banks pushed toward practical AI defense measures.</div><div class="pulse-meta">Reuters</div></div>
-          </a>
-          <a class="pulse-card" href="https://www.gartner.com/en/newsroom/press-releases/2026-06-02-gartner-identifies-four-critical-threats-requiring-urgent-improvements-from-cybersecurity-leaders" target="_blank" rel="noopener">
-            <div class="pulse-thumb pulse-cyber" data-mark="SEC"></div>
-            <div class="pulse-copy"><div class="pulse-tag">Jun 2 - cyber</div><div class="pulse-title">AI app compromise flagged as a critical enterprise threat.</div><div class="pulse-meta">Gartner</div></div>
-          </a>
-          <a class="pulse-card" href="https://ca.investing.com/news/stock-market-news/nvidia-launches-new-chip-to-bring-ai-directly-to-personal-computers-4667868" target="_blank" rel="noopener">
-            <div class="pulse-thumb pulse-chip" data-mark="AI PC"></div>
-            <div class="pulse-copy"><div class="pulse-tag">Jun 1 - devices</div><div class="pulse-title">AI agents move closer to laptops and desktops, not only cloud.</div><div class="pulse-meta">Reuters</div></div>
-          </a>
-          <div class="pulse-card" role="group" aria-label="Interesting IT fact">
-            <div class="pulse-thumb pulse-fact" data-mark="FACT"></div>
-            <div class="pulse-copy"><div class="pulse-tag">IT fact</div><div class="pulse-title">The first webcam watched a coffee pot so researchers avoided empty trips.</div><div class="pulse-meta">Cambridge lore</div></div>
+        <div class="pulse-tv" aria-label="Global IT Pulse elevator news screen">
+          <div class="pulse-screen" aria-live="off">
+            <article class="pulse-slide is-active">
+              <div class="pulse-video" data-mark="WORLD"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
+              <div>
+                <div class="pulse-kicker">World IT brief</div>
+                <div class="pulse-headline">Banks tighten AI risk controls</div>
+                <div class="pulse-summary">Regulated teams are moving from AI hype to evidence, controls, and incident playbooks.</div>
+              </div>
+            </article>
+            <article class="pulse-slide">
+              <div class="pulse-video cyber" data-mark="CYBER"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
+              <div>
+                <div class="pulse-kicker">Security desk</div>
+                <div class="pulse-headline">AI app access is now a board-level issue</div>
+                <div class="pulse-summary">The practical ask: inventory tools, lock down data paths, and watch for unauthorized automation.</div>
+              </div>
+            </article>
+            <article class="pulse-slide">
+              <div class="pulse-video edge" data-mark="EDGE"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
+              <div>
+                <div class="pulse-kicker">Device watch</div>
+                <div class="pulse-headline">AI moves closer to laptops</div>
+                <div class="pulse-summary">More work can happen on-device, which makes endpoint policy and support readiness matter more.</div>
+              </div>
+            </article>
+            <article class="pulse-slide">
+              <div class="pulse-video ops" data-mark="FACT"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
+              <div>
+                <div class="pulse-kicker">IT fact</div>
+                <div class="pulse-headline">The first webcam watched a coffee pot</div>
+                <div class="pulse-summary">A tiny office annoyance became a famous networked camera story. Support history is wonderfully weird.</div>
+              </div>
+            </article>
+          </div>
+          <div class="pulse-footer">
+            <div class="pulse-ticker"><span>Now showing: AI risk controls - endpoint readiness - cyber hygiene - support trivia - </span></div>
+            <div class="pulse-dots" aria-label="Global IT Pulse slides">
+              <button class="pulse-dot is-active" type="button" aria-label="Show world IT brief"></button>
+              <button class="pulse-dot" type="button" aria-label="Show security desk"></button>
+              <button class="pulse-dot" type="button" aria-label="Show device watch"></button>
+              <button class="pulse-dot" type="button" aria-label="Show IT fact"></button>
+            </div>
           </div>
         </div>
       </div>
@@ -2015,37 +2084,32 @@
 
       <div class="conversion-panel" id="conversionPanel">
         <div class="status-head"><span class="led amber"></span><span>DEPLOYMENT PATHS</span></div>
-        <div class="conversion-sub">When the ARIA demo proves the concept, move into one scoped next step instead of a broad undefined rollout. The shared guide keeps scoping, audit, and pack-first buyers on the right path.</div>
+        <div class="conversion-sub">After the demo, pick one clean next step. No broad rollout menu, no messy decision tree.</div>
         <div class="conversion-grid">
-          <a class="conversion-card" href="/start-here.html">
-            <div class="conversion-top"><span>Guide</span><span>All paths</span></div>
-            <div class="conversion-title">Choose the safest first move</div>
-            <div class="conversion-copy">Open the shared Start Here guide when the buyer likes ARIA but still needs the clearest first step between scoping, workflow mapping, or a proof-first pack.</div>
-            <div class="conversion-cta">Open start guide <span>&rarr;</span></div>
+          <a class="conversion-card featured" href="/start-here.html" aria-label="Open Start Here guide for all deployment paths">
+            <span class="conversion-index">01</span>
+            <span class="conversion-body"><span class="conversion-top">Guide / All paths</span><span class="conversion-title">Safest first move</span></span>
+            <span class="conversion-cta">Open</span>
           </a>
-          <a class="conversion-card" href="/product.html?id=gl-helpdesk-blueprint">
-            <div class="conversion-top"><span>Blueprint</span><span>L1 noise first</span></div>
-            <div class="conversion-title">Reduce repetitive ticket load</div>
-            <div class="conversion-copy">Start with the AI Help Desk Automation Blueprint when the team needs a repeatable internal model before buying live coverage.</div>
-            <div class="conversion-cta">Open blueprint <span>&rarr;</span></div>
+          <a class="conversion-card" href="/product.html?id=gl-helpdesk-blueprint" aria-label="Open AI Help Desk Automation Blueprint">
+            <span class="conversion-index">02</span>
+            <span class="conversion-body"><span class="conversion-top">Blueprint</span><span class="conversion-title">L1 noise first</span></span>
+            <span class="conversion-cta">View</span>
           </a>
-          <a class="conversion-card" href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Audit%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AWorkflow%20or%20handoff%20causing%20the%20most%20friction%3A%0ATools%20used%20today%3A%0AWhat%20a%20good%20first%20pilot%20would%20look%20like%3A">
-            <div class="conversion-top"><span>Audit</span><span>Scope first</span></div>
-            <div class="conversion-title">Find the best first AI workflow</div>
-            <div class="conversion-copy">Use the AI Workflow Audit when the problem is broader than IT support and the buyer needs one high-value workflow mapped before implementation.</div>
-            <div class="conversion-cta">Stage audit request <span>&rarr;</span></div>
+          <a class="conversion-card" href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Audit%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AWorkflow%20or%20handoff%20causing%20the%20most%20friction%3A%0ATools%20used%20today%3A%0AWhat%20a%20good%20first%20pilot%20would%20look%20like%3A" aria-label="Stage AI Workflow Audit request">
+            <span class="conversion-index">03</span>
+            <span class="conversion-body"><span class="conversion-top">Audit</span><span class="conversion-title">Scope first</span></span>
+            <span class="conversion-cta">Stage</span>
           </a>
-          <a class="conversion-card" href="/?contact=1&amp;subject=Request%20Remote%20L1-L3%20Overflow%20Support%20Pilot&amp;desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20queue%20or%20support%20pressure%3A%0ATools%20used%20today%3A%0AIssue%20types%20safe%20to%20delegate%20first%3A%0AWhat%20a%20successful%20two-week%20pilot%20would%20look%20like%3A">
-            <div class="conversion-top"><span>Pilot</span><span>Coverage now</span></div>
-            <div class="conversion-title">Stage overflow support coverage</div>
-            <div class="conversion-copy">Use the overflow pilot when the queue is already heavy and the team needs scoped live triage, M365 support, and cleaner escalation notes now.</div>
-            <div class="conversion-cta">Stage overflow pilot <span>&rarr;</span></div>
+          <a class="conversion-card" href="/?contact=1&amp;subject=Request%20Remote%20L1-L3%20Overflow%20Support%20Pilot&amp;desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20queue%20or%20support%20pressure%3A%0ATools%20used%20today%3A%0AIssue%20types%20safe%20to%20delegate%20first%3A%0AWhat%20a%20successful%20two-week%20pilot%20would%20look%20like%3A" aria-label="Stage Remote L1-L3 Overflow Support Pilot">
+            <span class="conversion-index">04</span>
+            <span class="conversion-body"><span class="conversion-top">Pilot</span><span class="conversion-title">Coverage now</span></span>
+            <span class="conversion-cta">Stage</span>
           </a>
-          <a class="conversion-card" href="/downloads/library/monthly-ai-support-plan-preview.html">
-            <div class="conversion-top"><span>Retainer</span><span>Keep improving</span></div>
-            <div class="conversion-title">Keep ARIA useful every month</div>
-            <div class="conversion-copy">Use the Monthly AI Support Plan when the first ARIA workflow, KB, or prompt system is already live but nobody owns the cleanup, updates, QA, or next-step backlog.</div>
-            <div class="conversion-cta">Preview monthly plan <span>&rarr;</span></div>
+          <a class="conversion-card" href="/downloads/library/monthly-ai-support-plan-preview.html" aria-label="Preview Monthly AI Support Plan">
+            <span class="conversion-index">05</span>
+            <span class="conversion-body"><span class="conversion-top">Retainer</span><span class="conversion-title">Keep improving</span></span>
+            <span class="conversion-cta">Preview</span>
           </a>
         </div>
       </div>
@@ -2531,6 +2595,39 @@ function tweenCounters(){
 setInterval(updateTargets, 2200);
 setInterval(tweenCounters, 80);
 updateTargets();
+
+/* ============== GLOBAL IT PULSE TV ROTATOR ============== */
+(function initPulseTv(){
+  const slides = Array.from(document.querySelectorAll('.pulse-slide'));
+  const dots = Array.from(document.querySelectorAll('.pulse-dot'));
+  if (!slides.length || !dots.length) return;
+  let active = 0;
+  let timer = null;
+
+  function showPulseSlide(index){
+    active = (index + slides.length) % slides.length;
+    slides.forEach((slide, i) => slide.classList.toggle('is-active', i === active));
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('is-active', i === active);
+      dot.setAttribute('aria-pressed', i === active ? 'true' : 'false');
+    });
+  }
+
+  function startPulseTimer(){
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    clearInterval(timer);
+    timer = setInterval(() => showPulseSlide(active + 1), 5200);
+  }
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      showPulseSlide(i);
+      startPulseTimer();
+    });
+  });
+  showPulseSlide(0);
+  startPulseTimer();
+})();
 
 /* ============== INSIGHTS ROTATOR ============== */
 const insights = [
@@ -5279,7 +5376,7 @@ if (_prefill){
 })();
 </script>
 <script src="/assets/aria-aperture-bridge.js?v=20260611-mobile-polish" defer></script>
-  <script src="/assets/aria-v04-ext.js?v=20260611-mobile-polish"></script>
+  <script src="/assets/aria-v04-ext.js?v=20260618-pulse-tv"></script>
 
 <script>
 /* ===== Aperture surround engine — populates the scenario band + left-rail panels.

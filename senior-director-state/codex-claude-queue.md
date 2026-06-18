@@ -79,3 +79,27 @@ Claude next best work:
 - Use `/platform-readiness.html` and `/.netlify/functions/aria-platform-readiness` as the source of truth for remaining platform gates.
 - Do not classify D-U-N-S, provider keys, Slack approval, admin tokens, or production publish as missing implementation unless the readiness endpoint/page fails.
 - Focus non-coding work on collecting/confirming those final-action inputs or live-provider proof after Ahmad approves.
+
+## 2026-06-18 12:20 ET - Codex ARIA side-rail cleanup
+
+Codex handled Ahmad's ARIA layout cleanup request on branch `codex/aria-global-pulse-tv-2026-06-18`.
+
+Shipped UI cleanup:
+
+- `aria.html` now replaces the old Global IT Pulse card grid/list with a compact elevator-style TV/slideshow module: animated screen, four controlled slides, ticker, dots, reduced-motion handling, and no external news/video dependency.
+- `aria.html` now compresses `DEPLOYMENT PATHS` from five verbose long-form cards into one featured Start Here lane plus four short revenue-path lanes. All existing destinations are preserved, but the side rail no longer reads like a long list.
+- `aria.html` bumps `assets/aria-v04-ext.js` to `?v=20260618-pulse-tv` so browser/service-worker caches pull the fixed extension script.
+- `assets/aria-v04-ext.js` exposes a shared `window.__ariaCanObserveNode` helper and updates later polish blocks to use it, removing the repeated `canObserveNode is not defined` console failure for the current asset version.
+
+Validation to trust:
+
+- `node --check assets/aria-v04-ext.js` passed.
+- Inline script parser for `aria.html` passed: 11 scripts, 0 failures.
+- `git diff --check` passed.
+- Browser QA at desktop width: Pulse TV present, 4 dots, 0 old pulse cards/grids, deployment panel has 5 compact lanes, 0 verbose copy blocks, no horizontal overflow, no `20260618-pulse-tv` console warnings/errors.
+- Browser QA at 390px mobile width: Pulse TV fits at 274px wide, deployment panel fits at 302px wide, 0 old pulse cards/grids, no horizontal overflow, no current-version console warnings/errors.
+
+Claude next best work:
+
+- Do not rework the ARIA Global IT Pulse or deployment path side rail unless Ahmad asks for fresh copy/art direction.
+- If scoring UI coverage, count this as closing the visible clutter/layout regression lane; remaining work should focus on true revenue gates, not this ARIA panel cleanup.
