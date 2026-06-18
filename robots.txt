@@ -21,3 +21,5 @@ Disallow: /lead-radar
 Disallow: /docs/
 Disallow: /backups/
 Disallow: /archive/
+
+Sitemap: https://iisupp.net/sitemap.xml
