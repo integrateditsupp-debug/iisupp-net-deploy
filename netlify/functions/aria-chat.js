@@ -239,7 +239,21 @@ exports.handler = async (event) => {
     return json(200, responsePayload);
   } catch (err) {
     console.error('[aria-chat] error:', err.message);
-    return json(500, { error: 'Service error. Call (647) 581-3182.' });
+    // Cat 13 graceful degraded mode — distinguish provider outage vs everything else
+    const m = String(err.message || '').toLowerCase();
+    const providerDown = m.includes('anthropic') || m.includes('overloaded') || m.includes('rate limit') ||
+                         m.includes('502') || m.includes('503') || m.includes('504') ||
+                         m.includes('timeout') || m.includes('fetch failed') || m.includes('econnreset');
+    if (providerDown) {
+      // 200 status with a fallback reply so the chat UI doesn't bork
+      return json(200, {
+        reply: "Hey — I'm having a momentary issue reaching my reasoning brain. While I'm reconnecting, here are your fastest next steps: \n\n1. If this is an Outlook / Teams / M365 issue, try a quick restart of the app first.\n2. If you need a human right now, hit the Get a human button at the bottom of the chat — that pages Ahmad directly.\n3. Or try me again in 60 seconds — usually that's all it takes.\n\nNot ignoring you. Just temporarily offline upstream.",
+        degraded: true,
+        retry_in_sec: 60,
+        next_actions: ['restart_app', 'page_human', 'retry_in_60s']
+      });
+    }
+    return json(500, { error: 'Service error. Call (647) 581-3182.', detail: err.message.slice(0, 200) });
   }
 };
 

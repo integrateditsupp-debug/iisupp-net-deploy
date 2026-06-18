@@ -5613,5 +5613,91 @@ setInterval(attach, 1200);
 })();
 </script>
 
+
+<style>
+.aot-overlay{position:fixed;inset:0;z-index:99500;display:none;pointer-events:none}
+.aot-overlay.on{display:block;pointer-events:auto}
+.aot-spotlight{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.72),0 0 0 3px rgba(197,160,89,.7),0 0 40px rgba(197,160,89,.55);transition:all .35s ease;pointer-events:none}
+.aot-card{position:absolute;width:min(360px,calc(100vw - 40px));background:linear-gradient(165deg,#0a0805,#15110a);border:1px solid rgba(197,160,89,.55);border-radius:14px;padding:18px 22px;color:#fff;font-family:Inter,sans-serif;font-size:13.5px;line-height:1.55;box-shadow:0 26px 60px rgba(0,0,0,.55)}
+.aot-card h4{font-family:Cinzel,serif;color:#c5a059;margin:0 0 8px;font-size:13px;letter-spacing:.18em;text-transform:uppercase}
+.aot-card p{margin:0 0 12px;color:rgba(255,255,255,.84)}
+.aot-card .aot-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
+.aot-card .aot-actions button{font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;font-weight:700;text-transform:uppercase;padding:8px 14px;border-radius:7px;border:0;cursor:pointer}
+.aot-card .aot-skip{background:transparent;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.20)}
+.aot-card .aot-next{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#1a1410}
+.aot-card .aot-dots{display:flex;gap:5px}
+.aot-card .aot-dots span{width:6px;height:6px;border-radius:50%;background:rgba(197,160,89,.30)}
+.aot-card .aot-dots span.on{background:#c5a059;box-shadow:0 0 6px rgba(197,160,89,.6)}
+</style>
+<div id="ariaOnboardingTour" class="aot-overlay" aria-hidden="true">
+  <div class="aot-spotlight" id="aot-spot"></div>
+  <div class="aot-card" id="aot-card">
+    <h4 id="aot-title">Welcome to ARIA</h4>
+    <p id="aot-body">Quick 3-step tour. Skip anytime.</p>
+    <div class="aot-actions">
+      <button type="button" class="aot-skip" id="aot-skip-btn">Skip</button>
+      <div class="aot-dots" id="aot-dots"><span></span><span></span><span></span></div>
+      <button type="button" class="aot-next" id="aot-next-btn">Next \u2192</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  try { if (localStorage.getItem('aria_tour_done')) return; } catch(e) { return; }
+  // Don't run for returning users — only true first-timers
+  try { if (localStorage.getItem('aria_user_profile')) return; } catch(e) {}
+  var profile = null;
+  try { profile = JSON.parse(localStorage.getItem('aria_user_profile')||'null'); } catch(e){}
+  // Wait for the onboarding overlay (#apIntakeOverlay) to be DISMISSED, then start tour
+  function waitForReady(cb, attempts){
+    attempts = attempts || 0;
+    if (attempts > 60) return; // 60s timeout
+    if (!document.getElementById('apIntakeOverlay') && document.querySelector('#askInput')) return cb();
+    setTimeout(function(){ waitForReady(cb, attempts + 1); }, 1000);
+  }
+  function steps(){
+    return [
+      { selector: '#askInput', title: 'Step 1 \u00b7 Ask anything', body: 'Type any IT issue right here. ARIA reads the question, picks the right framework, and walks you through the fix.' },
+      { selector: '#ariaHandoffBtn', title: 'Step 2 \u00b7 Get a human', body: 'If ARIA can\'t solve it OR you want a real person, this button pages Ahmad with your full chat context. Reply usually within minutes.' },
+      { selector: '#ariaLeadBtn', title: 'Step 3 \u00b7 Talk to sales', body: 'Ready to bring ARIA to your business? This button kicks off a real conversation about plans and pricing. No sales team \u2014 just Ahmad.' }
+    ];
+  }
+  function show(stepIdx){
+    var arr = steps();
+    var s = arr[stepIdx];
+    if (!s) return done();
+    var el = document.querySelector(s.selector);
+    if (!el) { show(stepIdx + 1); return; }
+    var rect = el.getBoundingClientRect();
+    var ov = document.getElementById('ariaOnboardingTour'); ov.classList.add('on'); ov.setAttribute('aria-hidden','false');
+    var sp = document.getElementById('aot-spot');
+    var pad = 12;
+    sp.style.left = (rect.left - pad) + 'px';
+    sp.style.top = (rect.top - pad) + 'px';
+    sp.style.width = (rect.width + pad*2) + 'px';
+    sp.style.height = (rect.height + pad*2) + 'px';
+    var card = document.getElementById('aot-card');
+    var ct = rect.top + rect.height + 18;
+    var cl = Math.max(16, Math.min(rect.left, window.innerWidth - 380));
+    if (ct + 220 > window.innerHeight) ct = Math.max(16, rect.top - 220);
+    card.style.left = cl + 'px';
+    card.style.top = ct + 'px';
+    document.getElementById('aot-title').textContent = s.title;
+    document.getElementById('aot-body').textContent = s.body;
+    var dots = document.getElementById('aot-dots').children;
+    for (var i = 0; i < dots.length; i++) dots[i].className = i === stepIdx ? 'on' : '';
+    document.getElementById('aot-next-btn').textContent = stepIdx === arr.length - 1 ? 'Got it' : 'Next \u2192';
+    document.getElementById('aot-next-btn').onclick = function(){ show(stepIdx + 1); };
+    document.getElementById('aot-skip-btn').onclick = done;
+  }
+  function done(){
+    try { localStorage.setItem('aria_tour_done', '1'); } catch(e) {}
+    var ov = document.getElementById('ariaOnboardingTour');
+    if (ov) { ov.classList.remove('on'); ov.setAttribute('aria-hidden','true'); }
+  }
+  waitForReady(function(){ setTimeout(function(){ show(0); }, 600); });
+})();
+</script>
+
 </body>
 </html>
