@@ -145,3 +145,37 @@ Claude next best work:
 
 - Do not re-add the removed demo outcomes panel.
 - Treat the side rail as intentionally compact: tiers + one right-path chooser by default, path detail only on drawer open.
+
+## 2026-06-18 13:49 ET - Codex unattended deploy-hygiene and compare-page pass
+
+Codex continued the unattended revenue-operator lane on branch `codex/deploy-hygiene-pass-2026-06-18`.
+
+Pushed earlier in this branch before this handoff:
+
+- `94c7fdc` tightened public route hygiene: `/docs/api` redirects, `/ai-governance`, dead favicon/PGP/pitch links, public opportunity-engine fallback data, and service-worker cache bumps.
+- `3242bf2` clarified public trust copy: removed vague ARIA "coming soon" language and corrected the automated-decisions admin-console link.
+- `d3ee081` added JSON-LD structured data to the main revenue pages and vertical pages.
+
+Current code batch:
+
+- `c76fe48` adds a real `/compare/` hub plus `/compare/aria-vs-retell/`, `/compare/aria-vs-vapi/`, and `/compare/aria-vs-msp-x/` pages so sitemap compare URLs are no longer hollow.
+- `compare/compare.css` is a shared responsive compare-page visual system; the copy is intentionally a fit guide, not a competitor benchmark or endorsement claim.
+- `scripts/check-public-route-hygiene.mjs` adds a reusable public-route hygiene gate for missing `href`/`src` references, invalid JSON-LD, and sitemap URLs blocked by robots or lacking a static/redirect/function route.
+- `package.json` now exposes that gate as `npm run site:hygiene`.
+- `sw.js` and `service-worker.js` were bumped and precache the compare routes.
+- `about.html` no longer has a dead `AI Courses / Development` placeholder; desktop and mobile nav now link to `/ai-edge.html` as `AI Edge / Learning`.
+
+Validation to trust:
+
+- `npm run site:hygiene` passed: 104 HTML files scanned, 46 redirects, 125 function routes, 0 missing refs, 0 invalid JSON-LD, 0 sitemap issues.
+- `node --check scripts/check-public-route-hygiene.mjs`, `node --check sw.js`, and `node --check service-worker.js` passed.
+- `git diff --check` passed.
+- Chrome QA via local directory-index server: all four compare sitemap routes returned 200 at 1440px and 390px, all JSON-LD blocks parsed, no horizontal overflow, and no console errors.
+- Computed-style QA confirmed `/compare/compare.css` is loaded and active.
+- Browser QA for `/about.html` at 1440px and 390px confirmed the stale AI Courses placeholder is gone, two live AI Edge links exist, and there is no horizontal overflow. The only warning is the pre-existing Tailwind CDN production warning on About.
+
+Claude next best work:
+
+- Treat `/compare/` and the three compare child routes as live public assets and link them from campaigns, partner follow-ups, or the Growth Library where useful.
+- Use `npm run site:hygiene` before future pushes when touching public pages, sitemap, redirects, or service-worker route lists.
+- Do not turn the compare pages into hard competitor claims; keep them as careful buyer-fit guidance unless Ahmad approves formal competitive positioning.
