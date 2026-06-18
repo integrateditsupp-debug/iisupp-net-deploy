@@ -158,7 +158,7 @@ Pushed earlier in this branch before this handoff:
 
 Current code batch:
 
-- `d160890` adds a real `/compare/` hub plus `/compare/aria-vs-retell/`, `/compare/aria-vs-vapi/`, and `/compare/aria-vs-msp-x/` pages so sitemap compare URLs are no longer hollow.
+- The compare-page code batch adds a real `/compare/` hub plus `/compare/aria-vs-retell/`, `/compare/aria-vs-vapi/`, and `/compare/aria-vs-msp-x/` pages so sitemap compare URLs are no longer hollow.
 - `compare/compare.css` is a shared responsive compare-page visual system; the copy is intentionally a fit guide, not a competitor benchmark or endorsement claim.
 - `scripts/check-public-route-hygiene.mjs` adds a reusable public-route hygiene gate for missing `href`/`src` references, invalid JSON-LD, and sitemap URLs blocked by robots or lacking a static/redirect/function route.
 - `package.json` now exposes that gate as `npm run site:hygiene`.
