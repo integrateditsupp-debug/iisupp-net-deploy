@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Upload your KB to ARIA · Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+body{font-family:-apple-system,Segoe UI,sans-serif;background:#050505;color:#fff;line-height:1.6;margin:0}
+.wrap{max-width:760px;margin:0 auto;padding:42px 22px}
+h1{font-family:Cinzel,Georgia,serif;font-size:30px;margin:0 0 8px}.gold{color:#c5a059}
+h2{font-family:Cinzel,serif;font-size:14px;color:#c5a059;letter-spacing:.18em;text-transform:uppercase;margin:30px 0 12px}
+p{color:rgba(255,255,255,.78);font-size:14.5px}
+.card{background:linear-gradient(165deg,#0a0805,#15110a);border:1px solid rgba(197,160,89,.28);border-radius:14px;padding:22px 24px;margin:18px 0}
+label{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#c5a059;font-weight:600;margin:14px 0 6px}
+input,textarea{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.25);color:#fff;padding:11px 13px;border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box}
+textarea{min-height:280px;resize:vertical;font-family:'JetBrains Mono',Menlo,monospace;font-size:13px;line-height:1.55}
+input:focus,textarea:focus{outline:none;border-color:#c5a059}
+button{font-family:Cinzel,serif;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#1a1410;padding:13px 22px;border-radius:10px;font-weight:700;letter-spacing:.14em;font-size:12px;text-transform:uppercase;border:0;cursor:pointer;margin-top:16px}
+.status{margin-top:14px;padding:10px 14px;border-radius:8px;font-size:13px;display:none}
+.status.ok{display:block;background:rgba(74,222,128,.10);color:#4ade80;border:1px solid rgba(74,222,128,.30)}
+.status.err{display:block;background:rgba(251,113,133,.10);color:#fb7185;border:1px solid rgba(251,113,133,.30)}
+a{color:#c5a059;text-decoration:none}a:hover{color:#f1dca7}
+</style></head><body><div class="wrap">
+<p><a href="/">&larr; Home</a> &middot; <a href="/plans">Plans</a></p>
+<h1>Upload your <span class="gold">company KB</span> to ARIA</h1>
+<p>Paste your internal docs, runbooks, policies, FAQs — anything ARIA should reference when answering your team's questions. Ahmad reviews, formats, and merges into your tenant's KB within 1-2 business days. Available on Small Business, Mid-Size, and Enterprise plans.</p>
+
+<div class="card">
+  <form id="kbForm" novalidate>
+    <label>Tenant email <span style="color:#888;font-weight:400;text-transform:none;letter-spacing:0">(use your work email — it identifies your tenant)</span></label>
+    <input id="t-email" type="email" required autocomplete="email" placeholder="you@your-company.com">
+    <label>Your name <span style="color:#888;font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+    <input id="t-contact" type="text" autocomplete="name">
+    <label>KB title</label>
+    <input id="t-title" type="text" placeholder="e.g. Acme IT Onboarding Runbook v3">
+    <label>KB content — paste markdown / plain text / your existing docs</label>
+    <textarea id="t-content" placeholder="# Onboarding checklist&#10;&#10;1. Provision M365 license&#10;2. Add to Operations group in Azure AD&#10;...&#10;&#10;Max 200,000 characters. For larger KBs, split into multiple submissions."></textarea>
+    <button type="submit">Submit to Ahmad &rarr;</button>
+    <div class="status" id="status"></div>
+  </form>
+</div>
+
+<h2>What happens next</h2>
+<p>Within 1-2 business days Ahmad reviews the content for formatting, normalizes it into ARIA's KB schema, and merges it into your tenant's KB. After that, every time your team asks ARIA a question with their work email, ARIA references YOUR docs first before falling back to the general KB. You get a confirmation email when ingestion is complete.</p>
+
+<script>
+document.getElementById('kbForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  var st = document.getElementById('status');
+  st.className = 'status';
+  var btn = e.target.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  var p = {
+    tenant_email: document.getElementById('t-email').value.trim(),
+    contact_name: document.getElementById('t-contact').value.trim(),
+    kb_title: document.getElementById('t-title').value.trim(),
+    kb_content: document.getElementById('t-content').value.trim()
+  };
+  if (!p.tenant_email || p.kb_content.length < 50) {
+    st.className = 'status err'; st.textContent = 'Email + at least 50 chars of KB content required.';
+    btn.disabled = false; btn.textContent = 'Submit to Ahmad →';
+    return;
+  }
+  try {
+    var r = await fetch('/.netlify/functions/aria-tenant-kb', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(p) });
+    var j = await r.json();
+    if (r.ok && j.ok) {
+      st.className = 'status ok';
+      st.innerHTML = 'KB submitted. Submission ID: <code>' + j.submission_id + '</code>. Ahmad will email you when ingestion is complete.';
+      btn.textContent = 'Submitted ✓';
+    } else { throw new Error(j.error || 'HTTP '+r.status); }
+  } catch(e) {
+    st.className = 'status err'; st.textContent = 'Could not submit: ' + (e.message || 'unknown error');
+    btn.disabled = false; btn.textContent = 'Submit to Ahmad →';
+  }
+});
+</script>
+</div></body></html>
