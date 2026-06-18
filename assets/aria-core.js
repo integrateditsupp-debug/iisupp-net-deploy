@@ -910,7 +910,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
                 +   '<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto">'
                 +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">💰</div><h3 class="ci-card-title">Cut IT waste</h3></div><div class="ci-face ci-back"><p>We eliminate IT costs that do not make sense.</p></div></div></div>'
                 +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🎯</div><h3 class="ci-card-title">Focus on revenue</h3></div><div class="ci-face ci-back"><p>We own your IT so you do not have to think about it.</p></div></div></div>'
-                +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🏆</div><h3 class="ci-card-title"><span class="ci-count" data-to="21">21</span>+ years</h3></div><div class="ci-face ci-back"><p>ITIL, Six Sigma, cross-industry — actually applied, not framed on a wall.</p></div></div></div>'
+                +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🏆</div><h3 class="ci-card-title"><span class="ci-count" data-to="15">15</span>+ years</h3></div><div class="ci-face ci-back"><p>ITIL, Six Sigma, cross-industry — actually applied, not framed on a wall.</p></div></div></div>'
                 +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🤖</div><h3 class="ci-card-title">Built on AI</h3></div><div class="ci-face ci-back"><p>AI helps you take on challenges before they become problems.</p></div></div></div>'
                 +   '</div>'
                 +   '<div class="text-center mt-10"><a href="#introducing-aria" class="inline-block text-[10px] tracking-[0.4em] uppercase font-bold border-b border-[#c5a059]/40 pb-2 transition hover:text-white" style="color:#c5a059">See our apps, examples &amp; recent work ↓</a></div>'
@@ -1077,6 +1077,32 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
     startTick();
   }
 
+  /* === Trial-expiry email reminders (added 2026-06-18) ===
+     Fires email at 5-min-remaining and at 0:00 expiry.
+     Uses localStorage flags so each milestone only sends ONCE per email
+     (across sessions/devices). Routes through existing aria-receipt-email
+     Netlify function (Resend primary + SMTP fallback). */
+  function sendReminderEmail(milestone) {
+    var email = getActiveEmail();
+    if (!email) return;
+    var flagKey = "aria_reminder_sent_" + milestone + "_" + email;
+    try { if (localStorage.getItem(flagKey)) return; } catch (e) {}
+    try {
+      fetch("/.netlify/functions/aria-receipt-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          event: "trial_" + milestone,
+          ts: new Date().toISOString(),
+          milestone: milestone === "5min" ? "5 minutes remaining" : "expired"
+        })
+      }).then(function () {
+        try { localStorage.setItem(flagKey, String(Date.now())); } catch (e) {}
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
   function startTick() {
     if (_timerHandle) clearTimeout(_timerHandle);
     function tick() {
@@ -1084,6 +1110,10 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       var elapsed = getElapsed();
       var remaining = TRIAL_MS - elapsed;
       var bar = document.getElementById("aria-trial-bar");
+      // Fire 5-min-remaining reminder (only when crossing the threshold downward)
+      if (remaining > 0 && remaining <= 5 * 60 * 1000 && remaining > 4 * 60 * 1000 + 50 * 1000) {
+        sendReminderEmail("5min");
+      }
       if (remaining <= 0) {
         _trialActive = false;
         _expired = true;
@@ -1093,6 +1123,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
           var t = bar.querySelector(".atb-time"); if (t) t.textContent = "0:00";
           var l = bar.querySelector(".atb-label"); if (l) l.textContent = "TRIAL ENDED";
         }
+        sendReminderEmail("expired");  // single fire on first 0:00 detection
         blurAriaSections();
         return;
       }

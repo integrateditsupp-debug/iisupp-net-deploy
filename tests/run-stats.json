@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.1",
-  "label": "ARIA classifier autonomous improvement loop",
-  "last_run_at": "2026-06-18T04:00:00Z",
+  "schema_version": "1.2",
+  "label": "ARIA classifier autonomous improvement loop + trial-expiry reminders",
+  "last_run_at": "2026-06-18T05:00:00Z",
   "last_run_iso": "2026-06-18",
   "total_runs": 5,
   "cumulative_scenarios": 392203,
@@ -14,15 +14,13 @@
   "current_corpus_size": 332163,
   "target_corpus_size": 500000,
   "coverage_pct_of_target": 66.4,
-  "next_run_at": "2026-06-18T12:00:00Z",
-  "scheduled_cadence": "3x daily first 30 days, taper to 1x daily after, weekly web-research pulse",
+  "next_run_at": "2026-06-18T13:00:00Z",
+  "scheduled_cadence": "3x daily first 30 days (8am/4pm/midnight local), taper to 1x daily after",
   "milestones": {
     "first_run_2026_06_18": "1,896 scenarios @ 84.5% pass",
-    "round_2_2026_06_18": "17 regex swaps → 91.6% pass",
-    "round_3_2026_06_18": "15 regex swaps → 94.8% pass on 10K corpus",
-    "10k_expansion_2026_06_18": "29,072 scenarios @ 94.5% pass",
     "mega_expansion_2026_06_18": "332,163 scenarios @ 91.1% pass — 30 industries × apps × personas × OS × severity × case/prefix",
-    "next_target": "500K with web-research-driven emerging-scenario expansion"
+    "password_rotation_2026_06_18": "APERTURE_ADMIN_PASSWORD + ADMIN_PASSWORD rotated (RJ-substring closed)",
+    "trial_email_reminders_2026_06_18": "5-min-remaining + 0:00-expired email hooks added to startTick()"
   },
   "intents_at_100pct": 17,
   "intents_at_95_99pct": 12,
