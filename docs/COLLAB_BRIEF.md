@@ -275,6 +275,25 @@ Both agents must independently enforce. Any output that fails a check goes to `d
 
 ## 11 · Update log (append at top — never silently rewrite)
 
+### 2026-06-18 — Cowork (Sonnet, late session — D-U-N-S + browser ops + Lane 9)
+**D-U-N-S obtained: 241726397.** D&B Canada email request via browser MCP — turned out IIS was already in D&B at 30 Fothergill Crt Whitby ON L1P 1L4 (no 30-day wait). Memory `reference_iis_business_identifiers.md` saved. Updated /government.html public registrations banner + MS Partner + AWS Partner drafts with the number.
+
+**8 free programs queued in browser tabs** (Ahmad sign-in only blocker, $0 each, combined value ~$350K cloud credits + SEO + US fed procurement gateway):
+1. MS Cloud Partner — advanced past Stage 1 (Partner+Build+Deliver selected)
+2. MS for Startups Founders Hub ($150K Azure credits)
+3. AWS Activate (up to $200K AWS credits)
+4. AWS Partner Network
+5. Google Search Console
+6. SAM.gov UEI (US fed procurement gateway, D-U-N-S 241726397 in hand)
+7. Bing Webmaster Tools
+8. Google Business Profile (Whitby ON listing)
+
+**Translation expansion (5 -> 13 locales, $0):** Per Ahmad's "ARIA is AI, translation must be free" rule — added zh, ur, hi, pt, ja, ko, ru, it. Built `aria-translate.js` netlify function backed by Claude Haiku 4.5 with Netlify Blobs cache. Cost per future locale: zero. Replaces any human-translator spend.
+
+**Lane 9 — Founder Ops + first-3-hires playbook shipped to outputs:** daily/weekly/monthly/quarterly cadences, first-3-hires playbook (backup tech → CSM → junior eng, with trigger MRR thresholds), founder-engineer transition signals, founder-only review list. Goal: when revenue lands, Ahmad doesn't drown.
+
+**Standing rule LOCKED 2026-06-18:** Browser-required work gets Chrome-MCP-driven prefill, stop at submit, surface what Ahmad must finish. Memory: `feedback_browser_prefill_for_ahmad.md`.
+
 ### 2026-06-18 — Cowork (Sonnet, continued)
 **Revenue Engine + Procurement lanes shipped.** Lane 5 (lead-capture funnel: /cost-calculator, /compliance-gap, /leads-admin, /refer + case study templates), Lane 6 (distribution: /webinar live + podcast pitch + conference abstracts + press kit + PR template), Lane 7 (/insiders newsletter + sales discovery script + 10-objection library + enterprise motion + 4 pricing experiments), Lane 8 (/government + /enterprise live pages + Sourcewell + PSPC AI Source List 09-30 packets + CanadaBuys/MERX hunt routines + Enterprise RFP framework + 6 reusable proposal sections + VPAT 2.5 + HECVAT-Lite).
 
