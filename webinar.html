@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Free Webinar — AI for IT Support · IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Monthly free webinar: AI for IT Support. Live demo, Q&A, no sales pitch. 30 minutes. Free, no signup until 24h before.">
+<meta property="og:title" content="Free webinar — AI for IT Support">
+<meta property="og:description" content="Monthly live walk-through of ARIA + Q&A. 30 min. Free.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050505;color:#e8e8e8;line-height:1.55;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:720px;margin:0 auto}
+  .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h1{font-size:42px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em;line-height:1.1}
+  h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  p.sub{color:rgba(255,255,255,.65);font-size:16px;margin-bottom:32px;line-height:1.6}
+  .next-card{background:#0d0d0d;border:1px solid rgba(197,160,89,.45);border-radius:14px;padding:28px;margin-bottom:24px}
+  .next-row{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+  .next-meta{flex:1;min-width:240px}
+  .next-tag{color:#c5a059;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+  .next-title{color:#fff;font-size:22px;font-weight:600;margin-bottom:6px;line-height:1.3}
+  .next-when{color:rgba(255,255,255,.7);font-size:14px;font-family:ui-monospace,monospace}
+  .seats{text-align:right;min-width:160px}
+  .seats .num{font-size:34px;font-weight:700;background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:ui-monospace,monospace;line-height:1}
+  .seats .lbl{font-size:10.5px;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+  .form-card{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:28px;margin-bottom:18px}
+  .form-card h3{color:#f1dca7;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;font-weight:600}
+  label{display:block;color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;font-weight:600}
+  input,select{width:100%;padding:11px 13px;background:#050505;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14.5px;font-family:inherit;margin-bottom:13px}
+  input:focus,select:focus{outline:none;border-color:#c5a059}
+  button.signup{width:100%;padding:14px;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;border:none;border-radius:8px;font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:ui-monospace,monospace;transition:transform .15s,box-shadow .2s}
+  button.signup:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(197,160,89,.3)}
+  button.signup:disabled{opacity:.5;cursor:wait}
+  .ok-msg{display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.4);color:#22c55e;padding:13px;border-radius:8px;font-size:13.5px;margin-top:12px}
+  .err-msg{display:none;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.3);color:#f87171;padding:11px;border-radius:8px;font-size:13px;margin-top:10px}
+  h2{font-size:18px;color:#d4af37;margin:30px 0 12px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+  .agenda{background:#0d0d0d;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px;margin-bottom:18px}
+  .ag-item{display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+  .ag-item:last-child{border-bottom:0}
+  .ag-time{color:#c5a059;font-family:ui-monospace,monospace;font-size:11.5px;letter-spacing:.05em;min-width:60px;padding-top:2px}
+  .ag-content b{color:#fff;font-size:14px}
+  .ag-content p{color:rgba(255,255,255,.6);font-size:13px;margin-top:2px}
+  .fine{color:rgba(255,255,255,.4);font-size:11.5px;margin-top:18px;text-align:center;line-height:1.6}
+  .nav{text-align:center;margin-top:32px;color:rgba(255,255,255,.4);font-size:12.5px}
+  .nav a{color:rgba(255,255,255,.6);text-decoration:none;margin:0 8px}
+  .nav a:hover{color:#c5a059}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">Monthly · Free · 30 min</div>
+  <h1>AI for IT Support — <span class="gold">live walk-through.</span></h1>
+  <p class="sub">A monthly live demo + Q&amp;A. We show what ARIA does in real-time, share what we shipped that month, and answer any IT question you bring. No sales pitch. No catch.</p>
+
+  <div class="next-card">
+    <div class="next-row">
+      <div class="next-meta">
+        <div class="next-tag">Next session</div>
+        <div class="next-title" id="next-title">AI for IT Support: walk-through + August updates</div>
+        <div class="next-when" id="next-when">Loading...</div>
+        <p style="color:rgba(255,255,255,.6);font-size:13px;margin-top:8px">Hosted by Ahmad Wasee, founder, IIS · 30 min · Free</p>
+      </div>
+      <div class="seats">
+        <div class="num" id="seats-left">25</div>
+        <div class="lbl">Seats left</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>Register</h3>
+    <label>Your name *</label>
+    <input id="reg-name" type="text" placeholder="Jane Smith">
+
+    <label>Work email *</label>
+    <input id="reg-email" type="email" placeholder="you@yourcompany.com">
+
+    <label>Company (optional)</label>
+    <input id="reg-company" type="text" placeholder="Acme Inc.">
+
+    <label>What is the one IT issue you would love an AI to handle?</label>
+    <input id="reg-question" type="text" placeholder="e.g. 'Outlook crashes during demos' — pre-loads the Q&A">
+
+    <button class="signup" id="signup-btn">Reserve my seat →</button>
+    <div class="ok-msg" id="ok-msg">Registered. Confirmation + Zoom link will arrive 24h before the session.</div>
+    <div class="err-msg" id="err-msg"></div>
+  </div>
+
+  <h2>What we cover (30 min)</h2>
+  <div class="agenda">
+    <div class="ag-item">
+      <div class="ag-time">0:00</div>
+      <div class="ag-content"><b>Live ARIA demo</b><p>Real questions, real responses. No canned scenarios.</p></div>
+    </div>
+    <div class="ag-item">
+      <div class="ag-time">5:00</div>
+      <div class="ag-content"><b>Vertical depth walk-through</b><p>How ARIA handles healthcare HIPAA, legal privilege, finance SOX differently.</p></div>
+    </div>
+    <div class="ag-item">
+      <div class="ag-time">12:00</div>
+      <div class="ag-content"><b>What we shipped this month</b><p>Specific features, specific tradeoffs, specific failures.</p></div>
+    </div>
+    <div class="ag-item">
+      <div class="ag-time">18:00</div>
+      <div class="ag-content"><b>Live Q&A</b><p>Bring your IT problem — we walk through it on screen.</p></div>
+    </div>
+    <div class="ag-item">
+      <div class="ag-time">28:00</div>
+      <div class="ag-content"><b>How to take ARIA for a spin</b><p>15-min free trial path. No card. We answer any signup questions live.</p></div>
+    </div>
+  </div>
+
+  <h2>FAQ</h2>
+  <div class="agenda">
+    <div class="ag-item"><div class="ag-time" style="color:#aaa">Q</div><div class="ag-content"><b>Is this recorded?</b><p>Yes, attendees get the recording 24h after. Public version posted to iisupp.net.</p></div></div>
+    <div class="ag-item"><div class="ag-time" style="color:#aaa">Q</div><div class="ag-content"><b>Will you pitch us?</b><p>No. We tell you what ARIA is + answer questions. Pricing is on /plans if you want it. We will not chase you after.</p></div></div>
+    <div class="ag-item"><div class="ag-time" style="color:#aaa">Q</div><div class="ag-content"><b>Can I bring my IT team?</b><p>Yes. Forward the Zoom link. Everyone is welcome.</p></div></div>
+  </div>
+
+  <p class="fine">Hosted on Zoom · Recording sent 24h after · No follow-up sales calls unless you ask for one</p>
+
+  <div class="nav">
+    <a href="/">Home</a> · <a href="/aria">Try ARIA</a> · <a href="/verticals/">By Vertical</a> · <a href="/plans">Pricing</a>
+  </div>
+</div>
+
+<script>
+// Next session = 4th Thursday of next month at 1pm ET. Compute it.
+(function(){
+  var now = new Date();
+  var target = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  // find 4th Thursday
+  var thursdaysSeen = 0;
+  while (true) {
+    if (target.getDay() === 4) { thursdaysSeen++; if (thursdaysSeen === 4) break; }
+    target.setDate(target.getDate() + 1);
+  }
+  target.setHours(13, 0, 0, 0);
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var when = months[target.getMonth()] + ' ' + target.getDate() + ', ' + target.getFullYear() + ' · 1:00 PM ET · 30 min';
+  document.getElementById('next-when').textContent = when;
+  document.getElementById('next-title').textContent = 'AI for IT Support: walk-through + ' + months[target.getMonth()] + ' updates';
+})();
+
+document.getElementById('signup-btn').onclick = async function(){
+  var name = document.getElementById('reg-name').value.trim();
+  var email = document.getElementById('reg-email').value.trim();
+  var company = document.getElementById('reg-company').value.trim();
+  var question = document.getElementById('reg-question').value.trim();
+  var err = document.getElementById('err-msg');
+  var ok = document.getElementById('ok-msg');
+  err.style.display = ok.style.display = 'none';
+  if (!name || !email) { err.textContent = 'Name + email required.'; err.style.display = 'block'; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Valid email required.'; err.style.display = 'block'; return; }
+
+  var btn = document.getElementById('signup-btn');
+  btn.disabled = true; btn.textContent = 'Reserving...';
+  try {
+    var r = await fetch('/.netlify/functions/aria-lead-capture', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: name, email: email, company: company,
+        message: 'WEBINAR signup. Pre-question: ' + (question || '(none)'),
+        source: 'webinar-page',
+        last_intent: 'webinar_registration'
+      })
+    });
+    if (!r.ok) throw new Error('reg failed');
+    ok.style.display = 'block';
+    btn.style.display = 'none';
+    // Decrement seats
+    var s = document.getElementById('seats-left');
+    s.textContent = Math.max(0, parseInt(s.textContent) - 1);
+  } catch(e) {
+    err.textContent = 'Could not register — try again or email ahmad.wasee@iisupp.net.';
+    err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Reserve my seat →';
+  }
+};
+</script>
+</body>
+</html>
