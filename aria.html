@@ -1521,6 +1521,17 @@
   .aria-receipt-block .ar-email-note { margin-top: 8px; font-size: 11px; color: rgba(241,220,167,0.7); display: flex; align-items: center; gap: 6px; }
   .ar-choice-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
   .ar-choice-row .choice { cursor: pointer; }
+
+/* === Confidence calibration chip (2026-06-18) === */
+.aria-confidence{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;font-family:'JetBrains Mono',ui-monospace,monospace;opacity:.78}
+.aria-confidence .ac-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.aria-confidence.high .ac-dot{background:#4ade80;box-shadow:0 0 6px rgba(74,222,128,.7)}
+.aria-confidence.high{color:#4ade80}
+.aria-confidence.medium .ac-dot{background:#fbbf24;box-shadow:0 0 6px rgba(251,191,36,.7)}
+.aria-confidence.medium{color:#fbbf24}
+.aria-confidence.low .ac-dot{background:#fb7185;box-shadow:0 0 6px rgba(251,113,133,.5)}
+.aria-confidence.low{color:#fb7185}
+.aria-low-conf-note{color:rgba(255,255,255,.62);font-size:12px;font-style:italic;margin:0 0 10px;padding:8px 12px;background:rgba(251,113,133,.06);border-left:2px solid rgba(251,113,133,.4);border-radius:4px}
 </style>
 </head>
 <body>
@@ -3064,6 +3075,35 @@ function youBubble(text){
   return `<div class="you-block"><div class="you-label">YOU</div><div class="you-bubble">${escapeHTML(text)}</div></div>`;
 }
 
+
+/* === Hallucination scoring / confidence calibration (2026-06-18) ===
+   Returns a confidence level for a given (text, intent) pair.
+     HIGH   = very specific KB intent + meaningful text
+     MEDIUM = broad core intent (mail/password/wifi/printer/vpn) or short text
+     LOW    = default intent OR too-short input -> show disclaimer
+*/
+function intentConfidence(text, intent) {
+  var t = String(text || '').trim();
+  if (!intent || intent === 'default') return 'low';
+  if (t.length < 5) return 'low';
+  var specificKB = ['kb:security','kb:m365','kb:active-directory','kb:bitlocker',
+                    'kb:bluetooth','kb:onedrive','kb:performance','kb:windows',
+                    'kb:macos','kb:webcam','kb:teams','kb:mfa','kb:usb',
+                    'kb:networking','kb:permissions','kb:onboarding','kb:browser'];
+  if (specificKB.indexOf(intent) >= 0) return 'high';
+  var broad = ['mail','password','wifi','printer','vpn','outlook_ooo','escalation','voice'];
+  if (broad.indexOf(intent) >= 0) return 'high';
+  return 'medium';
+}
+function confidenceChip(level) {
+  if (!level || level === 'high') return '';  // confident = no chip needed (premium feel)
+  var label = level === 'medium' ? 'Working it out · best match' : 'Best guess — say if it\'s off';
+  return '<div class="aria-confidence ' + level + '"><span class="ac-dot"></span><span>' + label + '</span></div>';
+}
+function lowConfidenceDisclaimer() {
+  return '<p class="aria-low-conf-note">I\'m not 100% sure I caught that exactly. Here\'s the closest match — if it\'s off, just rephrase and I\'ll narrow in.</p>';
+}
+
 function ariaBubble(headline, body, extras = ''){
   return `<div class="aria-block">
     <div class="aria-tag">ARIA</div>
@@ -3931,8 +3971,11 @@ function renderTechnical(intent, userText){
 
 function renderConversational(text, userText){
   appendMessage(youBubble(userText));
+  var lvl = intentConfidence(userText, state.lastIntent || 'default');
+  var pre = (lvl === 'low') ? lowConfidenceDisclaimer() : '';
+  var chip = confidenceChip(lvl);
   setTimeout(() => {
-    appendMessage(ariaBubble('', text));
+    appendMessage(ariaBubble('', pre + text + chip));
     speak(text);
   }, 250);
 }
