@@ -698,8 +698,10 @@ function authHeaders(extra){
 function showApp(){
   $('login').style.display='none'; $('app').style.display='block';
   tickClock(); setInterval(tickClock,1000);
-  renderAgentOffice([], [], {}, [], [], {});
-  if (!OFFICE_TIMER) OFFICE_TIMER = setInterval(renderOfficeTimers,1000);
+  try {
+    renderAgentOffice([], [], {}, [], [], {});
+    if (!OFFICE_TIMER) OFFICE_TIMER = setInterval(renderOfficeTimers,1000);
+  } catch(e) {}
   loadAll(); POLL=setInterval(loadAll,4000);
 }
 function tickClock(){
@@ -720,7 +722,7 @@ async function loadAll(){
       fetch('/api/senior-director-agent',{headers}).catch((e)=>({ ok:false, status:0, error:e })),
       fetch('/api/mesh-events?limit=60',{headers}).catch((e)=>({ ok:false, status:0, error:e }))
     ]);
-    if (sR.status === 401 || tR.status === 401 || cR.status === 401){ logout(); return; }
+    if (sR.status === 401 || tR.status === 401 || cR.status === 401) ok = false;
     const status  = await sR.json().catch(()=>({}));
     const tickets = (await tR.json().catch(()=>({}))).tickets || [];
     const msgs    = (await cR.json().catch(()=>({}))).messages || [];
@@ -736,7 +738,7 @@ async function loadAll(){
     renderHealth(tickets);
     renderDirector(director, dR);
     renderMeshActivity(mesh.events||[], status.agents, mesh.stats);
-    renderAgentOffice(mesh.events||[], status.agents, mesh.stats, msgs, tickets, status);
+    try { renderAgentOffice(mesh.events||[], status.agents, mesh.stats, msgs, tickets, status); } catch(e) {}
   } catch(e){ ok=false; }
   setConn(ok);
 }
