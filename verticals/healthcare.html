@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ARIA for Healthcare — HIPAA-aware AI IT Support · IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="HIPAA-aware AI-powered IT support for clinics, EMR-aware, PACS-aware, never auto-changes patient records. From the team that built ARIA.">
+<meta property="og:title" content="ARIA for Healthcare — HIPAA-aware AI IT Support">
+<meta property="og:description" content="HIPAA-aware AI for IT support. EMR, PACS, secure-fax. Never auto-changes records.">
+<link rel="icon" href="/assets/iis-favicon.png" type="image/png">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#050505;color:#e8e8e8;font-family:-apple-system,system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  header.top{padding:24px 0 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.06)}
+  header.top a{color:#c5a059;text-decoration:none;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+  header.top a:hover{color:#f1dca7}
+  .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600}
+  .hero{padding:64px 0 48px;text-align:center}
+  .hero h1{font-size:48px;font-weight:800;line-height:1.05;letter-spacing:-.02em;margin:14px 0 18px;color:#fff}
+  .hero h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  .hero p.lead{font-size:17px;color:rgba(255,255,255,.7);max-width:640px;margin:0 auto 28px;line-height:1.55}
+  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .btn{display:inline-block;padding:14px 28px;border-radius:8px;font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;text-decoration:none;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;transition:transform .15s,box-shadow .2s}
+  .btn-primary{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;box-shadow:0 8px 24px rgba(197,160,89,.22)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(197,160,89,.34)}
+  .btn-ghost{background:transparent;color:#c5a059;border:1px solid rgba(197,160,89,.45)}
+  .btn-ghost:hover{background:rgba(197,160,89,.08)}
+  section.pillar{padding:56px 0;border-top:1px solid rgba(255,255,255,.06)}
+  section.pillar h2{font-size:28px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-.01em}
+  section.pillar .sub{color:rgba(255,255,255,.55);font-size:14px;margin-bottom:28px}
+  .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+  .card{background:#0d0d0d;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:24px}
+  .card h3{color:#f1dca7;font-size:15px;margin-bottom:8px;font-weight:600}
+  .card p{color:rgba(255,255,255,.7);font-size:13.5px}
+  ul.checklist{list-style:none;padding:0}
+  ul.checklist li{padding:10px 0;color:rgba(255,255,255,.8);font-size:14.5px;display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,.04)}
+  ul.checklist li:before{content:'✓';color:#c5a059;font-weight:700;flex-shrink:0;margin-top:2px}
+  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;margin:32px 0}
+  .stat{text-align:center;padding:20px 12px;background:#0d0d0d;border:1px solid rgba(255,255,255,.06);border-radius:12px}
+  .stat .num{font-family:ui-monospace,monospace;font-size:32px;font-weight:700;background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+  .stat .label{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+  .quote-box{background:rgba(197,160,89,.06);border-left:3px solid #c5a059;padding:18px 22px;margin:24px 0;border-radius:0 10px 10px 0}
+  .quote-box p{color:#fff;font-size:15px;font-style:italic;line-height:1.55}
+  .quote-box .src{display:block;color:rgba(255,255,255,.5);font-size:12px;margin-top:8px;font-style:normal;letter-spacing:.06em}
+  footer.bot{padding:48px 0 32px;border-top:1px solid rgba(255,255,255,.06);text-align:center;color:rgba(255,255,255,.4);font-size:12px;letter-spacing:.06em}
+  footer.bot a{color:rgba(255,255,255,.6);text-decoration:none;margin:0 8px}
+  footer.bot a:hover{color:#c5a059}
+  @media(max-width:640px){.hero h1{font-size:36px}.hero p.lead{font-size:15px}section.pillar h2{font-size:24px}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a href="/">← IIS Home</a>
+    <a href="/aria">Try ARIA →</a>
+  </header>
+
+  <section class="hero">
+    <div class="crown">For healthcare practices · HIPAA / PHIPA aware</div>
+    <h1>The AI <span class="gold">IT helpdesk</span> for clinics that take patient data seriously.</h1>
+    <p class="lead">ARIA handles your team's IT questions in seconds — Outlook crashes, EMR login loops, PACS image-load issues, secure-fax fails — without ever auto-changing patient records. Built for multi-location clinics, family-health teams, and specialty practices.</p>
+
+    <div class="cta-row">
+      <a href="/aria" class="btn btn-primary">Try ARIA — 15 min free</a>
+      <a href="/health-check" class="btn btn-ghost">60-sec IT Health Check</a>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">&lt; 2s</div><div class="label">First response</div></div>
+      <div class="stat"><div class="num">24</div><div class="label">Healthcare-specific workflows</div></div>
+      <div class="stat"><div class="num">100%</div><div class="label">Human-approved on privileged action</div></div>
+      <div class="stat"><div class="num">24×7</div><div class="label">Always on, never on hold</div></div>
+    </div>
+  </section>
+
+  <section class="pillar">
+    <h2>What ARIA handles for healthcare</h2>
+    <p class="sub">All 24 entries cover real workflows we ship to production. No "coming soon."</p>
+    <div class="grid-3">
+      <div class="card"><h3>EMR-specific fixes</h3><p>Epic MyChart login loops, Cerner PowerChart crashes, Allscripts Sunrise slowness, athenahealth print issues, NextGen + PACS image-load failures.</p></div>
+      <div class="card"><h3>HIPAA-aware L2 paths</h3><p>Suspected ePHI email leak. Lost laptop with ePHI. MFA recovery for clinical staff. BAA checklist. Encryption-at-rest audit prep.</p></div>
+      <div class="card"><h3>Medical device + PACS</h3><p>Imaging modality not on network. Infusion pump Wi-Fi drops. Vital signs monitor offline. DICOM image not displaying. Radiology workstation slow.</p></div>
+      <div class="card"><h3>Patient portal + secure fax</h3><p>MyChart account lock. Portal MFA recovery without email. Secure fax failover (RightFax, sRFax). Clinical printer + Zebra label drivers.</p></div>
+      <div class="card"><h3>Citrix + database</h3><p>Citrix Receiver EMR disconnects. EMR database connection loss after patch. ARIA stops + escalates anything affecting clinical workflow during business hours.</p></div>
+      <div class="card"><h3>Refuses to auto-change records</h3><p>ARIA never modifies patient data, never deletes from EMR, never bypasses audit logging. Always escalates to a human technician for L2/L3 patient-touching work.</p></div>
+    </div>
+  </section>
+
+  <section class="pillar">
+    <h2>How we keep patient data safe</h2>
+    <ul class="checklist">
+      <li>PII redaction at the edge — emails, SSNs, phones, card numbers scrubbed before any log entry</li>
+      <li>Per-tenant audit log (cap 500 events) — your compliance officer can pull on demand</li>
+      <li>Human approval required for every privileged action (password reset, license change, group membership change) — no exceptions</li>
+      <li>Conversation memory locally first, optional cross-device sync with HMAC-signed token</li>
+      <li>SOC 2 readiness self-assessment public at <a href="/soc2-readiness" style="color:#c5a059">/soc2-readiness</a></li>
+      <li>GDPR Art. 22 + PIPEDA Principle 9 notice at <a href="/compliance/automated-decisions" style="color:#c5a059">/compliance/automated-decisions</a></li>
+      <li>ISO 29147 vulnerability disclosure policy at <a href="/security/disclosure" style="color:#c5a059">/security/disclosure</a></li>
+      <li>Anthropic Claude as the reasoning core — your data is not used to train models (Anthropic commercial terms apply)</li>
+    </ul>
+  </section>
+
+  <section class="pillar">
+    <h2>Founder behind it</h2>
+    <div class="quote-box">
+      <p>I have spent 15+ years inside IT operations — including healthcare environments where one bad fix can mean a regulator-reportable incident. ARIA is built around what I would actually trust to put in front of a clinical team.</p>
+      <span class="src">— Ahmad Wasee, Founder, Integrated IT Support Inc.</span>
+    </div>
+    <p style="color:rgba(255,255,255,.65);font-size:14.5px">Anthropic Academy certified. Multiple Microsoft certifications. Real IT operations experience, not just AI hype.</p>
+  </section>
+
+  <section class="pillar">
+    <h2>Pricing for healthcare</h2>
+    <p class="sub">Same as our public pricing — no vertical surcharge. See full plans at <a href="/plans" style="color:#c5a059">/plans</a>.</p>
+    <div class="grid-3">
+      <div class="card"><h3>Personal</h3><p style="color:#f1dca7;font-size:22px;margin:8px 0">$599 USD/mo</p><p>Best for solo practitioners + small clinics &lt; 5 staff</p></div>
+      <div class="card"><h3>Pro</h3><p style="color:#f1dca7;font-size:22px;margin:8px 0">$1,500 USD/mo</p><p>Multi-clinic groups, family-health teams</p></div>
+      <div class="card"><h3>Small Business</h3><p style="color:#f1dca7;font-size:22px;margin:8px 0">$156,000 USD/yr</p><p>Mid-market practices, networks, regional chains</p></div>
+    </div>
+
+    <div class="cta-row" style="margin-top:32px">
+      <a href="/aria" class="btn btn-primary">Try ARIA — 15 min free</a>
+      <a href="mailto:ahmad.wasee@iisupp.net?subject=Healthcare%20pilot%20interest" class="btn btn-ghost">Email founder directly</a>
+    </div>
+  </section>
+
+  <footer class="bot">
+    <p><a href="/">Home</a> · <a href="/aria">Try ARIA</a> · <a href="/plans">Pricing</a> · <a href="/verticals/legal">For Law Firms</a> · <a href="/verticals/finance">For Finance Teams</a></p>
+    <p style="margin-top:8px">© Integrated IT Support Inc. · iisupp.net · Toronto, Canada</p>
+  </footer>
+</div>
+
+</body>
+</html>
