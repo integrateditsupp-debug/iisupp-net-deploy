@@ -1,5 +1,6 @@
 const { withBreaker } = require('./_circuit-breaker');
 const { fetchWithRetry } = require('./_retry');
+const context = require('./_conversation-context');
 
 /**
  * ARIA Helpdesk AI v2.0 — Emotional Intelligence + 25-Year Pro Mindset
@@ -147,6 +148,20 @@ exports.handler = async (event) => {
     return json(400, { error: 'Last message must be user' });
   }
 
+  const sessionId = String(body.sessionId || body.session_id || 'anon-' + Date.now()).slice(0, 80);
+  const currentUserText = cleanMsgs[cleanMsgs.length - 1].content;
+  const prior = context.getSession(sessionId);
+  const priorMessages = context
+    .buildMessages(sessionId, currentUserText, [])
+    .filter(m => m.role === 'user' || m.role === 'assistant')
+    .slice(-12);
+  const clientHistory = cleanMsgs.slice(0, -1).slice(-12);
+  const contextSummary = prior && prior.summary
+    ? `\n\nPrior conversation summary: ${prior.summary}`
+    : '';
+  const outboundMessages = (priorMessages.length ? priorMessages : clientHistory)
+    .concat([{ role: 'user', content: currentUserText }]);
+
   try {
     const r = await withBreaker('anthropic-messages', () => fetchWithRetry('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -158,8 +173,8 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         model,
         max_tokens: 1500,
-        system: SYSTEM_PROMPT,
-        messages: cleanMsgs,
+        system: SYSTEM_PROMPT + contextSummary,
+        messages: outboundMessages,
       }),
     }, { attempts: 3, baseDelayMs: 250, maxDelayMs: 1600 }), {
       failure_threshold: 3,
@@ -188,14 +203,16 @@ exports.handler = async (event) => {
         escalation_reason: null, issue_category: 'other', suggestions: [] };
     }
 
+    context.addTurn(sessionId, 'user', currentUserText);
+    context.addTurn(sessionId, 'assistant', parsed.text || '');
+
     // Fire-and-forget: log conversation to /aria-learn for self-learning
-    const sessionId = body.sessionId || 'anon-' + Date.now();
     fetch(`${event.headers.host ? 'https://' + event.headers.host : process.env.APP_URL || 'https://iisupp.net'}/.netlify/functions/aria-learn`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         sessionId,
-        userMessage: cleanMsgs[cleanMsgs.length - 1].content,
+        userMessage: currentUserText,
         ariaResponse: parsed.text,
         emotion: parsed.emotion_detected,
         tone: parsed.tone_used,
@@ -224,7 +241,7 @@ exports.handler = async (event) => {
     const lastUserMsg = cleanMsgs[cleanMsgs.length - 1]?.content || '';
     const tracePayload = {
       ts:           Date.now(),
-      sessionId:    body.sessionId || 'anon',
+      sessionId:    sessionId,
       turnIndex:    cleanMsgs.filter(m => m.role === 'user').length,
       userMsg:      lastUserMsg.slice(0, 2000),
       ariaResp:     responsePayload.text.slice(0, 3000),

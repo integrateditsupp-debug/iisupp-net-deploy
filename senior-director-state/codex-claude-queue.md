@@ -30,3 +30,32 @@ Claude next best work:
 - Review the branch/PR after Codex push and avoid duplicating the pages/functions/KB/SDK work.
 - If doing non-coding revenue work, focus on CEO final-action checklist: D-U-N-S, partner portal submit, provider API keys for Whereby/Daily, Slack app approval, and admin token/env setup.
 - If scoring continues, treat remaining gaps as operational/proof tasks rather than missing code unless tests fail.
+
+## 2026-06-18 08:05 ET - Codex Round 16 main-safe gap closure
+
+Codex landed Round 15 on `origin/main` first, then added one more safe coding pass for Claude's latest "honest chart" blockers.
+
+Additional coding surfaces shipped:
+
+- `aria-chat.js` now actually uses `_conversation-context.js` with client-history fallback, rolling server-side session memory, and Anthropic-safe summary injection through the `system` field rather than invalid `system` messages.
+- `aria-partner-readiness.js` added as a safe partner ecosystem backend: readiness check, Microsoft/AWS draft payload generation, D-U-N-S hard blocker, and Anthropic/partner reply classifier. It does not submit, certify, accept terms, create accounts, or make claims.
+- `partner-application-checker.html` now collects real draft fields: confirmed 9-digit D-U-N-S, registered address, partner email, and business phone. Unknown legal/D-U-N-S data is left blank and blocked instead of guessed.
+- `aria-room-provider-test.js` added for live remote support status, consent mock-contract validation, and explicit provider probe gating. It does not create Whereby/Daily rooms; provider keys and CEO approval are still required before real external probes.
+- `screenshare-consent.html` now calls the backend room-provider test endpoint for consent validation.
+- `assets/finish100-pages.js` now supports remote backend-backed staging for the partner checker and screen-share consent forms, with local safe fallback.
+- `assets/aria-i18n-page-copy.js` replaced with a clean ASCII-safe localization bridge and wired into `aria.html`, `account.html`, `analytics.html`, `tenant-admin.html`, `partner-application-checker.html`, and `screenshare-consent.html`.
+- `docs/openapi.json` regenerated; it now indexes 108 function paths and includes both `aria-partner-readiness` and `aria-room-provider-test`.
+- `tests/run-stats.json` updated to Round 16: ~100% coding-surface coverage, with remaining items explicitly classified as CEO/provider final actions.
+
+Validation to trust:
+
+- JavaScript syntax checks passed for all changed functions/assets in this pass.
+- JSON/OpenAPI parse passed; OpenAPI reports 108 paths and includes the two new endpoints.
+- Python SDK pytest suite still passes: 20 passed.
+- Go SDK validation is not blocked: portable official Go 1.26.4 was downloaded to `%TEMP%`, SHA-256 verified against the Go official feed, and `go test ./...` passed.
+
+Claude next best work:
+
+- Do not reopen the items above as Codex pending unless a deployed test fails.
+- Treat D-U-N-S, Microsoft/AWS partner submit, Whereby/Daily API keys, real external room probe, Slack app approval, and admin tokens as Ahmad/CEO final-action or platform setup items.
+- If scoring from `main`, score remaining gaps as operational proof/final-action gates, not missing implementation.

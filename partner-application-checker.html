@@ -32,7 +32,11 @@
       <form class="f100-card" id="partner-checker-form">
         <h2>Readiness gate</h2>
         <label>D-U-N-S confirmed<select class="f100-select" name="duns"><option value="no">No</option><option value="yes">Yes</option></select></label>
+        <label>Confirmed D-U-N-S number<input class="f100-input" name="duns_number" inputmode="numeric" placeholder="9 digits, CEO confirmed"></label>
         <label>Legal name/address consistent<select class="f100-select" name="legal"><option value="no">No</option><option value="yes">Yes</option></select></label>
+        <label>Registered address<input class="f100-input" name="registered_address" placeholder="CEO confirmed legal address"></label>
+        <label>Business email<input class="f100-input" name="business_email" type="email" placeholder="partner application contact email"></label>
+        <label>Business phone<input class="f100-input" name="phone" type="tel" value="+1 647-581-3182"></label>
         <label>Microsoft partner draft reviewed<select class="f100-select" name="mpn"><option value="no">No</option><option value="yes">Yes</option></select></label>
         <label>AWS partner draft reviewed<select class="f100-select" name="aws"><option value="no">No</option><option value="yes">Yes</option></select></label>
         <button class="f100-button primary" type="submit">Check readiness</button>
@@ -43,6 +47,7 @@
       </article>
     </section>
   </main>
+  <script src="/assets/aria-i18n-page-copy.js"></script>
   <script src="/assets/finish100-pages.js"></script>
 </body>
 </html>
