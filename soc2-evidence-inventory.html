@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOC 2 Evidence Inventory · Internal</title>
+<meta name="robots" content="noindex">
+<style>body{font-family:system-ui;background:#0a0f1a;color:#e6f0ff;max-width:1100px;margin:30px auto;padding:24px;line-height:1.55}h1{color:#7afbff;margin:0 0 6px}h2{color:#7afbff;border-bottom:1px solid #2a3a55;padding-bottom:6px;margin-top:30px}table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}td,th{padding:8px 10px;border-bottom:1px solid #1f2a3f;text-align:left;vertical-align:top}th{background:#0e1626;color:#7afbff}.ok{color:#7dffae}.partial{color:#ffcb6b}.todo{color:#ff7e7e}input{background:#0e1626;color:#e6f0ff;border:1px solid #2a3a55;padding:8px;border-radius:4px;width:280px}button{background:#7afbff;color:#0a0f1a;border:0;padding:8px 14px;border-radius:5px;font-weight:600;cursor:pointer;margin-left:8px}</style>
+</head><body>
+<h1>SOC 2 Evidence Inventory</h1>
+<p>Living list of evidence we have / partial / missing, mapped to TSC controls. Pull the actual evidence package via <code>aria-soc2-evidence-collect</code>.</p>
+
+<div style="margin:18px 0">
+<input id="admin" type="password" placeholder="Admin token"> <button onclick="loadEvidence()">Refresh from blobs</button>
+</div>
+
+<h2>Control coverage (CC = Common Criteria)</h2>
+<table>
+<tr><th>Control</th><th>Category</th><th>Evidence we have</th><th>Status</th></tr>
+<tr><td>CC1.1</td><td>Control environment</td><td>Founder ops cadence, COC, hire playbook in outputs/founder-ops-2026-06-18/</td><td class="partial">Partial</td></tr>
+<tr><td>CC2.1</td><td>Communication</td><td>docs/COLLAB_BRIEF.md, status page, founder digest cron</td><td class="ok">Yes</td></tr>
+<tr><td>CC3.1</td><td>Risk assessment</td><td>aria-self-audit-cron logs, aria-gap-detector-cron output</td><td class="ok">Yes</td></tr>
+<tr><td>CC5.1</td><td>Control activities</td><td>aria-sla-monitor-cron, aria-uptime-probe, aria-churn-predictor</td><td class="ok">Yes</td></tr>
+<tr><td>CC6.1</td><td>Logical access</td><td>HMAC-signed admin tokens, aria-tenant-isolation-test, audit log per tenant</td><td class="ok">Yes</td></tr>
+<tr><td>CC6.6</td><td>Encryption in transit</td><td>aria-tls-monitor-cron (daily), TLS forced on Netlify CDN</td><td class="ok">Yes</td></tr>
+<tr><td>CC6.7</td><td>Encryption at rest</td><td>Netlify Blobs encrypted at rest by platform</td><td class="ok">Yes</td></tr>
+<tr><td>CC7.1</td><td>Detection</td><td>aria-anomaly-detect, aria-sla-monitor-cron, abuse-report endpoint</td><td class="ok">Yes</td></tr>
+<tr><td>CC7.2</td><td>Monitoring</td><td>aria-uptime-probe (5min), /status page, /aperture dashboards</td><td class="ok">Yes</td></tr>
+<tr><td>CC7.3</td><td>Incident response</td><td>docs/DR-RUNBOOK.md, /security/disclosure, security.txt</td><td class="ok">Yes</td></tr>
+<tr><td>CC7.4</td><td>Recovery</td><td>aria-backup-cron weekly, 12-week retention</td><td class="ok">Yes</td></tr>
+<tr><td>CC8.1</td><td>Change management</td><td>Git history (immutable), Netlify deploy log</td><td class="ok">Yes</td></tr>
+<tr><td>CC9.1</td><td>Risk mitigation</td><td>aria-circuit-breaker, aria-pii-redactor</td><td class="ok">Yes</td></tr>
+<tr><td>A1.1</td><td>Availability — capacity</td><td>Stateless Netlify Functions auto-scale</td><td class="ok">Yes</td></tr>
+<tr><td>A1.2</td><td>Availability — env protection</td><td>Multi-region Netlify CDN</td><td class="ok">Yes</td></tr>
+<tr><td>C1.1</td><td>Confidentiality</td><td>aria-pii-redactor, tenant audit isolation</td><td class="ok">Yes</td></tr>
+<tr><td>P1.1</td><td>Privacy notice</td><td>/privacy, /privacy-rights, GDPR Art.22 page, automated-decisions page</td><td class="ok">Yes</td></tr>
+<tr><td>P6.1</td><td>Data subject rights</td><td>/privacy-rights with delete, /aria-audit-export per tenant</td><td class="ok">Yes</td></tr>
+<tr><td>—</td><td>Pen test</td><td>Vulnerability disclosure program live, no formal pen test yet</td><td class="todo">Open</td></tr>
+<tr><td>—</td><td>Background checks</td><td>1-person co; n/a until first hire</td><td class="todo">Open</td></tr>
+<tr><td>—</td><td>Vendor mgmt</td><td>Anthropic, Stripe, Netlify, Resend listed; DPA review pending</td><td class="partial">Partial</td></tr>
+</table>
+
+<h2>Live evidence pulls (admin)</h2>
+<div id="live"></div>
+
+<script>
+async function loadEvidence() {
+  const t = document.getElementById('admin').value;
+  const r = await fetch('/.netlify/functions/aria-soc2-evidence-collect', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ admin_token: t })
+  });
+  const j = await r.json();
+  document.getElementById('live').innerHTML = '<pre style="background:#0e1626;padding:14px;border-radius:6px;overflow:auto">'+JSON.stringify(j,null,2)+'</pre>';
+}
+</script>
+</body></html>

@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPv6 Readiness · IIS</title>
+<meta name="robots" content="noindex">
+<style>body{font-family:system-ui;background:#0a0f1a;color:#e6f0ff;max-width:800px;margin:40px auto;padding:24px;line-height:1.6}h1{color:#7afbff;margin:0 0 8px}h2{color:#7afbff;border-bottom:1px solid #2a3a55;padding-bottom:6px;margin-top:32px}code{background:#0e1626;padding:2px 6px;border-radius:3px;color:#7dffae}.box{background:#0e1626;border:1px solid #2a3a55;padding:18px;border-radius:8px;margin:14px 0}.ok{color:#7dffae}.warn{color:#ffcb6b}.bad{color:#ff7e7e}table{width:100%;border-collapse:collapse;margin:12px 0}td,th{padding:8px 10px;border-bottom:1px solid #1f2a3f;text-align:left}</style>
+</head><body>
+<h1>IPv6 Readiness Check</h1>
+<p>Internal note. iisupp.net is fronted by Netlify, which serves both IPv4 + IPv6 out-of-the-box.</p>
+
+<h2>Current state</h2>
+<table>
+<tr><th>Layer</th><th>IPv6 status</th><th>Notes</th></tr>
+<tr><td>Netlify CDN</td><td class="ok">Native dual-stack</td><td>AAAA records auto-served</td></tr>
+<tr><td>Netlify Functions</td><td class="ok">IPv6-aware</td><td>req.ip preserves family</td></tr>
+<tr><td>Netlify Blobs</td><td class="ok">Internal</td><td>n/a — server-side only</td></tr>
+<tr><td>Stripe API</td><td class="ok">IPv6-ready</td><td>api.stripe.com has AAAA</td></tr>
+<tr><td>Anthropic API</td><td class="ok">IPv6-ready</td><td>api.anthropic.com has AAAA</td></tr>
+<tr><td>SMTP outbound (Resend/Mailtrap)</td><td class="warn">Mixed</td><td>Depends on relay provider</td></tr>
+<tr><td>Customer SMTP receivers</td><td class="warn">Mixed</td><td>Some corp MTAs IPv4-only</td></tr>
+</table>
+
+<h2>What this means for compliance answers</h2>
+<div class="box">
+<strong>RFP / VPAT / SOC 2 questionnaire fields:</strong><br>
+"<em>Does the service support IPv6 end-to-end?</em>" → <strong class="ok">Yes for inbound</strong> (CDN, web traffic, API endpoints). Outbound email path depends on upstream relay (Resend currently routes IPv4-preferred but accepts IPv6 source).
+</div>
+
+<h2>Verifying manually</h2>
+<pre style="background:#0e1626;padding:14px;border-radius:6px;overflow:auto"><code>dig AAAA iisupp.net +short
+dig AAAA www.iisupp.net +short
+curl -6 -I https://iisupp.net/
+</code></pre>
+
+<h2>If a customer's network is IPv6-only</h2>
+<p>Netlify Edge serves dual-stack so no proxy is required. AROC + ARIA APIs all reachable on AAAA.</p>
+
+<hr style="border-color:#2a3a55;margin-top:32px">
+<p style="color:#8aa3c9;font-size:13px">Internal reference for security questionnaires. Update if Netlify or relay provider changes.</p>
+</body></html>
