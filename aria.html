@@ -40,7 +40,7 @@
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{min-height:100%;width:100%;overflow-x:hidden}
+  html,body{min-height:100%;width:100%;max-width:100%;overflow-x:hidden}
   html{height:100%}
   body{
     background:
@@ -1365,6 +1365,50 @@
     .left{height:clamp(520px,70dvh,700px)}
     .right{position:relative;min-height:720px;overflow:visible}
   }
+
+  /* Window-fit safety: when the browser is dragged smaller, stack instead of clipping. */
+  @media (max-width:1279px), (max-height:760px){
+    html,body{height:auto;min-height:100%;overflow:auto}
+    .app{
+      grid-template-columns:minmax(0,1fr) !important;
+      grid-template-rows:auto auto auto auto !important;
+      height:auto;
+      min-height:100dvh;
+      overflow:visible;
+      padding:clamp(46px,5vh,58px) clamp(10px,2vw,18px) clamp(14px,2vw,22px);
+    }
+    .left,
+    .right,
+    .ap-band,
+    .ap-rail{grid-column:1 / -1;min-width:0}
+    .left{height:clamp(540px,76dvh,820px);min-height:min(540px,100dvh - 88px)}
+    .right{height:auto;min-height:0;max-height:none;overflow:visible}
+    .browser-frame{height:100%;min-height:0}
+  }
+
+  @media (max-width:640px){
+    .app{gap:10px;padding-left:10px;padding-right:10px}
+    .left{height:clamp(540px,78dvh,760px);border-radius:14px}
+    .browser-frame{padding:10px 10px 0}
+    .browser-bar{gap:6px;padding:7px 8px}
+    .url{font-size:10px;letter-spacing:.08em;padding:6px 8px}
+    .aria-chip,.iis-chip{font-size:9px;letter-spacing:.12em;padding-right:8px}
+    .iis-chip span{display:none}
+    .aria-tag{width:36px;letter-spacing:.18em}
+    .you-bubble{max-width:100%;font-size:13px}
+    .choice-grid{grid-template-columns:1fr}
+    .stats-top{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+
+  @media (max-width:420px){
+    .topbar{font-size:9px;letter-spacing:.24em}
+    .history-bar{gap:6px;justify-content:center}
+    #aria-v04-inline{width:100%;justify-content:center}
+    #aria-v04-end-btn,
+    #aria-v04-callback-btn{flex:1 1 120px;min-width:0}
+    .input-row{gap:8px}
+    .input-row input{min-width:0}
+  }
 </style>
   <link rel="canonical" href="https://iisupp.net/aria">
   <meta property="og:type" content="website">
@@ -1549,6 +1593,14 @@
     /* dock is in-flow as a bottom section — no override needed */
   }
   /* Very wide desktop (≥1600px): nudge chat even larger */
+  @media (max-width:1279px), (max-height:760px){
+    .ap-rail{
+      grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)) !important;
+      max-height:none;
+      overflow:visible;
+    }
+    .ap-card{min-width:0}
+  }
   @media (min-width:1600px){
     .app{ grid-template-columns:minmax(0,1.7fr) minmax(320px,1fr); padding:60px clamp(22px,3vw,40px) clamp(22px,3vw,40px); }
   }
@@ -3527,50 +3579,64 @@ function classify(text){
   let q = text.toLowerCase().replace(/\b([a-z])\.\s*([a-z])\.\s*([a-z])\.\s*/g, '$1$2$3 ');
   // === MOST-SPECIFIC FIRST (these beat broader matches like 'mail'/'teams') ===
   // security beats mail (phishing email → security, not mail)
-  if (/(scam|phishing|suspicious|malware|ransomware|trojan|virus warning)/.test(q)) return 'kb:security';
+  // MFA-specific catches BEFORE general security (so 'mfa fatigue' / 'too many mfa' route to MFA, not security)
+  if (/\b(mfa fatigue|mfa bombing|too many mfa|too many mfa prompts|50 mfa|spam mfa|mfa loop)\b/.test(q)) return 'kb:mfa';
+  if (/(scam|phishing|suspicious (email|link|file|attachment|sign-?in|activity)|malware|ransomware|trojan|virus warning|account (compromised|hacked|hijack)|impossible travel|sign[- ]in from (russia|china|north korea|iran)|clicked.* link|breached account|hibp|haveibeenpwned|files? (are )?encrypted|lockbit|wannacry|conti|ryuk|crypto.?locker|someone has access|unauthorized access|suspicious activity|account takeover)/.test(q)) return 'kb:security';
   // webcam beats teams (webcam frozen in teams → webcam)
-  if (/(camera|webcam|video call)/.test(q)) return 'kb:webcam';
+  if (/(camera|webcam|video call|logitech c\d+|logitech brio|brio webcam|razer kiyo|elgato facecam|opal c1)/.test(q)) return 'kb:webcam';
   // bitlocker is unambiguous
-  if (/(bitlocker|recovery key)/.test(q)) return 'kb:bitlocker';
+  if (/(bitlocker)/.test(q) || (/recovery key/.test(q) && !/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q))) return 'kb:bitlocker';
   // out-of-office is unambiguous
   if (/(out of office|ooo|automatic repl|auto.?reply|auto.?responder|vacation|away message)/.test(q)) return 'outlook_ooo';
   // Outlook launch/open failures should route into the mail diagnostic path, not generic fallback
   if (/\boutlook\b/.test(q) && /\b((won'?t|wont|will not|cannot|can.?t|isn'?t|is not|not) (open|opening|launch|launching|start|starting|run|running)|crash|crashes|crashing|hang|hangs|hanging|freeze|freezes|freezing|frozen|not responding)\b/.test(q)) return 'mail';
 
+  // OneDrive password-prompt BEFORE password generic
+  if (/onedrive/.test(q)) return 'kb:onedrive';
+  // AD-specific qualifiers BEFORE password (so 'ad password reset' hits AD)
+  if (/\b(active directory|ad lockout|domain account|domain controller|kerberos|krb5)\b/.test(q) || /\bad\b\s+(account|password|user|lockout|sync|replication|reset|unlock)/.test(q) || /\b(account|user|password) (locked|unlock|reset)\s+(in (ad|active directory)|in domain|domain side)\b/.test(q) || /\block(ed)? out in domain\b/.test(q) || /\bcan'?t unlock (ad|domain) account\b/.test(q)) return 'kb:active-directory';
+
   // === CORE TECHNICAL ===
-  if (/(mail|email|inbox|outlook)/.test(q)) return /out of office|ooo|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';
-  if (/vpn|tunnel/.test(q)) return 'vpn';
-  if (/(password|locked out|sign[- ]in|reset.*password|can'?t (log|sign) in)/.test(q)) return 'password';
-  if (/(wifi|wi-fi|wireless|network|internet|limited connectivity|no internet)/.test(q)) return 'wifi';
+  if (/(mail|email|inbox|outlook|outlok|outloook|outlk|sent items|drafts? folder|spam filter|junk folder|email attachment|attachments? not opening|email signature|autocomplete|exchange|mailbox|smtp|imap|pop3|exchange online)/.test(q)) return /out of office|ooo|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';
+  if (/vpn|tunnel|globalprotect|anyconnect|cisco (vpn|anyconnect)|fortinet|pulse secure|pulsesecure|openvpn|wireguard|remote access|forticlient/.test(q)) return 'vpn';
+  if (/(password|pasword|passwd|passw0rd|pasworld|locked out|sign[- ]in|sign[- ]on|log[- ]in|login|logon|reset.*(password|login)|can'?t (log|sign|get) in|wont? (let me )?(log|sign) in|wont? log in|cant log in|can'?t log on|invalid (login|sign[- ]?in)|account locked( (out|after))?)/.test(q) && !/\b(wifi|wi-fi|wireless|router|modem)\b/.test(q)) return 'password';
+  // Bluetooth wireless audio before generic wifi (so 'wireless headset cutting out' hits bluetooth)
+  // Printer-specific BEFORE wifi (so 'network printer' hits printer not wifi)
+  if (/\b(network printer|wifi printer|wireless printer)\b/.test(q) || /print/.test(q)) return 'printer';
+  if (/\b(wireless (headset|earbud|headphones?|mic)|bluetooth (headset|earbud|headphones?|mic))\b/.test(q)) return 'kb:bluetooth';
+  if (/(wifi|wi-fi|wireless|network|internet|limited connectivity|no internet|5\s*ghz|2\.4\s*ghz|router|modem|ssid|access point|wifi adapter|wifi card|wireless adapter)/.test(q)) return 'wifi';
   if (/print/.test(q)) return 'printer';
+  // Printer trumps wifi (network printer)
+  if (/\b(network printer|wifi printer|wireless printer)\b/.test(q)) return 'printer';
 
   // === KB-ONLY TOPICS (single-article surface, no choice cards) ===
-  if (/(blue screen|bsod|stop error|wont boot|won'?t boot|spinning dots|stuck on boot|error 0x|0x000)/.test(q)) return 'kb:windows';
-  if (/(onedrive|sync(ing)? files?)/.test(q)) return 'kb:onedrive';
-  if (/(teams|microsoft teams)/.test(q)) return 'kb:teams';
-  if (/(mfa|multi[- ]factor|two.?factor|2fa|authenticator)/.test(q)) return 'kb:mfa';
-  if (/(bluetooth|airpod|headphones?)/.test(q)) return 'kb:bluetooth';
-  if (/(usb|external drive|flash drive)/.test(q)) return 'kb:usb';
-  if (/(slow|laggy|sluggish|performance|high cpu|cpu usage|ram usage|memory usage)/.test(q)) return 'kb:performance';
-  if (/(kernel panic|beach ball|mac (won'?t|wont) (boot|start|shut)|macbook (won'?t|wont))/.test(q)) return 'kb:macos';
-  if (/(dns|dhcp|ip address|ping (timeout|fail)|gateway unreachable)/.test(q)) return 'kb:networking';
-  if (/(file share|ntfs|shared folder|access denied|permission denied)/.test(q)) return 'kb:permissions';
-  if (/(active directory|account locked|ad lockout)/.test(q)) return 'kb:active-directory';
-  if (/(intune|conditional access|azure ad|m365 license|license activation)/.test(q)) return 'kb:m365';
-  if (/(onboarding|offboarding|byod|new hire)/.test(q)) return 'kb:onboarding';
-  if (/(browser|edge|chrome|firefox)/.test(q) && !/(slow|laggy|cpu)/.test(q)) return 'kb:browser';
+  if (/(blue screen|bsod|stop error|wont boot|won'?t boot|spinning dots|stuck on boot|error 0x|0x000|bootloop|boot loop|keeps restarting|windows (won'?t|wont|will not) (start|boot|turn on)|windows update (broke|failed|failing|fails?)|cumulative update fail|feature update fail|servicing stack|startup repair loop|recovery mode loop|cannot activate windows|can'?t activate windows|windows activation (failed|issue))/.test(q)) return 'kb:windows';
+  if (/(onedrive|sync(ing)? files?|files? wont sync|files? won'?t sync|file wont? sync|sync conflict|share with me|shared file wont sync|sync error|selective sync|files? on demand|onedrive (icon|prompt|password|stuck|paused|setup|over quota))/.test(q)) return 'kb:onedrive';
+  if (/(teams|microsoft teams|ms teams|teams meeting|teams chat|teams channel|teams call|cant see channels|can'?t see channels|teams cache|teams notifications|teams external guest|channels?\s+(missing|gone|empty)|cant join meeting|can'?t join meeting)/.test(q)) return 'kb:teams';
+  if (/(mfa|multi[- ]factor|two.?factor|2fa|authenticator|sms code|text code|verification code|otp code|one[- ]time code|sms (not |never )?(arriving|coming|came)|text (not |never )?(arriving|coming|came)|six[- ]digit code|6[- ]digit code|verification not)/.test(q)) return 'kb:mfa';
+  if (/(bluetooth|airpod|headphones?|headset|earbuds?|jabra|poly|plantronics|bose|sennheiser|sony wh|jbl|wireless headset|wireless earbud|headphone jack|headset jack|audio jack)/.test(q)) return 'kb:bluetooth';
+  if (/(usb|external drive|flash drive|external ssd|external hard drive|seagate|sandisk|wd (my passport|elements)|usb-c (port|hub)|thunderbolt port|sd card|micro sd|memory card)/.test(q)) return 'kb:usb';
+  if (/(slow|laggy|sluggish|performance|high cpu|cpu usage|ram usage|memory usage|memory leak|disk 100|disk at 100|antimalware service|svchost (high|using)|fans? (spin|spinning)|overheat(ing)?|laptop hot|laggy machine|slow (startup|shutdown|after)|takes forever to (boot|open|load|start)|task manager shows high)/.test(q)) return 'kb:performance';
+  if (/(kernel panic|beach ball|mac (won'?t|wont) (boot|start|shut|turn)|macbook (won'?t|wont)|spinning beach ball|mac freezes|macos slow|mac stuck on apple|imac (won'?t|wont)|macos update fail)/.test(q)) return 'kb:macos';
+  if (/(dns|dhcp|ip address|ping (timeout|fail)|gateway unreachable|cannot resolve hostname|hostname not resolved|cant resolve hostname|can'?t resolve hostname|traceroute fail|tracert fail|route to host|arp issue|subnet mask|vlan|firewall (block|blocking)|port (closed|blocked)|can'?t reach internal|cannot reach internal|internal site (down|unreachable))/.test(q)) return 'kb:networking';
+  if (/(file share|ntfs|shared folder|access denied|permission denied|denied permission|no access to (folder|file|share)|group missing permissions|permissions reset|acl issue|share permission|cant open folder|can'?t open folder|user can'?t open|cannot access folder|folder access)/.test(q)) return 'kb:permissions';
+  if (/(active directory|\bad\b lockout|domain account locked|domain account|kerberos|krb5|ad authentication|ad replication|domain controller|dc replication)/.test(q)) return 'kb:active-directory';
+  if (/(intune|conditional access|azure ad|m365 license|license activation|e3 license|e5 license|f3 license|business basic|business standard|business premium|enterprise mobility|emm|emt|tenant settings|m365 admin center|microsoft 365 admin|aad|entra(\s+id)?|user has no license|license (expired|assignment|missing|removed|added)|no license assigned|need to add.*license|deactivate user|provision user|new hire (account|license))/.test(q)) return 'kb:m365';
+  // Onboarding BEFORE m365 (so 'deactivate user' routes here, not generic license)
+  if (/(onboarding|offboarding|byod|new hire|employee leaving|bring your own device|deactivate (user|account)|provision user|new starter|departing employee|leaver process|joiner process|need to deactivate)/.test(q)) return 'kb:onboarding';
+  if (/\b(edge|chrome|firefox|safari|brave|opera|browser)\b/.test(q)) return 'kb:browser';
   // navigational
   if (/(ops|dashboard|operations|metrics)/.test(q)) return 'ops';
   // ESCALATION (catch before generic 'talk' / 'voice')
-  if (/^(talk to (it|live agent|agent|human|tech support|support)|escalate|live agent|contact (it|support|tech))/.test(q)) return 'escalation';
+  if (/\b(talk to (it|live agent|agent|human|tech support|support|someone|a human|a person|a tech|a real person)|escalate|live agent|contact (it|support|tech)|i (want|need) (a |to talk to )?(human|person|real (person|human))|transfer me|connect me to|need a human|need to talk to (someone|a (person|human|tech)))\b/.test(q)) return 'escalation';
   if (/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';
   // VOICE — explicit only (was over-matching plain 'talk')
-  if (/^(voice mode|switch to voice|use voice|voice chat)\b/.test(q)) return 'voice';
+  if (/\b(voice mode|switch to voice|use voice|voice chat)\b/.test(q)) return 'voice';
   // external / off-topic
   if (/\b(rolex|omega|patek|tag.?heuer|hublot|seiko|cartier|breitling|audemars|iwc)\b/.test(q)) return 'shopping';
   if (/\bwatch(?:es)?\b(?!list)|\b(jewel(?:ry|lery)?|diamond|necklace|earring|handbag|sneakers?|shoes?)\b/.test(q)) return 'shopping';
   if (/\b(buy|shop|shopping|purchase|amazon|product|store|retail|deal)\b/.test(q)) return 'shopping';
-  if (/\b(news|headline|breaking|article)\b/.test(q)) return 'news';
+  if (/\b(news|headlines?|breaking|article|top stories)\b/.test(q)) return 'news';
   if (/\b(weather|temperature|forecast|raining|snow)\b/.test(q)) return 'weather';
   if (/\b(stock|share price|crypto|bitcoin|ethereum|nasdaq|s&p|dow|tsx|ticker|trade|invest)\b/.test(q)) return 'trade';
   if (/\b(quote|saying|wisdom|inspiration|motivat)/.test(q)) return 'quote';
@@ -5054,7 +5120,7 @@ function looksLikeResolution(q){
   var NEG = /\b(not|n['\u2019]?t|isn['\u2019]?t|wasn['\u2019]?t|aren['\u2019]?t|don['\u2019]?t|doesn['\u2019]?t|didn['\u2019]?t|cant|can['\u2019]?t|won['\u2019]?t|wouldn['\u2019]?t|couldn['\u2019]?t|never|nope|nah|negative|still\s+(broken|same|stuck|down|having|getting|happening|seeing|not|cant|can['\u2019]?t)|broke\s+again|came\s+back|happening\s+again|back\s+to\s+(square|broken)|worse|worst)\b/;
   if (NEG.test(t)) {
     // negation present, almost certainly not a resolution unless explicitly "no more issues" etc.
-    if (!/no (more |longer )?(issues?|problems?|errors?)|no\s+(issue|problem|error)\s+now|nothing\s+broken|not\s+broken\s+anymore/.test(t)) {
+    if (!/no (more|longer) (issues?|problems?|errors?|broken)|no\s+(issue|problem|error)\s+now|nothing\s+broken|not\s+broken\s+anymore/.test(t)) {
       return false;
     }
   }
