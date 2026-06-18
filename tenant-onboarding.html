@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tenant onboarding — IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050505;color:#e8e8e8;line-height:1.55;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:680px;margin:0 auto}
+  .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h1{font-size:34px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em;line-height:1.1}
+  h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  p.sub{color:rgba(255,255,255,.65);font-size:15px;margin-bottom:32px}
+  .steps{display:flex;justify-content:space-between;margin-bottom:32px;gap:8px}
+  .step-tab{flex:1;padding:10px 8px;text-align:center;border-radius:8px;background:#141414;border:1px solid #2a2a2a;color:#888;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;font-family:ui-monospace,monospace}
+  .step-tab.active{background:#1a1606;border-color:#c5a059;color:#f1dca7}
+  .step-tab.done{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.4);color:#22c55e}
+  .panel{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:28px}
+  .panel h2{color:#fff;font-size:18px;margin-bottom:6px}
+  .panel .lead{color:rgba(255,255,255,.6);font-size:13.5px;margin-bottom:18px}
+  label{display:block;color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;font-weight:600;margin-top:14px}
+  input,select,textarea{width:100%;padding:11px 13px;background:#050505;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14.5px;font-family:inherit}
+  .check-row{display:flex;align-items:center;gap:10px;margin-top:14px;color:#ddd;font-size:14px;cursor:pointer}
+  .actions{display:flex;justify-content:space-between;margin-top:24px;gap:10px}
+  button.btn{padding:12px 26px;border-radius:8px;font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;font-family:ui-monospace,monospace;border:none}
+  .btn-primary{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505}
+  .btn-ghost{background:transparent;color:#aaa;border:1px solid #2a2a2a}
+  .nav{text-align:center;margin-top:32px;color:rgba(255,255,255,.4);font-size:12.5px}
+  .nav a{color:rgba(255,255,255,.6);margin:0 8px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">Tenant onboarding · 5 min</div>
+  <h1>Set up <span class="gold">your ARIA tenant.</span></h1>
+  <p class="sub">Walks you through the 5 setup steps. Saves progress in your browser — close anytime, come back later.</p>
+
+  <div class="steps" id="step-tabs"></div>
+
+  <div class="panel" id="panel"></div>
+
+  <div class="nav">
+    <a href="/aria">Back to ARIA</a> · <a href="/plans">Pricing</a> · <a href="/aria-data-export">Data export</a>
+  </div>
+</div>
+
+<script>
+const STEPS = [
+  { id: 'identity', title: 'Identity', lead: 'Tell us who you are and confirm your tenant email.' },
+  { id: 'vertical', title: 'Vertical', lead: 'Healthcare / Legal / Finance / Education / Manufacturing / General. Tunes ARIA for you.' },
+  { id: 'm365',     title: 'M365',     lead: 'Optional: connect Microsoft 365 Graph (read-only by default).' },
+  { id: 'kb',       title: 'KB',       lead: 'Optional: upload your existing IT runbook / processes.' },
+  { id: 'pilot',    title: 'Pilot',    lead: 'Pick the first 3 IT issues you want ARIA to handle this week.' }
+];
+const KEY = 'iis_tenant_onboarding_v1';
+let state = JSON.parse(localStorage.getItem(KEY) || '{"step":0,"data":{}}');
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+function renderTabs(){
+  const t = document.getElementById('step-tabs');
+  t.innerHTML = STEPS.map((s,i) => {
+    let cls = '';
+    if (i === state.step) cls = 'active';
+    else if (i < state.step) cls = 'done';
+    return '<div class="step-tab ' + cls + '">' + (i+1) + '. ' + s.title + '</div>';
+  }).join('');
+}
+function next(){ if (state.step < STEPS.length-1) state.step++; save(); render(); }
+function back(){ if (state.step > 0) state.step--; save(); render(); }
+function render(){
+  renderTabs();
+  const p = document.getElementById('panel');
+  const s = STEPS[state.step];
+  p.innerHTML = '<h2>' + (state.step+1) + '. ' + s.title + '</h2><p class="lead">' + s.lead + '</p><div id="body"></div>';
+  const body = document.getElementById('body');
+
+  if (s.id === 'identity') {
+    body.innerHTML = '<label>Your name</label><input id="i-name" value="' + (state.data.name||'') + '"><label>Tenant email (domain matters)</label><input id="i-email" value="' + (state.data.email||'') + '" placeholder="you@yourcompany.com"><label>Company name</label><input id="i-company" value="' + (state.data.company||'') + '">';
+  } else if (s.id === 'vertical') {
+    body.innerHTML = '<label>Pick your primary vertical</label><select id="i-vertical"><option>Pick...</option><option' + (state.data.vertical==='healthcare'?' selected':'') + '>healthcare</option><option' + (state.data.vertical==='legal'?' selected':'') + '>legal</option><option' + (state.data.vertical==='finance'?' selected':'') + '>finance</option><option' + (state.data.vertical==='education'?' selected':'') + '>education</option><option' + (state.data.vertical==='manufacturing'?' selected':'') + '>manufacturing</option><option' + (state.data.vertical==='general'?' selected':'') + '>general SMB</option></select><label>Approx team size</label><select id="i-size"><option>Pick...</option><option>1-10</option><option>11-50</option><option>51-250</option><option>250+</option></select>';
+  } else if (s.id === 'm365') {
+    body.innerHTML = '<p style="color:#aaa;font-size:14px;margin-bottom:14px">If you connect M365 Graph, ARIA can look up users / licenses / groups / device compliance (READ-ONLY). Any privileged action (password reset etc.) requires per-action approval from you via email link.</p><label class="check-row"><input type="checkbox" id="i-m365-yes" ' + (state.data.m365_consent?'checked':'') + '> Yes — I will set up the Azure app registration and provide M365_TENANT_ID + M365_CLIENT_ID + M365_CLIENT_SECRET</label><label class="check-row"><input type="checkbox" id="i-m365-no" ' + (state.data.m365_skip?'checked':'') + '> Skip for now — ARIA works without it</label>';
+  } else if (s.id === 'kb') {
+    body.innerHTML = '<label>Paste 1-3 of your existing IT runbook entries (optional)</label><textarea id="i-kb" style="min-height:160px" placeholder="e.g. \"For password reset, our process is...\" — ARIA will learn your terminology">' + (state.data.kb_content||'') + '</textarea><p style="color:#888;font-size:12px;margin-top:8px">You can upload more later at /enterprise/upload-kb.html</p>';
+  } else if (s.id === 'pilot') {
+    body.innerHTML = '<label>Top 3 IT issues your team hits most often</label><input id="i-pilot1" value="' + (state.data.pilot1||'') + '" placeholder="e.g. Outlook crashes on launch"><input id="i-pilot2" value="' + (state.data.pilot2||'') + '" placeholder="e.g. VPN disconnects" style="margin-top:8px"><input id="i-pilot3" value="' + (state.data.pilot3||'') + '" placeholder="e.g. Multi-user QB freeze" style="margin-top:8px">';
+  }
+
+  const acts = document.createElement('div');
+  acts.className = 'actions';
+  acts.innerHTML = (state.step > 0 ? '<button class="btn btn-ghost" id="back">Back</button>' : '<span></span>') +
+    '<button class="btn btn-primary" id="next">' + (state.step === STEPS.length-1 ? 'Submit' : 'Next →') + '</button>';
+  p.appendChild(acts);
+
+  document.getElementById('next').onclick = function(){
+    saveCurrent();
+    if (state.step === STEPS.length-1) submit();
+    else next();
+  };
+  if (state.step > 0) document.getElementById('back').onclick = back;
+}
+
+function saveCurrent(){
+  const s = STEPS[state.step];
+  const get = id => document.getElementById(id)?.value || '';
+  const chk = id => document.getElementById(id)?.checked || false;
+  if (s.id === 'identity') { state.data.name = get('i-name'); state.data.email = get('i-email'); state.data.company = get('i-company'); }
+  else if (s.id === 'vertical') { state.data.vertical = get('i-vertical'); state.data.size = get('i-size'); }
+  else if (s.id === 'm365') { state.data.m365_consent = chk('i-m365-yes'); state.data.m365_skip = chk('i-m365-no'); }
+  else if (s.id === 'kb') { state.data.kb_content = get('i-kb'); }
+  else if (s.id === 'pilot') { state.data.pilot1 = get('i-pilot1'); state.data.pilot2 = get('i-pilot2'); state.data.pilot3 = get('i-pilot3'); }
+  save();
+}
+
+async function submit(){
+  // POST consolidated state to aria-lead-capture w/ a TENANT_ONBOARDING prefix
+  try {
+    const msg = 'TENANT ONBOARDING COMPLETE.\n\n' + Object.entries(state.data).map(([k,v]) => k+': '+v).join('\n');
+    await fetch('/.netlify/functions/aria-lead-capture', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: state.data.name, email: state.data.email, company: state.data.company,
+        message: msg, source: 'tenant-onboarding', last_intent: 'tenant_setup_complete'
+      })
+    });
+    document.getElementById('panel').innerHTML = '<h2 style="color:#22c55e">All set ✓</h2><p class="lead">Your tenant setup is recorded. Ahmad will personally email you within 4 hours with: M365 app registration walk-through (if you opted in), KB ingestion confirmation, and your week-1 check-in schedule.</p><p style="margin-top:18px"><a href="/aria" style="color:#c5a059">Go to ARIA →</a></p>';
+  } catch(e) {
+    document.getElementById('panel').innerHTML = '<h2 style="color:#f87171">Could not submit</h2><p>Email ahmad.wasee@iisupp.net directly with your details.</p>';
+  }
+}
+
+render();
+</script>
+</body>
+</html>
