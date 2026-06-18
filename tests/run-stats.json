@@ -39,7 +39,7 @@
   "apps_covered": 200,
   "personas_covered": 8,
   "os_contexts": 10,
-  "last_round": 13,
+  "last_round": 14,
   "last_round_at": "2026-06-18T05:31:32Z",
   "round_6": {
     "shipped": [
@@ -116,6 +116,22 @@
         "cat_8_localization": "58 -> 75",
         "cat_20_live_remote": "55 -> 72",
         "cat_22_vertical_kb": "50 -> 62"
+      }
+    }
+  },
+  "round_14": {
+    "cowork": {
+      "shipped": [
+        "knowledge-base/vertical-finance/ (15 entries \u2014 QB/Xero/Sage/ADP, SOX/PCI/CRA L2)",
+        "netlify/functions/aria-cross-device-sync.js (Cat 21 \u2014 HMAC-token authed, last-200 merge, dedupe)",
+        "netlify/functions/aria-white-label.js (Cat 19 \u2014 tenant theming GET css|json, admin-set, blob persist)",
+        "soc2-readiness.html (Cat 24 \u2014 AICPA Common Criteria self-assessment, localStorage, export JSON)"
+      ],
+      "categories_lifted": {
+        "cat_19_embedded": "80% -> ~88%",
+        "cat_21_kg_memory": "72% -> ~85%",
+        "cat_22_vertical_kb": "62% -> ~72% (finance added)",
+        "cat_24_compliance": "88% -> ~94%"
       }
     }
   }

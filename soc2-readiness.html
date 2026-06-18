@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SOC 2 Readiness Self-Assessment — IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#e8e8e8;line-height:1.6;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:880px;margin:0 auto}
+  .crown{font-size:12px;letter-spacing:.18em;color:#d4af37;text-transform:uppercase;margin-bottom:8px}
+  h1{font-size:32px;margin-bottom:8px;color:#fff}
+  .sub{color:#888;font-size:14px;margin-bottom:24px}
+  h2{font-size:18px;color:#d4af37;margin:32px 0 14px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
+  .score-tile{background:#0f0f0f;border:1px solid #2a2a2a;border-radius:12px;padding:24px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+  .score-tile .num{font-size:48px;font-weight:700;background:linear-gradient(135deg,#d4af37,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:ui-monospace,monospace;line-height:1}
+  .score-tile .lbl{color:#888;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;margin-top:4px}
+  .bar{height:4px;background:#1a1a1a;border-radius:2px;overflow:hidden;flex:1;min-width:200px}
+  .bar-fill{height:100%;background:linear-gradient(90deg,#d4af37,#f1dca7);width:0;transition:width 0.4s}
+  .principle{background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:14px}
+  .principle h3{color:#fff;font-size:16px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .principle .pct{font-size:14px;color:#d4af37;font-family:ui-monospace,monospace}
+  .principle .desc{color:#aaa;font-size:13px;margin-bottom:14px}
+  .control{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer;color:#ddd;font-size:13.5px;line-height:1.5}
+  .control input{margin-top:3px;accent-color:#d4af37;flex-shrink:0}
+  .control .ev{display:block;color:#777;font-size:11px;font-style:italic;margin-top:2px}
+  .actions{display:flex;gap:10px;margin-top:24px;justify-content:center;flex-wrap:wrap}
+  .btn{padding:11px 22px;border-radius:8px;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;font-family:ui-monospace,monospace;cursor:pointer;font-weight:600;text-decoration:none;display:inline-block}
+  .btn-primary{background:linear-gradient(135deg,#d4af37,#f1dca7);color:#050505;border:none}
+  .btn-ghost{background:transparent;color:#aaa;border:1px solid #2a2a2a}
+  .btn-ghost:hover{background:#1a1a1a;color:#fff}
+  .footer-nav{text-align:center;margin-top:32px;border-top:1px solid #2a2a2a;padding-top:18px;color:#666;font-size:13px}
+  a{color:#d4af37}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">Compliance · SOC 2 Type I/II</div>
+  <h1>SOC 2 Readiness Self-Assessment</h1>
+  <p class="sub">Track your readiness against the AICPA Trust Services Criteria. Progress saved in your browser. Export when you are ready to engage an auditor.</p>
+
+  <div class="score-tile">
+    <div>
+      <div class="num" id="overallScore">0%</div>
+      <div class="lbl">Overall readiness</div>
+    </div>
+    <div class="bar"><div class="bar-fill" id="overallBar"></div></div>
+  </div>
+
+  <h2>Common Criteria (CC) — All organizations</h2>
+
+  <div class="principle" data-principle="cc">
+    <h3>CC1 — Control Environment <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Org has integrity, ethical values, and oversight from top.</div>
+    <label class="control"><input type="checkbox" data-key="cc1-1"><div>Written code of conduct exists <span class="ev">Evidence: signed copy on file for all staff</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc1-2"><div>Board / advisor oversight defined <span class="ev">Evidence: org chart + meeting minutes</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc1-3"><div>Background checks on hires with privileged access <span class="ev">Evidence: HR policy + completed checks</span></div></label>
+  </div>
+
+  <div class="principle" data-principle="cc">
+    <h3>CC2 — Communication &amp; Information <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Information is identified, captured, and communicated.</div>
+    <label class="control"><input type="checkbox" data-key="cc2-1"><div>Privacy policy published <span class="ev">Already done at /privacy</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc2-2"><div>Incident notification process documented <span class="ev">Who-tells-whom on incident</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc2-3"><div>Customer-facing security commitments published <span class="ev">/security/disclosure already covers this</span></div></label>
+  </div>
+
+  <div class="principle" data-principle="cc">
+    <h3>CC3 — Risk Assessment <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Org identifies and assesses risks to achievement of objectives.</div>
+    <label class="control"><input type="checkbox" data-key="cc3-1"><div>Annual risk assessment performed <span class="ev">Document risks + mitigations</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc3-2"><div>Fraud risk assessment done <span class="ev">Especially for finance touchpoints</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc3-3"><div>Significant change risk reviewed <span class="ev">Before every major release / vendor change</span></div></label>
+  </div>
+
+  <div class="principle" data-principle="cc">
+    <h3>CC4 — Monitoring Activities <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Org evaluates whether internal control is functioning.</div>
+    <label class="control"><input type="checkbox" data-key="cc4-1"><div>Quarterly access review <span class="ev">Who has admin / privileged access</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc4-2"><div>Vulnerability scans run monthly <span class="ev">Scan reports archived</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc4-3"><div>Penetration test annually <span class="ev">3rd-party report on file</span></div></label>
+  </div>
+
+  <div class="principle" data-principle="cc">
+    <h3>CC5 — Control Activities <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Org has policies + procedures, and segregation of duties.</div>
+    <label class="control"><input type="checkbox" data-key="cc5-1"><div>Change management process documented <span class="ev">Code review, approval, rollback plan</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc5-2"><div>Segregation of duties enforced <span class="ev">Same person cannot code + deploy + approve</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc5-3"><div>Vendor management policy in place <span class="ev">/compliance/policies/vendor-management.md exists</span></div></label>
+  </div>
+
+  <div class="principle" data-principle="cc">
+    <h3>CC6 — Logical &amp; Physical Access <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Access to systems/data is restricted.</div>
+    <label class="control"><input type="checkbox" data-key="cc6-1"><div>MFA on all admin accounts <span class="ev">Entra ID admin MFA enforced</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc6-2"><div>Password complexity + rotation policy <span class="ev">/compliance/policies/password.md exists</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc6-3"><div>Encryption at rest + in transit <span class="ev">TLS 1.2+ enforced everywhere</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc6-4"><div>Provisioning + deprovisioning checklist <span class="ev">Onboard/offboard documented</span></div></label>
+  </div>
+
+  <div class="principle" data-principle="cc">
+    <h3>CC7 — System Operations <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Org detects + responds to security events.</div>
+    <label class="control"><input type="checkbox" data-key="cc7-1"><div>SIEM / log aggregation in place <span class="ev">Centralized log review</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc7-2"><div>Incident response plan documented <span class="ev">Roles + escalation tree</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc7-3"><div>Backup + recovery tested annually <span class="ev">Documented test result on file</span></div></label>
+  </div>
+
+  <div class="principle" data-principle="cc">
+    <h3>CC8 — Change Management <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Org authorizes + tests changes before production.</div>
+    <label class="control"><input type="checkbox" data-key="cc8-1"><div>Production changes go through code review <span class="ev">GitHub PR approval</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc8-2"><div>Staging environment used pre-prod <span class="ev">No untested prod pushes</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc8-3"><div>Rollback plan documented per change <span class="ev">In runbook / change ticket</span></div></label>
+  </div>
+
+  <div class="principle" data-principle="cc">
+    <h3>CC9 — Risk Mitigation <span class="pct" data-pct>0%</span></h3>
+    <div class="desc">Org identifies, selects, and develops risk mitigations.</div>
+    <label class="control"><input type="checkbox" data-key="cc9-1"><div>Vendor risk reviewed before signing <span class="ev">Security questionnaire on file</span></div></label>
+    <label class="control"><input type="checkbox" data-key="cc9-2"><div>Business continuity plan exists <span class="ev">/compliance/policies/business-continuity.md exists</span></div></label>
+  </div>
+
+  <h2>Optional: trust service categories you want covered</h2>
+  <div class="principle">
+    <h3>Availability <span class="pct" data-pct>0%</span></h3>
+    <label class="control"><input type="checkbox" data-key="av-1"><div>Uptime monitored + reported <span class="ev">/status page already live</span></div></label>
+    <label class="control"><input type="checkbox" data-key="av-2"><div>SLA published <span class="ev">99.9% or as committed</span></div></label>
+  </div>
+  <div class="principle">
+    <h3>Confidentiality <span class="pct" data-pct>0%</span></h3>
+    <label class="control"><input type="checkbox" data-key="conf-1"><div>Data classification policy <span class="ev">Public / internal / confidential / restricted</span></div></label>
+    <label class="control"><input type="checkbox" data-key="conf-2"><div>Encryption at rest for sensitive data <span class="ev">AES-256 typically</span></div></label>
+  </div>
+  <div class="principle">
+    <h3>Privacy <span class="pct" data-pct>0%</span></h3>
+    <label class="control"><input type="checkbox" data-key="priv-1"><div>Data inventory + retention schedule <span class="ev">What data, where, how long</span></div></label>
+    <label class="control"><input type="checkbox" data-key="priv-2"><div>Self-serve data export + deletion <span class="ev">/aria-data-export already live</span></div></label>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="exportBtn">Export progress (JSON)</button>
+    <a class="btn btn-ghost" href="/security/disclosure">View security policy</a>
+    <a class="btn btn-ghost" href="/compliance/automated-decisions">AI governance</a>
+  </div>
+
+  <div class="footer-nav">
+    <p>This is a self-assessment, not a SOC 2 report. An independent CPA firm must perform the actual audit.</p>
+    <p style="margin-top:8px;font-size:11px;color:#444">Cat 24 — Compliance · SOC 2 readiness v0.1 · 2026-06-18</p>
+  </div>
+</div>
+
+<script>
+  var KEY = 'iis_soc2_readiness_v1';
+  var state = JSON.parse(localStorage.getItem(KEY) || '{}');
+
+  function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+  function update() {
+    var allBoxes = document.querySelectorAll('input[type=checkbox]');
+    var allDone = 0;
+    allBoxes.forEach(function(b){
+      if (state[b.dataset.key]) { b.checked = true; allDone++; }
+    });
+    var pct = Math.round(allDone / allBoxes.length * 100);
+    document.getElementById('overallScore').textContent = pct + '%';
+    document.getElementById('overallBar').style.width = pct + '%';
+
+    document.querySelectorAll('.principle').forEach(function(p){
+      var boxes = p.querySelectorAll('input[type=checkbox]');
+      var done = 0;
+      boxes.forEach(function(b){ if (state[b.dataset.key]) done++; });
+      var pPct = boxes.length ? Math.round(done / boxes.length * 100) : 0;
+      var pctEl = p.querySelector('[data-pct]');
+      if (pctEl) pctEl.textContent = pPct + '%';
+    });
+  }
+
+  document.querySelectorAll('input[type=checkbox]').forEach(function(b){
+    b.addEventListener('change', function(){ state[b.dataset.key] = b.checked; save(); update(); });
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', function(){
+    var data = { exported_at: new Date().toISOString(), state: state };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'iis-soc2-readiness-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+  });
+
+  update();
+</script>
+</body>
+</html>
