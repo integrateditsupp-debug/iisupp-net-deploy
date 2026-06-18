@@ -39,7 +39,7 @@
   "apps_covered": 200,
   "personas_covered": 8,
   "os_contexts": 10,
-  "last_round": 7,
+  "last_round": 8,
   "last_round_at": "2026-06-18T05:31:32Z",
   "round_6": {
     "shipped": [
@@ -70,6 +70,21 @@
       "cat_14_marketing": "35% -> ~62%",
       "cat_17_partner": "30% -> ~50%",
       "cat_20_screenshare": "30% -> ~55%"
+    }
+  },
+  "round_8": {
+    "shipped": [
+      "assets/aria-session-memory-client.js (Cat 21 client wrapper + welcome-back banner)",
+      "netlify/functions/aria-tenant-audit.js (Cat 12 per-tenant audit + policy)",
+      "compliance/automated-decisions.html (Cat 24 GDPR Art.22 + PIPEDA fairness notice)",
+      "senior-director-state/loop-engineer/ROUND_VELOCITY_PLAYBOOK.md (process propagation)",
+      "Memory playbook_round_velocity.md (cross-session playbook)"
+    ],
+    "categories_lifted": {
+      "cat_12_enterprise_multi_tenant": "? -> ~55%",
+      "cat_21_kg_memory": "50% -> ~72%",
+      "cat_24_compliance": "75% -> ~88%",
+      "process_velocity": "documented + propagated to all agents"
     }
   }
 }

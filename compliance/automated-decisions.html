@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Automated Decision-Making & AI Notice — IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="How Integrated IT Support Inc. (IIS) uses automated decision-making and AI (ARIA), your rights, and how to opt out.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#e8e8e8;line-height:1.65;padding:48px 20px}
+  .wrap{max-width:780px;margin:0 auto}
+  .crown{font-size:12px;letter-spacing:.18em;color:#d4af37;text-transform:uppercase;margin-bottom:8px}
+  h1{font-size:32px;margin-bottom:8px;color:#fff}
+  .sub{color:#888;font-size:14px;margin-bottom:32px}
+  h2{font-size:20px;color:#d4af37;margin:32px 0 12px;font-weight:600}
+  h3{font-size:16px;color:#fff;margin:20px 0 8px}
+  p,li{font-size:15px;color:#ccc;margin-bottom:10px}
+  ul{padding-left:22px;margin-bottom:14px}
+  .box{background:#141414;border:1px solid #2a2a2a;border-radius:10px;padding:20px;margin:18px 0}
+  .box.gold{border-color:#d4af37}
+  code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:13px;color:#d4af37}
+  a{color:#d4af37}
+  .updated{color:#666;font-size:13px;margin-top:48px;border-top:1px solid #2a2a2a;padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">Compliance · GDPR Art. 22 · PIPEDA Fairness</div>
+  <h1>Automated Decision-Making &amp; AI Notice</h1>
+  <p class="sub">How IIS uses AI to make decisions about your support requests, and your rights regarding those decisions.</p>
+
+  <h2>1. What this notice covers</h2>
+  <p>Integrated IT Support Inc. ("IIS", "we") operates ARIA — an AI-powered IT support assistant. ARIA uses automated reasoning to classify your support requests, suggest solutions, route to human technicians, and (in some cases) take read-only actions in your Microsoft 365 or Google Workspace tenant.</p>
+
+  <h2>2. What decisions ARIA makes automatically</h2>
+  <div class="box">
+    <h3>Classification</h3>
+    <p>ARIA categorizes your issue (e.g., "password reset", "VPN", "Outlook crash") to suggest the right fix path. This is a low-stakes decision — wrong classification just means we ask a clarifying question.</p>
+    <h3>Solution suggestion</h3>
+    <p>ARIA suggests fixes from our knowledge base. You always choose whether to apply them. No automated change to your account or files.</p>
+    <h3>Read-only Microsoft Graph lookups</h3>
+    <p>If your organization has connected its M365 tenant to ARIA, ARIA may look up your user record, license, group memberships, or device compliance — read-only, never modifying.</p>
+    <h3>Escalation routing</h3>
+    <p>ARIA decides whether to handle an issue itself or escalate to a human technician.</p>
+  </div>
+
+  <h2>3. What ARIA does NOT do automatically</h2>
+  <div class="box gold">
+    <p><strong>ARIA does NOT take any privileged action without explicit human approval.</strong> The following always require either you (the user) or your administrator to approve:</p>
+    <ul>
+      <li>Password resets</li>
+      <li>Microsoft 365 / Google Workspace license assignment or removal</li>
+      <li>Group membership changes</li>
+      <li>Device wipes or disablement</li>
+      <li>User account enable / disable</li>
+      <li>Adding entries to your tenant knowledge base</li>
+      <li>Sending notifications to other users in your tenant</li>
+    </ul>
+    <p>For all the above, ARIA sends an approval request and waits. No action fires automatically. See our <a href="/.netlify/functions/aria-write-gate">write-gate function</a> for the technical implementation.</p>
+  </div>
+
+  <h2>4. Your rights under GDPR Article 22</h2>
+  <p>If you are in the EU or UK, GDPR Article 22 gives you the right not to be subject to a decision based solely on automated processing that produces legal or similarly significant effects. Because ARIA does not make such decisions (all consequential actions require human approval), Article 22 is largely not triggered. Where it could apply, you have the right to:</p>
+  <ul>
+    <li>Request human review of any automated decision</li>
+    <li>Express your point of view</li>
+    <li>Contest the decision</li>
+  </ul>
+  <p>To exercise these rights, email <a href="mailto:privacy@iisupp.net">privacy@iisupp.net</a>.</p>
+
+  <h2>5. Your rights under PIPEDA (Canada)</h2>
+  <p>Canada's Personal Information Protection and Electronic Documents Act (PIPEDA) Principle 9 gives you the right to:</p>
+  <ul>
+    <li>Access your personal information held by IIS</li>
+    <li>Challenge its accuracy</li>
+    <li>Request correction</li>
+  </ul>
+  <p>Use our self-serve <a href="/aria-data-export.html">Data Export &amp; Deletion</a> page, or email <a href="mailto:privacy@iisupp.net">privacy@iisupp.net</a>.</p>
+
+  <h2>6. How to opt out of AI processing</h2>
+  <p>If you prefer to interact only with a human technician, reply "human please" in ARIA chat, or email <a href="mailto:support@iisupp.net">support@iisupp.net</a>. A live technician will pick up your case. You will not be penalized for opting out.</p>
+
+  <h2>7. What models we use</h2>
+  <p>ARIA is built on Anthropic's Claude family of language models, accessed via the Anthropic API. We do not train models on your data. Anthropic's <a href="https://www.anthropic.com/legal/commercial-terms" target="_blank">commercial terms</a> apply to data sent to their API.</p>
+
+  <h2>8. Confidence and uncertainty</h2>
+  <p>ARIA flags its own confidence on every reply. If confidence is low, you will see a chip like "Low confidence" with a disclaimer suggesting human review. We instrument this to keep ARIA honest about what it does not know.</p>
+
+  <h2>9. Audit logging</h2>
+  <p>For tenants with our enterprise plans, every action ARIA takes (or proposes) is logged in a per-tenant audit log. Your administrator can review it via the <a href="/.netlify/functions/aria-tenant-audit">tenant audit</a> endpoint or the upcoming admin console.</p>
+
+  <h2>10. Contact</h2>
+  <p>Privacy Officer: <a href="mailto:privacy@iisupp.net">privacy@iisupp.net</a></p>
+  <p>General support: <a href="mailto:support@iisupp.net">support@iisupp.net</a></p>
+  <p>Postal mail: Integrated IT Support Inc. · Ontario, Canada</p>
+
+  <div class="updated">Last updated: 2026-06-18 · Version 1.0 · Cat 24 compliance</div>
+  <p style="margin-top:16px"><a href="/">Home</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/ai-governance">AI Governance</a></p>
+</div>
+</body>
+</html>
