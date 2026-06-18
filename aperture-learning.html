@@ -144,17 +144,55 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .ops-feed-item .s{font-family:var(--mono);font-size:9.5px;color:var(--txt-3);margin-top:3px}
 .ops-feed-item .tm{font-family:var(--mono);font-size:9.5px;color:var(--txt-3)}
 .ops-viewport{position:relative;min-height:420px;border-radius:10px;overflow:hidden;border:1px solid rgba(34,225,255,.22);background:#030814;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 28px 90px -50px rgba(34,225,255,.55)}
-.ops-viewport img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.08) contrast(1.05)}
-.ops-viewport::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,8,16,.04),rgba(3,8,16,.22)),radial-gradient(closest-side at 50% 58%,rgba(34,225,255,.14),transparent 58%);pointer-events:none}
-.agent-pin{position:absolute;z-index:2;padding:4px 8px;border-radius:6px;background:rgba(3,8,16,.74);border:1px solid rgba(34,225,255,.4);font-family:var(--mono);font-size:10px;color:#dff8ff;box-shadow:0 0 14px rgba(34,225,255,.18);white-space:nowrap}
-.pin-1{left:12%;top:23%}.pin-2{left:37%;top:24%}.pin-3{right:18%;top:25%}.pin-4{left:17%;bottom:30%}.pin-5{left:45%;bottom:24%}.pin-6{right:16%;bottom:28%}
-.core-pulse{position:absolute;z-index:2;left:50%;top:55%;transform:translate(-50%,-50%);width:82px;height:82px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(34,225,255,.42);background:rgba(3,8,16,.54);font-family:var(--mono);font-size:12px;color:var(--accent);box-shadow:0 0 0 10px rgba(34,225,255,.04),0 0 42px rgba(34,225,255,.35);animation:breathe 2.4s var(--ease) infinite}
+.ops-viewport::after{content:"";position:absolute;inset:0;background:radial-gradient(closest-side at 50% 58%,rgba(34,225,255,.14),transparent 58%),linear-gradient(180deg,rgba(3,8,16,.04),rgba(3,8,16,.22));pointer-events:none}
+.office-scene{position:absolute;inset:0;z-index:1;background:
+  linear-gradient(180deg,rgba(6,13,25,.9),rgba(2,6,14,.98)),
+  radial-gradient(circle at 50% 15%,rgba(34,225,255,.13),transparent 28%);overflow:hidden}
+.office-scene::before{content:"";position:absolute;left:-8%;right:-8%;top:8%;height:54%;background:
+  repeating-linear-gradient(90deg,rgba(34,225,255,.12) 0 1px,transparent 1px 58px),
+  linear-gradient(180deg,rgba(9,20,38,.94),rgba(5,12,24,.4));transform:perspective(760px) rotateX(58deg);transform-origin:50% 100%;border-top:1px solid rgba(34,225,255,.18);border-bottom:1px solid rgba(34,225,255,.08);opacity:.78}
+.office-scene::after{content:"";position:absolute;left:-15%;right:-15%;bottom:-22%;height:56%;background:
+  linear-gradient(90deg,rgba(34,225,255,.08) 1px,transparent 1px),
+  linear-gradient(0deg,rgba(34,225,255,.07) 1px,transparent 1px),
+  radial-gradient(ellipse at 50% 0%,rgba(34,225,255,.16),transparent 58%);background-size:48px 48px,48px 48px,100% 100%;transform:perspective(640px) rotateX(64deg);transform-origin:50% 0%;opacity:.86}
+.office-horizon{position:absolute;inset:0 0 auto;height:46%;background:linear-gradient(180deg,rgba(0,0,0,.28),transparent 72%);border-bottom:1px solid rgba(34,225,255,.08)}
+.office-board{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:min(42%,360px);padding:10px 14px;border:1px solid rgba(34,225,255,.2);border-radius:10px;background:rgba(2,7,15,.62);box-shadow:0 0 28px rgba(34,225,255,.12);text-align:center}
+.office-board .brandline{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+.office-board .subline{font-family:var(--mono);font-size:9px;color:var(--txt-3);letter-spacing:.12em;text-transform:uppercase;margin-top:5px}
+.office-core{position:absolute;z-index:4;left:50%;top:55%;transform:translate(-50%,-50%);width:96px;height:96px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(34,225,255,.42);background:rgba(3,8,16,.56);font-family:var(--mono);font-size:12px;color:var(--accent);box-shadow:0 0 0 12px rgba(34,225,255,.04),0 0 46px rgba(34,225,255,.35);animation:breathe 2.4s var(--ease) infinite}
+.office-core span{display:block;text-align:center}.office-core small{display:block;color:var(--txt-3);font-size:8px;letter-spacing:.16em;text-transform:uppercase;margin-top:3px}
+.office-agents{position:absolute;inset:0;z-index:3}
+.office-agent{position:absolute;width:154px;min-height:108px;transform:translate(-50%,-50%);filter:drop-shadow(0 18px 22px rgba(0,0,0,.42))}
+.oa-research{left:20%;top:29%}.oa-security{left:41%;top:31%}.oa-report{left:71%;top:31%}.oa-support{left:20%;top:66%}.oa-data{left:47%;top:68%}.oa-code{left:76%;top:65%}
+.agent-desk{position:absolute;left:8px;right:8px;bottom:0;height:48px;border:1px solid rgba(34,225,255,.17);border-radius:8px;background:linear-gradient(180deg,rgba(20,41,65,.9),rgba(5,13,26,.96));box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.agent-screen{position:absolute;right:13px;bottom:34px;width:58px;height:36px;border:1px solid rgba(34,225,255,.35);border-radius:5px;background:linear-gradient(135deg,rgba(18,59,92,.95),rgba(6,15,30,.98));box-shadow:0 0 16px rgba(34,225,255,.12);overflow:hidden}
+.agent-screen::before{content:"";position:absolute;inset:8px 6px;background:repeating-linear-gradient(0deg,rgba(34,225,255,.72) 0 1px,transparent 1px 6px);opacity:.5}
+.agent-person{position:absolute;left:28px;bottom:34px;width:56px;height:64px}
+.agent-head{position:absolute;left:15px;top:5px;width:25px;height:27px;border-radius:45% 45% 50% 50%;background:linear-gradient(145deg,#b88d66,#6f4c39);box-shadow:inset -4px -4px 6px rgba(0,0,0,.2)}
+.agent-head::before{content:"";position:absolute;left:-3px;top:-4px;width:31px;height:14px;border-radius:14px 14px 7px 7px;background:linear-gradient(145deg,#182335,#070b13)}
+.agent-head::after{content:"";position:absolute;left:6px;top:11px;width:3px;height:3px;border-radius:50%;background:#06111a;box-shadow:9px 0 0 #06111a}
+.agent-body{position:absolute;left:8px;top:34px;width:42px;height:28px;border-radius:13px 13px 5px 5px;background:linear-gradient(145deg,#182437,#0a101b);border:1px solid rgba(34,225,255,.12)}
+.agent-arm{position:absolute;left:42px;top:40px;width:28px;height:7px;border-radius:999px;background:linear-gradient(90deg,#73513f,#b88d66);transform-origin:0 50%;animation:typingArm 1.1s ease-in-out infinite}
+.agent-status{position:absolute;left:0;right:0;top:0;border:1px solid rgba(34,225,255,.22);border-radius:9px;background:rgba(2,7,15,.78);backdrop-filter:blur(8px);padding:6px 8px;transform:translateY(-16px)}
+.agent-status .name{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:#e7fbff;font-weight:600;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.agent-status .name i{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);flex:0 0 auto}
+.agent-status .doing{font-size:10px;color:var(--txt-2);line-height:1.35;margin-top:4px;min-height:26px}
+.agent-status .talk{font-family:var(--mono);font-size:8.5px;color:var(--accent);letter-spacing:.06em;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.agent-time{position:absolute;left:12px;bottom:8px;font-family:var(--mono);font-size:9px;color:var(--gold, var(--warn));letter-spacing:.08em}
+.agent-pulse{position:absolute;left:50%;top:50%;width:12px;height:12px;border-radius:50%;border:1px solid rgba(34,225,255,.5);transform:translate(-50%,-50%);animation:agentPing 2.2s ease-out infinite;opacity:.7}
+.office-caption{position:absolute;left:16px;right:16px;bottom:14px;z-index:5;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid rgba(34,225,255,.18);border-radius:10px;background:rgba(2,7,15,.78);backdrop-filter:blur(10px);padding:10px 12px}
+.office-caption .live{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.office-caption .line{font-size:12px;color:var(--txt);line-height:1.45;margin-top:2px}
+.office-caption .time{font-family:var(--mono);font-size:11px;color:var(--txt-2);font-variant-numeric:tabular-nums}
+@keyframes typingArm{0%,100%{transform:rotate(8deg)}50%{transform:rotate(-7deg)}}
+@keyframes agentPing{0%{width:4px;height:4px;opacity:.65}100%{width:46px;height:46px;opacity:0}}
 .ops-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
 .dock-tile{border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.025);padding:11px 12px}
 .dock-tile .v{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--txt);font-variant-numeric:tabular-nums}
 .dock-tile .k{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3);margin-top:4px}
-@media(max-width:1180px){.ops-layout{grid-template-columns:1fr}.ops-rail{min-height:auto}.ops-viewport{min-height:390px}.ops-dock{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:620px){.ops-head{align-items:flex-start;flex-direction:column}.ops-status{justify-content:flex-start}.ops-viewport{min-height:300px}.agent-pin{display:none}.core-pulse{width:68px;height:68px}.ops-dock{grid-template-columns:1fr}}
+@media(max-width:1180px){.ops-layout{grid-template-columns:1fr}.ops-rail{min-height:auto}.ops-viewport{min-height:430px}.ops-dock{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.office-agent{width:136px}.oa-research{left:28%;top:31%}.oa-security{left:70%;top:33%}.oa-report{display:none}.oa-support{left:28%;top:65%}.oa-data{left:70%;top:66%}.oa-code{display:none}.office-board{width:72%;top:14px}.office-core{width:78px;height:78px}.office-caption{grid-template-columns:1fr}.office-caption .time{display:none}}
+@media(max-width:620px){.ops-head{align-items:flex-start;flex-direction:column}.ops-status{justify-content:flex-start}.ops-viewport{min-height:360px}.office-agent{width:124px}.agent-status .doing{display:none}.agent-screen{width:48px}.agent-person{transform:scale(.88);transform-origin:bottom left}.ops-dock{grid-template-columns:1fr}}
 
 /* lists */
 .rows{display:flex;flex-direction:column}
@@ -262,15 +300,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   }
   #app.reference-command .ops-head,
   #app.reference-command .ops-rail,
-  #app.reference-command .ops-dock,
-  #app.reference-command .agent-pin,
-  #app.reference-command .core-pulse{display:none}
+  #app.reference-command .ops-dock{display:none}
   #app.reference-command .ops-layout{display:block;width:100%;height:100dvh}
   #app.reference-command .ops-viewport{
     width:100%;height:100dvh;min-height:0;border:0;border-radius:0;background:#02070f;box-shadow:none;
   }
-  #app.reference-command .ops-viewport img{object-fit:contain;background:#02070f;filter:none}
   #app.reference-command .ops-viewport::after{display:none}
+  #app.reference-command .office-scene{inset:0}
   #app.reference-command .command-exit{display:block}
   #app.reference-command > .mesh-wrap,
   #app.reference-command > .grid,
@@ -440,15 +476,23 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
           <div class="ops-feed-item crit"><span class="light"></span><div><div class="t">High priority ticket</div><div class="s">Human verification queued</div></div><span class="tm">7m</span></div>
         </div>
       </aside>
-      <div class="ops-viewport" aria-label="ARIA AI operations command center">
-        <img src="/assets/aria-command-center-concept.png" alt="ARIA AI operations command center with autonomous agents at work" loading="eager">
-        <span class="agent-pin pin-1">Research Agent #1</span>
-        <span class="agent-pin pin-2">Security Agent</span>
-        <span class="agent-pin pin-3">Report Agent</span>
-        <span class="agent-pin pin-4">Support Agent</span>
-        <span class="agent-pin pin-5">Data Analyst</span>
-        <span class="agent-pin pin-6">Code Auditor</span>
-        <div class="core-pulse">ARIA</div>
+      <div class="ops-viewport" aria-label="ARIA live agent operations office">
+        <div class="office-scene" id="agent-office">
+          <div class="office-horizon"></div>
+          <div class="office-board">
+            <div class="brandline">ARIA AGENT OFFICE</div>
+            <div class="subline" id="office-shift">live shift loading</div>
+          </div>
+          <div class="office-agents" id="office-agents" aria-live="polite"></div>
+          <div class="office-core"><span>ARIA<small>router</small></span></div>
+          <div class="office-caption">
+            <div>
+              <div class="live">live work moment</div>
+              <div class="line" id="office-caption-line">Agents are joining the shift and loading current work.</div>
+            </div>
+            <div class="time" id="office-caption-time">00:00</div>
+          </div>
+        </div>
       </div>
       <aside class="ops-rail">
         <h3>History board</h3>
@@ -597,6 +641,27 @@ const KIND_META = {
   nudge:{label:'Operator nudge', dot:'low'},
   msg:{label:'Agent message', dot:'low'}
 };
+const OFFICE_AGENTS = [
+  { id:'R1', name:'Research Agent #1', role:'Research', cls:'oa-research', base:'checking live scenario gaps', talks:'Research Pool', seed:2 },
+  { id:'security', name:'Security Agent', role:'Security', cls:'oa-security', base:'reviewing risk signals', talks:'Human Review', seed:7 },
+  { id:'report', name:'Report Agent', role:'Reporting', cls:'oa-report', base:'building operator summary', talks:'Ahmad', seed:11 },
+  { id:'l1', name:'Support Agent', role:'L1 Support', cls:'oa-support', base:'walking a user through first checks', talks:'User', seed:17 },
+  { id:'audit', name:'Data Analyst', role:'Analytics', cls:'oa-data', base:'clustering repeated tickets', talks:'ARIA Router', seed:23 },
+  { id:'ai_eng', name:'Code Auditor', role:'Code QA', cls:'oa-code', base:'checking a patch before promote', talks:'Claude Code', seed:31 }
+];
+const OFFICE_ACTIONS = [
+  'checking Outlook crash patterns',
+  'summarizing a Microsoft 365 ticket',
+  'preparing human handoff notes',
+  'comparing KB answer quality',
+  'reviewing a security escalation',
+  'indexing a newly resolved issue',
+  'routing a user to safe first steps',
+  'waiting on Ahmad approval gate'
+];
+let OFFICE_STATE = [];
+let OFFICE_TIMER = null;
+let OFFICE_CAPTION_INDEX = 0;
 
 if (TOKEN) showApp();
 
@@ -633,6 +698,8 @@ function authHeaders(extra){
 function showApp(){
   $('login').style.display='none'; $('app').style.display='block';
   tickClock(); setInterval(tickClock,1000);
+  renderAgentOffice([], [], {}, [], [], {});
+  if (!OFFICE_TIMER) OFFICE_TIMER = setInterval(renderOfficeTimers,1000);
   loadAll(); POLL=setInterval(loadAll,4000);
 }
 function tickClock(){
@@ -669,6 +736,7 @@ async function loadAll(){
     renderHealth(tickets);
     renderDirector(director, dR);
     renderMeshActivity(mesh.events||[], status.agents, mesh.stats);
+    renderAgentOffice(mesh.events||[], status.agents, mesh.stats, msgs, tickets, status);
   } catch(e){ ok=false; }
   setConn(ok);
 }
@@ -843,6 +911,88 @@ function renderMeshActivity(events, roster, stats){
 }
 
 /* ── render: tickets ─────────────────────────────────────────────── */
+/* ---- render: live office scene ------------------------------------------- */
+function renderAgentOffice(events, roster, stats, msgs, tickets, status){
+  const host = $('office-agents');
+  if (!host) return;
+  const now = Date.now();
+  const eventByAgent = {};
+  (events||[]).forEach(e=>{
+    if (!e || !e.agentId) return;
+    const ts = typeof e.ts === 'string' ? new Date(e.ts).getTime() : Number(e.ts || 0);
+    if (!eventByAgent[e.agentId] || ts > eventByAgent[e.agentId]._ts) eventByAgent[e.agentId] = Object.assign({}, e, {_ts:ts});
+  });
+  const msgByAgent = {};
+  (msgs||[]).forEach(m=>{
+    if (!m) return;
+    const from = m.from || m.agent || m.a;
+    if (!from) return;
+    const ts = typeof (m.ts||m.timestamp) === 'string' ? new Date(m.ts||m.timestamp).getTime() : Number(m.ts||m.timestamp||0);
+    if (!msgByAgent[from] || ts > msgByAgent[from]._ts) msgByAgent[from] = Object.assign({}, m, {_ts:ts});
+  });
+  const openTickets = (tickets||[]).filter(t=>t && t.status !== 'resolved' && t.status !== 'closed');
+  OFFICE_STATE = OFFICE_AGENTS.map((agent, i)=>{
+    const event = eventByAgent[agent.id] || eventByAgent[agent.name] || eventByAgent[agent.role];
+    const msg = msgByAgent[agent.id] || msgByAgent[agent.name] || msgByAgent[agent.role];
+    const drift = ((now / 1000 + agent.seed * 17) % 96);
+    const startedAt = event && event._ts ? event._ts : now - ((8 + agent.seed + Math.floor(drift)) * 1000);
+    const ticket = openTickets[(i + Math.floor(now / 15000)) % Math.max(1, openTickets.length)];
+    let doing = agent.base;
+    if (event && event.kind) doing = String(event.kind).replace(/[-_]/g,' ') + (event.success === false ? ' - retrying safely' : '');
+    else if (msg && msg.text) doing = String(msg.text).slice(0, 74);
+    else if (ticket && (agent.id === 'l1' || agent.id === 'security')) doing = 'triaging ' + String(ticket.issue || ticket.summary || ticket.id || 'open ticket').slice(0, 54);
+    else doing = OFFICE_ACTIONS[(i + Math.floor(now / 9000)) % OFFICE_ACTIONS.length];
+    const talks = msg && msg.to ? label(msg.to) : (event && event.to ? label(event.to) : agent.talks);
+    const active = (event && event._ts && now - event._ts < 180000) || (msg && msg._ts && now - msg._ts < 180000) || drift < 72;
+    return {
+      id:agent.id,
+      name:agent.name,
+      role:agent.role,
+      cls:agent.cls,
+      doing,
+      talks,
+      active,
+      startedAt,
+      count:(stats && stats.agentCounts && (stats.agentCounts[agent.id] || stats.agentCounts[agent.name])) || 0
+    };
+  });
+  host.innerHTML = OFFICE_STATE.map(agent=>renderOfficeAgent(agent)).join('');
+  renderOfficeTimers();
+}
+
+function renderOfficeAgent(agent){
+  return '<div class="office-agent '+esc(agent.cls)+'" data-office-agent="'+esc(agent.id)+'">'
+    + '<div class="agent-status"><div class="name"><i style="background:'+ (agent.active ? 'var(--ok)' : 'var(--txt-3)') +'"></i><span>'+esc(agent.name)+'</span></div>'
+    + '<div class="doing">'+esc(agent.doing)+'</div><div class="talk">talking to '+esc(agent.talks||'ARIA Router')+'</div></div>'
+    + '<div class="agent-pulse"></div><div class="agent-screen"></div><div class="agent-person"><span class="agent-head"></span><span class="agent-body"></span><span class="agent-arm"></span></div>'
+    + '<div class="agent-desk"></div><div class="agent-time" data-office-time="'+esc(agent.id)+'">00:00</div></div>';
+}
+
+function renderOfficeTimers(){
+  const now = Date.now();
+  if (!$('office-agents') || !OFFICE_STATE.length) return;
+  OFFICE_STATE.forEach(agent=>{
+    const el = document.querySelector('[data-office-time="'+agent.id.replace(/"/g,'')+'"]');
+    if (el) el.textContent = fmtDuration(Math.max(0, now - agent.startedAt));
+  });
+  const active = OFFICE_STATE.filter(a=>a.active).length;
+  const caption = OFFICE_STATE[Math.floor(now / 4000) % OFFICE_STATE.length];
+  setText('office-shift', active + ' active agents - ' + OFFICE_STATE.length + ' on shift');
+  if (caption) {
+    setText('office-caption-line', caption.name + ' is ' + caption.doing + ' while talking to ' + (caption.talks || 'ARIA Router') + '.');
+    setText('office-caption-time', fmtDuration(now - caption.startedAt));
+  }
+}
+
+function fmtDuration(ms){
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const r = s % 60;
+  if (h) return h + 'h ' + String(m).padStart(2,'0') + 'm';
+  return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0');
+}
+
 function renderTickets(t){
   const open = t.filter(x=>x && x.status!=='resolved' && x.status!=='closed');
   $('tkt-chip').textContent = open.length+' open';
@@ -955,129 +1105,4 @@ function renderHealth(t){
     const pts=HEALTH_HIST.map((v,i)=>{
       const x=(i/(HEALTH_HIST.length-1))*280;
       const y=52-(Math.max(0,Math.min(100,v))/100)*48;
-      return x.toFixed(1)+','+y.toFixed(1);
-    }).join(' ');
-    $('spark').setAttribute('points',pts);
-  }
-}
-
-/* ── actions ─────────────────────────────────────────────────────── */
-function viewTicket(id){
-  openModal('Ticket '+id, '<div class="empty">Loading…</div>');
-  fetch('/.netlify/functions/aria-escalation?action=ticket&id='+encodeURIComponent(id), { headers: authHeaders() })
-    .then(r=>r.json()).then(j=>{
-      const tk=j.ticket||j;
-      $('modal-body').innerHTML='<pre>'+esc(JSON.stringify(tk,null,2))+'</pre>';
-    }).catch(()=>{ $('modal-body').innerHTML='<div class="empty">Could not load ticket.</div>'; });
-}
-function nudge(agent, btn){
-  if(btn){ btn.disabled=true; btn.textContent='Sent'; }
-  fetch('/.netlify/functions/aria-escalation?action=chatpost',{
-    method:'POST', headers:authHeaders({'Content-Type':'application/json'}),
-    body:JSON.stringify({ kind:'nudge', from:'operator', to:agent,
-      text:'OPERATOR NUDGE — status check, please proceed or report blocker', ts:Date.now() })
-  }).then(()=>setTimeout(loadAll,600)).catch(()=>{});
-}
-function postBit(){
-  const v=val('composer-in'); if(!v) return;
-  const m=v.match(/^@(\S+)\s+(.+)/);
-  const to=m?m[1]:'all-agents', text=m?m[2]:v;
-  fetch('/.netlify/functions/aria-escalation?action=chatpost',{
-    method:'POST', headers:authHeaders({'Content-Type':'application/json'}),
-    body:JSON.stringify({ from:'operator', to, kind:'msg', text })
-  }).then(()=>{ $('composer-in').value=''; loadAll(); }).catch(()=>{});
-}
-function sendReportNow(){
-  fetch('/.netlify/functions/aperture-email-report',{
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({ to:'integrateditsupp@gmail.com', name:'Ahmad',
-      sessionId:'manual-report-'+Date.now(), summary:'Manual report triggered from ARIA Command Center.',
-      endedBy:'user', subjectOverride:'ARIA · Operations Report · '+new Date().toISOString().slice(0,10) })
-  }).catch(()=>{});
-  openModal('Report queued','<div style="color:var(--txt-2);font-size:13px;line-height:1.6">An operations report has been queued and will arrive at your registered email shortly.</div>');
-}
-function directorBrief(){
-  openModal('Senior Director brief','<div class="empty">Generating Director brief...</div>');
-  fetch('/api/senior-director-agent',{
-    method:'POST',
-    headers:authHeaders({'Content-Type':'application/json'}),
-    body:JSON.stringify({ action:'brief', notifyTelegram:false })
-  }).then(async r=>{
-    const j = await r.json().catch(()=>({}));
-    if(!r.ok || !j.digest){
-      $('modal-body').innerHTML = '<div class="empty">Director brief unavailable. Check deployment, Aperture auth, or Senior Director function.</div>';
-      return;
-    }
-    const d = j.digest;
-    const briefLeads = (d.leads?.matches || []).slice(0,5).map((m,i)=>(i+1)+'. '+(m.hot?'HOT ':'')+(m.title||'Untitled')+(m.org?' - '+m.org:'')+(m.close?' - closes '+m.close:''));
-    const briefTasks = (d.queue?.newestPending || []).slice(-5).map(t=>'- '+(t.target||'agent')+': '+((t.payload?.instruction||'').slice(0,140)));
-    const lines = [
-      'Generated: '+(d.generatedAt || 'now'),
-      '',
-      'Agents: '+(d.agents?.active ?? 0)+'/'+(d.agents?.total ?? 0)+' active',
-      'Queue: '+(d.queue?.pending ?? 0)+' pending, '+(d.queue?.failed ?? 0)+' failed in recent tasks',
-      'Lead Radar: '+(d.leads?.count ?? 0)+' matches, '+(d.leads?.hot ?? 0)+' hot, '+(d.leads?.scanned ?? 0)+' scanned',
-      '',
-      'Top leads:',
-      ...(briefLeads.length ? briefLeads : ['none']),
-      '',
-      'Pending work:',
-      ...(briefTasks.length ? briefTasks : ['none']),
-      '',
-      'Approval gates stay active: no spend, outreach, final paperwork, credentials, or irreversible commitments without Ahmad.'
-    ];
-    $('modal-body').innerHTML = '<pre>'+esc(lines.join('\n'))+'</pre>';
-  }).catch(()=>{
-    $('modal-body').innerHTML = '<div class="empty">Director brief unavailable.</div>';
-  });
-}
-function openModal(title, html){ $('modal-title').textContent=title; $('modal-body').innerHTML=html; $('modal-bg').classList.add('show'); }
-function closeModal(){ $('modal-bg').classList.remove('show'); }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
-
-/* ── helpers ─────────────────────────────────────────────────────── */
-function $(id){ return document.getElementById(id); }
-function val(id){ return ($(id).value||'').trim(); }
-function setText(id,text){ const e=$(id); if(e) e.textContent=text; }
-function num(v){ return Number(v)||0; }
-function label(k){ return AGENT_LABELS[k] || (k? String(k).replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):''); }
-function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function setKV(id,text,cls){ const e=$(id); if(!e) return; e.textContent=text; e.className='v'+(cls?' '+cls:''); }
-function fmtTime(ts){ return new Date(typeof ts==='string'?ts:Number(ts)).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}); }
-function timeAgo(ts){
-  const d=Date.now()-(typeof ts==='string'?new Date(ts).getTime():Number(ts));
-  if(d<60000) return Math.round(d/1000)+'s ago';
-  if(d<3600000) return Math.round(d/60000)+'m ago';
-  if(d<86400000) return Math.round(d/3600000)+'h ago';
-  return Math.round(d/86400000)+'d ago';
-}
-function bitHash(t){ // compact, on-brand bit-stream chip (not literal binary)
-  let h=0; for(let i=0;i<t.length;i++){ h=((h<<5)-h)+t.charCodeAt(i); h|=0; }
-  let r=h>>>0, s='';
-  for(let i=0;i<6;i++){ r=(r*1103515245+12345)>>>0; s+=('0000'+(r&0xffff).toString(16)).slice(-4)+' '; }
-  return s.trim();
-}
-const REDUCE = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-const COUNT_STATE = {};
-function countTo(id, target, suffix){
-  const e=$(id); if(!e) return;
-  suffix = suffix || '';
-  const from = COUNT_STATE[id]||0;
-  COUNT_STATE[id]=target;
-  if(REDUCE || from===target){ render(target); return; }
-  const t0=performance.now(), dur=600;
-  (function step(now){
-    const k=Math.min(1,(now-t0)/dur), e2=1-Math.pow(1-k,3);
-    render(Math.round(from+(target-from)*e2));
-    if(k<1) requestAnimationFrame(step);
-  })(t0);
-  function render(v){ e.innerHTML = v + (suffix?'<span class="unit">'+suffix+'</span>':''); }
-}
-</script>
-
-<!-- ARIA MESH SPIDER-WEB — shared component (also embedded on /aperture) -->
-<script src="/assets/aria-mesh-web.js" defer></script>
-<!-- IIS Loops Panel — live registry + ledger + observer (additive; safe to remove) -->
-<script src="/assets/loops-panel.js" defer></script>
-</body>
-</html>
+   

@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "label": "ARIA classifier autonomous improvement loop",
+  "last_run_at": "2026-06-18T03:00:00Z",
+  "last_run_iso": "2026-06-18",
+  "total_runs": 4,
+  "cumulative_scenarios": 60040,
+  "last_session_scenarios": 29072,
+  "last_pass_rate_pct": 94.5,
+  "last_pass_count": 27475,
+  "last_fail_count": 1597,
+  "cumulative_regex_swaps_applied": 46,
+  "cumulative_fixes_shipped": 46,
+  "current_corpus_size": 29072,
+  "target_corpus_size": 150000,
+  "coverage_pct_of_target": 19.4,
+  "next_run_at": "2026-06-18T13:00:00Z",
+  "scheduled_cadence": "Every 8 hours (8am / 4pm / midnight local)",
+  "milestones": {
+    "first_run": "2026-06-18 — 1,896 scenarios @ 84.5% pass",
+    "round_2": "2026-06-18 — 17 swaps → 91.6% pass",
+    "round_3": "2026-06-18 — 15 swaps → 94.8% pass",
+    "10k_expansion": "2026-06-18 — 29,072 scenarios @ 94.5% pass"
+  },
+  "intents_at_100pct": 17,
+  "intents_at_95_99pct": 12,
+  "intents_below_90pct": 4,
+  "harness_speed_scenarios_per_sec": 646044
+}
