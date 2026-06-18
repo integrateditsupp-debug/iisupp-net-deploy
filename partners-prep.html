@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Partner Center Prep — IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#e8e8e8;line-height:1.6;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:780px;margin:0 auto}
+  .crown{font-size:12px;letter-spacing:.18em;color:#d4af37;text-transform:uppercase;margin-bottom:8px}
+  h1{font-size:32px;margin-bottom:8px;color:#fff}
+  .sub{color:#888;font-size:14px;margin-bottom:32px}
+  h2{font-size:20px;color:#d4af37;margin:32px 0 14px;font-weight:600}
+  .card{background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:22px;margin-bottom:18px}
+  .card.priority{border-color:#d4af37;background:#1a1606}
+  .card.done{opacity:0.5}
+  .card h3{color:#fff;font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  .card h3 .badge{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 8px;border-radius:4px;font-weight:600}
+  .badge.free{background:#16a34a;color:#fff}
+  .badge.paid{background:#d4af37;color:#050505}
+  .badge.gate{background:#dc2626;color:#fff}
+  .card p{color:#ccc;font-size:14px;margin-bottom:8px}
+  .card .meta{color:#666;font-size:12px;margin-top:8px;font-family:ui-monospace,monospace}
+  .check{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer;color:#ddd;font-size:14px}
+  .check input{margin-top:3px;accent-color:#d4af37;flex-shrink:0}
+  .progress-tile{background:#0f0f0f;border:1px solid #2a2a2a;border-radius:10px;padding:16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+  .progress-tile .pct{font-size:32px;font-weight:700;background:linear-gradient(135deg,#d4af37,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:monospace}
+  .bar{height:4px;background:#1a1a1a;border-radius:2px;overflow:hidden;width:60%}
+  .bar-fill{height:100%;background:linear-gradient(90deg,#d4af37,#f1dca7);width:0;transition:width 0.4s}
+  a{color:#d4af37}
+  code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:12px;color:#d4af37}
+  .footer-nav{text-align:center;margin-top:48px;border-top:1px solid #2a2a2a;padding-top:18px;color:#666;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">Partner Network · Prerequisites</div>
+  <h1>Partner Center Prep</h1>
+  <p class="sub">Self-tracked checklist for Microsoft Cloud Partner + AWS Partner Network applications. Tick as you complete; progress persists in this browser.</p>
+
+  <div class="progress-tile">
+    <div>
+      <strong style="color:#fff">Overall progress</strong>
+      <div class="bar" style="margin-top:6px"><div class="bar-fill" id="barFill"></div></div>
+    </div>
+    <div class="pct" id="pctText">0%</div>
+  </div>
+
+  <h2>Foundation (do these first — free or near-free)</h2>
+
+  <div class="card priority">
+    <h3>D-U-N-S Number <span class="badge free">FREE</span></h3>
+    <p>Required for both Microsoft Cloud Partner Program and AWS Partner Network. Issued by Dun &amp; Bradstreet. Processing: ~30 days.</p>
+    <label class="check"><input type="checkbox" data-key="duns-applied"> Applied at <a href="https://www.dnb.com/duns-number/get-a-duns.html" target="_blank">dnb.com/duns-number/get-a-duns</a></label>
+    <label class="check"><input type="checkbox" data-key="duns-received"> D-U-N-S number received (record below)</label>
+    <input type="text" placeholder="D-U-N-S: ___________" data-store="duns-number" style="width:220px;padding:8px 12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:6px;color:#fff;margin-top:6px;font-family:monospace">
+    <div class="meta">Why: most partner programs auto-verify your business with this. Without it = manual review queue = weeks added.</div>
+  </div>
+
+  <div class="card">
+    <h3>Verify CRA business number on record <span class="badge free">FREE</span></h3>
+    <p>Make sure your IIS CRA Business Number (BN) is current. Partner verifications cross-check against CRA records.</p>
+    <label class="check"><input type="checkbox" data-key="bn-verified"> BN confirmed active</label>
+  </div>
+
+  <div class="card">
+    <h3>Microsoft Partner Center account <span class="badge free">FREE</span></h3>
+    <p>Create the master Microsoft account that owns your partner relationship. Use a business email, NOT personal Gmail.</p>
+    <label class="check"><input type="checkbox" data-key="ms-account"> Account created at <a href="https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/welcome/azureappconsulting" target="_blank">partner.microsoft.com</a></label>
+    <label class="check"><input type="checkbox" data-key="ms-mpn"> MPN ID assigned</label>
+    <input type="text" placeholder="MPN ID: ___________" data-store="mpn-id" style="width:220px;padding:8px 12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:6px;color:#fff;margin-top:6px;font-family:monospace">
+  </div>
+
+  <div class="card">
+    <h3>AWS account + Partner Central <span class="badge free">FREE</span></h3>
+    <p>Root AWS account with payment method on file (required even for free tier). Register at AWS Partner Central.</p>
+    <label class="check"><input type="checkbox" data-key="aws-account"> AWS account exists w/ payment on file</label>
+    <label class="check"><input type="checkbox" data-key="aws-partner-reg"> APN registered at <a href="https://aws.amazon.com/partners/registration/" target="_blank">aws.amazon.com/partners/registration</a></label>
+  </div>
+
+  <h2>Identity proof (low spend — Ahmad approve)</h2>
+
+  <div class="card">
+    <h3>Microsoft MS-900 certification <span class="badge paid">$165 USD</span></h3>
+    <p>Microsoft 365 Fundamentals exam. Optional but boosts Solutions Partner self-assessment score significantly.</p>
+    <label class="check"><input type="checkbox" data-key="ms-900-approved"> Spend approved by Ahmad</label>
+    <label class="check"><input type="checkbox" data-key="ms-900-scheduled"> Exam scheduled</label>
+    <label class="check"><input type="checkbox" data-key="ms-900-passed"> Passed</label>
+    <div class="meta">Prep: <a href="https://learn.microsoft.com/en-us/credentials/certifications/exams/ms-900/" target="_blank">Free Microsoft Learn path</a>. Study: 8–12 hours.</div>
+  </div>
+
+  <div class="card">
+    <h3>AWS Cloud Practitioner (CLF-C02) <span class="badge paid">$100 USD</span></h3>
+    <p>AWS foundational cert. Required-by-some-AWS-programs entry-level proof of platform familiarity.</p>
+    <label class="check"><input type="checkbox" data-key="aws-clf-approved"> Spend approved by Ahmad</label>
+    <label class="check"><input type="checkbox" data-key="aws-clf-passed"> Passed</label>
+  </div>
+
+  <h2>Submission (gated until foundation done)</h2>
+
+  <div class="card">
+    <h3>Microsoft Cloud Partner enrollment <span class="badge gate">GATE</span></h3>
+    <p>Submit the actual partner application. Draft in <code>/outputs/ms-cloud-partner-application-draft-2026-06-18.md</code>.</p>
+    <label class="check"><input type="checkbox" data-key="ms-app-reviewed"> Draft reviewed end-to-end by Ahmad</label>
+    <label class="check"><input type="checkbox" data-key="ms-app-submitted"> Submitted</label>
+    <input type="date" data-store="ms-app-submit-date" style="padding:8px 12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:6px;color:#fff;margin-top:6px;font-family:monospace">
+  </div>
+
+  <div class="card">
+    <h3>AWS Partner Network enrollment <span class="badge gate">GATE</span></h3>
+    <p>Submit the actual partner application. Draft in <code>/outputs/aws-partner-application-draft-2026-06-18.md</code>.</p>
+    <label class="check"><input type="checkbox" data-key="aws-app-reviewed"> Draft reviewed end-to-end by Ahmad</label>
+    <label class="check"><input type="checkbox" data-key="aws-app-submitted"> Submitted</label>
+    <input type="date" data-store="aws-app-submit-date" style="padding:8px 12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:6px;color:#fff;margin-top:6px;font-family:monospace">
+  </div>
+
+  <h2>Post-acceptance (after approval)</h2>
+
+  <div class="card">
+    <h3>Solutions Partner self-assessment</h3>
+    <p>Map current state to Solutions Partner designations (Modern Work, Security, Infrastructure). Reveals exact gap.</p>
+    <label class="check"><input type="checkbox" data-key="sp-assessment"> Self-assessment complete</label>
+  </div>
+
+  <div class="card">
+    <h3>AWS Foundational Technical Review (FTR)</h3>
+    <p>Required for AWS Marketplace SaaS listing. We submit ARIA's architecture for AWS technical review.</p>
+    <label class="check"><input type="checkbox" data-key="aws-ftr-submitted"> FTR submitted</label>
+    <label class="check"><input type="checkbox" data-key="aws-ftr-passed"> FTR passed</label>
+  </div>
+
+  <div class="footer-nav">
+    <p>Progress persists in your browser. <a href="/">Home</a> · <a href="/admin-console.html">Admin Console</a></p>
+    <p style="margin-top:8px;font-size:11px;color:#444">Cat 17 — Partner ecosystem · v0.1 · 2026-06-18</p>
+  </div>
+</div>
+
+<script>
+  var KEY = 'iis_partner_prep_v1';
+  var state = JSON.parse(localStorage.getItem(KEY) || '{}');
+  function save() { localStorage.setItem(KEY, JSON.stringify(state)); updatePct(); }
+  function updatePct() {
+    var boxes = document.querySelectorAll('input[type=checkbox]');
+    var done = 0; var total = boxes.length;
+    boxes.forEach(function(b){ if (state[b.dataset.key]) { b.checked = true; b.closest('.card').classList.add('done'); done++; } else { b.closest('.card').classList.remove('done'); } });
+    var pct = Math.round(done / total * 100);
+    document.getElementById('pctText').textContent = pct + '%';
+    document.getElementById('barFill').style.width = pct + '%';
+  }
+  document.querySelectorAll('input[type=checkbox]').forEach(function(b){
+    b.addEventListener('change', function(){ state[b.dataset.key] = b.checked; save(); });
+  });
+  document.querySelectorAll('input[data-store]').forEach(function(i){
+    if (state[i.dataset.store]) i.value = state[i.dataset.store];
+    i.addEventListener('input', function(){ state[i.dataset.store] = i.value; localStorage.setItem(KEY, JSON.stringify(state)); });
+  });
+  updatePct();
+</script>
+</body>
+</html>

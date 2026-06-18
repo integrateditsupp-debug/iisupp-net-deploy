@@ -39,7 +39,7 @@
   "apps_covered": 200,
   "personas_covered": 8,
   "os_contexts": 10,
-  "last_round": 11,
+  "last_round": 9,
   "last_round_at": "2026-06-18T05:31:32Z",
   "round_6": {
     "shipped": [
@@ -102,83 +102,4 @@
         "cat_13_failure_modes": "55% -> ~75%"
       }
     },
-    "codex": {
-      "cowork": {
-        "shipped": [
-          "netlify/functions/_circuit-breaker.js (Cat 13)",
-          "netlify/functions/aria-analytics-dashboard.js (Cat 10)",
-          "netlify/functions/_prompt-injection-guard.js (Cat 9)",
-          "admin-console.html (Cat 12)"
-        ],
-        "categories_lifted": {
-          "cat_9_edge_cases": "70% -> ~80%",
-          "cat_10_reporting": "55% -> ~75%",
-          "cat_12_multi_tenant": "55% -> ~72% (with admin console)",
-          "cat_13_failure_modes": "55% -> ~75%"
-        }
-      },
-      "codex": {
-        "shipped": [
-          "knowledge-base/vertical-healthcare/ (24 HIPAA-aware healthcare KB entries, Cat 22)",
-          "sdk/python/ (sync + async httpx SDK, Cat 18)",
-          "netlify/functions/aria-teams-bot.js + aria-teams-tab-token.js + aria-teams-install.js (Cat 6)",
-          "netlify/functions/aria-slack-events.js + aria-slack-interactive.js (Cat 19)"
-        ],
-        "categories_lifted": {
-          "cat_22_vertical_kb_packs": "25% -> ~50%",
-          "cat_18_devex_sdk": "55% -> ~75%",
-          "cat_6_integrations": "52% -> ~75%",
-          "cat_19_embedded_white_label": "60% -> ~80%"
-        },
-        "guardrails": [
-          "Did not touch Claude-owned Cat 9/10/12/13 files",
-          "Did not edit existing public frontend pages",
-          "No patient PII, external submit, cost, account creation, or legal commitment"
-        ],
-        "required_env": [
-          "SLACK_SIGNING_SECRET",
-          "SLACK_BOT_TOKEN",
-          "APERTURE_JWT_SECRET",
-          "TEAMS_BOT_APP_ID or MICROSOFT_APP_ID",
-          "TEAMS_BOT_APP_PASSWORD or MICROSOFT_APP_PASSWORD"
-        ],
-        "weighted_average_note": "~74% -> ~80% when combined with cowork Round 9 lanes"
-      }
-    }
-  },
-  "round_10": {
-    "cowork": {
-      "shipped": [
-        "aria-billing-portal.js (Cat 5)",
-        "aria-uptime-probe.mjs (Cat 7)",
-        "aria-engagement-cron.mjs (Cat 2+15)",
-        ".well-known/security.txt + security/disclosure.html (Cat 4)"
-      ],
-      "categories_lifted": {
-        "cat_2_saas_lifecycle": "72% -> ~82%",
-        "cat_4_trust_safety": "88% -> ~94%",
-        "cat_5_account_mgmt": "70% -> ~82%",
-        "cat_7_performance": "70% -> ~85%",
-        "cat_15_lifecycle_onboarding": "65% -> ~80%"
-      }
-    }
-  },
-  "round_11": {
-    "cowork": {
-      "shipped": [
-        "IT Health Check button (homepage hero)",
-        "IT Health Check popup modal (assets/health-check-modal.js)",
-        "knowledge-base/tier3-hybrid/ (5 L3 entries - AAD Connect, SAML, Exchange, PKI)",
-        "aria-coupon.js (Cat 16)",
-        "_conversation-context.js (Cat 3)",
-        "sitemap.xml + robots.txt update (Cat 14)"
-      ],
-      "categories_lifted": {
-        "cat_1_end_user_support": "78% -> ~84%",
-        "cat_3_ai_chat": "80% -> ~88%",
-        "cat_14_marketing_seo": "62% -> ~75%",
-        "cat_16_pricing": "70% -> ~82%"
-      }
-    }
-  }
-}
+    
