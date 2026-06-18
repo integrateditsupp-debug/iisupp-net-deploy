@@ -182,7 +182,8 @@
     scroll-behavior:smooth;
     min-width:0;
   }
-  .browser-body{padding-bottom:120px}
+  .browser-frame:not(.active-chat) .browser-body{padding-bottom:220px}
+  .browser-frame.active-chat .browser-body{padding-bottom:14px}
   #chatMessages{max-width:100%;min-width:0;overflow-x:hidden}
   .browser-body::-webkit-scrollbar{width:7px}
   .browser-body::-webkit-scrollbar-thumb{background:rgba(180,140,70,.2);border-radius:8px}
@@ -1596,11 +1597,11 @@
   .ap-layer-pct{text-align:right;color:var(--ap-text-2);font-weight:600}
   /* relocated chat input dock (was under "Tap to speak") */
   .chat-dock{
-    position:absolute;left:50%;top:auto;bottom:12px;z-index:25;
+    position:absolute;left:50%;top:50%;bottom:auto;z-index:25;
     width:min(100% - 48px, 640px);
-    transform:translateX(-50%);
+    transform:translate(-50%,-50%);
     display:flex;flex-direction:column;gap:8px;
-    transition:bottom .28s ease,transform .28s ease,width .2s ease;
+    transition:top .28s ease,bottom .28s ease,transform .28s ease,width .2s ease;
   }
   .browser-frame.active-chat .chat-dock{
     top:auto;bottom:12px;
@@ -4999,6 +5000,7 @@ async function submitAsk(text){
     ? state.lastIntent
     : null;
   if (!v) return;
+  activateChatDock();  // drop dock to bottom on first real send
   // BUG FIX 6: cap input length, strip pure-punctuation submissions
   if (v.length > 800) v = v.slice(0, 800) + '…';
   if (/^[\s!?.,;:'"`~@#$%^&*()_+\-={}\[\]|\\\/<>]+$/.test(v)){
