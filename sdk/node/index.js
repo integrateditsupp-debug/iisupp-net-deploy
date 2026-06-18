@@ -42,6 +42,7 @@ class ARIA {
 
   captureLead(p)         { return this._post('aria-lead-capture', p); }
   requestHandoff(p)      { return this._post('aria-warm-handoff', p); }
+  requestScreenShare(p)  { return this._post('aria-screenshare-request', p); }
   exportMyData(p)        { return this._post('aria-data-export', p); }
   deleteMyAccount(p)     { return this._post('aria-account-delete', p); }
   changePlan(p)          { return this._post('aria-plan-change', p); }

@@ -2,6 +2,7 @@ declare class ARIA {
   constructor(opts?: { base?: string; timeoutMs?: number });
   captureLead(p: { name: string; email: string; company?: string; phone?: string; message?: string; source?: string; last_intent?: string }): Promise<any>;
   requestHandoff(p: { email: string; name?: string; chat_summary?: string; last_intent?: string; urgency?: 'normal' | 'urgent' }): Promise<any>;
+  requestScreenShare(p: { email: string; name?: string; urgency?: 'normal' | 'urgent'; context?: string; room_pref?: string }): Promise<any>;
   exportMyData(p: { email: string }): Promise<any>;
   deleteMyAccount(p: { email: string; confirm: 'DELETE-MY-DATA' }): Promise<any>;
   changePlan(p: { email: string; new_tier: 'personal' | 'pro' | 'small_business' | 'mid_size' | 'enterprise' }): Promise<any>;

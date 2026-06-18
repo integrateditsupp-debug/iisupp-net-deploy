@@ -22,6 +22,14 @@ await client.captureLead({
   message: 'Looking for managed IT support'
 });
 
+// Escalate into a human-approved screen-share request
+await client.requestScreenShare({
+  email: 'jane@acme.com',
+  name: 'Jane Doe',
+  urgency: 'normal',
+  context: 'Need help with Outlook and screen walkthrough'
+});
+
 // Get live MRR snapshot
 const stats = await client.mrr();
 console.log('Current MRR:', stats.mrr_usd);

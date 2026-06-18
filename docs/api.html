@@ -36,6 +36,7 @@ header.top a{color:rgba(255,255,255,.55)}
   <a href="#embed">Embeddable widget</a>
   <a href="#lead-capture">Lead capture</a>
   <a href="#handoff">Live-agent handoff</a>
+  <a href="#screenshare">Screen share</a>
   <a href="#data-export">Data export</a>
   <a href="#account-delete">Account delete</a>
   <a href="#plan-change">Plan change</a>
@@ -75,6 +76,15 @@ header.top a{color:rgba(255,255,255,.55)}
   "chat_summary": "USER: ... ARIA: ... USER: ...",
   "last_intent": "kb:windows", "urgency": "normal" }</pre>
 <p>Pages Ahmad with full chat context. Returns <code>{ ok: true, message: 'Ahmad is being paged now.' }</code>.</p>
+</div>
+
+<h2 id="screenshare">Screen-Share Request</h2>
+<div class="card">
+<p><span class="method POST">POST</span><code>/.netlify/functions/aria-screenshare-request</code></p>
+<pre>{ "email": "user@co.com", "name": "Jane Doe",
+  "urgency": "normal",
+  "context": "Need a live walkthrough for Outlook profile repair" }</pre>
+<p>Requests a human-approved screen-share session. Tenant gets a confirmation first; Ahmad gets the room details and decides whether to forward the live link. No auto-join and no recording implied.</p>
 </div>
 
 <h2 id="data-export">Data Export (PIPEDA Principle 9)</h2>
