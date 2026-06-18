@@ -6,6 +6,7 @@ const skipDirs = new Set(['.git', 'node_modules', 'backups', 'archive', 'artifac
 const missingRefs = [];
 const invalidJsonLd = [];
 const sitemapIssues = [];
+const securityTxtIssues = [];
 
 function walk(dir, files = []) {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -89,6 +90,11 @@ function localFileExists(route) {
     fs.existsSync(path.join(target, 'index.html'));
 }
 
+function routeExists(route, redirects, functionRoutes) {
+  const clean = normalizeRoute(route);
+  return redirects.ok.has(clean) || functionRoutes.has(clean) || localFileExists(route);
+}
+
 function refIsExternal(ref) {
   return /^(https?:|mailto:|tel:|javascript:|data:|blob:|about:)/i.test(ref);
 }
@@ -145,6 +151,38 @@ function checkSitemap(redirects, functionRoutes, robots) {
   }
 }
 
+function checkSecurityTxt(redirects, functionRoutes) {
+  const file = path.join(root, '.well-known', 'security.txt');
+  const text = read(file);
+  if (!text) return;
+  for (const line of text.split(/\r?\n/)) {
+    const match = line.match(/^(Contact|Canonical|Policy|Acknowledgments|Hiring|Encryption):\s*(\S+)/);
+    if (!match) continue;
+    const field = match[1];
+    const value = match[2];
+    if (value.startsWith('mailto:')) continue;
+    let url;
+    try {
+      url = new URL(value);
+    } catch {
+      securityTxtIssues.push({ field, value, issue: 'invalid URL' });
+      continue;
+    }
+    if (url.hostname !== 'iisupp.net') continue;
+    const route = normalizeRoute(url.pathname);
+    if (!routeExists(route, redirects, functionRoutes)) {
+      securityTxtIssues.push({ field, route, issue: 'no static file, redirect, or function route found' });
+      continue;
+    }
+    if (field === 'Encryption') {
+      const keyText = read(path.join(root, route.replace(/^\//, '')));
+      if (!keyText.includes('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
+        securityTxtIssues.push({ field, route, issue: 'encryption URL is not an armored PGP public key' });
+      }
+    }
+  }
+}
+
 const htmlFiles = walk(root);
 const redirects = parseRedirects();
 const functionRoutes = parseFunctionRoutes();
@@ -153,6 +191,7 @@ const robots = parseRobots();
 checkHtmlRefs(htmlFiles, redirects, functionRoutes);
 checkJsonLd(htmlFiles);
 checkSitemap(redirects, functionRoutes, robots);
+checkSecurityTxt(redirects, functionRoutes);
 
 const report = {
   scannedHtmlFiles: htmlFiles.length,
@@ -160,11 +199,12 @@ const report = {
   functionRoutes: functionRoutes.size,
   missingRefs,
   invalidJsonLd,
-  sitemapIssues
+  sitemapIssues,
+  securityTxtIssues
 };
 
 console.log(JSON.stringify(report, null, 2));
 
-if (missingRefs.length || invalidJsonLd.length || sitemapIssues.length) {
+if (missingRefs.length || invalidJsonLd.length || sitemapIssues.length || securityTxtIssues.length) {
   process.exitCode = 1;
 }
