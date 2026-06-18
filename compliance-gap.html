@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Compliance Gap Quiz — IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="90-second compliance gap analysis tailored to your vertical (HIPAA, privilege, SOX, PCI). Free, no signup to see your score.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050505;color:#e8e8e8;line-height:1.55;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:680px;margin:0 auto}
+  .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h1{font-size:36px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em;line-height:1.1}
+  h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  p.sub{color:rgba(255,255,255,.6);font-size:15px;margin-bottom:32px}
+  .panel{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:30px}
+  .q-num{color:#c5a059;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+  .q-text{color:#fff;font-size:20px;font-weight:600;margin-bottom:18px;line-height:1.35}
+  .bar{height:3px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;margin-bottom:20px}
+  .bar-fill{height:100%;background:linear-gradient(90deg,#c5a059,#f1dca7);transition:width .4s cubic-bezier(.16,1,.3,1)}
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opt{padding:13px 16px;background:#141414;border:1px solid #2a2a2a;border-radius:10px;cursor:pointer;color:#ddd;text-align:left;font-size:14.5px;line-height:1.4;transition:all .15s;font-family:inherit;display:flex;gap:11px;align-items:center}
+  .opt:hover{border-color:#c5a059;background:#1a1606}
+  .pip{width:10px;height:10px;border:1.5px solid rgba(197,160,89,.55);border-radius:50%;flex-shrink:0}
+  .result-score{font-size:60px;font-weight:700;background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:ui-monospace,monospace;line-height:1;text-align:center}
+  .result-tier{color:#c5a059;font-size:14px;letter-spacing:.14em;text-transform:uppercase;text-align:center;margin:6px 0 18px;font-weight:600}
+  .gap{background:rgba(248,113,113,.06);border-left:3px solid #f87171;padding:14px 18px;margin:10px 0;border-radius:0 8px 8px 0;font-size:14px;color:#ddd}
+  .gap b{color:#fff;display:block;margin-bottom:3px}
+  .gap small{color:rgba(255,255,255,.5);font-size:12px;display:block;margin-top:4px}
+  .cta-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+  .btn{padding:12px 22px;border-radius:8px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;text-decoration:none;font-family:ui-monospace,monospace;cursor:pointer;border:none;font-family:ui-monospace,monospace}
+  .btn-primary{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505}
+  .btn-ghost{background:transparent;color:#c5a059;border:1px solid rgba(197,160,89,.45)}
+  .nav{text-align:center;margin-top:32px;color:rgba(255,255,255,.4);font-size:12.5px}
+  .nav a{color:rgba(255,255,255,.6);margin:0 8px;text-decoration:none}
+  .nav a:hover{color:#c5a059}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">90 seconds · Free · No signup</div>
+  <h1>Where is your <span class="gold">compliance gap?</span></h1>
+  <p class="sub">Pick your vertical. Answer 4 quick questions. See where you are most exposed and what to fix first.</p>
+
+  <div id="panel" class="panel"></div>
+
+  <div class="nav">
+    <a href="/">Home</a> · <a href="/health-check">IT Health Check</a> · <a href="/scorecard">AI Readiness</a> · <a href="/cost-calculator">Cost Calculator</a>
+  </div>
+</div>
+
+<script>
+var QUESTIONS = {
+  healthcare: [
+    { id:'baa', q:'Do you have a signed BAA with every vendor that touches patient data?', opts:[
+      {t:'Yes — all current', v:0, gap:null},
+      {t:'Most, not all', v:1, gap:{t:'Gap in vendor BAA coverage', d:'Even one un-BAA vendor is a HIPAA/PHIPA violation. Cloud storage, transcription tools, AI tools — common gaps.'}},
+      {t:'No / not sure', v:3, gap:{t:'No BAA program in place', d:'This is the #1 audit finding for SMB healthcare. Start with your most-recent vendor list.'}}
+    ]},
+    { id:'mfa', q:'Is MFA enforced on EMR + email for ALL staff?', opts:[
+      {t:'Yes — all staff', v:0, gap:null},
+      {t:'Clinical staff only', v:1, gap:{t:'Admin staff often the weakest link', d:'Reception and billing staff handle just as much patient data. Bring them in.'}},
+      {t:'Some users opted out', v:2, gap:{t:'MFA opt-outs are audit findings', d:'No legitimate clinical reason for an opt-out. Pull access reports + close gaps.'}},
+      {t:'No', v:3, gap:{t:'No MFA on patient-data systems', d:'Single largest preventable breach risk. Free to enforce via Entra ID conditional access.'}}
+    ]},
+    { id:'epi', q:'Where is your EMR data backed up, and have you tested restore in the last 90 days?', opts:[
+      {t:'Off-site + tested', v:0, gap:null},
+      {t:'Backed up, never tested', v:2, gap:{t:'Untested backups fail when needed', d:'~40% of first-time restore tests fail. Schedule one this month.'}},
+      {t:'Cloud sync only', v:2, gap:{t:'Sync is not backup', d:'Ransomware encrypts your sync. You need versioned, immutable backups.'}},
+      {t:'Not sure / none', v:3, gap:{t:'No recoverable backup', d:'Single biggest patient-safety + business-continuity risk. Fix this month.'}}
+    ]},
+    { id:'training', q:'When was your last HIPAA / privacy training across all staff?', opts:[
+      {t:'Within last 12 mo', v:0, gap:null},
+      {t:'1-2 years ago', v:1, gap:{t:'Stale training is audit-flag', d:'Annual is the minimum. Most breach lawsuits cite training gaps.'}},
+      {t:'Never / not sure', v:3, gap:{t:'No documented training program', d:'Training records are pulled in every audit. Build a simple log this quarter.'}}
+    ]}
+  ],
+  legal: [
+    { id:'shared', q:'Are your shared drives + matter folders scoped per-matter (not org-wide)?', opts:[
+      {t:'Yes — strict per-matter access', v:0, gap:null},
+      {t:'Mostly, some legacy folders open', v:2, gap:{t:'Stale open folders = privilege risk', d:'A paralegal seeing a matter they should not is a Law Society complaint. Audit legacy folders.'}},
+      {t:'Everyone sees everything', v:3, gap:{t:'No matter scoping', d:'Single biggest privilege exposure in a small firm. Start with active high-stakes matters.'}}
+    ]},
+    { id:'cloud', q:'Where is your cloud data stored — US or Canada?', opts:[
+      {t:'Canada (Canadian region)', v:0, gap:null},
+      {t:'US (multi-tenant)', v:1, gap:{t:'Jurisdiction-of-data question', d:'Cross-border storage is allowed but disclose to clients. Some clients require Canadian-only.'}},
+      {t:'Not sure', v:2, gap:{t:'Unknown data location', d:'Pull your M365 / Google admin data residency setting today.'}}
+    ]},
+    { id:'conflict', q:'Do you run conflict checks BEFORE matter intake (not after)?', opts:[
+      {t:'Yes — always before', v:0, gap:null},
+      {t:'After intake', v:2, gap:{t:'Late conflict checks = risk', d:'You may have already accepted retainer + privileged disclosure before knowing. Process gap.'}},
+      {t:'Not formal', v:3, gap:{t:'No conflict check process', d:'This is malpractice exposure. Even a simple shared spreadsheet helps.'}}
+    ]},
+    { id:'trust', q:'Trust accounting — is the software reconciled monthly with bank?', opts:[
+      {t:'Yes — monthly', v:0, gap:null},
+      {t:'Quarterly', v:1, gap:{t:'Quarterly reconcile is risky', d:'Most Law Society rules require monthly. Convert to monthly cadence.'}},
+      {t:'Sporadic', v:3, gap:{t:'Trust accounting drift', d:'Trust mismatches are regulator-reportable in many jurisdictions. Reconcile this month + every month after.'}}
+    ]}
+  ],
+  finance: [
+    { id:'soc', q:'Do you have written SOX-style change-management for your accounting systems?', opts:[
+      {t:'Yes — documented', v:0, gap:null},
+      {t:'Informal / verbal', v:2, gap:{t:'Informal = audit finding', d:'For SOX-touching changes, auditors want written evidence. Document next quarter.'}},
+      {t:'No', v:3, gap:{t:'No change management', d:'High audit-finding risk + fraud risk. Start with vendor change requests.'}}
+    ]},
+    { id:'pci', q:'Does cardholder data ever land in email, screenshots, or support tickets?', opts:[
+      {t:'No — never', v:0, gap:null},
+      {t:'Sometimes', v:2, gap:{t:'Cardholder data leak path', d:'Each instance is potentially a PCI violation. Train staff + scan email retention.'}},
+      {t:'Not sure', v:3, gap:{t:'No PCI hygiene check', d:'Run a search for credit card patterns in your shared inboxes this week.'}}
+    ]},
+    { id:'audit', q:'Can you produce access logs for your accounting system on auditor request?', opts:[
+      {t:'Yes — within 1 day', v:0, gap:null},
+      {t:'Within 1 week', v:1, gap:{t:'Audit-response gap', d:'A week is tolerable but tight. Pre-build the export script.'}},
+      {t:'No / not sure', v:3, gap:{t:'No audit-log retrieval path', d:'Auditor non-cooperation finding = expensive. Document the export process.'}}
+    ]},
+    { id:'segregation', q:'Same person create + approve + post journal entries?', opts:[
+      {t:'No — segregated', v:0, gap:null},
+      {t:'Same person sometimes', v:2, gap:{t:'Segregation-of-duties gap', d:'Classic SOX deficiency. Two-person rule on any entry above $X.'}},
+      {t:'Yes / single person', v:3, gap:{t:'No SOD at all', d:'Fraud vector + audit-finding. Even a 2-person review fixes 90% of risk.'}}
+    ]}
+  ]
+};
+
+var TIER_LABELS = {
+  healthcare: { '0':'HIPAA-ready', '1-3':'Minor gaps', '4-7':'Moderate exposure', '8+':'High HIPAA risk' },
+  legal: { '0':'Privilege-protected', '1-3':'Minor gaps', '4-7':'Moderate exposure', '8+':'High privilege risk' },
+  finance: { '0':'SOX-ready', '1-3':'Minor gaps', '4-7':'Moderate exposure', '8+':'High audit risk' }
+};
+
+var state = { vertical: null, idx: 0, answers: {}, gaps: [] };
+var panel = document.getElementById('panel');
+
+renderStart();
+
+function renderStart(){
+  panel.innerHTML =
+    '<div class="q-num">Step 1 of 5</div>' +
+    '<div class="q-text">What vertical are you in?</div>' +
+    '<div class="opts">' +
+      '<button class="opt" data-v="healthcare"><span class="pip"></span><span>Healthcare / clinical practice</span></button>' +
+      '<button class="opt" data-v="legal"><span class="pip"></span><span>Law firm / legal services</span></button>' +
+      '<button class="opt" data-v="finance"><span class="pip"></span><span>Accounting / finance / wealth management</span></button>' +
+    '</div>';
+  panel.querySelectorAll('.opt').forEach(function(b){
+    b.onclick = function(){ state.vertical = b.dataset.v; state.idx = 0; renderQ(); };
+  });
+}
+
+function renderQ(){
+  var qs = QUESTIONS[state.vertical];
+  var q = qs[state.idx];
+  var pct = Math.round((state.idx / qs.length) * 100);
+  panel.innerHTML =
+    '<div class="q-num">Question ' + (state.idx+1) + ' of ' + qs.length + '</div>' +
+    '<div class="q-text">' + q.q + '</div>' +
+    '<div class="bar"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+    '<div class="opts" id="opts"></div>';
+  var box = panel.querySelector('#opts');
+  q.opts.forEach(function(o){
+    var b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = '<span class="pip"></span><span>' + o.t + '</span>';
+    b.onclick = function(){
+      state.answers[q.id] = o.v;
+      if (o.gap) state.gaps.push(o.gap);
+      if (state.idx < qs.length - 1) { state.idx++; renderQ(); }
+      else { renderResult(); }
+    };
+    box.appendChild(b);
+  });
+}
+
+function renderResult(){
+  var score = Object.values(state.answers).reduce(function(a,b){ return a+b; }, 0);
+  var tier;
+  if (score === 0) tier = TIER_LABELS[state.vertical]['0'];
+  else if (score <= 3) tier = TIER_LABELS[state.vertical]['1-3'];
+  else if (score <= 7) tier = TIER_LABELS[state.vertical]['4-7'];
+  else tier = TIER_LABELS[state.vertical]['8+'];
+
+  var displayScore = Math.max(0, Math.round(100 - (score / 12) * 100));
+
+  var gapsHtml = state.gaps.length === 0
+    ? '<div class="gap" style="border-color:#22c55e;background:rgba(34,197,94,.06)"><b>No major gaps surfaced.</b>Your fundamentals are strong. A periodic review keeps it that way — there are usually still quick wins.</div>'
+    : state.gaps.map(function(g){ return '<div class="gap"><b>' + g.t + '</b>' + g.d + '</div>'; }).join('');
+
+  panel.innerHTML =
+    '<div class="result-score">' + displayScore + '</div>' +
+    '<div class="result-tier">' + tier + '</div>' +
+    gapsHtml +
+    '<div class="cta-row">' +
+      '<a href="/verticals/' + state.vertical + '" class="btn btn-primary">See ARIA for ' + state.vertical + ' →</a>' +
+      '<a href="/aria" class="btn btn-ghost">Try ARIA — 15 min free</a>' +
+    '</div>' +
+    '<p style="text-align:center;color:rgba(255,255,255,.4);font-size:11.5px;margin-top:18px">Want a deeper review? <a href="mailto:ahmad.wasee@iisupp.net?subject=Compliance%20gap%20review" style="color:#c5a059">Email Ahmad directly</a> — 20-min call, no pitch.</p>';
+}
+</script>
+</body>
+</html>

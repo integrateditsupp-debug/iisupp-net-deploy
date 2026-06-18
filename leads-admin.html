@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Leads Inbox — IIS Admin</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050810;color:#d8e0e6;line-height:1.5;min-height:100vh}
+  header{background:#0a1219;border-bottom:1px solid #243a47;padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
+  header .brand{font-family:ui-monospace,monospace;font-size:13px;letter-spacing:.18em;color:#2dd4bf}
+  .wrap{max-width:1200px;margin:0 auto;padding:22px}
+  h1{font-size:22px;color:#fff;font-weight:600;margin-bottom:4px}
+  .sub{color:#6b7c87;font-size:12.5px;font-family:ui-monospace,monospace;margin-bottom:22px}
+  .auth{background:#0a1219;border:1px solid #2dd4bf;padding:22px;border-radius:8px;max-width:400px;margin:80px auto;text-align:center}
+  .auth h2{color:#2dd4bf;font-family:ui-monospace,monospace;font-size:13px;letter-spacing:.14em;margin-bottom:12px}
+  .auth input{width:100%;padding:11px;background:#050810;border:1px solid #243a47;color:#fff;font-family:ui-monospace,monospace;margin-bottom:12px;font-size:14px}
+  .auth input:focus{outline:none;border-color:#2dd4bf}
+  .auth button{width:100%;padding:11px;background:#2dd4bf;color:#050810;border:none;font-family:ui-monospace,monospace;font-weight:600;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;font-size:11px}
+  .tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:1px solid #243a47}
+  .tab{padding:11px 18px;cursor:pointer;color:#6b7c87;font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;border-bottom:2px solid transparent}
+  .tab:hover{color:#d8e0e6}
+  .tab.active{color:#2dd4bf;border-bottom-color:#2dd4bf}
+  .lead-card{background:#0a1219;border:1px solid #182530;border-radius:8px;padding:16px 18px;margin-bottom:10px}
+  .lead-card.priority{border-color:#d4af37}
+  .lead-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+  .lead-meta{flex:1;min-width:200px}
+  .lead-name{color:#fff;font-size:15px;font-weight:600}
+  .lead-email{color:#2dd4bf;font-size:13px;font-family:ui-monospace,monospace;margin-top:2px}
+  .lead-co{color:#aaa;font-size:13px;margin-top:1px}
+  .lead-when{color:#6b7c87;font-size:11px;font-family:ui-monospace,monospace;margin-top:4px}
+  .lead-tags{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start}
+  .tag{padding:3px 9px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;border-radius:4px;font-family:ui-monospace,monospace;font-weight:600}
+  .tag.source{background:rgba(45,212,191,.12);color:#2dd4bf}
+  .tag.vertical{background:rgba(212,175,55,.15);color:#d4af37}
+  .tag.urgent{background:rgba(248,113,113,.15);color:#f87171}
+  .lead-msg{color:#bbb;font-size:13px;margin-top:10px;padding:10px;background:#050810;border-radius:6px;line-height:1.5}
+  .actions{display:flex;gap:8px;margin-top:10px}
+  .btn-sm{padding:6px 12px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;background:transparent;color:#2dd4bf;border:1px solid #243a47;border-radius:4px;cursor:pointer;font-family:ui-monospace,monospace;text-decoration:none;display:inline-block}
+  .btn-sm:hover{border-color:#2dd4bf}
+  .empty{text-align:center;padding:48px 24px;color:#6b7c87;font-family:ui-monospace,monospace}
+  .err{color:#f87171;padding:14px;background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.3);border-radius:6px;font-family:ui-monospace,monospace;font-size:12px}
+  .summary-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+  .stat{background:#0a1219;border:1px solid #182530;border-radius:8px;padding:14px;text-align:center}
+  .stat .v{font-size:24px;font-weight:700;color:#2dd4bf;font-family:ui-monospace,monospace;line-height:1}
+  .stat .l{font-size:10px;color:#6b7c87;letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+  .refresh{background:transparent;color:#2dd4bf;border:1px solid #2dd4bf;padding:6px 12px;font-family:ui-monospace,monospace;font-size:10.5px;cursor:pointer;text-transform:uppercase;letter-spacing:.1em}
+</style>
+</head>
+<body>
+
+<div id="auth-screen" class="auth">
+  <h2>LEADS INBOX</h2>
+  <p style="color:#6b7c87;font-size:12px;margin-bottom:16px">Admin only · token required</p>
+  <input id="token" type="password" placeholder="admin token" autofocus>
+  <button id="auth-btn">Authenticate</button>
+  <p id="auth-err" style="display:none;margin-top:14px;color:#f87171;font-size:12px"></p>
+</div>
+
+<div id="app" style="display:none">
+  <header>
+    <div class="brand">ARIA :: LEADS INBOX</div>
+    <button id="refresh" class="refresh">Refresh</button>
+  </header>
+  <div class="wrap">
+    <h1>Lead inbox</h1>
+    <p class="sub">All inbound from scorecard / health-check / contact / chat handoff / pilot signup. Last refresh: <span id="last-refresh">-</span></p>
+
+    <div class="summary-row" id="stats"></div>
+
+    <div class="tabs">
+      <div class="tab active" data-source="all">All</div>
+      <div class="tab" data-source="scorecard">Scorecard</div>
+      <div class="tab" data-source="health-check">Health Check</div>
+      <div class="tab" data-source="compliance-gap">Compliance Gap</div>
+      <div class="tab" data-source="aria-chat">ARIA Chat Handoff</div>
+      <div class="tab" data-source="vertical">Vertical Pages</div>
+      <div class="tab" data-source="pilot">Pilots</div>
+    </div>
+
+    <div id="lead-list"></div>
+  </div>
+</div>
+
+<script>
+var TOKEN = '';
+function $(s){ return document.querySelector(s); }
+
+$('#auth-btn').onclick = async function(){
+  var t = $('#token').value.trim();
+  if (!t) return;
+  // Test by hitting any admin-token-gated endpoint
+  var r = await fetch('/.netlify/functions/aria-analytics-dashboard', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({event:'snapshot', admin_token: t})
+  });
+  if (r.status === 401) {
+    $('#auth-err').textContent = 'Invalid token';
+    $('#auth-err').style.display = 'block';
+    return;
+  }
+  TOKEN = t;
+  $('#auth-screen').style.display = 'none';
+  $('#app').style.display = 'block';
+  loadLeads();
+};
+$('#token').onkeyup = function(e){ if (e.key === 'Enter') $('#auth-btn').click(); };
+
+document.querySelectorAll('.tab').forEach(function(t){
+  t.onclick = function(){
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    loadLeads(t.dataset.source);
+  };
+});
+$('#refresh').onclick = function(){ loadLeads(currentSource); };
+
+var currentSource = 'all';
+async function loadLeads(source){
+  currentSource = source || 'all';
+  $('#last-refresh').textContent = new Date().toLocaleString();
+
+  // v0.1: pulls from a future /aria-leads-inbox endpoint
+  // For now: query the existing endpoints we have (aria-lead-capture POST results would be in Blobs,
+  // but we don't have a list-leads function yet — that's the next ship)
+  try {
+    var r = await fetch('/.netlify/functions/aria-analytics-dashboard', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({event:'snapshot', admin_token: TOKEN})
+    });
+    var snap = await r.json();
+    $('#stats').innerHTML =
+      stat('Tickets 30d', snap.tickets_total_30d || 0) +
+      stat('Deflection', (snap.deflection_rate_pct || 0) + '%') +
+      stat('Thumbs up', snap.thumbs_up_30d || 0) +
+      stat('Thumbs down', snap.thumbs_down_30d || 0);
+
+    // Try to fetch leads from a dedicated endpoint (will exist once Codex ships /aria-leads-inbox per FINISH-100 packet)
+    var lr = await fetch('/.netlify/functions/aria-leads-inbox', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({event:'list', admin_token: TOKEN, source: source === 'all' ? null : source, limit: 100})
+    }).catch(()=>null);
+
+    if (!lr || !lr.ok) {
+      $('#lead-list').innerHTML = '<div class="empty">No leads-inbox function yet. Ship <code>aria-leads-inbox.js</code> to enable this view.<br><br>Until then: check Gmail drafts + Stripe customers + Resend webhook log.</div>';
+      return;
+    }
+    var lj = await lr.json();
+    var leads = (lj.leads || []);
+    if (leads.length === 0) {
+      $('#lead-list').innerHTML = '<div class="empty">No leads yet for this filter. Check back after outbound goes out.</div>';
+      return;
+    }
+    $('#lead-list').innerHTML = leads.map(renderLead).join('');
+  } catch(e) {
+    $('#lead-list').innerHTML = '<div class="err">Could not load leads: ' + e.message + '</div>';
+  }
+}
+function stat(label, value){
+  return '<div class="stat"><div class="v">' + value + '</div><div class="l">' + label + '</div></div>';
+}
+function renderLead(l){
+  var urgent = (Date.now() - (l.received_at || 0)) < 3600000 ? '<span class="tag urgent">&lt;1h ago</span>' : '';
+  return '<div class="lead-card ' + (urgent ? 'priority' : '') + '">' +
+    '<div class="lead-row">' +
+      '<div class="lead-meta">' +
+        '<div class="lead-name">' + (l.name || 'No name') + '</div>' +
+        '<div class="lead-email">' + (l.email || '-') + '</div>' +
+        (l.company ? '<div class="lead-co">' + l.company + '</div>' : '') +
+        '<div class="lead-when">' + (l.received_at ? new Date(l.received_at).toLocaleString() : '-') + '</div>' +
+      '</div>' +
+      '<div class="lead-tags">' +
+        urgent +
+        '<span class="tag source">' + (l.source || 'unknown') + '</span>' +
+        (l.vertical ? '<span class="tag vertical">' + l.vertical + '</span>' : '') +
+      '</div>' +
+    '</div>' +
+    (l.message ? '<div class="lead-msg">' + l.message.replace(/[<>&]/g,'') + '</div>' : '') +
+    '<div class="actions">' +
+      '<a class="btn-sm" href="mailto:' + l.email + '?subject=Re%3A%20your%20inquiry%20to%20IIS">Reply →</a>' +
+      '<a class="btn-sm" href="https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(l.name || '') + '" target="_blank">LinkedIn</a>' +
+    '</div>' +
+  '</div>';
+}
+</script>
+</body>
+</html>
