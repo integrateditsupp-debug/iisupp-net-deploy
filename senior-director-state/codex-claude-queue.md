@@ -15,6 +15,7 @@ Shipped coding surfaces:
 - DevEx expansion: Python SDK now covers new endpoints with 20 tests and 3 examples; Node SDK has new endpoint methods; Go SDK starter added under `sdk/go/`.
 - API/PWA/SEO: `docs/openapi.json` generated for current public Netlify functions; `manifest.webmanifest`, `sw.js`, and `sitemap.xml` updated.
 - Metrics: `tests/run-stats.json` now records `round_15.codex` with all 25 scenario-universe categories moved to ~100% coding-surface coverage.
+- Validation update: Go was not installed on PATH, so Codex downloaded the official Windows amd64 Go 1.26.4 archive into `%TEMP%`, verified the archive SHA-256 against Go's official JSON feed, and ran `go test ./...` from `sdk/go`. Result: `ok github.com/iisupp/aria-go/aria` and example package compiled with no test files.
 
 CEO-gated / do not auto-submit:
 
