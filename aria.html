@@ -5556,5 +5556,62 @@ try{
 <button id="ariaHandoffBtn" type="button" onclick="(function(){var st=document.getElementById('alm-status');var btn=this;var profile={};try{profile=JSON.parse(localStorage.getItem('aria_user_profile')||'{}')}catch(e){}if(!profile.email){alert('Please enter your details in ARIA first (the blue Sign-In form), then hit this button again.');return;}btn.disabled=true;var orig=btn.innerHTML;btn.innerHTML='<span class=\"ah-dot\"></span> PAGING...';var msgs=Array.prototype.slice.call(document.querySelectorAll('.aria-block, .you-block')).slice(-20).map(function(b){var who=b.classList.contains('you-block')?'USER':'ARIA';var txt=(b.innerText||'').trim().slice(0,400);return who+': '+txt}).join('\n\n');fetch('/.netlify/functions/aria-warm-handoff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:profile.email,name:(profile.firstName||'')+' '+(profile.lastName||'').trim(),chat_summary:msgs,last_intent:(window.state&&window.state.lastIntent)||'',urgency:'normal',session_start:profile.startedAt||''})}).then(function(r){return r.json()}).then(function(j){btn.innerHTML='<span class=\"ah-dot\"></span> AHMAD PAGED \u2713';setTimeout(function(){btn.innerHTML=orig;btn.disabled=false;},5000);}).catch(function(e){btn.innerHTML='ERROR \u2014 EMAIL DIRECTLY';btn.style.borderColor='#fb7185';setTimeout(function(){btn.innerHTML=orig;btn.style.borderColor='';btn.disabled=false;},5000);});}).call(this)"><span class="ah-dot"></span><span>Get a human</span></button>
 <script>setTimeout(function(){var b=document.getElementById('ariaHandoffBtn');if(b)b.classList.add('show');},20000);setInterval(function(){if(document.querySelector('.aria-locked-overlay')){var b=document.getElementById('ariaHandoffBtn');if(b)b.classList.add('show');}},3000);</script>
 
+
+<style>
+.aria-fb-bar{display:flex;align-items:center;gap:6px;margin-top:8px;opacity:.6;transition:opacity .2s;font-family:'JetBrains Mono',monospace;font-size:10px}
+.aria-block:hover .aria-fb-bar,.aria-fb-bar.voted{opacity:1}
+.aria-fb-bar button{background:transparent;border:1px solid rgba(197,160,89,.20);color:rgba(255,255,255,.65);cursor:pointer;padding:3px 8px;border-radius:6px;font-size:12px;line-height:1;transition:all .15s}
+.aria-fb-bar button:hover{border-color:rgba(197,160,89,.55);color:#f1dca7}
+.aria-fb-bar button.active.up{background:rgba(74,222,128,.12);color:#4ade80;border-color:rgba(74,222,128,.45)}
+.aria-fb-bar button.active.down{background:rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.45)}
+.aria-fb-bar .aria-fb-thanks{color:rgba(197,160,89,.65);font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+</style>
+<script>
+(function(){
+function attach(){
+  // Periodically inject feedback bar into every ARIA reply that doesn't have one yet
+  var blocks = document.querySelectorAll('.aria-block:not([data-fb])');
+  blocks.forEach(function(b, idx){
+    if (b.querySelector('.aria-thinking')) return; // skip in-progress
+    b.setAttribute('data-fb', '1');
+    var bar = document.createElement('div');
+    bar.className = 'aria-fb-bar ariaFeedbackBar';
+    var msgId = 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
+    bar.innerHTML = '<button class="fb-up" aria-label="Helpful">\u{1F44D}</button><button class="fb-down" aria-label="Not helpful">\u{1F44E}</button>';
+    var content = b.querySelector('.aria-content');
+    if (content) content.appendChild(bar);
+    function vote(v){
+      bar.classList.add('voted');
+      var u = bar.querySelector('.fb-up'); var d = bar.querySelector('.fb-down');
+      if (u) u.classList.remove('active'); if (d) d.classList.remove('active');
+      var btn = bar.querySelector(v === 'up' ? '.fb-up' : '.fb-down');
+      if (btn) btn.classList.add('active', v);
+      var profile = {}; try { profile = JSON.parse(localStorage.getItem('aria_user_profile')||'{}'); } catch(e){}
+      var text = (content && content.innerText || '').trim().slice(0, 600);
+      fetch('/.netlify/functions/aria-feedback', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          msg_id: msgId, vote: v, text: text, email: profile.email || '',
+          intent: (window.state && window.state.lastIntent) || ''
+        })
+      }).catch(function(){});
+      setTimeout(function(){
+        var thanks = bar.querySelector('.aria-fb-thanks');
+        if (!thanks) {
+          var t = document.createElement('span');
+          t.className = 'aria-fb-thanks';
+          t.textContent = v === 'up' ? '· thanks for the signal' : '· noted, we will improve';
+          bar.appendChild(t);
+        }
+      }, 200);
+    }
+    bar.querySelector('.fb-up').addEventListener('click', function(){ vote('up'); });
+    bar.querySelector('.fb-down').addEventListener('click', function(){ vote('down'); });
+  });
+}
+setInterval(attach, 1200);
+})();
+</script>
+
 </body>
 </html>
