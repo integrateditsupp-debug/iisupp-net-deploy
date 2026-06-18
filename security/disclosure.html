@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vulnerability Disclosure Policy — IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#0a0a0a;color:#e8e8e8;line-height:1.65;padding:48px 20px}
+  .wrap{max-width:760px;margin:0 auto}
+  .crown{font-size:12px;letter-spacing:.18em;color:#d4af37;text-transform:uppercase;margin-bottom:8px}
+  h1{font-size:32px;margin-bottom:8px;color:#fff}
+  .sub{color:#888;font-size:14px;margin-bottom:32px}
+  h2{font-size:20px;color:#d4af37;margin:32px 0 12px;font-weight:600}
+  p,li{font-size:15px;color:#ccc;margin-bottom:10px}
+  ul,ol{padding-left:22px;margin-bottom:14px}
+  .box{background:#141414;border:1px solid #2a2a2a;border-radius:10px;padding:20px;margin:18px 0}
+  .box.gold{border-color:#d4af37}
+  code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:13px;color:#d4af37}
+  a{color:#d4af37}
+  .updated{color:#666;font-size:13px;margin-top:48px;border-top:1px solid #2a2a2a;padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">Security · Coordinated Disclosure</div>
+  <h1>Vulnerability Disclosure Policy</h1>
+  <p class="sub">How to report a security issue in ARIA, iisupp.net, or any IIS service. We appreciate responsible disclosure and respond fast.</p>
+
+  <h2>1. Report to</h2>
+  <div class="box gold">
+    <p><strong>Email:</strong> <a href="mailto:security@iisupp.net">security@iisupp.net</a></p>
+    <p><strong>PGP key:</strong> <a href="/.well-known/pgp-key.txt">/.well-known/pgp-key.txt</a> (coming soon — email plaintext OK in the meantime)</p>
+    <p><strong>Acknowledgement target:</strong> within 24 hours on business days, 72 hours otherwise</p>
+    <p><strong>Initial assessment target:</strong> within 5 business days</p>
+  </div>
+
+  <h2>2. What we want to hear about</h2>
+  <ul>
+    <li>Authentication bypass on any iisupp.net surface</li>
+    <li>Cross-site scripting (XSS) on iisupp.net or our hosted apps</li>
+    <li>SQL injection or NoSQL injection (we use NoSQL; report either)</li>
+    <li>Server-side request forgery (SSRF) in any Netlify function</li>
+    <li>Privilege escalation across tenants or roles</li>
+    <li>Sensitive data exposure (env vars, secrets, customer data)</li>
+    <li>Insecure direct object reference (IDOR)</li>
+    <li>Prompt-injection attacks that leak system prompts or take privileged actions</li>
+    <li>Stripe webhook signature bypass or billing fraud vectors</li>
+  </ul>
+
+  <h2>3. What is OUT of scope</h2>
+  <ul>
+    <li>Denial-of-service attacks (please do not test these against production)</li>
+    <li>Social engineering of IIS staff</li>
+    <li>Physical security tests</li>
+    <li>Reports requiring physical access to a user's device</li>
+    <li>Reports of missing security headers without a demonstrated impact (we'll fix, but it's not a vuln)</li>
+    <li>Reports of best-practice non-compliance without a working exploit</li>
+  </ul>
+
+  <h2>4. Safe harbour</h2>
+  <p>If you make a good-faith effort to comply with this policy during your security research, IIS will:</p>
+  <ul>
+    <li>Not initiate legal action against you</li>
+    <li>Work with you to understand and resolve the issue quickly</li>
+    <li>Credit you in our hall of fame (if you want — anonymous reports also welcome)</li>
+  </ul>
+  <p>We expect you to:</p>
+  <ul>
+    <li>Avoid privacy violations and disruption to live users</li>
+    <li>Only test against your own accounts unless explicitly authorized</li>
+    <li>Give us reasonable time to respond before public disclosure (we suggest 90 days)</li>
+    <li>Not exfiltrate any data beyond what is needed to demonstrate the issue</li>
+  </ul>
+
+  <h2>5. What you can expect from us</h2>
+  <ol>
+    <li><strong>Day 0:</strong> Email acknowledgement</li>
+    <li><strong>Day 1–5:</strong> Triage + severity assignment (Critical/High/Medium/Low)</li>
+    <li><strong>Day 5–30:</strong> Fix shipped (timeline depends on severity)</li>
+    <li><strong>After fix:</strong> Coordinated disclosure window agreed with reporter</li>
+  </ol>
+
+  <h2>6. Bounty?</h2>
+  <p>We are bootstrapped and do not currently run a formal bounty program. We will gladly credit you, and if a report leads to a serious fix, we offer a thank-you in the form of swag, ARIA Pro plan credit, or a paid pilot for your organization.</p>
+
+  <h2>7. Bug bounty cooperation</h2>
+  <p>We follow ISO/IEC 29147 (vulnerability disclosure) and ISO/IEC 30111 (handling) where applicable.</p>
+
+  <div class="updated">Last updated: 2026-06-18 · Version 1.0 · Cat 4 trust + safety</div>
+  <p style="margin-top:16px"><a href="/">Home</a> · <a href="/.well-known/security.txt">security.txt</a> · <a href="/privacy">Privacy</a></p>
+</div>
+</body>
+</html>

@@ -101,6 +101,5 @@
         "cat_12_multi_tenant": "55% -> ~72% (with admin console)",
         "cat_13_failure_modes": "55% -> ~75%"
       }
-    }
-  }
-}
+    },
+    
