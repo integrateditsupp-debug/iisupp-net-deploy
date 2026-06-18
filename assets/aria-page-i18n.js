@@ -23,7 +23,7 @@
     } catch { return 'en'; }
   }
   var loc = getLocale();
-  var SUPPORTED = ['en','fr','es','de','ar'];
+  var SUPPORTED = ['en','fr','es','de','ar','zh','ur','hi','pt','ja','ko','ru','it'];
   if (SUPPORTED.indexOf(loc) === -1) loc = 'en';
 
   // Resolve a translation string. Prefer ariaI18N if available, else inline map.
@@ -39,7 +39,15 @@
     fr: { try_aria:'Essayer ARIA — 15 min gratuit', home:'Accueil', pricing:'Tarifs', back:'Précédent', next:'Suivant', close:'Fermer', submit:'Soumettre', loading:'Chargement', see_score:'Voir mon score', email_report:'Recevoir le rapport par courriel', try_again:'Réessayer', start:'Commencer' },
     es: { try_aria:'Probar ARIA — 15 min gratis', home:'Inicio', pricing:'Precios', back:'Atrás', next:'Siguiente', close:'Cerrar', submit:'Enviar', loading:'Cargando', see_score:'Ver mi puntaje', email_report:'Enviarme el reporte completo', try_again:'Reintentar', start:'Comenzar' },
     de: { try_aria:'ARIA testen — 15 min kostenlos', home:'Startseite', pricing:'Preise', back:'Zurück', next:'Weiter', close:'Schließen', submit:'Absenden', loading:'Laden', see_score:'Mein Ergebnis sehen', email_report:'Vollständigen Bericht per E-Mail', try_again:'Erneut versuchen', start:'Starten' },
-    ar: { try_aria:'جرّب ARIA — 15 دقيقة مجانًا', home:'الرئيسية', pricing:'الأسعار', back:'رجوع', next:'التالي', close:'إغلاق', submit:'إرسال', loading:'جارٍ التحميل', see_score:'شاهد نتيجتي', email_report:'أرسل لي التقرير كاملاً', try_again:'حاول مجددًا', start:'ابدأ' }
+    ar: { try_aria:'جرّب ARIA — 15 دقيقة مجانًا', home:'الرئيسية', pricing:'الأسعار', back:'رجوع', next:'التالي', close:'إغلاق', submit:'إرسال', loading:'جارٍ التحميل', see_score:'شاهد نتيجتي', email_report:'أرسل لي التقرير كاملاً', try_again:'حاول مجددًا', start:'ابدأ' },
+    zh: { try_aria:'试用 ARIA — 免费 15 分钟', home:'首页', pricing:'价格', back:'返回', next:'下一步', close:'关闭', submit:'提交', loading:'加载中', see_score:'查看我的得分', email_report:'发送完整报告到邮箱', try_again:'重试', start:'开始' },
+    ur: { try_aria:'ARIA آزمائیں — 15 منٹ مفت', home:'ہوم', pricing:'قیمت', back:'پیچھے', next:'آگے', close:'بند کریں', submit:'جمع کرائیں', loading:'لوڈ ہو رہا ہے', see_score:'میرا اسکور دیکھیں', email_report:'مکمل رپورٹ ای میل کریں', try_again:'دوبارہ کوشش', start:'شروع' },
+    hi: { try_aria:'ARIA आज़माएँ — मुफ़्त 15 मिनट', home:'होम', pricing:'मूल्य', back:'वापस', next:'आगे', close:'बंद करें', submit:'जमा करें', loading:'लोड हो रहा है', see_score:'मेरा स्कोर देखें', email_report:'पूरी रिपोर्ट ईमेल करें', try_again:'फिर से कोशिश', start:'शुरू' },
+    pt: { try_aria:'Testar ARIA — 15 min grátis', home:'Início', pricing:'Preços', back:'Voltar', next:'Próximo', close:'Fechar', submit:'Enviar', loading:'Carregando', see_score:'Ver minha pontuação', email_report:'Enviar relatório completo por e-mail', try_again:'Tentar novamente', start:'Começar' },
+    ja: { try_aria:'ARIAを試す — 15分無料', home:'ホーム', pricing:'料金', back:'戻る', next:'次へ', close:'閉じる', submit:'送信', loading:'読み込み中', see_score:'スコアを見る', email_report:'完全なレポートをメール送信', try_again:'再試行', start:'開始' },
+    ko: { try_aria:'ARIA 사용해 보기 — 15분 무료', home:'홈', pricing:'가격', back:'뒤로', next:'다음', close:'닫기', submit:'제출', loading:'로딩 중', see_score:'점수 보기', email_report:'전체 보고서 이메일로 받기', try_again:'재시도', start:'시작' },
+    ru: { try_aria:'Попробовать ARIA — 15 мин бесплатно', home:'Главная', pricing:'Цены', back:'Назад', next:'Далее', close:'Закрыть', submit:'Отправить', loading:'Загрузка', see_score:'Показать мой результат', email_report:'Прислать полный отчёт', try_again:'Повторить', start:'Начать' },
+    it: { try_aria:'Prova ARIA — 15 min gratis', home:'Home', pricing:'Prezzi', back:'Indietro', next:'Avanti', close:'Chiudi', submit:'Invia', loading:'Caricamento', see_score:'Vedi il mio punteggio', email_report:'Inviami il report completo', try_again:'Riprova', start:'Inizia' }
   };
 
   // Merge any page-specific extras
@@ -51,7 +59,7 @@
 
   // Apply HTML attrs (lang + dir for RTL)
   document.documentElement.setAttribute('lang', loc);
-  if (loc === 'ar') document.documentElement.setAttribute('dir', 'rtl');
+  if (loc === 'ar' || loc === 'ur') document.documentElement.setAttribute('dir', 'rtl');
 
   function applyTranslations(){
     var nodes = document.querySelectorAll('[data-i18n]');
