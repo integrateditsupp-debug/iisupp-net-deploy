@@ -10,17 +10,6 @@
   node_bundler = "esbuild"
   external_node_modules = ["stripe", "@netlify/blobs"]
 
-[[redirects]]
-  from = "/docs/api"
-  to = "/docs/api.html"
-  status = 200
-  force = true
-[[redirects]]
-  from = "/docs/api/"
-  to = "/docs/api.html"
-  status = 200
-  force = true
-
 [[headers]]
   for = "/*"
   [headers.values]
@@ -91,6 +80,21 @@
   from = "/procurement-downloads/*"
   to = "/index.html"
   status = 404
+  force = true
+[[redirects]]
+  from = "/plans"
+  to = "/plans/index.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/plans/"
+  to = "/plans/index.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/plans/index.html"
+  to = "/plans/index.html"
+  status = 200
   force = true
 [[redirects]]
   from = "/plans/*"
@@ -308,10 +312,6 @@
   to = "/governance/ai-use.html"
   status = 200
 [[redirects]]
-  from = "/ai-governance"
-  to = "/governance/ai-use.html"
-  status = 200
-[[redirects]]
   from = "/governance/code-of-conduct"
   to = "/governance/code-of-conduct.html"
   status = 200
@@ -371,3 +371,19 @@
   from = "/aperture-learning/"
   to = "/aperture-learning.html"
   status = 200
+
+# IIS_CACHE_HEADERS — long cache static, short cache HTML
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=300, stale-while-revalidate=60"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "interest-cohort=()"

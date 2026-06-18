@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Book a 30-min call — IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Book a 30-minute discovery call with Ahmad Wasee, founder of Integrated IT Support.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050505;color:#e8e8e8;line-height:1.55;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:640px;margin:0 auto}
+  .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h1{font-size:36px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em;line-height:1.1}
+  h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  p.sub{color:rgba(255,255,255,.65);font-size:15.5px;margin-bottom:32px}
+  .form-card{background:#0d0d0d;border:1px solid rgba(197,160,89,.4);border-radius:14px;padding:28px}
+  label{display:block;color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;font-weight:600;margin-top:14px}
+  label:first-child{margin-top:0}
+  input,select,textarea{width:100%;padding:11px 13px;background:#050505;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14.5px;font-family:inherit}
+  textarea{min-height:80px;resize:vertical}
+  .slot-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:8px}
+  .slot{padding:10px;background:#141414;border:1px solid #2a2a2a;border-radius:8px;cursor:pointer;text-align:center;font-size:13px;color:#ddd;transition:all .15s}
+  .slot:hover{border-color:#c5a059;background:#1a1606}
+  .slot.sel{border-color:#c5a059;background:#1a1606;color:#fff}
+  button.book{width:100%;padding:14px;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;border:none;border-radius:8px;font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:ui-monospace,monospace;margin-top:20px}
+  button.book:disabled{opacity:.5;cursor:wait}
+  .ok-msg{display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.4);color:#22c55e;padding:13px;border-radius:8px;font-size:13.5px;margin-top:12px}
+  .err-msg{display:none;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.3);color:#f87171;padding:11px;border-radius:8px;font-size:13px;margin-top:10px}
+  .nav{text-align:center;margin-top:32px;color:rgba(255,255,255,.4);font-size:12.5px}
+  .nav a{color:rgba(255,255,255,.6);text-decoration:none;margin:0 8px}
+  .nav a:hover{color:#c5a059}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">Book a discovery call</div>
+  <h1>30 min with <span class="gold">Ahmad.</span></h1>
+  <p class="sub">Founder-direct. No sales rep. We talk about your IT setup, where ARIA fits, and whether a pilot makes sense for you. No pressure.</p>
+
+  <div class="form-card">
+    <label>Your name *</label>
+    <input id="b-name" type="text" placeholder="Jane Smith">
+
+    <label>Work email *</label>
+    <input id="b-email" type="email" placeholder="you@company.com">
+
+    <label>Company *</label>
+    <input id="b-company" type="text" placeholder="Acme Inc.">
+
+    <label>Vertical</label>
+    <select id="b-vertical">
+      <option value="">Pick one...</option>
+      <option>Healthcare / clinic</option>
+      <option>Legal / law firm</option>
+      <option>Finance / accounting</option>
+      <option>Education</option>
+      <option>Manufacturing</option>
+      <option>General SMB</option>
+      <option>Other</option>
+    </select>
+
+    <label>Preferred day + time (3 options)</label>
+    <input id="b-slot1" type="text" placeholder="Tue 2026-07-22 2pm ET">
+    <input id="b-slot2" type="text" placeholder="Thu 2026-07-24 10am ET" style="margin-top:6px">
+    <input id="b-slot3" type="text" placeholder="Fri 2026-07-25 3pm ET" style="margin-top:6px">
+
+    <label>What is the IT issue most on your mind right now?</label>
+    <textarea id="b-context" placeholder="e.g. 'Our Outlook crashes during morning huddles' — one specific thing"></textarea>
+
+    <button class="book" id="book-btn">Request 30-min call →</button>
+    <div class="ok-msg" id="ok-msg">Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.</div>
+    <div class="err-msg" id="err-msg"></div>
+  </div>
+
+  <p style="color:rgba(255,255,255,.4);font-size:12px;margin-top:18px;text-align:center">No automated scheduling. Ahmad replies personally with the confirmed slot + Google Meet link.</p>
+
+  <div class="nav">
+    <a href="/">Home</a> · <a href="/aria">Try ARIA</a> · <a href="/verticals/">By Vertical</a> · <a href="/plans">Pricing</a>
+  </div>
+</div>
+
+<script>
+document.getElementById('book-btn').onclick = async function(){
+  var name = document.getElementById('b-name').value.trim();
+  var email = document.getElementById('b-email').value.trim();
+  var company = document.getElementById('b-company').value.trim();
+  var vertical = document.getElementById('b-vertical').value;
+  var s1 = document.getElementById('b-slot1').value.trim();
+  var s2 = document.getElementById('b-slot2').value.trim();
+  var s3 = document.getElementById('b-slot3').value.trim();
+  var context = document.getElementById('b-context').value.trim();
+  var err = document.getElementById('err-msg');
+  var ok = document.getElementById('ok-msg');
+  err.style.display = ok.style.display = 'none';
+  if (!name || !email || !company) { err.textContent = 'Name + email + company required.'; err.style.display = 'block'; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Valid email required.'; err.style.display = 'block'; return; }
+  var btn = document.getElementById('book-btn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try {
+    var slots = [s1, s2, s3].filter(s => s).join(' OR ');
+    var r = await fetch('/.netlify/functions/aria-lead-capture', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: name, email: email, company: company,
+        message: 'BOOK 30-MIN CALL.\n\nVertical: ' + (vertical || '(not specified)') + '\n\nProposed slots:\n' + (slots || '(no slots provided)') + '\n\nContext: ' + (context || '(none)'),
+        source: 'book-page', last_intent: 'demo_call_request'
+      })
+    });
+    if (!r.ok) throw new Error('send failed');
+    ok.style.display = 'block';
+    btn.style.display = 'none';
+  } catch(e) {
+    err.textContent = 'Could not send — try again or email ahmad.wasee@iisupp.net.';
+    err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Request 30-min call →';
+  }
+};
+</script>
+</body>
+</html>
