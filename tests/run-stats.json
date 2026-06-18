@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.3",
+  "schema_version": "1.4",
   "label": "ARIA classifier + product autonomous loop",
   "last_run_at": "2026-06-18T07:00:00Z",
   "last_run_iso": "2026-06-18",
@@ -38,5 +38,24 @@
   "industries_covered": 30,
   "apps_covered": 200,
   "personas_covered": 8,
-  "os_contexts": 10
+  "os_contexts": 10,
+  "last_round": 6,
+  "last_round_at": "2026-06-18T05:31:32Z",
+  "round_6": {
+    "shipped": [
+      "aria-slack-command.js",
+      "aria-cost-tracker.js v0.2 (Blobs)",
+      "aria-session-memory.js",
+      "aria-write-gate.js",
+      "sdk/node/"
+    ],
+    "categories_lifted": {
+      "cat_6_integrations": "35% -> ~52%",
+      "cat_18_devex_sdk": "25% -> ~55%",
+      "cat_19_embedded": "~50% -> ~60% (slack backend matches manifest)",
+      "cat_21_kg_memory": "20% -> ~50%",
+      "cat_23_autonomous": "45% -> ~65%",
+      "cat_25_cost": "35% -> ~70%"
+    }
+  }
 }
