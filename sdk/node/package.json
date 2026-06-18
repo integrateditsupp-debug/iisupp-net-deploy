@@ -1,0 +1,13 @@
+{
+  "name": "@iisupp/aria-sdk",
+  "version": "0.2.0",
+  "description": "Official Node.js client for ARIA — AI-powered IT support API by Integrated IT Support Inc.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "engines": { "node": ">=18" },
+  "keywords": ["aria", "iisupp", "ai", "support", "helpdesk", "anthropic", "claude"],
+  "author": "Integrated IT Support Inc.",
+  "license": "MIT",
+  "homepage": "https://iisupp.net/docs/api",
+  "repository": { "type": "git", "url": "https://github.com/integrateditsupp-debug/iisupp-net-deploy" }
+}
