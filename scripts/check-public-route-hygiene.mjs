@@ -1,0 +1,170 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+const root = process.cwd();
+const skipDirs = new Set(['.git', 'node_modules', 'backups', 'archive', 'artifacts', 'outputs']);
+const missingRefs = [];
+const invalidJsonLd = [];
+const sitemapIssues = [];
+
+function walk(dir, files = []) {
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (ent.isDirectory()) {
+      if (skipDirs.has(ent.name)) continue;
+      walk(path.join(dir, ent.name), files);
+    } else if (ent.isFile() && ent.name.endsWith('.html')) {
+      files.push(path.join(dir, ent.name));
+    }
+  }
+  return files;
+}
+
+function read(file) {
+  return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+}
+
+function normalizeRoute(route) {
+  if (!route) return '/';
+  const clean = route.replace(/\/$/, '');
+  return clean || '/';
+}
+
+function parseRedirects() {
+  const toml = read(path.join(root, 'netlify.toml'));
+  const ok = new Set();
+  const blocked = new Set();
+  for (const block of toml.split(/\[\[redirects\]\]/g).slice(1)) {
+    const from = block.match(/from\s*=\s*"([^"]+)"/)?.[1];
+    const status = Number(block.match(/status\s*=\s*(\d+)/)?.[1] || 0);
+    if (!from) continue;
+    if (status === 200) ok.add(normalizeRoute(from));
+    if (status === 404) blocked.add(normalizeRoute(from));
+  }
+  return { ok, blocked };
+}
+
+function parseFunctionRoutes() {
+  const routes = new Set();
+  const dir = path.join(root, 'netlify', 'functions');
+  if (!fs.existsSync(dir)) return routes;
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!ent.isFile()) continue;
+    const text = read(path.join(dir, ent.name));
+    const configured = text.match(/config\s*=\s*\{\s*path:\s*['"]([^'"]+)['"]/);
+    if (configured) routes.add(normalizeRoute(configured[1]));
+    const base = ent.name.replace(/\.(mjs|js)$/i, '');
+    if (base) routes.add(normalizeRoute(`/.netlify/functions/${base}`));
+  }
+  return routes;
+}
+
+function parseRobots() {
+  const text = read(path.join(root, 'robots.txt'));
+  const allows = [];
+  const disallows = [];
+  for (const line of text.split(/\r?\n/)) {
+    const allow = line.match(/^Allow:\s*(\S+)/i)?.[1];
+    const disallow = line.match(/^Disallow:\s*(\S+)/i)?.[1];
+    if (allow) allows.push(allow);
+    if (disallow) disallows.push(disallow);
+  }
+  return { allows, disallows };
+}
+
+function robotAllows(route, robots) {
+  let best = { len: -1, allow: true };
+  for (const rule of robots.disallows) {
+    if (route.startsWith(rule) && rule.length > best.len) best = { len: rule.length, allow: false };
+  }
+  for (const rule of robots.allows) {
+    if (route.startsWith(rule) && rule.length > best.len) best = { len: rule.length, allow: true };
+  }
+  return best.allow;
+}
+
+function localFileExists(route) {
+  const target = path.join(root, route.replace(/^\//, ''));
+  return fs.existsSync(target) ||
+    fs.existsSync(`${target}.html`) ||
+    fs.existsSync(path.join(target, 'index.html'));
+}
+
+function refIsExternal(ref) {
+  return /^(https?:|mailto:|tel:|javascript:|data:|blob:|about:)/i.test(ref);
+}
+
+function checkHtmlRefs(htmlFiles, redirects, functionRoutes) {
+  const attrRe = /\b(?:href|src)\s*=\s*["']([^"']+)["']/gi;
+  for (const file of htmlFiles) {
+    const html = read(file);
+    let m;
+    while ((m = attrRe.exec(html))) {
+      const ref = m[1].trim();
+      if (!ref || ref.startsWith('#') || ref.includes('${') || refIsExternal(ref)) continue;
+      if (ref.startsWith('/.netlify/')) continue;
+      const route = ref.split('#')[0].split('?')[0];
+      if (!route || route === '/') continue;
+      const clean = normalizeRoute(route);
+      if (redirects.ok.has(clean) || functionRoutes.has(clean)) continue;
+      const target = route.startsWith('/')
+        ? path.join(root, route.slice(1))
+        : path.resolve(path.dirname(file), route);
+      const ok = fs.existsSync(target) || fs.existsSync(`${target}.html`) || fs.existsSync(path.join(target, 'index.html'));
+      if (!ok) missingRefs.push({ file: path.relative(root, file), ref });
+    }
+  }
+}
+
+function checkJsonLd(htmlFiles) {
+  const re = /<script\s+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  for (const file of htmlFiles) {
+    const html = read(file);
+    let m;
+    let index = 0;
+    while ((m = re.exec(html))) {
+      index += 1;
+      try {
+        JSON.parse(m[1]);
+      } catch (error) {
+        invalidJsonLd.push({ file: path.relative(root, file), block: index, error: error.message });
+      }
+    }
+  }
+}
+
+function checkSitemap(redirects, functionRoutes, robots) {
+  const sitemap = read(path.join(root, 'sitemap.xml'));
+  for (const loc of sitemap.matchAll(/<loc>https:\/\/iisupp\.net([^<]*)<\/loc>/g)) {
+    const route = normalizeRoute(loc[1].split('?')[0]);
+    if (!robotAllows(route, robots)) {
+      sitemapIssues.push({ route, issue: 'blocked by robots.txt' });
+      continue;
+    }
+    if (redirects.ok.has(route) || functionRoutes.has(route) || localFileExists(route)) continue;
+    sitemapIssues.push({ route, issue: 'no static file, redirect, or function route found' });
+  }
+}
+
+const htmlFiles = walk(root);
+const redirects = parseRedirects();
+const functionRoutes = parseFunctionRoutes();
+const robots = parseRobots();
+
+checkHtmlRefs(htmlFiles, redirects, functionRoutes);
+checkJsonLd(htmlFiles);
+checkSitemap(redirects, functionRoutes, robots);
+
+const report = {
+  scannedHtmlFiles: htmlFiles.length,
+  redirects: redirects.ok.size,
+  functionRoutes: functionRoutes.size,
+  missingRefs,
+  invalidJsonLd,
+  sitemapIssues
+};
+
+console.log(JSON.stringify(report, null, 2));
+
+if (missingRefs.length || invalidJsonLd.length || sitemapIssues.length) {
+  process.exitCode = 1;
+}

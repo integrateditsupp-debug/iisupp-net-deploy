@@ -33,6 +33,7 @@
     "contracts:bids:result": "node scripts/contracts-bids-submit-result-agent.mjs",
     "autonomy:once": "node scripts/autonomy-supervisor-agent.mjs",
     "cleanup:once": "node scripts/workspace-cleanup-agent.mjs",
+    "site:hygiene": "node scripts/check-public-route-hygiene.mjs",
     "director:once": "node scripts/senior-director-worker.mjs --once",
     "director:worker": "node scripts/senior-director-worker.mjs"
   },
