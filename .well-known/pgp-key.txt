@@ -1,0 +1,10 @@
+# PGP public key for security@iisupp.net
+# 
+# Status: Key generation pending. Until generated, please email plaintext to security@iisupp.net
+# for vulnerability disclosure. We will respond within 24 hours business days.
+# 
+# Founder Ahmad Wasee to generate via:
+#   gpg --full-generate-key
+#   gpg --armor --export security@iisupp.net > /.well-known/pgp-key.txt
+# 
+# Last updated: 2026-06-18

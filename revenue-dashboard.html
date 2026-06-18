@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Revenue Dashboard — IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050810;color:#d8e0e6;line-height:1.5;min-height:100vh}
+  header{background:#0a1219;border-bottom:1px solid #243a47;padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
+  header .brand{font-family:ui-monospace,monospace;font-size:13px;letter-spacing:.18em;color:#2dd4bf}
+  .wrap{max-width:1280px;margin:0 auto;padding:24px}
+  h1{font-size:22px;color:#fff;font-weight:600}
+  .sub{color:#6b7c87;font-size:12.5px;font-family:ui-monospace,monospace;margin-bottom:24px}
+  .auth{background:#0a1219;border:1px solid #2dd4bf;padding:24px;border-radius:8px;max-width:420px;margin:80px auto;text-align:center}
+  .auth h2{color:#2dd4bf;font-family:ui-monospace,monospace;font-size:13px;letter-spacing:.14em;margin-bottom:12px}
+  .auth input{width:100%;padding:11px;background:#050810;border:1px solid #243a47;color:#fff;font-family:ui-monospace,monospace;margin-bottom:12px;font-size:14px}
+  .auth button{width:100%;padding:11px;background:#2dd4bf;color:#050810;border:none;font-family:ui-monospace,monospace;font-weight:600;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;font-size:11px}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+  .kpi{background:#0a1219;border:1px solid #243a47;padding:18px;border-radius:8px;text-align:left}
+  .kpi-label{font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.18em;color:#6b7c87;text-transform:uppercase;margin-bottom:6px}
+  .kpi-value{font-size:28px;font-weight:600;color:#2dd4bf;font-family:ui-monospace,monospace;line-height:1}
+  .kpi-value.gold{background:linear-gradient(135deg,#d4af37,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .kpi-delta{font-size:11px;color:#888;margin-top:4px;font-family:ui-monospace,monospace}
+  .section{background:#0a1219;border:1px solid #243a47;padding:20px;border-radius:8px;margin-bottom:18px}
+  .section h2{color:#d4af37;font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:13px;font-family:ui-monospace,monospace}
+  th{background:#050810;color:#6b7c87;padding:9px;text-align:left;font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:10px;border-bottom:1px solid #243a47}
+  td{padding:9px;border-bottom:1px solid #182530;color:#d8e0e6}
+  td.num{color:#2dd4bf;text-align:right}
+  td.warn{color:#d4af37}
+  td.danger{color:#f87171}
+  .empty{text-align:center;padding:48px 24px;color:#6b7c87;font-family:ui-monospace,monospace}
+  .refresh{background:transparent;color:#2dd4bf;border:1px solid #2dd4bf;padding:6px 12px;font-family:ui-monospace,monospace;font-size:10.5px;cursor:pointer;text-transform:uppercase;letter-spacing:.1em}
+</style>
+</head>
+<body>
+
+<div id="auth-screen" class="auth">
+  <h2>REVENUE DASHBOARD</h2>
+  <p style="color:#6b7c87;font-size:12px;margin-bottom:16px">Owner only · token required</p>
+  <input id="token" type="password" placeholder="admin token" autofocus>
+  <button id="auth-btn">Authenticate</button>
+</div>
+
+<div id="app" style="display:none">
+  <header>
+    <div class="brand">IIS :: REVENUE DASHBOARD</div>
+    <button id="refresh" class="refresh">Refresh</button>
+  </header>
+  <div class="wrap">
+    <h1>Revenue snapshot</h1>
+    <p class="sub">Last refresh: <span id="last-refresh">-</span></p>
+
+    <div class="kpi-grid" id="kpis"></div>
+
+    <div class="section">
+      <h2>Active subscriptions</h2>
+      <table id="subs-table"><thead><tr><th>Customer</th><th>Plan</th><th>MRR</th><th>Status</th><th>Started</th></tr></thead><tbody><tr><td colspan="5" class="empty">Loading...</td></tr></tbody></table>
+    </div>
+
+    <div class="section">
+      <h2>Pilot lifecycle</h2>
+      <table id="pilots-table"><thead><tr><th>Pilot</th><th>Welcomed</th><th>Activated</th><th>Day-30 due</th><th>Status</th></tr></thead><tbody><tr><td colspan="5" class="empty">Loading...</td></tr></tbody></table>
+    </div>
+
+    <div class="section">
+      <h2>Cohort retention (last 6 months)</h2>
+      <div id="cohort">Coming soon — needs 6 months of data</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let TOKEN = '';
+const $ = q => document.querySelector(q);
+
+$('#auth-btn').onclick = async () => {
+  const t = $('#token').value.trim();
+  if (!t) return;
+  const r = await fetch('/.netlify/functions/aria-mrr-dashboard', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({event:'snapshot', admin_token: t})
+  });
+  if (r.status === 401) { alert('Invalid token'); return; }
+  TOKEN = t;
+  $('#auth-screen').style.display = 'none';
+  $('#app').style.display = 'block';
+  loadAll();
+};
+$('#token').onkeyup = e => { if (e.key === 'Enter') $('#auth-btn').click(); };
+$('#refresh').onclick = loadAll;
+
+function tile(label, value, delta) {
+  const goldCls = label === 'MRR' || label === 'ARR' ? ' gold' : '';
+  return '<div class="kpi"><div class="kpi-label">' + label + '</div><div class="kpi-value' + goldCls + '">' + value + '</div>' + (delta ? '<div class="kpi-delta">' + delta + '</div>' : '') + '</div>';
+}
+
+async function loadAll() {
+  $('#last-refresh').textContent = new Date().toLocaleString();
+  try {
+    const r = await fetch('/.netlify/functions/aria-mrr-dashboard', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({event:'snapshot', admin_token: TOKEN})
+    });
+    const j = await r.json();
+    if (!j.ok) return;
+    const mrr = j.mrr_usd || 0;
+    const arr = mrr * 12;
+    const subs = j.active_count || 0;
+    const arpu = subs > 0 ? (mrr / subs) : 0;
+    $('#kpis').innerHTML =
+      tile('MRR', '$' + mrr.toFixed(2), 'recurring revenue') +
+      tile('ARR', '$' + arr.toFixed(0), '12x MRR') +
+      tile('Active subs', subs, '') +
+      tile('ARPU', '$' + arpu.toFixed(0), 'per customer') +
+      tile('Pilot-to-paid', '—', 'tracked separately') +
+      tile('Churn this mo', '—', '%');
+
+    // Render subs table
+    const tbody = $('#subs-table tbody');
+    if (j.subs && j.subs.length) {
+      tbody.innerHTML = j.subs.map(s =>
+        '<tr><td>' + (s.email || '-') + '</td><td>' + (s.plan || '-') + '</td><td class="num">$' + (s.mrr_usd || 0).toFixed(2) + '</td><td>' + (s.status || '-') + '</td><td>' + (s.started_at ? new Date(s.started_at).toLocaleDateString() : '-') + '</td></tr>'
+      ).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">No active subscriptions yet. First customer signs the chart in.</td></tr>';
+    }
+  } catch (e) {
+    $('#kpis').innerHTML = '<div class="kpi" style="border-color:#f87171"><div class="kpi-label">Error</div><div class="kpi-value">' + e.message + '</div></div>';
+  }
+}
+</script>
+</body>
+</html>

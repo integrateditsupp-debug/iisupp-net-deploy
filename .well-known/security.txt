@@ -6,3 +6,7 @@ Preferred-Languages: en, fr
 Canonical: https://iisupp.net/.well-known/security.txt
 Policy: https://iisupp.net/security/disclosure
 Hiring: https://iisupp.net/careers
+Acknowledgments: https://iisupp.net/security/hall-of-fame
+
+# This file is signed using the PGP key referenced above (signature when key is generated).
+# Ahmad: generate a PGP key with `gpg --gen-key` and publish the public key at /.well-known/pgp-key.txt
