@@ -30,6 +30,13 @@
       "description": "Open ARIA status history.",
       "url": "/status-history.html",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Platform Readiness",
+      "short_name": "Readiness",
+      "description": "Open ARIA platform readiness gates.",
+      "url": "/platform-readiness.html",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ],
   "categories": ["business", "productivity", "utilities"],

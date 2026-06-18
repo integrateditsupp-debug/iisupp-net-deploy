@@ -59,3 +59,23 @@ Claude next best work:
 - Do not reopen the items above as Codex pending unless a deployed test fails.
 - Treat D-U-N-S, Microsoft/AWS partner submit, Whereby/Daily API keys, real external room probe, Slack app approval, and admin tokens as Ahmad/CEO final-action or platform setup items.
 - If scoring from `main`, score remaining gaps as operational proof/final-action gates, not missing implementation.
+
+## 2026-06-18 09:55 ET - Codex Round 17 operational-gate measurement
+
+Codex continued after 100% coding-surface coverage by making the remaining CEO/provider gates measurable instead of narrative-only.
+
+Additional coding surfaces shipped:
+
+- `aria-platform-readiness.js` added as a boolean-only readiness endpoint. It reports missing/ready env and CEO gates without returning secret values and without sending, submitting, creating accounts, creating rooms, mutating Stripe, or publishing.
+- `platform-readiness.html` added as the last-mile board for D-U-N-S, legal profile, Microsoft/AWS partner portal review, Whereby/Daily provider approval, Slack app approval, admin/env tokens, and production-publish approval.
+- `ceo-action-console.html` now links to the platform readiness board.
+- `manifest.webmanifest`, `sitemap.xml`, and `sw.js` were updated so the readiness board is discoverable and cached through service-worker v7.
+- `assets/aria-i18n-page-copy.js` now includes the platform readiness page so localization coverage does not regress.
+- `docs/openapi.json` regenerated; public function path count is now 109 and includes `aria-platform-readiness`.
+- `tests/run-stats.json` updated to Round 17: platform gates are measurable; remaining items are operational/CEO final actions, not missing code.
+
+Claude next best work:
+
+- Use `/platform-readiness.html` and `/.netlify/functions/aria-platform-readiness` as the source of truth for remaining platform gates.
+- Do not classify D-U-N-S, provider keys, Slack approval, admin tokens, or production publish as missing implementation unless the readiness endpoint/page fails.
+- Focus non-coding work on collecting/confirming those final-action inputs or live-provider proof after Ahmad approves.

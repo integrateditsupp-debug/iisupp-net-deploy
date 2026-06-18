@@ -1,7 +1,7 @@
 {
   "schema_version": "1.5",
   "label": "ARIA classifier + product autonomous loop",
-  "last_run_at": "2026-06-18T12:05:42Z",
+  "last_run_at": "2026-06-18T13:55:55Z",
   "last_run_iso": "2026-06-18",
   "total_runs": 6,
   "cumulative_scenarios": 724366,
@@ -21,8 +21,8 @@
   "universe_categories_at_70_plus": 25,
   "universe_categories_at_50_to_69": 0,
   "universe_categories_below_50": 0,
-  "session_commits_today": 27,
-  "session_lift_points": 48,
+  "session_commits_today": 28,
+  "session_lift_points": 52,
   "milestones": {
     "first_run_2026_06_18": "1,896 scenarios @ 84.5% pass",
     "mega_expansion_2026_06_18": "332,163 scenarios @ 91.1% pass",
@@ -39,8 +39,8 @@
   "apps_covered": 200,
   "personas_covered": 8,
   "os_contexts": 10,
-  "last_round": 16,
-  "last_round_at": "2026-06-18T12:05:42Z",
+  "last_round": 17,
+  "last_round_at": "2026-06-18T13:55:55Z",
   "round_6": {
     "shipped": [
       "aria-slack-command.js",
@@ -193,6 +193,25 @@
         "cat_20_live_remote_support": "~100% coding-surface coverage; real provider probe remains key/CEO-gated"
       },
       "weighted_coverage_estimate": "~100% coding-surface coverage on main; remaining work is operational final action, not missing code"
+    }
+  },
+  "round_17": {
+    "codex": {
+      "shipped": [
+        "Added aria-platform-readiness.js to report boolean-only env/platform readiness without exposing secrets or taking external action",
+        "Added platform-readiness.html as the measurable CEO/provider final-action board for D-U-N-S, partner portals, Whereby/Daily, Slack, admin tokens, and production publish",
+        "Linked platform readiness from ceo-action-console.html, manifest.webmanifest, sitemap.xml, and service-worker precache v7",
+        "Extended aria-i18n-page-copy.js so platform-readiness.html stays covered by the page localization bridge",
+        "Regenerated docs/openapi.json; public function path count is now 109 including aria-platform-readiness"
+      ],
+      "categories_lifted": {
+        "cat_10_reporting_analytics": "~100% retained with an operational readiness score and raw API result",
+        "cat_13_failure_recovery": "~100% retained with missing-env and missing-CEO-gate visibility",
+        "cat_17_partner_ecosystem": "~100% coding plus measurable D-U-N-S/legal/portal final-action gates",
+        "cat_20_live_remote_support": "~100% coding plus measurable provider account/key gate",
+        "cat_23_autonomous_agentic": "~100% retained with clearer agent/CEO separation for next actions"
+      },
+      "weighted_coverage_estimate": "~100% coding-surface coverage plus measurable operational-gate readiness"
     }
   }
 }

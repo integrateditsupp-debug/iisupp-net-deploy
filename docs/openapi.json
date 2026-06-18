@@ -2633,6 +2633,52 @@
         }
       }
     },
+    "/.netlify/functions/aria-platform-readiness": {
+      "post": {
+        "summary": "aria-platform-readiness Netlify function",
+        "operationId": "post_aria_platform_readiness",
+        "tags": [
+          "netlify-functions"
+        ],
+        "x-netlify-function-file": "aria-platform-readiness.js",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Function response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "405": {
+            "description": "Unsupported method"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
     "/.netlify/functions/aria-receipt-email": {
       "post": {
         "summary": "aria-receipt-email Netlify function",

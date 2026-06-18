@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Platform Readiness | Integrated IT Support</title>
+  <meta name="description" content="CEO-safe readiness board for ARIA partner, provider, Slack, billing, email, M365, and production gates.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/assets/finish100.css">
+  <style>
+    .readiness-list{display:grid;gap:10px;margin-top:12px}
+    .readiness-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:start;padding:12px;border:1px solid rgba(212,175,55,.16);border-radius:14px;background:rgba(0,0,0,.22)}
+    .readiness-dot{width:14px;height:14px;margin-top:4px;border-radius:50%;background:var(--f100-danger);box-shadow:0 0 14px rgba(255,107,107,.25)}
+    .readiness-row.ready .readiness-dot{background:var(--f100-ok);box-shadow:0 0 14px rgba(102,227,166,.25)}
+    .readiness-row h3{margin:0;color:var(--f100-ink);font-family:"Aptos","Segoe UI",sans-serif;font-size:15px;letter-spacing:0}
+    .readiness-row p{margin:4px 0 0;color:var(--f100-muted);font-size:13px}
+    .readiness-chip{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--f100-muted)}
+    .readiness-row.ready .readiness-chip{color:var(--f100-ok)}
+    .f100-card label{display:block;color:var(--f100-gold-soft);font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .f100-card label.check{display:flex;gap:10px;align-items:center;color:var(--f100-muted);text-transform:none;letter-spacing:0;font-size:14px}
+    .f100-card label.check input{width:18px;height:18px;accent-color:var(--f100-gold)}
+    .readiness-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  </style>
+</head>
+<body class="finish100">
+  <main class="f100-shell">
+    <nav class="f100-nav">
+      <a class="f100-mark" href="/"><span>ARIA</span> Platform Readiness</a>
+      <div class="f100-navlinks">
+        <a href="/ceo-action-console.html">CEO console</a>
+        <a href="/partner-application-checker.html">Partner checker</a>
+        <a href="/screenshare-consent.html">Screen-share consent</a>
+        <a href="/status-history.html">Status history</a>
+      </div>
+    </nav>
+
+    <section class="f100-hero">
+      <div class="f100-panel">
+        <h1>One board for the last mile.</h1>
+        <p>ARIA code coverage is complete; this page measures the remaining CEO/platform gates without exposing secrets or performing external actions.</p>
+        <div class="readiness-actions">
+          <button class="f100-button primary" id="refresh-readiness" type="button">Refresh readiness</button>
+          <button class="f100-button" id="save-known" type="button">Save local known gates</button>
+        </div>
+      </div>
+      <aside class="f100-panel">
+        <div class="f100-label">Readiness score</div>
+        <div class="f100-metric" id="readiness-score">--%</div>
+        <div class="f100-progress" aria-hidden="true"><span id="score-bar" style="--value:0%"></span></div>
+        <p class="f100-small" id="readiness-summary">Loading platform and CEO-gate readiness.</p>
+      </aside>
+    </section>
+
+    <section class="f100-grid two">
+      <form class="f100-card" id="known-gates-form">
+        <h2>CEO-known gates</h2>
+        <label>Confirmed D-U-N-S number<input class="f100-input" name="duns" inputmode="numeric" placeholder="9 digits; leave blank until confirmed"></label>
+        <label class="check"><input type="checkbox" name="legal_profile_confirmed"> Legal profile/address confirmed</label>
+        <label class="check"><input type="checkbox" name="microsoft_partner_reviewed"> Microsoft partner draft reviewed</label>
+        <label class="check"><input type="checkbox" name="aws_partner_reviewed"> AWS partner draft reviewed</label>
+        <label class="check"><input type="checkbox" name="whereby_or_daily_account_ready"> Whereby/Daily provider account approved</label>
+        <label class="check"><input type="checkbox" name="slack_app_approval_ready"> Slack app approval/install ready</label>
+        <label class="check"><input type="checkbox" name="admin_tokens_ready"> Admin/env tokens ready in provider dashboard</label>
+        <label class="check"><input type="checkbox" name="production_publish_approved"> Production publish approved after grouping review</label>
+      </form>
+      <article class="f100-card">
+        <h2>CEO next actions</h2>
+        <div class="readiness-list" id="next-actions"></div>
+      </article>
+    </section>
+
+    <section class="f100-grid two">
+      <article class="f100-card">
+        <h2>Environment readiness</h2>
+        <p class="f100-small">Only true/false configuration state is shown. Secret values are never returned.</p>
+        <div class="readiness-list" id="env-readiness"></div>
+      </article>
+      <article class="f100-card">
+        <h2>Operational gates</h2>
+        <p class="f100-small">These are the items Claude should treat as final-action gates, not missing implementation.</p>
+        <div class="readiness-list" id="ops-readiness"></div>
+      </article>
+    </section>
+
+    <section class="f100-card">
+      <h2>Raw readiness result</h2>
+      <pre class="f100-output" id="raw-readiness">No readiness result loaded yet.</pre>
+    </section>
+
+    <p class="f100-footer">Safe mode: this page does not send, submit, create accounts, create rooms, mutate Stripe, accept terms, or publish production changes.</p>
+  </main>
+
+  <script src="/assets/aria-i18n-page-copy.js"></script>
+  <script>
+    (function(){
+      var form = document.getElementById('known-gates-form');
+      var storageKey = 'aria-platform-known-gates';
+      function formData(){
+        var data = {};
+        Array.from(form.elements).forEach(function(el){
+          if (!el.name) return;
+          data[el.name] = el.type === 'checkbox' ? el.checked : el.value.trim();
+        });
+        return data;
+      }
+      function loadKnown(){
+        try {
+          var saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+          Array.from(form.elements).forEach(function(el){
+            if (!el.name || saved[el.name] === undefined) return;
+            if (el.type === 'checkbox') el.checked = Boolean(saved[el.name]);
+            else el.value = saved[el.name];
+          });
+        } catch(e) {}
+      }
+      function saveKnown(){
+        localStorage.setItem(storageKey, JSON.stringify(formData()));
+      }
+      function row(item){
+        var div = document.createElement('div');
+        div.className = 'readiness-row' + (item.ready ? ' ready' : '');
+        div.innerHTML = '<span class="readiness-dot"></span><div><h3></h3><p></p></div><span class="readiness-chip"></span>';
+        div.querySelector('h3').textContent = item.label || item.key;
+        div.querySelector('p').textContent = item.ceo_action || item.detail || item.source || '';
+        div.querySelector('.readiness-chip').textContent = item.ready ? 'ready' : 'blocked';
+        return div;
+      }
+      function render(result){
+        document.getElementById('readiness-score').textContent = result.score + '%';
+        document.getElementById('score-bar').style.setProperty('--value', result.score + '%');
+        document.getElementById('readiness-summary').textContent = result.summary.ready_items + ' of ' + result.summary.total_items + ' readiness checks complete. ' + result.summary.final_action_mode + '.';
+        document.getElementById('raw-readiness').textContent = JSON.stringify(result, null, 2);
+
+        var envRoot = document.getElementById('env-readiness');
+        envRoot.innerHTML = '';
+        result.categories.forEach(function(category){
+          var synthetic = {
+            key: category.id,
+            label: category.label,
+            ready: category.ready,
+            detail: category.ready ? category.final_action : 'Missing: ' + category.missing_env.join(', ')
+          };
+          envRoot.appendChild(row(synthetic));
+        });
+
+        var opsRoot = document.getElementById('ops-readiness');
+        opsRoot.innerHTML = '';
+        result.operational_gates.items.forEach(function(item){ opsRoot.appendChild(row(item)); });
+
+        var actionsRoot = document.getElementById('next-actions');
+        actionsRoot.innerHTML = '';
+        if (!result.next_ceo_actions.length) {
+          actionsRoot.appendChild(row({ label: 'No blocked CEO gates', ready: true, detail: 'All tracked platform gates are ready.' }));
+        } else {
+          result.next_ceo_actions.slice(0, 10).forEach(function(action){
+            actionsRoot.appendChild(row({ label: action, ready: false, detail: 'Final action remains with Ahmad/provider surface.' }));
+          });
+        }
+      }
+      async function refresh(){
+        var res = await fetch('/.netlify/functions/aria-platform-readiness', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ known: formData() })
+        });
+        var json = await res.json();
+        if (!res.ok) throw new Error(json.error || ('HTTP ' + res.status));
+        render(json);
+      }
+      loadKnown();
+      document.getElementById('save-known').addEventListener('click', function(){ saveKnown(); refresh().catch(function(e){ alert(e.message); }); });
+      document.getElementById('refresh-readiness').addEventListener('click', function(){ refresh().catch(function(e){ alert(e.message); }); });
+      form.addEventListener('change', function(){ saveKnown(); });
+      refresh().catch(function(e){ document.getElementById('raw-readiness').textContent = 'Readiness load failed: ' + e.message; });
+    })();
+  </script>
+</body>
+</html>

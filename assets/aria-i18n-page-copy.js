@@ -25,7 +25,9 @@
       partner_title: 'Verification partenaire ARIA',
       partner_sub: 'Preparez les brouillons Microsoft et AWS sans soumettre avant le feu vert CEO.',
       screenshare_title: 'Consentement au partage ecran ARIA',
-      screenshare_sub: 'Confirmez consentement, enregistrement et controle distant avant toute session live.'
+      screenshare_sub: 'Confirmez consentement, enregistrement et controle distant avant toute session live.',
+      platform_title: 'Preparation plateforme ARIA',
+      platform_sub: 'Mesurez les derniers blocages CEO et fournisseur sans exposer de secrets ni declencher dactions externes.'
     },
     es: {
       home_title: 'Servicios de TI distinguidos para equipos modernos',
@@ -46,7 +48,9 @@
       partner_title: 'Verificador de socios ARIA',
       partner_sub: 'Prepara borradores de Microsoft y AWS sin enviar hasta la aprobacion del CEO.',
       screenshare_title: 'Consentimiento de pantalla ARIA',
-      screenshare_sub: 'Confirma pantalla, grabacion y control remoto antes de una sesion en vivo.'
+      screenshare_sub: 'Confirma pantalla, grabacion y control remoto antes de una sesion en vivo.',
+      platform_title: 'Preparacion de plataforma ARIA',
+      platform_sub: 'Mide los ultimos bloqueos de CEO y proveedor sin exponer secretos ni ejecutar acciones externas.'
     },
     de: {
       home_title: 'Ausgezeichnete IT-Services fuer moderne Teams',
@@ -67,7 +71,9 @@
       partner_title: 'ARIA Partnerpruefung',
       partner_sub: 'Bereite Microsoft- und AWS-Entwuerfe vor, ohne vor CEO-Freigabe zu senden.',
       screenshare_title: 'ARIA Bildschirmfreigabe-Zustimmung',
-      screenshare_sub: 'Bestaetige Bildschirmfreigabe, Aufnahme und Fernsteuerung vor jeder Live-Sitzung.'
+      screenshare_sub: 'Bestaetige Bildschirmfreigabe, Aufnahme und Fernsteuerung vor jeder Live-Sitzung.',
+      platform_title: 'ARIA Plattformbereitschaft',
+      platform_sub: 'Miss die letzten CEO- und Provider-Blocker, ohne Secrets offenzulegen oder externe Aktionen auszufuehren.'
     },
     ar: {
       home_title: '\u062e\u062f\u0645\u0627\u062a \u062a\u0642\u0646\u064a\u0629 \u0645\u0645\u064a\u0632\u0629 \u0644\u0644\u0641\u0631\u0642 \u0627\u0644\u062d\u062f\u064a\u062b\u0629',
@@ -88,7 +94,9 @@
       partner_title: '\u0641\u062d\u0635 \u0634\u0631\u0627\u0643\u0627\u062a ARIA',
       partner_sub: '\u062a\u062d\u0636\u064a\u0631 \u0645\u0633\u0648\u062f\u0627\u062a Microsoft \u0648AWS \u0628\u062f\u0648\u0646 \u0627\u0631\u0633\u0627\u0644 \u0642\u0628\u0644 \u0645\u0648\u0627\u0641\u0642\u0629 \u0627\u0644\u0645\u062f\u064a\u0631.',
       screenshare_title: '\u0645\u0648\u0627\u0641\u0642\u0629 \u0645\u0634\u0627\u0631\u0643\u0629 \u0627\u0644\u0634\u0627\u0634\u0629',
-      screenshare_sub: '\u062a\u0627\u0643\u064a\u062f \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629 \u0642\u0628\u0644 \u0627\u064a \u062c\u0644\u0633\u0629 \u062f\u0639\u0645 \u0645\u0628\u0627\u0634\u0631\u0629.'
+      screenshare_sub: '\u062a\u0627\u0643\u064a\u062f \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629 \u0642\u0628\u0644 \u0627\u064a \u062c\u0644\u0633\u0629 \u062f\u0639\u0645 \u0645\u0628\u0627\u0634\u0631\u0629.',
+      platform_title: '\u062c\u0627\u0647\u0632\u064a\u0629 \u0645\u0646\u0635\u0629 ARIA',
+      platform_sub: '\u0642\u064a\u0627\u0633 \u0627\u0644\u0628\u0648\u0627\u0628\u0627\u062a \u0627\u0644\u0627\u062e\u064a\u0631\u0629 \u0628\u062f\u0648\u0646 \u0643\u0634\u0641 \u0627\u0633\u0631\u0627\u0631 \u0627\u0648 \u062a\u0646\u0641\u064a\u0630 \u0627\u062c\u0631\u0627\u0621\u0627\u062a \u062e\u0627\u0631\u062c\u064a\u0629.'
     }
   };
 
@@ -152,7 +160,9 @@
       '/partner-application-checker.html': ['partner_title', 'partner_sub'],
       '/partner-application-checker': ['partner_title', 'partner_sub'],
       '/screenshare-consent.html': ['screenshare_title', 'screenshare_sub'],
-      '/screenshare-consent': ['screenshare_title', 'screenshare_sub']
+      '/screenshare-consent': ['screenshare_title', 'screenshare_sub'],
+      '/platform-readiness.html': ['platform_title', 'platform_sub'],
+      '/platform-readiness': ['platform_title', 'platform_sub']
     };
     if (pages[path]) applyFinishPage(t, pages[path][0], pages[path][1]);
   }
