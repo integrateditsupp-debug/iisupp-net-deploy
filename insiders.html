@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ARIA Insiders — early access + monthly notes from the founder</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Founder-direct notes on AI for IT support. Monthly only. No spam, no sales pitches, no automation. Free.">
+<meta property="og:title" content="ARIA Insiders — monthly notes from the founder">
+<meta property="og:description" content="Monthly behind-the-build email from the IIS founder. Free.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050505;color:#e8e8e8;line-height:1.55;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:640px;margin:0 auto}
+  .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h1{font-size:40px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em;line-height:1.1}
+  h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  p.sub{color:rgba(255,255,255,.65);font-size:16px;margin-bottom:30px;line-height:1.6}
+  .form-card{background:#0d0d0d;border:1px solid rgba(197,160,89,.4);border-radius:14px;padding:28px;margin-bottom:24px}
+  label{display:block;color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;font-weight:600}
+  input,select{width:100%;padding:11px 13px;background:#050505;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14.5px;font-family:inherit;margin-bottom:14px}
+  input:focus,select:focus{outline:none;border-color:#c5a059}
+  button.subscribe{width:100%;padding:14px;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;border:none;border-radius:8px;font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:ui-monospace,monospace}
+  button.subscribe:disabled{opacity:.5;cursor:wait}
+  .ok-msg{display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.4);color:#22c55e;padding:13px;border-radius:8px;font-size:13.5px;margin-top:12px}
+  .err-msg{display:none;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.3);color:#f87171;padding:11px;border-radius:8px;font-size:13px;margin-top:10px}
+  h2{font-size:18px;color:#d4af37;margin:32px 0 12px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+  ul{padding-left:22px;color:#ddd;margin-bottom:20px}
+  ul li{margin-bottom:8px;font-size:14.5px;line-height:1.55}
+  ul li b{color:#fff}
+  .promise{background:rgba(197,160,89,.05);border-left:3px solid #c5a059;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;font-size:14px;color:#ddd;line-height:1.6}
+  .fine{color:rgba(255,255,255,.4);font-size:11.5px;margin-top:18px;text-align:center;line-height:1.6}
+  .nav{text-align:center;margin-top:32px;color:rgba(255,255,255,.4);font-size:12.5px}
+  .nav a{color:rgba(255,255,255,.6);text-decoration:none;margin:0 8px}
+  .nav a:hover{color:#c5a059}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crown">ARIA Insiders · Free · Monthly</div>
+  <h1>Monthly notes from <span class="gold">the founder</span>, direct.</h1>
+  <p class="sub">One email per month. What we shipped. What broke. What we learned. Honest. Specific. No fluff. From me, written by me.</p>
+
+  <div class="form-card">
+    <label>Your name</label>
+    <input id="ins-name" type="text" placeholder="Jane Smith">
+
+    <label>Work email *</label>
+    <input id="ins-email" type="email" placeholder="you@yourdomain.com">
+
+    <label>What is your role?</label>
+    <select id="ins-role">
+      <option value="">Pick one (helps me tailor)</option>
+      <option>Practice manager / clinic director</option>
+      <option>Firm administrator / office manager</option>
+      <option>CFO / Controller / Finance lead</option>
+      <option>IT lead / MSP owner</option>
+      <option>Founder / CEO</option>
+      <option>Other</option>
+    </select>
+
+    <button class="subscribe" id="sub-btn">Subscribe →</button>
+    <div class="ok-msg" id="ok-msg">Welcome. Next note lands first business day of next month.</div>
+    <div class="err-msg" id="err-msg"></div>
+  </div>
+
+  <h2>What you actually get</h2>
+  <ul>
+    <li><b>What we shipped that month</b> — specific features, specific numbers</li>
+    <li><b>What broke</b> — yes, including the file-truncation incident that almost broke the live site</li>
+    <li><b>What we learned</b> — patterns we will repeat, mistakes we will not</li>
+    <li><b>One tactical tip</b> for your IT setup — actionable in under 15 minutes, regardless of whether you use ARIA</li>
+    <li><b>Optional invite</b> to that month's free webinar (no obligation)</li>
+  </ul>
+
+  <div class="promise">
+    <b style="color:#fff;display:block;margin-bottom:6px">My promise to you</b>
+    Monthly only — never weekly, never automated drip. Reply to any note and it lands in my inbox; I will reply. Unsubscribe is one click. No tracking pixels. No marketing automation tools.
+  </div>
+
+  <p class="fine">Privacy: your email stays with us, never sold, never shared. Used only for ARIA Insiders. Full policy at <a href="/privacy" style="color:#c5a059">/privacy</a>.</p>
+
+  <div class="nav">
+    <a href="/">Home</a> · <a href="/aria">Try ARIA</a> · <a href="/webinar">Monthly Webinar</a> · <a href="/plans">Pricing</a>
+  </div>
+</div>
+
+<script>
+document.getElementById('sub-btn').onclick = async function(){
+  var name = document.getElementById('ins-name').value.trim();
+  var email = document.getElementById('ins-email').value.trim();
+  var role = document.getElementById('ins-role').value;
+  var err = document.getElementById('err-msg');
+  var ok = document.getElementById('ok-msg');
+  err.style.display = ok.style.display = 'none';
+  if (!email) { err.textContent = 'Email required.'; err.style.display = 'block'; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Valid email required.'; err.style.display = 'block'; return; }
+
+  var btn = document.getElementById('sub-btn');
+  btn.disabled = true; btn.textContent = 'Subscribing...';
+  try {
+    var r = await fetch('/.netlify/functions/aria-lead-capture', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: name || '(anonymous)', email: email, company: role,
+        message: 'INSIDERS subscribe. Role: ' + (role || '(none)'),
+        source: 'insiders-newsletter',
+        last_intent: 'newsletter_subscribe'
+      })
+    });
+    if (!r.ok) throw new Error('sub failed');
+    ok.style.display = 'block';
+    btn.style.display = 'none';
+  } catch(e) {
+    err.textContent = 'Could not subscribe — try again or email ahmad.wasee@iisupp.net.';
+    err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Subscribe →';
+  }
+};
+</script>
+</body>
+</html>
