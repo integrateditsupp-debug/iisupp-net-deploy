@@ -5544,5 +5544,17 @@ try{
 })();
 </script>
 
+
+<style>
+#ariaHandoffBtn{position:fixed;bottom:18px;right:160px;z-index:8400;background:transparent;color:#f1dca7;border:1px solid rgba(197,160,89,.55);padding:11px 16px;border-radius:999px;font-family:Cinzel,serif;font-size:10.5px;letter-spacing:.18em;font-weight:700;text-transform:uppercase;cursor:pointer;display:none;align-items:center;gap:7px;backdrop-filter:blur(6px);transition:all .15s}
+#ariaHandoffBtn:hover{background:rgba(197,160,89,.12);color:#fff}
+#ariaHandoffBtn.show{display:inline-flex}
+#ariaHandoffBtn .ah-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;animation:ahPulse 1.5s infinite}
+@keyframes ahPulse{0%,100%{opacity:1}50%{opacity:.4}}
+@media(max-width:680px){#ariaHandoffBtn{bottom:78px;right:18px}}
+</style>
+<button id="ariaHandoffBtn" type="button" onclick="(function(){var st=document.getElementById('alm-status');var btn=this;var profile={};try{profile=JSON.parse(localStorage.getItem('aria_user_profile')||'{}')}catch(e){}if(!profile.email){alert('Please enter your details in ARIA first (the blue Sign-In form), then hit this button again.');return;}btn.disabled=true;var orig=btn.innerHTML;btn.innerHTML='<span class=\"ah-dot\"></span> PAGING...';var msgs=Array.prototype.slice.call(document.querySelectorAll('.aria-block, .you-block')).slice(-20).map(function(b){var who=b.classList.contains('you-block')?'USER':'ARIA';var txt=(b.innerText||'').trim().slice(0,400);return who+': '+txt}).join('\n\n');fetch('/.netlify/functions/aria-warm-handoff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:profile.email,name:(profile.firstName||'')+' '+(profile.lastName||'').trim(),chat_summary:msgs,last_intent:(window.state&&window.state.lastIntent)||'',urgency:'normal',session_start:profile.startedAt||''})}).then(function(r){return r.json()}).then(function(j){btn.innerHTML='<span class=\"ah-dot\"></span> AHMAD PAGED \u2713';setTimeout(function(){btn.innerHTML=orig;btn.disabled=false;},5000);}).catch(function(e){btn.innerHTML='ERROR \u2014 EMAIL DIRECTLY';btn.style.borderColor='#fb7185';setTimeout(function(){btn.innerHTML=orig;btn.style.borderColor='';btn.disabled=false;},5000);});}).call(this)"><span class="ah-dot"></span><span>Get a human</span></button>
+<script>setTimeout(function(){var b=document.getElementById('ariaHandoffBtn');if(b)b.classList.add('show');},20000);setInterval(function(){if(document.querySelector('.aria-locked-overlay')){var b=document.getElementById('ariaHandoffBtn');if(b)b.classList.add('show');}},3000);</script>
+
 </body>
 </html>
