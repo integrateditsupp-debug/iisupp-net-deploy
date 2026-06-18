@@ -1,0 +1,41 @@
+{
+  "display_information": {
+    "name": "ARIA by IIS",
+    "description": "AI-powered IT support assistant — L1-L3 helpdesk in your Slack",
+    "background_color": "#0a0805",
+    "long_description": "ARIA is an AI-powered IT support assistant by Integrated IT Support Inc. (iisupp.net). Solves Microsoft 365, Azure AD, hybrid identity, security, and helpdesk scenarios using a 9-framework reasoning engine on Anthropic Claude. Install to your workspace and ask ARIA anything tech via @ARIA in any channel or DM."
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "ARIA",
+      "always_online": true
+    },
+    "slash_commands": [
+      {
+        "command": "/aria",
+        "url": "https://iisupp.net/.netlify/functions/aria-slack-command",
+        "description": "Ask ARIA an IT question",
+        "usage_hint": "outlook won't open",
+        "should_escape": false
+      }
+    ]
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": ["commands", "chat:write", "im:history", "im:read", "im:write"]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "https://iisupp.net/.netlify/functions/aria-slack-events",
+      "bot_events": ["app_mention", "message.im"]
+    },
+    "interactivity": {
+      "is_enabled": true,
+      "request_url": "https://iisupp.net/.netlify/functions/aria-slack-interactive"
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}

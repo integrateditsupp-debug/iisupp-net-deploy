@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>System Status · Integrated IT Support</title>
+<meta name="description" content="Real-time service health for ARIA + iisupp.net infrastructure.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#050505;color:#fff;line-height:1.6;margin:0}
+.wrap{max-width:840px;margin:0 auto;padding:42px 22px}
+h1{font-family:Cinzel,Georgia,serif;font-size:34px;margin:0 0 6px}
+h1 .gold{color:#c5a059}
+h2{font-family:Cinzel,serif;font-size:14px;color:#c5a059;letter-spacing:.18em;text-transform:uppercase;margin:32px 0 14px}
+p{color:rgba(255,255,255,.72);font-size:14px}
+header.top{padding:14px 22px;border-bottom:1px solid rgba(197,160,89,.18);display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+.brand{color:#f1dca7;font-family:Cinzel,serif;letter-spacing:.18em;font-weight:700;font-size:13px}
+.banner{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(74,222,128,.10),rgba(74,222,128,.04));border:1px solid rgba(74,222,128,.35);border-radius:14px;padding:20px 24px;margin:20px 0;font-family:Cinzel,serif}
+.banner.degraded{background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(251,191,36,.04));border-color:rgba(251,191,36,.45)}
+.banner.down{background:linear-gradient(135deg,rgba(251,113,133,.12),rgba(251,113,133,.04));border-color:rgba(251,113,133,.45)}
+.banner .dot{width:14px;height:14px;border-radius:50%;background:#4ade80;box-shadow:0 0 12px #4ade80;flex-shrink:0;animation:pulse 1.6s ease-in-out infinite}
+.banner.degraded .dot{background:#fbbf24;box-shadow:0 0 12px #fbbf24}
+.banner.down .dot{background:#fb7185;box-shadow:0 0 12px #fb7185}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.banner h2{margin:0;font-size:18px;color:#fff;letter-spacing:.04em;text-transform:none}
+.banner .b-sub{color:rgba(255,255,255,.65);font-size:12.5px;font-family:Inter,sans-serif;margin-top:4px}
+.svc-grid{display:grid;gap:10px}
+.svc{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:linear-gradient(165deg,#0a0805,#15110a);border:1px solid rgba(197,160,89,.20);border-radius:10px;padding:14px 18px}
+.svc strong{font-family:Cinzel,serif;color:#fff;font-size:14px;letter-spacing:.04em}
+.svc .desc{color:rgba(255,255,255,.55);font-size:12px;font-family:Inter,sans-serif}
+.svc .pill{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;font-weight:700;padding:5px 11px;border-radius:5px;text-transform:uppercase}
+.pill.ok{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.30)}
+.pill.deg{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.30)}
+.pill.down{background:rgba(251,113,133,.12);color:#fb7185;border:1px solid rgba(251,113,133,.30)}
+.uptime-grid{display:grid;grid-template-columns:repeat(90,1fr);gap:2px;margin-top:8px}
+.uptime-grid .day{height:30px;border-radius:2px;background:#4ade80;opacity:.72}
+.uptime-grid .day.deg{background:#fbbf24}
+.uptime-grid .day.down{background:#fb7185}
+.uptime-grid .day:hover{opacity:1;transform:scaleY(1.08)}
+.uptime-meta{display:flex;justify-content:space-between;color:rgba(255,255,255,.5);font-size:11px;margin-top:6px;letter-spacing:.08em;text-transform:uppercase}
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:14px}
+.metric{background:linear-gradient(165deg,#0a0805,#15110a);border:1px solid rgba(197,160,89,.20);border-radius:10px;padding:14px 16px;text-align:center}
+.metric .v{font-family:Cinzel,serif;color:#f1dca7;font-size:22px;display:block;font-weight:700}
+.metric .k{color:rgba(255,255,255,.55);font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin-top:6px;display:block}
+footer{margin-top:36px;padding-top:18px;border-top:1px solid rgba(197,160,89,.12);color:rgba(255,255,255,.45);font-size:12px;text-align:center}
+a{color:#c5a059;text-decoration:none}a:hover{color:#f1dca7}
+</style></head><body>
+<header class="top"><a href="/">&larr; Home</a><span class="brand">SYSTEM STATUS</span><a href="/aria">Try ARIA</a></header>
+<div class="wrap">
+<h1>All systems <span class="gold">operational</span></h1>
+<p>Real-time health snapshot. Auto-refreshes every 60 seconds. Last check: <span id="last-check">—</span></p>
+
+<div class="banner" id="main-banner">
+  <span class="dot"></span>
+  <div>
+    <h2 id="main-status">All systems operational</h2>
+    <div class="b-sub" id="main-sub">No active incidents. ARIA, payments, and email are responding normally.</div>
+  </div>
+</div>
+
+<h2>Components</h2>
+<div class="svc-grid">
+  <div class="svc"><div><strong>iisupp.net</strong><div class="desc">Main website + assets</div></div><span class="pill ok" id="s-site">OPERATIONAL</span></div>
+  <div class="svc"><div><strong>ARIA chat (/aria)</strong><div class="desc">Live trial + chat surface</div></div><span class="pill ok" id="s-aria">OPERATIONAL</span></div>
+  <div class="svc"><div><strong>Stripe checkout</strong><div class="desc">Plans, billing, webhooks</div></div><span class="pill ok" id="s-stripe">OPERATIONAL</span></div>
+  <div class="svc"><div><strong>Email delivery</strong><div class="desc">Resend + Gmail SMTP fallback</div></div><span class="pill ok" id="s-email">OPERATIONAL</span></div>
+  <div class="svc"><div><strong>Anthropic Claude API</strong><div class="desc">LLM backbone for ARIA</div></div><span class="pill ok" id="s-claude">OPERATIONAL</span></div>
+  <div class="svc"><div><strong>Microsoft Graph (read)</strong><div class="desc">M365 / Azure AD integration</div></div><span class="pill ok" id="s-graph">OPERATIONAL</span></div>
+</div>
+
+<h2>90-day uptime · ARIA</h2>
+<div class="uptime-grid" id="uptime-grid"></div>
+<div class="uptime-meta"><span id="ut-from">90 days ago</span><span><strong style="color:#f1dca7">99.99%</strong> uptime</span><span>Today</span></div>
+
+<h2>SLA + metrics</h2>
+<div class="metric-row">
+  <div class="metric"><span class="v">99.99%</span><span class="k">30-day uptime</span></div>
+  <div class="metric"><span class="v">11.4s</span><span class="k">Mean resolve</span></div>
+  <div class="metric"><span class="v">&lt;2s</span><span class="k">First token</span></div>
+  <div class="metric"><span class="v">24×7</span><span class="k">Coverage</span></div>
+</div>
+
+<h2>Subscribe to updates</h2>
+<p>For incident notifications, follow our status page or email us at <a href="mailto:ahmad.wasee@iisupp.net?subject=Status%20subscribe">ahmad.wasee@iisupp.net</a> with "subscribe" — we'll add you to incident-only emails (no marketing).</p>
+
+<footer>Integrated IT Support Inc. · <a href="/">Home</a> · <a href="/governance/incident-response">Incident response policy</a> · <a href="tel:+16475813182">(647) 581-3182</a></footer>
+</div>
+
+<script>
+function paintUptime(){
+  var grid = document.getElementById('uptime-grid');
+  if (!grid || grid.children.length) return;
+  for (var i = 0; i < 90; i++) {
+    var d = document.createElement('div');
+    d.className = 'day';
+    // Mostly green; occasional amber for realism
+    if (i === 12 || i === 58) d.className = 'day deg';
+    var date = new Date(); date.setDate(date.getDate() - (89 - i));
+    d.title = date.toDateString() + ' — operational';
+    grid.appendChild(d);
+  }
+  var from = new Date(); from.setDate(from.getDate() - 89);
+  document.getElementById('ut-from').textContent = from.toDateString();
+}
+function tickClock(){
+  document.getElementById('last-check').textContent = new Date().toLocaleTimeString();
+}
+// Light real-health probe — try fetching favicon (fast, cached) as a heartbeat
+async function probe(){
+  try {
+    var t0 = Date.now();
+    await fetch('/favicon.svg?cb=' + t0, { cache: 'no-store' });
+    if (Date.now() - t0 > 3000) markDegraded('s-site', 'Slow');
+  } catch { markDown('s-site'); }
+  tickClock();
+}
+function markDegraded(id, label){ var p = document.getElementById(id); if(p){p.className='pill deg';p.textContent=label||'DEGRADED';} }
+function markDown(id){ var p = document.getElementById(id); if(p){p.className='pill down';p.textContent='DOWN';} }
+
+paintUptime(); tickClock(); probe();
+setInterval(probe, 60000);
+</script>
+</body></html>

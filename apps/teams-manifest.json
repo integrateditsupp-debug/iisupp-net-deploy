@@ -1,0 +1,33 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "0.1.0",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "packageName": "net.iisupp.aria",
+  "developer": {
+    "name": "Integrated IT Support Inc.",
+    "websiteUrl": "https://iisupp.net",
+    "privacyUrl": "https://iisupp.net/governance/privacy",
+    "termsOfUseUrl": "https://iisupp.net/terms.html"
+  },
+  "icons": { "color": "icon-color.png", "outline": "icon-outline.png" },
+  "name": { "short": "ARIA", "full": "ARIA — AI IT Support by Integrated IT Support Inc." },
+  "description": {
+    "short": "AI-powered IT help, voice + chat, 15-min free trial.",
+    "full": "ARIA is an AI-powered IT support assistant by Integrated IT Support Inc. (iisupp.net). Built on Anthropic Claude with a 9-framework reasoning engine. Solves L1-L3 Microsoft 365, Azure AD, hybrid identity, security, and helpdesk scenarios. Use directly in Teams chat or open the live trial at iisupp.net/aria."
+  },
+  "accentColor": "#c5a059",
+  "staticTabs": [
+    {
+      "entityId": "aria-chat",
+      "name": "ARIA",
+      "contentUrl": "https://iisupp.net/aria",
+      "websiteUrl": "https://iisupp.net/aria",
+      "scopes": ["personal"]
+    }
+  ],
+  "configurableTabs": [],
+  "bots": [],
+  "permissions": ["identity"],
+  "validDomains": ["iisupp.net", "*.iisupp.net"]
+}
