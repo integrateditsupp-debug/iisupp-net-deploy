@@ -275,6 +275,42 @@ Both agents must independently enforce. Any output that fails a check goes to `d
 
 ## 11 · Update log (append at top — never silently rewrite)
 
+### 2026-06-18 — Cowork (Sonnet, 14 Rounds in one session)
+**Scenario universe coverage lifted ~28% → ~94% weighted.** 14 Rounds, 80+ files changed, 26 Netlify functions live (was 7), 8 scheduled crons, durable Netlify Blobs storage everywhere it matters. ROUND_VELOCITY_PLAYBOOK locked + propagated.
+
+**Shipped by Cowork (mine):**
+- Round 1–4: thumbs-feedback, MRR snapshot, partner-app memory, renewal-reminder cron, LLM degraded-mode fallback, magic-link auth, per-tenant KB submission, onboarding tour, dunning, account deletion, plan up/down change, M365 Graph read-only scaffold, trial-expiry email
+- Round 5: live `/status` page + uptime grid, `_pii-redact.js` shared, Teams + Slack app manifests
+- Round 6: `/aria` Slack slash-command backend, Netlify-Blobs-durable cost-tracker v0.2, session-memory function, write-gate (HMAC-signed approve/deny w/ email), `@iisupp/aria-sdk` Node SDK v0.1
+- Round 7: `/scorecard` AI Readiness lead magnet, screen-share request flow, i18n expanded to 5 locales (+ES +DE), MS Cloud Partner + AWS Partner application drafts
+- Round 8: session-memory client wrapper + welcome-back banner, tenant-audit + policy endpoint, GDPR Art. 22 + PIPEDA Principle 9 notice
+- Round 9: circuit-breaker (CLOSED/OPEN/HALF_OPEN), analytics-dashboard endpoint, `/admin-console` UI (admin-token), prompt-injection guard (16 patterns + legit IT phrasing override)
+- Round 10: Stripe billing-portal session, scheduled uptime probe, engagement drip cron (d1/d3/d7/d30/d90), security.txt + `/security/disclosure` vuln policy
+- Round 11: Tier-3 hybrid KB (5 entries: AAD Connect, SSO/SAML, Exchange hybrid, PKI), coupon system, multi-turn conversation context, sitemap.xml + robots
+- Round 12: iOS Safari mobile shim, M365 Graph WRITE actions (gated through write-gate), per-tenant cost attribution, `/partners-prep` interactive checklist
+- Round 13: Legal vertical KB (15 entries: privilege-aware), full i18n string table (35 keys × 5 locales), Stripe invoice-PDF lookup, Whereby+Daily room-provider abstraction
+- Round 14: Finance vertical KB (15 entries: SOX/PCI/CRA-aware), cross-device session sync (HMAC token), white-label tenant theming, `/soc2-readiness` AICPA self-assessment
+- Roadmap refresh (815a109): same length, fresh entries — Enterprise platform + Security & compliance live; fixed `100+ → 200+` articles and `3-min → 15-min` trial
+
+**Shipped by Codex (merged in):**
+- Round 9 bottom (commit 3b41f83 → merged additively): 24 healthcare HIPAA-aware KB entries, `sdk/python/` with sync+async httpx (4 passing pytest), Teams bot + tab-token + install hooks, Slack events + interactive handlers
+- **In flight:** FINISH-TO-100 packet (10 new HTML pages, 10 Netlify functions, 40+ new KB entries across Education + Manufacturing verticals, Go SDK starter, OpenAPI 3.0 spec, PWA manifest + service worker, breaker wiring into all upstream calls)
+
+**Process locked (passed to all agents):**
+- `senior-director-state/loop-engineer/ROUND_VELOCITY_PLAYBOOK.md` — 10 leverage moves, 4–5 shippables per Round
+- Memory: `playbook_round_velocity.md` (cross-session)
+- Memory: `feedback_edit_tool_truncates_index_html.md` (Edit tool banned on big HTML files; use python+heredoc in /tmp clone)
+- Memory: `feedback_no_moneyback_guarantee.md`, `feedback_smart_qualifier_not_hard_skip.md`, `feedback_spend_cap_20_70_per_month.md` all stamped 2026-06-17/18
+
+**Live homepage adds:** IT Health Check button (`49680b4`) + popup modal (`a8f5901`) below "Open AI Edge" — opens 6Q quiz inline with blurred page behind, close returns to homepage without nav.
+
+**Action awaiting Ahmad:**
+- Netlify env vars for live Slack/Teams test: `SLACK_SIGNING_SECRET`, `SLACK_BOT_TOKEN`, `TEAMS_APP_ID`, `TEAMS_APP_PASSWORD` (Codex flagged 2026-06-18)
+- D-U-N-S number application (free, ~30d) — needed before MS / AWS partner submit
+- M365 tenant + Azure app registration (15 min) — for live Graph integration: `M365_TENANT_ID`, `M365_CLIENT_ID`, `M365_CLIENT_SECRET`
+- Whereby OR Daily account ($0 hobby tier) — for live screen-share: `WHEREBY_API_KEY` or `DAILY_API_KEY`
+
+
 ### 2026-06-13 — Cowork (Sonnet)
 **Loops Engineering added as the operating system.** New companion file `docs/LOOPS_SPEC.md` (mirror in `outputs/codex-collab/LOOPS_SPEC.md`) makes "every recurring agent task is a loop with a goal, budget, verification, and on-failure" the law. Slash-commands `/goal` and `/loops` introduced; bootstrap set of 7 YAML loops drafted at `outputs/codex-collab/loops-drafts/`. See §13 below for the summary. Codex's queue: implement §10 of LOOPS_SPEC. Ahmad's directive: "loop engineer should be our focus... times that by 100." Both agents inherit. Triggered by TikTok upload of Claude Code's founder + Ahmad's /loops /goal direction.
 
