@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Data — PIPEDA Export &amp; Deletion · Integrated IT Support</title>
+<meta name="description" content="PIPEDA Principle 9 access + GDPR right-to-erasure. Export everything ARIA stores about you, or delete it.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  body{font-family:Inter,sans-serif;background:#050505;color:#fff;line-height:1.6;margin:0}
+  .gold{color:#c5a059}.h-cinzel{font-family:Cinzel,serif}
+  .wrap{max-width:760px;margin:0 auto;padding:48px 22px}
+  .card{background:linear-gradient(165deg,#0a0805 0%,#15110a 100%);border:1px solid rgba(197,160,89,.25);border-radius:14px;padding:24px 26px;margin:18px 0}
+  h1{font-family:Cinzel,serif;font-size:30px;margin:0 0 6px}
+  h2{font-family:Cinzel,serif;font-size:18px;letter-spacing:.10em;color:#c5a059;margin:0 0 12px;text-transform:uppercase}
+  label{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#c5a059;font-weight:600;margin-bottom:6px}
+  input{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.25);color:#fff;padding:11px 13px;border-radius:8px;font-size:14px;box-sizing:border-box}
+  input:focus{outline:none;border-color:#c5a059}
+  button{font-family:Cinzel,serif;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#1a1410;padding:12px 20px;border-radius:8px;font-weight:700;letter-spacing:.14em;font-size:12px;text-transform:uppercase;border:0;cursor:pointer;transition:transform .15s}
+  button:hover{transform:translateY(-1px)}
+  button.danger{background:linear-gradient(135deg,#d97560,#b85a4a);color:#fff}
+  pre{background:rgba(0,0,0,.55);border:1px solid rgba(197,160,89,.20);border-radius:8px;padding:14px;color:rgba(255,255,255,.85);font-size:12px;max-height:480px;overflow:auto;font-family:'JetBrains Mono',monospace;white-space:pre-wrap;word-wrap:break-word}
+  .small{font-size:12px;color:rgba(255,255,255,.6);line-height:1.55}
+  .small a{color:#c5a059}
+  a.back{color:rgba(255,255,255,.5);font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
+  a.back:hover{color:#f1dca7}
+</style></head>
+<body>
+<div class="wrap">
+  <a class="back" href="/">&larr; Back to home</a>
+  <h1>Your data — <span class="gold">access &amp; deletion</span></h1>
+  <p class="small">Aligned to PIPEDA Principle 9 (Individual Access) and GDPR right-to-erasure. Two tools below.</p>
+
+  <div class="card">
+    <h2>1 · Export everything ARIA has on you</h2>
+    <p class="small">We dump every server-side record (Stripe account, invoices) AND every browser-side localStorage key we set. Download as JSON.</p>
+    <label for="ex-email">Your email</label>
+    <input type="email" id="ex-email" placeholder="you@company.com" autocomplete="email">
+    <p style="margin:14px 0 0"><button id="ex-btn">Export my data</button></p>
+    <pre id="ex-out" style="display:none;margin-top:16px"></pre>
+    <p style="margin:14px 0 0"><button id="ex-dl" style="display:none">Download JSON</button></p>
+  </div>
+
+  <div class="card">
+    <h2>2 · Delete everything</h2>
+    <p class="small">Cancels active subscriptions, flags Stripe customer as deleted, sends confirmation email. <strong style="color:#f1dca7">You must also click Log Out on /aria to clear browser-side data.</strong></p>
+    <label for="del-email">Your email</label>
+    <input type="email" id="del-email" placeholder="you@company.com" autocomplete="email">
+    <label for="del-confirm" style="margin-top:14px">Confirm — type DELETE-MY-DATA</label>
+    <input type="text" id="del-confirm" placeholder="DELETE-MY-DATA">
+    <p style="margin:14px 0 0"><button class="danger" id="del-btn">Delete my data</button></p>
+    <pre id="del-out" style="display:none;margin-top:16px"></pre>
+  </div>
+
+  <p class="small" style="margin-top:24px">Questions? Privacy Officer: <a href="mailto:ahmad.wasee@iisupp.net">ahmad.wasee@iisupp.net</a> · See also <a href="/governance/privacy">Privacy Policy</a></p>
+</div>
+
+<script>
+function $(id){return document.getElementById(id);}
+function clientSideDump(email){
+  const dump = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k) continue;
+      const v = localStorage.getItem(k);
+      // Include keys related to us OR keys that contain the email
+      if (k.startsWith('aria_') || k.startsWith('iis_') || k.startsWith('aperture_') || (v && v.indexOf(email) >= 0)) {
+        dump[k] = v;
+      }
+    }
+  } catch (e) { dump._error = e.message; }
+  return dump;
+}
+$('ex-btn').addEventListener('click', async () => {
+  const email = ($('ex-email').value || '').trim();
+  if (!email) return;
+  $('ex-out').style.display = 'block'; $('ex-out').textContent = 'Loading...';
+  try {
+    const r = await fetch('/.netlify/functions/aria-data-export', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const j = await r.json();
+    j.client_side_dump = clientSideDump(email.toLowerCase());
+    const text = JSON.stringify(j, null, 2);
+    $('ex-out').textContent = text;
+    $('ex-dl').style.display = 'inline-block';
+    $('ex-dl').onclick = () => {
+      const blob = new Blob([text], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'my-aria-data-' + email + '.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+  } catch (e) { $('ex-out').textContent = 'Error: ' + e.message; }
+});
+$('del-btn').addEventListener('click', async () => {
+  const email = ($('del-email').value || '').trim();
+  const confirm = ($('del-confirm').value || '').trim();
+  if (!email || !confirm) return;
+  $('del-out').style.display = 'block'; $('del-out').textContent = 'Processing...';
+  try {
+    const r = await fetch('/.netlify/functions/aria-account-delete', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email, confirm })
+    });
+    const j = await r.json();
+    $('del-out').textContent = JSON.stringify(j, null, 2);
+  } catch (e) { $('del-out').textContent = 'Error: ' + e.message; }
+});
+</script>
+</body></html>
