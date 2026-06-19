@@ -518,16 +518,23 @@
     var orig = btn ? btn.innerHTML : '';
     if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = 'Opening secure checkout…'; }
     try {
+      // FULL purchases prefer real Stripe price ID (tier path) when SKU is mapped.
+      // PEEK (30% preview) stays on inline priceData since it's discounted on the fly.
+      var checkoutBody;
+      if (mode === 'full') {
+        // Send tier; stripe-checkout.js PRICE_MAP looks up the real STRIPE_PRICE_* env var.
+        checkoutBody = { successPath: META.successUrl, tier: p.id, planName: p.title };
+      } else {
+        checkoutBody = { successPath: META.successUrl, priceData: {
+          amount_cents: amount, currency: 'usd',
+          product_name: 'IIS · ' + p.title + ' — Preview peek (30%)',
+          description: 'Paid preview of "' + p.title + '" — a teaser of what\'s inside. Credited toward full access; reply to your receipt to apply it. [' + (p.format || 'digital') + ']',
+          id: p.id + '-peek'
+        } };
+      }
       var r = await fetch('/.netlify/functions/stripe-checkout', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ successPath: META.successUrl, priceData: {
-          amount_cents: amount, currency: 'usd',
-          product_name: 'IIS · ' + p.title + (mode === 'peek' ? ' — Preview peek (30%)' : ''),
-          description: (mode === 'peek'
-            ? 'Paid preview of "' + p.title + '" — a teaser of what\'s inside. Credited toward full access; reply to your receipt to apply it.'
-            : (p.blurb || '').slice(0, 165)) + ' [' + (p.format || 'digital') + ']',
-          id: p.id + '-' + mode
-        } })
+        body: JSON.stringify(checkoutBody)
       });
       var data = await r.json();
       if (data && data.url) { window.location = data.url; return; }

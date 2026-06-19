@@ -14,18 +14,50 @@
 const Stripe = require('stripe');
 
 const PRICE_MAP = {
+  // Subscription tiers (now have real monthly + yearly prices)
   personal:           process.env.STRIPE_PRICE_PERSONAL,
   personal_y:         process.env.STRIPE_PRICE_PERSONAL_Y,
   pro:                process.env.STRIPE_PRICE_PRO,
   pro_y:              process.env.STRIPE_PRICE_PRO_Y,
   small_business:     process.env.STRIPE_PRICE_SMALL_BUSINESS,
-  small_business_y:   process.env.STRIPE_PRICE_SMALL_BUSINESS_Y || process.env.STRIPE_PRICE_SMALL_BUSINESS,
+  small_business_y:   process.env.STRIPE_PRICE_SMALL_BUSINESS_Y,
   mid_size:           process.env.STRIPE_PRICE_MID_SIZE,
-  mid_size_y:         process.env.STRIPE_PRICE_MID_SIZE_Y || process.env.STRIPE_PRICE_MID_SIZE,
+  mid_size_y:         process.env.STRIPE_PRICE_MID_SIZE_Y,
   midsize:            process.env.STRIPE_PRICE_MID_SIZE,
-  midsize_y:          process.env.STRIPE_PRICE_MID_SIZE_Y || process.env.STRIPE_PRICE_MID_SIZE,
+  midsize_y:          process.env.STRIPE_PRICE_MID_SIZE_Y,
   enterprise:         process.env.STRIPE_PRICE_ENTERPRISE,
-  enterprise_y:       process.env.STRIPE_PRICE_ENTERPRISE_Y || process.env.STRIPE_PRICE_ENTERPRISE,
+  enterprise_y:       process.env.STRIPE_PRICE_ENTERPRISE_Y,
+  // Lifetime (Stripe caps unit_amount at $999,999.99 — for true $2M, use contact-only flow)
+  lifetime:           process.env.STRIPE_PRICE_LIFETIME,
+  // Growth Library — 16 SKUs
+  'gl-l1-it-bible':        process.env.STRIPE_PRICE_GL_L1_IT_BIBLE,
+  'gl-m365-kb':            process.env.STRIPE_PRICE_GL_M365_KB,
+  'gl-ai-agent-starter':   process.env.STRIPE_PRICE_GL_AI_AGENT_STARTER,
+  'gl-prompt-workflows':   process.env.STRIPE_PRICE_GL_PROMPT_WORKFLOWS,
+  'gl-win11-kb':           process.env.STRIPE_PRICE_GL_WIN11_KB,
+  'gl-outlook-fix':        process.env.STRIPE_PRICE_GL_OUTLOOK_FIX,
+  'gl-helpdesk-blueprint': process.env.STRIPE_PRICE_GL_HELPDESK_BLUEPRINT,
+  'gl-cyber-basics':       process.env.STRIPE_PRICE_GL_CYBER_BASICS,
+  'gl-nocode-kit':         process.env.STRIPE_PRICE_GL_NOCODE_KIT,
+  'gl-meeting-sop-pack':   process.env.STRIPE_PRICE_GL_MEETING_SOP_PACK,
+  'gl-website-checklist':  process.env.STRIPE_PRICE_GL_WEBSITE_CHECKLIST,
+  'gl-ai-edge-starter':       process.env.STRIPE_PRICE_GL_AI_EDGE_STARTER,
+  'gl-ai-edge-pro-playbook':  process.env.STRIPE_PRICE_GL_AI_EDGE_PRO_PLAYBOOK,
+  'gl-ai-edge-family-studio': process.env.STRIPE_PRICE_GL_AI_EDGE_FAMILY_STUDIO,
+  'gl-ai-edge-adult-momentum':process.env.STRIPE_PRICE_GL_AI_EDGE_ADULT_MOMENTUM,
+  'gl-book-living-well':      process.env.STRIPE_PRICE_GL_BOOK_LIVING_WELL,
+  // Bundles
+  'bundle-it-mastery':    process.env.STRIPE_PRICE_BUNDLE_IT_MASTERY,
+  'bundle-ai-automation': process.env.STRIPE_PRICE_BUNDLE_AI_AUTOMATION,
+  'bundle-allaccess':     process.env.STRIPE_PRICE_BUNDLE_ALLACCESS,
+  // In-stock devices
+  'inv-notebook-ram-16gb': process.env.STRIPE_PRICE_INV_NOTEBOOK_RAM_16GB,
+  'inv-mac-mini-1':        process.env.STRIPE_PRICE_INV_MAC_MINI_1,
+  'inv-mac-mini-2':        process.env.STRIPE_PRICE_INV_MAC_MINI_2,
+  'inv-ipad-a1458':        process.env.STRIPE_PRICE_INV_IPAD_A1458,
+  'inv-desktop-tower':     process.env.STRIPE_PRICE_INV_DESKTOP_TOWER,
+  'inv-dell-laptop':       process.env.STRIPE_PRICE_INV_DELL_LAPTOP,
+  'inv-macbook-pro':       process.env.STRIPE_PRICE_INV_MACBOOK_PRO,
 };
 
 exports.handler = async (event) => {
@@ -88,14 +120,27 @@ exports.handler = async (event) => {
       return j(400, { error: 'Unknown tier: ' + tier });
     }
     lineItems = [{ price: priceId, quantity: 1 }];
-    mode = 'subscription';
+    // Subscription tiers vs one-time catalog items
+    const SUBSCRIPTION_TIERS = new Set([
+      'personal','personal_y','pro','pro_y',
+      'small_business','small_business_y',
+      'mid_size','mid_size_y','midsize','midsize_y',
+      'enterprise','enterprise_y'
+    ]);
+    mode = SUBSCRIPTION_TIERS.has(tier) ? 'subscription' : 'payment';
     metadata = {
       tier: tier,
       planName: body.planName || tier,
-      kind: 'aria-plan'
+      kind: SUBSCRIPTION_TIERS.has(tier) ? 'aria-plan' : 'iis-catalog'
     };
-    successUrl = origin + '/aria?checkout=success&session_id={CHECKOUT_SESSION_ID}';
-    cancelUrl  = origin + '/aria?checkout=canceled';
+    // Catalog items return to homepage success path; subscription tiers return to /aria.
+    if (mode === 'subscription') {
+      successUrl = origin + '/aria?checkout=success&session_id={CHECKOUT_SESSION_ID}';
+      cancelUrl  = origin + '/aria?checkout=canceled';
+    } else {
+      successUrl = origin + (body.successPath || '/?checkout=success&session_id={CHECKOUT_SESSION_ID}');
+      cancelUrl  = origin + '/?checkout=canceled';
+    }
   }
 
   try {
