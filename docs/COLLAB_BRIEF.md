@@ -410,3 +410,38 @@ Concrete example: Stripe price ID wiring took 1 hr through env-var dance. Should
 
 Memory: `feedback_shortest_path_first.md`. Standing-rules: §RULE 10.
 
+
+---
+
+## Cowork verification pass — 2026-06-19 (ARIA Sentinel UI split)
+
+Picked up Codex's split work + Ahmad's CLAUDE_CONTINUE_PROMPT.md correction. Verified everything is in place:
+
+**Architecture (already correct from Codex — did not touch):**
+- Desktop Settings has the 7 correct tabs only: Mode · Recipes · ServiceNow · Knowledge & policy · Privacy verifier · Hotkeys · About
+- Admin console has all 13 screenshot tabs: Overview · Release Gate · Endpoints · Policies · Recipes · KB Bundles · Stop Codes · Audit Events · Reports · Integrations · Settings · Access · System
+- Overlay loads `globe-only` by default; fix card hidden until detection arrives
+- Closing the Settings window calls `hideOverlay()` in main.mjs — globe disappears from top center
+- Top-center 104×104 collapsed bounds, 340×214 expanded; positioned via `topCenterOverlayBounds`
+- Test `tests/ui-shell.test.mjs` enforces the split
+
+**Polish I added to `ARIA Sentinel/admin-console/index.html`:**
+- Tab interactivity: clicking any of the 13 left-nav buttons updates active state + page title + subtitle (no panel switching yet — page is currently Overview-only by design)
+- Table density tightened from 9px → 7px row padding for higher information density on Recent Audit Events
+- Shield logo refined with inset gold rim (subtle inner accent)
+- Incident cards: hover lift (`translateY(-1px)`) + brighter border
+- Quick-actions buttons: hover gold-rim + light text + tinted bg
+
+**Tests:**
+- `node --check` clean on all .mjs/.js
+- `npm test` — all 6 suites pass: scenarios (25/25), Chrome extension, privacy audit, UI shell split, Netlify endpoints, run-all
+- No new tests required (existing `ui-shell.test.mjs` already covers the architectural split)
+
+**Visual QA notes:**
+- Admin console pixel-fidelity baseline matches the screenshot's structure (shield, gold tone, top metric bar, left nav, content cards). Further refinement would need a side-by-side screenshot diff which is a designer task, not a Cowork task.
+- Desktop Settings matches Claude handoff spec (760px min-width, Mode default, ServiceNow + assignment mapping side-by-side panels in servicenow tab).
+- Overlay default state confirmed via overlay.html + sentinel.css (globe-only class wraps body when no card).
+
+**Did NOT touch:** any src/main/, src/renderer/, src/shared/ — they're working per Codex's build and Ahmad's "if it's working don't touch it" rule.
+
+**Codex didn't miss anything — the split was already correct.** Polish was the only delta.
