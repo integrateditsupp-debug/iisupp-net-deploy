@@ -404,6 +404,24 @@
   to = "/compliance/"
   status = 301
 
+
+# Rule 9 — lead-capture merges (2026-06-18)
+# /scorecard → merged conceptually into /health-check (same intent)
+[[redirects]]
+  from = "/scorecard"
+  to = "/health-check"
+  status = 301
+# /cost-calculator → merged into /plans (pricing math lives there)
+[[redirects]]
+  from = "/cost-calculator"
+  to = "/plans/"
+  status = 301
+# /insiders → merged into homepage footer signup
+[[redirects]]
+  from = "/insiders"
+  to = "/#aria-demo"
+  status = 301
+
 # IIS_CACHE_HEADERS — long cache static, short cache HTML
 [[headers]]
   for = "/assets/*"

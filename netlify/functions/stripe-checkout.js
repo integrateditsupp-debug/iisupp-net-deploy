@@ -14,13 +14,18 @@
 const Stripe = require('stripe');
 
 const PRICE_MAP = {
-  personal:        process.env.STRIPE_PRICE_PERSONAL,
-  personal_y:      process.env.STRIPE_PRICE_PERSONAL_Y,
-  pro:             process.env.STRIPE_PRICE_PRO,
-  pro_y:           process.env.STRIPE_PRICE_PRO_Y,
-  small_business:  process.env.STRIPE_PRICE_SMALL_BUSINESS,
-  mid_size:        process.env.STRIPE_PRICE_MID_SIZE,
-  enterprise:      process.env.STRIPE_PRICE_ENTERPRISE,
+  personal:           process.env.STRIPE_PRICE_PERSONAL,
+  personal_y:         process.env.STRIPE_PRICE_PERSONAL_Y,
+  pro:                process.env.STRIPE_PRICE_PRO,
+  pro_y:              process.env.STRIPE_PRICE_PRO_Y,
+  small_business:     process.env.STRIPE_PRICE_SMALL_BUSINESS,
+  small_business_y:   process.env.STRIPE_PRICE_SMALL_BUSINESS_Y || process.env.STRIPE_PRICE_SMALL_BUSINESS,
+  mid_size:           process.env.STRIPE_PRICE_MID_SIZE,
+  mid_size_y:         process.env.STRIPE_PRICE_MID_SIZE_Y || process.env.STRIPE_PRICE_MID_SIZE,
+  midsize:            process.env.STRIPE_PRICE_MID_SIZE,
+  midsize_y:          process.env.STRIPE_PRICE_MID_SIZE_Y || process.env.STRIPE_PRICE_MID_SIZE,
+  enterprise:         process.env.STRIPE_PRICE_ENTERPRISE,
+  enterprise_y:       process.env.STRIPE_PRICE_ENTERPRISE_Y || process.env.STRIPE_PRICE_ENTERPRISE,
 };
 
 exports.handler = async (event) => {
