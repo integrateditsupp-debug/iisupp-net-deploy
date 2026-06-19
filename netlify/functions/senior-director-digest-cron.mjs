@@ -1,3 +1,4 @@
+import { beat } from './_heartbeat.mjs';
 import {
   buildStatusDigest,
   formatTelegramDigest,
@@ -7,6 +8,7 @@ import {
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 export default async () => {
+  await beat('senior-director-digest-cron');
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_OWNER_CHAT_ID) {
     console.log('[senior-director-digest-cron] Telegram env not configured; skipping.');
     return new Response(JSON.stringify({ ok: true, skipped: true, reason: 'telegram-not-configured' }), {

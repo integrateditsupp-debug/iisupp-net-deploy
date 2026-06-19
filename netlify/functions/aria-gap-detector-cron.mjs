@@ -6,10 +6,12 @@
  *  Emails Ahmad weekly digest of top gaps for human review
  *  Cat 21 + Cat 22 — Self-improving knowledge base.
  */
+import { beat } from './_heartbeat.mjs';
 const TOP_N_GAPS = 5;
 const MIN_CLUSTER_SIZE = 3;
 
 export default async () => {
+  await beat('aria-gap-detector-cron');
   const out = { scanned_at: new Date().toISOString(), gaps_found: 0, stubs_drafted: 0 };
   let store, kbStore;
   try {

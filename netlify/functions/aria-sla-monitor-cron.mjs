@@ -4,6 +4,7 @@
  *  Reads aria-tenant-audit for open issues w/o resolution; if past SLA → alert Ahmad
  *  Cat 13 — Failure modes (SLA compliance).
  */
+import { beat } from './_heartbeat.mjs';
 const SLA = {
   enterprise: 30,
   midsize: 60,
@@ -12,6 +13,7 @@ const SLA = {
 };
 
 export default async () => {
+  await beat('aria-sla-monitor-cron');
   const out = { ran_at: new Date().toISOString(), tickets_checked: 0, breached: [], alerts_sent: 0 };
   let store;
   try { ({ getStore } = await import('@netlify/blobs')); store = (await import('@netlify/blobs')).getStore({ name: 'aria-tenant-audit', consistency: 'eventual' }); }

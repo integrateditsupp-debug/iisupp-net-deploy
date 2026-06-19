@@ -10,9 +10,11 @@
  */
 import { getStore } from '@netlify/blobs';
 
+import { beat } from './_heartbeat.mjs';
 export const config = { schedule: '0 13 * * 1' };
 
 export default async () => {
+  await beat('aria-pipeline-weekly-report');
   const out = {
     week_ending: new Date().toISOString().slice(0, 10),
     leads_7d: 0,

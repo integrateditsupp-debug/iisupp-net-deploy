@@ -5,6 +5,7 @@
 // bit-KB against the freshness horizon and re-queue stale topics for the agents to
 // research again. Cost: $0 (deterministic, no LLM).
 
+import { beat } from './_heartbeat.mjs';
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 const handler = async () => {
@@ -25,6 +26,7 @@ const handler = async () => {
 // 1st and 15th of every month at 03:00 UTC (~every 2 weeks). (Ahmad 2026-06-01) Use
 // config.schedule — the legacy schedule() wrapper was not registered by Netlify here.
 export default async () => {
+  await beat('aria-reverify-cron');
   await handler();
   return new Response('ok', { headers: { 'content-type': 'text/plain' } });
 };

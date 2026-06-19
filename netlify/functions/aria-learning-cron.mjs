@@ -14,6 +14,7 @@
 //
 // Schedule: every 15 minutes.
 
+import { beat } from './_heartbeat.mjs';
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 const handler = async () => {
@@ -44,6 +45,7 @@ const handler = async () => {
 // used config.schedule, ever fired), so this loop never ran autonomously. Verified via
 // deploy.function_schedules listing only aria-monitor.
 export default async () => {
+  await beat('aria-learning-cron');
   await handler();
   return new Response('ok', { headers: { 'content-type': 'text/plain' } });
 };

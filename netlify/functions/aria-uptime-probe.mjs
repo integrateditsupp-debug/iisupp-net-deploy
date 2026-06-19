@@ -7,6 +7,7 @@
  *
  *  Cat 7 — Performance + uptime.
  */
+import { beat } from './_heartbeat.mjs';
 const ENDPOINTS = [
   { name: 'site',          url: 'https://iisupp.net/',                                              must_return: 200, contain: 'IIS' },
   { name: 'aria',          url: 'https://iisupp.net/aria',                                          must_return: 200, contain: 'ARIA' },
@@ -17,6 +18,7 @@ const ENDPOINTS = [
 ];
 
 export default async () => {
+  await beat('aria-uptime-probe');
   const ts = Date.now();
   const results = [];
 

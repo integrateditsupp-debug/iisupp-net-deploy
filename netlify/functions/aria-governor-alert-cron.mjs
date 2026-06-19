@@ -12,6 +12,7 @@
 
 import { getStore } from '@netlify/blobs';
 
+import { beat } from './_heartbeat.mjs';
 const STORE = 'aria-llm-governor';
 const ALERT_KEY = 'cap-alert.json';
 const LEDGER_KEY = 'ledger.json';
@@ -63,6 +64,7 @@ const handler = async () => {
 // Every 3 minutes. (Ahmad 2026-06-01) Use config.schedule — the legacy schedule()
 // wrapper was not registered by Netlify here.
 export default async () => {
+  await beat('aria-governor-alert-cron');
   await handler();
   return new Response('ok', { headers: { 'content-type': 'text/plain' } });
 };

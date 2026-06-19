@@ -12,6 +12,7 @@
 import tls from 'node:tls';
 import { getStore } from '@netlify/blobs';
 
+import { beat } from './_heartbeat.mjs';
 export const config = { schedule: '0 3 * * *' };
 
 const HOSTS = [
@@ -20,6 +21,7 @@ const HOSTS = [
 ];
 
 export default async () => {
+  await beat('aria-tls-monitor-cron');
   const results = [];
   for (const host of HOSTS) {
     try {

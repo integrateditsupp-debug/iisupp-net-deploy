@@ -10,6 +10,7 @@
  *  State tracked in Netlify Blobs per email.
  *  Cat 2 (lifecycle) + Cat 15 (onboarding).
  */
+import { beat } from './_heartbeat.mjs';
 const TEMPLATES = {
   d1: {
     subject: 'How was your first ARIA session?',
@@ -60,6 +61,7 @@ function emailWrap(intro, bullets, ctaText, ctaUrl) {
 }
 
 export default async () => {
+  await beat('aria-engagement-cron');
   const sent = [];
   const failed = [];
 

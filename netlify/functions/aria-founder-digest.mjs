@@ -5,7 +5,9 @@
  *  Delivers via Resend to ahmad.wasee@iisupp.net.
  *  Cat 10 — Reporting (founder-facing).
  */
+import { beat } from './_heartbeat.mjs';
 export default async () => {
+  await beat('aria-founder-digest');
   const out = {
     generated_at: new Date().toISOString(),
     mrr: null,
