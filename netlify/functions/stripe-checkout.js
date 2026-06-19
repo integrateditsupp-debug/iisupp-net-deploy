@@ -147,6 +147,8 @@ exports.handler = async (event) => {
       line_items: lineItems,
       success_url: successUrl,
       cancel_url:  cancelUrl,
+      // Explicit payment_method_types so new Stripe accounts don't fall through auto-detect
+      payment_method_types: ['card'],
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
       metadata: metadata,
