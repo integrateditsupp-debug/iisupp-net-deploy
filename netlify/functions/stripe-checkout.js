@@ -162,9 +162,7 @@ exports.handler = async (event) => {
     return j(200, { url: session.url, id: session.id });
   } catch (err) {
     console.error('[stripe-checkout] error:', err.message);
-    // Temporary debug: expose Stripe's error message so we can diagnose live vs test mismatch
-    const debug = (err && err.message) ? err.message.slice(0, 200) : 'unknown';
-    return j(500, { error: 'Could not start checkout. Call (647) 581-3182.', debug: debug, mode_hint: process.env.STRIPE_SECRET_KEY ? (process.env.STRIPE_SECRET_KEY.startsWith('sk_live_') ? 'live' : 'test') : 'missing' });
+    return j(500, { error: 'Could not start checkout. Call (647) 581-3182.' });
   }
 };
 
