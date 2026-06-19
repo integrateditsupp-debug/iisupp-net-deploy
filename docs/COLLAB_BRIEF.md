@@ -392,3 +392,21 @@ Ahmad's exact words: *"every detail in our business perfect, limit the number of
 
 Memory file: `feedback_perfect_details_limit_count.md`. Standing-rules file updated.
 
+
+---
+
+## RULE 10 LOCKED — 2026-06-19 — shortest path first
+
+Ahmad's exact words: *"ALWAYS use the best and save time approach to issues."*
+
+**For every agent (especially Codex):**
+- Before any task: pick the SHORTEST code path that delivers the actual outcome.
+- **Bake non-secret config in code over env vars** (Stripe price IDs, public endpoints, public keys).
+- **One commit beats a setup script.**
+- **Don't ask Ahmad to run anything** if a code edit ships the same outcome.
+- Real secrets (SECRET keys, passwords) stay env vars. Everything else: question the indirection.
+
+Concrete example: Stripe price ID wiring took 1 hr through env-var dance. Should have been 5 min via baked-in code. Final fix at commit `f985edc` — that was always the right answer.
+
+Memory: `feedback_shortest_path_first.md`. Standing-rules: §RULE 10.
+

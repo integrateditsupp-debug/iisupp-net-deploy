@@ -1430,3 +1430,17 @@ Action for this agent on next pickup:
 6. Tail-integrity + visual-stability checks remain mandatory
 
 Memory file: `feedback_perfect_details_limit_count.md`
+
+---
+
+## 2026-06-19 — RULE 10 LOCKED — shortest path first
+
+Ahmad's words: *"ALWAYS use the best and save time approach to issues."*
+
+Before any task: pick the SHORTEST code path that delivers the actual outcome.
+- Bake non-secret config in code with env-var override.
+- One commit beats a setup script.
+- Don't ask Ahmad to run scripts when a code edit works.
+- Real secrets stay env vars (Stripe SECRET key, Anthropic key, admin passwords) — everything else: question the indirection.
+
+Memory: `feedback_shortest_path_first.md`. Full text in `STANDING-RULES-FOR-ALL-AGENTS.md` §RULE 10.
