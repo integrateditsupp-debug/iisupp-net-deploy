@@ -1,0 +1,62 @@
+---
+brain_region: cerebellum
+type: decision
+date: {{date:YYYY-MM-DD}}
+status: locked|provisional|revisited
+---
+
+# D-{{date:YYYYMMDD}} · {{title}}
+
+## Context
+- 
+
+## Decision
+- 
+
+## Why
+- 
+
+## Tradeoffs
+- 
+
+## What this commits us to
+- 
+
+## Revisit when
+-
+
+## Related
+
+<!-- LINK-WEB:auto -->
+- [[AXIS]]
+- [[Ahmad]]
+- [[Backup-agent]]
+- [[Brain-Map]]
+- [[CLAUDE_CODE_AUTOCAPTURE_PACKET]]
+- [[Campaign]]
+- [[Claude-Code]]
+- [[Cleaning-agent]]
+- [[Codex]]
+- [[Cowork]]
+- [[Customer]]
+- [[DIRECTOR_AUTONOMY]]
+- [[Daily-note]]
+- [[KB-agent]]
+- [[Leads]]
+- [[Leads-agent]]
+- [[OPS-agent]]
+- [[RULES]]
+- [[STACK]]
+- [[VOICE]]
+- [[_ARIA]]
+- [[_Amygdala]]
+- [[_Brainstem]]
+- [[_Campaigns]]
+- [[_CorpusCallosum]]
+- [[_Decisions]]
+- [[_Glia]]
+- [[_HOME]]
+- [[_IIS]]
+- [[_Inbox]]
+- [[_Sentinel]]
+- [[_capture]]

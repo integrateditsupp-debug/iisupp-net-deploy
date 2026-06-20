@@ -1,0 +1,66 @@
+---
+brain_region: cerebellum
+type: customer
+status: prospect|active|paused|churned
+tier: personal|pro|smb|mid|enterprise
+created: {{date:YYYY-MM-DD}}
+---
+
+# {{title}}
+
+## Contact
+- Primary: 
+- Email: 
+- Phone: 
+- LinkedIn: 
+
+## Company
+- Industry: 
+- Size: 
+- Region: 
+
+## Deal
+- ARR: 
+- Started: 
+- Renewal: 
+
+## Notes
+- 
+
+## Tickets
+-
+
+## Related
+
+<!-- LINK-WEB:auto -->
+- [[AXIS]]
+- [[Ahmad]]
+- [[Backup-agent]]
+- [[Brain-Map]]
+- [[Campaign]]
+- [[Claude-Code]]
+- [[Cleaning-agent]]
+- [[Codex]]
+- [[Cowork]]
+- [[DIRECTOR_AUTONOMY]]
+- [[Daily-note]]
+- [[Decision]]
+- [[KB-agent]]
+- [[Leads]]
+- [[Leads-agent]]
+- [[OPS-agent]]
+- [[RULES]]
+- [[STACK]]
+- [[VOICE]]
+- [[_ARIA]]
+- [[_Amygdala]]
+- [[_Brainstem]]
+- [[_Campaigns]]
+- [[_CorpusCallosum]]
+- [[_Decisions]]
+- [[_Glia]]
+- [[_HOME]]
+- [[_IIS]]
+- [[_Inbox]]
+- [[_Sentinel]]
+- [[_capture]]

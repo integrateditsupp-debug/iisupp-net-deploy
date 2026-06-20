@@ -1,0 +1,80 @@
+---
+brain_region: cortex-frontal
+type: agent
+role: build
+created: 2026-06-19
+---
+
+# Codex (Claude Code) — build agent
+
+## Role
+- Sprint-level code execution
+- Picks up packets from [[Cowork]] (`docs/CODEX-COMPLETE-PACKAGE-A-Z.md`, `docs/CLAUDE_CODE_4HR_PACKET.md`)
+- Branches per sprint, opens PRs, ships green tests
+
+## Active assignment
+- ARIA Sentinel Sprints 0-6 per [[_Sentinel]]
+
+## Hand-off path
+- [[Cowork]] writes packet → commits to repo → Codex reads → branches → builds
+
+## Related
+
+<!-- LINK-WEB:auto -->
+- [[2026-06-19]]
+- [[AXIS]]
+- [[Ahmad]]
+- [[Aperture]]
+- [[Backup-agent]]
+- [[Brain-Map]]
+- [[Claude-Code]]
+- [[Cleaning-agent]]
+- [[Cowork]]
+- [[DIRECTOR_AUTONOMY]]
+- [[KB-agent]]
+- [[Leads]]
+- [[Leads-agent]]
+- [[OPS-agent]]
+- [[RULES]]
+- [[STACK]]
+- [[VOICE]]
+- [[_ARIA]]
+- [[_Amygdala]]
+- [[_Brainstem]]
+- [[_Campaigns]]
+- [[_CorpusCallosum]]
+- [[_Decisions]]
+- [[_Glia]]
+- [[_HOME]]
+- [[_IIS]]
+- [[_Inbox]]
+- [[_Sentinel]]
+- [[_capture]]
+- [[feedback-aperture-aria-never-break]]
+- [[feedback-browser-prefill-for-ahmad]]
+- [[feedback-capture-overwrite-lesson]]
+- [[feedback-communication-style]]
+- [[feedback-director-autonomy]]
+- [[feedback-dont-ask-just-do]]
+- [[feedback-edit-tool-truncates-index-html]]
+- [[feedback-garry-tan-method]]
+- [[feedback-idle-brainstorm-loop]]
+- [[feedback-memory-31gb-cap]]
+- [[feedback-never-idle]]
+- [[feedback-never-stop]]
+- [[feedback-no-moneyback-guarantee]]
+- [[feedback-no-real-names-in-vault]]
+- [[feedback-outbound-send-cadence]]
+- [[feedback-perfect-details-limit-count]]
+- [[feedback-preview-before-push]]
+- [[feedback-report-brevity]]
+- [[feedback-revenue-first-ordering]]
+- [[feedback-ship-now-no-tomorrow]]
+- [[feedback-shortest-path-first]]
+- [[feedback-smart-qualifier-not-hard-skip]]
+- [[feedback-spend]]
+- [[feedback-spend-cap-20-70-per-month]]
+- [[feedback-visual-stability]]
+- [[playbook-autonomous-morning]]
+- [[playbook-round-velocity]]
+- [[reference-ahmad-resume-fac
