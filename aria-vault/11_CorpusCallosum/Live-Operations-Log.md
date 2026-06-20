@@ -1,0 +1,87 @@
+---
+type: live-log
+brain_region: corpus-callosum
+created: 2026-06-20
+purpose: real-time interconnect log of every agent's actions across the mesh
+---
+
+# Live Operations Log — Cross-Agent Activity
+
+> Append-only feed. Every agent writes here AND to its own region note. This is the single pane of glass for "what's happening right now" across [[Cowork]], [[Claude-Code]], [[Hermes]], [[OPS-agent]], [[Leads-agent]], [[KB-agent]], [[AXIS]], [[Cleaning-agent]], [[Backup-agent]], and [[_Sentinel]] runtime.
+
+## Standing protocol — every agent MUST
+
+When you start a task → append `[YYYY-MM-DDTHH:MM] [agent-name] START · task-summary · region:<frontal|hippocampus|...>`
+When you finish → append `[YYYY-MM-DDTHH:MM] [agent-name] DONE · outcome · result-link`
+When you fail → append `[YYYY-MM-DDTHH:MM] [agent-name] FAIL · reason · escalate-to`
+When you delegate → append `[YYYY-MM-DDTHH:MM] [agent-name] DISPATCH · sub-agent · packet-link`
+
+Format: one line per event. ISO timestamp. Use `>>` append, never `>` overwrite.
+
+## Routing rule
+
+After appending here, ALSO append to:
+- `aria-vault/04_ShortTerm/YYYY-MM-DD.md` (daily note section "### Live-Log slice")
+- The agent's own region note (e.g. `12_Glia/Hermes-runs.md` for Hermes-specific detail)
+
+## Region map (where work lives)
+
+| Agent | Region | Detail note |
+|---|---|---|
+| Cowork | cortex | 07_Cortex/Cowork.md |
+| Claude-Code | cortex | 07_Cortex/Claude-Code.md |
+| Hermes | cortex | 12_Glia/Hermes-runs.md |
+| OPS-agent | cortex | 07_Cortex/OPS-agent.md |
+| Leads-agent | cortex | 07_Cortex/Leads-agent.md |
+| KB-agent | cortex | 07_Cortex/KB-agent.md |
+| AXIS | cortex-frontal | 07_Cortex/AXIS.md |
+| Cleaning-agent | glia | 07_Cortex/Cleaning-agent.md |
+| Backup-agent | glia | 07_Cortex/Backup-agent.md |
+| Sentinel runtime | amygdala (alerts), brainstem (health), frontal (decisions) | 01_Frontal/Sentinel/*.md |
+
+## Events (newest at bottom)
+
+### 2026-06-20
+
+[2026-06-20T16:52] [Cowork] START · wire Live-Operations-Log + cross-agent interconnect · region:corpus-callosum
+[2026-06-20T16:52] [Cowork] DISPATCH · message Hermes session with append-protocol directive
+[2026-06-20T16:52] [Cowork] DISPATCH · update claude-code-next-prompt.md with append-protocol directive
+[2026-06-20T16:52] [Claude-Code] ACTIVE · RUN 21 auto-update orchestrator · 82.7k tokens consumed · R11 tests being written
+[2026-06-20T16:52] [Hermes] ACTIVE · master directive received · reading 10 context files · model:claude-opus-4-8
+[2026-06-20T16:52] [Backup-agent] STANDBY · pre-RUN-21 snapshot due before CC commit
+[2026-06-20T16:52] [Cleaning-agent] STANDBY · daily 02:00 ET run pending
+
+## Related
+
+<!-- LINK-WEB:auto -->
+- [[2026-06-20]]
+- [[AXIS]]
+- [[Ahmad]]
+- [[Backup-agent]]
+- [[Brain-Map]]
+- [[Claude-Code]]
+- [[Cleaning-agent]]
+- [[Codex]]
+- [[Cowork]]
+- [[DIRECTOR_AUTONOMY]]
+- [[Hermes]]
+- [[KB-agent]]
+- [[Leads]]
+- [[Leads-agent]]
+- [[OPS-agent]]
+- [[RULES]]
+- [[STACK]]
+- [[VOICE]]
+- [[_ARIA]]
+- [[_Amygdala]]
+- [[_Brainstem]]
+- [[_Campaigns]]
+- [[_CorpusCallosum]]
+- [[_Decisions]]
+- [[_Glia]]
+- [[_HOME]]
+- [[_IIS]]
+- [[_Inbox]]
+- [[_Sentinel]]
+- [[_capture]]
+<!-- /LINK-WEB:auto -->

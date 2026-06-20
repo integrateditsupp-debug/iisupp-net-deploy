@@ -1,7 +1,7 @@
 {
   "v": "brain-index-v1",
-  "generated": "2026-06-20T06:17:12.933Z",
-  "totalNotes": 89,
+  "generated": "2026-06-20T16:53:15.519Z",
+  "totalNotes": 92,
   "regions": {
     "cortex-association": {
       "count": 5,
@@ -16,16 +16,16 @@
           "updated": "2026-06-20"
         },
         {
+          "title": "🔒 HARD RULES — READ FIRST (Locked 2026-06-20)",
+          "updated": "2026-06-20"
+        },
+        {
           "title": "IIS · ARIA · ARIA Sentinel — Vault Home",
           "updated": "2026-06-20"
         },
         {
           "title": "Brain-Map — anatomical layout of the vault",
           "updated": "2026-06-20"
-        },
-        {
-          "title": "CLAUDE.md — Master agent instructions for the IIS / ARIA / Sentinel vault",
-          "updated": "2026-06-19"
         }
       ]
     },
@@ -148,20 +148,20 @@
           "updated": "2026-06-20"
         },
         {
+          "title": "VOICE — tone for everything I write or say on Ahmad's behalf",
+          "updated": "2026-06-20"
+        },
+        {
           "title": "STACK — tools, accounts, URLs (no secrets — secrets in Netlify env / 1Password)",
+          "updated": "2026-06-20"
+        },
+        {
+          "title": "RULES — 10 standing rules for every agent + Ahmad",
           "updated": "2026-06-20"
         },
         {
           "title": "Director Autonomy — Cowork operating mandate",
           "updated": "2026-06-20"
-        },
-        {
-          "title": "VOICE — tone for everything I write or say on Ahmad's behalf",
-          "updated": "2026-06-19"
-        },
-        {
-          "title": "RULES — 10 standing rules for every agent + Ahmad",
-          "updated": "2026-06-19"
         }
       ]
     },
@@ -189,6 +189,20 @@
         },
         {
           "title": "Friday, June 19, 2026",
+          "updated": "2026-06-20"
+        }
+      ]
+    },
+    "unfiled": {
+      "count": 2,
+      "lastUpdated": "2026-06-20",
+      "notes": [
+        {
+          "title": "feedback-private-folder-offlimits",
+          "updated": "2026-06-20"
+        },
+        {
+          "title": "Hermes",
           "updated": "2026-06-20"
         }
       ]
@@ -402,11 +416,15 @@
       ]
     },
     "corpus-callosum": {
-      "count": 1,
+      "count": 2,
       "lastUpdated": "2026-06-20",
       "notes": [
         {
           "title": "_CorpusCallosum — corpus-callosum region hub",
+          "updated": "2026-06-20"
+        },
+        {
+          "title": "Live Operations Log — Cross-Agent Activity",
           "updated": "2026-06-20"
         }
       ]
