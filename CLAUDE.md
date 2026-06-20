@@ -1,3 +1,15 @@
+# 🔒 HARD RULES — READ FIRST (Locked 2026-06-20)
+
+**Folder `"Private pics and Vids"` on Ahmad's machine is OFF LIMITS to every agent.**
+
+No read · No write · No list · No scan · No index · No screenshot · No reference.
+Case-insensitive glob: `**/Private pics and Vids/**`.
+If your planned action touches this path → halt + log SECURITY audit + surface "1 personal folder excluded".
+Same severity as no-Raymond-James.
+See `02_Hippocampus/RULES.md` R11 + Cowork memory `feedback-private-folder-offlimits`.
+
+---
+
 # Claude Cowork Instructions
 
 Read these first when working in this repo:

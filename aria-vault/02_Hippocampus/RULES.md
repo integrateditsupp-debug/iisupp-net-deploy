@@ -67,4 +67,12 @@ Only if all 4 fail → skip + log the attempts
 - All leads/customers/contacts → [[Leads]] (01_Business/IIS/Leads.md) as `Lead-001`, `Lead-002`, etc.
 - Real contact info stays in CRM (Apollo) · Gmail Drafts · WhatsApp — never the vault
 - Reason: graph + vault appear in demos/docs/screenshots → real names = leak surface
-- Exceptions: only Ahmad + agents (Cowork · Codex · Claude-Code · KB-
+- Exceptions: only Ahmad + agents (Cowork · Codex · Claude-Code · KB-agent · OPS-agent · Leads-agent)
+
+## R11 · Private folder OFF LIMITS (LOCKED 2026-06-20)
+- The folder "Private pics and Vids" on Ahmad's machine is UNTOUCHABLE
+- No agent (Cowork · Claude Code · Codex · Hermes · OPS · Leads · KB · AXIS · Sentinel · any future agent) reads, writes, lists, scans, indexes, copies, moves, deletes, screenshots, or references this folder or its contents
+- Case-insensitive glob match: `**/Private pics and Vids/**`
+- If a planned action touches this path → halt, log SECURITY audit entry "blocked by privacy rule", surface "1 personal folder excluded"
+- Same severity as R6 (no RJ)
+- See [[feedback-private-folder-offlimits]]
