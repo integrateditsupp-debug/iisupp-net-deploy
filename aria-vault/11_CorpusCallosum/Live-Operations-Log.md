@@ -85,3 +85,7 @@ After appending here, ALSO append to:
 - [[_Sentinel]]
 - [[_capture]]
 <!-- /LINK-WEB:auto -->
+[2026-06-20T16:59] [Claude-Code] COMMIT · 62b055b · [sentinel] RUN 21 auto-update orchestrator + startup hook + heartbeat (114/114)
+[2026-06-20T16:59] [Claude-Code] TEST · 114/114 green · 15 new (R11 path-guard + orchestrator state machine + tamper detection)
+[2026-06-20T16:59] [Claude-Code] DONE · RUN 21 · readiness 10.0 · awaiting RUN 22 packet
+[2026-06-20T16:59] [Cowork] DISPATCH · pushing local commit + unstaged admin-auth.mjs to remote via /tmp clone
