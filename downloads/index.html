@@ -30,14 +30,16 @@
   @media(max-width:1024px){.cards{grid-template-columns:repeat(3,1fr)}}
   @media(max-width:680px){.cards{grid-template-columns:1fr 1fr}}
   @media(max-width:420px){.cards{grid-template-columns:1fr}}
-  .card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px 14px;opacity:.62;filter:grayscale(.5);display:flex;flex-direction:column;gap:8px;transition:opacity .2s}
-  .card:hover{opacity:.78}
+  .card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px 14px;display:flex;flex-direction:column;gap:8px;transition:opacity .2s,border-color .2s}
+  .card:hover{border-color:rgba(197,160,89,.3)}
   .card h3{font-family:Cinzel,serif;font-size:16px;color:rgba(255,255,255,.92);margin:0}
-  .card .price{font-size:22px;font-weight:700;color:#a08b6e;line-height:1}
+  .card .price{font-size:22px;font-weight:700;color:#f1dca7;line-height:1}
   .card .price small{font-size:11px;font-weight:400;color:rgba(255,255,255,.5);margin-left:2px}
   .card .seats{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:rgba(255,255,255,.45)}
   .card .blurb{font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.5;flex:1;margin:4px 0 6px}
-  .card button{width:100%;background:rgba(80,80,80,.3);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);padding:10px 0;font-size:10.5px;letter-spacing:.22em;border-radius:6px;cursor:not-allowed;font-weight:600}
+  .card .pf-cta{width:100%;background:#c5a059;border:none;color:#050505;padding:10px 0;font-size:10.5px;letter-spacing:.22em;border-radius:6px;cursor:pointer;font-weight:700;transition:opacity .2s;font-family:inherit}
+  .card .pf-cta:hover{opacity:.85}
+  .card .pf-cta:disabled{background:rgba(80,80,80,.3);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);cursor:not-allowed;font-weight:600}
   .features{max-width:1100px;margin:48px auto 0;padding:26px 26px;background:rgba(197,160,89,.05);border:1px solid rgba(197,160,89,.18);border-radius:14px}
   .features-tag{color:#c5a059;font-size:10px;letter-spacing:.32em;margin-bottom:18px;font-weight:600}
   .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;font-size:13px;color:rgba(255,255,255,.72);line-height:1.6}
@@ -95,35 +97,40 @@
     <div class="price">$599<small>/mo</small></div>
     <div class="seats">1 user &middot; 1 device</div>
     <p class="blurb">Resident IT support with guided Manual-mode fixes.</p>
-    <button disabled>COMING SOON</button>
+    <button class="pf-cta" data-tier="personal" data-name="Personal">SUBSCRIBE</button>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
   </article>
   <article class="card">
     <h3>Pro</h3>
     <div class="price">$1,500<small>/mo</small></div>
     <div class="seats">Small team</div>
     <p class="blurb">Confirmed + Autonomous modes, full 77 recipes, self-serve PDFs.</p>
-    <button disabled>COMING SOON</button>
+    <button class="pf-cta" data-tier="pro" data-name="Pro">SUBSCRIBE</button>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
   </article>
   <article class="card">
     <h3>Small Business</h3>
     <div class="price">$156K<small>/yr</small></div>
     <div class="seats">SMB fleet</div>
     <p class="blurb">Pro + fleet view, compliance evidence, custom recipes.</p>
-    <button disabled>COMING SOON</button>
+    <button class="pf-cta" data-tier="small_business_y" data-name="Small Business">SUBSCRIBE</button>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
   </article>
   <article class="card">
     <h3>Mid Size</h3>
     <div class="price">$312K<small>/yr</small></div>
     <div class="seats">Mid-size org</div>
     <p class="blurb">Fleet + compliance + custom recipes at mid-size scale.</p>
-    <button disabled>COMING SOON</button>
+    <button class="pf-cta" data-tier="midsize_y" data-name="Mid Size">SUBSCRIBE</button>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
   </article>
   <article class="card">
     <h3>Enterprise</h3>
     <div class="price">$625K<small>/yr</small></div>
     <div class="seats">Enterprise fleet</div>
     <p class="blurb">Everything + white-label + dedicated support.</p>
-    <button disabled>COMING SOON</button>
+    <button class="pf-cta" data-tier="enterprise_y" data-name="Enterprise">SUBSCRIBE</button>
+    <div style="text-align:center;font-size:9.5px;color:rgba(255,255,255,.45);letter-spacing:.05em;margin-top:-2px">Desktop unlocks at launch</div>
   </article>
 </section>
 
@@ -191,6 +198,27 @@
     status.textContent = msg;
     status.className = 'status-msg show ' + kind;
   }
+  // SUBSCRIBE → Stripe Checkout — same flow as /plans
+  document.querySelectorAll('.pf-cta[data-tier]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var tier = btn.getAttribute('data-tier');
+      var name = btn.getAttribute('data-name');
+      var orig = btn.textContent;
+      btn.disabled = true; btn.textContent = 'STARTING CHECKOUT...';
+      fetch('/.netlify/functions/stripe-checkout', {
+        method: 'POST',
+        headers: {'content-type':'application/json'},
+        body: JSON.stringify({ tier: tier, planName: name })
+      })
+      .then(function(res){ return res.json().then(function(d){ return {ok: res.ok, status: res.status, data: d}; }); })
+      .then(function(r){
+        if(r.ok && r.data.url){ window.location.href = r.data.url; return; }
+        showStatus(r.data.error || ('Could not start checkout (HTTP ' + r.status + '). Please call (647) 581-3182.'), 'err');
+        btn.disabled = false; btn.textContent = orig;
+      })
+      .catch(function(){ showStatus('Network error. Please try again or call (647) 581-3182.', 'err'); btn.disabled = false; btn.textContent = orig; });
+    });
+  });
 })();
 </script>
 
