@@ -140,6 +140,11 @@
   to = "/aria-sentinel/docs/index.html"
   status = 200
   force = true
+[[redirects]]
+  from = "/downloads"
+  to = "/downloads/index.html"
+  status = 200
+  force = true
 # Internal-only paths blocked from public access (security audit 2026-05-29). These also stay
 # gitignored/untracked; the 404 rules are defense-in-depth in case a file is ever re-added.
 [[redirects]]

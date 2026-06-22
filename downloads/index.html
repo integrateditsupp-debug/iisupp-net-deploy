@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Downloads · ARIA Sentinel — Integrated IT Support</title>
+<meta name="description" content="ARIA Sentinel — autonomous desktop IT support agent. Windows release within a month, then all platforms. Content-blind by design.">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#050505;color:#fff;font-family:Inter,-apple-system,sans-serif;line-height:1.6;min-height:100vh}
+  a{color:inherit;text-decoration:none}
+  .nav{position:fixed;top:0;left:0;right:0;z-index:110;background:rgba(0,0,0,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.05);padding:18px 32px;display:flex;justify-content:space-between;align-items:center}
+  .nav-brand{font-family:Cinzel,serif;font-size:13px;letter-spacing:.32em;color:#c5a059}
+  .nav-links{display:flex;gap:24px;font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+  .nav-links a{color:#c5a059;transition:opacity .2s}
+  .nav-links a:hover{opacity:.7}
+  .nav-links a.active{color:#f1dca7;font-weight:600}
+  @media(max-width:880px){.nav-links{display:none}}
+  main{padding-top:88px;max-width:1180px;margin:0 auto}
+  .hero{padding:64px 28px 36px;text-align:center}
+  .hero-tag{color:#c5a059;font-size:11px;letter-spacing:.34em;margin-bottom:18px}
+  .hero h1{font-family:Cinzel,serif;font-size:48px;margin-bottom:16px;line-height:1.1}
+  .hero h1 .gold{color:#c5a059}
+  .hero p{color:rgba(255,255,255,.72);font-size:15.5px;max-width:680px;margin:0 auto;line-height:1.65}
+  .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:0 24px;max-width:1180px;margin:24px auto 0}
+  @media(max-width:1024px){.cards{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:680px){.cards{grid-template-columns:1fr 1fr}}
+  @media(max-width:420px){.cards{grid-template-columns:1fr}}
+  .card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px 14px;opacity:.62;filter:grayscale(.5);display:flex;flex-direction:column;gap:8px;transition:opacity .2s}
+  .card:hover{opacity:.78}
+  .card h3{font-family:Cinzel,serif;font-size:16px;color:rgba(255,255,255,.92);margin:0}
+  .card .price{font-size:22px;font-weight:700;color:#a08b6e;line-height:1}
+  .card .price small{font-size:11px;font-weight:400;color:rgba(255,255,255,.5);margin-left:2px}
+  .card .seats{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:rgba(255,255,255,.45)}
+  .card .blurb{font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.5;flex:1;margin:4px 0 6px}
+  .card button{width:100%;background:rgba(80,80,80,.3);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);padding:10px 0;font-size:10.5px;letter-spacing:.22em;border-radius:6px;cursor:not-allowed;font-weight:600}
+  .features{max-width:1100px;margin:48px auto 0;padding:26px 26px;background:rgba(197,160,89,.05);border:1px solid rgba(197,160,89,.18);border-radius:14px}
+  .features-tag{color:#c5a059;font-size:10px;letter-spacing:.32em;margin-bottom:18px;font-weight:600}
+  .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;font-size:13px;color:rgba(255,255,255,.72);line-height:1.6}
+  @media(max-width:780px){.features-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.features-grid{grid-template-columns:1fr}}
+  .features-grid b{display:block;color:#f1dca7;font-weight:600;font-size:13.5px;margin-bottom:4px}
+  .notify-wrap{text-align:center;margin:48px auto 0;padding:0 24px}
+  .notify-form{display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:480px}
+  .notify-form input{flex:1;min-width:220px;background:rgba(255,255,255,.04);border:1px solid rgba(197,160,89,.3);border-radius:8px;padding:12px 14px;color:#fff;font-size:13px;font-family:inherit}
+  .notify-form input:focus{outline:none;border-color:#c5a059}
+  .notify-form button{background:#c5a059;color:#050505;border:none;padding:12px 22px;border-radius:8px;font-size:11px;letter-spacing:.22em;font-weight:700;cursor:pointer;transition:opacity .2s}
+  .notify-form button:hover{opacity:.85}
+  .notify-note{font-size:11px;color:rgba(255,255,255,.45);margin-top:10px;letter-spacing:.05em}
+  .status-msg{display:none;margin-top:14px;font-size:12px;padding:10px 14px;border-radius:8px;max-width:480px;margin-left:auto;margin-right:auto}
+  .status-msg.show{display:block}
+  .status-msg.ok{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.3)}
+  .status-msg.err{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+  .platforms{max-width:1100px;margin:48px auto 0;padding:0 24px}
+  .platforms-tag{color:#c5a059;font-size:10px;letter-spacing:.32em;text-align:center;margin-bottom:18px;font-weight:600}
+  .platforms-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;font-size:12.5px}
+  @media(max-width:680px){.platforms-grid{grid-template-columns:repeat(2,1fr)}}
+  .platform{padding:18px 14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:10px;text-align:center}
+  .platform.live{border-color:rgba(197,160,89,.4);background:rgba(197,160,89,.04)}
+  .platform b{display:block;color:#fff;font-size:14px;margin-bottom:4px;font-weight:600}
+  .platform .when{color:rgba(255,255,255,.55);font-size:11px;letter-spacing:.05em}
+  .platform.live .when{color:#f1dca7}
+  footer{padding:56px 28px 36px;text-align:center;color:rgba(255,255,255,.4);font-size:11.5px;border-top:1px solid rgba(255,255,255,.05);margin-top:64px}
+  footer a{color:#c5a059;text-decoration:underline;text-underline-offset:3px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-brand">INTEGRATED IT SUPPORT</a>
+  <div class="nav-links">
+    <a href="/services.html">Services</a>
+    <a href="/plans/">Plans</a>
+    <a href="/shop.html">Shop</a>
+    <a href="/marketplace.html">Marketplace</a>
+    <a href="/downloads/" class="active">Downloads</a>
+    <a href="/aria.html">ARIA</a>
+    <a href="/about.html">About</a>
+  </div>
+</nav>
+
+<main>
+<section class="hero">
+  <p class="hero-tag">DOWNLOADS</p>
+  <h1>ARIA Sentinel &mdash; <span class="gold">coming soon</span></h1>
+  <p>The desktop side of ARIA. An autonomous IT support agent that runs locally &mdash; fixes 77 common Windows faults, monitors silently, and stays content-blind by design. <strong style="color:#f1dca7">Available on all platforms beginning with Windows within a month.</strong> Polishing now in private beta.</p>
+</section>
+
+<section class="cards">
+  <article class="card">
+    <h3>Personal</h3>
+    <div class="price">$599<small>/mo</small></div>
+    <div class="seats">1 user &middot; 1 device</div>
+    <p class="blurb">Resident IT support with guided Manual-mode fixes.</p>
+    <button disabled>COMING SOON</button>
+  </article>
+  <article class="card">
+    <h3>Pro</h3>
+    <div class="price">$1,500<small>/mo</small></div>
+    <div class="seats">Small team</div>
+    <p class="blurb">Confirmed + Autonomous modes, full 77 recipes, self-serve PDFs.</p>
+    <button disabled>COMING SOON</button>
+  </article>
+  <article class="card">
+    <h3>Small Business</h3>
+    <div class="price">$156K<small>/yr</small></div>
+    <div class="seats">SMB fleet</div>
+    <p class="blurb">Pro + fleet view, compliance evidence, custom recipes.</p>
+    <button disabled>COMING SOON</button>
+  </article>
+  <article class="card">
+    <h3>Mid Size</h3>
+    <div class="price">$312K<small>/yr</small></div>
+    <div class="seats">Mid-size org</div>
+    <p class="blurb">Fleet + compliance + custom recipes at mid-size scale.</p>
+    <button disabled>COMING SOON</button>
+  </article>
+  <article class="card">
+    <h3>Enterprise</h3>
+    <div class="price">$625K<small>/yr</small></div>
+    <div class="seats">Enterprise fleet</div>
+    <p class="blurb">Everything + white-label + dedicated support.</p>
+    <button disabled>COMING SOON</button>
+  </article>
+</section>
+
+<section class="features">
+  <p class="features-tag">WHAT YOU GET ON RELEASE</p>
+  <div class="features-grid">
+    <div><b>Windows .exe installer</b>One-click install, auto-updates via secure OTA pipeline.</div>
+    <div><b>Tray + floating globe</b>Manual, Confirmed, and Autonomous modes for every scenario.</div>
+    <div><b>77 vetted fix recipes</b>Print Spooler &middot; Windows Update &middot; DNS &middot; Bluetooth &middot; Audio &middot; network &middot; disk &middot; and more.</div>
+    <div><b>Quarterly PDF reports</b>Pro and above &mdash; SLA, performance, compliance evidence ready for auditors.</div>
+    <div><b>Content-blind by design</b>Symbolic state codes only. Never reads your documents, screen, or files.</div>
+    <div><b>Admin console</b>Fleet view, OTA publish, license management &mdash; SMB tier and above.</div>
+  </div>
+</section>
+
+<section class="platforms">
+  <p class="platforms-tag">PLATFORM ROADMAP</p>
+  <div class="platforms-grid">
+    <div class="platform live"><b>Windows</b><span class="when">Within a month</span></div>
+    <div class="platform"><b>macOS</b><span class="when">Following Windows</span></div>
+    <div class="platform"><b>Linux</b><span class="when">Following macOS</span></div>
+    <div class="platform"><b>Mobile</b><span class="when">Companion app</span></div>
+  </div>
+</section>
+
+<section class="notify-wrap">
+  <form class="notify-form" id="notify-form" name="sentinel-notify" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="sentinel-notify">
+    <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
+    <input type="email" name="email" required placeholder="your@email.com" autocomplete="email" id="notify-email">
+    <input type="hidden" name="source" value="/downloads">
+    <button type="submit" id="notify-btn">NOTIFY ME</button>
+  </form>
+  <p class="notify-note">We'll only email you when the Windows release goes live. No spam, ever.</p>
+  <div class="status-msg" id="notify-status"></div>
+</section>
+
+<footer>
+  Want a private demo before launch? <a href="mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Sentinel%20Demo%20Request">Email the founder</a> &nbsp;&middot;&nbsp; <a href="/plans/">View pricing</a> &nbsp;&middot;&nbsp; <a href="/aria.html">Try ARIA web demo</a>
+</footer>
+</main>
+
+<script>
+(function(){
+  var form = document.getElementById('notify-form');
+  var status = document.getElementById('notify-status');
+  var btn = document.getElementById('notify-btn');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = document.getElementById('notify-email').value.trim();
+    if(!email || email.indexOf('@') < 0){ showStatus('Please enter a valid email.', 'err'); return; }
+    btn.disabled = true; btn.textContent = 'SENDING...';
+    var body = new URLSearchParams();
+    var fd = new FormData(form);
+    fd.forEach(function(v,k){ body.append(k, String(v)); });
+    fetch('/', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: body.toString() })
+      .then(function(r){
+        if(r.ok){ showStatus("You're on the list. We'll email when Sentinel goes live on Windows.", 'ok'); form.reset(); }
+        else{ showStatus('Submission failed — please email ahmad.wasee@iisupp.net directly.', 'err'); }
+      })
+      .catch(function(){ showStatus('Network error — please email ahmad.wasee@iisupp.net directly.', 'err'); })
+      .finally(function(){ btn.disabled = false; btn.textContent = 'NOTIFY ME'; });
+  });
+  function showStatus(msg, kind){
+    status.textContent = msg;
+    status.className = 'status-msg show ' + kind;
+  }
+})();
+</script>
+
+</body>
+</html>
