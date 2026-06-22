@@ -1,6 +1,10 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+  # RUN 23e — inject the ARIA Sentinel tier matrix into /plans from pricing-tiers.mjs at build time, so the
+  # site + desktop app never drift. Env-aware: each tier shows live SUBSCRIBE only when its STRIPE_PRICE_
+  # SENTINEL_* env is set, else Contact-sales. Non-fatal (|| true) so injection can never break the deploy.
+  command = "node 'ARIA Sentinel/scripts/build-plans-matrix.mjs' --inject plans/index.html || true"
 
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "APP_URL,SALES_NOTIFY_EMAIL,ARIA_MODEL,ARIA_RATE_LIMIT,NETLIFY_SITE_ID,RESEND_FROM,TELEGRAM_BOT_TOKEN,TELEGRAM_WEBHOOK_SECRET,TELEGRAM_OWNER_CHAT_ID,SENIOR_DIRECTOR_SECRET,SENIOR_DIRECTOR_DAILY_ALWAYS"
@@ -41,6 +45,31 @@
   force = true
 [[redirects]]
   from = "/node_modules/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/apps/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/tests/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/ARIA%20Sentinel/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/ARIA Sentinel/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/.github/*"
   to = "/index.html"
   status = 404
   force = true
@@ -100,6 +129,16 @@
   from = "/plans/*"
   to = "/index.html"
   status = 404
+  force = true
+[[redirects]]
+  from = "/sentinel-admin"
+  to = "/sentinel-admin/index.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/aria-sentinel/docs"
+  to = "/aria-sentinel/docs/index.html"
+  status = 200
   force = true
 # Internal-only paths blocked from public access (security audit 2026-05-29). These also stay
 # gitignored/untracked; the 404 rules are defense-in-depth in case a file is ever re-added.

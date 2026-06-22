@@ -56,6 +56,13 @@ const PRICE_MAP = {
   'inv-desktop-tower':     process.env.STRIPE_PRICE_INV_DESKTOP_TOWER     || 'price_1TjsftCa3MISR76yWbpxHQGN',
   'inv-dell-laptop':       process.env.STRIPE_PRICE_INV_DELL_LAPTOP       || 'price_1TjsfuCa3MISR76yRtjwqT9G',
   'inv-macbook-pro':       process.env.STRIPE_PRICE_INV_MACBOOK_PRO       || 'price_1TjsfvCa3MISR76ygTGXjPfo',
+  // RUN 23e — ARIA Sentinel tiers (env-only; price IDs from scripts/setup-stripe-sentinel.mjs)
+  sentinel_personal_m:   process.env.STRIPE_PRICE_SENTINEL_PERSONAL_M,
+  sentinel_personal_y:   process.env.STRIPE_PRICE_SENTINEL_PERSONAL_Y,
+  sentinel_pro_m:        process.env.STRIPE_PRICE_SENTINEL_PRO_M,
+  sentinel_business_y:   process.env.STRIPE_PRICE_SENTINEL_BUSINESS_Y,
+  sentinel_midsize_y:    process.env.STRIPE_PRICE_SENTINEL_MIDSIZE_Y,
+  sentinel_enterprise_y: process.env.STRIPE_PRICE_SENTINEL_ENTERPRISE_Y,
 };
 
 exports.handler = async (event) => {
@@ -93,9 +100,9 @@ exports.handler = async (event) => {
     }];
     mode = 'payment';
     metadata = {
-      tier: String(body.tier || pd.id || 'tech-service').slice(0, 40),
+      tier: String(body.tier || pd.id || 'one-time').slice(0, 40),
       planName: productName,
-      kind: 'tech-service'
+      kind: 'one-time'
     };
     // Callers may attach extra metadata (e.g. concierge book-order fee breakdown).
     // Values must be strings; this can set kind:'book-order' which the webhook acts on.
@@ -108,8 +115,8 @@ exports.handler = async (event) => {
     // land digital buyers on a delivery page. Defaults to homepage (unchanged).
     successUrl = origin + (typeof body.successPath === 'string' && body.successPath.charAt(0) === '/'
       ? body.successPath + (body.successPath.indexOf('?') >= 0 ? '&' : '?') + 'checkout=success&session_id={CHECKOUT_SESSION_ID}'
-      : '/?checkout=success&session_id={CHECKOUT_SESSION_ID}');
-    cancelUrl  = origin + '/?checkout=canceled';
+      : '/checkout-success.html?checkout=success&session_id={CHECKOUT_SESSION_ID}');
+    cancelUrl  = origin + '/checkout-success.html?checkout=canceled';
   } else {
     // Branch 2: existing ARIA tier subscription
     const tier = String(body.tier || '').toLowerCase();
