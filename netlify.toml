@@ -1,10 +1,9 @@
 [build]
   publish = "."
   functions = "netlify/functions"
-  # RUN 23e — inject the ARIA Sentinel tier matrix into /plans from pricing-tiers.mjs at build time, so the
-  # site + desktop app never drift. Env-aware: each tier shows live SUBSCRIBE only when its STRIPE_PRICE_
-  # SENTINEL_* env is set, else Contact-sales. Non-fatal (|| true) so injection can never break the deploy.
-  command = "node 'ARIA Sentinel/scripts/build-plans-matrix.mjs' --inject plans/index.html || true"
+  # Static site — no build step. Pricing matrix on /plans is hardcoded HTML between
+  # SENTINEL_MATRIX:START/END markers (RUN 23f baseline). When the build-plans-matrix.mjs
+  # script lands on main from sprint-0-backend, re-enable as: command = "..."
 
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "APP_URL,SALES_NOTIFY_EMAIL,ARIA_MODEL,ARIA_RATE_LIMIT,NETLIFY_SITE_ID,RESEND_FROM,TELEGRAM_BOT_TOKEN,TELEGRAM_WEBHOOK_SECRET,TELEGRAM_OWNER_CHAT_ID,SENIOR_DIRECTOR_SECRET,SENIOR_DIRECTOR_DAILY_ALWAYS"
