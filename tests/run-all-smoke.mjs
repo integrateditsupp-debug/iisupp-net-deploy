@@ -10,7 +10,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const FN_DIR = path.join(__dirname, '..', 'netlify', 'functions');
@@ -51,6 +51,8 @@ const ACCEPTABLE_STATUS = new Set([200, 204, 400, 401, 403, 404, 405]);
 const results = [];
 let pass = 0, fail = 0, skip = 0;
 
+process.env.APERTURE_JWT_SECRET ||= 'local-smoke-test-secret-do-not-use-in-prod';
+
 const files = fs.readdirSync(FN_DIR).filter(f => /\.(js|mjs|mts|cjs)$/.test(f) && !f.startsWith('_'));
 
 for (const f of files) {
@@ -69,7 +71,7 @@ for (const f of files) {
   }
 
   try {
-    const mod = await import(filePath);
+    const mod = await import(pathToFileURL(filePath).href);
     const handler = mod.handler || mod.default;
     if (!handler) {
       results.push({ fn: name, status: 'SKIP', reason: 'no .handler export' });
@@ -84,11 +86,17 @@ for (const f of files) {
       body: isJson ? JSON.stringify(payload) : payload
     };
     const r = await handler(event);
+    const bodySample = String(r.body || '').slice(0, 160);
+    if (r.statusCode === 503 && /not configured/i.test(bodySample)) {
+      results.push({ fn: name, status: 'SKIP', reason: 'external integration not configured', body_sample: bodySample });
+      skip++;
+      continue;
+    }
     if (ACCEPTABLE_STATUS.has(r.statusCode)) {
       results.push({ fn: name, status: 'PASS', http: r.statusCode });
       pass++;
     } else {
-      results.push({ fn: name, status: 'FAIL', http: r.statusCode, body_sample: (r.body || '').slice(0, 100) });
+      results.push({ fn: name, status: 'FAIL', http: r.statusCode, body_sample: bodySample });
       fail++;
     }
   } catch (e) {
@@ -116,4 +124,4 @@ if (fail > 0) {
   results.filter(r => r.status === 'FAIL').forEach(r => console.log('  ' + r.fn + ':', r.http || r.error));
 }
 
-process.exit(fail > 0 ? 1 : 0);
+process.exitCode = fail > 0 ? 1 : 0;

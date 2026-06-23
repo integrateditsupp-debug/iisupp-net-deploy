@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-06-18T17:52:35.545Z",
-  "total": 110,
-  "pass": 26,
-  "fail": 4,
-  "skip": 80,
+  "ran_at": "2026-06-21T18:07:23.966Z",
+  "total": 155,
+  "pass": 27,
+  "fail": 0,
+  "skip": 128,
   "results": [
     {
       "fn": "aperture-audit",
@@ -36,14 +36,34 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
+      "fn": "aria-ab-test",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-abuse-report",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
       "fn": "aria-account-delete",
       "status": "PASS",
       "http": 400
     },
     {
+      "fn": "aria-admin-auth",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
       "fn": "aria-analytics-dashboard",
       "status": "PASS",
       "http": 200
+    },
+    {
+      "fn": "aria-audit-export",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "aria-backup-cron",
@@ -54,6 +74,11 @@
       "fn": "aria-billing-portal",
       "status": "PASS",
       "http": 200
+    },
+    {
+      "fn": "aria-binary-update",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
       "fn": "aria-call-summary",
@@ -67,6 +92,11 @@
     },
     {
       "fn": "aria-chat",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-churn-predictor",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
@@ -91,9 +121,24 @@
       "http": 200
     },
     {
+      "fn": "aria-cron-health-monitor",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
       "fn": "aria-cross-device-sync",
       "status": "PASS",
       "http": 401
+    },
+    {
+      "fn": "aria-customer-health",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-customer-slack-invite",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "aria-data-export",
@@ -104,6 +149,11 @@
       "fn": "aria-engagement-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "aria-env-check",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "aria-escalation",
@@ -171,9 +221,24 @@
       "http": 200
     },
     {
+      "fn": "aria-kb-bundle",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
       "fn": "aria-kb-export",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "aria-kb-freshness",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-lead-attribution",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "aria-lead-auto-triage",
@@ -246,6 +311,11 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
+      "fn": "aria-llm-cost-cap",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
       "fn": "aria-llm-governor",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -262,9 +332,8 @@
     },
     {
       "fn": "aria-magic-link",
-      "status": "FAIL",
-      "http": 503,
-      "body_sample": "{\"error\":\"APERTURE_JWT_SECRET not configured\"}"
+      "status": "PASS",
+      "http": 200
     },
     {
       "fn": "aria-mesh-events",
@@ -288,9 +357,14 @@
     },
     {
       "fn": "aria-mrr-dashboard",
-      "status": "FAIL",
-      "http": 503,
+      "status": "SKIP",
+      "reason": "external integration not configured",
       "body_sample": "{\"error\":\"STRIPE_SECRET_KEY not configured\"}"
+    },
+    {
+      "fn": "aria-nps-pulse",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "aria-pattern-router",
@@ -298,13 +372,33 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
+      "fn": "aria-pipeline-weekly-report",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
       "fn": "aria-plan-change",
-      "status": "FAIL",
-      "http": 503,
+      "status": "SKIP",
+      "reason": "external integration not configured",
       "body_sample": "{\"error\":\"STRIPE_PRICE_PRO not configured in Netlify\"}"
     },
     {
+      "fn": "aria-prompt-cache-tracker",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
       "fn": "aria-receipt-email",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-recipe-circuit-breaker",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "aria-recipe-feedback",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
@@ -314,9 +408,14 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
+      "fn": "aria-recipes",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
       "fn": "aria-renewal-reminders",
-      "status": "FAIL",
-      "http": 503,
+      "status": "SKIP",
+      "reason": "external integration not configured",
       "body_sample": "{\"error\":\"STRIPE_SECRET_KEY not configured\"}"
     },
     {
@@ -328,6 +427,16 @@
       "fn": "aria-resend-helper",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "aria-retention-sweep-cron",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "aria-revenue-forecast",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "aria-reverify-cron",
@@ -343,6 +452,11 @@
       "fn": "aria-room-provider",
       "status": "PASS",
       "http": 200
+    },
+    {
+      "fn": "aria-scheduled-tasks-audit",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "aria-screenshare-request",
@@ -365,6 +479,46 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
+      "fn": "aria-self-eval-cron",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "aria-self-heal-report",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-sentinel-data",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "aria-sentinel-heartbeat",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-sentinel-license-register",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-sentinel-license-search",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-sentinel-update-manifest",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-sentinel-update-publish",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
       "fn": "aria-session-end",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -375,7 +529,22 @@
       "http": 200
     },
     {
+      "fn": "aria-session-recording-hook",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
       "fn": "aria-session",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "aria-signup-health-cron",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "aria-sla-monitor-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
@@ -400,9 +569,24 @@
       "reason": "no safe payload defined"
     },
     {
+      "fn": "aria-soc2-evidence-collect",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-stop-codes",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
       "fn": "aria-stripe-pilot-events",
       "status": "PASS",
       "http": 200
+    },
+    {
+      "fn": "aria-tax-helper",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "aria-teams-bot",
@@ -425,9 +609,34 @@
       "http": 200
     },
     {
+      "fn": "aria-tenant-isolation-test",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
       "fn": "aria-tenant-kb",
       "status": "PASS",
       "http": 400
+    },
+    {
+      "fn": "aria-tenant-offboard",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-tenant-tier-detect",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-testimonial-request",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-tls-monitor-cron",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
       "fn": "aria-trace",
@@ -453,6 +662,21 @@
       "fn": "aria-warm-handoff",
       "status": "PASS",
       "http": 200
+    },
+    {
+      "fn": "aria-webhook-signature-audit",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-welcome-ab-report",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "aria-welcome-email-ab",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "aria-white-label",
