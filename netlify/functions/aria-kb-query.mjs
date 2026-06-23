@@ -8,14 +8,24 @@
 //
 // This is faithful to the web /aria architecture — pure-JS token-overlap retrieval, no LLM, no cost.
 
-// Same hard routing rules as assets/aria-kb-retrieval.mjs — kept inline so this function is self-contained.
+// Routing rules — ORDER MATTERS, first match adds +25 score boost. Tuned 2026-06-23 from
+// live stress test on 30 real-world queries. Mac-specific BEFORE BSOD (otherwise BSOD eats kernel-panic).
+// Mobile (iPhone/iPad/Android) — no article exists yet, let them fall through to generic wifi/bluetooth.
 const ROUTING = [
-  [/\b(blue\s*screen|bsod|stop\s*error|kernel\s*panic|critical_process_died|whea_uncorrectable)\b/i, 'l1-windows-001'],
+  // === Mac-specific FIRST (must beat BSOD on kernel-panic, beach-ball, etc.) ===
+  [/\b(macbook|imac|mac\s*mini|mac\s*pro|mac\s*os|macos)\b.*\b(kernel\s*panic|beach\s*ball|rainbow\s*wheel|spinning|freez|restart|crash|sleep)\b/i, 'l1-mac-001'],
+  [/\b(kernel\s*panic|beach\s*ball|rainbow\s*wheel|spinning\s*beach)\b/i, 'l1-mac-001'],
+  [/\b(mac\s*was\s*restarted|computer\s*was\s*restarted\s*because)\b/i, 'l1-mac-001'],
+  // mac + wifi → use the generic wifi article (no mac-wifi-specific chunk exists)
+  [/\bmac(book)?\b.*\bwifi\b|\bwifi\b.*\bmac(book)?\b/i, 'l1-wifi-001'],
+  // === Windows BSOD — only for actual Windows stop-error terms ===
+  [/\b(blue\s*screen|bsod|stop\s*error|critical_process_died|whea_uncorrectable|memory_management|page_fault_in_nonpaged_area)\b/i, 'l1-windows-001'],
   [/\b(won.?t\s*boot|can.?t\s*boot|spinning\s*dots|stuck\s*on\s*logo|black\s*screen|boot\s*loop|automatic\s*repair)\b/i, 'l1-windows-002'],
-  [/\b(slow|laggy|sluggish|freezing|takes\s*forever|high\s*cpu|100%\s*disk)\b.*\b(pc|computer|laptop|machine|mac)?\b/i, 'l1-windows-003'],
-  [/\b(disk\s*full|out\s*of\s*space|low\s*disk|c\s*drive\s*full|storage\s*full)\b/i, 'l1-windows-004'],
-  [/\b(no\s*sound|no\s*audio|speakers?\s*not\s*working|red\s*x\s*speaker)\b/i, 'l1-windows-005'],
+  [/\b(slow|laggy|sluggish|freezing|takes\s*forever|high\s*cpu|100%\s*disk)\b.*\b(pc|computer|laptop|machine)?\b/i, 'l1-windows-003'],
+  [/\b(disk\s*full|out\s*of\s*space|low\s*disk|c\s*drive\s*full|storage\s*full|almost\s*full)\b/i, 'l1-windows-004'],
+  [/\b(no\s*sound|no\s*audio|speakers?\s*not\s*working|speakers?\s*dead|audio\s*not\s*working|sound\s*not\s*working|can.?t\s*hear|red\s*x\s*speaker)\b/i, 'l1-windows-005'],
   [/\b(app\s*won.?t\s*open|app\s*crash|app\s*closes?\s*immediately|application\s*error)\b/i, 'l1-windows-006'],
+  // === M365 / Office ===
   [/\b(can.?t\s*sign\s*in|password\s*prompt|login\s*loop|aadsts)\b.*\b(office|365|m365)\b/i, 'l1-m365-001'],
   [/\b(office|word|excel)\b.*(unlicensed|reduced\s*functionality|activation)\b/i, 'l1-m365-002'],
   [/\boutlook\b.*(not\s*receiv|missing\s*email|inbox\s*not\s*updat|stuck|offline)\b/i, 'l1-outlook-001'],
@@ -23,13 +33,36 @@ const ROUTING = [
   [/\bteams\b.*(no\s*audio|can.?t\s*hear|mic|microphone|speaker|sound)\b/i, 'l1-teams-001'],
   [/\bteams\b.*(won.?t\s*load|stuck|splash|crash|not\s*open)\b/i, 'l1-teams-002'],
   [/\bonedrive\b.*(not\s*sync|sync\s*stuck|paused|red\s*x)\b/i, 'l1-onedrive-001'],
-  [/\b(wi.?fi|wireless)\b.*(not\s*working|no\s*internet|can.?t\s*connect|dropped)\b/i, 'l1-wifi-001'],
+  // === Networking ===
+  [/\b(wi.?fi|wireless)\b.*(not\s*working|no\s*internet|can.?t\s*connect|dropped|drop|keep\s*dropping)\b/i, 'l1-wifi-001'],
+  // === Devices / peripherals ===
   [/\bprinter\b.*(not\s*print|stuck|won.?t\s*print|offline|jam|spooler)\b/i, 'l1-printer-001'],
+  [/\bbluetooth\b.*(pair|disconnect|cut.?out|won.?t|stuck)\b/i, 'l1-bluetooth-001'],
   [/\b(forgot|reset)\s*password|self.?service|sspr\b/i, 'l1-password-001'],
-  [/\bvpn\b.*(won.?t\s*connect|disconnect|timeout|drop)\b/i, 'l1-vpn-001'],
-  [/\b(macbook|imac|mac\s*mini|mac\s*pro)\b.*\b(won.?t|not\s*work|crash|slow|freez|sleep|wifi)\b/i, 'l1-mac-001'],
-  [/\b(iphone|ipad|ios|ipados)\b/i, 'l1-mac-001'],
-  [/\bandroid\b/i, 'l1-mac-001'],
+  // VPN — match BEFORE password (e.g. "vpn keeps disconnecting" must beat "password locked" matcher)
+  [/\bvpn\b/i, 'l1-vpn-001'],
+  [/\b(cisco\s*anyconnect|globalprotect|fortinet|openvpn|always\s*on\s*vpn|pulse\s*secure|ivanti)\b/i, 'l1-vpn-001'],
+  // === Security / phishing ===
+  [/\b(suspicious|phishing|scam|sketchy)\s*email\b/i, 'l1-email-001'],
+  [/\bemail\b.*(asking\s*for|asks\s*for|wants?\s*my)\s*(password|account|credentials|verify|sign\s*in|ssn|credit\s*card)\b/i, 'l1-email-001'],
+  // === L2 enterprise infrastructure (tier-2) ===
+  [/\b(domain\s*controller|\bDC\b.*resolve|repadmin|dcpromo|ntds)\b/i, 'l2-active-directory-001'],
+  [/\b(account|user)\s*(keeps\s*)?(getting\s*)?lock(ed|out)\s*out?\b/i, 'l2-active-directory-001'],
+  [/\bgroup\s*policy\b|\bgpo\b|\bgpupdate\b|\bgpresult\b|\brsop\b|\bevent\s*1058\b|\bevent\s*1030\b/i, 'l2-active-directory-001'],
+  [/\b(active\s*directory|\bAD\s*(connect|sync|schema|forest|domain)|schema\s*master|fsmo)\b/i, 'l2-active-directory-001'],
+  [/\b(azure\s*ad\s*connect|aad\s*connect|adfs|federation)\b/i, 'l2-azure-ad-001'],
+  [/\bconditional\s*access|aadsts5(3003|3000|0053|0126)|access\s*blocked\b/i, 'l2-azure-ad-001'],
+  [/\bbitlocker\b.*(recovery|prompt|key|tpm|protector|boot)\b/i, 'l2-bitlocker-001'],
+  [/\b(malware|virus|infect|trojan|compromised|ransomware|files?\s*encrypted|ransom\s*note)\b/i, 'l2-malware-001'],
+  [/\bdns\b.*(resolution|fail|split.?brain|not\s*resolving|internal\s*hostname)\b/i, 'l2-dns-001'],
+  [/\b(dhcp|apipa|169\.254|scope\s*exhaust)\b/i, 'l2-dhcp-001'],
+  // === L3 architecture ===
+  [/\b(disaster\s*recovery|\brto\b|\brpo\b|veeam|rubrik|3-2-1|tabletop)\b/i, 'l3-disaster-recovery-001'],
+  [/\b(raid\s*rebuild|raid\s*fail|disk\s*failure|drive\s*failed|hot\s*swap)\b/i, 'l3-disaster-recovery-001'],
+  [/\b(cyber\s*incident|p1\s*incident|breach|kill\s*chain|exfiltration|lateral\s*movement)\b/i, 'l3-security-001'],
+  [/\b(sso|saml|oidc|federation|identity\s*provider|jwt|okta\s*entra)\b/i, 'l3-sso-saml-001'],
+  // === Generic catch-alls (lower priority — only fire if nothing else did) ===
+  [/\b(internet|wi.?fi)\b.*(not\s*working|down|out)\b/i, 'l1-wifi-001'],
 ];
 
 let CHUNKS_CACHE = null;
