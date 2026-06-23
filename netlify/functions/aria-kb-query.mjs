@@ -12,59 +12,70 @@
 // live stress test on 30 real-world queries. Mac-specific BEFORE BSOD (otherwise BSOD eats kernel-panic).
 // Mobile (iPhone/iPad/Android) — no article exists yet, let them fall through to generic wifi/bluetooth.
 const ROUTING = [
-  // === Mac-specific FIRST (must beat BSOD on kernel-panic, beach-ball, etc.) ===
-  [/\b(macbook|imac|mac\s*mini|mac\s*pro|mac\s*os|macos)\b.*\b(kernel\s*panic|beach\s*ball|rainbow\s*wheel|spinning|freez|restart|crash|sleep)\b/i, 'l1-mac-001'],
-  [/\b(kernel\s*panic|beach\s*ball|rainbow\s*wheel|spinning\s*beach)\b/i, 'l1-mac-001'],
-  [/\b(mac\s*was\s*restarted|computer\s*was\s*restarted\s*because)\b/i, 'l1-mac-001'],
-  // mac + wifi → use the generic wifi article (no mac-wifi-specific chunk exists)
+  // === Mac-specific FIRST (must beat BSOD on kernel-panic) ===
+  [/\b(macbook|imac|mac\s*mini|mac\s*pro|mac\s*os|macos)\b.*(kernel\s*panic|beach\s*ball|rainbow\s*wheel|spinning|freez|restart|crash|sleep|wake)/i, 'l1-mac-001'],
+  [/(kernel\s*panic|beach\s*ball|rainbow\s*wheel|spinning\s*beach)/i, 'l1-mac-001'],
+  [/(mac\s*was\s*restarted|computer\s*was\s*restarted\s*because)/i, 'l1-mac-001'],
   [/\bmac(book)?\b.*\bwifi\b|\bwifi\b.*\bmac(book)?\b/i, 'l1-wifi-001'],
-  // === Windows BSOD — only for actual Windows stop-error terms ===
-  [/\b(blue\s*screen|bsod|stop\s*error|critical_process_died|whea_uncorrectable|memory_management|page_fault_in_nonpaged_area)\b/i, 'l1-windows-001'],
-  [/\b(won.?t\s*boot|can.?t\s*boot|spinning\s*dots|stuck\s*on\s*logo|black\s*screen|boot\s*loop|automatic\s*repair)\b/i, 'l1-windows-002'],
-  [/\b(slow|laggy|sluggish|freezing|takes\s*forever|high\s*cpu|100%\s*disk)\b.*\b(pc|computer|laptop|machine)?\b/i, 'l1-windows-003'],
-  [/\b(disk\s*full|out\s*of\s*space|low\s*disk|c\s*drive\s*full|storage\s*full|almost\s*full)\b/i, 'l1-windows-004'],
-  [/\b(no\s*sound|no\s*audio|speakers?\s*not\s*working|speakers?\s*dead|audio\s*not\s*working|sound\s*not\s*working|can.?t\s*hear|red\s*x\s*speaker)\b/i, 'l1-windows-005'],
-  [/\b(app\s*won.?t\s*open|app\s*crash|app\s*closes?\s*immediately|application\s*error)\b/i, 'l1-windows-006'],
+  // === Teams BEFORE windows-audio (so "teams + audio" wins teams) ===
+  [/\bteams\b.*(no\s*audio|cant?\s*hear|hear\s*any|mic\b|microphone|speaker|sound)|hear\s*any.*teams/i, 'l1-teams-001'],
+  [/\bteams\b.*(won.?t\s*load|stuck|splash|crash|not\s*open|on\s*launch)|teams\s*crash/i, 'l1-teams-002'],
+  // === Outlook BEFORE generic windows ===
+  [/\boutlook\b.*(not\s*receiv|missing\s*email|inbox\s*not\s*updat|inbox.*update|stuck|offline)|outlook.*receiv|inbox.*outlook/i, 'l1-outlook-001'],
+  [/\boutlook\b.*(cant?\s*send|stuck.*outbox|outbox.*stuck|smtp|unable\s*to\s*send|send\s*fail)|smtp.*outlook|outlook.*smtp/i, 'l1-outlook-002'],
+  // === OneDrive BEFORE generic ===
+  [/\bonedrive\b/i, 'l1-onedrive-001'],
   // === M365 / Office ===
-  [/\b(can.?t\s*sign\s*in|password\s*prompt|login\s*loop|aadsts)\b.*\b(office|365|m365)\b/i, 'l1-m365-001'],
-  [/\b(office|word|excel)\b.*(unlicensed|reduced\s*functionality|activation)\b/i, 'l1-m365-002'],
-  [/\boutlook\b.*(not\s*receiv|missing\s*email|inbox\s*not\s*updat|stuck|offline)\b/i, 'l1-outlook-001'],
-  [/\boutlook\b.*(can.?t\s*send|stuck\s*in\s*outbox|smtp|unable\s*to\s*send)\b/i, 'l1-outlook-002'],
-  [/\bteams\b.*(no\s*audio|can.?t\s*hear|mic|microphone|speaker|sound)\b/i, 'l1-teams-001'],
-  [/\bteams\b.*(won.?t\s*load|stuck|splash|crash|not\s*open)\b/i, 'l1-teams-002'],
-  [/\bonedrive\b.*(not\s*sync|sync\s*stuck|paused|red\s*x)\b/i, 'l1-onedrive-001'],
+  [/(cant?\s*sign\s*in|password\s*prompt|login\s*loop|aadsts).*\b(office|365|m365)|\b(office|m365|365)\b.*(sign\s*in|login\s*loop|password\s*prompt)/i, 'l1-m365-001'],
+  [/(office|word|excel|powerpoint|outlook).*(unlicensed|reduced\s*functionality|activation\s*error|activation\s*fail|not\s*activated)/i, 'l1-m365-002'],
+  // === Windows BSOD — actual stop-error terms ===
+  [/(blue\s*screen|bsod|stop\s*error|critical_process_died|whea_uncorrectable|memory_management|page_fault_in_nonpaged_area|driver_irql|system_thread|ntoskrnl)/i, 'l1-windows-001'],
+  // === Windows boot ===
+  [/(wont?\s*boot|cant?\s*boot|spinning\s*dots|stuck.*logo|stuck.*windows.*logo|black\s*screen|boot\s*loop|automatic\s*repair|startup\s*repair|recovery\s*environment)/i, 'l1-windows-002'],
+  // === Windows performance ===
+  [/(slow|laggy|sluggish|freezing|takes\s*forever|high\s*cpu|100\s*(percent|%)\s*(cpu|disk|memory)|cpu\s*at\s*100|disk\s*usage\s*100)/i, 'l1-windows-003'],
+  // === Windows disk ===
+  [/(disk\s*full|out\s*of\s*space|low\s*disk|c\s*drive\s*full|storage\s*full|almost\s*full|disk\s*almost\s*full|low\s*storage|cleanmgr)/i, 'l1-windows-004'],
+  // === Windows audio (after teams to avoid override) ===
+  [/(no\s*sound|no\s*audio|speakers?\s*not\s*working|speakers?\s*dead|audio\s*not\s*working|sound\s*not\s*working|red\s*x.*speaker|speaker.*red\s*x)/i, 'l1-windows-005'],
+  // === Windows app crashes (variants) ===
+  [/\bapp(lication)?\b.*(wont?\s*open|crash|close|fail|error|hang|freez|not\s*respond)|app.*not\s*respond|(crash|fail|error).*\bapp/i, 'l1-windows-006'],
   // === Networking ===
-  [/\b(wi.?fi|wireless)\b.*(not\s*working|no\s*internet|can.?t\s*connect|dropped|drop|keep\s*dropping)\b/i, 'l1-wifi-001'],
+  [/\b(wi.?fi|wireless)\b.*(not\s*working|no\s*internet|cant?\s*connect|dropped|drop|keep\s*dropping|disconnect)|no\s*internet.*wifi|wifi.*disconnect/i, 'l1-wifi-001'],
   // === Devices / peripherals ===
-  [/\bprinter\b.*(not\s*print|stuck|won.?t\s*print|offline|jam|spooler)\b/i, 'l1-printer-001'],
-  [/\bbluetooth\b.*(pair|disconnect|cut.?out|won.?t|stuck)\b/i, 'l1-bluetooth-001'],
-  [/\b(forgot|reset)\s*password|self.?service|sspr\b/i, 'l1-password-001'],
-  // VPN — match BEFORE password (e.g. "vpn keeps disconnecting" must beat "password locked" matcher)
-  [/\bvpn\b/i, 'l1-vpn-001'],
-  [/\b(cisco\s*anyconnect|globalprotect|fortinet|openvpn|always\s*on\s*vpn|pulse\s*secure|ivanti)\b/i, 'l1-vpn-001'],
+  [/\bprinter\b.*(not\s*print|stuck|wont?\s*print|offline|jam|spooler|queue)|print\s*queue|spooler/i, 'l1-printer-001'],
+  [/\bbluetooth\b/i, 'l1-bluetooth-001'],
+  [/(forgot|reset)\s*password|self.?service|sspr|password\s*reset/i, 'l1-password-001'],
+  // === VPN ===
+  [/\bvpn\b|cisco\s*anyconnect|globalprotect|fortinet|openvpn|always\s*on\s*vpn|pulse\s*secure|ivanti|anyconnect/i, 'l1-vpn-001'],
   // === Security / phishing ===
-  [/\b(suspicious|phishing|scam|sketchy)\s*email\b/i, 'l1-email-001'],
-  [/\bemail\b.*(asking\s*for|asks\s*for|wants?\s*my)\s*(password|account|credentials|verify|sign\s*in|ssn|credit\s*card)\b/i, 'l1-email-001'],
-  // === L2 enterprise infrastructure (tier-2) ===
-  [/\b(domain\s*controllers?|\bDCs?\b.*resolv|repadmin|dcpromo|ntds|fsmo)\b/i, 'l2-active-directory-001'],
-  [/\b(account|user)\s*(keeps\s*)?(getting\s*)?lock(ed|out)\s*out?\b/i, 'l2-active-directory-001'],
-  [/\bgroup\s*policy\b|\bgpo\b|\bgpupdate\b|\bgpresult\b|\brsop\b|\bevent\s*1058\b|\bevent\s*1030\b/i, 'l2-active-directory-001'],
-  [/\b(active\s*directory|\bAD\s*(connect|sync|schema|forest|domain)|schema\s*master|fsmo)\b/i, 'l2-active-directory-001'],
-  [/\b(azure\s*ad\s*connect|aad\s*connect|adfs|federation)\b/i, 'l2-azure-ad-001'],
-  [/\bconditional\s*access|aadsts5(3003|3000|0053|0126)|access\s*blocked\b/i, 'l2-azure-ad-001'],
-  [/\bbitlocker\b.*(recovery|prompt|key|tpm|protector|boot)\b/i, 'l2-bitlocker-001'],
-  [/\b(malware|virus|infect|trojan|compromised|ransomware|files?\s*encrypted|ransom\s*note)\b/i, 'l2-malware-001'],
-  [/\bdns\b.*(resolution|fail|split.?brain|not\s*resolving|internal\s*hostname)\b/i, 'l2-dns-001'],
-  [/\b(can.?t\s*resolve|not\s*resolving|name\s*resolution|internal\s*name|fqdn|hostname.*resolve)\b/i, 'l2-dns-001'],
-  [/\b(isp|wan|router|firewall)\b.*\b(change|swap|replace|migration|new)\b/i, 'l2-dns-001'],
-  [/\b(dhcp|apipa|169\.254|scope\s*exhaust)\b/i, 'l2-dhcp-001'],
-  // === L3 architecture ===
-  [/\b(disaster\s*recovery|\brto\b|\brpo\b|veeam|rubrik|3-2-1|tabletop)\b/i, 'l3-disaster-recovery-001'],
-  [/\b(raid\s*rebuild|raid\s*fail|disk\s*failure|drive\s*failed|hot\s*swap)\b/i, 'l3-disaster-recovery-001'],
-  [/\b(cyber\s*incident|p1\s*incident|breach|kill\s*chain|exfiltration|lateral\s*movement)\b/i, 'l3-security-001'],
-  [/\b(sso|saml|oidc|federation|identity\s*provider|jwt|okta\s*entra)\b/i, 'l3-sso-saml-001'],
-  // === Generic catch-alls (lower priority — only fire if nothing else did) ===
-  [/\b(internet|wi.?fi)\b.*(not\s*working|down|out)\b/i, 'l1-wifi-001'],
+  [/(suspicious|phishing|scam|sketchy)\s*email|phishing|scam\s*(email|message)|email.*pretending|fake\s*email/i, 'l1-email-001'],
+  [/\bemail\b.*(asking|asks|wants?).*\b(password|account|credentials|verify|sign\s*in|ssn|credit\s*card)/i, 'l1-email-001'],
+  // === L2 AD/GPO ===
+  [/(domain\s*controllers?|\bDCs?\b.*resolv|repadmin|dcpromo|ntds|fsmo|schema\s*master)/i, 'l2-active-directory-001'],
+  [/(account|user)\s*(keeps\s*)?(getting\s*)?lock(ed|out|s\s*out)|account.*lock.*out|locked\s*out\s*repeat/i, 'l2-active-directory-001'],
+  [/group\s*policy|\bgpo\b|\bgpupdate\b|\bgpresult\b|\brsop\b|event\s*1058|event\s*1030|event\s*5719/i, 'l2-active-directory-001'],
+  [/active\s*directory|\bAD\s*(connect|sync|schema|forest|domain|replication)|replication\s*fail/i, 'l2-active-directory-001'],
+  // === L2 Azure AD ===
+  [/azure\s*ad\s*connect|aad\s*connect|adfs|federation\s*server|federation\s*broken/i, 'l2-azure-ad-001'],
+  [/conditional\s*access|aadsts\d+|access\s*blocked|sign\s*in\s*blocked/i, 'l2-azure-ad-001'],
+  // === L2 BitLocker ===
+  [/\bbitlocker\b|recovery\s*key\s*prompt|tpm.*bitlocker|bitlocker.*tpm/i, 'l2-bitlocker-001'],
+  // === L2 Malware/Ransomware ===
+  [/malware|virus|infect|trojan|compromised|ransomware|files?\s*encrypted|ransom\s*note|encrypted\s*all/i, 'l2-malware-001'],
+  // === L2 DNS ===
+  [/\bdns\b.*(resolution|fail|split.?brain|not\s*resolving|internal|hostname|forwarder)|split.?brain.*dns/i, 'l2-dns-001'],
+  [/(cant?\s*resolve|not\s*resolving|name\s*resolution|internal\s*name|fqdn|hostname.*resolve)/i, 'l2-dns-001'],
+  [/(isp|wan|router|firewall).*(change|swap|replace|migration|new)/i, 'l2-dns-001'],
+  // === L2 DHCP ===
+  [/\bdhcp\b|apipa|169\.254|scope\s*exhaust/i, 'l2-dhcp-001'],
+  // === L3 DR ===
+  [/disaster\s*recovery|\brto\b|\brpo\b|veeam|rubrik|3-2-1|tabletop|backup\s*fail/i, 'l3-disaster-recovery-001'],
+  [/raid\s*rebuild|raid\s*fail|disk\s*failure|drive\s*fail|hot\s*swap/i, 'l3-disaster-recovery-001'],
+  // === L3 Security ===
+  [/cyber\s*incident|p1\s*incident|\bbreach\b|kill\s*chain|exfiltration|lateral\s*movement/i, 'l3-security-001'],
+  // === L3 SSO ===
+  [/\bsso\b|\bsaml\b|\boidc\b|federation.*identity|\bjwt\b|okta|entra/i, 'l3-sso-saml-001'],
 ];
 
 let CHUNKS_CACHE = null;
@@ -133,7 +144,7 @@ export async function handler(event) {
   const scored = chunks.map(c => ({ chunk: c, score: score(query, c) })).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
   const top = scored[0];
 
-  if (!top || top.score < 3) {
+  if (!top || top.score < 8) {  // raised 2026-06-23 — align with Sentinel threshold
     return json(200, { match: false, confidence: top ? top.score : 0, source: "aria-kb-public", totalChunks: chunks.length });
   }
 
