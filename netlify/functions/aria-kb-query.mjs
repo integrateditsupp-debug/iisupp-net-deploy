@@ -41,11 +41,11 @@ const ROUTING = [
   // === Windows app crashes (variants) ===
   [/\bapp(lication)?\b.*(wont?\s*open|crash|close|fail|error|hang|freez|not\s*respond)|app.*not\s*respond|(crash|fail|error).*\bapp/i, 'l1-windows-006'],
   // === Networking ===
-  [/\b(wi.?fi|wireless)\b.*(not\s*working|no\s*internet|cant?\s*connect|dropped|drop|keep\s*dropping|disconnect)|no\s*internet.*wifi|wifi.*disconnect/i, 'l1-wifi-001'],
+  [/\b(wi.?fi|wireless)\b|cant?\s*connect.*(wi.?fi|wireless|internet)|(wi.?fi|wireless).*(not\s*working|no\s*internet|cant?\s*connect|dropped|drop|disconnect)/i, 'l1-wifi-001'],
   // === Devices / peripherals ===
   [/\bprinter\b.*(not\s*print|stuck|wont?\s*print|offline|jam|spooler|queue)|print\s*queue|spooler/i, 'l1-printer-001'],
   [/\bbluetooth\b/i, 'l1-bluetooth-001'],
-  [/(forgot|reset)\s*password|self.?service|sspr|password\s*reset/i, 'l1-password-001'],
+  [/forgot.*password|reset.*password|self.?service|sspr|password\s*(reset|forgot|expired)|cant?.*sign\s*in.*password/i, 'l1-password-001'],
   // === VPN ===
   [/\bvpn\b|cisco\s*anyconnect|globalprotect|fortinet|openvpn|always\s*on\s*vpn|pulse\s*secure|ivanti|anyconnect/i, 'l1-vpn-001'],
   // === Security / phishing ===
