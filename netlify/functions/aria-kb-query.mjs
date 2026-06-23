@@ -8,12 +8,6 @@
 //
 // This is faithful to the web /aria architecture — pure-JS token-overlap retrieval, no LLM, no cost.
 
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 // Same hard routing rules as assets/aria-kb-retrieval.mjs — kept inline so this function is self-contained.
 const ROUTING = [
   [/\b(blue\s*screen|bsod|stop\s*error|kernel\s*panic|critical_process_died|whea_uncorrectable)\b/i, 'l1-windows-001'],
@@ -39,17 +33,15 @@ const ROUTING = [
 ];
 
 let CHUNKS_CACHE = null;
+let CHUNKS_LOADED_AT = 0;
 async function loadChunks() {
-  if (CHUNKS_CACHE) return CHUNKS_CACHE;
-  try {
-    // The chunks JSON is bundled with the function at deploy time via included_files.
-    const buf = await readFile(path.join(__dirname, "aria-kb-chunks.json"), "utf8");
-    CHUNKS_CACHE = JSON.parse(buf);
-  } catch (e) {
-    // Fallback: fetch from public URL if bundling failed
-    const r = await fetch("https://iisupp.net/assets/aria-kb-chunks.json");
-    CHUNKS_CACHE = await r.json();
-  }
+  // Cache 1 hour in function memory (warm starts reuse, cold start re-fetches)
+  if (CHUNKS_CACHE && (Date.now() - CHUNKS_LOADED_AT) < 3600 * 1000) return CHUNKS_CACHE;
+  // Fetch from the public static asset — Netlify serves it at edge, ~50ms global
+  const r = await fetch("https://iisupp.net/assets/aria-kb-chunks.json", { headers: { "user-agent": "aria-kb-query/1.0" } });
+  if (!r.ok) throw new Error(`KB fetch failed: ${r.status}`);
+  CHUNKS_CACHE = await r.json();
+  CHUNKS_LOADED_AT = Date.now();
   return CHUNKS_CACHE;
 }
 
