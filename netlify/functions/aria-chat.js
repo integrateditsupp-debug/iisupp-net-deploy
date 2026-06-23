@@ -141,7 +141,7 @@ exports.handler = async (event) => {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  const model = process.env.ARIA_MODEL || 'claude-sonnet-4-20250514';
+  const model = process.env.ARIA_MODEL || 'claude-sonnet-4-5-20250929';
   if (!apiKey) {
     return json(500, { error: 'AI service not configured. Call (647) 581-3182.' });
   }
