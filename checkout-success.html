@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#c5a059" />
+  <meta name="robots" content="noindex" />
+  <title>Order Confirmation · Integrated IT Support</title>
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;900&display=swap');
+    :root { --gold:#c5a059; --gold-soft:#f1dca7; --slate:#0a0c12; }
+    * { box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:var(--slate); color:#fff; margin:0; min-height:100vh;
+      display:flex; align-items:center; justify-content:center; padding:24px;
+      background-image:radial-gradient(circle at 50% 0%, rgba(197,160,89,.10), transparent 60%); }
+    .card { width:100%; max-width:560px; background:rgba(0,0,0,.65); border:1px solid rgba(197,160,89,.32);
+      border-radius:18px; padding:40px 34px; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,.55); }
+    .globe { width:64px; height:64px; margin:0 auto 18px; border-radius:50%;
+      background:radial-gradient(circle at 35% 30%, var(--gold-soft), var(--gold) 55%, #6b521f 100%);
+      box-shadow:0 0 28px rgba(197,160,89,.5); }
+    .brand { font-family:'Cinzel',serif; font-size:13px; letter-spacing:.34em; text-transform:uppercase; color:var(--gold-soft); margin:0 0 4px; }
+    .brand-sub { font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); margin:0 0 26px; opacity:.85; }
+    h1 { font-family:'Cinzel',serif; font-size:27px; margin:0 0 12px; color:#fff; }
+    p { font-size:14.5px; line-height:1.65; color:rgba(255,255,255,.82); margin:0 0 10px; }
+    .check { font-size:46px; line-height:1; margin-bottom:14px; }
+    .ok { color:#7afb9b; } .warn { color:var(--gold-soft); }
+    .ref { font-family:'Courier New',ui-monospace,monospace; font-size:11.5px; color:var(--gold); word-break:break-all;
+      background:rgba(197,160,89,.08); border:1px solid rgba(197,160,89,.2); border-radius:8px; padding:9px 12px; margin:18px 0 6px; }
+    .actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
+    a.btn { display:inline-block; text-decoration:none; font-weight:600; font-size:13px; letter-spacing:.02em;
+      padding:12px 22px; border-radius:11px; transition:transform .15s ease, box-shadow .25s ease; }
+    a.primary { background:linear-gradient(135deg,var(--gold),var(--gold-soft)); color:#1a1410; }
+    a.ghost { background:transparent; color:var(--gold-soft); border:1px solid rgba(197,160,89,.4); }
+    a.btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(197,160,89,.25); }
+    .foot { margin-top:24px; font-size:11px; color:rgba(255,255,255,.45); }
+    .foot a { color:var(--gold); text-decoration:none; }
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <div class="globe" aria-hidden="true"></div>
+    <p class="brand">Integrated IT Support Inc.</p>
+    <p class="brand-sub">Distinguished Technical Services</p>
+
+    <div id="state-success" hidden>
+      <div class="check ok" aria-hidden="true">✓</div>
+      <h1>Thank you — your order is confirmed</h1>
+      <p>Your payment was received and your purchase is now active. A receipt has been emailed to you by Stripe.</p>
+      <p>If this purchase unlocks software or a deliverable, you'll receive access details by email shortly.</p>
+      <div id="ref" class="ref" hidden></div>
+      <div class="actions">
+        <a class="btn primary" href="/">Return to homepage</a>
+        <a class="btn ghost" href="/aria">Open ARIA</a>
+      </div>
+    </div>
+
+    <div id="state-canceled" hidden>
+      <div class="check warn" aria-hidden="true">↩</div>
+      <h1>Checkout canceled</h1>
+      <p>No charge was made. You closed the secure Stripe checkout before completing payment.</p>
+      <p>You can pick up where you left off whenever you're ready.</p>
+      <div class="actions">
+        <a class="btn primary" href="/">Back to homepage</a>
+        <a class="btn ghost" href="/plans/">View plans</a>
+      </div>
+    </div>
+
+    <div id="state-default" hidden>
+      <div class="check ok" aria-hidden="true">✓</div>
+      <h1>Order received</h1>
+      <p>Thank you for your business with Integrated IT Support.</p>
+      <div class="actions">
+        <a class="btn primary" href="/">Return to homepage</a>
+        <a class="btn ghost" href="/aria">Open ARIA</a>
+      </div>
+    </div>
+
+    <p class="foot">Questions about your order? Email <a href="mailto:support@iisupp.net">support@iisupp.net</a>.</p>
+  </main>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var status = (params.get('checkout') || '').toLowerCase();
+      var session = params.get('session_id') || '';
+      var show = function (id) { var el = document.getElementById(id); if (el) el.hidden = false; };
+
+      if (status === 'canceled' || status === 'cancelled') {
+        show('state-canceled');
+      } else if (status === 'success') {
+        show('state-success');
+        if (session && session.indexOf('{') === -1) {
+          var ref = document.getElementById('ref');
+          ref.textContent = 'Order reference: ' + session;
+          ref.hidden = false;
+        }
+      } else {
+        show('state-default');
+      }
+    })();
+  </script>
+</body>
+</html>

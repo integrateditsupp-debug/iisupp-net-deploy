@@ -26,11 +26,18 @@ const ROUTING = [
   [/\b(restore|recover)\s*(deleted|previous)|version\s*history|recycle\s*bin\b/i, 'l1-onedrive-002'],
   [/\bonedrive\b.*(duplicate|conflict|two\s*copies|computer\s*copy)\b/i, 'l1-onedrive-003'],
   [/\b(wi.?fi|wireless)\b.*(not\s*working|yellow\s*triangle|no\s*internet|secured|can.?t\s*connect|dropped)\b/i, 'l1-wifi-001'],
-  [/\bprinter\b.*(not\s*print|stuck|won.?t\s*print|offline|jam|spooler)\b/i, 'l1-printer-001'],
+  // RUN 35-2 iter-7 — connectivity phrasings that never say the word "wifi" (lifts wifi 76→95%+).
+  [/\b(no\s*internet\s*access|internet\s*keeps\s*going\s*out|internet\s*(is\s*)?down|connected\s*but\s*no\s*internet|network\s*keeps\s*timing\s*out|office\s*wifi\s*slow|2\.4\s*ghz|can.?t\s*see\s*5g|wireless\s*adapter\s*not\s*found|wi.?fi\s*card\s*missing)\b/i, 'l1-wifi-001'],
+  // RUN 35-2 iter-7 — printer rule tightened: route on the WORD "printer", or "print" + a printer-specific
+  // symptom. A bare vertical-app "WONT PRINT CONFIRM" (no "printer", no print-symptom) falls through to chat.
+  [/\bprinter\b|print\s*(queue|spooler|driver|jam|offline|not\s*working|to\s*pdf|too\s*small|too\s*large)|add\s*a\s*printer|install\s*printer/i, 'l1-printer-001'],
   [/\bprinter\b.*(garble|garbage|symbols|wrong\s*characters|gibberish)\b/i, 'l1-printer-002'],
   [/\b(lost|new)\s+phone\b.*\b(mfa|2fa|authenticator)\b/i, 'l1-mfa-001'],
   [/\b(mfa|2fa|authenticator)\b.*\b(lost|new)\s+phone\b/i, 'l1-mfa-001'],
   [/\b(mfa|2fa|two.?factor|authenticator)\b.*(setup|recovery|reset|locked\s*out)\b/i, 'l1-mfa-001'],
+  // RUN 35-7 — surfaced in the live sample: bare "authenticator" and phone-loss MFA phrasings weren't routing.
+  [/\bauthenticator\s*(app|phone|code|reset)?\b/i, 'l1-mfa-001'],
+  [/\b(lost|new|replaced|broke|upgraded)\s+(my\s+)?phone\b.*\b(mfa|2fa|verif|sign.?in|log\s*in|login|authenticat|2.?step)\b/i, 'l1-mfa-001'],
   [/\b(forgot|reset)\s*password|self.?service|sspr|reset\s*link\b/i, 'l1-password-001'],
   [/\bvpn\b.*(won.?t\s*connect|disconnect|timeout|drop|not\s*connecting)\b/i, 'l1-vpn-001'],
   [/\b(cisco\s*anyconnect|globalprotect|fortinet|openvpn|always\s*on\s*vpn)\b/i, 'l1-vpn-001'],
@@ -52,6 +59,9 @@ const ROUTING = [
   [/\bbitlocker\b.*(recovery|prompt|key|tpm|protector)\b/i, 'l2-bitlocker-001'],
   [/\b(malware|virus|infect|trojan|compromised|quarantine)\b/i, 'l2-malware-001'],
   [/\bransomware|files?\s*encrypted|\.locked|\.crypted|ransom\s*note\b/i, 'l2-malware-001'],
+  // RUN 35-2 iter-7 — ransomware families + malware-popup phrasings (lifts kb:security 67→95%+).
+  [/\b(lockbit|wannacry|conti|ryuk|crypto.?locker|maze|revil|blackcat|alphv)\b/i, 'l2-malware-001'],
+  [/\b(encrypted\s*all|all\s*(my\s*)?files?\s*(are\s*)?encrypted|virus\s*warning\s*popup|trojan\s*detected|malware\s*on\s*(my\s*)?(laptop|pc|computer)|got\s*a\s*phishing|clicked.*phishing|phishing\s*link|fake\s*virus\s*alert|ransomware\s*on\s*my)\b/i, 'l2-malware-001'],
   [/\bdns\b.*(resolution|fail|split.?brain|not\s*resolving)\b/i, 'l2-dns-001'],
   [/\b(dhcp|apipa|169\.254|scope\s*exhaust)\b/i, 'l2-dhcp-001'],
   [/\b(rdp|remote\s*desktop|rd\s*gateway|terminal\s*server|rds)\b/i, 'l2-rdp-001'],
@@ -74,6 +84,8 @@ const ROUTING = [
   [/\b(wpr|xperf|performance\s*trace|boot\s*performance)\b/i, 'l2-performance-001'],
   [/\b(vpn\s*gateway|always\s*on\s*vpn|aovpn|device\s*tunnel|user\s*tunnel|rras|ikev2)\b/i, 'l2-vpn-001'],
   [/\b(cyber\s*incident|p1\s*incident|breach|kill\s*chain|exfiltration|lateral\s*movement)\b/i, 'l3-security-001'],
+  // RUN 35-2 iter-7 — account-takeover signals → security incident (lifts kb:security 67→95%+).
+  [/\b(account\s*(is\s*|was\s*|been\s*|got\s*)?(compromised|hacked|hijacked|breached)|someone\s*has\s*access|unauthorized\s*access|impossible\s*travel|mfa\s*bombing|suspicious\s*activity\s*on\s*(my\s*)?account|sign.?in\s*from\s*(china|russia|north\s*korea|iran)|account\s*takeover)\b/i, 'l3-security-001'],
   [/\b(sso|saml|oidc|federation|identity\s*provider|jwt|okta\s*entra)\b/i, 'l3-sso-saml-001'],
   [/\b(pki|certificate\s*authority|ad\s*cs|autoenroll|crl|ocsp|root\s*ca|hsm)\b/i, 'l3-certificates-001'],
   [/\b(disaster\s*recovery|rto|rpo|veeam|rubrik|cohesity|3-2-1|tabletop|bcp)\b/i, 'l3-disaster-recovery-001'],
@@ -116,6 +128,15 @@ function tokenize(text) {
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
+// Returns the set of hard-routed article ids a query matches (first match per id).
+// Exported so the routing rules can be unit-tested without the full KB article set.
+export function routeIds(query) {
+  const q = query || '';
+  const ids = [];
+  for (const [re, id] of ROUTING) { if (re.test(q) && !ids.includes(id)) ids.push(id); }
+  return ids;
+}
+
 export function classify(query) {
   const q = (query || '').toLowerCase();
   const signals = { level_hint: 'L1', audience: 'end-user', severity_signal: 'medium', sensitive: false };
@@ -150,64 +171,4 @@ function scoreArticle(article, queryTokens, queryRaw, signals) {
   for (const kw of (article.keywords || [])) {
     const norm = kw.toLowerCase();
     if (norm.length >= 3 && lowerQ.includes(norm)) {
-      score += 12 * Math.max(1, norm.split(/\s+/).length);
-    }
-  }
-  // 2. Token overlap — title heaviest, then keywords, then symptoms.
-  for (const tok of queryTokens) {
-    if (titleTokens.includes(tok)) score += 3;
-    if (keywordTokens.includes(tok)) score += 2;
-    if (symptomTokens.includes(tok)) score += 1;
-  }
-  // 3. Level hint boost — only if there's already some signal (avoids surfacing
-  //    irrelevant L2/L3 articles just because the query *sounded* admin-y).
-  if (score > 0 && signals.level_hint === article.level) score += 4;
-  // 4. Audience match.
-  if (score > 0 && signals.audience === article.audience) score += 2;
-  // 5. Sensitive → boost critical-severity matches.
-  if (signals.sensitive && article.severity === 'critical') score += 3;
-
-  return score;
-}
-
-export function retrieve(query, articles, opts = {}) {
-  const topK = opts.topK || 5;
-  const queryTokens = tokenize(query);
-  const queryRaw = query || '';
-  const signals = classify(queryRaw);
-
-  // Hard routing first — exact pattern matches almost always win.
-  const routedIds = new Set();
-  for (const [re, id] of ROUTING) {
-    if (re.test(queryRaw)) routedIds.add(id);
-  }
-
-  const scored = articles
-    .map(a => {
-      let score = scoreArticle(a, queryTokens, queryRaw, signals);
-      if (routedIds.has(a.id)) score += 25;
-      return { ...a, score, _signals: signals };
-    })
-    .filter(a => a.score > 0);
-
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, topK);
-}
-
-// Renders the public-safe portion of an article for an audience.
-// NEVER returns §10 (Internal Technician Notes) for non-admin audiences.
-// Inputs caller controls: { article, audience }
-export function renderForAudience(article, audience = 'end-user') {
-  const safeAudiences = new Set(['end-user', 'senior-user']);
-  const isPublic = safeAudiences.has(audience);
-  return {
-    title: article.title,
-    summary: article.user_friendly || article.symptoms?.split('\n')[0] || '',
-    symptoms: isPublic ? article.symptoms : article.symptoms,
-    escalation: article.escalation_trigger || '',
-    show_internal_notes: !isPublic && audience === 'admin',
-    severity: article.severity,
-    level: article.level,
-    path: article.path,
-  };
-}
+      score += 

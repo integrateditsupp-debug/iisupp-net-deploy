@@ -1,0 +1,323 @@
+{
+  "endpoint": "https://iisupp.net/.netlify/functions/aria-kb-query",
+  "total": 556,
+  "pass": 404,
+  "fail": 152,
+  "pct": 72.66,
+  "neterr": 0,
+  "by_intent": {
+    "password": "20/50 (40%)",
+    "mail": "42/50 (84%)",
+    "kb:teams": "41/50 (82%)",
+    "wifi": "33/50 (66%)",
+    "kb:mfa": "1/50 (2%)",
+    "printer": "50/50 (100%)",
+    "vpn": "43/50 (86%)",
+    "kb:onedrive": "46/50 (92%)",
+    "kb:security": "27/50 (54%)",
+    "kb:windows": "45/50 (90%)",
+    "FALLTHROUGH": "56/56 (100%)"
+  },
+  "top_failures": [
+    {
+      "intent": "password",
+      "q": "btw sign in failed",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "please my login is broken",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "fyi Locked out of my account",
+      "got": "l2-cra-001-cra-business-account-mfa-locked-out",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "this is blocking me — Wont let me log in",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "critical: Password help",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "please Sign-in keeps failing",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "this is blocking me — Password isnt accepted",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "i'm a developer, mychart login failed",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "mcleod loadmaster eld wont login on macos",
+      "got": "l1-mac-001-kernel-panic-spinning-beach-ball",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "powerschool student wont login — affects 50 users",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "This is blocking me — wont let me log in",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "SORRY BUT PASSWORD HELP",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "SORRY BUT PASSWORD ISN'T ACCEPTED",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "Critical: CANT SIGN IN",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "FYI LOGIN WON'T WORK",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "INVALID PASSWORD ERROR ASAP",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "As a c-suite exec, cerner login failed",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "CALYPSO WONT LOGIN ON WINDOWS 10",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "Propertyware mls wont login — affects 50 users",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "AS AN ADMIN, CONFLUENCE WONT LOGIN TO CLOUD CONSOLE",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "As a senior admin, sentry wont login to cloud console",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "CAN YOU RESPOND IN FRENCH — MY LOGIN IS BROKEN",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "quick one — urgent: can't log in",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "please cannot sign in",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "quick one — now: login broken",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "please hey Sign in failed",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "quick one — i need help with I can't remember my password",
+      "got": "l1-adp-001-adp-workforcenow-sso-broken",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "quick one — now: SIGN IN KEEPS FAILING",
+      "got": "l1-qb-001-quickbooks-online-login-loop",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "please LOGIN BROKEN urgent",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "password",
+      "q": "quick one — sorry but It rejected my password",
+      "got": "l1-adp-001-adp-workforcenow-sso-broken",
+      "reason": ""
+    },
+    {
+      "intent": "mail",
+      "q": "this is blocking me — Spam filter not working",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "mail",
+      "q": "Please sent items missing",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "mail",
+      "q": "Autocomplete missing in outlokk",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "mail",
+      "q": "Asap Spam filter not working",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "mail",
+      "q": "quick one — no new emials coming in",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "mail",
+      "q": "quick one — outlokk says disconnected",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "mail",
+      "q": "quick one — outlook365 keeps asking for password",
+      "got": "l1-adp-001-adp-workforcenow-sso-broken",
+      "reason": ""
+    },
+    {
+      "intent": "mail",
+      "q": "quick one — sorry but Spam filter not working",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "kb:teams",
+      "q": "cantt see channels",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "kb:teams",
+      "q": "CAN'T SEE CHANNELS asap",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "kb:teams",
+      "q": "TEEM WON'T OPEN",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "kb:teams",
+      "q": "Can t see channels",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "kb:teams",
+      "q": "CAN'T SEE CHANNELS please",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "kb:teams",
+      "q": "quick one — can't see channels urgent",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "kb:teams",
+      "q": "please teem says reconnecting",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "kb:teams",
+      "q": "quick one — team's web app broken",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "kb:teams",
+      "q": "quick one — now: CAN'T SEE CHANNELS",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "wifi",
+      "q": "btw limited connectivity",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "wifi",
+      "q": "i need help with 5ghz not connecting",
+      "got": "(no-match)",
+      "reason": ""
+    },
+    {
+      "intent": "wifi",
+      "q": "Dhcp not assigning ip urgent",
+      "got": "l2-dhcp-001-scope-exhaustion",
+      "reason": ""
+    }
+  ]
+}

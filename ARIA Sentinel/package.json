@@ -1,0 +1,72 @@
+{
+  "name": "aria-sentinel",
+  "version": "0.1.13",
+  "private": true,
+  "description": "ARIA Sentinel Windows desktop agent and Chrome extension MVP.",
+  "author": "Integrated IT Support Inc.",
+  "type": "module",
+  "main": "src/main/main.mjs",
+  "scripts": {
+    "start": "electron .",
+    "start:dry-run": "set ARIA_SENTINEL_DRY_RUN=1&& electron .",
+    "test": "node tests/run-all.mjs",
+    "audit": "node tests/privacy-audit.mjs",
+    "scenario:test": "node tests/scenario-suite.mjs",
+    "package:win": "electron-builder --win nsis --publish never",
+    "package:mac": "electron-builder --mac --publish never",
+    "package:dir": "electron-builder --dir --publish never"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0",
+    "electron-updater": "^6.8.9"
+  },
+  "devDependencies": {
+    "electron": "^42.4.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "net.iisupp.aria-sentinel",
+    "productName": "ARIA Sentinel",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "chrome-extension/**/*",
+      "edge-extension/**/*",
+      "aria-kb-pack/**/*",
+      "package.json",
+      "README-MVP.md",
+      ".env.example"
+    ],
+    "extraResources": [
+      "admin-console/**/*"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "ARIA-Sentinel-${version}-unsigned.${ext}",
+      "signExecutable": false
+    },
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dir"
+      ],
+      "artifactName": "ARIA-Sentinel-${version}-adhoc.${ext}",
+      "identity": null,
+      "hardenedRuntime": false,
+      "type": "distribution"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
