@@ -46,7 +46,7 @@ const ROUTING = [
   [/\b(suspicious|phishing|scam|sketchy)\s*email\b/i, 'l1-email-001'],
   [/\bemail\b.*(asking\s*for|asks\s*for|wants?\s*my)\s*(password|account|credentials|verify|sign\s*in|ssn|credit\s*card)\b/i, 'l1-email-001'],
   // === L2 enterprise infrastructure (tier-2) ===
-  [/\b(domain\s*controller|\bDC\b.*resolve|repadmin|dcpromo|ntds)\b/i, 'l2-active-directory-001'],
+  [/\b(domain\s*controllers?|\bDCs?\b.*resolv|repadmin|dcpromo|ntds|fsmo)\b/i, 'l2-active-directory-001'],
   [/\b(account|user)\s*(keeps\s*)?(getting\s*)?lock(ed|out)\s*out?\b/i, 'l2-active-directory-001'],
   [/\bgroup\s*policy\b|\bgpo\b|\bgpupdate\b|\bgpresult\b|\brsop\b|\bevent\s*1058\b|\bevent\s*1030\b/i, 'l2-active-directory-001'],
   [/\b(active\s*directory|\bAD\s*(connect|sync|schema|forest|domain)|schema\s*master|fsmo)\b/i, 'l2-active-directory-001'],
@@ -55,6 +55,8 @@ const ROUTING = [
   [/\bbitlocker\b.*(recovery|prompt|key|tpm|protector|boot)\b/i, 'l2-bitlocker-001'],
   [/\b(malware|virus|infect|trojan|compromised|ransomware|files?\s*encrypted|ransom\s*note)\b/i, 'l2-malware-001'],
   [/\bdns\b.*(resolution|fail|split.?brain|not\s*resolving|internal\s*hostname)\b/i, 'l2-dns-001'],
+  [/\b(can.?t\s*resolve|not\s*resolving|name\s*resolution|internal\s*name|fqdn|hostname.*resolve)\b/i, 'l2-dns-001'],
+  [/\b(isp|wan|router|firewall)\b.*\b(change|swap|replace|migration|new)\b/i, 'l2-dns-001'],
   [/\b(dhcp|apipa|169\.254|scope\s*exhaust)\b/i, 'l2-dhcp-001'],
   // === L3 architecture ===
   [/\b(disaster\s*recovery|\brto\b|\brpo\b|veeam|rubrik|3-2-1|tabletop)\b/i, 'l3-disaster-recovery-001'],
