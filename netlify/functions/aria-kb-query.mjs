@@ -194,8 +194,14 @@ export async function handler(event) {
     return json(200, { match: false, confidence: top ? top.score : 0, source: "aria-kb-public", meta: { kb_generated_at: data.generated_at || null, total_chunks: chunks.length, static_chunks: staticChunks.length, live_chunks: liveChunks.length, cache_age_ms: Date.now() - CHUNKS_LOADED_AT } });
   }
 
+  // Strip YAML frontmatter if present (chunks built from markdown sometimes ship it leading)
+  function stripFrontmatter(s) {
+    if (!s) return s;
+    const m = String(s).match(/^---\s*\n[\s\S]*?\n---\s*\n([\s\S]*)$/);
+    return m ? m[1].trim() : s;
+  }
   // Trim content for response
-  let content = top.chunk.content || "";
+  let content = stripFrontmatter(top.chunk.content || "");
   if (content.length > 4000) content = content.slice(0, 4000) + "\n…[truncated — see iisupp.net/aria for full article]";
 
   return json(200, {
