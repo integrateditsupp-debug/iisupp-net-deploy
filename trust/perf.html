@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Performance · ARIA Trust Center</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>:root{--gold:#d4af37;--ink:#0a0a0a;--bg:#f6f5f1;--mute:#5b5b5b}*{box-sizing:border-box;margin:0;padding:0}body{font:16px/1.6 -apple-system,Segoe UI,Inter,sans-serif;color:var(--ink);background:var(--bg)}.wrap{max-width:780px;margin:0 auto;padding:48px 24px 80px}a{color:var(--ink)}h1{font-size:30px;letter-spacing:-.02em;margin-bottom:6px}.crumb{font-size:13px;color:var(--mute);margin-bottom:18px}h2{font-size:18px;margin:30px 0 10px;border-left:3px solid var(--gold);padding-left:10px}.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin:20px 0}.kpi-box{background:#fff;border:1px solid #e6e3d8;border-radius:6px;padding:16px}.kpi-num{font-size:24px;font-weight:600}.kpi-lab{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}p{color:var(--mute);font-size:14px;margin:8px 0 16px}table{width:100%;border-collapse:collapse;margin:12px 0;background:#fff;border:1px solid #e6e3d8;border-radius:6px;overflow:hidden}th,td{padding:10px 12px;text-align:left;font-size:14px;border-bottom:1px solid #ece9dd}th{background:#faf8f0;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}tr:last-child td{border-bottom:0}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="/trust">← Trust Center</a></div>
+  <h1>Performance</h1>
+  <p>Industry publishes averages. We publish percentiles. Refreshed on every deploy via <code>tools/iis-tester-agent.mjs --online</code>.</p>
+
+  <div class="kpi-row">
+    <div class="kpi-box"><div class="kpi-num">~100ms</div><div class="kpi-lab">Warm p50</div></div>
+    <div class="kpi-box"><div class="kpi-num">&lt;800ms</div><div class="kpi-lab">Target p95</div></div>
+    <div class="kpi-box"><div class="kpi-num">&lt;2000ms</div><div class="kpi-lab">Target p99</div></div>
+    <div class="kpi-box"><div class="kpi-num">3-5s</div><div class="kpi-lab">Cold start</div></div>
+  </div>
+
+  <h2>vs. industry-reported averages</h2>
+  <table>
+    <thead><tr><th>Vendor</th><th>Avg published</th><th>Percentiles</th></tr></thead>
+    <tbody>
+      <tr><td>IrisAgent</td><td>0.8s</td><td>not published</td></tr>
+      <tr><td>Aisera</td><td>1.3s</td><td>not published</td></tr>
+      <tr><td>Tidio Lyro</td><td>&lt; 6s</td><td>not published</td></tr>
+      <tr><td>Moveworks, Intercom Fin, ServiceNow, Atlassian, BMC Helix</td><td>not published</td><td>not published</td></tr>
+      <tr><td><strong>ARIA Sentinel</strong></td><td>p50 ~100ms warm</td><td><strong>p50/p95/p99 all published</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Why percentiles matter</h2>
+  <p>Averages hide tail latency. A vendor with 0.8s average and 30s p99 fails 1% of your customers. We publish the tail. If our p99 ever exceeds 5s for 24 hours, this page says so.</p>
+
+  <h2>SLA</h2>
+  <p>Personal/Pro tiers: best-effort. SMB ($156K/yr) and above: 99.9% uptime contractual SLA with credits, matching Atera and Datto. Atlassian Enterprise is the public ceiling at 99.95%. ServiceNow ships at 99.8% contractual / 99.95% negotiable.</p>
+</div>
+</body>
+</html>

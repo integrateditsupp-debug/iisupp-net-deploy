@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI evaluation · ARIA Trust Center</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>:root{--gold:#d4af37;--ink:#0a0a0a;--bg:#f6f5f1;--mute:#5b5b5b}*{box-sizing:border-box;margin:0;padding:0}body{font:16px/1.6 -apple-system,Segoe UI,Inter,sans-serif;color:var(--ink);background:var(--bg)}.wrap{max-width:780px;margin:0 auto;padding:48px 24px 80px}a{color:var(--ink)}h1{font-size:30px;letter-spacing:-.02em;margin-bottom:6px}.crumb{font-size:13px;color:var(--mute);margin-bottom:18px}h2{font-size:18px;margin:30px 0 10px;border-left:3px solid var(--gold);padding-left:10px}.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:20px 0}.kpi-box{background:#fff;border:1px solid #e6e3d8;border-radius:6px;padding:16px}.kpi-num{font-size:24px;font-weight:600}.kpi-lab{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}p{color:var(--mute);font-size:14px;margin:8px 0 16px}ul{margin:8px 0 16px 22px;color:var(--mute);font-size:14px}code{background:#ece9dd;padding:1px 6px;border-radius:3px;font-size:13px}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="/trust">← Trust Center</a></div>
+  <h1>AI evaluation</h1>
+  <p>How we know ARIA isn't lying.</p>
+
+  <div class="kpi-row">
+    <div class="kpi-box"><div class="kpi-num">100%</div><div class="kpi-lab">Answers graded</div></div>
+    <div class="kpi-box"><div class="kpi-num">3</div><div class="kpi-lab">Eval axes</div></div>
+    <div class="kpi-box"><div class="kpi-num">&lt;2s</div><div class="kpi-lab">Median grade time</div></div>
+    <div class="kpi-box"><div class="kpi-num">Continuous</div><div class="kpi-lab">Cadence</div></div>
+  </div>
+
+  <h2>Three eval axes</h2>
+  <ul>
+    <li><strong>Truthfulness</strong> — does the answer match a KB chunk?</li>
+    <li><strong>Citation-grounding</strong> — is every factual claim traceable to a source?</li>
+    <li><strong>Intent-match</strong> — did the routing pick the article the user actually needs?</li>
+  </ul>
+
+  <h2>How it works</h2>
+  <p>An LLM-as-Judge layer (Gemini Flash) runs on every ARIA response. Below confidence threshold 8, the answer is routed to a human or refused — not fabricated. The grade per query is logged to the public observability endpoint at <code>/.netlify/functions/aria-observability</code> and aggregated nightly into a rolling 30-day rate.</p>
+
+  <h2>Hallucination benchmarks</h2>
+  <p>Industry standard: zero vendors publish a quantitative hallucination rate. Our rolling 30-day rate against curated probes (10 unknown-answer queries that should be refused, not answered) is published below as it's measured. We will also run TruthfulQA + HaluEval-QA quarterly and post the results.</p>
+
+  <h2>Prompt injection / jailbreak</h2>
+  <p>Industry standard: also zero. We test with a curated probe set of 10 jailbreak prompts every release. Pass threshold: 100% blocked. Any leak of a secret value is a P0 incident published in the security log.</p>
+
+  <h2>Comparison</h2>
+  <p>The two closest public eval frameworks are Aisera CLASSic (5 narrative dimensions) and ServiceNow Now Assist's 9-metric framework. Both describe the framework; neither publishes a number. Atlassian Rovo uses gpt-4o-mini as a judge but doesn't publish judge agreement. Intercom Fin claims 99.9% accuracy on $1M-guaranteed plans — no eval methodology published. We're not better than the rest because we ship more rules; we're better because <em>we tell you the score</em>.</p>
+</div>
+</body>
+</html>

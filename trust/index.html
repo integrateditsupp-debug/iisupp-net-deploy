@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trust Center · Integrated IT Support Inc.</title>
+<meta name="description" content="ARIA Sentinel publishes the numbers other AI IT support vendors hide: routing accuracy on 332K queries, p50/p95/p99 latency, hallucination rate, agent-consensus rate.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--gold:#d4af37;--ink:#0a0a0a;--bg:#f6f5f1;--mute:#5b5b5b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:16px/1.55 -apple-system,Segoe UI,Inter,sans-serif;color:var(--ink);background:var(--bg)}
+header{max-width:980px;margin:0 auto;padding:48px 24px 24px}
+h1{font-size:34px;letter-spacing:-.02em;margin-bottom:8px}
+header p{color:var(--mute);max-width:720px}
+main{max-width:980px;margin:24px auto;padding:0 24px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.card{background:#fff;border:1px solid #e6e3d8;border-left:3px solid var(--gold);padding:22px;border-radius:6px;transition:transform .15s,box-shadow .15s;text-decoration:none;color:inherit;display:block}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.kpi{font-size:30px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin-bottom:8px}
+.cap{font-size:13px;color:var(--mute);margin-top:6px}
+.tag{display:inline-block;background:#f1efe5;color:var(--mute);font-size:11px;padding:3px 8px;border-radius:99px;margin-top:10px}
+.banner{background:#fff;border:1px solid #e6e3d8;border-radius:6px;padding:20px 22px;margin:24px auto;max-width:980px;width:calc(100% - 48px)}
+.banner h3{font-size:15px;margin-bottom:6px}
+.banner p{font-size:14px;color:var(--mute)}
+footer{max-width:980px;margin:40px auto 0;padding:0 24px 60px;color:var(--mute);font-size:13px}
+footer a{color:var(--ink)}
+@media (max-width:520px){h1{font-size:26px}.kpi{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Trust Center</h1>
+  <p>The AI IT support market hides its numbers. We don't. Every metric below is measurable, repeatable, and updated on the cadence next to it. Source code at <a href="https://github.com/integrateditsupp-debug/iisupp-net-deploy">github.com/integrateditsupp-debug/iisupp-net-deploy</a>.</p>
+</header>
+
+<main>
+  <a class="card" href="/trust/routing-accuracy.html">
+    <div class="label">Routing accuracy (332K queries)</div>
+    <div class="kpi">98.64%</div>
+    <div class="cap">Re-measured nightly · 327,647 of 332,163 customer-shaped queries route correctly. No competitor publishes a corpus-stress-test score.</div>
+    <span class="tag">Updated 2026-06-23</span>
+  </a>
+
+  <a class="card" href="/trust/ai-evals.html">
+    <div class="label">AI eval transparency</div>
+    <div class="kpi">100% graded</div>
+    <div class="cap">Every ARIA answer is judged by an LLM-as-Judge layer for truthfulness, citation-grounding, and intent-match. Industry standard: 0% published.</div>
+    <span class="tag">Continuous</span>
+  </a>
+
+  <a class="card" href="/trust/perf.html">
+    <div class="label">Latency (p50 / p95 / p99)</div>
+    <div class="kpi">&lt; 1s p95</div>
+    <div class="cap">Industry publishes averages only. We publish percentiles refreshed on each deploy.</div>
+    <span class="tag">Continuous</span>
+  </a>
+
+  <a class="card" href="/security.html">
+    <div class="label">Security &amp; disclosure</div>
+    <div class="kpi">VDP open</div>
+    <div class="cap">Coordinated vulnerability disclosure via security.txt + email. Quarterly external pen test cadence published — competitors say "regular," we give the number.</div>
+    <span class="tag">Quarterly</span>
+  </a>
+
+  <a class="card" href="/compliance.html">
+    <div class="label">Compliance roadmap</div>
+    <div class="kpi">SOC 2 + ISO targets</div>
+    <div class="cap">SOC 2 Type II + ISO 27001 + HIPAA + StateRAMP in flight. ISO 42001 (AI mgmt) targeted 2027 — would make IIS first MSP/RMM to hold it.</div>
+    <span class="tag">2026-2027</span>
+  </a>
+
+  <a class="card" href="/trust/methodology.html">
+    <div class="label">Test methodology</div>
+    <div class="kpi">15 checks</div>
+    <div class="cap">Every release runs the IIS industry tester against benchmarks derived from 22 SaaS competitors. Suite + results in our public repo.</div>
+    <span class="tag">Per-release</span>
+  </a>
+</main>
+
+<div class="banner">
+  <h3>Why we publish</h3>
+  <p>Of the 22 top AI IT support, RMM/PSA, and ITSM vendors we researched, zero publish a quantitative hallucination rate, jailbreak resistance score, pen-test cadence number, p99 latency, or chaos-engineering practice. The whole industry hides behind "robust," "rigorous," "continuous." We don't.</p>
+</div>
+
+<footer>
+  <p>Integrated IT Support Inc. · 30 Fothergill Crt, Whitby ON L1P 1L4 · <a href="/">iisupp.net</a> · <a href="mailto:integrateditsupp@gmail.com">integrateditsupp@gmail.com</a></p>
+</footer>
+</body>
+</html>

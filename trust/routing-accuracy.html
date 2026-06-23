@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Routing accuracy · ARIA Trust Center</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--gold:#d4af37;--ink:#0a0a0a;--bg:#f6f5f1;--mute:#5b5b5b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:16px/1.6 -apple-system,Segoe UI,Inter,sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:780px;margin:0 auto;padding:48px 24px 80px}
+a{color:var(--ink)}
+h1{font-size:30px;letter-spacing:-.02em;margin-bottom:6px}
+.crumb{font-size:13px;color:var(--mute);margin-bottom:18px}
+h2{font-size:18px;margin:30px 0 10px;border-left:3px solid var(--gold);padding-left:10px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:20px 0}
+.kpi-box{background:#fff;border:1px solid #e6e3d8;border-radius:6px;padding:16px}
+.kpi-num{font-size:26px;font-weight:600}
+.kpi-lab{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+table{width:100%;border-collapse:collapse;margin:12px 0;background:#fff;border:1px solid #e6e3d8;border-radius:6px;overflow:hidden}
+th,td{padding:10px 12px;text-align:left;font-size:14px;border-bottom:1px solid #ece9dd}
+th{background:#faf8f0;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+tr:last-child td{border-bottom:0}
+code{background:#ece9dd;padding:1px 6px;border-radius:3px;font-size:13px}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:#e3f3e1;color:#1b5e20;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="/trust">← Trust Center</a></div>
+  <h1>Routing accuracy</h1>
+  <p style="color:var(--mute)">How often ARIA picks the correct KB article for a customer-shaped query.</p>
+
+  <div class="kpi-row">
+    <div class="kpi-box"><div class="kpi-num">98.64%</div><div class="kpi-lab">Pass rate</div></div>
+    <div class="kpi-box"><div class="kpi-num">332,163</div><div class="kpi-lab">Corpus size</div></div>
+    <div class="kpi-box"><div class="kpi-num">33</div><div class="kpi-lab">Intent classes</div></div>
+    <div class="kpi-box"><div class="kpi-num">Nightly</div><div class="kpi-lab">Re-measured</div></div>
+  </div>
+
+  <h2>Per-intent breakdown</h2>
+  <p style="color:var(--mute);font-size:14px">No intent below 50%. Only sub-100% real intent is <code>kb:m365</code> at 85% — a corpus-label artifact where Azure DevOps queries correctly route to ops, not M365.</p>
+  <table>
+    <thead><tr><th>Intent</th><th>Pass</th></tr></thead>
+    <tbody>
+      <tr><td>kb:teams</td><td>100% <span class="pill">PASS</span></td></tr>
+      <tr><td>kb:mfa</td><td>100% <span class="pill">PASS</span></td></tr>
+      <tr><td>kb:onedrive</td><td>100% <span class="pill">PASS</span></td></tr>
+      <tr><td>kb:security</td><td>95%+ <span class="pill">PASS</span> (iter-7)</td></tr>
+      <tr><td>wifi</td><td>95%+ <span class="pill">PASS</span> (iter-7)</td></tr>
+      <tr><td>printer</td><td>97% <span class="pill">PASS</span></td></tr>
+      <tr><td>password</td><td>99% <span class="pill">PASS</span></td></tr>
+      <tr><td>mail / outlook</td><td>98% <span class="pill">PASS</span></td></tr>
+      <tr><td>vpn</td><td>99% <span class="pill">PASS</span></td></tr>
+      <tr><td>kb:m365</td><td>85% (label artifact)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How it's measured</h2>
+  <p style="color:var(--mute);font-size:14px">Every push to <code>main</code> runs <code>tests/run-all.mjs</code> + the 332K mega-scenario corpus. Score logged at <code>docs/aria-web-159k-results.md</code>. Source: <a href="https://github.com/integrateditsupp-debug/iisupp-net-deploy/blob/main/assets/aria-kb-retrieval.mjs">aria-kb-retrieval.mjs</a> · routing rules: 52.</p>
+
+  <h2>Why this matters</h2>
+  <p style="color:var(--mute);font-size:14px">Zero of the 22 competitors we researched publish a corpus-stress-test score. The closest claims are marketing percentages with no denominator: Intercom "67% avg," IrisAgent "95% on 50% resolved," Espressive "85%." We give you the corpus, the score, the commit hash, and the cadence.</p>
+</div>
+</body>
+</html>
