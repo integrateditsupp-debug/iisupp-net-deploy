@@ -145,7 +145,7 @@ export async function handler(event) {
   const top = scored[0];
 
   if (!top || top.score < 8) {  // raised 2026-06-23 — align with Sentinel threshold
-    return json(200, { match: false, confidence: top ? top.score : 0, source: "aria-kb-public", totalChunks: chunks.length });
+    return json(200, { match: false, confidence: top ? top.score : 0, source: "aria-kb-public", meta: { kb_generated_at: data.generated_at || null, total_chunks: chunks.length, cache_age_ms: Date.now() - CHUNKS_LOADED_AT } });
   }
 
   // Trim content for response
@@ -163,7 +163,12 @@ export async function handler(event) {
       vertical: top.chunk.vertical,
       url: `https://iisupp.net/aria?article=${encodeURIComponent(top.chunk.slug)}`
     },
-    content_excerpt: content
+    content_excerpt: content,
+    meta: {
+      kb_generated_at: data.generated_at || null,
+      total_chunks: chunks.length,
+      cache_age_ms: Date.now() - CHUNKS_LOADED_AT
+    }
   });
 }
 
