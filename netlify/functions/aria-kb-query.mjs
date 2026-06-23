@@ -1,3 +1,5 @@
+import { getStore } from '@netlify/blobs';
+
 // PUBLIC KB endpoint for ARIA Sentinel desktop (and any other ARIA surface).
 // Mirrors the same retrieval engine + chunks that iisupp.net/aria uses client-side.
 // POST { query, platform?, audience? } → { match: bool, article, content_excerpt, confidence, source }
@@ -91,6 +93,48 @@ async function loadChunks() {
   return CHUNKS_CACHE;
 }
 
+// Live KB — chunks the aria-learning-cron has promoted to the 'aria-kb-live' Netlify Blobs
+// store. These never made it into the static aria-kb-chunks.json (that file is built from
+// local /knowledge-base markdown only). Merging both means cron-promoted chunks become
+// searchable within minutes of promotion, not the next manual export+commit+deploy cycle.
+let LIVE_CACHE = null;
+let LIVE_LOADED_AT = 0;
+async function loadLiveChunks() {
+  if (LIVE_CACHE && (Date.now() - LIVE_LOADED_AT) < 600 * 1000) return LIVE_CACHE; // 10min cache
+  try {
+    const store = getStore({ name: 'aria-kb-live', consistency: 'eventual' });
+    const idx = await store.get('kb-index.json', { type: 'json' });
+    if (!idx || !Array.isArray(idx.entries)) { LIVE_CACHE = []; LIVE_LOADED_AT = Date.now(); return LIVE_CACHE; }
+    // Convert entries → chunk format aria-kb-query already scores
+    const chunks = [];
+    for (const e of idx.entries) {
+      if (!e || !e.promoted) continue; // only promoted survive (passes vet gate)
+      // Pull the actual body
+      let body = '';
+      try { const d = await store.get(e.key, { type: 'json' }); body = (d && d.body) || ''; } catch (_) {}
+      if (!body || body.length < 25) continue;
+      chunks.push({
+        slug: e.key,
+        title: e.topic || e.key.replace(/^learn-/, '').replace(/-/g, ' '),
+        content: String(body).slice(0, 3500),
+        keywords: [],
+        tier: 'learn',
+        vertical: 'learned',
+        added_at: e.t ? new Date(e.t).toISOString() : null,
+        _live: true
+      });
+    }
+    LIVE_CACHE = chunks;
+    LIVE_LOADED_AT = Date.now();
+    return LIVE_CACHE;
+  } catch (err) {
+    // Live KB unavailable (Blobs down or unconfigured) — don't fail the query, just skip
+    LIVE_CACHE = [];
+    LIVE_LOADED_AT = Date.now();
+    return LIVE_CACHE;
+  }
+}
+
 const STOP_WORDS = new Set("a an and are as at be been being but by can could did do does for from get had has have he her him his how i if in into is it its me my no not now of on only or our should so than that the their them then there these they this to too us was we were what when where which who why will with would you your".split(" "));
 
 function tokenize(s) {
@@ -139,13 +183,15 @@ export async function handler(event) {
   if (!query || query.length < 2) return json(400, { error: "query required" });
 
   const data = await loadChunks();
-  const chunks = data.chunks || [];
+  const staticChunks = data.chunks || [];
+  const liveChunks = await loadLiveChunks();
+  const chunks = [...staticChunks, ...liveChunks];
 
   const scored = chunks.map(c => ({ chunk: c, score: score(query, c) })).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
   const top = scored[0];
 
   if (!top || top.score < 8) {  // raised 2026-06-23 — align with Sentinel threshold
-    return json(200, { match: false, confidence: top ? top.score : 0, source: "aria-kb-public", meta: { kb_generated_at: data.generated_at || null, total_chunks: chunks.length, cache_age_ms: Date.now() - CHUNKS_LOADED_AT } });
+    return json(200, { match: false, confidence: top ? top.score : 0, source: "aria-kb-public", meta: { kb_generated_at: data.generated_at || null, total_chunks: chunks.length, static_chunks: staticChunks.length, live_chunks: liveChunks.length, cache_age_ms: Date.now() - CHUNKS_LOADED_AT } });
   }
 
   // Trim content for response
@@ -167,6 +213,8 @@ export async function handler(event) {
     meta: {
       kb_generated_at: data.generated_at || null,
       total_chunks: chunks.length,
+      static_chunks: staticChunks.length,
+      live_chunks: liveChunks.length,
       cache_age_ms: Date.now() - CHUNKS_LOADED_AT
     }
   });
