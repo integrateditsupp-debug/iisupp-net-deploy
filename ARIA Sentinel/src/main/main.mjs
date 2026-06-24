@@ -30,6 +30,7 @@ import {
 } from "../shared/safety.mjs";
 import { createDetectionOrchestrator } from "../sub-agents/detection/index.mjs";
 import { loadCustomerConfig } from "../shared/customer-config.mjs";
+import { DEEP_LINK_SCHEME, parseSentinelDeepLink, validateResolveLink } from "../shared/deep-link.mjs"; // Slice C — web→Sentinel handoff
 import { ingest as ingestKb } from "../shared/kb-ingester.mjs";
 import { parsePolicyOverlay } from "../shared/policy.mjs";
 import { parseControlPlaneKill, remediationDecision, blockedRecipeResult, KILL_HOTKEY, buildKillResult } from "../shared/kill-switch.mjs";
@@ -186,14 +187,70 @@ let overlayPhysicsTimer = null;
 let overlayLastTick = 0;
 let overlayActiveUntil = 0;
 
+// Slice C — register the aria-sentinel:// deep-link scheme so the web "Open with ARIA Sentinel" button can
+// hand a matched fix to the installed app. The link only ever carries a recipe id + an intent STRING —
+// never a system command (R6/R8). The id is allowlisted against the local registry and the fix still runs
+// through the full gated pipeline (supervisor + 10s countdown + restore point + Ctrl+Alt+K + audit).
+try {
+  if (process.defaultApp && process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(DEEP_LINK_SCHEME, process.execPath, [path.resolve(process.argv[1])]);
+  } else {
+    app.setAsDefaultProtocolClient(DEEP_LINK_SCHEME);
+  }
+} catch { /* protocol registration is best-effort */ }
+
+let pendingDeepLink = null;
+function extractDeepLink(argv) {
+  if (!Array.isArray(argv)) return null;
+  return argv.find((a) => typeof a === "string" && a.startsWith(DEEP_LINK_SCHEME + "://")) || null;
+}
+
+// Parse + safely act on aria-sentinel://resolve?recipe=<id>&intent=<text>. Parsing + validation live in the
+// pure src/shared/deep-link.mjs (unit-tested); this only wires the verdict to the gated execution pipeline.
+function handleSentinelDeepLink(rawUrl) {
+  const parsed = parseSentinelDeepLink(rawUrl);
+  if (!parsed) return;
+  const verdict = validateResolveLink(parsed, {
+    isKnownRecipe: (id) => Boolean(recipeById(id)) || Boolean(resolveExecutorId(id)),
+    isBlocked: isBlockedPath
+  });
+  if (verdict.reason === "r11_blocked") {
+    logEvent("SECURITY", "Deep-link blocked by R11 (private folder).", r11AuditEntry("deep-link"));
+    return;
+  }
+  // Bring the app forward so the handoff is always visible (transparency — never a silent background fix).
+  showMainWindow("recipes");
+  showOverlay({ expanded: false });
+  if (!verdict.ok) {
+    logEvent("DETECT", `Deep-link not actioned (${verdict.reason}): ${parsed.recipeId || "(none)"}.`, { intent: parsed.intent ? "[provided]" : "" });
+    return;
+  }
+  // Web-originated → ALWAYS gate as Confirmed: one explicit human approve + the visible 10s countdown is the
+  // consent. We deliberately do NOT silently auto-fire from a browser link even for green recipes (R8 trust
+  // boundary); runSupervisedFix already forbids Autonomous for resolve actions. Restore point + Ctrl+Alt+K stay.
+  logEvent("RUN", `Deep-link resolve requested for ${parsed.recipeId}.`, { recipeId: parsed.recipeId });
+  try { runSupervisedFix({ recipeId: parsed.recipeId, mode: "confirmed", risk: (recipeById(parsed.recipeId)?.risk || "medium") }); }
+  catch (e) { logEvent("ERROR", `Deep-link resolve failed: ${e?.message || e}`, { recipeId: parsed.recipeId }); }
+}
+
+// macOS delivers deep-links via open-url (can fire before the app is ready).
+app.on("open-url", (event, openedUrl) => {
+  event.preventDefault();
+  if (app.isReady()) handleSentinelDeepLink(openedUrl);
+  else pendingDeepLink = openedUrl;
+});
+
 const hasSingleInstanceLock = app.requestSingleInstanceLock();
 if (!hasSingleInstanceLock) {
   app.quit();
 } else {
-  app.on("second-instance", () => {
+  app.on("second-instance", (_event, argv) => {
     logEvent("SELF-REPAIR", "Second ARIA Sentinel launch redirected to existing instance.");
     showMainWindow("mode");
     showOverlay({ expanded: false });
+    // Windows delivers the deep-link as an argv on the relaunch that hits the running instance.
+    const link = extractDeepLink(argv);
+    if (link) handleSentinelDeepLink(link);
   });
 }
 
@@ -3223,6 +3280,11 @@ if (hasSingleInstanceLock) {
     // RUN 22 — daily 02:00 data-retention cleanup + quarterly report on a quarter-start launch.
     scheduleDailyAt(2, runRetentionCleanup);
     maybeRunQuarterly();
+    // Slice C — a deep-link that LAUNCHED the app (Windows first-run argv, or a macOS open-url buffered
+    // before ready). Fire it after the UI is up so the recipes view + countdown are visible.
+    const initialLink = pendingDeepLink || extractDeepLink(process.argv);
+    pendingDeepLink = null;
+    if (initialLink) setTimeout(() => handleSentinelDeepLink(initialLink), 1500);
   });
 }
 

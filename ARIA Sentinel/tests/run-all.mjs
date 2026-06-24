@@ -223,6 +223,8 @@ const TESTS = [
   "./offline-matcher.test.mjs",
   // Coverage Slice B — execution-boundary dry-run precedence (prod LIVE-by-mode; system-fixes-off safety).
   "./actual-dryrun-precedence.test.mjs",
+  // Coverage Slice C — aria-sentinel:// deep-link parse/validate (only known recipe ids; R11; intent cap).
+  "./deep-link.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
