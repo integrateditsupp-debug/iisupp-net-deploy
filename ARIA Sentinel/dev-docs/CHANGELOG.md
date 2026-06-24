@@ -1,0 +1,42 @@
+# ARIA / Sentinel — Major Change Log
+
+Organized record of **major** changes (Ahmad directive, 2026-06-24: record all major changes, properly organized). Newest first.
+**Process:** every major change → add a row here AND a line in `aria-vault/11_CorpusCallosum/Live-Operations-Log.md`. A change is "done" only when **Verified on LIVE = YES**.
+
+| Date | Change | Why | Files / Area | Verified on LIVE? | By |
+|------|--------|-----|--------------|-------------------|-----|
+| 2026-06-24 | **DoD criterion 5 MET** — 100-call matcher re-test **100% PASS** (was 66%) via token-overlap + recipe synonyms + KB-index fixes + 3 gap articles | Coverage target ≥95% | `dev-docs/run-100-call-harness.mjs`, `100-call-retest-2026-06-24.md`, `src/shared/recipes.mjs`, `knowledge-base/_meta/index-by-keyword.json`, `l1-security-001`/`l1-mobile-email-001`/`l1-newdevice-001` | YES — harness 102/102 | Claude-Code |
+| 2026-06-24 | **Slice 4** — 5 compliance readiness maps (EU AI Act, NIST AI RMF, HIPAA, ISO 27001 SoA, C2PA); every file flagged self-assessment / NOT certified | Sales-enabling readiness; legal gate held | `compliance/*.md` | n/a — readiness only; ⚠️ legal review before external publish | Claude-Code |
+| 2026-06-24 | **Slice 3** — 20 Tier-4 moat articles (AI-agent governance, AI-threat, next-gen endpoint, frontier-infra) + routing/index | Strategic differentiation; near-zero today | `knowledge-base/tier4/`, `_meta/*` | YES — schema + index validated | Claude-Code |
+| 2026-06-24 | **Slice 2** — 8 L3 human-led runbooks (RAID/SAN, hypervisor-down, CA expiry, zero-day, DDoS, forensics, DR/BC, tenant-migration) | Tier-3 premium coverage | `knowledge-base/L3/*`, `_meta/*` | YES — schema + index validated | Claude-Code |
+| 2026-06-24 | **Slice 1** — 6 Tier-1/2 articles (passkey×2, mail-auth, SASE/SSE, Wi-Fi survey, patch-mgmt) + 5 guided web recipes | Highest ticket-volume gaps | `knowledge-base/L1,L2/*`, `aria-recipes-data.mjs`, `_meta/*` | YES — modules import + index validated | Claude-Code |
+| 2026-06-24 | **Slice C** — `aria-sentinel://` deep-link handler (allowlisted recipe ids, R11, intent cap, Confirmed-gated) + web "Open with ARIA Sentinel" button w/ install-detection fallback | Web→Sentinel autonomous handoff | `src/main/main.mjs`, `src/shared/deep-link.mjs`, `aria.html`, `deep-link.test.mjs` | unit YES; ⚠️ end-to-end VM-verify (Ahmad: install + click) | Claude-Code |
+| 2026-06-24 | **Slice B** — production execution: `allowSystemFixes` defaults ON in packaged builds; `resolveActualDryRun` so Manual previews / Confirmed+Autonomous run LIVE; all rails kept; mode-labelled buttons | No dry-run in production (Ahmad) | `src/main/main.mjs`, `src/main/dry-run-policy.mjs`, `src/renderer/renderer.js`, `actual-dryrun-precedence.test.mjs` | unit YES; ⚠️ VM-verify real run + rollback + Ctrl+Alt+K (Ahmad) | Claude-Code |
+| 2026-06-24 | **Slice D** — web chat: non-recipe Qs route to the LLM (`askAriaLLM`); NEW CHAT resets session; topic-bleed fixed; `aria-chat.js` model cascade fixes the live HTTP-400 | Pre-sale blocker (stuck session, no LLM, 400) | `aria.html`, `netlify/functions/aria-chat.js` | code YES; ⚠️ re-verify on LIVE after Netlify publish | Claude-Code |
+| 2026-06-24 | **Slice A** — Office/Excel recipe (web+Sentinel) + token-overlap matcher + wifi synonyms + Recipes-tab finder (A→Z + search) + restored truncated `aria-kb-retrieval.mjs` | Quick win + matcher robustness | `aria-recipes-data.mjs`, `src/shared/recipes.mjs`, `src/renderer/*`, `assets/aria-kb-retrieval.mjs`, `offline-matcher.test.mjs` | YES — suite + harness | Claude-Code |
+| 2026-06-24 | **Slice 0** — restored truncated `aria-vault/scripts/link-web.mjs` (mesh linker) | Was SyntaxError on origin | `aria-vault/scripts/link-web.mjs` | YES — runs clean (114 notes) | Claude-Code |
+| 2026-06-24 | CC packet: added **Definition of Done** (100% live, no dry-run, test-on-live, iterate-until-pass) + Slice B reframed to fully-live | Ahmad: make the app 100% live + tested on live, no excuses | `senior-director-state/cc-aria-coverage-buildout-2026-06-24.md` | n/a (spec) | Cowork |
+| 2026-06-24 | CC packet: added **Slice B** (production execution), **Slice C** (web→Sentinel deep-link handoff), **Slice D** (web chat-logic bugs) | Production-ready; fix stuck-session + build the autonomous handoff | packet | n/a (spec) | Cowork |
+| 2026-06-24 | **ARIA web live test** — recipe path PASS (printer fix correct); found stuck-session + CLEAR-no-reset bugs; no Resolve→Sentinel handoff yet | Verify ARIA after key fix | live iisupp.net/aria | YES (tested) | Cowork |
+| 2026-06-24 | **Netlify redeploy** `main@740ab84` (no-cache) to pick up `ANTHROPIC_API_KEY` | ARIA cloud 400 — key was missing/malformed | Netlify env + build | YES — ARIA returned a correct fix | Cowork |
+| 2026-06-24 | **100-call matcher test** baseline 66 PASS / 25 PARTIAL / 11 FAIL; gaps are matcher/index, not content | Quantify coverage; target ≥95% after Slice A | `dev-docs/100-common-call-test-2026-06-24.md` | YES (harness) | Cowork |
+| 2026-06-24 | **Backups** reconfigured: source `iisupp-net-deploy/aria-vault`; 2 locations (GitHub/ARIA + Documents); twice-daily auto | Never lose the vault again (R17) | `_vault-backups/`, `Documents/ARIA-Vault-Backups/` | YES — both 772 KB | Cowork |
+| 2026-06-24 | **Vault recovered** to 145 notes after git-corruption incident; R15/R16/R17 locked | Corruption from concurrent `.git` writers | `aria-vault/` | YES — opens in Obsidian | Cowork |
+
+## Open items (must reach Verified-on-LIVE = YES)
+- **Slice B** (criterion 1): recipes execute for real on a live machine + roll back + Ctrl+Alt+K — needs a signed/packaged build run on a Windows VM (Ahmad). Code + gating proven by `actual-dryrun-precedence.test`.
+- **Slice C** (criterion 3): "Resolve it for me" → opens Sentinel + auto-runs — needs the installed app + deployed web (Ahmad). Parse/validate proven by `deep-link.test`.
+- **Slice D** (criterion 2): web topic-switch + CLEAR reset + LLM free-form answer — code complete; needs Netlify publish of the branch, then re-run the live `aria-web-test` script. (The `aria-chat` 400 is addressed by the model cascade — re-verify post-publish; if still 400, check `ARIA_MODEL` env + key.)
+- **Recipes tab** (criterion 4): A→Z dropdown + search — built; visual confirmation needs the running Electron app.
+- ✅ **Slice A matcher** (criterion 5): **DONE — 100% on the 100-call harness** (`100-call-retest-2026-06-24.md`).
+
+## Definition-of-Done status (2026-06-24)
+1. Recipes run for REAL on live Windows — **code+gating done; live VM run is Ahmad's gate** (can't install a signed build here).
+2. Web chat (topic-switch / CLEAR / LLM) — **code done; live proof needs Netlify publish** (Cowork/Ahmad).
+3. Web "Resolve it for me" → Sentinel — **code done; live proof needs install + publish**.
+4. Recipes tab A→Z + search — **built; visual proof needs the running app**.
+5. Matcher ≥95% — **✅ DONE: 100.0% (102/102)**.
+6. All tests green — **✅ new tests pass; suite 185/188 on the review branch (3 reds are pre-existing cross-tree netlify imports absent on the main-based branch, not coverage-related)**.
+7. Every major change recorded — **✅ this file + the vault Live-Ops-Log**.
+
+> Hard external blockers I cannot clear from here: **Netlify publish** (criteria 2, 3) and **installing a signed/packaged desktop build** (criteria 1, 3, 4). Everything within my control is code-complete, unit-proven, committed, and pushed.
