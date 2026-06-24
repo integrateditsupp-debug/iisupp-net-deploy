@@ -17,6 +17,7 @@ const ROUTING = [
   [/\b(can.?t\s*sign\s*in|password\s*prompt|login\s*loop|aadsts)\b.*\b(office|365|m365)\b/i, 'l1-m365-001'],
   [/\b(office|m365).*(can.?t\s*sign\s*in|password\s*prompt)\b/i, 'l1-m365-001'],
   [/\b(office|word|excel)\b.*(unlicensed|reduced\s*functionality|activation|product\s*deactivated|subscription\s*expired)\b/i, 'l1-m365-002'],
+  // Slice A — Office file won't open / corrupt / locked.
   [/\b(excel|word|powerpoint|xlsx|docx|pptx|spreadsheet|workbook)\b.*(won.?t\s*open|corrupt|damaged|format.*not\s*valid|locked|in\s*use|repair|recover)\b/i, 'l1-m365-003'],
   [/\b(file\s*format|format)\b.*(not\s*valid|invalid)\b/i, 'l1-m365-003'],
   [/\boutlook\b.*(not\s*receiv|missing\s*email|inbox\s*not\s*updat|stuck|offline|i.?m\s*offline|says.*offline)\b/i, 'l1-outlook-001'],
@@ -173,4 +174,64 @@ function scoreArticle(article, queryTokens, queryRaw, signals) {
   for (const kw of (article.keywords || [])) {
     const norm = kw.toLowerCase();
     if (norm.length >= 3 && lowerQ.includes(norm)) {
-      score += 
+      score += 12 * Math.max(1, norm.split(/\s+/).length);
+    }
+  }
+  // 2. Token overlap — title heaviest, then keywords, then symptoms.
+  for (const tok of queryTokens) {
+    if (titleTokens.includes(tok)) score += 3;
+    if (keywordTokens.includes(tok)) score += 2;
+    if (symptomTokens.includes(tok)) score += 1;
+  }
+  // 3. Level hint boost — only if there's already some signal (avoids surfacing
+  //    irrelevant L2/L3 articles just because the query *sounded* admin-y).
+  if (score > 0 && signals.level_hint === article.level) score += 4;
+  // 4. Audience match.
+  if (score > 0 && signals.audience === article.audience) score += 2;
+  // 5. Sensitive → boost critical-severity matches.
+  if (signals.sensitive && article.severity === 'critical') score += 3;
+
+  return score;
+}
+
+export function retrieve(query, articles, opts = {}) {
+  const topK = opts.topK || 5;
+  const queryTokens = tokenize(query);
+  const queryRaw = query || '';
+  const signals = classify(queryRaw);
+
+  // Hard routing first — exact pattern matches almost always win.
+  const routedIds = new Set();
+  for (const [re, id] of ROUTING) {
+    if (re.test(queryRaw)) routedIds.add(id);
+  }
+
+  const scored = articles
+    .map(a => {
+      let score = scoreArticle(a, queryTokens, queryRaw, signals);
+      if (routedIds.has(a.id)) score += 25;
+      return { ...a, score, _signals: signals };
+    })
+    .filter(a => a.score > 0);
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, topK);
+}
+
+// Renders the public-safe portion of an article for an audience.
+// NEVER returns §10 (Internal Technician Notes) for non-admin audiences.
+// Inputs caller controls: { article, audience }
+export function renderForAudience(article, audience = 'end-user') {
+  const safeAudiences = new Set(['end-user', 'senior-user']);
+  const isPublic = safeAudiences.has(audience);
+  return {
+    title: article.title,
+    summary: article.user_friendly || article.symptoms?.split('\n')[0] || '',
+    symptoms: isPublic ? article.symptoms : article.symptoms,
+    escalation: article.escalation_trigger || '',
+    show_internal_notes: !isPublic && audience === 'admin',
+    severity: article.severity,
+    level: article.level,
+    path: article.path,
+  };
+}
