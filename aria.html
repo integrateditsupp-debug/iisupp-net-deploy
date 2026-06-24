@@ -5510,7 +5510,7 @@ async function submitAsk(text){
   handleUserInput(v);
   askInput.value = '';
 }
-sendBtn.addEventListener('click', submitAsk);
+sendBtn.addEventListener('click', () => void submitAsk()); // pass no arg → submitAsk reads askInput.value (NOT the click event)
 askInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') void submitAsk(); });
 
 document.getElementById('micBtn').addEventListener('click', () => {
