@@ -1928,7 +1928,7 @@
           <div class="history-bar">
             <button class="history-toggle" id="historyToggle">HISTORY <span class="count" id="historyCount">0</span><span class="caret">▾</span></button>
             <button class="history-clear" id="newChatBtn" title="Start a fresh conversation — archives the current chat to History">NEW CHAT</button>
-            <button class="history-clear" id="historyClear" title="Clear archived chats only — does not affect the current chat">CLEAR</button>
+            <button class="history-clear" id="historyClear" title="Clear everything — reset the current chat and wipe archived chats">CLEAR</button>
             <div class="history-dropdown" id="historyDropdown">
               <div class="history-empty">No archived chats</div>
             </div>
@@ -2931,6 +2931,13 @@ function flushUnknowns(){
 // instead of dead-ending. Any failure (offline / function error) falls back to the learning-loop queue.
 async function askAriaLLM(text){
   appendMessage(youBubble(text));
+  // Slice D R2 — a free-form LLM exchange is its OWN context. Drop any stale recipe intent immediately so
+  // the prior issue can't bleed into follow-ups: no leftover pivot prompt, no accidental "resolve the
+  // printer" when the user types "yes", and the next message classifies fresh. llmHistory carries the
+  // actual conversation continuity instead.
+  state.lastIntent = null;
+  state.pendingPivot = null;
+  state.pendingConfirm = null;
   const thinking = appendTransientMessage(ariaThinkingBubble('Thinking it through…'));
   state.llmHistory = state.llmHistory || [];
   state.llmHistory.push({ role:'user', content:String(text).slice(0, 4000) });
@@ -3247,10 +3254,22 @@ function archiveCurrentChat(){
   renderHistoryDropdown();
 }
 
-// Slice D — a true "start fresh" reset: archive whatever's on screen (nothing lost), then wipe ALL
-// conversational state. Wired to the NEW CHAT control so CLEAR-style intent actually resets context.
-function resetConversation(){
-  if (state.introCleared) archiveCurrentChat();   // archive + the reset above clears most flags
+// Slice D R2 — wipe the CURRENT conversation to a clean slate: restore the intro and clear EVERY piece of
+// conversational state. Shared by NEW CHAT (after archiving the current chat) and CLEAR (which now also
+// hard-resets the live session). Does not touch the archive itself.
+function hardResetCurrentChat(){
+  const m = document.getElementById('chatMessages');
+  if (m){
+    m.innerHTML = `
+            <div class="aria-block fade-in" id="introBlock">
+              <div class="aria-tag">ARIA</div>
+              <div class="aria-content">
+                <div class="aria-headline">How can I help you today?</div>
+              </div>
+            </div>`;
+  }
+  state.thread = [];
+  state.introCleared = false;
   state.lastIntent = null;
   state.pendingConfirm = null;
   state.pendingPivot = null;
@@ -3259,6 +3278,13 @@ function resetConversation(){
   state.unknownQueries = [];
   state.satisfactionShown = false;
   state.llmHistory = [];
+  document.querySelector('.browser-frame')?.classList.remove('active-chat');
+}
+
+// Slice D — NEW CHAT: archive the current chat to History (nothing lost), then a guaranteed clean slate.
+function resetConversation(){
+  if (state.introCleared) archiveCurrentChat();   // preserve the current chat in History
+  hardResetCurrentChat();                          // then wipe to a fresh session (covers the empty-chat case too)
   document.getElementById('historyDropdown')?.classList.remove('open');
 }
 
@@ -3302,10 +3328,11 @@ function restoreFromHistory(id){
 }
 
 function clearChatHistory(){
-  // wipe archive only — DO NOT touch current chat
+  // Slice D R2 — CLEAR now hard-resets the live session AND wipes the archive (a true "clear everything").
+  hardResetCurrentChat();
   chatHistory = [];
   renderHistoryDropdown();
-  document.getElementById('historyDropdown').classList.remove('open');
+  document.getElementById('historyDropdown')?.classList.remove('open');
 }
 
 function timeAgo(d){
