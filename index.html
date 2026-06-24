@@ -1664,31 +1664,36 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             </div>
             <div class="flex flex-col"><span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span><span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span></div>
         </a>
-        <div class="desktop-nav-links hidden lg:flex nav-groups" aria-label="Primary">
-            <div class="nav-group">
+        <div class="desktop-nav-links hidden lg:flex nav-groups nav-blade" aria-label="Primary">
+            <div class="nav-group" data-facet="solutions">
+                <span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/></svg></span>
                 <a href="#solutions">Pricing</a>
                 <a href="/services.html" class="nav-accent">Services</a>
                 <a href="/plans/" class="nav-accent">Plans</a>
             </div>
             <span class="nav-divider"></span>
-            <div class="nav-group nav-group-collapsible">
+            <div class="nav-group nav-group-collapsible" data-facet="marketplace">
+                <span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16l-1.2-4H5.2L4 9z"/><path d="M5 9v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/><path d="M9.5 19v-5h5v5"/></svg></span>
                 <a href="#methodology" class="method-link">Methodology</a>
                 <a href="/shop.html" class="nav-accent">Shop</a>
                 <a href="/marketplace.html" class="nav-accent">Marketplace</a>
                 <a href="/downloads/" class="nav-accent">Downloads</a>
             </div>
             <span class="nav-divider"></span>
-            <div class="nav-group nav-aria-block">
+            <div class="nav-group nav-aria-block" data-facet="ai">
+                <span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 4.2L18 9l-4.5 1.8L12 15l-1.5-4.2L6 9l4.5-1.8L12 3z"/><circle cx="18.5" cy="18.5" r="1.4"/><circle cx="5.5" cy="17.5" r="1"/></svg></span>
                 <a href="/ai-edge.html" class="nav-accent">AI Edge</a>
                 <a href="/aria.html" class="aria-link">ARIA</a>
             </div>
             <span class="nav-divider"></span>
-            <div class="nav-group nav-group-collapsible">
+            <div class="nav-group nav-group-collapsible" data-facet="library">
+                <span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5a2 2 0 0 1 2-2h11v15H7a2 2 0 0 0-2 2V5z"/><path d="M10 8.5l4 2.3-4 2.3v-4.6z"/></svg></span>
                 <a href="/growth-library.html" class="nav-accent">Growth Library</a>
                 <a href="#aria-demo">ARIA Demo</a>
             </div>
             <span class="nav-divider"></span>
-            <div class="nav-group nav-group-collapsible">
+            <div class="nav-group nav-group-collapsible" data-facet="firm">
+                <span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l4 3.5-4 14.5-4-14.5L12 3z"/><path d="M8.2 6.5h7.6"/></svg></span>
                 <a href="#portfolio" class="nav-accent">Portfolio</a>
                 <a href="/about.html" class="nav-accent">About Us</a>
             </div>
@@ -1699,6 +1704,87 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <button type="button" class="download-app-btn is-disabled" aria-label="Install app unavailable" aria-disabled="true" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m6 9 6 6 6-6"/><path d="M5 21h14"/></svg>Install App</button>
         </div>
     </nav>
+
+    <!-- ====== AI "COMMAND BLADE" NAV — crafted-object nav reimagined for tech/AI (all links preserved) ====== -->
+    <style id="nav-command-blade">
+      /* The desktop nav strip becomes one machined object: a brushed black-gold blade with a faint PCB trace,
+         a docked brand chip on the left, an icon + animated gold underline per facet, and a gold connector
+         tip extending off the right edge (the "handle"). Every existing link is kept; only the chrome changes. */
+      .desktop-nav-links.nav-blade {
+        position: relative;
+        flex: 0 1 auto; /* content-width, never grows into the actions/CTA — keeps clean gaps via justify-between */
+        padding: 9px 30px 9px 16px;
+        margin: 0 30px 0 6px; /* right margin clears the connector tip so it never overlaps the CTA */
+        border-radius: 40px;
+        gap: 4px;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,0) 42%),
+          linear-gradient(180deg, #15110a 0%, #0c0c0e 55%, #070708 100%);
+        border: 1px solid rgba(197,160,89,.30);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.12),
+          inset 0 -12px 26px rgba(0,0,0,.55),
+          0 10px 34px rgba(0,0,0,.45);
+        overflow: visible;
+      }
+      /* faint circuit-trace texture, masked to fade at the top/bottom edges */
+      .desktop-nav-links.nav-blade::before {
+        content: ""; position: absolute; inset: 1px; border-radius: 39px; pointer-events: none; opacity: .55;
+        background-image:
+          linear-gradient(90deg, rgba(197,160,89,.10) 1px, transparent 1px),
+          radial-gradient(circle, rgba(197,160,89,.20) 1.1px, transparent 1.5px);
+        background-size: 48px 100%, 48px 22px;
+        -webkit-mask: linear-gradient(180deg, transparent, #000 55%, transparent);
+                mask: linear-gradient(180deg, transparent, #000 55%, transparent);
+      }
+      /* the connector "handle" — a gold plug tip that reads as the object continuing off the blade */
+      .desktop-nav-links.nav-blade::after {
+        content: ""; position: absolute; right: -11px; top: 50%; transform: translateY(-50%);
+        width: 17px; height: 28px; border-radius: 5px 7px 7px 5px;
+        background: linear-gradient(180deg, #f6e6bd 0%, #c5a059 48%, #7a5e25 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -2px 4px rgba(0,0,0,.4), 0 5px 14px rgba(0,0,0,.5);
+      }
+      /* each facet: a hoverable tab with icon-over-label + an animated gold underline (the active-tab cue) */
+      .nav-blade .nav-group {
+        position: relative; z-index: 1;
+        padding: 5px 9px 9px; border-radius: 13px;
+        transition: background .25s ease, transform .25s ease;
+      }
+      .nav-blade .nav-group:hover { background: rgba(197,160,89,.09); transform: translateY(-1px); }
+      .nav-blade .nav-ico { display: block; color: #c5a059; opacity: .82; line-height: 0; margin-bottom: 3px;
+        transition: opacity .25s ease, transform .25s ease, filter .25s ease; }
+      .nav-blade .nav-group:hover .nav-ico { opacity: 1; transform: translateY(-1px);
+        filter: drop-shadow(0 0 6px rgba(197,160,89,.55)); }
+      /* ARIA facet lit by default (the reference's active tab) */
+      .nav-blade .nav-aria-block .nav-ico { opacity: 1; filter: drop-shadow(0 0 6px rgba(197,160,89,.5)); }
+      .nav-blade .nav-group::after {
+        content: ""; position: absolute; left: 20%; right: 20%; bottom: 3px; height: 2px; border-radius: 2px;
+        background: linear-gradient(90deg, transparent, #c5a059, #f1dca7, #c5a059, transparent);
+        transform: scaleX(0); transform-origin: center; transition: transform .32s cubic-bezier(.22,1,.36,1);
+        box-shadow: 0 0 8px rgba(197,160,89,.5);
+      }
+      .nav-blade .nav-group:hover::after { transform: scaleX(1); }
+      .nav-blade .nav-aria-block::after { transform: scaleX(1); } /* ARIA underline lit by default */
+      .nav-blade .nav-divider { height: 30px; align-self: center; background: rgba(197,160,89,.20); }
+      /* dock the brand "I" chip so it reads as the left end-cap of the same machined object */
+      .nav-home-link .nav-i-logo {
+        box-shadow: 0 0 0 1px rgba(197,160,89,.30), inset 0 1px 0 rgba(255,255,255,.10), 0 6px 16px rgba(0,0,0,.4);
+      }
+      /* Laptop widths (≤1500px): tighten the blade + CTA so the object never overlaps the right-side actions.
+         The protruding connector tip is a wide-screen flourish — drop it here so nothing reaches into the CTA. */
+      @media (max-width: 1500px) {
+        .desktop-nav-links.nav-blade { padding: 8px 18px; gap: 0; margin: 0 16px 0 4px; }
+        .desktop-nav-links.nav-blade::after { display: none; }
+        .nav-blade .nav-group { padding: 5px 6px 8px; letter-spacing: 0.12em; }
+        .nav-blade .nav-ico svg { width: 15px; height: 15px; }
+        .luxury-flip-container { width: 200px; }
+      }
+      @media (max-width: 1280px) {
+        .desktop-nav-links.nav-blade { padding: 7px 14px; }
+        .nav-blade .nav-group { padding: 5px 5px 8px; }
+        .luxury-flip-container { width: 176px; }
+      }
+    </style>
 
     <!-- ====== MOBILE MENU ====== -->
     <div id="mobileMenu" class="mobile-nav-overlay">

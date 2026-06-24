@@ -89,3 +89,8 @@ After appending here, ALSO append to:
 [2026-06-20T16:59] [Claude-Code] TEST · 114/114 green · 15 new (R11 path-guard + orchestrator state machine + tamper detection)
 [2026-06-20T16:59] [Claude-Code] DONE · RUN 21 · readiness 10.0 · awaiting RUN 22 packet
 [2026-06-20T16:59] [Cowork] DISPATCH · pushing local commit + unstaged admin-auth.mjs to remote via /tmp clone
+[2026-06-23] [Claude-Code] MASTER-RUN · branch cc/master-run-2026-06-23 off CURRENT origin/main (82ebcad) — fixed stale-clone drift (local was 172 behind)
+[2026-06-23] [Claude-Code] AUDIT · STEP 1 recovery: 30/30 kb-bulk-push articles + 22/22 AEGIS governance files ALREADY on origin/main — nothing genuinely lost (stale clone, not lost commits)
+[2026-06-23] [Claude-Code] BUILD · STEP 2 AI-command-blade nav rebuilt on current index.html (13 desktop links + 2 actions kept; mobile untouched; verified 1536/1366/390)
+[2026-06-23] [Claude-Code] DOC · STEP 3 docs/STRUCTURE.md (operational map by business line) + aria-vault/07_Cortex/lesson-stay-synced-to-origin-main.md; no risky file moves
+[2026-06-23] [Claude-Code] VERIFY · iis-tester-agent --online = 4 PASS + HALL-1 fail (known, lands separately); ARIA/Aperture unaffected; markup balanced
