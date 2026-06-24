@@ -4584,6 +4584,10 @@ function openResolveModal(intent, cardEl){
     +     '<strong style="font-family:Cinzel,Georgia,serif;letter-spacing:.16em;color:#f1dca7;font-size:14px;text-transform:uppercase">Resolve it for me</strong>'
     +   '</div>'
     +   '<p style="color:rgba(255,255,255,.72);font-size:13px;line-height:1.6;margin:0 0 18px">For your security, fixes run on <strong style="color:#f1dca7;font-weight:600">your own device</strong> — never from the website. Choose how to continue:</p>'
+    +   '<button class="aria-rm-opt" data-rm="open" style="'+optStyle+'">'
+    +     '<strong style="display:block;color:#f1dca7;font-size:14px;margin-bottom:3px">Open with ARIA Sentinel &rarr;</strong>'
+    +     '<span style="font-size:12px;color:rgba(255,255,255,.66);line-height:1.5">Already have the desktop app? Hand this issue straight to it — Sentinel runs the gated fix on your machine (you approve, with a countdown + one-click stop).</span>'
+    +   '</button>'
     +   '<button class="aria-rm-opt" data-rm="download" style="'+optStyle+'">'
     +     '<strong style="display:block;color:#f1dca7;font-size:14px;margin-bottom:3px">Download ARIA Sentinel &rarr;</strong>'
     +     '<span style="font-size:12px;color:rgba(255,255,255,.66);line-height:1.5">Download the desktop app for localized troubleshooting on your system — gated, reversible, fully audited.</span>'
@@ -4603,10 +4607,55 @@ function openResolveModal(intent, cardEl){
   }
   function close(re){ ov.remove(); if (re) reEnable(); }
   ov.addEventListener('click', function(e){ if (e.target === ov) close(true); });
+  // Slice C — "Open with ARIA Sentinel": fire the aria-sentinel:// deep-link. The web NEVER runs the fix
+  // (R8) — it only hands the issue to the installed desktop app, which gates it (approve + countdown +
+  // restore point + kill-switch). If nothing handles the scheme (app not installed), fall back to download.
+  ov.querySelector('[data-rm="open"]').addEventListener('click', function(){
+    var status = document.createElement('div');
+    status.style.cssText = 'font-size:12px;color:rgba(255,255,255,.7);margin:2px 0 12px;text-align:center';
+    status.textContent = 'Opening ARIA Sentinel…';
+    this.insertAdjacentElement('afterend', status);
+    openWithSentinel(intent, sentinelRecipeForIntent(intent), function onNotInstalled(){
+      status.innerHTML = 'ARIA Sentinel isn’t installed on this device. <strong style="color:#f1dca7">Download it below</strong> to run on-device fixes.';
+    });
+  });
   ov.querySelector('[data-rm="download"]').addEventListener('click', function(){ close(false); window.open('/downloads/', '_blank', 'noopener'); });
   ov.querySelector('[data-rm="walkthrough"]').addEventListener('click', function(){ close(false); renderGuided(intent); });
   ov.querySelector('[data-rm="close"]').addEventListener('click', function(){ close(true); });
   document.addEventListener('keydown', function esc(e){ if (e.key === 'Escape'){ close(true); document.removeEventListener('keydown', esc); } });
+}
+
+/* Slice C — map a web chat intent to a Sentinel recipe id that is KNOWN to exist in the desktop registry.
+   Unmapped intents pass intent-only: Sentinel still opens (on its searchable Recipes tab) and the user
+   picks the fix. We never invent an id the desktop app would reject. */
+function sentinelRecipeForIntent(intent){
+  var MAP = {
+    wifi: 'wifi-no-internet-v1'
+  };
+  return MAP[String(intent || '')] || '';
+}
+
+/* Fire the aria-sentinel:// deep-link and detect whether the OS handled it. If the app launches, the page
+   loses visibility/focus within ~1.2s → treat as opened. If nothing happens, call onNotInstalled() so the
+   caller can fall back to the download path. Best-effort heuristic (no reliable "is-handler-installed" API). */
+function openWithSentinel(intent, recipeId, onNotInstalled){
+  var link = 'aria-sentinel://resolve?intent=' + encodeURIComponent(String(intent || '').slice(0, 180))
+           + (recipeId ? '&recipe=' + encodeURIComponent(recipeId) : '');
+  var handled = false;
+  function markHandled(){ handled = true; cleanup(); }
+  function cleanup(){
+    document.removeEventListener('visibilitychange', onVis);
+    window.removeEventListener('blur', markHandled);
+  }
+  function onVis(){ if (document.hidden) markHandled(); }
+  document.addEventListener('visibilitychange', onVis);
+  window.addEventListener('blur', markHandled);
+  setTimeout(function(){
+    cleanup();
+    if (!handled && !document.hidden && typeof onNotInstalled === 'function') onNotInstalled();
+  }, 1300);
+  try { window.location.href = link; }
+  catch(e){ cleanup(); if (typeof onNotInstalled === 'function') onNotInstalled(); }
 }
 
 /* ============== ROUTER ============== */
