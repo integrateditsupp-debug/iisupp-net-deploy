@@ -15,3 +15,9 @@ Method: live test on https://iisupp.net/aria after Netlify redeploy `main@740ab8
 - **Slice C:** build "Resolve it for me" → open-with-ARIA-Sentinel deep-link (autonomous), with download fallback.
 
 Re-run this script after the fix to confirm: topic-switch works, CLEAR resets, LLM answers a free-form question, and "Resolve it for me" appears + hands to Sentinel.
+
+## RE-TEST after deploy b0ef4bf (2026-06-24, live)
+Deployed main@b0ef4bf (merged web branch + rebuilt KB bundles, 280 articles). Web tester 7 PASS / 0 FAIL.
+- PASS: deploy live; cross-load topic stickiness fixed; NEW CHAT button present; self-update modal works.
+- FAIL (DoD #2): in-session topic-bleed (VPN->RAM got "What is the VPN doing?"); NEW CHAT no reset; aria-chat (LLM) never called for free-form questions (network-verified). -> Slice D Round 2.
+- PENDING (need installed Sentinel build): Office recipe end-to-end, "Open with ARIA Sentinel" deep-link, Slice B live execution, Recipes tab finder.

@@ -19,3 +19,7 @@ Organized record of **major** changes (Ahmad directive, 2026-06-24: record all m
 - Slice B: recipes execute for real on a live machine + roll back + kill-switch.
 - Slice C: "Resolve it for me" → opens Sentinel + auto-runs.
 - Slice A: matcher ≥95% on the 100-call harness; Recipes tab dropdown + search.
+
+## 2026-06-24 — Deploy + live re-test (Cowork)
+- MERGED web branch + rebuilt KB bundles (280 articles) -> main @ b0ef4bf, auto-deployed. Web tester 0 FAIL. Verified LIVE: YES.
+- LIVE re-test: 3 web bugs remain (DoD #2) — in-session topic-bleed, NEW CHAT no-reset, aria-chat LLM never fires. -> Slice D Round 2. Verified LIVE: NO.
