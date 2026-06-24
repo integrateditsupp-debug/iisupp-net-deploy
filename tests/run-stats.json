@@ -1,20 +1,20 @@
 {
   "schema_version": "1.5",
   "label": "ARIA classifier + product autonomous loop",
-  "last_run_at": "2026-06-18T13:55:55Z",
-  "last_run_iso": "2026-06-18",
-  "total_runs": 6,
-  "cumulative_scenarios": 724366,
-  "last_session_scenarios": 332163,
-  "last_pass_rate_pct": 91.1,
-  "last_pass_count": 302480,
-  "last_fail_count": 29683,
+  "last_run_at": "2026-06-24T04:15:38Z",
+  "last_run_iso": "2026-06-24",
+  "total_runs": 7,
+  "cumulative_scenarios": 753438,
+  "last_session_scenarios": 29072,
+  "last_pass_rate_pct": 96,
+  "last_pass_count": 27907,
+  "last_fail_count": 1165,
   "cumulative_regex_swaps_applied": 46,
-  "cumulative_fixes_shipped": 46,
+  "cumulative_fixes_shipped": 55,
   "current_corpus_size": 332163,
   "target_corpus_size": 500000,
   "coverage_pct_of_target": 66.4,
-  "next_run_at": "2026-06-18T13:00:00Z",
+  "next_run_at": "2026-06-24T08:00:00Z",
   "scheduled_cadence": "Classifier 3x daily + renewal reminders daily 8:22 + bay-monitor + ops-prep + 22 other autopilots",
   "universe_categories_total": 25,
   "universe_avg_coverage_pct": 100,
@@ -122,10 +122,10 @@
   "round_14": {
     "cowork": {
       "shipped": [
-        "knowledge-base/vertical-finance/ (15 entries \u2014 QB/Xero/Sage/ADP, SOX/PCI/CRA L2)",
-        "netlify/functions/aria-cross-device-sync.js (Cat 21 \u2014 HMAC-token authed, last-200 merge, dedupe)",
-        "netlify/functions/aria-white-label.js (Cat 19 \u2014 tenant theming GET css|json, admin-set, blob persist)",
-        "soc2-readiness.html (Cat 24 \u2014 AICPA Common Criteria self-assessment, localStorage, export JSON)"
+        "knowledge-base/vertical-finance/ (15 entries — QB/Xero/Sage/ADP, SOX/PCI/CRA L2)",
+        "netlify/functions/aria-cross-device-sync.js (Cat 21 — HMAC-token authed, last-200 merge, dedupe)",
+        "netlify/functions/aria-white-label.js (Cat 19 — tenant theming GET css|json, admin-set, blob persist)",
+        "soc2-readiness.html (Cat 24 — AICPA Common Criteria self-assessment, localStorage, export JSON)"
       ],
       "categories_lifted": {
         "cat_19_embedded": "80% -> ~88%",
@@ -213,5 +213,25 @@
       },
       "weighted_coverage_estimate": "~100% coding-surface coverage plus measurable operational-gate readiness"
     }
+  },
+  "classifier_loop": {
+    "harness": "tests/run-10k-scenarios.js",
+    "last_run_at": "2026-06-24T04:15:38Z",
+    "last_run_iso": "2026-06-24",
+    "runs": 1,
+    "prev_pass_rate_pct": 94.5,
+    "last_pass_rate_pct": 96,
+    "delta_pct": 1.5,
+    "last_pass_count": 27907,
+    "last_fail_count": 1165,
+    "session_scenarios": 29072,
+    "corpus_size": 29072,
+    "base_corpus_size": 1896,
+    "target_corpus_size": 150000,
+    "coverage_pct_of_target": 19.4,
+    "safe_corpus_fixes_applied": 9,
+    "regex_clusters_pending_review": 22,
+    "next_run_at": "2026-06-24T08:00:00Z",
+    "note": "Loop resumed after multi-day push block. Top-level current_corpus_size/target_corpus_size/coverage_pct_of_target describe the legacy 332K mega corpus and are intentionally left unchanged to avoid a false regression; this object tracks the classifier 10k-harness lineage per the scheduled-task spec."
   }
 }
