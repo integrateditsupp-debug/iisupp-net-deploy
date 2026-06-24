@@ -73,6 +73,20 @@ export function executionPolicy({ vettedCount = 0, mode = "manual", dryRunCheckb
   };
 }
 
+/**
+ * Slice B — resolve the ACTUAL dry-run flag at the execution boundary (runRecipe / runTier0Fix in main).
+ * Precedence: (1) system fixes not allowed (dev/unsigned, or env =0) → ALWAYS preview; (2) an explicit
+ * caller decision wins — this is how the mode-policy drives execution: Manual passes true (preview),
+ * Confirmed/Autonomous pass false (LIVE); (3) no caller decision → the legacy global "dryRun" toggle.
+ * Pure. Real execution is still independently gated by supervisor + countdown + restore point + kill-switch.
+ */
+export function resolveActualDryRun({ allowSystemFixes = false, optionDryRun, globalDryRun = false } = {}) {
+  if (!allowSystemFixes) return true;
+  if (optionDryRun === false) return false;
+  if (optionDryRun === true) return true;
+  return Boolean(globalDryRun);
+}
+
 // ── recipe-history.json (vetted-count ledger) ───────────────────────────────────────────────────────────
 export function emptyHistory() { return { recipes: {} }; }
 

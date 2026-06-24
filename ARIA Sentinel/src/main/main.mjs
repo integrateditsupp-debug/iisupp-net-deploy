@@ -93,7 +93,7 @@ import { sealAudit, verifyAudit } from "../shared/audit-integrity.mjs";
 import { createProcessDetector, IPC as PROC_HEALTH_IPC } from "./process-detectors.mjs";
 import { recommendAction } from "../shared/recommend-action.mjs";
 import { superviseProposal, supervisorAuditEntry, recipeSideEffects } from "./supervisor-agent.mjs";
-import { executionPolicy, recordOutcome, vettedCountOf, emptyHistory } from "./dry-run-policy.mjs";
+import { executionPolicy, recordOutcome, vettedCountOf, emptyHistory, resolveActualDryRun } from "./dry-run-policy.mjs";
 import { createCountdown, createCountdownManager, shouldCountdown, countdownChatLine, countdownBannerText, COUNTDOWN_SECONDS } from "./action-countdown.mjs";
 import { EXECUTABLE_RECIPES, YELLOW_RECIPES } from "../shared/recipe-runner.mjs";
 // RUN 23b — Tier-0 executor: maps Tier-0 recipe ids to real, reversible PowerShell with pre/post/rollback.
@@ -151,7 +151,13 @@ const store = new Store({
   }
 });
 
-const allowSystemFixes = process.env.ARIA_SENTINEL_ALLOW_SYSTEM_FIXES === "1";
+// Slice B (production enablement) — packaged/signed builds run REAL fixes by default, gated by mode +
+// supervisor + 10s countdown + restore point + Ctrl+Alt+K + allowlist (none of which this flag touches).
+// Dev/unpackaged builds stay preview-only. Either build can force the value: env =1 forces ON, =0 forces OFF.
+const allowSystemFixes =
+  process.env.ARIA_SENTINEL_ALLOW_SYSTEM_FIXES === "1" ? true :
+  process.env.ARIA_SENTINEL_ALLOW_SYSTEM_FIXES === "0" ? false :
+  app.isPackaged === true;
 Menu.setApplicationMenu(null); // No File/Edit/View bar — Sentinel is a focused app, not a generic Electron shell
 let mainWindow;
 let overlayWindow;
@@ -1833,8 +1839,9 @@ function tier0Run(command) {
 }
 
 async function runTier0Fix(recipeId, options = {}) {
-  // Dry-run unless system fixes are enabled AND the global gate is off AND the caller didn't force dry-run.
-  const actualDryRun = !allowSystemFixes || Boolean(store.get("dryRun")) || options.dryRun === true;
+  // Slice B — Manual previews while Confirmed/Autonomous run for real (mode-policy passes options.dryRun);
+  // still gated downstream by supervisor + countdown + restore point + kill-switch. See resolveActualDryRun.
+  const actualDryRun = resolveActualDryRun({ allowSystemFixes, optionDryRun: options.dryRun, globalDryRun: store.get("dryRun") });
   const result = await executeTier0(recipeId, {
     dryRun: actualDryRun,
     run: tier0Run,
@@ -2250,7 +2257,10 @@ async function runRecipe(recipeId, options = {}) {
   const executionId = options.executionId || options.execution_id;
   const confirmed = options.confirmed === true;
   const core = async () => {
-  const actualDryRun = !allowSystemFixes || Boolean(store.get("dryRun")) || options.dryRun !== false;
+  // Slice B — same precedence as runTier0Fix (see resolveActualDryRun): system-fixes-off → preview; else
+  // the mode-policy's options.dryRun wins (false = LIVE for Confirmed/Autonomous); else the legacy global
+  // toggle. Restore point + supervisor + countdown + kill-switch below are unchanged and gate every change.
+  const actualDryRun = resolveActualDryRun({ allowSystemFixes, optionDryRun: options.dryRun, globalDryRun: store.get("dryRun") });
   setAgentState("fixing");
   const steps = [];
   // A System Restore point is created before any change touches the machine. Yellow-tier recipes

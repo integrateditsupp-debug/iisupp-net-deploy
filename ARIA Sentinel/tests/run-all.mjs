@@ -221,6 +221,8 @@ const TESTS = [
   "./resolve-for-me.test.mjs",
   // Coverage Slice A — offline intent matcher resolves symptom phrasing → recipe (token-overlap).
   "./offline-matcher.test.mjs",
+  // Coverage Slice B — execution-boundary dry-run precedence (prod LIVE-by-mode; system-fixes-off safety).
+  "./actual-dryrun-precedence.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

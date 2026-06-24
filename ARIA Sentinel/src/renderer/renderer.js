@@ -588,13 +588,18 @@ function paintRecipes(list) {
     setHtml("recipeList", `<p class="note">No fixes match that search. Try a symptom word like “zoom”, “internet”, or “excel” — or pick from the A–Z list.</p>`);
     return;
   }
+  // Slice B — label the primary action by mode: Manual previews (walk-through), Confirmed/Autonomous run
+  // the real fix (still supervisor + countdown + restore point + kill-switch gated). The ghost button is
+  // always an explicit dry-run preview.
+  const mode = (state && state.mode) || "manual";
+  const primaryLabel = mode === "manual" ? "Preview the fix" : "Resolve it for me";
   setHtml("recipeList", list.map((recipe) => `
     <article class="recipe-card">
       <span class="chip">${escapeHtml(recipe.chip)}</span>
       <h3>${escapeHtml(recipe.title)}</h3>
       <p>${escapeHtml(recipe.summary)}</p>
       <div class="button-row">
-        <button class="primary" data-resolve-fix="${escapeHtml(recipe.id)}" data-risk="${escapeHtml(recipe.risk || "medium")}">Resolve it for me</button>
+        <button class="primary" data-resolve-fix="${escapeHtml(recipe.id)}" data-risk="${escapeHtml(recipe.risk || "medium")}">${primaryLabel}</button>
         <button class="ghost" data-recipe-run="${escapeHtml(recipe.id)}">Dry-run</button>
       </div>
       <p class="note resolve-status" data-resolve-status="${escapeHtml(recipe.id)}" hidden></p>
