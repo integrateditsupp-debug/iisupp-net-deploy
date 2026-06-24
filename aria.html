@@ -4472,7 +4472,9 @@ function wireChoices(){
       const sibs = el.parentElement.querySelectorAll('.choice');
       sibs.forEach(s => { if (s !== el){ s.style.opacity='0.4'; s.style.pointerEvents='none'; } });
       const intent = el.dataset.intent;
-      if (el.dataset.choice === 'auto') renderAutoResolution(intent);
+      // TASK 5 — web NEVER runs a local fix. "Resolve it for me" opens a two-option gate
+      // (download ARIA Sentinel for on-device fixes, or continue the guided walkthrough here).
+      if (el.dataset.choice === 'auto') openResolveModal(intent, el);
       else renderGuided(intent);
       // BUG FIX: scroll-to-bottom after option click (render functions append via setTimeout)
       setTimeout(function(){
@@ -4481,6 +4483,50 @@ function wireChoices(){
       }, 800);
     });
   });
+}
+
+/* TASK 5 — "Resolve it for me" gate (web). The website never executes a local fix; for security, fixes run
+   on the user's own device. This opens a black+gold modal with two choices: (A) download ARIA Sentinel for
+   on-device troubleshooting, or (B) continue the guided walkthrough here. */
+function openResolveModal(intent, cardEl){
+  var existing = document.getElementById('aria-resolve-modal');
+  if (existing) existing.remove();
+  var optStyle = 'display:block;width:100%;text-align:left;cursor:pointer;margin:0 0 12px;padding:14px 16px;border-radius:12px;'
+    + 'background:linear-gradient(180deg,rgba(197,160,89,.10),rgba(197,160,89,.02));border:1px solid rgba(197,160,89,.32);color:#fff;font-family:inherit;transition:border-color .2s,transform .15s';
+  var ov = document.createElement('div');
+  ov.id = 'aria-resolve-modal';
+  ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.74);backdrop-filter:blur(4px)';
+  ov.innerHTML =
+    '<div style="width:100%;max-width:520px;background:linear-gradient(180deg,#15110a,#09090b);border:1px solid rgba(197,160,89,.42);border-radius:16px;padding:26px 24px;box-shadow:0 30px 80px rgba(0,0,0,.6)">'
+    +   '<div style="display:flex;align-items:center;gap:11px;margin-bottom:8px">'
+    +     '<span style="width:34px;height:34px;border-radius:50%;flex:0 0 auto;background:radial-gradient(circle at 35% 30%,#f1dca7,#c5a059 60%,#6b521f);box-shadow:0 0 16px rgba(197,160,89,.5)"></span>'
+    +     '<strong style="font-family:Cinzel,Georgia,serif;letter-spacing:.16em;color:#f1dca7;font-size:14px;text-transform:uppercase">Resolve it for me</strong>'
+    +   '</div>'
+    +   '<p style="color:rgba(255,255,255,.72);font-size:13px;line-height:1.6;margin:0 0 18px">For your security, fixes run on <strong style="color:#f1dca7;font-weight:600">your own device</strong> — never from the website. Choose how to continue:</p>'
+    +   '<button class="aria-rm-opt" data-rm="download" style="'+optStyle+'">'
+    +     '<strong style="display:block;color:#f1dca7;font-size:14px;margin-bottom:3px">Download ARIA Sentinel &rarr;</strong>'
+    +     '<span style="font-size:12px;color:rgba(255,255,255,.66);line-height:1.5">Download the desktop app for localized troubleshooting on your system — gated, reversible, fully audited.</span>'
+    +   '</button>'
+    +   '<button class="aria-rm-opt" data-rm="walkthrough" style="'+optStyle+'">'
+    +     '<strong style="display:block;color:#f1dca7;font-size:14px;margin-bottom:3px">Continue with walkthrough</strong>'
+    +     '<span style="font-size:12px;color:rgba(255,255,255,.66);line-height:1.5">Stay in this chat — ARIA guides you step-by-step. Nothing changes without you.</span>'
+    +   '</button>'
+    +   '<button data-rm="close" style="display:block;margin:4px auto 0;background:none;border:0;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;font-family:inherit;padding:6px 10px">Maybe later</button>'
+    + '</div>';
+  document.body.appendChild(ov);
+  function reEnable(){
+    if (!cardEl) return;
+    cardEl.dataset.fired = '';
+    cardEl.style.opacity = ''; cardEl.style.pointerEvents = '';
+    if (cardEl.parentElement) cardEl.parentElement.querySelectorAll('.choice').forEach(function(s){ s.style.opacity=''; s.style.pointerEvents=''; });
+  }
+  function close(re){ ov.remove(); if (re) reEnable(); }
+  ov.addEventListener('click', function(e){ if (e.target === ov) close(true); });
+  ov.querySelector('[data-rm="download"]').addEventListener('click', function(){ close(false); window.open('/downloads/', '_blank', 'noopener'); });
+  ov.querySelector('[data-rm="walkthrough"]').addEventListener('click', function(){ close(false); renderGuided(intent); });
+  ov.querySelector('[data-rm="close"]').addEventListener('click', function(){ close(true); });
+  document.addEventListener('keydown', function esc(e){ if (e.key === 'Escape'){ close(true); document.removeEventListener('keydown', esc); } });
 }
 
 /* ============== ROUTER ============== */
