@@ -133,6 +133,37 @@ unless explicitly multi-tagged.
 
 ---
 
+## Tier-4 (frontier) signals
+
+Tier-4 articles (`tech_generation: tier-4` in `tier4/`) are the strategic-moat topics. They are
+advisory / readiness runbooks — route here on these signals, and always frame as guidance + human
+engagement (no certification or autonomous frontier-infra action).
+
+| User says (paraphrase) | Likely article(s) |
+|---|---|
+| Govern / inventory our AI agents | t4-aigov-001 |
+| An AI agent did something wrong | t4-aigov-002 → t4-aigov-001 |
+| Log / audit what an agent did | t4-aigov-003 |
+| AI / token costs running away | t4-aigov-004 |
+| Onboard/offboard an agent identity | t4-aigov-005 |
+| Unsanctioned AI tools in use (shadow AI) | t4-aigov-006 |
+| Prompt injection / data leaking from an AI | t4-aithreat-001 → l3-security-001 if breach |
+| Suspicious voice call / cloned voice asking for money | t4-aithreat-002 → l3-security-001 |
+| Deepfake video / fake exec on a call (BEC) | t4-aithreat-003 → l3-security-001 |
+| AI feature/model update broke a workflow | t4-endpoint-001 |
+| NPU / Copilot+ AI PC issue | t4-endpoint-002 |
+| Self-healing agent needs a human | t4-endpoint-003 |
+| Build a local LLM / on-prem GPU | t4-endpoint-004 |
+| Quantum-safe / post-quantum crypto migration | t4-frontier-001 |
+| Harvest-now-decrypt-later data risk | t4-frontier-002 → t4-frontier-001 |
+| Private 5G / private cellular | t4-frontier-003 |
+| Satellite / LEO backup internet | t4-frontier-004 |
+| AR / smart glasses at work | t4-frontier-005 |
+| Enterprise wearables | t4-frontier-006 |
+| Robotics / cobot / OT edge | t4-frontier-007 |
+
+---
+
 ## Multi-article patterns
 
 Some user requests pull multiple articles:

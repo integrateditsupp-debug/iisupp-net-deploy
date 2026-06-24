@@ -184,10 +184,241 @@
       "level": "L1"
     }
   ],
+  "agent accountability": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
+  "agent decision logging": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
+  "agent handoff": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
+      "level": "L3"
+    }
+  ],
+  "agent identity lifecycle": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
+      "level": "L3"
+    }
+  ],
+  "agent inventory": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "agent misbehavior": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
+    }
+  ],
+  "agent observability": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
+  "agent offboarding": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
+      "level": "L3"
+    }
+  ],
+  "agent ownership": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "agent telemetry": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
+  "agentic ai controls": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "agentic incident": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
+    }
+  ],
   "aging": [
     {
       "id": "l2-dns-001",
       "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "ai accelerator": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
+  "ai action log": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
+  "ai agent audit trail": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
+  "ai agent governance": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "ai agent incident response": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
+    }
+  ],
+  "ai budget": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
+    }
+  ],
+  "ai data exfil": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
+    }
+  ],
+  "ai data leakage": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
+  "ai discovery": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
+  "ai feature not using npu": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
+  "ai feature regression": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
+  "ai governance framework": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "ai guardrails": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "ai ir runbook": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
+    }
+  ],
+  "ai pc": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
+  "ai risk tiering": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "ai root cause analysis": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
+    }
+  ],
+  "ai spend guardrails": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
+    }
+  ],
+  "ai usage visibility": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
+  "ai vishing": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
+      "level": "L3"
+    }
+  ],
+  "ai workflow break": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
       "level": "L2"
     }
   ],
@@ -245,6 +476,20 @@
       "level": "L2"
     }
   ],
+  "aperture dashboard": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
+  "api budget caps": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
+    }
+  ],
   "apipa": [
     {
       "id": "l2-dhcp-001",
@@ -271,6 +516,13 @@
       "id": "l1-windows-006",
       "title": "An app won't open / closes immediately / shows error on launch",
       "level": "L1"
+    }
+  ],
+  "apple neural engine": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
     }
   ],
   "apple pay": [
@@ -306,6 +558,27 @@
       "id": "ga-booking-001",
       "title": "Booking appointments online (medical, restaurant, services)",
       "level": "GA"
+    }
+  ],
+  "approval workflow": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "ar glasses": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
+  "aria sentinel": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
+      "level": "L3"
     }
   ],
   "asr": [
@@ -357,10 +630,24 @@
       "level": "L1"
     }
   ],
+  "audit handoff": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
+      "level": "L3"
+    }
+  ],
   "audit mode": [
     {
       "id": "l2-endpoint-001",
       "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "augmented reality": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
       "level": "L2"
     }
   ],
@@ -376,6 +663,13 @@
       "id": "l1-mfa-001",
       "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
       "level": "L1"
+    }
+  ],
+  "auto-update breakage": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
     }
   ],
   "autoenroll": [
@@ -403,6 +697,27 @@
     {
       "id": "l3-enterprise-001",
       "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "autonomous agent policy": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "autonomous remediation": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
+      "level": "L3"
+    }
+  ],
+  "autonomy guardrail": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
       "level": "L3"
     }
   ],
@@ -472,6 +787,13 @@
       "level": "L1"
     }
   ],
+  "backup wan": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
+      "level": "L2"
+    }
+  ],
   "bad password attempts": [
     {
       "id": "l2-active-directory-001",
@@ -505,6 +827,13 @@
       "level": "L1"
     }
   ],
+  "bec 2.0": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
+    }
+  ],
   "bestseller": [
     {
       "id": "ga-shopping-002",
@@ -536,6 +865,20 @@
       "id": "l1-windows-002",
       "title": "Windows won't boot — stuck on spinning dots or black screen",
       "level": "L1"
+    }
+  ],
+  "blast radius": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
+    }
+  ],
+  "ble pairing": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
     }
   ],
   "block credential stealing": [
@@ -615,6 +958,13 @@
       "level": "L1"
     }
   ],
+  "browser extension risk": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
   "bsod": [
     {
       "id": "l1-windows-001",
@@ -641,6 +991,11 @@
       "id": "l1-email-001",
       "title": "Suspicious email / suspected phishing — what to do",
       "level": "L1"
+    },
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
     }
   ],
   "business impact analysis": [
@@ -648,6 +1003,13 @@
       "id": "l3-business-continuity-001",
       "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
       "level": "L3"
+    }
+  ],
+  "byod wearable": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
     }
   ],
   "c drive full": [
@@ -683,6 +1045,27 @@
       "id": "ga-booking-001",
       "title": "Booking appointments online (medical, restaurant, services)",
       "level": "GA"
+    }
+  ],
+  "callback protocol": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
+      "level": "L3"
+    }
+  ],
+  "callback verification protocol": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
+    }
+  ],
+  "caller verification": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
+      "level": "L3"
     }
   ],
   "can't connect": [
@@ -741,10 +1124,38 @@
       "level": "L2"
     }
   ],
+  "cbom": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
+    }
+  ],
+  "cbrs": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
   "cdn waf": [
     {
       "id": "l3-network-ddos-001",
       "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
+    }
+  ],
+  "ceo deepfake": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
+    }
+  ],
+  "ceo fraud": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
       "level": "L3"
     }
   ],
@@ -783,10 +1194,24 @@
       "level": "L3"
     }
   ],
+  "cgnat": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
+      "level": "L2"
+    }
+  ],
   "chain of custody": [
     {
       "id": "l3-forensics-001",
       "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
+  "change record": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
       "level": "L3"
     }
   ],
@@ -888,6 +1313,13 @@
       "level": "L2"
     }
   ],
+  "cobot": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
+    }
+  ],
   "code signing expiry": [
     {
       "id": "l3-certificates-002",
@@ -900,6 +1332,13 @@
       "id": "l3-disaster-recovery-001",
       "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
       "level": "L3"
+    }
+  ],
+  "companion app": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
     }
   ],
   "company portal": [
@@ -972,6 +1411,20 @@
       "level": "L2"
     }
   ],
+  "containment runbook": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
+    }
+  ],
+  "context length": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
   "controller cache battery": [
     {
       "id": "l3-storage-001",
@@ -986,11 +1439,32 @@
       "level": "L1"
     }
   ],
+  "copilot plus pc": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
+  "copilot update": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
   "corrupt print": [
     {
       "id": "l1-printer-002",
       "title": "Printer prints garbled / unreadable / wrong characters",
       "level": "L1"
+    }
+  ],
+  "cost anomaly": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
     }
   ],
   "cost management": [
@@ -1000,10 +1474,31 @@
       "level": "L3"
     }
   ],
+  "coverage planning": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
   "credential guard": [
     {
       "id": "l3-endpoint-001",
       "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "credential management": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
+      "level": "L3"
+    }
+  ],
+  "credential theft": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
       "level": "L3"
     }
   ],
@@ -1042,10 +1537,31 @@
       "level": "L3"
     }
   ],
+  "crypto inventory": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
+    }
+  ],
+  "crypto-agility": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
+    }
+  ],
   "csv offline": [
     {
       "id": "l3-virtualization-001",
       "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
+    }
+  ],
+  "cuda": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
       "level": "L3"
     }
   ],
@@ -1067,6 +1583,53 @@
     {
       "id": "l3-security-001",
       "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "data classification": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
+    }
+  ],
+  "data exfiltration": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
+    }
+  ],
+  "data loss prevention": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
+  "data minimization": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
+    },
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
+    }
+  ],
+  "data privacy": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
+  "data shelf life": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
       "level": "L3"
     }
   ],
@@ -1095,6 +1658,20 @@
     {
       "id": "l3-business-continuity-001",
       "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
+    }
+  ],
+  "deepfake audio": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
+      "level": "L3"
+    }
+  ],
+  "deepfake video": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
       "level": "L3"
     }
   ],
@@ -1140,6 +1717,13 @@
       "level": "L2"
     }
   ],
+  "deprovisioning agent": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
+      "level": "L3"
+    }
+  ],
   "device compliance": [
     {
       "id": "l2-intune-001",
@@ -1175,6 +1759,13 @@
       "level": "L2"
     }
   ],
+  "device provisioning": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
   "device tunnel": [
     {
       "id": "l2-vpn-001",
@@ -1189,11 +1780,25 @@
       "level": "L2"
     }
   ],
+  "directml": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
   "disable account": [
     {
       "id": "l2-offboarding-001",
       "title": "User offboarding: identity disable, data preservation, license recovery",
       "level": "L2"
+    }
+  ],
+  "disable agent": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
     }
   ],
   "disaster recovery": [
@@ -1362,6 +1967,13 @@
       "level": "L1"
     }
   ],
+  "dual wan": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
+      "level": "L2"
+    }
+  ],
   "duplex": [
     {
       "id": "l2-networking-001",
@@ -1381,6 +1993,13 @@
       "id": "l1-browser-001",
       "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
       "level": "L1"
+    }
+  ],
+  "edge node": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
     }
   ],
   "edr": [
@@ -1479,10 +2098,38 @@
       "level": "L3"
     }
   ],
+  "employee ai tools": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
+  "encrypted capture": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
+    }
+  ],
   "enrollment failed": [
     {
       "id": "l2-intune-001",
       "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "enterprise ar": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
+  "enterprise wearables": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
       "level": "L2"
     }
   ],
@@ -1514,6 +2161,20 @@
       "level": "L2"
     }
   ],
+  "escalation packet": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
+      "level": "L3"
+    }
+  ],
+  "esim": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
   "everyone except external": [
     {
       "id": "l2-sharepoint-001",
@@ -1533,6 +2194,13 @@
       "id": "l1-windows-006",
       "title": "An app won't open / closes immediately / shows error on launch",
       "level": "L1"
+    }
+  ],
+  "executive impersonation": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
     }
   ],
   "exfiltration": [
@@ -1556,10 +2224,24 @@
       "level": "GA"
     }
   ],
+  "explainability": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
   "exploited in the wild": [
     {
       "id": "l3-security-002",
       "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
+    }
+  ],
+  "fail-safe": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
       "level": "L3"
     }
   ],
@@ -1598,6 +2280,13 @@
       "level": "GA"
     }
   ],
+  "fake video call": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
+    }
+  ],
   "federation": [
     {
       "id": "l3-hybrid-ad-001",
@@ -1617,6 +2306,20 @@
       "level": "L1"
     }
   ],
+  "field connectivity": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
+      "level": "L2"
+    }
+  ],
+  "field service": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
   "file conflict": [
     {
       "id": "l1-onedrive-003",
@@ -1629,6 +2332,13 @@
       "id": "ga-form-filling-001",
       "title": "Filling out forms online safely",
       "level": "GA"
+    }
+  ],
+  "finops for ai": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
     }
   ],
   "firefox": [
@@ -1678,6 +2388,13 @@
       "id": "l1-vpn-001",
       "title": "VPN won't connect / disconnects randomly",
       "level": "L1"
+    }
+  ],
+  "forward secrecy": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
     }
   ],
   "fwaas": [
@@ -1743,6 +2460,20 @@
       "level": "GA"
     }
   ],
+  "gpu drivers": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
+  "gpu out of memory": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
   "group based licensing": [
     {
       "id": "l2-onboarding-001",
@@ -1778,11 +2509,32 @@
       "level": "L2"
     }
   ],
+  "harvest now decrypt later": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
+    }
+  ],
   "hashing": [
     {
       "id": "l3-forensics-001",
       "title": "Digital forensic evidence preservation during a suspected breach",
       "level": "L3"
+    }
+  ],
+  "heads-up display": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
+  "health data privacy": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
     }
   ],
   "help me buy": [
@@ -1823,6 +2575,20 @@
       "id": "l1-windows-003",
       "title": "Computer running slow / performance lag",
       "level": "L1"
+    }
+  ],
+  "high risk request verification": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
+    }
+  ],
+  "hndl": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
     }
   ],
   "host isolation": [
@@ -1874,10 +2640,31 @@
       "level": "L3"
     }
   ],
+  "human escalation": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
+      "level": "L3"
+    }
+  ],
+  "human in the loop": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
   "hvci": [
     {
       "id": "l3-endpoint-001",
       "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "hybrid cryptography": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
       "level": "L3"
     }
   ],
@@ -1913,6 +2700,13 @@
     {
       "id": "l3-cloud-001",
       "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "identity governance": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
       "level": "L3"
     }
   ],
@@ -1972,6 +2766,27 @@
       "level": "L3"
     }
   ],
+  "indirect prompt injection": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
+    }
+  ],
+  "industrial control": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
+    }
+  ],
+  "industrial iot": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
   "infected": [
     {
       "id": "l2-malware-001",
@@ -1979,10 +2794,38 @@
       "level": "L2"
     }
   ],
+  "inference accuracy": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
+  "inference server": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
   "inheritance": [
     {
       "id": "l2-permissions-001",
       "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "interim controls": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
+    }
+  ],
+  "internet redundancy": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
       "level": "L2"
     }
   ],
@@ -2021,6 +2864,13 @@
       "level": "GA"
     }
   ],
+  "iso 42001": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
   "isolate not wipe": [
     {
       "id": "l3-forensics-001",
@@ -2046,6 +2896,13 @@
     {
       "id": "l3-certificates-002",
       "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
+    }
+  ],
+  "it ot convergence": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
       "level": "L3"
     }
   ],
@@ -2084,10 +2941,24 @@
       "level": "L1"
     }
   ],
+  "key exchange": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
+    }
+  ],
   "kill chain": [
     {
       "id": "l3-security-001",
       "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "kill switch": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
       "level": "L3"
     }
   ],
@@ -2119,6 +2990,13 @@
       "level": "L2"
     }
   ],
+  "latency jitter": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
+      "level": "L2"
+    }
+  ],
   "lateral movement": [
     {
       "id": "l3-security-001",
@@ -2137,6 +3015,27 @@
     {
       "id": "l2-dhcp-001",
       "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "least privilege": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
+      "level": "L3"
+    }
+  ],
+  "least privilege llm": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
+    }
+  ],
+  "leo satellite": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
       "level": "L2"
     }
   ],
@@ -2189,6 +3088,41 @@
       "level": "L2"
     }
   ],
+  "liveness check": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
+    }
+  ],
+  "llm cost control": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
+    }
+  ],
+  "llm jailbreak": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
+    }
+  ],
+  "local llm": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
+  "local model version": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
   "locations": [
     {
       "id": "l2-azure-ad-001",
@@ -2208,6 +3142,13 @@
       "level": "L2"
     }
   ],
+  "log retention": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
   "login loop": [
     {
       "id": "l1-m365-001",
@@ -2220,6 +3161,13 @@
       "id": "l2-performance-001",
       "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
       "level": "L2"
+    }
+  ],
+  "long-lived secrets": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
     }
   ],
   "look-alike domain": [
@@ -2275,6 +3223,13 @@
     {
       "id": "l3-migration-001",
       "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
+  "machine identity": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
       "level": "L3"
     }
   ],
@@ -2338,6 +3293,13 @@
     {
       "id": "l2-malware-001",
       "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "mdm enrollment": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
       "level": "L2"
     }
   ],
@@ -2453,6 +3415,90 @@
       "level": "L1"
     }
   ],
+  "mitre atlas": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
+    }
+  ],
+  "ml regression": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
+  "ml-dsa": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
+    }
+  ],
+  "ml-kem": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
+    }
+  ],
+  "mobile core": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
+  "model cost governance": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
+    }
+  ],
+  "model drift": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
+  "model pinning": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
+  "model rollback": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
+  "model serving": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
+  "model validation": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
+  "mosca theorem": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
+    }
+  ],
   "msp": [
     {
       "id": "l3-enterprise-001",
@@ -2544,6 +3590,34 @@
       "level": "L3"
     }
   ],
+  "network segmentation": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
+    }
+  ],
+  "network slicing": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
+  "neural processing unit": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
+  "never auto-actuate": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
+    }
+  ],
   "new hire": [
     {
       "id": "l2-onboarding-001",
@@ -2570,6 +3644,20 @@
       "id": "l1-teams-002",
       "title": "Microsoft Teams won't load / stuck on splash screen",
       "level": "L1"
+    }
+  ],
+  "nist ai rmf": [
+    {
+      "id": "t4-aigov-001",
+      "title": "AI Agent Governance Framework for the Enterprise",
+      "level": "L3"
+    }
+  ],
+  "nist pqc": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
     }
   ],
   "no audio": [
@@ -2610,6 +3698,13 @@
       "id": "l1-windows-005",
       "title": "Windows: no sound at all from the computer",
       "level": "L1"
+    }
+  ],
+  "non-human identity": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
+      "level": "L3"
     }
   ],
   "non-technical": [
@@ -2668,6 +3763,20 @@
       "level": "L1"
     }
   ],
+  "npu": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
+  "npu driver": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
   "ntfs": [
     {
       "id": "l2-permissions-001",
@@ -2687,6 +3796,13 @@
       "id": "l3-backup-dr-002",
       "title": "Immutable / air-gapped backup design (anti-ransomware)",
       "level": "L3"
+    }
+  ],
+  "obstruction": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
+      "level": "L2"
     }
   ],
   "ocsp": [
@@ -2745,6 +3861,27 @@
       "level": "L3"
     }
   ],
+  "on-device ai": [
+    {
+      "id": "t4-endpoint-001",
+      "title": "AI Model Drift & On-Device-AI Auto-Update Breakage",
+      "level": "L2"
+    }
+  ],
+  "on-device inference": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
+  "on-prem gpu": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
   "onboarding": [
     {
       "id": "l2-onboarding-001",
@@ -2780,6 +3917,13 @@
       "level": "GA"
     }
   ],
+  "onnx runtime": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
   "oobe": [
     {
       "id": "l2-deployment-001",
@@ -2801,10 +3945,31 @@
       "level": "L1"
     }
   ],
+  "operational technology": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
+    }
+  ],
   "order of volatility": [
     {
       "id": "l3-forensics-001",
       "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
+  "orphaned credentials": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
+      "level": "L3"
+    }
+  ],
+  "ot security": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
       "level": "L3"
     }
   ],
@@ -2826,6 +3991,18 @@
     {
       "id": "l3-security-002",
       "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
+    }
+  ],
+  "out of band verification": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
+      "level": "L3"
+    },
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
       "level": "L3"
     }
   ],
@@ -2853,6 +4030,20 @@
       "id": "l1-outlook-002",
       "title": "Outlook can't send emails / messages stuck in Outbox",
       "level": "L1"
+    }
+  ],
+  "output handling": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
+    }
+  ],
+  "owasp llm top 10": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
     }
   ],
   "p1": [
@@ -3016,6 +4207,13 @@
       "level": "GA"
     }
   ],
+  "per agent quota": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
+    }
+  ],
   "performance": [
     {
       "id": "l1-windows-003",
@@ -3066,6 +4264,13 @@
       "level": "L1"
     }
   ],
+  "phone fraud": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
+      "level": "L3"
+    }
+  ],
   "pki": [
     {
       "id": "l3-certificates-001",
@@ -3078,6 +4283,13 @@
       "id": "l1-passkey-001",
       "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
       "level": "L1"
+    }
+  ],
+  "plc": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
     }
   ],
   "pmtud": [
@@ -3101,11 +4313,25 @@
       "level": "L3"
     }
   ],
+  "post-quantum cryptography": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
+    }
+  ],
   "posture policy blocking": [
     {
       "id": "l2-sase-001",
       "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
       "level": "L2"
+    }
+  ],
+  "pqc": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
     }
   ],
   "predictive survey": [
@@ -3183,11 +4409,39 @@
       "level": "L1"
     }
   ],
+  "privacy camera": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
+  "private 5g": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
   "private app unreachable": [
     {
       "id": "l2-sase-001",
       "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
       "level": "L2"
+    }
+  ],
+  "private cellular": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
+  "private lte": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
     }
   ],
   "product deactivated": [
@@ -3209,6 +4463,13 @@
       "id": "l2-windows-001",
       "title": "Windows user profile corrupted / temp profile / rebuild",
       "level": "L2"
+    }
+  ],
+  "prompt injection": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
     }
   ],
   "protector": [
@@ -3239,6 +4500,34 @@
       "level": "L3"
     }
   ],
+  "purdue model": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
+    }
+  ],
+  "quantization": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
+  "quantum risk": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
+      "level": "L3"
+    }
+  ],
+  "quantum-safe": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
+    }
+  ],
   "quarantine": [
     {
       "id": "l2-malware-001",
@@ -3257,6 +4546,13 @@
     {
       "id": "l3-virtualization-001",
       "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
+    }
+  ],
+  "rag data leakage": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
       "level": "L3"
     }
   ],
@@ -3300,6 +4596,11 @@
       "id": "l3-network-ddos-001",
       "title": "DDoS attack response (volumetric / protocol / application-layer)",
       "level": "L3"
+    },
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
     }
   ],
   "rbac": [
@@ -3407,6 +4708,20 @@
       "level": "L3"
     }
   ],
+  "remediation rollback": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
+      "level": "L3"
+    }
+  ],
+  "remote assist": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
   "remote desktop": [
     {
       "id": "l2-rdp-001",
@@ -3461,6 +4776,13 @@
       "level": "L1"
     }
   ],
+  "restore context": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
+      "level": "L3"
+    }
+  ],
   "restore file": [
     {
       "id": "l1-onedrive-002",
@@ -3493,6 +4815,13 @@
     {
       "id": "l3-certificates-001",
       "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "revoke agent credentials": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
       "level": "L3"
     }
   ],
@@ -3529,6 +4858,27 @@
       "level": "L1"
     }
   ],
+  "robotics": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
+    }
+  ],
+  "rogue agent": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
+    }
+  ],
+  "rogue ai apps": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
   "rogue dhcp": [
     {
       "id": "l2-dhcp-001",
@@ -3546,6 +4896,13 @@
       "id": "l2-drivers-001",
       "title": "Driver rollback / WHQL gating / fleet driver management",
       "level": "L2"
+    }
+  ],
+  "rollback agent actions": [
+    {
+      "id": "t4-aigov-002",
+      "title": "AI Agent Incident Response Runbook",
+      "level": "L3"
     }
   ],
   "rollback planning": [
@@ -3618,10 +4975,24 @@
       "level": "L3"
     }
   ],
+  "ruggedized wearable": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
+    }
+  ],
   "rule guid": [
     {
       "id": "l2-endpoint-001",
       "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "runaway agent cost": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
       "level": "L2"
     }
   ],
@@ -3630,6 +5001,13 @@
       "id": "l3-business-continuity-001",
       "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
       "level": "L3"
+    }
+  ],
+  "saas ai sprawl": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
     }
   ],
   "safari": [
@@ -3660,6 +5038,13 @@
       "level": "GA"
     }
   ],
+  "safety system": [
+    {
+      "id": "t4-frontier-007",
+      "title": "Robotics / Cobots / OT + Edge-Node Triage",
+      "level": "L3"
+    }
+  ],
   "saml": [
     {
       "id": "l3-sso-saml-001",
@@ -3674,6 +5059,13 @@
       "level": "L3"
     }
   ],
+  "sanctioning workflow": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
   "sase": [
     {
       "id": "l2-sase-001",
@@ -3685,6 +5077,13 @@
     {
       "id": "l2-sase-001",
       "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "satellite failover": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
       "level": "L2"
     }
   ],
@@ -3737,6 +5136,13 @@
       "level": "L2"
     }
   ],
+  "scoped tokens": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
+      "level": "L3"
+    }
+  ],
   "scrubbing center": [
     {
       "id": "l3-network-ddos-001",
@@ -3751,10 +5157,24 @@
       "level": "L3"
     }
   ],
+  "sd-wan failover": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
+      "level": "L2"
+    }
+  ],
   "second drive failure": [
     {
       "id": "l3-storage-001",
       "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
+  "secret rotation": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
       "level": "L3"
     }
   ],
@@ -3786,6 +5206,13 @@
       "level": "L1"
     }
   ],
+  "see-what-i-see": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
   "segmentation": [
     {
       "id": "l3-networking-001",
@@ -3798,6 +5225,20 @@
       "id": "l1-password-001",
       "title": "Password reset / forgotten password (self-service)",
       "level": "L1"
+    }
+  ],
+  "self-healing endpoint": [
+    {
+      "id": "t4-endpoint-003",
+      "title": "Self-Healing Endpoint → Human Escalation",
+      "level": "L3"
+    }
+  ],
+  "self-hosted ai": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
     }
   ],
   "seller legit": [
@@ -3821,6 +5262,13 @@
       "level": "GA"
     }
   ],
+  "sensor data": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
+    }
+  ],
   "server core": [
     {
       "id": "l3-server-001",
@@ -3842,6 +5290,13 @@
       "level": "L2"
     }
   ],
+  "service account agent": [
+    {
+      "id": "t4-aigov-005",
+      "title": "Agent Identity Onboarding & Offboarding",
+      "level": "L3"
+    }
+  ],
   "service account locked": [
     {
       "id": "l2-active-directory-001",
@@ -3860,6 +5315,13 @@
     {
       "id": "l2-offboarding-001",
       "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "shadow ai": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
       "level": "L2"
     }
   ],
@@ -3919,6 +5381,13 @@
       "level": "L1"
     }
   ],
+  "sim provisioning": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
   "simple language": [
     {
       "id": "ga-senior-001",
@@ -3954,6 +5423,20 @@
       "level": "GA"
     }
   ],
+  "smart glasses": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
+  "smartwatch mdm": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
+    }
+  ],
   "smtp error": [
     {
       "id": "l1-outlook-002",
@@ -3965,6 +5448,13 @@
     {
       "id": "l3-security-001",
       "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "social engineering": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
       "level": "L3"
     }
   ],
@@ -3994,6 +5484,20 @@
       "id": "ga-shopping-002",
       "title": "Comparing products fairly — what specs matter and which are marketing",
       "level": "GA"
+    }
+  ],
+  "spectrum": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
+  "spend alerting": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
     }
   ],
   "spf": [
@@ -4092,6 +5596,13 @@
       "level": "L3"
     }
   ],
+  "starlink": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
+      "level": "L2"
+    }
+  ],
   "stig": [
     {
       "id": "l3-endpoint-001",
@@ -4124,6 +5635,13 @@
     {
       "id": "l3-storage-001",
       "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
+  "store now decrypt later": [
+    {
+      "id": "t4-frontier-002",
+      "title": "\\\"Harvest-Now, Decrypt-Later\\\" Risk Playbook",
       "level": "L3"
     }
   ],
@@ -4218,6 +5736,20 @@
       "level": "L1"
     }
   ],
+  "synthetic media": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
+    }
+  ],
+  "synthetic voice": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
+      "level": "L3"
+    }
+  ],
   "sysprep": [
     {
       "id": "l3-server-001",
@@ -4263,6 +5795,13 @@
       "id": "l1-windows-003",
       "title": "Computer running slow / performance lag",
       "level": "L1"
+    }
+  ],
+  "tamper evident logs": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
     }
   ],
   "tax form": [
@@ -4342,6 +5881,13 @@
       "level": "L2"
     }
   ],
+  "thermal throttling": [
+    {
+      "id": "t4-endpoint-002",
+      "title": "On-Device NPU (Copilot+/AI PC) Issues",
+      "level": "L2"
+    }
+  ],
   "third party patching": [
     {
       "id": "l2-patch-management-001",
@@ -4384,10 +5930,45 @@
       "level": "L3"
     }
   ],
+  "tls migration": [
+    {
+      "id": "t4-frontier-001",
+      "title": "Post-Quantum Cryptography (PQC) / Quantum-Safe Migration",
+      "level": "L3"
+    }
+  ],
+  "token cost runaway": [
+    {
+      "id": "t4-aigov-004",
+      "title": "AI / Agent Spend Guardrails",
+      "level": "L2"
+    }
+  ],
+  "tool abuse": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
+      "level": "L3"
+    }
+  ],
+  "tool call logging": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
+      "level": "L2"
+    }
+  ],
   "tpm reset": [
     {
       "id": "l2-bitlocker-001",
       "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "traceability": [
+    {
+      "id": "t4-aigov-003",
+      "title": "AI Agent Audit Trail & Observability",
       "level": "L2"
     }
   ],
@@ -4454,6 +6035,13 @@
       "level": "L1"
     }
   ],
+  "unapproved ai": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
   "universal print": [
     {
       "id": "l2-printers-001",
@@ -4465,6 +6053,20 @@
     {
       "id": "l3-storage-001",
       "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
+  "unsanctioned ai tools": [
+    {
+      "id": "t4-aigov-006",
+      "title": "Shadow-AI Discovery",
+      "level": "L2"
+    }
+  ],
+  "untrusted content": [
+    {
+      "id": "t4-aithreat-001",
+      "title": "Prompt Injection & RAG/Data Leakage",
       "level": "L3"
     }
   ],
@@ -4545,6 +6147,13 @@
       "level": "L1"
     }
   ],
+  "video conference fraud": [
+    {
+      "id": "t4-aithreat-003",
+      "title": "Deepfake Video / Executive Impersonation (BEC 2.0)",
+      "level": "L3"
+    }
+  ],
   "virtual card": [
     {
       "id": "ga-checkout-001",
@@ -4578,6 +6187,13 @@
       "id": "ga-senior-001",
       "title": "Helping seniors / non-technical users with technology",
       "level": "GA"
+    }
+  ],
+  "voice cloning": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
+      "level": "L3"
     }
   ],
   "volumetric attack": [
@@ -4622,6 +6238,13 @@
       "level": "L1"
     }
   ],
+  "vram sizing": [
+    {
+      "id": "t4-endpoint-004",
+      "title": "Local-LLM / On-Prem GPU Build-Out",
+      "level": "L3"
+    }
+  ],
   "vsphere ha": [
     {
       "id": "l3-virtualization-001",
@@ -4648,6 +6271,41 @@
       "id": "l1-m365-001",
       "title": "Can't sign in to Microsoft 365 / repeated password prompts",
       "level": "L1"
+    }
+  ],
+  "wearable battery": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
+    }
+  ],
+  "wearable endpoint": [
+    {
+      "id": "t4-frontier-005",
+      "title": "AR / Smart-Glasses for Field & Enterprise Work",
+      "level": "L2"
+    }
+  ],
+  "wearable provisioning": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
+    }
+  ],
+  "wearable security": [
+    {
+      "id": "t4-frontier-006",
+      "title": "Enterprise Wearables",
+      "level": "L2"
+    }
+  ],
+  "weather fade": [
+    {
+      "id": "t4-frontier-004",
+      "title": "Satellite / LEO Connectivity Failover",
+      "level": "L2"
     }
   ],
   "what is": [
@@ -4741,6 +6399,13 @@
       "level": "L2"
     }
   ],
+  "wifi vs cellular": [
+    {
+      "id": "t4-frontier-003",
+      "title": "Private 5G / Private Cellular for Enterprise",
+      "level": "L3"
+    }
+  ],
   "windows hello passkey": [
     {
       "id": "l1-passkey-001",
@@ -4781,6 +6446,13 @@
       "id": "ga-checkout-001",
       "title": "Safe online checkout — payment options ranked",
       "level": "GA"
+    }
+  ],
+  "wire transfer fraud": [
+    {
+      "id": "t4-aithreat-002",
+      "title": "AI Voice Phishing (Vishing) & Deepfake Audio",
+      "level": "L3"
     }
   ],
   "wirecutter": [
