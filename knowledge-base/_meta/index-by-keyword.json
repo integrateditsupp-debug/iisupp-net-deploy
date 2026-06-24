@@ -1,182 +1,79 @@
 {
-  "browser": [
+  "0x0000011b": [
     {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "100% disk": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
       "level": "L1"
     }
   ],
-  "chrome": [
+  "169.254": [
     {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "2.4 vs 5 vs 6 ghz": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "2fa": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
       "level": "L1"
     }
   ],
-  "edge": [
+  "3-2-1": [
     {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
-      "level": "L1"
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
     }
   ],
-  "firefox": [
+  "3-2-1-1-0": [
     {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
-      "level": "L1"
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
     }
   ],
-  "safari": [
+  "4740 event": [
     {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
-      "level": "L1"
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
     }
   ],
-  "not loading": [
+  "5.7.x": [
     {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
-      "level": "L1"
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
     }
   ],
-  "this site can't be reached": [
+  "50 30 20": [
     {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
-      "level": "L1"
-    }
-  ],
-  "your connection is not private": [
-    {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
-      "level": "L1"
-    }
-  ],
-  "net::err_cert": [
-    {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
-      "level": "L1"
-    }
-  ],
-  "cache": [
-    {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
-      "level": "L1"
-    }
-  ],
-  "cookies": [
-    {
-      "id": "l1-browser-001",
-      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
-      "level": "L1"
-    }
-  ],
-  "phishing": [
-    {
-      "id": "l1-email-001",
-      "title": "Suspicious email / suspected phishing \u2014 what to do",
-      "level": "L1"
-    },
-    {
-      "id": "ga-scam-001",
-      "title": "Detecting fake / scam websites and phishing pages",
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
       "level": "GA"
     }
   ],
-  "suspicious email": [
+  "aad connect": [
     {
-      "id": "l1-email-001",
-      "title": "Suspicious email / suspected phishing \u2014 what to do",
-      "level": "L1"
-    }
-  ],
-  "scam email": [
-    {
-      "id": "l1-email-001",
-      "title": "Suspicious email / suspected phishing \u2014 what to do",
-      "level": "L1"
-    }
-  ],
-  "spam": [
-    {
-      "id": "l1-email-001",
-      "title": "Suspicious email / suspected phishing \u2014 what to do",
-      "level": "L1"
-    }
-  ],
-  "report phishing": [
-    {
-      "id": "l1-email-001",
-      "title": "Suspicious email / suspected phishing \u2014 what to do",
-      "level": "L1"
-    }
-  ],
-  "email scam": [
-    {
-      "id": "l1-email-001",
-      "title": "Suspicious email / suspected phishing \u2014 what to do",
-      "level": "L1"
-    }
-  ],
-  "business email compromise": [
-    {
-      "id": "l1-email-001",
-      "title": "Suspicious email / suspected phishing \u2014 what to do",
-      "level": "L1"
-    }
-  ],
-  "bec": [
-    {
-      "id": "l1-email-001",
-      "title": "Suspicious email / suspected phishing \u2014 what to do",
-      "level": "L1"
-    }
-  ],
-  "microsoft 365": [
-    {
-      "id": "l1-m365-001",
-      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
-      "level": "L1"
-    }
-  ],
-  "m365": [
-    {
-      "id": "l1-m365-001",
-      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
-      "level": "L1"
-    }
-  ],
-  "office 365": [
-    {
-      "id": "l1-m365-001",
-      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
-      "level": "L1"
-    }
-  ],
-  "can't sign in": [
-    {
-      "id": "l1-m365-001",
-      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
-      "level": "L1"
-    }
-  ],
-  "password prompt": [
-    {
-      "id": "l1-m365-001",
-      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
-      "level": "L1"
-    }
-  ],
-  "login loop": [
-    {
-      "id": "l1-m365-001",
-      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
-      "level": "L1"
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
     }
   ],
   "aadsts": [
@@ -184,6 +81,46 @@
       "id": "l1-m365-001",
       "title": "Can't sign in to Microsoft 365 / repeated password prompts",
       "level": "L1"
+    }
+  ],
+  "aadsts53000": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "aadsts53003": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "access blocked": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "access denied": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    },
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "account creation": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
     }
   ],
   "account locked": [
@@ -198,708 +135,53 @@
       "level": "L1"
     }
   ],
-  "we couldn't connect": [
-    {
-      "id": "l1-m365-001",
-      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
-      "level": "L1"
-    }
-  ],
-  "office activation": [
-    {
-      "id": "l1-m365-002",
-      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
-      "level": "L1"
-    }
-  ],
-  "reduced functionality": [
-    {
-      "id": "l1-m365-002",
-      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
-      "level": "L1"
-    }
-  ],
-  "license": [
-    {
-      "id": "l1-m365-002",
-      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
-      "level": "L1"
-    }
-  ],
-  "subscription expired": [
-    {
-      "id": "l1-m365-002",
-      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
-      "level": "L1"
-    }
-  ],
-  "product deactivated": [
-    {
-      "id": "l1-m365-002",
-      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
-      "level": "L1"
-    }
-  ],
-  "sign in to activate office": [
-    {
-      "id": "l1-m365-002",
-      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
-      "level": "L1"
-    }
-  ],
-  "mfa": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "2fa": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "two factor": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "multi factor": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "authenticator": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "lost phone": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "new phone": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "mfa code": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "microsoft authenticator": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "authy": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "google authenticator": [
-    {
-      "id": "l1-mfa-001",
-      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
-      "level": "L1"
-    }
-  ],
-  "onedrive": [
-    {
-      "id": "l1-onedrive-001",
-      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
-      "level": "L1"
-    }
-  ],
-  "not syncing": [
-    {
-      "id": "l1-onedrive-001",
-      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
-      "level": "L1"
-    }
-  ],
-  "paused": [
-    {
-      "id": "l1-onedrive-001",
-      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
-      "level": "L1"
-    }
-  ],
-  "looking for changes": [
-    {
-      "id": "l1-onedrive-001",
-      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
-      "level": "L1"
-    }
-  ],
-  "sync stuck": [
-    {
-      "id": "l1-onedrive-001",
-      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
-      "level": "L1"
-    }
-  ],
-  "red x": [
-    {
-      "id": "l1-onedrive-001",
-      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
-      "level": "L1"
-    }
-  ],
-  "upload pending": [
-    {
-      "id": "l1-onedrive-001",
-      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
-      "level": "L1"
-    }
-  ],
-  "blocked file": [
-    {
-      "id": "l1-onedrive-001",
-      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
-      "level": "L1"
-    }
-  ],
-  "restore file": [
-    {
-      "id": "l1-onedrive-002",
-      "title": "Restore deleted or modified file from OneDrive / version history",
-      "level": "L1"
-    }
-  ],
-  "deleted file": [
-    {
-      "id": "l1-onedrive-002",
-      "title": "Restore deleted or modified file from OneDrive / version history",
-      "level": "L1"
-    }
-  ],
-  "recover file": [
-    {
-      "id": "l1-onedrive-002",
-      "title": "Restore deleted or modified file from OneDrive / version history",
-      "level": "L1"
-    }
-  ],
-  "version history": [
-    {
-      "id": "l1-onedrive-002",
-      "title": "Restore deleted or modified file from OneDrive / version history",
-      "level": "L1"
-    }
-  ],
-  "previous version": [
-    {
-      "id": "l1-onedrive-002",
-      "title": "Restore deleted or modified file from OneDrive / version history",
-      "level": "L1"
-    }
-  ],
-  "rollback": [
-    {
-      "id": "l1-onedrive-002",
-      "title": "Restore deleted or modified file from OneDrive / version history",
-      "level": "L1"
-    },
-    {
-      "id": "l2-drivers-001",
-      "title": "Driver rollback / WHQL gating / fleet driver management",
-      "level": "L2"
-    }
-  ],
-  "ransomware recovery": [
-    {
-      "id": "l1-onedrive-002",
-      "title": "Restore deleted or modified file from OneDrive / version history",
-      "level": "L1"
-    }
-  ],
-  "onedrive recycle bin": [
-    {
-      "id": "l1-onedrive-002",
-      "title": "Restore deleted or modified file from OneDrive / version history",
-      "level": "L1"
-    }
-  ],
-  "sync conflict": [
-    {
-      "id": "l1-onedrive-003",
-      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
-      "level": "L1"
-    }
-  ],
-  "duplicate file": [
-    {
-      "id": "l1-onedrive-003",
-      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
-      "level": "L1"
-    }
-  ],
-  "file conflict": [
-    {
-      "id": "l1-onedrive-003",
-      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
-      "level": "L1"
-    }
-  ],
-  "two copies": [
-    {
-      "id": "l1-onedrive-003",
-      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
-      "level": "L1"
-    }
-  ],
-  "my computer copy": [
-    {
-      "id": "l1-onedrive-003",
-      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
-      "level": "L1"
-    }
-  ],
-  "merged file": [
-    {
-      "id": "l1-onedrive-003",
-      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
-      "level": "L1"
-    }
-  ],
-  "which version": [
-    {
-      "id": "l1-onedrive-003",
-      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
-      "level": "L1"
-    }
-  ],
-  "outlook": [
-    {
-      "id": "l1-outlook-001",
-      "title": "Outlook not receiving new emails",
-      "level": "L1"
-    },
-    {
-      "id": "l1-outlook-002",
-      "title": "Outlook can't send emails / messages stuck in Outbox",
-      "level": "L1"
-    }
-  ],
-  "not receiving emails": [
-    {
-      "id": "l1-outlook-001",
-      "title": "Outlook not receiving new emails",
-      "level": "L1"
-    }
-  ],
-  "email stuck": [
-    {
-      "id": "l1-outlook-001",
-      "title": "Outlook not receiving new emails",
-      "level": "L1"
-    }
-  ],
-  "inbox not updating": [
-    {
-      "id": "l1-outlook-001",
-      "title": "Outlook not receiving new emails",
-      "level": "L1"
-    }
-  ],
-  "missing emails": [
-    {
-      "id": "l1-outlook-001",
-      "title": "Outlook not receiving new emails",
-      "level": "L1"
-    }
-  ],
-  "send/receive": [
-    {
-      "id": "l1-outlook-001",
-      "title": "Outlook not receiving new emails",
-      "level": "L1"
-    }
-  ],
-  "can't send": [
-    {
-      "id": "l1-outlook-002",
-      "title": "Outlook can't send emails / messages stuck in Outbox",
-      "level": "L1"
-    }
-  ],
-  "stuck in outbox": [
-    {
-      "id": "l1-outlook-002",
-      "title": "Outlook can't send emails / messages stuck in Outbox",
-      "level": "L1"
-    }
-  ],
-  "email not sending": [
-    {
-      "id": "l1-outlook-002",
-      "title": "Outlook can't send emails / messages stuck in Outbox",
-      "level": "L1"
-    }
-  ],
-  "unable to send": [
-    {
-      "id": "l1-outlook-002",
-      "title": "Outlook can't send emails / messages stuck in Outbox",
-      "level": "L1"
-    }
-  ],
-  "smtp error": [
-    {
-      "id": "l1-outlook-002",
-      "title": "Outlook can't send emails / messages stuck in Outbox",
-      "level": "L1"
-    }
-  ],
-  "outbox": [
-    {
-      "id": "l1-outlook-002",
-      "title": "Outlook can't send emails / messages stuck in Outbox",
-      "level": "L1"
-    }
-  ],
-  "password reset": [
-    {
-      "id": "l1-password-001",
-      "title": "Password reset / forgotten password (self-service)",
-      "level": "L1"
-    }
-  ],
-  "forgot password": [
-    {
-      "id": "l1-password-001",
-      "title": "Password reset / forgotten password (self-service)",
-      "level": "L1"
-    }
-  ],
-  "sspr": [
-    {
-      "id": "l1-password-001",
-      "title": "Password reset / forgotten password (self-service)",
-      "level": "L1"
-    }
-  ],
-  "self service password reset": [
-    {
-      "id": "l1-password-001",
-      "title": "Password reset / forgotten password (self-service)",
-      "level": "L1"
-    }
-  ],
-  "locked out": [
-    {
-      "id": "l1-password-001",
-      "title": "Password reset / forgotten password (self-service)",
-      "level": "L1"
-    },
+  "account lockout": [
     {
       "id": "l2-active-directory-001",
       "title": "Active Directory: account lockout / repeating lockouts after password change",
       "level": "L2"
     }
   ],
-  "reset link": [
+  "active survey": [
     {
-      "id": "l1-password-001",
-      "title": "Password reset / forgotten password (self-service)",
-      "level": "L1"
-    }
-  ],
-  "printer": [
-    {
-      "id": "l1-printer-001",
-      "title": "Printer not printing / job stuck in queue",
-      "level": "L1"
-    }
-  ],
-  "not printing": [
-    {
-      "id": "l1-printer-001",
-      "title": "Printer not printing / job stuck in queue",
-      "level": "L1"
-    }
-  ],
-  "print queue": [
-    {
-      "id": "l1-printer-001",
-      "title": "Printer not printing / job stuck in queue",
-      "level": "L1"
-    },
-    {
-      "id": "l2-printers-001",
-      "title": "Print server / queue management / Universal Print rollout",
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
       "level": "L2"
     }
   ],
-  "stuck job": [
+  "ad cs": [
     {
-      "id": "l1-printer-001",
-      "title": "Printer not printing / job stuck in queue",
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "add a passkey": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
       "level": "L1"
     }
   ],
-  "offline": [
+  "admin reset passkey": [
     {
-      "id": "l1-printer-001",
-      "title": "Printer not printing / job stuck in queue",
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
       "level": "L1"
     }
   ],
-  "print spooler": [
+  "aging": [
     {
-      "id": "l1-printer-001",
-      "title": "Printer not printing / job stuck in queue",
-      "level": "L1"
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
     }
   ],
-  "won't print": [
+  "air gap": [
     {
-      "id": "l1-printer-001",
-      "title": "Printer not printing / job stuck in queue",
-      "level": "L1"
-    }
-  ],
-  "paper jam": [
-    {
-      "id": "l1-printer-001",
-      "title": "Printer not printing / job stuck in queue",
-      "level": "L1"
-    }
-  ],
-  "error printing": [
-    {
-      "id": "l1-printer-001",
-      "title": "Printer not printing / job stuck in queue",
-      "level": "L1"
-    }
-  ],
-  "garbled print": [
-    {
-      "id": "l1-printer-002",
-      "title": "Printer prints garbled / unreadable / wrong characters",
-      "level": "L1"
-    }
-  ],
-  "wrong characters": [
-    {
-      "id": "l1-printer-002",
-      "title": "Printer prints garbled / unreadable / wrong characters",
-      "level": "L1"
-    }
-  ],
-  "prints symbols": [
-    {
-      "id": "l1-printer-002",
-      "title": "Printer prints garbled / unreadable / wrong characters",
-      "level": "L1"
-    }
-  ],
-  "prints code": [
-    {
-      "id": "l1-printer-002",
-      "title": "Printer prints garbled / unreadable / wrong characters",
-      "level": "L1"
-    }
-  ],
-  "printer driver": [
-    {
-      "id": "l1-printer-002",
-      "title": "Printer prints garbled / unreadable / wrong characters",
-      "level": "L1"
-    }
-  ],
-  "corrupt print": [
-    {
-      "id": "l1-printer-002",
-      "title": "Printer prints garbled / unreadable / wrong characters",
-      "level": "L1"
-    }
-  ],
-  "teams": [
-    {
-      "id": "l1-teams-001",
-      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
-      "level": "L1"
-    }
-  ],
-  "no audio": [
-    {
-      "id": "l1-teams-001",
-      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
-      "level": "L1"
-    },
-    {
-      "id": "l1-windows-005",
-      "title": "Windows: no sound at all from the computer",
-      "level": "L1"
-    }
-  ],
-  "can't hear": [
-    {
-      "id": "l1-teams-001",
-      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
-      "level": "L1"
-    }
-  ],
-  "mic not working": [
-    {
-      "id": "l1-teams-001",
-      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
-      "level": "L1"
-    }
-  ],
-  "microphone": [
-    {
-      "id": "l1-teams-001",
-      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
-      "level": "L1"
-    }
-  ],
-  "speaker": [
-    {
-      "id": "l1-teams-001",
-      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
-      "level": "L1"
-    }
-  ],
-  "other people can't hear me": [
-    {
-      "id": "l1-teams-001",
-      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
-      "level": "L1"
-    }
-  ],
-  "audio device not detected": [
-    {
-      "id": "l1-teams-001",
-      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
-      "level": "L1"
-    }
-  ],
-  "teams won't load": [
-    {
-      "id": "l1-teams-002",
-      "title": "Microsoft Teams won't load / stuck on splash screen",
-      "level": "L1"
-    }
-  ],
-  "teams stuck": [
-    {
-      "id": "l1-teams-002",
-      "title": "Microsoft Teams won't load / stuck on splash screen",
-      "level": "L1"
-    }
-  ],
-  "white screen": [
-    {
-      "id": "l1-teams-002",
-      "title": "Microsoft Teams won't load / stuck on splash screen",
-      "level": "L1"
-    }
-  ],
-  "splash screen": [
-    {
-      "id": "l1-teams-002",
-      "title": "Microsoft Teams won't load / stuck on splash screen",
-      "level": "L1"
-    }
-  ],
-  "teams crashes": [
-    {
-      "id": "l1-teams-002",
-      "title": "Microsoft Teams won't load / stuck on splash screen",
-      "level": "L1"
-    }
-  ],
-  "teams won't sign in": [
-    {
-      "id": "l1-teams-002",
-      "title": "Microsoft Teams won't load / stuck on splash screen",
-      "level": "L1"
-    }
-  ],
-  "new teams not opening": [
-    {
-      "id": "l1-teams-002",
-      "title": "Microsoft Teams won't load / stuck on splash screen",
-      "level": "L1"
-    }
-  ],
-  "vpn": [
-    {
-      "id": "l1-vpn-001",
-      "title": "VPN won't connect / disconnects randomly",
-      "level": "L1"
-    }
-  ],
-  "won't connect": [
-    {
-      "id": "l1-vpn-001",
-      "title": "VPN won't connect / disconnects randomly",
-      "level": "L1"
-    }
-  ],
-  "vpn disconnects": [
-    {
-      "id": "l1-vpn-001",
-      "title": "VPN won't connect / disconnects randomly",
-      "level": "L1"
-    }
-  ],
-  "vpn timeout": [
-    {
-      "id": "l1-vpn-001",
-      "title": "VPN won't connect / disconnects randomly",
-      "level": "L1"
-    }
-  ],
-  "cisco anyconnect": [
-    {
-      "id": "l1-vpn-001",
-      "title": "VPN won't connect / disconnects randomly",
-      "level": "L1"
-    }
-  ],
-  "globalprotect": [
-    {
-      "id": "l1-vpn-001",
-      "title": "VPN won't connect / disconnects randomly",
-      "level": "L1"
-    }
-  ],
-  "fortinet": [
-    {
-      "id": "l1-vpn-001",
-      "title": "VPN won't connect / disconnects randomly",
-      "level": "L1"
-    }
-  ],
-  "openvpn": [
-    {
-      "id": "l1-vpn-001",
-      "title": "VPN won't connect / disconnects randomly",
-      "level": "L1"
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
     }
   ],
   "always on vpn": [
@@ -914,325 +196,133 @@
       "level": "L2"
     }
   ],
-  "wifi": [
+  "amazon": [
     {
-      "id": "l1-wifi-001",
-      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
-      "level": "L1"
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
     }
   ],
-  "wi-fi": [
+  "analogy": [
     {
-      "id": "l1-wifi-001",
-      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
-      "level": "L1"
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
     }
   ],
-  "no internet": [
+  "aovpn": [
     {
-      "id": "l1-wifi-001",
-      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
-      "level": "L1"
-    }
-  ],
-  "no internet secured": [
-    {
-      "id": "l1-wifi-001",
-      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
-      "level": "L1"
-    }
-  ],
-  "yellow triangle": [
-    {
-      "id": "l1-wifi-001",
-      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
-      "level": "L1"
-    }
-  ],
-  "wireless not working": [
-    {
-      "id": "l1-wifi-001",
-      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
-      "level": "L1"
-    }
-  ],
-  "can't connect": [
-    {
-      "id": "l1-wifi-001",
-      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
-      "level": "L1"
-    }
-  ],
-  "dropped connection": [
-    {
-      "id": "l1-wifi-001",
-      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
-      "level": "L1"
-    }
-  ],
-  "bsod": [
-    {
-      "id": "l1-windows-001",
-      "title": "Blue screen of death (BSOD) on Windows 10/11",
-      "level": "L1"
-    }
-  ],
-  "blue screen": [
-    {
-      "id": "l1-windows-001",
-      "title": "Blue screen of death (BSOD) on Windows 10/11",
-      "level": "L1"
-    }
-  ],
-  "stop error": [
-    {
-      "id": "l1-windows-001",
-      "title": "Blue screen of death (BSOD) on Windows 10/11",
-      "level": "L1"
-    }
-  ],
-  "kernel panic": [
-    {
-      "id": "l1-windows-001",
-      "title": "Blue screen of death (BSOD) on Windows 10/11",
-      "level": "L1"
-    }
-  ],
-  "system crash": [
-    {
-      "id": "l1-windows-001",
-      "title": "Blue screen of death (BSOD) on Windows 10/11",
-      "level": "L1"
-    }
-  ],
-  "critical_process_died": [
-    {
-      "id": "l1-windows-001",
-      "title": "Blue screen of death (BSOD) on Windows 10/11",
-      "level": "L1"
-    }
-  ],
-  "whea_uncorrectable": [
-    {
-      "id": "l1-windows-001",
-      "title": "Blue screen of death (BSOD) on Windows 10/11",
-      "level": "L1"
-    }
-  ],
-  "memory_management": [
-    {
-      "id": "l1-windows-001",
-      "title": "Blue screen of death (BSOD) on Windows 10/11",
-      "level": "L1"
-    }
-  ],
-  "driver_irql": [
-    {
-      "id": "l1-windows-001",
-      "title": "Blue screen of death (BSOD) on Windows 10/11",
-      "level": "L1"
-    }
-  ],
-  "won't boot": [
-    {
-      "id": "l1-windows-002",
-      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
-      "level": "L1"
-    }
-  ],
-  "stuck on logo": [
-    {
-      "id": "l1-windows-002",
-      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
-      "level": "L1"
-    }
-  ],
-  "spinning dots": [
-    {
-      "id": "l1-windows-002",
-      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
-      "level": "L1"
-    }
-  ],
-  "black screen": [
-    {
-      "id": "l1-windows-002",
-      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
-      "level": "L1"
-    }
-  ],
-  "boot loop": [
-    {
-      "id": "l1-windows-002",
-      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
-      "level": "L1"
-    }
-  ],
-  "automatic repair loop": [
-    {
-      "id": "l1-windows-002",
-      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
-      "level": "L1"
-    }
-  ],
-  "windows not loading": [
-    {
-      "id": "l1-windows-002",
-      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
-      "level": "L1"
-    }
-  ],
-  "slow computer": [
-    {
-      "id": "l1-windows-003",
-      "title": "Computer running slow / performance lag",
-      "level": "L1"
-    }
-  ],
-  "laggy": [
-    {
-      "id": "l1-windows-003",
-      "title": "Computer running slow / performance lag",
-      "level": "L1"
-    }
-  ],
-  "performance": [
-    {
-      "id": "l1-windows-003",
-      "title": "Computer running slow / performance lag",
-      "level": "L1"
-    },
-    {
-      "id": "l2-performance-001",
-      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
       "level": "L2"
     }
   ],
-  "high cpu": [
+  "ap density": [
     {
-      "id": "l1-windows-003",
-      "title": "Computer running slow / performance lag",
-      "level": "L1"
-    },
-    {
-      "id": "l2-performance-001",
-      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
       "level": "L2"
     }
   ],
-  "high memory": [
+  "ap placement": [
     {
-      "id": "l1-windows-003",
-      "title": "Computer running slow / performance lag",
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "apipa": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "app crashes": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
       "level": "L1"
     }
   ],
-  "high disk usage": [
+  "app rings": [
     {
-      "id": "l1-windows-003",
-      "title": "Computer running slow / performance lag",
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "app won't open": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
       "level": "L1"
     }
   ],
-  "100% disk": [
+  "apple pay": [
     {
-      "id": "l1-windows-003",
-      "title": "Computer running slow / performance lag",
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "application error": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
       "level": "L1"
     }
   ],
-  "slow startup": [
+  "applocker": [
     {
-      "id": "l1-windows-003",
-      "title": "Computer running slow / performance lag",
-      "level": "L1"
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
     }
   ],
-  "takes forever to load": [
+  "appointment": [
     {
-      "id": "l1-windows-003",
-      "title": "Computer running slow / performance lag",
-      "level": "L1"
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
     }
   ],
-  "disk full": [
+  "asr": [
     {
-      "id": "l1-windows-004",
-      "title": "Disk full / out of space on C: drive",
-      "level": "L1"
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
     }
   ],
-  "out of space": [
+  "assertion": [
     {
-      "id": "l1-windows-004",
-      "title": "Disk full / out of space on C: drive",
-      "level": "L1"
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
     }
   ],
-  "low disk space": [
+  "assist with purchase": [
     {
-      "id": "l1-windows-004",
-      "title": "Disk full / out of space on C: drive",
-      "level": "L1"
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
     }
   ],
-  "c drive full": [
+  "attack surface reduction": [
     {
-      "id": "l1-windows-004",
-      "title": "Disk full / out of space on C: drive",
-      "level": "L1"
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
     }
   ],
-  "storage full": [
+  "audio device not detected": [
     {
-      "id": "l1-windows-004",
-      "title": "Disk full / out of space on C: drive",
-      "level": "L1"
-    }
-  ],
-  "clear space": [
-    {
-      "id": "l1-windows-004",
-      "title": "Disk full / out of space on C: drive",
-      "level": "L1"
-    }
-  ],
-  "cleanup": [
-    {
-      "id": "l1-windows-004",
-      "title": "Disk full / out of space on C: drive",
-      "level": "L1"
-    }
-  ],
-  "no sound": [
-    {
-      "id": "l1-windows-005",
-      "title": "Windows: no sound at all from the computer",
-      "level": "L1"
-    }
-  ],
-  "speakers not working": [
-    {
-      "id": "l1-windows-005",
-      "title": "Windows: no sound at all from the computer",
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
       "level": "L1"
     }
   ],
   "audio missing": [
-    {
-      "id": "l1-windows-005",
-      "title": "Windows: no sound at all from the computer",
-      "level": "L1"
-    }
-  ],
-  "no audio output device": [
-    {
-      "id": "l1-windows-005",
-      "title": "Windows: no sound at all from the computer",
-      "level": "L1"
-    }
-  ],
-  "red x speaker icon": [
     {
       "id": "l1-windows-005",
       "title": "Windows: no sound at all from the computer",
@@ -1246,204 +336,59 @@
       "level": "L1"
     }
   ],
-  "app won't open": [
+  "audit mode": [
     {
-      "id": "l1-windows-006",
-      "title": "An app won't open / closes immediately / shows error on launch",
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "authenticator": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
       "level": "L1"
     }
   ],
-  "app crashes": [
+  "authy": [
     {
-      "id": "l1-windows-006",
-      "title": "An app won't open / closes immediately / shows error on launch",
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
       "level": "L1"
     }
   ],
-  "exe won't run": [
+  "autoenroll": [
     {
-      "id": "l1-windows-006",
-      "title": "An app won't open / closes immediately / shows error on launch",
-      "level": "L1"
-    }
-  ],
-  "application error": [
-    {
-      "id": "l1-windows-006",
-      "title": "An app won't open / closes immediately / shows error on launch",
-      "level": "L1"
-    }
-  ],
-  "not opening": [
-    {
-      "id": "l1-windows-006",
-      "title": "An app won't open / closes immediately / shows error on launch",
-      "level": "L1"
-    }
-  ],
-  "closes immediately": [
-    {
-      "id": "l1-windows-006",
-      "title": "An app won't open / closes immediately / shows error on launch",
-      "level": "L1"
-    }
-  ],
-  "account lockout": [
-    {
-      "id": "l2-active-directory-001",
-      "title": "Active Directory: account lockout / repeating lockouts after password change",
-      "level": "L2"
-    }
-  ],
-  "bad password attempts": [
-    {
-      "id": "l2-active-directory-001",
-      "title": "Active Directory: account lockout / repeating lockouts after password change",
-      "level": "L2"
-    }
-  ],
-  "repeating lockout": [
-    {
-      "id": "l2-active-directory-001",
-      "title": "Active Directory: account lockout / repeating lockouts after password change",
-      "level": "L2"
-    }
-  ],
-  "cached credential": [
-    {
-      "id": "l2-active-directory-001",
-      "title": "Active Directory: account lockout / repeating lockouts after password change",
-      "level": "L2"
-    }
-  ],
-  "service account locked": [
-    {
-      "id": "l2-active-directory-001",
-      "title": "Active Directory: account lockout / repeating lockouts after password change",
-      "level": "L2"
-    }
-  ],
-  "4740 event": [
-    {
-      "id": "l2-active-directory-001",
-      "title": "Active Directory: account lockout / repeating lockouts after password change",
-      "level": "L2"
-    }
-  ],
-  "conditional access": [
-    {
-      "id": "l2-azure-ad-001",
-      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
-      "level": "L2"
-    }
-  ],
-  "aadsts53003": [
-    {
-      "id": "l2-azure-ad-001",
-      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
-      "level": "L2"
-    }
-  ],
-  "aadsts53000": [
-    {
-      "id": "l2-azure-ad-001",
-      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
-      "level": "L2"
-    }
-  ],
-  "access blocked": [
-    {
-      "id": "l2-azure-ad-001",
-      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
-      "level": "L2"
-    }
-  ],
-  "compliant device required": [
-    {
-      "id": "l2-azure-ad-001",
-      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
-      "level": "L2"
-    }
-  ],
-  "mfa policy": [
-    {
-      "id": "l2-azure-ad-001",
-      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
-      "level": "L2"
-    }
-  ],
-  "locations": [
-    {
-      "id": "l2-azure-ad-001",
-      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
-      "level": "L2"
-    }
-  ],
-  "blocked by policy": [
-    {
-      "id": "l2-azure-ad-001",
-      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
-      "level": "L2"
-    }
-  ],
-  "bitlocker": [
-    {
-      "id": "l2-bitlocker-001",
-      "title": "BitLocker: recovery key retrieval and re-protection",
-      "level": "L2"
-    },
-    {
-      "id": "l3-endpoint-001",
-      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
       "level": "L3"
     }
   ],
-  "recovery key": [
+  "autofill": [
     {
-      "id": "l2-bitlocker-001",
-      "title": "BitLocker: recovery key retrieval and re-protection",
-      "level": "L2"
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
     }
   ],
-  "recovery prompt": [
+  "automatic repair loop": [
     {
-      "id": "l2-bitlocker-001",
-      "title": "BitLocker: recovery key retrieval and re-protection",
-      "level": "L2"
+      "id": "l1-windows-002",
+      "title": "Windows won't boot — stuck on spinning dots or black screen",
+      "level": "L1"
     }
   ],
-  "tpm reset": [
+  "automation": [
     {
-      "id": "l2-bitlocker-001",
-      "title": "BitLocker: recovery key retrieval and re-protection",
-      "level": "L2"
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
     }
   ],
-  "hardware change": [
+  "autopatch": [
     {
-      "id": "l2-bitlocker-001",
-      "title": "BitLocker: recovery key retrieval and re-protection",
-      "level": "L2"
-    }
-  ],
-  "manage-bde": [
-    {
-      "id": "l2-bitlocker-001",
-      "title": "BitLocker: recovery key retrieval and re-protection",
-      "level": "L2"
-    }
-  ],
-  "protector": [
-    {
-      "id": "l2-bitlocker-001",
-      "title": "BitLocker: recovery key retrieval and re-protection",
-      "level": "L2"
-    }
-  ],
-  "deployment": [
-    {
-      "id": "l2-deployment-001",
-      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
       "level": "L2"
     }
   ],
@@ -1464,215 +409,103 @@
       "level": "L2"
     }
   ],
-  "oobe": [
+  "aws s3 object lock": [
     {
-      "id": "l2-deployment-001",
-      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "azure": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "azure ad connect": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "azure backup vault": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "azure policy": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "backup sign in method": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "bad password attempts": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
       "level": "L2"
     }
   ],
-  "app rings": [
+  "bbb": [
     {
-      "id": "l2-deployment-001",
-      "title": "Device deployment: Autopilot, image hygiene, app rings",
-      "level": "L2"
-    }
-  ],
-  "configuration profiles": [
-    {
-      "id": "l2-deployment-001",
-      "title": "Device deployment: Autopilot, image hygiene, app rings",
-      "level": "L2"
-    }
-  ],
-  "device images": [
-    {
-      "id": "l2-deployment-001",
-      "title": "Device deployment: Autopilot, image hygiene, app rings",
-      "level": "L2"
-    }
-  ],
-  "white glove": [
-    {
-      "id": "l2-deployment-001",
-      "title": "Device deployment: Autopilot, image hygiene, app rings",
-      "level": "L2"
-    }
-  ],
-  "dhcp": [
-    {
-      "id": "l2-dhcp-001",
-      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
-      "level": "L2"
-    }
-  ],
-  "apipa": [
-    {
-      "id": "l2-dhcp-001",
-      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
-      "level": "L2"
-    }
-  ],
-  "169.254": [
-    {
-      "id": "l2-dhcp-001",
-      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
-      "level": "L2"
-    }
-  ],
-  "scope exhaustion": [
-    {
-      "id": "l2-dhcp-001",
-      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
-      "level": "L2"
-    }
-  ],
-  "lease": [
-    {
-      "id": "l2-dhcp-001",
-      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
-      "level": "L2"
-    }
-  ],
-  "reservation": [
-    {
-      "id": "l2-dhcp-001",
-      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
-      "level": "L2"
-    },
-    {
-      "id": "ga-booking-001",
-      "title": "Booking appointments online (medical, restaurant, services)",
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research — is this company legit?",
       "level": "GA"
     }
   ],
-  "failover": [
+  "bcp": [
     {
-      "id": "l2-dhcp-001",
-      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
-      "level": "L2"
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
     }
   ],
-  "rogue dhcp": [
+  "bec": [
     {
-      "id": "l2-dhcp-001",
-      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
-      "level": "L2"
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing — what to do",
+      "level": "L1"
     }
   ],
-  "dns": [
+  "bestseller": [
     {
-      "id": "l2-dns-001",
-      "title": "DNS: internal name resolution failing / split-brain issues",
-      "level": "L2"
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly — what specs matter and which are marketing",
+      "level": "GA"
     }
   ],
-  "name resolution": [
+  "bitlocker": [
     {
-      "id": "l2-dns-001",
-      "title": "DNS: internal name resolution failing / split-brain issues",
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
       "level": "L2"
+    },
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
     }
   ],
-  "split brain": [
+  "black screen": [
     {
-      "id": "l2-dns-001",
-      "title": "DNS: internal name resolution failing / split-brain issues",
-      "level": "L2"
+      "id": "l1-windows-002",
+      "title": "Windows won't boot — stuck on spinning dots or black screen",
+      "level": "L1"
     }
   ],
-  "conditional forwarder": [
-    {
-      "id": "l2-dns-001",
-      "title": "DNS: internal name resolution failing / split-brain issues",
-      "level": "L2"
-    }
-  ],
-  "stub zone": [
-    {
-      "id": "l2-dns-001",
-      "title": "DNS: internal name resolution failing / split-brain issues",
-      "level": "L2"
-    }
-  ],
-  "dns scavenging": [
-    {
-      "id": "l2-dns-001",
-      "title": "DNS: internal name resolution failing / split-brain issues",
-      "level": "L2"
-    }
-  ],
-  "srv records": [
-    {
-      "id": "l2-dns-001",
-      "title": "DNS: internal name resolution failing / split-brain issues",
-      "level": "L2"
-    }
-  ],
-  "aging": [
-    {
-      "id": "l2-dns-001",
-      "title": "DNS: internal name resolution failing / split-brain issues",
-      "level": "L2"
-    }
-  ],
-  "driver": [
-    {
-      "id": "l2-drivers-001",
-      "title": "Driver rollback / WHQL gating / fleet driver management",
-      "level": "L2"
-    }
-  ],
-  "whql": [
-    {
-      "id": "l2-drivers-001",
-      "title": "Driver rollback / WHQL gating / fleet driver management",
-      "level": "L2"
-    }
-  ],
-  "intune driver": [
-    {
-      "id": "l2-drivers-001",
-      "title": "Driver rollback / WHQL gating / fleet driver management",
-      "level": "L2"
-    }
-  ],
-  "autopatch": [
-    {
-      "id": "l2-drivers-001",
-      "title": "Driver rollback / WHQL gating / fleet driver management",
-      "level": "L2"
-    }
-  ],
-  "oem driver": [
-    {
-      "id": "l2-drivers-001",
-      "title": "Driver rollback / WHQL gating / fleet driver management",
-      "level": "L2"
-    }
-  ],
-  "windows update for business": [
-    {
-      "id": "l2-drivers-001",
-      "title": "Driver rollback / WHQL gating / fleet driver management",
-      "level": "L2"
-    }
-  ],
-  "asr": [
-    {
-      "id": "l2-endpoint-001",
-      "title": "Defender ASR rules / Attack Surface Reduction tuning",
-      "level": "L2"
-    }
-  ],
-  "attack surface reduction": [
-    {
-      "id": "l2-endpoint-001",
-      "title": "Defender ASR rules / Attack Surface Reduction tuning",
-      "level": "L2"
-    }
-  ],
-  "defender": [
+  "block credential stealing": [
     {
       "id": "l2-endpoint-001",
       "title": "Defender ASR rules / Attack Surface Reduction tuning",
@@ -1686,38 +519,45 @@
       "level": "L2"
     }
   ],
-  "block credential stealing": [
+  "blocked by policy": [
     {
-      "id": "l2-endpoint-001",
-      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
       "level": "L2"
     }
   ],
-  "audit mode": [
+  "blocked file": [
     {
-      "id": "l2-endpoint-001",
-      "title": "Defender ASR rules / Attack Surface Reduction tuning",
-      "level": "L2"
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
     }
   ],
-  "rule guid": [
+  "blue screen": [
     {
-      "id": "l2-endpoint-001",
-      "title": "Defender ASR rules / Attack Surface Reduction tuning",
-      "level": "L2"
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
     }
   ],
-  "mail flow": [
+  "booking": [
     {
-      "id": "l2-exchange-001",
-      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
-      "level": "L2"
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
     }
   ],
-  "ndr": [
+  "boot loop": [
     {
-      "id": "l2-exchange-001",
-      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "id": "l1-windows-002",
+      "title": "Windows won't boot — stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "boot performance": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
       "level": "L2"
     }
   ],
@@ -1728,524 +568,122 @@
       "level": "L2"
     }
   ],
-  "5.7.x": [
-    {
-      "id": "l2-exchange-001",
-      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
-      "level": "L2"
-    }
-  ],
-  "message trace": [
-    {
-      "id": "l2-exchange-001",
-      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
-      "level": "L2"
-    }
-  ],
-  "dkim": [
-    {
-      "id": "l2-exchange-001",
-      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
-      "level": "L2"
-    }
-  ],
-  "spf": [
-    {
-      "id": "l2-exchange-001",
-      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
-      "level": "L2"
-    }
-  ],
-  "dmarc": [
-    {
-      "id": "l2-exchange-001",
-      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
-      "level": "L2"
-    }
-  ],
-  "connector": [
-    {
-      "id": "l2-exchange-001",
-      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
-      "level": "L2"
-    }
-  ],
-  "intune": [
-    {
-      "id": "l2-intune-001",
-      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
-      "level": "L2"
-    }
-  ],
-  "device compliance": [
-    {
-      "id": "l2-intune-001",
-      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
-      "level": "L2"
-    }
-  ],
-  "not compliant": [
-    {
-      "id": "l2-intune-001",
-      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
-      "level": "L2"
-    }
-  ],
-  "enrollment failed": [
-    {
-      "id": "l2-intune-001",
-      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
-      "level": "L2"
-    }
-  ],
-  "hybrid join": [
-    {
-      "id": "l2-intune-001",
-      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
-      "level": "L2"
-    }
-  ],
-  "company portal": [
-    {
-      "id": "l2-intune-001",
-      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
-      "level": "L2"
-    }
-  ],
-  "device not registered": [
-    {
-      "id": "l2-intune-001",
-      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
-      "level": "L2"
-    }
-  ],
-  "malware": [
-    {
-      "id": "l2-malware-001",
-      "title": "Malware / suspected infection: triage and containment",
-      "level": "L2"
-    }
-  ],
-  "virus": [
-    {
-      "id": "l2-malware-001",
-      "title": "Malware / suspected infection: triage and containment",
-      "level": "L2"
-    }
-  ],
-  "infected": [
-    {
-      "id": "l2-malware-001",
-      "title": "Malware / suspected infection: triage and containment",
-      "level": "L2"
-    }
-  ],
-  "ransomware": [
-    {
-      "id": "l2-malware-001",
-      "title": "Malware / suspected infection: triage and containment",
-      "level": "L2"
-    }
-  ],
-  "compromised": [
-    {
-      "id": "l2-malware-001",
-      "title": "Malware / suspected infection: triage and containment",
-      "level": "L2"
-    }
-  ],
-  "quarantine": [
-    {
-      "id": "l2-malware-001",
-      "title": "Malware / suspected infection: triage and containment",
-      "level": "L2"
-    }
-  ],
-  "mde": [
-    {
-      "id": "l2-malware-001",
-      "title": "Malware / suspected infection: triage and containment",
-      "level": "L2"
-    }
-  ],
-  "defender for endpoint": [
-    {
-      "id": "l2-malware-001",
-      "title": "Malware / suspected infection: triage and containment",
-      "level": "L2"
-    }
-  ],
-  "isolation": [
-    {
-      "id": "l2-malware-001",
-      "title": "Malware / suspected infection: triage and containment",
-      "level": "L2"
-    }
-  ],
-  "latency": [
-    {
-      "id": "l2-networking-001",
-      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
-      "level": "L2"
-    }
-  ],
-  "packet loss": [
-    {
-      "id": "l2-networking-001",
-      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
-      "level": "L2"
-    }
-  ],
-  "mtu": [
-    {
-      "id": "l2-networking-001",
-      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
-      "level": "L2"
-    }
-  ],
-  "jumbo frames": [
-    {
-      "id": "l2-networking-001",
-      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
-      "level": "L2"
-    }
-  ],
-  "traceroute": [
-    {
-      "id": "l2-networking-001",
-      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
-      "level": "L2"
-    }
-  ],
-  "mtr": [
-    {
-      "id": "l2-networking-001",
-      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
-      "level": "L2"
-    }
-  ],
-  "pmtud": [
-    {
-      "id": "l2-networking-001",
-      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
-      "level": "L2"
-    }
-  ],
-  "duplex": [
-    {
-      "id": "l2-networking-001",
-      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
-      "level": "L2"
-    }
-  ],
-  "errors": [
-    {
-      "id": "l2-networking-001",
-      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
-      "level": "L2"
-    }
-  ],
-  "offboarding": [
-    {
-      "id": "l2-offboarding-001",
-      "title": "User offboarding: identity disable, data preservation, license recovery",
-      "level": "L2"
-    }
-  ],
-  "termination": [
-    {
-      "id": "l2-offboarding-001",
-      "title": "User offboarding: identity disable, data preservation, license recovery",
-      "level": "L2"
-    }
-  ],
-  "exit": [
-    {
-      "id": "l2-offboarding-001",
-      "title": "User offboarding: identity disable, data preservation, license recovery",
-      "level": "L2"
-    }
-  ],
-  "disable account": [
-    {
-      "id": "l2-offboarding-001",
-      "title": "User offboarding: identity disable, data preservation, license recovery",
-      "level": "L2"
-    }
-  ],
-  "litigation hold": [
-    {
-      "id": "l2-offboarding-001",
-      "title": "User offboarding: identity disable, data preservation, license recovery",
-      "level": "L2"
-    }
-  ],
-  "shared mailbox": [
-    {
-      "id": "l2-offboarding-001",
-      "title": "User offboarding: identity disable, data preservation, license recovery",
-      "level": "L2"
-    }
-  ],
-  "license reclaim": [
-    {
-      "id": "l2-offboarding-001",
-      "title": "User offboarding: identity disable, data preservation, license recovery",
-      "level": "L2"
-    }
-  ],
-  "sessions revoked": [
-    {
-      "id": "l2-offboarding-001",
-      "title": "User offboarding: identity disable, data preservation, license recovery",
-      "level": "L2"
-    }
-  ],
-  "onboarding": [
-    {
-      "id": "l2-onboarding-001",
-      "title": "New user onboarding: account, license, device, and access provisioning",
-      "level": "L2"
-    }
-  ],
-  "new hire": [
-    {
-      "id": "l2-onboarding-001",
-      "title": "New user onboarding: account, license, device, and access provisioning",
-      "level": "L2"
-    }
-  ],
-  "provisioning": [
-    {
-      "id": "l2-onboarding-001",
-      "title": "New user onboarding: account, license, device, and access provisioning",
-      "level": "L2"
-    }
-  ],
-  "first day": [
-    {
-      "id": "l2-onboarding-001",
-      "title": "New user onboarding: account, license, device, and access provisioning",
-      "level": "L2"
-    }
-  ],
-  "account creation": [
-    {
-      "id": "l2-onboarding-001",
-      "title": "New user onboarding: account, license, device, and access provisioning",
-      "level": "L2"
-    }
-  ],
-  "license assignment": [
-    {
-      "id": "l2-onboarding-001",
-      "title": "New user onboarding: account, license, device, and access provisioning",
-      "level": "L2"
-    }
-  ],
-  "device deployment": [
-    {
-      "id": "l2-onboarding-001",
-      "title": "New user onboarding: account, license, device, and access provisioning",
-      "level": "L2"
-    }
-  ],
-  "group based licensing": [
-    {
-      "id": "l2-onboarding-001",
-      "title": "New user onboarding: account, license, device, and access provisioning",
-      "level": "L2"
-    }
-  ],
-  "wpr": [
-    {
-      "id": "l2-performance-001",
-      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
-      "level": "L2"
-    }
-  ],
-  "xperf": [
-    {
-      "id": "l2-performance-001",
-      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
-      "level": "L2"
-    }
-  ],
-  "traces": [
-    {
-      "id": "l2-performance-001",
-      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
-      "level": "L2"
-    }
-  ],
-  "boot performance": [
-    {
-      "id": "l2-performance-001",
-      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
-      "level": "L2"
-    }
-  ],
-  "long delay": [
-    {
-      "id": "l2-performance-001",
-      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
-      "level": "L2"
-    }
-  ],
-  "hang": [
-    {
-      "id": "l2-performance-001",
-      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
-      "level": "L2"
-    }
-  ],
-  "ntfs": [
-    {
-      "id": "l2-permissions-001",
-      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
-      "level": "L2"
-    }
-  ],
-  "permissions": [
-    {
-      "id": "l2-permissions-001",
-      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
-      "level": "L2"
-    },
+  "broken inheritance": [
     {
       "id": "l2-sharepoint-001",
       "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
       "level": "L2"
     }
   ],
-  "access denied": [
+  "browser": [
     {
-      "id": "l2-permissions-001",
-      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
-      "level": "L2"
-    },
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "bsod": [
     {
-      "id": "l2-sharepoint-001",
-      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "budget": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "business email compromise": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing — what to do",
+      "level": "L1"
+    }
+  ],
+  "c drive full": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "cache": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "cached credential": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
       "level": "L2"
     }
   ],
-  "share": [
+  "calendar": [
     {
-      "id": "l2-permissions-001",
-      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
-      "level": "L2"
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
     }
   ],
-  "inheritance": [
+  "can't connect": [
     {
-      "id": "l2-permissions-001",
-      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
-      "level": "L2"
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
     }
   ],
-  "take ownership": [
+  "can't hear": [
     {
-      "id": "l2-permissions-001",
-      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
-      "level": "L2"
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
     }
   ],
-  "icacls": [
+  "can't send": [
     {
-      "id": "l2-permissions-001",
-      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
-      "level": "L2"
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
     }
   ],
-  "effective access": [
+  "can't sign in": [
     {
-      "id": "l2-permissions-001",
-      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
-      "level": "L2"
-    }
-  ],
-  "print server": [
-    {
-      "id": "l2-printers-001",
-      "title": "Print server / queue management / Universal Print rollout",
-      "level": "L2"
-    }
-  ],
-  "universal print": [
-    {
-      "id": "l2-printers-001",
-      "title": "Print server / queue management / Universal Print rollout",
-      "level": "L2"
-    }
-  ],
-  "printnightmare": [
-    {
-      "id": "l2-printers-001",
-      "title": "Print server / queue management / Universal Print rollout",
-      "level": "L2"
-    }
-  ],
-  "point and print": [
-    {
-      "id": "l2-printers-001",
-      "title": "Print server / queue management / Universal Print rollout",
-      "level": "L2"
-    }
-  ],
-  "driver isolation": [
-    {
-      "id": "l2-printers-001",
-      "title": "Print server / queue management / Universal Print rollout",
-      "level": "L2"
-    }
-  ],
-  "0x0000011b": [
-    {
-      "id": "l2-printers-001",
-      "title": "Print server / queue management / Universal Print rollout",
-      "level": "L2"
-    }
-  ],
-  "rdp": [
-    {
-      "id": "l2-rdp-001",
-      "title": "Remote Desktop (RDP) / RDS connection issues",
-      "level": "L2"
-    }
-  ],
-  "remote desktop": [
-    {
-      "id": "l2-rdp-001",
-      "title": "Remote Desktop (RDP) / RDS connection issues",
-      "level": "L2"
-    }
-  ],
-  "rds": [
-    {
-      "id": "l2-rdp-001",
-      "title": "Remote Desktop (RDP) / RDS connection issues",
-      "level": "L2"
-    }
-  ],
-  "terminal server": [
-    {
-      "id": "l2-rdp-001",
-      "title": "Remote Desktop (RDP) / RDS connection issues",
-      "level": "L2"
-    }
-  ],
-  "rd gateway": [
-    {
-      "id": "l2-rdp-001",
-      "title": "Remote Desktop (RDP) / RDS connection issues",
-      "level": "L2"
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
     }
   ],
   "cant connect": [
     {
       "id": "l2-rdp-001",
       "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "cant reach internal app": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "cant sign in passkey": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "casb": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
       "level": "L2"
     }
   ],
@@ -2256,60 +694,11 @@
       "level": "L2"
     }
   ],
-  "licensing grace period": [
+  "certificate authority": [
     {
-      "id": "l2-rdp-001",
-      "title": "Remote Desktop (RDP) / RDS connection issues",
-      "level": "L2"
-    }
-  ],
-  "sharepoint": [
-    {
-      "id": "l2-sharepoint-001",
-      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
-      "level": "L2"
-    }
-  ],
-  "broken inheritance": [
-    {
-      "id": "l2-sharepoint-001",
-      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
-      "level": "L2"
-    }
-  ],
-  "sharing audit": [
-    {
-      "id": "l2-sharepoint-001",
-      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
-      "level": "L2"
-    }
-  ],
-  "link sharing": [
-    {
-      "id": "l2-sharepoint-001",
-      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
-      "level": "L2"
-    }
-  ],
-  "everyone except external": [
-    {
-      "id": "l2-sharepoint-001",
-      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
-      "level": "L2"
-    }
-  ],
-  "guests": [
-    {
-      "id": "l2-sharepoint-001",
-      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
-      "level": "L2"
-    }
-  ],
-  "vpn gateway": [
-    {
-      "id": "l2-vpn-001",
-      "title": "VPN gateway, certificates, and Always-On profile management",
-      "level": "L2"
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
     }
   ],
   "certificate expired": [
@@ -2319,312 +708,102 @@
       "level": "L2"
     }
   ],
-  "aovpn": [
+  "certificate rollover": [
     {
-      "id": "l2-vpn-001",
-      "title": "VPN gateway, certificates, and Always-On profile management",
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "channel utilization": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
       "level": "L2"
     }
   ],
-  "device tunnel": [
+  "channel width": [
     {
-      "id": "l2-vpn-001",
-      "title": "VPN gateway, certificates, and Always-On profile management",
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
       "level": "L2"
     }
   ],
-  "user tunnel": [
+  "check business": [
     {
-      "id": "l2-vpn-001",
-      "title": "VPN gateway, certificates, and Always-On profile management",
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research — is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "chrome": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "cis": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "cisco anyconnect": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "claims": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "cleanup": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "clear space": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "closes immediately": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "level": "L1"
+    }
+  ],
+  "cloud sync": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "cluster": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "co-channel interference": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
       "level": "L2"
-    }
-  ],
-  "rras": [
-    {
-      "id": "l2-vpn-001",
-      "title": "VPN gateway, certificates, and Always-On profile management",
-      "level": "L2"
-    }
-  ],
-  "ikev2": [
-    {
-      "id": "l2-vpn-001",
-      "title": "VPN gateway, certificates, and Always-On profile management",
-      "level": "L2"
-    }
-  ],
-  "profile corrupted": [
-    {
-      "id": "l2-windows-001",
-      "title": "Windows user profile corrupted / temp profile / rebuild",
-      "level": "L2"
-    }
-  ],
-  "temp profile": [
-    {
-      "id": "l2-windows-001",
-      "title": "Windows user profile corrupted / temp profile / rebuild",
-      "level": "L2"
-    }
-  ],
-  "profile rebuild": [
-    {
-      "id": "l2-windows-001",
-      "title": "Windows user profile corrupted / temp profile / rebuild",
-      "level": "L2"
-    }
-  ],
-  "we can't sign in to your account": [
-    {
-      "id": "l2-windows-001",
-      "title": "Windows user profile corrupted / temp profile / rebuild",
-      "level": "L2"
-    }
-  ],
-  "user shell folders": [
-    {
-      "id": "l2-windows-001",
-      "title": "Windows user profile corrupted / temp profile / rebuild",
-      "level": "L2"
-    }
-  ],
-  "regedit profilelist": [
-    {
-      "id": "l2-windows-001",
-      "title": "Windows user profile corrupted / temp profile / rebuild",
-      "level": "L2"
-    }
-  ],
-  "immutable backup": [
-    {
-      "id": "l3-backup-dr-002",
-      "title": "Immutable / air-gapped backup design (anti-ransomware)",
-      "level": "L3"
-    }
-  ],
-  "air gap": [
-    {
-      "id": "l3-backup-dr-002",
-      "title": "Immutable / air-gapped backup design (anti-ransomware)",
-      "level": "L3"
-    }
-  ],
-  "object lock": [
-    {
-      "id": "l3-backup-dr-002",
-      "title": "Immutable / air-gapped backup design (anti-ransomware)",
-      "level": "L3"
-    }
-  ],
-  "ransomware proof": [
-    {
-      "id": "l3-backup-dr-002",
-      "title": "Immutable / air-gapped backup design (anti-ransomware)",
-      "level": "L3"
-    }
-  ],
-  "3-2-1-1-0": [
-    {
-      "id": "l3-backup-dr-002",
-      "title": "Immutable / air-gapped backup design (anti-ransomware)",
-      "level": "L3"
-    }
-  ],
-  "veeam hardened repository": [
-    {
-      "id": "l3-backup-dr-002",
-      "title": "Immutable / air-gapped backup design (anti-ransomware)",
-      "level": "L3"
-    }
-  ],
-  "aws s3 object lock": [
-    {
-      "id": "l3-backup-dr-002",
-      "title": "Immutable / air-gapped backup design (anti-ransomware)",
-      "level": "L3"
-    }
-  ],
-  "azure backup vault": [
-    {
-      "id": "l3-backup-dr-002",
-      "title": "Immutable / air-gapped backup design (anti-ransomware)",
-      "level": "L3"
-    }
-  ],
-  "pki": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "certificate authority": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "ad cs": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "autoenroll": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "crl": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "ocsp": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "subordinate ca": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "root ca": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "hsm": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "revoke": [
-    {
-      "id": "l3-certificates-001",
-      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
-      "level": "L3"
-    }
-  ],
-  "azure": [
-    {
-      "id": "l3-cloud-001",
-      "title": "Azure tenant + subscription design / landing zones",
-      "level": "L3"
-    }
-  ],
-  "tenant": [
-    {
-      "id": "l3-cloud-001",
-      "title": "Azure tenant + subscription design / landing zones",
-      "level": "L3"
-    }
-  ],
-  "subscription": [
-    {
-      "id": "l3-cloud-001",
-      "title": "Azure tenant + subscription design / landing zones",
-      "level": "L3"
-    }
-  ],
-  "landing zone": [
-    {
-      "id": "l3-cloud-001",
-      "title": "Azure tenant + subscription design / landing zones",
-      "level": "L3"
-    }
-  ],
-  "management groups": [
-    {
-      "id": "l3-cloud-001",
-      "title": "Azure tenant + subscription design / landing zones",
-      "level": "L3"
-    }
-  ],
-  "azure policy": [
-    {
-      "id": "l3-cloud-001",
-      "title": "Azure tenant + subscription design / landing zones",
-      "level": "L3"
-    }
-  ],
-  "rbac": [
-    {
-      "id": "l3-cloud-001",
-      "title": "Azure tenant + subscription design / landing zones",
-      "level": "L3"
-    }
-  ],
-  "cost management": [
-    {
-      "id": "l3-cloud-001",
-      "title": "Azure tenant + subscription design / landing zones",
-      "level": "L3"
-    }
-  ],
-  "identity": [
-    {
-      "id": "l3-cloud-001",
-      "title": "Azure tenant + subscription design / landing zones",
-      "level": "L3"
-    }
-  ],
-  "disaster recovery": [
-    {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
-    }
-  ],
-  "dr": [
-    {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
-    }
-  ],
-  "rto": [
-    {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
-    }
-  ],
-  "rpo": [
-    {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
-    }
-  ],
-  "veeam": [
-    {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
-    }
-  ],
-  "rubrik": [
-    {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
     }
   ],
   "cohesity": [
@@ -2634,64 +813,87 @@
       "level": "L3"
     }
   ],
-  "immutable": [
+  "company portal": [
     {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
     }
   ],
-  "3-2-1": [
+  "compare products": [
     {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly — what specs matter and which are marketing",
+      "level": "GA"
     }
   ],
-  "tabletop": [
+  "compliant device required": [
     {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
-    },
-    {
-      "id": "l3-security-001",
-      "title": "Security incident response runbook (P1 cyber incident)",
-      "level": "L3"
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
     }
   ],
-  "bcp": [
+  "compromised": [
     {
-      "id": "l3-disaster-recovery-001",
-      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
-      "level": "L3"
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
     }
   ],
-  "edr": [
+  "conditional access": [
     {
-      "id": "l3-endpoint-001",
-      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
-      "level": "L3"
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
     }
   ],
-  "applocker": [
+  "conditional forwarder": [
     {
-      "id": "l3-endpoint-001",
-      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
-      "level": "L3"
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
     }
   ],
-  "wdac": [
+  "configuration profiles": [
     {
-      "id": "l3-endpoint-001",
-      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
-      "level": "L3"
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
     }
   ],
-  "device guard": [
+  "confirmation": [
     {
-      "id": "l3-endpoint-001",
-      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "connector": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "cookies": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "corrupt print": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "cost management": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
       "level": "L3"
     }
   ],
@@ -2702,53 +904,53 @@
       "level": "L3"
     }
   ],
-  "hvci": [
+  "credit card": [
     {
-      "id": "l3-endpoint-001",
-      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "critical_process_died": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "crl": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
       "level": "L3"
     }
   ],
-  "hardening": [
+  "cyber incident": [
     {
-      "id": "l3-endpoint-001",
-      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
       "level": "L3"
     }
   ],
-  "cis": [
+  "debit": [
     {
-      "id": "l3-endpoint-001",
-      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
-      "level": "L3"
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
+      "level": "GA"
     }
   ],
-  "stig": [
+  "defender": [
     {
-      "id": "l3-endpoint-001",
-      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
-      "level": "L3"
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
     }
   ],
-  "msp": [
+  "defender for endpoint": [
     {
-      "id": "l3-enterprise-001",
-      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
-      "level": "L3"
-    }
-  ],
-  "multi tenant": [
-    {
-      "id": "l3-enterprise-001",
-      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
-      "level": "L3"
-    }
-  ],
-  "lighthouse": [
-    {
-      "id": "l3-enterprise-001",
-      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
-      "level": "L3"
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
     }
   ],
   "delegated administration": [
@@ -2758,25 +960,763 @@
       "level": "L3"
     }
   ],
-  "psa": [
+  "delete lost device passkey": [
     {
-      "id": "l3-enterprise-001",
-      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "deleted file": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "deployment": [
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "device compliance": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "device deployment": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "device guard": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
       "level": "L3"
     }
   ],
-  "rmm": [
+  "device images": [
     {
-      "id": "l3-enterprise-001",
-      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "device not registered": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "device tunnel": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "dhcp": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "disable account": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "disaster recovery": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
       "level": "L3"
     }
   ],
-  "automation": [
+  "disk full": [
     {
-      "id": "l3-enterprise-001",
-      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "dkim": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "dkim selector cname": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "dkim setup": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "dmarc": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "dmarc p=reject": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "dmarc policy": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "dmarc rua report": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "dmv": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "dns": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "dns scavenging": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "domain being spoofed": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "dr": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
       "level": "L3"
+    }
+  ],
+  "driver": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "driver isolation": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "driver_irql": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "dropped connection": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "duplex": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "duplicate file": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict — 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "edge": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "edr": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "effective access": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "elderly": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "eli5": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "email authentication failing": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "email going to spam": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "email not sending": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "email scam": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing — what to do",
+      "level": "L1"
+    }
+  ],
+  "email spoofing protection": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "email stuck": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "emergency fund": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "emergency patch": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "enrollment failed": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "entra": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "entra passkey": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "error printing": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "errors": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "everyone except external": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "exe won't run": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "level": "L1"
+    }
+  ],
+  "exfiltration": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "exit": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "explain simply": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "failover": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "fake site": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "federation": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    },
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "fido2 key": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "file conflict": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict — 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "fill out form": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "firefox": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "firewall": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "first day": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "first time online": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "forgot password": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "fortinet": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "fwaas": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "garbled print": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "gift card": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "globalprotect": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "google authenticator": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "google pay": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "government form": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "group based licensing": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "guests": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "hang": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "hardening": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "hardware change": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "help me buy": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "help my parent": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "high cpu": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    },
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "high disk usage": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "high memory": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "how does it work": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "how to buy": [
+    {
+      "id": "ga-shopping-001",
+      "title": "Online shopping: how to buy something safely from start to finish",
+      "level": "GA"
+    }
+  ],
+  "how to use a passkey": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "hsm": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "hub spoke": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "hvci": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "hybrid identity": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "hybrid join": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "icacls": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "identity": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "identity policy denied": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "identity provider": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "ikev2": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "immutable": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "immutable backup": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "inbox not updating": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "incident response": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "infected": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "inheritance": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "intune": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "intune driver": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "is this real": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research — is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "is this site safe": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "isolation": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
     }
   ],
   "itil": [
@@ -2793,107 +1733,303 @@
       "level": "L3"
     }
   ],
-  "azure ad connect": [
+  "jumbo frames": [
     {
-      "id": "l3-hybrid-ad-001",
-      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
-      "level": "L3"
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
     }
   ],
-  "aad connect": [
-    {
-      "id": "l3-hybrid-ad-001",
-      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
-      "level": "L3"
-    }
-  ],
-  "hybrid identity": [
-    {
-      "id": "l3-hybrid-ad-001",
-      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
-      "level": "L3"
-    }
-  ],
-  "sync": [
-    {
-      "id": "l3-hybrid-ad-001",
-      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
-      "level": "L3"
-    }
-  ],
-  "password hash sync": [
-    {
-      "id": "l3-hybrid-ad-001",
-      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
-      "level": "L3"
-    }
-  ],
-  "pass-through auth": [
-    {
-      "id": "l3-hybrid-ad-001",
-      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
-      "level": "L3"
-    }
-  ],
-  "federation": [
-    {
-      "id": "l3-hybrid-ad-001",
-      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
-      "level": "L3"
-    },
+  "jwt": [
     {
       "id": "l3-sso-saml-001",
       "title": "SSO / SAML / OIDC: federation troubleshooting",
       "level": "L3"
     }
   ],
-  "cloud sync": [
+  "kernel panic": [
     {
-      "id": "l3-hybrid-ad-001",
-      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "kill chain": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
       "level": "L3"
     }
   ],
-  "writeback": [
+  "laggy": [
     {
-      "id": "l3-hybrid-ad-001",
-      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "landing zone": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
       "level": "L3"
     }
   ],
-  "network architecture": [
+  "large text": [
     {
-      "id": "l3-networking-001",
-      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "latency": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "lateral movement": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
       "level": "L3"
     }
   ],
-  "segmentation": [
+  "lease": [
     {
-      "id": "l3-networking-001",
-      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "license": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues — apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "license assignment": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "license reclaim": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "licensing grace period": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "lighthouse": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
       "level": "L3"
     }
   ],
-  "zero trust": [
+  "link sharing": [
     {
-      "id": "l3-networking-001",
-      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "litigation hold": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "locations": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "locked out": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    },
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "login loop": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "long delay": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "look-alike domain": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "looking for changes": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "lost passkey": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "lost phone": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "low disk space": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "m365": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "mail flow": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "mail rejected external": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "maintenance window": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "malware": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "manage-bde": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "management groups": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
       "level": "L3"
     }
   ],
-  "sd-wan": [
+  "mde": [
     {
-      "id": "l3-networking-001",
-      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
-      "level": "L3"
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
     }
   ],
-  "hub spoke": [
+  "memory_management": [
     {
-      "id": "l3-networking-001",
-      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
-      "level": "L3"
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "merged file": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict — 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "message trace": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "mfa": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "mfa code": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "mfa policy": [
+    {
+      "id": "l2-azure-ad-001",
+      "title": "Conditional Access blocking sign-in (AADSTS53003 / 53000)",
+      "level": "L2"
+    }
+  ],
+  "mic not working": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "microphone": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
     }
   ],
   "microsegmentation": [
@@ -2903,60 +2039,53 @@
       "level": "L3"
     }
   ],
-  "vlans": [
+  "microsoft 365": [
     {
-      "id": "l3-networking-001",
-      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "microsoft 365 passkey": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "microsoft authenticator": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "mint": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "missing emails": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "msp": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
       "level": "L3"
     }
   ],
-  "firewall": [
+  "mtr": [
     {
-      "id": "l3-networking-001",
-      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
-      "level": "L3"
-    }
-  ],
-  "nva": [
-    {
-      "id": "l3-networking-001",
-      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
-      "level": "L3"
-    }
-  ],
-  "incident response": [
-    {
-      "id": "l3-security-001",
-      "title": "Security incident response runbook (P1 cyber incident)",
-      "level": "L3"
-    }
-  ],
-  "cyber incident": [
-    {
-      "id": "l3-security-001",
-      "title": "Security incident response runbook (P1 cyber incident)",
-      "level": "L3"
-    }
-  ],
-  "p1": [
-    {
-      "id": "l3-security-001",
-      "title": "Security incident response runbook (P1 cyber incident)",
-      "level": "L3"
-    }
-  ],
-  "soc": [
-    {
-      "id": "l3-security-001",
-      "title": "Security incident response runbook (P1 cyber incident)",
-      "level": "L3"
-    }
-  ],
-  "kill chain": [
-    {
-      "id": "l3-security-001",
-      "title": "Security incident response runbook (P1 cyber incident)",
-      "level": "L3"
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
     }
   ],
   "mttc": [
@@ -2973,126 +2102,250 @@
       "level": "L3"
     }
   ],
-  "exfiltration": [
+  "mtu": [
     {
-      "id": "l3-security-001",
-      "title": "Security incident response runbook (P1 cyber incident)",
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "multi factor": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "multi tenant": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
       "level": "L3"
     }
   ],
-  "lateral movement": [
+  "my computer copy": [
     {
-      "id": "l3-security-001",
-      "title": "Security incident response runbook (P1 cyber incident)",
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict — 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "name resolution": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "ndr": [
+    {
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "net::err_cert": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "network architecture": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
       "level": "L3"
     }
   ],
-  "windows server": [
+  "new hire": [
     {
-      "id": "l3-server-001",
-      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "new phone": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "new phone passkey": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "new teams not opening": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "no audio": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    },
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "no audio output device": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "no internet": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "no internet secured": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "no sound": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "non-technical": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "non-technical explanation": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "not compliant": [
+    {
+      "id": "l2-intune-001",
+      "title": "Intune device compliance: device shows non-compliant or fails to enroll",
+      "level": "L2"
+    }
+  ],
+  "not loading": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "not opening": [
+    {
+      "id": "l1-windows-006",
+      "title": "An app won't open / closes immediately / shows error on launch",
+      "level": "L1"
+    }
+  ],
+  "not printing": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "not receiving emails": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "not syncing": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "ntfs": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "nva": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
       "level": "L3"
     }
   ],
-  "server role": [
+  "object lock": [
     {
-      "id": "l3-server-001",
-      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
       "level": "L3"
     }
   ],
-  "patching": [
+  "ocsp": [
     {
-      "id": "l3-server-001",
-      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
       "level": "L3"
     }
   ],
-  "cluster": [
+  "oem driver": [
     {
-      "id": "l3-server-001",
-      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
-      "level": "L3"
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
     }
   ],
-  "storage spaces direct": [
+  "offboarding": [
     {
-      "id": "l3-server-001",
-      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
-      "level": "L3"
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
     }
   ],
-  "sconfig": [
+  "office 365": [
     {
-      "id": "l3-server-001",
-      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
-      "level": "L3"
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
     }
   ],
-  "server core": [
+  "office activation": [
     {
-      "id": "l3-server-001",
-      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
-      "level": "L3"
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues — apps in reduced functionality",
+      "level": "L1"
     }
   ],
-  "sysprep": [
+  "offline": [
     {
-      "id": "l3-server-001",
-      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
-      "level": "L3"
-    }
-  ],
-  "sso": [
-    {
-      "id": "l3-sso-saml-001",
-      "title": "SSO / SAML / OIDC: federation troubleshooting",
-      "level": "L3"
-    }
-  ],
-  "saml": [
-    {
-      "id": "l3-sso-saml-001",
-      "title": "SSO / SAML / OIDC: federation troubleshooting",
-      "level": "L3"
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
     }
   ],
   "oidc": [
-    {
-      "id": "l3-sso-saml-001",
-      "title": "SSO / SAML / OIDC: federation troubleshooting",
-      "level": "L3"
-    }
-  ],
-  "identity provider": [
-    {
-      "id": "l3-sso-saml-001",
-      "title": "SSO / SAML / OIDC: federation troubleshooting",
-      "level": "L3"
-    }
-  ],
-  "service provider": [
-    {
-      "id": "l3-sso-saml-001",
-      "title": "SSO / SAML / OIDC: federation troubleshooting",
-      "level": "L3"
-    }
-  ],
-  "assertion": [
-    {
-      "id": "l3-sso-saml-001",
-      "title": "SSO / SAML / OIDC: federation troubleshooting",
-      "level": "L3"
-    }
-  ],
-  "claims": [
-    {
-      "id": "l3-sso-saml-001",
-      "title": "SSO / SAML / OIDC: federation troubleshooting",
-      "level": "L3"
-    }
-  ],
-  "jwt": [
     {
       "id": "l3-sso-saml-001",
       "title": "SSO / SAML / OIDC: federation troubleshooting",
@@ -3106,388 +2359,31 @@
       "level": "L3"
     }
   ],
-  "entra": [
+  "onboarding": [
     {
-      "id": "l3-sso-saml-001",
-      "title": "SSO / SAML / OIDC: federation troubleshooting",
-      "level": "L3"
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
     }
   ],
-  "certificate rollover": [
+  "onedrive": [
     {
-      "id": "l3-sso-saml-001",
-      "title": "SSO / SAML / OIDC: federation troubleshooting",
-      "level": "L3"
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
     }
   ],
-  "booking": [
+  "onedrive recycle bin": [
     {
-      "id": "ga-booking-001",
-      "title": "Booking appointments online (medical, restaurant, services)",
-      "level": "GA"
-    }
-  ],
-  "appointment": [
-    {
-      "id": "ga-booking-001",
-      "title": "Booking appointments online (medical, restaurant, services)",
-      "level": "GA"
-    }
-  ],
-  "schedule": [
-    {
-      "id": "ga-booking-001",
-      "title": "Booking appointments online (medical, restaurant, services)",
-      "level": "GA"
-    }
-  ],
-  "opentable": [
-    {
-      "id": "ga-booking-001",
-      "title": "Booking appointments online (medical, restaurant, services)",
-      "level": "GA"
-    }
-  ],
-  "resy": [
-    {
-      "id": "ga-booking-001",
-      "title": "Booking appointments online (medical, restaurant, services)",
-      "level": "GA"
-    }
-  ],
-  "calendar": [
-    {
-      "id": "ga-booking-001",
-      "title": "Booking appointments online (medical, restaurant, services)",
-      "level": "GA"
-    }
-  ],
-  "confirmation": [
-    {
-      "id": "ga-booking-001",
-      "title": "Booking appointments online (medical, restaurant, services)",
-      "level": "GA"
-    }
-  ],
-  "budget": [
-    {
-      "id": "ga-budgeting-001",
-      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
-      "level": "GA"
-    }
-  ],
-  "50 30 20": [
-    {
-      "id": "ga-budgeting-001",
-      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
-      "level": "GA"
-    }
-  ],
-  "track spending": [
-    {
-      "id": "ga-budgeting-001",
-      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
-      "level": "GA"
-    }
-  ],
-  "personal finance": [
-    {
-      "id": "ga-budgeting-001",
-      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
-      "level": "GA"
-    }
-  ],
-  "saving": [
-    {
-      "id": "ga-budgeting-001",
-      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
-      "level": "GA"
-    }
-  ],
-  "emergency fund": [
-    {
-      "id": "ga-budgeting-001",
-      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
-      "level": "GA"
-    }
-  ],
-  "ynab": [
-    {
-      "id": "ga-budgeting-001",
-      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
-      "level": "GA"
-    }
-  ],
-  "mint": [
-    {
-      "id": "ga-budgeting-001",
-      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
-      "level": "GA"
-    }
-  ],
-  "safe checkout": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "payment method": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "credit card": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "paypal": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "apple pay": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "google pay": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "virtual card": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "debit": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "wire transfer": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "gift card": [
-    {
-      "id": "ga-checkout-001",
-      "title": "Safe online checkout \u2014 payment options ranked",
-      "level": "GA"
-    }
-  ],
-  "explain simply": [
-    {
-      "id": "ga-explanation-001",
-      "title": "Explaining technology in simple language (analogies + framing)",
-      "level": "GA"
-    }
-  ],
-  "analogy": [
-    {
-      "id": "ga-explanation-001",
-      "title": "Explaining technology in simple language (analogies + framing)",
-      "level": "GA"
-    }
-  ],
-  "eli5": [
-    {
-      "id": "ga-explanation-001",
-      "title": "Explaining technology in simple language (analogies + framing)",
-      "level": "GA"
-    }
-  ],
-  "what is": [
-    {
-      "id": "ga-explanation-001",
-      "title": "Explaining technology in simple language (analogies + framing)",
-      "level": "GA"
-    }
-  ],
-  "how does it work": [
-    {
-      "id": "ga-explanation-001",
-      "title": "Explaining technology in simple language (analogies + framing)",
-      "level": "GA"
-    }
-  ],
-  "non-technical explanation": [
-    {
-      "id": "ga-explanation-001",
-      "title": "Explaining technology in simple language (analogies + framing)",
-      "level": "GA"
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
     }
   ],
   "online form": [
     {
       "id": "ga-form-filling-001",
       "title": "Filling out forms online safely",
-      "level": "GA"
-    }
-  ],
-  "fill out form": [
-    {
-      "id": "ga-form-filling-001",
-      "title": "Filling out forms online safely",
-      "level": "GA"
-    }
-  ],
-  "autofill": [
-    {
-      "id": "ga-form-filling-001",
-      "title": "Filling out forms online safely",
-      "level": "GA"
-    }
-  ],
-  "government form": [
-    {
-      "id": "ga-form-filling-001",
-      "title": "Filling out forms online safely",
-      "level": "GA"
-    }
-  ],
-  "tax form": [
-    {
-      "id": "ga-form-filling-001",
-      "title": "Filling out forms online safely",
-      "level": "GA"
-    }
-  ],
-  "dmv": [
-    {
-      "id": "ga-form-filling-001",
-      "title": "Filling out forms online safely",
-      "level": "GA"
-    }
-  ],
-  "safety": [
-    {
-      "id": "ga-form-filling-001",
-      "title": "Filling out forms online safely",
-      "level": "GA"
-    }
-  ],
-  "scam website": [
-    {
-      "id": "ga-scam-001",
-      "title": "Detecting fake / scam websites and phishing pages",
-      "level": "GA"
-    }
-  ],
-  "fake site": [
-    {
-      "id": "ga-scam-001",
-      "title": "Detecting fake / scam websites and phishing pages",
-      "level": "GA"
-    }
-  ],
-  "look-alike domain": [
-    {
-      "id": "ga-scam-001",
-      "title": "Detecting fake / scam websites and phishing pages",
-      "level": "GA"
-    }
-  ],
-  "typo squat": [
-    {
-      "id": "ga-scam-001",
-      "title": "Detecting fake / scam websites and phishing pages",
-      "level": "GA"
-    }
-  ],
-  "is this site safe": [
-    {
-      "id": "ga-scam-001",
-      "title": "Detecting fake / scam websites and phishing pages",
-      "level": "GA"
-    }
-  ],
-  "whois": [
-    {
-      "id": "ga-scam-001",
-      "title": "Detecting fake / scam websites and phishing pages",
-      "level": "GA"
-    }
-  ],
-  "trustpilot": [
-    {
-      "id": "ga-scam-001",
-      "title": "Detecting fake / scam websites and phishing pages",
-      "level": "GA"
-    }
-  ],
-  "senior": [
-    {
-      "id": "ga-senior-001",
-      "title": "Helping seniors / non-technical users with technology",
-      "level": "GA"
-    }
-  ],
-  "elderly": [
-    {
-      "id": "ga-senior-001",
-      "title": "Helping seniors / non-technical users with technology",
-      "level": "GA"
-    }
-  ],
-  "non-technical": [
-    {
-      "id": "ga-senior-001",
-      "title": "Helping seniors / non-technical users with technology",
-      "level": "GA"
-    }
-  ],
-  "simple language": [
-    {
-      "id": "ga-senior-001",
-      "title": "Helping seniors / non-technical users with technology",
-      "level": "GA"
-    }
-  ],
-  "patient": [
-    {
-      "id": "ga-senior-001",
-      "title": "Helping seniors / non-technical users with technology",
-      "level": "GA"
-    }
-  ],
-  "large text": [
-    {
-      "id": "ga-senior-001",
-      "title": "Helping seniors / non-technical users with technology",
-      "level": "GA"
-    }
-  ],
-  "voice": [
-    {
-      "id": "ga-senior-001",
-      "title": "Helping seniors / non-technical users with technology",
-      "level": "GA"
-    }
-  ],
-  "help my parent": [
-    {
-      "id": "ga-senior-001",
-      "title": "Helping seniors / non-technical users with technology",
       "level": "GA"
     }
   ],
@@ -3498,31 +2394,759 @@
       "level": "GA"
     }
   ],
-  "how to buy": [
+  "oobe": [
     {
-      "id": "ga-shopping-001",
-      "title": "Online shopping: how to buy something safely from start to finish",
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "opentable": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
       "level": "GA"
     }
   ],
-  "first time online": [
+  "openvpn": [
     {
-      "id": "ga-shopping-001",
-      "title": "Online shopping: how to buy something safely from start to finish",
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "other people can't hear me": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "out of band patch": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "out of space": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "outbox": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "outlook": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    },
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "p1": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "packet loss": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "paper jam": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "pass-through auth": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "passive survey": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "passkey failed": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "passkey locked out": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "passkey not working": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "passkey recovery": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "passkey setup": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "passkey vs password": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "password hash sync": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "password prompt": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "password reset": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "passwordless sign in": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "patch cadence": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "patch compliance reporting": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "patch management": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "patching": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "patient": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
       "level": "GA"
     }
   ],
-  "amazon": [
+  "paused": [
     {
-      "id": "ga-shopping-001",
-      "title": "Online shopping: how to buy something safely from start to finish",
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "payment method": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
       "level": "GA"
     }
   ],
-  "shopify": [
+  "paypal": [
     {
-      "id": "ga-shopping-001",
-      "title": "Online shopping: how to buy something safely from start to finish",
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "performance": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    },
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "permissions": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    },
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "personal finance": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "phishing": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing — what to do",
+      "level": "L1"
+    },
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "phone as passkey": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "pki": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "platform passkey": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "pmtud": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "point and print": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "posture policy blocking": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "predictive survey": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "previous version": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "print queue": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    },
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "print server": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "print spooler": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "printer": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "printer driver": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "printnightmare": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "prints code": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "prints symbols": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "private app unreachable": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "product deactivated": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues — apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "profile corrupted": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "profile rebuild": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "protector": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "provisioning": [
+    {
+      "id": "l2-onboarding-001",
+      "title": "New user onboarding: account, license, device, and access provisioning",
+      "level": "L2"
+    }
+  ],
+  "psa": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "quarantine": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "quarantine vs reject": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "ransomware": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "ransomware proof": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "ransomware recovery": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "rbac": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "rd gateway": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "rdp": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "rds": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "reboot loop after update": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "recover file": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "recovery key": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "recovery prompt": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "red x": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "red x speaker icon": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "reduced functionality": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues — apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "regedit profilelist": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "register new passkey": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "remote desktop": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "remove old passkey": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "repeating lockout": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "replaced laptop passkey": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "report phishing": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing — what to do",
+      "level": "L1"
+    }
+  ],
+  "reservation": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    },
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "reset link": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "restore file": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "resy": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly — what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "revoke": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "ring deployment": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "risk acceptance exception": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "rmm": [
+    {
+      "id": "l3-enterprise-001",
+      "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "roaming passkey": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "rogue dhcp": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "rollback": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    },
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "root ca": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "rpo": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "rras": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "rssi snr targets": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "rtings": [
+    {
+      "id": "ga-shopping-002",
+      "title": "Comparing products fairly — what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "rto": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "rubrik": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "rule guid": [
+    {
+      "id": "l2-endpoint-001",
+      "title": "Defender ASR rules / Attack Surface Reduction tuning",
+      "level": "L2"
+    }
+  ],
+  "safari": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "safe checkout": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
       "level": "GA"
     }
   ],
@@ -3533,116 +3157,1115 @@
       "level": "GA"
     }
   ],
-  "help me buy": [
+  "safety": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
+      "level": "GA"
+    }
+  ],
+  "saml": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "sase": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "sase client certificate": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "saving": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "scam email": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing — what to do",
+      "level": "L1"
+    }
+  ],
+  "scam website": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "scan qr code to sign in": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "schedule": [
+    {
+      "id": "ga-booking-001",
+      "title": "Booking appointments online (medical, restaurant, services)",
+      "level": "GA"
+    }
+  ],
+  "sconfig": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "scope exhaustion": [
+    {
+      "id": "l2-dhcp-001",
+      "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
+      "level": "L2"
+    }
+  ],
+  "sd-wan": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "secretary of state": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research — is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "secure web gateway": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "security info microsoft account": [
+    {
+      "id": "l1-passkey-002",
+      "title": "Recover passkey access after a lost, replaced, or broken device",
+      "level": "L1"
+    }
+  ],
+  "security key login": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "segmentation": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "self service password reset": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "seller legit": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research — is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "send/receive": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "senior": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "server core": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "server role": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "server vs workstation patching": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "service account locked": [
+    {
+      "id": "l2-active-directory-001",
+      "title": "Active Directory: account lockout / repeating lockouts after password change",
+      "level": "L2"
+    }
+  ],
+  "service provider": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "sessions revoked": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "share": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "shared mailbox": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "sharepoint": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "sharing audit": [
+    {
+      "id": "l2-sharepoint-001",
+      "title": "SharePoint Online: permissions, broken inheritance, sharing audit",
+      "level": "L2"
+    }
+  ],
+  "shopify": [
     {
       "id": "ga-shopping-001",
       "title": "Online shopping: how to buy something safely from start to finish",
       "level": "GA"
     }
   ],
-  "assist with purchase": [
+  "sign in to activate office": [
     {
-      "id": "ga-shopping-001",
-      "title": "Online shopping: how to buy something safely from start to finish",
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues — apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "sign in without password": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "simple language": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
       "level": "GA"
     }
   ],
-  "compare products": [
+  "slow computer": [
     {
-      "id": "ga-shopping-002",
-      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "slow startup": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "slow wifi remediation": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "small business legit": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research — is this company legit?",
       "level": "GA"
     }
   ],
-  "which is better": [
+  "smtp error": [
     {
-      "id": "ga-shopping-002",
-      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
-      "level": "GA"
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "soc": [
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "spam": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing — what to do",
+      "level": "L1"
+    }
+  ],
+  "speaker": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "speakers not working": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
     }
   ],
   "specs": [
     {
       "id": "ga-shopping-002",
-      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "title": "Comparing products fairly — what specs matter and which are marketing",
       "level": "GA"
     }
   ],
-  "reviews": [
+  "spf": [
     {
-      "id": "ga-shopping-002",
-      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "id": "l2-exchange-001",
+      "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
+      "level": "L2"
+    }
+  ],
+  "spf 10 lookup limit": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "spf record": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "spf softfail hardfail": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "spinning dots": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot — stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "splash screen": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "split brain": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "split tunnel issue": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "srv records": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "sse": [
+    {
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "sso": [
+    {
+      "id": "l3-sso-saml-001",
+      "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "sspr": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "stig": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "stop error": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "storage full": [
+    {
+      "id": "l1-windows-004",
+      "title": "Disk full / out of space on C: drive",
+      "level": "L1"
+    }
+  ],
+  "storage spaces direct": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "stub zone": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "stuck in outbox": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "stuck job": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "stuck on logo": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot — stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "stuck windows update": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "subordinate ca": [
+    {
+      "id": "l3-certificates-001",
+      "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "subscription": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "subscription expired": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues — apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "suspicious email": [
+    {
+      "id": "l1-email-001",
+      "title": "Suspicious email / suspected phishing — what to do",
+      "level": "L1"
+    }
+  ],
+  "sync": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "sync conflict": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict — 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "sync stuck": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "sysprep": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "system crash": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "tabletop": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    },
+    {
+      "id": "l3-security-001",
+      "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "take ownership": [
+    {
+      "id": "l2-permissions-001",
+      "title": "NTFS / file share permissions: access denied, broken inheritance, audit",
+      "level": "L2"
+    }
+  ],
+  "takes forever to load": [
+    {
+      "id": "l1-windows-003",
+      "title": "Computer running slow / performance lag",
+      "level": "L1"
+    }
+  ],
+  "tax form": [
+    {
+      "id": "ga-form-filling-001",
+      "title": "Filling out forms online safely",
       "level": "GA"
     }
   ],
-  "rtings": [
+  "teams": [
+    {
+      "id": "l1-teams-001",
+      "title": "Microsoft Teams: no audio in meetings (mic or speaker not working)",
+      "level": "L1"
+    }
+  ],
+  "teams crashes": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "teams stuck": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "teams won't load": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "teams won't sign in": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "temp profile": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "tenant": [
+    {
+      "id": "l3-cloud-001",
+      "title": "Azure tenant + subscription design / landing zones",
+      "level": "L3"
+    }
+  ],
+  "terminal server": [
+    {
+      "id": "l2-rdp-001",
+      "title": "Remote Desktop (RDP) / RDS connection issues",
+      "level": "L2"
+    }
+  ],
+  "termination": [
+    {
+      "id": "l2-offboarding-001",
+      "title": "User offboarding: identity disable, data preservation, license recovery",
+      "level": "L2"
+    }
+  ],
+  "third party patching": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "this site can't be reached": [
+    {
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
+    }
+  ],
+  "tpm reset": [
+    {
+      "id": "l2-bitlocker-001",
+      "title": "BitLocker: recovery key retrieval and re-protection",
+      "level": "L2"
+    }
+  ],
+  "traceroute": [
+    {
+      "id": "l2-networking-001",
+      "title": "Network troubleshooting: latency, packet loss, MTU, switching",
+      "level": "L2"
+    }
+  ],
+  "traces": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "track spending": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
+      "level": "GA"
+    }
+  ],
+  "trustpilot": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "two copies": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict — 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "two factor": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "txt record email": [
+    {
+      "id": "l2-mail-auth-001",
+      "title": "Email authentication: SPF, DKIM, and DMARC setup and troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "typo squat": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "unable to send": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "universal print": [
+    {
+      "id": "l2-printers-001",
+      "title": "Print server / queue management / Universal Print rollout",
+      "level": "L2"
+    }
+  ],
+  "update failed 0x8024": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "upload pending": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "user shell folders": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "user tunnel": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "veeam": [
+    {
+      "id": "l3-disaster-recovery-001",
+      "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "veeam hardened repository": [
+    {
+      "id": "l3-backup-dr-002",
+      "title": "Immutable / air-gapped backup design (anti-ransomware)",
+      "level": "L3"
+    }
+  ],
+  "vendor research": [
+    {
+      "id": "ga-vendor-research-001",
+      "title": "Vendor / seller research — is this company legit?",
+      "level": "GA"
+    }
+  ],
+  "version history": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "virtual card": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
+      "level": "GA"
+    }
+  ],
+  "virus": [
+    {
+      "id": "l2-malware-001",
+      "title": "Malware / suspected infection: triage and containment",
+      "level": "L2"
+    }
+  ],
+  "vlans": [
+    {
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "voice": [
+    {
+      "id": "ga-senior-001",
+      "title": "Helping seniors / non-technical users with technology",
+      "level": "GA"
+    }
+  ],
+  "vpn": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "vpn disconnects": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "vpn gateway": [
+    {
+      "id": "l2-vpn-001",
+      "title": "VPN gateway, certificates, and Always-On profile management",
+      "level": "L2"
+    }
+  ],
+  "vpn timeout": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "wdac": [
+    {
+      "id": "l3-endpoint-001",
+      "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "we can't sign in to your account": [
+    {
+      "id": "l2-windows-001",
+      "title": "Windows user profile corrupted / temp profile / rebuild",
+      "level": "L2"
+    }
+  ],
+  "we couldn't connect": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "what is": [
+    {
+      "id": "ga-explanation-001",
+      "title": "Explaining technology in simple language (analogies + framing)",
+      "level": "GA"
+    }
+  ],
+  "whea_uncorrectable": [
+    {
+      "id": "l1-windows-001",
+      "title": "Blue screen of death (BSOD) on Windows 10/11",
+      "level": "L1"
+    }
+  ],
+  "which is better": [
     {
       "id": "ga-shopping-002",
-      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "title": "Comparing products fairly — what specs matter and which are marketing",
+      "level": "GA"
+    }
+  ],
+  "which version": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict — 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "white glove": [
+    {
+      "id": "l2-deployment-001",
+      "title": "Device deployment: Autopilot, image hygiene, app rings",
+      "level": "L2"
+    }
+  ],
+  "white screen": [
+    {
+      "id": "l1-teams-002",
+      "title": "Microsoft Teams won't load / stuck on splash screen",
+      "level": "L1"
+    }
+  ],
+  "whois": [
+    {
+      "id": "ga-scam-001",
+      "title": "Detecting fake / scam websites and phishing pages",
+      "level": "GA"
+    }
+  ],
+  "whql": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "wi-fi": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "wifi": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "wifi dead zone": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "wifi roaming issues": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "wifi site survey": [
+    {
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "windows hello passkey": [
+    {
+      "id": "l1-passkey-001",
+      "title": "Set up and sign in with a passkey (passwordless / FIDO2 / Windows Hello)",
+      "level": "L1"
+    }
+  ],
+  "windows not loading": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot — stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "windows server": [
+    {
+      "id": "l3-server-001",
+      "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "windows update for business": [
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "windows update troubleshooter": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "wire transfer": [
+    {
+      "id": "ga-checkout-001",
+      "title": "Safe online checkout — payment options ranked",
       "level": "GA"
     }
   ],
   "wirecutter": [
     {
       "id": "ga-shopping-002",
-      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "title": "Comparing products fairly — what specs matter and which are marketing",
       "level": "GA"
     }
   ],
-  "bestseller": [
+  "wireless coverage": [
     {
-      "id": "ga-shopping-002",
-      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
+      "id": "l2-wifi-survey-001",
+      "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
+      "level": "L2"
+    }
+  ],
+  "wireless not working": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "won't boot": [
+    {
+      "id": "l1-windows-002",
+      "title": "Windows won't boot — stuck on spinning dots or black screen",
+      "level": "L1"
+    }
+  ],
+  "won't connect": [
+    {
+      "id": "l1-vpn-001",
+      "title": "VPN won't connect / disconnects randomly",
+      "level": "L1"
+    }
+  ],
+  "won't print": [
+    {
+      "id": "l1-printer-001",
+      "title": "Printer not printing / job stuck in queue",
+      "level": "L1"
+    }
+  ],
+  "wpr": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "writeback": [
+    {
+      "id": "l3-hybrid-ad-001",
+      "title": "Hybrid AD: Azure AD Connect / Cloud Sync / password writeback",
+      "level": "L3"
+    }
+  ],
+  "wrong characters": [
+    {
+      "id": "l1-printer-002",
+      "title": "Printer prints garbled / unreadable / wrong characters",
+      "level": "L1"
+    }
+  ],
+  "wsus intune autopatch": [
+    {
+      "id": "l2-patch-management-001",
+      "title": "Patch management program design and update troubleshooting",
+      "level": "L2"
+    }
+  ],
+  "xperf": [
+    {
+      "id": "l2-performance-001",
+      "title": "Performance deep dive: WPR / xperf / consistent slowness diagnosis",
+      "level": "L2"
+    }
+  ],
+  "yellow triangle": [
+    {
+      "id": "l1-wifi-001",
+      "title": "Wi-Fi: can't connect / shows 'no internet, secured' / yellow triangle",
+      "level": "L1"
+    }
+  ],
+  "ynab": [
+    {
+      "id": "ga-budgeting-001",
+      "title": "Personal budgeting basics (50/30/20, tracking, common tools)",
       "level": "GA"
     }
   ],
-  "vendor research": [
+  "your connection is not private": [
     {
-      "id": "ga-vendor-research-001",
-      "title": "Vendor / seller research \u2014 is this company legit?",
-      "level": "GA"
+      "id": "l1-browser-001",
+      "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
+      "level": "L1"
     }
   ],
-  "seller legit": [
+  "zero trust": [
     {
-      "id": "ga-vendor-research-001",
-      "title": "Vendor / seller research \u2014 is this company legit?",
-      "level": "GA"
+      "id": "l3-networking-001",
+      "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
     }
   ],
-  "is this real": [
+  "zero trust network access": [
     {
-      "id": "ga-vendor-research-001",
-      "title": "Vendor / seller research \u2014 is this company legit?",
-      "level": "GA"
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
     }
   ],
-  "check business": [
+  "ztna": [
     {
-      "id": "ga-vendor-research-001",
-      "title": "Vendor / seller research \u2014 is this company legit?",
-      "level": "GA"
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
     }
   ],
-  "small business legit": [
+  "ztna agent not connecting": [
     {
-      "id": "ga-vendor-research-001",
-      "title": "Vendor / seller research \u2014 is this company legit?",
-      "level": "GA"
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
     }
   ],
-  "bbb": [
+  "ztna vs vpn": [
     {
-      "id": "ga-vendor-research-001",
-      "title": "Vendor / seller research \u2014 is this company legit?",
-      "level": "GA"
-    }
-  ],
-  "secretary of state": [
-    {
-      "id": "ga-vendor-research-001",
-      "title": "Vendor / seller research \u2014 is this company legit?",
-      "level": "GA"
+      "id": "l2-sase-001",
+      "title": "SASE, SSE, and ZTNA fundamentals and troubleshooting",
+      "level": "L2"
     }
   ]
 }

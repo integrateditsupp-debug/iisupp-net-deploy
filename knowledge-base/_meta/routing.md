@@ -70,6 +70,8 @@ unless explicitly multi-tagged.
 | Printer not printing | l1-printer-001 |
 | Printer prints garbage | l1-printer-002 |
 | MFA / lost phone | l1-mfa-001 |
+| Set up a passkey / passwordless | l1-passkey-001 |
+| Lost passkey device / can't sign in with passkey | l1-passkey-002 |
 | Forgot password | l1-password-001 |
 | VPN won't connect | l1-vpn-001 |
 | Browser won't load site | l1-browser-001 |
@@ -89,6 +91,10 @@ unless explicitly multi-tagged.
 | User offboarding | l2-offboarding-001 |
 | Print server / Universal Print | l2-printers-001 |
 | Mail flow / NDR | l2-exchange-001 |
+| Email spoofed / going to spam (SPF/DKIM/DMARC) | l2-mail-auth-001 |
+| SASE / SSE / ZTNA access issue | l2-sase-001 |
+| Wi-Fi coverage / site survey | l2-wifi-survey-001 |
+| Patch management / failed updates fleet-wide | l2-patch-management-001 |
 | User profile rebuild | l2-windows-001 |
 | Performance traces (WPA) | l2-performance-001 |
 | NTFS / share permissions | l2-permissions-001 |

@@ -615,6 +615,157 @@ export const RECIPES = [
       onSuccess: 'Disable suspect extensions, close + reopen browser, and test. If suspicious behavior continues, escalate — you may have malware. Call (647) 581-3182 IMMEDIATELY.'
     },
     allowlistTags: ['browser-settings','security']
+  },
+  // ── Coverage Slice 1 — Tier 1/2 volume recipes (guided; the web never executes a local fix) ──────────
+  {
+    id: 'passkey-enroll-v1',
+    title: 'Set up a passkey (passwordless sign-in)',
+    category: 'identity',
+    os: ['windows','macos'],
+    matchKeywords: ['set up passkey','create passkey','enroll passkey','passwordless sign in','windows hello passkey','register passkey','add a passkey','use a passkey','fido2 key','phone as passkey'],
+    matchPatterns: ['(set ?up|create|enroll|register|add|use).*(passkey|passwordless)','passkey.*(setup|enroll|register)'],
+    version: 1, riskOverall: 'green',
+    description: 'Enroll a passkey on this device (Windows Hello / Touch ID) or your phone so you can sign in without a password.',
+    diagnostic: null,
+    fixSteps: [
+      { id: 'choose-method', label: 'Choose where the passkey lives', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'A passkey can live on this PC (Windows Hello — PIN/fingerprint/face), this Mac (Touch ID), or your phone. Phone passkeys roam between devices; a device passkey is fastest on that one machine. Pick at least one you always have with you.', rollback: null, estimatedSeconds: 20 },
+      { id: 'open-security-info', label: 'Open your account security settings', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'For a work/Microsoft 365 account go to aka.ms/mysecurityinfo (or your IdP’s “Security info”). For a personal Microsoft account, account.microsoft.com → Security → Advanced security options. Choose “Add sign-in method → Passkey”.', rollback: null, estimatedSeconds: 30 },
+      { id: 'create-passkey', label: 'Create the passkey', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'Follow the prompt: verify with your PIN / fingerprint / face (or scan the QR code with your phone). The passkey is created and bound to your sign-in — no password to remember or phish.', rollback: 'Remove the passkey again from the same Security info page if you change your mind.', estimatedSeconds: 40 },
+      { id: 'add-backup', label: 'Add a second method so you never get locked out', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'Always register a SECOND passkey or method (e.g. phone + security key, or keep the authenticator app). If the only passkey device is lost you’d otherwise need an admin reset.', rollback: null, estimatedSeconds: 30 }
+    ],
+    ariaScript: {
+      intro: 'A passkey replaces your password with your device’s fingerprint/face/PIN — nothing to phish. I’ll walk you through enrolling one.',
+      consent: 'You open your account’s Security info, choose Add → Passkey, and verify with Hello/Touch ID or your phone. I never see the passkey.',
+      onCantReproduce: '',
+      onSuccess: 'Once it’s created, sign out and back in with the passkey to confirm, then add a second method as backup.'
+    },
+    allowlistTags: ['identity','passwordless']
+  },
+  {
+    id: 'passkey-recovery-v1',
+    title: 'Recover sign-in when a passkey device is lost',
+    category: 'identity',
+    os: ['windows','macos'],
+    matchKeywords: ['lost passkey','passkey not working','new phone passkey','replace passkey','lost my passkey device','cant sign in passkey','passkey gone','remove old passkey','locked out passkey','passkey on old phone'],
+    matchPatterns: ['(lost|new|replace|remove|broken|old).*(passkey|device).*(passkey)?','passkey.*(not working|won.?t|lost|gone|locked)','can.?t sign in.*passkey'],
+    version: 1, riskOverall: 'yellow',
+    description: 'Regain access after losing a passkey device, register a passkey on a new device, and remove the lost one from your account.',
+    diagnostic: null,
+    fixSteps: [
+      { id: 'use-backup-method', label: 'Sign in with a backup method', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'At the sign-in screen choose “Other ways to sign in” / “Use another method” and pick a backup you still have (authenticator app, a second passkey, SMS, or a temporary access pass from your admin).', rollback: null, estimatedSeconds: 40 },
+      { id: 'register-new-passkey', label: 'Register a passkey on your new device', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'Once signed in, go to Security info → Add sign-in method → Passkey and enroll the new phone/PC (same flow as first-time setup).', rollback: null, estimatedSeconds: 40 },
+      { id: 'remove-lost-passkey', label: 'Remove the lost device’s passkey', cmd: null, manual: true, risk: 'yellow', requiresConfirm: true,
+        explainer: 'In Security info, find the passkey/credential tied to the lost device and delete it so it can no longer be used. Do this for any device you no longer control.', rollback: 'You cannot undo a deletion — but you can always enroll a fresh passkey on a device you hold.', estimatedSeconds: 30 },
+      { id: 'all-lost-admin-reset', label: 'If every method is lost — request an admin reset', cmd: null, manual: true, risk: 'yellow', requiresConfirm: true,
+        explainer: 'If you have no working method, your IT admin issues a Temporary Access Pass (Entra) or resets your security info so you can re-enroll. For a personal account use account.microsoft.com recovery. Call (647) 581-3182 if IIS manages your identity.', rollback: null, estimatedSeconds: 60 }
+    ],
+    ariaScript: {
+      intro: 'Lost the device with your passkey? Let’s get you back in with a backup method, enroll a new passkey, and retire the lost one.',
+      consent: 'You sign in with a backup method, add a new passkey, then delete the lost device’s credential. I never see your secrets.',
+      onCantReproduce: '',
+      onSuccess: 'After re-enrolling, always keep TWO methods so a single lost device never locks you out.'
+    },
+    allowlistTags: ['identity','passwordless','account-recovery']
+  },
+  {
+    id: 'mail-auth-diagnostic-v1',
+    title: 'Check email authentication (SPF / DKIM / DMARC)',
+    category: 'email',
+    os: ['windows','macos'],
+    matchKeywords: ['spf','dkim','dmarc','email going to spam','mail marked as spam','we are being spoofed','email spoofing','dmarc record','spf record','mail authentication','external mail rejected','domain spoofed','email failing dmarc'],
+    matchPatterns: ['(spf|dkim|dmarc)','(email|mail|domain).*(spoof|going to spam|marked spam|rejected|authentication)','(check|verify|fix).*(spf|dkim|dmarc|mail auth)'],
+    version: 1, riskOverall: 'green',
+    description: 'Read your domain’s SPF, DKIM, and DMARC DNS records to diagnose spoofing, spam placement, or rejected mail.',
+    diagnostic: {
+      cmd: 'Resolve-DnsName -Type TXT $env:USERDNSDOMAIN -ErrorAction SilentlyContinue | Where-Object { $_.Strings -match "spf1|DMARC" } | Select-Object -ExpandProperty Strings',
+      shell: 'powershell',
+      explainer: 'Looks up the TXT records for your domain so we can see the current SPF and DMARC policy (read-only DNS query — changes nothing).',
+      expectedReproduces: 'Missing SPF/DMARC, an SPF that ends in ~all/?all, or DMARC p=none — all of which let spoofed mail through or land you in spam.',
+      expectedNoIssue: 'A single SPF record ending in -all plus DMARC p=quarantine or p=reject with alignment — authentication is configured.'
+    },
+    fixSteps: [
+      { id: 'read-spf', label: 'Review the SPF record', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'There must be exactly ONE “v=spf1 …” TXT record listing every service that sends as your domain (include:spf.protection.outlook.com etc.), ending in -all (hard fail) or ~all (soft fail). More than one SPF record, or exceeding the 10-DNS-lookup limit, breaks SPF.', rollback: null, estimatedSeconds: 60 },
+      { id: 'verify-dkim', label: 'Verify DKIM signing + selector CNAMEs', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'Confirm DKIM is enabled in your mail platform (e.g. M365 Defender → Email authentication) and that the selector CNAMEs (selector1._domainkey, selector2._domainkey) resolve. DKIM cryptographically signs outbound mail so receivers can trust it wasn’t altered.', rollback: null, estimatedSeconds: 60 },
+      { id: 'set-dmarc', label: 'Publish / tighten the DMARC policy', cmd: null, manual: true, risk: 'yellow', requiresConfirm: true,
+        explainer: 'Add a _dmarc TXT record: start at v=DMARC1; p=none; rua=mailto:dmarc@yourdomain to collect reports, then move to p=quarantine and finally p=reject once legitimate senders pass alignment. Never jump straight to p=reject before reviewing reports.', rollback: 'Lower the policy back to p=none if legitimate mail starts failing while you investigate.', estimatedSeconds: 90 }
+    ],
+    ariaScript: {
+      intro: 'Mail landing in spam or your domain being spoofed almost always traces to SPF/DKIM/DMARC. I’ll read your DNS records and show what to fix.',
+      consent: 'I run a read-only DNS lookup of your TXT records — no changes. You (or your DNS admin) apply any record updates.',
+      onCantReproduce: 'If SPF -all, DKIM signing, and DMARC p=quarantine/reject are all present and aligned, authentication is healthy — the spam issue may be content or reputation; escalate for a deeper review.',
+      onSuccess: 'Apply the record changes at your DNS host, wait for propagation, then re-check and watch DMARC aggregate reports for failures.'
+    },
+    allowlistTags: ['email','dns','security']
+  },
+  {
+    id: 'suspicious-login-check-v1',
+    title: 'Suspicious sign-in / conditional-access self-check',
+    category: 'security',
+    os: ['windows','macos'],
+    matchKeywords: ['suspicious login','unusual sign in','someone signed into my account','impossible travel','sign in from another country','account compromised','conditional access blocked','blocked sign in','review sign in activity','was my account hacked','unfamiliar sign in'],
+    matchPatterns: ['(suspicious|unusual|unfamiliar|strange).*(sign ?in|login)','(someone|unknown).*(signed|logged) in','impossible travel','conditional access.*(block|denied)','account.*(compromis|hack)'],
+    version: 1, riskOverall: 'yellow',
+    description: 'Review recent sign-in activity, lock down a possibly-compromised account, and understand a conditional-access block.',
+    diagnostic: null,
+    fixSteps: [
+      { id: 'review-activity', label: 'Review recent sign-in activity', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'Go to your account’s recent activity (personal: account.microsoft.com → Security → Sign-in activity; work: My Sign-ins → mysignins.microsoft.com). Look for sign-ins you don’t recognize — unfamiliar locations, devices, or times.', rollback: null, estimatedSeconds: 60 },
+      { id: 'secure-if-compromised', label: 'If you don’t recognize a sign-in — secure now', cmd: null, manual: true, risk: 'yellow', requiresConfirm: true,
+        explainer: 'Change your password immediately, sign out of all sessions, and confirm your MFA methods are still only yours (remove any unknown authenticator/phone). Report the activity. If it’s a work account, tell IT at once.', rollback: null, estimatedSeconds: 90 },
+      { id: 'understand-ca-block', label: 'Understand a conditional-access block', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'A “you can’t get there from here” block is usually conditional access: device not compliant/managed, MFA required, an untrusted location, or a risky-sign-in flag. The block message has a request ID — give it to IT so they can read the exact policy that fired.', rollback: null, estimatedSeconds: 45 },
+      { id: 'escalate', label: 'Escalate a confirmed compromise', cmd: null, manual: true, risk: 'yellow', requiresConfirm: true,
+        explainer: 'If the account was truly accessed, IT should revoke sessions/tokens, reset credentials, review mailbox rules (auto-forwarding is a classic attacker move), and check for data access. Call (647) 581-3182 if IIS manages your tenant.', rollback: null, estimatedSeconds: 60 }
+    ],
+    ariaScript: {
+      intro: 'Let’s check whether that sign-in was really you. I’ll point you to your account’s activity log and, if anything looks off, lock it down fast.',
+      consent: 'You review your own sign-in activity and apply any password/MFA changes. I never see your credentials.',
+      onCantReproduce: 'If every recent sign-in is yours and the block was conditional access, capture the request ID and have IT review the policy — your account is likely fine.',
+      onSuccess: 'After securing the account, watch for re-blocks and review mailbox forwarding rules for anything you didn’t create.'
+    },
+    allowlistTags: ['security','identity','account-recovery']
+  },
+  {
+    id: 'onedrive-kfm-repair-v1',
+    title: 'Repair OneDrive Known Folder Move (Desktop/Docs/Pictures)',
+    category: 'm365',
+    os: ['windows'],
+    matchKeywords: ['known folder move','kfm','desktop not syncing','documents not backed up','onedrive desktop folder','folder backup stopped','onedrive known folders','my desktop files missing','onedrive folder protection','backup my folders onedrive'],
+    matchPatterns: ['(known folder|kfm)','(desktop|documents|pictures).*(not sync|not backed up|missing|onedrive)','onedrive.*(folder|backup).*(protect|stop|fail)'],
+    version: 1, riskOverall: 'yellow',
+    description: 'Restore OneDrive folder backup (Known Folder Move) when Desktop, Documents, or Pictures stop syncing or appear missing.',
+    diagnostic: {
+      cmd: 'Get-Process OneDrive -ErrorAction SilentlyContinue | Select-Object Name,Id; Get-ItemProperty "HKCU:\\Software\\Microsoft\\OneDrive\\Accounts\\Business1" -ErrorAction SilentlyContinue | Select-Object UserFolder,ConfiguredTenantId',
+      shell: 'powershell',
+      explainer: 'Confirms OneDrive is running and reads the configured account folder (read-only) so we know KFM is set up before changing anything.',
+      expectedReproduces: 'OneDrive not running, or Desktop/Documents/Pictures not redirected into the OneDrive folder.',
+      expectedNoIssue: 'OneDrive is running and the known folders already point into OneDrive — the issue may be a stuck sync; restart the client.'
+    },
+    fixSteps: [
+      { id: 'check-onedrive-running', label: 'Confirm OneDrive is signed in and running', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'Look for the OneDrive cloud icon in the system tray. If it’s missing, start OneDrive and sign in with your work account. KFM only works while OneDrive is connected.', rollback: null, estimatedSeconds: 30 },
+      { id: 'open-backup-settings', label: 'Open “Manage backup” (Known Folder Move)', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'OneDrive tray icon → gear → Settings → Sync and back up → Manage backup. Turn ON Desktop, Documents, and Pictures so they’re protected and synced.', rollback: 'You can stop a folder’s backup from the same screen; files then live locally again.', estimatedSeconds: 45 },
+      { id: 'resolve-sync-conflict', label: 'Clear any “files not syncing” warning', cmd: null, manual: true, risk: 'yellow', requiresConfirm: true,
+        explainer: 'If sync is stuck: pause and resume sync, check for files over the path-length/size limits or with blocked characters (\" * : < > ? / \\ |), and free up space if the drive is full. As a last resort, “Reset OneDrive” (per Microsoft’s documented command) re-syncs without deleting cloud files.', rollback: 'A OneDrive reset re-downloads from the cloud; your files in OneDrive are not deleted.', estimatedSeconds: 90 },
+      { id: 'verify', label: 'Verify the folders are protected', cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'Manage backup should show Desktop/Documents/Pictures as “Backed up”, and those folders should show OneDrive status icons (green check / cloud). Open a file to confirm it opens from OneDrive.', rollback: null, estimatedSeconds: 30 }
+    ],
+    ariaScript: {
+      intro: 'When Desktop or Documents stop backing up, it’s usually OneDrive Known Folder Move. I’ll help you re-enable folder protection and clear any stuck sync.',
+      consent: 'You open OneDrive’s Manage backup screen and toggle the folders on; I only read whether OneDrive is running. Nothing is deleted.',
+      onCantReproduce: 'If the folders already show “Backed up” and sync is current, your files are safe in OneDrive — the “missing” files may just need the cloud status to refresh.',
+      onSuccess: 'After enabling backup, confirm each folder shows a sync status icon and that a test file appears in OneDrive on the web.'
+    },
+    allowlistTags: ['m365','onedrive','backup']
   }
 ];
 
