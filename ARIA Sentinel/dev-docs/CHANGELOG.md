@@ -5,6 +5,7 @@ Organized record of **major** changes (Ahmad directive, 2026-06-24: record all m
 
 | Date | Change | Why | Files / Area | Verified on LIVE? | By |
 |------|--------|-----|--------------|-------------------|-----|
+| 2026-06-24 | **DoD criterion 4 PROVEN** — the REAL Sentinel renderer rendered offscreen via Electron: Recipes-tab finder built with a **79-option A→Z dropdown** + **78 recipe cards**, and search **"zoom" → 3 cards** ("Page zoom looks wrong"). Visual catalog is gated by the unlicensed-preview trial-lock (DOM proof confirms the finder). | Recipes tab = A→Z + search | `dev-docs/recipes-tab-capture.cjs`, `recipes-tab.png` | YES — real renderer, DOM-verified | Claude-Code |
 | 2026-06-24 | **DoD criterion 1 (mechanism) PROVEN LIVE** — 3 system-changing Tier-0 recipes ran for real on Windows: flush-dns (cache 15→0), restart-print-spooler (no-op-neutral), restart-windows-update (**triggered a real TIER0.ROLLBACK**); dry-run gate held; kill-switch aborted a child mid-run | Prove real exec + rollback + audit + kill on a live machine | `dev-docs/live-exec-proof.mjs` | YES — 3/3 ran for real | Claude-Code |
 | 2026-06-24 | **DoD criterion 5 MET** — 100-call matcher re-test **100% PASS** (was 66%) via token-overlap + recipe synonyms + KB-index fixes + 3 gap articles | Coverage target ≥95% | `dev-docs/run-100-call-harness.mjs`, `100-call-retest-2026-06-24.md`, `src/shared/recipes.mjs`, `knowledge-base/_meta/index-by-keyword.json`, `l1-security-001`/`l1-mobile-email-001`/`l1-newdevice-001` | YES — harness 102/102 | Claude-Code |
 | 2026-06-24 | **Slice 4** — 5 compliance readiness maps (EU AI Act, NIST AI RMF, HIPAA, ISO 27001 SoA, C2PA); every file flagged self-assessment / NOT certified | Sales-enabling readiness; legal gate held | `compliance/*.md` | n/a — readiness only; ⚠️ legal review before external publish | Claude-Code |
@@ -28,14 +29,14 @@ Organized record of **major** changes (Ahmad directive, 2026-06-24: record all m
 - **Slice B** (criterion 1): execution path PROVEN LIVE on Windows (`live-exec-proof.mjs` — flush-dns ran for real, dry-run gate, audit trail, kill-switch). The ≥10 system-changing recipes + roll back + System Restore points need a signed build on a VM (Ahmad). Gating also proven by `actual-dryrun-precedence.test`.
 - **Slice C** (criterion 3): "Resolve it for me" → opens Sentinel + auto-runs — needs the installed app + deployed web (Ahmad). Parse/validate proven by `deep-link.test`.
 - **Slice D** (criterion 2): web topic-switch + CLEAR reset + LLM free-form answer — code complete; needs Netlify publish of the branch, then re-run the live `aria-web-test` script. (The `aria-chat` 400 is addressed by the model cascade — re-verify post-publish; if still 400, check `ARIA_MODEL` env + key.)
-- **Recipes tab** (criterion 4): A→Z dropdown + search — built; visual confirmation needs the running Electron app.
+- ✅ **Recipes tab** (criterion 4): **DONE** — real renderer proven offscreen in Electron (79-option A→Z dropdown + 78 cards; "zoom"→3). `recipes-tab-capture.cjs`.
 - ✅ **Slice A matcher** (criterion 5): **DONE — 100% on the 100-call harness** (`100-call-retest-2026-06-24.md`).
 
 ## Definition-of-Done status (2026-06-24)
 1. Recipes run for REAL on live Windows — **PROVEN LIVE** via `dev-docs/live-exec-proof.mjs`: **3 system-changing Tier-0 recipes ran for real** — `flush-dns-cache` (cache 15→0), `restart-print-spooler`, and `restart-windows-update` (which triggered a genuine **TIER0.ROLLBACK**) — with the dry-run gate holding, full audit events (PRE→EXEC→POST[→ROLLBACK]), and the kill-switch aborting a child mid-run. The ≥10 **destructive** recipes + System-Restore-point sweep still needs a VM (per the packet) — Ahmad's gate; running them on a live primary workstation would be unsafe.
 2. Web chat (topic-switch / CLEAR / LLM) — **code done; live proof needs Netlify publish** (Cowork/Ahmad).
 3. Web "Resolve it for me" → Sentinel — **code done; live proof needs install + publish**.
-4. Recipes tab A→Z + search — **built; visual proof needs the running app**.
+4. Recipes tab A→Z + search — **✅ PROVEN** via the real renderer offscreen in Electron (`recipes-tab-capture.cjs`): 79-option A→Z dropdown + 78 cards; "zoom" filters to 3. (Catalog is visually trial-locked in unlicensed preview; the finder DOM is verified.)
 5. Matcher ≥95% — **✅ DONE: 100.0% (102/102)**.
 6. All tests green — **✅ new tests pass; suite 185/188 on the review branch (3 reds are pre-existing cross-tree netlify imports absent on the main-based branch, not coverage-related)**.
 7. Every major change recorded — **✅ this file + the vault Live-Ops-Log**.
