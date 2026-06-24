@@ -1666,10 +1666,8 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         </a>
         <div class="desktop-nav-links hidden lg:flex nav-groups nav-blade" aria-label="Primary">
             <span class="nav-node nav-node-l" aria-hidden="true"></span>
-            <span class="nav-scan" aria-hidden="true"></span>
             <div class="nav-group" data-facet="solutions">
                 <span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>
-                <a href="/shop.html" class="nav-accent">Shop</a>
                 <a href="/services.html" class="nav-accent">Services</a>
                 <a href="/plans/" class="nav-accent">Plans</a>
             </div>
@@ -1677,6 +1675,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <div class="nav-group nav-group-collapsible" data-facet="marketplace">
                 <span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16l-1.2-4H5.2L4 9z"/><path d="M5 9v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/><path d="M9.5 19v-5h5v5"/></svg></span>
                 <a href="/marketplace.html" class="nav-accent">Marketplace</a>
+                <a href="/shop.html" class="nav-accent">Shop</a>
             </div>
             <span class="nav-divider"></span>
             <div class="nav-group nav-aria-block" data-facet="ai">
@@ -1724,7 +1723,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
          and a continuous "data scan" sweeping across it. Every link is kept; only the chrome changes. */
       .desktop-nav-links.nav-blade {
         position: relative;
-        padding: 10px 26px; border-radius: 40px; gap: 4px;
+        padding: 7px 18px; border-radius: 34px; gap: 2px;
         background:
           linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%),
           radial-gradient(120% 160% at 50% -40%, rgba(197,160,89,.12), transparent 60%),
@@ -1735,7 +1734,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
           inset 0 -12px 26px rgba(0,0,0,.55),
           0 12px 38px rgba(0,0,0,.5),
           0 0 22px rgba(197,160,89,.10);
-        overflow: hidden; /* clip the scan sweep to the blade shape */
+        overflow: visible; /* let the gold end-nodes sit on the border */
       }
       /* faint circuit-trace texture, masked to fade at the top/bottom edges */
       .desktop-nav-links.nav-blade::before {
@@ -1747,14 +1746,6 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         -webkit-mask: linear-gradient(180deg, transparent, #000 55%, transparent);
                 mask: linear-gradient(180deg, transparent, #000 55%, transparent);
       }
-      /* TECHY ANIMATION — a soft gold "data scan" sweeps across the blade on a loop. */
-      .nav-blade .nav-scan {
-        content: ""; position: absolute; inset: 1px; border-radius: 39px; pointer-events: none; z-index: 0;
-        background: linear-gradient(100deg, transparent 38%, rgba(197,160,89,.10) 47%, rgba(241,220,167,.42) 50%, rgba(197,160,89,.10) 53%, transparent 62%);
-        background-size: 240% 100%; mix-blend-mode: screen;
-        animation: navScan 5.5s linear infinite;
-      }
-      @keyframes navScan { 0% { background-position: 130% 0; } 100% { background-position: -130% 0; } }
       /* Glowing gold NODES pinned to both ends of the blade border, pulsing out of phase. */
       .nav-blade .nav-node {
         position: absolute; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; border-radius: 50%; z-index: 2;
@@ -1772,9 +1763,10 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
       /* each facet: a hoverable tab with icon-over-label + an animated gold underline (the active-tab cue) */
       .nav-blade .nav-group {
         position: relative; z-index: 1;
-        padding: 5px 11px 9px; border-radius: 14px;
+        padding: 4px 8px 7px; border-radius: 12px;
         transition: background .25s ease, transform .25s ease, box-shadow .25s ease;
       }
+      .nav-blade .nav-ico svg { width: 16px; height: 16px; }
       .nav-blade .nav-group:hover {
         background: rgba(197,160,89,.10); transform: translateY(-2px);
         box-shadow: inset 0 0 0 1px rgba(197,160,89,.22), 0 6px 16px rgba(0,0,0,.35);
@@ -1812,18 +1804,18 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
       }
       /* Respect reduced-motion — no scan sweep / node pulse. */
       @media (prefers-reduced-motion: reduce) {
-        .nav-blade .nav-scan, .nav-blade .nav-node { animation: none; }
+        .nav-blade .nav-node { animation: none; }
       }
     </style>
 
     <!-- ====== MOBILE MENU ====== -->
     <div id="mobileMenu" class="mobile-nav-overlay">
         <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
-        <a href="/shop.html" onclick="toggleMobileMenu()" style="color: #c5a059;">Shop</a>
         <a href="/services.html" onclick="toggleMobileMenu()" style="color:#c5a059;">Services</a>
         <a href="/plans/" onclick="toggleMobileMenu()" style="color: #c5a059;">Plans</a>
         <div class="mobile-nav-sep" aria-hidden="true"></div>
         <a href="/marketplace.html" onclick="toggleMobileMenu()" style="color: #c5a059;">Marketplace</a>
+        <a href="/shop.html" onclick="toggleMobileMenu()" style="color: #c5a059;">Shop</a>
         <div class="mobile-nav-sep" aria-hidden="true"></div>
         <a href="/ai-edge.html" onclick="toggleMobileMenu()" style="color: #c5a059;">AI Edge</a>
         <a href="/aria.html" onclick="toggleMobileMenu()" style="color: #c5a059;">ARIA</a>
@@ -1845,6 +1837,86 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(197,160,89,0.08)_0%,_transparent_70%)]"></div>
         <div class="text-center z-10 relative">
             <span class="text-[#c5a059] tracking-[0.7em] text-[9px] uppercase mb-8 block font-bold">Whitby • Ontario • Global</span>
+
+            <!-- 4 capability flip-boxes (hover on desktop · tap to flip on mobile) -->
+            <style>
+              .hero-feat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; padding:0 6px; }
+              @media (min-width:680px){ .hero-feat-grid{ grid-template-columns:repeat(4,1fr); } }
+              .feat-flip { perspective:1200px; min-height:184px; cursor:pointer; outline:none; }
+              .feat-inner { position:relative; width:100%; min-height:184px; height:100%; transition:transform .6s cubic-bezier(.2,.8,.2,1); transform-style:preserve-3d; }
+              .feat-flip:hover .feat-inner, .feat-flip:focus-within .feat-inner, .feat-flip.flipped .feat-inner { transform:rotateY(180deg); }
+              .feat-face { position:absolute; inset:0; -webkit-backface-visibility:hidden; backface-visibility:hidden; display:flex; flex-direction:column; border-radius:14px; padding:18px 15px; border:1px solid rgba(241,220,167,0.5); box-shadow:0 10px 30px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.08); }
+              .feat-front { align-items:center; justify-content:center; text-align:center; background:linear-gradient(160deg, rgba(255,255,255,0.025), rgba(197,160,89,0.06) 60%, rgba(0,0,0,0.18)); }
+              .feat-back { transform:rotateY(180deg); justify-content:space-between; background:linear-gradient(160deg, rgba(197,160,89,0.12), rgba(0,0,0,0.42)); }
+              .feat-flip:hover .feat-front { border-color:rgba(241,220,167,0.7); }
+              .feat-ico { color:#c5a059; margin-bottom:10px; line-height:0; }
+              .feat-title { font-family:'Cinzel',Georgia,serif; color:#f1dca7; font-size:14.5px; letter-spacing:0.03em; line-height:1.25; }
+              .feat-hint { color:rgba(255,255,255,0.34); font-size:8.5px; letter-spacing:0.2em; text-transform:uppercase; margin-top:11px; }
+              .feat-back p { color:rgba(255,255,255,0.82); font-size:11px; line-height:1.5; margin:0; text-align:left; }
+              .feat-cta { align-self:flex-start; margin-top:10px; color:#f1dca7; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid rgba(241,220,167,0.45); padding-bottom:2px; }
+              .feat-cta:hover { color:#fff; }
+            </style>
+            <div class="hero-feat-grid max-w-5xl mx-auto mb-10">
+              <div class="feat-flip" tabindex="0" role="button" aria-label="L1 to L3 IT Support">
+                <div class="feat-inner">
+                  <div class="feat-face feat-front">
+                    <span class="feat-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a7 7 0 0 1 14 0"/><rect x="3" y="13" width="3.6" height="6" rx="1.4"/><rect x="17.4" y="13" width="3.6" height="6" rx="1.4"/><path d="M19 19v.4a3 3 0 0 1-3 3h-2"/></svg></span>
+                    <span class="feat-title">L1 &ndash; L3 IT Support</span>
+                    <span class="feat-hint">Tap to flip</span>
+                  </div>
+                  <div class="feat-face feat-back">
+                    <p>Helpdesk, escalations and deep technical fixes &mdash; from password resets and device setup to servers, networking and identity. One team across every tier.</p>
+                    <a class="feat-cta" href="/plans/">See pricing options &rarr;</a>
+                  </div>
+                </div>
+              </div>
+              <div class="feat-flip" tabindex="0" role="button" aria-label="Move-in and move-out support">
+                <div class="feat-inner">
+                  <div class="feat-face feat-front">
+                    <span class="feat-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h10v9H3z"/><path d="M13 10h4l4 3v3h-8z"/><circle cx="7" cy="18.5" r="1.6"/><circle cx="17.5" cy="18.5" r="1.6"/></svg></span>
+                    <span class="feat-title">Move-In / Move-Out Support</span>
+                    <span class="feat-hint">Tap to flip</span>
+                  </div>
+                  <div class="feat-face feat-back">
+                    <p>Relocating or opening an office? We plan, configure and set up workstations, networking, cabling, printers and phones so day one runs smoothly &mdash; and decommission the old site cleanly.</p>
+                    <a class="feat-cta" href="/services.html">Learn more &rarr;</a>
+                  </div>
+                </div>
+              </div>
+              <div class="feat-flip" tabindex="0" role="button" aria-label="IT Improvement Assessments">
+                <div class="feat-inner">
+                  <div class="feat-face feat-front">
+                    <span class="feat-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M8.5 13l2.2 2.2 4.8-4.7"/></svg></span>
+                    <span class="feat-title">IT Improvement Assessments</span>
+                    <span class="feat-hint">Tap to flip</span>
+                  </div>
+                  <div class="feat-face feat-back">
+                    <p>We audit your IT team and surface real areas of improvement with 15+ years of experience &mdash; candidly, without the job-security hesitation an internal manager might have. We&rsquo;re here to make IT departments stronger, not pile on unnecessary expense.</p>
+                    <a class="feat-cta" href="/services.html">Request an assessment &rarr;</a>
+                  </div>
+                </div>
+              </div>
+              <div class="feat-flip" tabindex="0" role="button" aria-label="Managed Cybersecurity">
+                <div class="feat-inner">
+                  <div class="feat-face feat-front">
+                    <span class="feat-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><rect x="9.3" y="11.2" width="5.4" height="4.6" rx="1"/><path d="M10.4 11.2V9.6a1.6 1.6 0 0 1 3.2 0v1.6"/></svg></span>
+                    <span class="feat-title">Managed Cybersecurity</span>
+                    <span class="feat-hint">Tap to flip</span>
+                  </div>
+                  <div class="feat-face feat-back">
+                    <p>Endpoint protection, monitoring, patching and compliance readiness &mdash; threats stopped before they reach your business, with audit-ready reporting.</p>
+                    <a class="feat-cta" href="/services.html">Explore services &rarr;</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <script>
+              // Mobile tap-to-flip: toggle .flipped on tap, but let links inside navigate normally.
+              document.querySelectorAll('.feat-flip').forEach(function(c){
+                c.addEventListener('click', function(e){ if (e.target.closest('a')) return; c.classList.toggle('flipped'); });
+                c.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); c.classList.toggle('flipped'); } });
+              });
+            </script>
 
             <!-- 3 starter-service boxes -->
             <div class="hero-svc-grid max-w-5xl mx-auto mb-12 grid grid-cols-1 sm:grid-cols-3 gap-4 px-2">
@@ -1877,7 +1949,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                     <button type="button" class="hero-svc-cta" data-stripe-id="website-ai-deposit" data-stripe-name="Website + AI Assistant Setup · Deposit" data-stripe-amount-cents="250000" data-stripe-desc="Website + AI Assistant Setup project deposit ($2,500). Scope confirmed before delivery starts." onclick="event.stopPropagation();event.preventDefault();">Purchase</button></a>
             </div>
 
-            <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-8">INTEGRATED IT SUPPORT <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic uppercase">Preventative Aid</span></h1>
+            <h1 class="text-3xl md:text-5xl font-black tracking-tighter leading-none mb-6">INTEGRATED IT SUPPORT <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic uppercase">Preventative Aid</span></h1>
 
             <!-- Lively animated globe -->
             <div id="heroAriaGlobe" class="hero-aria-globe"><div class="globe-wrap" id="heroGlobeWrap" aria-hidden="true"></div><a class="hero-ask-aria" href="/aria"><span class="hero-ask-aria-dot" aria-hidden="true"></span>Ask ARIA <span aria-hidden="true">→</span></a></div>
@@ -1889,6 +1961,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <div class="hero-health-check-row" style="margin-top:26px;text-align:center;width:100%">
               <a href="/health-check" class="hero-health-check-cta" style="display:inline-block;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;padding:14px 30px;border-radius:8px;text-decoration:none;box-shadow:0 8px 24px rgba(197,160,89,0.22);transition:transform 0.15s ease, box-shadow 0.2s ease">IT Health Check &rarr;</a>
               <div style="color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;margin-top:10px;font-weight:500">60 seconds &middot; 6 questions &middot; free score</div>
+              <div style="margin-top:16px"><a href="/services.html" style="color:#f1dca7;font-size:13px;letter-spacing:0.03em;text-decoration:none;border-bottom:1px solid rgba(241,220,167,0.45);padding-bottom:2px;transition:color .2s">We're here for all your IT needs and AI workflows &rarr;</a></div>
             </div>
         </div>
 
@@ -1974,9 +2047,9 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         .hero-ask-aria { font-size: 10px; padding: 5px 10px; right: 0; bottom: 4px; }
       }
       /* === ARIA globe — transplanted from /aria for the hero, scoped to #heroAriaGlobe === */
-      #heroAriaGlobe { width: 280px; height: 280px; margin: 0 auto 32px; position: relative; opacity: 0.62; --serif: "Cinzel", "Fraunces", Georgia, serif; }
+      #heroAriaGlobe { width: 340px; height: 340px; margin: 0 auto 32px; position: relative; opacity: 0.92; filter: brightness(1.12) drop-shadow(0 0 28px rgba(197,160,89,0.30)); --serif: "Cinzel", "Fraunces", Georgia, serif; }
       #heroAriaGlobe .globe-letter .a { font-family: "Cinzel", "Fraunces", Georgia, serif !important; }
-      @media (min-width: 768px) { #heroAriaGlobe { width: 360px; height: 360px; margin-bottom: 40px; } }
+      @media (min-width: 768px) { #heroAriaGlobe { width: 440px; height: 440px; margin-bottom: 40px; } }
   .globe-wrap{position:relative;display:grid;place-items:center;height:100%;min-height:0;width:100%;overflow:visible}
   .globe-stage{position:relative;width:min(100%, 380px);aspect-ratio:1/1;max-height:100%;display:grid;place-items:center}
   .globe{width:100%;height:100%;display:block;overflow:visible}
