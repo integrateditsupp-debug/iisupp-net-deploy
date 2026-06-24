@@ -162,9 +162,9 @@ exports.handler = async (event) => {
   // Hardcoded skip-list of models Anthropic has retired (return 400 not 404 for these). When ARIA_MODEL env
 // is set to a known-deprecated value we ignore it and fall through to the safe default. Ahmad can rotate
 // ARIA_MODEL to any current model on Netlify env any time — only retired strings get the override.
-const DEPRECATED_MODELS = /claude-sonnet-4-20250514|claude-3-5-sonnet-202(40|41)|claude-3-opus-20240229|claude-3-haiku-20240307/;
+const DEPRECATED_MODELS = /claude-sonnet-4-20250514|claude-sonnet-4-5-20250929|claude-3-5-sonnet-202(40|41)|claude-3-opus-20240229|claude-3-haiku-20240307/;
 const envModel = process.env.ARIA_MODEL;
-const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'claude-sonnet-4-5-20250929';
+const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'claude-sonnet-4-6';
   if (!apiKey) {
     return json(500, { error: 'AI service not configured. Call (647) 581-3182.' });
   }
