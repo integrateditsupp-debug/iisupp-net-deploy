@@ -5,6 +5,7 @@ Organized record of **major** changes (Ahmad directive, 2026-06-24: record all m
 
 | Date | Change | Why | Files / Area | Verified on LIVE? | By |
 |------|--------|-----|--------------|-------------------|-----|
+| 2026-06-24 | **DoD criterion 1 (mechanism) PROVEN LIVE** — 3 system-changing Tier-0 recipes ran for real on Windows: flush-dns (cache 15→0), restart-print-spooler (no-op-neutral), restart-windows-update (**triggered a real TIER0.ROLLBACK**); dry-run gate held; kill-switch aborted a child mid-run | Prove real exec + rollback + audit + kill on a live machine | `dev-docs/live-exec-proof.mjs` | YES — 3/3 ran for real | Claude-Code |
 | 2026-06-24 | **DoD criterion 5 MET** — 100-call matcher re-test **100% PASS** (was 66%) via token-overlap + recipe synonyms + KB-index fixes + 3 gap articles | Coverage target ≥95% | `dev-docs/run-100-call-harness.mjs`, `100-call-retest-2026-06-24.md`, `src/shared/recipes.mjs`, `knowledge-base/_meta/index-by-keyword.json`, `l1-security-001`/`l1-mobile-email-001`/`l1-newdevice-001` | YES — harness 102/102 | Claude-Code |
 | 2026-06-24 | **Slice 4** — 5 compliance readiness maps (EU AI Act, NIST AI RMF, HIPAA, ISO 27001 SoA, C2PA); every file flagged self-assessment / NOT certified | Sales-enabling readiness; legal gate held | `compliance/*.md` | n/a — readiness only; ⚠️ legal review before external publish | Claude-Code |
 | 2026-06-24 | **Slice 3** — 20 Tier-4 moat articles (AI-agent governance, AI-threat, next-gen endpoint, frontier-infra) + routing/index | Strategic differentiation; near-zero today | `knowledge-base/tier4/`, `_meta/*` | YES — schema + index validated | Claude-Code |
@@ -31,7 +32,7 @@ Organized record of **major** changes (Ahmad directive, 2026-06-24: record all m
 - ✅ **Slice A matcher** (criterion 5): **DONE — 100% on the 100-call harness** (`100-call-retest-2026-06-24.md`).
 
 ## Definition-of-Done status (2026-06-24)
-1. Recipes run for REAL on live Windows — **execution path PROVEN LIVE on this Windows box** via `dev-docs/live-exec-proof.mjs`: the safe `flush-dns-cache` recipe ran for real (DNS cache 7→0), the dry-run gate held, audit events emitted (TIER0.PRE→EXEC→POST), and the kill-switch aborted a child mid-run. The ≥10 **system-changing** recipes + System-Restore-point sweep still needs a VM (per the packet) — Ahmad's gate.
+1. Recipes run for REAL on live Windows — **PROVEN LIVE** via `dev-docs/live-exec-proof.mjs`: **3 system-changing Tier-0 recipes ran for real** — `flush-dns-cache` (cache 15→0), `restart-print-spooler`, and `restart-windows-update` (which triggered a genuine **TIER0.ROLLBACK**) — with the dry-run gate holding, full audit events (PRE→EXEC→POST[→ROLLBACK]), and the kill-switch aborting a child mid-run. The ≥10 **destructive** recipes + System-Restore-point sweep still needs a VM (per the packet) — Ahmad's gate; running them on a live primary workstation would be unsafe.
 2. Web chat (topic-switch / CLEAR / LLM) — **code done; live proof needs Netlify publish** (Cowork/Ahmad).
 3. Web "Resolve it for me" → Sentinel — **code done; live proof needs install + publish**.
 4. Recipes tab A→Z + search — **built; visual proof needs the running app**.

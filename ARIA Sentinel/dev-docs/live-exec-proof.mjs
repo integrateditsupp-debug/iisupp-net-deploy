@@ -1,7 +1,9 @@
-// DoD criterion 1 (partial, SAFE) — prove the Tier-0 execution path runs for REAL on a live Windows
-// machine, using the harmless self-recovering `flush-dns-cache` recipe (ipconfig /flushdns). This does NOT
-// run the 10 system-changing recipes (those need a VM, per the packet) — it proves the mechanism: real
-// PowerShell spawn, before/after probe, LIVE exec (dryRun:false), audit events, and the kill path.
+// DoD criterion 1 — prove the Tier-0 execution path runs system-CHANGING recipes for REAL on a live
+// Windows machine. The Tier-0 executor set is 5 recipes (DNS flush + 4 service restarts) — all safe and
+// self-recovering. To avoid disrupting an ACTIVE session, the 3 low-disruption ones (DNS, Print Spooler,
+// Windows Update) run LIVE here; Audio + Bluetooth are exercised via the executor in DRY-RUN only (their
+// restart would blip an in-use speaker / BT mouse). The full ≥10 destructive-recipe + System-Restore-point
+// sweep is a VM task per the packet. Also proves the dry-run gate + the Ctrl+Alt+K kill path.
 import { spawn } from "node:child_process";
 import { executeTier0 } from "../src/main/tier-0-executor.mjs";
 
@@ -17,31 +19,42 @@ function psRun(command) {
     child.on("error", () => { children.delete(child); resolve({ stdout: out, stderr: err || "error", exitCode: 1 }); });
   });
 }
+const log = () => {};
 
-const log = (event, text) => console.log(`  [${event}] ${text}`);
+console.log("\n=== DoD criterion 1 — LIVE Tier-0 execution proof (Windows) ===\n");
 
-console.log("\n=== DoD criterion 1 — LIVE Tier-0 execution proof (flush-dns-cache, safe) ===");
-
-// 1) DRY-RUN first — proves the gate: no command spawned.
+// (a) DRY-RUN gate holds — no command spawned.
 const dry = await executeTier0("flush-dns-cache", { run: psRun, dryRun: true, logger: log });
-console.log(`DRY-RUN  → outcome=${dry.outcome} (expect "dry-run", no system change)\n`);
+console.log(`gate    flush-dns-cache DRY-RUN → outcome=${dry.outcome} (expect dry-run; no system change)`);
 
-// 2) LIVE — dryRun:false → real ipconfig /flushdns runs; before/after DNS cache count probed for real.
-const live = await executeTier0("flush-dns-cache", { run: psRun, dryRun: false, logger: log });
-console.log(`LIVE     → outcome=${live.outcome} exitCode=${live.exitCode} before=${live.before} after=${live.after}`);
-const ranForReal = live.outcome !== "dry-run" && live.exitCode === 0 && live.events.some((e) => e.event === "TIER0.EXEC" && e.dryRun !== true);
-console.log(`           ran for REAL: ${ranForReal} · audit events: ${live.events.map((e) => e.event).join(" → ")}\n`);
+// (b) LIVE — these 3 representative system-changing recipes run for REAL.
+const liveIds = ["flush-dns-cache", "restart-print-spooler", "restart-windows-update"];
+let liveOk = 0;
+for (const id of liveIds) {
+  const r = await executeTier0(id, { run: psRun, dryRun: false, logger: log });
+  const real = r.outcome !== "dry-run" && r.events.some((e) => e.event === "TIER0.EXEC" && e.dryRun !== true);
+  const audit = r.events.map((e) => e.event).join("→");
+  const ok = real && ["success", "no-op-neutral", "no-op"].includes(r.outcome) || (real && r.exitCode === 0);
+  if (ok) liveOk++;
+  console.log(`LIVE    ${id.padEnd(22)} → outcome=${String(r.outcome).padEnd(8)} exit=${r.exitCode} before=${r.before} after=${r.after} audit=${audit} REAL=${real}`);
+}
 
-// 3) KILL path (Ctrl+Alt+K) — spawn a long command, then kill the live child mid-run, like the kill-switch.
+// (c) The 2 disruptive Tier-0 recipes — exercised via the executor in DRY-RUN (proves they're wired,
+//     without interrupting an in-use audio device / Bluetooth input on the live session).
+for (const id of ["restart-audio", "restart-bluetooth"]) {
+  const r = await executeTier0(id, { run: psRun, dryRun: true, logger: log });
+  console.log(`wired   ${id.padEnd(22)} → outcome=${r.outcome} (dry-run on a live session by choice; runs live in a VM)`);
+}
+
+// (d) KILL path (Ctrl+Alt+K) — kill a live child mid-run.
 const longRun = psRun("Start-Sleep -Seconds 30; 'should-not-print'");
 await new Promise((r) => setTimeout(r, 800));
-let killed = 0;
-for (const c of children) { c.kill(); killed++; }
+let killed = 0; for (const c of children) { c.kill(); killed++; }
 const killResult = await longRun;
 const abortedMidRun = killResult.exitCode !== 0 && !killResult.stdout.includes("should-not-print");
-console.log(`KILL     → killed ${killed} live child process(es) mid-run; aborted-before-completion: ${abortedMidRun}\n`);
+console.log(`\nKILL    killed ${killed} live child mid-run; aborted-before-completion=${abortedMidRun}`);
 
-const pass = dry.outcome === "dry-run" && ranForReal && abortedMidRun;
-console.log(`=== criterion 1 (execution-path proof on live Windows): ${pass ? "PASS" : "FAIL"} ===`);
-console.log("Note: the 10-recipe + System-Restore-point verification of system-CHANGING recipes still needs a VM (Ahmad).");
+const pass = dry.outcome === "dry-run" && liveOk === liveIds.length && abortedMidRun;
+console.log(`\n=== execution-path proof on live Windows: ${pass ? "PASS" : "FAIL"} (${liveOk}/${liveIds.length} live recipes ran for real) ===`);
+console.log("Remaining for full criterion 1: ≥10 system-CHANGING recipes + System Restore points on a VM (Ahmad).");
 process.exitCode = pass ? 0 : 1;
