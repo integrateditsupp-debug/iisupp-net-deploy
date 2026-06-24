@@ -76,3 +76,10 @@ Only if all 4 fail → skip + log the attempts
 - If a planned action touches this path → halt, log SECURITY audit entry "blocked by privacy rule", surface "1 personal folder excluded"
 - Same severity as R6 (no RJ)
 - See [[feedback-private-folder-offlimits]]
+
+## R15 · CC always commits + pushes to GitHub; Cowork merges — LOCKED 2026-06-24
+Every CC run ends with `git commit` + `git push` to origin. CC pushes a review branch; Cowork merges→main + pushes. Ahmad never pushes/merges by hand.
+## R16 · One writer per .git — LOCKED 2026-06-24
+Never two agents writing the same clone/.git at once (caused HEAD/packed-refs/index corruption 2026-06-24). Each agent = own clone/worktree; stagger crons.
+## R17 · Backup discipline — LOCKED 2026-06-24
+≥2 copies of every backup (backup-of-backup), in separate locations OUTSIDE the working tree (a working-tree-only backup got wiped by a bad checkout 2026-06-24). Daily snapshot + INSTANT snapshot after any major vault work.
