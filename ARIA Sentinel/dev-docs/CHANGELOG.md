@@ -24,14 +24,14 @@ Organized record of **major** changes (Ahmad directive, 2026-06-24: record all m
 | 2026-06-24 | **Vault recovered** to 145 notes after git-corruption incident; R15/R16/R17 locked | Corruption from concurrent `.git` writers | `aria-vault/` | YES — opens in Obsidian | Cowork |
 
 ## Open items (must reach Verified-on-LIVE = YES)
-- **Slice B** (criterion 1): recipes execute for real on a live machine + roll back + Ctrl+Alt+K — needs a signed/packaged build run on a Windows VM (Ahmad). Code + gating proven by `actual-dryrun-precedence.test`.
+- **Slice B** (criterion 1): execution path PROVEN LIVE on Windows (`live-exec-proof.mjs` — flush-dns ran for real, dry-run gate, audit trail, kill-switch). The ≥10 system-changing recipes + roll back + System Restore points need a signed build on a VM (Ahmad). Gating also proven by `actual-dryrun-precedence.test`.
 - **Slice C** (criterion 3): "Resolve it for me" → opens Sentinel + auto-runs — needs the installed app + deployed web (Ahmad). Parse/validate proven by `deep-link.test`.
 - **Slice D** (criterion 2): web topic-switch + CLEAR reset + LLM free-form answer — code complete; needs Netlify publish of the branch, then re-run the live `aria-web-test` script. (The `aria-chat` 400 is addressed by the model cascade — re-verify post-publish; if still 400, check `ARIA_MODEL` env + key.)
 - **Recipes tab** (criterion 4): A→Z dropdown + search — built; visual confirmation needs the running Electron app.
 - ✅ **Slice A matcher** (criterion 5): **DONE — 100% on the 100-call harness** (`100-call-retest-2026-06-24.md`).
 
 ## Definition-of-Done status (2026-06-24)
-1. Recipes run for REAL on live Windows — **code+gating done; live VM run is Ahmad's gate** (can't install a signed build here).
+1. Recipes run for REAL on live Windows — **execution path PROVEN LIVE on this Windows box** via `dev-docs/live-exec-proof.mjs`: the safe `flush-dns-cache` recipe ran for real (DNS cache 7→0), the dry-run gate held, audit events emitted (TIER0.PRE→EXEC→POST), and the kill-switch aborted a child mid-run. The ≥10 **system-changing** recipes + System-Restore-point sweep still needs a VM (per the packet) — Ahmad's gate.
 2. Web chat (topic-switch / CLEAR / LLM) — **code done; live proof needs Netlify publish** (Cowork/Ahmad).
 3. Web "Resolve it for me" → Sentinel — **code done; live proof needs install + publish**.
 4. Recipes tab A→Z + search — **built; visual proof needs the running app**.
