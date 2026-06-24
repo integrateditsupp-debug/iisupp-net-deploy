@@ -213,5 +213,7 @@ import "./aria-markdown.test.mjs";
 import "./license-mint-timeout.test.mjs";
 // RUN 33-A — KB freshness surfaced in the top bar.
 import "./kb-freshness.test.mjs";
+// TASK 3 (2026-06-24) — "Resolve it for me" enabled + gated (supervised-fix, Confirmed, never autonomous).
+import "./resolve-for-me.test.mjs";
 
 console.log("ARIA Sentinel test suite passed.");

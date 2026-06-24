@@ -552,8 +552,10 @@ function renderRecipes(recipes) {
       <h3>${escapeHtml(recipe.title)}</h3>
       <p>${escapeHtml(recipe.summary)}</p>
       <div class="button-row">
+        <button class="primary" data-resolve-fix="${escapeHtml(recipe.id)}" data-risk="${escapeHtml(recipe.risk || "medium")}">Resolve it for me</button>
         <button class="ghost" data-recipe-run="${escapeHtml(recipe.id)}">Dry-run</button>
       </div>
+      <p class="note resolve-status" data-resolve-status="${escapeHtml(recipe.id)}" hidden></p>
     </article>
   `).join(""));
 
@@ -563,7 +565,40 @@ function renderRecipes(recipes) {
       return sentinel.runRecipe(button.dataset.recipeRun, { dryRun: true });
     }));
   });
+  // RUN 36 / TASK 3 — "Resolve it for me": run the matched fix LOCALLY through the gated control plane
+  // (R11 → supervisor → execution policy → 10s countdown → kill-switch). Confirmed-grade gating; never
+  // autonomous. The countdown indicator is the visible confirm/cancel; Ctrl+Alt+K aborts mid-fix.
+  qsa("[data-resolve-fix]").forEach((button) => bindResolveFix(button));
 }
+
+// Wire one "Resolve it for me" button to the supervised-fix pipeline and surface the gate's verdict.
+function bindResolveFix(button) {
+  const recipeId = button.dataset.resolveFix;
+  const risk = button.dataset.risk || "medium";
+  const statusEl = qs(`[data-resolve-status="${cssEscape(recipeId)}"]`) || button.closest(".recipe-card")?.querySelector(".resolve-status");
+  button.addEventListener("click", () => runAction(button, async () => {
+    // mode:"confirmed" requests explicit-approval + countdown gating for THIS fix (clamped — never autonomous).
+    const r = await sentinel.supervisedFix?.({ recipeId, risk, mode: "confirmed" });
+    if (statusEl) {
+      statusEl.hidden = false;
+      if (!r || r.ok === false) {
+        if (r?.error === "r11_blocked") statusEl.textContent = "1 personal folder excluded — fix blocked by privacy rule.";
+        else if (r?.verdict === "veto") statusEl.textContent = `Held by the safety supervisor: ${r.reason || "vetoed"}.`;
+        else statusEl.textContent = "Couldn't start this fix.";
+      } else if (r.countdown) {
+        statusEl.textContent = `Applying in ${r.seconds || 10}s — cancel from the countdown, or press Ctrl+Alt+K to abort.`;
+      } else if (r.bypass) {
+        statusEl.textContent = "Low-risk action acknowledged.";
+      } else {
+        statusEl.textContent = r.policy && r.policy.dryRun === false ? "Fix applied (reversible — see Restore points)." : "Previewed safely (dry-run). Enable live fixes to apply.";
+      }
+    }
+    return r;
+  }));
+}
+
+// Minimal CSS.escape shim (older Electron renderers) so the status selector is always valid.
+function cssEscape(s) { return String(s).replace(/[^a-zA-Z0-9_-]/g, (c) => "\\" + c); }
 
 function renderKnowledge(sources) {
   setHtml("knowledgeRows", sources.map((source) => `
@@ -1577,7 +1612,7 @@ function initAriaChat() {
     r.innerHTML = `<p class="aria-chat-who">ARIA</p><div class="aria-chat-bubble"><span class="aria-chat-dots"><span></span><span></span><span></span></span></div>`;
     log.appendChild(r); scrollEnd(); return r;
   }
-  function fill(r, res) {
+  function fill(r, res, question) {
     const bubble = r.querySelector(".aria-chat-bubble");
     // RUN 34-1 — render the answer as real markdown (H3/ol/ul/code/links), not raw "## / - / 1." text.
     const answer = document.createElement("div"); answer.className = "aria-chat-md";
@@ -1598,6 +1633,37 @@ function initAriaChat() {
     if (badge.textContent) bubble.appendChild(badge);
     const meta = res && res.kbMeta;
     if (meta && Number.isFinite(Number(meta.total_chunks))) { const c = qs("#ariaChatChunks"); if (c) c.textContent = Number(meta.total_chunks) + " chunks"; }
+    // TASK 4 — the one intentional difference from web: Sentinel can RESOLVE it on this device. The chip runs
+    // the matched fix through the gated control plane (Confirmed-grade, never autonomous, countdown + kill-switch).
+    appendResolveChip(bubble, question);
+  }
+  // The Sentinel-only "Resolve it for me" affordance under an answer. Diagnoses the question locally, and if a
+  // fix recipe is matched, runs it through the supervised-fix gate; otherwise opens the diagnostics flow.
+  function appendResolveChip(bubble, question) {
+    if (!window.sentinel || !window.sentinel.supervisedFix) return;
+    const wrap = document.createElement("div"); wrap.className = "aria-chat-resolve";
+    const btn = document.createElement("button"); btn.type = "button"; btn.className = "aria-chat-resolve-btn";
+    btn.textContent = "Resolve it for me";
+    const st = document.createElement("span"); st.className = "aria-chat-resolve-status";
+    btn.addEventListener("click", async () => {
+      btn.disabled = true; st.textContent = "Checking this device…";
+      try {
+        const d = (await window.sentinel.diagnose?.(question || "")) || {};
+        const recipeId = d.recipeId
+          || (Array.isArray(d.causes) && (d.causes.find((c) => c && c.recipeId) || {}).recipeId)
+          || (Array.isArray(d.attempts) && (d.attempts.find((a) => a && a.recipeId) || {}).recipeId)
+          || "";
+        if (!recipeId) { st.textContent = "No automatic fix matched — opening diagnostics."; activateTab("control-center"); await window.sentinel.selfDiagnose?.("chat"); return; }
+        const fix = await window.sentinel.supervisedFix({ recipeId, mode: "confirmed" });
+        if (!fix || fix.ok === false) {
+          st.textContent = fix?.error === "r11_blocked" ? "1 personal folder excluded." : fix?.verdict === "veto" ? `Held by safety supervisor: ${fix.reason || "vetoed"}.` : "Couldn't start the fix.";
+        } else if (fix.countdown) {
+          st.textContent = `Applying in ${fix.seconds || 10}s — cancel from the countdown, or Ctrl+Alt+K to abort.`;
+        } else if (fix.policy && fix.policy.dryRun === false) { st.textContent = "Fix applied (reversible — see Restore points)."; }
+        else { st.textContent = "Previewed safely (dry-run)."; }
+      } catch { st.textContent = "Couldn't resolve right now."; btn.disabled = false; }
+    });
+    wrap.append(btn, st); bubble.appendChild(wrap);
   }
   input.addEventListener("input", () => { input.style.height = "auto"; input.style.height = Math.min(140, input.scrollHeight) + "px"; });
   input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
@@ -1607,7 +1673,7 @@ function initAriaChat() {
     if (!msg || !window.sentinel || !window.sentinel.chat) return;
     row("me", msg); input.value = ""; input.style.height = "auto"; send.disabled = true; input.disabled = true;
     const r = thinking();
-    try { fill(r, await window.sentinel.chat(msg, {})); }
+    try { fill(r, await window.sentinel.chat(msg, {}), msg); }
     catch (err) { r.querySelector(".aria-chat-bubble").textContent = "Something went wrong reaching ARIA. Please try again."; }
     finally { send.disabled = false; input.disabled = false; input.focus(); scrollEnd(); }
   });

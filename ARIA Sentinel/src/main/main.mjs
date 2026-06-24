@@ -1791,7 +1791,11 @@ function runSupervisedFix(payload = {}) {
   const history = readRecipeHistory();
   const runs = (((history.recipes || {})[recipeId] || {}).runs || []).map((r) => ({ recipeId, ts: r.ts, ok: r.outcome === "success" }));
   const proposal = { recipeId, args: { pid: payload.pid }, riskTier: payload.risk || "medium", expectedImpact: recipeSideEffects(recipeId), rollbackPlan: "restore-point" };
-  const mode = store.get("mode") || "manual";
+  // "Resolve it for me" (TASK 3) may request CONFIRMED-grade gating for this one action — explicit user
+  // approval + a visible 10s countdown. SAFETY: a resolve action may only request "manual" or "confirmed";
+  // it can NEVER escalate to Autonomous (silent auto-fix). Anything else falls back to the stored mode.
+  const requested = String(payload.mode || "");
+  const mode = (requested === "manual" || requested === "confirmed") ? requested : (store.get("mode") || "manual");
   const verdict = superviseProposal(proposal, { mode, history: runs, now: Date.now(), vettedCatalog: supervisedVettedCatalog() });
   logEvent(verdict.verdict === "veto" ? "SECURITY" : "SUPERVISOR", `${supervisorAuditEntry(verdict, proposal).event}: ${verdict.reason}`, { recipeId });
   if (verdict.verdict === "veto") { writeRecipeHistory(recordOutcome(history, recipeId, "veto")); return { ok: false, verdict: "veto", reason: verdict.reason }; }
