@@ -198,8 +198,13 @@ const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'clau
   const outboundMessages = (priorMessages.length ? priorMessages : clientHistory)
     .concat([{ role: 'user', content: currentUserText }]);
 
+  // Slice D — model cascade. A single bad/retired ARIA_MODEL env value was 400-ing the whole web chat.
+  // Try the configured model first, then current known-good fallbacks. Anthropic returns 400 (not 404)
+  // for retired model strings, so treat 400/404 as "this model is unusable — try the next one".
+  const modelCandidates = [...new Set([model, 'claude-sonnet-4-6', 'claude-haiku-4-5-20251001'])];
+
   try {
-    const r = await withBreaker('anthropic-messages', () => fetchWithRetry('https://api.anthropic.com/v1/messages', {
+    const callModel = (candidate) => withBreaker('anthropic-messages', () => fetchWithRetry('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
@@ -207,7 +212,7 @@ const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'clau
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model,
+        model: candidate,
         max_tokens: 1500,
         system: SYSTEM_PROMPT + contextSummary,
         messages: outboundMessages,
@@ -218,14 +223,24 @@ const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'clau
       request_timeout_ms: 28000
     });
 
-    if (!r.ok) {
-      const err = await r.text();
-      console.error('[aria-chat] Anthropic error:', r.status, 'model:', model, 'body:', err.slice(0, 500));
-      const hint = r.status === 404 ? `model not found: ${model}` :
-                   r.status === 401 ? 'invalid API key' :
-                   r.status === 529 ? 'Anthropic overloaded' : `HTTP ${r.status}`;
-      return json(502, { error: `AI temporarily unavailable (${hint}). Call (647) 581-3182.` });
+    let r = null, usedModel = null, lastStatus = 0, lastErr = '';
+    for (const candidate of modelCandidates) {
+      const resp = await callModel(candidate);
+      if (resp.ok) { r = resp; usedModel = candidate; break; }
+      lastStatus = resp.status;
+      lastErr = (await resp.text()).slice(0, 400);
+      console.error('[aria-chat] Anthropic error:', resp.status, 'model:', candidate, 'body:', lastErr);
+      // only fall through to the next model for model-rejection statuses; bail on auth/overload
+      if (resp.status !== 400 && resp.status !== 404) break;
     }
+
+    if (!r) {
+      const hint = lastStatus === 404 ? 'model not found' :
+                   lastStatus === 401 ? 'invalid API key' :
+                   lastStatus === 529 ? 'Anthropic overloaded' : `HTTP ${lastStatus}`;
+      return json(502, { error: `AI temporarily unavailable (${hint}). Call (647) 581-3182.`, detail: lastErr || undefined });
+    }
+    if (usedModel !== model) console.warn('[aria-chat] model fallback: configured', model, '→ used', usedModel);
 
     const data = await r.json();
     const txt = (data.content && data.content[0] && data.content[0].text) || '';

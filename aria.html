@@ -1927,6 +1927,7 @@
           </div>
           <div class="history-bar">
             <button class="history-toggle" id="historyToggle">HISTORY <span class="count" id="historyCount">0</span><span class="caret">▾</span></button>
+            <button class="history-clear" id="newChatBtn" title="Start a fresh conversation — archives the current chat to History">NEW CHAT</button>
             <button class="history-clear" id="historyClear" title="Clear archived chats only — does not affect the current chat">CLEAR</button>
             <div class="history-dropdown" id="historyDropdown">
               <div class="history-empty">No archived chats</div>
@@ -2842,6 +2843,13 @@ if (_historyClear){
     clearChatHistory();
   });
 }
+const _newChatBtn = document.getElementById('newChatBtn');
+if (_newChatBtn){
+  _newChatBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    resetConversation();
+  });
+}
 document.addEventListener('click', e => {
   if (!e.target.closest('.history-bar')) _historyDD?.classList.remove('open');
   // followup chip → fire as user input
@@ -2899,6 +2907,7 @@ const state = {
   testQueue: null,
   testIdx: 0,
   unknownQueries: [],    // learning loop — batch to IIS via mailto
+  llmHistory: [],        // Slice D — rolling transcript sent to the aria-chat web brain for general Qs
   user: null,            // { firstName, lastName, company, email }
   sessionStart: Date.now(),
   satisfactionShown: false,
@@ -2914,6 +2923,56 @@ function flushUnknowns(){
   window.open(mailto, '_blank');
   appendMessage(ariaBubble("Sent.", `${state.unknownQueries.length} queries on the way to IIS. They'll push patterns in the next update — your ARIA picks them up automatically.`, ''));
   state.unknownQueries = [];
+}
+
+/* ============== Slice D — general-question path to the ARIA web brain (aria-chat) ============== */
+// Reached only when no IT recipe / KB pattern matched. Sends the rolling transcript to aria-chat and
+// renders a real LLM answer, so novel questions ("16 vs 32GB RAM for video editing?") get answered
+// instead of dead-ending. Any failure (offline / function error) falls back to the learning-loop queue.
+async function askAriaLLM(text){
+  appendMessage(youBubble(text));
+  const thinking = appendTransientMessage(ariaThinkingBubble('Thinking it through…'));
+  state.llmHistory = state.llmHistory || [];
+  state.llmHistory.push({ role:'user', content:String(text).slice(0, 4000) });
+  if (state.llmHistory.length > 16) state.llmHistory = state.llmHistory.slice(-16);
+  try {
+    const res = await fetch('/.netlify/functions/aria-chat', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ messages: state.llmHistory, sessionId: 'web-' + state.sessionId })
+    });
+    if (!res.ok) throw new Error('status ' + res.status);
+    const data = await res.json();
+    const reply = (data && data.text) ? String(data.text).trim() : '';
+    if (!reply) throw new Error('empty reply');
+    state.llmHistory.push({ role:'assistant', content:reply });
+    thinking?.remove();
+    let extra = '';
+    if (Array.isArray(data.suggestions) && data.suggestions.length){
+      extra += `<div class="followup-row" style="margin-top:10px">${data.suggestions.slice(0,3).map(s =>
+        `<button class="followup-chip" data-followup="${escapeHTML(String(s))}">${escapeHTML(String(s))}</button>`).join('')}</div>`;
+    }
+    if (data.escalate){
+      extra += `<div class="aria-text" style="margin-top:10px;color:var(--gold-bright)">Want a person? Call <a class="aria-result-link" href="tel:+16475813182">647-581-3182</a> or type <em>talk to a live agent</em>.</div>`;
+    }
+    appendMessage(ariaBubble('', escapeHTML(reply).replace(/\n/g,'<br>') + extra));
+    speak(reply);
+  } catch(err){
+    thinking?.remove();
+    queueUnknownFallback(text);   // graceful: log it + offer to teach IIS, no youBubble (already shown)
+  }
+}
+
+// Learning-loop fallback — used only when the web brain is unreachable. Does NOT re-append the user
+// bubble (askAriaLLM already did). Keeps the "send these to IIS" teach button working.
+function queueUnknownFallback(text){
+  state.unknownQueries = state.unknownQueries || [];
+  state.unknownQueries.push({ text, ts: Date.now() });
+  const n = state.unknownQueries.length;
+  const teachCue = n >= 3
+    ? `<div class="aria-text" style="margin-top:10px"><button class="esc-btn esc-urgent" data-send-unknowns style="width:auto;display:inline-flex"><div class="esc-num">${n}</div><div class="esc-body"><strong>Send these to IIS so they can teach me</strong><span>${n} queued · email ahmad.wasee@iisupp.net</span></div></button></div>`
+    : `<div class="aria-text" style="font-size:11px;color:var(--muted);margin-top:6px">I couldn't reach the live helpdesk just now — I've logged your question. Try again in a moment, or call (647) 581-3182.</div>`;
+  appendMessage(ariaBubble("I couldn't reach the helpdesk service just now.", "Your question is logged. Try again shortly, or call (647) 581-3182.", teachCue));
 }
 
 /* ============== AUTO-UPDATE — fetch manifest, swap KB / caps when newer ============== */
@@ -3178,8 +3237,29 @@ function archiveCurrentChat(){
   state.thread = [];
   state.introCleared = false;
   state.lastIntent = null;
+  // Slice D — clear sticky per-topic flags so the prior issue can't bleed into the next one.
+  state.pendingConfirm = null;
+  state.pendingPivot = null;
+  state.testQueue = null;
+  state.testIdx = 0;
+  state.llmHistory = [];
   document.querySelector('.browser-frame')?.classList.remove('active-chat');
   renderHistoryDropdown();
+}
+
+// Slice D — a true "start fresh" reset: archive whatever's on screen (nothing lost), then wipe ALL
+// conversational state. Wired to the NEW CHAT control so CLEAR-style intent actually resets context.
+function resetConversation(){
+  if (state.introCleared) archiveCurrentChat();   // archive + the reset above clears most flags
+  state.lastIntent = null;
+  state.pendingConfirm = null;
+  state.pendingPivot = null;
+  state.testQueue = null;
+  state.testIdx = 0;
+  state.unknownQueries = [];
+  state.satisfactionShown = false;
+  state.llmHistory = [];
+  document.getElementById('historyDropdown')?.classList.remove('open');
 }
 
 function renderHistoryDropdown(){
@@ -5026,18 +5106,9 @@ function handleUserInput(text){
       )), 200);
       return;
     }
-    // === LEARNING LOOP — queue unknown for IIS team to teach ARIA ===
-    state.unknownQueries = state.unknownQueries || [];
-    state.unknownQueries.push({ text, ts: Date.now() });
-    const n = state.unknownQueries.length;
-    const teachCue = n >= 3
-      ? `<div class="aria-text" style="margin-top:10px"><button class="esc-btn esc-urgent" data-send-unknowns style="width:auto;display:inline-flex"><div class="esc-num">${n}</div><div class="esc-body"><strong>Send these to IIS so they can teach me</strong><span>${n} unknown queries queued · email ahmad.wasee@iisupp.net</span></div></button></div>`
-      : `<div class="aria-text" style="font-size:11px;color:var(--muted);margin-top:6px">I'll log this and the next unknowns. After 3, you can send them to IIS to teach me.</div>`;
-    renderConversational("Hmm — I don't have a confident match for that yet.", text);
-    setTimeout(() => {
-      const last = document.querySelector('#chatMessages .aria-block:last-child .aria-content');
-      if (last) last.insertAdjacentHTML('beforeend', teachCue);
-    }, 350);
+    // === Slice D — non-recipe / general question → ARIA web brain (LLM). No canned IT pattern matched,
+    // so hand it to aria-chat for a real free-form answer. On any failure, fall back to the learning loop. ===
+    askAriaLLM(text);
     return;
   }
 
