@@ -83,6 +83,57 @@ export const RECIPES = [
     allowlistTags: ['office-repair','m365']
   },
   {
+    id: 'office-file-repair-v1',
+    title: 'Excel / Word file won’t open (format not valid, corrupt, or locked)',
+    category: 'm365',
+    os: ['windows'],
+    matchKeywords: ['file format not valid','excel won’t open file','excel wont open','spreadsheet won’t open','xlsx won’t open','word file won’t open','docx corrupt','file is corrupt','file is locked','file in use','cannot open the file','open and repair','excel file damaged','workbook corrupt','the file is locked for editing'],
+    matchPatterns: ['(excel|word|powerpoint|xlsx|docx|pptx|spreadsheet|workbook).*(won.?t open|not valid|corrupt|damaged|locked|in use|repair|recover)','(file format|format).*(not valid|invalid)','file.*(locked|in use|corrupt)'],
+    version: 1, riskOverall: 'orange',
+    description: 'Recover an Office file that won’t open — Open-and-Repair, clear the Office file cache, release a locked file, and verify the extension.',
+    diagnostic: {
+      cmd: 'Get-ChildItem $env:TEMP, "$env:LOCALAPPDATA\\Microsoft\\Office\\UnsavedFiles" -Filter "~$*" -ErrorAction SilentlyContinue | Select-Object Name,LastWriteTime',
+      shell: 'powershell',
+      explainer: 'Look for stray Office owner-lock files (~$…) that can keep a document marked "locked for editing".',
+      expectedReproduces: 'One or more ~$ lock files, or the file still won’t open after closing all Office apps',
+      expectedNoIssue: 'No lock files and the app opens other files fine — the document itself may be corrupt; use Open-and-Repair.'
+    },
+    fixSteps: [
+      {
+        id: 'verify-extension', label: 'Verify the file extension matches its type',
+        cmd: null, manual: true, risk: 'green', requiresConfirm: false,
+        explainer: 'In File Explorer turn on View → File name extensions. A file saved as the wrong type (e.g. a .csv renamed to .xlsx) shows "format not valid". Rename it back to the correct extension (.xlsx / .docx / .pptx) and try again.',
+        rollback: null, estimatedSeconds: 30
+      },
+      {
+        id: 'open-and-repair', label: 'Open and Repair from within the app',
+        cmd: null, manual: true, risk: 'orange', requiresConfirm: true,
+        explainer: 'Open Excel (or Word) → File → Open → Browse → single-click the file → click the small arrow next to the Open button → choose "Open and Repair". This rebuilds the file’s internal structure without changing the original until you save.',
+        rollback: 'If repair fails, choose "Extract Data" on the same menu to pull values out of a damaged workbook.', estimatedSeconds: 60
+      },
+      {
+        id: 'release-lock', label: 'Release a file locked "for editing"',
+        cmd: null, manual: true, risk: 'orange', requiresConfirm: true,
+        explainer: 'Close every Office app (check the system tray). If it’s a shared/network file, the lock clears when the other person closes it or after Office times out. Delete any leftover ~$<filename> owner-lock file in the same folder — it only stores who had it open, never your data.',
+        rollback: null, estimatedSeconds: 45
+      },
+      {
+        id: 'clear-office-cache', label: 'Clear the Office Document Cache (last resort)',
+        cmd: 'Start-Process "ms-settings:" ; Write-Host "Close all Office apps first, then clear the Office Upload/Document Cache from File > Options > Save."',
+        shell: 'powershell', risk: 'orange', requiresConfirm: true,
+        explainer: 'A stale upload cache can lock cloud files. Close all Office apps, then in any Office app go File → Options → Save → "Delete cached files". Your documents live in OneDrive/SharePoint and re-download.',
+        rollback: null, estimatedSeconds: 60
+      }
+    ],
+    ariaScript: {
+      intro: 'When a file shows “format not valid”, won’t open, or says it’s locked, it’s usually fixable on your own machine. I’ll walk you through it — nothing changes the original until you save.',
+      consent: 'I’ll guide you through 4 safe checks: verify the extension, Open-and-Repair, release a locked file, then clear the Office cache if needed. You approve each step.',
+      onCantReproduce: 'The file opens for me here — it may be machine-specific or a permissions issue. Try opening it on another device, or call (647) 581-3182.',
+      onSuccess: 'Your file should open now. If it stays corrupt, restore an earlier copy from OneDrive/SharePoint version history, or call (647) 581-3182.'
+    },
+    allowlistTags: ['office-repair','file-recovery','m365']
+  },
+  {
     id: 'teams-cache-reset-v1',
     title: 'Teams stuck loading or won’t sign in',
     category: 'm365',

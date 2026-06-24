@@ -17,6 +17,8 @@ const ROUTING = [
   [/\b(can.?t\s*sign\s*in|password\s*prompt|login\s*loop|aadsts)\b.*\b(office|365|m365)\b/i, 'l1-m365-001'],
   [/\b(office|m365).*(can.?t\s*sign\s*in|password\s*prompt)\b/i, 'l1-m365-001'],
   [/\b(office|word|excel)\b.*(unlicensed|reduced\s*functionality|activation|product\s*deactivated|subscription\s*expired)\b/i, 'l1-m365-002'],
+  [/\b(excel|word|powerpoint|xlsx|docx|pptx|spreadsheet|workbook)\b.*(won.?t\s*open|corrupt|damaged|format.*not\s*valid|locked|in\s*use|repair|recover)\b/i, 'l1-m365-003'],
+  [/\b(file\s*format|format)\b.*(not\s*valid|invalid)\b/i, 'l1-m365-003'],
   [/\boutlook\b.*(not\s*receiv|missing\s*email|inbox\s*not\s*updat|stuck|offline|i.?m\s*offline|says.*offline)\b/i, 'l1-outlook-001'],
   [/\boutlook\b.*(can.?t\s*send|stuck\s*in\s*outbox|smtp|unable\s*to\s*send)\b/i, 'l1-outlook-002'],
   [/\bteams\b.*(no\s*audio|can.?t\s*hear|hear\s*me|mic|microphone|speaker|sound)\b/i, 'l1-teams-001'],
