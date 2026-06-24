@@ -6,12 +6,16 @@ const os = require("os");
 const path = require("path");
 const INDEX = process.env.INDEX_HTML;
 const OUT = process.env.OUT_PNG;
-app.commandLine.appendSwitch("disable-gpu");
 app.setPath("userData", path.join(os.tmpdir(), "aria-rcap-" + process.pid + "-" + process.hrtime.bigint().toString()));
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 app.whenReady().then(async () => {
-  const win = new BrowserWindow({ show: false, width: 1340, height: 980, webPreferences: { contextIsolation: true, nodeIntegration: false } });
+  // Offscreen rendering: Chromium paints to a bitmap delivered via the 'paint' event — the correct way to
+  // screenshot without a visible window (capturePage on a hidden window returns a blank buffer).
+  const win = new BrowserWindow({ show: false, width: 1340, height: 980, webPreferences: { offscreen: true, contextIsolation: true, nodeIntegration: false } });
+  let latest = null;
+  win.webContents.on("paint", (_e, _dirty, image) => { latest = image; });
+  win.webContents.setFrameRate(15);
   for (let i = 0; i < 4; i++) { try { await win.loadFile(INDEX); break; } catch (e) { await wait(1200); } }
   await wait(2800);
 
@@ -44,7 +48,12 @@ app.whenReady().then(async () => {
   // a hidden Electron window returns a stale blank buffer (tooling limitation), so we assert from layout.
   const onScreen = (r) => r && r.w > 50 && r.h > 10 && r.y >= 0 && r.y < 980;
   const pass = diag.recipesActive && jumpOptions > 5 && diag.cards >= 1 && onScreen(diag.searchRect) && onScreen(diag.cardRect) && diag.listDisplay === "grid";
-  try { win.webContents.invalidate(); await wait(700); const img = await win.webContents.capturePage(); fs.writeFileSync(OUT, img.toPNG()); console.log("  screenshot:", OUT, fs.statSync(OUT).size, "bytes (note: hidden-window capture may be blank — see DIAG geometry)"); } catch (e) { console.log("  capture skipped:", e.message); }
+  try {
+    win.webContents.invalidate();
+    await wait(1200); // let offscreen paint a fresh frame of the recipes tab
+    if (latest) { fs.writeFileSync(OUT, latest.toPNG()); console.log("  screenshot (offscreen paint):", OUT, fs.statSync(OUT).size, "bytes"); }
+    else { const img = await win.webContents.capturePage(); fs.writeFileSync(OUT, img.toPNG()); console.log("  screenshot (capturePage fallback):", OUT, fs.statSync(OUT).size, "bytes"); }
+  } catch (e) { console.log("  capture skipped:", e.message); }
   console.log("=== criterion 4 (Recipes finder renders + filters, geometry-verified): " + (pass ? "PASS" : "CHECK") + " ===");
   app.quit();
 }).catch((e) => { console.error("harness error:", e); app.quit(); });
