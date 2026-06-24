@@ -1,0 +1,67 @@
+/* ARIA Sentinel — Design Tokens
+ * Integrated IT Support Inc. · iisupp.net
+ * Dark only. Gold on black. Never inverted.
+ * Drop into the Electron renderer / extension content scripts as :root vars.
+ */
+:root {
+  /* ---- Surfaces ---- */
+  --aria-bg:            #050505; /* app chrome, dark surfaces, BSOD-overlay base */
+  --aria-surface:       #0a0a0a; /* cards, modals, panels */
+  --aria-inset:         #141414; /* inset panels, inputs, progress track base */
+  --aria-border:        #2a2a2a; /* primary divider / card border */
+  --aria-border-soft:   #1c1c1c; /* subtle section dividers */
+  --aria-border-faint:  #1a1a1a; /* faint internal rules */
+
+  /* ---- Gold (brand) ---- */
+  --aria-gold:          #c5a059; /* primary brand, globe core, CTA */
+  --aria-gold-light:    #f1dca7; /* highlights, hover, gradient end */
+  --aria-gold-dark:     #8b6d2f; /* pressed state */
+  --aria-gold-kicker:   #7d6326; /* eyebrow / section-label gold (dim) */
+  --aria-gold-tint-bg:  #15110a; /* selected/active gold-tinted surface */
+  --aria-gold-tint-bd:  #38301d; /* border on gold-tinted surface */
+
+  /* ---- Text ---- */
+  --aria-text:          #ffffff; /* primary text */
+  --aria-text-2:        #aaaaaa; /* secondary text */
+  --aria-text-muted:    #666666; /* disclaimers, timestamps */
+
+  /* ---- Status ---- */
+  --aria-success:       #7afbff; /* fix-applied / resolved / connected */
+  --aria-warning:       #ffcb6b; /* action required / escalation / in-progress */
+  --aria-error:         #ff7e7e; /* fatal / security / contact support */
+
+  /* ---- Type ---- */
+  --aria-font-display:  'Cinzel', serif;                 /* logo, hero, modal headlines, CTAs */
+  --aria-font-ui:       'Inter', system-ui, sans-serif;  /* all UI labels, copy, buttons */
+  --aria-font-mono:     ui-monospace, 'SF Mono', Monaco, Menlo, monospace; /* timestamps, stop codes, log lines */
+
+  /* ---- Radius ---- */
+  --aria-r-sm: 5px;   /* chips */
+  --aria-r-md: 8px;   /* buttons, inputs */
+  --aria-r-lg: 12px;  /* cards */
+  --aria-r-xl: 14px;  /* fix card, windows */
+  --aria-r-2xl: 18px; /* stage / showcase surfaces */
+
+  /* ---- Gradients ---- */
+  --aria-grad-gold: linear-gradient(90deg, #c5a059, #f1dca7); /* CTA buttons, progress fill */
+  --aria-grad-card: linear-gradient(180deg, #141414, #0a0a0a); /* fix-card / window body */
+
+  /* ---- Globe gradients (radial) ---- */
+  /* core:  radial-gradient(62% at 36% 34%, #f1dca7 .95 → #c5a059 .68 @55% → #5a3f10 0 @100%) */
+  /* glow:  radial-gradient(50%, #c5a059 .34 → 0) ; escalation glow uses #ffcb6b .42 → 0 */
+
+  /* ---- Motion ---- */
+  --aria-ease-card: cubic-bezier(.16, 1, .3, 1); /* card slide-up */
+  --aria-dur-card: 260ms;
+  --aria-dur-dodge: 200ms;            /* cursor-dodge response, linear */
+  --aria-globe-pulse: 4.2s;           /* idle glow pulse, ease-in-out */
+  --aria-globe-rot-idle: 34s;         /* idle rotation, linear; ~30s spec */
+  /* fixing rotation ≈ 4× idle; diagnosing ≈ 2×; drop to 30fps after 5s idle */
+
+  /* ---- Footprint constraints (HARD) ---- */
+  --aria-globe-default: 64px;  /* idle diameter */
+  --aria-globe-active:  96px;  /* diagnosing/fixing diameter */
+  --aria-globe-hitbox:  80px;  /* clickable region; globe is click-through outside this */
+  --aria-overlay-max-w: 320px; /* globe + card max width */
+  --aria-overlay-max-h: 200px; /* globe + card max height */
+}

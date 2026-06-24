@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#050505; }
+  @keyframes deckBob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+</style>
+</helmet>
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+  <section data-label="Cover" data-speaker-notes="ARIA Sentinel — resident IT support that never sleeps. The on-device autonomous extension of our existing ARIA L1-L3 support product." style="width:100%; height:100%; box-sizing:border-box; background:radial-gradient(circle at 72% 42%, rgba(197,160,89,.10), transparent 55%), #050505; font-family:'Inter',sans-serif; display:flex; align-items:center; padding:0 140px; position:relative; overflow:hidden;">
+    <div style="position:absolute; right:150px; top:50%; transform:translateY(-50%); animation:deckBob 5.5s ease-in-out infinite;"><dc-import name="Globe" state="idle" size="360" hint-size="360px,360px"></dc-import></div>
+    <div style="position:relative;">
+      <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.36em; color:#c5a059; text-transform:uppercase; margin-bottom:34px;">Integrated IT Support Inc. · iisupp.net</div>
+      <div style="font-family:'Cinzel',serif; font-size:120px; line-height:1; font-weight:700; color:#fff; letter-spacing:.01em;">ARIA <span style="color:#c5a059;">Sentinel</span></div>
+      <div style="font-family:'Cinzel',serif; font-size:38px; color:#e9e9e9; margin-top:30px; font-weight:500;">Resident IT support that never sleeps.</div>
+      <div style="font-size:24px; color:#9a9a9a; margin-top:22px; max-width:760px; line-height:1.5;">An ambient on-device agent that watches for tech problems, fixes them before they slow you down, and routes the rest — without sending your data anywhere.</div>
+    </div>
+  </section>
+
+  <section data-label="Problem" data-speaker-notes="Large orgs drown in repeat, automatable tickets. 10s-100s of agents in helpdesk roles. The pattern across 16+ years: most of it is the same fixable issues." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:96px 140px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:24px;">The problem</div>
+    <div style="font-family:'Cinzel',serif; font-size:62px; font-weight:700; color:#fff; max-width:1200px; line-height:1.12;">The service desk is buried in the same fixable tickets</div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:26px; margin-top:64px;">
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-family:'Cinzel',serif; font-size:64px; font-weight:700; color:#c5a059;">70–80%</div><div style="font-size:21px; color:#bdbdbd; margin-top:14px; line-height:1.4;">of L1–L3 tickets are repeat, automatable issues</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-family:'Cinzel',serif; font-size:64px; font-weight:700; color:#c5a059;">$15–30</div><div style="font-size:21px; color:#bdbdbd; margin-top:14px; line-height:1.4;">typical fully-loaded cost per support ticket</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-family:'Cinzel',serif; font-size:64px; font-weight:700; color:#c5a059;">10s–100s</div><div style="font-size:21px; color:#bdbdbd; margin-top:14px; line-height:1.4;">of agents per large-org helpdesk</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-family:'Cinzel',serif; font-size:64px; font-weight:700; color:#c5a059;">millions</div><div style="font-size:21px; color:#bdbdbd; margin-top:14px; line-height:1.4;">of tickets/calls per year at enterprise scale</div></div>
+    </div>
+  </section>
+
+  <section data-label="Product" data-speaker-notes="One sentence: ARIA Sentinel lives on the PC, watches, and fixes before you notice. The gold globe is the whole interface." style="width:100%; height:100%; box-sizing:border-box; background:radial-gradient(circle at 24% 50%, rgba(197,160,89,.09), transparent 55%), #050505; font-family:'Inter',sans-serif; padding:96px 140px; display:flex; align-items:center; gap:90px;">
+    <div style="flex:0 0 380px; display:flex; justify-content:center; animation:deckBob 5.5s ease-in-out infinite;"><dc-import name="Globe" state="fixing" size="340" hint-size="340px,340px"></dc-import></div>
+    <div style="flex:1;">
+      <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:26px;">The product, in one sentence</div>
+      <div style="font-family:'Cinzel',serif; font-size:58px; font-weight:700; color:#fff; line-height:1.18;">ARIA Sentinel lives on your PC, watches for tech problems, and fixes them before they slow you down.</div>
+      <div style="font-size:24px; color:#9a9a9a; margin-top:30px; line-height:1.55; max-width:820px;">A single gold globe hugs the edge of the screen. It stays calm until something breaks — then it diagnoses, fixes, and gets out of the way.</div>
+    </div>
+  </section>
+
+  <section data-label="Modes" data-speaker-notes="Three modes. Manual is the free default. Confirmed and Autonomous are paid. Risky fixes always confirm." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:96px 140px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:24px;">How it works</div>
+    <div style="font-family:'Cinzel',serif; font-size:62px; font-weight:700; color:#fff;">Three modes, you stay in control</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:60px;">
+      <div style="background:linear-gradient(180deg,#15110a,#0a0a0a); border:1px solid #c5a059; border-radius:20px; padding:44px;"><div style="display:flex; align-items:center; gap:14px;"><span style="font-family:'Cinzel',serif; font-size:34px; font-weight:700; color:#fff;">Manual</span><span style="font-size:16px; letter-spacing:.12em; color:#7afbff; border:1px solid rgba(122,251,255,.4); border-radius:6px; padding:5px 12px;">DEFAULT · FREE</span></div><div style="font-size:22px; color:#bdbdbd; margin-top:22px; line-height:1.55;">ARIA detects the issue and walks you through the fix in chat. Nothing is applied automatically.</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:20px; padding:44px;"><div style="display:flex; align-items:center; gap:14px;"><span style="font-family:'Cinzel',serif; font-size:34px; font-weight:700; color:#fff;">Confirmed</span><span style="font-size:16px; letter-spacing:.12em; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:6px; padding:5px 12px;">PAID</span></div><div style="font-size:22px; color:#bdbdbd; margin-top:22px; line-height:1.55;">ARIA proposes a fix card and applies it the moment you confirm.</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:20px; padding:44px;"><div style="display:flex; align-items:center; gap:14px;"><span style="font-family:'Cinzel',serif; font-size:34px; font-weight:700; color:#fff;">Autonomous</span><span style="font-size:16px; letter-spacing:.12em; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:6px; padding:5px 12px;">PAID · OPT-IN</span></div><div style="font-size:22px; color:#bdbdbd; margin-top:22px; line-height:1.55;">ARIA silently fixes low-risk issues and tells you after. High-risk fixes still confirm.</div></div>
+    </div>
+  </section>
+
+  <section data-label="ServiceNow" data-speaker-notes="When ARIA can't fix it locally, it auto-routes a ServiceNow incident to the right assignment group. The user can't change the bin — ARIA picks it from the signal." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:96px 140px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#ffcb6b; text-transform:uppercase; margin-bottom:24px;">When ARIA can't fix it</div>
+    <div style="font-family:'Cinzel',serif; font-size:60px; font-weight:700; color:#fff; max-width:1300px; line-height:1.12;">It raises a routed ServiceNow incident — automatically</div>
+    <div style="font-size:24px; color:#9a9a9a; margin-top:24px; max-width:1100px; line-height:1.5;">ARIA classifies the unresolved signal and files an incident to the correct assignment group, pre-filled with diagnostics. Routing is policy-driven and not user-editable.</div>
+    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:18px; margin-top:56px;">
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-left:3px solid #c5a059; border-radius:14px; padding:26px 22px;"><div style="font-size:23px; color:#fff; font-weight:600;">Desktop Support</div><div style="font-size:16px; color:#888; margin-top:10px; line-height:1.4;">Hardware · reimaging</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-left:3px solid #c5a059; border-radius:14px; padding:26px 22px;"><div style="font-size:23px; color:#fff; font-weight:600;">Network</div><div style="font-size:16px; color:#888; margin-top:10px; line-height:1.4;">VPN · DNS infra</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-left:3px solid #ff7e7e; border-radius:14px; padding:26px 22px;"><div style="font-size:23px; color:#fff; font-weight:600;">Security</div><div style="font-size:16px; color:#888; margin-top:10px; line-height:1.4;">Malware · policy</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-left:3px solid #c5a059; border-radius:14px; padding:26px 22px;"><div style="font-size:23px; color:#fff; font-weight:600;">System Admins</div><div style="font-size:16px; color:#888; margin-top:10px; line-height:1.4;">AD · GPO</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-left:3px solid #c5a059; border-radius:14px; padding:26px 22px;"><div style="font-size:23px; color:#fff; font-weight:600;">Purchasing</div><div style="font-size:16px; color:#888; margin-top:10px; line-height:1.4;">Parts · licenses</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-left:3px solid #7afbff; border-radius:14px; padding:26px 22px;"><div style="font-size:23px; color:#fff; font-weight:600;">Service Desk</div><div style="font-size:16px; color:#888; margin-top:10px; line-height:1.4;">Catch-all triage</div></div>
+    </div>
+  </section>
+
+  <section data-label="Governance" data-speaker-notes="ARIA reads the company's own policies, procedures, compliance and culture docs before acting. It never operates outside documented policy." style="width:100%; height:100%; box-sizing:border-box; background:radial-gradient(circle at 78% 50%, rgba(197,160,89,.08), transparent 55%), #050505; font-family:'Inter',sans-serif; padding:96px 140px; display:flex; align-items:center; gap:80px;">
+    <div style="flex:1;">
+      <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:24px;">Governance first</div>
+      <div style="font-family:'Cinzel',serif; font-size:58px; font-weight:700; color:#fff; line-height:1.14;">It reads your rulebook before it touches anything</div>
+      <div style="font-size:24px; color:#9a9a9a; margin-top:26px; line-height:1.55; max-width:780px;">Upload your procedures, policies, workflows, culture, security, compliance, audit and regulatory docs. ARIA consults this on-device corpus before any fix or suggestion — and uses your culture &amp; tone docs to shape how it speaks to users.</div>
+    </div>
+    <div style="flex:0 0 560px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:20px; padding:40px; display:flex; flex-direction:column; gap:16px;">
+      <div style="background:#0c0c0c; border:1px solid #1f1f1f; border-radius:12px; padding:20px 24px; font-size:22px; color:#ddd;">Detect issue</div>
+      <div style="text-align:center; color:#444; font-size:26px;">↓</div>
+      <div style="background:#15110a; border:1px solid rgba(197,160,89,.45); border-radius:12px; padding:20px 24px; font-size:22px; color:#f1dca7;">Check against policy corpus</div>
+      <div style="text-align:center; color:#444; font-size:26px;">↓</div>
+      <div style="display:flex; gap:16px;"><div style="flex:1; background:#0c0c0c; border:1px solid rgba(122,251,255,.3); border-radius:12px; padding:18px; font-size:19px; color:#7afbff;">Allowed → apply</div><div style="flex:1; background:#0c0c0c; border:1px solid rgba(255,203,107,.35); border-radius:12px; padding:18px; font-size:19px; color:#ffcb6b;">Restricted → escalate</div></div>
+    </div>
+  </section>
+
+  <section data-label="Architecture" data-speaker-notes="Four layers. The desktop agent is the engine. Backend is pull-only. ServiceNow is the one intentional outbound, to the customer's own instance." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:84px 140px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:22px;">Architecture</div>
+    <div style="font-family:'Cinzel',serif; font-size:54px; font-weight:700; color:#fff; margin-bottom:40px;">Four layers, one engine</div>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div style="background:#0a0a0a; border:1px solid rgba(197,160,89,.4); border-radius:14px; padding:24px 32px; display:flex; align-items:center; gap:24px;"><div style="font-family:'Cinzel',serif; font-size:22px; color:#c5a059; letter-spacing:.2em; flex:0 0 200px;">L4 · BRAND</div><div style="font-size:21px; color:#aaa;">Gold globe · Cinzel + Inter · ARIA TTS voice · dark only</div></div>
+      <div style="background:#0a0a0a; border:1px solid rgba(122,251,255,.32); border-radius:14px; padding:24px 32px; display:flex; align-items:center; gap:24px;"><div style="font-family:'Cinzel',serif; font-size:22px; color:#7afbff; letter-spacing:.2em; flex:0 0 200px;">L3 · BACKEND</div><div style="font-size:21px; color:#aaa;">iisupp.net — pull-only: signed recipes + BSOD stop-code index. No user data uploads.</div></div>
+      <div style="background:#0a0a0a; border:1px solid rgba(197,160,89,.32); border-radius:14px; padding:24px 32px; display:flex; align-items:center; gap:24px;"><div style="font-family:'Cinzel',serif; font-size:22px; color:#c5a059; letter-spacing:.2em; flex:0 0 200px;">L2 · BROWSER</div><div style="font-size:21px; color:#aaa;">Manifest V3 extensions — Chrome · Edge · Safari · localhost WS bridge to the agent</div></div>
+      <div style="background:#0a0a0a; border:1px solid rgba(241,220,167,.45); border-radius:14px; padding:24px 32px; display:flex; align-items:center; gap:24px;"><div style="font-family:'Cinzel',serif; font-size:22px; color:#f1dca7; letter-spacing:.2em; flex:0 0 200px;">L1 · AGENT</div><div style="font-size:21px; color:#aaa;">Electron · watchers · PowerShell fix runner · encrypted KB · BSOD/WinRE · <span style="color:#ffcb6b;">ServiceNow bridge</span></div></div>
+    </div>
+  </section>
+
+  <section data-label="Privacy" data-speaker-notes="Privacy by engineering. No upload paths to iisupp.net exist in the binary. Open-source verification harness." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:96px 140px; display:flex; align-items:center; gap:90px;">
+    <div style="flex:1;">
+      <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#7afbff; text-transform:uppercase; margin-bottom:24px;">Trust</div>
+      <div style="font-family:'Cinzel',serif; font-size:60px; font-weight:700; color:#fff; line-height:1.12;">Privacy by engineering, not by promise</div>
+      <div style="font-size:24px; color:#9a9a9a; margin-top:28px; line-height:1.55; max-width:780px;">No user-data upload path exists in the binary — verifiable with any network monitor. Recipes come down from iisupp.net; incidents go to your own ServiceNow. KB is encrypted on-device. The verification harness is source-available.</div>
+    </div>
+    <div style="flex:0 0 460px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:24px; padding:60px; text-align:center;">
+      <div style="font-family:'Cinzel',serif; font-size:180px; font-weight:700; color:#7afbff; line-height:.9;">0</div>
+      <div style="font-size:26px; color:#fff; margin-top:18px; font-weight:600;">data-upload paths to iisupp.net</div>
+    </div>
+  </section>
+
+  <section data-label="BSOD" data-speaker-notes="The wow moment. ARIA appears on the BSOD recovery screen. Reads the minidump, fixes locally, or routes a ticket." style="width:100%; height:100%; box-sizing:border-box; background:#0078D4; font-family:'Inter',sans-serif; padding:90px 130px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-size:130px; line-height:.8; color:#fff; font-weight:300;">:(</div>
+    <div style="font-size:34px; color:#fff; font-weight:300; margin-top:34px; max-width:900px; line-height:1.35;">Your PC ran into a problem and needs to restart.</div>
+    <div style="font-family:ui-monospace,monospace; font-size:22px; color:rgba(255,255,255,.9); margin-top:22px;">Stop code: CRITICAL_PROCESS_DIED  (0x000000EF)</div>
+    <div style="margin-top:50px; max-width:1320px; background:rgba(0,0,0,.34); border:3px solid rgba(197,160,89,.85); border-radius:22px; padding:36px 40px; display:flex; align-items:center; gap:40px;">
+      <dc-import name="Globe" state="diagnosing" size="150" hint-size="150px,150px"></dc-import>
+      <div style="flex:1;"><div style="font-family:'Cinzel',serif; font-size:20px; letter-spacing:.24em; color:#f1dca7;">ARIA SENTINEL</div><div style="font-family:'Cinzel',serif; font-size:46px; font-weight:700; color:#fff; margin:8px 0 12px;">Solve it for me</div><div style="font-size:23px; color:rgba(255,255,255,.88); line-height:1.4;">I can read this stop code and apply a known fix locally — or raise a routed ServiceNow incident if hardware support is needed.</div></div>
+      <div style="background:#c5a059; color:#1a1410; font-family:'Cinzel',serif; font-weight:700; font-size:24px; letter-spacing:.14em; padding:24px 38px; border-radius:14px;">SOLVE IT FOR ME</div>
+    </div>
+  </section>
+
+  <section data-label="Recipes" data-speaker-notes="25 detection-to-fix recipes ship in MVP, expanding to 75+ via the KB-agent loop. Desktop and browser." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:84px 130px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:20px;">The knowledge base</div>
+    <div style="font-family:'Cinzel',serif; font-size:54px; font-weight:700; color:#fff;">25 fixes at launch, expanding to 75+</div>
+    <div style="font-size:24px; color:#9a9a9a; margin-top:20px; max-width:1320px; line-height:1.45;">Beyond the known: ARIA researches new issues as they appear and resolves them — or connects you to IT experts with decades of cross-sector experience.</div>
+    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:48px;">
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">DISK.FULL</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">NET.DNS.FAIL</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">NET.WIFI.DROP</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">OUTLOOK.CRASH</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">PRINT.OFFLINE</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">WIN.UPDATE.STUCK</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">SLOW.PC</div>
+      <div style="background:#0c0c0c; border:1px solid rgba(255,203,107,.4); border-radius:11px; padding:18px; font-size:22px; color:#ffcb6b; font-family:ui-monospace,monospace;">BLUE.SCREEN</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">TEAMS.STUCK</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">ONEDRIVE.SYNC</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">AUDIO.MUTE</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">BLUETOOTH.OFF</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">VPN.DROP</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">CACHE.STALE</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">COOKIE.JAR</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">PASSWORD.RETRY</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">SERVICE.WORKER</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">CERT.EXPIRED</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">EXT.CONFLICT</div>
+      <div style="background:#0c0c0c; border:1px solid #222; border-radius:11px; padding:18px; font-size:22px; color:#ddd; font-family:ui-monospace,monospace;">TAB.HANG</div>
+      <div style="background:#0c0c0c; border:1px dashed #2a2a2a; border-radius:11px; padding:18px; font-size:22px; color:#c5a059; font-family:'Inter',sans-serif;">+5 more</div>
+    </div>
+  </section>
+
+  <section data-label="Demo flow" data-speaker-notes="The full loop: install, watch, detect, fix, done. Globe state changes carry the narrative." style="width:100%; height:100%; box-sizing:border-box; background:radial-gradient(circle at 50% 30%, rgba(197,160,89,.07), transparent 60%), #050505; font-family:'Inter',sans-serif; padding:96px 130px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:24px;">The loop</div>
+    <div style="font-family:'Cinzel',serif; font-size:56px; font-weight:700; color:#fff; margin-bottom:60px;">Install → detect → fix → done</div>
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:18px;">
+      <div style="text-align:center; flex:1;"><dc-import name="Globe" state="idle" size="150" hint-size="150px,150px"></dc-import><div style="font-size:26px; color:#fff; font-weight:600; margin-top:18px;">Watching</div><div style="font-size:19px; color:#888; margin-top:8px;">&lt;1% CPU idle</div></div>
+      <div style="color:#c5a059; font-size:48px;">→</div>
+      <div style="text-align:center; flex:1;"><dc-import name="Globe" state="diagnosing" size="150" hint-size="150px,150px"></dc-import><div style="font-size:26px; color:#fff; font-weight:600; margin-top:18px;">Diagnosing</div><div style="font-size:19px; color:#888; margin-top:8px;">matches local KB</div></div>
+      <div style="color:#c5a059; font-size:48px;">→</div>
+      <div style="text-align:center; flex:1;"><dc-import name="Globe" state="fixing" size="150" hint-size="150px,150px"></dc-import><div style="font-size:26px; color:#fff; font-weight:600; margin-top:18px;">Fixing</div><div style="font-size:19px; color:#888; margin-top:8px;">restore point first</div></div>
+      <div style="color:#c5a059; font-size:48px;">→</div>
+      <div style="text-align:center; flex:1;"><dc-import name="Globe" state="done" size="150" hint-size="150px,150px"></dc-import><div style="font-size:26px; color:#fff; font-weight:600; margin-top:18px;">Done</div><div style="font-size:19px; color:#888; margin-top:8px;">card slides up</div></div>
+    </div>
+  </section>
+
+  <section data-label="Pricing &amp; roadmap" data-speaker-notes="Standalone B2B pricing, separate from existing ARIA tiers. Manual free, Confirmed+Autonomous paid. Roadmap by sprint to v1.0." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:84px 130px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:20px;">Model &amp; roadmap</div>
+    <div style="font-family:'Cinzel',serif; font-size:54px; font-weight:700; color:#fff;">B2B-first, shipped in sprints</div>
+    <div style="display:flex; gap:30px; margin-top:48px;">
+      <div style="flex:0 0 520px; background:linear-gradient(180deg,#15110a,#0a0a0a); border:1px solid #c5a059; border-radius:20px; padding:40px;">
+        <div style="font-family:'Cinzel',serif; font-size:30px; color:#fff; font-weight:700;">Standalone subscription</div>
+        <div style="font-size:21px; color:#bdbdbd; margin-top:16px; line-height:1.6;">Separate from existing ARIA tiers. <span style="color:#7afbff;">Manual = free / freemium.</span> <span style="color:#c5a059;">Confirmed + Autonomous = paid.</span> Per-seat for SMB → enterprise. GPO / MSI / SCCM deployment.</div>
+      </div>
+      <div style="flex:1; display:flex; flex-direction:column; gap:14px; justify-content:center;">
+        <div style="display:flex; gap:16px;"><div style="background:#0c0c0c; border:1px solid #222; border-radius:12px; padding:18px 22px; flex:1;"><span style="color:#c5a059; font-family:'Cinzel',serif; font-size:19px;">S0–1</span><span style="font-size:20px; color:#ddd;"> · Backend + Win/Chrome MVP</span></div><div style="background:#0c0c0c; border:1px solid #222; border-radius:12px; padding:18px 22px; flex:1;"><span style="color:#c5a059; font-family:'Cinzel',serif; font-size:19px;">S2–3</span><span style="font-size:20px; color:#ddd;"> · macOS + Edge/Safari</span></div></div>
+        <div style="display:flex; gap:16px;"><div style="background:#0c0c0c; border:1px solid #222; border-radius:12px; padding:18px 22px; flex:1;"><span style="color:#c5a059; font-family:'Cinzel',serif; font-size:19px;">S4</span><span style="font-size:20px; color:#ddd;"> · Autonomous + BSOD Tier A</span></div><div style="background:#0c0c0c; border:1px solid #222; border-radius:12px; padding:18px 22px; flex:1;"><span style="color:#c5a059; font-family:'Cinzel',serif; font-size:19px;">S5</span><span style="font-size:20px; color:#ddd;"> · 75+ recipes (KB loop)</span></div></div>
+        <div style="background:#0c0c0c; border:1px solid rgba(241,220,167,.5); border-radius:12px; padding:18px 22px;"><span style="color:#f1dca7; font-family:'Cinzel',serif; font-size:19px;">S6</span><span style="font-size:20px; color:#ddd;"> · Polish · DPI · multi-monitor · v1.0 ship</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="CTA · internal" data-speaker-notes="Internal close. Founder direct. This is slide 12 — the end of the internal alignment deck." style="width:100%; height:100%; box-sizing:border-box; background:radial-gradient(circle at 50% 50%, rgba(197,160,89,.10), transparent 60%), #050505; font-family:'Inter',sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 140px;">
+    <div style="animation:deckBob 5.5s ease-in-out infinite; margin-bottom:30px;"><dc-import name="Globe" state="done" size="200" hint-size="200px,200px"></dc-import></div>
+    <div style="font-family:'Cinzel',serif; font-size:72px; font-weight:700; color:#fff; line-height:1.1;">Let's turn the ticket flood<br>into one calm globe</div>
+    <div style="font-size:26px; color:#9a9a9a; margin-top:28px; max-width:900px; line-height:1.5;">Approve the design, and the build begins. Sprint 0 (backend) is already in flight.</div>
+    <div style="font-size:22px; color:#c5a059; margin-top:34px; font-family:ui-monospace,monospace;">Ahmad Wasee · ahmad.wasee@iisupp.net · iisupp.net</div>
+  </section>
+
+  <section data-label="Market timing" data-speaker-notes="Investor extra. Why ambient agents now: AI capable enough, on-device compute, privacy demand, support cost pressure." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:96px 140px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:24px;">Why now</div>
+    <div style="font-family:'Cinzel',serif; font-size:58px; font-weight:700; color:#fff;">Support is moving from ticket → agent → ambient fix</div>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:26px; margin-top:56px;">
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-size:26px; color:#c5a059; font-weight:600; font-family:'Cinzel',serif;">Models are good enough</div><div style="font-size:21px; color:#bdbdbd; margin-top:14px; line-height:1.5;">Local reasoning + a curated recipe KB now resolve the long tail of repeat issues reliably.</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-size:26px; color:#c5a059; font-weight:600; font-family:'Cinzel',serif;">Privacy is non-negotiable</div><div style="font-size:21px; color:#bdbdbd; margin-top:14px; line-height:1.5;">Enterprises want data sovereignty. On-device-only is a hard requirement, not a feature.</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-size:26px; color:#c5a059; font-weight:600; font-family:'Cinzel',serif;">Cost pressure is acute</div><div style="font-size:21px; color:#bdbdbd; margin-top:14px; line-height:1.5;">Every automated fix removes a ticket — recurring savings that compound at scale.</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-size:26px; color:#c5a059; font-weight:600; font-family:'Cinzel',serif;">First mover wins retention</div><div style="font-size:21px; color:#bdbdbd; margin-top:14px; line-height:1.5;">An always-on resident agent becomes infrastructure — sticky, recurring revenue.</div></div>
+    </div>
+  </section>
+
+  <section data-label="Competition" data-speaker-notes="No competitor at this strict-privacy, ambient, on-device-fix positioning. RMM tools monitor; chatbots talk; MSPs are manual. ARIA fixes, on-device." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:96px 140px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:24px;">Landscape</div>
+    <div style="font-family:'Cinzel',serif; font-size:58px; font-weight:700; color:#fff;">No one sits where ARIA sits</div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:22px; margin-top:56px;">
+      <div style="background:#0a0a0a; border:1px solid #2a2a2a; border-radius:18px; padding:34px;"><div style="font-size:24px; color:#aaa; font-weight:600;">RMM / monitoring</div><div style="font-size:20px; color:#777; margin-top:14px; line-height:1.5;">Sees problems. Doesn't fix at the user's seat.</div></div>
+      <div style="background:#0a0a0a; border:1px solid #2a2a2a; border-radius:18px; padding:34px;"><div style="font-size:24px; color:#aaa; font-weight:600;">Helpdesk chatbots</div><div style="font-size:20px; color:#777; margin-top:14px; line-height:1.5;">Talks. Still hands the work back to the user.</div></div>
+      <div style="background:#0a0a0a; border:1px solid #2a2a2a; border-radius:18px; padding:34px;"><div style="font-size:24px; color:#aaa; font-weight:600;">MSP / managed IT</div><div style="font-size:20px; color:#777; margin-top:14px; line-height:1.5;">Human-paced and cloud-routed by default.</div></div>
+      <div style="background:linear-gradient(180deg,#15110a,#0a0a0a); border:1px solid #c5a059; border-radius:18px; padding:34px;"><div style="font-size:24px; color:#f1dca7; font-weight:700; font-family:'Cinzel',serif;">ARIA Sentinel</div><div style="font-size:20px; color:#cdbb89; margin-top:14px; line-height:1.5;">Fixes on-device, ambient, strict-privacy, routes the rest to ServiceNow.</div></div>
+    </div>
+  </section>
+
+  <section data-label="Distribution" data-speaker-notes="Direct download MVP, then store listings. IT-team motion via GPO/MSI/SCCM and a deployment one-pager." style="width:100%; height:100%; box-sizing:border-box; background:#050505; font-family:'Inter',sans-serif; padding:96px 140px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:24px;">Go to market</div>
+    <div style="font-family:'Cinzel',serif; font-size:58px; font-weight:700; color:#fff;">Land direct, expand through IT</div>
+    <div style="display:flex; align-items:stretch; gap:22px; margin-top:56px;">
+      <div style="flex:1; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-family:'Cinzel',serif; font-size:30px; color:#c5a059;">1 · Direct</div><div style="font-size:22px; color:#bdbdbd; margin-top:16px; line-height:1.5;">Signed .exe from iisupp.net/aria-sentinel. Pilot offer + 15-min demo.</div></div>
+      <div style="display:flex; align-items:center; color:#c5a059; font-size:40px;">→</div>
+      <div style="flex:1; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-family:'Cinzel',serif; font-size:30px; color:#c5a059;">2 · Stores</div><div style="font-size:22px; color:#bdbdbd; margin-top:16px; line-height:1.5;">Chrome Web Store + Microsoft Partner Store listings once v1 is signed.</div></div>
+      <div style="display:flex; align-items:center; color:#c5a059; font-size:40px;">→</div>
+      <div style="flex:1; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:18px; padding:36px;"><div style="font-family:'Cinzel',serif; font-size:30px; color:#c5a059;">3 · Fleet</div><div style="font-size:22px; color:#bdbdbd; margin-top:16px; line-height:1.5;">GPO / MSI / SCCM mass deployment for mid-market and enterprise IT.</div></div>
+    </div>
+  </section>
+
+  <section data-label="Pilot" data-speaker-notes="Investor/customer close. Pilot offer + booking link + founder direct contact." style="width:100%; height:100%; box-sizing:border-box; background:radial-gradient(circle at 72% 45%, rgba(197,160,89,.10), transparent 55%), #050505; font-family:'Inter',sans-serif; display:flex; align-items:center; padding:0 140px; position:relative; overflow:hidden;">
+    <div style="position:absolute; right:150px; top:50%; transform:translateY(-50%); animation:deckBob 5.5s ease-in-out infinite;"><dc-import name="Globe" state="listening" size="320" hint-size="320px,320px"></dc-import></div>
+    <div style="position:relative;">
+      <div style="font-family:'Cinzel',serif; font-size:24px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase; margin-bottom:26px;">Pilot offer</div>
+      <div style="font-family:'Cinzel',serif; font-size:76px; font-weight:700; color:#fff; line-height:1.08;">Run ARIA on 25 seats.<br>Watch the queue drop.</div>
+      <div style="font-size:25px; color:#9a9a9a; margin-top:28px; max-width:820px; line-height:1.5;">A scoped pilot on your real machines and your ServiceNow instance. Measure deflection, then expand across the fleet.</div>
+      <div style="display:flex; gap:18px; margin-top:40px;"><div style="background:linear-gradient(90deg,#c5a059,#f1dca7); color:#1a1410; font-family:'Cinzel',serif; font-weight:700; font-size:24px; letter-spacing:.1em; padding:20px 40px; border-radius:12px;">BOOK A 15-MIN DEMO</div></div>
+      <div style="font-size:22px; color:#c5a059; margin-top:30px; font-family:ui-monospace,monospace;">Ahmad Wasee · ahmad.wasee@iisupp.net · iisupp.net</div>
+    </div>
+  </section>
+
+  <!-- DECK_APPEND -->
+
+</x-import>
+</x-dc>
+</body>
+</html>

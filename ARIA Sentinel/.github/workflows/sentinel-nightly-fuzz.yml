@@ -1,0 +1,29 @@
+# ARIA Sentinel — nightly 10K content-leak fuzz.
+# Project-local copy. Move to the repo-root .github/workflows/ to activate on the live runner.
+# Runs the content-leak suite with an expanded 10,000-input corpus; posts on a detected leak.
+# Zero spend: standard GitHub-hosted runner, no external services.
+name: sentinel-nightly-fuzz
+
+on:
+  schedule:
+    - cron: "0 7 * * *" # 07:00 UTC nightly
+  workflow_dispatch: {}
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "ARIA Sentinel"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Content-leak fuzz (10,000 inputs)
+        env:
+          ARIA_FUZZ_N: "10000"
+        run: node tests/content-leak.test.mjs
+      - name: Notify on failure
+        if: failure()
+        run: echo "::error::Content-leak fuzz found a potential leak — see logs (post to aria-sentinel-evidence)."

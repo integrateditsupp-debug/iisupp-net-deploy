@@ -178,4 +178,40 @@ import "./plans-matrix.test.mjs";
 import "./sentinel-license-funnel.test.mjs";
 import "./sentinel-licenses-api.test.mjs";
 import "./admin-licenses-tab.test.mjs";
-// RUN 24 A6 — server-side license resolve (secr
+// RUN 24 A6 — server-side license resolve (secret stays server-side) + desktop offline cache tiers.
+import "./sentinel-resolve.test.mjs";
+import "./desktop-license-cache.test.mjs";
+// RUN 29-A — mode-based dry-run defaults (Manual ON · Confirmed/Autonomous OFF).
+import "./dryrun-defaults.test.mjs";
+// RUN 29-D — $0 content-blind crash reporter.
+import "./crash-reporter.test.mjs";
+// RUN 29-C — first-run onboarding state machine (never replays after dismiss).
+import "./onboarding-flow.test.mjs";
+// RUN 30-B — offline local KB matcher (cross-platform, platform bias).
+import "./aria-local-kb.test.mjs";
+// RUN 31 — KB-first wiring (aria-kb-query before aria-chat; $0 retrieval).
+import "./kb-first-wiring.test.mjs";
+// RUN 32-B — 3-mode proof-of-life (Manual/Confirmed/Autonomous execution pipeline).
+import "./mode-execution.test.mjs";
+// RUN 34-4 — 3-mode × 13-error matrix (every Windows error class × Manual/Confirmed/Autonomous disposition).
+import "./mode-error-matrix.test.mjs";
+// RUN 34-5 — 20+ Windows-error detector sweep (every live watcher mapper, each content-blind under PII input).
+import "./windows-error-sweep.test.mjs";
+// RUN 33 PIVOT — ARIA Chat in-tab (Chat sub-section of the ARIA parent tab; detached window removed).
+import "./aria-chat-window-ui.test.mjs";
+// RUN 35-1 — chat scroll containment (inner log scrolls; outer tab never grows).
+import "./chat-scroll-containment.test.mjs";
+// RUN 35-2 — aria-kb-query routing iter 7 (security families/takeover · wifi no-word · printer tightened).
+import "./aria-kb-routing-iter7.test.mjs";
+// RUN 33 Phase 2 — ARIA tab data parsers (status / kb-stats / sessions R11 / heartbeats).
+import "./aria-surfaces.test.mjs";
+// RUN 33-E — first-launch Setup wizard (state machine + wiring).
+import "./setup-wizard.test.mjs";
+// RUN 34-1 — readable chat: markdown → HTML rendering.
+import "./aria-markdown.test.mjs";
+// RUN 34-3 — license mint never hangs (timeouts on every leg + actionable error).
+import "./license-mint-timeout.test.mjs";
+// RUN 33-A — KB freshness surfaced in the top bar.
+import "./kb-freshness.test.mjs";
+
+console.log("ARIA Sentinel test suite passed.");

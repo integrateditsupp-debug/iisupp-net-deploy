@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#1a1a1a; }
+  /* Print-ready: Letter by default. For A4, change to: size: A4; */
+  @page { size: Letter; margin: 0; }
+  @media print {
+    body { background:#fff; }
+    .pagewrap { box-shadow:none !important; margin:0 !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</helmet>
+<div class="pagewrap" style="width:816px; min-height:1056px; margin:24px auto; background:#050505; font-family:'Inter',system-ui,sans-serif; color:#fff; box-sizing:border-box; padding:46px 50px; position:relative; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5);">
+
+  <div style="position:absolute; top:-40px; right:-40px; opacity:.5;"><dc-import name="Globe" state="idle" size="220" hint-size="220px,220px"></dc-import></div>
+
+  <!-- Hero -->
+  <div style="position:relative;">
+    <div style="display:flex; align-items:center; gap:13px;">
+      <dc-import name="Globe" state="idle" size="40" hint-size="40px,40px"></dc-import>
+      <div style="font-family:'Cinzel',serif; font-size:13px; letter-spacing:.3em; color:#c5a059; text-transform:uppercase;">Integrated IT Support Inc. · iisupp.net</div>
+    </div>
+    <div style="font-family:'Cinzel',serif; font-size:54px; font-weight:700; line-height:1.04; margin-top:22px;">ARIA <span style="color:#c5a059;">Sentinel</span></div>
+    <div style="font-family:'Cinzel',serif; font-size:23px; color:#e9e9e9; margin-top:12px; font-weight:500;">Resident IT support that never sleeps.</div>
+    <div style="font-size:14px; color:#aaa; margin-top:14px; line-height:1.55; max-width:560px;">An ambient on-device agent that watches your Windows machine for problems, fixes them before they slow you down, and routes the rest to the right team — without sending your data anywhere.</div>
+    <div style="display:flex; align-items:center; gap:16px; margin-top:20px;">
+      <div style="background:linear-gradient(90deg,#c5a059,#f1dca7); color:#1a1410; font-family:'Cinzel',serif; font-weight:700; font-size:14px; letter-spacing:.1em; padding:13px 26px; border-radius:9px;">DOWNLOAD FOR WINDOWS</div>
+      <div style="font-size:13px; color:#c5a059;">or book a 15-min demo</div>
+    </div>
+  </div>
+
+  <!-- 3 modes -->
+  <div style="margin-top:34px;">
+    <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.26em; color:#7d6326; text-transform:uppercase; margin-bottom:14px;">Three modes — you stay in control</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+      <div style="background:linear-gradient(180deg,#15110a,#0a0a0a); border:1px solid #c5a059; border-radius:13px; padding:18px;"><div style="display:flex; align-items:center; gap:8px;"><span style="font-family:'Cinzel',serif; font-size:18px; font-weight:700;">Manual</span><span style="font-size:8px; letter-spacing:.1em; color:#7afbff; border:1px solid rgba(122,251,255,.4); border-radius:4px; padding:2px 6px;">FREE</span></div><div style="font-size:11.5px; color:#aaa; margin-top:9px; line-height:1.45;">Detects the issue and walks you through the fix in chat.</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:13px; padding:18px;"><div style="display:flex; align-items:center; gap:8px;"><span style="font-family:'Cinzel',serif; font-size:18px; font-weight:700;">Confirmed</span><span style="font-size:8px; letter-spacing:.1em; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:4px; padding:2px 6px;">PAID</span></div><div style="font-size:11.5px; color:#aaa; margin-top:9px; line-height:1.45;">Proposes a fix and applies it the moment you confirm.</div></div>
+      <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:13px; padding:18px;"><div style="display:flex; align-items:center; gap:8px;"><span style="font-family:'Cinzel',serif; font-size:18px; font-weight:700;">Autonomous</span><span style="font-size:8px; letter-spacing:.1em; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:4px; padding:2px 6px;">OPT-IN</span></div><div style="font-size:11.5px; color:#aaa; margin-top:9px; line-height:1.45;">Silently fixes low-risk issues and tells you after.</div></div>
+    </div>
+  </div>
+
+  <!-- Beyond known + ServiceNow -->
+  <div style="margin-top:24px; display:flex; gap:12px;">
+    <div style="flex:1; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:13px; padding:18px;">
+      <div style="font-family:'Cinzel',serif; font-size:15px; font-weight:700; color:#fff;">Beyond the known</div>
+      <div style="font-size:11.5px; color:#aaa; margin-top:8px; line-height:1.5;">ARIA researches new issues as they appear and resolves them — or connects you to IT experts with decades of cross-sector experience.</div>
+    </div>
+    <div style="flex:1; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:13px; padding:18px;">
+      <div style="font-family:'Cinzel',serif; font-size:15px; font-weight:700; color:#fff;">Routes the rest</div>
+      <div style="font-size:11.5px; color:#aaa; margin-top:8px; line-height:1.5;">What it can't fix becomes a routed ServiceNow incident — sent automatically to the right assignment group.</div>
+    </div>
+  </div>
+
+  <!-- BSOD demo strip -->
+  <div style="margin-top:24px; background:#0078D4; border-radius:14px; padding:22px 26px; display:flex; align-items:center; gap:22px;">
+    <div style="font-size:54px; line-height:.8; color:#fff; font-weight:300;">:(</div>
+    <div style="flex:1;">
+      <div style="font-family:'Cinzel',serif; font-size:11px; letter-spacing:.22em; color:#f1dca7;">ARIA SENTINEL · ON THE BLUE SCREEN</div>
+      <div style="font-family:'Cinzel',serif; font-size:24px; font-weight:700; color:#fff; margin-top:5px;">Solve it for me</div>
+      <div style="font-size:12px; color:rgba(255,255,255,.88); margin-top:5px; line-height:1.4;">After a crash, ARIA appears on the recovery screen, reads the stop code, and fixes it locally — or escalates if hardware support is needed.</div>
+    </div>
+    <div style="background:#c5a059; color:#1a1410; font-family:'Cinzel',serif; font-weight:700; font-size:12px; letter-spacing:.12em; padding:13px 18px; border-radius:9px; white-space:nowrap;">SOLVE IT</div>
+  </div>
+
+  <!-- Privacy + footer -->
+  <div style="margin-top:24px; display:flex; align-items:center; gap:20px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:13px; padding:18px 22px;">
+    <div style="font-family:'Cinzel',serif; font-size:46px; font-weight:700; color:#7afbff; line-height:1;">0</div>
+    <div><div style="font-size:14px; color:#fff; font-weight:600;">Data-upload paths to iisupp.net</div><div style="font-size:11.5px; color:#888; margin-top:4px;">Privacy by engineering, not by promise. KB encrypted on-device · telemetry off by default · source-available verification harness.</div></div>
+  </div>
+
+  <div style="position:absolute; left:50px; right:50px; bottom:30px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1c1c1c; padding-top:14px;">
+    <div style="font-size:11px; color:#666;">iisupp.net/aria-sentinel · GPO / MSI / SCCM deployment for IT teams</div>
+    <div style="font-size:11px; color:#c5a059;">Privacy verifier · security.txt · ahmad.wasee@iisupp.net</div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

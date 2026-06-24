@@ -1,0 +1,71 @@
+/* RUN 23 §3 — globe status panel. Gold / cyber-noir glassmorphism. Opens downward from the globe, 320px
+   wide, max 380px tall with internal scroll. CSP-safe (no remote assets). */
+:root {
+  --sp-gold: #c5a059;
+  --sp-gold-soft: #e8c06a;
+  --sp-cyan: #7afbff;
+  --sp-red: #ff6b6b;
+  --sp-ink: #ece6d8;
+  --sp-dim: #9a937f;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: transparent; }
+body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; }
+
+.sp-wrap {
+  width: 320px;
+  max-height: 380px;
+  overflow-y: auto;
+  background: rgba(15, 15, 20, 0.95);
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  color: var(--sp-ink);
+  padding: 12px 12px 10px;
+}
+.sp-wrap::-webkit-scrollbar { width: 7px; }
+.sp-wrap::-webkit-scrollbar-thumb { background: rgba(197, 160, 89, 0.4); border-radius: 4px; }
+
+.sp-hero {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.2px;
+  padding: 8px 10px; border-radius: 10px; margin-bottom: 8px;
+}
+.sp-hero-clear { color: var(--sp-cyan); background: rgba(122, 251, 255, 0.07); }
+.sp-hero-alert { color: var(--sp-gold-soft); background: rgba(232, 192, 106, 0.08); }
+.sp-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; flex: 0 0 auto; }
+
+.sp-section { margin: 6px 0; }
+.sp-h {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1.4px;
+  color: var(--sp-gold); margin: 8px 2px 4px;
+}
+.sp-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 7px 9px; margin: 4px 0;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 9px;
+}
+.sp-row-main { display: flex; flex-direction: column; min-width: 0; }
+.sp-name { font-size: 12.5px; color: var(--sp-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
+.sp-meta { font-size: 10.5px; color: var(--sp-dim); margin-top: 1px; }
+
+.sp-btn {
+  flex: 0 0 auto; cursor: pointer;
+  font-size: 11px; font-weight: 600;
+  padding: 5px 11px; border-radius: 7px;
+  color: #14110a; background: var(--sp-gold);
+  border: 0; transition: filter 0.15s ease;
+}
+.sp-btn:hover { filter: brightness(1.12); }
+.sp-risk-low { background: var(--sp-cyan); }
+.sp-risk-medium { background: var(--sp-gold-soft); }
+.sp-risk-high { background: var(--sp-red); color: #fff; }
+
+.sp-foot {
+  margin-top: 10px; padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 9.5px; color: var(--sp-dim); text-align: center; line-height: 1.4;
+}

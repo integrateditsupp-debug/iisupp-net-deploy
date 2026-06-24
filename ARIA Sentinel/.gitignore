@@ -1,0 +1,4 @@
+
+# build + backup artifacts (never commit — exceed GitHub 100MB limit)
+dist-backups/
+dist/

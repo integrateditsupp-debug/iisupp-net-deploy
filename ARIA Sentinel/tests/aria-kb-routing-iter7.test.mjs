@@ -42,4 +42,9 @@ t();
 
 // 6 — RUN 35-7: bare "authenticator" + phone-loss MFA phrasings (surfaced in the live sample) route to MFA.
 for (const q of ["lost my authenticator phone", "authenticator app not working", "reset authenticator",
-  "got a new phone and my mfa is
+  "got a new phone and my mfa is gone", "replaced my phone, cant sign in with 2fa"])
+  assert.ok(has(q, "l1-mfa-001"), `mfa: "${q}" → l1-mfa-001`);
+t();
+
+assert.equal(n, 6, "6 iter-7 routing groups");
+console.log(`aria-kb-routing-iter7 passed (${n} groups · security families+takeover · wifi no-word phrasings · printer tightened · vertical wont-print falls through · L2 print-server intact).`);

@@ -1,0 +1,39 @@
+{
+  "product": "ARIA Sentinel",
+  "version": "0.1.0",
+  "format": "sbom-lite",
+  "generated_at": "2026-06-19",
+  "note": "Lightweight dependency inventory for internal pilot review. Generate a formal CycloneDX or SPDX SBOM before enterprise production deployment.",
+  "packages": [
+    {
+      "name": "iisupport-net",
+      "version": "1.5.0",
+      "scope": "root-site-and-functions",
+      "dependencies": [
+        { "name": "@netlify/blobs", "version": "7.4.0" },
+        { "name": "framer-motion", "version": "12.40.0" },
+        { "name": "nodemailer", "version": "9.0.1" },
+        { "name": "stripe", "version": "17.7.0" }
+      ]
+    },
+    {
+      "name": "aria-sentinel",
+      "version": "0.1.0",
+      "scope": "windows-electron-prototype",
+      "dependencies": [
+        { "name": "electron-store", "version": "8.2.0" },
+        { "name": "electron", "version": "42.4.1", "type": "devDependency" },
+        { "name": "electron-builder", "version": "26.15.3", "type": "devDependency" }
+      ]
+    },
+    {
+      "name": "@iisupp/aria-sentinel-desktop",
+      "version": "0.1.0",
+      "scope": "canonical-typescript-core",
+      "dependencies": [
+        { "name": "@types/node", "version": "20.19.43", "type": "devDependency" },
+        { "name": "typescript", "version": "5.9.3", "type": "devDependency" }
+      ]
+    }
+  ]
+}

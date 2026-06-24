@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'" />
+  <title>ARIA Sentinel — Choose your plan</title>
+  <link rel="stylesheet" href="./plan-picker.css" />
+</head>
+<body>
+  <main class="picker">
+    <header class="picker-head">
+      <p class="eyebrow">ARIA Sentinel</p>
+      <h1>Choose your plan</h1>
+      <p class="picker-sub" id="pickerSub">License the tier that fits — your key unlocks the matching features instantly.</p>
+      <div class="billing-toggle" role="tablist" aria-label="Billing period">
+        <button class="bt-opt active" data-billing="monthly" role="tab">Monthly</button>
+        <button class="bt-opt" data-billing="yearly" role="tab">Yearly</button>
+      </div>
+    </header>
+
+    <section id="cards" class="plan-cards" aria-label="Plans"></section>
+
+    <section class="matrix-wrap">
+      <h2>Compare features</h2>
+      <div class="matrix-scroll"><table id="matrix" class="matrix"></table></div>
+      <p class="picker-foot">Prices in USD. Business tiers (Small Business · Mid Size · Enterprise) share the same feature set and differ in seats + price. Seat counts are confirmed at checkout.</p>
+    </section>
+  </main>
+  <script type="module" src="./plan-picker.mjs"></script>
+</body>
+</html>

@@ -1625,4 +1625,284 @@ const SETUP_STEPS = [
     <label class="setup-radio"><input type="radio" name="setupMode" value="manual" ${setupPrefs.mode === "manual" ? "checked" : ""}/> <b>Manual</b> — preview only (recommended)</label>
     <label class="setup-radio"><input type="radio" name="setupMode" value="confirmed" ${setupPrefs.mode === "confirmed" ? "checked" : ""}/> <b>Confirmed</b> — execute after a 10s countdown</label>` },
   { kicker: "ARIA Chat", title: "ARIA Chat", body: () => `<p class="setup-lead">ARIA Chat lives in the ARIA tab (left panel) — or press Ctrl+Alt+A anytime.</p><label class="setup-check"><input type="checkbox" id="setupLand" ${setupPrefs.landOnAria ? "checked" : ""}/> Open the ARIA tab when Sentinel starts</label>` },
-  { kicker: "Notifications", title: "Notifications", body: ()
+  { kicker: "Notifications", title: "Notifications", body: () => `<label class="setup-check"><input type="checkbox" id="setupKbNotif" ${setupPrefs.kbNotifications ? "checked" : ""}/> Tell me when ARIA learns new fixes</label><label class="setup-check"><input type="checkbox" id="setupTray" ${setupPrefs.trayIcon ? "checked" : ""}/> Show the system-tray icon</label>` },
+  { kicker: "Done", title: "You're all set", body: () => `<p class="setup-lead">ARIA Sentinel is ready. Open the Dashboard to see status, the ARIA tab to chat, or the Learning sub-section to see what ARIA knows.</p>` }
+];
+let setupStep = 0;
+function maybeShowSetupWizard(state) {
+  if (setupShown || !state || !state.setupNeeded) return;
+  setupShown = true; setupStep = 0; renderSetupStep();
+  const modal = qs("#setupWizard"); if (modal) modal.hidden = false;
+}
+function captureSetupStep() {
+  const mode = qs('input[name="setupMode"]:checked'); if (mode) setupPrefs.mode = mode.value;
+  const land = qs("#setupLand"); if (land) setupPrefs.landOnAria = land.checked;
+  const kb = qs("#setupKbNotif"); if (kb) setupPrefs.kbNotifications = kb.checked;
+  const tray = qs("#setupTray"); if (tray) setupPrefs.trayIcon = tray.checked;
+}
+function renderSetupStep() {
+  const s = SETUP_STEPS[setupStep]; if (!s) return;
+  setText("setupKicker", s.kicker); setText("setupTitle", s.title);
+  const body = qs("#setupBody"); if (body) body.innerHTML = s.body();
+  const dots = qs("#setupDots"); if (dots) dots.innerHTML = SETUP_STEPS.map((_, i) => `<span class="onboard-dot${i === setupStep ? " active" : ""}"></span>`).join("");
+  const back = qs("#setupBack"); if (back) back.style.visibility = setupStep === 0 ? "hidden" : "visible";
+  const next = qs("#setupNext"); if (next) next.textContent = setupStep === SETUP_STEPS.length - 1 ? "Finish" : "Next";
+}
+function initSetupWizard() {
+  bindClick("setupBack", () => { captureSetupStep(); if (setupStep > 0) { setupStep--; renderSetupStep(); } });
+  bindClick("setupNext", async () => {
+    captureSetupStep();
+    if (setupStep < SETUP_STEPS.length - 1) { setupStep++; renderSetupStep(); return; }
+    try { await sentinel.completeSetup?.({ ...setupPrefs }); } catch (e) { /* persistence best-effort */ }
+    const modal = qs("#setupWizard"); if (modal) modal.hidden = true;
+    if (setupPrefs.landOnAria) activateTab("aria");
+  });
+  bindClick("reRunSetup", async () => { try { await sentinel.reopenSetup?.(); setupShown = false; } catch (e) {} });
+}
+
+// RUN 33 Phase 2 — fill the ARIA tab's data sub-sections (Learning/Health/Memory/Agents). All data is parsed +
+// R11-scrubbed in the main process (aria-surfaces.mjs); the renderer only paints it. 🔒 no raw paths reach here.
+async function loadAriaData() {
+  const esc = (s) => String(s == null ? "" : s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
+  const timeAgoShort = (iso) => { const t = Date.parse(iso || ""); if (!Number.isFinite(t)) return ""; const m = Math.max(0, Math.floor((Date.now() - t) / 60000)), h = Math.floor(m / 60), d = Math.floor(h / 24); return d >= 1 ? `${d}d ago` : h >= 1 ? `${h}h ago` : `${m}m ago`; };
+  const bars = (rows) => rows.map((r) => { const max = Math.max(1, ...rows.map((x) => x.n)); return `<div class="lb-row"><span class="lb-label">${esc(r.label)}</span><span class="lb-track"><span class="lb-fill" style="width:${Math.round((r.n / max) * 100)}%"></span></span><span class="lb-n">${r.n}</span></div>`; }).join("");
+
+  // Health ← aria-system-status (the locked Anthropic banner is already in the HTML — we never touch it).
+  try {
+    const { data } = (await window.sentinel?.ariaStatus?.()) || { data: null };
+    if (data) {
+      const dot = qs("#healthDot"); if (dot) dot.dataset.status = data.overall;
+      setText("healthOverall", data.overall === "green" ? "All systems healthy" : data.overall === "yellow" ? "Degraded — fallback active" : data.overall === "red" ? "Outage — using local KB" : "Status unavailable");
+      setText("healthProbe", data.lastProbe ? `last probe ${timeAgoShort(data.lastProbe)}` : "");
+      const ft = qs("#fallthroughChain");
+      if (ft) ft.innerHTML = data.tiers.map((tr) => `<div class="ft-tier"><span class="ft-name"><span class="health-dot" data-status="${tr.status}" style="width:9px;height:9px;display:inline-block;margin-right:7px"></span>${esc(tr.name)}</span><span class="ft-meta">${esc(tr.cost)} · ${esc(tr.coverage)}</span></div>`).join("");
+    }
+  } catch (e) { /* offline → leave placeholder */ }
+
+  // Learning ← aria-kb-stats.
+  try {
+    const { data } = (await window.sentinel?.ariaLearning?.()) || { data: null };
+    if (data) {
+      setText("learningHeader", `Knowledge base · ${data.totalChunks != null ? data.totalChunks + " chunks" : "—"}${data.generatedAt ? " · synced " + timeAgoShort(data.generatedAt) : ""}`);
+      const recent = qs("#learningRecent");
+      if (recent) recent.innerHTML = data.recent.length ? data.recent.map((r) => `<div class="lr-item">${esc(r.title)}${r.tier ? `<span class="lr-tier">${esc(r.tier)}</span>` : ""}<span class="merge-sub" style="float:right">${esc(timeAgoShort(r.addedAt))}</span></div>`).join("") : `<p class="merge-sub">No recent learnings reported.</p>`;
+      const tiers = qs("#learningTiers"); if (tiers) tiers.innerHTML = bars([{ label: "L1 (easy)", n: data.byTier.l1 }, { label: "L2 (mid)", n: data.byTier.l2 }, { label: "L3 (hard)", n: data.byTier.l3 }]);
+      const cats = qs("#learningCategories"); if (cats) cats.innerHTML = bars(data.topCategories.map((c) => ({ label: c.name, n: c.count })));
+    }
+  } catch (e) { /* offline */ }
+
+  // Memory ← local sessions (already R11-scrubbed by the main process).
+  try {
+    const { data } = (await window.sentinel?.ariaMemory?.()) || { data: null };
+    if (data) {
+      const ms = qs("#memoryStats"); if (ms) ms.innerHTML = `<div class="memory-stats-grid"><span>${data.stats.total} session(s)</span> · <span>${data.stats.totalAsks} asks</span> · <span>${data.stats.kbHits} KB hits</span> · <span>${data.stats.anthropicHits} Anthropic</span></div>`;
+      const list = qs("#memoryList");
+      if (list) list.innerHTML = data.list.length ? data.list.map((s) => `<details class="mem-item"><summary>${esc(s.id || "session")} · ${s.count} messages · ${esc(timeAgoShort(s.startedAt))}</summary>${s.turns.map((tn) => `<div class="mem-turn ${tn.role}"><strong>${tn.role === "user" ? "You" : "ARIA"}:</strong> ${esc(tn.text)}</div>`).join("")}</details>`).join("") : `<p class="merge-sub">No local conversations yet.</p>`;
+    }
+  } catch (e) { /* none */ }
+
+  // Agents ← heartbeat files.
+  try {
+    const { data } = (await window.sentinel?.ariaAgents?.()) || { data: null };
+    const fleet = qs("#agentFleet");
+    if (fleet) fleet.innerHTML = (data && data.length) ? data.map((a) => `<div class="af-row"><span class="af-dot ${a.status}"></span><strong>${esc(a.name)}</strong><span class="merge-sub">${esc(a.status)}${a.lastTs ? " · " + esc(timeAgoShort(new Date(a.lastTs).toISOString())) : ""}</span><span class="merge-sub" style="margin-left:auto">${esc(a.lastTask)}</span></div>`).join("") : `<p class="merge-sub">No agent heartbeats found.</p>`;
+  } catch (e) { /* none */ }
+}
+
+// RUN 33-A — "KB v203 · synced 3h ago" in the top bar (mirrors aria-brain-client.formatKbFreshness, tested there).
+function renderKbFreshness(meta) {
+  const el = qs("#kbFreshness");
+  if (!el) return;
+  const total = meta && Number.isFinite(Number(meta.total_chunks)) ? Number(meta.total_chunks) : null;
+  if (!meta || (total == null && !meta.kb_generated_at)) { el.hidden = true; return; }
+  let label = total != null ? `KB v${total}` : "KB";
+  const gen = meta.kb_generated_at ? Date.parse(meta.kb_generated_at) : NaN;
+  if (Number.isFinite(gen)) {
+    const mins = Math.max(0, Math.floor((Date.now() - gen) / 60000)), hrs = Math.floor(mins / 60), days = Math.floor(hrs / 24);
+    label += " · synced " + (days >= 1 ? `${days}d ago` : hrs >= 1 ? `${hrs}h ago` : mins >= 1 ? `${mins}m ago` : "just now");
+  }
+  el.textContent = label; el.hidden = false;
+}
+
+function titleCase(value) {
+  return String(value || "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+async function getSentinelApi() {
+  if (window.sentinel) return window.sentinel;
+  const {
+    ALLOWED_OUTBOUND_PATHS,
+    BRIDGE_PORT,
+    CONTROL_PLANE_MVP_RECIPE_COUNT,
+    CONTROL_PLANE_MVP_STOP_CODE_COUNT,
+    RECIPES,
+    ROUTING_TARGETS,
+    SENTINEL_VERSION,
+    STOP_CODES,
+    matchRecipes
+  } = await import("../shared/recipes.mjs");
+  const { contentSafeContext, sanitizeToSignature } = await import("../shared/safety.mjs");
+
+  const listeners = new Set();
+  const previewState = {
+    version: SENTINEL_VERSION,
+    mode: "manual",
+    dryRun: true,
+    systemFixesEnabled: false,
+    externalAiCalls: false,
+    paused: false,
+    pausedUntil: 0,
+    firstRunComplete: true,
+    killed: false,
+    restorePoints: [
+      { id: "rp-preview-1", name: "ARIA pre-fix DISK.LOW_SPACE", createdAt: new Date().toISOString(), rolledBack: false }
+    ],
+    serviceNowStatus: { configured: false, connected: false, queued: 0, lastVerified: 0 },
+    bridgePort: BRIDGE_PORT,
+    bridgeStatus: { listening: true, conflict: false, port: BRIDGE_PORT, owner: "preview", lastError: "" },
+    recipeCatalog: {
+      localInteractive: RECIPES.length,
+      controlPlaneMvp: CONTROL_PLANE_MVP_RECIPE_COUNT,
+      localStopCodes: STOP_CODES.length,
+      controlPlaneStopCodes: CONTROL_PLANE_MVP_STOP_CODE_COUNT
+    },
+    recipes: RECIPES,
+    routingTargets: ROUTING_TARGETS,
+    allowedOutboundPaths: ALLOWED_OUTBOUND_PATHS,
+    transparencyLog: [{ ts: new Date().toISOString(), tag: "PREVIEW", text: "Browser preview mode. Desktop bridge not required." }],
+    knowledgeSources: [
+      { name: "Procedures & runbooks", status: "Indexed", docs: 24 },
+      { name: "IT policies & workflows", status: "Indexed", docs: 12 },
+      { name: "Security & compliance", status: "Indexed", docs: 9 },
+      { name: "Audit & regulatory", status: "Indexed", docs: 6 },
+      { name: "Culture & tone", status: "Processing", docs: 4 }
+    ],
+    systemChecks: []
+  };
+  previewState.systemChecks = defaultChecks(previewState);
+
+  const notify = () => listeners.forEach((listener) => listener({ ...previewState }));
+  const log = (tag, text) => {
+    previewState.transparencyLog.unshift({ ts: new Date().toISOString(), tag, text });
+    notify();
+  };
+
+  return {
+    getState: async () => ({ ...previewState }),
+    onState: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    onNavigate: () => () => {},
+    setMode: async (mode) => {
+      previewState.mode = mode;
+      log("POLICY", `Mode set to ${mode}.`);
+      return { ok: true };
+    },
+    setDryRun: async (dryRun) => {
+      previewState.dryRun = Boolean(dryRun);
+      log("POLICY", `Dry-run ${previewState.dryRun ? "enabled" : "disabled"}.`);
+      return { ok: true };
+    },
+    setPaused: async (milliseconds = 0) => {
+      previewState.pausedUntil = milliseconds ? Date.now() + Number(milliseconds) : 0;
+      previewState.paused = previewState.pausedUntil > Date.now();
+      log("WATCH", previewState.paused ? "Watching paused." : "Watching resumed.");
+      return { ok: true };
+    },
+    showGlobe: async () => {
+      log("OVERLAY", "Top-center globe requested.");
+      return { ok: true };
+    },
+    openAdminConsole: async () => {
+      log("ADMIN", "Local admin console requested.");
+      return { ok: true };
+    },
+    updateKnowledge: async () => {
+      previewState.knowledgeSources = previewState.knowledgeSources.map((source) => ({ ...source, status: "Indexed" }));
+      log("KB", "Preview knowledge sources refreshed.");
+      return { ok: true };
+    },
+    selfDiagnose: async () => {
+      previewState.systemChecks = defaultChecks(previewState);
+      log("SELF-CHECK", "Settings self diagnosis passed.");
+      return { ok: true, checks: previewState.systemChecks, bridgeStatus: previewState.bridgeStatus };
+    },
+    selfRepair: async () => {
+      previewState.systemChecks = defaultChecks(previewState);
+      log("SELF-REPAIR", "Preview self repair ran.");
+      return { ok: true, actions: ["overlay-verified", "bridge-verified"], diagnosis: { ok: true, checks: previewState.systemChecks } };
+    },
+    detect: async (input = {}) => {
+      const signature = sanitizeToSignature(input);
+      const [match] = matchRecipes([signature.code, signature.family, input.issue || ""].join(" "), { limit: 1 });
+      if (!match) return { ok: false, error: "no_match" };
+      log("DETECT", `${match.recipe.signal}: ${match.recipe.title}`);
+      return { ok: true, detection: { ...match.recipe, recipeId: match.recipe.id, context: contentSafeContext(input) } };
+    },
+    runRecipe: async (recipeId) => {
+      const recipe = RECIPES.find((item) => item.id === recipeId);
+      log("RUN", `Dry-run recipe ${recipe?.signal || recipeId}.`);
+      return { ok: Boolean(recipe), dryRun: true, recipe, message: "Dry-run complete. No system changes were made." };
+    },
+    reportError: async (payload = {}) => {
+      log("SELF-ERROR", `Renderer reported ${payload.source || "error"}.`);
+      return { ok: true };
+    },
+    serviceNowTest: async () => {
+      log("SERVICENOW", "Preview ServiceNow test (no live connection).");
+      return { ok: false, configured: false };
+    },
+    serviceNowList: async () => ({ ok: true, configured: false, incidents: [] }),
+    serviceNowComment: async () => ({ ok: false, dryRun: true }),
+    rollback: async (id) => {
+      log("RESTORE PT", `Preview roll back ${String(id).slice(0, 8)}.`);
+      return { ok: true, dryRun: true };
+    },
+    ingestKb: async (file = {}) => {
+      previewState.knowledgeSources.unshift({ name: file.name || "Customer document", status: "Indexed", docs: 1 });
+      log("KB", "Preview document indexed locally.");
+      notify();
+      return { ok: true, chunkCount: 1, status: "Indexed", sha256: "preview" };
+    },
+    completeOnboarding: async () => ({ ok: true }),
+    runDiagnostic: async () => ({
+      ok: true,
+      passed: 7,
+      total: 7,
+      rows: [
+        { id: "bridge", label: "Local bridge port", ok: true, severity: "ok", detail: "Listening on 127.0.0.1:37841", remediation: "" },
+        { id: "watchers", label: "Detection watchers", ok: true, severity: "ok", detail: "7/7 watchers · last tick 4s ago", remediation: "" },
+        { id: "servicenow", label: "ServiceNow connection", ok: true, severity: "ok", detail: "Not configured (local drafts only)", remediation: "" },
+        { id: "kb-bundle", label: "Knowledge bundle", ok: true, severity: "ok", detail: "Bundle current verified", remediation: "" },
+        { id: "audit", label: "Audit log integrity", ok: true, severity: "ok", detail: "1 local events · content-blind", remediation: "" },
+        { id: "tray", label: "Tray icon", ok: true, severity: "ok", detail: "Gold globe present", remediation: "" },
+        { id: "overlay", label: "Overlay rendering", ok: true, severity: "ok", detail: "Globe window available", remediation: "" }
+      ]
+    })
+  };
+}
+
+init().catch((error) => {
+  console.error(error);
+  document.body.innerHTML = `
+    <main class="settings-workspace">
+      <section class="panel">
+        <p class="eyebrow">ARIA Sentinel</p>
+        <h1>Self-repair started</h1>
+        <p>ARIA caught a renderer startup error and reported it to the local self-diagnosis path.</p>
+      </section>
+    </main>
+  `;
+});

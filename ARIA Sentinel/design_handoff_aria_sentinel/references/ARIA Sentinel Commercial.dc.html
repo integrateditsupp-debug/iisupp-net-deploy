@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#000; }
+  @keyframes c1  { 0%{opacity:0} 1.07%{opacity:1} 7.86%{opacity:1} 8.93%{opacity:0} 100%{opacity:0} }
+  @keyframes c2  { 0%{opacity:0} 8.93%{opacity:0} 10%{opacity:1} 16.07%{opacity:1} 16.96%{opacity:0} 100%{opacity:0} }
+  @keyframes c3  { 0%{opacity:0} 16.96%{opacity:0} 18.04%{opacity:1} 28.39%{opacity:1} 29.46%{opacity:0} 100%{opacity:0} }
+  @keyframes c4  { 0%{opacity:0} 29.46%{opacity:0} 30.54%{opacity:1} 39.11%{opacity:1} 40.18%{opacity:0} 100%{opacity:0} }
+  @keyframes c5  { 0%{opacity:0} 40.18%{opacity:0} 41.25%{opacity:1} 49.82%{opacity:1} 50.89%{opacity:0} 100%{opacity:0} }
+  @keyframes c6  { 0%{opacity:0} 50.89%{opacity:0} 51.96%{opacity:1} 58.75%{opacity:1} 59.82%{opacity:0} 100%{opacity:0} }
+  @keyframes c7  { 0%{opacity:0} 59.82%{opacity:0} 60.89%{opacity:1} 68.57%{opacity:1} 69.64%{opacity:0} 100%{opacity:0} }
+  @keyframes c8  { 0%{opacity:0} 69.64%{opacity:0} 70.71%{opacity:1} 76.61%{opacity:1} 77.68%{opacity:0} 100%{opacity:0} }
+  @keyframes c9  { 0%{opacity:0} 77.68%{opacity:0} 78.75%{opacity:1} 82.86%{opacity:1} 83.93%{opacity:0} 100%{opacity:0} }
+  @keyframes c10 { 0%{opacity:0} 83.93%{opacity:0} 84.82%{opacity:1} 88.39%{opacity:1} 89.29%{opacity:0} 100%{opacity:0} }
+  @keyframes c11 { 0%{opacity:0} 89.29%{opacity:0} 90.54%{opacity:1} 100%{opacity:1} }
+  @keyframes prog { from{width:0%} to{width:100%} }
+  @keyframes cKen  { 0%{transform:scale(1)} 100%{transform:scale(1.06)} }
+  @keyframes cBob  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+  @keyframes cFloat{ 0%,100%{transform:translateY(0) rotate(var(--r,0deg))} 50%{transform:translateY(-18px) rotate(var(--r,0deg))} }
+  @keyframes cFill { 0%{width:6%} 100%{width:82%} }
+  @keyframes cIn   { 0%{opacity:0; transform:translateY(16px)} 100%{opacity:1; transform:translateY(0)} }
+</style>
+</helmet>
+<div style="font-family:'Inter',system-ui,sans-serif; background:#000; min-height:100vh; display:flex; flex-direction:column;">
+
+  <div id="ariaWrap" style="flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+    <div id="ariaBoard" data-screen-label="0s" style="width:1920px; height:1080px; position:relative; background:#050505; overflow:hidden; transform-origin:center center; flex:none;">
+
+      <!-- S1 · the queue fills -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c1 56s linear both paused;">
+        <div style="position:absolute; inset:0; overflow:hidden;">
+          <div style="position:absolute; top:140px; left:180px; --r:-4deg; animation: cFloat 6s ease-in-out infinite; background:#101010; border:1px solid #262626; border-radius:12px; padding:18px 26px; font-size:26px; color:#8a8a8a;">Password reset</div>
+          <div style="position:absolute; top:300px; left:520px; --r:3deg; animation: cFloat 7s ease-in-out infinite .6s; background:#101010; border:1px solid #262626; border-radius:12px; padding:18px 26px; font-size:26px; color:#8a8a8a;">VPN keeps dropping</div>
+          <div style="position:absolute; top:210px; left:1040px; --r:-2deg; animation: cFloat 6.5s ease-in-out infinite 1.1s; background:#101010; border:1px solid #262626; border-radius:12px; padding:18px 26px; font-size:26px; color:#8a8a8a;">Printer offline</div>
+          <div style="position:absolute; top:430px; left:1360px; --r:5deg; animation: cFloat 7.4s ease-in-out infinite .3s; background:#101010; border:1px solid #262626; border-radius:12px; padding:18px 26px; font-size:26px; color:#8a8a8a;">Outlook crashed</div>
+          <div style="position:absolute; top:760px; left:240px; --r:4deg; animation: cFloat 6.8s ease-in-out infinite .9s; background:#101010; border:1px solid #262626; border-radius:12px; padding:18px 26px; font-size:26px; color:#8a8a8a;">Disk almost full</div>
+          <div style="position:absolute; top:840px; left:760px; --r:-3deg; animation: cFloat 7.1s ease-in-out infinite 1.4s; background:#101010; border:1px solid #262626; border-radius:12px; padding:18px 26px; font-size:26px; color:#8a8a8a;">Wi-Fi won't connect</div>
+          <div style="position:absolute; top:720px; left:1300px; --r:2deg; animation: cFloat 6.3s ease-in-out infinite .2s; background:#101010; border:1px solid #262626; border-radius:12px; padding:18px 26px; font-size:26px; color:#8a8a8a;">Blue screen on boot</div>
+        </div>
+        <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; width:1300px;">
+          <div style="font-family:'Cinzel',serif; font-size:96px; font-weight:700; color:#fff; line-height:1.05;">Every day, the queue fills.</div>
+          <div style="font-size:34px; color:#9a9a9a; margin-top:24px;">Thousands of tickets. The same problems. Again and again.</div>
+        </div>
+      </div>
+
+      <!-- S2 · meet ARIA -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c2 56s linear both paused; display:flex; align-items:center; justify-content:center;">
+        <div style="position:absolute; background:radial-gradient(circle at 50% 45%, rgba(197,160,89,.12), transparent 55%); inset:0;"></div>
+        <div style="text-align:center; position:relative;">
+          <div style="display:flex; justify-content:center; animation: cBob 5s ease-in-out infinite;"><dc-import name="Globe" state="idle" size="320" hint-size="320px,320px"></dc-import></div>
+          <div style="font-family:'Cinzel',serif; font-size:88px; font-weight:700; color:#fff; margin-top:34px;">Meet <span style="color:#c5a059;">ARIA Sentinel</span></div>
+          <div style="font-family:'Cinzel',serif; font-size:36px; color:#e6e6e6; margin-top:18px; font-weight:500;">Resident IT support that never sleeps.</div>
+        </div>
+      </div>
+
+      <!-- S3 · everyday troubleshooting montage -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c3 56s linear both paused; padding:90px 130px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center;">
+        <div style="display:flex; align-items:center; gap:24px; margin-bottom:44px;">
+          <dc-import name="Globe" state="fixing" size="110" hint-size="110px,110px"></dc-import>
+          <div><div style="font-family:'Cinzel',serif; font-size:30px; letter-spacing:.26em; color:#c5a059; text-transform:uppercase;">It handles the everyday</div><div style="font-family:'Cinzel',serif; font-size:64px; font-weight:700; color:#fff; margin-top:8px;">Hundreds of fixes, one calm globe</div></div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px 40px;">
+          <div style="display:flex; align-items:center; gap:16px;"><span style="color:#7afbff; font-size:28px;">✓</span><span style="font-size:27px; color:#ddd;">Clears browser cache &amp; cookies</span></div>
+          <div style="display:flex; align-items:center; gap:16px;"><span style="color:#7afbff; font-size:28px;">✓</span><span style="font-size:27px; color:#ddd;">Ends frozen apps in Task Manager</span></div>
+          <div style="display:flex; align-items:center; gap:16px;"><span style="color:#7afbff; font-size:28px;">✓</span><span style="font-size:27px; color:#ddd;">Restarts the printer spooler</span></div>
+          <div style="display:flex; align-items:center; gap:16px;"><span style="color:#7afbff; font-size:28px;">✓</span><span style="font-size:27px; color:#ddd;">Adds printers &amp; network drives</span></div>
+          <div style="display:flex; align-items:center; gap:16px;"><span style="color:#7afbff; font-size:28px;">✓</span><span style="font-size:27px; color:#ddd;">Restores lost network files</span></div>
+          <div style="display:flex; align-items:center; gap:16px;"><span style="color:#7afbff; font-size:28px;">✓</span><span style="font-size:27px; color:#ddd;">Repairs Adobe &amp; app errors</span></div>
+          <div style="display:flex; align-items:center; gap:16px;"><span style="color:#7afbff; font-size:28px;">✓</span><span style="font-size:27px; color:#ddd;">Recovers corrupt files</span></div>
+          <div style="display:flex; align-items:center; gap:16px;"><span style="color:#7afbff; font-size:28px;">✓</span><span style="font-size:27px; color:#ddd;">How-tos &amp; guided walkthroughs</span></div>
+          <div style="display:flex; align-items:center; gap:16px;"><span style="color:#7afbff; font-size:28px;">✓</span><span style="font-size:27px; color:#ddd;">Setup &amp; install instructions</span></div>
+        </div>
+      </div>
+
+      <!-- S4 · browser support demo -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c4 56s linear both paused; display:flex; align-items:center; justify-content:center; gap:70px; padding:0 120px; box-sizing:border-box;">
+        <div style="max-width:520px;">
+          <div style="font-family:'Cinzel',serif; font-size:30px; letter-spacing:.26em; color:#c5a059; text-transform:uppercase; margin-bottom:20px;">Right in your browser</div>
+          <div style="font-family:'Cinzel',serif; font-size:64px; font-weight:700; color:#fff; line-height:1.1;">Live web support &amp; troubleshooting</div>
+          <div style="font-size:28px; color:#9a9a9a; margin-top:22px; line-height:1.5;">The globe rides over any page — Chrome, Edge, Safari — spotting stale caches, stuck sessions and broken logins, and fixing them in place.</div>
+        </div>
+        <div style="width:760px; border:1px solid #2a2a2a; border-radius:16px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.6); animation: cKen 14s ease-in-out infinite alternate;">
+          <div style="background:#1d1d1f; padding:14px 18px; display:flex; align-items:center; gap:12px;"><div style="display:flex; gap:8px;"><span style="width:13px; height:13px; border-radius:50%; background:#ff5f57;"></span><span style="width:13px; height:13px; border-radius:50%; background:#febc2e;"></span><span style="width:13px; height:13px; border-radius:50%; background:#28c840;"></span></div><div style="flex:1; background:#0d0d0f; border-radius:8px; padding:9px 16px; font-size:18px; color:#888; font-family:ui-monospace,monospace; max-width:380px; margin:0 auto;">acme.app/workspace</div></div>
+          <div style="position:relative; background:#f5f5f7; height:420px; padding:30px;">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid #e3e3e6; padding-bottom:18px;"><div style="font-size:24px; font-weight:700; color:#1d1d22;">Projects</div><div style="width:120px; height:38px; background:#2a2a31; border-radius:9px;"></div></div>
+            <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-top:22px;"><div style="background:#fff; border:1px solid #e6e6ea; border-radius:13px; height:120px;"></div><div style="background:#fff; border:1px solid #e6e6ea; border-radius:13px; height:120px;"></div></div>
+            <div style="position:absolute; right:26px; bottom:26px; display:flex; flex-direction:column; align-items:flex-end; gap:14px;">
+              <div style="width:330px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:14px; padding:18px; box-shadow:0 18px 40px rgba(0,0,0,.35);">
+                <div style="display:inline-block; padding:5px 10px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(197,160,89,.5); font-size:13px; letter-spacing:.12em; color:#c5a059; font-weight:600;">BROWSER · CACHE.STALE</div>
+                <div style="font-family:'Cinzel',serif; font-size:22px; color:#fff; font-weight:700; margin:12px 0 6px;">This page looks stale</div>
+                <div style="font-size:16px; color:#aaa; line-height:1.5;">Clearing cache for acme.app and reloading…</div>
+                <div style="height:8px; border-radius:4px; background:#1a1410; margin-top:14px; overflow:hidden;"><div style="height:100%; background:linear-gradient(90deg,#c5a059,#f1dca7); animation: cFill 2.6s ease-in-out infinite alternate;"></div></div>
+              </div>
+              <div style="animation: cBob 5s ease-in-out infinite;"><dc-import name="Globe" state="fixing" size="84" hint-size="84px,84px"></dc-import></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S5 · researches the unknown + expert team -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c5 56s linear both paused; display:flex; align-items:center; justify-content:center;">
+        <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 40%, rgba(197,160,89,.09), transparent 55%);"></div>
+        <div style="text-align:center; position:relative; animation: cKen 14s ease-in-out infinite alternate; max-width:1320px;">
+          <div style="display:flex; justify-content:center; animation: cBob 5s ease-in-out infinite; margin-bottom:28px;"><dc-import name="Globe" state="diagnosing" size="180" hint-size="180px,180px"></dc-import></div>
+          <div style="font-family:'Cinzel',serif; font-size:74px; font-weight:700; color:#fff; line-height:1.1;">We don't just fix the known.</div>
+          <div style="font-size:32px; color:#bdbdbd; margin-top:24px; line-height:1.5; max-width:1120px; margin-left:auto; margin-right:auto;">ARIA researches new issues the moment they appear — and resolves them. Anything it can't crack, it connects you to IT experts with decades of cross-sector experience.</div>
+          <div style="display:flex; gap:16px; justify-content:center; margin-top:34px; flex-wrap:wrap;">
+            <span style="font-size:22px; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:30px; padding:10px 22px;">Finance</span>
+            <span style="font-size:22px; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:30px; padding:10px 22px;">Healthcare</span>
+            <span style="font-size:22px; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:30px; padding:10px 22px;">Manufacturing</span>
+            <span style="font-size:22px; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:30px; padding:10px 22px;">Legal</span>
+            <span style="font-size:22px; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:30px; padding:10px 22px;">Public sector</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- S6 · even on a blue screen -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c6 56s linear both paused;">
+        <div style="position:absolute; inset:0; background:#0078D4; animation: cKen 16s ease-in-out infinite alternate; padding:120px 150px; box-sizing:border-box;">
+          <div style="font-size:150px; line-height:.8; color:#fff; font-weight:300;">:(</div>
+          <div style="font-size:40px; color:#fff; font-weight:300; margin-top:40px; max-width:1000px;">Your PC ran into a problem and needs to restart.</div>
+          <div style="margin-top:60px; max-width:1300px; background:rgba(0,0,0,.34); border:3px solid rgba(197,160,89,.9); border-radius:22px; padding:38px 44px; display:flex; align-items:center; gap:44px;">
+            <dc-import name="Globe" state="diagnosing" size="150" hint-size="150px,150px"></dc-import>
+            <div style="flex:1;"><div style="font-family:'Cinzel',serif; font-size:22px; letter-spacing:.24em; color:#f1dca7;">ARIA SENTINEL</div><div style="font-family:'Cinzel',serif; font-size:52px; font-weight:700; color:#fff; margin-top:8px;">Solve it for me</div></div>
+            <div style="background:#c5a059; color:#1a1410; font-family:'Cinzel',serif; font-weight:700; font-size:26px; letter-spacing:.14em; padding:26px 40px; border-radius:14px;">SOLVE IT</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S7 · routes what it can't fix -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c7 56s linear both paused;">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:90px; animation: cKen 14s ease-in-out infinite alternate;">
+          <div style="max-width:680px;">
+            <div style="font-family:'Cinzel',serif; font-size:30px; letter-spacing:.28em; color:#ffcb6b; text-transform:uppercase; margin-bottom:22px;">And the rest?</div>
+            <div style="font-family:'Cinzel',serif; font-size:74px; font-weight:700; color:#fff; line-height:1.1;">What it can't fix, it routes — instantly.</div>
+            <div style="font-size:30px; color:#9a9a9a; margin-top:24px; line-height:1.5;">A ServiceNow incident, sent to the right team. No one has to file it.</div>
+          </div>
+          <div style="width:420px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(197,160,89,.4); border-radius:18px; padding:36px; box-shadow:0 30px 80px rgba(0,0,0,.6);">
+            <div style="display:inline-block; padding:7px 12px; border-radius:6px; background:#0a0a0a; border:1px solid rgba(197,160,89,.5); font-size:15px; letter-spacing:.14em; color:#c5a059; font-weight:600;">INCIDENT CREATED</div>
+            <div style="font-family:'Cinzel',serif; font-size:46px; font-weight:700; color:#fff; margin:16px 0 6px;">INC0042781</div>
+            <div style="font-size:22px; color:#aaa;">→ Desktop Support · P3 · SLA 4h</div>
+            <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+              <span style="font-size:17px; color:#7afbff; border:1px solid rgba(122,251,255,.4); border-radius:6px; padding:6px 12px;">New</span>
+              <span style="font-size:17px; color:#cdbb89; border:1px solid #38301d; border-radius:6px; padding:6px 12px;">Auto-routed</span>
+              <span style="font-size:17px; color:#cdbb89; border:1px solid #38301d; border-radius:6px; padding:6px 12px;">Diagnostics attached</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S8 · updates arrive automatically -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c8 56s linear both paused; display:flex; align-items:center; justify-content:center; gap:80px; padding:0 130px; box-sizing:border-box;">
+        <div style="max-width:620px;">
+          <div style="font-family:'Cinzel',serif; font-size:30px; letter-spacing:.26em; color:#c5a059; text-transform:uppercase; margin-bottom:20px;">Always improving</div>
+          <div style="font-family:'Cinzel',serif; font-size:66px; font-weight:700; color:#fff; line-height:1.1;">New fixes arrive automatically</div>
+          <div style="font-size:28px; color:#9a9a9a; margin-top:22px; line-height:1.5;">ARIA pulls fresh, signed recipes on its own — and gives you a heads-up on what's coming next.</div>
+        </div>
+        <div style="width:480px; display:flex; flex-direction:column; gap:16px;">
+          <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(122,251,255,.35); border-radius:16px; padding:24px; display:flex; align-items:center; gap:18px;"><dc-import name="Globe" state="done" size="64" hint-size="64px,64px"></dc-import><div><div style="font-size:24px; color:#fff; font-weight:600;">Knowledge updated</div><div style="font-size:19px; color:#7afbff; margin-top:5px;">6 new recipes added</div></div></div>
+          <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:16px; padding:24px;"><div style="font-size:17px; letter-spacing:.16em; color:#7d6326; text-transform:uppercase; margin-bottom:14px;">Coming up</div><div style="display:flex; gap:12px; flex-wrap:wrap;"><span style="font-size:20px; color:#cdbb89; border:1px solid #38301d; border-radius:24px; padding:8px 18px;">Teams repair</span><span style="font-size:20px; color:#cdbb89; border:1px solid #38301d; border-radius:24px; padding:8px 18px;">OneDrive sync</span><span style="font-size:20px; color:#cdbb89; border:1px solid #38301d; border-radius:24px; padding:8px 18px;">Driver rollback</span></div></div>
+        </div>
+      </div>
+
+      <!-- S9 · privacy -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c9 56s linear both paused; display:flex; align-items:center; justify-content:center;">
+        <div style="text-align:center; animation: cKen 12s ease-in-out infinite alternate;">
+          <div style="font-family:'Cinzel',serif; font-size:240px; font-weight:700; color:#7afbff; line-height:.9;">0</div>
+          <div style="font-family:'Cinzel',serif; font-size:62px; font-weight:700; color:#fff; margin-top:10px;">Your data never leaves your device.</div>
+          <div style="font-size:30px; color:#9a9a9a; margin-top:18px;">Privacy by engineering, not by promise.</div>
+        </div>
+      </div>
+
+      <!-- S10 · business + personal -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c10 56s linear both paused; display:flex; align-items:center; justify-content:center;">
+        <div style="text-align:center;">
+          <div style="font-family:'Cinzel',serif; font-size:84px; font-weight:700; color:#fff;">Built for business.</div>
+          <div style="font-family:'Cinzel',serif; font-size:84px; font-weight:700; color:#c5a059;">Ready for you, too.</div>
+          <div style="font-size:30px; color:#9a9a9a; margin-top:26px; max-width:1100px;">From 10,000-seat fleets to a single laptop at home — one calm globe, watching your back.</div>
+        </div>
+      </div>
+
+      <!-- S11 · coming to every device + stay tuned + CTA -->
+      <div data-clip style="position:absolute; inset:0; opacity:0; animation: c11 56s linear both paused;">
+        <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 38%, rgba(197,160,89,.12), transparent 55%); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 120px; box-sizing:border-box;">
+          <div style="animation: cBob 5s ease-in-out infinite;"><dc-import name="Globe" state="idle" size="170" hint-size="170px,170px"></dc-import></div>
+          <div style="font-family:'Cinzel',serif; font-size:80px; font-weight:700; color:#fff; margin-top:22px;">Windows today. <span style="color:#c5a059;">Everything next.</span></div>
+          <div style="display:flex; gap:16px; justify-content:center; margin-top:30px; flex-wrap:wrap;">
+            <span style="font-size:24px; color:#e6e6e6; border:1px solid #2a2a2a; border-radius:30px; padding:12px 26px;">macOS</span>
+            <span style="font-size:24px; color:#e6e6e6; border:1px solid #2a2a2a; border-radius:30px; padding:12px 26px;">Linux</span>
+            <span style="font-size:24px; color:#e6e6e6; border:1px solid #2a2a2a; border-radius:30px; padding:12px 26px;">iPhone</span>
+            <span style="font-size:24px; color:#e6e6e6; border:1px solid #2a2a2a; border-radius:30px; padding:12px 26px;">iPad</span>
+            <span style="font-size:24px; color:#e6e6e6; border:1px solid #2a2a2a; border-radius:30px; padding:12px 26px;">Android</span>
+          </div>
+          <div style="font-size:30px; color:#9a9a9a; margin-top:28px;">More features in the pipeline. <span style="color:#f1dca7;">Stay tuned.</span></div>
+          <div style="background:linear-gradient(90deg,#c5a059,#f1dca7); color:#1a1410; font-family:'Cinzel',serif; font-weight:700; font-size:26px; letter-spacing:.1em; padding:20px 42px; border-radius:14px; margin-top:34px;">iisupp.net/aria-sentinel</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="flex:none; background:#080808; border-top:1px solid #1a1a1a; padding:14px 26px; display:flex; align-items:center; gap:18px;">
+    <button onClick="{{ toggle }}" style="width:46px; height:46px; border-radius:50%; border:1px solid #2a2a2a; background:#141414; color:#f1dca7; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; font-family:'Inter',sans-serif;">{{ playLabel }}</button>
+    <button onClick="{{ replay }}" style="height:46px; padding:0 16px; border-radius:23px; border:1px solid #2a2a2a; background:#141414; color:#aaa; cursor:pointer; font-size:13px; letter-spacing:.06em; font-family:'Inter',sans-serif;">Replay</button>
+    <div id="ariaTrack" onClick="{{ seek }}" style="flex:1; height:8px; border-radius:4px; background:#1a1a1a; cursor:pointer; position:relative; overflow:hidden;">
+      <div id="ariaFill" data-clip style="height:100%; width:0%; background:linear-gradient(90deg,#c5a059,#f1dca7); animation: prog 56s linear both paused;"></div>
+    </div>
+    <div id="ariaTime" style="font-family:ui-monospace,monospace; font-size:13px; color:#888; min-width:96px; text-align:right;">0:00 / 0:56</div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  T = 56;
+  state = { playing: true };
+
+  componentDidMount() {
+    this.board = document.getElementById("ariaBoard");
+    this.wrap = document.getElementById("ariaWrap");
+    this.fillTime = document.getElementById("ariaTime");
+    this.track = document.getElementById("ariaTrack");
+    this.clips = this.board ? this.board.querySelectorAll("[data-clip]") : [];
+    let saved = 0, savedPlaying = true;
+    try {
+      saved = parseFloat(localStorage.getItem("ariaCommercialT") || "0") || 0;
+      const sp = localStorage.getItem("ariaCommercialPlaying");
+      if (sp !== null) savedPlaying = sp === "1";
+    } catch (e) {}
+    this.elapsed = saved % this.T;
+    this.last = null;
+    this.fit();
+    this._onResize = () => this.fit();
+    window.addEventListener("resize", this._onResize);
+    this.playing = savedPlaying;
+    this.setState({ playing: savedPlaying });
+    this.apply();
+    this._raf = requestAnimationFrame((t) => this.tick(t));
+    this._persist = setInterval(() => this.persist(), 600);
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf);
+    clearInterval(this._persist);
+    window.removeEventListener("resize", this._onResize);
+  }
+  fit() {
+    if (!this.board || !this.wrap) return;
+    const s = Math.min(this.wrap.clientWidth / 1920, this.wrap.clientHeight / 1080);
+    this.board.style.transform = "scale(" + s + ")";
+  }
+  tick(now) {
+    if (this.last == null) this.last = now;
+    if (this.playing) {
+      this.elapsed += (now - this.last) / 1000;
+      if (this.elapsed >= this.T) this.elapsed = this.elapsed % this.T;
+    }
+    this.last = now;
+    this.apply();
+    this._raf = requestAnimationFrame((t) => this.tick(t));
+  }
+  apply() {
+    const d = (-this.elapsed) + "s";
+    if (this.clips) this.clips.forEach((c) => { c.style.animationDelay = d; });
+    if (this.board) this.board.setAttribute("data-screen-label", Math.floor(this.elapsed) + "s");
+    if (this.fillTime) this.fillTime.textContent = this.fmt(this.elapsed) + " / " + this.fmt(this.T);
+  }
+  fmt(s) {
+    const m = Math.floor(s / 60), ss = Math.floor(s % 60);
+    return m + ":" + (ss < 10 ? "0" : "") + ss;
+  }
+  persist() {
+    try {
+      localStorage.setItem("ariaCommercialT", String(this.elapsed));
+      localStorage.setItem("ariaCommercialPlaying", this.playing ? "1" : "0");
+    } catch (e) {}
+  }
+  toggle = () => {
+    this.playing = !this.playing;
+    this.setState({ playing: this.playing });
+    this.persist();
+  };
+  replay = () => {
+    this.elapsed = 0;
+    this.playing = true;
+    this.setState({ playing: true });
+    this.apply();
+  };
+  seek = (e) => {
+    if (!this.track) return;
+    const r = this.track.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    this.elapsed = pct * this.T;
+    this.apply();
+    this.persist();
+  };
+  renderVals() {
+    return {
+      toggle: this.toggle,
+      replay: this.replay,
+      seek: this.seek,
+      playLabel: this.state.playing ? "❚❚" : "►",
+    };
+  }
+}
+</script>
+</body>
+</html>

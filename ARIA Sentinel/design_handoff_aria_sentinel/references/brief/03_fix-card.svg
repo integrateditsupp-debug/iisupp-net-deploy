@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <radialGradient id="goldCore2" cx="35%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#f1dca7" stop-opacity="0.95"></stop>
+      <stop offset="55%" stop-color="#c5a059" stop-opacity="0.7"></stop>
+      <stop offset="100%" stop-color="#5a3f10" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="goldBtn" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c5a059"></stop>
+      <stop offset="100%" stop-color="#f1dca7"></stop>
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141414"></stop>
+      <stop offset="100%" stop-color="#0a0a0a"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="#050505"></rect>
+
+  <text x="40" y="40" fill="#c5a059" font-family="Cinzel, serif" font-size="14" letter-spacing="0.18em">ARIA SENTINEL · FIX CARD STATES</text>
+  <text x="40" y="62" fill="#666" font-size="11">Card slides up from globe. Width 320px. Three states shown.</text>
+
+  
+  <g transform="translate(80,110)">
+    <text x="0" y="-12" fill="#888" font-size="11" letter-spacing="0.12em">CONFIRMED MODE · DETECTED</text>
+
+    <rect width="320" height="240" rx="14" fill="url(#cardBg)" stroke="#2a2a2a"></rect>
+
+    
+    <g transform="translate(160,0)">
+      <circle r="28" fill="url(#goldCore2)" transform="translate(0,-12)"></circle>
+      <circle r="28" fill="none" stroke="#c5a059" stroke-opacity="0.6" stroke-width="0.8" transform="translate(0,-12)"></circle>
+    </g>
+
+    
+    <rect x="0" y="32" width="320" height="2" fill="#c5a059" opacity="0.4"></rect>
+
+    
+    <rect x="20" y="50" width="120" height="22" rx="4" fill="#0a0a0a" stroke="#c5a059" stroke-opacity="0.5"></rect>
+    <text x="32" y="65" fill="#c5a059" font-size="10" letter-spacing="0.18em" font-weight="600">DISK · LOW SPACE</text>
+
+    <text x="20" y="98" fill="#fff" font-family="Cinzel, serif" font-size="14" font-weight="700">Disk almost full</text>
+    <text x="20" y="124" fill="#aaa" font-size="12">3% free on C:\. I can recover</text>
+    <text x="20" y="140" fill="#aaa" font-size="12">~4.2 GB by clearing temp files,</text>
+    <text x="20" y="156" fill="#aaa" font-size="12">browser caches and old downloads.</text>
+
+    
+    <rect x="20" y="180" width="170" height="40" rx="8" fill="url(#goldBtn)"></rect>
+    <text x="105" y="205" fill="#1a1410" font-size="12" font-weight="700" letter-spacing="0.16em" text-anchor="middle" font-family="Cinzel, serif">FIX IT NOW</text>
+
+    <rect x="198" y="180" width="102" height="40" rx="8" fill="transparent" stroke="#c5a059" stroke-opacity="0.45"></rect>
+    <text x="249" y="205" fill="#c5a059" font-size="11" letter-spacing="0.14em" text-anchor="middle">DETAILS</text>
+  </g>
+
+  
+  <g transform="translate(440,110)">
+    <text x="0" y="-12" fill="#888" font-size="11" letter-spacing="0.12em">IN PROGRESS</text>
+
+    <rect width="320" height="240" rx="14" fill="url(#cardBg)" stroke="#2a2a2a"></rect>
+    <g transform="translate(160,0)">
+      <circle r="30" fill="url(#goldCore2)" transform="translate(0,-12)"></circle>
+      <circle r="30" fill="none" stroke="#f1dca7" stroke-width="1.4" transform="translate(0,-12)"></circle>
+      
+      <g fill="#f1dca7" transform="translate(0,-12)">
+        <circle cx="-18" cy="-44" r="1.6" opacity="0.8"></circle>
+        <circle cx="8" cy="-50" r="1.4" opacity="0.7"></circle>
+        <circle cx="22" cy="-40" r="1.6" opacity="0.85"></circle>
+      </g>
+    </g>
+    <rect x="0" y="32" width="320" height="2" fill="#c5a059" opacity="0.4"></rect>
+
+    <rect x="20" y="50" width="120" height="22" rx="4" fill="#0a0a0a" stroke="#c5a059" stroke-opacity="0.5"></rect>
+    <text x="32" y="65" fill="#c5a059" font-size="10" letter-spacing="0.18em" font-weight="600">FIXING · STEP 2/4</text>
+
+    <text x="20" y="98" fill="#fff" font-family="Cinzel, serif" font-size="14" font-weight="700">Clearing temp files…</text>
+
+    
+    <rect x="20" y="124" width="280" height="6" rx="3" fill="#1a1410"></rect>
+    <rect x="20" y="124" width="160" height="6" rx="3" fill="url(#goldBtn)"></rect>
+
+    <text x="20" y="156" fill="#aaa" font-size="11">Cleared 1.7 GB · Working on browser caches</text>
+
+    <text x="20" y="200" fill="#666" font-size="10" letter-spacing="0.1em">A System Restore point was created before any change.</text>
+  </g>
+
+  
+  <g transform="translate(800,110)">
+    <text x="0" y="-12" fill="#7afbff" font-size="11" letter-spacing="0.12em">DONE</text>
+
+    <rect width="320" height="240" rx="14" fill="url(#cardBg)" stroke="#7afbff" stroke-opacity="0.35"></rect>
+    <g transform="translate(160,0)">
+      <circle r="28" fill="url(#goldCore2)" transform="translate(0,-12)"></circle>
+      <path d="M -10 -12 L -3 -5 L 12 -22" stroke="#7afbff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-12)"></path>
+    </g>
+    <rect x="0" y="32" width="320" height="2" fill="#7afbff" opacity="0.55"></rect>
+
+    <rect x="20" y="50" width="120" height="22" rx="4" fill="#0a0a0a" stroke="#7afbff" stroke-opacity="0.5"></rect>
+    <text x="32" y="65" fill="#7afbff" font-size="10" letter-spacing="0.18em" font-weight="600">DISK · RESOLVED</text>
+
+    <text x="20" y="98" fill="#fff" font-family="Cinzel, serif" font-size="14" font-weight="700">Recovered 4.2 GB</text>
+    <text x="20" y="124" fill="#aaa" font-size="12">Disk is healthy. Your work won&#39;t</text>
+    <text x="20" y="140" fill="#aaa" font-size="12">be interrupted by space issues.</text>
+
+    <rect x="20" y="180" width="170" height="40" rx="8" fill="url(#goldBtn)"></rect>
+    <text x="105" y="205" fill="#1a1410" font-size="12" font-weight="700" letter-spacing="0.16em" text-anchor="middle" font-family="Cinzel, serif">DISMISS</text>
+
+    <rect x="198" y="180" width="102" height="40" rx="8" fill="transparent" stroke="#7afbff" stroke-opacity="0.5"></rect>
+    <text x="249" y="205" fill="#7afbff" font-size="10" letter-spacing="0.14em" text-anchor="middle">VIEW LOG</text>
+  </g>
+
+  
+  <g transform="translate(440,420)">
+    <text x="0" y="-12" fill="#ffcb6b" font-size="11" letter-spacing="0.12em">ESCALATION · HARDWARE</text>
+
+    <rect width="320" height="240" rx="14" fill="url(#cardBg)" stroke="#ffcb6b" stroke-opacity="0.5"></rect>
+    <g transform="translate(160,0)">
+      <circle r="28" fill="url(#goldCore2)" opacity="0.6" transform="translate(0,-12)"></circle>
+      <circle r="28" fill="none" stroke="#ffcb6b" stroke-width="1.5" transform="translate(0,-12)"></circle>
+      
+      <path d="M -12 -2 L 0 -22 L 12 -2 Z" fill="none" stroke="#ffcb6b" stroke-width="1.8" transform="translate(0,-12)"></path>
+      <line x1="0" y1="-14" x2="0" y2="-8" stroke="#ffcb6b" stroke-width="1.8" transform="translate(0,-12)"></line>
+      <circle cx="0" cy="-5" r="0.8" fill="#ffcb6b" transform="translate(0,-12)"></circle>
+    </g>
+    <rect x="0" y="32" width="320" height="2" fill="#ffcb6b" opacity="0.55"></rect>
+
+    <rect x="20" y="50" width="170" height="22" rx="4" fill="#0a0a0a" stroke="#ffcb6b" stroke-opacity="0.5"></rect>
+    <text x="32" y="65" fill="#ffcb6b" font-size="10" letter-spacing="0.18em" font-weight="600">BSOD · 0xC000021A</text>
+
+    <text x="20" y="98" fill="#fff" font-family="Cinzel, serif" font-size="14" font-weight="700">This may need hardware</text>
+    <text x="20" y="116" fill="#fff" font-family="Cinzel, serif" font-size="14" font-weight="700">inspection</text>
+    <text x="20" y="142" fill="#aaa" font-size="11.5">May need replacement parts or</text>
+    <text x="20" y="158" fill="#aaa" font-size="11.5">reimaging. Please contact your</text>
+    <text x="20" y="174" fill="#aaa" font-size="11.5">local Desktop Support team.</text>
+
+    <rect x="20" y="194" width="280" height="36" rx="8" fill="transparent" stroke="#ffcb6b" stroke-opacity="0.55"></rect>
+    <text x="160" y="217" fill="#ffcb6b" font-size="11" letter-spacing="0.14em" text-anchor="middle">CONTACT DESKTOP SUPPORT</text>
+  </g>
+
+  <text x="40" y="678" fill="#444" font-size="10">03_fix-card.svg · ARIA Sentinel · 2026-06-19</text>
+</svg>

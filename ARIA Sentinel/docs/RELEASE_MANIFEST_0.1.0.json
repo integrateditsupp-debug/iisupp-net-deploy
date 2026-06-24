@@ -1,0 +1,54 @@
+{
+  "product": "ARIA Sentinel",
+  "version": "0.1.0",
+  "generated_at": "2026-06-19T09:18:22-04:00",
+  "release_type": "unsigned-internal-pilot",
+  "artifacts": [
+    {
+      "path": "ARIA Sentinel/dist/ARIA-Sentinel-0.1.0-unsigned.exe",
+      "size_bytes": 102108634,
+      "sha256": "BDA18BFD5314FA56BD57ACBBD5FBCB72DDD41F52D4981F0BFE9CB596716D4DE7"
+    },
+    {
+      "path": "ARIA Sentinel/dist/ARIA-Sentinel-0.1.0-unsigned.exe.blockmap",
+      "size_bytes": 107718,
+      "sha256": "9658C96CC46E26A10CEC95FF4A033384760D8A8CA12906104F62048D4BD3E7D5"
+    }
+  ],
+  "lockfiles": [
+    {
+      "path": "package-lock.json",
+      "sha256": "6BCE9BD9097869F9E3676945ED4D000CB4139E76EF6232FB6397E0CD0CE3B2A2"
+    },
+    {
+      "path": "ARIA Sentinel/package-lock.json",
+      "sha256": "82FA01F01C9D41E8A2F68F70E04A73A0EBAF1C1C9AFFDD0FFCB2C9ADB5D5E542"
+    },
+    {
+      "path": "apps/sentinel-desktop/package-lock.json",
+      "sha256": "0A12D9C6C7BECA731D37492992EE6D9A91A3A54F67B7F35978A7A023EE460EB8"
+    }
+  ],
+  "required_gates": [
+    "sentinel:build",
+    "sentinel:test",
+    "sentinel:prototype:test",
+    "sentinel:public-pages:test",
+    "kb:test",
+    "site-smoke",
+    "classifier-10k",
+    "classifier-mega",
+    "dependency-audit",
+    "aria-sentinel-ui-shell",
+    "aria-sentinel-desktop-admin-split",
+    "packaged-exe-bridge-smoke",
+    "packaged-duplicate-launch-regression"
+  ],
+  "known_blocks": [
+    "unsigned-windows-installer",
+    "no-msi-intune-package",
+    "no-live-servicenow-oauth",
+    "no-external-penetration-test",
+    "no-production-legal-package"
+  ]
+}

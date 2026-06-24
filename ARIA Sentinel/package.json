@@ -1,6 +1,6 @@
 {
   "name": "aria-sentinel",
-  "version": "0.1.13",
+  "version": "0.1.15",
   "private": true,
   "description": "ARIA Sentinel Windows desktop agent and Chrome extension MVP.",
   "author": "Integrated IT Support Inc.",

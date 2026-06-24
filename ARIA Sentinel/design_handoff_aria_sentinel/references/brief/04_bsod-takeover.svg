@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" font-family="Segoe UI, Inter, system-ui, sans-serif">
+  <defs>
+    <radialGradient id="goldCoreBSOD" cx="35%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#f1dca7" stop-opacity="0.95"></stop>
+      <stop offset="55%" stop-color="#c5a059" stop-opacity="0.7"></stop>
+      <stop offset="100%" stop-color="#5a3f10" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+
+  
+  <rect width="1200" height="700" fill="#0078D4"></rect>
+
+  <text x="40" y="40" fill="#fff" font-family="Cinzel, serif" font-size="14" letter-spacing="0.18em" opacity="0.85">ARIA SENTINEL · BSOD TAKEOVER (RECOVERY SCREEN)</text>
+  <text x="40" y="62" fill="#fff" font-size="11" opacity="0.65">Shown on next boot after BSOD detection. ARIA option added below standard Microsoft recovery options.</text>
+
+  
+  <g transform="translate(140,150)">
+    
+    <text x="0" y="0" fill="#fff" font-size="120" font-family="Segoe UI, sans-serif">:(</text>
+
+    
+    <text x="0" y="70" fill="#fff" font-size="22" font-weight="300">Your PC ran into a problem and needs to restart.</text>
+    <text x="0" y="98" fill="#fff" font-size="18" font-weight="300">We&#39;re collecting some error info and you can try the options below.</text>
+
+    
+    <text x="0" y="160" fill="#fff" font-size="14" opacity="0.85">For more information about this issue and possible fixes, visit:</text>
+    <text x="0" y="180" fill="#fff" font-size="14" font-family="ui-monospace, monospace" opacity="0.9">https://www.windows.com/stopcode</text>
+
+    <text x="0" y="220" fill="#fff" font-size="13" opacity="0.7">If you call a support person, give them this info:</text>
+    <text x="0" y="245" fill="#fff" font-size="13" font-family="ui-monospace, monospace">Stop code: CRITICAL_PROCESS_DIED  (0x000000EF)</text>
+  </g>
+
+  
+  <g transform="translate(140,440)">
+    <rect width="930" height="180" rx="16" fill="#000" fill-opacity="0.32" stroke="#c5a059" stroke-width="2" stroke-opacity="0.85"></rect>
+
+    
+    <rect x="2" y="2" width="926" height="176" rx="14" fill="none" stroke="#f1dca7" stroke-opacity="0.15"></rect>
+
+    
+    <g transform="translate(82,90)">
+      <circle r="58" fill="#000" fill-opacity="0.35"></circle>
+      <circle r="44" fill="url(#goldCoreBSOD)"></circle>
+      <circle r="44" fill="none" stroke="#f1dca7" stroke-opacity="0.7" stroke-width="1.2"></circle>
+      <circle r="30" fill="none" stroke="#c5a059" stroke-opacity="0.5" stroke-width="0.7"></circle>
+      <circle r="15" fill="none" stroke="#c5a059" stroke-opacity="0.5" stroke-width="0.6"></circle>
+      <line x1="-44" y1="0" x2="44" y2="0" stroke="#c5a059" stroke-opacity="0.55" stroke-width="0.8"></line>
+      <line x1="0" y1="-44" x2="0" y2="44" stroke="#c5a059" stroke-opacity="0.55" stroke-width="0.8"></line>
+    </g>
+
+    
+    <text x="170" y="62" fill="#c5a059" font-family="Cinzel, serif" font-size="11" letter-spacing="0.22em">ARIA SENTINEL</text>
+    <text x="170" y="92" fill="#fff" font-family="Cinzel, serif" font-size="22" font-weight="700">Solve it for me</text>
+    <text x="170" y="120" fill="#fff" font-size="14" opacity="0.85">I can read this stop code and apply a known fix locally,</text>
+    <text x="170" y="138" fill="#fff" font-size="14" opacity="0.85">or tell you if hardware support is needed.</text>
+
+    
+    <g transform="translate(710,80)">
+      <rect width="200" height="56" rx="10" fill="#c5a059"></rect>
+      <text x="100" y="35" fill="#1a1410" font-family="Cinzel, serif" font-size="14" font-weight="700" letter-spacing="0.18em" text-anchor="middle">SOLVE IT FOR ME</text>
+    </g>
+    <text x="810" y="156" fill="#fff" font-size="11" opacity="0.55" text-anchor="middle">Press F8 → Recovery menu → ARIA</text>
+  </g>
+
+  
+  <text x="140" y="660" fill="#fff" font-size="12" opacity="0.55">0% complete</text>
+
+  <text x="40" y="690" fill="#fff" font-size="10" opacity="0.45">04_bsod-takeover.svg · ARIA Sentinel · 2026-06-19</text>
+</svg>

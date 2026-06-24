@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RUN 15 §3 — Live globe icon swap PREVIEW (awaiting Ahmad approval)</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,sans-serif;background:#050505;color:#eee;margin:0;padding:32px;max-width:860px;margin:0 auto}
+    h1{font-size:20px} .note{background:#15110a;border:1px solid #38301d;color:#f1dca7;padding:10px 14px;border-radius:8px;font-size:13px}
+    .row{display:flex;gap:48px;align-items:center;margin:28px 0;padding:18px;border:1px solid #1c1c1c;border-radius:12px;background:#0a0a0a}
+    .col{display:flex;flex-direction:column;align-items:center;gap:8px} .col small{color:#888;font-size:12px}
+    .gold-a{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#f1dca7 0 15%,#c5a059 36%,#5a3f10 68%,transparent 72%);border:1px solid rgba(241,220,167,.58);color:#1a1206;font-weight:700;font-family:Georgia,serif}
+    .aria-live-globe{width:48px;height:48px} .big .aria-live-globe{width:96px;height:96px} .big .gold-a{width:96px;height:96px;font-size:34px}
+  </style>
+</head>
+<body>
+  <h1>RUN 15 §3 · Live ARIA globe — icon swap preview</h1>
+  <p class="note">★ Per Rule 6 this customer-facing visual change is <b>NOT applied yet</b>. This preview is for Ahmad's approval. Compare against <b>iisupp.net/aria</b>. On approval, the next run swaps the rail header (48px), rail footer (96px) and Chrome/Edge/Safari extension icons. The Windows install .ico (crystal A) and the floating desktop globe are unchanged.</p>
+
+  <div class="row">
+    <div class="col"><div class="gold-a">A</div><small>CURRENT header (gold A) — 48px</small></div>
+    <div class="col"><object type="image/svg+xml" data="../src/renderer/aria-live-globe.svg" width="48" height="48"></object><small>PROPOSED header — live globe 48px</small></div>
+  </div>
+  <div class="row big">
+    <div class="col"><div class="gold-a">A</div><small>CURRENT footer — 96px</small></div>
+    <div class="col"><object type="image/svg+xml" data="../src/renderer/aria-live-globe.svg" width="96" height="96"></object><small>PROPOSED footer — live globe 96px (rotating ring + breathing core)</small></div>
+  </div>
+
+  <p class="note">Approve → reply "ship the globe icons" and the next run applies the swap + re-renders the extension PNGs. Hold → the gold A stays.</p>
+</body>
+</html>

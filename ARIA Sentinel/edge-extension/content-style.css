@@ -1,0 +1,107 @@
+#aria-sentinel-root {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2147483647;
+  font-family: Inter, system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+#aria-sentinel-root,
+#aria-sentinel-root * {
+  box-sizing: border-box;
+}
+
+.aria-sentinel-globe {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 64px;
+  height: 64px;
+  border: 1px solid rgba(241,220,167,.58);
+  border-radius: 50%;
+  background:
+    linear-gradient(90deg, transparent 48%, rgba(139,109,47,.72) 49%, rgba(139,109,47,.72) 51%, transparent 52%),
+    linear-gradient(0deg, transparent 48%, rgba(139,109,47,.72) 49%, rgba(139,109,47,.72) 51%, transparent 52%),
+    radial-gradient(circle at 35% 30%, #f1dca7 0 15%, #c5a059 36%, #5a3f10 68%, transparent 72%);
+  box-shadow: 0 0 22px rgba(197,160,89,.38), inset 0 0 18px rgba(241,220,167,.22);
+  cursor: pointer;
+}
+
+.aria-sentinel-globe::before,
+.aria-sentinel-globe::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(241,220,167,.42);
+}
+
+.aria-sentinel-globe::before { inset: 14px; }
+.aria-sentinel-globe::after { inset: 23px; }
+
+.aria-sentinel-card {
+  position: absolute;
+  right: 0;
+  bottom: 76px;
+  width: 280px;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  background: linear-gradient(180deg,#141414,#0a0a0a);
+  box-shadow: 0 18px 50px rgba(0,0,0,.48), 0 0 34px rgba(197,160,89,.16);
+  padding: 14px;
+  text-align: left;
+}
+
+.aria-sentinel-chip {
+  display: inline-flex;
+  border: 1px solid rgba(197,160,89,.5);
+  border-radius: 5px;
+  background: #0a0a0a;
+  color: #f1dca7;
+  font: 700 10px ui-monospace, "SF Mono", Monaco, Menlo, monospace;
+  letter-spacing: .12em;
+  padding: 5px 7px;
+  text-transform: uppercase;
+}
+
+.aria-sentinel-card h2 {
+  margin: 10px 0 7px;
+  color: #fff;
+  font: 700 17px Georgia, "Times New Roman", serif;
+  letter-spacing: 0;
+}
+
+.aria-sentinel-card p {
+  margin: 0;
+  color: #aaa;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.aria-sentinel-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.aria-sentinel-actions button {
+  min-height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: 700 10px Georgia, "Times New Roman", serif;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.aria-sentinel-actions button:first-child {
+  flex: 1;
+  border: 0;
+  background: linear-gradient(90deg,#c5a059,#f1dca7);
+  color: #1a1410;
+}
+
+.aria-sentinel-actions button:last-child {
+  border: 1px solid rgba(197,160,89,.45);
+  background: transparent;
+  color: #f1dca7;
+}

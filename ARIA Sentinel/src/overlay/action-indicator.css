@@ -1,0 +1,41 @@
+/* RUN 23 §4 — action-indicator banner. Frameless window anchored below the globe. Gold / cyber-noir,
+   glassmorphism, CSP-safe. Pulses while a fix is counting down; ⏹ ABORT cancels it. */
+* { box-sizing: border-box; }
+html, body { margin: 0; background: transparent; }
+body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; }
+
+.ai-banner {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px 8px 12px;
+  background: rgba(15, 15, 20, 0.95);
+  border: 1px solid rgba(232, 192, 106, 0.45);
+  border-radius: 11px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  color: #ece6d8;
+}
+.ai-risk-low { border-color: rgba(122, 251, 255, 0.5); }
+.ai-risk-high { border-color: rgba(255, 107, 107, 0.6); }
+
+.ai-pulse {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #e8c06a; box-shadow: 0 0 0 0 rgba(232, 192, 106, 0.6);
+  animation: ai-pulse 1s infinite; flex: 0 0 auto;
+}
+.ai-risk-high .ai-pulse { background: #ff6b6b; box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.6); }
+@keyframes ai-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(232, 192, 106, 0.55); }
+  70% { box-shadow: 0 0 0 9px rgba(232, 192, 106, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(232, 192, 106, 0); }
+}
+
+.ai-text { font-size: 12.5px; font-weight: 600; letter-spacing: 0.2px; white-space: nowrap; }
+
+.ai-abort {
+  margin-left: auto; cursor: pointer;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  padding: 5px 12px; border-radius: 7px; border: 0;
+  background: #ff6b6b; color: #fff;
+  transition: filter 0.15s ease;
+}
+.ai-abort:hover { filter: brightness(1.12); }

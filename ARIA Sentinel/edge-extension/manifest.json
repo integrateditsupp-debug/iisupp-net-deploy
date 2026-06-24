@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "ARIA Sentinel for Edge",
+  "version": "0.1.0",
+  "description": "On-device browser support companion for ARIA Sentinel (Microsoft Edge build).",
+  "permissions": [
+    "activeTab",
+    "alarms",
+    "browsingData",
+    "notifications",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:37841/*",
+    "http://localhost:37841/*",
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["site-prefs.js", "content-script.js"],
+      "css": ["content-style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ARIA Sentinel"
+  },
+  "icons": {
+    "16": "icons/i-16.png",
+    "32": "icons/i-32.png",
+    "128": "icons/i-128.png"
+  }
+}

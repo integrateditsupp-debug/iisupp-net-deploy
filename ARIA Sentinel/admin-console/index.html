@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <title>ARIA Sentinel Admin</title>
+    <style>
+      /* RUN 11 — PWA responsive breakpoints: rail collapses, panels stack on phones. */
+      @media (max-width: 720px) {
+        .rail { position: static !important; width: 100% !important; height: auto !important; display: flex; flex-wrap: wrap; }
+        .grid-3, .grid-main, .controls, .proof-grid { grid-template-columns: 1fr !important; }
+        .content { padding: 12px !important; }
+        table { font-size: 12px; }
+      }
+      :root {
+        color-scheme: dark;
+        --bg: #050505;
+        --surface: #0a0a0a;
+        --inset: #111;
+        --panel: #0d0d0d;
+        --line: #2a2a2a;
+        --line-soft: #1c1c1c;
+        --gold: #c5a059;
+        --gold-light: #f1dca7;
+        --gold-bg: #15110a;
+        --text: #fff;
+        --text-2: #aaa;
+        --muted: #666;
+        --success: #74e073;
+        --cyan: #7afbff;
+        --warning: #ffcb6b;
+        --error: #ff7e7e;
+        --display: Cinzel, Georgia, serif;
+        --ui: Inter, system-ui, sans-serif;
+        --mono: ui-monospace, "SF Mono", Consolas, monospace;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at 80% 0, rgba(197,160,89,.08), transparent 36%), var(--bg);
+        color: var(--text);
+        font-family: var(--ui);
+        font-size: 13px;
+      }
+      button, select, input { font: inherit; }
+      button, select, input { color: inherit; }
+      .admin-shell {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 188px minmax(0, 1fr);
+        border: 1px solid rgba(255,255,255,.08);
+        background: rgba(5,5,5,.96);
+      }
+      .rail {
+        border-right: 1px solid var(--line-soft);
+        background: #070707;
+        padding: 16px 12px;
+        display: flex;
+        flex-direction: column;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--gold-light);
+        font-family: var(--display);
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+      .shield {
+        width: 28px;
+        height: 28px;
+        border: 2px solid var(--gold);
+        clip-path: polygon(50% 0, 86% 14%, 80% 70%, 50% 100%, 20% 70%, 14% 14%);
+        display: grid;
+        place-items: center;
+        color: var(--gold-light);
+      }
+      .shield::before { content: ""; width: 9px; height: 14px; border-left: 2px solid currentColor; border-right: 2px solid currentColor; box-shadow: inset 0 0 0 1px rgba(241,220,167,.24); }
+      .rail-kicker {
+        margin: 28px 8px 8px;
+        color: var(--text-2);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+      .nav { display: grid; gap: 4px; }
+      .nav button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 34px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: #c8c8c8;
+        cursor: pointer;
+        padding: 0 10px;
+        text-align: left;
+      }
+      .nav button.active, .nav button:hover {
+        background: rgba(197,160,89,.28);
+        color: var(--gold-light);
+      }
+      .nav svg { width: 15px; height: 15px; color: currentColor; }
+      .collapse {
+        margin-top: auto;
+        color: var(--text-2);
+        display: grid;
+        gap: 18px;
+        padding: 12px 8px;
+        font-size: 12px;
+      }
+      .workspace { min-width: 0; }
+      .topbar {
+        height: 58px;
+        display: grid;
+        grid-template-columns: repeat(6, minmax(92px, auto)) 1fr auto;
+        align-items: center;
+        gap: 18px;
+        border-bottom: 1px solid var(--line-soft);
+        padding: 0 18px;
+      }
+      .metric-top span {
+        display: block;
+        color: var(--text-2);
+        font-size: 11px;
+        margin-bottom: 3px;
+      }
+      .metric-top strong {
+        color: #fff;
+        font-size: 13px;
+      }
+      .ok { color: var(--success) !important; }
+      .pass {
+        display: inline-flex;
+        border-radius: 4px;
+        background: rgba(116,224,115,.18);
+        color: var(--success);
+        padding: 3px 7px;
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+      .clock { color: var(--text-2); font-family: var(--mono); font-size: 11px; justify-self: end; }
+      .avatar { width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; font-weight: 700; }
+      .content { padding: 18px; }
+      h1, h2, h3 { font-family: var(--display); letter-spacing: 0; }
+      h1 { margin: 0 0 4px; font-size: 22px; }
+      h2 { margin: 0 0 14px; color: var(--gold-light); font-size: 14px; text-transform: uppercase; }
+      h3 { margin: 0 0 8px; font-size: 16px; }
+      p { color: var(--text-2); line-height: 1.45; }
+      .subtle { color: var(--text-2); margin: 0 0 16px; }
+      .grid-3 { display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: 12px; }
+      .grid-main { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(280px, .8fr); gap: 12px; margin-top: 12px; }
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: linear-gradient(180deg, rgba(20,20,20,.94), rgba(8,8,8,.96));
+        padding: 14px;
+        min-width: 0;
+      }
+      .gate-pass {
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        gap: 12px;
+        align-items: center;
+      }
+      .check {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--success);
+        color: #081008;
+        font-weight: 900;
+      }
+      .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line-soft); border-radius: 8px; overflow: hidden; }
+      .proof-grid div { padding: 10px; border-right: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+      .proof-grid div:nth-child(3n) { border-right: 0; }
+      .proof-grid div:nth-last-child(-n+3) { border-bottom: 0; }
+      .proof-grid span, .detail-label { color: var(--text-2); font-size: 11px; display: block; }
+      .proof-grid strong { display: block; margin-top: 4px; font-size: 17px; }
+      .health {
+        display: grid;
+        grid-template-columns: 96px 1fr;
+        align-items: center;
+        gap: 14px;
+      }
+      .donut {
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background: conic-gradient(var(--success) 0 74%, var(--warning) 74% 91%, var(--error) 91% 98%, #777 98% 100%);
+        display: grid;
+        place-items: center;
+        position: relative;
+      }
+      .donut::after {
+        content: "";
+        position: absolute;
+        inset: 15px;
+        border-radius: 50%;
+        background: var(--surface);
+      }
+      .donut strong { z-index: 1; display: block; text-align: center; font-size: 20px; }
+      .legend { display: grid; gap: 8px; }
+      .legend-row { display: grid; grid-template-columns: 10px 1fr auto; gap: 8px; align-items: center; color: var(--text-2); font-size: 12px; }
+      .swatch { width: 9px; height: 9px; border-radius: 2px; background: var(--success); }
+      .swatch.warn { background: var(--warning); }
+      .swatch.error { background: var(--error); }
+      .swatch.offline { background: #777; }
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 12px;
+        align-items: end;
+      }
+      .field label { color: var(--text-2); font-size: 11px; display: block; margin-bottom: 5px; }
+      select, input {
+        width: 100%;
+        min-height: 32px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: #080808;
+        padding: 0 8px;
+        color: #e5e5e5;
+      }
+      .button {
+        min-height: 34px;
+        border: 1px solid var(--gold);
+        border-radius: 6px;
+        background: transparent;
+        color: var(--gold-light);
+        cursor: pointer;
+        font-family: var(--display);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+      .table-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 10px; }
+      .filters { display: flex; gap: 8px; }
+      .filters button {
+        min-height: 28px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: #080808;
+        color: var(--text-2);
+        padding: 0 10px;
+      }
+      table { width: 100%; border-collapse: collapse; min-width: 760px; }
+      th, td { border-bottom: 1px solid var(--line-soft); padding: 7px 10px; text-align: left; font-size: 12px; white-space: nowrap; }
+      th { color: var(--text-2); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+      .scroll { overflow: auto; }
+      .result {
+        border: 1px solid rgba(116,224,115,.35);
+        border-radius: 4px;
+        color: var(--success);
+        padding: 2px 7px;
+        font-family: var(--mono);
+        font-size: 10px;
+      }
+      .result.recv { border-color: rgba(122,251,255,.35); color: var(--cyan); }
+      .breaker-list { display: grid; gap: 9px; }
+      .breaker-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; color: var(--text-2); }
+      .breaker-row strong { color: #fff; }
+      .status-closed { color: var(--success); font-weight: 700; }
+      .incident-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(210px, .7fr); gap: 12px; margin-top: 12px; }
+      .incident {
+        border: 1px solid rgba(255,203,107,.38);
+        border-radius: 8px;
+        background: #0c0c0c;
+        padding: 14px;
+        transition: transform .2s ease, border-color .2s ease;
+      }
+      .incident:hover { transform: translateY(-1px); border-color: rgba(255,203,107,.6); }
+      .incident.sev2 { border-color: rgba(255,126,126,.42); }
+      .sev { float: right; border: 1px solid currentColor; border-radius: 4px; padding: 2px 6px; font-family: var(--mono); font-size: 10px; }
+      .quick { display: grid; gap: 8px; }
+      .quick button {
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: #0b0b0b;
+        color: var(--text-2);
+        min-height: 32px;
+        text-align: left;
+        padding: 0 10px;
+        cursor: pointer;
+        transition: border-color .15s ease, color .15s ease, background .15s ease;
+      }
+      .quick button:hover { border-color: var(--gold); color: var(--gold-light); background: var(--gold-bg); }
+      .linkish { color: var(--gold); font-weight: 700; font-size: 12px; }
+      @media (max-width: 1180px) {
+        .admin-shell { grid-template-columns: 1fr; }
+        .rail { min-height: auto; }
+        .nav { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+        .topbar, .grid-3, .grid-main, .incident-grid, .controls { grid-template-columns: 1fr; height: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="admin-shell">
+      <aside class="rail">
+        <div class="brand"><span class="shield"></span>ARIA Sentinel</div>
+        <div class="rail-kicker">Sentinel Admin</div>
+        <nav class="nav" aria-label="Admin navigation">
+          <button class="active" data-view-target="overview"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg>Overview</button>
+          <button data-view-target="release"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l8 4v6c0 5-3.3 9-8 10-4.7-1-8-5-8-10V6z"/></svg>Release Gate</button>
+          <button data-view-target="endpoints"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 5h16v10H4zm6 12h4v2h4v2H6v-2h4z"/></svg>Endpoints</button>
+          <button data-view-target="policies"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3l8 4v10l-8 4-8-4V7zm0 3L7 8v7l5 3 5-3V8z"/></svg>Policies</button>
+          <button data-view-target="recipes"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 3h10l4 4v14H3V3zm1 5h8v2H8zm0 4h8v2H8z"/></svg>Recipes</button>
+          <button data-view-target="kb-bundles"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h14a2 2 0 012 2v14H6a2 2 0 01-2-2z"/></svg>KB Bundles</button>
+          <button data-view-target="stop-codes"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5v6h5v2h-7V7z"/></svg>Stop Codes</button>
+          <button data-view-target="audit-events"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 3h12v18H6zm2 4h8V5H8zm0 4h8V9H8zm0 4h8v-2H8z"/></svg>Audit Events</button>
+          <button data-view-target="reports"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 3h14v18H5zm3 12h2V8H8zm4 0h2V5h-2zm4 0h2v-4h-2z"/></svg>Reports</button>
+          <button data-view-target="integrations"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 7h4v4H7zm6 0h4v4h-4zM7 13h4v4H7zm6 0h4v4h-4z"/></svg>Integrations</button>
+          <button data-view-target="settings"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 5l-2.1.7a7 7 0 01-.8 1.9l1 2-2.1 2.1-2-1a7 7 0 01-1.9.8L12 23H9l-.7-2.1a7 7 0 01-1.9-.8l-2 1-2.1-2.1 1-2a7 7 0 01-.8-1.9L0 14v-3l2.1-.7a7 7 0 01.8-1.9l-1-2L4 4.3l2 1a7 7 0 011.9-.8L9 1h3l.7 2.1a7 7 0 011.9.8l2-1L18.7 5l-1 2a7 7 0 01.8 1.9L21 10z"/></svg>Settings</button>
+          <button data-view-target="access"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 12a5 5 0 100-10 5 5 0 000 10zm-9 9a9 9 0 1118 0z"/></svg>Access</button>
+          <button data-view-target="system"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>System</button>
+          <button data-view-target="updates"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4v8l4 2-1 2-5-3V4z"/></svg>Updates</button>
+          <button data-view-target="fleet-performance"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h4v8H3zm7-6h4v14h-4zm7-4h4v18h-4z"/></svg>Fleet Performance</button>
+          <button data-view-target="quarterly-reports"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 3h14v18H5zm3 5h8v2H8zm0 4h8v2H8z"/></svg>Quarterly Reports</button>
+          <button data-view-target="cohort-sla"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5v6h5v2h-7V7z"/></svg>Cohort SLA</button>
+          <button data-view-target="licenses"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 2a4 4 0 014 4 4 4 0 01-2 3.46V11h3l2 2-2 2 2 2-3 3-2-2V9.46A4 4 0 0110 2zm0 2.5A1.5 1.5 0 1010 7.5 1.5 1.5 0 0010 4.5z"/></svg>Licenses</button>
+        </nav>
+        <div class="collapse"><span>&lt; Collapse</span><small>ARIA Sentinel v1.4.2<br />Owner-only local admin</small></div>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div class="metric-top"><span>Fleet</span><strong class="ok">● Healthy</strong></div>
+          <div class="metric-top"><span>Gate</span><strong class="pass">PASS</strong></div>
+          <div class="metric-top"><span>Incidents</span><strong>2</strong></div>
+          <div class="metric-top"><span>Endpoints</span><strong>1,248</strong></div>
+          <div class="metric-top"><span>KB Version</span><strong>2025.05.17.1</strong></div>
+          <div class="metric-top"><span>API</span><strong class="ok">● Healthy</strong></div>
+          <div class="clock">UTC 2025-05-18 14:32:11Z</div>
+          <div class="avatar">IT</div>
+        </header>
+
+        <div class="content">
+          <h1>Overview</h1>
+          <p class="subtle">Operational summary of ARIA Sentinel</p>
+
+          <section class="view" data-view="overview">
+          <section class="panel" style="margin-bottom:12px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:18px">
+              <div style="width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 36% 34%, rgba(241,220,167,.18), rgba(197,160,89,.06) 60%, transparent 72%);border:2px solid #c5a059">
+                <strong id="healthScoreValue" style="font-size:34px;line-height:1;color:#f1dca7">94</strong>
+              </div>
+              <div>
+                <h2 style="margin:0">System Health Score</h2>
+                <p class="subtle" style="margin:2px 0 0">One glanceable number, <b>0–100</b> · <span id="healthScoreLabel" class="ok">Healthy</span> · updates every 60s</p>
+                <p class="subtle" style="margin:4px 0 0;font-size:12px">Computed by <code>health-score.mjs</code> — same value shown on the tray tooltip.</p>
+              </div>
+            </div>
+            <div class="proof-grid" style="flex:1;min-width:280px">
+              <div><span>Watcher heartbeats</span><strong>25</strong></div>
+              <div><span>Recipe success (30d)</span><strong>30</strong></div>
+              <div><span>ITSM queue</span><strong>15</strong></div>
+              <div><span>KB freshness</span><strong>15</strong></div>
+              <div><span>Audit integrity</span><strong>15</strong></div>
+              <div><span>Weighting total</span><strong class="ok">100</strong></div>
+            </div>
+          </section>
+          <section class="panel" style="margin-bottom:12px">
+            <div class="table-head"><h2>Fleet health — per customer</h2><div class="filters"><input id="tenantFilter" placeholder="Filter customers…" style="background:#0c0c0c;border:1px solid rgba(197,160,89,.3);color:#f5f5f5;border-radius:6px;padding:4px 8px" /></div></div>
+            <div id="fleetGrid" class="proof-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"></div>
+            <p class="linkish">Click a customer to drill into their endpoints → (RUN 11)</p>
+          </section>
+          <section class="grid-3">
+            <article class="panel">
+              <h2>Release Gate Status</h2>
+              <div class="gate-pass"><div class="check">✓</div><div><h3 class="ok">PASS</h3><p>KB Bundle <b>2025.05.17.1</b><br />Evaluated <b>2025-05-18 14:31:02Z</b><br />Reason <b>All content-blind smoke tests passed</b></p><span class="linkish">View gate history -></span></div></div>
+            </article>
+            <article class="panel">
+              <h2>Content-Blind Telemetry Proof</h2>
+              <div class="proof-grid">
+                <div><span>Events (24h)</span><strong>102,846</strong></div>
+                <div><span>Recipes Served</span><strong>38,912</strong></div>
+                <div><span>KB Bundles Served</span><strong>8,472</strong></div>
+                <div><span>Content Fields Hash Validated</span><strong class="ok">100%</strong></div>
+                <div><span>PII Detected</span><strong>0</strong></div>
+                <div><span>Schema Version</span><strong>1.2.0</strong></div>
+              </div>
+              <p class="linkish">View data contract -></p>
+            </article>
+            <article class="panel">
+              <h2>Endpoint Health Summary</h2>
+              <div class="health">
+                <div class="donut"><strong>1,248<br /><small>Total</small></strong></div>
+                <div class="legend">
+                  <div class="legend-row"><span class="swatch"></span><span>Healthy</span><b>932 (74.7%)</b></div>
+                  <div class="legend-row"><span class="swatch warn"></span><span>Warning</span><b>214 (17.1%)</b></div>
+                  <div class="legend-row"><span class="swatch error"></span><span>Critical</span><b>62 (5.0%)</b></div>
+                  <div class="legend-row"><span class="swatch offline"></span><span>Offline</span><b>40 (3.2%)</b></div>
+                </div>
+              </div>
+              <p class="linkish">View endpoints -></p>
+            </article>
+          </section>
+
+          <section class="panel" style="margin-top:12px">
+            <h2>Fleet Policy Controls</h2>
+            <div class="controls">
+              <div class="field"><label>Policy Set</label><select><option>Standard Enterprise</option></select></div>
+              <div class="field"><label>KB Auto-Update</label><select><option>Enabled</option></select></div>
+              <div class="field"><label>Recipe Auto-Exec</label><select><option>Prompt Only</option></select></div>
+              <div class="field"><label>Telemetry</label><select><option>Content-Blind Only</option></select></div>
+              <div class="field"><label>Stop Code Upload</label><select><option>Enabled</option></select></div>
+              <div class="field"><label>Feedback</label><select><option>Enabled</option></select></div>
+            </div>
+          </section>
+
+          <section class="grid-main">
+            <article class="panel">
+              <div class="table-head">
+                <h2>Recent Audit Events</h2>
+                <div class="filters"><button>All Event Types</button><button>2025-05-17 -> 2025-05-18</button><button>Export CSV</button></div>
+              </div>
+              <div class="scroll">
+                <table>
+                  <thead><tr><th>Time (UTC)</th><th>Event Type</th><th>Endpoint</th><th>User</th><th>Details</th><th>Result</th></tr></thead>
+                  <tbody>
+                    <tr><td>2025-05-18 14:31:02Z</td><td>KB_BUNDLE_FETCH</td><td>LAPTOP-7F3K2MJ</td><td>jdoe</td><td>KB=2025.05.17.1 Size=12.4 MB</td><td><span class="result">SUCCESS</span></td></tr>
+                    <tr><td>2025-05-18 14:30:58Z</td><td>RECIPE_EXECUTE</td><td>DESKTOP-19A8GH</td><td>system</td><td>Code=DISK.LOW_SPACE</td><td><span class="result">SUCCESS</span></td></tr>
+                    <tr><td>2025-05-18 14:30:55Z</td><td>STOP_CODE_UPLOAD</td><td>WS-01F23</td><td>system</td><td>Code=BSOD.CRITICAL_PROCESS_DIED</td><td><span class="result">SUCCESS</span></td></tr>
+                    <tr><td>2025-05-18 14:30:52Z</td><td>RECIPE_FEEDBACK</td><td>LAPTOP-7F3K2MJ</td><td>jdoe</td><td>Code=BROWSER.SERVICE_WORKER.STUCK</td><td><span class="result recv">RECEIVED</span></td></tr>
+                    <tr><td>2025-05-18 14:30:47Z</td><td>TELEMETRY_PING</td><td>LAPTOP-7F3K2MJ</td><td>system</td><td>Schema=1.2.0 Metrics=12</td><td><span class="result">SUCCESS</span></td></tr>
+                    <tr><td>2025-05-18 14:30:42Z</td><td>KB_BUNDLE_FETCH</td><td>WS-01F23</td><td>system</td><td>KB=2025.05.17.1 Size=12.4 MB</td><td><span class="result">SUCCESS</span></td></tr>
+                    <tr><td>2025-05-18 14:30:38Z</td><td>RECIPE_EXECUTE</td><td>LAPTOP-3H9J7P</td><td>asmith</td><td>Code=BROWSER.SERVICE_WORKER.STUCK</td><td><span class="result">SUCCESS</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <aside class="panel">
+              <h2>Recipe Circuit Breaker</h2>
+              <div class="breaker-list">
+                <div class="breaker-row"><span>State</span><strong class="status-closed">● CLOSED</strong></div>
+                <div class="breaker-row"><span>Failure Threshold</span><strong>5 failures / 5 min</strong></div>
+                <div class="breaker-row"><span>Trip Threshold</span><strong>60% failure rate</strong></div>
+                <div class="breaker-row"><span>Observation Window</span><strong>5 minutes</strong></div>
+                <div class="breaker-row"><span>Current Failure Rate</span><strong>12%</strong></div>
+                <div class="breaker-row"><span>Failures (last 5 min)</span><strong>3</strong></div>
+                <div class="breaker-row"><span>Trips (last 24h)</span><strong>0</strong></div>
+                <button class="button">Open Breaker (Manual)</button>
+                <span class="linkish">View breaker history -></span>
+              </div>
+            </aside>
+          </section>
+
+          <section class="incident-grid">
+            <article class="incident sev2"><span class="sev">SEV 2</span><h3>INC-2025-0518-0007</h3><p>Endpoint connectivity flapping in West DC</p><p>14 endpoints affected</p><span class="linkish">View incident -></span></article>
+            <article class="incident"><span class="sev">SEV 3</span><h3>INC-2025-0518-0005</h3><p>KB auto-update pending on 62 endpoints</p><p>62 endpoints affected</p><span class="linkish">View incident -></span></article>
+            <aside class="panel">
+              <h2>Quick Actions</h2>
+              <div class="quick">
+                <button>Force Gate Re-evaluation</button>
+                <button>Push KB Bundle</button>
+                <button>Run Content-Blind Smoke Tests</button>
+                <button>View Audit Events</button>
+              </div>
+            </aside>
+          </section>
+          </section>
+
+          <!-- ===== Release Gate ===== -->
+          <section class="view" data-view="release" hidden>
+            <section class="grid-main">
+              <article class="panel">
+                <h2>Release Gate History</h2>
+                <div class="scroll"><table>
+                  <thead><tr><th>Evaluated (UTC)</th><th>Bundle Hash</th><th>Verdict</th><th>Reason</th><th>Size MB</th></tr></thead>
+                  <tbody data-rows="release"></tbody>
+                </table></div>
+              </article>
+              <aside class="panel">
+                <h2>Manual Override</h2>
+                <p>Force-publish a bundle that failed the gate. Every override is written to the append-only audit log with the operator identity.</p>
+                <div class="field"><label>Bundle hash</label><input value="2026.06.18.1" /></div>
+                <button class="button">Override &amp; Publish</button>
+                <p class="linkish">⚠ Overrides bypass content-blind smoke tests — use only with a signed change ticket.</p>
+              </aside>
+            </section>
+          </section>
+
+          <!-- ===== Endpoints ===== -->
+          <section class="view" data-view="endpoints" hidden>
+            <section class="grid-main">
+              <article class="panel">
+                <div class="table-head">
+                  <h2>Fleet Endpoints</h2>
+                  <div class="filters"><input placeholder="Search host / user" style="min-width:160px" /><button>All status</button><button>All regions</button><button>KB 2026.06.18.1</button></div>
+                </div>
+                <div class="scroll"><table>
+                  <thead><tr><th>Hostname</th><th>User</th><th>OS</th><th>KB</th><th>Last seen</th><th>Health</th><th>SLA</th></tr></thead>
+                  <tbody data-rows="endpoints"></tbody>
+                </table></div>
+              </article>
+              <aside class="panel">
+                <h2>Bulk Actions</h2>
+                <div class="quick">
+                  <button>Push KB to selected</button>
+                  <button>Force self-diagnose</button>
+                  <button>Pause remediation 24h</button>
+                  <button>Export endpoint CSV</button>
+                </div>
+              </aside>
+            </section>
+          </section>
+
+          <!-- ===== Policies ===== -->
+          <section class="view" data-view="policies" hidden>
+            <section class="grid-main">
+              <article class="panel">
+                <h2>Policy Sets</h2>
+                <div class="grid-3" data-cards="policies"></div>
+              </article>
+              <aside class="panel">
+                <h2>Create Policy</h2>
+                <div class="field"><label>Name</label><input placeholder="e.g. Legal — Restricted" /></div>
+                <div class="field"><label>Confirmation threshold</label><input value="0.7" /></div>
+                <div class="dropzone" style="border:1px dashed rgba(197,160,89,.5);border-radius:10px;padding:18px;text-align:center;color:var(--gold-light)">Import customer KB / policy overlay<br /><small style="color:var(--muted)">PDF · DOCX · MD · JSON — parsed locally, content-blind</small></div>
+                <button class="button">Create Policy Set</button>
+              </aside>
+            </section>
+          </section>
+
+          <!-- ===== Recipes ===== -->
+          <section class="view" data-view="recipes" hidden>
+            <section class="grid-main">
+              <article class="panel">
+                <h2>Recipe Registry</h2>
+                <div class="scroll"><table>
+                  <thead><tr><th>Recipe ID</th><th>Family</th><th>Risk</th><th>Success 28d</th><th>Canary</th><th>Attempts 24h</th><th>Breaker</th></tr></thead>
+                  <tbody data-rows="recipes"></tbody>
+                </table></div>
+              </article>
+              <aside class="panel">
+                <h2>Recipe Controls</h2>
+                <div class="field"><label>Recipe</label><select data-options="recipes"></select></div>
+                <div class="quick">
+                  <button>Enable / Disable</button>
+                  <button>Open circuit breaker</button>
+                  <button>Reset canary</button>
+                </div>
+              </aside>
+            </section>
+          </section>
+
+          <!-- ===== KB Bundles ===== -->
+          <section class="view" data-view="kb-bundles" hidden>
+            <section class="grid-3" data-cards="kbBundles"></section>
+          </section>
+
+          <!-- ===== Stop Codes ===== -->
+          <section class="view" data-view="stop-codes" hidden>
+            <article class="panel">
+              <h2>BSOD Stop-Code Corpus</h2>
+              <div class="scroll"><table>
+                <thead><tr><th>Code</th><th>Hex</th><th>Likely causes</th><th>Local first steps</th><th>Escalation</th></tr></thead>
+                <tbody data-rows="stopCodes"></tbody>
+              </table></div>
+            </article>
+          </section>
+
+          <!-- ===== Audit Events ===== -->
+          <section class="view" data-view="audit-events" hidden>
+            <article class="panel">
+              <div class="table-head">
+                <h2>Append-Only Audit</h2>
+                <div class="filters"><button>All event types</button><button>All endpoints</button><button>2026-06-12 → 2026-06-19</button><button>Export CSV</button><button>Export JSON</button></div>
+              </div>
+              <div class="scroll"><table>
+                <thead><tr><th>Time (UTC)</th><th>Event Type</th><th>Endpoint</th><th>User</th><th>Details</th><th>Result</th></tr></thead>
+                <tbody data-rows="audit"></tbody>
+              </table></div>
+            </article>
+          </section>
+
+          <!-- ===== Reports ===== -->
+          <section class="view" data-view="reports" hidden>
+            <section class="grid-3">
+              <article class="panel"><h2>Weekly Fleet Health</h2><div class="proof-grid"><div><span>Healthy</span><strong class="ok">91%</strong></div><div><span>Self-healed</span><strong>3,114</strong></div><div><span>Escalated</span><strong>206</strong></div></div></article>
+              <article class="panel"><h2>Monthly Cost Saved</h2><div class="proof-grid"><div><span>Tickets avoided</span><strong>2,940</strong></div><div><span>Est. hours</span><strong>1,470</strong></div><div><span>Est. value</span><strong>$132k</strong></div></div></article>
+              <article class="panel"><h2>Top Recipes (28d)</h2><div class="breaker-list" data-list="topRecipes"></div></article>
+            </section>
+            <article class="panel" style="margin-top:12px"><h2>Top Stop Codes (28d)</h2><div class="breaker-list" data-list="topStopCodes"></div></article>
+          </section>
+
+          <!-- ===== Integrations ===== -->
+          <section class="view" data-view="integrations" hidden>
+            <section class="grid-3" data-cards="integrations"></section>
+          </section>
+
+          <!-- ===== Settings ===== -->
+          <section class="view" data-view="settings" hidden>
+            <article class="panel">
+              <h2>Console Settings</h2>
+              <div class="controls">
+                <div class="field"><label>Owner email</label><input value="owner@iisupp.net" /></div>
+                <div class="field"><label>Admin token</label><input value="••••••••••••" /></div>
+                <div class="field"><label>Auto-update channel</label><select><option>stable</option><option>beta</option></select></div>
+                <div class="field"><label>Default mode</label><select><option>Manual</option><option>Confirmed</option><option>Autonomous</option></select></div>
+                <div class="field"><label>Default tier</label><select><option>Free</option><option>Paid</option></select></div>
+                <div class="field"><label>Timezone</label><select><option>UTC</option><option>America/New_York</option></select></div>
+              </div>
+              <p style="margin-top:12px"><button class="button">Save settings</button> <button class="button">Rotate admin token</button></p>
+            </article>
+          </section>
+
+          <!-- ===== Access ===== -->
+          <section class="view" data-view="access" hidden>
+            <section class="grid-main">
+              <article class="panel">
+                <h2>Operators</h2>
+                <div class="scroll"><table>
+                  <thead><tr><th>Name</th><th>Role</th><th>MFA</th><th>Last login</th></tr></thead>
+                  <tbody data-rows="operators"></tbody>
+                </table></div>
+              </article>
+              <aside class="panel">
+                <h2>Invite &amp; Roles</h2>
+                <div class="field"><label>Invite email</label><input placeholder="name@company.com" /></div>
+                <div class="field"><label>Role</label><select><option>Owner</option><option>Operator</option><option>Read-only</option></select></div>
+                <button class="button">Send invite</button>
+                <div class="breaker-list" style="margin-top:10px">
+                  <div class="breaker-row"><span>Owner</span><strong>Full control + billing</strong></div>
+                  <div class="breaker-row"><span>Operator</span><strong>Push KB, breakers, incidents</strong></div>
+                  <div class="breaker-row"><span>Read-only</span><strong>View dashboards + audit</strong></div>
+                </div>
+              </aside>
+            </section>
+          </section>
+
+          <!-- ===== System ===== -->
+          <section class="view" data-view="system" hidden>
+            <section class="grid-3">
+              <article class="panel"><h2>Service Health</h2><div class="breaker-list">
+                <div class="breaker-row"><span>Backend</span><strong class="status-closed">● Healthy</strong></div>
+                <div class="breaker-row"><span>Version</span><strong>1.4.2</strong></div>
+                <div class="breaker-row"><span>DB</span><strong class="status-closed">● Online</strong></div>
+                <div class="breaker-row"><span>Queue depth</span><strong>0</strong></div>
+                <div class="breaker-row"><span>Last cron heartbeat</span><strong>34s ago</strong></div>
+              </div></article>
+              <article class="panel"><h2>Region Map</h2><div class="breaker-list">
+                <div class="breaker-row"><span>US-East</span><strong class="status-closed">● 612</strong></div>
+                <div class="breaker-row"><span>US-West</span><strong class="status-closed">● 401</strong></div>
+                <div class="breaker-row"><span>CA-Central</span><strong class="status-closed">● 188</strong></div>
+                <div class="breaker-row"><span>EU-West</span><strong class="status-closed">● 47</strong></div>
+              </div></article>
+              <article class="panel"><h2>Content-Blind Proof</h2><div class="proof-grid"><div><span>PII detected</span><strong class="ok">0</strong></div><div><span>Hash validated</span><strong class="ok">100%</strong></div><div><span>Schema</span><strong>1.2.0</strong></div></div></article>
+            </section>
+          </section>
+
+          <section class="view" data-view="updates" hidden>
+            <section class="panel" style="margin-bottom:12px">
+              <div class="table-head"><h2>Push update</h2><div class="button-row"><button class="button" id="publishCurrentDist">📤 Publish current dist as new version</button><button class="button" id="publishVersionBtn">Manual entry…</button></div></div>
+              <label style="display:flex;gap:8px;align-items:center;color:#bbb;font-size:13px;margin:8px 0"><input type="checkbox" id="publishMandatory" /> Mandatory — compress the 3-strike window from 24h to 3h per strike</label>
+              <p class="subtle" id="publishDistStatus">One-click reads the built <code>dist/</code> .exe from the running app (version + sha512 + size), points clients at the GitHub Release, and publishes. Falls back to manual entry if dist isn't available.</p>
+              <div id="versionRows" class="breaker-list"></div>
+            </section>
+            <section class="panel" style="margin-bottom:12px">
+              <div class="table-head"><h2>Update fleet</h2><span id="fleetUpdatedMeta" class="subtle"></span></div>
+              <p class="subtle">License × installed version × last heartbeat × startup state. Licenses silent &gt;24h may be offline or have auto-start disabled.</p>
+              <div id="updateFleetRows" class="breaker-list"></div>
+            </section>
+            <section class="grid-3" style="margin-bottom:12px">
+              <article class="panel"><h2>Staged rollout</h2>
+                <p class="subtle">Limit how many licenses receive the latest version.</p>
+                <div class="button-row"><button class="button" data-rollout="10">Push to 10%</button><button class="button" data-rollout="50">Push to 50%</button><button class="button" data-rollout="100">Push to 100%</button></div>
+                <p id="rolloutStatus" class="subtle"></p>
+              </article>
+              <article class="panel"><h2>Disable a version</h2>
+                <p class="subtle">Emergency stop: devices not yet upgraded won't receive it.</p>
+                <div class="button-row"><input id="disableVersionInput" placeholder="0.1.3" style="background:#0c0c0c;border:1px solid rgba(197,160,89,.3);color:#f5f5f5;border-radius:6px;padding:4px 8px" /><button class="button" id="disableVersionBtn">Disable</button></div>
+              </article>
+              <article class="panel"><h2>All-machines rollback</h2>
+                <p class="subtle">Pins EVERY active license to a chosen version. Double-confirm + admin token.</p>
+                <div class="button-row"><input id="allRollbackVersion" placeholder="0.1.2" style="background:#0c0c0c;border:1px solid rgba(197,160,89,.3);color:#f5f5f5;border-radius:6px;padding:4px 8px" /><button class="button" id="allRollbackBtn">Roll back ALL</button></div>
+              </article>
+            </section>
+            <section class="panel">
+              <div class="table-head"><h2>Per-license search &amp; rollback</h2>
+                <div class="filters"><input id="licenseSearch" placeholder="license / first / last / company…" style="background:#0c0c0c;border:1px solid rgba(197,160,89,.3);color:#f5f5f5;border-radius:6px;padding:4px 8px" /><button class="button" id="licenseSearchBtn">Search</button></div>
+              </div>
+              <div class="scroll"><table><thead><tr><th>License</th><th>Name</th><th>Company</th><th>Version</th><th>Devices</th><th>Last seen</th><th>Rollback</th></tr></thead><tbody id="licenseSearchRows"></tbody></table></div>
+              <p class="subtle">Bulk: select rows then "Roll back N". Rollback only pins an existing license — it never bypasses license validation.</p>
+            </section>
+          </section>
+
+          <section class="view" data-view="fleet-performance" hidden>
+            <section class="panel" style="margin-bottom:12px">
+              <div class="table-head"><h2>Fleet Performance</h2><span id="fleetPerfMeta" class="subtle"></span></div>
+              <p class="subtle">Aggregate KPIs across all heartbeating licenses — version spread, avg health, startup state, silent &gt;24h.</p>
+              <div id="fleetPerfRows" class="breaker-list"></div>
+            </section>
+          </section>
+
+          <section class="view" data-view="quarterly-reports" hidden>
+            <section class="panel" style="margin-bottom:12px">
+              <div class="table-head"><h2>Quarterly Reports</h2><span class="subtle">delivery status × open rate</span></div>
+              <div id="quarterlyReportRows" class="breaker-list"></div>
+            </section>
+            <section class="panel">
+              <div class="table-head"><h2>Quarterly email queue</h2><button class="button" id="quarterlyEmailSendBtn">Preview &amp; send</button></div>
+              <p class="subtle">Preview every recipient before auto-send. Manual override required — emails never fire without sign-off.</p>
+              <div id="quarterlyEmailQueue" class="breaker-list"></div>
+            </section>
+          </section>
+
+          <section class="view" data-view="cohort-sla" hidden>
+            <section class="panel">
+              <div class="table-head"><h2>Cohort SLA</h2><span class="subtle">% of fleet meeting SLA, tier by tier</span></div>
+              <div id="cohortSlaRows" class="breaker-list"></div>
+            </section>
+          </section>
+
+          <!-- RUN 24 A4 — Licenses registry (Stripe-minted + manual). Admin-tier console only. -->
+          <section class="view" data-view="licenses" hidden>
+            <section class="panel">
+              <div class="table-head"><h2>Licenses</h2><span class="subtle">Auto-minted on each Stripe subscription · keyed by subscription</span></div>
+              <div class="button-row" style="display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap">
+                <input id="licRegSearch" type="text" placeholder="Search email or name…" style="flex:1;min-width:220px" />
+                <button class="button" id="licRegSearchBtn">Search</button>
+                <button class="button" id="licRegAddBtn">Add manually</button>
+                <button class="button" id="licRegExportBtn">Export CSV</button>
+              </div>
+              <form id="licRegAddForm" hidden style="display:grid;gap:8px;margin:0 0 12px;padding:12px;border:1px solid rgba(197,160,89,.3);border-radius:10px">
+                <input id="licAddEmail" type="email" placeholder="customer@company.com" required />
+                <input id="licAddName" type="text" placeholder="Name (optional)" />
+                <select id="licAddTier">
+                  <option value="personal">Personal</option>
+                  <option value="pro">Pro</option>
+                  <option value="smb">Small Business</option>
+                  <option value="midsize">Mid Size</option>
+                  <option value="enterprise">Enterprise</option>
+                </select>
+                <div class="button-row" style="display:flex;gap:8px">
+                  <button class="button" type="submit">Mint + email</button>
+                  <button class="button" type="button" id="licAddCancel">Cancel</button>
+                </div>
+              </form>
+              <table class="table"><thead><tr><th>Email</th><th>Name</th><th>Tier</th><th>Key</th><th>Issued</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="licRegRows"><tr><td colspan="7" class="subtle">Open this tab to load licenses (needs the admin token).</td></tr></tbody>
+              </table>
+              <p id="licRegStatus" class="subtle"></p>
+            </section>
+          </section>
+        </div>
+      </section>
+    </main>
+      <!-- admin data + view router. Inline (not fetch/module) so it runs from file:// in any browser.
+           Swap DATA for the real backend, or load admin-console/mock-data.json, in one place. -->
+    <script id="aria-admin-data" type="application/json">{"release":[{"ts":"2026-06-19 14:31:02Z","hash":"2026.06.18.1","verdict":"PASS","reason":"All content-blind smoke tests passed","sizeMb":12.4},{"ts":"2026-06-17 09:12:44Z","hash":"2026.06.16.2","verdict":"PASS","reason":"Canary fleet healthy at 5%","sizeMb":12.3},{"ts":"2026-06-15 22:05:10Z","hash":"2026.06.15.1","verdict":"FAIL","reason":"PII scan flagged 1 candidate — auto-rolled back","sizeMb":12.6},{"ts":"2026-06-14 11:48:31Z","hash":"2026.06.14.1","verdict":"PASS","reason":"Stop-code bundle re-signed","sizeMb":12.1},{"ts":"2026-06-12 16:20:07Z","hash":"2026.06.12.3","verdict":"PASS","reason":"Recipe success-rate gate >= 92%","sizeMb":12}],"endpoints":[{"host":"LAPTOP-7F3K2MJ","user":"jdoe","os":"Win 11 23H2","kb":"2026.06.18.1","lastSeen":"2m","health":"Healthy","sla":"OK"},{"host":"DESKTOP-19A8GH","user":"asmith","os":"Win 11 23H2","kb":"2026.06.18.1","lastSeen":"4m","health":"Healthy","sla":"OK"},{"host":"WS-01F23","user":"system","os":"Win 10 22H2","kb":"2026.06.16.2","lastSeen":"9m","health":"Warning","sla":"Watch"},{"host":"LAPTOP-3H9J7P","user":"bnguyen","os":"Win 11 23H2","kb":"2026.06.18.1","lastSeen":"1m","health":"Healthy","sla":"OK"},{"host":"WS-44KK21","user":"system","os":"Win 10 22H2","kb":"2026.06.12.3","lastSeen":"31m","health":"Critical","sla":"Breach"},{"host":"LAPTOP-90ZX2","user":"rkhan","os":"Win 11 23H2","kb":"2026.06.18.1","lastSeen":"6m","health":"Healthy","sla":"OK"},{"host":"DESKTOP-7711B","user":"mlopez","os":"Win 11 23H2","kb":"2026.06.16.2","lastSeen":"12m","health":"Warning","sla":"Watch"},{"host":"WS-22QW88","user":"system","os":"Win Server 2022","kb":"2026.06.18.1","lastSeen":"3m","health":"Offline","sla":"—"}],"policies":[{"name":"Standard Enterprise","endpoints":842,"revision":"r41","activated":"2026-06-18"},{"name":"Healthcare","endpoints":188,"revision":"r12","activated":"2026-06-15"},{"name":"Finance","endpoints":156,"revision":"r19","activated":"2026-06-17"},{"name":"BYOD","endpoints":62,"revision":"r07","activated":"2026-06-10"}],"kbBundles":[{"hash":"2026.06.18.1","signedBy":"IIS Release Key 02","sizeMb":12.4,"regions":"US, CA, EU","adoption":91,"current":true},{"hash":"2026.06.16.2","signedBy":"IIS Release Key 02","sizeMb":12.3,"regions":"US, CA, EU","adoption":7,"current":false},{"hash":"2026.06.15.1","signedBy":"IIS Release Key 02","sizeMb":12.6,"regions":"US, CA","adoption":1,"current":false},{"hash":"stop-codes 2026.06.14","signedBy":"IIS Release Key 02","sizeMb":0.8,"regions":"global","adoption":100,"current":false}],"integrations":[{"name":"ServiceNow","status":"Connected","detail":"acme.service-now.com"},{"name":"Slack","status":"Disconnected","detail":"Alert lane"},{"name":"M365 Graph","status":"Connected","detail":"Sign-in signals"},{"name":"Jira","status":"Disconnected","detail":"Escalation mirror"},{"name":"Webhook","status":"Connected","detail":"https out (customer)"},{"name":"Email","status":"Connected","detail":"Digest to owner"}],"operators":[{"name":"A. Wasee","role":"Owner","mfa":"On","lastLogin":"2026-06-19 14:02Z"},{"name":"Ops Bot","role":"Service","mfa":"n/a","lastLogin":"2026-06-19 14:30Z"},{"name":"L. Carter","role":"Operator","mfa":"On","lastLogin":"2026-06-18 21:11Z"},{"name":"S. Devi","role":"Read-only","mfa":"On","lastLogin":"2026-06-17 08:40Z"}],"recipes":[{"id":"disk-low-space-v1","family":"DISK","risk":"orange","success":"92%","canary":"stable","attempts":24,"breaker":"CLOSED"},{"id":"dns-fail-v1","family":"NETWORK","risk":"green","success":"92%","canary":"stable","attempts":26,"breaker":"CLOSED"},{"id":"wifi-no-internet-v1","family":"NETWORK","risk":"orange","success":"92%","canary":"stable","attempts":10,"breaker":"CLOSED"},{"id":"printer-spooler-v1","family":"PRINT","risk":"orange","success":"85%","canary":"stable","attempts":37,"breaker":"CLOSED"},{"id":"teams-cache-v1","family":"APP","risk":"orange","success":"85%","canary":"stable","attempts":25,"breaker":"CLOSED"},{"id":"browser-cache-stale-v1","family":"BROWSER","risk":"yellow","success":"85%","canary":"stable","attempts":9,"breaker":"CLOSED"},{"id":"browser-password-loop-v1","family":"BROWSER","risk":"yellow","success":"85%","canary":"stable","attempts":35,"breaker":"CLOSED"},{"id":"service-worker-stuck-v1","family":"BROWSER","risk":"yellow","success":"92%","canary":"stable","attempts":22,"breaker":"CLOSED"},{"id":"zoom-weird-v1","family":"BROWSER","risk":"green","success":"92%","canary":"stable","attempts":12,"breaker":"CLOSED"},{"id":"bsod-critical-process-v1","family":"BSOD","risk":"red","success":"85%","canary":"stable","attempts":35,"breaker":"CLOSED"},{"id":"sentinel-self-repair-v1","family":"APP","risk":"green","success":"92%","canary":"stable","attempts":22,"breaker":"CLOSED"},{"id":"outlook-ost-repair-v1","family":"APP","risk":"yellow","success":"92%","canary":"stable","attempts":36,"breaker":"CLOSED"}],"stopCodes":[{"code":"CRITICAL_PROCESS_DIED","hex":"0x000000EF","causes":"corrupt system files, driver failure, disk fault","steps":"sfc /scannow, DISM health restore, review recent drivers","esc":"Desktop Support"},{"code":"SYSTEM_SERVICE_EXCEPTION","hex":"0x0000003B","causes":"driver fault, graphics stack, security software conflict","steps":"safe mode, driver rollback, Windows Update review","esc":"Desktop Support"},{"code":"PAGE_FAULT_IN_NONPAGED_AREA","hex":"0x00000050","causes":"RAM fault, bad driver, disk paging issue","steps":"Windows Memory Diagnostic, driver rollback, disk check","esc":"Hardware inspection"},{"code":"INACCESSIBLE_BOOT_DEVICE","hex":"0x0000007B","causes":"boot disk controller, storage driver, disk failure","steps":"WinRE startup repair, bootrec scan, storage diagnostics","esc":"Desktop Support for reimaging or part replacem"},{"code":"DPC_WATCHDOG_VIOLATION","hex":"0x00000133","causes":"storage driver timeout, firmware, device driver hang","steps":"update storage driver, firmware review, event log review","esc":"Desktop Support"},{"code":"KMODE_EXCEPTION_NOT_HANDLED","hex":"0x0000001E","causes":"kernel driver exception, memory corruption, security software conflict","steps":"safe mode, driver rollback, memory diagnostic","esc":"Desktop Support"},{"code":"IRQL_NOT_LESS_OR_EQUAL","hex":"0x0000000A","causes":"driver memory access, RAM fault, firmware","steps":"driver review, memory diagnostic, firmware review","esc":"Desktop Support"},{"code":"SYSTEM_THREAD_EXCEPTION_NOT_HANDLED","hex":"0x0000007E","causes":"driver exception, graphics driver, firmware","steps":"safe mode, graphics rollback, Windows Update review","esc":"Desktop Support"},{"code":"BAD_POOL_CALLER","hex":"0x000000C2","causes":"driver memory misuse, security driver, RAM","steps":"recent driver review, memory diagnostic, safe mode","esc":"Desktop Support"},{"code":"MEMORY_MANAGEMENT","hex":"0x0000001A","causes":"RAM fault, driver corruption, disk paging issue","steps":"Windows Memory Diagnostic, driver review, disk check","esc":"Hardware inspection"},{"code":"NTFS_FILE_SYSTEM","hex":"0x00000024","causes":"disk corruption, storage driver, file system error","steps":"storage diagnostics, safe mode, system file check","esc":"Desktop Support"},{"code":"DRIVER_POWER_STATE_FAILURE","hex":"0x0000009F","causes":"sleep resume driver, USB device, power management","steps":"driver power review, disconnect peripherals, firmware update","esc":"Desktop Support"},{"code":"VIDEO_TDR_FAILURE","hex":"0x00000116","causes":"graphics driver timeout, GPU fault, firmware","steps":"graphics driver rollback, firmware review, thermal check","esc":"Desktop Support"},{"code":"WHEA_UNCORRECTABLE_ERROR","hex":"0x00000124","causes":"hardware fault, thermal issue, firmware","steps":"hardware diagnostics, thermal review, firmware review","esc":"Desktop Support"},{"code":"CLOCK_WATCHDOG_TIMEOUT","hex":"0x00000101","causes":"CPU deadlock, firmware, thermal instability","steps":"firmware review, thermal review, hardware diagnostics","esc":"Desktop Support"},{"code":"DRIVER_IRQL_NOT_LESS_OR_EQUAL","hex":"0x000000D1","causes":"driver memory access, network driver, storage driver","steps":"driver rollback, safe mode, device review","esc":"Desktop Support"},{"code":"BAD_SYSTEM_CONFIG_INFO","hex":"0x00000074","causes":"registry hive, BCD config, recent system change","steps":"WinRE startup repair, system restore, recent change review","esc":"Desktop Support for boot repair."},{"code":"ACPI_BIOS_ERROR","hex":"0x000000A5","causes":"BIOS firmware, ACPI table, hardware compatibility","steps":"firmware review, vendor advisory, hardware inventory","esc":"Desktop Support for firmware or vendor support"},{"code":"FAT_FILE_SYSTEM","hex":"0x00000023","causes":"file system corruption, removable media, storage driver","steps":"disconnect removable media, storage diagnostics, system file check","esc":"Desktop Support"},{"code":"UNEXPECTED_KERNEL_MODE_TRAP","hex":"0x0000007F","causes":"memory fault, CPU fault, driver exception","steps":"memory diagnostic, hardware diagnostics, recent driver review","esc":"Desktop Support"},{"code":"MACHINE_CHECK_EXCEPTION","hex":"0x0000009C","causes":"CPU hardware fault, thermal issue, firmware","steps":"thermal review, firmware review, hardware diagnostics","esc":"Desktop Support"},{"code":"THREAD_STUCK_IN_DEVICE_DRIVER","hex":"0x000000EA","causes":"graphics driver, GPU timeout, display firmware","steps":"graphics driver rollback, firmware review, thermal check","esc":"Desktop Support"},{"code":"PFN_LIST_CORRUPT","hex":"0x0000004E","causes":"memory corruption, driver fault, RAM","steps":"memory diagnostic, driver review, system file check","esc":"Desktop Support"},{"code":"REGISTRY_ERROR","hex":"0x00000051","causes":"registry hive corruption, disk fault, recent system change","steps":"WinRE startup repair, system restore, disk diagnostics","esc":"Desktop Support for boot repair or reimage."},{"code":"BOOTMGR_IMAGE_CORRUPT","hex":"0x000000C1","causes":"boot manager corruption, disk fault, failed update","steps":"WinRE startup repair, boot repair guidance, disk diagnostics","esc":"Desktop Support for boot recovery."}],"topRecipes":[{"k":"disk-low-space-v1","v":"900 runs"},{"k":"dns-fail-v1","v":"827 runs"},{"k":"wifi-no-internet-v1","v":"754 runs"},{"k":"printer-spooler-v1","v":"681 runs"},{"k":"teams-cache-v1","v":"608 runs"},{"k":"browser-cache-stale-v1","v":"535 runs"},{"k":"browser-password-loop-v1","v":"462 runs"},{"k":"service-worker-stuck-v1","v":"389 runs"},{"k":"zoom-weird-v1","v":"316 runs"},{"k":"bsod-critical-process-v1","v":"243 runs"}],"topStopCodes":[{"k":"CRITICAL_PROCESS_DIED","v":"120 hits"},{"k":"SYSTEM_SERVICE_EXCEPTION","v":"111 hits"},{"k":"PAGE_FAULT_IN_NONPAGED_AREA","v":"102 hits"},{"k":"INACCESSIBLE_BOOT_DEVICE","v":"93 hits"},{"k":"DPC_WATCHDOG_VIOLATION","v":"84 hits"},{"k":"KMODE_EXCEPTION_NOT_HANDLED","v":"75 hits"},{"k":"IRQL_NOT_LESS_OR_EQUAL","v":"66 hits"},{"k":"SYSTEM_THREAD_EXCEPTION_NOT_HANDLED","v":"57 hits"},{"k":"BAD_POOL_CALLER","v":"48 hits"},{"k":"MEMORY_MANAGEMENT","v":"39 hits"}],"audit":[{"ts":"2026-06-19 14:31:02Z","type":"KB_BUNDLE_FETCH","endpoint":"LAPTOP-7F3K2MJ","user":"jdoe","details":"KB=2026.06.18.1 Size=12.4 MB","result":"SUCCESS"},{"ts":"2026-06-19 14:30:58Z","type":"RECIPE_EXECUTE","endpoint":"DESKTOP-19A8GH","user":"system","details":"Code=DISK.LOW_SPACE","result":"SUCCESS"},{"ts":"2026-06-19 14:30:55Z","type":"STOP_CODE_UPLOAD","endpoint":"WS-01F23","user":"system","details":"Code=BSOD.CRITICAL_PROCESS_DIED","result":"SUCCESS"},{"ts":"2026-06-19 14:30:52Z","type":"RECIPE_FEEDBACK","endpoint":"LAPTOP-7F3K2MJ","user":"jdoe","details":"Code=BROWSER.SERVICE_WORKER.STUCK","result":"RECEIVED"},{"ts":"2026-06-19 14:30:47Z","type":"KILL_SWITCH","endpoint":"FLEET","user":"system","details":"killed=false","result":"SUCCESS"},{"ts":"2026-06-19 14:30:42Z","type":"TELEMETRY_PING","endpoint":"WS-44KK21","user":"system","details":"Schema=1.2.0 Metrics=12","result":"SUCCESS"},{"ts":"2026-06-19 14:30:38Z","type":"RECIPE_EXECUTE","endpoint":"LAPTOP-3H9J7P","user":"bnguyen","details":"Code=NET.DNS.FAIL","result":"SUCCESS"},{"ts":"2026-06-19 14:30:31Z","type":"INCIDENT_RAISED","endpoint":"WS-44KK21","user":"system","details":"Group=Desktop Support","result":"SUCCESS"}]}</script>
+    <script>
+      (() => {
+        const DATA = JSON.parse(document.getElementById('aria-admin-data').textContent);
+        const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const tone = (v) => /pass|healthy|connected|ok|closed/i.test(v) ? 'result' : /fail|critical|breach|offline|disconnected/i.test(v) ? 'result sev' : 'result recv';
+
+        const ROWS = {
+          release: (d) => d.release.map((r) => `<tr><td>${esc(r.ts)}</td><td>${esc(r.hash)}</td><td><span class="${r.verdict === 'PASS' ? 'pass' : 'result sev'}">${esc(r.verdict)}</span></td><td>${esc(r.reason)}</td><td>${esc(r.sizeMb)}</td></tr>`).join(''),
+          endpoints: (d) => d.endpoints.map((e) => `<tr><td>${esc(e.host)}</td><td>${esc(e.user)}</td><td>${esc(e.os)}</td><td>${esc(e.kb)}</td><td>${esc(e.lastSeen)}</td><td><span class="${tone(e.health)}">${esc(e.health)}</span></td><td>${esc(e.sla)}</td></tr>`).join(''),
+          recipes: (d) => d.recipes.map((r) => `<tr><td>${esc(r.id)}</td><td>${esc(r.family)}</td><td>${esc(r.risk)}</td><td>${esc(r.success)}</td><td>${esc(r.canary)}</td><td>${esc(r.attempts)}</td><td><span class="status-closed">${esc(r.breaker)}</span></td></tr>`).join(''),
+          stopCodes: (d) => d.stopCodes.map((s) => `<tr><td>${esc(s.code)}</td><td>${esc(s.hex)}</td><td>${esc(s.causes)}</td><td>${esc(s.steps)}</td><td>${esc(s.esc)}</td></tr>`).join(''),
+          operators: (d) => d.operators.map((o) => `<tr><td>${esc(o.name)}</td><td>${esc(o.role)}</td><td>${esc(o.mfa)}</td><td>${esc(o.lastLogin)}</td></tr>`).join(''),
+          audit: (d) => d.audit.map((a) => `<tr><td>${esc(a.ts)}</td><td>${esc(a.type)}</td><td>${esc(a.endpoint)}</td><td>${esc(a.user)}</td><td>${esc(a.details)}</td><td><span class="${tone(a.result)}">${esc(a.result)}</span></td></tr>`).join('')
+        };
+        const CARDS = {
+          policies: (d) => d.policies.map((p) => `<article class="panel"><h3>${esc(p.name)}</h3><p>${esc(p.endpoints)} endpoints · rev ${esc(p.revision)}</p><p class="linkish">Activated ${esc(p.activated)}</p></article>`).join(''),
+          kbBundles: (d) => d.kbBundles.map((b) => `<article class="panel"><h3>${esc(b.hash)}${b.current ? ' <span class="pass">CURRENT</span>' : ''}</h3><p>Signed by ${esc(b.signedBy)}</p><p>${esc(b.sizeMb)} MB · ${esc(b.regions)}</p><p class="linkish">Fleet adoption ${esc(b.adoption)}%</p></article>`).join(''),
+          integrations: (d) => d.integrations.map((g) => `<article class="panel"><h3>${esc(g.name)} <span class="${tone(g.status)}">${esc(g.status)}</span></h3><p>${esc(g.detail)}</p><button class="button">${g.status === 'Connected' ? 'Disconnect' : 'Connect'}</button></article>`).join('')
+        };
+        const LISTS = {
+          topRecipes: (d) => d.topRecipes.map((x) => `<div class="breaker-row"><span>${esc(x.k)}</span><strong>${esc(x.v)}</strong></div>`).join(''),
+          topStopCodes: (d) => d.topStopCodes.map((x) => `<div class="breaker-row"><span>${esc(x.k)}</span><strong>${esc(x.v)}</strong></div>`).join('')
+        };
+
+        document.querySelectorAll('[data-rows]').forEach((el) => { const f = ROWS[el.dataset.rows]; if (f) el.innerHTML = f(DATA); });
+        document.querySelectorAll('[data-cards]').forEach((el) => { const f = CARDS[el.dataset.cards]; if (f) el.innerHTML = f(DATA); });
+        document.querySelectorAll('[data-list]').forEach((el) => { const f = LISTS[el.dataset.list]; if (f) el.innerHTML = f(DATA); });
+        document.querySelectorAll('[data-options]').forEach((el) => { if (el.dataset.options === 'recipes') el.innerHTML = DATA.recipes.map((r) => `<option>${esc(r.id)}</option>`).join(''); });
+
+        // Fleet health grid (handles only — no real customer names, per privacy rule R11).
+        const fleet = (DATA.fleet) || [
+          { handle: 'cust-7f3k2', endpoints: 48, health: 96, fixesWeek: 31, lastSeen: '2m ago' },
+          { handle: 'cust-19a8g', endpoints: 120, health: 91, fixesWeek: 88, lastSeen: '5m ago' },
+          { handle: 'cust-b22qd', endpoints: 12, health: 99, fixesWeek: 7, lastSeen: '1m ago' },
+          { handle: 'cust-mz04t', endpoints: 240, health: 84, fixesWeek: 140, lastSeen: '12m ago' }
+        ];
+        const fleetGrid = document.getElementById('fleetGrid');
+        const renderFleet = (q) => {
+          const rows = fleet.filter((f) => !q || f.handle.includes(q));
+          // One row per customer: handle · endpoints · health avg · fixes/week · last seen. Click → drill in.
+          fleetGrid.innerHTML = rows.map((f) => `<div title="${esc(f.handle)}" data-tenant="${esc(f.handle)}" style="cursor:pointer"><span>${esc(f.handle)} · ${f.endpoints} endpoints · seen ${esc(f.lastSeen)}</span><strong class="${f.health >= 90 ? 'ok' : ''}">${f.health}/100</strong><span>${f.fixesWeek} fixes/wk →</span></div>`).join('') || '<div><span>No customers match.</span></div>';
+          fleetGrid.querySelectorAll('[data-tenant]').forEach((el) => el.addEventListener('click', () => {
+            const h = el.getAttribute('data-tenant');
+            const row = fleet.find((f) => f.handle === h);
+            let detail = document.getElementById('fleetDetail');
+            if (!detail) { detail = document.createElement('div'); detail.id = 'fleetDetail'; detail.className = 'fleet-detail'; fleetGrid.after(detail); }
+            detail.innerHTML = row
+              ? `<strong>${esc(row.handle)}</strong> · ${row.endpoints} endpoints · health ${row.health}/100 · ${row.fixesWeek} fixes/week · seen ${esc(row.lastSeen)} <span class="note">(handles only, per privacy rule R11)</span>`
+              : `<span class="note">No detail available for ${esc(h)}.</span>`;
+          }));
+        };
+        renderFleet('');
+        const tf = document.getElementById('tenantFilter');
+        if (tf) tf.addEventListener('input', () => renderFleet(tf.value.trim().toLowerCase()));
+
+        // RUN 22 — Fleet Performance: aggregate KPIs across heartbeating licenses (handles only, R11).
+        const fpr = document.getElementById('fleetPerfRows');
+        if (fpr) {
+          const avgHealth = Math.round(fleet.reduce((s, f) => s + (f.health || 0), 0) / (fleet.length || 1));
+          const totalEndpoints = fleet.reduce((s, f) => s + (f.endpoints || 0), 0);
+          const silent = fleet.filter((f) => /\d+\s*[dh]/.test(f.lastSeen) && /\bd\b|[0-9]+d/.test(f.lastSeen)).length;
+          const stats = [['Licenses heartbeating', fleet.length], ['Total endpoints', totalEndpoints], ['Avg health', avgHealth + '/100'], ['Silent >24h', silent], ['Fixes this week', fleet.reduce((s, f) => s + (f.fixesWeek || 0), 0)]];
+          fpr.innerHTML = stats.map(([k, v]) => `<div class="breaker-row"><span>${esc(k)}</span><strong class="${k === 'Avg health' && avgHealth >= 90 ? 'status-closed' : ''}">${esc(v)}</strong></div>`).join('');
+          const meta = document.getElementById('fleetPerfMeta'); if (meta) meta.textContent = fleet.length + ' licenses · handles only (R11)';
+        }
+        // RUN 22 — Cohort SLA: % of each tier meeting its SLA floor (demo cohort from mock fleet).
+        const csr = document.getElementById('cohortSlaRows');
+        if (csr) {
+          const cohorts = [['Personal', 99.0, 98], ['Pro', 99.5, 99], ['Small Business', 99.9, 97], ['Mid Size', 99.95, 96], ['Enterprise', 99.99, 99]];
+          csr.innerHTML = cohorts.map(([tier, floor, pct]) => `<div class="breaker-row"><span>${esc(tier)} (floor ${floor}%)</span><strong class="${pct >= floor ? 'status-closed' : 'result sev'}">${pct}% meeting</strong></div>`).join('');
+        }
+        // RUN 22 — Quarterly Reports + email queue (delivery status; emails never auto-fire without sign-off).
+        const qrr = document.getElementById('quarterlyReportRows');
+        if (qrr) {
+          const reps = (DATA.quarterlyReports) || [{ period: '2026-Q2', delivered: 3, opened: 2, queued: 1 }];
+          qrr.innerHTML = reps.map((r) => `<div class="breaker-row"><span>${esc(r.period)}</span><span>${r.delivered} delivered</span><span>${r.opened} opened</span><strong>${r.queued || 0} queued</strong></div>`).join('');
+        }
+        const qeq = document.getElementById('quarterlyEmailQueue');
+        if (qeq) {
+          const queue = (DATA.emailQueue) || [{ handle: 'cust-7f3k2', contact: 'opted-in', status: 'preview' }];
+          qeq.innerHTML = queue.map((q) => `<div class="breaker-row"><span>${esc(q.handle)}</span><span>${esc(q.contact)}</span><strong>${esc(q.status)}</strong></div>`).join('');
+        }
+        document.getElementById('quarterlyEmailSendBtn')?.addEventListener('click', () => {
+          const detail = document.getElementById('quarterlyEmailQueue');
+          if (detail) detail.insertAdjacentHTML('afterbegin', '<div class="breaker-row"><span>Preview ready</span><strong>manual send requires admin sign-off</strong></div>');
+        });
+
+        // RUN 14 — Updates view: publish · staged rollout · disable · per-license/bulk/all rollback.
+        const ADMIN_BASE = 'https://iisupp.net/.netlify/functions';
+        const adminToken = () => sessionStorage.getItem('ariaAdminToken') || (() => { const t = prompt('Admin token'); if (t) sessionStorage.setItem('ariaAdminToken', t); return t; })();
+        async function adminFetch(fn, opts = {}) {
+          const t = adminToken(); if (!t) return null;
+          // RUN 34-3 — 10s timeout so a hung/cold-starting/mis-deployed function can NEVER stick the UI on
+          // "Minting…" forever. AbortSignal.timeout aborts → caught → null (the caller shows a clear error).
+          try {
+            const sig = (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(10000) : undefined;
+            const r = await fetch(ADMIN_BASE + '/' + fn, { ...opts, signal: sig, headers: { 'content-type': 'application/json', 'X-Admin-Token': t, ...(opts.headers || {}) } });
+            return await r.json().catch(() => ({}));
+          } catch (e) { return null; }
+        }
+        const versions = (DATA.versions) || [{ version: '0.1.1', disabled: false }, { version: '0.1.0', disabled: false }];
+        const vr = document.getElementById('versionRows');
+        if (vr) vr.innerHTML = versions.map((v) => `<div class="breaker-row"><span>${esc(v.version)}</span><strong class="${v.disabled ? 'result sev' : 'status-closed'}">${v.disabled ? '● disabled' : '● live'}</strong></div>`).join('');
+        // RUN 21 — Update fleet: license × installed version × last heartbeat × startup state.
+        const fleetData = (DATA.fleet) || [];
+        const fr = document.getElementById('updateFleetRows');
+        if (fr) {
+          fr.innerHTML = fleetData.map((f) => {
+            const silent = /(\d+)\s*[hd]/.test(f.lastSeen) && /d/.test(f.lastSeen);
+            const startup = f.startupEnabled === false ? '⚠ startup off' : 'startup on';
+            return `<div class="breaker-row"><span>${esc(f.handle)}</span><span>${esc(f.version || versions[0].version)}</span><span>seen ${esc(f.lastSeen)}</span><strong class="${silent ? 'result sev' : 'status-closed'}">${esc(startup)}</strong></div>`;
+          }).join('') || '<div class="breaker-row"><span>No heartbeating licenses yet.</span></div>';
+          const meta = document.getElementById('fleetUpdatedMeta'); if (meta) meta.textContent = fleetData.length + ' licenses';
+        }
+        document.querySelectorAll('[data-rollout]').forEach((b) => b.addEventListener('click', async () => {
+          const pct = b.getAttribute('data-rollout');
+          const r = await adminFetch('aria-sentinel-update-publish', { method: 'POST', body: JSON.stringify({ action: 'rollout', percent: Number(pct) }) });
+          const el = document.getElementById('rolloutStatus'); if (el) el.textContent = r ? ('Rollout set to ' + pct + '%') : ('Queued ' + pct + '% (run from the live admin to apply).');
+        }));
+        document.getElementById('disableVersionBtn')?.addEventListener('click', () => { const v = document.getElementById('disableVersionInput').value.trim(); if (v) adminFetch('aria-sentinel-update-publish', { method: 'POST', body: JSON.stringify({ action: 'disable', version: v, disabled: true }) }); });
+        document.getElementById('publishVersionBtn')?.addEventListener('click', () => { const v = prompt('New version (e.g. 0.1.3):'); const sha = v && prompt('sha512:'); const mandatory = !!document.getElementById('publishMandatory')?.checked; if (v && sha) adminFetch('aria-sentinel-update-publish', { method: 'POST', body: JSON.stringify({ version: v, sha512: sha, release_notes: prompt('Release notes:') || '', mandatory }) }); });
+        // RUN 23c — one-click: read the built dist .exe from the local bridge, auto-fill version/sha512/size + the GitHub Release url, publish.
+        document.getElementById('publishCurrentDist')?.addEventListener('click', async () => {
+          const status = document.getElementById('publishDistStatus');
+          let info = null;
+          try { info = await fetch('http://127.0.0.1:37841/dist-info').then((r) => r.json()); } catch { info = null; }
+          if (!info || !info.ok) { if (status) status.textContent = 'Could not read dist/ from the running app — using manual entry.'; document.getElementById('publishVersionBtn')?.click(); return; }
+          const mandatory = !!document.getElementById('publishMandatory')?.checked;
+          const notes = prompt('Release notes:', 'ARIA Sentinel ' + info.version) || '';
+          const out = await adminFetch('aria-sentinel-update-publish', { method: 'POST', body: JSON.stringify({ version: info.version, sha512: info.sha512, size: info.size, url: info.url, release_notes: notes, mandatory }) });
+          if (status) status.textContent = (out && out.ok) ? ('Published v' + info.version + ' · clients detect it on their next update poll.') : 'Publish failed — check the admin token.';
+        });
+        document.getElementById('licenseSearchBtn')?.addEventListener('click', async () => {
+          const q = document.getElementById('licenseSearch').value.trim();
+          const r = await adminFetch('aria-sentinel-license-search?q=' + encodeURIComponent(q), {});
+          const rows = (r && r.results) || [];
+          document.getElementById('licenseSearchRows').innerHTML = rows.length ? rows.map((x) => `<tr><td>${esc(x.license_key)}</td><td>${esc(((x.first_name || '') + ' ' + (x.last_name || '')).trim())}</td><td>${esc(x.company || '')}</td><td>${esc((x.devices && x.devices[0] && x.devices[0].version) || '')}</td><td>${(x.devices || []).length}</td><td>${esc((x.devices && x.devices[0] && x.devices[0].last_seen) || '')}</td><td><button class="button" data-roll="${esc(x.license_key)}">Roll back</button></td></tr>`).join('') : '<tr><td colspan="7">No matches (or run from the live admin).</td></tr>';
+          document.querySelectorAll('[data-roll]').forEach((b) => b.addEventListener('click', () => { const ver = prompt('Roll back ' + b.getAttribute('data-roll') + ' to version:'); if (ver) adminFetch('aria-sentinel-license-search', { method: 'POST', body: JSON.stringify({ action: 'rollback', keys: [b.getAttribute('data-roll')], version_pin: ver }) }); }));
+        });
+        document.getElementById('allRollbackBtn')?.addEventListener('click', async () => {
+          const v = document.getElementById('allRollbackVersion').value.trim(); if (!v) return;
+          if (!confirm('Roll back ALL active licenses to ' + v + '? This affects every device.')) return;
+          if (!confirm('FINAL CONFIRM: every machine downgrades to ' + v + '.')) return;
+          const t = prompt('Re-enter admin token to confirm all-machines rollback'); if (!t) return;
+          sessionStorage.setItem('ariaAdminToken', t);
+          await adminFetch('aria-sentinel-license-search', { method: 'POST', body: JSON.stringify({ action: 'rollback', scope: 'all', confirm_all: true, version_pin: v }) });
+        });
+
+        const navButtons = document.querySelectorAll('.rail .nav button');
+        const views = document.querySelectorAll('.view');
+        const h1 = document.querySelector('.content h1');
+        const subtle = document.querySelector('.content > p.subtle');
+        const labels = ['Overview','Release Gate','Endpoints','Policies','Recipes','KB Bundles','Stop Codes','Audit Events','Reports','Integrations','Settings','Access','System','Updates','Fleet Performance','Quarterly Reports','Cohort SLA','Licenses'];
+        const subtitles = ['Operational summary of ARIA Sentinel','Per-bundle gate results, history and overrides','Fleet inventory · per-endpoint health, KB version, last seen','Policy sets · per-tenant overrides · activation state','Vetted recipes · risk class · success rate · canary status','Bundles · hashes · regions · signing keys','BSOD stop code corpus · likely causes · escalation copy','Append-only audit · per-event class · content-blind','Weekly health · cost saved · top recipes & stop codes','ServiceNow · Slack · M365 · Jira · webhook lanes','Owner-only console preferences · auth · keys','Operators · roles · MFA · session policy','Service health · backend version · region map','Publish · staged rollout · per-license + all-machines rollback','Aggregate KPIs across all heartbeating licenses','Quarterly reports · delivery status · open rate · email queue','% of fleet meeting SLA, tier by tier','Auto-minted on each Stripe subscription · keyed by subscription'];
+        navButtons.forEach((btn, i) => {
+          const target = btn.getAttribute('data-view-target');
+          if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', labels[i] || ('Tab ' + (i + 1)));
+          btn.addEventListener('click', () => {
+            navButtons.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            views.forEach((v) => { v.hidden = v.getAttribute('data-view') !== target; });
+            if (h1 && labels[i]) h1.textContent = labels[i];
+            if (subtle && subtitles[i]) subtle.textContent = subtitles[i];
+            if (target === 'licenses') loadLicenses();
+          });
+        });
+
+        // RUN 24 A4 — Licenses registry view (calls the admin-token-gated sentinel-licenses API).
+        const maskKey = (k) => { k = String(k || ''); return k.length < 12 ? '…' : (k.slice(0, 4) + '…' + k.slice(-4)); };
+        const licStatus = (m) => { const el = document.getElementById('licRegStatus'); if (el) el.textContent = m || ''; };
+        function renderLicenses(records) {
+          const body = document.getElementById('licRegRows');
+          if (!body) return;
+          if (!records || !records.length) { body.innerHTML = '<tr><td colspan="7" class="subtle">No licenses yet (or run from the live admin).</td></tr>'; return; }
+          body.innerHTML = records.map((r) => `<tr><td>${esc(r.email || '')}</td><td>${esc(r.name || '')}</td><td>${esc(r.tier || '')}</td><td><code class="lic-key" data-key="${esc(r.key || '')}" title="click to reveal + copy" style="cursor:pointer">${esc(maskKey(r.key))}</code></td><td>${esc((r.issued_at || '').slice(0, 10))}</td><td><strong class="${r.status === 'revoked' ? 'result sev' : 'status-closed'}">${esc(r.status || 'active')}</strong></td><td><button class="button" data-lic-resend="${esc(r.subscription_id)}">Resend</button> <button class="button" data-lic-revoke="${esc(r.subscription_id)}" ${r.status === 'revoked' ? 'disabled' : ''}>Revoke</button></td></tr>`).join('');
+          body.querySelectorAll('.lic-key').forEach((c) => c.addEventListener('click', () => { const k = c.getAttribute('data-key'); c.textContent = k; navigator.clipboard?.writeText(k).then(() => licStatus('Key copied to clipboard.'), () => {}); }));
+          body.querySelectorAll('[data-lic-resend]').forEach((b) => b.addEventListener('click', async () => { licStatus('Resending…'); const r = await adminFetch('sentinel-licenses?action=resend', { method: 'POST', body: JSON.stringify({ subscription_id: b.getAttribute('data-lic-resend') }) }); licStatus(r && r.resent ? 'Customer email re-sent.' : 'Resend failed.'); }));
+          body.querySelectorAll('[data-lic-revoke]').forEach((b) => b.addEventListener('click', async () => { if (!confirm('Revoke this license? The customer\'s key stops working within 6 hours.')) return; const r = await adminFetch('sentinel-licenses?action=revoke', { method: 'POST', body: JSON.stringify({ subscription_id: b.getAttribute('data-lic-revoke') }) }); if (r && r.record) loadLicenses(); }));
+        }
+        async function loadLicenses(q) {
+          licStatus('Loading…');
+          const r = await adminFetch('sentinel-licenses?action=list' + (q ? '&q=' + encodeURIComponent(q) : ''), {});
+          renderLicenses(r && r.records);
+          licStatus(r ? ((r.records || []).length + ' license(s)') : 'Could not load (check the admin token).');
+        }
+        document.getElementById('licRegSearchBtn')?.addEventListener('click', () => loadLicenses(document.getElementById('licRegSearch').value.trim()));
+        document.getElementById('licRegAddBtn')?.addEventListener('click', () => { const f = document.getElementById('licRegAddForm'); if (f) f.hidden = !f.hidden; });
+        document.getElementById('licAddCancel')?.addEventListener('click', () => { const f = document.getElementById('licRegAddForm'); if (f) f.hidden = true; });
+        document.getElementById('licRegAddForm')?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('licAddEmail').value.trim();
+          const name = document.getElementById('licAddName').value.trim();
+          const tier = document.getElementById('licAddTier').value;
+          if (!email) return;
+          licStatus('Minting…');
+          const r = await adminFetch('sentinel-licenses?action=addManual', { method: 'POST', body: JSON.stringify({ email, name, tier }) });
+          if (r && r.subscription_id) { document.getElementById('licRegAddForm').hidden = true; document.getElementById('licAddEmail').value = ''; document.getElementById('licAddName').value = ''; loadLicenses(); licStatus('Minted + emailed ' + esc(email) + '.'); }
+          // RUN 34-3 — actionable failure (no more silent hang). Most common cause is a missing Netlify env var.
+          else if (r && r.error) licStatus('Mint failed — ' + esc(r.error) + '. Check Netlify env: SENTINEL_LICENSE_SECRET, RESEND_API_KEY/RESEND_FROM.');
+          else licStatus('Mint failed — endpoint didn’t respond in 10s or errored. Verify Netlify env (SENTINEL_LICENSE_SECRET · RESEND_API_KEY/RESEND_FROM · STRIPE_WEBHOOK_SECRET · SENTINEL_ADMIN_TOKEN) + the function logs.');
+        });
+        document.getElementById('licRegExportBtn')?.addEventListener('click', async () => {
+          const t = adminToken(); if (!t) return;
+          try {
+            const res = await fetch(ADMIN_BASE + '/sentinel-licenses?action=exportCsv', { headers: { 'X-Admin-Token': t } });
+            const csv = await res.text();
+            const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'sentinel-licenses.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+          } catch { licStatus('Export failed.'); }
+        });
+      })();
+    </script>
+    <script>
+      // PWA: register the service worker so the admin shell works offline + "Add to Home Screen".
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("./service-worker.js").catch(function () { /* SW optional */ });
+        });
+      }
+    </script>
+  </body>
+</html>
