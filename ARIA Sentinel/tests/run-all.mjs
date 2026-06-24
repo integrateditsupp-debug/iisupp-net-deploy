@@ -1,219 +1,242 @@
-import "./scenario-suite.mjs";
-import "./extension.test.mjs";
-import "./endpoint.test.mjs";
-import "./privacy-audit.mjs";
-import "./ui-shell.test.mjs";
-import "./watchers.test.mjs";
-import "./macos-watchers.test.mjs";
-import "./overlay-physics.test.mjs";
-import "./servicenow.test.mjs";
-import "./policy-injection.test.mjs";
-import "./content-leak.test.mjs";
-import "./idempotency.test.mjs";
-import "./kill-switch.test.mjs";
-import "./recipe-execution.test.mjs";
-import "./recipe-runner.test.mjs";
-import "./diagnostic.test.mjs";
-import "./health-score.test.mjs";
-import "./tray-state.test.mjs";
-import "./network-capture.test.mjs";
-import "./evidence-pack.test.mjs";
-import "./status-badge.test.mjs";
-import "./telemetry-event.test.mjs";
-import "./autonomous-guards.test.mjs";
-import "./autonomous-refire.test.mjs";
-import "./slack-notify.test.mjs";
-import "./weekly-digest.test.mjs";
-import "./audit-export.test.mjs";
-import "./low-power.test.mjs";
-import "./command-palette.test.mjs";
-import "./roi-calc.test.mjs";
-import "./license.test.mjs";
-import "./auto-update.test.mjs";
-import "./api-v1.test.mjs";
-import "./patch-management.test.mjs";
-import "./multi-tenant.test.mjs";
-import "./pwa-manifest.test.mjs";
-import "./globe-roam.test.mjs";
-import "./admin-console-open.test.mjs";
-import "./show-floating-globe.test.mjs";
-import "./trial-gate.test.mjs";
-import "./network-detect.test.mjs";
-import "./mode-behavior.test.mjs";
-import "./ia-tabs.test.mjs";
-import "./quick-controls.test.mjs";
-import "./chrome-ext-install.test.mjs";
-import "./hotkeys.test.mjs";
-import "./update-manifest.test.mjs";
-import "./admin-publish.test.mjs";
-import "./license-search.test.mjs";
-import "./license-register.test.mjs";
-import "./update-rollback.test.mjs";
-import "./update-feedurl.test.mjs";
-import "./self-heal.test.mjs";
-import "./globe-anchor.test.mjs";
-import "./globe-greetings.test.mjs";
-import "./aria-brain-client.test.mjs";
-import "./admin-build-gate.test.mjs";
-import "./start-stop-aria.test.mjs";
-import "./hotkeys-bind.test.mjs";
-import "./live-globe-icons.test.mjs";
-// RUN 16 — full-spectrum test battery (12 dimensions).
-import "./debug-battery.test.mjs";
-import "./qa-battery.test.mjs";
-import "./user-journey.test.mjs";
-import "./security-battery.test.mjs";
-import "./privacy-battery.test.mjs";
-import "./scenario-battery.test.mjs";
-import "./test-kb-qa.test.mjs";
-import "./audit-battery.test.mjs";
-import "./soc2-map.test.mjs";
-import "./regulatory-map.test.mjs";
-import "./legal-inventory.test.mjs";
-import "./accessibility-battery.test.mjs";
-import "./build-exclusion.test.mjs";
-import "./audit-integrity.test.mjs";
-import "./icon-pipeline.test.mjs";
-// RUN 17 — audit-tamper security banner.
-import "./security-banner.test.mjs";
-import "./security-banner-dismiss.test.mjs";
-// RUN 18 — enterprise verification (wiring lock + artifact-level content-blindness).
-import "./run18-enterprise-wiring.test.mjs";
-import "./run18-evidence-content-blind.test.mjs";
-// RUN 19 — live-app polish + premium UX.
-import "./popup-clamp.test.mjs";
-import "./sidebar-layout.test.mjs";
-import "./kill-switch-hotkey.test.mjs";
-import "./delete-triple-confirm.test.mjs";
-import "./trial-end-modal.test.mjs";
-import "./odd-grid.test.mjs";
-import "./live-buttons.test.mjs";
-// RUN 20 — system knowledge engine + cross-platform blueprint + safe-generic Tier-0 recipes.
-import "./system-context-enum.test.mjs";
-import "./system-context-refresh.test.mjs";
-import "./symptom-kb-parse.test.mjs";
-import "./blueprint-coverage.test.mjs";
-import "./tier-0-recipes-dryrun.test.mjs";
-import "./diagnostic-reasoner-fuzzy.test.mjs";
-import "./diagnostic-reasoner-system-aware.test.mjs";
-import "./no-harm-gate.test.mjs";
-import "./anomaly-surfacing.test.mjs";
-import "./cross-platform-no-control.test.mjs";
-import "./event-log-sanitize.test.mjs";
-import "./registry-read-only.test.mjs";
-import "./escalation-path.test.mjs";
-// RUN 21 — auto-update orchestrator + startup hook + admin capture + heartbeat.
-import "./update-listener.test.mjs";
-import "./update-orchestrator-states.test.mjs";
-import "./update-orchestrator-time-windows.test.mjs";
-import "./update-orchestrator-fullscreen-defer.test.mjs";
-import "./update-rollback-killswitch.test.mjs";
-import "./startup-registrar.test.mjs";
-import "./startup-tamper-detection.test.mjs";
-import "./startup-disable-double-confirm.test.mjs";
-import "./heartbeat-payload-content-blind.test.mjs";
-import "./heartbeat-endpoint.test.mjs";
-import "./admin-publish-captures-event.test.mjs";
-import "./admin-mandatory-checkbox.test.mjs";
-import "./pause-updates-quarterly-limit.test.mjs";
-import "./private-folder-never-touched.test.mjs";
-import "./run-21-no-regression.test.mjs";
-// RUN 22 — dashboard + performance + SLA + compliance + quarterly reports + retention.
-import "./dashboard-hero-status.test.mjs";
-import "./dashboard-kpi-tiles.test.mjs";
-import "./dashboard-recent-activity.test.mjs";
-import "./dashboard-quick-actions.test.mjs";
-import "./performance-kpis.test.mjs";
-import "./performance-ai-accuracy.test.mjs";
-import "./performance-hours-saved.test.mjs";
-import "./performance-tab-no-regression.test.mjs";
-import "./sla-tracker.test.mjs";
-import "./sla-breach-credits.test.mjs";
-import "./sla-tier-thresholds.test.mjs";
-import "./compliance-frameworks.test.mjs";
-import "./compliance-r11-enforcement.test.mjs";
-import "./compliance-evidence-pack.test.mjs";
-import "./report-generator-quarterly.test.mjs";
-import "./report-generator-adhoc.test.mjs";
-import "./report-pdf-no-pii.test.mjs";
-import "./email-quarterly-delivery.test.mjs";
-import "./data-retention-policy.test.mjs";
-import "./data-retention-cleanup-cron.test.mjs";
-import "./admin-console-fleet-perf.test.mjs";
-import "./private-folder-never-touched-r22.test.mjs";
-// RUN 23 — self-service loop (process detectors · recommend-action · globe panel · countdown gate ·
-// supervisor critic · dry-run policy · quarterly cron · cowork bridge).
-import "./process-detectors.test.mjs";
-import "./recommend-action.test.mjs";
-import "./globe-status-panel.test.mjs";
-import "./action-countdown.test.mjs";
-import "./supervisor-agent.test.mjs";
-import "./dry-run-policy.test.mjs";
-import "./quarterly-cron.test.mjs";
-import "./cowork-bridge.test.mjs";
-import "./run-23-r11-never-touched.test.mjs";
-import "./run-23-no-regression.test.mjs";
-// RUN 23b — Tier-0 executor binding (5 vetted recipes go live, gated by the supervisor + countdown).
-import "./tier-0-executor.test.mjs";
-import "./tier-0-rollback.test.mjs";
-import "./tier-0-supervisor-integration.test.mjs";
-import "./tier-0-r11-never-touched.test.mjs";
-// RUN 23c — auto-OTA pipeline (version bump · GitHub Releases publisher · manifest · 1-click admin button).
-import "./version-bump.test.mjs";
-import "./publish-github-release.test.mjs";
-import "./publish-manifest.test.mjs";
-import "./admin-console-publish-button.test.mjs";
-import "./ota-build-step7.test.mjs";
-import "./r11-publish-paths.test.mjs";
-// RUN 23d — tab IA 17→9 consolidation (Dashboard/Compliance&Privacy/System/Settings merges + redirects).
-import "./tab-ia-consolidation.test.mjs";
-// RUN 23e — single build + license-tier feature gating + plan picker + upsell + shouldBump hotfix.
-import "./pricing-tiers.test.mjs";
-import "./license-features.test.mjs";
-import "./upsell.test.mjs";
-import "./feature-gating.test.mjs";
-import "./plan-picker.test.mjs";
-import "./plans-matrix.test.mjs";
-// RUN 24 — auto-license funnel (webhook mint/persist/email logic) + admin licenses registry.
-import "./sentinel-license-funnel.test.mjs";
-import "./sentinel-licenses-api.test.mjs";
-import "./admin-licenses-tab.test.mjs";
-// RUN 24 A6 — server-side license resolve (secret stays server-side) + desktop offline cache tiers.
-import "./sentinel-resolve.test.mjs";
-import "./desktop-license-cache.test.mjs";
-// RUN 29-A — mode-based dry-run defaults (Manual ON · Confirmed/Autonomous OFF).
-import "./dryrun-defaults.test.mjs";
-// RUN 29-D — $0 content-blind crash reporter.
-import "./crash-reporter.test.mjs";
-// RUN 29-C — first-run onboarding state machine (never replays after dismiss).
-import "./onboarding-flow.test.mjs";
-// RUN 30-B — offline local KB matcher (cross-platform, platform bias).
-import "./aria-local-kb.test.mjs";
-// RUN 31 — KB-first wiring (aria-kb-query before aria-chat; $0 retrieval).
-import "./kb-first-wiring.test.mjs";
-// RUN 32-B — 3-mode proof-of-life (Manual/Confirmed/Autonomous execution pipeline).
-import "./mode-execution.test.mjs";
-// RUN 34-4 — 3-mode × 13-error matrix (every Windows error class × Manual/Confirmed/Autonomous disposition).
-import "./mode-error-matrix.test.mjs";
-// RUN 34-5 — 20+ Windows-error detector sweep (every live watcher mapper, each content-blind under PII input).
-import "./windows-error-sweep.test.mjs";
-// RUN 33 PIVOT — ARIA Chat in-tab (Chat sub-section of the ARIA parent tab; detached window removed).
-import "./aria-chat-window-ui.test.mjs";
-// RUN 35-1 — chat scroll containment (inner log scrolls; outer tab never grows).
-import "./chat-scroll-containment.test.mjs";
-// RUN 35-2 — aria-kb-query routing iter 7 (security families/takeover · wifi no-word · printer tightened).
-import "./aria-kb-routing-iter7.test.mjs";
-// RUN 33 Phase 2 — ARIA tab data parsers (status / kb-stats / sessions R11 / heartbeats).
-import "./aria-surfaces.test.mjs";
-// RUN 33-E — first-launch Setup wizard (state machine + wiring).
-import "./setup-wizard.test.mjs";
-// RUN 34-1 — readable chat: markdown → HTML rendering.
-import "./aria-markdown.test.mjs";
-// RUN 34-3 — license mint never hangs (timeouts on every leg + actionable error).
-import "./license-mint-timeout.test.mjs";
-// RUN 33-A — KB freshness surfaced in the top bar.
-import "./kb-freshness.test.mjs";
-// TASK 3 (2026-06-24) — "Resolve it for me" enabled + gated (supervised-fix, Confirmed, never autonomous).
-import "./resolve-for-me.test.mjs";
+// ARIA Sentinel test runner — RESILIENT (Task 1b, 2026-06-24).
+// Every suite runs in its own try/catch; one missing file or throw can no longer hide the rest. A final
+// PASS/FAIL summary lists the reds. Pass --bail to opt back into fail-fast (stop on the first red).
+const TESTS = [
+  "./scenario-suite.mjs",
+  "./extension.test.mjs",
+  "./endpoint.test.mjs",
+  "./privacy-audit.mjs",
+  "./ui-shell.test.mjs",
+  "./watchers.test.mjs",
+  "./macos-watchers.test.mjs",
+  "./overlay-physics.test.mjs",
+  "./servicenow.test.mjs",
+  "./policy-injection.test.mjs",
+  "./content-leak.test.mjs",
+  "./idempotency.test.mjs",
+  "./kill-switch.test.mjs",
+  "./recipe-execution.test.mjs",
+  "./recipe-runner.test.mjs",
+  "./diagnostic.test.mjs",
+  "./health-score.test.mjs",
+  "./tray-state.test.mjs",
+  "./network-capture.test.mjs",
+  "./evidence-pack.test.mjs",
+  "./status-badge.test.mjs",
+  "./telemetry-event.test.mjs",
+  "./autonomous-guards.test.mjs",
+  "./autonomous-refire.test.mjs",
+  "./slack-notify.test.mjs",
+  "./weekly-digest.test.mjs",
+  "./audit-export.test.mjs",
+  "./low-power.test.mjs",
+  "./command-palette.test.mjs",
+  "./roi-calc.test.mjs",
+  "./license.test.mjs",
+  "./auto-update.test.mjs",
+  "./api-v1.test.mjs",
+  "./patch-management.test.mjs",
+  "./multi-tenant.test.mjs",
+  "./pwa-manifest.test.mjs",
+  "./globe-roam.test.mjs",
+  "./admin-console-open.test.mjs",
+  "./show-floating-globe.test.mjs",
+  "./trial-gate.test.mjs",
+  "./network-detect.test.mjs",
+  "./mode-behavior.test.mjs",
+  "./ia-tabs.test.mjs",
+  "./quick-controls.test.mjs",
+  "./chrome-ext-install.test.mjs",
+  "./hotkeys.test.mjs",
+  "./update-manifest.test.mjs",
+  "./admin-publish.test.mjs",
+  "./license-search.test.mjs",
+  "./license-register.test.mjs",
+  "./update-rollback.test.mjs",
+  "./update-feedurl.test.mjs",
+  "./self-heal.test.mjs",
+  "./globe-anchor.test.mjs",
+  "./globe-greetings.test.mjs",
+  "./aria-brain-client.test.mjs",
+  "./admin-build-gate.test.mjs",
+  "./start-stop-aria.test.mjs",
+  "./hotkeys-bind.test.mjs",
+  "./live-globe-icons.test.mjs",
+  // RUN 16 — full-spectrum test battery (12 dimensions).
+  "./debug-battery.test.mjs",
+  "./qa-battery.test.mjs",
+  "./user-journey.test.mjs",
+  "./security-battery.test.mjs",
+  "./privacy-battery.test.mjs",
+  "./scenario-battery.test.mjs",
+  "./test-kb-qa.test.mjs",
+  "./audit-battery.test.mjs",
+  "./soc2-map.test.mjs",
+  "./regulatory-map.test.mjs",
+  "./legal-inventory.test.mjs",
+  "./accessibility-battery.test.mjs",
+  "./build-exclusion.test.mjs",
+  "./audit-integrity.test.mjs",
+  "./icon-pipeline.test.mjs",
+  // RUN 17 — audit-tamper security banner.
+  "./security-banner.test.mjs",
+  "./security-banner-dismiss.test.mjs",
+  // RUN 18 — enterprise verification (wiring lock + artifact-level content-blindness).
+  "./run18-enterprise-wiring.test.mjs",
+  "./run18-evidence-content-blind.test.mjs",
+  // RUN 19 — live-app polish + premium UX.
+  "./popup-clamp.test.mjs",
+  "./sidebar-layout.test.mjs",
+  "./kill-switch-hotkey.test.mjs",
+  "./delete-triple-confirm.test.mjs",
+  "./trial-end-modal.test.mjs",
+  "./odd-grid.test.mjs",
+  "./live-buttons.test.mjs",
+  // RUN 20 — system knowledge engine + cross-platform blueprint + safe-generic Tier-0 recipes.
+  "./system-context-enum.test.mjs",
+  "./system-context-refresh.test.mjs",
+  "./symptom-kb-parse.test.mjs",
+  "./blueprint-coverage.test.mjs",
+  "./tier-0-recipes-dryrun.test.mjs",
+  "./diagnostic-reasoner-fuzzy.test.mjs",
+  "./diagnostic-reasoner-system-aware.test.mjs",
+  "./no-harm-gate.test.mjs",
+  "./anomaly-surfacing.test.mjs",
+  "./cross-platform-no-control.test.mjs",
+  "./event-log-sanitize.test.mjs",
+  "./registry-read-only.test.mjs",
+  "./escalation-path.test.mjs",
+  // RUN 21 — auto-update orchestrator + startup hook + admin capture + heartbeat.
+  "./update-listener.test.mjs",
+  "./update-orchestrator-states.test.mjs",
+  "./update-orchestrator-time-windows.test.mjs",
+  "./update-orchestrator-fullscreen-defer.test.mjs",
+  "./update-rollback-killswitch.test.mjs",
+  "./startup-registrar.test.mjs",
+  "./startup-tamper-detection.test.mjs",
+  "./startup-disable-double-confirm.test.mjs",
+  "./heartbeat-payload-content-blind.test.mjs",
+  "./heartbeat-endpoint.test.mjs",
+  "./admin-publish-captures-event.test.mjs",
+  "./admin-mandatory-checkbox.test.mjs",
+  "./pause-updates-quarterly-limit.test.mjs",
+  "./private-folder-never-touched.test.mjs",
+  "./run-21-no-regression.test.mjs",
+  // RUN 22 — dashboard + performance + SLA + compliance + quarterly reports + retention.
+  "./dashboard-hero-status.test.mjs",
+  "./dashboard-kpi-tiles.test.mjs",
+  "./dashboard-recent-activity.test.mjs",
+  "./dashboard-quick-actions.test.mjs",
+  "./performance-kpis.test.mjs",
+  "./performance-ai-accuracy.test.mjs",
+  "./performance-hours-saved.test.mjs",
+  "./performance-tab-no-regression.test.mjs",
+  "./sla-tracker.test.mjs",
+  "./sla-breach-credits.test.mjs",
+  "./sla-tier-thresholds.test.mjs",
+  "./compliance-frameworks.test.mjs",
+  "./compliance-r11-enforcement.test.mjs",
+  "./compliance-evidence-pack.test.mjs",
+  "./report-generator-quarterly.test.mjs",
+  "./report-generator-adhoc.test.mjs",
+  "./report-pdf-no-pii.test.mjs",
+  "./email-quarterly-delivery.test.mjs",
+  "./data-retention-policy.test.mjs",
+  "./data-retention-cleanup-cron.test.mjs",
+  "./admin-console-fleet-perf.test.mjs",
+  "./private-folder-never-touched-r22.test.mjs",
+  // RUN 23 — self-service loop (process detectors · recommend-action · globe panel · countdown gate ·
+  // supervisor critic · dry-run policy · quarterly cron · cowork bridge).
+  "./process-detectors.test.mjs",
+  "./recommend-action.test.mjs",
+  "./globe-status-panel.test.mjs",
+  "./action-countdown.test.mjs",
+  "./supervisor-agent.test.mjs",
+  "./dry-run-policy.test.mjs",
+  "./quarterly-cron.test.mjs",
+  "./cowork-bridge.test.mjs",
+  "./run-23-r11-never-touched.test.mjs",
+  "./run-23-no-regression.test.mjs",
+  // RUN 23b — Tier-0 executor binding (5 vetted recipes go live, gated by the supervisor + countdown).
+  "./tier-0-executor.test.mjs",
+  "./tier-0-rollback.test.mjs",
+  "./tier-0-supervisor-integration.test.mjs",
+  "./tier-0-r11-never-touched.test.mjs",
+  // RUN 23c — auto-OTA pipeline (version bump · GitHub Releases publisher · manifest · 1-click admin button).
+  "./version-bump.test.mjs",
+  "./publish-github-release.test.mjs",
+  "./publish-manifest.test.mjs",
+  "./admin-console-publish-button.test.mjs",
+  "./ota-build-step7.test.mjs",
+  "./r11-publish-paths.test.mjs",
+  // RUN 23d — tab IA 17→9 consolidation (Dashboard/Compliance&Privacy/System/Settings merges + redirects).
+  "./tab-ia-consolidation.test.mjs",
+  // RUN 23e — single build + license-tier feature gating + plan picker + upsell + shouldBump hotfix.
+  "./pricing-tiers.test.mjs",
+  "./license-features.test.mjs",
+  "./upsell.test.mjs",
+  "./feature-gating.test.mjs",
+  "./plan-picker.test.mjs",
+  "./plans-matrix.test.mjs",
+  // RUN 24 — auto-license funnel (webhook mint/persist/email logic) + admin licenses registry.
+  "./sentinel-license-funnel.test.mjs",
+  "./sentinel-licenses-api.test.mjs",
+  "./admin-licenses-tab.test.mjs",
+  // RUN 24 A6 — server-side license resolve (secret stays server-side) + desktop offline cache tiers.
+  "./sentinel-resolve.test.mjs",
+  "./desktop-license-cache.test.mjs",
+  // RUN 29-A — mode-based dry-run defaults (Manual ON · Confirmed/Autonomous OFF).
+  "./dryrun-defaults.test.mjs",
+  // RUN 29-D — $0 content-blind crash reporter.
+  "./crash-reporter.test.mjs",
+  // RUN 29-C — first-run onboarding state machine (never replays after dismiss).
+  "./onboarding-flow.test.mjs",
+  // RUN 30-B — offline local KB matcher (cross-platform, platform bias).
+  "./aria-local-kb.test.mjs",
+  // RUN 31 — KB-first wiring (aria-kb-query before aria-chat; $0 retrieval).
+  "./kb-first-wiring.test.mjs",
+  // RUN 32-B — 3-mode proof-of-life (Manual/Confirmed/Autonomous execution pipeline).
+  "./mode-execution.test.mjs",
+  // RUN 34-4 — 3-mode × 13-error matrix (every Windows error class × Manual/Confirmed/Autonomous disposition).
+  "./mode-error-matrix.test.mjs",
+  // RUN 34-5 — 20+ Windows-error detector sweep (every live watcher mapper, each content-blind under PII input).
+  "./windows-error-sweep.test.mjs",
+  // RUN 33 PIVOT — ARIA Chat in-tab (Chat sub-section of the ARIA parent tab; detached window removed).
+  "./aria-chat-window-ui.test.mjs",
+  // RUN 35-1 — chat scroll containment (inner log scrolls; outer tab never grows).
+  "./chat-scroll-containment.test.mjs",
+  // RUN 35-2 — aria-kb-query routing iter 7 (security families/takeover · wifi no-word · printer tightened).
+  "./aria-kb-routing-iter7.test.mjs",
+  // RUN 33 Phase 2 — ARIA tab data parsers (status / kb-stats / sessions R11 / heartbeats).
+  "./aria-surfaces.test.mjs",
+  // RUN 33-E — first-launch Setup wizard (state machine + wiring).
+  "./setup-wizard.test.mjs",
+  // RUN 34-1 — readable chat: markdown → HTML rendering.
+  "./aria-markdown.test.mjs",
+  // RUN 34-3 — license mint never hangs (timeouts on every leg + actionable error).
+  "./license-mint-timeout.test.mjs",
+  // RUN 33-A — KB freshness surfaced in the top bar.
+  "./kb-freshness.test.mjs",
+  // TASK 3 (2026-06-24) — "Resolve it for me" enabled + gated (supervised-fix, Confirmed, never autonomous).
+  "./resolve-for-me.test.mjs",
+];
 
+const bail = process.argv.includes("--bail");
+const results = [];
+for (const spec of TESTS) {
+  try {
+    await import(spec);
+    results.push({ spec, ok: true });
+  } catch (err) {
+    const msg = (err && err.message) ? err.message : String(err);
+    results.push({ spec, ok: false, err: msg });
+    if (bail) { console.error(`✗ ${spec}\n${(err && err.stack) || err}`); process.exit(1); }
+  }
+}
+
+const reds = results.filter((r) => !r.ok);
+const greenCount = results.length - reds.length;
+console.log(`\n${greenCount}/${results.length} suites green${reds.length ? `, ${reds.length} FAILED` : ""}.`);
+for (const r of reds) console.error(`  ✗ ${r.spec} — ${String(r.err).split("\n")[0]}`);
+if (reds.length) process.exit(1);
 console.log("ARIA Sentinel test suite passed.");
