@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>RUN 23e — iisupp.net/plans ARIA Sentinel matrix (PREVIEW)</title>
+<style>
+:root{--gold:#c5a059;--gold-l:#f1dca7;--bg:#070b16;--card:#0e1424;--bd:#1e2740;--tint:#15110a;--tintbd:#38301d;--text:#fff;--t2:#aeb6c8;--mut:#6b7488;--cyan:#7afbff;}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#070b16,#04060d);color:var(--text);font-family:Inter,system-ui,sans-serif;}
+.pv{position:sticky;top:0;background:linear-gradient(180deg,#15110a,#0a0a0a);border-bottom:1px solid var(--tintbd);padding:8px 18px;font-size:12px;color:var(--gold-l);display:flex;gap:14px;flex-wrap:wrap;align-items:center;z-index:9}
+.pv b{color:var(--gold);font-family:Cinzel,Georgia,serif;letter-spacing:.06em}.pv .flag{color:#ffcb6b}
+.wrap{max-width:1180px;margin:0 auto;padding:30px 22px 60px}
+.eyebrow{color:var(--gold);font-family:Cinzel,Georgia,serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin:0 0 8px}
+h1{font-family:Cinzel,Georgia,serif;font-size:32px;margin:0}h2{font-family:Cinzel,Georgia,serif;font-size:20px;margin:34px 0 14px}
+.lead{color:var(--t2);font-size:15px;max-width:720px}
+.sentinel-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:24px}
+@media(max-width:980px){.sentinel-cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.sentinel-cards{grid-template-columns:1fr}}
+.sentinel-card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:8px}
+.sentinel-card h3{font-family:Cinzel,Georgia,serif;font-size:17px;margin:0}
+.pf-price{font-family:Cinzel,Georgia,serif;font-size:27px;color:var(--gold-l)}.pf-unit{font-size:13px;color:var(--mut)}
+.pf-seats{color:var(--mut);font-size:11.5px;font-family:ui-monospace,Menlo,monospace}
+.pf-blurb{color:var(--t2);font-size:12px;line-height:1.45;flex:1}
+.pf-cta{margin-top:6px;border:0;border-radius:8px;background:linear-gradient(90deg,#c5a059,#f1dca7);color:#1a1410;font-family:Cinzel,Georgia,serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:11px;cursor:pointer;text-align:center;text-decoration:none;display:block}
+.pf-cta.contact{background:transparent;border:1px solid var(--gold);color:var(--gold-l)}
+.sentinel-matrix-wrap{overflow-x:auto;border:1px solid var(--bd);border-radius:12px;margin-top:14px}
+.sentinel-matrix{width:100%;border-collapse:collapse;font-size:12.5px;min-width:720px}
+.sentinel-matrix th,.sentinel-matrix td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--bd)}
+.sentinel-matrix th:first-child,.sentinel-matrix td:first-child{text-align:left;color:var(--t2)}
+.sentinel-matrix thead th{color:var(--gold-l);font-family:Cinzel,Georgia,serif;font-size:13px}
+.sentinel-matrix .price-row td{color:var(--gold-l);font-family:Cinzel,Georgia,serif}
+.yes{color:var(--cyan)}.no{color:var(--mut)}
+.foot{color:var(--mut);font-size:11.5px;margin-top:12px}
+</style></head><body>
+<div class="pv"><b>RUN 23e PREVIEW</b><span>iisupp.net/plans — ARIA Sentinel tier matrix, generated from pricing-tiers.mjs</span><span class="flag">⚑ Buttons shown live; each auto-falls-back to Contact-sales until its Stripe price env is set</span></div>
+<div class="wrap">
+  <p class="eyebrow">ARIA Sentinel</p>
+  <h1>License the tier that fits</h1>
+  <p class="lead">Same app for everyone — your license key unlocks the matching features instantly. Personal is Manual-mode guided support; Pro adds Confirmed &amp; Autonomous auto-fix and the full recipe library; business tiers add fleet view, compliance evidence and custom recipes.</p>
+  <div class="sentinel-cards">
+  <article class="sentinel-card">
+    <h3>Personal</h3>
+    <div class="pf-price">$599<span class="pf-unit">/mo</span></div>
+    <div class="pf-seats">1 user · 1 device</div>
+    <p class="pf-blurb">Resident IT support with guided Manual-mode fixes.</p>
+    <button class="pf-cta" data-tier="sentinel_personal_m" data-name="ARIA Sentinel Personal">SUBSCRIBE</button>
+  </article>
+  <article class="sentinel-card">
+    <h3>Pro</h3>
+    <div class="pf-price">$1,500<span class="pf-unit">/mo</span></div>
+    <div class="pf-seats">Small team</div>
+    <p class="pf-blurb">Full Confirmed + Autonomous modes, the complete recipe library, self-serve quarterly PDFs.</p>
+    <button class="pf-cta" data-tier="sentinel_pro_m" data-name="ARIA Sentinel Pro">SUBSCRIBE</button>
+  </article>
+  <article class="sentinel-card">
+    <h3>Small Business</h3>
+    <div class="pf-price">$156K<span class="pf-unit">/yr</span></div>
+    <div class="pf-seats">Small business fleet</div>
+    <p class="pf-blurb">Everything in Pro plus fleet view, compliance evidence and custom recipes.</p>
+    <button class="pf-cta" data-tier="sentinel_business_y" data-name="ARIA Sentinel Small Business">SUBSCRIBE</button>
+  </article>
+  <article class="sentinel-card">
+    <h3>Mid Size</h3>
+    <div class="pf-price">$312K<span class="pf-unit">/yr</span></div>
+    <div class="pf-seats">Mid-size org fleet</div>
+    <p class="pf-blurb">Fleet, compliance and custom recipes scaled for a mid-size organization.</p>
+    <button class="pf-cta" data-tier="sentinel_midsize_y" data-name="ARIA Sentinel Mid Size">SUBSCRIBE</button>
+  </article>
+  <article class="sentinel-card">
+    <h3>Enterprise</h3>
+    <div class="pf-price">$625K<span class="pf-unit">/yr</span></div>
+    <div class="pf-seats">Enterprise fleet</div>
+    <p class="pf-blurb">Fleet, compliance and custom recipes at enterprise scale.</p>
+    <button class="pf-cta" data-tier="sentinel_enterprise_y" data-name="ARIA Sentinel Enterprise">SUBSCRIBE</button>
+  </article>
+</div>
+<div class="sentinel-matrix-wrap">
+<table class="sentinel-matrix">
+<thead><tr><th>Feature</th><th>Personal</th><th>Pro</th><th>Small Business</th><th>Mid Size</th><th>Enterprise</th></tr><tr class="price-row"><td>Price</td><td>$599<small>/mo</small></td><td>$1,500<small>/mo</small></td><td>$156K<small>/yr</small></td><td>$312K<small>/yr</small></td><td>$625K<small>/yr</small></td></tr><tr><td>Seats</td><td>1 user · 1 device</td><td>Small team</td><td>Small business fleet</td><td>Mid-size org fleet</td><td>Enterprise fleet</td></tr></thead>
+<tbody>
+<tr><td>Manual mode</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Confirmed mode</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Autonomous mode</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Fix-recipe library</td><td><span>14 recipes</span></td><td><span>77 recipes</span></td><td><span>77 recipes</span></td><td><span>77 recipes</span></td><td><span>77 recipes</span></td></tr>
+<tr><td>Local system inventory</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Quarterly PDF reports</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>SLA tracking</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Compliance evidence pack</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Fleet view (multi-device)</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Custom recipes</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>White-label</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Admin console + OTA publish</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
+</tbody>
+</table>
+</div>
+  <p class="foot">Prices in USD. Business tiers (Small Business · Mid Size · Enterprise) share the same feature set and differ in seats + price. Seat counts confirmed at checkout. Generated at build time from <code>pricing-tiers.mjs</code> so this page and the app never drift.</p>
+  <h2>Stripe wiring (turnkey)</h2>
+  <p class="lead">Each Subscribe button is env-aware: it renders live only when that tier's <code>STRIPE_PRICE_SENTINEL_*</code> env is set, otherwise it shows <b>Contact sales</b> — so nothing is ever a broken checkout. Running <code>scripts/setup-stripe-sentinel.mjs</code> (with your Stripe key) creates the Pro / Mid / Enterprise prices and sets those envs; the buttons then go live on the next Netlify build with no code change.</p>
+</div></body></html>

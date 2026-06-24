@@ -1,0 +1,46 @@
+{
+  "_comment": "ARIA Sentinel admin-console seed data. Swap this file's loader for the real backend (one swap). All values are synthetic — no real customer data.",
+  "release": [
+    { "ts": "2026-06-19 14:31:02Z", "hash": "2026.06.18.1", "verdict": "PASS", "reason": "All content-blind smoke tests passed", "sizeMb": 12.4 },
+    { "ts": "2026-06-17 09:12:44Z", "hash": "2026.06.16.2", "verdict": "PASS", "reason": "Canary fleet healthy at 5%", "sizeMb": 12.3 },
+    { "ts": "2026-06-15 22:05:10Z", "hash": "2026.06.15.1", "verdict": "FAIL", "reason": "PII scan flagged 1 candidate — auto-rolled back", "sizeMb": 12.6 },
+    { "ts": "2026-06-14 11:48:31Z", "hash": "2026.06.14.1", "verdict": "PASS", "reason": "Stop-code bundle re-signed", "sizeMb": 12.1 },
+    { "ts": "2026-06-12 16:20:07Z", "hash": "2026.06.12.3", "verdict": "PASS", "reason": "Recipe success-rate gate >= 92%", "sizeMb": 12.0 }
+  ],
+  "endpoints": [
+    { "host": "LAPTOP-7F3K2MJ", "user": "jdoe", "os": "Win 11 23H2", "kb": "2026.06.18.1", "lastSeen": "2m", "health": "Healthy", "sla": "OK" },
+    { "host": "DESKTOP-19A8GH", "user": "asmith", "os": "Win 11 23H2", "kb": "2026.06.18.1", "lastSeen": "4m", "health": "Healthy", "sla": "OK" },
+    { "host": "WS-01F23", "user": "system", "os": "Win 10 22H2", "kb": "2026.06.16.2", "lastSeen": "9m", "health": "Warning", "sla": "Watch" },
+    { "host": "LAPTOP-3H9J7P", "user": "bnguyen", "os": "Win 11 23H2", "kb": "2026.06.18.1", "lastSeen": "1m", "health": "Healthy", "sla": "OK" },
+    { "host": "WS-44KK21", "user": "system", "os": "Win 10 22H2", "kb": "2026.06.12.3", "lastSeen": "31m", "health": "Critical", "sla": "Breach" },
+    { "host": "LAPTOP-90ZX2", "user": "rkhan", "os": "Win 11 23H2", "kb": "2026.06.18.1", "lastSeen": "6m", "health": "Healthy", "sla": "OK" },
+    { "host": "DESKTOP-7711B", "user": "mlopez", "os": "Win 11 23H2", "kb": "2026.06.16.2", "lastSeen": "12m", "health": "Warning", "sla": "Watch" },
+    { "host": "WS-22QW88", "user": "system", "os": "Win Server 2022", "kb": "2026.06.18.1", "lastSeen": "3m", "health": "Offline", "sla": "—" }
+  ],
+  "policies": [
+    { "name": "Standard Enterprise", "endpoints": 842, "revision": "r41", "activated": "2026-06-18" },
+    { "name": "Healthcare", "endpoints": 188, "revision": "r12", "activated": "2026-06-15" },
+    { "name": "Finance", "endpoints": 156, "revision": "r19", "activated": "2026-06-17" },
+    { "name": "BYOD", "endpoints": 62, "revision": "r07", "activated": "2026-06-10" }
+  ],
+  "kbBundles": [
+    { "hash": "2026.06.18.1", "signedBy": "IIS Release Key 02", "sizeMb": 12.4, "regions": "US, CA, EU", "adoption": 91, "current": true },
+    { "hash": "2026.06.16.2", "signedBy": "IIS Release Key 02", "sizeMb": 12.3, "regions": "US, CA, EU", "adoption": 7, "current": false },
+    { "hash": "2026.06.15.1", "signedBy": "IIS Release Key 02", "sizeMb": 12.6, "regions": "US, CA", "adoption": 1, "current": false },
+    { "hash": "stop-codes 2026.06.14", "signedBy": "IIS Release Key 02", "sizeMb": 0.8, "regions": "global", "adoption": 100, "current": false }
+  ],
+  "integrations": [
+    { "name": "ServiceNow", "status": "Connected", "detail": "acme.service-now.com" },
+    { "name": "Slack", "status": "Disconnected", "detail": "Alert lane" },
+    { "name": "M365 Graph", "status": "Connected", "detail": "Sign-in signals" },
+    { "name": "Jira", "status": "Disconnected", "detail": "Escalation mirror" },
+    { "name": "Webhook", "status": "Connected", "detail": "https out (customer)" },
+    { "name": "Email", "status": "Connected", "detail": "Digest to owner" }
+  ],
+  "operators": [
+    { "name": "A. Wasee", "role": "Owner", "mfa": "On", "lastLogin": "2026-06-19 14:02Z" },
+    { "name": "Ops Bot", "role": "Service", "mfa": "n/a", "lastLogin": "2026-06-19 14:30Z" },
+    { "name": "L. Carter", "role": "Operator", "mfa": "On", "lastLogin": "2026-06-18 21:11Z" },
+    { "name": "S. Devi", "role": "Read-only", "mfa": "On", "lastLogin": "2026-06-17 08:40Z" }
+  ]
+}

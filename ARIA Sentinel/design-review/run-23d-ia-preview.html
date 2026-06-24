@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RUN 23d — Tab IA 14→8 preview</title>
+<!--
+  PREVIEW-ONLY mockup for RUN 23d (NOT wired to the app). Static sample data.
+  Demonstrates the proposed 8-tab IA, merged sections with ## H2 breaks,
+  expandable sidebar sub-anchors, smooth-scroll, gold/cyber-noir theme.
+  Theme tokens copied verbatim from src/renderer/sentinel.css.
+-->
+<style>
+:root{
+  --aria-bg:#050505;--aria-surface:#0a0a0a;--aria-inset:#141414;--aria-border:#2a2a2a;
+  --aria-border-soft:#1c1c1c;--aria-gold:#c5a059;--aria-gold-light:#f1dca7;--aria-gold-dark:#8b6d2f;
+  --aria-gold-tint-bg:#15110a;--aria-gold-tint-bd:#38301d;--aria-text:#fff;--aria-text-2:#aaa;
+  --aria-text-muted:#666;--aria-success:#7afbff;--aria-warning:#ffcb6b;--aria-error:#ff7e7e;
+  --aria-font-display:Cinzel,Georgia,serif;--aria-font-ui:Inter,system-ui,sans-serif;
+  --aria-font-mono:ui-monospace,"SF Mono",Monaco,Menlo,monospace;
+  --aria-grad-gold:linear-gradient(90deg,#c5a059,#f1dca7);--aria-grad-card:linear-gradient(180deg,#141414,#0a0a0a);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+body{margin:0;min-height:100vh;background:var(--aria-bg);color:var(--aria-text);font-family:var(--aria-font-ui);-webkit-font-smoothing:antialiased;}
+button,input{font:inherit;}button{border:0;}
+h1,h2,h3{font-family:var(--aria-font-display);letter-spacing:0;}
+h1{font-size:30px;line-height:1;margin:0;}h2{font-size:18px;margin:0 0 14px;}h3{font-size:16px;margin:9px 0 8px;}
+p{color:var(--aria-text-2);line-height:1.5;}
+
+/* preview banner */
+.pv-banner{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#15110a,#0a0a0a);border-bottom:1px solid var(--aria-gold-tint-bd);padding:8px 18px;font-size:12px;color:var(--aria-gold-light);display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.pv-banner b{color:var(--aria-gold);font-family:var(--aria-font-display);letter-spacing:.06em;}
+.pv-banner .flag{color:var(--aria-warning);}
+
+.settings-shell{min-height:100vh;min-width:980px;display:grid;grid-template-columns:204px minmax(0,1fr);background:var(--aria-bg);}
+.settings-rail{border-right:1px solid var(--aria-border-soft);background:#070707;padding:18px 12px;display:flex;flex-direction:column;min-width:0;}
+.settings-brand{display:flex;flex-direction:column;align-items:center;gap:6px;border-bottom:1px solid var(--aria-border-soft);padding:4px 4px 16px;text-align:center;}
+.brand-globe{width:56px;height:56px;border-radius:50%;background:linear-gradient(90deg,transparent 48%,rgba(139,109,47,.74) 49%,rgba(139,109,47,.74) 51%,transparent 52%),linear-gradient(0deg,transparent 48%,rgba(139,109,47,.74) 49%,rgba(139,109,47,.74) 51%,transparent 52%),radial-gradient(circle at 35% 30%,#f1dca7 0 15%,#c5a059 36%,#5a3f10 68%,transparent 72%);border:1px solid rgba(241,220,167,.58);box-shadow:0 0 18px rgba(197,160,89,.32),inset 0 0 18px rgba(241,220,167,.2);}
+.brand-name{color:var(--aria-gold-light);font-family:var(--aria-font-display);font-size:13px;letter-spacing:.08em;line-height:1.2;text-transform:uppercase;text-align:center;}
+.brand-sub{color:var(--aria-text-muted);font-size:11px;}
+
+.settings-nav{display:grid;gap:4px;margin-top:18px;}
+.nav-item{width:100%;min-height:34px;text-align:left;border-radius:8px;padding:0 10px;background:transparent;color:#bdbdbd;cursor:pointer;font-size:12px;font-weight:650;display:flex;align-items:center;gap:9px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:#2b2b2b;flex:0 0 auto;}
+.nav-item:hover,.nav-item.active{background:var(--aria-gold-tint-bg);color:var(--aria-gold-light);}
+.nav-item.active .nav-dot{background:var(--aria-gold);}
+.nav-caret{margin-left:auto;font-size:9px;color:var(--aria-text-muted);transition:transform .15s;}
+.nav-item.active .nav-caret{transform:rotate(90deg);color:var(--aria-gold);}
+/* sub-anchor list (visible only under the active parent) */
+.nav-sub{display:none;margin:2px 0 4px 18px;padding-left:8px;border-left:1px solid var(--aria-gold-tint-bd);gap:1px;}
+.nav-sub.open{display:grid;}
+.nav-sub a{color:#8f8f8f;font-size:11px;text-decoration:none;padding:5px 8px;border-radius:6px;display:block;}
+.nav-sub a:hover{color:var(--aria-gold-light);background:var(--aria-gold-tint-bg);}
+
+.rail-footer{margin-top:auto;border-top:1px solid var(--aria-border-soft);padding:14px 6px 0;display:grid;gap:6px;justify-items:center;color:var(--aria-text-2);font-size:12px;text-align:center;}
+.rail-footer .brand-globe{width:90px;height:90px;}
+
+.settings-workspace{min-width:0;padding:20px 24px;overflow:auto;height:100vh;scroll-behavior:smooth;}
+.settings-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;}
+.status-stack{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;}
+.eyebrow{color:var(--aria-gold);font-family:var(--aria-font-display);font-size:11px;font-weight:600;letter-spacing:.22em;margin:0 0 8px;text-transform:uppercase;}
+
+.chip{display:inline-flex;align-items:center;width:max-content;max-width:100%;border:1px solid rgba(197,160,89,.5);border-radius:5px;background:#0a0a0a;color:var(--aria-gold-light);font-family:var(--aria-font-mono);font-size:10px;font-weight:700;letter-spacing:.12em;padding:5px 7px;text-transform:uppercase;}
+.chip.cyan{border-color:rgba(122,251,255,.5);color:var(--aria-success);}
+.chip.amber{border-color:rgba(255,203,107,.5);color:var(--aria-warning);}
+
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.panel{background:var(--aria-grad-card);border:1px solid var(--aria-border);border-radius:14px;padding:16px;min-width:0;}
+.panel+.panel{margin-top:14px;}
+.settings-grid-main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:14px;align-items:start;}
+.panel-actions{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:10px;}
+
+/* section divider between merged surfaces */
+.merge-head{display:flex;align-items:center;gap:12px;margin:26px 0 12px;}
+.merge-head:first-of-type{margin-top:4px;}
+.merge-head .bar{width:4px;align-self:stretch;min-height:34px;border-radius:3px;background:var(--aria-grad-gold);}
+.merge-head h2{margin:0;}
+.merge-head .sub{color:var(--aria-text-muted);font-size:11.5px;margin:2px 0 0;}
+.merge-head .eyebrow{margin:0 0 3px;}
+
+.hero-panel{text-align:center;}
+.hero-status{display:inline-flex;align-items:center;gap:12px;font-family:var(--aria-font-display);}
+.hero-status .hero-emoji{font-size:34px;}
+.hero-status .hero-label{font-size:30px;letter-spacing:.06em;color:var(--aria-success);}
+.hero-subline{color:var(--aria-text-2);font-size:13px;margin:8px 0 0;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0;}
+.kpi-tile{background:var(--aria-grad-card);border:1px solid var(--aria-border);border-radius:12px;padding:14px;}
+.kpi-tile .kpi-value{font-family:var(--aria-font-display);font-size:26px;color:var(--aria-gold-light);}
+.kpi-tile .kpi-label{color:var(--aria-text-2);font-size:12px;margin-top:2px;}
+.kpi-tile .kpi-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.kpi-delta{font-size:12px;font-family:var(--aria-font-mono);}
+.kpi-delta.up{color:var(--aria-success);}.kpi-delta.down{color:var(--aria-error);}.kpi-delta.flat{color:var(--aria-text-muted);}
+
+.health-list,.source-list,.log-list,.table-list,.outbound-list{display:grid;gap:8px;}
+.health-row,.source-row,.log-row,.table-row,.outbound-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#0c0c0c;border:1px solid #202020;border-radius:8px;padding:10px 12px;font-size:12px;min-width:0;}
+.health-row{grid-template-columns:120px minmax(0,1fr) 70px;}
+.table-row{grid-template-columns:140px minmax(0,1fr) 80px;}
+.outbound-row{grid-template-columns:76px minmax(0,1fr) 120px;}
+.log-row{grid-template-columns:70px 90px minmax(0,1fr);font-family:var(--aria-font-mono);}
+.health-row span,.table-row span,.outbound-row span{color:var(--aria-gold);font-family:var(--aria-font-mono);}
+.log-row span,.table-row em,.health-row em{color:var(--aria-text-muted);font-style:normal;}
+.log-row strong{color:var(--aria-gold);font-family:var(--aria-font-mono);}
+.diag-ok{color:var(--aria-success)!important;}.diag-warn{color:var(--aria-warning)!important;}
+
+.activity-timeline{display:grid;gap:6px;}
+.activity-row{display:grid;grid-template-columns:70px 24px 1fr auto;gap:10px;align-items:center;font-size:12.5px;padding:6px 8px;border-radius:8px;}
+.activity-row:hover{background:var(--aria-gold-tint-bg);}
+.activity-row .act-time{color:var(--aria-gold);font-family:var(--aria-font-mono);}
+.activity-row .act-meta{color:var(--aria-text-muted);font-size:11px;}
+.trust-strip{margin-top:14px;padding:10px 14px;border:1px solid var(--aria-border-soft);border-radius:10px;background:#070707;color:var(--aria-text-muted);font-size:11.5px;text-align:center;}
+
+.primary,.ghost{border-radius:8px;cursor:pointer;font-family:var(--aria-font-display);font-size:11px;font-weight:700;letter-spacing:.1em;min-height:38px;padding:10px 12px;text-transform:uppercase;}
+.primary{background:var(--aria-grad-gold);color:#1a1410;}
+.ghost{background:transparent;border:1px solid rgba(197,160,89,.45);color:var(--aria-gold-light);}
+.wide{width:100%;}
+.button-row{display:flex;gap:8px;margin-top:12px;}.button-row>button{flex:1;}
+.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px;}
+.note{color:var(--aria-text-muted);font-size:12px;margin:10px 0 14px;}
+.framework-badge{display:inline-block;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:.08em;}
+.framework-badge.strong{color:var(--aria-success);border:1px solid rgba(122,251,255,.5);}
+
+.mode-list{display:grid;gap:10px;}
+.mode-row{display:grid;grid-template-columns:20px 1fr;gap:12px;width:100%;text-align:left;border:1px solid #232323;border-radius:12px;background:#0c0c0c;color:var(--aria-text);padding:13px;}
+.mode-row.selected{background:var(--aria-gold-tint-bg);border-color:var(--aria-gold);}
+.radio{width:16px;height:16px;margin-top:2px;border-radius:50%;border:1px solid var(--aria-border);}
+.mode-row.selected .radio{border-color:var(--aria-gold-light);background:radial-gradient(circle,var(--aria-gold-light) 0 40%,transparent 44%);}
+.mode-row strong,.mode-row em,.mode-row small{display:block;}
+.mode-row em{color:var(--aria-gold);font-family:var(--aria-font-mono);font-size:10px;font-style:normal;letter-spacing:.12em;margin:5px 0;}
+.mode-row small{color:var(--aria-text-2);font-size:12px;line-height:1.5;}
+.support-grid{display:grid;gap:8px;}
+.support-row{display:grid;grid-template-columns:80px 1fr auto;gap:12px;align-items:center;background:#0c0c0c;border:1px solid #202020;border-radius:8px;padding:10px 12px;font-size:12px;}
+.support-row span{color:var(--aria-gold);font-family:var(--aria-font-mono);}
+.flag-pill{background:rgba(255,203,107,.12);border:1px solid rgba(255,203,107,.4);color:var(--aria-warning);font-size:10px;border-radius:5px;padding:2px 7px;font-family:var(--aria-font-mono);letter-spacing:.08em;margin-left:8px;text-transform:uppercase;}
+</style>
+</head>
+<body>
+<div class="pv-banner">
+  <b>RUN 23d PREVIEW</b>
+  <span>14→8 tab IA · click sidebar items to switch · merged tabs expand sub-anchors (smooth-scroll)</span>
+  <span class="flag">⚑ FLAGGED: ServiceNow + Support placement (see banner inside System/Settings) — not in original 8-tab spec</span>
+</div>
+
+<main class="settings-shell">
+  <aside class="settings-rail">
+    <div class="settings-brand">
+      <div class="brand-globe"></div>
+      <div class="brand-name">Integrated IT Support Inc.</div>
+      <div class="brand-sub">ARIA Sentinel</div>
+    </div>
+    <nav class="settings-nav" aria-label="ARIA Sentinel settings navigation">
+      <button class="nav-item active" data-tab="dashboard"><span class="nav-dot"></span>Dashboard<span class="nav-caret">▶</span></button>
+      <div class="nav-sub open" data-sub="dashboard">
+        <a href="#dash-overview">Overview</a>
+        <a href="#dash-performance">Performance</a>
+        <a href="#dash-sla">SLA</a>
+        <a href="#dash-activity">Activity</a>
+      </div>
+      <button class="nav-item" data-tab="control-center"><span class="nav-dot"></span>Control Center</button>
+      <button class="nav-item" data-tab="recipes"><span class="nav-dot"></span>Recipes</button>
+      <button class="nav-item" data-tab="compliance-privacy"><span class="nav-dot"></span>Compliance &amp; Privacy<span class="nav-caret">▶</span></button>
+      <div class="nav-sub" data-sub="compliance-privacy">
+        <a href="#cp-compliance">Compliance</a>
+        <a href="#cp-privacy">Privacy</a>
+      </div>
+      <button class="nav-item" data-tab="reports"><span class="nav-dot"></span>Reports</button>
+      <button class="nav-item" data-tab="knowledge"><span class="nav-dot"></span>Knowledge &amp; Policy</button>
+      <button class="nav-item" data-tab="system"><span class="nav-dot"></span>System<span class="nav-caret">▶</span></button>
+      <div class="nav-sub" data-sub="system">
+        <a href="#sys-machine">This Machine</a>
+        <a href="#sys-platform">Platform Support</a>
+        <a href="#sys-servicenow">ServiceNow <span style="color:var(--aria-warning)">⚑</span></a>
+      </div>
+      <button class="nav-item" data-tab="settings"><span class="nav-dot"></span>Settings<span class="nav-caret">▶</span></button>
+      <div class="nav-sub" data-sub="settings">
+        <a href="#set-mode">Mode</a>
+        <a href="#set-hotkeys">Hotkeys</a>
+        <a href="#set-troubleshoot">Troubleshoot</a>
+        <a href="#set-support">Support <span style="color:var(--aria-warning)">⚑</span></a>
+        <a href="#set-about">About</a>
+      </div>
+    </nav>
+    <div class="rail-footer">
+      <div class="brand-globe"></div>
+      <strong>Resident agent</strong>
+      <small>v0.1.1</small>
+    </div>
+  </aside>
+
+  <section class="settings-workspace">
+    <header class="settings-topbar">
+      <div>
+        <p class="eyebrow">ARIA Sentinel · Settings</p>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="status-stack">
+        <span class="chip">Manual mode · watching</span>
+        <span class="chip cyan">Bridge :37841</span>
+        <span class="chip amber">Dry-run safe</span>
+      </div>
+    </header>
+
+    <!-- ============ DASHBOARD (Overview + Performance + SLA + Activity) ============ -->
+    <section id="dashboard" class="tab-panel active">
+      <span id="dash-overview"></span>
+      <section class="panel hero-panel">
+        <div class="hero-status"><span class="hero-emoji">🟢</span><strong class="hero-label">PROTECTED</strong></div>
+        <p class="hero-subline">ARIA is watching. No issues need your attention.</p>
+      </section>
+
+      <div class="kpi-grid">
+        <div class="kpi-tile"><div class="kpi-value">98</div><div class="kpi-label">Health score</div><div class="kpi-foot"><span class="kpi-delta up">▲ +3</span><span class="chip cyan">good</span></div></div>
+        <div class="kpi-tile"><div class="kpi-value">142</div><div class="kpi-label">Issues fixed</div><div class="kpi-foot"><span class="kpi-delta up">▲ +12</span><span class="note" style="margin:0">this month</span></div></div>
+        <div class="kpi-tile"><div class="kpi-value">18.4h</div><div class="kpi-label">Hours saved</div><div class="kpi-foot"><span class="kpi-delta up">▲ +2.1h</span><span class="note" style="margin:0">@ $75/hr</span></div></div>
+        <div class="kpi-tile"><div class="kpi-value">0</div><div class="kpi-label">Outbound leaks</div><div class="kpi-foot"><span class="kpi-delta flat">— 0</span><span class="chip cyan">clean</span></div></div>
+        <div class="kpi-tile"><div class="kpi-value">99.97%</div><div class="kpi-label">Uptime</div><div class="kpi-foot"><span class="kpi-delta up">▲ SLA met</span></div></div>
+        <div class="kpi-tile"><div class="kpi-value">5</div><div class="kpi-label">Vetted recipes live</div><div class="kpi-foot"><span class="kpi-delta flat">tier-0</span><span class="chip amber">dry-run</span></div></div>
+      </div>
+
+      <section class="panel">
+        <p class="eyebrow">Quick actions</p>
+        <div class="settings-grid">
+          <button class="primary">Diagnose issue</button>
+          <button class="ghost">Run health check</button>
+          <button class="ghost">Check for updates</button>
+          <button class="ghost">Export evidence pack</button>
+        </div>
+      </section>
+
+      <!-- ## Performance (merged in) -->
+      <div class="merge-head" id="dash-performance">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from Performance tab</p><h2>Performance</h2><p class="sub">Operational KPIs · AI diagnosis quality · usage patterns</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">Operational KPIs · the moat</p><h2>Operations</h2>
+        <div class="kpi-grid">
+          <div class="kpi-tile"><div class="kpi-value">1.8s</div><div class="kpi-label">Mean detection</div><div class="kpi-foot"><span class="kpi-delta up">▲ faster</span></div></div>
+          <div class="kpi-tile"><div class="kpi-value">94%</div><div class="kpi-label">Auto-resolve rate</div><div class="kpi-foot"><span class="kpi-delta up">▲ +4%</span></div></div>
+          <div class="kpi-tile"><div class="kpi-value">96.2%</div><div class="kpi-label">Diagnosis accuracy</div><div class="kpi-foot"><span class="chip cyan">AI moat</span></div></div>
+          <div class="kpi-tile"><div class="kpi-value">0.4%</div><div class="kpi-label">False-positive</div><div class="kpi-foot"><span class="kpi-delta down">▼ -0.1%</span></div></div>
+        </div>
+        <div class="health-list" style="margin-top:8px">
+          <div class="health-row"><span>peak-hours</span><strong>Mon–Fri 09:00–11:00 — highest detection volume</strong><em>usage</em></div>
+          <div class="health-row"><span>top-recipe</span><strong>DNS flush — 38 runs this month</strong><em>usage</em></div>
+        </div>
+      </section>
+
+      <!-- ## SLA (merged in) -->
+      <div class="merge-head" id="dash-sla">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from SLA tab</p><h2>SLA</h2><p class="sub">Compliance window · uptime · response &amp; resolution by severity · breaches</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">Compliance window</p><h2 style="margin-bottom:6px">99.2% SLA-met this month</h2>
+        <p class="note">Window 2026-06-01 → 2026-06-22 · 248 events measured · 2 within grace.</p>
+        <div class="health-list">
+          <div class="health-row"><span>uptime</span><strong>99.97% availability — target 99.9%</strong><em class="diag-ok">MET</em></div>
+          <div class="health-row"><span>P1 response</span><strong>4m avg — target 15m</strong><em class="diag-ok">MET</em></div>
+          <div class="health-row"><span>P2 response</span><strong>22m avg — target 30m</strong><em class="diag-ok">MET</em></div>
+          <div class="health-row"><span>P1 resolve</span><strong>1.2h avg — target 4h</strong><em class="diag-ok">MET</em></div>
+          <div class="health-row"><span>breaches</span><strong>0 breaches · 0 service credits owed</strong><em class="diag-ok">CLEAN</em></div>
+        </div>
+        <p class="note">Service credits are auto-calculated but never auto-issued — admin sign-off required.</p>
+      </section>
+
+      <!-- ## Activity (kept from Overview) -->
+      <div class="merge-head" id="dash-activity">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Activity</p><h2>Recent activity</h2></div>
+      </div>
+      <section class="panel">
+        <div class="activity-timeline">
+          <div class="activity-row"><span class="act-time">14:02</span><span>✓</span><span>DNS flush applied — network recovered</span><span class="act-meta">auto · dry-run</span></div>
+          <div class="activity-row"><span class="act-time">11:47</span><span>✓</span><span>Disk cleanup recommended — 4.2 GB reclaimable</span><span class="act-meta">manual</span></div>
+          <div class="activity-row"><span class="act-time">09:13</span><span>·</span><span>Health check passed — 7/7 watchers green</span><span class="act-meta">scheduled</span></div>
+          <div class="activity-row"><span class="act-time">08:30</span><span>✓</span><span>Audit integrity verified — hash chain intact</span><span class="act-meta">startup</span></div>
+        </div>
+      </section>
+      <footer class="trust-strip">🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization</footer>
+    </section>
+
+    <!-- ============ CONTROL CENTER (unchanged) ============ -->
+    <section id="control-center" class="tab-panel">
+      <section class="panel">
+        <p class="eyebrow">Local agent</p><h2>Quick controls</h2>
+        <div class="settings-grid">
+          <button class="primary">Start ARIA</button><button class="ghost">Stop ARIA</button>
+          <button class="ghost">Show globe</button><button class="ghost">Pause 1 hour</button>
+          <button class="ghost">Self check</button><button class="primary">Repair ARIA</button>
+          <button class="primary">Diagnose issue</button><button class="ghost">Pause updates 7 days</button>
+        </div>
+        <p class="note">Self-heal idle. Last pass: 7/7 checks OK.</p>
+        <div class="health-list">
+          <div class="health-row"><span>bridge</span><strong>Local bridge available on :37841</strong><em>OK</em></div>
+          <div class="health-row"><span>dry-run</span><strong>System-changing actions remain gated</strong><em>OK</em></div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ RECIPES (unchanged) ============ -->
+    <section id="recipes" class="tab-panel">
+      <section class="panel">
+        <div class="panel-actions"><div><p class="eyebrow">Local recipe registry</p><h2>Vetted fixes</h2></div><button class="ghost">Simulate ARIA error</button></div>
+        <p class="note">75 local interactive recipes. Admin-only release gates live in the separate web console.</p>
+        <div class="health-list">
+          <div class="health-row"><span>net-dns</span><strong>Flush DNS resolver cache</strong><em>green</em></div>
+          <div class="health-row"><span>svc-restart</span><strong>Restart stalled print spooler</strong><em>green</em></div>
+        </div>
+      </section>
+      <section class="panel">
+        <p class="eyebrow">Tier-0 · safe-generic</p><h2>Safe Generic fixes</h2>
+        <p class="note">Every one is dry-run by default, content-blind, audit-logged, and asks before it changes anything.</p>
+      </section>
+    </section>
+
+    <!-- ============ COMPLIANCE & PRIVACY (Compliance + Privacy) ============ -->
+    <section id="compliance-privacy" class="tab-panel">
+      <div class="merge-head" id="cp-compliance">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from Compliance tab</p><h2>Compliance</h2><p class="sub">Audit integrity · safety gate · R11 · framework scores · evidence export</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">Audit integrity</p><h2>Hash chain</h2>
+        <div class="health-list">
+          <div class="health-row"><span>chain</span><strong>4,128 entries · hash chain intact</strong><em class="diag-ok">OK</em></div>
+          <div class="health-row"><span>tier-0</span><strong>3 risky actions blocked this month</strong><em class="diag-ok">GATED</em></div>
+          <div class="health-row"><span>R11</span><strong>Private folder never read/listed/scanned</strong><em class="diag-ok">ENFORCED</em></div>
+        </div>
+      </section>
+      <section class="panel">
+        <p class="eyebrow">Frameworks</p><h2>Composite scores</h2>
+        <div class="kpi-grid">
+          <div class="kpi-tile"><div class="kpi-value">SOC 2</div><div class="kpi-label">Mapped controls</div><div class="kpi-foot"><span class="framework-badge strong">94%</span></div></div>
+          <div class="kpi-tile"><div class="kpi-value">ISO 27001</div><div class="kpi-label">Mapped controls</div><div class="kpi-foot"><span class="framework-badge strong">91%</span></div></div>
+          <div class="kpi-tile"><div class="kpi-value">NIST</div><div class="kpi-label">CSF coverage</div><div class="kpi-foot"><span class="framework-badge strong">89%</span></div></div>
+        </div>
+        <div class="button-row"><button class="ghost wide">Export evidence pack</button></div>
+      </section>
+
+      <div class="merge-head" id="cp-privacy">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from Privacy verifier tab</p><h2>Privacy</h2><p class="sub">Outbound paths · live 10s capture · transparency log · delete safety</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">Privacy verifier</p><h2>Outbound + sanitization</h2>
+        <div class="outbound-list">
+          <div class="outbound-row"><span>POST</span><strong>iisupp.net/telemetry — content-blind event</strong><em>allowlisted</em></div>
+          <div class="outbound-row"><span>GET</span><strong>iisupp.net/aria-brain — diagnosis hints</strong><em>allowlisted</em></div>
+        </div>
+        <div class="button-row"><button class="primary">Live capture (10s)</button><button class="ghost">Export audit JSON</button></div>
+        <p class="note">0 data-upload paths to iisupp.net. Raw pages, document text, URLs, screenshots, credentials and command output are not sent.</p>
+      </section>
+    </section>
+
+    <!-- ============ REPORTS (unchanged) ============ -->
+    <section id="reports" class="tab-panel">
+      <section class="panel">
+        <div class="panel-actions"><div><p class="eyebrow">Quarterly + ad-hoc</p><h2>Reports</h2></div><button class="primary">Generate ad-hoc report now</button></div>
+        <p class="note">Reports retained 24 months, then auto-purged. Last quarterly: 2026-Q2.</p>
+        <div class="health-list">
+          <div class="health-row"><span>2026-Q2</span><strong>Quarterly business review — 142 fixes, 18.4h saved</strong><em>ready</em></div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ KNOWLEDGE & POLICY (unchanged) ============ -->
+    <section id="knowledge" class="tab-panel">
+      <div class="settings-grid-main">
+        <section class="panel">
+          <p class="eyebrow">Company knowledge</p><h2>Knowledge sources</h2>
+          <div class="health-list"><div class="health-row"><span>kb-core</span><strong>IIS policy corpus — 515 bits indexed</strong><em>ready</em></div></div>
+          <button class="ghost wide" style="margin-top:10px">Update knowledge</button>
+        </section>
+        <section class="panel">
+          <p class="eyebrow">Governance gate</p><h2>Before every fix</h2>
+          <p class="note">Detect → check policy corpus → allowed: apply/walk through → restricted: escalate. Stored encrypted on-device; never uploaded.</p>
+        </section>
+      </div>
+    </section>
+
+    <!-- ============ SYSTEM (System Context + Cross-Platform [+ ServiceNow flagged]) ============ -->
+    <section id="system" class="tab-panel">
+      <div class="merge-head" id="sys-machine">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from System Context tab</p><h2>This Machine</h2><p class="sub">Local inventory · apps · services · drivers — content-blind</p></div>
+      </div>
+      <section class="panel">
+        <div class="panel-actions"><div><p class="eyebrow">Local inventory</p><h2>System Context</h2></div><button class="ghost">Refresh</button></div>
+        <p class="note">312 apps · 184 services · last refreshed today. Local + content-blind.</p>
+        <div class="health-list">
+          <div class="health-row"><span>cpu</span><strong>Intel i7-1265U · 10 cores · 3% idle load</strong><em>OK</em></div>
+          <div class="health-row"><span>ram</span><strong>32 GB · 41% in use</strong><em>OK</em></div>
+          <div class="health-row"><span>disk</span><strong>C: 512 GB · 68% used</strong><em class="diag-warn">WATCH</em></div>
+        </div>
+      </section>
+
+      <div class="merge-head" id="sys-platform">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from Cross-Platform tab</p><h2>Platform Support</h2><p class="sub">Cross-platform blueprints — knowledge only, no remote control</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">Tech-support reference</p><h2>Cross-Platform blueprints</h2>
+        <p class="note">Knowledge only — ARIA guides users on any platform by voice/chat. No remote control of phones or other machines.</p>
+        <div class="health-list">
+          <div class="health-row"><span>windows</span><strong>BSOD recovery · network reset · driver rollback</strong><em>12 plays</em></div>
+          <div class="health-row"><span>macos</span><strong>kernel panic · Wi-Fi · permissions reset</strong><em>9 plays</em></div>
+          <div class="health-row"><span>mobile</span><strong>iOS / Android guided fixes</strong><em>7 plays</em></div>
+        </div>
+      </section>
+
+      <div class="merge-head" id="sys-servicenow">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from ServiceNow tab <span class="flag-pill">⚑ proposed placement</span></p><h2>Incident Bridge</h2><p class="sub">ServiceNow OAuth · routing map · Slack/Teams notify · my incidents</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">ServiceNow connection</p><h2>Incident bridge</h2>
+        <p class="note">⚑ Not named in the original 8-tab spec. Proposed home: <b>System</b> (integration/inventory surface). Alternatives: own tab, or under Settings. Awaiting your call.</p>
+        <div class="health-list">
+          <div class="health-row"><span>instance</span><strong>customer.service-now.com — not connected (MVP dry-run)</strong><em>standby</em></div>
+        </div>
+        <div class="button-row"><button class="ghost wide">Test connection</button></div>
+      </section>
+    </section>
+
+    <!-- ============ SETTINGS (Mode + Hotkeys + Troubleshoot + [Support flagged] + About) ============ -->
+    <section id="settings" class="tab-panel">
+      <div class="merge-head" id="set-mode">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from Mode tab</p><h2>Mode</h2><p class="sub">Choose how ARIA helps · dry-run toggle · ask ARIA dock</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">Choose how ARIA helps</p><h2>Mode</h2>
+        <div class="mode-list">
+          <div class="mode-row selected"><span class="radio"></span><span><strong>Manual</strong><em>DEFAULT · FREE</em><small>ARIA detects issues and walks you through fixes in chat. Nothing applied automatically.</small></span></div>
+          <div class="mode-row"><span class="radio"></span><span><strong>Confirmed</strong><em>PAID</em><small>The globe pins on top and pops a fix-card; ARIA applies once you confirm.</small></span></div>
+          <div class="mode-row"><span class="radio"></span><span><strong>Autonomous</strong><em>PAID · OPT-IN</em><small>Auto-applies low-risk (green) fixes; risky fixes still confirm.</small></span></div>
+        </div>
+      </section>
+
+      <div class="merge-head" id="set-hotkeys">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from Hotkeys tab</p><h2>Hotkeys</h2><p class="sub">Local shortcuts · live status · rebind</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">Hotkeys</p><h2>Local shortcuts</h2>
+        <div class="table-list">
+          <div class="table-row"><span>Ctrl+Alt+A</span><strong>Open ARIA chat (globe bubble)</strong><em class="diag-ok">Active</em></div>
+          <div class="table-row"><span>Ctrl+Alt+G</span><strong>Show or hide the globe</strong><em class="diag-ok">Active</em></div>
+          <div class="table-row"><span>Ctrl+Alt+K</span><strong>Kill ARIA + undo last action</strong><em style="color:var(--aria-error)">Panic</em></div>
+        </div>
+      </section>
+
+      <div class="merge-head" id="set-troubleshoot">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from Troubleshoot tab</p><h2>Troubleshoot</h2><p class="sub">7-point self-test · restore points · recipe circuit breaker</p></div>
+      </div>
+      <section class="panel">
+        <div class="panel-actions"><div><p class="eyebrow">Self-test</p><h2>Is the agent running?</h2></div><button class="ghost">Run diagnostic</button></div>
+        <p class="note">7-point check: bridge · watchers · ServiceNow · KB bundle · audit log · tray · overlay.</p>
+        <div class="health-list">
+          <div class="health-row"><span>watchers</span><strong>All 4 watchers reporting</strong><em class="diag-ok">PASS</em></div>
+          <div class="health-row"><span>restore</span><strong>2 restore points available</strong><em class="diag-ok">PASS</em></div>
+        </div>
+      </section>
+
+      <div class="merge-head" id="set-support">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from Support tab <span class="flag-pill">⚑ proposed placement</span></p><h2>Support</h2><p class="sub">Talk to Integrated IT Support · company details</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">Need help?</p><h2>Talk to Integrated IT Support</h2>
+        <p class="note">⚑ Not named in the original 8-tab spec. Proposed home: <b>Settings</b> (pairs with About company block). Awaiting your call.</p>
+        <div class="support-grid">
+          <div class="support-row"><span>Phone</span><strong>+1-647-581-3182</strong><button class="ghost">Call now</button></div>
+          <div class="support-row"><span>Email</span><strong>ahmad.wasee@iisupp.net</strong><button class="ghost">Email us</button></div>
+          <div class="support-row"><span>Web chat</span><strong>iisupp.net/aria</strong><button class="ghost">Open chat</button></div>
+        </div>
+      </section>
+
+      <div class="merge-head" id="set-about">
+        <div class="bar"></div>
+        <div><p class="eyebrow">Merged from About tab</p><h2>About</h2><p class="sub">Floating globe · version · license &amp; subscription · ROI · low-power · auto-update</p></div>
+      </div>
+      <section class="panel">
+        <p class="eyebrow">About</p><h2>Resident IT support that never sleeps</h2>
+        <p>ARIA Sentinel lives on your PC, watches for tech problems, and fixes them before they slow you down — without sending your data anywhere.</p>
+        <div class="table-list">
+          <div class="table-row"><span>Version</span><strong>0.1.1</strong><em>Internal MVP</em></div>
+          <div class="table-row"><span>Bridge</span><strong>127.0.0.1:37841</strong><em>Local only</em></div>
+          <div class="table-row"><span>License</span><strong>Trial active · 23 days left</strong><em>Confirmed+Auto</em></div>
+        </div>
+      </section>
+    </section>
+  </section>
+</main>
+
+<script>
+const tabs=document.querySelectorAll('.nav-item');
+const subs=document.querySelectorAll('.nav-sub');
+const panels=document.querySelectorAll('.tab-panel');
+const titles={dashboard:'Dashboard','control-center':'Control Center',recipes:'Recipes','compliance-privacy':'Compliance & Privacy',reports:'Reports',knowledge:'Knowledge & Policy',system:'System',settings:'Settings'};
+function activate(tab){
+  tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  panels.forEach(p=>p.classList.toggle('active',p.id===tab));
+  subs.forEach(s=>s.classList.toggle('open',s.dataset.sub===tab));
+  document.getElementById('pageTitle').textContent=titles[tab]||tab;
+  document.querySelector('.settings-workspace').scrollTop=0;
+}
+tabs.forEach(b=>b.addEventListener('click',()=>activate(b.dataset.tab)));
+// smooth-scroll sidebar sub-anchors to their H2
+document.querySelectorAll('.nav-sub a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const id=a.getAttribute('href').slice(1);
+    const el=document.getElementById(id);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+</script>
+</body>
+</html>

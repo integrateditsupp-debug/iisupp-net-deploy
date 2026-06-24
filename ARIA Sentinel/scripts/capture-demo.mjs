@@ -1,0 +1,232 @@
+// A1 — demo recording pipeline (zero-dep, no spend).
+//
+// Generates a self-running, loopable HTML demo per scenario under design-review/demos/.
+// Each demo replays detection → fix card → done using the real gold-globe SVG + fix-card
+// styling, so it is screen-recordable to mp4/GIF and directly embeddable (iframe) in the
+// landing pages. ffmpeg is NOT bundled here, so mp4 ENCODING is left to a screen recorder
+// (documented in the generated README) — Rule 10: no install, graceful degrade.
+//
+// Run: node scripts/capture-demo.mjs
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+import fs from "node:fs";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, "..");
+const outDir = path.join(root, "design-review", "demos");
+fs.mkdirSync(outDir, { recursive: true });
+
+// Copy is verbatim from design_handoff_aria_sentinel/copy.md where a card variant exists.
+const SCENARIOS = [
+  {
+    id: "disk-low",
+    label: "Disk almost full",
+    chip: "DISK · LOW SPACE",
+    title: "Disk almost full",
+    body: "3% free on C:. I can recover ~4.2 GB by clearing temp files, browser caches and old downloads.",
+    doneChip: "DISK · RESOLVED",
+    doneTitle: "Recovered 4.2 GB",
+    doneBody: "Disk is healthy. Your work won't be interrupted by space issues.",
+    escalates: false
+  },
+  {
+    id: "printer-stuck",
+    label: "Print queue stuck",
+    chip: "PRINT · SPOOLER",
+    title: "Print queue stuck",
+    body: "The print spooler stalled with jobs queued. I can restart it and clear the stuck jobs.",
+    doneChip: "PRINT · RESOLVED",
+    doneTitle: "Spooler restarted",
+    doneBody: "Print Spooler reset. Try printing again.",
+    escalates: false
+  },
+  {
+    id: "cache-stale",
+    label: "Stale page (browser)",
+    chip: "BROWSER · CACHE.STALE",
+    title: "This page looks stale",
+    body: "This site keeps serving an old version. I can clear the cache for this site only and reload.",
+    doneChip: "BROWSER · RESOLVED",
+    doneTitle: "Cache cleared",
+    doneBody: "Cache cleared for this site. Page reloaded.",
+    escalates: false
+  },
+  {
+    id: "bsod-resume",
+    label: "Blue screen recovery",
+    chip: "BSOD · CRITICAL_PROCESS_DIED",
+    title: "Blue screen detected",
+    body: "I read the stop code from the last crash and collected the minidump list locally.",
+    doneChip: "ROUTING TO DESKTOP SUPPORT",
+    doneTitle: "Escalating safely",
+    doneBody: "This will need to be looked at by Desktop Support as it may need replacement parts or reimaging.",
+    escalates: true
+  },
+  {
+    id: "escalation",
+    label: "Could not resolve locally",
+    chip: "COULD NOT RESOLVE LOCALLY",
+    title: "Routing to Desktop Support",
+    body: "I tried 2 recipes without success. Raising a ServiceNow incident so the right team can take over.",
+    doneChip: "INCIDENT CREATED",
+    doneTitle: "INC0042781 raised",
+    doneBody: "Team auto-assigned from the signal. No PII leaves the device.",
+    escalates: true
+  }
+];
+
+const GLOBE_SVG = `
+<svg class="aria-globe" data-state="idle" width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+  <defs>
+    <radialGradient id="agCore" cx="36%" cy="34%" r="62%">
+      <stop offset="0%" stop-color="#f1dca7" stop-opacity=".95"/>
+      <stop offset="55%" stop-color="#c5a059" stop-opacity=".68"/>
+      <stop offset="100%" stop-color="#5a3f10" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="agGold" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c5a059" stop-opacity=".34"/>
+      <stop offset="100%" stop-color="#c5a059" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="agAmber" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffcb6b" stop-opacity=".42"/>
+      <stop offset="100%" stop-color="#ffcb6b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle class="glow" cx="60" cy="60" r="56" fill="url(#agGold)"/>
+  <circle cx="60" cy="60" r="22" fill="url(#agCore)"/>
+  <g class="ring-group">
+    <circle class="ring-stroke" cx="60" cy="60" r="22" fill="none" stroke="#c5a059" stroke-opacity=".62" stroke-width=".9"/>
+    <circle class="ring-stroke" cx="60" cy="60" r="15" fill="none" stroke="#c5a059" stroke-opacity=".42" stroke-width=".7"/>
+    <circle class="ring-stroke" cx="60" cy="60" r="8"  fill="none" stroke="#c5a059" stroke-opacity=".5"  stroke-width=".6"/>
+    <line class="ring-stroke" x1="36" y1="60" x2="84" y2="60" stroke="#c5a059" stroke-opacity=".5" stroke-width=".8"/>
+    <line class="ring-stroke" x1="60" y1="36" x2="60" y2="84" stroke="#c5a059" stroke-opacity=".5" stroke-width=".8"/>
+  </g>
+  <circle class="x-scan" cx="60" cy="60" r="27" fill="none" stroke="#f1dca7" stroke-width="1.6" stroke-dasharray="7 5" stroke-opacity=".85"/>
+  <path class="x-done" d="M 50 60 L 57 67 L 73 49" fill="none" stroke="#7afbff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="44"/>
+</svg>`;
+
+function demoHtml(s) {
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8" />
+<title>ARIA Sentinel — ${esc(s.label)}</title>
+<style>
+  :root{--gold:#c5a059;--gold-light:#f1dca7;--bg:#050505;--cyan:#7afbff;--amber:#ffcb6b;
+    --display:Cinzel,Georgia,serif;--ui:Inter,system-ui,sans-serif;--mono:ui-monospace,Consolas,monospace;}
+  *{box-sizing:border-box;margin:0}
+  body{background:radial-gradient(circle at 50% 20%,#15110a,#050505 60%);color:#fff;font-family:var(--ui);
+    min-height:100vh;display:grid;place-items:center;overflow:hidden}
+  .stage{position:relative;width:380px;height:420px;display:grid;place-items:start center;padding-top:30px}
+  .aria-globe{display:block;overflow:visible}
+  .ring-group{transform-origin:60px 60px;animation:rot 34s linear infinite}
+  .glow{transform-origin:60px 60px;animation:glow 4.2s ease-in-out infinite}
+  .x-scan,.x-done{display:none}
+  .aria-globe[data-state="diagnosing"] .x-scan{display:block;transform-origin:60px 60px;animation:scan 5s linear infinite}
+  .aria-globe[data-state="diagnosing"] .ring-group{animation-duration:17s}
+  .aria-globe[data-state="fixing"] .ring-group{animation-duration:9s}
+  .aria-globe[data-state="done"] .x-done{display:block;animation:draw .55s ease-out forwards}
+  .aria-globe[data-state="escalation"] .ring-stroke{stroke:var(--amber)}
+  .aria-globe[data-state="escalation"] .glow{fill:url(#agAmber)}
+  @keyframes rot{to{transform:rotate(360deg)}}
+  @keyframes scan{to{transform:rotate(-360deg)}}
+  @keyframes glow{0%,100%{opacity:.5}50%{opacity:.92}}
+  @keyframes draw{from{stroke-dashoffset:44}to{stroke-dashoffset:0}}
+  .card{position:absolute;top:150px;left:50%;transform:translateX(-50%) translateY(16px);width:320px;
+    background:linear-gradient(180deg,#141414,#0a0a0a);border:1px solid #2a2a2a;border-radius:14px;
+    padding:32px 16px 16px;text-align:center;opacity:0;transition:opacity .26s cubic-bezier(.16,1,.3,1),transform .26s cubic-bezier(.16,1,.3,1)}
+  .card.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .card.done{border-color:rgba(122,251,255,.5)}
+  .card.escalate{border-color:rgba(255,203,107,.55)}
+  .chip{display:inline-block;border:1px solid rgba(197,160,89,.5);border-radius:5px;background:#0a0a0a;
+    color:var(--gold-light);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;
+    padding:5px 7px;text-transform:uppercase}
+  .card.done .chip{border-color:rgba(122,251,255,.5);color:var(--cyan)}
+  .card.escalate .chip{border-color:rgba(255,203,107,.55);color:var(--amber)}
+  h3{font-family:var(--display);font-size:17px;margin:12px 0 8px}
+  .card p{color:#aaa;font-size:12.5px;line-height:1.5}
+  .caption{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#666;font-size:11px;letter-spacing:.04em}
+  .caption b{color:var(--gold)}
+  .brand{position:absolute;top:0;left:0;right:0;text-align:center;color:var(--gold-light);
+    font-family:var(--display);font-size:12px;letter-spacing:.28em;text-transform:uppercase;opacity:.7}
+</style></head>
+<body>
+  <div class="stage">
+    <div class="brand">ARIA Sentinel</div>
+    ${GLOBE_SVG}
+    <section class="card" id="card">
+      <span class="chip" id="chip">${esc(s.chip)}</span>
+      <h3 id="title">${esc(s.title)}</h3>
+      <p id="body">${esc(s.body)}</p>
+    </section>
+    <div class="caption"><b>Content-blind</b> · on-device · resident IT support that never sleeps</div>
+  </div>
+<script>
+  var S=${JSON.stringify({ chip: s.chip, title: s.title, body: s.body, doneChip: s.doneChip, doneTitle: s.doneTitle, doneBody: s.doneBody, escalates: s.escalates })};
+  var globe=document.querySelector('.aria-globe'),card=document.getElementById('card'),
+      chip=document.getElementById('chip'),title=document.getElementById('title'),body=document.getElementById('body');
+  function set(st){globe.setAttribute('data-state',st)}
+  function detected(){chip.textContent=S.chip;title.textContent=S.title;body.textContent=S.body;card.className='card show'}
+  function resolved(){chip.textContent=S.doneChip;title.textContent=S.doneTitle;body.textContent=S.doneBody;
+    card.className='card show '+(S.escalates?'escalate':'done')}
+  function reset(){card.className='card';set('idle')}
+  // 9s loop: idle -> diagnosing -> detected -> fixing -> done/escalate -> reset
+  function play(){
+    reset();
+    setTimeout(function(){set('diagnosing')},900);
+    setTimeout(function(){detected()},2600);
+    setTimeout(function(){set(S.escalates?'escalation':'fixing')},4400);
+    setTimeout(function(){set(S.escalates?'escalation':'done');resolved()},6400);
+    setTimeout(function(){play()},9000);
+  }
+  play();
+</script>
+</body></html>`;
+}
+
+function galleryHtml(scenarios) {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8" />
+<title>ARIA Sentinel — Demo gallery</title>
+<style>body{background:#050505;color:#fff;font-family:Inter,system-ui,sans-serif;margin:0;padding:24px}
+h1{font-family:Cinzel,serif;color:#f1dca7;letter-spacing:.1em;font-size:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-top:18px}
+figure{margin:0;border:1px solid #2a2a2a;border-radius:14px;overflow:hidden;background:#0a0a0a}
+iframe{width:100%;height:420px;border:0;display:block}
+figcaption{padding:10px 14px;color:#aaa;font-size:13px}</style></head>
+<body><h1>ARIA Sentinel — Demo gallery</h1>
+<p style="color:#888">Self-running, loopable. Screen-record any tile for an mp4/GIF, or embed the file directly.</p>
+<div class="grid">
+${scenarios.map((s) => `<figure><iframe src="./${s.id}.html" title="${esc(s.label)}"></iframe><figcaption>${esc(s.label)}</figcaption></figure>`).join("\n")}
+</div></body></html>`;
+}
+
+function esc(v) {
+  return String(v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+let n = 0;
+for (const s of SCENARIOS) {
+  fs.writeFileSync(path.join(outDir, `${s.id}.html`), demoHtml(s));
+  n++;
+}
+fs.writeFileSync(path.join(outDir, "index.html"), galleryHtml(SCENARIOS));
+fs.writeFileSync(path.join(outDir, "README.md"), `# ARIA Sentinel demo reels
+
+${SCENARIOS.length} self-running, loopable HTML demos (real gold-globe SVG + fix-card UI). Regenerate with:
+
+\`\`\`
+node scripts/capture-demo.mjs
+\`\`\`
+
+Each plays detection → fix card → done on a 9s loop. **Zero dependencies, no install.**
+
+## To produce an mp4 / GIF (no ffmpeg bundled — Rule 10)
+1. Open \`<scenario>.html\` (or \`index.html\` for the gallery) in a browser.
+2. Screen-record the stage (Win+G Game Bar, or any recorder) for ~9s = one full loop.
+3. Save under \`design-review/demos/\` as \`<scenario>.mp4\`.
+
+## Embed in a landing page
+\`<iframe src="/aria-sentinel/demos/disk-low.html" width="380" height="420"></iframe>\`
+
+Scenarios: ${SCENARIOS.map((s) => s.id).join(" · ")}
+`);
+
+console.log(`Demo pipeline generated ${n} scenarios + gallery + README → ${path.relative(root, outDir)}`);

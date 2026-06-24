@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <radialGradient id="goldCore" cx="35%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#f1dca7" stop-opacity="0.95"></stop>
+      <stop offset="55%" stop-color="#c5a059" stop-opacity="0.7"></stop>
+      <stop offset="100%" stop-color="#5a3f10" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="goldGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c5a059" stop-opacity="0.3"></stop>
+      <stop offset="100%" stop-color="#c5a059" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="amberGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffcb6b" stop-opacity="0.45"></stop>
+      <stop offset="100%" stop-color="#ffcb6b" stop-opacity="0"></stop>
+    </radialGradient>
+    <filter id="softBlur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5"></feGaussianBlur>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="360" fill="#050505"></rect>
+
+  
+  <text x="40" y="40" fill="#c5a059" font-family="Cinzel, serif" font-size="14" letter-spacing="0.18em">ARIA SENTINEL · GLOBE STATES</text>
+  <text x="40" y="62" fill="#666" font-size="11" letter-spacing="0.06em">Each state ships as a tuned animation. Globe is gold (#c5a059) on black (#050505).</text>
+
+  
+  <g>
+    
+    <g transform="translate(150,180)">
+      <circle r="80" fill="url(#goldGlow)" filter="url(#softBlur)"></circle>
+      <circle r="40" fill="url(#goldCore)"></circle>
+      <circle r="40" fill="none" stroke="#c5a059" stroke-opacity="0.6" stroke-width="1"></circle>
+      <circle r="28" fill="none" stroke="#c5a059" stroke-opacity="0.4" stroke-width="0.8"></circle>
+      <circle r="14" fill="none" stroke="#c5a059" stroke-opacity="0.5" stroke-width="0.6"></circle>
+      <line x1="-40" y1="0" x2="40" y2="0" stroke="#c5a059" stroke-opacity="0.5" stroke-width="0.8"></line>
+      <line x1="0" y1="-40" x2="0" y2="40" stroke="#c5a059" stroke-opacity="0.5" stroke-width="0.8"></line>
+    </g>
+    <text x="150" y="290" fill="#fff" font-size="12" text-anchor="middle" letter-spacing="0.16em" font-weight="600">IDLE</text>
+    <text x="150" y="308" fill="#888" font-size="10" text-anchor="middle">Drift along edge · pulse 4s loop</text>
+
+    
+    <g transform="translate(360,180)">
+      <circle r="92" fill="url(#goldGlow)" filter="url(#softBlur)" opacity="0.85"></circle>
+      <circle r="80" fill="none" stroke="#c5a059" stroke-opacity="0.25" stroke-width="0.6"></circle>
+      <circle r="64" fill="none" stroke="#c5a059" stroke-opacity="0.35" stroke-width="0.7"></circle>
+      <circle r="40" fill="url(#goldCore)"></circle>
+      <circle r="40" fill="none" stroke="#c5a059" stroke-opacity="0.6" stroke-width="1"></circle>
+      <circle r="28" fill="none" stroke="#c5a059" stroke-opacity="0.4" stroke-width="0.8"></circle>
+      <circle r="14" fill="none" stroke="#c5a059" stroke-opacity="0.5" stroke-width="0.6"></circle>
+      <line x1="-40" y1="0" x2="40" y2="0" stroke="#c5a059" stroke-opacity="0.5" stroke-width="0.8"></line>
+      <line x1="0" y1="-40" x2="0" y2="40" stroke="#c5a059" stroke-opacity="0.5" stroke-width="0.8"></line>
+    </g>
+    <text x="360" y="290" fill="#fff" font-size="12" text-anchor="middle" letter-spacing="0.16em" font-weight="600">LISTENING</text>
+    <text x="360" y="308" fill="#888" font-size="10" text-anchor="middle">Outer rings expand · responding</text>
+
+    
+    <g transform="translate(570,180)">
+      <circle r="80" fill="url(#goldGlow)" filter="url(#softBlur)"></circle>
+      <circle r="40" fill="url(#goldCore)"></circle>
+      <g transform="rotate(35)">
+        <circle r="40" fill="none" stroke="#f1dca7" stroke-opacity="0.85" stroke-width="1.2"></circle>
+        <circle r="28" fill="none" stroke="#c5a059" stroke-opacity="0.7" stroke-width="0.8"></circle>
+        <circle r="14" fill="none" stroke="#c5a059" stroke-opacity="0.6" stroke-width="0.6"></circle>
+        <line x1="-44" y1="0" x2="44" y2="0" stroke="#c5a059" stroke-opacity="0.8" stroke-width="0.9"></line>
+        <line x1="0" y1="-44" x2="0" y2="44" stroke="#c5a059" stroke-opacity="0.8" stroke-width="0.9"></line>
+      </g>
+      
+      <circle r="48" fill="none" stroke="#f1dca7" stroke-width="2" stroke-dasharray="6 4" stroke-opacity="0.8"></circle>
+    </g>
+    <text x="570" y="290" fill="#fff" font-size="12" text-anchor="middle" letter-spacing="0.16em" font-weight="600">DIAGNOSING</text>
+    <text x="570" y="308" fill="#888" font-size="10" text-anchor="middle">Rotates 2× · scanning local KB</text>
+
+    
+    <g transform="translate(800,180)">
+      <circle r="100" fill="url(#goldGlow)" filter="url(#softBlur)"></circle>
+      <circle r="40" fill="url(#goldCore)"></circle>
+      <circle r="40" fill="none" stroke="#f1dca7" stroke-width="1.5"></circle>
+      <circle r="28" fill="none" stroke="#f1dca7" stroke-opacity="0.85" stroke-width="1"></circle>
+      <circle r="14" fill="none" stroke="#f1dca7" stroke-opacity="0.75" stroke-width="0.8"></circle>
+      <line x1="-44" y1="0" x2="44" y2="0" stroke="#f1dca7" stroke-width="1"></line>
+      <line x1="0" y1="-44" x2="0" y2="44" stroke="#f1dca7" stroke-width="1"></line>
+      
+      <g fill="#f1dca7">
+        <circle cx="-25" cy="-65" r="2" opacity="0.8"></circle>
+        <circle cx="10" cy="-72" r="1.5" opacity="0.7"></circle>
+        <circle cx="32" cy="-60" r="1.8" opacity="0.85"></circle>
+        <circle cx="-15" cy="-82" r="1.2" opacity="0.6"></circle>
+        <circle cx="20" cy="-90" r="1.6" opacity="0.55"></circle>
+        <circle cx="-38" cy="-50" r="1.4" opacity="0.7"></circle>
+      </g>
+    </g>
+    <text x="800" y="290" fill="#fff" font-size="12" text-anchor="middle" letter-spacing="0.16em" font-weight="600">FIXING</text>
+    <text x="800" y="308" fill="#888" font-size="10" text-anchor="middle">Rotates 4× · gold particles emit</text>
+
+    
+    <g transform="translate(1030,180)">
+      <circle r="92" fill="#f1dca7" opacity="0.18" filter="url(#softBlur)"></circle>
+      <circle r="40" fill="url(#goldCore)"></circle>
+      <circle r="40" fill="none" stroke="#f1dca7" stroke-width="1.5"></circle>
+      
+      <path d="M -16 2 L -4 14 L 18 -10" stroke="#7afbff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+    </g>
+    <text x="1030" y="290" fill="#fff" font-size="12" text-anchor="middle" letter-spacing="0.16em" font-weight="600">DONE</text>
+    <text x="1030" y="308" fill="#888" font-size="10" text-anchor="middle">Pulse · checkmark · card slides up</text>
+  </g>
+
+  
+  <text x="40" y="338" fill="#444" font-size="10">02_globe-states.svg · ARIA Sentinel · 2026-06-19</text>
+</svg>

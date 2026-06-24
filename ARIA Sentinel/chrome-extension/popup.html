@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARIA Sentinel</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header>
+        <span class="globe"></span>
+        <div>
+          <h1>ARIA Sentinel</h1>
+          <p id="bridge">Checking bridge</p>
+        </div>
+      </header>
+
+      <section class="status-badge-row" id="statusBadge">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">On-device · browser-only fixes stay local</span>
+        <span class="browser-chip" id="browserChip">browser</span>
+      </section>
+
+      <section class="actions">
+        <button id="clearCache">Clear site cache</button>
+        <button id="resetWorkers">Reset site worker</button>
+        <button id="resetZoom">Reset zoom</button>
+        <button id="openDesktop">Open desktop app</button>
+      </section>
+
+      <section class="site-toggle">
+        <label for="siteDisable">
+          <span id="siteName">On this site</span>
+          <small id="siteState">ARIA is active here</small>
+        </label>
+        <input type="checkbox" id="siteDisable" aria-label="Disable ARIA on this site" />
+      </section>
+
+      <section class="today-counter">
+        <span>What ARIA did here today</span>
+        <strong id="todayCount">0</strong>
+      </section>
+
+      <section class="chat">
+        <div id="messages"></div>
+        <div class="input-row">
+          <input id="input" placeholder="Ask ARIA about this page" />
+          <button id="send">Send</button>
+        </div>
+      </section>
+
+      <footer>
+        <span>0 data-upload paths to iisupp.net</span>
+      </footer>
+    </main>
+    <script src="./site-prefs.js"></script>
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

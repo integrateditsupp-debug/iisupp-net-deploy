@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'" />
+    <title>ARIA Sentinel Settings</title>
+    <link rel="stylesheet" href="./sentinel.css" />
+  </head>
+  <body>
+    <!-- RUN 17 — audit-tamper security banner (shown when state.auditIntegrity.ok === false). Sits above
+         the whole shell so it persists across every tab. -->
+    <div id="securityBanner" class="security-banner" role="alert" aria-live="assertive" hidden>
+      <div class="security-banner-text">
+        <strong class="security-banner-title">Security alert: Audit log tampered.</strong>
+        <span id="securityBannerSub" class="security-banner-sub"></span>
+      </div>
+      <div class="security-banner-actions">
+        <button id="securityBannerView" class="security-banner-btn">View audit log</button>
+        <button id="securityBannerDismiss" class="security-banner-btn ghost">Dismiss</button>
+      </div>
+    </div>
+    <main class="settings-shell">
+      <aside class="settings-rail">
+        <div class="settings-brand">
+          <aria-globe class="brand-globe" size="56"></aria-globe>
+          <div class="brand-name">Integrated IT Support Inc.</div>
+          <div class="brand-sub">ARIA Sentinel</div>
+        </div>
+        <nav class="settings-nav" aria-label="ARIA Sentinel settings navigation"><!-- RUN 23d — IA 17→9; merged parents carry an expand-on-active sub-anchor list that smooth-scrolls to ## H2 (old tab-id = anchor id) -->
+          <button class="nav-item active" data-tab="dashboard"><span class="nav-dot"></span>Dashboard<span class="nav-caret">▸</span></button>
+          <div class="nav-sub open" data-sub="dashboard">
+            <a href="#overview" data-anchor="overview">Overview</a>
+            <a href="#performance" data-anchor="performance">Performance</a>
+            <a href="#sla" data-anchor="sla">SLA</a>
+            <a href="#dashActivity" data-anchor="dashActivity">Activity</a>
+          </div>
+          <!-- RUN 33 PIVOT — ARIA brain as one parent tab with 5 sub-sections (Chat primary). -->
+          <button class="nav-item" data-tab="aria"><span class="nav-dot"></span>ARIA<span class="nav-caret">▸</span></button>
+          <div class="nav-sub" data-sub="aria">
+            <a href="#aria-chat" data-anchor="aria-chat">Chat</a>
+            <a href="#aria-learning" data-anchor="aria-learning">Learning</a>
+            <a href="#aria-health" data-anchor="aria-health">Health</a>
+            <a href="#aria-memory" data-anchor="aria-memory">Memory</a>
+            <a href="#aria-agents" data-anchor="aria-agents">Agents</a>
+          </div>
+          <button class="nav-item" data-tab="control-center"><span class="nav-dot"></span>Control Center</button>
+          <button class="nav-item" data-tab="recipes"><span class="nav-dot"></span>Recipes</button>
+          <button class="nav-item" data-tab="compliance-privacy"><span class="nav-dot"></span>Compliance &amp; Privacy<span class="nav-caret">▸</span></button>
+          <div class="nav-sub" data-sub="compliance-privacy">
+            <a href="#compliance" data-anchor="compliance">Compliance</a>
+            <a href="#privacy" data-anchor="privacy">Privacy</a>
+          </div>
+          <button class="nav-item" data-tab="reports"><span class="nav-dot"></span>Reports</button>
+          <button class="nav-item" data-tab="knowledge"><span class="nav-dot"></span>Knowledge &amp; policy</button>
+          <button class="nav-item" data-tab="system"><span class="nav-dot"></span>System<span class="nav-caret">▸</span></button>
+          <div class="nav-sub" data-sub="system">
+            <a href="#system-context" data-anchor="system-context">This Machine</a>
+            <a href="#cross-platform" data-anchor="cross-platform">Platform Support</a>
+          </div>
+          <button class="nav-item" data-tab="servicenow"><span class="nav-dot"></span>ServiceNow</button>
+          <button class="nav-item" data-tab="settings"><span class="nav-dot"></span>Settings<span class="nav-caret">▸</span></button>
+          <div class="nav-sub" data-sub="settings">
+            <a href="#mode" data-anchor="mode">Mode</a>
+            <a href="#hotkeys" data-anchor="hotkeys">Hotkeys</a>
+            <a href="#troubleshoot" data-anchor="troubleshoot">Troubleshoot</a>
+            <a href="#support" data-anchor="support">Support</a>
+            <a href="#about" data-anchor="about">About</a>
+          </div>
+        </nav>
+        <div class="rail-footer">
+          <aria-globe class="aria-living-globe" size="120"></aria-globe>
+          <strong>Resident agent</strong>
+          <small id="railVersion">v0.1.0</small>
+        </div>
+      </aside>
+
+      <section class="settings-workspace">
+        <header class="settings-topbar">
+          <div>
+            <p class="eyebrow">ARIA Sentinel - Settings</p>
+            <h1 id="pageTitle">Dashboard</h1>
+          </div>
+          <div class="status-stack">
+            <span id="railStatus" class="chip mode-pill">Manual mode - watching</span>
+            <span id="trialBadge" class="chip amber" hidden>Trial</span>
+            <span id="bridgeStatus" class="chip cyan">Bridge checking</span>
+            <!-- RUN 33 PIVOT — "Dry-run safe" pill removed; execution safety is governed by the chosen Mode. -->
+            <!-- RUN 33-A — live KB freshness (version + last-synced), filled from state.kbMeta after a KB answer -->
+            <span id="kbFreshness" class="chip" title="ARIA's knowledge base version and when it last synced from iisupp.net/aria" hidden></span>
+          </div>
+        </header>
+
+        <!-- ============ ARIA (RUN 33 PIVOT: Chat + Learning + Health + Memory + Agents) ============ -->
+        <section id="aria" class="tab-panel aria-tab">
+          <!-- ── Chat sub-section (primary) — reuses the Slice 0 premium design, in-tab + responsive ── -->
+          <span id="aria-chat" class="ia-anchor"></span>
+          <section class="panel aria-chat-panel">
+            <div class="aria-chat-head">
+              <div class="aria-chat-globe" aria-hidden="true"></div>
+              <p class="aria-chat-company">Integrated IT Support Inc.</p>
+              <p class="aria-chat-subtitle">ARIA Chat · IT Assistant</p>
+              <div class="aria-chat-divider"></div>
+            </div>
+            <div class="aria-chat-log" id="ariaChatLog">
+              <div class="aria-chat-welcome" id="ariaChatWelcome"><strong>Ask ARIA anything.</strong><br/>Windows, Mac, iPhone, iPad, Android, ChromeOS or Linux — answered from the knowledge base first, instantly.</div>
+            </div>
+            <form class="aria-chat-composer" id="ariaChatForm">
+              <textarea id="ariaChatInput" placeholder="Ask ARIA anything…" rows="1"></textarea>
+              <button class="aria-chat-send" id="ariaChatSend" type="submit">Send →</button>
+            </form>
+            <div class="aria-chat-statusline">Answer chain: <b>KB-first</b> ($0) · <b>Anthropic</b> fallback · <b>local KB</b> offline · <span id="ariaChatChunks">203 chunks</span></div>
+          </section>
+
+          <!-- ── Learning ── -->
+          <div class="merge-head" id="aria-learning"><div class="merge-bar" aria-hidden="true"></div><div><p class="eyebrow">ARIA</p><h2>Learning</h2><p class="merge-sub">What ARIA is learning from the web /aria knowledge base</p></div></div>
+          <section class="panel">
+            <p class="eyebrow" id="learningHeader">Knowledge base</p>
+            <h2>What ARIA recently learned</h2>
+            <div id="learningRecent" class="learning-recent"><p class="merge-sub">Loading recent learnings…</p></div>
+            <h2 style="margin-top:18px">Coverage by tier</h2>
+            <div id="learningTiers" class="learning-bars"></div>
+            <h2 style="margin-top:18px">Top categories</h2>
+            <div id="learningCategories" class="learning-bars"></div>
+          </section>
+
+          <!-- ── Health (system status + 3-tier fall-through chain) ── -->
+          <div class="merge-head" id="aria-health"><div class="merge-bar" aria-hidden="true"></div><div><p class="eyebrow">ARIA</p><h2>Health</h2><p class="merge-sub">Live answer-chain status</p></div></div>
+          <section class="panel">
+            <!-- 🔒 MANDATORY (RUN 33 hard-stop): the Anthropic-preserved banner is locked and must never be hidden. -->
+            <div class="anthropic-banner" id="anthropicBanner">Anthropic is your last-resort safety net. ARIA tries the knowledge base first (free), then Anthropic only for novel questions, then the bundled local KB offline. This chain is locked.</div>
+            <div class="health-status"><span class="health-dot" id="healthDot" data-status="unknown"></span><strong id="healthOverall">Checking…</strong><span class="merge-sub" id="healthProbe"></span></div>
+            <div class="fallthrough" id="fallthroughChain"></div>
+          </section>
+
+          <!-- ── Memory (local sessions, R11-guarded) ── -->
+          <div class="merge-head" id="aria-memory"><div class="merge-bar" aria-hidden="true"></div><div><p class="eyebrow">ARIA</p><h2>Memory</h2><p class="merge-sub">Local conversation sessions — never leaves this device</p></div></div>
+          <section class="panel">
+            <div id="memoryStats" class="memory-stats"><p class="merge-sub">Reading local sessions…</p></div>
+            <div id="memoryList" class="memory-list"></div>
+            <!-- Export / Clear actions ship with the Memory live-data wiring (next build slice). -->
+          </section>
+
+          <!-- ── Agents (fleet heartbeats, read-only) ── -->
+          <div class="merge-head" id="aria-agents"><div class="merge-bar" aria-hidden="true"></div><div><p class="eyebrow">ARIA</p><h2>Agents</h2><p class="merge-sub">Background agent fleet — read-only heartbeats</p></div></div>
+          <section class="panel">
+            <div id="agentFleet" class="agent-fleet"><p class="merge-sub">Reading agent heartbeats…</p></div>
+          </section>
+        </section>
+
+        <!-- ============ DASHBOARD (RUN 23d: Overview + Performance + SLA + Activity) ============ -->
+        <section id="dashboard" class="tab-panel active">
+          <span id="overview" class="ia-anchor"></span>
+          <section class="panel hero-panel">
+            <div id="heroStatus" class="hero-status" data-level="protected"><span class="hero-emoji">🟢</span><strong class="hero-label">PROTECTED</strong></div>
+            <p id="heroSubline" class="hero-subline">ARIA is watching.</p>
+          </section>
+          <div id="kpiTiles" class="kpi-grid"></div>
+          <section class="panel" id="pendingActionsPanel" hidden>
+            <p class="eyebrow">Needs attention</p><h2>Pending actions</h2>
+            <div id="pendingActions" class="pending-actions"></div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Quick actions</p>
+            <div class="settings-grid">
+              <button id="dashDiagnose" class="primary">Diagnose issue</button>
+              <button id="dashHealthCheck" class="ghost">Run health check</button>
+              <button id="dashCheckUpdates" class="ghost">Check for updates</button>
+              <button id="dashExportEvidence" class="ghost">Export evidence pack</button>
+            </div>
+          </section>
+
+          <!-- ## Performance (merged from the Performance tab) -->
+          <div class="merge-head" id="performance">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Performance</p><h2>Performance</h2><p class="merge-sub">Operational KPIs · AI diagnosis quality · usage patterns</p></div>
+          </div>
+          <section class="panel"><p class="eyebrow">Operational KPIs</p><h2>Operations</h2><div id="perfOperational" class="kpi-grid"></div></section>
+          <section class="panel"><p class="eyebrow">AI performance · the moat</p><h2>Diagnosis quality</h2><div id="perfAI" class="kpi-grid"></div></section>
+          <section class="panel"><p class="eyebrow">Usage patterns</p><h2>Usage</h2><div id="perfUsage" class="health-list"></div></section>
+
+          <!-- ## SLA (merged from the SLA tab) -->
+          <div class="merge-head" id="sla">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">SLA</p><h2>SLA</h2><p class="merge-sub">Compliance window · uptime · response &amp; resolution by severity · breaches</p></div>
+          </div>
+          <section class="panel"><p class="eyebrow">Compliance window</p><h2 id="slaComposite">SLA-met this month</h2><p class="note" id="slaComplianceNote"></p></section>
+          <section class="panel"><p class="eyebrow">Uptime</p><h2>Availability</h2><div id="slaUptime" class="kpi-grid"></div></section>
+          <section class="panel"><p class="eyebrow">Response time</p><h2>Response SLA by severity</h2><div id="slaResponse" class="health-list"></div></section>
+          <section class="panel"><p class="eyebrow">Resolution time</p><h2>Resolution SLA by severity</h2><div id="slaResolution" class="health-list"></div></section>
+          <section class="panel"><p class="eyebrow">Breaches</p><h2>SLA breach tracking</h2><div id="slaBreaches" class="health-list"></div><p class="note">Service credits are auto-calculated but never auto-issued — admin sign-off required.</p></section>
+
+          <!-- ## Activity (kept from Overview, now last per RUN 23d layout) -->
+          <div class="merge-head" id="dashActivity">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Activity</p><h2>Recent activity</h2></div>
+          </div>
+          <section class="panel">
+            <div id="recentActivity" class="activity-timeline"></div>
+          </section>
+          <footer id="trustStrip" class="trust-strip">🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization</footer>
+        </section>
+
+        <!-- ============ CONTROL CENTER (unchanged) ============ -->
+        <section id="control-center" class="tab-panel">
+          <section class="panel">
+            <p class="eyebrow">Local agent</p>
+            <h2>Quick controls</h2>
+            <div class="settings-grid">
+              <button id="startAria" class="primary">Start ARIA</button>
+              <button id="stopAria" class="ghost">Stop ARIA</button>
+              <button id="showGlobe" class="ghost">Show globe</button>
+              <button id="pauseOneHour" class="ghost">Pause 1 hour</button>
+              <button id="runSelfDiagnose" class="ghost">Self check</button>
+              <button id="runSelfRepair" class="primary">Repair ARIA</button>
+              <button id="diagnoseIssue" class="primary">Diagnose issue</button>
+              <button id="pauseUpdates" class="ghost">Pause updates 7 days</button>
+              <button id="openAdminConsole" class="ghost">Open admin console</button>
+            </div>
+            <p id="selfHealHeadline" class="note"></p>
+            <div id="systemChecks" class="health-list"></div>
+          </section>
+        </section>
+
+        <!-- ============ RECIPES (unchanged) ============ -->
+        <section id="recipes" class="tab-panel">
+          <section class="panel">
+            <div class="panel-actions">
+              <div>
+                <p class="eyebrow">Local recipe registry</p>
+                <h2>Vetted fixes</h2>
+              </div>
+              <button id="simulateAriaError" class="ghost">Simulate ARIA error</button>
+            </div>
+            <p id="recipeCatalogMeta" class="note">Loading recipes.</p>
+            <div id="recipeList" class="recipe-list compact-list"></div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Tier-0 · safe-generic</p>
+            <h2>Safe Generic fixes</h2>
+            <p class="note">Run when a symptom doesn't match a specific cause. Every one is dry-run by default, content-blind, audit-logged, and asks before it changes anything. None ever deletes your documents, touches system files, or disables security.</p>
+            <div id="tier0List" class="recipe-list compact-list"></div>
+          </section>
+        </section>
+
+        <!-- ============ COMPLIANCE & PRIVACY (RUN 23d: Compliance + Privacy verifier) ============ -->
+        <section id="compliance-privacy" class="tab-panel">
+          <!-- ## Compliance (merged from the Compliance tab) -->
+          <div class="merge-head" id="compliance">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Compliance</p><h2>Compliance</h2><p class="merge-sub">Audit integrity · safety gate · R11 · framework scores · evidence export</p></div>
+          </div>
+          <section class="panel"><p class="eyebrow">Audit integrity</p><h2>Hash chain</h2><div id="compAudit" class="health-list"></div></section>
+          <section class="panel"><p class="eyebrow">Privacy verifier</p><h2>Outbound + sanitization</h2><div id="compPrivacy" class="health-list"></div></section>
+          <section class="panel"><p class="eyebrow">Safety gate</p><h2>Tier-0 blocks</h2><div id="compTier0" class="health-list"></div></section>
+          <section class="panel"><p class="eyebrow">R11 privacy rule</p><h2>Private folder enforcement</h2><div id="compR11" class="health-list"></div></section>
+          <section class="panel"><p class="eyebrow">Frameworks</p><h2>Composite scores</h2><div id="compFrameworks" class="kpi-grid"></div></section>
+          <section class="panel"><p class="eyebrow">Evidence</p><h2>Auditor export</h2><div class="button-row"><button id="compExportEvidence" class="ghost wide">Export evidence pack</button><span id="compEvidenceResult" class="capture-verdict"></span></div></section>
+
+          <!-- ## Privacy (merged from the Privacy verifier tab) -->
+          <div class="merge-head" id="privacy">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Privacy</p><h2>Privacy verifier</h2><p class="merge-sub">Outbound paths · live 10s capture · transparency log · delete safety</p></div>
+          </div>
+          <div class="settings-grid-main">
+            <section class="panel">
+              <p class="eyebrow">Privacy verifier</p>
+              <h2>Outbound paths in binary</h2>
+              <div id="outboundList" class="outbound-list"></div>
+            </section>
+            <section class="panel stat-panel">
+              <span>0</span>
+              <strong>data-upload paths to iisupp.net</strong>
+              <p>Telemetry is content-blind. Raw pages, document text, URLs, screenshots, credentials and command output are not sent.</p>
+              <button id="exportAudit" class="ghost wide">Export audit JSON</button>
+            </section>
+          </div>
+          <section class="panel">
+            <p class="eyebrow">Live network capture</p>
+            <h2>Prove it in 10 seconds</h2>
+            <p class="muted">Sniffs every outbound request for 10s and checks each against the 6-host allowlist and the content-blind payload rule.</p>
+            <div class="button-row">
+              <button id="liveCapture" class="primary">Live capture (10s)</button>
+              <span id="captureVerdict" class="capture-verdict"></span>
+            </div>
+            <div id="captureRows" class="capture-rows"></div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">RFP evidence pack</p>
+            <h2>Export an audit bundle</h2>
+            <p class="muted">One ZIP with the last 30 days of audit log, the privacy snapshot, the latest network capture, the recipe registry version, the SBOM and the signed-bundle hash — saved to your Documents folder.</p>
+            <div class="button-row">
+              <button id="exportEvidence" class="ghost wide">Export evidence pack</button>
+              <span id="evidenceResult" class="capture-verdict"></span>
+            </div>
+            <div class="button-row" style="margin-top:10px">
+              <button id="exportAuditCsv" class="ghost">Download audit (CSV)</button>
+              <button id="exportAuditPdf" class="ghost">Download audit (PDF)</button>
+            </div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Transparency log</p>
+            <h2>Local audit only</h2>
+            <div id="logList" class="log-list"></div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Delete safety</p>
+            <h2>Triple-confirm on delete</h2>
+            <p class="muted">Every delete (file, folder, recipe revert, KB purge) clears a 3-step gate. File types you opt out of drop to a single confirmation — never silent. Opt-outs are stored locally in <code>delete-prefs.json</code>.</p>
+            <div id="deletePrefsList" class="source-list"></div>
+            <div class="button-row">
+              <button id="resetDeletePrefs" class="ghost">Reset all delete confirmations</button>
+            </div>
+          </section>
+        </section>
+
+        <!-- ============ REPORTS (unchanged) ============ -->
+        <section id="reports" class="tab-panel">
+          <section class="panel">
+            <div class="panel-actions"><div><p class="eyebrow">Quarterly + ad-hoc</p><h2>Reports</h2></div><button id="generateReport" class="primary">Generate ad-hoc report now</button></div>
+            <p class="note" id="reportsRetentionNote"></p>
+            <div id="reportsList" class="health-list"></div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Email delivery</p><h2>Quarterly auto-email</h2>
+            <label class="field">Key contact email <input id="reportContactEmail" type="email" placeholder="cfo@company.com" /></label>
+            <label class="field">CC (optional) <input id="reportCcEmails" type="text" placeholder="ops@company.com" /></label>
+            <label class="toggle-row" style="display:flex;align-items:center;gap:10px"><input id="reportOptIn" type="checkbox" /> <span>Email the quarterly report to my key contact (default: quarterly)</span></label>
+            <div class="button-row"><button id="saveReportPrefs" class="ghost">Save</button><span id="reportPrefsStatus" class="note"></span></div>
+          </section>
+          <section class="panel"><p class="eyebrow">Preview</p><h2>What the customer receives</h2><pre id="reportPreview" class="whats-new-body"></pre></section>
+        </section>
+
+        <!-- ============ KNOWLEDGE & POLICY (unchanged) ============ -->
+        <section id="knowledge" class="tab-panel">
+          <div class="settings-grid-main">
+            <section class="panel">
+              <p class="eyebrow">Company knowledge</p>
+              <h2>Knowledge sources</h2>
+              <div class="dropzone">Drop documents or browse<br><small>PDF - DOCX - MD - TXT - indexed locally into the KB</small></div>
+              <button id="updateKnowledge" class="ghost wide">Update knowledge</button>
+              <div id="knowledgeRows" class="source-list"></div>
+            </section>
+            <section class="panel">
+              <p class="eyebrow">Browser companion</p>
+              <h2>ARIA for Chrome / Edge</h2>
+              <p class="note">The gold A appears in your browser toolbar and fixes browser issues on-device.</p>
+              <div class="button-row">
+                <button id="extInstructions" class="ghost">Install instructions</button>
+                <button id="openChromeExt" class="ghost" data-support="https://iisupp.net/aria">Open chrome://extensions</button>
+              </div>
+              <ol id="extSteps" class="ext-steps" hidden>
+                <li>Open your browser's extensions page (chrome://extensions or edge://extensions).</li>
+                <li>Enable <b>Developer mode</b> (top-right toggle).</li>
+                <li>Click <b>Load unpacked</b>.</li>
+                <li>Select: <code>&lt;Sentinel install path&gt;\resources\chrome-extension</code></li>
+                <li>Done — the gold A appears in your toolbar.</li>
+              </ol>
+            </section>
+            <section class="panel">
+              <p class="eyebrow">Governance gate</p>
+              <h2>Before every fix</h2>
+              <div class="flow"><span>Detect issue</span><span>Check policy corpus</span><span>Allowed: apply or walk through</span><span>Restricted: escalate</span></div>
+              <p class="note">Stored encrypted on-device in production; never uploaded to iisupp.net.</p>
+            </section>
+          </div>
+        </section>
+
+        <!-- ============ SYSTEM (RUN 23d: System Context + Cross-Platform) ============ -->
+        <section id="system" class="tab-panel">
+          <!-- ## This Machine (merged from the System Context tab) -->
+          <div class="merge-head" id="system-context">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">This Machine</p><h2>This Machine</h2><p class="merge-sub">Local inventory · apps · services · drivers — content-blind</p></div>
+          </div>
+          <section class="panel">
+            <div class="panel-actions">
+              <div><p class="eyebrow">Local inventory</p><h2>System Context</h2></div>
+              <button id="refreshSystemContext" class="ghost">Refresh</button>
+            </div>
+            <p id="systemContextMeta" class="note">All inventory stays on this device. Nothing is sent off-device unless you click "Share with ARIA for diagnosis".</p>
+            <input id="systemContextSearch" type="text" placeholder="Search apps, services, drivers…" />
+            <div id="systemContextSummary" class="health-list"></div>
+            <h3 style="margin-top:14px">Installed apps</h3>
+            <div id="systemContextApps" class="source-list"></div>
+          </section>
+
+          <!-- ## Platform Support (merged from the Cross-Platform tab) -->
+          <div class="merge-head" id="cross-platform">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Platform Support</p><h2>Platform Support</h2><p class="merge-sub">Cross-platform blueprints — knowledge only, no remote control</p></div>
+          </div>
+          <section class="panel">
+            <p class="eyebrow">Tech-support reference</p>
+            <h2>Cross-Platform blueprints</h2>
+            <p class="note">Knowledge only — ARIA guides users on any platform by voice/chat. No remote control of phones or other machines.</p>
+            <div id="blueprintList" class="source-list"></div>
+            <pre id="blueprintView" class="whats-new-body" hidden></pre>
+          </section>
+        </section>
+
+        <!-- ============ SERVICENOW (own tab — RUN 23d: Ahmad keeps it standalone) ============ -->
+        <section id="servicenow" class="tab-panel">
+          <div class="settings-grid-main">
+            <section class="panel">
+              <p class="eyebrow">ServiceNow connection</p>
+              <h2>Incident bridge</h2>
+              <label class="field">Instance URL <input value="https://customer.service-now.com" readonly /></label>
+              <label class="field">OAuth 2.0 <input value="Not connected in MVP dry-run" readonly /></label>
+              <label class="field">Default caller <input value="ARIA Sentinel local user" readonly /></label>
+              <button id="testServiceNow" class="ghost wide">Test connection</button>
+              <p class="note">Live posting is enabled only after customer OAuth and assignment group approval.</p>
+            </section>
+            <section class="panel">
+              <p class="eyebrow">Assignment group mapping</p>
+              <h2>Automatic routing</h2>
+              <div id="routingRows" class="mapping"></div>
+            </section>
+          </div>
+          <section class="panel">
+            <p class="eyebrow">Integrations</p>
+            <h2>Notify on auto-fix (Slack / Teams)</h2>
+            <p class="note">Sends a content-blind event (recipe · outcome · endpoint handle · duration) when ARIA auto-applies a fix. Never page content. Slack or Teams incoming-webhook URLs only.</p>
+            <label class="field">Webhook URL <input id="notifyWebhook" type="url" placeholder="Slack or Teams incoming-webhook URL" /></label>
+            <label class="field">Channel (optional) <input id="notifyChannel" type="text" placeholder="#it-fixes" /></label>
+            <div class="button-row">
+              <button id="saveNotify" class="ghost">Save</button>
+              <button id="testNotify" class="ghost">Send test ping</button>
+              <span id="notifyStatus" class="note"></span>
+            </div>
+          </section>
+          <section class="panel sn-incidents">
+            <div class="sn-head">
+              <img class="mini-globe live-globe-img" src="aria-live-globe.svg" alt="" aria-hidden="true">
+              <div>
+                <p class="eyebrow">My incidents</p>
+                <h2>Synced with ServiceNow</h2>
+              </div>
+              <span id="snSyncNote" class="sync-note">Newest first</span>
+            </div>
+            <p id="snStatusNote" class="note">ServiceNow live connection is configured per customer. Until then, incidents stay as local content-blind drafts.</p>
+            <div id="incidentList" class="incident-stack"></div>
+          </section>
+        </section>
+
+        <!-- ============ SETTINGS (RUN 23d: Mode + Hotkeys + Troubleshoot + Support + About) ============ -->
+        <section id="settings" class="tab-panel">
+          <!-- ## Mode (merged from the Mode tab) -->
+          <div class="merge-head" id="mode">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Mode</p><h2>Mode</h2><p class="merge-sub">Choose how ARIA helps · dry-run toggle · ask ARIA dock</p></div>
+          </div>
+          <section class="panel mode-panel-centered">
+            <p class="eyebrow">Choose how ARIA helps</p>
+            <h2>Mode</h2>
+            <div class="mode-list">
+              <button class="mode-row selected" data-mode="manual"><span class="radio"></span><span><strong>Manual</strong><em>DEFAULT - FREE</em><small>ARIA detects issues and walks you through fixes in chat. The globe free-roams; nothing is applied automatically.</small></span></button>
+              <button class="mode-row" data-mode="confirmed"><span class="radio"></span><span><strong>Confirmed</strong><em>PAID</em><small>The globe pins on top and pops a fix-card bubble; ARIA applies once you confirm.</small></span></button>
+              <button class="mode-row" data-mode="autonomous"><span class="radio"></span><span><strong>Autonomous</strong><em>PAID - OPT-IN</em><small>The globe pins on top and auto-applies low-risk (green) fixes; risky fixes still confirm.</small></span></button>
+            </div>
+            <!-- RUN 33 PIVOT — dry-run checkbox removed; the chosen Mode governs preview-vs-execute (Manual previews; Confirmed/Autonomous execute after supervisor + countdown + kill-switch). -->
+          </section>
+          <!-- RUN 34-2 — the redundant Settings "Ask ARIA" box was removed; ARIA Chat lives only in the ARIA tab. -->
+
+          <!-- ## Hotkeys (merged from the Hotkeys tab) -->
+          <div class="merge-head" id="hotkeys">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Hotkeys</p><h2>Hotkeys</h2><p class="merge-sub">Local shortcuts · live status · rebind</p></div>
+          </div>
+          <section class="panel">
+            <p class="eyebrow">Hotkeys</p>
+            <h2>Local shortcuts</h2>
+            <div class="table-list">
+              <div class="table-row"><span>Ctrl + Alt + A</span><strong>Open ARIA chat (globe bubble)</strong><em class="active-badge">Active</em></div>
+              <div class="table-row"><span>Ctrl + Alt + G</span><strong>Show or hide the globe</strong><em class="active-badge">Active</em></div>
+              <div class="table-row"><span>Ctrl + Alt + P</span><strong>Pause watching for 24 hours</strong><em class="active-badge">Active</em></div>
+              <div class="table-row kill-row"><span>Ctrl + Alt + K</span><strong>Kill ARIA + undo last action</strong><em class="kill-badge">Panic</em></div>
+            </div>
+            <h3 style="margin-top:14px">Live status</h3>
+            <div id="hotkeyStatus" class="table-list"></div>
+          </section>
+
+          <!-- ## Troubleshoot (merged from the Troubleshoot tab) -->
+          <div class="merge-head" id="troubleshoot">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Troubleshoot</p><h2>Troubleshoot</h2><p class="merge-sub">7-point self-test · restore points · recipe circuit breaker</p></div>
+          </div>
+          <section class="panel">
+            <div class="panel-actions">
+              <div><p class="eyebrow">Self-test</p><h2>Is the agent running?</h2></div>
+              <button id="runDiagnostic" class="ghost">Run diagnostic</button>
+            </div>
+            <p id="diagnosticSummary" class="note">Run a 7-point check: bridge · watchers · ServiceNow · KB bundle · audit log · tray · overlay. Self check &amp; Repair ARIA live in Control Center.</p>
+            <div id="diagnosticRows" class="health-list"></div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Restore points</p>
+            <h2>Roll back any fix</h2>
+            <div id="restorePoints" class="restore-list"></div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Recipe circuit breaker</p>
+            <h2>Safety brake</h2>
+            <p class="note">If a recipe fails repeatedly its breaker trips and it stops auto-running. Manage per-recipe breakers in the admin console.</p>
+            <button id="openAdminConsole2" class="ghost">Open admin console</button>
+          </section>
+
+          <!-- ## Support (merged from the Support tab — RUN 23d: Ahmad folds Support into Settings) -->
+          <div class="merge-head" id="support">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Support</p><h2>Support</h2><p class="merge-sub">Talk to Integrated IT Support · company details</p></div>
+          </div>
+          <section class="panel">
+            <p class="eyebrow">Need help?</p>
+            <h2>Talk to Integrated IT Support</h2>
+            <div class="support-grid">
+              <div class="support-row"><span>Phone</span><strong>+1-647-581-3182</strong><button class="ghost" data-support="tel:+16475813182">Call now</button></div>
+              <div class="support-row"><span>Email</span><strong>ahmad.wasee@iisupp.net</strong><button class="ghost" data-support="mailto:ahmad.wasee@iisupp.net">Email us</button></div>
+              <div class="support-row"><span>WhatsApp</span><strong>wa.me/16475813182</strong><button class="ghost" data-support="https://wa.me/16475813182">Open WhatsApp</button></div>
+              <div class="support-row"><span>Web chat</span><strong>iisupp.net/aria</strong><button class="ghost" data-support="https://iisupp.net/aria">Open chat</button></div>
+              <div class="support-row"><span>Status</span><strong>iisupp.net/sentinel-status</strong><button class="ghost" data-support="https://iisupp.net/sentinel-status">Check status</button></div>
+              <!-- RUN 33-E — re-run the first-launch Setup wizard -->
+              <div class="support-row"><span>Setup</span><strong>First-launch wizard</strong><button id="reRunSetup" class="ghost" type="button">Re-run Setup</button></div>
+            </div>
+            <p class="note">Business hours: Mon–Fri 9am–6pm ET · Emergency support (Pro+ plans): 24/7</p>
+          </section>
+          <section class="panel company-footer">
+            <strong>Integrated IT Support Inc.</strong>
+            <p>30 Fothergill Crt, Whitby ON L1P 1L4 · Canada<br />+1-647-581-3182 · ahmad.wasee@iisupp.net<br />D-U-N-S 241726397 · iisupp.net</p>
+          </section>
+
+          <!-- ## About (merged from the About tab) -->
+          <div class="merge-head" id="about">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">About</p><h2>About</h2><p class="merge-sub">Floating globe · version · license &amp; subscription · ROI · low-power · auto-update &amp; startup</p></div>
+          </div>
+          <section class="panel">
+            <p class="eyebrow">Display</p>
+            <h2>Floating globe</h2>
+            <label class="toggle-row" style="display:flex;align-items:center;gap:10px">
+              <input id="showFloatingGlobe" type="checkbox" checked />
+              <span>Show the floating globe on my desktop</span>
+            </label>
+            <small class="note">Hide it if you don't want a visible icon — the tray menu still works either way. The globe is click-through (it never blocks clicks); press Ctrl+Alt+G to click it.</small>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">About</p>
+            <h2>Resident IT support that never sleeps</h2>
+            <p>ARIA Sentinel lives on your PC, watches for tech problems, and fixes them before they slow you down without sending your data anywhere.</p>
+            <div class="table-list">
+              <div class="table-row"><span>Version</span><strong id="aboutVersion">0.1.0</strong><em>Internal MVP</em></div>
+              <div class="table-row"><span>Bridge</span><strong>127.0.0.1:37841</strong><em>Local only</em></div>
+              <div class="table-row"><span>Admin</span><strong>Separate local web console</strong><em>Owner-only</em></div>
+            </div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">License</p>
+            <h2>Trial &amp; subscription</h2>
+            <p id="licenseStatus" class="note">Manual mode (free). Start a 30-day trial of Confirmed + Autonomous.</p>
+            <label class="field">Email for trial <input id="trialEmail" type="email" placeholder="you@company.com" /></label>
+            <div class="button-row">
+              <button id="upgradePlanBtn" class="primary">Upgrade plan</button>
+              <button id="startTrial" class="ghost">Start 30-day trial</button>
+              <button id="checkUpdates" class="ghost">Check for updates</button>
+              <button id="manageSubscription" class="ghost">Manage subscription</button>
+              <span id="updateStatus" class="note"></span>
+            </div>
+          </section>
+          <section class="panel">
+            <p class="eyebrow">Value this period</p>
+            <h2>ROI</h2>
+            <p id="roiSummary" class="note">ARIA has not recorded any fixes yet.</p>
+            <label class="field">Your hourly rate (USD) <input id="roiRate" type="number" value="75" min="0" /></label>
+          </section>
+          <section class="panel">
+            <div class="panel-actions">
+              <div><p class="eyebrow">Battery</p><h2>Low-power mode</h2></div>
+              <label class="switch"><input type="checkbox" id="lowPowerToggle" /> <span>Enable</span></label>
+            </div>
+            <p class="note">Drops watcher polling to 60s, the globe to 15fps, and disables animation. Tip: ARIA runs at &lt;1% idle CPU.</p>
+          </section>
+          <section class="panel">
+            <div class="panel-actions">
+              <div><p class="eyebrow">Account</p><h2>License</h2></div>
+              <button id="logoutBtn" class="ghost">Logout</button>
+            </div>
+            <p id="accountStatus" class="note">Trial active.</p>
+            <div class="button-row">
+              <input id="licenseKeyInput" type="text" placeholder="Enter license" style="flex:1;min-width:200px" />
+              <button id="enterLicenseBtn" class="ghost">Activate</button>
+              <button id="managePlanBtn" class="ghost">Manage subscription</button>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-actions">
+              <div><p class="eyebrow">Updates</p><h2>Auto-update</h2></div>
+              <label class="switch"><input type="checkbox" id="autoUpdateToggle" checked /> <span>Auto-update</span></label>
+            </div>
+            <p id="updateStatusLine" class="note">You're on the latest version.</p>
+            <div class="button-row">
+              <button id="installUpdateBtn" class="primary" hidden>Install update</button>
+              <button id="getLatestBtn" class="ghost" data-support="https://iisupp.net/downloads">Get latest from website</button>
+            </div>
+            <h3 style="margin-top:14px">Update history</h3>
+            <div id="updateHistory" class="health-list"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-actions">
+              <div><p class="eyebrow">Updates &amp; startup</p><h2>Self-maintaining</h2></div>
+              <button id="checkUpdateChannel" class="ghost">Check for updates</button>
+            </div>
+            <div id="startupBanner" class="security-banner-sub" style="color:var(--aria-warning);margin-bottom:8px" hidden></div>
+            <div class="health-list">
+              <div class="health-row"><span>version</span><strong id="updCurrentVersion">v0.1.0</strong><em id="updLastCheck">never checked</em></div>
+              <div class="health-row"><span>pending</span><strong id="updPending">No update pending.</strong><em id="updStrike"></em></div>
+            </div>
+            <label class="toggle-row" style="display:flex;align-items:center;gap:10px;margin-top:10px">
+              <input id="autoStartupToggle" type="checkbox" checked />
+              <span>Start ARIA automatically at login (recommended)</span>
+            </label>
+            <h3 style="margin-top:14px">Startup security log</h3>
+            <div id="startupAuditLog" class="log-list"></div>
+          </section>
+          <section class="panel company-footer">
+            <strong>Integrated IT Support Inc.</strong>
+            <p>30 Fothergill Crt, Whitby ON L1P 1L4<br />+1-647-581-3182 · ahmad.wasee@iisupp.net<br />D-U-N-S 241726397 · iisupp.net</p>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <!-- First-run onboarding tour (4 coachmarks) + UAC/SmartScreen explainers. Hidden until shown by renderer. -->
+    <div id="onboarding" class="onboarding" hidden>
+      <div class="onboarding-card">
+        <div class="coach-globe" data-state="idle" aria-hidden="true"></div>
+        <p class="eyebrow" id="onboardKicker">Welcome</p>
+        <h2 id="onboardTitle">Meet the globe</h2>
+        <p id="onboardBody">A calm gold globe lives in the corner of your screen. It is ARIA Sentinel — resident IT support that never sleeps.</p>
+        <div id="onboardDialog" class="onboard-dialog" hidden></div>
+        <div class="onboarding-foot">
+          <div class="onboard-dots" id="onboardDots"></div>
+          <div class="button-row">
+            <button id="onboardSkip" class="ghost">Skip</button>
+            <button id="onboardNext" class="primary">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trial-end modal — full-screen luxury purchase prompt, shown after the trial expires. -->
+    <div id="planModal" class="onboarding trial-end" hidden>
+      <div class="trial-end-card">
+        <p class="eyebrow">Trial ended</p>
+        <h2 class="trial-end-title">Your ARIA trial has ended</h2>
+        <p class="trial-end-sub">Choose your tier to keep ARIA running on this machine.</p>
+        <p class="trial-end-version">ARIA Sentinel <span id="trialEndVersion">v0.1.0</span> · <span class="auto-update-badge">Auto-updates included</span></p>
+        <div class="plan-grid plan-grid-5">
+          <div class="plan-card" data-tier="personal">
+            <strong>Personal</strong><span class="plan-price">$599<em>/mo</em></span>
+            <button class="primary plan-subscribe" data-plan="personal">Subscribe</button>
+          </div>
+          <div class="plan-card" data-tier="pro">
+            <strong>Pro</strong><span class="plan-price">$1,500<em>/mo</em></span>
+            <button class="primary plan-subscribe" data-plan="pro">Subscribe</button>
+          </div>
+          <div class="plan-card" data-tier="smb">
+            <strong>Small Business</strong><span class="plan-price">$156K<em>/yr</em></span>
+            <button class="primary plan-subscribe" data-plan="smb">Subscribe</button>
+          </div>
+          <div class="plan-card" data-tier="midsize">
+            <strong>Mid Size</strong><span class="plan-price">$312K<em>/yr</em></span>
+            <button class="primary plan-subscribe" data-plan="midsize">Subscribe</button>
+          </div>
+          <div class="plan-card" data-tier="enterprise">
+            <strong>Enterprise</strong><span class="plan-price">$625K<em>/yr</em></span>
+            <button class="primary plan-subscribe" data-plan="enterprise">Subscribe</button>
+          </div>
+        </div>
+        <div class="trial-end-license">
+          <a href="#" id="planEnterLicenseLink" class="enter-license-link">Enter license</a>
+          <div class="trial-end-license-row" id="planLicenseRow" hidden>
+            <input id="planLicenseInput" type="text" placeholder="Enter license" />
+            <button id="planActivateBtn" class="ghost">Activate</button>
+          </div>
+        </div>
+        <div class="onboarding-foot">
+          <a href="#" id="planDetails" data-support="https://iisupp.net/aria-sentinel/">Visit iisupp.net for full details</a>
+          <div class="button-row"><button id="planEnterLicense" class="ghost">Enter license</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Triple-confirm delete modal (RUN 19 §4) — driven by the renderer's delete-confirm flow. -->
+    <div id="deleteModal" class="onboarding" hidden>
+      <div class="onboarding-card delete-modal-card">
+        <p class="eyebrow" id="deleteStepKicker">Delete</p>
+        <h2 id="deleteStepTitle">Delete this?</h2>
+        <p id="deleteStepBody" class="delete-step-body"></p>
+        <label class="delete-optout"><input type="checkbox" id="deleteOptOut" /> <span id="deleteOptOutLabel">Don't ask me again for these files</span></label>
+        <div class="onboarding-foot">
+          <span></span>
+          <div class="button-row">
+            <button id="deleteCancel" class="ghost">Cancel</button>
+            <button id="deleteConfirm" class="primary danger-btn">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Non-blocking toast stack (upgrade nudges, kill-switch confirmation, rollback notices). -->
+    <div id="toastStack" class="toast-stack" aria-live="polite"></div>
+
+    <!-- Command palette (Cmd/Ctrl+K) -->
+    <div id="commandPalette" class="cmdk" hidden>
+      <div class="cmdk-box">
+        <input id="cmdkInput" type="text" placeholder="Search recipes and actions… (Esc to close)" autocomplete="off" />
+        <div id="cmdkResults" class="cmdk-results"></div>
+      </div>
+    </div>
+
+    <!-- Autonomous opt-in modal — Enable stays disabled until "I understand" is checked. -->
+    <div id="autonomousModal" class="onboarding" hidden>
+      <div class="onboarding-card">
+        <p class="eyebrow">Mode change</p>
+        <h2>Switch to Autonomous?</h2>
+        <p>Autonomous means ARIA fixes <strong>low-risk (green) issues without asking</strong> and tells you after. Higher-risk fixes still confirm with you every time, even in Autonomous.</p>
+        <ul style="font-size:13px;color:rgba(255,255,255,.75);margin:0 0 12px;padding-left:18px">
+          <li>Only green recipes auto-apply (DNS flush, service restarts, cache flush).</li>
+          <li>Same recipe runs at most 3× per 24h, with a 30-min cooldown.</li>
+          <li>A restore point is taken before any change.</li>
+          <li>Pause anytime from Settings → Mode.</li>
+        </ul>
+        <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:12px">
+          <input type="checkbox" id="autoUnderstand" /> I understand ARIA will apply green fixes automatically.
+        </label>
+        <div class="onboarding-foot">
+          <span></span>
+          <div class="button-row">
+            <button id="autoCancel" class="ghost">Cancel</button>
+            <button id="autoEnable" class="primary" disabled>Enable Autonomous</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- "What's new" modal — shown once after an update (skipped on first install). -->
+    <div id="whatsNew" class="onboarding" hidden>
+      <div class="onboarding-card">
+        <p class="eyebrow">What's new</p>
+        <h2 id="whatsNewTitle">ARIA Sentinel updated</h2>
+        <pre id="whatsNewBody" class="whats-new-body"></pre>
+        <div class="onboarding-foot">
+          <span></span>
+          <div class="button-row">
+            <button id="whatsNewGotIt" class="primary">Got it</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RUN 33-E — first-launch Setup wizard (6 steps; re-runnable from Settings). Renderer drives the steps. -->
+    <div id="setupWizard" class="onboarding" hidden>
+      <div class="onboarding-card">
+        <div class="coach-globe" data-state="idle" aria-hidden="true"></div>
+        <p class="eyebrow" id="setupKicker">Setup</p>
+        <h2 id="setupTitle">Welcome to ARIA Sentinel</h2>
+        <div id="setupBody" class="setup-body"></div>
+        <div class="onboarding-foot">
+          <div class="onboard-dots" id="setupDots"></div>
+          <div class="button-row">
+            <button id="setupBack" class="ghost" type="button">Back</button>
+            <button id="setupNext" class="primary" type="button">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./renderer.js"></script>
+  </body>
+</html>

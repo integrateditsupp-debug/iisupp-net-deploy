@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="goldLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c5a059"/>
+      <stop offset="100%" stop-color="#f1dca7"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="820" fill="#050505"/>
+
+  <text x="40" y="40" fill="#c5a059" font-family="Cinzel, serif" font-size="14" letter-spacing="0.18em">ARIA SENTINEL · 4-LAYER ARCHITECTURE</text>
+  <text x="40" y="62" fill="#666" font-size="11">L4 brand · L3 backend (pull-only) · L2 browser extensions · L1 desktop agent (the engine)</text>
+
+  <!-- L4 BRAND LAYER -->
+  <g transform="translate(60,100)">
+    <rect width="1080" height="80" rx="12" fill="#0a0a0a" stroke="#c5a059" stroke-opacity="0.45"/>
+    <text x="24" y="34" fill="#c5a059" font-family="Cinzel, serif" font-size="14" letter-spacing="0.22em">L4 · BRAND</text>
+    <text x="24" y="60" fill="#aaa" font-size="13">Gold globe geometry · Cinzel + Inter typography · Female TTS voice · Dark only</text>
+    <!-- Mini globe -->
+    <g transform="translate(1010,40)">
+      <circle r="22" fill="#c5a059"/>
+      <circle r="14" fill="none" stroke="#f1dca7" stroke-opacity="0.7" stroke-width="0.8"/>
+      <line x1="-22" y1="0" x2="22" y2="0" stroke="#f1dca7" stroke-opacity="0.5" stroke-width="0.7"/>
+      <line x1="0" y1="-22" x2="0" y2="22" stroke="#f1dca7" stroke-opacity="0.5" stroke-width="0.7"/>
+    </g>
+  </g>
+
+  <!-- L3 BACKEND -->
+  <g transform="translate(60,210)">
+    <rect width="1080" height="140" rx="12" fill="#0a0a0a" stroke="#7afbff" stroke-opacity="0.35"/>
+    <text x="24" y="34" fill="#7afbff" font-family="Cinzel, serif" font-size="14" letter-spacing="0.22em">L3 · BACKEND · iisupp.net (PULL-ONLY)</text>
+
+    <!-- endpoints -->
+    <g transform="translate(40,56)">
+      <rect width="300" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#7afbff" font-size="11" letter-spacing="0.14em">GET /aria-recipes</text>
+      <text x="14" y="44" fill="#aaa" font-size="12">Versioned, signed fix recipes</text>
+      <text x="14" y="60" fill="#666" font-size="10">Pulled daily + on user-request</text>
+    </g>
+    <g transform="translate(360,56)">
+      <rect width="300" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#7afbff" font-size="11" letter-spacing="0.14em">GET /aria-stop-codes</text>
+      <text x="14" y="44" fill="#aaa" font-size="12">Windows BSOD code → fix index</text>
+      <text x="14" y="60" fill="#666" font-size="10">~5,000 known codes with recipes</text>
+    </g>
+    <g transform="translate(680,56)">
+      <rect width="360" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#7afbff" font-size="11" letter-spacing="0.14em">POST /aria-recipe-feedback (opt-in)</text>
+      <text x="14" y="44" fill="#aaa" font-size="12">Anonymous fix-success counter</text>
+      <text x="14" y="60" fill="#666" font-size="10">Off by default · no PII · no machine ID</text>
+    </g>
+  </g>
+
+  <!-- L2 BROWSER EXTENSIONS -->
+  <g transform="translate(60,380)">
+    <rect width="1080" height="140" rx="12" fill="#0a0a0a" stroke="#c5a059" stroke-opacity="0.35"/>
+    <text x="24" y="34" fill="#c5a059" font-family="Cinzel, serif" font-size="14" letter-spacing="0.22em">L2 · BROWSER EXTENSIONS · Manifest V3</text>
+
+    <g transform="translate(40,56)">
+      <rect width="220" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#fff" font-size="11" letter-spacing="0.14em">CHROME</text>
+      <text x="14" y="44" fill="#aaa" font-size="11">Service worker + content script</text>
+      <text x="14" y="60" fill="#666" font-size="10">webRequest · cookies · cache · forms</text>
+    </g>
+    <g transform="translate(280,56)">
+      <rect width="220" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#fff" font-size="11" letter-spacing="0.14em">EDGE</text>
+      <text x="14" y="44" fill="#aaa" font-size="11">Chrome codebase, manifest tweaks</text>
+      <text x="14" y="60" fill="#666" font-size="10">Same detection + fix recipes</text>
+    </g>
+    <g transform="translate(520,56)">
+      <rect width="220" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#fff" font-size="11" letter-spacing="0.14em">SAFARI</text>
+      <text x="14" y="44" fill="#aaa" font-size="11">Bundled in macOS app (Sprint 2)</text>
+      <text x="14" y="60" fill="#666" font-size="10">Apple notarization required</text>
+    </g>
+    <g transform="translate(760,56)">
+      <rect width="280" height="68" rx="8" fill="#141414" stroke="#c5a059" stroke-opacity="0.5"/>
+      <text x="14" y="22" fill="#c5a059" font-size="11" letter-spacing="0.14em">LOCALHOST WEBSOCKET</text>
+      <text x="14" y="44" fill="#aaa" font-size="11">Extension ↔ desktop bridge</text>
+      <text x="14" y="60" fill="#666" font-size="10">For fixes needing OS-level access</text>
+    </g>
+  </g>
+
+  <!-- L1 DESKTOP -->
+  <g transform="translate(60,550)">
+    <rect width="1080" height="210" rx="12" fill="#0a0a0a" stroke="#f1dca7" stroke-opacity="0.5"/>
+    <text x="24" y="34" fill="#f1dca7" font-family="Cinzel, serif" font-size="14" letter-spacing="0.22em">L1 · DESKTOP AGENT · Electron · Windows-first → macOS Sprint 2</text>
+
+    <!-- 6 modules -->
+    <g transform="translate(40,56)">
+      <rect width="160" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#fff" font-size="11" letter-spacing="0.14em">GLOBE UI</text>
+      <text x="14" y="42" fill="#aaa" font-size="10">Three.js · transparent</text>
+      <text x="14" y="56" fill="#aaa" font-size="10">always-on-top</text>
+    </g>
+    <g transform="translate(220,56)">
+      <rect width="160" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#fff" font-size="11" letter-spacing="0.14em">WATCHERS</text>
+      <text x="14" y="42" fill="#aaa" font-size="10">Event Viewer · WMI</text>
+      <text x="14" y="56" fill="#aaa" font-size="10">Registry · Perf counters</text>
+    </g>
+    <g transform="translate(400,56)">
+      <rect width="160" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#fff" font-size="11" letter-spacing="0.14em">FIX RUNNER</text>
+      <text x="14" y="42" fill="#aaa" font-size="10">PowerShell sandboxed</text>
+      <text x="14" y="56" fill="#aaa" font-size="10">Restore point first</text>
+    </g>
+    <g transform="translate(580,56)">
+      <rect width="160" height="68" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#fff" font-size="11" letter-spacing="0.14em">LOCAL KB</text>
+      <text x="14" y="42" fill="#aaa" font-size="10">SQLite encrypted</text>
+      <text x="14" y="56" fill="#aaa" font-size="10">%APPDATA%\\AriaSentinel</text>
+    </g>
+    <g transform="translate(760,56)">
+      <rect width="280" height="68" rx="8" fill="#141414" stroke="#ffcb6b" stroke-opacity="0.55"/>
+      <text x="14" y="22" fill="#ffcb6b" font-size="11" letter-spacing="0.14em">BSOD / WinRE INTEGRATION</text>
+      <text x="14" y="42" fill="#aaa" font-size="10">Tier A: BCD boot menu entry</text>
+      <text x="14" y="56" fill="#aaa" font-size="10">Tier C: crash-on-resume detector</text>
+    </g>
+
+    <g transform="translate(40,138)">
+      <rect width="340" height="56" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#fff" font-size="11" letter-spacing="0.14em">TRAY ICON + SETTINGS</text>
+      <text x="14" y="42" fill="#aaa" font-size="10">Mode select · Pause · Privacy verifier · Recipes</text>
+    </g>
+    <g transform="translate(400,138)">
+      <rect width="340" height="56" rx="8" fill="#141414" stroke="#2a2a2a"/>
+      <text x="14" y="22" fill="#fff" font-size="11" letter-spacing="0.14em">PRIVACY VERIFIER</text>
+      <text x="14" y="42" fill="#aaa" font-size="10">Network monitor proves no upload paths</text>
+    </g>
+    <g transform="translate(760,138)">
+      <rect width="280" height="56" rx="8" fill="#141414" stroke="#7afbff" stroke-opacity="0.55"/>
+      <text x="14" y="22" fill="#7afbff" font-size="11" letter-spacing="0.14em">CONFIRMED · AUTONOMOUS</text>
+      <text x="14" y="42" fill="#aaa" font-size="10">Default at install = MANUAL (free tier)</text>
+    </g>
+  </g>
+
+  <!-- Data flow arrows -->
+  <g stroke="#c5a059" stroke-opacity="0.5" stroke-width="2" fill="none" marker-end="url(#arrowEnd)">
+    <defs>
+      <marker id="arrowEnd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#c5a059"/>
+      </marker>
+    </defs>
+    <!-- L3 → L1 (recipe pull) -->
+    <path d="M 200 350 L 200 550" stroke-dasharray="5 5"/>
+    <text x="210" y="465" fill="#c5a059" font-size="10" letter-spacing="0.1em">RECIPES IN</text>
+    <!-- L2 ↔ L1 (websocket) -->
+    <path d="M 950 520 L 950 550" />
+    <text x="800" y="540" fill="#c5a059" font-size="10" letter-spacing="0.1em">WS BRIDGE</text>
+  </g>
+
+  <text x="40" y="800" fill="#444" font-size="10">05_architecture-diagram.svg · ARIA Sentinel · 2026-06-19 · iisupp.net does NOT receive user data</text>
+</svg>

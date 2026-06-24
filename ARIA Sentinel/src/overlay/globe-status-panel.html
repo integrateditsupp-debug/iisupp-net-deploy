@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <!-- CSP-safe: self only, no remote origins, no inline-handler exec. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;" />
+  <title>ARIA Sentinel — status</title>
+  <link rel="stylesheet" href="globe-status-panel.css" />
+</head>
+<body>
+  <div id="globeStatusPanel"></div>
+  <script type="module">
+    import { buildStatusPanel, bindStatusPanel } from "./globe-status-panel.mjs";
+    const host = document.getElementById("globeStatusPanel");
+    const bridge = window.sentinelBridge || window.sentinel || null;
+
+    function render(snapshot, perf) {
+      host.innerHTML = buildStatusPanel({ snapshot, cpu: perf && perf.cpu, ram: perf && perf.ram, services: (snapshot && snapshot.services) || [] });
+      bindStatusPanel(host, bridge);
+    }
+
+    // Initial paint + live subscription to the 30s process-health push (D1).
+    render({}, {});
+    if (bridge && typeof bridge.getProcessHealth === "function") {
+      bridge.getProcessHealth().then((snap) => render(snap, {})).catch(() => {});
+    }
+    if (bridge && typeof bridge.onProcessHealth === "function") {
+      bridge.onProcessHealth((snap) => render(snap, {}));
+    }
+  </script>
+</body>
+</html>

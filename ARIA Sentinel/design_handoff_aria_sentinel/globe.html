@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ARIA Sentinel — Globe (framework-agnostic reference)</title>
+<!--
+  Drop-in gold globe for the Electron transparent overlay window and the browser
+  extension content script. No build step, no deps. Lift the <svg>, the <style>,
+  and setGlobeState() into your renderer.
+
+  States: idle | listening | diagnosing | fixing | done | escalation
+  API:    setGlobeState('fixing')   — sets data-state on .aria-globe
+  Sizing: set width/height on .aria-globe (viewBox is 0 0 120 120, scales freely).
+          Idle 64px · active (diagnosing/fixing) 96px. 80px clickable hitbox.
+  Perf:   pure CSS keyframes. Drop the page to 30fps after 5s idle (Electron:
+          window.webContents.setFrameRate or pause via prefers-reduced-motion).
+-->
+<style>
+  :root { --gold:#c5a059; --gold-light:#f1dca7; --amber:#ffcb6b; --success:#7afbff; }
+  body { margin:0; background:#050505; color:#fff; font-family:Inter,system-ui,sans-serif; }
+
+  .aria-globe { display:block; overflow:visible; }
+  .aria-globe .ring-group { transform-origin:60px 60px; animation: aria-rot 34s linear infinite; }
+  .aria-globe .glow        { transform-origin:60px 60px; animation: aria-glow 4.2s ease-in-out infinite; }
+
+  /* state-driven extras (hidden by default) */
+  .aria-globe .x-listen, .aria-globe .x-scan, .aria-globe .x-particles, .aria-globe .x-done { display:none; }
+  .aria-globe[data-state="listening"]  .x-listen    { display:block; }
+  .aria-globe[data-state="diagnosing"] .x-scan      { display:block; }
+  .aria-globe[data-state="diagnosing"] .ring-group  { animation-duration:17s; }
+  .aria-globe[data-state="fixing"]     .x-particles { display:block; }
+  .aria-globe[data-state="fixing"]     .ring-group  { animation-duration:9s; }
+  .aria-globe[data-state="done"]       .x-done      { display:block; }
+
+  /* escalation = amber recolor */
+  .aria-globe[data-state="escalation"] .ring-stroke { stroke:var(--amber); }
+  .aria-globe[data-state="escalation"] .glow        { fill:url(#agAmber); }
+
+  @keyframes aria-rot   { to { transform: rotate(360deg); } }
+  @keyframes aria-scan  { to { transform: rotate(-360deg); } }
+  @keyframes aria-glow  { 0%,100% { opacity:.5; } 50% { opacity:.92; } }
+  @keyframes aria-ping  { 0% { transform:scale(.45); opacity:.55; } 100% { transform:scale(1.15); opacity:0; } }
+  @keyframes aria-rise  { 0% { transform:translateY(2px); opacity:0; } 25% { opacity:.95; } 100% { transform:translateY(-30px); opacity:0; } }
+  @keyframes aria-draw  { from { stroke-dashoffset:44; } to { stroke-dashoffset:0; } }
+
+  /* demo only — remove in production */
+  .demo { display:flex; gap:8px; flex-wrap:wrap; padding:24px; }
+  .demo button { background:#141414; border:1px solid #2a2a2a; color:#ddd; padding:8px 14px; border-radius:8px; cursor:pointer; font-family:inherit; }
+  .demo button:hover { border-color:var(--gold); color:var(--gold-light); }
+  .stage { display:flex; align-items:center; justify-content:center; height:240px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <!-- The globe. Set width/height to size it. -->
+    <svg class="aria-globe" data-state="idle" width="150" height="150" viewBox="0 0 120 120">
+      <defs>
+        <radialGradient id="agCore" cx="36%" cy="34%" r="62%">
+          <stop offset="0%"  stop-color="#f1dca7" stop-opacity=".95"/>
+          <stop offset="55%" stop-color="#c5a059" stop-opacity=".68"/>
+          <stop offset="100%" stop-color="#5a3f10" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="agGold" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c5a059" stop-opacity=".34"/>
+          <stop offset="100%" stop-color="#c5a059" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="agAmber" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffcb6b" stop-opacity=".42"/>
+          <stop offset="100%" stop-color="#ffcb6b" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <circle class="glow" cx="60" cy="60" r="56" fill="url(#agGold)"/>
+
+      <!-- listening: expanding rings -->
+      <g class="x-listen">
+        <circle class="ring-stroke" cx="60" cy="60" r="24" fill="none" stroke="#c5a059" stroke-width="1" style="transform-origin:60px 60px; animation: aria-ping 2.6s ease-out infinite;"/>
+        <circle class="ring-stroke" cx="60" cy="60" r="24" fill="none" stroke="#c5a059" stroke-width="1" style="transform-origin:60px 60px; animation: aria-ping 2.6s ease-out infinite 1.3s;"/>
+      </g>
+
+      <circle cx="60" cy="60" r="22" fill="url(#agCore)"/>
+
+      <g class="ring-group">
+        <circle class="ring-stroke" cx="60" cy="60" r="22" fill="none" stroke="#c5a059" stroke-opacity=".62" stroke-width=".9"/>
+        <circle class="ring-stroke" cx="60" cy="60" r="15" fill="none" stroke="#c5a059" stroke-opacity=".42" stroke-width=".7"/>
+        <circle class="ring-stroke" cx="60" cy="60" r="8"  fill="none" stroke="#c5a059" stroke-opacity=".5"  stroke-width=".6"/>
+        <line class="ring-stroke" x1="36" y1="60" x2="84" y2="60" stroke="#c5a059" stroke-opacity=".5" stroke-width=".8"/>
+        <line class="ring-stroke" x1="60" y1="36" x2="60" y2="84" stroke="#c5a059" stroke-opacity=".5" stroke-width=".8"/>
+      </g>
+
+      <!-- diagnosing: counter-rotating dashed scan ring -->
+      <circle class="x-scan" cx="60" cy="60" r="27" fill="none" stroke="#f1dca7" stroke-width="1.6" stroke-dasharray="7 5" stroke-opacity=".85" style="transform-origin:60px 60px; animation: aria-scan 5s linear infinite;"/>
+
+      <!-- fixing: rising gold particles -->
+      <g class="x-particles" fill="#f1dca7">
+        <circle cx="48" cy="40" r="1.7" style="animation: aria-rise 1.8s ease-in infinite;"/>
+        <circle cx="62" cy="36" r="1.3" style="animation: aria-rise 1.8s ease-in infinite .4s;"/>
+        <circle cx="72" cy="42" r="1.6" style="animation: aria-rise 1.8s ease-in infinite .8s;"/>
+        <circle cx="55" cy="34" r="1.2" style="animation: aria-rise 1.8s ease-in infinite 1.1s;"/>
+        <circle cx="68" cy="32" r="1.4" style="animation: aria-rise 1.8s ease-in infinite .6s;"/>
+      </g>
+
+      <!-- done: cyan checkmark draws in -->
+      <path class="x-done" d="M 50 60 L 57 67 L 73 49" fill="none" stroke="#7afbff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="44" style="animation: aria-draw .55s ease-out forwards;"/>
+    </svg>
+  </div>
+
+  <div class="demo">
+    <button onclick="setGlobeState('idle')">idle</button>
+    <button onclick="setGlobeState('listening')">listening</button>
+    <button onclick="setGlobeState('diagnosing')">diagnosing</button>
+    <button onclick="setGlobeState('fixing')">fixing</button>
+    <button onclick="setGlobeState('done')">done</button>
+    <button onclick="setGlobeState('escalation')">escalation</button>
+  </div>
+
+  <script>
+    function setGlobeState(state) {
+      document.querySelectorAll('.aria-globe').forEach(function (g) {
+        g.setAttribute('data-state', state);
+      });
+    }
+    // window.setGlobeState is the only API the host needs.
+  </script>
+</body>
+</html>

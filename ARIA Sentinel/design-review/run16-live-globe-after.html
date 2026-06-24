@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>RUN 16 §0 — Live-globe swap APPLIED (record)</title>
+<style>
+  body { margin:0; background:#0d0f14; color:#f1dca7; font:14px/1.5 -apple-system,Segoe UI,system-ui,sans-serif; padding:32px; }
+  h1 { font-size:18px; color:#c5a059; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:24px; }
+  .card { border:1px solid rgba(197,160,89,.3); border-radius:14px; padding:22px; background:#15110a; }
+  .card h2 { font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:#c5a059; margin:0 0 16px; }
+  .row { display:flex; align-items:center; gap:20px; margin:14px 0; }
+  /* OLD gold-A globe (the previous CSS gradient sphere) — recreated for the record. */
+  .old-globe { border-radius:50%;
+    background:
+      linear-gradient(90deg, transparent 48%, rgba(139,109,47,.74) 49%, rgba(139,109,47,.74) 51%, transparent 52%),
+      radial-gradient(circle at 36% 34%, #f1dca7 0%, #c5a059 55%, #2a1d06 100%);
+    box-shadow:0 0 18px rgba(197,160,89,.32), inset 0 0 18px rgba(241,220,167,.2); }
+  .old-46 { width:46px; height:46px; } .old-84 { width:84px; height:84px; } .old-34 { width:34px; height:34px; }
+  img.new { display:block; }
+  .lbl { font-size:12px; color:rgba(241,220,167,.6); }
+  .note { margin-top:26px; padding:14px 16px; border-left:3px solid #c5a059; background:rgba(197,160,89,.08); font-size:13px; }
+  code { color:#f7e7bd; }
+</style></head>
+<body>
+  <h1>RUN 16 §0 — Live iisupp.net/aria globe swap · APPLIED (Ahmad approved)</h1>
+  <p class="lbl">Visual-stability record per Rule 6. Left = previous gold gradient sphere. Right = applied live globe
+  (rotating gold ring + breathing core; <code>src/renderer/aria-live-globe.svg</code> in-app, rasterized PNGs for extensions).</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Before — gold gradient sphere</h2>
+      <div class="row"><div class="old-globe old-46"></div><span class="lbl">Settings header (.brand-globe ~46px)</span></div>
+      <div class="row"><div class="old-globe old-84"></div><span class="lbl">Settings footer (.aria-living-globe ~84px)</span></div>
+      <div class="row"><div class="old-globe old-34"></div><span class="lbl">ServiceNow panel chip (.mini-globe ~34px)</span></div>
+    </div>
+    <div class="card">
+      <h2>After — live globe (APPLIED)</h2>
+      <div class="row"><img class="new" src="../src/renderer/aria-live-globe.svg" width="46" height="46" alt="live globe 46"><span class="lbl">Settings header</span></div>
+      <div class="row"><img class="new" src="../src/renderer/aria-live-globe.svg" width="84" height="84" alt="live globe 84"><span class="lbl">Settings footer</span></div>
+      <div class="row"><img class="new" src="../src/renderer/aria-live-globe.svg" width="34" height="34" alt="live globe 34"><span class="lbl">ServiceNow panel chip</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:28px">
+    <h2>Extension toolbar icons (rasterized live globe)</h2>
+    <div class="row">
+      <img src="run16-icon-16.png" width="16" height="16" alt="16"><span class="lbl">i-16.png</span>
+      <img src="run16-icon-32.png" width="32" height="32" alt="32"><span class="lbl">i-32.png</span>
+      <img src="run16-icon-128.png" width="128" height="128" alt="128"><span class="lbl">i-128.png — Chrome · Edge · Safari</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Kept unchanged (Ahmad's explicit instruction):</strong> the floating desktop overlay globe (the crystal-A
+    presence avatar, <code>src/renderer/overlay.html</code> <code>.aria-globe</code>) and the Windows installer
+    <code>build/icon.ico</code>. No other in-app gold-A icons remain — see <code>docs/RUN_16_TEST_RESULTS_live-globe.md</code>.
+  </div>
+</body></html>

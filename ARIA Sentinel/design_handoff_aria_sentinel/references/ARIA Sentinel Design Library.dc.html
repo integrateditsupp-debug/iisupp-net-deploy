@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #050505; }
+  ::selection { background: rgba(197,160,89,.3); color: #fff; }
+  @keyframes ariaBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+  @keyframes ariaSheen { 0% { background-position: -120% 0; } 100% { background-position: 220% 0; } }
+  @keyframes ariaProg { 0% { width: 8%; } 100% { width: 62%; } }
+</style>
+</helmet>
+<div style="font-family:'Inter',system-ui,sans-serif; background:#050505; color:#fff; min-height:100vh;">
+
+  <aside style="position:fixed; top:0; left:0; width:248px; height:100vh; background:#08080a; border-right:1px solid #1a1a1a; padding:28px 0; overflow-y:auto; z-index:20;">
+    <div style="padding:0 24px 22px;">
+      <div style="display:flex; align-items:center; gap:11px;">
+        <dc-import name="Globe" state="idle" size="34" hint-size="34px,34px"></dc-import>
+        <div>
+          <div style="font-family:'Cinzel',serif; font-size:14px; font-weight:700; letter-spacing:.16em; color:#f1dca7;">ARIA SENTINEL</div>
+          <div style="font-size:10.5px; letter-spacing:.22em; color:#6a6a6a; text-transform:uppercase; margin-top:2px;">Design Library</div>
+        </div>
+      </div>
+    </div>
+
+    <nav style="padding:0 14px;">
+      <div style="font-family:'Cinzel',serif; font-size:10px; letter-spacing:.26em; color:#7d6326; padding:14px 10px 7px; text-transform:uppercase;">Foundations</div>
+      <a data-target="overview" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Overview</a>
+      <a data-target="tokens" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Design tokens</a>
+
+      <div style="font-family:'Cinzel',serif; font-size:10px; letter-spacing:.26em; color:#7d6326; padding:18px 10px 7px; text-transform:uppercase;">Core product</div>
+      <a data-target="globe" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Floating globe · 6 states</a>
+      <a data-target="fixcard" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Fix card · 4 states</a>
+      <a data-target="recipes" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Recipe done variants</a>
+      <a data-target="chat" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Manual chat overlay</a>
+
+      <div style="font-family:'Cinzel',serif; font-size:10px; letter-spacing:.26em; color:#7d6326; padding:18px 10px 7px; text-transform:uppercase;">BSOD &amp; escalation</div>
+      <a data-target="bsod" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">BSOD takeover</a>
+      <a data-target="escalation" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">ServiceNow escalation</a>
+      <a data-target="ticket" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Ticket created</a>
+      <a data-target="tickets" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">My tickets</a>
+      <a data-target="routing" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Routing logic</a>
+
+      <div style="font-family:'Cinzel',serif; font-size:10px; letter-spacing:.26em; color:#7d6326; padding:18px 10px 7px; text-transform:uppercase;">App chrome</div>
+      <a data-target="settings" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Settings window</a>
+      <a data-target="installer" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Installer flow</a>
+      <a data-target="firstrun" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">UAC / SmartScreen</a>
+      <a data-target="tray" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Tray menu</a>
+
+      <div style="font-family:'Cinzel',serif; font-size:10px; letter-spacing:.26em; color:#7d6326; padding:18px 10px 7px; text-transform:uppercase;">Trust</div>
+      <a data-target="knowledge" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Company knowledge</a>
+      <a data-target="privacy" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Privacy verifier</a>
+      <a data-target="transparency" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Transparency log</a>
+      <a data-target="restore" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Restore point</a>
+
+      <div style="font-family:'Cinzel',serif; font-size:10px; letter-spacing:.26em; color:#7d6326; padding:18px 10px 7px; text-transform:uppercase;">Extended</div>
+      <a data-target="browser" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Browser-extension globe</a>
+      <a data-target="onboarding" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Onboarding tour</a>
+      <a data-target="multimon" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Multi-monitor placement</a>
+      <a data-target="architecture" onClick="{{ go }}" style="display:block; padding:8px 10px; border-radius:7px; color:#bdbdbd; font-size:13px; cursor:pointer; text-decoration:none;" style-hover="background:#141414; color:#f1dca7;">Architecture</a>
+    </nav>
+  </aside>
+
+  <main style="margin-left:248px; padding:0 64px 120px; max-width:1180px;">
+
+    <header id="overview" style="padding:96px 0 18px; position:relative;">
+      <div style="position:absolute; top:30px; right:-20px; opacity:.5;">
+        <dc-import name="Globe" state="idle" size="200" hint-size="200px,200px"></dc-import>
+      </div>
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.34em; color:#c5a059; text-transform:uppercase; margin-bottom:20px;">Integrated IT Support Inc. · iisupp.net</div>
+      <h1 style="font-family:'Cinzel',serif; font-size:58px; line-height:1.04; font-weight:700; margin:0 0 22px; letter-spacing:.005em; max-width:780px;">ARIA Sentinel<br><span style="color:#c5a059;">Design Library</span></h1>
+      <p style="font-size:18px; line-height:1.65; color:#b4b4b4; max-width:680px; margin:0 0 14px;">Resident IT support that never sleeps. The source-of-truth component set for the ambient on-device agent — globe, fix cards, BSOD recovery, ServiceNow escalation, settings, and installer — rendered at production fidelity in gold-on-black.</p>
+      <p style="font-size:14px; line-height:1.6; color:#6f6f6f; max-width:680px; margin:0;">Every surface below is built from the same tokens and the same globe geometry. Click a screen in the rail to jump to it. This file is the visual contract — the build team (Cowork × Codex) does not deviate.</p>
+
+      <div style="display:flex; gap:14px; margin-top:36px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:10px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:10px; padding:12px 18px;">
+          <div style="width:8px; height:8px; border-radius:50%; background:#7afbff;"></div>
+          <span style="font-size:12.5px; color:#cfcfcf;">Strict privacy — nothing uploads to iisupp.net</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:10px; padding:12px 18px;">
+          <div style="width:8px; height:8px; border-radius:50%; background:#c5a059;"></div>
+          <span style="font-size:12.5px; color:#cfcfcf;">Windows-first · all-OS · all-browser</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:10px; padding:12px 18px;">
+          <div style="width:8px; height:8px; border-radius:50%; background:#ffcb6b;"></div>
+          <span style="font-size:12.5px; color:#cfcfcf;">ServiceNow incident routing on escalation</span>
+        </div>
+      </div>
+    </header>
+
+    <section id="tokens" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Foundations</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Design tokens</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:640px; margin:0;">Dark only. Gold on black, never inverted. These exact values ship as CSS custom properties and JSON in the handoff folder.</p>
+
+      <div style="margin-top:34px; display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#050505; border-bottom:1px solid #1c1c1c;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Background</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#050505</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#0a0a0a; border-bottom:1px solid #1c1c1c;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Surface</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#0a0a0a</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#141414; border-bottom:1px solid #1c1c1c;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Inset</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#141414</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#2a2a2a; border-bottom:1px solid #1c1c1c;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Border</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#2a2a2a</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#c5a059;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Accent gold</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#c5a059</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#f1dca7;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Gold light</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#f1dca7</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#8b6d2f;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Gold dark</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#8b6d2f</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#7afbff;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Success</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#7afbff</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#ffcb6b;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Warning</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#ffcb6b</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#ff7e7e;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Error</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#ff7e7e</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#aaaaaa;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Text secondary</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#aaaaaa</div></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; overflow:hidden;">
+          <div style="height:74px; background:#666666;"></div>
+          <div style="padding:12px 14px;"><div style="font-size:12.5px; color:#fff; font-weight:600;">Text muted</div><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; margin-top:3px;">#666666</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; padding:26px 28px;">
+          <div style="font-size:11px; letter-spacing:.18em; color:#7d6326; text-transform:uppercase; margin-bottom:16px;">Typeface — Display</div>
+          <div style="font-family:'Cinzel',serif; font-size:38px; color:#fff; font-weight:700; line-height:1.1;">Cinzel</div>
+          <div style="font-family:'Cinzel',serif; font-size:16px; color:#c5a059; margin-top:8px; letter-spacing:.04em;">Logo · hero · modal headlines</div>
+          <div style="font-family:ui-monospace,monospace; font-size:11px; color:#6a6a6a; margin-top:14px;">weights 500 / 600 / 700</div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; padding:26px 28px;">
+          <div style="font-size:11px; letter-spacing:.18em; color:#7d6326; text-transform:uppercase; margin-bottom:16px;">Typeface — UI &amp; mono</div>
+          <div style="font-family:'Inter',sans-serif; font-size:30px; color:#fff; font-weight:600; line-height:1.1;">Inter</div>
+          <div style="font-family:'Inter',sans-serif; font-size:14px; color:#aaa; margin-top:8px;">All UI labels, copy, buttons</div>
+          <div style="font-family:ui-monospace,monospace; font-size:16px; color:#7afbff; margin-top:14px;">ui-monospace · 0x000000EF</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:12px; padding:26px 28px;">
+        <div style="font-size:11px; letter-spacing:.18em; color:#7d6326; text-transform:uppercase; margin-bottom:18px;">Motion timing</div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:22px;">
+          <div><div style="font-size:13px; color:#fff; font-weight:600;">Idle pulse</div><div style="font-family:ui-monospace,monospace; font-size:11.5px; color:#c5a059; margin-top:5px;">4.2s · ease-in-out</div><div style="font-size:11.5px; color:#7a7a7a; margin-top:4px;">opacity .5 → .92</div></div>
+          <div><div style="font-size:13px; color:#fff; font-weight:600;">Cursor dodge</div><div style="font-family:ui-monospace,monospace; font-size:11.5px; color:#c5a059; margin-top:5px;">200ms · linear</div><div style="font-size:11.5px; color:#7a7a7a; margin-top:4px;">80px hitbox trigger</div></div>
+          <div><div style="font-size:13px; color:#fff; font-weight:600;">Card slide-up</div><div style="font-family:ui-monospace,monospace; font-size:11.5px; color:#c5a059; margin-top:5px;">260ms · cubic-bezier</div><div style="font-size:11.5px; color:#7a7a7a; margin-top:4px;">.16,1,.3,1</div></div>
+          <div><div style="font-size:13px; color:#fff; font-weight:600;">Globe rotation</div><div style="font-family:ui-monospace,monospace; font-size:11.5px; color:#c5a059; margin-top:5px;">~30s idle → 4× fix</div><div style="font-size:11.5px; color:#7a7a7a; margin-top:4px;">drop to 30fps idle</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="globe" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Core product · 01</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Floating globe — six states</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:640px; margin:0;">64px at rest, 96px when active. Hugs viewport edges, dodges the cursor, click-through except its 80px hitbox. Calm by default — animates only when it has something to do.</p>
+
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:18px; padding:30px 24px 22px; position:relative; overflow:hidden;">
+        <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 40%, rgba(197,160,89,.06), transparent 60%); pointer-events:none;"></div>
+        <div style="position:relative; display:grid; grid-template-columns:repeat(6,1fr); gap:8px;">
+          <div style="text-align:center;">
+            <div style="height:150px; display:flex; align-items:center; justify-content:center;"><dc-import name="Globe" state="idle" size="118" hint-size="118px,118px"></dc-import></div>
+            <div style="font-size:11.5px; letter-spacing:.16em; color:#fff; font-weight:600; margin-top:6px;">IDLE</div>
+            <div style="font-size:10.5px; color:#7a7a7a; margin-top:4px; line-height:1.4;">Drift along edge<br>pulse 4s loop</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="height:150px; display:flex; align-items:center; justify-content:center;"><dc-import name="Globe" state="listening" size="118" hint-size="118px,118px"></dc-import></div>
+            <div style="font-size:11.5px; letter-spacing:.16em; color:#fff; font-weight:600; margin-top:6px;">LISTENING</div>
+            <div style="font-size:10.5px; color:#7a7a7a; margin-top:4px; line-height:1.4;">Rings expand<br>responding</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="height:150px; display:flex; align-items:center; justify-content:center;"><dc-import name="Globe" state="diagnosing" size="118" hint-size="118px,118px"></dc-import></div>
+            <div style="font-size:11.5px; letter-spacing:.16em; color:#fff; font-weight:600; margin-top:6px;">DIAGNOSING</div>
+            <div style="font-size:10.5px; color:#7a7a7a; margin-top:4px; line-height:1.4;">Scan ring<br>local KB match</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="height:150px; display:flex; align-items:center; justify-content:center;"><dc-import name="Globe" state="fixing" size="118" hint-size="118px,118px"></dc-import></div>
+            <div style="font-size:11.5px; letter-spacing:.16em; color:#fff; font-weight:600; margin-top:6px;">FIXING</div>
+            <div style="font-size:10.5px; color:#7a7a7a; margin-top:4px; line-height:1.4;">Gold particles<br>emit upward</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="height:150px; display:flex; align-items:center; justify-content:center;"><dc-import name="Globe" state="done" size="118" hint-size="118px,118px"></dc-import></div>
+            <div style="font-size:11.5px; letter-spacing:.16em; color:#fff; font-weight:600; margin-top:6px;">DONE</div>
+            <div style="font-size:10.5px; color:#7a7a7a; margin-top:4px; line-height:1.4;">Flash · checkmark<br>card slides up</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="height:150px; display:flex; align-items:center; justify-content:center;"><dc-import name="Globe" state="escalation" size="118" hint-size="118px,118px"></dc-import></div>
+            <div style="font-size:11.5px; letter-spacing:.16em; color:#ffcb6b; font-weight:600; margin-top:6px;">ESCALATION</div>
+            <div style="font-size:10.5px; color:#7a7a7a; margin-top:4px; line-height:1.4;">Amber glow<br>slow pulse</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; display:flex; gap:14px; align-items:stretch;">
+        <div style="flex:1; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:30px; display:flex; align-items:center; justify-content:center; min-height:230px; position:relative; overflow:hidden;">
+          <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 50%, rgba(197,160,89,.05), transparent 65%);"></div>
+          <div style="animation: ariaBob 5s ease-in-out infinite;"><dc-import name="Globe" state="{{ heroGlobe }}" size="150" hint-size="150px,150px"></dc-import></div>
+        </div>
+        <div style="width:300px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:24px;">
+          <div style="font-size:11px; letter-spacing:.18em; color:#7d6326; text-transform:uppercase; margin-bottom:14px;">Preview state</div>
+          <div style="display:flex; flex-direction:column; gap:7px;">
+            <button data-state="idle" onClick="{{ setHero }}" style="text-align:left; background:#141414; border:1px solid #242424; color:#ddd; padding:9px 13px; border-radius:8px; font-size:12.5px; cursor:pointer; font-family:'Inter',sans-serif;" style-hover="border-color:#c5a059; color:#f1dca7;">Idle</button>
+            <button data-state="listening" onClick="{{ setHero }}" style="text-align:left; background:#141414; border:1px solid #242424; color:#ddd; padding:9px 13px; border-radius:8px; font-size:12.5px; cursor:pointer; font-family:'Inter',sans-serif;" style-hover="border-color:#c5a059; color:#f1dca7;">Listening</button>
+            <button data-state="diagnosing" onClick="{{ setHero }}" style="text-align:left; background:#141414; border:1px solid #242424; color:#ddd; padding:9px 13px; border-radius:8px; font-size:12.5px; cursor:pointer; font-family:'Inter',sans-serif;" style-hover="border-color:#c5a059; color:#f1dca7;">Diagnosing</button>
+            <button data-state="fixing" onClick="{{ setHero }}" style="text-align:left; background:#141414; border:1px solid #242424; color:#ddd; padding:9px 13px; border-radius:8px; font-size:12.5px; cursor:pointer; font-family:'Inter',sans-serif;" style-hover="border-color:#c5a059; color:#f1dca7;">Fixing</button>
+            <button data-state="done" onClick="{{ setHero }}" style="text-align:left; background:#141414; border:1px solid #242424; color:#ddd; padding:9px 13px; border-radius:8px; font-size:12.5px; cursor:pointer; font-family:'Inter',sans-serif;" style-hover="border-color:#c5a059; color:#f1dca7;">Done</button>
+            <button data-state="escalation" onClick="{{ setHero }}" style="text-align:left; background:#141414; border:1px solid #242424; color:#ddd; padding:9px 13px; border-radius:8px; font-size:12.5px; cursor:pointer; font-family:'Inter',sans-serif;" style-hover="border-color:#ffcb6b; color:#ffcb6b;">Escalation</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="fixcard" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Core product · 02</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Fix card — four states</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:640px; margin:0;">Slides up from the globe. 320px wide, max footprint 320×200 with the globe. Globe perches at the top edge. Confirmed-mode detection → in-progress → done, plus the warning-chip escalation template.</p>
+
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:18px; padding:44px 40px; display:flex; gap:28px; flex-wrap:wrap; justify-content:center; position:relative; overflow:hidden;">
+        <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 0%, rgba(197,160,89,.05), transparent 55%);"></div>
+
+        <div style="position:relative;">
+          <div style="font-size:10.5px; letter-spacing:.16em; color:#888; margin:0 0 12px 4px;">CONFIRMED · DETECTED</div>
+          <div style="width:320px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:14px; padding:34px 20px 20px; position:relative;">
+            <div style="position:absolute; top:-26px; left:50%; transform:translateX(-50%);"><dc-import name="Globe" state="listening" size="56" hint-size="56px,56px"></dc-import></div>
+            <div style="display:inline-block; padding:5px 10px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(197,160,89,.5); font-size:10px; letter-spacing:.16em; color:#c5a059; font-weight:600;">DISK · LOW SPACE</div>
+            <div style="font-family:'Cinzel',serif; font-size:17px; font-weight:700; color:#fff; margin:14px 0 8px;">Disk almost full</div>
+            <div style="font-size:12.5px; line-height:1.55; color:#aaa;">3% free on C:\. I can recover ~4.2 GB by clearing temp files, browser caches and old downloads.</div>
+            <div style="display:flex; gap:10px; margin-top:18px;">
+              <button style="flex:1; background:linear-gradient(90deg,#c5a059,#f1dca7); color:#1a1410; border:none; border-radius:8px; padding:12px; font-family:'Cinzel',serif; font-weight:700; font-size:12px; letter-spacing:.14em; cursor:pointer;">FIX IT NOW</button>
+              <button style="background:transparent; color:#c5a059; border:1px solid rgba(197,160,89,.45); border-radius:8px; padding:12px 16px; font-size:11px; letter-spacing:.12em; cursor:pointer; font-family:'Inter',sans-serif;">DETAILS</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <div style="font-size:10.5px; letter-spacing:.16em; color:#888; margin:0 0 12px 4px;">IN PROGRESS</div>
+          <div style="width:320px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:14px; padding:34px 20px 20px; position:relative;">
+            <div style="position:absolute; top:-26px; left:50%; transform:translateX(-50%);"><dc-import name="Globe" state="fixing" size="56" hint-size="56px,56px"></dc-import></div>
+            <div style="display:inline-block; padding:5px 10px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(197,160,89,.5); font-size:10px; letter-spacing:.16em; color:#c5a059; font-weight:600;">FIXING · STEP 2/4</div>
+            <div style="font-family:'Cinzel',serif; font-size:17px; font-weight:700; color:#fff; margin:14px 0 12px;">Clearing temp files…</div>
+            <div style="height:6px; border-radius:3px; background:#1a1410; overflow:hidden;"><div style="height:100%; border-radius:3px; background:linear-gradient(90deg,#c5a059,#f1dca7); animation: ariaProg 3s ease-in-out infinite alternate;"></div></div>
+            <div style="font-size:12px; color:#aaa; margin-top:14px;">Cleared 1.7 GB · working on browser caches</div>
+            <div style="font-size:10.5px; color:#666; margin-top:18px; letter-spacing:.04em;">A System Restore point was created before any change.</div>
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <div style="font-size:10.5px; letter-spacing:.16em; color:#7afbff; margin:0 0 12px 4px;">DONE</div>
+          <div style="width:320px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(122,251,255,.35); border-radius:14px; padding:34px 20px 20px; position:relative;">
+            <div style="position:absolute; top:-26px; left:50%; transform:translateX(-50%);"><dc-import name="Globe" state="done" size="56" hint-size="56px,56px"></dc-import></div>
+            <div style="display:inline-block; padding:5px 10px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(122,251,255,.5); font-size:10px; letter-spacing:.16em; color:#7afbff; font-weight:600;">DISK · RESOLVED</div>
+            <div style="font-family:'Cinzel',serif; font-size:17px; font-weight:700; color:#fff; margin:14px 0 8px;">Recovered 4.2 GB</div>
+            <div style="font-size:12.5px; line-height:1.55; color:#aaa;">Disk is healthy. Your work won't be interrupted by space issues.</div>
+            <div style="display:flex; gap:10px; margin-top:18px;">
+              <button style="flex:1; background:linear-gradient(90deg,#c5a059,#f1dca7); color:#1a1410; border:none; border-radius:8px; padding:12px; font-family:'Cinzel',serif; font-weight:700; font-size:12px; letter-spacing:.14em; cursor:pointer;">DISMISS</button>
+              <button style="background:transparent; color:#7afbff; border:1px solid rgba(122,251,255,.5); border-radius:8px; padding:12px 16px; font-size:11px; letter-spacing:.12em; cursor:pointer; font-family:'Inter',sans-serif;">VIEW LOG</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <div style="font-size:10.5px; letter-spacing:.16em; color:#ffcb6b; margin:0 0 12px 4px;">ESCALATION · HARDWARE</div>
+          <div style="width:320px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(255,203,107,.5); border-radius:14px; padding:34px 20px 20px; position:relative;">
+            <div style="position:absolute; top:-26px; left:50%; transform:translateX(-50%);"><dc-import name="Globe" state="escalation" size="56" hint-size="56px,56px"></dc-import></div>
+            <div style="display:inline-block; padding:5px 10px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(255,203,107,.5); font-size:10px; letter-spacing:.16em; color:#ffcb6b; font-weight:600;">BSOD · 0xC000021A</div>
+            <div style="font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:#fff; margin:14px 0 8px; line-height:1.25;">This may need hardware inspection</div>
+            <div style="font-size:12px; line-height:1.55; color:#aaa;">May need replacement parts or reimaging. I've raised a ServiceNow incident to your Desktop Support team.</div>
+            <button style="width:100%; margin-top:18px; background:transparent; color:#ffcb6b; border:1px solid rgba(255,203,107,.55); border-radius:8px; padding:11px; font-size:11px; letter-spacing:.12em; cursor:pointer; font-family:'Inter',sans-serif;">VIEW INCIDENT INC0042781</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="recipes" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Core product · 03</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Recipe-applied done states</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:640px; margin:0;">The done card adapts to the recipe family. Same template, family-specific chip, title and outcome line. Five of the top 25 MVP recipes shown.</p>
+      <div style="margin-top:34px; display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
+        <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(122,251,255,.3); border-radius:13px; padding:22px;">
+          <div style="display:inline-block; padding:5px 9px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(122,251,255,.45); font-size:9.5px; letter-spacing:.16em; color:#7afbff; font-weight:600;">DISK · DISK.FULL</div>
+          <div style="font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:#fff; margin:13px 0 7px;">Recovered 4.2 GB</div>
+          <div style="font-size:12px; line-height:1.5; color:#9a9a9a;">Temp files, browser caches and downloads &gt;30 days cleared.</div>
+        </div>
+        <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(122,251,255,.3); border-radius:13px; padding:22px;">
+          <div style="display:inline-block; padding:5px 9px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(122,251,255,.45); font-size:9.5px; letter-spacing:.16em; color:#7afbff; font-weight:600;">NETWORK · NET.DNS.FAIL</div>
+          <div style="font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:#fff; margin:13px 0 7px;">DNS resolved</div>
+          <div style="font-size:12px; line-height:1.5; color:#9a9a9a;">Flushed DNS cache and reset the adapter. You're back online.</div>
+        </div>
+        <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(122,251,255,.3); border-radius:13px; padding:22px;">
+          <div style="display:inline-block; padding:5px 9px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(122,251,255,.45); font-size:9.5px; letter-spacing:.16em; color:#7afbff; font-weight:600;">BROWSER · CACHE.STALE</div>
+          <div style="font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:#fff; margin:13px 0 7px;">Cleared cache</div>
+          <div style="font-size:12px; line-height:1.5; color:#9a9a9a;">Cleared cache for this origin. Refresh the page to finish.</div>
+        </div>
+        <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(122,251,255,.3); border-radius:13px; padding:22px;">
+          <div style="display:inline-block; padding:5px 9px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(122,251,255,.45); font-size:9.5px; letter-spacing:.16em; color:#7afbff; font-weight:600;">APP · PRINT.OFFLINE</div>
+          <div style="font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:#fff; margin:13px 0 7px;">Printer back online</div>
+          <div style="font-size:12px; line-height:1.5; color:#9a9a9a;">Restarted the Print Spooler service. Try printing again.</div>
+        </div>
+        <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(122,251,255,.3); border-radius:13px; padding:22px;">
+          <div style="display:inline-block; padding:5px 9px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(122,251,255,.45); font-size:9.5px; letter-spacing:.16em; color:#7afbff; font-weight:600;">BSOD · CRITICAL_PROCESS_DIED</div>
+          <div style="font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:#fff; margin:13px 0 7px;">Repaired on boot</div>
+          <div style="font-size:12px; line-height:1.5; color:#9a9a9a;">Matched stop code, repaired the Outlook profile. System resumed.</div>
+        </div>
+        <div style="background:#0a0a0a; border:1px dashed #2a2a2a; border-radius:13px; padding:22px; display:flex; flex-direction:column; justify-content:center;">
+          <div style="font-size:12.5px; color:#c5a059; font-weight:600;">+20 more recipes</div>
+          <div style="font-size:11.5px; line-height:1.5; color:#777; margin-top:6px;">25 in MVP, expanding to 75+ via the KB-agent loop (Sprint 5).</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="chat" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Core product · 04</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Manual mode chat overlay</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:640px; margin:0;">Manual is the default at install. The globe pulses, offers chat, and ARIA walks the user through the fix step by step — extending the existing L1–L3 ARIA chat/voice product onto the desktop.</p>
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:18px; padding:44px; display:flex; justify-content:center; position:relative; overflow:hidden;">
+        <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 0%, rgba(197,160,89,.05), transparent 55%);"></div>
+        <div style="position:relative; width:392px; background:#0a0a0a; border:1px solid #2a2a2a; border-radius:16px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.5);">
+          <div style="display:flex; align-items:center; gap:11px; padding:14px 18px; border-bottom:1px solid #1c1c1c; background:#0c0c0c;">
+            <dc-import name="Globe" state="listening" size="34" hint-size="34px,34px"></dc-import>
+            <div style="flex:1;">
+              <div style="font-family:'Cinzel',serif; font-size:14px; color:#f1dca7; font-weight:700; letter-spacing:.06em;">ARIA</div>
+              <div style="font-size:10.5px; color:#777; letter-spacing:.1em;">MANUAL MODE · WALKTHROUGH</div>
+            </div>
+            <div style="width:7px; height:7px; border-radius:50%; background:#7afbff;"></div>
+          </div>
+          <div style="padding:20px 18px; display:flex; flex-direction:column; gap:14px;">
+            <div style="max-width:88%; background:#141414; border:1px solid #222; border-radius:4px 13px 13px 13px; padding:12px 14px;">
+              <div style="font-size:13px; line-height:1.55; color:#e6e6e6;">I think this is a printer driver issue. Want me to walk you through it?</div>
+            </div>
+            <div style="align-self:flex-end; max-width:80%; background:linear-gradient(180deg,#1c1710,#15110a); border:1px solid #38301d; border-radius:13px 4px 13px 13px; padding:12px 14px;">
+              <div style="font-size:13px; line-height:1.55; color:#f1dca7;">Yes please</div>
+            </div>
+            <div style="max-width:88%; background:#141414; border:1px solid #222; border-radius:4px 13px 13px 13px; padding:12px 14px;">
+              <div style="font-size:13px; line-height:1.55; color:#e6e6e6;">Open <span style="color:#c5a059;">Settings → Bluetooth &amp; devices → Printers</span>. Tell me when you're there and I'll do the rest.</div>
+              <div style="margin-top:10px; display:flex; gap:8px;">
+                <span style="font-size:11px; color:#1a1410; background:linear-gradient(90deg,#c5a059,#f1dca7); padding:6px 12px; border-radius:6px; font-weight:600;">I'm there</span>
+                <span style="font-size:11px; color:#aaa; border:1px solid #2a2a2a; padding:6px 12px; border-radius:6px;">Do it for me</span>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; padding-left:4px;">
+              <div style="width:5px; height:5px; border-radius:50%; background:#c5a059; opacity:.8;"></div>
+              <div style="width:5px; height:5px; border-radius:50%; background:#c5a059; opacity:.5;"></div>
+              <div style="width:5px; height:5px; border-radius:50%; background:#c5a059; opacity:.3;"></div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; padding:13px 16px; border-top:1px solid #1c1c1c; background:#0c0c0c;">
+            <div style="flex:1; background:#141414; border:1px solid #242424; border-radius:9px; padding:10px 13px; font-size:12.5px; color:#666;">Ask ARIA anything…</div>
+            <div style="width:36px; height:36px; border-radius:9px; background:linear-gradient(135deg,#c5a059,#f1dca7); display:flex; align-items:center; justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12h14M12 5l7 7-7 7" stroke="#1a1410" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="bsod" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">BSOD &amp; escalation · 05</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">BSOD takeover — the wow moment</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:660px; margin:0;">On next boot after a crash, ARIA's "Solve it for me" option appears below the standard Microsoft recovery text (Tier A: BCD boot entry · Tier C: crash-on-resume fallback). It reads the minidump, matches the stop code locally, applies a known fix — or escalates.</p>
+      <div style="margin-top:34px; border:1px solid #1c1c1c; border-radius:18px; overflow:hidden;">
+        <div style="position:relative; background:#0078D4; padding:64px 70px 70px;">
+          <div style="font-size:110px; line-height:.8; color:#fff; font-weight:300; font-family:'Segoe UI',Inter,sans-serif;">:(</div>
+          <div style="font-size:22px; color:#fff; font-weight:300; margin-top:28px; max-width:620px; line-height:1.4;">Your PC ran into a problem and needs to restart. We're collecting some error info, and you can try the options below.</div>
+          <div style="font-size:14px; color:rgba(255,255,255,.82); margin-top:30px;">For more information about this issue and possible fixes, visit</div>
+          <div style="font-family:ui-monospace,monospace; font-size:14px; color:rgba(255,255,255,.92);">https://www.windows.com/stopcode</div>
+          <div style="font-size:13px; color:rgba(255,255,255,.7); margin-top:22px;">If you call a support person, give them this info:</div>
+          <div style="font-family:ui-monospace,monospace; font-size:13px; color:#fff; margin-top:4px;">Stop code: CRITICAL_PROCESS_DIED  (0x000000EF)</div>
+
+          <div style="margin-top:40px; max-width:860px; background:rgba(0,0,0,.34); border:2px solid rgba(197,160,89,.85); border-radius:16px; padding:24px 26px; display:flex; align-items:center; gap:24px;">
+            <dc-import name="Globe" state="diagnosing" size="92" hint-size="92px,92px"></dc-import>
+            <div style="flex:1;">
+              <div style="font-family:'Cinzel',serif; font-size:11px; letter-spacing:.24em; color:#f1dca7;">ARIA SENTINEL</div>
+              <div style="font-family:'Cinzel',serif; font-size:24px; font-weight:700; color:#fff; margin:5px 0 8px;">Solve it for me</div>
+              <div style="font-size:13.5px; line-height:1.5; color:rgba(255,255,255,.86);">I can read this stop code and apply a known fix locally — or raise a routed ServiceNow incident if hardware support is needed.</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="background:#c5a059; color:#1a1410; font-family:'Cinzel',serif; font-weight:700; font-size:14px; letter-spacing:.16em; padding:16px 26px; border-radius:10px;">SOLVE IT FOR ME</div>
+              <div style="font-size:10.5px; color:rgba(255,255,255,.55); margin-top:10px;">Press F8 → Recovery menu → ARIA</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:rgba(255,255,255,.5); margin-top:26px;">0% complete</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="escalation" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">BSOD &amp; escalation · 06</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">ServiceNow escalation card</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:680px; margin:0;">When local recipes can't resolve it, ARIA composes a ServiceNow incident — assignment group auto-selected from the signal, pre-filled with diagnostic context. The one intentional outbound path, and it goes to the customer's own ServiceNow instance, never to iisupp.net.</p>
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:18px; padding:44px; display:flex; gap:30px; flex-wrap:wrap; justify-content:center; position:relative; overflow:hidden;">
+        <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 0%, rgba(255,203,107,.05), transparent 55%);"></div>
+        <div style="position:relative;">
+          <div style="font-size:10.5px; letter-spacing:.16em; color:#ffcb6b; margin:0 0 12px 4px;">COMPOSE INCIDENT</div>
+          <div style="width:368px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(255,203,107,.5); border-radius:14px; padding:34px 22px 22px; position:relative;">
+            <div style="position:absolute; top:-26px; left:50%; transform:translateX(-50%);"><dc-import name="Globe" state="escalation" size="56" hint-size="56px,56px"></dc-import></div>
+            <div style="display:inline-block; padding:5px 10px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(255,203,107,.5); font-size:10px; letter-spacing:.14em; color:#ffcb6b; font-weight:600;">COULD NOT RESOLVE LOCALLY</div>
+            <div style="font-family:'Cinzel',serif; font-size:18px; font-weight:700; color:#fff; margin:14px 0 7px;">Routing to Desktop Support</div>
+            <div style="font-size:12.5px; line-height:1.5; color:#aaa;">I tried 2 recipes without success. Raising a ServiceNow incident so the right team can take over.</div>
+
+            <div style="margin-top:18px; background:#0c0c0c; border:1px solid #222; border-radius:10px; padding:14px 15px;">
+              <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #1a1a1a;">
+                <span style="font-size:11px; color:#777;">Assignment group</span>
+                <span style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#f1dca7; font-weight:600;">Desktop Support (DSS)<span style="font-size:8.5px; letter-spacing:.1em; color:#7afbff; border:1px solid rgba(122,251,255,.4); border-radius:3px; padding:1px 5px;">AUTO</span></span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #1a1a1a;">
+                <span style="font-size:11px; color:#777;">Short description</span>
+                <span style="font-size:11.5px; color:#ddd; text-align:right; max-width:200px;">BSOD 0xC000021A · hardware suspected</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #1a1a1a;">
+                <span style="font-size:11px; color:#777;">Caller</span>
+                <span style="font-size:11.5px; color:#ddd;">a.wasee · WHITBY-WS-14</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:7px 0;">
+                <span style="font-size:11px; color:#777;">Priority</span>
+                <span style="font-size:11.5px; color:#ffcb6b;">3 — Moderate</span>
+              </div>
+            </div>
+            <div style="font-size:10px; color:#666; margin-top:11px; letter-spacing:.03em;">Team auto-assigned from the signal · minidump + recipe attempts attach automatically · no PII leaves the device.</div>
+            <button style="width:100%; margin-top:16px; background:linear-gradient(90deg,#c5a059,#f1dca7); color:#1a1410; border:none; border-radius:8px; padding:12px; font-family:'Cinzel',serif; font-weight:700; font-size:12px; letter-spacing:.12em; cursor:pointer;">RAISE INCIDENT</button>
+          </div>
+        </div>
+        <div style="position:relative; align-self:center; max-width:280px;">
+          <div style="font-family:'Cinzel',serif; font-size:13px; color:#c5a059; letter-spacing:.08em; margin-bottom:12px;">Auto-routing signal</div>
+          <div style="font-size:12.5px; line-height:1.65; color:#9a9a9a;">ARIA classifies the failing signal — stop code class, failed recipe family, affected subsystem — and maps it to the correct ServiceNow assignment group automatically. Routing is policy-driven and not user-editable, so every incident lands in the right queue.</div>
+          <div style="margin-top:16px; font-family:ui-monospace,monospace; font-size:11px; color:#7a7a7a; background:#0c0c0c; border:1px solid #1c1c1c; border-radius:9px; padding:13px;">signal: BSOD.HW_SUSPECT<br>confidence: 0.38<br>→ group: DSS<br>→ priority: 3</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ticket" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">BSOD &amp; escalation · 07</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Ticket created — confirmation</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:660px; margin:0;">The incident is filed. ARIA shows the number, the queue it landed in, the SLA clock, and a deep link into ServiceNow. The diagnostic bundle is attached for the assignee.</p>
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:18px; padding:44px; display:flex; justify-content:center; position:relative; overflow:hidden;">
+        <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 0%, rgba(197,160,89,.05), transparent 55%);"></div>
+        <div style="position:relative; width:368px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid rgba(197,160,89,.4); border-radius:14px; padding:34px 22px 22px;">
+          <div style="position:absolute; top:-26px; left:50%; transform:translateX(-50%);"><dc-import name="Globe" state="done" size="56" hint-size="56px,56px"></dc-import></div>
+          <div style="display:inline-block; padding:5px 10px; border-radius:5px; background:#0a0a0a; border:1px solid rgba(197,160,89,.5); font-size:10px; letter-spacing:.14em; color:#c5a059; font-weight:600;">INCIDENT CREATED</div>
+          <div style="font-family:'Cinzel',serif; font-size:26px; font-weight:700; color:#fff; margin:13px 0 4px; letter-spacing:.02em;">INC0042781</div>
+          <div style="font-size:12.5px; color:#aaa;">Desktop Support has it. You'll hear back here and by email.</div>
+
+          <div style="margin-top:18px; display:grid; grid-template-columns:1fr 1fr; gap:9px;">
+            <div style="background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 13px;"><div style="font-size:10px; color:#777; letter-spacing:.08em;">STATE</div><div style="font-size:12.5px; color:#7afbff; margin-top:4px; font-weight:600;">New</div></div>
+            <div style="background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 13px;"><div style="font-size:10px; color:#777; letter-spacing:.08em;">PRIORITY</div><div style="font-size:12.5px; color:#ffcb6b; margin-top:4px; font-weight:600;">3 — Moderate</div></div>
+            <div style="background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 13px;"><div style="font-size:10px; color:#777; letter-spacing:.08em;">ASSIGNMENT GROUP</div><div style="font-size:12.5px; color:#ddd; margin-top:4px; font-weight:600;">DSS</div></div>
+            <div style="background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 13px;"><div style="font-size:10px; color:#777; letter-spacing:.08em;">RESPONSE SLA</div><div style="font-size:12.5px; color:#ddd; margin-top:4px; font-weight:600;">4h 00m</div></div>
+          </div>
+
+          <div style="margin-top:12px; display:flex; align-items:center; gap:9px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 13px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 12h6M9 16h6M9 8h2M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="#c5a059" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <span style="font-size:11.5px; color:#9a9a9a;">minidump-0619.dmp · recipe-log.json attached</span>
+          </div>
+
+          <div style="display:flex; gap:10px; margin-top:16px;">
+            <button style="flex:1; background:linear-gradient(90deg,#c5a059,#f1dca7); color:#1a1410; border:none; border-radius:8px; padding:12px; font-family:'Cinzel',serif; font-weight:700; font-size:12px; letter-spacing:.1em; cursor:pointer;">VIEW IN SERVICENOW</button>
+            <button style="background:transparent; color:#aaa; border:1px solid #2a2a2a; border-radius:8px; padding:12px 14px; font-size:11px; letter-spacing:.08em; cursor:pointer; font-family:'Inter',sans-serif;">COPY #</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tickets" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">BSOD &amp; escalation · 08</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">My tickets</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:700px; margin:0;">Every incident ARIA raised, newest first — status, the issue as described, and live work notes, all pulled from ServiceNow. The user can post a note asking for an update; it lands directly on the ServiceNow incident so support sees them engaged.</p>
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:16px; overflow:hidden;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 22px; border-bottom:1px solid #161616; background:#0c0c0c;">
+          <div style="display:flex; align-items:center; gap:10px;"><div style="transform:scale(.78);"><dc-import name="Globe" state="idle" size="24" hint-size="24px,24px"></dc-import></div><span style="font-family:'Cinzel',serif; font-size:14px; color:#f1dca7; letter-spacing:.06em;">My incidents</span></div>
+          <span style="display:flex; align-items:center; gap:7px; font-size:11px; color:#7afbff;"><span style="width:7px; height:7px; border-radius:50%; background:#7afbff;"></span>Synced with ServiceNow · newest first</span>
+        </div>
+
+        <div style="padding:14px 18px 18px; display:flex; flex-direction:column; gap:11px;">
+          <div style="background:#0c0c0c; border:1px solid rgba(197,160,89,.3); border-radius:12px; padding:17px 19px;">
+            <div style="display:flex; align-items:center; gap:11px; flex-wrap:wrap;">
+              <span style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700;">INC0042781</span>
+              <span style="font-size:9.5px; letter-spacing:.12em; color:#7afbff; border:1px solid rgba(122,251,255,.4); border-radius:4px; padding:2px 8px;">NEW</span>
+              <span style="font-size:11px; color:#ffcb6b;">P3</span>
+              <span style="flex:1;"></span>
+              <span style="font-size:11px; color:#777;">Desktop Support · 2 min ago</span>
+            </div>
+            <div style="font-size:13px; color:#ddd; margin-top:9px; font-weight:600;">BSOD 0xC000021A — hardware inspection suspected</div>
+            <div style="font-size:12px; color:#9a9a9a; margin-top:5px; line-height:1.5;">Issue described: repeated blue screen on boot. ARIA matched the stop code but confidence was below the auto-fix threshold.</div>
+            <div style="margin-top:13px; border-left:2px solid #242424; padding:2px 0 2px 13px; display:flex; flex-direction:column; gap:7px;">
+              <div style="font-size:10px; letter-spacing:.14em; color:#7d6326;">WORK NOTES</div>
+              <div style="display:flex; gap:11px;"><span style="font-family:ui-monospace,monospace; font-size:11px; color:#666; flex:0 0 60px;">14:02</span><span style="font-size:11.5px; color:#aaa; line-height:1.45;">ARIA: minidump + recipe log attached, routed to DSS.</span></div>
+              <div style="display:flex; gap:11px;"><span style="font-family:ui-monospace,monospace; font-size:11px; color:#666; flex:0 0 60px;">14:05</span><span style="font-size:11.5px; color:#aaa; line-height:1.45;">Awaiting assignment — response SLA 4h.</span></div>
+            </div>
+            <div style="margin-top:12px; border-left:2px solid #38301d; padding:2px 0 2px 13px; display:flex; flex-direction:column; gap:7px;">
+              <div style="font-size:10px; letter-spacing:.14em; color:#7d6326;">YOUR COMMENTS</div>
+              <div style="display:flex; gap:11px;"><span style="font-family:ui-monospace,monospace; font-size:11px; color:#8a6f33; flex:0 0 60px;">14:09</span><span style="font-size:11.5px; color:#cdbb89; line-height:1.45;">Any update? This is blocking my morning.</span></div>
+            </div>
+            <div style="margin-top:13px; display:flex; gap:9px; align-items:center;">
+              <div style="flex:1; background:#141414; border:1px solid #242424; border-radius:9px; padding:10px 13px; font-size:12px; color:#666;">Ask for an update…</div>
+              <button style="background:linear-gradient(90deg,#c5a059,#f1dca7); color:#1a1410; border:none; border-radius:9px; padding:10px 16px; font-family:'Cinzel',serif; font-weight:700; font-size:11px; letter-spacing:.1em; cursor:pointer;">POST</button>
+            </div>
+            <div style="font-size:10px; color:#666; margin-top:8px; letter-spacing:.03em;">Posts to ServiceNow as your comment — the assigned team is notified you're waiting.</div>
+          </div>
+
+          <div style="background:#0c0c0c; border:1px solid #1f1f1f; border-radius:12px; padding:17px 19px;">
+            <div style="display:flex; align-items:center; gap:11px; flex-wrap:wrap;">
+              <span style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700;">INC0042770</span>
+              <span style="font-size:9.5px; letter-spacing:.12em; color:#ffcb6b; border:1px solid rgba(255,203,107,.4); border-radius:4px; padding:2px 8px;">IN PROGRESS</span>
+              <span style="font-size:11px; color:#ffcb6b;">P2</span>
+              <span style="flex:1;"></span>
+              <span style="font-size:11px; color:#777;">Network Team · 3 hrs ago</span>
+            </div>
+            <div style="font-size:13px; color:#ddd; margin-top:9px; font-weight:600;">VPN drops every few minutes on corporate Wi-Fi</div>
+            <div style="font-size:12px; color:#9a9a9a; margin-top:5px; line-height:1.5;">Issue described: tunnel reconnects repeatedly. ARIA's reconnect recipe didn't hold, so it escalated to infra.</div>
+            <div style="margin-top:13px; border-left:2px solid #242424; padding:2px 0 2px 13px; display:flex; flex-direction:column; gap:7px;">
+              <div style="font-size:10px; letter-spacing:.14em; color:#7d6326;">WORK NOTES</div>
+              <div style="display:flex; gap:11px;"><span style="font-family:ui-monospace,monospace; font-size:11px; color:#666; flex:0 0 60px;">11:18</span><span style="font-size:11.5px; color:#aaa; line-height:1.45;">N. Patel: confirmed gateway flapping, investigating the concentrator.</span></div>
+            </div>
+          </div>
+
+          <div style="background:#0c0c0c; border:1px solid #1f1f1f; border-radius:12px; padding:17px 19px;">
+            <div style="display:flex; align-items:center; gap:11px; flex-wrap:wrap;">
+              <span style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700;">INC0042612</span>
+              <span style="font-size:9.5px; letter-spacing:.12em; color:#7afbff; border:1px solid rgba(122,251,255,.4); border-radius:4px; padding:2px 8px;">RESOLVED</span>
+              <span style="font-size:11px; color:#777;">P3</span>
+              <span style="flex:1;"></span>
+              <span style="font-size:11px; color:#777;">Service Desk · 2 days ago</span>
+            </div>
+            <div style="font-size:13px; color:#ddd; margin-top:9px; font-weight:600;">Outlook profile corruption after update</div>
+            <div style="font-size:12px; color:#9a9a9a; margin-top:5px; line-height:1.5;">Issue described: Outlook wouldn't open. ARIA couldn't auto-repair, escalated, and the fix was confirmed.</div>
+            <div style="margin-top:13px; border-left:2px solid #242424; padding:2px 0 2px 13px; display:flex; flex-direction:column; gap:7px;">
+              <div style="font-size:10px; letter-spacing:.14em; color:#7d6326;">WORK NOTES</div>
+              <div style="display:flex; gap:11px;"><span style="font-family:ui-monospace,monospace; font-size:11px; color:#666; flex:0 0 60px;">06/17</span><span style="font-size:11.5px; color:#aaa; line-height:1.45;">Rebuilt OST and re-created the mail profile. Verified with user. Closed.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="routing" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">BSOD &amp; escalation · 09</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Routing logic — assignment groups</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:680px; margin:0;">ARIA classifies the unresolved signal and routes the incident to the correct ServiceNow assignment group. Six targets ship in v1, with Service Desk as the catch-all.</p>
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:18px; padding:36px; position:relative; overflow:hidden;">
+        <div style="display:flex; align-items:center; gap:22px; flex-wrap:wrap;">
+          <div style="flex:0 0 200px;">
+            <div style="background:#0c0c0c; border:1px solid rgba(255,203,107,.4); border-radius:12px; padding:18px;">
+              <div style="font-size:10px; letter-spacing:.16em; color:#ffcb6b; margin-bottom:8px;">LOCAL FIX FAILS</div>
+              <div style="font-size:12.5px; line-height:1.5; color:#ddd;">confidence &lt; 0.5, or 2 attempts exhausted</div>
+            </div>
+            <div style="text-align:center; color:#444; font-size:20px; margin:8px 0;">↓</div>
+            <div style="background:#0c0c0c; border:1px solid rgba(197,160,89,.5); border-radius:12px; padding:18px;">
+              <div style="font-size:10px; letter-spacing:.16em; color:#c5a059; margin-bottom:8px;">ARIA CLASSIFIER</div>
+              <div style="font-size:12.5px; line-height:1.5; color:#ddd;">signal class → assignment group + priority</div>
+            </div>
+          </div>
+          <div style="flex:1; min-width:420px; display:grid; grid-template-columns:1fr 1fr; gap:11px;">
+            <div style="background:linear-gradient(180deg,#141414,#0c0c0c); border:1px solid #242424; border-radius:11px; padding:15px 16px; border-left:2px solid #c5a059;">
+              <div style="font-size:13px; color:#fff; font-weight:600;">Desktop Support (DSS)</div>
+              <div style="font-size:11px; color:#888; margin-top:5px; line-height:1.45;">Hardware suspect · reimaging · physical device faults</div>
+            </div>
+            <div style="background:linear-gradient(180deg,#141414,#0c0c0c); border:1px solid #242424; border-radius:11px; padding:15px 16px; border-left:2px solid #c5a059;">
+              <div style="font-size:13px; color:#fff; font-weight:600;">Network Team</div>
+              <div style="font-size:11px; color:#888; margin-top:5px; line-height:1.45;">VPN infra · DNS server-side · connectivity outages</div>
+            </div>
+            <div style="background:linear-gradient(180deg,#141414,#0c0c0c); border:1px solid #242424; border-radius:11px; padding:15px 16px; border-left:2px solid #ff7e7e;">
+              <div style="font-size:13px; color:#fff; font-weight:600;">Security Team</div>
+              <div style="font-size:11px; color:#888; margin-top:5px; line-height:1.45;">Suspected malware · policy violations · quarantine</div>
+            </div>
+            <div style="background:linear-gradient(180deg,#141414,#0c0c0c); border:1px solid #242424; border-radius:11px; padding:15px 16px; border-left:2px solid #c5a059;">
+              <div style="font-size:13px; color:#fff; font-weight:600;">System Admins</div>
+              <div style="font-size:11px; color:#888; margin-top:5px; line-height:1.45;">AD · GPO · server-side configuration</div>
+            </div>
+            <div style="background:linear-gradient(180deg,#141414,#0c0c0c); border:1px solid #242424; border-radius:11px; padding:15px 16px; border-left:2px solid #c5a059;">
+              <div style="font-size:13px; color:#fff; font-weight:600;">Purchasing</div>
+              <div style="font-size:11px; color:#888; margin-top:5px; line-height:1.45;">Replacement parts · license renewals · procurement</div>
+            </div>
+            <div style="background:linear-gradient(180deg,#141414,#0c0c0c); border:1px solid #242424; border-radius:11px; padding:15px 16px; border-left:2px solid #7afbff;">
+              <div style="font-size:13px; color:#fff; font-weight:600;">Service Desk</div>
+              <div style="font-size:11px; color:#888; margin-top:5px; line-height:1.45;">Catch-all triage when class is ambiguous</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:24px; padding-top:20px; border-top:1px solid #161616; font-size:12.5px; line-height:1.6; color:#777;">Vision — collapse the L1–L3 ticket flood into one autonomous on-device agent. 70–80% of recurring user-end issues self-heal; only the genuine hands-on cases route to a human queue. The physical-work layer is the future robotics frontier.</div>
+      </div>
+    </section>
+
+    <section id="settings" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">App chrome · 10</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Settings window</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:660px; margin:0;">Mode selector, Recipes, ServiceNow connection, Privacy verifier, Hotkeys, About. Manual is the free default; Confirmed and Autonomous are paid. The ServiceNow tab maps each signal class to an assignment group.</p>
+
+      <div style="margin-top:34px; border:1px solid #2a2a2a; border-radius:14px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.5);">
+        <div style="display:flex; align-items:center; gap:11px; padding:12px 16px; background:#0c0c0c; border-bottom:1px solid #1c1c1c;">
+          <dc-import name="Globe" state="idle" size="22" hint-size="22px,22px"></dc-import>
+          <div style="font-family:'Cinzel',serif; font-size:13px; color:#f1dca7; letter-spacing:.08em; flex:1;">ARIA Sentinel — Settings</div>
+          <div style="display:flex; gap:14px; color:#666;">
+            <span style="font-size:15px;">—</span><span style="font-size:13px;">▢</span><span style="font-size:14px;">✕</span>
+          </div>
+        </div>
+        <div style="display:flex; background:#0a0a0a; min-height:340px;">
+          <div style="width:184px; border-right:1px solid #1a1a1a; padding:16px 12px;">
+            <div style="background:#15110a; border:1px solid #38301d; color:#f1dca7; padding:10px 13px; border-radius:8px; font-size:13px; font-weight:600;">Mode</div>
+            <div style="color:#aaa; padding:10px 13px; font-size:13px;">Recipes</div>
+            <div style="color:#aaa; padding:10px 13px; font-size:13px;">ServiceNow</div>
+            <div style="color:#aaa; padding:10px 13px; font-size:13px;">Knowledge &amp; policy</div>
+            <div style="color:#aaa; padding:10px 13px; font-size:13px;">Privacy verifier</div>
+            <div style="color:#aaa; padding:10px 13px; font-size:13px;">Hotkeys</div>
+            <div style="color:#aaa; padding:10px 13px; font-size:13px;">About</div>
+          </div>
+          <div style="flex:1; padding:26px 28px;">
+            <div style="font-family:'Cinzel',serif; font-size:17px; color:#fff; font-weight:700; margin-bottom:5px;">Operating mode</div>
+            <div style="font-size:12.5px; color:#888; margin-bottom:18px;">How much ARIA does on its own. Higher-risk fixes always confirm regardless of mode.</div>
+            <div style="display:flex; flex-direction:column; gap:11px;">
+              <div style="display:flex; gap:14px; align-items:flex-start; background:#15110a; border:1px solid #c5a059; border-radius:11px; padding:16px 18px;">
+                <div style="width:18px; height:18px; border-radius:50%; border:2px solid #c5a059; display:flex; align-items:center; justify-content:center; margin-top:2px;"><div style="width:9px; height:9px; border-radius:50%; background:#c5a059;"></div></div>
+                <div style="flex:1;"><div style="display:flex; gap:10px; align-items:center;"><span style="font-size:14px; color:#fff; font-weight:600;">Manual</span><span style="font-size:9.5px; letter-spacing:.12em; color:#7afbff; border:1px solid rgba(122,251,255,.4); border-radius:4px; padding:2px 7px;">DEFAULT · FREE</span></div><div style="font-size:12px; color:#9a9a9a; margin-top:5px; line-height:1.5;">ARIA detects issues and walks you through fixes in chat. Nothing is applied automatically.</div></div>
+              </div>
+              <div style="display:flex; gap:14px; align-items:flex-start; background:#0c0c0c; border:1px solid #242424; border-radius:11px; padding:16px 18px;">
+                <div style="width:18px; height:18px; border-radius:50%; border:2px solid #3a3a3a; margin-top:2px;"></div>
+                <div style="flex:1;"><div style="display:flex; gap:10px; align-items:center;"><span style="font-size:14px; color:#fff; font-weight:600;">Confirmed</span><span style="font-size:9.5px; letter-spacing:.12em; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:4px; padding:2px 7px;">PAID</span></div><div style="font-size:12px; color:#9a9a9a; margin-top:5px; line-height:1.5;">ARIA proposes a fix card and applies it once you confirm.</div></div>
+              </div>
+              <div style="display:flex; gap:14px; align-items:flex-start; background:#0c0c0c; border:1px solid #242424; border-radius:11px; padding:16px 18px;">
+                <div style="width:18px; height:18px; border-radius:50%; border:2px solid #3a3a3a; margin-top:2px;"></div>
+                <div style="flex:1;"><div style="display:flex; gap:10px; align-items:center;"><span style="font-size:14px; color:#fff; font-weight:600;">Autonomous</span><span style="font-size:9.5px; letter-spacing:.12em; color:#c5a059; border:1px solid rgba(197,160,89,.4); border-radius:4px; padding:2px 7px;">PAID · OPT-IN</span></div><div style="font-size:12px; color:#9a9a9a; margin-top:5px; line-height:1.5;">ARIA silently applies low-risk fixes and tells you after. Risky fixes still confirm.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; display:flex; gap:14px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:380px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:13px; padding:24px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <div style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700;">ServiceNow connection</div>
+            <span style="display:flex; align-items:center; gap:7px; font-size:11px; color:#7afbff;"><span style="width:7px; height:7px; border-radius:50%; background:#7afbff;"></span>Connected</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div><div style="font-size:10.5px; color:#777; letter-spacing:.06em; margin-bottom:5px;">INSTANCE URL</div><div style="background:#141414; border:1px solid #242424; border-radius:8px; padding:10px 12px; font-family:ui-monospace,monospace; font-size:12px; color:#ddd;">https://acme.service-now.com</div></div>
+            <div><div style="font-size:10.5px; color:#777; letter-spacing:.06em; margin-bottom:5px;">AUTH</div><div style="background:#141414; border:1px solid #242424; border-radius:8px; padding:10px 12px; font-size:12px; color:#ddd;">OAuth 2.0 · service account</div></div>
+            <div><div style="font-size:10.5px; color:#777; letter-spacing:.06em; margin-bottom:5px;">DEFAULT CALLER</div><div style="background:#141414; border:1px solid #242424; border-radius:8px; padding:10px 12px; font-size:12px; color:#ddd;">resolved from machine identity</div></div>
+          </div>
+          <button style="margin-top:14px; background:transparent; color:#c5a059; border:1px solid rgba(197,160,89,.45); border-radius:8px; padding:10px 16px; font-size:11px; letter-spacing:.1em; cursor:pointer; font-family:'Inter',sans-serif;">TEST CONNECTION</button>
+        </div>
+        <div style="flex:1; min-width:330px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:13px; padding:24px;">
+          <div style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700; margin-bottom:16px;">Assignment group mapping</div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:12px;">
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #1a1a1a;"><span style="color:#888;">Hardware / BSOD</span><span style="color:#ddd;">Desktop Support</span></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #1a1a1a;"><span style="color:#888;">Connectivity infra</span><span style="color:#ddd;">Network Team</span></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #1a1a1a;"><span style="color:#888;">Malware / policy</span><span style="color:#ddd;">Security Team</span></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #1a1a1a;"><span style="color:#888;">AD / GPO</span><span style="color:#ddd;">System Admins</span></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0;"><span style="color:#888;">Parts / licenses</span><span style="color:#ddd;">Purchasing</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="installer" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">App chrome · 11</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Installer flow — four steps</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:660px; margin:0;">Welcome → permissions explainer → mode select → done. The installer creates the BCD boot entry so BSOD takeover is live from first launch.</p>
+      <div style="margin-top:34px; display:grid; grid-template-columns:repeat(2,1fr); gap:16px;">
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; overflow:hidden;">
+          <div style="padding:30px 28px 26px; text-align:center; border-bottom:1px solid #161616; position:relative;">
+            <div style="position:absolute; top:14px; left:18px; font-size:10.5px; letter-spacing:.16em; color:#7d6326;">STEP 1 / 4</div>
+            <div style="display:flex; justify-content:center; margin:14px 0 16px;"><dc-import name="Globe" state="idle" size="84" hint-size="84px,84px"></dc-import></div>
+            <div style="font-family:'Cinzel',serif; font-size:20px; color:#fff; font-weight:700;">Welcome to ARIA Sentinel</div>
+            <div style="font-size:12.5px; color:#9a9a9a; margin-top:8px; line-height:1.55; max-width:330px; margin-left:auto; margin-right:auto;">Resident IT support that never sleeps. Watches for problems, fixes them on-device, and keeps your data where it belongs.</div>
+            <div style="margin-top:18px; display:inline-block; background:linear-gradient(90deg,#c5a059,#f1dca7); color:#1a1410; font-family:'Cinzel',serif; font-weight:700; font-size:12px; letter-spacing:.12em; padding:11px 28px; border-radius:8px;">GET STARTED</div>
+          </div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:26px 28px; position:relative;">
+          <div style="font-size:10.5px; letter-spacing:.16em; color:#7d6326;">STEP 2 / 4</div>
+          <div style="font-family:'Cinzel',serif; font-size:19px; color:#fff; font-weight:700; margin:12px 0 6px;">What ARIA needs</div>
+          <div style="font-size:12px; color:#9a9a9a; margin-bottom:16px; line-height:1.5;">Elevated access, requested once. Here's exactly why.</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; gap:12px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:10px; padding:13px 15px;"><div style="color:#c5a059; font-size:15px;">◆</div><div><div style="font-size:12.5px; color:#fff; font-weight:600;">Run elevated fixes (UAC)</div><div style="font-size:11px; color:#888; margin-top:3px;">PowerShell, sandboxed, restore point first</div></div></div>
+            <div style="display:flex; gap:12px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:10px; padding:13px 15px;"><div style="color:#c5a059; font-size:15px;">◆</div><div><div style="font-size:12.5px; color:#fff; font-weight:600;">Add a recovery boot entry</div><div style="font-size:11px; color:#888; margin-top:3px;">Enables "Solve it for me" on BSOD</div></div></div>
+            <div style="display:flex; gap:12px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:10px; padding:13px 15px;"><div style="color:#c5a059; font-size:15px;">◆</div><div><div style="font-size:12.5px; color:#fff; font-weight:600;">Read system event logs</div><div style="font-size:11px; color:#888; margin-top:3px;">Local only — never uploaded</div></div></div>
+          </div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:26px 28px;">
+          <div style="font-size:10.5px; letter-spacing:.16em; color:#7d6326;">STEP 3 / 4</div>
+          <div style="font-family:'Cinzel',serif; font-size:19px; color:#fff; font-weight:700; margin:12px 0 6px;">Choose how ARIA helps</div>
+          <div style="font-size:12px; color:#9a9a9a; margin-bottom:16px; line-height:1.5;">You can change this anytime in Settings.</div>
+          <div style="display:flex; flex-direction:column; gap:9px;">
+            <div style="display:flex; align-items:center; gap:12px; background:#15110a; border:1px solid #c5a059; border-radius:10px; padding:13px 15px;"><div style="width:16px; height:16px; border-radius:50%; border:2px solid #c5a059; display:flex; align-items:center; justify-content:center;"><div style="width:8px; height:8px; border-radius:50%; background:#c5a059;"></div></div><div style="flex:1;"><span style="font-size:13px; color:#fff; font-weight:600;">Manual</span><span style="font-size:11px; color:#888;"> — walk me through it</span></div></div>
+            <div style="display:flex; align-items:center; gap:12px; background:#0c0c0c; border:1px solid #242424; border-radius:10px; padding:13px 15px;"><div style="width:16px; height:16px; border-radius:50%; border:2px solid #3a3a3a;"></div><div style="flex:1;"><span style="font-size:13px; color:#fff; font-weight:600;">Confirmed</span><span style="font-size:11px; color:#888;"> — ask before fixing</span></div></div>
+            <div style="display:flex; align-items:center; gap:12px; background:#0c0c0c; border:1px solid #242424; border-radius:10px; padding:13px 15px;"><div style="width:16px; height:16px; border-radius:50%; border:2px solid #3a3a3a;"></div><div style="flex:1;"><span style="font-size:13px; color:#fff; font-weight:600;">Autonomous</span><span style="font-size:11px; color:#888;"> — fix low-risk silently</span></div></div>
+          </div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:30px 28px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <div style="align-self:flex-start; font-size:10.5px; letter-spacing:.16em; color:#7d6326;">STEP 4 / 4</div>
+          <div style="margin:6px 0 16px;"><dc-import name="Globe" state="done" size="84" hint-size="84px,84px"></dc-import></div>
+          <div style="font-family:'Cinzel',serif; font-size:20px; color:#fff; font-weight:700;">ARIA is watching</div>
+          <div style="font-size:12.5px; color:#9a9a9a; margin-top:8px; line-height:1.55; max-width:320px;">The globe is in your corner. It stays calm until something needs attention. BSOD recovery is live.</div>
+          <div style="margin-top:18px; display:inline-block; background:transparent; color:#c5a059; border:1px solid rgba(197,160,89,.45); font-size:11px; letter-spacing:.12em; padding:11px 24px; border-radius:8px;">FINISH</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="firstrun" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">App chrome · 12</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">First-run permission explainers</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:660px; margin:0;">ARIA gets ahead of Windows' own warnings — explaining the SmartScreen notice and the UAC prompt before they appear, so the user isn't startled into cancelling.</p>
+      <div style="margin-top:34px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:26px;">
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:14px;"><div style="width:34px; height:34px; border-radius:8px; background:#15110a; border:1px solid #38301d; display:flex; align-items:center; justify-content:center; color:#ffcb6b; font-size:17px;">⚠</div><div style="font-family:'Cinzel',serif; font-size:16px; color:#fff; font-weight:700;">About the SmartScreen notice</div></div>
+          <div style="font-size:13px; line-height:1.6; color:#aaa;">Windows may show "Windows protected your PC" because ARIA is newly published. Click <span style="color:#f1dca7;">More info → Run anyway</span>. This is expected until code signing reputation builds — it's not a problem with the app.</div>
+          <div style="margin-top:16px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:14px; font-size:12px; color:#888; line-height:1.5;">Windows Defender SmartScreen prevented an unrecognized app from starting.<br><span style="color:#c5a059;">More info</span></div>
+        </div>
+        <div style="background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:26px;">
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:14px;"><div style="width:34px; height:34px; border-radius:8px; background:#15110a; border:1px solid #38301d; display:flex; align-items:center; justify-content:center; color:#c5a059; font-size:17px;">◆</div><div style="font-family:'Cinzel',serif; font-size:16px; color:#fff; font-weight:700;">About the UAC prompt</div></div>
+          <div style="font-size:13px; line-height:1.6; color:#aaa;">You'll see "Do you want to allow this app to make changes?" once. ARIA needs elevation to run fixes and add the recovery boot entry. Click <span style="color:#f1dca7;">Yes</span> — it won't ask again unless a fix requires it.</div>
+          <div style="margin-top:16px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:14px; font-size:12px; color:#888; line-height:1.5;">User Account Control<br>Publisher: <span style="color:#ddd;">Integrated IT Support Inc.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tray" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">App chrome · 13</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Tray icon menu</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:660px; margin:0;">Right-click the tray globe for quick control. Pausing ARIA never disables BSOD takeover — that's safety, not convenience.</p>
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:18px; padding:48px; display:flex; justify-content:center; align-items:flex-end; min-height:330px; position:relative; overflow:hidden;">
+        <div style="position:absolute; bottom:0; left:0; right:0; height:46px; background:#0c0c0c; border-top:1px solid #1c1c1c; display:flex; align-items:center; justify-content:flex-end; padding-right:24px; gap:18px;">
+          <span style="color:#555; font-size:12px;">▲ ◫ ⚙</span>
+          <div style="transform:scale(.8);"><dc-import name="Globe" state="idle" size="26" hint-size="26px,26px"></dc-import></div>
+          <span style="color:#777; font-size:12px; font-family:ui-monospace,monospace;">2:14 PM</span>
+        </div>
+        <div style="position:relative; margin-bottom:54px; width:248px; background:#0c0c0c; border:1px solid #2a2a2a; border-radius:11px; padding:7px; box-shadow:0 20px 50px rgba(0,0,0,.6);">
+          <div style="display:flex; align-items:center; gap:10px; padding:10px 12px 11px; border-bottom:1px solid #1a1a1a; margin-bottom:5px;"><dc-import name="Globe" state="idle" size="26" hint-size="26px,26px"></dc-import><div><div style="font-family:'Cinzel',serif; font-size:12.5px; color:#f1dca7; font-weight:700;">ARIA Sentinel</div><div style="font-size:10px; color:#777;">Manual mode · watching</div></div></div>
+          <div style="display:flex; justify-content:space-between; padding:9px 12px; border-radius:7px; color:#ddd; font-size:12.5px;" style-hover="background:#15110a; color:#f1dca7;">Mode<span style="color:#666;">▸</span></div>
+          <div style="padding:9px 12px; border-radius:7px; color:#ddd; font-size:12.5px;" style-hover="background:#15110a; color:#f1dca7;">Pause for 24 hours</div>
+          <div style="padding:9px 12px; border-radius:7px; color:#ddd; font-size:12.5px;" style-hover="background:#15110a; color:#f1dca7;">Update knowledge</div>
+          <div style="height:1px; background:#1a1a1a; margin:5px 8px;"></div>
+          <div style="padding:9px 12px; border-radius:7px; color:#ddd; font-size:12.5px;" style-hover="background:#15110a; color:#f1dca7;">Open settings</div>
+          <div style="padding:9px 12px; border-radius:7px; color:#ddd; font-size:12.5px;" style-hover="background:#15110a; color:#f1dca7;">Privacy verifier</div>
+          <div style="height:1px; background:#1a1a1a; margin:5px 8px;"></div>
+          <div style="padding:9px 12px; border-radius:7px; color:#aaa; font-size:12.5px;" style-hover="background:#15110a; color:#f1dca7;">Quit ARIA Sentinel</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="knowledge" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Trust · 14</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Company knowledge &amp; policy</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:700px; margin:0;">At setup, at startup, and anytime in Settings, ARIA prompts the customer to upload their own procedures, policies, workflows, culture, security, compliance, audit and regulatory docs. ARIA reads this corpus before applying any fix or making any suggestion — and it shapes how ARIA talks to users. Stored encrypted on-device; never uploaded.</p>
+      <div style="margin-top:34px; display:flex; gap:14px; flex-wrap:wrap; align-items:stretch;">
+        <div style="flex:1; min-width:430px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:26px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <div style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700;">Knowledge sources</div>
+            <span style="font-size:10.5px; letter-spacing:.12em; color:#7afbff; border:1px solid rgba(122,251,255,.4); border-radius:5px; padding:4px 9px;">ON-DEVICE · ENCRYPTED</span>
+          </div>
+          <div style="border:1.5px dashed #2f2a1d; border-radius:11px; padding:22px; text-align:center; background:#0c0c0c; margin-bottom:14px;">
+            <div style="display:flex; justify-content:center; margin-bottom:10px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0l-5 5m5-5l5 5M5 20h14" stroke="#c5a059" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+            <div style="font-size:13px; color:#ddd; font-weight:600;">Drop documents or browse</div>
+            <div style="font-size:11px; color:#777; margin-top:5px;">PDF · DOCX · MD · TXT · indexed locally into the KB</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; align-items:center; gap:12px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 14px;"><span style="width:7px; height:7px; border-radius:50%; background:#7afbff;"></span><span style="flex:1; font-size:12.5px; color:#ddd;">Procedures &amp; runbooks</span><span style="font-size:11px; color:#7afbff;">Indexed · 24 docs</span></div>
+            <div style="display:flex; align-items:center; gap:12px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 14px;"><span style="width:7px; height:7px; border-radius:50%; background:#7afbff;"></span><span style="flex:1; font-size:12.5px; color:#ddd;">IT policies &amp; workflows</span><span style="font-size:11px; color:#7afbff;">Indexed · 11 docs</span></div>
+            <div style="display:flex; align-items:center; gap:12px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 14px;"><span style="width:7px; height:7px; border-radius:50%; background:#7afbff;"></span><span style="flex:1; font-size:12.5px; color:#ddd;">Security &amp; compliance</span><span style="font-size:11px; color:#7afbff;">Indexed · 8 docs</span></div>
+            <div style="display:flex; align-items:center; gap:12px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 14px;"><span style="width:7px; height:7px; border-radius:50%; background:#7afbff;"></span><span style="flex:1; font-size:12.5px; color:#ddd;">Audit &amp; regulatory</span><span style="font-size:11px; color:#7afbff;">Indexed · 5 docs</span></div>
+            <div style="display:flex; align-items:center; gap:12px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:11px 14px;"><span style="width:7px; height:7px; border-radius:50%; background:#ffcb6b;"></span><span style="flex:1; font-size:12.5px; color:#ddd;">Culture &amp; tone of voice</span><span style="font-size:11px; color:#ffcb6b;">Processing…</span></div>
+          </div>
+        </div>
+        <div style="flex:0 0 320px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:26px;">
+          <div style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700; margin-bottom:16px;">Governance gate</div>
+          <div style="display:flex; flex-direction:column; gap:9px;">
+            <div style="background:#0c0c0c; border:1px solid #1f1f1f; border-radius:9px; padding:12px 14px; font-size:12px; color:#ddd;">Detect issue</div>
+            <div style="text-align:center; color:#444; font-size:14px;">↓</div>
+            <div style="background:#15110a; border:1px solid rgba(197,160,89,.45); border-radius:9px; padding:12px 14px; font-size:12px; color:#f1dca7;">Check against policy corpus</div>
+            <div style="text-align:center; color:#444; font-size:14px;">↓</div>
+            <div style="display:flex; gap:8px;"><div style="flex:1; background:#0c0c0c; border:1px solid rgba(122,251,255,.3); border-radius:9px; padding:11px 12px; font-size:11.5px; color:#7afbff;">Allowed → apply fix</div><div style="flex:1; background:#0c0c0c; border:1px solid rgba(255,203,107,.35); border-radius:9px; padding:11px 12px; font-size:11.5px; color:#ffcb6b;">Restricted → escalate</div></div>
+          </div>
+          <div style="font-size:11.5px; color:#777; margin-top:16px; line-height:1.55;">ARIA never acts outside your documented policy. Culture &amp; tone docs tune how it speaks to users — your voice, your rules.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Trust · 15</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Privacy verifier</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:680px; margin:0;">Privacy by engineering, not by promise. The verifier enumerates every outbound path in the binary. Recipes come down from iisupp.net; incidents go to your own ServiceNow. No user data path to iisupp.net exists — verifiable with any network monitor.</p>
+      <div style="margin-top:34px; display:flex; gap:14px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:420px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:26px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;"><div style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700;">Outbound paths in binary</div><span style="font-size:10.5px; letter-spacing:.12em; color:#7afbff; border:1px solid rgba(122,251,255,.4); border-radius:5px; padding:4px 9px;">SOURCE-AVAILABLE HARNESS</span></div>
+          <div style="display:flex; flex-direction:column; gap:9px;">
+            <div style="display:flex; align-items:center; gap:13px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:10px; padding:13px 15px;"><span style="width:8px; height:8px; border-radius:50%; background:#7afbff;"></span><div style="flex:1;"><div style="font-family:ui-monospace,monospace; font-size:11.5px; color:#ddd;">GET iisupp.net/.netlify/functions/aria-recipes</div><div style="font-size:11px; color:#777; margin-top:3px;">Inbound recipes · signed · daily + on-request</div></div></div>
+            <div style="display:flex; align-items:center; gap:13px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:10px; padding:13px 15px;"><span style="width:8px; height:8px; border-radius:50%; background:#7afbff;"></span><div style="flex:1;"><div style="font-family:ui-monospace,monospace; font-size:11.5px; color:#ddd;">GET iisupp.net/.netlify/functions/aria-stop-codes</div><div style="font-size:11px; color:#777; margin-top:3px;">BSOD code lookup table · read-only</div></div></div>
+            <div style="display:flex; align-items:center; gap:13px; background:#0c0c0c; border:1px solid #1f1f1f; border-radius:10px; padding:13px 15px;"><span style="width:8px; height:8px; border-radius:50%; background:#c5a059;"></span><div style="flex:1;"><div style="font-family:ui-monospace,monospace; font-size:11.5px; color:#ddd;">POST {your-instance}.service-now.com/api/now/table/incident</div><div style="font-size:11px; color:#777; margin-top:3px;">Your ITSM only · escalation tickets · never to iisupp.net</div></div></div>
+            <div style="display:flex; align-items:center; gap:13px; background:#0c0c0c; border:1px dashed #2a2a2a; border-radius:10px; padding:13px 15px;"><span style="width:8px; height:8px; border-radius:50%; background:#3a3a3a;"></span><div style="flex:1;"><div style="font-size:11.5px; color:#888;">User data → iisupp.net</div><div style="font-size:11px; color:#666; margin-top:3px;">No such path exists in the binary</div></div></div>
+          </div>
+        </div>
+        <div style="flex:0 0 300px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:26px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+          <div style="font-family:'Cinzel',serif; font-size:54px; color:#7afbff; font-weight:700; line-height:1;">0</div>
+          <div style="font-size:13px; color:#fff; font-weight:600; margin-top:10px;">data-upload paths to iisupp.net</div>
+          <div style="font-size:11.5px; color:#777; margin-top:8px; line-height:1.5;">KB stored encrypted in SQLite at %APPDATA%\AriaSentinel. Telemetry off by default.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="transparency" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Trust · 16</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Transparency log</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:660px; margin:0;">"Here's exactly what I did." Every action ARIA takes is logged locally with timestamps and the exact command run — auditable, never uploaded.</p>
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:14px; padding:10px 0; font-family:ui-monospace,monospace;">
+        <div style="display:flex; gap:16px; padding:13px 24px; border-bottom:1px solid #141414;"><span style="color:#666; font-size:11.5px; flex:0 0 78px;">14:02:11</span><span style="color:#7afbff; font-size:11.5px; flex:0 0 90px;">DETECT</span><span style="color:#ccc; font-size:11.5px;">DISK.FULL — C: at 3% free</span></div>
+        <div style="display:flex; gap:16px; padding:13px 24px; border-bottom:1px solid #141414;"><span style="color:#666; font-size:11.5px; flex:0 0 78px;">14:02:12</span><span style="color:#c5a059; font-size:11.5px; flex:0 0 90px;">RESTORE PT</span><span style="color:#ccc; font-size:11.5px;">Created "ARIA pre-fix 0619-1402"</span></div>
+        <div style="display:flex; gap:16px; padding:13px 24px; border-bottom:1px solid #141414;"><span style="color:#666; font-size:11.5px; flex:0 0 78px;">14:02:13</span><span style="color:#c5a059; font-size:11.5px; flex:0 0 90px;">RUN</span><span style="color:#ccc; font-size:11.5px;">Remove-Item $env:TEMP\* -Recurse -Force</span></div>
+        <div style="display:flex; gap:16px; padding:13px 24px; border-bottom:1px solid #141414;"><span style="color:#666; font-size:11.5px; flex:0 0 78px;">14:02:18</span><span style="color:#c5a059; font-size:11.5px; flex:0 0 90px;">RUN</span><span style="color:#ccc; font-size:11.5px;">Clear-BrowserCache --origin current</span></div>
+        <div style="display:flex; gap:16px; padding:13px 24px;"><span style="color:#666; font-size:11.5px; flex:0 0 78px;">14:02:24</span><span style="color:#7afbff; font-size:11.5px; flex:0 0 90px;">DONE</span><span style="color:#ccc; font-size:11.5px;">Recovered 4.2 GB · 0 errors · no data left device</span></div>
+      </div>
+    </section>
+
+    <section id="restore" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Trust · 17</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Restore point indicator</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:640px; margin:0;">Before any risky fix, ARIA creates a System Restore point and says so. One click rolls everything back.</p>
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:18px; padding:48px; display:flex; justify-content:center;">
+        <div style="width:360px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:13px; padding:22px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:40px; height:40px; border-radius:10px; background:#15110a; border:1px solid #38301d; display:flex; align-items:center; justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4" stroke="#c5a059" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+            <div style="flex:1;"><div style="font-size:13.5px; color:#fff; font-weight:600;">Restore point created</div><div style="font-size:11px; color:#777; margin-top:3px; font-family:ui-monospace,monospace;">ARIA pre-fix · 0619-1402</div></div>
+          </div>
+          <div style="font-size:12px; color:#9a9a9a; margin-top:14px; line-height:1.55;">I saved a snapshot before clearing files. If anything looks wrong, roll back instantly.</div>
+          <button style="width:100%; margin-top:14px; background:transparent; color:#c5a059; border:1px solid rgba(197,160,89,.45); border-radius:8px; padding:11px; font-size:11px; letter-spacing:.12em; cursor:pointer; font-family:'Inter',sans-serif;">ROLL BACK THIS FIX</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="browser" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Extended · 18</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Browser-extension globe</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:660px; margin:0;">The same gold globe rides over any web page (Chrome → Edge → Safari). It detects browser-level issues — stale cache, stuck service worker, expired cert — and offers an in-page fix.</p>
+      <div style="margin-top:34px; border:1px solid #2a2a2a; border-radius:14px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.5);">
+        <div style="background:#1d1d1f; padding:10px 14px; display:flex; align-items:center; gap:10px;">
+          <div style="display:flex; gap:7px;"><span style="width:11px; height:11px; border-radius:50%; background:#ff5f57;"></span><span style="width:11px; height:11px; border-radius:50%; background:#febc2e;"></span><span style="width:11px; height:11px; border-radius:50%; background:#28c840;"></span></div>
+          <div style="flex:1; background:#0d0d0f; border-radius:7px; padding:6px 14px; font-size:11.5px; color:#888; font-family:ui-monospace,monospace; max-width:420px; margin:0 auto;">acme.app/workspace/projects</div>
+          <div style="display:flex; align-items:center; gap:6px;"><div style="transform:scale(.62);"><dc-import name="Globe" state="idle" size="26" hint-size="26px,26px"></dc-import></div></div>
+        </div>
+        <div style="position:relative; background:#f5f5f7; min-height:330px; padding:28px 32px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #e3e3e6; padding-bottom:16px;">
+            <div style="font-size:17px; font-weight:700; color:#1d1d22;">Projects</div>
+            <div style="display:flex; gap:9px;"><div style="width:74px; height:30px; background:#e7e7ea; border-radius:7px;"></div><div style="width:96px; height:30px; background:#2a2a31; border-radius:7px;"></div></div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px;">
+            <div style="background:#fff; border:1px solid #e6e6ea; border-radius:11px; padding:16px; height:96px;"><div style="width:60%; height:11px; background:#e7e7ea; border-radius:4px;"></div><div style="width:90%; height:8px; background:#efeff2; border-radius:4px; margin-top:11px;"></div><div style="width:75%; height:8px; background:#efeff2; border-radius:4px; margin-top:7px;"></div></div>
+            <div style="background:#fff; border:1px solid #e6e6ea; border-radius:11px; padding:16px; height:96px;"><div style="width:50%; height:11px; background:#e7e7ea; border-radius:4px;"></div><div style="width:88%; height:8px; background:#efeff2; border-radius:4px; margin-top:11px;"></div><div style="width:70%; height:8px; background:#efeff2; border-radius:4px; margin-top:7px;"></div></div>
+            <div style="background:#fff; border:1px solid #e6e6ea; border-radius:11px; padding:16px; height:96px;"><div style="width:64%; height:11px; background:#e7e7ea; border-radius:4px;"></div><div style="width:92%; height:8px; background:#efeff2; border-radius:4px; margin-top:11px;"></div><div style="width:60%; height:8px; background:#efeff2; border-radius:4px; margin-top:7px;"></div></div>
+          </div>
+
+          <div style="position:absolute; right:26px; bottom:26px; display:flex; flex-direction:column; align-items:flex-end; gap:12px;">
+            <div style="width:280px; background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #2a2a2a; border-radius:12px; padding:16px; box-shadow:0 18px 40px rgba(0,0,0,.35);">
+              <div style="display:inline-block; padding:4px 8px; border-radius:4px; background:#0a0a0a; border:1px solid rgba(197,160,89,.5); font-size:9px; letter-spacing:.14em; color:#c5a059; font-weight:600;">BROWSER · CACHE.STALE</div>
+              <div style="font-family:'Cinzel',serif; font-size:14px; color:#fff; font-weight:700; margin:10px 0 5px;">This page looks stale</div>
+              <div style="font-size:11.5px; color:#aaa; line-height:1.5;">Cached assets for acme.app are out of date. Clear cache for this site and reload?</div>
+              <div style="display:flex; gap:8px; margin-top:12px;"><span style="flex:1; text-align:center; font-size:10.5px; color:#1a1410; background:linear-gradient(90deg,#c5a059,#f1dca7); padding:9px; border-radius:7px; font-weight:600; letter-spacing:.06em;">CLEAR &amp; RELOAD</span><span style="font-size:10.5px; color:#aaa; border:1px solid #2a2a2a; padding:9px 13px; border-radius:7px;">Not now</span></div>
+            </div>
+            <div style="animation: ariaBob 5s ease-in-out infinite;"><dc-import name="Globe" state="diagnosing" size="64" hint-size="64px,64px"></dc-import></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="onboarding" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Extended · 19</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Onboarding tour</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:640px; margin:0;">Four coachmark cards on first run — short, calm, dismissible. No walls of text.</p>
+      <div style="margin-top:34px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
+        <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #242424; border-radius:13px; padding:22px;"><div style="font-size:10.5px; color:#7d6326; letter-spacing:.14em;">1 / 4</div><div style="display:flex; justify-content:center; margin:14px 0;"><dc-import name="Globe" state="idle" size="58" hint-size="58px,58px"></dc-import></div><div style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700; text-align:center;">Meet the globe</div><div style="font-size:11.5px; color:#9a9a9a; margin-top:7px; line-height:1.5; text-align:center;">It lives in your corner and hugs the edge. Click it anytime.</div></div>
+        <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #242424; border-radius:13px; padding:22px;"><div style="font-size:10.5px; color:#7d6326; letter-spacing:.14em;">2 / 4</div><div style="display:flex; justify-content:center; margin:14px 0;"><dc-import name="Globe" state="diagnosing" size="58" hint-size="58px,58px"></dc-import></div><div style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700; text-align:center;">It watches quietly</div><div style="font-size:11.5px; color:#9a9a9a; margin-top:7px; line-height:1.5; text-align:center;">Under 1% CPU when idle. It only acts when something breaks.</div></div>
+        <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #242424; border-radius:13px; padding:22px;"><div style="font-size:10.5px; color:#7d6326; letter-spacing:.14em;">3 / 4</div><div style="display:flex; justify-content:center; margin:14px 0;"><dc-import name="Globe" state="fixing" size="58" hint-size="58px,58px"></dc-import></div><div style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700; text-align:center;">You're in control</div><div style="font-size:11.5px; color:#9a9a9a; margin-top:7px; line-height:1.5; text-align:center;">Manual, Confirmed or Autonomous — switch modes whenever.</div></div>
+        <div style="background:linear-gradient(180deg,#141414,#0a0a0a); border:1px solid #242424; border-radius:13px; padding:22px;"><div style="font-size:10.5px; color:#7d6326; letter-spacing:.14em;">4 / 4</div><div style="display:flex; justify-content:center; margin:14px 0;"><dc-import name="Globe" state="escalation" size="58" hint-size="58px,58px"></dc-import></div><div style="font-family:'Cinzel',serif; font-size:15px; color:#fff; font-weight:700; text-align:center;">Even on a blue screen</div><div style="font-size:11.5px; color:#9a9a9a; margin-top:7px; line-height:1.5; text-align:center;">If it can't fix it, ARIA routes a ticket to the right team.</div></div>
+      </div>
+    </section>
+
+    <section id="multimon" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Extended · 20</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Multi-monitor placement</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:660px; margin:0;">The globe positions correctly on whichever display has focus and snaps to the nearest corner. The card never spans monitors.</p>
+      <div style="margin-top:34px; background:#0a0a0a; border:1px solid #1c1c1c; border-radius:18px; padding:48px; display:flex; gap:24px; align-items:center; justify-content:center;">
+        <div style="position:relative; width:300px; height:188px; background:#0c0c0c; border:1px solid #2a2a2a; border-radius:8px;">
+          <div style="position:absolute; bottom:14px; right:14px;"><dc-import name="Globe" state="idle" size="44" hint-size="44px,44px"></dc-import></div>
+          <div style="position:absolute; bottom:8px; left:14px; font-size:10px; color:#666; letter-spacing:.1em;">DISPLAY 1 · PRIMARY · focus</div>
+        </div>
+        <div style="width:18px; height:60px; background:#161616; border-radius:3px;"></div>
+        <div style="position:relative; width:240px; height:150px; background:#0c0c0c; border:1px solid #1c1c1c; border-radius:8px; opacity:.7;">
+          <div style="position:absolute; bottom:8px; left:14px; font-size:10px; color:#555; letter-spacing:.1em;">DISPLAY 2 · idle</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" style="padding:72px 0; border-top:1px solid #161616;">
+      <div style="font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; color:#c5a059; text-transform:uppercase; margin-bottom:14px;">Extended · 21</div>
+      <h2 style="font-family:'Cinzel',serif; font-size:30px; font-weight:700; color:#fff; margin:0 0 10px;">Four-layer architecture</h2>
+      <p style="font-size:15px; line-height:1.6; color:#9a9a9a; max-width:680px; margin:0;">Brand · pull-only backend · browser extensions · desktop agent. The desktop agent is the engine. ServiceNow is the one intentional outbound integration, to the customer's own instance.</p>
+      <div style="margin-top:34px; display:flex; flex-direction:column; gap:12px;">
+        <div style="background:#0a0a0a; border:1px solid rgba(197,160,89,.4); border-radius:12px; padding:18px 22px; display:flex; align-items:center; gap:16px;"><div style="font-family:'Cinzel',serif; font-size:13px; color:#c5a059; letter-spacing:.18em; flex:0 0 120px;">L4 · BRAND</div><div style="flex:1; font-size:13px; color:#aaa;">Gold globe geometry · Cinzel + Inter · ARIA TTS voice · dark only</div><div style="transform:scale(.7);"><dc-import name="Globe" state="idle" size="40" hint-size="40px,40px"></dc-import></div></div>
+        <div style="background:#0a0a0a; border:1px solid rgba(122,251,255,.32); border-radius:12px; padding:18px 22px;"><div style="font-family:'Cinzel',serif; font-size:13px; color:#7afbff; letter-spacing:.18em; margin-bottom:12px;">L3 · BACKEND · iisupp.net (PULL-ONLY)</div><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;"><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:12px 14px;"><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7afbff;">GET /aria-recipes</div><div style="font-size:11px; color:#888; margin-top:4px;">Versioned, signed fixes</div></div><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:12px 14px;"><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7afbff;">GET /aria-stop-codes</div><div style="font-size:11px; color:#888; margin-top:4px;">BSOD code → fix index</div></div><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:12px 14px;"><div style="font-family:ui-monospace,monospace; font-size:11px; color:#7afbff;">POST /recipe-feedback</div><div style="font-size:11px; color:#888; margin-top:4px;">Opt-in · anon · off by default</div></div></div></div>
+        <div style="background:#0a0a0a; border:1px solid rgba(197,160,89,.32); border-radius:12px; padding:18px 22px;"><div style="font-family:'Cinzel',serif; font-size:13px; color:#c5a059; letter-spacing:.18em; margin-bottom:12px;">L2 · BROWSER EXTENSIONS · Manifest V3</div><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;"><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:11px 13px; font-size:11.5px; color:#ddd;">Chrome</div><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:11px 13px; font-size:11.5px; color:#ddd;">Edge</div><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:11px 13px; font-size:11.5px; color:#ddd;">Safari</div><div style="background:#141414; border:1px solid rgba(197,160,89,.4); border-radius:9px; padding:11px 13px; font-size:11.5px; color:#c5a059;">Localhost WS bridge</div></div></div>
+        <div style="background:#0a0a0a; border:1px solid rgba(241,220,167,.45); border-radius:12px; padding:18px 22px;"><div style="font-family:'Cinzel',serif; font-size:13px; color:#f1dca7; letter-spacing:.18em; margin-bottom:12px;">L1 · DESKTOP AGENT · Electron · Windows-first</div><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;"><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:11px 13px; font-size:11.5px; color:#ddd;">Globe UI · Three.js</div><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:11px 13px; font-size:11.5px; color:#ddd;">Watchers · WMI / registry</div><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:11px 13px; font-size:11.5px; color:#ddd;">Fix runner · PowerShell</div><div style="background:#141414; border:1px solid #242424; border-radius:9px; padding:11px 13px; font-size:11.5px; color:#ddd;">Local KB · SQLite encrypted</div><div style="background:#141414; border:1px solid rgba(255,203,107,.45); border-radius:9px; padding:11px 13px; font-size:11.5px; color:#ffcb6b;">BSOD / WinRE integration</div><div style="background:#141414; border:1px solid rgba(255,203,107,.45); border-radius:9px; padding:11px 13px; font-size:11.5px; color:#ffcb6b;">ServiceNow incident bridge</div></div></div>
+      </div>
+    </section>
+
+    <!-- SECTIONS_APPEND -->
+
+    <footer style="padding:60px 0 0; border-top:1px solid #161616; color:#555; font-size:12px;">
+      ARIA Sentinel Design Library · Integrated IT Support Inc. · iisupp.net · Dark only · Gold #c5a059 on black #050505
+    </footer>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { heroGlobe: "fixing" };
+  go = (e) => {
+    const id = e.currentTarget.dataset.target;
+    const el = document.getElementById(id);
+    if (el) window.scrollTo({ top: el.offsetTop - 20, behavior: "smooth" });
+  };
+  setHero = (e) => {
+    this.setState({ heroGlobe: e.currentTarget.dataset.state });
+  };
+  renderVals() {
+    return { go: this.go, setHero: this.setHero, heroGlobe: this.state.heroGlobe };
+  }
+}
+</script>
+</body>
+</html>

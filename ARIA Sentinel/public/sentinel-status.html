@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ARIA Sentinel — Status</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Inter,sans-serif;background:#0a0a0a;color:#f5f5f5;margin:0;padding:32px;max-width:760px;margin:0 auto}
+    h1{font-size:22px;margin:0 0 4px} .sub{color:#9a9a9a;margin:0 0 24px;font-size:13px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+    .card{border:1px solid rgba(197,160,89,.3);border-radius:12px;padding:16px}
+    .card b{font-size:20px;color:#7afbff} .ok{color:#7afbff} .card span{display:block;color:#9a9a9a;font-size:12px;margin-bottom:6px}
+    .timeline{display:flex;gap:3px} .day{flex:1;height:28px;border-radius:3px;background:#1b3a1b} .day.bad{background:#5a1b1b}
+    .note{color:#6a6a6a;font-size:12px;margin-top:18px}
+  </style>
+</head>
+<body>
+  <h1>ARIA Sentinel — Status</h1>
+  <p class="sub">Public service status · pulls from the existing uptime probe (mock values shown until wired)</p>
+  <div class="grid">
+    <div class="card"><span>API uptime (30d)</span><b class="ok">99.98%</b></div>
+    <div class="card"><span>Recipe bundle</span><b>v0.1.0</b><div style="color:#9a9a9a;font-size:12px">fresh · 2h ago</div></div>
+    <div class="card"><span>Last incident</span><b style="color:#f5f5f5;font-size:14px">None in 30 days</b></div>
+    <div class="card"><span>Recipes live</span><b>75</b></div>
+  </div>
+  <h2 style="font-size:14px;color:#9a9a9a">30-day timeline</h2>
+  <div class="timeline" id="timeline" aria-label="30 day uptime timeline"></div>
+  <p class="note">Static page on Netlify ($0). Replace mock values with the live uptime-probe feed at deploy time. No customer data is shown here.</p>
+  <script>
+    // Render 30 all-good days from a static array (no network; replaced by the live probe feed).
+    var days = Array.from({length:30}, function(){ return true; });
+    var el = document.getElementById('timeline');
+    el.innerHTML = days.map(function(ok){ return '<div class="day'+(ok?'':' bad')+'"></div>'; }).join('');
+  </script>
+</body>
+</html>

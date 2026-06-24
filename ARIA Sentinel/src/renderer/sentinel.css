@@ -878,3 +878,96 @@ aria-globe { line-height: 0; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
 body.low-power .toast { animation: none; }
 body.low-power .trial-end-card .plan-card::before { display: none; }
+
+/* ============ RUN 33 PIVOT — ARIA tab (Chat + Learning + Health + Memory + Agents) ============ */
+/* RUN 35-1 — scroll containment: the chat panel is a fixed viewport-height envelope. The message log
+   (#ariaChatLog) scrolls INTERNALLY; the head stays pinned at top and the composer + statusline stay
+   pinned at the bottom. A long conversation never grows the outer ARIA tab / portal. min-height:0 on the
+   log is the critical bit — without it a flex child won't shrink below its content and overflow never fires. */
+.aria-chat-panel { display:flex; flex-direction:column; max-width:720px; margin:0 auto;
+  height:calc(100vh - 112px); max-height:calc(100vh - 112px); min-height:440px; }
+.aria-chat-head { text-align:center; padding:6px 0 10px; flex-shrink:0; }
+.aria-chat-globe { width:40px; height:40px; margin:0 auto 8px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #f1dca7, #c5a059 55%, #6b521f 100%); box-shadow:0 0 18px rgba(197,160,89,.45); }
+.aria-chat-company { font-family:Cinzel,Georgia,serif; font-size:12px; letter-spacing:.22em; color:#f1dca7; margin:0; text-transform:uppercase; }
+.aria-chat-subtitle { font-size:12.5px; color:var(--muted,#8b8b93); margin:3px 0 0; }
+.aria-chat-divider { height:1px; width:72%; margin:10px auto 0; background:linear-gradient(90deg, transparent, rgba(197,160,89,.45), transparent); }
+.aria-chat-log { flex:1 1 auto; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:14px 4px; }
+.aria-chat-welcome { text-align:center; color:var(--muted,#8b8b93); font-size:13px; line-height:1.65; max-width:520px; margin:auto; }
+.aria-chat-welcome strong { color:#ececec; }
+.aria-chat-row { display:flex; flex-direction:column; max-width:88%; }
+.aria-chat-row.me { align-self:flex-end; align-items:flex-end; }
+.aria-chat-row.aria { align-self:flex-start; align-items:flex-start; }
+.aria-chat-who { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted,#8b8b93); margin:0 4px 3px; }
+.aria-chat-bubble { padding:11px 14px; border-radius:14px; font-size:13.5px; line-height:1.6; white-space:pre-wrap; word-wrap:break-word; }
+.aria-chat-row.me .aria-chat-bubble { background:rgba(197,160,89,.14); border:1px solid rgba(197,160,89,.32); border-bottom-right-radius:4px; }
+.aria-chat-row.aria .aria-chat-bubble { background:#0d0d12; border:1px solid rgba(255,255,255,.08); border-bottom-left-radius:4px; }
+.aria-chat-dots span { display:inline-block; width:6px; height:6px; margin:0 2px; border-radius:50%; background:#c5a059; opacity:.4; animation:aria-blink 1.2s infinite both; }
+.aria-chat-dots span:nth-child(2){ animation-delay:.2s; } .aria-chat-dots span:nth-child(3){ animation-delay:.4s; }
+@keyframes aria-blink { 0%,80%,100%{ opacity:.25; } 40%{ opacity:1; } }
+.aria-chat-article { margin-top:9px; border:1px solid rgba(197,160,89,.32); border-radius:12px; padding:11px 13px; background:linear-gradient(180deg, rgba(197,160,89,.06), transparent); }
+.aria-chat-article .ac-top { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.aria-chat-article .ac-title { font-size:12.5px; font-weight:600; color:#f1dca7; }
+.aria-chat-article .ac-tier { font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; padding:2px 7px; border-radius:999px; border:1px solid rgba(197,160,89,.32); color:#c5a059; }
+.aria-chat-article a { font-size:11.5px; color:#c5a059; text-decoration:none; } .aria-chat-article a:hover { text-decoration:underline; }
+.aria-chat-src { font-size:10px; color:var(--muted,#8b8b93); margin-top:5px; }
+.aria-chat-src.anthropic { color:#8aa6c8; }
+/* TASK 4 — Sentinel-only "Resolve it for me" chip under an answer (the gated local-fix action). */
+.aria-chat-resolve { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:9px; }
+.aria-chat-resolve-btn { background:linear-gradient(135deg,#c5a059,#f1dca7); color:#1a1410; border:0; border-radius:999px;
+  padding:6px 14px; font-weight:700; font-size:11.5px; letter-spacing:.02em; cursor:pointer; }
+.aria-chat-resolve-btn:hover { box-shadow:0 0 14px rgba(197,160,89,.45); }
+.aria-chat-resolve-btn:disabled { opacity:.55; cursor:default; }
+.aria-chat-resolve-status { font-size:11px; color:var(--aria-gold-light,#f1dca7); }
+/* recipe-card resolve status line */
+.recipe-card .resolve-status { margin-top:8px; font-size:11.5px; color:var(--aria-gold-light,#f1dca7); }
+.aria-chat-composer { display:flex; gap:8px; align-items:flex-end; padding-top:10px; border-top:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+.aria-chat-composer textarea { flex:1; resize:none; background:#0d0d12; border:1px solid rgba(255,255,255,.08); color:#ececec; border-radius:12px; padding:11px 13px; font:inherit; font-size:13.5px; line-height:1.45; outline:none; max-height:140px; min-height:44px; }
+.aria-chat-composer textarea:focus { border-color:#c5a059; }
+.aria-chat-send { background:linear-gradient(135deg,#c5a059,#f1dca7); color:#1a1410; border:0; border-radius:12px; padding:0 18px; height:44px; font-weight:700; font-size:12.5px; cursor:pointer; }
+.aria-chat-send:disabled { opacity:.5; cursor:default; }
+.aria-chat-statusline { text-align:center; font-size:10.5px; color:var(--muted,#8b8b93); margin-top:8px; flex-shrink:0; }
+.aria-chat-statusline b { color:#c5a059; }
+
+/* Health — the LOCKED Anthropic-preserved banner (must never be hidden) + status + fall-through chain */
+.anthropic-banner { border:1px solid rgba(197,160,89,.4); background:linear-gradient(180deg, rgba(197,160,89,.08), transparent); border-radius:10px; padding:11px 14px; font-size:12.5px; line-height:1.5; color:#f1dca7; margin-bottom:14px; }
+.health-status { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.health-dot { width:14px; height:14px; border-radius:50%; background:#666; }
+.health-dot[data-status="green"]{ background:#4ade80; box-shadow:0 0 10px rgba(74,222,128,.6); }
+.health-dot[data-status="yellow"]{ background:#fbbf24; box-shadow:0 0 10px rgba(251,191,36,.55); }
+.health-dot[data-status="red"]{ background:#fb7185; box-shadow:0 0 10px rgba(251,113,133,.6); }
+.fallthrough .ft-tier { display:flex; justify-content:space-between; gap:10px; padding:9px 12px; border:1px solid rgba(255,255,255,.08); border-radius:9px; margin-bottom:7px; font-size:12.5px; }
+.fallthrough .ft-tier .ft-name { color:#ececec; } .fallthrough .ft-tier .ft-meta { color:var(--muted,#8b8b93); }
+
+/* Learning / Memory / Agents */
+.learning-bars .lb-row { display:flex; align-items:center; gap:10px; margin:5px 0; font-size:12px; }
+.learning-bars .lb-label { width:130px; color:var(--muted,#8b8b93); } .learning-bars .lb-track { flex:1; height:8px; background:rgba(255,255,255,.06); border-radius:5px; overflow:hidden; }
+.learning-bars .lb-fill { height:100%; background:linear-gradient(90deg,#c5a059,#f1dca7); } .learning-bars .lb-n { width:42px; text-align:right; color:#ececec; }
+.learning-recent .lr-item { padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:12.5px; }
+.learning-recent .lr-tier { font-size:9.5px; text-transform:uppercase; padding:1px 6px; border-radius:999px; border:1px solid rgba(197,160,89,.3); color:#c5a059; margin-left:6px; }
+.memory-actions { margin-top:12px; display:flex; gap:8px; } .memory-actions .danger { color:#fb7185; border-color:rgba(251,113,133,.4); }
+.agent-fleet .af-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:12.5px; }
+.agent-fleet .af-dot { width:10px; height:10px; border-radius:50%; }
+.agent-fleet .af-dot.running{ background:#4ade80; } .agent-fleet .af-dot.idle{ background:#fbbf24; } .agent-fleet .af-dot.stalled{ background:#fb7185; }
+
+/* RUN 33-E — Setup wizard inputs (reuses .onboarding card chrome) */
+.setup-body { text-align:left; margin:6px 0 4px; }
+.setup-lead { color:var(--muted,#8b8b93); font-size:13px; line-height:1.6; margin:0 0 10px; }
+.setup-body input[type="text"], .setup-body input:not([type]), #setupLicense { width:100%; background:#0d0d12; border:1px solid rgba(255,255,255,.1); color:#ececec; border-radius:9px; padding:9px 11px; font:inherit; font-size:13px; outline:none; }
+.setup-radio, .setup-check { display:flex; align-items:center; gap:9px; padding:8px 0; font-size:13px; color:#ececec; cursor:pointer; }
+.setup-radio b, .setup-check b { color:#f1dca7; }
+
+/* RUN 34-1 — markdown rendering inside ARIA Chat bubbles (readable answers) */
+.aria-chat-md { font-size:13.5px; line-height:1.6; }
+.aria-chat-md .md-h { color:#f1dca7; margin:12px 0 6px; font-size:13.5px; font-weight:700; letter-spacing:.01em; }
+.aria-chat-md .md-h:first-child { margin-top:2px; }
+.aria-chat-md h4.md-h { color:#ececec; font-size:13px; }
+.aria-chat-md p { margin:7px 0; }
+.aria-chat-md ol.md-ol, .aria-chat-md ul.md-ul { margin:7px 0 7px 4px; padding-left:20px; }
+.aria-chat-md ol.md-ol li, .aria-chat-md ul.md-ul li { margin:4px 0; padding-left:3px; }
+.aria-chat-md code { background:rgba(197,160,89,.12); border:1px solid rgba(197,160,89,.22); border-radius:5px; padding:1px 5px; font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace; font-size:12px; color:#f1dca7; }
+.aria-chat-md pre.md-pre { background:#0a0a0f; border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:10px 12px; overflow-x:auto; margin:8px 0; }
+.aria-chat-md pre.md-pre code { background:none; border:0; padding:0; color:#d6d6d6; font-size:12px; line-height:1.5; }
+.aria-chat-md blockquote.md-quote { border-left:2px solid rgba(197,160,89,.5); margin:8px 0; padding:4px 0 4px 12px; color:var(--muted,#8b8b93); }
+.aria-chat-md hr.md-hr { border:0; border-top:1px solid rgba(255,255,255,.08); margin:10px 0; }
+.aria-chat-md a { color:#c5a059; text-decoration:none; } .aria-chat-md a:hover { text-decoration:underline; }

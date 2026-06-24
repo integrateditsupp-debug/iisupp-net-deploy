@@ -1,0 +1,46 @@
+/* RUN 23e — plan-picker overlay surface. Gold/cyber-noir, matches the Sentinel settings shell. */
+:root {
+  --aria-bg:#050505; --aria-surface:#0a0a0a; --aria-border:#2a2a2a; --aria-border-soft:#1c1c1c;
+  --aria-gold:#c5a059; --aria-gold-light:#f1dca7; --aria-gold-tint-bg:#15110a; --aria-gold-tint-bd:#38301d;
+  --aria-text:#fff; --aria-text-2:#aaa; --aria-text-muted:#666; --aria-success:#7afbff; --aria-error:#ff7e7e;
+  --aria-font-display:Cinzel,Georgia,serif; --aria-font-ui:Inter,system-ui,sans-serif; --aria-font-mono:ui-monospace,Menlo,monospace;
+  --aria-grad-gold:linear-gradient(90deg,#c5a059,#f1dca7); --aria-grad-card:linear-gradient(180deg,#141414,#0a0a0a);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--aria-bg);color:var(--aria-text);font-family:var(--aria-font-ui);-webkit-font-smoothing:antialiased;}
+.picker{max-width:1180px;margin:0 auto;padding:28px 22px 40px;}
+.eyebrow{color:var(--aria-gold);font-family:var(--aria-font-display);font-size:11px;font-weight:600;letter-spacing:.22em;margin:0 0 8px;text-transform:uppercase;}
+h1{font-family:var(--aria-font-display);font-size:30px;margin:0;}
+h2{font-family:var(--aria-font-display);font-size:18px;margin:30px 0 14px;}
+.picker-sub{color:var(--aria-text-2);font-size:13px;margin:8px 0 0;}
+.picker-head{text-align:center;}
+
+.billing-toggle{display:inline-flex;gap:0;margin:18px auto 0;border:1px solid var(--aria-gold-tint-bd);border-radius:10px;overflow:hidden;}
+.bt-opt{background:transparent;border:0;color:var(--aria-text-2);font-family:var(--aria-font-display);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:9px 18px;cursor:pointer;}
+.bt-opt.active{background:var(--aria-gold-tint-bg);color:var(--aria-gold-light);}
+
+.plan-cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:24px;}
+@media (max-width:980px){.plan-cards{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:560px){.plan-cards{grid-template-columns:1fr;} }
+.plan-card{background:var(--aria-grad-card);border:1px solid var(--aria-border);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:8px;position:relative;}
+.plan-card.current{border-color:var(--aria-gold);box-shadow:0 0 22px rgba(197,160,89,.28);}
+.plan-card .current-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--aria-grad-gold);color:#1a1410;font-family:var(--aria-font-mono);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:6px;padding:3px 9px;}
+.plan-card h3{font-family:var(--aria-font-display);font-size:17px;margin:0;}
+.plan-price{font-family:var(--aria-font-display);font-size:28px;color:var(--aria-gold-light);}
+.plan-price em{font-style:normal;font-size:13px;color:var(--aria-text-muted);}
+.plan-seats{color:var(--aria-text-muted);font-size:11.5px;font-family:var(--aria-font-mono);}
+.plan-blurb{color:var(--aria-text-2);font-size:12px;line-height:1.45;flex:1;}
+.subscribe{margin-top:6px;border:0;border-radius:8px;background:var(--aria-grad-gold);color:#1a1410;font-family:var(--aria-font-display);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:11px;cursor:pointer;}
+.subscribe.is-current{background:transparent;border:1px solid var(--aria-gold);color:var(--aria-gold-light);cursor:default;}
+
+.matrix-wrap{margin-top:14px;}
+.matrix-scroll{overflow-x:auto;border:1px solid var(--aria-border-soft);border-radius:12px;}
+.matrix{width:100%;border-collapse:collapse;font-size:12.5px;min-width:680px;}
+.matrix th,.matrix td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--aria-border-soft);}
+.matrix th:first-child,.matrix td:first-child{text-align:left;color:var(--aria-text-2);}
+.matrix thead th{color:var(--aria-gold-light);font-family:var(--aria-font-display);font-size:13px;}
+.matrix .yes{color:var(--aria-success);}
+.matrix .no{color:var(--aria-text-muted);}
+.matrix tr.current-col-mark th{color:var(--aria-gold);}
+.picker-foot{color:var(--aria-text-muted);font-size:11.5px;margin-top:12px;text-align:center;}

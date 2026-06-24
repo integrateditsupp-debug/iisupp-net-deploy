@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="65%">
+      <stop offset="0%" stop-color="#5a4018"/>
+      <stop offset="35%" stop-color="#2a1c0c"/>
+      <stop offset="75%" stop-color="#0e0905"/>
+      <stop offset="100%" stop-color="#040201"/>
+    </radialGradient>
+    <radialGradient id="haloA" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe9ad" stop-opacity="0.85"/>
+      <stop offset="25%" stop-color="#f6c668" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#c5a059" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#7a5a25" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="haloB" cx="50%" cy="50%" r="38%">
+      <stop offset="0%" stop-color="#fff8e0" stop-opacity="1"/>
+      <stop offset="40%" stop-color="#f1dca7" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#c5a059" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="fHi" x1="0%" y1="10%" x2="100%" y2="90%">
+      <stop offset="0%" stop-color="#fff8d6"/>
+      <stop offset="30%" stop-color="#fce39b"/>
+      <stop offset="70%" stop-color="#d8b264"/>
+      <stop offset="100%" stop-color="#8c6928"/>
+    </linearGradient>
+    <linearGradient id="fMidL" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f6d68a"/>
+      <stop offset="50%" stop-color="#c5a059"/>
+      <stop offset="100%" stop-color="#6d4f1d"/>
+    </linearGradient>
+    <linearGradient id="fMidR" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f6d68a"/>
+      <stop offset="50%" stop-color="#a8842d"/>
+      <stop offset="100%" stop-color="#3b2a10"/>
+    </linearGradient>
+    <linearGradient id="fLo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8c6928"/>
+      <stop offset="50%" stop-color="#5a3f10"/>
+      <stop offset="100%" stop-color="#1f1407"/>
+    </linearGradient>
+    <linearGradient id="fGlint" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="40%" stop-color="#fde8b8" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#c5a059" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="spark" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#fff8e0" stop-opacity="0.95"/>
+      <stop offset="65%" stop-color="#f6d68a" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#c5a059" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sparkBig" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="20%" stop-color="#fff4cc" stop-opacity="0.95"/>
+      <stop offset="55%" stop-color="#f0c96a" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#c5a059" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="bloom" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22" result="b1"/>
+      <feFlood flood-color="#fde8b8" flood-opacity="0.95"/>
+      <feComposite in2="b1" operator="in" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="spike" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="sb"/>
+      <feMerge><feMergeNode in="sb"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <g id="star">
+      <path d="M 0 -28 L 4 -4 L 28 0 L 4 4 L 0 28 L -4 4 L -28 0 L -4 -4 Z" fill="#fff8e0"/>
+      <circle r="6" fill="#ffffff"/>
+    </g>
+    <g id="starSm">
+      <path d="M 0 -14 L 2 -2 L 14 0 L 2 2 L 0 14 L -2 2 L -14 0 L -2 -2 Z" fill="#fde8b8"/>
+      <circle r="2.5" fill="#ffffff"/>
+    </g>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <circle cx="512" cy="512" r="540" fill="url(#haloA)"/>
+
+  <g opacity="0.85">
+    <circle cx="512" cy="512" r="460" fill="none" stroke="#c5a059" stroke-width="2.5" stroke-opacity="0.55"/>
+    <circle cx="512" cy="512" r="448" fill="none" stroke="#f1dca7" stroke-width="1" stroke-opacity="0.4"/>
+    <g stroke="#c5a059" fill="none">
+      <ellipse cx="512" cy="512" rx="400" ry="170" stroke-width="1.5" stroke-opacity="0.45" transform="rotate(-25 512 512)"/>
+      <ellipse cx="512" cy="512" rx="400" ry="170" stroke-width="1.2" stroke-opacity="0.35" transform="rotate(15 512 512)"/>
+      <ellipse cx="512" cy="512" rx="400" ry="170" stroke-width="1.0" stroke-opacity="0.30" transform="rotate(55 512 512)"/>
+      <ellipse cx="512" cy="512" rx="400" ry="170" stroke-width="0.9" stroke-opacity="0.25" transform="rotate(90 512 512)"/>
+      <ellipse cx="512" cy="512" rx="380" ry="120" stroke-width="0.8" stroke-opacity="0.30" transform="rotate(-65 512 512)"/>
+    </g>
+    <circle cx="512" cy="512" r="478" fill="none" stroke="#fde8b8" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="2 6"/>
+  </g>
+
+  <circle cx="512" cy="512" r="370" fill="url(#haloB)"/>
+
+  <g transform="translate(512,200)" opacity="0.85" filter="url(#spike)">
+    <g fill="url(#fGlint)">
+      <polygon points="-6,0 6,0 0,-180"/>
+      <polygon points="-4,0 4,0 80,-150" opacity="0.7"/>
+      <polygon points="-4,0 4,0 -80,-150" opacity="0.7"/>
+      <polygon points="-3,0 3,0 140,-90" opacity="0.4"/>
+      <polygon points="-3,0 3,0 -140,-90" opacity="0.4"/>
+    </g>
+  </g>
+
+  <g filter="url(#bloom)">
+    <polygon points="512,180 380,540 442,540 512,335" fill="url(#fHi)"/>
+    <polygon points="380,540 260,820 340,820 442,540" fill="url(#fMidL)"/>
+    <polygon points="512,180 512,335 442,540 482,500" fill="url(#fMidR)"/>
+    <polygon points="442,540 340,820 410,820 482,580" fill="url(#fLo)"/>
+    <polygon points="512,180 644,540 582,540 512,335" fill="url(#fMidL)"/>
+    <polygon points="644,540 764,820 684,820 582,540" fill="url(#fMidR)"/>
+    <polygon points="512,180 512,335 582,540 542,500" fill="url(#fLo)"/>
+    <polygon points="582,540 684,820 614,820 542,580" fill="url(#fMidR)"/>
+    <polygon points="512,180 482,500 512,485 542,500" fill="url(#fHi)"/>
+    <polygon points="482,500 512,485 542,500 512,560" fill="url(#fMidL)"/>
+    <polygon points="430,540 594,540 580,560 444,560" fill="url(#fHi)"/>
+    <polygon points="444,560 512,560 504,604 444,604" fill="url(#fMidL)"/>
+    <polygon points="512,560 580,560 580,604 504,604" fill="url(#fMidR)"/>
+    <polygon points="444,604 580,604 558,626 466,626" fill="url(#fLo)"/>
+    <polygon points="410,820 614,820 542,580 482,580" fill="url(#fLo)" opacity="0.4"/>
+    <g stroke="#fff8e0" stroke-linecap="round" fill="none">
+      <line x1="512" y1="180" x2="260" y2="820" stroke-width="3.5" stroke-opacity="0.95"/>
+      <line x1="512" y1="180" x2="764" y2="820" stroke-width="3" stroke-opacity="0.85"/>
+      <line x1="512" y1="180" x2="442" y2="540" stroke-width="2" stroke-opacity="0.7"/>
+      <line x1="512" y1="180" x2="582" y2="540" stroke-width="2" stroke-opacity="0.55"/>
+      <line x1="442" y1="540" x2="340" y2="820" stroke-width="2" stroke-opacity="0.7"/>
+      <line x1="582" y1="540" x2="684" y2="820" stroke-width="1.8" stroke-opacity="0.6"/>
+      <line x1="430" y1="540" x2="594" y2="540" stroke-width="2.5" stroke-opacity="0.9"/>
+      <line x1="466" y1="626" x2="558" y2="626" stroke-width="1.5" stroke-opacity="0.6"/>
+      <line x1="512" y1="180" x2="512" y2="335" stroke-width="1.8" stroke-opacity="0.75"/>
+      <line x1="512" y1="540" x2="512" y2="626" stroke-width="0.8" stroke-opacity="0.4"/>
+    </g>
+    <circle cx="512" cy="195" r="22" fill="#fff8e0" opacity="0.95"/>
+    <circle cx="512" cy="195" r="46" fill="url(#sparkBig)" opacity="0.85"/>
+    <circle cx="512" cy="195" r="78" fill="url(#spark)" opacity="0.5"/>
+  </g>
+
+  <g>
+    <use href="#star" transform="translate(820,220) scale(1.1)" opacity="0.9"/>
+    <use href="#star" transform="translate(210,290) scale(0.9)" opacity="0.85"/>
+    <use href="#star" transform="translate(160,620)" opacity="0.8"/>
+    <use href="#star" transform="translate(880,560) scale(1.05)" opacity="0.9"/>
+    <use href="#star" transform="translate(290,880) scale(0.85)" opacity="0.8"/>
+    <use href="#star" transform="translate(760,880) scale(1.1)" opacity="0.9"/>
+    <use href="#star" transform="translate(160,440) scale(0.75)" opacity="0.7"/>
+    <use href="#star" transform="translate(870,400) scale(0.8)" opacity="0.75"/>
+    <use href="#starSm" transform="translate(420,150)" opacity="0.8"/>
+    <use href="#starSm" transform="translate(610,140)" opacity="0.85"/>
+    <use href="#starSm" transform="translate(380,920)" opacity="0.7"/>
+    <use href="#starSm" transform="translate(640,920)" opacity="0.75"/>
+    <use href="#starSm" transform="translate(120,520)" opacity="0.7"/>
+    <use href="#starSm" transform="translate(920,500)" opacity="0.75"/>
+    <use href="#starSm" transform="translate(330,360)" opacity="0.65"/>
+    <use href="#starSm" transform="translate(700,360)" opacity="0.7"/>
+    <use href="#starSm" transform="translate(330,720)" opacity="0.65"/>
+    <use href="#starSm" transform="translate(700,720)" opacity="0.7"/>
+    <use href="#starSm" transform="translate(240,180)" opacity="0.6"/>
+    <use href="#starSm" transform="translate(800,170)" opacity="0.65"/>
+    <use href="#starSm" transform="translate(180,750)" opacity="0.6"/>
+    <use href="#starSm" transform="translate(840,750)" opacity="0.65"/>
+  </g>
+
+  <g fill="#fde8b8" opacity="0.65">
+    <circle cx="100" cy="380" r="2"/>
+    <circle cx="950" cy="350" r="2"/>
+    <circle cx="100" cy="680" r="2"/>
+    <circle cx="940" cy="680" r="2"/>
+    <circle cx="500" cy="60" r="2.5"/>
+    <circle cx="500" cy="975" r="2.5"/>
+    <circle cx="270" cy="540" r="1.5"/>
+    <circle cx="750" cy="540" r="1.5"/>
+  </g>
+
+  <circle cx="512" cy="512" r="512" fill="url(#haloA)" opacity="0.18"/>
+</svg>
