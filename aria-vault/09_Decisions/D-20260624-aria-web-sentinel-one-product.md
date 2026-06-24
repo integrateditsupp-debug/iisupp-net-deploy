@@ -34,3 +34,36 @@ and routes serious fixes to Sentinel (the paid desktop agent).
 
 ## Related
 - [[_ARIA]] · [[_Sentinel]] · [[RULES]] (R8 ARIA/Sentinel-core never break) · `docs/STRUCTURE.md`
+
+
+<!-- LINK-WEB:auto -->
+- [[_Amygdala]]
+- [[_ARIA]]
+- [[_Brainstem]]
+- [[_Campaigns]]
+- [[_capture]]
+- [[_CorpusCallosum]]
+- [[_Decisions]]
+- [[_Glia]]
+- [[_HOME]]
+- [[_IIS]]
+- [[_Inbox]]
+- [[_Sentinel]]
+- [[Ahmad]]
+- [[AXIS]]
+- [[Backup-agent]]
+- [[Brain-Map]]
+- [[Claude-Code]]
+- [[Cleaning-agent]]
+- [[Codex]]
+- [[Cowork]]
+- [[D-20260619-bake-stripe-price-ids-in-code]]
+- [[DIRECTOR_AUTONOMY]]
+- [[KB-agent]]
+- [[Leads]]
+- [[Leads-agent]]
+- [[OPS-agent]]
+- [[RULES]]
+- [[STACK]]
+- [[VOICE]]
+<!-- /LINK-WEB:auto -->

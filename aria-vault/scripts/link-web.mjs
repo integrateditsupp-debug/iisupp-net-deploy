@@ -146,5 +146,36 @@ for (const f of allFiles2) {
   const myFolder = dirname(f);
   const candidates = new Set();
   for (const hub of MASTER_HUBS) candidates.add(hub);
+  // 2. all folder siblings
   for (const other of allFiles2) {
-    if (dirname(other) === myFolder && other !== f) candidates.add(noteKey(ot
+    if (dirname(other) === myFolder && other !== f) candidates.add(noteKey(other));
+  }
+  // 3. all notes that link to me (bi-directional / reverse links)
+  for (const back of (reverseLinks.get(me) || [])) candidates.add(back);
+  // 4. all notes I already mention (forward links)
+  for (const fwd of existingLinks(text)) candidates.add(fwd);
+
+  // Never link a note to itself; only keep candidates that resolve to a real note.
+  candidates.delete(me);
+  const myRegion = regionByKey.get(me) || "";
+  const valid = [...candidates].filter((k) => k !== me && fileIndex2.has(k));
+  if (!valid.length) continue;
+
+  // Region-aware ordering (RUN A · Part B): same anatomical region first so they cluster tightly in the
+  // Obsidian graph, then everything else; A→Z within each band. Keeps the auto-block deterministic.
+  valid.sort((a, b) => {
+    const ra = (regionByKey.get(a) || "") === myRegion ? 0 : 1;
+    const rb = (regionByKey.get(b) || "") === myRegion ? 0 : 1;
+    if (ra !== rb) return ra - rb;
+    return a.localeCompare(b);
+  });
+
+  const blockBody = valid.map((k) => `- [[${k}]]`).join("\n");
+  const next = upsertRelatedBlock(text, blockBody);
+  if (next !== text) {
+    await writeFile(f, next);
+    touched++;
+  }
+}
+
+console.log(`link-web: ${allFiles2.length} notes scanned · ${stubs} stub(s) created · ${touched} Related block(s) updated.`);
