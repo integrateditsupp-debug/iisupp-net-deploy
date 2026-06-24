@@ -219,6 +219,8 @@ const TESTS = [
   "./kb-freshness.test.mjs",
   // TASK 3 (2026-06-24) — "Resolve it for me" enabled + gated (supervised-fix, Confirmed, never autonomous).
   "./resolve-for-me.test.mjs",
+  // Coverage Slice A — offline intent matcher resolves symptom phrasing → recipe (token-overlap).
+  "./offline-matcher.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

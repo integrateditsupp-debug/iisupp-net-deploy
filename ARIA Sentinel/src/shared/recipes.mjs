@@ -379,7 +379,7 @@ export const RECIPES = [
     chip: "NETWORK - WIFI",
     risk: "orange",
     mode: "confirmed",
-    confidenceKeywords: ["wifi no internet", "connected no internet", "internet down", "wireless drop", "169.254"],
+    confidenceKeywords: ["wifi no internet", "connected no internet", "internet down", "no internet", "internet not working", "no websites", "websites not loading", "cant get online", "no connection", "offline", "wireless drop", "169.254"],
     summary: "Renew the IP address after a safe DNS reset.",
     detector: "Test-NetConnection fails or APIPA address appears.",
     diagnostic: {
@@ -1283,6 +1283,30 @@ export const RECIPES = [
     ],
     success: "Update review opened. A restore point is taken before any install.",
     escalation: "Desktop Support for fleet-wide patch rollout or a failed update."
+  },
+  {
+    id: "office-file-repair-v1",
+    family: "APP",
+    signal: "APP.OFFICE.FILE_CORRUPT",
+    title: "Office file won't open (format not valid, corrupt, or locked)",
+    chip: "APP - OFFICE/EXCEL",
+    risk: "orange",
+    mode: "confirmed",
+    confidenceKeywords: ["excel won't open", "excel wont open", "file won't open", "file format not valid", "format not valid", "spreadsheet won't open", "xlsx won't open", "word won't open", "file is corrupt", "workbook corrupt", "file is locked", "file in use", "open and repair", "excel", "spreadsheet", "office file"],
+    summary: "Recover an Office file: verify extension, Open-and-Repair, release a locked file, clear the Office cache.",
+    detector: "Office reports 'format not valid' / 'corrupt' / 'locked for editing', or a ~$ owner-lock file lingers.",
+    diagnostic: {
+      shell: "powershell",
+      command: "Get-ChildItem $env:TEMP -Filter '~$*' -ErrorAction SilentlyContinue | Select-Object Name,LastWriteTime"
+    },
+    actions: [
+      { id: "verify-extension", label: "Verify file extension", shell: "manual", risk: "green", requiresConfirm: false, command: null, dryRunResult: "Turn on File name extensions in Explorer; rename a mis-typed file to the correct extension (.xlsx/.docx)." },
+      { id: "open-and-repair", label: "Open and Repair", shell: "manual", risk: "orange", requiresConfirm: true, command: null, dryRunResult: "In Excel/Word: File > Open > Browse > pick the file > arrow beside Open > Open and Repair. Rebuilds the file; the original is unchanged until you save." },
+      { id: "release-lock", label: "Release a locked file", shell: "powershell", risk: "orange", requiresConfirm: true, command: "Get-ChildItem -Recurse -Filter '~$*' $env:USERPROFILE\\Documents -ErrorAction SilentlyContinue | Remove-Item -Force -WhatIf", dryRunResult: "Would remove stale ~$ Office owner-lock files (they store only who had the file open — never your data)." },
+      { id: "clear-office-cache", label: "Clear the Office Document Cache", shell: "manual", risk: "orange", requiresConfirm: true, command: null, dryRunResult: "Close all Office apps, then File > Options > Save > Delete cached files. Cloud documents re-download from OneDrive/SharePoint." }
+    ],
+    success: "The file opens. Save a clean copy with Save As. If still corrupt, restore from OneDrive/SharePoint version history.",
+    escalation: "Escalate if corrupt after Open-and-Repair with no usable version history, or if many files corrupt (possible disk fault)."
   }
 ];
 
@@ -1360,15 +1384,25 @@ export function normalizeText(value) {
 export function scoreRecipe(query, recipe) {
   const q = normalizeText(query);
   if (!q) return 0;
+  // Slice A — offline intent matcher hardening. The old matcher was substring-only, so natural phrasing
+  // like "the internet IS down" missed the keyword "internet down" (the filler "is" broke the substring).
+  // Now: exact-substring stays strongest, but a keyword also scores when ALL its significant tokens appear
+  // anywhere in the query (any order, non-contiguous). This multiplies recipe reach during the cloud outage.
+  const qTokens = new Set(q.split(" ").filter(Boolean));
   let score = 0;
   for (const kw of recipe.confidenceKeywords || []) {
     const n = normalizeText(kw);
-    if (n && q.includes(n)) score += Math.max(8, n.split(" ").length * 6);
+    if (!n) continue;
+    if (q.includes(n)) { score += Math.max(8, n.split(" ").length * 6); continue; }
+    const kwTokens = n.split(" ").filter((t) => t.length > 2);
+    if (kwTokens.length && kwTokens.every((t) => qTokens.has(t))) {
+      score += Math.max(6, kwTokens.length * 5); // token-overlap (slightly lower than an exact phrase hit)
+    }
   }
   if (q.includes(normalizeText(recipe.signal))) score += 20;
   if (recipe.family && q.includes(recipe.family.toLowerCase())) score += 5;
   const titleTokens = new Set(normalizeText(recipe.title).split(" ").filter((t) => t.length > 2));
-  for (const token of q.split(" ")) {
+  for (const token of qTokens) {
     if (titleTokens.has(token)) score += 2;
   }
   return score;
