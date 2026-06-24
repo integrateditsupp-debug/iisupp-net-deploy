@@ -233,6 +233,12 @@
               <button id="simulateAriaError" class="ghost">Simulate ARIA error</button>
             </div>
             <p id="recipeCatalogMeta" class="note">Loading recipes.</p>
+            <div class="recipe-finder">
+              <input id="recipeSearch" type="search" class="recipe-search" placeholder="Search fixes — e.g. zoom, internet, excel, printer…" aria-label="Search recipes" autocomplete="off" />
+              <select id="recipeJump" class="recipe-jump" aria-label="Jump to a fix (A–Z)">
+                <option value="">All fixes (A–Z)</option>
+              </select>
+            </div>
             <div id="recipeList" class="recipe-list compact-list"></div>
           </section>
           <section class="panel">

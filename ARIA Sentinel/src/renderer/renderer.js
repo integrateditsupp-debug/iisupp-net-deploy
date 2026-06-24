@@ -545,8 +545,50 @@ async function finishOnboarding() {
   }
 }
 
+// Slice A — the Recipes tab is ARIA's "common issue solutions" library. Make it a FINDER: an A→Z jump
+// dropdown + a search field (title / category / summary / keywords). Empty search = the full A→Z list.
+let _allRecipes = [];
 function renderRecipes(recipes) {
-  setHtml("recipeList", recipes.map((recipe) => `
+  _allRecipes = (recipes || []).slice().sort((a, b) => String(a.title || "").localeCompare(String(b.title || "")));
+  const jump = qs("#recipeJump");
+  if (jump) {
+    jump.innerHTML = '<option value="">All fixes (A–Z)</option>' +
+      _allRecipes.map((r) => `<option value="${escapeHtml(r.id)}">${escapeHtml(r.title)}</option>`).join("");
+  }
+  const search = qs("#recipeSearch");
+  if (search && !search.dataset.wired) {
+    search.dataset.wired = "1";
+    const apply = () => {
+      const term = (search.value || "").trim().toLowerCase();
+      if (jump) jump.value = "";
+      paintRecipes(term ? _allRecipes.filter((r) => recipeMatchesTerm(r, term)) : _allRecipes);
+    };
+    search.addEventListener("input", apply);
+    search.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); apply(); } });
+  }
+  if (jump && !jump.dataset.wired) {
+    jump.dataset.wired = "1";
+    jump.addEventListener("change", () => {
+      if (search) search.value = "";
+      paintRecipes(jump.value ? _allRecipes.filter((r) => r.id === jump.value) : _allRecipes);
+    });
+  }
+  paintRecipes(_allRecipes);
+}
+
+// Match a recipe against a search term across every field a tech under pressure might type.
+function recipeMatchesTerm(recipe, term) {
+  const hay = [recipe.title, recipe.chip, recipe.category, recipe.family, recipe.summary,
+    ...(recipe.confidenceKeywords || []), ...(recipe.matchKeywords || [])].filter(Boolean).join(" ").toLowerCase();
+  return hay.includes(term);
+}
+
+function paintRecipes(list) {
+  if (!list.length) {
+    setHtml("recipeList", `<p class="note">No fixes match that search. Try a symptom word like “zoom”, “internet”, or “excel” — or pick from the A–Z list.</p>`);
+    return;
+  }
+  setHtml("recipeList", list.map((recipe) => `
     <article class="recipe-card">
       <span class="chip">${escapeHtml(recipe.chip)}</span>
       <h3>${escapeHtml(recipe.title)}</h3>

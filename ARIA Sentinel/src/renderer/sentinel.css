@@ -397,6 +397,38 @@ p { color: var(--aria-text-2); line-height: 1.5; }
 .button-row { display: flex; gap: 8px; margin-top: 12px; }
 .button-row > button { flex: 1; }
 
+/* Slice A — Recipes-tab finder: search box + A→Z jump dropdown above the card grid. */
+.recipe-finder {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 14px;
+  flex-wrap: wrap;
+}
+.recipe-search {
+  flex: 1 1 240px;
+  min-width: 160px;
+  background: #0c0c0c;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: #f2f2f2;
+  font-size: 14px;
+}
+.recipe-jump {
+  flex: 0 1 230px;
+  max-width: 260px;
+  background: #0c0c0c;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: #f2f2f2;
+  font-size: 14px;
+}
+.recipe-search:focus, .recipe-jump:focus {
+  outline: none;
+  border-color: #c8a04a;
+}
+
 .recipe-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
