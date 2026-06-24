@@ -71,3 +71,6 @@ brain_region: frontal-sentinel
 - [[_HOME]]
 - [[_IIS]]
 - [[_Inbox]]
+## Web + Sentinel — one product, one brain (2026-06-24)
+
+ARIA web (`iisupp.net/aria`) and **ARIA Sentinel** (Windows desktop) are the **same product, one shared brain** — same KB (`knowledge-base/` + `aria_brain_pack/`), recipes, stop-codes, and the locked fall-through chain (KB $0 → Anthropic → offline local KB). The **same agents** (Claude-Code · KB-agent · OPS-agent) build both surfaces. Only intentional difference: the web "Resolve it for me" routes to a download/walkthrough gate (never runs local fixes), while Sentinel resolves locally through the RUN 29 gated control plane (supervisor → 10s countdown → kill-switch; Confirmed-grade, never autonomous). See [[D-20260624-aria-web-sentinel-one-product]] + `docs/STRUCTURE.md`.

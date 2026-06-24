@@ -12,6 +12,14 @@
 3. **ARIA Sentinel** — the Windows desktop agent.
 4. **AXIS** — the voice layer (early; lives inside the Sentinel tree).
 
+> **ARIA web + ARIA Sentinel are ONE product, ONE brain** (decision [[D-20260624-aria-web-sentinel-one-product]]).
+> The cloud surface (`/aria`) and the desktop surface (Sentinel) share the same KB
+> (`knowledge-base/` + `aria_brain_pack/`), recipes, stop-codes, and the locked answer chain (KB $0 →
+> Anthropic → offline local KB), and the **same agents build both**. The only intentional difference:
+> the web "Resolve it for me" routes to a **download-Sentinel-or-continue-walkthrough** gate (it never
+> runs a local fix), while Sentinel resolves **locally** through the RUN 29 gated control plane
+> (supervisor → 10s countdown → Ctrl+Alt+K kill-switch; Confirmed-grade, never autonomous).
+
 ## Branch model (the "falling behind" root cause + fix)
 
 - **`origin/main` = the website deploy branch.** Netlify auto-deploys it. It carries the public site + the
