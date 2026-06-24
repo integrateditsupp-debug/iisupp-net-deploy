@@ -102,6 +102,14 @@ unless explicitly multi-tagged.
 | Device deployment / Autopilot | l2-deployment-001 |
 | Network latency / loss | l2-networking-001 |
 | Cyber incident (P1) | l3-security-001 |
+| RAID / SAN failure + rebuild | l3-storage-001 |
+| Hypervisor cluster down (vSphere/Hyper-V) | l3-virtualization-001 |
+| CA / certificate expiry (mass outage) | l3-certificates-002 |
+| Zero-day / actively-exploited CVE | l3-security-002 → l3-security-001 if exploited |
+| DDoS attack | l3-network-ddos-001 |
+| Forensic evidence preservation | l3-forensics-001 → l3-security-001 |
+| DR / business continuity plan | l3-business-continuity-001 |
+| Tenant-to-tenant migration (M365/Workspace) | l3-migration-001 |
 | SSO / SAML federation | l3-sso-saml-001 |
 | Internal PKI / certs | l3-certificates-001 |
 | Disaster recovery | l3-disaster-recovery-001 |

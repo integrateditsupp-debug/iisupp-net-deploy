@@ -69,6 +69,13 @@
       "level": "GA"
     }
   ],
+  "802.1x failure": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
+    }
+  ],
   "aad connect": [
     {
       "id": "l3-hybrid-ad-001",
@@ -147,6 +154,13 @@
       "id": "l2-wifi-survey-001",
       "title": "Wireless site survey and Wi-Fi coverage/performance remediation",
       "level": "L2"
+    }
+  ],
+  "actively exploited": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
     }
   ],
   "ad cs": [
@@ -271,6 +285,13 @@
       "id": "l1-windows-006",
       "title": "An app won't open / closes immediately / shows error on launch",
       "level": "L1"
+    }
+  ],
+  "application layer ddos": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
     }
   ],
   "applocker": [
@@ -470,6 +491,11 @@
       "id": "l3-disaster-recovery-001",
       "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
       "level": "L3"
+    },
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
     }
   ],
   "bec": [
@@ -484,6 +510,13 @@
       "id": "ga-shopping-002",
       "title": "Comparing products fairly — what specs matter and which are marketing",
       "level": "GA"
+    }
+  ],
+  "bgp blackhole": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
     }
   ],
   "bitlocker": [
@@ -596,6 +629,13 @@
       "level": "GA"
     }
   ],
+  "business continuity": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
+    }
+  ],
   "business email compromise": [
     {
       "id": "l1-email-001",
@@ -603,11 +643,25 @@
       "level": "L1"
     }
   ],
+  "business impact analysis": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
+    }
+  ],
   "c drive full": [
     {
       "id": "l1-windows-004",
       "title": "Disk full / out of space on C: drive",
       "level": "L1"
+    }
+  ],
+  "ca certificate expired": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
     }
   ],
   "cache": [
@@ -687,6 +741,13 @@
       "level": "L2"
     }
   ],
+  "cdn waf": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
+    }
+  ],
   "certificate": [
     {
       "id": "l2-rdp-001",
@@ -708,10 +769,24 @@
       "level": "L2"
     }
   ],
+  "certificate renewal": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
+    }
+  ],
   "certificate rollover": [
     {
       "id": "l3-sso-saml-001",
       "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "chain of custody": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
       "level": "L3"
     }
   ],
@@ -747,6 +822,13 @@
     {
       "id": "l3-endpoint-001",
       "title": "Endpoint security architecture: EDR + AppLocker/WDAC + Windows Hardening",
+      "level": "L3"
+    }
+  ],
+  "cisa kev": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
       "level": "L3"
     }
   ],
@@ -806,6 +888,13 @@
       "level": "L2"
     }
   ],
+  "code signing expiry": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
+    }
+  ],
   "cohesity": [
     {
       "id": "l3-disaster-recovery-001",
@@ -825,6 +914,13 @@
       "id": "ga-shopping-002",
       "title": "Comparing products fairly — what specs matter and which are marketing",
       "level": "GA"
+    }
+  ],
+  "compensating control": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
     }
   ],
   "compliant device required": [
@@ -876,6 +972,13 @@
       "level": "L2"
     }
   ],
+  "controller cache battery": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
   "cookies": [
     {
       "id": "l1-browser-001",
@@ -925,10 +1028,59 @@
       "level": "L3"
     }
   ],
+  "crl expired": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
+    }
+  ],
+  "cross-sign": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
+    }
+  ],
+  "csv offline": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
+    }
+  ],
+  "cutover vs staged": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
+  "cvss": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
+    }
+  ],
   "cyber incident": [
     {
       "id": "l3-security-001",
       "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "datastore apd pdl": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
+    }
+  ],
+  "ddos attack": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
       "level": "L3"
     }
   ],
@@ -937,6 +1089,13 @@
       "id": "ga-checkout-001",
       "title": "Safe online checkout — payment options ranked",
       "level": "GA"
+    }
+  ],
+  "declare a disaster": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
     }
   ],
   "defender": [
@@ -1042,6 +1201,11 @@
       "id": "l3-disaster-recovery-001",
       "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
       "level": "L3"
+    },
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
     }
   ],
   "disk full": [
@@ -1049,6 +1213,13 @@
       "id": "l1-windows-004",
       "title": "Disk full / out of space on C: drive",
       "level": "L1"
+    }
+  ],
+  "disk image": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
     }
   ],
   "dkim": [
@@ -1121,6 +1292,20 @@
       "level": "L2"
     }
   ],
+  "do not initialize array": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
+  "do not power off": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
   "domain being spoofed": [
     {
       "id": "l2-mail-auth-001",
@@ -1128,10 +1313,24 @@
       "level": "L2"
     }
   ],
+  "domain move": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
   "dr": [
     {
       "id": "l3-disaster-recovery-001",
       "title": "Disaster recovery runbook: RTO/RPO, restore order, validation",
+      "level": "L3"
+    }
+  ],
+  "dr tiers": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
       "level": "L3"
     }
   ],
@@ -1254,6 +1453,13 @@
       "level": "L1"
     }
   ],
+  "emergency change": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
+    }
+  ],
   "emergency fund": [
     {
       "id": "ga-budgeting-001",
@@ -1266,6 +1472,11 @@
       "id": "l2-patch-management-001",
       "title": "Patch management program design and update troubleshooting",
       "level": "L2"
+    },
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
     }
   ],
   "enrollment failed": [
@@ -1310,6 +1521,13 @@
       "level": "L2"
     }
   ],
+  "evidence integrity": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
   "exe won't run": [
     {
       "id": "l1-windows-006",
@@ -1338,11 +1556,39 @@
       "level": "GA"
     }
   ],
+  "exploited in the wild": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
+    }
+  ],
+  "failed disk": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
   "failover": [
     {
       "id": "l2-dhcp-001",
       "title": "DHCP scope exhaustion / clients getting APIPA / lease conflicts",
       "level": "L2"
+    }
+  ],
+  "failover cluster": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
+    }
+  ],
+  "failover failback": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
     }
   ],
   "fake site": [
@@ -1413,6 +1659,13 @@
       "level": "GA"
     }
   ],
+  "forensic preservation": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
   "forgot password": [
     {
       "id": "l1-password-001",
@@ -1441,6 +1694,13 @@
       "level": "L1"
     }
   ],
+  "geo blocking": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
+    }
+  ],
   "gift card": [
     {
       "id": "ga-checkout-001",
@@ -1467,6 +1727,13 @@
       "id": "ga-checkout-001",
       "title": "Safe online checkout — payment options ranked",
       "level": "GA"
+    }
+  ],
+  "google workspace migration": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
     }
   ],
   "government form": [
@@ -1511,6 +1778,13 @@
       "level": "L2"
     }
   ],
+  "hashing": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
   "help me buy": [
     {
       "id": "ga-shopping-001",
@@ -1549,6 +1823,20 @@
       "id": "l1-windows-003",
       "title": "Computer running slow / performance lag",
       "level": "L1"
+    }
+  ],
+  "host isolation": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
+    }
+  ],
+  "hot spare": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
     }
   ],
   "how does it work": [
@@ -1605,6 +1893,13 @@
       "id": "l2-intune-001",
       "title": "Intune device compliance: device shows non-compliant or fails to enroll",
       "level": "L2"
+    }
+  ],
+  "hypervisor cluster down": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
     }
   ],
   "icacls": [
@@ -1670,6 +1965,13 @@
       "level": "L3"
     }
   ],
+  "incident response firm": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
   "infected": [
     {
       "id": "l2-malware-001",
@@ -1698,6 +2000,13 @@
       "level": "L2"
     }
   ],
+  "ioc hunting": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
+    }
+  ],
   "is this real": [
     {
       "id": "ga-vendor-research-001",
@@ -1712,11 +2021,32 @@
       "level": "GA"
     }
   ],
+  "isolate not wipe": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
   "isolation": [
     {
       "id": "l2-malware-001",
       "title": "Malware / suspected infection: triage and containment",
       "level": "L2"
+    }
+  ],
+  "isp engagement": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
+    }
+  ],
+  "issuing ca expiry": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
     }
   ],
   "itil": [
@@ -1793,6 +2123,13 @@
     {
       "id": "l3-security-001",
       "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "layer 7": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
       "level": "L3"
     }
   ],
@@ -1920,6 +2257,13 @@
       "level": "L1"
     }
   ],
+  "lun offline": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
   "m365": [
     {
       "id": "l1-m365-001",
@@ -1927,11 +2271,25 @@
       "level": "L1"
     }
   ],
+  "m365 migration": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
   "mail flow": [
     {
       "id": "l2-exchange-001",
       "title": "Exchange Online: mail flow troubleshooting / NDR analysis",
       "level": "L2"
+    }
+  ],
+  "mail onedrive sharepoint teams": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
     }
   ],
   "mail rejected external": [
@@ -1969,11 +2327,25 @@
       "level": "L3"
     }
   ],
+  "mass validation failure": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
+    }
+  ],
   "mde": [
     {
       "id": "l2-malware-001",
       "title": "Malware / suspected infection: triage and containment",
       "level": "L2"
+    }
+  ],
+  "memory image": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
     }
   ],
   "memory_management": [
@@ -2060,6 +2432,13 @@
       "level": "L1"
     }
   ],
+  "migration tooling": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
   "mint": [
     {
       "id": "ga-budgeting-001",
@@ -2120,6 +2499,13 @@
     {
       "id": "l3-enterprise-001",
       "title": "Enterprise / MSP architecture: multi-tenant operations, segregation, automation",
+      "level": "L3"
+    }
+  ],
+  "mx autodiscover dns": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
       "level": "L3"
     }
   ],
@@ -2415,6 +2801,13 @@
       "level": "L1"
     }
   ],
+  "order of volatility": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
   "other people can't hear me": [
     {
       "id": "l1-teams-001",
@@ -2427,6 +2820,13 @@
       "id": "l2-patch-management-001",
       "title": "Patch management program design and update troubleshooting",
       "level": "L2"
+    }
+  ],
+  "out of band update": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
     }
   ],
   "out of space": [
@@ -2694,6 +3094,13 @@
       "level": "L2"
     }
   ],
+  "post-cutover validation": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
   "posture policy blocking": [
     {
       "id": "l2-sase-001",
@@ -2811,6 +3218,13 @@
       "level": "L2"
     }
   ],
+  "protocol attack": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
+    }
+  ],
   "provisioning": [
     {
       "id": "l2-onboarding-001",
@@ -2839,6 +3253,27 @@
       "level": "L2"
     }
   ],
+  "quorum loss": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
+    }
+  ],
+  "raid degraded": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
+  "raid rebuild": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
   "ransomware": [
     {
       "id": "l2-malware-001",
@@ -2858,6 +3293,13 @@
       "id": "l1-onedrive-002",
       "title": "Restore deleted or modified file from OneDrive / version history",
       "level": "L1"
+    }
+  ],
+  "rate limiting": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
     }
   ],
   "rbac": [
@@ -2909,6 +3351,13 @@
       "level": "L2"
     }
   ],
+  "recovery objectives": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
+    }
+  ],
   "recovery prompt": [
     {
       "id": "l2-bitlocker-001",
@@ -2949,6 +3398,13 @@
       "id": "l1-passkey-002",
       "title": "Recover passkey access after a lost, replaced, or broken device",
       "level": "L1"
+    }
+  ],
+  "rekey": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
     }
   ],
   "remote desktop": [
@@ -3012,6 +3468,13 @@
       "level": "L1"
     }
   ],
+  "restore testing": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
+    }
+  ],
   "resy": [
     {
       "id": "ga-booking-001",
@@ -3038,6 +3501,11 @@
       "id": "l2-patch-management-001",
       "title": "Patch management program design and update troubleshooting",
       "level": "L2"
+    },
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
     }
   ],
   "risk acceptance exception": [
@@ -3080,10 +3548,24 @@
       "level": "L2"
     }
   ],
+  "rollback planning": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
   "root ca": [
     {
       "id": "l3-certificates-001",
       "title": "Internal PKI / cert lifecycle / autoenroll / OCSP",
+      "level": "L3"
+    }
+  ],
+  "root ca expiry": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
       "level": "L3"
     }
   ],
@@ -3122,6 +3604,13 @@
       "level": "L3"
     }
   ],
+  "rto rpo": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
+    }
+  ],
   "rubrik": [
     {
       "id": "l3-disaster-recovery-001",
@@ -3134,6 +3623,13 @@
       "id": "l2-endpoint-001",
       "title": "Defender ASR rules / Attack Surface Reduction tuning",
       "level": "L2"
+    }
+  ],
+  "runbook": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
+      "level": "L3"
     }
   ],
   "safari": [
@@ -3168,6 +3664,13 @@
     {
       "id": "l3-sso-saml-001",
       "title": "SSO / SAML / OIDC: federation troubleshooting",
+      "level": "L3"
+    }
+  ],
+  "san multipath": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
       "level": "L3"
     }
   ],
@@ -3234,10 +3737,24 @@
       "level": "L2"
     }
   ],
+  "scrubbing center": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
+    }
+  ],
   "sd-wan": [
     {
       "id": "l3-networking-001",
       "title": "Network architecture: segmentation, zero trust, hub-and-spoke / SD-WAN",
+      "level": "L3"
+    }
+  ],
+  "second drive failure": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
       "level": "L3"
     }
   ],
@@ -3358,6 +3875,13 @@
       "id": "l2-offboarding-001",
       "title": "User offboarding: identity disable, data preservation, license recovery",
       "level": "L2"
+    }
+  ],
+  "shared storage outage": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
     }
   ],
   "sharepoint": [
@@ -3519,6 +4043,11 @@
       "id": "l2-dns-001",
       "title": "DNS: internal name resolution failing / split-brain issues",
       "level": "L2"
+    },
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
     }
   ],
   "split tunnel issue": [
@@ -3556,6 +4085,13 @@
       "level": "L1"
     }
   ],
+  "staged recovery order": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
+    }
+  ],
   "stig": [
     {
       "id": "l3-endpoint-001",
@@ -3581,6 +4117,13 @@
     {
       "id": "l3-server-001",
       "title": "Windows Server: role health, patching strategy, sysprep / reference image",
+      "level": "L3"
+    }
+  ],
+  "storage vendor support": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
       "level": "L3"
     }
   ],
@@ -3647,6 +4190,13 @@
       "level": "L1"
     }
   ],
+  "syn flood": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
+    }
+  ],
   "sync": [
     {
       "id": "l3-hybrid-ad-001",
@@ -3691,6 +4241,13 @@
     {
       "id": "l3-security-001",
       "title": "Security incident response runbook (P1 cyber incident)",
+      "level": "L3"
+    }
+  ],
+  "tabletop exercise": [
+    {
+      "id": "l3-business-continuity-001",
+      "title": "Disaster Recovery & Business Continuity program (planning + invocation)",
       "level": "L3"
     }
   ],
@@ -3764,6 +4321,13 @@
       "level": "L3"
     }
   ],
+  "tenant to tenant migration": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
   "terminal server": [
     {
       "id": "l2-rdp-001",
@@ -3790,6 +4354,34 @@
       "id": "l1-browser-001",
       "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
       "level": "L1"
+    }
+  ],
+  "throttling": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
+  "timeline analysis": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
+  "tipping off the attacker": [
+    {
+      "id": "l3-forensics-001",
+      "title": "Digital forensic evidence preservation during a suspected breach",
+      "level": "L3"
+    }
+  ],
+  "tls handshake failure": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
     }
   ],
   "tpm reset": [
@@ -3869,6 +4461,13 @@
       "level": "L2"
     }
   ],
+  "unrecoverable read error": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
   "update failed 0x8024": [
     {
       "id": "l2-patch-management-001",
@@ -3883,6 +4482,20 @@
       "level": "L1"
     }
   ],
+  "upn smtp coexistence": [
+    {
+      "id": "l3-migration-001",
+      "title": "Microsoft 365 / Google Workspace tenant-to-tenant migration",
+      "level": "L3"
+    }
+  ],
+  "ure": [
+    {
+      "id": "l3-storage-001",
+      "title": "RAID array / SAN disk failure and rebuild",
+      "level": "L3"
+    }
+  ],
   "user shell folders": [
     {
       "id": "l2-windows-001",
@@ -3895,6 +4508,13 @@
       "id": "l2-vpn-001",
       "title": "VPN gateway, certificates, and Always-On profile management",
       "level": "L2"
+    }
+  ],
+  "vcenter down": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
     }
   ],
   "veeam": [
@@ -3932,6 +4552,13 @@
       "level": "GA"
     }
   ],
+  "virtual patching": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
+    }
+  ],
   "virus": [
     {
       "id": "l2-malware-001",
@@ -3953,11 +4580,25 @@
       "level": "GA"
     }
   ],
+  "volumetric attack": [
+    {
+      "id": "l3-network-ddos-001",
+      "title": "DDoS attack response (volumetric / protocol / application-layer)",
+      "level": "L3"
+    }
+  ],
   "vpn": [
     {
       "id": "l1-vpn-001",
       "title": "VPN won't connect / disconnects randomly",
       "level": "L1"
+    }
+  ],
+  "vpn certificate": [
+    {
+      "id": "l3-certificates-002",
+      "title": "Certificate Authority / critical certificate expiry",
+      "level": "L3"
     }
   ],
   "vpn disconnects": [
@@ -3979,6 +4620,13 @@
       "id": "l1-vpn-001",
       "title": "VPN won't connect / disconnects randomly",
       "level": "L1"
+    }
+  ],
+  "vsphere ha": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
     }
   ],
   "wdac": [
@@ -4156,6 +4804,13 @@
       "level": "L1"
     }
   ],
+  "witness failure": [
+    {
+      "id": "l3-virtualization-001",
+      "title": "Hypervisor cluster down (vSphere / Hyper-V failover cluster)",
+      "level": "L3"
+    }
+  ],
   "won't boot": [
     {
       "id": "l1-windows-002",
@@ -4231,6 +4886,13 @@
       "id": "l1-browser-001",
       "title": "Browser issues: pages won't load, certificate errors, or constant crashes",
       "level": "L1"
+    }
+  ],
+  "zero day": [
+    {
+      "id": "l3-security-002",
+      "title": "Zero-day / actively-exploited vulnerability emergency fleet response",
+      "level": "L3"
     }
   ],
   "zero trust": [
