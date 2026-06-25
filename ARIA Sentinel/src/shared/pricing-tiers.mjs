@@ -27,8 +27,10 @@ export const TIERS = Object.freeze({
   personal: {
     plan: "personal",
     label: "Personal",
-    price: 599,
-    priceDisplay: "$599",
+    price: 899,
+    priceDisplay: "$899",
+    priceMonthly: 899,
+    priceMonthlyDisplay: "$899",
     billing: "month",
     billingPeriod: "monthly",
     seats: "1 user · 1 device",
@@ -52,8 +54,10 @@ export const TIERS = Object.freeze({
   pro: {
     plan: "pro",
     label: "Pro",
-    price: 1500,
-    priceDisplay: "$1,500",
+    price: 2250,
+    priceDisplay: "$2,250",
+    priceMonthly: 2250,
+    priceMonthlyDisplay: "$2,250",
     billing: "month",
     billingPeriod: "monthly",
     seats: "Small team",
@@ -77,8 +81,12 @@ export const TIERS = Object.freeze({
   smb: {
     plan: "smb",
     label: "Small Business",
-    price: 156000,
-    priceDisplay: "$156K",
+    price: 234000,
+    priceDisplay: "$234K",
+    priceMonthly: 19500,
+    priceMonthlyDisplay: "$19,500",
+    billedAnnually: true,
+    bundledVisits: { onsitePerYear: 1, remoteJumpIns: true },
     billing: "year",
     billingPeriod: "yearly",
     seats: "Small business fleet",
@@ -90,8 +98,12 @@ export const TIERS = Object.freeze({
   midsize: {
     plan: "midsize",
     label: "Mid Size",
-    price: 312000,
-    priceDisplay: "$312K",
+    price: 468000,
+    priceDisplay: "$468K",
+    priceMonthly: 39000,
+    priceMonthlyDisplay: "$39,000",
+    billedAnnually: true,
+    bundledVisits: { onsitePerYear: 2, remoteJumpIns: true },
     billing: "year",
     billingPeriod: "yearly",
     seats: "Mid-size org fleet",
@@ -103,8 +115,12 @@ export const TIERS = Object.freeze({
   enterprise: {
     plan: "enterprise",
     label: "Enterprise",
-    price: 625000,
-    priceDisplay: "$625K",
+    price: 937500,
+    priceDisplay: "$938K",
+    priceMonthly: 78125,
+    priceMonthlyDisplay: "$78,125",
+    billedAnnually: true,
+    bundledVisits: { onsitePerYear: 4, remoteJumpIns: true },
     billing: "year",
     billingPeriod: "yearly",
     seats: "Enterprise fleet",
@@ -223,7 +239,13 @@ function rowValue(key, f) {
 export function planComparisonTable({ includeAdmin = false } = {}) {
   const plans = (includeAdmin ? PLAN_ORDER : CLIENT_PLANS).map((p) => {
     const t = TIERS[p];
-    return { plan: p, label: t.label, priceDisplay: t.priceDisplay, billing: t.billing, seats: t.seats, blurb: t.blurb };
+    return {
+      plan: p, label: t.label, priceDisplay: t.priceDisplay, billing: t.billing, seats: t.seats, blurb: t.blurb,
+      priceMonthlyDisplay: t.priceMonthlyDisplay || t.priceDisplay,
+      billedAnnually: Boolean(t.billedAnnually),
+      bundledVisits: t.bundledVisits || null,
+      visitsLabel: visitsLabel(p),
+    };
   });
   const rows = COMPARISON_ROWS.map((r) => ({
     key: r.key,
@@ -231,4 +253,27 @@ export function planComparisonTable({ includeAdmin = false } = {}) {
     values: Object.fromEntries(plans.map((p) => [p.plan, rowValue(r.key, TIERS[p.plan].features)]))
   }));
   return { plans, rows };
+}
+
+// R-ONE N5 — every business tier bundles a MINIMAL cap of human visits; anything beyond is a SEPARATE,
+// human-delivered contract (never ARIA). This note must appear on every pricing surface.
+export const SEPARATE_HUMAN_SUPPORT_NOTE =
+  "Any additional on-site OR remote human support beyond the bundled visits is a separate, quote-based " +
+  "contract — human-delivered, not ARIA.";
+
+/** Human-readable bundled-visit line for a plan (N5). Empty for non-business tiers. */
+export function visitsLabel(plan) {
+  const t = TIERS[normalizePlan(plan)];
+  const v = t && t.bundledVisits;
+  if (!v) return "";
+  const visits = `${v.onsitePerYear} on-site visit${v.onsitePerYear === 1 ? "" : "s"}/yr`;
+  return v.remoteJumpIns ? `${visits} + remote jump-ins` : visits;
+}
+
+/** Monthly-display string for a plan (N5): business tiers show monthly-equivalent (billed annually). */
+export function monthlyDisplay(plan) {
+  const t = TIERS[normalizePlan(plan)];
+  if (!t) return "";
+  const base = t.priceMonthlyDisplay || t.priceDisplay;
+  return t.billedAnnually ? `${base}/mo (billed annually)` : `${base}/mo`;
 }

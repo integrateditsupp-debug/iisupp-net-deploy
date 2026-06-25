@@ -90,12 +90,19 @@ assert.equal(confirmedRow.values.pro, true);
 const recipeRow = table.rows.find((r) => r.key === "recipes");
 assert.equal(recipeRow.values.personal, "14 recipes");
 t();
-// 17 — prices match the directive.
-assert.equal(TIERS.personal.price, 599);
-assert.equal(TIERS.pro.price, 1500);
-assert.equal(TIERS.smb.price, 156000);
-assert.equal(TIERS.midsize.price, 312000);
-assert.equal(TIERS.enterprise.price, 625000);
+// 17 — prices match the directive (R-ONE N1: +50% across the 5 desktop tiers).
+assert.equal(TIERS.personal.price, 899);
+assert.equal(TIERS.pro.price, 2250);
+assert.equal(TIERS.smb.price, 234000);
+assert.equal(TIERS.midsize.price, 468000);
+assert.equal(TIERS.enterprise.price, 937500);
+// N5 — business tiers carry monthly-equivalent + bundled visits (1/2/4 on-site per year).
+assert.equal(TIERS.smb.priceMonthlyDisplay, "$19,500");
+assert.equal(TIERS.midsize.priceMonthlyDisplay, "$39,000");
+assert.equal(TIERS.enterprise.priceMonthlyDisplay, "$78,125");
+assert.equal(TIERS.smb.bundledVisits.onsitePerYear, 1);
+assert.equal(TIERS.midsize.bundledVisits.onsitePerYear, 2);
+assert.equal(TIERS.enterprise.bundledVisits.onsitePerYear, 4);
 t();
 // 18 — Stripe is referenced by ENV-VAR NAME only — no hardcoded URL anywhere in the tier table.
 for (const p of CLIENT_PLANS) {
