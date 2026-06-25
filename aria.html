@@ -3952,8 +3952,12 @@ function classify(text){
 
   // OneDrive password-prompt BEFORE password generic
   if (/onedrive/.test(q)) return 'kb:onedrive';
-  // AD-specific qualifiers BEFORE password (so 'ad password reset' hits AD)
-  if (/\b(active directory|ad lockout|domain account|domain controller|kerberos|krb5)\b/.test(q) || /\bad\b\s+(account|password|user|lockout|sync|replication|reset|unlock)/.test(q) || /\b(account|user|password) (locked|unlock|reset)\s+(in (ad|active directory)|in domain|domain side)\b/.test(q) || /\block(ed)? out in domain\b/.test(q) || /\bcan'?t unlock (ad|domain) account\b/.test(q)) return 'kb:active-directory';
+  // Active Directory (on-prem) BEFORE password, so 'account locked in ad' / 'unlock ad account' / 'ad pasword reset'
+  // route to AD, not the generic password bucket. Requires AD context + an identity/account action (avoids 'saw an ad'),
+  // and EXCLUDES azure/entra/aad/cloud (those are kb:m365) and onboarding/offboarding. Mirrored in tests/aria-classifier-mirror.js.
+  if ((/(active directory|domain controller|\bdc\b replication|kerberos|krb5|ad replication|ad authentication|domain account|on[- ]?prem(ises)? ad|local ad)/.test(q)
+       || (/\b(ad|domain)\b/.test(q) && /(account|lockout|lock(ed)? out|locked|unlock|disabl|re-?enabl|\benabl|reset|password|login|log[- ]?in|sign[- ]?in|logon|group|membership|credential|user)/.test(q)))
+      && !/(azure|entra|\baad\b|conditional access|intune|m365|microsoft 365|office 365|\bcloud\b|onboard|offboard|new hire|new starter|provision|deactivat|byod|employee leaving|departing|leaver|joiner)/.test(q)) return 'kb:active-directory';
 
   // === CORE TECHNICAL ===
   if (/(mail|email|inbox|outlook|outlok|outloook|outlk|sent items|drafts? folder|spam filter|junk folder|email attachment|attachments? not opening|email signature|autocomplete|exchange|mailbox|smtp|imap|pop3|exchange online)/.test(q)) return /out of office|ooo|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';

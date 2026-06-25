@@ -15,6 +15,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(__dirname, '..');
@@ -66,16 +67,27 @@ async function SEC_3() {
 }
 
 async function ACC_1() {
-  const harness = exists('ARIA Sentinel/tests/aria-kb-routing-iter7.test.mjs');
-  const corpus  = exists('tests/scenario-corpus-mega.js');
-  if (!harness || !corpus) {
+  const corpusF = exists('tests/scenario-corpus-mega.js');
+  const mirrorF = exists('tests/aria-classifier-mirror.js');
+  if (!corpusF || !mirrorF) {
     log('ACC-1', 'routing-accuracy regression', 'SKIP',
-        `Missing files: ${!harness ? 'iter7 test' : ''} ${!corpus ? 'mega corpus' : ''}`, null);
+        `Missing: ${[!corpusF && 'mega corpus', !mirrorF && 'classifier mirror'].filter(Boolean).join(', ')}`, null);
     return;
   }
-  log('ACC-1', 'routing-accuracy regression (332K corpus)', 'PASS',
-      'Last measured 98.64% (327,647/332,163) per docs/aria-web-159k-results.md',
-      'docs/aria-web-159k-results.md');
+  // ZERO-ERROR (Q-QA1 / C-1 + H-1): accuracy is COMPUTED here at test time against the live mirror —
+  // never a stored string. A regression in the classifier makes this check fail immediately.
+  const require = createRequire(import.meta.url);
+  const corpus = require(path.join(REPO, 'tests/scenario-corpus-mega.js'));
+  const { classify, looksLikeResolution } = require(path.join(REPO, 'tests/aria-classifier-mirror.js'));
+  const { evaluate } = require(path.join(REPO, 'tests/mega-eval.js'));
+  const ev = evaluate(corpus, classify, looksLikeResolution);
+  const total = ev.total;
+  const acc = total ? ev.pass / total : 0;
+  const below50 = Object.entries(ev.by_intent).filter(([, v]) => v.pass / v.total < 0.5).map(([k]) => k);
+  const okGate = acc >= 0.90 && below50.length === 0;
+  log('ACC-1', 'routing-accuracy regression (computed at test time)', okGate ? 'PASS' : 'FAIL',
+      `${(acc * 100).toFixed(2)}% (${ev.pass}/${total}); intents below the 50% HARD floor: ${below50.length ? below50.join(', ') : 'none'}`,
+      { accuracy: acc, total, below50 });
 }
 
 async function CONS_1() {
@@ -98,7 +110,7 @@ async function CONS_1() {
 
 async function CHAOS_1() {
   const checks = [
-    ['ARIA Sentinel/src/main.js', 'degraded.*mode|offline.*fallback|cache'],
+    ['ARIA Sentinel/src/main/main.mjs', 'degraded.*mode|offline.*fallback|cache|localKbAnswer'],
     ['ARIA Sentinel/src/renderer/renderer.js', 'no.match|fallback|escalat'],
   ];
   const found = checks.map(([f, pat]) => {

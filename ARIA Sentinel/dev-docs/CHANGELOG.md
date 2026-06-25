@@ -5,6 +5,7 @@ Organized record of **major** changes (Ahmad directive, 2026-06-24: record all m
 
 | Date | Change | Why | Files / Area | Verified on LIVE? | By |
 |------|--------|-----|--------------|-------------------|-----|
+| 2026-06-25 | **Q-QA1** classifier C-1 fix: kb:active-directory 49%→100%, overall 92.4% computed at test time (killed hard-coded 98.64%); CHAOS-1 path fix; per-intent CI gate | QA finding C-1/H-1/M-1/M-2 release-blocker | `aria.html`, `tests/aria-classifier-mirror.js`, `tests/mega-eval.js`, `tools/iis-tester-agent.mjs`, `ARIA Sentinel/tests/classifier-accuracy.test.mjs`, `trust/*`, `ARIA Sentinel/qa/classifier-accuracy-2026-06-25.md` | n/a (CI green; live publish Ahmad-gated) | Cowork |
 | 2026-06-24 | CC packet: added **Definition of Done** (100% live, no dry-run, test-on-live, iterate-until-pass) + Slice B reframed to fully-live | Ahmad: make the app 100% live + tested on live, no excuses | `senior-director-state/cc-aria-coverage-buildout-2026-06-24.md` | n/a (spec) | Cowork |
 | 2026-06-24 | CC packet: added **Slice B** (production execution), **Slice C** (web→Sentinel deep-link handoff), **Slice D** (web chat-logic bugs) | Production-ready; fix stuck-session + build the autonomous handoff | packet | n/a (spec) | Cowork |
 | 2026-06-24 | **ARIA web live test** — recipe path PASS (printer fix correct); found stuck-session + CLEAR-no-reset bugs; no Resolve→Sentinel handoff yet | Verify ARIA after key fix | live iisupp.net/aria | YES (tested) | Cowork |
