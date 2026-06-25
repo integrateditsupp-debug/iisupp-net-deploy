@@ -36,14 +36,28 @@ This proves the full live chain (OS protocol → app → second-instance argv �
 security property (a browser-supplied arbitrary recipe id cannot execute). State at test: mode=manual,
 dryRun=false, ariaStopped=true.
 
-### Still NOT exercised live (correctly gated — needs Ahmad)
-- Firing a **known** recipe id to watch the live 10s Confirmed countdown was deliberately SKIPPED — it would
-  route to `runSupervisedFix(confirmed)` and (even though manual mode only previews) could touch the machine.
-  That branch is covered by `tests/resolve-for-me.test.mjs` + `tests/deep-link.test.mjs` (known id → supervised
-  Confirmed, never autonomous). Ahmad can run it live by firing e.g.
-  `aria-sentinel://resolve?recipe=printer-spooler-v1&intent=printer` and confirming the countdown appears.
+### POSITIVE (known-recipe) path ALSO verified live — safely, with execution force-previewed
+The installed 0.1.15 build ships Slice B (`allowSystemFixes = app.isPackaged` → ON when packaged), so a known
+recipe fired at the normal running instance WOULD execute a real fix after the countdown. To verify the accept
+path without touching the machine, the app was relaunched with `ARIA_SENTINEL_ALLOW_SYSTEM_FIXES=0` (forces
+`resolveActualDryRun` → preview at the runRecipe level, all other gates intact), then fired
+`aria-sentinel://resolve?recipe=printer-spooler-v1&intent=printer`. transparency log recorded the FULL pipeline:
+- `[SELF-REPAIR] Second ARIA Sentinel launch redirected to existing instance.`
+- `[RUN] Deep-link resolve requested for printer-spooler-v1.`   ← known id ACCEPTED + routed
+- `[SUPERVISOR] SUPERVISOR.APPROVE: Approved — all safety checks passed.`
+- `[RESTORE PT] Restore point created before printer-spooler-v1.`   ← restore-point gate
+- `[RUN] Dry-run recipe PRINT.OFFLINE` + `[DONE] Restart Print Spooler: Would restart…`   ← previewed, not run
+
+Proof of zero real change: the Spooler service PID was unchanged before/after (no real restart), restorePoints
+count unchanged. Every R8 gate (supervisor → restore-point → countdown → dry-run → kill-switch hotkey) fired and
+was preserved. The app was then relaunched WITHOUT the env override, restoring packaged-default behavior
+(mode=manual, dryRun=false, ariaStopped=true preserved via electron-store).
+
+**Net: both branches of the receiver are now live-verified on-device** — unknown/forged id refused; known id
+runs the full gated Confirmed pipeline and previews safely. The only thing left to a human is letting a known-id
+fix actually EXECUTE (env-default) — that is a real system change and stays Ahmad's call.
 - The installed app is 0.1.15 (pre-web-emitter). Re-package from `cc/sentinel-deeplink-web-handoff-2026-06-24`
-  to ship the web emitter alongside; the receiver itself is already proven on-device.
+  to ship the web emitter alongside; the receiver itself is already proven on-device (both branches).
 
 ## What still needs a human on a real machine (cannot be done headlessly — GUI + OS protocol registry)
 
