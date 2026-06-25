@@ -221,6 +221,10 @@ const TESTS = [
   "./kb-freshness.test.mjs",
   // TASK 3 (2026-06-24) — "Resolve it for me" enabled + gated (supervised-fix, Confirmed, never autonomous).
   "./resolve-for-me.test.mjs",
+  // Q0b (2026-06-24) — aria-sentinel:// deep-link receiver (pure parser/validator).
+  "./deep-link.test.mjs",
+  // Q0b (2026-06-24) — web "Open with ARIA Sentinel" emitter ↔ desktop receiver URL contract.
+  "./web-handoff-contract.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
