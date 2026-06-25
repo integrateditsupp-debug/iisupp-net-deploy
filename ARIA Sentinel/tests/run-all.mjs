@@ -178,6 +178,8 @@ const TESTS = [
   "./feature-gating.test.mjs",
   "./plan-picker.test.mjs",
   "./plans-matrix.test.mjs",
+  // R-ONE N1 — site-wide pricing guard: 0 stale tier prices anywhere + pages match the single source.
+  "./site-pricing-guard.test.mjs",
   // RUN 24 — auto-license funnel (webhook mint/persist/email logic) + admin licenses registry.
   "./sentinel-license-funnel.test.mjs",
   "./sentinel-licenses-api.test.mjs",

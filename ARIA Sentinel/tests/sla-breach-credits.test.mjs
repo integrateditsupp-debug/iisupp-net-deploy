@@ -25,7 +25,7 @@ assert.equal(serviceCredits([{ severity: "P1" }], "enterprise", 10000).pctOwed, 
 assert.equal(serviceCredits([{ severity: "P1" }], "enterprise", 10000).owed, 1500);
 
 // Personal/Pro tiers carry NO service credits regardless of breaches.
-assert.equal(serviceCredits([{ severity: "P1" }, { severity: "P2" }], "personal", 599).owed, 0);
-assert.equal(serviceCredits([{ severity: "P1" }], "pro", 1500).owed, 0);
+assert.equal(serviceCredits([{ severity: "P1" }, { severity: "P2" }], "personal", 899).owed, 0);
+assert.equal(serviceCredits([{ severity: "P1" }], "pro", 2250).owed, 0);
 
 console.log("Sla-breach-credits test passed (breach detect · tier credit schedule · never auto-issued · personal/pro = $0).");

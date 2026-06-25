@@ -6,7 +6,7 @@ import {
   renderPlansCards, renderPlansMatrix, renderPlansFragment, injectFragment,
   CHECKOUT_TIER, SENTINEL_PRICE_ENV, isWired, MARKER_START, MARKER_END
 } from "../scripts/build-plans-matrix.mjs";
-import { TIERS, CLIENT_PLANS, planComparisonTable } from "../src/shared/pricing-tiers.mjs";
+import { TIERS, CLIENT_PLANS, planComparisonTable, monthlyDisplay, visitsLabel, SEPARATE_HUMAN_SUPPORT_NOTE } from "../src/shared/pricing-tiers.mjs";
 
 // Env helpers for deterministic tests (never read the real process env).
 const NONE = {};
@@ -17,8 +17,13 @@ const ONLY_PERSONAL = { [SENTINEL_PRICE_ENV.personal]: "price_x" };
 const cardsAll = renderPlansCards(ALL);
 for (const p of CLIENT_PLANS) {
   assert.ok(cardsAll.includes(TIERS[p].label), `card for ${TIERS[p].label}`);
-  assert.ok(cardsAll.includes(TIERS[p].priceDisplay), `card shows ${p} price ${TIERS[p].priceDisplay}`);
+  // R-ONE N5 — cards display the MONTHLY figure (business tiers: monthly-equivalent, billed annually).
+  assert.ok(cardsAll.includes(monthlyDisplay(p)), `card shows ${p} monthly price ${monthlyDisplay(p)}`);
+  // Business tiers also surface their bundled human-visit line.
+  if (visitsLabel(p)) assert.ok(cardsAll.includes(visitsLabel(p)), `card shows ${p} bundled visits ${visitsLabel(p)}`);
 }
+// The separate-human-support note appears in the rendered fragment.
+assert.ok(renderPlansFragment(ALL).includes(SEPARATE_HUMAN_SUPPORT_NOTE), "human-support note present");
 
 // Env-awareness: no envs → every tier is Contact-sales (never a broken checkout).
 const cardsNone = renderPlansCards(NONE);

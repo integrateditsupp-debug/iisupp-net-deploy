@@ -22,11 +22,11 @@ assert.match(m, /Choose your tier/, "subtitle copy");
 
 // Exactly 5 pricing cards, each with the right tier + price + a Subscribe CTA carrying data-plan.
 const tiers = [
-  { tier: "personal", price: "$599", plan: "personal" },
-  { tier: "pro", price: "$1,500", plan: "pro" },
-  { tier: "smb", price: "$156K", plan: "smb" },
-  { tier: "midsize", price: "$312K", plan: "midsize" },
-  { tier: "enterprise", price: "$625K", plan: "enterprise" }
+  { tier: "personal", price: "$899", plan: "personal" },
+  { tier: "pro", price: "$2,250", plan: "pro" },
+  { tier: "smb", price: "$19,500", plan: "smb" },
+  { tier: "midsize", price: "$39,000", plan: "midsize" },
+  { tier: "enterprise", price: "$78,125", plan: "enterprise" }
 ];
 const cards = m.match(/<div class="plan-card"[\s\S]*?<\/div>/g) || [];
 assert.equal(cards.length, 5, "exactly 5 pricing cards");

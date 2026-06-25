@@ -6,7 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { TIERS, CLIENT_PLANS, planComparisonTable } from "../src/shared/pricing-tiers.mjs";
+import { TIERS, CLIENT_PLANS, planComparisonTable, monthlyDisplay, visitsLabel, SEPARATE_HUMAN_SUPPORT_NOTE } from "../src/shared/pricing-tiers.mjs";
 
 // data-tier checkout key per plan (matches stripe-checkout.js PRICE_MAP).
 export const CHECKOUT_TIER = {
@@ -36,15 +36,15 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 export function renderPlansCards(env = process.env) {
   return `<div class="sentinel-cards">\n` + CLIENT_PLANS.map((p) => {
     const t = TIERS[p];
-    const unit = t.billing === "year" ? "/yr" : "/mo";
     const cta = isWired(p, env)
       ? `<button class="pf-cta" data-tier="${CHECKOUT_TIER[p]}" data-name="ARIA Sentinel ${esc(t.label)}">SUBSCRIBE</button>`
       : `<a class="pf-cta contact" href="mailto:ahmad.wasee@iisupp.net?subject=ARIA%20Sentinel%20${encodeURIComponent(t.label)}">CONTACT SALES</a>`;
+    const visits = visitsLabel(p) ? `\n    <div class="pf-visits">Includes ${esc(visitsLabel(p))}</div>` : "";
     return `  <article class="sentinel-card">
     <h3>${esc(t.label)}</h3>
-    <div class="pf-price">${esc(t.priceDisplay)}<span class="pf-unit">${unit}</span></div>
+    <div class="pf-price">${esc(monthlyDisplay(p))}</div>
     <div class="pf-seats">${esc(t.seats)}</div>
-    <p class="pf-blurb">${esc(t.blurb)}</p>
+    <p class="pf-blurb">${esc(t.blurb)}</p>${visits}
     ${cta}
   </article>`;
   }).join("\n") + `\n</div>`;
@@ -55,15 +55,17 @@ export function renderPlansMatrix() {
   const yes = `<span class="yes">✓</span>`, no = `<span class="no">—</span>`;
   const cell = (v) => v === true ? yes : v === false ? no : `<span>${esc(v)}</span>`;
   const head = `<tr><th>Feature</th>${plans.map((p) => `<th>${esc(p.label)}</th>`).join("")}</tr>`;
-  const priceRow = `<tr class="price-row"><td>Price</td>${plans.map((p) => `<td>${esc(p.priceDisplay)}<small>/${p.billing === "year" ? "yr" : "mo"}</small></td>`).join("")}</tr>`;
+  const priceRow = `<tr class="price-row"><td>Price</td>${plans.map((p) => `<td>${esc(monthlyDisplay(p.plan))}</td>`).join("")}</tr>`;
+  const visitsRow = `<tr><td>Bundled human visits</td>${plans.map((p) => `<td>${esc(visitsLabel(p.plan) || "—")}</td>`).join("")}</tr>`;
   const seatRow = `<tr><td>Seats</td>${plans.map((p) => `<td>${esc(p.seats)}</td>`).join("")}</tr>`;
   const body = rows.map((r) => `<tr><td>${esc(r.label)}</td>${plans.map((p) => `<td>${cell(r.values[p.plan])}</td>`).join("")}</tr>`).join("\n");
-  return `<table class="sentinel-matrix">\n<thead>${head}${priceRow}${seatRow}</thead>\n<tbody>\n${body}\n</tbody>\n</table>`;
+  return `<table class="sentinel-matrix">\n<thead>${head}${priceRow}${seatRow}${visitsRow}</thead>\n<tbody>\n${body}\n</tbody>\n</table>`;
 }
 
 /** The full fragment Netlify injects between the SENTINEL_MATRIX markers. */
 export function renderPlansFragment(env = process.env) {
-  return `${renderPlansCards(env)}\n<div class="sentinel-matrix-wrap">\n${renderPlansMatrix()}\n</div>`;
+  const note = `<p class="sentinel-human-note">${esc(SEPARATE_HUMAN_SUPPORT_NOTE)} <a href="/contact.html?subject=Human%20Support%20quote">Request a Human Support quote →</a></p>`;
+  return `${renderPlansCards(env)}\n<div class="sentinel-matrix-wrap">\n${renderPlansMatrix()}\n</div>\n${note}`;
 }
 
 // An env where every Sentinel price is "set" — used to preview the final all-SUBSCRIBE state.
