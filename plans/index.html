@@ -103,6 +103,21 @@
     <p style="color:rgba(255,255,255,.7);font-size:16px;line-height:1.6">Start free on this site for 15 minutes. Pick the plan that matches your team. Stripe-secured checkout. Cancel anytime.</p>
   </div>
 
+  <!-- Q-WEBTIER — $70/mo ARIA Web + AI Edge (top-of-funnel, separate from the desktop matrix below).
+       Env-aware: the card renders a real Subscribe button only when STRIPE_PRICE_ARIA_WEB_M is set,
+       otherwise it falls back to a free trial / contact (never a broken checkout). -->
+  <style>
+    .aria-web-tier-card{max-width:760px;margin:0 auto 48px;padding:28px 32px;border:1px solid rgba(197,160,89,.45);border-radius:16px;background:linear-gradient(180deg,rgba(197,160,89,.08),rgba(255,255,255,.02));text-align:center}
+    .aria-web-tier-card .awt-eyebrow{color:#c5a059;font-size:11px;letter-spacing:.28em;text-transform:uppercase}
+    .aria-web-tier-card .awt-title{font-size:26px;font-weight:700;margin:8px 0 4px}
+    .aria-web-tier-card .awt-price{color:#c5a059;font-size:30px;font-weight:700;margin-bottom:12px}
+    .aria-web-tier-card .awt-features{list-style:none;padding:0;margin:0 auto 18px;max-width:520px;color:rgba(255,255,255,.78);font-size:15px;line-height:1.8;text-align:left}
+    .aria-web-tier-card .awt-features li::before{content:"\2713  ";color:#c5a059}
+    .aria-web-tier-card .awt-primary{background:#c5a059;color:#1a1205;border:0;border-radius:10px;padding:12px 28px;font-weight:700;font-size:15px;cursor:pointer}
+    .aria-web-tier-card .awt-secondary{display:inline-block;margin-left:16px;color:rgba(255,255,255,.75);font-size:14px;text-decoration:underline}
+  </style>
+  <div data-aria-web-tier></div>
+
   <div class="pf-grid">
     <div class="pf-card">
       <div class="pf-tier">Personal</div>
@@ -509,5 +524,6 @@
 })();
 </script>
 <script defer src="/assets/aria-i18n-page-copy.js"></script>
+<script defer src="/assets/aria-web-tier.js"></script>
 </body>
 </html>
