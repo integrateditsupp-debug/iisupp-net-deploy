@@ -209,6 +209,12 @@ const TESTS = [
   "./aria-kb-routing-iter7.test.mjs",
   // RUN 36 round-3 — routing coverage for calendar · external display · conference-room AV (top50-gaps).
   "./aria-kb-routing-round3.test.mjs",
+  // Q-QA1 — web /aria classifier accuracy computed at test time + per-intent 50% floor + AD regression lock.
+  "./classifier-accuracy.test.mjs",
+  // Q-WEBTIER — $70/mo ARIA Web + AI Edge: env-aware config + card model + checkout wiring + matrix separation.
+  "./web-tier-contract.test.mjs",
+  // Q-DIR / Q-DIR+ (R3) — identity-tier directory provider: cannot-mess-up protocol + failure-injection (mock-only).
+  "./directory.test.mjs",
   // RUN 33 Phase 2 — ARIA tab data parsers (status / kb-stats / sessions R11 / heartbeats).
   "./aria-surfaces.test.mjs",
   // RUN 33-E — first-launch Setup wizard (state machine + wiring).

@@ -1,5 +1,11 @@
 # ARIA Web /aria Classifier — Mega-Scenario Results (RUN 35-5)
 
+> ⚠️ **SUPERSEDED / CORRECTED 2026-06-25 (Q-QA1, finding C-1).** The 98.64% below was a hard-coded figure that
+> was never recomputed; a fresh run measured **92.39%** and `kb:active-directory` at **49%** (now fixed to
+> **100%**). The current, test-time-computed results are in **`ARIA Sentinel/qa/classifier-accuracy-2026-06-25.md`**.
+> Accuracy is now recomputed by `ARIA Sentinel/tests/classifier-accuracy.test.mjs` on every CI run — it is never
+> a stored string again. The numbers in this file are kept only as a dated historical snapshot.
+
 Date: 2026-06-23 · Harness: `tests/run-mega-scenarios.js` against `tests/scenario-corpus-mega.js`
 (offline web-classifier mirror `tests/aria-classifier-mirror.js`). Runs fully offline.
 

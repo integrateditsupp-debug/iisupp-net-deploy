@@ -63,6 +63,10 @@ const PRICE_MAP = {
   sentinel_business_y:   process.env.STRIPE_PRICE_SENTINEL_BUSINESS_Y,
   sentinel_midsize_y:    process.env.STRIPE_PRICE_SENTINEL_MIDSIZE_Y,
   sentinel_enterprise_y: process.env.STRIPE_PRICE_SENTINEL_ENTERPRISE_Y,
+  // Q-WEBTIER — $70/mo "ARIA Web + AI Edge" website subscription (top-of-funnel). SEPARATE product line
+  // from the Sentinel desktop license matrix (pricing-tiers.mjs). Env-only: undefined until Ahmad creates
+  // the Stripe price + sets STRIPE_PRICE_ARIA_WEB_M, so checkout cleanly 400s ("never a broken checkout").
+  aria_web_m:            process.env.STRIPE_PRICE_ARIA_WEB_M,
 };
 
 exports.handler = async (event) => {
@@ -130,7 +134,8 @@ exports.handler = async (event) => {
       'personal','personal_y','pro','pro_y',
       'small_business','small_business_y',
       'mid_size','mid_size_y','midsize','midsize_y',
-      'enterprise','enterprise_y'
+      'enterprise','enterprise_y',
+      'aria_web_m'   // Q-WEBTIER — $70/mo website subscription (separate from desktop tiers)
     ]);
     mode = SUBSCRIPTION_TIERS.has(tier) ? 'subscription' : 'payment';
     metadata = {

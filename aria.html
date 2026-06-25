@@ -3952,8 +3952,12 @@ function classify(text){
 
   // OneDrive password-prompt BEFORE password generic
   if (/onedrive/.test(q)) return 'kb:onedrive';
-  // AD-specific qualifiers BEFORE password (so 'ad password reset' hits AD)
-  if (/\b(active directory|ad lockout|domain account|domain controller|kerberos|krb5)\b/.test(q) || /\bad\b\s+(account|password|user|lockout|sync|replication|reset|unlock)/.test(q) || /\b(account|user|password) (locked|unlock|reset)\s+(in (ad|active directory)|in domain|domain side)\b/.test(q) || /\block(ed)? out in domain\b/.test(q) || /\bcan'?t unlock (ad|domain) account\b/.test(q)) return 'kb:active-directory';
+  // Active Directory (on-prem) BEFORE password, so 'account locked in ad' / 'unlock ad account' / 'ad pasword reset'
+  // route to AD, not the generic password bucket. Requires AD context + an identity/account action (avoids 'saw an ad'),
+  // and EXCLUDES azure/entra/aad/cloud (those are kb:m365) and onboarding/offboarding. Mirrored in tests/aria-classifier-mirror.js.
+  if ((/(active directory|domain controller|\bdc\b replication|kerberos|krb5|ad replication|ad authentication|domain account|on[- ]?prem(ises)? ad|local ad)/.test(q)
+       || (/\b(ad|domain)\b/.test(q) && /(account|lockout|lock(ed)? out|locked|unlock|disabl|re-?enabl|\benabl|reset|password|login|log[- ]?in|sign[- ]?in|logon|group|membership|credential|user)/.test(q)))
+      && !/(azure|entra|\baad\b|conditional access|intune|m365|microsoft 365|office 365|\bcloud\b|onboard|offboard|new hire|new starter|provision|deactivat|byod|employee leaving|departing|leaver|joiner)/.test(q)) return 'kb:active-directory';
 
   // === CORE TECHNICAL ===
   if (/(mail|email|inbox|outlook|outlok|outloook|outlk|sent items|drafts? folder|spam filter|junk folder|email attachment|attachments? not opening|email signature|autocomplete|exchange|mailbox|smtp|imap|pop3|exchange online)/.test(q)) return /out of office|ooo|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';
@@ -6209,6 +6213,22 @@ setInterval(attach, 1200);
 })();
 </script>
 
+<!-- Q-WEBTIER — $70/mo ARIA Web + AI Edge upsell (env-aware; renders Subscribe only when the Stripe price is
+     set, else a free-trial/contact fallback). Bottom strip — non-disruptive to the chat widget above.
+     NOTE: visual placement on /aria to be confirmed on the deploy preview before publish. -->
+<style>
+  #aria-web-tier-strip{max-width:760px;margin:28px auto;padding:0 16px}
+  #aria-web-tier-strip .aria-web-tier-card{padding:24px 28px;border:1px solid rgba(197,160,89,.4);border-radius:14px;background:rgba(197,160,89,.06);text-align:center;font-family:inherit}
+  #aria-web-tier-strip .awt-eyebrow{color:#c5a059;font-size:11px;letter-spacing:.26em;text-transform:uppercase}
+  #aria-web-tier-strip .awt-title{font-size:22px;font-weight:700;margin:6px 0 2px}
+  #aria-web-tier-strip .awt-price{color:#c5a059;font-size:26px;font-weight:700;margin-bottom:10px}
+  #aria-web-tier-strip .awt-features{list-style:none;padding:0;margin:0 auto 16px;max-width:520px;font-size:14px;line-height:1.7;text-align:left;opacity:.85}
+  #aria-web-tier-strip .awt-features li::before{content:"\2713  ";color:#c5a059}
+  #aria-web-tier-strip .awt-primary{background:#c5a059;color:#1a1205;border:0;border-radius:10px;padding:11px 26px;font-weight:700;cursor:pointer}
+  #aria-web-tier-strip .awt-secondary{display:inline-block;margin-left:14px;font-size:14px;text-decoration:underline;opacity:.8}
+</style>
+<div id="aria-web-tier-strip"><div data-aria-web-tier></div></div>
 <script src="/assets/aria-i18n-page-copy.js"></script>
+<script defer src="/assets/aria-web-tier.js"></script>
 </body>
 </html>
