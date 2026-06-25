@@ -3,6 +3,28 @@ Process TOP-DOWN. After EACH task: append a `[UTC] [cc] <task> DONE/BLOCKED — 
 
 GOVERNANCE (Ahmad, LOCKED): NEVER remove or restructure a user-facing feature/tab/UI without Ahmad's explicit say-so. Default to ADD/enhance. The ONLY approved removal is the Settings>Mode "Ask ARIA" box (Q0b).
 
+# ===== MASTER RUN R-ZERO (2026-06-25) — run ALL open items, ZERO-ERROR standard (Ahmad: 100% execution, no room for error) =====
+Open items only (Q0/Q0b/Q1/Q2/Q3 already DONE). Run in order; each task is 'done' ONLY when its DoD is met, VERIFIED by a read-back, and recorded. If a step cannot fully complete, STOP, flag BLOCKED-ON-AHMAD, leave the system consistent — never commit a half-finished state.
+ORDER:
+  R1 = Q-QA1  (classifier regression + 158k/332k re-run + kill the stale 98.64%) — RELEASE BLOCKER, do first.
+  R2 = Q-WEBTIER  ($70 ARIA Web + AI Edge tier) — env-aware, never a broken checkout.
+  R3 = Q-DIR  (Directory/Identity: Entra/Azure AD + on-prem AD) — MISSION-CRITICAL CORRECTNESS, the app must NEVER mis-perform an identity action.
+GLOBAL ZERO-ERROR DoD (every task): node tests/run-all.mjs 100% green + NEW tests for new code (no red = no done); every change verified by a check step, not assumed; results written to ARIA Sentinel/qa/ + CHANGELOG + Live-Ops-Log; R16 clone, R15 push-per-task, R8 + R11 gates.
+
+R3 'CANNOT-MESS-UP' PROTOCOL (mandatory for EVERY identity action — this is non-negotiable):
+  1. READ-ONLY FIRST — ship + fully test the read-only connect + lookups before ANY write path exists in the build.
+  2. TARGET CERTAINTY — never act on a guessed target. If the user/group/device is <100% certain (ambiguous name, >1 match), STOP and ask. A wrong-target reset/disable = a security breach. NO fuzzy-match writes, EVER.
+  3. WRITE PIPELINE per action: validate target -> explicit admin approval (Confirmed minimum, NEVER Autonomous) -> execute -> READ-BACK VERIFY the change applied EXACTLY as intended -> tamper-evident audit (who/what/when) -> on ANY mismatch or error: AUTO-ROLLBACK + escalate to a human; never leave a half-done identity state.
+  4. IDEMPOTENT + SAFE-RETRY — re-running never double-applies; a network drop mid-write recovers to a consistent state.
+  5. LEAST-PRIVILEGE — read scopes for reads, the minimum write scope per action, no standing god-mode token.
+  6. FAILURE-INJECTION TESTS REQUIRED before any real use: network drop mid-write, partial failure, wrong-target guard, permission-denied, token-expiry, duplicate request — ALL must pass.
+  7. MOCK / TEST-TENANT ONLY until Ahmad explicitly approves a real tenant; CC registers no app and touches no live directory.
+  8. 100% of identity-tier tests green is a HARD GATE — no write path ships with a single failing or uncovered case.
+Build R3 in slices (read-only -> unlock -> password reset -> group add/remove -> disable), each its own gated, fully-tested recipe. Live-tenant writes are Ahmad-gated BY DESIGN — that gating IS the zero-error guarantee, not a step to skip.
+
+WHEN DONE: append to STATUS LOG -> 'MASTER RUN R-ZERO: buildable scope COMPLETE, 100% green; remaining = live-tenant directory writes + Stripe $70 price + Entra scope-consent (all Ahmad-gated).' Then stop.
+# ----- detailed task specs below -----
+
 Q0 [ ] SENTINEL ARIA-CHAT TAB — RESTORE + ENHANCE (TOP PRIORITY). Ahmad asked to remove ONLY the redundant "Ask ARIA" chat box under Settings (under Modes) — NOT the left-panel ARIA chat, which worked well and must be kept with ALL functions/features/knowledge.
   (a) Ensure the left-nav "ARIA" tab (ARIA Sentinel/src/renderer/index.html data-tab="aria" -> #aria-chat .aria-chat-panel + #ariaChatLog, wired in renderer.js) is PRESENT + FULLY functional: company header + gold globe, chat log, input, KB article cards + source badges (KB $0 / via Anthropic / offline), gated "Resolve it for me". If any Slice (A-D / parity RUN 33) stripped/degraded it, restore from git history (complete ~commit 4547c00) and re-apply on current code.
   (b) REMOVE ONLY the "Ask ARIA" chat box under Settings > Mode. Keep the Mode selector.
