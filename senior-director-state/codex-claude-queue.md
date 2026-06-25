@@ -1,3 +1,25 @@
+# ===== ACTIVE RUN QUEUE (Cowork → Claude Code, 2026-06-24) — DO THIS FIRST =====
+Process TOP-DOWN. After EACH task: append a `[UTC] [cc] <task> DONE/BLOCKED — result` line in the STATUS LOG at the bottom of this file, commit+push, then start the next. Loop until all DONE or BLOCKED-ON-AHMAD. Own clone (R16), commit+push each (R15), safety gates (R8). Full spec: senior-director-state/cc-aria-coverage-buildout-2026-06-24.md.
+
+GOVERNANCE (Ahmad, LOCKED): NEVER remove or restructure a user-facing feature/tab/UI without Ahmad's explicit say-so. Default to ADD/enhance. The ONLY approved removal is the Settings>Mode "Ask ARIA" box (Q0b).
+
+Q0 [ ] SENTINEL ARIA-CHAT TAB — RESTORE + ENHANCE (TOP PRIORITY). Ahmad asked to remove ONLY the redundant "Ask ARIA" chat box under Settings (under Modes) — NOT the left-panel ARIA chat, which worked well and must be kept with ALL functions/features/knowledge.
+  (a) Ensure the left-nav "ARIA" tab (ARIA Sentinel/src/renderer/index.html data-tab="aria" -> #aria-chat .aria-chat-panel + #ariaChatLog, wired in renderer.js) is PRESENT + FULLY functional: company header + gold globe, chat log, input, KB article cards + source badges (KB $0 / via Anthropic / offline), gated "Resolve it for me". If any Slice (A-D / parity RUN 33) stripped/degraded it, restore from git history (complete ~commit 4547c00) and re-apply on current code.
+  (b) REMOVE ONLY the "Ask ARIA" chat box under Settings > Mode. Keep the Mode selector.
+  (c) Wire ALL new knowledge/features INTO the left-panel chat: hardened matcher, Office/Excel recipe, 280-article KB, gated Resolve flow, aria-sentinel:// deep-link.
+  (d) Toss NOTHING — layer on top; remove only the Settings chat box.
+  VERIFY: launch app; "ARIA" tab opens the full chat; Settings>Mode has NO chat box; node tests/run-all.mjs green; screenshot ARIA tab + Settings>Mode.
+Q1 [ ] WEB-LLM-ROUTING (Round 3). On LIVE a free-form question gets the generic "which is closest to the problem?" triage and NEVER calls /.netlify/functions/aria-chat (Cowork verified b0ef4bf+f00f864 — only aria-event fires). Route genuine questions / no-match / "Something else" to askAriaLLM (POST aria-chat). VERIFY ON LIVE network: advisory question -> 200 aria-chat + real answer (if 200 + upstream error, flag key/org model access).
+Q2 [ ] EXECUTABLE-RECIPES (DoD#1). Add >=5 safe reversible Tier-0 executable recipes (flush ARP, clear Windows Update cache, restart Audio/Spooler, re-register stuck service, reset adapter) so a VM sweep can hit >=10. restore-point+audit+kill-switch+tests.
+Q3 [ ] REGRESSION + RECORDS. Re-run 100-call harness (>=95%), Sentinel run-all, web tester. Update dev-docs/CHANGELOG.md + vault Live-Ops-Log.
+BLOCKED ON AHMAD (flag, don't attempt): DoD#2 real reply = key/org Claude 4.x access; DoD#3 = install build-sentinel-v2.bat; DoD#1 full sweep = Windows VM.
+When Q0-Q3 done, append "QUEUE COMPLETE — remaining items Ahmad-gated" to the status log and stop.
+
+## STATUS LOG (CC append newest at bottom — this is the heartbeat Cowork monitors)
+[2026-06-25T00:05Z] [Cowork] Queue published here (codex-claude-queue is the tracked channel; cc-run-queue.md was gitignored). CC: start Q0.
+
+# ===== prior handoff content below =====
+
 > **STANDING:** Apply Round Velocity Playbook at `senior-director-state/loop-engineer/ROUND_VELOCITY_PLAYBOOK.md` -- 4-5 shippables per Round, single push. LOCKED 2026-06-18 by Ahmad.
 
 # CODEX — TASK QUEUE
