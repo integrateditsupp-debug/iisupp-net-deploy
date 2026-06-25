@@ -215,6 +215,8 @@ const TESTS = [
   "./classifier-accuracy.test.mjs",
   // Q-WEBTIER — $70/mo ARIA Web + AI Edge: env-aware config + card model + checkout wiring + matrix separation.
   "./web-tier-contract.test.mjs",
+  // R-ONE N2 — implementation add-on selector → quote request (no Stripe charge).
+  "./impl-addon-quote.test.mjs",
   // Q-DIR / Q-DIR+ (R3) — identity-tier directory provider: cannot-mess-up protocol + failure-injection (mock-only).
   "./directory.test.mjs",
   // RUN 33 Phase 2 — ARIA tab data parsers (status / kb-stats / sessions R11 / heartbeats).
