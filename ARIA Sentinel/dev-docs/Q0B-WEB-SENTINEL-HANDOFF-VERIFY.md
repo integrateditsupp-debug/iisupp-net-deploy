@@ -19,6 +19,32 @@ The two halves of the handoff are unified on one branch:
 - `tests/web-handoff-contract.test.mjs` — the web emitter and desktop receiver agree on the URL byte-for-byte;
   every web-mapped intent points at a REAL recipe id; forged ids are refused.
 
+## LIVE end-to-end verification DONE on the installed app (2026-06-25, this machine)
+
+The installed **ARIA Sentinel 0.1.15** already ships the Slice C receiver (confirmed: `app.asar` contains
+`handleSentinelDeepLink` / `setAsDefaultProtocolClient` / `parseSentinelDeepLink`), and the OS protocol is
+registered: `HKCU\Software\Classes\aria-sentinel\shell\open\command` =
+`"C:\Users\Ahmad Wasee\AppData\Local\Programs\ARIA Sentinel\ARIA Sentinel.exe" "%1"`.
+
+Fired `aria-sentinel://resolve?recipe=verify-noop-q0b-deeplink&intent=verify` (deliberately UNKNOWN id, so
+no system action is possible). Within ~1s the running app's transparency log recorded EXACTLY:
+- `[SELF-REPAIR] Second ARIA Sentinel launch redirected to existing instance.`  ← warm `second-instance` argv path
+- `[DETECT] Deep-link not actioned (unknown_recipe): verify-noop-q0b-deeplink.`  ← receiver parsed + REFUSED the forged id
+
+No `RUN`/`FIX`/`RESTORE` entries; `restorePoints` unchanged (20); `incidents` 0 → **zero system side effects**.
+This proves the full live chain (OS protocol → app → second-instance argv → parse → validate → log) AND the
+security property (a browser-supplied arbitrary recipe id cannot execute). State at test: mode=manual,
+dryRun=false, ariaStopped=true.
+
+### Still NOT exercised live (correctly gated — needs Ahmad)
+- Firing a **known** recipe id to watch the live 10s Confirmed countdown was deliberately SKIPPED — it would
+  route to `runSupervisedFix(confirmed)` and (even though manual mode only previews) could touch the machine.
+  That branch is covered by `tests/resolve-for-me.test.mjs` + `tests/deep-link.test.mjs` (known id → supervised
+  Confirmed, never autonomous). Ahmad can run it live by firing e.g.
+  `aria-sentinel://resolve?recipe=printer-spooler-v1&intent=printer` and confirming the countdown appears.
+- The installed app is 0.1.15 (pre-web-emitter). Re-package from `cc/sentinel-deeplink-web-handoff-2026-06-24`
+  to ship the web emitter alongside; the receiver itself is already proven on-device.
+
 ## What still needs a human on a real machine (cannot be done headlessly — GUI + OS protocol registry)
 
 1. **Build + install** a packaged Sentinel from this branch (`npm run package:win`) so Windows registers the
