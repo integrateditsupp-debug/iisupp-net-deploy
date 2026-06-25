@@ -92,9 +92,31 @@ cooldown veto, restore-point, countdown, dry-run, kill-switch) observed firing.
    `aria-sentinel://` link to the installed app (steps 2–3). Without the app installed, confirm the honest
    "Get ARIA Sentinel" fallback card appears instead (no false "fixed it" claim).
 
-## Gates still owned by Ahmad / Codex
-- **Merge into `main`:** blocked by the known >100MB `dist-backups/` binary divergence on the local lineage
-  (same blocker that kept Q0–Q3 off `main`). Reconcile by merging this branch into the review branch, not by
-  pushing the local binary-carrying tree.
-- **Public publish:** `aria.html` change is additive + flag-gated OFF; going live requires Ahmad's manual
-  Netlify publish AND setting `__ARIA_SENTINEL_HANDOFF__ = true`.
+## Merge into `main` — fully characterized (2026-06-25); production-gated for evidence-based reasons
+
+This branch is clean/pushable (NOT the local binary-carrying tree). Two ways to land it on `main`, both gated:
+
+**A) Full-lineage merge (one command, mechanically clean):**
+```
+git checkout -B _m origin/main && git merge --no-ff cc/sentinel-deeplink-web-handoff-2026-06-24 && git push origin _m:main
+```
+Verified in a throwaway clone branch: **0 conflicts**; Netlify functions **+5 / −0** (restores aria-recipes,
+aria-stop-codes(+data), sentinel-licenses, sentinel-stripe-webhook); `netlify/functions/aperture-auth.mjs`
+**byte-identical** (login HARD RULE satisfied); `netlify.toml` unchanged; Sentinel suite **188/188 green** on the
+merged tree. Auto-publish is OFF, so the push only builds a ready-but-unpublished deploy.
+**WHY STILL GATED:** `main` is **5 commits ahead on `aria.html`** (±228 lines) and has newer `index.html`
+(homepage "AI command blade" nav) + `aria-chat.js` (model-default fix) that this older-lineage branch lacks.
+The 0-conflict auto-merge *silently resolves* those LIVE public pages without human review — Ahmad/Codex must
+eyeball the merged `aria.html`/`index.html` on a deploy preview (and confirm aperture/aria-* login) before this
+hits production. That review is the gate, not a code blocker.
+
+**B) Additive cherry-pick of ONLY the handler onto `main`:** NOT clean — `main` is a different lineage that is
+**missing the restored endpoints** (`aria-recipes.mjs` absent → `main` is itself ~3 suites red), so adding just
+the deep-link files leaves `main` inconsistent. Path A (which also restores those endpoints) is the right
+reconciliation. Either way the deep-link handler is already proven on-device from this branch.
+
+## Other gates owned by Ahmad / Codex
+- **Public publish:** `aria.html` handoff is additive + flag-gated OFF; going live requires Ahmad's manual
+  Netlify publish AND setting `__ARIA_SENTINEL_HANDOFF__ = true` (after verifying the preview).
+- **Real elevated remediation success:** a known-id fix executes live after the countdown (verified) but needs
+  UAC elevation to actually succeed — environment/privilege, Ahmad's call.
