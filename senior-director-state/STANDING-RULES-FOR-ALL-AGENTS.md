@@ -142,6 +142,9 @@ Goal: spend the fewest tokens that still do the job right (Ruben Hassid "21 hack
 ## RULE 12 — APPROVED OUTREACH COPY (Ahmad-locked 2026-06-25)
 All cold lead/prospect outreach (cold email, LinkedIn DM, contact-form follow-up — ANY channel) uses the approved template VERBATIM. Canonical: aria-vault/01_Frontal/Outreach-Template-Approved.md. Personalize ONLY [Name]; never write your own pitch/variants. Keep the demo link https://calendar.app.google/LUyV5pHxkqJRg5vp8, email ahmad.wasee@iisupp.net, phone 647-581-3182, signature exactly. Append CASL footer for cold email. Applies to ops-agent, morning-outbound-pack, morning-hunt-bids-leads, cold-outbound-v2, AND contract-hunter (its cold-outreach + Apollo-sequence portions). Does NOT apply to procurement bid cover letters, personal job applications, or existing-customer renewals.
 
+## RULE 13 — DATED AUDIT / TEST RECORDS (Ahmad-locked 2026-06-25)
+Every testing, audit, QA, or compliance activity (any user or agent) MUST produce a dated, recorded document. Product/Sentinel audits -> ARIA Sentinel/qa/audits/audit-YYYY-MM-DD-*.md. ALWAYS add a dated one-line entry to aria-vault/11_CorpusCallosum/Live-Operations-Log.md (date, method, result, what was gated/not-tested). No silent tests.
+
 ## CHANGE LOG
 
 | Date | Change |
@@ -150,3 +153,4 @@ All cold lead/prospect outreach (cold email, LinkedIn DM, contact-form follow-up
 | 2026-06-18 | RULE 9 added: every detail perfect, limit the count. Customer-surface freeze + audit-and-prune pass mandated. |
 | 2026-06-25 | RULE 11 added: token-efficiency workflow + concise/caveman style default (critical content stays precise; no destructive vault rewrite). |
 | 2026-06-25 | RULE 12 added: approved outreach copy locked for all lead-outreach agents. |
+| 2026-06-25 | RULE 13 added: all testing/audit/compliance work = dated recorded docs. |
