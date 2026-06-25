@@ -102,6 +102,36 @@ export const recipes = {
     id: "check-driver-issues", title: "Check device/driver problems", category: "usb-peripheral", readOnly: true,
     whatItDoes: "Lists devices reporting an error code in Device Manager (read-only).",
     commands: ["Get-CimInstance Win32_PnPEntity | Where-Object { $_.ConfigManagerErrorCode -ne 0 } | Select-Object Name,ConfigManagerErrorCode"]
+  }),
+  "check-ip-configuration": def({
+    id: "check-ip-configuration", title: "Show IP configuration", category: "no-internet", readOnly: true,
+    whatItDoes: "Shows the full IP configuration (adapters, DHCP, gateway, DNS) read-only to diagnose connectivity.",
+    commands: ["ipconfig /all"]
+  }),
+  "check-active-connections": def({
+    id: "check-active-connections", title: "List active network connections", category: "no-internet", readOnly: true,
+    whatItDoes: "Lists active TCP/UDP connections and listening ports (read-only) to spot stuck or unexpected connections.",
+    commands: ["netstat -ano"]
+  }),
+  "check-memory-usage": def({
+    id: "check-memory-usage", title: "Check memory usage", category: "slow-performance", readOnly: true,
+    whatItDoes: "Reports free vs total physical memory (read-only) to confirm whether low RAM is causing slowness.",
+    commands: ["Get-CimInstance Win32_OperatingSystem | Select-Object FreePhysicalMemory,TotalVisibleMemorySize"]
+  }),
+  "check-disk-space": def({
+    id: "check-disk-space", title: "Check free disk space", category: "slow-performance", readOnly: true,
+    whatItDoes: "Reports free and total space per drive (read-only) to spot a nearly-full disk.",
+    commands: ["Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID,FreeSpace,Size"]
+  }),
+  "check-installed-updates": def({
+    id: "check-installed-updates", title: "List installed updates", category: "update-stuck", readOnly: true,
+    whatItDoes: "Lists installed Windows updates/hotfixes with install dates (read-only).",
+    commands: ["Get-CimInstance Win32_QuickFixEngineering | Select-Object HotFixID,InstalledOn"]
+  }),
+  "restart-dhcp-client": def({
+    id: "restart-dhcp-client", title: "Restart DHCP client", category: "no-internet",
+    whatItDoes: "Restarts the DHCP Client service to recover a lost or stale IP lease.",
+    commands: ["Restart-Service -Name Dhcp"]
   })
 };
 

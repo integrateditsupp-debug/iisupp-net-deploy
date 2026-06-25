@@ -25,8 +25,8 @@ assert.match(main, /child\.kill\("SIGKILL"\)/, "RUN 19 SIGKILL intact");
 assert.match(renderer, /function confirmDelete\(/, "RUN 19 triple-confirm delete intact");
 assert.match(indexHtml, /<aria-globe class="brand-globe"/, "RUN 19 live globe intact");
 
-// RUN 20 — system knowledge engine (14 Tier-0 recipes, reasoner, KB).
-assert.equal(fs.readdirSync(path.join(root, "src", "main", "recipes", "tier-0")).filter((f) => f.endsWith(".recipe.mjs")).length, 14, "RUN 20 14 tier-0 recipes intact");
+// RUN 20 — system knowledge engine (20 Tier-0 recipes, reasoner, KB).
+assert.equal(fs.readdirSync(path.join(root, "src", "main", "recipes", "tier-0")).filter((f) => f.endsWith(".recipe.mjs")).length, 20, "RUN 20 20 tier-0 recipes intact");
 assert.ok(fs.existsSync(path.join(root, "src", "shared", "diagnostic-reasoner.mjs")), "RUN 20 reasoner intact");
 
 // RUN 22 report/email modules intact; RUN 23d's 9 + RUN 33 PIVOT's ARIA tab = 10.
@@ -60,4 +60,4 @@ assert.deepEqual(Object.keys(pkg.devDependencies).sort(), ["electron", "electron
 assert.ok(pkg.build.files.includes("src/**/*"), "src tree shipped to customers");
 assert.ok(!pkg.build.files.some((f) => /cowork-tools|netlify/.test(f)), "cowork-tools/netlify excluded from customer build");
 
-console.log("Run-23-no-regression test passed (RUN 17→22 intact · 14 recipes · 9 tabs · axis untouched · R11 wired · 15 new files · 0 new deps).");
+console.log("Run-23-no-regression test passed (RUN 17→22 intact · 20 recipes · 9 tabs · axis untouched · R11 wired · 15 new files · 0 new deps).");

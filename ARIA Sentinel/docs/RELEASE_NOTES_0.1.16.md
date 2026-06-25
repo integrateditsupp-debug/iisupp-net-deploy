@@ -21,6 +21,9 @@ Settings cleanup, and brings the full automated suite back to green. No-cost, un
     with optional `?q=` filter by code or hex.
   - Both are **content-blind** (`privacy.uploadToIisupp:false`) and ship an `x-aria-*-sha256` integrity
     header so clients can detect tampering in transit.
+- **Tier-0 catalog expanded 14 → 20.** Six new safe-generic, content-blind, dry-run-default recipes
+  (read-only diagnostics + a DHCP-client restart) on the existing allowlisted command set: show IP config,
+  list active connections, check memory usage, check disk space, list installed updates, restart DHCP client.
 - **Settings → Mode cleanup finished (RUN 34-2).** The redundant Settings "Ask ARIA" box stays removed
   (ARIA Chat lives only in the ARIA tab); the stale "dry-run toggle · ask ARIA dock" sub-caption is replaced
   with copy that reflects the current Mode panel. The Mode selector (Manual / Confirmed / Autonomous) is
