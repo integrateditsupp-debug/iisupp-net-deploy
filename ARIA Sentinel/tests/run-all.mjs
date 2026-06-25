@@ -207,6 +207,8 @@ const TESTS = [
   "./chat-scroll-containment.test.mjs",
   // RUN 35-2 — aria-kb-query routing iter 7 (security families/takeover · wifi no-word · printer tightened).
   "./aria-kb-routing-iter7.test.mjs",
+  // RUN 36 round-3 — routing coverage for calendar · external display · conference-room AV (top50-gaps).
+  "./aria-kb-routing-round3.test.mjs",
   // RUN 33 Phase 2 — ARIA tab data parsers (status / kb-stats / sessions R11 / heartbeats).
   "./aria-surfaces.test.mjs",
   // RUN 33-E — first-launch Setup wizard (state machine + wiring).
@@ -219,6 +221,10 @@ const TESTS = [
   "./kb-freshness.test.mjs",
   // TASK 3 (2026-06-24) — "Resolve it for me" enabled + gated (supervised-fix, Confirmed, never autonomous).
   "./resolve-for-me.test.mjs",
+  // Q0b (2026-06-24) — aria-sentinel:// deep-link receiver (pure parser/validator).
+  "./deep-link.test.mjs",
+  // Q0b (2026-06-24) — web "Open with ARIA Sentinel" emitter ↔ desktop receiver URL contract.
+  "./web-handoff-contract.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

@@ -1,6 +1,6 @@
 // RUN 29-A — dry-run DEFAULT is mode-based now: Manual keeps the dry-run safety ON; Confirmed + Autonomous
 // default to real execution. This proves the flip per mode/tier, that the per-invocation checkbox override
-// still wins, that every real-exec path keeps its supervisor + countdown gates, and that all 14 Tier-0
+// still wins, that every real-exec path keeps its supervisor + countdown gates, and that all 20 Tier-0
 // recipes route to real execution under Autonomous + supervisor approval. (Ctrl+Alt+K in-flight abort is
 // covered by kill-switch.test.mjs / kill-switch-hotkey.test.mjs.)
 import assert from "node:assert/strict";
@@ -43,8 +43,8 @@ for (const mode of ["confirmed", "autonomous"]) {
 }
 t();
 
-// 5 — all 14 Tier-0 recipes route to REAL execution under Autonomous + supervisor approval.
-assert.equal(TIER0_RECIPES.length, 14, "14 Tier-0 recipes in the catalog");
+// 5 — all 20 Tier-0 recipes route to REAL execution under Autonomous + supervisor approval.
+assert.equal(TIER0_RECIPES.length, 20, "20 Tier-0 recipes in the catalog");
 let liveCount = 0;
 for (const r of TIER0_RECIPES) {
   // A Tier-0 recipe carries 100+ vetted runs; under Autonomous + approve it must execute live + may auto-fire.
@@ -55,7 +55,7 @@ for (const r of TIER0_RECIPES) {
   assert.equal(pol.canAutoFire, true, `${r.id}: Tier-0 may auto-fire in Autonomous`);
   if (pol.execute) liveCount++;
 }
-assert.equal(liveCount, 14, "all 14 Tier-0 recipes execute live under Autonomous");
+assert.equal(liveCount, 20, "all 20 Tier-0 recipes execute live under Autonomous");
 t();
 
 // 6 — Autonomous live default is still overridable to dry-run for diagnostics (per-invocation).
@@ -63,4 +63,4 @@ assert.equal(executionPolicy({ vettedCount: 150, mode: "autonomous", dryRunCheck
 t();
 
 assert.equal(n, 6, "6 dry-run-default test groups");
-console.log(`dryrun-defaults test passed (${n} groups · Manual ON / Confirmed+Autonomous OFF · checkbox override both ways · safety gates intact · 14 Tier-0 recipes route live under Autonomous).`);
+console.log(`dryrun-defaults test passed (${n} groups · Manual ON / Confirmed+Autonomous OFF · checkbox override both ways · safety gates intact · 20 Tier-0 recipes route live under Autonomous).`);

@@ -99,6 +99,15 @@ const ROUTING = [
   [/\b(network\s*architecture|segmentation|zero\s*trust|sd-?wan|hub\s*spoke|microsegment)\b/i, 'l3-networking-001'],
   [/\b(landing\s*zone|management\s*group|azure\s*policy|tenant\s*design)\b/i, 'l3-cloud-001'],
   [/\b(server\s*role|sysprep|reference\s*image|s2d|storage\s*spaces\s*direct)\b/i, 'l3-server-001'],
+  // RUN 36 round-3 — high-frequency end-user categories that had KB articles but NO routing rule
+  // (calendar, external display, conference-room AV). Sourced from the top50-gaps KB set.
+  [/\b(out\s*of\s*office|automatic\s*repl(y|ies)|\boof\b|vacation\s*responder|away\s*message)\b/i, 'l1-calendar-002'],
+  [/\boutlook\s*calendar\b|\bshared\s*calendar\b|\bcalendar\b.*(not\s*sync|won.?t\s*sync|not\s*show|won.?t\s*show|missing|double.?book|wrong\s*time|disappear)/i, 'l1-calendar-001'],
+  [/\b(meeting|calendar)\s*invites?\b.*(missing|duplicat|not\s*show|wrong\s*calendar|disappear)/i, 'l1-calendar-003'],
+  [/\b(external|second|2nd|dual|extra)\s*(monitor|screen|display)\b.*(not\s*detect|not\s*work|no\s*signal|black|won.?t\s*(show|display|turn\s*on)|not\s*found)/i, 'l1-display-001'],
+  [/\b(monitor|hdmi|displayport|second\s*screen)\b.*(no\s*signal|not\s*detect)/i, 'l1-display-001'],
+  [/\b(monitor|display|screen)\b.*(resolution|scaling|blurry|too\s*(small|big|tiny|huge))/i, 'l1-display-002'],
+  [/\b(conference|meeting)\s*room\b|\b(teams\s*room|projector|boardroom)\b|\broom\s*(av|tv|display|projector)\b/i, 'l1-conference-001'],
   // GA — general assistance
   [/\b(scam|fake)\s*(site|website)|look.?alike\s*domain|typo.?squat|amaz0n|paypa1|microsoft-update|is\s*this\s*site\s*safe\b/i, 'ga-scam-001'],
   [/\b(help|teach|show)\b.*\b(my\s*)?(mom|dad|grandm|grandp|elderly|senior|parent)\b/i, 'ga-senior-001'],
