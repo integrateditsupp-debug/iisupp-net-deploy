@@ -12,10 +12,11 @@
 |---|---|---|
 | **What it does** | On-device AI IT support — diagnose + fix the top desktop tickets, gated and reversible | Everything in Standalone **plus** live directory action: AD / Entra ID, ServiceNow, RSA, PingOne, Dynamics 365, Outlook — verified self-service password reset & unlock, manager-delegated actions, group & asset management |
 | **Who it's for** | Individuals, small teams | Mid-market, enterprise, government |
-| **Price** | Personal **$899/mo** · Pro **$2,250/mo** | Small Business **$234K/yr** · Mid-Size **$468K/yr** · Enterprise **$938K/yr** |
-| **On-ramp** | ARIA Web + AI Edge **$70/mo** | — |
+| **Price (monthly)** | Personal **$899/mo** · Pro **$2,250/mo** | Small Business **$19,500/mo** · Mid-Size **$39,000/mo** · Enterprise **$78,125/mo** *(billed annually — $234K / $468K / $937.5K per year)* |
+| **Bundled human support** | — | Small Business **1** on-site visit/yr · Mid **2**/yr · Enterprise **4**/yr — plus occasional remote jump-ins. Minimal by design. |
 
 *Every integration is optional — toggle on only what the business uses, exactly like ServiceNow.*
+*Additional human on-site or remote support beyond the bundled visits is a **separate contract** (human-delivered, not ARIA).*
 
 ---
 
@@ -47,9 +48,5 @@ Add the rest of L1 automation (slow PC, Outlook, printer, VPN, OneDrive…) and 
 
 ## Why it commands the price
 
-- **Replaces headcount + vendors:** a verified self-service reset desk is a tier-1 helpdesk function plus an identity-verification vendor — automated, 24/7, audited.
-- **Identity-safe by design:** never autonomous on a write; target must be 100% certain; every action is approved, verified after execution, and rolled back on mismatch.
-- **Audit-ready for procurement:** least-privilege, tamper-evident logs, conditional-access aware — the things a gov/enterprise security review demands.
-
-**Next step:** a 30-minute scoping call → connector selection → fixed implementation quote → pilot.
-*Integrated IT Support Inc. · ahmad.wasee@iisupp.net · iisupp.net/aria-sentinel*
+- **Replaces headcount + vendors:** a verified self-service reset desk is a tier-1 helpdesk function plus an identity-verification vendor — automated, 24/7, audited — with a few human visits when hands-on is truly needed.
+- **Identity-safe by design:** never autonomous on a write; target must be 100% certain; ARIA only ever middlemans to the business's trusted
