@@ -207,6 +207,8 @@ const TESTS = [
   "./chat-scroll-containment.test.mjs",
   // RUN 35-2 — aria-kb-query routing iter 7 (security families/takeover · wifi no-word · printer tightened).
   "./aria-kb-routing-iter7.test.mjs",
+  // RUN 36 round-3 — routing coverage for calendar · external display · conference-room AV (top50-gaps).
+  "./aria-kb-routing-round3.test.mjs",
   // RUN 33 Phase 2 — ARIA tab data parsers (status / kb-stats / sessions R11 / heartbeats).
   "./aria-surfaces.test.mjs",
   // RUN 33-E — first-launch Setup wizard (state machine + wiring).

@@ -21,6 +21,11 @@ Settings cleanup, and brings the full automated suite back to green. No-cost, un
     with optional `?q=` filter by code or hex.
   - Both are **content-blind** (`privacy.uploadToIisupp:false`) and ship an `x-aria-*-sha256` integrity
     header so clients can detect tampering in transit.
+- **Web KB routing — round 3.** Added hard-routing for three high-frequency end-user categories that
+  had KB articles (top50-gaps) but no routing rule: Outlook calendar (sync/missing/double-booked + invites
+  + out-of-office), external display (not-detected + resolution/scaling), and conference-room AV (projector
+  / Teams Room / boardroom). New `aria-kb-routing-round3` suite; iter-7 lifts + vertical wont-print
+  fallthrough verified intact.
 - **Tier-0 catalog expanded 14 → 20.** Six new safe-generic, content-blind, dry-run-default recipes
   (read-only diagnostics + a DHCP-client restart) on the existing allowlisted command set: show IP config,
   list active connections, check memory usage, check disk space, list installed updates, restart DHCP client.
