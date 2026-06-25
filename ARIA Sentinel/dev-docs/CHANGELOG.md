@@ -23,3 +23,8 @@ Organized record of **major** changes (Ahmad directive, 2026-06-24: record all m
 ## 2026-06-24 — Deploy + live re-test (Cowork)
 - MERGED web branch + rebuilt KB bundles (280 articles) -> main @ b0ef4bf, auto-deployed. Web tester 0 FAIL. Verified LIVE: YES.
 - LIVE re-test: 3 web bugs remain (DoD #2) — in-session topic-bleed, NEW CHAT no-reset, aria-chat LLM never fires. -> Slice D Round 2. Verified LIVE: NO.
+
+## 2026-06-24 — Slice D Round 2 merged + live re-test (Cowork)
+- MERGED Round 2 -> main @ f00f864, deployed. Topic-bleed fix + NEW CHAT/CLEAR hard-reset shipped.
+- LIVE re-test: free-form questions STILL never call aria-chat (only aria-event fires) — triage front-door intercepts the LLM. DoD#2 NOT met -> CC Round 3 (cc-run-queue.md Q1). Verified LIVE: NO.
+- Set up CC run queue + status loop (senior-director-state/cc-run-queue.md + cc-run-status.md).
