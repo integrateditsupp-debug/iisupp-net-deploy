@@ -126,9 +126,23 @@ Workarounds by gap:
 
 ---
 
+## RULE 11 — TOKEN-EFFICIENCY + STYLE (all agents, every run)
+Goal: spend the fewest tokens that still do the job right (Ruben Hassid "21 hacks", distilled).
+1. Read ONLY what the task needs. Never load a whole folder or the whole vault — pick the exact files. No file needed -> load none.
+2. Keep input tight (aim < ~2000 words). Trim, do not dump.
+3. ONE pass: a single specific prompt with all steps beats many round-trips.
+4. Right model for the job: cheap/fast model for format/grammar/simple pulls; big model only for real reasoning.
+5. Tight output: ask for exactly what is needed; "just the output, no commentary" when that is all.
+6. One topic per run. Unrelated task = new run, not a pile-on.
+7. Long run -> every ~15-20 steps write a short state summary to a file and continue from it; do not re-chew history.
+8. Targeted fixes only: redo the wrong part, not the whole thing.
+9. Recurring work stays SCHEDULED; do not re-run by hand.
+10. STYLE: default to concise / "caveman-short" phrasing in chat, agent outputs, and NEW vault notes — UNLESS the content is CRITICAL (commands, file paths, prices, code, safety, decisions, specs), then be precise and complete. Do NOT mass-rewrite existing vault notes (corruption + info-loss risk); apply the short style to new/edited notes only.
+
 ## CHANGE LOG
 
 | Date | Change |
 |---|---|
 | 2026-06-17 | Initial publication after spend-cap + smart-qualifier + ship-now rules locked |
 | 2026-06-18 | RULE 9 added: every detail perfect, limit the count. Customer-surface freeze + audit-and-prune pass mandated. |
+| 2026-06-25 | RULE 11 added: token-efficiency workflow + concise/caveman style default (critical content stays precise; no destructive vault rewrite). |
