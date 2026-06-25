@@ -17,6 +17,10 @@ const allowedHosts = [
   "localhost:37841",
   "{customer-instance}.service-now.com",
   "customer.service-now.com",
+  // Q-DIR slice 2 — the customer's own Entra directory integration (opt-in, admin-consented, like
+  // ServiceNow above). Read-only in this slice; writes need write scopes + admin consent (later slice).
+  "graph.microsoft.com",
+  "login.microsoftonline.com",
   "www.w3.org",
   "example.com",
   "wa.me"
