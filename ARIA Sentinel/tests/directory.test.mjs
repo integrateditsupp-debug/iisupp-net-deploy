@@ -6,7 +6,8 @@
 import assert from "node:assert/strict";
 import {
   getDirectoryConfig, connectorEnabled, lookupUser, resolveTarget, accountStatus, groupMembership,
-  listDevices, idvResult, IDV_FAIL_MESSAGE, performIdentityAction, auditEntry, WRITE_SCOPE_BY_ACTION,
+  listDevices, idvResult, routeToVerifier, outlookDelivery, IDV_FAIL_MESSAGE, performIdentityAction,
+  auditEntry, WRITE_SCOPE_BY_ACTION,
 } from "../src/shared/directory.mjs";
 
 let n = 0; const group = () => { n++; };
@@ -99,9 +100,9 @@ assert.ok(!JSON.stringify(r).toLowerCase().includes("password=") && !/plaintext.
 group();
 
 // 9 — BIOMETRIC never reaches ARIA: raw selfie/id/template → refused by idvResult.
-assert.equal(idvResult({ provider: "builtin_idv", verified: true, rawSelfie: "<bytes>" }).verified, false, "raw selfie rejected");
-assert.equal(idvResult({ provider: "builtin_idv", verified: true, biometricTemplate: "x" }).reason, "raw_biometric_must_not_reach_aria");
-assert.equal(idvResult({ provider: "builtin_idv", verified: true }).verified, true, "pass/fail only → ok");
+assert.equal(idvResult({ provider: "vendor_idv", verified: true, rawSelfie: "<bytes>" }).verified, false, "raw selfie rejected");
+assert.equal(idvResult({ provider: "vendor_idv", verified: true, biometricTemplate: "x" }).reason, "raw_biometric_must_not_reach_aria");
+assert.equal(idvResult({ provider: "vendor_idv", verified: true }).verified, true, "pass/fail only → ok");
 group();
 
 // 10 — IDEMPOTENT replay: same requestId never double-applies.
@@ -153,5 +154,15 @@ const forged = auditEntry(a1.hash, "disable", { actor: "M1", target: "U2", reque
 assert.notEqual(forged.hash, a2.hash, "any field change yields a different hash");
 group();
 
-assert.equal(n, 15, "15 identity-tier groups");
+// 16 — N3 IDV middleman + N4 Outlook delivery.
+const route = routeToVerifier("pingone_verify", { requestId: "r1" });
+assert.ok(route.ok && route.action === "redirect_to_verifier" && route.capturesInAria === false, "IDV routes to verifier, never captures in ARIA");
+assert.equal(routeToVerifier("aria_captures_it").ok, false, "unknown verifier refused");
+const del = outlookDelivery({ securityLayer: "mimecast" });
+assert.ok(del.mode === "enable_only" && del.via === "business_outlook_exchange" && del.configuredByBusinessIT === true, "delivery is enable-only via the business's Outlook stack");
+assert.equal(del.plaintextPassword, false, "no plaintext password in delivery");
+assert.equal(del.securityLayer, "mimecast", "respects the business's own security layer");
+group();
+
+assert.equal(n, 16, "16 identity-tier groups");
 console.log(`directory test passed (${n} groups · read-only content-blind · target-certainty · never-autonomous · admin-approval · IDV verified/unverified · manager reports-to · no-plaintext-pw · biometric-never-reaches-brain · idempotent · network-drop · read-back mismatch->auto-rollback · permission/token failures · least-privilege · tamper-evident audit).`);

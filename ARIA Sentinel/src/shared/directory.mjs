@@ -96,19 +96,50 @@ function publicUser(u = {}) {
   return { id: u.id, ref: hashId(u.id), display: String(u.displayName || "").slice(0, 80), managerId: u.managerId || null };
 }
 
-// ---- IDV gate (Q-DIR+ B) --------------------------------------------------
-// Returns ONLY a pass/fail. Raw gov-ID / selfie / biometric is never stored or returned, and never reaches
-// the brain. The caller passes an opaque verification result from a vetted IDV vendor / the business IdP.
-export const IDV_PROVIDERS = ["business_idp", "rsa_securid", "pingone_verify", "builtin_idv"];
+// ---- IDV gate — MIDDLEMAN ONLY (Q-DIR+ B, refined by R-ONE N3) -------------
+// ARIA NEVER collects, stores, or processes an ID, selfie, or biometric. Like a human agent, it ROUTES the
+// user to the business's TRUSTED verifier (PingOne Verify / RSA SecurID / the business's own IdP, or a
+// vetted third-party IDV vendor), waits for that verifier's pass/fail callback, and consumes ONLY the
+// verified/not-verified result. There is NO ARIA-side capture path of any kind.
+export const IDV_PROVIDERS = ["business_idp", "rsa_securid", "pingone_verify", "vendor_idv"];
+
+/** Hand off verification to the business's verifier. Returns a routing descriptor — NEVER a capture form. */
+export function routeToVerifier(provider, ctx = {}) {
+  const p = String(provider || "").toLowerCase();
+  if (!IDV_PROVIDERS.includes(p)) return { ok: false, reason: "unknown_idv_provider", capturesInAria: false };
+  return {
+    ok: true,
+    provider: p,
+    action: "redirect_to_verifier",      // ARIA sends the user to the verifier; it never shows a capture form
+    capturesInAria: false,               // hard invariant — ARIA never collects ID/selfie/biometric
+    awaits: "pass_fail_callback",
+    requestId: String(ctx.requestId || "").slice(0, 64),
+  };
+}
 
 export function idvResult(input = {}) {
   const provider = String(input.provider || "").toLowerCase();
   if (!IDV_PROVIDERS.includes(provider)) return { verified: false, provider, reason: "unknown_idv_provider" };
-  // Defensive: refuse to handle raw biometric material — it must be processed by the vendor, never here.
+  // Defensive: ARIA must NEVER receive raw biometric material — it is processed by the verifier, never here.
   if (input.rawSelfie || input.rawIdImage || input.biometricTemplate) {
     return { verified: false, provider, reason: "raw_biometric_must_not_reach_aria" };
   }
   return { verified: input.verified === true, provider, reason: input.verified === true ? "verified" : "unverified" };
+}
+
+// ---- Secure delivery via the business's OWN Outlook/Exchange stack (Q-DIR+ C/D, refined by R-ONE N4) ----
+// ARIA does not reinvent email security. Manager notifications + secure delivery go through whatever the
+// business already runs on Outlook/Exchange (Proofpoint, Mimecast, native, etc.). ARIA only ENABLES the
+// integration; the business's local IT configures + applies it. The no-plaintext-password rule still holds.
+export function outlookDelivery(ctx = {}) {
+  return {
+    mode: "enable_only",                 // ARIA enables; the business configures + applies its own controls
+    via: "business_outlook_exchange",
+    securityLayer: String(ctx.securityLayer || "business_default"), // proofpoint | mimecast | native | ...
+    plaintextPassword: false,            // never email a reusable password — temp + force-change or unlock+notify
+    delivery: "secure_link",
+    configuredByBusinessIT: true,
+  };
 }
 
 export const IDV_FAIL_MESSAGE =

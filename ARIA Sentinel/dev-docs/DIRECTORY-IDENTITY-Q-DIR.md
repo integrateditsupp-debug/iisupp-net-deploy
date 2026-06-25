@@ -22,9 +22,21 @@ Mock/test-tenant only — **no Entra app is registered and no live tenant is tou
 - **Editions / connectors (Q-DIR+ A/E):** Standalone vs Integrated; per-connector toggles
   (`entra · onprem_ad · servicenow · rsa_securid · outlook · dynamics365 · pingone_verify`), off by default.
 
+## R-ONE refinements (N3 + N4)
+
+- **N3 — IDV is MIDDLEMAN ONLY.** ARIA never collects/stores/processes an ID, selfie, or biometric. Like a
+  human agent it ROUTES the user to the business's trusted verifier (`routeToVerifier`: PingOne Verify / RSA
+  SecurID / business IdP / vetted third-party `vendor_idv`), waits for the pass/fail callback, then runs the
+  gated action. `routeToVerifier(...).capturesInAria === false` is the hard invariant — no ARIA-side capture
+  form exists. On fail → "contact your manager / contact us" + content-blind ticket.
+- **N4 — Secure delivery via the business's OWN Outlook/Exchange stack.** `outlookDelivery` returns an
+  `enable_only` descriptor: manager-notify + secure delivery go through whatever the business already runs
+  (Proofpoint / Mimecast / native); ARIA only ENABLES the integration, the business's IT configures it. The
+  no-plaintext-password rule holds (temp + force-change, or unlock+notify).
+
 ## Tests (`ARIA Sentinel/tests/directory.test.mjs`, in `run-all`)
 
-15 groups incl. all REQUIRED failure-injection: network drop mid-write, read-back mismatch → auto-rollback,
+16 groups incl. all REQUIRED failure-injection: network drop mid-write, read-back mismatch → auto-rollback,
 ambiguous/wrong target, never-autonomous, admin-approval, IDV verified/unverified, manager reports-to
 pass/fail, idempotent replay, no-plaintext-password, biometric-never-reaches-brain, permission-denied,
 token-expiry, least-privilege scope, tamper-evident audit. **100% green is the gate; nothing ships red.**
