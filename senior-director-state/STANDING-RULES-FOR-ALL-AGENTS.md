@@ -139,6 +139,9 @@ Goal: spend the fewest tokens that still do the job right (Ruben Hassid "21 hack
 9. Recurring work stays SCHEDULED; do not re-run by hand.
 10. STYLE: default to concise / "caveman-short" phrasing in chat, agent outputs, and NEW vault notes — UNLESS the content is CRITICAL (commands, file paths, prices, code, safety, decisions, specs), then be precise and complete. Do NOT mass-rewrite existing vault notes (corruption + info-loss risk); apply the short style to new/edited notes only.
 
+## RULE 12 — APPROVED OUTREACH COPY (Ahmad-locked 2026-06-25)
+All cold lead/prospect outreach (cold email, LinkedIn DM, contact-form follow-up — ANY channel) uses the approved template VERBATIM. Canonical: aria-vault/01_Frontal/Outreach-Template-Approved.md. Personalize ONLY [Name]; never write your own pitch/variants. Keep the demo link https://calendar.app.google/LUyV5pHxkqJRg5vp8, email ahmad.wasee@iisupp.net, phone 647-581-3182, signature exactly. Append CASL footer for cold email. Applies to ops-agent, morning-outbound-pack, morning-hunt-bids-leads, cold-outbound-v2, AND contract-hunter (its cold-outreach + Apollo-sequence portions). Does NOT apply to procurement bid cover letters, personal job applications, or existing-customer renewals.
+
 ## CHANGE LOG
 
 | Date | Change |
@@ -146,3 +149,4 @@ Goal: spend the fewest tokens that still do the job right (Ruben Hassid "21 hack
 | 2026-06-17 | Initial publication after spend-cap + smart-qualifier + ship-now rules locked |
 | 2026-06-18 | RULE 9 added: every detail perfect, limit the count. Customer-surface freeze + audit-and-prune pass mandated. |
 | 2026-06-25 | RULE 11 added: token-efficiency workflow + concise/caveman style default (critical content stays precise; no destructive vault rewrite). |
+| 2026-06-25 | RULE 12 added: approved outreach copy locked for all lead-outreach agents. |
