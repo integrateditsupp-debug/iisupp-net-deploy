@@ -219,6 +219,8 @@ const TESTS = [
   "./impl-addon-quote.test.mjs",
   // Q-DIR / Q-DIR+ (R3) — identity-tier directory provider: cannot-mess-up protocol + failure-injection (mock-only).
   "./directory.test.mjs",
+  // Q-DIR slice 2 — live Microsoft Graph DirectoryProvider adapter (read-only; mock-fetch tested).
+  "./entra-graph-client.test.mjs",
   // RUN 33 Phase 2 — ARIA tab data parsers (status / kb-stats / sessions R11 / heartbeats).
   "./aria-surfaces.test.mjs",
   // RUN 33-E — first-launch Setup wizard (state machine + wiring).
