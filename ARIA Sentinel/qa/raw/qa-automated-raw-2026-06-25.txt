@@ -1,0 +1,453 @@
+================================================================
+ARIA SENTINEL — AUTOMATED QA RAW LOG
+Generated: 2026-06-25T03:16:34Z
+Repo: integrateditsupp-debug/iisupp-net-deploy (fresh clone /tmp/qa)
+HEAD: 31c8872d597af208d2111182d561f379336dd699  (31c8872)
+HEAD subject: [cc] Q0b: merge aria-sentinel:// deep-link handler + web handoff into main (additive, verified)
+Node: v22.22.3   npm: 10.9.8
+Install required to run tests: NO (pure-.mjs runners; electron binary not imported by suite)
+================================================================
+
+########## 1. FULL SUITE: node tests/run-all.mjs (exit 0) ##########
+Scenario suite passed (75 scenarios, 77 recipes, 25 stop codes).
+Chrome extension test passed (3 manifests validate · per-site disable persists · auto-pause · browser detect · today counter).
+Netlify endpoint tests passed.
+Privacy audit passed.
+UI shell split test passed (9 settings tabs, separate admin console with 14 panels).
+Watchers content-blind test passed (700 fuzzed inputs across 7 watchers, 0 leaks).
+macOS watchers content-blind test passed (500 fuzzed inputs across 5 watchers, 0 leaks, 5 factories).
+Overlay physics test passed (8000 randomised ticks, all invariants held).
+ServiceNow connector test passed (payload content-blind, queue+retry, list+comment).
+Policy-injection test passed (52 attempts, all stripped; allow-list stays code-defined).
+Content-leak fuzz passed (1500 inputs, 0 leaks, 1152 still classified to a symbolic code).
+Idempotency test passed (77 recipes dedupe on execution_id, rollback restores state).
+Kill-switch test passed (global + per-customer detect-only, recipes no-op when killed).
+Recipe-execution test passed (15 reversible greens cleared, 62 stay dry-run, denylist holds).
+Recipe-runner yellow-tier test passed (5 yellow recipes, confirm + restore-point enforced, Autonomous cannot bypass).
+Diagnostic self-test passed (7 checks, PASS/WARN/FAIL + remediation).
+Health-score test passed (5 factors, weights sum 100, perfect=100, broken=0).
+Tray-state test passed (4 distinct state icons, idle fallback).
+Network-capture test passed (6-host allowlist, 3 declared pulls, +2 update / +1 license paths only, exfil + leak caught).
+Evidence-pack test passed (6 artifacts in a real zip, 30d window, zip round-trip, what's-new logic).
+Status-badge test passed (well-formed iframe HTML · CSP-locked · no script · score clamped · tenant escaped).
+Telemetry-event test passed (ISO ts only · opaque stable handles · symbolic-only · leak guard).
+Autonomous-guards test passed (opt-in gate · cap 3/24h · cooldown · fleet rate-limit).
+Autonomous re-fire test passed (same id → once; new ids → bounded by the 3/24h cap).
+Slack-notify test passed (host allowlist · symbolic-only payload · 0 user content · webhook redacted in logs).
+Weekly-digest test passed (aggregation math · HTML render · content-blind · empty-safe).
+Audit-export test passed (CSV schema · valid PDF · 30-day window · content-blind).
+Low-power test passed (60s polling · 15fps · animation off when toggled).
+Command-palette test passed (83 commands, ranked filter, recipe + nav search).
+ROI-calc test passed (math · custom rate · 0 fixes · very large · garbage-safe).
+License test passed (HMAC verify · tamper-proof · expiry → Manual fallback).
+Auto-update test passed (manifest parse · .exe asset · version compare · garbage-safe).
+API-v1 test passed (bearer auth · 401/403/429 · content-blind events).
+Patch-management test passed (6 vendors · pinned allowlist · version compare · restore-point-before-install · content-blind).
+Multi-tenant test passed (fleet aggregation · handle-only privacy · filter · Whereby guard).
+PWA-manifest test passed (valid manifest · SW install+fetch offline · registered + responsive).
+Globe-roam test passed (repel decays to 0 >180px · free-roam stays in work area · click-through default).
+Admin-console-open test passed (button → preload → IPC → dedicated window, focus-if-open).
+Show-floating-globe test passed (toggle → preload → IPC → persist + show/hide; default on).
+Trial-gate test passed (12h · not-started/active/expired · license-or-trial gate · badge).
+Network-detect test passed (2 consec → NET.DOWN once · blip ignored · yellow troubleshoot recipe).
+Mode-behavior test passed (autonomous/confirmed pin · manual free-roams · main wired).
+IA-tabs test passed (10 tabs in order, branded header + footer).
+Quick-controls test passed (7 buttons wired button→preload→main).
+Chrome-ext-install test passed (bundled in build.files + install UI present).
+Hotkeys test passed (Ctrl+Alt+A/G/P via bindAll + cleaned up + UI Active).
+Update-manifest test passed (pin + latest-non-disabled · latest.yml · staged rollout).
+Admin-publish test passed (X-Admin-Token vs ARIA_ADMIN_TOKEN env · 401 paths · no hardcoded token).
+License-search test passed (key/email/name/company substring · pagination).
+License-register test passed (seed · idempotent upsert · append · pin preserved).
+Update-rollback test passed (history newest-first+dedupe · rollback targets older-only · pin downgrades).
+Update-feedurl test passed (license in feed URL · exactly +2 paths · 6-host verifier unchanged).
+Self-heal test passed (audit · auto-heal recoverable · escalate code/design · sanitized report).
+Globe-anchor test passed (top-centre anchor · cursor repel · 2s teleport-back · greeting schedule + rate-limit).
+Globe-greetings test passed (launch hi · 60s rate-limit · periodic · 10-min chat · autonomous/low-power quiet).
+ARIA-brain-client test passed (request shape · headers · offline fallback · escalation · only 2 brain paths).
+Admin-gate test passed (RUN 23e: HMAC session + license-tier admin gate + single-build wiring; non-admin tiers locked out).
+Start-stop-aria test passed (stop hides globe · start monitors · pause · monitor order · UI renamed).
+Hotkeys-bind test passed (primary · fallback on block · isRegistered confirm · failed surfaced · rebinds).
+Live-globe-icons test passed (swap APPLIED in-app + 3 extensions; overlay crystal-A + icon.ico protected).
+Debug battery passed (8 features probed · 4 injected faults all detected · 2 auto-recoverable · 2 escalated · 0 silent failures · report content-blind).
+QA battery passed (46/46 inventory items wired: 9 tabs · 25 buttons · 6 IPC · 3 hotkeys · 3 recipes).
+User-journey battery passed (5/5 journeys reached success state, 0 dead-ends).
+Security battery passed (hardened webPreferences · no eval · CSP · constant-time HMAC · env-only admin auth · destructive denylist · content-blind IPC).
+Privacy battery passed (10000 fuzz inputs · 0 leaks · 6-host allowlist + update/brain paths unchanged · greetings + self-heal + offline fallback content-blind).
+Scenario battery passed (167 scenarios: 77/77 recipes routed from keywords · 90/90 out-of-domain inputs escalated).
+Test-KB-QA battery passed (20/20 entries retrieved + cited exactly · 5/5 off-KB → "I don't know").
+Audit battery passed (ISO timestamps · CSV+PDF complete · hash-chain detects modify/truncate/reorder + alerts admin · exact time-window queries · wired into session-start).
+SOC2-map test passed (CC1–CC9 all mapped · status vocabulary · ≥70% readiness · real gaps named).
+Regulatory-map test passed (PIPEDA · GDPR · CCPA · CASL · rights + minimization + consent).
+Legal-inventory test passed (license audit · no GPL/AGPL · trademark posture · EULA + DPA clauses · 4 deps audited).
+Accessibility battery passed (lang · title · viewport · alt text + decorative aria-hidden · button names · focus order · contrast tokens across 2 renderer HTMLs).
+Build-exclusion test passed (RUN 23e single build · admin-console via extraResources · tests/fixtures/design-review/docs excluded · no package:win:admin).
+Audit-integrity unit test passed (deterministic genesis-anchored chain · modify/truncate/extend/reorder all detected · field-sensitive hashing).
+Icon-pipeline test passed (PNG decode/downscale/encode round-trip · dimensions + transparency preserved · master archived).
+Security-banner test passed (visibility + model + markup-above-shell + renderer wiring + cyber-noir styling).
+Security-banner-dismiss test passed (per-session sessionStorage flag · re-shows next launch · integrity state untouched).
+RUN18 enterprise-wiring test passed (live capture · evidence→Documents · attention wiggle · whats-new+release-notes · PS-arg-safe spawn · 9 settings/17 admin tabs locked · RUN17 banner intact).
+RUN18 evidence-content-blind test passed (no recipe internals in the pack · symbolic registry · valid complete .zip · exfil verdict fails on bad host/leak · 6-host verifier not widened).
+Popup-clamp test passed (every modal clamps to calc(100vh - 80px) + scrolls; padding guards the edge).
+Sidebar-layout test passed (brand centered · mode pill in top bar · 2 live globes 56/120).
+Kill-switch-hotkey test passed (Ctrl+Alt+K · SIGKILL children · undo last action · dim globe · single-purpose).
+Delete-triple-confirm test passed (3-step default · per-ext opt-out → single confirm · persisted · wired).
+Trial-end-modal test passed (5 tiers · Subscribe→Stripe env · luxe shimmer/glow · <30% nudge).
+Odd-grid test passed (5 cards = 3 top + 2 centered; 6-col span-2 grid; responsive fallback).
+Live-buttons test passed (80 buttons audited; all wired; no alert/console.log/stub dummies).
+System-context-enum test passed (3 apps merged from 3 sources, deduped, all required fields).
+System-context-refresh test passed (<3s: 0ms · email/username/machine all stripped).
+Symptom-KB-parse test passed (17 files, 105 causes, all well-formed, index complete).
+Blueprint-coverage test passed (10 platforms × 8 required sections).
+Tier-0-recipes-dryrun test passed (14 recipes · dry-run default · allowlisted · audit-logged · content-blind).
+Diagnostic-reasoner-fuzzy test passed (20/20 in top-3, 20/20 top-1).
+Diagnostic-reasoner-system-aware test passed (live context re-ranks causes; healthy context = no boost).
+No-harm-gate test passed (auto-run only read-only/dry-run Tier-0 · deletes scoped to %TEMP% · system/security protected).
+Anomaly-surfacing test passed (unrelated high-error subsystem flagged; related/low-count ignored).
+Cross-platform-no-control test passed (blueprints = md-only knowledge; no remote execution; getBlueprint reads only).
+Event-log-sanitize test passed (usernames · machine names · emails stripped; structure kept).
+Registry-read-only test passed (HKLM/HKCU enumeration only · zero writes in the inventory path).
+Escalation-path test passed (3 failed Tier-0 attempts → content-blind ServiceNow draft; <3 → none).
+Update-listener test passed (parse · version compare · 09-11 ET jitter · injected poll · offline-safe).
+Update-orchestrator-states test passed (FRESH→S1→S2→S3→AUTO · persists across restart · mandatory 3h window).
+Update-orchestrator-time-windows test passed (5pm prefer · noon after 2w · on-launch last resort).
+Update-orchestrator-fullscreen-defer test passed (fullscreen defers install; mandatory respects the same gate).
+Update-rollback-killswitch test passed (snapshot before install · 60-min Ctrl+Alt+K revert window · wired in main).
+Startup-registrar test passed (HKCU only · at-logon 30s delay · heal-on-missing · R11-blocked).
+Startup-tamper-detection test passed (method classified · audit entry · warning model · wired in main).
+Startup-disable-double-confirm test passed (two confirmations required to keep ARIA off).
+Heartbeat-payload-content-blind test passed (allowlist only · no username/machine/path · R11-safe).
+Heartbeat-endpoint test passed (license validate · latest version · mandatory flag · content-blind log).
+Admin-publish-captures-event test passed (event built + appended + stored · fleet UI present).
+Admin-mandatory-checkbox test passed (checked → 24h→3h strike window; orchestrator honors it).
+Pause-updates-quarterly-limit test passed (1 per quarter · extends strike window 7d · resets next quarter).
+Private-folder-never-touched test passed (R11 blocks every enum/startup/heartbeat path; guard wired in 4 modules).
+Run-21-no-regression test passed (RUN 17/18/19/20 intact · 12 tabs · axis untouched · R11 guard wired).
+Dashboard-hero-status test passed (4 sources → protected/attention/critical; security beats operational).
+Dashboard-kpi-tiles test passed (6 tiles · inline-SVG sparklines · up/down/flat deltas).
+Dashboard-recent-activity test passed (audit → timeline · icons · deep-links · capped at 10).
+Dashboard-quick-actions test passed (4 quick actions wired to real handlers).
+Performance-kpis test passed (MTTD/MTTR/FTR/auto-escalated/recipe-success computed correctly).
+Performance-ai-accuracy test passed (diagnosis accuracy + calibration + confirmation + KB hit).
+Performance-hours-saved test passed (cumulative hours saved vs 47-min L1 baseline; never negative).
+Performance-tab-no-regression test passed (RUN 17–21 intact · axis untouched · Performance tab added).
+Sla-tracker test passed (uptime + response + resolution, all tier-specific).
+Sla-breach-credits test passed (breach detect · tier credit schedule · never auto-issued · personal/pro = $0).
+Sla-tier-thresholds test passed (5 tiers · uptime/response/credit/CSM defaults correct).
+Compliance-frameworks test passed (SOC2/HIPAA/PIPEDA/GDPR composites + badges + drill-down).
+Compliance-r11-enforcement test passed (counter stays 0 · builders redact the private folder).
+Compliance-evidence-pack test passed (RUN 18 evidence pack intact · framework scores available for export).
+Report-generator-quarterly test passed (quarter detection · 9 sections · 3-line exec summary).
+Report-generator-adhoc test passed (custom range · identical template + sections · UI wired).
+Report-pdf-no-pii test passed (usernames/machines/emails + R11 stripped; gate catches raw leaks).
+Email-quarterly-delivery test passed (subject + content-blind body + opt-in gate + Resend send + delivery log).
+Data-retention-policy test passed (per-class cutoffs · never-classes · legal-hold · R11-excluded · snapshot keepLatest).
+Data-retention-cleanup-cron test passed (daily 02:00 cron · retention plan · audit-logged).
+Admin-console-fleet-perf test passed (fleet aggregate + cohort SLA + admin views + token gate).
+Private-folder-never-touched-r22 test passed (every new tab/report/email redacts the private folder; guard wired in 8 modules).
+Process-detectors test passed (cpu% · frozen · sustained cpu-hog · ram-hog · odd · top-N · R11 exclusion · poller).
+Recommend-action test passed (12 finding→action maps · Tier-0 catalog · risk tiers · R11 short-circuit).
+Globe-status-panel test passed (empty state · sections · CSP-safe runRecipe buttons · escaping · R11).
+Action-countdown test passed (bypass · ticks · complete · abort paths · manager abortAll · R11).
+Supervisor-agent test passed (R11 first · signature · history fast-path · risk/mode · side-effect · cooldown · audit).
+Dry-run-policy test passed (tiers · dry-run default · mode gates · auto-fire · countdown skip · ledger ±1 · R11).
+Quarterly-cron test passed (quarter math · opt-in gate · scheduled config · Resend + attachment + send-log).
+Cowork-bridge test passed (audit/state redaction · R11 drop · client request shape · 3 actions · admin gate).
+Run-23-r11-never-touched test passed (every new builder/detector/critic/redactor excludes the private folder; guard wired in 9 modules).
+Run-23-no-regression test passed (RUN 17→22 intact · 20 recipes · 9 tabs · axis untouched · R11 wired · 15 new files · 0 new deps).
+Tier-0-executor test passed (5 bindings · success/neutral/fail · dry-run no-spawn · alias · unbound · logger · allowlist).
+Tier-0-rollback test passed (worse→recover · worse→manual · runner-throw safe · dns no-rollback).
+Tier-0-supervisor-integration test passed (recommend→bind · supervisor approve/veto · dormant-by-default · opt-in · fast-path).
+Tier-0-r11-never-touched test passed (catalog clean · private id never runs · probe output redacted · guard wired).
+Version-bump test passed (semver guard · patch bump · [no-bump] · tag/asset/url · version record · package.json rewrite).
+Publish-github-release test passed (sha512 · create/reuse release · idempotent asset replace · 2-asset upload · guards).
+Publish-manifest test passed (record with GitHub url · POST to update-publish · admin-token required).
+Admin-console-publish-button test passed (one-click + manual fallback · dist-info bridge · auto-filled publish with GitHub url).
+Ota-build-step7 test passed (RUN 23e: Step 0 bump → %VERSION% · single package:win build · Step 6 auto-publish · non-blocking failure).
+R11-publish-paths test passed (semver fail-closed · record/manifest clean · publishers read only the signed dist artifact).
+  ✓ count-lock: 10 tabs in order (≤10 hard stop)
+  ✓ Dashboard renders Overview + Performance + SLA + Activity
+  ✓ Compliance & Privacy renders both sections
+  ✓ System renders This Machine + Platform Support
+  ✓ Settings renders Mode + Hotkeys + Troubleshoot + Support + About
+  ✓ 12 old anchor routes redirect to the right parent + anchor
+  ✓ all widget renderers + merged-tab loaders preserved
+  ✓ merged parents fan out to every former loader
+  ✓ sidebar sub-anchors + active-state toggle wired
+  ✓ sub-anchor clicks smooth-scroll to existing targets
+  ✓ R11 enforcement intact across merged surfaces
+  ✓ Dashboard is the default tab and paints its merged sections on launch
+Tab-IA-consolidation test passed (12/12 cases · 17→9 IA · redirects + sub-anchors + R11 intact).
+Pricing-tiers test passed (20 cases · 6 tiers · gates · fail-closed normalize · 12×matrix).
+License-features test passed (11 groups · key round-trip · admin-only gate · fail-closed · trial=pro/free=personal · verify+revocation).
+Upsell test passed (7-day per-class throttle · detection copy · hours-saved · About nudge threshold).
+Feature-gating test passed (features broadcast · mode/recipe/reports gates · admin via tier · choosePlan checkout · no hardcoded URL).
+Plan-picker test passed (data-driven · no hardcoded Stripe URL · monthly/yearly toggle · current-plan highlight · wired into main+preload).
+Plans-matrix test passed (env-aware cards + 12×5 grid from pricing-tiers · existing data-tier wiring preserved · marker injection · no hardcoded Stripe URL).
+Sentinel-license-funnel test passed (7 groups · plan map · mint+record · idempotency · emails · masked admin key · no-secret-leak · R11 scrub).
+Sentinel-licenses-api test passed (6 groups · admin auth · filter/sort · revoke · key-hash lookup · masked CSV).
+Admin-licenses-tab test passed (nav+view+columns · token-gated actions · masked key · public is-revoked · admin-tier console gate).
+Sentinel-resolve test passed (6 groups · active/revoked/forged/malformed status codes · IP rate-limit · secret+key never leak).
+Desktop-license-cache test passed (5 groups · fresh/stale/hard-stale tiers · revoked override · key hashed not stored).
+dryrun-defaults test passed (6 groups · Manual ON / Confirmed+Autonomous OFF · checkbox override both ways · safety gates intact · 20 Tier-0 recipes route live under Autonomous).
+crash-reporter test passed (5 groups · R11 redaction · all-paths scrubbed · symbolic-only record · bounded queue · retry-on-failure · never-throw flush).
+onboarding-flow test passed (6 groups · fresh-show · step advance/complete · skip persists · never-replay invariant · version-bump re-show · normalize safety).
+aria-local-kb test passed (6 groups · tokenize · platform infer/bias · keyword match · cross-platform no-match · R11/scrub on output).
+kb-first-wiring test passed (7 groups · confident hit skips Anthropic · low-conf/no-match/timeout/no-excerpt fall through · R11 scrub · inclusive threshold 8).
+mode-execution test passed (6 groups · Manual previews/awaits-confirm · Confirmed countdown+exec · Autonomous fast-path(no-countdown)+unproven-keeps-countdown · veto blocks all 3 modes · kill-switch aborts in-flight).
+mode-error-matrix passed — 13 errors × 3 modes:
+  E01 app-not-responding       | non-executable (no live recipe in any mode)
+  E02 high-cpu-process         | non-executable (no live recipe in any mode)
+  E03 high-memory-process      | non-executable (no live recipe in any mode)
+  E04 unusual-process          | non-executable (no live recipe in any mode)
+  E05 no-internet              | manual:preview  confirmed:exec+10s  auto-proven:+10s(high-risk)  auto-unproven:+10s
+  E06 print-spooler-stopped    | manual:preview  confirmed:exec+10s  auto-proven:fast  auto-unproven:+10s
+  E07 windows-search-stopped   | manual:preview  confirmed:exec+10s  auto-proven:fast  auto-unproven:+10s
+  E08 audio-service-stopped    | manual:preview  confirmed:exec+10s  auto-proven:fast  auto-unproven:+10s
+  E09 unknown-service-stopped  | non-executable (no live recipe in any mode)
+  E10 r11-private-folder       | non-executable (no live recipe in any mode)
+  E11 dns-resolution-fail      | manual:preview  confirmed:exec+10s  auto-proven:fast  auto-unproven:+10s
+  E12 slow-temp-bloat          | manual:preview  confirmed:exec+10s  auto-proven:fast  auto-unproven:+10s
+  E13 disk-health-concern      | manual:preview  confirmed:exec+10s  auto-proven:fast  auto-unproven:+10s
+windows-error-sweep passed — 21 Windows error detectors, each content-blind:
+  E01 kernel-power-loss (unexpected shutdown) → SYSTEM.UNEXPECTED_SHUTDOWN
+  E02 WER bugcheck (BSOD reported)         → BSOD.UNKNOWN
+  E03 disk I/O error                       → DISK.IO_ERROR
+  E04 NTFS filesystem corruption           → DISK.FS_CORRUPT
+  E05 service crashed (SCM 7034)           → SYSTEM.SERVICE.CRASHED
+  E06 DNS client timeout (1014)            → NET.DNS.FAIL
+  E07 Windows Update stuck (20)            → UPDATE.WINDOWS.STUCK
+  E08 sustained high CPU                   → SYSTEM.SLOW.HIGH_CPU
+  E09 sustained high RAM                   → SYSTEM.SLOW.HIGH_RAM
+  E10 disk almost full (< 5%)              → DISK.LOW_SPACE
+  E11 Outlook OST corrupt                  → APP.OUTLOOK.OST_CORRUPT
+  E12 Teams stuck                          → TEAMS.STUCK
+  E13 OneDrive sync stuck                  → APP.ONEDRIVE.SYNC_STUCK
+  E14 browser tab crash loop               → BROWSER.TAB_CRASH_LOOP
+  E15 Explorer shell crashed               → SYSTEM.SHELL.CRASHED
+  E16 Print Spooler stopped                → SYSTEM.SERVICE.STOPPED.SPOOLER
+  E17 Windows Audio stopped                → SYSTEM.SERVICE.STOPPED.AUDIOSRV
+  E18 Windows Update svc stopped           → SYSTEM.SERVICE.STOPPED.WUAUSERV
+  E19 network adapter down                 → NET.ADAPTER.DOWN
+  E20 internet unreachable                 → NET.DOWN
+  E21 new minidump → BSOD                  → BSOD.UNKNOWN
+aria-chat-window-ui test passed (5 groups · ARIA parent tab + 5 sub-sections · Slice 0 chat design in-tab (720px responsive) · same brain/article/badge/frontmatter · LOCKED Anthropic banner · detached window removed).
+chat-scroll-containment test passed (4 groups · viewport envelope · internal log scroll · pinned head/composer · auto-scroll with scroll-up pause).
+aria-kb-routing-iter7 passed (6 groups · security families+takeover · wifi no-word phrasings · printer tightened · vertical wont-print falls through · L2 print-server intact).
+aria-kb-routing-round3 passed (7 groups · calendar oof/problems/invites · external display detect+resolution · conference-room AV · iter-7 fallthrough+lifts intact).
+aria-surfaces test passed (7 groups · 3-tier status + locked banner · kb-stats · unread dot · Memory R11 scrub+drop · heartbeat stalled>1h).
+setup-wizard test passed (7 groups · fresh-show · 6-step advance/complete · never-replay · prefs persist+validate · re-run keeps prefs · normalize safe).
+aria-markdown test passed (7 groups · headings/ol/ul/code/links/quotes/fences · XSS-safe escape-first · readable hierarchy).
+license-mint-timeout test passed (3 groups · admin 10s + actionable error · desktop verify 10s · server email 8s ×2). No path can hang on "Minting…".
+kb-freshness test passed (4 groups · formatter (h/m/d/just-now) · normalize keeps only freshness · askAria surfaces kb_meta on a KB hit · main+renderer+top-bar wiring).
+resolve-for-me test passed (5 groups · recipe-card + chat chip → supervisedFix(confirmed) · never-autonomous clamp · R11+supervisor+policy+countdown+kill-switch intact).
+deep-link test passed (7 cases · only known recipe ids actioned · R11 enforced · intent capped · foreign schemes rejected).
+web-handoff-contract test passed (6 groups · build↔parse round-trip · empty-guard · 200-cap mirror · web emitter byte-parity · mapped ids real · forged id refused).
+
+188/188 suites green.
+ARIA Sentinel test suite passed.
+
+########## 2. STANDALONE: privacy-audit.mjs ##########
+Privacy audit passed.
+
+########## 3. STANDALONE: scenario-suite.mjs ##########
+Scenario suite passed (75 scenarios, 77 recipes, 25 stop codes).
+
+########## 4. MATCHER/COVERAGE: tests/run-mega-scenarios.js (REAL FRESH RUN) ##########
+Corpus size: 1896
+MEGA Corpus size: 83041
+MEGA Corpus size (post-tier-7): 332163
+========== ARIA MEGA-SCENARIO RESULTS ==========
+Total: 332163 in 557 ms  (596343 scen/sec)
+Pass: 304955 (91.8%)
+Fail: 27208 (8.2%)
+
+--- By expected intent (sorted by volume) ---
+  default                   103592/118495 (87%)
+  password                  19060/20998 (91%)
+  mail                      19730/20235 (98%)
+  resolution                12423/14596 (85%)
+  kb:teams                  11725/12265 (96%)
+  wifi                      11230/11810 (95%)
+  kb:mfa                    11400/11400 (100%)
+  printer                   11394/11394 (100%)
+  vpn                       9535/9535 (100%)
+  kb:onedrive               7230/7890 (92%)
+  kb:security               6800/7580 (90%)
+  kb:performance            7125/7500 (95%)
+  kb:windows                7015/7060 (99%)
+  kb:bluetooth              5685/5685 (100%)
+  kb:browser                5310/5685 (93%)
+  outlook_ooo               5675/5675 (100%)
+  kb:m365                   4500/5280 (85%)
+  kb:usb                    4595/4595 (100%)
+  not-resolution            3850/4125 (93%)
+  kb:networking             3787/4090 (93%)
+  kb:webcam                 3820/3820 (100%)
+  kb:active-directory       1875/3810 (49%)
+  kb:permissions            3780/3810 (99%)
+  escalation                3144/3750 (84%)
+  kb:macos                  3050/3080 (99%)
+  kb:onboarding             2625/3000 (88%)
+  shopping                  3000/3000 (100%)
+  trade                     3000/3000 (100%)
+  weather/news              2625/2625 (100%)
+  kb:bitlocker              1875/1875 (100%)
+  voice                     1875/1875 (100%)
+  quote                     1500/1500 (100%)
+  news                      1125/1125 (100%)
+
+########## 5. INDUSTRY TESTER: tools/iis-tester-agent.mjs --offline --report ##########
+{
+  "when": "2026-06-25T03:14:39.219Z",
+  "base": "https://iisupp.net",
+  "counts": {
+    "PASS": 7,
+    "SKIP": 1,
+    "WARN": 2
+  },
+  "results": [
+    {
+      "id": "SEC-2",
+      "name": "security.txt at /.well-known/",
+      "status": "PASS",
+      "detail": "Present",
+      "evidence": "Contact: mailto:security@iisupp.net\nContact: https://iisupp.net/security/disclosure\nExpires: 2027-06-18T00:00:00.000Z\nPreferred-Languages: en, fr\nCanonical: https://iisupp.net/.well-known/security.txt",
+      "at": "2026-06-25T03:14:39.214Z"
+    },
+    {
+      "id": "SEC-3",
+      "name": "VDP / trust page",
+      "status": "PASS",
+      "detail": "Found: security.html, trust/index.html",
+      "evidence": [
+        "security.html",
+        "trust/index.html"
+      ],
+      "at": "2026-06-25T03:14:39.214Z"
+    },
+    {
+      "id": "ACC-1",
+      "name": "routing-accuracy regression (332K corpus)",
+      "status": "PASS",
+      "detail": "Last measured 98.64% (327,647/332,163) per docs/aria-web-159k-results.md",
+      "evidence": "docs/aria-web-159k-results.md",
+      "at": "2026-06-25T03:14:39.214Z"
+    },
+    {
+      "id": "CONS-1",
+      "name": "27-agent consensus",
+      "status": "SKIP",
+      "detail": "MEMORY_DIR env not set or missing",
+      "evidence": null,
+      "at": "2026-06-25T03:14:39.214Z"
+    },
+    {
+      "id": "CHAOS-1",
+      "name": "Sentinel resilience paths",
+      "status": "WARN",
+      "detail": "Missing in: ARIA Sentinel/src/main.js",
+      "evidence": [
+        {
+          "f": "ARIA Sentinel/src/main.js",
+          "hit": false,
+          "reason": "missing"
+        },
+        {
+          "f": "ARIA Sentinel/src/renderer/renderer.js",
+          "hit": true
+        }
+      ],
+      "at": "2026-06-25T03:14:39.215Z"
+    },
+    {
+      "id": "DRY-1",
+      "name": "3-mode dry-run safety",
+      "status": "PASS",
+      "detail": "All 3 modes referenced",
+      "evidence": [],
+      "at": "2026-06-25T03:14:39.215Z"
+    },
+    {
+      "id": "REGEN-1",
+      "name": "regression coverage (0/69)",
+      "status": "WARN",
+      "detail": "0.0% intents have test ref",
+      "evidence": {
+        "totalIntents": 69,
+        "covered": 0
+      },
+      "at": "2026-06-25T03:14:39.215Z"
+    },
+    {
+      "id": "TRUST-1",
+      "name": "Trust pages exist",
+      "status": "PASS",
+      "detail": "All present",
+      "evidence": [],
+      "at": "2026-06-25T03:14:39.215Z"
+    },
+    {
+      "id": "WCAG-1",
+      "name": "WCAG 2.2 AA probe (3 pages)",
+      "status": "PASS",
+      "detail": "No static issues",
+      "evidence": [
+        "index.html",
+        "aria.html",
+        "about.html"
+      ],
+      "at": "2026-06-25T03:14:39.218Z"
+    },
+    {
+      "id": "AGENT-1",
+      "name": "Industry-test workflow propagated",
+      "status": "PASS",
+      "detail": "1/7 agent docs reference industry tester",
+      "evidence": [
+        "senior-director-state/active-agent-handoff.md"
+      ],
+      "at": "2026-06-25T03:14:39.219Z"
+    }
+  ]
+}
+
+Report: /tmp/qa/docs/iis-test-results-2026-06-25.md
+
+########## 6. 3-MODE SMOKE: scripts/test-3-modes.mjs ##########
+✅ Manual — default (preview)               {"verdict":"approve","dryRun":true,"execute":false,"countdown":true,"autoFire":false}
+✅ Manual — user confirms                   {"verdict":"approve","dryRun":false,"execute":true,"countdown":true,"autoFire":false}
+✅ Confirmed — countdown + exec             {"verdict":"approve","dryRun":false,"execute":true,"countdown":true,"autoFire":false}
+✅ Autonomous — proven, fast-path           {"verdict":"approve-fast","dryRun":false,"execute":true,"countdown":false,"autoFire":true}
+✅ Autonomous — unproven, keeps countdown   {"verdict":"approve","dryRun":false,"execute":true,"countdown":true,"autoFire":true}
+
+Wrote ARIA Sentinel/docs/3-mode-smoke-results.md  ·  ALL PASS
+
+########## 7. PRIVACY/FUZZ/SANITIZATION SUITES (individual) ##########
+----- tests/privacy-battery.test.mjs -----
+Privacy battery passed (10000 fuzz inputs · 0 leaks · 6-host allowlist + update/brain paths unchanged · greetings + self-heal + offline fallback content-blind).
+
+----- tests/content-leak.test.mjs -----
+Content-leak fuzz passed (1500 inputs, 0 leaks, 1152 still classified to a symbolic code).
+
+----- tests/watchers.test.mjs -----
+Watchers content-blind test passed (700 fuzzed inputs across 7 watchers, 0 leaks).
+
+----- tests/macos-watchers.test.mjs -----
+macOS watchers content-blind test passed (500 fuzzed inputs across 5 watchers, 0 leaks, 5 factories).
+
+----- tests/event-log-sanitize.test.mjs -----
+Event-log-sanitize test passed (usernames · machine names · emails stripped; structure kept).
+
+----- tests/telemetry-event.test.mjs -----
+Telemetry-event test passed (ISO ts only · opaque stable handles · symbolic-only · leak guard).
+
+----- tests/heartbeat-payload-content-blind.test.mjs -----
+Heartbeat-payload-content-blind test passed (allowlist only · no username/machine/path · R11-safe).
+
+----- tests/policy-injection.test.mjs -----
+Policy-injection test passed (52 attempts, all stripped; allow-list stays code-defined).
+
+----- tests/network-capture.test.mjs -----
+Network-capture test passed (6-host allowlist, 3 declared pulls, +2 update / +1 license paths only, exfil + leak caught).
+
