@@ -66,6 +66,8 @@ status: locked
 
 <!-- LINK-WEB:auto -->
 - [[_Decisions]]
+- [[D-20260623-director-safe-autonomy-mandate]]
+- [[D-20260624-vault-corruption-recovery]]
 - [[_Amygdala]]
 - [[_ARIA]]
 - [[_Brainstem]]
@@ -87,6 +89,7 @@ status: locked
 - [[Codex]]
 - [[Cowork]]
 - [[D-20260624-aria-web-sentinel-one-product]]
+- [[D-20260625-pricing-editions-ad-integration]]
 - [[DIRECTOR_AUTONOMY]]
 - [[KB-agent]]
 - [[Leads]]

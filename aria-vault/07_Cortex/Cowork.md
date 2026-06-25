@@ -123,6 +123,7 @@ created: 2026-06-19
 - [[Customer]]
 - [[Customers]]
 - [[D-20260619-bake-stripe-price-ids-in-code]]
+- [[D-20260623-director-safe-autonomy-mandate]]
 - [[Daily-note]]
 - [[Decision]]
 - [[DIRECTOR_AUTONOMY]]

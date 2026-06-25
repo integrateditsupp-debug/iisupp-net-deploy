@@ -1,14 +1,14 @@
 {
   "main": {
-    "id": "efe9044933b72c82",
+    "id": "edc9fce4efe3c455",
     "type": "split",
     "children": [
       {
-        "id": "b1558358fbd26aac",
+        "id": "5647c8b0ed18b909",
         "type": "tabs",
         "children": [
           {
-            "id": "002e093d84f81b16",
+            "id": "0a4da2f4ca25fd24",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -23,15 +23,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "1ce6c9081e0643c4",
+    "id": "57c0592e3b347f1e",
     "type": "split",
     "children": [
       {
-        "id": "6ab3fb1b2c3862ba",
+        "id": "846dcb45e45d392e",
         "type": "tabs",
         "children": [
           {
-            "id": "2b7b9aa108381d7d",
+            "id": "9f8fbed11156ce0b",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -44,7 +44,7 @@
             }
           },
           {
-            "id": "36324307363afd62",
+            "id": "947e78ee0daff605",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -61,7 +61,7 @@
             }
           },
           {
-            "id": "8ff220b5f6a72aea",
+            "id": "08af048ace524b90",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -77,20 +77,19 @@
     "width": 300
   },
   "right": {
-    "id": "047477a18939e173",
+    "id": "33fae3bd01c83eb2",
     "type": "split",
     "children": [
       {
-        "id": "6e6e88b1976feb57",
+        "id": "3abcd171b8697c84",
         "type": "tabs",
         "children": [
           {
-            "id": "1fa8219f7f06dd46",
+            "id": "c5c1f1c9292ffe7e",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "07_People/Ahmad.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -100,25 +99,24 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Ahmad"
+              "title": "Backlinks"
             }
           },
           {
-            "id": "c11f0a4fd8d686b2",
+            "id": "acbc5a865bf8f421",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "07_People/Ahmad.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Ahmad"
+              "title": "Outgoing links"
             }
           },
           {
-            "id": "663e7b6f59d94a86",
+            "id": "4f3c605b300a9f11",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -133,7 +131,7 @@
             }
           },
           {
-            "id": "73de5865a053c2b3",
+            "id": "8337ccf7aa9b3b45",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -147,18 +145,17 @@
             }
           },
           {
-            "id": "e71f463acbf74a3b",
+            "id": "9e3e814aa117f2f3",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "07_People/Ahmad.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Ahmad"
+              "title": "Outline"
             }
           }
         ]
@@ -179,43 +176,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "002e093d84f81b16",
+  "active": "0a4da2f4ca25fd24",
   "lastOpenFiles": [
-    "_meta/brain-index.json",
-    "_meta",
-    "scripts/brain-index.mjs",
-    "scripts/link-web.mjs.tmp.29216.55acfaed1a97",
-    "scripts/link-web.mjs.tmp.29216.e02c40303913",
-    "scripts/link-web.mjs.tmp.29216.0bd4ab4e0067",
-    "scripts/link-web.mjs.tmp.29216.dd0471a15a97",
-    "scripts/link-web.mjs.tmp.29216.a9585b5af140",
-    "09_Decisions/_Decisions.md.tmp.29216.9ab5c73978d9",
-    "_stubs-trash/link-web.md",
-    "07_Cortex/sedPKJsO1",
-    "04_ShortTerm/Jarvis-Companion.md",
-    "scripts/link-web.mjs.tmp.50384.b1a3e1ad4741",
-    "12_Glia/_Glia.md",
-    "11_CorpusCallosum/_CorpusCallosum.md",
-    "10_Brainstem/_Brainstem.md",
-    "08_Amygdala/_Amygdala.md",
-    "00_Index/Brain-Map.md",
-    "07_Cortex/AXIS.md",
-    "07_Cortex/playbook-round-velocity.md",
-    "07_Cortex/reference-ahmad-resume-facts.md",
-    "07_Cortex/playbook-autonomous-morning.md",
-    "07_Cortex/OPS-agent.md",
-    "07_Cortex/Leads-agent.md",
-    "07_Cortex/KB-agent.md",
-    "07_Cortex/feedback-visual-stability.md",
-    "07_Cortex/feedback-shortest-path-first.md",
-    "07_Cortex/feedback-spend.md",
-    "07_Cortex/feedback-ship-now-no-tomorrow.md",
-    "07_Cortex/feedback-spend-cap-20-70-per-month.md",
-    "07_Cortex/feedback-smart-qualifier-not-hard-skip.md",
-    "07_Cortex/feedback-revenue-first-ordering.md",
-    "07_Cortex/feedback-report-brevity.md",
-    "07_Cortex/feedback-outbound-send-cadence.md",
-    "07_Cortex/feedback-preview-before-push.md",
-    "07_Cortex/feedback-perfect-details-limit-count.md"
-  ]
-}
+    "_stubs-trash/w.md",
+    "07_Cortex/12_Glia.md",
+    "07_Cortex/R11 Private folder OFF LIMITS.md",
+    "07_Cortex/

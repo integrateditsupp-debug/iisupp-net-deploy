@@ -37,6 +37,7 @@ and routes serious fixes to Sentinel (the paid desktop agent).
 
 
 <!-- LINK-WEB:auto -->
+- [[D-20260625-pricing-editions-ad-integration]]
 - [[_Amygdala]]
 - [[_ARIA]]
 - [[_Brainstem]]
@@ -58,6 +59,8 @@ and routes serious fixes to Sentinel (the paid desktop agent).
 - [[Codex]]
 - [[Cowork]]
 - [[D-20260619-bake-stripe-price-ids-in-code]]
+- [[D-20260623-director-safe-autonomy-mandate]]
+- [[D-20260624-vault-corruption-recovery]]
 - [[DIRECTOR_AUTONOMY]]
 - [[KB-agent]]
 - [[Leads]]
