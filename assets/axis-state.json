@@ -1,0 +1,447 @@
+{
+  "generatedAt": "2026-06-26T15:12:25.805Z",
+  "health": {
+    "worker": "up",
+    "heartbeatAt": "2026-06-26T15:12:25.805Z",
+    "leadsQueued": 155,
+    "agentsTotal": 24,
+    "approvalsPending": 31,
+    "ariaPassPct": 99.7
+  },
+  "autoApprove": {
+    "enabled": true,
+    "rails": [
+      "approved template only",
+      "daily rate caps",
+      "known-good target filter",
+      "suppression list",
+      "anomaly check"
+    ],
+    "note": "Auto-sends fire only within the rails. Anything irreversible / anomalous / no-safe-workaround waits in Approvals. A daily auto-fire digest lists everything that fired so mistakes can be caught."
+  },
+  "recentActivity": [
+    {
+      "at": "2026-06-26T15:00:29.817Z",
+      "agent": "Senior Director Worker",
+      "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-06-26T14:47:24.124Z",
+      "agent": "Interaction Avoidance Agent",
+      "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-06-26T14:44:51.249Z",
+      "agent": "Opportunity Quality Gate Agent",
+      "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-06-26T14:31:50.841Z",
+      "agent": "CEO Action Digest Agent",
+      "text": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-06-26T14:29:02.565Z",
+      "agent": "Opportunity Review Agent",
+      "text": "Opportunity records were enriched with summaries, drafts, reminders, and required-document scaffolding.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-06-26T14:29:02.501Z",
+      "agent": "Opportunity Research Agent",
+      "text": "Public opportunity sources were rescanned and merged into the opportunity engine.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-06-26T14:21:54.876Z",
+      "agent": "Opportunity Prep Packets Agent",
+      "text": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-06-26T12:00:01.677Z",
+      "agent": "Business Development Agent",
+      "text": "Daily no-send business-development queue refreshed and routed into the autonomous board.",
+      "status": "ready"
+    }
+  ],
+  "approvals": [
+    {
+      "id": "apr-1",
+      "title": "Direct-contact first-send queue: …, …, and … are already approved-to-transmit. Next live action is to send them when an email/contact surface is avail",
+      "kind": "review"
+    },
+    {
+      "id": "apr-2",
+      "title": "Jason Brown / Hines follow-up: approved for Friday, only if Jason has not replied first. Use ….",
+      "kind": "review"
+    },
+    {
+      "id": "apr-3",
+      "title": "Approved-to-publish slices: staged operations conversion slice, homepage contact-intake context upgrade, and staged Growth Library conversion slice. N",
+      "kind": "review"
+    },
+    {
+      "id": "apr-4",
+      "title": "New local-only Start Here route-guide slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-5",
+      "title": "New local-only overflow conversion slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-6",
+      "title": "New local-only ARIA deployment-path slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-7",
+      "title": "New local-only Help Desk Blueprint sample-preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-8",
+      "title": "New local-only Overflow Support Pilot preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-9",
+      "title": "New local-only M365 Security & Productivity Tune-Up preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-10",
+      "title": "New local-only Website Checklist sample-preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-11",
+      "title": "New local-only Office Move readiness preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-12",
+      "title": "New local-only AI Workflow Audit preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-13",
+      "title": "New local-only AI Workflow Quick-Win Sprint preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-14",
+      "title": "New local-only MSP / Partner Overflow Coverage preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-15",
+      "title": "New local-only product route-back conversion slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-16",
+      "title": "New local-only enterprise-reference compliance cleanup slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-17",
+      "title": "New local-only homepage proof-shelf conversion slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-18",
+      "title": "New local-only Monthly AI Support Plan preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-19",
+      "title": "New local-only contact route reassurance slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-20",
+      "title": "New local-only services fit-and-first-deliverable slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-21",
+      "title": "New local-only Prompt Engineering for Workflows preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-22",
+      "title": "New local-only Cybersecurity Basics for Employees preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-23",
+      "title": "New local-only Meeting-to-SOP AI pack preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-24",
+      "title": "New local-only AI Agent Starter Kit preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-25",
+      "title": "New local-only No-Code Automation Kit preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-26",
+      "title": "New local-only Outlook Fix Guide preview slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-27",
+      "title": "New local-only Marketplace quote-first routeback slice: … is ready for Ahmad to approve publish or hold local only.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-28",
+      "title": "Workspace cleanup posture: summary-only cleanup pass is approved. Destructive cleanup remains blocked.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-29",
+      "title": "Samsung ProCare tender posture: park as no-bid unless a real no-cost compliant OEM/partner path appears.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-30",
+      "title": "RBC supplier registration path: live portal open and partially prefilled with verified IIS company/contact fields. Remaining Ahmad-only steps are CAPT",
+      "kind": "review"
+    },
+    {
+      "id": "apr-31",
+      "title": "Workspace steward has cleanup/retirement recommendations; destructive action stays blocked until a later keep/archive/delete review.",
+      "kind": "review"
+    }
+  ],
+  "agents": [
+    {
+      "name": "Hunter",
+      "fn": "Find Leads",
+      "does": "Hunts gov/contract bids daily 3pm",
+      "task": "contract-hunter-autopilot",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Forager",
+      "fn": "Find Leads",
+      "does": "Weekday 9am: new bids + IT/AI leads, drafts outreach",
+      "task": "morning-hunt-bids-leads",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Prospector",
+      "fn": "Find Leads",
+      "does": "Daily 7am: IT contracts, gigs, RFPs",
+      "task": "daily-it-opportunities-7am",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Globe",
+      "fn": "Find Leads",
+      "does": "Daily 7am: top-5 international contracts (UAE/UK/USA/EU)",
+      "task": "daily-international-contract-scan",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Tender",
+      "fn": "Find Leads",
+      "does": "Daily: Ontario/MERX/CanadaBuys MSP tenders",
+      "task": "ontario-tenders-alert-msp-fit",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Bidwatch",
+      "fn": "Find Leads",
+      "does": "Weekly: gov bid statuses + deadlines",
+      "task": "gov-bid-status-monitor",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Pitch",
+      "fn": "Draft Emails",
+      "does": "Weekday 9am: 5 cold drafts + inbound triage",
+      "task": "morning-outbound-pack",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Closer",
+      "fn": "Draft Emails",
+      "does": "Monday: fresh Apollo leads + drafted batch",
+      "task": "cold-outbound-v2-monday-batch",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Ops",
+      "fn": "Work Report",
+      "does": "Pre-dawn: health check, lead drafts, CEO brief",
+      "task": "ops-agent-morning-prep",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Scout",
+      "fn": "Work Report",
+      "does": "Daily 7am: cross-agent status + pipeline + news",
+      "task": "bay-monitor-autopilot",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Applicant",
+      "fn": "Apply LinkedIn",
+      "does": "Weekday 8am: LinkedIn Easy Apply roles",
+      "task": "linkedin-easy-apply-autopilot",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Tuner",
+      "fn": "ARIA Quality",
+      "does": "3x/day: ARIA classifier test + auto-fix",
+      "task": "aria-classifier-autonomous-improver",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Renew",
+      "fn": "Send Email",
+      "does": "Daily 8am: Stripe renewal reminders 7/3/1d",
+      "task": "aria-daily-renewal-reminders",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Ledger",
+      "fn": "Finance",
+      "does": "Daily 9pm: expenses → CRA tax workbook",
+      "task": "iisupport-daily-expense-sync",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Auditor",
+      "fn": "Finance",
+      "does": "Month-end: full expense sweep",
+      "task": "iisupport-month-end-sweep",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Compass",
+      "fn": "Ops Health",
+      "does": "Daily 6am: keep every loop aligned to top goal",
+      "task": "goal-alignment-loop",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Observer",
+      "fn": "Ops Health",
+      "does": "2x/weekday: watch Forge's commits + delta",
+      "task": "codex-observer-loop",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Dispatch",
+      "fn": "Ops Health",
+      "does": "Every 3h: assign idle agents safe no-send work",
+      "task": "axis-247-dispatcher",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Mesh",
+      "fn": "Brain",
+      "does": "Daily 2am: relink the Obsidian brain",
+      "task": "vault-mesh-cleaning-agent",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Vault",
+      "fn": "Brain",
+      "does": "2x/day: back up the brain to 2 places",
+      "task": "aria-vault-twice-daily-backup",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Herald",
+      "fn": "Approvals",
+      "does": "Daily 8am: list queued go-live items",
+      "task": "golive-pending-reminder",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Dawn",
+      "fn": "Work Report",
+      "does": "Sunday am: revenue, uptime, weekly priorities",
+      "task": "aria-morning-autopilot",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Dusk",
+      "fn": "Work Report",
+      "does": "Sunday pm: week recap + next #1 priority",
+      "task": "aria-evening-autopilot",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Biller",
+      "fn": "Finance",
+      "does": "One-off: retry DigitalOcean payment Jun 30",
+      "task": "do-payment-retry-june-30",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    }
+  ]
+}
