@@ -1,102 +1,75 @@
-# Half B runbook — Ahmad's post-deploy execution
+# Half-B Runbook — ship Sentinel 0.1.2 + verify the funnel (RUN 29-I)
 
-After Cowork ships RUN 29 (cherry-pick into main lands + Netlify deploys green), Ahmad runs the steps below to validate the full funnel end-to-end and ship the 0.1.2 customer .exe.
+The exact sequence Ahmad runs **on his machine** after CC's RUN 24/25/29 commits are on `main` and Netlify has deployed. CC cannot run any of this (it requires production secrets). Order matters.
 
-## Prerequisites (one-time setup)
+---
 
-### 1. Verify Netlify env vars all set
+## 0. Prerequisites — verify these env vars exist on **Netlify** (Site → Settings → Environment)
 
-Visit `https://app.netlify.com/projects/iisupp/configuration/env` — these must ALL be present (sealed where marked):
+The funnel is dead without these. Verify each is set (values are server-side only — never paste them into chat, code, or git):
 
-| Variable | Sealed | Source |
+| Var | Used by | Purpose |
 |---|---|---|
-| `SENTINEL_LICENSE_SECRET` | yes | already set 2026-06-22 |
-| `SENTINEL_ADMIN_TOKEN` | yes | already set (RUN 23/23b) |
-| `STRIPE_WEBHOOK_SECRET` | yes | **PENDING** — see step 2 below |
-| `RESEND_API_KEY` | yes | should be present |
-| `RESEND_FROM` | no | `ahmad.wasee@iisupp.net` |
-| `STRIPE_PRICE_PERSONAL` | no | already set |
-| `STRIPE_PRICE_PRO` | no | already set |
-| `STRIPE_PRICE_SMALL_BUSINESS_Y` | no | already set |
-| `STRIPE_PRICE_MID_SIZE_Y` | no | already set |
-| `STRIPE_PRICE_ENTERPRISE_Y` | no | already set |
+| `SENTINEL_LICENSE_SECRET` | `sentinel-resolve`, `sentinel-stripe-webhook`, `sentinel-licenses` | HMAC that mints/resolves license keys. **Single point of failure.** |
+| `STRIPE_SECRET_KEY` | `sentinel-stripe-webhook` | Stripe API (live for production). |
+| `STRIPE_WEBHOOK_SECRET` | `sentinel-stripe-webhook` | Verifies the Stripe webhook signature. Set **after** adding the webhook endpoint in Stripe. |
+| `RESEND_API_KEY` + `RESEND_FROM` | webhook + `sentinel-licenses` | Sends the customer key email + admin notify. |
+| `SENTINEL_ADMIN_TOKEN` | `sentinel-licenses` (every mutation + the registry-poll) | Bearer token guarding the admin registry API. |
+| `STRIPE_PRICE_*` (all 5 tiers) | checkout / webhook lookup | Maps Stripe price/lookup-key → plan. |
 
-### 2. Set `STRIPE_WEBHOOK_SECRET` on Netlify
+> Note: the desktop `.exe` does **NOT** carry `SENTINEL_LICENSE_SECRET` (RUN 24-A6). It resolves licenses by POSTing the pasted key to `/sentinel-resolve`, which keeps the secret server-side.
 
-1. Stripe Dashboard → Developers → Webhooks → **Add endpoint**
-2. URL: `https://iisupp.net/.netlify/functions/sentinel-stripe-webhook`
-3. Events to send: `checkout.session.completed` + `customer.subscription.created`
-4. After creation, click the endpoint → "Signing secret" → **Reveal** → copy
-5. Netlify env → Add variable → key: `STRIPE_WEBHOOK_SECRET` · value: paste · sealed · all scopes
+---
 
-## Build the 0.1.2 customer .exe
+## 1. Build + publish 0.1.2
 
 ```powershell
 cd "C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy"
-ota-build.bat
+.\ARIA Sentinel\ota-build.bat        # package:win → sign (once cert is set up, RUN 29-F) → GitHub Release → manifest
 ```
 
-Expected output:
-- Version bumps `0.1.1 → 0.1.2`
-- `dist/ARIA-Sentinel-0.1.2-unsigned.exe` produced
-- Auto-published to GitHub Release + manifest updated
+This produces `ARIA-Sentinel-0.1.2-unsigned.exe` (or signed, once the EV cert from `docs/code-signing-decision.md` is wired) and publishes the GitHub Release + update manifest.
 
-If the version doesn't bump → confirm `src/shared/ota-release.mjs` has the subject-line-only `shouldBump` fix (RUN 23c hotfix).
+> Until the code-signing cert is purchased, the `.exe` is unsigned → SmartScreen will warn on a clean machine (expected; see `docs/code-signing-decision.md`).
 
-## Install the new .exe
+## 2. Install on a clean Windows VM
 
-1. Right-click `dist/ARIA-Sentinel-0.1.2-unsigned.exe` → Run as administrator
-2. Walk through installer (SmartScreen warning expected until code-signing — see `docs/code-signing-decision.md`)
-3. Launch from Start menu
+Install the published `.exe`. On first run it should show the license-entry / trial flow (RUN 29-C onboarding, when shipped). No `SENTINEL_LICENSE_SECRET` is present locally — that's correct.
 
-## Smoke-test the 6 HMAC keys
+## 3. Run the funnel smoke test
 
-Set the 6 keys (Ahmad pastes from Cowork memory `reference-sentinel-admin-master-license`):
+Set the secrets in **your shell** (TEST mode for Stripe), then run the one-command harness:
 
 ```powershell
-$env:SENTINEL_KEY_ADMIN       = "b2a808581ee58d9609bd49600b124c8a80f19f876471480c98cb779b0c81e088"
-$env:SENTINEL_KEY_PERSONAL    = "e60aeffcec5096f52a203080e2f40b5523ee5ba14afde5f77fc906c5db4d5e25"
-$env:SENTINEL_KEY_PRO         = "7b22a8b0dcb025348fec4b2efc29d24950787192145118cd52e5890382e7a574"
-$env:SENTINEL_KEY_SMB         = "4a9c7de74d4ba51f48c2da8a6699ec1f26b215f8fb9fa722f9240dafa4299c28"
-$env:SENTINEL_KEY_MIDSIZE     = "bd14982620e9a6d911da894736cfeb80889f166f99e52baa8cdc3b2b3da3bc69"
-$env:SENTINEL_KEY_ENTERPRISE  = "0d4632ef1bfce7c9079d5e1a423a82cb75af18004dc808ba68d2b17a8800d166"
+$env:SENTINEL_LICENSE_SECRET = "<the production secret>"   # same value as Netlify
+$env:SENTINEL_ADMIN_TOKEN    = "<admin token>"
+$env:STRIPE_SECRET_KEY       = "sk_test_..."               # TEST mode — the script refuses sk_live
+$env:STRIPE_SMOKE_PRICE      = "price_..."                 # a Sentinel TEST-mode price id
 node scripts/smoke-test-funnel.mjs
 ```
 
-Expected:
-- 6 PASS lines for the keys
-- 1 PASS line for the heartbeat
-- Output file `docs/funnel-smoke-test-results.md` with pass/fail matrix
+What it does (see `scripts/smoke-test-funnel.mjs`, RUN 29-H):
+1. Computes the 6 HMAC keys (personal/pro/smb/midsize/enterprise/admin) and POSTs each to `/sentinel-resolve` → asserts each returns `{plan, status:"active"}`.
+2. Confirms a forged key is rejected (401).
+3. (if Stripe env set) Creates a TEST subscription → polls the admin registry up to 60s for the minted record → asserts the raw key is never returned.
+4. Writes a pass/fail matrix to `docs/funnel-smoke-test-results.md`.
 
-If any FAIL, the script writes specific "how to fix" hints in the results file.
+**Expected:** `✅ ALL PASS`. If a tier resolves to the wrong plan → the HMAC secret on Netlify differs from the one in your shell. If the Stripe record never lands → check `STRIPE_WEBHOOK_SECRET` + the webhook endpoint in the Stripe dashboard + `RESEND_*`.
 
-## End-to-end Stripe test-mode subscription
+## 4. Manual paste-key check (the real customer path)
 
-After keys verify, run one real Stripe test-mode subscription to prove the full funnel:
+In the installed Sentinel, paste each of the 6 keys (the smoke test prints masked keys; generate the real ones the same way the script does) and confirm the tier unlocks: Personal = Manual only, Pro = paid modes, … admin = admin console visible. Revoke one via the admin Licenses tab and confirm the desktop degrades within the cache window (RUN 24-A6b: ≤24h fresh / 24–72h toast / >72h Personal).
 
-1. Stripe Dashboard → switch to **Test mode** (top-right toggle)
-2. Use a test card (`4242 4242 4242 4242`, any future date, any CVC)
-3. Subscribe via `https://iisupp.net/plans/` → click SUBSCRIBE on Personal tier
-4. Complete checkout
-5. Within 30 seconds:
-   - Check Sentinel admin console → Licenses tab — new entry should appear
-   - Check `ahmad.wasee@iisupp.net` inbox — admin notify email should arrive
-   - Check the test customer email (Stripe shows it in test mode) — license email should arrive
-6. Open the new Sentinel .exe → paste the emailed key → tier should unlock (Personal mode features visible, others gated)
+## 5. Live Stripe end-to-end (final)
 
-Paste the outcome to Cowork:
-- Pass/fail per checkpoint
-- Any unexpected behavior
-- Timing of each step
+With a **real** card on the live checkout: subscribe to one tier → confirm the customer key email arrives (Resend) → install → paste → tier unlocks. Then cancel/refund the test purchase.
 
-## Rollback path
+---
 
-If anything breaks customer-visible:
-1. Netlify → Deploys → previous green deploy (`fc13223` or whatever was last working) → "Publish deploy"
-2. Tells Cowork to revert and re-investigate
+## Done when
 
-## What's next after Half B passes
+- `docs/funnel-smoke-test-results.md` shows ✅ ALL PASS.
+- All 6 keys unlock the correct tier in the installed 0.1.2.
+- A real Stripe purchase delivers a working key by email.
 
-- Switch Stripe to **live mode**
-- First outbound batch to lead list with "ARIA Sentinel Windows now available" message
-- Monitor admin Licenses tab for first real customer
+Report the smoke-test matrix + any failures back into `senior-director-state/loop-engineer/claude-code-next-prompt.md` so Cowork can queue follow-ups.

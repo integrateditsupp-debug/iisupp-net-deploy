@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../src/renderer/sentinel.css">
+<style>body{padding:0}.frame{max-width:1040px;padding:26px 30px;background:var(--aria-bg)}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+h1{font-family:var(--aria-font-display);margin:2px 0 0;font-size:26px}</style></head>
+<body class="low-power"><div class="frame">
+<header class="topbar"><div><p class="eyebrow">ARIA Sentinel - Settings</p><h1>System</h1></div>
+<div class="status-stack"><span class="chip mode-pill">Manual mode - watching</span><span class="chip cyan">Bridge listening</span></div></header>
+<div class="merge-head" id="system-context"><div class="merge-bar"></div><div><p class="eyebrow">This Machine</p><h2>This Machine</h2><p class="merge-sub">Local inventory · apps · services · drivers — content-blind</p></div></div>
+<section class="panel"><div class="panel-actions"><div><p class="eyebrow">Local inventory</p><h2>System Context</h2></div><button class="ghost">Refresh</button></div>
+<p class="note">312 apps · 184 services · last refreshed just now. Local + content-blind.</p>
+<input id="systemContextSearch" type="text" placeholder="Search apps, drivers, security updates…">
+<div class="health-list">
+<div class="health-row"><span>os</span><strong>Windows 11 Home · build 26200</strong><em class="diag-ok">OK</em></div>
+<div class="health-row"><span>cpu</span><strong>AMD Ryzen 7 · 8 cores · 12% load</strong><em class="diag-ok">OK</em></div>
+<div class="health-row"><span>ram</span><strong>61% used</strong><em class="diag-ok">OK</em></div>
+<div class="health-row"><span>disk</span><strong>NVMe SSD · OK</strong><em class="diag-ok">OK</em></div>
+</div>
+<div id="systemContextApps" class="inventory-groups">
+<details class="inv-group" open><summary><span class="inv-group-name">Apps</span><span class="inv-count">312</span></summary><div class="inv-body">
+<div class="source-row"><span>Google Chrome</span><strong>126.0.6478 · Google LLC</strong></div>
+<div class="source-row"><span>Microsoft 365 Apps</span><strong>16.0.17628 · Microsoft</strong></div>
+<div class="source-row"><span>Adobe Acrobat Reader</span><strong>24.002 · Adobe Inc.</strong></div>
+<div class="source-row"><span>Zoom Workplace</span><strong>6.1.0 · Zoom</strong></div>
+<div class="source-row"><span>7-Zip</span><strong>24.07 · Igor Pavlov</strong></div>
+<div class="source-row"><span>Node.js</span><strong>24.15.0 · OpenJS Foundation</strong></div>
+</div></details>
+<details class="inv-group"><summary><span class="inv-group-name">Drivers</span><span class="inv-count">47</span></summary><div class="inv-body">
+<div class="source-row"><span>NVIDIA Graphics Driver</span><strong>552.44 · NVIDIA</strong></div>
+<div class="source-row"><span>Realtek Audio</span><strong>6.0.9456 · Realtek</strong></div>
+</div></details>
+<details class="inv-group"><summary><span class="inv-group-name">Security updates</span><span class="inv-count">9</span></summary><div class="inv-body">
+<div class="source-row"><span>Security Intelligence Update (Defender)</span><strong>1.413.690 · installed</strong></div>
+<div class="source-row"><span>2026-06 Cumulative Update</span><strong>KB5039212 · installed</strong></div>
+</div></details>
+</div></section>
+</div></body></html>

@@ -24,7 +24,8 @@ const TAB_TITLES = {
   reports: "Reports",
   knowledge: "Knowledge & policy",
   system: "System",
-  servicenow: "ServiceNow",
+  servicenow: "ServiceNow", // W5 — no longer a nav slot; reachable via the Integrations ServiceNow card deep-link
+  integrations: "Integrations", // W5 — Identity & Service + Microsoft 365 document connectors
   settings: "Settings"
 };
 // RUN 23d — old tab routes redirect to their new parent + the in-page anchor (= the old tab id),
@@ -102,11 +103,12 @@ function activateTab(tab) {
 // Lazy loaders for the new merged parents — every former-tab loader still fires when its host tab opens.
 function runTabLoaders(target) {
   if (target === "aria") loadAriaData(); // RUN 33 — Learning/Health/Memory/Agents sub-sections
-  if (target === "dashboard") { loadDashboard(); loadPerformance(); loadSla(); }
+  if (target === "dashboard") { loadDashboard(); loadPerformance(); loadSla(); loadProofMetrics(); }
   if (target === "compliance-privacy") loadCompliance();
   if (target === "system") { loadSystemContext(); loadBlueprints(); }
   if (target === "settings") loadUpdatesPanel();
-  if (target === "servicenow") loadIncidents();
+  if (target === "servicenow") { loadIncidents(); loadOmniStatus(); }
+  if (target === "integrations") loadIntegrations();
   if (target === "recipes") renderTier0();
   if (target === "reports") loadReports();
 }
@@ -379,6 +381,173 @@ function renderDiagnostic(report) {
   `).join("");
 }
 
+// W5 — Integrations tab. Cards are drawn from the main process (getIntegrations → edition + resolved
+// descriptors). Status is read-only; "Test connection" is disabled in Slice 1. The ServiceNow card
+// deep-links to its incident bridge panel (which lost its nav slot to this tab).
+const INTEGRATION_STATUS_LABELS = { connected: "Connected", not_configured: "Not configured", error: "Error" };
+
+async function loadIntegrations() {
+  const host = qs("#integrationsGrid");
+  if (!host) return;
+  const data = sentinel.getIntegrations ? await sentinel.getIntegrations().catch(() => null) : null;
+  const edition = (data && data.edition) || "integrated";
+  const items = Array.isArray(data && data.items) ? data.items : [];
+  const editionNote = qs("#integrationsEdition");
+  if (editionNote) editionNote.dataset.edition = edition;
+  if (!items.length) {
+    host.innerHTML = `<p class="note">No integrations available for this edition.</p>`;
+    return;
+  }
+  // Preserve descriptor order while splitting into the two labelled groups.
+  const groups = [];
+  for (const item of items) {
+    let group = groups.find((g) => g.name === item.group);
+    if (!group) { group = { name: item.group, cards: [] }; groups.push(group); }
+    group.cards.push(item);
+  }
+  host.innerHTML = groups.map((group) => `
+    <section class="integration-group">
+      <header class="integration-group-head">
+        <h3>${escapeHtml(group.name)}</h3>
+        <span class="integration-count">${group.cards.length}</span>
+      </header>
+      <div class="integrations-grid">
+        ${group.cards.map(renderIntegrationCard).join("")}
+      </div>
+    </section>`).join("");
+  // ServiceNow card → its incident bridge panel (no longer in the nav rail).
+  qsa("#integrationsGrid [data-goto]").forEach((button) => {
+    button.addEventListener("click", () => activateTab(button.dataset.goto));
+  });
+  // W5 Slice 2 — read-only "Test connection" per card. Inline pass/fail; never throws to a crash.
+  qsa("#integrationsGrid [data-test-for]").forEach((button) => {
+    button.addEventListener("click", () => runIntegrationTest(button));
+  });
+}
+
+async function runIntegrationTest(button) {
+  const id = button.dataset.testFor;
+  const out = qs(`#integrationsGrid [data-result-for="${id}"]`);
+  const previous = button.textContent;
+  button.disabled = true;
+  button.textContent = "Testing…";
+  if (out) { out.hidden = false; out.classList.remove("pass", "fail"); out.textContent = "Checking…"; }
+  let res;
+  try {
+    res = sentinel.testIntegration ? await sentinel.testIntegration(id) : { ok: false, message: "Unavailable" };
+  } catch {
+    res = { ok: false, message: "Connection test failed" };
+  }
+  button.disabled = false;
+  button.textContent = previous;
+  const ok = Boolean(res && res.ok);
+  const message = (res && res.message) || (ok ? "Connected" : "Not configured");
+  if (out) {
+    out.hidden = false;
+    out.textContent = `${ok ? "✓" : "✕"} ${message}`;
+    out.classList.remove("pass", "fail");
+    out.classList.add(ok ? "pass" : "fail");
+  }
+  // G-INTEGRATIONS — the badge reflects the VERIFIED state: green "Connected" ONLY on a real successful
+  // read; a real error (e.g. HTTP 401/403) → red "Error"; "Not configured" stays grey. Never a fake connect.
+  const card = qs(`#integrationsGrid [data-integration="${id}"]`);
+  const badge = card && card.querySelector(".int-badge");
+  if (badge) {
+    const state = ok ? "connected" : (/not configured/i.test(message) ? "not_configured" : "error");
+    const label = ok ? "Connected" : (state === "error" ? "Error" : "Not configured");
+    badge.classList.remove("connected", "not_configured", "error");
+    badge.classList.add(state);
+    badge.textContent = label;
+  }
+}
+
+function renderIntegrationCard(card) {
+  const status = INTEGRATION_STATUS_LABELS[card.status] ? card.status : "not_configured";
+  const label = INTEGRATION_STATUS_LABELS[status];
+  const manage = card.id === "servicenow"
+    ? `<button class="ghost int-link" data-goto="servicenow">Manage incidents →</button>`
+    : "";
+  return `
+    <article class="integration-card" data-integration="${escapeHtml(card.id)}">
+      <div class="integration-top">
+        <span class="integration-icon" aria-hidden="true">${escapeHtml(card.icon || "🔌")}</span>
+        <span class="int-badge ${status}">${escapeHtml(label)}</span>
+      </div>
+      <h4 class="integration-name">${escapeHtml(card.name)}</h4>
+      <p class="integration-desc">${escapeHtml(card.description || "")}</p>
+      ${card.statusDetail ? `<p class="integration-detail">${escapeHtml(card.statusDetail)}</p>` : ""}
+      <div class="integration-actions">
+        <button class="ghost" data-test-for="${escapeHtml(card.id)}" title="Read-only connection test">Test connection</button>
+        ${manage}
+      </div>
+      <p class="integration-result" data-result-for="${escapeHtml(card.id)}" hidden></p>
+    </article>`;
+}
+
+// G-METRICS — the Proof metrics view. Reads the REAL measured aggregate from the local store; shows zero
+// honestly when nothing has been measured yet (no placeholders, no invented numbers).
+async function loadProofMetrics() {
+  const tiles = qs("#proofMetricsTiles");
+  if (!tiles) return;
+  const res = sentinel.getProofMetrics ? await sentinel.getProofMetrics().catch(() => null) : null;
+  const m = res && res.metrics;
+  if (!m) {
+    tiles.innerHTML = `<p class="note">Measured metrics unavailable in this build.</p>`;
+    setText("proofMetricsMeta", "");
+    return;
+  }
+  const fmtMs = (ms) => ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${ms} ms`;
+  const cards = [
+    { label: "Queries handled", value: m.queriesHandled, sub: "measured" },
+    { label: "Deflection", value: `${m.deflectionPct}%`, sub: "auto-resolved / total" },
+    { label: "Auto-resolved", value: m.autoResolved, sub: `${m.escalated} escalated` },
+    { label: "Avg resolution", value: m.queriesHandled ? fmtMs(m.avgResolutionMs) : "—", sub: "per resolved query" },
+    { label: "KB-hit rate", value: `${m.kbHitRatePct}%`, sub: "answered from local KB" }
+  ];
+  tiles.innerHTML = cards.map((c) => `
+    <div class="proof-tile">
+      <span class="proof-tile-val">${escapeHtml(String(c.value))}</span>
+      <span class="proof-tile-label">${escapeHtml(c.label)}</span>
+      <span class="proof-tile-sub">${escapeHtml(c.sub)}</span>
+    </div>`).join("");
+  const when = res.updatedAt ? new Date(res.updatedAt).toLocaleString() : "—";
+  setText("proofMetricsMeta", m.sampleSize
+    ? `${m.sampleSize} measured event${m.sampleSize === 1 ? "" : "s"} · last updated ${when}. Real measured data — never fabricated.`
+    : "No measured events yet — these populate as ARIA answers queries and applies fixes. Shown honestly as zero.");
+}
+
+// G-OMNI — render the honest Slack/Teams config status (never a fake "connected"). Read-only display.
+const OMNI_META = {
+  slack: { name: "Slack", icon: "💬", description: "Ask ARIA in a Slack channel; answers from the local KB, escalates to a human." },
+  teams: { name: "Microsoft Teams", icon: "🟣", description: "Ask ARIA in a Teams channel; answers from the local KB, escalates to a human." }
+};
+
+async function loadOmniStatus() {
+  const host = qs("#omniGrid");
+  if (!host) return;
+  const res = sentinel.getOmniStatus ? await sentinel.getOmniStatus().catch(() => null) : null;
+  const providers = (res && res.providers) || {};
+  const cards = ["slack", "teams"].map((id) => {
+    const meta = OMNI_META[id];
+    const p = providers[id] || { status: "not_configured", detail: "" };
+    // Honest badge: "configured" (token present) is amber/pending, NOT the green "connected" — we never
+    // claim a verified live connection without one.
+    const status = p.status === "configured" ? "configured" : "not_configured";
+    const label = p.status === "configured" ? "Configured" : "Not configured";
+    return `
+      <article class="integration-card" data-omni="${escapeHtml(id)}">
+        <div class="integration-top">
+          <span class="integration-icon" aria-hidden="true">${escapeHtml(meta.icon)}</span>
+          <span class="int-badge ${status}">${escapeHtml(label)}</span>
+        </div>
+        <h4 class="integration-name">${escapeHtml(meta.name)}</h4>
+        <p class="integration-desc">${escapeHtml(meta.description)}</p>
+        ${p.detail ? `<p class="integration-detail">${escapeHtml(p.detail)}</p>` : ""}
+      </article>`;
+  });
+  host.innerHTML = cards.join("");
+}
+
 async function loadIncidents() {
   const host = qs("#incidentList");
   if (!host || !sentinel.serviceNowList) return;
@@ -566,8 +735,7 @@ function renderRecipes(recipes) {
     }));
   });
   // RUN 36 / TASK 3 — "Resolve it for me": run the matched fix LOCALLY through the gated control plane
-  // (R11 → supervisor → execution policy → 10s countdown → kill-switch). Confirmed-grade gating; never
-  // autonomous. The countdown indicator is the visible confirm/cancel; Ctrl+Alt+K aborts mid-fix.
+  // (R11 → supervisor → execution policy → 10s countdown → kill-switch). Confirmed-grade gating; never autonomous.
   qsa("[data-resolve-fix]").forEach((button) => bindResolveFix(button));
 }
 
@@ -597,7 +765,6 @@ function bindResolveFix(button) {
   }));
 }
 
-// Minimal CSS.escape shim (older Electron renderers) so the status selector is always valid.
 function cssEscape(s) { return String(s).replace(/[^a-zA-Z0-9_-]/g, (c) => "\\" + c); }
 
 function renderKnowledge(sources) {
@@ -1145,6 +1312,8 @@ function wireRun20() {
   }));
   const search = qs("#systemContextSearch");
   if (search) search.addEventListener("input", () => renderSystemContextApps(search.value.trim().toLowerCase()));
+  // G-METRICS — refresh the measured proof numbers on demand.
+  bindClick("refreshProofMetrics", (b) => runAction(b, async () => { await loadProofMetrics(); return { ok: true }; }));
 }
 
 async function loadSystemContext() {
@@ -1177,16 +1346,41 @@ function renderSystemContext(ctx) {
   renderSystemContextApps("");
 }
 
+// Slice 3 — System Inventory grouped into Apps / Drivers / Security updates. Each is a collapsible
+// <details> with a live count, all filtered by the one search box. No raw flat dump, no blank panel.
+const INVENTORY_GROUPS = [
+  { key: "apps", label: "Apps",
+    source: (c) => c.apps || [],
+    line: (a) => ({ name: a.name || "App", meta: `${a.version || "—"}${a.publisher ? " · " + a.publisher : ""}` }) },
+  { key: "drivers", label: "Drivers",
+    source: (c) => c.drivers || [],
+    line: (d) => ({ name: d.name || d.deviceName || d.device || "Driver",
+      meta: `${d.version || d.driverVersion || "—"}${(d.provider || d.manufacturer) ? " · " + (d.provider || d.manufacturer) : ""}` }) },
+  { key: "updates", label: "Security updates",
+    source: (c) => c.recentUpdates || [],
+    line: (u) => ({ name: u.title || u.description || u.id || u.hotfixId || "Update",
+      meta: `${u.id || u.hotfixId || ""}${u.installedOn ? " · " + u.installedOn : ""}`.trim() || "installed" }) }
+];
+
 function renderSystemContextApps(filter) {
   const host = qs("#systemContextApps");
   if (!host) return;
-  const apps = (lastSystemContext && lastSystemContext.apps) || [];
-  const shown = (filter ? apps.filter((a) => `${a.name} ${a.publisher || ""}`.toLowerCase().includes(filter)) : apps).slice(0, 300);
-  host.innerHTML = shown.map((a) => `
-    <div class="source-row">
-      <span>${escapeHtml(a.name || "App")}</span>
-      <strong>${escapeHtml(a.version || "—")}${a.publisher ? " · " + escapeHtml(a.publisher) : ""}</strong>
-    </div>`).join("") || `<div class="source-row"><span>No matches.</span><strong></strong></div>`;
+  const ctx = lastSystemContext || {};
+  const f = (filter || "").toLowerCase();
+  host.innerHTML = INVENTORY_GROUPS.map((group) => {
+    const items = group.source(ctx).map(group.line);
+    const matched = f ? items.filter((i) => `${i.name} ${i.meta}`.toLowerCase().includes(f)) : items;
+    const shown = matched.slice(0, 300);
+    // Apps open by default; a filter expands any group with a hit so matches are never hidden.
+    const open = (group.key === "apps" && !f) || (f && shown.length) ? " open" : "";
+    const body = shown.length
+      ? shown.map((i) => `<div class="source-row"><span>${escapeHtml(i.name)}</span><strong>${escapeHtml(i.meta)}</strong></div>`).join("")
+      : `<p class="inv-empty">No ${escapeHtml(group.label.toLowerCase())}${f ? " match this filter" : " detected"}.</p>`;
+    return `<details class="inv-group"${open}>
+      <summary><span class="inv-group-name">${escapeHtml(group.label)}</span><span class="inv-count">${matched.length}</span></summary>
+      <div class="inv-body">${body}</div>
+    </details>`;
+  }).join("");
 }
 
 async function loadBlueprints() {
@@ -1633,8 +1827,7 @@ function initAriaChat() {
     if (badge.textContent) bubble.appendChild(badge);
     const meta = res && res.kbMeta;
     if (meta && Number.isFinite(Number(meta.total_chunks))) { const c = qs("#ariaChatChunks"); if (c) c.textContent = Number(meta.total_chunks) + " chunks"; }
-    // TASK 4 — the one intentional difference from web: Sentinel can RESOLVE it on this device. The chip runs
-    // the matched fix through the gated control plane (Confirmed-grade, never autonomous, countdown + kill-switch).
+    // TASK 4 — Sentinel-only: offer to RESOLVE the issue on this device, gated identically (Confirmed-grade, never autonomous).
     appendResolveChip(bubble, question);
   }
   // The Sentinel-only "Resolve it for me" affordance under an answer. Diagnoses the question locally, and if a
@@ -1931,6 +2124,32 @@ async function getSentinelApi() {
       return { ok: false, configured: false };
     },
     serviceNowList: async () => ({ ok: true, configured: false, incidents: [] }),
+    getIntegrations: async () => {
+      // Browser-preview parity: resolve the same descriptors the main process serves, with no env
+      // configured (so every card reads "Not configured") and the default Integrated edition.
+      const { resolveIntegrations } = await import("../shared/integrations.mjs");
+      const { getEdition } = await import("../shared/edition.mjs");
+      const edition = getEdition({});
+      return { ok: true, edition, items: resolveIntegrations({}, edition) };
+    },
+    testIntegration: async (id) => {
+      // Browser-preview parity: run the same read-only dispatcher with no env (all "Not configured").
+      const { testIntegration } = await import("../shared/integrations.mjs");
+      return testIntegration(id, {});
+    },
+    getProofMetrics: async () => ({
+      // Browser preview has no local store (proof-metrics needs node fs/os) — show honest zeros, never invented.
+      ok: true, updatedAt: null, sampleSize: 0,
+      metrics: { queriesHandled: 0, autoResolved: 0, escalated: 0, deflectionPct: 0, avgResolutionMs: 0, avgResolutionSec: 0, kbHitRatePct: 0, sampleSize: 0, generatedAt: new Date().toISOString() }
+    }),
+    getOmniStatus: async () => ({
+      // Browser preview reads no env — honest "Not configured" for both channels (never a fake connection).
+      ok: true,
+      providers: {
+        slack: { provider: "slack", configured: false, status: "not_configured", detail: "Set SLACK_BOT_TOKEN + SLACK_SIGNING_SECRET" },
+        teams: { provider: "teams", configured: false, status: "not_configured", detail: "Set TEAMS_APP_ID + TEAMS_APP_PASSWORD" }
+      }
+    }),
     serviceNowComment: async () => ({ ok: false, dryRun: true }),
     rollback: async (id) => {
       log("RESTORE PT", `Preview roll back ${String(id).slice(0, 8)}.`);

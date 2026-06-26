@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "updated": "2026-06-11T15:40:00-04:00",
+  "backendWork": {
+    "mode": "around_the_clock",
+    "recommendedIntervalMinutes": 60,
+    "allowedAtAnyTime": [
+      "public-source research",
+      "dedupe",
+      "scoring",
+      "database updates",
+      "review summaries",
+      "no-send drafts",
+      "reminder updates",
+      "dashboard state preparation",
+      "agent memory updates"
+    ]
+  },
+  "communicationWork": {
+    "mode": "business_hours_only",
+    "rule": "Prepare anytime, but only surface/send/contact during the recipient or target market 08:00-17:00 business window, and only after Ahmad approval where the action is external.",
+    "targetTimezones": [
+      "America/Toronto",
+      "America/New_York",
+      "America/Chicago",
+      "America/Denver",
+      "America/Los_Angeles",
+      "Europe/London",
+      "Europe/Berlin",
+      "Asia/Dubai",
+      "Asia/Singapore",
+      "Australia/Sydney"
+    ]
+  },
+  "standingAutoApproval": {
+    "approvedWithoutRepeatPermission": [
+      "safe no-cost research",
+      "public-source opportunity collection",
+      "lead/profile analysis from public or user-provided data",
+      "priority scoring",
+      "status organization",
+      "draft messages not sent externally",
+      "proposal and application preparation",
+      "bid package preparation before final submission",
+      "dashboard improvements",
+      "reversible local file updates",
+      "agent memory and handoff updates"
+    ],
+    "mustStopForAhmad": [
+      "cost or paid service",
+      "legal commitment",
+      "contract or certification",
+      "irreversible or hard-to-repair damage",
+      "reputation-sensitive public claim",
+      "external send/contact/connect/submit/apply/final approval",
+      "account creation",
+      "credential or security change",
+      "platform rule risk",
+      "deletion, archive, or move of user work without backup"
+    ]
+  }
+}

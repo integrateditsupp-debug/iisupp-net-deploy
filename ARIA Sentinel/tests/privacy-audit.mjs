@@ -17,6 +17,12 @@ const allowedHosts = [
   "localhost:37841",
   "{customer-instance}.service-now.com",
   "customer.service-now.com",
+  // W5 Slice 2 — read-only Microsoft Entra ID / Graph lane (customer tenant, admin-consented, GET-only;
+  // dormant until DIRECTORY_* creds are provisioned). Same explicit-integration class as service-now.
+  "login.microsoftonline.com",
+  "graph.microsoft.com",
+  // G-INTEGRATIONS — read-only CRM lane (HubSpot free private-app token, GET-only; dormant until a token is set).
+  "api.hubapi.com",
   "www.w3.org",
   "example.com",
   "wa.me"

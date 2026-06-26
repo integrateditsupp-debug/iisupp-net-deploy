@@ -6,22 +6,6 @@
 <title>ARIA — AI Technical Assistant · IIS</title>
 <meta name="description" content="ARIA — AI technical assistant for IIS. Voice + text, 72-article live KB, audit trail per action.">
 <meta name="theme-color" content="#060503">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "ARIA",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Web",
-  "url": "https://iisupp.net/aria",
-  "publisher": {
-    "@type": "Organization",
-    "name": "Integrated IT Support Inc.",
-    "url": "https://iisupp.net/"
-  },
-  "description": "AI technical assistant for IT support, knowledge-base answers, escalation routing, and enterprise support workflows."
-}
-</script>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1154,136 +1138,102 @@
     border:1px solid var(--border);border-radius:11px;
     background:rgba(15,11,6,.5);padding:11px 13px;margin-bottom:10px;
   }
-  .pulse-tv{
-    margin-top:8px;border:1px solid rgba(212,168,90,.28);border-radius:14px;
-    background:linear-gradient(160deg,rgba(6,8,10,.92),rgba(21,14,7,.82));
-    box-shadow:inset 0 0 0 1px rgba(255,230,170,.035),inset 0 -18px 60px rgba(0,0,0,.36);
-    overflow:hidden;position:relative;
+  .pulse-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
+  .pulse-card{
+    display:grid;grid-template-columns:54px minmax(0,1fr);gap:9px;align-items:center;
+    min-width:0;text-decoration:none;color:inherit;
+    border:1px solid var(--border);border-radius:9px;background:rgba(20,14,7,.42);
+    padding:7px;transition:border-color .2s,background .2s,transform .2s;
   }
-  .pulse-tv::before{
-    content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;
-    background:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 4px);
-    mix-blend-mode:screen;
+  .pulse-card:hover{border-color:var(--border-glow);background:rgba(34,25,13,.62);transform:translateY(-1px)}
+  .pulse-thumb{
+    height:48px;border-radius:7px;position:relative;overflow:hidden;
+    border:1px solid rgba(212,168,90,.18);
+    background:radial-gradient(circle at 30% 25%,rgba(240,216,149,.55),transparent 24%),linear-gradient(135deg,#271909,#090705);
   }
-  .pulse-screen{
-    min-height:136px;position:relative;overflow:hidden;border-bottom:1px solid rgba(212,168,90,.16);
+  .pulse-thumb::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(120deg,transparent 0 38%,rgba(255,255,255,.14) 42%,transparent 50% 100%);
+    opacity:.45;
   }
-  .pulse-slide{
-    position:absolute;inset:0;display:grid;grid-template-columns:78px minmax(0,1fr);gap:12px;
-    padding:13px 14px;opacity:0;transform:translateX(14px) scale(.985);
-    transition:opacity .45s ease,transform .45s ease;
-  }
-  .pulse-slide.is-active{opacity:1;transform:none;z-index:1}
-  .pulse-video{
-    border-radius:10px;position:relative;overflow:hidden;border:1px solid rgba(212,168,90,.22);
-    background:
-      radial-gradient(circle at 30% 26%,rgba(45,212,191,.35),transparent 22%),
-      radial-gradient(circle at 78% 72%,rgba(240,216,149,.35),transparent 24%),
-      linear-gradient(135deg,#10212a,#070504);
-  }
-  .pulse-video::before{
-    content:"";position:absolute;inset:12px;border-radius:50%;
-    border:1px solid rgba(240,216,149,.24);box-shadow:0 0 24px rgba(45,212,191,.12);
-  }
-  .pulse-video::after{
-    content:attr(data-mark);position:absolute;left:9px;bottom:8px;
+  .pulse-thumb::after{
+    content:attr(data-mark);position:absolute;right:7px;bottom:5px;
     font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:#f0d895;text-shadow:0 0 12px rgba(240,216,149,.55);
   }
-  .pulse-video.cyber{background:radial-gradient(circle at 34% 30%,rgba(109,186,133,.36),transparent 27%),linear-gradient(135deg,#0f2118,#090705)}
-  .pulse-video.edge{background:radial-gradient(circle at 68% 28%,rgba(90,150,255,.32),transparent 25%),linear-gradient(135deg,#0d1627,#130b05)}
-  .pulse-video.ops{background:radial-gradient(circle at 42% 36%,rgba(240,216,149,.40),transparent 26%),linear-gradient(135deg,#231506,#070504)}
-  .pulse-video .bar{
-    position:absolute;left:14px;right:14px;height:3px;border-radius:999px;background:rgba(240,216,149,.2);
-    animation:pulseTvBars 4.8s ease-in-out infinite;
+  .pulse-bank{background:radial-gradient(circle at 68% 35%,rgba(45,212,191,.34),transparent 28%),linear-gradient(135deg,#10212a,#130d06)}
+  .pulse-cyber{background:radial-gradient(circle at 30% 30%,rgba(109,186,133,.38),transparent 30%),linear-gradient(135deg,#151f13,#0c0805)}
+  .pulse-chip{background:radial-gradient(circle at 62% 28%,rgba(90,150,255,.32),transparent 28%),linear-gradient(135deg,#0d1627,#150d05)}
+  .pulse-fact{background:radial-gradient(circle at 38% 32%,rgba(240,216,149,.42),transparent 30%),linear-gradient(135deg,#231506,#070504)}
+  .pulse-copy{min-width:0}
+  .pulse-tag{font-family:var(--mono);font-size:7.5px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+  .pulse-title{font-size:11.5px;line-height:1.25;color:var(--cream-2);font-weight:600}
+  .pulse-meta{font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;margin-top:5px}
+  .sla-panel{
+    border:1px solid var(--border);border-radius:11px;
+    background:rgba(15,11,6,.5);padding:11px 13px;margin-bottom:10px;
   }
-  .pulse-video .bar:nth-child(1){top:24px;width:58%}
-  .pulse-video .bar:nth-child(2){top:38px;width:76%;animation-delay:.5s}
-  .pulse-video .bar:nth-child(3){top:52px;width:44%;animation-delay:1s}
-  .pulse-kicker{font-family:var(--mono);font-size:7.5px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:5px}
-  .pulse-headline{font-family:var(--serif);font-size:16px;line-height:1.05;color:var(--cream-2);font-weight:600;margin-bottom:6px}
-  .pulse-summary{font-size:11px;line-height:1.35;color:rgba(245,237,219,.72)}
-  .pulse-footer{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:7px 10px;background:rgba(4,3,2,.62);
+  .sla-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .sla-cell{
+    border:1px solid var(--border);border-radius:8px;background:rgba(20,14,7,.42);
+    padding:8px 9px;min-width:0;
   }
-  .pulse-ticker{font-family:var(--mono);font-size:8px;letter-spacing:.15em;color:var(--muted);white-space:nowrap;overflow:hidden;text-transform:uppercase}
-  .pulse-ticker span{display:inline-block;animation:pulseTicker 18s linear infinite}
-  .pulse-dots{display:flex;align-items:center;gap:5px;flex:0 0 auto}
-  .pulse-dot{width:7px;height:7px;border:1px solid rgba(212,168,90,.5);border-radius:50%;background:transparent;padding:0;cursor:pointer}
-  .pulse-dot.is-active{background:var(--gold-bright);box-shadow:0 0 10px rgba(240,216,149,.65)}
-  @keyframes pulseTvBars{0%,100%{transform:scaleX(.72);opacity:.45}50%{transform:scaleX(1);opacity:.9}}
-  @keyframes pulseTicker{from{transform:translateX(0)}to{transform:translateX(-52%)}}
-  @media (prefers-reduced-motion:reduce){
-    .pulse-slide,.pulse-video .bar,.pulse-ticker span{animation:none!important;transition:none!important}
-  }
+  .sla-cell .v{font-family:var(--serif);font-size:17px;line-height:1;color:var(--cream-2);font-weight:500}
+  .sla-cell .k{font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-top:5px;line-height:1.3}
   .conversion-panel{
     border:1px solid var(--border);border-radius:11px;
     background:linear-gradient(180deg,rgba(15,11,6,.55),rgba(22,16,9,.62));
     padding:11px 13px;margin-bottom:10px;
   }
-  .path-tier-strip{
-    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:7px;
-  }
-  .path-tier-pill{
-    border:1px solid rgba(212,168,90,.22);border-radius:8px;background:rgba(20,14,7,.38);
-    padding:6px 7px;min-width:0;
-  }
-  .path-tier-pill strong{
-    display:block;font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--gold-bright);
-    line-height:1;text-transform:uppercase;margin-bottom:3px;
-  }
-  .path-tier-pill span{
-    display:block;font-family:var(--mono);font-size:7px;letter-spacing:.1em;color:var(--muted);
-    text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
-  .conversion-toggle{
-    width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
-    border:1px solid rgba(212,168,90,.24);border-radius:999px;background:rgba(20,14,7,.44);
-    padding:8px 10px;cursor:pointer;color:var(--cream-2);
-    font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;
-    transition:border-color .2s,background .2s,box-shadow .2s;
-  }
-  .conversion-toggle:hover{
-    border-color:var(--border-glow);background:rgba(34,25,13,.62);
-    box-shadow:0 0 0 1px rgba(212,168,90,.1) inset;
-  }
-  .conversion-toggle:focus-visible{outline:2px solid rgba(240,216,149,.62);outline-offset:3px}
-  .conversion-toggle .hint{color:var(--gold-bright);white-space:nowrap}
-  .conversion-toggle[aria-expanded="true"]{border-radius:11px 11px 8px 8px;border-color:rgba(212,168,90,.34)}
-  .conversion-grid[hidden]{display:none}
-  .conversion-grid{display:grid;grid-template-columns:1fr;gap:5px;margin-top:6px}
+  .conversion-sub{color:var(--muted);font-size:11.5px;line-height:1.45;margin-bottom:8px}
+  .conversion-grid{display:grid;grid-template-columns:1fr;gap:7px}
   .conversion-card{
-    display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;
-    text-decoration:none;color:inherit;min-width:0;
+    display:block;text-decoration:none;color:inherit;
     border:1px solid var(--border);border-radius:9px;background:rgba(20,14,7,.44);
-    padding:7px 9px;transition:border-color .2s,background .2s,transform .2s,box-shadow .2s;
-  }
-  .conversion-card.featured{
-    background:linear-gradient(135deg,rgba(39,28,13,.76),rgba(13,10,7,.68));
+    padding:9px 10px;transition:border-color .2s,background .2s,transform .2s,box-shadow .2s;
   }
   .conversion-card:hover{
     border-color:var(--border-glow);background:rgba(34,25,13,.66);transform:translateY(-1px);
     box-shadow:0 0 0 1px rgba(212,168,90,.12) inset;
   }
-  .conversion-index{
-    width:20px;height:20px;border-radius:50%;display:grid;place-items:center;
-    border:1px solid rgba(212,168,90,.34);background:rgba(212,168,90,.08);
-    font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--gold-bright);
-  }
-  .conversion-body{min-width:0}
   .conversion-top{
-    display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
     font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--gold);
-    text-transform:uppercase;margin-bottom:3px;
+    text-transform:uppercase;margin-bottom:4px;
   }
   .conversion-title{
-    font-family:var(--serif);font-size:13.5px;line-height:1.1;color:var(--cream-2);font-weight:500;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-family:var(--serif);font-size:16px;line-height:1.15;color:var(--cream-2);font-weight:500;
+    margin-bottom:3px;
   }
+  .conversion-copy{color:var(--cream);font-size:11.5px;line-height:1.45}
   .conversion-cta{
-    font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--gold-bright);text-transform:uppercase;
-    white-space:nowrap;
+    display:inline-flex;align-items:center;gap:6px;margin-top:6px;
+    font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--gold-bright);text-transform:uppercase;
   }
+  .conversion-proof{
+    margin-top:8px;
+    border:1px solid rgba(212,168,90,.22);
+    border-radius:9px;
+    background:linear-gradient(155deg,rgba(212,168,90,.09),rgba(20,14,7,.5) 62%,rgba(20,14,7,.42));
+  }
+  .conversion-proof-steps{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:6px;
+    margin-top:8px;
+  }
+  .conversion-step{
+    display:block;text-decoration:none;color:inherit;
+    border:1px solid rgba(212,168,90,.16);border-radius:8px;background:rgba(15,11,6,.42);
+    padding:8px 9px;transition:border-color .2s,background .2s,transform .2s;
+  }
+  .conversion-step:hover{
+    border-color:var(--border-glow);background:rgba(34,25,13,.58);transform:translateY(-1px);
+  }
+  .conversion-step strong{
+    display:block;font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--gold-bright);text-transform:uppercase;
+    margin-bottom:4px;font-weight:500;
+  }
+  .conversion-step span{display:block;color:var(--cream);font-size:11px;line-height:1.4}
   .issue-list{display:flex;flex-direction:column;gap:6px}
   .issue-row{
     display:flex;align-items:flex-start;gap:8px;
@@ -1419,13 +1369,17 @@
     .mic-btn{width:46px;height:46px}
     .mic-btn svg{width:18px;height:18px}
     .divider{margin-bottom:8px}
-    .status-panel,.conversion-panel,.it-pulse,.insights{padding:9px 11px;margin-bottom:8px}
-    .pulse-screen{min-height:118px}
-    .pulse-slide{grid-template-columns:62px minmax(0,1fr);gap:9px;padding:10px}
-    .pulse-headline{font-size:14px}
-    .pulse-summary{font-size:10px}
-    .conversion-title{font-size:13px}
-    .conversion-top,.conversion-toggle{font-size:7.5px}
+    .status-panel,.sla-panel,.conversion-panel,.it-pulse,.insights{padding:9px 11px;margin-bottom:8px}
+    .pulse-grid{grid-template-columns:1fr 1fr;gap:6px}
+    .pulse-card{grid-template-columns:42px minmax(0,1fr);gap:7px;padding:6px}
+    .pulse-thumb{height:40px}
+    .pulse-title{font-size:10.5px}
+    .pulse-tag,.pulse-meta{font-size:6.8px;letter-spacing:.12em}
+    .sla-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .sla-cell .v{font-size:14px}
+    .sla-cell .k{font-size:6.8px;letter-spacing:.12em}
+    .conversion-title{font-size:14px}
+    .conversion-copy,.conversion-sub{font-size:10.5px}
     .quick-actions{padding:9px 11px}
   }
 
@@ -1437,8 +1391,8 @@
     .right{position:relative;min-height:720px;overflow:visible}
   }
 
-  /* Window-fit safety: stack only on narrow screens; short desktop windows stay two-column. */
-  @media (max-width:900px){
+  /* Window-fit safety: when the browser is dragged smaller, stack instead of clipping. */
+  @media (max-width:1279px), (max-height:760px){
     html,body{height:auto;min-height:100%;overflow:auto}
     .app{
       grid-template-columns:minmax(0,1fr) !important;
@@ -1454,15 +1408,12 @@
     .ap-rail{grid-column:1 / -1;min-width:0}
     .left{height:clamp(540px,76dvh,820px);min-height:min(540px,100dvh - 88px)}
     .right{height:auto;min-height:0;max-height:none;overflow:visible}
-    .aria-section{position:relative;z-index:1}
-    .content-section{position:relative;z-index:3}
-    .globe-wrap,.globe-stage,.globe{pointer-events:none}
     .browser-frame{height:100%;min-height:0}
   }
 
   @media (max-width:640px){
     .app{gap:10px;padding-left:10px;padding-right:10px}
-    .left{height:clamp(460px,58dvh,540px);border-radius:14px}
+    .left{height:clamp(540px,78dvh,760px);border-radius:14px}
     .browser-frame{padding:10px 10px 0}
     .browser-bar{gap:6px;padding:7px 8px}
     .url{font-size:10px;letter-spacing:.08em;padding:6px 8px}
@@ -1657,27 +1608,28 @@
     .ap-band{grid-column:1 / -1}
     .ap-rail{grid-column:1 / -1}
   }
-  /* === SMART AUTO-FIT (updated 2026-06-18): on narrow desktop keep ARIA beside chat.
-         Stats compress instead of pushing the activity panel below the input dock. */
+  /* === SMART AUTO-FIT (added 2026-06-17): on narrow desktop (901-1279px)
+         flip to single column so chat browser always has full width.
+         Stats panel stacks below — discoverable but not crowding the chat. */
   @media (min-width:901px) and (max-width:1279px){
     .app{
-      grid-template-columns:minmax(0,1.32fr) minmax(300px,.9fr) !important;
-      grid-template-rows:auto auto minmax(0,1fr) !important;
-      height:100dvh; min-height:620px;
-      overflow:hidden;
+      grid-template-columns:minmax(0,1fr) !important;
+      grid-template-rows:auto auto auto auto !important;
+      height:auto; min-height:100vh;
+      overflow:auto;
       padding-top:clamp(44px,5vh,60px);
     }
-    body{ overflow:hidden; height:100%; min-height:100%; }
+    body{ overflow:auto; height:auto; min-height:100vh; }
     .ap-band, .ap-rail{ grid-column:1 / -1 }
     .ap-rail{
       grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-      max-height:148px; overflow:hidden;
+      max-height:none; overflow:visible;
     }
-    .browser-frame{ height:100%; min-height:0; overflow:hidden; }
+    .browser-frame{ height:clamp(560px,78vh,820px); overflow:hidden; }
     /* dock is in-flow as a bottom section — no override needed */
   }
   /* Very wide desktop (≥1600px): nudge chat even larger */
-  @media (max-width:900px){
+  @media (max-width:1279px), (max-height:760px){
     .ap-rail{
       grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)) !important;
       max-height:none;
@@ -1742,96 +1694,22 @@
     z-index:5;
   }
   .chat-dock .input-row{max-width:640px;margin:0 auto;width:100%;justify-content:center}
-  .chat-dock .history-bar{max-width:780px;margin:0 auto;width:100%;justify-content:center}
+  .chat-dock .history-bar{max-width:640px;margin:0 auto;width:100%;justify-content:center}
   /* .browser-frame.active-chat .chat-dock — no override needed; dock is always in-flow at bottom */
   .chat-dock .input-row{margin:0;width:100%;box-shadow:0 10px 26px rgba(0,0,0,.35)}
-  #aria-v04-inline{display:inline-flex!important;gap:6px!important;margin-right:0!important;align-items:center;flex-wrap:nowrap;justify-content:center}
-  #aria-v04-end-btn,#aria-v04-callback-btn{
-    border-radius:7px!important;padding:6px 10px!important;font-size:9px!important;letter-spacing:.2em!important;
-  }
-  .history-bar #ariaHandoffBtn,
-  .history-bar #ariaLeadBtn{
-    position:static!important;bottom:auto!important;right:auto!important;z-index:auto!important;
-    display:inline-flex!important;align-items:center!important;gap:6px!important;margin:0!important;
-    padding:6px 10px!important;border-radius:7px!important;box-shadow:none!important;transform:none!important;
-    font-family:var(--mono)!important;font-size:9px!important;letter-spacing:.22em!important;
-    line-height:1!important;text-transform:uppercase!important;min-height:28px!important;
-  }
-  .history-bar #ariaHandoffBtn{
-    order:-20;background:rgba(74,222,128,.08)!important;border:1px solid rgba(74,222,128,.45)!important;
-    color:#4ade80!important;backdrop-filter:blur(8px)!important;
-  }
-  .history-bar #aria-v04-inline{order:-10}
-  .history-bar .history-toggle{order:0}
-  .history-bar .history-clear{order:10}
-  .history-bar #ariaLeadBtn{
-    order:20;background:linear-gradient(135deg,rgba(197,160,89,.22),rgba(241,220,167,.16))!important;
-    border:1px solid rgba(197,160,89,.55)!important;color:var(--gold-bright)!important;
-  }
+  #aria-v04-inline{display:inline-flex!important;gap:8px!important;margin-right:0!important;align-items:center;flex-wrap:wrap;justify-content:center}
+  #aria-v04-end-btn,#aria-v04-callback-btn{border-radius:7px!important}
   @media (max-width:900px){
-    .app{grid-template-areas:"band" "chat" "rail" "right"}
-    .ap-band{grid-area:band;padding:10px 12px}
-    .left{grid-area:chat}
-    .ap-rail{grid-area:rail}
-    .right{grid-area:right}
     .chat-dock{padding:12px 12px}
-    .chat-dock .history-bar{max-width:640px}
     .ap-rail{grid-template-columns:1fr;max-height:none;overflow:visible}
     .ap-card{padding:12px}
-    .ap-band-quote{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .ap-tag-row{max-height:68px;overflow:hidden}
   }
   @media (max-width:520px){
-    .pulse-screen{min-height:124px}
-    .pulse-slide{grid-template-columns:64px minmax(0,1fr)}
-    .ap-band-title{font-size:12px}
-    .chat-dock{padding:10px 8px}
-    .chat-dock .history-bar{gap:6px;max-width:100%}
-    #aria-v04-inline{width:auto}
-    #aria-v04-end-btn,#aria-v04-callback-btn,
-    .history-bar #ariaHandoffBtn,
-    .history-bar #ariaLeadBtn{
-      padding:6px 8px!important;font-size:8px!important;letter-spacing:.14em!important;
-    }
-    .browser-body{padding-bottom:8px}
+    .pulse-grid{grid-template-columns:1fr}
   }
   @media (min-width:901px){
     #apLayerRows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
     .ap-card:nth-child(3){padding-bottom:10px}
-  }
-  @media (min-width:901px) and (max-height:860px){
-    html,body{height:100%;overflow:hidden}
-    .app{
-      grid-template-columns:minmax(0,1.35fr) minmax(300px,.9fr) !important;
-      grid-template-rows:auto auto minmax(0,1fr) !important;
-      height:100dvh;
-      min-height:0;
-      overflow:hidden;
-      padding:42px 12px 12px;
-      gap:10px;
-    }
-    .left,.right{grid-column:auto;min-height:0;height:auto;max-height:none}
-    .left{overflow:hidden}
-    .right{overflow:auto;padding:12px}
-    .ap-band,.ap-rail{grid-column:1 / -1}
-    .ap-band{padding:8px 12px;border-radius:12px}
-    .ap-band-quote{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:5px}
-    .ap-tag-row{max-height:24px;overflow:hidden;margin-top:6px}
-    .ap-rail{grid-template-columns:minmax(180px,.75fr) minmax(220px,.85fr) minmax(300px,1.4fr) !important;gap:10px;max-height:128px;overflow:hidden}
-    .ap-card{padding:10px 12px}
-    .ap-card-head{margin-bottom:6px}
-    .ap-stage-text{margin:4px 0 8px}
-    .ap-fw-cell{min-width:28px;padding:4px 3px}
-    .ap-layer-row{padding:1px 0}
-    .browser-frame{height:100%;min-height:0;padding:10px 12px 0}
-    .browser-bar{margin-bottom:8px}
-    .browser-body{padding:10px 6px 10px}
-    .chat-dock{padding:10px 12px}
-    #rightDefault{display:flex!important;flex-direction:column;min-height:0}
-  }
-  @media (min-width:901px) and (max-height:700px){
-    .ap-card:nth-child(2){display:none}
-    .ap-rail{grid-template-columns:minmax(220px,.8fr) minmax(340px,1.2fr) !important}
   }
 </style>
 
@@ -2082,49 +1960,22 @@
 
       <div class="it-pulse" id="itPulsePanel">
         <div class="status-head"><span class="led green"></span><span>GLOBAL IT PULSE</span></div>
-        <div class="pulse-tv" aria-label="Global IT Pulse elevator news screen">
-          <div class="pulse-screen" aria-live="off">
-            <article class="pulse-slide is-active">
-              <div class="pulse-video" data-mark="WORLD"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
-              <div>
-                <div class="pulse-kicker">World IT brief</div>
-                <div class="pulse-headline">Banks tighten AI risk controls</div>
-                <div class="pulse-summary">Regulated teams are moving from AI hype to evidence, controls, and incident playbooks.</div>
-              </div>
-            </article>
-            <article class="pulse-slide">
-              <div class="pulse-video cyber" data-mark="CYBER"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
-              <div>
-                <div class="pulse-kicker">Security desk</div>
-                <div class="pulse-headline">AI app access is now a board-level issue</div>
-                <div class="pulse-summary">The practical ask: inventory tools, lock down data paths, and watch for unauthorized automation.</div>
-              </div>
-            </article>
-            <article class="pulse-slide">
-              <div class="pulse-video edge" data-mark="EDGE"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
-              <div>
-                <div class="pulse-kicker">Device watch</div>
-                <div class="pulse-headline">AI moves closer to laptops</div>
-                <div class="pulse-summary">More work can happen on-device, which makes endpoint policy and support readiness matter more.</div>
-              </div>
-            </article>
-            <article class="pulse-slide">
-              <div class="pulse-video ops" data-mark="FACT"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
-              <div>
-                <div class="pulse-kicker">IT fact</div>
-                <div class="pulse-headline">The first webcam watched a coffee pot</div>
-                <div class="pulse-summary">A tiny office annoyance became a famous networked camera story. Support history is wonderfully weird.</div>
-              </div>
-            </article>
-          </div>
-          <div class="pulse-footer">
-            <div class="pulse-ticker"><span>Now showing: AI risk controls - endpoint readiness - cyber hygiene - support trivia - </span></div>
-            <div class="pulse-dots" aria-label="Global IT Pulse slides">
-              <button class="pulse-dot is-active" type="button" aria-label="Show world IT brief"></button>
-              <button class="pulse-dot" type="button" aria-label="Show security desk"></button>
-              <button class="pulse-dot" type="button" aria-label="Show device watch"></button>
-              <button class="pulse-dot" type="button" aria-label="Show IT fact"></button>
-            </div>
+        <div class="pulse-grid">
+          <a class="pulse-card" href="https://www.investing.com/news/economy-news/ecb-to-ask-banks-for-targeted-measures-to-counter-ai-risk-4723629" target="_blank" rel="noopener">
+            <div class="pulse-thumb pulse-bank" data-mark="ECB"></div>
+            <div class="pulse-copy"><div class="pulse-tag">Jun 3 - AI risk</div><div class="pulse-title">European banks pushed toward practical AI defense measures.</div><div class="pulse-meta">Reuters</div></div>
+          </a>
+          <a class="pulse-card" href="https://www.gartner.com/en/newsroom/press-releases/2026-06-02-gartner-identifies-four-critical-threats-requiring-urgent-improvements-from-cybersecurity-leaders" target="_blank" rel="noopener">
+            <div class="pulse-thumb pulse-cyber" data-mark="SEC"></div>
+            <div class="pulse-copy"><div class="pulse-tag">Jun 2 - cyber</div><div class="pulse-title">AI app compromise flagged as a critical enterprise threat.</div><div class="pulse-meta">Gartner</div></div>
+          </a>
+          <a class="pulse-card" href="https://ca.investing.com/news/stock-market-news/nvidia-launches-new-chip-to-bring-ai-directly-to-personal-computers-4667868" target="_blank" rel="noopener">
+            <div class="pulse-thumb pulse-chip" data-mark="AI PC"></div>
+            <div class="pulse-copy"><div class="pulse-tag">Jun 1 - devices</div><div class="pulse-title">AI agents move closer to laptops and desktops, not only cloud.</div><div class="pulse-meta">Reuters</div></div>
+          </a>
+          <div class="pulse-card" role="group" aria-label="Interesting IT fact">
+            <div class="pulse-thumb pulse-fact" data-mark="FACT"></div>
+            <div class="pulse-copy"><div class="pulse-tag">IT fact</div><div class="pulse-title">The first webcam watched a coffee pot so researchers avoided empty trips.</div><div class="pulse-meta">Cambridge lore</div></div>
           </div>
         </div>
       </div>
@@ -2134,42 +1985,81 @@
         <div class="status-text" id="statusText">All systems are operational, no local end issues I have access to were detected.</div>
       </div>
 
-      <div class="conversion-panel" id="conversionPanel">
-        <div class="status-head"><span class="led amber"></span><span>AI TIER + RIGHT PATH</span></div>
-        <div class="path-tier-strip" aria-label="AI support tiers">
-          <div class="path-tier-pill"><strong>L1</strong><span>Self-serve</span></div>
-          <div class="path-tier-pill"><strong>L2</strong><span>Ops assist</span></div>
-          <div class="path-tier-pill"><strong>L3</strong><span>Expert handoff</span></div>
+      <div class="sla-panel" id="slaPanel">
+        <div class="status-head"><span class="led green"></span><span>ARIA DEMO OUTCOMES</span></div>
+        <div class="sla-grid">
+          <div class="sla-cell"><div class="v">11.4s</div><div class="k">Guided step</div></div>
+          <div class="sla-cell"><div class="v">Ready</div><div class="k">Demo status</div></div>
+          <div class="sla-cell"><div class="v">8</div><div class="k">Support routes</div></div>
+          <div class="sla-cell"><div class="v">72</div><div class="k">Verified KBs</div></div>
         </div>
-        <button class="conversion-toggle" type="button" aria-expanded="false" aria-controls="conversionOptions">
-          <span>Choose right path</span><span class="hint">Click</span>
-        </button>
-        <div class="conversion-grid" id="conversionOptions" hidden>
-          <a class="conversion-card featured" href="/start-here.html" aria-label="Open Start Here guide for all deployment paths">
-            <span class="conversion-index">01</span>
-            <span class="conversion-body"><span class="conversion-top">Guide / All paths</span><span class="conversion-title">Safest first move</span></span>
-            <span class="conversion-cta">Open</span>
+      </div>
+
+      <div class="conversion-panel" id="conversionPanel">
+        <div class="status-head"><span class="led amber"></span><span>DEPLOYMENT PATHS</span></div>
+        <div class="conversion-sub">When the ARIA demo proves the concept, move into one scoped next step instead of a broad undefined rollout. The shared guide keeps scoping, audit, and pack-first buyers on the right path.</div>
+        <div class="conversion-grid">
+          <a class="conversion-card" href="/start-here.html">
+            <div class="conversion-top"><span>Guide</span><span>All paths</span></div>
+            <div class="conversion-title">Choose the safest first move</div>
+            <div class="conversion-copy">Open the shared Start Here guide when the buyer likes ARIA but still needs the clearest first step between scoping, workflow mapping, or a proof-first pack.</div>
+            <div class="conversion-cta">Open start guide <span>&rarr;</span></div>
           </a>
-          <a class="conversion-card" href="/product.html?id=gl-helpdesk-blueprint" aria-label="Open AI Help Desk Automation Blueprint">
-            <span class="conversion-index">02</span>
-            <span class="conversion-body"><span class="conversion-top">Blueprint</span><span class="conversion-title">L1 noise first</span></span>
-            <span class="conversion-cta">View</span>
+          <a class="conversion-card" href="/product.html?id=gl-helpdesk-blueprint">
+            <div class="conversion-top"><span>Blueprint</span><span>L1 noise first</span></div>
+            <div class="conversion-title">Reduce repetitive ticket load</div>
+            <div class="conversion-copy">Start with the AI Help Desk Automation Blueprint when the team needs a repeatable internal model before buying live coverage.</div>
+            <div class="conversion-cta">Open blueprint <span>&rarr;</span></div>
           </a>
-          <a class="conversion-card" href="/?contact=1&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Audit%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AWorkflow%20or%20handoff%20causing%20the%20most%20friction%3A%0ATools%20used%20today%3A%0AWhat%20a%20good%20first%20pilot%20would%20look%20like%3A" aria-label="Stage AI Workflow Audit request">
-            <span class="conversion-index">03</span>
-            <span class="conversion-body"><span class="conversion-top">Audit</span><span class="conversion-title">Scope first</span></span>
-            <span class="conversion-cta">Stage</span>
+          <a class="conversion-card" href="/book.html?lane=workflow-proof&amp;source=aria-conversion-grid&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Audit%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AWorkflow%20or%20handoff%20causing%20the%20most%20friction%3A%0ATools%20used%20today%3A%0AWhat%20a%20good%20first%20pilot%20would%20look%20like%3A">
+            <div class="conversion-top"><span>Audit</span><span>Scope first</span></div>
+            <div class="conversion-title">Find the best first AI workflow</div>
+            <div class="conversion-copy">Use the AI Workflow Audit when the problem is broader than IT support and the buyer needs one high-value workflow mapped before implementation.</div>
+            <div class="conversion-cta">Stage audit request <span>&rarr;</span></div>
           </a>
-          <a class="conversion-card" href="/?contact=1&amp;subject=Request%20Remote%20L1-L3%20Overflow%20Support%20Pilot&amp;desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20queue%20or%20support%20pressure%3A%0ATools%20used%20today%3A%0AIssue%20types%20safe%20to%20delegate%20first%3A%0AWhat%20a%20successful%20two-week%20pilot%20would%20look%20like%3A" aria-label="Stage Remote L1-L3 Overflow Support Pilot">
-            <span class="conversion-index">04</span>
-            <span class="conversion-body"><span class="conversion-top">Pilot</span><span class="conversion-title">Coverage now</span></span>
-            <span class="conversion-cta">Stage</span>
+          <a class="conversion-card" href="/book.html?lane=hybrid-support&amp;source=aria-conversion-grid&amp;subject=Request%20Remote%20L1-L3%20Overflow%20Support%20Pilot&amp;desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20queue%20or%20support%20pressure%3A%0ATools%20used%20today%3A%0AIssue%20types%20safe%20to%20delegate%20first%3A%0AWhat%20a%20successful%20two-week%20pilot%20would%20look%20like%3A">
+            <div class="conversion-top"><span>Pilot</span><span>Coverage now</span></div>
+            <div class="conversion-title">Stage overflow support coverage</div>
+            <div class="conversion-copy">Use the overflow pilot when the queue is already heavy and the team needs scoped live triage, M365 support, and cleaner escalation notes now.</div>
+            <div class="conversion-cta">Stage overflow pilot <span>&rarr;</span></div>
           </a>
-          <a class="conversion-card" href="/downloads/library/monthly-ai-support-plan-preview.html" aria-label="Preview Monthly AI Support Plan">
-            <span class="conversion-index">05</span>
-            <span class="conversion-body"><span class="conversion-top">Retainer</span><span class="conversion-title">Keep improving</span></span>
-            <span class="conversion-cta">Preview</span>
+          <a class="conversion-card" href="/downloads/library/monthly-ai-support-plan-preview.html">
+            <div class="conversion-top"><span>Retainer</span><span>Keep improving</span></div>
+            <div class="conversion-title">Keep ARIA useful every month</div>
+            <div class="conversion-copy">Use the Monthly AI Support Plan when the first ARIA workflow, KB, or prompt system is already live but nobody owns the cleanup, updates, QA, or next-step backlog.</div>
+            <div class="conversion-cta">Preview monthly plan <span>&rarr;</span></div>
           </a>
+          <a class="conversion-card" href="/downloads/library/small-business-ai-agent-setup-preview.html">
+            <div class="conversion-top"><span>Setup</span><span>Front door first</span></div>
+            <div class="conversion-title">Turn repeated questions into clean intake</div>
+            <div class="conversion-copy">Use the Small Business AI Agent Setup lane when the first win is a bounded FAQ, booking, quote-prep, or intake assistant with a visible human handoff.</div>
+            <div class="conversion-cta">Preview agent setup <span>&rarr;</span></div>
+          </a>
+          <a class="conversion-card" href="/downloads/library/ai-readable-it-support-kb-pack-preview.html">
+            <div class="conversion-top"><span>KB lane</span><span>Humans + AI</span></div>
+            <div class="conversion-title">Fix support knowledge before scaling ARIA</div>
+            <div class="conversion-copy">Use the AI-readable support-knowledge proof when the blocker is scattered notes, SOPs, and support articles that people and future AI systems cannot trust yet.</div>
+            <div class="conversion-cta">Open KB proof asset <span>&rarr;</span></div>
+          </a>
+        </div>
+        <div class="conversion-card conversion-proof">
+          <div class="conversion-top"><span>Proof stack</span><span>Support-knowledge fast path</span></div>
+          <div class="conversion-title">Move from ARIA demo to a cleaner support brain</div>
+          <div class="conversion-copy">When the buyer already sees ARIA fit but needs proof before a scoped build, keep the next step explicit: show the AI-readable structure, inspect the support operating model, then stage the knowledge-base build with the discovery prompt already framed.</div>
+          <div class="conversion-proof-steps">
+            <a class="conversion-step" href="/downloads/library/ai-readable-it-support-kb-pack-preview.html">
+              <strong>1 · Open KB preview</strong>
+              <span>Show the article structure, escalation fields, and AI-readable format first.</span>
+            </a>
+            <a class="conversion-step" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">
+              <strong>2 · Preview support blueprint</strong>
+              <span>Inspect the ticket flow, escalation discipline, and ARIA-ready support posture behind the pack.</span>
+            </a>
+            <a class="conversion-step" href="/?contact=1&amp;subject=Request%20AI%20Knowledge%20Base%20Build&amp;desc=I%20want%20to%20stage%20an%20AI%20Knowledge%20Base%20Build%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20support%20scope%3A%0AWhere%20support%20knowledge%20lives%20today%3A%0ABiggest%20knowledge%20gaps%20or%20inconsistencies%3A%0AWhat%20needs%20to%20be%20safe%20for%20human%20and%20AI%20use%3A%0AWhat%20a%20cleaner%20KB%20would%20look%20like%20first%3A">
+              <strong>3 · Stage KB build</strong>
+              <span>Hand Ahmad a preframed AI Knowledge Base Build request instead of a vague follow-up.</span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -2654,52 +2544,6 @@ function tweenCounters(){
 setInterval(updateTargets, 2200);
 setInterval(tweenCounters, 80);
 updateTargets();
-
-/* ============== GLOBAL IT PULSE TV ROTATOR ============== */
-(function initPulseTv(){
-  const slides = Array.from(document.querySelectorAll('.pulse-slide'));
-  const dots = Array.from(document.querySelectorAll('.pulse-dot'));
-  if (!slides.length || !dots.length) return;
-  let active = 0;
-  let timer = null;
-
-  function showPulseSlide(index){
-    active = (index + slides.length) % slides.length;
-    slides.forEach((slide, i) => slide.classList.toggle('is-active', i === active));
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('is-active', i === active);
-      dot.setAttribute('aria-pressed', i === active ? 'true' : 'false');
-    });
-  }
-
-  function startPulseTimer(){
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    clearInterval(timer);
-    timer = setInterval(() => showPulseSlide(active + 1), 5200);
-  }
-
-  dots.forEach((dot, i) => {
-    dot.addEventListener('click', () => {
-      showPulseSlide(i);
-      startPulseTimer();
-    });
-  });
-  showPulseSlide(0);
-  startPulseTimer();
-})();
-
-/* ============== DEPLOYMENT PATH DRAWER ============== */
-(function initDeploymentDrawer(){
-  const toggle = document.querySelector('.conversion-toggle');
-  const drawer = document.getElementById('conversionOptions');
-  if (!toggle || !drawer) return;
-
-  toggle.addEventListener('click', () => {
-    const nextOpen = toggle.getAttribute('aria-expanded') !== 'true';
-    toggle.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
-    drawer.hidden = !nextOpen;
-  });
-})();
 
 /* ============== INSIGHTS ROTATOR ============== */
 const insights = [
@@ -3826,32 +3670,55 @@ function kbCard(article){
 }
 
 /* ============== INTENT CLASSIFIER ============== */
+var INDUSTRY_APP_HINTS = "epic|cerner|meditech|allscripts|athenahealth|nextgen|ecw|emr|ehr|patient portal|dragon medical|mychart|clinical workstation|bloomberg terminal|reuters eikon|factset|murex|calypso|front arena|sap|oracle financials|sas|tradeweb|marketaxess|fix gateway|reuters trading|bloomberg messenger|salesforce financial|imanage|netdocuments|worldox|clio|mylegalpractice|lexisnexis|westlaw|time matters|prolaw|tabs3|elite 3e|intapp|cac card|piv card|sipr|niprnet|sf86|dod cac reader|smartcard|ahce|vits|rms|tigris|sap mes|sap erp|siemens nx|autodesk inventor|solidworks|plm|dassault|mastercam|plc|scada|wonderware|ignition|rockwell|pos|shopify pos|square pos|clover|lightspeed|vend|toast|aloha pos|revel|heartland|catapult|opera pms|protel|mews|cloudbeds|hotelogix|quickbooks pos|silverware|oracle micros|yardi|appfolio|mri software|realpage|propertyware|rentmanager|dotloop|docusign|salesforce real estate|mls|procore|autodesk construction cloud|plangrid|bluebeam revu|primavera|revit|autocad|sage 300 cre|viewpoint vista|sketchup|osi pi|aveva pi|rockwell factorytalk|ge cimplicity|siemens wincc|schneider citect|sap pm|fleetmatics|geotab|samsara|verizon connect|mcleod loadmaster|tmw|dat|truckmate|wms|manhattan wms|veeva vault|oracle clinical|medidata rave|inform|cdms|lims|sample tracker|rave edc|spotfire|canvas|blackboard|moodle|d2l brightspace|schoology|google classroom|clever|classlink|powerschool|infinite campus|synergy|aspen|skyward|salesforce npsp|blackbaud raisers edge|blackbaud crm|donorperfect|bloomerang|little green light|quickbooks nonprofit|classy|givelively|networkforgood|climate fieldview|agleader sms|john deere operations center|trimble ag|farm logs|granular|agworld|conservis|guidewire|duck creek|vlocity|salesforce insurance|applied epic|aim|xanadu|sapiens|workday|ultipro|adp workforce|bamboohr|greenhouse|lever|linkedin recruiter|sap successfactors|peoplesoft|dayforce|cad system|aegis cad|tritech|intergraph|motorola cad|priority dispatch|pulsepoint|prodigy|mobile data terminal|jpas|difms|dts|jtims|mark logic|accumulo|palantir|distributed common ground|dcgs|catia|windchill|enovia|smarteam|ansys|simulia|star-ccm|dealersocket|reynolds and reynolds|cdk drive|autosoft|dominion dms|vinsolutions|xtime|cox automotive|surpac|vulcan|minesight|datamine|leapfrog geo|jigsaw|wenco|modular mining|aspen plus|chemcad|pro ii|hysys|aspen tech|sap process|simatic pcs7|delta v|plex erp|sage 100|aptean|sap food|infor m3|navision food|dynaway|hudl|dartfish|sportscode|synergy sports|statcast|garmin connect|strava for business|training peaks|firstbeat|artsystems|artwork archive|collectorsystems|tessitura|choice ticketing|spektrix|blackbaud altru|siriusware|planning center|breeze chms|elexio|servant keeper|realm|aplos|txt2give|easy tithe".split("|");
+function industryIntentOverride(q){
+  if (!INDUSTRY_APP_HINTS.some(function(app){ return industryAppMatches(q, app); })) return null;
+  if (/\b(login failed|wont login|won't login|can'?t login|cant login|password|cac certificate|smart card|wont read smart card)\b/.test(q)) return 'password';
+  if (/\b(print|printer)\b/.test(q)) return 'printer';
+  return 'default';
+}
+function industryAppMatches(q, app){
+  var escaped = app.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp('(^|[^a-z0-9])' + escaped + '([^a-z0-9]|$)').test(q);
+}
+
 function classify(text){
   // pre-normalize: strip periods inside multi-letter abbreviations ("v.p.n." → "vpn")
   let q = text.toLowerCase().replace(/\b([a-z])\.\s*([a-z])\.\s*([a-z])\.\s*/g, '$1$2$3 ');
+  q = q.replace(/\bwi\s+fi\b/g, 'wifi').replace(/\bone[-\s]+drive\b/g, 'onedrive').replace(/\bon drive\b/g, 'onedrive').replace(/\bcantt\b/g, 'cant');
   // === MOST-SPECIFIC FIRST (these beat broader matches like 'mail'/'teams') ===
   // security beats mail (phishing email → security, not mail)
-  // MFA-specific catches BEFORE general security (so 'mfa fatigue' / 'too many mfa' route to MFA, not security)
-  if (/\b(mfa fatigue|mfa bombing|too many mfa|too many mfa prompts|50 mfa|spam mfa|mfa loop)\b/.test(q)) return 'kb:mfa';
-  if (/(scam|phishing|suspicious (email|link|file|attachment|sign-?in|activity)|malware|ransomware|trojan|virus warning|account (compromised|hacked|hijack)|impossible travel|sign[- ]in from (russia|china|north korea|iran)|clicked.* link|breached account|hibp|haveibeenpwned|files? (are )?encrypted|lockbit|wannacry|conti|ryuk|crypto.?locker|someone has access|unauthorized access|suspicious activity|account takeover)/.test(q)) return 'kb:security';
+  if (/\b(mfa bombing|50 mfa pushes?|mfa push bombing|mfa bombed)\b/.test(q)) return 'kb:security';
+  // MFA usability issues stay in MFA. Active push-abuse language routes to security above.
+  if (/\b(mfa fatigue|too many mfa|too many mfa prompts|spam mfa|mfa loop)\b/.test(q)) return 'kb:mfa';
+  if (/(scam|phishing|suspicious (email|emial|eamil|link|file|attachment|sign-?in|activity)|\bmalware\b|ransomware|trojan|virus warning|account (compromised|hacked|hijack)|impossible travel|sign[- ]in from (russia|china|north korea|iran)|clicked.* link|breached account|hibp|haveibeenpwned|files? (are )?encrypted|lockbit|wannacry|conti|ryuk|crypto.?locker|someone has access|unauthorized access|suspicious activity|account takeover)/.test(q)) return 'kb:security';
   // webcam beats teams (webcam frozen in teams → webcam)
   if (/(camera|webcam|video call|logitech c\d+|logitech brio|brio webcam|razer kiyo|elgato facecam|opal c1)/.test(q)) return 'kb:webcam';
   // bitlocker is unambiguous
+  if (/\b(help me find|find (the |my )?recovery key|stuck.*recovery key)\b/.test(q)) return 'escalation';
   if (/(bitlocker)/.test(q) || (/recovery key/.test(q) && !/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q))) return 'kb:bitlocker';
   // out-of-office is unambiguous
-  if (/(out of office|ooo|automatic repl|auto.?reply|auto.?responder|vacation|away message)/.test(q)) return 'outlook_ooo';
+  if (/(out of office|\booo\b|automatic repl|auto.?reply|auto.?responder|vacation|away message)/.test(q)) return 'outlook_ooo';
   // Outlook launch/open failures should route into the mail diagnostic path, not generic fallback
-  if (/\boutlook\b/.test(q) && /\b((won'?t|wont|will not|cannot|can.?t|isn'?t|is not|not) (open|opening|launch|launching|start|starting|run|running)|crash|crashes|crashing|hang|hangs|hanging|freeze|freezes|freezing|frozen|not responding)\b/.test(q)) return 'mail';
+  if (/\b(outlook|outlo+o?k|outlok|outlokk|outluk|outlk)\b/.test(q) && /\b((won'?t|won ?t|wont|will not|cannot|can.?t|can ?t|isn'?t|is not|not) (open|opening|launch|launching|start|starting|run|running)|crash|crashes|crashing|hang|hangs|hanging|freeze|freezes|freezing|frozen|not responding)\b/.test(q)) return 'mail';
+  if (/\b(team'?s|teamz|teems?|teams|microsoft teams|ms teams)\b/.test(q)) return 'kb:teams';
+  if (/\b(wfi|wifii)\b/.test(q)) return 'wifi';
+  if (/\b(locked out of (my )?(email|e-mail|emial|eamil|outlook|outlo+o?k|outlok|outlokk|outluk)|reset (my )?(password|passwrd|pasword|passwd|passw0rd|pasworld) for (outlook|outlo+o?k|outlok|outlokk|outluk|office|email|e-mail|emial|eamil)|(email|e-mail|emial|eamil) password reset|(outlook|outlo+o?k|outlok|outlokk|outluk) password reset)\b/.test(q)) return 'password';
 
   // OneDrive password-prompt BEFORE password generic
   if (/onedrive/.test(q)) return 'kb:onedrive';
+  if (/(onboarding|offboarding|byod|new hire|employee leaving|bring your own device|deactivate (user|account)|provision user|new starter|departing employee|leaver process|joiner process|need to deactivate)/.test(q)) return 'kb:onboarding';
+  if (/\bazure ad\b/.test(q)) return 'kb:m365';
   // AD-specific qualifiers BEFORE password (so 'ad password reset' hits AD)
-  if (/\b(active directory|ad lockout|domain account|domain controller|kerberos|krb5)\b/.test(q) || /\bad\b\s+(account|password|user|lockout|sync|replication|reset|unlock)/.test(q) || /\b(account|user|password) (locked|unlock|reset)\s+(in (ad|active directory)|in domain|domain side)\b/.test(q) || /\block(ed)? out in domain\b/.test(q) || /\bcan'?t unlock (ad|domain) account\b/.test(q)) return 'kb:active-directory';
+  if (/\b(active directory|ad lockout|domain account|domain controller|kerberos|krb5)\b/.test(q) || /\bad\b\s+(account|password|passwrd|pasword|passw0rd|pasworld|passwd|user|lockout|sync|replication|reset|unlock)/.test(q) || /\b(account|user|password) (locked|unlock|reset)\s+(in (ad|active directory)|in domain|domain side)\b/.test(q) || /\block(ed)? out in domain\b/.test(q) || /\bcan'?t unlock (ad|domain) account\b/.test(q)) return 'kb:active-directory';
+  if (/\bdhcp not assigning ip\b/.test(q)) return 'wifi';
+  var industryOverride = industryIntentOverride(q);
+  if (industryOverride) return industryOverride;
 
   // === CORE TECHNICAL ===
-  if (/(mail|email|inbox|outlook|outlok|outloook|outlk|sent items|drafts? folder|spam filter|junk folder|email attachment|attachments? not opening|email signature|autocomplete|exchange|mailbox|smtp|imap|pop3|exchange online)/.test(q)) return /out of office|ooo|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';
+  if (/(mail|email|e-mail|emial|eamil|inbox|outlook|outlok|outloook|outlokk|outluk|outlk|sent items|drafts? folder|spam filter|junk folder|email attachment|attachments? not opening|email signature|autocomplete|exchange|mailbox|smtp|imap|pop3|exchange online)/.test(q)) return /out of office|\booo\b|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';
   if (/vpn|tunnel|globalprotect|anyconnect|cisco (vpn|anyconnect)|fortinet|pulse secure|pulsesecure|openvpn|wireguard|remote access|forticlient/.test(q)) return 'vpn';
-  if (/(password|pasword|passwd|passw0rd|pasworld|locked out|sign[- ]in|sign[- ]on|log[- ]in|login|logon|reset.*(password|login)|can'?t (log|sign|get) in|wont? (let me )?(log|sign) in|wont? log in|cant log in|can'?t log on|invalid (login|sign[- ]?in)|account locked( (out|after))?)/.test(q) && !/\b(wifi|wi-fi|wireless|router|modem)\b/.test(q)) return 'password';
+  if (/(password|passwrd|pasword|passwd|passw0rd|pasworld|locked out|sign[- ]in|sign[- ]on|log[- ]in|login|logon|reset.*(password|passwrd|login)|can'?t (log|sign|get) in|wont? (let me )?(log|sign) in|wont? log in|cant log in|can'?t log on|invalid (login|sign[- ]?in)|account locked( (out|after))?)/.test(q) && !/\b(wifi|wi-fi|wireless|router|modem)\b/.test(q)) return 'password';
   // Bluetooth wireless audio before generic wifi (so 'wireless headset cutting out' hits bluetooth)
   // Printer-specific BEFORE wifi (so 'network printer' hits printer not wifi)
   if (/\b(network printer|wifi printer|wireless printer)\b/.test(q) || /print/.test(q)) return 'printer';
@@ -3862,23 +3729,25 @@ function classify(text){
   if (/\b(network printer|wifi printer|wireless printer)\b/.test(q)) return 'printer';
 
   // === KB-ONLY TOPICS (single-article surface, no choice cards) ===
-  if (/(blue screen|bsod|stop error|wont boot|won'?t boot|spinning dots|stuck on boot|error 0x|0x000|bootloop|boot loop|keeps restarting|windows (won'?t|wont|will not) (start|boot|turn on)|windows update (broke|failed|failing|fails?)|cumulative update fail|feature update fail|servicing stack|startup repair loop|recovery mode loop|cannot activate windows|can'?t activate windows|windows activation (failed|issue))/.test(q)) return 'kb:windows';
-  if (/(onedrive|sync(ing)? files?|files? wont sync|files? won'?t sync|file wont? sync|sync conflict|share with me|shared file wont sync|sync error|selective sync|files? on demand|onedrive (icon|prompt|password|stuck|paused|setup|over quota))/.test(q)) return 'kb:onedrive';
-  if (/(teams|microsoft teams|ms teams|teams meeting|teams chat|teams channel|teams call|cant see channels|can'?t see channels|teams cache|teams notifications|teams external guest|channels?\s+(missing|gone|empty)|cant join meeting|can'?t join meeting)/.test(q)) return 'kb:teams';
+  if (/(blue screen|bsod|stop error|wont boot|won'?t boot|won ?t boot|won'?r boot|spinning dots|stuck on boot|error 0x|0x000|bootloop|boot loop|keeps restarting|windows (won'?t|won ?t|won'?r|wont|will not) (start|boot|turn on)|windows update (broke|failed|failing|fails?)|cumulative update fail|feature update fail|servicing stack|startup repair loop|recovery mode loop|cannot activate windows|can'?t activate windows|windows activation (failed|issue))/.test(q)) return 'kb:windows';
+  if (/(onedrive|sync(ing)? files?|files? wont sync|files? won'?t sync|files? won ?t sync|files? won'?r sync|file wont? sync|shared file won ?t sync|shared file won'?r sync|sync conflict|share with me|shared file wont sync|sync error|selective sync|files? on demand|onedrive (icon|prompt|password|stuck|paused|setup|over quota))/.test(q)) return 'kb:onedrive';
+  if (/(teams|microsoft teams|ms teams|teams meeting|teams chat|teams channel|teams call|cant see channels|can'?t see channels|can ?t see channels|can;t see channels|teams cache|teams notifications|teams external guest|channels?\s+(missing|gone|empty)|cant join meeting|can'?t join meeting)/.test(q)) return 'kb:teams';
   if (/(mfa|multi[- ]factor|two.?factor|2fa|authenticator|sms code|text code|verification code|otp code|one[- ]time code|sms (not |never )?(arriving|coming|came)|text (not |never )?(arriving|coming|came)|six[- ]digit code|6[- ]digit code|verification not)/.test(q)) return 'kb:mfa';
-  if (/(bluetooth|airpod|headphones?|headset|earbuds?|jabra|poly|plantronics|bose|sennheiser|sony wh|jbl|wireless headset|wireless earbud|headphone jack|headset jack|audio jack)/.test(q)) return 'kb:bluetooth';
+  if (/\b(headphone jack|headset jack|audio jack|wired headphones?)\b/.test(q)) return 'default';
+  if (/(bluetooth|airpod|headphones?|headset|earbuds?|jabra|poly|plantronics|bose|sennheiser|sony wh|jbl|wireless headset|wireless earbud)/.test(q)) return 'kb:bluetooth';
   if (/(usb|external drive|flash drive|external ssd|external hard drive|seagate|sandisk|wd (my passport|elements)|usb-c (port|hub)|thunderbolt port|sd card|micro sd|memory card)/.test(q)) return 'kb:usb';
+  if (/\b(edge|chrome|firefox|safari|brave|opera|browser)\b.*\b(slow|laggy|crash|crashed|crashing|cache|bookmarks?|favorites?|homepage|pop-ups?|download|sync|extension|won'?t open|broken)\b/.test(q)) return 'kb:browser';
   if (/(slow|laggy|sluggish|performance|high cpu|cpu usage|ram usage|memory usage|memory leak|disk 100|disk at 100|antimalware service|svchost (high|using)|fans? (spin|spinning)|overheat(ing)?|laptop hot|laggy machine|slow (startup|shutdown|after)|takes forever to (boot|open|load|start)|task manager shows high)/.test(q)) return 'kb:performance';
-  if (/(kernel panic|beach ball|mac (won'?t|wont) (boot|start|shut|turn)|macbook (won'?t|wont)|spinning beach ball|mac freezes|macos slow|mac stuck on apple|imac (won'?t|wont)|macos update fail)/.test(q)) return 'kb:macos';
-  if (/(dns|dhcp|ip address|ping (timeout|fail)|gateway unreachable|cannot resolve hostname|hostname not resolved|cant resolve hostname|can'?t resolve hostname|traceroute fail|tracert fail|route to host|arp issue|subnet mask|vlan|firewall (block|blocking)|port (closed|blocked)|can'?t reach internal|cannot reach internal|internal site (down|unreachable))/.test(q)) return 'kb:networking';
-  if (/(file share|ntfs|shared folder|access denied|permission denied|denied permission|no access to (folder|file|share)|group missing permissions|permissions reset|acl issue|share permission|cant open folder|can'?t open folder|user can'?t open|cannot access folder|folder access)/.test(q)) return 'kb:permissions';
-  if (/(active directory|\bad\b lockout|domain account locked|domain account|kerberos|krb5|ad authentication|ad replication|domain controller|dc replication)/.test(q)) return 'kb:active-directory';
-  if (/(intune|conditional access|azure ad|m365 license|license activation|e3 license|e5 license|f3 license|business basic|business standard|business premium|enterprise mobility|emm|emt|tenant settings|m365 admin center|microsoft 365 admin|aad|entra(\s+id)?|user has no license|license (expired|assignment|missing|removed|added)|no license assigned|need to add.*license|deactivate user|provision user|new hire (account|license))/.test(q)) return 'kb:m365';
-  // Onboarding BEFORE m365 (so 'deactivate user' routes here, not generic license)
+  if (/(kernel panic|beach ball|mac (won'?t|won ?t|won'?r|wont) (boot|start|shut|turn)|macbook (won'?t|won ?t|won'?r|wont)|spinning beach ball|mac freezes|macos slow|mac stuck on apple|imac (won'?t|won ?t|won'?r|wont)|macos update fail)/.test(q)) return 'kb:macos';
+  if (/(dns|dhcp|ip address|ping (timeout|fail)|gateway unreachable|cannot resolve hostname|hostname not resolved|cant resolve hostname|can'?t resolve hostname|can ?t resolve hostname|can;t resolve hostname|traceroute fail|tracert fail|route to host|arp issue|subnet mask|vlan|firewall (block|blocking)|port (closed|blocked)|can'?t reach internal|can ?t reach internal|can;t reach internal|cannot reach internal|internal site (down|unreachable))/.test(q)) return 'kb:networking';
+  if (/(file share|ntfs|shared folder|access denied|permission denied|denied permission|no access to (folder|file|share)|group missing permissions|permissions reset|acl issue|share permission|cant open folder|can'?t open folder|can ?t open folder|can;t open folder|user can'?t open|user can ?t open|user can;t open|cannot access folder|folder access)/.test(q)) return 'kb:permissions';
+  if (/(active directory|\bad\b lockout|domain account locked|domain account|kerberos|krb5|ad authentication|ad replication|domain controller|dc replication|\bad\b\s+(pasword|passw0rd|pasworld|passwd)\s+reset)/.test(q)) return 'kb:active-directory';
   if (/(onboarding|offboarding|byod|new hire|employee leaving|bring your own device|deactivate (user|account)|provision user|new starter|departing employee|leaver process|joiner process|need to deactivate)/.test(q)) return 'kb:onboarding';
+  if (/(intune|conditional access|azure ad|m365 license|license activation|e3 license|e5 license|f3 license|business basic|business standard|business premium|enterprise mobility|emm|emt|tenant settings|m365 admin center|microsoft 365 admin|aad|entra(\s+id)?|user has no license|license (expired|assignment|missing|removed|added)|no license assigned|need to add.*license|new hire (account|license))/.test(q)) return 'kb:m365';
   if (/\b(edge|chrome|firefox|safari|brave|opera|browser)\b/.test(q)) return 'kb:browser';
   // navigational
   if (/(ops|dashboard|operations|metrics)/.test(q)) return 'ops';
+  if (/\b(i'?m stuck|im stuck)\b/.test(q)) return 'escalation';
   // ESCALATION (catch before generic 'talk' / 'voice')
   if (/\b(talk to (it|live agent|agent|human|tech support|support|someone|a human|a person|a tech|a real person)|escalate|live agent|contact (it|support|tech)|i (want|need) (a |to talk to )?(human|person|real (person|human))|transfer me|connect me to|need a human|need to talk to (someone|a (person|human|tech)))\b/.test(q)) return 'escalation';
   if (/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';
@@ -4654,6 +4523,11 @@ function handleUserInput(text){
   const cleanText = normalizeInput(text);
   const q = cleanText;
 
+  // RUN 25 — remember the prior user message so the expert path can detect a topic switch
+  // (e.g. printer L1 → DNS L2) and drop stale context instead of staying stuck on the old topic.
+  const prevUserMessage = state.lastUserMessage || '';
+  state.lastUserMessage = cleanText;
+
   // BUG FIX 5: explicit cancel for any pending state
   if (/^(cancel|nevermind|never mind|forget it|stop|esc)$/.test(q)){
     if (state.pendingConfirm || state.pendingPivot || state.testQueue){
@@ -4980,7 +4854,27 @@ function handleUserInput(text){
       )), 200);
       return;
     }
-    // === LEARNING LOOP — queue unknown for IIS team to teach ARIA ===
+    // === RUN 25 — expert-domain rescue + technician handoff (before the generic learning loop) ===
+    // An IT-admin message (AD/GPO/DNS/virtualization/identity/remote-access) must never drop to the
+    // consumer-grade "no confident match" path — that's the instant-refund moment. Recognize the expert
+    // vocabulary and answer with a domain-aware first-3-checks; if it's genuinely unclassifiable, hand off
+    // to a human technician instead of a picker. (window.AriaNLUTier23 = /assets/aria-nlu-tier23.js.)
+    if (window.AriaNLUTier23){
+      const _nlu = window.AriaNLUTier23;
+      const expert = _nlu.detectExpertMode(cleanText);
+      if (expert.skipPicker){
+        // a clear topic switch (printer → DNS) drops the stale pivot/context before we answer the new domain
+        if (prevUserMessage && _nlu.isTopicSwitch(prevUserMessage, cleanText)) state.pendingPivot = null;
+        renderExpertResponse(text, expert);
+        return;
+      }
+      if (_nlu.shouldEscalateToTechnician('default', expert)){
+        renderTechnicianHandoff(text);
+        return;
+      }
+    }
+
+    // === LEARNING LOOP — queue unknown for IIS team to teach ARIA (fallback if the NLU module is absent) ===
     state.unknownQueries = state.unknownQueries || [];
     state.unknownQueries.push({ text, ts: Date.now() });
     const n = state.unknownQueries.length;
@@ -5112,6 +5006,61 @@ function handleEscalation(choice, ctx){
   } else {
     appendMessage(ariaBubble("Got it.", "I'll ping you the moment I find one.", `<div class="aria-text">Watching for the key. Meanwhile feel free to pick option 1 or 3.</div>`));
   }
+}
+
+// RUN 25 — open the existing "Talk to sales" capture modal, tagged with a lead-source and pre-filled with
+// the user's message, so an expert/low-confidence handoff flows through the proven aria-lead-capture pipeline.
+function openAriaLead(source, prefill){
+  window.__ariaLeadSource = source || '/aria';
+  const msg = document.getElementById('alm-msg');
+  if (msg && prefill && !msg.value) msg.value = prefill;
+  const modal = document.getElementById('ariaLeadModal');
+  if (modal) modal.classList.add('open');
+}
+
+// RUN 25 — domain-aware expert answer. Replaces the generic "no confident match" drop for AD/GPO/DNS/
+// virtualization/identity/remote-access messages with a credible first-3-checks + a human handoff. Every
+// string passes scrubPublicSurface() so no admin-internal term can reach the public chat (fc13223 invariant).
+function renderExpertResponse(userText, expert){
+  appendMessage(youBubble(userText));
+  state.lastIntent = 'expert';
+  const NLU = window.AriaNLUTier23;
+  const info = NLU.expertChecks(expert.domain);
+  const scrub = NLU.scrubPublicSurface;
+  const tierTag = expert.tier === 3 ? 'Deep IT' : 'IT infrastructure';
+  setTimeout(() => {
+    const checks = info.checks.map(c => `<li>${escapeHTML(scrub(c))}</li>`).join('');
+    const html = `
+      <div class="aria-text" style="margin-bottom:6px"><strong>${escapeHTML(scrub(info.label))}</strong> · ${escapeHTML(tierTag)}</div>
+      <div class="aria-text">Here's where a technician starts on this:</div>
+      <ul class="help-list">${checks}</ul>
+      <div class="aria-text" style="margin-top:8px">${escapeHTML(scrub(info.escalation))}</div>
+      <div class="esc-options" style="margin-top:10px">
+        <button class="esc-btn esc-urgent expert-cta"><div class="esc-num">&rarr;</div><div class="esc-body"><strong>Get a technician on this</strong><span>I'll capture the details — the team reaches out, usually same day.</span></div></button>
+      </div>`;
+    const node = appendMessage(ariaBubble("This is squarely IT infrastructure.", "I won't make you pick from a menu — here's the real first move:", html));
+    const btn = node && node.querySelector('.expert-cta');
+    if (btn) btn.addEventListener('click', () => openAriaLead(NLU.LOW_CONFIDENCE_SOURCE, userText));
+  }, 200);
+}
+
+// RUN 25 — low-confidence (no intent, no fuzzy match, no expert vocab) → professional technician handoff,
+// never the consumer-grade picker. Still queues the unknown internally so the IIS teach-loop keeps learning.
+function renderTechnicianHandoff(userText){
+  appendMessage(youBubble(userText));
+  state.unknownQueries = state.unknownQueries || [];
+  state.unknownQueries.push({ text: userText, ts: Date.now() });
+  const NLU = window.AriaNLUTier23;
+  setTimeout(() => {
+    const node = appendMessage(ariaBubble(
+      "This one needs a technician.",
+      "I'm capturing the full details for the team — add your contact and someone will reach out within your support window:",
+      `<div class="esc-options"><button class="esc-btn esc-urgent expert-cta"><div class="esc-num">&rarr;</div><div class="esc-body"><strong>Send this to the IIS team</strong><span>We'll review your message and get back to you &mdash; same day where possible.</span></div></button></div>
+       <div class="phone-cta"><span class="phone-label">Or call now:</span><a class="phone-num" href="tel:+16475813182">647-581-3182</a></div>`
+    ));
+    const btn = node && node.querySelector('.expert-cta');
+    if (btn) btn.addEventListener('click', () => openAriaLead(NLU.LOW_CONFIDENCE_SOURCE, userText));
+  }, 200);
 }
 
 function renderKBOnly(category, userText){
@@ -5372,7 +5321,7 @@ function looksLikeResolution(q){
   if (!t) return false;
 
   // Negation guard — if user expresses NEGATIVE state, this is NOT a resolution
-  var NEG = /\b(not|n['\u2019]?t|isn['\u2019]?t|wasn['\u2019]?t|aren['\u2019]?t|don['\u2019]?t|doesn['\u2019]?t|didn['\u2019]?t|cant|can['\u2019]?t|won['\u2019]?t|wouldn['\u2019]?t|couldn['\u2019]?t|never|nope|nah|negative|still\s+(broken|same|stuck|down|having|getting|happening|seeing|not|cant|can['\u2019]?t)|broke\s+again|came\s+back|happening\s+again|back\s+to\s+(square|broken)|worse|worst)\b/;
+  var NEG = /\b(not|n['\u2019]?t|isn['\u2019]?t|wasn['\u2019]?t|aren['\u2019]?t|don['\u2019]?t|doesn['\u2019]?t|didn['\u2019]?t|cant|can['\u2019]?t|won['\u2019]?t|wouldn['\u2019]?t|couldn['\u2019]?t|never|nope|nah|negative|no\s+longer\s+working|still\s+(broken|same|stuck|down|having|getting|happening|seeing|not|cant|can['\u2019]?t)|broke\s+again|came\s+back|happening\s+again|back\s+to\s+(square|broken)|worse|worst)\b/;
   if (NEG.test(t)) {
     // negation present, almost certainly not a resolution unless explicitly "no more issues" etc.
     if (!/no (more|longer) (issues?|problems?|errors?|broken)|no\s+(issue|problem|error)\s+now|nothing\s+broken|not\s+broken\s+anymore/.test(t)) {
@@ -5381,16 +5330,21 @@ function looksLikeResolution(q){
   }
 
   // Strong single-word positive signals
-  var POS_KEYWORDS = /\b(resolved?|solved?|solving|fixed|fixin|fixing|works?|worked|working|done|completed?|sorted|success(ful)?|perfect(ly)?|excellent|awesome|amazing|brilliant|fantastic|wonderful|cool|nice|sweet|sick|tight|smooth|clean|smashing|stellar|killer|lifesaver|slay|legit|fire|magic|magical|miracle|godsend|wizard|hero|legend|champ|champion|boss|guru|king|queen|mvp)\b/;
+  var POS_KEYWORDS = /\b(resolved?|solved?|solving|fixed|fixin|fixing|works?|worked|working|done|completed?|sorted|success(ful)?|perfect(ly)?|excellent|awesome|amazing|great|brilliant|fantastic|wonderful|cool|nice|sweet|sick|tight|smooth|clean|smashing|stellar|killer|lifesaver|slay|legit|fire|magic|magical|miracle|godsend|wizard|hero|legend|champ|champion|boss|guru|king|queen|mvp)\b/;
 
   // Strong multi-word positive phrases
-  var POS_PHRASES = /(all (good|set|sorted|done|fixed|right|cleared|clear|better|smooth|working)|that (did|fixed|worked|works|nailed|got|solved) it|that\s+was\s+it|problem (solved|fixed|gone|cleared|sorted)|issue (resolved|solved|fixed|gone|cleared|sorted)|good to go|back to normal|back (online|up|running)|up\s+and\s+running|fine now|ok(ay)? now|now (working|fine|good|fixed)|works (now|perfectly|great|fine|like a charm|like a champ)|fixed (now|it|the issue|the problem)|thanks?\s+(a\s+lot|so much|very much|alot|so|much)|much appreciated|appreciate (you|it|this|that|your help)|thank\s+you(\s+(very\s+much|so\s+much|kindly|sir|maam|ma['\u2019]?am))?|got it (working|fixed|sorted)|10\s*\/\s*10|5\s*stars?|five\s*stars?|five\s*star|on\s+top|chefs?\s*kiss|chef['\u2019]?s\s*kiss|gold\s*star|nailed it|crushed it|killed it|smashed it|cracked it|that\s+helped|this\s+helped|that\s+(was\s+)?perfect|much better|way better|good now|great now|cleared up|cleared it|sorted out|figured (it )?out|got\s+it|in\s+the\s+clear|squared\s+away|squared\s+up|wrapped\s+up|wrap\s+it\s+up|close\s+(this|it|the\s+ticket)|case\s+closed|ticket\s+(closed|done|resolved)|end\s+(of\s+)?call|im\s+good|i\s+am\s+good|we['\u2019]?re\s+good|were\s+good|we\s+are\s+good|youre\s+(a\s+)?(star|legend|champ|lifesaver|the\s+best|amazing|incredible)|you\s+are\s+(a\s+)?(star|legend|champ|lifesaver|the\s+best|amazing|incredible)|that\s+took\s+care\s+of\s+it|did\s+the\s+trick|that['\u2019]?s\s+(it|the\s+one|better|perfect|great)|easy|too\s+easy|piece\s+of\s+cake|cake\s+walk|painless|smooth\s+sailing)/;
+  var POS_PHRASES = /(all (good|set|sorted|done|fixed|right|cleared|clear|better|smooth|working)|that (did|fixed|worked|works|nailed|got|solved) it|that\s+was\s+it|problem (solved|fixed|gone|cleared|sorted)|issue (resolved|solved|fixed|gone|cleared|sorted)|good to go|back to normal|back (online|up|running)|up\s+and\s+running|fine now|ok(ay)? now|now (working|fine|good|fixed)|works (now|perfectly|great|fine|like a charm|like a champ)|fixed (now|it|the issue|the problem)|thanks?\s+(a\s+lot|so much|very much|alot|so|much|a million|million)|much appreciated|appreciate (you|it|this|that|your help)|thank\s+you(\s+(very\s+much|so\s+much|kindly|sir|maam|ma['\u2019]?am))?|got it (working|fixed|sorted)|10\s*\/\s*10|5\s*stars?|five\s*stars?|five\s*star|on\s+top|chefs?\s*kiss|chef['\u2019]?s\s*kiss|gold\s*star|nailed it|crushed it|killed it|smashed it|cracked it|that\s+helped|this\s+helped|that\s+(was\s+)?perfect|much better|way better|good now|great now|cleared up|cleared it|sorted out|figured (it )?out|got\s+it|in\s+the\s+clear|squared\s+away|squared\s+up|wrapped\s+up|wrap\s+it\s+up|close\s+(this|it|the\s+ticket)|case\s+closed|ticket\s+(closed|done|resolved)|end\s+(of\s+)?call|im\s+good|i\s+am\s+good|we['\u2019]?re\s+good|were\s+good|we\s+are\s+good|youre\s+(a\s+)?(star|legend|champ|lifesaver|the\s+best|amazing|incredible)|you\s+are\s+(a\s+)?(star|legend|champ|lifesaver|the\s+best|amazing|incredible)|that\s+took\s+care\s+of\s+it|did\s+the\s+trick|that['\u2019]?s\s+(it|the\s+one|better|perfect|great)|easy|too\s+easy|piece\s+of\s+cake|cake\s+walk|painless|smooth\s+sailing)/;
 
   // Very short affirmations on their own (one or two tokens)
   // e.g. "ty", "thx", "yep!", "fixed!", "perfect.", "thanks", "cheers", "👌"
   var SHORT_AFFIRMS = /^(\s*(yep|yup|yeah|yes|y|ya|ok|okay|k|kk|aye|aight|alright|nice|cool|sweet|sick|sure|cheers|cool|good|great|perfect|amazing|awesome|brilliant|done|fixed|solved|resolved|works|working|thx|thanks|thanx|tysm|ty|tia|tyvm|ily|appreciate|grateful|gracias|merci|danke|salud|legend|legendary|kudos|w|win|gg|gjwp|gj|glhf|noted|copy|10\/10|5\/5|👌|👍|🙏|💯|🔥|✅|✔️|✓|🏆|🌟|⭐)+\s*[!.]*\s*)+$/;
 
-  return POS_KEYWORDS.test(t) || POS_PHRASES.test(t) || SHORT_AFFIRMS.test(t);
+  var COURTESY_CORE = t
+    .replace(/^(please|can you help with|i need help with|help me with|sorry but|quick question\s*[—-]?|hey|urgent:|fyi|btw|urgent|asap|p1:|critical:|now:|this is blocking me\s*[—-]?|losing time on)\s+/i, '')
+    .replace(/\s+(please|asap|urgent)\??$/i, '')
+    .trim();
+
+  return POS_KEYWORDS.test(t) || POS_PHRASES.test(t) || SHORT_AFFIRMS.test(t) || (COURTESY_CORE !== t && SHORT_AFFIRMS.test(COURTESY_CORE));
 }
 
 function escapeHTML(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -5448,7 +5402,9 @@ if (_prefill){
 })();
 </script>
 <script src="/assets/aria-aperture-bridge.js?v=20260611-mobile-polish" defer></script>
-  <script src="/assets/aria-v04-ext.js?v=20260618-pulse-tv"></script>
+  <!-- RUN 25 — Tier-2/3 expert-domain NLU layer (window.AriaNLUTier23); post-classify, does not touch classify() -->
+  <script src="/assets/aria-nlu-tier23.js?v=20260622-run25"></script>
+  <script src="/assets/aria-v04-ext.js?v=20260611-mobile-polish"></script>
 
 <script>
 /* ===== Aperture surround engine — populates the scenario band + left-rail panels.
@@ -5690,7 +5646,7 @@ if (_prefill){
 #ariaLeadModal .alm-status.err{display:block;background:rgba(251,113,133,.08);color:#fb7185;border:1px solid rgba(251,113,133,.3)}
 @media(max-width:520px){#ariaLeadModal .alm-row{grid-template-columns:1fr}}
 </style>
-<button id="ariaLeadBtn" type="button" onclick="document.getElementById('ariaLeadModal').classList.add('open')">Talk to sales</button>
+<button id="ariaLeadBtn" type="button" onclick="window.__ariaLeadSource='/aria';document.getElementById('ariaLeadModal').classList.add('open')">Talk to sales</button>
 <div id="ariaLeadModal" role="dialog" aria-modal="true">
   <div class="alm-card">
     <button class="alm-close" aria-label="Close" onclick="document.getElementById('ariaLeadModal').classList.remove('open')">x</button>
@@ -5722,7 +5678,7 @@ e.preventDefault();
 var $=function(id){return document.getElementById(id);};
 var st=$('alm-status');st.className='alm-status';
 var btn=form.querySelector('.alm-submit');btn.disabled=true;btn.textContent='Sending...';
-var p={name:$('alm-name').value.trim(),company:$('alm-company').value.trim(),email:$('alm-email').value.trim(),phone:$('alm-phone').value.trim(),message:$('alm-msg').value.trim(),source:'/aria',last_intent:(window.state&&window.state.lastIntent)||''};
+var p={name:$('alm-name').value.trim(),company:$('alm-company').value.trim(),email:$('alm-email').value.trim(),phone:$('alm-phone').value.trim(),message:$('alm-msg').value.trim(),source:(window.__ariaLeadSource||'/aria'),last_intent:(window.state&&window.state.lastIntent)||''};
 if(!p.name||!p.email){st.className='alm-status err';st.textContent='Name and email required.';btn.disabled=false;btn.textContent='Send to Ahmad';return;}
 try{var r=await fetch('/.netlify/functions/aria-lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
 var j=await r.json().catch(function(){return{};});
@@ -5765,112 +5721,8 @@ try{
 @keyframes ahPulse{0%,100%{opacity:1}50%{opacity:.4}}
 @media(max-width:680px){#ariaHandoffBtn{bottom:78px;right:18px}}
 </style>
-<button id="ariaHandoffBtn" type="button"><span class="ah-dot"></span><span>Get a human</span></button>
-<script>
-(function(){
-  var btn=document.getElementById('ariaHandoffBtn');
-  if(!btn)return;
-  function setLabel(label,isError){
-    btn.textContent='';
-    if(!isError){
-      var dot=document.createElement('span');
-      dot.className='ah-dot';
-      btn.appendChild(dot);
-    }
-    btn.appendChild(document.createTextNode(label));
-  }
-  function restore(){
-    setLabel('Get a human',false);
-    btn.disabled=false;
-    btn.style.borderColor='';
-    btn.removeAttribute('aria-busy');
-  }
-  async function pageHuman(){
-    var profile={};
-    try{profile=JSON.parse(localStorage.getItem('aria_user_profile')||'{}');}catch(e){}
-    if(!profile.email){
-      alert('Please enter your details in ARIA first, then hit this button again.');
-      return;
-    }
-    btn.disabled=true;
-    btn.setAttribute('aria-busy','true');
-    setLabel(' Paging...',false);
-    var msgs=Array.prototype.slice.call(document.querySelectorAll('.aria-block, .you-block')).slice(-20).map(function(block){
-      var who=block.classList.contains('you-block')?'USER':'ARIA';
-      var txt=(block.innerText||'').trim().replace(/\s+/g,' ').slice(0,400);
-      return who+': '+txt;
-    }).join('\n\n');
-    try{
-      var res=await fetch('/.netlify/functions/aria-warm-handoff',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          email:profile.email,
-          name:((profile.firstName||'')+' '+(profile.lastName||'')).trim(),
-          chat_summary:msgs,
-          last_intent:(window.state&&window.state.lastIntent)||'',
-          urgency:'normal',
-          session_start:profile.startedAt||''
-        })
-      });
-      if(!res.ok)throw new Error('HTTP '+res.status);
-      setLabel(' Ahmad paged',false);
-      setTimeout(restore,5000);
-    }catch(e){
-      setLabel('Error - email directly',true);
-      btn.style.borderColor='#fb7185';
-      setTimeout(restore,5000);
-    }
-  }
-  btn.addEventListener('click',pageHuman);
-  setTimeout(function(){btn.classList.add('show');},20000);
-  setInterval(function(){if(document.querySelector('.aria-locked-overlay'))btn.classList.add('show');},3000);
-})();
-</script>
-
-<script>
-(function(){
-  function dockActionButtons(){
-    var bar=document.querySelector('.history-bar');
-    var human=document.getElementById('ariaHandoffBtn');
-    var sales=document.getElementById('ariaLeadBtn');
-    if(!bar||!human||!sales)return false;
-
-    var inline=document.getElementById('aria-v04-inline');
-    var clear=document.getElementById('historyClear');
-
-    human.classList.add('show','aria-row-action');
-    sales.classList.add('show','aria-row-action');
-
-    if(human.parentNode!==bar){
-      bar.insertBefore(human, inline||bar.firstChild);
-    }else if(inline&&human.nextSibling!==inline){
-      bar.insertBefore(human, inline);
-    }
-
-    if(clear){
-      if(sales.parentNode!==bar||clear.nextSibling!==sales){
-        bar.insertBefore(sales, clear.nextSibling);
-      }
-    }else if(sales.parentNode!==bar){
-      bar.appendChild(sales);
-    }
-
-    return true;
-  }
-
-  var tries=0;
-  var timer=setInterval(function(){
-    tries++;
-    if(dockActionButtons()||tries>40)clearInterval(timer);
-  },250);
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',dockActionButtons);
-  }else{
-    dockActionButtons();
-  }
-})();
-</script>
+<button id="ariaHandoffBtn" type="button" onclick="(function(){var st=document.getElementById('alm-status');var btn=this;var profile={};try{profile=JSON.parse(localStorage.getItem('aria_user_profile')||'{}')}catch(e){}if(!profile.email){alert('Please enter your details in ARIA first (the blue Sign-In form), then hit this button again.');return;}btn.disabled=true;var orig=btn.innerHTML;btn.innerHTML='<span class=\"ah-dot\"></span> PAGING...';var msgs=Array.prototype.slice.call(document.querySelectorAll('.aria-block, .you-block')).slice(-20).map(function(b){var who=b.classList.contains('you-block')?'USER':'ARIA';var txt=(b.innerText||'').trim().slice(0,400);return who+': '+txt}).join('\n\n');fetch('/.netlify/functions/aria-warm-handoff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:profile.email,name:(profile.firstName||'')+' '+(profile.lastName||'').trim(),chat_summary:msgs,last_intent:(window.state&&window.state.lastIntent)||'',urgency:'normal',session_start:profile.startedAt||''})}).then(function(r){return r.json()}).then(function(j){btn.innerHTML='<span class=\"ah-dot\"></span> AHMAD PAGED \u2713';setTimeout(function(){btn.innerHTML=orig;btn.disabled=false;},5000);}).catch(function(e){btn.innerHTML='ERROR \u2014 EMAIL DIRECTLY';btn.style.borderColor='#fb7185';setTimeout(function(){btn.innerHTML=orig;btn.style.borderColor='';btn.disabled=false;},5000);});}).call(this)"><span class="ah-dot"></span><span>Get a human</span></button>
+<script>setTimeout(function(){var b=document.getElementById('ariaHandoffBtn');if(b)b.classList.add('show');},20000);setInterval(function(){if(document.querySelector('.aria-locked-overlay')){var b=document.getElementById('ariaHandoffBtn');if(b)b.classList.add('show');}},3000);</script>
 
 
 <style>
@@ -6015,6 +5867,63 @@ setInterval(attach, 1200);
 })();
 </script>
 
-<script src="/assets/aria-i18n-page-copy.js"></script>
+<script>
+(function(){
+  var qs;
+  try { qs = new URLSearchParams(location.search); } catch(_) { return; }
+  if (qs.get('checkout') !== 'success') return;
+  var sid = qs.get('session_id');
+  if (!sid) return;
+  var onceKey = 'aria_checkout_confirmed_' + sid;
+  try { if (sessionStorage.getItem(onceKey) === '1') return; } catch(_) {}
+  try { sessionStorage.setItem(onceKey, '1'); } catch(_) {}
+
+  var style = document.createElement('style');
+  style.textContent = '#ariaCheckoutConfirm{position:fixed;inset:0;z-index:10001;background:rgba(3,4,7,.86);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px}#ariaCheckoutConfirm .card{max-width:620px;width:100%;background:linear-gradient(180deg,#0b0b0b,#131313);border:1px solid rgba(197,160,89,.35);border-radius:18px;padding:32px;color:#fff;box-shadow:0 20px 60px rgba(0,0,0,.45)}#ariaCheckoutConfirm h2{margin:0 0 12px;font:700 30px/1.1 Cinzel,serif;color:#f1dca7}#ariaCheckoutConfirm p{margin:0 0 14px;color:rgba(255,255,255,.72);font:400 14px/1.8 Inter,sans-serif}#ariaCheckoutConfirm .token{margin:16px 0;padding:16px 18px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:rgba(197,160,89,.08);font:700 18px/1.4 \"JetBrains Mono\",monospace;letter-spacing:.08em;color:#f1dca7;word-break:break-all}#ariaCheckoutConfirm .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}#ariaCheckoutConfirm .btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 20px;border-radius:10px;text-decoration:none;border:1px solid rgba(197,160,89,.45);font:700 11px/1 Cinzel,serif;letter-spacing:.18em;text-transform:uppercase;cursor:pointer}#ariaCheckoutConfirm .btn.primary{background:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%);color:#111;border-color:transparent}#ariaCheckoutConfirm .btn.ghost{background:transparent;color:#f1dca7}';
+  document.head.appendChild(style);
+
+  var host = document.createElement('div');
+  host.id = 'ariaCheckoutConfirm';
+  host.innerHTML = '<div class="card"><h2>Confirming your ARIA purchase…</h2><p>Stripe returned successfully. We are issuing your license now.</p></div>';
+  document.body.appendChild(host);
+
+  function closeOverlay(){
+    if (host && host.parentNode) host.parentNode.removeChild(host);
+    if (qs.has('checkout') || qs.has('session_id')) {
+      qs.delete('checkout');
+      qs.delete('session_id');
+      var next = location.pathname + (qs.toString() ? ('?' + qs.toString()) : '') + location.hash;
+      history.replaceState({}, '', next);
+    }
+  }
+
+  fetch('/.netlify/functions/stripe-confirm', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ session_id: sid })
+  }).then(function(res){
+    return res.json().catch(function(){ return {}; }).then(function(data){ return { ok: res.ok, data: data }; });
+  }).then(function(result){
+    if (!result.ok || !result.data || !result.data.ok || !result.data.license) {
+      throw new Error((result.data && result.data.error) || 'Could not confirm payment.');
+    }
+    var token = result.data.license;
+    var email = result.data.email || 'your email';
+    host.innerHTML = '<div class="card"><h2>Your ARIA license is ready.</h2><p>Payment confirmed for <strong>' + email + '</strong>. Keep this token and use the in-page <strong>Activate License</strong> path if ARIA asks for it.</p><div class="token" id="ariaCheckoutToken">' + token + '</div><p>A copy was also sent by email if outbound mail is configured. If you ever need help, reply to the receipt or call (647) 581-3182.</p><div class="row"><button class="btn primary" id="ariaCopyToken">Copy token</button><button class="btn ghost" id="ariaCloseToken">Continue into ARIA</button></div></div>';
+    document.getElementById('ariaCopyToken').onclick = function(){
+      navigator.clipboard.writeText(token).then(function(){
+        document.getElementById('ariaCopyToken').textContent = 'Copied';
+      }).catch(function(){
+        document.getElementById('ariaCopyToken').textContent = 'Copy failed';
+      });
+    };
+    document.getElementById('ariaCloseToken').onclick = closeOverlay;
+  }).catch(function(err){
+    host.innerHTML = '<div class="card"><h2>Stripe returned, but ARIA still needs confirmation.</h2><p>' + (err && err.message ? err.message : 'We could not finish license issuance automatically.') + '</p><p>Call (647) 581-3182 or email <a href="mailto:ahmad.wasee@iisupp.net" style="color:#f1dca7">ahmad.wasee@iisupp.net</a> with your Stripe receipt and we will complete it manually.</p><div class="row"><button class="btn ghost" id="ariaCloseToken">Close</button></div></div>';
+    document.getElementById('ariaCloseToken').onclick = closeOverlay;
+  });
+})();
+</script>
+
 </body>
 </html>

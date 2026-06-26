@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c5a059">
+<title>Microsoft 365 Help Desk KB Pack Preview | Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+:root{
+  --panel:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.7);
+  --muted:rgba(255,255,255,.45);
+  --gold:#c5a059;
+  --gold-soft:#f1dca7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(180deg,#080808 0%,#050505 100%);
+}
+a{text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 22px 72px}
+.toplink{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.eyebrow{display:block;margin-bottom:12px;color:var(--gold);font-size:10px;letter-spacing:.32em;text-transform:uppercase;font-weight:800}
+.hero{
+  margin-top:20px;
+  border:1px solid rgba(197,160,89,.24);
+  border-radius:18px;
+  padding:42px 34px;
+  background:
+    radial-gradient(120% 140% at 100% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:26px}
+.logo{font-family:'Cinzel',serif;font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.02;margin:0 0 16px}
+.gold{color:var(--gold-soft)}
+.lede{margin:0 0 18px;color:var(--text);font-size:15px;line-height:1.85;max-width:720px}
+.tagrow{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.tag{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{
+  height:100%;
+  border:1px solid rgba(197,160,89,.18);
+  border-radius:14px;
+  padding:20px 18px;
+  background:rgba(0,0,0,.24);
+}
+.panel p{margin:0 0 12px;color:var(--text);font-size:13px;line-height:1.8}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 18px;
+  border-radius:8px;
+  border:1px solid rgba(197,160,89,.4);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:rgba(197,160,89,.06);
+}
+.btn.primary{background:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%);color:#1a1407;border-color:transparent}
+.grid-two,.grid-three{display:grid;gap:16px;margin-top:24px}
+.grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px 18px 16px;
+  background:var(--panel);
+}
+.card h2,.card h3{margin:0 0 10px;font-family:'Cinzel',serif}
+.card h2{font-size:1.3rem}
+.card h3{font-size:1rem}
+.card p{margin:0;color:var(--text);font-size:13px;line-height:1.8}
+.checklist,.steps{
+  margin:14px 0 0;
+  padding-left:18px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.notice{
+  margin-top:26px;
+  padding:16px 18px;
+  border-left:3px solid var(--gold);
+  background:rgba(197,160,89,.07);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.mini{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width: 900px){
+  .hero-grid,.grid-two,.grid-three{grid-template-columns:1fr}
+  .hero{padding:30px 20px}
+  .wrap{padding:20px 16px 54px}
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="toplink" href="/growth-library.html">Back to growth library</a>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Sample Preview</span>
+          <h1 class="logo">Microsoft 365 <span class="gold">Help Desk KB Pack</span></h1>
+          <p class="lede">This preview shows how IIS frames recurring Microsoft 365 ticket work when the real need is cleaner support structure first: what the help desk should check, what stays admin-owned, how to separate user-safe guidance from tenant changes, and when the buyer should move from a pack into a scoped cleanup sprint.</p>
+          <div class="tagrow">
+            <span class="tag">For help desks and SMB admins</span>
+            <span class="tag">For recurring M365 ticket churn</span>
+            <span class="tag">For human and AI support use</span>
+          </div>
+          <div class="btnrow">
+            <a class="btn primary" href="/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>
+            <a class="btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View tune-up preview</a>
+          </div>
+        </div>
+        <aside class="panel">
+          <span class="eyebrow" style="margin-bottom:10px">What this preview proves</span>
+          <p>The M365 pack is a real proof-first product lane, not just a service upsell disguised as a guide. Buyers can see the operating structure before unlocking the full pack or asking IIS to do the cleanup with them.</p>
+          <p>This keeps the lane safe: no public pricing change, no Microsoft partnership claim, no licensing-reseller posture, and no promise that one guide replaces live admin review.</p>
+          <p class="mini">The live cleanup still depends on tenant scope, affected users, admin ownership, and which actions must stay approved before production changes.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">Inside the pack</span>
+        <h2>What the buyer actually gets</h2>
+        <ul class="checklist">
+          <li>Structured KB articles for the M365 issues that burn the most support time: Outlook, Teams, OneDrive, SharePoint, MFA, password resets, licensing, and mailbox access.</li>
+          <li>A repeatable split between user-safe guidance, help-desk checks, and admin-only or change-controlled actions.</li>
+          <li>Escalation signals that help teams stop guessing when the issue reflects wider tenant drift instead of a one-user fix.</li>
+          <li>A cleaner ladder into the IIS tune-up lane when the buyer wants scoped cleanup help rather than self-serve documentation alone.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best fit</span>
+        <h2>Who should start here</h2>
+        <ul class="checklist">
+          <li>SMB admins who keep inheriting recurring Microsoft 365 issues without a clean playbook.</li>
+          <li>Help desks that need faster, more consistent first-response handling for M365 tickets.</li>
+          <li>Internal IT teams trying to reduce repeat escalations before investing in larger tooling or workflow changes.</li>
+          <li>AI-support builders who need cleaner human-owned article structure before turning the KB into agent-readable support logic.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:24px">
+      <span class="eyebrow">Sample section</span>
+      <h2>What a practical M365 KB posture can look like</h2>
+      <p>This is a representative structure slice. The live version changes detail depth based on tenant complexity, admin ownership, support maturity, and how much of the issue is really documentation versus active cleanup work.</p>
+      <div class="grid-three">
+        <div class="card">
+          <h3>Start with user-safe checks</h3>
+          <p>Confirm the exact symptom, whether it affects one user or many, what changed recently, and what basic sign-in, sync, or client checks are safe before the ticket gets pushed upward too fast.</p>
+        </div>
+        <div class="card">
+          <h3>Keep admin paths explicit</h3>
+          <p>Separate actions that require admin-center review, policy confirmation, licensing changes, or mailbox-level work so support staff do not improvise production-impacting fixes without the right owner.</p>
+        </div>
+        <div class="card">
+          <h3>Leave reusable resolution notes</h3>
+          <p>Close each issue with a short pattern: symptom, likely cause, what fixed it, and what would escalate the next version of the same problem into broader tenant cleanup.</p>
+        </div>
+      </div>
+      <div class="notice">
+        Typical escalation triggers include repeated MFA failures across users, mailbox-permission confusion tied to role changes, OneDrive or Teams sync issues that suggest policy drift, licensing mismatch, or a broader onboarding/offboarding control problem.
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">What stays scoped</span>
+        <h2>Reserved for live discovery</h2>
+        <ul class="steps">
+          <li>The exact tenant architecture, licensing posture, and any compliance or retention controls tied to the cleanup lane.</li>
+          <li>Authenticated admin-center actions, production changes, or device-management work that should not be guessed in public sample content.</li>
+          <li>Any commitment about turnaround time, staffing, or ownership of live tenant remediation.</li>
+          <li>Detailed pricing and scope for the IIS tune-up engagement, which belongs in real discovery instead of a public proof page.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best next move</span>
+        <h2>Use the right lane after the preview</h2>
+        <ul class="steps">
+          <li>Use the pack when the buyer mainly needs cleaner M365 support structure and reusable answers.</li>
+          <li>Use the M365 Security and Productivity Tune-Up when the tenant already feels messy and the team wants IIS to help scope and prioritize cleanup.</li>
+          <li>Use the Outlook Fix Guide or Windows 11 KB when the recurring issue is narrower than a broader M365 lane.</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn primary" href="/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

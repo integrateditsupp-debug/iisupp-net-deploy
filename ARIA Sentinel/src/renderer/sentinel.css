@@ -294,6 +294,50 @@ p { color: var(--aria-text-2); line-height: 1.5; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
+/* W5 — Integrations tab: two labelled groups, each a responsive card grid. Black + gold theme. */
+.integrations-groups { display: grid; gap: 16px; }
+.integration-group { display: grid; gap: 10px; }
+.integration-group-head { display: flex; align-items: center; gap: 10px; }
+.integration-group-head h3 {
+  margin: 0; font-family: var(--aria-font-display); font-size: 15px; letter-spacing: .04em; color: var(--aria-gold-light);
+}
+.integration-count {
+  display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px;
+  border: 1px solid var(--aria-gold-tint-bd); border-radius: 999px; background: var(--aria-gold-tint-bg);
+  color: var(--aria-gold); font-family: var(--aria-font-mono); font-size: 11px; font-weight: 700;
+}
+.integrations-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); gap: 12px;
+}
+.integration-card {
+  display: flex; flex-direction: column; gap: 8px; padding: 14px;
+  background: var(--aria-grad-card); border: 1px solid var(--aria-border); border-radius: 14px; min-width: 0;
+}
+.integration-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.integration-icon { font-size: 22px; line-height: 1; }
+.integration-name { margin: 0; font-size: 14px; font-weight: 600; color: var(--aria-text); }
+.integration-desc { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--aria-text-2); }
+.integration-detail { margin: 0; font-size: 11px; line-height: 1.45; color: var(--aria-text-muted); font-family: var(--aria-font-mono); }
+.integration-actions { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; flex-wrap: wrap; }
+.integration-actions .ghost[disabled] { opacity: .45; cursor: not-allowed; }
+.int-link { font-size: 12px; padding: 6px 10px; }
+/* W5 Slice 2 — inline read-only Test connection result. */
+.integration-result { margin: 0; font-size: 11.5px; line-height: 1.45; font-family: var(--aria-font-mono); }
+.integration-result.pass { color: #5cd6a0; }
+.integration-result.fail { color: var(--aria-text-2); }
+/* Status badges — connected=green, not_configured=grey, error=red. */
+.int-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px;
+  border: 1px solid; font-family: var(--aria-font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; white-space: nowrap;
+}
+.int-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.int-badge.connected { color: #5cd6a0; border-color: rgba(92,214,160,.5); background: rgba(92,214,160,.08); }
+.int-badge.not_configured { color: #8f8f8f; border-color: rgba(143,143,143,.45); background: rgba(143,143,143,.07); }
+/* G-OMNI — "configured" (token present, not yet live-verified) is amber/pending, never the green "connected". */
+.int-badge.configured { color: var(--aria-warning); border-color: rgba(255,203,107,.5); background: rgba(255,203,107,.08); }
+.int-badge.error { color: var(--aria-error); border-color: rgba(255,126,126,.5); background: rgba(255,126,126,.08); }
+
 .settings-grid-main {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
@@ -478,6 +522,37 @@ input:focus { border-color: rgba(197,160,89,.75); }
 .source-row strong, .outbound-row strong, .table-row strong, .health-row strong { overflow-wrap: anywhere; }
 .log-row span, .table-row em, .health-row em { color: var(--aria-text-muted); font-style: normal; }
 .log-row strong, .source-row strong, .outbound-row span, .table-row span, .health-row span { color: var(--aria-gold); font-family: var(--aria-font-mono); }
+
+/* Slice 3 — System Inventory: collapsible Apps / Drivers / Security updates groups. */
+.inventory-groups { display: grid; gap: 10px; margin-top: 12px; }
+.inv-group { border: 1px solid var(--aria-border); border-radius: 12px; background: #0b0b0b; overflow: hidden; }
+.inv-group > summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer;
+  padding: 11px 14px; list-style: none; user-select: none;
+}
+.inv-group > summary::-webkit-details-marker { display: none; }
+.inv-group > summary::before {
+  content: "▸"; color: var(--aria-gold); font-size: 11px; margin-right: 8px; transition: transform .15s ease;
+}
+.inv-group[open] > summary::before { transform: rotate(90deg); }
+.inv-group-name { flex: 1; font-family: var(--aria-font-display); font-size: 13.5px; letter-spacing: .03em; color: var(--aria-gold-light); }
+.inv-count {
+  display: inline-grid; place-items: center; min-width: 24px; height: 20px; padding: 0 7px;
+  border: 1px solid var(--aria-gold-tint-bd); border-radius: 999px; background: var(--aria-gold-tint-bg);
+  color: var(--aria-gold); font-family: var(--aria-font-mono); font-size: 11px; font-weight: 700;
+}
+.inv-body { display: grid; gap: 8px; padding: 0 14px 14px; max-height: 360px; overflow: auto; }
+.inv-empty { margin: 0; padding: 8px 0 2px; color: var(--aria-text-muted); font-size: 12px; }
+
+/* G-METRICS — Proof metrics tiles (measured outcomes; black + gold). */
+.proof-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 4px 0 12px; }
+.proof-tile {
+  display: grid; gap: 3px; padding: 14px; border: 1px solid var(--aria-border); border-radius: 12px;
+  background: var(--aria-grad-card);
+}
+.proof-tile-val { font-family: var(--aria-font-display); font-size: 26px; line-height: 1; color: var(--aria-gold-light); }
+.proof-tile-label { font-size: 12px; color: var(--aria-text); font-weight: 600; }
+.proof-tile-sub { font-size: 10.5px; color: var(--aria-text-muted); font-family: var(--aria-font-mono); }
 
 .flow { display: grid; gap: 8px; }
 .flow span { border-left: 3px solid var(--aria-gold); background: #0c0c0c; border-radius: 8px; padding: 12px; }
@@ -912,15 +987,6 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .aria-chat-article a { font-size:11.5px; color:#c5a059; text-decoration:none; } .aria-chat-article a:hover { text-decoration:underline; }
 .aria-chat-src { font-size:10px; color:var(--muted,#8b8b93); margin-top:5px; }
 .aria-chat-src.anthropic { color:#8aa6c8; }
-/* TASK 4 — Sentinel-only "Resolve it for me" chip under an answer (the gated local-fix action). */
-.aria-chat-resolve { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:9px; }
-.aria-chat-resolve-btn { background:linear-gradient(135deg,#c5a059,#f1dca7); color:#1a1410; border:0; border-radius:999px;
-  padding:6px 14px; font-weight:700; font-size:11.5px; letter-spacing:.02em; cursor:pointer; }
-.aria-chat-resolve-btn:hover { box-shadow:0 0 14px rgba(197,160,89,.45); }
-.aria-chat-resolve-btn:disabled { opacity:.55; cursor:default; }
-.aria-chat-resolve-status { font-size:11px; color:var(--aria-gold-light,#f1dca7); }
-/* recipe-card resolve status line */
-.recipe-card .resolve-status { margin-top:8px; font-size:11.5px; color:var(--aria-gold-light,#f1dca7); }
 .aria-chat-composer { display:flex; gap:8px; align-items:flex-end; padding-top:10px; border-top:1px solid rgba(255,255,255,.08); flex-shrink:0; }
 .aria-chat-composer textarea { flex:1; resize:none; background:#0d0d12; border:1px solid rgba(255,255,255,.08); color:#ececec; border-radius:12px; padding:11px 13px; font:inherit; font-size:13.5px; line-height:1.45; outline:none; max-height:140px; min-height:44px; }
 .aria-chat-composer textarea:focus { border-color:#c5a059; }
@@ -971,3 +1037,12 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .aria-chat-md blockquote.md-quote { border-left:2px solid rgba(197,160,89,.5); margin:8px 0; padding:4px 0 4px 12px; color:var(--muted,#8b8b93); }
 .aria-chat-md hr.md-hr { border:0; border-top:1px solid rgba(255,255,255,.08); margin:10px 0; }
 .aria-chat-md a { color:#c5a059; text-decoration:none; } .aria-chat-md a:hover { text-decoration:underline; }
+
+/* TASK 4 — Sentinel-only "Resolve it for me" chip under an answer (the gated local-fix action). [merged from resolve branch] */
+.aria-chat-resolve { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:9px; }
+.aria-chat-resolve-btn { background:linear-gradient(135deg,#c5a059,#f1dca7); color:#1a1410; border:0; border-radius:999px;
+  padding:6px 14px; font-weight:700; font-size:11.5px; letter-spacing:.02em; cursor:pointer; }
+.aria-chat-resolve-btn:hover { box-shadow:0 0 14px rgba(197,160,89,.45); }
+.aria-chat-resolve-btn:disabled { opacity:.55; cursor:default; }
+.aria-chat-resolve-status { font-size:11px; color:var(--aria-gold-light,#f1dca7); }
+.recipe-card .resolve-status { margin-top:8px; font-size:11.5px; color:var(--aria-gold-light,#f1dca7); }

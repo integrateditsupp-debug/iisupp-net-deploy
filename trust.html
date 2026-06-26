@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noarchive, nosnippet">
+    <meta name="theme-color" content="#c5a059">
+    <title>Trust &amp; Security | Integrated IT Support</title>
+    <meta name="description" content="ARIA's safety-first governance — read-only first, never autonomous on a write, human kill-switch, least privilege, delegated identity verification, tamper-evident audit, local-first encrypted data. Honest compliance status.">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/aria-core.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;900&display=swap');
+        :root { --luxury-gold: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); --deep-slate: #050505; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--deep-slate); color: #ffffff; margin: 0; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, .logo-text { font-family: 'Cinzel', serif; }
+
+        body, .protected { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        input, textarea, select { -webkit-user-select: text !important; user-select: text !important; }
+        img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
+
+        .gold-glow { text-shadow: 0 0 25px rgba(197, 160, 89, 0.5); }
+        .doc-wrap { max-width: 920px; margin: 0 auto; padding: 48px 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(197,160,89,0.2); border-radius: 4px; }
+        .doc-wrap p { color: rgba(255,255,255,0.78); line-height: 1.85; font-size: 14px; margin: 0 0 16px 0; letter-spacing: 0.01em; }
+        .doc-wrap strong { color: #f1dca7; font-weight: 700; }
+        .doc-wrap h2 { color: #c5a059; font-size: 26px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+        .doc-wrap h3 { font-size: 14px; letter-spacing: 0.25em; text-transform: uppercase; color: #f1dca7; margin-top: 36px; margin-bottom: 14px; border-left: 2px solid #c5a059; padding-left: 14px; }
+        .doc-wrap .sub { color: rgba(255,255,255,0.45); font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 32px; font-weight: 700; }
+        /* Governance list — a bold control name + plain-language description. */
+        .gov-list { list-style: none; padding: 0; margin: 0 0 8px 0; }
+        .gov-list li { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .gov-list li:last-child { border-bottom: none; }
+        .gov-list .term { display: block; color: #f1dca7; font-weight: 700; font-size: 13px; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .gov-list .desc { color: rgba(255,255,255,0.72); font-size: 13.5px; line-height: 1.75; }
+        .callout { border: 1px solid rgba(197,160,89,0.3); background: rgba(197,160,89,0.05); padding: 18px 22px; border-radius: 4px; margin: 22px 0; }
+        .callout p { margin: 0 0 10px 0; color: rgba(255,255,255,0.85); font-size: 13.5px; line-height: 1.8; }
+        .callout p:last-child { margin-bottom: 0; }
+        .callout.honest { border-color: rgba(197,160,89,0.55); background: rgba(197,160,89,0.08); }
+        .measured-note { font-size: 12px; color: rgba(255,255,255,0.55); letter-spacing: 0.02em; }
+        .cta-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 18px; }
+        .cta-gold { display: inline-flex; align-items: center; gap: 10px; background: var(--luxury-gold); color: #1a1410; font-weight: 700; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; padding: 14px 24px; border-radius: 3px; text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .cta-gold:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(197,160,89,0.25); }
+        .cta-ghost { display: inline-flex; align-items: center; gap: 8px; color: #c5a059; font-weight: 700; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; padding: 14px 22px; border: 1px solid rgba(197,160,89,0.4); border-radius: 3px; text-decoration: none; transition: all 0.2s ease; }
+        .cta-ghost:hover { border-color: #c5a059; color: #f1dca7; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; text-decoration: none; font-weight: 700; padding: 10px 18px; border: 1px solid rgba(197,160,89,0.3); border-radius: 2px; transition: all 0.3s ease; }
+        .back-link:hover { color: #c5a059; border-color: #c5a059; }
+        .mobile-menu-btn { display: none; background: none; border: 1px solid rgba(197, 160, 89, 0.4); color: #c5a059; padding: 8px 10px; cursor: pointer; }
+        .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: #c5a059; margin: 4px 0; }
+        .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 55; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+        .mobile-nav-overlay.active { display: flex; }
+        .mobile-nav-overlay a { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; color: rgba(255,255,255,0.6); text-decoration: none; padding: 8px 0; }
+        .mobile-nav-overlay a:hover { color: #c5a059; }
+        .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: #c5a059; font-size: 28px; cursor: pointer; }
+        @media (max-width: 1024px) { nav { padding: 16px 20px !important; } .mobile-menu-btn { display: block; } .desktop-nav-links { display: none !important; } }
+        @media (max-width: 768px) { .doc-wrap { padding: 28px 18px; margin: 0 12px; } .doc-wrap h2 { font-size: 18px; letter-spacing: 0.15em; } .doc-wrap p, .gov-list .desc { font-size: 12.5px; } }
+    </style>
+  <link rel="canonical" href="https://iisupp.net/trust">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://iisupp.net/trust">
+  <meta property="og:title" content="Trust &amp; Security | Integrated IT Support">
+  <meta property="og:description" content="ARIA's safety-first governance and honest compliance status.">
+  <meta property="og:image" content="https://iisupp.net/icons/icon-512.png">
+  <meta name="twitter:card" content="summary_large_image">
+</head>
+<body class="protected">
+
+    <nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+        <a href="/" class="flex items-center gap-6" style="text-decoration:none;color:inherit;">
+            <div class="w-12 h-12 flex items-center justify-center border border-[#c5a059] relative"><div class="absolute inset-1 border border-[#c5a059]/30"></div><span class="text-[#c5a059] font-bold text-xl logo-text">I</span></div>
+            <div class="flex flex-col"><span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span><span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span></div>
+        </a>
+        <div class="desktop-nav-links hidden lg:flex space-x-12 text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
+            <a href="/purchase-tech.html" class="hover:text-[#c5a059] transition">Purchase Tech</a>
+            <a href="/#service-center" class="hover:text-[#c5a059] transition">Service Center</a>
+            <a href="/#solutions" class="hover:text-[#c5a059] transition">Pricing</a>
+            <a href="/services.html" class="hover:text-[#c5a059] transition">Services</a>
+            <a href="/trust" class="hover:text-[#c5a059] transition" style="color:#c5a059;">Trust</a>
+            <a href="/about.html" class="hover:text-[#c5a059] transition">About Us</a>
+            <a href="tel:+16475813182" class="text-white hover:text-[#c5a059] transition">Connect with Senior Director</a>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </nav>
+
+    <div id="mobileMenu" class="mobile-nav-overlay">
+        <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
+        <a href="/" onclick="toggleMobileMenu()">Home</a>
+        <a href="/purchase-tech.html" onclick="toggleMobileMenu()">Purchase Tech</a>
+        <a href="/#solutions" onclick="toggleMobileMenu()">Pricing</a>
+        <a href="/services.html" onclick="toggleMobileMenu()">Services</a>
+        <a href="/trust" onclick="toggleMobileMenu()" style="color:#c5a059;">Trust &amp; Security</a>
+        <a href="/about.html" onclick="toggleMobileMenu()">About Us</a>
+        <a href="tel:+16475813182" onclick="toggleMobileMenu()" style="color:#c5a059;">Call (647) 581-3182</a>
+    </div>
+
+    <section class="pt-36 pb-24 px-6">
+        <div class="max-w-5xl mx-auto text-center mb-12">
+            <span class="text-[#c5a059] tracking-[0.5em] text-[9px] uppercase font-bold block mb-4">Governance &amp; Safety</span>
+            <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight logo-text uppercase">Trust &amp; <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic">Security</span></h1>
+            <p class="text-white/40 uppercase tracking-[0.35em] text-[10px] mt-6">ARIA / Integrated IT Support Inc. — real capabilities, honestly stated</p>
+        </div>
+
+        <div class="doc-wrap">
+            <h2>Trust &amp; Security</h2>
+            <p class="sub">Safety-first, by design</p>
+
+            <p>ARIA is built to act on your systems carefully. Every potentially-impactful action is governed, not assumed.</p>
+
+            <h3>Our approach</h3>
+            <ul class="gov-list">
+                <li><span class="term">Read-only first.</span><span class="desc">Connectors (directory, ITSM, CRM) start read-only. Write access is never on by default.</span></li>
+                <li><span class="term">Never autonomous on a write.</span><span class="desc">Any change is proposed &rarr; approved &rarr; executed &rarr; <strong>read back to verify it landed</strong> &rarr; auto-rollback on mismatch.</span></li>
+                <li><span class="term">Human kill-switch.</span><span class="desc">ARIA Sentinel has an always-available stop (Ctrl+Alt+K) and a dry-run mode.</span></li>
+                <li><span class="term">Least privilege.</span><span class="desc">Integrations request the minimum scopes needed (e.g., Microsoft Entra read scopes only until you grant more).</span></li>
+                <li><span class="term">Identity verification is delegated.</span><span class="desc">End-user identity is confirmed through your trusted verifier (PingOne / RSA / your portal). <strong>ARIA never handles ID photos or biometrics.</strong></span></li>
+                <li><span class="term">Tamper-evident audit.</span><span class="desc">Actions are logged for review.</span></li>
+                <li><span class="term">Local-first data.</span><span class="desc">ARIA Sentinel runs on the endpoint; sensitive memory is stored locally and encrypted.</span></li>
+            </ul>
+
+            <h3>Honest compliance status</h3>
+            <div class="callout honest">
+                <p>We will never overstate this:</p>
+                <p>&bull; ARIA / Integrated IT Support Inc. is <strong>not currently SOC 2, ISO 27001, or HIPAA certified.</strong></p>
+                <p>&bull; We follow the security controls described above and intend to pursue formal certification as we scale.</p>
+                <p>&bull; We will <strong>never</strong> claim a certification we do not hold, a customer we do not have, or a metric we have not measured.</p>
+            </div>
+
+            <h3>Data handling</h3>
+            <ul class="gov-list">
+                <li><span class="desc">You control your connectors and credentials; you can disconnect any integration at any time.</span></li>
+                <li><span class="desc">Credentials are stored in secure local configuration, never emailed or sent in plain text.</span></li>
+                <li><span class="desc">We do not sell customer data.</span></li>
+            </ul>
+
+            <h3>Measured, not marketed</h3>
+            <p>When we cite a performance number, it is something we actually measured — never a customer or production figure we have not earned. The only outcome figure we currently cite is an <strong>internal self-test, 20 questions, 40% auto-resolve</strong> of ARIA's offline local knowledge base. <span class="measured-note">It is an internal self-test, not a production or customer result.</span></p>
+
+            <h3>Reporting a security concern</h3>
+            <p>Email <a href="mailto:ahmad.wasee@iisupp.net" style="color:#c5a059; text-decoration:underline;">ahmad.wasee@iisupp.net</a> or call <a href="tel:+16475813182" style="color:#c5a059; text-decoration:underline;">647-581-3182</a>.</p>
+            <div class="cta-row">
+                <a href="https://calendar.app.google/LUyV5pHxkqJRg5vp8" target="_blank" rel="noopener" class="cta-gold"><i class="fas fa-calendar-check"></i> Book a Security Review</a>
+                <a href="tel:+16475813182" class="cta-ghost"><i class="fas fa-phone"></i> Call the Senior Director</a>
+            </div>
+
+            <div class="callout">
+                <p class="measured-note">Last reviewed: 2026-06-25. This page reflects current, real capabilities and will be updated as they change.</p>
+            </div>
+
+            <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(197,160,89,0.2); text-align:center;">
+                <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Return to Home</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-14 px-10 border-t border-white/5 text-center">
+        <p class="logo-text text-sm tracking-widest uppercase mb-2">&copy; Integrated IT Support Inc.</p>
+        <p class="text-white/30 text-[9px] tracking-widest uppercase">30 Fothergill Court, Whitby, ON L1P 2L4 &mdash; <a href="tel:+16475813182" style="color:#c5a059;">(647) 581-3182</a></p>
+        <p class="text-white/30 text-[9px] tracking-widest uppercase mt-3">
+            <a href="/about.html" style="color:rgba(255,255,255,0.5);">About</a>
+            <span class="text-white/20 mx-2">&bull;</span>
+            <a href="/terms.html" style="color:rgba(255,255,255,0.5);">Terms</a>
+            <span class="text-white/20 mx-2">&bull;</span>
+            <a href="/trust" style="color:#c5a059;">Trust &amp; Security</a>
+            <span class="text-white/20 mx-2">&bull;</span>
+            <a href="/copyright.html" style="color:rgba(255,255,255,0.5);">&copy; IIS Inc.</a>
+        </p>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        document.addEventListener('dragstart', function(e) { if (e.target && e.target.tagName === 'IMG') e.preventDefault(); });
+        document.addEventListener('keydown', function(e) {
+            var k = e.key ? e.key.toLowerCase() : '';
+            if (e.key === 'F12') { e.preventDefault(); return; }
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','j','c'].indexOf(k) !== -1) { e.preventDefault(); return; }
+            if ((e.ctrlKey || e.metaKey) && ['u','s'].indexOf(k) !== -1) { e.preventDefault(); return; }
+            var active = document.activeElement;
+            var inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT');
+            if (!inField && (e.ctrlKey || e.metaKey) && ['c','x','a','p'].indexOf(k) !== -1) { e.preventDefault(); }
+        });
+        document.addEventListener('copy', function(e) {
+            var active = document.activeElement;
+            var inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
+            if (!inField) e.preventDefault();
+        });
+    </script>
+    <script src="/assets/aria-core.js" defer></script>
+</body>
+</html>

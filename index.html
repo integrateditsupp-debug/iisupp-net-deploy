@@ -24,25 +24,6 @@
     <meta name="twitter:description" content="Managed IT, Microsoft 365, cybersecurity, automation, web, and ARIA AI support services.">
     <meta name="twitter:image" content="https://iisupp.net/assets/iisupp-link-preview.png">
     <meta name="twitter:image:alt" content="Integrated IT Support logo">
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      "name": "Integrated IT Support Inc.",
-      "url": "https://iisupp.net/",
-      "telephone": "+1-647-581-3182",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "30 Fothergill Court",
-        "addressLocality": "Whitby",
-        "addressRegion": "ON",
-        "addressCountry": "CA"
-      },
-      "areaServed": ["Canada", "United States"],
-      "serviceType": ["Managed IT support", "Microsoft 365 support", "Cybersecurity basics", "AI workflow automation", "Web conversion support"],
-      "sameAs": ["https://iisupp.net/"]
-    }
-    </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.webmanifest">
@@ -80,7 +61,7 @@
         img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none; }
 
         /* --- GATEWAY SYSTEM --- */
-        #gateway { position: fixed; inset: 0; z-index: 9999; display: flex; background: #000; cursor: pointer; }
+        #gateway { position: fixed; inset: 0; z-index: 100; display: flex; background: #000; cursor: pointer; }
         #gateway.hidden-gate { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .door { flex: 1; background: #050505; height: 100vh; transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1); position: relative; display: flex; align-items: center; overflow: hidden; }
         .door-left { justify-content: flex-end; border-right: 1px solid rgba(197, 160, 89, 0.2); }
@@ -1677,7 +1658,6 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                 <a href="#methodology" class="method-link">Methodology</a>
                 <a href="/shop.html" class="nav-accent">Shop</a>
                 <a href="/marketplace.html" class="nav-accent">Marketplace</a>
-                <a href="/downloads/" class="nav-accent">Downloads</a>
             </div>
             <span class="nav-divider"></span>
             <div class="nav-group nav-aria-block" data-facet="ai">
@@ -1705,7 +1685,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         </div>
     </nav>
 
-    <!-- ====== AI "COMMAND BLADE" NAV — crafted-object nav reimagined for tech/AI (all links preserved) ====== -->
+    <!-- ====== AI "COMMAND BLADE" NAV — crafted-object nav reimagined for tech/AI (all tabs preserved) ====== -->
     <style id="nav-command-blade">
       /* The desktop nav strip becomes one machined object: a brushed black-gold blade with a faint PCB trace,
          a docked brand chip on the left, an icon + animated gold underline per facet, and a gold connector
@@ -1755,8 +1735,6 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         transition: opacity .25s ease, transform .25s ease, filter .25s ease; }
       .nav-blade .nav-group:hover .nav-ico { opacity: 1; transform: translateY(-1px);
         filter: drop-shadow(0 0 6px rgba(197,160,89,.55)); }
-      /* ARIA facet lit by default (the reference's active tab) */
-      .nav-blade .nav-aria-block .nav-ico { opacity: 1; filter: drop-shadow(0 0 6px rgba(197,160,89,.5)); }
       .nav-blade .nav-group::after {
         content: ""; position: absolute; left: 20%; right: 20%; bottom: 3px; height: 2px; border-radius: 2px;
         background: linear-gradient(90deg, transparent, #c5a059, #f1dca7, #c5a059, transparent);
@@ -1764,7 +1742,6 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         box-shadow: 0 0 8px rgba(197,160,89,.5);
       }
       .nav-blade .nav-group:hover::after { transform: scaleX(1); }
-      .nav-blade .nav-aria-block::after { transform: scaleX(1); } /* ARIA underline lit by default */
       .nav-blade .nav-divider { height: 30px; align-self: center; background: rgba(197,160,89,.20); }
       /* dock the brand "I" chip so it reads as the left end-cap of the same machined object */
       .nav-home-link .nav-i-logo {
@@ -1796,7 +1773,6 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         <a href="#methodology" onclick="toggleMobileMenu()">Methodology</a>
         <a href="/shop.html" onclick="toggleMobileMenu()" style="color: #c5a059;">Shop</a>
         <a href="/marketplace.html" onclick="toggleMobileMenu()" style="color: #c5a059;">Marketplace</a>
-        <a href="/downloads/" onclick="toggleMobileMenu()" style="color: #c5a059;">Downloads</a>
         <a href="/growth-library.html" onclick="toggleMobileMenu()" style="color: #c5a059;">Growth Library</a>
         <div class="mobile-nav-sep" aria-hidden="true"></div>
         <a href="/ai-edge.html" onclick="toggleMobileMenu()" style="color: #c5a059;">AI Edge</a>
@@ -1857,11 +1833,6 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <p class="max-w-2xl mx-auto text-white/40 text-[11px] md:text-xs tracking-wider uppercase font-light leading-relaxed mb-6">We don't just fix problems — we keep your operations running smoothly.</p>
             <p class="max-w-xl mx-auto text-white/30 text-[10px] md:text-[11px] tracking-wider uppercase font-light leading-relaxed mb-10">System-driven · outcome-owned · considered before every change.</p>
             <a href="/ai-edge.html" class="text-[9px] tracking-[0.5em] uppercase font-bold border-b border-[#c5a059]/40 pb-2 hover:text-[#c5a059] transition">Open AI Edge</a>
-
-            <div class="hero-health-check-row" style="margin-top:26px;text-align:center;width:100%">
-              <a href="/health-check" class="hero-health-check-cta" style="display:inline-block;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;padding:14px 30px;border-radius:8px;text-decoration:none;box-shadow:0 8px 24px rgba(197,160,89,0.22);transition:transform 0.15s ease, box-shadow 0.2s ease">IT Health Check &rarr;</a>
-              <div style="color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;margin-top:10px;font-weight:500">60 seconds &middot; 6 questions &middot; free score</div>
-            </div>
         </div>
 
     </section>
@@ -2561,7 +2532,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <h3 class="ai-tier-title">AI Agent Setup &amp; Integration</h3>
             <p class="ai-tier-desc">Full multi-agent setup — design, integration, governance, training. Scope priced per environment.</p>
             <div class="ai-tier-price"><strong>$24,000 &ndash; $75,000</strong><span>per engagement</span></div>
-            <button type="button" class="ai-tier-cta" data-stripe-id="ai-agent-setup-deposit" data-stripe-name="AI Agent Setup &amp; Integration — Deposit" data-stripe-amount-cents="500000" data-stripe-desc="Refundable engagement deposit ($5,000). Final scope and price confirmed before delivery starts.">Purchase deposit</button>
+            <button type="button" class="ai-tier-cta" data-stripe-id="ai-agent-setup-deposit" data-stripe-name="AI Agent Setup &amp; Integration — Deposit" data-stripe-amount-cents="500000" data-stripe-desc="Engagement deposit ($5,000). Final scope and price confirmed before delivery starts.">Purchase deposit</button>
           </div>
         </div>
         <div class="ai-maint-band">
@@ -3119,7 +3090,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
           <span class="text-[#c5a059] tracking-[0.5em] text-[10px] uppercase font-bold block mb-4">Capabilities</span>
           <h2 class="text-3xl md:text-4xl font-bold logo-text tracking-widest uppercase mb-4">What ARIA does <span class="text-[#c5a059]">today</span></h2>
           <p class="text-white/50 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
-            A live snapshot of what ARIA is shipping right now — verified, tested, deployed. ARIA keeps expanding through measured support, knowledge, and governance releases.
+            A live snapshot of what ARIA is shipping right now — verified, tested, deployed. There is much more to ARIA coming soon.
           </p>
         </div>
 
@@ -3136,7 +3107,7 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
           <a href="/assets/aria-capabilities.csv" download="ARIA-capabilities.csv" class="cap-download">
             <span>↓</span> Download full capability sheet (.csv · opens in Excel)
           </a>
-          <p class="cap-followup">Need the operator view? Open ARIA or download the current capability sheet.</p>
+          <p class="cap-followup">There is much more to ARIA coming soon.</p>
         </div>
       </div>
     </section>
@@ -3652,6 +3623,8 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
             <a href="/governance/privacy" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Privacy</a>
             <span class="text-white/20 mx-2">•</span>
             <a href="/terms.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Terms</a>
+            <span class="text-white/20 mx-2">•</span>
+            <a href="/trust" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Trust &amp; Security</a>
             <span class="text-white/20 mx-2">•</span>
             <a href="/governance/ai-use" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">AI Use Policy</a>
             <span class="text-white/20 mx-2">•</span>
@@ -4805,7 +4778,5 @@ function animateSatellites(rootSel){
 })();
 </script>
 
-<script defer src="/assets/aria-i18n-page-copy.js"></script>
-<script defer src="/assets/health-check-modal.js"></script>
 </body>
 </html>

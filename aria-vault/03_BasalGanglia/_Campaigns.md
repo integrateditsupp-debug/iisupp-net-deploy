@@ -17,8 +17,19 @@ brain_region: basal-ganglia
 ## Related
 
 <!-- LINK-WEB:auto -->
-- [[AXIS]]
+- [[_Amygdala]]
+- [[_ARIA]]
+- [[_Brainstem]]
+- [[_capture]]
+- [[_CorpusCallosum]]
+- [[_Decisions]]
+- [[_Glia]]
+- [[_HOME]]
+- [[_IIS]]
+- [[_Inbox]]
+- [[_Sentinel]]
 - [[Ahmad]]
+- [[AXIS]]
 - [[Backup-agent]]
 - [[Brain-Map]]
 - [[Campaign]]
@@ -34,14 +45,4 @@ brain_region: basal-ganglia
 - [[RULES]]
 - [[STACK]]
 - [[VOICE]]
-- [[_ARIA]]
-- [[_Amygdala]]
-- [[_Brainstem]]
-- [[_CorpusCallosum]]
-- [[_Decisions]]
-- [[_Glia]]
-- [[_HOME]]
-- [[_IIS]]
-- [[_Inbox]]
-- [[_Sentinel]]
-- 
+<!-- /LINK-WEB:auto -->

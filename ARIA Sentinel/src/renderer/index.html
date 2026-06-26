@@ -34,6 +34,7 @@
             <a href="#performance" data-anchor="performance">Performance</a>
             <a href="#sla" data-anchor="sla">SLA</a>
             <a href="#dashActivity" data-anchor="dashActivity">Activity</a>
+            <a href="#proof-metrics" data-anchor="proof-metrics">Proof</a>
           </div>
           <!-- RUN 33 PIVOT — ARIA brain as one parent tab with 5 sub-sections (Chat primary). -->
           <button class="nav-item" data-tab="aria"><span class="nav-dot"></span>ARIA<span class="nav-caret">▸</span></button>
@@ -58,7 +59,9 @@
             <a href="#system-context" data-anchor="system-context">This Machine</a>
             <a href="#cross-platform" data-anchor="cross-platform">Platform Support</a>
           </div>
-          <button class="nav-item" data-tab="servicenow"><span class="nav-dot"></span>ServiceNow</button>
+          <!-- W5 — Integrations replaces the standalone ServiceNow nav slot (ServiceNow is now a card here;
+               its incident bridge panel stays reachable via the card's "Manage incidents" deep-link). -->
+          <button class="nav-item" data-tab="integrations"><span class="nav-dot"></span>Integrations</button>
           <button class="nav-item" data-tab="settings"><span class="nav-dot"></span>Settings<span class="nav-caret">▸</span></button>
           <div class="nav-sub" data-sub="settings">
             <a href="#mode" data-anchor="mode">Mode</a>
@@ -199,6 +202,20 @@
             <div id="recentActivity" class="activity-timeline"></div>
           </section>
           <footer id="trustStrip" class="trust-strip">🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization</footer>
+
+          <!-- ## Proof metrics (G-METRICS — REAL measured outcomes; zero is shown honestly, never fabricated) -->
+          <div class="merge-head" id="proof-metrics">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Proof metrics</p><h2>Measured outcomes</h2><p class="merge-sub">Real measured ARIA results — auto-resolution, deflection, KB-hit rate. No fabricated numbers; zero shows as zero.</p></div>
+          </div>
+          <section class="panel">
+            <div class="panel-actions">
+              <div><p class="eyebrow">Measured · local · content-blind</p><h2>Proof metrics</h2></div>
+              <button id="refreshProofMetrics" class="ghost">Refresh</button>
+            </div>
+            <div id="proofMetricsTiles" class="proof-tiles"></div>
+            <p id="proofMetricsMeta" class="note">Loading measured metrics…</p>
+          </section>
         </section>
 
         <!-- ============ CONTROL CENTER (unchanged) ============ -->
@@ -379,10 +396,11 @@
               <button id="refreshSystemContext" class="ghost">Refresh</button>
             </div>
             <p id="systemContextMeta" class="note">All inventory stays on this device. Nothing is sent off-device unless you click "Share with ARIA for diagnosis".</p>
-            <input id="systemContextSearch" type="text" placeholder="Search apps, services, drivers…" />
+            <input id="systemContextSearch" type="text" placeholder="Search apps, drivers, security updates…" />
             <div id="systemContextSummary" class="health-list"></div>
-            <h3 style="margin-top:14px">Installed apps</h3>
-            <div id="systemContextApps" class="source-list"></div>
+            <!-- Slice 3 — the flat app dump is now grouped (Apps / Drivers / Security updates): collapsible,
+                 counted, filtered by the search box above. Empty categories show a clean state, no blank panel. -->
+            <div id="systemContextApps" class="inventory-groups"></div>
           </section>
 
           <!-- ## Platform Support (merged from the Cross-Platform tab) -->
@@ -429,6 +447,16 @@
               <span id="notifyStatus" class="note"></span>
             </div>
           </section>
+          <!-- G-OMNI — ask-ARIA-in-channel front-end (Slack / Teams). Read-only: answers from the local KB,
+               escalates to a human on a miss; never executes a fix. Honest "Not configured" without a token. -->
+          <section class="panel">
+            <p class="eyebrow">Omni-channel</p>
+            <h2>Ask ARIA in Slack / Teams</h2>
+            <p class="note">Users ask in the channel → ARIA answers from the local knowledge base → it escalates to a human when it can't confidently resolve. Read-only: chat is input, not new authority — fixes stay behind the desktop approval gates. Each handled question counts toward the measured deflection number.</p>
+            <div id="omniGrid" class="integrations-grid">
+              <p class="note">Loading channel status…</p>
+            </div>
+          </section>
           <section class="panel sn-incidents">
             <div class="sn-head">
               <img class="mini-globe live-globe-img" src="aria-live-globe.svg" alt="" aria-hidden="true">
@@ -443,12 +471,24 @@
           </section>
         </section>
 
+        <!-- ============ INTEGRATIONS (W5 — 8 cards · edition-gated · status from existing health checks) ============ -->
+        <section id="integrations" class="tab-panel">
+          <section class="panel">
+            <p class="eyebrow">Connections</p>
+            <h2>Integrations</h2>
+            <p class="note" id="integrationsEdition">Identity, service, and Microsoft&nbsp;365 document connectors. Status is read-only; live writes to any directory, RSA, or ServiceNow stay gated behind per-customer approval.</p>
+          </section>
+          <div id="integrationsGrid" class="integrations-groups">
+            <p class="note">Loading integrations…</p>
+          </div>
+        </section>
+
         <!-- ============ SETTINGS (RUN 23d: Mode + Hotkeys + Troubleshoot + Support + About) ============ -->
         <section id="settings" class="tab-panel">
           <!-- ## Mode (merged from the Mode tab) -->
           <div class="merge-head" id="mode">
             <div class="merge-bar" aria-hidden="true"></div>
-            <div><p class="eyebrow">Mode</p><h2>Mode</h2><p class="merge-sub">Choose how ARIA helps · dry-run toggle · ask ARIA dock</p></div>
+            <div><p class="eyebrow">Mode</p><h2>Mode</h2><p class="merge-sub">Choose how ARIA helps · the chosen mode governs preview vs execute</p></div>
           </div>
           <section class="panel mode-panel-centered">
             <p class="eyebrow">Choose how ARIA helps</p>

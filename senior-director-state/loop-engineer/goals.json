@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-13T19:48:33.375Z",
+  "active_goal": {
+    "id": "iis-aria-market-ahead-system",
+    "title": "IIS / ARIA market-ahead operating engine",
+    "objective": "Keep IIS / ARIA several steps ahead by converting long-life demand into review-gated products, ARIA improvements, Growth Library assets, website conversion paths, and CEO final-action packets.",
+    "style": "Ahmad x100: fast, practical, premium, revenue-focused, ethical, direct, and always moving safe work forward.",
+    "success_signals": [
+      "top long-life trends are scored and review-gated",
+      "products and demos are staged before competitors can copy the positioning",
+      "ARIA gets better through phased, realistic, business-professional support behavior",
+      "website and Growth Library assets move toward paid conversion",
+      "Claude critiques strategy while Codex builds safe local slices",
+      "Ahmad only sees final-action items and real blockers"
+    ],
+    "approval_gates": [
+      "send",
+      "submit",
+      "apply",
+      "publish risky production changes",
+      "create account",
+      "pay or subscribe",
+      "sign or certify",
+      "delete or archive user work",
+      "make public high-risk claims"
+    ]
+  }
+}

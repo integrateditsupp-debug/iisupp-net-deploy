@@ -13,8 +13,21 @@ brain_region: thalamus
 ## Related
 
 <!-- LINK-WEB:auto -->
-- [[AXIS]]
+- [[_capture]]
+- [[_Amygdala]]
+- [[_ARIA]]
+- [[_Brainstem]]
+- [[_ca]]
+- [[_Campaigns]]
+- [[_CorpusCallosum]]
+- [[_Decisions]]
+- [[_Glia]]
+- [[_HOME]]
+- [[_IIS]]
+- [[_Sen]]
+- [[_Sentinel]]
 - [[Ahmad]]
+- [[AXIS]]
 - [[Backup-agent]]
 - [[Brain-Map]]
 - [[Claude-Code]]
@@ -29,14 +42,4 @@ brain_region: thalamus
 - [[RULES]]
 - [[STACK]]
 - [[VOICE]]
-- [[_ARIA]]
-- [[_Amygdala]]
-- [[_Brainstem]]
-- [[_Campaigns]]
-- [[_CorpusCallosum]]
-- [[_Decisions]]
-- [[_Glia]]
-- [[_HOME]]
-- [[_IIS]]
-- [[_Sentinel]]
-- [[_ca
+<!-- /LINK-WEB:auto -->

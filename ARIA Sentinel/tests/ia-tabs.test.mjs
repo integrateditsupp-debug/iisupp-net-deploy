@@ -13,7 +13,7 @@ const navOrder = [...indexHtml.matchAll(/class="nav-item[^"]*"\s+data-tab="([^"]
 const expected = [
   "dashboard", "aria", "control-center", "recipes",   // RUN 33 PIVOT — ARIA added as the 10th tab (after Dashboard)
   "compliance-privacy", "reports", "knowledge",
-  "system", "servicenow", "settings"
+  "system", "integrations", "settings"   // W5 — Integrations took ServiceNow's slot (ServiceNow is a card)
 ];
 assert.deepEqual(navOrder, expected, "nav tabs in order (RUN 23d 9 + RUN 33 ARIA = 10)");
 assert.ok(expected.length <= 10, "tab budget: ≤10 sidebar entries (hard stop)");

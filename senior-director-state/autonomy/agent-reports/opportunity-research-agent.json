@@ -1,0 +1,30 @@
+{
+  "agentId": "opportunity-research-agent",
+  "label": "Opportunity Research Agent",
+  "generatedAt": "2026-06-26T06:29:01.953Z",
+  "status": "ready",
+  "summary": "Public opportunity sources were rescanned and merged into the opportunity engine.",
+  "metrics": {
+    "sourcesChecked": 15,
+    "foundThisRun": 146,
+    "totalItems": 642,
+    "sourceErrors": 0
+  },
+  "artifacts": [
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\sources.json",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\opportunities.json",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\actions-log.json"
+  ],
+  "approvals": [],
+  "readyActions": [],
+  "nextActions": [
+    "Pass 146 discovered item(s) through review and quality gate."
+  ],
+  "focusAreas": [
+    "public-source-research",
+    "tender-discovery",
+    "opportunity-engine-refresh"
+  ],
+  "assignments": [],
+  "metadata": {}
+}

@@ -1,0 +1,988 @@
+--- PAGE 1 ---
+Rev. 3/2026         Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+Page 1 
+RFP #061726 
+REQUEST FOR PROPOSALS  
+for 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+Proposal Due Date: June 17, 2026, 3:30 p.m., Central Time 
+Sourcewell, a State of Minnesota local government unit  and service cooperative,  is requesting 
+proposals for Enterprise Artificial Intelligence: P latforms, Services, and Integrated Delivery to 
+result in a procurement  solution for use by its Participating Entities . Sourcewell Participating 
+Entities include thousands of governmental, higher education, K-12 education, no nprofit, tribal 
+government, and other public agencies located in the United States and Canada. Sourcewell 
+encourages the use of S mall, Minority- owned, Women’s Business Enterprise, Veteran- owned 
+Business Enterprise (S/M/WBE/VBE) suppliers both as prime and subcontractors and encourages 
+the participation of these suppliers in the solicitation process.  A full copy of the Request for 
+Proposals can be found on the Sourcewell Procurement Portal [ https://proportal.sourcewell-
+mn.gov]. Only proposals submitted through the Sourcewell Procurement Portal will 
+be considered. Proposals are due no later than June 17, 2026, at 3:30 p.m. Central Time,  and 
+late proposals will not be considered. 
+SOLICITATION SCHEDULE 
+Public Notice of RFP Published: 
+Pre-proposal Conference: 
+Question Submission Deadline: 
+Proposal Due Date: 
+Opening: 
+April 29, 2026 
+May 12, 2026, 10:00 a.m., Central Time 
+June 09, 2026, 4:30 p.m., Central Time 
+June 17, 2026, 3:30 p.m., Central Time 
+Late responses will not be considered. 
+June 17, 2026, 3:30 p.m., Central Time 
+See RFP Section V.G. “Opening”
+
+--- PAGE 2 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 2 
+I. ABOUT SOURCEWELL 
+ 
+A. SOURCEWELL 
+  
+Sourcewell is a State of Minnesota local government unit and service cooperative created 
+under the laws of the State of Minnesota (Minnesota Statutes Section 123A.21) that facilitates 
+a competitive public solicitation and master agreement award process for the benefit of its 
+50,000+ participating entities across the United States and Canada. Sourcewell’s solicitation 
+process complies with State of Minnesota law and policies, conforms to Canadian trade 
+agreements (including Canadian Free Trade Agreement, Ontario-Quebec Trade and 
+Cooperation Agreement, and Canada-European Union Comprehensive Economic and Trade 
+Agreement, as applicable), and results in cooperative purchasing solutions from which 
+Sourcewell’s Participating Entities procure equipment, products, and services.   
+ 
+Cooperative purchasing provides participating entities and suppliers increased administrative 
+efficiencies and the power of combined purchasing volume that result in overall cost savings. At 
+times, Sourcewell also partners with other purchasing cooperatives to combine the purchasing 
+volume of their membership into a single solicitation and master agreement expanding the 
+reach of awarded suppliers’ potential pool of end users.  
+ 
+Sourcewell uses a website-based platform, the Sourcewell Procurement Portal, through which 
+all proposals to this RFP must be submitted.  
+   
+B. USE OF RESULTING MASTER AGREEMENTS 
+ 
+In the United States, Sourcewell’s master agreements are available for use by:  
+• Federal and state government entities1; 
+• Cities, towns, and counties/parishes; 
+• Education service cooperatives; 
+• K-12 and higher education entities; 
+• Tribal government entities; 
+• Some nonprofit entities; and  
+• Other public entities.  
+ 
+The following entities are listed in this solicitation to satisfy the procurement requirements 
+of Oregon, Utah, and Virginia [Political Subdivision List - Oregon, Utah, and Virginia]. 
+ 
+In Canada, Sourcewell’s master agreements are available for use by current and future members 
+including: 
+ 
+ 
+1 Pursuant to HAR §3 -128-2, the State of Hawaii, Department of Accounting and General Services, State Procurement Office, on behalf of the 
+State of Hawaii and participating jurisdictions, has provided notice of its Intent to Participate in the solicitation a s a participating entity. 
+ 
+
+--- PAGE 3 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 3 
+• Federal, provincial, and territorial government departments, ministries, agencies, 
+boards, councils, committees, commissions, and similar agencies; 
+• Indigenous self-governing bodies; 
+• Regional, local, district, and other forms of municipal government, municipal 
+organizations, school boards, and publicly funded academic, health, and social service 
+entities referred to as MASH sector (this should be construed to include but not be 
+limited to the cities of Calgary, Edmonton, Toronto, Ottawa, and Winnipeg), as well as 
+any corporation or entity owned or controlled by one or more of the preceding entities; 
+• Crown corporations, government enterprises, and other entities that are owned or 
+controlled by these entities through ownership interest; and 
+• Canoe procurement group of Canada’s current and future members.  Canoe members 
+include: 
+o Federal, provincial and territorial government departments, ministries, agencies, 
+boards, councils, committees, commissions, and similar agencies; 
+o Crown corporations, government enterprises, and other entities that are owned 
+or controlled by these entities through ownership interest; 
+o Indigenous self-governing bodies; 
+o Airport authorities;  
+o Regional, local, district, and other forms of municipal government, municipal 
+organizations, school boards, and publicly funded academic, health, and social 
+service entities referred to as MASH sector (this should be construed to include 
+but not be limited to the cities of Calgary, Edmonton, Toronto, Ottawa, and 
+Winnipeg), as well as any corporation or entity owned or controlled by one or 
+more of the preceding entities; and  
+o Canoe procurement group of Canada’s current and future partner associations, 
+including Saskatchewan Association of Rural Municipalities, Association of 
+Manitoba Municipalities, Local Authorities Services/Association of Municipalities 
+Ontario, Nova Scotia Federation of Municipalities, Federation of Prince Edward 
+Island Municipalities, Municipalities Newfoundland Labrador, Union of New 
+Brunswick Municipalities, Northwest Territories Association of Communities, 
+Association of Yukon Communities, CivicInfo BC, Association and their current 
+and future members.  
+For a listing of current United States and Canadian Participating Entities visit Sourcewell’s 
+website (note: there is a tab for each country): https://www.sourcewell-mn.gov/sourcewell-for-
+vendors/agency-locator. 
+Participating Entities typically access master agreements for equipment, products, or services 
+through a purchase order issued directly to the awarded supplier. A Participating Entity may 
+request additional terms or conditions related to a purchase. Use of Sourcewell master 
+agreements is voluntary and Participating Entities retain the right to obtain similar equipment, 
+products, or services from other sources. 
+ 
+
+--- PAGE 4 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 4 
+To meet Participating Entities’ needs, Sourcewell broadly publishes public notice of all 
+solicitation opportunities, including this RFP. In addition, where applicable, other purchasing 
+cooperatives and procurement officials receive notice and are encouraged to re-post the 
+solicitation opportunity.  
+ 
+Proof of publication will be available at the conclusion of the solicitation process. 
+ 
+Sourcewell encourages the use of Small, Minority-owned, Women’s Business Enterprise, 
+Veteran-owned Business Enterprise (S/M/WBE/VBE) suppliers both as prime and 
+subcontractors and encourages the participation of these suppliers in the solicitation process. 
+ 
+C. INTERGOVERNMENTAL SUPPORT AGREEMENTS 
+ 
+Pursuant to 10 U.S.C. § 2679, United States Department of Defense authorized installations 
+may access Sourcewell's awarded cooperative purchasing master agreements through an 
+Intergovernmental Support Agreement with Sourcewell. All transactions completed through 
+this Intergovernmental Support program are directly facilitated by Sourcewell and may be 
+subject to additional terms and conditions.  
+ 
+II. SOLICITATION DETAILS 
+ 
+A. SOLUTIONS-BASED SOLICITATION  
+ 
+This RFP and master agreement award process is a solutions-based solicitation; meaning that 
+Sourcewell is seeking equipment, products, or services that meet the general requirements of 
+the scope of this RFP and are commonly desired or are required by law or industry standards.  
+Participating Entities are responsible for conducting due diligence and ensuring compliance 
+with state, federal, local laws, and specific funding requirements in consultation with legal 
+counsel. 
+ 
+B. REQUESTED EQUIPMENT, PRODUCTS, OR SERVICES 
+ 
+Proposers are expected to offer a wide array of equipment, products, or services at lower prices 
+and with better value than what they would ordinarily offer to a single government entity, 
+school district, or regional cooperative. 
+ 
+Sourcewell is seeking proposals for Enterprise Artificial Intelligence: Platforms, Services, and 
+Integrated Delivery as described below. 
+ 
+Sourcewell recognizes that enterprise artificial intelligence solutions often rely on related 
+capabilities such as data infrastructure, cybersecurity, and compliance. Proposers may include 
+directly related products and services to the extent that they are complementary to the Primary 
+Lot being proposed, even where those offerings are not exclusively AI specific, provided they 
+align with the scope of the Solicitation.  
+
+--- PAGE 5 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 5 
+ 
+This RFP is organized into three (3) response Lots. Proposers must select ONE (1) Primary Lot 
+under which to submit a response.  
+ 
+• For purposes of this RFP, “Primary Lot” means the single Lot that best represents the 
+proposer’s principal line of business and the primary value the proposer provides to 
+Participating Entities under this solicitation.  
+ 
+The Proposer’s Lot selection will determine the response pool in which the proposal is 
+evaluated. Proposers will not be penalized for complementary offerings or capabilities that 
+may also align with other Lots; the Lot structure serves only as an organizational and 
+evaluation mechanism and does not limit the scope of a proposer’s broader capabilities.  
+ 
+Proposals submitted in response to this Solicitation will be evaluated on a Lot-by-Lot basis. The 
+issuance of awards may occur at different times for each Lot, and Sourcewell reserves the right 
+to evaluate, negotiate, and award contracts for any Lot independently of the others. 
+ 
+Notwithstanding the timing of any individual contract award, all master agreements awarded 
+under this Solicitation shall share a common expiration date and shall be coterminous. 
+ 
+Lot Selection Guidance  
+ 
+The following guidance is provided to assist proposers in selecting the most appropriate, single, 
+Primary Lot for their response. This section is intended for clarification purposes only and does 
+not modify or replace the requirements of this Solicitation. 
+ 
+Primary Deliverable Determination 
+Based on the definition above, proposers should consider the nature of their offering: 
+1. If the proposer’s Primary deliverable is a technology product, such as an AI platform, 
+infrastructure system, or software solution that Participating Entities procure and 
+operate, the proposer should respond under Lot 1: AI Products and Platforms. 
+2. If the proposer’s Primary deliverable is human expertise, including advisory, consulting, 
+implementation, or managed services, the proposer should respond under Lot 2: AI 
+Professional Services. 
+3. If (a) the proposer delivers both AI technology and AI professional services as a unified 
+commercial offering, and (b) can serve as the single accountable party for both under 
+one contract, and (c) maintains primary responsibility for the design, integration, 
+performance, and delivery of the integrated AI solution, and remains fully accountable 
+for outcomes, even when third-party components are used, the proposer should 
+respond under Lot 3: Integrated AI Delivery. 
+ 
+Lot 1: AI Products and Platforms 
+ 
+Included Solutions may consist of, but are not limited to: 
+
+--- PAGE 6 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 6 
+a. AI Platforms and Infrastructure 
+i. Enterprise AI platforms with built-in automation, orchestration, and governance 
+capabilities;  
+ii. Platforms supporting AI model development, deployment, and lifecycle 
+management for enterprise and public sector use cases;  
+iii. On-premise, hybrid, and cloud AI infrastructure design, deployment, and 
+management;  
+iv. AI-optimized compute infrastructure; 
+v. Enterprise knowledge management systems and data infrastructure that enable AI 
+capabilities; and  
+vi. AI solutions designed for sensitive or restricted government environments, 
+including air-gapped and privacy-preserving deployments. 
+ 
+b. Intelligent Automation Platforms and Agentic AI 
+i. Agentic AI platforms that build, deploy, and manage AI-driven automation that 
+operate across enterprise systems independent of any single software application 
+— including agent development frameworks, orchestration infrastructure, and 
+lifecycle management tools;  
+ii. Workflow automation platforms that connect AI capabilities to systems, data 
+sources, and processes across organizational boundaries;  
+iii. Enterprise automation platforms enhanced with AI reasoning and natural language 
+capabilities that operate across multiple systems; and  
+iv. Platforms for document intelligence, multimodal processing, and unstructured data 
+extraction at enterprise scale. 
+ 
+For purposes of this solicitation, an AI platform is a technology system that provides 
+foundational infrastructure, tooling, or services enabling the development, deployment, 
+operation, or management of artificial intelligence capabilities at enterprise scale. An AI 
+platform is defined by the functions it performs, not by specific technologies or terminology, and 
+is characterized by one or more of the following: 
+• Model Infrastructure 
+The platform hosts, serves, or provides access to artificial intelligence models and 
+provides mechanisms for model versioning, performance management, and lifecycle 
+management. 
+• Development and Deployment Tooling 
+The platform provides tools for building, configuring, evaluating, deploying, and 
+maintaining AI-enabled systems or applications, including data pipeline management 
+and integration capabilities. 
+• Orchestration and Automation 
+The platform coordinates AI capabilities, intelligent automation, or automated 
+workflows across enterprise systems, data sources, and operational processes. 
+• Purpose-Built AI Platforms 
+The platform delivers AI-enabled functionality designed for a specific industry, 
+
+--- PAGE 7 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 7 
+government function, or operational domain, operating as a distinct, separately-
+procured technology independent of any single enterprise software application. 
+ 
+Lot 1 includes both horizontal AI platforms applicable across multiple industries and purpose-
+built AI platforms designed for specific government functions, industries, or operational 
+domains, provided the platform is enterprise-scale. 
+ 
+Artificial intelligence should constitute a primary, standalone component of the proposer’s 
+offering or proposed solution. A standalone AI platform is an independent, purpose-built system 
+that delivers artificial intelligence capabilities as a primary function, rather than a feature 
+embedded within existing software applications. It operates as a modular solution that can 
+integrate with multiple systems and data sources across an organization.  
+ 
+Lot 2: AI Professional Services 
+ 
+Included Solutions may consist of, but are not limited to: 
+a. AI Strategy, Governance, and Enterprise Transformation 
+i. Enterprise AI maturity assessment — structured evaluation of an organization’s AI 
+readiness across technology, data, talent, governance, and culture dimensions; 
+ii. Responsible AI policy development — documented frameworks, policies, and 
+standards governing AI use, accountability, and risk management; 
+iii. AI governance architecture — design and implementation of oversight structures, 
+audit mechanisms, bias controls, and human-in-the-loop requirements; 
+iv. Operating model redesign — restructuring of organizational workflows, roles, and 
+accountabilities around AI-enabled capabilities; 
+v. AI investment prioritization and business case development — structured 
+approaches to identifying, evaluating, and sequencing AI opportunities; 
+vi. Workforce transformation strategy — design of AI literacy programs, role transition 
+planning, and organizational change management at scale; and 
+vii. Cross-sector AI policy advisory — guidance on compliance with applicable federal, 
+state, and local AI governance requirements and emerging regulatory frameworks. 
+ 
+b. AI-Enabled Managed Services 
+i. AI operations management, including deployment oversight, incident response, and 
+service level management; 
+ii. Model monitoring — ongoing tracking of AI system performance, accuracy, and 
+output quality in production environments; 
+iii. Model drift management — detection and remediation of accuracy degradation as 
+real-world data diverges from training data over time; 
+iv. Continuous improvement programs — structured processes for model retraining, 
+capability expansion, and performance optimization; 
+v. Managed AI services for specific government functions, including citizen services 
+automation, benefits processing, case management, and permitting; and 
+
+--- PAGE 8 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 8 
+vi. AI security operations — monitoring for adversarial inputs, data poisoning, and 
+unauthorized model access. 
+ 
+c. AI Software Development and Engineering  
+Custom development of AI-enabled applications, integrations, and automated 
+workflows designed for specific government functions, operational domains, or 
+agency use cases, including model fine-tuning and adaptation. 
+ 
+For purposes of this Solicitation, custom development, software engineering, and client-specific 
+solution design are considered professional services, even when resulting in a deployed AI-
+enabled application or system. 
+ 
+Lot 3: Integrated AI Delivery 
+ 
+Included Solutions may include, but are not limited to: 
+ 
+a. Systems integrators delivering end-to-end AI solutions, including platform 
+implementation, integration, and ongoing managed services; 
+b. Technology companies with established professional service arms that deploy and 
+support their own AI platforms; 
+c. Managed service providers delivering AI platforms and ongoing operations as a unified 
+service offering; and 
+d. Providers delivering turnkey AI solutions for specific government functions, including 
+both the underlying technology and ongoing service delivery. 
+ 
+A proposer would respond in Lot 3 only if they are a single organization capable of:  
+ 
+i. Delivering both AI technology products and AI professional services under one 
+contract;  
+ii. Serving as the primary accountable party for both; and  
+iii. Maintaining primary responsibility for the design, integration, performance, and 
+delivery of the integrated AI solution, remaining fully accountable for outcomes, 
+even when third-party components are used. 
+ 
+The ability to deliver both technology and services does not, by itself, qualify a proposer for Lot 
+3; the integration of these components must be a standard, unified offering for which the 
+proposer assumes end-to-end accountability. 
+ 
+Unlike Lot 1 proposers, who primarily deliver technology, or Lot 2 proposers who primarily 
+deliver services, Lot 3 proposers deliver both as a unified, integrated offering in which the 
+technology and services components are core to the proposer’s business model and are 
+commercially established. 
+ 
+Lot 3 proposers should demonstrate that: 
+
+--- PAGE 9 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 9 
+ 
+i. Both the AI technology and professional services components are core offerings of 
+the organization (not incidental or ad hoc); 
+ii. The proposer can deliver these as integrated components; and 
+iii. The proposer assumes primary responsibility for the performance, implementation, 
+and outcomes of the combined solution. 
+ 
+Offerings that rely primarily on reselling or distributing third-party AI products without 
+providing integrated implementation and accountability for outcomes do not meet the intent of 
+this Lot. 
+ 
+C. ROLLING SUPPLIER ONBOARDING 
+ 
+Consistent with Sourcewell’s commitment to providing Participating Entities with access to the 
+best available AI solutions throughout the master agreement term, Sourcewell may conduct 
+supplemental supplier onboarding evaluations during the ten-year term of the resulting master 
+agreements. 
+• Future supplemental supplier onboarding evaluations will be subject to the same 
+evaluation factors and terms as this RFP, including the ten-year maximum Master 
+Agreement term and coterminous termination date applicable to all master 
+agreements awarded under this RFP. 
+• Future supplemental supplier onboarding evaluations will be evaluated only against 
+other suppliers responding in the same Lot, not against prior submissions or previously 
+awarded suppliers. 
+• Existing awardees are not required to reapply through a supplemental evaluation 
+window, and their master agreements remain in effect. Suppliers who previously 
+responded to a Lot but were not awarded must resubmit during future supplemental 
+onboarding to be considered. 
+• Sourcewell may re-open any Lot every six months to consider additional responses. 
+Sourcewell reserves the right, in its sole discretion, to suspend, delay, or discontinue 
+further rolling supplier onboarding for any Lot as Sourcewell deems appropriate, 
+including based on the best interests of Participating Entities, administrative capacity, or 
+other operational considerations. Sourcewell reserves the right to open any, all, or no 
+Lots at the time of any rolling supplier onboarding.  
+ 
+D. SINGLE PRIMARY LOT 
+ 
+Proposers must select ONE Primary Lot (1, 2, or 3) in which to submit their proposal. For 
+purposes of this RFP, “Primary" means the single Lot that best represents the proposer‘s 
+principal line of business and the primary value the proposer provides to Participating Entities 
+under this solicitation. Lot selection is the proposer’s determination and reflects how they 
+primarily create value for Participating Entities. If a proposer submits a response that does not 
+clearly fit the selected Primary Lot, Sourcewell reserves the right to seek clarification from a 
+
+--- PAGE 10 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 10 
+proposer and reassign the submission to the most appropriate Lot, or deem it non-responsive, 
+based on such clarification. 
+ 
+Sourcewell prefers suppliers that provide a sole source of responsibility for the equipment, 
+products, and services provided under a resulting master agreement. If proposer includes the 
+equipment, products, and services of its subsidiary entities, the proposer must also identify all 
+subsidiaries included in its proposal. If proposer requires the use of distributors, dealers, 
+resellers, or subcontractors to provide the equipment, products, or services, the proposal must 
+address how the equipment, products or services will be provided to Participating Entities, and 
+describe the network of distributors, dealers, resellers, and/or subcontractors that will be 
+available to serve Participating Entities under a resulting master agreement.  
+ 
+Sourcewell encourages suppliers to offer the broadest possible selection of equipment, 
+products, and services being proposed over the largest possible geographic area and to the 
+largest possible cross-section of Sourcewell current and future Participating Entities. 
+ 
+E. REQUIREMENTS 
+ 
+It is expected that proposers have knowledge of all applicable industry standards, laws, and 
+regulations and possess an ability to market and distribute the equipment, products, or services 
+to Participating Entities.  
+ 
+1. Safety Requirements. All items proposed must comply with current applicable safety or 
+regulatory standards or codes. 
+2. Deviation from Industry Standard. Deviations from industry standards must be 
+identified with an explanation of how the equipment, products, and services will provide 
+equivalent function, coverage, performance, and/or related services.   
+3. New Equipment and Products. Proposed equipment and products must be for new, 
+current model; however, proposer may offer certain close-out equipment or products if 
+it is specifically noted in the Pricing proposal.  
+4. Delivered and operational. Unless clearly noted in the proposal, equipment and 
+products must be delivered to the Participating Entity as operational. 
+5. Warranty. All equipment, products, supplies, and services must be covered by a 
+warranty that is the industry standard or better.   
+ 
+F. PROSPECTIVE MASTER AGREEMENT TERM 
+ 
+The term of the Master Agreement will be ten (10) years with no extensions. Sourcewell 
+reserves the right to consider additional extensions beyond the ten-year term as required 
+under exceptional circumstances and mutual agreement. Notwithstanding the timing of any 
+individual master agreement award, all master agreements awarded under this Solicitation 
+shall share a common expiration date and shall be coterminous.  
+ 
+
+--- PAGE 11 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 11 
+G. ESTIMATED MASTER AGREEMENT VALUE AND USAGE 
+ 
+Based on past volume of similar contracts, the estimated annual value of all transactions from 
+master agreements resulting from this RFP is anticipated to be USD $150 Million for Lot 1, $150 
+Million for Lot 2, and $300 Million for Lot 3. Therefore, proposers are expected to propose 
+volume pricing. Sourcewell anticipates considerable activity under the master agreement(s) 
+awarded from this RFP; however, sales and sales volume from any resulting master agreement 
+are not guaranteed. 
+ 
+H. MARKETING PLAN 
+ 
+Proposer’s sales force will be the primary source of communication with Participating Entities. 
+The proposer’s Marketing Plan should demonstrate proposer’s ability to deploy a sales force or 
+dealer network to Participating Entities, as well as proposer’s sales and service capabilities. It is 
+expected that proposer will promote and market any master agreement award. 
+ 
+I. ADDITIONAL CONSIDERATIONS 
+ 
+1. Master agreements will be awarded to proposers able to best meet the needs of 
+Participating Entities. Proposers should submit their complete line of equipment, 
+products, or services that are applicable to the scope of this RFP.  
+2. A proposer may submit only one proposal. If related, affiliated, or subsidiary entities 
+elect to submit separate proposals, rather than a single parent-entity proposal, each 
+such proposal must be prepared independently and without cooperation, collaboration, 
+or collusion. 
+3. If a proposer works with a consultant on its proposal, the consultant (an individual or 
+company) may not assist any other entity with a proposal for this solicitation. 
+4. Proposers should include all relevant information in its proposal, since Sourcewell 
+cannot consider information that is not included in the proposal. Sourcewell reserves 
+the right to verify proposer’s information and may request clarification from a proposer, 
+including samples of the proposed equipment or products. 
+5. Depending upon the responses received in a given category, Sourcewell may need to 
+organize responses into subcategories in order to provide the broadest coverage of the 
+requested equipment, products, or services to Participating Entities. Awards may be 
+based on a subcategory. 
+6. A proposer’s documented negative past performance with Sourcewell or its 
+Participating Entities occurring under a previously awarded Sourcewell master 
+agreement may be considered in the evaluation of a proposal.   
+ 
+III. PRICING AND DELIVERY SCHEDULES 
+A. REQUIREMENTS 
+ 
+
+--- PAGE 12 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 12 
+Sourcewell recognizes that enterprise AI solutions are delivered through fundamentally different 
+commercial models. Proposers are expected to propose pricing structures appropriate to their 
+Primary Lot and the nature of their offering and upload a corresponding detailed price sheet. 
+ 
+All proposed pricing must be: 
+ 
+1. Submitted using one or more of the following pricing structures, as appropriate to the 
+proposer's Primary Lot and commercial model*: 
+ 
+a. Line-Item Pricing — Pricing based on each individual product, platform, or service. 
+Each line must indicate the proposer's published list price and the Master Agreement 
+Price. Applicable where discrete, individually priced products or services are offered. 
+b. Percentage Discount from Catalog or Published Rate Card — A percentage discount 
+applied to a published rate card, MSRP, or catalog price. Proposers are responsible for 
+providing and maintaining current published rates with Sourcewell throughout the 
+term of any resulting master agreement. This pricing must be included in the proposal 
+and updated as rate cards change. 
+c. Subscription and Consumption-Based Pricing — For AI platforms, models, and 
+infrastructure delivered on a recurring or usage-based basis. Proposals must identify 
+the pricing unit (e.g., per user/month, per API call, per compute unit, per model 
+inference, per transaction) and the not-to-exceed rate for each unit. Where 
+consumption pricing is tiered, all tiers must be disclosed. 
+d. Managed Services and Recurring Fees — For ongoing AI operations, model 
+monitoring, and managed services delivered under a recurring engagement. Proposals 
+must fully describe the pricing model, billing basis, scope of included services, and any 
+assumptions, limitations, tiers, minimums, or other conditions affecting the proposed 
+pricing (for example, pricing per month, per environment, per model, per user, by 
+service tier, or under a fixed recurring fee arrangement). 
+e. Time-and-Materials Rates — For professional services, implementation, advisory, and 
+custom development. Proposals must provide not-to-exceed hourly or daily rates by 
+role, labor category, or service type.  
+f. Outcome- or Transaction-Based Pricing — For solutions priced per task completed, 
+case resolved, or decision processed. Proposals must identify the unit of outcome, the 
+not-to-exceed rate per unit, and any volume thresholds that affect per-unit pricing. 
+g. Other – does not fit within the models above. Proposer must fully describe their 
+pricing model. 
+ 
+*Note on Pricing Model Selection: Proposers are not required to only use a single 
+pricing model. 
+ 
+2. Selected Bid Pricing Line Items - In addition to 1(a) through 1(g) above, Sourcewell is 
+requesting selected bid pricing items to assist in preparation of the independent estimate 
+and cost/price analysis. 
+ 
+
+--- PAGE 13 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 13 
+3. The proposer’s not to exceed price. A not to exceed price is the highest price for which 
+equipment, products, or services may be billed to a Participating Entity. However, it is 
+permissible for suppliers to sell at a price that is lower than the agreed-upon price. 
+ 
+4. Stated in U.S. and Canadian dollars (as applicable). 
+ 
+5. Clearly understandable, complete, and fully describe the total cost of acquisition (e.g., the 
+cost of the proposed equipment, products, and services delivered and operational for its 
+intended purpose in the Participating Entity’s location). 
+ 
+Proposers should clearly identify any costs that are NOT included in the proposed product or 
+service pricing. This may include items such as installation, set up, mandatory training, or initial 
+inspection. Include identification of any parties that impose such costs and their relationship to 
+the proposer. Additionally, proposers should clearly describe any unique distribution and/or 
+delivery methods or options offered in the proposal.  
+ 
+B. PRICING TRANSPARENCY REQUIREMENTS 
+ 
+Given the complexity and variability of AI pricing, all proposals must also include a Pricing 
+Narrative – a plain-language explanation of: 
+• How costs scale over time as usage, users, or data volumes grow; 
+• What events or conditions may trigger pricing changes during the contract term (e.g., 
+model updates, infrastructure changes, licensing tier adjustments); and 
+• How a Participating Entity can reasonably estimate total cost of ownership over a multi-
+year engagement. 
+ 
+The Pricing Narrative is not a substitute for the structured price sheet required above — it is a 
+supplement that allows evaluators and Participating Entities to assess the full economic 
+picture. 
+ 
+C. ADMINISTRATIVE FEES 
+ 
+Proposers awarded a master agreement are expected to pay Sourcewell an administrative fee in 
+exchange for Sourcewell facilitating the resulting master agreement s. The administrative fee is 
+normally calculated as a percentage of the total sales to Participating Entities  for all equipment, 
+products, or services made during a calendar quarter, and is typically one percent (1%) to two 
+percent (2%). In some categories, a flat fee may be an acceptable alternative. 
+ 
+D. DELIVERY SCHEDULES 
+ 
+Participating Entities are encouraged to establish flexible delivery schedules whenever feasible 
+with the awarded supplier. 
+ 
+IV. MASTER AGREEMENT 
+
+--- PAGE 14 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 14 
+ 
+Proposers awarded a master agreement will be required to execute a master agreement with 
+Sourcewell (see attached template). Only those modifications the proposer indicates in its 
+proposal will be available for discussion. Much of the language in the master agreement reflects 
+Minnesota legal requirements and cannot be altered. Numerous and/or onerous exceptions 
+that contradict Minnesota law may result in the proposal being disqualified from further review 
+and evaluation.  Additionally, if a Participating Entities use an awarded master agreement for 
+FEMA or other federal grant purchases, terms and conditions required by 2 C.F.R.§200.327 and 
+Appendix II to 2 C.F.R §200 are incorporated into the master agreement.  These terms and 
+conditions cannot be altered. 
+ 
+To identify any exception, or to request any modification, to Sourcewell’s standard master 
+agreement terms, conditions, or specifications, a proposer must submit the proposed 
+exception(s) or requested modification(s) via redline in the Master Agreement Template 
+provided in the “Documents” section of the “Bid Details” page on the Sourcewell Procurement 
+Portal and uploaded as part of its response. Only those exceptions noted at the time of the 
+proposal submission will be considered. 
+Exceptions must: 
+1. Clearly identify the affected article and section. 
+2. Clearly note the requested modification; and as applicable, provide requested 
+alternative language. 
+ 
+Unclear requests will be automatically denied.   
+ 
+Only those exceptions that have been accepted by Sourcewell will be included in the master 
+agreement document provided to the awarded supplier for signature. 
+ 
+If a proposer receives a master agreement award resulting from this solicitation it will have up 
+to 30 days to sign and return the master agreement. After that time, at Sourcewell’s sole 
+discretion, the master agreement award may be revoked. 
+ 
+V. RFP PROCESS 
+ 
+A. PRE-PROPOSAL CONFERENCE 
+ 
+Sourcewell will hold an optional, non-mandatory pre-proposal conference via webcast on the 
+date and time noted in the Solicitation Schedule for this RFP and on the Sourcewell 
+Procurement Portal. The purpose of this conference is to allow potential proposers to ask 
+questions regarding this RFP and Sourcewell’s competitive procurement process. Information 
+about the webcast will be sent to all entities that have registered for this solicitation 
+opportunity through their Sourcewell Procurement Portal Vendor Account. Pre-proposal 
+conference attendance is optional. 
+ 
+B. QUESTIONS REGARDING THIS RFP AND ORAL COMMUNICATION   
+
+--- PAGE 15 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 15 
+ 
+All questions regarding this RFP must be submitted through the Sourcewell Procurement Portal. 
+The deadline for submission of questions is found in the Solicitation Schedule and on the 
+Sourcewell Procurement Portal. Answers to questions will be issued through an addendum to 
+this RFP. Repetitive questions will be summarized into a single answer and identifying 
+information will be removed from the submitted questions.   
+ 
+All questions, whether specific to a proposer or generally related to the RFP, must be submitted 
+using this process. Do not contact individual Sourcewell staff to ask questions or request 
+information as this may disqualify the proposer from responding to this RFP. Sourcewell will not 
+respond to questions submitted after the deadline.  
+ 
+C. ADDENDA  
+ 
+Sourcewell may modify this RFP at any time prior to the proposal due date by issuing an 
+addendum. Addenda issued by Sourcewell become a part of the RFP and will be delivered to 
+potential proposers through the Sourcewell Procurement Portal. Sourcewell accepts no liability 
+in connection with the delivery of any addenda. 
+ 
+Before a proposal will be accepted through the Sourcewell Procurement Portal, all addenda, if 
+any, must be acknowledged by the proposer by checking the box for each addendum. It is the 
+responsibility of the proposer to check for any addenda that may have been issued up to the 
+solicitation due date and time.  
+ 
+If an addendum is issued after a proposer submitted its proposal, the Sourcewell Procurement 
+Portal will WITHDRAW the submission and change the proposer’s proposal status to 
+INCOMPLETE. The proposer can view this status change in the “MY BIDS” section of the 
+Sourcewell Procurement Portal Vendor Account. The proposer is solely responsible to check the 
+“MY BIDS” section of the Sourcewell Procurement Portal Vendor Account periodically after 
+submitting its proposal (and up to the Proposal Due Date). If the proposer’s proposal status has 
+changed to INCOMPLETE, the proposer is solely responsible to: 
+1. make any required adjustments to its proposal;  
+2. acknowledge the addenda; and 
+3. ensure the re-submitted proposal is received through the Sourcewell Procurement Portal 
+no later than the Proposal Due Date and time shown in the Solicitation Schedule above. 
+ 
+D. PROPOSAL SUBMISSION 
+ 
+Proposer’s complete proposal must be submitted through the Sourcewell Procurement Portal 
+no later than the date and time specified in the Solicitation Schedule. Any other form of 
+proposal submission, whether electronic, paper, or otherwise, will not be considered by 
+Sourcewell. Late proposals will not be considered. It is the proposer’s sole responsibility to 
+ensure that the proposal is received on time. 
+  
+
+--- PAGE 16 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 16 
+It is recommended that proposers allow sufficient time to upload the proposal and to resolve 
+any issues that may arise. The time and date that a proposal is received by Sourcewell is solely 
+determined by the Sourcewell Procurement Portal web clock. 
+ 
+In the event of problems with the Sourcewell Procurement Portal, follow the instructions for 
+technical support posted in the portal. It may take up to 24 hours to respond to certain issues.   
+ 
+Upon successful submission of a proposal, the Sourcewell Procurement Portal will automatically 
+generate a confirmation email to the proposer. If the proposer does not receive a confirmation 
+email, contact Sourcewell’s support provider at support@bidsandtenders.ca. 
+ 
+To ensure receipt of the latest information and updates via email regarding this solicitation, or 
+if the proposer has obtained this solicitation document from a third party, the onus is on the 
+proposer to create a Sourcewell Procurement Portal Vendor Account and register for this 
+solicitation opportunity. 
+ 
+Within the Sourcewell Procurement Portal, all proposals must be digitally acknowledged by an 
+authorized representative of the proposer attesting that the information contained in the 
+proposal is true and accurate. By submitting a proposal, proposer warrants that the information 
+provided is true, correct, and reliable for purposes of evaluation for potential master 
+agreement award. The submission of inaccurate, misleading, or false information is grounds for 
+disqualification from a master agreement award and may subject the proposer to remedies 
+available by law. 
+ 
+E. GENERAL PROPOSAL REQUIREMENTS 
+ 
+Proposals must be: 
+1. In substantial compliance with  the requirements of this RFP or it will be considered 
+nonresponsive and be rejected. 
+2. Complete. A proposal will be rejected if it is conditional or incomplete.  
+3. Submitted in English.  
+4. Valid and irrevocable for 150 days following the Proposal Due Date. 
+ 
+Any and all costs incurred in responding to this RFP will be borne by the proposer.  
+ 
+F. PROPOSAL WITHDRAWAL 
+ 
+Prior to the proposal deadline, a proposer may withdraw its proposal.  
+ 
+G. OPENING 
+ 
+The Opening of proposals will be conducted in the Sourcewell Procurement Portal immediately 
+following the proposal due date and time. To view the list of proposers resulting from the 
+
+--- PAGE 17 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 17 
+opening, verify that the Sourcewell Procurement Portal opportunities list search is set to “All” 
+or “Closed.”  
+ 
+Members of the public may attend the Opening at Sourcewell’s office located at 202 12th 
+Street NE, Staples, MN to hear the results. 
+ 
+VI. EVALUATION AND AWARD 
+ 
+A. EVALUATION 
+ 
+It is the intent of Sourcewell to award one or more master agreements to responsive and 
+responsible proposers offering the best overall quality, selection of equipment, products, and 
+services, and price that meet the commonly requested specifications of Sourcewell and its 
+Participating Entities. The award(s) will be limited to the number of proposers that Sourcewell 
+determines is necessary to meet the needs of its Participating Entities. 
+ 
+Proposals submitted in response to this Solicitation will be evaluated on a Lot-by-Lot basis. The 
+issuance of awards may occur at different times for each Lot, and Sourcewell reserves the right 
+to evaluate, negotiate, and award contracts for any Lot independently of the others. 
+ 
+Factors to be considered in determining the number of master agreements to be awarded in 
+any category may include the following: 
+1. Total evaluation scores ( considering natural break s in the scoring  of responsive 
+proposals); 
+2. The number and geographic location of highest-scoring proposers that offer: 
+a. A comprehensive selection of the requested equipment, products, or services; 
+b. A sales and service network ensur ing availability and coverage for Participating 
+Entities’ use; and 
+c. Other attributes of the proposer or contents of its proposal that assist Participating 
+Entities in achieving environmental and social requirements, and goals. 
+ 
+Information submitted as part of a proposal should be as specific as possible when responding 
+to the RFP. Do not assume Sourcewell has any knowledge about a specific supplier or product. 
+ 
+Responsiveness Criteria 
+  
+To qualify as responsive under this RFP, a Proposer must demonstrate experience delivering 
+artificial intelligence solutions in a highly regulated industry at a scale appropriate to the 
+selected Lot. The required thresholds are identified and explained at the beginning of the RFP 
+Questionnaire in the Sourcewell Procurement Portal, and will be evaluated during a 
+responsiveness review, which constitutes the first step of the evaluation process.  
+ 
+
+--- PAGE 18 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 18 
+• Highly regulated industries are sectors subject to strict government oversight, 
+compliance standards, and legal requirements to ensure safety, security, and ethical 
+practices. 
+• Qualifying highly regulated industries include, but are not limited to: banking and 
+financial services, insurance, healthcare and public health, federal, state, local, or tribal 
+government, K–12 or higher education, public safety and criminal justice, public 
+transportation and transit authorities, utilities and energy (where government-operated 
+or regulated), and defense and national security. Whether an industry qualifies as highly 
+regulated for the purposes of this RFP will be determined at the sole discretion of the 
+evaluation team 
+ 
+B. AWARD(S) 
+ 
+Award(s) will be made to the highest-scoring proposer(s) whose proposal conforms to all 
+conditions and requirements of the RFP, and consistent with the award criteria defined in this 
+RFP. 
+ 
+Proposals submitted in response to this Solicitation will be evaluated on a Lot-by-Lot basis. The 
+issuance of awards may occur at different times for each Lot, and Sourcewell reserves the right 
+to evaluate, negotiate, and award contracts for any Lot independently of the others. 
+ 
+Sourcewell may request written clarification of a proposal at any time during the evaluation 
+process. 
+ 
+Proposal evaluation will be based on the following scoring criteria and the Sourcewell Evaluator 
+Scoring Guide (a copy is available in the Sourcewell Procurement Portal): 
+ 
+  
+Conformance to RFP Requirements Pass/Fail 
+Financial Viability and Marketplace Success 50 
+Ability to Sell and Deliver Solutions  175 
+Responsible AI & Governance  175 
+Marketing Plan 100 
+Value Added Attributes 100 
+Depth and Breadth of Offered Solutions 200 
+Pricing 200 
+TOTAL POINTS 1000 
+ 
+Sourcewell reserves the right to reduce or recalibrate the numerical evaluation scale to align 
+with Sourcewell’s then-current procurement practices. Any such adjustment will apply 
+prospectively and uniformly to future evaluation cycles. Notwithstanding any modification to the 
+evaluation scale, all substantive evaluation criteria and the weights assigned to those criteria will 
+remain unchanged and will be applied consistently across all future rolling solicitations.  
+ 
+C. PROTESTS OF AWARDS 
+
+--- PAGE 19 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 19 
+ 
+Any protest made under this RFP by a proposer must be in writing, in English, addressed to 
+Sourcewell’s Chief Executive Officer, and delivered to the Sourcewell office located at 202 12th 
+Street NE, Staples, MN 56479. All documents that comprise the complete protest package must 
+be received, and time stamped at the Sourcewell office by 3:30 p.m., Central Time, no later 
+than 10 business days following Sourcewell’s notice of master agreement non-award. A protest 
+must allege a procedural, technical, or legal defect, with supporting documentation. A protest 
+that merely requests a re-evaluation of a proposal’s content will not be entertained.  
+ 
+A protest must include the following items: 
+• The name, address, and telephone number of the protester; 
+• Identification of the solicitation by RFP number; 
+• A precise statement of the relevant facts; 
+• Identification of the alleged procedural, technical, or legal defect;  
+• Analysis of the basis for the protest;  
+• Any additional supporting documentation;  
+• The original signature of the protester or its representative; and 
+• Protest bond in the amount of $20,000  (except where prohibited by law or 
+ treaty).  
+ 
+Protests that do not address these elements and include all required documents will not be 
+reviewed. 
+ 
+D. RIGHTS RESERVED 
+ 
+This RFP does not commit Sourcewell to award any master agreement, and a proposal may be 
+rejected if it is nonresponsive, conditional, incomplete, conflicting, or misleading. Proposals 
+that contain false statements or do not support an attribute or condition stated by the 
+proposer may be rejected. 
+ 
+In addition to any other rights reserved herein, Sourcewell reserves the right to: 
+• Modify or cancel this RFP at any time; 
+• Reject any and all proposals received; 
+• Reject proposals that do not comply with the provisions of this RFP; 
+• Select, for master agreements or for discussion, a proposal other than that with the 
+lowest cost; 
+• Independently verify any information provided in a proposal; 
+• Disqualify any proposer that does not meet the requirements of this RFP, is debarred or 
+suspended by the United States or Canada, State of Minnesota, Participating Entity’s 
+state or province; has an officer, or other key personnel, who have been charged with a 
+serious crime; or is bankrupt, insolvent, or where bankruptcy or insolvency are a 
+reasonable prospect; 
+
+--- PAGE 20 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 20 
+• Waive or modify any informalities, irregularities, or inconsistencies in the proposals 
+received; 
+• Clarify any part of a proposal and discuss any aspect of the proposal with any proposer; 
+and negotiate with more than one proposer; 
+• Award a master agreement if only one responsive proposal is received if it is in the best 
+interest of Participating Entities; and 
+• Award a master agreement to one or more proposers if it is in the best interest of 
+Participating Entities.  
+ 
+E. DISPOSITION OF PROPOSALS 
+ 
+All materials submitted in response to this RFP will become property of Sourcewell and will 
+become public record in accordance with Minnesota Statutes Chapter 13, after negotiations are 
+complete, including pricing and financial data. Sourcewell considers negotiations complete 
+upon execution of a resulting master agreement.  
+ 
+Proposers are explicitly cautioned not to submit any data that they consider to be confidential, 
+proprietary, or trade secret, as such data will not be treated as confidential and will be subject 
+to public disclosure in accordance with Minnesota law. 
+ 
+F. ADDITIONAL FEDERAL FUNDING NOTICES 
+ 
+NOTICE TO ALL PROPOSERS 
+ 
+Non-Discrimination on the Basis of Faith  
+• Faith-based organizations may propose to this Request for Proposals on the same basis 
+as any other organization, as set forth at, and subject to the protections and 
+requirements of, this part and any applicable constitutional and statutory requirements, 
+including 42 U.S.C. 2000bb et seq. Neither Sourcewell, nor any federal funding agency 
+will discriminate for or against an organization on the basis of the organization’s 
+religious character, motives, or affiliation, or lack thereof, or on the basis of conduct 
+that would not be considered grounds to favor or disfavor a similarly situated secular 
+organization. 
+• A faith-based organization that participates in this program will retain its independence 
+from the government and may continue to carry out its mission consistent with religious 
+freedom and conscience protections in Federal law. Religious accommodations may also 
+be sought under many of these religious freedom, nondiscrimination, and conscience 
+protections in Federal law. 
+• A faith-based organization may not use direct Federal financial assistance from any 
+federal funding agency to support or engage in any explicitly religious activities except 
+when consistent with the Establishment Clause of the First Amendment and any other 
+applicable requirements. An organization receiving Federal financial assistance also may 
+not, in providing services funded by any Federal agency, or in their outreach activities 
+related to such services, discriminate against a program beneficiary on the basis of 
+
+--- PAGE 21 ---
+ 
+Rev. 3/2026               Sourcewell RFP #061726 
+Enterprise Artificial Intelligence: Platforms, Services, and Integrated Delivery 
+  Page 21 
+religion, a religious belief, a refusal to hold a religious belief, or a refusal to attend or 
+participate in a religious service. 
+ 
+Non-Discrimination of Disadvantaged Businesses 
+  
+In accordance with the provisions of Title VI of the Civil Rights Act of 1964 (78 Stat. 252, 42 
+U.S.C. §§ 2000d to 2000d-4), Sourcewell hereby notifies all proposers that it will affirmatively 
+ensure that disadvantaged business enterprises will be afforded full and fair opportunity to 
+submit proposals in response to this Request for Proposals and will not be discriminated against 
+on the grounds of race, color, or national origin in consideration for an award. 
+ 

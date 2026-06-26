@@ -17,7 +17,8 @@ const ok = (label) => { tests++; console.log(`  ✓ ${label}`); };
 
 // ── Test 1 — count-lock: the RUN 23d 9 tabs + RUN 33 PIVOT ARIA = 10, in order (≤10 hard stop). ──
 const navOrder = [...indexHtml.matchAll(/class="nav-item[^"]*"\s+data-tab="([^"]+)"/g)].map((m) => m[1]);
-const CANONICAL = ["dashboard", "aria", "control-center", "recipes", "compliance-privacy", "reports", "knowledge", "system", "servicenow", "settings"];
+// W5 — Integrations took ServiceNow's nav slot (ServiceNow is now a card); count stays 10.
+const CANONICAL = ["dashboard", "aria", "control-center", "recipes", "compliance-privacy", "reports", "knowledge", "system", "integrations", "settings"];
 assert.deepEqual(navOrder, CANONICAL, "10 nav tabs in canonical order (9 + ARIA)");
 assert.equal(new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1])).size, 10, "RUN 33: 10 tabs (ARIA added)");
 ok("count-lock: 10 tabs in order (≤10 hard stop)");

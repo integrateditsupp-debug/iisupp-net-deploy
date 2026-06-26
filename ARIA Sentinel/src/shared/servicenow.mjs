@@ -152,6 +152,23 @@ export async function ping(instanceUrl, user, pass, options = {}) {
   }
 }
 
+/**
+ * Read-only connectivity test for the Integrations tab. Without creds → { ok:false, "Not configured" }.
+ * With creds → a single GET (sysparm_limit=1) via ping(); never POSTs, never creates an incident, never
+ * throws. `options.fetch` is injectable for tests.
+ */
+export async function testConnection(env = process.env, options = {}) {
+  const cfg = getServiceNowConfig(env);
+  if (!cfg.configured) return { ok: false, message: "Not configured" };
+  try {
+    const res = await ping(cfg.instanceUrl, cfg.user, cfg.pass, options);
+    if (res.ok) return { ok: true, message: `Connected — HTTP ${res.status} in ${res.latency_ms}ms` };
+    return { ok: false, message: res.status ? `ServiceNow returned HTTP ${res.status}` : "Could not reach ServiceNow" };
+  } catch {
+    return { ok: false, message: "ServiceNow check failed" };
+  }
+}
+
 export async function createIncident(input = {}, options = {}) {
   const cfg = options.config || getServiceNowConfig(options.env || process.env);
   const payload = buildIncidentPayload(input);

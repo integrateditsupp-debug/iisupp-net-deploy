@@ -8,7 +8,7 @@
     { "type": "tab", "id": "reports" },
     { "type": "tab", "id": "knowledge" },
     { "type": "tab", "id": "system" },
-    { "type": "tab", "id": "servicenow" },
+    { "type": "tab", "id": "integrations" },
     { "type": "tab", "id": "settings" },
 
     { "type": "button", "id": "startAria" },

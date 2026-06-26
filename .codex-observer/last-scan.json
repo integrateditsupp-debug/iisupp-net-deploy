@@ -1,0 +1,161 @@
+{
+  "schema": "codex-observer/last-scan/v1",
+  "generatedAt": "2026-06-25T13:09:34Z",
+  "windowDays": 2,
+  "windowSince": "2026-06-23T13:09:34Z",
+  "head": {
+    "sha": "300d240",
+    "branch": "cc/sentinel-resolve-parity-2026-06-24"
+  },
+  "scope": "local branches, deduped (git log --branches --since=2d)",
+  "commits": 58,
+  "authors": {
+    "Ahmad": 50,
+    "Cowork (Claude)": 5,
+    "Cowork-Director": 2,
+    "aria-classifier-loop": 1
+  },
+  "tagPrefixes": {
+    "[cc]": 42,
+    "untagged": 4,
+    "[ops]": 3,
+    "[hotfix]": 3,
+    "[sentinel]": 2,
+    "[autonomous]": 1,
+    "[web]": 1,
+    "[trust]": 1,
+    "[deploy]": 1
+  },
+  "taggedRatio": "54/58",
+  "topTokens": {
+    "slice": 15,
+    "coverage": 13,
+    "dod": 10,
+    "criterion": 10,
+    "sentinel": 10,
+    "real": 7,
+    "chat": 6,
+    "recipes": 6,
+    "home": 6,
+    "nav": 6,
+    "fix": 5,
+    "llm": 5
+  },
+  "topDirs1": {
+    "ARIA Sentinel": 802,
+    "aria-vault": 387,
+    "knowledge-base": 177,
+    "netlify": 104,
+    "apps": 38,
+    "docs": 23,
+    "outputs": 22,
+    "assets": 20,
+    "compliance": 18,
+    "sdk": 15
+  },
+  "topDirs2": {
+    "ARIA Sentinel/tests": 201,
+    "ARIA Sentinel/src": 168,
+    "ARIA Sentinel/dist": 110,
+    "netlify/functions": 104,
+    "ARIA Sentinel/docs": 90,
+    "aria-vault/07_Cortex": 88,
+    "aria-vault/iisupp-strategic": 86,
+    "aria-vault/01_Frontal": 73,
+    "apps/sentinel-desktop": 36,
+    "ARIA Sentinel/design-review": 34
+  },
+  "churn": {
+    "insertions": 538843,
+    "deletions": 11417,
+    "note": "inflated by committed generated artifacts (dist, KB JSON, vault)"
+  },
+  "codexLaneWindowCommits": 0,
+  "codexLaneLastActivity": "2026-06-18",
+  "codexBranchCount": 8,
+  "branchActivity": {
+    "cc/coverage-sentinel-2026-06-24": "2026-06-24",
+    "cc/coverage-buildout-2026-06-24": "2026-06-24",
+    "cc/home-hero-nav-2026-06-24": "2026-06-24",
+    "cc/sentinel-resolve-parity-2026-06-24": "2026-06-24",
+    "cc/master-run-2026-06-23": "2026-06-24",
+    "sprint-0-backend": "2026-06-23",
+    "run-24-25-clean": "2026-06-22",
+    "codex/deploy-hygiene-pass-2026-06-18": "2026-06-18",
+    "codex/aria-action-row-cleanup-2026-06-18": "2026-06-18",
+    "codex/aria-deployment-collapse-2026-06-18": "2026-06-18",
+    "codex/aria-global-pulse-tv-2026-06-18": "2026-06-18",
+    "codex/fix-aria-layout-2026-06-18": "2026-06-18",
+    "codex/finish100-post-round14": "2026-06-18",
+    "codex/round9-bottom-2026-06-18": "2026-06-18",
+    "codex/revenue-synthesis-2026-06-17": "2026-06-18",
+    "main": "2026-06-16",
+    "learning-loop-activation": "2026-05-26",
+    "kb-bulk-push": "2026-05-12"
+  },
+  "method": {
+    "gitViaBashMount": "usable this run — packed-refs clean, git log/show-ref/rev-parse all exit 0 (06-24 corruption resolved per 06-25 goal-alignment)",
+    "observeCodexScript": "not mounted this session (local_442f5d4e); reproduced via git log",
+    "writes": "file-tools / node fs only, no git ops",
+    "spendUsd": 0,
+    "llmTokens": 0
+  },
+  "headCheckedOut": {
+    "sha": "300d240",
+    "branch": "cc/sentinel-resolve-parity-2026-06-24",
+    "tipTime": "2026-06-24T03:11:54-04:00",
+    "note": "unchanged vs prior scan — checkout parked on old branch; NOT the newest work"
+  },
+  "headNewestAcrossBranches": {
+    "sha": "60a4093b",
+    "branch": "cc/coverage-sentinel-2026-06-24",
+    "tipTime": "2026-06-24T19:54:25-04:00"
+  },
+  "newSincePriorScan": {
+    "count": 30,
+    "window": "2026-06-24T16:34→19:54 ET",
+    "priorScanAt": "2026-06-24T13:16:09Z",
+    "note": "all on 2 NEW cc/coverage-* branches; not merged to main"
+  },
+  "priorScan": {
+    "date": "2026-06-24T13:16:09Z",
+    "commits": 87,
+    "headSha": "300d240",
+    "tagPrefixes": {
+      "[sentinel]": 49,
+      "[aria]": 17,
+      "[cc]": 6,
+      "[ops]": 5,
+      "[hotfix]": 3,
+      "[autonomous]": 3,
+      "[web]": 1,
+      "[trust]": 1,
+      "[deploy]": 1,
+      "untagged": 1
+    },
+    "topTokens": {
+      "run": 42,
+      "bump": 11,
+      "loop": 6,
+      "hotfix": 6,
+      "classifier": 3,
+      "tester": 2,
+      "nav": 2,
+      "home": 2,
+      "aria-chat": 2
+    },
+    "topDirs1": {
+      "ARIA Sentinel": 295,
+      "aria-vault": 260,
+      "knowledge-base": 129,
+      "netlify": 123,
+      "apps": 38,
+      "docs": 29,
+      "outputs": 22,
+      "assets": 20,
+      "tests": 17,
+      "sdk": 15
+    },
+    "taggedRatio": "86/87"
+  }
+}

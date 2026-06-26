@@ -1,0 +1,242 @@
+{
+  "version": 1,
+  "generated_at": "2026-06-13T19:06:47.805Z",
+  "items": [
+    {
+      "id": "l1-troubleshooting-bible-product-page",
+      "type": "product_page_plan",
+      "title": "Level 1 IT Support Troubleshooting Bible",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public page, checkout, Stripe link, or claims",
+      "risk_flags": []
+    },
+    {
+      "id": "l1-troubleshooting-bible-demo",
+      "type": "demo_plan",
+      "title": "10-minute ticket triage preview",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public demo",
+      "risk_flags": []
+    },
+    {
+      "id": "l1-troubleshooting-bible-community",
+      "type": "community_challenge",
+      "title": "Resolve one sample ticket using the triage tree.",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public community launch",
+      "risk_flags": []
+    },
+    {
+      "id": "m365-helpdesk-kb-pack-product-page",
+      "type": "product_page_plan",
+      "title": "Microsoft 365 Help Desk KB Pack",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public page, checkout, Stripe link, or claims",
+      "risk_flags": []
+    },
+    {
+      "id": "m365-helpdesk-kb-pack-demo",
+      "type": "demo_plan",
+      "title": "10-minute M365 issue classifier",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public demo",
+      "risk_flags": []
+    },
+    {
+      "id": "m365-helpdesk-kb-pack-community",
+      "type": "community_challenge",
+      "title": "Submit one cleaned-up M365 fix article.",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public community launch",
+      "risk_flags": []
+    },
+    {
+      "id": "ai-agent-starter-kit-small-business-product-page",
+      "type": "product_page_plan",
+      "title": "AI Agent Starter Kit for Small Business",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public page, checkout, Stripe link, or claims",
+      "risk_flags": []
+    },
+    {
+      "id": "ai-agent-starter-kit-small-business-demo",
+      "type": "demo_plan",
+      "title": "10-minute AI agent use-case finder",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public demo",
+      "risk_flags": []
+    },
+    {
+      "id": "ai-agent-starter-kit-small-business-community",
+      "type": "community_challenge",
+      "title": "Map one repetitive task into an agent-safe workflow.",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public community launch",
+      "risk_flags": []
+    },
+    {
+      "id": "prompt-engineering-workflows-product-page",
+      "type": "product_page_plan",
+      "title": "Prompt Engineering for Workflows",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public page, checkout, Stripe link, or claims",
+      "risk_flags": []
+    },
+    {
+      "id": "prompt-engineering-workflows-demo",
+      "type": "demo_plan",
+      "title": "10-minute prompt workflow builder",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public demo",
+      "risk_flags": []
+    },
+    {
+      "id": "prompt-engineering-workflows-community",
+      "type": "community_challenge",
+      "title": "Share one prompt that improved a real workflow.",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public community launch",
+      "risk_flags": []
+    },
+    {
+      "id": "windows-11-troubleshooting-kb-product-page",
+      "type": "product_page_plan",
+      "title": "Windows 11 Troubleshooting KB",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public page, checkout, Stripe link, or claims",
+      "risk_flags": []
+    },
+    {
+      "id": "windows-11-troubleshooting-kb-demo",
+      "type": "demo_plan",
+      "title": "10-minute Windows issue sorter",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public demo",
+      "risk_flags": []
+    },
+    {
+      "id": "windows-11-troubleshooting-kb-community",
+      "type": "community_challenge",
+      "title": "Document one Windows fix in simple user language.",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public community launch",
+      "risk_flags": []
+    },
+    {
+      "id": "outlook-fix-guide-product-page",
+      "type": "product_page_plan",
+      "title": "Outlook Fix Guide",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public page, checkout, Stripe link, or claims",
+      "risk_flags": []
+    },
+    {
+      "id": "outlook-fix-guide-demo",
+      "type": "demo_plan",
+      "title": "10-minute Outlook issue guide",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public demo",
+      "risk_flags": []
+    },
+    {
+      "id": "outlook-fix-guide-community",
+      "type": "community_challenge",
+      "title": "Rewrite one Outlook fix for a non-technical user.",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public community launch",
+      "risk_flags": []
+    },
+    {
+      "id": "ai-helpdesk-automation-blueprint-product-page",
+      "type": "product_page_plan",
+      "title": "AI Help Desk Automation Blueprint",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public page, checkout, Stripe link, or claims",
+      "risk_flags": []
+    },
+    {
+      "id": "ai-helpdesk-automation-blueprint-demo",
+      "type": "demo_plan",
+      "title": "10-minute help desk automation readiness score",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public demo",
+      "risk_flags": []
+    },
+    {
+      "id": "ai-helpdesk-automation-blueprint-community",
+      "type": "community_challenge",
+      "title": "Design one safe automation rule for a real support issue.",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public community launch",
+      "risk_flags": []
+    },
+    {
+      "id": "cybersecurity-basics-employees-product-page",
+      "type": "product_page_plan",
+      "title": "Cybersecurity Basics for Employees",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public page, checkout, Stripe link, or claims",
+      "risk_flags": []
+    },
+    {
+      "id": "cybersecurity-basics-employees-demo",
+      "type": "demo_plan",
+      "title": "10-minute phishing decision practice",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public demo",
+      "risk_flags": []
+    },
+    {
+      "id": "cybersecurity-basics-employees-community",
+      "type": "community_challenge",
+      "title": "Share one plain-language security habit that helped your team.",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public community launch",
+      "risk_flags": []
+    },
+    {
+      "id": "no-code-automation-kit-product-page",
+      "type": "product_page_plan",
+      "title": "No-Code Automation Kit",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public page, checkout, Stripe link, or claims",
+      "risk_flags": []
+    },
+    {
+      "id": "no-code-automation-kit-demo",
+      "type": "demo_plan",
+      "title": "10-minute automation opportunity finder",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public demo",
+      "risk_flags": []
+    },
+    {
+      "id": "no-code-automation-kit-community",
+      "type": "community_challenge",
+      "title": "Share one before/after workflow that saved time.",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before public community launch",
+      "risk_flags": []
+    },
+    {
+      "id": "donation-copy",
+      "type": "donation_messaging",
+      "title": "Donation layer copy",
+      "review_status": "Needs review",
+      "approval_gate": "Ahmad review before public donation or contribution feature",
+      "risk_flags": [
+        "impact_claim_review"
+      ]
+    },
+    {
+      "id": "external-product-bridge-template",
+      "type": "external_product_bridge",
+      "title": "External product bridge template",
+      "review_status": "Needs review",
+      "approval_gate": "Human review before referral, concierge, affiliate, or product-fee language",
+      "risk_flags": [
+        "fee_disclosure_review"
+      ]
+    }
+  ]
+}

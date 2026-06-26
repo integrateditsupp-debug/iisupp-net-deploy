@@ -567,13 +567,133 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
   }
 
   // Conversation memory for multi-turn helpdesk chat
-  const ariaChatHistory = [];
+  const ARIA_CHAT_HISTORY_LIMIT = 12;
+  const ARIA_CHAT_HISTORY_KEY = "aria_chat_history_v2";
+  const ARIA_MEMORY_KEY_STORAGE = "aria_memory_key";
+  const ARIA_MEMORY_ENDPOINT = "/.netlify/functions/aria-session-memory";
+  let ariaRemoteMemoryHydrated = false;
+  const ariaChatHistory = loadAriaChatHistory();
+
+  function loadAriaChatHistory() {
+    try {
+      const raw = localStorage.getItem(ARIA_CHAT_HISTORY_KEY);
+      const parsed = JSON.parse(raw || "[]");
+      return sanitizeAriaTurns(parsed);
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  function saveAriaChatHistory() {
+    try {
+      localStorage.setItem(ARIA_CHAT_HISTORY_KEY, JSON.stringify(ariaChatHistory.slice(-ARIA_CHAT_HISTORY_LIMIT)));
+    } catch (_error) {
+      // ignore quota/storage failures
+    }
+  }
+
+  function sanitizeAriaTurns(turns) {
+    return (Array.isArray(turns) ? turns : [])
+      .map((turn) => ({
+        role: turn && turn.role === "assistant" ? "assistant" : "user",
+        content: String(turn && turn.content ? turn.content : "").trim().slice(0, 500)
+      }))
+      .filter((turn) => turn.content)
+      .slice(-ARIA_CHAT_HISTORY_LIMIT);
+  }
+
+  function pushAriaHistory(role, content) {
+    const text = String(content || "").trim().slice(0, 500);
+    if (!text) return;
+    ariaChatHistory.push({ role: role === "assistant" ? "assistant" : "user", content: text });
+    if (ariaChatHistory.length > ARIA_CHAT_HISTORY_LIMIT) {
+      ariaChatHistory.splice(0, ariaChatHistory.length - ARIA_CHAT_HISTORY_LIMIT);
+    }
+    saveAriaChatHistory();
+  }
+
+  function getAriaMemoryKey() {
+    try {
+      let key = localStorage.getItem(ARIA_MEMORY_KEY_STORAGE);
+      if (key) return key;
+      key =
+        "mem_" +
+        (
+          (window.crypto && window.crypto.randomUUID && window.crypto.randomUUID().replace(/-/g, "")) ||
+          Math.random().toString(16).slice(2) + Date.now().toString(16)
+        );
+      localStorage.setItem(ARIA_MEMORY_KEY_STORAGE, key);
+      return key;
+    } catch (_error) {
+      return "";
+    }
+  }
+
+  async function hydrateAriaRemoteMemory() {
+    if (ariaRemoteMemoryHydrated) return;
+    ariaRemoteMemoryHydrated = true;
+    if (ariaChatHistory.length || typeof fetch !== "function") return;
+    const memoryKey = getAriaMemoryKey();
+    if (!memoryKey) return;
+    try {
+      const res = await fetch(ARIA_MEMORY_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event: "get", memory_key: memoryKey })
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      sanitizeAriaTurns(data && data.recent_turns).forEach((turn) => {
+        ariaChatHistory.push(turn);
+      });
+      if (ariaChatHistory.length > ARIA_CHAT_HISTORY_LIMIT) {
+        ariaChatHistory.splice(0, ariaChatHistory.length - ARIA_CHAT_HISTORY_LIMIT);
+      }
+      saveAriaChatHistory();
+    } catch (error) {
+      console.warn("ARIA memory hydrate failed", error);
+    }
+  }
+
+  function buildAriaMemorySummary() {
+    return ariaChatHistory
+      .filter((turn) => turn.role === "user")
+      .slice(-3)
+      .map((turn) => turn.content)
+      .join(" | ")
+      .slice(0, 600);
+  }
+
+  function persistAriaRemoteMemory(extra) {
+    saveAriaChatHistory();
+    if (typeof fetch !== "function") return;
+    const memoryKey = getAriaMemoryKey();
+    if (!memoryKey) return;
+    fetch(ARIA_MEMORY_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event: "remember",
+        memory_key: memoryKey,
+        recent_turns: ariaChatHistory.slice(-ARIA_CHAT_HISTORY_LIMIT),
+        summary: buildAriaMemorySummary(),
+        last_intent: (extra && extra.lastIntent) || "",
+        source: "aria-core"
+      })
+    }).catch((error) => {
+      console.warn("ARIA memory persist failed", error);
+    });
+  }
 
   async function buildTechSupport(q) {
+    await hydrateAriaRemoteMemory();
     // 1. Try Knowledge Base first (instant, no AI cost)
     if (window.ARIA_KB) {
       const kb = window.ARIA_KB.lookup(q);
       if (kb) {
+        pushAriaHistory("user", q);
+        pushAriaHistory("assistant", kb.text);
+        persistAriaRemoteMemory({ lastIntent: (window.state && window.state.lastIntent) || "" });
         const escalateNote = kb.escalate ? `<p class="small-note" style="color:#D4AF37;"><b>Recommend live agent.</b> Call <a class="aria-result-link" href="tel:+16475813182">(647) 581-3182</a>.</p>` : '';
         return {
           title: kb.escalate ? "Recommend Live Agent" : "ARIA — IT Helpdesk",
@@ -584,8 +704,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       }
     }
     // 2. Fall through to AI (with conversation memory)
-    ariaChatHistory.push({ role: "user", content: q });
-    if (ariaChatHistory.length > 16) ariaChatHistory.splice(0, ariaChatHistory.length - 16);
+    pushAriaHistory("user", q);
 
     try {
       const res = await fetch("/.netlify/functions/aria-chat", {
@@ -596,7 +715,8 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
       if (!res.ok) throw new Error("Status " + res.status);
       const data = await res.json();
       const replyText = data.text || "I had trouble reaching the helpdesk service. Please call (647) 581-3182.";
-      ariaChatHistory.push({ role: "assistant", content: replyText });
+      pushAriaHistory("assistant", replyText);
+      persistAriaRemoteMemory({ lastIntent: (window.state && window.state.lastIntent) || "" });
 
       const escapeReply = escapeHtml(replyText).replace(/\n/g, "<br>");
       let escalateNote = "";

@@ -36,10 +36,15 @@ header.top a{color:rgba(255,255,255,.55)}
   <a href="#embed">Embeddable widget</a>
   <a href="#lead-capture">Lead capture</a>
   <a href="#handoff">Live-agent handoff</a>
+  <a href="#screenshare">Screen share</a>
   <a href="#data-export">Data export</a>
   <a href="#account-delete">Account delete</a>
   <a href="#plan-change">Plan change</a>
   <a href="#m365-graph">M365 Graph</a>
+  <a href="#cost-tracker">Cost tracker</a>
+  <a href="#memory">Memory</a>
+  <a href="#approval-gate">Approval gate</a>
+  <a href="#slack">Slack</a>
   <a href="#receipt-email">Receipt email</a>
 </div>
 
@@ -73,6 +78,15 @@ header.top a{color:rgba(255,255,255,.55)}
 <p>Pages Ahmad with full chat context. Returns <code>{ ok: true, message: 'Ahmad is being paged now.' }</code>.</p>
 </div>
 
+<h2 id="screenshare">Screen-Share Request</h2>
+<div class="card">
+<p><span class="method POST">POST</span><code>/.netlify/functions/aria-screenshare-request</code></p>
+<pre>{ "email": "user@co.com", "name": "Jane Doe",
+  "urgency": "normal",
+  "context": "Need a live walkthrough for Outlook profile repair" }</pre>
+<p>Requests a human-approved screen-share session. Tenant gets a confirmation first; Ahmad gets the room details and decides whether to forward the live link. No auto-join and no recording implied.</p>
+</div>
+
 <h2 id="data-export">Data Export (PIPEDA Principle 9)</h2>
 <div class="card">
 <p><span class="method POST">POST</span><code>/.netlify/functions/aria-data-export</code></p>
@@ -101,7 +115,55 @@ header.top a{color:rgba(255,255,255,.55)}
 <p><span class="method POST">POST</span><code>/.netlify/functions/aria-m365-graph</code></p>
 <pre>{ "action": "list-users",
   "params": { "top": 25 } }</pre>
-<p>Actions: <code>health-check</code>, <code>list-users</code>, <code>get-user</code>, <code>check-license</code>, <code>list-groups</code>, <code>list-devices</code>. Requires env vars <code>M365_TENANT_ID</code>, <code>M365_CLIENT_ID</code>, <code>M365_CLIENT_SECRET</code> (per-tenant). Use the <a href="/platform-readiness.html">platform readiness board</a> to confirm the CEO/provider gates before enabling customer tenants.</p>
+<p>Actions: <code>health-check</code>, <code>list-users</code>, <code>get-user</code>, <code>check-license</code>, <code>list-groups</code>, <code>list-devices</code>. Requires env vars <code>M365_TENANT_ID</code>, <code>M365_CLIENT_ID</code>, <code>M365_CLIENT_SECRET</code> (per-tenant). See <a href="/docs/M365-GRAPH-INTEGRATION-SETUP">setup guide</a>.</p>
+</div>
+
+<h2 id="cost-tracker">Durable Cost Tracker</h2>
+<div class="card">
+<p><span class="method POST">POST</span><code>/.netlify/functions/aria-cost-tracker</code></p>
+<pre>{ "event": "log", "model": "claude-sonnet-4-6",
+  "tokens_in": 1200, "tokens_out": 640, "customer_id": "acme-01" }</pre>
+<pre>{ "event": "status" }</pre>
+<p>Tracks monthly token spend. Now persists summary + ledger to Netlify Blobs when available, with alerts at 80%, 95%, and 100% of the configured cap.</p>
+</div>
+
+<h2 id="memory">Cross-Session Memory</h2>
+<div class="card">
+<p><span class="method POST">POST</span><code>/.netlify/functions/aria-session-memory</code></p>
+<pre>{ "event": "remember",
+  "memory_key": "mem_...",
+  "summary": "User keeps asking about Outlook add-ins",
+  "recent_turns": [
+    { "role": "user", "content": "Outlook crashes on launch" },
+    { "role": "assistant", "content": "Start with safe mode..." }
+  ] }</pre>
+<pre>{ "event": "get", "memory_key": "mem_..." }</pre>
+<pre>{ "event": "forget", "memory_key": "mem_...", "fields": ["recent_turns", "summary"] }</pre>
+<p>Supports both legacy email-scoped turn storage and anonymous memory-key storage for durable repeat-session context before a signed account exists.</p>
+</div>
+
+<h2 id="approval-gate">Approval Gate Scaffold</h2>
+<div class="card">
+<p><span class="method POST">POST</span><code>/.netlify/functions/aria-write-gate</code></p>
+<pre>{ "event": "request",
+  "action": "kb.add_entry",
+  "tenant_email": "ops@acme.com",
+  "requested_by": "ARIA operator",
+  "params": { "title": "Outlook add-in baseline" } }</pre>
+<pre>{ "event": "status", "request_id": "..." }</pre>
+<p>Queues allow-listed write/agentic actions for Ahmad approval. Email approval links are generated through Resend when configured; nothing executes automatically.</p>
+</div>
+
+<h2 id="slack">Slack Slash Command</h2>
+<div class="card">
+<p><span class="method POST">POST</span><code>/.netlify/functions/aria-slack-command</code></p>
+<pre>Slack sends form-encoded payloads and expects a fast acknowledgement.
+Supported text commands:
+- /aria help
+- /aria status
+- /aria cost
+- /aria &lt;IT question&gt;</pre>
+<p>Verifies <code>X-Slack-Signature</code> and <code>X-Slack-Request-Timestamp</code> when <code>SLACK_SIGNING_SECRET</code> is configured. Replies remain ephemeral by default.</p>
 </div>
 
 <h2 id="receipt-email">Receipt + Session Email</h2>

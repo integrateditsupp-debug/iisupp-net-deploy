@@ -1,0 +1,947 @@
+{
+  "version": 1,
+  "updatedAt": "2026-06-19T14:56:30.198Z",
+  "actions": {
+    "rbc-supplier-registration": {
+      "status": "done",
+      "updatedAt": "2026-06-12T14:27:27.925Z",
+      "note": "this was done but keep an eye for it in our email inbox or anyway to keep track of the status",
+      "title": "RBC supplier registration final gate"
+    },
+    "jason-brown-hines-follow-up": {
+      "status": "hold",
+      "updatedAt": "2026-06-12T14:27:37.074Z",
+      "note": "",
+      "title": "Jason Brown / Hines follow-up"
+    },
+    "direct-contact-first-send": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:08:22.142Z",
+      "title": "Send 7-day SMB follow-ups"
+    },
+    "publish-approved-slices": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:28:17.287Z",
+      "note": "",
+      "title": "Publish already-approved website slices"
+    },
+    "review-staged-conversion-slice-review-2026-06-11": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:28:31.340Z",
+      "note": "",
+      "title": "Homepage contact-intake context upgrade"
+    },
+    "review-staged-operations-conversion-slice-review-2026-06-11": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:28:38.411Z",
+      "note": "",
+      "title": "Operations conversion slice"
+    },
+    "review-staged-growth-library-conversion-review-2026-06-11": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:28:53.662Z",
+      "note": "",
+      "title": "Growth Library conversion slice"
+    },
+    "review-staged-overflow-conversion-review-2026-06-11": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:29:08.356Z",
+      "note": "",
+      "title": "overflow conversion slice"
+    },
+    "review-staged-aria-conversion-review-2026-06-11": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:29:13.676Z",
+      "note": "",
+      "title": "ARIA deployment-path slice"
+    },
+    "review-staged-helpdesk-blueprint-preview-review-2026-06-11": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:29:18.474Z",
+      "note": "",
+      "title": "Help Desk Blueprint sample-preview slice"
+    },
+    "review-staged-website-checklist-preview-review-2026-06-11": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:29:22.791Z",
+      "note": "",
+      "title": "Website Checklist sample-preview slice"
+    },
+    "review-staged-ai-workflow-audit-preview-review-2026-06-11": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:29:27.663Z",
+      "note": "",
+      "title": "AI Workflow Audit preview slice"
+    },
+    "review-staged-msp-partner-overflow-preview-review-2026-06-12": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:29:38.328Z",
+      "note": "",
+      "title": "MSP / Partner Overflow Coverage preview slice"
+    },
+    "review-staged-m365-tune-up-preview-review-2026-06-12": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:29:46.445Z",
+      "note": "",
+      "title": "M365 Security & Productivity Tune-Up preview slice"
+    },
+    "review-staged-overflow-support-pilot-preview-review-2026-06-12": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:30:04.818Z",
+      "note": "",
+      "title": "Overflow Support Pilot preview slice"
+    },
+    "acceptance-1": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:30:31.485Z",
+      "note": "",
+      "title": "Check LinkedIn acceptance: Steve Lariviere (Hines)"
+    },
+    "acceptance-2": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:30:57.305Z",
+      "note": "",
+      "title": "Check LinkedIn acceptance: David Hoffman (Hines)"
+    },
+    "acceptance-3": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:31:11.627Z",
+      "note": "",
+      "title": "Check LinkedIn acceptance: Adam F Clerici (Project / construction)"
+    },
+    "acceptance-4": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:31:24.062Z",
+      "note": "",
+      "title": "Check LinkedIn acceptance: Muhammad Bajwa (Program management)"
+    },
+    "acceptance-5": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:31:31.238Z",
+      "note": "",
+      "title": "Check LinkedIn acceptance: Avil Dsouza (IT leadership)"
+    },
+    "acceptance-6": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:31:42.074Z",
+      "note": "",
+      "title": "Check LinkedIn acceptance: John Bewley (Forward IT Thinking)"
+    },
+    "prep-4": {
+      "status": "accept",
+      "updatedAt": "2026-06-12T14:34:04.291Z",
+      "note": "",
+      "title": "Freight Data Modernization Initiative Phase 1 - Ministry of Transportation"
+    },
+    "prep-5": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:34:10.523Z",
+      "note": "",
+      "title": "Data Platform Evolution - CanadaBuys - AI opportunities"
+    },
+    "prep-7": {
+      "status": "accept",
+      "updatedAt": "2026-06-12T14:34:15.636Z",
+      "note": "",
+      "title": "TELUS procurement registration review - TELUS"
+    },
+    "prep-8": {
+      "status": "accept",
+      "updatedAt": "2026-06-12T14:34:20.333Z",
+      "note": "",
+      "title": "Rogers supplier portal registration review - Rogers"
+    },
+    "review-staged-office-move-preview-review-2026-06-11": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:43:06.482Z",
+      "note": "",
+      "title": "Office Move readiness preview slice"
+    },
+    "acceptance-7": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:43:34.865Z",
+      "note": "you can check and continue the leads searching",
+      "title": "Check LinkedIn acceptance: ABDULKERIM- CIO.D,CISSP,CCSP,MBA (Executive IT)"
+    },
+    "acceptance-8": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:52:56.996Z",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "title": "Check LinkedIn acceptance: Sean Banikin (Automate My Workflow)"
+    },
+    "review-staged-start-here-conversion-review-2026-06-12": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:44:46.749Z",
+      "note": "",
+      "title": "Start Here route-guide slice"
+    },
+    "acceptance-9": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:52:56.996Z",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "title": "Check LinkedIn acceptance: Jason Louth (Long View Systems)"
+    },
+    "acceptance-10": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:52:56.996Z",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "title": "Check LinkedIn acceptance: Rahoul R Dhopade (Powerex)"
+    },
+    "acceptance-11": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:52:56.996Z",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "title": "Check LinkedIn acceptance: Olivier Perron (PMO / AI)"
+    },
+    "acceptance-12": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:52:56.996Z",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "title": "Check LinkedIn acceptance: Justin Anlund (ANLUND GROUP)"
+    },
+    "acceptance-13": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:52:56.996Z",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "title": "Check LinkedIn acceptance: Clinton Boyda (Lantern)"
+    },
+    "acceptance-14": {
+      "status": "agent",
+      "updatedAt": "2026-06-12T14:52:56.996Z",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "title": "Check LinkedIn acceptance: Kshitiz (Shi) Nayyar (KNAYYAR INC.)"
+    },
+    "prep-1": {
+      "status": "reject",
+      "updatedAt": "2026-06-12T14:50:41.890Z",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "title": "EP168-270277 - RFSO - Landscape Architecture Services - CanadaBuys - cybersecurity opportunities"
+    },
+    "prep-3": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:50:16.566Z",
+      "note": "",
+      "title": "Cloudera Licenses Renewal 26-27 - CanadaBuys - IT opportunities"
+    },
+    "prep-6": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T14:50:20.305Z",
+      "note": "",
+      "title": "Security Control Centre IT Modernization Project - Department of National Defence (DND)"
+    },
+    "prep-2": {
+      "status": "reject",
+      "updatedAt": "2026-06-12T14:50:28.484Z",
+      "note": "",
+      "title": "Turning Urban Data into Real-Time Insight through AI - CanadaBuys - cybersecurity opportunities"
+    },
+    "contract-prep-1": {
+      "status": "reject",
+      "updatedAt": "2026-06-12T15:19:12.277Z",
+      "note": "",
+      "title": "EP168-270277 - RFSO - Landscape Architecture Services - CanadaBuys - cybersecurity opportunities"
+    },
+    "contract-prep-2": {
+      "status": "reject",
+      "updatedAt": "2026-06-12T15:27:22.303Z",
+      "note": "",
+      "title": "Turning Urban Data into Real-Time Insight through AI - CanadaBuys - cybersecurity opportunities"
+    },
+    "contract-prep-3": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T15:27:22.303Z",
+      "note": "",
+      "title": "Cloudera Licenses Renewal 26-27 - CanadaBuys - IT opportunities"
+    },
+    "contract-prep-4": {
+      "status": "accept",
+      "updatedAt": "2026-06-12T15:27:22.303Z",
+      "note": "",
+      "title": "Freight Data Modernization Initiative Phase 1 - Ministry of Transportation"
+    },
+    "contract-prep-5": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T15:27:22.303Z",
+      "note": "",
+      "title": "Data Platform Evolution - CanadaBuys - AI opportunities"
+    },
+    "contract-prep-6": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T15:27:22.303Z",
+      "note": "",
+      "title": "Security Control Centre IT Modernization Project - Department of National Defence (DND)"
+    },
+    "contract-prep-7": {
+      "status": "accept",
+      "updatedAt": "2026-06-12T15:27:22.303Z",
+      "note": "",
+      "title": "TELUS procurement registration review - TELUS"
+    },
+    "contract-prep-8": {
+      "status": "accept",
+      "updatedAt": "2026-06-12T15:27:22.303Z",
+      "note": "",
+      "title": "Rogers supplier portal registration review - Rogers"
+    },
+    "growth-lead-engine": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T20:50:13.465Z",
+      "note": "",
+      "title": "Find new qualified revenue leads"
+    },
+    "growth-contract-staffing-lane": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T20:50:21.725Z",
+      "note": "",
+      "title": "Remote contract staffing / subcontracting lane"
+    },
+    "growth-aria-products": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T20:50:43.569Z",
+      "note": "",
+      "title": "Create new ARIA/IIS service products"
+    },
+    "growth-claude-sync": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T20:50:53.377Z",
+      "note": "",
+      "title": "Share current work and learnings with Claude/agents"
+    },
+    "growth-corp-docs": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T20:50:59.401Z",
+      "note": "",
+      "title": "Maintain IIS corporate documentation"
+    },
+    "growth-dashboard-health": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T20:51:04.269Z",
+      "note": "",
+      "title": "Keep dashboard non-empty and useful"
+    },
+    "review-staged-product-routeback-conversion-review-2026-06-12": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T21:06:28.010Z",
+      "note": "",
+      "title": "product route-back conversion slice"
+    },
+    "review-staged-enterprise-reference-compliance-review-2026-06-12": {
+      "status": "accept",
+      "updatedAt": "2026-06-12T21:06:34.093Z",
+      "note": "",
+      "title": "enterprise-reference compliance cleanup slice"
+    },
+    "review-staged-homepage-proof-shelf-review-2026-06-12": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T21:06:44.177Z",
+      "note": "",
+      "title": "homepage proof-shelf conversion slice"
+    },
+    "review-staged-monthly-ai-support-preview-review-2026-06-12": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T21:06:52.309Z",
+      "note": "",
+      "title": "Monthly AI Support Plan preview slice"
+    },
+    "review-staged-ai-workflow-quick-win-sprint-preview-review-2026-06-12": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T22:54:43.744Z",
+      "note": "",
+      "title": "AI Workflow Quick-Win Sprint preview slice"
+    },
+    "review-staged-contact-route-reassurance-review-2026-06-12": {
+      "status": "approve",
+      "updatedAt": "2026-06-12T22:55:20.236Z",
+      "note": "",
+      "title": "contact route reassurance slice"
+    }
+  },
+  "notes": [
+    {
+      "actionId": "rbc-supplier-registration",
+      "status": "done",
+      "at": "2026-06-12T14:06:22.400Z",
+      "title": "RBC supplier registration final gate"
+    },
+    {
+      "actionId": "jason-brown-hines-follow-up",
+      "status": "hold",
+      "at": "2026-06-12T14:07:13.749Z",
+      "title": "Jason Brown / Hines follow-up"
+    },
+    {
+      "actionId": "direct-contact-first-send",
+      "status": "agent",
+      "at": "2026-06-12T14:08:22.142Z",
+      "title": "Send 7-day SMB follow-ups"
+    },
+    {
+      "actionId": "rbc-supplier-registration",
+      "title": "RBC supplier registration final gate",
+      "status": "done",
+      "note": "this was done but keep an eye for it in our email inbox or anyway to keep track of the status",
+      "at": "2026-06-12T14:27:21.372Z"
+    },
+    {
+      "actionId": "rbc-supplier-registration",
+      "title": "RBC supplier registration final gate",
+      "status": "done",
+      "note": "this was done but keep an eye for it in our email inbox or anyway to keep track of the status",
+      "at": "2026-06-12T14:27:25.186Z"
+    },
+    {
+      "actionId": "rbc-supplier-registration",
+      "title": "RBC supplier registration final gate",
+      "status": "done",
+      "note": "this was done but keep an eye for it in our email inbox or anyway to keep track of the status",
+      "at": "2026-06-12T14:27:27.925Z"
+    },
+    {
+      "actionId": "jason-brown-hines-follow-up",
+      "title": "Jason Brown / Hines follow-up",
+      "status": "hold",
+      "note": "",
+      "at": "2026-06-12T14:27:37.074Z"
+    },
+    {
+      "actionId": "publish-approved-slices",
+      "title": "Publish already-approved website slices",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:28:17.287Z"
+    },
+    {
+      "actionId": "review-staged-conversion-slice-review-2026-06-11",
+      "title": "Homepage contact-intake context upgrade",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:28:31.340Z"
+    },
+    {
+      "actionId": "review-staged-operations-conversion-slice-review-2026-06-11",
+      "title": "Operations conversion slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:28:38.411Z"
+    },
+    {
+      "actionId": "review-staged-growth-library-conversion-review-2026-06-11",
+      "title": "Growth Library conversion slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:28:53.662Z"
+    },
+    {
+      "actionId": "review-staged-overflow-conversion-review-2026-06-11",
+      "title": "overflow conversion slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:29:08.356Z"
+    },
+    {
+      "actionId": "review-staged-aria-conversion-review-2026-06-11",
+      "title": "ARIA deployment-path slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:29:13.676Z"
+    },
+    {
+      "actionId": "review-staged-helpdesk-blueprint-preview-review-2026-06-11",
+      "title": "Help Desk Blueprint sample-preview slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:29:18.474Z"
+    },
+    {
+      "actionId": "review-staged-website-checklist-preview-review-2026-06-11",
+      "title": "Website Checklist sample-preview slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:29:22.791Z"
+    },
+    {
+      "actionId": "review-staged-ai-workflow-audit-preview-review-2026-06-11",
+      "title": "AI Workflow Audit preview slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:29:27.663Z"
+    },
+    {
+      "actionId": "review-staged-msp-partner-overflow-preview-review-2026-06-12",
+      "title": "MSP / Partner Overflow Coverage preview slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:29:38.328Z"
+    },
+    {
+      "actionId": "review-staged-m365-tune-up-preview-review-2026-06-12",
+      "title": "M365 Security & Productivity Tune-Up preview slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:29:46.445Z"
+    },
+    {
+      "actionId": "review-staged-overflow-support-pilot-preview-review-2026-06-12",
+      "title": "Overflow Support Pilot preview slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:30:04.818Z"
+    },
+    {
+      "actionId": "acceptance-1",
+      "title": "Check LinkedIn acceptance: Steve Lariviere (Hines)",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:30:31.485Z"
+    },
+    {
+      "actionId": "acceptance-2",
+      "title": "Check LinkedIn acceptance: David Hoffman (Hines)",
+      "status": "agent",
+      "note": "",
+      "at": "2026-06-12T14:30:57.305Z"
+    },
+    {
+      "actionId": "acceptance-3",
+      "title": "Check LinkedIn acceptance: Adam F Clerici (Project / construction)",
+      "status": "agent",
+      "note": "",
+      "at": "2026-06-12T14:31:11.627Z"
+    },
+    {
+      "actionId": "acceptance-4",
+      "title": "Check LinkedIn acceptance: Muhammad Bajwa (Program management)",
+      "status": "agent",
+      "note": "",
+      "at": "2026-06-12T14:31:24.062Z"
+    },
+    {
+      "actionId": "acceptance-5",
+      "title": "Check LinkedIn acceptance: Avil Dsouza (IT leadership)",
+      "status": "agent",
+      "note": "",
+      "at": "2026-06-12T14:31:31.238Z"
+    },
+    {
+      "actionId": "acceptance-6",
+      "title": "Check LinkedIn acceptance: John Bewley (Forward IT Thinking)",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:31:42.074Z"
+    },
+    {
+      "actionId": "prep-4",
+      "title": "Freight Data Modernization Initiative Phase 1 - Ministry of Transportation",
+      "status": "accept",
+      "note": "",
+      "at": "2026-06-12T14:34:04.291Z"
+    },
+    {
+      "actionId": "prep-5",
+      "title": "Data Platform Evolution - CanadaBuys - AI opportunities",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:34:10.523Z"
+    },
+    {
+      "actionId": "prep-7",
+      "title": "TELUS procurement registration review - TELUS",
+      "status": "accept",
+      "note": "",
+      "at": "2026-06-12T14:34:15.636Z"
+    },
+    {
+      "actionId": "prep-8",
+      "title": "Rogers supplier portal registration review - Rogers",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:34:19.226Z"
+    },
+    {
+      "actionId": "prep-8",
+      "title": "Rogers supplier portal registration review - Rogers",
+      "status": "accept",
+      "note": "",
+      "at": "2026-06-12T14:34:20.333Z"
+    },
+    {
+      "actionId": "console-proceed",
+      "title": "CEO Proceed",
+      "status": "proceed",
+      "note": "24 item(s) ready for agent continuation. 14 still open.",
+      "at": "2026-06-12T14:37:42.076Z"
+    },
+    {
+      "actionId": "review-staged-office-move-preview-review-2026-06-11",
+      "title": "Office Move readiness preview slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:43:06.482Z"
+    },
+    {
+      "actionId": "acceptance-7",
+      "title": "Check LinkedIn acceptance: ABDULKERIM- CIO.D,CISSP,CCSP,MBA (Executive IT)",
+      "status": "open",
+      "note": "you can check and continue the leads searching",
+      "at": "2026-06-12T14:43:33.412Z"
+    },
+    {
+      "actionId": "acceptance-7",
+      "title": "Check LinkedIn acceptance: ABDULKERIM- CIO.D,CISSP,CCSP,MBA (Executive IT)",
+      "status": "agent",
+      "note": "you can check and continue the leads searching",
+      "at": "2026-06-12T14:43:34.865Z"
+    },
+    {
+      "actionId": "acceptance-8",
+      "title": "Check LinkedIn acceptance: Sean Banikin (Automate My Workflow)",
+      "status": "open",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:44:31.496Z"
+    },
+    {
+      "actionId": "review-staged-start-here-conversion-review-2026-06-12",
+      "title": "Start Here route-guide slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:44:46.749Z"
+    },
+    {
+      "actionId": "acceptance-9",
+      "title": "Check LinkedIn acceptance: Jason Louth (Long View Systems)",
+      "status": "open",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:45:09.850Z"
+    },
+    {
+      "actionId": "acceptance-10",
+      "title": "Check LinkedIn acceptance: Rahoul R Dhopade (Powerex)",
+      "status": "open",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:45:16.648Z"
+    },
+    {
+      "actionId": "acceptance-11",
+      "title": "Check LinkedIn acceptance: Olivier Perron (PMO / AI)",
+      "status": "open",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:45:21.815Z"
+    },
+    {
+      "actionId": "acceptance-12",
+      "title": "Check LinkedIn acceptance: Justin Anlund (ANLUND GROUP)",
+      "status": "open",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:45:27.949Z"
+    },
+    {
+      "actionId": "acceptance-13",
+      "title": "Check LinkedIn acceptance: Clinton Boyda (Lantern)",
+      "status": "open",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:45:42.096Z"
+    },
+    {
+      "actionId": "acceptance-14",
+      "title": "Check LinkedIn acceptance: Kshitiz (Shi) Nayyar (KNAYYAR INC.)",
+      "status": "open",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:45:46.060Z"
+    },
+    {
+      "actionId": "prep-1",
+      "title": "EP168-270277 - RFSO - Landscape Architecture Services - CanadaBuys - cybersecurity opportunities",
+      "status": "open",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:45:51.741Z"
+    },
+    {
+      "actionId": "prep-3",
+      "title": "Cloudera Licenses Renewal 26-27 - CanadaBuys - IT opportunities",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:50:16.566Z"
+    },
+    {
+      "actionId": "prep-6",
+      "title": "Security Control Centre IT Modernization Project - Department of National Defence (DND)",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T14:50:20.305Z"
+    },
+    {
+      "actionId": "prep-2",
+      "title": "Turning Urban Data into Real-Time Insight through AI - CanadaBuys - cybersecurity opportunities",
+      "status": "reject",
+      "note": "",
+      "at": "2026-06-12T14:50:28.484Z"
+    },
+    {
+      "actionId": "prep-1",
+      "title": "EP168-270277 - RFSO - Landscape Architecture Services - CanadaBuys - cybersecurity opportunities",
+      "status": "reject",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:50:41.890Z"
+    },
+    {
+      "actionId": "console-proceed",
+      "title": "CEO Proceed",
+      "status": "proceed",
+      "note": "29 item(s) ready for agent continuation. 7 still open.",
+      "at": "2026-06-12T14:50:49.175Z"
+    },
+    {
+      "actionId": "acceptance-8",
+      "title": "Check LinkedIn acceptance: Sean Banikin (Automate My Workflow)",
+      "status": "agent",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:52:56.996Z"
+    },
+    {
+      "actionId": "acceptance-9",
+      "title": "Check LinkedIn acceptance: Jason Louth (Long View Systems)",
+      "status": "agent",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:52:56.996Z"
+    },
+    {
+      "actionId": "acceptance-10",
+      "title": "Check LinkedIn acceptance: Rahoul R Dhopade (Powerex)",
+      "status": "agent",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:52:56.996Z"
+    },
+    {
+      "actionId": "acceptance-11",
+      "title": "Check LinkedIn acceptance: Olivier Perron (PMO / AI)",
+      "status": "agent",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:52:56.996Z"
+    },
+    {
+      "actionId": "acceptance-12",
+      "title": "Check LinkedIn acceptance: Justin Anlund (ANLUND GROUP)",
+      "status": "agent",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:52:56.996Z"
+    },
+    {
+      "actionId": "acceptance-13",
+      "title": "Check LinkedIn acceptance: Clinton Boyda (Lantern)",
+      "status": "agent",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:52:56.996Z"
+    },
+    {
+      "actionId": "acceptance-14",
+      "title": "Check LinkedIn acceptance: Kshitiz (Shi) Nayyar (KNAYYAR INC.)",
+      "status": "agent",
+      "note": "you check and if not accepted move to finding new leads. if accepted draft the messages then show me in this queue to send or not and if we need to adjust the message.",
+      "at": "2026-06-12T14:52:56.996Z"
+    },
+    {
+      "actionId": "contract-prep-1",
+      "title": "EP168-270277 - RFSO - Landscape Architecture Services - CanadaBuys - cybersecurity opportunities",
+      "status": "reject",
+      "note": "",
+      "at": "2026-06-12T15:19:12.277Z"
+    },
+    {
+      "actionId": "contract-prep-2",
+      "title": "Turning Urban Data into Real-Time Insight through AI - CanadaBuys - cybersecurity opportunities",
+      "status": "reject",
+      "note": "Synced from source dashboard action prep-2.",
+      "at": "2026-06-12T15:27:22.303Z"
+    },
+    {
+      "actionId": "contract-prep-3",
+      "title": "Cloudera Licenses Renewal 26-27 - CanadaBuys - IT opportunities",
+      "status": "approve",
+      "note": "Synced from source dashboard action prep-3.",
+      "at": "2026-06-12T15:27:22.303Z"
+    },
+    {
+      "actionId": "contract-prep-4",
+      "title": "Freight Data Modernization Initiative Phase 1 - Ministry of Transportation",
+      "status": "accept",
+      "note": "Synced from source dashboard action prep-4.",
+      "at": "2026-06-12T15:27:22.303Z"
+    },
+    {
+      "actionId": "contract-prep-5",
+      "title": "Data Platform Evolution - CanadaBuys - AI opportunities",
+      "status": "approve",
+      "note": "Synced from source dashboard action prep-5.",
+      "at": "2026-06-12T15:27:22.303Z"
+    },
+    {
+      "actionId": "contract-prep-6",
+      "title": "Security Control Centre IT Modernization Project - Department of National Defence (DND)",
+      "status": "approve",
+      "note": "Synced from source dashboard action prep-6.",
+      "at": "2026-06-12T15:27:22.303Z"
+    },
+    {
+      "actionId": "contract-prep-7",
+      "title": "TELUS procurement registration review - TELUS",
+      "status": "accept",
+      "note": "Synced from source dashboard action prep-7.",
+      "at": "2026-06-12T15:27:22.303Z"
+    },
+    {
+      "actionId": "contract-prep-8",
+      "title": "Rogers supplier portal registration review - Rogers",
+      "status": "accept",
+      "note": "Synced from source dashboard action prep-8.",
+      "at": "2026-06-12T15:27:22.303Z"
+    },
+    {
+      "actionId": "growth-lead-engine",
+      "title": "Find new qualified revenue leads",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T20:50:13.465Z"
+    },
+    {
+      "actionId": "growth-contract-staffing-lane",
+      "title": "Remote contract staffing / subcontracting lane",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T20:50:21.725Z"
+    },
+    {
+      "actionId": "growth-aria-products",
+      "title": "Create new ARIA/IIS service products",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T20:50:43.569Z"
+    },
+    {
+      "actionId": "growth-claude-sync",
+      "title": "Share current work and learnings with Claude/agents",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T20:50:53.377Z"
+    },
+    {
+      "actionId": "growth-corp-docs",
+      "title": "Maintain IIS corporate documentation",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T20:50:59.401Z"
+    },
+    {
+      "actionId": "growth-dashboard-health",
+      "title": "Keep dashboard non-empty and useful",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T20:51:04.269Z"
+    },
+    {
+      "actionId": "console-proceed",
+      "title": "CEO Proceed",
+      "status": "proceed",
+      "note": "48 item(s) ready for agent continuation. 0 still open.",
+      "at": "2026-06-12T20:51:06.293Z"
+    },
+    {
+      "actionId": "review-staged-product-routeback-conversion-review-2026-06-12",
+      "title": "product route-back conversion slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T21:06:28.010Z"
+    },
+    {
+      "actionId": "review-staged-enterprise-reference-compliance-review-2026-06-12",
+      "title": "enterprise-reference compliance cleanup slice",
+      "status": "accept",
+      "note": "",
+      "at": "2026-06-12T21:06:34.093Z"
+    },
+    {
+      "actionId": "review-staged-homepage-proof-shelf-review-2026-06-12",
+      "title": "homepage proof-shelf conversion slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T21:06:44.177Z"
+    },
+    {
+      "actionId": "review-staged-monthly-ai-support-preview-review-2026-06-12",
+      "title": "Monthly AI Support Plan preview slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T21:06:52.309Z"
+    },
+    {
+      "actionId": "review-staged-ai-workflow-quick-win-sprint-preview-review-2026-06-12",
+      "title": "AI Workflow Quick-Win Sprint preview slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T22:54:43.744Z"
+    },
+    {
+      "actionId": "review-staged-contact-route-reassurance-review-2026-06-12",
+      "title": "contact route reassurance slice",
+      "status": "approve",
+      "note": "",
+      "at": "2026-06-12T22:55:20.236Z"
+    }
+  ],
+  "proceed": {
+    "requestedAt": "2026-06-12T20:51:06.293Z",
+    "summary": {
+      "open": 0,
+      "approve": 28,
+      "accept": 6,
+      "reject": 4,
+      "done": 1,
+      "hold": 1,
+      "agent": 13
+    },
+    "instruction": "CEO clicked Proceed. Agents should read saved item decisions and notes, continue all approved/accepted/done/needs-agent work, park rejected/held work, and stop only at true final gates."
+  },
+  "contracts": {
+    "contract-prep-2": {
+      "status": "reject",
+      "title": "Turning Urban Data into Real-Time Insight through AI - CanadaBuys - cybersecurity opportunities",
+      "sourceActionId": "prep-2",
+      "updatedAt": "2026-06-12T15:27:22.303Z"
+    },
+    "contract-prep-3": {
+      "status": "approve",
+      "title": "Erwin Data Modeler for Transport Canada - Shared Services Canada",
+      "sourceActionId": "prep-3",
+      "updatedAt": "2026-06-12T15:27:22.303Z"
+    },
+    "contract-prep-4": {
+      "status": "accept",
+      "title": "W0125-26WR15 Volmet System Replacement - Department of National Defence (DND)",
+      "sourceActionId": "prep-4",
+      "updatedAt": "2026-06-12T15:27:22.303Z"
+    },
+    "contract-prep-5": {
+      "status": "approve",
+      "title": "Rogers supplier portal registration review - Rogers",
+      "sourceActionId": "prep-5",
+      "updatedAt": "2026-06-12T15:27:22.303Z"
+    },
+    "contract-prep-6": {
+      "status": "approve",
+      "title": "TELUS procurement registration review - TELUS",
+      "sourceActionId": "prep-6",
+      "updatedAt": "2026-06-12T15:27:22.303Z"
+    },
+    "contract-prep-7": {
+      "status": "accept",
+      "title": "Rogers supplier self-registration review - Rogers",
+      "sourceActionId": "prep-7",
+      "updatedAt": "2026-06-12T15:27:22.303Z"
+    },
+    "contract-prep-8": {
+      "status": "accept",
+      "title": "TELUS supplier procurement review - TELUS",
+      "sourceActionId": "prep-8",
+      "updatedAt": "2026-06-12T15:27:22.303Z"
+    }
+  }
+}

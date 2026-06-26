@@ -1,56 +1,77 @@
-# ARIA Sentinel — Code-signing decision (research only, no spend)
+# ARIA Sentinel — Code-Signing Decision (RUN 29-F)
 
-**Decision date:** 2026-06-22
-**Status:** Documented for Ahmad. NO purchase made. Awaiting spend approval.
+**Status:** RESEARCH ONLY — no purchase. Ahmad approves any spend.
+**Date:** 2026-06-22
+**Decision owner:** Ahmad (Integrated IT Support Inc.)
 
-## Why this matters
+> All dollar figures below are *typical market ranges* observed in the CA market as of early 2026 and **must be re-confirmed on the vendor's checkout page before any purchase** — CA pricing changes often and varies by reseller, term length, and promotions. Nothing here is a quote.
 
-Unsigned `.exe` files trigger Windows SmartScreen + Defender warnings on first install. Conversion impact:
-- Without code-signing cert → ~30-50% install abandonment on first try (consumer reports vary)
-- With OV cert (standard) → 30-day reputation build period before warnings disappear
-- With EV cert → instant SmartScreen reputation, no warning ever
+---
 
-For $599–$625K customers, install friction = trust collapse. Code-signing is launch-critical, not nice-to-have.
+## 1. Why this matters for Sentinel
 
-## Vendor comparison (USD, 1-year)
+`npm run package:win` produces an **unsigned** `.exe` (`ARIA-Sentinel-<ver>-unsigned.exe`). On a fresh Windows machine an unsigned, low-reputation binary triggers **Microsoft Defender SmartScreen**: a full-screen "Windows protected your PC" warning where the user must click *More info → Run anyway*. For a paid B2B security product this is a conversion killer and a trust problem — exactly the friction Sentinel exists to remove.
 
-| Vendor | OV Standard | EV (hardware token / HSM) | Reputation build |
-|---|---|---|---|
-| **Sectigo** | $179/yr (3-year deal: $107/yr) | $329/yr EV + USB token ~$60 | OV: 30 days · EV: instant |
-| **DigiCert** | $474/yr | $599/yr EV + HSM included | OV: 30 days · EV: instant |
-| **SSL.com** | $159/yr | $349/yr EV | OV: 30 days · EV: instant |
-| **GoGetSSL (reseller)** | $84/yr Sectigo OV | $279/yr Sectigo EV | Same as Sectigo |
+Signing does two things:
+1. **Authenticode signature** — proves the binary came from "Integrated IT Support Inc." and wasn't tampered with (also satisfies many corporate allow-listing / MDM policies).
+2. **SmartScreen reputation** — reduces/eliminates the warning. *How fast* the warning goes away depends on certificate type (below).
 
-## Recommendation
+---
 
-**SSL.com EV at $349/yr** for the launch. Reasoning:
-1. EV eliminates the 30-day reputation build entirely → SmartScreen-clean from day one
-2. SSL.com offers cloud HSM (no USB token to ship/manage) — better for Ahmad's solo-founder ops
-3. $349 fits inside the locked $20-70/mo cap once amortized monthly ($29/mo)
-4. Faster onboarding than DigiCert/Sectigo direct
-5. EV is required for any future Microsoft Store submission — future-proofs the path
+## 2. Certificate types
 
-## Alternative if budget tight
+| | **OV (Standard) code signing** | **EV (Extended Validation) code signing** |
+|---|---|---|
+| Org validation | Yes (business verified) | Yes (stricter EV vetting) |
+| SmartScreen reputation | **Earned over time** — must accumulate installs/clean telemetry; warnings persist for the first weeks until reputation builds | **Instant** — EV certs get immediate SmartScreen reputation on first signed release |
+| Key storage (2023+ CA/B Forum rule) | Must be on FIPS 140-2 hardware: **USB token or cloud HSM** (soft PFX files no longer issued) | Same — hardware/HSM required, EV always was |
+| Kernel-mode driver signing | No | Required for EV + Microsoft attestation (Sentinel ships **no kernel driver**, so N/A) |
+| Typical annual cost | ~$200–$400 / yr | ~$350–$700 / yr |
+| One-time token (if USB) | ~$50–$100 hardware | ~$50–$100 hardware |
 
-**Sectigo OV via GoGetSSL at $84/yr** ($7/mo) — accepts the 30-day reputation build window. Pair with a `docs/install-troubleshooting.md` page guiding customers through "More info → Run anyway" if SmartScreen complains during the build period.
+**Key implication for Sentinel:** Sentinel is a *new* product with *zero* existing install base. With an **OV** cert, the first ~30 days / first few hundred installs will **still show SmartScreen warnings** while reputation builds — precisely during the launch window when first paying customers install. With **EV**, the warning is gone from the first signed `.exe`.
 
-## Process notes
+---
 
-EV cert validation requires:
-- D-U-N-S number ✓ (have it: 241726397 per `reference-iis-business-identifiers`)
-- Articles of incorporation
-- Business phone number callback to verify (operator at the listed business number must confirm identity)
-- Typical timeline: 5-10 business days
+## 3. Vendor comparison (OV and EV)
 
-## Decision pending
+| Vendor | OV (typical/yr) | EV (typical/yr) | Token / HSM | Notes |
+|---|---|---|---|---|
+| **Sectigo** (formerly Comodo) | ~$200–$300 | ~$400–$500 | USB token (SafeNet) or Sectigo cloud HSM | Cheapest mainstream OV; widely resold (SSLs.com, The SSL Store) often below list. Good for cost-sensitive launch. |
+| **SSL.com** | ~$200–$250 | ~$350–$400 | USB token or **eSigner cloud** (sign in CI without physical token) | **eSigner cloud signing** is the standout: no USB token to plug into Ahmad's build machine, signs from a hosted HSM via API — fits an automated `ota-build.bat`. Often the lowest EV price. |
+| **DigiCert** | ~$400–$600 | ~$600–$700 | USB token or DigiCert KeyLocker (cloud HSM) | Most "enterprise trusted" brand; priciest. KeyLocker is a polished cloud-HSM CI story. Overkill for a solo-founder launch unless an enterprise customer demands the DigiCert name. |
 
-Ahmad approves spend (per locked spend cap rule). Two paths:
-- **Premium:** SSL.com EV $349/yr → no install friction ever
-- **Lean:** Sectigo OV $84/yr → 30-day reputation build window + troubleshooting page
+---
 
-Recommendation: **SSL.com EV** for launch. Friction at $599 entry-price tier is conversion-fatal; the $265/yr delta pays for itself with 1 saved Personal-tier signup.
+## 4. The hidden cost: physical token vs cloud HSM
 
-## Related
-- [[reference-iis-business-identifiers]] — D-U-N-S + business address ready for validation
-- [[feedback-spend-cap-20-70-per-month]] — spend approval rule
-- [[project-sentinel-ota-pipeline-live]] — where the signed .exe will be served
+The 2023 CA/B Forum hardware-key mandate means an OV/EV cert is delivered to a **USB token** (must be physically present in Ahmad's build machine every signing) **or** a **cloud HSM** (sign over an API). For an automated `ota-build.bat` pipeline that publishes 0.1.x releases, a USB token is operational friction (the token must be plugged in, drivers installed, PIN entered per build).
+
+**Cloud-HSM signing (SSL.com eSigner / DigiCert KeyLocker) is strongly preferred** for an automated pipeline — it removes the "is the token plugged in?" failure mode and lets signing run unattended.
+
+---
+
+## 5. Recommendation
+
+**Recommended: SSL.com EV Code Signing with eSigner cloud signing.**
+
+Reasoning, in priority order:
+1. **EV → zero SmartScreen warnings from day one.** Sentinel launches with no install base; OV's 30-day reputation-build window would put warnings in front of the *first* paying customers. EV removes that risk entirely. For a security product sold on trust, this is worth the EV premium.
+2. **eSigner cloud signing → no USB token in the build loop.** Fits the automated `ota-build.bat` → GitHub Releases pipeline; no physical-token failure mode.
+3. **Lowest EV price among the three** in the typical range, and SSL.com is an established, broadly-trusted CA.
+
+**Budget to approve (verify at checkout):** ~$350–$400/yr for the EV cert; eSigner cloud signing may add a small per-year or per-signature fee — confirm the eSigner tier on SSL.com's checkout. No USB hardware cost with eSigner.
+
+**Fallback if EV is rejected on cost:** Sectigo **OV** (~$200–$300/yr) — accept the ~30-day SmartScreen reputation ramp, and front-load installs (e.g. sign 0.1.2, ship to the first friendly customers, let reputation accrue before broad outbound). Document the warning in the install email so early customers expect it.
+
+**Not recommended now:** DigiCert (price premium not justified at this stage unless a specific enterprise customer contractually requires the DigiCert name).
+
+---
+
+## 6. What this unblocks / next step (no spend yet)
+
+- Once Ahmad approves: purchase EV cert from SSL.com, complete EV org vetting (can take a few business days), set up eSigner.
+- Wire signing into `ota-build.bat` after `package:win` (sign the `-unsigned.exe`, drop the `-unsigned` suffix on the signed artifact).
+- Re-test the 0.1.2 download → install flow on a clean VM to confirm SmartScreen is silent.
+
+**No certificate has been purchased. This document is for Ahmad's decision only.**

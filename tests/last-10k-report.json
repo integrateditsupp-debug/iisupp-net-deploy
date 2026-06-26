@@ -1,0 +1,810 @@
+{
+  "results": {
+    "total": 34209,
+    "pass": 34106,
+    "fail": 103,
+    "failures": [
+      {
+        "q": "wirless wont conect",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "wirless wont conect please",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "wirless wont conect asap",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "WIRLESS WONT CONECT",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "WIRLESS WONT CONECT please",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "WIRLESS WONT CONECT asap",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "Wirless wont conect",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "Wirless wont conect please",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "Wirless wont conect asap",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "no wirless signal at all",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "no wirless signal at all please",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "no wirless signal at all asap",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "NO WIRLESS SIGNAL AT ALL",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "NO WIRLESS SIGNAL AT ALL please",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "NO WIRLESS SIGNAL AT ALL asap",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "No wirless signal at all",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "No wirless signal at all please",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "No wirless signal at all asap",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "vpm wont conect",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "vpm wont conect please",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "vpm wont conect asap",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "VPM WONT CONECT",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "VPM WONT CONECT please",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "VPM WONT CONECT asap",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "Vpm wont conect",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "Vpm wont conect please",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "Vpm wont conect asap",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "cant reach the vpm",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "cant reach the vpm please",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "cant reach the vpm asap",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "CANT REACH THE VPM",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "CANT REACH THE VPM please",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "CANT REACH THE VPM asap",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "Cant reach the vpm",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "Cant reach the vpm please",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "Cant reach the vpm asap",
+        "expected": "vpn",
+        "got": "default"
+      },
+      {
+        "q": "prnter jammed again",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "prnter jammed again please",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "prnter jammed again asap",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "PRNTER JAMMED AGAIN",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "PRNTER JAMMED AGAIN please",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "PRNTER JAMMED AGAIN asap",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "Prnter jammed again",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "Prnter jammed again please",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "Prnter jammed again asap",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "the priner is offline",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "the priner is offline please",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "the priner is offline asap",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "THE PRINER IS OFFLINE",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "THE PRINER IS OFFLINE please",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "THE PRINER IS OFFLINE asap",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "The priner is offline",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "The priner is offline please",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "The priner is offline asap",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "blutooth wont pair",
+        "expected": "kb:bluetooth",
+        "got": "default"
+      },
+      {
+        "q": "blutooth wont pair please",
+        "expected": "kb:bluetooth",
+        "got": "default"
+      },
+      {
+        "q": "blutooth wont pair asap",
+        "expected": "kb:bluetooth",
+        "got": "default"
+      },
+      {
+        "q": "BLUTOOTH WONT PAIR",
+        "expected": "kb:bluetooth",
+        "got": "default"
+      },
+      {
+        "q": "BLUTOOTH WONT PAIR please",
+        "expected": "kb:bluetooth",
+        "got": "default"
+      },
+      {
+        "q": "BLUTOOTH WONT PAIR asap",
+        "expected": "kb:bluetooth",
+        "got": "default"
+      },
+      {
+        "q": "Blutooth wont pair",
+        "expected": "kb:bluetooth",
+        "got": "default"
+      },
+      {
+        "q": "Blutooth wont pair please",
+        "expected": "kb:bluetooth",
+        "got": "default"
+      },
+      {
+        "q": "Blutooth wont pair asap",
+        "expected": "kb:bluetooth",
+        "got": "default"
+      },
+      {
+        "q": "my wabcam is frozen on calls",
+        "expected": "kb:webcam",
+        "got": "default"
+      },
+      {
+        "q": "my wabcam is frozen on calls please",
+        "expected": "kb:webcam",
+        "got": "default"
+      },
+      {
+        "q": "my wabcam is frozen on calls asap",
+        "expected": "kb:webcam",
+        "got": "default"
+      },
+      {
+        "q": "MY WABCAM IS FROZEN ON CALLS",
+        "expected": "kb:webcam",
+        "got": "default"
+      },
+      {
+        "q": "MY WABCAM IS FROZEN ON CALLS please",
+        "expected": "kb:webcam",
+        "got": "default"
+      },
+      {
+        "q": "MY WABCAM IS FROZEN ON CALLS asap",
+        "expected": "kb:webcam",
+        "got": "default"
+      },
+      {
+        "q": "My wabcam is frozen on calls",
+        "expected": "kb:webcam",
+        "got": "default"
+      },
+      {
+        "q": "My wabcam is frozen on calls please",
+        "expected": "kb:webcam",
+        "got": "default"
+      },
+      {
+        "q": "My wabcam is frozen on calls asap",
+        "expected": "kb:webcam",
+        "got": "default"
+      },
+      {
+        "q": "mi impresora esta atascada",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "Mi impresora esta atascada",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "mi impresora esta atascada ?",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "no puedo iniciar sesion",
+        "expected": "password",
+        "got": "default"
+      },
+      {
+        "q": "No puedo iniciar sesion",
+        "expected": "password",
+        "got": "default"
+      },
+      {
+        "q": "no puedo iniciar sesion ?",
+        "expected": "password",
+        "got": "default"
+      },
+      {
+        "q": "mi red inalambrica no funciona",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "Mi red inalambrica no funciona",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "mi red inalambrica no funciona ?",
+        "expected": "wifi",
+        "got": "default"
+      },
+      {
+        "q": "mon imprimante est en panne",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "Mon imprimante est en panne",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "mon imprimante est en panne ?",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "je ne peux pas me connecter",
+        "expected": "password",
+        "got": "default"
+      },
+      {
+        "q": "Je ne peux pas me connecter",
+        "expected": "password",
+        "got": "default"
+      },
+      {
+        "q": "je ne peux pas me connecter ?",
+        "expected": "password",
+        "got": "default"
+      },
+      {
+        "q": "mein drucker druckt nicht",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "Mein drucker druckt nicht",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "mein drucker druckt nicht ?",
+        "expected": "printer",
+        "got": "default"
+      },
+      {
+        "q": "mein passwort ist abgelaufen",
+        "expected": "password",
+        "got": "default"
+      },
+      {
+        "q": "Mein passwort ist abgelaufen",
+        "expected": "password",
+        "got": "default"
+      },
+      {
+        "q": "mein passwort ist abgelaufen ?",
+        "expected": "password",
+        "got": "default"
+      },
+      {
+        "q": "mi correo no abre",
+        "expected": "mail",
+        "got": "default"
+      },
+      {
+        "q": "Mi correo no abre",
+        "expected": "mail",
+        "got": "default"
+      },
+      {
+        "q": "mi correo no abre ?",
+        "expected": "mail",
+        "got": "default"
+      },
+      {
+        "q": "perfect, no luck",
+        "expected": "not-resolution",
+        "got": "resolution"
+      },
+      {
+        "q": "ok perfect, no luck",
+        "expected": "not-resolution",
+        "got": "resolution"
+      },
+      {
+        "q": "oh perfect, no luck",
+        "expected": "not-resolution",
+        "got": "resolution"
+      },
+      {
+        "q": "well perfect, no luck",
+        "expected": "not-resolution",
+        "got": "resolution"
+      },
+      {
+        "q": "my fan is spinning and the laptop is hot",
+        "expected": "kb:performance",
+        "got": "default"
+      },
+      {
+        "q": "the laptop is running hot and loud",
+        "expected": "kb:performance",
+        "got": "default"
+      },
+      {
+        "q": "cant sign in to my email",
+        "expected": "password",
+        "got": "mail"
+      }
+    ],
+    "by_intent": {
+      "password": {
+        "total": 2334,
+        "pass": 2324,
+        "fail": 10
+      },
+      "kb:mfa": {
+        "total": 1682,
+        "pass": 1682,
+        "fail": 0
+      },
+      "mail": {
+        "total": 2852,
+        "pass": 2849,
+        "fail": 3
+      },
+      "outlook_ooo": {
+        "total": 729,
+        "pass": 729,
+        "fail": 0
+      },
+      "vpn": {
+        "total": 1493,
+        "pass": 1475,
+        "fail": 18
+      },
+      "wifi": {
+        "total": 1814,
+        "pass": 1793,
+        "fail": 21
+      },
+      "printer": {
+        "total": 1168,
+        "pass": 1141,
+        "fail": 27
+      },
+      "kb:teams": {
+        "total": 1814,
+        "pass": 1814,
+        "fail": 0
+      },
+      "kb:onedrive": {
+        "total": 1223,
+        "pass": 1223,
+        "fail": 0
+      },
+      "kb:bluetooth": {
+        "total": 992,
+        "pass": 983,
+        "fail": 9
+      },
+      "kb:usb": {
+        "total": 748,
+        "pass": 748,
+        "fail": 0
+      },
+      "kb:performance": {
+        "total": 1325,
+        "pass": 1323,
+        "fail": 2
+      },
+      "kb:windows": {
+        "total": 969,
+        "pass": 969,
+        "fail": 0
+      },
+      "kb:security": {
+        "total": 1341,
+        "pass": 1341,
+        "fail": 0
+      },
+      "kb:webcam": {
+        "total": 622,
+        "pass": 613,
+        "fail": 9
+      },
+      "kb:active-directory": {
+        "total": 610,
+        "pass": 610,
+        "fail": 0
+      },
+      "kb:m365": {
+        "total": 576,
+        "pass": 576,
+        "fail": 0
+      },
+      "kb:browser": {
+        "total": 971,
+        "pass": 971,
+        "fail": 0
+      },
+      "kb:permissions": {
+        "total": 610,
+        "pass": 610,
+        "fail": 0
+      },
+      "kb:networking": {
+        "total": 607,
+        "pass": 607,
+        "fail": 0
+      },
+      "kb:macos": {
+        "total": 520,
+        "pass": 520,
+        "fail": 0
+      },
+      "kb:bitlocker": {
+        "total": 361,
+        "pass": 361,
+        "fail": 0
+      },
+      "kb:onboarding": {
+        "total": 384,
+        "pass": 384,
+        "fail": 0
+      },
+      "escalation": {
+        "total": 722,
+        "pass": 722,
+        "fail": 0
+      },
+      "voice": {
+        "total": 361,
+        "pass": 361,
+        "fail": 0
+      },
+      "weather/news": {
+        "total": 336,
+        "pass": 336,
+        "fail": 0
+      },
+      "shopping": {
+        "total": 505,
+        "pass": 505,
+        "fail": 0
+      },
+      "trade": {
+        "total": 505,
+        "pass": 505,
+        "fail": 0
+      },
+      "quote": {
+        "total": 313,
+        "pass": 313,
+        "fail": 0
+      },
+      "news": {
+        "total": 265,
+        "pass": 265,
+        "fail": 0
+      },
+      "resolution": {
+        "total": 1280,
+        "pass": 1280,
+        "fail": 0
+      },
+      "not-resolution": {
+        "total": 123,
+        "pass": 119,
+        "fail": 4
+      },
+      "edge": {
+        "total": 30,
+        "pass": 30,
+        "fail": 0
+      },
+      "default": {
+        "total": 3903,
+        "pass": 3903,
+        "fail": 0
+      },
+      "weather": {
+        "total": 121,
+        "pass": 121,
+        "fail": 0
+      }
+    }
+  },
+  "topClusters": [
+    [
+      "printer→default",
+      {
+        "count": 27,
+        "examples": [
+          "prnter jammed again",
+          "prnter jammed again please",
+          "prnter jammed again asap"
+        ]
+      }
+    ],
+    [
+      "wifi→default",
+      {
+        "count": 21,
+        "examples": [
+          "wirless wont conect",
+          "wirless wont conect please",
+          "wirless wont conect asap"
+        ]
+      }
+    ],
+    [
+      "vpn→default",
+      {
+        "count": 18,
+        "examples": [
+          "vpm wont conect",
+          "vpm wont conect please",
+          "vpm wont conect asap"
+        ]
+      }
+    ],
+    [
+      "kb:bluetooth→default",
+      {
+        "count": 9,
+        "examples": [
+          "blutooth wont pair",
+          "blutooth wont pair please",
+          "blutooth wont pair asap"
+        ]
+      }
+    ],
+    [
+      "kb:webcam→default",
+      {
+        "count": 9,
+        "examples": [
+          "my wabcam is frozen on calls",
+          "my wabcam is frozen on calls please",
+          "my wabcam is frozen on calls asap"
+        ]
+      }
+    ],
+    [
+      "password→default",
+      {
+        "count": 9,
+        "examples": [
+          "no puedo iniciar sesion",
+          "No puedo iniciar sesion",
+          "no puedo iniciar sesion ?"
+        ]
+      }
+    ],
+    [
+      "not-resolution→resolution",
+      {
+        "count": 4,
+        "examples": [
+          "perfect, no luck",
+          "ok perfect, no luck",
+          "oh perfect, no luck"
+        ]
+      }
+    ],
+    [
+      "mail→default",
+      {
+        "count": 3,
+        "examples": [
+          "mi correo no abre",
+          "Mi correo no abre",
+          "mi correo no abre ?"
+        ]
+      }
+    ],
+    [
+      "kb:performance→default",
+      {
+        "count": 2,
+        "examples": [
+          "my fan is spinning and the laptop is hot",
+          "the laptop is running hot and loud"
+        ]
+      }
+    ],
+    [
+      "password→mail",
+      {
+        "count": 1,
+        "examples": [
+          "cant sign in to my email"
+        ]
+      }
+    ]
+  ]
+}

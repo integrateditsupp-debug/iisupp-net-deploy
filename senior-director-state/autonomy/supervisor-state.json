@@ -1,0 +1,894 @@
+{
+  "generatedAt": "2026-06-26T11:59:07.791Z",
+  "trigger": "senior-director-worker:interval",
+  "summary": {
+    "reportingAgents": 8,
+    "approvalCount": 31,
+    "readyApprovalCount": 27,
+    "opportunityCount": 15,
+    "contactCount": 15,
+    "openclawReachable": true
+  },
+  "approvals": [
+    {
+      "text": "Direct-contact first-send queue: `WD Numeric Corporate Services`, `Tangs Accounting Services`, and `Global Health Physiotherapy Clinic` are already approved-to-transmit. Next live action is to send them when an email/contact surface is available.",
+      "category": "send",
+      "ownerAction": "Send when ready"
+    },
+    {
+      "text": "Jason Brown / Hines follow-up: approved for Friday, 2026-06-12 only if Jason has not replied first. Use `senior-director-state/hines-jason-brown-friday-send-checklist-2026-06-11.md`.",
+      "category": "dated_send",
+      "ownerAction": "Send or Hold based on reply status/date"
+    },
+    {
+      "text": "Approved-to-publish slices: staged operations conversion slice, homepage contact-intake context upgrade, and staged Growth Library conversion slice. Next live action is deploy/publish when the production publish surface is available.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Start Here route-guide slice: `senior-director-state/staged-start-here-conversion-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only overflow conversion slice: `senior-director-state/staged-overflow-conversion-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only ARIA deployment-path slice: `senior-director-state/staged-aria-conversion-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Help Desk Blueprint sample-preview slice: `senior-director-state/staged-helpdesk-blueprint-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Overflow Support Pilot preview slice: `senior-director-state/staged-overflow-support-pilot-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only M365 Security & Productivity Tune-Up preview slice: `senior-director-state/staged-m365-tune-up-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Website Checklist sample-preview slice: `senior-director-state/staged-website-checklist-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Office Move readiness preview slice: `senior-director-state/staged-office-move-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only AI Workflow Audit preview slice: `senior-director-state/staged-ai-workflow-audit-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only AI Workflow Quick-Win Sprint preview slice: `senior-director-state/staged-ai-workflow-quick-win-sprint-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only MSP / Partner Overflow Coverage preview slice: `senior-director-state/staged-msp-partner-overflow-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only product route-back conversion slice: `senior-director-state/staged-product-routeback-conversion-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only enterprise-reference compliance cleanup slice: `senior-director-state/staged-enterprise-reference-compliance-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only homepage proof-shelf conversion slice: `senior-director-state/staged-homepage-proof-shelf-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Monthly AI Support Plan preview slice: `senior-director-state/staged-monthly-ai-support-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only contact route reassurance slice: `senior-director-state/staged-contact-route-reassurance-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only services fit-and-first-deliverable slice: `senior-director-state/staged-services-fit-deliverable-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Prompt Engineering for Workflows preview slice: `senior-director-state/staged-prompt-engineering-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Cybersecurity Basics for Employees preview slice: `senior-director-state/staged-cyber-basics-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Meeting-to-SOP AI pack preview slice: `senior-director-state/staged-meeting-sop-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only AI Agent Starter Kit preview slice: `senior-director-state/staged-ai-agent-starter-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only No-Code Automation Kit preview slice: `senior-director-state/staged-nocode-kit-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Outlook Fix Guide preview slice: `senior-director-state/staged-outlook-fix-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "New local-only Marketplace quote-first routeback slice: `senior-director-state/staged-marketplace-bridge-conversion-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+      "category": "publish",
+      "ownerAction": "Approve publish or hold local only"
+    },
+    {
+      "text": "Workspace cleanup posture: summary-only cleanup pass is approved. Destructive cleanup remains blocked.",
+      "category": "cleanup",
+      "ownerAction": "Approve cleanup action or keep blocked"
+    },
+    {
+      "text": "Samsung ProCare tender posture: park as no-bid unless a real no-cost compliant OEM/partner path appears.",
+      "category": "approval",
+      "ownerAction": "Approve or review"
+    },
+    {
+      "text": "RBC supplier registration path: live portal open and partially prefilled with verified IIS company/contact fields. Remaining Ahmad-only steps are CAPTCHA, any attestation/certification choices, account credentials, and the final `Register` click.",
+      "category": "portal_submit",
+      "ownerAction": "Register / Create Account / Submit after review"
+    },
+    {
+      "text": "Workspace steward has cleanup/retirement recommendations; destructive action stays blocked until a later keep/archive/delete review.",
+      "category": "cleanup",
+      "ownerAction": "Approve cleanup action or keep blocked"
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "turning-urban-data-into-real-time-insight-through-ai-canadabuys-canada-ca-en-tender-opportunities-tender-notice-cb-47-77333895",
+      "title": "Turning Urban Data into Real-Time Insight through AI",
+      "organization": "CanadaBuys - cybersecurity opportunities",
+      "type": "tender",
+      "qualityScore": 10,
+      "priorityScore": 9,
+      "difficultyScore": 7,
+      "deadline": "2026/07/14",
+      "status": "needs_review",
+      "manualDisposition": "partner_path_only",
+      "manualReason": "Real open AI challenge with upside, but only credible through a research, sensing, or defence-tech partner path rather than a direct IIS bid.",
+      "manualReference": "senior-director-state/bid-no-bid-turning-urban-data-into-real-time-insight-through-ai-2026-06-12.md",
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit, cybersecurity fit",
+      "nextStep": "Use the grounding brief to decide whether to keep this parked, allow partner-path-only prep, or discard it from the active revenue lane.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/cb-47-77333895",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "security-control-centre-it-modernization-project-canadabuys-canada-ca-en-tender-opportunities-tender-notice-cb-502-36125052",
+      "title": "Security Control Centre IT Modernization Project",
+      "organization": "Department of National Defence (DND)",
+      "type": "tender",
+      "qualityScore": 9,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/06/26",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit, cybersecurity fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/cb-502-36125052",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "data-platform-evolution-canadabuys-canada-ca-en-tender-opportunities-tender-notice-mx-444036532070",
+      "title": "Data Platform Evolution",
+      "organization": "CanadaBuys - AI opportunities",
+      "type": "tender",
+      "qualityScore": 9,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/07/08",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/mx-444036532070",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "t2012-260046-b-mv-fundy-rose-fuel-system-upgrade-canadabuys-canada-ca-en-tender-opportunities-tender-notice-ws5581573898-doc5762278517",
+      "title": "T2012-260046_B MV Fundy Rose Fuel System Upgrade",
+      "organization": "Department of Transport (TC)",
+      "type": "tender",
+      "qualityScore": 8,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/07/22",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/ws5581573898-doc5762278517",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "tdk-camera-and-shielded-audio-intercom-system-canadabuys-canada-ca-en-tender-opportunities-tender-notice-cb-575-23038847",
+      "title": "TDK Camera and Shielded Audio Intercom System",
+      "organization": "Department of National Defence (DND)",
+      "type": "tender",
+      "qualityScore": 8,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/07/09",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/cb-575-23038847",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "development-and-implementation-of-a-digital-twin-solution-canadabuys-canada-ca-en-tender-opportunities-tender-notice-cb-490-63037206",
+      "title": "Development and Implementation of a Digital Twin Solution",
+      "organization": "National Research Council of Canada (NRC)",
+      "type": "tender",
+      "qualityScore": 8,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/06/29",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/cb-490-63037206",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "high-accuracy-high-stability-digital-multimeters-canadabuys-canada-ca-en-tender-opportunities-tender-notice-cb-861-6117240",
+      "title": "High-accuracy, high-stability digital multimeters",
+      "organization": "National Research Council of Canada (NRC)",
+      "type": "tender",
+      "qualityScore": 8,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/07/14",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/cb-861-6117240",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "w3028-26-cage-modular-storage-cage-system-canadabuys-canada-ca-en-tender-opportunities-tender-notice-ws5728704923-doc5728762242",
+      "title": "W3028-26-CAGE ̶̶ Modular Storage Cage System",
+      "organization": "Department of National Defence (DND)",
+      "type": "tender",
+      "qualityScore": 8,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/07/06",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/ws5728704923-doc5728762242",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "26-58018-laboratory-wind-wall-system-amendment-3-question-and-answer-4-canadabuys-canada-ca-en-tender-opportunities-tender-notice-cb-742-6929020",
+      "title": "26-58018 Laboratory Wind Wall System, Amendment #3, Question and Answer 4",
+      "organization": "National Research Council of Canada (NRC)",
+      "type": "tender",
+      "qualityScore": 8,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/07/30",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/cb-742-6929020",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "digital-advertising-digital-marketing-growth-services-canadabuys-canada-ca-en-tender-opportunities-tender-notice-mx-444065434632",
+      "title": "Digital Advertising & Digital Marketing Growth Services",
+      "organization": "Brock University",
+      "type": "tender",
+      "qualityScore": 8,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/07/27",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, AI automation fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/mx-444065434632",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "cloudera-licenses-renewal-26-27-canadabuys-canada-ca-en-tender-opportunities-tender-notice-mx-444031636755",
+      "title": "Cloudera Licenses Renewal 26-27",
+      "organization": "CanadaBuys - IT opportunities",
+      "type": "tender",
+      "qualityScore": 7,
+      "priorityScore": 10,
+      "difficultyScore": 7,
+      "deadline": "2026/06/30",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/mx-444031636755",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "ep168-270277-rfso-landscape-architecture-services-canadabuys-canada-ca-en-tender-opportunities-tender-notice-ws5722049539-doc5723390243",
+      "title": "EP168-270277 - RFSO - Landscape Architecture Services",
+      "organization": "CanadaBuys - cybersecurity opportunities",
+      "type": "tender",
+      "qualityScore": 7,
+      "priorityScore": 9,
+      "difficultyScore": 7,
+      "deadline": "2026/07/16",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, cybersecurity fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/ws5722049539-doc5723390243",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "replacement-of-perimeter-intrusion-detection-system-pids-canadabuys-canada-ca-en-tender-opportunities-tender-notice-ws5749548652-doc5757154161",
+      "title": "Replacement of Perimeter Intrusion Detection System (PIDS)",
+      "organization": "CanadaBuys - cybersecurity opportunities",
+      "type": "tender",
+      "qualityScore": 7,
+      "priorityScore": 9,
+      "difficultyScore": 7,
+      "deadline": "2026/08/14",
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "public-sector credibility and contract potential, cybersecurity fit",
+      "nextStep": "Open source, confirm requirements, prepare summary/pitch, and stop before Submit/Send.",
+      "sourceLink": "https://canadabuys.canada.ca/en/tender-opportunities/tender-notice/ws5749548652-doc5757154161",
+      "ownerAgent": "tender-bid-brief-agent"
+    },
+    {
+      "id": "telus-procurement-registration-review-www-telus-com-en-about-procurement",
+      "title": "TELUS procurement registration review",
+      "organization": "TELUS",
+      "type": "vendor registration",
+      "qualityScore": 5,
+      "priorityScore": 9,
+      "difficultyScore": 8,
+      "deadline": null,
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "enterprise/vendor access path",
+      "nextStep": "Review portal and prepare registration checklist for Ahmad approval.",
+      "sourceLink": "https://www.telus.com/en/about/procurement",
+      "ownerAgent": "vendor-registration-prep-agent"
+    },
+    {
+      "id": "rogers-supplier-portal-registration-review-supplierportal-rogers-com",
+      "title": "Rogers supplier portal registration review",
+      "organization": "Rogers",
+      "type": "vendor registration",
+      "qualityScore": 5,
+      "priorityScore": 9,
+      "difficultyScore": 8,
+      "deadline": null,
+      "status": "needs_review",
+      "manualDisposition": null,
+      "manualReason": null,
+      "manualReference": null,
+      "whyRelevant": "enterprise/vendor access path",
+      "nextStep": "Review portal and prepare registration checklist for Ahmad approval.",
+      "sourceLink": "https://supplierportal.rogers.com/",
+      "ownerAgent": "vendor-registration-prep-agent"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "jason-brown-hines",
+      "name": "Jason Brown",
+      "company": "Hines",
+      "status": "accepted",
+      "segment": "commercial real estate / enterprise operations",
+      "signal": "Senior Director at Hines; accepted connection; CIBC Square ecosystem.",
+      "nextAction": "If Jason has not replied, Ahmad can send or hold the approved short follow-up now. Use the prepared checklist for the final decision.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "azim-lila-financial-services-digital-strategy",
+      "name": "Azim Lila",
+      "company": "Financial services / digital strategy",
+      "status": "message_sent",
+      "segment": "financial services / AI transformation",
+      "signal": "AI, disruption, financial inclusion; past CIBC Director / Senior Manager Digital Strategy; free message sent.",
+      "nextAction": "Follow up in 7 days if no reply.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "steve-lariviere-hines",
+      "name": "Steve Lariviere",
+      "company": "Hines",
+      "status": "connection_requested",
+      "segment": "commercial real estate operations",
+      "signal": "Operations Engineer at Hines; CIBC Square operations signal.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "david-hoffman-hines",
+      "name": "David Hoffman",
+      "company": "Hines",
+      "status": "connection_requested",
+      "segment": "commercial real estate operations",
+      "signal": "General Manager - CIBC SQUARE at Hines.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "adam-f-clerici-project-construction",
+      "name": "Adam F Clerici",
+      "company": "Project / construction",
+      "status": "connection_requested",
+      "segment": "commercial real estate projects",
+      "signal": "Senior construction professional; projects include 81 Bay Street / CIBC Square.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "muhammad-bajwa-program-management",
+      "name": "Muhammad Bajwa",
+      "company": "Program management",
+      "status": "connection_requested",
+      "segment": "project delivery / operations",
+      "signal": "Program management, business operations, project delivery; projects include Hines CIBC Square.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "avil-dsouza-it-leadership",
+      "name": "Avil Dsouza",
+      "company": "IT leadership",
+      "status": "connection_requested",
+      "segment": "IT leadership / M365",
+      "signal": "Head of IT / Director IT; Azure and Microsoft 365 governance.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "john-bewley-forward-it-thinking",
+      "name": "John Bewley",
+      "company": "Forward IT Thinking",
+      "status": "connection_requested",
+      "segment": "SMB IT / AI automation partner",
+      "signal": "SMB AI automation and IT service delivery founder.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "abdulkerim-cio-d-cissp-ccsp-mba-executive-it",
+      "name": "ABDULKERIM- CIO.D,CISSP,CCSP,MBA",
+      "company": "Executive IT",
+      "status": "connection_requested",
+      "segment": "executive IT / cybersecurity",
+      "signal": "CIO/CISO/cloud/AI executive IT leadership.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "sean-banikin-automate-my-workflow",
+      "name": "Sean Banikin",
+      "company": "Automate My Workflow",
+      "status": "connection_requested",
+      "segment": "workflow automation / SMB",
+      "signal": "Operations expert, process architect, workflow automation owner.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "jason-louth-long-view-systems",
+      "name": "Jason Louth",
+      "company": "Long View Systems",
+      "status": "connection_requested",
+      "segment": "M365 / Copilot / AI",
+      "signal": "Microsoft 365, Copilot, AI and digital transformation.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "rahoul-r-dhopade-powerex",
+      "name": "Rahoul R Dhopade",
+      "company": "Powerex",
+      "status": "connection_requested",
+      "segment": "IT infrastructure / operations",
+      "signal": "Director, IT Infrastructure & Operations; senior infrastructure architect.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "olivier-perron-pmo-ai",
+      "name": "Olivier Perron",
+      "company": "PMO / AI",
+      "status": "connection_requested",
+      "segment": "AI PMO / operations",
+      "signal": "AI-native PMO and AI executive.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "justin-anlund-anlund-group",
+      "name": "Justin Anlund",
+      "company": "ANLUND GROUP",
+      "status": "connection_requested",
+      "segment": "solution architecture / partner",
+      "signal": "Business and solution architecture owner; Microsoft/AWS/Google certified.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    },
+    {
+      "id": "clinton-boyda-lantern",
+      "name": "Clinton Boyda",
+      "company": "Lantern",
+      "status": "connection_requested",
+      "segment": "M365 / automation architecture",
+      "signal": "Enterprise automation and data platform architect; Microsoft 365.",
+      "nextAction": "Check acceptance before messaging.",
+      "ownerAgent": "business-development-agent"
+    }
+  ],
+  "agentReports": [
+    {
+      "agentId": "senior-director-worker",
+      "label": "Senior Director Worker",
+      "generatedAt": "2026-06-26T11:59:07.791Z",
+      "status": "ready",
+      "summary": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
+      "metrics": {
+        "openclawReachable": 1,
+        "lastLeadScanAt": 1782474236272,
+        "lastMcpScanAt": 1782417949142,
+        "lastOperatingCycleAt": 1782474236272,
+        "lastMissionBriefAt": 1782474236272
+      },
+      "artifacts": [
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\heartbeat.json",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\director-operating-board.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\ceo-approval-required.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\iis-aria-command-update.md"
+      ],
+      "approvals": [],
+      "readyActions": [],
+      "nextActions": [
+        "Continue autonomous safe work and only escalate true Ahmad final-action gates."
+      ],
+      "focusAreas": [
+        "director-orchestration",
+        "lead-radar",
+        "approval-gating"
+      ],
+      "assignments": [],
+      "metadata": {}
+    },
+    {
+      "agentId": "interaction-avoidance-agent",
+      "label": "Interaction Avoidance Agent",
+      "generatedAt": "2026-06-26T06:47:24.116Z",
+      "status": "ready",
+      "summary": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
+      "metrics": {
+        "activeItems": 86,
+        "readyItems": 0,
+        "reviewItems": 10,
+        "contractItems": 8,
+        "vendorItems": 8,
+        "careerItems": 8
+      },
+      "artifacts": [
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\interaction-avoidance-board.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\auto-created-agents",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\iis-aria-command-update.md"
+      ],
+      "approvals": [],
+      "readyActions": [],
+      "nextActions": [
+        "Keep tender prep moving on 8 contract/tender item(s).",
+        "Keep supplier registration prep moving on 8 portal item(s)."
+      ],
+      "focusAreas": [
+        "interaction-reduction",
+        "prep-agent-routing",
+        "ceo-final-action-compression"
+      ],
+      "assignments": [],
+      "metadata": {}
+    },
+    {
+      "agentId": "opportunity-quality-gate-agent",
+      "label": "Opportunity Quality Gate Agent",
+      "generatedAt": "2026-06-26T06:44:51.092Z",
+      "status": "ready",
+      "summary": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
+      "metrics": {
+        "totalItems": 642,
+        "activeItems": 86,
+        "activeRevenueItems": 27,
+        "parkedItems": 1,
+        "manualParkedItems": 0,
+        "promotedItems": 0
+      },
+      "artifacts": [
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\opportunities.json",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\quality-gate-report.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\iis-aria-command-update.md"
+      ],
+      "approvals": [],
+      "readyActions": [],
+      "nextActions": [
+        "Keep prep focused on active revenue/company items first."
+      ],
+      "focusAreas": [
+        "opportunity-triage",
+        "bid-no-bid-filtering",
+        "revenue-first-ranking"
+      ],
+      "assignments": [],
+      "metadata": {}
+    },
+    {
+      "agentId": "ceo-action-digest-agent",
+      "label": "CEO Action Digest Agent",
+      "generatedAt": "2026-06-26T06:31:51.397Z",
+      "status": "ready",
+      "summary": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
+      "metrics": {
+        "queueItems": 28,
+        "readyActions": 27,
+        "upcomingActions": 1,
+        "businessPrepItems": 27
+      },
+      "artifacts": [
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\ceo-now-action-digest.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\ceo-approval-required.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\iis-aria-command-update.md"
+      ],
+      "approvals": [
+        "Direct-contact first-send queue: `WD Numeric Corporate Services`, `Tangs Accounting Services`, and `Global Health Physiotherapy Clinic` are already approved-to-transmit. Next live action is to send them when an email/contact surface is available.",
+        "Jason Brown / Hines follow-up: approved for Friday, 2026-06-12 only if Jason has not replied first. Use `senior-director-state/hines-jason-brown-friday-send-checklist-2026-06-11.md`.",
+        "Approved-to-publish slices: staged operations conversion slice, homepage contact-intake context upgrade, and staged Growth Library conversion slice. Next live action is deploy/publish when the production publish surface is available.",
+        "New local-only Start Here route-guide slice: `senior-director-state/staged-start-here-conversion-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only overflow conversion slice: `senior-director-state/staged-overflow-conversion-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only ARIA deployment-path slice: `senior-director-state/staged-aria-conversion-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Help Desk Blueprint sample-preview slice: `senior-director-state/staged-helpdesk-blueprint-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Overflow Support Pilot preview slice: `senior-director-state/staged-overflow-support-pilot-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only M365 Security & Productivity Tune-Up preview slice: `senior-director-state/staged-m365-tune-up-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Website Checklist sample-preview slice: `senior-director-state/staged-website-checklist-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Office Move readiness preview slice: `senior-director-state/staged-office-move-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only AI Workflow Audit preview slice: `senior-director-state/staged-ai-workflow-audit-preview-review-2026-06-11.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only AI Workflow Quick-Win Sprint preview slice: `senior-director-state/staged-ai-workflow-quick-win-sprint-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only MSP / Partner Overflow Coverage preview slice: `senior-director-state/staged-msp-partner-overflow-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only product route-back conversion slice: `senior-director-state/staged-product-routeback-conversion-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only enterprise-reference compliance cleanup slice: `senior-director-state/staged-enterprise-reference-compliance-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only homepage proof-shelf conversion slice: `senior-director-state/staged-homepage-proof-shelf-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Monthly AI Support Plan preview slice: `senior-director-state/staged-monthly-ai-support-preview-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only contact route reassurance slice: `senior-director-state/staged-contact-route-reassurance-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only services fit-and-first-deliverable slice: `senior-director-state/staged-services-fit-deliverable-review-2026-06-12.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Prompt Engineering for Workflows preview slice: `senior-director-state/staged-prompt-engineering-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Cybersecurity Basics for Employees preview slice: `senior-director-state/staged-cyber-basics-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Meeting-to-SOP AI pack preview slice: `senior-director-state/staged-meeting-sop-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only AI Agent Starter Kit preview slice: `senior-director-state/staged-ai-agent-starter-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only No-Code Automation Kit preview slice: `senior-director-state/staged-nocode-kit-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Outlook Fix Guide preview slice: `senior-director-state/staged-outlook-fix-preview-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+        "New local-only Marketplace quote-first routeback slice: `senior-director-state/staged-marketplace-bridge-conversion-review-2026-06-13.md` is ready for Ahmad to approve publish or hold local only.",
+        "Workspace cleanup posture: summary-only cleanup pass is approved. Destructive cleanup remains blocked.",
+        "Samsung ProCare tender posture: park as no-bid unless a real no-cost compliant OEM/partner path appears.",
+        "RBC supplier registration path: live portal open and partially prefilled with verified IIS company/contact fields. Remaining Ahmad-only steps are CAPTCHA, any attestation/certification choices, account credentials, and the final `Register` click.",
+        "Workspace steward has cleanup/retirement recommendations; destructive action stays blocked until a later keep/archive/delete review."
+      ],
+      "readyActions": [
+        "27 CEO action(s) are ready when the live surface is available."
+      ],
+      "nextActions": [
+        "Keep preparing 5 top business opportunity watchlist item(s)."
+      ],
+      "focusAreas": [
+        "ceo-action-compression",
+        "approval-inbox",
+        "business-first-routing"
+      ],
+      "assignments": [],
+      "metadata": {}
+    },
+    {
+      "agentId": "opportunity-review-agent",
+      "label": "Opportunity Review Agent",
+      "generatedAt": "2026-06-26T06:29:02.032Z",
+      "status": "ready",
+      "summary": "Opportunity records were enriched with summaries, drafts, reminders, and required-document scaffolding.",
+      "metrics": {
+        "reviewedItems": 642,
+        "updatedItems": 12
+      },
+      "artifacts": [
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\opportunities.json",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\actions-log.json"
+      ],
+      "approvals": [],
+      "readyActions": [],
+      "nextActions": [
+        "Feed reviewed items into quality gate and prep packets."
+      ],
+      "focusAreas": [
+        "opportunity-enrichment",
+        "draft-preparation",
+        "reminder-scheduling"
+      ],
+      "assignments": [],
+      "metadata": {}
+    },
+    {
+      "agentId": "opportunity-research-agent",
+      "label": "Opportunity Research Agent",
+      "generatedAt": "2026-06-26T06:29:01.953Z",
+      "status": "ready",
+      "summary": "Public opportunity sources were rescanned and merged into the opportunity engine.",
+      "metrics": {
+        "sourcesChecked": 15,
+        "foundThisRun": 146,
+        "totalItems": 642,
+        "sourceErrors": 0
+      },
+      "artifacts": [
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\sources.json",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\opportunities.json",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\actions-log.json"
+      ],
+      "approvals": [],
+      "readyActions": [],
+      "nextActions": [
+        "Pass 146 discovered item(s) through review and quality gate."
+      ],
+      "focusAreas": [
+        "public-source-research",
+        "tender-discovery",
+        "opportunity-engine-refresh"
+      ],
+      "assignments": [],
+      "metadata": {}
+    },
+    {
+      "agentId": "opportunity-prep-packets-agent",
+      "label": "Opportunity Prep Packets Agent",
+      "generatedAt": "2026-06-26T06:21:55.062Z",
+      "status": "ready",
+      "summary": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
+      "metrics": {
+        "activeItems": 86,
+        "preparedPackets": 15,
+        "revenuePackets": 12,
+        "tenderPackets": 7,
+        "vendorPackets": 8,
+        "careerPackets": 3
+      },
+      "artifacts": [
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\prep-packets.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\opportunities.json",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\iis-aria-command-update.md"
+      ],
+      "approvals": [],
+      "readyActions": [],
+      "nextActions": [
+        "Advance 7 tender/contract packet(s) to bid/no-bid posture.",
+        "Advance 8 vendor registration packet(s) to final checklist posture."
+      ],
+      "focusAreas": [
+        "tender-prep",
+        "vendor-registration-prep",
+        "ceo-final-action-packets"
+      ],
+      "assignments": [],
+      "metadata": {}
+    },
+    {
+      "agentId": "business-development-agent",
+      "label": "Business Development Agent",
+      "generatedAt": "2026-06-25T12:00:02.145Z",
+      "status": "ready",
+      "summary": "Daily no-send business-development queue refreshed and routed into the autonomous board.",
+      "metrics": {
+        "trackedContacts": 21,
+        "obtainedLeads": 2,
+        "pendingConnections": 14,
+        "strategicFollows": 5,
+        "tenderLeadCount": 12
+      },
+      "artifacts": [
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\business-development-crm.json",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\business-development-daily-brief.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\Obtained Leads - contact now.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\revenue-generation-sprint.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\revenue-outreach-drafts.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\iis-aria-command-update.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\aria-monetization-packages.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\growth-library-product-engine.md",
+        "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\last-mile-execution-protocol.md"
+      ],
+      "approvals": [],
+      "readyActions": [
+        "2 warm lead(s) are staged for Ahmad-only send/hold review."
+      ],
+      "nextActions": [
+        "Check 14 pending connection request(s) for acceptance.",
+        "Revisit 5 strategic follow(s) on cadence.",
+        "Review 12 tender/public lead(s) for bid/no-bid posture."
+      ],
+      "focusAreas": [
+        "warm-lead follow-up",
+        "remote-l1-l3-overflow-support",
+        "ai-workflow-audit",
+        "website-conversion"
+      ],
+      "assignments": [],
+      "metadata": {}
+    }
+  ],
+  "heartbeat": {
+    "ts": "2026-06-26T11:59:06.181Z",
+    "mission": "Grow Integrated IT Support Inc. with ARIA, remote L1-L3 support, AI implementation, websites, tenders, corporate overflow, and offshore support. Preserve the site look and feel. Keep agents sharp through cleanup, handoff, and recognition. No spend, external sends, destructive cleanup, or irreversible paperwork without Ahmad.",
+    "ownerEmail": "ahmad.wasee@iisupp.net",
+    "openclaw": true
+  }
+}

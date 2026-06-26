@@ -37,37 +37,45 @@ brain_region: frontal-sentinel
 ## What needs Ahmad's hands (only)
 1. Microsoft Authenticode EV cert (~$300/yr, after MVP test)
 2. Apple Developer ID ($99/yr, before macOS port)
-3. Approve Chrome Web Store + MS Partner Store + Apple App Store submits
+3. Approve Chrome Web Store + MS Partner Store + Apple App Store submits## Web + Sentinel — one product, one brain (2026-06-24)
+
+ARIA web (`iisupp.net/aria`) and **ARIA Sentinel** (Windows desktop) are the **same product, one shared brain** — same KB (`knowledge-base/` + `aria_brain_pack/`), recipes, stop-codes, and the locked fall-through chain (KB $0 → Anthropic → offline local KB). The **same agents** (Claude-Code · KB-agent · OPS-agent) build both surfaces. Only intentional difference: the web "Resolve it for me" routes to a download/walkthrough gate (never runs local fixes), while Sentinel resolves locally through the RUN 29 gated control plane (supervisor → 10s countdown → kill-switch; Confirmed-grade, never autonomous). See [[D-20260624-aria-web-sentinel-one-product]] + `docs/STRUCTURE.md`.
 
 ## Related
 
 <!-- LINK-WEB:auto -->
-- [[2026-06-20]]
-- [[AXIS]]
-- [[Ahmad]]
-- [[Backup-agent]]
-- [[Brain-Map]]
 - [[CLAUDE_CODE_4HR_PACKET]]
-- [[Claude-Code]]
-- [[Cleaning-agent]]
-- [[Codex]]
-- [[Cowork]]
-- [[DIRECTOR_AUTONOMY]]
-- [[KB-agent]]
-- [[Leads]]
-- [[Leads-agent]]
-- [[OPS-agent]]
 - [[OTA-pipeline]]
-- [[RULES]]
-- [[STACK]]
-- [[VOICE]]
-- [[_ARIA]]
 - [[_Amygdala]]
+- [[_ARIA]]
 - [[_Brainstem]]
 - [[_Campaigns]]
+- [[_capture]]
 - [[_CorpusCallosum]]
 - [[_Decisions]]
 - [[_Glia]]
 - [[_HOME]]
 - [[_IIS]]
+- [[_Inb]]
 - [[_Inbox]]
+- [[2026-06-20]]
+- [[2026-06-24]]
+- [[Ahmad]]
+- [[AXIS]]
+- [[Backup-agent]]
+- [[Brain-Map]]
+- [[Claude-Code]]
+- [[Cleaning-agent]]
+- [[Codex]]
+- [[Cowork]]
+- [[D-20260624-aria-web-sentinel-one-product]]
+- [[DIRECTOR_AUTONOMY]]
+- [[KB-agent]]
+- [[Leads]]
+- [[Leads-agent]]
+- [[Live-Operations-Log]]
+- [[OPS-agent]]
+- [[RULES]]
+- [[STACK]]
+- [[VOICE]]
+<!-- /LINK-WEB:auto -->

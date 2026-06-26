@@ -1,6 +1,6 @@
 {
   "schema": "iis-loops/v1",
-  "updated": "2026-06-16T14:32:38.226Z",
+  "updated": "2026-06-26T10:00:00Z",
   "loops": [
     {
       "id": "lead-radar",
@@ -77,13 +77,14 @@
       "class": "Observer",
       "status": "running",
       "approved_spend_usd": 0,
-      "last_run": "2026-06-16T11:52:35Z",
-      "success_count": 2,
+      "last_run": "2026-06-26T10:00:00Z",
+      "success_count": 4,
       "failure_count": 0,
       "spawns": [],
       "serves_top_goal": true,
       "scheduled_via": "cowork-scheduled-tasks",
-      "scheduler_id": "goal-alignment-loop"
+      "scheduler_id": "goal-alignment-loop",
+      "last_run_outcome": "success"
     },
     {
       "id": "codex-observer",
@@ -94,9 +95,13 @@
       "class": "Observer",
       "status": "running",
       "approved_spend_usd": 0,
-      "last_run": "2026-06-16T13:08:17Z",
-      "success_count": 3,
+      "last_run": "2026-06-25T13:09:34Z",
+      "last_run_outcome": "success",
+      "success_count": 4,
       "failure_count": 0,
+      "skip_count": 1,
+      "last_skip": "2026-06-24T21:07:43Z",
+      "last_skip_reason": ".git/index.lock present after 30s retry (stale, Codex not active) + git unusable via mount (packed-refs corrupt)",
       "spawns": [],
       "serves_top_goal": true,
       "scheduled_via": "cowork-scheduled-tasks",
@@ -551,23 +556,13 @@
       "spawns": [],
       "reports_to": "cfo-agent",
       "serves_top_goal": true
-    },
-    {
-      "id": "director-idle-improvement",
-      "title": "Director idle-improvement delegator",
-      "yaml": "loops/director-idle-improvement.yaml",
-      "owner": "cowork",
-      "cadence": "*/10 * * * *",
-      "class": "Director",
-      "status": "idle",
-      "approved_spend_usd": 0,
-      "last_run": null,
-      "success_count": 0,
-      "failure_count": 0,
-      "spawns": [],
-      "serves_top_goal": true,
-      "ceo_pre_approved": true
     }
   ],
-  "agents_added": "2026-06-15 — 27 agent org chart (CEO + 6 C-suite + 20 reports)"
+  "agents_added": "2026-06-15 — 27 agent org chart (CEO + 6 C-suite + 20 reports)",
+  "codex-observer": {
+    "last_run": "2026-06-25T21:06:29Z",
+    "success_count": 1,
+    "failure_count": 0,
+    "skip_count": 0
+  }
 }

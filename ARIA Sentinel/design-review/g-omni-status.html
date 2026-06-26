@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../src/renderer/sentinel.css">
+<style>body{padding:0}.frame{max-width:1040px;padding:26px 30px;background:var(--aria-bg)}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+h1{font-family:var(--aria-font-display);margin:2px 0 0;font-size:26px}</style></head>
+<body class="low-power"><div class="frame">
+<header class="topbar"><div><p class="eyebrow">ARIA Sentinel - Settings</p><h1>ServiceNow &amp; Channels</h1></div>
+<div class="status-stack"><span class="chip mode-pill">Manual mode - watching</span><span class="chip cyan">Bridge listening</span></div></header>
+<section class="panel">
+  <p class="eyebrow">Omni-channel</p>
+  <h2>Ask ARIA in Slack / Teams</h2>
+  <p class="note">Users ask in the channel → ARIA answers from the local knowledge base → it escalates to a human when it can't confidently resolve. Read-only: chat is input, not new authority — fixes stay behind the desktop approval gates. Each handled question counts toward the measured deflection number.</p>
+  <div class="integrations-grid">
+    <article class="integration-card">
+      <div class="integration-top"><span class="integration-icon">💬</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">Slack</h4>
+      <p class="integration-desc">Ask ARIA in a Slack channel; answers from the local KB, escalates to a human.</p>
+      <p class="integration-detail">Set SLACK_BOT_TOKEN + SLACK_SIGNING_SECRET</p>
+    </article>
+    <article class="integration-card">
+      <div class="integration-top"><span class="integration-icon">🟣</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">Microsoft Teams</h4>
+      <p class="integration-desc">Ask ARIA in a Teams channel; answers from the local KB, escalates to a human.</p>
+      <p class="integration-detail">Set TEAMS_APP_ID + TEAMS_APP_PASSWORD</p>
+    </article>
+  </div>
+</section>
+</div></body></html>

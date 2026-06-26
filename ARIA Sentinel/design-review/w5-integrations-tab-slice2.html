@@ -1,0 +1,1079 @@
+<!doctype html><html><head><meta charset="utf-8"><style>:root {
+  --aria-bg: #050505;
+  --aria-surface: #0a0a0a;
+  --aria-inset: #141414;
+  --aria-border: #2a2a2a;
+  --aria-border-soft: #1c1c1c;
+  --aria-gold: #c5a059;
+  --aria-gold-light: #f1dca7;
+  --aria-gold-dark: #8b6d2f;
+  --aria-gold-tint-bg: #15110a;
+  --aria-gold-tint-bd: #38301d;
+  --aria-text: #ffffff;
+  --aria-text-2: #aaaaaa;
+  --aria-text-muted: #666666;
+  --aria-success: #7afbff;
+  --aria-warning: #ffcb6b;
+  --aria-error: #ff7e7e;
+  --aria-font-display: Cinzel, Georgia, serif;
+  --aria-font-ui: Inter, system-ui, sans-serif;
+  --aria-font-mono: ui-monospace, "SF Mono", Monaco, Menlo, monospace;
+  --aria-grad-gold: linear-gradient(90deg, #c5a059, #f1dca7);
+  --aria-grad-card: linear-gradient(180deg, #141414, #0a0a0a);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--aria-bg);
+  color: var(--aria-text);
+  font-family: var(--aria-font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input { font: inherit; }
+button { border: 0; }
+
+/* RUN 17 — audit-tamper security banner. Cyber-noir: deep red field, gold border-bottom, fixed to the
+   top of the window above every tab. Only offsets the shell when actually shown. */
+.security-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1200;
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  padding: 11px 22px;
+  background: linear-gradient(180deg, #2c0b0b 0%, #170606 100%);
+  border-bottom: 2px solid var(--aria-gold);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .55), inset 0 0 40px rgba(255, 60, 60, .08);
+}
+.security-banner[hidden] { display: none; }
+.security-banner-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.security-banner-title {
+  color: #ff5f5f; font-family: var(--aria-font-display); font-size: 14px; letter-spacing: .03em;
+  text-shadow: 0 0 12px rgba(255, 70, 70, .5);
+}
+.security-banner-sub { color: var(--aria-gold-light); font-size: 12px; opacity: .85; }
+.security-banner-actions { display: flex; gap: 10px; flex: 0 0 auto; }
+.security-banner-btn {
+  cursor: pointer; padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 600;
+  color: #1a0707; background: var(--aria-grad-gold); border: 1px solid var(--aria-gold);
+}
+.security-banner-btn.ghost { color: var(--aria-gold-light); background: transparent; }
+.security-banner-btn:hover { box-shadow: 0 0 14px rgba(197, 160, 89, .5); }
+/* Push the shell down only while the banner is visible (set by the renderer). */
+body.has-security-banner .settings-shell { padding-top: 58px; }
+
+.settings-shell {
+  min-height: 100vh;
+  min-width: 980px; /* Fix 1 — with the window minWidth 1024 the rail never clips off-screen */
+  display: grid;
+  grid-template-columns: 184px minmax(0, 1fr);
+  background: var(--aria-bg);
+}
+
+.settings-rail {
+  border-right: 1px solid var(--aria-border-soft);
+  background: #070707;
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.settings-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--aria-border-soft);
+  padding: 4px 4px 16px;
+}
+
+.settings-brand strong {
+  display: block;
+  color: var(--aria-gold-light);
+  font-family: var(--aria-font-display);
+  font-size: 14px;
+  letter-spacing: .1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.settings-brand span {
+  display: block;
+  color: var(--aria-text-muted);
+  font-size: 11px;
+  line-height: 1.25;
+  margin-top: 4px;
+}
+
+.mini-globe, .floating-globe {
+  border-radius: 50%;
+  background:
+    linear-gradient(90deg, transparent 48%, rgba(139,109,47,.74) 49%, rgba(139,109,47,.74) 51%, transparent 52%),
+    linear-gradient(0deg, transparent 48%, rgba(139,109,47,.74) 49%, rgba(139,109,47,.74) 51%, transparent 52%),
+    radial-gradient(circle at 35% 30%, #f1dca7 0 15%, #c5a059 36%, #5a3f10 68%, transparent 72%);
+  border: 1px solid rgba(241,220,167,.58);
+  box-shadow: 0 0 18px rgba(197,160,89,.32), inset 0 0 18px rgba(241,220,167,.2);
+}
+
+.mini-globe { width: 34px; height: 34px; flex: 0 0 auto; }
+.floating-globe { width: 64px; height: 64px; position: relative; }
+.floating-globe::before, .floating-globe::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(241,220,167,.45);
+}
+.floating-globe::after { inset: 25px; border-color: rgba(241,220,167,.34); }
+.floating-globe.diagnosing { animation: globePulse 4.2s ease-in-out infinite; }
+
+@keyframes globePulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 18px rgba(197,160,89,.32), inset 0 0 18px rgba(241,220,167,.2); }
+  50% { transform: scale(1.04); box-shadow: 0 0 34px rgba(197,160,89,.54), inset 0 0 22px rgba(241,220,167,.3); }
+}
+
+.settings-nav {
+  display: grid;
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.nav-item {
+  width: 100%;
+  min-height: 34px;
+  text-align: left;
+  border-radius: 8px;
+  padding: 0 10px;
+  background: transparent;
+  color: #bdbdbd;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.nav-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2b2b2b;
+  flex: 0 0 auto;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: var(--aria-gold-tint-bg);
+  color: var(--aria-gold-light);
+}
+
+.nav-item.active .nav-dot { background: var(--aria-gold); }
+
+/* RUN 23d — IA consolidation: collapsible sub-anchor list under merged parents + ## section dividers. */
+.nav-caret {
+  margin-left: auto;
+  font-size: 9px;
+  color: var(--aria-text-muted);
+  transition: transform .15s ease, color .15s ease;
+}
+.nav-item.active .nav-caret { transform: rotate(90deg); color: var(--aria-gold); }
+.nav-sub {
+  display: none;
+  margin: 2px 0 4px 17px;
+  padding-left: 8px;
+  border-left: 1px solid var(--aria-gold-tint-bd);
+  grid-auto-rows: min-content;
+  gap: 1px;
+}
+.nav-sub.open { display: grid; }
+.nav-sub a {
+  color: #8f8f8f;
+  font-size: 11px;
+  text-decoration: none;
+  padding: 5px 8px;
+  border-radius: 6px;
+}
+.nav-sub a:hover { color: var(--aria-gold-light); background: var(--aria-gold-tint-bg); }
+body.low-power .nav-caret { transition: none; }
+
+/* Zero-height scroll target so old #overview/#mode/etc. anchors land cleanly under the topbar. */
+.ia-anchor { display: block; height: 0; scroll-margin-top: 8px; }
+
+/* ## H2 section break between merged surfaces (gold bar + eyebrow + heading). */
+.merge-head {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin: 26px 0 12px;
+  scroll-margin-top: 8px;
+}
+.merge-head .merge-bar {
+  width: 4px;
+  flex: 0 0 4px;
+  min-height: 34px;
+  border-radius: 3px;
+  background: var(--aria-grad-gold);
+}
+.merge-head h2 { margin: 0; }
+.merge-head .eyebrow { margin: 0 0 3px; }
+.merge-head .merge-sub { color: var(--aria-text-muted); font-size: 11.5px; margin: 2px 0 0; }
+
+.rail-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--aria-border-soft);
+  padding: 14px 6px 0;
+  display: grid;
+  gap: 3px;
+  color: var(--aria-text-2);
+  font-size: 12px;
+}
+
+.pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--aria-success);
+  box-shadow: 0 0 12px rgba(122,251,255,.45);
+}
+
+.settings-workspace {
+  min-width: 0;
+  padding: 20px;
+  overflow: auto;
+}
+
+.settings-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.eyebrow {
+  color: var(--aria-gold);
+  font-family: var(--aria-font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+h1, h2, h3 { font-family: var(--aria-font-display); letter-spacing: 0; }
+h1 { font-size: 30px; line-height: 1; margin: 0; }
+h2 { font-size: 18px; margin: 0 0 14px; }
+h3 { font-size: 16px; margin: 9px 0 8px; }
+p { color: var(--aria-text-2); line-height: 1.5; }
+
+.status-stack { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  border: 1px solid rgba(197,160,89,.5);
+  border-radius: 5px;
+  background: #0a0a0a;
+  color: var(--aria-gold-light);
+  font-family: var(--aria-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  padding: 5px 7px;
+  text-transform: uppercase;
+}
+
+.chip.cyan { border-color: rgba(122,251,255,.5); color: var(--aria-success); }
+.chip.amber { border-color: rgba(255,203,107,.5); color: var(--aria-warning); }
+.chip.red { border-color: rgba(255,126,126,.5); color: var(--aria-error); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* W5 — Integrations tab: two labelled groups, each a responsive card grid. Black + gold theme. */
+.integrations-groups { display: grid; gap: 16px; }
+.integration-group { display: grid; gap: 10px; }
+.integration-group-head { display: flex; align-items: center; gap: 10px; }
+.integration-group-head h3 {
+  margin: 0; font-family: var(--aria-font-display); font-size: 15px; letter-spacing: .04em; color: var(--aria-gold-light);
+}
+.integration-count {
+  display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px;
+  border: 1px solid var(--aria-gold-tint-bd); border-radius: 999px; background: var(--aria-gold-tint-bg);
+  color: var(--aria-gold); font-family: var(--aria-font-mono); font-size: 11px; font-weight: 700;
+}
+.integrations-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); gap: 12px;
+}
+.integration-card {
+  display: flex; flex-direction: column; gap: 8px; padding: 14px;
+  background: var(--aria-grad-card); border: 1px solid var(--aria-border); border-radius: 14px; min-width: 0;
+}
+.integration-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.integration-icon { font-size: 22px; line-height: 1; }
+.integration-name { margin: 0; font-size: 14px; font-weight: 600; color: var(--aria-text); }
+.integration-desc { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--aria-text-2); }
+.integration-detail { margin: 0; font-size: 11px; line-height: 1.45; color: var(--aria-text-muted); font-family: var(--aria-font-mono); }
+.integration-actions { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; flex-wrap: wrap; }
+.integration-actions .ghost[disabled] { opacity: .45; cursor: not-allowed; }
+.int-link { font-size: 12px; padding: 6px 10px; }
+/* W5 Slice 2 — inline read-only Test connection result. */
+.integration-result { margin: 0; font-size: 11.5px; line-height: 1.45; font-family: var(--aria-font-mono); }
+.integration-result.pass { color: #5cd6a0; }
+.integration-result.fail { color: var(--aria-text-2); }
+/* Status badges — connected=green, not_configured=grey, error=red. */
+.int-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px;
+  border: 1px solid; font-family: var(--aria-font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; white-space: nowrap;
+}
+.int-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.int-badge.connected { color: #5cd6a0; border-color: rgba(92,214,160,.5); background: rgba(92,214,160,.08); }
+.int-badge.not_configured { color: #8f8f8f; border-color: rgba(143,143,143,.45); background: rgba(143,143,143,.07); }
+.int-badge.error { color: var(--aria-error); border-color: rgba(255,126,126,.5); background: rgba(255,126,126,.08); }
+
+.settings-grid-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--aria-grad-card);
+  border: 1px solid var(--aria-border);
+  border-radius: 14px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.panel + .panel { margin-top: 14px; }
+
+.panel-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.mode-list { display: grid; gap: 10px; }
+
+.mode-row {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #232323;
+  border-radius: 12px;
+  background: #0c0c0c;
+  color: var(--aria-text);
+  padding: 13px;
+  cursor: pointer;
+}
+
+.mode-row.selected { background: var(--aria-gold-tint-bg); border-color: var(--aria-gold); }
+
+/* RUN 23e — license-tier feature gating: locked mode tiles + upsell cards. */
+.mode-row.locked { opacity: .62; cursor: pointer; position: relative; }
+.mode-row.locked:hover { border-color: var(--aria-gold); opacity: .8; }
+.mode-row .lock-badge { position: absolute; top: 11px; right: 12px; font-size: 13px; filter: grayscale(.2); }
+.upsell-card {
+  display: flex; align-items: center; gap: 14px; justify-content: space-between;
+  margin-top: 14px; padding: 14px 16px;
+  border: 1px solid var(--aria-gold-tint-bd); border-radius: 12px;
+  background: linear-gradient(180deg, var(--aria-gold-tint-bg), #0b0a07);
+}
+.upsell-card .upsell-text strong { color: var(--aria-gold-light); font-family: var(--aria-font-display); font-size: 14px; }
+.upsell-card .upsell-text p { color: var(--aria-text-2); font-size: 12.5px; margin: 4px 0 0; }
+.upsell-card .upsell-btn { flex: 0 0 auto; min-width: 120px; }
+.upsell-nudge { color: var(--aria-warning); cursor: pointer; }
+.feature-locked { opacity: .5; pointer-events: none; filter: grayscale(.5); }
+.radio { width: 16px; height: 16px; margin-top: 2px; border-radius: 50%; border: 1px solid var(--aria-border); }
+.mode-row.selected .radio { border-color: var(--aria-gold-light); background: radial-gradient(circle, var(--aria-gold-light) 0 40%, transparent 44%); }
+.mode-row strong, .mode-row em, .mode-row small { display: block; }
+.mode-row em { color: var(--aria-gold); font-family: var(--aria-font-mono); font-size: 10px; font-style: normal; letter-spacing: .12em; margin: 5px 0; }
+.mode-row small { color: var(--aria-text-2); font-size: 12px; line-height: 1.5; }
+
+.toggle-row {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid var(--aria-border-soft);
+  border-radius: 12px;
+  background: #0c0c0c;
+  display: grid;
+  gap: 6px;
+  color: var(--aria-text-2);
+  font-size: 12px;
+}
+.toggle-row label { color: var(--aria-text); display: flex; gap: 8px; align-items: center; }
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.primary, .ghost {
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--aria-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  min-height: 38px;
+  padding: 10px 12px;
+  text-transform: uppercase;
+}
+.primary { background: var(--aria-grad-gold); color: #1a1410; }
+.ghost { background: transparent; border: 1px solid rgba(197,160,89,.45); color: var(--aria-gold-light); }
+.primary:disabled, .ghost:disabled { cursor: not-allowed; filter: grayscale(.7); opacity: .5; }
+.wide { width: 100%; }
+
+.button-row { display: flex; gap: 8px; margin-top: 12px; }
+.button-row > button { flex: 1; }
+
+.recipe-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.recipe-card {
+  background: #0c0c0c;
+  border: 1px solid #202020;
+  border-radius: 12px;
+  padding: 13px;
+}
+.recipe-card h3 { font-size: 15px; }
+.recipe-card p { font-size: 12.5px; margin: 0 0 10px; }
+
+.field { display: grid; gap: 6px; color: var(--aria-text-2); font-size: 12px; margin-bottom: 12px; }
+input {
+  width: 100%;
+  border: 1px solid #242424;
+  border-radius: 8px;
+  background: #070707;
+  color: var(--aria-text);
+  min-height: 38px;
+  padding: 9px 10px;
+  outline: none;
+}
+input[type="checkbox"] { width: 18px; height: 18px; min-height: 0; flex: 0 0 18px; padding: 0; accent-color: var(--aria-gold); }
+input:focus { border-color: rgba(197,160,89,.75); }
+
+.note { color: var(--aria-text-muted); font-size: 12px; margin: 10px 0 14px; }
+
+.mapping {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px;
+  align-items: center;
+}
+.mapping span, .mapping strong {
+  background: #0c0c0c;
+  border: 1px solid #202020;
+  border-radius: 8px;
+  min-height: 36px;
+  padding: 10px;
+  font-size: 12px;
+}
+.mapping span { color: var(--aria-gold); font-family: var(--aria-font-mono); }
+
+.dropzone {
+  border: 1px dashed rgba(197,160,89,.5);
+  border-radius: 12px;
+  color: var(--aria-gold-light);
+  padding: 22px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.dropzone small { color: var(--aria-text-muted); }
+
+.source-list, .outbound-list, .log-list, .health-list, .table-list {
+  display: grid;
+  gap: 8px;
+}
+
+.source-row, .outbound-row, .log-row, .health-row, .table-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  background: #0c0c0c;
+  border: 1px solid #202020;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  min-width: 0;
+}
+.outbound-row { grid-template-columns: 76px minmax(0, 1fr) 126px; }
+.log-row { grid-template-columns: 70px 86px minmax(0, 1fr); font-family: var(--aria-font-mono); }
+.table-row { grid-template-columns: 128px minmax(0, 1fr) 80px; }
+.health-row { grid-template-columns: 100px minmax(0, 1fr) 64px; }
+.source-row strong, .outbound-row strong, .table-row strong, .health-row strong { overflow-wrap: anywhere; }
+.log-row span, .table-row em, .health-row em { color: var(--aria-text-muted); font-style: normal; }
+.log-row strong, .source-row strong, .outbound-row span, .table-row span, .health-row span { color: var(--aria-gold); font-family: var(--aria-font-mono); }
+
+.flow { display: grid; gap: 8px; }
+.flow span { border-left: 3px solid var(--aria-gold); background: #0c0c0c; border-radius: 8px; padding: 12px; }
+
+.stat-panel {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+.stat-panel span {
+  color: var(--aria-success);
+  font-family: var(--aria-font-display);
+  font-size: 72px;
+  line-height: .9;
+}
+.stat-panel strong {
+  color: var(--aria-gold-light);
+  font-family: var(--aria-font-display);
+  font-size: 18px;
+}
+
+.fix-card {
+  position: relative;
+  border: 1px solid var(--aria-border);
+  border-radius: 14px;
+  background: var(--aria-grad-card);
+  padding: 34px 16px 14px;
+  text-align: center;
+}
+.fix-card p { font-size: 12.5px; margin: 0; }
+
+.overlay-body {
+  background: transparent;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.globe-button {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.globe-button:hover .floating-globe {
+  box-shadow: 0 0 34px rgba(197,160,89,.54), inset 0 0 22px rgba(241,220,167,.3);
+}
+
+.overlay-card {
+  position: absolute;
+  top: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  min-height: 124px;
+  padding-top: 22px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.48), 0 0 34px rgba(197,160,89,.16);
+}
+
+.overlay-card[hidden] { display: none; }
+
+.overlay-body.card-visible .globe-button { top: 8px; }
+
+.dropzone.dragging { background: var(--aria-gold-tint-bg); border-color: var(--aria-gold-light); }
+
+/* Diagnostic self-test (C2) */
+.health-row em.diag-ok { color: var(--aria-success); }
+.health-row em.diag-warn { color: var(--aria-warning); }
+.health-row em.diag-fail { color: var(--aria-error); }
+
+/* ServiceNow My-incidents (BLOCK 9) */
+.sn-incidents { margin-top: 14px; }
+.sn-head { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; margin-bottom: 10px; }
+.sn-head .eyebrow { margin: 0; }
+.sn-head h2 { margin: 2px 0 0; font-size: 15px; }
+.sync-note { color: var(--aria-success); font-family: var(--aria-font-mono); font-size: 11px; }
+.incident-stack { display: grid; gap: 10px; }
+.incident-card { background: #0c0c0c; border: 1px solid #1f1f1f; border-radius: 12px; padding: 13px; }
+.incident-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.incident-head strong { font-family: var(--aria-font-display); font-size: 14px; color: var(--aria-gold-light); }
+.incident-meta { margin-left: auto; color: var(--aria-text-muted); font-size: 11px; }
+.incident-title { color: #ddd; font-size: 13px; font-weight: 600; margin: 8px 0 4px; }
+.work-notes { border-left: 2px solid #242424; padding-left: 10px; margin-top: 8px; }
+.work-notes .eyebrow { font-size: 10px; margin-bottom: 4px; }
+.work-note { color: #9a9a9a; font-size: 12px; font-family: var(--aria-font-mono); padding: 2px 0; }
+.incident-composer { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; border-left: 2px solid var(--aria-gold-tint-bd); padding-left: 10px; }
+.incident-composer input { min-height: 34px; }
+.incident-composer .primary { min-height: 34px; padding: 0 14px; }
+
+/* Restore points (BLOCK 10) */
+.restore-list { display: grid; gap: 10px; }
+.restore-card { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; background: #0c0c0c; border: 1px solid #202020; border-radius: 12px; padding: 12px; }
+.restore-icon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--aria-gold-tint-bd); color: var(--aria-gold-light); font-size: 20px; }
+.restore-body { display: grid; gap: 2px; min-width: 0; }
+.restore-body strong { font-size: 13px; }
+.restore-body code { color: var(--aria-gold); font-family: var(--aria-font-mono); font-size: 12px; overflow-wrap: anywhere; }
+.restore-body small { color: var(--aria-text-muted); font-size: 11px; }
+.restore-card .ghost { min-height: 34px; padding: 0 12px; white-space: nowrap; }
+
+/* Onboarding tour (BLOCK 11) */
+.onboarding { position: fixed; inset: 0; background: rgba(2,2,2,.82); display: grid; place-items: center; z-index: 50; }
+.onboarding[hidden] { display: none; }
+.onboarding-card { width: min(420px, 92vw); background: var(--aria-grad-card); border: 1px solid var(--aria-border); border-radius: 18px; padding: 26px 22px 18px; text-align: center; box-shadow: 0 24px 70px rgba(0,0,0,.6); }
+.onboarding-card h2 { font-size: 20px; margin: 4px 0 10px; }
+.onboarding-card p { font-size: 13px; }
+.coach-globe { width: 64px; height: 64px; margin: 0 auto 10px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f1dca7 0 15%, #c5a059 36%, #5a3f10 68%, transparent 72%);
+  border: 1px solid rgba(241,220,167,.5); box-shadow: 0 0 22px rgba(197,160,89,.35); }
+.coach-globe[data-state="diagnosing"] { animation: globePulse 2.4s ease-in-out infinite; }
+.coach-globe[data-state="fixing"] { animation: globePulse 1.2s ease-in-out infinite; }
+.coach-globe[data-state="escalation"] { box-shadow: 0 0 24px rgba(255,203,107,.5); border-color: rgba(255,203,107,.6); }
+.onboard-dialog { margin: 12px 0 4px; padding: 10px; border: 1px solid var(--aria-border-soft); border-radius: 10px; background: #080808; color: var(--aria-text-2); font-family: var(--aria-font-mono); font-size: 11px; }
+.onboard-dialog[hidden] { display: none; }
+.onboarding-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.onboarding-foot .button-row { margin-top: 0; }
+.onboard-dots { display: flex; gap: 6px; }
+.onboard-dots span { width: 7px; height: 7px; border-radius: 50%; background: #2b2b2b; }
+.onboard-dots span.on { background: var(--aria-gold); }
+
+@media (max-width: 820px) {
+  .settings-shell { grid-template-columns: 1fr; }
+  .settings-rail { border-right: 0; border-bottom: 1px solid var(--aria-border-soft); }
+  .settings-nav { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); }
+  .settings-grid-main { grid-template-columns: 1fr; }
+  .settings-topbar { flex-direction: column; }
+}
+
+/* RUN 3 — privacy verifier live capture + evidence pack + what's new */
+.muted { color: rgba(255,255,255,.6); font-size: 13px; }
+.capture-verdict { font-size: 12px; color: #c5a059; align-self: center; }
+.capture-rows { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.capture-row { display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid rgba(197,160,89,.25); border-radius: 8px; font-size: 13px; }
+.capture-row .tick { font-weight: 700; }
+.capture-row.ok .tick { color: #7afbff; }
+.capture-row.bad { border-color: rgba(255,82,71,.5); }
+.capture-row.bad .tick { color: #ff5247; }
+.capture-row em { color: rgba(255,255,255,.55); font-style: normal; font-size: 12px; }
+.whats-new-body { max-height: 320px; overflow: auto; white-space: pre-wrap; font-family: inherit; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.82); background: rgba(0,0,0,.25); border-radius: 8px; padding: 12px; margin: 8px 0 0; }
+
+/* RUN 6 — restore-point card polish (design §17) + autonomous/notify */
+.restore-card { max-width: 360px; display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid rgba(197,160,89,.3); border-radius: 12px; margin-bottom: 8px; }
+.restore-icon { font-size: 22px; color: #c5a059; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid rgba(197,160,89,.4); border-radius: 50%; flex: 0 0 auto; }
+.restore-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.restore-body code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #f1dca7; }
+.rollback-btn { letter-spacing: .04em; font-size: 11px; }
+
+/* RUN 9 — command palette + low-power switch */
+.cmdk { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh; z-index: 50; }
+.cmdk[hidden] { display: none; }
+.cmdk-box { width: min(560px, 92vw); background: #111; border: 1px solid rgba(197,160,89,.4); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+#cmdkInput { width: 100%; box-sizing: border-box; padding: 14px 16px; background: #0c0c0c; border: 0; border-bottom: 1px solid rgba(197,160,89,.25); color: #f5f5f5; font-size: 15px; outline: none; }
+.cmdk-results { max-height: 320px; overflow: auto; }
+.cmdk-item { display: block; width: 100%; text-align: left; padding: 10px 16px; background: transparent; border: 0; color: #e8e8e8; font-size: 13px; cursor: pointer; }
+.cmdk-item:hover, .cmdk-item.active { background: rgba(197,160,89,.14); color: #f1dca7; }
+.cmdk-empty { padding: 16px; color: #9a9a9a; font-size: 13px; }
+.switch { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+
+/* ===== RUN 12 — Fix 7: classy, GPU-cheap micro-animations (transform/opacity only) ===== */
+button { position: relative; overflow: hidden; transition: transform .18s ease, box-shadow .25s ease, background .25s ease; }
+button:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(197,160,89,.25); }
+button::after { content: ""; position: absolute; top: 0; left: -120%; width: 50%; height: 100%; background: linear-gradient(110deg, transparent, rgba(255,248,224,.18), transparent); transition: left .55s ease; pointer-events: none; }
+button:hover::after { left: 140%; }
+
+/* Panels — soft reveal on tab change (display model unchanged; animate the active panel) */
+.tab-panel.active { animation: panel-rise .35s ease; }
+@keyframes panel-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* Chips — subtle pulse for live state badges */
+.chip.cyan { animation: chip-pulse 3s ease-in-out infinite; }
+@keyframes chip-pulse { 50% { box-shadow: 0 0 12px rgba(122,251,255,.35); } }
+
+/* Mode rows — selected glow */
+.mode-row.selected { box-shadow: inset 0 0 0 1px rgba(241,220,167,.55), 0 0 24px rgba(197,160,89,.18); }
+
+/* Health rows — staggered slide-in */
+.health-list > * { animation: row-rise .4s ease forwards; opacity: 0; transform: translateY(6px); }
+.health-list > *:nth-child(1) { animation-delay: .05s; }
+.health-list > *:nth-child(2) { animation-delay: .10s; }
+.health-list > *:nth-child(3) { animation-delay: .15s; }
+.health-list > *:nth-child(4) { animation-delay: .20s; }
+@keyframes row-rise { to { opacity: 1; transform: none; } }
+
+/* Low-power mode (RUN 9) — kill every animation/transition, no exceptions */
+body.low-power *, body.low-power *::before, body.low-power *::after { animation: none !important; transition: none !important; }
+body.low-power button::after { display: none; }
+body.low-power .health-list > * { opacity: 1; transform: none; }
+
+/* ===== RUN 13 — luxe branding, new tabs, chat dock, support, clip fix ===== */
+.settings-brand { padding: 22px 14px; text-align: center; border-bottom: 1px solid rgba(197,160,89,.18); }
+.settings-brand .brand-globe { width: 46px; height: 46px; margin: 0 auto 10px; }
+/* RUN 16 §0 — live iisupp.net/aria globe (rotating gold ring + breathing core). The animations live
+   inside the SVG's own <style>, so they run even when the asset is referenced via <img>. */
+.live-globe-img { display: block; object-fit: contain; border: 0; background: none; box-shadow: none; border-radius: 0; }
+.settings-brand .brand-name { font-family: var(--aria-font-display); font-size: 15px; color: var(--aria-gold); letter-spacing: .04em; }
+.settings-brand .brand-sub { font-size: 11px; color: rgba(241,220,167,.6); margin-top: 4px; }
+.settings-nav .nav-item { position: relative; }
+.settings-nav .nav-item.active { background: linear-gradient(90deg, rgba(197,160,89,.16), transparent); color: #fde8b8; }
+.rail-footer .aria-living-globe { width: 84px; height: 84px; margin: 0 auto 8px; }
+.active-badge { color: var(--aria-success); font-style: normal; font-size: 10px; letter-spacing: .12em; }
+
+/* Mode tab — centered + narrower + chat dock */
+.mode-panel-centered { max-width: 560px; margin: 0 auto; }
+.aria-chat-dock { max-width: 560px; margin: 14px auto 0; }
+.chat-stream { max-height: 220px; overflow: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.chat-msg { font-size: 13px; line-height: 1.5; padding: 6px 10px; border-radius: 8px; }
+.chat-msg.user { background: rgba(197,160,89,.1); align-self: flex-end; }
+.chat-msg.aria { background: #0c0c0c; border: 1px solid var(--aria-border-soft); }
+.chat-input { display: flex; gap: 8px; }
+.chat-input input { flex: 1; background: #0c0c0c; border: 1px solid var(--aria-border); border-radius: 8px; color: #fff; padding: 9px 12px; }
+
+/* Support tab */
+.support-grid { display: flex; flex-direction: column; gap: 8px; }
+.support-row { display: grid; grid-template-columns: 90px 1fr auto; gap: 12px; align-items: center; padding: 8px 10px; border: 1px solid var(--aria-border-soft); border-radius: 10px; }
+.support-row span { color: var(--aria-text-2); font-size: 12px; }
+.company-footer strong { color: var(--aria-gold-light); font-family: var(--aria-font-display); }
+.company-footer p { font-size: 12px; line-height: 1.6; }
+.ext-steps { font-size: 13px; color: var(--aria-text-2); line-height: 1.7; padding-left: 18px; }
+
+/* Plan picker */
+.plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin: 14px 0; }
+.plan-card { display: flex; flex-direction: column; gap: 4px; padding: 14px; border: 1px solid var(--aria-border); border-radius: 12px; background: #0c0c0c; color: #fff; cursor: pointer; }
+.plan-card strong { color: var(--aria-gold-light); }
+.plan-card span { color: var(--aria-text-2); font-size: 12px; }
+
+/* §10 clip fix — detection/health/restore cards always render fully (no fixed-height clip) */
+.health-list, .restore-list, .source-list, .log-list, .chat-stream { min-height: 0; max-height: none; overflow: visible; }
+.health-row, .restore-card { min-height: auto; overflow: visible; }
+
+/* ============================================================================================
+   RUN 19 — live-app polish + premium UX
+   ============================================================================================ */
+
+/* §1 — POPUP CLAMPING. Every modal/popup card stays inside the window viewport and scrolls if it
+   would otherwise overflow. clamp = (viewport height − 80px) so headers/footers never clip off-edge. */
+.onboarding-card,
+.trial-end-card,
+.delete-modal-card,
+.cmdk-box,
+.whats-new-body {
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+/* Modals are fixed-overlay grids: keep their padding so a clamped card never butts the screen edge. */
+.onboarding { padding: 20px; }
+.onboarding-card, .trial-end-card, .delete-modal-card {
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .7), 0 0 40px rgba(197, 160, 89, .12);
+}
+
+/* §2 — BRAND CENTERED + LIVE GLOBE. The brand stacks vertically and centers; the live globe custom
+   element sits on top, the footer globe at the bottom. */
+.settings-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.settings-brand .brand-name { width: 100%; text-align: center; }
+.settings-brand aria-globe.brand-globe { margin: 0 auto 10px; }
+.rail-footer { text-align: center; justify-items: center; }
+.rail-footer aria-globe.aria-living-globe { margin: 0 auto 8px; }
+aria-globe { line-height: 0; }
+
+/* §2 — mode pill in the top bar (moved out of the brand area). Discreet gold-tinted chip. */
+.chip.mode-pill {
+  border-color: rgba(197, 160, 89, .5);
+  color: var(--aria-gold-light);
+  background: var(--aria-gold-tint-bg);
+}
+
+/* §3 — kill-switch row in the Hotkeys tab: red panic styling. */
+.table-row.kill-row { border-color: rgba(255, 95, 95, .45); }
+.table-row.kill-row span,
+.table-row.kill-row strong { color: #ff6b6b; }
+.kill-badge {
+  color: #ff5f5f; font-style: normal; font-size: 10px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+/* §4 — triple-confirm delete modal. */
+.delete-modal-card { width: min(440px, 92vw); text-align: center; }
+.delete-step-body { font-size: 14px; color: var(--aria-text); margin: 6px 0 14px; }
+.delete-optout {
+  display: flex; align-items: center; gap: 8px; justify-content: center;
+  font-size: 12px; color: var(--aria-text-2); margin-bottom: 8px;
+}
+.danger-btn { background: linear-gradient(90deg, #b3322f, #ff6b6b); color: #fff; }
+#deletePrefsList:empty::after { content: "No file types opted out — every delete is triple-confirmed."; color: var(--aria-text-muted); font-size: 12px; }
+.delete-pref-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: #0c0c0c; border: 1px solid #202020; border-radius: 8px; padding: 8px 10px; font-size: 12px; }
+.delete-pref-row code { color: var(--aria-gold); font-family: var(--aria-font-mono); }
+
+/* §5 — luxury trial-end modal. Cyber-noir gradient, gold border, Cinzel headers, gold prices. */
+.trial-end { background: rgba(2, 2, 2, .9); }
+.trial-end-card {
+  width: min(980px, 94vw);
+  background: radial-gradient(120% 120% at 50% 0%, #1a130a 0%, #0a0a0a 55%, #050505 100%);
+  border: 1px solid var(--aria-gold);
+  border-radius: 20px;
+  padding: 30px 28px 22px;
+  text-align: center;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .8), 0 0 60px rgba(197, 160, 89, .18);
+}
+.trial-end-title { font-family: var(--aria-font-display); font-size: 26px; color: var(--aria-gold-light); margin: 4px 0 6px; letter-spacing: .03em; }
+.trial-end-sub { color: var(--aria-text-2); font-size: 14px; margin: 0 0 18px; }
+.trial-end-license { margin: 8px 0 4px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.enter-license-link { color: var(--aria-gold-light); font-size: 13px; text-decoration: underline; cursor: pointer; }
+.trial-end-license-row { display: flex; gap: 8px; width: min(360px, 90%); }
+.trial-end-license-row[hidden] { display: none; }
+.trial-end-license-row input { flex: 1; }
+
+/* §5/§6 — pricing cards: shimmer on hover + gold glow on focus. */
+.plan-card .plan-price { color: var(--aria-gold-light); font-family: var(--aria-font-display); font-size: 22px; }
+.plan-card .plan-price em { color: var(--aria-text-2); font-size: 12px; font-style: normal; font-family: var(--aria-font-ui); }
+.trial-end-card .plan-card {
+  position: relative; overflow: hidden; gap: 8px; padding: 18px 14px; align-items: center;
+  border: 1px solid var(--aria-gold-tint-bd); cursor: default; transition: transform .2s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.trial-end-card .plan-card strong { font-family: var(--aria-font-display); letter-spacing: .04em; }
+.trial-end-card .plan-card::before {
+  content: ""; position: absolute; top: 0; left: -150%; width: 60%; height: 100%;
+  background: linear-gradient(110deg, transparent, rgba(255, 248, 224, .22), transparent);
+  transform: skewX(-18deg); transition: left .6s ease; pointer-events: none;
+}
+.trial-end-card .plan-card:hover { transform: translateY(-3px); border-color: var(--aria-gold); box-shadow: 0 10px 30px rgba(197, 160, 89, .25); }
+.trial-end-card .plan-card:hover::before { left: 150%; }
+.trial-end-card .plan-card:focus-within { border-color: var(--aria-gold-light); box-shadow: 0 0 0 1px var(--aria-gold-light), 0 0 26px rgba(197, 160, 89, .4); }
+.plan-subscribe { width: 100%; margin-top: 4px; }
+
+/* ===== RUN 22 — dashboard · performance · SLA · compliance · reports ===== */
+.hero-panel { text-align: center; }
+.hero-status { display: inline-flex; align-items: center; gap: 12px; font-family: var(--aria-font-display); }
+.hero-status .hero-emoji { font-size: 34px; }
+.hero-status .hero-label { font-size: 30px; letter-spacing: .06em; }
+.hero-status[data-level="protected"] .hero-label { color: var(--aria-success); }
+.hero-status[data-level="attention"] .hero-label { color: var(--aria-warning); }
+.hero-status[data-level="critical"] .hero-label { color: var(--aria-error); }
+.hero-subline { color: var(--aria-text-2); font-size: 13px; margin: 8px 0 0; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 14px 0; }
+.kpi-tile { background: var(--aria-grad-card); border: 1px solid var(--aria-border); border-radius: 12px; padding: 14px; }
+.kpi-tile .kpi-value { font-family: var(--aria-font-display); font-size: 26px; color: var(--aria-gold-light); }
+.kpi-tile .kpi-label { color: var(--aria-text-2); font-size: 12px; margin-top: 2px; }
+.kpi-tile .kpi-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.kpi-delta.up { color: var(--aria-success); } .kpi-delta.down { color: var(--aria-error); } .kpi-delta.flat { color: var(--aria-text-muted); }
+.kpi-delta { font-size: 12px; font-family: var(--aria-font-mono); }
+.pending-actions { display: grid; gap: 8px; }
+.pending-card { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: #0c0c0c; border: 1px solid var(--aria-gold-tint-bd); border-radius: 10px; padding: 10px 12px; cursor: pointer; font-size: 13px; }
+.pending-card:hover { border-color: var(--aria-gold); }
+.activity-timeline { display: grid; gap: 6px; }
+.activity-row { display: grid; grid-template-columns: 70px 24px 1fr auto; gap: 10px; align-items: center; font-size: 12.5px; padding: 6px 8px; border-radius: 8px; }
+.activity-row:hover { background: var(--aria-gold-tint-bg); }
+.activity-row .act-time { color: var(--aria-gold); font-family: var(--aria-font-mono); }
+.trust-strip { margin-top: 14px; padding: 10px 14px; border: 1px solid var(--aria-border-soft); border-radius: 10px; background: #070707; color: var(--aria-text-muted); font-size: 11.5px; text-align: center; }
+.framework-badge { display: inline-block; border-radius: 6px; padding: 2px 8px; font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+.framework-badge.strong { color: var(--aria-success); border: 1px solid rgba(122,251,255,.5); }
+.framework-badge.ok { color: var(--aria-warning); border: 1px solid rgba(255,203,107,.5); }
+.framework-badge.gap { color: var(--aria-error); border: 1px solid rgba(255,126,126,.5); }
+
+/* §5/RUN21 — trial-end version + auto-updates-included badge */
+.trial-end-version { color: var(--aria-text-2); font-size: 12px; margin: -8px 0 14px; }
+.auto-update-badge { color: var(--aria-gold-light); border: 1px solid var(--aria-gold-tint-bd); border-radius: 6px; padding: 2px 8px; font-size: 11px; }
+
+/* §6 — ODD-NUMBER LAYOUT. 5 cards = 3 on top, 2 centered on the bottom row (never an orphan). The
+   grid is 6 columns; each card spans 2, so cards 4 & 5 offset to columns 2-3 and 4-5 (centered). */
+.plan-grid-5 { grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 8px 0 18px; }
+.plan-grid-5 > .plan-card { grid-column: span 2; }
+.plan-grid-5 > .plan-card:nth-child(4) { grid-column: 2 / span 2; }
+.plan-grid-5 > .plan-card:nth-child(5) { grid-column: 4 / span 2; }
+@media (max-width: 720px) {
+  .plan-grid-5 { grid-template-columns: repeat(2, 1fr); }
+  .plan-grid-5 > .plan-card,
+  .plan-grid-5 > .plan-card:nth-child(4),
+  .plan-grid-5 > .plan-card:nth-child(5) { grid-column: auto; }
+}
+
+/* §5 — non-blocking upgrade toast / kill-switch toast stack (top-right, dismissible). */
+.toast-stack { position: fixed; top: 16px; right: 16px; z-index: 1400; display: flex; flex-direction: column; gap: 10px; max-width: min(360px, 90vw); }
+.toast {
+  background: linear-gradient(180deg, #15110a, #0a0a0a);
+  border: 1px solid var(--aria-gold);
+  border-radius: 12px; padding: 12px 14px; color: var(--aria-text);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .6), 0 0 22px rgba(197, 160, 89, .18);
+  font-size: 13px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start;
+  animation: toast-in .3s ease;
+}
+.toast.danger { border-color: #ff6b6b; box-shadow: 0 12px 36px rgba(0, 0, 0, .6), 0 0 22px rgba(255, 90, 90, .25); }
+.toast strong { color: var(--aria-gold-light); display: block; margin-bottom: 2px; font-family: var(--aria-font-display); font-size: 13px; }
+.toast .toast-body { color: var(--aria-text-2); font-size: 12px; }
+.toast .toast-cta { color: var(--aria-gold-light); text-decoration: underline; cursor: pointer; font-size: 12px; }
+.toast .toast-close { background: transparent; border: 0; color: var(--aria-text-muted); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+body.low-power .toast { animation: none; }
+body.low-power .trial-end-card .plan-card::before { display: none; }
+
+/* ============ RUN 33 PIVOT — ARIA tab (Chat + Learning + Health + Memory + Agents) ============ */
+/* RUN 35-1 — scroll containment: the chat panel is a fixed viewport-height envelope. The message log
+   (#ariaChatLog) scrolls INTERNALLY; the head stays pinned at top and the composer + statusline stay
+   pinned at the bottom. A long conversation never grows the outer ARIA tab / portal. min-height:0 on the
+   log is the critical bit — without it a flex child won't shrink below its content and overflow never fires. */
+.aria-chat-panel { display:flex; flex-direction:column; max-width:720px; margin:0 auto;
+  height:calc(100vh - 112px); max-height:calc(100vh - 112px); min-height:440px; }
+.aria-chat-head { text-align:center; padding:6px 0 10px; flex-shrink:0; }
+.aria-chat-globe { width:40px; height:40px; margin:0 auto 8px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #f1dca7, #c5a059 55%, #6b521f 100%); box-shadow:0 0 18px rgba(197,160,89,.45); }
+.aria-chat-company { font-family:Cinzel,Georgia,serif; font-size:12px; letter-spacing:.22em; color:#f1dca7; margin:0; text-transform:uppercase; }
+.aria-chat-subtitle { font-size:12.5px; color:var(--muted,#8b8b93); margin:3px 0 0; }
+.aria-chat-divider { height:1px; width:72%; margin:10px auto 0; background:linear-gradient(90deg, transparent, rgba(197,160,89,.45), transparent); }
+.aria-chat-log { flex:1 1 auto; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:14px 4px; }
+.aria-chat-welcome { text-align:center; color:var(--muted,#8b8b93); font-size:13px; line-height:1.65; max-width:520px; margin:auto; }
+.aria-chat-welcome strong { color:#ececec; }
+.aria-chat-row { display:flex; flex-direction:column; max-width:88%; }
+.aria-chat-row.me { align-self:flex-end; align-items:flex-end; }
+.aria-chat-row.aria { align-self:flex-start; align-items:flex-start; }
+.aria-chat-who { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted,#8b8b93); margin:0 4px 3px; }
+.aria-chat-bubble { padding:11px 14px; border-radius:14px; font-size:13.5px; line-height:1.6; white-space:pre-wrap; word-wrap:break-word; }
+.aria-chat-row.me .aria-chat-bubble { background:rgba(197,160,89,.14); border:1px solid rgba(197,160,89,.32); border-bottom-right-radius:4px; }
+.aria-chat-row.aria .aria-chat-bubble { background:#0d0d12; border:1px solid rgba(255,255,255,.08); border-bottom-left-radius:4px; }
+.aria-chat-dots span { display:inline-block; width:6px; height:6px; margin:0 2px; border-radius:50%; background:#c5a059; opacity:.4; animation:aria-blink 1.2s infinite both; }
+.aria-chat-dots span:nth-child(2){ animation-delay:.2s; } .aria-chat-dots span:nth-child(3){ animation-delay:.4s; }
+@keyframes aria-blink { 0%,80%,100%{ opacity:.25; } 40%{ opacity:1; } }
+.aria-chat-article { margin-top:9px; border:1px solid rgba(197,160,89,.32); border-radius:12px; padding:11px 13px; background:linear-gradient(180deg, rgba(197,160,89,.06), transparent); }
+.aria-chat-article .ac-top { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.aria-chat-article .ac-title { font-size:12.5px; font-weight:600; color:#f1dca7; }
+.aria-chat-article .ac-tier { font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; padding:2px 7px; border-radius:999px; border:1px solid rgba(197,160,89,.32); color:#c5a059; }
+.aria-chat-article a { font-size:11.5px; color:#c5a059; text-decoration:none; } .aria-chat-article a:hover { text-decoration:underline; }
+.aria-chat-src { font-size:10px; color:var(--muted,#8b8b93); margin-top:5px; }
+.aria-chat-src.anthropic { color:#8aa6c8; }
+.aria-chat-composer { display:flex; gap:8px; align-items:flex-end; padding-top:10px; border-top:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+.aria-chat-composer textarea { flex:1; resize:none; background:#0d0d12; border:1px solid rgba(255,255,255,.08); color:#ececec; border-radius:12px; padding:11px 13px; font:inherit; font-size:13.5px; line-height:1.45; outline:none; max-height:140px; min-height:44px; }
+.aria-chat-composer textarea:focus { border-color:#c5a059; }
+.aria-chat-send { background:linear-gradient(135deg,#c5a059,#f1dca7); color:#1a1410; border:0; border-radius:12px; padding:0 18px; height:44px; font-weight:700; font-size:12.5px; cursor:pointer; }
+.aria-chat-send:disabled { opacity:.5; cursor:default; }
+.aria-chat-statusline { text-align:center; font-size:10.5px; color:var(--muted,#8b8b93); margin-top:8px; flex-shrink:0; }
+.aria-chat-statusline b { color:#c5a059; }
+
+/* Health — the LOCKED Anthropic-preserved banner (must never be hidden) + status + fall-through chain */
+.anthropic-banner { border:1px solid rgba(197,160,89,.4); background:linear-gradient(180deg, rgba(197,160,89,.08), transparent); border-radius:10px; padding:11px 14px; font-size:12.5px; line-height:1.5; color:#f1dca7; margin-bottom:14px; }
+.health-status { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.health-dot { width:14px; height:14px; border-radius:50%; background:#666; }
+.health-dot[data-status="green"]{ background:#4ade80; box-shadow:0 0 10px rgba(74,222,128,.6); }
+.health-dot[data-status="yellow"]{ background:#fbbf24; box-shadow:0 0 10px rgba(251,191,36,.55); }
+.health-dot[data-status="red"]{ background:#fb7185; box-shadow:0 0 10px rgba(251,113,133,.6); }
+.fallthrough .ft-tier { display:flex; justify-content:space-between; gap:10px; padding:9px 12px; border:1px solid rgba(255,255,255,.08); border-radius:9px; margin-bottom:7px; font-size:12.5px; }
+.fallthrough .ft-tier .ft-name { color:#ececec; } .fallthrough .ft-tier .ft-meta { color:var(--muted,#8b8b93); }
+
+/* Learning / Memory / Agents */
+.learning-bars .lb-row { display:flex; align-items:center; gap:10px; margin:5px 0; font-size:12px; }
+.learning-bars .lb-label { width:130px; color:var(--muted,#8b8b93); } .learning-bars .lb-track { flex:1; height:8px; background:rgba(255,255,255,.06); border-radius:5px; overflow:hidden; }
+.learning-bars .lb-fill { height:100%; background:linear-gradient(90deg,#c5a059,#f1dca7); } .learning-bars .lb-n { width:42px; text-align:right; color:#ececec; }
+.learning-recent .lr-item { padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:12.5px; }
+.learning-recent .lr-tier { font-size:9.5px; text-transform:uppercase; padding:1px 6px; border-radius:999px; border:1px solid rgba(197,160,89,.3); color:#c5a059; margin-left:6px; }
+.memory-actions { margin-top:12px; display:flex; gap:8px; } .memory-actions .danger { color:#fb7185; border-color:rgba(251,113,133,.4); }
+.agent-fleet .af-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:12.5px; }
+.agent-fleet .af-dot { width:10px; height:10px; border-radius:50%; }
+.agent-fleet .af-dot.running{ background:#4ade80; } .agent-fleet .af-dot.idle{ background:#fbbf24; } .agent-fleet .af-dot.stalled{ background:#fb7185; }
+
+/* RUN 33-E — Setup wizard inputs (reuses .onboarding card chrome) */
+.setup-body { text-align:left; margin:6px 0 4px; }
+.setup-lead { color:var(--muted,#8b8b93); font-size:13px; line-height:1.6; margin:0 0 10px; }
+.setup-body input[type="text"], .setup-body input:not([type]), #setupLicense { width:100%; background:#0d0d12; border:1px solid rgba(255,255,255,.1); color:#ececec; border-radius:9px; padding:9px 11px; font:inherit; font-size:13px; outline:none; }
+.setup-radio, .setup-check { display:flex; align-items:center; gap:9px; padding:8px 0; font-size:13px; color:#ececec; cursor:pointer; }
+.setup-radio b, .setup-check b { color:#f1dca7; }
+
+/* RUN 34-1 — markdown rendering inside ARIA Chat bubbles (readable answers) */
+.aria-chat-md { font-size:13.5px; line-height:1.6; }
+.aria-chat-md .md-h { color:#f1dca7; margin:12px 0 6px; font-size:13.5px; font-weight:700; letter-spacing:.01em; }
+.aria-chat-md .md-h:first-child { margin-top:2px; }
+.aria-chat-md h4.md-h { color:#ececec; font-size:13px; }
+.aria-chat-md p { margin:7px 0; }
+.aria-chat-md ol.md-ol, .aria-chat-md ul.md-ul { margin:7px 0 7px 4px; padding-left:20px; }
+.aria-chat-md ol.md-ol li, .aria-chat-md ul.md-ul li { margin:4px 0; padding-left:3px; }
+.aria-chat-md code { background:rgba(197,160,89,.12); border:1px solid rgba(197,160,89,.22); border-radius:5px; padding:1px 5px; font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace; font-size:12px; color:#f1dca7; }
+.aria-chat-md pre.md-pre { background:#0a0a0f; border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:10px 12px; overflow-x:auto; margin:8px 0; }
+.aria-chat-md pre.md-pre code { background:none; border:0; padding:0; color:#d6d6d6; font-size:12px; line-height:1.5; }
+.aria-chat-md blockquote.md-quote { border-left:2px solid rgba(197,160,89,.5); margin:8px 0; padding:4px 0 4px 12px; color:var(--muted,#8b8b93); }
+.aria-chat-md hr.md-hr { border:0; border-top:1px solid rgba(255,255,255,.08); margin:10px 0; }
+.aria-chat-md a { color:#c5a059; text-decoration:none; } .aria-chat-md a:hover { text-decoration:underline; }
+
+  body{padding:0} .frame{max-width:1040px;margin:0;padding:26px 30px;background:var(--aria-bg)}
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+  h1{font-family:var(--aria-font-display);margin:2px 0 0;font-size:26px}</style></head><body><div class="frame">
+  <header class="topbar"><div><p class="eyebrow">ARIA Sentinel - Settings</p><h1>Integrations</h1></div>
+    <div class="status-stack"><span class="chip mode-pill">Manual mode - watching</span><span class="chip cyan">Bridge listening</span></div></header>
+  <section class="panel"><p class="eyebrow">Connections</p><h2>Integrations</h2>
+    <p class="note">Read-only connection tests wired (Slice 2). Live writes to any directory, RSA, or ServiceNow stay gated behind per-customer approval. <b>Edition: integrated</b></p></section>
+  <div class="integrations-groups" style="margin-top:16px"><section class="integration-group"><header class="integration-group-head"><h3>Identity &amp; Service</h3><span class="integration-count">4</span></header><div class="integrations-grid">
+    <article class="integration-card" data-integration="servicenow">
+      <div class="integration-top"><span class="integration-icon" aria-hidden="true">🛎️</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">ServiceNow</h4>
+      <p class="integration-desc">ITSM tickets, incidents, change requests.</p>
+      <p class="integration-detail">ServiceNow credentials not set</p>
+      <div class="integration-actions"><button class="ghost" title="Read-only connection test">Test connection</button><button class="ghost int-link" data-goto="servicenow">Manage incidents →</button></div>
+      <p class="integration-result fail">✕ Not configured</p>
+    </article>
+    <article class="integration-card" data-integration="crm">
+      <div class="integration-top"><span class="integration-icon" aria-hidden="true">📇</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">CRM</h4>
+      <p class="integration-desc">Customer records &amp; deal context (Dynamics / HubSpot).</p>
+      <p class="integration-detail">No CRM connected</p>
+      <div class="integration-actions"><button class="ghost" title="Read-only connection test">Test connection</button></div>
+      <p class="integration-result fail">✕ Not configured</p>
+    </article>
+    <article class="integration-card" data-integration="entra">
+      <div class="integration-top"><span class="integration-icon" aria-hidden="true">🪪</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">Azure AD / Microsoft Entra ID</h4>
+      <p class="integration-desc">Directory: users, groups, lockouts, devices (read-only first).</p>
+      <p class="integration-detail">Tenant / client credentials not set</p>
+      <div class="integration-actions"><button class="ghost" title="Read-only connection test">Test connection</button></div>
+      <p class="integration-result fail">✕ Not configured</p>
+    </article>
+    <article class="integration-card" data-integration="rsa">
+      <div class="integration-top"><span class="integration-icon" aria-hidden="true">🔐</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">RSA admin</h4>
+      <p class="integration-desc">ID verification &amp; token admin — middleman only, never biometrics.</p>
+      <p class="integration-detail">RSA admin not connected</p>
+      <div class="integration-actions"><button class="ghost" title="Read-only connection test">Test connection</button></div>
+      <p class="integration-result fail">✕ Not configured</p>
+    </article></div></section><section class="integration-group"><header class="integration-group-head"><h3>Microsoft 365 Documents</h3><span class="integration-count">4</span></header><div class="integrations-grid">
+    <article class="integration-card" data-integration="word">
+      <div class="integration-top"><span class="integration-icon" aria-hidden="true">📄</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">MS Word</h4>
+      <p class="integration-desc">Read/generate .docx (reports, guides).</p>
+      <p class="integration-detail">Microsoft 365 not connected</p>
+      <div class="integration-actions"><button class="ghost" title="Read-only connection test">Test connection</button></div>
+      <p class="integration-result fail">✕ Not configured</p>
+    </article>
+    <article class="integration-card" data-integration="excel">
+      <div class="integration-top"><span class="integration-icon" aria-hidden="true">📊</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">Excel</h4>
+      <p class="integration-desc">Read/generate .xlsx (inventories, exports).</p>
+      <p class="integration-detail">Microsoft 365 not connected</p>
+      <div class="integration-actions"><button class="ghost" title="Read-only connection test">Test connection</button></div>
+      <p class="integration-result fail">✕ Not configured</p>
+    </article>
+    <article class="integration-card" data-integration="powerpoint">
+      <div class="integration-top"><span class="integration-icon" aria-hidden="true">📑</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">PowerPoint</h4>
+      <p class="integration-desc">Generate .pptx (client decks).</p>
+      <p class="integration-detail">Microsoft 365 not connected</p>
+      <div class="integration-actions"><button class="ghost" title="Read-only connection test">Test connection</button></div>
+      <p class="integration-result fail">✕ Not configured</p>
+    </article>
+    <article class="integration-card" data-integration="onenote">
+      <div class="integration-top"><span class="integration-icon" aria-hidden="true">🗒️</span><span class="int-badge not_configured">Not configured</span></div>
+      <h4 class="integration-name">OneNote</h4>
+      <p class="integration-desc">Read/append notes.</p>
+      <p class="integration-detail">Microsoft 365 not connected</p>
+      <div class="integration-actions"><button class="ghost" title="Read-only connection test">Test connection</button></div>
+      <p class="integration-result fail">✕ Not configured</p>
+    </article></div></section></div></div></body></html>

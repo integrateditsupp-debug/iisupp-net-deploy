@@ -63,7 +63,7 @@
       seo: ['level 1 IT support guide', 'help desk troubleshooting guide', 'desktop support troubleshooting'],
       free: false, password: true, featured: true, trendScore: 90,
       preview: '/downloads/library/l1-it-support-bible-preview.html', file: null,
-      related: ['gl-win11-kb', 'gl-outlook-fix', 'gl-m365-kb'], bundle: 'bundle-it-mastery', upsell: 'service'
+      related: ['gl-service-desk-sop-pack', 'gl-win11-kb', 'gl-outlook-fix', 'gl-m365-kb'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
     {
       id: 'gl-m365-kb',
@@ -76,7 +76,7 @@
       tags: ['microsoft 365', 'm365 support', 'help desk knowledge base', 'sop'],
       seo: ['microsoft 365 support guide', 'help desk knowledge base', 'm365 troubleshooting kb'],
       free: false, password: true, featured: true, trendScore: 88,
-      preview: '/downloads/library/m365-security-productivity-tune-up-preview.html', file: null,
+      preview: '/downloads/library/m365-help-desk-kb-preview.html', file: null,
       related: ['gl-outlook-fix', 'gl-l1-it-bible', 'gl-helpdesk-blueprint'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
     {
@@ -118,7 +118,7 @@
       tags: ['windows troubleshooting checklist', 'windows 11 support', 'desktop support'],
       seo: ['Windows troubleshooting checklist', 'Windows 11 support guide', 'desktop support troubleshooting'],
       free: false, password: true, featured: false, trendScore: 78,
-      preview: '/downloads/library/cybersecurity-basics-preview.html', file: null,
+      preview: '/downloads/library/windows-11-troubleshooting-kb-preview.html', file: null,
       related: ['gl-l1-it-bible', 'gl-outlook-fix'], bundle: 'bundle-it-mastery', upsell: 'service'
     },
     {
@@ -160,7 +160,7 @@
       tags: ['cybersecurity awareness training', 'security awareness', 'employee security training'],
       seo: ['cybersecurity awareness training', 'employee security awareness training'],
       free: false, password: true, featured: false, trendScore: 62,
-      preview: null, file: null,
+      preview: '/downloads/library/cybersecurity-basics-preview.html', file: null,
       related: ['gl-l1-it-bible', 'gl-m365-kb'], bundle: 'bundle-ai-automation', upsell: 'service'
     },
     {
@@ -176,6 +176,20 @@
       free: false, password: true, featured: false, trendScore: 83,
       preview: '/downloads/library/no-code-automation-kit-preview.html', file: null,
       related: ['gl-prompt-workflows', 'gl-ai-agent-starter'], bundle: 'bundle-ai-automation', upsell: 'aria'
+    },
+    {
+      id: 'gl-service-desk-sop-pack',
+      title: 'Service Desk SOP Pack',
+      blurb: 'Support quality improves when intake, ownership, and escalation stop depending on memory.',
+      long: 'A practical operating pack for MSPs and internal IT teams that need cleaner intake, more consistent triage, better escalation notes, and stronger closure discipline. It turns recurring support quality issues into reusable SOP structure that helps human agents now and prepares the desk for cleaner AI-assisted support later.',
+      inside: ['Ticket intake and note-taking SOPs', 'Ownership, triage, and escalation checkpoints', 'Customer-safe and internal handoff templates', 'Closure and reopened-issue prevention patterns', 'Human-first operating layer for later AI support', 'Service-desk cleanup sprint pathway'],
+      priceCents: 29700, category: 'Knowledge Base Packs', section: 'guides',
+      audience: ['business', 'it', 'ai'], format: 'PDF + SOP templates + AI-readable schema',
+      tags: ['service desk sop', 'help desk sop', 'ticket handling process', 'support escalation'],
+      seo: ['service desk SOP pack', 'help desk SOP templates', 'support escalation process'],
+      free: false, password: true, featured: true, trendScore: 85,
+      preview: '/downloads/library/service-desk-sop-pack-preview.html', file: null,
+      related: ['gl-helpdesk-blueprint', 'gl-m365-kb', 'gl-l1-it-bible'], bundle: null, upsell: 'service'
     },
     {
       id: 'gl-meeting-sop-pack',

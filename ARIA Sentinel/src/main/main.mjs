@@ -118,6 +118,12 @@ import {
   queueDepth as snQueueDepth,
   hashIdentifier as snHashIdentifier
 } from "../shared/servicenow.mjs";
+import { resolveIntegrations, testIntegration } from "../shared/integrations.mjs"; // W5 — Integrations tab (read-only)
+import { getEdition } from "../shared/edition.mjs";
+// G-METRICS — record REAL measured outcomes (content-blind) + surface the proof aggregate / metrics.json.
+import { recordEvent as recordProof, aggregate as aggregateProof, loadStore as loadProofStore, emitPublicJson as emitProofJson } from "../shared/proof-metrics.mjs";
+// G-OMNI — Slack/Teams front-end (read-only answers + human escalation; honest "not_configured" w/o token).
+import { getOmniStatus, handleMessage as handleOmniMessage } from "../shared/omni-channel.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(__dirname, "../..");
@@ -1791,9 +1797,7 @@ function runSupervisedFix(payload = {}) {
   const history = readRecipeHistory();
   const runs = (((history.recipes || {})[recipeId] || {}).runs || []).map((r) => ({ recipeId, ts: r.ts, ok: r.outcome === "success" }));
   const proposal = { recipeId, args: { pid: payload.pid }, riskTier: payload.risk || "medium", expectedImpact: recipeSideEffects(recipeId), rollbackPlan: "restore-point" };
-  // "Resolve it for me" (TASK 3) may request CONFIRMED-grade gating for this one action — explicit user
-  // approval + a visible 10s countdown. SAFETY: a resolve action may only request "manual" or "confirmed";
-  // it can NEVER escalate to Autonomous (silent auto-fix). Anything else falls back to the stored mode.
+  // Resolve-it-for-me passes an explicit grade; clamp to manual|confirmed so a resolve action can NEVER escalate to autonomous.
   const requested = String(payload.mode || "");
   const mode = (requested === "manual" || requested === "confirmed") ? requested : (store.get("mode") || "manual");
   const verdict = superviseProposal(proposal, { mode, history: runs, now: Date.now(), vettedCatalog: supervisedVettedCatalog() });
@@ -2585,7 +2589,16 @@ function kbIndex() {
   return _kbIndex;
 }
 
+// G-METRICS — write ONE content-blind proof record per handled chat query. Never throws; a measurement
+// failure must never break a chat answer. Only booleans + a measured latency leave this function.
+function recordChatProof({ source, matchedKb, resolved, escalated, startedAt }) {
+  try {
+    recordProof({ source, matchedKb, resolved, escalated, resolveMs: Date.now() - startedAt });
+  } catch { /* metrics are best-effort; chat answers are never blocked by instrumentation */ }
+}
+
 async function chat(message, context = {}) {
+  const _proofStart = Date.now();
   // Local KB match (always computed; used as the offline fallback + as a fix hint).
   const signature = sanitizeToSignature({ issue: message, ...context });
   const query = queryForSignature(signature);
@@ -2602,6 +2615,8 @@ async function chat(message, context = {}) {
   if (brain && !brain.offline && brain.reply) {
     if (brain.session_id) store.set("chatSessionId", brain.session_id);
     if (brain.kb_meta) { store.set("kbMeta", brain.kb_meta); broadcastState(); } // RUN 33-A — surface KB freshness to the top bar
+    // Measured: the live brain answered → query handled & resolved; KB-hit when a KB article backed it.
+    recordChatProof({ source: "chat", matchedKb: Boolean(brain.kb_match), resolved: true, escalated: false, startedAt: _proofStart });
     return { ok: true, provider: "aria-brain", text: brain.reply, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
   }
   // Offline / unreachable → answer from the bundled cross-platform KB (RUN 30-B). ARIA is full cross-platform
@@ -2611,6 +2626,8 @@ async function chat(message, context = {}) {
   const text = localMatches.length
     ? `${kb.text}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
     : kb.text;
+  // Measured: offline answer. A KB hit auto-resolves ($0, no human); a miss would escalate (online/human).
+  recordChatProof({ source: "local-kb", matchedKb: kb.matched, resolved: kb.matched, escalated: !kb.matched, startedAt: _proofStart });
   return { ok: true, provider: "local-kb", text, signature, matched: kb.matched, matches: localMatches, offline: true, cost: "none" };
 }
 
@@ -3025,6 +3042,36 @@ ipcMain.handle("sentinel:report-error", (_event, payload = {}) => {
 ipcMain.handle("sentinel:sn-test", () => serviceNowTestConnection());
 ipcMain.handle("sentinel:sn-raise", (_event, recipeId, context) => serviceNowRaiseIncident(recipeId, context || {}));
 ipcMain.handle("sentinel:sn-list", () => serviceNowListIncidents());
+ipcMain.handle("sentinel:get-integrations", () => {
+  // W5 — read-only Integrations status. Resolves the edition-visible cards from the existing provider
+  // health checks (no network here); "Test connection" stays disabled until a later slice.
+  const edition = getEdition(process.env);
+  return { ok: true, edition, items: resolveIntegrations(process.env, edition) };
+});
+ipcMain.handle("sentinel:integration-test", (_event, id) => {
+  // W5 Slice 2 — read-only connection test. Each provider issues GET-only health checks and never
+  // throws; testIntegration normalizes to { ok, message }. No writes to any directory/RSA/ServiceNow.
+  return testIntegration(String(id || ""), process.env);
+});
+ipcMain.handle("sentinel:omni-status", () => {
+  // G-OMNI — honest config-presence per provider (never a fake "connected"). Read-only.
+  return { ok: true, providers: getOmniStatus(process.env) };
+});
+// G-OMNI — the desktop-hosted entry a Slack/Teams connector calls for each inbound message. Answers from
+// the bundled local KB, escalates to a human on a miss, and records the SAME content-blind proof event as
+// desktop chat (so omni usage counts toward the real deflection number). READ-ONLY: never executes a fix.
+async function handleHostedOmniMessage(message = {}) {
+  return handleOmniMessage(message, { kbIndex: kbIndex(), record: recordProof });
+}
+ipcMain.handle("sentinel:omni-message", (_event, message) => handleHostedOmniMessage(message || {}));
+ipcMain.handle("sentinel:get-proof-metrics", () => {
+  // G-METRICS — read the local measured store, aggregate the proof numbers, and refresh metrics.json.
+  // Read-only over REAL recorded data; never fabricates (zero stays zero).
+  const store = loadProofStore();
+  const metrics = aggregateProof(store);
+  try { emitProofJson(); } catch { /* emission is best-effort */ }
+  return { ok: true, metrics, updatedAt: store.updatedAt || null, sampleSize: metrics.sampleSize };
+});
 ipcMain.handle("sentinel:sn-comment", (_event, incidentSysId, comment) => serviceNowComment(incidentSysId, comment));
 ipcMain.handle("sentinel:rollback", (_event, snapshotId) => rollbackRestorePoint(snapshotId));
 ipcMain.handle("sentinel:run-diagnostic", () => runDiagnostic());

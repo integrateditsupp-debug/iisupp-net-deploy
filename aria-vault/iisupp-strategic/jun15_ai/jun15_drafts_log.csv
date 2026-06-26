@@ -1,0 +1,101 @@
+idx,email,company,industry,city,subject,draft_id,status
+0,dawson@mississaugalawyer.com,"Hancock Douglas H",Law,Mississauga,"Hancock Douglas H — quick thought on contract & intake review",r-6469963663693928578,created
+1,info@gvelaw.ca,"Grandmaitre Virgo Evans",Law,Ottawa,"Grandmaitre Virgo Evans — quick thought on contract & intake review",r-7011104287155153197,created
+2,emark@keohanelaw.ca,"Keohane E Mark",Law,Edmonton,"Keohane E Mark — quick thought on contract & intake review",r-8073099369256601370,created
+3,fisch@jfischlaw.ca,"Fisch & Antonette",Law,Toronto,"Fisch & Antonette — quick thought on contract & intake review",r-4570585587618442704,created
+4,office@thatcherandwands.com,"William L Thatcher B A LL.B",Law,Hamilton,"William L Thatcher B A LL.B — quick thought on contract & intake review",r-1159049759630719064,created
+5,main@mcallisterllp.com,"McAllister LLP",Law,Edmonton,"McAllister LLP — quick thought on contract & intake review",r482627175674168246,created
+6,reception@wrightlaw.ca,"Wright Law Office",Law,Calgary,"Wright Law Office — quick thought on contract & intake review",r8089925199448131808,created
+7,contactus@tlclaw.ca,"Clark Tyrrell A Barr&Solctr",Law,Mississauga,"Clark Tyrrell A Barr&Solctr — quick thought on contract & intake review",r-7954439792549765143,created
+8,recep@gibsonslaw.com,"Gibsons LLP",Law,Ottawa,"Gibsons LLP — quick thought on contract & intake review",r-7683496122933255102,created
+9,info@bhmlaw.ca,"Bradley Hiscock McCracken",Law,Ottawa,"Bradley Hiscock McCracken — quick thought on contract & intake review",r6299975040425213363,created
+10,lassist@divorcebc.net,"Dubas & Co",Law,Vancouver,"Dubas & Co — quick thought on contract & intake review",r8716064290760036865,created
+11,info@leonardlaw.ca,"Leonard Law",Law,Vancouver,"Leonard Law — quick thought on contract & intake review",r-7038789446769120518,created
+12,info@munrocrawford.ca,"Munro & Crawford Barristers & Solicitors",Law,Vancouver,"Munro & Crawford Barristers & Solicitors — quick thought on contract & intake review",r-6674409236089247797,created
+13,info@westcoastwills.com,"Westcoast Wills & Estates",Law,Vancouver,"Westcoast Wills & Estates — quick thought on contract & intake review",r-4784200955314031816,created
+14,info@frl-law.com,"Farber Robillard Leith, LLP",Law,Ottawa,"Farber Robillard Leith, LLP — quick thought on contract & intake review",r1495952070570360107,created
+15,info@litigationchambers.com,"Hunter Litigation Chambers Law Corp",Law,Vancouver,"Hunter Litigation Chambers Law Corp — quick thought on contract & intake review",r8792061658955048551,created
+16,info@rhncpa.com,"RHN CPA",Accounting,Vancouver,"RHN CPA — quick thought on client document workflows",r-2256094386004256054,created
+17,rwelm@shaw.ca,"Robert W Elm Inc",Accounting,Vancouver,"Robert W Elm Inc — quick thought on client document workflows",r8147539510680828650,created
+18,rita@ritazelikman.com,"Rita Zelikman",Accounting,Toronto,"Rita Zelikman — quick thought on client document workflows",r-5130584824630520209,created
+19,info@perfectfinancialsolutions.ca,"Profit Financial Solutions Ltd",Accounting,Toronto,"Profit Financial Solutions Ltd — quick thought on client document workflows",r-3404718333034078447,created
+20,info@lohncaulder.com,"Lohn Caulder LLP Chartered Professional Accountants",Accounting,Vancouver,"Lohn Caulder LLP Chartered Professional Accountants — quick thought on client document workflows",r7577283005612271087,created
+21,info@bomcas.ca,"Baker Ronald Chartered Accountant",Accounting,Toronto,"Baker Ronald Chartered Accountant — quick thought on client document workflows",r-6259151070350863611,created
+22,info@accountants-bc.ca,"Accountants-BC Ltd.",Accounting,Vancouver,"Accountants-BC Ltd. — quick thought on client document workflows",r9108255330114992675,created
+23,info@fastaccountingservice.net,"F-A-S-T Accounting Services",Accounting,Vancouver,"F-A-S-T Accounting Services — quick thought on client document workflows",r7827909154969344984,created
+24,rogermillette@bellnet.ca,"Roger Millette, Professional Corporation",Accounting,Ottawa,"Roger Millette, Professional Corporation — quick thought on client document workflows",r-7166462342965953765,created
+25,info@tscpa.ca,"Trépanier Sarrazin CGA",Accounting,Ottawa,"Trépanier Sarrazin CGA — quick thought on client document workflows",r843198353869075893,created
+26,stricklandandco@telus.net,"Don G Strickland Chartered Professional Accountant",Accounting,Vancouver,"Don G Strickland Chartered Professional Accountant — quick thought on client document workflows",r-1896789980497309889,created
+27,contact@ksk.ca,"Koster Spinks & Koster",Accounting,Toronto,"Koster Spinks & Koster — quick thought on client document workflows",r4985648860381142032,created
+28,info@kuzniakcpa.ca,"Kuzniak CPA Professional Corporation",Accounting,Toronto,"Kuzniak CPA Professional Corporation — quick thought on client document workflows",r-1642825136904398748,created
+29,info@capitalcpa.ca,"CCC Capital CPA",Accounting,Vancouver,"CCC Capital CPA — quick thought on client document workflows",r598944442901600071,created
+30,info@raviaccuratetax.ca,"Accurate Tax Services - Ravi Cheema",Accounting,Toronto,"Accurate Tax Services - Ravi Cheema — quick thought on client document workflows",r-311158621036789063,created
+31,info@bhicksortho.com,"Dr Bryan R Hicks",Dental,Vancouver,"Dr Bryan R Hicks — quick thought on booking & no-shows",r-2125437723464752072,created
+32,dr.mlbygrave@gmail.com,"Dr. M. L. Bygrave",Dental,Toronto,"Dr. M. L. Bygrave — quick thought on booking & no-shows",r-1603865479120412887,created
+33,reception@missionoralsurgery.com,"Mission Oral Surgery",Dental,Calgary,"Mission Oral Surgery — quick thought on booking & no-shows",r-5525718515150300463,created
+34,info@drstern.ca,"Dr Steven & Dr Jonathan Stern Dentistry",Dental,Toronto,"Dr Steven & Dr Jonathan Stern Dentistry — quick thought on booking & no-shows",r4467180758710789839,created
+35,office@ewdental.ca,"Eglinton West Dental",Dental,Toronto,"Eglinton West Dental — quick thought on booking & no-shows",r965336756613478190,created
+36,admin@yorkvillesmiles.com,"Sturm Judy Dr",Dental,Toronto,"Sturm Judy Dr — quick thought on booking & no-shows",r8056373473745005739,created
+37,info@scarlettroaddentistry.com,"Scarlett Road Dentistry",Dental,Toronto,"Scarlett Road Dentistry — quick thought on booking & no-shows",r7905226261242892045,created
+38,info@yongeperio.com,"Yonge Eglinton Periodontics - Dr. Andrew Kay",Dental,Toronto,"Yonge Eglinton Periodontics - Dr. Andrew Kay — quick thought on booking & no-shows",r185614164919726811,created
+39,info@lisabentleydentist.com,"Dr Bentley Lisa",Dental,Mississauga,"Dr Bentley Lisa — quick thought on booking & no-shows",r3716763901492710041,created
+40,hi@smileonthedrive.com,"Mercato Dental Centre",Dental,Vancouver,"Mercato Dental Centre — quick thought on booking & no-shows",r1581098565686640433,created
+41,mail@paperio.ca,"Litchen Michael Dr",Dental,Mississauga,"Litchen Michael Dr — quick thought on booking & no-shows",r1123902716041212699,created
+42,demarchidental@bellnet.ca,"DeMarchi Ban Dr",Dental,Mississauga,"DeMarchi Ban Dr — quick thought on booking & no-shows",r3378417232474849538,created
+43,reception@falsecreekpuredental.com,"False Creek Pure Dental",Dental,Vancouver,"False Creek Pure Dental — quick thought on booking & no-shows",r-6987166704325900335,created
+44,info@galleriadental.ca,"Galleria Dental | Dr. I. Costache & Associates",Dental,Toronto,"Galleria Dental | Dr. I. Costache & Associates — quick thought on booking & no-shows",r-562020770118146637,created
+45,reception@royaldentalcentre.com,"Royal Bank Plaza Dental Centre",Dental,Toronto,"Royal Bank Plaza Dental Centre — quick thought on booking & no-shows",r3760566374265841234,created
+46,admin@leonismgmt.com,"Leonis Management & Consultants Ltd",PropertyMgmt,Vancouver,"Leonis Management & Consultants Ltd — quick thought on work-orders & tenant comms",r2192751741321848757,created
+47,e-revenue@metcap.com,"Metcap Living Management",PropertyMgmt,Toronto,"Metcap Living Management — quick thought on work-orders & tenant comms",r-5286472947449472354,created
+48,info@abionacentre.ca,"Park Property Management Inc",PropertyMgmt,Toronto,"Park Property Management Inc — quick thought on work-orders & tenant comms",r-4931346700120695104,created
+49,reception@maudemackay.com,"Maude MacKay & Co Ltd",PropertyMgmt,Vancouver,"Maude MacKay & Co Ltd — quick thought on work-orders & tenant comms",r2123924964479147280,created
+50,mail@westcorp.net,"Westcorp",PropertyMgmt,Calgary,"Westcorp — quick thought on work-orders & tenant comms",r6115489542480439877,created
+51,info@birdsnestproperties.ca,"Birds Nest Properties",PropertyMgmt,Vancouver,"Birds Nest Properties — quick thought on work-orders & tenant comms",r-5308771675283381580,created
+52,info@morguard.com,"Morguard",PropertyMgmt,Vancouver,"Morguard — quick thought on work-orders & tenant comms",r5190911855823322764,created
+53,media@hopewell.com,"Hopewell Development Corporation",PropertyMgmt,Calgary,"Hopewell Development Corporation — quick thought on work-orders & tenant comms",r6645176464029558971,created
+54,responsive-communitycare@vha.ca,"VHA Home HealthCare",PropertyMgmt,Toronto,"VHA Home HealthCare — quick thought on work-orders & tenant comms",r-4378453422673721305,created
+55,info@cmsrealestateltd.com,"CMS Real Estate Ltd",PropertyMgmt,Calgary,"CMS Real Estate Ltd — quick thought on work-orders & tenant comms",r-4797254451408554671,created
+56,jesse@jessedavies.ca,"FirstService",PropertyMgmt,Calgary,"FirstService — quick thought on work-orders & tenant comms",r-535669771537625594,created
+57,media@oxfordproperties.com,"Oxford Properties Group",PropertyMgmt,Toronto,"Oxford Properties Group — quick thought on work-orders & tenant comms",r-3077306792836414754,created
+58,info@insurancetiger.ca,"InsuranceTiger.ca",Insurance,Toronto,"InsuranceTiger.ca — quick thought on quote & claims intake",r2986790818651775578,created
+59,client_service_support@cooperators.ca,"Co-operators",Insurance,Toronto,"Co-operators — quick thought on quote & claims intake",r8905328985339382451,created
+60,steve.marchese@desjardins.com,"Desjardins Insurance Steve Marchese - Agent",Insurance,Ottawa,"Desjardins Insurance Steve Marchese - Agent — quick thought on quote & claims intake",r3589291125594860326,created
+61,info@bairdmacgregor.com,"Baird MacGregor Insurance Brokers LP",Insurance,Toronto,"Baird MacGregor Insurance Brokers LP — quick thought on quote & claims intake",r-3575548779137408011,created
+62,info@benefitsmatter.ca,"Benefits Matter - Warren Handsor Broker",Insurance,Toronto,"Benefits Matter - Warren Handsor Broker — quick thought on quote & claims intake",r7629887130221717328,created
+63,info@jhallinsurance.ca,"J Hall Insurance",Insurance,Toronto,"J Hall Insurance — quick thought on quote & claims intake",r3051672862551432329,created
+64,info@cmrinsurance.com,"CMR Insurance Brokers Ltd.",Insurance,Toronto,"CMR Insurance Brokers Ltd. — quick thought on quote & claims intake",r7582928274346825107,created
+65,viresh@blueumbrellafinancial.ca,"Blue Umbrella Financial Services",Insurance,Toronto,"Blue Umbrella Financial Services — quick thought on quote & claims intake",r-1718000555252168390,created
+66,customer.service@thinkinsure.ca,"Thinkinsure",Insurance,Toronto,"Thinkinsure — quick thought on quote & claims intake",r1602601537524446442,created
+67,insurewithpreeti@gmail.com,"Preeti Sidhu-Diamond Insurance)",Insurance,Toronto,"Preeti Sidhu-Diamond Insurance) — quick thought on quote & claims intake",r4245317450243818266,created
+68,hello@spearrealty.ca,"Spear Realty Inc.",RealEstate,Toronto,"Spear Realty Inc. — quick thought on lead routing",r8924252873195101885,created
+69,ahmed@ahmedamin.ca,"Ahmed Amin Hamed Aly",RealEstate,Toronto,"Ahmed Amin Hamed Aly — quick thought on lead routing",r-5144140394683087480,created
+70,rotimi.fadipe@royallepage.ca,"Rotimi Fadipe Royal LePage Prime Real Estate",RealEstate,Toronto,"Rotimi Fadipe Royal LePage Prime Real Estate — quick thought on lead routing",r-4432693316694521972,created
+71,melissa@moagrealty.com,"Melissa Oag Realty",RealEstate,Toronto,"Melissa Oag Realty — quick thought on lead routing",r6539980787407390639,created
+72,info@realtylife.com,"Realty Life Ltd Brokerage",RealEstate,Toronto,"Realty Life Ltd Brokerage — quick thought on lead routing",r4741457583823578991,created
+73,tina@larsenrealtyteam.com,"Larsen Realty Team Inc - ReMax Realty Specialists",RealEstate,Toronto,"Larsen Realty Team Inc - ReMax Realty Specialists — quick thought on lead routing",r2191530446867526393,created
+74,info@gtahousebuyers.ca,"GTA House Buyers",RealEstate,Toronto,"GTA House Buyers — quick thought on lead routing",r2718011433058682554,created
+75,info@smartchoiceteam.com,"Smart Choice Team",RealEstate,Toronto,"Smart Choice Team — quick thought on lead routing",r-727370228344067012,created
+76,info@jzach.ca,"Team JZACH (J Zachariah)",RealEstate,Toronto,"Team JZACH (J Zachariah) — quick thought on lead routing",r-6838772122523806973,created
+77,matt@storefronttoronto.com,"Storefront Toronto",RealEstate,Toronto,"Storefront Toronto — quick thought on lead routing",r-6073492223129377024,created
+78,admin@anaxinc.com,"ANAX Roofing",Trade,Toronto,"ANAX Roofing — quick thought on call/quote intake",r-1002518759476801246,created
+79,info@griffithsplumbing.com,"Griffiths Geo & Sons Ltd",Trade,Toronto,"Griffiths Geo & Sons Ltd — quick thought on call/quote intake",r-5647782377004825618,created
+80,ewsmithroofing@rogers.com,"E W Smith Roofing",Trade,Toronto,"E W Smith Roofing — quick thought on call/quote intake",r-6220756098057001472,created
+81,info@bserraandsons.com,"B Serra & Sons Roofing Inc",Trade,Toronto,"B Serra & Sons Roofing Inc — quick thought on call/quote intake",r-7445795914764606117,created
+82,info@newcanadiandrain.com,"New Canadian Drain and Plumbing Ltd",Trade,Toronto,"New Canadian Drain and Plumbing Ltd — quick thought on call/quote intake",r-910996206414853533,created
+83,info@drainkingplumbers.ca,"Drain King Plumbers",Trade,Toronto,"Drain King Plumbers — quick thought on call/quote intake",r-8720435012868015153,created
+84,info@alderwoodplumbing.ca,"Alderwood Plumbing Services Ltd",Trade,Toronto,"Alderwood Plumbing Services Ltd — quick thought on call/quote intake",r-4725907025185395665,created
+85,avivplumbing@gmail.com,"Aviv Plumbing Inc",Trade,Toronto,"Aviv Plumbing Inc — quick thought on call/quote intake",r-1605190845610953441,created
+86,micah@micahrich.com,"X-Cel Home Comfort",Trade,Toronto,"X-Cel Home Comfort — quick thought on call/quote intake",r-9103454332340797916,created
+87,st.louisroofingconstruction@gmail.com,"St Louis Roofing",Trade,Toronto,"St Louis Roofing — quick thought on call/quote intake",r5502822416664877699,created
+88,info@coretemp.ca,"Coretemp Heating And Air Inc",Trade,Toronto,"Coretemp Heating And Air Inc — quick thought on call/quote intake",r4248575200590133529,created
+89,jobs@crawfordroofing.ca,"Crawford Roofing Corp",Trade,Toronto,"Crawford Roofing Corp — quick thought on call/quote intake",r7395261214682750310,created
+90,mail@ayplumbing.ca,"A & Y Plumbing",Trade,Toronto,"A & Y Plumbing — quick thought on call/quote intake",r3977140900283596031,created
+91,info@birnieplumbinganddrains.ca,"Birnie Thos R & Sons Ltd",Trade,Toronto,"Birnie Thos R & Sons Ltd — quick thought on call/quote intake",r2960842774886064036,created
+92,info@rdaroofvac.rocks,"RDA Roof Vacuum Expert Inc",Trade,Toronto,"RDA Roof Vacuum Expert Inc — quick thought on call/quote intake",r1931444310635089844,created
+93,info@goldmanspring.com,"Goldman Spring Kichler & Sanders LLP",Law,Toronto,"Goldman Spring Kichler & Sanders LLP — quick thought on contract & intake review",r-4676970209987325681,created
+94,mb@mblegal.ca,"Botnick Myer",Law,Toronto,"Botnick Myer — quick thought on contract & intake review",r829072775824296813,created
+95,info@lawwise.ca,"Law Wise Professional Corporation",Law,Mississauga,"Law Wise Professional Corporation — quick thought on contract & intake review",r-8770421267727022370,created
+96,info@calvinbarry.ca,"Calvin Barry",Law,Toronto,"Calvin Barry — quick thought on contract & intake review",r2140440392389176957,created
+97,info@grillo.ca,"Grillo Law Personal Injury Lawyers",Law,Toronto,"Grillo Law Personal Injury Lawyers — quick thought on contract & intake review",r7330556707314793624,created
+98,reception@filicelaw.ca,"Filice Pat Law Office",Law,Hamilton,"Filice Pat Law Office — quick thought on contract & intake review",r-4389124450639628904,created
+99,joinus@hmclawyers.com,"HMC Laywers LLP",Law,Calgary,"HMC Laywers LLP — quick thought on contract & intake review",r5450285635013300762,created

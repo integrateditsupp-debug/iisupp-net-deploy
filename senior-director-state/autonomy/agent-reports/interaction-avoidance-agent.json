@@ -1,0 +1,33 @@
+{
+  "agentId": "interaction-avoidance-agent",
+  "label": "Interaction Avoidance Agent",
+  "generatedAt": "2026-06-26T06:47:24.116Z",
+  "status": "ready",
+  "summary": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
+  "metrics": {
+    "activeItems": 86,
+    "readyItems": 0,
+    "reviewItems": 10,
+    "contractItems": 8,
+    "vendorItems": 8,
+    "careerItems": 8
+  },
+  "artifacts": [
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\interaction-avoidance-board.md",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\auto-created-agents",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\iis-aria-command-update.md"
+  ],
+  "approvals": [],
+  "readyActions": [],
+  "nextActions": [
+    "Keep tender prep moving on 8 contract/tender item(s).",
+    "Keep supplier registration prep moving on 8 portal item(s)."
+  ],
+  "focusAreas": [
+    "interaction-reduction",
+    "prep-agent-routing",
+    "ceo-final-action-compression"
+  ],
+  "assignments": [],
+  "metadata": {}
+}

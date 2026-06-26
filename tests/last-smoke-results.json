@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-06-18T17:52:35.545Z",
-  "total": 110,
-  "pass": 26,
-  "fail": 4,
-  "skip": 80,
+  "ran_at": "2026-06-26T11:58:01.783Z",
+  "total": 81,
+  "pass": 5,
+  "fail": 0,
+  "skip": 76,
   "results": [
     {
       "fn": "aperture-audit",
@@ -36,26 +36,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-      "fn": "aria-account-delete",
-      "status": "PASS",
-      "http": 400
-    },
-    {
-      "fn": "aria-analytics-dashboard",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-backup-cron",
-      "status": "SKIP",
-      "reason": "scheduled / esm — not unit-testable from this harness"
-    },
-    {
-      "fn": "aria-billing-portal",
-      "status": "PASS",
-      "http": 200
-    },
-    {
       "fn": "aria-call-summary",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -76,34 +56,9 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-      "fn": "aria-cost-attribution",
-      "status": "PASS",
-      "http": 200
-    },
-    {
       "fn": "aria-cost-tracker",
       "status": "PASS",
       "http": 200
-    },
-    {
-      "fn": "aria-coupon",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-cross-device-sync",
-      "status": "PASS",
-      "http": 401
-    },
-    {
-      "fn": "aria-data-export",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-engagement-cron",
-      "status": "SKIP",
-      "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
       "fn": "aria-escalation",
@@ -122,21 +77,6 @@
     },
     {
       "fn": "aria-evolution-report",
-      "status": "SKIP",
-      "reason": "scheduled / esm — not unit-testable from this harness"
-    },
-    {
-      "fn": "aria-feedback",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-founder-digest",
-      "status": "SKIP",
-      "reason": "scheduled / esm — not unit-testable from this harness"
-    },
-    {
-      "fn": "aria-gap-detector-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
@@ -166,24 +106,9 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-      "fn": "aria-invoice-download",
-      "status": "PASS",
-      "http": 200
-    },
-    {
       "fn": "aria-kb-export",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
-    },
-    {
-      "fn": "aria-lead-auto-triage",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-lead-capture",
-      "status": "PASS",
-      "http": 200
     },
     {
       "fn": "aria-lead-radar-cron",
@@ -194,11 +119,6 @@
       "fn": "aria-lead-radar",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
-    },
-    {
-      "fn": "aria-leads-inbox",
-      "status": "PASS",
-      "http": 401
     },
     {
       "fn": "aria-learn-admin",
@@ -251,22 +171,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-      "fn": "aria-m365-graph-write",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-m365-graph",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-magic-link",
-      "status": "FAIL",
-      "http": 503,
-      "body_sample": "{\"error\":\"APERTURE_JWT_SECRET not configured\"}"
-    },
-    {
       "fn": "aria-mesh-events",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -287,21 +191,9 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-      "fn": "aria-mrr-dashboard",
-      "status": "FAIL",
-      "http": 503,
-      "body_sample": "{\"error\":\"STRIPE_SECRET_KEY not configured\"}"
-    },
-    {
       "fn": "aria-pattern-router",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
-    },
-    {
-      "fn": "aria-plan-change",
-      "status": "FAIL",
-      "http": 503,
-      "body_sample": "{\"error\":\"STRIPE_PRICE_PRO not configured in Netlify\"}"
     },
     {
       "fn": "aria-receipt-email",
@@ -314,10 +206,9 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-      "fn": "aria-renewal-reminders",
-      "status": "FAIL",
-      "http": 503,
-      "body_sample": "{\"error\":\"STRIPE_SECRET_KEY not configured\"}"
+      "fn": "aria-recipes",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
       "fn": "aria-research",
@@ -338,11 +229,6 @@
       "fn": "aria-reverify",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
-    },
-    {
-      "fn": "aria-room-provider",
-      "status": "PASS",
-      "http": 200
     },
     {
       "fn": "aria-screenshare-request",
@@ -385,49 +271,19 @@
       "http": 200
     },
     {
-      "fn": "aria-slack-events",
-      "status": "SKIP",
-      "reason": "no safe payload defined"
-    },
-    {
-      "fn": "aria-slack-interactive",
-      "status": "SKIP",
-      "reason": "no safe payload defined"
-    },
-    {
       "fn": "aria-sms",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-      "fn": "aria-stripe-pilot-events",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-teams-bot",
+      "fn": "aria-stop-codes-data",
       "status": "SKIP",
-      "reason": "no safe payload defined"
+      "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-      "fn": "aria-teams-install",
+      "fn": "aria-stop-codes",
       "status": "SKIP",
-      "reason": "no safe payload defined"
-    },
-    {
-      "fn": "aria-teams-tab-token",
-      "status": "SKIP",
-      "reason": "no safe payload defined"
-    },
-    {
-      "fn": "aria-tenant-audit",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-tenant-kb",
-      "status": "PASS",
-      "http": 400
+      "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
       "fn": "aria-trace",
@@ -435,32 +291,7 @@
       "reason": "no safe payload defined"
     },
     {
-      "fn": "aria-translate",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-uptime-probe",
-      "status": "SKIP",
-      "reason": "scheduled / esm — not unit-testable from this harness"
-    },
-    {
       "fn": "aria-verifier",
-      "status": "SKIP",
-      "reason": "scheduled / esm — not unit-testable from this harness"
-    },
-    {
-      "fn": "aria-warm-handoff",
-      "status": "PASS",
-      "http": 200
-    },
-    {
-      "fn": "aria-white-label",
-      "status": "PASS",
-      "http": 400
-    },
-    {
-      "fn": "aria-winback-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
@@ -516,6 +347,26 @@
     },
     {
       "fn": "senior-director-telegram",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "sentinel-crash",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "sentinel-licenses",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "sentinel-resolve",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "sentinel-stripe-webhook",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },

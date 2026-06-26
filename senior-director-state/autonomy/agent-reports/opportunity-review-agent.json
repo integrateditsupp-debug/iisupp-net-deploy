@@ -1,0 +1,27 @@
+{
+  "agentId": "opportunity-review-agent",
+  "label": "Opportunity Review Agent",
+  "generatedAt": "2026-06-26T06:29:02.032Z",
+  "status": "ready",
+  "summary": "Opportunity records were enriched with summaries, drafts, reminders, and required-document scaffolding.",
+  "metrics": {
+    "reviewedItems": 642,
+    "updatedItems": 12
+  },
+  "artifacts": [
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\opportunities.json",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\opportunity-engine\\actions-log.json"
+  ],
+  "approvals": [],
+  "readyActions": [],
+  "nextActions": [
+    "Feed reviewed items into quality gate and prep packets."
+  ],
+  "focusAreas": [
+    "opportunity-enrichment",
+    "draft-preparation",
+    "reminder-scheduling"
+  ],
+  "assignments": [],
+  "metadata": {}
+}

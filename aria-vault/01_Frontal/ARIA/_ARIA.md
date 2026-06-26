@@ -30,33 +30,19 @@ See [[Stripe-Products]] for actual Stripe price IDs.
 - Front-end: aria.html + aria-core.js + aria-trial.js (DO NOT BREAK — Rule 8)
 
 ## Recipes
-- See [[Recipes]] folder — 25 active, expanding to 75
+- See [[Recipes]] folder — 25 active, expanding to 75## Web + Sentinel — one product, one brain (2026-06-24)
+
+ARIA web (`iisupp.net/aria`) and **ARIA Sentinel** (Windows desktop) are the **same product, one shared brain** — same KB (`knowledge-base/` + `aria_brain_pack/`), recipes, stop-codes, and the locked fall-through chain (KB $0 → Anthropic → offline local KB). The **same agents** (Claude-Code · KB-agent · OPS-agent) build both surfaces. Only intentional difference: the web "Resolve it for me" routes to a download/walkthrough gate (never runs local fixes), while Sentinel resolves locally through the RUN 29 gated control plane (supervisor → 10s countdown → kill-switch; Confirmed-grade, never autonomous). See [[D-20260624-aria-web-sentinel-one-product]] + `docs/STRUCTURE.md`.
 
 ## Related
 
 <!-- LINK-WEB:auto -->
-- [[2026-06-20]]
-- [[AXIS]]
-- [[Ahmad]]
-- [[Backup-agent]]
-- [[Brain-Map]]
-- [[Claude-Code]]
-- [[Cleaning-agent]]
-- [[Codex]]
-- [[Cowork]]
-- [[DIRECTOR_AUTONOMY]]
-- [[KB-agent]]
-- [[Leads]]
-- [[Leads-agent]]
-- [[OPS-agent]]
-- [[RULES]]
 - [[Recipes]]
-- [[STACK]]
 - [[Stripe-Products]]
-- [[VOICE]]
 - [[_Amygdala]]
 - [[_Brainstem]]
 - [[_Campaigns]]
+- [[_capture]]
 - [[_CorpusCallosum]]
 - [[_Decisions]]
 - [[_Glia]]
@@ -64,4 +50,22 @@ See [[Stripe-Products]] for actual Stripe price IDs.
 - [[_IIS]]
 - [[_Inbox]]
 - [[_Sentinel]]
-- [
+- [[2026-06-20]]
+- [[Ahmad]]
+- [[AXIS]]
+- [[Backup-agent]]
+- [[Brain-Map]]
+- [[Claude-Code]]
+- [[Cleaning-agent]]
+- [[Codex]]
+- [[Cowork]]
+- [[D-20260624-aria-web-sentinel-one-product]]
+- [[DIRECTOR_AUTONOMY]]
+- [[KB-agent]]
+- [[Leads]]
+- [[Leads-agent]]
+- [[OPS-agent]]
+- [[RULES]]
+- [[STACK]]
+- [[VOICE]]
+<!-- /LINK-WEB:auto -->

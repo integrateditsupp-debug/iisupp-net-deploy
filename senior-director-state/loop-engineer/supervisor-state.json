@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-13T19:48:33.375Z",
+  "command_surface": [
+    "/goal",
+    "/loops",
+    "/loop <id>",
+    "/loop-prompt claude",
+    "/loop-prompt codex"
+  ],
+  "active_goal_id": "iis-aria-market-ahead-system",
+  "active_loop_id": "trend-radar-loop",
+  "loop_count": 8,
+  "bridge_status": "protocol-ready; authenticated always-on agent bridge not installed",
+  "external_actions_allowed": false
+}

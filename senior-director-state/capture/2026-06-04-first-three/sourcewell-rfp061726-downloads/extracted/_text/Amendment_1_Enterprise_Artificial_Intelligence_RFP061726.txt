@@ -1,0 +1,37 @@
+--- PAGE 1 ---
+ 
+ 
+5/01/2026  
+Amendment No. 1 
+Solicitation Number: RFP 061726 
+Solicitation Name: Enterprise Artificial Intelligence: Platforms, Services, and Integrated 
+Delivery 
+ 
+Consider the following amendment to be part of the above-titled solicitation 
+documents. The remainder of the documents remain unchanged. 
+ 
+RFP Amendment: 
+Following a review of the evaluation criteria for this solicitation, RFP Section VI. B. 
+Awards has been revised to reflect an updated pricing weight in the evaluation process, 
+to read as follows: 
+ 
+* * * * 
+    
+Conformance to RFP Requirements  Pass/Fail  
+Financial Viability and Marketplace Success  50  
+Ability to Sell and Deliver Solutions   175  
+Responsible AI & Governance   175  
+Marketing Plan  75  
+Value Added Attributes  75  
+Depth and Breadth of Offered Solutions  200  
+Pricing  250  
+Total Points  1000  
+ 
+* * * * 
+ 
+The remainder of the RFP content remains unchanged. 
+ 
+ 
+End of Amendment 
+Acknowledgement of this Amendment to RFP 061726, posted to the Sourcewell 
+Procurement Portal on 5/01/2026, is required at the time of proposal submittal. 

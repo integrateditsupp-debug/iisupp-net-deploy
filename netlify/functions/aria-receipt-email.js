@@ -5,7 +5,7 @@
 //   RESEND_API_KEY    + RESEND_FROM   — preferred (https://resend.com)
 //   SMTP_APP_PASSWORD + SMTP_SENDER   — fallback Gmail App Password
 //
-// POST body: { to, firstName, lastName, company, sessionId, topics: [..], thread: [..] }
+// POST body: { to|email, firstName, lastName, company, sessionId, topics: [..], thread: [..] }
 // Returns: { ok:true, sent:true, via:'resend'|'smtp' } on success.
 
 const nodemailer = require('nodemailer');
@@ -24,7 +24,7 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); }
   catch (e) { return { statusCode: 400, headers, body: JSON.stringify({ error: 'invalid JSON' }) }; }
 
-  const to = String(body.to || '').trim();
+  const to = String(body.to || body.email || '').trim();
   const firstName = String(body.firstName || '').trim();
   const lastName  = String(body.lastName  || '').trim();
   const company   = String(body.company   || '').trim();

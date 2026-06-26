@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c5a059">
+<title>Service Desk SOP Pack Preview | Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+:root{
+  --panel:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.7);
+  --muted:rgba(255,255,255,.45);
+  --gold:#c5a059;
+  --gold-soft:#f1dca7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(180deg,#080808 0%,#050505 100%);
+}
+a{text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 22px 72px}
+.toplink{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.eyebrow{display:block;margin-bottom:12px;color:var(--gold);font-size:10px;letter-spacing:.32em;text-transform:uppercase;font-weight:800}
+.hero{
+  margin-top:20px;
+  border:1px solid rgba(197,160,89,.24);
+  border-radius:18px;
+  padding:42px 34px;
+  background:
+    radial-gradient(120% 140% at 100% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:26px}
+.logo{font-family:'Cinzel',serif;font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.02;margin:0 0 16px}
+.gold{color:var(--gold-soft)}
+.lede{margin:0 0 18px;color:var(--text);font-size:15px;line-height:1.85;max-width:720px}
+.tagrow{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.tag{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{
+  height:100%;
+  border:1px solid rgba(197,160,89,.18);
+  border-radius:14px;
+  padding:20px 18px;
+  background:rgba(0,0,0,.24);
+}
+.panel p{margin:0 0 12px;color:var(--text);font-size:13px;line-height:1.8}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 18px;
+  border-radius:8px;
+  border:1px solid rgba(197,160,89,.4);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:rgba(197,160,89,.06);
+}
+.btn.primary{background:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%);color:#1a1407;border-color:transparent}
+.grid-two,.grid-three{display:grid;gap:16px;margin-top:24px}
+.grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px 18px 16px;
+  background:var(--panel);
+}
+.card h2,.card h3{margin:0 0 10px;font-family:'Cinzel',serif}
+.card h2{font-size:1.3rem}
+.card h3{font-size:1rem}
+.card p{margin:0;color:var(--text);font-size:13px;line-height:1.8}
+.checklist,.steps{
+  margin:14px 0 0;
+  padding-left:18px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.notice{
+  margin-top:26px;
+  padding:16px 18px;
+  border-left:3px solid var(--gold);
+  background:rgba(197,160,89,.07);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.mini{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width: 900px){
+  .hero-grid,.grid-two,.grid-three{grid-template-columns:1fr}
+  .hero{padding:30px 20px}
+  .wrap{padding:20px 16px 54px}
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="toplink" href="/growth-library.html">Back to growth library</a>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Sample Preview</span>
+          <h1 class="logo">Service Desk <span class="gold">SOP Pack</span></h1>
+          <p class="lede">This preview shows how IIS frames the support-operations lane when the real issue is not tooling first, but inconsistent intake, weak ownership, uneven triage, and escalation drift. The point is operational discipline: clearer steps, cleaner handoffs, and usable SOP structure that can support human agents now and AI assistance later.</p>
+          <div class="tagrow">
+            <span class="tag">For MSPs and internal IT</span>
+            <span class="tag">For SOP drift and escalation quality</span>
+            <span class="tag">For queue-ready operations</span>
+          </div>
+          <div class="btnrow">
+            <a class="btn primary" href="/?contact=1&subject=Request%20Service%20Desk%20SOP%20Sprint&desc=I%20want%20to%20stage%20a%20Service%20Desk%20SOP%20Sprint.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20support%20channels%20used%20today%3A%0ABiggest%20service-desk%20quality%20or%20handoff%20problem%3A%0AWhat%20keeps%20getting%20missed%20or%20reopened%3A%0AExisting%20SOPs%20or%20runbooks%20in%20place%3A%0AWhat%20a%20cleaner%20support%20flow%20would%20look%20like%3A">Stage SOP sprint</a>
+            <a class="btn" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">View blueprint preview</a>
+          </div>
+        </div>
+        <aside class="panel">
+          <span class="eyebrow" style="margin-bottom:10px">What this preview proves</span>
+          <p>The offer is concrete enough to trust before a live call. Buyers can see that IIS is packaging disciplined support operations, not vague documentation work or a generic AI promise.</p>
+          <p>This keeps the lane value-first without public pricing, staffing guarantees, compliance claims, or unsupported promises about autonomous triage and escalations.</p>
+          <p class="mini">The live sprint still depends on queue pressure, tools already in use, current SOP maturity, and which approvals must stay human-owned.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">Inside the offer</span>
+        <h2>What the buyer actually gets</h2>
+        <ul class="checklist">
+          <li>A practical SOP structure for intake, triage, ownership, escalation, and closure discipline.</li>
+          <li>Templates for ticket notes, customer-safe updates, internal escalation handoff, and reopened-issue prevention.</li>
+          <li>A way to separate user-safe steps, analyst-owned checks, and admin or vendor dependencies before the queue turns chaotic.</li>
+          <li>A cleaner ladder into a scoped blueprint, overflow pilot, or recurring support improvement sprint when the team wants IIS help implementing it.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best fit</span>
+        <h2>Who should start here</h2>
+        <ul class="checklist">
+          <li>MSPs with recurring inconsistency between agents, notes, and escalation quality.</li>
+          <li>Internal IT teams where tickets are technically solvable but the operating rhythm is weak.</li>
+          <li>Support leads cleaning up queue pressure before adding more headcount or tooling.</li>
+          <li>Teams exploring AI-assisted support later but first needing a stronger human operating baseline.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:24px">
+      <span class="eyebrow">Sample section</span>
+      <h2>What a practical service-desk SOP layer can look like</h2>
+      <p>This is a representative structure slice. The live version adjusts the exact detail level to the buyer's current queue, escalation paths, communication posture, and how much support ownership should stay with internal staff versus IIS.</p>
+      <div class="grid-three">
+        <div class="card">
+          <h3>Start with intake discipline</h3>
+          <p>Capture the issue type, user impact, recent change, steps already tried, and business consequence before the ticket becomes another vague request that bounces between people.</p>
+        </div>
+        <div class="card">
+          <h3>Standardize ownership checkpoints</h3>
+          <p>Make it clear when the agent owns the next step, when a lead or admin must review, and when vendor dependency or change-control risk stops same-line progression.</p>
+        </div>
+        <div class="card">
+          <h3>Close with reusable notes</h3>
+          <p>End each solved issue with a short resolution pattern and escalation signal so future agents and AI systems inherit useful structure instead of a dead-end sentence.</p>
+        </div>
+      </div>
+      <div class="notice">
+        Typical escalation triggers include security risk, executive or VIP impact, multi-user outage, unresolved repeat issue, unclear ownership across teams, or any request that changes production state without the right approval.
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">What stays scoped</span>
+        <h2>Reserved for live discovery</h2>
+        <ul class="steps">
+          <li>The exact tool stack, support tiers, and who approves sensitive or production-impacting actions.</li>
+          <li>Any authenticated workflow write-back, automation, or AI-assisted routing behavior.</li>
+          <li>Team-specific compliance, vendor, security, or records-management boundaries.</li>
+          <li>Detailed pricing, staffing volume, or retainer posture that should be set in live discovery instead of guessed publicly.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best next move</span>
+        <h2>Use the right lane after the preview</h2>
+        <ul class="steps">
+          <li>Use the Service Desk SOP Sprint when the support team needs cleaner operating structure right away.</li>
+          <li>Use the AI Help Desk Automation Blueprint when the team already wants the longer-term AI-assisted support architecture.</li>
+          <li>Use the Overflow Support Pilot when the immediate pain is queue pressure and IIS needs to help stabilize live support coverage.</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn primary" href="/?contact=1&subject=Request%20Service%20Desk%20SOP%20Sprint&desc=I%20want%20to%20stage%20a%20Service%20Desk%20SOP%20Sprint.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20support%20channels%20used%20today%3A%0ABiggest%20service-desk%20quality%20or%20handoff%20problem%3A%0AWhat%20keeps%20getting%20missed%20or%20reopened%3A%0AExisting%20SOPs%20or%20runbooks%20in%20place%3A%0AWhat%20a%20cleaner%20support%20flow%20would%20look%20like%3A">Stage SOP sprint</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "updated": "2026-06-11T15:05:00-04:00",
+  "rules": {
+    "noPaidApis": true,
+    "noLoginBypass": true,
+    "noRestrictedScraping": true,
+    "noExternalSendOrSubmit": true,
+    "respectfulMinimumMinutesBetweenRuns": 60
+  },
+  "sources": [
+    {
+      "id": "canadabuys-it",
+      "name": "CanadaBuys - IT opportunities",
+      "type": "tender",
+      "mode": "html",
+      "url": "https://canadabuys.canada.ca/en/tender-opportunities?search_api_fulltext=information%20technology",
+      "priority": 9,
+      "tags": ["government", "tender", "it", "canada"]
+    },
+    {
+      "id": "canadabuys-ai",
+      "name": "CanadaBuys - AI opportunities",
+      "type": "tender",
+      "mode": "html",
+      "url": "https://canadabuys.canada.ca/en/tender-opportunities?search_api_fulltext=artificial%20intelligence",
+      "priority": 9,
+      "tags": ["government", "tender", "ai", "canada"]
+    },
+    {
+      "id": "canadabuys-cyber",
+      "name": "CanadaBuys - cybersecurity opportunities",
+      "type": "tender",
+      "mode": "html",
+      "url": "https://canadabuys.canada.ca/en/tender-opportunities?search_api_fulltext=cybersecurity",
+      "priority": 8,
+      "tags": ["government", "tender", "cybersecurity", "canada"]
+    },
+    {
+      "id": "weworkremotely-programming",
+      "name": "We Work Remotely - programming jobs",
+      "type": "job",
+      "mode": "rss",
+      "url": "https://weworkremotely.com/categories/remote-programming-jobs.rss",
+      "priority": 7,
+      "tags": ["remote", "job", "software", "ai"]
+    },
+    {
+      "id": "weworkremotely-devops",
+      "name": "We Work Remotely - devops/sysadmin jobs",
+      "type": "job",
+      "mode": "rss",
+      "url": "https://weworkremotely.com/categories/remote-devops-sysadmin-jobs.rss",
+      "priority": 7,
+      "tags": ["remote", "job", "devops", "it-support"]
+    },
+    {
+      "id": "remoteok",
+      "name": "RemoteOK - remote tech roles",
+      "type": "job",
+      "mode": "remoteok",
+      "url": "https://remoteok.com/api",
+      "priority": 6,
+      "tags": ["remote", "job", "software", "ai"]
+    },
+    {
+      "id": "remotive-ai",
+      "name": "Remotive - AI remote jobs",
+      "type": "job",
+      "mode": "remotive",
+      "url": "https://remotive.com/api/remote-jobs?search=ai",
+      "priority": 7,
+      "tags": ["remote", "job", "ai"]
+    },
+    {
+      "id": "bmo-supplier",
+      "name": "BMO supplier/vendor portal",
+      "type": "vendor registration",
+      "mode": "manual",
+      "url": "https://www.bmo.com/en-ca/main/about-bmo/who-we-are/business-conduct/supplier-info/",
+      "priority": 8,
+      "tags": ["bank", "vendor", "canada", "enterprise"]
+    },
+    {
+      "id": "td-supplier",
+      "name": "TD supplier/vendor portal",
+      "type": "vendor registration",
+      "mode": "manual",
+      "url": "https://www.td.com/ca/en/about-td/for-suppliers",
+      "priority": 8,
+      "tags": ["bank", "vendor", "canada", "enterprise"]
+    },
+    {
+      "id": "rbc-supplier",
+      "name": "RBC supplier/vendor portal",
+      "type": "vendor registration",
+      "mode": "manual",
+      "url": "https://www.rbc.com/sourcing/",
+      "priority": 8,
+      "tags": ["bank", "vendor", "canada", "enterprise"]
+    },
+    {
+      "id": "uoft-procurement",
+      "name": "University of Toronto procurement",
+      "type": "vendor registration",
+      "mode": "manual",
+      "url": "https://procurement.utoronto.ca/",
+      "priority": 7,
+      "tags": ["university", "vendor", "procurement", "canada"]
+    },
+    {
+      "id": "uhn-procurement",
+      "name": "University Health Network procurement",
+      "type": "vendor registration",
+      "mode": "manual",
+      "url": "https://www.uhn.ca/corporate/For_Vendors",
+      "priority": 7,
+      "tags": ["hospital", "vendor", "healthcare", "canada"]
+    },
+    {
+      "id": "cibc-supplier",
+      "name": "CIBC supplier intake",
+      "type": "vendor registration",
+      "mode": "manual",
+      "url": "https://www.cibc.com/en/about-cibc/sustainability/to-our-suppliers/becoming-a-cibc-supplier.html",
+      "priority": 8,
+      "tags": ["bank", "vendor", "canada", "enterprise"]
+    },
+    {
+      "id": "rogers-supplier",
+      "name": "Rogers supplier portal",
+      "type": "vendor registration",
+      "mode": "manual",
+      "url": "https://supplierportal.rogers.com/",
+      "priority": 8,
+      "tags": ["telecom", "vendor", "canada", "enterprise"]
+    },
+    {
+      "id": "telus-supplier",
+      "name": "TELUS procurement",
+      "type": "vendor registration",
+      "mode": "manual",
+      "url": "https://www.telus.com/en/about/procurement",
+      "priority": 8,
+      "tags": ["telecom", "vendor", "canada", "enterprise"]
+    }
+  ]
+}

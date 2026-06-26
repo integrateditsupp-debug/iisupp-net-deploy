@@ -1,0 +1,42 @@
+{
+  "agentId": "business-development-agent",
+  "label": "Business Development Agent",
+  "generatedAt": "2026-06-26T12:00:01.677Z",
+  "status": "ready",
+  "summary": "Daily no-send business-development queue refreshed and routed into the autonomous board.",
+  "metrics": {
+    "trackedContacts": 21,
+    "obtainedLeads": 2,
+    "pendingConnections": 14,
+    "strategicFollows": 5,
+    "tenderLeadCount": 12
+  },
+  "artifacts": [
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\business-development-crm.json",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\business-development-daily-brief.md",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\Obtained Leads - contact now.md",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\revenue-generation-sprint.md",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\revenue-outreach-drafts.md",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\iis-aria-command-update.md",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\aria-monetization-packages.md",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\growth-library-product-engine.md",
+    "C:\\Users\\Ahmad Wasee\\Documents\\GitHub\\ARIA — Real-Time AI Assistant\\iisupp-net-deploy\\senior-director-state\\last-mile-execution-protocol.md"
+  ],
+  "approvals": [],
+  "readyActions": [
+    "2 warm lead(s) are staged for Ahmad-only send/hold review."
+  ],
+  "nextActions": [
+    "Check 14 pending connection request(s) for acceptance.",
+    "Revisit 5 strategic follow(s) on cadence.",
+    "Review 12 tender/public lead(s) for bid/no-bid posture."
+  ],
+  "focusAreas": [
+    "warm-lead follow-up",
+    "remote-l1-l3-overflow-support",
+    "ai-workflow-audit",
+    "website-conversion"
+  ],
+  "assignments": [],
+  "metadata": {}
+}

@@ -1,0 +1,426 @@
+--- PAGE 1 ---
+  
+ 
+ 
+  
+  
+05/14/2026 
+Addendum No. 4 
+Solicitation Number: RFP 061726 
+Solicitation Name: Enterprise Artificial Intelligence: Platforms, Services, and Integrated 
+Delivery 
+ 
+Consider the following Question(s) and Answer(s) to be part of the above-titled 
+solicitation documents. The remainder of the documents remain unchanged. 
+ 
+Question 1: 
+Can a Lot 1 proposer include standardized enablement, adoption, training, governance, 
+and deployment support services as complementary services packaged with an 
+enterprise AI platform subscription, provided that the AI platform remains the 
+proposer’s primary deliverable and primary source of value? 
+Answer 1: 
+Refer to Section II.B. Primary Deliverable Determination and Lot 1: AI Products and 
+Platforms.  
+ 
+In the competitive process, Sourcewell will not advise a proposer on the content of the 
+proposal. It is left to the discretion of each proposer to determine how to best satisfy all 
+requirements of the questionnaire tables. 
+ 
+Question 2: 
+The RFP states that the proposer will be responsible for the development, deployment, 
+operation, and maintenance of the solution. Could you please clarify whether this scope 
+also includes knowledge transfer and/or transition activities to the client? 
+
+--- PAGE 2 ---
+Answer 2: 
+Refer to Addendum 3, Answer 4. 
+ 
+Question 3: 
+Does the organization have a preferred cloud platform or hosting environment, or is the 
+proposer expected to recommend the most suitable cloud solution as part of the 
+proposal? 
+Answer 3: 
+Sourcewell is requesting proposals to meet the various needs of its 50,000+ 
+Participating Entities as a whole, across the United States and Canada. In this 
+competitive solicitation process, Sourcewell will not advise a proposer on the contents 
+of its proposal. It is left to the discretion of each proposer to articulate and propose the 
+solutions that align with its business methods and satisfies the requirements of the RFP. 
+A Participating Entities’ unique needs will be determined if and when the Participating 
+Entities choose to utilize a contract resulting from this solicitation. 
+ 
+Question 4: 
+Could you please outline the evaluation process for the proposals, including the 
+anticipated timeline for commencement of evaluations? 
+Answer 4: 
+Refer to RFP, Section VI. Evaluation and Award, Subsection A. 
+ 
+Question 5: 
+With reference to Section H, Page 11, could you please clarify the proposer’s expected 
+role in marketing or promoting the Master Agreement award? 
+Answer 5: 
+Refer to RFP Section II. H. Marketing Plan, “Proposer’s sales force will be the primary 
+source of communication with Participating Entities. The Proposer’s Marketing Plan 
+should demonstrate Proposer’s ability to deploy a sales force or dealer network to 
+Participating Entities, as well as Proposer’s sales and service capabilities. It is expected 
+that Proposer will promote and market any master agreement award.” 
+ 
+The Sourcewell Supplier Development team will also provide support and resources to 
+expand and enhance awarded supplier marketing efforts. In the competitive process, 
+
+--- PAGE 3 ---
+Sourcewell does not advise on the content of proposer marketing plans. Each proposal 
+will be evaluated based on the criteria stated in the RFP. 
+ 
+Question 6: 
+Can Sourcewell provide examples of the types of AI use cases participating agencies are 
+most interested in (healthcare, education, public safety, operations, bare-metal etc.)?” 
+Answer 6: 
+Refer to Section II. B. Requested Equipment, Products, or Services for examples within 
+each Lot, and Section VI. A. Responsiveness Criteria for a definition and examples of 
+qualifying highly regulated industries. 
+ 
+Question 7: 
+Can Sourcewell confirm the required compliance frameworks for this contract (HIPAA, 
+SOC 2, ISO 27001, CJIS, etc.) for vendors providing AI compute or hosting services? 
+Answer 7: 
+Refer to Answer 3. 
+ 
+Question 8: 
+Are there any data residency requirements for agencies using AI compute or hosting 
+services under this contract?” 
+Answer 8: 
+Sourcewell is requesting proposals to meet the various needs of its 50,000+ 
+Participating Entities as a whole, across the United States and Canada. In this 
+competitive solicitation process, Sourcewell will not advise a proposer on the contents 
+of its proposal. It is left to the discretion of each proposer to articulate and propose the 
+solutions that aligns with its business methods and satisfies the requirements of the 
+RFP. A Participating Entities’ unique needs will be determined if and when the 
+Participating Entities choose to utilize a contract resulting from this solicitation. 
+ 
+Question 9: 
+Does Sourcewell have any minimum performance expectations for AI compute (e.g., 
+memory bandwidth, GPU memory size, or throughput) that vendors should meet or 
+exceed?” We utilize the Nvidia H200s for maximum compute. 
+
+--- PAGE 4 ---
+Answer 9: 
+Refer to Answer 8.  
+ 
+Question 10: 
+Regarding potential evaluation points, Table headings for 7A and 7B read as follows:  
+• Table 7A: Depth and Breadth of Offered Solutions (200 Points, applies to Table 7A and 
+7B)  
+• Table 7B: Responsible AI & Governance (175 Points)  
+ 
+Evaluation scoring criteria lists:  
+• Responsible AI & Governance – 175 pts  
+• Depth and Breadth of Offered Solutions – 200 pts  
+ 
+Following the logic, are we correct in our analysis that this creates a possible 375 points 
+for Tables 7A and 7B? Is Table 7B essentially evaluated under two categories? 
+Answer 10: 
+Refer to Amendment 2.  
+ 
+Question 11: 
+Historically, Sourcewell has specifically excluded products, solutions, and services 
+available through currently active Master Agreements. With no exclusions identified in 
+061726, Enterprise AI: Platform, Services, and Integrated Delivery we respectfully 
+submit the following questions:  
+ 
+a) Will Sourcewell issue an Amendment to RFP 061726 to exclude existing contracts 
+such as 121923 Technology Products and Services and 110724 AI Readiness, 
+Implementation, and Support Services?  
+b) If there is no Amendment detailing existing contract exclusion, how will Sourcewell 
+address the addition of suppliers offering similar solutions to previously solicited, 
+evaluated, and competitively awarded contracts? 
+
+--- PAGE 5 ---
+Answer 11: 
+Sourcewell does not currently plan to issue an amendment or addendum to RFP 061726 
+regarding contract exclusions. While Sourcewell acknowledges there may be slight 
+overlap with previously released RFPs, Sourcewell believes the AI engagement-focused 
+response criteria and current lot structure included in this RFP provide sufficient 
+guardrails to prevent the solicitation from overlapping too closely with existing 
+contracts. 
+ 
+Question 12: 
+Will Sourcewell please delineate the primary differences between Enterprise AI 
+Products, Services, and Solutions offered in the forthcoming 061726 contract against 
+121923 Technology Products and Services and 110724 AI Readiness, Implementation, 
+and Support Services? 
+Answer 12: 
+Refer to Addendum 2, Answer 2.  
+ 
+Question 13: 
+Response Template, Table 4, Question 47. Does Sourcewell prefer that the example of 
+how governmental and educational customers have successfully utilized e-Procurement 
+or e-Commerce ordering processes be included in the response narrative or included as 
+detailed attachment? 
+Answer 13: 
+It is left to the discretion of each proposer to determine the information or 
+documentation necessary to best demonstrate their ability to serve Sourcewell 
+Participating Entities and satisfy all the requirements included in the questionnaire 
+tables. 
+ 
+Question 14: 
+What is the minimum and maximum service providers that Sourcewell will select for 
+each lot? 
+Answer 14: 
+Refer to the Evaluation and Award section of the RFP VI. It is the intent of Sourcewell to 
+award one or more suppliers offering the best overall quality, selection of equipment, 
+products, and services, and prices that meet the commonly requested specifications of 
+
+--- PAGE 6 ---
+Sourcewell and its Participating Entities. The award(s) will be limited to the number of 
+proposers that Sourcewell determines is necessary to meet the needs of its Participating 
+Entities. 
+ 
+Question 15: 
+For Lot 2, may proposers submit multiple pricing models, such as time-and-
+materials rates, fixed-fee service packages, managed services tiers, and optional 
+transaction-based pricing? 
+Answer 15: 
+All proposed pricing must be submitted using one or more of the pricing structures, as 
+appropriate to the proposer’s Primary Lot and commercial model, listed in RFP Section 
+III. A. 1.   
+ 
+Question 16: 
+For professional services pricing, does Sourcewell prefer hourly rates, daily rates, 
+or will either be acceptable if not-to-exceed rates are clearly provided by labor 
+category? 
+Answer 16: 
+It is left to the discretion of each proposer to determine and propose the pricing 
+approach that aligns with their business methods and satisfies all the requirements of 
+RFP Section III – Pricing and Delivery Schedules. Proposals are evaluated based on the 
+criteria stated in the RFP. 
+ 
+Also refer to Answer 15.  
+ 
+Question 17: 
+The RFP requires a Pricing Narrative explaining cost scaling, price-change triggers, 
+and total cost of ownership. Is Sourcewell expecting this narrative as a separate 
+uploaded document, a portal response, or part of the pricing attachment? 
+Answer 17: 
+A specific format is not required for submission, but Excel is preferred. Each supplier will 
+propose pricing in the format that makes sense for their industry. Each proposer, in its 
+discretion, will determine and articulate the pricing approach that aligns with its 
+business methods and satisfies all the requirements of the III. Pricing section of the RFP. 
+Proposals are evaluated based on the criteria stated in the RFP. 
+
+--- PAGE 7 ---
+ 
+Question 18: 
+For third-party costs such as cloud hosting, model/API consumption, software 
+licensing, OCR tools, or other pass-through costs, should proposers include not-
+to-exceed rates where available or identify them as excluded/pass-through costs 
+to be priced at the Participating Entity task-order level? 
+Answer 18: 
+Refer to Answers 15 and 16 above. 
+ 
+Question 19: 
+Can Sourcewell clarify whether the administrative fee should be embedded into 
+proposed pricing or treated separately in the proposer’s internal commercial 
+model? 
+Answer 19: 
+Refer to RFP III. B. and Master Agreement Article II. G. Administrative Fees. The 
+administrative fee is paid by the awarded supplier to Sourcewell and is not to be 
+separately assessed to a participating entity. 
+ 
+Question 20: 
+Under “Depth and Breadth of Offered Solutions,” should Lot 2 proposers 
+emphasize the breadth of professional services only, or should they also describe 
+related tools, frameworks, accelerators, and partner technologies used to deliver 
+those services? 
+Answer 20: 
+In the competitive process, Sourcewell will not advise a proposer on the content of the 
+proposal. It is left to the discretion of each proposer to determine how to best satisfy all 
+requirements of the questionnaire tables. 
+ 
+
+--- PAGE 8 ---
+Question 21: 
+Under “Ability to Sell and Deliver Solutions,” what evidence is most useful: 
+national delivery footprint, sales coverage, customer support model, delivery 
+staffing, implementation methodology, or public-sector contract adoption strategy? 
+Answer 21: 
+Refer to Addendum 1, Answer 1 
+ 
+Question 22: 
+Under “Responsible AI &amp; Governance,” is Sourcewell looking primarily for 
+proposer internal AI governance policies, client-facing governance services, 
+implementation controls, or all of these? 
+Answer 22: 
+It is left to the discretion of each proposer to determine the information or 
+documentation necessary to best demonstrate their ability to serve Sourcewell 
+Participating Entities and satisfy all the requirements included in the questionnaire 
+tables. Sourcewell will not advise a proposer on the contents of its proposal.  
+ 
+Question 23: 
+If a Lot 2 proposer uses third-party AI platforms, cloud services, LLMs, OCR 
+tools,automation tools, or model APIs as part of delivering professional services, 
+should those be described as enabling tools under Lot 2 rather than as separate 
+Lot 1 products? 
+Answer 23: 
+Per RFP Section II. D. Single Primary Lot, “Sourcewell prefers suppliers that provide a 
+sole source of responsibility for the equipment, products, and services provided under a 
+resulting master agreement. If proposer includes the equipment, products, and services 
+of its subsidiary entities, the proposer must also identify all subsidiaries included in its 
+proposal. If proposer requires the use of distributors, dealers, resellers, or 
+subcontractors to provide the equipment, products, or services, the proposal must  
+address how the equipment, products or services will be provided to Participating 
+Entities, and describe the network of distributors, dealers, resellers, and/or 
+subcontractors that will be available to serve Participating Entities under a resulting 
+master agreement.” 
+ 
+Primary Lot selection is the proposer’s determination and reflects how they primarily 
+create value for Participating Entities. 
+
+--- PAGE 9 ---
+Question 24: 
+If a proposer provides both AI professional services and access to third-party 
+technology components, but does not commercialize its own AI platform as the 
+primary offering, is Lot 2 still the appropriate Lot? 
+Answer 24: 
+Refer to Answer 23. 
+ 
+Question 25: 
+The RFP states that proposers must demonstrate experience delivering AI 
+solutions in a highly regulated industry at a scale appropriate to the selected 
+Lot. For Lot 2, what type of evidence will Sourcewell consider sufficient to 
+demonstrate this requirement? 
+Answer 25: 
+Refer to Addendum 1, Answer 1. 
+ 
+Question 26: 
+For Lot 2, how does Sourcewell define “scale appropriate to the selected Lot”? 
+Is Sourcewell looking for number of engagements, size of client, dollar value, 
+number of users supported, number of workflows implemented, geographic 
+reach, or a combination? 
+Answer 26: 
+Responsiveness Criteria thresholds and requirements are listed in the RFP Specifications 
+Questionnaire under the section titled Responsiveness Criteria. The Questionnaire can 
+be found in the Sourcewell Procurement Portal. 
+ 
+Question 27: 
+Will Sourcewell allow proposers to include confidential client examples in 
+summarized or anonymized form if the work is covered by confidentiality 
+obligations? 
+Answer 27: 
+Refer to RFP Section VI. E. Disposition of Proposals, which states, “Proposers are 
+explicitly cautioned not to submit any data that they consider to be confidential, 
+
+--- PAGE 10 ---
+proprietary, or trade secret, as such data will not be treated as confidential and will be 
+subject to public disclosure in accordance with Minnesota law.” 
+ 
+Question 28: 
+Under Section II.D “Single Primary Lot,” the RFP states a preference for a single 
+source of responsibility and allows the use of subcontractors, distributors, and 
+related entities where appropriately described. However, the RFP does not 
+explicitly address whether Joint Venture (JV), consortium, or team-based prime 
+submissions (i.e., two or more entities jointly submitting as a single prime 
+contractor) are permitted. Please clarify whether Joint Venture or consortium 
+bids are allowed under this solicitation. 
+Answer 28: 
+A proposer may submit only one proposal. If related, affiliated, or subsidiary entities 
+elect to submit separate proposals, rather than a single parent-entity proposal, each 
+such proposal must be prepared independently and without cooperation, collaboration, 
+or collusion. It is left to the discretion of each proposer to determine the information or 
+documentation necessary to best demonstrate their ability to serve Sourcewell 
+Participating Entities and satisfy all the requirements of the RFP. 
+ 
+Question 29: 
+After watching the video and hearing the references to 'highly regulated 
+industries' I revisited the RFP and noted in a number of places that 'highly 
+regulated industries' is mentioned.  On the first web page reference is made to 
+'governmental, higher education, K-12 education, nonprofit, tribal government, 
+and other public agencies located in the United States and Canada' - I am 
+having trouble reconciling highly regulated industries with some of the types of 
+organisations mentioned, which makes responding confusing (when I think of 
+highly regulated I think of Banking, Air Transportation, Nuclear Energy, Medical 
+and other regulated professions).  Is experience in 'highly regulated industries a 
+requirement? 
+Answer 29: 
+Refer to RFP Section VI. A. Responsiveness Criteria, as well as the thresholds and 
+requirements listed in the RFP Questionnaire under the section titled, Responsiveness 
+Criteria. Both areas provide a definition of highly regulated industries and examples of 
+qualifying highly regulated industries. 
+ 
+
+--- PAGE 11 ---
+Question 30: 
+In the list of organisations - 'governmental, higher education, K-12 education, 
+nonprofit, tribal government, and other public agencies located in the United 
+States and Canada' - which of those do you consider regulated? 
+Answer 30: 
+Refer to RFP Section VI. A. Responsiveness Criteria, as well as the thresholds and 
+requirements listed in the RFP Questionnaire under the section titled, Responsiveness 
+Criteria. Both areas provide a definition of highly regulated industries and examples of 
+qualifying highly regulated industries.  
+ 
+Question 31: 
+RFP Section II.B Primary Delivery Determination #3, pg. 5 
+Relating to Primary Lot selection as stated in RFP II.B Primary Delivery 
+Determination #3, if a Bidder wishes to be considered for Lots 1 and 2, the 
+direction is that the bidder should select Lot 3, correct? 
+Answer 31: 
+Sourcewell will not pre-qualify any products or services. It is left to the discretion of 
+each Proposer to determine if its products or services meet the scope of RFP II. B. 
+Requested Equipment, Products, or Services. Only those products within the scope of 
+the RFP will be included in any contract awarded by Sourcewell as a result of the 
+solicitation.  
+ 
+Question 32: 
+RFP Section II.B Primary Delivery Determination #3, pg. 5 
+If a bidder is bidding Primary Lot 3, should the Bidder provide responses to 
+Demonstrated Experience requirements for Lots 1, 2, and 3; or just Lot 3? 
+Answer 32: 
+For the Responsiveness Criteria Demonstrated Experience tables (pages 2–5 of the RFP 
+Questionnaire), proposers must identify the single, Primary Lot for which they are 
+submitting a response and complete only the corresponding Demonstrated Experience 
+table. 
+ 
+
+--- PAGE 12 ---
+Question 33: 
+For purposes of the Lot 1 responsiveness criteria regarding “production 
+deployments,” would Sourcewell consider multiple operational deployments of the 
+same AI platform across distinct enterprise customer environments or facilities as 
+separate deployments, provided each deployment: supports ongoing operational 
+use, includes defined users/workflows and measurable outputs, and 
+operates within separate production environments? 
+Answer 33: 
+In the competitive process, Sourcewell will not advise a proposer on the content of the 
+proposal. It is left to the discretion of each proposer to determine how to best satisfy all 
+requirements of the questionnaire tables. 
+ 
+Question 34: 
+As presented on the Pre Proposal Conference, Sourcewell described a process to 
+evaluate and award Lots consecutively, starting with Lot 1 and moving on to Lot 
+2 and finally Lot 3. Adding to the degree of complexity, Section I. Additional 
+Consideration, Question 5 of the RFP reads that Sourcewell may need to 
+organize responses into subcategories and awards may be based on those 
+subcategories which may create an even more extended timeline per Lot.  
+With an unknown, and likely large, number of responses submitted this strategy, 
+while thorough, creates the potential for an extended timeline between 
+submission and potential award.  Upon  solicitation close, and based on the 
+number of responses received, is Sourcewell considering alternate evaluation and 
+award practices (i.e., concurrent evaluation and award across Lots 1, 2, and 3) 
+to minimize time from submission to award and maximize potential impact to 
+Sourcewell Members? 
+Answer 34: 
+The duration of the evaluation process will depend on the number and complexity of 
+responses received. Following the solicitation close, Sourcewell may reevaluate the 
+evaluation and award approach, as needed, provided any adjustments remain 
+consistent with the process and requirements outlined in the RFP. 
+ 
+ 
+ 
+
+--- PAGE 13 ---
+ 
+ 
+End of Addendum 
+Acknowledgement of this Addendum to RFP 061726, posted to the Sourcewell 
+Procurement Portal on 05/14/2026, is required at the time of proposal submittal. 
+ 

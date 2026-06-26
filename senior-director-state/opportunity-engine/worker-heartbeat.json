@@ -1,0 +1,7 @@
+﻿{
+    "taskName":  "IIS Opportunity Engine Hourly",
+    "mode":  "24/7 backend research and review",
+    "communicationRule":  "Prepare anytime; external communication remains approval-gated and should be timed to recipient 8-5 business hours.",
+    "installedAt":  "2026-06-11T11:23:47.4857240-04:00",
+    "intervalMinutes":  60
+}

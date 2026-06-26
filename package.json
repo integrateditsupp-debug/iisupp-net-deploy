@@ -35,12 +35,20 @@
     "cleanup:once": "node scripts/workspace-cleanup-agent.mjs",
     "site:hygiene": "node scripts/check-public-route-hygiene.mjs",
     "director:once": "node scripts/senior-director-worker.mjs --once",
-    "director:worker": "node scripts/senior-director-worker.mjs"
+    "director:worker": "node scripts/senior-director-worker.mjs",
+    "youtube:generate": "node scripts/build-youtube-engine.mjs",
+    "youtube:queue": "node scripts/youtube-production-agent.mjs",
+    "sentinel:build": "npm --prefix apps/sentinel-desktop run build",
+    "sentinel:test": "npm --prefix apps/sentinel-desktop test",
+    "sentinel:prototype:test": "npm --prefix \"ARIA Sentinel\" test",
+    "sentinel:public-pages:test": "node tests/sentinel/public-pages.spec.mjs",
+    "aria:classifier:scenarios": "node tests/run-10k-scenarios.js",
+    "aria:nlu:test": "node tests/classifier-tier23.test.mjs && node tests/topic-switch.test.mjs && node tests/low-confidence-escalation.test.mjs"
   },
   "dependencies": {
     "@netlify/blobs": "^7.4.0",
     "framer-motion": "^12.40.0",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^9.0.1",
     "stripe": "^17.0.0"
   }
 }
