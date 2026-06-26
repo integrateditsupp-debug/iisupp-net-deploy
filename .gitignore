@@ -62,3 +62,5 @@ tests/suggested-fixes.md
 node_modules/
 _driver*.mjs
 _modal.mjs
+node_modules/
+_*.mjs

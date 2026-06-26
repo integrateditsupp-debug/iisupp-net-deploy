@@ -4567,31 +4567,31 @@ function wireChoices(){
 function openResolveModal(intent, cardEl){
   var existing = document.getElementById('aria-resolve-modal');
   if (existing) existing.remove();
-  var optStyle = 'display:block;width:100%;text-align:left;cursor:pointer;margin:0 0 12px;padding:14px 16px;border-radius:12px;'
-    + 'background:linear-gradient(180deg,rgba(197,160,89,.10),rgba(197,160,89,.02));border:1px solid rgba(197,160,89,.32);color:#fff;font-family:inherit;transition:border-color .2s,transform .15s';
+  var optStyle = 'display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;margin:0 0 9px;padding:12px 14px;border-radius:11px;'
+    + 'background:linear-gradient(180deg,rgba(197,160,89,.10),rgba(197,160,89,.02));border:1px solid rgba(197,160,89,.30);color:#fff;font-family:inherit;transition:border-color .2s,background .2s';
+  var icStyle = 'flex:0 0 auto;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(197,160,89,.14);color:#f1dca7;font-size:15px;line-height:1';
+  function opt(rm, ic, label, sub){
+    return '<button class="aria-rm-opt" data-rm="'+rm+'" style="'+optStyle+'">'
+      + '<span aria-hidden="true" style="'+icStyle+'">'+ic+'</span>'
+      + '<span style="min-width:0;flex:1">'
+      +   '<span style="display:block;color:#f1dca7;font-size:13.5px;font-weight:600;line-height:1.3">'+label+'</span>'
+      + '<span style="display:block;font-size:11.5px;color:rgba(255,255,255,.55);line-height:1.4;margin-top:1px">'+sub+'</span>'
+      + '</span></button>';
+  }
   var ov = document.createElement('div');
   ov.id = 'aria-resolve-modal';
   ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true');
   ov.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.74);backdrop-filter:blur(4px)';
   ov.innerHTML =
-    '<div style="width:100%;max-width:520px;background:linear-gradient(180deg,#15110a,#09090b);border:1px solid rgba(197,160,89,.42);border-radius:16px;padding:26px 24px;box-shadow:0 30px 80px rgba(0,0,0,.6)">'
-    +   '<div style="display:flex;align-items:center;gap:11px;margin-bottom:8px">'
-    +     '<span style="width:34px;height:34px;border-radius:50%;flex:0 0 auto;background:radial-gradient(circle at 35% 30%,#f1dca7,#c5a059 60%,#6b521f);box-shadow:0 0 16px rgba(197,160,89,.5)"></span>'
-    +     '<strong style="font-family:Cinzel,Georgia,serif;letter-spacing:.16em;color:#f1dca7;font-size:14px;text-transform:uppercase">Resolve it for me</strong>'
+    '<div style="width:100%;max-width:430px;background:linear-gradient(180deg,#15110a,#09090b);border:1px solid rgba(197,160,89,.42);border-radius:16px;padding:22px 22px;box-shadow:0 30px 80px rgba(0,0,0,.6)">'
+    +   '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">'
+    +     '<span style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;background:radial-gradient(circle at 35% 30%,#f1dca7,#c5a059 60%,#6b521f);box-shadow:0 0 14px rgba(197,160,89,.5)"></span>'
+    +     '<strong style="font-family:Cinzel,Georgia,serif;letter-spacing:.16em;color:#f1dca7;font-size:13px;text-transform:uppercase">Resolve it for me</strong>'
     +   '</div>'
-    +   '<p style="color:rgba(255,255,255,.72);font-size:13px;line-height:1.6;margin:0 0 18px">For your security, fixes run on <strong style="color:#f1dca7;font-weight:600">your own device</strong> — never from the website. Choose how to continue:</p>'
-    +   '<button class="aria-rm-opt" data-rm="open" style="'+optStyle+'">'
-    +     '<strong style="display:block;color:#f1dca7;font-size:14px;margin-bottom:3px">Open with ARIA Sentinel &rarr;</strong>'
-    +     '<span style="font-size:12px;color:rgba(255,255,255,.66);line-height:1.5">Already have the desktop app? Hand this issue straight to it — Sentinel runs the gated fix on your machine (you approve, with a countdown + one-click stop).</span>'
-    +   '</button>'
-    +   '<button class="aria-rm-opt" data-rm="download" style="'+optStyle+'">'
-    +     '<strong style="display:block;color:#f1dca7;font-size:14px;margin-bottom:3px">Download ARIA Sentinel &rarr;</strong>'
-    +     '<span style="font-size:12px;color:rgba(255,255,255,.66);line-height:1.5">Download the desktop app for localized troubleshooting on your system — gated, reversible, fully audited.</span>'
-    +   '</button>'
-    +   '<button class="aria-rm-opt" data-rm="walkthrough" style="'+optStyle+'">'
-    +     '<strong style="display:block;color:#f1dca7;font-size:14px;margin-bottom:3px">Continue with walkthrough</strong>'
-    +     '<span style="font-size:12px;color:rgba(255,255,255,.66);line-height:1.5">Stay in this chat — ARIA guides you step-by-step. Nothing changes without you.</span>'
-    +   '</button>'
+    +   '<p style="color:rgba(255,255,255,.6);font-size:12.5px;line-height:1.5;margin:0 0 16px">Fixes run on <strong style="color:#f1dca7;font-weight:600">your device</strong> — never from the website.</p>'
+    +   opt('open', '&#8599;', 'Open with ARIA Sentinel', 'Runs on your device, gated.')
+    +   opt('download', '&#8595;', 'Download ARIA Sentinel', 'Get the desktop app first.')
+    +   opt('walkthrough', '&#8801;', 'Continue with walkthrough', 'Guided steps, here in chat.')
     +   '<button data-rm="close" style="display:block;margin:4px auto 0;background:none;border:0;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;font-family:inherit;padding:6px 10px">Maybe later</button>'
     + '</div>';
   document.body.appendChild(ov);
