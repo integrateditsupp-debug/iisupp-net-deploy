@@ -92,8 +92,8 @@ exports.handler = async (event) => {
     return json(200, {
       ok: true, queued,
       text: action === 'approval'
-        ? (entry.decision === 'approve' ? 'Approved. Worker picks it up next tick.' : 'Rejected. Held.')
-        : `Queued for ${entry.agent || 'the fleet'}. Behind rails — irreversible waits for your ok.`,
+        ? (entry.decision === 'approve' ? 'Approved · queued, runs next sync (not instant).' : 'Rejected. Held.')
+        : `Queued for ${entry.agent || 'the fleet'} · runs next sync. Behind rails — irreversible waits for your ok.`,
       entry: { id: entry.id, agent: entry.agent, intent: entry.intent, decision: entry.decision }
     });
   }

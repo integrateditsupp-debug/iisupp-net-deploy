@@ -9,6 +9,29 @@ import {
   approvalTextForReview
 } from './staged-review-files.mjs';
 import { publishAgentReport, runAutonomySupervisor } from './autonomy-supervisor-core.mjs';
+import { openAxisInbox, readAxisInbox, processAxisInbox, consumeAxisInbox } from './lib/axis-inbox.mjs';
+
+// AXIS approve-hop (vision-flaw-audit fix #2): each tick, pull the AXIS Command Center inbox, run the
+// rail-safe approved items (queue the agent work behind the existing rails), HOLD anything irreversible for
+// Ahmad, and consume what ran. Graceful no-op when Blobs creds aren't on this machine.
+async function runAxisInboxHop() {
+  try {
+    const store = await openAxisInbox();
+    const items = await readAxisInbox(store);
+    if (!items.length) return;
+    const { execute, hold, consumed } = processAxisInbox(items);
+    for (const it of execute) {
+      await queueForCodexClaude(
+        `AXIS approve-hop · ${it.action} → ${it.agent || 'the fleet'}`,
+        `Approved via the AXIS Command Center (rail-safe). Intent: ${String(it.intent || it.approvalId || '').slice(0, 200)}.\n\nRun behind the existing rails (approved template · daily cap · suppression · anomaly). NO external send/apply/pay without the rails; anything irreversible stays for Ahmad.`
+      );
+    }
+    await consumeAxisInbox(store, execute);
+    await log('axis approve-hop', { executed: execute.length, held: hold.length, consumed: consumed.length });
+  } catch (e) {
+    await log('axis approve-hop failed', { error: e?.message || String(e) }).catch(() => {});
+  }
+}
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const STATE_DIR = path.join(ROOT, 'senior-director-state');
@@ -1274,6 +1297,7 @@ async function tick(reason = 'interval') {
   }
   await writeJson(path.join(STATE_DIR, 'worker-state.json'), state);
   await emitAxisState(hb, state);
+  await runAxisInboxHop();
   await publishAgentReport({
     agentId: 'senior-director-worker',
     label: 'Senior Director Worker',
