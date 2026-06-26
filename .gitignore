@@ -64,3 +64,5 @@ _driver*.mjs
 _modal.mjs
 node_modules/
 _*.mjs
+node_modules/
+_*.mjs

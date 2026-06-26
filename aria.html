@@ -3469,29 +3469,6 @@ const KB = {
     headline:'I can either guide you step-by-step,<br/>or set Outlook out-of-office for you remotely.',
     sub:'Both options are safe and reversible. Which would you prefer?',
     note:'I will only modify the Automatic Replies setting. Inbox rules and your signature will not be touched.',
-    autoTime:'6.4s',
-    audit:[
-      ['14:42:08','info','Permission token validated · device-2861-MX'],
-      ['14:42:09','info','Outlook launched in silent mode (no UI flash)'],
-      ['14:42:11','info','MAPI session opened · profile=Default'],
-      ['14:42:13','ok',  'Automatic Replies enabled (internal + external)'],
-      ['14:42:14','ok',  'Settings persisted · session closed cleanly'],
-    ],
-    summary:{ time:'6.4 s', actions:'5', down:'12', cost:'$0.00' },
-    confirmCard:`
-      <div class="preview-pane">
-        <div class="preview-head"><img src="https://www.google.com/s2/favicons?domain=outlook.com&sz=64" alt=""/><span>MICROSOFT OUTLOOK · AUTOMATIC REPLIES · CONFIRMED</span></div>
-        <div class="preview-body">
-          <div class="ooo-mock">
-            <div class="ooo-toggle"><div class="l">Send automatic replies</div><div class="ooo-switch"></div></div>
-            <div class="ooo-row"><div class="k">FROM</div><div class="v" id="oooFrom">Today, 2:42 PM</div></div>
-            <div class="ooo-row"><div class="k">TO</div><div class="v" id="oooTo">Friday, 6:00 PM</div></div>
-            <div class="ooo-row"><div class="k">SCOPE</div><div class="v">Inside &amp; outside the organization</div></div>
-            <div class="ooo-msg" id="oooMsg">Thanks for your message. I'm currently out of the office and will respond when I return. For urgent matters, please contact the IIS service desk.</div>
-            <div class="ooo-confirm">✓ Saved to Microsoft 365 · synced across devices</div>
-          </div>
-        </div>
-      </div>`,
     walk:[
       { title:'Open Outlook', sub:'ARIA will highlight the icon in your taskbar.', screenshot: outlookSS('open') },
       { title:'Click File → Automatic Replies', sub:'Top-left of the ribbon.', screenshot: outlookSS('file') },
@@ -3504,22 +3481,6 @@ const KB = {
     headline:'I can either guide you step-by-step,<br/>or resolve the issue for you remotely.',
     sub:'Both options are safe and reversible. Which would you prefer?',
     note:"<em>Don't worry</em> — I'll help you through this step by step. Nothing is changed without your approval.",
-    autoTime:'17.4s',
-    audit:[
-      ['14:42:08','info','Permission token validated · device-2861-MX'],
-      ['14:42:09','info','Process Manager opened by ARIA cursor'],
-      ['14:42:11','warn','Mail.exe → Not Responding (412 MB / 0% CPU)'],
-      ['14:42:14','ok',  'Mail.exe terminated · safe-state confirmed'],
-      ['14:42:25','ok',  'Mail relaunched · inbox synced (1,204 messages)'],
-    ],
-    summary:{ time:'17.4 s', actions:'5', down:'22', cost:'$0.00' },
-    confirmCard:`
-      <div class="preview-pane">
-        <div class="preview-head"><img src="https://www.google.com/s2/favicons?domain=outlook.com&sz=64" alt=""/><span>MAIL · LIVE PREVIEW</span></div>
-        <div class="preview-body" style="display:flex;align-items:center;justify-content:space-between;color:var(--cream);font-size:13px">
-          <span>1,204 messages · last sync 2 sec ago</span><span style="color:var(--green)">✓ inbox synced</span>
-        </div>
-      </div>`,
     walk:[
       { title:'Open Task Manager', sub:'Press Ctrl + Shift + Esc.', screenshot: genericSS('Task Manager','Processes · 27') },
       { title:'Locate the Mail process', sub:'Sort by Memory — find the row marked Not Responding.', screenshot: genericSS('Mail','412 MB · NOT RESPONDING') },
@@ -3532,22 +3493,6 @@ const KB = {
     headline:'I can either guide you step-by-step,<br/>or help verify the safest Outlook startup path.',
     sub:'First ARIA should confirm the exact behavior, then keep the next step short and reversible.',
     note:"<em>Nothing risky happens first</em> — ARIA starts by confirming whether Outlook is frozen, crashing, showing an error, or failing silently.",
-    autoTime:'14.8s',
-    audit:[
-      ['14:42:08','info','Permission token validated · device-2861-MX'],
-      ['14:42:09','info','Outlook startup path checked'],
-      ['14:42:11','warn','Possible hung Outlook process or add-in conflict detected'],
-      ['14:42:15','ok',  'Safe startup test prepared'],
-      ['14:42:23','ok',  'Next approved action ready'],
-    ],
-    summary:{ time:'14.8 s', actions:'5', down:'18', cost:'$0.00' },
-    confirmCard:`
-      <div class="preview-pane">
-        <div class="preview-head"><img src="https://www.google.com/s2/favicons?domain=outlook.com&sz=64" alt=""/><span>OUTLOOK · STARTUP CHECK</span></div>
-        <div class="preview-body" style="display:flex;align-items:center;justify-content:space-between;color:var(--cream);font-size:13px">
-          <span>Startup path isolated · safe test ready</span><span style="color:var(--green)">✓ no profile change yet</span>
-        </div>
-      </div>`,
     walk:[
       { title:'Confirm what Outlook does', sub:'Does it do nothing, freeze, crash, or show an error?', screenshot: genericSS('Outlook startup','Open / freeze / error?') },
       { title:'Close any stuck Outlook process', sub:'Task Manager → end Outlook only if it is still hanging.', screenshot: genericSS('Task Manager','OUTLOOK.EXE · not responding') },
@@ -3560,16 +3505,6 @@ const KB = {
     headline:'I can run a VPN diagnostic,<br/>or reconfigure the tunnel for you.',
     sub:'Diagnostic is read-only. Reconfigure restores defaults under audit.',
     note:'<em>Heads up</em> — reconfiguring the VPN may briefly disconnect any active sessions.',
-    autoTime:'24.1s',
-    audit:[
-      ['09:18:02','info','Permission token validated · device-2861-MX'],
-      ['09:18:04','info','VPN client status queried'],
-      ['09:18:06','warn','Gateway handshake stalled at TLS phase'],
-      ['09:18:11','ok',  'Configuration restored to org defaults'],
-      ['09:18:26','ok',  'Tunnel up · routing verified'],
-    ],
-    summary:{ time:'24.1 s', actions:'5', down:'9', cost:'$0.00' },
-    confirmCard:`<div class="preview-pane"><div class="preview-head"><span>VPN · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>Connected · 12 ms latency · region eu-west</span><span style="color:var(--green)">✓ tunnel up</span></div></div>`,
     walk:[
       { title:'Open the VPN client', sub:'Find the icon in the system tray.', screenshot: genericSS('VPN Client','Status: disconnected') },
       { title:'Click Disconnect, then Connect', sub:'Forces a fresh handshake.', screenshot: genericSS('Reconnecting','TLS handshake…') },
@@ -3581,16 +3516,6 @@ const KB = {
     headline:'I can walk you through a reset,<br/>or issue a temporary password for you.',
     sub:'Both paths trigger a multi-factor confirmation on your phone.',
     note:"<em>Just a moment</em> — I'll keep your session active while we recover access.",
-    autoTime:'4.2s',
-    audit:[
-      ['11:02:01','info','Identity verified via MFA push'],
-      ['11:02:02','info','Directory record located'],
-      ['11:02:03','ok',  'Temporary password issued'],
-      ['11:02:04','ok',  'Forced rotation policy applied'],
-      ['11:02:05','ok',  'Session restored · directory synced'],
-    ],
-    summary:{ time:'4.2 s', actions:'5', down:'6', cost:'$0.00' },
-    confirmCard:`<div class="preview-pane"><div class="preview-head"><span>ACCOUNT · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>Signed in · device-2861 · 1 active session</span><span style="color:var(--green)">✓ MFA confirmed</span></div></div>`,
     walk:[
       { title:'Approve the MFA prompt on your phone', sub:'Authenticator app — tap Approve.', screenshot: genericSS('MFA Push','Approve sign-in?') },
       { title:'Enter the temporary password', sub:'I have placed it in your secure clipboard.', screenshot: genericSS('Sign in','Temporary password') },
@@ -3602,16 +3527,6 @@ const KB = {
     headline:'I can reset your network adapter,<br/>or walk you through diagnostics.',
     sub:'Adapter reset takes about ten seconds and is fully reversible.',
     note:'Wi-Fi will drop briefly while the adapter cycles. Hang tight.',
-    autoTime:'12.4s',
-    audit:[
-      ['08:31:10','info','Adapter state queried'],
-      ['08:31:11','warn','Driver responding but no SSID bound'],
-      ['08:31:13','info','Adapter reset issued'],
-      ['08:31:20','ok',  'SSID re-acquired · DHCP lease renewed'],
-      ['08:31:22','ok',  'Connectivity verified · 24 ms RTT'],
-    ],
-    summary:{ time:'12.4 s', actions:'5', down:'4', cost:'$0.00' },
-    confirmCard:`<div class="preview-pane"><div class="preview-head"><span>NETWORK · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>MERIDIAN-CORP · 5 GHz · 867 Mbps</span><span style="color:var(--green)">✓ connected</span></div></div>`,
     walk:[
       { title:'Open Network Settings', sub:'Right-click the Wi-Fi icon → Network settings.', screenshot: genericSS('Network','Wi-Fi · disconnected') },
       { title:'Disable then re-enable Wi-Fi', sub:'Toggle off, wait 5 seconds, toggle on.', screenshot: genericSS('Adapter','Wi-Fi · OFF → ON') },
@@ -3623,16 +3538,6 @@ const KB = {
     headline:'I can re-add the printer,<br/>or clear the print spooler for you.',
     sub:'Both run under audit. The spooler clear will discard pending jobs.',
     note:'Pending print jobs will be lost when the spooler is cleared.',
-    autoTime:'9.0s',
-    audit:[
-      ['16:05:11','info','Spooler service status: degraded'],
-      ['16:05:12','ok',  'Spooler restarted'],
-      ['16:05:14','info','Printer port re-bound'],
-      ['16:05:18','ok',  'Test page accepted'],
-      ['16:05:20','ok',  'Printer online · queue clear'],
-    ],
-    summary:{ time:'9.0 s', actions:'5', down:'3', cost:'$0.00' },
-    confirmCard:`<div class="preview-pane"><div class="preview-head"><span>PRINTER · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>HP-LJ-Floor3 · ready · 0 pending</span><span style="color:var(--green)">✓ online</span></div></div>`,
     walk:[
       { title:'Open Printers & scanners', sub:'Settings → Bluetooth & devices → Printers.', screenshot: genericSS('Printers','HP-LJ-Floor3 · offline') },
       { title:'Remove the printer, then re-add', sub:'ARIA will keep your defaults.', screenshot: genericSS('Add printer','Searching…') },
@@ -3644,16 +3549,6 @@ const KB = {
     headline:"I can help with that.",
     sub:"Tell me a bit more — or pick how you'd like to proceed.",
     note:"Try things like <em>set my out of office</em>, <em>my mail won't open</em>, <em>VPN is broken</em>, or <em>show ops</em>.",
-    autoTime:'12.0s',
-    audit:[
-      ['12:00:00','info','Session created · device-2861-MX'],
-      ['12:00:01','info','Diagnostic dispatched'],
-      ['12:00:03','ok',  'Root cause located'],
-      ['12:00:05','ok',  'Remediation applied'],
-      ['12:00:07','ok',  'Verification passed'],
-    ],
-    summary:{ time:'12.0 s', actions:'5', down:'10', cost:'$0.00' },
-    confirmCard:`<div class="preview-pane"><div class="preview-head"><span>RESULT · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>Resolution confirmed · last sync 2 sec ago</span><span style="color:var(--green)">✓ done</span></div></div>`,
     walk:[
       { title:'Tell me what app or area is affected', sub:'A short description is enough.', screenshot: genericSS('Description','e.g. "Outlook crashes when…"') },
       { title:'I will run a safe diagnostic', sub:'Read-only — no changes yet.', screenshot: genericSS('Diagnostic','Scanning…') },
@@ -4270,7 +4165,7 @@ function renderTechnical(intent, userText){
         <span class="badge">RECOMMENDED</span>
         <h3>Resolve it for me</h3>
         <p>Hands this issue to the ARIA Sentinel desktop app, which runs the gated fix on <strong>your own device</strong> — you approve, with a 10-second countdown and one-click stop. Not installed? You'll get a download link.</p>
-        <div class="tags"><span class="pill">EST · ${kb.autoTime}</span><span class="pill">ON-DEVICE · GATED</span></div>
+        <div class="tags"><span class="pill">ON YOUR DEVICE</span><span class="pill">GATED · REVERSIBLE</span></div>
       </div>
     </div>
     <div class="aria-text" style="margin-top:14px"><strong style="color:var(--gold-bright);font-weight:500">Safe start:</strong> ${kb.note}</div>
@@ -4448,25 +4343,10 @@ function renderArticle(insight){
   }));
 }
 
-function renderAutoResolution(intent){
-  // HARD RULE 14 (2026-06-26): the website NEVER runs or simulates a fix. "Resolve it for me" hands the
-  // issue to the ARIA Sentinel desktop app via the aria-sentinel:// deep-link — the app runs the fix on the
-  // user's OWN machine behind its gates (approve + 10s countdown + restore point + one-click stop). If the
-  // app isn't installed, the modal offers Download. No fabricated audit trail, no fake "resolved".
-  openResolveModal(intent, null);
-}
-
-function kbAutoHeadline(intent){
-  return ({
-    outlook_ooo:'Out of Office is now on.',
-    mail:'Mail has been restored successfully.',
-    vpn:'VPN tunnel has been re-established.',
-    password:'Password has been reset successfully.',
-    wifi:'Wi-Fi connection has been restored.',
-    printer:'Printer has been reconnected.',
-    default:'Issue has been resolved successfully.',
-  })[intent] || 'Done.';
-}
+// HARD RULE 14 (2026-06-26 audit): the fake auto-resolution helpers were DELETED at source — they streamed a
+// fabricated audit trail (invented timestamps, fake device IDs, downtime/ticket-cost metrics) and fake "resolved"
+// headlines. The ONLY "Resolve it for me" path is the choice card / typed-confirm → openResolveModal
+// → aria-sentinel:// handoff (real, on-device, gated) or the install/download fallback. The fake can never resurface.
 function kbSuccessLine(intent){
   return ({
     outlook_ooo:"Outlook out-of-office is set. Anything else?",
@@ -5236,26 +5116,15 @@ function renderEscalation(userText){
 
 function handleEscalation(choice, ctx){
   if (choice === 'ms-recover'){
-    appendMessage(ariaBubble("Checking your Microsoft account…", "", `<div class="aria-text">Looking up the recovery key for this device sign-in…</div>`));
-    setTimeout(() => {
-      const found = Math.random() > 0.5;
-      if (found){
-        appendMessage(ariaBubble("Found it.", "", `
-          <div class="recovery-key">
-            <div class="rk-label">RECOVERY KEY · BitLocker</div>
-            <div class="rk-value" id="rkVal">428913-672034-188205-559371-294006-820915-103467-275488</div>
-            <div class="rk-meta">From your Microsoft account · device-2861-MX · escrowed 2024-03-12</div>
-            <button class="rk-copy" onclick="navigator.clipboard.writeText(document.getElementById('rkVal').textContent);this.textContent='COPIED'">COPY</button>
-          </div>`));
-      } else {
-        appendMessage(ariaBubble("Couldn't find it.", "Your local IT will have the key.", `
-          <div class="aria-text">No recovery key for this device in your Microsoft account. Two paths:</div>
-          <ul class="help-list">
-            <li><strong>Local IT</strong> — they hold it in your tenant's Azure AD escrow.</li>
-            <li>Or <strong>option 3</strong> above to escalate to IIS now.</li>
-          </ul>`));
-      }
-    }, 1500);
+    // HARD RULE 14 (2026-06-26 audit): the website cannot read your Microsoft account or your real BitLocker key,
+    // so it never displays a fabricated one. It points you to where YOUR real key actually lives.
+    appendMessage(ariaBubble("Here's how to get your BitLocker recovery key.", "", `
+      <div class="aria-text">I can't read your account from here — but your key is escrowed in one of these, and you can copy it in under a minute:</div>
+      <ul class="help-list">
+        <li><strong>Personal Microsoft account</strong> — sign in at <span style="color:var(--gold-bright)">account.microsoft.com/devices</span> &rarr; your device &rarr; <em>Manage recovery keys</em>.</li>
+        <li><strong>Work / school account</strong> — <span style="color:var(--gold-bright)">aka.ms/myrecoverykey</span> (your IT escrows it in Azure AD / Entra).</li>
+        <li><strong>Local IT</strong> — they hold it in your tenant's escrow. Or use <strong>option 3</strong> above to escalate to IIS now.</li>
+      </ul>`));
   } else if (choice === 'agent'){
     const subj = `${intentLabel(ctx)} — user needs immediate help`;
     const body = `Session #${state.sessionId} · ${intentLabel(ctx)}\nUser requested live-agent callback at ${new Date().toLocaleString()}.`;
