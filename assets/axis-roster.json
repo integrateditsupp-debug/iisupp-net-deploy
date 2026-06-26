@@ -1,0 +1,31 @@
+{
+  "updated": "2026-06-26",
+  "director": { "name": "AXIS", "role": "Director — you talk to AXIS; it dispatches the rest", "maps": "senior-director-worker daemon + Cowork" },
+  "executor": { "name": "Forge", "role": "Code builder (Claude Code) — ships features on command", "maps": "CC" },
+  "agents": [
+    { "name": "Hunter",     "task": "contract-hunter-autopilot",          "does": "Hunts gov/contract bids daily 3pm", "fn": "Find Leads" },
+    { "name": "Forager",    "task": "morning-hunt-bids-leads",            "does": "Weekday 9am: new bids + IT/AI leads, drafts outreach", "fn": "Find Leads" },
+    { "name": "Prospector", "task": "daily-it-opportunities-7am",         "does": "Daily 7am: IT contracts, gigs, RFPs", "fn": "Find Leads" },
+    { "name": "Globe",      "task": "daily-international-contract-scan",   "does": "Daily 7am: top-5 international contracts (UAE/UK/USA/EU)", "fn": "Find Leads" },
+    { "name": "Tender",     "task": "ontario-tenders-alert-msp-fit",      "does": "Daily: Ontario/MERX/CanadaBuys MSP tenders", "fn": "Find Leads" },
+    { "name": "Bidwatch",   "task": "gov-bid-status-monitor",            "does": "Weekly: gov bid statuses + deadlines", "fn": "Find Leads" },
+    { "name": "Pitch",      "task": "morning-outbound-pack",             "does": "Weekday 9am: 5 cold drafts + inbound triage", "fn": "Draft Emails" },
+    { "name": "Closer",     "task": "cold-outbound-v2-monday-batch",      "does": "Monday: fresh Apollo leads + drafted batch", "fn": "Draft Emails" },
+    { "name": "Ops",        "task": "ops-agent-morning-prep",            "does": "Pre-dawn: health check, lead drafts, CEO brief", "fn": "Work Report" },
+    { "name": "Scout",      "task": "bay-monitor-autopilot",            "does": "Daily 7am: cross-agent status + pipeline + news", "fn": "Work Report" },
+    { "name": "Applicant",  "task": "linkedin-easy-apply-autopilot",     "does": "Weekday 8am: LinkedIn Easy Apply roles", "fn": "Apply LinkedIn" },
+    { "name": "Tuner",      "task": "aria-classifier-autonomous-improver","does": "3x/day: ARIA classifier test + auto-fix", "fn": "ARIA Quality" },
+    { "name": "Renew",      "task": "aria-daily-renewal-reminders",      "does": "Daily 8am: Stripe renewal reminders 7/3/1d", "fn": "Send Email" },
+    { "name": "Ledger",     "task": "iisupport-daily-expense-sync",       "does": "Daily 9pm: expenses → CRA tax workbook", "fn": "Finance" },
+    { "name": "Auditor",    "task": "iisupport-month-end-sweep",         "does": "Month-end: full expense sweep", "fn": "Finance" },
+    { "name": "Compass",    "task": "goal-alignment-loop",              "does": "Daily 6am: keep every loop aligned to top goal", "fn": "Ops Health" },
+    { "name": "Observer",   "task": "codex-observer-loop",              "does": "2x/weekday: watch Forge's commits + delta", "fn": "Ops Health" },
+    { "name": "Dispatch",   "task": "axis-247-dispatcher",              "does": "Every 3h: assign idle agents safe no-send work", "fn": "Ops Health" },
+    { "name": "Mesh",       "task": "vault-mesh-cleaning-agent",         "does": "Daily 2am: relink the Obsidian brain", "fn": "Brain" },
+    { "name": "Vault",      "task": "aria-vault-twice-daily-backup",     "does": "2x/day: back up the brain to 2 places", "fn": "Brain" },
+    { "name": "Herald",     "task": "golive-pending-reminder",          "does": "Daily 8am: list queued go-live items", "fn": "Approvals" },
+    { "name": "Dawn",       "task": "aria-morning-autopilot",           "does": "Sunday am: revenue, uptime, weekly priorities", "fn": "Work Report" },
+    { "name": "Dusk",       "task": "aria-evening-autopilot",           "does": "Sunday pm: week recap + next #1 priority", "fn": "Work Report" },
+    { "name": "Biller",     "task": "do-payment-retry-june-30",         "does": "One-off: retry DigitalOcean payment Jun 30", "fn": "Finance" }
+  ]
+}

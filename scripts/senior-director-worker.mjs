@@ -1135,6 +1135,98 @@ async function acquireLock() {
   return cleanup;
 }
 
+// ── AXIS Command Center: emit a PUBLIC, secret-free state snapshot each tick ───────────────
+// Written to assets/axis-state.json (assets/ is public; senior-director-state/ is redirect-blocked).
+// HARD GATE: no secrets/PII. Backtick spans (file paths + named prospects/companies), urls, emails,
+// and long number runs are stripped from every free-text field before it goes public.
+function axisSanitize(text, max = 140) {
+  return String(text || '')
+    .replace(/`[^`]*`/g, '…')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/[\w.+-]+@[\w.-]+\.\w+/g, '')
+    .replace(/\b\d[\d\s().-]{6,}\d\b/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, max);
+}
+
+async function emitAxisState(hb, workerState) {
+  try {
+    const reportsDir = path.join(STATE_DIR, 'autonomy', 'agent-reports');
+    const rosterFile = path.join(ROOT, 'assets', 'axis-roster.json');
+    const outFile = path.join(ROOT, 'assets', 'axis-state.json');
+
+    let roster = { agents: [] };
+    try { roster = JSON.parse(await fs.readFile(rosterFile, 'utf8')); } catch {}
+
+    const reports = {};
+    try {
+      for (const f of (await fs.readdir(reportsDir)).filter((x) => x.endsWith('.json'))) {
+        const r = await readJson(path.join(reportsDir, f), null);
+        if (r && r.agentId) reports[r.agentId] = r;
+      }
+    } catch {}
+
+    const recentActivity = Object.values(reports)
+      .filter((r) => r && r.generatedAt)
+      .sort((a, b) => new Date(b.generatedAt) - new Date(a.generatedAt))
+      .slice(0, 12)
+      .map((r) => ({ at: r.generatedAt, agent: axisSanitize(r.label || r.agentId, 40), text: axisSanitize(r.summary, 150), status: String(r.status || 'ok') }));
+
+    let approvals = [];
+    try {
+      approvals = (await fs.readFile(APPROVALS_FILE, 'utf8')).split(/\r?\n/)
+        .filter((l) => /^\s*[-*]\s+/.test(l))
+        .map((l) => axisSanitize(l.replace(/^\s*[-*]\s+/, ''), 150))
+        .filter(Boolean)
+        .slice(0, 40)
+        .map((title, i) => ({ id: 'apr-' + (i + 1), title, kind: 'review' }));
+    } catch {}
+
+    let leadsQueued = 0;
+    try { leadsQueued = (await fs.readFile(LEAD_QUEUE_FILE, 'utf8')).split(/\r?\n/).filter(Boolean).length; } catch {}
+
+    let ariaPassPct = null;
+    try { const s = await readJson(path.join(ROOT, 'tests', 'run-stats.json'), null); if (s) ariaPassPct = Number(s.last_pass_rate_pct) || null; } catch {}
+
+    const matchReport = (task) => reports[task]
+      || Object.values(reports).find((r) => (r.agentId || '').includes(String(task || '').split('-')[0]))
+      || null;
+    const agents = (roster.agents || []).map((a) => {
+      const rep = matchReport(a.task);
+      return {
+        name: a.name, fn: a.fn, does: a.does, task: a.task,
+        lastRunAt: rep ? rep.generatedAt : null,
+        status: rep ? String(rep.status || 'ok') : 'scheduled',
+        summary: rep ? axisSanitize(rep.summary, 120) : ''
+      };
+    });
+
+    const out = {
+      generatedAt: nowIso(),
+      health: {
+        worker: 'up',
+        heartbeatAt: hb?.ts || nowIso(),
+        leadsQueued,
+        agentsTotal: agents.length,
+        approvalsPending: approvals.length,
+        ariaPassPct
+      },
+      autoApprove: {
+        enabled: true,
+        rails: ['approved template only', 'daily rate caps', 'known-good target filter', 'suppression list', 'anomaly check'],
+        note: 'Auto-sends fire only within the rails. Anything irreversible / anomalous / no-safe-workaround waits in Approvals. A daily auto-fire digest lists everything that fired so mistakes can be caught.'
+      },
+      recentActivity,
+      approvals,
+      agents
+    };
+    await writeJson(outFile, out);
+  } catch (e) {
+    await log('axis-state emit failed', { error: e?.message || String(e) }).catch(() => {});
+  }
+}
+
 async function tick(reason = 'interval') {
   await ensureState();
   const hb = await heartbeat();
@@ -1160,6 +1252,7 @@ async function tick(reason = 'interval') {
     state.lastMissionBrief = now;
   }
   await writeJson(path.join(STATE_DIR, 'worker-state.json'), state);
+  await emitAxisState(hb, state);
   await publishAgentReport({
     agentId: 'senior-director-worker',
     label: 'Senior Director Worker',
