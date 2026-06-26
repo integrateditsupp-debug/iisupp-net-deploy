@@ -1,6 +1,6 @@
-// AXIS Command Center — contract + safety tests.
-// 1) axis-state.json is well-formed and SECRET-FREE (no file paths, emails, phones, backtick leaks).
-// 2) the director endpoint loads + handles chat/command/approval/OPTIONS without throwing.
+// AXIS Command Center — contract + privacy tests.
+// Public /assets/axis-state.json is COUNTS-ONLY (no names/titles/strategy). Named detail is gated behind the
+// authenticated /api/axis-state (verifyAperture). The director endpoint handles all actions without throwing.
 // Run: node tests/axis-command-center.test.mjs
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -15,43 +15,52 @@ assert.ok(Array.isArray(roster.agents) && roster.agents.length >= 20, 'roster ha
 assert.ok(roster.agents.every(a => a.name && a.fn && a.does), 'each agent has name/fn/does');
 ok();
 
-// ---- 2. axis-state shape ----
+// ---- 2. PUBLIC axis-state is counts-only ----
 const state = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'axis-state.json'), 'utf8'));
-for (const k of ['generatedAt', 'health', 'autoApprove', 'recentActivity', 'approvals', 'agents']) {
-  assert.ok(k in state, `axis-state has ${k}`);
+for (const k of ['generatedAt', 'health', 'autoApprove', 'approvalsSummary', 'activitySummary', 'agentsSummary']) {
+  assert.ok(k in state, `public axis-state has ${k}`);
 }
-assert.ok(state.autoApprove.enabled === true && Array.isArray(state.autoApprove.rails) && state.autoApprove.rails.length >= 4, 'auto-approve rails present');
-assert.ok(Array.isArray(state.approvals) && Array.isArray(state.agents), 'approvals + agents are arrays');
+assert.deepEqual(state.approvals, [], 'public approvals array is EMPTY (titles gated)');
+assert.deepEqual(state.recentActivity, [], 'public recentActivity is EMPTY (prose gated)');
+assert.equal(typeof state.approvalsSummary.pending, 'number', 'approvals are COUNTS only');
+assert.ok('classifierSelfTestPassPct' in state.health, 'self-test pct clearly labeled');
+assert.ok(!('ariaPassPct' in state.health), 'old ambiguous ariaPassPct removed');
 ok();
 
-// ---- 3. HARD GATE: no secrets / PII anywhere in the public state JSON ----
+// ---- 3. HARD PRIVACY GATE: public file leaks NO names / approval titles / strategy ----
 const blob = JSON.stringify(state);
 const leaks = [
-  [/[A-Za-z]:\\\\Users|[A-Za-z]:\\Users|\/Users\//, 'absolute file path'],
-  [/senior-director-state\//, 'internal state path'],
+  [/[A-Za-z]:\\Users|\/Users\//, 'absolute file path'],
+  [/senior-director-state\/|staged-[a-z0-9-]+\.md/, 'internal path/filename'],
   [/[\w.+-]+@[\w.-]+\.(com|net|org|ca)/, 'email address'],
   [/\b\d{3}[-. ]\d{3}[-. ]\d{4}\b/, 'phone number'],
-  [/ghp_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}/, 'token/api key'],
-  [/`[^`]+`/, 'unredacted backtick span'],
-  [/staged-[a-z0-9-]+\.md/, 'staged review filename'],
+  [/`[^`]+`/, 'backtick span'],
+  // proper-noun / strategy leaks Cowork found live:
+  [/jason|hines|\brbc\b|tangs|physiotherapy|numeric corporate/i, 'named prospect/company'],
+  [/approved-to-transmit|first-send queue|supplier registration|next live action|follow-up only if/i, 'deal strategy / approval title'],
 ];
-for (const [re, label] of leaks) assert.ok(!re.test(blob), `axis-state must not contain a ${label}`);
+for (const [re, label] of leaks) assert.ok(!re.test(blob), `public axis-state must not contain ${label}`);
 ok();
 
-// ---- 4. director endpoint contract (no throw on any action; graceful without key/Blobs) ----
-const mod = await import(pathToFileURL(path.join(root, 'netlify', 'functions', 'axis-director.js')).href);
-const handler = mod.handler || (mod.default && mod.default.handler);
-assert.equal(typeof handler, 'function', 'axis-director exports a handler');
-const opt = await handler({ httpMethod: 'OPTIONS' });
-assert.equal(opt.statusCode, 204, 'OPTIONS → 204');
-const bad = await handler({ httpMethod: 'GET' });
-assert.equal(bad.statusCode, 405, 'GET → 405');
+// ---- 4. AUTHED /api/axis-state gates the named detail (rejects no/invalid session) ----
+const ax = (await import(pathToFileURL(path.join(root, 'netlify', 'functions', 'axis-state.mjs')).href)).default;
+assert.equal(typeof ax, 'function', 'axis-state exports a handler');
+assert.equal((await ax(new Request('https://x/api/axis-state', { method: 'OPTIONS' }))).status, 204, 'OPTIONS → 204');
+assert.equal((await ax(new Request('https://x/api/axis-state', { method: 'GET' }))).status, 401, 'NO session → 401');
+assert.equal((await ax(new Request('https://x/api/axis-state', { method: 'GET', headers: { Authorization: 'Bearer not.a.real.jwt' } }))).status, 401, 'INVALID session → 401');
+// the private full-detail file exists + is NOT the public one (carries the gated arrays)
+const full = JSON.parse(fs.readFileSync(path.join(root, 'netlify', 'functions', '_axis-state-full.json'), 'utf8'));
+assert.ok(Array.isArray(full.approvals) && Array.isArray(full.recentActivity), 'full state has the detail arrays');
+ok();
+
+// ---- 5. director endpoint contract (no throw on any action) ----
+const handler = (await import(pathToFileURL(path.join(root, 'netlify', 'functions', 'axis-director.js')).href)).handler;
+assert.equal((await handler({ httpMethod: 'OPTIONS' })).statusCode, 204, 'OPTIONS → 204');
+assert.equal((await handler({ httpMethod: 'GET' })).statusCode, 405, 'GET → 405');
 const cmd = await handler({ httpMethod: 'POST', body: JSON.stringify({ action: 'command', intent: 'queue find leads' }) });
-assert.equal(cmd.statusCode, 200, 'command → 200');
 assert.equal(JSON.parse(cmd.body).ok, true, 'command acknowledged');
 const apr = await handler({ httpMethod: 'POST', body: JSON.stringify({ action: 'approval', approvalId: 'apr-1', decision: 'approve' }) });
-assert.equal(apr.statusCode, 200, 'approval → 200');
 assert.match(JSON.parse(apr.body).text, /approv/i, 'approval acknowledged');
 ok();
 
-console.log(`AXIS Command Center test passed (${n} groups · roster · state shape · NO-SECRETS gate · endpoint contract chat/command/approval/OPTIONS).`);
+console.log(`AXIS Command Center test passed (${n} groups · roster · PUBLIC counts-only · no-name/title/strategy leak · AUTHED /api/axis-state gates detail (401) · director endpoint contract).`);

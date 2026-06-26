@@ -1202,26 +1202,47 @@ async function emitAxisState(hb, workerState) {
       };
     });
 
-    const out = {
-      generatedAt: nowIso(),
-      health: {
-        worker: 'up',
-        heartbeatAt: hb?.ts || nowIso(),
-        leadsQueued,
-        agentsTotal: agents.length,
-        approvalsPending: approvals.length,
-        ariaPassPct
-      },
-      autoApprove: {
-        enabled: true,
-        rails: ['approved template only', 'daily rate caps', 'known-good target filter', 'suppression list', 'anomaly check'],
-        note: 'Auto-sends fire only within the rails. Anything irreversible / anomalous / no-safe-workaround waits in Approvals. A daily auto-fire digest lists everything that fired so mistakes can be caught.'
-      },
-      recentActivity,
-      approvals,
-      agents
+    const health = {
+      worker: 'up',
+      heartbeatAt: hb?.ts || nowIso(),
+      leadsQueued,
+      agentsTotal: agents.length,
+      approvalsPending: approvals.length,
+      classifierSelfTestPassPct: ariaPassPct // clearly labeled — NOT uptime
     };
-    await writeJson(outFile, out);
+    const autoApprove = {
+      enabled: true,
+      rails: ['approved template only', 'daily rate caps', 'known-good target filter', 'suppression list', 'anomaly check'],
+      note: 'Auto-sends fire only within the rails. Anything irreversible / anomalous waits in Approvals; a daily auto-fire digest lists what fired.'
+    };
+
+    // FULL (login-only) state — names, approval titles, activity prose. Written to a NON-public, redirect-blocked
+    // path that ONLY the authenticated /api/axis-state function (verifyAperture) reads. Never at a public URL.
+    const full = { generatedAt: nowIso(), health, autoApprove, recentActivity, approvals, agents };
+    try {
+      const privDir = path.join(ROOT, 'netlify', 'functions');
+      await fs.mkdir(privDir, { recursive: true });
+      await writeJson(path.join(privDir, '_axis-state-full.json'), full);
+    } catch (e) { await log('axis-state full emit failed', { error: e?.message || String(e) }).catch(() => {}); }
+
+    // PUBLIC state — COUNTS ONLY. assets/ is publicly fetchable, so NO prospect/person/company names, NO approval
+    // titles, NO strategy text, NO activity prose may appear here. (2026-06-26 leak fix.)
+    const byFunction = {};
+    for (const a of agents) byFunction[a.fn || 'Other'] = (byFunction[a.fn || 'Other'] || 0) + 1;
+    const publicState = {
+      generatedAt: nowIso(),
+      public: true,
+      note: 'Counts only. Approval detail + live activity require an Aperture login (served via /api/axis-state).',
+      health,
+      autoApprove,
+      approvalsSummary: { pending: approvals.length, byKind: { review: approvals.length } },
+      activitySummary: { recentCount: recentActivity.length, lastActivityAt: recentActivity[0]?.at || null },
+      agentsSummary: { total: agents.length, byFunction },
+      agents: agents.map((a) => ({ name: a.name, fn: a.fn, does: a.does, status: a.status })), // roster codenames (already public); NO run summaries
+      approvals: [],      // gated — count is in approvalsSummary.pending
+      recentActivity: []  // gated — count is in activitySummary.recentCount
+    };
+    await writeJson(outFile, publicState);
   } catch (e) {
     await log('axis-state emit failed', { error: e?.message || String(e) }).catch(() => {});
   }

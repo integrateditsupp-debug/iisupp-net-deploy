@@ -11,9 +11,11 @@
   if (!MOUNT) return;
 
   var ENDPOINT = '/.netlify/functions/axis-director';
-  var STATE_URL = '/assets/axis-state.json';
+  var AUTHED_URL = '/api/axis-state';            // gated: named detail (approval titles, activity) — login only
+  var STATE_URL = '/assets/axis-state.json';     // public: counts only — NO names / titles / strategy
   var ROSTER_URL = '/assets/axis-roster.json';
-  var state = null, roster = null, chat = [], activeFn = 'approvals', listening = false, rec = null;
+  var state = null, roster = null, chat = [], activeFn = 'approvals', listening = false, rec = null, authed = false;
+  function apertureToken() { try { return localStorage.getItem('aperture_jwt') || ''; } catch (e) { return ''; } }
 
   // Left sidebar functions (packet order). `fns` = roster.fn values this tab shows in its live view.
   var FUNCTIONS = [
@@ -36,10 +38,21 @@
 
   /* ---------- data ---------- */
   function load() {
-    fetch(STATE_URL, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) { if (d) { state = d; render(); } }).catch(function () {});
+    var tok = apertureToken();
+    // Logged in → fetch the AUTHENTICATED state (named detail). No token / 401 → public counts-only file,
+    // which deliberately carries NO names, approval titles, or strategy.
+    if (tok) {
+      fetch(AUTHED_URL, { cache: 'no-store', headers: { Authorization: 'Bearer ' + tok } })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { if (d && d.ok) { state = d; authed = true; render(); } else { loadPublic(); } })
+        .catch(function () { loadPublic(); });
+    } else { loadPublic(); }
     if (!roster) fetch(ROSTER_URL, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { if (d) { roster = d; render(); } }).catch(function () {});
+  }
+  function loadPublic() {
+    fetch(STATE_URL, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d) { state = d; authed = false; render(); } }).catch(function () {});
   }
 
   /* ---------- render ---------- */
@@ -50,15 +63,16 @@
       pill((h.agentsTotal || 0) + ' agents', 'a'),
       pill((h.approvalsPending || 0) + ' to approve', (h.approvalsPending ? 'hot' : 'ok')),
       pill((h.leadsQueued || 0) + ' leads queued', 'a'),
-      pill('ARIA ' + (h.ariaPassPct != null ? h.ariaPassPct + '%' : '—'), 'ok'),
-      span('axis-upd', state ? 'updated ' + rel(state.generatedAt) : '')
+      pill('self-test ' + (h.classifierSelfTestPassPct != null ? h.classifierSelfTestPassPct + '%' : '—'), 'ok'),
+      span('axis-upd', (state ? 'updated ' + rel(state.generatedAt) : '') + (authed ? '' : ' · public view')),
     ].join(''));
 
+    var actCount = (state && state.activitySummary && state.activitySummary.recentCount) || 0;
     setHTML('axis-feed', (state && state.recentActivity && state.recentActivity.length
       ? state.recentActivity.map(function (e) {
         return '<div class="axis-feed-row"><span class="dot ' + dotc(e.status) + '"></span><div><div class="ft">' +
           esc(e.agent) + ' <span class="fs">' + rel(e.at) + '</span></div><div class="fb">' + esc(e.text) + '</div></div></div>';
-      }).join('') : '<div class="axis-empty">Awaiting agent activity…</div>'));
+      }).join('') : '<div class="axis-empty">' + (!authed && actCount ? actCount + ' recent events · <b>log in</b> for detail' : 'Awaiting agent activity…') + '</div>'));
 
     var ags = (state && state.agents) || (roster && roster.agents) || [];
     setHTML('axis-roster', ags.length ? ags.map(function (a) {
@@ -97,8 +111,9 @@
   function approvalsView() {
     var aps = (state && state.approvals) || [];
     var auto = (state && state.autoApprove) || {};
+    var pending = aps.length || (state && state.approvalsSummary && state.approvalsSummary.pending) || 0;
     return '<div class="lv-head"><span class="live-tag"><span class="dot live"></span>APPROVALS · instant</span>' +
-      '<span class="ap-count">' + aps.length + ' pending</span></div>' +
+      '<span class="ap-count">' + pending + ' pending</span></div>' +
       '<div class="ap-auto"><div class="ap-auto-h"><b>Auto-approve</b><span class="ap-toggle ' + (auto.enabled ? 'on' : '') + '">' +
       (auto.enabled ? 'ON' : 'OFF') + '</span></div>' +
       '<div class="ap-rails">' + ((auto.rails || []).map(function (r) { return '<span class="rail">' + esc(r) + '</span>'; }).join('') || '') + '</div>' +
@@ -107,7 +122,7 @@
         return '<div class="ap-row" data-apid="' + esc(a.id) + '"><div class="ap-t">' + esc(a.title) + '</div>' +
           '<div class="ap-btns"><button class="ap-ok" data-ap="approve" data-id="' + esc(a.id) + '">Approve</button>' +
           '<button class="ap-no" data-ap="reject" data-id="' + esc(a.id) + '">Reject</button></div></div>';
-      }).join('') : '<div class="axis-empty">Nothing pending. All clear.</div>');
+      }).join('') : '<div class="axis-empty">' + (!authed && pending ? pending + ' items pending review · <b>log in</b> to see &amp; approve them' : 'Nothing pending. All clear.') + '</div>');
   }
 
   /* ---------- chat ---------- */
