@@ -158,7 +158,9 @@ async function REGEN_1() {
 }
 
 async function TRUST_1() {
-  const need = ['trust/index.html','trust/ai-evals.html','trust/perf.html','trust/routing-accuracy.html'];
+  // HARD RULE 14 (2026-06-26): the inflated routing/ai-evals/perf/methodology sub-pages were removed
+  // (no real backing artifact). Only the honest /trust page must exist.
+  const need = ['trust/index.html'];
   const missing = exists404(need);
   log('TRUST-1', 'Trust pages exist', missing.length ? 'FAIL' : 'PASS',
       missing.length ? `MISSING: ${missing.join(', ')}` : 'All present', missing);

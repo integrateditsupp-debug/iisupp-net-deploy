@@ -447,6 +447,43 @@
   to = "/compliance/"
   status = 301
 
+# HARD RULE 14 honesty fix (2026-06-26): the inflated "Trust Center" sub-pages
+# (332K "customer-shaped" routing, 100% LLM-eval, p99 latency, quarterly pen-test, SOC2/ISO "in flight")
+# were removed — none was backed by a real, reproducible artifact. /trust now serves the honest
+# Trust & Security page; old sub-page URLs redirect there so external/cached links don't 404.
+[[redirects]]
+  from = "/trust/routing-accuracy"
+  to = "/trust"
+  status = 301
+[[redirects]]
+  from = "/trust/routing-accuracy.html"
+  to = "/trust"
+  status = 301
+[[redirects]]
+  from = "/trust/ai-evals"
+  to = "/trust"
+  status = 301
+[[redirects]]
+  from = "/trust/ai-evals.html"
+  to = "/trust"
+  status = 301
+[[redirects]]
+  from = "/trust/perf"
+  to = "/trust"
+  status = 301
+[[redirects]]
+  from = "/trust/perf.html"
+  to = "/trust"
+  status = 301
+[[redirects]]
+  from = "/trust/methodology"
+  to = "/trust"
+  status = 301
+[[redirects]]
+  from = "/trust/methodology.html"
+  to = "/trust"
+  status = 301
+
 
 # Rule 9 — lead-capture merges (2026-06-18)
 # /scorecard → merged conceptually into /health-check (same intent)

@@ -127,4 +127,121 @@ async function deliverDeepReply({ responseUrl, text, userName, baseUrl }) {
 
   const intent = classifyIntent(q);
   const hints = {
-    password: '*Password / sign-in:* Try aka.ms/sspr for self-serve reset if your org enabled it. Admin path: Entra 
+    password: '*Password / sign-in:* Try aka.ms/sspr for self-serve reset if your org enabled it. Admin path: Entra ID -> Users -> Password reset.',
+    mfa: '*MFA:* If you lost your device, admin must re-register MFA from Entra ID -> Users -> Authentication methods, then re-add via aka.ms/mfasetup.',
+    mail: '*Outlook / mail:* Try safe mode first. Ctrl+click Outlook -> Yes to safe mode. If it opens, disable COM add-ins one by one.',
+    vpn: '*VPN:* Disconnect -> reconnect. If it still hangs, restart the VPN client process. If connected-but-no-internet, test a different DNS resolver.',
+    wifi: '*Wi-Fi:* Forget the network -> reconnect. Restart the wireless adapter. If possible, switch between 2.4GHz and 5GHz to isolate band issues.',
+    teams: '*Teams:* Close Teams -> clear `%appdata%\\\\Microsoft\\\\Teams` contents -> relaunch. If web works but desktop fails, it is usually cache or profile state.',
+    onedrive: '*OneDrive / SharePoint:* Run `%localappdata%\\\\Microsoft\\\\OneDrive\\\\onedrive.exe /reset`, wait 2 minutes, then launch OneDrive again.',
+    printer: '*Printer:* Restart the print spooler, clear `C:\\\\Windows\\\\System32\\\\spool\\\\PRINTERS`, then remove/re-add the printer if jobs still stick.',
+    general: 'Your question spans multiple areas. Ask with a tighter symptom, or open the full ARIA chat for a longer diagnostic walk-through.'
+  };
+
+  const reply = [
+    'Hey ' + userName + ', here is the first move I would try:',
+    '',
+    hints[intent] || hints.general,
+    '',
+    'Want the longer path? <' + baseUrl + '/aria|Open ARIA chat>.'
+  ].join('\n');
+
+  return sendSlackResponse(responseUrl, reply);
+}
+
+function verifySlackRequest(event) {
+  const signingSecret = process.env.SLACK_SIGNING_SECRET;
+  if (!signingSecret) {
+    return { ok: true };
+  }
+
+  const headers = lowerCaseHeaders(event.headers || {});
+  const timestamp = headers['x-slack-request-timestamp'];
+  const signature = headers['x-slack-signature'];
+  if (!timestamp || !signature) {
+    return { ok: false, statusCode: 401, message: 'Slack signature missing.' };
+  }
+
+  const ageSeconds = Math.abs(Math.floor(Date.now() / 1000) - Number(timestamp));
+  if (!Number.isFinite(ageSeconds) || ageSeconds > 60 * 5) {
+    return { ok: false, statusCode: 401, message: 'Slack request timestamp expired.' };
+  }
+
+  const base = 'v0:' + timestamp + ':' + (event.body || '');
+  const expected = 'v0=' + crypto.createHmac('sha256', signingSecret).update(base).digest('hex');
+
+  try {
+    const left = Buffer.from(signature, 'utf8');
+    const right = Buffer.from(expected, 'utf8');
+    if (left.length !== right.length || !crypto.timingSafeEqual(left, right)) {
+      return { ok: false, statusCode: 401, message: 'Slack signature mismatch.' };
+    }
+  } catch (_error) {
+    return { ok: false, statusCode: 401, message: 'Slack signature invalid.' };
+  }
+
+  return { ok: true };
+}
+
+function inferBaseUrl(event) {
+  const headers = lowerCaseHeaders(event.headers || {});
+  const origin = headers.origin || headers.referer;
+  if (origin) {
+    try {
+      const url = new URL(origin);
+      return url.origin.replace(/\/$/, '');
+    } catch (_error) {
+      // fall through
+    }
+  }
+  return 'https://iisupp.net';
+}
+
+function lowerCaseHeaders(headers) {
+  const out = {};
+  Object.keys(headers || {}).forEach((key) => {
+    out[String(key).toLowerCase()] = headers[key];
+  });
+  return out;
+}
+
+function classifyIntent(q) {
+  if (/password|locked|sign[- ]in|log[- ]in/.test(q)) return 'password';
+  if (/mfa|2fa|authenticator/.test(q)) return 'mfa';
+  if (/outlook|email|mail|inbox/.test(q)) return 'mail';
+  if (/vpn|tunnel|globalprotect|anyconnect/.test(q)) return 'vpn';
+  if (/wifi|wi-fi|wireless|network|internet/.test(q)) return 'wifi';
+  if (/teams|microsoft teams/.test(q)) return 'teams';
+  if (/onedrive|sharepoint|sync/.test(q)) return 'onedrive';
+  if (/print|printer/.test(q)) return 'printer';
+  return 'general';
+}
+
+function safeNumber(value) {
+  return Math.round(Number(value || 0) * 100) / 100;
+}
+
+async function postJson(url, body) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body || {})
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || response.statusText || 'request failed');
+  }
+  return data;
+}
+
+async function sendSlackResponse(responseUrl, text) {
+  await fetch(responseUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      response_type: 'ephemeral',
+      replace_original: false,
+      text
+    })
+  });
+}

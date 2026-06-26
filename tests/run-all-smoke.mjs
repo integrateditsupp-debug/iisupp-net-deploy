@@ -10,7 +10,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const FN_DIR = path.join(__dirname, '..', 'netlify', 'functions');
@@ -69,7 +69,7 @@ for (const f of files) {
   }
 
   try {
-    const mod = await import(filePath);
+    const mod = await import(pathToFileURL(filePath).href);
     const handler = mod.handler || mod.default;
     if (!handler) {
       results.push({ fn: name, status: 'SKIP', reason: 'no .handler export' });
