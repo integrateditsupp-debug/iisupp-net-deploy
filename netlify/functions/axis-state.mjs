@@ -7,8 +7,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const FULL_FILE = path.join(__dirname, '_axis-state-full.json');
+const FN_DIR = path.dirname(fileURLToPath(import.meta.url)); // NOT "__dirname" — esbuild injects its own shim
+const FULL_FILE = path.join(FN_DIR, '_axis-state-full.json');
 
 const cors = {
   'Access-Control-Allow-Origin': '*',
