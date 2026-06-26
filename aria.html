@@ -4449,46 +4449,11 @@ function renderArticle(insight){
 }
 
 function renderAutoResolution(intent){
-  const kb = KB[intent] || KB.default;
-  const auditHTML = `<div class="audit-mini">
-    <div class="audit-mini-head"><span>AUDIT TRAIL · LIVE</span><span>${kb.audit.length} ACTIONS</span></div>
-    <div id="auditStream-${Date.now()}"></div>
-  </div>`;
-  const sumHTML = `<div class="summary-mini">
-    <div class="sum-cell"><div class="lbl">TIME TO FIX</div><div class="val">${kb.summary.time}</div></div>
-    <div class="sum-cell"><div class="lbl">ACTIONS</div><div class="val">${kb.summary.actions}</div></div>
-    <div class="sum-cell"><div class="lbl">DOWNTIME SAVED</div><div class="val">≈ ${kb.summary.down} min</div></div>
-    <div class="sum-cell"><div class="lbl">TICKET COST</div><div class="val">${kb.summary.cost}</div></div>
-  </div>`;
-
-  const wrap = appendMessage(ariaBubble('Working on it now…','I will keep you posted as I make changes.', `<div class="inline-resolution">${auditHTML}</div>`));
-  // stream audit rows
-  const stream = wrap.querySelector('[id^="auditStream-"]');
-  kb.audit.forEach((row, i) => {
-    setTimeout(() => {
-      const div = document.createElement('div');
-      div.className = 'audit-row fade-in';
-      div.innerHTML = `<span class="ts">${row[0]}</span><span class="lvl ${row[1]}">${row[1].toUpperCase()}</span><span class="msg">${row[2]}</span>`;
-      stream.appendChild(div);
-      const body = document.getElementById('chatBody');
-      body.scrollTo({ top: body.scrollHeight, behavior:'smooth' });
-    }, 400 + i * 450);
-  });
-
-  // final success card
-  const totalDelay = 400 + kb.audit.length * 450 + 400;
-  setTimeout(() => {
-    const success = appendMessage(ariaBubble('Done.', kbSuccessLine(intent),
-      `<div class="inline-resolution success">
-        <div class="resolution-head">
-          <div class="resolution-headline">${kbAutoHeadline(intent)}</div>
-          <div class="resolved-pill"><span class="dot"></span><span>RESOLVED · ${kb.autoTime}</span></div>
-        </div>
-        ${sumHTML}
-        ${kb.confirmCard}
-      </div>`));
-    speak(kbSuccessLine(intent));
-  }, totalDelay);
+  // HARD RULE 14 (2026-06-26): the website NEVER runs or simulates a fix. "Resolve it for me" hands the
+  // issue to the ARIA Sentinel desktop app via the aria-sentinel:// deep-link — the app runs the fix on the
+  // user's OWN machine behind its gates (approve + 10s countdown + restore point + one-click stop). If the
+  // app isn't installed, the modal offers Download. No fabricated audit trail, no fake "resolved".
+  openResolveModal(intent, null);
 }
 
 function kbAutoHeadline(intent){
@@ -5134,7 +5099,8 @@ function handleUserInput(text){
     // continuation only if a topic is currently active — typo-tolerant
     if (state.lastIntent && fuzzyCmd(q, ['yes','yeah','yep','yup','do it','please','sure','go','ok','okay','resolve','fix it','go ahead'])){
       appendMessage(youBubble(text));
-      setTimeout(() => renderAutoResolution(state.lastIntent), 200);
+      // typed confirmation ("do it" / "resolve" / "go ahead") → hand off to the gated desktop app, not a fake fix.
+      setTimeout(() => openResolveModal(state.lastIntent, null), 200);
       return;
     }
     if (state.lastIntent && /^(walk\s*(me\s*)?through(\s*it)?|guide\s*me|show\s*me\s*(how|the\s*steps?|step\s*by\s*step)?|step\s*(through|by\s*step)|guided?|narrate)\s*(it|please)?\s*$/.test(q)){
