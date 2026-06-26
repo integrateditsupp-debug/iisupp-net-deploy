@@ -2191,3 +2191,79 @@ init().catch((error) => {
     </main>
   `;
 });
+
+/* ── First-run profile gate + Edit profile (spec dev-docs/sentinel-profile-and-session-email-spec.md A) ──
+   MANDATORY modal: First/Last/Company/Email/Phone — same fields ARIA web asks. Blocks the app until saved
+   (profile.json in the app data dir, LOCAL-ONLY, re-read each launch). "Edit profile" reopens it. PII leaves
+   the device ONLY to address the user's own session-end email. */
+(function () {
+  "use strict";
+  if (typeof window === "undefined" || !window.sentinel || !window.sentinel.getProfile) return;
+  var FIELDS = [
+    ["firstName", "First name", "text", "given-name"],
+    ["lastName", "Last name", "text", "family-name"],
+    ["company", "Company", "text", "organization"],
+    ["email", "Email", "email", "email"],
+    ["phone", "Phone", "tel", "tel"]
+  ];
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
+
+  function buildGate(prefill, mandatory) {
+    var old = document.getElementById("aria-profile-gate"); if (old) old.remove();
+    prefill = prefill || {};
+    var ov = document.createElement("div");
+    ov.id = "aria-profile-gate";
+    ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true");
+    ov.style.cssText = "position:fixed;inset:0;z-index:2147483600;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(6,8,11,.86);backdrop-filter:blur(7px);font-family:Inter,system-ui,sans-serif";
+    var rows = FIELDS.map(function (f) {
+      return '<label style="display:block;margin:0 0 11px">'
+        + '<span style="display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#9fb0bd;margin-bottom:5px">' + esc(f[1]) + ' <b style="color:#cda85c">*</b></span>'
+        + '<input data-pf="' + f[0] + '" type="' + f[2] + '" autocomplete="' + f[3] + '" value="' + esc(prefill[f[0]] || "") + '" '
+        + 'style="width:100%;box-sizing:border-box;background:#0c1117;border:1px solid #233140;border-radius:9px;color:#eaf2f7;font-size:14px;padding:11px 12px;font-family:inherit" /></label>';
+    }).join("");
+    ov.innerHTML =
+      '<div style="width:100%;max-width:440px;background:linear-gradient(180deg,#11161c,#0a0d11);border:1px solid rgba(205,168,92,.4);border-radius:16px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.6)">'
+      + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">'
+      + '<span style="width:30px;height:30px;border-radius:50%;flex:0 0 auto;background:radial-gradient(circle at 35% 30%,#f1dca7,#c5a059 60%,#6b521f);box-shadow:0 0 14px rgba(197,160,89,.5)"></span>'
+      + '<strong style="font-family:Cinzel,Georgia,serif;letter-spacing:.14em;color:#f1dca7;font-size:14px;text-transform:uppercase">' + (mandatory ? "Welcome to ARIA Sentinel" : "Edit your profile") + '</strong></div>'
+      + '<p style="color:rgba(255,255,255,.6);font-size:12.5px;line-height:1.55;margin:0 0 16px">A few details so ARIA can send your session summary + SLA. <b style="color:#cda85c">Stored only on this device</b> — shared only to email you your own report.</p>'
+      + rows
+      + '<p data-pf-err style="min-height:15px;color:#fb7185;font-size:11.5px;margin:2px 0 10px"></p>'
+      + '<div style="display:flex;gap:9px;align-items:center">'
+      + '<button data-pf-save style="flex:1;border:0;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#1a1410;font-weight:700;font-size:13px;border-radius:10px;padding:12px;cursor:pointer;font-family:inherit">' + (mandatory ? "Save & continue" : "Save") + '</button>'
+      + (mandatory ? "" : '<button data-pf-cancel style="background:none;border:1px solid #2a3a47;color:#9fb0bd;border-radius:10px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:13px">Cancel</button>')
+      + '</div></div>';
+    document.body.appendChild(ov);
+
+    function read() { var o = {}; FIELDS.forEach(function (f) { var el = ov.querySelector('[data-pf="' + f[0] + '"]'); o[f[0]] = el ? el.value.trim() : ""; }); return o; }
+    function err(m) { var e = ov.querySelector("[data-pf-err]"); if (e) e.textContent = m || ""; }
+    function clientValid(o) {
+      for (var i = 0; i < FIELDS.length; i++) { var k = FIELDS[i][0]; if (!o[k]) { return FIELDS[i][1] + " is required"; } }
+      if (!EMAIL_RE.test(o.email)) return "Enter a valid email";
+      if ((o.phone.match(/\d/g) || []).length < 7) return "Enter a valid phone number";
+      return null;
+    }
+    ov.querySelector("[data-pf-save]").addEventListener("click", function () {
+      var o = read(); var ce = clientValid(o); if (ce) { err(ce); return; }
+      err(""); var btn = this; btn.disabled = true; btn.textContent = "Saving…";
+      Promise.resolve(window.sentinel.saveProfile(o)).then(function (res) {
+        if (res && res.ok) { ov.remove(); }
+        else { btn.disabled = false; btn.textContent = "Save"; err((res && res.errors && Object.values(res.errors)[0]) || "Could not save — check the fields."); }
+      }).catch(function () { btn.disabled = false; btn.textContent = "Save"; err("Could not save."); });
+    });
+    var cancel = ov.querySelector("[data-pf-cancel]"); if (cancel) cancel.addEventListener("click", function () { ov.remove(); });
+    var first = ov.querySelector("[data-pf]"); if (first) first.focus();
+  }
+
+  // expose for a Settings "Edit profile" control
+  window.ariaEditProfile = function () { Promise.resolve(window.sentinel.getProfile()).then(function (p) { buildGate(p || {}, false); }); };
+
+  // show the MANDATORY gate on launch when no valid profile is saved
+  function init() {
+    Promise.resolve(window.sentinel.getState()).then(function (st) {
+      if (st && st.profileRequired) buildGate({}, true);
+    }).catch(function () {});
+  }
+  if (document.readyState !== "loading") init(); else document.addEventListener("DOMContentLoaded", init);
+})();

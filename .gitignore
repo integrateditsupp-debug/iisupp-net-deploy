@@ -59,3 +59,7 @@ tests/last-10k-report.json
 tests/last-mega-report.json
 tests/last-run-report.json
 tests/suggested-fixes.md
+node_modules/
+_*.mjs
+_*.js
+_*.html

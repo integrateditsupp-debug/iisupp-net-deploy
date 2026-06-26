@@ -225,6 +225,8 @@ import "./omni-channel.test.mjs";
 import "./kb-matcher-precision.test.mjs";
 // TASK 3/4 — "Resolve it for me" wiring (recipe card + chat chip → supervisedFix confirmed; merged from the resolve branch).
 import "./resolve-for-me.test.mjs";
+// Profile + session-end email — first-run profile gate, persistence, REAL SLA, content-safe payload, escalated≠fixed.
+import "./profile-session.test.mjs";
 
 // G-METRICS — FAIL LOUD: no test file may be silently skipped (no fake "green"). Every tests/*.test.mjs
 // must be imported above. An un-imported NEW test throws here. Exactly one pre-existing test is quarantined

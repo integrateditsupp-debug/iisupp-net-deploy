@@ -71,6 +71,21 @@ export function isLicensePathAllowed(pathname) {
   return LICENSE_OUTBOUND_PATHS.some((a) => p === a);
 }
 
+// 2026-06-26 — the ONLY iisupp.net path the end-of-session report may reach. Additive, like the update /
+// brain / license classes; the 6-host telemetry verifier (CAPTURE_HOST_ALLOWLIST) is UNCHANGED. The POST is
+// content-SAFE (scrubbed transcript + REAL metrics + the user's OWN contact for delivery) and fires ONLY at
+// session end, never mid-session. 🔒 R11 — the private folder + absolute paths are stripped before send.
+// Growing this list requires an explicit test (see profile-session.test.mjs).
+export const SESSION_OUTBOUND_PATHS = [
+  "/.netlify/functions/sentinel-session-report"
+];
+
+// True only for the explicitly-allowed session-report path — every other iisupp.net path returns false.
+export function isSessionPathAllowed(pathname) {
+  const p = String(pathname || "");
+  return SESSION_OUTBOUND_PATHS.some((a) => p === a);
+}
+
 export function hostAllowed(host) {
   const h = String(host || "").toLowerCase().replace(/:\d+$/, "");
   if (!h) return false;

@@ -40,6 +40,12 @@ contextBridge.exposeInMainWorld("sentinel", {
   completeOnboarding: () => ipcRenderer.invoke("sentinel:complete-onboarding"),
   completeSetup: (prefs) => ipcRenderer.invoke("setup:complete", prefs), // RUN 33-E — first-launch wizard
   reopenSetup: () => ipcRenderer.invoke("setup:reopen"),
+  // First-run profile (local-only PII) + session-end email — spec dev-docs/sentinel-profile-and-session-email-spec.md
+  getProfile: () => ipcRenderer.invoke("profile:get"),
+  saveProfile: (input) => ipcRenderer.invoke("profile:save", input),
+  startSession: (issue, intent) => ipcRenderer.invoke("session:start", issue, intent),
+  recordSessionTurn: (role, text) => ipcRenderer.invoke("session:turn", role, text),
+  endSession: (outcome) => ipcRenderer.invoke("session:end", outcome), // builds + emails the report at END only
   runDiagnostic: () => ipcRenderer.invoke("sentinel:run-diagnostic"),
   privacyCapture: (windowMs) => ipcRenderer.invoke("sentinel:privacy-capture", windowMs),
   exportEvidence: () => ipcRenderer.invoke("sentinel:export-evidence"),

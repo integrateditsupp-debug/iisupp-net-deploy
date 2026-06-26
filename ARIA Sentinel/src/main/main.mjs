@@ -84,6 +84,9 @@ import { askAria } from "../shared/aria-brain-client.mjs";
 import { loadKbPack, localKbAnswer } from "../shared/aria-local-kb.mjs"; // RUN 30-B — offline cross-platform KB
 import { parseSystemStatus, parseKbStats, parseSessions, parseHeartbeats } from "../shared/aria-surfaces.mjs"; // RUN 33 — ARIA tab data
 import { defaultAppConfig, shouldShowSetup, completeSetup, reopenSetup } from "../shared/app-config.mjs"; // RUN 33-E — setup wizard
+// First-run profile (local-only PII) + session-end email — spec dev-docs/sentinel-profile-and-session-email-spec.md
+import { loadProfile, saveProfile as persistProfile, profileGateRequired } from "../shared/profile.mjs";
+import { createSession, recordTurn, endSession, buildSessionReport } from "../shared/session.mjs";
 import { anchorTarget, tickAnchored } from "../shared/globe-anchor.mjs";
 import { dueGreeting, jitteredPeriod } from "../shared/globe-greetings.mjs";
 import { sealAudit, verifyAudit } from "../shared/audit-integrity.mjs";
@@ -1981,7 +1984,8 @@ function getState() {
     knowledgeSources: store.get("knowledgeSources"),
     restorePoints: (store.get("restorePoints") || []).slice(0, 10),
     deletePrefs: readDeletePrefs(),
-    firstRunComplete: Boolean(store.get("firstRunComplete"))
+    firstRunComplete: Boolean(store.get("firstRunComplete")),
+    profileRequired: profileGateRequired(fs, path, app.getPath("userData")) // mandatory first-run profile gate
   };
 }
 
@@ -2955,6 +2959,43 @@ function readJson(req) {
     });
   });
 }
+
+// ── First-run profile (local-only) + session-end report ───────────────────────────────────────────────
+// Spec: dev-docs/sentinel-profile-and-session-email-spec.md. The report POSTs to the single allow-listed path
+// (SESSION_OUTBOUND_PATHS in network-capture.mjs) ONLY at session end; two emails (company + user) fire
+// server-side. Outcome is honest (escalated never reads as fixed) and the payload is content-blind.
+const SESSION_REPORT_ENDPOINT = "https://iisupp.net/.netlify/functions/sentinel-session-report";
+const profileDir = () => app.getPath("userData");
+let currentSession = null;
+ipcMain.handle("profile:get", () => loadProfile(fs, path, profileDir()));
+ipcMain.handle("profile:save", (_event, input) => persistProfile(fs, path, profileDir(), input));
+ipcMain.handle("session:start", (_event, issue, intent) => {
+  currentSession = createSession({ issue, intent, startedAt: Date.now() });
+  return { id: currentSession.id };
+});
+ipcMain.handle("session:turn", (_event, role, text) => {
+  if (currentSession) recordTurn(currentSession, role, text, Date.now());
+  return { ok: Boolean(currentSession) };
+});
+ipcMain.handle("session:end", async (_event, outcome) => {
+  if (!currentSession) return { ok: false, reason: "no active session" };
+  endSession(currentSession, outcome, Date.now());                  // REAL measured end timestamp
+  const profile = loadProfile(fs, path, profileDir());
+  if (!profile) { currentSession = null; return { ok: false, reason: "no profile — cannot address the email" }; }
+  let report;
+  try { report = buildSessionReport(currentSession, profile); }     // throws if not ended — never mid-session
+  catch (e) { currentSession = null; return { ok: false, reason: e.message }; }
+  let sent = false;
+  try {
+    const r = await fetch(SESSION_REPORT_ENDPOINT, {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(report)
+    });
+    sent = r.ok || r.status === 207;
+  } catch { sent = false; }
+  const finalOutcome = report.outcome;
+  currentSession = null;
+  return { ok: true, sent, outcome: finalOutcome };
+});
 
 ipcMain.handle("sentinel:get-state", () => getState());
 ipcMain.handle("sentinel:set-mode", (_event, mode, optIn) => {
