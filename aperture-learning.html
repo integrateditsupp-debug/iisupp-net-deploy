@@ -591,6 +591,27 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
     </div>
   </div>
 
+  <!-- ───── INFINITY WISDOM — autonomous branching agent engine (BEHIND the aperture login) ───── -->
+  <section id="infinity-wisdom" class="panel" style="grid-column:1/-1;animation-delay:.2s">
+    <div class="panel-h">
+      <h2><span class="iw-glyph">&#8734;</span> Infinity Wisdom <span class="hint">autonomous branching agent engine</span></h2>
+      <span class="chip" id="iw-status">connecting…</span>
+    </div>
+    <div class="iw-tiles">
+      <div class="iw-tile"><div class="v" id="iw-agents">—</div><div class="k">Agents active</div></div>
+      <div class="iw-tile"><div class="v" id="iw-tasks">—</div><div class="k">Tasks reviewed</div></div>
+      <div class="iw-tile"><div class="v" id="iw-branches">—</div><div class="k">Branches spawned</div></div>
+      <div class="iw-tile"><div class="v" id="iw-newagents">—</div><div class="k">New agents</div></div>
+      <div class="iw-tile"><div class="v" id="iw-approvals">—</div><div class="k">Pending approval</div></div>
+    </div>
+    <div class="iw-toolbar">
+      <button id="iw-stop" class="iw-stop-btn" type="button" onclick="iwStop()">&#9632;&nbsp; STOP the workflow</button>
+      <span class="iw-foot">Controlled infinity — capped per cycle, safe-only, risky&nbsp;&rarr;&nbsp;approvals. <span id="iw-updated">—</span></span>
+    </div>
+    <div class="iw-eyebrow">Live branching tree &middot; agents &rarr; tasks &rarr; completions &rarr; new branches</div>
+    <div id="iw-tree" class="iw-tree"><div class="iw-empty">Connecting to the engine…</div></div>
+  </section>
+
   <div class="footer">
     <span>ARIA Command Center · IIS · <span id="build-id">v2</span></span>
     <span><a href="/aperture" target="_blank" rel="noopener">Aperture</a> · <a href="https://iisupp.net" target="_blank" rel="noopener">iisupp.net</a> · refresh 4s</span>
@@ -685,6 +706,107 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       if (bar) bar.style.width = Math.min(100, (d.coverage_pct_of_target || 0)) + '%';
     })
     .catch(function(){ /* silent */ });
+})();
+</script>
+
+<!-- ───── INFINITY WISDOM — styles + live data (additive; safe to remove) ───── -->
+<style id="infinity-wisdom-style">
+  #infinity-wisdom .iw-glyph{color:#f1dca7;font-size:20px;text-shadow:0 0 16px rgba(241,220,167,.5);margin-right:2px}
+  #infinity-wisdom .iw-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:14px 0 4px}
+  @media(max-width:720px){#infinity-wisdom .iw-tiles{grid-template-columns:repeat(2,1fr)}}
+  #infinity-wisdom .iw-tile{background:linear-gradient(165deg,rgba(197,160,89,.07),rgba(34,225,255,.04));border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+  #infinity-wisdom .iw-tile .v{font-size:26px;font-weight:700;letter-spacing:-.02em;color:#fff;font-variant-numeric:tabular-nums;line-height:1}
+  #infinity-wisdom .iw-tile .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt-3);margin-top:7px}
+  #infinity-wisdom .iw-toolbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:16px 0 6px}
+  #infinity-wisdom .iw-stop-btn{background:linear-gradient(135deg,#d97560,#b3372a);border:1px solid rgba(217,117,96,.6);color:#fff;font-weight:700;letter-spacing:.04em;font-size:12.5px;padding:11px 20px;border-radius:10px;cursor:pointer;transition:transform .14s,box-shadow .25s,filter .2s;box-shadow:0 8px 24px -10px rgba(217,117,96,.7)}
+  #infinity-wisdom .iw-stop-btn:hover{transform:translateY(-1px);filter:brightness(1.08);box-shadow:0 14px 32px -10px rgba(217,117,96,.8)}
+  #infinity-wisdom .iw-stop-btn:disabled{filter:grayscale(.7) brightness(.7);cursor:default;transform:none;box-shadow:none}
+  #infinity-wisdom .iw-foot{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);letter-spacing:.02em}
+  #infinity-wisdom .iw-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);margin:14px 0 10px}
+  #infinity-wisdom .iw-tree{max-height:420px;overflow:auto;padding:4px 2px}
+  #infinity-wisdom .iw-empty{font-family:var(--mono);font-size:12px;color:var(--txt-3);padding:18px;text-align:center}
+  #infinity-wisdom .iw-node{display:flex;align-items:center;gap:10px;padding:7px 0;position:relative;animation:iwIn .5s var(--ease,cubic-bezier(.2,.7,.2,1)) both}
+  @keyframes iwIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+  #infinity-wisdom .iw-branch{flex:none;width:18px;height:1px;background:linear-gradient(90deg,transparent,rgba(34,225,255,.55))}
+  #infinity-wisdom .iw-dot{flex:none;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle,#f1dca7,#c5a059);box-shadow:0 0 10px rgba(197,160,89,.55)}
+  #infinity-wisdom .iw-node[data-kind="new-agent"] .iw-dot{background:radial-gradient(circle,#7fe7ff,#22e1ff);box-shadow:0 0 12px rgba(34,225,255,.7)}
+  #infinity-wisdom .iw-ttl{font-size:13px;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #infinity-wisdom .iw-tag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-3);border:1px solid var(--line);border-radius:5px;padding:2px 6px;flex:none}
+  #infinity-wisdom .iw-agent{font-family:var(--mono);font-size:10px;color:#c5a059;flex:none}
+  #infinity-wisdom .chip.iw-stopped{background:rgba(217,117,96,.16);color:#ffb4a6;border-color:rgba(217,117,96,.5)}
+  #infinity-wisdom .chip.iw-running{background:rgba(109,186,133,.16);color:#9fe6b8;border-color:rgba(109,186,133,.45)}
+</style>
+<script>
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function tok(){ try{ return localStorage.getItem('aperture_jwt')||''; }catch(e){ return ''; } }
+  function n(v){ try{ return Number(v||0).toLocaleString(); }catch(e){ return '0'; } }
+  function setCounts(c){
+    if($('iw-agents'))$('iw-agents').textContent=n(c.agentsActive);
+    if($('iw-tasks'))$('iw-tasks').textContent=n(c.tasksDone);
+    if($('iw-branches'))$('iw-branches').textContent=n(c.branchesSpawned);
+    if($('iw-newagents'))$('iw-newagents').textContent=n(c.newAgentsTotal);
+    if($('iw-approvals'))$('iw-approvals').textContent=n(c.approvalsPending);
+  }
+  function setStatus(stopped){
+    var el=$('iw-status'); if(!el)return;
+    el.textContent = stopped?'STOPPED':'RUNNING';
+    el.className='chip '+(stopped?'iw-stopped':'iw-running');
+    var b=$('iw-stop'); if(b){ b.disabled=!!stopped; b.textContent= stopped?'■  STOPPED':'■  STOP the workflow'; }
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function renderTree(nodes){
+    var box=$('iw-tree'); if(!box)return;
+    if(!nodes||!nodes.length){ box.innerHTML='<div class="iw-empty">No branches yet — the engine enqueues the next best paths as tasks complete.</div>'; return; }
+    var html='';
+    nodes.slice(0,80).forEach(function(node,i){
+      var depth=Math.max(0,Math.min(6,Number(node.depth)||0));
+      var indent=depth*22;
+      html+='<div class="iw-node" data-kind="'+esc(node.kind)+'" style="margin-left:'+indent+'px;animation-delay:'+(i*0.012)+'s">'
+        +(depth>0?'<span class="iw-branch"></span>':'')
+        +'<span class="iw-dot"></span>'
+        +'<span class="iw-tag">'+esc(node.kind||'task')+'</span>'
+        +'<span class="iw-ttl">'+esc(node.title||node.id)+'</span>'
+        +(node.agent?'<span class="iw-agent">@'+esc(node.agent)+'</span>':'')
+        +'</div>';
+    });
+    box.innerHTML=html;
+  }
+  function fallbackPublic(){
+    // Unauthenticated / engine-not-synced: show the counts-only public asset (no tree, no names).
+    fetch('/infinity-wisdom-public.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(!d)return;
+      setCounts(d); setStatus(d.stopped===true);
+      if($('iw-updated'))$('iw-updated').textContent = d.updatedAt? ('updated '+new Date(d.updatedAt).toLocaleTimeString()) : '';
+      var box=$('iw-tree'); if(box&&!box.dataset.full)box.innerHTML='<div class="iw-empty">Sign in for the full live branching tree. (Public view: counts only.)</div>';
+    }).catch(function(){});
+  }
+  function load(){
+    var t=tok();
+    if(!t){ fallbackPublic(); return; }
+    fetch('/.netlify/functions/infinity-wisdom-state',{headers:{'Authorization':'Bearer '+t},cache:'no-store'})
+      .then(function(r){ if(r.status===401){ throw new Error('unauth'); } return r.ok?r.json():null; })
+      .then(function(j){
+        if(!j||!j.state){ fallbackPublic(); return; }
+        var s=j.state;
+        setCounts(s.counts||{}); setStatus(s.stopped===true);
+        if($('iw-updated'))$('iw-updated').textContent = s.updatedAt? ('updated '+new Date(s.updatedAt).toLocaleTimeString()) : '';
+        var box=$('iw-tree'); if(box)box.dataset.full='1';
+        renderTree(s.nodes||[]);
+      })
+      .catch(function(){ fallbackPublic(); });
+  }
+  window.iwStop=function(){
+    var t=tok();
+    if(!t){ alert('Sign in to control the workflow.'); return; }
+    if(!confirm('STOP the Infinity Wisdom workflow? All branching halts immediately. (You can resume later.)'))return;
+    fetch('/.netlify/functions/infinity-wisdom-state',{method:'POST',headers:{'Authorization':'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify({action:'stop'})})
+      .then(function(r){return r.ok?r.json():null;}).then(function(j){ if(j&&j.stopped){ setStatus(true); } else { alert('STOP request was not accepted.'); } })
+      .catch(function(){ alert('Network error sending STOP.'); });
+  };
+  // Only poll once the dashboard is visible (post-login). Cheap + silent.
+  function tick(){ var app=$('app'); if(app&&app.style.display!=='none')load(); }
+  tick(); setInterval(tick, 6000);
 })();
 </script>
 
