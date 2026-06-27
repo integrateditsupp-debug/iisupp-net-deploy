@@ -54,6 +54,15 @@ const CFG = {
   dryRun: process.env.SENIOR_DIRECTOR_DRY_RUN === '1'
 };
 
+// FIX `spawn claude ENOENT`: openclaw spawns the `claude` CLI but loses the npm-global bin from PATH. Put it
+// back (configurable via CLAUDE_CLI_DIR) so child processes resolve `claude`. Log once, not every tick.
+const claudeBinDir = process.env.CLAUDE_CLI_DIR
+  || (process.platform === 'win32' && process.env.APPDATA ? path.join(process.env.APPDATA, 'npm') : null);
+if (claudeBinDir && !String(process.env.PATH || '').split(path.delimiter).includes(claudeBinDir)) {
+  process.env.PATH = `${claudeBinDir}${path.delimiter}${process.env.PATH || ''}`;
+}
+let warnedClaudeMissing = false; // so the spawn-missing notice logs ONCE per process, never per tick
+
 const ALLOWED_WITHOUT_APPROVAL = [
   'Fix bugs, add features, and improve the IIS/ARIA website as reversible work while preserving the current look, feel, brand, colors, typography, and layout language.',
   'Use local browser, Chrome, and desktop automation/testing when Codex, Claude Code, or local agents need it to verify no-cost website or ARIA work.',
@@ -447,8 +456,14 @@ async function openclawReadiness() {
     cliOnPath: true,
     modelStatusOk: models.code === 0,
     authExpired: /expired/i.test(combined),
-    claudeSpawnMissing: /spawn claude ENOENT/i.test(combined),
-    attention: /expired/i.test(combined) ? 'Claude/OpenClaw OAuth token is expired; deterministic Director board continues.' : null
+    claudeSpawnMissing: (() => {
+      const missing = /spawn claude ENOENT/i.test(combined);
+      if (missing && !warnedClaudeMissing) { warnedClaudeMissing = true; console.warn(`[worker] claude CLI not found on PATH for openclaw (set CLAUDE_CLI_DIR). Logged once; deterministic board continues.`); }
+      return missing;
+    })(),
+    attention: /expired/i.test(combined)
+      ? 'Claude/OpenClaw OAuth token is expired; deterministic Director board continues.'
+      : (/spawn claude ENOENT/i.test(combined) ? 'claude CLI not on PATH for openclaw (set CLAUDE_CLI_DIR); deterministic board continues.' : null)
   };
 }
 
@@ -751,8 +766,8 @@ function formatLeadBullets(summary) {
 function buildOperatingBoard({ hb, repo, logSummary, leadSummary, recentNotes, growthNotes, mcpReport, cleanupBoard, retirementPlan, careReport }) {
   const changed = repo.status ? repo.status.split('\n').filter(Boolean).length : 0;
   const approvalItems = [
-    'Direct-contact first-send queue: `WD Numeric Corporate Services`, `Tangs Accounting Services`, and `Global Health Physiotherapy Clinic` are already approved-to-transmit. Next live action is to send them when an email/contact surface is available.',
-    'Jason Brown / Hines follow-up: approved for Friday, 2026-06-12 only if Jason has not replied first. Use `senior-director-state/hines-jason-brown-friday-send-checklist-2026-06-11.md`.',
+    'Direct-contact follow-up queue: `WD Numeric Corporate Services`, `Tangs Accounting Services`, and `Global Health Physiotherapy Clinic` were already sent on 2026-06-11 through public website contact forms. The next live action is for Ahmad to send or hold the prepared follow-up drafts now.',
+    'Jason Brown / Hines follow-up: if Jason has not replied, Ahmad can send or hold the approved short follow-up now. Use `senior-director-state/hines-jason-brown-friday-send-checklist-2026-06-11.md`.',
     APPROVED_PUBLISH_SUMMARY,
     ...LOCAL_ONLY_STAGED_REVIEW_FILES.map(approvalTextForReview),
     'Workspace cleanup posture: summary-only cleanup pass is approved. Destructive cleanup remains blocked.',
