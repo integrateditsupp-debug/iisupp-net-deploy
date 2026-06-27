@@ -227,13 +227,26 @@ for (const [industry, def] of Object.entries(INDUSTRY_SCENARIOS)) {
 
 // ============ TIER 3: HARDWARE VENDOR SCENARIOS ============
 const HARDWARE_VENDORS = ['dell','hp','lenovo','apple','microsoft surface','asus','acer','razer','framework','lg','samsung','panasonic','toshiba','msi','cyberpower','origin','alienware'];
-const HARDWARE_PROBLEMS = ['wont turn on','wont charge','battery dying','fan loud','screen black','screen flicker','keyboard not working','touchpad dead','speakers dead','overheating','hard drive crash','ssd failed','bios stuck','no display','random shutdown','blue screen','frozen','wifi card dead','bluetooth dead','webcam dead','docking station issue','thunderbolt port broken','usb-c not working','hdmi port broken'];
+// Each hardware-vendor problem now carries its TRUE intent (kb:hardware exists as of 2026-06-27).
+// These were labelled 'default' only because there was no hardware route yet; a human IT tech routes
+// a physical fault to kb:hardware, but a more-specific KB owns some (BSOD→windows, radio→bluetooth,
+// camera→webcam, port→usb, link→wifi, thermal→performance). Honest relabel, not a metric tweak.
+const HARDWARE_PROBLEM_INTENT = {
+  'wont turn on':'kb:hardware','wont charge':'kb:hardware','battery dying':'kb:hardware','fan loud':'kb:hardware',
+  'screen black':'kb:hardware','screen flicker':'kb:hardware','keyboard not working':'kb:hardware','touchpad dead':'kb:hardware',
+  'speakers dead':'kb:hardware','overheating':'kb:performance','hard drive crash':'kb:hardware','ssd failed':'kb:hardware',
+  'bios stuck':'kb:hardware','no display':'kb:hardware','random shutdown':'kb:hardware','blue screen':'kb:windows',
+  'frozen':'default','wifi card dead':'wifi','bluetooth dead':'kb:bluetooth','webcam dead':'kb:webcam',
+  'docking station issue':'kb:hardware','thunderbolt port broken':'kb:usb','usb-c not working':'kb:usb','hdmi port broken':'kb:hardware'
+};
+const HARDWARE_PROBLEMS = Object.keys(HARDWARE_PROBLEM_INTENT);
 
 HARDWARE_VENDORS.forEach(vendor => {
   HARDWARE_PROBLEMS.forEach(prob => {
-    push(vendor + ' laptop ' + prob, 'default');
-    push(vendor + ' desktop ' + prob, 'default');
-    PERSONAS.slice(0, 3).forEach(p => p.tag && push(p.tag + vendor + ' laptop ' + prob, 'default'));
+    const intent = HARDWARE_PROBLEM_INTENT[prob];
+    push(vendor + ' laptop ' + prob, intent);
+    push(vendor + ' desktop ' + prob, intent);
+    PERSONAS.slice(0, 3).forEach(p => p.tag && push(p.tag + vendor + ' laptop ' + prob, intent));
   });
 });
 

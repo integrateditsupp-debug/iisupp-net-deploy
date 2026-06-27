@@ -235,6 +235,8 @@ import "./resolve-for-me.test.mjs";
 import "./profile-session.test.mjs";
 // STAGE 7 — prove-before-prod gate: preflight reject (never reaches prod) · apply+verify · induced-damage rollback · honest logic/sandbox labels.
 import "./sandbox-validate.test.mjs";
+// STAGE 7 × Tier-0 — validate a REAL recipe (Windows-Update) through the gate before auto-apply; unbound rejected; failure rolled back.
+import "./stage7-tier0.test.mjs";
 
 // G-METRICS — FAIL LOUD: no test file may be silently skipped (no fake "green"). Every tests/*.test.mjs
 // must be imported above. An un-imported NEW test throws here. Exactly one pre-existing test is quarantined

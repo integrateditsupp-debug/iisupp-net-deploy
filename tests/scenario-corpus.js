@@ -284,13 +284,33 @@ const corpus = [];
   'are you human','are you ai','who are you','tell me about yourself'
 ].forEach(q => corpus.push({ q, expect: 'default' }));
 
-// === UNCATEGORIZED / DEFAULT === (60)
+// === NEW ROUTES + B5–B9 REGRESSION (2026-06-27) — lock the gap-close in the base corpus ===
 [
-  'my screen is flickering','monitor goes black','dual monitor issue',
-  'docking station not working','laptop won\'t charge','battery dying fast',
+  ['set up my rsa token','kb:rsa'],['rsa securid not working','kb:rsa'],['my rsa token is out of sync','kb:rsa'],
+  ['set up email on my iphone','kb:mobile'],['enroll my android phone for work','kb:mobile'],['add my work account to my ipad','kb:mobile'],
+  ['my laptop wont turn on','kb:hardware'],['keyboard stopped working','kb:hardware'],['docking station not working','kb:hardware'],
+  ['repair my office installation','kb:office'],['reinstall office','kb:office'],['word keeps freezing','kb:office'],
+  ['ivanti secure access wont connect','vpn'],['install ivanti secure access','vpn'],            // B5
+  ['permission denied on the network drive','kb:permissions'],['i lost access to a folder','kb:permissions'], // B6
+  ['my account is locked','password'],['please unlock my account','password'],                    // B7
+  ['deactivate a user account','kb:onboarding'],['provision a new employee','kb:onboarding'],     // B8
+  ['company portal wont enroll my device','kb:m365']                                              // B9
+].forEach(([q, expect]) => corpus.push({ q, expect }));
+
+// === HARDWARE break/fix (kb:hardware exists as of 2026-06-27) ===
+// These physical faults were previously bucketed 'default' (no hardware route existed). They are
+// genuine hardware-triage issues and now route to kb:hardware. Honest relabel, not a metric tweak.
+[
+  'my screen is flickering','docking station not working','laptop won\'t charge','battery dying fast',
+  'speakers crackling','laptop won\'t turn on','no power to laptop'
+].forEach(q => corpus.push({ q, expect: 'kb:hardware' }));
+
+// === UNCATEGORIZED / DEFAULT === (genuinely ambiguous / shell / generic — stay default)
+[
+  'monitor goes black','dual monitor issue',
   'fan making noise','keyboard not typing','spacebar broken','sticky keys',
   'mouse cursor frozen','touchpad not responding','sound not working',
-  'no audio after update','headphone jack not working','speakers crackling',
+  'no audio after update','headphone jack not working',
   'cd drive missing',
   'taskbar missing','start menu gone','desktop icons gone','recycle bin missing',
   'file explorer crashed','windows explorer not responding','clock wrong','timezone wrong',
@@ -300,8 +320,8 @@ const corpus = [];
   'i need help','can you help me','support please','urgent help',
   'this is urgent','my system is broken','everything is broken','nothing works',
   'whole computer dead','laptop on fire','smoke from computer',
-  'spilled coffee on laptop','dropped laptop','laptop won\'t turn on',
-  'no power to laptop','power button does nothing','adapter not working',
+  'spilled coffee on laptop','dropped laptop',
+  'power button does nothing','adapter not working',
   'charger broken','hdmi cable issue','displayport not working','vga issue',
   'ethernet cable not working','rj45 broken'
 ].forEach(q => corpus.push({ q, expect: 'default' }));
