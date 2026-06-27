@@ -342,4 +342,15 @@ const TIER9 = [
 TIER9.forEach(([q, expect]) => { push(q, expect); push(q.toUpperCase(), expect); push('please ' + q, expect); });
 console.error('MEGA Corpus size (post-tier-9):', out.length);
 
+// ============ TIER 10: P3 — NEW call types (2026-06-27): software install, display/monitor, certificates, scanner ============
+const TIER10 = [
+  ['i need photoshop installed','kb:software'],['please install zoom for me','kb:software'],['can you install slack','kb:software'],
+  ['request software install','kb:software'],['need an app installed','kb:software'],['install adobe acrobat','kb:software'],['software request for visio','kb:software'],
+  ['my second monitor isnt working','kb:hardware'],['dual monitor not detected','kb:hardware'],['external monitor not showing','kb:hardware'],['extend my display to two screens','kb:hardware'],
+  ['certificate error on the website','kb:certificates'],['ssl certificate expired','kb:certificates'],['your connection is not private','kb:certificates'],['untrusted certificate warning','kb:certificates'],
+  ['scanner wont scan','printer'],['scan to folder not working','printer'],['cant scan a document','printer'],['document scanner not working','printer'],
+];
+TIER10.forEach(([q, expect]) => { push(q, expect); push(q.toUpperCase(), expect); push('please ' + q, expect); });
+console.error('MEGA Corpus size (post-tier-10):', out.length);
+
 module.exports = out;

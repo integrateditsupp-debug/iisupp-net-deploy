@@ -75,7 +75,26 @@ onboarding, hardware/rsa/mobile/office (0→100%); the ONLY down-mover is `defau
 other category regressed** — the broad onboarding/permissions/m365/password expansions did not steal from mail/vpn/password/etc.
 Corpus TIER-9 regressions added; mirror re-synced again; 10k mirror test steady at 95.7%.
 
+## Priority 3 (same batch) — NEW call types
+Probing common IT calls surfaced 4 more categories that fell to `default`. Added routes + (where missing) articles:
+- **Software install / deployment requests** → new `kb:software` intent + article (inline + `knowledge-base/L1/l1-software-001`).
+  "i need photoshop installed", "install zoom", "request software install".
+- **Dual / external monitor / display** → `kb:hardware` (extended). "second monitor isn't working", "external monitor not showing".
+- **Certificate / SSL / TLS errors** → `kb:certificates` (article already existed). "certificate error", "ssl certificate expired",
+  "your connection is not private".
+- **Scanner / scan-to-X** → `printer` (MFP scanning). **RULE-14 catch:** the first attempt's bare "wont scan" false-matched
+  "fleetmatics wont scan **barcode**" (a logistics barcode scanner ≠ a document scanner) — tightened to document-scanner
+  context only, verified the barcode case now correctly stays out of `printer`.
+
+## Combined P1+P2+P3 — final
+- **Overall: 93.54% → 94.05% (+0.51pp)** on **332,619** scenarios. **No category regressed** except the correct `default`
+  reroute. Coverage taxonomy: **17 STRONG · 0 WEAK · 0 NONE**; 4 new call types added (software/display/certificate/scanner).
+- **Articles authored (RULE 16):** 5 inline (aria-kb-data 72→77) + 5 `knowledge-base/` source markdown
+  (rsa, hardware, mobile, office, software). No dead routes.
+- **Mirror drift fixed** (re-synced verbatim from aria.html, 3×); corpus TIER-8/9/10 regressions; 10k mirror test 95.7%.
+
 **Reproduce:** `node tests/run-breadth-coverage.cjs` (extracts from `aria.html`). Raw: `tests/breadth-results.json`.
-**Cowork:** spot-verify the gains on the live page after deploy (e.g. "set up my rsa token", "my laptop won't turn on",
-"ivanti secure access won't connect", "reinstall office", "cant get into the department folder", "offboard someone who quit",
-"mdm enrollment stuck") and confirm each returns the right article.
+**Cowork:** spot-verify on the live page after deploy: "set up my rsa token", "my laptop won't turn on", "ivanti secure
+access won't connect", "reinstall office", "cant get into the department folder", "offboard someone who quit", "mdm
+enrollment stuck", "i need photoshop installed", "ssl certificate expired", "my second monitor isn't working".
+This is a STANDING job — Priority 3 (broaden forever) continues each cycle.
