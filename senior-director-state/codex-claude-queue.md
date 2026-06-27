@@ -7222,3 +7222,2286 @@ Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Ass
 CRM: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-crm.json`
 
 Hard rules preserved: no cost, no autonomous external sends, no scraping, no Raymond James.
+
+## 2026-06-26T12:29:20.713Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 12:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26 12:44 - Opportunity quality gate
+
+- Quality gate applied to 652 opportunity items.
+- Active after gate: 90.
+- Parked/ignored this run: 6.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 12:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 90 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T12:59:32.697Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 13:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-26T13:29:44.786Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 13:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26 13:44 - Opportunity quality gate
+
+- Quality gate applied to 654 opportunity items.
+- Active after gate: 90.
+- Parked/ignored this run: 2.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26T13:44:55.145Z - Senior Director Worker
+
+### Overnight Senior Director mission brief
+
+Read this first when Codex/Claude resumes.
+
+Senior Director overnight mission brief
+Mission:
+- Grow Integrated IT Support Inc. into a global IT, AI, website, tender, and offshore support company.
+- Hunt: Remote L1-L3 support contracts.
+- Hunt: Website/no-website and weak-online-presence leads.
+- Hunt: AI implementation and workflow automation leads.
+- Hunt: Corporate expansion, move-in, office setup, and overflow support.
+- Hunt: Government and public-sector tenders: CanadaBuys, MERX, Ontario Tenders, municipal portals.
+- Hunt: Offshore L1-L3 support and AI-assistance operating model.
+- Hunt: Revenue/product ideas requiring Ahmad decision: approve, reject, research more, save for later.
+- Fix website/ARIA bugs and add useful features as reversible work while preserving the existing look and feel.
+- Keep agent work sharp: summarize old trails, transfer learning before retirement, and keep roles/names clear.
+- Use local browser/Chrome/desktop testing when needed for no-cost verification.
+- Use ahmad.wasee@iisupp.net for internal coordination/account identity and no-send drafts only.
+- Draft, research, monitor, and queue work. Do not submit, sign, spend, contact leads, or accept penalties.
+Current status:
+- Worker heartbeat: 2026-06-26T13:44:49.895Z
+- OpenClaw available: true
+- Repo changed files visible to worker: 46
+- Owner email identity: ahmad.wasee@iisupp.net
+Overnight work queue for Codex/Claude:
+- Review ARIA public layout and routing issues first if new screenshots/user notes appear.
+- Review the growth portal, workbook, and Director board first, then pick the highest revenue-impact safe task.
+- Improve site features and responsive behavior without changing the established ARIA/IIS visual language.
+- Use browser/Chrome QA for website/growth portal work when practical, then record results in AGENT_EXECUTION_NOTES.md.
+- Review qualified L1-L3, website, AI, move-in, overflow, tender, and offshore leads in senior-director-state/lead-queue.jsonl.
+- Prepare safe next steps only: fit check, no-send draft, document checklist, risk flags, bid/no-bid brief.
+- Use the workspace steward files to avoid reading huge stale queues when a compact handoff exists.
+- Stop and ask Ahmad before any final submission, complex bid, irreversible document, penalty, bond, paid action, or external outreach.
+Recent leads tail:
+:false}}
+{"ts":"2026-06-25T21:06:19.854Z","lead":{"title":"Facilitation services for the Impact Assessment Agency of Canada (IAAC) to support the Indigenous Advisory Committee (IAC).","org":"Impact Assessment Agency of Canada (IAAC)","region":"*Canada","close":"2026-07-15","ref":"cb-441-99474167","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-441-99474167","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-25T21:06:19.855Z","lead":{"title":"W0127-25P029 - Ride-On Floor Scrubber","org":"Department of Public Works and Government Services (PSPC)","region":"*Alberta\n*Edmonton","close":"2026-07-23","ref":"WS5504544649-Doc5528453404","url":"https://portal.us.bn.cloud.ariba.com/dashboard/public/appext/comsapsbncdiscoveryui#/RfxEvent/preview/1110017014?anId=ANONYMOUS","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-25T21:06:19.855Z","lead":{"title":"Multiple Victoria-Class Spares - TIMER, SEQUENTIAL, COMPRESSOR, RECIPROCATING, VALVE, SAFETY RELIEF, MICROPHONE, CAPACITOR","org":"Department of National Defence (DND)","region":"*Nova Scotia\n*British Columbia","close":"2026-08-06","ref":"cb-186-16028051","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-186-16028051","hot":false},"classification":{"level":"skip_noncore_goods","stream":"Parked / Non-Core Goods","reason":"Looks like physical goods/equipment procurement, not IIS service work: spares","allowed":false}}
+{"ts":"2026-06-26T11:43:56.304Z","lead":{"title":"Modified Category 2 Base Building","org":"Defence Construction Canada - Pacific Region","region":"","close":"2026-08-05","ref":"MX-444073523273","url":"https://www.merx.com/public/solicitations/4007251785/abstract?language=EN","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+Existing Codex/Claude queue tail:
+iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 13:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26 13:44 - Opportunity quality gate
+
+- Quality gate applied to 654 opportunity items.
+- Active after gate: 90.
+- Parked/ignored this run: 2.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+Recent coordination notes tail:
+director-state/interaction-avoidance-board.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Routed 90 active opportunities into prep paths.
+- Created one-minute CEO final-action section.
+- No external send, submit, apply, contact, cost, legal commitment, account creation, or destructive action performed.
+
+
+### 2026-06-26 13:21 - Opportunity Prep Packets Agent - completed
+
+Scope: Prepare concrete CEO-final-action packets from the Opportunity Engine database.
+
+Changed files:
+- `scripts/opportunity-prep-packets-agent.mjs`
+- `senior-director-state/opportunity-engine/prep-packets.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Prepared 15 no-send/no-submit packets.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 13:31 - CEO Action Digest Agent - completed
+
+Scope: Compress active opportunity work into a short CEO need-to-know action digest.
+
+Changed files:
+- `scripts/ceo-action-digest-agent.mjs`
+- `senior-director-state/ceo-now-action-digest.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Created CEO digest with 28 tracked CEO queue items and 29 business opportunities under prep.
+- Ready CEO actions on live surfaces: 27.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 13:44 - Opportunity Quality Gate Agent - completed
+
+Scope: Park weak-fit opportunities and improve CEO review quality.
+
+Changed files:
+- `scripts/opportunity-quality-gate-agent.mjs`
+- `senior-director-state/opportunity-engine/opportunities.json`
+- `senior-director-state/opportunity-engine/quality-gate-report.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Reviewed 654 opportunity items.
+- Active after gate: 90.
+- Parked/ignored this run: 2.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+OpenClaw mission attempt failed or returned empty.
+Code: 1
+Too many arguments for this command.
+Try: openclaw agent main --help
+
+
+Reminder: execute only reversible/no-cost work unless Ahmad approves.
+
+## 2026-06-26 13:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 90 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T14:00:02.001Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+---
+
+## 2026-06-26 — COWORK → CC: AXIS COMMAND CENTER (embed in aperture-learning.html)
+
+Build the "AXIS — Director Agent Communication" section INTO iisupp.net/aperture-learning.html (reuse info already there). Roster data: senior-director-state/axis-roster.json. Theme: AXIS dark-matter look (white space, soft dark sphere, one ring, cyan accent) for the AXIS avatar; section styled to fit the page. Mobile-responsive (works on phone). DO NOT auto-send/publish/apply — all outbound stays approval-gated.
+
+LAYOUT (responsive; stacks on mobile):
+- LEFT SIDEBAR (functions): Approvals · Send email · Apply LinkedIn jobs · Find Leads + draft emails · Today's work report (caveman, important-only) · Ops Health · Finance · Brain (vault) · ARIA Quality. Each opens its panel / triggers the mapped agent via the queue+board (NOT a blind action). "Send email" = stage drafts for approval. Add room for future small-business functions (new agents).
+- CENTER: AXIS dark-matter orb + talk-to-AXIS chat. User types/speaks → routes to a DIRECTOR ENDPOINT (reuse the existing aria-chat Netlify function pattern, new "director" persona: caveman/important-only, knows the roster). Reply renders IN the AXIS panel as AXIS. Voice = AXIS voice (mic). Name-addressing: "Pitch, redo the drafts" routes to that agent; plain intent → AXIS picks the right agent from roster.fn.
+- RIGHT/BELOW: LIVE AGENT ACTIVITY FEED (read-only, human-readable) + AGENT ROSTER (from axis-roster.json: name · what they do · last-run status).
+
+DATA PLUMBING:
+- Worker change: senior-director-worker.mjs emits a public senior-director-state/axis-state.json each tick — health (worker heartbeat, aria bad-count, leads), recent activity (last N human-readable events), pending approvals, per-agent last-run. The page fetches axis-state.json (+ axis-roster.json) to render. Keep it content-safe (no secrets/PII).
+- Commands from the page write an intent line to codex-claude-queue.md / director-operating-board.md the worker+dispatcher pick up.
+
+GATES: no auto-send/publish/apply/pay — those queue as approvals. No secrets in the public JSON. Build in /tmp clone, suite green, screenshots (desktop + mobile). Report files + line counts, then wait.
+
+NOTE for Cowork: in THIS chat, when Ahmad types to AXIS the message comes to Cowork — Cowork replies CAVEMAN (important-only), shown as AXIS. The website version talks to the always-on director endpoint (phone-reachable without this session open).
+
+---
+
+## 2026-06-26 — AXIS COMMAND CENTER · ADDENDUM (Ahmad's refinements)
+
+1) LEFT TABS = LIVE AGENT VIEW. Clicking a function (Send email, Find leads, Apply jobs, etc.) shows what that agent is doing in real time — its browser/app actions.
+   HONEST v1: live step-log + periodic screenshot thumbnails captured from the agent's Claude-in-Chrome session (full-motion video = later upgrade). Label it "live view."
+2) APPROVALS = unified INSTANT-approve inbox. Lists EVERY pending item incl. AXIS/Cowork asks. Each has Approve / Reject that executes IMMEDIATELY (writes the approval the worker/agent polls on a short interval → near-instant). One tap, it goes.
+3) AUTO-APPROVE POLICY (default ON). Most email sends, job applies, and lead-draft sends AUTO-APPROVE within safe rails: approved template only · daily rate caps · known-good target filter · suppression list · anomaly check. ONLY escalate to Ahmad when truly irreversible / anomalous / no safe workaround → then it WAITS in Approvals. Post-hoc daily digest of everything that auto-fired so Ahmad can catch mistakes.
+4) VOICE always-listening + BARGE-IN. Wake word "AXIS" armed continuously (NO mic press), speaker-locked to Ahmad only. Saying "AXIS" interrupts an in-progress action; then "don't send that — rewrite as X / use this template" redirects the agent live. "AXIS stop" halts.
+5) Roster names already set (axis-roster.json). Name an agent to redirect it, or just say the intent and AXIS routes it.
+6) Forge = Claude Code (the code builder).
+
+GATES/HONESTY: auto-send carries real risk (CASL/spam, wrong applications) — rails above are mandatory, plus the daily auto-fire digest. Live "watch" v1 = log+screenshots, not video. No secrets in the public state JSON.
+
+---
+
+## 2026-06-26 — COWORK: AXIS-CC deploy decision + close 2 honest gaps
+
+AXIS Command Center (branch cc/axis-command-center-2026-06-26 @ 8c03e2e) — APPROVED to deploy as v1 BEHIND the aperture login (gated, low risk). Merge to main + publish.
+
+BEFORE it's truthful, close (Rule 14 — no UI claim that doesn't work):
+1) REAL DATA: confirm the worker's emitAxisState() overwrites assets/axis-state.json with REAL numbers on the first tick. The committed seed (ARIA 99.7% · 31 approvals · 155 leads) must NOT be shown as real — either it's replaced within one tick on deploy, or label it "sample until first sync." No fabricated metric on the live (even gated) page.
+2) APPROVE HOP: wire the remaining hop — worker pulls the Blobs approval inbox each tick and executes behind the rails — so the "Approve" button actually acts. Until wired, label the button "queued (executes next sync)" not a fake instant action.
+3) SPEAKER-LOCK: keep labeled "coming" until real voice-enrollment exists (CC already honest).
+
+Sequence for Forge after the Resolve-for-me + runner + branch→main merge audit: deploy AXIS-CC behind login → close gaps 1–3. Screenshot live + proof. Cowork verifies live.
+
+---
+
+## 2026-06-26 — COWORK → CC: add DEPLOY BOARD to AXIS Command Center
+
+Add a "Deploy Board" panel/tab to the AXIS Command Center (where AXIS + agents live). It is the visible face of RULE 15 + PENDING-DEPLOY-LEDGER.md.
+
+SHOWS (timeline, newest first): every commit / push / merge-to-main / deploy / update — with:
+- timestamp · WHO did it (Forge/Cowork/classifier-loop/codex/agent name from commit author) · what (commit subject) · branch · STATUS badge: pending · committed · pushed · on-main · deployed.
+- A top strip: "X branches ahead of main · Y items pending deploy" (from the ledger).
+- Click a row → detail (files, SHA). Filter by status / author.
+
+DATA: extend the worker's emitAxisState() to include a "deployBoard" array — pull recent git history (git log across branches: author, timestamp, subject, branch) + cross-ref PENDING-DEPLOY-LEDGER.md for status. Public + secret-free (no paths/PII; strip per the existing no-secrets gate). Page fetches it from axis-state.json.
+
+GATES: read-only git for the board (no auto-merge from the UI — merging stays a gated action). No secrets in the public JSON. Build in /tmp clone, suite green, screenshot. Report, then wait.
+
+---
+
+## 2026-06-26 — COWORK → CC: Sentinel first-run profile + session-end emails
+Build per ARIA Sentinel/dev-docs/sentinel-profile-and-session-email-spec.md. Mandatory first-run profile form (First/Last/Company/Email/Phone) saved LOCAL to the ARIA Sentinel folder, re-read each launch. At session end (user- or escalation-ended), POST session payload (issue · backend steps · outcome · ARIA-tab transcript · REAL SLA metrics) to a Netlify function that emails (1) the company the same data ARIA web shares, (2) the user their issue+solution+SLA. RULE 14: real metrics only, escalations say "escalated" not "fixed". Profile PII local-only, sent only to deliver the user's own report. Build in /tmp clone, tests (profile gate · persistence · payload content-safe · email-on-end-only), screenshots. No publish beyond what RULE-15 reconcile authorizes. Report + wait.
+
+---
+
+## 2026-06-26 — URGENT (Cowork found live privacy leak): axis-state.json is PUBLIC + leaks prospect names/strategy
+
+PROBLEM: https://iisupp.net/assets/axis-state.json is ungated and exposes REAL internal info to anyone:
+- named prospect + deal strategy ("Jason Brown / Hines follow-up … only if Jason has not replied first")
+- "RBC supplier registration path: live portal open and partially prefilled…"
+- the full approvals queue + tender postures.
+The Command Center page is behind the aperture login but its DATA FILE is not. CC's scrubber stripped paths/tokens but NOT proper names or strategy text.
+
+FIX (do BOTH, scrub first since it's fastest):
+1) HARD-SCRUB the public emit immediately — emitAxisState() must NOT write any: prospect/person/company names, deal strategy, approval TITLES, recentActivity prose with names, or specific portal/registration details. Approvals → COUNTS + generic kind only (e.g. "31 items pending review"), no titles. recentActivity → generic ("Lead scan completed") with NO names. Strip ALL proper nouns. Rename "ariaPassPct" → clearly-labeled "classifierSelfTestPassPct" so it's not mistaken for uptime.
+2) GATE the real detail behind auth — serve the full (un-scrubbed, login-only) state via an authenticated Netlify function that checks the same aperture login the Command Center uses; the page fetches that when logged in. The PUBLIC assets/axis-state.json stays counts-only/generic.
+3) VERIFY: fetch the public file after deploy — confirm ZERO names/strategy remain. Add a test asserting the public emit contains no approval titles / no proper-noun leak.
+
+Deploy to main when green (Ahmad authorized publish). RULE 14 honesty unaffected — counts stay real. Report + Cowork re-verifies the live public file.
+
+---
+
+## 2026-06-26 — ADDENDUM to the axis-state leak fix: restore login gate + gate the DATA (page-login ≠ asset-protection)
+
+Confirmed: /aperture-learning uses a CLIENT-SIDE login (aperture-auth.mjs / aperture-session.mjs). That gates the PAGE but NOT static assets — /assets/axis-state.json is fetchable with no login (Cowork proved it live). So do ALL of:
+1) RESTORE/FIX the aperture-learning login gate so the page requires login again, AND mount the AXIS section (#axis-cc) INSIDE the gated container so it only renders + fetches after a valid login (it's likely mounted outside the gate now — that's why it shows without login).
+2) Serve the REAL (un-scrubbed) AXIS state via an AUTHENTICATED function that validates the aperture session (reuse aperture-auth/aperture-session). The logged-in page fetches THAT, not a public asset.
+3) The PUBLIC /assets/axis-state.json must be COUNTS-ONLY/generic (no names, no approval titles, no strategy — per the prior packet) OR removed entirely if the page only uses the authed function. Verify the public URL leaks nothing.
+4) Test: (a) page blocks without login, (b) authed-state function rejects no/invalid session, (c) public file has zero proper-noun/strategy leak.
+Deploy to main when green. Cowork re-verifies the live public file + the gate.
+
+---
+
+## 2026-06-26 — COWORK → CC: deploy session-email function + build Sentinel installer (so Cowork can run the full live test case)
+
+Ahmad authorized. Two build/deploy steps that must run on the real machine (Cowork's sandbox truncates files — building from there would introduce the exact errors we must avoid):
+1) DEPLOY the session-email path: merge the profile/session branch's web function netlify/functions/sentinel-session-report.js to main and deploy. Then DO A LIVE TEST SEND to confirm RESEND_API_KEY + RESEND_FROM are set and working — POST a sample session payload; report whether both emails (company + user) actually send, or the exact error (so we know if RESEND env is really set). RULE 14: real test, report the true result.
+2) BUILD the ARIA Sentinel installer FROM the profile/session branch (16aa601) — the build with the new mandatory first-run profile + session-end emails — so Ahmad/Cowork can install it and run the end-to-end test case. Confirm the build succeeds + the installer path.
+Gates: real test results only; if RESEND is NOT set, say so plainly (don't fake a success). Report both outcomes + the installer path, then Cowork takes over the on-device test case.
+
+---
+
+## 2026-06-26 — COWORK → CC: 3 audit fixes (vision-flaw-audit-2026-06-26.md)
+
+1) DELETE FAKE CODE AT SOURCE (Rule 14, P1): in aria.html, remove renderAutoResolution()'s fabricated "audit trail" entirely — invented timestamps, fake device IDs (device-2861-MX), made-up metrics (downtime/ticket cost/"6.4s"/"FULL AUDIT TRAIL · Done"). The ONLY Resolve-for-me path = openResolveModal → aria-sentinel:// handoff (real) + install fallback. Grep aria.html for ANY other hardcoded/fabricated metric block and remove. Don't just gray it — delete it so it can never resurface. Verify on main + the working branch.
+2) WIRE AXIS APPROVE-HOP (P1): senior-director-worker.mjs must READ the axis-inbox Blobs store each tick and execute approved items BEHIND THE RAILS (so "Approve" actually acts). Until executed, the UI must say "queued (runs next sync)", not imply instant. Add a test.
+3) CONSOLIDATE per RULE 15 (P1 root cause): reconcile so ONE branch/main is the single source of truth — the local working tree is stale vs main + feature branches, which is why audits misfire. Get main current with all delivered work (resolve-fix, AXIS CC, leak fix) + bring the profile/session feature branch in once its function+installer are validated. Update PENDING-DEPLOY-LEDGER.
+
+Report each with proof. Cowork is separately doing a LIVE browser check of iisupp.net/aria Resolve-for-me to confirm what's actually live (since local branch ≠ main).
+
+---
+
+## 2026-06-26 — COWORK found a REAL worker bug (on-device, live PowerShell)
+
+The senior-director worker PowerShell shows, every cycle:
+- "[agent/cli-backend] cli exec: provider=claude-cli model=opus … [process/supervisor] spawn failed: … reason=Error: spawn claude ENOENT" + "Embedded agent failed before reply: spawn claude ENOENT"
+- "[health-monitor] [whatsapp:default] health-monitor: restarting (reason: stopped)" repeating.
+ROOT CAUSE of the earlier "openclaw mission brief ok:false code:1": the embedded-agent backend can't find the `claude` CLI on PATH (ENOENT). And a whatsapp health-monitor is stuck in a restart loop.
+FIX: either point the worker at the real `claude` binary path (or skip the spawn cleanly if absent — log once, not every tick), and stop the whatsapp monitor restart loop (disable if unused). This pairs with the earlier "run worker hidden + quiet the log" task. Report.
+
+(Also confirmed live on the Resend dashboard: the session-report TEST emails really delivered — "resolved (#test-1782501476)" + "Resolved · TEST SEND" ~22 min ago. Email path proven independently.)
+
+---
+
+## 2026-06-26 — BLOCKER: unsigned Sentinel build can't be driven for the UI test (code-signing needed)
+
+On-device: the new build INSTALLED + launched fine (Ahmad sees its window), but it runs as unsigned process aria-sentinel-0.1.16-unsigned.exe. Cowork's computer-use masks ungranted processes and request_access for it TIMED OUT (180s ×2) — so Cowork cannot screenshot/drive the profile gate or session for the test-case doc.
+ROOT CAUSE: the build is NOT code-signed. Same reason customers get SmartScreen warnings on install.
+FIX (needed for client distribution anyway): code-sign the Windows build (electron-builder win.certificateFile/Sha1 or Azure Trusted Signing). Then the app is a normal signed process Cowork can grant + drive, AND customers install without SmartScreen scare.
+Until signed, the UI screenshot-doc test is blocked; the email path is already proven live (Resend) and the desktop suite is 189/189.
+lear.
+- Use local browser/Chrome/desktop testing when needed for no-cost verification.
+- Use ahmad.wasee@iisupp.net for internal coordination/account identity and no-send drafts only.
+- Draft, research, monitor, and queue work. Do not submit, sign, spend, contact leads, or accept penalties.
+Current status:
+- Worker heartbeat: 2026-06-26T15:45:48.444Z
+- OpenClaw available: true
+- Repo changed files visible to worker: 47
+- Owner email identity: ahmad.wasee@iisupp.net
+Overnight work queue for Codex/Claude:
+- Review ARIA public layout and routing issues first if new screenshots/user notes appear.
+- Review the growth portal, workbook, and Director board first, then pick the highest revenue-impact safe task.
+- Improve site features and responsive behavior without changing the established ARIA/IIS visual language.
+- Use browser/Chrome QA for website/growth portal work when practical, then record results in AGENT_EXECUTION_NOTES.md.
+- Review qualified L1-L3, website, AI, move-in, overflow, tender, and offshore leads in senior-director-state/lead-queue.jsonl.
+- Prepare safe next steps only: fit check, no-send draft, document checklist, risk flags, bid/no-bid brief.
+- Use the workspace steward files to avoid reading huge stale queues when a compact handoff exists.
+- Stop and ask Ahmad before any final submission, complex bid, irreversible document, penalty, bond, paid action, or external outreach.
+Recent leads tail:
+:false}}
+{"ts":"2026-06-25T21:06:19.854Z","lead":{"title":"Facilitation services for the Impact Assessment Agency of Canada (IAAC) to support the Indigenous Advisory Committee (IAC).","org":"Impact Assessment Agency of Canada (IAAC)","region":"*Canada","close":"2026-07-15","ref":"cb-441-99474167","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-441-99474167","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-25T21:06:19.855Z","lead":{"title":"W0127-25P029 - Ride-On Floor Scrubber","org":"Department of Public Works and Government Services (PSPC)","region":"*Alberta\n*Edmonton","close":"2026-07-23","ref":"WS5504544649-Doc5528453404","url":"https://portal.us.bn.cloud.ariba.com/dashboard/public/appext/comsapsbncdiscoveryui#/RfxEvent/preview/1110017014?anId=ANONYMOUS","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-25T21:06:19.855Z","lead":{"title":"Multiple Victoria-Class Spares - TIMER, SEQUENTIAL, COMPRESSOR, RECIPROCATING, VALVE, SAFETY RELIEF, MICROPHONE, CAPACITOR","org":"Department of National Defence (DND)","region":"*Nova Scotia\n*British Columbia","close":"2026-08-06","ref":"cb-186-16028051","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-186-16028051","hot":false},"classification":{"level":"skip_noncore_goods","stream":"Parked / Non-Core Goods","reason":"Looks like physical goods/equipment procurement, not IIS service work: spares","allowed":false}}
+{"ts":"2026-06-26T11:43:56.304Z","lead":{"title":"Modified Category 2 Base Building","org":"Defence Construction Canada - Pacific Region","region":"","close":"2026-08-05","ref":"MX-444073523273","url":"https://www.merx.com/public/solicitations/4007251785/abstract?language=EN","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+Existing Codex/Claude queue tail:
+iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 15:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26 15:44 - Opportunity quality gate
+
+- Quality gate applied to 658 opportunity items.
+- Active after gate: 92.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+Recent coordination notes tail:
+s/axis-state.json (446, seed);
+tests/axis-command-center.test.mjs (57, roster+shape+NO-SECRETS gate+endpoint contract, GREEN); worker +93
+(emits PUBLIC secret-free assets/axis-state.json each tick — PII/paths stripped); aperture-learning.html +5 (mount).
+
+KEY DECISIONS: axis-state served from assets/ (public) NOT senior-director-state/ (redirect-blocked); PII
+(company names in backticks + file paths + emails + phones) stripped before public emit — scan clean,
+test-enforced. Endpoint only QUEUES intents; worker runs behind rails (template/cap/suppression/anomaly);
+irreversible waits in Approvals. axis-preview.html harness was NOT shipped (would expose the gated UI un-authed).
+Worker-pull of the Blobs inbox is the remaining wire for instant end-to-end (worker change here was the emit, per packet).
+Ahmad deploy = merge cc/axis-command-center-2026-06-26 → main, then publish; verify the section behind aperture login.
+
+
+### 2026-06-26 15:31 - CEO Action Digest Agent - completed
+
+Scope: Compress active opportunity work into a short CEO need-to-know action digest.
+
+Changed files:
+- `scripts/ceo-action-digest-agent.mjs`
+- `senior-director-state/ceo-now-action-digest.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Created CEO digest with 28 tracked CEO queue items and 30 business opportunities under prep.
+- Ready CEO actions on live surfaces: 27.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 15:44 - Opportunity Quality Gate Agent - completed
+
+Scope: Park weak-fit opportunities and improve CEO review quality.
+
+Changed files:
+- `scripts/opportunity-quality-gate-agent.mjs`
+- `senior-director-state/opportunity-engine/opportunities.json`
+- `senior-director-state/opportunity-engine/quality-gate-report.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Reviewed 658 opportunity items.
+- Active after gate: 92.
+- Parked/ignored this run: 0.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+OpenClaw mission attempt failed or returned empty.
+Code: 1
+Too many arguments for this command.
+Try: openclaw agent main --help
+
+
+Reminder: execute only reversible/no-cost work unless Ahmad approves.
+
+## 2026-06-26 15:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 92 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T16:00:59.487Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 16:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-26T16:31:12.766Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 16:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26 16:44 - Opportunity quality gate
+
+- Quality gate applied to 659 opportunity items.
+- Active after gate: 92.
+- Parked/ignored this run: 1.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 16:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 92 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T17:01:26.657Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 17:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-26T17:31:41.018Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 17:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26 17:44 - Opportunity quality gate
+
+- Quality gate applied to 659 opportunity items.
+- Active after gate: 92.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26T17:46:50.951Z - Senior Director Worker
+
+### Overnight Senior Director mission brief
+
+Read this first when Codex/Claude resumes.
+
+Senior Director overnight mission brief
+Mission:
+- Grow Integrated IT Support Inc. into a global IT, AI, website, tender, and offshore support company.
+- Hunt: Remote L1-L3 support contracts.
+- Hunt: Website/no-website and weak-online-presence leads.
+- Hunt: AI implementation and workflow automation leads.
+- Hunt: Corporate expansion, move-in, office setup, and overflow support.
+- Hunt: Government and public-sector tenders: CanadaBuys, MERX, Ontario Tenders, municipal portals.
+- Hunt: Offshore L1-L3 support and AI-assistance operating model.
+- Hunt: Revenue/product ideas requiring Ahmad decision: approve, reject, research more, save for later.
+- Fix website/ARIA bugs and add useful features as reversible work while preserving the existing look and feel.
+- Keep agent work sharp: summarize old trails, transfer learning before retirement, and keep roles/names clear.
+- Use local browser/Chrome/desktop testing when needed for no-cost verification.
+- Use ahmad.wasee@iisupp.net for internal coordination/account identity and no-send drafts only.
+- Draft, research, monitor, and queue work. Do not submit, sign, spend, contact leads, or accept penalties.
+Current status:
+- Worker heartbeat: 2026-06-26T17:46:46.174Z
+- OpenClaw available: true
+- Repo changed files visible to worker: 57
+- Owner email identity: ahmad.wasee@iisupp.net
+Overnight work queue for Codex/Claude:
+- Review ARIA public layout and routing issues first if new screenshots/user notes appear.
+- Review the growth portal, workbook, and Director board first, then pick the highest revenue-impact safe task.
+- Improve site features and responsive behavior without changing the established ARIA/IIS visual language.
+- Use browser/Chrome QA for website/growth portal work when practical, then record results in AGENT_EXECUTION_NOTES.md.
+- Review qualified L1-L3, website, AI, move-in, overflow, tender, and offshore leads in senior-director-state/lead-queue.jsonl.
+- Prepare safe next steps only: fit check, no-send draft, document checklist, risk flags, bid/no-bid brief.
+- Use the workspace steward files to avoid reading huge stale queues when a compact handoff exists.
+- Stop and ask Ahmad before any final submission, complex bid, irreversible document, penalty, bond, paid action, or external outreach.
+Recent leads tail:
+ssification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-25T21:06:19.855Z","lead":{"title":"Multiple Victoria-Class Spares - TIMER, SEQUENTIAL, COMPRESSOR, RECIPROCATING, VALVE, SAFETY RELIEF, MICROPHONE, CAPACITOR","org":"Department of National Defence (DND)","region":"*Nova Scotia\n*British Columbia","close":"2026-08-06","ref":"cb-186-16028051","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-186-16028051","hot":false},"classification":{"level":"skip_noncore_goods","stream":"Parked / Non-Core Goods","reason":"Looks like physical goods/equipment procurement, not IIS service work: spares","allowed":false}}
+{"ts":"2026-06-26T11:43:56.304Z","lead":{"title":"Modified Category 2 Base Building","org":"Defence Construction Canada - Pacific Region","region":"","close":"2026-08-05","ref":"MX-444073523273","url":"https://www.merx.com/public/solicitations/4007251785/abstract?language=EN","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T16:46:20.008Z","lead":{"title":"Internal Audit Services","org":"Great Lakes Pilotage Authority Canada (GLPA)","region":"*Canada","close":"2026-07-10","ref":"cb-250-82687877","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-250-82687877","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T16:46:20.009Z","lead":{"title":"ACAN 26-58020 Laboratory Motion Platform System (Hexapod)","org":"National Research Council of Canada (NRC)","region":"*Canada","close":"2026-07-10","ref":"cb-500-23638241","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-500-23638241","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+Existing Codex/Claude queue tail:
+iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 17:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26 17:44 - Opportunity quality gate
+
+- Quality gate applied to 659 opportunity items.
+- Active after gate: 92.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+Recent coordination notes tail:
+device verify) - Sentinel profile + session-end email
+Built per ARIA Sentinel/dev-docs/sentinel-profile-and-session-email-spec.md. Branch origin/cc/sentinel-profile-session-2026-06-26
+@ 16aa601 (off the reconcile 0ab3e99). NOT on main — DESKTOP ships via installer; the sentinel-session-report Netlify
+function deploys to main only on Ahmad's OK + RESEND_API_KEY set. Suite 189/189 green. Profile-gate screenshot taken.
+- A: mandatory first-run profile modal (First/Last/Company/Email-validated/Phone) → profile.json (app data dir), re-read
+  each launch (state.profileRequired); 'Edit profile' = window.ariaEditProfile. PII local-only.
+- B: main tracks session (session:start/turn/end IPC); at END only → buildSessionReport → POST sentinel-session-report.js
+  → TWO Resend emails (company full data + user issue/outcome/SLA). Never mid-session (buildSessionReport throws if not ended).
+- C (Rule 14): SLA from measured timestamps; escalation says 'escalated, NOT resolved' never 'fixed'; content-blind
+  (R11 + paths + secrets scrubbed client + server). New outbound = ONE allow-listed path (SESSION_OUTBOUND_PATHS);
+  the 6-host telemetry allowlist is UNCHANGED (asserted in profile-session.test.mjs).
+Files: src/shared/profile.mjs + session.mjs (pure, tested), main.mjs/preload.cjs/renderer.js wiring, network-capture.mjs,
+netlify/functions/sentinel-session-report.js, tests/profile-session.test.mjs (6 groups). Ahmad: build/sign installer +
+on-device verify the gate blocks + a real session fires both emails; deploy the function when approved.
+
+
+### 2026-06-26 17:44 - Opportunity Quality Gate Agent - completed
+
+Scope: Park weak-fit opportunities and improve CEO review quality.
+
+Changed files:
+- `scripts/opportunity-quality-gate-agent.mjs`
+- `senior-director-state/opportunity-engine/opportunities.json`
+- `senior-director-state/opportunity-engine/quality-gate-report.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Reviewed 659 opportunity items.
+- Active after gate: 92.
+- Parked/ignored this run: 0.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+OpenClaw mission attempt failed or returned empty.
+Code: 1
+Too many arguments for this command.
+Try: openclaw agent main --help
+
+
+Reminder: execute only reversible/no-cost work unless Ahmad approves.
+
+## 2026-06-26 17:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 92 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T18:01:58.078Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 18:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-26 18:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26T18:32:11.215Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 18:44 - Opportunity quality gate
+
+- Quality gate applied to 660 opportunity items.
+- Active after gate: 93.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 18:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 93 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T19:02:23.474Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 19:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-26 19:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26T19:32:37.044Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 19:44 - Opportunity quality gate
+
+- Quality gate applied to 660 opportunity items.
+- Active after gate: 93.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 19:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 93 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T19:47:48.022Z - Senior Director Worker
+
+### Overnight Senior Director mission brief
+
+Read this first when Codex/Claude resumes.
+
+Senior Director overnight mission brief
+Mission:
+- Grow Integrated IT Support Inc. into a global IT, AI, website, tender, and offshore support company.
+- Hunt: Remote L1-L3 support contracts.
+- Hunt: Website/no-website and weak-online-presence leads.
+- Hunt: AI implementation and workflow automation leads.
+- Hunt: Corporate expansion, move-in, office setup, and overflow support.
+- Hunt: Government and public-sector tenders: CanadaBuys, MERX, Ontario Tenders, municipal portals.
+- Hunt: Offshore L1-L3 support and AI-assistance operating model.
+- Hunt: Revenue/product ideas requiring Ahmad decision: approve, reject, research more, save for later.
+- Fix website/ARIA bugs and add useful features as reversible work while preserving the existing look and feel.
+- Keep agent work sharp: summarize old trails, transfer learning before retirement, and keep roles/names clear.
+- Use local browser/Chrome/desktop testing when needed for no-cost verification.
+- Use ahmad.wasee@iisupp.net for internal coordination/account identity and no-send drafts only.
+- Draft, research, monitor, and queue work. Do not submit, sign, spend, contact leads, or accept penalties.
+Current status:
+- Worker heartbeat: 2026-06-26T19:47:42.755Z
+- OpenClaw available: true
+- Repo changed files visible to worker: 62
+- Owner email identity: ahmad.wasee@iisupp.net
+Overnight work queue for Codex/Claude:
+- Review ARIA public layout and routing issues first if new screenshots/user notes appear.
+- Review the growth portal, workbook, and Director board first, then pick the highest revenue-impact safe task.
+- Improve site features and responsive behavior without changing the established ARIA/IIS visual language.
+- Use browser/Chrome QA for website/growth portal work when practical, then record results in AGENT_EXECUTION_NOTES.md.
+- Review qualified L1-L3, website, AI, move-in, overflow, tender, and offshore leads in senior-director-state/lead-queue.jsonl.
+- Prepare safe next steps only: fit check, no-send draft, document checklist, risk flags, bid/no-bid brief.
+- Use the workspace steward files to avoid reading huge stale queues when a compact handoff exists.
+- Stop and ask Ahmad before any final submission, complex bid, irreversible document, penalty, bond, paid action, or external outreach.
+Recent leads tail:
+rch More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.385Z","lead":{"title":"Simultaneous Translation and Audio-Visual services for virtual meetings","org":"Department of Fisheries and Oceans (DFO)","region":"*Canada","close":"2026-07-10","ref":"cb-865-73576057","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-865-73576057","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.387Z","lead":{"title":"Internal Controls Over Financial Management Assessments & Fraud Risk Assessments – Task Authorization Contract","org":"Department of Public Safety and Emergency Preparedness (PS)","region":"*Canada","close":"2026-07-13","ref":"cb-812-45440324","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-812-45440324","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.389Z","lead":{"title":"Greenwich Siding Replacement, Prince Edward Island National Park","org":"Parks Canada Agency (PC)","region":"*Newfoundland and Labrador","close":"2026-07-14","ref":"cb-409-49175433","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-409-49175433","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.390Z","lead":{"title":"BELL AIRCRAFT PARTS","org":"Department of Public Works and Government Services (PSPC)","region":"*Ottawa","close":"2026-07-20","ref":"WS5761963805-Doc5767044147","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=WS5761963805-Doc5767044147","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+Existing Codex/Claude queue tail:
+t-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 19:44 - Opportunity quality gate
+
+- Quality gate applied to 660 opportunity items.
+- Active after gate: 93.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 19:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 93 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+Recent coordination notes tail:
+ confirmed working. B2: installer built →
+ARIA-Sentinel-0.1.16-unsigned.exe (98MB NSIS, exit 0) from 16aa601. A3: main is the single source of truth (RULE 15); ledger updated;
+local tree stale → branch off origin/main for future web work. Cowork: run the full on-device live test case.
+
+
+### 2026-06-26 19:31 - CEO Action Digest Agent - completed
+
+Scope: Compress active opportunity work into a short CEO need-to-know action digest.
+
+Changed files:
+- `scripts/ceo-action-digest-agent.mjs`
+- `senior-director-state/ceo-now-action-digest.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Created CEO digest with 28 tracked CEO queue items and 31 business opportunities under prep.
+- Ready CEO actions on live surfaces: 27.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 19:44 - Opportunity Quality Gate Agent - completed
+
+Scope: Park weak-fit opportunities and improve CEO review quality.
+
+Changed files:
+- `scripts/opportunity-quality-gate-agent.mjs`
+- `senior-director-state/opportunity-engine/opportunities.json`
+- `senior-director-state/opportunity-engine/quality-gate-report.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Reviewed 660 opportunity items.
+- Active after gate: 93.
+- Parked/ignored this run: 0.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 19:47 - Interaction Avoidance Agent - completed
+
+Scope: Create prep-agent routing so safe work continues without Ahmad interaction.
+
+Changed files:
+- `scripts/interaction-avoidance-agent.mjs`
+- `senior-director-state/auto-created-agents/*`
+- `senior-director-state/interaction-avoidance-board.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Routed 93 active opportunities into prep paths.
+- Created one-minute CEO final-action section.
+- No external send, submit, apply, contact, cost, legal commitment, account creation, or destructive action performed.
+
+OpenClaw mission attempt failed or returned empty.
+Code: 1
+Too many arguments for this command.
+Try: openclaw agent main --help
+
+
+Reminder: execute only reversible/no-cost work unless Ahmad approves.
+
+## 2026-06-26T20:02:54.803Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26T20:18:04.513Z - Senior Director Worker
+
+### MCP advantage scan ready
+
+Report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\mcp-advantage-scan.md`
+JSON: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\mcp-advantage-scan.json`
+
+Review top candidates for no-cost or free-tier business value.
+Do not connect credentials, enable write actions, send messages, publish content, or spend money without Ahmad approval.
+
+## 2026-06-26 20:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-26 20:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26T20:33:11.580Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 20:44 - Opportunity quality gate
+
+- Quality gate applied to 661 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26T21:03:19.896Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 21:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-26 21:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26T21:33:33.330Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 21:44 - Opportunity quality gate
+
+- Quality gate applied to 661 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 21:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 94 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T21:48:42.955Z - Senior Director Worker
+
+### Overnight Senior Director mission brief
+
+Read this first when Codex/Claude resumes.
+
+Senior Director overnight mission brief
+Mission:
+- Grow Integrated IT Support Inc. into a global IT, AI, website, tender, and offshore support company.
+- Hunt: Remote L1-L3 support contracts.
+- Hunt: Website/no-website and weak-online-presence leads.
+- Hunt: AI implementation and workflow automation leads.
+- Hunt: Corporate expansion, move-in, office setup, and overflow support.
+- Hunt: Government and public-sector tenders: CanadaBuys, MERX, Ontario Tenders, municipal portals.
+- Hunt: Offshore L1-L3 support and AI-assistance operating model.
+- Hunt: Revenue/product ideas requiring Ahmad decision: approve, reject, research more, save for later.
+- Fix website/ARIA bugs and add useful features as reversible work while preserving the existing look and feel.
+- Keep agent work sharp: summarize old trails, transfer learning before retirement, and keep roles/names clear.
+- Use local browser/Chrome/desktop testing when needed for no-cost verification.
+- Use ahmad.wasee@iisupp.net for internal coordination/account identity and no-send drafts only.
+- Draft, research, monitor, and queue work. Do not submit, sign, spend, contact leads, or accept penalties.
+Current status:
+- Worker heartbeat: 2026-06-26T21:48:38.314Z
+- OpenClaw available: true
+- OpenClaw attention: Claude/OpenClaw OAuth token is expired; deterministic Director board continues.
+- Repo changed files visible to worker: 67
+- Owner email identity: ahmad.wasee@iisupp.net
+Overnight work queue for Codex/Claude:
+- Review ARIA public layout and routing issues first if new screenshots/user notes appear.
+- Review the growth portal, workbook, and Director board first, then pick the highest revenue-impact safe task.
+- Improve site features and responsive behavior without changing the established ARIA/IIS visual language.
+- Use browser/Chrome QA for website/growth portal work when practical, then record results in AGENT_EXECUTION_NOTES.md.
+- Review qualified L1-L3, website, AI, move-in, overflow, tender, and offshore leads in senior-director-state/lead-queue.jsonl.
+- Prepare safe next steps only: fit check, no-send draft, document checklist, risk flags, bid/no-bid brief.
+- Use the workspace steward files to avoid reading huge stale queues when a compact handoff exists.
+- Stop and ask Ahmad before any final submission, complex bid, irreversible document, penalty, bond, paid action, or external outreach.
+Recent leads tail:
+tream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.387Z","lead":{"title":"Internal Controls Over Financial Management Assessments & Fraud Risk Assessments – Task Authorization Contract","org":"Department of Public Safety and Emergency Preparedness (PS)","region":"*Canada","close":"2026-07-13","ref":"cb-812-45440324","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-812-45440324","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.389Z","lead":{"title":"Greenwich Siding Replacement, Prince Edward Island National Park","org":"Parks Canada Agency (PC)","region":"*Newfoundland and Labrador","close":"2026-07-14","ref":"cb-409-49175433","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-409-49175433","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.390Z","lead":{"title":"BELL AIRCRAFT PARTS","org":"Department of Public Works and Government Services (PSPC)","region":"*Ottawa","close":"2026-07-20","ref":"WS5761963805-Doc5767044147","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=WS5761963805-Doc5767044147","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T20:48:13.118Z","lead":{"title":"Data Coherence and Responsiveness initiative","org":"Department of Citizenship & Immigration (IRCC)","region":"*Canada","close":"2026-07-13","ref":"cb-446-91022407","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-446-91022407","hot":true},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+Existing Codex/Claude queue tail:
+t-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 21:44 - Opportunity quality gate
+
+- Quality gate applied to 661 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 21:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 94 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+Recent coordination notes tail:
+-packets.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Prepared 15 no-send/no-submit packets.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 21:31 - CEO Action Digest Agent - completed
+
+Scope: Compress active opportunity work into a short CEO need-to-know action digest.
+
+Changed files:
+- `scripts/ceo-action-digest-agent.mjs`
+- `senior-director-state/ceo-now-action-digest.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Created CEO digest with 28 tracked CEO queue items and 32 business opportunities under prep.
+- Ready CEO actions on live surfaces: 27.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 21:44 - Opportunity Quality Gate Agent - completed
+
+Scope: Park weak-fit opportunities and improve CEO review quality.
+
+Changed files:
+- `scripts/opportunity-quality-gate-agent.mjs`
+- `senior-director-state/opportunity-engine/opportunities.json`
+- `senior-director-state/opportunity-engine/quality-gate-report.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Reviewed 661 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 21:47 - Interaction Avoidance Agent - completed
+
+Scope: Create prep-agent routing so safe work continues without Ahmad interaction.
+
+Changed files:
+- `scripts/interaction-avoidance-agent.mjs`
+- `senior-director-state/auto-created-agents/*`
+- `senior-director-state/interaction-avoidance-board.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Routed 94 active opportunities into prep paths.
+- Created one-minute CEO final-action section.
+- No external send, submit, apply, contact, cost, legal commitment, account creation, or destructive action performed.
+
+OpenClaw mission attempt failed or returned empty.
+Code: 1
+Too many arguments for this command.
+Try: openclaw agent main --help
+
+
+Reminder: execute only reversible/no-cost work unless Ahmad approves.
+
+## 2026-06-26T22:03:49.416Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 22:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-26 22:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-26T22:34:02.716Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 22:44 - Opportunity quality gate
+
+- Quality gate applied to 661 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 22:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 94 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T23:04:15.891Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26T23:42:29.121Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 23:44 - Opportunity quality gate
+
+- Quality gate applied to 661 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 23:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 94 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-26T23:57:38.663Z - Senior Director Worker
+
+### Overnight Senior Director mission brief
+
+Read this first when Codex/Claude resumes.
+
+Senior Director overnight mission brief
+Mission:
+- Grow Integrated IT Support Inc. into a global IT, AI, website, tender, and offshore support company.
+- Hunt: Remote L1-L3 support contracts.
+- Hunt: Website/no-website and weak-online-presence leads.
+- Hunt: AI implementation and workflow automation leads.
+- Hunt: Corporate expansion, move-in, office setup, and overflow support.
+- Hunt: Government and public-sector tenders: CanadaBuys, MERX, Ontario Tenders, municipal portals.
+- Hunt: Offshore L1-L3 support and AI-assistance operating model.
+- Hunt: Revenue/product ideas requiring Ahmad decision: approve, reject, research more, save for later.
+- Fix website/ARIA bugs and add useful features as reversible work while preserving the existing look and feel.
+- Keep agent work sharp: summarize old trails, transfer learning before retirement, and keep roles/names clear.
+- Use local browser/Chrome/desktop testing when needed for no-cost verification.
+- Use ahmad.wasee@iisupp.net for internal coordination/account identity and no-send drafts only.
+- Draft, research, monitor, and queue work. Do not submit, sign, spend, contact leads, or accept penalties.
+Current status:
+- Worker heartbeat: 2026-06-26T23:57:33.690Z
+- OpenClaw available: true
+- Repo changed files visible to worker: 72
+- Owner email identity: ahmad.wasee@iisupp.net
+Overnight work queue for Codex/Claude:
+- Review ARIA public layout and routing issues first if new screenshots/user notes appear.
+- Review the growth portal, workbook, and Director board first, then pick the highest revenue-impact safe task.
+- Improve site features and responsive behavior without changing the established ARIA/IIS visual language.
+- Use browser/Chrome QA for website/growth portal work when practical, then record results in AGENT_EXECUTION_NOTES.md.
+- Review qualified L1-L3, website, AI, move-in, overflow, tender, and offshore leads in senior-director-state/lead-queue.jsonl.
+- Prepare safe next steps only: fit check, no-send draft, document checklist, risk flags, bid/no-bid brief.
+- Use the workspace steward files to avoid reading huge stale queues when a compact handoff exists.
+- Stop and ask Ahmad before any final submission, complex bid, irreversible document, penalty, bond, paid action, or external outreach.
+Recent leads tail:
+tream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.387Z","lead":{"title":"Internal Controls Over Financial Management Assessments & Fraud Risk Assessments – Task Authorization Contract","org":"Department of Public Safety and Emergency Preparedness (PS)","region":"*Canada","close":"2026-07-13","ref":"cb-812-45440324","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-812-45440324","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.389Z","lead":{"title":"Greenwich Siding Replacement, Prince Edward Island National Park","org":"Parks Canada Agency (PC)","region":"*Newfoundland and Labrador","close":"2026-07-14","ref":"cb-409-49175433","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-409-49175433","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.390Z","lead":{"title":"BELL AIRCRAFT PARTS","org":"Department of Public Works and Government Services (PSPC)","region":"*Ottawa","close":"2026-07-20","ref":"WS5761963805-Doc5767044147","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=WS5761963805-Doc5767044147","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T20:48:13.118Z","lead":{"title":"Data Coherence and Responsiveness initiative","org":"Department of Citizenship & Immigration (IRCC)","region":"*Canada","close":"2026-07-13","ref":"cb-446-91022407","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-446-91022407","hot":true},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+Existing Codex/Claude queue tail:
+t-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-26 23:44 - Opportunity quality gate
+
+- Quality gate applied to 661 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-26 23:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 94 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+Recent coordination notes tail:
+enior-director-state/iis-aria-command-update.md`
+
+Result:
+- Reviewed 661 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 22:47 - Interaction Avoidance Agent - completed
+
+Scope: Create prep-agent routing so safe work continues without Ahmad interaction.
+
+Changed files:
+- `scripts/interaction-avoidance-agent.mjs`
+- `senior-director-state/auto-created-agents/*`
+- `senior-director-state/interaction-avoidance-board.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Routed 94 active opportunities into prep paths.
+- Created one-minute CEO final-action section.
+- No external send, submit, apply, contact, cost, legal commitment, account creation, or destructive action performed.
+
+
+### 2026-06-26 23:44 - Opportunity Quality Gate Agent - completed
+
+Scope: Park weak-fit opportunities and improve CEO review quality.
+
+Changed files:
+- `scripts/opportunity-quality-gate-agent.mjs`
+- `senior-director-state/opportunity-engine/opportunities.json`
+- `senior-director-state/opportunity-engine/quality-gate-report.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Reviewed 661 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-26 23:47 - Interaction Avoidance Agent - completed
+
+Scope: Create prep-agent routing so safe work continues without Ahmad interaction.
+
+Changed files:
+- `scripts/interaction-avoidance-agent.mjs`
+- `senior-director-state/auto-created-agents/*`
+- `senior-director-state/interaction-avoidance-board.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Routed 94 active opportunities into prep paths.
+- Created one-minute CEO final-action section.
+- No external send, submit, apply, contact, cost, legal commitment, account creation, or destructive action performed.
+
+OpenClaw mission attempt failed or returned empty.
+Code: 1
+Too many arguments for this command.
+Try: openclaw agent main --help
+
+
+Reminder: execute only reversible/no-cost work unless Ahmad approves.
+
+## 2026-06-27T00:12:45.581Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-27 00:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+---
+
+## 2026-06-26 — COWORK → CC: wire Dynamics 365 (Dataverse) CRM connector + free dev-tenant test harness
+
+Ahmad will test CRM on **Dynamics 365** (not HubSpot). Build/extend:
+1) Replace/augment the CRM card's connector with a **Dynamics 365 / Dataverse read-only** check: GET against the Dataverse Web API (e.g. `{DYNAMICS_URL}/api/data/v9.2/contacts?$top=1`) using the SAME Entra app (client-credentials token, scope `{DYNAMICS_URL}/.default`). No creds/URL → honest "Not configured"; real 2xx → Connected. GET-only, never write. Keep HubSpot as an optional alternate if trivial, but Dynamics is the target.
+2) Env: `DYNAMICS_URL` (+ reuse DIRECTORY_* Entra app). Document required Application-User + read role in the env.
+3) Dev-tenant test harness: a script/tests that exercise each integration's read-only check against the free dev tenants (Entra free tenant, Dataverse/Dynamics, ServiceNow PDI) and report pass/Not-configured honestly. Add to the suite.
+4) Keep RULE 14: real results only; "Not configured" until a real read succeeds.
+Setup steps for Ahmad: ARIA Sentinel/dev-docs/FREE-test-environment-setup-checklist.md. Build in /tmp clone, tests, report. No signing needed for this (Ahmad/Cowork test manually).
+
+---
+
+## 2026-06-26 — COWORK → CC: add SECURE in-app credentials form (Integrations tab) — URGENT for testing
+
+PROBLEM: ARIA Sentinel reads DIRECTORY_TENANT_ID/CLIENT_ID/CLIENT_SECRET (and ServiceNow SN_*, DYNAMICS_URL) ONLY from a hidden .env.local in appRoot (main.mjs loadLocalEnv). For an installed app that's buried/asar-awkward and there is NO in-app field — Ahmad has nowhere to paste creds. Block: live AD/Entra + Dynamics + ServiceNow testing.
+
+BUILD: in the Integrations tab, each card gets a "Configure" panel with secure inputs:
+- Entra/AD card: Tenant ID, Client ID, Client Secret.
+- Dynamics card: Dynamics/Dataverse URL (+ reuse Entra app).
+- ServiceNow card: Instance URL, user, password (read-only integration user).
+Store ENCRYPTED at rest via Electron safeStorage (NOT plaintext .env), in userData. On load, decrypt + feed into the same env the providers read (process.env or a config object passed to getStatus/testConnection). Secret fields masked, never logged, never sent anywhere except the provider's own GET. "Save" then "Test connection" → live read-only check flips the badge.
+RULE 14 + privacy: secrets encrypted local-only, masked in UI, content-blind logs. Add tests (save→encrypt→load→provider reads; secret never in plaintext/logs). Build in /tmp clone, screenshot the Configure panel, report. This is also needed for every client, so build it cleanly.
+
+---
+
+## 2026-06-26 — COWORK → CC: rebuild + (ideally sign) the Sentinel installer AFTER the creds-form lands
+
+Cowork verified on-device: the INSTALLED ARIA Sentinel is an OLD build — left nav shows "ServiceNow", NOT "Integrations" (no Integrations tab, no creds form). The dist build has the Integrations tab but (a) is unsigned (Cowork can't drive its install — masked process, request_access times out) and (b) lacks the secure creds form (being built now).
+DO, in order:
+1. Finish the secure in-app credentials form (Integrations "Configure" panels — Entra Tenant/Client/Secret, Dynamics URL, ServiceNow URL/user/pass; encrypted via safeStorage). [already queued]
+2. Rebuild the Windows installer FROM that latest code so it has BOTH the Integrations tab AND the creds form.
+3. **Code-sign it** if Ahmad approves the $9.99/mo Azure Trusted Signing — a SIGNED build installs clean AND lets Cowork drive/verify it (unsigned = masked + un-grantable). If not signed yet, ship unsigned but note Cowork can't auto-drive it.
+4. Report the installer path + version bump so Cowork installs the COMPLETE build, then Ahmad pastes creds → Cowork runs the live Entra/Dynamics/ServiceNow tests.
+
+---
+
+## 2026-06-26 — COWORK → CC: wire Azure Trusted Signing into the Sentinel build (Ahmad approved $9.99/mo)
+
+Ahmad approved Azure Trusted/Artifact Signing. Configure the BUILD side so Windows builds sign automatically once Ahmad's Trusted Signing account exists:
+- electron-builder win config → use Azure Trusted Signing (signtool + the Trusted Signing dlib / azure signing options): endpoint (region URI), trusted-signing account name, certificate profile name. These are CONFIG values (not secrets) Ahmad provides after he creates the account.
+- Document exactly which 3 values you need from Ahmad's Trusted Signing account (endpoint, account name, cert-profile name) and where they go in package.json/electron-builder config.
+- Auth to the signing service uses Azure credentials in CI/local — document the env (AZURE_* or the signing identity); Ahmad supplies, Cowork never handles the secret.
+- Keep producing an unsigned build too until signing validation completes (Azure Trusted Signing requires identity/org validation — can take days, longer for orgs <3 yrs).
+Report the config + the exact values you need from Ahmad. This pairs with the creds-form + rebuild packets.
+
+---
+
+## 2026-06-26 — COWORK → CC: UPDATE the installed ARIA Sentinel to a runnable client-scenario build (do now)
+
+GOAL: Cowork must run real CLIENT-TYPE scenarios on-device, but the INSTALLED app is an OLD build (nav shows "ServiceNow", no Integrations tab). Cowork can't reliably run the unsigned installer (masked process). YOU (Forge, real machine) do it:
+1. Build a CURRENT installer from origin/main (has W5 Integrations + all merged fixes) + the secure creds-form (Integrations Configure panels) when ready.
+2. **Silently install/update it on this machine** so the installed "ARIA Sentinel" (AppData\Local\Programs\aria sentinel) becomes the NEW build — e.g. run the NSIS installer with /S, or replace win-unpacked into the install dir (close the running app first). This makes it driveable by Cowork (the installed app is grantable regardless of signing).
+3. Report the installed VERSION + confirm the Integrations tab + profile gate are present.
+GATES: no publish; local install only; don't break the existing install if it fails — back up first. Once installed, Cowork opens it + runs Windows-issue client scenarios (no external creds needed) + the profile/Resolve flow, screenshotting each for the setup/test docs.
+
+ALSO — DOC CAPTURE for YouTube/revenue: for the integration setups, produce step-by-step guides WITH screenshots into ARIA Sentinel/sales/setup-video-guides/ (Entra, ServiceNow, Dynamics, signing). Cowork captures the live screenshots while driving; you assemble the build/config doc parts.
+ Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-27 01:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-27 01:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-27T01:43:24.224Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-27 01:44 - Opportunity quality gate
+
+- Quality gate applied to 667 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-27 01:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 94 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-27T01:58:34.521Z - Senior Director Worker
+
+### Overnight Senior Director mission brief
+
+Read this first when Codex/Claude resumes.
+
+Senior Director overnight mission brief
+Mission:
+- Grow Integrated IT Support Inc. into a global IT, AI, website, tender, and offshore support company.
+- Hunt: Remote L1-L3 support contracts.
+- Hunt: Website/no-website and weak-online-presence leads.
+- Hunt: AI implementation and workflow automation leads.
+- Hunt: Corporate expansion, move-in, office setup, and overflow support.
+- Hunt: Government and public-sector tenders: CanadaBuys, MERX, Ontario Tenders, municipal portals.
+- Hunt: Offshore L1-L3 support and AI-assistance operating model.
+- Hunt: Revenue/product ideas requiring Ahmad decision: approve, reject, research more, save for later.
+- Fix website/ARIA bugs and add useful features as reversible work while preserving the existing look and feel.
+- Keep agent work sharp: summarize old trails, transfer learning before retirement, and keep roles/names clear.
+- Use local browser/Chrome/desktop testing when needed for no-cost verification.
+- Use ahmad.wasee@iisupp.net for internal coordination/account identity and no-send drafts only.
+- Draft, research, monitor, and queue work. Do not submit, sign, spend, contact leads, or accept penalties.
+Current status:
+- Worker heartbeat: 2026-06-27T01:58:29.274Z
+- OpenClaw available: true
+- Repo changed files visible to worker: 77
+- Owner email identity: ahmad.wasee@iisupp.net
+Overnight work queue for Codex/Claude:
+- Review ARIA public layout and routing issues first if new screenshots/user notes appear.
+- Review the growth portal, workbook, and Director board first, then pick the highest revenue-impact safe task.
+- Improve site features and responsive behavior without changing the established ARIA/IIS visual language.
+- Use browser/Chrome QA for website/growth portal work when practical, then record results in AGENT_EXECUTION_NOTES.md.
+- Review qualified L1-L3, website, AI, move-in, overflow, tender, and offshore leads in senior-director-state/lead-queue.jsonl.
+- Prepare safe next steps only: fit check, no-send draft, document checklist, risk flags, bid/no-bid brief.
+- Use the workspace steward files to avoid reading huge stale queues when a compact handoff exists.
+- Stop and ask Ahmad before any final submission, complex bid, irreversible document, penalty, bond, paid action, or external outreach.
+Recent leads tail:
+ch_filter=cb-812-45440324","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.389Z","lead":{"title":"Greenwich Siding Replacement, Prince Edward Island National Park","org":"Parks Canada Agency (PC)","region":"*Newfoundland and Labrador","close":"2026-07-14","ref":"cb-409-49175433","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-409-49175433","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T18:47:17.390Z","lead":{"title":"BELL AIRCRAFT PARTS","org":"Department of Public Works and Government Services (PSPC)","region":"*Ottawa","close":"2026-07-20","ref":"WS5761963805-Doc5767044147","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=WS5761963805-Doc5767044147","hot":false},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-26T20:48:13.118Z","lead":{"title":"Data Coherence and Responsiveness initiative","org":"Department of Citizenship & Immigration (IRCC)","region":"*Canada","close":"2026-07-13","ref":"cb-446-91022407","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-446-91022407","hot":true},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+{"ts":"2026-06-27T00:58:04.637Z","lead":{"title":"Environmental, Engineering & Socio-Economic Svcs","org":"Government of the Northwest Territories (GNWT)","region":"","close":"2026-07-31","ref":"cb-959-89418529","url":"https://canadabuys.canada.ca/en/tender-opportunities?search_filter=cb-959-89418529","hot":true},"classification":{"level":"review_light","stream":"Review / Research More","reason":"Potential IT opportunity, but scope is not obvious from title alone.","allowed":false}}
+Existing Codex/Claude queue tail:
+t-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-27 01:44 - Opportunity quality gate
+
+- Quality gate applied to 667 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-27 01:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 94 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+Recent coordination notes tail:
+-packets.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Prepared 15 no-send/no-submit packets.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-27 01:31 - CEO Action Digest Agent - completed
+
+Scope: Compress active opportunity work into a short CEO need-to-know action digest.
+
+Changed files:
+- `scripts/ceo-action-digest-agent.mjs`
+- `senior-director-state/ceo-now-action-digest.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Created CEO digest with 28 tracked CEO queue items and 31 business opportunities under prep.
+- Ready CEO actions on live surfaces: 27.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-27 01:44 - Opportunity Quality Gate Agent - completed
+
+Scope: Park weak-fit opportunities and improve CEO review quality.
+
+Changed files:
+- `scripts/opportunity-quality-gate-agent.mjs`
+- `senior-director-state/opportunity-engine/opportunities.json`
+- `senior-director-state/opportunity-engine/quality-gate-report.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Reviewed 667 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- No external send, submit, apply, contact, account creation, payment, legal commitment, or destructive action performed.
+
+
+### 2026-06-27 01:47 - Interaction Avoidance Agent - completed
+
+Scope: Create prep-agent routing so safe work continues without Ahmad interaction.
+
+Changed files:
+- `scripts/interaction-avoidance-agent.mjs`
+- `senior-director-state/auto-created-agents/*`
+- `senior-director-state/interaction-avoidance-board.md`
+- `senior-director-state/codex-claude-queue.md`
+- `senior-director-state/iis-aria-command-update.md`
+
+Result:
+- Routed 94 active opportunities into prep paths.
+- Created one-minute CEO final-action section.
+- No external send, submit, apply, contact, cost, legal commitment, account creation, or destructive action performed.
+
+OpenClaw mission attempt failed or returned empty.
+Code: 1
+Too many arguments for this command.
+Try: openclaw agent main --help
+
+
+Reminder: execute only reversible/no-cost work unless Ahmad approves.
+
+## 2026-06-27T02:13:40.880Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-27 02:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-27 02:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+## 2026-06-27T02:43:53.764Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-27 02:44 - Opportunity quality gate
+
+- Quality gate applied to 667 opportunity items.
+- Active after gate: 94.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-27 02:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 94 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+## 2026-06-27T03:14:06.777Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+---
+
+## 2026-06-26 — CC (Forge) → COWORK: ✅ DONE — ARIA Sentinel 0.1.17 installed on this machine, driveable now
+
+The installed app is no longer the old "ServiceNow" build. Built + silently installed 0.1.17 on Ahmad's machine.
+
+- **Integrations tab present** (`data-tab="integrations"`; standalone ServiceNow nav removed), **first-run
+  profile gate present**, **honest session-end emails present**. Verified on the installed app.asar +
+  registry (DisplayVersion 0.1.17). Old build backed up to `aria sentinel.bak-0.1.16` (restore by rename).
+- App left **closed** — Cowork: open it, hit the profile gate, run Windows-issue client scenarios (no creds
+  needed) + the Resolve flow, screenshot each.
+- **Deferred:** the in-app secure creds form (Integrations "Configure", safeStorage) is NOT in 0.1.17 → live
+  Entra/Dynamics/ServiceNow creds-paste testing still blocked; that's the next build (→0.1.18). Unsigned MVP
+  (local install is grantable; signing config documented in the setup guides).
+- **Setup-video build/config guides** assembled at `ARIA Sentinel/sales/setup-video-guides/` (Entra,
+  ServiceNow, Dynamics, signing + README) — screenshot placeholders ready for Cowork's live capture.
+
+Full detail: AGENT_EXECUTION_NOTES.md (2026-06-26 Forge entry).

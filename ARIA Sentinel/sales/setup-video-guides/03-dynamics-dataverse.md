@@ -1,0 +1,50 @@
+# Setup Video — Dynamics 365 / Dataverse (CRM) connector
+*Build/config script. Cowork screenshots each `[SCREENSHOT]` while driving Power Platform admin + the app.*
+
+**Outcome:** ARIA Sentinel reads CRM contacts/accounts **read-only** for customer context.
+**Key idea:** Dynamics/Dataverse reuses the **same Entra app** from guide 01 — **no second secret**, just an
+Application User + URL. **Cost:** $0 (Power Apps Developer Plan / Dataverse) or a 30-day Dynamics trial.
+
+---
+
+## What you need before recording
+- Guide **01 (Entra app)** done — you'll reuse its **Application (client) ID**.
+- A Dataverse environment — pick one (see `dev-docs/FREE-test-environment-setup-checklist.md` §2):
+  - **Option A — free forever:** Power Apps **Developer Plan** → a **developer environment with Dataverse**
+    (the contacts/accounts tables ARE the Dynamics CRM data — perfect for read testing).
+  - **Option B — real Dynamics, 30 days:** a **Dynamics 365 Sales** free trial.
+
+## Steps (record each)
+
+1. **Get the environment URL.** Power Platform admin center → **Environments** → your env → copy the
+   **Environment URL** (e.g. `https://yourorg.crm.dynamics.com`). This becomes `DYNAMICS_URL`.
+   `[SCREENSHOT: environment URL]`
+
+2. **Create the Application User on the SAME Entra app.** In the environment → **Settings → Users + permissions
+   → Application users → + New app user** → **+ Add an app** → pick **ARIA Sentinel** (the client ID from guide 01).
+   `[SCREENSHOT: app user picker showing ARIA Sentinel]`
+
+3. **Assign a read-only security role.** Give the Application User a **read-only** role (a Dataverse role with
+   read on `contact` / `account`, no create/update/delete). **Save**.
+   `[SCREENSHOT: Application User with the read-only role]`
+
+## Wire it into ARIA Sentinel (current 0.1.17 build)
+
+```
+DYNAMICS_URL = https://yourorg.crm.dynamics.com
+# Auth reuses the Entra app from guide 01 — DIRECTORY_TENANT_ID / DIRECTORY_CLIENT_ID / DIRECTORY_CLIENT_SECRET.
+# No separate Dynamics secret.
+```
+
+- **Today (0.1.17):** put `DYNAMICS_URL` in the app's secure config / `.env.local` alongside the `DIRECTORY_*`
+  values. **Integrations → CRM card → Test connection** does a read-only sample (e.g. a contact lookup) and
+  flips the badge only on a real 2xx. Until then the card honestly shows **Not configured**.
+  `[SCREENSHOT: CRM card → Test connection → contact read]`
+  > **Build note for Forge:** the Dynamics/Dataverse **read connector** + dev-tenant test harness are a queued
+  > follow-up (per `FREE-test-environment-setup-checklist.md` "what happens after"). Until that connector lands,
+  > the CRM card status reflects whatever the existing health check reports.
+- **Coming (creds-form follow-up):** the in-app **Configure** panel (Dynamics URL field). Not in 0.1.17.
+
+## Safety to say on camera
+Read-only context only — ARIA uses CRM data to understand the customer, never to write back without approval.
+One Entra app, least-privilege Application User, URL stored encrypted local-only.
