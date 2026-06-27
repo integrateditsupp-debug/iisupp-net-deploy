@@ -229,11 +229,22 @@ for (const [industry, def] of Object.entries(INDUSTRY_SCENARIOS)) {
 const HARDWARE_VENDORS = ['dell','hp','lenovo','apple','microsoft surface','asus','acer','razer','framework','lg','samsung','panasonic','toshiba','msi','cyberpower','origin','alienware'];
 const HARDWARE_PROBLEMS = ['wont turn on','wont charge','battery dying','fan loud','screen black','screen flicker','keyboard not working','touchpad dead','speakers dead','overheating','hard drive crash','ssd failed','bios stuck','no display','random shutdown','blue screen','frozen','wifi card dead','bluetooth dead','webcam dead','docking station issue','thunderbolt port broken','usb-c not working','hdmi port broken'];
 
+// Each hardware problem now routes to its TRUE intent (2026-06-27 — kb:hardware triage added to classify();
+// the old blanket 'default' meant "no route existed"). Physical faults → kb:hardware; the rest to their topic.
+const HW_INTENT = {
+  'wont turn on':'kb:hardware','wont charge':'kb:hardware','battery dying':'kb:hardware','fan loud':'kb:hardware',
+  'screen black':'kb:hardware','screen flicker':'kb:hardware','keyboard not working':'kb:hardware','touchpad dead':'kb:hardware',
+  'speakers dead':'kb:hardware','overheating':'kb:performance','hard drive crash':'kb:hardware','ssd failed':'kb:hardware',
+  'bios stuck':'kb:hardware','no display':'kb:hardware','random shutdown':'kb:hardware','blue screen':'kb:windows',
+  'frozen':'default','wifi card dead':'wifi','bluetooth dead':'kb:bluetooth','webcam dead':'kb:webcam',
+  'docking station issue':'kb:hardware','thunderbolt port broken':'kb:usb','usb-c not working':'kb:usb','hdmi port broken':'kb:hardware',
+};
 HARDWARE_VENDORS.forEach(vendor => {
   HARDWARE_PROBLEMS.forEach(prob => {
-    push(vendor + ' laptop ' + prob, 'default');
-    push(vendor + ' desktop ' + prob, 'default');
-    PERSONAS.slice(0, 3).forEach(p => p.tag && push(p.tag + vendor + ' laptop ' + prob, 'default'));
+    const it = HW_INTENT[prob] || 'default';
+    push(vendor + ' laptop ' + prob, it);
+    push(vendor + ' desktop ' + prob, it);
+    PERSONAS.slice(0, 3).forEach(p => p.tag && push(p.tag + vendor + ' laptop ' + prob, it));
   });
 });
 
@@ -270,5 +281,42 @@ snapshot.slice(0, Math.floor(snapshot.length / 2)).forEach(item => {
 });
 
 console.error('MEGA Corpus size (post-tier-7):', out.length);
+
+// ============ TIER 8: NEWLY-COVERED CATEGORIES (2026-06-27 breadth-gap close) ============
+// Regression scenarios for the routes added to aria.html classify(): RSA, hardware, mobile, Office,
+// Ivanti→vpn, and the B6–B9 phrasing fixes. With case + politeness/urgency variants.
+const TIER8 = [
+  // RSA SecurID
+  ['set up my rsa token','kb:rsa'],['rsa securid not working','kb:rsa'],['my rsa token is out of sync','kb:rsa'],
+  ['import my rsa soft token','kb:rsa'],['rsa securid app setup','kb:rsa'],['need a new rsa token issued','kb:rsa'],
+  ['securid code keeps getting rejected','kb:rsa'],['rsa token resync','kb:rsa'],
+  // Ivanti Secure Access → vpn
+  ['ivanti secure access wont connect','vpn'],['set up ivanti vpn','vpn'],['ivanti pulse vpn error','vpn'],
+  ['cant connect with ivanti secure','vpn'],['ivanti secure access keeps disconnecting','vpn'],['install ivanti secure access','vpn'],
+  // Mobile (iOS/Android) setup + enrollment
+  ['set up email on my iphone','kb:mobile'],['configure outlook on my android','kb:mobile'],['set up my work phone','kb:mobile'],
+  ['add my work account to my ipad','kb:mobile'],['enroll my android phone for work','kb:mobile'],['set up company email on my personal phone','kb:mobile'],
+  // Office app repair / reinstall
+  ['repair my office installation','kb:office'],['reinstall office','kb:office'],['my office apps wont launch','kb:office'],
+  ['word keeps freezing','kb:office'],['excel wont open','kb:office'],['repair microsoft office','kb:office'],['powerpoint crashes on launch','kb:office'],
+  // Hardware break/fix triage
+  ['my laptop wont turn on','kb:hardware'],['screen is black','kb:hardware'],['keyboard stopped working','kb:hardware'],
+  ['laptop wont charge','kb:hardware'],['docking station not working','kb:hardware'],['no display on my monitor','kb:hardware'],['battery wont hold charge','kb:hardware'],
+  // B6 permissions phrasing
+  ['permission denied on the network drive','kb:permissions'],['i lost access to a folder','kb:permissions'],['cant open the shared drive','kb:permissions'],
+  // B7 account-locked phrasing
+  ['my account is locked','password'],['please unlock my account','password'],['locked out of my account','password'],
+  // B8 onboarding phrasing
+  ['deactivate a user account','kb:onboarding'],['provision a new employee','kb:onboarding'],['disable access for a departing employee','kb:onboarding'],
+  // B9 Intune Company Portal
+  ['company portal wont enroll my device','kb:m365'],['company portal setup','kb:m365'],
+];
+TIER8.forEach(([q, expect]) => {
+  push(q, expect);
+  push(q.toUpperCase(), expect);
+  push(q.charAt(0).toUpperCase() + q.slice(1), expect);
+  ['please ', 'urgent: ', 'can you help with '].forEach((p) => push(p + q, expect));
+});
+console.error('MEGA Corpus size (post-tier-8):', out.length);
 
 module.exports = out;
