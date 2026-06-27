@@ -73,11 +73,14 @@ assert.notEqual(entryHash("p", entries[0]), entryHash("p", { ...entries[0], text
 // 6 · Runtime wiring (RUN 16): main seals the log on every write, verifies integrity at session start
 // before anything logs, alerts on tamper, and exposes the status in getState.
 const mainJs = fs.readFileSync(path.resolve(import.meta.dirname, "..", "src", "main", "main.mjs"), "utf8");
-assert.match(mainJs, /import \{ sealAudit, verifyAudit \} from "\.\.\/shared\/audit-integrity\.mjs"/, "main imports the integrity module");
+assert.match(mainJs, /import \{ sealAudit, verifyAudit, classifyIntegrity \} from "\.\.\/shared\/audit-integrity\.mjs"/, "main imports the integrity module (incl. classifyIntegrity)");
 assert.match(mainJs, /store\.set\("auditSeal", sealAudit\(/, "main re-seals the log on write");
+assert.match(mainJs, /sealAudit\([^)]*\{ appVersion: appVersion\(\)/, "the seal is version-stamped so upgrades aren't read as tampering");
 assert.match(mainJs, /function verifyAuditIntegrity\(\)/, "main defines the startup verifier");
+assert.match(mainJs, /classifyIntegrity\(log, sealed, appVersion\(\)\)/, "startup verifier classifies via the version-aware check");
 assert.match(mainJs, /verifyAuditIntegrity\(\);\s*\n\s*initWhatsNew\(\)/, "verifier runs first in whenReady, before any logEvent");
-assert.match(mainJs, /logEvent\("SECURITY"[\s\S]{0,140}tamper/i, "tamper raises a SECURITY audit event (admin alert)");
+assert.match(mainJs, /verdict\.status === "version-changed"/, "version upgrade is handled as a benign re-seal, not tampering");
+assert.match(mainJs, /logEvent\("SECURITY"[\s\S]{0,160}tamper/i, "tamper raises a SECURITY audit event (admin alert)");
 assert.match(mainJs, /auditIntegrity: store\.get\("auditIntegrity"\)/, "integrity status exposed in getState");
 
 console.log("Audit battery passed (ISO timestamps · CSV+PDF complete · hash-chain detects modify/truncate/reorder + alerts admin · exact time-window queries · wired into session-start).");

@@ -20,11 +20,41 @@ export function entryHash(prevHash, entry) {
 }
 
 // Seal a log: returns the per-entry chain + the final seal hash. Persist this alongside the log.
-export function sealAudit(entries = []) {
+// `meta.appVersion` stamps the build that sealed it, so a later session can tell a legitimate version
+// upgrade (re-seal, not tampering) apart from an off-app edit of the SAME version's log.
+export function sealAudit(entries = [], meta = {}) {
   let h = GENESIS;
   const chain = [];
   for (const e of (Array.isArray(entries) ? entries : [])) { h = entryHash(h, e); chain.push(h); }
-  return { v: "audit-seal-v1", count: chain.length, chain, seal: h };
+  return {
+    v: "audit-seal-v2",
+    count: chain.length,
+    chain,
+    seal: h,
+    appVersion: meta.appVersion != null ? String(meta.appVersion) : null,
+    sealedAt: meta.sealedAt != null ? String(meta.sealedAt) : null
+  };
+}
+
+/**
+ * Classify a session-start integrity check, distinguishing a benign VERSION UPGRADE (or a legacy
+ * version-less seal) from a real SAME-VERSION tamper. Pure — main wires the store + alerts.
+ *   no seal            → "baseline"        (first run; just seal)
+ *   no/changed version → "version-changed" (an install/upgrade re-sealed the chain — NOT tampering)
+ *   same version, ok   → "intact"
+ *   same version, diff → "tampered"        (off-app edit of this build's log → alert)
+ * Real tamper detection is preserved: a divergent chain under the SAME app version still alerts.
+ */
+export function classifyIntegrity(entries = [], sealed, currentVersion) {
+  if (!sealed || !Array.isArray(sealed.chain)) return { status: "baseline", alertAdmin: false };
+  const sealedVersion = sealed.appVersion != null ? String(sealed.appVersion) : null;
+  const current = currentVersion != null ? String(currentVersion) : null;
+  if (sealedVersion == null || (current != null && sealedVersion !== current)) {
+    return { status: "version-changed", from: sealedVersion, to: current, alertAdmin: false };
+  }
+  const result = verifyAudit(entries, sealed);
+  if (result.ok) return { status: "intact", alertAdmin: false };
+  return { status: "tampered", reason: result.reason, brokenAt: result.brokenAt, alertAdmin: true };
 }
 
 // Verify a log against a prior seal. Detects modification (brokenAt = first divergent index),

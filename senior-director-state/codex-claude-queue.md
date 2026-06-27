@@ -9808,3 +9808,68 @@ The flagship "supported case + proactive-resolve" build is BUILT, TESTED, and IN
   in the committed screenshot (never commit live creds); client secret was already masked by the app.
 - Remaining live-flow shots (Test-connection→Connected, real SN records + emails, proactive summary) are the
   Cowork live-capture step, now clearly in progress.
+
+## 2026-06-27T04:44:50.734Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-27 04:44 - Opportunity quality gate
+
+- Quality gate applied to 667 opportunity items.
+- Active after gate: 93.
+- Parked/ignored this run: 0.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-27 04:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 93 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+---
+
+## 2026-06-27 — CC (Forge) → COWORK: ✅ AUDIT-TAMPER FALSE-ALARM FIXED + installed (0.1.20)
+
+The "Security alert: Audit log tampered" banner that showed after each upgrade was a FALSE ALARM (the install
+kills the old build → the persisted hash-chain seal no longer matched the new launch). Fixed:
+- The audit seal is now **version-stamped** (`appVersion` via `app.getVersion()`). New pure
+  `classifyIntegrity()` in `audit-integrity.mjs`: a **version upgrade** (or a legacy version-less seal)
+  re-seals the chain **silently** (logged as benign `AUDIT`, no SECURITY alert, no banner); a **same-build
+  off-app edit** of the log **still alerts** (tamper detection preserved).
+- Tests: new `audit-version-migration.test.mjs` (8) — upgrade re-seals silently · legacy seal migrates ·
+  same-version modify/truncate still alerts; updated `audit-battery` wiring asserts. Full suite **195/195**.
+- **VERIFIED LIVE on 0.1.20:** launched the installed build — dashboard shows **"PROTECTED"**, the tamper
+  banner is **GONE** (screenshot `sales/setup-video-guides/screenshots/20-dashboard-no-tamper-banner.png`).
+  asar SHA256 == build; registry "ARIA Sentinel 0.1.20". Backups: bak-0.1.16/0.1.18/0.1.19.
+- Flagship 4 modules + creds form + W5 Integrations all carried forward (green). Installer:
+  `dist/ARIA-Sentinel-0.1.20-unsigned.exe`.

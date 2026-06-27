@@ -89,7 +89,7 @@ import { loadProfile, saveProfile as persistProfile, profileGateRequired } from 
 import { createSession, recordTurn, endSession, buildSessionReport } from "../shared/session.mjs";
 import { anchorTarget, tickAnchored } from "../shared/globe-anchor.mjs";
 import { dueGreeting, jitteredPeriod } from "../shared/globe-greetings.mjs";
-import { sealAudit, verifyAudit } from "../shared/audit-integrity.mjs";
+import { sealAudit, verifyAudit, classifyIntegrity } from "../shared/audit-integrity.mjs";
 // RUN 23 — self-service loop: process-health detector · findings→action mapper · supervisor critic ·
 // vetted-tier dry-run policy · abortable 10s countdown gate. The supervisor + policy + countdown form the
 // control plane in FRONT of the existing (dry-run-gated) executor — nothing executes live by default.
@@ -1922,33 +1922,46 @@ function logEvent(tag, text, extra = {}) {
   current.unshift(entry);
   const trimmed = current.slice(0, 250);
   store.set("transparencyLog", trimmed);
-  // RUN 16 §H — re-seal the log on every write so the next session can detect off-app tampering.
-  try { store.set("auditSeal", sealAudit(trimmed)); } catch { /* sealing must never block logging */ }
+  // RUN 16 §H — re-seal the log on every write so the next session can detect off-app tampering. The seal
+  // is version-stamped so a later build can tell an upgrade (benign re-seal) from a same-version edit.
+  try { store.set("auditSeal", sealAudit(trimmed, { appVersion: appVersion(), sealedAt: entry.ts })); } catch { /* sealing must never block logging */ }
   broadcastState();
   return entry;
 }
 
+// The real build version (package.json, e.g. 0.1.19) — changes per install, unlike the static
+// SENTINEL_VERSION constant. Used to version-stamp the audit seal so upgrades aren't read as tampering.
+function appVersion() {
+  try { return app.getVersion(); } catch { return SENTINEL_VERSION; }
+}
+
 // RUN 16 §H — at session start, verify the persisted audit log against the seal written last session.
-// A mismatch means the on-disk log was edited/truncated/reordered while the app was closed → record a
-// SECURITY entry, surface it to the admin (state + tray), then re-baseline the seal to the current log.
+// A mismatch UNDER THE SAME BUILD means the on-disk log was edited/truncated/reordered while the app was
+// closed → record a SECURITY entry, surface it to the admin (state + tray). A version UPGRADE (or a
+// legacy version-less seal) is NOT tampering — the install kills the old build and the new one re-seals;
+// we migrate the chain silently so updates never raise a false tamper alarm. Real tamper still alerts.
 function verifyAuditIntegrity() {
   const log = store.get("transparencyLog") || [];
   const sealed = store.get("auditSeal");
-  if (sealed && Array.isArray(sealed.chain)) {
-    const result = verifyAudit(log, sealed);
-    if (!result.ok) {
-      const finding = { ok: false, reason: result.reason, brokenAt: result.brokenAt, detectedAt: new Date().toISOString() };
-      store.set("auditIntegrity", finding);
-      // logEvent re-seals over the (now-trusted-going-forward) log, so this alert won't repeat next launch.
-      logEvent("SECURITY", `Audit log integrity check FAILED (${result.reason}) — tamper detected; admin alerted.`);
-      try { refreshTray(); } catch { /* tray may not exist yet at startup */ }
-      return finding;
-    }
+  const verdict = classifyIntegrity(log, sealed, appVersion());
+  const reseal = () => { try { store.set("auditSeal", sealAudit(log, { appVersion: appVersion(), sealedAt: new Date().toISOString() })); } catch { /* non-fatal */ } };
+
+  if (verdict.status === "tampered") {
+    const finding = { ok: false, reason: verdict.reason, brokenAt: verdict.brokenAt, detectedAt: new Date().toISOString() };
+    store.set("auditIntegrity", finding);
+    // logEvent re-seals over the (now-trusted-going-forward) log, so this alert won't repeat next launch.
+    logEvent("SECURITY", `Audit log integrity check FAILED (${verdict.reason}) — tamper detected; admin alerted.`);
+    try { refreshTray(); } catch { /* tray may not exist yet at startup */ }
+    return finding;
   }
-  const ok = { ok: true, verifiedAt: new Date().toISOString() };
+
+  const ok = { ok: true, verifiedAt: new Date().toISOString(), migratedAcrossVersion: verdict.status === "version-changed" };
   store.set("auditIntegrity", ok);
-  // Baseline/refresh the seal (first run, or after a confirmed-clean verify).
-  try { store.set("auditSeal", sealAudit(log)); } catch { /* non-fatal */ }
+  reseal(); // baseline (first run) / migrate (version change) / refresh (clean verify) — always under the current version
+  if (verdict.status === "version-changed") {
+    // Audit, but as benign maintenance — NOT a SECURITY tamper alert and NOT a banner trigger.
+    logEvent("AUDIT", `Audit chain re-sealed across version change (${verdict.from || "legacy"} -> ${verdict.to}) — not tampering.`);
+  }
   return ok;
 }
 

@@ -220,6 +220,7 @@ import "./servicenow-write.test.mjs";
 import "./entra-remediation.test.mjs";
 import "./case-orchestrator.test.mjs";
 import "./proactive-resolve.test.mjs";
+import "./audit-version-migration.test.mjs";
 // W5 Slice 3 — System Inventory grouped (Apps / Drivers / Security updates · collapsible · filtered).
 import "./system-inventory-grouping.test.mjs";
 // G-METRICS — proof-metrics store: content-blind counters + deflection/kb-hit/avg math + honest zero.
