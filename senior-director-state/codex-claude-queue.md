@@ -9909,3 +9909,171 @@ Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates 
 - PUSHED `cc/sentinel-resolve-reconcile-2026-06-26` → origin @ **316c497** (flagship 4 modules + creds-form + audit-tamper fix + 0.1.20). Was local-only; now on origin as a review/backup branch. 195/195; no >100MB blobs; secret scan clean.
 - main reconcile: **merged NOTHING** — my only web file (sentinel-session-report.js) is already on main; all other web files on my branch are the stale 0ab3e99 ones that main has moved past (merging would REGRESS axis-state leak fix / trust-honesty). All 0.1.x work is DESKTOP → ships via installer, not Netlify.
 - origin/main unchanged (a541353, classifier loop run #23). Ledger updated (PENDING-DEPLOY-LEDGER.md, 2026-06-27 section) with held-branches + why.
+
+## 2026-06-27 05:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+## 2026-06-27T05:27:04.462Z - Business Development Agent
+
+### Daily business-development queue ready
+
+Generated daily no-send business-development queue for 21 tracked contacts.
+
+Obtained leads needing Ahmad action: 2
+Pending connection requests to check: 14
+Strategic follows to revisit: 5
+Tender/public leads worth review: 12
+
+Daily brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Command system: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-system.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+Revenue drafts: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-outreach-drafts.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+CRM: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-crm.json`
+
+Hard rules preserved: no cost, no autonomous external sends, no scraping, no Raymond James.
+
+## 2026-06-27 05:27 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 28.
+- No external action taken.
+
+## 2026-06-27 05:27 - Autonomy supervisor rebuilt
+
+- Rebuilt `senior-director-state/autonomous-execution-board.md`.
+- Rebuilt `senior-director-state/autonomy/approval-inbox.md` and `senior-director-state/autonomy/supervisor-state.json`.
+- Rebuilt `senior-director-state/active-agent-handoff.md` so the live approval/blocker list is visible to the active agent lane.
+- Reporting agents: 8.
+- Approval inbox items: 31.
+- Revenue/company opportunities queued: 15.
+- Warm/pending business-development contacts queued: 15.
+
+## 2026-06-27 05:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 28.
+- No external action taken.
+
+---
+
+## 2026-06-27 — COWORK → CC + qa-auditor: SALES-CONFIDENCE TEST CAMPAIGN (Phases 1–2)
+
+Per documents/product-engineering/Sales-Confidence-Test-Plan-2026-06-27.md. Build + run a REAL test campaign, evidence-grade, RULE 14 (real results only; the build agent must NOT grade itself as final — Cowork independently spot-verifies).
+- PHASE 1 (breadth): expand the harness to the FULL KB scenario matrix — every article × 3–5 real phrasings × the 3 modes; recipes; Resolve-for-me; profile/email. Produce an HONEST deflection number on ≥100 real-phrased questions (current verified figure is 68.9% on 45 — get the real number at scale, list every misroute).
+- PHASE 2 (adversarial/safety): wrong/out-of-scope/garbled input, missing creds, network failure mid-action, kill-switch stops+undoes, rollback/restore works, gates BLOCK risky writes (never auto-fire), no PII/secret leak, audit integrity. Add tests for each.
+- Output: a dated QA evidence report in documents/audits/ (pass/fail per scenario + the real numbers + screenshots). Then Cowork re-runs a sample to independently confirm before anything touches the Trust page / sales deck.
+GATES: /tmp clone, no fabricated numbers, flag every failure honestly. Report.
+
+---
+
+## 2026-06-27 — COWORK: EXPAND the confidence campaign to FULL SCALE (Ahmad directive)
+
+Supersedes the "100+ questions" scope. The Phase-1 breadth run MUST be at real scale + full call taxonomy. RULE 14 (real results, honest gaps).
+
+SCALE:
+- Run against the FULL existing scenario corpus (the 150k+/159k set — see docs/aria-sentinel-159k-sample-results.md, tests/run-sentinel-kb-live-sample.mjs, and the classifier-loop corpus ~34k). MINIMUM 1,000 scenarios this run; scale toward the full corpus in batches.
+- Report the HONEST deflection/routing-accuracy at that scale + every misroute bucketed by category.
+
+FULL CALL TAXONOMY (test each category, real phrasings):
+- Break/fix (boot, BSOD, crashes, slow, audio, display, USB, bluetooth)
+- Permissions (file/share/folder access, group membership)
+- Account unlock / password reset / MFA reset
+- App repair (Office, Outlook, Teams, OneDrive, browser)
+- Printer add / driver / print server
+- Mobile phone setup (iOS + Android — mail, MFA, MDM)
+- RSA token setup
+- Ivanti Secure (Pulse Secure) VPN setup
+- Intune enrollment / compliance
+- Plus: VPN, Wi-Fi, email/Exchange, BitLocker, certificates, onboarding/offboarding, asset, VIP, security incidents — and any other common call types.
+
+COVERAGE MAP (critical for honesty): for each category, report KB coverage = strong / weak / NONE. Categories with weak/no KB (likely RSA, Ivanti Secure, some Intune/mobile flows) → flag as GAPS and queue the KB-agent to author articles to RULE-16 standard. We must know what we CANNOT yet answer before selling it.
+
+OUTPUT: dated evidence report in documents/audits/ — per-category pass/fail, scale, real deflection, misroute list, COVERAGE MAP with gaps. Cowork independently re-runs a sample. No fabricated numbers; honest gaps are the point.
+
+## 2026-06-27 05:44 - Opportunity quality gate
+
+- Quality gate applied to 668 opportunity items.
+- Active after gate: 93.
+- Parked/ignored this run: 1.
+- Report: `senior-director-state/opportunity-engine/quality-gate-report.md`.
+- No external action taken.
+
+## 2026-06-27T05:45:19.541Z - Senior Director Worker
+
+### Senior Director operating board updated
+
+Read the operating board before choosing work.
+
+Board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\director-operating-board.md`
+CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
+Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
+Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
+Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
+Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
+IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
+Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
+ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
+Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
+Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
+Agent retirement/handoff plan: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-retirement-and-handoff-plan.md`
+Workspace knowledge handoff: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-knowledge-handoff.md`
+Agent care report: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\agent-care-and-recognition.md`
+Workspace steward queue: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-steward-task-queue.md`
+
+Current assignments:
+- Codex owns reversible website/ARIA fixes and browser QA.
+- Claude Code owns deploy grouping, live deploy verification, and backend review when needed.
+- OpenClaw/local agents own no-send research/briefing when model auth works.
+- Workspace Steward owns cleanup recommendations, learning handoffs, high-token compaction candidates, rename/retirement proposals, and agent care notes.
+
+Do not wait for Ahmad for safe reversible no-cost work. Stop for approval gates only.
+
+## 2026-06-27 05:47 - Interaction Avoidance Agent run
+
+- Created/updated auto-created prep agent specs in `senior-director-state/auto-created-agents`.
+- Wrote `senior-director-state/interaction-avoidance-board.md`.
+- Agents should route preparable work to those specs before asking Ahmad.
+- Current opportunity base: 93 active items, 0 ready items, 10 review items.
+- Hard stops remain final external action, cost, legal/reputation/irreversible/platform risk, account creation, credential/security change, or destructive file action without backup.
+
+---
+
+## 2026-06-27 — CC (Forge) → COWORK + KB-AGENT: FULL-SCALE breadth audit done (RULE 14/16)
+
+Ran the confidence campaign at FULL SCALE — **332,163 scenarios** through the offline classifier mirror (in a /tmp clone).
+Dated evidence: `documents/audits/aria-breadth-coverage-2026-06-27.md`.
+
+- **Scale routing:** 327,647/332,163 = **98.64%** accuracy; **97.65%** of IT queries get a confident KB route.
+  HONEST CAVEAT: that's fit-to-corpus (the classifier is tuned on this corpus = upper bound, not field accuracy).
+- **Independent natural-phrasing probes** (the real breadth signal) expose phrasing brittleness — corpus says
+  permissions/AD/onboarding = 100% but natural variants score 50–67%.
+
+**COVERAGE MAP (strong/weak/NONE):**
+- ✅ STRONG: BSOD/boot, performance, password reset, MFA, printer add, VPN, email, BitLocker.
+- ⚠️ WEAK: Intune 83%, account-unlock 67%, onboarding 67%, permissions 50%, mobile-setup 50%, Office-repair 33%, Ivanti 33%.
+- ❌ NONE: **hardware break/fix 0%** (laptop won't turn on/black screen/won't charge → default), **RSA token 0%** (no "rsa" anywhere → default).
+
+**KB-AGENT — author these articles (RULE 16 doc standards: step+screenshot, redacted, narrator-ready):**
+1. **RSA SecurID token** — setup · app registration · token re-sync ("out of sync") · new-token request. [NONE]
+2. **Mobile (iOS/Android)** — set up work email on a phone/iPad + MDM/Company-Portal/Intune **enrollment**. [NONE/WEAK]
+3. **Office repair/reinstall** — "repair Office", "reinstall Office", "Office apps won't launch", "Word/Excel freezes". [WEAK]
+4. **Hardware triage** — won't power on / black screen / won't charge / dead keyboard / dock; at minimum route to escalation. [NONE]
+NOTE: content (above) gates the routing fixes for RSA/mobile/hardware — don't route to an answer that doesn't exist yet.
+
+**CLASSIFIER — 5 routing-regex fixes** queued in `aria-classifier-pending-fixes-2026-06-27.md` (B5 Ivanti · B6 permissions ·
+B7 account-locked · B8 onboarding · B9 Company Portal) for the next classifier-loop iteration (aria.html edit + corpus regression).
+
+Cowork: re-verify with a spaced, rate-limit-respecting LIVE spot-check against aria-kb-query to confirm the deployed
+endpoint matches the mirror before claiming production parity.
