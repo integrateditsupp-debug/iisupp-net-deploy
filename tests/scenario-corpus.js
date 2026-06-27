@@ -115,6 +115,7 @@ const corpus = [];
 // === BLUETOOTH / AIRPODS === (15)
 [
   'bluetooth not working','can\'t pair bluetooth','airpods not connecting','airpods keep disconnecting',
+  'headphone jack not working',
   'headphones won\'t pair','bluetooth keyboard disconnects','bluetooth mouse not working','bluetooth keeps dropping',
   'jabra not pairing','poly headset issue','bluetooth no audio','sound only on left airpod',
   'bluetooth latency','wireless headset cutting out','bose qc not pairing'
@@ -290,7 +291,7 @@ const corpus = [];
   'docking station not working','laptop won\'t charge','battery dying fast',
   'fan making noise','keyboard not typing','spacebar broken','sticky keys',
   'mouse cursor frozen','touchpad not responding','sound not working',
-  'no audio after update','headphone jack not working','speakers crackling',
+  'no audio after update','speakers crackling',
   'cd drive missing',
   'taskbar missing','start menu gone','desktop icons gone','recycle bin missing',
   'file explorer crashed','windows explorer not responding','clock wrong','timezone wrong',
