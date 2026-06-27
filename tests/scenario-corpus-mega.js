@@ -319,4 +319,27 @@ TIER8.forEach(([q, expect]) => {
 });
 console.error('MEGA Corpus size (post-tier-8):', out.length);
 
+// ============ TIER 9: P2 — natural-phrasing HARDENING of previously-weak categories (2026-06-27) ============
+const TIER9 = [
+  // Ivanti (vpn)
+  ['ivanti connect secure wont launch','vpn'],['cant get on ivanti','vpn'],['ivanti vpn keeps asking for credentials','vpn'],
+  ['my ivanti client crashed','vpn'],['ivanti wont authenticate','vpn'],['update ivanti secure access','vpn'],['ivanti pulse not connecting','vpn'],['reinstall ivanti','vpn'],
+  // Intune (kb:m365)
+  ['my device shows not compliant in intune','kb:m365'],['intune wont push my apps','kb:m365'],['retire my device from intune','kb:m365'],
+  ['intune policy not applying','kb:m365'],['cant enroll in intune','kb:m365'],['intune sync failed','kb:m365'],['device management enrollment error','kb:m365'],['mdm enrollment stuck','kb:m365'],
+  // account unlock (password)
+  ['account locked','password'],['im locked out','password'],['my login is locked','password'],['locked out after password change','password'],
+  ['my profile is locked','password'],['unlock me please','password'],['i got locked out this morning','password'],['account disabled after too many tries','password'],
+  // onboarding/offboarding (kb:onboarding)
+  ['new employee starting monday','kb:onboarding'],['set up accounts for a new hire','kb:onboarding'],['disable a terminated employee','kb:onboarding'],
+  ['offboard someone who quit','kb:onboarding'],['remove access for ex employee','kb:onboarding'],['onboard a contractor','kb:onboarding'],
+  ['decommission a leaver','kb:onboarding'],['grant a new joiner their apps','kb:onboarding'],['employee transferred departments access','kb:onboarding'],
+  // permissions (kb:permissions)
+  ['i dont have permission to this folder','kb:permissions'],['getting access denied opening the share','kb:permissions'],['cant get into the department folder','kb:permissions'],
+  ['my permissions to the drive disappeared','kb:permissions'],['folder says you dont have access','kb:permissions'],['need access to a network share','kb:permissions'],
+  ['cant write to the shared folder','kb:permissions'],['permission error on the file server','kb:permissions'],['lost my rights to the team drive','kb:permissions'],['access to the share was removed','kb:permissions'],
+];
+TIER9.forEach(([q, expect]) => { push(q, expect); push(q.toUpperCase(), expect); push('please ' + q, expect); });
+console.error('MEGA Corpus size (post-tier-9):', out.length);
+
 module.exports = out;

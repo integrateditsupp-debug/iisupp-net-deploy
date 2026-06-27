@@ -58,6 +58,24 @@ app-repair, mobile, Ivanti, Intune, onboarding.
 - A KB-bundle rebuild (`scripts/build-kb-bundle*.mjs`) should propagate the 4 new `knowledge-base/` articles to the live
   `aria-kb-query` endpoint + the offline bundles (the web `/aria` page already serves them inline).
 
+## Priority 2 (same batch) — harden the previously-weak categories on natural phrasing
+P1 made every category 100% on a 6-probe set, but a 10-phrasing **stress test** exposed brittleness on real wording
+(onboarding 2/10, permissions 2/10). P2 added the missing synonyms/phrasings:
+- **permissions:** a comprehensive EARLY check (folder/share-context, before password+wifi) — "i don't have permission
+  to this folder", "cant get into the department folder", "lost my rights to the team drive", "need access to a network
+  share", "access to the share was removed" → now `kb:permissions` (was `default`/`password`/`wifi`). **10/10.**
+- **onboarding:** "new employee starting monday", "disable a terminated employee", "offboard someone who quit", "remove
+  access for ex employee", "onboard a contractor", "decommission a leaver", "grant a new joiner" → `kb:onboarding`. **9/9.**
+- **account unlock:** "my profile is locked", "unlock me please", "account disabled after too many tries". **8/8.**
+- **Intune:** "mdm enrollment stuck", "device management enrollment error", "not compliant in intune". **8/8.**
+- **Ivanti:** "ivanti connect secure", "cant get on ivanti", "ivanti won't authenticate". **8/8.**
+
+**P1+P2 combined, full-corpus per-category diff vs origin/main:** overall **93.57% → 94.13% (+0.55pp)**; UP: permissions,
+onboarding, hardware/rsa/mobile/office (0→100%); the ONLY down-mover is `default` (−1.4pp = the correct rerouting). **No
+other category regressed** — the broad onboarding/permissions/m365/password expansions did not steal from mail/vpn/password/etc.
+Corpus TIER-9 regressions added; mirror re-synced again; 10k mirror test steady at 95.7%.
+
 **Reproduce:** `node tests/run-breadth-coverage.cjs` (extracts from `aria.html`). Raw: `tests/breadth-results.json`.
 **Cowork:** spot-verify the gains on the live page after deploy (e.g. "set up my rsa token", "my laptop won't turn on",
-"ivanti secure access won't connect", "reinstall office") and confirm each returns the right article.
+"ivanti secure access won't connect", "reinstall office", "cant get into the department folder", "offboard someone who quit",
+"mdm enrollment stuck") and confirm each returns the right article.
