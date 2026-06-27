@@ -9164,15 +9164,16 @@ MODULE 3 — Case orchestration (the demo): web ARIA "Resolve it for me" → ari
 MODULE 4 — Proactive silent resolution + user summary: Sentinel already detects local issues (clock drift etc.). For SAFE/low-risk issues, auto-resolve within the Confirmed/Autonomous gates (no user prompt), log a ServiceNow ticket per issue (M1), and on a cadence email the USER a summary: "ARIA resolved X + prevented Y so you weren't bothered" (session-report infra). REAL data only — list only what actually ran. NEVER auto-run risky/destructive fixes silently.
 
 GATES: read-back-verify every write; never autonomous on a risky write; RULE 14 (no fake ticket #, no fake "unlocked"); secrets via safeStorage form; flag missing scope/instance instead of faking. /tmp clone, tests per module, screenshots, report. THEN Cowork runs the full live scenario + documents it as the flagship test-case + YouTube demo.
-board.md`
-CEO approvals: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\ceo-approval-required.md`
-Growth workbook: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\IIS_Growth_Engine.xlsx`
-Growth notes: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-research-notes.md`
-Business development brief: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\business-development-daily-brief.md`
-Obtained leads: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\Obtained Leads - contact now.md`
-IIS / ARIA command update: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\iis-aria-command-update.md`
-Revenue sprint: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\revenue-generation-sprint.md`
-ARIA packages: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\aria-monetization-packages.md`
+
+---
+
+## 2026-06-26 — COWORK found: audit-tamper FALSE ALARM on update + flagship prereqs
+
+ON-DEVICE: after the 0.1.18 silent reinstall, Sentinel shows a RED "Security alert: Audit log tampered — entries modified or removed at entry 0." The tamper-evident audit WORKS (good) but the reinstall/migration tripped it (not a real attack). Real client problem: every update would false-alarm.
+FIX: on version upgrade, migrate the audit chain cleanly (re-seal/continue the hash chain across the install, or mark a signed "version-upgrade" boundary entry) so a legitimate update does NOT register as tampering. Distinguish real tamper (unexpected external edit) from a signed upgrade event. Add a test: upgrade path does not raise a tamper alert; an actual out-of-band edit still does. Keep RULE 14 (don't suppress real tamper).
+
+Also: the flagship "supported case" build (ServiceNow write + Entra remediation + orchestration + proactive) is still queued — Cowork can't run it live until (a) those modules are coded, (b) ServiceNow instance exists, (c) Entra write scopes consented (Ahmad added User-PasswordProfile.ReadWrite.All + User.RevokeSessions.All — confirm). Local Sentinel scenarios (diagnose/fix) ARE runnable now.
+\senior-director-state\aria-monetization-packages.md`
 Growth Library engine: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\growth-library-product-engine.md`
 Last-mile protocol: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\last-mile-execution-protocol.md`
 Workspace cleanup board: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy\senior-director-state\workspace-cleanup-board.md`
@@ -9794,3 +9795,16 @@ The flagship "supported case + proactive-resolve" build is BUILT, TESTED, and IN
   screen-leak. The remaining live-flow screenshots (Integrations/Configure, ticket+remediation+emails, proactive
   summary) are Cowork's live-capture step with computer-use + Ahmad's provisioned ServiceNow/Entra creds. Details:
   `sales/setup-video-guides/screenshots/README.md`.
+
+### 2026-06-27 — Forge: real run evidence + screenshots (Configure panel IDs redacted)
+- **Ran the case orchestrator end-to-end against the REAL modules** (headless): RUN 1 no-creds → escalated,
+  null ticket, both steps flagged not-configured (no fake); RUN 2 configured transport → Interaction
+  IMS000101 → Incident INC000201 → revoke (verified, honest label) → resolve → close → email {resolved:true}.
+  Log: `sales/setup-video-guides/screenshots/flagship-case-e2e-run.log`. Same code path as the live run.
+- **Real screenshots** of 0.1.19 (PrintWindow, non-disruptive): dashboard, **Integrations tab** (8 cards,
+  honest "Not configured", Configure/Test buttons), **Entra Configure panel** (safeStorage creds form).
+- ⚠️ NOTE: the Entra Configure panel already showed **real credentials present** — someone is mid-provisioning
+  the live scenario right now (matches the open Entra-MFA browser). I **redacted** the real tenant/client IDs
+  in the committed screenshot (never commit live creds); client secret was already masked by the app.
+- Remaining live-flow shots (Test-connection→Connected, real SN records + emails, proactive summary) are the
+  Cowork live-capture step, now clearly in progress.

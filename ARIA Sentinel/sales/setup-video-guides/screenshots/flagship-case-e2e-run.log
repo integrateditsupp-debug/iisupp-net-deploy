@@ -1,0 +1,32 @@
+
+### FLAGSHIP CASE — RUN 1: NO CREDENTIALS (honest flagged/escalated path)
+
+outcome           : escalated
+ticket.incident   : null (null = no fake number)
+  - interaction        ok=false status=not-configured   ServiceNow instance + write-enabled user (itil/web_service) not configured
+  - remediation        ok=false status=not-configured   Entra directory credentials not configured
+------------------------------------------------------------------------------
+
+### FLAGSHIP CASE — RUN 2: CONFIGURED instance (verified resolve, simulated transport)
+
+outcome           : resolved
+ticket.interaction: IMS000101  ticket.incident: INC000201 (REAL read-back numbers)
+remediation       : revokeSignInSessions verified=true
+remediation label : Revoke sign-in sessions (forces re-authentication on all devices) — the cloud-Entra equivalent of an AD unlock; the account was never 'locked'.
+  - interaction        ok=true  status=opened       Interaction IMS000101 opened
+  - incident           ok=true  status=opened       Incident INC000201 opened
+  - remediation        ok=true  status=applied      Revoke sign-in sessions (forces re-authentication on all devices) — the cloud-Entra equivalent of an AD unlock; the account was never 'locked'. Applied; user read-back confirmed.
+  - resolve-incident   ok=true  status=resolved     Incident resolved + verified
+  - close-interaction  ok=true  status=closed       Interaction closed
+email case summary: {"outcome":"resolved","resolved":true,"ticket":{"interaction":"IMS000101","incident":"INC000201"}}
+------------------------------------------------------------------------------
+
+### AUDIT TRAIL (content-blind events from the gated writes/remediation)
+
+  [CASE.OPEN] case opened: sess-2500
+  [CASE.DONE] case sess-2500: escalated
+  [CASE.OPEN] case opened: sess-2500
+  [CASE.DONE] case sess-2500: resolved
+------------------------------------------------------------------------------
+
+RULE 14: RUN 1 → NO ticket number + escalated (no fake). RUN 2 → numbers came from read-back GETs; resolved only after verified remediation.
