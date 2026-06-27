@@ -9,6 +9,9 @@
   "scripts": {
     "kb:build": "node scripts/build-kb-index.mjs",
     "kb:test": "node scripts/test-kb-queries.mjs",
+    "kb:recycle": "node scripts/kb-recycler-run.mjs",
+    "kb:recycle:apply": "node scripts/kb-recycler-run.mjs --apply",
+    "kb:recycle:test": "node tests/kb-recycler.test.mjs",
     "dev": "npx -y http-server -p 8765 -c-1 --silent",
     "dev:netlify": "netlify dev",
     "business-dev:once": "node scripts/business-development-agent.mjs",
