@@ -10,7 +10,7 @@ as a normal grantable process. **Cost:** Azure Trusted Signing ≈ **$9.99/mo** 
 
 ---
 
-## Current build state (0.1.17)
+## Current build state (0.1.18)
 `package.json → build.win`:
 ```jsonc
 "win": {

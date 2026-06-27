@@ -47,13 +47,13 @@ DIRECTORY_CLIENT_ID   = <Application (client) ID>
 DIRECTORY_CLIENT_SECRET = <secret Value>
 ```
 
-- **Today (0.1.17):** place these in the app's secure config / `.env.local` in the app data folder that
-  `main.mjs` `loadLocalEnv` reads. The **Integrations → Azure AD / Entra** card then shows live read-only
-  status; **Test connection** does a token flow + a read-only lookup and flips the badge to **Connected**
-  only on a real 2xx — never faked.
-  `[SCREENSHOT: Integrations tab → Entra card → Test connection → Connected]`
-- **Coming (creds-form follow-up):** the in-app **Configure** panel (Tenant/Client/Secret fields, encrypted
-  via Electron `safeStorage`) lets you paste these directly in the UI — no file editing. Not in 0.1.17.
+- **In 0.1.18 (recommended):** open **Integrations → Azure AD / Entra → Configure** and paste Tenant ID /
+  Client ID / Client secret directly. They're encrypted on-device via Electron `safeStorage` (no file
+  editing), then **Test connection** does a token flow + a read-only lookup and flips the badge to
+  **Connected** only on a real 2xx — never faked. The secret field is masked, never echoed back, never logged.
+  `[SCREENSHOT: Integrations → Entra → Configure panel]` · `[SCREENSHOT: Entra card → Test connection → Connected]`
+- **Alternative (headless / pre-0.1.18):** place the same values in the app's `.env.local` that `main.mjs`
+  `loadLocalEnv` reads — the providers read the identical env keys.
 
 ## Safety to say on camera
 Read-only scopes only. Write actions (password reset / unlock) are a **separate, gated** step with a second

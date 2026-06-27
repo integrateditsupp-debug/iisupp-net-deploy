@@ -385,11 +385,15 @@ function renderDiagnostic(report) {
 // descriptors). Status is read-only; "Test connection" is disabled in Slice 1. The ServiceNow card
 // deep-links to its incident bridge panel (which lost its nav slot to this tab).
 const INTEGRATION_STATUS_LABELS = { connected: "Connected", not_configured: "Not configured", error: "Error" };
+// Cards with a secure "Configure" credentials panel (encrypted at rest via safeStorage in main).
+let integrationConfig = null; // { encryptionAvailable, fields, config } from getIntegrationConfig()
 
 async function loadIntegrations() {
   const host = qs("#integrationsGrid");
   if (!host) return;
   const data = sentinel.getIntegrations ? await sentinel.getIntegrations().catch(() => null) : null;
+  // Secure creds form — masked config (secrets never returned) + field metadata + encryption availability.
+  integrationConfig = sentinel.getIntegrationConfig ? await sentinel.getIntegrationConfig().catch(() => null) : null;
   const edition = (data && data.edition) || "integrated";
   const items = Array.isArray(data && data.items) ? data.items : [];
   const editionNote = qs("#integrationsEdition");
@@ -423,6 +427,87 @@ async function loadIntegrations() {
   qsa("#integrationsGrid [data-test-for]").forEach((button) => {
     button.addEventListener("click", () => runIntegrationTest(button));
   });
+  // Secure creds form — toggle the Configure panel + handle Save (encrypt + persist in main).
+  qsa("#integrationsGrid [data-config-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.configToggle;
+      const panel = qs(`#integrationsGrid [data-config-for="${id}"]`);
+      if (!panel) return;
+      const open = panel.hasAttribute("hidden");
+      if (open) panel.removeAttribute("hidden"); else panel.setAttribute("hidden", "");
+      button.setAttribute("aria-expanded", String(open));
+    });
+  });
+  qsa("#integrationsGrid form[data-config-save]").forEach((form) => {
+    form.addEventListener("submit", (event) => { event.preventDefault(); saveIntegrationConfig(form); });
+  });
+}
+
+// Render the secure Configure panel for a configurable card. Secret fields are type=password and are
+// NEVER pre-filled (the main process never returns secret values); a stored secret shows a "saved"
+// hint and stays blank = "leave unchanged". Non-secret fields pre-fill their saved value.
+function renderConfigPanel(id) {
+  const cfg = integrationConfig;
+  const provider = cfg && cfg.fields && cfg.fields[id];
+  if (!provider) return "";
+  const saved = (cfg.config && cfg.config[id] && cfg.config[id].fields) || {};
+  const warn = cfg.encryptionAvailable === false
+    ? `<p class="integration-config-warn">⚠ Secure storage unavailable on this device — credentials can't be saved encrypted, so saving is disabled.</p>`
+    : "";
+  const rows = provider.fields.map((f) => {
+    const s = saved[f.key] || {};
+    if (f.secret) {
+      const hint = s.set ? "saved — leave blank to keep" : "";
+      return `<label class="integration-config-row">
+        <span>${escapeHtml(f.label)}</span>
+        <input type="password" autocomplete="off" spellcheck="false" name="${escapeHtml(f.key)}" placeholder="${escapeHtml(hint)}" />
+      </label>`;
+    }
+    return `<label class="integration-config-row">
+      <span>${escapeHtml(f.label)}</span>
+      <input type="text" autocomplete="off" spellcheck="false" name="${escapeHtml(f.key)}" value="${escapeHtml(s.value || "")}" />
+    </label>`;
+  }).join("");
+  const disabled = cfg.encryptionAvailable === false ? "disabled" : "";
+  return `
+    <form class="integration-config" data-config-for="${escapeHtml(id)}" data-config-save="${escapeHtml(id)}" hidden>
+      ${warn}
+      ${rows}
+      <div class="integration-config-actions">
+        <button type="submit" class="primary" ${disabled}>Save credentials</button>
+        <span class="integration-config-result" data-config-result="${escapeHtml(id)}" hidden></span>
+      </div>
+      <p class="integration-config-note">Stored encrypted on this device only (safeStorage). Secrets are masked, never logged, and sent only to the provider's own read-only check.</p>
+    </form>`;
+}
+
+async function saveIntegrationConfig(form) {
+  const id = form.dataset.configSave;
+  const out = qs(`#integrationsGrid [data-config-result="${id}"]`);
+  const submit = form.querySelector('button[type="submit"]');
+  const patch = { [id]: {} };
+  form.querySelectorAll("input[name]").forEach((input) => { patch[id][input.name] = input.value; });
+  if (submit) { submit.disabled = true; submit.textContent = "Saving…"; }
+  if (out) { out.hidden = false; out.classList.remove("pass", "fail"); out.textContent = "Saving…"; }
+  let res;
+  try {
+    res = sentinel.saveIntegrationConfig ? await sentinel.saveIntegrationConfig(patch) : { ok: false, error: "unavailable" };
+  } catch {
+    res = { ok: false, error: "save-failed" };
+  }
+  if (submit) { submit.disabled = false; submit.textContent = "Save credentials"; }
+  const ok = Boolean(res && res.ok);
+  if (out) {
+    out.hidden = false;
+    out.textContent = ok ? "✓ Saved — run Test connection" : `✕ ${res && res.error === "encryption-unavailable" ? "Secure storage unavailable" : "Save failed"}`;
+    out.classList.remove("pass", "fail");
+    out.classList.add(ok ? "pass" : "fail");
+  }
+  // Clear secret inputs after a successful save so they don't linger in the DOM; refresh masked state.
+  if (ok) {
+    form.querySelectorAll('input[type="password"]').forEach((input) => { input.value = ""; });
+    integrationConfig = sentinel.getIntegrationConfig ? await sentinel.getIntegrationConfig().catch(() => integrationConfig) : integrationConfig;
+  }
 }
 
 async function runIntegrationTest(button) {
@@ -467,6 +552,11 @@ function renderIntegrationCard(card) {
   const manage = card.id === "servicenow"
     ? `<button class="ghost int-link" data-goto="servicenow">Manage incidents →</button>`
     : "";
+  // Configurable cards (Entra / CRM / ServiceNow) get a secure "Configure" panel toggle.
+  const configurable = Boolean(integrationConfig && integrationConfig.fields && integrationConfig.fields[card.id]);
+  const configure = configurable
+    ? `<button class="ghost" data-config-toggle="${escapeHtml(card.id)}" aria-expanded="false" title="Enter credentials (encrypted on this device)">Configure</button>`
+    : "";
   return `
     <article class="integration-card" data-integration="${escapeHtml(card.id)}">
       <div class="integration-top">
@@ -478,9 +568,11 @@ function renderIntegrationCard(card) {
       ${card.statusDetail ? `<p class="integration-detail">${escapeHtml(card.statusDetail)}</p>` : ""}
       <div class="integration-actions">
         <button class="ghost" data-test-for="${escapeHtml(card.id)}" title="Read-only connection test">Test connection</button>
+        ${configure}
         ${manage}
       </div>
       <p class="integration-result" data-result-for="${escapeHtml(card.id)}" hidden></p>
+      ${configurable ? renderConfigPanel(card.id) : ""}
     </article>`;
 }
 

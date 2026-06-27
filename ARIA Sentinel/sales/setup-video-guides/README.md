@@ -5,10 +5,10 @@ script with the exact values, env vars, scopes, and config blocks. **Cowork capt
 screenshots** while driving the installed app + the admin portals; drop them into the
 `[SCREENSHOT: …]` placeholders during edit.
 
-> Source build for these guides: **ARIA Sentinel 0.1.17** (installed on Ahmad's machine 2026-06-26).
-> Honesty note (RULE 14): the in-app **Integrations → Configure** credentials form is **not yet in
-> 0.1.17**. Until it ships, creds go into secure config / env the providers read, and the Integrations
-> tab shows **read-only status only**. Every guide flags this where it matters.
+> Source build for these guides: **ARIA Sentinel 0.1.18** (installed on Ahmad's machine 2026-06-26).
+> The in-app **Integrations → Configure** credentials form (encrypted via Electron `safeStorage`) **ships
+> in 0.1.18** — creds are pasted directly in the UI, encrypted on-device, and fed into the providers'
+> read-only checks. (Pre-0.1.18 the only path was a hand-edited `.env.local`; the guides note both.)
 
 | Guide | What it covers | Who does it |
 |---|---|---|

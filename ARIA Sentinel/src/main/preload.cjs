@@ -32,6 +32,8 @@ contextBridge.exposeInMainWorld("sentinel", {
   serviceNowList: () => ipcRenderer.invoke("sentinel:sn-list"),
   getIntegrations: () => ipcRenderer.invoke("sentinel:get-integrations"), // W5 — Integrations tab (read-only status)
   testIntegration: (id) => ipcRenderer.invoke("sentinel:integration-test", id), // W5 Slice 2 — read-only test
+  getIntegrationConfig: () => ipcRenderer.invoke("sentinel:get-integration-config"), // creds form — masked (no secrets returned)
+  saveIntegrationConfig: (patch) => ipcRenderer.invoke("sentinel:save-integration-config", patch), // creds form — encrypt + persist
   getProofMetrics: () => ipcRenderer.invoke("sentinel:get-proof-metrics"), // G-METRICS — real measured proof numbers
   getOmniStatus: () => ipcRenderer.invoke("sentinel:omni-status"), // G-OMNI — Slack/Teams config status (honest)
   omniMessage: (message) => ipcRenderer.invoke("sentinel:omni-message", message), // G-OMNI — hosted read-only handler

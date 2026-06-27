@@ -325,6 +325,22 @@ p { color: var(--aria-text-2); line-height: 1.5; }
 .integration-result { margin: 0; font-size: 11.5px; line-height: 1.45; font-family: var(--aria-font-mono); }
 .integration-result.pass { color: #5cd6a0; }
 .integration-result.fail { color: var(--aria-text-2); }
+/* Secure "Configure" credentials panel — encrypted at rest via safeStorage in main. */
+.integration-config { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.08); }
+.integration-config[hidden] { display: none; }
+.integration-config-row { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--aria-text-2); }
+.integration-config-row input {
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.12); border-radius: 6px;
+  padding: 6px 8px; color: var(--aria-text-1); font-family: var(--aria-font-mono); font-size: 12px;
+}
+.integration-config-row input:focus { outline: none; border-color: rgba(255,203,107,.55); }
+.integration-config-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+.integration-config-result { font-size: 11.5px; font-family: var(--aria-font-mono); }
+.integration-config-result[hidden] { display: none; }
+.integration-config-result.pass { color: #5cd6a0; }
+.integration-config-result.fail { color: var(--aria-error); }
+.integration-config-warn { margin: 0; font-size: 11px; color: var(--aria-warning); }
+.integration-config-note { margin: 2px 0 0; font-size: 10.5px; color: var(--aria-text-3, var(--aria-text-2)); line-height: 1.4; }
 /* Status badges — connected=green, not_configured=grey, error=red. */
 .int-badge {
   display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px;

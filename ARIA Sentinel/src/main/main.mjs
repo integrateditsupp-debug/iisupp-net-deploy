@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, shell, screen, session, globalShortcut, powerMonitor } from "electron";
+import { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, shell, screen, session, globalShortcut, powerMonitor, safeStorage } from "electron";
 import Store from "electron-store";
 import { exec, spawn } from "node:child_process";
 import { randomUUID, createHash } from "node:crypto";
@@ -122,6 +122,8 @@ import {
   hashIdentifier as snHashIdentifier
 } from "../shared/servicenow.mjs";
 import { resolveIntegrations, testIntegration } from "../shared/integrations.mjs"; // W5 — Integrations tab (read-only)
+// Secure in-app credentials store — Integrations "Configure" panels; encrypted at rest via safeStorage.
+import { loadCredentials as loadIntegrationCreds, saveCredentials as saveIntegrationCreds, applyCredentialsToEnv, maskedView as integrationCredsMaskedView, CREDENTIAL_FIELDS } from "../shared/integration-credentials.mjs";
 import { getEdition } from "../shared/edition.mjs";
 // G-METRICS — record REAL measured outcomes (content-blind) + surface the proof aggregate / metrics.json.
 import { recordEvent as recordProof, aggregate as aggregateProof, loadStore as loadProofStore, emitPublicJson as emitProofJson } from "../shared/proof-metrics.mjs";
@@ -225,6 +227,19 @@ function loadLocalEnv(envPath) {
     }
   } catch {
     // Env loading should never block the local app shell.
+  }
+}
+
+// Integration credentials live encrypted in userData (NOT .env.local). Decrypt + feed them into the
+// SAME env keys the providers read, so the Integrations status/Test-connection work unchanged. The UI
+// is the source of truth → these override any stale .env value. Available only after app is ready
+// (userData path). Never throws; never logs secrets.
+function integrationCredsDeps() { return { safeStorage, fs, dir: app.getPath("userData") }; }
+function applyStoredIntegrationCreds() {
+  try {
+    applyCredentialsToEnv(loadIntegrationCreds(integrationCredsDeps()), process.env);
+  } catch {
+    // Credential loading must never block the app shell.
   }
 }
 
@@ -3094,6 +3109,19 @@ ipcMain.handle("sentinel:integration-test", (_event, id) => {
   // throws; testIntegration normalizes to { ok, message }. No writes to any directory/RSA/ServiceNow.
   return testIntegration(String(id || ""), process.env);
 });
+// Secure creds form — return the MASKED config (secret fields report {set} only, never the value) plus
+// whether OS encryption is available (so the UI can warn instead of silently storing nothing).
+ipcMain.handle("sentinel:get-integration-config", () => {
+  const available = Boolean(safeStorage && safeStorage.isEncryptionAvailable && safeStorage.isEncryptionAvailable());
+  return { ok: true, encryptionAvailable: available, fields: CREDENTIAL_FIELDS, config: integrationCredsMaskedView(loadIntegrationCreds(integrationCredsDeps())) };
+});
+// Save (encrypt + persist) submitted credentials, then immediately apply them to the live env so a
+// follow-up Test connection uses them. Blank secret fields are preserved (the UI never echoes secrets).
+ipcMain.handle("sentinel:save-integration-config", (_event, patch) => {
+  const result = saveIntegrationCreds(patch || {}, integrationCredsDeps());
+  if (result.ok) applyStoredIntegrationCreds();
+  return result;
+});
 ipcMain.handle("sentinel:omni-status", () => {
   // G-OMNI — honest config-presence per provider (never a fake "connected"). Read-only.
   return { ok: true, providers: getOmniStatus(process.env) };
@@ -3263,6 +3291,9 @@ if (hasSingleInstanceLock) {
     // RUN 16 §H — verify audit-log integrity BEFORE anything logs (a startup logEvent would re-seal).
     verifyAuditIntegrity();
     initWhatsNew();
+    // Decrypt the in-app integration credentials and feed them into the provider env (before any
+    // window/integration status resolves). Encrypted-at-rest via safeStorage; no-op if none saved.
+    applyStoredIntegrationCreds();
     // RUN 29-D — install the content-blind crash reporter early (after the audit verifier): captures uncaught
     // errors to a local queue + best-effort forwards last launch's queue to sentinel-crash (never blocks the UI).
     installCrashReporter({ version: SENTINEL_VERSION, crashFile: path.join(os.homedir(), ".aria-sentinel", "crash.log"), endpoint: "https://iisupp.net/.netlify/functions/sentinel-crash", fs, log: logEvent });

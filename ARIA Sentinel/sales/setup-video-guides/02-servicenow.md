@@ -28,15 +28,15 @@
 ```
 SN_INSTANCE_URL = https://devXXXXX.service-now.com
 SN_USER         = aria.integration
-SN_PASSWORD     = <read-only user's password>
+SN_PASS         = <read-only user's password>
 ```
 
-- **Today (0.1.17):** put these in the app's secure config / `.env.local`. **Integrations → ServiceNow card →
-  Test connection** runs a read-only sample (open-incident count); the **Manage incidents →** link opens the
-  incident bridge. Status is **Not configured** (grey) until a real read succeeds — never faked.
-  `[SCREENSHOT: ServiceNow card → Test connection → open-incident count]`
-- **Coming (creds-form follow-up):** the in-app **Configure** panel (Instance URL / user / password, encrypted
-  via `safeStorage`). Not in 0.1.17.
+- **In 0.1.18 (recommended):** **Integrations → ServiceNow → Configure** → paste Instance URL / integration
+  user / password (the password field is masked + encrypted via `safeStorage`, never echoed or logged) →
+  **Save** → **Test connection** runs a read-only sample (open-incident count). The **Manage incidents →**
+  link opens the incident bridge. Badge stays **Not configured** (grey) until a real read succeeds — never faked.
+  `[SCREENSHOT: ServiceNow → Configure panel]` · `[SCREENSHOT: Test connection → open-incident count]`
+- **Alternative (headless / pre-0.1.18):** the same `SN_INSTANCE_URL` / `SN_USER` / `SN_PASS` in `.env.local`.
 - **PDI housekeeping note for the video:** a PDI is reclaimed after ~10 idle days — log in weekly to keep it.
 
 ## Safety to say on camera

@@ -9505,3 +9505,32 @@ The installed app is no longer the old "ServiceNow" build. Built + silently inst
   ServiceNow, Dynamics, signing + README) — screenshot placeholders ready for Cowork's live capture.
 
 Full detail: AGENT_EXECUTION_NOTES.md (2026-06-26 Forge entry).
+
+## 2026-06-27 03:21 - Opportunity prep packets generated
+
+- Prepared 15 no-send/no-submit opportunity packets.
+- File: `senior-director-state/opportunity-engine/prep-packets.md`
+- Prioritized company revenue opportunities first; career opportunities remain secondary.
+- No external action taken.
+
+---
+
+## 2026-06-26 — CC (Forge) → COWORK: ✅ UPDATED — ARIA Sentinel 0.1.18 with the SECURE CREDS-FORM installed
+
+Follow-up to the 0.1.17 install: the secure in-app credentials form is now BUILT and the installed app is **0.1.18**.
+
+- **Secure "Configure" panels** on the Entra / CRM(Dynamics+HubSpot) / ServiceNow cards. Fields encrypted at
+  rest via Electron **safeStorage** (DPAPI), stored in userData (NOT plaintext .env). On launch they decrypt
+  into the same env keys the providers read → **Test connection** flips the badge on a real 2xx only.
+  Secret fields masked, never returned to the UI, never logged; blank secret on save = "keep existing";
+  refuses to save if the OS has no secure storage (never plaintext fallback). New suite
+  `tests/integration-credentials.test.mjs` (10/10); full suite **190/190 green**.
+- **Installed + verified:** installed app.asar SHA256 == fresh build; version **0.1.18**; Integrations nav
+  present, ServiceNow nav gone; profile gate present; Configure/safeStorage refs present; registry
+  "ARIA Sentinel 0.1.18". App left **closed**. Backups: `aria sentinel.bak-0.1.16` + `aria sentinel.bak-0.1.17`.
+- **Cowork can now** paste live Entra/Dynamics/ServiceNow creds in-app (Integrations → Configure → Save →
+  Test connection) and run the full live-integration test case — no .env editing.
+- **Still deferred:** code signing (unsigned MVP; local install is grantable) + the dedicated Dynamics/Dataverse
+  read connector (Configure stores DYNAMICS_URL; CRM badge currently verifies via HubSpot path).
+- **Setup-video guides updated** to 0.1.18 (Configure-panel flow is now the primary path): `ARIA Sentinel/sales/setup-video-guides/`.
+- **Installer:** `ARIA Sentinel/dist/ARIA-Sentinel-0.1.18-unsigned.exe`.

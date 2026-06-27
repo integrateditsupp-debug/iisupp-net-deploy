@@ -36,14 +36,15 @@ DYNAMICS_URL = https://yourorg.crm.dynamics.com
 # No separate Dynamics secret.
 ```
 
-- **Today (0.1.17):** put `DYNAMICS_URL` in the app's secure config / `.env.local` alongside the `DIRECTORY_*`
-  values. **Integrations → CRM card → Test connection** does a read-only sample (e.g. a contact lookup) and
-  flips the badge only on a real 2xx. Until then the card honestly shows **Not configured**.
-  `[SCREENSHOT: CRM card → Test connection → contact read]`
-  > **Build note for Forge:** the Dynamics/Dataverse **read connector** + dev-tenant test harness are a queued
-  > follow-up (per `FREE-test-environment-setup-checklist.md` "what happens after"). Until that connector lands,
-  > the CRM card status reflects whatever the existing health check reports.
-- **Coming (creds-form follow-up):** the in-app **Configure** panel (Dynamics URL field). Not in 0.1.17.
+- **In 0.1.18 (recommended):** **Integrations → CRM → Configure** → paste the **Dynamics / Dataverse URL**
+  (→ `DYNAMICS_URL`) and, if used, a **HubSpot private-app token** (masked + encrypted via `safeStorage`).
+  Entra auth is reused from guide 01. **Test connection** does a read-only sample and flips the badge only on
+  a real 2xx; until then the card honestly shows **Not configured**.
+  `[SCREENSHOT: CRM → Configure panel]` · `[SCREENSHOT: CRM card → Test connection]`
+  > **Build note for Forge:** the Configure panel stores `DYNAMICS_URL` today, but the live CRM badge currently
+  > verifies through the **HubSpot** read path — the dedicated Dynamics/Dataverse **read connector** + dev-tenant
+  > test harness remain a queued follow-up (per `FREE-test-environment-setup-checklist.md` "what happens after").
+- **Alternative (headless / pre-0.1.18):** `DYNAMICS_URL` in `.env.local` alongside the `DIRECTORY_*` values.
 
 ## Safety to say on camera
 Read-only context only — ARIA uses CRM data to understand the customer, never to write back without approval.

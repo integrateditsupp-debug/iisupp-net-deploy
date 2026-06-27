@@ -215,6 +215,7 @@ import "./license-mint-timeout.test.mjs";
 import "./kb-freshness.test.mjs";
 // W5 — Integrations tab (8 cards · edition-gated · read-only status · ServiceNow→card).
 import "./integrations.test.mjs";
+import "./integration-credentials.test.mjs";
 // W5 Slice 3 — System Inventory grouped (Apps / Drivers / Security updates · collapsible · filtered).
 import "./system-inventory-grouping.test.mjs";
 // G-METRICS — proof-metrics store: content-blind counters + deflection/kb-hit/avg math + honest zero.
