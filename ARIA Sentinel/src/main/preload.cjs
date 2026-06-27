@@ -48,6 +48,8 @@ contextBridge.exposeInMainWorld("sentinel", {
   startSession: (issue, intent) => ipcRenderer.invoke("session:start", issue, intent),
   recordSessionTurn: (role, text) => ipcRenderer.invoke("session:turn", role, text),
   endSession: (outcome) => ipcRenderer.invoke("session:end", outcome), // builds + emails the report at END only
+  runSupportCase: (caseInput) => ipcRenderer.invoke("sentinel:run-support-case", caseInput), // M3 — gated case lifecycle
+  proactiveSummary: (records, period) => ipcRenderer.invoke("sentinel:proactive-summary", records, period), // M4 — user summary email
   runDiagnostic: () => ipcRenderer.invoke("sentinel:run-diagnostic"),
   privacyCapture: (windowMs) => ipcRenderer.invoke("sentinel:privacy-capture", windowMs),
   exportEvidence: () => ipcRenderer.invoke("sentinel:export-evidence"),

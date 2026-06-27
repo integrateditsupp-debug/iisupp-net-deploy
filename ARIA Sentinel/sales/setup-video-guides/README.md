@@ -16,6 +16,7 @@ screenshots** while driving the installed app + the admin portals; drop them int
 | [`02-servicenow.md`](02-servicenow.md) | Free PDI, read-scoped integration user, instance URL + creds | ServiceNow admin (Ahmad) |
 | [`03-dynamics-dataverse.md`](03-dynamics-dataverse.md) | Free Dataverse/Dynamics env, Application User on the **same** Entra app, `DYNAMICS_URL` | Power Platform admin (Ahmad) |
 | [`04-code-signing-azure-trusted.md`](04-code-signing-azure-trusted.md) | Wire Azure Trusted Signing into the electron-builder Windows build | Build owner (Forge) + Ahmad supplies 3 values |
+| [`05-flagship-write-role-and-notifications.md`](05-flagship-write-role-and-notifications.md) | Flagship gated-write case: ServiceNow write role + Entra write scope + ServiceNow email notification rule | ServiceNow + tenant admin (Ahmad) |
 
 Companion client-facing source docs (already in the repo):
 - `sales/client-guides/ClientGuide-ARIA-Sentinel-Integrations.md` — full Integrations tab walkthrough.

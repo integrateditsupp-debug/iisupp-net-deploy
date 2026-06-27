@@ -293,3 +293,187 @@ export async function postComment(input = {}, options = {}) {
 function nowMs() {
   return Date.now();
 }
+
+// ===========================================================================
+// MODULE 1 — gated ServiceNow WRITE ticket lifecycle (Interaction → Incident → resolve/close).
+// Every write is: (1) GATED — refuses unless options.approved===true; (2) HONEST — flags a missing
+// instance / write-enabled user and a 401/403 permission failure instead of faking; (3) READ-BACK
+// VERIFIED — after the write it GETs the record and returns the REAL sys_id/number/state (never an
+// invented ticket number — RULE 14); (4) AUDITED — emits a content-blind event per step via
+// options.logger. Bodies stay content-blind (assertContentSafePayload + symbolic close notes). 🔒 R11.
+// ===========================================================================
+
+export const SN_INTERACTION_TABLE = "interaction";
+export const SN_INCIDENT_TABLE = "incident";
+const INCIDENT_STATE = { resolved: "6", closed: "7" };
+
+function tableUrl(cfg, table, sysId) {
+  const t = String(table).replace(/[^a-z_]/gi, "");
+  const id = sysId ? "/" + encodeURIComponent(String(sysId).replace(/[^a-z0-9]/gi, "").slice(0, 40)) : "";
+  return `${cfg.instanceUrl}/api/now/table/${t}${id}`;
+}
+
+function emitter(logger) {
+  const events = [];
+  const emit = (type, message, data = {}) => {
+    const e = { type, message: String(message).slice(0, 200), ts: new Date().toISOString(), ...data };
+    events.push(e);
+    if (typeof logger === "function") { try { logger(e); } catch { /* logging must never throw */ } };
+  };
+  return { events, emit };
+}
+
+/** READ-BACK GET — confirm a written record actually exists and return its real fields. Never throws. */
+export async function getRecord(table, sysId, options = {}) {
+  const cfg = options.config || getServiceNowConfig(options.env || process.env);
+  const id = String(sysId || "").replace(/[^a-z0-9]/gi, "").slice(0, 40);
+  if (!cfg.configured || !id) return { ok: false };
+  const fetchImpl = options.fetch || globalThis.fetch;
+  try {
+    const res = await fetchImpl(`${tableUrl(cfg, table, id)}?sysparm_fields=sys_id,number,state,close_code,close_notes`, {
+      method: "GET",
+      headers: { Authorization: authHeader(cfg), Accept: "application/json" }
+    });
+    if (!res.ok) return { ok: false, status: res.status };
+    const body = await res.json().catch(() => ({}));
+    return { ok: true, record: body?.result || {} };
+  } catch {
+    return { ok: false };
+  }
+}
+
+/**
+ * The one gated-write primitive every lifecycle step routes through. POST (create) or PATCH (update)
+ * a Table API record, then read-back GET to verify. Returns honest, structured outcomes:
+ *   { ok:false, needsApproval } · { ok:false, notConfigured } · { ok:false, forbidden, status }
+ *   { ok:false, unverified } · { ok:false, status } · { ok:true, sysId, number, state, record }
+ */
+async function writeRecord({ table, method, sysId, body, approved, label }, options = {}) {
+  const cfg = options.config || getServiceNowConfig(options.env || process.env);
+  const { events, emit } = emitter(options.logger);
+  if (approved !== true) {
+    emit("SN.WRITE.BLOCKED", `${label}: blocked — awaiting approval`, { table });
+    return { ok: false, needsApproval: true, message: "Awaiting approval (gated write)", events };
+  }
+  if (!cfg.configured) {
+    emit("SN.WRITE.UNCONFIGURED", `${label}: no ServiceNow instance / write-enabled user`, { table });
+    return { ok: false, notConfigured: true, message: "ServiceNow instance + write-enabled user (itil/web_service) not configured", events };
+  }
+  // Defense-in-depth: the write body must be content-blind (no PII/path/url/long-number).
+  if (!assertContentSafePayload(body)) {
+    emit("SN.WRITE.LEAK", `${label}: body failed content-safety — not sent`, { table });
+    return { ok: false, contentUnsafe: true, message: "Write body failed content-safety; not sent", events };
+  }
+  const fetchImpl = options.fetch || globalThis.fetch;
+  try {
+    const res = await fetchImpl(tableUrl(cfg, table, sysId), {
+      method,
+      headers: { Authorization: authHeader(cfg), "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(body)
+    });
+    if (res.status === 401 || res.status === 403) {
+      emit("SN.WRITE.FORBIDDEN", `${label}: write user lacks permission (HTTP ${res.status})`, { table, status: res.status });
+      return { ok: false, forbidden: true, status: res.status, message: `Write user lacks permission (HTTP ${res.status}) — grant itil/web_service write role`, events };
+    }
+    if (!res.ok) {
+      emit("SN.WRITE.FAIL", `${label}: HTTP ${res.status}`, { table, status: res.status });
+      return { ok: false, status: res.status, message: `ServiceNow write failed (HTTP ${res.status})`, events };
+    }
+    const json = await res.json().catch(() => ({}));
+    const rec = json?.result || {};
+    const resultSysId = String(rec.sys_id || sysId || "").trim();
+    // READ-BACK VERIFY — confirm the write landed; never trust the POST echo alone, never invent a number.
+    const verified = await getRecord(table, resultSysId, options);
+    if (!verified.ok || !verified.record?.sys_id) {
+      emit("SN.WRITE.UNVERIFIED", `${label}: write returned but read-back unconfirmed`, { table });
+      return { ok: false, unverified: true, sysId: resultSysId, number: rec.number || "", message: "Write returned but read-back could not confirm", events };
+    }
+    const number = rec.number || verified.record.number || "";
+    emit("SN.WRITE.OK", `${label}: ${number || resultSysId} verified`, { table, number });
+    return { ok: true, sysId: resultSysId, number, state: verified.record.state || rec.state || "", record: verified.record, events };
+  } catch {
+    emit("SN.WRITE.ERROR", `${label}: could not reach ServiceNow`, { table });
+    return { ok: false, message: "Could not reach ServiceNow", events };
+  }
+}
+
+/** Build the content-blind Interaction body (the customer-facing "case opened" record). */
+export function buildInteractionPayload(input = {}) {
+  const code = symbolic(input.symbolicCode || input.shortDesc || "SUPPORT.CASE");
+  const body = {
+    short_description: `ARIA Sentinel case · ${code}`,
+    type: "phone",
+    state: "new",
+    channel: "virtual_agent",
+    work_notes: "Opened automatically by ARIA Sentinel from a local support case. Content-blind."
+  };
+  if (input.assignmentGroup) body.assignment_group = String(input.assignmentGroup).slice(0, 80);
+  return body;
+}
+
+/** STEP 1 — open the Interaction (gated, read-back-verified). */
+export async function createInteraction(input = {}, options = {}) {
+  return writeRecord(
+    { table: SN_INTERACTION_TABLE, method: "POST", body: buildInteractionPayload(input), approved: input.approved === true || options.approved === true, label: "create interaction" },
+    options
+  );
+}
+
+/** STEP 2 — open the Incident, correlated to the Interaction (gated, read-back-verified). */
+export async function createIncidentFromInteraction(input = {}, options = {}) {
+  const body = buildIncidentPayload(input);
+  // Link to the parent interaction via the correlation fields (no assumption of custom fields).
+  if (input.interactionSysId) body.correlation_id = String(input.interactionSysId).replace(/[^a-z0-9]/gi, "").slice(0, 40);
+  if (input.interactionNumber) body.correlation_display = symbolic(input.interactionNumber);
+  return writeRecord(
+    { table: SN_INCIDENT_TABLE, method: "POST", body, approved: input.approved === true || options.approved === true, label: "create incident" },
+    options
+  );
+}
+
+/** STEP 3 — update the Incident with a content-blind work note (gated, read-back-verified). */
+export async function updateIncident(sysId, fields = {}, options = {}) {
+  const body = {};
+  if (fields.workNote) body.work_notes = symbolicNote(fields.workNote);
+  if (fields.state) body.state = String(fields.state).replace(/[^0-9]/g, "").slice(0, 1) || "2";
+  if (fields.assignmentGroup) body.assignment_group = String(fields.assignmentGroup).slice(0, 80);
+  return writeRecord(
+    { table: SN_INCIDENT_TABLE, method: "PATCH", sysId, body, approved: fields.approved === true || options.approved === true, label: "update incident" },
+    options
+  );
+}
+
+/** STEP 4 — resolve/close the Incident with content-blind close notes (gated, read-back confirms state). */
+export async function resolveIncident(sysId, input = {}, options = {}) {
+  const close = input.close === "closed" ? "closed" : "resolved";
+  const body = {
+    state: INCIDENT_STATE[close],
+    close_code: symbolic(input.closeCode || "Solved.Permanently").replace(/\./g, " "),
+    close_notes: symbolicNote(input.closeNotes || `Resolved by ARIA Sentinel · ${symbolic(input.recipeId || "remediation")} · verified`)
+  };
+  const result = await writeRecord(
+    { table: SN_INCIDENT_TABLE, method: "PATCH", sysId, body, approved: input.approved === true || options.approved === true, label: `${close} incident` },
+    options
+  );
+  // Honest confirmation: only report 'resolved' if the read-back state is actually Resolved/Closed.
+  if (result.ok) {
+    const landed = String(result.record?.state || result.state || "");
+    result.resolvedConfirmed = landed === INCIDENT_STATE.resolved || landed === INCIDENT_STATE.closed;
+  }
+  return result;
+}
+
+/** STEP 5 — close the Interaction once the linked Incident is resolved (gated, read-back-verified). */
+export async function closeInteraction(sysId, input = {}, options = {}) {
+  return writeRecord(
+    { table: SN_INTERACTION_TABLE, method: "PATCH", sysId, body: { state: "closed_complete" }, approved: input.approved === true || options.approved === true, label: "close interaction" },
+    options
+  );
+}
+
+// A content-blind work/close note: symbolic tokens only, never raw user text/paths.
+function symbolicNote(value) {
+  const text = String(value || "").replace(/[A-Za-z]:\\[^\s"']+/g, "[path]").replace(/https?:\/\/\S+/g, "[url]").slice(0, 600);
+  // assertContentSafePayload is the hard gate in writeRecord; this is the soft pre-scrub.
+  return text || "ARIA Sentinel automated update.";
+}

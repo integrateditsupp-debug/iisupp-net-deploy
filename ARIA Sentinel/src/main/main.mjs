@@ -119,8 +119,19 @@ import {
   postComment as snPostComment,
   drainQueue as snDrainQueue,
   queueDepth as snQueueDepth,
-  hashIdentifier as snHashIdentifier
+  hashIdentifier as snHashIdentifier,
+  // MODULE 1 — gated write lifecycle (Interaction → Incident → resolve/close), read-back-verified.
+  createInteraction as snCreateInteraction,
+  createIncidentFromInteraction as snCreateIncidentFromInteraction,
+  resolveIncident as snResolveIncident,
+  closeInteraction as snCloseInteraction
 } from "../shared/servicenow.mjs";
+// MODULE 2 — gated Entra remediation (revokeSignInSessions / forcePasswordChange), honest labels.
+import { remediateUser as entraRemediateUser } from "../shared/entra-graph-client.mjs";
+// MODULE 3 — supported-case orchestrator (web Resolve → ticket → remediate → close → email).
+import { runSupportCase } from "../shared/case-orchestrator.mjs";
+// MODULE 4 — proactive silent-resolve of safe local issues + the user "what I handled" summary.
+import { buildUserSummary as buildProactiveSummary, summaryIsContentSafe as proactiveSummarySafe } from "../shared/proactive-resolve.mjs";
 import { resolveIntegrations, testIntegration } from "../shared/integrations.mjs"; // W5 — Integrations tab (read-only)
 // Secure in-app credentials store — Integrations "Configure" panels; encrypted at rest via safeStorage.
 import { loadCredentials as loadIntegrationCreds, saveCredentials as saveIntegrationCreds, applyCredentialsToEnv, maskedView as integrationCredsMaskedView, CREDENTIAL_FIELDS } from "../shared/integration-credentials.mjs";
@@ -3010,6 +3021,47 @@ ipcMain.handle("session:end", async (_event, outcome) => {
   const finalOutcome = report.outcome;
   currentSession = null;
   return { ok: true, sent, outcome: finalOutcome };
+});
+
+// MODULE 3 — run the full supported case (gated). The renderer passes the case + an explicit `approved`
+// from the user's confirmation; the connector modules enforce gating again regardless. Real ServiceNow
+// writes (M1) + Entra remediation (M2) + the session-end email. RULE 14 honesty is structural in the
+// orchestrator (resolved only on a verified fix; real ticket numbers only; missing scope flagged).
+async function postSessionReport(report) {
+  try {
+    const r = await fetch(SESSION_REPORT_ENDPOINT, {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(report)
+    });
+    return { ok: r.ok || r.status === 207 };
+  } catch { return { ok: false }; }
+}
+ipcMain.handle("sentinel:run-support-case", async (_event, caseInput = {}) => {
+  const profile = loadProfile(fs, path, profileDir()) || {};
+  const snOptions = { env: process.env, logger: logEvent };
+  const entraOptions = { env: process.env, logger: logEvent };
+  return runSupportCase(
+    { ...caseInput, approved: caseInput.approved === true, profile },
+    {
+      serviceNow: { createInteraction: snCreateInteraction, createIncidentFromInteraction: snCreateIncidentFromInteraction, resolveIncident: snResolveIncident, closeInteraction: snCloseInteraction },
+      entra: { remediateUser: entraRemediateUser },
+      snOptions, entraOptions,
+      sendReport: postSessionReport,
+      now: () => Date.now(),
+      logger: logEvent
+    }
+  );
+});
+
+// MODULE 4 — email the user the periodic "what ARIA handled in the background" summary. Takes the REAL
+// resolution records collected by the proactive sweep; refuses to send if the content isn't content-safe.
+ipcMain.handle("sentinel:proactive-summary", async (_event, records = [], period = "this period") => {
+  const profile = loadProfile(fs, path, profileDir());
+  if (!profile || !profile.email) return { ok: false, reason: "no profile email — cannot address the summary" };
+  const summary = buildProactiveSummary(Array.isArray(records) ? records : [], profile, { period });
+  if (!proactiveSummarySafe(summary)) return { ok: false, reason: "summary failed content-safety" };
+  const sent = await postSessionReport({ kind: "proactive-summary", outcome: "resolved", resolved: true, summary, user: summary.user });
+  logEvent("PROACTIVE.SUMMARY", `emailed user summary (${summary.counts.resolved} resolved · ${summary.counts.prevented} prevented)`, {});
+  return { ok: true, sent: sent.ok, counts: summary.counts };
 });
 
 ipcMain.handle("sentinel:get-state", () => getState());
