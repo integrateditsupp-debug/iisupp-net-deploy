@@ -56,6 +56,7 @@ import { planCleanup, nextCleanupAt, retentionSummary } from "./data-retention.m
 import { buildQuarterlyReport, quarterOf, isQuarterStart, reportIsClean } from "./report-generator.mjs";
 import { createExecutionCache, runIdempotent } from "../shared/idempotency.mjs";
 import { isActionExecutable, isExecutableRecipe, buildExecution, buildVerification } from "../shared/recipe-runner.mjs";
+import { validateThenApply, VERDICT as STAGE7_VERDICT } from "../shared/sandbox-validate.mjs";
 import { buildDiagnostic } from "../shared/diagnostic.mjs";
 import { computeHealthScore, healthTooltip } from "../shared/health-score.mjs";
 import { tickFreeRoam, roamBounds } from "./overlay-physics.mjs";
@@ -1868,20 +1869,67 @@ function tier0Run(command) {
 async function runTier0Fix(recipeId, options = {}) {
   // Dry-run unless system fixes are enabled AND the global gate is off AND the caller didn't force dry-run.
   const actualDryRun = !allowSystemFixes || Boolean(store.get("dryRun")) || options.dryRun === true;
-  const result = await executeTier0(recipeId, {
-    dryRun: actualDryRun,
-    run: tier0Run,
-    logger: (event, text, extra) => logEvent(event, text, { ...extra })
-  });
+
+  // Dry-run path: describe-only, nothing touches prod, so the Stage-7 prod gate is not needed.
+  if (actualDryRun) {
+    const result = await executeTier0(recipeId, {
+      dryRun: true,
+      run: tier0Run,
+      logger: (event, text, extra) => logEvent(event, text, { ...extra })
+    });
+    try { refreshHealthScore(); } catch { /* health refresh best-effort */ }
+    const ok = ["success", "no-op-neutral", "dry-run"].includes(result.outcome);
+    return { ok, dryRun: true, recipe: { id: result.recipeId || recipeId, tier: "tier-0" }, outcome: result.outcome, steps: result.events, message: result.message };
+  }
+
+  // REAL execution → STAGE 7 prove-before-prod gate. The proven executeTier0 stays the atomic
+  // apply unit (its own pre→exec→post→rollback + R11 + allowlist are untouched); Stage 7 sits in
+  // front of it: logic-validate via a dry-run first, take a restore point, apply, read back, and only
+  // surface a silent outcome. A fix whose dry-run is blocked/unbound never reaches the real run.
+  let applyResult = null;
+  const gate = await validateThenApply(
+    { id: recipeId, requiresSnapshot: false },
+    {
+      // PREFLIGHT (logic) — a real dry-run of the exact command. Only a clean "dry-run" outcome passes;
+      // "blocked" (allowlist/R11) or "unbound" (no binding) ⇒ wouldApply:false ⇒ prod is never touched.
+      dryRun: async () => {
+        const d = await executeTier0(recipeId, { dryRun: true, run: tier0Run });
+        return { ok: d.outcome === "dry-run", wouldApply: d.outcome === "dry-run", reason: d.message };
+      },
+      // Side-effect surface is already enforced inside executeTier0 (allowlist + deny list + R11) and is
+      // reflected in the preflight outcome above, so this scan is a confirming pass.
+      sideEffectScan: async () => ({ ok: true, blocked: false, findings: [] }),
+      // Restore point (best-effort for greens; not required, so a miss does not block).
+      snapshot: async () => { const rp = recordRestorePoint(recipeId, `ARIA pre-fix ${recipeId}`); return { ok: Boolean(rp), token: rp }; },
+      // APPLY — the real executeTier0 (exec + post + internal rollback on a failed restart).
+      apply: async () => {
+        applyResult = await executeTier0(recipeId, { dryRun: false, run: tier0Run, logger: (event, text, extra) => logEvent(event, text, { ...extra }) });
+        return { ok: ["success", "no-op-neutral"].includes(applyResult.outcome) };
+      },
+      // READBACK — map the executor's verdict: success/no-op = healthy; a real fail = damage (executeTier0
+      // has already attempted its own service rollback by this point).
+      readback: async () => {
+        const o = applyResult && applyResult.outcome;
+        if (o === "success" || o === "no-op-neutral") return { ok: true, healthy: true, damaged: false };
+        return { ok: false, healthy: false, damaged: o === "fail" };
+      },
+      // Rollback was performed inside executeTier0; report whether the service actually recovered.
+      rollback: async () => ({ ok: true, recovered: Boolean(applyResult && applyResult.rolledBack) })
+    },
+    { logger: (event, text, extra) => logEvent(event, text, { ...extra }) }
+  );
   try { refreshHealthScore(); } catch { /* health refresh best-effort */ }
-  const ok = ["success", "no-op-neutral", "dry-run"].includes(result.outcome);
+  logEvent("STAGE7", `Validated fix ${recipeId}: ${gate.verdict} (${gate.validation}).`, { recipeId, verdict: gate.verdict, validation: gate.validation });
+  const ok = gate.verdict === STAGE7_VERDICT.APPLIED || (applyResult && applyResult.outcome === "no-op-neutral");
   return {
     ok,
-    dryRun: actualDryRun,
-    recipe: { id: result.recipeId || recipeId, tier: "tier-0" },
-    outcome: result.outcome,
-    steps: result.events,
-    message: result.message
+    dryRun: false,
+    recipe: { id: (applyResult && applyResult.recipeId) || recipeId, tier: "tier-0" },
+    outcome: applyResult ? applyResult.outcome : gate.verdict,
+    verdict: gate.verdict,
+    validation: gate.validation,
+    steps: applyResult ? applyResult.events : gate.events,
+    message: gate.userMessage
   };
 }
 

@@ -233,6 +233,8 @@ import "./kb-matcher-precision.test.mjs";
 import "./resolve-for-me.test.mjs";
 // Profile + session-end email — first-run profile gate, persistence, REAL SLA, content-safe payload, escalated≠fixed.
 import "./profile-session.test.mjs";
+// STAGE 7 — prove-before-prod gate: preflight reject (never reaches prod) · apply+verify · induced-damage rollback · honest logic/sandbox labels.
+import "./sandbox-validate.test.mjs";
 
 // G-METRICS — FAIL LOUD: no test file may be silently skipped (no fake "green"). Every tests/*.test.mjs
 // must be imported above. An un-imported NEW test throws here. Exactly one pre-existing test is quarantined
