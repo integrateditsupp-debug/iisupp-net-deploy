@@ -9758,3 +9758,39 @@ The flagship "supported case + proactive-resolve" build is BUILT, TESTED, and IN
 - **OPERATOR CONFIG Ahmad must set (instance/tenant, NOT code)** — see `ARIA Sentinel/sales/setup-video-guides/05-flagship-write-role-and-notifications.md`: ServiceNow write-enabled user (itil/interaction write); Entra write scope (User.RevokeSessions.All / User.ReadWrite.All) + admin consent + a test user; ServiceNow email-notification rule (incident created/resolved → integrateditsupp@gmail.com). Until granted, ARIA flags the gap (no fake ticket / no fake unlock).
 - **Cowork:** paste the write creds (Integrations → Configure), have Ahmad grant the scopes + a test user, then run the live flagship scenario (Resolve-for-me → ticket → remediate → close → emails) + the proactive background pass. Screenshot each into the guide's [SCREENSHOT] placeholders.
 - **Installer:** `ARIA Sentinel/dist/ARIA-Sentinel-0.1.19-unsigned.exe`.
+
+### 2026-06-27 — Forge: flagship verification notes (/tmp clone) + explicit Cowork handoff
+
+- **/tmp clone, tests per module — DONE.** Copied the 4 pure modules (servicenow.mjs, entra-graph-client.mjs,
+  case-orchestrator.mjs, proactive-resolve.mjs) + their 4 test files into an isolated scratchpad clone with
+  **no node_modules** and ran them there: 8/8 · 9/9 · 5/5 · 8/8 all PASS. Confirms the modules are
+  self-contained (node built-ins only) and pass independent of the working tree.
+- **Build done in the real working tree** (not /tmp) for the Electron installer step — /tmp lacks node_modules
+  and a 102MB Electron build there is wasteful; the working-tree git works fine here. The module *tests* were
+  the part run in the /tmp clone (above).
+- **HANDOFF TO COWORK (the remaining two steps are yours by role):**
+  1. **Live scenario run** — I cannot drive computer-use or reach live ServiceNow/Entra. Steps: paste write creds
+     (Integrations → Configure), have Ahmad grant the SN write role + Entra write scope/consent + a test user
+     (guide 05), then run Resolve-for-me → Interaction+Incident → remediation → resolve/close → emails, plus the
+     proactive background pass.
+  2. **Screenshots** — capture each live step into the `[SCREENSHOT]` placeholders in
+     `sales/setup-video-guides/` (01–05). These are inherently live-capture (need the driven UI + real creds),
+     which is the Cowork half per the original packet ("Cowork captures the live screenshots while driving").
+  Everything build-side (modules · gating · read-back · tests 194/194 · installed 0.1.19 · operator-config docs)
+  is complete and staged.
+
+## 2026-06-27 04:31 - CEO digest generated
+
+- Created `senior-director-state/ceo-now-action-digest.md`.
+- Approved CEO queue items tracked: 28.
+- Ready CEO actions on live surfaces: 27.
+- No external action taken.
+
+### 2026-06-27 — Forge: screenshot status update
+- Captured ONE real build-side screenshot — `sales/setup-video-guides/screenshots/00-app-dashboard.png` — of the
+  running ARIA Sentinel **0.1.19** dashboard (proves the flagship build launches + renders).
+- STOPPED further GUI automation: the machine is in **active use** (a browser was open to Microsoft Entra MFA
+  mid-session), and driving the Electron UI by mouse/foreground automation interferes with that live work + can
+  screen-leak. The remaining live-flow screenshots (Integrations/Configure, ticket+remediation+emails, proactive
+  summary) are Cowork's live-capture step with computer-use + Ahmad's provisioned ServiceNow/Entra creds. Details:
+  `sales/setup-video-guides/screenshots/README.md`.
