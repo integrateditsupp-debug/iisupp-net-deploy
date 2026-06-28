@@ -673,6 +673,602 @@ FIN_DEFAULT_BASES.forEach(function(b){
   FIN_DEFAULT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'default',cat:'fin-default'}); });
 });
 
-console.error('Finance vertical layer added:', out.length - finStart, 'scenarios');
+
+// ============================================================
+// LEGAL VERTICAL LAYER — Law firms, in-house counsel, courts, e-discovery
+// Apps: iManage / NetDocs / Clio / Relativity / Westlaw / LexisNexis /
+//       ProLaw / PracticePanther / MyCase / PACER / Kofax / Nuance Power PDF
+// ============================================================
+const legalStart = out.length;
+
+// --- LEG-1. Password / Authentication (DMS login, matter system) ---
+const LEG_AUTH_BASES = [
+  'cannot log into imanage document management','imanage password reset needed at firm',
+  'netdocs login not working for attorney','clio login failed for paralegal',
+  'relativity password expired for ediscovery review','westlaw login not working for associate',
+  'lexisnexis authentication failed for researcher','practicemanager login locked out',
+  'pacer login not accepted for court filing','time entry system login broken for billing',
+  'document review platform locked out','matter management system login failed',
+  'e-billing portal credentials rejected','legal billing software access denied',
+  'case management system password reset','ediscovery review account locked',
+  'dms single sign on broken at firm','law firm vpn not accepting credentials',
+];
+const LEG_AUTH_SFXS = ['', ' please', ' urgent'];
+LEG_AUTH_BASES.forEach(function(b){
+  LEG_AUTH_SFXS.forEach(function(s){ out.push({q:b+s,expect:'password',cat:'leg-auth'}); });
+});
+
+// --- LEG-2. Hardware (scanners, high-vol printers, large-format exhibits) ---
+const LEG_HW_BASES = [
+  'high speed scanner not feeding documents for discovery','kofax scanner jammed on case files',
+  'large format plotter not printing exhibit boards','fujitsu scanner not detected for document intake',
+  'nuance power pdf crashing on scan import','workstation freezing during document review',
+  'laptop overheating in trial prep room','second monitor not working at attorney workstation',
+  'docking station not detecting displays at desk','external hard drive not recognized for evidence copy',
+  'trial presentation laptop not booting','usb dvd drive for court not reading disk',
+  'courtroom av equipment not displaying','evidence scanning station locked up',
+  'document camera not connecting for deposition','attorney ipad not pairing with keyboard',
+];
+const LEG_HW_SFXS = ['', ' please', ' urgent'];
+LEG_HW_BASES.forEach(function(b){
+  LEG_HW_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:hardware',cat:'leg-hardware'}); });
+});
+
+// --- LEG-3. VPN / Remote (attorneys working remote, court access) ---
+const LEG_VPN_BASES = [
+  'vpn not connecting for remote attorney','law firm vpn drops during document review',
+  'citrix not loading for remote case access','remote desktop to firm not working for partner',
+  'vpn slow when accessing imanage from home','cisco anyconnect failing for outside counsel',
+  'remote access to relativity review platform down','vpn token not syncing for mobile attorney',
+  'firm vpn blocked at hotel for traveling lawyer','secure remote access to court systems broken',
+  'pulse secure vpn error for home office attorney','remote review session dropped for paralegal',
+];
+const LEG_VPN_SFXS = ['', ' please', ' urgent'];
+LEG_VPN_BASES.forEach(function(b){
+  LEG_VPN_SFXS.forEach(function(s){ out.push({q:b+s,expect:'vpn',cat:'leg-vpn'}); });
+});
+
+// --- LEG-4. Performance / Slow systems (review platform, doc search) ---
+const LEG_PERF_BASES = [
+  'relativity review platform extremely slow for attorneys','imanage document search taking too long',
+  'westlaw searches timing out on large queries','clio loading slowly for billing entry',
+  'document management system sluggish on large matter','ediscovery review tool freezing on batch',
+  'legal research database slow on concurrent users','time billing software hanging on save',
+  'netdocs preview loading very slow','case management system slow at end of day',
+  'contract review ai tool freezing on upload','imanage workspace loading slow on shared matter',
+  'lexisnexis results taking long to display','matter management very slow for large cases',
+];
+const LEG_PERF_SFXS = ['', ' please', ' urgent'];
+LEG_PERF_BASES.forEach(function(b){
+  LEG_PERF_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:performance',cat:'leg-performance'}); });
+});
+
+// --- LEG-5. OneDrive / File Access (matter files, shared drives) ---
+const LEG_ONEDRIVE_BASES = [
+  'matter folder missing from shared drive for attorney','case documents not syncing in onedrive',
+  'client folder permissions denied on file server','shared deal room documents disappeared',
+  'contract drafts not accessible on onedrive','discovery production folder missing',
+  'deal file room access removed for associate','legal pad templates missing from shared drive',
+  'transaction folder not syncing for deal team','deposition exhibit folder gone from sharepoint',
+  'client database not accessible on network drive','imanage workspace sync not working to desktop',
+  'shared pleadings folder permissions error','settlement documents folder not accessible',
+];
+const LEG_ONEDRIVE_SFXS = ['', ' please', ' urgent'];
+LEG_ONEDRIVE_BASES.forEach(function(b){
+  LEG_ONEDRIVE_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:onedrive',cat:'leg-onedrive'}); });
+});
+
+// --- LEG-6. Email (client comms, privilege tags, court notifications) ---
+const LEG_EMAIL_BASES = [
+  'client email flagged as spam from attorney account','outlook not syncing on attorney laptop',
+  'email archiving not capturing privileged communications','court notification emails not arriving',
+  'encrypted email to client failing at firm','exchange blocking large discovery attachment',
+  'email thread for deal not accessible in archive','opposing counsel email bouncing back',
+  'court electronic filing confirmation not arriving','barristers chambers email thread missing',
+  'email dlp blocking contract attachment to client','retainer agreement email not delivered',
+  'client intake email form not sending confirmations','legal aid email portal down',
+];
+const LEG_EMAIL_SFXS = ['', ' please', ' urgent'];
+LEG_EMAIL_BASES.forEach(function(b){
+  LEG_EMAIL_SFXS.forEach(function(s){ out.push({q:b+s,expect:'mail',cat:'leg-email'}); });
+});
+
+// --- LEG-7. MFA / Security (bar compliance, privileged system 2FA) ---
+const LEG_MFA_BASES = [
+  'duo mobile not working for imanage login','mfa token expired for court filing system',
+  'authenticator app lost for relativity access','two factor authentication broken for clio',
+  'rsa token dead for privileged document system','google authenticator not generating code for firm vpn',
+  'mfa push not arriving for legal billing portal','soft token broken for matter management system',
+  'hardware token fob not working for secure document vault','authentication app reset needed for westlaw',
+  'two step verification broken for firm email','mfa not working for ediscovery platform login',
+];
+const LEG_MFA_SFXS = ['', ' please', ' urgent'];
+LEG_MFA_BASES.forEach(function(b){
+  LEG_MFA_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:mfa',cat:'leg-mfa'}); });
+});
+
+// --- LEG-8. Onboarding (new associates, paralegals, summer clerks) ---
+const LEG_ONBOARD_BASES = [
+  'new associate needs imanage access set up','summer associate it onboarding incomplete',
+  'new paralegal needs clio provisioned','lateral hire needs all firm systems access',
+  'new partner joining needs full workstation configured','new legal assistant needs document management access',
+  'contract attorney starting needs relativity account','new law clerk needs court system credentials',
+  'incoming articling student needs dms onboarding','new associate needs westlaw and lexisnexis set up',
+  'new securities associate needs bloomberg access','new discovery paralegal needs relativity training account',
+  'junior associate needs court efiling account','new counsel needs time entry system configured',
+];
+const LEG_ONBOARD_SFXS = ['', ' please', ' urgent'];
+LEG_ONBOARD_BASES.forEach(function(b){
+  LEG_ONBOARD_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:onboarding',cat:'leg-onboarding'}); });
+});
+
+// --- LEG-9. WiFi (firm offices, courtrooms, client sites) ---
+const LEG_WIFI_BASES = [
+  'wifi not connecting at attorney workstation','wireless drops during video deposition',
+  'courthouse wifi not available for attorney laptop','client boardroom wifi not working for deal signing',
+  'conference room wifi cuts out during trial prep','law library wireless keeps dropping',
+  'guest wifi for client meeting not working at firm','wireless issue at satellite office for attorneys',
+  'wifi drops during zoom mediation session','access point down in litigation floor at firm',
+];
+const LEG_WIFI_SFXS = ['', ' please', ' urgent'];
+LEG_WIFI_BASES.forEach(function(b){
+  LEG_WIFI_SFXS.forEach(function(s){ out.push({q:b+s,expect:'wifi',cat:'leg-wifi'}); });
+});
+
+// --- LEG-10. Printer (court filings, exhibits, client docs) ---
+const LEG_PRINT_BASES = [
+  'printer jammed on court filing batch','exhibit copies not printing before trial',
+  'high volume copier offline in litigation support','large format printer not printing exhibit boards',
+  'print job stuck in queue for client documents','scanning to email not working on copier',
+  'printer driver not installing for court computer','color printer offline for presentation materials',
+  'pleadings batch print failed','labels not printing on file folders',
+  'duplex printing broken for discovery documents','printer toner alert on main copier in filing room',
+];
+const LEG_PRINT_SFXS = ['', ' please', ' urgent'];
+LEG_PRINT_BASES.forEach(function(b){
+  LEG_PRINT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'printer',cat:'leg-printer'}); });
+});
+
+// --- LEG-11. Networking (firm network, client data rooms) ---
+const LEG_NET_BASES = [
+  'ethernet not working at attorney workstation','firm network down on litigation floor',
+  'virtual data room connection issues for m&a deal','network slow in conference room during closing',
+  'internet down at satellite office for firm','network drive not accessible for deal team',
+  'lan port not working at new attorney desk','network outage at branch office of firm',
+  'voip calls dropping at reception for firm','network switch issue on paralegal floor',
+];
+const LEG_NET_SFXS = ['', ' please', ' urgent'];
+LEG_NET_BASES.forEach(function(b){
+  LEG_NET_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:networking',cat:'leg-networking'}); });
+});
+
+// --- LEG-12. Out-of-scope (legal questions, billing disputes, bar matters) ---
+const LEG_DEFAULT_BASES = [
+  'what is the statute of limitations for this claim','how do i file a motion to dismiss',
+  'what is our retainer agreement policy','how to calculate contingency fee',
+  'when is the discovery cutoff for this case','what is billable hours target for associates',
+  'how do i submit pro bono hours','what is our conflict check process',
+  'how to request a court date extension','what is the privilege log format required',
+  'what are our client intake procedures','how to submit a docketing entry',
+];
+const LEG_DEFAULT_SFXS = ['', ' please', '?'];
+LEG_DEFAULT_BASES.forEach(function(b){
+  LEG_DEFAULT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'default',cat:'leg-default'}); });
+});
+
+// --- LEG-13. Bluetooth (wireless mics, AirPods for depositions/mediations) ---
+const LEG_BT_BASES = [
+  'bluetooth headset not pairing for video deposition','airpods not connecting for zoom mediation',
+  'wireless mouse not pairing at attorney desk','bluetooth not working on courtroom laptop',
+  'airpods dropping audio on client call','wireless keyboard not pairing at partner office',
+  'bluetooth speaker not pairing for conference room','jabra headset not connecting via bluetooth',
+];
+const LEG_BT_SFXS = ['', ' please', ' urgent'];
+LEG_BT_BASES.forEach(function(b){
+  LEG_BT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:bluetooth',cat:'leg-bluetooth'}); });
+});
+
+// --- LEG-14. Webcam / Video (depositions, mediations, remote hearings) ---
+const LEG_CAM_BASES = [
+  'webcam not working for remote deposition','video not connecting for zoom court hearing',
+  'camera frozen during video mediation session','remote hearing camera not detected on laptop',
+  'zoom video blurry for client meeting','teams video not working for attorney conference',
+  'deposition platform camera not activating','virtual hearing webcam needs restart',
+  'webex camera grainy for arbitration session','camera not turning on for client intake call',
+];
+const LEG_CAM_SFXS = ['', ' please', ' urgent'];
+LEG_CAM_BASES.forEach(function(b){
+  LEG_CAM_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:webcam',cat:'leg-webcam'}); });
+});
+
+// --- LEG-15. Permissions / Access Control (matter access, need-to-know) ---
+const LEG_PERM_BASES = [
+  'cannot access matter workspace on imanage','access denied to client folder on dms',
+  'attorney ethics wall blocking file access','need permission to view sealed matter documents',
+  'associate cannot open restricted deal room','permission error on confidential client sharepoint',
+  'document vault access denied for paralegal','read-only access on matter when edit needed',
+  'co-counsel access request for shared matter','external expert access to document review platform',
+];
+const LEG_PERM_SFXS = ['', ' please', ' urgent'];
+LEG_PERM_BASES.forEach(function(b){
+  LEG_PERM_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:permissions',cat:'leg-permissions'}); });
+});
+
+
+// ============================================================
+// GOVERNMENT VERTICAL LAYER — Federal/provincial agencies, municipalities
+// Apps: GCdocs / SharePoint GC / GCKey / MyKey / Phoenix / PeopleSoft /
+//       SAP GC / Cisco WebEx Gov / MS365 GC / Teams GC / Adobe Acrobat Sign
+// ============================================================
+const govStart = out.length;
+
+// --- GOV-1. Password / Authentication ---
+const GOV_AUTH_BASES = [
+  'gcdocs password reset needed at federal office','gckey login not working for employee',
+  'phoenix pay system login failed','peopleSoft hr portal login locked out',
+  'sap gc login credentials expired','government sharepoint login not working',
+  'ms365 gc account locked for federal employee','mykey authentication broken for gc portal',
+  'secure remote access credentials expired for public servant','psg portal login not accepted',
+  'gc digital services account locked out','government email password expired on outlook gc',
+  'esdc portal login not working for officer','cra business account login failed',
+  'esss login not working for department','goc vpn credentials rejected for telework',
+  'phoenix self serve login not working','compensation web application login broken',
+  'service canada employee portal access denied','service now gc account locked out',
+  'government lan account expired','idp login failing for gc collaboration tool',
+  'teams gc authentication not working','government moodle account locked',
+  'goc workplace technology login broken','ms gov cloud login failed for employee',
+  'gc notify portal credentials rejected','sso broken for goc shared services',
+];
+const GOV_AUTH_SFXS = ['', ' please', ' urgent'];
+GOV_AUTH_BASES.forEach(function(b){
+  GOV_AUTH_SFXS.forEach(function(s){ out.push({q:b+s,expect:'password',cat:'gov-auth'}); });
+});
+
+// --- GOV-2. Hardware ---
+const GOV_HW_BASES = [
+  'government laptop not turning on for public servant','gc workstation frozen at desk',
+  'government issued laptop battery dead','docking station not working at government office',
+  'second monitor not detected at federal desk','gc tablet not powering on',
+  'government usb security key not recognized','smart card reader not reading cac card',
+  'piv card reader not working for federal employee','federal employee laptop overheating',
+  'barcode scanner for asset tracking not working','government desktop computer frozen',
+  'government issued phone not charging','projector not working in government meeting room',
+  'hardened laptop not booting at classified desk','fingerprint reader not scanning for gov device',
+  'gc laptop screen flickering on mobile worker','government desktop no display on monitor',
+  'shared workstation login slow at service canada counter','government video conferencing unit offline',
+];
+const GOV_HW_SFXS = ['', ' please', ' urgent'];
+GOV_HW_BASES.forEach(function(b){
+  GOV_HW_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:hardware',cat:'gov-hardware'}); });
+});
+
+// --- GOV-3. VPN / Remote (telework, GC Secure Remote Access) ---
+const GOV_VPN_BASES = [
+  'goc vpn not connecting for telework employee','gc secure remote access not working',
+  'cisco anyconnect failing on government laptop','remote desktop to office not connecting',
+  'gc vpn drops when accessing gcdocs from home','telework vpn certificate error on laptop',
+  'secure government vpn blocked at location','gc vpn token not syncing for mobile worker',
+  'pulse secure not connecting for gc employee','anyconnect error on government issued device',
+  'goc telework connection dropping regularly','remote access to gc sharepoint broken',
+  'government vpn slow when accessing phoenix','gc vpn not reconnecting after sleep',
+  'secure connection to classified network broken','remote work vpn authentication timing out',
+];
+const GOV_VPN_SFXS = ['', ' please', ' urgent'];
+GOV_VPN_BASES.forEach(function(b){
+  GOV_VPN_SFXS.forEach(function(s){ out.push({q:b+s,expect:'vpn',cat:'gov-vpn'}); });
+});
+
+// --- GOV-4. Performance ---
+const GOV_PERF_BASES = [
+  'phoenix pay system running very slow today','gcdocs extremely slow on large file upload',
+  'gc sharepoint loading slowly for department','government laptop very slow on startup',
+  'peopleSoft taking too long to load for hr','sap gc running slow at month end',
+  'government pc slow when opening large spreadsheets','gc mail very slow for employee',
+  'gc network sluggish in regional office','goc corporate wifi slow during all hands',
+  'government issued device freezing on updates','eats system slow at peak hours',
+  'gc collaboration platform lagging during meeting','government intranet very slow today',
+  'goc teams calls laggy in regional office','government device sluggish on gc desktop',
+  'federal employee laptop slow after update','service now gc ticket system very slow',
+];
+const GOV_PERF_SFXS = ['', ' please', ' urgent'];
+GOV_PERF_BASES.forEach(function(b){
+  GOV_PERF_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:performance',cat:'gov-performance'}); });
+});
+
+// --- GOV-5. OneDrive / File Access ---
+const GOV_ONEDRIVE_BASES = [
+  'gc sharepoint document library not accessible','gcdocs folder missing for department',
+  'government shared drive not accessible from telework','policy documents folder missing on gc network',
+  'gc onedrive sync not working on laptop','interdepartmental shared folder permissions denied',
+  'classified document share not accessible','gc teams channel files not loading',
+  'government repository not syncing to device','shared briefing folder disappeared on sharepoint gc',
+  'government project folder permissions error','gc file share not accessible for officer',
+  'ministerial briefing folder not accessible','gc records management system folder missing',
+  'edrms folder not accessible for employee','government collaboration space files gone',
+];
+const GOV_ONEDRIVE_SFXS = ['', ' please', ' urgent'];
+GOV_ONEDRIVE_BASES.forEach(function(b){
+  GOV_ONEDRIVE_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:onedrive',cat:'gov-onedrive'}); });
+});
+
+// --- GOV-6. Email ---
+const GOV_EMAIL_BASES = [
+  'gc email not delivering interdepartmental messages','outlook gc not syncing on government device',
+  'government email blocked by spam filter','classified email not arriving for officer',
+  'gc notify email not sending to citizen','protected b email encryption not working',
+  'government email archiving not capturing messages','gc mail large attachment blocked',
+  'public servant email not accessible on mobile','gc calendar invites not arriving from other dept',
+  'outlook web access not loading for employee','goc email retention policy blocking send',
+  'secure email to partner department failing','automated government notification email not arriving',
+];
+const GOV_EMAIL_SFXS = ['', ' please', ' urgent'];
+GOV_EMAIL_BASES.forEach(function(b){
+  GOV_EMAIL_SFXS.forEach(function(s){ out.push({q:b+s,expect:'mail',cat:'gov-email'}); });
+});
+
+// --- GOV-7. MFA ---
+const GOV_MFA_BASES = [
+  'government mfa app not generating code','gc two factor authentication broken for portal',
+  'smart card authentication failing for federal employee','piv token not working for gc system',
+  'duo mobile not working for goc login','rsa token dead for government system',
+  'gc authenticator app lost on phone','hardware token not generating otp for gc portal',
+  'mfa push not arriving for telework access','two step verification broken for gc email',
+  'government security token expired','google authenticator broken for gc cloud',
+];
+const GOV_MFA_SFXS = ['', ' please', ' urgent'];
+GOV_MFA_BASES.forEach(function(b){
+  GOV_MFA_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:mfa',cat:'gov-mfa'}); });
+});
+
+// --- GOV-8. Onboarding ---
+const GOV_ONBOARD_BASES = [
+  'new public servant needs gc device provisioned','new hire at federal department it onboarding incomplete',
+  'new officer needs gcdocs access set up','student placement needs government laptop configured',
+  'new director needs full gc tenant access','new analyst needs sharepoint gc provisioned',
+  'contract worker needs temporary gc network access','new employee needs phoenix self-serve set up',
+  'incoming executive needs classified workstation','seconded officer needs it access at host department',
+  'new administrative assistant needs full office setup','new graduate intake needs gc email and teams',
+  'new indeterminate employee needs id and swipe access','new term position needs gc device and accounts',
+];
+const GOV_ONBOARD_SFXS = ['', ' please', ' urgent'];
+GOV_ONBOARD_BASES.forEach(function(b){
+  GOV_ONBOARD_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:onboarding',cat:'gov-onboarding'}); });
+});
+
+// --- GOV-9. WiFi ---
+const GOV_WIFI_BASES = [
+  'government wifi not connecting at federal office','gc wireless drops during teams meeting',
+  'wifi not working at regional service canada office','government guest wifi not accessible for visitor',
+  'wireless dropping in government building','gc office wifi kicks off employee device',
+  'wifi not available in meeting room at federal building','government wifi authentication failing on phone',
+  'wireless signal weak in new wing of government office','employee wifi not reconnecting after break',
+];
+const GOV_WIFI_SFXS = ['', ' please', ' urgent'];
+GOV_WIFI_BASES.forEach(function(b){
+  GOV_WIFI_SFXS.forEach(function(s){ out.push({q:b+s,expect:'wifi',cat:'gov-wifi'}); });
+});
+
+// --- GOV-10. Printer ---
+const GOV_PRINT_BASES = [
+  'government printer jammed on policy batch','protected b document not printing at secure printer',
+  'gc print job stuck in queue','multifunction printer offline at regional office',
+  'government copier offline for department','large batch print failed for briefing notes',
+  'gc secure print job expired before pickup','scanner not working on government mfp',
+  'printer driver not installing on gc device','government printer not responding on network',
+  'classified document printer offline','cabinet submission batch print failed',
+];
+const GOV_PRINT_SFXS = ['', ' please', ' urgent'];
+GOV_PRINT_BASES.forEach(function(b){
+  GOV_PRINT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'printer',cat:'gov-printer'}); });
+});
+
+// --- GOV-11. Networking ---
+const GOV_NET_BASES = [
+  'government lan down at regional office','ethernet not working at federal desk',
+  'gc network switch down on floor','network not accessible in government building wing',
+  'gc trusted network not routing correctly','network drops when connecting classified device',
+  'internet not accessible at government office','lan port dead at federal employee desk',
+  'gc network outage at department headquarters','voip not working on gc network for employees',
+];
+const GOV_NET_SFXS = ['', ' please', ' urgent'];
+GOV_NET_BASES.forEach(function(b){
+  GOV_NET_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:networking',cat:'gov-networking'}); });
+});
+
+// --- GOV-12. Out-of-scope ---
+const GOV_DEFAULT_BASES = [
+  'what is the policy on overtime for federal employees','how do i submit a grievance',
+  'when is the next public service performance review','what are the values and ethics guidelines',
+  'how do i apply for a language training course','what is the collective agreement for my group',
+  'how to request maternity leave as public servant','what is the pay increment schedule for ec group',
+  'how to file a harassment complaint','when is the next interdepartmental transfer posting',
+];
+const GOV_DEFAULT_SFXS = ['', ' please', '?'];
+GOV_DEFAULT_BASES.forEach(function(b){
+  GOV_DEFAULT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'default',cat:'gov-default'}); });
+});
+
+console.error('Government vertical layer added:', out.length - govStart, 'scenarios');
+console.error('10K Corpus size:', out.length);
+
+// ============================================================
+// MANUFACTURING VERTICAL LAYER — Factories, plants, warehouses, MES
+// Apps: SAP PM / Maximo / Infor EAM / Plex / Epicor / Ignition SCADA /
+//       FactoryTalk / OSIsoft PI / Rockwell Studio 5000 / JD Edwards
+// ============================================================
+const mfgStart = out.length;
+
+// --- MFG-1. Password / Authentication ---
+const MFG_AUTH_BASES = [
+  'sap pm login not working on shop floor','maximo workorder login locked out for technician',
+  'mes system login expired for operator','epicor login not working at manufacturing site',
+  'plex erp authentication failed for planner','scada hmi login not accepting credentials',
+  'factorytalk login credentials rejected for maintenance','jd edwards login locked for purchasing',
+  'infor eam locked out for asset manager','plant network account expired for line worker',
+  'shift supervisor login not working on floor terminal','production tracking system password expired',
+  'quality management system login broken for inspector','inventory system login not working at warehouse',
+  'time and attendance kiosk not accepting pin','forklift terminal login not working in warehouse',
+];
+const MFG_AUTH_SFXS = ['', ' please', ' urgent'];
+MFG_AUTH_BASES.forEach(function(b){
+  MFG_AUTH_SFXS.forEach(function(s){ out.push({q:b+s,expect:'password',cat:'mfg-auth'}); });
+});
+
+// --- MFG-2. Hardware ---
+const MFG_HW_BASES = [
+  'shop floor terminal frozen on production line','ruggedized laptop not turning on in plant',
+  'barcode scanner not reading labels at receiving','handheld rf terminal not booting in warehouse',
+  'production screen frozen at line station','forklift mounted computer not starting',
+  'panel pc locked up at assembly station','thermal label printer not working at shipping',
+  'tablet not charging on plant floor','industrial touchscreen not responding at hmi',
+  'warehouse scanner gun not detected on charger','weigh scale display not connecting to system',
+  'camera on quality inspection station offline','rugged tablet screen cracked and unresponsive',
+  'time clock kiosk frozen in breakroom','workorder terminal locked at maintenance bay',
+  'cnc machine control monitor not displaying','desktop frozen in engineering office at plant',
+];
+const MFG_HW_SFXS = ['', ' please', ' urgent'];
+MFG_HW_BASES.forEach(function(b){
+  MFG_HW_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:hardware',cat:'mfg-hardware'}); });
+});
+
+// --- MFG-3. VPN / Remote ---
+const MFG_VPN_BASES = [
+  'vpn not connecting to plant systems from office','remote access to scada not working for engineer',
+  'anyconnect failing on plant maintenance laptop','remote desktop to mes server not connecting',
+  'vpn drops when accessing plant historian','contractor vpn not working at facility',
+  'secure remote access to plc programming software broken','vpn certificate error on plant engineer laptop',
+  'remote monitoring connection to plant floor lost','vpn slow when accessing manufacturing erp from home',
+  'industrial vpn gateway not routing correctly','remote session to factorytalk dropping',
+];
+const MFG_VPN_SFXS = ['', ' please', ' urgent'];
+MFG_VPN_BASES.forEach(function(b){
+  MFG_VPN_SFXS.forEach(function(s){ out.push({q:b+s,expect:'vpn',cat:'mfg-vpn'}); });
+});
+
+// --- MFG-4. Performance ---
+const MFG_PERF_BASES = [
+  'sap pm very slow at start of shift','mes system slow during peak production',
+  'epicor taking too long to load workorders','plant floor terminal slow on shift change',
+  'plex erp running slow for planner','warehouse management system sluggish at receiving',
+  'quality system slow during audit batch','production tracking slow at end of shift',
+  'shop floor terminal lagging on barcode scan','infor eam slow when generating work orders',
+  'engineering laptop slow running cad software','plant historian data loading very slowly',
+  'scada trending slow when multiple engineers connected','maximo report taking too long to generate',
+];
+const MFG_PERF_SFXS = ['', ' please', ' urgent'];
+MFG_PERF_BASES.forEach(function(b){
+  MFG_PERF_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:performance',cat:'mfg-performance'}); });
+});
+
+// --- MFG-5. OneDrive / File Access ---
+const MFG_ONEDRIVE_BASES = [
+  'sop documents folder not accessible on plant network','engineering drawing folder missing on sharepoint',
+  'quality records shared drive not accessible','production schedule file not syncing on onedrive',
+  'maintenance procedure folder permissions denied','work instruction documents folder gone',
+  'plant shared drive not accessible from floor terminal','technical drawing folder missing for engineer',
+  'npi documents not accessible in shared drive','supplier quality docs folder permissions error',
+  'calibration records folder not accessible','equipment manual folder missing from network drive',
+];
+const MFG_ONEDRIVE_SFXS = ['', ' please', ' urgent'];
+MFG_ONEDRIVE_BASES.forEach(function(b){
+  MFG_ONEDRIVE_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:onedrive',cat:'mfg-onedrive'}); });
+});
+
+// --- MFG-6. Email ---
+const MFG_EMAIL_BASES = [
+  'plant manager email not delivering to corporate','supplier email not arriving for buyer',
+  'outlook not working on plant floor pc','automated workorder email not sending',
+  'quality alert email not arriving for team','shift report email not delivering',
+  'email to vendor blocked at plant','maintenance alert email not sending from mes',
+  'customer delivery email bouncing back','production schedule email not sending',
+  'plant email not syncing on rugged tablet','po approval email not arriving for manager',
+];
+const MFG_EMAIL_SFXS = ['', ' please', ' urgent'];
+MFG_EMAIL_BASES.forEach(function(b){
+  MFG_EMAIL_SFXS.forEach(function(s){ out.push({q:b+s,expect:'mail',cat:'mfg-email'}); });
+});
+
+// --- MFG-7. MFA ---
+const MFG_MFA_BASES = [
+  'two factor authentication not working for mes login','mfa token expired for plant erp',
+  'duo push not arriving for plant vpn','authenticator app lost for manufacturing system',
+  'rsa token broken for scada access','hardware token not working for remote plant access',
+  'mfa push not arriving for epicor login','google authenticator broken for sap at plant',
+];
+const MFG_MFA_SFXS = ['', ' please', ' urgent'];
+MFG_MFA_BASES.forEach(function(b){
+  MFG_MFA_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:mfa',cat:'mfg-mfa'}); });
+});
+
+// --- MFG-8. Onboarding ---
+const MFG_ONBOARD_BASES = [
+  'new operator needs mes system access','new technician it onboarding not complete at plant',
+  'new maintenance tech needs maximo account','new production supervisor needs all systems set up',
+  'new quality inspector needs qms access','new engineer needs cad software and vpn configured',
+  'contract worker needs temporary plant network access','new shift lead needs scada view access',
+  'new warehouse picker needs rf terminal account','new plant manager needs full system access',
+  'new buyer needs epicor and email configured','summer student needs read-only plant access set up',
+];
+const MFG_ONBOARD_SFXS = ['', ' please', ' urgent'];
+MFG_ONBOARD_BASES.forEach(function(b){
+  MFG_ONBOARD_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:onboarding',cat:'mfg-onboarding'}); });
+});
+
+// --- MFG-9. WiFi ---
+const MFG_WIFI_BASES = [
+  'wifi not connecting on plant floor','wireless drops during production run',
+  'rf scanners dropping wifi in warehouse','wifi not available in new section of plant',
+  'wireless signal weak at shipping dock','forklift terminal losing wifi in warehouse',
+  'plant wifi authentication failing on tablet','wifi drops during shift in assembly area',
+  'access point down in warehouse section','wireless coverage poor in manufacturing cell',
+];
+const MFG_WIFI_SFXS = ['', ' please', ' urgent'];
+MFG_WIFI_BASES.forEach(function(b){
+  MFG_WIFI_SFXS.forEach(function(s){ out.push({q:b+s,expect:'wifi',cat:'mfg-wifi'}); });
+});
+
+// --- MFG-10. Printer ---
+const MFG_PRINT_BASES = [
+  'label printer jammed on production line','thermal printer not printing shipping labels',
+  'workorder print job stuck in queue at plant','barcode label printer not detected on network',
+  'production report printer offline in manager office','zebra printer not printing at receiving dock',
+  'quality inspection label printer offline','shipping label printer driver not installing',
+  'parts traveler print failed on shop floor','batch print for packing slips stuck in queue',
+  'plant network printer offline for maintenance team','thermal receipt printer not printing at kiosk',
+];
+const MFG_PRINT_SFXS = ['', ' please', ' urgent'];
+MFG_PRINT_BASES.forEach(function(b){
+  MFG_PRINT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'printer',cat:'mfg-printer'}); });
+});
+
+// --- MFG-11. Networking ---
+const MFG_NET_BASES = [
+  'plant floor network down on production line','ethernet not working at assembly station',
+  'industrial network switch down in plant','lan down in warehouse section',
+  'plant ops network not routing to corporate','network drops on cnc machine control',
+  'industrial ethernet port dead at hmi','plant network outage at receiving dock',
+  'scada network communication lost to plc','production cell network not connecting to mes',
+];
+const MFG_NET_SFXS = ['', ' please', ' urgent'];
+MFG_NET_BASES.forEach(function(b){
+  MFG_NET_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:networking',cat:'mfg-networking'}); });
+});
+
+// --- MFG-12. Out-of-scope ---
+const MFG_DEFAULT_BASES = [
+  'what is the current production schedule for line 3','how do i submit a safety incident report',
+  'what is the changeover time for product x','how do i request raw material reorder',
+  'what is our oee target for the quarter','how to escalate a machine breakdown to maintenance',
+  'what is the takt time for current order','how do i file a workers compensation claim',
+  'what are the quality hold procedures','when is the next preventive maintenance due',
+];
+const MFG_DEFAULT_SFXS = ['', ' please', '?'];
+MFG_DEFAULT_BASES.forEach(function(b){
+  MFG_DEFAULT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'default',cat:'mfg-default'}); });
+});
+
+console.error('Manufacturing vertical layer added:', out.length - mfgStart, 'scenarios');
 console.error('10K Corpus size:', out.length);
 module.exports = out;
+
+
