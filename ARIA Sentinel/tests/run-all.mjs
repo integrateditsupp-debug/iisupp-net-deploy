@@ -241,6 +241,8 @@ import "./stage7-tier0.test.mjs";
 import "./a1-empty-state-no-fabrication.test.mjs";
 // RUN-B B2 — real ROI: roiFromLog wired to transparencyLog; hoursSaved null when no events; email real-or-empty.
 import "./b2-real-roi.test.mjs";
+// RUN-B B3 — honest trust/security surface: sanitization real-or-empty; no overclaims; "How ARIA measures itself".
+import "./b3-trust-surface.test.mjs";
 // RUN-B B4 — AXIS director chat: deterministic intents + honest fallback + aria-chat.js model-path fix.
 import "./b4-axis-chat.test.mjs";
 

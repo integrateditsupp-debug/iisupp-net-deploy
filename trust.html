@@ -138,6 +138,20 @@
             <h3>Measured, not marketed</h3>
             <p>When we cite a performance number, it is something we actually measured — never a customer or production figure we have not earned. The only outcome figure we currently cite is an <strong>internal self-test, 20 questions, 40% auto-resolve</strong> of ARIA's offline local knowledge base. <span class="measured-note">It is an internal self-test, not a production or customer result.</span></p>
 
+            <h3>How ARIA measures itself</h3>
+            <p>ARIA Sentinel is built to self-report honestly. Every metric surface in the app traces to a real event or reads as empty-state — never a seeded number. Here is how each key figure is generated:</p>
+            <ul class="gov-list">
+                <li><span class="term">Incidents resolved (fixes).</span><span class="desc">Counted from RUN-tagged events in the local transparency log — each one records when a recipe was actually executed, not just diagnosed. Zero fixes = no number shown; the dashboard shows empty-state.</span></li>
+                <li><span class="term">Hours saved / dollars saved.</span><span class="desc">Derived from fix count × configurable minutes-per-fix × your hourly rate. With no fixes recorded, this field is blank — never "0 hours" fabricated.</span></li>
+                <li><span class="term">Diagnoses.</span><span class="desc">Counted from DIAGNOSE-tagged events — KB lookups and reasoning steps. Diagnoses ≠ resolutions; ARIA distinguishes them. A machine that only diagnoses shows 0 fixes, not inflated output.</span></li>
+                <li><span class="term">Confidence badge.</span><span class="desc">Per-answer score from the KB matcher. Below the retrieval threshold (τ = 0.30), ARIA abstains rather than guessing. High/uncertain/low reflects the actual match score, not a marketing label.</span></li>
+                <li><span class="term">Deflection / resolution feedback.</span><span class="desc">"Did this fix it?" is asked after every Resolve action. Only a confirmed Yes increments the deflection counter. An unresolved session does not inflate the metric.</span></li>
+                <li><span class="term">Audit trail.</span><span class="desc">Every ARIA action is appended to a hash-chained local log. The chain is verified on read; a broken chain surfaces immediately in the Compliance tab — it is never hidden.</span></li>
+            </ul>
+            <div class="callout">
+                <p>This means a brand-new installation shows mostly empty-states and dashes, not impressive numbers. That is intentional. The numbers appear as ARIA earns them — and only then.</p>
+            </div>
+
             <h3>Reporting a security concern</h3>
             <p>Email <a href="mailto:ahmad.wasee@iisupp.net" style="color:#c5a059; text-decoration:underline;">ahmad.wasee@iisupp.net</a> or call <a href="tel:+16475813182" style="color:#c5a059; text-decoration:underline;">647-581-3182</a>.</p>
             <div class="cta-row">
@@ -146,7 +160,7 @@
             </div>
 
             <div class="callout">
-                <p class="measured-note">Last reviewed: 2026-06-25. This page reflects current, real capabilities and will be updated as they change.</p>
+                <p class="measured-note">Last reviewed: 2026-06-29. This page reflects current, real capabilities and will be updated as they change.</p>
             </div>
 
             <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(197,160,89,0.2); text-align:center;">
@@ -156,38 +170,4 @@
     </section>
 
     <footer class="py-14 px-10 border-t border-white/5 text-center">
-        <p class="logo-text text-sm tracking-widest uppercase mb-2">&copy; Integrated IT Support Inc.</p>
-        <p class="text-white/30 text-[9px] tracking-widest uppercase">30 Fothergill Court, Whitby, ON L1P 2L4 &mdash; <a href="tel:+16475813182" style="color:#c5a059;">(647) 581-3182</a></p>
-        <p class="text-white/30 text-[9px] tracking-widest uppercase mt-3">
-            <a href="/about.html" style="color:rgba(255,255,255,0.5);">About</a>
-            <span class="text-white/20 mx-2">&bull;</span>
-            <a href="/terms.html" style="color:rgba(255,255,255,0.5);">Terms</a>
-            <span class="text-white/20 mx-2">&bull;</span>
-            <a href="/trust" style="color:#c5a059;">Trust &amp; Security</a>
-            <span class="text-white/20 mx-2">&bull;</span>
-            <a href="/copyright.html" style="color:rgba(255,255,255,0.5);">&copy; IIS Inc.</a>
-        </p>
-    </footer>
-
-    <script>
-        function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
-        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-        document.addEventListener('dragstart', function(e) { if (e.target && e.target.tagName === 'IMG') e.preventDefault(); });
-        document.addEventListener('keydown', function(e) {
-            var k = e.key ? e.key.toLowerCase() : '';
-            if (e.key === 'F12') { e.preventDefault(); return; }
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','j','c'].indexOf(k) !== -1) { e.preventDefault(); return; }
-            if ((e.ctrlKey || e.metaKey) && ['u','s'].indexOf(k) !== -1) { e.preventDefault(); return; }
-            var active = document.activeElement;
-            var inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT');
-            if (!inField && (e.ctrlKey || e.metaKey) && ['c','x','a','p'].indexOf(k) !== -1) { e.preventDefault(); }
-        });
-        document.addEventListener('copy', function(e) {
-            var active = document.activeElement;
-            var inField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
-            if (!inField) e.preventDefault();
-        });
-    </script>
-    <script src="/assets/aria-core.js" defer></script>
-</body>
-</html>
+        <p class="logo-text text-sm tracking-widest uppercase mb-2">&copy; Integra
