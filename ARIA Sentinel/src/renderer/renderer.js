@@ -1628,7 +1628,11 @@ async function loadDashboard() {
     const hero = qs("#heroStatus");
     if (hero) { hero.dataset.level = status.level; hero.innerHTML = `<span class="hero-emoji">${status.emoji}</span><strong class="hero-label">${status.label}</strong>`; }
     setText("heroSubline", heroSubline(d.subline || {}));
-    setHtml("kpiTiles", DashboardTab.tilesHtml(heroTiles(d.metrics || {})));
+    // B1: merge real deflection stats from user feedback events (Rule 14: only real events).
+    let deflectionStats = null;
+    try { const ds = await sentinel.getDeflectionStats?.(); deflectionStats = ds && ds.ok ? ds.stats : null; } catch { /* offline */ }
+    const metricsWithDeflection = { ...(d.metrics || {}), deflectionPct: deflectionStats ? deflectionStats.deflectionPct : null };
+    setHtml("kpiTiles", DashboardTab.tilesHtml(heroTiles(metricsWithDeflection)));
     const pending = d.pending || [];
     const pPanel = qs("#pendingActionsPanel"); if (pPanel) pPanel.hidden = pending.length === 0;
     setHtml("pendingActions", DashboardTab.pendingHtml(pending));
@@ -1921,7 +1925,44 @@ function initAriaChat() {
     if (meta && Number.isFinite(Number(meta.total_chunks))) { const c = qs("#ariaChatChunks"); if (c) c.textContent = Number(meta.total_chunks) + " chunks"; }
     // TASK 4 — Sentinel-only: offer to RESOLVE the issue on this device, gated identically (Confirmed-grade, never autonomous).
     appendResolveChip(bubble, question);
+    // B1: confidence badge (high/uncertain/low from match score) + "Was this fixed?" feedback chip.
+    appendConfidenceBadge(bubble, res);
+    appendFeedbackChip(bubble, question, res);
   }
+  // B1: confidence badge — high/uncertain/low from KB match score. Never shown without a real score.
+  function appendConfidenceBadge(bubble, res) {
+    if (!res) return;
+    const score = res.score != null ? Number(res.score) : null;
+    if (score == null && !res.matched) return; // no score to show
+    const level = score == null ? null : score >= 0.60 ? "high" : score >= 0.40 ? "uncertain" : "low";
+    if (!level) return;
+    const badge = document.createElement("span"); badge.className = `aria-chat-confidence aria-chat-confidence--${level}`;
+    badge.title = `Match confidence: ${level} (score ${score != null ? score.toFixed(2) : "—"})`;
+    badge.textContent = level === "high" ? "✓ High confidence" : level === "uncertain" ? "~ Uncertain match" : "⚠ Low confidence";
+    bubble.appendChild(badge);
+  }
+
+  // B1: "Was this fixed?" chip — logs real resolution event on genuine user feedback (Rule 14).
+  function appendFeedbackChip(bubble, question, res) {
+    if (!window.sentinel || !window.sentinel.logResolution) return;
+    const score = res && res.score != null ? Number(res.score) : null;
+    const source = res && res.provider ? String(res.provider) : "chat";
+    const wrap = document.createElement("div"); wrap.className = "aria-chat-feedback";
+    const label = document.createElement("span"); label.className = "aria-chat-feedback-label";
+    label.textContent = "Was this helpful?";
+    const yes = document.createElement("button"); yes.type = "button"; yes.className = "aria-chat-thumb aria-chat-thumb--yes";
+    yes.title = "Yes, this fixed it"; yes.setAttribute("aria-label", "Yes, this fixed it"); yes.textContent = "👍";
+    const no = document.createElement("button"); no.type = "button"; no.className = "aria-chat-thumb aria-chat-thumb--no";
+    no.title = "No, not yet"; no.setAttribute("aria-label", "No, not yet"); no.textContent = "👎";
+    const done = (outcome) => {
+      yes.disabled = true; no.disabled = true; label.textContent = outcome === "resolved" ? "Thanks — marked as resolved." : "Noted. We'll improve.";
+      window.sentinel.logResolution({ question: String(question || "").slice(0, 200), outcome, score, source }).catch(() => {});
+    };
+    yes.addEventListener("click", () => done("resolved"));
+    no.addEventListener("click",  () => done("unresolved"));
+    wrap.append(label, yes, no); bubble.appendChild(wrap);
+  }
+
   // The Sentinel-only "Resolve it for me" affordance under an answer. Diagnoses the question locally, and if a
   // fix recipe is matched, runs it through the supervised-fix gate; otherwise opens the diagnostics flow.
   // A3: scoped gated confirm-card — diagnose → preview → confirm → supervisedFix (never immediate).
@@ -2269,7 +2310,7 @@ async function getSentinelApi() {
     getProofMetrics: async () => ({
       // Browser preview has no local store (proof-metrics needs node fs/os) — show honest zeros, never invented.
       ok: true, updatedAt: null, sampleSize: 0,
-      metrics: { queriesHandled: 0, autoResolved: 0, escalated: 0, deflectionPct: 0, avgResolutionMs: 0, avgResolutionSec: 0, kbHitRatePct: 0, sampleSize: 0, generatedAt: new Date().toISOString() }
+      metrics: { queriesHandled: 0, autoResolved: 0, escalated: 0, deflectionPct: null, avgResolutionMs: 0, // B1 Rule14: null not 0 — no real events in browser preview avgResolutionSec: 0, kbHitRatePct: 0, sampleSize: 0, generatedAt: new Date().toISOString() }
     }),
     getOmniStatus: async () => ({
       // Browser preview reads no env — honest "Not configured" for both channels (never a fake connection).

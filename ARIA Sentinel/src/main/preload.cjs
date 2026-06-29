@@ -116,6 +116,9 @@ contextBridge.exposeInMainWorld("sentinel", {
   subscribeProcessHealth: () => ipcRenderer.invoke("sentinel:processHealth:subscribe"),
   onProcessHealth: (cb) => { const l = (_e, snap) => cb(snap); ipcRenderer.on("sentinel:processHealth", l); return () => ipcRenderer.removeListener("sentinel:processHealth", l); },
   supervisedFix: (payload) => ipcRenderer.invoke("sentinel:supervised-fix", payload),
+  // B1: real deflection metric (Rule 14: only real user feedback, never seeded).
+  logResolution: (payload) => ipcRenderer.invoke("sentinel:log-resolution", payload),
+  getDeflectionStats: () => ipcRenderer.invoke("sentinel:deflection-stats"),
   abortCountdown: () => ipcRenderer.invoke("sentinel:abort-countdown"),
   onCountdownTick: (cb) => { const l = (_e, info) => cb(info); ipcRenderer.on("sentinel:countdown-tick", l); return () => ipcRenderer.removeListener("sentinel:countdown-tick", l); },
   onState: (callback) => {

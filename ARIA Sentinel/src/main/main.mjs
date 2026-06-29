@@ -40,6 +40,7 @@ import { enumerate as enumerateSystem, buildSystemContext } from "./system-conte
 import { TIER0_RECIPES, preview as previewTier0, tier0ById } from "./recipes/tier-0/index.mjs";
 import { loadSymptomKb } from "../shared/symptom-kb.mjs";
 import { diagnose as diagnoseSymptom } from "../shared/diagnostic-reasoner.mjs";
+import { readStore, writeStore, logResolutionEvent, computeDeflectionStats } from "../shared/deflection-store.mjs"; // B1: real deflection metric
 // RUN 21 — auto-update orchestrator · startup hook · heartbeat. (R11 private-folder guard applied.)
 import { checkForUpdate } from "./update-listener.mjs";
 import * as orchestrator from "./update-orchestrator.mjs";
@@ -3332,6 +3333,23 @@ ipcMain.handle("sentinel:preview-tier0", (_event, id) => { const r = tier0ById(i
 ipcMain.handle("sentinel:list-blueprints", () => listBlueprints());
 ipcMain.handle("sentinel:get-blueprint", (_event, id) => getBlueprint(id));
 ipcMain.handle("sentinel:diagnose", (_event, message) => runDiagnose(message));
+
+// B1 — real deflection metric IPC (Rule 14: only real user feedback events, never seeded).
+function deflectionStorePath() { try { return require("path").join(app.getPath("userData"), "deflection-events.json"); } catch { return "./deflection-events.json"; } }
+ipcMain.handle("sentinel:log-resolution", (_event, payload) => {
+  try {
+    const { sessionId, question, outcome, score, source } = payload || {};
+    const store = readStore(deflectionStorePath());
+    const updated = logResolutionEvent(store, { sessionId, question, outcome, score, source });
+    writeStore(updated, deflectionStorePath());
+    logEvent("DEFLECTION", `Resolution logged: ${outcome} (total: ${updated.events.length})`);
+    return { ok: true, stats: computeDeflectionStats(updated) };
+  } catch (e) { return { ok: false, error: String(e.message) }; }
+});
+ipcMain.handle("sentinel:deflection-stats", () => {
+  try { return { ok: true, stats: computeDeflectionStats(readStore(deflectionStorePath())) }; }
+  catch (e) { return { ok: false, stats: { total: 0, resolved: 0, unresolved: 0, deflectionPct: null } }; }
+});
 // RUN 21 — auto-update orchestrator · startup · heartbeat IPC.
 ipcMain.handle("sentinel:check-update-channel", () => runUpdateCheck("manual"));
 ipcMain.handle("sentinel:update-state", () => readUpdateState());

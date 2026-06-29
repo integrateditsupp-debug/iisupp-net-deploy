@@ -57,6 +57,8 @@ export function heroTiles(m = {}) {
     kpiTile({ id: "accuracy", label: "Diagnosis accuracy", value: m.accuracy ?? 0, unit: "%", values: m.accuracyTrend, prev: m.accuracyPrev }),
     kpiTile({ id: "breaches", label: "SLA breaches MTD", value: m.breaches ?? 0, values: m.breachTrend, prev: m.breachPrev }),
     kpiTile({ id: "hours", label: "Hours saved MTD", value: m.hoursSaved ?? 0, values: m.hoursTrend, prev: m.hoursPrev }),
+    // B1 Rule 14: deflectionPct is from real user feedback only — null = empty-state (no data yet).
+    kpiTile({ id: "deflection", label: "First-touch resolution", value: m.deflectionPct ?? null, unit: m.deflectionPct != null ? "%" : "", emptyLabel: "— no data yet" }),
     kpiTile({ id: "update", label: "Version", value: m.version || "0.1.0", unit: m.updatePending ? " · update ready" : "" })
   ];
 }
