@@ -5,6 +5,12 @@
 //
 // 🔒 R11 / scrub invariant (RUN 29): answers NEVER echo a filesystem path, and NEVER surface admin-internal
 // terms (recipe ids, mode names, OTA paths). The KB pack is customer-facing content only.
+//
+// A2 (2026-06-29): Intent tags + vertical guard + synonym precision fix.
+//   - loadKbPack now parses YAML frontmatter: intent, vertical, safe_recipe fields.
+//   - matchKb applies a vertical guard: non-generic docs outside the query's inferred vertical get a 0.3x penalty.
+//   - SYNONYMS: separated "locked/lockout" from generic "credential" to route account-lockout queries precisely.
+//   - matchKb logs {query, topScore, chosenId} for τ tuning (console.debug, no-op in prod).
 
 const STOP = new Set(["the","and","but","for","with","that","this","have","has","are","was","were","not","cant",
   "cannot","wont","you","your","our","will","would","should","could","please","help","need","when","then","from",
@@ -12,7 +18,7 @@ const STOP = new Set(["the","and","but","for","with","that","this","have","has",
 
 export function tokenize(text) {
   return String(text == null ? "" : text).toLowerCase()
-    .replace(/['’]/g, "")                 // won't → wont (a stopword), don't → dont
+    .replace(/['']/g, "")                 // won't → wont (a stopword), don't → dont
     .replace(/\bwi[-\s]?fi\b/g, "wifi")    // wi-fi / wi fi → wifi (one token)
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
@@ -42,6 +48,17 @@ export function inferPlatform(message, hostPlatform = "") {
   return hostPlatform || "";
 }
 
+// ── A2: Infer the vertical the user is asking about (generic = no specific vertical detected) ──
+// Verticals: generic | healthcare | banking | legal | hr
+export function inferVertical(message) {
+  const m = String(message || "").toLowerCase();
+  if (/mychart|epic|patient portal|ehr|emr|meditech|cerner|allscripts|healthstream/.test(m)) return "healthcare";
+  if (/online banking|bank login|td bank|rbc|bmo|scotiabank|cibc|wells fargo/.test(m)) return "banking";
+  if (/legal software|clio|practice management law/.test(m)) return "legal";
+  if (/workday|adp|hris|payroll portal|bamboohr/.test(m)) return "hr";
+  return "generic";
+}
+
 // ── G-PRECISION (RUN 36) — precision-first scoring. Three signals replace the old raw-overlap score that let
 // big OS-blueprints swallow specific diagnostics:
 //   1. IDF weighting — a token in MANY docs (windows, issue, fix) is near-worthless; a rare topical token
@@ -51,10 +68,13 @@ export function inferPlatform(message, hostPlatform = "") {
 //      counts far more than a stray body mention, so "audio no sound" → Audio Issues, not the Windows blueprint.
 //   3. Explicit-platform bias only — the host OS no longer biases routing; a blueprint is preferred ONLY when
 //      the user actually names that platform/device. Generic symptoms route to the specific diagnostic.
+//   4. A2 — Vertical guard: a non-generic doc (vertical=healthcare etc.) is penalized 0.3x for queries that
+//      don't signal that vertical. Prevents MyChart/patient-portal docs from polluting generic Windows queries.
 // A light stemmer matches morphological variants (crashing/crashes → crash) on BOTH sides. Out-of-scope is
 // rejected honestly — we never force a match to pad the metric.
 export const TITLE_BOOST = 3;
 export const MATCH_FLOOR = 0.30;
+export const VERTICAL_PENALTY = 0.3; // A2: non-matching vertical → multiply score by this
 
 /** Light, symmetric stemmer (applied to query AND doc tokens) so word forms align. */
 export function stem(word) {
@@ -66,20 +86,32 @@ export function stem(word) {
   return w;
 }
 
-// Curated synonym/intent signals → the canonical topic word that appears in the right doc's title/headings.
+// A2 SYNONYM PRECISION FIX: "locked"/"lockout" now map to "lockout" (the specific account-lockout article's
+// key term) instead of "credential" (which is shared with password/sign-in articles). This prevents generic
+// account-lockout queries from routing to the wrong credential-issues article.
+// "password"/"signin"/"login" still map to "credential" for generic sign-in issues.
 const SYNONYMS = {
   monitor: ["display"], screen: ["display"], hdmi: ["display"], displayport: ["display"], resolution: ["display"],
   headphones: ["bluetooth", "audio"], headset: ["bluetooth", "audio"], airpods: ["bluetooth"], earbuds: ["bluetooth"],
   sound: ["audio"], speaker: ["audio"], speakers: ["audio"], mic: ["audio"], microphone: ["audio"],
   charge: ["battery"], charging: ["battery"], charger: ["battery"], drain: ["battery"], drains: ["battery"], draining: ["battery"],
-  password: ["credential"], signin: ["credential"], login: ["credential"], locked: ["credential"], lockout: ["credential"],
+  // A2 FIX: locked/lockout → "lockout" (specific), not "credential" (generic).
+  // password/signin/login still map to "credential" for password-reset / sign-in issues.
+  password: ["credential"], signin: ["credential"], login: ["credential"],
+  locked: ["lockout"], lockout: ["lockout"],
   bsod: ["crash"], freeze: ["crash"], frozen: ["crash"], hang: ["crash"], hangs: ["crash"],
   startup: ["boot"], reboot: ["boot"],
   lag: ["slow"], lagging: ["slow"], sluggish: ["slow"],
   outlook: ["email"], gmail: ["email"], smtp: ["email"], imap: ["email"],
   mouse: ["peripheral", "usb"], keyboard: ["peripheral", "usb"], webcam: ["peripheral", "camera"], scanner: ["peripheral"],
   spooler: ["printer"], printing: ["printer"],
-  ethernet: ["network"], activate: ["activation"], license: ["activation"], antivirus: ["antivirus"], defender: ["antivirus"]
+  ethernet: ["network"], activate: ["activation"], license: ["activation"], antivirus: ["antivirus"], defender: ["antivirus"],
+  // A2: time/clock intent signals
+  clock: ["time"], sync: ["time"], timezone: ["time"], "time zone": ["time"],
+  // A2: setup intent signals for add-printer
+  add: ["setup"], install: ["setup"], connect: ["setup"],
+  // A2: Office/Excel
+  excel: ["excel", "office"], word: ["office"], powerpoint: ["office"], "microsoft office": ["office"]
 };
 
 /** Tokenize a message, fold in synonym signals, and stem → the de-duplicated query stem set. */
@@ -118,11 +150,10 @@ function ensureStems(doc) {
 
 /**
  * Score a doc against the stemmed query: IDF-weighted coverage with a heading/title boost, plus an
- * explicit-platform bias. Returns { score }. `opts.idf(token)` + `opts.totalIdf` (the full query IDF mass)
- * come from matchKb; `opts.explicit` is the user-named platform ("" = none).
+ * explicit-platform bias and (A2) vertical guard. Returns { score }.
  */
 export function scoreKbDoc(doc, queryStems, opts = {}) {
-  const { idf = () => 1, totalIdf = 1, explicit = "", titleBoost = TITLE_BOOST } = opts;
+  const { idf = () => 1, totalIdf = 1, explicit = "", titleBoost = TITLE_BOOST, queryVertical = "generic" } = opts;
   if (!doc || !Array.isArray(queryStems) || !queryStems.length) return { score: 0 };
   ensureStems(doc);
   let sum = 0;
@@ -131,6 +162,12 @@ export function scoreKbDoc(doc, queryStems, opts = {}) {
   }
   let score = sum / (totalIdf || 1);
   if (explicit && doc.platform) score *= (doc.platform === explicit ? 1.5 : 0.5); // bias ONLY on a named platform
+  // A2 vertical guard: suppress non-generic docs when the query doesn't signal that vertical.
+  // Example: healthcare lockout docs get 0.3x for generic Windows lockout queries.
+  const docVertical = doc.vertical || "generic";
+  if (docVertical !== "generic" && docVertical !== queryVertical) {
+    score *= VERTICAL_PENALTY;
+  }
   return { score };
 }
 
@@ -145,15 +182,21 @@ export function matchKb(index, message, { platform = "", min = MATCH_FLOOR } = {
   if (!Q.length) return null;
   const totalIdf = Q.reduce((s, q) => s + idf(q), 0) || 1;
   const explicit = explicitPlatformMention(message);
+  const queryVertical = inferVertical(message); // A2
   let best = null, bestScore = min;
   for (const doc of docs) {
-    const { score } = scoreKbDoc(doc, Q, { idf, totalIdf, explicit });
+    const { score } = scoreKbDoc(doc, Q, { idf, totalIdf, explicit, queryVertical });
     if (score > bestScore) { bestScore = score; best = doc; }
+  }
+  // A2: log for τ tuning (console.debug no-ops in Electron renderer/prod — no cost, no leak)
+  if (typeof console !== "undefined" && typeof console.debug === "function") {
+    console.debug("[kb-match]", { query: message.slice(0, 60), topScore: bestScore.toFixed(3), chosen: best?.id ?? "null (abstain)" });
   }
   return best ? { doc: best, score: bestScore, platform: inferPlatform(message, platform) } : null;
 }
 
 const NO_MATCH = "I couldn't find a local match for that. I can help across Windows, Mac, iPhone, iPad, Android, ChromeOS and Linux — reconnect to the internet for the full assistant, or rephrase with the device + symptom.";
+const ABSTAIN_SUGGEST = "I'm not certain about that one. Here's the closest related guidance I have locally — but I'd recommend connecting to ARIA's full assistant for a confident answer, or I can open a support ticket.";
 
 /**
  * Offline answer for Ask ARIA. Returns { text, source, matched, platform } — never throws, never echoes a path.
@@ -164,8 +207,13 @@ export function localKbAnswer({ message, platform = "", index = [] } = {}) {
   if (!hit) return { text: NO_MATCH, source: "local-kb", matched: false, platform: inferPlatform(message, platform) };
   const d = hit.doc;
   const excerpt = scrub(String(d.summary || d.text || "").trim()).slice(0, 600);
-  const text = `From the offline knowledge base — ${scrub(d.title || "guide")}:\n\n${excerpt}\n\n(Reconnect for the full ARIA assistant.)`;
-  return { text, source: "local-kb", matched: true, platform: hit.platform, id: d.id };
+  // A2: if score is above floor but not very high, use the abstain framing
+  const confident = hit.score >= MATCH_FLOOR * 2;
+  const preamble = confident
+    ? `From the offline knowledge base — ${scrub(d.title || "guide")}:`
+    : `${ABSTAIN_SUGGEST}\n\nClosest match — ${scrub(d.title || "guide")}:`;
+  const text = `${preamble}\n\n${excerpt}\n\n(Reconnect for the full ARIA assistant.)`;
+  return { text, source: "local-kb", matched: true, confident, platform: hit.platform, id: d.id };
 }
 
 // 🔒 strip any absolute path + admin-internal term from KB output (defense-in-depth; KB content is clean).
@@ -177,6 +225,18 @@ function scrub(text) {
     .replace(/\brcp_[a-z0-9_-]+/gi, "[recipe]");
 }
 
+// ── A2: Parse YAML frontmatter from a markdown doc (id, intent, vertical, safe_recipe) ──
+function parseFrontmatter(raw) {
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!match) return {};
+  const result = {};
+  for (const line of match[1].split(/\r?\n/)) {
+    const [k, ...rest] = line.split(":");
+    if (k && rest.length) result[k.trim()] = rest.join(":").trim();
+  }
+  return result;
+}
+
 // ── Thin loader: index aria-kb-pack/{blueprints,diagnostics}/*.md (not unit-tested; the matcher above is) ──
 export function loadKbPack(dir, fsImpl) {
   const index = [];
@@ -186,6 +246,7 @@ export function loadKbPack(dir, fsImpl) {
     for (const f of files) {
       let raw = "";
       try { raw = fsImpl.readFileSync(`${dir}/${sub}/${f}`, "utf8"); } catch { continue; }
+      const fm = parseFrontmatter(raw); // A2: parse intent / vertical / safe_recipe from frontmatter
       const title = (raw.match(/^#\s+(.+)$/m) || [])[1] || f.replace(/\.md$/, "");
       const text = raw.toLowerCase();
       // G-PRECISION — the doc's own headings (# / ## / ###) ARE its topic words; fold them (+ a filename hint)
@@ -194,8 +255,12 @@ export function loadKbPack(dir, fsImpl) {
       const fileHint = f.replace(/\.md$/, "").replace(/[-_]/g, " ");
       const headingText = `${title} ${headings} ${fileHint}`;
       index.push({
-        id: `${sub}/${f}`,
+        id: fm.id || `${sub}/${f}`,
         platform: sub === "blueprints" ? platformOf(f) : "",
+        // A2: surface frontmatter fields so scorer + vertical guard can use them
+        intent: fm.intent || "",
+        vertical: fm.vertical || "generic",
+        safe_recipe: fm.safe_recipe || "",
         title, text, _headings: headingText,
         _stemSet: new Set(tokenize(`${title} ${text}`).map(stem)),
         _stemTitleSet: new Set(tokenize(headingText).map(stem))

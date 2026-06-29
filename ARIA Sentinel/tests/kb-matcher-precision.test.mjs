@@ -40,7 +40,7 @@ const ROUTES = [
   ["audio not working there is no sound", /audio-issues/],
   ["external monitor is not being detected", /display-issues/],
   ["my printer won't print anything", /printer/],
-  ["i am locked out of my account", /credential/],
+  ["i am locked out of my account", /account-lockout-windows-ad-entra|lockout/], // A2: now correctly routes to lockout doc, not generic credential
   ["the laptop battery drains way too fast", /battery-power/],
   ["usb drive is not showing up", /usb-peripheral/]
 ];

@@ -67,6 +67,11 @@ export function isWellFormed(rec) {
 
 /** Load + parse every <symptom>.md in a directory (skips the symptoms.md master index). */
 export function loadSymptomKb(dir) {
-  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") && f !== "symptoms.md");
+  // A2: skip YAML-frontmatter files (new-style docs for loadKbPack); only load structured symptom files.
+  const files = fs.readdirSync(dir).filter((f) => {
+    if (!f.endsWith(".md") || f === "symptoms.md") return false;
+    const raw = fs.readFileSync(path.join(dir, f), "utf8");
+    return !raw.startsWith("---"); // frontmatter-style → loadKbPack owns these
+  });
   return files.map((f) => parseSymptomFile(fs.readFileSync(path.join(dir, f), "utf8"), path.basename(f, ".md")));
 }
