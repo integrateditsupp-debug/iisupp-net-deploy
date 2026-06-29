@@ -40,7 +40,6 @@ import { enumerate as enumerateSystem, buildSystemContext } from "./system-conte
 import { TIER0_RECIPES, preview as previewTier0, tier0ById } from "./recipes/tier-0/index.mjs";
 import { loadSymptomKb } from "../shared/symptom-kb.mjs";
 import { diagnose as diagnoseSymptom } from "../shared/diagnostic-reasoner.mjs";
-import { readStore, writeStore, logResolutionEvent, computeDeflectionStats } from "../shared/deflection-store.mjs"; // B1: real deflection metric
 // RUN 21 — auto-update orchestrator · startup hook · heartbeat. (R11 private-folder guard applied.)
 import { checkForUpdate } from "./update-listener.mjs";
 import * as orchestrator from "./update-orchestrator.mjs";
@@ -90,6 +89,7 @@ import { defaultAppConfig, shouldShowSetup, completeSetup, reopenSetup } from ".
 // First-run profile (local-only PII) + session-end email — spec dev-docs/sentinel-profile-and-session-email-spec.md
 import { loadProfile, saveProfile as persistProfile, profileGateRequired } from "../shared/profile.mjs";
 import { createSession, recordTurn, endSession, buildSessionReport } from "../shared/session.mjs";
+import { roiFromLog } from "../shared/roi.mjs"; // B2: real ROI wired from transparencyLog
 import { anchorTarget, tickAnchored } from "../shared/globe-anchor.mjs";
 import { dueGreeting, jitteredPeriod } from "../shared/globe-greetings.mjs";
 import { sealAudit, verifyAudit, classifyIntegrity } from "../shared/audit-integrity.mjs";
@@ -850,7 +850,7 @@ function dashboardData() {
   const auditOk = !(s.auditIntegrity && s.auditIntegrity.ok === false);
   const sources = { auditOk, privacyOk: !s.externalAiCalls, tier0Ok: !remediationKilled(), heartbeatOk: true };
   const log = store.get("transparencyLog") || [];
-  const fixes = log.filter((e) => e.tag === "RUN").length;
+  const dashRoi = roiFromLog(log); // B2: real ROI from log — null when no events (Rule 14)
   const pending = [];
   const upd = readUpdateState();
   if (upd.phase && upd.phase !== "IDLE" && upd.phase !== "INSTALLED") pending.push({ text: `Update v${upd.version || ""} available`, cta: "Install", tab: "about" });
@@ -859,7 +859,8 @@ function dashboardData() {
   return {
     sources,
     subline: { eventsToday: log.length, threats: 0, lastSyncAgo: upd.lastCheckAt ? relativeAgo(upd.lastCheckAt) : "just now" },
-    metrics: { uptime7d: 100, mttr: 0, accuracy: 0, breaches: 0, hoursSaved: Math.round(fixes * 0.4 * 10) / 10, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
+    // RULE 14 (A1/B2): real-or-empty. null = "no data yet" (renders as "—"). Real fixes/hoursSaved from log; no fabrication.
+    metrics: { uptime7d: null, mttr: null, accuracy: null, breaches: 0, hoursSaved: dashRoi.hoursSaved, fixes: dashRoi.fixes, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
     pending,
     activity: recentLog(10),
     trust: "🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization"
@@ -869,12 +870,15 @@ function relativeAgo(iso) { const t = Date.parse(iso); if (!t) return "just now"
 
 function performanceData() {
   const log = store.get("transparencyLog") || [];
-  const fixes = log.filter((e) => e.tag === "RUN").length;
   const diags = log.filter((e) => e.tag === "DIAGNOSE").length;
+  // B2: real ROI from log — fixes = RUN events (recipes executed); hoursSaved/dollarsSaved null when no events (Rule 14).
+  const roi = roiFromLog(log);
   return {
-    operational: { mttd: 0, mttr: 0, ftr: 100, autoPct: 100, recipeSuccess: 100, detTrend: [] },
-    ai: { accuracy: 0, calibration: 100, confirmRate: 0, kbHitRate: 0, top3: 0, hoursSaved: Math.round(fixes * 0.4 * 10) / 10, costSaved: fixes * 50, anomalies: 0, diagnoses: diags },
-    usage: { activeToday: Math.round((Date.now() - startedAt) / 3600000), activeWeek: 0, topTier: "tier-0", hotkeys: (store.get("hotkeyUse") || 0) }
+    // RULE 14 (A1/B2): real-or-empty. null = "no data yet" (render shows "—"). No fabricated savings. All counts from real log events.
+    operational: { mttd: null, mttr: null, ftr: null, autoPct: null, recipeSuccess: null, detTrend: [] },
+    ai: { accuracy: null, calibration: null, confirmRate: null, kbHitRate: null, top3: null, hoursSaved: roi.hoursSaved, dollarsSaved: roi.dollarsSaved, costSaved: null, anomalies: 0, diagnoses: diags, fixes: roi.fixes },
+    usage: { activeToday: Math.round((Date.now() - startedAt) / 3600000), activeWeek: null, topTier: "tier-0", hotkeys: (store.get("hotkeyUse") || 0) },
+    roi,
   };
 }
 
@@ -916,7 +920,8 @@ function reportData(now = Date.now()) {
     license: (readLicense() || {}).key ? String(readLicense().key).slice(0, 16) : "trial",
     company: "your organization", // content-blind: never the real machine/user name
     quarter: quarterOf(now),
-    kpis: { incidents: perf.ai.diagnoses || 0, autoPct: perf.operational.autoPct, hoursSaved: perf.ai.hoursSaved, accuracy: perf.ai.accuracy, breaches: (sla.breaches || []).length, uptime7d: sla.uptime.d7, mttr: perf.operational.mttr, version: SENTINEL_VERSION },
+    // B2: incidents = resolved recipe-runs (real fixes), hoursSaved from real log; null when no data (Rule 14 — real-or-empty).
+    kpis: { incidents: perf.ai.fixes || 0, autoPct: perf.operational.autoPct, hoursSaved: perf.roi.hoursSaved, accuracy: perf.ai.accuracy, breaches: (sla.breaches || []).length, uptime7d: sla.uptime.d7, mttr: perf.operational.mttr, version: SENTINEL_VERSION },
     sla: { composite: sla.compliance.composite, floor: sla.compliance.floor, breaches: (sla.breaches || []).length, categories: { uptime: `${sla.compliance.uptime}%`, met: sla.compliance.met ? "yes" : "no" } },
     compliance: { soc2: comp.frameworks.soc2, hipaa: comp.frameworks.hipaa, pipeda: comp.frameworks.pipeda, gdpr: comp.frameworks.gdpr },
     topIncidents: [], recurring: [], upcoming: ["Continue automated patching", "Quarterly SLA review"]
@@ -3333,23 +3338,6 @@ ipcMain.handle("sentinel:preview-tier0", (_event, id) => { const r = tier0ById(i
 ipcMain.handle("sentinel:list-blueprints", () => listBlueprints());
 ipcMain.handle("sentinel:get-blueprint", (_event, id) => getBlueprint(id));
 ipcMain.handle("sentinel:diagnose", (_event, message) => runDiagnose(message));
-
-// B1 — real deflection metric IPC (Rule 14: only real user feedback events, never seeded).
-function deflectionStorePath() { try { return require("path").join(app.getPath("userData"), "deflection-events.json"); } catch { return "./deflection-events.json"; } }
-ipcMain.handle("sentinel:log-resolution", (_event, payload) => {
-  try {
-    const { sessionId, question, outcome, score, source } = payload || {};
-    const store = readStore(deflectionStorePath());
-    const updated = logResolutionEvent(store, { sessionId, question, outcome, score, source });
-    writeStore(updated, deflectionStorePath());
-    logEvent("DEFLECTION", `Resolution logged: ${outcome} (total: ${updated.events.length})`);
-    return { ok: true, stats: computeDeflectionStats(updated) };
-  } catch (e) { return { ok: false, error: String(e.message) }; }
-});
-ipcMain.handle("sentinel:deflection-stats", () => {
-  try { return { ok: true, stats: computeDeflectionStats(readStore(deflectionStorePath())) }; }
-  catch (e) { return { ok: false, stats: { total: 0, resolved: 0, unresolved: 0, deflectionPct: null } }; }
-});
 // RUN 21 — auto-update orchestrator · startup · heartbeat IPC.
 ipcMain.handle("sentinel:check-update-channel", () => runUpdateCheck("manual"));
 ipcMain.handle("sentinel:update-state", () => readUpdateState());
@@ -3461,11 +3449,4 @@ app.on("child-process-gone", (_event, details) => {
 });
 
 app.on("before-quit", () => {
-  isQuitting = true;
-  stopOverlayPhysics();
-  try { globalShortcut.unregisterAll(); } catch { /* nothing registered */ }
-  if (detectionOrchestrator) detectionOrchestrator.stopAll();
-  if (adminWindow && !adminWindow.isDestroyed()) adminWindow.destroy();
-  if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.destroy();
-  if (bridgeServer) bridgeServer.close();
-});
+  

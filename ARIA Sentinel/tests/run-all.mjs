@@ -239,6 +239,8 @@ import "./sandbox-validate.test.mjs";
 import "./stage7-tier0.test.mjs";
 // RUN-A A1 — empty-state no-fabrication: metrics show real-or-empty, never fabricated zeros.
 import "./a1-empty-state-no-fabrication.test.mjs";
+// RUN-B B2 — real ROI: roiFromLog wired to transparencyLog; hoursSaved null when no events; email real-or-empty.
+import "./b2-real-roi.test.mjs";
 // RUN-B B4 — AXIS director chat: deterministic intents + honest fallback + aria-chat.js model-path fix.
 import "./b4-axis-chat.test.mjs";
 
