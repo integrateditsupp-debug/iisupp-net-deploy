@@ -1924,12 +1924,52 @@ function initAriaChat() {
   }
   // The Sentinel-only "Resolve it for me" affordance under an answer. Diagnoses the question locally, and if a
   // fix recipe is matched, runs it through the supervised-fix gate; otherwise opens the diagnostics flow.
+  // A3: scoped gated confirm-card — diagnose → preview → confirm → supervisedFix (never immediate).
   function appendResolveChip(bubble, question) {
     if (!window.sentinel || !window.sentinel.supervisedFix) return;
     const wrap = document.createElement("div"); wrap.className = "aria-chat-resolve";
     const btn = document.createElement("button"); btn.type = "button"; btn.className = "aria-chat-resolve-btn";
     btn.textContent = "Resolve it for me";
     const st = document.createElement("span"); st.className = "aria-chat-resolve-status";
+
+    // Run supervised fix after user confirmed the card.
+    async function runFix(recipeId) {
+      st.textContent = "Starting fix…";
+      try {
+        const fix = await window.sentinel.supervisedFix({ recipeId, mode: "confirmed" });
+        if (!fix || fix.ok === false) {
+          st.textContent = fix?.error === "r11_blocked" ? "1 personal folder excluded." : fix?.verdict === "veto" ? `Held by safety supervisor: ${fix.reason || "vetoed"}.` : "Couldn't start the fix.";
+        } else if (fix.countdown) {
+          st.textContent = `Applying in ${fix.seconds || 10}s — cancel from the countdown, or Ctrl+Alt+K to abort.`;
+        } else if (fix.policy && fix.policy.dryRun === false) { st.textContent = "Fix applied (reversible — see Restore points)."; }
+        else { st.textContent = "Previewed safely (dry-run)."; }
+      } catch { st.textContent = "Couldn't run the fix."; }
+    }
+
+    // A3: inline confirm-card with recipe title, what-it-does, restore note, and Confirm/Cancel buttons.
+    function showConfirmCard(recipeId, preview) {
+      btn.remove();
+      const card = document.createElement("div"); card.className = "aria-chat-confirm-card";
+      const title = document.createElement("strong"); title.className = "aria-chat-confirm-title";
+      title.textContent = preview.title || recipeId;
+      const desc = document.createElement("p"); desc.className = "aria-chat-confirm-desc";
+      desc.textContent = (preview.summary || "Applies a safe, reversible fix.").replace(/^\[dry-run\]\s*/i, "");
+      const restore = document.createElement("p"); restore.className = "aria-chat-confirm-restore";
+      restore.textContent = preview.requiresReboot
+        ? "A system restore point will be created. A reboot is required after this fix."
+        : "A system restore point will be created before applying this fix.";
+      const actions = document.createElement("div"); actions.className = "aria-chat-confirm-actions";
+      const confirmBtn = document.createElement("button"); confirmBtn.type = "button"; confirmBtn.className = "aria-chat-confirm-ok";
+      confirmBtn.textContent = preview.readOnly ? "Run check" : "Apply fix";
+      const cancelBtn = document.createElement("button"); cancelBtn.type = "button"; cancelBtn.className = "aria-chat-confirm-cancel";
+      cancelBtn.textContent = "Cancel";
+      confirmBtn.addEventListener("click", () => { card.remove(); runFix(recipeId); });
+      cancelBtn.addEventListener("click", () => { card.remove(); btn.disabled = false; btn.textContent = "Resolve it for me"; wrap.prepend(btn); });
+      actions.append(confirmBtn, cancelBtn);
+      card.append(title, desc, restore, actions);
+      wrap.prepend(card);
+    }
+
     btn.addEventListener("click", async () => {
       btn.disabled = true; st.textContent = "Checking this device…";
       try {
@@ -1939,13 +1979,10 @@ function initAriaChat() {
           || (Array.isArray(d.attempts) && (d.attempts.find((a) => a && a.recipeId) || {}).recipeId)
           || "";
         if (!recipeId) { st.textContent = "No automatic fix matched — opening diagnostics."; activateTab("control-center"); await window.sentinel.selfDiagnose?.("chat"); return; }
-        const fix = await window.sentinel.supervisedFix({ recipeId, mode: "confirmed" });
-        if (!fix || fix.ok === false) {
-          st.textContent = fix?.error === "r11_blocked" ? "1 personal folder excluded." : fix?.verdict === "veto" ? `Held by safety supervisor: ${fix.reason || "vetoed"}.` : "Couldn't start the fix.";
-        } else if (fix.countdown) {
-          st.textContent = `Applying in ${fix.seconds || 10}s — cancel from the countdown, or Ctrl+Alt+K to abort.`;
-        } else if (fix.policy && fix.policy.dryRun === false) { st.textContent = "Fix applied (reversible — see Restore points)."; }
-        else { st.textContent = "Previewed safely (dry-run)."; }
+        // A3: fetch recipe preview, then show confirm-card — never call supervisedFix immediately.
+        st.textContent = "";
+        const preview = (await window.sentinel.previewTier0?.(recipeId)) || {};
+        showConfirmCard(recipeId, preview);
       } catch { st.textContent = "Couldn't resolve right now."; btn.disabled = false; }
     });
     wrap.append(btn, st); bubble.appendChild(wrap);

@@ -230,6 +230,7 @@ import "./omni-channel.test.mjs";
 // G-PRECISION — precision-first KB matcher: stemmer · synonyms · explicit-platform · routing · out-of-scope reject.
 import "./kb-matcher-precision.test.mjs";
 import "./a2-routing-battery.test.mjs"; // A2: 6-question routing battery
+import "./a3-confirm-card.test.mjs"; // A3: confirm-card gate (7 tests)
 // TASK 3/4 — "Resolve it for me" wiring (recipe card + chat chip → supervisedFix confirmed; merged from the resolve branch).
 import "./resolve-for-me.test.mjs";
 // Profile + session-end email — first-run profile gate, persistence, REAL SLA, content-safe payload, escalated≠fixed.
