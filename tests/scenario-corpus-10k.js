@@ -1269,6 +1269,197 @@ MFG_DEFAULT_BASES.forEach(function(b){
 
 console.error('Manufacturing vertical layer added:', out.length - mfgStart, 'scenarios');
 console.error('10K Corpus size:', out.length);
+
+// ============================================================
+// RETAIL VERTICAL LAYER — Stores, POS, inventory, e-commerce
+// Sunday 2026-06-29 growth slot
+// Covers: Oracle Retail / NCR / Lightspeed / Shopify POS /
+//         Manhattan Associates / Blue Yonder / Magento /
+//         Cash registers, barcode scanners, receipt printers,
+//         handheld RF devices, digital price tags, kiosks
+// Expectations reflect IT support intent, not retail-domain intent.
+// ============================================================
+const retailStart = out.length;
+
+// --- RETAIL-1. Authentication / Password ---
+const RETAIL_AUTH_BASES = [
+  'pos system login not working at register','cannot log into oracle retail back office',
+  'store manager password expired for retek','lightspeed pos password reset needed',
+  'shopify pos login failing on tablet','ncr register login screen frozen',
+  'inventory system password reset for associate','back office system login locked out',
+  'magento admin password expired','loyalty program admin login not working',
+  'store portal login failing for shift lead','blue yonder password reset for buyer',
+  'warehouse management system login locked','digital signage admin password expired',
+  'loss prevention system login not working','workforce management login failing for supervisor',
+];
+const RETAIL_AUTH_SFXS = ['', ' please', ' urgent'];
+RETAIL_AUTH_BASES.forEach(function(b){
+  RETAIL_AUTH_SFXS.forEach(function(s){ out.push({q:b+s,expect:'password',cat:'retail-auth'}); });
+});
+
+// --- RETAIL-2. Hardware ---
+const RETAIL_HW_BASES = [
+  'pos terminal frozen at checkout','cash drawer not opening at register',
+  'barcode scanner not reading in store','handheld rf device not powering on',
+  'store tablet not charging overnight','kiosk touchscreen unresponsive',
+  'self checkout machine frozen','digital price tag display not updating',
+  'electronic shelf label not syncing','mobile pos device battery dead',
+  'store associate device cracked screen','handheld scanner battery not holding charge',
+  'point of sale display customer screen blank','back office workstation not booting',
+  'store laptop wont turn on for manager','payment terminal freezing during transaction',
+];
+const RETAIL_HW_SFXS = ['', ' please', ' urgent'];
+RETAIL_HW_BASES.forEach(function(b){
+  RETAIL_HW_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:hardware',cat:'retail-hardware'}); });
+});
+
+// --- RETAIL-3. WiFi ---
+const RETAIL_WIFI_BASES = [
+  'wifi not working in store','wireless dropping at checkout lanes',
+  'store floor wifi not connecting on handheld','wireless down in stockroom',
+  'pos tablets losing wifi during peak hours','store network wifi authentication failing',
+  'wifi weak near back of store','access point down in fitting room area',
+  'wireless not reaching mezzanine level','store wifi dropping for associates on floor',
+  'handheld devices losing wifi in receiving area','mobile checkout not connecting to wifi',
+];
+const RETAIL_WIFI_SFXS = ['', ' please', ' urgent'];
+RETAIL_WIFI_BASES.forEach(function(b){
+  RETAIL_WIFI_SFXS.forEach(function(s){ out.push({q:b+s,expect:'wifi',cat:'retail-wifi'}); });
+});
+
+// --- RETAIL-4. Performance / Slow systems ---
+const RETAIL_PERF_BASES = [
+  'pos is running slow during checkout','oracle retail taking forever to load',
+  'inventory lookup freezing on handheld','stock replenishment screen lagging',
+  'cash register responding slow at peak','self checkout kiosk very slow',
+  'e-commerce admin panel loading slowly','order management system running slow',
+  'store portal taking long to load','receiving system slow to process scan',
+  'loyalty program lookup slow at register','workforce scheduler loading slow',
+];
+const RETAIL_PERF_SFXS = ['', ' please', ' urgent'];
+RETAIL_PERF_BASES.forEach(function(b){
+  RETAIL_PERF_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:performance',cat:'retail-perf'}); });
+});
+
+// --- RETAIL-5. Networking ---
+const RETAIL_NET_BASES = [
+  'store network down affecting all registers','ethernet not working at checkout lane',
+  'store internet down for all systems','network outage in stockroom area',
+  'pos network connectivity lost at register','store lan not routing to corporate',
+  'network switch down in back of house','store network unreachable from head office',
+  'receiving dock network port dead','loss prevention network camera offline',
+  'store ethernet drop not working at kiosk','back office network outage',
+];
+const RETAIL_NET_SFXS = ['', ' please', ' urgent'];
+RETAIL_NET_BASES.forEach(function(b){
+  RETAIL_NET_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:networking',cat:'retail-networking'}); });
+});
+
+// --- RETAIL-6. Printer (receipt, label, tag) ---
+const RETAIL_PRINT_BASES = [
+  'receipt printer not printing at register','label printer jammed in stockroom',
+  'price tag printer not working for planogram team','shipping label printer offline at receiving',
+  'receipt paper out on pos printer','zebra label printer not detected on network',
+  'barcode label printer driver not installing','receipt printer connection error at checkout',
+  'promotion label printer offline for merchandising','return receipt not printing at customer service',
+  'shelf label printer jammed','tag printer not communicating with pos',
+];
+const RETAIL_PRINT_SFXS = ['', ' please', ' urgent'];
+RETAIL_PRINT_BASES.forEach(function(b){
+  RETAIL_PRINT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'printer',cat:'retail-printer'}); });
+});
+
+// --- RETAIL-7. Email ---
+const RETAIL_EMAIL_BASES = [
+  'store manager email not working','district manager email not syncing',
+  'outlook not opening on back office pc','corporate email not arriving for store team',
+  'shift schedule email not sending to associates','daily sales report email not delivering',
+  'vendor confirmation email bouncing back','store email blocked from sending attachments',
+  'email to corporate stuck in outbox at store','merchandising email not arriving for team',
+];
+const RETAIL_EMAIL_SFXS = ['', ' please', ' urgent'];
+RETAIL_EMAIL_BASES.forEach(function(b){
+  RETAIL_EMAIL_SFXS.forEach(function(s){ out.push({q:b+s,expect:'mail',cat:'retail-email'}); });
+});
+
+// --- RETAIL-8. MFA ---
+const RETAIL_MFA_BASES = [
+  'two factor not working for back office login','mfa token expired for store portal',
+  'authenticator app not working for corporate vpn','duo push not arriving for retail admin',
+  'google authenticator broken for inventory system','mfa code not accepted for e-commerce admin',
+  'hardware token not working for head office access','rsa token expired for loss prevention system',
+];
+const RETAIL_MFA_SFXS = ['', ' please', ' urgent'];
+RETAIL_MFA_BASES.forEach(function(b){
+  RETAIL_MFA_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:mfa',cat:'retail-mfa'}); });
+});
+
+// --- RETAIL-9. Onboarding ---
+const RETAIL_ONBOARD_BASES = [
+  'new cashier needs pos system access set up','new store associate it onboarding not complete',
+  'new shift supervisor needs all store systems configured','new loss prevention officer needs lp system access',
+  'new department manager needs inventory system access','new visual merchandiser needs digital tag system set up',
+  'new receiving clerk needs wms login created','new seasonal associate needs handheld device configured',
+  'new store manager needs full system access','new buyer needs order management system access',
+  'temporary holiday staff needs pos training account','new e-commerce coordinator needs admin access configured',
+];
+const RETAIL_ONBOARD_SFXS = ['', ' please', ' urgent'];
+RETAIL_ONBOARD_BASES.forEach(function(b){
+  RETAIL_ONBOARD_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:onboarding',cat:'retail-onboarding'}); });
+});
+
+// --- RETAIL-10. File / Cloud Drive (planograms, policies, reports) ---
+const RETAIL_ONEDRIVE_BASES = [
+  'planogram folder not accessible for merchandising team','store policy documents not loading from shared drive',
+  'corporate shared drive not syncing at store','weekly sales report file not accessible',
+  'vendor documents folder gone from shared drive','store operations manual not loading from sharepoint',
+  'inventory count template not accessible on onedrive','promotion kit files not syncing for store team',
+  'district shared folder not available at store','corporate policy update not accessible on shared drive',
+];
+const RETAIL_ONEDRIVE_SFXS = ['', ' please', ' urgent'];
+RETAIL_ONEDRIVE_BASES.forEach(function(b){
+  RETAIL_ONEDRIVE_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:onedrive',cat:'retail-onedrive'}); });
+});
+
+// --- RETAIL-11. Permissions / Access ---
+const RETAIL_PERM_BASES = [
+  'cannot access inventory management system for cycle count','loss prevention portal access denied for officer',
+  'corporate reporting tool access denied for store manager','e-commerce back end access denied for coordinator',
+  'workforce management access denied for shift supervisor','vendor portal access denied for buyer',
+  'price change system access denied for merchandiser','promotion tool access denied for marketing team at store',
+  'return override access not granted for supervisor','void transaction permission not working at register',
+];
+const RETAIL_PERM_SFXS = ['', ' please', ' urgent'];
+RETAIL_PERM_BASES.forEach(function(b){
+  RETAIL_PERM_SFXS.forEach(function(s){ out.push({q:b+s,expect:'kb:permissions',cat:'retail-permissions'}); });
+});
+
+// --- RETAIL-12. VPN (store-to-corporate) ---
+const RETAIL_VPN_BASES = [
+  'store vpn not connecting to corporate','district manager vpn failing for remote access',
+  'back office vpn connection dropping','remote store access vpn not working for it team',
+  'corporate vpn timing out at store','vpn not connecting from home for store manager',
+  'store vpn login failing after password reset','remote pos support vpn not connecting',
+];
+const RETAIL_VPN_SFXS = ['', ' please', ' urgent'];
+RETAIL_VPN_BASES.forEach(function(b){
+  RETAIL_VPN_SFXS.forEach(function(s){ out.push({q:b+s,expect:'vpn',cat:'retail-vpn'}); });
+});
+
+// --- RETAIL-13. Out-of-scope ---
+const RETAIL_DEFAULT_BASES = [
+  'what is the current promotion schedule for the week','how do i request a price override at checkout',
+  'what are the store opening procedures','how do i process a customer return without receipt',
+  'what is the planogram for the new product line','how do i submit a loss prevention incident report',
+  'what is the target inventory turn rate','how do i request additional seasonal staff',
+  'what are the visual merchandising standards','when is the next inventory count scheduled',
+];
+const RETAIL_DEFAULT_SFXS = ['', ' please', '?'];
+RETAIL_DEFAULT_BASES.forEach(function(b){
+  RETAIL_DEFAULT_SFXS.forEach(function(s){ out.push({q:b+s,expect:'default',cat:'retail-default'}); });
+});
+
+console.error('Retail vertical layer added:', out.length - retailStart, 'scenarios');
+console.error('10K Corpus size:', out.length);
+
 module.exports = out;
-
-
