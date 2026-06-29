@@ -18,10 +18,10 @@ Make ARIA Sentinel + ARIA web + Integrated IT Support Inc. fully CLIENT-READY so
 - [~] A3 — confirm-card gate on Resolve routing · `cc/run-a-a3-2026-06-29` · commit 65be69e · PUSHED ✓ awaiting merge
 - [~] A4 — edge-case hardening · `cc/run-a-a4-2026-06-29` · commit 8ab62b4 · PUSHED ✓ awaiting merge
 
-### Sequence B — PROVE VALUE  (tasks done: 0/4 merged; B1+B2+B4 shipped)
+### Sequence B — PROVE VALUE  (tasks done: 0/4 merged; B1+B2+B3+B4 shipped — SEQUENCE B COMPLETE)
 - [~] B1 — "was this resolved?" + feedback + confidence badge · `cc/run-b-b1-2026-06-29` · commit da4f94b · PUSHED ✓ awaiting merge
 - [~] B2 — real ROI on every surface (real-or-empty) · `cc/run-b-b4-2026-06-29` · commit f52d534 · PUSHED ✓ awaiting merge
-- [ ] B3 — honest trust/security surface
+- [~] B3 — honest trust/security surface · `cc/run-b-b4-2026-06-29` · commit e81a882 · PUSHED ✓ awaiting merge
 - [~] B4 — AXIS director chat: deterministic intents + aria-chat.js model-path fix · `cc/run-b-b4-2026-06-29` · commit f043d16 · PUSHED ✓ awaiting merge
 
 ### Sequence C — CONVERSION PATH  (tasks done: 0/3)
@@ -45,8 +45,44 @@ Make ARIA Sentinel + ARIA web + Integrated IT Support Inc. fully CLIENT-READY so
 - **SEQUENCE A COMPLETE** — all 4 tasks built+tested+pushed. Merge all 4 branches to count program %.
 - B1 SHIPPED `cc/run-b-b1-2026-06-29` (commit da4f94b, pushed 2026-06-29) — awaiting Ahmad merge
 - B2 SHIPPED `cc/run-b-b4-2026-06-29` (commit f52d534, pushed 2026-06-29) — awaiting Ahmad merge
+- B3 SHIPPED `cc/run-b-b4-2026-06-29` (commit e81a882, pushed 2026-06-29) — awaiting Ahmad merge
 - B4 SHIPPED `cc/run-b-b4-2026-06-29` (commit f043d16, pushed 2026-06-29) — awaiting Ahmad merge
-- **Next:** B3 (honest trust/security surface)
+- **SEQUENCE B COMPLETE** — all 4 tasks built+tested+pushed. Branch: `cc/run-b-b4-2026-06-29` tip: e81a882.
+- **Next:** RUN-C (Conversion path — C1: funnel audit, C2: free-pilot, C3: 5-min onboarding)
+---
+
+## 2026-06-29 — Cowork Flywheel: B3 SHIPPED + SEQUENCE B COMPLETE (commit e81a882, branch cc/run-b-b4-2026-06-29)
+
+**Rule 14: all results below are real — tests actually ran, push actually happened.**
+
+### What Was Built
+- `src/renderer/tabs/compliance.mjs`: `privacyRowsHtml()` — `sanitization ?? 100` seeded value replaced with real-or-empty: `null`/`undefined` → `"--"`, real value passes through. (Rule 14)
+- `src/shared/compliance-score.mjs`: GDPR Art32 control name — removed hardcoded `"sanitization 100%"`, now `"content-blind sanitization gate"` (no baked-in percentage).
+- `security.html`: "Quarterly external pen test" KPI box — changed from stated fact to `"Planned"` with honest cadence description. Meta description updated.
+- `trust.html`: Added `"How ARIA measures itself"` explainer section — 6 items covering fixes/RUN-tags, hoursSaved null-when-zero, diagnoses≠resolutions, confidence badge/τ threshold, deflection feedback loop, hash-chained audit. Updated review date to 2026-06-29.
+- `tests/b3-trust-surface.test.mjs`: NEW — 8-test B3 battery (T1-T3 sanitization real-or-empty, T4 Art32 no-hardcoded-%, T5 scores math not seeded, T6-T7 R11 enforcement, T8 zero-score render).
+- `tests/run-all.mjs`: b3-trust-surface.test.mjs registered (201/201 green).
+
+### Test Results (real)
+- B3 suite: **8/8 passed**
+- Full suite: **201/201 passed** (all test files imported, 0 quarantined)
+
+### B3 Exit Criteria
+- [x] sanitization null/undefined → "--" displayed (never "100%" fabricated)
+- [x] real sanitization value passes through unchanged
+- [x] GDPR Art32 control name has no hardcoded percentage
+- [x] compositeScores derived from control-count math, not seeded values
+- [x] pen-test claim on security.html qualified as "Planned" not stated fact
+- [x] "How ARIA measures itself" explainer on trust.html — all 6 metric sources explained
+- [x] trust.html review date updated to 2026-06-29
+- [x] 201/201 full test suite green
+- [ ] Ahmad review + merge still needed
+
+### PROGRAM STATUS
+- series 1 · sequence B · B1+B2+B3+B4 built+tested+pushed · **SEQUENCE B COMPLETE** · program 0% until merge
+- 8 branches awaiting Ahmad merge: A1 A2 A3 A4 B1 B2 B3 B4
+- Next: RUN-C (Conversion path)
+
 ---
 
 ## 2026-06-29 — Cowork Flywheel: B2 SHIPPED (commit f52d534, branch cc/run-b-b4-2026-06-29)
@@ -54,47 +90,4 @@ Make ARIA Sentinel + ARIA web + Integrated IT Support Inc. fully CLIENT-READY so
 **Rule 14: all results below are real — tests actually ran, push actually happened.**
 
 ### What Was Built
-- `src/shared/roi.mjs`: `roiFromLog(log, opts)` — pure function; counts RUN-tagged events from transparencyLog as fixes; returns hoursSaved/dollarsSaved=null when fixes=0 (Rule 14 real-or-empty, never "0 hours" fabricated).
-- `src/shared/roi.mjs`: `roiSummaryFromLog(log, opts)` — returns placeholder "not recorded any resolved incidents yet." when fixes=0.
-- `src/main/main.mjs`: `performanceData()` wired to `roiFromLog(log)` — ai.hoursSaved, ai.dollarsSaved, ai.fixes all come from real log events.
-- `src/main/main.mjs`: `dashboardData()` wired — metrics.hoursSaved and fixes from real log.
-- `src/main/main.mjs`: `reportData()` wired — incidents and hoursSaved from real log.
-- `tests/b2-real-roi.test.mjs`: NEW — 11-test B2 battery (R1-R4 roiFromLog, S1-S2 roiSummaryFromLog, E1-E3 email, P1-P2 edge cases).
-- `tests/run-all.mjs`: b2-real-roi.test.mjs registered (200/200 green).
-
-### Test Results (real)
-- B2 suite: **11/11 passed**
-- Full suite: **200/200 passed** (all test files imported, 0 quarantined)
-
-### B2 Exit Criteria
-- [x] roiFromLog counts only RUN events (not DIAGNOSE, not INFO, not SECURITY)
-- [x] fixes=0 → hoursSaved=null, dollarsSaved=null (never fabricated zero)
-- [x] email body with hoursSaved=null → "null" never appears in HTML output
-- [x] DIAGNOSE-only log → fixes=0 (diagnosing ≠ resolving)
-- [x] non-array input → graceful, no crash
-- [x] all 3 callers (performanceData, dashboardData, reportData) wired to real log
-- [x] 200/200 full test suite green
-- [ ] Ahmad review + merge still needed
-
-### PROGRAM STATUS
-- series 1 · sequence B · B1+B2+B4 built+tested+pushed · program 0% until merge
-- Next: B3 (honest trust/security surface)
-
----
-
-## 2026-06-29 — Cowork Flywheel: A4 SHIPPED + SEQUENCE A COMPLETE (commit 8ab62b4, branch cc/run-a-a4-2026-06-29)
-
-**Rule 14: all results below are real — tests actually ran, push actually happened.**
-
-### What Was Built
-- `aria-local-kb.mjs`: `MAX_QUERY_LEN = 1000` constant exported — hard cap on query length before processing.
-- `aria-local-kb.mjs`: `sanitizeQuery(message)` — trims + truncates to MAX_QUERY_LEN. Pure, exported, tested.
-- `aria-local-kb.mjs`: `matchKb()` calls `sanitizeQuery()` first — oversized queries processed safely.
-- `aria-local-kb.mjs`: `localKbAnswer()` calls `sanitizeQuery()` first — same guard at public API level.
-- `tests/a4-edge-case-hardening.test.mjs`: NEW — 12-test battery covering all 8 A4 exit-criteria cases + 4 sanitizeQuery unit tests.
-- `tests/run-all.mjs`: registered (200/200 green).
-
-### A4 Exit Criteria
-- [x] E1: empty string → matched:false, graceful NO_MATCH message, no crash
-- [x] E2: whitespace-only → same as empty
-- [x] E3: gibberish →
+- `src/shared/roi.mjs`: `roiFromLog(log, opts)` — pure function; counts RUN-tagged events from transparencyLog as fixes; 
