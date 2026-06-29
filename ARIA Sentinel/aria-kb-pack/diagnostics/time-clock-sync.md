@@ -39,3 +39,10 @@ safe_recipe: w32tm-resync
 **Escalation:** Escalate to network/IT if the NTP port is blocked.
 
 > **Note:** This article covers standard Windows clock/time issues. It does NOT cover healthcare appointment scheduling systems, electronic health records, or any patient-portal time settings.
+
+### Cause: Hyper-V or VM guest clock drift causing persistent time skew
+**Probability:** 8
+**Detection:** Issue occurs on a virtual machine (Azure VM, Hyper-V guest, VMware); clock is correct after sync but drifts again quickly; host-based time sync may conflict with Windows Time service.
+**Safe diagnostic:** In an elevated Command Prompt: `systeminfo | findstr "Hyper-V"` to confirm VM environment (read-only); check if the VM integration services include time synchronization.
+**Safe fix:** With IT confirmation: on Hyper-V guests, disable the Hyper-V Time Synchronization integration service in the VM settings, then configure Windows Time against a reliable NTP source (w32tm /config /manualpeerlist:"time.windows.com" /syncfromflags:manual /reliable:YES /update && w32tm /resync).
+**Escalation:** Escalate to IT/infrastructure team if the VM is Azure-hosted or managed by a hypervisor admin — modifying integration services requires host-level access.

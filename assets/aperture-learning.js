@@ -165,9 +165,10 @@ function renderStats(s, t){
   const roster = Array.isArray(s.agents) ? s.agents.length : 0;
   countTo('agents-active', roster);
   $('agents-born').textContent = num(s.newAgentsBorn);
-  setText('dock-resolved', logged ? String(resolved) : '1,248');
-  setText('dock-tasks', logged ? String(open) : String(num(s.queueDepth) || 134));
-  setText('dock-agents', roster ? String(roster) : '22');
+  const hasQueueDepth = Object.prototype.hasOwnProperty.call(s || {}, 'queueDepth');
+  setText('dock-resolved', logged ? String(resolved) : '--');
+  setText('dock-tasks', logged ? String(open) : (hasQueueDepth ? String(q) : '--'));
+  setText('dock-agents', roster ? String(roster) : '--');
 }
 
 /* ---- render: Senior Director visibility ------------------------------------ */
@@ -243,6 +244,11 @@ function renderLearning(s){
   countTo('loop-bits', num(s.totalBits));
   countTo('loop-kb', num(s.kbLiveCount));
   countTo('loop-queue', num(s.queueDepth));
+  const recentBits = Array.isArray(s.recentBits) ? s.recentBits : [];
+  const roster = Array.isArray(s.agents)?s.agents:[];
+  const hasLearningData = !!(num(s.totalBits) || num(s.kbLiveCount) || num(s.queueDepth) || s.lastTopic || s.lastAgent || recentBits.length || roster.length);
+  const loopChip = $('loop-chip');
+  if (loopChip){ loopChip.textContent = hasLearningData ? 'running' : 'awaiting data'; loopChip.className = 'chip ' + (hasLearningData ? 'ok' : ''); }
 
   const now = $('loop-now');
   if (s.lastTopic || s.lastAgent){
@@ -251,7 +257,7 @@ function renderLearning(s){
       + '<div class="sub">'+esc(label(s.lastAgent)||'learning agent')
       + (s.sessionStarted?' · since '+timeAgo(s.sessionStarted):'')+'</div></div></div>';
     // recent bits underneath
-    const bits = (s.recentBits||[]).slice(-5).reverse();
+    const bits = recentBits.slice(-5).reverse();
     if (bits.length){
       now.innerHTML += bits.map(b=>{
         const topic = b.topic || b.title || b.text || b.insight || (typeof b==='string'?b:'bit recorded');
@@ -263,7 +269,6 @@ function renderLearning(s){
     }
   } else now.innerHTML = '<div class="empty">Idle · awaiting topics</div>';
 
-  const roster = Array.isArray(s.agents)?s.agents:[];
   $('roster').innerHTML = roster.length
     ? roster.slice(0,24).map(a=>'<span class="r-chip'+(a.born?' born':'')+'"><span class="led"></span>'
         +esc(label(a.name)||a.name||'agent')+'</span>').join('')
@@ -328,19 +333,23 @@ function renderAgentOffice(events, roster, stats, msgs, tickets, status){
     if (!msgByAgent[from] || ts > msgByAgent[from]._ts) msgByAgent[from] = Object.assign({}, m, {_ts:ts});
   });
   const openTickets = (tickets||[]).filter(t=>t && t.status !== 'resolved' && t.status !== 'closed');
+  const hasTelemetry = Object.keys(eventByAgent).length > 0
+    || Object.keys(msgByAgent).length > 0
+    || openTickets.length > 0
+    || (Array.isArray(status?.agents) && status.agents.length > 0);
   OFFICE_STATE = OFFICE_AGENTS.map((agent, i)=>{
     const event = eventByAgent[agent.id] || eventByAgent[agent.name] || eventByAgent[agent.role];
     const msg = msgByAgent[agent.id] || msgByAgent[agent.name] || msgByAgent[agent.role];
-    const drift = ((now / 1000 + agent.seed * 17) % 96);
-    const startedAt = event && event._ts ? event._ts : now - ((8 + agent.seed + Math.floor(drift)) * 1000);
+    const startedAt = event && event._ts ? event._ts : (msg && msg._ts ? msg._ts : now);
     const ticket = openTickets[(i + Math.floor(now / 15000)) % Math.max(1, openTickets.length)];
     let doing = agent.base;
     if (event && event.kind) doing = String(event.kind).replace(/[-_]/g,' ') + (event.success === false ? ' - retrying safely' : '');
     else if (msg && msg.text) doing = String(msg.text).slice(0, 74);
     else if (ticket && (agent.id === 'l1' || agent.id === 'security')) doing = 'triaging ' + String(ticket.issue || ticket.summary || ticket.id || 'open ticket').slice(0, 54);
-    else doing = OFFICE_ACTIONS[(i + Math.floor(now / 9000)) % OFFICE_ACTIONS.length];
-    const talks = msg && msg.to ? label(msg.to) : (event && event.to ? label(event.to) : agent.talks);
-    const active = (event && event._ts && now - event._ts < 180000) || (msg && msg._ts && now - msg._ts < 180000) || drift < 72;
+    else if (!hasTelemetry) doing = 'standing by for authenticated telemetry';
+    else doing = 'visible in roster; no current event';
+    const talks = msg && msg.to ? label(msg.to) : (event && event.to ? label(event.to) : (hasTelemetry ? agent.talks : 'Aperture gate'));
+    const active = (event && event._ts && now - event._ts < 180000) || (msg && msg._ts && now - msg._ts < 180000);
     return {
       id:agent.id,
       name:agent.name,
@@ -358,9 +367,11 @@ function renderAgentOffice(events, roster, stats, msgs, tickets, status){
 }
 
 function renderOfficeAgent(agent){
-  return '<div class="office-agent '+esc(agent.cls)+'" data-office-agent="'+esc(agent.id)+'">'
+  const stateClass = agent.active ? 'is-live' : 'is-standby';
+  const talkLabel = agent.active ? 'talking to ' : 'linked to ';
+  return '<div class="office-agent '+esc(agent.cls)+' '+stateClass+'" data-office-agent="'+esc(agent.id)+'">'
     + '<div class="agent-status"><div class="name"><i style="background:'+ (agent.active ? 'var(--ok)' : 'var(--txt-3)') +'"></i><span>'+esc(agent.name)+'</span></div>'
-    + '<div class="doing">'+esc(agent.doing)+'</div><div class="talk">talking to '+esc(agent.talks||'ARIA Router')+'</div></div>'
+    + '<div class="doing">'+esc(agent.doing)+'</div><div class="talk">'+talkLabel+esc(agent.talks||'ARIA Router')+'</div></div>'
     + '<div class="agent-pulse"></div><div class="agent-screen"></div><div class="agent-person"><span class="agent-head"></span><span class="agent-body"></span><span class="agent-arm"></span></div>'
     + '<div class="agent-desk"></div><div class="agent-time" data-office-time="'+esc(agent.id)+'">00:00</div></div>';
 }
@@ -373,6 +384,12 @@ function renderOfficeTimers(){
     if (el) el.textContent = fmtDuration(Math.max(0, now - agent.startedAt));
   });
   const active = OFFICE_STATE.filter(a=>a.active).length;
+  if (!active){
+    setText('office-shift', 'standby - waiting for authenticated telemetry');
+    setText('office-caption-line', 'No current agent activity is being claimed. Authenticated mesh events light this room.');
+    setText('office-caption-time', '--:--');
+    return;
+  }
   const caption = OFFICE_STATE[Math.floor(now / 4000) % OFFICE_STATE.length];
   setText('office-shift', active + ' active agents - ' + OFFICE_STATE.length + ' on shift');
   if (caption) {
@@ -412,6 +429,14 @@ function renderSLA(t){
   const logged = t.length;
   const resolved = t.filter(x=>x && (x.status==='resolved'||x.status==='closed'));
   const escal = t.filter(x=>x && (x.status==='escalated'||x.status==='awaiting-human'||x.status==='awaiting_human')).length;
+  if (!logged){
+    setKV('sla-fcr','--','');
+    setKV('sla-resp','--','');
+    setKV('sla-rest','--','');
+    setKV('sla-state','Awaiting data','');
+    const chip=$('sla-chip'); chip.textContent='Awaiting data'; chip.className='chip';
+    return;
+  }
   const fcr = logged ? Math.round(resolved.length/logged*100) : 100;
   setKV('sla-fcr', fcr+'%', fcr>=90?'ok':fcr>=70?'warn':'bad');
 
@@ -489,6 +514,15 @@ function renderHealth(t){
   const logged=t.length;
   const resolved=t.filter(x=>x && (x.status==='resolved'||x.status==='closed')).length;
   const escal=t.filter(x=>x && (x.status==='escalated'||x.status==='awaiting-human'||x.status==='awaiting_human')).length;
+  if (!logged){
+    const numEl = $('health-num');
+    if (numEl) numEl.innerHTML = '--<span class="unit" style="font-size:18px;color:var(--txt-2)">%</span>';
+    setText('dock-health', '--');
+    const chip=$('health-chip');
+    chip.textContent='Awaiting data'; chip.className='chip';
+    const spark=$('spark'); if (spark) spark.setAttribute('points','');
+    return;
+  }
   // concern-free proxy: high when resolved share high & few escalations open
   let h = logged ? Math.round((resolved/logged)*100) : 100;
   h = Math.max(0, h - escal*4);

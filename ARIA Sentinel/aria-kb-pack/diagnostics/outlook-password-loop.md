@@ -40,3 +40,10 @@ safe_recipe: clear-office-credentials
 **Safe diagnostic:** Check Outlook version under File → Office Account → About Outlook (read-only).
 **Safe fix:** Upgrade Outlook to a version that supports Modern Auth (Outlook 2019 / 2021 / 365). Escalate to IT if the user is on a managed device.
 **Escalation:** Version upgrade requires admin/license; escalate to IT.
+
+### Cause: Modern Authentication disabled or misconfigured forcing basic auth prompts
+**Probability:** 10
+**Detection:** Outlook repeatedly asks for credentials even after entering them correctly; IT has recently changed tenant authentication policies; prompts occur specifically for Exchange/M365 (not browser logins).
+**Safe diagnostic:** In Outlook: File → Office Account → check Connected Services and sign-in state. Note whether the prompt is for basic auth (username/password box) or modern auth (browser-based sign-in page) — read-only.
+**Safe fix:** Modern auth prompts must be resolved by IT enabling ADAL (Modern Authentication) in the M365 tenant. Guide user to close all Office apps and re-open; if the sign-in redirects to a browser-based Microsoft login page, modern auth is active and credentials can be re-entered safely.
+**Escalation:** If basic auth prompts persist after IT confirms modern auth is enabled, escalate for re-provisioning the user's Outlook profile.

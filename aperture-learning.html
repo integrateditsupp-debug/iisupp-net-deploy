@@ -180,6 +180,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .agent-status .talk{font-family:var(--mono);font-size:8.5px;color:var(--accent);letter-spacing:.06em;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .agent-time{position:absolute;left:12px;bottom:8px;font-family:var(--mono);font-size:9px;color:var(--gold, var(--warn));letter-spacing:.08em}
 .agent-pulse{position:absolute;left:50%;top:50%;width:12px;height:12px;border-radius:50%;border:1px solid rgba(34,225,255,.5);transform:translate(-50%,-50%);animation:agentPing 2.2s ease-out infinite;opacity:.7}
+.office-agent.is-standby .agent-pulse{display:none}
+.office-agent.is-standby .agent-arm{animation:none;opacity:.5}
+.office-agent.is-standby .agent-screen::before{opacity:.18}
+.office-agent.is-standby .agent-status .name i{box-shadow:none}
 .office-caption{position:absolute;left:16px;right:16px;bottom:14px;z-index:5;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid rgba(34,225,255,.18);border-radius:10px;background:rgba(2,7,15,.78);backdrop-filter:blur(10px);padding:10px 12px}
 .office-caption .live{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
 .office-caption .line{font-size:12px;color:var(--txt);line-height:1.45;margin-top:2px}
@@ -247,6 +251,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .director-item a{color:var(--accent)}
 .director-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .director-note{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);line-height:1.6;margin-top:10px}
+/* B4 — AXIS chat bubbles */
+.axis-bubble{padding:8px 12px;border-radius:8px;font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-width:100%}
+.axis-user{background:rgba(34,225,255,.10);border:1px solid rgba(34,225,255,.18);color:var(--txt);align-self:flex-end}
+.axis-axis{background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--txt-2);align-self:flex-start}
 @media(max-width:680px){.director-hero{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:420px){.director-hero{grid-template-columns:1fr}}
 
@@ -423,6 +431,18 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
         <a class="ghost-btn" href="/growth-command-center" target="_blank" rel="noopener">Open Growth Center</a>
       </div>
       <div class="director-note" id="director-mission">Mission: grow IIS revenue and profit while protecting approval gates.</div>
+
+      <!-- B4: AXIS Director Chat — deterministic intents, no LLM, never "Brain busy." -->
+      <div style="margin-top:16px;border-top:1px solid rgba(255,255,255,.07);padding-top:14px">
+        <div class="eyebrow" style="margin-bottom:8px">Ask AXIS · status · agents · leads · queue · approvals</div>
+        <div id="axis-chat-log" style="display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;margin-bottom:10px;min-height:48px">
+          <div class="axis-bubble axis-axis" style="opacity:.6;font-style:italic">Ask me about live status, agents, leads, queue, or approvals — I answer from real data, no model required.</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <input id="axis-chat-in" type="text" placeholder="e.g. give me a status update" style="flex:1;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.12);color:var(--txt);padding:9px 12px;font-size:13px;border-radius:8px;outline:none;font-family:var(--sans)" autocomplete="off">
+          <button id="axis-chat-send" onclick="axisChatSend()" style="padding:9px 16px;background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--txt-2);font-size:12px;border-radius:8px;cursor:pointer;white-space:nowrap">Send</button>
+        </div>
+      </div>
     </div>
 
     <div class="panel director-card" style="animation-delay:.08s">
@@ -456,39 +476,39 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       <div class="ops-title">
         <div class="sig">A</div>
         <div>
-          <h2>Live AI Agent Office</h2>
-          <div class="sub">ARIA command center - autonomous operations</div>
+          <h2>Agent Operations Room</h2>
+          <div class="sub">ARIA command center - real telemetry + safety gates</div>
         </div>
       </div>
       <div class="ops-status">
-        <span class="chip ok">System optimal</span>
-        <span class="chip accent">Human review ready</span>
-        <span class="chip warn">Escalation watch</span>
+        <span class="chip accent">Telemetry-gated</span>
+        <span class="chip ok">Ahmad final-action gate</span>
+        <span class="chip warn">No synthetic live work</span>
       </div>
     </div>
     <div class="ops-layout">
       <aside class="ops-rail">
         <h3>Notification board</h3>
         <div class="ops-feed">
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">New agent born</div><div class="s">Code Auditor joined the roster</div></div><span class="tm">now</span></div>
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Audit completed</div><div class="s">Security checks passed</div></div><span class="tm">2m</span></div>
-          <div class="ops-feed-item warn"><span class="light"></span><div><div class="t">Workload threshold</div><div class="s">Research Agent #2 needs review</div></div><span class="tm">4m</span></div>
-          <div class="ops-feed-item crit"><span class="light"></span><div><div class="t">High priority ticket</div><div class="s">Human verification queued</div></div><span class="tm">7m</span></div>
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Telemetry source</div><div class="s">Authenticated mesh events fill this board</div></div><span class="tm">ready</span></div>
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Safety gates</div><div class="s">No send, spend, deploy, or sign without Ahmad</div></div><span class="tm">locked</span></div>
+          <div class="ops-feed-item warn"><span class="light"></span><div><div class="t">Runner bridge</div><div class="s">Infinity STOP must be linked to the local runner before live use</div></div><span class="tm">review</span></div>
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Public view</div><div class="s">Counts only; no names, prompts, or sensitive notes</div></div><span class="tm">safe</span></div>
         </div>
       </aside>
-      <div class="ops-viewport" aria-label="ARIA live agent operations office">
+      <div class="ops-viewport" aria-label="ARIA agent operations room">
         <div class="office-scene" id="agent-office">
           <div class="office-horizon"></div>
           <div class="office-board">
-            <div class="brandline">ARIA AGENT OFFICE</div>
-            <div class="subline" id="office-shift">live shift loading</div>
+            <div class="brandline">ARIA OPERATIONS ROOM</div>
+            <div class="subline" id="office-shift">telemetry source pending</div>
           </div>
           <div class="office-agents" id="office-agents" aria-live="polite"></div>
           <div class="office-core"><span>ARIA<small>router</small></span></div>
           <div class="office-caption">
             <div>
-              <div class="live">live work moment</div>
-              <div class="line" id="office-caption-line">Agents are joining the shift and loading current work.</div>
+              <div class="live">telemetry state</div>
+              <div class="line" id="office-caption-line">Waiting for authenticated agent events. No synthetic live work is shown.</div>
             </div>
             <div class="time" id="office-caption-time">00:00</div>
           </div>
@@ -497,18 +517,18 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       <aside class="ops-rail">
         <h3>History board</h3>
         <div class="ops-feed">
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Solution found</div><div class="s">Database connection fix indexed</div></div><span class="tm">10:22</span></div>
-          <div class="ops-feed-item warn"><span class="light"></span><div><div class="t">Ticket escalated</div><div class="s">Needs operator verification</div></div><span class="tm">10:21</span></div>
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Learning promoted</div><div class="s">Knowledge bit moved to live KB</div></div><span class="tm">10:19</span></div>
-          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Report sent</div><div class="s">Daily operations package delivered</div></div><span class="tm">10:00</span></div>
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Run ledger</div><div class="s">Completed events appear here after auth</div></div><span class="tm">live</span></div>
+          <div class="ops-feed-item warn"><span class="light"></span><div><div class="t">Approvals</div><div class="s">Final-action items stay with Ahmad</div></div><span class="tm">gate</span></div>
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Learning</div><div class="s">Knowledge promotions are logged before display</div></div><span class="tm">audit</span></div>
+          <div class="ops-feed-item"><span class="light"></span><div><div class="t">Reports</div><div class="s">Email reports remain operator-triggered</div></div><span class="tm">manual</span></div>
         </div>
       </aside>
     </div>
     <div class="ops-dock">
-      <div class="dock-tile"><div class="v" id="dock-resolved">1,248</div><div class="k">Tickets resolved</div></div>
-      <div class="dock-tile"><div class="v" id="dock-tasks">134</div><div class="k">Tasks in progress</div></div>
-      <div class="dock-tile"><div class="v" id="dock-health">99.9%</div><div class="k">System health</div></div>
-      <div class="dock-tile"><div class="v" id="dock-agents">22</div><div class="k">Active agents</div></div>
+      <div class="dock-tile"><div class="v" id="dock-resolved">&mdash;</div><div class="k">Tickets resolved</div></div>
+      <div class="dock-tile"><div class="v" id="dock-tasks">&mdash;</div><div class="k">Open tasks</div></div>
+      <div class="dock-tile"><div class="v" id="dock-health">&mdash;</div><div class="k">Health signal</div></div>
+      <div class="dock-tile"><div class="v" id="dock-agents">&mdash;</div><div class="k">Roster visible</div></div>
     </div>
   </div>
 
@@ -597,6 +617,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
       <h2><span class="iw-glyph">&#8734;</span> Infinity Wisdom <span class="hint">autonomous branching agent engine</span></h2>
       <span class="chip" id="iw-status">connecting…</span>
     </div>
+    <div class="iw-primer">
+      Monitor agents, review completions, branch next-best paths, route to the best-fit agent, and create new agents only inside hard caps. Live execution stays locked until the web STOP flag, local runner kill-switch, final-action gates, replay protection, and concurrency caps all pass together.
+    </div>
     <div class="iw-tiles">
       <div class="iw-tile"><div class="v" id="iw-agents">—</div><div class="k">Agents active</div></div>
       <div class="iw-tile"><div class="v" id="iw-tasks">—</div><div class="k">Tasks reviewed</div></div>
@@ -606,9 +629,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
     </div>
     <div class="iw-toolbar">
       <button id="iw-stop" class="iw-stop-btn" type="button" onclick="iwStop()">&#9632;&nbsp; STOP the workflow</button>
-      <span class="iw-foot">Controlled infinity — capped per cycle, safe-only, risky&nbsp;&rarr;&nbsp;approvals. <span id="iw-updated">—</span></span>
+      <span class="iw-foot">Controlled infinity - capped per cycle, safe-only, risky&nbsp;&rarr;&nbsp;approvals. Live run locked until bridge tests pass. <span id="iw-updated">—</span></span>
     </div>
-    <div class="iw-eyebrow">Live branching tree &middot; agents &rarr; tasks &rarr; completions &rarr; new branches</div>
+    <div class="iw-readiness" aria-label="Infinity Wisdom live readiness gates">
+      <div class="iw-gate ok"><span>Public asset</span><b>counts-only</b></div>
+      <div class="iw-gate warn"><span>STOP bridge</span><b>web flag must halt local runner</b></div>
+      <div class="iw-gate warn"><span>Final-action gate</span><b>deny submit/apply/sign/create</b></div>
+      <div class="iw-gate warn"><span>Growth caps</span><b>concurrency + new-agent caps verified</b></div>
+      <div class="iw-gate warn"><span>Replay guard</span><b>consume branches once</b></div>
+    </div>
+    <div id="iw-source" class="iw-source-note">Waiting for authenticated Infinity state. Public fallback is counts-only and never exposes names, prompts, or vault notes.</div>
+    <div class="iw-eyebrow">Authed branching tree &middot; agents &rarr; tasks &rarr; completions &rarr; new branches</div>
     <div id="iw-tree" class="iw-tree"><div class="iw-empty">Connecting to the engine…</div></div>
   </section>
 
@@ -712,6 +743,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 <!-- ───── INFINITY WISDOM — styles + live data (additive; safe to remove) ───── -->
 <style id="infinity-wisdom-style">
   #infinity-wisdom .iw-glyph{color:#f1dca7;font-size:20px;text-shadow:0 0 16px rgba(241,220,167,.5);margin-right:2px}
+  #infinity-wisdom .iw-primer{border:1px solid rgba(241,220,167,.18);border-radius:12px;background:linear-gradient(135deg,rgba(241,220,167,.07),rgba(34,225,255,.035));color:var(--txt-2);font-size:13px;line-height:1.65;padding:13px 15px;margin:12px 0 14px}
   #infinity-wisdom .iw-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:14px 0 4px}
   @media(max-width:720px){#infinity-wisdom .iw-tiles{grid-template-columns:repeat(2,1fr)}}
   #infinity-wisdom .iw-tile{background:linear-gradient(165deg,rgba(197,160,89,.07),rgba(34,225,255,.04));border:1px solid var(--line);border-radius:12px;padding:13px 14px}
@@ -722,6 +754,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   #infinity-wisdom .iw-stop-btn:hover{transform:translateY(-1px);filter:brightness(1.08);box-shadow:0 14px 32px -10px rgba(217,117,96,.8)}
   #infinity-wisdom .iw-stop-btn:disabled{filter:grayscale(.7) brightness(.7);cursor:default;transform:none;box-shadow:none}
   #infinity-wisdom .iw-foot{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);letter-spacing:.02em}
+  #infinity-wisdom .iw-readiness{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:14px 0 10px}
+  #infinity-wisdom .iw-gate{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);padding:10px 11px;min-height:72px}
+  #infinity-wisdom .iw-gate span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3);margin-bottom:8px}
+  #infinity-wisdom .iw-gate b{display:block;font-size:12px;line-height:1.35;color:var(--txt);font-weight:600}
+  #infinity-wisdom .iw-gate.ok{border-color:rgba(109,186,133,.28);background:rgba(109,186,133,.055)}
+  #infinity-wisdom .iw-gate.warn{border-color:rgba(241,220,167,.24);background:rgba(241,220,167,.055)}
+  #infinity-wisdom .iw-source-note{border:1px solid rgba(34,225,255,.18);border-radius:10px;background:rgba(34,225,255,.04);color:var(--txt-2);font-family:var(--mono);font-size:10.5px;line-height:1.55;padding:9px 11px;margin:10px 0}
   #infinity-wisdom .iw-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3);margin:14px 0 10px}
   #infinity-wisdom .iw-tree{max-height:420px;overflow:auto;padding:4px 2px}
   #infinity-wisdom .iw-empty{font-family:var(--mono);font-size:12px;color:var(--txt-3);padding:18px;text-align:center}
@@ -735,12 +774,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   #infinity-wisdom .iw-agent{font-family:var(--mono);font-size:10px;color:#c5a059;flex:none}
   #infinity-wisdom .chip.iw-stopped{background:rgba(217,117,96,.16);color:#ffb4a6;border-color:rgba(217,117,96,.5)}
   #infinity-wisdom .chip.iw-running{background:rgba(109,186,133,.16);color:#9fe6b8;border-color:rgba(109,186,133,.45)}
+  #infinity-wisdom .chip.iw-limited{background:rgba(241,220,167,.12);color:#f1dca7;border-color:rgba(241,220,167,.38)}
+  #infinity-wisdom .chip.iw-offline{background:rgba(255,255,255,.06);color:var(--txt-3);border-color:var(--line)}
+  @media(max-width:980px){#infinity-wisdom .iw-readiness{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:560px){#infinity-wisdom .iw-readiness{grid-template-columns:1fr}}
 </style>
 <script>
 (function(){
   function $(id){ return document.getElementById(id); }
   function tok(){ try{ return localStorage.getItem('aperture_jwt')||''; }catch(e){ return ''; } }
   function n(v){ try{ return Number(v||0).toLocaleString(); }catch(e){ return '0'; } }
+  function note(msg){ var el=$('iw-source'); if(el)el.textContent=msg; }
   function setCounts(c){
     if($('iw-agents'))$('iw-agents').textContent=n(c.agentsActive);
     if($('iw-tasks'))$('iw-tasks').textContent=n(c.tasksDone);
@@ -748,11 +792,25 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
     if($('iw-newagents'))$('iw-newagents').textContent=n(c.newAgentsTotal);
     if($('iw-approvals'))$('iw-approvals').textContent=n(c.approvalsPending);
   }
-  function setStatus(stopped){
+  function setStatus(stopped, mode){
     var el=$('iw-status'); if(!el)return;
-    el.textContent = stopped?'STOPPED':'RUNNING';
-    el.className='chip '+(stopped?'iw-stopped':'iw-running');
-    var b=$('iw-stop'); if(b){ b.disabled=!!stopped; b.textContent= stopped?'■  STOPPED':'■  STOP the workflow'; }
+    mode = mode || 'live';
+    if(mode==='offline'){
+      el.textContent='NOT DEPLOYED';
+      el.className='chip iw-offline';
+    } else if(mode==='public'){
+      el.textContent=stopped?'STOPPED':'PUBLIC COUNTS';
+      el.className='chip '+(stopped?'iw-stopped':'iw-limited');
+    } else {
+      el.textContent = stopped?'STOPPED':'RUNNING';
+      el.className='chip '+(stopped?'iw-stopped':'iw-running');
+    }
+    var b=$('iw-stop');
+    if(b){
+      var liveReady = mode==='live';
+      b.disabled = !liveReady || !!stopped;
+      b.textContent = stopped?'STOPPED':(liveReady?'STOP web flag':'Live endpoint required');
+    }
   }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function renderTree(nodes){
@@ -772,43 +830,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visibl
     });
     box.innerHTML=html;
   }
-  function fallbackPublic(){
+  function fallbackPublic(reason){
     // Unauthenticated / engine-not-synced: show the counts-only public asset (no tree, no names).
-    fetch('/infinity-wisdom-public.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){
-      if(!d)return;
-      setCounts(d); setStatus(d.stopped===true);
+    fetch('/infinity-wisdom-public.json',{cache:'no-store'}).then(function(r){ if(r.status===404){ setStatus(false,'offline'); return null; } return r.ok?r.json():null; }).then(function(d){
+      if(!d){ note('Infinity Wisdom public projection is unavailable on this deployment. Keep live execution locked.'); return; }
+      setCounts(d); setStatus(d.stopped===true,'public');
       if($('iw-updated'))$('iw-updated').textContent = d.updatedAt? ('updated '+new Date(d.updatedAt).toLocaleTimeString()) : '';
       var box=$('iw-tree'); if(box&&!box.dataset.full)box.innerHTML='<div class="iw-empty">Sign in for the full live branching tree. (Public view: counts only.)</div>';
-    }).catch(function(){});
+      note((reason?reason+' ':'')+'Showing counts-only public state. Full tree and controls require authenticated live state.');
+    }).catch(function(){ setStatus(false,'offline'); note('Infinity Wisdom state could not be reached. No live control is implied.'); });
   }
   function load(){
     var t=tok();
     if(!t){ fallbackPublic(); return; }
     fetch('/.netlify/functions/infinity-wisdom-state',{headers:{'Authorization':'Bearer '+t},cache:'no-store'})
       .then(function(r){ if(r.status===401){ throw new Error('unauth'); } return r.ok?r.json():null; })
-      .then(function(j){
-        if(!j||!j.state){ fallbackPublic(); return; }
-        var s=j.state;
-        setCounts(s.counts||{}); setStatus(s.stopped===true);
-        if($('iw-updated'))$('iw-updated').textContent = s.updatedAt? ('updated '+new Date(s.updatedAt).toLocaleTimeString()) : '';
-        var box=$('iw-tree'); if(box)box.dataset.full='1';
-        renderTree(s.nodes||[]);
-      })
-      .catch(function(){ fallbackPublic(); });
-  }
-  window.iwStop=function(){
-    var t=tok();
-    if(!t){ alert('Sign in to control the workflow.'); return; }
-    if(!confirm('STOP the Infinity Wisdom workflow? All branching halts immediately. (You can resume later.)'))return;
-    fetch('/.netlify/functions/infinity-wisdom-state',{method:'POST',headers:{'Authorization':'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify({action:'stop'})})
-      .then(function(r){return r.ok?r.json():null;}).then(function(j){ if(j&&j.stopped){ setStatus(true); } else { alert('STOP request was not accepted.'); } })
-      .catch(function(){ alert('Network error sending STOP.'); });
-  };
-  // Only poll once the dashboard is visible (post-login). Cheap + silent.
-  function tick(){ var app=$('app'); if(app&&app.style.display!=='none')load(); }
-  tick(); setInterval(tick, 6000);
-})();
-</script>
-
-</body>
-</html>
+      

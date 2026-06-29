@@ -42,3 +42,10 @@ vertical: generic
 **Safe diagnostic:** Confirm whether this is a standard user account or an admin/privileged account (read-only check with the user).
 **Safe fix:** Do NOT attempt self-service on privileged accounts. Escalate immediately to IT Security.
 **Escalation:** Any lockout of a privileged account → escalate to IT Security immediately. Do not unlock without investigation.
+
+### Cause: Stale cached credentials on a non-domain-joined device triggering lockouts
+**Probability:** 10
+**Detection:** User accesses company resources (VPN, M365, mapped drives) from a personal or non-domain device; lockouts occur despite correct password on the main machine.
+**Safe diagnostic:** Ask whether the user has any other devices (phone, home PC) accessing company email or drives — stale saved credentials on those devices repeatedly send the old password (read-only investigation).
+**Safe fix:** With user confirmation: on each device, open Credential Manager (Windows) or Keychain (Mac) and remove any saved entries for the corporate domain or M365, then re-authenticate with the new password.
+**Escalation:** If lockouts persist after credential cleanup on all devices, escalate to IT to audit sign-in logs in Azure AD / Entra for the offending source IP.

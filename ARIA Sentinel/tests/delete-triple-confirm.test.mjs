@@ -52,7 +52,7 @@ assert.deepEqual(normalizePrefs({ skipTripleFor: ["pdf", ".PDF", "", "docx"], ju
 const tmp = path.join(import.meta.dirname, `del-prefs-${process.pid}.json`);
 fs.writeFileSync(tmp, JSON.stringify(addOptOut(emptyPrefs(), ".log")));
 assert.deepEqual(normalizePrefs(JSON.parse(fs.readFileSync(tmp, "utf8"))), { skipTripleFor: [".log"] });
-fs.rmSync(tmp, { force: true });
+try { fs.rmSync(tmp, { force: true }); } catch (e) { if (e.code !== 'EPERM') throw e; } // NTFS FUSE mounts reject unlink; logic still verified above
 
 // main.mjs wiring: prefs file in userData, IPC get/set/clear/reset, state carries deletePrefs.
 const root = path.resolve(import.meta.dirname, "..");
@@ -74,4 +74,4 @@ for (const id of ["deleteModal", "deleteOptOut", "deleteConfirm", "deleteCancel"
   assert.match(indexHtml, new RegExp(`id="${id}"`), `delete UI element ${id} present`);
 }
 
-console.log("Delete-triple-confirm test passed (3-step default · per-ext opt-out → single confirm · persisted · wired).");
+console.log

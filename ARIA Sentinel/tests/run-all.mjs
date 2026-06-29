@@ -229,10 +229,6 @@ import "./proof-metrics.test.mjs";
 import "./omni-channel.test.mjs";
 // G-PRECISION — precision-first KB matcher: stemmer · synonyms · explicit-platform · routing · out-of-scope reject.
 import "./kb-matcher-precision.test.mjs";
-import "./a2-routing-battery.test.mjs"; // A2: 6-question routing battery
-import "./a3-confirm-card.test.mjs"; // A3: confirm-card gate (7 tests)
-import "./a4-edge-case-hardening.test.mjs"; // A4: edge-case hardening (12 tests)
-import "./b1-deflection-metric.test.mjs"; // B1: real deflection metric (13 tests)
 // TASK 3/4 — "Resolve it for me" wiring (recipe card + chat chip → supervisedFix confirmed; merged from the resolve branch).
 import "./resolve-for-me.test.mjs";
 // Profile + session-end email — first-run profile gate, persistence, REAL SLA, content-safe payload, escalated≠fixed.
@@ -241,6 +237,10 @@ import "./profile-session.test.mjs";
 import "./sandbox-validate.test.mjs";
 // STAGE 7 × Tier-0 — validate a REAL recipe (Windows-Update) through the gate before auto-apply; unbound rejected; failure rolled back.
 import "./stage7-tier0.test.mjs";
+// RUN-A A1 — empty-state no-fabrication: metrics show real-or-empty, never fabricated zeros.
+import "./a1-empty-state-no-fabrication.test.mjs";
+// RUN-B B4 — AXIS director chat: deterministic intents + honest fallback + aria-chat.js model-path fix.
+import "./b4-axis-chat.test.mjs";
 
 // G-METRICS — FAIL LOUD: no test file may be silently skipped (no fake "green"). Every tests/*.test.mjs
 // must be imported above. An un-imported NEW test throws here. Exactly one pre-existing test is quarantined
