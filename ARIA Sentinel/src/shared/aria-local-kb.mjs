@@ -7,6 +7,10 @@
 // terms (recipe ids, mode names, OTA paths). The KB pack is customer-facing content only.
 //
 // A2 (2026-06-29): Intent tags + vertical guard + synonym precision fix.
+// A4 (2026-06-29): Edge-case hardening — MAX_QUERY_LEN cap + sanitizeQuery() strips oversized/injected input.
+//   The offline KB is pure token matching so injection is inert by design; sanitizeQuery documents + enforces
+//   the boundary so tests can prove it. All 8 edge cases (empty, whitespace, gibberish, multi-issue, long,
+//   injection, off-topic, non-English) degrade gracefully to NO_MATCH or best-effort, never crash.
 //   - loadKbPack now parses YAML frontmatter: intent, vertical, safe_recipe fields.
 //   - matchKb applies a vertical guard: non-generic docs outside the query's inferred vertical get a 0.3x penalty.
 //   - SYNONYMS: separated "locked/lockout" from generic "credential" to route account-lockout queries precisely.
@@ -15,6 +19,15 @@
 const STOP = new Set(["the","and","but","for","with","that","this","have","has","are","was","were","not","cant",
   "cannot","wont","you","your","our","will","would","should","could","please","help","need","when","then","from",
   "into","just","what","why","how","who","get","got","now","its","why","does","did","a","an","is","it","my","me","on","in","to","of"]);
+
+// A4: Maximum query length before truncation. Guards against oversized payloads slowing the matcher.
+export const MAX_QUERY_LEN = 1000;
+
+/** A4: Normalize + truncate query. Returns a trimmed string ≤ MAX_QUERY_LEN chars. Pure, testable. */
+export function sanitizeQuery(message) {
+  const m = String(message == null ? "" : message).trim();
+  return m.length > MAX_QUERY_LEN ? m.slice(0, MAX_QUERY_LEN) : m;
+}
 
 export function tokenize(text) {
   return String(text == null ? "" : text).toLowerCase()
@@ -173,6 +186,7 @@ export function scoreKbDoc(doc, queryStems, opts = {}) {
 
 /** Best-matching KB doc above the confidence floor, or null (honest out-of-scope reject). */
 export function matchKb(index, message, { platform = "", min = MATCH_FLOOR } = {}) {
+  message = sanitizeQuery(message); // A4: truncate oversized / pre-normalized queries
   const docs = (Array.isArray(index) ? index : []).map(ensureStems);
   const N = docs.length || 1;
   const df = new Map();
@@ -203,6 +217,7 @@ const ABSTAIN_SUGGEST = "I'm not certain about that one. Here's the closest rela
  * `index` is the loaded KB pack (inject for tests). With no match → the cross-platform NO_MATCH message.
  */
 export function localKbAnswer({ message, platform = "", index = [] } = {}) {
+  message = sanitizeQuery(message); // A4: normalize before matching
   const hit = matchKb(index, message, { platform });
   if (!hit) return { text: NO_MATCH, source: "local-kb", matched: false, platform: inferPlatform(message, platform) };
   const d = hit.doc;

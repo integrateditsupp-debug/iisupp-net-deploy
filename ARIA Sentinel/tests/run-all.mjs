@@ -231,6 +231,7 @@ import "./omni-channel.test.mjs";
 import "./kb-matcher-precision.test.mjs";
 import "./a2-routing-battery.test.mjs"; // A2: 6-question routing battery
 import "./a3-confirm-card.test.mjs"; // A3: confirm-card gate (7 tests)
+import "./a4-edge-case-hardening.test.mjs"; // A4: edge-case hardening (12 tests)
 // TASK 3/4 — "Resolve it for me" wiring (recipe card + chat chip → supervisedFix confirmed; merged from the resolve branch).
 import "./resolve-for-me.test.mjs";
 // Profile + session-end email — first-run profile gate, persistence, REAL SLA, content-safe payload, escalated≠fixed.
