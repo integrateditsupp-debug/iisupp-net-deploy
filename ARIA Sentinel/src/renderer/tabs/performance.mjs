@@ -1,28 +1,33 @@
-// RUN 22 §2 — Performance tab: pure HTML builders for operational + AI + usage sections. 🔒 R11-safe.
+// RUN 22 S2 -- Performance tab: pure HTML builders for operational + AI + usage sections. R11-safe.
+// A1 (RULE 14): null metrics -> "--" empty-state, never 0/100/derived. mv() enforces this contract.
 import { esc, tileHtml } from "./dashboard.mjs";
 import { sparklineSvg } from "../../shared/dashboard-status.mjs";
 
+/** RULE 14 helper: null -> empty-state "--" (no unit). Real value -> pass through with unit. */
+const mv = (v, unit = "", values = []) => ({ value: v == null ? "--" : v, unit: v == null ? "" : unit, values: v == null ? [] : values });
+
 export function operationalTilesHtml(m = {}) {
+  const lastDet = (m.detTrend || []).slice(-1)[0];
   return [
-    tileHtml({ id: "mttd", label: "MTTD (min)", value: m.mttd ?? 0, values: m.detTrend }),
-    tileHtml({ id: "mttr", label: "MTTR (min)", value: m.mttr ?? 0, values: m.mttrTrend }),
-    tileHtml({ id: "ftr", label: "First-touch resolution", value: m.ftr ?? 0, unit: "%" }),
-    tileHtml({ id: "auto", label: "Auto-resolved", value: m.autoPct ?? 0, unit: "%" }),
-    tileHtml({ id: "recipe", label: "Recipe success", value: m.recipeSuccess ?? 0, unit: "%" }),
-    tileHtml({ id: "detday", label: "Detections/day", value: (m.detTrend || []).slice(-1)[0] ?? 0, values: m.detTrend })
+    tileHtml({ id: "mttd",   label: "MTTD (min)",            ...mv(m.mttd,          "",  m.detTrend) }),
+    tileHtml({ id: "mttr",   label: "MTTR (min)",            ...mv(m.mttr,          "",  m.mttrTrend) }),
+    tileHtml({ id: "ftr",    label: "First-touch resolution",...mv(m.ftr,           "%") }),
+    tileHtml({ id: "auto",   label: "Auto-resolved",         ...mv(m.autoPct,       "%") }),
+    tileHtml({ id: "recipe", label: "Recipe success",        ...mv(m.recipeSuccess, "%") }),
+    tileHtml({ id: "detday", label: "Detections/day",        ...mv(lastDet == null ? null : lastDet, "", m.detTrend) })
   ].join("");
 }
 
 export function aiTilesHtml(m = {}) {
   return [
-    tileHtml({ id: "accuracy", label: "Diagnosis accuracy", value: m.accuracy ?? 0, unit: "%", values: m.accuracyTrend }),
-    tileHtml({ id: "calibration", label: "Confidence calibration", value: m.calibration ?? 0, unit: "/100" }),
-    tileHtml({ id: "confirm", label: "User confirmation", value: m.confirmRate ?? 0, unit: "%" }),
-    tileHtml({ id: "kbhit", label: "KB hit rate", value: m.kbHitRate ?? 0, unit: "%" }),
-    tileHtml({ id: "top3", label: "Fuzzy top-3 accuracy", value: m.top3 ?? 0, unit: "%" }),
-    tileHtml({ id: "hours", label: "Hours saved (MTD)", value: m.hoursSaved ?? 0 }),
-    tileHtml({ id: "cost", label: "Cost saved (MTD)", value: `$${m.costSaved ?? 0}` }),
-    tileHtml({ id: "anomaly", label: "Anomalies surfaced", value: m.anomalies ?? 0 })
+    tileHtml({ id: "accuracy",    label: "Diagnosis accuracy",     ...mv(m.accuracy,    "%",    m.accuracyTrend) }),
+    tileHtml({ id: "calibration", label: "Confidence calibration", ...mv(m.calibration, "/100") }),
+    tileHtml({ id: "confirm",     label: "User confirmation",      ...mv(m.confirmRate, "%") }),
+    tileHtml({ id: "kbhit",       label: "KB hit rate",            ...mv(m.kbHitRate,   "%") }),
+    tileHtml({ id: "top3",        label: "Fuzzy top-3 accuracy",   ...mv(m.top3,        "%") }),
+    tileHtml({ id: "hours",       label: "Hours saved (MTD)",      ...mv(m.hoursSaved) }),
+    tileHtml({ id: "cost",        label: "Cost saved (MTD)",       value: m.costSaved == null ? "--" : "$" + m.costSaved, unit: "" }),
+    tileHtml({ id: "anomaly",     label: "Anomalies surfaced",     value: m.anomalies ?? 0 })
   ].join("");
 }
 

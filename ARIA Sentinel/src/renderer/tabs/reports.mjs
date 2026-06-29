@@ -12,17 +12,18 @@ export function retentionNote(nextCleanupAt) {
   return `Reports are kept permanently (compliance audit). Next data-retention cleanup: ${esc(nextCleanupAt || "02:00 local")}.`;
 }
 
-/** Plain-text preview of what the customer email/report contains. */
+/** Plain-text preview of what the customer email/report contains. RULE 14 (A1): null -> "--". */
 export function previewText(data = {}) {
   const k = data.kpis || {};
+  const mv = (v, unit = "") => v == null ? "--" : (v + unit);
   return [
-    `ARIA Sentinel — ${data.quarter || "Q?"} report for ${data.company || "your organization"}`,
+    `ARIA Sentinel -- ${data.quarter || "Q?"} report for ${data.company || "your organization"}`,
     "",
-    `• Incidents resolved: ${k.incidents ?? 0} (${k.autoPct ?? 0}% automatic)`,
-    `• Hours of human work avoided: ${k.hoursSaved ?? 0}`,
-    `• SLA compliance: ${data.sla?.composite ?? 0}% (floor ${data.sla?.floor ?? 0}%)`,
-    `• Diagnosis accuracy: ${k.accuracy ?? 0}%`,
+    `* Incidents resolved: ${k.incidents ?? 0} (${mv(k.autoPct, "% automatic")})`,
+    `* Hours of human work avoided: ${mv(k.hoursSaved)}`,
+    `* SLA compliance: ${mv(data.sla?.composite, "%")} (floor ${mv(data.sla?.floor, "%")})`,
+    `* Diagnosis accuracy: ${mv(k.accuracy, "%")}`,
     "",
-    "Audit integrity verified · privacy verifier active · R11 private folder never touched."
+    "Audit integrity verified -- privacy verifier active -- R11 private folder never touched."
   ].map(esc).join("\n");
 }
