@@ -33,6 +33,7 @@ const TESTS = [
   "./command-palette.test.mjs",
   "./roi-calc.test.mjs",
   "./license.test.mjs",
+  "./c2-pilot-state.test.mjs",   // RUN-C C2 — free-pilot mechanic
   "./auto-update.test.mjs",
   "./api-v1.test.mjs",
   "./patch-management.test.mjs",

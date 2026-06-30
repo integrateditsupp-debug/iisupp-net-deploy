@@ -109,6 +109,7 @@ function currentPlanFeatures() { return planEnabledFeatures(gateStatus()); }
 function currentIsAdmin() { return licenseIsAdmin(gateStatus()); }
 let hotkeyStatus = [];
 import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge } from "../shared/license.mjs";
+import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord } from "../shared/pilot-state.mjs";
 import {
   getServiceNowConfig,
   ping as snPing,
@@ -875,6 +876,8 @@ function dashboardData() {
   if (upd.phase && upd.phase !== "IDLE" && upd.phase !== "INSTALLED") pending.push({ text: `Update v${upd.version || ""} available`, cta: "Install", tab: "about" });
   if (s.auditIntegrity && s.auditIntegrity.ok === false) pending.push({ text: "Audit integrity needs review", cta: "Open", tab: "compliance" });
   if (s.gate && s.gate.trial && s.gate.trial.state === "active") pending.push({ text: s.gate.trial.badge, cta: "Upgrade", tab: "about" });
+  const pilotPrompt = pilotPromptNow();
+  if (pilotPrompt && pilotPrompt.show) pending.push({ text: pilotPrompt.title, cta: pilotPrompt.cta, tab: "about" });
   return {
     sources,
     subline: { eventsToday: log.length, threats: 0, lastSyncAgo: upd.lastCheckAt ? relativeAgo(upd.lastCheckAt) : "just now" },
@@ -1305,6 +1308,7 @@ const MAC_PRIVACY_PANES = {
 // --- RUN 10: trial license · updates · billing portal ----------------------------------------
 const LICENSE_FILE = path.join(os.homedir(), ".aria-sentinel", "license.json");
 const TRIAL_FILE = path.join(os.homedir(), ".aria-sentinel", "trial.json");
+const PILOT_FILE = path.join(os.homedir(), ".aria-sentinel", "pilot.json"); // RUN-C C2 — 14-day SMB pilot
 // The binary checks updates via iisupp.net (server-side function talks to GitHub) — its outbound
 // stays inside the declared allowlist; it never calls GitHub directly.
 const UPDATE_ENDPOINT = "https://iisupp.net/aria-binary-update";
@@ -1414,14 +1418,45 @@ function ensureTrialStarted() {
 function trialState() {
   return computeTrialStatus(readTrial()?.started_at);
 }
+// RUN-C C2 — 14-day SMB free-pilot, stored at ~/.aria-sentinel/pilot.json. Local only, no external send;
+// distinct from the 12-hour trial gate above. Falls back to free Manual at expiry (never locks the user out).
+function readPilot() {
+  try { return JSON.parse(fs.readFileSync(PILOT_FILE, "utf8")); } catch { return null; }
+}
+function pilotStateLocal() {
+  return pilotStatus({ startedAt: readPilot()?.started_at });
+}
+function startPilot(intake) {
+  if (readPilot()) return { ok: true, already: true, status: pilotStateLocal() };
+  const built = buildPilotRecord(intake || {}, { deviceId: os.hostname() });
+  if (!built.ok) return { ok: false, errors: built.errors };
+  try {
+    fs.mkdirSync(path.dirname(PILOT_FILE), { recursive: true });
+    fs.writeFileSync(PILOT_FILE, JSON.stringify(built.record, null, 2));
+    logEvent("PILOT", "14-day free pilot started.");
+  } catch { /* best-effort local write; never an external send */ }
+  return { ok: true, status: pilotStatus({ startedAt: built.record.started_at }) };
+}
+function pilotPromptNow() {
+  const dismissed = store.get("pilotPromptDismissed") || [];
+  return pilotUpgradePrompt(pilotStateLocal(), { dismissed });
+}
+function dismissPilotPrompt(state) {
+  const dismissed = new Set(store.get("pilotPromptDismissed") || []);
+  if (state) dismissed.add(String(state));
+  store.set("pilotPromptDismissed", [...dismissed]);
+  return { ok: true };
+}
 function gateStatus() {
   const lic = licenseStatus();
   const trial = trialState();
+  const pilot = pilotStateLocal();
   return {
     licensed: lic.licensed,
     plan: lic.plan,
     email: lic.email,
     trial: { state: trial.state, remainingMs: trial.remainingMs, badge: trialBadge(trial.remainingMs) },
+    pilot: { state: pilot.state, daysRemaining: pilot.daysRemaining, badge: pilotBadge(pilot) },
     unlocked: licenseUnlocked({ licenseValid: lic.licensed, trialState: trial.state })
   };
 }
@@ -3114,6 +3149,9 @@ ipcMain.handle("sentinel:export-evidence", () => exportEvidencePack());
 ipcMain.handle("sentinel:ack-whats-new", () => acknowledgeWhatsNew());
 ipcMain.handle("sentinel:open-mac-permissions", (_event, pane) => openMacPermissions(pane));
 ipcMain.handle("sentinel:start-trial", (_event, email) => startTrial(email));
+ipcMain.handle("sentinel:start-pilot", (_event, intake) => startPilot(intake || {}));
+ipcMain.handle("sentinel:pilot-status", () => ({ status: pilotStateLocal(), prompt: pilotPromptNow() }));
+ipcMain.handle("sentinel:dismiss-pilot-prompt", (_event, state) => dismissPilotPrompt(state));
 ipcMain.handle("sentinel:check-updates", () => checkForUpdates());
 ipcMain.handle("sentinel:manage-subscription", () => manageSubscription());
 ipcMain.handle("sentinel:get-settings", () => ({ showFloatingGlobe: store.get("showFloatingGlobe") !== false, lowPower: Boolean(store.get("lowPower")) }));
