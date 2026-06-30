@@ -23,7 +23,9 @@ const STALE = ["$599", "$156,000", "$156K", "$312,000", "$312K", "$625,000", "$6
 const SURFACES = [
   "plans/index.html", "downloads/index.html", "pricing-experiments.html",
   "verticals/finance.html", "verticals/healthcare.html", "verticals/legal.html",
-  "trust/perf.html", "trust/index.html", "trust/routing-accuracy.html",
+  // trust/perf.html + trust/routing-accuracy.html were intentionally removed by eb8f404
+  // (HARD RULE 14: honest Trust Center). Guard now covers the live honest trust surfaces that ship.
+  "trust/index.html", "trust.html",
   "ARIA Sentinel/src/renderer/index.html",
 ];
 for (const f of SURFACES) {
