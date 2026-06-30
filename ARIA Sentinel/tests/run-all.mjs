@@ -237,6 +237,8 @@ const TESTS = [
   "./deep-link.test.mjs",
   // Q0b (2026-06-24) — web "Open with ARIA Sentinel" emitter ↔ desktop receiver URL contract.
   "./web-handoff-contract.test.mjs",
+  // RUN-C C1 (2026-06-30) — funnel "zero dead ends" guard: every customer-facing internal link resolves + conversion chain intact.
+  "./funnel-link-guard.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
