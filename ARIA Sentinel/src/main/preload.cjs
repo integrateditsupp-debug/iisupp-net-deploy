@@ -5,6 +5,9 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("sentinel", {
   getState: () => ipcRenderer.invoke("sentinel:get-state"),
+  startPilot: (intake) => ipcRenderer.invoke("sentinel:start-pilot", intake),       // RUN-C C2
+  pilotStatus: () => ipcRenderer.invoke("sentinel:pilot-status"),
+  dismissPilotPrompt: (state) => ipcRenderer.invoke("sentinel:dismiss-pilot-prompt", state),
   setMode: (mode, optIn) => ipcRenderer.invoke("sentinel:set-mode", mode, optIn),
   pauseAutonomous: (choice) => ipcRenderer.invoke("sentinel:pause-autonomous", choice),
   setNotify: (config) => ipcRenderer.invoke("sentinel:set-notify", config),
