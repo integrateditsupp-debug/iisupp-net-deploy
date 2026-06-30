@@ -240,6 +240,8 @@ const TESTS = [
   "./web-handoff-contract.test.mjs",
   // RUN-C C1 (2026-06-30) — funnel "zero dead ends" guard: every customer-facing internal link resolves + conversion chain intact.
   "./funnel-link-guard.test.mjs",
+  // RUN-C C3 (2026-06-30) — 5-minute onboarding activation + time-to-first-value (real-or-empty, no dead step).
+  "./onboarding-activation.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
