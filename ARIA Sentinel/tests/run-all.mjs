@@ -1,3 +1,5 @@
+// SECURITY LOCKDOWN 2026-07-01 — repo-level deploy-safety denylist (lives at repo root; runs first).
+import "../../tests/deploy-safety-denylist.test.mjs";
 import "./scenario-suite.mjs";
 import "./extension.test.mjs";
 import "./endpoint.test.mjs";
