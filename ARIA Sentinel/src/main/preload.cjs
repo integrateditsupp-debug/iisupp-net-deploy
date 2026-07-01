@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld("sentinel", {
   dismissPilotPrompt: (state) => ipcRenderer.invoke("sentinel:dismiss-pilot-prompt", state),
   conversionMoment: () => ipcRenderer.invoke("sentinel:conversion-moment"),          // RUN-D D2
   caseStudyDraft: (opts) => ipcRenderer.invoke("sentinel:case-study-draft", opts),   // RUN-D D2 (staged draft)
+  resolutionOutcome: (payload) => ipcRenderer.invoke("sentinel:resolution-outcome", payload), // RUN-B B1 — "Was this fixed?"
+  resolutionStats: () => ipcRenderer.invoke("sentinel:resolution-stats"),                     // RUN-B B1 — real deflection %
   setMode: (mode, optIn) => ipcRenderer.invoke("sentinel:set-mode", mode, optIn),
   pauseAutonomous: (choice) => ipcRenderer.invoke("sentinel:pause-autonomous", choice),
   setNotify: (config) => ipcRenderer.invoke("sentinel:set-notify", config),

@@ -247,6 +247,8 @@ const TESTS = [
   "./d2-case-study.test.mjs",
   // RUN-D D2 wiring (2026-07-01) — case-study/conversion-moment plumbed into main IPC + preload + pilot-expiry pending surface.
   "./d2-wire-conversion.test.mjs",
+  // RUN-B B1 (2026-07-01) — "Was this fixed?" feedback loop -> real deflection %% (real-or-empty; feeds dashboard tile + D2 proof).
+  "./resolution-outcome.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
