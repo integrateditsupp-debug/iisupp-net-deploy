@@ -1516,3 +1516,13 @@ Before any task: pick the SHORTEST code path that delivers the actual outcome.
 - Real secrets stay env vars (Stripe SECRET key, Anthropic key, admin passwords) — everything else: question the indirection.
 
 Memory: `feedback_shortest_path_first.md`. Full text in `STANDING-RULES-FOR-ALL-AGENTS.md` §RULE 10.
+
+---
+### 2026-07-01 — Cowork Flywheel: RUN-D shipped (caveman)
+- Verified live: origin/main = 7910002, 198/198 green. RUN-C really on main (a2d2436 is its ancestor — earlier "tip a2d2436" note was fine).
+- BUILT + MERGED RUN-D to main (now 5384003, 199/199 green):
+  - D2 engine `ARIA Sentinel/src/shared/case-study.mjs` + test (8 groups). Real-or-empty: no case study until a real matured pilot with >=1 real fix; numbers from the audited roi.mjs; quotes never faked; publish needs explicit consent+draft-review; conversion moment only on real proof, never blocks, points at /plans.
+  - D1 `documents/sales-marketing/ARIA-Battlecard-vs-incumbents.md` (Moveworks/Aisera/ServiceNow, every figure dated+sourced) + `ARIA-ROI-One-Pager.md` (blank until a real pilot fills it).
+  - D3 `documents/sales-marketing/RUN-D-D3-outreach-staged.md` — staged send list, RULE 12 verbatim, NOTHING sent.
+- NEXT (no hold): wire D2 into main.mjs IPC + surface the conversion moment in the pilot-expiry UI (mirror how pilot-state/onboarding were wired). Then Master exit review.
+- AHMAD ONE-CLICKS (not holds): (a) commit `aria-vault/01_Frontal/Outreach-Template-Approved.md` so D3 is literally send-ready; (b) optional: delete the 6 stale cc/run-a*/run-b* branches.
