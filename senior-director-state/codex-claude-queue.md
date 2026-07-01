@@ -1543,3 +1543,18 @@ Memory: `feedback_shortest_path_first.md`. Full text in `STANDING-RULES-FOR-ALL-
   4. NEW registered test: the deflection metric moves ONLY on a real resolved event, never on an unresolved one; real-or-empty; main/preload wiring proof.
   Exit B1: a resolved session increments a real deflection metric, an unresolved one doesn't; thumbs + confidence visible; tests assert real-only. Then B2 (ROI on every surface) follows.
 - AHMAD ONE-CLICKS (not holds): (a) commit `aria-vault/01_Frontal/Outreach-Template-Approved.md` so D3 is send-ready; (b) optional: delete the stale `cc/run-a*/run-b*` + 06-2x branches.
+
+### 2026-07-01c — Cowork Flywheel: RUN-B B1 MERGED (caveman) + RUN-B B2 RELEASED
+- Verified live: origin/main 8ff6682 -> 7a636b8 (ls-remote), 201/201 green on the merged HEAD (was 200).
+- BUILT + MERGED RUN-B B1 (the Master-review gap: "prove value" was skipped ahead of C/D). The one number buyers ask for is now REAL:
+  - NEW pure `ARIA Sentinel/src/shared/resolution-outcome.mjs`: "Was this fixed?" outcome events -> first-touch-resolution / deflection % = resolved / conversations. Rule 14 real-or-empty: null until a real event, moves ONLY on a real resolved outcome, never a fabricated default. Per-answer confidence badge (high/uncertain/low) from the REAL match score. R11 path-scrub on session id; idempotent per session (thumbs cannot be spammed to inflate the metric).
+  - main.mjs: `recordResolutionOutcome` + `resolutionStatsNow`; `sentinel:resolution-outcome` + `sentinel:resolution-stats` IPC; fills the dashboard tile A1 left empty (real-or-empty); `pilotMetricsNow` now feeds `pilotProofMetrics` so the RUN-D D2 pilot->paid proof carries the SAME real deflection, not just a fix count.
+  - preload.cjs bridges; renderer.js per-answer confidence badge + "Did this fix it?" thumbs (records the real outcome); sentinel.css styling.
+  - tests/resolution-outcome.test.mjs (registered): real-or-empty; moves only on real resolved; dedupe can't game it; confidence from real score; R11-scrubbed; feeds the D2 proof; full main/preload/renderer/run-all wiring proof. Additive (309+/2-, zero deletions).
+- Exit B1 MET: a resolved session increments the real deflection metric; an unresolved one does not; thumbs + confidence visible; tests assert real-only.
+- **NEXT RELEASED (no hold): RUN-B B2 — real ROI on every surface (real-or-empty).** Off origin/main 7a636b8; mirror the same slice pattern:
+  1. Wire `src/shared/roi.mjs` (computeRoi, already audited) to REAL resolved-incident counts on the dashboard + Settings/About + session-end report + weekly/quarterly digests — all real-or-empty (no seeded values; empty-state until real fixes exist).
+  2. The session-end report (already proven to send) must contain ONLY that session's real numbers. Now that B1 gives a real deflection %, surface it alongside ROI on the same surfaces so buyers see resolved-rate + hours/$ saved together.
+  3. NEW registered test: every ROI/deflection figure traces to real events; with no events it shows empty-state; digests/report render real numbers only.
+  Exit B2: ROI + deflection on every surface trace to real events; no events => empty-state; email/digest verified to render real numbers. Then B3 (honest trust surface — already largely on main via eb8f404; reconcile/extend) and B5 (globe "resolved + email sent" confirmation) follow.
+- AHMAD ONE-CLICKS (not holds): (a) commit `aria-vault/01_Frontal/Outreach-Template-Approved.md` so D3 is send-ready; (b) optional: delete the stale `cc/run-a*/run-b*` (06-29) branches — superseded, never merged.
