@@ -15,13 +15,16 @@ export function retentionNote(nextCleanupAt) {
 /** Plain-text preview of what the customer email/report contains. */
 export function previewText(data = {}) {
   const k = data.kpis || {};
+  const s = data.sla || {};
+  const pct = (v) => (v == null ? "--" : `${v}%`);
+  const em = (v) => (v == null ? "--" : v);
   return [
     `ARIA Sentinel — ${data.quarter || "Q?"} report for ${data.company || "your organization"}`,
     "",
-    `• Incidents resolved: ${k.incidents ?? 0} (${k.autoPct ?? 0}% automatic)`,
-    `• Hours of human work avoided: ${k.hoursSaved ?? 0}`,
-    `• SLA compliance: ${data.sla?.composite ?? 0}% (floor ${data.sla?.floor ?? 0}%)`,
-    `• Diagnosis accuracy: ${k.accuracy ?? 0}%`,
+    `• Incidents resolved: ${k.incidents ?? 0} (${k.autoPct == null ? "--" : k.autoPct + "%"} automatic)`,
+    `• Hours of human work avoided: ${em(k.hoursSaved)}`,
+    `• SLA compliance: ${pct(s.composite)} (floor ${pct(s.floor)})`,
+    `• Diagnosis accuracy: ${pct(k.accuracy)}`,
     "",
     "Audit integrity verified · privacy verifier active · R11 private folder never touched."
   ].map(esc).join("\n");

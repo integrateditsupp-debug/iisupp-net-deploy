@@ -21,12 +21,14 @@ export function quarterLabel(date = new Date()) {
 /** Lightweight HTML body: cover summary + 6 hero KPIs + a "View full report" CTA. Content-blind. */
 export function emailBody(data = {}) {
   const k = data.kpis || {};
+  const em = (v) => (v == null ? "--" : v);
+  const pct = (v) => (v == null ? "--" : `${v}%`);
   const tiles = [
-    ["Uptime (7d)", `${k.uptime7d ?? 100}%`],
-    ["MTTR (min)", `${k.mttr ?? 0}`],
-    ["Diagnosis accuracy", `${k.accuracy ?? 0}%`],
+    ["Uptime (7d)", pct(k.uptime7d)],
+    ["MTTR (min)", em(k.mttr)],
+    ["Diagnosis accuracy", pct(k.accuracy)],
     ["SLA breaches", `${k.breaches ?? 0}`],
-    ["Hours saved", `${k.hoursSaved ?? 0}`],
+    ["Hours saved", em(k.hoursSaved)],
     ["Version", `${k.version || "0.1.0"}`]
   ];
   const cards = tiles.map(([label, value]) =>
@@ -35,7 +37,7 @@ export function emailBody(data = {}) {
   return `<!doctype html><html><body style="font-family:Segoe UI,system-ui,sans-serif;color:#111;margin:0;padding:24px">
   <h1 style="font-size:20px;margin:0 0 4px">ARIA Sentinel — ${esc(data.quarter || "")} report</h1>
   <p style="color:#666;margin:0 0 16px">${esc(data.company || "your organization")}</p>
-  <p style="font-size:14px">ARIA resolved <b>${esc(k.incidents ?? 0)}</b> incidents this quarter, <b>${esc(k.autoPct ?? 0)}%</b> automatically, saving ~<b>${esc(k.hoursSaved ?? 0)}</b> hours.</p>
+  <p style="font-size:14px">ARIA resolved <b>${esc(k.incidents ?? 0)}</b> incidents this quarter, <b>${esc(k.autoPct == null ? "--" : k.autoPct + "%")}</b> automatically, saving ~<b>${esc(em(k.hoursSaved))}</b> hours.</p>
   <table style="border-collapse:separate;border-spacing:8px"><tr>${cards}</tr></table>
   <p style="margin-top:18px"><a href="${esc(data.reportUrl || "https://iisupp.net/aria-sentinel/")}" style="background:#c5a059;color:#1a1410;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">View full report</a></p>
   <p style="color:#888;font-size:11px;margin-top:20px">Content-blind report. No usernames, machine names, file paths, or personal data is included.</p>

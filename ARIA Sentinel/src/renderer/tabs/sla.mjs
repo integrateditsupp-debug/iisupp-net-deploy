@@ -3,12 +3,12 @@ import { esc, tileHtml } from "./dashboard.mjs";
 
 export function uptimeTilesHtml(u = {}) {
   return [["24h", u.h24], ["7d", u.d7], ["30d", u.d30], ["90d", u.d90]]
-    .map(([label, v]) => tileHtml({ id: `up-${label}`, label: `Uptime ${label}`, value: v ?? 100, unit: "%" })).join("");
+    .map(([label, v]) => tileHtml({ id: `up-${label}`, label: `Uptime ${label}`, value: v, unit: "%" })).join("");
 }
 
 export function severityRowsHtml(metByLevel = {}, threshold = {}) {
   return ["P1", "P2", "P3", "P4"].map((sev) =>
-    `<div class="health-row"><span>${esc(sev)}</span><strong>${esc(metByLevel[sev] ?? 100)}% met</strong><em>${threshold[sev] != null ? esc("target " + threshold[sev]) : ""}</em></div>`
+    `<div class="health-row"><span>${esc(sev)}</span><strong>${metByLevel[sev] == null ? "--" : esc(metByLevel[sev]) + "% met"}</strong><em>${threshold[sev] != null ? esc("target " + threshold[sev]) : ""}</em></div>`
   ).join("");
 }
 

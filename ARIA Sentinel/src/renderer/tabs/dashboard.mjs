@@ -8,7 +8,9 @@ export const esc = (v) => redactPrivate(String(v == null ? "" : v)).replace(/[&<
 export function tileHtml(t = {}) {
   const d = t.delta;
   const deltaSpan = d ? `<span class="kpi-delta ${d.dir}">${d.symbol} ${Math.abs(d.pct)}%</span>` : "<span></span>";
-  return `<div class="kpi-tile" data-kpi="${esc(t.id || "")}"><div class="kpi-value">${esc(t.value)}${esc(t.unit || "")}</div><div class="kpi-label">${esc(t.label)}</div><div class="kpi-foot">${t.sparkline || sparklineSvg(t.values || [])}${deltaSpan}</div></div>`;
+  const _empty = t.value == null || t.value === "--";
+  const _shown = _empty ? "--" : `${esc(t.value)}${esc(t.unit || "")}`;
+  return `<div class="kpi-tile" data-kpi="${esc(t.id || "")}"><div class="kpi-value">${_shown}</div><div class="kpi-label">${esc(t.label)}</div><div class="kpi-foot">${t.sparkline || sparklineSvg(t.values || [])}${deltaSpan}</div></div>`;
 }
 export function tilesHtml(tiles = []) { return (tiles || []).map(tileHtml).join(""); }
 
