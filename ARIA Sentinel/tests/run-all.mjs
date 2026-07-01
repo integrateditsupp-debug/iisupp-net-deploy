@@ -257,6 +257,17 @@ const TESTS = [
   "./b3-trust-posture.test.mjs",   // RUN-B B3 — honest trust/security surface (no over-claim, real-or-empty)
   // RUN-B B6 (2026-07-01) — regression-sweep LOCK: RUN-B modules present, gates stay registered, honesty moat live, real-or-empty + inflated Trust pages stay deleted.
   "./b6-regression-sweep.test.mjs",
+  // STAGE 3 S1 (2026-07-01) — Autonomous Resolution Engine, Confirmed mode only: plan schema +
+  // hash-chained journal + executor loop (supervisor/countdown/tier-0 reused UNCHANGED) +
+  // 3 authored playbooks. R11 check #1 at every new layer; goalProbe declares success, never steps.
+  "./plan-schema.test.mjs",
+  "./plan-journal-hashchain.test.mjs",
+  "./plan-supervisor-midplan-veto.test.mjs",
+  "./plan-rollback-reverse-order.test.mjs",
+  "./plan-goalprobe-real-or-empty.test.mjs",
+  "./plan-resume-after-reboot.test.mjs",
+  "./plan-autonomy-ladder.test.mjs",
+  "./plan-r11-and-killswitch.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
