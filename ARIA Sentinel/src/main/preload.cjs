@@ -135,7 +135,14 @@ contextBridge.exposeInMainWorld("sentinel", {
     const listener = (_event, greeting) => callback(greeting);
     ipcRenderer.on("sentinel:greeting", listener);
     return () => ipcRenderer.removeListener("sentinel:greeting", listener);
-  }
+  },
+  // RUN-B B5 - the under-globe "issue resolved | email sent | ticket reference" confirmation.
+  onGlobeConfirmation: (callback) => {
+    const listener = (_event, conf) => callback(conf);
+    ipcRenderer.on("sentinel:globe-confirmation", listener);
+    return () => ipcRenderer.removeListener("sentinel:globe-confirmation", listener);
+  },
+  globeConfirmTest: (input) => ipcRenderer.invoke("sentinel:globe-confirm-test", input)
 });
 
 // RUN 23 — the globe status panel + action-indicator windows talk to window.sentinelBridge. runRecipe takes

@@ -9,7 +9,8 @@ const sentinel = window.sentinel || {
   selfDiagnose: async () => ({ ok: true }),
   selfRepair: async () => ({ ok: true }),
   runRecipe: async () => ({ ok: true, dryRun: true }),
-  onGreeting: () => {}
+  onGreeting: () => {},
+  onGlobeConfirmation: () => {}
 };
 let currentDetection = null;
 let wiggledThisSession = false;
@@ -21,6 +22,8 @@ const copy = document.getElementById("overlayBody");
 const globeSvg = document.querySelector(".aria-globe");
 const greeting = document.getElementById("overlayGreeting");
 let greetingTimer = null;
+const confirmEl = document.getElementById("overlayConfirm");
+let confirmTimer = null;
 
 function setGlobeState(state) {
   if (globeSvg) globeSvg.setAttribute("data-state", state);
@@ -40,6 +43,20 @@ sentinel.onGreeting?.((g) => {
     greeting.classList.remove("show");
     setTimeout(() => { greeting.hidden = true; }, 320);
   }, Math.max(2000, Number(g.durationMs) || 4000));
+});
+
+// RUN-B B5 - show the "issue resolved | email sent | ticket reference" confirmation DIRECTLY UNDER the globe.
+// Renders only what main sent (main already gated it on a real applied+verified resolve + a real send result).
+sentinel.onGlobeConfirmation?.((c) => {
+  if (!confirmEl || !c || !c.show || !c.text) return;
+  confirmEl.textContent = c.text;
+  confirmEl.hidden = false;
+  void confirmEl.offsetWidth; // reflow so the fade-in runs
+  confirmEl.classList.add("show");
+  const hide = () => { confirmEl.classList.remove("show"); setTimeout(() => { confirmEl.hidden = true; }, 320); };
+  if (confirmTimer) clearTimeout(confirmTimer);
+  confirmTimer = setTimeout(hide, Math.max(6000, Number(c.dismissMs) || 9000));
+  confirmEl.onclick = () => { if (confirmTimer) clearTimeout(confirmTimer); hide(); };
 });
 
 sentinel.onOverlayMode?.((mode) => {
