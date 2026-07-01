@@ -66,3 +66,22 @@ node_modules/
 _*.mjs
 node_modules/
 _*.mjs
+
+# SECURITY LOCKDOWN 2026-07-01 — internal brain/ops trees + agent instructions + op scripts.
+# publish dir = "." → anything tracked at root ships to every clone AND the live deploy.
+# These are untracked from git (files stay on disk) and must never come back.
+aria-vault/
+ARIA-Vault-Backups/
+_vault-backups*/
+documents/
+CLAUDE.md
+*.cmd
+*.bat
+*.ps1
+*.tar.gz
+# Exception: ARIA Sentinel product source ships recipe/build scripts as part of the desktop
+# product; the whole tree is already force-404'd live (/ARIA Sentinel/*). Without these
+# negations, new recipe scripts could never be committed again.
+!ARIA Sentinel/**/*.ps1
+!ARIA Sentinel/**/*.bat
+!ARIA Sentinel/CLAUDE.md
