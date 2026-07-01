@@ -243,6 +243,8 @@ const TESTS = [
   "./funnel-link-guard.test.mjs",
   // RUN-C C3 (2026-06-30) — 5-minute onboarding activation + time-to-first-value (real-or-empty, no dead step).
   "./onboarding-activation.test.mjs",
+  // RUN-D D2 (2026-07-01) — pilot->paid capture engine: case study real-or-empty + consent gate + conversion moment.
+  "./d2-case-study.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
