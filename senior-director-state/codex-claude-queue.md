@@ -1526,3 +1526,20 @@ Memory: `feedback_shortest_path_first.md`. Full text in `STANDING-RULES-FOR-ALL-
   - D3 `documents/sales-marketing/RUN-D-D3-outreach-staged.md` — staged send list, RULE 12 verbatim, NOTHING sent.
 - NEXT (no hold): wire D2 into main.mjs IPC + surface the conversion moment in the pilot-expiry UI (mirror how pilot-state/onboarding were wired). Then Master exit review.
 - AHMAD ONE-CLICKS (not holds): (a) commit `aria-vault/01_Frontal/Outreach-Template-Approved.md` so D3 is literally send-ready; (b) optional: delete the 6 stale cc/run-a*/run-b* branches.
+
+### 2026-07-01b — Cowork Flywheel: RUN-D D2 WIRED (caveman) + Master review + RUN-B B1 RELEASED
+- Verified live: origin/main 3f552b8 -> a4bf713 (ls-remote), 200/200 green on the merged HEAD.
+- BUILT + MERGED the D2 wiring (the prior "NEXT"): case-study.mjs is now plumbed into the app —
+  - main.mjs: `conversionMomentNow()` fed by REAL audit-log RUN fixes (same signal dashboard/perf use); `gateStatus.conversion`; day-10-14 pilot->paid card pushed onto the SAME pilot-expiry pending surface (mirrors pilotPrompt); IPC `sentinel:conversion-moment` + `sentinel:case-study-draft`.
+  - preload.cjs: `conversionMoment` + `caseStudyDraft` bridges.
+  - tests/d2-wire-conversion.test.mjs (registered): real-or-empty boundaries + main/preload/pending wiring proof. Suite 199 -> 200 green.
+  - Rule 14: no fabricated metric/quote/customer; /plans funnel page (never a fake checkout URL); case-study publish stays consent-gated (Ahmad one-click), never auto.
+- RUN-D now COMPLETE (D1 battlecard/ROI + D2 engine + D2 wiring + D3 staged). Master exit review of the CLIENT-READY program: A1 ✓, C1/C2/C3 ✓, D1/D2/D3 ✓ on main.
+- **GAP (Master review): RUN-B "Prove Value" was skipped** — C+D shipped ahead of B; commit fbc2bee confirms the RUN-B branches were stale/superseded, never built on main. B1's real deflection % is the exact data D2's conversion moment + case study consume (today only `fixes` is real; deflection_pct stays null until B1). So B1 is the highest-leverage next build AND it enriches D2.
+- **NEXT RELEASED (no hold): RUN-B B1 — "Was this resolved?" feedback loop + real deflection %.** Off origin/main a4bf713; mirror the pilot-state/onboarding slice pattern (pure shared module -> main IPC -> preload -> surface -> registered test):
+  1. NEW pure `ARIA Sentinel/src/shared/resolution-outcome.mjs`: record a real resolve outcome (`resolved` / `not-yet`) as an event; compute first-touch-resolution / deflection % = resolved ÷ conversations — real-or-empty (null until real events; reuse the case-study.mjs deflectionRate shape). Add a per-answer confidence badge (high/uncertain/low) derived from the match score.
+  2. main.mjs: IPC to log the outcome after a REAL Resolve; feed the dashboard tile A1 left empty; feed `conversionMomentNow()` metrics so the proof gets richer (real deflection, not just fixes).
+  3. preload.cjs bridge; surface thumbs up/down + confidence on answers.
+  4. NEW registered test: the deflection metric moves ONLY on a real resolved event, never on an unresolved one; real-or-empty; main/preload wiring proof.
+  Exit B1: a resolved session increments a real deflection metric, an unresolved one doesn't; thumbs + confidence visible; tests assert real-only. Then B2 (ROI on every surface) follows.
+- AHMAD ONE-CLICKS (not holds): (a) commit `aria-vault/01_Frontal/Outreach-Template-Approved.md` so D3 is send-ready; (b) optional: delete the stale `cc/run-a*/run-b*` + 06-2x branches.
