@@ -1,0 +1,42 @@
+{
+  "schema": "axis-status/1",
+  "generatedAt": "2026-07-01T23:45:46Z",
+  "source": "Flywheel run 12 (2026-07-01, cycle 2026-07-01T23:45:46Z). All numbers first-hand THIS cycle: pristine origin/main a8bc24c re-verified 214/214 green; this branch (a8bc24c + AXIS voice, rebuilt from run-11 bundle) 215/215 green incl. b4-axis-chat. mainRef a8bc24c = local origin/main ref (fetched on Ahmad's machine; live ls-remote impossible from sandbox — no credential — flagged per Rule 14, not guessed). Stage-3 + lockdown diffs fabrication-scanned: clean.",
+  "honest": true,
+  "headline": "Series 1 is 13 of 14 merged (93%) and main is 214/214 green — security lockdown v2 and Stage-3 S1 (Autonomous Resolution Engine) both landed via PR and were independently re-verified this cycle. AXIS voice + B4 chat fix rebuilt on the NEWEST main and re-verified (215/215): one double-click (AHMAD-PUSH-AXIS-VOICE.cmd) away from merge. RUN-E (first paying pilot) is released and next.",
+  "note": "The B4 fix rides in this same branch — the moment this feed is live (merge + Netlify publish), series 1 is 14/14 (100%).",
+  "program": {
+    "name": "Client-Ready Program",
+    "series": 1,
+    "sequence": "E (released) — AXIS-voice merge staged (one double-click)",
+    "tasksMerged": 13,
+    "tasksTotal": 14,
+    "pct": 93,
+    "testsGreen": "214/214 on main a8bc24c; 215/215 on staged axis-voice branch",
+    "mainRef": "a8bc24c"
+  },
+  "merged": ["A1","B1","B2","B3","B5","B6","C1","C2","C3","D1","D2","D2-wiring","D3"],
+  "extraMerged": ["SECURITY LOCKDOWN v2 (PR#2 — internal trees untracked, deploy-safety denylist test runs first)", "STAGE-3 S1 Autonomous Resolution Engine, Confirmed mode only (PR#3 — suite 206→214)"],
+  "builtNotMerged": [
+    "cc/axis-voice-2026-07-01 (r2): mic push-to-talk + spoken full-status + B4 chat fix (env-driven model, honest offline fallback) + this live feed — REBUILT on current main a8bc24c this cycle, 215/215 green, staged for one double-click",
+    "06-29 branches a2/a3/a4/b1/b4 — SUPERSEDED, do NOT merge (regressive vs current main)",
+    "run-11 packet (axis-sec-verified.bundle, main@f0848eb) — STALE/superseded: its base 76e554c is behind; use the run-12 packet instead"
+  ],
+  "nextUp": [
+    "Ahmad one-click: double-click AHMAD-PUSH-AXIS-VOICE.cmd at repo root (pushes verified branch + verified merge from your machine, where git credentials live — no PAT file needed)",
+    "Netlify publish (Ahmad one-click) so AXIS speaks this feed live",
+    "RUN-E E1: in-product pilot activation → TTFV clock (docs half already merged-ready in documents/sales-marketing/)"
+  ],
+  "lanes": [
+    {"id":"client-ready-flywheel","does":"builds + verifies + merges Series-1; this cycle: independently verified PR#2+PR#3 on main (214/214 + fabrication-scan clean), rebuilt AXIS voice on newest main (215/215), staged double-click push packet, regenerated this feed","cadence":"hourly","state":"running"},
+    {"id":"forums-design-pass","does":"Forums Stage-1 design (cc/forums-mvp untouched by flywheel)","cadence":"every 3h","state":"running"},
+    {"id":"stage-2-vision","does":"cc/stage-2-vision lane — merges only when Cowork clears","cadence":"parked","state":"waiting"},
+    {"id":"stage-3-are","does":"Autonomous Resolution Engine S1 MERGED to main (Confirmed mode only, hash-chained journal, 3 playbooks); S2+ next per STAGES-4-10 plan","cadence":"per-run","state":"merged"}
+  ],
+  "needsAhmad": [
+    {"action":"Double-click AHMAD-PUSH-AXIS-VOICE.cmd (repo root)","why":"sandbox has no GitHub credential; the .cmd runs the verified push + merge from your machine with a safety gate (aborts if main moved)","oneClick":true},
+    {"action":"Netlify publish after the merge lands","why":"merging main never deploys; publish stays your click","oneClick":true},
+    {"action":"do-payment-retry-june-30 cost flag","why":"open cost dependency surfaced per free-only rule","oneClick":true}
+  ],
+  "onTrack": true
+}

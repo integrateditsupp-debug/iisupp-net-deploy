@@ -255,6 +255,7 @@ const TESTS = [
   // RUN-B B5 (2026-07-01) — under-globe "issue resolved | email sent | ticket ref" confirmation (real-or-empty; desktop overlay + web mirror parity).
   "./b5-globe-confirmation.test.mjs",
   "./b3-trust-posture.test.mjs",   // RUN-B B3 — honest trust/security surface (no over-claim, real-or-empty)
+  "./b4-axis-chat.test.mjs",       // RUN-B B4 — AXIS chat: env-driven model + honest offline fallback (no silent Brain-busy)
   // RUN-B B6 (2026-07-01) — regression-sweep LOCK: RUN-B modules present, gates stay registered, honesty moat live, real-or-empty + inflated Trust pages stay deleted.
   "./b6-regression-sweep.test.mjs",
   // STAGE 3 S1 (2026-07-01) — Autonomous Resolution Engine, Confirmed mode only: plan schema +
