@@ -2,6 +2,7 @@ import { bannerVisible, bannerModel, SECURITY_BANNER_DISMISS_KEY } from "../shar
 import "./components/aria-globe.mjs"; // defines the <aria-globe> custom element used in the rail
 import { extOf, requiredSteps, stepFor } from "../shared/delete-confirm.mjs";
 import { renderMarkdown } from "../shared/aria-markdown.mjs"; // RUN 34-1 — readable chat answers (markdown → HTML)
+import { confidenceBadge } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — per-answer confidence + "Was this fixed?" feedback
 // RUN 22 — dashboard / performance / SLA / compliance / reports tab builders + status.
 import { computeHeroStatus, heroSubline, heroTiles } from "../shared/dashboard-status.mjs";
 import * as DashboardTab from "./tabs/dashboard.mjs";
@@ -1636,6 +1637,7 @@ function initAriaChat() {
     // TASK 4 — the one intentional difference from web: Sentinel can RESOLVE it on this device. The chip runs
     // the matched fix through the gated control plane (Confirmed-grade, never autonomous, countdown + kill-switch).
     appendResolveChip(bubble, question);
+    appendConfidenceAndFeedback(bubble, res, question);
   }
   // The Sentinel-only "Resolve it for me" affordance under an answer. Diagnoses the question locally, and if a
   // fix recipe is matched, runs it through the supervised-fix gate; otherwise opens the diagnostics flow.
@@ -1664,6 +1666,38 @@ function initAriaChat() {
       } catch { st.textContent = "Couldn't resolve right now."; btn.disabled = false; }
     });
     wrap.append(btn, st); bubble.appendChild(wrap);
+  }
+  // RUN-B B1 — per-answer confidence badge (derived from the REAL top match score) + a "Was this fixed?"
+  // feedback control that records a REAL resolution outcome. That outcome drives the honest deflection %
+  // on the dashboard + the RUN-D pilot->paid proof. Real-or-empty: no score => no badge; nothing is faked.
+  function appendConfidenceAndFeedback(bubble, res, question) {
+    const top = res && Array.isArray(res.matches) && res.matches[0] && Number.isFinite(res.matches[0].score)
+      ? res.matches[0].score : null;
+    const conf = confidenceBadge(top);
+    if (conf) {
+      const c = document.createElement("span");
+      c.className = "aria-chat-confidence conf-" + conf.level;
+      c.textContent = conf.label;
+      c.title = "Confidence reflects how well your question matched the knowledge base.";
+      bubble.appendChild(c);
+    }
+    if (!window.sentinel || !window.sentinel.resolutionOutcome) return;
+    const sid = "ans-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+    const wrap = document.createElement("div"); wrap.className = "aria-chat-feedback";
+    const q = document.createElement("span"); q.className = "aria-chat-feedback-q"; q.textContent = "Did this fix it?";
+    const yes = document.createElement("button"); yes.type = "button"; yes.className = "aria-chat-feedback-btn"; yes.textContent = "Yes, fixed";
+    const no = document.createElement("button"); no.type = "button"; no.className = "aria-chat-feedback-btn"; no.textContent = "Not yet";
+    const st = document.createElement("span"); st.className = "aria-chat-feedback-status";
+    async function mark(outcome) {
+      yes.disabled = true; no.disabled = true;
+      try {
+        await window.sentinel.resolutionOutcome({ outcome, matchScore: top, sessionId: sid });
+        st.textContent = outcome === "resolved" ? "Thanks — logged as resolved." : "Thanks — we'll keep improving.";
+      } catch { st.textContent = "Couldn't save that just now."; yes.disabled = false; no.disabled = false; }
+    }
+    yes.addEventListener("click", () => mark("resolved"));
+    no.addEventListener("click", () => mark("not-yet"));
+    wrap.append(q, yes, no, st); bubble.appendChild(wrap);
   }
   input.addEventListener("input", () => { input.style.height = "auto"; input.style.height = Math.min(140, input.scrollHeight) + "px"; });
   input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });

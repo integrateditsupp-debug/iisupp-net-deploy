@@ -971,3 +971,15 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .aria-chat-md blockquote.md-quote { border-left:2px solid rgba(197,160,89,.5); margin:8px 0; padding:4px 0 4px 12px; color:var(--muted,#8b8b93); }
 .aria-chat-md hr.md-hr { border:0; border-top:1px solid rgba(255,255,255,.08); margin:10px 0; }
 .aria-chat-md a { color:#c5a059; text-decoration:none; } .aria-chat-md a:hover { text-decoration:underline; }
+
+/* RUN-B B1 — per-answer confidence badge + "Was this fixed?" feedback (drives the real deflection %). */
+.aria-chat-confidence { display:inline-block; margin-top:6px; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600; letter-spacing:.02em; }
+.aria-chat-confidence.conf-high { background:rgba(122,251,255,.14); color:#7afbff; border:1px solid rgba(122,251,255,.35); }
+.aria-chat-confidence.conf-uncertain { background:rgba(255,203,107,.14); color:#ffcb6b; border:1px solid rgba(255,203,107,.35); }
+.aria-chat-confidence.conf-low { background:rgba(255,126,126,.12); color:#ff9e9e; border:1px solid rgba(255,126,126,.30); }
+.aria-chat-feedback { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.aria-chat-feedback-q { font-size:12px; opacity:.8; }
+.aria-chat-feedback-btn { font-size:12px; padding:3px 10px; border-radius:6px; cursor:pointer; background:rgba(255,255,255,.06); color:inherit; border:1px solid rgba(255,255,255,.18); }
+.aria-chat-feedback-btn:hover:not(:disabled) { background:rgba(255,255,255,.12); }
+.aria-chat-feedback-btn:disabled { opacity:.45; cursor:default; }
+.aria-chat-feedback-status { font-size:12px; opacity:.75; }

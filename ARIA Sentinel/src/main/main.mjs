@@ -111,6 +111,7 @@ let hotkeyStatus = [];
 import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge } from "../shared/license.mjs";
 import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord } from "../shared/pilot-state.mjs";
 import { conversionMoment, buildCaseStudy, caseStudyReadiness } from "../shared/case-study.mjs"; // RUN-D D2 — pilot->paid capture, wired
+import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %
 import {
   getServiceNowConfig,
   ping as snPing,
@@ -139,6 +140,7 @@ const store = new Store({
     detections: [],
     incidents: [],
     transparencyLog: [],
+    resolutionOutcomes: [],
     serviceNow: {
       instanceUrl: "",
       caller: "",
@@ -884,7 +886,7 @@ function dashboardData() {
   return {
     sources,
     subline: { eventsToday: log.length, threats: 0, lastSyncAgo: upd.lastCheckAt ? relativeAgo(upd.lastCheckAt) : "just now" },
-    metrics: { uptime7d: null, mttr: null, accuracy: null, breaches: 0, hoursSaved: null, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
+    metrics: { uptime7d: null, mttr: null, accuracy: null, breaches: 0, hoursSaved: null, deflection: resolutionStatsNow().deflectionPct, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
     pending,
     activity: recentLog(10),
     trust: "🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization"
@@ -1454,7 +1456,20 @@ function dismissPilotPrompt(state) {
 // fixes = audit-log RUN entries (real resolved fixes). Real-or-empty: 0 fixes or an immature pilot => no ask, ever.
 function pilotMetricsNow() {
   const log = store.get("transparencyLog") || [];
-  return { fixes: log.filter((e) => e.tag === "RUN").length };
+  const fixes = log.filter((e) => e.tag === "RUN").length;
+  // RUN-B B1 — feed the REAL deflection (resolved / conversations) into the D2 pilot->paid proof, not just a fix count.
+  return pilotProofMetrics(store.get("resolutionOutcomes") || [], { fixes });
+}
+// RUN-B B1 — the "Was this fixed?" feedback loop -> a real, defensible deflection %. Outcomes persist
+// locally (no external send); the metric is real-or-empty and moves ONLY on a real resolved outcome.
+function resolutionOutcomesLog() { return store.get("resolutionOutcomes") || []; }
+function resolutionStatsNow() { return deflectionStats(resolutionOutcomesLog()); }
+function recordResolutionOutcome(payload = {}) {
+  const res = recordResolutionEvent(resolutionOutcomesLog(), payload || {});
+  if (!res.ok) return { ok: false, errors: res.errors, stats: resolutionStatsNow() };
+  store.set("resolutionOutcomes", res.events.slice(-1000)); // cap; never unbounded
+  if (!res.deduped) logEvent("FEEDBACK", `Answer marked "${res.record.outcome}"${res.record.confidence ? ` (${res.record.confidence.level} confidence)` : ""}.`);
+  return { ok: true, deduped: res.deduped, stats: resolutionStatsNow() };
 }
 function conversionMomentNow() {
   return conversionMoment({ pilot: readPilot(), metrics: pilotMetricsNow() });
@@ -3183,6 +3198,8 @@ ipcMain.handle("sentinel:pilot-status", () => ({ status: pilotStateLocal(), prom
 ipcMain.handle("sentinel:dismiss-pilot-prompt", (_event, state) => dismissPilotPrompt(state));
 ipcMain.handle("sentinel:conversion-moment", () => conversionMomentNow());                    // RUN-D D2
 ipcMain.handle("sentinel:case-study-draft", (_event, opts) => caseStudyDraftNow(opts || {}));  // RUN-D D2 — staged, never auto-publish
+ipcMain.handle("sentinel:resolution-outcome", (_event, payload) => recordResolutionOutcome(payload || {})); // RUN-B B1 — "Was this fixed?" real outcome
+ipcMain.handle("sentinel:resolution-stats", () => resolutionStatsNow());                                     // RUN-B B1 — real deflection %
 ipcMain.handle("sentinel:check-updates", () => checkForUpdates());
 ipcMain.handle("sentinel:manage-subscription", () => manageSubscription());
 ipcMain.handle("sentinel:get-settings", () => ({ showFloatingGlobe: store.get("showFloatingGlobe") !== false, lowPower: Boolean(store.get("lowPower")) }));
