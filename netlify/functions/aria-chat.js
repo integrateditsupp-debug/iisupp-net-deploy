@@ -159,12 +159,17 @@ exports.handler = async (event) => {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  // Hardcoded skip-list of models Anthropic has retired (return 400 not 404 for these). When ARIA_MODEL env
-// is set to a known-deprecated value we ignore it and fall through to the safe default. Ahmad can rotate
-// ARIA_MODEL to any current model on Netlify env any time — only retired strings get the override.
-const DEPRECATED_MODELS = /claude-sonnet-4-20250514|claude-sonnet-4-5-20250929|claude-3-5-sonnet-202(40|41)|claude-3-opus-20240229|claude-3-haiku-20240307/;
-const envModel = process.env.ARIA_MODEL;
-const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'claude-sonnet-4-6';
+  // B4 model-path fix: never hardcode a model string that may not be accessible on the current API key.
+  // Priority: ARIA_MODEL env (operator sets the model they have access to) → ARIA_MODEL_FALLBACK env →
+  // absent both → degrade gracefully (no LLM call, honest fallback). This ensures a missing model never
+  // silently degrades to "Brain busy" or a bare error — the operator is in control.
+  const DEPRECATED_MODELS = /claude-sonnet-4-20250514|claude-sonnet-4-5-20250929|claude-3-5-sonnet-202(40|41)|claude-3-opus-20240229|claude-3-haiku-20240307/;
+  const envModel = process.env.ARIA_MODEL;
+  const fallbackModel = process.env.ARIA_MODEL_FALLBACK; // secondary; Ahmad sets on Netlify
+  // If no env model is configured, we cannot safely guess — degrade to the offline reply.
+  const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel
+    : (fallbackModel && !DEPRECATED_MODELS.test(fallbackModel)) ? fallbackModel
+    : null; // null → skip LLM, return honest offline-brain copy below
   if (!apiKey) {
     return json(500, { error: 'AI service not configured. Call (647) 581-3182.' });
   }
@@ -184,6 +189,30 @@ const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'clau
     return json(400, { error: 'Last message must be user' });
   }
 
+  // B4: if no model is configured (ARIA_MODEL env not set), skip the LLM call entirely and
+  // return the honest offline-brain copy. This prevents a 404 / model-not-found from surfacing
+  // as "Brain busy" — and makes the $0 offline path the explicit first-class fallback.
+  if (!model) {
+    console.warn('[aria-chat] No ARIA_MODEL env set — returning offline-brain copy. Set ARIA_MODEL on Netlify to enable LLM path.');
+    return json(200, {
+      text: "I'm running in offline mode right now — my reasoning model isn't configured on this deployment. "
+        + "For most IT questions I can still help you with common troubleshooting steps:\n\n"
+        + "1. Restart the affected app or device first — fixes ~40% of issues.\n"
+        + "2. If it's Outlook, Teams, or M365: clear cache, check service health at status.office.com.\n"
+        + "3. For network issues: ipconfig /release then /renew, or forget/rejoin Wi-Fi.\n"
+        + "4. If you need a human now, call us: (647) 581-3182.\n\n"
+        + "(To enable full AI reasoning, set ARIA_MODEL in your Netlify environment.)",
+      emotion_detected: 'neutral',
+      tone_used: 'warm',
+      takeNotes: null,
+      resolved: false,
+      escalate: false,
+      category: 'other',
+      suggestions: ['restart_app', 'check_m365_health', 'call_support'],
+      offline: true,
+    });
+  }
+
   const sessionId = String(body.sessionId || body.session_id || 'anon-' + Date.now()).slice(0, 80);
   const currentUserText = cleanMsgs[cleanMsgs.length - 1].content;
   const prior = context.getSession(sessionId);
@@ -198,13 +227,8 @@ const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'clau
   const outboundMessages = (priorMessages.length ? priorMessages : clientHistory)
     .concat([{ role: 'user', content: currentUserText }]);
 
-  // Slice D — model cascade. A single bad/retired ARIA_MODEL env value was 400-ing the whole web chat.
-  // Try the configured model first, then current known-good fallbacks. Anthropic returns 400 (not 404)
-  // for retired model strings, so treat 400/404 as "this model is unusable — try the next one".
-  const modelCandidates = [...new Set([model, 'claude-sonnet-4-6', 'claude-haiku-4-5-20251001'])];
-
   try {
-    const callModel = (candidate) => withBreaker('anthropic-messages', () => fetchWithRetry('https://api.anthropic.com/v1/messages', {
+    const r = await withBreaker('anthropic-messages', () => fetchWithRetry('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
@@ -212,7 +236,7 @@ const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'clau
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: candidate,
+        model,
         max_tokens: 1500,
         system: SYSTEM_PROMPT + contextSummary,
         messages: outboundMessages,
@@ -223,24 +247,14 @@ const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'clau
       request_timeout_ms: 28000
     });
 
-    let r = null, usedModel = null, lastStatus = 0, lastErr = '';
-    for (const candidate of modelCandidates) {
-      const resp = await callModel(candidate);
-      if (resp.ok) { r = resp; usedModel = candidate; break; }
-      lastStatus = resp.status;
-      lastErr = (await resp.text()).slice(0, 400);
-      console.error('[aria-chat] Anthropic error:', resp.status, 'model:', candidate, 'body:', lastErr);
-      // only fall through to the next model for model-rejection statuses; bail on auth/overload
-      if (resp.status !== 400 && resp.status !== 404) break;
+    if (!r.ok) {
+      const err = await r.text();
+      console.error('[aria-chat] Anthropic error:', r.status, 'model:', model, 'body:', err.slice(0, 500));
+      const hint = r.status === 404 ? `model not found: ${model}` :
+                   r.status === 401 ? 'invalid API key' :
+                   r.status === 529 ? 'Anthropic overloaded' : `HTTP ${r.status}`;
+      return json(502, { error: `AI temporarily unavailable (${hint}). Call (647) 581-3182.` });
     }
-
-    if (!r) {
-      const hint = lastStatus === 404 ? 'model not found' :
-                   lastStatus === 401 ? 'invalid API key' :
-                   lastStatus === 529 ? 'Anthropic overloaded' : `HTTP ${lastStatus}`;
-      return json(502, { error: `AI temporarily unavailable (${hint}). Call (647) 581-3182.`, detail: lastErr || undefined });
-    }
-    if (usedModel !== model) console.warn('[aria-chat] model fallback: configured', model, '→ used', usedModel);
 
     const data = await r.json();
     const txt = (data.content && data.content[0] && data.content[0].text) || '';

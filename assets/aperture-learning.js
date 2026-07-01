@@ -165,9 +165,10 @@ function renderStats(s, t){
   const roster = Array.isArray(s.agents) ? s.agents.length : 0;
   countTo('agents-active', roster);
   $('agents-born').textContent = num(s.newAgentsBorn);
-  setText('dock-resolved', logged ? String(resolved) : '1,248');
-  setText('dock-tasks', logged ? String(open) : String(num(s.queueDepth) || 134));
-  setText('dock-agents', roster ? String(roster) : '22');
+  const hasQueueDepth = Object.prototype.hasOwnProperty.call(s || {}, 'queueDepth');
+  setText('dock-resolved', logged ? String(resolved) : '--');
+  setText('dock-tasks', logged ? String(open) : (hasQueueDepth ? String(q) : '--'));
+  setText('dock-agents', roster ? String(roster) : '--');
 }
 
 /* ---- render: Senior Director visibility ------------------------------------ */
@@ -243,6 +244,11 @@ function renderLearning(s){
   countTo('loop-bits', num(s.totalBits));
   countTo('loop-kb', num(s.kbLiveCount));
   countTo('loop-queue', num(s.queueDepth));
+  const recentBits = Array.isArray(s.recentBits) ? s.recentBits : [];
+  const roster = Array.isArray(s.agents)?s.agents:[];
+  const hasLearningData = !!(num(s.totalBits) || num(s.kbLiveCount) || num(s.queueDepth) || s.lastTopic || s.lastAgent || recentBits.length || roster.length);
+  const loopChip = $('loop-chip');
+  if (loopChip){ loopChip.textContent = hasLearningData ? 'running' : 'awaiting data'; loopChip.className = 'chip ' + (hasLearningData ? 'ok' : ''); }
 
   const now = $('loop-now');
   if (s.lastTopic || s.lastAgent){
@@ -251,7 +257,7 @@ function renderLearning(s){
       + '<div class="sub">'+esc(label(s.lastAgent)||'learning agent')
       + (s.sessionStarted?' · since '+timeAgo(s.sessionStarted):'')+'</div></div></div>';
     // recent bits underneath
-    const bits = (s.recentBits||[]).slice(-5).reverse();
+    const bits = recentBits.slice(-5).reverse();
     if (bits.length){
       now.innerHTML += bits.map(b=>{
         const topic = b.topic || b.title || b.text || b.insight || (typeof b==='string'?b:'bit recorded');
@@ -263,7 +269,6 @@ function renderLearning(s){
     }
   } else now.innerHTML = '<div class="empty">Idle · awaiting topics</div>';
 
-  const roster = Array.isArray(s.agents)?s.agents:[];
   $('roster').innerHTML = roster.length
     ? roster.slice(0,24).map(a=>'<span class="r-chip'+(a.born?' born':'')+'"><span class="led"></span>'
         +esc(label(a.name)||a.name||'agent')+'</span>').join('')
@@ -328,19 +333,23 @@ function renderAgentOffice(events, roster, stats, msgs, tickets, status){
     if (!msgByAgent[from] || ts > msgByAgent[from]._ts) msgByAgent[from] = Object.assign({}, m, {_ts:ts});
   });
   const openTickets = (tickets||[]).filter(t=>t && t.status !== 'resolved' && t.status !== 'closed');
+  const hasTelemetry = Object.keys(eventByAgent).length > 0
+    || Object.keys(msgByAgent).length > 0
+    || openTickets.length > 0
+    || (Array.isArray(status?.agents) && status.agents.length > 0);
   OFFICE_STATE = OFFICE_AGENTS.map((agent, i)=>{
     const event = eventByAgent[agent.id] || eventByAgent[agent.name] || eventByAgent[agent.role];
     const msg = msgByAgent[agent.id] || msgByAgent[agent.name] || msgByAgent[agent.role];
-    const drift = ((now / 1000 + agent.seed * 17) % 96);
-    const startedAt = event && event._ts ? event._ts : now - ((8 + agent.seed + Math.floor(drift)) * 1000);
+    const startedAt = event && event._ts ? event._ts : (msg && msg._ts ? msg._ts : now);
     const ticket = openTickets[(i + Math.floor(now / 15000)) % Math.max(1, openTickets.length)];
     let doing = agent.base;
     if (event && event.kind) doing = String(event.kind).replace(/[-_]/g,' ') + (event.success === false ? ' - retrying safely' : '');
     else if (msg && msg.text) doing = String(msg.text).slice(0, 74);
     else if (ticket && (agent.id === 'l1' || agent.id === 'security')) doing = 'triaging ' + String(ticket.issue || ticket.summary || ticket.id || 'open ticket').slice(0, 54);
-    else doing = OFFICE_ACTIONS[(i + Math.floor(now / 9000)) % OFFICE_ACTIONS.length];
-    const talks = msg && msg.to ? label(msg.to) : (event && event.to ? label(event.to) : agent.talks);
-    const active = (event && event._ts && now - event._ts < 180000) || (msg && msg._ts && now - msg._ts < 180000) || drift < 72;
+    else if (!hasTelemetry) doing = 'standing by for authenticated telemetry';
+    else doing = 'visible in roster; no current event';
+    const talks = msg && msg.to ? label(msg.to) : (event && event.to ? label(event.to) : (hasTelemetry ? agent.talks : 'Aperture gate'));
+    const active = (event && event._ts && now - event._ts < 180000) || (msg && msg._ts && now - msg._ts < 180000);
     return {
       id:agent.id,
       name:agent.name,
@@ -358,9 +367,11 @@ function renderAgentOffice(events, roster, stats, msgs, tickets, status){
 }
 
 function renderOfficeAgent(agent){
-  return '<div class="office-agent '+esc(agent.cls)+'" data-office-agent="'+esc(agent.id)+'">'
+  const stateClass = agent.active ? 'is-live' : 'is-standby';
+  const talkLabel = agent.active ? 'talking to ' : 'linked to ';
+  return '<div class="office-agent '+esc(agent.cls)+' '+stateClass+'" data-office-agent="'+esc(agent.id)+'">'
     + '<div class="agent-status"><div class="name"><i style="background:'+ (agent.active ? 'var(--ok)' : 'var(--txt-3)') +'"></i><span>'+esc(agent.name)+'</span></div>'
-    + '<div class="doing">'+esc(agent.doing)+'</div><div class="talk">talking to '+esc(agent.talks||'ARIA Router')+'</div></div>'
+    + '<div class="doing">'+esc(agent.doing)+'</div><div class="talk">'+talkLabel+esc(agent.talks||'ARIA Router')+'</div></div>'
     + '<div class="agent-pulse"></div><div class="agent-screen"></div><div class="agent-person"><span class="agent-head"></span><span class="agent-body"></span><span class="agent-arm"></span></div>'
     + '<div class="agent-desk"></div><div class="agent-time" data-office-time="'+esc(agent.id)+'">00:00</div></div>';
 }
@@ -373,6 +384,12 @@ function renderOfficeTimers(){
     if (el) el.textContent = fmtDuration(Math.max(0, now - agent.startedAt));
   });
   const active = OFFICE_STATE.filter(a=>a.active).length;
+  if (!active){
+    setText('office-shift', 'standby - waiting for authenticated telemetry');
+    setText('office-caption-line', 'No current agent activity is being claimed. Authenticated mesh events light this room.');
+    setText('office-caption-time', '--:--');
+    return;
+  }
   const caption = OFFICE_STATE[Math.floor(now / 4000) % OFFICE_STATE.length];
   setText('office-shift', active + ' active agents - ' + OFFICE_STATE.length + ' on shift');
   if (caption) {
@@ -412,6 +429,14 @@ function renderSLA(t){
   const logged = t.length;
   const resolved = t.filter(x=>x && (x.status==='resolved'||x.status==='closed'));
   const escal = t.filter(x=>x && (x.status==='escalated'||x.status==='awaiting-human'||x.status==='awaiting_human')).length;
+  if (!logged){
+    setKV('sla-fcr','--','');
+    setKV('sla-resp','--','');
+    setKV('sla-rest','--','');
+    setKV('sla-state','Awaiting data','');
+    const chip=$('sla-chip'); chip.textContent='Awaiting data'; chip.className='chip';
+    return;
+  }
   const fcr = logged ? Math.round(resolved.length/logged*100) : 100;
   setKV('sla-fcr', fcr+'%', fcr>=90?'ok':fcr>=70?'warn':'bad');
 
@@ -489,6 +514,15 @@ function renderHealth(t){
   const logged=t.length;
   const resolved=t.filter(x=>x && (x.status==='resolved'||x.status==='closed')).length;
   const escal=t.filter(x=>x && (x.status==='escalated'||x.status==='awaiting-human'||x.status==='awaiting_human')).length;
+  if (!logged){
+    const numEl = $('health-num');
+    if (numEl) numEl.innerHTML = '--<span class="unit" style="font-size:18px;color:var(--txt-2)">%</span>';
+    setText('dock-health', '--');
+    const chip=$('health-chip');
+    chip.textContent='Awaiting data'; chip.className='chip';
+    const spark=$('spark'); if (spark) spark.setAttribute('points','');
+    return;
+  }
   // concern-free proxy: high when resolved share high & few escalations open
   let h = logged ? Math.round((resolved/logged)*100) : 100;
   h = Math.max(0, h - escal*4);
@@ -619,4 +653,310 @@ function countTo(id, target, suffix){
     if(k<1) requestAnimationFrame(step);
   })(t0);
   function render(v){ e.innerHTML = v + (suffix?'<span class="unit">'+suffix+'</span>':''); }
+}
+
+/* ── B4: AXIS Director Chat — deterministic intents, no LLM, never "Brain busy" ─────────────── */
+// Intent patterns for common AXIS asks → answered from live command-center state, zero model calls.
+// Only truly open-ended asks fall back to the offline brain copy (still no LLM).
+const AXIS_INTENTS = [
+  // "status" is intentionally broad: Ahmad's "status of everything" → the full picture (program % + lanes + digest + what needs him).
+  { name:'status',    re:/\b(status|how.*(going|doing|running)|overview|summary|brief|update|what.*happen|whats?\s*up|going\s*on|everything|state|health|alive|progress|percent|client.?ready|series|sequence|lanes?|build|program)\b/i },
+  { name:'agents',    re:/\b(agent|agents|roster|team|who.*working|workers|fleet|lineup)\b/i },
+  { name:'leads',     re:/\b(lead|leads|pipeline|prospect|opportunity|hot|radar)\b/i },
+  { name:'queue',     re:/\b(queue|queued|pending|work.*lined|backlog|tasks?|upcoming)\b/i },
+  { name:'approvals', re:/\b(approval|approvals|approve|waiting|gate|permission|sign.?off|need.*ok|one.?click)\b/i },
+  { name:'help',      re:/^\/?(help|what.*(can|do)|commands?|options?)\b/i }
+];
+
+// Classify user's question → intent name or null (unknown).
+function axisClassifyIntent(q) {
+  const s = String(q || '').trim();
+  for (const { name, re } of AXIS_INTENTS) if (re.test(s)) return name;
+  return null;
+}
+
+// Render an AXIS reply bubble in the chat panel.
+function axisAppendBubble(role, text, isLoading) {
+  const box = $('axis-chat-log');
+  if (!box) return;
+  const el = document.createElement('div');
+  el.className = 'axis-bubble axis-' + role;
+  el.textContent = text;
+  if (isLoading) el.dataset.loading = '1';
+  box.appendChild(el);
+  box.scrollTop = box.scrollHeight;
+  return el;
+}
+
+// Human "how long ago" from an ISO timestamp (honesty: surface snapshot age).
+function axisAgo(iso) {
+  const t = Date.parse(iso || '');
+  if (!isFinite(t)) return { text: 'unknown time', hours: null };
+  const mins = Math.max(0, Math.round((Date.now() - t) / 60000));
+  if (mins < 60) return { text: mins + 'm ago', hours: mins / 60 };
+  const h = Math.round(mins / 60);
+  if (h < 48) return { text: h + 'h ago', hours: h };
+  return { text: Math.round(h / 24) + 'd ago', hours: h };
+}
+
+// Fetch the honest program-status feed (baked JSON, refreshed by the progress/flywheel robots from real git + ledger).
+async function axisFetchStatusFeed() {
+  try {
+    const r = await fetch('/.well-known/axis/status.json', { cache: 'no-store' });
+    if (r.ok) return await r.json();
+  } catch (_) {}
+  return null;
+}
+
+// Format the FULL "status of everything" — program % + lanes + live digest + what needs Ahmad. Ahmad's primary ask.
+function axisFormatStatus(d, feed) {
+  const out = [];
+  let staleWarn = '';
+  if (feed && feed.program) {
+    const age = axisAgo(feed.generatedAt);
+    if (age.hours != null && age.hours > 6) staleWarn = '⚠ Snapshot is ' + age.text + ' — may be stale (Rule 14).\n\n';
+    const p = feed.program;
+    if (feed.headline) out.push(feed.headline);
+    out.push('Program: Series ' + p.series + ' · seq ' + p.sequence + ' · ' + p.tasksMerged + '/' + p.tasksTotal + ' merged (' + p.pct + '%)' + (p.testsGreen ? ' · tests ' + p.testsGreen : ''));
+    const lanes = Array.isArray(feed.lanes) ? feed.lanes : [];
+    if (lanes.length) {
+      out.push('\nBuild lanes running:');
+      lanes.forEach((l) => out.push('• ' + l.id + ' — ' + l.does + ' (' + l.cadence + ')'));
+    }
+  }
+  // Blend in the live director digest when the API is deployed (bonus real-time signal).
+  if (d) {
+    const bits = [];
+    if (d.agents) bits.push((d.agents.active ?? 0) + '/' + (d.agents.total ?? 0) + ' agents active');
+    if (d.queue)  bits.push((d.queue.pending ?? 0) + ' queued');
+    if (d.leads)  bits.push((d.leads.count ?? 0) + ' lead' + (((d.leads.count ?? 0) !== 1) ? 's' : '') + ((d.leads.hot) ? ' (' + d.leads.hot + ' hot)' : ''));
+    if (bits.length) out.push('\nLive: ' + bits.join(' · '));
+  }
+  if (feed && Array.isArray(feed.needsAhmad) && feed.needsAhmad.length) {
+    out.push('\nNeeds you (one-click):');
+    feed.needsAhmad.forEach((n) => out.push('• ' + n));
+  }
+  if (feed && feed.generatedAt) out.push('\nAs of ' + axisAgo(feed.generatedAt).text + (feed.onTrack ? ' · on track.' : '.'));
+  if (!out.length) {
+    return d ? 'Live director digest is up, but the program snapshot is unavailable. Agents/queue/leads shown in the panels above.'
+             : 'Program snapshot unavailable and the Director API is not deployed on this environment. Live panels above still show what I can see.';
+  }
+  return staleWarn + out.join('\n');
+}
+
+// A tight, natural SPOKEN version of the full status (so AXIS talks fast, not read-aloud bullets).
+function axisSpeakableStatus(d, feed) {
+  if (feed && feed.program) {
+    const p = feed.program;
+    const lanes = Array.isArray(feed.lanes) ? feed.lanes.length : 0;
+    const needs = (feed && Array.isArray(feed.needsAhmad)) ? feed.needsAhmad.length : 0;
+    let s = 'Series ' + p.series + ' client-ready is ' + p.pct + ' percent — ' + p.tasksMerged + ' of ' + p.tasksTotal + ' merged, tests green. ';
+    if (lanes) s += lanes + ' build lanes running. ';
+    if (needs) s += needs + ' thing' + (needs !== 1 ? 's' : '') + ' wait' + (needs === 1 ? 's' : '') + ' on you, one-click. ';
+    if (feed.onTrack) s += 'On track.';
+    return s;
+  }
+  if (d && d.agents) return (d.agents.active ?? 0) + ' of ' + (d.agents.total ?? 0) + ' agents active. Live panels are up.';
+  return 'Program snapshot is unavailable right now. Check the live panels above.';
+}
+
+function axisFormatAgents(d) {
+  if (!d) return 'Agent roster unavailable (Director API not deployed on this environment).';
+  const active = d.agents ? (d.agents.active ?? 0) : 0;
+  const total  = d.agents ? (d.agents.total  ?? 0) : 0;
+  let out = active + ' of ' + total + ' agents are active.';
+  const pending = Array.isArray(d.queue && d.queue.newestPending) ? d.queue.newestPending.slice(-4) : [];
+  if (pending.length) {
+    out += '\n\nMost recent tasks dispatched:';
+    pending.forEach((t) => { out += '\n• ' + (t.target || 'agent') + ': ' + String((t.payload && t.payload.instruction) || '').slice(0, 100); });
+  }
+  return out;
+}
+
+function axisFormatLeads(d) {
+  if (!d) return 'Lead radar unavailable (Director API not deployed on this environment).';
+  const count   = d.leads ? (d.leads.count ?? 0) : 0;
+  const hot     = d.leads ? (d.leads.hot ?? 0) : 0;
+  const scanned = d.leads ? (d.leads.scanned ?? 0) : 0;
+  const matches = Array.isArray(d.leads && d.leads.matches) ? d.leads.matches : [];
+  if (!count && !matches.length) return 'No Lead Radar matches at this time. Director continues scanning (scanned ' + scanned + ' sources).';
+  let out = count + ' match' + (count !== 1 ? 'es' : '') + (hot ? ' · ' + hot + ' hot' : '') + (scanned ? ' · ' + scanned + ' scanned' : '') + ':';
+  matches.slice(0, 5).forEach((m, i) => {
+    out += '\n' + (i + 1) + '. ' + (m.hot ? '⚡ ' : '') + (m.title || 'Untitled');
+    if (m.org) out += ' — ' + m.org;
+    if (m.close) out += ' (closes ' + m.close + ')';
+  });
+  return out;
+}
+
+function axisFormatQueue(d) {
+  if (!d) return 'Queue unavailable (Director API not deployed on this environment).';
+  const pending = d.queue ? (d.queue.pending ?? 0) : 0;
+  const failed  = d.queue ? (d.queue.failed  ?? 0) : 0;
+  let out = pending + ' task' + (pending !== 1 ? 's' : '') + ' pending in queue' + (failed ? ', ' + failed + ' recently failed' : '') + '.';
+  const newest = Array.isArray(d.queue && d.queue.newestPending) ? d.queue.newestPending.slice(-5).reverse() : [];
+  if (newest.length) {
+    out += '\n\nTop queued items:';
+    newest.forEach((t) => { out += '\n• ' + (t.target || 'agent') + ': ' + String((t.payload && t.payload.instruction) || '').slice(0, 120); });
+  } else { out += ' Queue appears empty or data not available.'; }
+  return out;
+}
+
+function axisFormatApprovals(d) {
+  if (!d) return 'Approval gate info unavailable (Director API not deployed on this environment).';
+  const gates = Array.isArray(d.policy && d.policy.requiresApproval) ? d.policy.requiresApproval : [];
+  let out = 'Active approval gates:';
+  if (gates.length) {
+    gates.slice(0, 6).forEach((g) => { out += '\n• ' + g; });
+  } else {
+    out += '\n• Default gate — Ahmad approval required before spend, outreach, public commitments, credentials, or irreversible actions.';
+  }
+  const pending = Array.isArray(d.events && d.events.attention) ? d.events.attention : [];
+  if (pending.length) {
+    out += '\n\n' + pending.length + ' item' + (pending.length !== 1 ? 's' : '') + ' need attention:';
+    pending.slice(0, 4).forEach((e) => { out += '\n• ' + (e.kind || 'attention') + ': ' + (e.error || e.agentId || 'Review required'); });
+  }
+  return out;
+}
+
+function axisHelp() {
+  return 'I can answer:\n  status / brief — live overview\n  agents / roster — fleet status\n  leads / radar — Lead Radar matches\n  queue / pending — queued work\n  approvals / gates — what needs Ahmad sign-off\n\nFor anything else I cannot reason about live state yet, but I can show you what I know.';
+}
+
+// Fallback for unrecognized asks — honest, never "Brain busy."
+function axisUnknownFallback(q, d, feed) {
+  const base = 'I don\'t have a specific handler for "' + String(q).slice(0, 60) + '" yet. Here\'s the live state I can see:';
+  const status = axisFormatStatus(d, feed);
+  return base + '\n\n' + status + '\n\nTry: status · agents · leads · queue · approvals · help';
+}
+
+/* ── AXIS VOICE — talk to AXIS, it talks back (free, browser Web Speech API; no paid API, no LLM) ── */
+let __axisRecog = null;          // active SpeechRecognition instance while listening
+let __axisVoiceOn = true;        // speak replies aloud by default (Ahmad: "I want to talk, it's faster")
+
+// Pick a natural English (male-leaning) voice when the OS offers one; else default.
+function axisPickVoice() {
+  try {
+    const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
+    return vs.find((v) => /^en(-|_)?(US|GB|CA|AU)?/i.test(v.lang) && /(david|daniel|alex|george|fred|arthur|guy|male|mark|james)/i.test(v.name))
+        || vs.find((v) => /^en/i.test(v.lang))
+        || vs[0] || null;
+  } catch (_) { return null; }
+}
+
+// Speak a concise string aloud (strips bullet glyphs / collapses whitespace for natural speech).
+function axisSpeak(text) {
+  try {
+    if (!window.speechSynthesis || !__axisVoiceOn) return;
+    const clean = String(text || '').replace(/[•·⚠🔊🔇🎙●]/g, ' ').replace(/\s*\n+\s*/g, '. ').replace(/\s+/g, ' ').trim();
+    if (!clean) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(clean);
+    const v = axisPickVoice(); if (v) { u.voice = v; u.lang = v.lang; }
+    u.rate = 1.04; u.pitch = 0.96;
+    speechSynthesis.speak(u);
+  } catch (_) {}
+}
+
+function axisSetMicState(on) {
+  const b = $('axis-mic');
+  if (!b) return;
+  b.textContent = on ? '● listening…' : '🎙 Talk';
+  b.style.borderColor = on ? 'rgba(34,225,255,.6)' : 'rgba(255,255,255,.18)';
+  b.style.color = on ? '#22e1ff' : '';
+}
+
+// Push-to-talk: start/stop mic. Transcript auto-fills the input and sends.
+window.axisMicToggle = function() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { axisAppendBubble('axis', 'Voice input needs Chrome or Edge (Web Speech API). You can still type your question.'); return; }
+  if (__axisRecog) { try { __axisRecog.stop(); } catch (_) {} __axisRecog = null; axisSetMicState(false); return; }
+  let rec;
+  try { rec = new SR(); } catch (_) { axisAppendBubble('axis', 'Could not start the microphone.'); return; }
+  rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
+  rec.onresult = (e) => {
+    const t = (e.results && e.results[0] && e.results[0][0] && e.results[0][0].transcript) || '';
+    const inp = $('axis-chat-in'); if (inp && t) inp.value = t;
+    axisSetMicState(false); __axisRecog = null;
+    if (t) window.axisChatSend();
+  };
+  rec.onerror = (e) => { axisSetMicState(false); __axisRecog = null; if (e && e.error === 'not-allowed') axisAppendBubble('axis', 'Microphone permission was blocked. Allow mic access to talk to me.'); };
+  rec.onend = () => { axisSetMicState(false); __axisRecog = null; };
+  __axisRecog = rec; axisSetMicState(true);
+  try { rec.start(); } catch (_) { axisSetMicState(false); __axisRecog = null; }
+};
+
+// Toggle whether replies are spoken aloud.
+window.axisVoiceToggle = function() {
+  __axisVoiceOn = !__axisVoiceOn;
+  const b = $('axis-speak');
+  if (b) { b.textContent = __axisVoiceOn ? '🔊 Voice on' : '🔇 Voice off'; b.style.opacity = __axisVoiceOn ? '1' : '.55'; }
+  if (__axisVoiceOn) axisSpeak('Voice on. Ask me for a status update.');
+  else if (window.speechSynthesis) speechSynthesis.cancel();
+};
+
+// Main AXIS chat send handler — deterministic (no LLM, never "Brain busy"), now voice-aware.
+window.axisChatSend = async function() {
+  const inp = $('axis-chat-in');
+  if (!inp) return;
+  const q = (inp.value || '').trim();
+  if (!q) return;
+  inp.value = '';
+  inp.disabled = true;
+  const sendBtn = $('axis-chat-send');
+  if (sendBtn) sendBtn.disabled = true;
+
+  axisAppendBubble('user', q);
+  const thinking = axisAppendBubble('axis', '…', true);
+
+  let reply = '';
+  let speak = '';
+  try {
+    const intent = axisClassifyIntent(q);
+    if (intent === 'help') {
+      reply = axisHelp();
+      speak = 'I can tell you status, agents, leads, queue, or approvals. Just ask.';
+    } else {
+      // Pull the honest program-status feed (always) + the live director digest (when deployed). Both deterministic, no LLM.
+      const [feed, digest] = await Promise.all([
+        axisFetchStatusFeed(),
+        (async () => { try { const r = await fetch('/api/senior-director-agent', { headers: authHeaders(), cache: 'no-store' }); if (r.ok) { const j = await r.json(); return j.digest || null; } } catch (_) {} return null; })()
+      ]);
+
+      if (intent === 'status')         { reply = axisFormatStatus(digest, feed); speak = axisSpeakableStatus(digest, feed); }
+      else if (intent === 'agents')    { reply = axisFormatAgents(digest); speak = reply; }
+      else if (intent === 'leads')     { reply = axisFormatLeads(digest); speak = reply; }
+      else if (intent === 'queue')     { reply = axisFormatQueue(digest); speak = reply; }
+      else if (intent === 'approvals') { reply = axisFormatApprovals(digest); speak = reply; }
+      else                             { reply = axisUnknownFallback(q, digest, feed); speak = axisSpeakableStatus(digest, feed); }
+    }
+  } catch (e) {
+    reply = 'I ran into an issue fetching live state (' + (e && e.message ? e.message.slice(0, 80) : 'network error') + '). '
+      + 'Live panels above show the current status. Try: status · agents · leads · queue · approvals';
+    speak = 'I hit a snag fetching live state. The panels above still show the current status.';
+  }
+
+  if (thinking && thinking.parentNode) {
+    thinking.textContent = reply;
+    delete thinking.dataset.loading;
+  } else {
+    axisAppendBubble('axis', reply);
+  }
+  axisSpeak(speak || reply);
+
+  inp.disabled = false;
+  if (sendBtn) sendBtn.disabled = false;
+  inp.focus();
+};
+
+// Wire Enter-to-send + warm up the speech-synth voice list (voices load async in Chrome).
+document.addEventListener('DOMContentLoaded', function() {
+  const inp = $('axis-chat-in');
+  if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') window.axisChatSend(); });
+  try { if (window.speechSynthesis) { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = function(){ speechSynthesis.getVoices(); }; } } catch (_) {}
+});
+
+// Export for unit tests (B4 + voice suite).
+if (typeof module !== 'undefined') {
+  module.exports = { axisClassifyIntent, axisFormatStatus, axisFormatAgents, axisFormatLeads, axisFormatQueue, axisFormatApprovals, axisHelp, axisUnknownFallback, axisSpeakableStatus, axisAgo };
 }
