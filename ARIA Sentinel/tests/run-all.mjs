@@ -2,6 +2,8 @@
 // Every suite runs in its own try/catch; one missing file or throw can no longer hide the rest. A final
 // PASS/FAIL summary lists the reds. Pass --bail to opt back into fail-fast (stop on the first red).
 const TESTS = [
+  // SECURITY LOCKDOWN 2026-07-01 — repo-level deploy-safety denylist (lives at repo root; runs first).
+  "../../tests/deploy-safety-denylist.test.mjs",
   "./scenario-suite.mjs",
   "./extension.test.mjs",
   "./endpoint.test.mjs",
