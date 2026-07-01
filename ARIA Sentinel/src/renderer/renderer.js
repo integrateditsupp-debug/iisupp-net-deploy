@@ -1390,6 +1390,7 @@ async function loadCompliance() {
     setHtml("compTier0", ComplianceTab.tier0RowsHtml(c.tier0 || {}));
     setHtml("compR11", ComplianceTab.r11RowsHtml(c.r11 || {}));
     setHtml("compFrameworks", ComplianceTab.frameworkTilesHtml(c.frameworks || {}));
+    setHtml("compTrust", ComplianceTab.trustPostureHtml(c.trust || {})); // RUN-B B3 — honest trust/security surface
   } catch (e) { reportRendererError(e, "compliance"); }
 }
 

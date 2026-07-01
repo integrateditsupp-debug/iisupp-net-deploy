@@ -114,6 +114,7 @@ import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord } from ".
 import { conversionMoment, buildCaseStudy, caseStudyReadiness } from "../shared/case-study.mjs"; // RUN-D D2 — pilot->paid capture, wired
 import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %
 import { valueProof, valueProofKpis } from "../shared/value-proof.mjs"; // RUN-B B2 — real ROI ($/hours) + deflection on every surface
+import { buildTrustSummary } from "../shared/trust-posture.mjs"; // RUN-B B3 — honest trust/security surface (real-or-empty)
 import {
   getServiceNowConfig,
   ping as snPing,
@@ -933,7 +934,8 @@ function complianceData() {
     privacy: { pass: true, allowlistOk: true, sanitization: 100, ts: store.get("lastPrivacyCapture")?.ts || "" },
     tier0: { blocked: (store.get("tier0Blocked") || 0), categories: [] },
     r11: r11EnforcementStatus(store.get("r11Attempts") || 0, new Date().toISOString()),
-    frameworks: compositeScores()
+    frameworks: compositeScores(),
+    trust: trustPostureNow() // RUN-B B3 — honest trust/security surface (real-or-empty)
   };
 }
 
@@ -1474,6 +1476,13 @@ function valueProofNow() {
   const log = store.get("transparencyLog") || [];
   const fixes = log.filter((e) => e.tag === "RUN").length;
   return valueProof({ fixes, outcomeEvents: resolutionOutcomesLog() });
+}
+// RUN-B B3 — the honest trust/security surface, real-or-empty. Same real signals B1/B2 use: audit-log RUN
+// count for fixes + the real "was this fixed?" outcomes for deflection. No seeded values, no cert we don't hold.
+function trustPostureNow() {
+  const log = store.get("transparencyLog") || [];
+  const fixes = log.filter((e) => e.tag === "RUN").length;
+  return buildTrustSummary({ resolutionEvents: resolutionOutcomesLog(), fixes });
 }
 // RUN-B B5 - globe "issue resolved | email sent | ticket reference" confirmation. Everything real (Rule 14):
 // fires ONLY after a real applied+verified fix, mints+RECORDS a real ticket reference, sends the real
@@ -3284,6 +3293,7 @@ ipcMain.handle("sentinel:case-study-draft", (_event, opts) => caseStudyDraftNow(
 ipcMain.handle("sentinel:resolution-outcome", (_event, payload) => recordResolutionOutcome(payload || {})); // RUN-B B1 — "Was this fixed?" real outcome
 ipcMain.handle("sentinel:resolution-stats", () => resolutionStatsNow());                                     // RUN-B B1 — real deflection %
 ipcMain.handle("sentinel:value-proof", () => valueProofNow());                                                // RUN-B B2 — real ROI + deflection value proof
+ipcMain.handle("sentinel:trust-posture", () => trustPostureNow());                                            // RUN-B B3 — honest trust/security surface
 ipcMain.handle("sentinel:check-updates", () => checkForUpdates());
 ipcMain.handle("sentinel:manage-subscription", () => manageSubscription());
 ipcMain.handle("sentinel:get-settings", () => ({ showFloatingGlobe: store.get("showFloatingGlobe") !== false, lowPower: Boolean(store.get("lowPower")) }));

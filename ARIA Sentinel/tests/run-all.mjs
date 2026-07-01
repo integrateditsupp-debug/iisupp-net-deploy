@@ -252,6 +252,7 @@ const TESTS = [
   "./value-proof.test.mjs",   // RUN-B B2 — real ROI $/hours + real deflection on every surface (real-or-empty)
   // RUN-B B5 (2026-07-01) — under-globe "issue resolved | email sent | ticket ref" confirmation (real-or-empty; desktop overlay + web mirror parity).
   "./b5-globe-confirmation.test.mjs",
+  "./b3-trust-posture.test.mjs",   // RUN-B B3 — honest trust/security surface (no over-claim, real-or-empty)
 ];
 
 const bail = process.argv.includes("--bail");
