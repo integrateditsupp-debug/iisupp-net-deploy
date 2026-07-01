@@ -1,1 +1,0 @@
-Backup of the prior LIVE aria-research.mjs (commit cfbda55), taken before deploying the 2026-05-28 answering fixes (gate-skip-on-known-state, apostrophe symptom detection, broadened thanks/social, tone). Restore: cp this file back to netlify/functions/aria-research.mjs, or git checkout the prior commit, or republish a prior Netlify deploy.

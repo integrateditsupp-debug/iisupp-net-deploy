@@ -1,7 +1,0 @@
-﻿{
-    "taskName":  "IIS Opportunity Quality Gate Hourly",
-    "rule":  "Park weak-fit opportunities before routing/prep. No external action.",
-    "mode":  "opportunity quality gate",
-    "installedAt":  "2026-06-11T14:26:49.5912990-04:00",
-    "intervalMinutes":  60
-}

@@ -1,7 +1,0 @@
-﻿{
-    "taskName":  "IIS Opportunity Prep Packets Hourly",
-    "rule":  "Refresh CEO-final-action packets without sending, submitting, applying, creating accounts, paying, signing, or certifying.",
-    "mode":  "opportunity prep packet refresh",
-    "installedAt":  "2026-06-11T12:56:54.3271916-04:00",
-    "intervalMinutes":  60
-}

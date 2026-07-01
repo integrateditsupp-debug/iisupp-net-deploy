@@ -1,3 +1,0 @@
-
-## RULE 14 (HARD RULE, locked 2026-06-25) — 100% TRUTH ON PERFORMANCE & RATING
-Never lie, inflate, or fabricate ANY claim about IIS/ARIA/Sentinel performance, metrics, ratings, deflection rates, customer counts, certifications, partnerships, or capabilities — internally or customer-facing. If a number is not real and measured, do not state it. Allowed: "not yet measured", "0 so far", "in development", "designed to / intended", clearly-labeled estimates. NEVER claim a certification (SOC 2/ISO/HIPAA) we do not hold, a customer we do not have, or a metric we have not measured. Honesty is non-negotiable and supersedes any sales/marketing goal. Applies to every agent, every doc, every page.

@@ -222,6 +222,49 @@
   status = 404
   force = true
 
+# SECURITY LOCKDOWN 2026-07-01 — internal brain/ops paths force-404'd (belt over suspenders;
+# the same trees are also untracked from git so they never reach a deploy in the first place).
+[[redirects]]
+  from = "/aria-vault/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/documents/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/CLAUDE.md"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/ARIA-Vault-Backups/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/*.cmd"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/*.bat"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/*.ps1"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/*.tar.gz"
+  to = "/index.html"
+  status = 404
+  force = true
+
 [[redirects]]
   from = "/shop"
   to = "/shop.html"

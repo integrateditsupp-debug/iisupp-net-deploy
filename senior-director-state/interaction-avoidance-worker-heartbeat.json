@@ -1,7 +1,0 @@
-﻿{
-    "taskName":  "IIS Interaction Avoidance Agent Hourly",
-    "rule":  "Create agent prep packets before asking Ahmad; stop at hard risk gates and final external actions.",
-    "mode":  "interaction avoidance and prep routing",
-    "installedAt":  "2026-06-11T11:32:22.7269246-04:00",
-    "intervalMinutes":  60
-}
