@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld("sentinel", {
   caseStudyDraft: (opts) => ipcRenderer.invoke("sentinel:case-study-draft", opts),   // RUN-D D2 (staged draft)
   resolutionOutcome: (payload) => ipcRenderer.invoke("sentinel:resolution-outcome", payload), // RUN-B B1 — "Was this fixed?"
   resolutionStats: () => ipcRenderer.invoke("sentinel:resolution-stats"),                     // RUN-B B1 — real deflection %
+  valueProof: () => ipcRenderer.invoke("sentinel:value-proof"),                              // RUN-B B2 — real ROI + deflection value proof
   setMode: (mode, optIn) => ipcRenderer.invoke("sentinel:set-mode", mode, optIn),
   pauseAutonomous: (choice) => ipcRenderer.invoke("sentinel:pause-autonomous", choice),
   setNotify: (config) => ipcRenderer.invoke("sentinel:set-notify", config),

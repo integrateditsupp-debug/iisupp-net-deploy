@@ -24,7 +24,7 @@ const esc = (v) => sanitizeText(String(v == null ? "" : v)).replace(/[&<>"']/g, 
 export function executiveSummary(data = {}) {
   const k = data.kpis || {};
   return [
-    `ARIA Sentinel resolved ${k.incidents ?? 0} incidents this quarter, ${k.autoPct == null ? "--" : k.autoPct + "%"} automatically, saving ~${k.hoursSaved == null ? "--" : k.hoursSaved} hours of L1 effort.`,
+    `ARIA Sentinel resolved ${k.incidents ?? 0} incidents this quarter, ${k.autoPct == null ? "--" : k.autoPct + "%"} automatically, saving ~${k.hoursSaved == null ? "--" : k.hoursSaved} hours of L1 effort.${k.deflectionPct == null ? "" : ` ${k.deflectionPct}% of issues were resolved first-touch${k.dollarsSaved == null ? "" : ` (~$${Number(k.dollarsSaved).toLocaleString("en-US")} of L1 effort avoided)`}.`}`,
     `SLA compliance held at ${data.sla?.composite == null ? "--" : data.sla.composite + "%"} against a ${data.sla?.floor == null ? "--" : data.sla.floor + "%"} contractual floor, with ${data.sla?.breaches ?? 0} breach(es).`,
     `Audit integrity verified, privacy verifier passing, and the protected private folder was never accessed (R11 enforced).`
   ];
@@ -38,7 +38,7 @@ export function buildSections(data = {}) {
     { id: "kpis", title: "Quarter-over-quarter KPIs", rows: (data.kpiTable || []).map((r) => ({ label: esc(r.label), value: esc(r.value), delta: esc(r.delta || "") })) },
     { id: "sla", title: "SLA achievement", rows: Object.entries(data.sla?.categories || {}).map(([k2, v]) => ({ label: esc(k2), value: esc(v) })) },
     { id: "incidents", title: "Top incidents resolved", rows: (data.topIncidents || []).map((i) => ({ label: esc(i.title), value: esc(i.outcome) })) },
-    { id: "roi", title: "Hours of human work avoided", value: esc(`${k.hoursSaved == null ? "--" : k.hoursSaved} hours (${k.incidents ?? 0} incidents)`) },
+    { id: "roi", title: "Hours of human work avoided", value: esc(`${k.hoursSaved == null ? "--" : k.hoursSaved} hours${k.dollarsSaved == null ? "" : ` = $${Number(k.dollarsSaved).toLocaleString("en-US")}`} (${k.incidents ?? 0} incidents${k.deflectionPct == null ? "" : `, ${k.deflectionPct}% resolved first-touch`})`) },
     { id: "compliance", title: "Compliance posture", rows: Object.entries(data.compliance || {}).map(([fw, s]) => ({ label: esc(fw.toUpperCase()), value: esc(`${s.score}/100 (${s.badge})`) })) },
     { id: "recurring", title: "Recurring issues + recommended fixes", rows: (data.recurring || []).map((r) => ({ label: esc(r.issue), value: esc(r.fix) })) },
     { id: "upcoming", title: "Next-quarter upcoming work", lines: (data.upcoming || []).map(esc) },

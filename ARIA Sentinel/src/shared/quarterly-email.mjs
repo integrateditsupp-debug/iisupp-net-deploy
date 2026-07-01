@@ -23,14 +23,22 @@ export function emailBody(data = {}) {
   const k = data.kpis || {};
   const em = (v) => (v == null ? "--" : v);
   const pct = (v) => (v == null ? "--" : `${v}%`);
+  const dollars = (v) => (v == null ? "--" : `$${Number(v).toLocaleString("en-US")}`); // RUN-B B2 — real-or-empty $
   const tiles = [
     ["Uptime (7d)", pct(k.uptime7d)],
     ["MTTR (min)", em(k.mttr)],
     ["Diagnosis accuracy", pct(k.accuracy)],
     ["SLA breaches", `${k.breaches ?? 0}`],
     ["Hours saved", em(k.hoursSaved)],
+    ["Value saved", dollars(k.dollarsSaved)],            // RUN-B B2 — real ROI $ (real-or-empty)
+    ["Resolved first-touch", pct(k.deflectionPct)],      // RUN-B B2 — real deflection % (real-or-empty)
     ["Version", `${k.version || "0.1.0"}`]
   ];
+  // RUN-B B2 — value-proof sentence, real-or-empty (nothing rendered until a real $ or a real deflection exists).
+  const _vBits = [];
+  if (k.dollarsSaved != null) _vBits.push(`<b>${esc(dollars(k.dollarsSaved))}</b> of L1 effort avoided`);
+  if (k.deflectionPct != null) _vBits.push(`<b>${esc(k.deflectionPct)}%</b> of issues resolved first-touch${(k.resolved != null && k.conversations != null) ? ` (${esc(k.resolved)}/${esc(k.conversations)})` : ""}`);
+  const valueLine = _vBits.length ? `<p style="font-size:14px">Value proof: ${_vBits.join(", ")}.</p>` : "";
   const cards = tiles.map(([label, value]) =>
     `<td style="padding:10px 14px;border:1px solid #e6dcc2;border-radius:8px"><div style="color:#8b6d2f;font-size:11px">${esc(label)}</div><div style="font-size:20px;color:#111"><b>${esc(value)}</b></div></td>`
   ).join("");
@@ -38,6 +46,7 @@ export function emailBody(data = {}) {
   <h1 style="font-size:20px;margin:0 0 4px">ARIA Sentinel — ${esc(data.quarter || "")} report</h1>
   <p style="color:#666;margin:0 0 16px">${esc(data.company || "your organization")}</p>
   <p style="font-size:14px">ARIA resolved <b>${esc(k.incidents ?? 0)}</b> incidents this quarter, <b>${esc(k.autoPct == null ? "--" : k.autoPct + "%")}</b> automatically, saving ~<b>${esc(em(k.hoursSaved))}</b> hours.</p>
+  ${valueLine}
   <table style="border-collapse:separate;border-spacing:8px"><tr>${cards}</tr></table>
   <p style="margin-top:18px"><a href="${esc(data.reportUrl || "https://iisupp.net/aria-sentinel/")}" style="background:#c5a059;color:#1a1410;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">View full report</a></p>
   <p style="color:#888;font-size:11px;margin-top:20px">Content-blind report. No usernames, machine names, file paths, or personal data is included.</p>

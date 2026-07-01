@@ -112,6 +112,7 @@ import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge } from ".
 import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord } from "../shared/pilot-state.mjs";
 import { conversionMoment, buildCaseStudy, caseStudyReadiness } from "../shared/case-study.mjs"; // RUN-D D2 — pilot->paid capture, wired
 import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %
+import { valueProof, valueProofKpis } from "../shared/value-proof.mjs"; // RUN-B B2 — real ROI ($/hours) + deflection on every surface
 import {
   getServiceNowConfig,
   ping as snPing,
@@ -883,10 +884,11 @@ function dashboardData() {
   if (pilotPrompt && pilotPrompt.show) pending.push({ text: pilotPrompt.title, cta: pilotPrompt.cta, tab: "about" });
   const conv = conversionMomentNow(); // RUN-D D2 — day-10-14 pilot->paid moment on the SAME pilot-expiry surface
   if (conv && conv.show) pending.push({ text: conversionPendingText(conv), cta: conv.cta.label, tab: "about", path: conv.cta.path });
+  const vp = valueProofNow(); // RUN-B B2 — real-or-empty ROI ($/hours) + deflection for the dashboard hero
   return {
     sources,
     subline: { eventsToday: log.length, threats: 0, lastSyncAgo: upd.lastCheckAt ? relativeAgo(upd.lastCheckAt) : "just now" },
-    metrics: { uptime7d: null, mttr: null, accuracy: null, breaches: 0, hoursSaved: null, deflection: resolutionStatsNow().deflectionPct, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
+    metrics: { uptime7d: null, mttr: null, accuracy: null, breaches: 0, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflection: resolutionStatsNow().deflectionPct, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
     pending,
     activity: recentLog(10),
     trust: "🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization"
@@ -939,11 +941,12 @@ function reportData(now = Date.now()) {
   const perf = performanceData();
   const sla = slaData();
   const comp = complianceData();
+  const vp = valueProofNow(); // RUN-B B2 — real ROI ($/hours) + deflection into the report/email kpis (real-or-empty)
   return {
     license: (readLicense() || {}).key ? String(readLicense().key).slice(0, 16) : "trial",
     company: "your organization", // content-blind: never the real machine/user name
     quarter: quarterOf(now),
-    kpis: { incidents: perf.ai.diagnoses || 0, autoPct: perf.operational.autoPct, hoursSaved: perf.ai.hoursSaved, accuracy: perf.ai.accuracy, breaches: (sla.breaches || []).length, uptime7d: sla.uptime.d7, mttr: perf.operational.mttr, version: SENTINEL_VERSION },
+    kpis: { incidents: perf.ai.diagnoses || 0, autoPct: perf.operational.autoPct, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflectionPct: vp.deflectionPct, resolved: vp.resolved, conversations: vp.conversations, accuracy: perf.ai.accuracy, breaches: (sla.breaches || []).length, uptime7d: sla.uptime.d7, mttr: perf.operational.mttr, version: SENTINEL_VERSION },
     sla: { composite: sla.compliance.composite, floor: sla.compliance.floor, breaches: (sla.breaches || []).length, categories: { uptime: `${sla.compliance.uptime}%`, met: sla.compliance.met ? "yes" : "no" } },
     compliance: { soc2: comp.frameworks.soc2, hipaa: comp.frameworks.hipaa, pipeda: comp.frameworks.pipeda, gdpr: comp.frameworks.gdpr },
     topIncidents: [], recurring: [], upcoming: ["Continue automated patching", "Quarterly SLA review"]
@@ -1464,6 +1467,13 @@ function pilotMetricsNow() {
 // locally (no external send); the metric is real-or-empty and moves ONLY on a real resolved outcome.
 function resolutionOutcomesLog() { return store.get("resolutionOutcomes") || []; }
 function resolutionStatsNow() { return deflectionStats(resolutionOutcomesLog()); }
+// RUN-B B2 — the ONE real-or-empty value proof (ROI $/hours + real deflection %) every surface renders. fixes =
+// the SAME audit-log RUN count the D2 pilot proof uses; outcomes = the real B1 "was this fixed?" events.
+function valueProofNow() {
+  const log = store.get("transparencyLog") || [];
+  const fixes = log.filter((e) => e.tag === "RUN").length;
+  return valueProof({ fixes, outcomeEvents: resolutionOutcomesLog() });
+}
 function recordResolutionOutcome(payload = {}) {
   const res = recordResolutionEvent(resolutionOutcomesLog(), payload || {});
   if (!res.ok) return { ok: false, errors: res.errors, stats: resolutionStatsNow() };
@@ -3200,6 +3210,7 @@ ipcMain.handle("sentinel:conversion-moment", () => conversionMomentNow());      
 ipcMain.handle("sentinel:case-study-draft", (_event, opts) => caseStudyDraftNow(opts || {}));  // RUN-D D2 — staged, never auto-publish
 ipcMain.handle("sentinel:resolution-outcome", (_event, payload) => recordResolutionOutcome(payload || {})); // RUN-B B1 — "Was this fixed?" real outcome
 ipcMain.handle("sentinel:resolution-stats", () => resolutionStatsNow());                                     // RUN-B B1 — real deflection %
+ipcMain.handle("sentinel:value-proof", () => valueProofNow());                                                // RUN-B B2 — real ROI + deflection value proof
 ipcMain.handle("sentinel:check-updates", () => checkForUpdates());
 ipcMain.handle("sentinel:manage-subscription", () => manageSubscription());
 ipcMain.handle("sentinel:get-settings", () => ({ showFloatingGlobe: store.get("showFloatingGlobe") !== false, lowPower: Boolean(store.get("lowPower")) }));

@@ -2,6 +2,7 @@
 // PURE: aggregation math + HTML render, no I/O. The netlify function feeds it content-blind events
 // and hands the HTML to Resend. No PII can enter because the inputs are already telemetry-events.
 import { isTelemetrySafe } from "./telemetry-event.mjs";
+import { DEFAULT_HOURLY_RATE } from "./roi.mjs"; // RUN-B B2 — real ROI $ from the same audited hourly rate
 
 // Rough minutes-saved-per-fix by tier (a fix a tech didn't have to do). Conservative defaults.
 const MINUTES_PER_FIX = { green: 12, yellow: 25 };
@@ -32,6 +33,8 @@ export function aggregateWeek(events = []) {
 
 export function renderDigestHtml(agg, meta = {}) {
   const hoursSaved = (agg.uptimeMinutes / 60).toFixed(1);
+  // RUN-B B2 — real ROI $ from this week's real fixes (real-or-empty: no fixes => no dollar figure).
+  const dollarsSaved = agg.fixes > 0 ? Math.round((agg.uptimeMinutes / 60) * DEFAULT_HOURLY_RATE) : null;
   const week = esc(meta.weekOf || "this week");
   const tenant = esc(meta.tenant || "your fleet");
   const rows = (agg.top3.length ? agg.top3 : [{ recipeId: "—", count: 0 }])
@@ -43,6 +46,7 @@ export function renderDigestHtml(agg, meta = {}) {
   <table style="border-collapse:collapse;margin-bottom:18px">
     <tr><td style="padding:6px 18px 6px 0;color:#9a9a9a">Issues fixed</td><td style="font-size:22px;color:#7afbff"><b>${agg.fixes}</b></td></tr>
     <tr><td style="padding:6px 18px 6px 0;color:#9a9a9a">Time saved</td><td style="font-size:22px;color:#c5a059"><b>~${esc(hoursSaved)} hrs</b></td></tr>
+    <tr><td style="padding:6px 18px 6px 0;color:#9a9a9a">Value saved</td><td style="font-size:22px;color:#c5a059"><b>${dollarsSaved == null ? "&mdash;" : "$" + dollarsSaved.toLocaleString("en-US")}</b></td></tr>
     <tr><td style="padding:6px 18px 6px 0;color:#9a9a9a">Endpoints helped</td><td style="font-size:22px"><b>${agg.endpoints}</b></td></tr>
     <tr><td style="padding:6px 18px 6px 0;color:#9a9a9a">Escalated to a human</td><td style="font-size:22px"><b>${agg.escalations}</b></td></tr>
   </table>

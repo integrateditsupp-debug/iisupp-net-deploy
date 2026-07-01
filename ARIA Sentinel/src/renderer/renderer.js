@@ -902,15 +902,23 @@ function wireFloatingGlobe() {
 }
 
 let roiApi = null;
+let valueProofApi = null; // RUN-B B2 — real-or-empty value proof (ROI + deflection)
 function wireRoi() {
   bindChange("roiRate", () => renderRoi(state));
 }
 async function renderRoi(next) {
   if (!roiApi) roiApi = await import("../shared/roi.mjs");
+  if (!valueProofApi) valueProofApi = await import("../shared/value-proof.mjs"); // RUN-B B2
   const log = (next && next.transparencyLog) || [];
   const fixes = log.filter((e) => e.tag === "RUN" && /^Executing/.test(e.text || "")).length;
   const rate = Number(qs("#roiRate")?.value) || roiApi.DEFAULT_HOURLY_RATE;
-  setText("roiSummary", roiApi.roiSummary(roiApi.computeRoi({ fixes, hourlyRate: rate })));
+  // RUN-B B2 — surface the real deflection % (B1) alongside ROI; honest empty-state until the first real fix.
+  const deflection = next && next.metrics ? next.metrics.deflection : null;
+  const roi = roiApi.computeRoi({ fixes, hourlyRate: rate });
+  const summary = fixes > 0
+    ? `${roiApi.roiSummary(roi)}${deflection == null ? "" : ` \u00b7 ${deflection}% resolved first-touch`}`
+    : valueProofApi.VALUE_PROOF_EMPTY;
+  setText("roiSummary", summary);
 }
 
 function wireLicense() {
