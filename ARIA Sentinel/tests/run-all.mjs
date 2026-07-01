@@ -245,6 +245,8 @@ const TESTS = [
   "./onboarding-activation.test.mjs",
   // RUN-D D2 (2026-07-01) — pilot->paid capture engine: case study real-or-empty + consent gate + conversion moment.
   "./d2-case-study.test.mjs",
+  // RUN-D D2 wiring (2026-07-01) — case-study/conversion-moment plumbed into main IPC + preload + pilot-expiry pending surface.
+  "./d2-wire-conversion.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

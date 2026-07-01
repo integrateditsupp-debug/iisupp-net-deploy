@@ -110,6 +110,7 @@ function currentIsAdmin() { return licenseIsAdmin(gateStatus()); }
 let hotkeyStatus = [];
 import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge } from "../shared/license.mjs";
 import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord } from "../shared/pilot-state.mjs";
+import { conversionMoment, buildCaseStudy, caseStudyReadiness } from "../shared/case-study.mjs"; // RUN-D D2 — pilot->paid capture, wired
 import {
   getServiceNowConfig,
   ping as snPing,
@@ -878,6 +879,8 @@ function dashboardData() {
   if (s.gate && s.gate.trial && s.gate.trial.state === "active") pending.push({ text: s.gate.trial.badge, cta: "Upgrade", tab: "about" });
   const pilotPrompt = pilotPromptNow();
   if (pilotPrompt && pilotPrompt.show) pending.push({ text: pilotPrompt.title, cta: pilotPrompt.cta, tab: "about" });
+  const conv = conversionMomentNow(); // RUN-D D2 — day-10-14 pilot->paid moment on the SAME pilot-expiry surface
+  if (conv && conv.show) pending.push({ text: conversionPendingText(conv), cta: conv.cta.label, tab: "about", path: conv.cta.path });
   return {
     sources,
     subline: { eventsToday: log.length, threats: 0, lastSyncAgo: upd.lastCheckAt ? relativeAgo(upd.lastCheckAt) : "just now" },
@@ -1447,6 +1450,31 @@ function dismissPilotPrompt(state) {
   store.set("pilotPromptDismissed", [...dismissed]);
   return { ok: true };
 }
+// RUN-D D2 — pilot->paid capture, fed by the SAME real signals the dashboard/performance tabs use.
+// fixes = audit-log RUN entries (real resolved fixes). Real-or-empty: 0 fixes or an immature pilot => no ask, ever.
+function pilotMetricsNow() {
+  const log = store.get("transparencyLog") || [];
+  return { fixes: log.filter((e) => e.tag === "RUN").length };
+}
+function conversionMomentNow() {
+  return conversionMoment({ pilot: readPilot(), metrics: pilotMetricsNow() });
+}
+function conversionPendingText(conv) {
+  const p = (conv && conv.proof) || {};
+  const bits = [];
+  if (p.fixes != null) bits.push(`${p.fixes} real fix${p.fixes === 1 ? "" : "es"}`);
+  if (p.hours_saved != null) bits.push(`${p.hours_saved}h saved`);
+  return bits.length ? `${conv.cta.label} \u2014 ${bits.join(" \u00b7 ")}` : conv.cta.label;
+}
+// Staged one-page proof — real-or-empty; NEVER auto-published (publish is Ahmad's consent-gated one-click).
+function caseStudyDraftNow(opts = {}) {
+  const pilot = readPilot();
+  const metrics = pilotMetricsNow();
+  return {
+    readiness: caseStudyReadiness({ pilot, metrics }),
+    draft: buildCaseStudy({ pilot, metrics, vertical: opts && opts.vertical })
+  };
+}
 function gateStatus() {
   const lic = licenseStatus();
   const trial = trialState();
@@ -1457,6 +1485,7 @@ function gateStatus() {
     email: lic.email,
     trial: { state: trial.state, remainingMs: trial.remainingMs, badge: trialBadge(trial.remainingMs) },
     pilot: { state: pilot.state, daysRemaining: pilot.daysRemaining, badge: pilotBadge(pilot) },
+    conversion: conversionMomentNow(), // RUN-D D2 — surfaced to renderer alongside the pilot block
     unlocked: licenseUnlocked({ licenseValid: lic.licensed, trialState: trial.state })
   };
 }
@@ -3152,6 +3181,8 @@ ipcMain.handle("sentinel:start-trial", (_event, email) => startTrial(email));
 ipcMain.handle("sentinel:start-pilot", (_event, intake) => startPilot(intake || {}));
 ipcMain.handle("sentinel:pilot-status", () => ({ status: pilotStateLocal(), prompt: pilotPromptNow() }));
 ipcMain.handle("sentinel:dismiss-pilot-prompt", (_event, state) => dismissPilotPrompt(state));
+ipcMain.handle("sentinel:conversion-moment", () => conversionMomentNow());                    // RUN-D D2
+ipcMain.handle("sentinel:case-study-draft", (_event, opts) => caseStudyDraftNow(opts || {}));  // RUN-D D2 — staged, never auto-publish
 ipcMain.handle("sentinel:check-updates", () => checkForUpdates());
 ipcMain.handle("sentinel:manage-subscription", () => manageSubscription());
 ipcMain.handle("sentinel:get-settings", () => ({ showFloatingGlobe: store.get("showFloatingGlobe") !== false, lowPower: Boolean(store.get("lowPower")) }));
