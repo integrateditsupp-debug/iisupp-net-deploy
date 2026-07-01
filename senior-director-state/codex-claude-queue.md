@@ -1585,3 +1585,13 @@ Memory: `feedback_shortest_path_first.md`. Full text in `STANDING-RULES-FOR-ALL-
 - **B3 — honest trust/security surface ($0 moat):** reconcile Trust Center + in-app Compliance/Privacy to reality — publish the self-assessment (CAIQ/SIG style), state plainly what we ARE / are NOT certified for, what data stays local, kill-switch, dry-run, tamper-evident audit, no-external-AI. No cert we don't have. Add a buyer-facing "How ARIA measures itself" explainer tied to the REAL B1/B2 metrics. **Exit:** every claim on the trust surface true+verifiable; a security-conscious SMB buyer's top questions answered; QA-safety pass (no over-claim).
 - **B6 — full regression sweep:** run the ENTIRE suite + a live smoke pass; list EVERY failing test / broken button / dead route / console error across Sentinel (all tabs) + web ARIA + aperture-learning.html; fix the quick ones, packet the rest (Rule 14 — report real failures, hide none).
 - **AHMAD ONE-CLICKS (not holds):** (a) B5 live-verify above; (b) commit `aria-vault/01_Frontal/Outreach-Template-Approved.md` (D3 send-ready); (c) optional: delete the stale `cc/run-a*/run-b*-2026-06-29` branches (superseded, never merged).
+
+
+---
+## [2026-07-01T19:01:13Z] Cowork-Flywheel record — RUN-B B3 DONE, B6 released
+**B3 (honest trust/security surface) is DONE + MERGED** (origin/main 09f6b0a..ecc2a94, verified via ls-remote; suite 204/204 green on merged HEAD). Shipped src/shared/trust-posture.mjs (honest source of truth + over-claim guard) + main/preload/compliance-tab/renderer wiring + web Trust Center "How ARIA measures itself" explainer + registered test b3-trust-posture.test.mjs. Rule 14: real-or-empty, no cert we don't hold; the over-claim guard now LOCKS every surface.
+
+### NEXT RELEASED (no hold): RUN-B B6 — full regression sweep
+- Automated portion already GREEN here: full Sentinel suite 204/204 + web funnel-link-guard (97 pages, 0 dead links) + site-pricing-guard (0 stale tier prices) on merged HEAD ecc2a94.
+- Remaining for B6 (needs a runtime — next run or Ahmad one-click): live Electron desktop smoke across all Sentinel tabs + web ARIA + aperture-learning.html; list any broken button / dead route / console error; fix quick ones, packet the rest (Rule 14 — report real failures, hide none).
+- **AHMAD ONE-CLICKS (not holds):** (a) B5 live-verify (trigger a safe fix / sentinel:globe-confirm-test → confirm the real email lands); (b) commit aria-vault/01_Frontal/Outreach-Template-Approved.md (D3 send-ready); (c) optional: delete the stale cc/run-a*/run-b*-2026-06-29 branches (superseded, never merged — do NOT merge them: they carry deleted inflated trust pages + 219k lines of stale corpus and would regress main).
