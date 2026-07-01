@@ -250,6 +250,8 @@ const TESTS = [
   // RUN-B B1 (2026-07-01) — "Was this fixed?" feedback loop -> real deflection %% (real-or-empty; feeds dashboard tile + D2 proof).
   "./resolution-outcome.test.mjs",
   "./value-proof.test.mjs",   // RUN-B B2 — real ROI $/hours + real deflection on every surface (real-or-empty)
+  // RUN-B B5 (2026-07-01) — under-globe "issue resolved | email sent | ticket ref" confirmation (real-or-empty; desktop overlay + web mirror parity).
+  "./b5-globe-confirmation.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

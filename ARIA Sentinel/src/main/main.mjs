@@ -87,6 +87,7 @@ import { parseSystemStatus, parseKbStats, parseSessions, parseHeartbeats } from 
 import { defaultAppConfig, shouldShowSetup, completeSetup, reopenSetup } from "../shared/app-config.mjs"; // RUN 33-E — setup wizard
 import { anchorTarget, tickAnchored } from "../shared/globe-anchor.mjs";
 import { dueGreeting, jitteredPeriod } from "../shared/globe-greetings.mjs";
+import { buildGlobeConfirmation, mintTicketRef, nextTicketSeq } from "../shared/globe-confirmation.mjs"; // RUN-B B5
 import { sealAudit, verifyAudit } from "../shared/audit-integrity.mjs";
 // RUN 23 — self-service loop: process-health detector · findings→action mapper · supervisor critic ·
 // vetted-tier dry-run policy · abortable 10s countdown gate. The supervisor + policy + countdown form the
@@ -1474,6 +1475,67 @@ function valueProofNow() {
   const fixes = log.filter((e) => e.tag === "RUN").length;
   return valueProof({ fixes, outcomeEvents: resolutionOutcomesLog() });
 }
+// RUN-B B5 - globe "issue resolved | email sent | ticket reference" confirmation. Everything real (Rule 14):
+// fires ONLY after a real applied+verified fix, mints+RECORDS a real ticket reference, sends the real
+// resolution email (reusing the proven Resend-backed sentinel-session-report function), and NEVER claims
+// "sent" unless the send actually returned success. The overlay renders it directly under the floating globe.
+const RESOLUTION_EMAIL_ENDPOINT = "https://iisupp.net/.netlify/functions/sentinel-session-report";
+
+function mintAndRecordTicketRef(serviceNowNumber = "") {
+  const prev = store.get("ticketSeq") || {};
+  const { day, seq } = nextTicketSeq(prev, Date.now());
+  store.set("ticketSeq", { day, seq });
+  const minted = mintTicketRef({ serviceNowNumber, seq });
+  // Record the reference in the tamper-evident transparency log so a local ref is never "random with no record".
+  logEvent("TICKET", `Ticket reference ${minted.ref} minted (${minted.source}).`, { ref: minted.ref, source: minted.source });
+  const refs = store.get("ticketRefs") || [];
+  refs.unshift(minted.record || { ref: minted.ref, source: minted.source, ts: new Date().toISOString() });
+  store.set("ticketRefs", refs.slice(0, 500));
+  return { ref: minted.ref, source: minted.source };
+}
+
+async function sendResolutionEmail({ issueTitle, ticketRef, sessionId } = {}) {
+  // Honest: no network in dry-run/test -> treat as not-attempted so the copy never claims a phantom send.
+  if (process.env.ARIA_SENTINEL_DRY_RUN === "1") return { attempted: false, sent: false, to: null };
+  const to = (licenseStatus().email || "").trim() || null;
+  const payload = {
+    sessionId: sessionId || `sentinel-${Date.now()}`,
+    outcome: "resolved",
+    endedAt: new Date().toISOString(),
+    issue: issueTitle,
+    ticketRef,
+    user: to ? { email: to } : {}
+  };
+  try {
+    const res = await fetch(RESOLUTION_EMAIL_ENDPOINT, {
+      method: "POST",
+      headers: { "content-type": "application/json", "user-agent": "aria-sentinel" },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout?.(9000)
+    });
+    return { attempted: true, sent: res.ok, to };
+  } catch {
+    return { attempted: true, sent: false, to };   // attempted but not confirmed -> honest "Email pending."
+  }
+}
+
+// Fire the under-globe confirmation for a REAL resolved+verified issue. Non-blocking; safe to call fire-and-forget.
+async function emitGlobeConfirmation({ issueTitle, serviceNowNumber = "", sessionId } = {}) {
+  try {
+    const { ref } = mintAndRecordTicketRef(serviceNowNumber);
+    const email = await sendResolutionEmail({ issueTitle, ticketRef: ref, sessionId });
+    const conf = buildGlobeConfirmation({ completed: true, verified: true, issueTitle, ticketRef: ref, email }, {});
+    if (!conf.show) return conf;
+    logEvent("RESOLVED", conf.text, { ticketRef: conf.ticketRef, emailSent: conf.email.sent });
+    if (overlayWindow && !overlayWindow.isDestroyed()) {
+      try { overlayWindow.webContents.send("sentinel:globe-confirmation", conf); } catch { /* overlay gone */ }
+    }
+    return conf;
+  } catch {
+    return { show: false, reason: "error" };
+  }
+}
+
 function recordResolutionOutcome(payload = {}) {
   const res = recordResolutionEvent(resolutionOutcomesLog(), payload || {});
   if (!res.ok) return { ok: false, errors: res.errors, stats: resolutionStatsNow() };
@@ -2417,6 +2479,11 @@ async function runRecipe(recipeId, options = {}) {
   if (!actualDryRun && isExecutableRecipe(recipe.id) && steps.every((s) => s.ok)) {
     const verified = await verifyRecipe(recipe.id);
     logEvent(verified.ok ? "DONE" : "REVIEW", `Verification for ${recipe.signal}: ${verified.ok ? "passed" : "inconclusive"}.`, { recipeId });
+    // RUN-B B5 - a REAL applied+verified fix: show the under-globe "resolved | email sent | ticket ref"
+    // confirmation (real email + real recorded ticket ref). Non-blocking; never fires on an unverified fix.
+    if (verified.ok) {
+      Promise.resolve(emitGlobeConfirmation({ issueTitle: recipe.title || recipe.signal, sessionId: executionId })).catch(() => {});
+    }
   }
   refreshHealthScore();
   const ok = steps.every((step) => step.ok);
@@ -3107,6 +3174,12 @@ ipcMain.handle("sentinel:pause-autonomous", (_event, choice) => {
 });
 ipcMain.handle("sentinel:set-notify", (_event, config = {}) => setNotifyConfig(config));
 ipcMain.handle("sentinel:test-notify", () => sendAutoFixNotify({ recipeId: "dns-fail-v1", signal: "NET.DNS.FAIL", outcome: "applied", endpoint: os.hostname(), durationMs: 0, tier: "green" }, { test: true }));
+// RUN-B B5 - lets Cowork/Ahmad trigger the under-globe confirmation live (records a real ticket ref + sends the
+// real resolution email, then renders the message under the globe) so the end-to-end can be seen + verified.
+ipcMain.handle("sentinel:globe-confirm-test", (_e, input = {}) => emitGlobeConfirmation({
+  issueTitle: (input && input.issueTitle) || "DNS lookup failed",
+  sessionId: (input && input.sessionId) || `test-${Date.now()}`
+}));
 ipcMain.handle("sentinel:set-dry-run", (_event, dryRun) => {
   store.set("dryRun", Boolean(dryRun));
   broadcastState();
