@@ -881,7 +881,7 @@ function dashboardData() {
   return {
     sources,
     subline: { eventsToday: log.length, threats: 0, lastSyncAgo: upd.lastCheckAt ? relativeAgo(upd.lastCheckAt) : "just now" },
-    metrics: { uptime7d: 100, mttr: 0, accuracy: 0, breaches: 0, hoursSaved: Math.round(fixes * 0.4 * 10) / 10, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
+    metrics: { uptime7d: null, mttr: null, accuracy: null, breaches: 0, hoursSaved: null, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
     pending,
     activity: recentLog(10),
     trust: "🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization"
@@ -895,7 +895,7 @@ function performanceData() {
   const diags = log.filter((e) => e.tag === "DIAGNOSE").length;
   return {
     operational: { mttd: 0, mttr: 0, ftr: 100, autoPct: 100, recipeSuccess: 100, detTrend: [] },
-    ai: { accuracy: 0, calibration: 100, confirmRate: 0, kbHitRate: 0, top3: 0, hoursSaved: Math.round(fixes * 0.4 * 10) / 10, costSaved: fixes * 50, anomalies: 0, diagnoses: diags },
+    ai: { accuracy: null, calibration: null, confirmRate: null, kbHitRate: null, top3: null, hoursSaved: null, costSaved: null, anomalies: 0, diagnoses: diags },
     usage: { activeToday: Math.round((Date.now() - startedAt) / 3600000), activeWeek: 0, topTier: "tier-0", hotkeys: (store.get("hotkeyUse") || 0) }
   };
 }

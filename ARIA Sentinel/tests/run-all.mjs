@@ -34,6 +34,7 @@ const TESTS = [
   "./roi-calc.test.mjs",
   "./license.test.mjs",
   "./c2-pilot-state.test.mjs",   // RUN-C C2 — free-pilot mechanic
+  "./a1-empty-state-no-fabrication.test.mjs",   // RUN-A A1 — Rule 14 real-or-empty (no fabricated metrics)
   "./auto-update.test.mjs",
   "./api-v1.test.mjs",
   "./patch-management.test.mjs",

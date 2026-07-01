@@ -52,11 +52,11 @@ export function kpiTile({ id, label, value, unit = "", values = [], prev = null 
 /** The six hero tiles from live state (Overview ROW 2). */
 export function heroTiles(m = {}) {
   return [
-    kpiTile({ id: "status", label: "Uptime (7d)", value: m.uptime7d ?? 100, unit: "%", values: m.uptimeTrend, prev: m.uptimePrev }),
-    kpiTile({ id: "mttr", label: "MTTR (min, 30d)", value: m.mttr ?? 0, values: m.mttrTrend, prev: m.mttrPrev }),
-    kpiTile({ id: "accuracy", label: "Diagnosis accuracy", value: m.accuracy ?? 0, unit: "%", values: m.accuracyTrend, prev: m.accuracyPrev }),
+    kpiTile({ id: "status", label: "Uptime (7d)", value: m.uptime7d, unit: "%", values: m.uptimeTrend, prev: m.uptimePrev }),
+    kpiTile({ id: "mttr", label: "MTTR (min, 30d)", value: m.mttr, values: m.mttrTrend, prev: m.mttrPrev }),
+    kpiTile({ id: "accuracy", label: "Diagnosis accuracy", value: m.accuracy, unit: "%", values: m.accuracyTrend, prev: m.accuracyPrev }),
     kpiTile({ id: "breaches", label: "SLA breaches MTD", value: m.breaches ?? 0, values: m.breachTrend, prev: m.breachPrev }),
-    kpiTile({ id: "hours", label: "Hours saved MTD", value: m.hoursSaved ?? 0, values: m.hoursTrend, prev: m.hoursPrev }),
+    kpiTile({ id: "hours", label: "Hours saved MTD", value: m.hoursSaved, values: m.hoursTrend, prev: m.hoursPrev }),
     kpiTile({ id: "update", label: "Version", value: m.version || "0.1.0", unit: m.updatePending ? " · update ready" : "" })
   ];
 }
