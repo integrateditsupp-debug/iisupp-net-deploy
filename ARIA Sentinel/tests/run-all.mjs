@@ -249,6 +249,7 @@ const TESTS = [
   "./d2-wire-conversion.test.mjs",
   // RUN-B B1 (2026-07-01) — "Was this fixed?" feedback loop -> real deflection %% (real-or-empty; feeds dashboard tile + D2 proof).
   "./resolution-outcome.test.mjs",
+  "./value-proof.test.mjs",   // RUN-B B2 — real ROI $/hours + real deflection on every surface (real-or-empty)
 ];
 
 const bail = process.argv.includes("--bail");
