@@ -1,10 +1,10 @@
 {
   "schema_version": "1.4",
   "label": "ARIA classifier + product autonomous loop",
-  "last_run_at": "2026-06-29T12:15:44Z",
-  "last_run_iso": "2026-06-29",
-  "total_runs": 30,
-  "cumulative_scenarios": 1523426,
+  "last_run_at": "2026-07-01T01:05:38Z",
+  "last_run_iso": "2026-06-30",
+  "total_runs": 32,
+  "cumulative_scenarios": 1602068,
   "last_session_scenarios": 39321,
   "last_pass_rate_pct": 94.6,
   "last_pass_count": 37185,
@@ -15,14 +15,14 @@
   "active_harness_corpus_size": 39321,
   "target_corpus_size": 500000,
   "coverage_pct_of_target": 7.9,
-  "next_run_at": "2026-06-29T20:15:44Z",
+  "next_run_at": "2026-07-01T09:05:38Z",
   "scheduled_cadence": "Classifier 3x daily + renewal reminders daily 8:22 + bay-monitor + ops-prep + 22 other autopilots",
   "universe_categories_total": 25,
   "universe_avg_coverage_pct": 56,
   "universe_categories_at_70_plus": 11,
   "universe_categories_at_50_to_69": 9,
   "universe_categories_below_50": 5,
-  "session_commits_today": 25,
+  "session_commits_today": 2,
   "session_lift_points": 28,
   "milestones": {
     "first_run_2026_06_18": "1,896 scenarios @ 84.5% pass",
@@ -210,7 +210,7 @@
     "aria_html_touched": false,
     "commit_pushed": false,
     "local_commit": "3cee21f (created via GIT_INDEX_FILE=/tmp workaround; index.lock EPERM on mount bypassed)",
-    "push_blocker": "PRE-EXISTING (not this run): GitHub pre-receive rejects sprint-0-backend \u2014 history contains oversized binaries: \"ARIA Sentinel/dist-backups/v0.1.0-pre-run13/ARIA-Sentinel-0.1.0-unsigned.exe\" (97MB) and \"...source-after-RUN13-7c64352.tar.gz\" (102MB > 100MB hard limit). Branch never pushed, so full history is validated and declined.",
+    "push_blocker": "PRE-EXISTING (not this run): GitHub pre-receive rejects sprint-0-backend — history contains oversized binaries: \"ARIA Sentinel/dist-backups/v0.1.0-pre-run13/ARIA-Sentinel-0.1.0-unsigned.exe\" (97MB) and \"...source-after-RUN13-7c64352.tar.gz\" (102MB > 100MB hard limit). Branch never pushed, so full history is validated and declined.",
     "ahmad_remediation": "Purge dist-backups large files from history then push. In Windows PowerShell: cd repo; git rm -r --cached \"ARIA Sentinel/dist-backups\"; echo \"ARIA Sentinel/dist-backups/\" >> .gitignore; git commit -m \"chore: drop oversized dist-backups from tracking\"; then use BFG or git filter-repo to strip the >100MB blobs from history: git filter-repo --path \"ARIA Sentinel/dist-backups\" --invert-paths; then git push origin sprint-0-backend. OR migrate them to Git LFS. My commit 3cee21f (tests/ + adversarial corpus) is already on HEAD and will ride along once the branch can push."
   },
   "this_session_2026_06_21_2013": {
@@ -368,7 +368,7 @@
     "corpus_growth": "none (Sunday-only rule; today is Saturday 2026-06-27). Next growth slot Sunday 2026-06-29.",
     "regex_changes_pending_review": 10,
     "pending_fixes_file": "senior-director-state/aria-classifier-pending-fixes-2026-06-27.md",
-    "pending_summary": "5 typo broadens (printer+27/wifi+21/vpn+18/bluetooth+9/webcam+9 \u2192 recommend Levenshtein-1 pre-pass), 1 NEG sarcasm +4, 2 i18n ES +12 (defer localization), 1 perf-adjacency +2, 1 routing collision +1. All 103 recoverable if all applied.",
+    "pending_summary": "5 typo broadens (printer+27/wifi+21/vpn+18/bluetooth+9/webcam+9 → recommend Levenshtein-1 pre-pass), 1 NEG sarcasm +4, 2 i18n ES +12 (defer localization), 1 perf-adjacency +2, 1 routing collision +1. All 103 recoverable if all applied.",
     "aria_html_touched": false,
     "commit_pushed": false
   },
@@ -388,16 +388,16 @@
     "pending_summary": "5 typo broadens (printer+27/wifi+21/vpn+18/bluetooth+9/webcam+9), 1 NEG sarcasm +4, 2 i18n ES +12 (defer localization), 1 perf-adjacency +2, 1 routing collision +1. All 103 recoverable if Ahmad approves pending-fixes file.",
     "aria_html_touched": false,
     "commit_pushed": false,
-    "push_blocker": "No PAT at .cowork-github-pat this session. Git index corrupt on working tree mount. Stats written via Cowork file API. AHMAD: push manually or provide PAT \u2014 git add tests/ senior-director-state/ && git commit -m '[autonomous] classifier loop 2026-06-27 14:20: 99.7% pass, 34209 corpus' && git push origin main"
+    "push_blocker": "No PAT at .cowork-github-pat this session. Git index corrupt on working tree mount. Stats written via Cowork file API. AHMAD: push manually or provide PAT — git add tests/ senior-director-state/ && git commit -m '[autonomous] classifier loop 2026-06-27 14:20: 99.7% pass, 34209 corpus' && git push origin main"
   },
   "this_session_2026_06_28": {
     "harness": "run-10k-scenarios.js",
     "scenarios": 36486,
-    "pass_rate_pct": 98.0,
+    "pass_rate_pct": 98,
     "pass": 35768,
     "fail": 718,
     "delta_from_last_run_pct": -1.7,
-    "note": "Sunday run #26. HEALTHCARE VERTICAL LAYER added (+1,263 scenarios). First industry vertical. Pass rate 99.7% -> 98.0% (expected \u2014 harder scenarios expose real classifier gaps). 607 new failures surface genuine healthcare-context regex gaps.",
+    "note": "Sunday run #26. HEALTHCARE VERTICAL LAYER added (+1,263 scenarios). First industry vertical. Pass rate 99.7% -> 98.0% (expected — harder scenarios expose real classifier gaps). 607 new failures surface genuine healthcare-context regex gaps.",
     "corpus_growth": "+1,263 HEALTHCARE scenarios (Sunday growth slot). 12 categories: auth/password, printer, wifi, vpn, performance, hardware, mail, onedrive, mfa, networking, onboarding, default. Covers Epic/Cerner/MEDITECH/Allscripts/athenahealth/PointClickCare + clinical devices (WOW carts, barcode scanners, label printers).",
     "safe_corpus_flips_applied": 0,
     "reason_zero_flips": "0 clusters match safe-flip pattern (expected=default -> got=specific). All failures are regex-broaden (A-type) or routing collisions (B-type) requiring aria.html changes = human review per safety rule.",
@@ -409,7 +409,7 @@
     "aria_html_touched": false,
     "new_failure_insight": "Healthcare context reveals: (1) ARIA auth regex does not know EMR names (Epic/Cerner/MEDITECH), (2) hardware regex misses WOW carts/barcode scanners, (3) performance regex misses slow-EMR framing, (4) networking/wifi collision on hospital floor framing.",
     "commit_pushed": false,
-    "push_blocker": "No PAT at .cowork-github-pat this session. Git index corrupt on working tree mount (known pre-existing). Stats + corpus + pending-fixes written to repo via Cowork file API. AHMAD: push manually or provide PAT \u2014 git add tests/ senior-director-state/ && git commit -m \"[autonomous] classifier loop 2026-06-28: 98.0% pass (healthcare vertical), 36486 corpus\" && git push origin main"
+    "push_blocker": "No PAT at .cowork-github-pat this session. Git index corrupt on working tree mount (known pre-existing). Stats + corpus + pending-fixes written to repo via Cowork file API. AHMAD: push manually or provide PAT — git add tests/ senior-director-state/ && git commit -m \"[autonomous] classifier loop 2026-06-28: 98.0% pass (healthcare vertical), 36486 corpus\" && git push origin main"
   },
   "this_session_2026_06_28_slot2": {
     "harness": "run-10k-scenarios.js",
@@ -418,10 +418,10 @@
     "pass": 35995,
     "fail": 959,
     "delta_from_last_run_pct": -0.6,
-    "note": "Sunday run #27 (slot 2, ~15:59Z). FINANCE VERTICAL added (+468 scenarios). Pass rate 98.0% \u2192 97.4% \u2014 expected, finance exposes classifier vocabulary gaps (Bloomberg, Murex, OMS, Fidessa, trading-floor HW).",
+    "note": "Sunday run #27 (slot 2, ~15:59Z). FINANCE VERTICAL added (+468 scenarios). Pass rate 98.0% → 97.4% — expected, finance exposes classifier vocabulary gaps (Bloomberg, Murex, OMS, Fidessa, trading-floor HW).",
     "corpus_growth": "+468 FINANCE scenarios. 12 categories: auth/password, hardware, vpn, performance, networking, email, mfa, onboarding, wifi, onedrive, printer, default. Covers Bloomberg/Murex/Fidessa/OMS/Refinitiv/FactSet + trading-floor hardware.",
     "safe_corpus_flips_applied": 0,
-    "reason_zero_flips": "0 clusters match safe-flip pattern (expected=default \u2192 got=specific). All 25 clusters are expected=specific \u2192 got=default (regex broaden A-type) or routing collisions (B-type) = human review per safety rule.",
+    "reason_zero_flips": "0 clusters match safe-flip pattern (expected=default → got=specific). All 25 clusters are expected=specific → got=default (regex broaden A-type) or routing collisions (B-type) = human review per safety rule.",
     "regex_changes_pending_review": 22,
     "pending_fixes_file": "senior-director-state/aria-classifier-pending-fixes-2026-06-28.md (updated)",
     "pending_summary": "10 regex-broadens (A1-A10) + 12 routing collisions (B1-B12). A1 password+finance apps = 303 hits highest impact. Combined fix = ~99.8% pass rate.",
@@ -429,7 +429,7 @@
     "new_failure_insight": "Finance context reveals ARIA has zero financial app vocabulary: Bloomberg/Murex/OMS/FactSet all route to default. Trading-floor hardware (squawk box, turret, ticker screen) also unknown. Market data feed terms (multicast, UDP, dark fiber) = unknown.",
     "sunday_growth_total": "+1,263 Healthcare + 468 Finance = 1,731 new scenarios this Sunday",
     "commit_pushed": false,
-    "push_blocker": "No PAT at .cowork-github-pat this session. Git index corrupt on working tree mount (known pre-existing). Stats + corpus + pending-fixes written via Cowork file API. AHMAD: push manually \u2014 git add tests/ senior-director-state/ && git commit -m \"[autonomous] classifier loop 2026-06-28 slot2: 97.4% pass (HC+Finance verticals), 36954 corpus\" && git push origin main"
+    "push_blocker": "No PAT at .cowork-github-pat this session. Git index corrupt on working tree mount (known pre-existing). Stats + corpus + pending-fixes written via Cowork file API. AHMAD: push manually — git add tests/ senior-director-state/ && git commit -m \"[autonomous] classifier loop 2026-06-28 slot2: 97.4% pass (HC+Finance verticals), 36954 corpus\" && git push origin main"
   },
   "this_session_2026_06_28_slot3": {
     "harness": "run-10k-scenarios.js",
@@ -438,7 +438,7 @@
     "pass": 36760,
     "fail": 1730,
     "delta_from_last_run_pct": -1.9,
-    "note": "Sunday slot 3 run #28. Corpus expanded with LEGAL (+558) + GOVERNMENT (+540) + MANUFACTURING (+438) verticals. Total Sunday 2026-06-28 growth: +3,267 scenarios (Healthcare+Finance+Legal+Gov+Mfg). Pass rate 97.4% -> 95.5% \u2014 expected degradation as new vertical vocabulary exposes classifier gaps. 5 new failure clusters: kb:permissions (legal iManage), kb:hardware/networking/onboarding/onedrive all growing from vertical-specific terminology.",
+    "note": "Sunday slot 3 run #28. Corpus expanded with LEGAL (+558) + GOVERNMENT (+540) + MANUFACTURING (+438) verticals. Total Sunday 2026-06-28 growth: +3,267 scenarios (Healthcare+Finance+Legal+Gov+Mfg). Pass rate 97.4% -> 95.5% — expected degradation as new vertical vocabulary exposes classifier gaps. 5 new failure clusters: kb:permissions (legal iManage), kb:hardware/networking/onboarding/onedrive all growing from vertical-specific terminology.",
     "corpus_growth": "+558 LEGAL + 540 GOVERNMENT + 438 MANUFACTURING scenarios (Sunday slot 3). Total Sunday growth: 3,267 scenarios across 5 verticals.",
     "safe_corpus_flips_applied": 0,
     "reason_zero_flips": "Auto-fix engine identified 1 candidate (default->trade) but semantically incorrect: 'how to submit a trade error report' is a compliance/OOO question correctly labeled default. Rejected. All 25 remaining clusters are expected=specific -> got=default (regex broaden A-type) or routing collisions (B-type) requiring aria.html review.",
@@ -455,7 +455,7 @@
       "password->default: Spanish auth phrases and EMR/legal/gov/mfg app names not triggering password"
     ],
     "commit_pushed": false,
-    "push_blocker": "No PAT at .cowork-github-pat this session. Git index corrupt on working tree mount (known pre-existing). Stats + corpus + pending-fixes written via Cowork file API. AHMAD: push manually \u2014 git add tests/ senior-director-state/ && git commit -m '[autonomous] classifier loop 2026-06-28 slot3: 95.5% pass (3267 new scenarios, 5 verticals), 38490 corpus' && git push origin main"
+    "push_blocker": "No PAT at .cowork-github-pat this session. Git index corrupt on working tree mount (known pre-existing). Stats + corpus + pending-fixes written via Cowork file API. AHMAD: push manually — git add tests/ senior-director-state/ && git commit -m '[autonomous] classifier loop 2026-06-28 slot3: 95.5% pass (3267 new scenarios, 5 verticals), 38490 corpus' && git push origin main"
   },
   "this_session_2026_06_29_slot2": {
     "harness": "run-10k-scenarios.js",
@@ -464,7 +464,7 @@
     "pass": 37185,
     "fail": 2136,
     "delta_from_last_run_pct": -0.4,
-    "note": "Sunday run #30 (slot 2, 2026-06-29). HOSPITALITY VERTICAL added (+387 scenarios: hotels, resorts, restaurants, casinos, event venues). Pass rate 95.0% -> 94.6% \u2014 expected degradation as new vocabulary (opera PMS, Micros POS, kitchen display, room key encoder) exposes classifier gaps.",
+    "note": "Sunday run #30 (slot 2, 2026-06-29). HOSPITALITY VERTICAL added (+387 scenarios: hotels, resorts, restaurants, casinos, event venues). Pass rate 95.0% -> 94.6% — expected degradation as new vocabulary (opera PMS, Micros POS, kitchen display, room key encoder) exposes classifier gaps.",
     "corpus_growth": "+387 HOSPITALITY scenarios (Sunday growth slot 2). 11 categories: auth/password, hardware, wifi, performance, networking, email, mfa, onboarding, onedrive, vpn, printer. Covers Opera/Agilysys/Infor HMS/Mews PMS + Micros POS + casino systems + resort/spa/banquet workflows.",
     "safe_corpus_flips_applied": 0,
     "reason_zero_flips": "0 clusters match safe-flip pattern (expected=default -> got=specific). All 25 clusters are expected=specific -> got=default (regex broaden A-type) or routing collisions (B-type) = human review per safety rule.",
@@ -475,5 +475,28 @@
     "aria_html_touched": false,
     "commit_pushed": true,
     "push_branch": "classifier-loop-2026-06-29b"
-  }
+  },
+  "this_session_2026_06_30_slot2": {
+    "harness": "run-10k-scenarios.js",
+    "scenarios": 39321,
+    "pass_rate_pct": 94.6,
+    "pass": 37185,
+    "fail": 2136,
+    "delta_from_last_run_pct": 0,
+    "note": "Run #32 (06-30 evening slot; executed 2026-07-01T01:05Z UTC, ~3.4h after the 21:38 slot). Non-Sunday -> no corpus growth. Mount reads verified clean: reproduced slot-1 baseline 39321/37185/2136 EXACTLY. Identical 25 clusters to slot 1.",
+    "safe_corpus_flips_applied": 0,
+    "reason_zero_flips": "auto-fix-engine: 0 expectation-update candidates (grep -c 'LIKELY EXPECTATION UPDATE' auto-apply.json = 0). All 25 clusters are expected=specific->got=default (Spanish i18n / typo / vertical-vocab regex broaden) or routing collisions = human review per safety rule.",
+    "corpus_growth": "none (Sunday-only rule; 06-30 is Tuesday). Next growth slot Sunday 2026-07-05.",
+    "regex_changes_pending_review": 25,
+    "pending_fixes_file": "senior-director-state/aria-classifier-pending-fixes-2026-06-30.md (slot-1 file; slot-2 reproduced identical clusters -> reconfirmation footer appended)",
+    "pending_summary": "ROOT1 Spanish i18n ~394 (password 370 + mail 24) | ROOT2 typos ~180 (vpn 98/printer 40/wifi 27/webcam 15) | ROOT3 vertical vocab ~1037 (hardware 316/onboarding 210/onedrive 158/perf 134/networking 73/mfa 66/permissions 30) | ROOT4 routing collisions ~197 (networking->wifi 132/mfa->rsa 24/mfa->password 21). Applying all ~= 94.6% -> ~99.3%.",
+    "aria_html_touched": false,
+    "reconciliation_flag": "PROD GAP: origin/main deployed classifier ~88.9% on the 39321 corpus vs working-HEAD 94.6% (cc/run-a-a1 carries unpushed INDUSTRY_APP_HINTS + industryIntentOverride() + full vertical corpus). ACTION: merge cc/run-a-a1 aria.html + tests/aria-classifier-mirror.js + tests/scenario-corpus-10k.js to main so deployed == tested (mirror must NOT lead aria.html).",
+    "smoke": "27 PASS / 0 FAIL / 140 SKIP - no ARIA/Aperture regression (no product files changed this run)",
+    "commit_pushed": true,
+    "push_branch": "classifier-loop-2026-06-30b"
+  },
+  "last_run_safe_corpus_fixes_applied": 0,
+  "last_run_regex_fixes_logged_for_review": 25,
+  "deployed_vs_head_note": "last_pass_rate_pct reflects working-HEAD (cc/run-a-a1: unpushed industryIntentOverride + full 39321 corpus). origin/main deployed classifier ~88.9% on same corpus / 92.1% on main committed corpus — merge HEAD classifier+corpus to main to reconcile (see senior-director-state/aria-classifier-pending-fixes-2026-06-30.md)."
 }
