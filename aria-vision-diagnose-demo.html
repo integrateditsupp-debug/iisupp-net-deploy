@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ARIA Vision Diagnosis — live review (Stage 2)</title>
+<style>
+  :root { --gold:#c5a059; --bg:#000; --panel:#0a0a0a; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:#f5f5f0; font-family:Arial,Helvetica,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:40px 20px 80px; }
+  h1 { color:var(--gold); font-family:'Times New Roman',serif; font-weight:400; font-size:30px; margin:0 0 4px; }
+  .sub { color:#8a8a82; font-size:13px; margin:0 0 24px; letter-spacing:.04em; }
+  .tabs { display:flex; gap:8px; margin:0 0 16px; flex-wrap:wrap; }
+  .tab { padding:7px 14px; border:1px solid #333; border-radius:999px; color:#c9c9c1; font-size:13px; cursor:pointer; }
+  .tab.on { border-color:var(--gold); color:var(--gold); }
+  .samples { margin:18px 0 6px; }
+  .samples b { color:var(--gold); font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+  .chip { display:inline-block; margin:8px 8px 0 0; padding:7px 12px; border:1px solid #2a2a1a; border-radius:8px; background:#0c0c0c; color:#d8d8d0; font-size:12.5px; cursor:pointer; }
+  .chip:hover { border-color:var(--gold); }
+  .note { font-size:12px; color:#6f6f68; margin-top:26px; border-top:1px solid #1a1a1a; padding-top:14px; line-height:1.6; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Show ARIA the problem</h1>
+    <p class="sub">Stage 2 · Vision Diagnosis — one engine for ARIA web · Sentinel · Forums “Ask AI”. Powered by the offline KB (free) with gated Fable&nbsp;5 vision for images.</p>
+
+    <div class="tabs" id="tabs">
+      <span class="tab on" data-s="web">ARIA web</span>
+      <span class="tab" data-s="sentinel">Sentinel</span>
+      <span class="tab" data-s="forums">Forums “Ask AI”</span>
+    </div>
+
+    <div id="zone"></div>
+
+    <div class="samples">
+      <b>Try a sample (offline, $0 path):</b><br>
+      <span class="chip" data-t="Windows blue screen stop error CRITICAL_PROCESS_DIED 0x000000EF, PC keeps restarting.">BSOD screenshot text</span>
+      <span class="chip" data-t="Print spooler keeps stopping, jobs stuck in the print queue, cannot print to the office printer.">Printer stuck</span>
+      <span class="chip" data-t="Outlook is frozen and will not open, stuck on loading profile.">Outlook frozen</span>
+      <span class="chip" data-t="Laptop is extremely slow, disk at 100%, fans spinning, antimalware service executable high CPU.">Slow / 100% disk</span>
+      <span class="chip" data-t="Wi-Fi connected but no internet, keeps dropping on the office network.">Wi-Fi no internet</span>
+      <span class="chip" data-t="A photo of a coffee mug on a desk.">Irrelevant (should abstain)</span>
+    </div>
+
+    <p class="note">
+      <strong>Reviewer notes.</strong> Text &amp; logs are matched against the offline knowledge base on our own iisupp.net function — no third-party AI model,
+      $0 cost, and nothing stored (the text does POST to our server; it is not "on your device").
+      Images call Claude Fable&nbsp;5 vision <em>only after you approve the disclosure</em>, and only when <code>ARIA_VISION_MODEL</code> is
+      configured on the deployment — otherwise ARIA honestly abstains rather than guess (Rule&nbsp;14). For text/logs, PII and secrets are redacted before matching.
+      For images, the picture is sent <strong>unredacted</strong> to the vision model — pixels can't be masked like text; only the text ARIA reads back is filtered.
+      The privacy receipt at the bottom of each answer shows exactly what was removed and what left the device.
+      A confident diagnosis attaches a one-click Fix that runs through the existing gated Sentinel resolve flow (restore point · kill-switch · signed audit token · logged).
+    </p>
+  </div>
+
+  <script src="/assets/aria-vision-diagnose.js"></script>
+  <script>
+    var api = '/.netlify/functions/aria-vision-diagnose';
+    var surface = 'web';
+    var widget = ARIAVisionDiagnose.mount(document.getElementById('zone'), {
+      surface: surface, endpoint: api, os: 'windows',
+      onFix: function (fix) { alert('One-click Fix → recipe "' + fix.recipeId + '" (risk: ' + fix.riskOverall + ').\nExecution runs the gated audit-token flow in ARIA Sentinel.'); },
+      onFeedback: function (helpful) { console.log('feedback helpful=', helpful); }
+    });
+
+    // Surface switcher — remounts the same widget for each surface.
+    document.getElementById('tabs').addEventListener('click', function (e) {
+      var t = e.target.closest('.tab'); if (!t) return;
+      [].forEach.call(document.querySelectorAll('.tab'), function (x) { x.classList.remove('on'); });
+      t.classList.add('on');
+      surface = t.getAttribute('data-s');
+      widget = ARIAVisionDiagnose.mount(document.getElementById('zone'), {
+        surface: surface, endpoint: api, os: 'windows',
+        onFix: function (fix) { alert('One-click Fix → recipe "' + fix.recipeId + '".'); }
+      });
+    });
+
+    // Sample chips submit text straight through the widget (offline path).
+    [].forEach.call(document.querySelectorAll('.chip'), function (c) {
+      c.addEventListener('click', function () { widget.submit({ kind: 'text', text: c.getAttribute('data-t') }); });
+    });
+  </script>
+</body>
+</html>
