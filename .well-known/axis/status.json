@@ -1,104 +1,100 @@
 {
-  "schema": "axis-status/1",
-  "generatedAt": "2026-07-02T02:25:50Z",
-  "source": "Flywheel run 14 (cycle 2026-07-02T02:25:50Z). First-hand THIS cycle: branch cc/run-e-e1-ttfv-r2-2026-07-02 (= main 89cf791 + E1 rebased) verified 217/217 in a /tmp workspace — sandbox kills cross-call background jobs, so the exact run-all.mjs import list was executed via a resumable shard runner (same files, same order; 216 green in-shard + the git-context denylist test re-run PASS after git-ifying the tree with zero-copy alternates; 0 real failures). Live serving probe run from THIS sandbox 2026-07-02T02:18:48Z: 10/10 refused, leak=false (post-publish gate adopted per Fable 5 request). mainRef 89cf791 = mount origin/main ref updated by Ahmad's verified 02:30Z merge click, GitHub-verified per queue entry; live ls-remote is still impossible from the sandbox (no GitHub credential) — flagged per Rule 14, not guessed.",
-  "honest": true,
-  "headline": "Series 1 is 14 of 14 merged (100%) and the serving-layer incident is CLOSED — the 07-01 'leak' was a fetch-tool cache replay (H5 confirmed); permanent gains: live probe suite + publish lock, production published & locked at 89cf791 with AXIS voice LIVE and probe green (re-confirmed 10/10 this cycle). RUN-E E1 was rebuilt on current main (r2) after the lockdown moved main past the old gate: pilot activation starts a real time-to-first-value clock — the first REAL resolved issue stamps ttfvMinutes write-once, dashboard shows '--' until it truly happens. 217/217 green; merge is one double-click (AHMAD-PUSH-E1-TTFV-R2.cmd).",
-  "note": "Merging main never deploys — Netlify publishing is LOCKED and stays Ahmad's click. The old AHMAD-PUSH-E1-TTFV.cmd is SUPERSEDED (its SHA gate now correctly refuses — main moved to 89cf791); use the R2 cmd.",
-  "program": {
-    "name": "Client-Ready Program",
-    "series": 1,
-    "sequence": "E in progress — E1 code half REBUILT on 89cf791 (r2, staged one-click); E1 docs half shipped; E2 proof autorun next",
-    "tasksMerged": 14,
-    "tasksTotal": 14,
-    "pct": 100,
-    "testsGreen": "217/217 on staged E1-r2 branch (main 89cf791 = 216/216)",
-    "mainRef": "89cf791"
+ "schema": "axis-status/1",
+ "generatedAt": "2026-07-02T02:45:41Z",
+ "source": "Flywheel run 15 (cycle 2026-07-02T02:45:41Z). First-hand THIS cycle: built RUN-E E2 proof autorun on top of the staged E1-r2 branch (new combined branch cc/run-e-e1e2-2026-07-02 = main 89cf791 + E1 + E2), ran the EXACT run-all.mjs import list via the resumable shard runner with package-root cwd: 218/218 green on the branch tip AND 218/218 on the staged merged HEAD (0 real failures; an earlier 2-red pass was a shard-cwd artifact, rerun clean). R14 fabrication grep of the E2 diff: clean. mainRef 89cf791 = mount origin/main ref (Ahmad's verified 02:30Z merge click, GitHub-verified per queue); live ls-remote still impossible from the sandbox (no GitHub credential) — flagged per Rule 14, not guessed. S1-executor review completed 03:05Z by a fresh Fable 5 subagent (PASS-WITH-CONCERNS, 0 blockers; Codex retired by Ahmad).",
+ "honest": true,
+ "headline": "Series 1 stays 14 of 14 merged (100%), production published & locked at 89cf791 with AXIS voice live and the serving probe green; incident remains CLOSED. NEW this cycle: RUN-E E2 — the pilot->paid PROOF AUTORUN. The moment a REAL pilot matures (day 10-14+) with at least one REAL audit-log fix, the honest one-page proof drafts ITSELF (write-once) with the real deflection % and ROI, a review card lands on the pending surface, and the /plans conversion moment fires from the same audited signals — an immature or zero-fix pilot produces NOTHING, and nothing publishes without Ahmad's explicit consent + draft-review one-click. E1 (TTFV clock) + E2 together are verified 218/218 and staged as ONE double-click (AHMAD-PUSH-E1-E2.cmd).",
+ "note": "Merging main never deploys — Netlify publishing is LOCKED and stays Ahmad's click. SUPERSEDED cmds that now correctly refuse or are stubbed: AHMAD-PUSH-E1-TTFV.cmd (r1) and AHMAD-PUSH-E1-TTFV-R2.cmd (folded into AHMAD-PUSH-E1-E2.cmd). Use AHMAD-PUSH-E1-E2.cmd.",
+ "program": {
+  "name": "Client-Ready Program",
+  "series": 1,
+  "sequence": "E in progress — E1 code+docs DONE (staged), E2 proof autorun BUILT + verified (staged, same click); E3 revenue-now board next",
+  "tasksMerged": 14,
+  "tasksTotal": 14,
+  "pct": 100,
+  "testsGreen": "218/218 on staged merged HEAD 89cf791+E1+E2 (main 89cf791 alone = 216/216)",
+  "mainRef": "89cf791"
+ },
+ "merged": [
+  "A1",
+  "B1",
+  "B2",
+  "B3",
+  "B4",
+  "B5",
+  "B6",
+  "C1",
+  "C2",
+  "C3",
+  "D1",
+  "D2",
+  "D2-wiring",
+  "D3"
+ ],
+ "extraMerged": [
+  "SECURITY LOCKDOWN v2 (PR#2)",
+  "STAGE-3 S1 Autonomous Resolution Engine, Confirmed mode only (PR#3)",
+  "AXIS voice + spoken status + B4 chat fix + this live feed (1578a52)",
+  "SERVING-LAYER LOCKDOWN (89cf791): live probe script + widened gate test — merged, PUBLISHED & LOCKED; probe green; incident downgraded to containment drill (H5: cache replay, 1578a52 never served /CLAUDE.md)"
+ ],
+ "builtNotMerged": [
+  "cc/run-e-e1e2-2026-07-02: RUN-E E1 (pilot activation -> TTFV clock, write-once, real-or-empty '--') + E2 (proof autorun: matured real pilot auto-drafts the honest case-study draft, consent-gated one-click publish path, /plans moment) + this feed regen. 218/218 on branch AND staged merged HEAD; ONE double-click: AHMAD-PUSH-E1-E2.cmd.",
+  "cc/stage-3-s2-resilience-2026-07 @ d292302 (CC lane, delivered as bundle): S2 slices 1+2, CC-reported 218/218 on ITS branch; push staged (AHMAD-PUSH-STAGE3-S2.cmd, branch-only); MERGE stays gated on the 5 S2 conditions + flywheel gate review after the ref lands."
+ ],
+ "nextUp": [
+  "Ahmad one-click: double-click AHMAD-PUSH-E1-E2.cmd at repo root (pushes the verified E1+E2 branch + verified merge; gate = main still 89cf791; supersedes both older E1 cmds)",
+  "Ahmad one-click: Netlify publish AFTER the merge so AXIS speaks 218/218 + TTFV + proof autorun live (publishing stays locked until you click)",
+  "Ahmad one-click: AHMAD-PUSH-STAGE3-S2.cmd (branch-only, CC lane; merge waits for the S2 gate review)",
+  "Flywheel next: E3 revenue-now board + acquisition-scout lane; then gate-review S2 when its ref lands"
+ ],
+ "lanes": [
+  {
+   "id": "client-ready-flywheel",
+   "does": "builds + verifies + merges Series-1/RUN-E; this cycle (run 15): stacked E2 proof autorun onto E1-r2 (write-once honest draft + consent-gated publish path + /plans moment), verified 218/218 on branch AND staged merged head (cwd-correct shard rerun), R14 diff scan clean, regenerated this feed, staged the combined one-click AHMAD-PUSH-E1-E2.cmd and superseded the R2 cmd",
+   "cadence": "hourly",
+   "state": "running"
   },
-  "merged": [
-    "A1",
-    "B1",
-    "B2",
-    "B3",
-    "B4",
-    "B5",
-    "B6",
-    "C1",
-    "C2",
-    "C3",
-    "D1",
-    "D2",
-    "D2-wiring",
-    "D3"
-  ],
-  "extraMerged": [
-    "SECURITY LOCKDOWN v2 (PR#2)",
-    "STAGE-3 S1 Autonomous Resolution Engine, Confirmed mode only (PR#3)",
-    "AXIS voice + spoken status + B4 chat fix + this live feed (1578a52)",
-    "SERVING-LAYER LOCKDOWN (89cf791): live probe script + widened gate test — merged, PUBLISHED & LOCKED; probe green; incident downgraded to containment drill (H5: cache replay, 1578a52 never served /CLAUDE.md)"
-  ],
-  "builtNotMerged": [
-    "cc/run-e-e1-ttfv-r2-2026-07-02: RUN-E E1 code half REBUILT on current main 89cf791 (old r1 gate stale) — pilot activation -> TTFV clock (audit-log RUN fix stamps ttfvMinutes, write-once, real-or-empty '--') + this feed regen. 217/217 green, staged one double-click (AHMAD-PUSH-E1-TTFV-R2.cmd)."
-  ],
-  "nextUp": [
-    "Ahmad one-click: double-click AHMAD-PUSH-E1-TTFV-R2.cmd at repo root (pushes verified E1-r2 branch + verified merge from your machine; gate = main still 89cf791)",
-    "Ahmad one-click: fire the Codex S1-executor review (packet queued — gates Stage-3 S2 MERGE, not S2 build)",
-    "Ahmad one-click: Netlify publish AFTER the E1 merge so AXIS speaks 217/217 + TTFV live (publishing stays locked until you click)",
-    "Flywheel: E2 pilot->paid proof autorun; CC: Stage-3 S2 resilience slices (branch-only)"
-  ],
-  "lanes": [
-    {
-      "id": "client-ready-flywheel",
-      "does": "builds + verifies + merges Series-1/RUN-E; this cycle (run 14): detected old E1 gate stale (main moved 1578a52->89cf791 via serving-lockdown), REBUILT E1 as r2 on current main via zero-copy alternates workspace, verified 217/217 (sharded, 0 real failures), ran the live serving probe first-hand (10/10, leak=false — post-publish gate adopted), regenerated this feed, staged the R2 push packet + superseded the old cmd",
-      "cadence": "hourly",
-      "state": "running"
-    },
-    {
-      "id": "forums-design-pass",
-      "does": "Forums Stage-1 design (cc/forums-mvp untouched by flywheel)",
-      "cadence": "every 3h",
-      "state": "running"
-    },
-    {
-      "id": "stage-2-vision",
-      "does": "cc/stage-2-vision lane — merges only when Cowork clears",
-      "cadence": "parked",
-      "state": "waiting"
-    },
-    {
-      "id": "stage-3-are",
-      "does": "S1 MERGED (PR#3); S2 build packet staged for CC (branch-only, merge gated on Codex 17-point S1 review — review packet awaits Ahmad's fire click)",
-      "cadence": "per-run",
-      "state": "building"
-    },
-    {
-      "id": "serving-safety",
-      "does": "live probe adopted as flywheel post-publish gate; production locked at 89cf791 deploy 6a45bca8; this cycle's probe: 10/10 refused, leak=false",
-      "cadence": "every run + post-publish",
-      "state": "green"
-    }
-  ],
-  "needsAhmad": [
-    {
-      "action": "Double-click AHMAD-PUSH-E1-TTFV-R2.cmd (repo root)",
-      "why": "sandbox has no GitHub credential; the .cmd pushes the verified E1-r2 branch + verified merge from your machine with a safety gate (aborts if main moved past 89cf791). The old E1 cmd is superseded — it gates on 1578a52 and will refuse.",
-      "oneClick": true
-    },
-    {
-      "action": "Fire the Codex S1-executor review",
-      "why": "packet queued and unchanged; it gates Stage-3 S2 MERGE (S2 build proceeds branch-only meanwhile)",
-      "oneClick": true
-    },
-    {
-      "action": "Netlify publish (after E1 merge)",
-      "why": "publishing is LOCKED (kept as incident gain); merges never deploy — your click makes AXIS speak 217/217 + TTFV live, then flywheel re-runs the probe",
-      "oneClick": true
-    },
-    {
-      "action": "do-payment-retry-june-30 cost flag",
-      "why": "open cost dependency surfaced per free-only rule",
-      "oneClick": true
-    }
-  ],
-  "onTrack": true
+  {
+   "id": "forums-design-pass",
+   "does": "Forums Stage-1 design (cc/forums-mvp untouched by flywheel)",
+   "cadence": "every 3h",
+   "state": "running"
+  },
+  {
+   "id": "stage-2-vision",
+   "does": "cc/stage-2-vision lane — merges only when Cowork clears",
+   "cadence": "parked",
+   "state": "waiting"
+  },
+  {
+   "id": "stage-3-are",
+   "does": "S1 MERGED (PR#3); S2 build packet staged for CC (branch-only, merge gated on Codex 17-point S1 review — review packet awaits Ahmad's fire click)",
+   "cadence": "per-run",
+   "state": "building"
+  },
+  {
+   "id": "serving-safety",
+   "does": "live probe adopted as flywheel post-publish gate; production locked at 89cf791 deploy 6a45bca8; this cycle's probe: 10/10 refused, leak=false",
+   "cadence": "every run + post-publish",
+   "state": "green"
+  }
+ ],
+ "needsAhmad": [
+  {
+   "action": "Double-click AHMAD-PUSH-E1-E2.cmd (repo root)",
+   "why": "sandbox has no GitHub credential; the .cmd pushes the verified E1+E2 branch + verified merge from your machine with a safety gate (aborts if main moved past 89cf791). Both older E1 cmds are superseded — this ONE click lands the TTFV clock AND the proof autorun.",
+   "oneClick": true
+  },
+  {
+   "action": "Netlify publish (after E1 merge)",
+   "why": "publishing is LOCKED (kept as incident gain); merges never deploy — your click makes AXIS speak 217/217 + TTFV live, then flywheel re-runs the probe",
+   "oneClick": true
+  },
+  {
+   "action": "do-payment-retry-june-30 cost flag",
+   "why": "open cost dependency surfaced per free-only rule",
+   "oneClick": true
+  }
+ ],
+ "onTrack": true
 }
