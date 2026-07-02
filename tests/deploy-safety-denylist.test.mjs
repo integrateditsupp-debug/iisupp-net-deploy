@@ -72,4 +72,48 @@ if (missing.length) {
   throw new Error(`deploy-safety-denylist: netlify.toml is missing force-404 rules for: ${missing.join(", ")} — the serving-layer lockdown block was removed or altered.`);
 }
 
-console.log(`deploy-safety-denylist: OK — 0 of ${files.length} tracked paths match the internal denylist; all ${REQUIRED_FORCE_404.length} force-404 rules present in netlify.toml.`);
+// ── PUBLIC-FILE CONTENT SCAN 2026-07-02 (DP-1) — the files we INTENTIONALLY serve (the AXIS
+// status feed + security.txt) reach any anonymous visitor + search indexing. The path lockdown
+// above proves internal paths refuse; this adds the missing invariant that the PUBLIC files carry
+// ZERO business-sensitive specifics. Regression-proofs the status.json pipeline-leak class
+// (RUN-E-ON-DD724EE gate review DP-1). Real specifics live ONLY under the force-404'd
+// senior-director-state/opportunity-engine board. Sensitive proper-noun tokens are built from
+// char codes at runtime so this tracked test never embeds them literally (same discipline as
+// probe-deploy-safety.test.mjs).
+const cc = (...codes) => String.fromCharCode(...codes);
+const SENSITIVE_CONTENT = [
+  { re: /\bW\d{3,5}\b/, reason: "tender/opportunity id" },
+  { re: /go\/no-?go/i, reason: "deal decision-gate phrasing" },
+  { re: new RegExp("\\b" + cc(65, 114, 105, 98, 97) + "\\b", "i"), reason: "procurement-platform name" },
+  { re: new RegExp(cc(79, 112, 101, 110, 84, 101, 120, 116), "i"), reason: "partner/deal name" },
+  { re: new RegExp(cc(83, 82, 73) + "\\s+registration", "i"), reason: "procurement-registration specifics" },
+  { re: /prospect\s+follow-?ups?/i, reason: "prospect/pipeline count" },
+  { re: /\$\s?\d[\d,]*(?:\.\d+)?\s*[kKmM]?\b/, reason: "dollar pipeline figure" },
+];
+
+// Files that are SUPPOSED to serve publicly (not force-404'd). Absent mirrors are skipped.
+const PUBLIC_SERVED_FILES = [
+  ".well-known/axis/status.json",
+  "public/.well-known/axis/status.json",
+  ".well-known/security.txt",
+];
+
+const contentLeaks = [];
+for (const rel of PUBLIC_SERVED_FILES) {
+  let text;
+  try {
+    text = readFileSync(path.join(repoRoot, rel), "utf8");
+  } catch {
+    continue; // an absent public file cannot leak
+  }
+  for (const { re, reason } of SENSITIVE_CONTENT) {
+    if (re.test(text)) contentLeaks.push(`${rel}: ${reason}`);
+  }
+}
+if (contentLeaks.length) {
+  console.error(`DEPLOY-SAFETY PUBLIC-CONTENT — ${contentLeaks.length} sensitive pattern(s) in publicly-served file(s):`);
+  for (const c of contentLeaks) console.error("  " + c);
+  throw new Error(`deploy-safety-denylist: a publicly-served file carries business-sensitive specifics — scrub it (tender ids / deal names / decision-gates / pipeline counts / $ figures belong ONLY under the force-404'd senior-director-state board).`);
+}
+
+console.log(`deploy-safety-denylist: OK — 0 of ${files.length} tracked paths match the internal denylist; all ${REQUIRED_FORCE_404.length} force-404 rules present in netlify.toml; ${PUBLIC_SERVED_FILES.length} public files scanned, 0 sensitive-content leaks.`);

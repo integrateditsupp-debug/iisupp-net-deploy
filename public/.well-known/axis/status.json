@@ -1,9 +1,9 @@
 {
  "schema": "axis-status/1",
  "generatedAt": "2026-07-02T04:04:28Z",
- "source": "Flywheel run 16 (cycle 2026-07-02T04:04:28Z). First-hand THIS cycle: built RUN-E E3 (revenue-now board + acquisition-scout lane) on top of the staged E1+E2 branch -> new combined branch cc/run-e-e1e2e3-2026-07-02; ran the EXACT run-all.mjs import list via the resumable shard runner with package-root cwd on the branch tree: 219 batteries, 218 green on the mount worktree in one uniform pass; the single red (delete-triple-confirm) is a deterministic sandbox-mount EPERM on its temp-file unlink (receipts: undeletable del-prefs-*.json debris) and the IDENTICAL test+src runs GREEN off-mount - so all 219 are individually verified green this cycle on this exact tree; methodology stated, nothing averaged away. Staged merge built by plumbing (commit-tree): merged tree == verified branch tree BY CONSTRUCTION. Live serving probe run first-hand this cycle: 10/10 sensitive paths refused, leak=false. mainRef 89cf791 sourced from the ledger + Ahmad's GitHub-verified 02:30Z merge click; live ls-remote still impossible from the sandbox (no GitHub credential) - flagged per Rule 14, not guessed. NEW first-hand discovery: the host repo .git corruption class is WRITE-TRUNCATION on the mount (a file rewritten through the mount kept its OLD byte length, chopping the tail - exactly how packed-refs died mid-write ~00:36Z); therefore the previous AHMAD-PUSH-E1-E2.cmd, which runs git fetch INSIDE the corrupt repo, would ABORT - replaced by a corruption-proof cmd that works in a throwaway %TEMP% clone and never touches the broken .git.",
+ "source": "Flywheel run 16 (cycle 2026-07-02T04:04:28Z). First-hand THIS cycle: built RUN-E E3 (revenue-now board + acquisition-scout lane) on top of the staged E1+E2 branch -> new combined branch cc/run-e-e1e2e3-2026-07-02; ran the EXACT run-all.mjs import list via the resumable shard runner with package-root cwd on the branch tree: 219 batteries, 218 green on the mount worktree in one uniform pass; the single red (delete-triple-confirm) is a deterministic sandbox-mount EPERM on its temp-file unlink (receipts: undeletable del-prefs-*.json debris) and the IDENTICAL test+src runs GREEN off-mount - so all 219 are individually verified green this cycle on this exact tree; methodology stated, nothing averaged away. Staged merge built by plumbing (commit-tree): merged tree == verified branch tree BY CONSTRUCTION. Live serving probe run first-hand this cycle: all denylisted internal paths refused (probe scope = internal paths only; it does NOT cover /.well-known public-file content, so it makes no leak-free claim about this feed). mainRef 89cf791 sourced from the ledger + Ahmad's GitHub-verified 02:30Z merge click; live ls-remote still impossible from the sandbox (no GitHub credential) - flagged per Rule 14, not guessed. NEW first-hand discovery: the host repo .git corruption class is WRITE-TRUNCATION on the mount (a file rewritten through the mount kept its OLD byte length, chopping the tail - exactly how packed-refs died mid-write ~00:36Z); therefore the previous AHMAD-PUSH-E1-E2.cmd, which runs git fetch INSIDE the corrupt repo, would ABORT - replaced by a corruption-proof cmd that works in a throwaway %TEMP% clone and never touches the broken .git.",
  "honest": true,
- "headline": "Series 1 stays 14 of 14 merged (100%), production published & locked at 89cf791, AXIS voice live, serving probe green (10/10 refused). NEW this cycle: RUN-E E3 - the REVENUE-NOW BOARD. One local board now ranks every real revenue move (2 warm prospect follow-ups due now, the W7714 tender ~July 28, the CSA OpenText go/no-go TODAY July 3 gate, the free SAP Ariba+SRI registration) by deterministic readiness with the exact next one-click, plus the acquisition-scout lane (honestly 0 vetted candidates yet; 5/5-gate vetting enforced in code). Real-or-empty everywhere: unevidenced leads are excluded with a reason, cold drafts are the Ahmad-locked template byte-verbatim ([Name] only), and the module physically cannot send anything. E1 (TTFV clock) + E2 (proof autorun) + E3 together are verified 219/219 this cycle and staged as ONE corruption-proof double-click: AHMAD-PUSH-E1-E2-E3.cmd.",
+ "headline": "Series 1 stays 14 of 14 merged (100%), production published & locked at 89cf791, AXIS voice live, serving probe green (all denylisted internal paths refused). NEW this cycle: RUN-E E3 - the REVENUE-NOW BOARD. One local board now ranks several evidenced revenue moves by deterministic readiness with the exact next one-click, plus the acquisition-scout lane (honestly 0 vetted candidates yet; 5/5-gate vetting enforced in code). Specifics are local-only under senior-director-state (force-404'd). Real-or-empty everywhere: unevidenced leads are excluded with a reason, cold drafts are the Ahmad-locked template byte-verbatim ([Name] only), and the module physically cannot send anything. E1 (TTFV clock) + E2 (proof autorun) + E3 together are verified 219/219 this cycle and staged as ONE corruption-proof double-click: AHMAD-PUSH-E1-E2-E3.cmd.",
  "note": "Merging main never deploys - Netlify publishing is LOCKED and stays Ahmad's click. SUPERSEDED cmds: AHMAD-PUSH-E1-TTFV.cmd, AHMAD-PUSH-E1-TTFV-R2.cmd and now AHMAD-PUSH-E1-E2.cmd (it would abort at 'git fetch' inside the corrupt local .git; E1+E2 are folded into the new cmd). Use AHMAD-PUSH-E1-E2-E3.cmd - it works even while the local .git is broken. AHMAD-PUSH-STAGE3-S2.cmd (CC lane) has the same corruption exposure and will abort until the staged REPO-REPAIR console block runs.",
  "program": {
   "name": "Client-Ready Program",
@@ -45,20 +45,20 @@
  "nextUp": [
   "Ahmad one-click: double-click AHMAD-PUSH-E1-E2-E3.cmd at repo root (corruption-proof: throwaway %TEMP% clone, SHA-gated on main==89cf791, pushes verified branch + verified merge; supersedes all three older E-cmds)",
   "Ahmad one-click: Netlify publish AFTER the merge so AXIS speaks 219/219 + TTFV + proof autorun + revenue board live (publishing stays locked until you click)",
-  "Ahmad: OPEN THE REVENUE BOARD - senior-director-state/opportunity-engine/REVENUE-BOARD.md: 2 prospect follow-ups due ~now, CSA OpenText go/no-go gate 2026-07-03, W7714 pull, free Ariba+SRI registration (account creation = your click)",
+  "Ahmad: OPEN THE REVENUE BOARD - senior-director-state/opportunity-engine/REVENUE-BOARD.md: several evidenced revenue moves ranked with the exact next one-click each; specifics are local-only under senior-director-state (account creation = your click)",
   "Ahmad console paste: the staged REPO-REPAIR block (fixes the truncated packed-refs local .git; unblocks STAGE3-S2 push cmd + forums gate re-review)",
   "Flywheel next: RUN-F auto-release after E lands + acquisition-scout candidates into the board (5/5 gate) + S2 gate follow-through"
  ],
  "lanes": [
   {
    "id": "cowork-flywheel",
-   "does": "run 16: built+verified RUN-E E3 revenue-now board + acquisition lane, 219/219 this cycle, regenerated this feed, replaced the corruption-exposed one-click with corruption-proof AHMAD-PUSH-E1-E2-E3.cmd, live probe 10/10",
+   "does": "run 16: built+verified RUN-E E3 revenue-now board + acquisition lane, 219/219 this cycle, regenerated this feed, replaced the corruption-exposed one-click with corruption-proof AHMAD-PUSH-E1-E2-E3.cmd, live probe all internal paths refused",
    "cadence": "hourly",
    "state": "running"
   },
   {
    "id": "revenue-board",
-   "does": "senior-director-state/opportunity-engine/REVENUE-BOARD.md - 5 real moves ranked (real-or-empty, staged one-clicks only, nothing sent); acquisition lane open with 0 vetted candidates (honest)",
+   "does": "senior-director-state/opportunity-engine/REVENUE-BOARD.md - several evidenced moves ranked (real-or-empty, staged one-clicks only, nothing sent); acquisition lane open with 0 vetted candidates (honest); specifics local-only",
    "cadence": "regenerated each flywheel run (node scripts/revenue-board-run.mjs)",
    "state": "live-local"
   },
@@ -82,7 +82,7 @@
   },
   {
    "id": "serving-safety",
-   "does": "live probe re-run first-hand this cycle: 10/10 sensitive paths refused, leak=false; production locked at 89cf791 deploy 6a45bca8",
+   "does": "live probe re-run first-hand this cycle: all denylisted internal paths refused (internal-paths scope only; not a claim about /.well-known public-file content); production locked at 89cf791 deploy 6a45bca8",
    "cadence": "every run + post-publish",
    "state": "green"
   }
@@ -100,7 +100,7 @@
   },
   {
    "action": "Open REVENUE-BOARD.md + act the top rows",
-   "why": "2 warm follow-ups are due ~now (paste-ready reply branches already prepped 07-01), the CSA OpenText go/no-go self-gate is 2026-07-03, W7714 closes ~07-28, Ariba+SRI registration is free but account creation is yours by rule",
+   "why": "several evidenced revenue moves are ranked with paste-ready next steps; the specifics (names, dates, ids) live ONLY in the force-404'd senior-director-state board, and any account creation is yours by rule",
    "oneClick": true
   },
   {
