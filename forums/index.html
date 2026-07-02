@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Not indexed until Ahmad's launch decision (branch preview / pre-launch). -->
+<meta name="robots" content="noindex">
+<title>IIS Forums — AI-native IT answers</title>
+<meta name="description" content="Search verified IIS solutions, ask the community, or let ARIA diagnose it. Free to read, no account required.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/forums-tokens.css">
+<link rel="stylesheet" href="/assets/forums.css">
+</head>
+<body>
+
+<header>
+  <div class="app">
+    <nav class="topnav" aria-label="Forums primary">
+      <a class="brand" href="/forums/" aria-label="IIS Forums home">
+        <span class="mark"><img src="/images/logo.png" alt="" aria-hidden="true" onerror="this.remove()"></span>
+        <span><b>IIS Forums</b><span class="tag" style="display:block">Powered by ARIA · Fable 5</span></span>
+      </a>
+      <div class="tabs" role="navigation" aria-label="Sections">
+        <a href="#solutions" data-nav="solutions">Solutions</a>
+        <a href="#discussions" data-nav="discussions">Discussions</a>
+        <a href="#askai" data-nav="askai">Ask AI</a>
+        <a href="#experts" data-nav="experts">Experts</a>
+        <a href="#trends" data-nav="trends">Trends</a>
+      </div>
+      <div class="navspace"></div>
+      <form class="navsearch" id="navSearch" role="search">
+        <span aria-hidden="true">⌕</span>
+        <input id="navSearchInput" type="search" placeholder="Search solutions…" aria-label="Search solutions">
+      </form>
+      <button class="avatar" id="ssoBtn" aria-label="Sign in with IIS SSO" title="Sign in">·</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ HOME ============ -->
+  <section data-view="home" class="on" aria-label="Forums home">
+    <div class="app">
+      <div class="hero">
+        <div class="eyebrow">AI-native IT answers · instantly</div>
+        <h1>Describe the problem.<br>Get the fix.</h1>
+        <p>Search verified IIS solutions, ask the community, or drop a screenshot and let ARIA diagnose it — free, no account required to read.</p>
+        <form class="askbar" id="heroAsk" role="search">
+          <span class="ico" aria-hidden="true">⌕</span>
+          <input id="heroAskInput" type="search" placeholder='e.g. Outlook stuck at "loading profile" after Windows update' aria-label="Ask or search a problem">
+          <span class="kbd">↵ Enter</span>
+        </form>
+        <div class="hintrow">
+          <a class="chip cyan" href="#askai"><span aria-hidden="true">🖼</span> Drop a screenshot</a>
+          <a class="chip" href="/aria"><span aria-hidden="true">⚡</span> Fix with ARIA</a>
+        </div>
+        <!-- Trust strip — Rule 14: real, verifiable values only. KB count is computed at runtime. -->
+        <div class="trust">
+          <div class="t"><div class="n" id="kbCount">--</div><div class="k">KB solutions</div></div>
+          <div class="t"><div class="n">Free</div><div class="k">To read &amp; use</div></div>
+          <div class="t"><div class="n">Local-first</div><div class="k">Your data stays yours</div></div>
+        </div>
+      </div>
+
+      <h2 class="sec">Recently solved</h2>
+      <div id="homeRecent">
+        <div class="empty">
+          <div class="em-ico" aria-hidden="true">✧</div>
+          <h4>No community solutions yet</h4>
+          <p>This space fills as real questions get answered and accepted. Nothing here is fabricated — when a thread is solved, it appears here and graduates into Solutions.</p>
+          <a class="btn ghost" href="#discussions">Start the first discussion</a>
+        </div>
+      </div>
+
+      <h2 class="sec">Trending IT issues</h2>
+      <div class="empty">
+        <div class="em-ico" aria-hidden="true">📈</div>
+        <h4>Trends populate from real activity</h4>
+        <p>Once solutions accumulate, the top issues this week surface here — measured, never invented.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SOLUTIONS ============ -->
+  <section data-view="solutions" aria-label="Solutions search">
+    <div class="app">
+      <form class="askbar" id="solAsk" role="search" style="max-width:none;margin:0 0 20px">
+        <span class="ico" aria-hidden="true">⌕</span>
+        <input id="solAskInput" type="search" placeholder="Describe the problem in plain English…" aria-label="Search solutions">
+        <span class="kbd">↵</span>
+      </form>
+      <div class="two">
+        <div id="solResults" aria-live="polite">
+          <div class="empty">
+            <div class="em-ico" aria-hidden="true">⌕</div>
+            <h4>Search the verified KB</h4>
+            <p>Type a real IT problem above. Results come from the real IIS knowledge base with a real confidence score — if we can't match confidently, we say so instead of guessing.</p>
+          </div>
+        </div>
+        <aside class="rail" aria-label="Filters">
+          <div class="card">
+            <h5>Filter by category</h5>
+            <div class="filter" id="catFilter"><span class="tert" style="font-size:12px">Categories load with the KB…</span></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SOLUTION PAGE ============ -->
+  <section data-view="solution" aria-label="Solution article">
+    <div class="app" id="solutionPage"><!-- rendered from the real KB chunk --></div>
+  </section>
+
+  <!-- ============ DISCUSSIONS ============ -->
+  <section data-view="discussions" aria-label="Discussions">
+    <div class="app">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+        <h1 class="pagehead" style="margin:0">Discussions</h1>
+        <div class="navspace"></div>
+        <button class="btn primary" id="newThreadBtn">＋ Start a discussion</button>
+      </div>
+      <div id="threadList" aria-live="polite"><div class="sk" style="width:60%"></div></div>
+      <div id="composerWrap" hidden>
+        <h2 class="sec">Start a discussion</h2>
+        <form class="composer card" id="threadComposer">
+          <label for="ctTitle">Title</label>
+          <input id="ctTitle" required minlength="8" maxlength="140" placeholder="One clear sentence — what's broken?">
+          <label for="ctBody">Details (markdown + code blocks supported)</label>
+          <textarea id="ctBody" required minlength="10" placeholder="What happened, what you tried, exact error text…"></textarea>
+          <label for="ctTags">Tags (comma-separated, up to 5)</label>
+          <input id="ctTags" placeholder="outlook, windows, vpn">
+          <div class="rowbtn"><button class="btn primary" type="submit">Post discussion</button><button class="btn ghost" type="button" id="composerCancel">Cancel</button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THREAD ============ -->
+  <section data-view="thread" aria-label="Discussion thread">
+    <div class="app" id="threadPage"><!-- rendered from the real store --></div>
+  </section>
+
+  <!-- ============ ASK AI ============ -->
+  <section data-view="askai" aria-label="Ask AI concierge">
+    <div class="app">
+      <div class="console">
+        <div class="eyebrow" style="text-align:center;margin-bottom:6px">Concierge · offline KB baseline</div>
+        <h1 style="text-align:center;font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 0 22px">Ask ARIA anything IT</h1>
+        <div id="aiLog" aria-live="polite"></div>
+        <div class="dropzone" id="aiDrop" role="button" tabindex="0" aria-label="Drop a screenshot for visual diagnosis">
+          <div class="di" aria-hidden="true">🖼</div>
+          <b>Drop a screenshot, log, or photo of the error</b>
+          <div class="muted" style="font-size:13px;margin-top:6px">Once it's online, Fable 5 visual diagnosis will read BSODs, dialogs, and config screens.</div>
+          <div class="chip gold" style="margin-top:12px"><span class="led"></span>Visual diagnosis coming online</div>
+        </div>
+        <form class="askbar" id="aiAsk" role="search" style="margin-top:16px">
+          <span class="ico" aria-hidden="true">✦</span>
+          <input id="aiAskInput" type="text" placeholder="Type the problem — answered from the real KB…" aria-label="Message ARIA">
+        </form>
+        <p class="ai-honesty" style="text-align:center;margin-top:10px">Answers are AI-retrieved from the verified KB and sourced. Verify before acting on production systems. Baseline runs on the free offline KB; visual diagnosis arrives with the Fable&nbsp;5 vision engine.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXPERTS ============ -->
+  <section data-view="experts" aria-label="Experts">
+    <div class="app">
+      <h1 class="pagehead">Experts</h1>
+      <p class="muted" style="margin:0 0 22px;max-width:560px">Verified specialists who answer the hardest threads. IIS is the founding expert.</p>
+      <div class="empty">
+        <div class="em-ico" aria-hidden="true">◈</div>
+        <h4>Verified experts are launching soon</h4>
+        <p>We won't show profiles or badges until real experts are verified — no filler. IIS goes first; the program opens after.</p>
+        <a class="btn gold" href="/#contact">Apply to be a verified expert</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRENDS ============ -->
+  <section data-view="trends" aria-label="Trends">
+    <div class="app">
+      <h1 class="pagehead">Trends</h1>
+      <p class="muted" style="margin:0 0 22px;max-width:560px">The top IT issues this week — measured from real solved activity, never invented.</p>
+      <div class="empty">
+        <div class="em-ico" aria-hidden="true">📈</div>
+        <h4>Not enough data yet</h4>
+        <p>The trend dashboard needs a baseline of real solutions before it can rank anything honestly. It switches on automatically once there's signal.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="forums-foot">
+  <div class="app">
+    Integrated IT Support Inc. · <a href="/">iisupp.net</a> · <a href="/aria">ARIA</a> · <a href="/governance/privacy">Privacy</a>
+    <span style="float:right">Free to read — no account, no paywall.</span>
+  </div>
+</footer>
+
+<nav class="btabs" aria-label="Sections (mobile)">
+  <a href="#solutions" data-nav="solutions"><span class="bi" aria-hidden="true">⌕</span>Solutions</a>
+  <a href="#discussions" data-nav="discussions"><span class="bi" aria-hidden="true">💬</span>Discuss</a>
+  <a href="#askai" data-nav="askai"><span class="bi" aria-hidden="true">✦</span>Ask AI</a>
+  <a href="#experts" data-nav="experts"><span class="bi" aria-hidden="true">◈</span>Experts</a>
+  <a href="#trends" data-nav="trends"><span class="bi" aria-hidden="true">📈</span>Trends</a>
+</nav>
+
+<!-- SSO modal — triggered only on post/vote/accept, never on read -->
+<div class="modal-wrap" id="ssoModal" role="dialog" aria-modal="true" aria-labelledby="ssoTitle">
+  <div class="modal">
+    <div class="mark" aria-hidden="true"><img src="/images/logo.png" alt="" onerror="this.remove()"></div>
+    <b id="ssoTitle" style="font-size:17px">Sign in to post</b>
+    <div class="muted mono" style="font-size:11px;letter-spacing:.06em;margin:5px 0 20px">Reading is free · no account needed</div>
+    <form id="ssoForm">
+      <label for="ssoEmail">Work email</label>
+      <input id="ssoEmail" type="email" required placeholder="you@company.com" autocomplete="email">
+      <button class="btn primary wfull" type="submit">Continue with IIS SSO</button>
+    </form>
+    <button class="btn ghost wfull" id="ssoClose" style="margin-top:10px" type="button">Cancel</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts" role="status" aria-live="polite"></div>
+
+<script type="module" src="/assets/forums.js"></script>
+</body>
+</html>

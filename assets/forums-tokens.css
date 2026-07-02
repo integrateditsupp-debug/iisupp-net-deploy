@@ -1,0 +1,124 @@
+/* ============================================================================
+   IIS FORUMS — CANONICAL DESIGN TOKENS  (Series 2 design pass · 2026-07-01)
+   Dark-matter aesthetic, reconciled to the LIVE iisupp.net / aperture brand.
+   CC: bind to these variables. DO NOT hardcode hex anywhere in Forums code.
+
+   Reconciliation vs the earlier handoff (Forums design brief/design_handoff_iis_forums):
+     • Type family  Hanken Grotesk  ->  Inter        (the live site loads Inter, not Hanken)
+     • Cyan primary #22D3EE         ->  #22e1ff      (the exact live accent; avoids nav clash)
+     • Surfaces     #07080B family  ->  #06080e family (the exact aperture-learning.html values)
+   Kept from the earlier handoff (already on-brand + Rule-14 aligned):
+     • Gold #E9B872 for accepted/graduated/premium   • the confidence colour scale
+   Source of truth for values: aperture-learning.html :root + index.html --luxury-gold.
+   ========================================================================== */
+
+:root {
+  /* ---- SURFACES (near-black dark-matter, live aperture values) ---------- */
+  --bg:            #06080e;   /* app background (void)                        */
+  --bg-soft:       #080b13;   /* softer background band                       */
+  --surface:       #0b0f1a;   /* base panels / wells                          */
+  --surface-2:     #0e1320;   /* cards, inputs, raised panels                 */
+  --surface-3:     #11182a;   /* hover / active raised, code insets           */
+  --code-well:     #05060a;   /* darkest code / terminal wells                */
+
+  /* ---- HAIRLINES -------------------------------------------------------- */
+  --line:          rgba(255,255,255,.07);  /* default 1px borders            */
+  --line-2:        rgba(255,255,255,.12);  /* stronger borders / dividers    */
+
+  /* ---- TEXT ------------------------------------------------------------- */
+  --txt:           #e8edf6;   /* primary text            (15.3:1 on --bg)    */
+  --txt-2:         #9aa7bd;   /* secondary / meta        (6.9:1 on --bg)     */
+  --txt-3:         #62718b;   /* tertiary / labels       (3.4:1 — large/UI)  */
+  --on-accent:     #04141a;   /* text on cyan fills                          */
+  --on-gold:       #241a05;   /* text on gold fills                          */
+
+  /* ---- CYAN  = primary / AI / links / CTAs (live #22e1ff) --------------- */
+  --accent:        #22e1ff;   /* primary, AI, CTA fills, focus ring          */
+  --accent-2:      #0fb8d8;   /* deep cyan (gradients, meter fill)           */
+  --accent-hi:     #67e8f9;   /* light cyan (link hover, on-dark text)       */
+  --accent-ink:    #04141a;   /* == --on-accent (text on cyan)               */
+  --accent-glow:   rgba(34,225,255,.35);
+  --accent-wash:   rgba(34,225,255,.07);  /* tinted chip/well backgrounds    */
+
+  /* ---- GOLD  = accepted answer / graduated-to-KB / premium / experts ---- */
+  --gold:          #e9b872;   /* accepted-answer, "graduated", expert badge  */
+  --gold-hi:       #f5d199;
+  --gold-deep:     #c9973f;
+  --gold-glow:     rgba(233,184,114,.16);
+  --gold-wash:     rgba(233,184,114,.07);
+  --luxury-gold:   linear-gradient(135deg,#c5a059 0%,#f1dca7 50%,#b38728 100%); /* premium hero moments (from index.html) */
+
+  /* ---- SEMANTIC + CONFIDENCE ------------------------------------------- */
+  --ok:            #34d399;   /* verified / success / confidence >= 85       */
+  --warn:          #fbbf24;   /* caution                                     */
+  --crit:          #fb7185;   /* error / BSOD / danger                       */
+  --info:          #7aa2ff;
+  --violet:        #a78bfa;   /* AI accent gradient partner (from live)      */
+  --conf-low:      #7c8794;   /* confidence < 65 -> route to escalate        */
+  /* Confidence meter fills:
+       high  (>=85): linear-gradient(90deg,var(--accent-2),var(--ok))
+       med (65-84): linear-gradient(90deg,var(--gold-deep),var(--gold))
+       low   (<65): var(--conf-low)  (flat, muted; pairs with honest no-match) */
+
+  /* ---- AMBIENT BACKGROUND GLOW (fixed, non-interactive, z-index:0) ------ */
+  --ambient:
+     radial-gradient(1200px 620px at 12% -12%, rgba(34,225,255,.10), transparent 60%),
+     radial-gradient(1000px 520px at 100% -6%, rgba(233,184,114,.055), transparent 55%),
+     radial-gradient(900px 700px at 50% 120%, rgba(34,225,255,.05), transparent 60%);
+
+  /* ---- TYPE (live families: Inter + JetBrains Mono) --------------------- */
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  /* Load: Inter wght 400;500;600;700;800  +  JetBrains Mono wght 400;500;600
+     (aperture currently loads Inter to 700 — Forums adds 800 for the hero display). */
+
+  /* Type scale — size / weight / tracking / line-height (see DESIGN-TOKENS.md) */
+  --fs-display: clamp(34px, 5.4vw, 58px);
+  --fs-h1:      clamp(28px, 3.2vw, 40px);
+  --fs-h2:      clamp(22px, 2.4vw, 28px);
+  --fs-h3:      20px;
+  --fs-title:   16px;   /* card titles                                       */
+  --fs-body:    15px;
+  --fs-sm:      13.5px;
+  --fs-caption: 12.5px;
+  --fs-micro:   11px;   /* uppercase labels / badges (letter-spacing .06em)  */
+  --fs-mono:    12.5px;
+
+  /* ---- SPACING — 4px base ---------------------------------------------- */
+  --sp-1: 2px;  --sp-2: 4px;  --sp-3: 8px;  --sp-4: 12px; --sp-5: 16px;
+  --sp-6: 20px; --sp-7: 24px; --sp-8: 32px; --sp-9: 40px; --sp-10: 48px;
+  --sp-11: 56px; --sp-12: 64px; --sp-13: 80px;
+  --gutter: 28px;          /* desktop content gutter                        */
+  --gutter-mobile: 16px;   /* mobile gutter                                 */
+  --maxw: 1200px;          /* content max width                             */
+
+  /* ---- RADIUS (anchored to live --r:14 / --r-sm:9) --------------------- */
+  --r-sm:   9px;    /* chips, small controls                                */
+  --r:      12px;   /* inputs, buttons                                      */
+  --r-card: 14px;   /* cards, panels (live canonical)                       */
+  --r-lg:   18px;   /* modals, hero wells, login card (live)               */
+  --r-xl:   24px;
+  --r-pill: 999px;
+
+  /* ---- ELEVATION ------------------------------------------------------- */
+  --shadow-1: 0 1px 0 rgba(255,255,255,.04) inset, 0 24px 48px -28px rgba(0,0,0,.8); /* live panel shadow */
+  --shadow-2: 0 1px 0 rgba(255,255,255,.05) inset, 0 30px 60px -24px rgba(0,0,0,.85);
+  --shadow-pop: 0 20px 60px -18px rgba(0,0,0,.9);   /* modals / popovers     */
+  --focus-ring: 0 0 0 3px var(--accent), 0 0 0 6px rgba(34,225,255,.18);
+
+  /* ---- MOTION (live easing) -------------------------------------------- */
+  --ease: cubic-bezier(.22,1,.36,1);   /* standard "confident" ease-out     */
+  --ease-in-out: cubic-bezier(.65,0,.35,1);
+  --dur-1: 120ms;   /* micro: hover, press                                  */
+  --dur-2: 200ms;   /* controls, chips                                      */
+  --dur-3: 320ms;   /* panels, cards rise                                   */
+  --dur-4: 600ms;   /* hero / section entrance                             */
+  --dur-pulse: 1400ms; /* cross-link gold ring-pulse                        */
+}
+
+/* Respect reduced motion everywhere (a11y — build-blocking). */
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-1:0ms; --dur-2:0ms; --dur-3:0ms; --dur-4:0ms; --dur-pulse:0ms; }
+  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
