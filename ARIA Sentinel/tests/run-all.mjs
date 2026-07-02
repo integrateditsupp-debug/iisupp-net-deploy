@@ -8,6 +8,8 @@ const TESTS = [
   "../../tests/probe-deploy-safety.test.mjs",
   // FORUMS MVP 2026-07-02 — real-KB retrieval + honest abstain + store core + a11y/fabrication gates.
   "../../tests/forums-mvp.test.mjs",
+  // CONCIERGE 2026-07-02 — AI Setup Walk-Through homepage card + aria.html copy + services.html listing.
+  "../../tests/concierge-service.test.mjs",
   "./scenario-suite.mjs",
   "./extension.test.mjs",
   "./endpoint.test.mjs",

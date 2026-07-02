@@ -1266,6 +1266,39 @@
             </div>
         </div>
 
+        <!-- ===== AI Services ===== -->
+        <div id="ai-services" class="svc-cat-block">
+            <div class="svc-cat-header">
+                <span class="svc-cat-tick"></span>
+                <h2 class="svc-cat-title">AI Services</h2>
+                <span class="svc-cat-tick"></span>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <article class="svc-card">
+                    <h3 class="svc-name">AI Setup Walk-Through</h3>
+                    <p class="svc-blurb">Step-by-step walk-through guidance to having your own AI setup for work — Claude (Cowork &amp; Code), Codex, and Gemini. We guide and train you on how each is used. Anyone can do it. Includes a 30-day ARIA Sentinel trial — keep the Walk-Through forever; continue Sentinel's monitoring &amp; auto-fix on a separate plan.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$7,000 – $15,000 depending on setup · talk to us for more info</span>
+                    </div>
+                    <button type="button" class="svc-buy" data-stripe-id="ai-setup-walkthrough" data-stripe-name="AI Setup Walk-Through Concierge · Starting Package" data-stripe-amount-cents="700000" data-stripe-desc="Step-by-step guided setup + training for your own AI workspace (Claude Cowork/Code, Codex, Gemini). Starts at $7,000; scales to $15,000 by scope. Final scope + price confirmed before work begins." style="display:inline-block;margin-top:14px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#1a1407;background:linear-gradient(135deg,#b8954f,#d8bd84 50%,#9c7322);padding:10px 16px;border-radius:4px;border:none;cursor:pointer;">Get started →</button>
+                    <a href="/book.html" style="display:inline-block;margin-top:12px;margin-left:10px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#d8bd84;border-bottom:1px solid rgba(184,149,79,.45);text-decoration:none;padding-bottom:2px;">Talk to us</a>
+                </article>
+
+                <article class="svc-card">
+                    <h3 class="svc-name">AI Business Automation</h3>
+                    <p class="svc-blurb">IIS builds one fully working automated workflow for your business — with documentation and a clean handoff so your team can run it.</p>
+                    <div class="svc-price-wrap">
+                        <span class="svc-price-label">Starting at</span>
+                        <span class="svc-price">$5,500 / project</span>
+                    </div>
+                    <button type="button" class="svc-buy" data-stripe-id="ai-business-automation" data-stripe-name="AI Business Automation (Learn to Delivery)" data-stripe-amount-cents="550000" data-stripe-desc="AI Automation engagement: IIS builds one fully working automated workflow with documentation and handoff ($5,500)." style="display:inline-block;margin-top:14px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#1a1407;background:linear-gradient(135deg,#b8954f,#d8bd84 50%,#9c7322);padding:10px 16px;border-radius:4px;border:none;cursor:pointer;">Purchase →</button>
+                </article>
+
+            </div>
+        </div>
+
         <!-- ===== Cloud &amp; Automation ===== -->
         <div id="cloud-automation" class="svc-cat-block">
             <div class="svc-cat-header">
@@ -1925,6 +1958,36 @@
     });
   }
   if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",attach);}else{attach();}
+})();
+</script>
+<script>
+(function(){
+  // Reuses the same inline-priceData /stripe-checkout flow the homepage hero buttons use.
+  function wire(){
+    document.querySelectorAll('.svc-buy[data-stripe-amount-cents]').forEach(function(btn){
+      if(btn.dataset.wired)return; btn.dataset.wired='1';
+      btn.addEventListener('click', async function(){
+        if(btn.disabled)return; btn.disabled=true;
+        var orig=btn.textContent; btn.textContent='Connecting...';
+        try{
+          var r=await fetch('/.netlify/functions/stripe-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({priceData:{
+            amount_cents: parseInt(btn.dataset.stripeAmountCents,10),
+            currency:'usd',
+            product_name: btn.dataset.stripeName,
+            description: btn.dataset.stripeDesc||'',
+            id: btn.dataset.stripeId
+          }})});
+          var d=await r.json();
+          if(d&&d.url){window.location=d.url;return;}
+          throw new Error((d&&d.error)||'Checkout failed');
+        }catch(e){
+          btn.disabled=false; btn.textContent=orig;
+          alert('Could not start checkout: '+(e.message||e)+'\nPlease email ahmad.wasee@iisupp.net to complete purchase.');
+        }
+      });
+    });
+  }
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",wire);}else{wire();}
 })();
 </script>
 </body>
