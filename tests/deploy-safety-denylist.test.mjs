@@ -56,7 +56,11 @@ const REQUIRED_FORCE_404 = [
   "/CLAUDE.md",
   "/ARIA-Vault-Backups/*",
   "/backups/*",
-  "/AGENT_EXECUTION_NOTES.md"
+  "/AGENT_EXECUTION_NOTES.md",
+  // 2026-07-02 amendment: ops + functions source must never serve either (the probe script
+  // lives under /scripts; /netlify holds function sources).
+  "/scripts/*",
+  "/netlify/*"
 ];
 
 const toml = readFileSync(path.join(repoRoot, "netlify.toml"), "utf8");

@@ -250,6 +250,15 @@
   force = true
 
 [[redirects]]
+  from = "/forums"
+  to = "/forums/index.html"
+  status = 200
+[[redirects]]
+  from = "/forums/"
+  to = "/forums/index.html"
+  status = 200
+
+[[redirects]]
   from = "/shop"
   to = "/shop.html"
   status = 200

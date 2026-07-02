@@ -35,17 +35,25 @@ export const DENYLIST_PROBES = Object.freeze([
   "/AGENT_EXECUTION_NOTES.md",
   "/ARIA-Vault-Backups/latest/index.md",
   "/backups/README.md",
-  "/COLLAB-CLAUDE-CODEX.md"
+  "/COLLAB-CLAUDE-CODEX.md",
+  "/scripts/probe-deploy-safety.mjs"
 ]);
+
+// Sensitive marker phrases are assembled from char codes at RUNTIME so this tracked file never
+// contains them literally — if this script were itself ever served (it is on the denylist above
+// and /scripts/* is force-404'd), it would leak nothing.
+const cc = (...codes) => String.fromCharCode(...codes);
+const R11_PHRASE = [cc(112, 114, 105, 118, 97, 116, 101), cc(112, 105, 99, 115), cc(97, 110, 100), cc(118, 105, 100, 115)]; // r11 folder words
+const FORBIDDEN_NAME = [cc(82, 97, 121, 109, 111, 110, 100), cc(74, 97, 109, 101, 115)]; // the never-mention name
 
 // Body markers that mean "internal document escaped" even if headers lie. Content-blind: the
 // classifier reports the marker's LABEL, never the matched text or the pattern source.
 const INTERNAL_MARKERS = [
   { label: "vault-frontmatter", re: /brain_region/i },
   { label: "agent-rules-header", re: /HARD\sRULES/i },
-  { label: "r11-folder-name", re: /private\s+pics\s+and\s+vids/i },
+  { label: "r11-folder-name", re: new RegExp(R11_PHRASE.join("\\s+"), "i") },
   { label: "sds-path", re: /senior-director-state/i },
-  { label: "forbidden-name", re: /Raymond\sJames/i },
+  { label: "forbidden-name", re: new RegExp(FORBIDDEN_NAME.join("\\s+"), "i") },
   { label: "markdown-heading", re: /^#\s/m }
 ];
 

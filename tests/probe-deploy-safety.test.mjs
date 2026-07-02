@@ -17,12 +17,36 @@ assert.equal(classifyProbe({ status: 404, contentType: "text/html", body: "# HAR
 assert.equal(classifyProbe({ status: 301, contentType: "", body: "" }).ok, false, "unexpected status surfaces honestly");
 assert.equal(classifyProbe({ status: 403, contentType: "text/html", body: html404 }).ok, true);
 
-// 2 — the incident path is probe #1 and the list covers every denylist class.
+// 2 — the incident path is probe #1 and the list covers every denylist class (incl. the probe
+// script itself: /scripts/* is force-404'd and self-probed).
 assert.equal(DENYLIST_PROBES[0], "/CLAUDE.md");
-for (const prefix of ["/aria-vault/", "/senior-director-state/", "/documents/", "/AGENT_EXECUTION_NOTES.md", "/ARIA-Vault-Backups/", "/backups/"]) {
+for (const prefix of ["/aria-vault/", "/senior-director-state/", "/documents/", "/AGENT_EXECUTION_NOTES.md", "/ARIA-Vault-Backups/", "/backups/", "/scripts/"]) {
   assert.ok(DENYLIST_PROBES.some((p) => p.startsWith(prefix)), `probe list must cover ${prefix}`);
 }
+assert.ok(DENYLIST_PROBES.includes("/scripts/probe-deploy-safety.mjs"), "the probe must probe itself");
 assert.ok(DENYLIST_PROBES.length >= 8);
+
+// 2b — the sensitive markers are built from char codes at RUNTIME (never literal in tracked
+// code) yet still catch their phrases. These fixtures are runtime-built for the same reason.
+{
+  const cc = (...codes) => String.fromCharCode(...codes);
+  const r11Phrase = [cc(80, 114, 105, 118, 97, 116, 101), cc(112, 105, 99, 115), cc(97, 110, 100), cc(86, 105, 100, 115)].join(" ");
+  const rjPhrase = [cc(82, 97, 121, 109, 111, 110, 100), cc(74, 97, 109, 101, 115)].join(" ");
+  let v = classifyProbe({ status: 404, contentType: "text/html", body: `notes under C:\\${r11Phrase}\\x` });
+  assert.deepEqual(v, { ok: false, reason: "internal-marker:r11-folder-name" });
+  v = classifyProbe({ status: 404, contentType: "text/html", body: `never mention ${rjPhrase} anywhere` });
+  assert.deepEqual(v, { ok: false, reason: "internal-marker:forbidden-name" });
+  // and the tracked probe sources must not carry either phrase literally.
+  const { readFileSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const { dirname, join } = await import("node:path");
+  const here = dirname(fileURLToPath(import.meta.url));
+  for (const rel of ["../scripts/probe-deploy-safety.mjs", "./probe-deploy-safety.test.mjs"]) {
+    const src = readFileSync(join(here, rel), "utf8");
+    assert.equal(new RegExp(r11Phrase.split(" ").join("\\s+"), "i").test(src), false, `${rel} must not contain the r11 phrase literally`);
+    assert.equal(new RegExp(rjPhrase.split(" ").join("\\s+"), "i").test(src), false, `${rel} must not contain the forbidden name literally`);
+  }
+}
 
 // 3 — runProbes: cache-busts every URL, sends no-cache headers, aggregates honestly.
 {
