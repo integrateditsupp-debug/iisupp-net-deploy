@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld("sentinel", {
   dismissPilotPrompt: (state) => ipcRenderer.invoke("sentinel:dismiss-pilot-prompt", state),
   conversionMoment: () => ipcRenderer.invoke("sentinel:conversion-moment"),          // RUN-D D2
   caseStudyDraft: (opts) => ipcRenderer.invoke("sentinel:case-study-draft", opts),   // RUN-D D2 (staged draft)
+  caseStudyConsent: (consent) => ipcRenderer.invoke("sentinel:case-study-consent", consent), // RUN-E E2 — explicit one-click consent (never auto)
+  caseStudyPublishable: () => ipcRenderer.invoke("sentinel:case-study-publishable"),          // RUN-E E2 — null until consent + reviewed draft
   resolutionOutcome: (payload) => ipcRenderer.invoke("sentinel:resolution-outcome", payload), // RUN-B B1 — "Was this fixed?"
   resolutionStats: () => ipcRenderer.invoke("sentinel:resolution-stats"),                     // RUN-B B1 — real deflection %
   valueProof: () => ipcRenderer.invoke("sentinel:value-proof"),                              // RUN-B B2 — real ROI + deflection value proof

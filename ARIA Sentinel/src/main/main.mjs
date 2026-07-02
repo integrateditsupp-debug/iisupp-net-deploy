@@ -110,8 +110,8 @@ function currentPlanFeatures() { return planEnabledFeatures(gateStatus()); }
 function currentIsAdmin() { return licenseIsAdmin(gateStatus()); }
 let hotkeyStatus = [];
 import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge } from "../shared/license.mjs";
-import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord } from "../shared/pilot-state.mjs";
-import { conversionMoment, buildCaseStudy, caseStudyReadiness } from "../shared/case-study.mjs"; // RUN-D D2 — pilot->paid capture, wired
+import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord, stampTtfv, firstFixAtFromAudit, ttfvMinutes, ttfvLabel } from "../shared/pilot-state.mjs"; // RUN-E E1 — TTFV clock
+import { conversionMoment, buildCaseStudy, caseStudyReadiness, autorunCaseStudy, withConsent, publishableCaseStudy } from "../shared/case-study.mjs"; // RUN-D D2 pilot->paid capture + RUN-E E2 proof autorun (consent-gated)
 import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %
 import { valueProof, valueProofKpis } from "../shared/value-proof.mjs"; // RUN-B B2 — real ROI ($/hours) + deflection on every surface
 import { buildTrustSummary } from "../shared/trust-posture.mjs"; // RUN-B B3 — honest trust/security surface (real-or-empty)
@@ -886,6 +886,9 @@ function dashboardData() {
   if (pilotPrompt && pilotPrompt.show) pending.push({ text: pilotPrompt.title, cta: pilotPrompt.cta, tab: "about" });
   const conv = conversionMomentNow(); // RUN-D D2 — day-10-14 pilot->paid moment on the SAME pilot-expiry surface
   if (conv && conv.show) pending.push({ text: conversionPendingText(conv), cta: conv.cta.label, tab: "about", path: conv.cta.path });
+  try { maybeAutorunCaseStudy(); } catch { /* RUN-E E2 — maturity arrives with TIME; the live pending surface catches it without needing a new event */ }
+  const csDraft = readCaseStudyDraft(); // RUN-E E2 — staged proof review card (consent-gated; never auto-published)
+  if (csDraft && !(csDraft.consent && csDraft.consent.granted)) pending.push({ text: caseStudyPendingText(csDraft), cta: "Review proof", tab: "about" });
   const vp = valueProofNow(); // RUN-B B2 — real-or-empty ROI ($/hours) + deflection for the dashboard hero
   return {
     sources,
@@ -1320,6 +1323,7 @@ const MAC_PRIVACY_PANES = {
 const LICENSE_FILE = path.join(os.homedir(), ".aria-sentinel", "license.json");
 const TRIAL_FILE = path.join(os.homedir(), ".aria-sentinel", "trial.json");
 const PILOT_FILE = path.join(os.homedir(), ".aria-sentinel", "pilot.json"); // RUN-C C2 — 14-day SMB pilot
+const CASE_STUDY_FILE = path.join(os.homedir(), ".aria-sentinel", "case-study-draft.json"); // RUN-E E2 — write-once staged proof (consent-gated)
 // The binary checks updates via iisupp.net (server-side function talks to GitHub) — its outbound
 // stays inside the declared allowlist; it never calls GitHub directly.
 const UPDATE_ENDPOINT = "https://iisupp.net/aria-binary-update";
@@ -1434,6 +1438,74 @@ function trialState() {
 function readPilot() {
   try { return JSON.parse(fs.readFileSync(PILOT_FILE, "utf8")); } catch { return null; }
 }
+// RUN-E E1 — persist the pilot record (local only, never an external send).
+function writePilot(record) {
+  try {
+    fs.mkdirSync(path.dirname(PILOT_FILE), { recursive: true });
+    fs.writeFileSync(PILOT_FILE, JSON.stringify(record, null, 2));
+    return true;
+  } catch { return false; }
+}
+// RUN-E E1 — TTFV clock: the FIRST audit-log RUN fix at/after pilot start stamps ttfv into pilot.json,
+// exactly once (write-once; a later "better" fix never rewrites history). Real-or-empty (Rule 14): no
+// pilot, no real fix, or fix-before-start => no write, no number — the dashboard keeps showing "--".
+let ttfvStamping = false;
+function maybeStampPilotTtfv() {
+  if (ttfvStamping) return;
+  const record = readPilot();
+  if (!record) return;
+  const firstFixAt = firstFixAtFromAudit(store.get("transparencyLog") || [], { startedAt: record.started_at });
+  const stamped = stampTtfv(record, { firstFixAt });
+  if (!stamped.changed) return;
+  if (!writePilot(stamped.record)) return;
+  ttfvStamping = true;
+  try {
+    logEvent("PILOT", `First value delivered: first real fix ${stamped.record.ttfv.minutes} min after pilot start (TTFV).`);
+  } finally { ttfvStamping = false; }
+}
+// RUN-E E2 — proof AUTORUN: the moment the pilot has MATURED (day 10–14+) AND holds >=1 REAL audit-log
+// fix, the honest one-page proof drafts ITSELF into case-study-draft.json (write-once; an existing draft
+// is never rewritten) and a review card lands on the pending surface. Rule 14 real-or-empty: an immature
+// or zero-fix pilot drafts NOTHING. Consent starts ungranted — publish stays Ahmad's explicit one-click
+// (sentinel:case-study-consent), never autonomous, never an external send.
+function readCaseStudyDraft() {
+  try { return JSON.parse(fs.readFileSync(CASE_STUDY_FILE, "utf8")); } catch { return null; }
+}
+function writeCaseStudyDraft(record) {
+  try {
+    fs.mkdirSync(path.dirname(CASE_STUDY_FILE), { recursive: true });
+    fs.writeFileSync(CASE_STUDY_FILE, JSON.stringify(record, null, 2));
+    return true;
+  } catch { return false; }
+}
+let caseStudyAutorunning = false;
+function maybeAutorunCaseStudy() {
+  if (caseStudyAutorunning) return;
+  const res = autorunCaseStudy({ pilot: readPilot(), metrics: pilotMetricsNow(), existingDraft: readCaseStudyDraft() });
+  if (!res.changed) return;              // real-or-empty: not matured / no real fix / already drafted => no write, no card
+  if (!writeCaseStudyDraft(res.record)) return;
+  caseStudyAutorunning = true;
+  try {
+    const m = res.record.metrics || {};
+    logEvent("PILOT", `Pilot proof drafted from real data: ${m.fixes} real fix${m.fixes === 1 ? "" : "es"}${m.deflection_pct != null ? `, ${m.deflection_pct}% deflection` : ""} (staged for review — nothing publishes without consent).`);
+  } finally { caseStudyAutorunning = false; }
+}
+function caseStudyPendingText(draft) {
+  const m = (draft && draft.metrics) || {};
+  const bits = [];
+  if (m.fixes != null) bits.push(`${m.fixes} real fix${m.fixes === 1 ? "" : "es"}`);
+  if (m.deflection_pct != null) bits.push(`${m.deflection_pct}% deflection`);
+  return bits.length ? `Pilot proof drafted \u2014 ${bits.join(" \u00b7 ")}` : "Pilot proof drafted";
+}
+// RUN-E E2 — record EXPLICIT consent on the persisted draft (Ahmad's one-click; nothing inferred).
+function recordCaseStudyConsent(consent = {}) {
+  const draft = readCaseStudyDraft();
+  if (!draft) return { ok: false, reason: "no-draft" };
+  const withC = withConsent({ ready: true, missing: [], record: draft }, consent || {});
+  if (!writeCaseStudyDraft(withC.record)) return { ok: false, reason: "write-failed" };
+  logEvent("PILOT", withC.record.consent.granted ? "Case-study consent recorded (explicit one-click; draft still requires review flag to publish)." : "Case-study consent not granted \u2014 draft stays private.");
+  return { ok: true, record: withC.record, publishable: publishableCaseStudy(withC) != null };
+}
 function pilotStateLocal() {
   return pilotStatus({ startedAt: readPilot()?.started_at });
 }
@@ -1441,11 +1513,7 @@ function startPilot(intake) {
   if (readPilot()) return { ok: true, already: true, status: pilotStateLocal() };
   const built = buildPilotRecord(intake || {}, { deviceId: os.hostname() });
   if (!built.ok) return { ok: false, errors: built.errors };
-  try {
-    fs.mkdirSync(path.dirname(PILOT_FILE), { recursive: true });
-    fs.writeFileSync(PILOT_FILE, JSON.stringify(built.record, null, 2));
-    logEvent("PILOT", "14-day free pilot started.");
-  } catch { /* best-effort local write; never an external send */ }
+  if (writePilot(built.record)) logEvent("PILOT", "14-day free pilot started."); // best-effort local write; never an external send
   return { ok: true, status: pilotStatus({ startedAt: built.record.started_at }) };
 }
 function pilotPromptNow() {
@@ -1568,7 +1636,8 @@ function caseStudyDraftNow(opts = {}) {
   const metrics = pilotMetricsNow();
   return {
     readiness: caseStudyReadiness({ pilot, metrics }),
-    draft: buildCaseStudy({ pilot, metrics, vertical: opts && opts.vertical })
+    draft: buildCaseStudy({ pilot, metrics, vertical: opts && opts.vertical }),
+    persisted: readCaseStudyDraft() // RUN-E E2 — the write-once autorun draft (null until a real matured proof exists)
   };
 }
 function gateStatus() {
@@ -1580,7 +1649,7 @@ function gateStatus() {
     plan: lic.plan,
     email: lic.email,
     trial: { state: trial.state, remainingMs: trial.remainingMs, badge: trialBadge(trial.remainingMs) },
-    pilot: { state: pilot.state, daysRemaining: pilot.daysRemaining, badge: pilotBadge(pilot) },
+    pilot: { state: pilot.state, daysRemaining: pilot.daysRemaining, badge: pilotBadge(pilot), ttfvMinutes: ttfvMinutes(readPilot()), ttfv: ttfvLabel(readPilot()) }, // RUN-E E1 — real-or-empty TTFV ("--" until a real first fix)
     conversion: conversionMomentNow(), // RUN-D D2 — surfaced to renderer alongside the pilot block
     unlocked: licenseUnlocked({ licenseValid: lic.licensed, trialState: trial.state })
   };
@@ -2108,6 +2177,9 @@ function logEvent(tag, text, extra = {}) {
   store.set("transparencyLog", trimmed);
   // RUN 16 §H — re-seal the log on every write so the next session can detect off-app tampering.
   try { store.set("auditSeal", sealAudit(trimmed)); } catch { /* sealing must never block logging */ }
+  // RUN-E E1 — a real fix just landed in the audit log: stamp pilot TTFV (write-once; no-op for other tags).
+  if (tag === "RUN") { try { maybeStampPilotTtfv(); } catch { /* TTFV must never block logging */ } }
+  if (tag === "RUN") { try { maybeAutorunCaseStudy(); } catch { /* RUN-E E2 — proof autorun must never block logging */ } }
   broadcastState();
   return entry;
 }
@@ -3290,6 +3362,8 @@ ipcMain.handle("sentinel:pilot-status", () => ({ status: pilotStateLocal(), prom
 ipcMain.handle("sentinel:dismiss-pilot-prompt", (_event, state) => dismissPilotPrompt(state));
 ipcMain.handle("sentinel:conversion-moment", () => conversionMomentNow());                    // RUN-D D2
 ipcMain.handle("sentinel:case-study-draft", (_event, opts) => caseStudyDraftNow(opts || {}));  // RUN-D D2 — staged, never auto-publish
+ipcMain.handle("sentinel:case-study-consent", (_event, consent) => recordCaseStudyConsent(consent || {})); // RUN-E E2 — explicit one-click consent, never inferred
+ipcMain.handle("sentinel:case-study-publishable", () => publishableCaseStudy({ ready: true, missing: [], record: readCaseStudyDraft() })); // RUN-E E2 — null until consent + review
 ipcMain.handle("sentinel:resolution-outcome", (_event, payload) => recordResolutionOutcome(payload || {})); // RUN-B B1 — "Was this fixed?" real outcome
 ipcMain.handle("sentinel:resolution-stats", () => resolutionStatsNow());                                     // RUN-B B1 — real deflection %
 ipcMain.handle("sentinel:value-proof", () => valueProofNow());                                                // RUN-B B2 — real ROI + deflection value proof
@@ -3419,6 +3493,8 @@ if (hasSingleInstanceLock) {
     createOverlayWindow();
     createTray();
     ensureTrialStarted();
+    try { maybeStampPilotTtfv(); } catch { /* RUN-E E1 — catch a first fix recorded in an earlier session; never blocks startup */ }
+    try { maybeAutorunCaseStudy(); } catch { /* RUN-E E2 — a pilot that matured between sessions drafts its proof at startup; never blocks */ }
     refreshLicense().catch(() => undefined); // RUN 24 A6 — silent server-side re-verify (skips network if cache fresh)
     showOverlay({ expanded: false });
     applyModeBehavior(store.get("mode"));

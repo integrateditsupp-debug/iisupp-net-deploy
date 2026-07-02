@@ -23,7 +23,11 @@ const allowedHosts = [
   "login.microsoftonline.com",
   "www.w3.org",
   "example.com",
-  "wa.me"
+  "wa.me",
+  // RUN-E E3 — Ahmad's own public 15-min demo booking link, embedded as TEXT in the Ahmad-locked
+  // outreach template (revenue-board.mjs). The RECIPIENT clicks it in an email; the app never fetches
+  // it (revenue-board.mjs is statically locked against fetch/net/child_process by its own battery).
+  "calendar.app.google"
 ];
 
 const findings = [];
