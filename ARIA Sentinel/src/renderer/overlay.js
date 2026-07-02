@@ -1,4 +1,5 @@
 import { COMPANION_MENU, getFlow, flowStep, resolveStep, stepKey, isStepAnswered, listFlows } from "../shared/walkthrough-steps.mjs";
+import { createLocalStt } from "./local-stt.mjs"; // TRUE on-device offline STT (Vosk) — no cloud, no audio egress
 
 // Defensive: if the preload bridge ever fails to attach, fall back to a no-op API so the
 // globe still renders instead of throwing an uncaught TypeError.
@@ -38,6 +39,92 @@ const companionPanel = document.getElementById("companionPanel");
 const companionBody = document.getElementById("companionBody");
 const companionBackBtn = document.getElementById("companionBack");
 const companionCloseBtn = document.getElementById("companionClose");
+const companionMuteBtn = document.getElementById("companionMute");
+
+// ============================================================================================================
+// COMPANION VOICE — on-device only, $0 (no paid/cloud voice API). Two halves, both guarded so the companion
+// degrades gracefully where the browser/OS lacks the API:
+//  · NARRATION (OUTPUT): speechSynthesis speaks the SAME visible card text (never a separate/embellished
+//    script — Rule 14), in a calm/warm/professional FEMALE voice (prefer Microsoft Aria/Jenny → Zira →
+//    any female en-US), rate ~0.95 / pitch ~1.0. ON by default; a header mute toggle always available.
+//  · INPUT (tap-to-speak): a bundled ON-DEVICE offline STT engine (Vosk WASM, see ./local-stt.mjs) transcribes
+//    into the field — NO audio leaves the machine and there is NO cloud recognizer fallback; typing ALWAYS works.
+// ============================================================================================================
+let narrationMuted = false; // narration is ON by default; the header toggle mutes/unmutes it
+
+function pickNarrationVoice() {
+  if (typeof speechSynthesis === "undefined") return null;
+  const voices = speechSynthesis.getVoices() || [];
+  const byName = (re) => voices.find((v) => re.test(v.name));
+  // Preference order: Microsoft Aria / Jenny (neural, natural) → Zira → any female en-US → any en-US → any en.
+  return byName(/aria|jenny/i)
+    || byName(/zira/i)
+    || voices.find((v) => /female|woman/i.test(v.name) && /^en[-_]?US/i.test(v.lang))
+    || voices.find((v) => /^en[-_]?US/i.test(v.lang))
+    || voices.find((v) => /^en/i.test(v.lang))
+    || null;
+}
+
+function narrate(text) {
+  if (typeof speechSynthesis === "undefined") return; // no TTS here → stay silent, screen text is the source
+  if (narrationMuted || !text || !text.trim()) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.trim());
+    const v = pickNarrationVoice(); if (v) u.voice = v;
+    u.lang = (v && v.lang) || "en-US";
+    u.rate = 0.95; u.pitch = 1.0; // soft, unhurried, professional
+    speechSynthesis.speak(u);
+  } catch { /* on-device TTS is best-effort; it never blocks the visible card */ }
+}
+
+// Speak EXACTLY what is on the card — read the rendered lead/sub text, never a separate script (Rule 14).
+function speakCurrentCard() {
+  if (!companionBody) return;
+  const parts = [...companionBody.querySelectorAll(".companion-lead, .companion-sub")]
+    .map((n) => n.textContent).filter((s) => s && s.trim());
+  narrate(parts.join(". "));
+}
+
+companionMuteBtn?.addEventListener("click", () => {
+  narrationMuted = !narrationMuted;
+  if (narrationMuted && typeof speechSynthesis !== "undefined") { try { speechSynthesis.cancel(); } catch { /* ignore */ } }
+  companionMuteBtn.setAttribute("aria-pressed", String(narrationMuted));
+  companionMuteBtn.title = narrationMuted ? "Unmute narration" : "Mute narration";
+  companionMuteBtn.innerHTML = narrationMuted ? "&#128263;" : "&#128266;"; // muted-speaker / speaker
+});
+
+// Tap-to-speak (voice INPUT): TRUE on-device offline STT (Vosk, ./local-stt.mjs). Guarded on a mic + a bundled
+// local model; if either is missing the button hides and typing still works — there is NEVER a cloud fallback.
+// The audio + transcription stay 100% local, so the caption "Voice stays on your device" is truthful. The mic is
+// active ONLY while listening and is released on stop. Returns the button or null.
+function addTapToSpeak(input, container) {
+  const host = container || input.parentNode;
+  const canMic = (typeof navigator !== "undefined") && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+  // No mic API, or no local-STT bridge → no button (the text field alone is fully usable). Never a cloud shim.
+  if (!canMic || !window.sentinel || !window.sentinel.voskModelUrl) return null;
+  const btn = el("button", "companion-speak"); btn.type = "button"; btn.textContent = "🎤 Tap to speak";
+  const cap = el("div", "companion-speak-note", "Voice stays on your device");
+  const hide = () => { try { btn.remove(); cap.remove(); } catch { /* already gone */ } };
+  let stt = null, listening = false;
+  const stop = () => { listening = false; btn.classList.remove("listening"); btn.textContent = "🎤 Tap to speak"; if (stt) { try { stt.stop(); } catch { /* ignore */ } stt = null; } };
+  btn.addEventListener("click", async () => {
+    if (listening) { stop(); return; }
+    try {
+      const modelUrl = await window.sentinel.voskModelUrl();
+      if (!modelUrl) return hide(); // no bundled model → hide the mic; NEVER fall back to a cloud recognizer
+      listening = true; btn.classList.add("listening"); btn.textContent = "● Listening… tap to stop";
+      stt = await createLocalStt({
+        modelUrl,
+        onText: (said) => { if (said) { input.value = (input.value ? input.value + " " : "") + said; input.dispatchEvent(new Event("input")); } }
+      });
+    } catch { stop(); hide(); } // local engine unavailable → hide the mic (typing still works)
+  });
+  host.appendChild(btn); host.appendChild(cap);
+  // Probe up front: if there's no bundled model on this install, don't show a dead mic button.
+  window.sentinel.voskModelUrl().then((u) => { if (!u) hide(); }).catch(() => hide());
+  return btn;
+}
 
 function setGlobeState(state) {
   if (globeSvg) globeSvg.setAttribute("data-state", state);
@@ -181,7 +268,7 @@ function openCompanion() {
   setMode("companion");
   renderCompanion();
 }
-function closeCompanion() { comp = null; setGlobeState("idle"); sentinel.showGlobe(); }
+function closeCompanion() { comp = null; if (typeof speechSynthesis !== "undefined") { try { speechSynthesis.cancel(); } catch { /* ignore */ } } setGlobeState("idle"); sentinel.showGlobe(); }
 function pushView(view) { comp.stack.push(view); renderCompanion(); }
 function backView() { if (!comp) return; comp.stack.pop(); if (!comp.stack.length) { closeCompanion(); return; } renderCompanion(); }
 function advance(view) { pushView({ kind: "flow", flowId: view.flowId, index: view.index + 1 }); }
@@ -194,11 +281,13 @@ function renderCompanion() {
   companionBody.innerHTML = "";
   const view = topView();
   companionBackBtn.hidden = comp.stack.length <= 1;
-  if (view.kind === "menu") return renderMenu();
-  if (view.kind === "picker") return renderPicker(view.group);
-  if (view.kind === "fix") return renderFix();
-  if (view.kind === "fix-result") return renderFixResult(view);
-  if (view.kind === "flow") return renderFlowStep(view);
+  if (view.kind === "menu") renderMenu();
+  else if (view.kind === "picker") renderPicker(view.group);
+  else if (view.kind === "fix") renderFix();
+  else if (view.kind === "fix-result") renderFixResult(view); // async; lead/sub are appended synchronously first
+  else if (view.kind === "flow") renderFlowStep(view);
+  // NARRATION: speak the same visible card text after it renders (guarded + muteable inside narrate()).
+  speakCurrentCard();
 }
 
 function renderMenu() {
@@ -249,6 +338,7 @@ function renderFlowStep(view) {
     input.value = comp.answers[step.key] || "";
     input.addEventListener("input", () => { comp.answers[step.key] = input.value; nextBtn.disabled = !input.value.trim(); });
     companionBody.appendChild(input);
+    addTapToSpeak(input, companionBody); // optional voice INPUT; hidden gracefully when unavailable
     nextBtn.disabled = !input.value.trim();
     setTimeout(() => input.focus(), 30);
   } else if (step.type === "choice") {
@@ -322,6 +412,7 @@ function renderFix() {
   companionBody.appendChild(el("div", "companion-sub", "Describe it in a few words. I'll guide you or, if it's a vetted fix, resolve it for you (gated — you approve)."));
   const input = el("input", "companion-input"); input.type = "text"; input.placeholder = "e.g. my printer won't print";
   companionBody.appendChild(input);
+  addTapToSpeak(input, companionBody); // first walk-through/problem step gets voice INPUT (optional, guarded)
   const status = el("div", "companion-status", "");
   const row = el("div", "companion-actions");
   const backBtn = el("button", "cbtn ghost"); backBtn.type = "button"; backBtn.textContent = "Back"; backBtn.addEventListener("click", backView);

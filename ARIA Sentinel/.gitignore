@@ -2,3 +2,7 @@
 # build + backup artifacts (never commit — exceed GitHub 100MB limit)
 dist-backups/
 dist/
+
+# on-device Vosk STT model (~40MB) — fetched at build time (npm run fetch:vosk-model / prepackage),
+# bundled into the installer via extraResources; never committed to git (keeps the repo lean).
+resources/models/

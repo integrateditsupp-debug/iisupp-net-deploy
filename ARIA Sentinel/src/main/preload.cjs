@@ -81,6 +81,9 @@ contextBridge.exposeInMainWorld("sentinel", {
   openWalkthrough: (payload) => ipcRenderer.invoke("sentinel:open-walkthrough", payload),
   openMainTab: (tab) => ipcRenderer.invoke("sentinel:open-main-tab", tab),
   copyText: (text) => ipcRenderer.invoke("sentinel:copy", text),
+  // TRUE on-device tap-to-speak — returns a file:// URL to the bundled offline Vosk model, or null if it isn't
+  // present on this install (then the renderer hides the mic; NEVER a cloud recognizer). Local file path only.
+  voskModelUrl: () => ipcRenderer.invoke("sentinel:vosk-model-url"),
   // RUN 19 — triple-confirm delete prefs + panic kill-switch.
   getDeletePrefs: () => ipcRenderer.invoke("sentinel:get-delete-prefs"),
   setDeletePref: (ext) => ipcRenderer.invoke("sentinel:set-delete-pref", ext),

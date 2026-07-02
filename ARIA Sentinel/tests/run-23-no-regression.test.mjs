@@ -51,9 +51,11 @@ const NEW = [
 ];
 for (const f of NEW) assert.ok(fs.existsSync(path.join(root, f)), `RUN 23 file present: ${f}`);
 
-// ZERO new npm runtime deps (electron-updater is the one documented exception; electron-store pre-existing).
+// Runtime deps are locked. Documented exceptions: electron-store (pre-existing), electron-updater, and
+// vosk-browser (2026-07-02) — the OFFLINE on-device STT engine that REPLACED the browser Web Speech recognizer so
+// tap-to-speak never sends audio to the cloud. No other runtime deps may be added silently.
 const pkg = JSON.parse(read("package.json"));
-assert.deepEqual(Object.keys(pkg.dependencies).sort(), ["electron-store", "electron-updater"], "no new runtime deps");
+assert.deepEqual(Object.keys(pkg.dependencies).sort(), ["electron-store", "electron-updater", "vosk-browser"], "runtime deps locked (+ vosk-browser on-device STT)");
 assert.deepEqual(Object.keys(pkg.devDependencies).sort(), ["electron", "electron-builder"], "no new dev deps");
 
 // Customer build still ships from the src/** allow-list (new modules included; cowork-tools/netlify excluded).
