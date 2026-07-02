@@ -35,7 +35,9 @@
     "cleanup:once": "node scripts/workspace-cleanup-agent.mjs",
     "site:hygiene": "node scripts/check-public-route-hygiene.mjs",
     "director:once": "node scripts/senior-director-worker.mjs --once",
-    "director:worker": "node scripts/senior-director-worker.mjs"
+    "director:worker": "node scripts/senior-director-worker.mjs",
+    "probe:deploy-safety": "node scripts/probe-deploy-safety.mjs",
+    "probe:deploy-safety:watch": "node scripts/probe-deploy-safety.mjs --watch 30"
   },
   "dependencies": {
     "@netlify/blobs": "^7.4.0",

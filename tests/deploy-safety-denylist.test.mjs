@@ -43,4 +43,29 @@ if (violations.length) {
   throw new Error(`deploy-safety-denylist: ${violations.length} denylisted path(s) tracked — run \`git rm --cached\` on them before committing.`);
 }
 
-console.log(`deploy-safety-denylist: OK — 0 of ${files.length} tracked paths match the internal denylist.`);
+// ── SERVING-LAYER LOCKDOWN 2026-07-02 (T3) — the force-404 redirect block must exist for every
+// internal path. Rules can't silently vanish in a merge: this fails the suite if netlify.toml
+// loses any of them. (Serving-layer LIVE behavior is covered by scripts/probe-deploy-safety.mjs —
+// this only locks the config; the 2026-07-02 incident proved config alone isn't sufficient.)
+import { readFileSync } from "node:fs";
+
+const REQUIRED_FORCE_404 = [
+  "/aria-vault/*",
+  "/senior-director-state/*",
+  "/documents/*",
+  "/CLAUDE.md",
+  "/ARIA-Vault-Backups/*",
+  "/backups/*",
+  "/AGENT_EXECUTION_NOTES.md"
+];
+
+const toml = readFileSync(path.join(repoRoot, "netlify.toml"), "utf8");
+const blocks = toml.split("[[redirects]]").slice(1);
+const missing = REQUIRED_FORCE_404.filter((from) => !blocks.some((b) =>
+  b.includes(`from = "${from}"`) && /status\s*=\s*404/.test(b) && /force\s*=\s*true/.test(b)
+));
+if (missing.length) {
+  throw new Error(`deploy-safety-denylist: netlify.toml is missing force-404 rules for: ${missing.join(", ")} — the serving-layer lockdown block was removed or altered.`);
+}
+
+console.log(`deploy-safety-denylist: OK — 0 of ${files.length} tracked paths match the internal denylist; all ${REQUIRED_FORCE_404.length} force-404 rules present in netlify.toml.`);

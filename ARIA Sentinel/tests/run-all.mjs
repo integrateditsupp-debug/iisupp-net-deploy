@@ -4,6 +4,8 @@
 const TESTS = [
   // SECURITY LOCKDOWN 2026-07-01 — repo-level deploy-safety denylist (lives at repo root; runs first).
   "../../tests/deploy-safety-denylist.test.mjs",
+  // SERVING-LAYER LOCKDOWN 2026-07-02 — live-probe logic (git-state tests can't see the serving layer).
+  "../../tests/probe-deploy-safety.test.mjs",
   "./scenario-suite.mjs",
   "./extension.test.mjs",
   "./endpoint.test.mjs",
