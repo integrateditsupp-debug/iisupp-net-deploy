@@ -20,6 +20,17 @@ export const TIER0_COMMANDS = Object.freeze({
   "restart-print-spooler": { kind: "service", service: "Spooler", command: "Restart-Service Spooler -Force; (Get-Service Spooler).Status", probe: "(Get-Service Spooler).Status" },
   "restart-windows-update": { kind: "service", service: "wuauserv", command: "Restart-Service wuauserv -Force; (Get-Service wuauserv).Status", probe: "(Get-Service wuauserv).Status" },
   "flush-dns-cache": { kind: "dns", command: "ipconfig /flushdns", probe: "(Get-DnsClientCache | Measure-Object).Count" },
+  // S2 (F5) — the 2 missing bindings that make network/print recovery true multi-step plans.
+  // reset-network-stack: one-way Winsock + TCP/IP reset (netsh was already allowlisted); catalog says
+  // requiresReboot — full effect can need one. Step success = the reset applied (exit 0); whether the
+  // USER'S problem is gone is declared only by the plan's outcome goalProbe (DNS resolve). One-way:
+  // no rollback exists and rollbackService says so honestly.
+  "reset-network-stack": { kind: "netsh", command: "netsh winsock reset; netsh int ip reset", probe: "(Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Measure-Object).Count" },
+  // clear-print-queue: PowerShell-native per-job clearing — Remove-PrintJob is scoped to print jobs
+  // ONLY (it cannot delete files), chosen over Remove-Item on the spool directory as the narrower
+  // hammer. Probe counts queued jobs: after=0 with before>0 = success; before=0 too = no-op-neutral
+  // (an already-empty queue is never claimed as a fix).
+  "clear-print-queue": { kind: "spool", command: "Get-Printer | ForEach-Object { Get-PrintJob -PrinterName $_.Name | Remove-PrintJob }", probe: "(Get-Printer | ForEach-Object { Get-PrintJob -PrinterName $_.Name } | Measure-Object).Count" },
   "restart-bluetooth": { kind: "service", service: "bthserv", command: "Restart-Service bthserv -Force; (Get-Service bthserv).Status", probe: "(Get-Service bthserv).Status" },
   "restart-audio": { kind: "service", service: "Audiosrv", command: "Restart-Service Audiosrv -Force; (Get-Service Audiosrv).Status", probe: "(Get-Service Audiosrv).Status" }
 });
@@ -67,12 +78,20 @@ function parseState(spec, res) {
   // 🔒 R11 — redact probe stdout at the source so a private path can never reach before/after or the audit.
   const text = redactPrivate(String((res && res.stdout) || "")).trim();
   if (spec.kind === "dns") { const m = text.match(/-?\d+/); return m ? Number(m[0]) : null; }
+  // S2 — netsh (adapter-up count) and spool (queued-job count) probes parse a number, like dns.
+  if (spec.kind === "netsh" || spec.kind === "spool") { const m = text.match(/-?\d+/); return m ? Number(m[0]) : null; }
   return text.split(/\r?\n/).map((s) => s.trim()).filter(Boolean).pop() || ""; // "Running" / "Stopped" / ""
 }
 
 function classify(spec, before, after, exec) {
   if (!exec || exec.exitCode !== 0) return "fail";
   if (spec.kind === "dns") return (before === 0 && after === 0) ? "no-op-neutral" : "success";
+  // S2 — netsh reset is one-way and never a no-op: exit 0 = the reset really applied. The plan-level
+  // outcome goalProbe (not this step verdict) decides whether the user's problem is gone.
+  if (spec.kind === "netsh") return "success";
+  // S2 — spool: success only when the queue actually drained; an already-empty queue is no-op-neutral;
+  // jobs still queued (or an unreadable count) = fail. Real-or-empty.
+  if (spec.kind === "spool") return after === 0 ? (before === 0 ? "no-op-neutral" : "success") : "fail";
   if (after === "Running") return before === "Running" ? "no-op-neutral" : "success";
   return "fail"; // not Running after a restart → failed
 }

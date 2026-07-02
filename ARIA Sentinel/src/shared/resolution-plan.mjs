@@ -12,7 +12,9 @@ import { isBlockedPath, R11_SURFACE } from "./path-guard.mjs";
 export const STEP_ON_FAIL = Object.freeze(["retry-once", "rollback-plan", "escalate"]);
 export const RISK_LEVELS = Object.freeze(["low", "medium", "high"]);
 export const ROLLBACK_POLICIES = Object.freeze(["reverse-order", "escalate-only"]);
-export const PROBE_INTERPRETS = Object.freeze(["service-running", "count-positive"]);
+// S2 (F2) adds outcome-level interprets: count-zero (e.g. zero stuck print jobs) and boolean-true
+// (e.g. Test-NetConnection -InformationLevel Quiet). Empty output NEVER passes any interpret.
+export const PROBE_INTERPRETS = Object.freeze(["service-running", "count-positive", "count-zero", "boolean-true"]);
 export const TRIGGER_KINDS = Object.freeze(["detector-cluster", "user-request", "vision-intake"]);
 const MAX_STEPS = 12;
 
@@ -70,5 +72,7 @@ export function validatePlan(plan, opts = {}) {
     errors.push("riskEnvelope must be { level: low|medium|high, touchesSystemState: boolean }");
   }
   if (!ROLLBACK_POLICIES.includes(plan.rollbackPolicy)) errors.push(`rollbackPolicy must be one of ${ROLLBACK_POLICIES.join("|")}`);
+  // S2 — optional quality flag: stop as soon as the goalProbe passes mid-plan (smallest effective hammer).
+  if (plan.stopEarlyOnGoal != null && typeof plan.stopEarlyOnGoal !== "boolean") errors.push("stopEarlyOnGoal must be a boolean when present");
   return { ok: errors.length === 0, code: errors.length ? "INVALID" : "", errors };
 }

@@ -28,7 +28,7 @@ assert.match(indexHtml, /<aria-globe class="brand-globe"/, "RUN 19 live globe in
 assert.ok(fs.existsSync(path.join(root, "aria-kb-pack", "diagnostics", "symptoms.md")), "RUN 20 symptom KB intact");
 assert.equal(fs.readdirSync(path.join(root, "aria-kb-pack", "blueprints")).filter((f) => f.endsWith(".md")).length, 10, "RUN 20 10 blueprints intact");
 assert.ok(fs.existsSync(path.join(root, "src", "shared", "diagnostic-reasoner.mjs")), "RUN 20 reasoner intact");
-assert.equal(fs.readdirSync(path.join(root, "src", "main", "recipes", "tier-0")).filter((f) => f.endsWith(".recipe.mjs")).length, 20, "RUN 20 tier-0 recipes intact");
+assert.equal(fs.readdirSync(path.join(root, "src", "main", "recipes", "tier-0")).filter((f) => f.endsWith(".recipe.mjs")).length, 21, "RUN 20 tier-0 recipes intact + S2 clear-print-queue = 21");
 
 // Tab count: RUN 23d's 9 + RUN 33 PIVOT's ARIA tab = 10 (≤10 hard stop).
 assert.equal(new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1])).size, 10, "10 settings tabs (9 + ARIA)");

@@ -271,6 +271,9 @@ const TESTS = [
   "./plan-resume-after-reboot.test.mjs",
   "./plan-autonomy-ladder.test.mjs",
   "./plan-r11-and-killswitch.test.mjs",
+  // STAGE 3 S2 (slices 1+2) — F5 bindings safety + F2 outcome-level goalProbes.
+  "./s2-tier0-bindings-safety.test.mjs",
+  "./s2-goalprobe-outcome-real-or-empty.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

@@ -34,13 +34,14 @@ const sneaky = goodPlan();
 sneaky.steps[0].args = { logDir: "C:\\private PICS and vids\\x" };
 assert.equal(validatePlan(sneaky, { isBound }).code, "R11_BLOCKED");
 
-// 3 — S1 bound-step enforcement: reset-network-stack is a real catalog recipe but has NO live
-// executor binding, so a plan using it is invalid (S1 runs only bound, vetted recipes).
+// 3 — bound-step enforcement (S2 note: reset-network-stack gained its live binding in S2 slice 1,
+// so the still-unbound sample is now restart-dhcp-client — the INTENT is unchanged: a plan using a
+// recipe with no live executor binding is invalid; only bound, vetted recipes run).
 const unbound = goodPlan();
-unbound.steps[0].recipeId = "reset-network-stack";
+unbound.steps[0].recipeId = "restart-dhcp-client";
 v = validatePlan(unbound, { isBound });
 assert.equal(v.ok, false);
-assert.ok(v.errors.some((e) => e.includes("reset-network-stack") && e.includes("no live Tier-0 executor binding")));
+assert.ok(v.errors.some((e) => e.includes("restart-dhcp-client") && e.includes("no live Tier-0 executor binding")));
 
 // 4 — shape errors: empty steps, bad onFail, bad rollbackPolicy, missing goalProbe.
 assert.equal(validatePlan({ ...goodPlan(), steps: [] }, { isBound }).ok, false);
