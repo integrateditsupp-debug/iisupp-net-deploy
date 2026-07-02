@@ -110,7 +110,7 @@ function currentPlanFeatures() { return planEnabledFeatures(gateStatus()); }
 function currentIsAdmin() { return licenseIsAdmin(gateStatus()); }
 let hotkeyStatus = [];
 import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge } from "../shared/license.mjs";
-import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord } from "../shared/pilot-state.mjs";
+import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord, stampTtfv, firstFixAtFromAudit, ttfvMinutes, ttfvLabel } from "../shared/pilot-state.mjs"; // RUN-E E1 — TTFV clock
 import { conversionMoment, buildCaseStudy, caseStudyReadiness } from "../shared/case-study.mjs"; // RUN-D D2 — pilot->paid capture, wired
 import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %
 import { valueProof, valueProofKpis } from "../shared/value-proof.mjs"; // RUN-B B2 — real ROI ($/hours) + deflection on every surface
@@ -1434,6 +1434,31 @@ function trialState() {
 function readPilot() {
   try { return JSON.parse(fs.readFileSync(PILOT_FILE, "utf8")); } catch { return null; }
 }
+// RUN-E E1 — persist the pilot record (local only, never an external send).
+function writePilot(record) {
+  try {
+    fs.mkdirSync(path.dirname(PILOT_FILE), { recursive: true });
+    fs.writeFileSync(PILOT_FILE, JSON.stringify(record, null, 2));
+    return true;
+  } catch { return false; }
+}
+// RUN-E E1 — TTFV clock: the FIRST audit-log RUN fix at/after pilot start stamps ttfv into pilot.json,
+// exactly once (write-once; a later "better" fix never rewrites history). Real-or-empty (Rule 14): no
+// pilot, no real fix, or fix-before-start => no write, no number — the dashboard keeps showing "--".
+let ttfvStamping = false;
+function maybeStampPilotTtfv() {
+  if (ttfvStamping) return;
+  const record = readPilot();
+  if (!record) return;
+  const firstFixAt = firstFixAtFromAudit(store.get("transparencyLog") || [], { startedAt: record.started_at });
+  const stamped = stampTtfv(record, { firstFixAt });
+  if (!stamped.changed) return;
+  if (!writePilot(stamped.record)) return;
+  ttfvStamping = true;
+  try {
+    logEvent("PILOT", `First value delivered: first real fix ${stamped.record.ttfv.minutes} min after pilot start (TTFV).`);
+  } finally { ttfvStamping = false; }
+}
 function pilotStateLocal() {
   return pilotStatus({ startedAt: readPilot()?.started_at });
 }
@@ -1441,11 +1466,7 @@ function startPilot(intake) {
   if (readPilot()) return { ok: true, already: true, status: pilotStateLocal() };
   const built = buildPilotRecord(intake || {}, { deviceId: os.hostname() });
   if (!built.ok) return { ok: false, errors: built.errors };
-  try {
-    fs.mkdirSync(path.dirname(PILOT_FILE), { recursive: true });
-    fs.writeFileSync(PILOT_FILE, JSON.stringify(built.record, null, 2));
-    logEvent("PILOT", "14-day free pilot started.");
-  } catch { /* best-effort local write; never an external send */ }
+  if (writePilot(built.record)) logEvent("PILOT", "14-day free pilot started."); // best-effort local write; never an external send
   return { ok: true, status: pilotStatus({ startedAt: built.record.started_at }) };
 }
 function pilotPromptNow() {
@@ -1580,7 +1601,7 @@ function gateStatus() {
     plan: lic.plan,
     email: lic.email,
     trial: { state: trial.state, remainingMs: trial.remainingMs, badge: trialBadge(trial.remainingMs) },
-    pilot: { state: pilot.state, daysRemaining: pilot.daysRemaining, badge: pilotBadge(pilot) },
+    pilot: { state: pilot.state, daysRemaining: pilot.daysRemaining, badge: pilotBadge(pilot), ttfvMinutes: ttfvMinutes(readPilot()), ttfv: ttfvLabel(readPilot()) }, // RUN-E E1 — real-or-empty TTFV ("--" until a real first fix)
     conversion: conversionMomentNow(), // RUN-D D2 — surfaced to renderer alongside the pilot block
     unlocked: licenseUnlocked({ licenseValid: lic.licensed, trialState: trial.state })
   };
@@ -2108,6 +2129,8 @@ function logEvent(tag, text, extra = {}) {
   store.set("transparencyLog", trimmed);
   // RUN 16 §H — re-seal the log on every write so the next session can detect off-app tampering.
   try { store.set("auditSeal", sealAudit(trimmed)); } catch { /* sealing must never block logging */ }
+  // RUN-E E1 — a real fix just landed in the audit log: stamp pilot TTFV (write-once; no-op for other tags).
+  if (tag === "RUN") { try { maybeStampPilotTtfv(); } catch { /* TTFV must never block logging */ } }
   broadcastState();
   return entry;
 }
@@ -3419,6 +3442,7 @@ if (hasSingleInstanceLock) {
     createOverlayWindow();
     createTray();
     ensureTrialStarted();
+    try { maybeStampPilotTtfv(); } catch { /* RUN-E E1 — catch a first fix recorded in an earlier session; never blocks startup */ }
     refreshLicense().catch(() => undefined); // RUN 24 A6 — silent server-side re-verify (skips network if cache fresh)
     showOverlay({ expanded: false });
     applyModeBehavior(store.get("mode"));

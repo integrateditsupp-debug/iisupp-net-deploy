@@ -148,3 +148,71 @@ export function buildPilotRecord(input = {}, { now = Date.now(), deviceId = "" }
     }
   };
 }
+
+// ────────────────────────────────────────────────────────────────────────────────────────────────────
+// RUN-E E1 — time-to-first-value (TTFV) clock.
+//
+// The pilot's activation moment (started_at, C2) starts the clock; the FIRST real resolved issue —
+// an audit-log RUN entry, the exact same signal the D2 pilot->paid proof counts — stops it. The stamp
+// is written once into pilot.json and never changes afterwards ("first value" is first, forever).
+//
+// 🔒 Rule 14 (real-or-empty): no pilot start, no real fix at/after the start => NO stamp, and every
+// surface shows "--". ttfvMinutes is only ever derived from two real timestamps we actually recorded.
+// Fixes that happened BEFORE the pilot started are NOT the pilot's first value and never count.
+
+/**
+ * Earliest real fix at/after the pilot start, from the transparency/audit log.
+ * @param {Array<{ts?:string,tag?:string}>} entries newest-first transparencyLog (order not assumed).
+ * @param {{startedAt?: string|number|null}} args pilot start (ISO or epoch-ms).
+ * @returns {number|null} epoch-ms of the FIRST qualifying RUN entry, or null (real-or-empty).
+ */
+export function firstFixAtFromAudit(entries, { startedAt } = {}) {
+  const started = parseStart(startedAt);
+  if (started == null || !Array.isArray(entries)) return null;
+  let earliest = null;
+  for (const e of entries) {
+    if (!e || e.tag !== "RUN") continue;
+    const t = Date.parse(String(e.ts == null ? "" : e.ts));
+    if (!Number.isFinite(t) || t < started) continue;
+    if (earliest == null || t < earliest) earliest = t;
+  }
+  return earliest;
+}
+
+/**
+ * Stamp TTFV into a pilot record — pure, idempotent, write-once.
+ * @param {object|null} record pilot.v1 record (needs a parseable started_at).
+ * @param {{firstFixAt?: number|string|null, now?: number}} args firstFixAt from firstFixAtFromAudit.
+ * @returns {{changed:boolean, record:object|null}} caller persists ONLY when changed === true.
+ */
+export function stampTtfv(record, { firstFixAt, now = Date.now() } = {}) {
+  if (!record || typeof record !== "object") return { changed: false, record: record || null };
+  if (record.ttfv && Number.isFinite(Number(record.ttfv.minutes))) return { changed: false, record }; // write-once
+  const started = parseStart(record.started_at);
+  const fix = parseStart(firstFixAt);
+  if (started == null || fix == null || fix < started) return { changed: false, record }; // real-or-empty
+  const minutes = Math.round(((fix - started) / 60000) * 10) / 10; // one decimal, never negative by guard above
+  return {
+    changed: true,
+    record: {
+      ...record,
+      ttfv: {
+        first_fix_at: new Date(fix).toISOString(),
+        minutes,
+        stamped_at: new Date(now).toISOString()
+      }
+    }
+  };
+}
+
+/** Real-or-empty accessor: stamped minutes, or null. Never invents a number. */
+export function ttfvMinutes(record) {
+  const m = record && record.ttfv ? Number(record.ttfv.minutes) : NaN;
+  return Number.isFinite(m) && m >= 0 ? m : null;
+}
+
+/** Dashboard label: "--" until a REAL first value exists (Rule 14), then e.g. "4.2 min". */
+export function ttfvLabel(record) {
+  const m = ttfvMinutes(record);
+  return m == null ? "--" : `${m} min`;
+}
