@@ -261,6 +261,7 @@ const TESTS = [
   // RUN-E E1 (2026-07-02) — pilot activation -> TTFV clock: first real audit-log RUN fix stamps ttfvMinutes into pilot.json (write-once, real-or-empty "--").
   "./e1-pilot-activation-ttfv.test.mjs",
   "./e2-proof-autorun.test.mjs",
+  "./e3-revenue-board.test.mjs",
   // RUN-B B6 (2026-07-01) — regression-sweep LOCK: RUN-B modules present, gates stay registered, honesty moat live, real-or-empty + inflated Trust pages stay deleted.
   "./b6-regression-sweep.test.mjs",
   // STAGE 3 S1 (2026-07-01) — Autonomous Resolution Engine, Confirmed mode only: plan schema +
