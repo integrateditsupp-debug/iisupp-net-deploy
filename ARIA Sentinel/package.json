@@ -13,10 +13,10 @@
     "audit": "node tests/privacy-audit.mjs",
     "scenario:test": "node tests/scenario-suite.mjs",
     "fetch:vosk-model": "node scripts/fetch-vosk-model.mjs",
-    "prepackage": "node scripts/fetch-vosk-model.mjs",
-    "package:win": "electron-builder --win nsis --publish never",
-    "package:mac": "electron-builder --mac --publish never",
-    "package:dir": "electron-builder --dir --publish never"
+    "package:win": "npm run fetch:vosk-model && electron-builder --win nsis --publish never",
+    "package:mac": "npm run fetch:vosk-model && electron-builder --mac --publish never",
+    "package:dir": "npm run fetch:vosk-model && electron-builder --dir --publish never",
+    "test:boot": "node tests/boot-smoke.mjs"
   },
   "dependencies": {
     "electron-store": "^8.2.0",
@@ -44,7 +44,10 @@
     ],
     "extraResources": [
       "admin-console/**/*",
-      { "from": "resources/models/vosk-model-small-en-us", "to": "vosk-model-small-en-us" }
+      {
+        "from": "resources/models/vosk-model-small-en-us",
+        "to": "vosk-model-small-en-us"
+      }
     ],
     "win": {
       "icon": "build/icon.ico",

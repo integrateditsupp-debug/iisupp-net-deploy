@@ -7,7 +7,9 @@
 //   2. trial expired, no paid plan, Walk-Through entitled (Concierge buyer) → ONLY Walk-Through enabled;
 //      the other tabs lock behind an honest upsell; the buy path (Settings) stays open.
 //   3. paid Sentinel plan → every tab enabled again.
-import { activePlan, isWalkthroughEntitled, FREE_PLAN } from "./license-features.mjs";
+// 2026-07-02 P0 DEAD-SHELL FIX — import the PURE plan logic (crypto-free) so the renderer graph never pulls
+// node:crypto (its CSP blocks it, which bricked every click). license-features.mjs re-exports these node-side.
+import { activePlan, isWalkthroughEntitled, FREE_PLAN } from "./license-plan.mjs";
 
 // The Walk-Through tab survives trial expiry (it was paid for in the Concierge package).
 export const WALKTHROUGH_TAB = "walkthrough";

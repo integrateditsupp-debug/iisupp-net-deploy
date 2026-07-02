@@ -14,6 +14,9 @@ const TESTS = [
   // P1 DEAD-SHELL FIX 2026-07-02 — the free/expired floor must stay a NAVIGABLE tier (never a locked shell).
   "./nav-baseline-navigable.test.mjs",
   "./renderer-no-deadshell.test.mjs",
+  // P0 DEAD-SHELL FIX 2026-07-02 — renderer import graph must be browser-safe (no node:/bare specifier can
+  // enter it, or the CSP blocks the load and every click dies). Catches the tab-gating→node:crypto regression.
+  "./renderer-import-graph.test.mjs",
   // FORUMS MVP 2026-07-02 — real-KB retrieval + honest abstain + store core + a11y/fabrication gates.
   "../../tests/forums-mvp.test.mjs",
   // CONCIERGE 2026-07-02 — AI Setup Walk-Through homepage card + aria.html copy + services.html listing.

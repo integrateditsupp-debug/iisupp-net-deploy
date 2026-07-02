@@ -6,3 +6,8 @@ dist/
 # on-device Vosk STT model (~40MB) — fetched at build time (npm run fetch:vosk-model / prepackage),
 # bundled into the installer via extraResources; never committed to git (keeps the repo lean).
 resources/models/
+
+# dev-only: installed deps + boot-smoke debug artifacts (never commit)
+node_modules/
+boot-smoke-out.txt
+electron-stdout.txt

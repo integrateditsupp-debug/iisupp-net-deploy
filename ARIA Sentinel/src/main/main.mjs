@@ -335,6 +335,7 @@ function createMainWindow() {
     height: 820,
     minWidth: 1024,
     minHeight: 720,
+    show: !process.env.ARIA_BOOT_SMOKE,
     title: "ARIA Sentinel - Settings",
     backgroundColor: "#050505",
     autoHideMenuBar: true,
@@ -347,6 +348,41 @@ function createMainWindow() {
       backgroundThrottling: false
     }
   });
+  // BOOT SELF-TEST (env-gated; ZERO effect in production — only runs when ARIA_BOOT_SMOKE is set by
+  // `npm run test:boot`). Headlessly proves the main window is actually INTERACTIVE after init: clicks the ARIA
+  // nav + a Quick Action and reports whether the panel switched. This is what caught the P0 dead-shell that
+  // node unit tests couldn't (renderer.js silently not executing under CSP). See tests/boot-smoke.mjs.
+  if (process.env.ARIA_BOOT_SMOKE) {
+    const logs = [];
+    const push = (s) => logs.push(String(s));
+    mainWindow.webContents.on("console-message", (_e, level, message, line, sourceId) => push(`[console:${level}] ${message} @ ${sourceId}:${line}`));
+    mainWindow.webContents.on("preload-error", (_e, p, err) => push(`[preload-error] ${p}: ${err && err.stack || err}`));
+    mainWindow.webContents.on("render-process-gone", (_e, d) => push(`[render-gone] ${JSON.stringify(d)}`));
+    mainWindow.webContents.on("did-fail-load", (_e, code, desc, url) => push(`[did-fail-load] ${code} ${desc} ${url}`));
+    mainWindow.webContents.once("did-finish-load", async () => {
+      try {
+        await new Promise((r) => setTimeout(r, 3000));
+        const probe = await mainWindow.webContents.executeJavaScript(`(function(){try{
+          const before = (document.querySelector('.tab-panel.active')||{}).id;
+          const hasSentinel = !!window.sentinel;
+          const navBtn = document.querySelector('.nav-item[data-tab="aria"]');
+          navBtn && navBtn.click();
+          const afterNav = (document.querySelector('.tab-panel.active')||{}).id;
+          const navStyled = navBtn && navBtn.classList.contains('active');
+          const lockedShown = !(document.getElementById('lockedTabOverlay')||{hidden:true}).hidden;
+          const planShown = !(document.getElementById('planModal')||{hidden:true}).hidden;
+          const qa = document.getElementById('dashDiagnose'); qa && qa.click();
+          const afterQa = (document.querySelector('.tab-panel.active')||{}).id;
+          return JSON.stringify({hasSentinel, before, afterNav, navStyled, lockedShown, planShown, afterQa});
+        }catch(e){return 'PROBE_THREW: '+(e&&e.stack||e);}})()`, true).catch((e) => "EXECJS_FAILED: " + e);
+        push("[probe] " + probe);
+      } catch (e) { push("[hook-error] " + (e && e.stack || e)); }
+      const out = "=== ARIA BOOT SMOKE ===\n" + logs.join("\n") + "\n";
+      try { fs.writeFileSync(process.env.ARIA_BOOT_SMOKE_OUT || "boot-smoke-out.txt", out); } catch (e) { /* ignore */ }
+      try { process.stdout.write(out); } catch { /* ignore */ }
+      setTimeout(() => { try { app.exit(0); } catch { /* ignore */ } }, 400);
+    });
+  }
   mainWindow.setMenuBarVisibility(false);
   mainWindow.on("close", (event) => {
     if (isQuitting) return;
