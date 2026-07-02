@@ -10,6 +10,7 @@ const TESTS = [
   "./walkthrough-entitlement.test.mjs",
   "./tab-gating-post-trial.test.mjs",
   "./walkthrough-webhook-grant.test.mjs",
+  "./gating-free-floor.test.mjs", // FIX 2 — free floor ⊊ paid Personal (a paid entry plan is a real upgrade)
   // FORUMS MVP 2026-07-02 — real-KB retrieval + honest abstain + store core + a11y/fabrication gates.
   "../../tests/forums-mvp.test.mjs",
   "./scenario-suite.mjs",

@@ -45,7 +45,7 @@ assert.equal(effIn.plan, WALKTHROUGH_TRIAL_PLAN, "inside the window → full pai
 assert.equal(effIn.walkthroughEntitled, true, "entitlement echoed inside the window");
 const nowAfter = Date.parse(issued) + 31 * DAY; // day 31 → expired
 const effAfter = walkthroughEffectivePlan(rec, nowAfter);
-assert.equal(effAfter.plan, "personal", "after the window → falls back to Personal");
+assert.equal(effAfter.plan, "free", "after the window → falls back to the FREE FLOOR (Walk-Through only; must subscribe for the rest)");
 assert.equal(effAfter.walkthroughEntitled, true, "entitlement is PERMANENT — still true after expiry");
 assert.equal(effAfter.trialEndsAt, rec.trialEndsAt, "the real trial-end date is echoed for honest days-left");
 t();

@@ -15,9 +15,12 @@ import crypto from "node:crypto";
 import { PLAN_ORDER, normalizePlan, getFeatures, getTier, isAdmin } from "./pricing-tiers.mjs";
 
 // RUN 23e (Ahmad 2026-06-22) — an ACTIVE trial demos the paid modes, so it unlocks the Pro tier.
-// An EXPIRED trial / no license falls back to the free Personal (Manual-only) tier — never Pro, never admin.
+// An EXPIRED trial / no license falls back to the FREE FLOOR — a genuine free tier whose feature set is STRICTLY
+// a subset of the lowest PAID tier (Personal), so buying Personal is a real upgrade. 2026-07-02: split the free
+// floor OUT of "personal" — previously FREE_PLAN was "personal", which (a) locked even a PAYING Personal
+// subscriber and (b) meant a paid entry plan unlocked nothing over the expired/unlicensed state. Never admin.
 export const TRIAL_PLAN = "pro";
-export const FREE_PLAN = "personal";
+export const FREE_PLAN = "free";
 
 /** Canonical signed message for a plan. Keep in lockstep with the key generator (issuePlanKey). */
 export function licenseMessage(plan) {

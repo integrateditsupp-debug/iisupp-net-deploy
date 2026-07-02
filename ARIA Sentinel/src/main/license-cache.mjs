@@ -4,9 +4,11 @@
 // file I/O. 🔒 R11 — the cache stores only a key HASH + plan + timestamps (no raw key, no paths, no PII).
 import { keyHash } from "../shared/license-features.mjs";
 
-export const FREE_PLAN = "personal";
+// 2026-07-02 — the fail-closed degrade target is the FREE FLOOR (not paid "personal"): a no-cache / revoked /
+// hard-stale user drops to a genuine free tier (strictly below paid Personal), never inheriting paid features.
+export const FREE_PLAN = "free";
 export const CACHE_FRESH_MS = 24 * 60 * 60 * 1000; // ≤24h: trust the cached plan, no network needed.
-export const CACHE_HARD_MS = 72 * 60 * 60 * 1000;  // 24–72h: keep plan but nudge; >72h: degrade to Personal.
+export const CACHE_HARD_MS = 72 * 60 * 60 * 1000;  // 24–72h: keep plan but nudge; >72h: degrade to the free floor.
 
 /** Build the cache record from a successful sentinel-resolve response. `status` ∈ "active" | "revoked". */
 export function buildCache(key, resolve = {}, nowMs = Date.now()) {

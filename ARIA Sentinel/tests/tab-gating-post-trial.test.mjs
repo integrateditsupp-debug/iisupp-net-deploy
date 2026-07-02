@@ -25,14 +25,22 @@ assert.deepEqual(buyPathTabs(), ["settings"], "the buy path is Settings (About/L
 assert.ok(!GATED_TABS.includes("settings"), "Settings is never in the gated set");
 t();
 
-// 3 — STATE 3: a paid Sentinel plan → EVERY tab enabled (walkthrough + all gated + settings).
-for (const plan of ["pro", "smb", "midsize", "enterprise", "admin"]) {
+// 3 — STATE 3: a paid Sentinel plan unlocks the app (every gated tab + settings). 2026-07-02: "personal" is
+// included now — the free-floor split means a PAYING Personal subscriber is unlocked (previously FREE_PLAN===
+// "personal" wrongly locked them). Walk-Through follows the plan's `walkthrough` feature: pro/business/admin
+// include it; plain paid Personal does NOT (it needs the Concierge entitlement flag), but its OTHER tabs unlock.
+for (const plan of ["personal", "pro", "smb", "midsize", "enterprise", "admin"]) {
   const paid = { licensed: true, plan };
   const map = tabGateMap(paid);
-  assert.equal(map[WALKTHROUGH_TAB], true, `${plan}: Walk-Through enabled`);
   for (const tab of GATED_TABS) assert.equal(map[tab], true, `${plan}: ${tab} enabled`);
-  assert.equal(appUnlocked(paid), true, `${plan}: app unlocked`);
+  assert.equal(appUnlocked(paid), true, `${plan}: app unlocked (strictly more than the free floor)`);
 }
+// plans whose feature set includes the Walk-Through get the tab; plain paid Personal does not (entitlement-only).
+for (const plan of ["pro", "smb", "midsize", "enterprise", "admin"]) {
+  assert.equal(tabGateMap({ licensed: true, plan })[WALKTHROUGH_TAB], true, `${plan}: Walk-Through enabled (plan feature)`);
+}
+assert.equal(tabGateMap({ licensed: true, plan: "personal" })[WALKTHROUGH_TAB], false, "plain paid Personal has no Walk-Through without the Concierge entitlement");
+assert.equal(tabGateMap({ licensed: true, plan: "personal", walkthroughEntitled: true })[WALKTHROUGH_TAB], true, "paid Personal + Concierge entitlement → Walk-Through enabled");
 t();
 
 // 4 — STATE 1: an active trial (→ Pro) → every tab enabled.

@@ -3,7 +3,7 @@
 // Sentinel suite. 🔒 R11 — free-text fields are path-scrubbed before they ever reach Blobs or an email;
 // the license SECRET is never referenced here (only issuePlanKey, which takes it as an argument).
 import crypto from "node:crypto";
-import { issuePlanKey } from "./license-features.mjs";
+import { issuePlanKey, FREE_PLAN } from "./license-features.mjs";
 import { normalizePlan, getTier, CLIENT_PLANS } from "./pricing-tiers.mjs";
 
 export const DOWNLOADS_URL = "https://iisupp.net/downloads";
@@ -82,14 +82,16 @@ export function mintWalkthroughEntitlement({ email, name, order_id, customer_id,
 
 /**
  * The runtime plan/entitlement a Concierge buyer sees, given their stored entitlement record + `now`. Inside
- * the 30-day window they get the full paid experience (Pro); after it, only the Walk-Through survives and the
- * rest falls to Personal. walkthroughEntitled + trialEndsAt are always echoed (the tab is permanent).
+ * the 30-day window they get the full paid experience (Pro); after it, only the Walk-Through survives — the rest
+ * falls to the FREE FLOOR (2026-07-02: was "personal", which wrongly handed a Concierge buyer permanent paid
+ * Personal Sentinel access; now they must subscribe to unlock the rest). walkthroughEntitled + trialEndsAt are
+ * always echoed (the tab is permanent).
  */
 export function walkthroughEffectivePlan(record, nowMs = Date.now()) {
   const ends = record && record.trialEndsAt ? Date.parse(record.trialEndsAt) : 0;
   const trialActive = Boolean(ends) && nowMs < ends;
   return {
-    plan: trialActive ? WALKTHROUGH_TRIAL_PLAN : "personal",
+    plan: trialActive ? WALKTHROUGH_TRIAL_PLAN : FREE_PLAN,
     walkthroughEntitled: Boolean(record && record.walkthroughEntitled),
     trialEndsAt: (record && record.trialEndsAt) || null
   };

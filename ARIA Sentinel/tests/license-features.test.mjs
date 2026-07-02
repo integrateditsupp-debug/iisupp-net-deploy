@@ -60,11 +60,11 @@ t();
 // 8 — trial tier (Ahmad 2026-06-22): an ACTIVE trial unlocks Pro (demo paid modes); an expired/absent
 // trial falls back to free Personal (Manual only). Neither is ever admin.
 assert.equal(TRIAL_PLAN, "pro");
-assert.equal(FREE_PLAN, "personal");
+assert.equal(FREE_PLAN, "free"); // 2026-07-02: the free floor is its own tier, split out of paid "personal"
 assert.equal(activePlan({ licensed: false, trial: { state: "active" } }), "pro", "active trial → Pro");
 assert.deepEqual(enabledFeatures({ licensed: false, trial: { state: "active" } }).modes, ["manual", "confirmed", "autonomous"], "active trial → full modes");
-assert.equal(activePlan({ licensed: false, trial: { state: "expired" } }), "personal", "expired trial → free Personal");
-assert.deepEqual(enabledFeatures({ licensed: false }).modes, ["manual"], "no license/trial → manual only");
+assert.equal(activePlan({ licensed: false, trial: { state: "expired" } }), "free", "expired trial → free floor (not paid Personal)");
+assert.deepEqual(enabledFeatures({ licensed: false }).modes, [], "no license/trial → the free floor has NO execution modes (strictly below Personal's manual)");
 assert.equal(enabledFeatures({ licensed: false, trial: { state: "active" } }).adminConsole, false, "trial → never admin");
 assert.equal(enabledFeatures({ licensed: false }).adminConsole, false, "free → no admin");
 t();
@@ -78,7 +78,7 @@ t();
 
 // 10 — activeTier exposes label/price for display.
 assert.equal(activeTier({ licensed: true, plan: "pro" }).label, "Pro");
-assert.equal(activeTier({ licensed: false }).label, "Personal");
+assert.equal(activeTier({ licensed: false }).label, "Free"); // unlicensed → the free floor tier (was "Personal")
 t();
 
 // 11 — RUN 24 A1: verifyLicenseStatus + keyHash (revocation-aware verification).
@@ -103,4 +103,4 @@ assert.notEqual(sawArg, proKey, "raw key is never passed to the revocation check
 assert.deepEqual(await verifyLicenseStatus(proKey, SECRET, async () => { throw new Error("offline"); }), { plan: "pro", status: "active" });
 t();
 
-console.log(`License-features test passed (${n} groups · key round-trip · admin-only gate · fail-closed · trial=pro/free=personal · verify+revocation).`);
+console.log(`License-features test passed (${n} groups · key round-trip · admin-only gate · fail-closed · trial=pro/free-floor split from paid personal · verify+revocation).`);
