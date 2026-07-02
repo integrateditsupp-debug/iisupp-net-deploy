@@ -15,12 +15,12 @@ const css = read("src", "renderer", "sentinel.css");
 let tests = 0;
 const ok = (label) => { tests++; console.log(`  ✓ ${label}`); };
 
-// ── Test 1 — count-lock: the RUN 23d 9 tabs + RUN 33 PIVOT ARIA = 10, in order (≤10 hard stop). ──
+// ── Test 1 — count-lock: RUN 23d 9 + RUN 33 ARIA + Walk-through (2026-07-02) = 11, in order (≤11 hard stop). ──
 const navOrder = [...indexHtml.matchAll(/class="nav-item[^"]*"\s+data-tab="([^"]+)"/g)].map((m) => m[1]);
-const CANONICAL = ["dashboard", "aria", "control-center", "recipes", "compliance-privacy", "reports", "knowledge", "system", "servicenow", "settings"];
-assert.deepEqual(navOrder, CANONICAL, "10 nav tabs in canonical order (9 + ARIA)");
-assert.equal(new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1])).size, 10, "RUN 33: 10 tabs (ARIA added)");
-ok("count-lock: 10 tabs in order (≤10 hard stop)");
+const CANONICAL = ["dashboard", "aria", "control-center", "recipes", "walkthrough", "compliance-privacy", "reports", "knowledge", "system", "servicenow", "settings"];
+assert.deepEqual(navOrder, CANONICAL, "11 nav tabs in canonical order (9 + ARIA + Walk-through)");
+assert.equal(new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1])).size, 11, "2026-07-02: 11 tabs (Walk-through added)");
+ok("count-lock: 11 tabs in order (≤11 hard stop)");
 
 // ── Test 2 — Dashboard renders all four merged sections (Overview · Performance · SLA · Activity) ──
 const dashboard = indexHtml.slice(indexHtml.indexOf('id="dashboard"'), indexHtml.indexOf('id="control-center"'));

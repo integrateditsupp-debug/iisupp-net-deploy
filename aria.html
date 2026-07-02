@@ -1915,6 +1915,19 @@
               <div class="aria-tag">ARIA</div>
               <div class="aria-content">
                 <div class="aria-headline">How can I help you today?</div>
+                <!-- Hero handoff CTA (D-20260624: web hands off, never runs a local fix). Opens ARIA Sentinel in
+                     GUIDE mode (mode=walkthrough → the desktop Walk-through tab, changes nothing). Never a dead
+                     click — the download fallback is always visible. -->
+                <div class="sentinel-walk-cta" style="margin:14px 0 2px;max-width:420px">
+                  <button type="button" class="sentinel-walk-btn" data-walk-sentinel data-intent="default"
+                    aria-label="Walk me through it in ARIA Sentinel"
+                    style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;cursor:pointer;padding:13px 18px;border-radius:12px;border:1px solid var(--gold-bright,#f1dca7);background:linear-gradient(90deg,#c5a059,#f1dca7);color:#15110a;font-family:inherit;font-size:14px;font-weight:700;letter-spacing:.02em">
+                    Walk me through it in ARIA Sentinel <span aria-hidden="true">&rarr;</span>
+                  </button>
+                  <div class="sentinel-walk-fallback" style="margin-top:8px;font-size:12px;color:rgba(255,255,255,.62)">
+                    Guided step-by-step fixes on your own device. Don't have ARIA Sentinel yet? <a href="/downloads/" target="_blank" rel="noopener" style="color:var(--gold-bright,#f1dca7);font-weight:600">Download it &rarr;</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -3238,9 +3251,23 @@ function archiveCurrentChat(){
               <div class="aria-tag">ARIA</div>
               <div class="aria-content">
                 <div class="aria-headline">How can I help you today?</div>
+                <!-- Hero handoff CTA (D-20260624: web hands off, never runs a local fix). Opens ARIA Sentinel in
+                     GUIDE mode (mode=walkthrough → the desktop Walk-through tab, changes nothing). Never a dead
+                     click — the download fallback is always visible. -->
+                <div class="sentinel-walk-cta" style="margin:14px 0 2px;max-width:420px">
+                  <button type="button" class="sentinel-walk-btn" data-walk-sentinel data-intent="default"
+                    aria-label="Walk me through it in ARIA Sentinel"
+                    style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;cursor:pointer;padding:13px 18px;border-radius:12px;border:1px solid var(--gold-bright,#f1dca7);background:linear-gradient(90deg,#c5a059,#f1dca7);color:#15110a;font-family:inherit;font-size:14px;font-weight:700;letter-spacing:.02em">
+                    Walk me through it in ARIA Sentinel <span aria-hidden="true">&rarr;</span>
+                  </button>
+                  <div class="sentinel-walk-fallback" style="margin-top:8px;font-size:12px;color:rgba(255,255,255,.62)">
+                    Guided step-by-step fixes on your own device. Don't have ARIA Sentinel yet? <a href="/downloads/" target="_blank" rel="noopener" style="color:var(--gold-bright,#f1dca7);font-weight:600">Download it &rarr;</a>
+                  </div>
+                </div>
               </div>
             </div>
           `;
+  wireWalkSentinelCtas(); // re-wire the hero CTA on the freshly-restored intro block
   state.thread = [];
   state.introCleared = false;
   state.lastIntent = null;
@@ -3265,9 +3292,23 @@ function hardResetCurrentChat(){
               <div class="aria-tag">ARIA</div>
               <div class="aria-content">
                 <div class="aria-headline">How can I help you today?</div>
+                <!-- Hero handoff CTA (D-20260624: web hands off, never runs a local fix). Opens ARIA Sentinel in
+                     GUIDE mode (mode=walkthrough → the desktop Walk-through tab, changes nothing). Never a dead
+                     click — the download fallback is always visible. -->
+                <div class="sentinel-walk-cta" style="margin:14px 0 2px;max-width:420px">
+                  <button type="button" class="sentinel-walk-btn" data-walk-sentinel data-intent="default"
+                    aria-label="Walk me through it in ARIA Sentinel"
+                    style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;cursor:pointer;padding:13px 18px;border-radius:12px;border:1px solid var(--gold-bright,#f1dca7);background:linear-gradient(90deg,#c5a059,#f1dca7);color:#15110a;font-family:inherit;font-size:14px;font-weight:700;letter-spacing:.02em">
+                    Walk me through it in ARIA Sentinel <span aria-hidden="true">&rarr;</span>
+                  </button>
+                  <div class="sentinel-walk-fallback" style="margin-top:8px;font-size:12px;color:rgba(255,255,255,.62)">
+                    Guided step-by-step fixes on your own device. Don't have ARIA Sentinel yet? <a href="/downloads/" target="_blank" rel="noopener" style="color:var(--gold-bright,#f1dca7);font-weight:600">Download it &rarr;</a>
+                  </div>
+                </div>
               </div>
             </div>`;
   }
+  wireWalkSentinelCtas(); // re-wire the hero CTA on the freshly-restored intro block
   state.thread = [];
   state.introCleared = false;
   state.lastIntent = null;
@@ -4152,13 +4193,23 @@ function renderTechnical(intent, userText){
     </details>`;
 
   const choicesHTML = `
+    <div class="sentinel-walk-cta" style="margin:0 0 15px">
+      <button type="button" class="sentinel-walk-btn" data-walk-sentinel data-intent="${issueIntent}"
+        aria-label="Walk me through it in ARIA Sentinel"
+        style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;cursor:pointer;padding:14px 18px;border-radius:12px;border:1px solid var(--gold-bright,#f1dca7);background:linear-gradient(90deg,#c5a059,#f1dca7);color:#15110a;font-family:inherit;font-size:14.5px;font-weight:700;letter-spacing:.02em">
+        Walk me through it in ARIA Sentinel <span aria-hidden="true">→</span>
+      </button>
+      <div class="sentinel-walk-fallback" style="margin-top:8px;text-align:center;font-size:12px;color:rgba(255,255,255,.62)">
+        Don't have ARIA Sentinel yet? <a href="/downloads/" target="_blank" rel="noopener" style="color:var(--gold-bright,#f1dca7);font-weight:600">Download it →</a>
+      </div>
+    </div>
     <div class="choice-grid">
       <div class="choice" data-choice="guided" data-intent="${issueIntent}">
         <div class="num">01</div>
-        <span class="badge">GUIDED</span>
-        <h3>Walk me through it</h3>
-        <p>ARIA narrates each step with on-screen markers. You stay in control of the keyboard and mouse.</p>
-        <div class="tags"><span class="pill">EST · 2 MIN</span><span class="pill">YOU IN CONTROL</span></div>
+        <span class="badge">PREVIEW</span>
+        <h3>Preview the steps here</h3>
+        <p>See the same steps right in this chat first — a quick look before you open the desktop app. Nothing runs on your device from the website.</p>
+        <div class="tags"><span class="pill">EST · 2 MIN</span><span class="pill">IN-BROWSER PREVIEW</span></div>
       </div>
       <div class="choice recommended" data-choice="auto" data-intent="${issueIntent}">
         <div class="num">02</div>
@@ -4415,7 +4466,28 @@ function renderGuided(intent){
   }, 100);
 }
 
+// Prominent primary CTA — "Walk me through it in ARIA Sentinel". Honors D-20260624: the web NEVER runs a local
+// fix; it hands off to the desktop app in GUIDE mode (mode=walkthrough → the app's Walk-through tab, which
+// changes nothing). If the app isn't installed the visible download fallback already covers it, and the in-line
+// status also confirms — never a dead click. Wired on load, after every reset, and on each rendered answer.
+function wireWalkSentinelCtas(){
+  document.querySelectorAll('[data-walk-sentinel]').forEach(function(btn){
+    if (btn.dataset.wired) return; btn.dataset.wired = '1';
+    btn.addEventListener('click', function(){
+      var intent = btn.dataset.intent || '';
+      var wrap = btn.closest('.sentinel-walk-cta');
+      var fb = wrap ? wrap.querySelector('.sentinel-walk-fallback') : null;
+      openWithSentinel(intent, sentinelRecipeForIntent(intent), function onNotInstalled(){
+        if (fb) fb.innerHTML = 'ARIA Sentinel isn’t installed on this device. <a href="/downloads/" target="_blank" rel="noopener" style="color:var(--gold-bright,#f1dca7);font-weight:600">Download it →</a> to open the guided walk-through here, or use <strong>Preview the steps here</strong>.';
+      }, 'walkthrough');
+    });
+  });
+}
+// Wire the always-visible hero CTA as soon as the page is ready (answer CTAs are wired via wireChoices).
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wireWalkSentinelCtas);
+else wireWalkSentinelCtas();
 function wireChoices(){
+  wireWalkSentinelCtas();
   document.querySelectorAll('.choice').forEach(el => {
     if (el.dataset.wired) return;
     el.dataset.wired = '1';
@@ -4514,9 +4586,11 @@ function sentinelRecipeForIntent(intent){
 /* Fire the aria-sentinel:// deep-link and detect whether the OS handled it. If the app launches, the page
    loses visibility/focus within ~1.2s → treat as opened. If nothing happens, call onNotInstalled() so the
    caller can fall back to the download path. Best-effort heuristic (no reliable "is-handler-installed" API). */
-function openWithSentinel(intent, recipeId, onNotInstalled){
+function openWithSentinel(intent, recipeId, onNotInstalled, mode){
+  var m = String(mode || '').toLowerCase();
   var link = 'aria-sentinel://resolve?intent=' + encodeURIComponent(String(intent || '').slice(0, 180))
-           + (recipeId ? '&recipe=' + encodeURIComponent(recipeId) : '');
+           + (recipeId ? '&recipe=' + encodeURIComponent(recipeId) : '')
+           + ((m === 'walkthrough' || m === 'apply') ? '&mode=' + m : '');
   var handled = false;
   function markHandled(){ handled = true; cleanup(); }
   function cleanup(){

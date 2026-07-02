@@ -12,11 +12,12 @@ const indexHtml = fs.readFileSync(path.join(root, "src", "renderer", "index.html
 const navOrder = [...indexHtml.matchAll(/class="nav-item[^"]*"\s+data-tab="([^"]+)"/g)].map((m) => m[1]);
 const expected = [
   "dashboard", "aria", "control-center", "recipes",   // RUN 33 PIVOT — ARIA added as the 10th tab (after Dashboard)
+  "walkthrough",                                       // 2026-07-02 — Walk-through guided-fix tab (Ahmad directive)
   "compliance-privacy", "reports", "knowledge",
   "system", "servicenow", "settings"
 ];
-assert.deepEqual(navOrder, expected, "nav tabs in order (RUN 23d 9 + RUN 33 ARIA = 10)");
-assert.ok(expected.length <= 10, "tab budget: ≤10 sidebar entries (hard stop)");
+assert.deepEqual(navOrder, expected, "nav tabs in order (RUN 23d 9 + RUN 33 ARIA + Walk-through = 11)");
+assert.ok(expected.length <= 11, "tab budget: ≤11 sidebar entries (hard stop; Walk-through added 2026-07-02)");
 // Dashboard is the default active tab.
 assert.match(indexHtml, /class="nav-item active"\s+data-tab="dashboard"/, "Dashboard is the default tab");
 

@@ -124,6 +124,15 @@ contextBridge.exposeInMainWorld("sentinel", {
     ipcRenderer.on("sentinel:navigate", listener);
     return () => ipcRenderer.removeListener("sentinel:navigate", listener);
   },
+  // Walk-through tab (guide mode — changes nothing). onWalkthrough fires when a web deep-link hands a recipe to
+  // the app; getWalkthrough pulls the last target on tab load (fresh-launch race); isVettedRecipe drives P1 routing.
+  onWalkthrough: (callback) => {
+    const listener = (_event, payload) => callback(payload);
+    ipcRenderer.on("sentinel:walkthrough", listener);
+    return () => ipcRenderer.removeListener("sentinel:walkthrough", listener);
+  },
+  getWalkthrough: () => ipcRenderer.invoke("sentinel:get-walkthrough"),
+  isVettedRecipe: (recipeId) => ipcRenderer.invoke("sentinel:is-vetted", recipeId),
   onDetection: (callback) => {
     const listener = (_event, detection) => callback(detection);
     ipcRenderer.on("sentinel:detection", listener);

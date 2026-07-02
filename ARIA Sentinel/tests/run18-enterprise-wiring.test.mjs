@@ -52,7 +52,7 @@ assert.doesNotMatch(main, /execSync\(/, "no execSync");
 // 6 · Regression locks: lock the CURRENT desktop tab count. RUN 23d consolidated the IA 17→9 settings
 // tabs (Dashboard / Compliance & Privacy / System / Settings merges; ServiceNow keeps its own tab).
 const settingsTabs = new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1]));
-assert.equal(settingsTabs.size, 10, "settings tab count (RUN 23d 9 + RUN 33 ARIA = 10)");
+assert.equal(settingsTabs.size, 11, "settings tab count (RUN 23d 9 + RUN 33 ARIA + Walk-through = 11)");
 const adminHtml = read("admin-console", "index.html");
 // RUN 22 added Fleet Performance + Quarterly Reports + Cohort SLA (→17 admin views).
 const adminViews = new Set([...adminHtml.matchAll(/data-view-target="([a-z-]+)"/g)].map((m) => m[1]));

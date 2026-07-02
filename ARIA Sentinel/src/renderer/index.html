@@ -46,6 +46,7 @@
           </div>
           <button class="nav-item" data-tab="control-center"><span class="nav-dot"></span>Control Center</button>
           <button class="nav-item" data-tab="recipes"><span class="nav-dot"></span>Recipes</button>
+          <button class="nav-item" data-tab="walkthrough"><span class="nav-dot"></span>Walk-through</button>
           <button class="nav-item" data-tab="compliance-privacy"><span class="nav-dot"></span>Compliance &amp; Privacy<span class="nav-caret">▸</span></button>
           <div class="nav-sub" data-sub="compliance-privacy">
             <a href="#compliance" data-anchor="compliance">Compliance</a>
@@ -240,6 +241,20 @@
             <h2>Safe Generic fixes</h2>
             <p class="note">Run when a symptom doesn't match a specific cause. Every one is dry-run by default, content-blind, audit-logged, and asks before it changes anything. None ever deletes your documents, touches system files, or disables security.</p>
             <div id="tier0List" class="recipe-list compact-list"></div>
+          </section>
+        </section>
+
+        <!-- ============ WALK-THROUGH (guided, step-by-step fixes · guide mode changes NOTHING) ============ -->
+        <section id="walkthrough" class="tab-panel">
+          <section class="panel">
+            <div class="panel-actions">
+              <div>
+                <p class="eyebrow">Guided fix · you stay in control</p>
+                <h2 id="walkthroughTitle">Walk-through</h2>
+              </div>
+            </div>
+            <p class="note walkthrough-guide-note">This is guidance only — nothing changes on your PC unless you approve a gated fix. Follow the steps at your own pace.</p>
+            <div id="walkthroughBody" class="walkthrough-body"></div>
           </section>
         </section>
 

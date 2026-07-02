@@ -31,7 +31,7 @@ assert.ok(fs.existsSync(path.join(root, "src", "shared", "diagnostic-reasoner.mj
 assert.equal(fs.readdirSync(path.join(root, "src", "main", "recipes", "tier-0")).filter((f) => f.endsWith(".recipe.mjs")).length, 20, "RUN 20 tier-0 recipes intact");
 
 // Tab count: RUN 23d's 9 + RUN 33 PIVOT's ARIA tab = 10 (≤10 hard stop).
-assert.equal(new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1])).size, 10, "10 settings tabs (9 + ARIA)");
+assert.equal(new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1])).size, 11, "11 settings tabs (9 + ARIA + Walk-through)");
 
 // axis/ stubs UNTOUCHED — present + still stub-only (RUN A scaffolding).
 assert.ok(fs.existsSync(path.join(root, "axis", "README.md")), "axis/ stubs present + untouched");

@@ -201,13 +201,28 @@ try {
 } catch { /* protocol registration is best-effort */ }
 
 let pendingDeepLink = null;
+// The last web-originated Walk-through target, held so the renderer can pull it once the tab loads even if the
+// event fired before the panel was ready (fresh-launch race). Content-blind: a recipe id + a capped intent only.
+let pendingWalkthrough = null;
 function extractDeepLink(argv) {
   if (!Array.isArray(argv)) return null;
   return argv.find((a) => typeof a === "string" && a.startsWith(DEEP_LINK_SCHEME + "://")) || null;
 }
 
-// Parse + safely act on aria-sentinel://resolve?recipe=<id>&intent=<text>. Parsing + validation live in the
-// pure src/shared/deep-link.mjs (unit-tested); this only wires the verdict to the gated execution pipeline.
+// Push a Walk-through target to the renderer AND stash it so a freshly-created window can pull it on load. GUIDE
+// mode only — this NEVER runs a fix; it opens the Walk-through tab pre-loaded with the recipe's authored steps.
+function openWalkthroughTab(recipeId, intent) {
+  pendingWalkthrough = { recipeId: String(recipeId || ""), intent: String(intent || "").slice(0, 200), mode: "guide" };
+  showMainWindow("walkthrough");
+  showOverlay({ expanded: false });
+  try {
+    if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send("sentinel:walkthrough", pendingWalkthrough);
+  } catch { /* renderer will pull via sentinel:get-walkthrough on tab load */ }
+}
+
+// Parse + safely act on aria-sentinel://resolve?recipe=<id>&intent=<text>&mode=<walkthrough|apply>. Parsing +
+// validation live in the pure src/shared/deep-link.mjs (unit-tested); this only wires the verdict to the right
+// desktop disposition — GUIDE (Walk-through tab, changes nothing) or the gated apply pipeline.
 function handleSentinelDeepLink(rawUrl) {
   const parsed = parseSentinelDeepLink(rawUrl);
   if (!parsed) return;
@@ -219,16 +234,26 @@ function handleSentinelDeepLink(rawUrl) {
     logEvent("SECURITY", "Deep-link blocked by R11 (private folder).", r11AuditEntry("deep-link"));
     return;
   }
+  const wantsWalkthrough = parsed.mode === "walkthrough";
   // Bring the app forward so the handoff is always visible (transparency — never a silent background fix).
-  showMainWindow("recipes");
+  showMainWindow(wantsWalkthrough ? "walkthrough" : "recipes");
   showOverlay({ expanded: false });
   if (!verdict.ok) {
     logEvent("DETECT", `Deep-link not actioned (${verdict.reason}): ${parsed.recipeId || "(none)"}.`, { intent: parsed.intent ? "[provided]" : "" });
     return;
   }
-  // Web-originated → ALWAYS gate as Confirmed: one explicit human approve + the visible 10s countdown is the
-  // consent. We deliberately do NOT silently auto-fire from a browser link even for green recipes (R8 trust
-  // boundary); runSupervisedFix already forbids Autonomous for resolve actions. Restore point + Ctrl+Alt+K stay.
+  // mode=walkthrough → open the Walk-through tab in GUIDE mode (pure display; nothing changes on the machine).
+  // Still R11-checked + vetted-gated above (a forged/unknown id never reaches here). No fix runs on this path.
+  if (wantsWalkthrough) {
+    logEvent("RUN", `Deep-link walk-through requested for ${parsed.recipeId}.`, { recipeId: parsed.recipeId });
+    try { openWalkthroughTab(parsed.recipeId, parsed.intent); }
+    catch (e) { logEvent("ERROR", `Deep-link walk-through failed: ${e?.message || e}`, { recipeId: parsed.recipeId }); }
+    return;
+  }
+  // mode=apply / absent → the gated apply flow. Web-originated → ALWAYS gate as Confirmed: one explicit human
+  // approve + the visible 10s countdown is the consent. We deliberately do NOT silently auto-fire from a browser
+  // link even for green recipes (R8 trust boundary); runSupervisedFix already forbids Autonomous for resolve
+  // actions. Restore point + Ctrl+Alt+K stay.
   logEvent("RUN", `Deep-link resolve requested for ${parsed.recipeId}.`, { recipeId: parsed.recipeId });
   try { runSupervisedFix({ recipeId: parsed.recipeId, mode: "confirmed", risk: (recipeById(parsed.recipeId)?.risk || "medium") }); }
   catch (e) { logEvent("ERROR", `Deep-link resolve failed: ${e?.message || e}`, { recipeId: parsed.recipeId }); }
@@ -3473,6 +3498,11 @@ ipcMain.handle(PROC_HEALTH_IPC.get, () => (processDetector ? processDetector.lat
 ipcMain.handle(PROC_HEALTH_IPC.subscribe, () => ({ ok: true, channel: PROC_HEALTH_IPC.push }));
 ipcMain.handle("sentinel:supervised-fix", (_event, payload) => runSupervisedFix(payload || {}));
 ipcMain.handle("sentinel:abort-countdown", () => { const n = countdownManager.abortAll(); if (n) closeActionIndicator(); return { ok: true, aborted: n }; });
+// Walk-through tab — pull (and clear) the last web-originated GUIDE-mode target after the tab loads; content-blind.
+ipcMain.handle("sentinel:get-walkthrough", () => { const t = pendingWalkthrough; pendingWalkthrough = null; return t; });
+// P1 routing — is this recipe a vetted/bound Tier-0 action that can safely auto-apply? Single source of truth so
+// the renderer routes unvetted recipes to the Walk-through tab (never a dead "Resolve" that can't apply anything).
+ipcMain.handle("sentinel:is-vetted", (_event, recipeId) => ({ vetted: Boolean(resolveExecutorId(String(recipeId || ""))) }));
 ipcMain.handle("sentinel:open-external", (_event, url) => {
   if (typeof url === "string" && /^https:\/\/(iisupp\.net|[\w.-]+\.service-now\.com)\//.test(url)) {
     shell.openExternal(url);

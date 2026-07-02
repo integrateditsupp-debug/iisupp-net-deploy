@@ -30,7 +30,7 @@ assert.equal(fs.readdirSync(path.join(root, "src", "main", "recipes", "tier-0"))
 assert.ok(fs.existsSync(path.join(root, "src", "shared", "diagnostic-reasoner.mjs")), "RUN 20 reasoner intact");
 
 // RUN 22 report/email modules intact; RUN 23d's 9 + RUN 33 PIVOT's ARIA tab = 10.
-assert.equal(new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1])).size, 10, "10 settings tabs (9 + ARIA)");
+assert.equal(new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1])).size, 11, "11 settings tabs (9 + ARIA + Walk-through)");
 assert.ok(fs.existsSync(path.join(root, "src", "main", "report-generator.mjs")), "RUN 22 report generator intact");
 
 // axis/ stubs UNTOUCHED.

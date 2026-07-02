@@ -4,7 +4,7 @@
 // local registry by the caller; an arbitrary browser-supplied id is rejected.
 export const DEEP_LINK_SCHEME = "aria-sentinel";
 
-/** Parse aria-sentinel://resolve?recipe=<id>&intent=<text>. Returns null for anything not our scheme. */
+/** Parse aria-sentinel://resolve?recipe=<id>&intent=<text>&mode=<walkthrough|apply>. Returns null for anything not our scheme. */
 export function parseSentinelDeepLink(rawUrl) {
   let url;
   try { url = new URL(String(rawUrl || "")); } catch { return null; }
@@ -12,7 +12,11 @@ export function parseSentinelDeepLink(rawUrl) {
   const action = (url.hostname || url.pathname.replace(/^\/+/, "")).toLowerCase();
   const recipeId = String(url.searchParams.get("recipe") || "").trim();
   const intent = String(url.searchParams.get("intent") || "").slice(0, 200); // cap — content-blind, no raw PII spill
-  return { scheme: DEEP_LINK_SCHEME, action, recipeId, intent };
+  // mode selects the DESKTOP disposition only (never a command): "walkthrough" → open the Walk-through tab in
+  // GUIDE mode (changes nothing); "apply"/absent → the gated apply flow. Anything else normalizes to "" (apply).
+  const rawMode = String(url.searchParams.get("mode") || "").trim().toLowerCase();
+  const mode = (rawMode === "walkthrough" || rawMode === "apply") ? rawMode : "";
+  return { scheme: DEEP_LINK_SCHEME, action, recipeId, intent, mode };
 }
 
 /**
@@ -21,12 +25,14 @@ export function parseSentinelDeepLink(rawUrl) {
  * web emitter (assets/aria-sentinel-handoff.js) mirrors this byte-for-byte and the contract test asserts
  * parse(build(...)) round-trips. Returns "" for a falsy recipe id so the caller never emits a junk link.
  */
-export function buildSentinelResolveLink(recipeId, intent = "") {
+export function buildSentinelResolveLink(recipeId, intent = "", mode = "") {
   const id = String(recipeId || "").trim();
   if (!id) return "";
   let link = `${DEEP_LINK_SCHEME}://resolve?recipe=${encodeURIComponent(id)}`;
   const cleanIntent = String(intent || "").slice(0, 200); // cap — content-blind, mirror of the parser
   if (cleanIntent) link += `&intent=${encodeURIComponent(cleanIntent)}`;
+  const cleanMode = String(mode || "").trim().toLowerCase();
+  if (cleanMode === "walkthrough" || cleanMode === "apply") link += `&mode=${cleanMode}`;
   return link;
 }
 

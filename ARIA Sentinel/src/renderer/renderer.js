@@ -2,6 +2,7 @@ import { bannerVisible, bannerModel, SECURITY_BANNER_DISMISS_KEY } from "../shar
 import "./components/aria-globe.mjs"; // defines the <aria-globe> custom element used in the rail
 import { extOf, requiredSteps, stepFor } from "../shared/delete-confirm.mjs";
 import { renderMarkdown } from "../shared/aria-markdown.mjs"; // RUN 34-1 — readable chat answers (markdown → HTML)
+import { walkStepsFor, hasWalkSteps } from "../shared/walkthrough-steps.mjs"; // Walk-through tab — ONE shared, real-or-empty step source
 import { confidenceBadge } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — per-answer confidence + "Was this fixed?" feedback
 // RUN 22 — dashboard / performance / SLA / compliance / reports tab builders + status.
 import { computeHeroStatus, heroSubline, heroTiles } from "../shared/dashboard-status.mjs";
@@ -21,6 +22,7 @@ const TAB_TITLES = {
   aria: "ARIA", // RUN 33 PIVOT — the ARIA parent tab (Chat + Learning + Health + Memory + Agents)
   "control-center": "Control Center",
   recipes: "Recipes",
+  walkthrough: "Walk-through", // guided step-by-step fix tab (guide mode changes nothing on the machine)
   "compliance-privacy": "Compliance & Privacy",
   reports: "Reports",
   knowledge: "Knowledge & policy",
@@ -61,6 +63,8 @@ async function init() {
   wireActions();
   sentinel.onState((next) => renderState(next));
   sentinel.onNavigate((tab) => activateTab(tab));
+  // A web deep-link (mode=walkthrough) hands a recipe to the app → open the Walk-through tab in GUIDE mode.
+  sentinel.onWalkthrough?.((payload) => { activateTab("walkthrough"); renderWalkthrough(payload); });
   state = await sentinel.getState();
   renderState(state);
   // RUN 23d — Dashboard is the default landing tab; it now hosts Overview + Performance + SLA sections.
@@ -110,6 +114,111 @@ function runTabLoaders(target) {
   if (target === "servicenow") loadIncidents();
   if (target === "recipes") renderTier0();
   if (target === "reports") loadReports();
+  if (target === "walkthrough") loadWalkthrough();
+}
+
+// Walk-through tab loader — on open, pull any pending web-deep-linked target (fresh-launch race), else keep the
+// current target, else show the empty explainer. Guide mode is pure display; nothing here changes the machine.
+let walkthroughTarget = null;
+async function loadWalkthrough() {
+  try {
+    const pending = await sentinel.getWalkthrough?.();
+    if (pending && (pending.recipeId || pending.intent)) walkthroughTarget = pending;
+  } catch { /* pull is best-effort — fall back to the current/empty state */ }
+  renderWalkthrough(walkthroughTarget);
+}
+
+// Render the step-by-step guided fix (or an honest fallback). REAL-OR-EMPTY: authored steps render Next/Back/Done;
+// a matched-but-unauthored recipe shows the verified KB article + gated-resolve option (never a fake/blank walk);
+// no target shows a short explainer + "Describe your problem" that routes into the ARIA chat.
+function renderWalkthrough(target) {
+  walkthroughTarget = target || null;
+  const body = qs("#walkthroughBody");
+  const titleEl = qs("#walkthroughTitle");
+  if (!body) return;
+  const recipeId = target && target.recipeId ? String(target.recipeId) : "";
+  const intent = target && target.intent ? String(target.intent) : "";
+
+  // Empty state — opened with no issue selected.
+  if (!recipeId && !intent) {
+    if (titleEl) titleEl.textContent = "Walk-through";
+    body.innerHTML = `
+      <p class="note">Pick an issue and I'll show you the exact steps to fix it yourself — screenshots where it helps, at your own pace. Nothing changes on your PC in guide mode.</p>
+      <div class="button-row"><button class="primary" id="walkthroughDescribe">Describe your problem</button></div>`;
+    qs("#walkthroughDescribe")?.addEventListener("click", () => { activateTab("aria"); qs("#ariaChatInput")?.focus(); });
+    return;
+  }
+
+  const steps = walkStepsFor(recipeId);
+  if (titleEl) titleEl.textContent = "Walk-through" + (recipeId ? " · " + recipeId : "");
+
+  // Real-or-empty fallback — a matched recipe with no authored steps yet. Never fabricate a walk; offer the
+  // verified KB article + the gated-resolve path instead.
+  if (!steps.length) {
+    const kbUrl = "https://iisupp.net/aria" + (recipeId ? "?article=" + encodeURIComponent(recipeId) : "");
+    body.innerHTML = `
+      <p class="note">Guided steps for this exact issue are being written. Here's the verified knowledge-base article, or you can let ARIA resolve it for you (gated — you approve, with a countdown and one-click stop).</p>
+      <div class="button-row">
+        <a class="ghost" href="${escapeHtml(kbUrl)}" target="_blank" rel="noopener">Open the KB article ↗</a>
+        <button class="primary" data-walkthrough-resolve="${escapeHtml(recipeId)}">Resolve it for me (gated)</button>
+      </div>
+      <p class="note resolve-status" id="walkthroughResolveStatus" hidden></p>`;
+    const rb = qs("[data-walkthrough-resolve]");
+    if (rb) rb.addEventListener("click", () => runAction(rb, () => resolveViaSupervisor(recipeId, "medium", qs("#walkthroughResolveStatus"))));
+    return;
+  }
+
+  // Authored steps — the guided experience. Step cards + a Back/Next/Done control. Pure display.
+  let i = 0;
+  function paint() {
+    const s = steps[i];
+    body.innerHTML = `
+      <ol class="walkthrough-steps" aria-label="Guided fix steps">
+        ${steps.map((st, idx) => `
+          <li class="walkthrough-step${idx === i ? " active" : idx < i ? " done" : ""}">
+            <span class="walkthrough-step-num">${String(idx + 1).padStart(2, "0")}</span>
+            <span class="walkthrough-step-copy"><span class="walkthrough-step-title">${escapeHtml(st.title)}</span><span class="walkthrough-step-sub">${escapeHtml(st.sub || "")}</span></span>
+          </li>`).join("")}
+      </ol>
+      ${s && s.screenshot ? `<div class="walkthrough-shot">${s.screenshot}</div>` : ""}
+      <div class="walkthrough-nav button-row">
+        <button class="ghost" id="walkthroughBack"${i === 0 ? " disabled" : ""}>Back</button>
+        <span class="walkthrough-count note">Step ${i + 1} of ${steps.length}</span>
+        <button class="primary" id="walkthroughNext">${i >= steps.length - 1 ? "Done" : "Next"}</button>
+      </div>`;
+    qs("#walkthroughBack")?.addEventListener("click", () => { if (i > 0) { i -= 1; paint(); } });
+    qs("#walkthroughNext")?.addEventListener("click", () => {
+      if (i >= steps.length - 1) {
+        body.innerHTML = `<p class="note">That's the full walk-through. If it's still not fixed, open the ARIA chat and I'll dig deeper — or let ARIA resolve it for you (gated).</p>
+          <div class="button-row"><button class="primary" id="walkthroughToChat">Ask ARIA</button></div>`;
+        qs("#walkthroughToChat")?.addEventListener("click", () => { activateTab("aria"); qs("#ariaChatInput")?.focus(); });
+        return;
+      }
+      i += 1; paint();
+    });
+  }
+  paint();
+}
+
+// Shared gated-apply helper used by the Walk-through fallback + the P1 chat/recipe routing. Confirmed-grade,
+// never autonomous; surfaces the gate's verdict. Nothing runs live by default (dry-run policy holds).
+async function resolveViaSupervisor(recipeId, risk, statusEl) {
+  const r = await sentinel.supervisedFix?.({ recipeId, risk: risk || "medium", mode: "confirmed" });
+  if (statusEl) {
+    statusEl.hidden = false;
+    if (!r || r.ok === false) {
+      if (r?.error === "r11_blocked") statusEl.textContent = "1 personal folder excluded — fix blocked by privacy rule.";
+      else if (r?.verdict === "veto") statusEl.textContent = `Held by the safety supervisor: ${r.reason || "vetoed"}.`;
+      else statusEl.textContent = "Couldn't start this fix.";
+    } else if (r.countdown) {
+      statusEl.textContent = `Applying in ${r.seconds || 10}s — cancel from the countdown, or press Ctrl+Alt+K to abort.`;
+    } else if (r.bypass) {
+      statusEl.textContent = "Low-risk action acknowledged.";
+    } else {
+      statusEl.textContent = r.policy && r.policy.dryRun === false ? "Fix applied (reversible — see Restore points)." : "Previewed safely (dry-run). Enable live fixes to apply.";
+    }
+  }
+  return r;
 }
 
 function scrollToAnchor(anchorId) {
@@ -553,12 +662,18 @@ function renderRecipes(recipes) {
       <h3>${escapeHtml(recipe.title)}</h3>
       <p>${escapeHtml(recipe.summary)}</p>
       <div class="button-row">
+        <button class="ghost" data-walk-recipe="${escapeHtml(recipe.id)}">Walk me through it</button>
         <button class="primary" data-resolve-fix="${escapeHtml(recipe.id)}" data-risk="${escapeHtml(recipe.risk || "medium")}">Resolve it for me</button>
         <button class="ghost" data-recipe-run="${escapeHtml(recipe.id)}">Dry-run</button>
       </div>
       <p class="note resolve-status" data-resolve-status="${escapeHtml(recipe.id)}" hidden></p>
     </article>
   `).join(""));
+
+  // "Walk me through it" — open the Walk-through tab in GUIDE mode for this recipe (changes nothing).
+  qsa("[data-walk-recipe]").forEach((button) => button.addEventListener("click", () => {
+    activateTab("walkthrough"); renderWalkthrough({ recipeId: button.dataset.walkRecipe, mode: "guide" });
+  }));
 
   qsa("[data-recipe-run]").forEach((button) => {
     button.addEventListener("click", () => runAction(button, () => {
@@ -572,29 +687,24 @@ function renderRecipes(recipes) {
   qsa("[data-resolve-fix]").forEach((button) => bindResolveFix(button));
 }
 
-// Wire one "Resolve it for me" button to the supervised-fix pipeline and surface the gate's verdict.
+// Wire one "Resolve it for me" button to the gated pipeline. P1: a vetted/bound Tier-0 recipe goes through the
+// gated apply (supervisor → countdown → tier-0 → kill-switch). An UNVETTED recipe (no safe auto-apply) degrades
+// to the Walk-through tab + an honest "can't auto-apply this yet — here are the steps" — NEVER Control Center.
 function bindResolveFix(button) {
   const recipeId = button.dataset.resolveFix;
   const risk = button.dataset.risk || "medium";
   const statusEl = qs(`[data-resolve-status="${cssEscape(recipeId)}"]`) || button.closest(".recipe-card")?.querySelector(".resolve-status");
   button.addEventListener("click", () => runAction(button, async () => {
-    // mode:"confirmed" requests explicit-approval + countdown gating for THIS fix (clamped — never autonomous).
-    const r = await sentinel.supervisedFix?.({ recipeId, risk, mode: "confirmed" });
-    if (statusEl) {
-      statusEl.hidden = false;
-      if (!r || r.ok === false) {
-        if (r?.error === "r11_blocked") statusEl.textContent = "1 personal folder excluded — fix blocked by privacy rule.";
-        else if (r?.verdict === "veto") statusEl.textContent = `Held by the safety supervisor: ${r.reason || "vetoed"}.`;
-        else statusEl.textContent = "Couldn't start this fix.";
-      } else if (r.countdown) {
-        statusEl.textContent = `Applying in ${r.seconds || 10}s — cancel from the countdown, or press Ctrl+Alt+K to abort.`;
-      } else if (r.bypass) {
-        statusEl.textContent = "Low-risk action acknowledged.";
-      } else {
-        statusEl.textContent = r.policy && r.policy.dryRun === false ? "Fix applied (reversible — see Restore points)." : "Previewed safely (dry-run). Enable live fixes to apply.";
-      }
+    let vetted = true;
+    try { vetted = Boolean((await sentinel.isVettedRecipe?.(recipeId))?.vetted); } catch { vetted = true; }
+    if (!vetted) {
+      if (statusEl) { statusEl.hidden = false; statusEl.textContent = "I can't safely auto-apply this one yet — opening the step-by-step walk-through."; }
+      activateTab("walkthrough");
+      renderWalkthrough({ recipeId, mode: "guide" });
+      return { ok: true, routed: "walkthrough" };
     }
-    return r;
+    // mode:"confirmed" requests explicit-approval + countdown gating for THIS fix (clamped — never autonomous).
+    return resolveViaSupervisor(recipeId, risk, statusEl);
   }));
 }
 
@@ -1648,23 +1758,50 @@ function initAriaChat() {
     appendResolveChip(bubble, question);
     appendConfidenceAndFeedback(bubble, res, question);
   }
-  // The Sentinel-only "Resolve it for me" affordance under an answer. Diagnoses the question locally, and if a
-  // fix recipe is matched, runs it through the supervised-fix gate; otherwise opens the diagnostics flow.
+  // Under every answer, present TWO clear Sentinel-only paths (P1): "Walk me through it" (opens the Walk-through
+  // tab in GUIDE mode — safe, changes nothing) and "Resolve it for me" (the gated apply flow). A matched recipe
+  // that isn't a vetted/bound Tier-0 action degrades to the Walk-through tab + honest "can't auto-apply this yet";
+  // no match also opens the Walk-through tab. NEVER Control Center, never a dead click.
+  async function diagnoseRecipeId(question) {
+    const d = (await window.sentinel.diagnose?.(question || "")) || {};
+    return d.recipeId
+      || (Array.isArray(d.causes) && (d.causes.find((c) => c && c.recipeId) || {}).recipeId)
+      || (Array.isArray(d.attempts) && (d.attempts.find((a) => a && a.recipeId) || {}).recipeId)
+      || "";
+  }
   function appendResolveChip(bubble, question) {
     if (!window.sentinel || !window.sentinel.supervisedFix) return;
     const wrap = document.createElement("div"); wrap.className = "aria-chat-resolve";
+    const walkBtn = document.createElement("button"); walkBtn.type = "button"; walkBtn.className = "aria-chat-resolve-btn ghost"; walkBtn.textContent = "Walk me through it";
     const btn = document.createElement("button"); btn.type = "button"; btn.className = "aria-chat-resolve-btn";
     btn.textContent = "Resolve it for me";
     const st = document.createElement("span"); st.className = "aria-chat-resolve-status";
+    // "Walk me through it" — always opens the guided tab (matched recipe if we can find one, else the intent text).
+    walkBtn.addEventListener("click", async () => {
+      walkBtn.disabled = true; st.textContent = "Opening the walk-through…";
+      let recipeId = ""; try { recipeId = await diagnoseRecipeId(question); } catch { /* fall back to intent */ }
+      activateTab("walkthrough");
+      renderWalkthrough({ recipeId, intent: question || "", mode: "guide" });
+      st.textContent = ""; walkBtn.disabled = false;
+    });
     btn.addEventListener("click", async () => {
       btn.disabled = true; st.textContent = "Checking this device…";
       try {
-        const d = (await window.sentinel.diagnose?.(question || "")) || {};
-        const recipeId = d.recipeId
-          || (Array.isArray(d.causes) && (d.causes.find((c) => c && c.recipeId) || {}).recipeId)
-          || (Array.isArray(d.attempts) && (d.attempts.find((a) => a && a.recipeId) || {}).recipeId)
-          || "";
-        if (!recipeId) { st.textContent = "No automatic fix matched — opening diagnostics."; activateTab("control-center"); await window.sentinel.selfDiagnose?.("chat"); return; }
+        const recipeId = await diagnoseRecipeId(question);
+        // No automatic fix matched → open the Walk-through tab (guide / describe-your-problem), NEVER Control Center.
+        if (!recipeId) {
+          st.textContent = "No automatic fix matched — opening the step-by-step walk-through.";
+          activateTab("walkthrough"); renderWalkthrough({ intent: question || "", mode: "guide" });
+          return;
+        }
+        // Unvetted (no safe auto-apply) → degrade to the Walk-through tab + honest note, NEVER Control Center.
+        let vetted = true;
+        try { vetted = Boolean((await window.sentinel.isVettedRecipe?.(recipeId))?.vetted); } catch { vetted = true; }
+        if (!vetted) {
+          st.textContent = "I can't safely auto-apply this one yet — here are the exact steps.";
+          activateTab("walkthrough"); renderWalkthrough({ recipeId, intent: question || "", mode: "guide" });
+          return;
+        }
         const fix = await window.sentinel.supervisedFix({ recipeId, mode: "confirmed" });
         if (!fix || fix.ok === false) {
           st.textContent = fix?.error === "r11_blocked" ? "1 personal folder excluded." : fix?.verdict === "veto" ? `Held by safety supervisor: ${fix.reason || "vetoed"}.` : "Couldn't start the fix.";
@@ -1674,7 +1811,7 @@ function initAriaChat() {
         else { st.textContent = "Previewed safely (dry-run)."; }
       } catch { st.textContent = "Couldn't resolve right now."; btn.disabled = false; }
     });
-    wrap.append(btn, st); bubble.appendChild(wrap);
+    wrap.append(walkBtn, btn, st); bubble.appendChild(wrap);
   }
   // RUN-B B1 — per-answer confidence badge (derived from the REAL top match score) + a "Was this fixed?"
   // feedback control that records a REAL resolution outcome. That outcome drives the honest deflection %

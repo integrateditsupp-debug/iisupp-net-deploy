@@ -17,12 +17,14 @@
   // Mirror of buildSentinelResolveLink() in "ARIA Sentinel/src/shared/deep-link.mjs" — kept byte-identical;
   // the Sentinel contract test (tests/web-handoff-contract.test.mjs) asserts parse(build(...)) round-trips.
   var DEEP_LINK_SCHEME = "aria-sentinel";
-  function buildSentinelResolveLink(recipeId, intent){
+  function buildSentinelResolveLink(recipeId, intent, mode){
     var id = String(recipeId || "").trim();
     if (!id) return "";
     var link = DEEP_LINK_SCHEME + "://resolve?recipe=" + encodeURIComponent(id);
     var cleanIntent = String(intent || "").slice(0, 200);
     if (cleanIntent) link += "&intent=" + encodeURIComponent(cleanIntent);
+    var cleanMode = String(mode || "").trim().toLowerCase();
+    if (cleanMode === "walkthrough" || cleanMode === "apply") link += "&mode=" + cleanMode;
     return link;
   }
   window.ashBuildResolveLink = buildSentinelResolveLink; // exposed so the contract test / console can verify
