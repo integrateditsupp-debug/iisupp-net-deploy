@@ -10,8 +10,8 @@ const dir = path.join(root, "src", "main", "recipes", "tier-0");
 
 // 14 individual recipe files on disk, each importing to a valid descriptor.
 const files = fs.readdirSync(dir).filter((f) => f.endsWith(".recipe.mjs"));
-assert.equal(files.length, 20, "20 Tier-0 recipe files");
-assert.equal(TIER0_RECIPES.length, 20, "catalog exposes 20 recipes");
+assert.equal(files.length, 21, "21 Tier-0 recipe files (RUN 20's 20 + S2 clear-print-queue)");
+assert.equal(TIER0_RECIPES.length, 21, "catalog exposes 21 recipes (S2 added clear-print-queue)");
 
 for (const f of files) {
   const mod = await import(pathToFileURL(path.join(dir, f)).href);

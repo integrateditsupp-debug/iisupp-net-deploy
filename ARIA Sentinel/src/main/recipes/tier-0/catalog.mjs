@@ -12,6 +12,8 @@ export const TIER0_ALLOWED_PREFIXES = [
   "ipconfig", "nbtstat", "netsh", "netstat",
   "Get-ChildItem", "Get-Package", "Get-AppxPackage", "Get-CimInstance", "Get-WinEvent",
   "Get-Service", "Get-ItemProperty", "Measure-Object",
+  // S2 (F2) — read-only OUTCOME-probe tokens: resolve a real host, reach a real port, read adapter/queue state.
+  "Get-NetAdapter", "Get-Printer", "Resolve-DnsName", "Test-NetConnection",
   "Stop-Service", "Start-Service", "Restart-Service",
   "Remove-Item", "Start-Process", "wmic", "sfc", "msdt.exe", "reg"
 ];
@@ -52,6 +54,11 @@ export const recipes = {
     id: "clear-browser-cache-prompt", title: "Open browser cache cleaner", category: "slow-performance", readOnly: true,
     whatItDoes: "Opens the Edge/Chrome 'Clear browsing data' page for YOU — ARIA never auto-deletes browser data.",
     commands: ["Start-Process msedge -ArgumentList 'edge://settings/clearBrowserData'", "Start-Process chrome -ArgumentList 'chrome://settings/clearBrowserData'"]
+  }),
+  "clear-print-queue": def({
+    id: "clear-print-queue", title: "Clear stuck print queue", category: "printer-issues",
+    whatItDoes: "Removes queued print jobs with Remove-PrintJob (scoped to print jobs ONLY — it cannot touch files; documents themselves are untouched and can simply be printed again). A spooler restart after this gets a clean start.",
+    commands: ["Get-Printer | ForEach-Object { Get-PrintJob -PrinterName $_.Name | Remove-PrintJob }"]
   }),
   "restart-print-spooler": def({
     id: "restart-print-spooler", title: "Restart print spooler", category: "printer-issues",

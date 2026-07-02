@@ -25,7 +25,7 @@ function dnsRun({ start = 50, exit = 0, calls } = {}) {
 }
 
 // 5 bindings present + ids stable.
-assert.deepEqual(TIER0_EXECUTOR_IDS, ["restart-print-spooler", "restart-windows-update", "flush-dns-cache", "restart-bluetooth", "restart-audio"]);
+assert.deepEqual(TIER0_EXECUTOR_IDS, ["restart-print-spooler", "restart-windows-update", "flush-dns-cache", "reset-network-stack", "clear-print-queue", "restart-bluetooth", "restart-audio"]); // S2 slice 1 (F5) added the 2 missing bindings
 
 // 1 — service success (was Stopped → now Running).
 let r = await executeTier0("restart-print-spooler", { run: svcRun({ start: "Stopped", afterRestart: "Running" }) });

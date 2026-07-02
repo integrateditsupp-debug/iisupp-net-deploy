@@ -45,6 +45,15 @@ export function evaluateProbe(spec, output) {
     const m = text.match(/-?\d+/);
     return !!m && Number(m[0]) > 0;
   }
+  // S2 (F2) — outcome-level interprets. Real-or-empty: NO number / NO output never passes.
+  if (spec.interpret === "count-zero") {
+    const m = text.match(/-?\d+/);
+    return !!m && Number(m[0]) === 0;
+  }
+  if (spec.interpret === "boolean-true") {
+    const last = text.split(/\r?\n/).map((s) => s.trim()).filter(Boolean).pop() || "";
+    return last === "True";
+  }
   return false;
 }
 
@@ -206,6 +215,19 @@ export async function executePlan(plan, ctx = {}) {
   for (let i = 0; i < plan.steps.length; i++) {
     const step = plan.steps[i];
     if (killed()) return abortPlan("KILL_SWITCH", i, "kill-switch engaged mid-plan");
+
+    // S2 — smallest-effective-hammer early exit: when the plan opts in (stopEarlyOnGoal) and a PREVIOUS
+    // step already made a real change, probe the GOAL before escalating to the next (bigger) step and
+    // stop if the user's problem is already gone (e.g. the DNS flush fixed it — skip the winsock reset).
+    // Same honesty rules as the final probe: live runs only (dry-run never reaches here as resolved),
+    // a blocked/failed probe never resolves, and no-change runs can never early-resolve.
+    if (i > 0 && plan.stopEarlyOnGoal === true && !dryRun && completed.some((c) => c.outcome === "success")) {
+      const early = await runProbe(plan.goalProbe, runFn);
+      if (!early.blocked && early.pass) {
+        journal("PLAN.RESOLVED", { detail: `goalProbe passed after step ${i - 1} — remaining ${plan.steps.length - i} step(s) skipped, goal already met: ${plan.goalProbe.description}`, extra: { evidence: early.output, noChange: false, earlyExit: true, stepsSkipped: plan.steps.length - i } });
+        return finish("resolved", { evidence: early.output });
+      }
+    }
 
     // Per-step supervisor re-approval against CURRENT state (mid-plan drift → veto → rollbackPolicy).
     const verdict = supervise(

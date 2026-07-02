@@ -317,6 +317,9 @@ const TESTS = [
   // tap-to-speak (STT) + calm female narration (TTS), both guarded, muteable, $0.
   "./companion-globe-box.test.mjs",
   "./companion-voice.test.mjs",
+  // STAGE 3 S2 (slices 1+2) — F5 bindings safety + F2 outcome-level goalProbes.
+  "./s2-tier0-bindings-safety.test.mjs",
+  "./s2-goalprobe-outcome-real-or-empty.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
