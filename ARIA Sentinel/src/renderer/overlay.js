@@ -38,6 +38,83 @@ const companionPanel = document.getElementById("companionPanel");
 const companionBody = document.getElementById("companionBody");
 const companionBackBtn = document.getElementById("companionBack");
 const companionCloseBtn = document.getElementById("companionClose");
+const companionMuteBtn = document.getElementById("companionMute");
+
+// ============================================================================================================
+// COMPANION VOICE — on-device only, $0 (no paid/cloud voice API). Two halves, both guarded so the companion
+// degrades gracefully where the browser/OS lacks the API:
+//  · NARRATION (OUTPUT): speechSynthesis speaks the SAME visible card text (never a separate/embellished
+//    script — Rule 14), in a calm/warm/professional FEMALE voice (prefer Microsoft Aria/Jenny → Zira →
+//    any female en-US), rate ~0.95 / pitch ~1.0. ON by default; a header mute toggle always available.
+//  · INPUT (tap-to-speak): Web Speech SpeechRecognition transcribes into the field; typing ALWAYS works.
+// ============================================================================================================
+let narrationMuted = false; // narration is ON by default; the header toggle mutes/unmutes it
+
+function pickNarrationVoice() {
+  if (typeof speechSynthesis === "undefined") return null;
+  const voices = speechSynthesis.getVoices() || [];
+  const byName = (re) => voices.find((v) => re.test(v.name));
+  // Preference order: Microsoft Aria / Jenny (neural, natural) → Zira → any female en-US → any en-US → any en.
+  return byName(/aria|jenny/i)
+    || byName(/zira/i)
+    || voices.find((v) => /female|woman/i.test(v.name) && /^en[-_]?US/i.test(v.lang))
+    || voices.find((v) => /^en[-_]?US/i.test(v.lang))
+    || voices.find((v) => /^en/i.test(v.lang))
+    || null;
+}
+
+function narrate(text) {
+  if (typeof speechSynthesis === "undefined") return; // no TTS here → stay silent, screen text is the source
+  if (narrationMuted || !text || !text.trim()) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.trim());
+    const v = pickNarrationVoice(); if (v) u.voice = v;
+    u.lang = (v && v.lang) || "en-US";
+    u.rate = 0.95; u.pitch = 1.0; // soft, unhurried, professional
+    speechSynthesis.speak(u);
+  } catch { /* on-device TTS is best-effort; it never blocks the visible card */ }
+}
+
+// Speak EXACTLY what is on the card — read the rendered lead/sub text, never a separate script (Rule 14).
+function speakCurrentCard() {
+  if (!companionBody) return;
+  const parts = [...companionBody.querySelectorAll(".companion-lead, .companion-sub")]
+    .map((n) => n.textContent).filter((s) => s && s.trim());
+  narrate(parts.join(". "));
+}
+
+companionMuteBtn?.addEventListener("click", () => {
+  narrationMuted = !narrationMuted;
+  if (narrationMuted && typeof speechSynthesis !== "undefined") { try { speechSynthesis.cancel(); } catch { /* ignore */ } }
+  companionMuteBtn.setAttribute("aria-pressed", String(narrationMuted));
+  companionMuteBtn.title = narrationMuted ? "Unmute narration" : "Mute narration";
+  companionMuteBtn.innerHTML = narrationMuted ? "&#128263;" : "&#128266;"; // muted-speaker / speaker
+});
+
+// Tap-to-speak (voice INPUT): guarded by SpeechRecognition availability; hidden gracefully when absent so
+// typing always works. On-device Web Speech; the mic is active ONLY while listening. Returns the button or null.
+function addTapToSpeak(input, container) {
+  const SR = (typeof window !== "undefined") && (window.SpeechRecognition || window.webkitSpeechRecognition);
+  if (!SR) return null; // no recognizer → no button; the text field alone is fully usable
+  const btn = el("button", "companion-speak"); btn.type = "button"; btn.textContent = "🎤 Tap to speak";
+  let rec = null, listening = false;
+  const stop = () => { listening = false; btn.classList.remove("listening"); btn.textContent = "🎤 Tap to speak"; try { rec && rec.stop(); } catch { /* ignore */ } };
+  btn.addEventListener("click", () => {
+    if (listening) { stop(); return; }
+    try {
+      rec = new SR(); rec.lang = "en-US"; rec.interimResults = false; rec.maxAlternatives = 1;
+      rec.onresult = (e) => {
+        const said = (e.results && e.results[0] && e.results[0][0] && e.results[0][0].transcript) || "";
+        if (said) { input.value = (input.value ? input.value + " " : "") + said; input.dispatchEvent(new Event("input")); }
+      };
+      rec.onend = stop; rec.onerror = stop;
+      listening = true; btn.classList.add("listening"); btn.textContent = "● Listening… tap to stop"; rec.start();
+    } catch { stop(); }
+  });
+  (container || input.parentNode).appendChild(btn);
+  return btn;
+}
 
 function setGlobeState(state) {
   if (globeSvg) globeSvg.setAttribute("data-state", state);
@@ -181,7 +258,7 @@ function openCompanion() {
   setMode("companion");
   renderCompanion();
 }
-function closeCompanion() { comp = null; setGlobeState("idle"); sentinel.showGlobe(); }
+function closeCompanion() { comp = null; if (typeof speechSynthesis !== "undefined") { try { speechSynthesis.cancel(); } catch { /* ignore */ } } setGlobeState("idle"); sentinel.showGlobe(); }
 function pushView(view) { comp.stack.push(view); renderCompanion(); }
 function backView() { if (!comp) return; comp.stack.pop(); if (!comp.stack.length) { closeCompanion(); return; } renderCompanion(); }
 function advance(view) { pushView({ kind: "flow", flowId: view.flowId, index: view.index + 1 }); }
@@ -194,11 +271,13 @@ function renderCompanion() {
   companionBody.innerHTML = "";
   const view = topView();
   companionBackBtn.hidden = comp.stack.length <= 1;
-  if (view.kind === "menu") return renderMenu();
-  if (view.kind === "picker") return renderPicker(view.group);
-  if (view.kind === "fix") return renderFix();
-  if (view.kind === "fix-result") return renderFixResult(view);
-  if (view.kind === "flow") return renderFlowStep(view);
+  if (view.kind === "menu") renderMenu();
+  else if (view.kind === "picker") renderPicker(view.group);
+  else if (view.kind === "fix") renderFix();
+  else if (view.kind === "fix-result") renderFixResult(view); // async; lead/sub are appended synchronously first
+  else if (view.kind === "flow") renderFlowStep(view);
+  // NARRATION: speak the same visible card text after it renders (guarded + muteable inside narrate()).
+  speakCurrentCard();
 }
 
 function renderMenu() {
@@ -249,6 +328,7 @@ function renderFlowStep(view) {
     input.value = comp.answers[step.key] || "";
     input.addEventListener("input", () => { comp.answers[step.key] = input.value; nextBtn.disabled = !input.value.trim(); });
     companionBody.appendChild(input);
+    addTapToSpeak(input, companionBody); // optional voice INPUT; hidden gracefully when unavailable
     nextBtn.disabled = !input.value.trim();
     setTimeout(() => input.focus(), 30);
   } else if (step.type === "choice") {
@@ -322,6 +402,7 @@ function renderFix() {
   companionBody.appendChild(el("div", "companion-sub", "Describe it in a few words. I'll guide you or, if it's a vetted fix, resolve it for you (gated — you approve)."));
   const input = el("input", "companion-input"); input.type = "text"; input.placeholder = "e.g. my printer won't print";
   companionBody.appendChild(input);
+  addTapToSpeak(input, companionBody); // first walk-through/problem step gets voice INPUT (optional, guarded)
   const status = el("div", "companion-status", "");
   const row = el("div", "companion-actions");
   const backBtn = el("button", "cbtn ghost"); backBtn.type = "button"; backBtn.textContent = "Back"; backBtn.addEventListener("click", backView);

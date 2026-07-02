@@ -11,8 +11,11 @@
          window's ignore-mouse is briefly disabled (card mode / Ctrl+Alt+G). */
       html, body { background: transparent; pointer-events: none; }
       .globe-button, .overlay-card, #overlayCard, .companion-panel, #companionPanel { pointer-events: auto; }
-      /* ARIA Companion — the interactive assistant panel anchored to the globe (guide/learn changes nothing). */
-      .companion-panel { position: absolute; inset: 0; display: flex; flex-direction: column;
+      /* ARIA Companion — a SMALL card BELOW the golden globe (mirrors #overlayCard / .globe-confirm). The globe
+         itself is never covered: the panel is anchored under it (top ~104px), centered, bounded, and scrolls
+         internally. NEVER inset:0 / full-window — that would hide the globe (Ahmad: "keep the globe"). */
+      .companion-panel { position: absolute; top: 104px; left: 50%; transform: translateX(-50%);
+        width: 300px; max-width: 92vw; max-height: calc(100vh - 120px); display: flex; flex-direction: column;
         background: linear-gradient(180deg, #141414, #0a0a0a); border: 1px solid #38301d; border-radius: 16px;
         box-shadow: 0 24px 70px rgba(0,0,0,.6); overflow: hidden; color: #fff;
         font: 400 13px/1.5 Inter, system-ui, sans-serif; }
@@ -35,6 +38,11 @@
       .companion-input { width: 100%; box-sizing: border-box; padding: 11px 12px; border-radius: 10px; border: 1px solid #2a2a2a;
         background: #0a0a0a; color: #fff; font: inherit; }
       .companion-input:focus { outline: none; border-color: #c5a059; }
+      /* Tap-to-speak (on-device Web Speech STT) — optional voice INPUT beside the field; typing always works. */
+      .companion-speak { align-self: flex-start; padding: 8px 12px; border-radius: 10px; cursor: pointer;
+        font: 600 12px/1 inherit; border: 1px solid #2a2a2a; background: #141414; color: #cbb98a; }
+      .companion-speak:hover { border-color: #c5a059; color: #f1dca7; }
+      .companion-speak.listening { border-color: #7afbff; color: #7afbff; background: #0b1416; }
       .companion-copy { white-space: pre-wrap; word-break: break-word; font: 12px/1.55 ui-monospace, Menlo, monospace;
         background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 11px 12px; color: #eadfc4; }
       .companion-safety { font-size: 11.5px; color: #ffcb6b; }
@@ -173,6 +181,7 @@
       <header class="companion-head">
         <span class="companion-title">ARIA</span>
         <div class="companion-head-actions">
+          <button id="companionMute" class="companion-icon" type="button" title="Mute narration" aria-label="Mute narration" aria-pressed="false">&#128266;</button>
           <button id="companionBack" class="companion-icon" type="button" title="Back" aria-label="Back" hidden>&lsaquo;</button>
           <button id="companionClose" class="companion-icon" type="button" title="Close" aria-label="Close">&times;</button>
         </div>

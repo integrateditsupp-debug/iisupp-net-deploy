@@ -289,6 +289,10 @@ const TESTS = [
   "./step-engine-input.test.mjs",
   "./ai-setup-claude-honest.test.mjs",
   "./learn-prompts-loops.test.mjs",
+  // COMPANION GLOBE-BOX + VOICE (2026-07-02) — keep the globe (small card below it, not inset:0); on-device
+  // tap-to-speak (STT) + calm female narration (TTS), both guarded, muteable, $0.
+  "./companion-globe-box.test.mjs",
+  "./companion-voice.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
