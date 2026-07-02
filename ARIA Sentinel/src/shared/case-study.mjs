@@ -171,3 +171,16 @@ export function conversionMoment(
     },
   };
 }
+
+// RUN-E E2 — proof AUTORUN decision, pure + write-once. Given the persisted draft (if any) and the same
+// real pilot/metrics inputs every other surface uses, decide whether an honest draft should be created
+// NOW. Rule 14 real-or-empty: not matured / no real fix => {changed:false} with the honest reason; an
+// existing draft is NEVER rewritten (history stays history). Consent on a new draft starts ungranted.
+export function autorunCaseStudy({ pilot, metrics, existingDraft, vertical } = {}, { now = Date.now() } = {}) {
+  if (existingDraft && existingDraft.schema === CASE_STUDY_SCHEMA && existingDraft.generated_at) {
+    return { changed: false, reason: "already-drafted", record: existingDraft };
+  }
+  const built = buildCaseStudy({ pilot, metrics, vertical }, { now });
+  if (!built.ready) return { changed: false, reason: built.missing.join(","), record: null };
+  return { changed: true, reason: "drafted", record: built.record };
+}
