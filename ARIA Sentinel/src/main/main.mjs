@@ -3,7 +3,7 @@ import Store from "electron-store";
 import { exec, spawn } from "node:child_process";
 import { randomUUID, createHash } from "node:crypto";
 import { createServer } from "node:http";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
 import os from "node:os";
@@ -3548,6 +3548,23 @@ ipcMain.handle("sentinel:copy", (_event, text) => {
   if (isBlockedPath(s)) { logEvent("SECURITY", "Copy blocked by R11 (private folder).", r11AuditEntry("companion-copy")); return { ok: false, error: "r11_blocked" }; }
   clipboard.writeText(s);
   return { ok: true };
+});
+// TRUE on-device tap-to-speak — resolve the bundled offline Vosk model to a local file:// URL. Bundled via
+// extraResources (see package.json + scripts/fetch-vosk-model.mjs); lands next to the app resources in prod, or
+// under resources/models/ in dev. Returns null when absent so the renderer hides the mic (never a cloud fallback).
+// R11: refuse to hand back any path that touches the off-limits folder.
+ipcMain.handle("sentinel:vosk-model-url", () => {
+  try {
+    const candidates = [
+      process.resourcesPath ? path.join(process.resourcesPath, "vosk-model-small-en-us") : "",
+      path.join(__dirname, "..", "..", "resources", "models", "vosk-model-small-en-us")
+    ];
+    for (const dir of candidates) {
+      if (!dir || isBlockedPath(dir)) continue;
+      if (fs.existsSync(dir)) return pathToFileURL(dir).href.replace(/\/?$/, "/");
+    }
+    return null;
+  } catch { return null; }
 });
 
 if (hasSingleInstanceLock) {

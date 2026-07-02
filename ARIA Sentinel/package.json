@@ -12,13 +12,16 @@
     "test": "node tests/run-all.mjs",
     "audit": "node tests/privacy-audit.mjs",
     "scenario:test": "node tests/scenario-suite.mjs",
+    "fetch:vosk-model": "node scripts/fetch-vosk-model.mjs",
+    "prepackage": "node scripts/fetch-vosk-model.mjs",
     "package:win": "electron-builder --win nsis --publish never",
     "package:mac": "electron-builder --mac --publish never",
     "package:dir": "electron-builder --dir --publish never"
   },
   "dependencies": {
     "electron-store": "^8.2.0",
-    "electron-updater": "^6.8.9"
+    "electron-updater": "^6.8.9",
+    "vosk-browser": "^0.0.8"
   },
   "devDependencies": {
     "electron": "^42.4.1",
@@ -40,7 +43,8 @@
       ".env.example"
     ],
     "extraResources": [
-      "admin-console/**/*"
+      "admin-console/**/*",
+      { "from": "resources/models/vosk-model-small-en-us", "to": "vosk-model-small-en-us" }
     ],
     "win": {
       "icon": "build/icon.ico",

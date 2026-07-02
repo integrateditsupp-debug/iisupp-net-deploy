@@ -42,16 +42,24 @@ assert.match(overlay, /u\.rate = 0\.95/, "calm rate ~0.95");
 assert.match(overlay, /u\.pitch = 1\.0/, "natural pitch ~1.0");
 t();
 
-// 5 — voice INPUT (tap-to-speak) is guarded by SpeechRecognition availability; the mic is active only while
-// listening and nothing auto-starts.
-assert.match(overlay, /const SR = \(typeof window !== "undefined"\) && \(window\.SpeechRecognition \|\| window\.webkitSpeechRecognition\)/, "input voice uses on-device Web Speech SpeechRecognition");
-assert.match(overlay, /if \(!SR\) return null/, "no SpeechRecognition → no button (typing still works)");
-assert.match(overlay, /rec\.start\(\)/, "recognition starts only on an explicit tap");
+// 5 — voice INPUT is TRUE on-device offline STT (Vosk), NOT the browser cloud recognizer. It is gated on a mic +
+// a locally-bundled model; hidden when either is unavailable; active only while listening; NEVER a cloud fallback.
+const stt = rd("src", "renderer", "local-stt.mjs");
+assert.doesNotMatch(overlay, /webkitSpeechRecognition|window\.SpeechRecognition/, "no browser Web Speech recognizer in the mic path (it can route audio to Google's cloud)");
+assert.match(overlay, /createLocalStt\(/, "tap-to-speak uses the bundled on-device engine (createLocalStt)");
+assert.match(overlay, /window\.sentinel\.voskModelUrl/, "the mic is gated on a bundled local Vosk model URL");
+assert.match(overlay, /Voice stays on your device/, "truthful on-device caption is shown (only on the local path)");
 assert.match(overlay, /classList\.add\("listening"\)/, "a listening indicator shows while the mic is active");
+// the engine itself: offline Vosk, local mic, no network host, no cloud recognizer.
+assert.match(stt, /"vosk-browser"/, "engine loads the offline Vosk WASM build");
+assert.match(stt, /getUserMedia/, "mic captured locally via getUserMedia");
+assert.doesNotMatch(stt, /https?:\/\//, "no network host in the STT engine (model is a local file:// URL)");
+assert.doesNotMatch(stt, /webkitSpeechRecognition|SpeechRecognition/, "no cloud recognizer in the engine");
 t();
 
-// 6 — $0, on-device ONLY: no paid/cloud voice API, no network call anywhere in the overlay voice path.
-assert.doesNotMatch(overlay, /elevenlabs|azure|googleapis|polly|api[_-]?key|fetch\(|XMLHttpRequest/i, "no paid/cloud voice API or network call");
+// 6 — $0, on-device ONLY: no paid/cloud voice API, no network call anywhere in the voice path (overlay + engine).
+assert.doesNotMatch(overlay, /elevenlabs|azure|googleapis|polly|api[_-]?key|fetch\(|XMLHttpRequest/i, "no paid/cloud voice API or network call in the overlay");
+assert.doesNotMatch(stt, /elevenlabs|azure|googleapis|polly|api[_-]?key|fetch\(|XMLHttpRequest/i, "no paid/cloud voice API or network call in the STT engine");
 t();
 
 assert.equal(n, 6, "6 companion-voice groups");

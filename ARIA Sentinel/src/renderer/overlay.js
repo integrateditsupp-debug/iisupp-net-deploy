@@ -1,4 +1,5 @@
 import { COMPANION_MENU, getFlow, flowStep, resolveStep, stepKey, isStepAnswered, listFlows } from "../shared/walkthrough-steps.mjs";
+import { createLocalStt } from "./local-stt.mjs"; // TRUE on-device offline STT (Vosk) — no cloud, no audio egress
 
 // Defensive: if the preload bridge ever fails to attach, fall back to a no-op API so the
 // globe still renders instead of throwing an uncaught TypeError.
@@ -46,7 +47,8 @@ const companionMuteBtn = document.getElementById("companionMute");
 //  · NARRATION (OUTPUT): speechSynthesis speaks the SAME visible card text (never a separate/embellished
 //    script — Rule 14), in a calm/warm/professional FEMALE voice (prefer Microsoft Aria/Jenny → Zira →
 //    any female en-US), rate ~0.95 / pitch ~1.0. ON by default; a header mute toggle always available.
-//  · INPUT (tap-to-speak): Web Speech SpeechRecognition transcribes into the field; typing ALWAYS works.
+//  · INPUT (tap-to-speak): a bundled ON-DEVICE offline STT engine (Vosk WASM, see ./local-stt.mjs) transcribes
+//    into the field — NO audio leaves the machine and there is NO cloud recognizer fallback; typing ALWAYS works.
 // ============================================================================================================
 let narrationMuted = false; // narration is ON by default; the header toggle mutes/unmutes it
 
@@ -92,27 +94,35 @@ companionMuteBtn?.addEventListener("click", () => {
   companionMuteBtn.innerHTML = narrationMuted ? "&#128263;" : "&#128266;"; // muted-speaker / speaker
 });
 
-// Tap-to-speak (voice INPUT): guarded by SpeechRecognition availability; hidden gracefully when absent so
-// typing always works. On-device Web Speech; the mic is active ONLY while listening. Returns the button or null.
+// Tap-to-speak (voice INPUT): TRUE on-device offline STT (Vosk, ./local-stt.mjs). Guarded on a mic + a bundled
+// local model; if either is missing the button hides and typing still works — there is NEVER a cloud fallback.
+// The audio + transcription stay 100% local, so the caption "Voice stays on your device" is truthful. The mic is
+// active ONLY while listening and is released on stop. Returns the button or null.
 function addTapToSpeak(input, container) {
-  const SR = (typeof window !== "undefined") && (window.SpeechRecognition || window.webkitSpeechRecognition);
-  if (!SR) return null; // no recognizer → no button; the text field alone is fully usable
+  const host = container || input.parentNode;
+  const canMic = (typeof navigator !== "undefined") && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+  // No mic API, or no local-STT bridge → no button (the text field alone is fully usable). Never a cloud shim.
+  if (!canMic || !window.sentinel || !window.sentinel.voskModelUrl) return null;
   const btn = el("button", "companion-speak"); btn.type = "button"; btn.textContent = "🎤 Tap to speak";
-  let rec = null, listening = false;
-  const stop = () => { listening = false; btn.classList.remove("listening"); btn.textContent = "🎤 Tap to speak"; try { rec && rec.stop(); } catch { /* ignore */ } };
-  btn.addEventListener("click", () => {
+  const cap = el("div", "companion-speak-note", "Voice stays on your device");
+  const hide = () => { try { btn.remove(); cap.remove(); } catch { /* already gone */ } };
+  let stt = null, listening = false;
+  const stop = () => { listening = false; btn.classList.remove("listening"); btn.textContent = "🎤 Tap to speak"; if (stt) { try { stt.stop(); } catch { /* ignore */ } stt = null; } };
+  btn.addEventListener("click", async () => {
     if (listening) { stop(); return; }
     try {
-      rec = new SR(); rec.lang = "en-US"; rec.interimResults = false; rec.maxAlternatives = 1;
-      rec.onresult = (e) => {
-        const said = (e.results && e.results[0] && e.results[0][0] && e.results[0][0].transcript) || "";
-        if (said) { input.value = (input.value ? input.value + " " : "") + said; input.dispatchEvent(new Event("input")); }
-      };
-      rec.onend = stop; rec.onerror = stop;
-      listening = true; btn.classList.add("listening"); btn.textContent = "● Listening… tap to stop"; rec.start();
-    } catch { stop(); }
+      const modelUrl = await window.sentinel.voskModelUrl();
+      if (!modelUrl) return hide(); // no bundled model → hide the mic; NEVER fall back to a cloud recognizer
+      listening = true; btn.classList.add("listening"); btn.textContent = "● Listening… tap to stop";
+      stt = await createLocalStt({
+        modelUrl,
+        onText: (said) => { if (said) { input.value = (input.value ? input.value + " " : "") + said; input.dispatchEvent(new Event("input")); } }
+      });
+    } catch { stop(); hide(); } // local engine unavailable → hide the mic (typing still works)
   });
-  (container || input.parentNode).appendChild(btn);
+  host.appendChild(btn); host.appendChild(cap);
+  // Probe up front: if there's no bundled model on this install, don't show a dead mic button.
+  window.sentinel.voskModelUrl().then((u) => { if (!u) hide(); }).catch(() => hide());
   return btn;
 }
 

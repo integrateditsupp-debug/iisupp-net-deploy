@@ -3,7 +3,7 @@
 // is anchored below the globe (top ~104px), bounded width, internal scroll — and is NOT inset:0/full-window;
 // (b) #overlayGlobe stays present/visible when the companion is open (the panel is a sibling, never wraps it);
 // (c) steps render into #companionBody; (d) input-text exposes a .companion-input field + an optional,
-// SpeechRecognition-guarded tap-to-speak button (typing always works). Structural (source) proof.
+// on-device-STT-guarded tap-to-speak button (typing always works). Structural (source) proof.
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -56,8 +56,8 @@ t();
 // guarded by SpeechRecognition availability (hidden gracefully when absent) so typing ALWAYS works.
 assert.match(overlay, /step\.type === "input-text"[\s\S]*?el\("input", "companion-input"\)/, "input-text renders a .companion-input field");
 assert.match(overlay, /step\.type === "input-text"[\s\S]*?addTapToSpeak\(input/, "input-text offers the optional tap-to-speak affordance");
-assert.match(overlay, /function addTapToSpeak\(input[\s\S]*?window\.SpeechRecognition \|\| window\.webkitSpeechRecognition/, "tap-to-speak uses on-device Web Speech SpeechRecognition");
-assert.match(overlay, /function addTapToSpeak\(input[\s\S]*?if \(!SR\) return null/, "no SpeechRecognition → button hidden gracefully (typing still works)");
+assert.match(overlay, /function addTapToSpeak\(input[\s\S]*?createLocalStt\(/, "tap-to-speak uses the bundled on-device offline engine (createLocalStt), not a cloud recognizer");
+assert.match(overlay, /function addTapToSpeak\(input[\s\S]*?if \(!canMic \|\| !window\.sentinel \|\| !window\.sentinel\.voskModelUrl\) return null/, "no mic / no bundled model → button hidden gracefully (typing still works)");
 // typing path is unconditional: the input + its input-listener exist regardless of the mic.
 assert.match(overlay, /input\.addEventListener\("input", \(\) => \{ comp\.answers\[step\.key\] = input\.value/, "typing always updates the answer, independent of voice");
 t();
