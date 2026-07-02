@@ -11,12 +11,18 @@ import { activePlan, isWalkthroughEntitled, FREE_PLAN } from "./license-features
 
 // The Walk-Through tab survives trial expiry (it was paid for in the Concierge package).
 export const WALKTHROUGH_TAB = "walkthrough";
+// 2026-07-02 DEAD-SHELL FIX — a free tier must NEVER be a locked shell. These stay navigable at EVERY tier,
+// including the free floor / expired trial: Dashboard (honest overview — no fake KPIs), ARIA (the KB chat, the
+// core free value), and Settings (the buy path). Paid FEATURES inside them are still gated by
+// enabledFeatures(activePlan) — we gate features, not the whole app. This is what un-bricks the app.
+export const BASELINE_TABS = Object.freeze(["dashboard", "aria", "settings"]);
 // Settings hosts About / License / Subscribe + the plan picker — the buy path must ALWAYS stay reachable so
-// a user can subscribe out of a locked state. Never locked.
+// a user can subscribe out of a locked state. Never locked. (Subset of the baseline; kept for callers.)
 export const ALWAYS_OPEN_TABS = Object.freeze(["settings"]);
-// Every other nav tab follows the plan gate: after expiry with no paid plan the plan is FREE_PLAN → these lock.
+// PAID tabs — gated by plan: locked at the free floor (expired trial + no paid plan), unlocked on an active
+// trial or any paid plan. A locked click shows a DISMISSIBLE upsell (never a wall); the baseline stays usable.
 export const GATED_TABS = Object.freeze([
-  "dashboard", "aria", "control-center", "recipes", "compliance-privacy",
+  "control-center", "recipes", "compliance-privacy",
   "reports", "knowledge", "system", "servicenow"
 ]);
 
@@ -36,17 +42,23 @@ export function appUnlocked(licenseStatus = {}) {
 
 /**
  * The per-tab enabled map for a license/gate status:
+ *   - BASELINE tabs (Dashboard · ARIA · Settings): ALWAYS enabled — the app is never a locked shell.
  *   - Walk-Through tab: enabled iff isWalkthroughEntitled(status) (active trial · paid plan · Concierge grant).
- *   - Settings (buy path): ALWAYS enabled.
- *   - every other tab: enabled iff appUnlocked(status).
+ *   - PAID tabs: enabled iff appUnlocked(status).
  * Returns { <tab>: boolean, ... }.
  */
 export function tabGateMap(licenseStatus = {}) {
   const unlocked = appUnlocked(licenseStatus);
   const map = { [WALKTHROUGH_TAB]: isWalkthroughEntitled(licenseStatus) };
-  for (const tab of ALWAYS_OPEN_TABS) map[tab] = true;
+  for (const tab of BASELINE_TABS) map[tab] = true;   // navigable at every tier — the un-brick guarantee
   for (const tab of GATED_TABS) map[tab] = unlocked;
   return map;
+}
+
+/** The tabs that are navigable in the given state (always ⊇ the baseline — the app is never a dead shell). */
+export function navigableTabs(licenseStatus = {}) {
+  const map = tabGateMap(licenseStatus);
+  return Object.keys(map).filter((tab) => map[tab] === true);
 }
 
 /** True when `tab` is locked for this status. Unknown tabs are treated as open (never over-lock the UI). */

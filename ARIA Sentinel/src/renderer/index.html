@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'" />
-    <title>ARIA Sentinel Settings</title>
+    <title>ARIA Sentinel</title>
     <link rel="stylesheet" href="./sentinel.css" />
   </head>
   <body>
@@ -701,7 +701,11 @@
         </div>
         <div class="onboarding-foot">
           <a href="#" id="planDetails" data-support="https://iisupp.net/aria-sentinel/">Visit iisupp.net for full details</a>
-          <div class="button-row"><button id="planEnterLicense" class="ghost">Enter license</button></div>
+          <div class="button-row">
+            <button id="planEnterLicense" class="ghost">Enter license</button>
+            <!-- DEAD-SHELL FIX 2026-07-02 — dismiss the upsell; never trap the user (baseline stays navigable). -->
+            <button id="planModalClose" class="ghost">Maybe later</button>
+          </div>
         </div>
       </div>
     </div>

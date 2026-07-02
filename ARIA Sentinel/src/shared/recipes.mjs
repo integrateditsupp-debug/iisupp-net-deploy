@@ -1,4 +1,6 @@
-export const SENTINEL_VERSION = "0.1.0";
+// Keep in sync with package.json "version" (the version-bump process bumps both). 2026-07-02: was stale at
+// "0.1.0" while package.json shipped 0.1.16 — the UI showed the wrong version and OTA compared the wrong current.
+export const SENTINEL_VERSION = "0.1.16";
 export const BRIDGE_PORT = 37841;
 export const CONTROL_PLANE_MVP_RECIPE_COUNT = 25;
 export const CONTROL_PLANE_MVP_STOP_CODE_COUNT = 25;

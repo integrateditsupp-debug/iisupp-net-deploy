@@ -63,13 +63,14 @@ assert.equal(getFeatures("smb").fleetView, true, "Business tiers have fleet view
 assert.equal(getFeatures("pro").fleetView, false, "Pro (single-team) has no fleet view — tiers keep their limits");
 t();
 
-// 5 — unlicensed + Walk-Through entitled (Concierge buyer, trial over) → ONLY the Walk-Through tab; the rest
-// locks; the buy path (Settings) is ALWAYS reachable so they can subscribe out of the locked state.
+// 5 — unlicensed + Walk-Through entitled (Concierge buyer, trial over): Walk-Through stays; the PAID tabs lock;
+// but the NAVIGABLE BASELINE (Dashboard · ARIA · Settings) stays open — a free floor is never a locked shell.
 const conciergeExpired = { licensed: false, walkthroughEntitled: true, trialEndsAt: "2020-01-01T00:00:00.000Z" };
 assert.equal(activePlan(conciergeExpired), "free", "Concierge buyer after the trial → the free floor");
 const map = tabGateMap(conciergeExpired);
 assert.equal(map[WALKTHROUGH_TAB], true, "Walk-Through stays (it was paid for)");
-for (const tab of GATED_TABS) assert.equal(map[tab], false, `${tab} is locked at the free floor`);
+for (const tab of GATED_TABS) assert.equal(map[tab], false, `${tab} (paid) is locked at the free floor`);
+for (const tab of ["dashboard", "aria", "settings"]) assert.equal(map[tab], true, `${tab} stays navigable at the free floor (baseline)`);
 for (const tab of ALWAYS_OPEN_TABS) assert.equal(map[tab], true, `buy path ${tab} stays open`);
 assert.deepEqual(buyPathTabs(), [...ALWAYS_OPEN_TABS], "the buy path is never locked");
 t();

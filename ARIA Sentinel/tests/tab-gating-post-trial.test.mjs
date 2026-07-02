@@ -8,12 +8,14 @@ import {
 
 let n = 0; const t = () => { n++; };
 
-// 1 — STATE 2: expired trial + no paid plan + walkthroughEntitled → Walk-Through ENABLED, all others LOCKED.
+// 1 — STATE 2: expired trial + no paid plan + walkthroughEntitled → Walk-Through ENABLED, the PAID tabs LOCKED,
+// but the NAVIGABLE BASELINE (Dashboard · ARIA · Settings) stays open — the app is NEVER a dead shell.
 const expiredEntitled = { licensed: false, plan: null, trial: { state: "expired" }, walkthroughEntitled: true };
 const map2 = tabGateMap(expiredEntitled);
 assert.equal(map2[WALKTHROUGH_TAB], true, "Walk-Through survives trial expiry (entitled)");
-for (const tab of GATED_TABS) assert.equal(map2[tab], false, `${tab} locks after expiry with no paid plan`);
-assert.equal(appUnlocked(expiredEntitled), false, "the rest of the app is locked in state 2");
+for (const tab of GATED_TABS) assert.equal(map2[tab], false, `${tab} (paid) locks after expiry with no paid plan`);
+for (const tab of ["dashboard", "aria", "settings"]) assert.equal(map2[tab], true, `${tab} stays navigable (baseline — never a locked shell)`);
+assert.equal(appUnlocked(expiredEntitled), false, "the PAID surface is locked in state 2");
 t();
 
 // 2 — the BUY PATH is never locked: Settings stays open so the user can always subscribe out of the lock.

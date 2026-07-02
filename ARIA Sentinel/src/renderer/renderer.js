@@ -107,6 +107,8 @@ function activateTab(tab) {
   qsa(".nav-sub").forEach((sub) => sub.classList.toggle("open", sub.dataset.sub === target));
   qsa(".tab-panel").forEach((panel) => panel.classList.toggle("active", panel.id === target));
   setText("pageTitle", TAB_TITLES[target]);
+  // Window title follows the active view (was always "ARIA Sentinel Settings").
+  if (TAB_TITLES[target]) document.title = `ARIA Sentinel — ${TAB_TITLES[target]}`;
   runTabLoaders(target);
   if (redirect) scrollToAnchor(redirect.anchor);
 }
@@ -1030,6 +1032,10 @@ function wireRun13() {
   // Account
   bindClick("enterLicenseBtn", (b) => runAction(b, () => activateLicense()));
   bindClick("planEnterLicense", (b) => runAction(b, () => { closePlanModal(); activateTab("about"); }));
+  // 2026-07-02 DEAD-SHELL FIX — the plan modal is a DISMISSIBLE upsell, never a trap. "Maybe later" closes it and
+  // drops the user onto the navigable baseline (Dashboard). Esc also closes it.
+  bindClick("planModalClose", () => { closePlanModal(); activateTab("dashboard"); });
+  qs("#planModal")?.addEventListener("keydown", (e) => { if (e.key === "Escape") closePlanModal(); });
   bindClick("logoutBtn", (b) => runAction(b, async () => { const r = await sentinel.logout?.(); return r; }));
   bindClick("managePlanBtn", (b) => runAction(b, () => sentinel.manageSubscription?.()));
   // Trial-end plan picker — each "Subscribe" CTA opens the tier's Stripe Checkout URL.
@@ -1081,14 +1087,11 @@ function renderGate(state) {
   }
   const acct = qs("#accountStatus");
   if (acct) acct.textContent = gate.licensed ? `Licensed${gate.plan ? " · " + gate.plan : ""}` : (gate.trial?.state === "active" ? gate.trial.badge : "Trial ended — choose a plan.");
-  // Post-trial gate: lock the app behind the plan modal — UNLESS the user is Walk-Through entitled (Concierge
-  // buyer). An entitled buyer must keep the Walk-Through tab, so we use per-tab locking (applyTabGates) instead
-  // of the full-app block; a plain expired trial keeps the legacy full-screen plan modal.
-  if (!gate.unlocked && !planModalShown && !gate.walkthroughEntitled) {
-    planModalShown = true;
-    const m = qs("#planModal");
-    if (m) m.hidden = false;
-  }
+  // 2026-07-02 DEAD-SHELL FIX — do NOT force the full-screen #planModal (an .onboarding{position:fixed;inset:0}
+  // overlay with no close) as an interaction-blocking wall. It trapped every click, including Settings, whenever
+  // the trial had expired. The app now always keeps a navigable baseline (Dashboard · ARIA · Settings, + Walk-
+  // Through if entitled) via applyTabGates; the plan modal is only ever opened intentionally (Settings → upgrade,
+  // or a locked paid-tab click) and is dismissible. Nothing is auto-walled here.
 }
 
 // SENTINEL TRIAL GATING 2026-07-02 — the per-tab enable/lock map for the current license/gate status.
