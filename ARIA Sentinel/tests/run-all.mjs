@@ -6,6 +6,10 @@ const TESTS = [
   "../../tests/deploy-safety-denylist.test.mjs",
   // SERVING-LAYER LOCKDOWN 2026-07-02 — live-probe logic (git-state tests can't see the serving layer).
   "../../tests/probe-deploy-safety.test.mjs",
+  // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
+  "./walkthrough-entitlement.test.mjs",
+  "./tab-gating-post-trial.test.mjs",
+  "./walkthrough-webhook-grant.test.mjs",
   // FORUMS MVP 2026-07-02 — real-KB retrieval + honest abstain + store core + a11y/fabrication gates.
   "../../tests/forums-mvp.test.mjs",
   "./scenario-suite.mjs",

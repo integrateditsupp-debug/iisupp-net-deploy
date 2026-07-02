@@ -31,6 +31,70 @@ export function planFromLookupKey(lookupKey, tierMeta) {
   return null;
 }
 
+// ===== SENTINEL TRIAL GATING 2026-07-02 — the AI Setup Walk-Through (Concierge) entitlement =====
+// The Concierge "AI Setup Walk-Through" package (ITEM 2 product id/kind `ai-setup-walkthrough`) bundles a
+// 30-day ARIA Sentinel trial + a PERMANENT Walk-Through entitlement. This is separate from a Sentinel plan
+// subscription: it grants the Walk-Through tab forever and full Sentinel for 30 days, then the rest gates.
+export const WALKTHROUGH_PRODUCT_ID = "ai-setup-walkthrough";
+export const WALKTHROUGH_TRIAL_DAYS = 30;
+// During the 30-day window the buyer gets the full paid experience (Pro-equivalent); after it, they keep
+// only the Walk-Through (walkthroughEntitled) and the rest falls to the free Personal tier.
+export const WALKTHROUGH_TRIAL_PLAN = "pro";
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Is this order the Concierge AI Setup Walk-Through (vs a normal Sentinel-tier subscription)? Matches on the
+ * product id / kind / lookup_key used by the Concierge sale. Never guesses — an unrelated product is false,
+ * so the entitlement is granted ONLY from the Concierge product.
+ */
+export function isConciergeWalkthroughOrder({ kind, product, lookupKey } = {}) {
+  const norm = (v) => String(v || "").trim().toLowerCase().replace(/_/g, "-");
+  return [kind, product, lookupKey].some((v) => norm(v) === WALKTHROUGH_PRODUCT_ID);
+}
+
+/** ISO trial-end = issued_at (or now) + 30 days. Real server-issued date — the desktop shows real days-left. */
+export function conciergeTrialEndsAt(issuedAtIso, days = WALKTHROUGH_TRIAL_DAYS) {
+  const base = Date.parse(issuedAtIso || "") || Date.now();
+  return new Date(base + days * DAY_MS).toISOString();
+}
+
+/**
+ * Mint the Walk-Through entitlement record for a completed Concierge order. The key is a Personal base key
+ * (never a permanent Pro unlock — the 30-day Pro window is enforced server-side by trialEndsAt in
+ * sentinel-resolve). The record carries walkthroughEntitled + trialEndsAt so the desktop caches + gates on
+ * real dates. 🔒 free-text fields are path-scrubbed (R11); the secret is only passed to issuePlanKey.
+ */
+export function mintWalkthroughEntitlement({ email, name, order_id, customer_id, secret, issued_at }) {
+  const key = issuePlanKey("personal", secret);
+  return {
+    email: scrubField(email),
+    name: scrubField(name) || "Customer",
+    tier: "personal",
+    key,
+    subscription_id: String(order_id || ""),
+    customer_id: String(customer_id || ""),
+    issued_at: issued_at || "",
+    status: "active",
+    walkthroughEntitled: true,
+    trialEndsAt: conciergeTrialEndsAt(issued_at)
+  };
+}
+
+/**
+ * The runtime plan/entitlement a Concierge buyer sees, given their stored entitlement record + `now`. Inside
+ * the 30-day window they get the full paid experience (Pro); after it, only the Walk-Through survives and the
+ * rest falls to Personal. walkthroughEntitled + trialEndsAt are always echoed (the tab is permanent).
+ */
+export function walkthroughEffectivePlan(record, nowMs = Date.now()) {
+  const ends = record && record.trialEndsAt ? Date.parse(record.trialEndsAt) : 0;
+  const trialActive = Boolean(ends) && nowMs < ends;
+  return {
+    plan: trialActive ? WALKTHROUGH_TRIAL_PLAN : "personal",
+    walkthroughEntitled: Boolean(record && record.walkthroughEntitled),
+    trialEndsAt: (record && record.trialEndsAt) || null
+  };
+}
+
 // 🔒 R11 — strip anything that looks like a filesystem path from a free-text field (name/email) before
 // it is persisted or emailed.
 export function scrubField(value) {

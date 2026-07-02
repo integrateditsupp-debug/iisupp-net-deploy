@@ -17,7 +17,9 @@ assert.doesNotMatch(main, /adminBuild: /, "the old adminBuild state field is gon
 assert.match(main, /function currentPlanFeatures\(\)/, "currentPlanFeatures defined");
 // RUN 24 A6 — the desktop no longer resolves the plan locally: the license SECRET left the client, and
 // enterLicense verifies the key through the server-side sentinel-resolve endpoint instead.
-assert.match(main, /resolveLicenseOnline\(key\)/, "enterLicense verifies the key via the server-side resolve endpoint");
+// SENTINEL TRIAL GATING 2026-07-02 — resolveLicenseOnline now also carries the (optional) email so the server
+// can resolve a per-customer Walk-Through entitlement; the key is still verified server-side (secret off-client).
+assert.match(main, /resolveLicenseOnline\(key/, "enterLicense verifies the key via the server-side resolve endpoint");
 assert.doesNotMatch(main, /process\.env\.SENTINEL_LICENSE_SECRET/, "the license secret is NEVER referenced on the desktop (server-side only)");
 
 // Renderer runs the gate pass on every state render.

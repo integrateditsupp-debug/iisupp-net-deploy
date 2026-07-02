@@ -20,7 +20,10 @@ const BUSINESS_FEATURES = Object.freeze({
   whiteLabel: true,
   quarterlyPdf: true,
   slaTracking: true,
-  systemInventory: true
+  systemInventory: true,
+  // A paid Sentinel plan includes the guided AI Setup Walk-Through. Only the free Personal tier lacks it
+  // (the Walk-Through is otherwise granted à-la-carte by the Concierge purchase — see license-features).
+  walkthrough: true
 });
 
 export const TIERS = Object.freeze({
@@ -48,7 +51,8 @@ export const TIERS = Object.freeze({
       whiteLabel: false,
       quarterlyPdf: false,
       slaTracking: false,
-      systemInventory: true
+      systemInventory: true,
+      walkthrough: false
     }
   },
   pro: {
@@ -75,7 +79,8 @@ export const TIERS = Object.freeze({
       whiteLabel: false,
       quarterlyPdf: true,
       slaTracking: true,
-      systemInventory: true
+      systemInventory: true,
+      walkthrough: true
     }
   },
   smb: {
@@ -152,7 +157,8 @@ export const TIERS = Object.freeze({
       whiteLabel: true,
       quarterlyPdf: true,
       slaTracking: true,
-      systemInventory: true
+      systemInventory: true,
+      walkthrough: true
     }
   }
 });

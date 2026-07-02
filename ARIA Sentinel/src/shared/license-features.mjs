@@ -80,6 +80,18 @@ export function licenseIsAdmin(licenseStatus = {}) {
   return Boolean(licenseStatus && licenseStatus.licensed) && isAdmin(activePlan(licenseStatus));
 }
 
+/**
+ * Walk-Through entitlement — INDEPENDENT of the Sentinel plan. The AI Setup Walk-Through package (Concierge
+ * purchase) grants a permanent Walk-Through: even at FREE_PLAN / expired-trial, walkthroughEntitled === true
+ * keeps the Walk-Through tab usable. A paid plan (or an active trial → Pro) that already lists the walkthrough
+ * feature also passes — so a Sentinel subscriber never loses the tab. Server-authoritative: the flag is set
+ * by sentinel-resolve / the Stripe webhook on a real Concierge order (never assumed client-side). Pure.
+ */
+export function isWalkthroughEntitled(licenseStatus = {}) {
+  if (licenseStatus && licenseStatus.walkthroughEntitled === true) return true;
+  return getFeatures(activePlan(licenseStatus)).walkthrough === true;
+}
+
 // RUN 24 A1 — the SHA-256 of a key. The revocation check is keyed by this hash so the raw key is NEVER
 // sent off-device (the server stores keyHash → revoked, not the key itself).
 export function keyHash(key) {

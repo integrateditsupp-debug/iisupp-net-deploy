@@ -4,6 +4,8 @@ import { extOf, requiredSteps, stepFor } from "../shared/delete-confirm.mjs";
 import { renderMarkdown } from "../shared/aria-markdown.mjs"; // RUN 34-1 — readable chat answers (markdown → HTML)
 import { walkStepsFor, hasWalkSteps, listFlows, getFlow, flowStep, resolveStep } from "../shared/walkthrough-steps.mjs"; // ONE shared source — recipe steps + companion flows
 import { confidenceBadge } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — per-answer confidence + "Was this fixed?" feedback
+// SENTINEL TRIAL GATING 2026-07-02 — per-tab enable/lock map (Walk-Through survives trial expiry; the buy path never locks).
+import { tabGateMap, LOCKED_TAB_MESSAGE, WALKTHROUGH_TAB } from "../shared/tab-gating.mjs";
 // RUN 22 — dashboard / performance / SLA / compliance / reports tab builders + status.
 import { computeHeroStatus, heroSubline, heroTiles } from "../shared/dashboard-status.mjs";
 import * as DashboardTab from "./tabs/dashboard.mjs";
@@ -80,7 +82,12 @@ function installErrorReporting() {
 
 function wireNavigation() {
   qsa(".nav-item").forEach((button) => {
-    button.addEventListener("click", () => activateTab(button.dataset.tab));
+    button.addEventListener("click", () => {
+      // SENTINEL TRIAL GATING 2026-07-02 — a locked tab (post-trial, no paid plan) shows the honest upsell
+      // + buy path instead of activating. Walk-Through + Settings are never locked (buy path stays open).
+      if (currentTabGate[button.dataset.tab] === false) { showLockedTabOverlay(); return; }
+      activateTab(button.dataset.tab);
+    });
   });
   // RUN 23d — sidebar sub-anchors switch to the parent tab then smooth-scroll to the ## H2 section.
   qsa(".nav-sub a[data-anchor]").forEach((link) => {
@@ -341,6 +348,7 @@ function wireActions() {
   wireRun21();
   wireRun22();
   wireRun23e();
+  wireLockedTabOverlay(); // SENTINEL TRIAL GATING 2026-07-02 — locked-tab upsell overlay + buy path
 
   bindClick("showGlobe", (button) => runAction(button, () => sentinel.showGlobe()));
   bindClick("pauseOneHour", (button) => runAction(button, () => sentinel.setPaused(HOUR_MS)));
@@ -455,6 +463,7 @@ function renderState(next) {
   renderRoi(state).catch(() => undefined);
   renderLicense(state);
   renderGate(state);
+  applyTabGates(state); // SENTINEL TRIAL GATING 2026-07-02 — lock non-Walk-Through tabs after trial expiry (no paid plan)
   applyFeatureGates(state); // RUN 23e — tier feature gates + upsell cards
   renderAboutNudge(state).catch(() => undefined); // RUN 23e — Personal monthly upsell nudge
   renderUpdates(state);
@@ -1072,12 +1081,66 @@ function renderGate(state) {
   }
   const acct = qs("#accountStatus");
   if (acct) acct.textContent = gate.licensed ? `Licensed${gate.plan ? " · " + gate.plan : ""}` : (gate.trial?.state === "active" ? gate.trial.badge : "Trial ended — choose a plan.");
-  // Post-trial gate: lock the app behind the plan modal.
-  if (!gate.unlocked && !planModalShown) {
+  // Post-trial gate: lock the app behind the plan modal — UNLESS the user is Walk-Through entitled (Concierge
+  // buyer). An entitled buyer must keep the Walk-Through tab, so we use per-tab locking (applyTabGates) instead
+  // of the full-app block; a plain expired trial keeps the legacy full-screen plan modal.
+  if (!gate.unlocked && !planModalShown && !gate.walkthroughEntitled) {
     planModalShown = true;
     const m = qs("#planModal");
     if (m) m.hidden = false;
   }
+}
+
+// SENTINEL TRIAL GATING 2026-07-02 — the per-tab enable/lock map for the current license/gate status.
+let currentTabGate = {};
+function applyTabGates(state) {
+  const gate = state && state.gate;
+  if (!gate) return;
+  currentTabGate = tabGateMap(gate);
+  qsa(".nav-item").forEach((btn) => {
+    const tab = btn.dataset.tab;
+    const locked = currentTabGate[tab] === false;
+    btn.classList.toggle("tab-locked", locked);
+    btn.setAttribute("aria-disabled", locked ? "true" : "false");
+    let lk = btn.querySelector(".nav-lock");
+    if (locked && !lk) {
+      lk = document.createElement("span");
+      lk.className = "nav-lock";
+      lk.textContent = "🔒";
+      lk.setAttribute("aria-hidden", "true");
+      btn.appendChild(lk);
+    } else if (!locked && lk) {
+      lk.remove();
+    }
+  });
+}
+
+// Real days-left from the server-issued trialEndsAt (Rule 14 — no fabricated countdown). "" when unknown/past.
+function trialDaysLeftLabel(gate) {
+  const ends = gate && gate.trialEndsAt ? Date.parse(gate.trialEndsAt) : NaN;
+  if (!Number.isFinite(ends)) return "";
+  const ms = ends - Date.now();
+  if (ms <= 0) return `Your 30-day trial ended ${new Date(ends).toLocaleDateString()}.`;
+  const days = Math.ceil(ms / (24 * 60 * 60 * 1000));
+  return `${days} day${days === 1 ? "" : "s"} left in your Sentinel trial (ends ${new Date(ends).toLocaleDateString()}).`;
+}
+
+// Honest locked-tab overlay: the real upsell message + the buy path (plan picker) + "keep your Walk-Through".
+function showLockedTabOverlay() {
+  const gate = (state && state.gate) || {};
+  setText("lockedTabMessage", LOCKED_TAB_MESSAGE);
+  const info = qs("#lockedTabTrialInfo");
+  const label = trialDaysLeftLabel(gate);
+  if (info) { info.textContent = label; info.hidden = !label; }
+  const m = qs("#lockedTabOverlay");
+  if (m) m.hidden = false;
+}
+function closeLockedTabOverlay() { const m = qs("#lockedTabOverlay"); if (m) m.hidden = true; }
+function wireLockedTabOverlay() {
+  bindClick("lockedTabClose", () => closeLockedTabOverlay());
+  bindClick("lockedTabKeepWalkthrough", () => { closeLockedTabOverlay(); activateTab(WALKTHROUGH_TAB); });
+  // "Choose a plan" opens the existing plan picker (the buy path) — never blocked.
+  bindClick("lockedTabChoosePlan", () => { closeLockedTabOverlay(); const pm = qs("#planModal"); if (pm) { pm.hidden = false; planModalShown = true; } else sentinel.openPlanPicker?.(); });
 }
 
 // Fix 5 — "Show the floating globe" toggle (persists via electron-store).

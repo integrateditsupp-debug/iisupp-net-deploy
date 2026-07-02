@@ -171,6 +171,13 @@ body.has-security-banner .settings-shell { padding-top: 58px; }
 
 .nav-item.active .nav-dot { background: var(--aria-gold); }
 
+/* SENTINEL TRIAL GATING 2026-07-02 — a locked tab (post-trial, no paid plan) is grayed but still clickable
+   (the click opens the honest upsell + buy path; it is never a dead/broken control). */
+.nav-item.tab-locked { opacity: .5; }
+.nav-item.tab-locked:hover { opacity: .72; }
+.nav-item .nav-lock { margin-left: auto; font-size: 11px; opacity: .8; }
+.nav-item.tab-locked .nav-caret { display: none; }
+
 /* RUN 23d — IA consolidation: collapsible sub-anchor list under merged parents + ## section dividers. */
 .nav-caret {
   margin-left: auto;

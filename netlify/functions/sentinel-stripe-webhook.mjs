@@ -10,10 +10,16 @@
 import Stripe from "stripe";
 import { getStore } from "@netlify/blobs";
 import {
-  planFromLookupKey, mintLicense, shouldMint, customerEmail, adminEmail, ADMIN_EMAIL
+  planFromLookupKey, mintLicense, shouldMint, customerEmail, adminEmail, ADMIN_EMAIL,
+  isConciergeWalkthroughOrder, mintWalkthroughEntitlement, WALKTHROUGH_TRIAL_DAYS
 } from "../../ARIA Sentinel/src/shared/sentinel-license-funnel.mjs";
 
 const FUNNEL_EVENTS = new Set(["checkout.session.completed", "customer.subscription.created"]);
+
+// SENTINEL TRIAL GATING 2026-07-02 — entitlements are looked up server-side by (lowercased) email in
+// sentinel-resolve, so a plain Personal-key holder never inherits another buyer's Walk-Through/trial.
+const WALKTHROUGH_STORE = "sentinel-walkthrough-entitlements";
+const emailKey = (email) => String(email || "").trim().toLowerCase();
 
 export const handler = async (event) => {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -36,6 +42,26 @@ export const handler = async (event) => {
   if (!FUNNEL_EVENTS.has(evt.type)) return ok({ ignored: evt.type });
 
   try {
+    // SENTINEL TRIAL GATING 2026-07-02 — a completed Concierge "AI Setup Walk-Through" order grants a 30-day
+    // Sentinel trial + a PERMANENT Walk-Through entitlement. Checked BEFORE the plan path (it is not a
+    // Sentinel-tier subscription). Only this product sets the entitlement — a normal order falls through.
+    if (evt.type === "checkout.session.completed") {
+      const concierge = extractConciergeFacts(evt);
+      if (concierge && concierge.email) {
+        const record = mintWalkthroughEntitlement({ ...concierge, secret: licenseSecret });
+        const store = getStore("sentinel-licenses");
+        const wtStore = getStore(WALKTHROUGH_STORE);
+        const existing = await store.get(concierge.order_id, { type: "json" }).catch(() => null);
+        if (!shouldMint(existing)) return ok({ idempotent: true, order_id: concierge.order_id });
+        await store.setJSON(concierge.order_id, record);
+        // Per-customer entitlement lookup for sentinel-resolve (keyed by lowercased email, never the key).
+        await wtStore.setJSON(emailKey(record.email), record).catch((e) => console.error("[sentinel-webhook] wt-store:", e.message));
+        await sendEmail(record.email, walkthroughWelcomeEmail(record)).catch((e) => console.error("[sentinel-webhook] concierge email:", e.message));
+        await sendEmail(ADMIN_EMAIL, adminEmail(record)).catch((e) => console.error("[sentinel-webhook] admin email:", e.message));
+        return ok({ walkthroughEntitled: true, order_id: concierge.order_id, trialEndsAt: record.trialEndsAt });
+      }
+    }
+
     const facts = await extractFacts(stripe, evt);
     if (!facts) return ok({ skipped: "not-a-sentinel-plan" });
     const { email, name, plan, subscription_id, customer_id, issued_at } = facts;
@@ -88,6 +114,45 @@ async function extractFacts(stripe, evt) {
     if (cust && !cust.deleted) { email = cust.email || ""; name = cust.name || ""; }
   } catch { /* customer fetch best-effort */ }
   return { email, name, plan, subscription_id: sub.id, customer_id: sub.customer || "", issued_at: new Date((evt.created || 0) * 1000).toISOString() };
+}
+
+// SENTINEL TRIAL GATING 2026-07-02 — pull Concierge facts from a checkout.session. The Concierge sale marks
+// the session with metadata.kind / metadata.product / a line-item price lookup_key === "ai-setup-walkthrough".
+// Returns null when the session is NOT the Concierge product (so the normal plan path handles it).
+function extractConciergeFacts(evt) {
+  const s = evt.data.object;
+  const meta = s.metadata || {};
+  if (!isConciergeWalkthroughOrder({ kind: meta.kind, product: meta.product, lookupKey: meta.lookup_key })) return null;
+  return {
+    email: (s.customer_details && s.customer_details.email) || s.customer_email || "",
+    name: (s.customer_details && s.customer_details.name) || "",
+    order_id: s.id,
+    customer_id: s.customer || "",
+    issued_at: new Date((evt.created || 0) * 1000).toISOString()
+  };
+}
+
+// Concierge welcome — honest: the guided setup is permanent; Sentinel beyond the 30-day trial is a separate plan.
+function walkthroughWelcomeEmail(record) {
+  const subject = "Your AI Setup Walk-Through + 30-day ARIA Sentinel trial";
+  const text = `Hi ${record.name},
+
+Thanks for your AI Setup Walk-Through. Here's your ARIA Sentinel key:
+
+    ${record.key}
+
+Your package includes:
+1. The guided AI Setup Walk-Through — yours to keep, always.
+2. A ${WALKTHROUGH_TRIAL_DAYS}-day trial of the full ARIA Sentinel (monitoring + auto-fix).
+
+Open ARIA Sentinel, paste the key, and use the Walk-Through tab any time. After the ${WALKTHROUGH_TRIAL_DAYS}-day
+trial, the Walk-Through stays; continuing with Sentinel's monitoring & auto-fix is a separate plan you can
+start from Settings.
+
+Questions: ${ADMIN_EMAIL}.
+
+— Ahmad, Integrated IT Support`;
+  return { subject, text };
 }
 
 async function sendEmail(to, { subject, text }) {
