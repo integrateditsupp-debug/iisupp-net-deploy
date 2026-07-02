@@ -8,7 +8,9 @@ import { toDoc, retrieve, summarize, stripFrontmatter, normalizeConfidence, ABST
 
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => [...(r || document).querySelectorAll(s)];
-const esc = (s) => String(s ?? "").replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
+// The ONE escape point for stored user text (D3: text is stored raw, escaped exactly here at
+// render). Covers the single quote too, so attribute contexts can't break out.
+const esc = (s) => String(s ?? "").replace(/[<>&"']/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c]));
 const FN = "/.netlify/functions/forums-threads";
 const SESSION_KEY = "aria_session_email";
 
@@ -43,6 +45,9 @@ function toast(msg, kind) {
 
 // ── session (reuse the site's existing identity; never required to read)
 const getEmail = () => { try { return localStorage.getItem(SESSION_KEY) || ""; } catch { return ""; } };
+// Optional aria-magic-link session token; when present + valid the server marks the post verified,
+// otherwise the post stays "self-reported". Absent by default until verified sessions ship.
+const getToken = () => { try { return localStorage.getItem("aria_session_token") || ""; } catch { return ""; } };
 let ssoReturnFocus = null;
 function requireSignIn(then) {
   if (getEmail()) return then();
@@ -223,7 +228,7 @@ async function renderSolution(slug) {
     `<a class="btn primary" href="/aria">Open in ARIA →</a><a class="btn ghost" href="/downloads">Download Sentinel</a></div></div>` +
     `<div class="sol-body">${md(d.body)}</div>` +
     `<h2 class="sec">Still stuck? Show ARIA the error</h2>` +
-    `<div class="dropzone" role="button" tabindex="0" aria-label="Drop a screenshot for visual diagnosis"><div class="di" aria-hidden="true">🖼</div><b>Drop a screenshot, log, or photo of the error</b><div class="muted" style="font-size:13px;margin-top:6px">Fable 5 visual diagnosis reads BSODs, dialogs, and config screens.</div><div class="chip gold" style="margin-top:12px"><span class="led"></span>Visual diagnosis coming online</div></div>` +
+    `<div class="dropzone" role="button" tabindex="0" aria-label="Drop a screenshot for visual diagnosis"><div class="di" aria-hidden="true">🖼</div><b>Drop a screenshot, log, or photo of the error</b><div class="muted" style="font-size:13px;margin-top:6px">Once it's online, Fable 5 visual diagnosis will read BSODs, dialogs, and config screens.</div><div class="chip gold" style="margin-top:12px"><span class="led"></span>Visual diagnosis coming online</div></div>` +
     `<div class="rowbtn" style="margin-top:18px"><a class="btn gold" href="/#contact">Escalate to IIS →</a><span class="muted" style="font-size:12.5px;align-self:center">Complex case? A human takes over.</span></div>` +
     `</article>`;
   wireDropzones(el);
@@ -246,9 +251,9 @@ async function renderThreadList() {
     return;
   }
   box.innerHTML = threads.map((t) =>
-    `<div class="threadrow"><div><h4><a href="#thread/${encodeURIComponent(t.id)}">${t.title}</a></h4>` +
-    `<div class="tmeta"><span>by ${esc(t.author)}</span><span>· ${t.replies === 0 ? "awaiting answer" : `${t.replies} repl${t.replies === 1 ? "y" : "ies"}`}</span></div>` +
-    `<div class="tags">${(t.tags || []).map((x) => `<span class="tag">${x}</span>`).join("")}</div></div>` +
+    `<div class="threadrow"><div><h4><a href="#thread/${encodeURIComponent(t.id)}">${esc(t.title)}</a></h4>` +
+    `<div class="tmeta"><span>by ${esc(t.author)}${t.verified ? "" : " (self-reported)"}</span><span>· ${t.replies === 0 ? "awaiting answer" : `${t.replies} repl${t.replies === 1 ? "y" : "ies"}`}</span></div>` +
+    `<div class="tags">${(t.tags || []).map((x) => `<span class="tag">${esc(x)}</span>`).join("")}</div></div>` +
     `<div style="text-align:right">${t.accepted ? `<span class="chip gold"><span class="led"></span>Accepted</span>` : ""}</div></div>`
   ).join("");
 }
@@ -259,7 +264,7 @@ $("#threadComposer").addEventListener("submit", async (e) => {
   const btn = e.target.querySelector('[type="submit"]');
   btn.setAttribute("aria-busy", "true");
   try {
-    const r = await fetchFn({ op: "create", title: $("#ctTitle").value, body: $("#ctBody").value, tags: $("#ctTags").value.split(",").map((s) => s.trim()).filter(Boolean), email: getEmail() });
+    const r = await fetchFn({ op: "create", title: $("#ctTitle").value, body: $("#ctBody").value, tags: $("#ctTags").value.split(",").map((s) => s.trim()).filter(Boolean), email: getEmail(), sessionToken: getToken() });
     if (!r.ok) { toast((r.errors || ["couldn't post"]).join("; "), "err"); return; }
     $("#composerWrap").hidden = true;
     e.target.reset();
@@ -293,11 +298,16 @@ async function renderThread(id, targetPost) {
       : `<div id="post-${p.id}"${targetPost === p.id ? ' class="target-post"' : ""}>${inner}</div>`;
   };
   t.canAccept = !!(me && t.posts[0] && t.posts[0].isOP && t.posts[0].author === me.split("@")[0]);
+  // Honest identity disclosure: shown whenever any post is not backed by a verified session
+  // (the norm until verified sessions land). Never implies a display name is confirmed.
+  const anyUnverified = t.posts.some((p) => !p.verified);
+  const disclosure = anyUnverified ? `<div class="xlink-banner" style="background:var(--surface-2);border-color:var(--line-2);color:var(--txt-2)"><span aria-hidden="true">ⓘ</span> Display names here are <b>&nbsp;self-reported&nbsp;</b> and not yet verified. Treat authorship as unconfirmed.</div>` : "";
+  el.dataset.threadId = id;
   el.innerHTML =
-    banner +
+    banner + disclosure +
     `<div class="crumb"><a href="#discussions">Discussions</a> / thread</div>` +
-    `<h1 style="font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 0 6px;max-width:760px">${t.title}</h1>` +
-    `<div class="tags" style="margin-bottom:18px">${(t.tags || []).map((x) => `<span class="tag">${x}</span>`).join("")}</div>` +
+    `<h1 style="font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 0 6px;max-width:760px">${esc(t.title)}</h1>` +
+    `<div class="tags" style="margin-bottom:18px">${(t.tags || []).map((x) => `<span class="tag">${esc(x)}</span>`).join("")}</div>` +
     `<div style="max-width:760px">${t.posts.map(postHtml).join("")}` +
     `<form class="composer" id="replyForm" style="margin-top:20px"><label for="replyBody">Add a reply (markdown + code blocks supported)</label>` +
     `<textarea id="replyBody" required minlength="2" placeholder="Share what worked, exact commands help…"></textarea>` +
@@ -306,29 +316,37 @@ async function renderThread(id, targetPost) {
     const target = $(`#post-${CSS.escape(targetPost)}`);
     if (target) setTimeout(() => target.scrollIntoView({ block: "center" }), 60);
   }
-  $("#replyForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    requireSignIn(async () => {
-      try {
-        const r = await fetchFn({ op: "reply", id, body: $("#replyBody").value, email: getEmail() });
-        if (!r.ok) { toast((r.errors || ["couldn't reply"]).join("; "), "err"); return; }
-        toast("Reply posted.");
-        renderThread(id, null);
-      } catch { toast("Couldn't reach the discussion store — retry shortly.", "err"); }
+  // D4 — bind the delegated listeners ONCE on the persistent #threadPage node (guard flag), reading
+  // the active thread id from its dataset. Re-rendering used to re-add them → stacked duplicate POSTs.
+  if (!el._boundThreadHandlers) {
+    el._boundThreadHandlers = true;
+    el.addEventListener("submit", (e) => {
+      if (!e.target.matches("#replyForm")) return;
+      e.preventDefault();
+      const tid = el.dataset.threadId;
+      requireSignIn(async () => {
+        try {
+          const r = await fetchFn({ op: "reply", id: tid, body: $("#replyBody").value, email: getEmail(), sessionToken: getToken() });
+          if (!r.ok) { toast((r.errors || ["couldn't reply"]).join("; "), "err"); return; }
+          toast("Reply posted.");
+          renderThread(tid, null);
+        } catch { toast("Couldn't reach the discussion store — retry shortly.", "err"); }
+      });
     });
-  });
-  el.addEventListener("click", (e) => {
-    const vote = e.target.closest("[data-vote]");
-    if (vote) return requireSignIn(async () => {
-      try { const r = await fetchFn({ op: "vote", id, postId: vote.dataset.post, dir: vote.dataset.vote, email: getEmail() }); if (r.ok) renderThread(id, null); else toast((r.errors || []).join("; "), "err"); }
-      catch { toast("Couldn't reach the discussion store.", "err"); }
+    el.addEventListener("click", (e) => {
+      const tid = el.dataset.threadId;
+      const vote = e.target.closest("[data-vote]");
+      if (vote) return requireSignIn(async () => {
+        try { const r = await fetchFn({ op: "vote", id: tid, postId: vote.dataset.post, dir: vote.dataset.vote, email: getEmail(), sessionToken: getToken() }); if (r.ok) renderThread(tid, null); else toast((r.errors || []).join("; "), "err"); }
+        catch { toast("Couldn't reach the discussion store.", "err"); }
+      });
+      const acc = e.target.closest("[data-accept]");
+      if (acc) return requireSignIn(async () => {
+        try { const r = await fetchFn({ op: "accept", id: tid, postId: acc.dataset.accept, email: getEmail(), sessionToken: getToken() }); if (r.ok) { GRAD = null; toast("Accepted — this answer graduates to Solutions ↗"); renderThread(tid, null); } else toast((r.errors || []).join("; "), "err"); }
+        catch { toast("Couldn't reach the discussion store.", "err"); }
+      });
     });
-    const acc = e.target.closest("[data-accept]");
-    if (acc) return requireSignIn(async () => {
-      try { const r = await fetchFn({ op: "accept", id, postId: acc.dataset.accept, email: getEmail() }); if (r.ok) { GRAD = null; toast("Accepted — this answer graduates to Solutions ↗"); renderThread(id, null); } else toast((r.errors || []).join("; "), "err"); }
-      catch { toast("Couldn't reach the discussion store.", "err"); }
-    });
-  }, { once: false });
+  }
 }
 
 // ── Ask AI (real KB baseline; drop-zone = honest coming-online; no fake thinking for absent features)

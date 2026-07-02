@@ -62,8 +62,11 @@ const { _core } = require_(path.join(root, "netlify/functions/forums-threads.js"
 const NOW = 1_760_000_000_000;
 let r = _core.newThread({ title: "Outlook profile re-locks after VPN reconnect", body: "Since the update it hangs on <script>alert(1)</script> loading profile", tags: ["outlook", "vpn"], email: "dana@company.com" }, NOW);
 assert.equal(r.ok, true, (r.errors || []).join("; "));
-assert.ok(!r.thread.posts[0].body.includes("<script>"), "HTML is escaped at the store boundary");
+// D3 — the store keeps RAW validated text (escaping happens exactly ONCE, at render). Storing
+// pre-escaped text double-encoded code-heavy posts. The single escape is asserted below (§3b).
+assert.ok(r.thread.posts[0].body.includes("<script>alert(1)</script>"), "store keeps raw validated text (no escaping at the store boundary)");
 assert.equal(r.thread.posts[0].author.name, "dana", "author = email local-part, never invented");
+assert.equal(r.thread.posts[0].author.verified, false, "unverified session → post is not marked verified (self-reported)");
 assert.equal(r.thread.acceptedPostId, null);
 assert.equal(r.thread.graduated, false);
 assert.equal(_core.newThread({ title: "short", body: "x", email: "nope" }, NOW).ok, false, "bad input rejected");
@@ -88,6 +91,37 @@ assert.equal(acc.thread.acceptedPostId, pid);
 const pub = _core.publicThread(acc.thread);
 assert.ok(pub.posts.find((p) => p.id === pid).accepted);
 assert.ok(!JSON.stringify(pub).includes("@company.com"), "raw emails never leave the store");
+assert.ok(pub.posts.every((p) => typeof p.verified === "boolean"), "public posts expose a verified flag for the self-reported disclosure");
+
+// 3b — D3 escaping happens ONCE, at RENDER (forums.js esc/md), and covers the single quote.
+const jsSrc = read("assets/forums.js");
+assert.ok(/const esc = \(s\) =>[\s\S]{0,160}\[<>&"'\]/.test(jsSrc), "render esc must cover < > & \" and ' (single quote added)");
+assert.ok(/"'":\s*"&#39;"/.test(jsSrc), "render esc maps the single quote to &#39;");
+assert.ok(/function md\(text\)\s*\{\s*(?:\/\/[^\n]*\n\s*)*const t = esc\(/.test(jsSrc), "md() escapes once at the render entry point");
+// round-trip display: a code-heavy body stored raw, escaped once, renders as correct SINGLE entities.
+const rawBody = _core.newThread({ title: "Code sample with entities & markup", body: 'compare a < b && c > d, quote "x" and \'y\'', tags: [], email: "z@z.io" }, NOW).thread.posts[0].body;
+assert.equal(rawBody, 'compare a < b && c > d, quote "x" and \'y\'', "stored body is byte-for-byte raw (validated only)");
+const escOnce = (s) => String(s).replace(/[<>&"']/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c]));
+assert.equal(escOnce(rawBody), 'compare a &lt; b &amp;&amp; c &gt; d, quote &quot;x&quot; and &#39;y&#39;', "single escape yields correct entities");
+assert.ok(!escOnce(rawBody).includes("&amp;lt;") && !escOnce(rawBody).includes("&amp;amp;"), "no double-encoding (code posts display correctly)");
+
+// 3c — D2 security: salted HMAC email hash, rate-limit wiring, admin-gated delete, token verify.
+const fnSrc = read("netlify/functions/forums-threads.js");
+assert.ok(/createHmac\('sha256', HASH_SALT\)/.test(fnSrc), "email hash is a salted HMAC, not a bare sha256");
+assert.ok(/require\('\.\/_rate-limit'\)/.test(fnSrc) && /checkRateLimit\(event, \{ scope: 'forums-write'/.test(fnSrc) && /key: 'forums-global'/.test(fnSrc), "per-IP + global rate limiting on writes");
+assert.ok(/case 'delete'/.test(fnSrc) && /FORUMS_ADMIN_TOKEN/.test(fnSrc) && /timingSafeEqual/.test(fnSrc), "admin-env-gated delete op with constant-time token check");
+// token verify actually gates the verified flag:
+const goodTok = (() => { const cr = require_("node:crypto"); const secret = "test-secret"; process.env.APERTURE_JWT_SECRET = secret;
+  const b64 = (b) => Buffer.from(b).toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  const data = b64(JSON.stringify({ email: "dana@company.com", exp: NOW + 9e11 })); return data + "." + b64(cr.createHmac("sha256", secret).update(data).digest()); })();
+assert.equal(_core.isVerified({ email: "dana@company.com", sessionToken: goodTok }), true, "matching signed token → verified");
+assert.equal(_core.isVerified({ email: "someone-else@evil.com", sessionToken: goodTok }), false, "token for a different email → not verified");
+assert.equal(_core.isVerified({ email: "dana@company.com", sessionToken: "forged.token" }), false, "forged token → not verified");
+delete process.env.APERTURE_JWT_SECRET;
+// salted hash is deterministic (vote-dedup/accept still work) but not a bare sha256 of the email.
+const bare = require_("node:crypto").createHash("sha256").update("dana@company.com").digest("hex").slice(0, 24);
+assert.notEqual(_core.hashEmail("dana@company.com"), bare, "salted hash differs from an unsalted sha256");
+assert.equal(_core.hashEmail("dana@company.com"), _core.hashEmail("Dana@Company.com"), "hash is case-insensitive + deterministic");
 
 // 4 — a11y contract (WCAG 2.1 AA — build-blocking) + honest UI.
 const html = read("forums/index.html");
