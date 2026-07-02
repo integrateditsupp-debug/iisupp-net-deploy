@@ -1,18 +1,18 @@
 {
  "schema": "axis-status/1",
- "generatedAt": "2026-07-02T02:45:41Z",
- "source": "Flywheel run 15 (cycle 2026-07-02T02:45:41Z). First-hand THIS cycle: built RUN-E E2 proof autorun on top of the staged E1-r2 branch (new combined branch cc/run-e-e1e2-2026-07-02 = main 89cf791 + E1 + E2), ran the EXACT run-all.mjs import list via the resumable shard runner with package-root cwd: 218/218 green on the branch tip AND 218/218 on the staged merged HEAD (0 real failures; an earlier 2-red pass was a shard-cwd artifact, rerun clean). R14 fabrication grep of the E2 diff: clean. mainRef 89cf791 = mount origin/main ref (Ahmad's verified 02:30Z merge click, GitHub-verified per queue); live ls-remote still impossible from the sandbox (no GitHub credential) — flagged per Rule 14, not guessed. S1-executor review completed 03:05Z by a fresh Fable 5 subagent (PASS-WITH-CONCERNS, 0 blockers; Codex retired by Ahmad).",
+ "generatedAt": "2026-07-02T04:04:28Z",
+ "source": "Flywheel run 16 (cycle 2026-07-02T04:04:28Z). First-hand THIS cycle: built RUN-E E3 (revenue-now board + acquisition-scout lane) on top of the staged E1+E2 branch -> new combined branch cc/run-e-e1e2e3-2026-07-02; ran the EXACT run-all.mjs import list via the resumable shard runner with package-root cwd on the branch tree: 219 batteries, 218 green on the mount worktree in one uniform pass; the single red (delete-triple-confirm) is a deterministic sandbox-mount EPERM on its temp-file unlink (receipts: undeletable del-prefs-*.json debris) and the IDENTICAL test+src runs GREEN off-mount - so all 219 are individually verified green this cycle on this exact tree; methodology stated, nothing averaged away. Staged merge built by plumbing (commit-tree): merged tree == verified branch tree BY CONSTRUCTION. Live serving probe run first-hand this cycle: 10/10 sensitive paths refused, leak=false. mainRef 89cf791 sourced from the ledger + Ahmad's GitHub-verified 02:30Z merge click; live ls-remote still impossible from the sandbox (no GitHub credential) - flagged per Rule 14, not guessed. NEW first-hand discovery: the host repo .git corruption class is WRITE-TRUNCATION on the mount (a file rewritten through the mount kept its OLD byte length, chopping the tail - exactly how packed-refs died mid-write ~00:36Z); therefore the previous AHMAD-PUSH-E1-E2.cmd, which runs git fetch INSIDE the corrupt repo, would ABORT - replaced by a corruption-proof cmd that works in a throwaway %TEMP% clone and never touches the broken .git.",
  "honest": true,
- "headline": "Series 1 stays 14 of 14 merged (100%), production published & locked at 89cf791 with AXIS voice live and the serving probe green; incident remains CLOSED. NEW this cycle: RUN-E E2 — the pilot->paid PROOF AUTORUN. The moment a REAL pilot matures (day 10-14+) with at least one REAL audit-log fix, the honest one-page proof drafts ITSELF (write-once) with the real deflection % and ROI, a review card lands on the pending surface, and the /plans conversion moment fires from the same audited signals — an immature or zero-fix pilot produces NOTHING, and nothing publishes without Ahmad's explicit consent + draft-review one-click. E1 (TTFV clock) + E2 together are verified 218/218 and staged as ONE double-click (AHMAD-PUSH-E1-E2.cmd).",
- "note": "Merging main never deploys — Netlify publishing is LOCKED and stays Ahmad's click. SUPERSEDED cmds that now correctly refuse or are stubbed: AHMAD-PUSH-E1-TTFV.cmd (r1) and AHMAD-PUSH-E1-TTFV-R2.cmd (folded into AHMAD-PUSH-E1-E2.cmd). Use AHMAD-PUSH-E1-E2.cmd.",
+ "headline": "Series 1 stays 14 of 14 merged (100%), production published & locked at 89cf791, AXIS voice live, serving probe green (10/10 refused). NEW this cycle: RUN-E E3 - the REVENUE-NOW BOARD. One local board now ranks every real revenue move (2 warm prospect follow-ups due now, the W7714 tender ~July 28, the CSA OpenText go/no-go TODAY July 3 gate, the free SAP Ariba+SRI registration) by deterministic readiness with the exact next one-click, plus the acquisition-scout lane (honestly 0 vetted candidates yet; 5/5-gate vetting enforced in code). Real-or-empty everywhere: unevidenced leads are excluded with a reason, cold drafts are the Ahmad-locked template byte-verbatim ([Name] only), and the module physically cannot send anything. E1 (TTFV clock) + E2 (proof autorun) + E3 together are verified 219/219 this cycle and staged as ONE corruption-proof double-click: AHMAD-PUSH-E1-E2-E3.cmd.",
+ "note": "Merging main never deploys - Netlify publishing is LOCKED and stays Ahmad's click. SUPERSEDED cmds: AHMAD-PUSH-E1-TTFV.cmd, AHMAD-PUSH-E1-TTFV-R2.cmd and now AHMAD-PUSH-E1-E2.cmd (it would abort at 'git fetch' inside the corrupt local .git; E1+E2 are folded into the new cmd). Use AHMAD-PUSH-E1-E2-E3.cmd - it works even while the local .git is broken. AHMAD-PUSH-STAGE3-S2.cmd (CC lane) has the same corruption exposure and will abort until the staged REPO-REPAIR console block runs.",
  "program": {
   "name": "Client-Ready Program",
   "series": 1,
-  "sequence": "E in progress — E1 code+docs DONE (staged), E2 proof autorun BUILT + verified (staged, same click); E3 revenue-now board next",
+  "sequence": "E in progress - E1+E2+E3 ALL BUILT + VERIFIED (staged as one click); RUN-E exit criteria met pending the merge click; RUN-F (scale) auto-releases after E lands",
   "tasksMerged": 14,
   "tasksTotal": 14,
   "pct": 100,
-  "testsGreen": "218/218 on staged merged HEAD 89cf791+E1+E2 (main 89cf791 alone = 216/216)",
+  "testsGreen": "219/219 this cycle on the staged merged tree 89cf791+E1+E2+E3 (218 uniform on-mount + delete-triple-confirm green off-mount, mount EPERM documented); main 89cf791 alone = 216/216",
   "mainRef": "89cf791"
  },
  "merged": [
@@ -34,60 +34,78 @@
  "extraMerged": [
   "SECURITY LOCKDOWN v2 (PR#2)",
   "STAGE-3 S1 Autonomous Resolution Engine, Confirmed mode only (PR#3)",
-  "AXIS voice + spoken status + B4 chat fix + this live feed (1578a52)",
-  "SERVING-LAYER LOCKDOWN (89cf791): live probe script + widened gate test — merged, PUBLISHED & LOCKED; probe green; incident downgraded to containment drill (H5: cache replay, 1578a52 never served /CLAUDE.md)"
+  "AXIS voice + spoken status + B4 chat fix + live status feed (1578a52)",
+  "SERVING-LAYER LOCKDOWN (89cf791): live probe script + widened gate test - merged, PUBLISHED & LOCKED; probe green again this cycle; incident stays closed (containment drill)"
  ],
  "builtNotMerged": [
-  "cc/run-e-e1e2-2026-07-02: RUN-E E1 (pilot activation -> TTFV clock, write-once, real-or-empty '--') + E2 (proof autorun: matured real pilot auto-drafts the honest case-study draft, consent-gated one-click publish path, /plans moment) + this feed regen. 218/218 on branch AND staged merged HEAD; ONE double-click: AHMAD-PUSH-E1-E2.cmd.",
-  "cc/stage-3-s2-resilience-2026-07 @ d292302 (CC lane, delivered as bundle): S2 slices 1+2, CC-reported 218/218 on ITS branch; push staged (AHMAD-PUSH-STAGE3-S2.cmd, branch-only); MERGE stays gated on the 5 S2 conditions + flywheel gate review after the ref lands."
+  "cc/run-e-e1e2e3-2026-07-02: RUN-E E1 (pilot activation -> TTFV clock) + E2 (proof autorun, consent-gated) + E3 (revenue-now board + acquisition-scout lane, evidence-gated, staged-one-click-only, locked-template verbatim) + fresh feed. 219/219 verified this cycle; ONE corruption-proof double-click: AHMAD-PUSH-E1-E2-E3.cmd.",
+  "cc/stage-3-s2-resilience-2026-07 @ d292302 (CC lane): S2 slices 1+2 gate-reviewed GREEN-WITH-DEFECT-NOTES (03:55Z); lane continues slices 3-7 with Defect-1 (dedicated PROBE_ALLOWED read-only list) as MANDATORY first commit; its push cmd aborts until REPO-REPAIR runs.",
+  "cc/forums-mvp @ 45f9b29 EXISTS ON ORIGIN (GitHub-verified per queue 04:45Z); local gate re-review runs right after the REPO-REPAIR block; flywheel does not touch this lane."
  ],
  "nextUp": [
-  "Ahmad one-click: double-click AHMAD-PUSH-E1-E2.cmd at repo root (pushes the verified E1+E2 branch + verified merge; gate = main still 89cf791; supersedes both older E1 cmds)",
-  "Ahmad one-click: Netlify publish AFTER the merge so AXIS speaks 218/218 + TTFV + proof autorun live (publishing stays locked until you click)",
-  "Ahmad one-click: AHMAD-PUSH-STAGE3-S2.cmd (branch-only, CC lane; merge waits for the S2 gate review)",
-  "Flywheel next: E3 revenue-now board + acquisition-scout lane; then gate-review S2 when its ref lands"
+  "Ahmad one-click: double-click AHMAD-PUSH-E1-E2-E3.cmd at repo root (corruption-proof: throwaway %TEMP% clone, SHA-gated on main==89cf791, pushes verified branch + verified merge; supersedes all three older E-cmds)",
+  "Ahmad one-click: Netlify publish AFTER the merge so AXIS speaks 219/219 + TTFV + proof autorun + revenue board live (publishing stays locked until you click)",
+  "Ahmad: OPEN THE REVENUE BOARD - senior-director-state/opportunity-engine/REVENUE-BOARD.md: 2 prospect follow-ups due ~now, CSA OpenText go/no-go gate 2026-07-03, W7714 pull, free Ariba+SRI registration (account creation = your click)",
+  "Ahmad console paste: the staged REPO-REPAIR block (fixes the truncated packed-refs local .git; unblocks STAGE3-S2 push cmd + forums gate re-review)",
+  "Flywheel next: RUN-F auto-release after E lands + acquisition-scout candidates into the board (5/5 gate) + S2 gate follow-through"
  ],
  "lanes": [
   {
-   "id": "client-ready-flywheel",
-   "does": "builds + verifies + merges Series-1/RUN-E; this cycle (run 15): stacked E2 proof autorun onto E1-r2 (write-once honest draft + consent-gated publish path + /plans moment), verified 218/218 on branch AND staged merged head (cwd-correct shard rerun), R14 diff scan clean, regenerated this feed, staged the combined one-click AHMAD-PUSH-E1-E2.cmd and superseded the R2 cmd",
+   "id": "cowork-flywheel",
+   "does": "run 16: built+verified RUN-E E3 revenue-now board + acquisition lane, 219/219 this cycle, regenerated this feed, replaced the corruption-exposed one-click with corruption-proof AHMAD-PUSH-E1-E2-E3.cmd, live probe 10/10",
    "cadence": "hourly",
    "state": "running"
   },
   {
+   "id": "revenue-board",
+   "does": "senior-director-state/opportunity-engine/REVENUE-BOARD.md - 5 real moves ranked (real-or-empty, staged one-clicks only, nothing sent); acquisition lane open with 0 vetted candidates (honest)",
+   "cadence": "regenerated each flywheel run (node scripts/revenue-board-run.mjs)",
+   "state": "live-local"
+  },
+  {
    "id": "forums-design-pass",
-   "does": "Forums Stage-1 design (cc/forums-mvp untouched by flywheel)",
+   "does": "Forums Stage-1 (cc/forums-mvp on origin @ 45f9b29; untouched by flywheel; gate re-review queued behind REPO-REPAIR)",
    "cadence": "every 3h",
-   "state": "running"
+   "state": "waiting-repair"
   },
   {
    "id": "stage-2-vision",
-   "does": "cc/stage-2-vision lane — merges only when Cowork clears",
+   "does": "cc/stage-2-vision lane - DEFECT-PACKET (D2 consent copy, D3 paste-listener, D4 unmetered paid-API) blocks publish; fix block queued after forums",
    "cadence": "parked",
-   "state": "waiting"
+   "state": "blocked-defects"
   },
   {
    "id": "stage-3-are",
-   "does": "S1 MERGED (PR#3); S2 build packet staged for CC (branch-only, merge gated on Codex 17-point S1 review — review packet awaits Ahmad's fire click)",
+   "does": "S2 slices 1+2 GREEN-WITH-DEFECT-NOTES; CC continues slices 3-7, Defect-1 first; merge gated on 5 S2 conditions + flywheel gate review after the ref lands",
    "cadence": "per-run",
    "state": "building"
   },
   {
    "id": "serving-safety",
-   "does": "live probe adopted as flywheel post-publish gate; production locked at 89cf791 deploy 6a45bca8; this cycle's probe: 10/10 refused, leak=false",
+   "does": "live probe re-run first-hand this cycle: 10/10 sensitive paths refused, leak=false; production locked at 89cf791 deploy 6a45bca8",
    "cadence": "every run + post-publish",
    "state": "green"
   }
  ],
  "needsAhmad": [
   {
-   "action": "Double-click AHMAD-PUSH-E1-E2.cmd (repo root)",
-   "why": "sandbox has no GitHub credential; the .cmd pushes the verified E1+E2 branch + verified merge from your machine with a safety gate (aborts if main moved past 89cf791). Both older E1 cmds are superseded — this ONE click lands the TTFV clock AND the proof autorun.",
+   "action": "Double-click AHMAD-PUSH-E1-E2-E3.cmd (repo root)",
+   "why": "sandbox has no GitHub credential; this cmd clones fresh into %TEMP% (your machine's saved credential), verifies main==89cf791, then pushes the verified branch + verified merge - it does NOT touch your broken local .git, so it works BEFORE the repo repair. Lands TTFV clock + proof autorun + revenue-board module in one click.",
    "oneClick": true
   },
   {
-   "action": "Netlify publish (after E1 merge)",
-   "why": "publishing is LOCKED (kept as incident gain); merges never deploy — your click makes AXIS speak 217/217 + TTFV live, then flywheel re-runs the probe",
+   "action": "Netlify publish (after the merge)",
+   "why": "publishing is LOCKED (incident gain); merges never deploy - your click makes AXIS speak 219/219 + the new revenue lanes live, then flywheel re-probes",
+   "oneClick": true
+  },
+  {
+   "action": "Open REVENUE-BOARD.md + act the top rows",
+   "why": "2 warm follow-ups are due ~now (paste-ready reply branches already prepped 07-01), the CSA OpenText go/no-go self-gate is 2026-07-03, W7714 closes ~07-28, Ariba+SRI registration is free but account creation is yours by rule",
+   "oneClick": true
+  },
+  {
+   "action": "Paste the staged REPO-REPAIR console block (CC console)",
+   "why": "local .git packed-refs is truncated (write-truncation class, first-hand-confirmed this cycle); until repaired, AHMAD-PUSH-STAGE3-S2.cmd and any in-repo git fetch will abort",
    "oneClick": true
   },
   {
