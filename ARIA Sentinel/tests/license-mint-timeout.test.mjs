@@ -20,7 +20,9 @@ t();
 
 // 2 — desktop license verify is bounded (never hangs activation / trial).
 const main = rd(sentinelRoot, "src", "main", "main.mjs");
-assert.match(main, /async function resolveLicenseOnline[\s\S]{0,600}AbortSignal\.timeout\(10000\)/, "resolveLicenseOnline bounded at 10s");
+// SENTINEL TRIAL GATING 2026-07-02 — the function gained an optional email arg + doc comment (per-customer
+// Walk-Through entitlement lookup), widening the header-to-timeout span; the 10s bound itself is unchanged.
+assert.match(main, /async function resolveLicenseOnline[\s\S]{0,900}AbortSignal\.timeout\(10000\)/, "resolveLicenseOnline bounded at 10s");
 t();
 
 // 3 — server-side Resend email is bounded in BOTH funnel functions (so the mint function returns promptly).

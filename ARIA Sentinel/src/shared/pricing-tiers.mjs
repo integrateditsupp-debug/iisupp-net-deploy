@@ -20,7 +20,10 @@ const BUSINESS_FEATURES = Object.freeze({
   whiteLabel: true,
   quarterlyPdf: true,
   slaTracking: true,
-  systemInventory: true
+  systemInventory: true,
+  // A paid Sentinel plan includes the guided AI Setup Walk-Through. Only the free Personal tier lacks it
+  // (the Walk-Through is otherwise granted à-la-carte by the Concierge purchase — see license-features).
+  walkthrough: true
 });
 
 export const TIERS = Object.freeze({
@@ -48,7 +51,8 @@ export const TIERS = Object.freeze({
       whiteLabel: false,
       quarterlyPdf: false,
       slaTracking: false,
-      systemInventory: true
+      systemInventory: true,
+      walkthrough: false
     }
   },
   pro: {
@@ -75,7 +79,8 @@ export const TIERS = Object.freeze({
       whiteLabel: false,
       quarterlyPdf: true,
       slaTracking: true,
-      systemInventory: true
+      systemInventory: true,
+      walkthrough: true
     }
   },
   smb: {
@@ -152,7 +157,39 @@ export const TIERS = Object.freeze({
       whiteLabel: true,
       quarterlyPdf: true,
       slaTracking: true,
-      systemInventory: true
+      systemInventory: true,
+      walkthrough: true
+    }
+  },
+  // FREE FLOOR (2026-07-02) — the unlicensed / expired-trial state. NOT purchasable and NOT in CLIENT_PLANS /
+  // PLAN_ORDER (never shown in the plan picker). Its feature set is STRICTLY a subset of the lowest PAID tier
+  // (Personal): no execution modes, no recipes, no system inventory — so buying Personal is a real upgrade over
+  // the free state. The Walk-Through is granted separately by entitlement (Concierge), never by this plan.
+  free: {
+    plan: "free",
+    label: "Free",
+    price: 0,
+    priceDisplay: "Free",
+    billing: "none",
+    billingPeriod: "none",
+    seats: "—",
+    stripeEnv: null,
+    stripeYearlyEnv: null,
+    purchasable: false,
+    blurb: "The free floor after a trial ends — read-only, plus your Walk-Through if you own it.",
+    features: {
+      modes: [],
+      recipesCount: 0,
+      adminConsole: false,
+      updatesPublish: false,
+      fleetView: false,
+      complianceEvidence: false,
+      customRecipes: false,
+      whiteLabel: false,
+      quarterlyPdf: false,
+      slaTracking: false,
+      systemInventory: false,
+      walkthrough: false
     }
   }
 });

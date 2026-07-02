@@ -15,9 +15,12 @@ import crypto from "node:crypto";
 import { PLAN_ORDER, normalizePlan, getFeatures, getTier, isAdmin } from "./pricing-tiers.mjs";
 
 // RUN 23e (Ahmad 2026-06-22) — an ACTIVE trial demos the paid modes, so it unlocks the Pro tier.
-// An EXPIRED trial / no license falls back to the free Personal (Manual-only) tier — never Pro, never admin.
+// An EXPIRED trial / no license falls back to the FREE FLOOR — a genuine free tier whose feature set is STRICTLY
+// a subset of the lowest PAID tier (Personal), so buying Personal is a real upgrade. 2026-07-02: split the free
+// floor OUT of "personal" — previously FREE_PLAN was "personal", which (a) locked even a PAYING Personal
+// subscriber and (b) meant a paid entry plan unlocked nothing over the expired/unlicensed state. Never admin.
 export const TRIAL_PLAN = "pro";
-export const FREE_PLAN = "personal";
+export const FREE_PLAN = "free";
 
 /** Canonical signed message for a plan. Keep in lockstep with the key generator (issuePlanKey). */
 export function licenseMessage(plan) {
@@ -78,6 +81,18 @@ export function activeTier(licenseStatus = {}) {
 /** Admin gate for a license status — admin console + OTA publish. Fail-closed for every client tier. */
 export function licenseIsAdmin(licenseStatus = {}) {
   return Boolean(licenseStatus && licenseStatus.licensed) && isAdmin(activePlan(licenseStatus));
+}
+
+/**
+ * Walk-Through entitlement — INDEPENDENT of the Sentinel plan. The AI Setup Walk-Through package (Concierge
+ * purchase) grants a permanent Walk-Through: even at FREE_PLAN / expired-trial, walkthroughEntitled === true
+ * keeps the Walk-Through tab usable. A paid plan (or an active trial → Pro) that already lists the walkthrough
+ * feature also passes — so a Sentinel subscriber never loses the tab. Server-authoritative: the flag is set
+ * by sentinel-resolve / the Stripe webhook on a real Concierge order (never assumed client-side). Pure.
+ */
+export function isWalkthroughEntitled(licenseStatus = {}) {
+  if (licenseStatus && licenseStatus.walkthroughEntitled === true) return true;
+  return getFeatures(activePlan(licenseStatus)).walkthrough === true;
 }
 
 // RUN 24 A1 — the SHA-256 of a key. The revocation check is keyed by this hash so the raw key is NEVER

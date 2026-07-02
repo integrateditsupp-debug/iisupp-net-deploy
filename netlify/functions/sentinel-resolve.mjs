@@ -5,6 +5,12 @@
 
 import crypto from "node:crypto";
 import { getStore } from "@netlify/blobs";
+// SENTINEL TRIAL GATING 2026-07-02 — single source of truth for the Concierge Walk-Through entitlement's
+// time-based plan (Pro during the 30-day trial, Personal after; entitlement always echoed).
+import { walkthroughEffectivePlan } from "../../ARIA Sentinel/src/shared/sentinel-license-funnel.mjs";
+
+const WALKTHROUGH_STORE = "sentinel-walkthrough-entitlements";
+const emailKey = (email) => String(email || "").trim().toLowerCase();
 
 const PLAN_ORDER = ["admin-lifetime", "personal", "pro", "smb", "midsize", "enterprise"];
 const PLAN_ALIASES = {
@@ -105,6 +111,7 @@ export async function handler(event) {
   let body = {};
   try { body = JSON.parse(event.body || "{}"); } catch { return json(400, { status: "bad-json" }); }
   const key = String(body.key || "").trim();
+  const email = String(body.email || "").trim();
 
   if (!/^[a-f0-9]{64}$/i.test(key)) return json(400, { status: "bad-key-format" });
 
@@ -112,6 +119,27 @@ export async function handler(event) {
   if (!plan) {
     console.log(`[sentinel-resolve] invalid key ${maskKey(key)}`);
     return json(401, { status: "invalid" });
+  }
+
+  // SENTINEL TRIAL GATING 2026-07-02 — per-customer Walk-Through entitlement, looked up by lowercased email
+  // (never the shared plan key). Grants a PERMANENT Walk-Through + a 30-day Pro trial window; after the
+  // window the entitlement stays but the plan falls back. Best-effort + fail-open — a Blobs blip never blocks
+  // a normal license resolve. Only a real Concierge buyer (an entitlement record exists) gets it.
+  let walkthroughEntitled = false;
+  let trialEndsAt = null;
+  let effectivePlan = plan;
+  if (email) {
+    try {
+      const rec = await getStore(WALKTHROUGH_STORE).get(emailKey(email), { type: "json" });
+      if (rec && rec.walkthroughEntitled) {
+        const eff = walkthroughEffectivePlan(rec, Date.now());
+        walkthroughEntitled = true;
+        trialEndsAt = eff.trialEndsAt;
+        // During the trial window the buyer gets the full paid experience; never DOWNGRADE a genuinely
+        // higher paid plan the key already resolves to.
+        if (eff.plan === "pro" && plan === "personal") effectivePlan = "pro";
+      }
+    } catch { /* Blobs down → fail-open: resolve the plan from the key alone, no entitlement this round. */ }
   }
 
   // Revocation check — Blobs `sentinel-licenses-revocations` keyed by sha256(key).
@@ -123,11 +151,12 @@ export async function handler(event) {
 
   if (revoked) {
     console.log(`[sentinel-resolve] revoked key ${maskKey(key)} (plan=${plan})`);
-    return json(200, { plan, status: "revoked", verified_at: new Date().toISOString() });
+    // A permanent Walk-Through entitlement survives plan revocation (the buyer paid for it); echo it through.
+    return json(200, { plan, status: "revoked", walkthroughEntitled, trialEndsAt, verified_at: new Date().toISOString() });
   }
 
-  console.log(`[sentinel-resolve] active key ${maskKey(key)} (plan=${plan})`);
-  return json(200, { plan, status: "active", verified_at: new Date().toISOString() });
+  console.log(`[sentinel-resolve] active key ${maskKey(key)} (plan=${effectivePlan}${walkthroughEntitled ? ", walkthrough" : ""})`);
+  return json(200, { plan: effectivePlan, status: "active", walkthroughEntitled, trialEndsAt, verified_at: new Date().toISOString() });
 }
 
 export const config = { path: "/.netlify/functions/sentinel-resolve" };

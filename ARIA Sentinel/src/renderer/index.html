@@ -706,6 +706,22 @@
       </div>
     </div>
 
+    <!-- SENTINEL TRIAL GATING 2026-07-02 — honest locked-tab upsell for Walk-Through-entitled (Concierge) buyers
+         after their 30-day Sentinel trial. Walk-Through + the buy path stay open; the other tabs show this card. -->
+    <div id="lockedTabOverlay" class="onboarding trial-end" hidden>
+      <div class="trial-end-card">
+        <p class="eyebrow">Sentinel trial ended</p>
+        <h2 class="trial-end-title">Subscribe to unlock the rest of ARIA Sentinel</h2>
+        <p class="trial-end-sub" id="lockedTabMessage"></p>
+        <p class="trial-end-version" id="lockedTabTrialInfo" hidden></p>
+        <div class="button-row">
+          <button id="lockedTabChoosePlan" class="primary">Choose a Sentinel plan</button>
+          <button id="lockedTabKeepWalkthrough" class="ghost">Keep using your Walk-Through</button>
+          <button id="lockedTabClose" class="ghost">Close</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Triple-confirm delete modal (RUN 19 §4) — driven by the renderer's delete-confirm flow. -->
     <div id="deleteModal" class="onboarding" hidden>
       <div class="onboarding-card delete-modal-card">

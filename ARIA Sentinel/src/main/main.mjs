@@ -1394,17 +1394,27 @@ function clearLicenseCache() { try { fs.rmSync(LICENSE_CACHE_FILE, { force: true
 
 // POST the key to sentinel-resolve. Returns { httpStatus, status, plan, verified_at }. Throws on a network
 // failure (caller falls back to the cache). The raw key never leaves over anything but this one HTTPS POST.
-async function resolveLicenseOnline(key) {
+async function resolveLicenseOnline(key, email = "") {
   // RUN 34-3 — 10s timeout so license verification can NEVER hang the activation/trial flow on a slow or
   // mis-deployed endpoint. A timeout throws → enterLicense/refreshLicense treat it as offline (fail-closed).
+  // SENTINEL TRIAL GATING 2026-07-02 — email lets the server resolve a per-customer Walk-Through entitlement
+  // (looked up by email, never the shared plan key). Optional: a blank email just resolves the plan.
   const res = await fetch(RESOLVE_ENDPOINT, {
     method: "POST",
     headers: { "content-type": "application/json", "user-agent": "aria-sentinel" },
-    body: JSON.stringify({ key }),
+    body: JSON.stringify(email ? { key, email } : { key }),
     signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined
   });
   const data = await res.json().catch(() => ({}));
-  return { httpStatus: res.status, status: data.status || (res.ok ? "active" : "error"), plan: data.plan || null, verified_at: data.verified_at || null };
+  return {
+    httpStatus: res.status,
+    status: data.status || (res.ok ? "active" : "error"),
+    plan: data.plan || null,
+    verified_at: data.verified_at || null,
+    // SENTINEL TRIAL GATING 2026-07-02 — server-authoritative Walk-Through entitlement + real 30-day trial end.
+    walkthroughEntitled: Boolean(data.walkthroughEntitled),
+    trialEndsAt: data.trialEndsAt || null
+  };
 }
 
 // Silent launch re-verify. A fresh, same-key cache skips the network; otherwise we re-resolve and refresh the
@@ -1417,9 +1427,9 @@ async function refreshLicense({ force = false } = {}) {
   const cache = readLicenseCache();
   if (!force && cacheMatchesKey(cache, key) && cacheIsFresh(cache)) return;
   try {
-    const r = await resolveLicenseOnline(key);
+    const r = await resolveLicenseOnline(key, (lic && lic.email) || "");
     if (r.status === "active" || r.status === "revoked") {
-      writeLicenseCache(buildCache(key, { plan: r.plan, status: r.status }));
+      writeLicenseCache(buildCache(key, { plan: r.plan, status: r.status, walkthroughEntitled: r.walkthroughEntitled, trialEndsAt: r.trialEndsAt }));
       if (r.status === "revoked") logEvent("LICENSE", "License revoked by issuer — downgraded to free.");
       else if (r.plan && lic.plan !== r.plan) {
         try { fs.writeFileSync(LICENSE_FILE, JSON.stringify({ ...lic, plan: r.plan, validated_at: new Date().toISOString() }, null, 2)); } catch { /* plan-sync best-effort */ }
@@ -1448,6 +1458,10 @@ function licenseStatus() {
     licensed,
     email: lic?.email || null,
     plan: eff.plan,
+    // SENTINEL TRIAL GATING 2026-07-02 — the permanent Walk-Through entitlement + real 30-day trial end,
+    // echoed even when the plan degrades offline (a paid Walk-Through survives a network blip; fail-open).
+    walkthroughEntitled: Boolean(eff.walkthroughEntitled),
+    trialEndsAt: eff.trialEndsAt || null,
     licenseSignal: eff.action,        // "use" | "toast" | "banner" | "personal" — drives the renderer nudge/banner
     licenseMessage: eff.message || ""
   };
@@ -1685,6 +1699,10 @@ function gateStatus() {
     licensed: lic.licensed,
     plan: lic.plan,
     email: lic.email,
+    // SENTINEL TRIAL GATING 2026-07-02 — the Walk-Through entitlement + real trial end drive the renderer
+    // tab gating (isWalkthroughEntitled) with honest days-left; independent of the Sentinel plan.
+    walkthroughEntitled: Boolean(lic.walkthroughEntitled),
+    trialEndsAt: lic.trialEndsAt || null,
     trial: { state: trial.state, remainingMs: trial.remainingMs, badge: trialBadge(trial.remainingMs) },
     pilot: { state: pilot.state, daysRemaining: pilot.daysRemaining, badge: pilotBadge(pilot), ttfvMinutes: ttfvMinutes(readPilot()), ttfv: ttfvLabel(readPilot()) }, // RUN-E E1 — real-or-empty TTFV ("--" until a real first fix)
     conversion: conversionMomentNow(), // RUN-D D2 — surfaced to renderer alongside the pilot block
@@ -1710,7 +1728,7 @@ async function enterLicense(payload = {}) {
   if (!/^[a-f0-9]{64}$/i.test(key)) return { ok: false, error: "invalid_key" };
   let r;
   try {
-    r = await resolveLicenseOnline(key);
+    r = await resolveLicenseOnline(key, String(payload.email || "").trim());
   } catch {
     if (!persistLicense(key, payload.email, null)) return { ok: false, error: "store_failed" };
     clearLicenseCache();
@@ -1721,7 +1739,7 @@ async function enterLicense(payload = {}) {
   if (r.status === "invalid" || r.httpStatus === 400 || r.httpStatus === 401) return { ok: false, error: "invalid_key" };
   if (r.httpStatus >= 500 || r.status === "error") return { ok: false, error: "server_error" };
   if (!persistLicense(key, payload.email, r.plan)) return { ok: false, error: "store_failed" };
-  writeLicenseCache(buildCache(key, { plan: r.plan, status: r.status }));
+  writeLicenseCache(buildCache(key, { plan: r.plan, status: r.status, walkthroughEntitled: r.walkthroughEntitled, trialEndsAt: r.trialEndsAt }));
   if (r.status === "revoked") {
     logEvent("LICENSE", "License key entered but revoked by issuer — Personal tier.");
     broadcastState();

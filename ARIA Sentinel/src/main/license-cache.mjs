@@ -4,9 +4,11 @@
 // file I/O. 🔒 R11 — the cache stores only a key HASH + plan + timestamps (no raw key, no paths, no PII).
 import { keyHash } from "../shared/license-features.mjs";
 
-export const FREE_PLAN = "personal";
+// 2026-07-02 — the fail-closed degrade target is the FREE FLOOR (not paid "personal"): a no-cache / revoked /
+// hard-stale user drops to a genuine free tier (strictly below paid Personal), never inheriting paid features.
+export const FREE_PLAN = "free";
 export const CACHE_FRESH_MS = 24 * 60 * 60 * 1000; // ≤24h: trust the cached plan, no network needed.
-export const CACHE_HARD_MS = 72 * 60 * 60 * 1000;  // 24–72h: keep plan but nudge; >72h: degrade to Personal.
+export const CACHE_HARD_MS = 72 * 60 * 60 * 1000;  // 24–72h: keep plan but nudge; >72h: degrade to the free floor.
 
 /** Build the cache record from a successful sentinel-resolve response. `status` ∈ "active" | "revoked". */
 export function buildCache(key, resolve = {}, nowMs = Date.now()) {
@@ -14,6 +16,10 @@ export function buildCache(key, resolve = {}, nowMs = Date.now()) {
     key_sha256: keyHash(key),
     plan: resolve.plan || null,
     status: resolve.status || "active",
+    // SENTINEL TRIAL GATING 2026-07-02 — the server-authoritative Walk-Through entitlement + the real 30-day
+    // trial end (Concierge buyers). Cached so the Walk-Through tab survives offline; no secret, no raw key.
+    walkthroughEntitled: Boolean(resolve.walkthroughEntitled),
+    trialEndsAt: resolve.trialEndsAt || null,
     verified_at: new Date(nowMs).toISOString(),
     expires_at: new Date(nowMs + CACHE_FRESH_MS).toISOString()
   };
@@ -43,20 +49,26 @@ export function cacheMatchesKey(cache, key) {
  */
 export function effectiveFromCache(cache, nowMs = Date.now()) {
   if (!cache || !cache.plan) {
-    return { plan: FREE_PLAN, status: "none", ageMs: Infinity, action: "personal", message: "" };
+    return { plan: FREE_PLAN, status: "none", ageMs: Infinity, action: "personal", message: "",
+      walkthroughEntitled: false, trialEndsAt: null };
   }
+  // SENTINEL TRIAL GATING 2026-07-02 — the Walk-Through entitlement is PERMANENT (paid for in the Concierge
+  // package), so echo it through EVERY branch, even when the Sentinel plan degrades offline. The plan can fall
+  // to Personal on staleness/revocation, but a real buyer never loses their Walk-Through tab.
+  const walkthroughEntitled = Boolean(cache.walkthroughEntitled);
+  const trialEndsAt = cache.trialEndsAt || null;
   if (cache.status === "revoked") {
     return { plan: FREE_PLAN, status: "revoked", ageMs: 0, action: "banner",
-      message: "License revoked — contact support to restore access." };
+      message: "License revoked — contact support to restore access.", walkthroughEntitled, trialEndsAt };
   }
   const ageMs = nowMs - Date.parse(cache.verified_at || 0);
   if (ageMs <= CACHE_FRESH_MS) {
-    return { plan: cache.plan, status: "active", ageMs, action: "use", message: "" };
+    return { plan: cache.plan, status: "active", ageMs, action: "use", message: "", walkthroughEntitled, trialEndsAt };
   }
   if (ageMs <= CACHE_HARD_MS) {
     return { plan: cache.plan, status: "stale", ageMs, action: "toast",
-      message: "Reconnect to verify license." };
+      message: "Reconnect to verify license.", walkthroughEntitled, trialEndsAt };
   }
   return { plan: FREE_PLAN, status: "unverified", ageMs, action: "banner",
-    message: "License unverified — connect to restore your tier." };
+    message: "License unverified — connect to restore your tier.", walkthroughEntitled, trialEndsAt };
 }
