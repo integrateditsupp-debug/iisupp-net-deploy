@@ -283,6 +283,12 @@ const TESTS = [
   "./deep-link-walkthrough-mode.test.mjs",
   "./resolve-button-routing.test.mjs",
   "./web-walkthrough-cta.test.mjs",
+  // ARIA COMPANION (2026-07-02) — globe → interactive assistant; typed step engine collecting input; honest
+  // Claude AI-setup (no invented price, user-click accounts); interactive Learn lessons.
+  "./companion-shell.test.mjs",
+  "./step-engine-input.test.mjs",
+  "./ai-setup-claude-honest.test.mjs",
+  "./learn-prompts-loops.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

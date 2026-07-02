@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, shell, screen, session, globalShortcut, powerMonitor } from "electron";
+import { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, shell, screen, session, globalShortcut, powerMonitor, clipboard } from "electron";
 import Store from "electron-store";
 import { exec, spawn } from "node:child_process";
 import { randomUUID, createHash } from "node:crypto";
@@ -170,6 +170,7 @@ let bridgeServer;
 let bridgeStatus = { listening: false, conflict: false, port: BRIDGE_PORT, owner: null, lastError: "", killed: false, killReason: "" };
 let isQuitting = false;
 let overlayExpanded = false;
+let overlayCompanion = false; // the interactive assistant panel is open on the globe overlay
 // RUN 19 §3 — every ARIA-spawned child process is tracked so the kill-switch can terminate them all.
 const childProcesses = new Set();
 const startedAt = Date.now(); // RUN 21 — uptime for the heartbeat
@@ -405,8 +406,15 @@ function pickWaypoint(workArea) {
   };
 }
 
-// Card mode = top-center; globe mode = current free-roam position (or a random spawn if none yet).
+// Companion mode = the interactive assistant panel (bigger, top-center); card mode = a detector card
+// (top-center); globe mode = current free-roam position (or a random spawn if none yet).
 function overlayBounds() {
+  if (overlayCompanion) {
+    const wa = screen.getPrimaryDisplay().workArea;
+    const width = 384;
+    const height = Math.min(600, wa.height - 40);
+    return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 12 };
+  }
   if (overlayExpanded) {
     const wa = screen.getPrimaryDisplay().workArea;
     const width = 340;
@@ -428,7 +436,9 @@ function positionOverlay() {
 
 function showOverlay(options = {}) {
   if (!app.isReady()) return;
-  overlayExpanded = Boolean(options.expanded);
+  overlayCompanion = Boolean(options.companion);
+  // The companion panel reuses the "expanded" (pinned + interactive, physics off) window path, just bigger.
+  overlayExpanded = Boolean(options.expanded) || overlayCompanion;
   // Fix 5: when the user has hidden the floating globe, the ambient globe never shows (a detection
   // card still pops, since that's a transient alert, not the persistent icon).
   if (!overlayExpanded && store.get("showFloatingGlobe") === false) {
@@ -441,12 +451,13 @@ function showOverlay(options = {}) {
   overlayWindow.showInactive();
   // RUN 15 §2 — fresh appearance of the globe re-arms the launch "Hi" (after the 2s grace).
   if (wasHidden && !overlayExpanded) greetState = { ...greetState, launchedMs: Date.now(), saidHi: false };
-  overlayWindow.webContents.send("sentinel:overlay-mode", overlayExpanded ? "card" : "globe");
+  overlayWindow.webContents.send("sentinel:overlay-mode", overlayCompanion ? "companion" : overlayExpanded ? "card" : "globe");
   if (overlayExpanded) {
-    // Card is interactive and pinned — no drifting while the user reads/acts on it.
+    // Card/companion are interactive and pinned — no drifting while the user reads/acts on it.
     stopOverlayPhysics();
     if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.setIgnoreMouseEvents(false);
-    overlayActiveUntil = Date.now() + 8000;
+    // The companion is a longer interaction (an interview + setup) — keep it interactive far longer than a card.
+    overlayActiveUntil = Date.now() + (overlayCompanion ? 300000 : 8000);
   } else {
     startOverlayPhysics();
   }
@@ -456,6 +467,7 @@ function showOverlay(options = {}) {
 function hideOverlay() {
   if (!overlayWindow || overlayWindow.isDestroyed()) return;
   overlayExpanded = false;
+  overlayCompanion = false;
   stopOverlayPhysics();
   overlayWindow.webContents.send("sentinel:overlay-mode", "globe");
   overlayWindow.hide();
@@ -1944,6 +1956,7 @@ function openMacPermissions(pane = "fulldisk") {
 
 function dismissOverlay() {
   overlayExpanded = false;
+  overlayCompanion = false;
   if (overlayWindow && !overlayWindow.isDestroyed()) {
     positionOverlay();
     overlayWindow.webContents.send("sentinel:overlay-mode", "globe");
@@ -3503,12 +3516,38 @@ ipcMain.handle("sentinel:get-walkthrough", () => { const t = pendingWalkthrough;
 // P1 routing — is this recipe a vetted/bound Tier-0 action that can safely auto-apply? Single source of truth so
 // the renderer routes unvetted recipes to the Walk-through tab (never a dead "Resolve" that can't apply anything).
 ipcMain.handle("sentinel:is-vetted", (_event, recipeId) => ({ vetted: Boolean(resolveExecutorId(String(recipeId || ""))) }));
+// Allowlist for shell.openExternal. The companion's `open` steps open the user's BROWSER to an OFFICIAL vendor
+// site (their pricing / sign-up) — this is the USER's click launching their own browser, NOT an app network
+// call and NOT an account/payment action by the agent (those stay the user's, always). Host-anchored so only
+// these exact official domains are ever opened. No paid API is called from here.
+const OPEN_EXTERNAL_ALLOW = /^https:\/\/(iisupp\.net|[\w.-]+\.service-now\.com|(www\.)?anthropic\.com|claude\.ai|(www\.)?openai\.com|chatgpt\.com|gemini\.google\.com|ai\.google\.dev)(\/|$)/;
 ipcMain.handle("sentinel:open-external", (_event, url) => {
-  if (typeof url === "string" && /^https:\/\/(iisupp\.net|[\w.-]+\.service-now\.com)\//.test(url)) {
+  if (typeof url === "string" && OPEN_EXTERNAL_ALLOW.test(url)) {
     shell.openExternal(url);
     return { ok: true };
   }
   return { ok: false };
+});
+// Companion → open the main window's Walk-through tab in GUIDE mode for a matched recipe (fix-a-problem path;
+// changes nothing). Reuses the same gated/guided surface as the web deep-link — never Control Center.
+ipcMain.handle("sentinel:open-walkthrough", (_event, payload = {}) => {
+  try { openWalkthroughTab(String(payload.recipeId || ""), String(payload.intent || "")); return { ok: true }; }
+  catch (e) { return { ok: false, error: e?.message || "open-failed" }; }
+});
+// Companion → bring the main window forward on a given tab (e.g. "Ask ARIA" → the ARIA chat tab).
+ipcMain.handle("sentinel:open-main-tab", (_event, tab) => {
+  const allowed = new Set(["aria", "walkthrough", "recipes", "dashboard"]);
+  showMainWindow(allowed.has(String(tab)) ? String(tab) : "aria");
+  return { ok: true };
+});
+// Companion → open the assistant panel on the floating globe overlay (companion mode).
+ipcMain.handle("sentinel:open-companion", () => { showOverlay({ companion: true }); return { ok: true }; });
+// Companion → copy a locally-composed prompt to the OS clipboard. R11: never copy an off-limits path reference.
+ipcMain.handle("sentinel:copy", (_event, text) => {
+  const s = String(text || "");
+  if (isBlockedPath(s)) { logEvent("SECURITY", "Copy blocked by R11 (private folder).", r11AuditEntry("companion-copy")); return { ok: false, error: "r11_blocked" }; }
+  clipboard.writeText(s);
+  return { ok: true };
 });
 
 if (hasSingleInstanceLock) {

@@ -27,7 +27,15 @@ const allowedHosts = [
   // RUN-E E3 — Ahmad's own public 15-min demo booking link, embedded as TEXT in the Ahmad-locked
   // outreach template (revenue-board.mjs). The RECIPIENT clicks it in an email; the app never fetches
   // it (revenue-board.mjs is statically locked against fetch/net/child_process by its own battery).
-  "calendar.app.google"
+  "calendar.app.google",
+  // ARIA Companion (2026-07-02) — the AI-setup flows' `open` steps launch the USER's own browser to these
+  // OFFICIAL vendor sites (their pricing / sign-up). The app NEVER fetches them and never signs in or pays —
+  // shell.openExternal is host-anchored to exactly these + the list above (see OPEN_EXTERNAL_ALLOW in main.mjs).
+  "www.anthropic.com",
+  "claude.ai",
+  "openai.com",
+  "chatgpt.com",
+  "gemini.google.com"
 ];
 
 const findings = [];

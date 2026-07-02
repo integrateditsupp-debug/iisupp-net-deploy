@@ -75,6 +75,12 @@ contextBridge.exposeInMainWorld("sentinel", {
   onFocusChat: (cb) => { const l = () => cb(); ipcRenderer.on("focus-chat", l); return () => ipcRenderer.removeListener("focus-chat", l); },
   ingestKb: (file) => ipcRenderer.invoke("sentinel:ingest-kb", file),
   openExternal: (url) => ipcRenderer.invoke("sentinel:open-external", url),
+  // ARIA Companion (globe assistant) — open the panel, hand a fix to the main Walk-through tab, bring a main tab
+  // forward (Ask ARIA), and copy a composed prompt. Copy uses the OS clipboard via main (no page-clipboard perms).
+  openCompanion: () => ipcRenderer.invoke("sentinel:open-companion"),
+  openWalkthrough: (payload) => ipcRenderer.invoke("sentinel:open-walkthrough", payload),
+  openMainTab: (tab) => ipcRenderer.invoke("sentinel:open-main-tab", tab),
+  copyText: (text) => ipcRenderer.invoke("sentinel:copy", text),
   // RUN 19 — triple-confirm delete prefs + panic kill-switch.
   getDeletePrefs: () => ipcRenderer.invoke("sentinel:get-delete-prefs"),
   setDeletePref: (ext) => ipcRenderer.invoke("sentinel:set-delete-pref", ext),

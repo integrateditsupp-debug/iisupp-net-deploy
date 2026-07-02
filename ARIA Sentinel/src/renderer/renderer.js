@@ -2,7 +2,7 @@ import { bannerVisible, bannerModel, SECURITY_BANNER_DISMISS_KEY } from "../shar
 import "./components/aria-globe.mjs"; // defines the <aria-globe> custom element used in the rail
 import { extOf, requiredSteps, stepFor } from "../shared/delete-confirm.mjs";
 import { renderMarkdown } from "../shared/aria-markdown.mjs"; // RUN 34-1 — readable chat answers (markdown → HTML)
-import { walkStepsFor, hasWalkSteps } from "../shared/walkthrough-steps.mjs"; // Walk-through tab — ONE shared, real-or-empty step source
+import { walkStepsFor, hasWalkSteps, listFlows, getFlow, flowStep, resolveStep } from "../shared/walkthrough-steps.mjs"; // ONE shared source — recipe steps + companion flows
 import { confidenceBadge } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — per-answer confidence + "Was this fixed?" feedback
 // RUN 22 — dashboard / performance / SLA / compliance / reports tab builders + status.
 import { computeHeroStatus, heroSubline, heroTiles } from "../shared/dashboard-status.mjs";
@@ -139,13 +139,28 @@ function renderWalkthrough(target) {
   const recipeId = target && target.recipeId ? String(target.recipeId) : "";
   const intent = target && target.intent ? String(target.intent) : "";
 
-  // Empty state — opened with no issue selected.
+  // A companion flow opened full-screen in the tab (the tab is the "library" view of the same content source).
+  if (target && target.flowId) { renderCompanionFlowInTab(String(target.flowId)); return; }
+
+  // Empty state — the library: describe a problem + the same guided setups/lessons the globe companion runs.
   if (!recipeId && !intent) {
     if (titleEl) titleEl.textContent = "Walk-through";
+    const flowCards = (group, heading) => `
+      <p class="eyebrow">${escapeHtml(heading)}</p>
+      <div class="walkthrough-library">
+        ${listFlows(group).map((f) => `
+          <button class="walkthrough-lib-card" data-flow="${escapeHtml(f.id)}">
+            <span class="walkthrough-lib-title">${escapeHtml(f.title)}</span>
+            <span class="walkthrough-lib-blurb">${escapeHtml(f.blurb || "")}</span>
+          </button>`).join("")}
+      </div>`;
     body.innerHTML = `
-      <p class="note">Pick an issue and I'll show you the exact steps to fix it yourself — screenshots where it helps, at your own pace. Nothing changes on your PC in guide mode.</p>
-      <div class="button-row"><button class="primary" id="walkthroughDescribe">Describe your problem</button></div>`;
+      <p class="note">Pick a guided task and I'll walk you through it step by step — collecting what I need as we go. Guide and learn change nothing on your PC. The same walk-throughs run right on the floating globe.</p>
+      <div class="button-row"><button class="primary" id="walkthroughDescribe">Fix a problem</button></div>
+      ${flowCards("setup", "Set up an AI tool")}
+      ${flowCards("learn", "Learn")}`;
     qs("#walkthroughDescribe")?.addEventListener("click", () => { activateTab("aria"); qs("#ariaChatInput")?.focus(); });
+    qsa("[data-flow]").forEach((b) => b.addEventListener("click", () => renderCompanionFlowInTab(b.dataset.flow)));
     return;
   }
 
@@ -219,6 +234,70 @@ async function resolveViaSupervisor(recipeId, risk, statusEl) {
     }
   }
   return r;
+}
+
+// Full-screen runner for a companion flow inside the Walk-through tab — the SAME engine + content the globe
+// companion uses (ONE source). Collects input, carries answers forward, composes real prompts. GUIDE/LEARN
+// CHANGES NOTHING on the machine: `open` launches the user's browser to an official site, `copy` uses the OS
+// clipboard, account/sign-in/payment stay the user's clicks. No fabricated values (missing answer re-asks).
+function renderCompanionFlowInTab(flowId) {
+  const body = qs("#walkthroughBody");
+  const titleEl = qs("#walkthroughTitle");
+  const flow = getFlow(flowId);
+  if (!body || !flow) return;
+  walkthroughTarget = { flowId };
+  if (titleEl) titleEl.textContent = "Walk-through · " + flow.title;
+  const answers = {};
+  let index = 0;
+
+  const setStatus = (elm, txt) => { if (elm) { elm.hidden = false; elm.textContent = txt; } };
+  function paint() {
+    const step = flowStep(flowId, index);
+    if (!step) {
+      body.innerHTML = `<p class="note">That's the walk-through. Revisit any step below, or pick another guide.</p>
+        <div class="button-row"><button class="primary" id="wtBackToLibrary">Back to the library</button></div>`;
+      qs("#wtBackToLibrary")?.addEventListener("click", () => renderWalkthrough(null));
+      return;
+    }
+    const r = resolveStep(step, answers);
+    const last = index >= flow.steps.length - 1;
+    let inner = `<p class="eyebrow">Step ${index + 1} of ${flow.steps.length}</p><h3 class="walkthrough-step-title">${escapeHtml(step.title)}</h3>`;
+    if (step.type === "display") {
+      inner += `<p class="note">${escapeHtml(r.text != null ? r.text : (step.body || ""))}</p>`;
+    } else if (step.type === "input-text") {
+      if (step.body) inner += `<p class="note">${escapeHtml(step.body)}</p>`;
+      inner += `<input id="wtInput" class="companion-input" type="text" placeholder="${escapeHtml(step.placeholder || "")}" />`;
+    } else if (step.type === "choice") {
+      inner += `<div class="walkthrough-library">${step.options.map((o) => `<button class="walkthrough-lib-card" data-choice="${escapeHtml(o.value)}"><span class="walkthrough-lib-title">${escapeHtml(o.label)}</span>${o.sub ? `<span class="walkthrough-lib-blurb">${escapeHtml(o.sub)}</span>` : ""}</button>`).join("")}</div>`;
+    } else if (step.type === "copy") {
+      if (step.body) inner += `<p class="note">${escapeHtml(step.body)}</p>`;
+      if (r.ready && r.text) inner += `<pre class="companion-copy" id="wtCopyText">${escapeHtml(r.text)}</pre><div class="button-row"><button class="primary" id="wtCopyBtn">Copy</button></div>${step.safety ? `<p class="note walkthrough-guide-note">${escapeHtml(step.safety)}</p>` : ""}`;
+      else inner += `<p class="note">Answer the earlier question and I'll build this from your words — I won't make one up.</p>`;
+    } else if (step.type === "open") {
+      if (step.body) inner += `<p class="note">${escapeHtml(step.body)}</p>`;
+      inner += `<div class="button-row"><button class="primary" id="wtOpenBtn">Open in my browser</button></div>${step.note ? `<p class="note walkthrough-guide-note">${escapeHtml(step.note)}</p>` : ""}`;
+    } else if (step.type === "confirm") {
+      inner += `<div class="button-row"><button class="primary" id="wtYes">${escapeHtml((step.yes && step.yes.label) || "Yes")}</button><button class="ghost" id="wtNo">${escapeHtml((step.no && step.no.label) || "Not yet")}</button></div>`;
+    }
+    inner += `<p class="note resolve-status" id="wtStatus" hidden></p>`;
+    const showNext = step.type === "display" || step.type === "input-text" || step.type === "open" || (step.type === "copy" && r.ready && r.text);
+    inner += `<div class="button-row">${index > 0 ? `<button class="ghost" id="wtBack">Back</button>` : ""}${showNext ? `<button class="primary" id="wtNext">${last ? "Done" : "Next"}</button>` : ""}</div>`;
+    body.innerHTML = inner;
+
+    const status = qs("#wtStatus");
+    qs("#wtBack")?.addEventListener("click", () => { index = Math.max(0, index - 1); paint(); });
+    qs("#wtNext")?.addEventListener("click", () => {
+      if (step.type === "input-text") { const v = qs("#wtInput")?.value.trim(); if (!v) { setStatus(status, "Type an answer so I can use it."); return; } answers[step.key] = v; }
+      index += 1; paint();
+    });
+    qsa("[data-choice]").forEach((c) => c.addEventListener("click", () => { answers[step.key] = c.dataset.choice; index += 1; paint(); }));
+    qs("#wtCopyBtn")?.addEventListener("click", async () => { const res = await sentinel.copyText?.(r.text); setStatus(status, res && res.ok ? "Copied — paste it into your AI." : "Couldn't copy."); });
+    qs("#wtOpenBtn")?.addEventListener("click", async () => { const res = await sentinel.openExternal?.(step.url); setStatus(status, res && res.ok ? "Opened in your browser." : "Couldn't open that link."); });
+    qs("#wtYes")?.addEventListener("click", () => { answers[step.key] = "yes"; if (flowId === "learn-loops") { activateTab("aria"); qs("#ariaChatInput")?.focus(); return; } index += 1; paint(); });
+    qs("#wtNo")?.addEventListener("click", () => { answers[step.key] = "no"; setStatus(status, (step.no && step.no.help) || "No problem."); });
+    if (step.type === "input-text") { const inp = qs("#wtInput"); if (inp) { inp.value = answers[step.key] || ""; setTimeout(() => inp.focus(), 20); } }
+  }
+  paint();
 }
 
 function scrollToAnchor(anchorId) {

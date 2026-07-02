@@ -53,8 +53,8 @@ assert.match(fn, /data-walkthrough-resolve=/, "fallback offers the gated resolve
 assert.doesNotMatch(fn, /issue resolved|已解决|successfully fixed|has been fixed/i, "guide mode never fakes a resolution");
 t();
 
-// 6 — empty state (no issue) routes into ARIA chat to describe the problem (never a dead end).
-assert.match(fn, /Describe your problem/, "empty state offers Describe your problem");
+// 6 — empty state (no issue) offers a Fix-a-problem entry that routes into the ARIA chat (never a dead end).
+assert.match(fn, /Fix a problem/, "empty state offers a Fix-a-problem entry");
 assert.match(fn, /activateTab\("aria"\)/, "empty state routes into the ARIA chat");
 t();
 
