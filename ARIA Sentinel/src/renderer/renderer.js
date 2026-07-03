@@ -106,6 +106,13 @@ function activateTab(tab) {
   qsa(".nav-item").forEach((button) => button.classList.toggle("active", button.dataset.tab === target));
   qsa(".nav-sub").forEach((sub) => sub.classList.toggle("open", sub.dataset.sub === target));
   qsa(".tab-panel").forEach((panel) => panel.classList.toggle("active", panel.id === target));
+  // F6 (2026-07-02) — highlight the CORRECT sub-anchor: the redirected one, else default to the FIRST link
+  // (Chat for ARIA) so opening ARIA never wrongly highlights Memory.
+  const activeSub = redirect ? redirect.anchor : null;
+  qsa(".nav-sub").forEach((sub) => {
+    const on = sub.dataset.sub === target;
+    qsa("a[data-anchor]", sub).forEach((a, i) => a.classList.toggle("active", on && (activeSub ? a.dataset.anchor === activeSub : i === 0)));
+  });
   setText("pageTitle", TAB_TITLES[target]);
   // Window title follows the active view (was always "ARIA Sentinel Settings").
   if (TAB_TITLES[target]) document.title = `ARIA Sentinel — ${TAB_TITLES[target]}`;
@@ -444,6 +451,8 @@ function renderState(next) {
 
   qsa(".mode-row").forEach((button) => button.classList.toggle("selected", button.dataset.mode === state.mode));
   if (qs("#dryRunToggle")) qs("#dryRunToggle").checked = Boolean(state.dryRun);
+  // F5 — the "Simulate ARIA error" dev tool is shown only in a dev run, never in the packaged customer build.
+  qs("#simulateAriaError")?.toggleAttribute("hidden", !state.devMode);
 
   setText("recipeCatalogMeta", `${Number(catalog.localInteractive || recipes.length || 0)} local interactive recipes. Admin-only release gates live in the separate web console.`);
   renderRecipes(recipes);
@@ -1194,9 +1203,17 @@ function renderLicense(next) {
   const lic = next && next.license;
   if (!lic) return;
   const el = qs("#licenseStatus");
-  if (el) el.textContent = lic.licensed
-    ? `Trial active · ${lic.daysRemaining} days left (Confirmed + Autonomous)`
-    : "Manual mode (free). Start a 30-day trial of Confirmed + Autonomous.";
+  if (!el) return;
+  // H3 (2026-07-02) — a LICENSED/admin user is NOT "trial active", and never leaks "undefined days". Trial copy
+  // shows ONLY when there's a real finite days-remaining; a paid/admin license shows "Licensed · <plan>".
+  const days = Number(lic.daysRemaining);
+  if (lic.licensed && Number.isFinite(days)) {
+    el.textContent = `Trial active · ${days} day${days === 1 ? "" : "s"} left (Confirmed + Autonomous)`;
+  } else if (lic.licensed) {
+    el.textContent = `Licensed${lic.plan ? " · " + lic.plan : ""}`;
+  } else {
+    el.textContent = "Manual mode (free). Start a 30-day trial of Confirmed + Autonomous.";
+  }
 }
 
 let whatsNewShown = false;
@@ -1420,6 +1437,21 @@ async function loadSystemContext() {
   } catch (e) { reportRendererError(e, "system-context"); }
 }
 
+// F4 (2026-07-02) — real disk usage like RAM. Computes % used from whatever the inventory reports (percent, or
+// size+free under common CIM field names); honest fallback (never a bare "Disk" with no value).
+function diskPercentUsed(disk = {}) {
+  if (disk.percentUsed != null) return Math.round(Number(disk.percentUsed));
+  const size = Number(disk.sizeGb ?? disk.size ?? disk.totalGb ?? disk.total);
+  const free = Number(disk.freeGb ?? disk.freeSpace ?? disk.free);
+  if (Number.isFinite(size) && size > 0 && Number.isFinite(free)) return Math.round((1 - free / size) * 100);
+  return null;
+}
+function diskUsageLabel(disk = {}) {
+  const pct = diskPercentUsed(disk);
+  if (pct != null) return `${pct}% used`;
+  if (disk && disk.model) return `${disk.model}${disk.status ? " · " + disk.status : ""}`;
+  return "usage not reported";
+}
 function renderSystemContext(ctx) {
   lastSystemContext = ctx || null;
   if (!ctx) { setText("systemContextMeta", "Inventory not available in this build."); return; }
@@ -1433,7 +1465,7 @@ function renderSystemContext(ctx) {
     { id: "os", message: `${os.edition || "Windows"}${os.build ? " · build " + os.build : ""}`, ok: true },
     { id: "cpu", message: `${cpu.model || "CPU"}${cpu.cores ? " · " + cpu.cores + " cores" : ""}${cpu.load != null ? " · " + cpu.load + "% load" : ""}`, ok: true },
     { id: "ram", message: ram.percentUsed != null ? `${ram.percentUsed}% used` : "RAM", ok: (ram.percentUsed || 0) < 90 },
-    { id: "disk", message: disk.model ? `${disk.model} · ${disk.status || "OK"}` : "Disk", ok: true }
+    { id: "disk", message: diskUsageLabel(disk), ok: (diskPercentUsed(disk) ?? 0) < 90 }
   ];
   setHtml("systemContextSummary", rows.map((r) => `
     <div class="health-row"><span>${escapeHtml(r.id)}</span><strong>${escapeHtml(r.message)}</strong><em>${r.ok ? "OK" : "CHECK"}</em></div>

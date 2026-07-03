@@ -202,7 +202,8 @@ body.has-security-banner .settings-shell { padding-top: 58px; }
   padding: 5px 8px;
   border-radius: 6px;
 }
-.nav-sub a:hover { color: var(--aria-gold-light); background: var(--aria-gold-tint-bg); }
+.nav-sub a:hover, .nav-sub a.active { color: var(--aria-gold-light); background: var(--aria-gold-tint-bg); }
+.nav-sub a.active { font-weight: 600; }
 body.low-power .nav-caret { transition: none; }
 
 /* Zero-height scroll target so old #overview/#mode/etc. anchors land cleanly under the topbar. */

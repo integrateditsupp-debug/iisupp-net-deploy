@@ -407,9 +407,17 @@ function createMainWindow() {
             const visibleBoxes = ['overlayCard','overlayConfirm'].filter((id)=>{const e=document.getElementById(id); return e && !e.hidden;});
             let voskUrl = null; try { voskUrl = await window.sentinel.voskModelUrl(); } catch(e) { voskUrl = 'ERR'; }
             const voskResolved = typeof voskUrl === 'string' && voskUrl.indexOf('file:') === 0;
-            return JSON.stringify({panelGone, cardShown, confirmHidden, greetingHidden, headShown, hasSpeak, globeVisible, visibleBoxes, voskResolved});
+            const c = document.getElementById('overlayCard');
+            const cardScrolls = !!c && c.scrollHeight > c.clientHeight + 2; // premium: common card should NOT scroll
+            const vis = (id) => { const e = document.getElementById(id); return !!e && e.offsetParent !== null; };
+            const chipVisible = vis('overlayChip'); const actionsVisible = vis('overlayActions'); // must be HIDDEN in companion mode
+            return JSON.stringify({panelGone, cardShown, confirmHidden, greetingHidden, headShown, hasSpeak, globeVisible, visibleBoxes, voskResolved, cardScrolls, chipVisible, actionsVisible});
           }catch(e){return 'OPROBE_THREW: '+(e&&e.stack||e);}})()`, true).catch((e) => "OEXECJS_FAILED: " + e), 6000, "overlay-execjs");
           push("[overlay-probe] " + oprobe);
+          // Screenshot the overlay card for the before/after report (env-gated; test-only).
+          if (process.env.ARIA_BOOT_SHOT_OUT) {
+            try { const img = await withTimeout(overlayWindow.webContents.capturePage(), 5000, "shot"); if (img && img.toPNG) fs.writeFileSync(process.env.ARIA_BOOT_SHOT_OUT, img.toPNG()); push("[overlay-shot] saved"); } catch (e) { push("[overlay-shot-err] " + e); }
+          }
         } else { push("[overlay-probe] overlayWindow missing"); }
       } catch (e) { push("[overlay-hook-error] " + (e && e.stack || e)); }
       finalize();
@@ -477,17 +485,19 @@ function pickWaypoint(workArea) {
 // Companion mode = the interactive assistant panel (bigger, top-center); card mode = a detector card
 // (top-center); globe mode = current free-roam position (or a random spawn if none yet).
 function overlayBounds() {
+  // L1/L2 (2026-07-02) — size the WINDOW so the card fits its content + primary buttons with NO scrollbar on a
+  // tiny card, and drop it below the screen top (breathing room; the card doesn't cover the app's header).
   if (overlayCompanion) {
     const wa = screen.getPrimaryDisplay().workArea;
     const width = 384;
-    const height = Math.min(600, wa.height - 40);
-    return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 12 };
+    const height = Math.min(620, wa.height - 80);
+    return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 44 };
   }
   if (overlayExpanded) {
     const wa = screen.getPrimaryDisplay().workArea;
-    const width = 340;
-    const height = 214;
-    return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 10 };
+    const width = 360;
+    const height = Math.min(340, wa.height - 80); // was 214 → clipped the card behind a scrollbar
+    return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 44 };
   }
   if (overlayPhysics && Number.isFinite(overlayPhysics.x)) {
     return { x: overlayPhysics.x, y: overlayPhysics.y, width: GLOBE_SIZE, height: GLOBE_SIZE };
@@ -1011,7 +1021,9 @@ function performanceData() {
   const fixes = log.filter((e) => e.tag === "RUN").length;
   const diags = log.filter((e) => e.tag === "DIAGNOSE").length;
   return {
-    operational: { mttd: 0, mttr: 0, ftr: 100, autoPct: 100, recipeSuccess: 100, detTrend: [] },
+    // H2 (2026-07-02) — real-or-empty: no fabricated 100%. Until real operational metrics are wired from live
+    // resolution outcomes, these render "--" (Rule 14: never a vanity 100% first-touch/auto/recipe at zero data).
+    operational: { mttd: null, mttr: null, ftr: null, autoPct: null, recipeSuccess: null, detTrend: [] },
     ai: { accuracy: null, calibration: null, confirmRate: null, kbHitRate: null, top3: null, hoursSaved: null, costSaved: null, anomalies: 0, diagnoses: diags },
     usage: { activeToday: Math.round((Date.now() - startedAt) / 3600000), activeWeek: 0, topTier: "tier-0", hotkeys: (store.get("hotkeyUse") || 0) }
   };
@@ -2336,6 +2348,9 @@ function getState() {
   const pausedUntil = Number(store.get("pausedUntil") || 0);
   return {
     version: SENTINEL_VERSION,
+    // F5 (2026-07-02) — dev-only affordances (e.g. "Simulate ARIA error") show ONLY in a dev run, never in the
+    // packaged customer build. app.isPackaged is true for the shipped .exe → devMode false.
+    devMode: !app.isPackaged || Boolean(process.env.ARIA_SENTINEL_DEV),
     mode: store.get("mode"),
     dryRun: !allowSystemFixes || Boolean(store.get("dryRun")),
     systemFixesEnabled: allowSystemFixes,
