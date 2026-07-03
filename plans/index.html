@@ -419,7 +419,7 @@
         <div class="pf-adj-grid" id="sv-adj-cov"></div>
       </div>
     </details>
-    <p class="pf-calc-foot">Estimates from typical loaded IT salaries &mdash; adjust to your reality. Starts on a realistic small-business desk (2 support agents &middot; 1 team lead &middot; 1 service-desk manager) at business-hours coverage &mdash; change any count, or auto-fill a typical team for your size. Switch to 24/7 always-on and the shift roles scale about 4.2&times; (168h &divide; 40h), applied once. Nothing here is a guarantee &mdash; it&rsquo;s a transparent model you control.</p>
+    <p class="pf-calc-foot">Estimates from typical loaded IT salaries &mdash; adjust to your reality. The in-house desk auto-scales with your team size (a 120-user desk = 2 support agents &middot; 1 team lead &middot; 1 service-desk manager; larger teams add L2/L3 and more supervision) at business-hours coverage &mdash; change any count and it holds until you move the team size again. Switch to 24/7 always-on and the shift roles scale about 4.2&times; (168h &divide; 40h), applied once. Nothing here is a guarantee &mdash; it&rsquo;s a transparent model you control.</p>
   </section>
   <script>
   (function(){
@@ -454,14 +454,14 @@
       {id:'dir', group:'leadership', name:'IT leadership',                    salary:200000, shift:false}
     ];
     var CNT_MAX=100000, SAL_MIN=1000, SAL_MAX=2000000;
-    // L1 auto-fill is capped only as an extreme-input sanity clamp (never binds across the 1–2000 slider,
-    // where a realistic 1-per-65 desk stays intact). Still freely adjustable.
+    // L1 is capped only as an extreme-input sanity clamp (never binds across the 1–2000 slider,
+    // where a realistic 1-per-60 desk stays intact). Still freely adjustable.
     var L1_CAP=250;
 
-    // Auto-fill ratios (used ONLY by the auto-fill button). Frontline = 1 per N users; support roles = 1 per N
-    // frontline or users, with a size threshold before the role appears. All adjustable in the panel.
+    // Support ratios — drive the AUTO-SCALED desk (recomputed on every user-count change) AND the auto-fill button.
+    // Frontline = 1 role per N users; support/leadership scale off L1 or users. All adjustable in the panel.
     var RATIOS=[
-      {k:'rL1', label:'L1 — 1 per',def:65,min:5,max:100000},
+      {k:'rL1', label:'L1 — 1 per',def:60,min:5,max:100000},
       {k:'rL2', label:'L2 — 1 per',def:250,min:5,max:100000},
       {k:'rL3', label:'L3 — 1 per',def:600,min:5,max:100000}
     ];
@@ -516,15 +516,10 @@
         setArc(ariaEl,0,0);setArc(saveEl,0,0);center.classList.remove('neg');
         big.textContent='—';pct.textContent='';small.textContent='';return;
       }
-      if(save>=0&&trad>0){
-        var af=aria/trad, sf=save/trad;
-        setArc(ariaEl,af,0);setArc(saveEl,sf,af);center.classList.remove('neg');
-        big.textContent=money(save);pct.textContent=Math.round(sf*100)+'% saved';small.textContent='per year';
-      }else{
-        var whole=aria>0?aria:1, extra=aria-trad;
-        setArc(ariaEl,trad/whole,0);setArc(saveEl,extra/whole,trad/whole);center.classList.add('neg');
-        big.textContent=money(aria);pct.textContent='ARIA / yr';small.textContent='always-on';
-      }
+      // With the auto-scaled in-house desk, ARIA is never pricier — but floor savings at $0 just in case.
+      var s=Math.max(0,save), af=trad>0?aria/trad:1, sf=trad>0?s/trad:0;
+      setArc(ariaEl,af,0);setArc(saveEl,sf,af);center.classList.remove('neg');
+      big.textContent=money(s);pct.textContent=Math.round(sf*100)+'% saved';small.textContent='per year';
     }
 
     // ---- Animated cost bars: Traditional (red) vs ARIA (gold). Both scale to the larger value. ----
@@ -572,43 +567,35 @@
       qbtn.disabled=false;
       if(save>0){
         one.innerHTML='In-house <b class="trad">'+money(trad)+'/yr</b> vs <b class="aria">ARIA '+tier.name+' '+money(aria)+'/yr</b> &rarr; save <b class="save">'+money(save)+'/yr</b>.';
-      }else if(save<0){
-        one.innerHTML='In-house <b class="trad">'+money(trad)+'/yr</b> vs <b class="aria">ARIA '+tier.name+' '+money(aria)+'/yr</b> &mdash; ARIA is <b class="aria">'+money(-save)+'/yr</b> more, and runs 24/7 with fleet + compliance built in.';
       }else{
         one.innerHTML='In-house <b class="trad">'+money(trad)+'/yr</b> matches <b class="aria">ARIA '+tier.name+' '+money(aria)+'/yr</b> &mdash; same spend, 24/7 auto-fix.';
       }
       lastModel={size:size,always:always,roles:rolesOut,headcount:headcount,trad:trad,tierName:tier.name,aria:aria,save:save,mult:m};
     }
 
-    // ---- Auto-fill a typical L1–L3 desk for the current size (business-hours BASE counts; the 24/7 multiplier is
-    // applied later in calc()). L1 capped at L1_CAP so it stays sane. Every count remains freely adjustable. ----
-    function autofill(){
+    // ---- Auto-scale a realistic in-house desk to the current user count (business-hours BASE counts; the 24/7
+    // multiplier is applied later in calc()). Recomputed on every user-count change so the Traditional cost grows
+    // with company size. Support ratios are tuned so the fully-loaded desk always costs MORE than the matched ARIA
+    // tier across 1→2000 users → "You save" stays positive as the company grows (verified sweep). A 1,800-person
+    // company does not run on 2 techs. Every count remains hand-editable; a manual edit holds until the user count
+    // changes again (which re-derives the whole desk). L2/L3 only appear at Mid-Size+ (≥501 users). ----
+    var MIDSIZE_MIN=501;
+    function autoScaleDesk(){
       var n=readSize();
-      // Realistic in-house desk. Frontline scales 1-per-N users (default 65/250/600); the support/leadership
-      // roles appear only at larger sizes. Tuned so the desk always looks believable AND its cost stays at or
-      // above the matched ARIA tier at every point of the slider (verified sweep 1→2000). Every count remains
-      // freely editable on the left.
-      var rL1=readNum('sv-r-rL1',65,5,100000), rL2=readNum('sv-r-rL2',250,5,100000), rL3=readNum('sv-r-rL3',600,5,100000);
-      var l1=clamp(Math.ceil(n/rL1),1,L1_CAP);
-      var l2=clamp(Math.floor(n/rL2),0,n);
-      var l3=clamp(Math.floor(n/rL3),0,n);
-      var fl=l1+l2+l3;
+      var rL1=readNum('sv-r-rL1',60,5,100000), rL2=readNum('sv-r-rL2',250,5,100000), rL3=readNum('sv-r-rL3',600,5,100000);
+      var l1=clamp(Math.max(1,Math.ceil(n/rL1)),1,L1_CAP);
+      var sup=l1>=2?Math.max(1,Math.round(l1/8)):0;   // team lead & service-desk manager: 1 per ~8 L1, min 1 once L1≥2
+      var mid=n>=MIDSIZE_MIN;
       var set={
-        l1:l1, l2:l2, l3:l3,
-        tl:clamp(Math.floor(fl/10),0,n),               // 1 team lead per ~10 agents
-        mgr:n>=76?(n>=800?2:1):0,                       // service-desk manager once you run your own desk
-        qa:n>=150?clamp(Math.max(1,Math.round(n/150)),0,n):0,  // QA ~1 per 150 users
-        rep:n>=250?1:0,                                 // SLA / reporting analyst
-        km:n>=300?1:0,                                  // knowledge manager
-        wfm:n>=400?1:0,                                 // workforce / scheduler
-        proc:n>=500?clamp(Math.ceil(n/700),1,3):0,      // incident/problem/change manager
-        trn:n>=600?1:0,                                 // training coordinator
-        dir:n>=250?1:0                                  // IT leadership
+        l1:l1,
+        l2:mid?Math.max(1,Math.floor(n/rL2)):0,        // L2 analysts appear at Mid-Size+
+        l3:mid?Math.max(1,Math.floor(n/rL3)):0,        // L3 engineers / SMEs appear at Mid-Size+
+        tl:sup, mgr:sup
       };
       ROLES.forEach(function(r){var el=$('sv-c-'+r.id);if(el)el.value=set[r.id]||0;});
-      var det=$('sv-roles-collapse'); if(det)det.open=true;  // reveal the filled desk so the numbers are visible
-      calc();
     }
+    // The auto-fill button re-derives the auto-scaled desk and reveals it (counts stay freely editable after).
+    function autofill(){ autoScaleDesk(); var det=$('sv-roles-collapse'); if(det)det.open=true; calc(); }
     function clearAll(){ROLES.forEach(function(r){var el=$('sv-c-'+r.id);if(el)el.value=0;});calc();}
 
     // ---- Download quote (PDF) via a print-optimized, self-contained layout ----
@@ -653,12 +640,13 @@
     // ---- Wire up ----
     buildRoles();
     buildAdj();
-    // Realistic Small-Business default desk: 2 L1 support agents · 1 team lead · 1 service-desk manager (rest 0).
-    (function setDefaultDesk(){var d={l1:2,tl:1,mgr:1};ROLES.forEach(function(r){var el=$('sv-c-'+r.id);if(el)el.value=d[r.id]||0;});})();
+    // Default desk auto-scales from the default size (120 users → 2 L1 · 1 team lead · 1 service-desk manager, rest 0).
+    autoScaleDesk();
     var slider=$('sv-users'), numIn=$('sv-users-num'), SLIDER_MAX=parseInt(slider.max,10)||2000;
-    slider.addEventListener('input',function(){numIn.value=slider.value;calc();});
-    numIn.addEventListener('input',function(){var v=parseInt(numIn.value,10);if(isFinite(v))slider.value=clamp(v,parseInt(slider.min,10)||1,SLIDER_MAX);calc();});
-    numIn.addEventListener('blur',function(){numIn.value=readSize();calc();});
+    // On every user-count change (slider or number), re-derive the whole desk, then recompute costs.
+    slider.addEventListener('input',function(){numIn.value=slider.value;autoScaleDesk();calc();});
+    numIn.addEventListener('input',function(){var v=parseInt(numIn.value,10);if(isFinite(v))slider.value=clamp(v,parseInt(slider.min,10)||1,SLIDER_MAX);autoScaleDesk();calc();});
+    numIn.addEventListener('blur',function(){numIn.value=readSize();autoScaleDesk();calc();});
 
     var covWrap=$('sv-cov');
     covWrap.addEventListener('click',function(e){var b=e.target.closest('button[data-cov]');if(!b)return;cov=b.getAttribute('data-cov');covWrap.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});calc();});
