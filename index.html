@@ -1851,19 +1851,31 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                     <span class="hero-svc-prefix">Starting at</span>
                     <div class="hero-svc-price"><strong>$6,000</strong><span>/mo</span></div>
                     <button type="button" class="hero-svc-cta" data-stripe-id="tier1-first-month" data-stripe-name="Preventative IT Support · Tier 1 First Month" data-stripe-amount-cents="600000" data-stripe-desc="Tier 1 Operational Foundation first-month retainer ($6,000). Final scope confirmed before work begins." onclick="event.stopPropagation();event.preventDefault();">Purchase</button></a>
-                <div class="hero-svc-card hero-svc-card--concierge">
-                    <div class="hero-svc-icon" aria-hidden="true">
-                        <svg viewBox="0 0 32 32" width="36" height="36"><path d="M16 4l2.6 5.6L24.6 11l-4.3 4.4L21.2 22 16 19.1 10.8 22l.9-6.6L7.4 11l6-1.4L16 4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 27h16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <div class="hero-svc-card hero-svc-flip" tabindex="0">
+                  <div class="hero-svc-flip-inner">
+                    <!-- FRONT — compact, matches the two side boxes -->
+                    <div class="hero-svc-face hero-svc-front">
+                        <div class="hero-svc-icon" aria-hidden="true">
+                            <svg viewBox="0 0 32 32" width="36" height="36"><path d="M16 4l2.6 5.6L24.6 11l-4.3 4.4L21.2 22 16 19.1 10.8 22l.9-6.6L7.4 11l6-1.4L16 4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 27h16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                        </div>
+                        <h3 class="hero-svc-title">AI Setup Walk-Through</h3>
+                        <div class="hero-svc-rule"></div>
+                        <p class="hero-svc-line">We get your team from AI-curious to AI-productive — with you, step by step.</p>
+                        <span class="hero-svc-prefix">Starting at</span>
+                        <div class="hero-svc-price"><strong>$7,000</strong></div>
+                        <button type="button" class="hero-svc-cta" data-stripe-id="ai-setup-walkthrough" data-stripe-name="AI Setup Walk-Through Concierge · Starting Package" data-stripe-amount-cents="700000" data-stripe-desc="Step-by-step guided setup + training for your own AI workspace (Claude Cowork/Code, Codex, Gemini). Starts at $7,000; scales to $15,000 by scope. Final scope + price confirmed before work begins." onclick="event.stopPropagation();event.preventDefault();">Get started</button>
+                        <p class="hero-svc-flip-hint" aria-hidden="true">Hover or tap for details</p>
                     </div>
-                    <h3 class="hero-svc-title">AI Setup Walk-Through</h3>
-                    <div class="hero-svc-rule"></div>
-                    <p class="hero-svc-desc">Step-by-step walk-through guidance to having your own AI setup for work — Claude (Cowork &amp; Code), Codex, and Gemini. We guide and train you on how each is used. Anyone can do it.</p>
-                    <p class="hero-svc-includes">Includes a 30-day ARIA Sentinel trial — keep the Walk-Through forever; continue Sentinel's monitoring &amp; auto-fix on a separate plan.</p>
-                    <span class="hero-svc-prefix">Starting at</span>
-                    <div class="hero-svc-price"><strong>$7,000</strong></div>
-                    <div class="hero-svc-note">$7,000–$15,000 depending on setup · talk to us for more info</div>
-                    <button type="button" class="hero-svc-cta" data-stripe-id="ai-setup-walkthrough" data-stripe-name="AI Setup Walk-Through Concierge · Starting Package" data-stripe-amount-cents="700000" data-stripe-desc="Step-by-step guided setup + training for your own AI workspace (Claude Cowork/Code, Codex, Gemini). Starts at $7,000; scales to $15,000 by scope. Final scope + price confirmed before work begins." onclick="event.stopPropagation();event.preventDefault();">Get started</button>
-                    <a href="/book.html" class="hero-svc-talk">Talk to us</a></div>
+                    <!-- BACK — the full detail, moved verbatim from the old front -->
+                    <div class="hero-svc-face hero-svc-back">
+                        <p class="hero-svc-back-label">What's included</p>
+                        <p class="hero-svc-desc">Step-by-step walk-through guidance to having your own AI setup for work — Claude (Cowork &amp; Code), Codex, and Gemini. We guide and train you on how each is used. Anyone can do it.</p>
+                        <p class="hero-svc-includes">Includes a 30-day ARIA Sentinel trial — keep the Walk-Through forever; continue Sentinel's monitoring &amp; auto-fix on a separate plan.</p>
+                        <div class="hero-svc-note">$7,000–$15,000 depending on setup · talk to us for more info</div>
+                        <a href="/book.html" class="hero-svc-talk">Talk to us</a>
+                    </div>
+                  </div>
+                </div>
                 <a href="/services#website-ai-intake" class="hero-svc-card">
                     <div class="hero-svc-icon" aria-hidden="true">
                         <svg viewBox="0 0 32 32" width="36" height="36"><rect x="4" y="6" width="24" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 26h10M16 22v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="12" r="1" fill="currentColor"/><circle cx="13" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/></svg>
@@ -1874,6 +1886,18 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
                     <div class="hero-svc-price"><strong>$6,000</strong><span>/project</span></div>
                     <button type="button" class="hero-svc-cta" data-stripe-id="website-ai-deposit" data-stripe-name="Website + AI Assistant Setup · Deposit" data-stripe-amount-cents="600000" data-stripe-desc="Website + AI Assistant Setup project start fee ($6,000). Final scope confirmed before delivery begins." onclick="event.stopPropagation();event.preventDefault();">Purchase</button></a>
             </div>
+            <script>
+            /* Hero middle card: tap anywhere (except its button/link) to flip. Hover + keyboard focus flip via CSS — mirrors /plans .pf-flip. */
+            (function(){
+              var cards=document.querySelectorAll('.hero-svc-flip');
+              Array.prototype.forEach.call(cards,function(card){
+                card.addEventListener('click',function(e){
+                  if(e.target.closest('a,button'))return; // let the CTA / link work normally
+                  card.classList.toggle('is-flipped');
+                });
+              });
+            })();
+            </script>
 
             <h1 class="text-3xl md:text-5xl font-black tracking-tighter leading-tight mb-6">INTEGRATED IT SUPPORT INC. <br><span class="inline-block mt-1 text-[0.56em] tracking-normal text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-[#f1dca7] gold-glow italic uppercase">Preventative Aid</span></h1>
 
@@ -1895,10 +1919,10 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
 
     <style>
       /* === Hero starter-service boxes === */
-      .hero-svc-card {
+      .hero-svc-card, .hero-svc-face {
         position: relative;
-        display: flex; flex-direction: column; align-items: center; text-align: center;
-        padding: 22px 18px 18px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        padding: 16px 15px 15px;
         border-radius: 14px;
         border: 1px solid rgba(241,220,167,0.55);
         background:
@@ -1918,27 +1942,28 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         border-color: rgba(241,220,167,0.7);
         box-shadow: 0 18px 42px rgba(0,0,0,0.45), 0 0 28px rgba(197,160,89,0.18);
       }
-      .hero-svc-icon { color: #c5a059; margin-bottom: 8px; line-height: 0; }
+      .hero-svc-icon { color: #c5a059; margin-bottom: 6px; line-height: 0; }
+      .hero-svc-icon svg { width: 30px; height: 30px; }
       .hero-svc-title {
         font-family: 'Cinzel', Georgia, serif;
-        font-size: 13px; line-height: 1.25;
+        font-size: 12px; line-height: 1.25;
         letter-spacing: 0.12em; text-transform: uppercase;
-        color: #fff; font-weight: 700; margin: 6px 0 10px;
+        color: #fff; font-weight: 700; margin: 4px 0 8px;
       }
       .hero-svc-rule {
         width: 30px; height: 1px;
         background: linear-gradient(90deg, transparent, rgba(197,160,89,0.85), transparent);
-        margin: 0 auto 10px;
+        margin: 0 auto 8px;
       }
       .hero-svc-prefix {
         font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
         color: #c5a059; font-weight: 700; margin-bottom: 4px;
       }
-      .hero-svc-price { display: flex; align-items: baseline; gap: 4px; color: #f1dca7; margin-bottom: 14px; }
-      .hero-svc-price strong { font-family: 'Cinzel', Georgia, serif; font-size: 26px; font-weight: 700; letter-spacing: 0.02em; }
+      .hero-svc-price { display: flex; align-items: baseline; gap: 4px; color: #f1dca7; margin-bottom: 10px; }
+      .hero-svc-price strong { font-family: 'Cinzel', Georgia, serif; font-size: 22px; font-weight: 700; letter-spacing: 0.02em; }
       .hero-svc-price span { font-size: 11px; color: rgba(243,236,217,0.62); letter-spacing: 0.08em; }
       .hero-svc-cta {
-        display: inline-block; padding: 8px 18px; border-radius: 4px;
+        display: inline-block; padding: 7px 16px; border-radius: 4px;
         background: linear-gradient(135deg, #b8954f, #d8bd84 50%, #9c7322);
         color: #1a1407; font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
         border: none; cursor: pointer; font-family: inherit;
@@ -1965,6 +1990,40 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important; 
         transition: color .2s ease, border-color .2s ease;
       }
       .hero-svc-talk:hover { color: #fff; border-color: rgba(241,220,167,0.9); }
+
+      /* === Middle hero card = FLIP CARD (mechanism mirrors /plans .pf-flip for site-wide consistency) ===
+         Front matches the two side boxes; the extra detail flips in on hover / keyboard focus / tap. */
+      .hero-svc-flip { position: relative; perspective: 1500px; min-height: 264px; cursor: pointer;
+        padding: 0; border: none; background: none; box-shadow: none; }
+      .hero-svc-flip:hover { transform: none; } /* the stage stays put; only .hero-svc-flip-inner rotates */
+      .hero-svc-flip-inner { position: absolute; inset: 0;
+        transition: transform .6s cubic-bezier(.4,.15,.2,1); transform-style: preserve-3d; }
+      .hero-svc-flip:hover .hero-svc-flip-inner,
+      .hero-svc-flip:focus-within .hero-svc-flip-inner,
+      .hero-svc-flip.is-flipped .hero-svc-flip-inner { transform: rotateY(180deg); }
+      .hero-svc-face { position: absolute; inset: 0; box-sizing: border-box; overflow: auto;
+        -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+      .hero-svc-flip:hover .hero-svc-face,
+      .hero-svc-flip:focus-within .hero-svc-face,
+      .hero-svc-flip.is-flipped .hero-svc-face {
+        border-color: rgba(241,220,167,0.7);
+        box-shadow: 0 18px 42px rgba(0,0,0,0.45), 0 0 28px rgba(197,160,89,0.18);
+      }
+      .hero-svc-back { transform: rotateY(180deg); }
+      .hero-svc-back .hero-svc-note { margin: 0 0 12px; }
+      .hero-svc-line {
+        font-size: 10.5px; line-height: 1.5; color: rgba(243,236,217,0.82);
+        letter-spacing: 0.01em; text-transform: none; margin: 0 0 12px; font-weight: 400;
+      }
+      .hero-svc-flip-hint {
+        margin: 10px 0 0; color: rgba(255,255,255,0.4);
+        font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+      }
+      .hero-svc-back-label {
+        color: #c5a059; font-size: 9px; letter-spacing: 0.16em;
+        text-transform: uppercase; margin: 0 0 8px; font-weight: 700;
+      }
+      @media (prefers-reduced-motion: reduce) { .hero-svc-flip-inner { transition: none; } }
 
       /* Globe wrapper + Ask ARIA chip */
       #heroAriaGlobe { position: relative; }
