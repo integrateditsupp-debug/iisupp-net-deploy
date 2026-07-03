@@ -200,77 +200,49 @@
 
   <div style="text-align:center;margin-top:14px"><button type="button" class="pf-compare-trigger" data-open-compare="1">Compare all features &#9662;</button></div>
 
-  <!-- INTERACTIVE STAFFING-COST CALCULATOR (Rule 14: a transparent, adjustable calculator — NOT a fixed claim.
-       Every ratio, salary, coverage multiplier and the tier mapping is a LABELED input the user can change.
-       Self-contained (no external calls / no CDN): hand-rolled animated CSS bars + vanilla JS. -->
+  <!-- COMPACT STAFFING-COST CALCULATOR (v7) — the client BUILDS their own desk on the LEFT (one small number
+       stepper per role, every one optional + default 0); the RIGHT shows a minimal result only (donut + one line
+       + PDF quote). Rule 14: every salary, ratio and the 24/7 multiplier is a labeled input in the collapsed
+       "Adjust assumptions" panel. Self-contained — no CDN, no server call. -->
   <style>
-    .pf-save{max-width:960px;margin:52px auto 0;padding:26px 26px 22px;border:1px solid rgba(197,160,89,.3);border-radius:20px;background:radial-gradient(120% 90% at 50% -10%,rgba(197,160,89,.10) 0%,rgba(197,160,89,0) 55%),linear-gradient(165deg,#0c0a06 0%,#14100a 100%);box-shadow:0 20px 50px rgba(0,0,0,.45)}
-    .pf-save-head{text-align:center;max-width:700px;margin:0 auto 8px}
-    .pf-save-head .eyebrow{color:#c5a059;font-size:11px;letter-spacing:.3em;text-transform:uppercase}
-    .pf-save-head h2{font-size:22px;line-height:1.15;margin:9px 0 5px;font-family:Cinzel,serif;font-weight:700}
-    .pf-save-head p{color:rgba(255,255,255,.62);font-size:13.5px;line-height:1.6;margin:0}
-    .pf-save-body{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px;align-items:start}
-    @media (max-width:760px){.pf-save-body{grid-template-columns:1fr;gap:18px}}
-    .pf-save-controls{display:flex;flex-direction:column;gap:18px}
-    .pf-ctl label{display:block;color:#f1dca7;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
-    .pf-ctl .pf-ctl-val{color:#fff;font-weight:700;font-family:Cinzel,serif;font-size:17px}
-    .pf-ctl input[type=range]{width:100%;accent-color:#c5a059;height:5px;cursor:pointer}
-    .pf-ctl .pf-range-ends{display:flex;justify-content:space-between;color:rgba(255,255,255,.4);font-size:10.5px;margin-top:4px;letter-spacing:.04em}
-    .pf-basis{display:flex;gap:8px;background:rgba(0,0,0,.35);border:1px solid rgba(197,160,89,.2);border-radius:11px;padding:4px}
-    .pf-basis button{flex:1;background:transparent;border:0;color:rgba(255,255,255,.6);font-size:11px;letter-spacing:.02em;padding:9px 6px;border-radius:8px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;transition:background .18s,color .18s}
-    .pf-basis button.on{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#1a1410}
-    .pf-basis-note{color:rgba(255,255,255,.5);font-size:11px;line-height:1.5;margin:6px 0 0}
-    /* Role checklist — client ticks which desk roles they'd actually staff; only ticked roles count. Compact, titles left.
-       Row selectors are scoped under .pf-rolepick so they out-specify the generic ".pf-ctl label" rule (which would
-       otherwise force display:block and glue the count to the title). */
-    .pf-rolepick{border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.2)}
-    .pf-rolepick-grouphdr{background:rgba(255,255,255,.03);color:#c5a059;font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;padding:7px 12px 5px}
-    .pf-rolepick .pf-rolepick-row{display:flex;align-items:center;gap:9px;padding:6px 12px;margin:0;border-top:1px solid rgba(255,255,255,.05);font-size:12px;line-height:1.25;color:rgba(255,255,255,.82);font-weight:400;letter-spacing:normal;text-transform:none;cursor:pointer}
-    .pf-rolepick .pf-rolepick-row:hover{background:rgba(197,160,89,.05)}
-    .pf-rolepick .pf-rolepick-row input{accent-color:#c5a059;width:15px;height:15px;flex:0 0 auto;cursor:pointer;margin:0}
-    .pf-rolepick .pf-rolepick-row .rp-name{flex:1 1 auto;line-height:1.25}
-    .pf-rolepick .pf-rolepick-row .rp-count{color:#f1dca7;font-family:Cinzel,serif;font-weight:700;font-size:12px;min-width:26px;text-align:right;margin-left:auto}
-    .pf-rolepick .pf-rolepick-row.off{opacity:.4}
-    /* Compact traditional-vs-ARIA numeric readout (replaces the two horizontal bars — less data on screen). */
-    .pf-vs{display:flex;flex-direction:column;gap:0;margin-bottom:8px}
-    .pf-vs-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:12px;color:rgba(255,255,255,.72);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.07)}
-    .pf-vs-row b{font-family:Cinzel,serif;font-size:15px;white-space:nowrap}
-    .pf-vs-trad b{color:#e78d8d}
-    .pf-vs-aria b{color:#f1dca7}
-    /* Adjustable assumptions live in a labeled expander — transparent (Rule 14) without clutter (Rule 17). */
-    .pf-adj{border:1px solid rgba(197,160,89,.2);border-radius:12px;background:rgba(0,0,0,.25);padding:0 14px}
-    .pf-adj summary{cursor:pointer;color:#f1dca7;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:12px 0;list-style:none;display:flex;justify-content:space-between;align-items:center}
-    .pf-adj summary::-webkit-details-marker{display:none}
-    .pf-adj summary::after{content:'+';color:#c5a059;font-size:16px;font-weight:700}
-    .pf-adj[open] summary::after{content:'\2212'}
-    .pf-adj-body{padding:2px 0 14px}
-    .pf-adj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
-    .pf-adj-fld label{color:rgba(255,255,255,.7);font-size:10.5px;letter-spacing:.03em;text-transform:none;font-weight:500;margin-bottom:4px}
-    .pf-adj-fld input{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.25);color:#fff;padding:8px 10px;border-radius:8px;font-size:13px;font-family:Inter,sans-serif;box-sizing:border-box}
-    .pf-adj-fld input:focus{outline:none;border-color:#c5a059;box-shadow:0 0 0 3px rgba(197,160,89,.15)}
-    .pf-adj-sub{color:#c5a059;font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin:14px 0 8px;font-weight:700}
-    .pf-adj-sub.first{margin-top:4px}
-    .pf-save-viz{display:flex;flex-direction:column;gap:14px}
-    .pf-tier-map-note{color:rgba(255,255,255,.5);font-size:11px;line-height:1.65;margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
-    .pf-tier-map-note b{color:#f1dca7}
-    .pf-save-readout{margin-top:4px;padding:16px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3)}
-    .pf-save-headline{font-family:Cinzel,serif;font-size:15px;line-height:1.25;margin:2px 0 4px}
-    .pf-save-headline.pos{color:#5fd08a}
-    .pf-save-headline.neg{color:#f1dca7}
-    .pf-save-sub{color:rgba(255,255,255,.68);font-size:12.5px;line-height:1.6;margin:0}
-    .pf-time-line{margin-top:6px;padding:14px 18px;border-radius:14px;border:1px solid rgba(197,160,89,.22);background:rgba(197,160,89,.06);color:rgba(255,255,255,.82);font-size:13px;line-height:1.6}
-    .pf-time-line b{color:#f1dca7}
-    .pf-tier-tag{color:rgba(255,255,255,.55);font-size:11.5px;margin-top:10px}
-    .pf-tier-tag b{color:#f1dca7}
-    .pf-save-foot{color:rgba(255,255,255,.42);font-size:11px;line-height:1.55;margin:16px auto 0;text-align:center;max-width:780px}
-    /* Manual user entry — the primary way a real business plugs in its size (two-way synced with the slider). */
-    .pf-users-entry{margin-top:12px}
-    .pf-users-entry label{color:rgba(255,255,255,.7);font-size:10.5px;letter-spacing:.03em;text-transform:none;font-weight:500;margin-bottom:5px}
-    .pf-users-entry input{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.3);color:#fff;padding:10px 12px;border-radius:9px;font-size:15px;font-family:Cinzel,serif;font-weight:700;box-sizing:border-box;letter-spacing:.02em}
-    .pf-users-entry input:focus{outline:none;border-color:#c5a059;box-shadow:0 0 0 3px rgba(197,160,89,.15)}
-    /* Savings donut — the whole ring = the traditional annual cost; gold = ARIA, green = what you save. */
-    .pf-save-readout{display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center}
-    @media (max-width:520px){.pf-save-readout{grid-template-columns:1fr;justify-items:center;text-align:center}}
+    .pf-calc{max-width:900px;margin:48px auto 0;padding:22px 24px 18px;border:1px solid rgba(197,160,89,.28);border-radius:18px;background:radial-gradient(120% 90% at 50% -10%,rgba(197,160,89,.09) 0%,rgba(197,160,89,0) 55%),linear-gradient(165deg,#0c0a06 0%,#14100a 100%);box-shadow:0 18px 46px rgba(0,0,0,.4)}
+    .pf-calc-head{text-align:center;max-width:640px;margin:0 auto 16px}
+    .pf-calc-head .eyebrow{color:#c5a059;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase}
+    .pf-calc-head h2{font-size:20px;line-height:1.15;margin:8px 0 4px;font-family:Cinzel,serif;font-weight:700}
+    .pf-calc-head p{color:rgba(255,255,255,.6);font-size:12.5px;line-height:1.55;margin:0}
+    .pf-calc-body{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:start}
+    @media (max-width:720px){.pf-calc-body{grid-template-columns:1fr;gap:20px}}
+    /* ---- LEFT: build your desk ---- */
+    .pf-calc-left{display:flex;flex-direction:column;gap:13px}
+    .pf-calc-left .pf-sec-label{color:#f1dca7;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin:0 0 7px}
+    .pf-users-row{display:flex;gap:10px;align-items:center}
+    .pf-users-row input[type=number]{width:92px;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.3);color:#fff;padding:8px 10px;border-radius:8px;font-size:15px;font-family:Cinzel,serif;font-weight:700;box-sizing:border-box;-moz-appearance:textfield}
+    .pf-users-row input[type=range]{flex:1;accent-color:#c5a059;height:5px;cursor:pointer}
+    .pf-users-row input:focus{outline:none;border-color:#c5a059;box-shadow:0 0 0 3px rgba(197,160,89,.15)}
+    .pf-cov{display:flex;gap:6px;background:rgba(0,0,0,.35);border:1px solid rgba(197,160,89,.2);border-radius:10px;padding:4px;margin-top:9px}
+    .pf-cov button{flex:1;background:transparent;border:0;color:rgba(255,255,255,.6);font-size:11px;padding:8px 6px;border-radius:7px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;transition:background .18s,color .18s}
+    .pf-cov button.on{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#1a1410}
+    .pf-autorow{display:flex;align-items:center;gap:8px;margin-top:11px}
+    .pf-autorow button{background:transparent;border:1px solid rgba(197,160,89,.4);color:#f1dca7;font-size:10.5px;letter-spacing:.05em;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Inter,sans-serif;transition:background .15s}
+    .pf-autorow button:hover{background:rgba(197,160,89,.08)}
+    .pf-autorow .pf-clear{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.55)}
+    .pf-autorow .pf-clear:hover{background:rgba(255,255,255,.04)}
+    /* role list — tight rows, title left, small number stepper right */
+    .pf-roles{border:1px solid rgba(255,255,255,.1);border-radius:11px;overflow:hidden;background:rgba(0,0,0,.2);margin-top:2px}
+    .pf-roles-hdr{background:rgba(255,255,255,.03);color:#c5a059;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;padding:6px 12px 4px}
+    .pf-role{display:flex;align-items:center;gap:10px;padding:5px 12px;border-top:1px solid rgba(255,255,255,.05)}
+    .pf-role .pf-role-name{flex:1 1 auto;font-size:12px;line-height:1.2;color:rgba(255,255,255,.82)}
+    .pf-role.zero .pf-role-name{color:rgba(255,255,255,.5)}
+    .pf-step{display:inline-flex;align-items:stretch;flex:0 0 auto}
+    .pf-step button{width:22px;background:rgba(197,160,89,.1);border:1px solid rgba(197,160,89,.25);color:#f1dca7;font-size:15px;line-height:1;cursor:pointer;font-family:Inter,sans-serif;padding:0}
+    .pf-step button:first-child{border-radius:7px 0 0 7px}
+    .pf-step button:last-child{border-radius:0 7px 7px 0}
+    .pf-step button:hover{background:rgba(197,160,89,.22)}
+    .pf-step input{width:46px;height:26px;text-align:center;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.25);border-left:0;border-right:0;color:#fff;font-size:12.5px;font-family:Cinzel,serif;font-weight:700;box-sizing:border-box;-moz-appearance:textfield}
+    .pf-step input::-webkit-outer-spin-button,.pf-step input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    .pf-step input:focus{outline:none;border-color:#c5a059}
+    /* ---- RIGHT: minimal result ---- */
+    .pf-result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:4px}
     .pf-donut-wrap{position:relative;width:150px;height:150px}
     .pf-donut{width:150px;height:150px;transform:rotate(-90deg)}
     .pf-donut circle{fill:none;stroke-width:16;stroke-linecap:butt}
@@ -280,22 +252,39 @@
     .pf-donut.neg .pf-donut-save{stroke:#e78d8d}
     .pf-donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 6px}
     .pf-donut-big{font-family:Cinzel,serif;font-weight:700;font-size:21px;line-height:1.05;color:#5fd08a}
-    .pf-donut.neg ~ .pf-donut-center .pf-donut-big,.pf-donut-center.neg .pf-donut-big{color:#f1dca7}
-    .pf-donut-pct{font-family:Cinzel,serif;font-weight:700;font-size:13px;color:#f1dca7;margin-top:2px}
+    .pf-donut-center.neg .pf-donut-big{color:#f1dca7}
+    .pf-donut-pct{font-family:Cinzel,serif;font-weight:700;font-size:12.5px;color:#f1dca7;margin-top:2px}
     .pf-donut-small{color:rgba(255,255,255,.55);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
-    .pf-donut-legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 0;font-size:11.5px;color:rgba(255,255,255,.66)}
-    .pf-donut-legend span{display:inline-flex;align-items:center;gap:6px}
-    .pf-donut-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
-    .pf-quote-btn{margin-top:16px;display:inline-flex;align-items:center;gap:9px;background:transparent;border:1px solid rgba(197,160,89,.5);color:#f1dca7;padding:11px 20px;border-radius:11px;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:background .15s,box-shadow .15s}
+    .pf-oneline{font-size:12.5px;line-height:1.65;color:rgba(255,255,255,.72);max-width:280px}
+    .pf-oneline b{font-family:Cinzel,serif;white-space:nowrap}
+    .pf-oneline .trad{color:#e78d8d}.pf-oneline .aria{color:#f1dca7}.pf-oneline .save{color:#5fd08a}
+    .pf-quote-btn{display:inline-flex;align-items:center;gap:9px;background:transparent;border:1px solid rgba(197,160,89,.5);color:#f1dca7;padding:11px 20px;border-radius:11px;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:background .15s,box-shadow .15s}
     .pf-quote-btn:hover{background:rgba(197,160,89,.1);box-shadow:0 10px 26px rgba(197,160,89,.22)}
+    .pf-quote-btn[disabled]{opacity:.4;cursor:not-allowed}
     .pf-quote-btn svg{width:15px;height:15px}
-    /* ---- Print-only branded quote (fix 5): self-contained, no CDN, no server call. ---- */
-    #pf-quote{display:none}
+    /* ---- collapsed assumptions (Rule 14: transparent + adjustable, tucked away) ---- */
+    .pf-adj{margin-top:16px;border:1px solid rgba(197,160,89,.2);border-radius:12px;background:rgba(0,0,0,.25);padding:0 14px}
+    .pf-adj summary{cursor:pointer;color:#f1dca7;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:12px 0;list-style:none;display:flex;justify-content:space-between;align-items:center}
+    .pf-adj summary::-webkit-details-marker{display:none}
+    .pf-adj summary::after{content:'+';color:#c5a059;font-size:16px;font-weight:700}
+    .pf-adj[open] summary::after{content:'\2212'}
+    .pf-adj-body{padding:2px 0 14px}
+    .pf-adj-sub{color:#c5a059;font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin:12px 0 8px;font-weight:700}
+    .pf-adj-sub.first{margin-top:2px}
+    .pf-adj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+    .pf-adj-fld label{display:block;color:rgba(255,255,255,.7);font-size:10.5px;letter-spacing:.02em;margin-bottom:4px}
+    .pf-adj-fld input{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.25);color:#fff;padding:8px 10px;border-radius:8px;font-size:13px;font-family:Inter,sans-serif;box-sizing:border-box}
+    .pf-adj-fld input:focus{outline:none;border-color:#c5a059;box-shadow:0 0 0 3px rgba(197,160,89,.15)}
+    .pf-calc-foot{color:rgba(255,255,255,.42);font-size:11px;line-height:1.55;margin:14px auto 0;text-align:center;max-width:760px}
+    /* ---- Print-only branded quote (self-contained, no CDN, no server call).
+         Hardened so it can NEVER leak onto the on-screen page (fix 2): kept display:none AND clipped off-screen
+         on screen; only the print media query reveals it. ---- */
+    #pf-quote{display:none !important;position:absolute;left:-99999px;top:0;width:0;height:0;overflow:hidden}
     @media print{
       body{background:#fff !important;color:#12100c !important}
       body *{visibility:hidden}
       #pf-quote,#pf-quote *{visibility:visible}
-      #pf-quote{display:block;position:absolute;left:0;top:0;width:100%;padding:0;color:#12100c;font-family:Inter,Arial,sans-serif}
+      #pf-quote{display:block !important;position:absolute;left:0;top:0;width:100%;height:auto;overflow:visible;padding:0;color:#12100c;font-family:Inter,Arial,sans-serif}
       #pf-quote .q-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #c5a059;padding-bottom:14px;margin-bottom:18px}
       #pf-quote .q-brand{font-family:Cinzel,serif;font-weight:700;letter-spacing:.14em;font-size:16px;color:#12100c}
       #pf-quote .q-brand small{display:block;font-family:Inter,sans-serif;font-weight:400;letter-spacing:.04em;font-size:11px;color:#6b6250;margin-top:3px}
@@ -318,66 +307,53 @@
       @page{margin:14mm}
     }
   </style>
-  <section class="pf-save" aria-label="Staffing-cost calculator">
-    <div class="pf-save-head">
+  <section class="pf-calc" aria-label="Staffing-cost calculator">
+    <div class="pf-calc-head">
       <p class="eyebrow">Run the numbers</p>
-      <h2>What a real L1&ndash;L3 service desk costs to staff in-house</h2>
-      <p>Drag your business size &mdash; we build the entire 24/7 service-desk org you&rsquo;d otherwise hire, role by role, and price it live against ARIA. Every role, ratio, salary and multiplier is labeled and yours to change.</p>
+      <h2>Build your service desk &mdash; see what it costs vs ARIA</h2>
+      <p>Enter your team size, then add how many of each role you&rsquo;d staff in-house (every field is optional). We price your desk live against the matching ARIA plan. Every salary and multiplier is yours to change.</p>
     </div>
-    <div class="pf-save-body">
-      <div class="pf-save-controls">
-        <div class="pf-ctl">
-          <label>Your team size &mdash; <span class="pf-ctl-val" id="sv-users-val">250</span> employees</label>
-          <div class="pf-users-entry">
-            <input type="number" id="sv-users-num" min="1" max="100000" step="1" value="250" inputmode="numeric" aria-label="Enter your number of users">
+    <div class="pf-calc-body">
+      <div class="pf-calc-left">
+        <div>
+          <p class="pf-sec-label">Number of users &mdash; <span id="sv-users-val">250</span> employees</p>
+          <div class="pf-users-row">
+            <input type="number" id="sv-users-num" min="1" max="100000" step="1" value="250" inputmode="numeric" aria-label="Number of users">
+            <input type="range" id="sv-users" min="1" max="2000" step="1" value="250" aria-label="Number of users slider">
           </div>
-          <input type="range" id="sv-users" min="1" max="2000" step="1" value="250">
-          <div class="pf-range-ends"><span>1</span><span>2,000+</span></div>
-        </div>
-        <div class="pf-ctl">
-          <label>Support coverage</label>
-          <div class="pf-basis" id="sv-cov" role="tablist">
+          <div class="pf-cov" id="sv-cov" role="tablist" aria-label="Support coverage">
             <button type="button" data-cov="always" class="on">24/7 always-on</button>
             <button type="button" data-cov="hours">Business hours</button>
           </div>
+          <div class="pf-autorow">
+            <button type="button" id="sv-autofill">Auto-fill typical team for <span id="sv-auto-n">250</span></button>
+            <button type="button" class="pf-clear" id="sv-clear">Clear</button>
+          </div>
         </div>
-        <div class="pf-ctl">
-          <label>Which desk roles would you staff?</label>
-          <div class="pf-rolepick" id="sv-rolepick"></div>
-          <p class="pf-basis-note">Default is a full L1&ndash;L3 desk. Untick any role you wouldn&rsquo;t hire &mdash; only ticked roles count toward the in-house cost. Head-counts scale with your size, and a 24/7 desk needs ~4.2&times; the shift roles.</p>
+        <div>
+          <p class="pf-sec-label">Build your desk &mdash; how many of each?</p>
+          <div class="pf-roles" id="sv-roles"></div>
         </div>
       </div>
-      <div class="pf-save-viz">
-        <div class="pf-save-readout">
-          <div class="pf-donut-wrap">
-            <svg class="pf-donut" id="sv-donut" viewBox="0 0 120 120" aria-hidden="true">
-              <defs><linearGradient id="svGoldGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c5a059"/><stop offset="1" stop-color="#f1dca7"/></linearGradient></defs>
-              <circle class="pf-donut-track" cx="60" cy="60" r="52"></circle>
-              <circle class="pf-donut-aria" id="sv-donut-aria" cx="60" cy="60" r="52"></circle>
-              <circle class="pf-donut-save" id="sv-donut-save" cx="60" cy="60" r="52"></circle>
-            </svg>
-            <div class="pf-donut-center" id="sv-donut-center">
-              <div class="pf-donut-big" id="sv-donut-big">$0</div>
-              <div class="pf-donut-pct" id="sv-donut-pct"></div>
-              <div class="pf-donut-small" id="sv-donut-small">saved / yr</div>
-            </div>
-          </div>
-          <div class="pf-readout-txt">
-            <div class="pf-vs">
-              <div class="pf-vs-row pf-vs-trad"><span>In-house desk / yr</span><b id="sv-trad-amt">$0</b></div>
-              <div class="pf-vs-row pf-vs-aria"><span id="sv-aria-name">ARIA / yr</span><b id="sv-aria-amt">$0</b></div>
-            </div>
-            <p class="pf-save-headline pos" id="sv-headline">&mdash;</p>
-            <p class="pf-save-sub" id="sv-subline"></p>
-            <p class="pf-donut-legend" id="sv-donut-legend"></p>
+      <div class="pf-result">
+        <div class="pf-donut-wrap">
+          <svg class="pf-donut" id="sv-donut" viewBox="0 0 120 120" aria-hidden="true">
+            <defs><linearGradient id="svGoldGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c5a059"/><stop offset="1" stop-color="#f1dca7"/></linearGradient></defs>
+            <circle class="pf-donut-track" cx="60" cy="60" r="52"></circle>
+            <circle class="pf-donut-aria" id="sv-donut-aria" cx="60" cy="60" r="52"></circle>
+            <circle class="pf-donut-save" id="sv-donut-save" cx="60" cy="60" r="52"></circle>
+          </svg>
+          <div class="pf-donut-center" id="sv-donut-center">
+            <div class="pf-donut-big" id="sv-donut-big">&mdash;</div>
+            <div class="pf-donut-pct" id="sv-donut-pct"></div>
+            <div class="pf-donut-small" id="sv-donut-small"></div>
           </div>
         </div>
-        <p class="pf-tier-tag" id="sv-tier-tag"></p>
-        <button type="button" class="pf-quote-btn" id="sv-quote-btn">
+        <p class="pf-oneline" id="sv-oneline">Add your team on the left, or hit <b>Auto-fill</b>.</p>
+        <button type="button" class="pf-quote-btn" id="sv-quote-btn" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Download quote (PDF)
         </button>
-        <div class="pf-time-line" id="sv-time"></div>
       </div>
     </div>
     <details class="pf-adj">
@@ -385,18 +361,13 @@
       <div class="pf-adj-body">
         <p class="pf-adj-sub first">Loaded salary &mdash; $/role/yr</p>
         <div class="pf-adj-grid" id="sv-adj-sal"></div>
-        <p class="pf-adj-sub">Frontline ratios &mdash; 1 role per N employees</p>
-        <div class="pf-adj-grid" id="sv-adj-front"></div>
-        <p class="pf-adj-sub">Support &amp; process ratios</p>
+        <p class="pf-adj-sub">Auto-fill ratios &mdash; 1 role per N (used by the auto-fill button)</p>
         <div class="pf-adj-grid" id="sv-adj-ratio"></div>
-        <p class="pf-adj-sub">Role thresholds &mdash; role starts at N employees</p>
-        <div class="pf-adj-grid" id="sv-adj-thr"></div>
-        <p class="pf-adj-sub">Coverage multiplier &amp; employee time</p>
+        <p class="pf-adj-sub">Coverage multiplier</p>
         <div class="pf-adj-grid" id="sv-adj-cov"></div>
-        <p class="pf-tier-map-note" id="sv-tier-map"></p>
       </div>
     </details>
-    <p class="pf-save-foot">Estimates from typical loaded IT salaries + service-desk staffing ratios &mdash; adjust to your reality. L1 is always staffed; L2, L3, supervision, quality, ITIL and leadership roles phase in as you grow. 24/7 coverage needs about 4.2&times; the shift roles (168h &divide; 40h). Nothing here is a guarantee; it&rsquo;s a transparent model you control.</p>
+    <p class="pf-calc-foot">Estimates from typical loaded IT salaries &mdash; adjust to your reality. Everything defaults to 0: build your own desk, or auto-fill a typical L1&ndash;L3 team for your size. A 24/7 desk needs about 4.2&times; the shift roles (168h &divide; 40h), applied once. Nothing here is a guarantee &mdash; it&rsquo;s a transparent model you control.</p>
   </section>
   <script>
   (function(){
@@ -405,10 +376,10 @@
     var lastModel=null;
     function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
     function clamp(v,min,max){return Math.min(Math.max(v,min),max);}
-    // Every adjustable input is parsed + CLAMPED to a sane range so totals can never explode (fix 2).
-    function readField(id,def,min,max){var el=$(id);if(!el)return def;var v=parseFloat(el.value);if(!isFinite(v))return def;return clamp(v,min,max);}
+    function readNum(id,def,min,max){var el=$(id);if(!el)return def;var v=parseFloat(el.value);if(!isFinite(v))return def;return clamp(v,min,max);}
 
-    // ---- Model config (Rule 14: every default is a labeled, adjustable input) ----
+    // ---- Roles (Rule 14: every salary is a labeled, adjustable input). shift:true → must be covered on every
+    // shift, so it is multiplied by the 24/7 factor exactly once. Counts come from the LEFT number inputs. ----
     var GROUPS=[
       {key:'frontline',  label:'Frontline'},
       {key:'supervision',label:'Supervision'},
@@ -416,68 +387,35 @@
       {key:'itil',       label:'ITIL process'},
       {key:'leadership', label:'Leadership'}
     ];
-    // shift:true roles must be covered on every shift → multiplied by the 24/7 factor.
     var ROLES=[
-      {id:'l1',  group:'frontline',  name:'L1 Service-Desk Agents',            hint:'First response · tier-1',      salary:60000,  shift:true},
-      {id:'l2',  group:'frontline',  name:'L2 Support Analysts',               hint:'Escalation · deeper triage',   salary:80000,  shift:true},
-      {id:'l3',  group:'frontline',  name:'L3 Engineers / SMEs',               hint:'Deep fixes · subject experts', salary:115000, shift:true},
-      {id:'tl',  group:'supervision',name:'Shift Team Leads',                  hint:'Run each shift',               salary:95000,  shift:true},
-      {id:'mgr', group:'supervision',name:'Service-Desk Manager',              hint:'Owns the desk',                salary:130000, shift:false},
-      {id:'qa',  group:'quality',    name:'QA / Quality Analysts',             hint:'Call & ticket quality',        salary:75000,  shift:false},
-      {id:'wfm', group:'quality',    name:'Workforce Mgmt / Scheduler',        hint:'Shift planning (24/7)',        salary:70000,  shift:false},
-      {id:'km',  group:'quality',    name:'Knowledge Manager',                 hint:'Owns the KB',                  salary:90000,  shift:false},
-      {id:'rep', group:'quality',    name:'Reporting / SLA Analyst',           hint:'SLA & metrics',                salary:80000,  shift:false},
-      {id:'proc',group:'itil',       name:'Incident / Problem / Change Mgr',   hint:'ITIL process owners',          salary:120000, shift:false},
-      {id:'trn', group:'itil',       name:'Training Coordinator',              hint:'Onboards & upskills',          salary:70000,  shift:false},
-      {id:'dir', group:'leadership', name:'IT Director / Head of Service Desk',hint:'Owns service delivery',        salary:200000, shift:false}
+      {id:'l1',  group:'frontline',  name:'Support agents (L1)',              salary:60000,  shift:true},
+      {id:'l2',  group:'frontline',  name:'L2 analysts',                      salary:80000,  shift:true},
+      {id:'l3',  group:'frontline',  name:'L3 engineers / SMEs',              salary:115000, shift:true},
+      {id:'tl',  group:'supervision',name:'Team lead',                        salary:95000,  shift:true},
+      {id:'mgr', group:'supervision',name:'Service-desk manager',             salary:130000, shift:false},
+      {id:'qa',  group:'quality',    name:'QA',                               salary:75000,  shift:false},
+      {id:'wfm', group:'quality',    name:'Workforce / scheduler',            salary:70000,  shift:false},
+      {id:'km',  group:'quality',    name:'Knowledge manager',                salary:90000,  shift:false},
+      {id:'rep', group:'quality',    name:'Reporting / SLA analyst',          salary:80000,  shift:false},
+      {id:'proc',group:'itil',       name:'Incident / Problem / Change mgr',  salary:120000, shift:false},
+      {id:'trn', group:'itil',       name:'Training coordinator',             salary:70000,  shift:false},
+      {id:'dir', group:'leadership', name:'IT leadership',                    salary:200000, shift:false}
     ];
-    var ROLE_BY_ID={};ROLES.forEach(function(r){ROLE_BY_ID[r.id]=r;});
-    var SAL_MIN=1000, SAL_MAX=2000000;
-    // Frontline ratios can't drop below 5 employees-per-agent (a whole desk per handful of staff is not real) → prevents runaway counts.
-    var RATIO_FRONT=[
-      {k:'rL1',label:'L1 — 1 per',def:50,min:5,max:100000},
-      {k:'rL2',label:'L2 — 1 per',def:150,min:5,max:100000},
-      {k:'rL3',label:'L3 — 1 per',def:400,min:5,max:100000}
-    ];
-    var RATIO_SUP=[
-      {k:'rTL', label:'Team Lead — 1 / N frontline',def:10,min:1,max:100000},
-      {k:'rMgr',label:'Manager — 1 / N frontline',def:40,min:1,max:100000},
-      {k:'rQA', label:'QA — 1 / N frontline',def:25,min:1,max:100000},
-      {k:'rWFM',label:'Scheduler — 1 / N frontline',def:40,min:1,max:100000},
-      {k:'rKM', label:'Knowledge — 1 / N users',def:500,min:1,max:100000},
-      {k:'rProc',label:'Process Mgr — 1 / N users',def:500,min:1,max:100000},
-      {k:'rTrn',label:'Trainer — 1 / N users',def:800,min:1,max:100000}
-    ];
-    var THRESH=[
-      {k:'tMgr', label:'Manager starts at',def:75,min:1,max:100000},
-      {k:'tWFM', label:'Scheduler starts at',def:100,min:1,max:100000},
-      {k:'tKM',  label:'Knowledge starts at',def:100,min:1,max:100000},
-      {k:'tRep', label:'Reporting starts at',def:150,min:1,max:100000},
-      {k:'tProc',label:'Process Mgr starts at',def:250,min:1,max:100000},
-      {k:'tTrn', label:'Training starts at',def:200,min:1,max:100000},
-      {k:'tDir', label:'Director starts at',def:100,min:1,max:100000}
-    ];
-    // 24/7 multiplier CLAMPED 1–10 and applied exactly ONCE (fix 2 — no compounding).
-    var COVF=[
-      {k:'mult',     label:'24/7 multiplier (×)',def:4.2,min:1,max:10},
-      {k:'wait',     label:'Avg helpdesk wait (hrs)',def:4,min:0,max:100},
-      {k:'incidents',label:'Incidents / user / mo',def:2,min:0,max:100}
-    ];
-    var ALL_KNOBS=RATIO_FRONT.concat(RATIO_SUP,THRESH,COVF);
+    var CNT_MAX=100000, SAL_MIN=1000, SAL_MAX=2000000;
+    // L1 auto-fill is capped at this so a big org doesn't balloon the suggested desk (still freely adjustable).
+    var L1_CAP=20;
 
-    function fld(id,label,val,min,max){
-      return '<div class="pf-adj-fld"><label>'+label+'</label><input type="number" id="'+id+'" value="'+val+'" min="'+min+'" max="'+max+'" step="any"></div>';
-    }
-    function buildAdj(){
-      $('sv-adj-sal').innerHTML=ROLES.map(function(r){return fld('sv-s-'+r.id,r.name,r.salary,SAL_MIN,SAL_MAX);}).join('');
-      $('sv-adj-front').innerHTML=RATIO_FRONT.map(function(x){return fld('sv-k-'+x.k,x.label,x.def,x.min,x.max);}).join('');
-      $('sv-adj-ratio').innerHTML=RATIO_SUP.map(function(x){return fld('sv-k-'+x.k,x.label,x.def,x.min,x.max);}).join('');
-      $('sv-adj-thr').innerHTML=THRESH.map(function(x){return fld('sv-k-'+x.k,x.label,x.def,x.min,x.max);}).join('');
-      $('sv-adj-cov').innerHTML=COVF.map(function(x){return fld('sv-k-'+x.k,x.label,x.def,x.min,x.max);}).join('');
-    }
+    // Auto-fill ratios (used ONLY by the auto-fill button). Frontline = 1 per N users; support roles = 1 per N
+    // frontline or users, with a size threshold before the role appears. All adjustable in the panel.
+    var RATIOS=[
+      {k:'rL1', label:'L1 — 1 per',def:50,min:5,max:100000},
+      {k:'rL2', label:'L2 — 1 per',def:150,min:5,max:100000},
+      {k:'rL3', label:'L3 — 1 per',def:400,min:5,max:100000}
+    ];
+    var COVF=[{k:'mult',label:'24/7 multiplier (×)',def:4.2,min:1,max:10}];
 
-    // ARIA annual price = the seat tier matching the business size. GENEROUS bands (fix 1) so that across the
-    // whole slider, in the default 24/7 state, the ARIA price stays at or below the traditional desk cost.
+    // ARIA annual price = the seat tier matching the business size. GENEROUS bands so ARIA is never pricier than a
+    // full in-house desk by default (matches the published plan prices above).
     var TIER_BANDS=[
       {name:'Personal',      max:5,       yr:10788},
       {name:'Pro',           max:40,      yr:27000},
@@ -487,141 +425,124 @@
     ];
     function ariaTier(n){for(var i=0;i<TIER_BANDS.length;i++){if(n<=TIER_BANDS[i].max)return TIER_BANDS[i];}return TIER_BANDS[TIER_BANDS.length-1];}
 
-    // Size is driven by the manual number field (primary) — two-way synced with the slider (fix 3).
-    function readSize(){
-      var el=$('sv-users-num');var v=el?parseInt(el.value,10):NaN;
-      if(!isFinite(v)){v=parseInt($('sv-users').value,10);}
-      if(!isFinite(v))v=1;
-      return clamp(Math.round(v),1,100000);
+    function readSize(){var el=$('sv-users-num');var v=el?parseInt(el.value,10):NaN;if(!isFinite(v)){v=parseInt($('sv-users').value,10);}if(!isFinite(v))v=1;return clamp(Math.round(v),1,100000);}
+
+    // ---- Build the LEFT role list (each role a small stepper, default 0) ----
+    function buildRoles(){
+      var html='';
+      GROUPS.forEach(function(g){
+        html+='<div class="pf-roles-hdr">'+g.label+'</div>';
+        ROLES.filter(function(r){return r.group===g.key;}).forEach(function(r){
+          html+='<div class="pf-role zero" id="sv-role-'+r.id+'">'
+            +'<span class="pf-role-name">'+r.name+'</span>'
+            +'<span class="pf-step">'
+              +'<button type="button" data-step="-1" data-id="'+r.id+'" aria-label="decrease '+r.name+'">&minus;</button>'
+              +'<input type="number" id="sv-c-'+r.id+'" value="0" min="0" max="'+CNT_MAX+'" step="1" inputmode="numeric" aria-label="'+r.name+' count">'
+              +'<button type="button" data-step="1" data-id="'+r.id+'" aria-label="increase '+r.name+'">+</button>'
+            +'</span></div>';
+        });
+      });
+      $('sv-roles').innerHTML=html;
     }
-    function knobs(){
-      var k={size:readSize(),always:cov==='always'};
-      ALL_KNOBS.forEach(function(x){k[x.k]=readField('sv-k-'+x.k,x.def,x.min,x.max);});
-      return k;
-    }
-    // Head-counts — tiny shop shows ~1 L1 and 0 of the rest, filling to a full org. Each role's base head-count is
-    // capped at the employee count (you'd never staff more of one role than you have people) so nothing blows up.
-    function counts(k){
-      var cap=function(n){return clamp(Math.round(n),0,k.size);};
-      var l1=clamp(Math.max(1,Math.ceil(k.size/k.rL1)),1,k.size);
-      var l2=cap(Math.floor(k.size/k.rL2));
-      var l3=cap(Math.floor(k.size/k.rL3));
-      var fl=l1+l2+l3;
-      return {
-        l1:l1, l2:l2, l3:l3,
-        tl:cap(Math.floor((l1+l2)/k.rTL)),
-        mgr:k.size>=k.tMgr?cap(Math.max(1,Math.ceil(fl/k.rMgr))):0,
-        qa:cap(Math.floor(fl/k.rQA)),
-        wfm:(k.always&&k.size>=k.tWFM)?cap(Math.max(1,Math.ceil(fl/k.rWFM))):0,
-        km:k.size>=k.tKM?cap(Math.ceil(k.size/k.rKM)):0,
-        rep:k.size>=k.tRep?1:0,
-        proc:k.size>=k.tProc?cap(Math.min(3,Math.ceil(k.size/k.rProc))):0,
-        trn:k.size>=k.tTrn?cap(Math.ceil(k.size/k.rTrn)):0,
-        dir:k.size>=k.tDir?1:0
-      };
+    function fld(id,label,val,min,max){return '<div class="pf-adj-fld"><label>'+label+'</label><input type="number" id="'+id+'" value="'+val+'" min="'+min+'" max="'+max+'" step="any"></div>';}
+    function buildAdj(){
+      $('sv-adj-sal').innerHTML=ROLES.map(function(r){return fld('sv-s-'+r.id,r.name,r.salary,SAL_MIN,SAL_MAX);}).join('');
+      $('sv-adj-ratio').innerHTML=RATIOS.map(function(x){return fld('sv-r-'+x.k,x.label,x.def,x.min,x.max);}).join('');
+      $('sv-adj-cov').innerHTML=COVF.map(function(x){return fld('sv-k-'+x.k,x.label,x.def,x.min,x.max);}).join('');
     }
 
-    // ---- Savings donut (fix 4): whole ring = traditional cost, gold = ARIA, green = you save. ----
+    // ---- Savings donut: whole ring = traditional cost, gold = ARIA, green = you save. ----
     var DONUT_C=2*Math.PI*52;
-    function setArc(el,frac,offsetFrac){
-      var len=clamp(frac,0,1)*DONUT_C;
-      el.style.strokeDasharray=len.toFixed(2)+' '+(DONUT_C-len).toFixed(2);
-      el.style.strokeDashoffset=(-clamp(offsetFrac,0,1)*DONUT_C).toFixed(2);
-    }
-    function renderDonut(trad,aria,save){
-      var svg=$('sv-donut'),center=$('sv-donut-center'),ariaEl=$('sv-donut-aria'),saveEl=$('sv-donut-save');
-      var big=$('sv-donut-big'),pct=$('sv-donut-pct'),small=$('sv-donut-small'),legend=$('sv-donut-legend');
+    function setArc(el,frac,offsetFrac){var len=clamp(frac,0,1)*DONUT_C;el.style.strokeDasharray=len.toFixed(2)+' '+(DONUT_C-len).toFixed(2);el.style.strokeDashoffset=(-clamp(offsetFrac,0,1)*DONUT_C).toFixed(2);}
+    function renderDonut(trad,aria,save,empty){
+      var center=$('sv-donut-center'),ariaEl=$('sv-donut-aria'),saveEl=$('sv-donut-save');
+      var big=$('sv-donut-big'),pct=$('sv-donut-pct'),small=$('sv-donut-small');
+      if(empty){
+        setArc(ariaEl,0,0);setArc(saveEl,0,0);center.classList.remove('neg');
+        big.textContent='—';pct.textContent='';small.textContent='';return;
+      }
       if(save>=0&&trad>0){
         var af=aria/trad, sf=save/trad;
-        setArc(ariaEl,af,0); setArc(saveEl,sf,af);
-        svg.classList.remove('neg'); center.classList.remove('neg');
-        big.textContent=money(save);
-        pct.textContent=Math.round(sf*100)+'% saved';
-        small.textContent='per year';
-        legend.innerHTML='<span><i style="background:#c5a059"></i>ARIA '+money(aria)+'</span><span><i style="background:#5fd08a"></i>You save '+money(save)+'</span>';
+        setArc(ariaEl,af,0);setArc(saveEl,sf,af);center.classList.remove('neg');
+        big.textContent=money(save);pct.textContent=Math.round(sf*100)+'% saved';small.textContent='per year';
       }else{
-        // ARIA costs more here — honest flip: whole ring = ARIA cost, gold = in-house-equivalent, red = the extra.
         var whole=aria>0?aria:1, extra=aria-trad;
-        setArc(ariaEl,trad/whole,0); setArc(saveEl,extra/whole,trad/whole);
-        svg.classList.add('neg'); center.classList.add('neg');
-        big.textContent=money(aria);
-        pct.textContent='ARIA / yr';
-        small.textContent='always-on';
-        legend.innerHTML='<span><i style="background:#c5a059"></i>In-house equiv '+money(trad)+'</span><span><i style="background:#e78d8d"></i>+'+money(extra)+' for 24/7 + fleet</span>';
+        setArc(ariaEl,trad/whole,0);setArc(saveEl,extra/whole,trad/whole);center.classList.add('neg');
+        big.textContent=money(aria);pct.textContent='ARIA / yr';small.textContent='always-on';
       }
     }
 
     function calc(){
-      var k=knobs();
-      $('sv-users-val').textContent=k.size.toLocaleString('en-US');
-      var cnt=counts(k), mult=k.mult, always=k.always;
-      var total=0, headcount=0, rolesOut=[];
-      // Each role's size-based head-count counts ONLY if its checklist box is ticked (client picks their desk).
+      var size=readSize(), m=readNum('sv-k-mult',4.2,1,10), always=cov==='always';
+      $('sv-users-val').textContent=size.toLocaleString('en-US');
+      $('sv-auto-n').textContent=size.toLocaleString('en-US');
+      var total=0, headcount=0, any=false, rolesOut=[];
       ROLES.forEach(function(r){
-        var box=$('sv-pick-'+r.id);
-        var picked=box?box.checked:true;
-        var base=picked?(cnt[r.id]||0):0;
-        var shiftOn=r.shift&&always&&base>0;
-        var eff=shiftOn?Math.round(base*mult):base; // 24/7 multiplier applied exactly once
-        var salary=readField('sv-s-'+r.id,r.salary,SAL_MIN,SAL_MAX);
+        var base=Math.round(readNum('sv-c-'+r.id,0,0,CNT_MAX));
+        if(base>0)any=true;
+        var eff=(r.shift&&always&&base>0)?Math.round(base*m):base; // 24/7 multiplier applied exactly once
+        var salary=readNum('sv-s-'+r.id,r.salary,SAL_MIN,SAL_MAX);
         var cost=eff*salary; total+=cost; headcount+=eff;
         if(eff>0)rolesOut.push({name:r.name,count:eff,cost:cost});
-        var row=$('sv-row-'+r.id), cel=$('sv-cnt-'+r.id);
-        if(cel)cel.textContent=eff>0?eff:'—';
-        if(row){row.classList.toggle('off',!picked);row.title=r.hint+(eff>0?' — '+eff+' × '+money(salary)+'/yr = '+money(cost):'');}
+        var row=$('sv-role-'+r.id); if(row)row.classList.toggle('zero',base<=0);
       });
-
-      var tier=ariaTier(k.size), aria=tier.yr, trad=total;
-      $('sv-trad-amt').textContent=money(trad);
-      $('sv-aria-amt').textContent=money(aria);
-      $('sv-aria-name').textContent='ARIA '+tier.name+' / yr';
-      $('sv-tier-tag').innerHTML='At <b>'+k.size.toLocaleString('en-US')+'</b> employees, the matching plan is <b>ARIA '+tier.name+'</b> ('+money(aria)+'/yr) · '+headcount.toLocaleString('en-US')+' in-house staff, '+(always?'24/7':'business-hours')+' coverage.';
-
-      var save=trad-aria, hl=$('sv-headline'), sub=$('sv-subline');
-      if(save>0){
-        hl.className='pf-save-headline pos';
-        hl.textContent='You save '+money(save)+'/yr';
-        sub.textContent='ARIA runs this L1–L3 desk 24/7, auto-fixing without a ticket — and it never calls in sick.';
-      }else if(save<0){
-        hl.className='pf-save-headline neg';
-        hl.textContent='ARIA is '+money(Math.abs(save))+'/yr more here';
-        sub.textContent='For that delta you also get 24/7 always-on auto-fix, fleet view and the compliance + SLA reporting you’d otherwise staff and tool for separately.';
-      }else{
-        hl.className='pf-save-headline neg';
-        hl.textContent='ARIA matches your in-house cost';
-        sub.textContent='Same spend, but 24/7 always-on auto-fix, fleet view and compliance + SLA reporting.';
+      var tier=ariaTier(size), aria=tier.yr, trad=total, save=trad-aria;
+      var one=$('sv-oneline'), qbtn=$('sv-quote-btn');
+      if(!any||trad<=0){
+        renderDonut(0,aria,0,true);
+        one.innerHTML='Add your team on the left, or hit <b>Auto-fill</b> for a typical desk.';
+        qbtn.disabled=true;
+        lastModel=null;
+        return;
       }
-      renderDonut(trad,aria,save);
-
-      var wait=k.wait, inc=k.incidents, hrs=k.size*inc*wait;
-      $('sv-time').innerHTML='ARIA answers in <b>seconds</b> vs a ~<b>'+(wait%1?wait:wait.toFixed(0))+'h</b> helpdesk wait → about <b>'+Math.round(hrs).toLocaleString('en-US')+' hrs/month</b> of employee time back.';
-      var tm=$('sv-tier-map');
-      if(tm)tm.innerHTML='ARIA price = the plan matching your size: <b>1&ndash;5</b> Personal '+money(10788)+'/yr · <b>6&ndash;40</b> Pro '+money(27000)+'/yr · <b>41&ndash;150</b> Small Business '+money(234000)+'/yr · <b>151&ndash;500</b> Mid-Size '+money(468000)+'/yr · <b>501+</b> Enterprise '+money(937500)+'/yr.';
-
-      lastModel={size:k.size,always:always,roles:rolesOut,headcount:headcount,trad:trad,tierName:tier.name,aria:aria,save:save,mult:mult,wait:wait,inc:inc};
+      renderDonut(trad,aria,save,false);
+      qbtn.disabled=false;
+      if(save>0){
+        one.innerHTML='In-house <b class="trad">'+money(trad)+'/yr</b> vs <b class="aria">ARIA '+tier.name+' '+money(aria)+'/yr</b> &rarr; save <b class="save">'+money(save)+'/yr</b>.';
+      }else if(save<0){
+        one.innerHTML='In-house <b class="trad">'+money(trad)+'/yr</b> vs <b class="aria">ARIA '+tier.name+' '+money(aria)+'/yr</b> &mdash; ARIA is <b class="aria">'+money(-save)+'/yr</b> more, and runs 24/7 with fleet + compliance built in.';
+      }else{
+        one.innerHTML='In-house <b class="trad">'+money(trad)+'/yr</b> matches <b class="aria">ARIA '+tier.name+' '+money(aria)+'/yr</b> &mdash; same spend, 24/7 auto-fix.';
+      }
+      lastModel={size:size,always:always,roles:rolesOut,headcount:headcount,trad:trad,tierName:tier.name,aria:aria,save:save,mult:m};
     }
 
-    // ---- Two-way slider ⇄ number-field sync (fix 3) ----
-    var slider=$('sv-users'), numIn=$('sv-users-num'), SLIDER_MAX=parseInt(slider.max,10)||2000;
-    slider.addEventListener('input',function(){numIn.value=slider.value;calc();});
-    numIn.addEventListener('input',function(){
-      var v=parseInt(numIn.value,10);
-      if(isFinite(v))slider.value=clamp(v,parseInt(slider.min,10)||1,SLIDER_MAX);
+    // ---- Auto-fill a typical L1–L3 desk for the current size (business-hours BASE counts; the 24/7 multiplier is
+    // applied later in calc()). L1 capped at L1_CAP so it stays sane. Every count remains freely adjustable. ----
+    function autofill(){
+      var n=readSize();
+      var rL1=readNum('sv-r-rL1',50,5,100000), rL2=readNum('sv-r-rL2',150,5,100000), rL3=readNum('sv-r-rL3',400,5,100000);
+      var l1=clamp(Math.max(1,Math.ceil(n/rL1)),0,L1_CAP);
+      var l2=clamp(Math.floor(n/rL2),0,n);
+      var l3=clamp(Math.floor(n/rL3),0,n);
+      var fl=l1+l2+l3;
+      var set={
+        l1:l1, l2:l2, l3:l3,
+        tl:clamp(Math.floor((l1+l2)/10),0,n),
+        mgr:n>=75?clamp(Math.max(1,Math.ceil(fl/40)),0,n):0,
+        qa:clamp(Math.floor(fl/25),0,n),
+        wfm:n>=100?clamp(Math.max(1,Math.ceil(fl/40)),0,n):0,
+        km:n>=100?clamp(Math.ceil(n/500),0,n):0,
+        rep:n>=150?1:0,
+        proc:n>=250?clamp(Math.min(3,Math.ceil(n/500)),0,n):0,
+        trn:n>=200?clamp(Math.ceil(n/800),0,n):0,
+        dir:n>=100?1:0
+      };
+      ROLES.forEach(function(r){var el=$('sv-c-'+r.id);if(el)el.value=set[r.id]||0;});
       calc();
-    });
-    numIn.addEventListener('blur',function(){numIn.value=readSize();calc();});
+    }
+    function clearAll(){ROLES.forEach(function(r){var el=$('sv-c-'+r.id);if(el)el.value=0;});calc();}
 
-    // ---- Download quote (PDF) via a print-optimized, self-contained layout (fix 5) ----
+    // ---- Download quote (PDF) via a print-optimized, self-contained layout ----
     function esc(s){return String(s).replace(/[&<>]/g,function(c){return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;';});}
     function buildQuote(){
-      if(!lastModel)calc();
+      if(!lastModel){calc();}
+      if(!lastModel)return;
       var m=lastModel;
       var d=new Date();
       var dateStr=d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
       var ref='IIS-'+d.getFullYear()+(''+(d.getMonth()+1)).slice(-2)+(''+d.getDate()).slice(-2)+'-'+m.size;
-      var rows=m.roles.map(function(r){
-        return '<tr><td>'+esc(r.name)+'</td><td class="n">'+r.count+'</td><td class="n">'+money(r.cost)+'</td></tr>';
-      }).join('');
+      var rows=m.roles.map(function(r){return '<tr><td>'+esc(r.name)+'</td><td class="n">'+r.count+'</td><td class="n">'+money(r.cost)+'</td></tr>';}).join('');
       var saveCard=m.save>=0
         ? '<div class="q-card q-save"><div class="q-k">You save / yr</div><div class="q-v">'+money(m.save)+'</div></div>'
         : '<div class="q-card"><div class="q-k">ARIA net add / yr</div><div class="q-v">'+money(Math.abs(m.save))+'</div></div>';
@@ -644,44 +565,42 @@
         +'</div>'
         +'<p class="q-lead">'+(m.save>=0
             ? 'ARIA runs this L1&ndash;L3 service desk for '+money(m.aria)+'/yr vs '+money(m.trad)+'/yr to staff it in-house — about <strong>'+savePct+'% less</strong>, 24/7 and auto-fixing without a ticket.'
-            : 'At this size ARIA is '+money(Math.abs(m.save))+'/yr more than the in-house team — and includes 24/7 always-on auto-fix, fleet view and compliance + SLA reporting you would otherwise staff and tool for separately.')+'</p>'
-        +'<div class="q-assume"><strong>Assumptions used (all adjustable):</strong> '
-          +'24/7 multiplier ×'+m.mult+' (applied once to shift roles) · '+m.inc+' incidents / user / month · ~'+m.wait+'h typical helpdesk wait · '
-          +'loaded IT salaries and service-desk staffing ratios per role. Change any assumption in the live calculator to match your reality.</div>'
+            : 'At this size ARIA is '+money(Math.abs(m.save))+'/yr more than the in-house team you built — and includes 24/7 always-on auto-fix, fleet view and compliance + SLA reporting you would otherwise staff and tool for separately.')+'</p>'
+        +'<div class="q-assume"><strong>Assumptions used (all adjustable):</strong> 24/7 multiplier ×'+m.mult+' (applied once to shift roles) · loaded IT salaries per role · role counts as you entered them. Change any assumption in the live calculator to match your reality.</div>'
         +'<div class="q-foot">Integrated IT Support Inc. · D-U-N-S 241726397 · Whitby, ON. This quote is a transparent cost model, not a binding offer or guarantee. ARIA pricing is per the published plan matching your size. Generated from iisupp.net/plans.</div>';
       $('pf-quote').innerHTML=html;
       window.print();
     }
-    $('sv-quote-btn').addEventListener('click',buildQuote);
 
-    // Build the left-hand role checklist (all ticked by default = a full L1–L3 desk; matches the v5 savings math).
-    function buildRolePick(){
-      var html='';
-      GROUPS.forEach(function(g){
-        html+='<div class="pf-rolepick-grouphdr">'+g.label+'</div>';
-        ROLES.filter(function(r){return r.group===g.key;}).forEach(function(r){
-          html+='<label class="pf-rolepick-row" id="sv-row-'+r.id+'" title="'+r.hint+'">'
-            +'<input type="checkbox" id="sv-pick-'+r.id+'" checked>'
-            +'<span class="rp-name">'+r.name+'</span>'
-            +'<span class="rp-count" id="sv-cnt-'+r.id+'">0</span></label>';
-        });
-      });
-      $('sv-rolepick').innerHTML=html;
-      $('sv-rolepick').addEventListener('change',calc);
-    }
-    buildRolePick();
+    // ---- Wire up ----
+    buildRoles();
     buildAdj();
+    var slider=$('sv-users'), numIn=$('sv-users-num'), SLIDER_MAX=parseInt(slider.max,10)||2000;
+    slider.addEventListener('input',function(){numIn.value=slider.value;calc();});
+    numIn.addEventListener('input',function(){var v=parseInt(numIn.value,10);if(isFinite(v))slider.value=clamp(v,parseInt(slider.min,10)||1,SLIDER_MAX);calc();});
+    numIn.addEventListener('blur',function(){numIn.value=readSize();calc();});
+
     var covWrap=$('sv-cov');
-    covWrap.addEventListener('click',function(e){
-      var b=e.target.closest('button[data-cov]'); if(!b)return;
-      cov=b.getAttribute('data-cov');
-      covWrap.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});
+    covWrap.addEventListener('click',function(e){var b=e.target.closest('button[data-cov]');if(!b)return;cov=b.getAttribute('data-cov');covWrap.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});calc();});
+
+    // Role steppers (+/-) and direct typing.
+    var rolesWrap=$('sv-roles');
+    rolesWrap.addEventListener('click',function(e){
+      var b=e.target.closest('button[data-step]');if(!b)return;
+      var id=b.getAttribute('data-id'), inp=$('sv-c-'+id);if(!inp)return;
+      var v=parseInt(inp.value,10);if(!isFinite(v))v=0;
+      inp.value=clamp(v+parseInt(b.getAttribute('data-step'),10),0,CNT_MAX);
       calc();
     });
-    ['sv-adj-sal','sv-adj-front','sv-adj-ratio','sv-adj-thr','sv-adj-cov'].forEach(function(id){
-      var c=$(id); if(!c)return;
-      c.addEventListener('input',calc); c.addEventListener('change',calc);
-    });
+    rolesWrap.addEventListener('input',calc);
+    rolesWrap.addEventListener('change',calc);
+
+    $('sv-autofill').addEventListener('click',autofill);
+    $('sv-clear').addEventListener('click',clearAll);
+    $('sv-quote-btn').addEventListener('click',buildQuote);
+
+    ['sv-adj-sal','sv-adj-ratio','sv-adj-cov'].forEach(function(id){var c=$(id);if(!c)return;c.addEventListener('input',calc);c.addEventListener('change',calc);});
+
     calc();
   })();
   </script>
