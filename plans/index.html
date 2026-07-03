@@ -244,6 +244,11 @@
     .pf-role.total{background:rgba(197,160,89,.06)}
     .pf-role.total .pf-role-name{color:#fff;font-weight:700}
     .pf-role.total .pf-role-cost{color:#f1dca7;font-family:Cinzel,serif;font-size:14px;font-weight:700}
+    .pf-role.group{grid-template-columns:1fr;background:rgba(255,255,255,.02);padding:9px 16px 6px}
+    .pf-role.group .pf-role-name{color:#c5a059;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:700}
+    .pf-role-name .pf-mult{color:#e6c079;font-size:9.5px;letter-spacing:.03em;margin-left:7px;background:rgba(197,160,89,.16);padding:1px 6px;border-radius:6px;vertical-align:middle;white-space:nowrap}
+    .pf-tier-map-note{color:rgba(255,255,255,.5);font-size:11px;line-height:1.65;margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
+    .pf-tier-map-note b{color:#f1dca7}
     .pf-bar-row{display:flex;flex-direction:column;gap:6px}
     .pf-bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px}
     .pf-bar-top .pf-bar-name{color:rgba(255,255,255,.8)}
@@ -268,15 +273,15 @@
   <section class="pf-save" aria-label="Staffing-cost calculator">
     <div class="pf-save-head">
       <p class="eyebrow">Run the numbers</p>
-      <h2>What an in-house IT team really costs</h2>
-      <p>Drag your business size &mdash; we build the L1&ndash;L3 team you&rsquo;d otherwise hire and price it live. Every ratio, salary and multiplier is labeled and yours to change.</p>
+      <h2>What a real L1&ndash;L3 service desk costs to staff in-house</h2>
+      <p>Drag your business size &mdash; we build the entire 24/7 service-desk org you&rsquo;d otherwise hire, role by role, and price it live against ARIA. Every role, ratio, salary and multiplier is labeled and yours to change.</p>
     </div>
     <div class="pf-save-body">
       <div class="pf-save-controls">
         <div class="pf-ctl">
-          <label>Business size &mdash; <span class="pf-ctl-val" id="sv-users-val">50</span> employees</label>
-          <input type="range" id="sv-users" min="5" max="1000" step="5" value="50">
-          <div class="pf-range-ends"><span>5</span><span>1,000</span></div>
+          <label>Business size &mdash; <span class="pf-ctl-val" id="sv-users-val">250</span> employees</label>
+          <input type="range" id="sv-users" min="5" max="2000" step="5" value="250">
+          <div class="pf-range-ends"><span>5</span><span>2,000</span></div>
         </div>
         <div class="pf-ctl">
           <label>Support coverage</label>
@@ -289,25 +294,17 @@
         <details class="pf-adj">
           <summary>Adjust the assumptions</summary>
           <div class="pf-adj-body">
-            <p class="pf-adj-sub first">Staffing ratios &mdash; 1 role per N employees</p>
-            <div class="pf-adj-grid">
-              <div class="pf-adj-fld"><label>L1 Techs &mdash; 1 per</label><input type="number" id="sv-r-l1" min="5" max="500" step="1" value="50"></div>
-              <div class="pf-adj-fld"><label>Senior Techs &mdash; 1 per</label><input type="number" id="sv-r-sr" min="20" max="1000" step="1" value="200"></div>
-              <div class="pf-adj-fld"><label>IT Management &mdash; 1 per</label><input type="number" id="sv-r-mg" min="30" max="1000" step="1" value="300"></div>
-              <div class="pf-adj-fld"><label>IT Leadership &mdash; 1 per</label><input type="number" id="sv-r-ld" min="100" max="2000" step="1" value="600"></div>
-            </div>
-            <p class="pf-adj-sub">Loaded salary &mdash; $/role/yr</p>
-            <div class="pf-adj-grid">
-              <div class="pf-adj-fld"><label>L1 Tech</label><input type="number" id="sv-s-l1" min="20000" max="500000" step="1000" value="70000"></div>
-              <div class="pf-adj-fld"><label>Senior Tech</label><input type="number" id="sv-s-sr" min="20000" max="500000" step="1000" value="115000"></div>
-              <div class="pf-adj-fld"><label>IT Manager</label><input type="number" id="sv-s-mg" min="20000" max="600000" step="1000" value="150000"></div>
-              <div class="pf-adj-fld"><label>IT Leadership</label><input type="number" id="sv-s-ld" min="20000" max="800000" step="1000" value="220000"></div>
-            </div>
-            <p class="pf-adj-sub">Employee time lost to the queue</p>
-            <div class="pf-adj-grid">
-              <div class="pf-adj-fld"><label>Avg helpdesk wait (hrs)</label><input type="number" id="sv-wait" min="0.1" max="72" step="0.5" value="4"></div>
-              <div class="pf-adj-fld"><label>Incidents / user / mo</label><input type="number" id="sv-incidents" min="0.1" max="30" step="0.5" value="2"></div>
-            </div>
+            <p class="pf-adj-sub first">Loaded salary &mdash; $/role/yr</p>
+            <div class="pf-adj-grid" id="sv-adj-sal"></div>
+            <p class="pf-adj-sub">Frontline ratios &mdash; 1 role per N employees</p>
+            <div class="pf-adj-grid" id="sv-adj-front"></div>
+            <p class="pf-adj-sub">Support &amp; process ratios</p>
+            <div class="pf-adj-grid" id="sv-adj-ratio"></div>
+            <p class="pf-adj-sub">Role thresholds &mdash; role starts at N employees</p>
+            <div class="pf-adj-grid" id="sv-adj-thr"></div>
+            <p class="pf-adj-sub">Coverage multiplier &amp; employee time</p>
+            <div class="pf-adj-grid" id="sv-adj-cov"></div>
+            <p class="pf-tier-map-note" id="sv-tier-map"></p>
           </div>
         </details>
       </div>
@@ -329,80 +326,167 @@
         <div class="pf-time-line" id="sv-time"></div>
       </div>
     </div>
-    <p class="pf-save-foot">Estimates from typical loaded IT salaries + staffing ratios &mdash; adjust to your reality. Senior techs staff in from ~25 employees, a dedicated IT manager from ~75, IT leadership from ~250. Nothing here is a guarantee; it&rsquo;s a transparent model you control.</p>
+    <p class="pf-save-foot">Estimates from typical loaded IT salaries + service-desk staffing ratios &mdash; adjust to your reality. L1 is always staffed; L2, L3, supervision, quality, ITIL and leadership roles phase in as you grow. 24/7 coverage needs about 4.2&times; the shift roles (168h &divide; 40h). Nothing here is a guarantee; it&rsquo;s a transparent model you control.</p>
   </section>
   <script>
   (function(){
     var $=function(id){return document.getElementById(id);};
     var cov='always';
-    var COV_MULT=4.2;
-    // ARIA annual cost = the tier that matches the business size (honest mapping to the seat tiers above).
+    function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
+    function num(id,def){var el=$(id);if(!el)return def;var v=parseFloat(el.value);return isFinite(v)&&v>0?v:def;}
+
+    // ---- Model config (Rule 14: every default is a labeled, adjustable input) ----
+    var GROUPS=[
+      {key:'frontline',  label:'Frontline'},
+      {key:'supervision',label:'Supervision'},
+      {key:'quality',    label:'Quality & Ops'},
+      {key:'itil',       label:'ITIL process'},
+      {key:'leadership', label:'Leadership'}
+    ];
+    // shift:true roles must be covered on every shift → multiplied by the 24/7 factor.
+    var ROLES=[
+      {id:'l1',  group:'frontline',  name:'L1 Service-Desk Agents',            hint:'First response · tier-1',      salary:60000,  shift:true},
+      {id:'l2',  group:'frontline',  name:'L2 Support Analysts',               hint:'Escalation · deeper triage',   salary:80000,  shift:true},
+      {id:'l3',  group:'frontline',  name:'L3 Engineers / SMEs',               hint:'Deep fixes · subject experts', salary:115000, shift:true},
+      {id:'tl',  group:'supervision',name:'Shift Team Leads',                  hint:'Run each shift',               salary:95000,  shift:true},
+      {id:'mgr', group:'supervision',name:'Service-Desk Manager',              hint:'Owns the desk',                salary:130000, shift:false},
+      {id:'qa',  group:'quality',    name:'QA / Quality Analysts',             hint:'Call & ticket quality',        salary:75000,  shift:false},
+      {id:'wfm', group:'quality',    name:'Workforce Mgmt / Scheduler',        hint:'Shift planning (24/7)',        salary:70000,  shift:false},
+      {id:'km',  group:'quality',    name:'Knowledge Manager',                 hint:'Owns the KB',                  salary:90000,  shift:false},
+      {id:'rep', group:'quality',    name:'Reporting / SLA Analyst',           hint:'SLA & metrics',                salary:80000,  shift:false},
+      {id:'proc',group:'itil',       name:'Incident / Problem / Change Mgr',   hint:'ITIL process owners',          salary:120000, shift:false},
+      {id:'trn', group:'itil',       name:'Training Coordinator',              hint:'Onboards & upskills',          salary:70000,  shift:false},
+      {id:'dir', group:'leadership', name:'IT Director / Head of Service Desk',hint:'Owns service delivery',        salary:200000, shift:false}
+    ];
+    var RATIO_FRONT=[
+      {k:'rL1',label:'L1 — 1 per',def:50},
+      {k:'rL2',label:'L2 — 1 per',def:150},
+      {k:'rL3',label:'L3 — 1 per',def:400}
+    ];
+    var RATIO_SUP=[
+      {k:'rTL', label:'Team Lead — 1 / N frontline',def:10},
+      {k:'rMgr',label:'Manager — 1 / N frontline',def:40},
+      {k:'rQA', label:'QA — 1 / N frontline',def:25},
+      {k:'rWFM',label:'Scheduler — 1 / N frontline',def:40},
+      {k:'rKM', label:'Knowledge — 1 / N users',def:500},
+      {k:'rProc',label:'Process Mgr — 1 / N users',def:500},
+      {k:'rTrn',label:'Trainer — 1 / N users',def:800}
+    ];
+    var THRESH=[
+      {k:'tMgr', label:'Manager starts at',def:75},
+      {k:'tWFM', label:'Scheduler starts at',def:100},
+      {k:'tKM',  label:'Knowledge starts at',def:100},
+      {k:'tRep', label:'Reporting starts at',def:150},
+      {k:'tProc',label:'Process Mgr starts at',def:250},
+      {k:'tTrn', label:'Training starts at',def:200},
+      {k:'tDir', label:'Director starts at',def:100}
+    ];
+    var COVF=[
+      {k:'mult',     label:'24/7 multiplier (×)',def:4.2},
+      {k:'wait',     label:'Avg helpdesk wait (hrs)',def:4},
+      {k:'incidents',label:'Incidents / user / mo',def:2}
+    ];
+
+    function fld(id,label,val){
+      return '<div class="pf-adj-fld"><label>'+label+'</label><input type="number" id="'+id+'" value="'+val+'" min="0" step="any"></div>';
+    }
+    function buildAdj(){
+      $('sv-adj-sal').innerHTML=ROLES.map(function(r){return fld('sv-s-'+r.id,r.name,r.salary);}).join('');
+      $('sv-adj-front').innerHTML=RATIO_FRONT.map(function(x){return fld('sv-k-'+x.k,x.label,x.def);}).join('');
+      $('sv-adj-ratio').innerHTML=RATIO_SUP.map(function(x){return fld('sv-k-'+x.k,x.label,x.def);}).join('');
+      $('sv-adj-thr').innerHTML=THRESH.map(function(x){return fld('sv-k-'+x.k,x.label,x.def);}).join('');
+      $('sv-adj-cov').innerHTML=COVF.map(function(x){return fld('sv-k-'+x.k,x.label,x.def);}).join('');
+    }
+
+    // ARIA annual price = the seat tier that matches the business size (honest mapping to the boxes above).
     function ariaTier(n){
-      if(n<=1)return{name:'Personal',yr:899*12};
-      if(n<=5)return{name:'Pro',yr:2250*12};
+      if(n<=1)return{name:'Personal',yr:10788};
+      if(n<=5)return{name:'Pro',yr:27000};
       if(n<=50)return{name:'Small Business',yr:234000};
       if(n<=250)return{name:'Mid-Size',yr:468000};
       return{name:'Enterprise',yr:937500};
     }
-    function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
-    function num(id,def){var v=parseFloat($(id).value);return isFinite(v)&&v>0?v:def;}
-    // Role floors: you don't staff a dedicated senior/manager/leader until the org is big enough (labeled in the note).
-    var ROLES=[
-      {name:'L1 Techs',      desc:'Frontline helpdesk',  r:'sv-r-l1', s:'sv-s-l1', floor:1},
-      {name:'Senior Techs',  desc:'L2 / L3 escalation',  r:'sv-r-sr', s:'sv-s-sr', floor:25},
-      {name:'IT Management', desc:'Manager / team lead', r:'sv-r-mg', s:'sv-s-mg', floor:75},
-      {name:'IT Leadership', desc:'Director / CIO',       r:'sv-r-ld', s:'sv-s-ld', floor:250}
-    ];
-    function calc(){
-      var users=Math.max(1,Math.round(num('sv-users',50)));
-      $('sv-users-val').textContent=users.toLocaleString('en-US');
-      var mult=cov==='always'?COV_MULT:1;
-      var rolesHtml='', baseTotal=0;
-      ROLES.forEach(function(role){
-        var div=num(role.r,50);
-        var count=users>=role.floor?Math.ceil(users/div):0;
-        var salary=num(role.s,70000);
-        var cost=count*salary; baseTotal+=cost;
-        rolesHtml+='<div class="pf-role'+(count?'':' zero')+'" title="'+count+' × '+money(salary)+'/yr = '+money(cost)+'">'
-          +'<div class="pf-role-name">'+role.name+'<small>'+role.desc+'</small></div>'
-          +'<div class="pf-role-count">'+count+'</div>'
-          +'<div class="pf-role-cost">'+money(cost)+'</div></div>';
-      });
-      var trad=baseTotal*mult;
-      rolesHtml+='<div class="pf-role total" title="Fully-loaded in-house team, '+(mult>1?'24/7':'business-hours')+' coverage">'
-        +'<div class="pf-role-name">In-house team / yr'+(mult>1?'<small>base '+money(baseTotal)+' × '+mult+' for 24/7 coverage</small>':'<small>business-hours coverage</small>')+'</div>'
-        +'<div class="pf-role-count"></div>'
-        +'<div class="pf-role-cost">'+money(trad)+'</div></div>';
-      $('sv-roles').innerHTML=rolesHtml;
 
-      var tier=ariaTier(users), aria=tier.yr;
+    function knobs(){
+      var k={size:Math.max(1,Math.round(num('sv-users',250))),always:cov==='always'};
+      RATIO_FRONT.concat(RATIO_SUP,THRESH,COVF).forEach(function(x){k[x.k]=num('sv-k-'+x.k,x.def);});
+      return k;
+    }
+    // Head-counts — clamped so a tiny shop shows ~1 L1 and 0 of the rest, then fills out smoothly to a full org.
+    function counts(k){
+      var l1=Math.max(1,Math.ceil(k.size/k.rL1));
+      var l2=Math.floor(k.size/k.rL2);
+      var l3=Math.floor(k.size/k.rL3);
+      var fl=l1+l2+l3;
+      return {
+        l1:l1, l2:l2, l3:l3,
+        tl:Math.floor((l1+l2)/k.rTL),
+        mgr:k.size>=k.tMgr?Math.max(1,Math.ceil(fl/k.rMgr)):0,
+        qa:Math.floor(fl/k.rQA),
+        wfm:(k.always&&k.size>=k.tWFM)?Math.max(1,Math.ceil(fl/k.rWFM)):0,
+        km:k.size>=k.tKM?Math.ceil(k.size/k.rKM):0,
+        rep:k.size>=k.tRep?1:0,
+        proc:k.size>=k.tProc?Math.min(3,Math.ceil(k.size/k.rProc)):0,
+        trn:k.size>=k.tTrn?Math.ceil(k.size/k.rTrn):0,
+        dir:k.size>=k.tDir?1:0
+      };
+    }
+
+    function calc(){
+      var k=knobs();
+      $('sv-users-val').textContent=k.size.toLocaleString('en-US');
+      var cnt=counts(k), mult=k.mult, always=k.always;
+      var html='', total=0, headcount=0;
+      GROUPS.forEach(function(g){
+        html+='<div class="pf-role group"><div class="pf-role-name">'+g.label+'</div></div>';
+        ROLES.filter(function(r){return r.group===g.key;}).forEach(function(r){
+          var base=cnt[r.id]||0;
+          var shiftOn=r.shift&&always&&base>0;
+          var eff=shiftOn?Math.round(base*mult):base;
+          var salary=num('sv-s-'+r.id,r.salary);
+          var cost=eff*salary; total+=cost; headcount+=eff;
+          html+='<div class="pf-role'+(eff?'':' zero')+'" title="'+eff+' × '+money(salary)+'/yr = '+money(cost)+'">'
+            +'<div class="pf-role-name">'+r.name+(shiftOn?'<span class="pf-mult">×'+mult+' 24/7</span>':'')+'<small>'+r.hint+'</small></div>'
+            +'<div class="pf-role-count">'+eff+'</div>'
+            +'<div class="pf-role-cost">'+money(cost)+'</div></div>';
+        });
+      });
+      html+='<div class="pf-role total" title="Fully-loaded in-house service desk">'
+        +'<div class="pf-role-name">In-house service desk / yr<small>'+headcount.toLocaleString('en-US')+' people · '+(always?'24/7 coverage':'business-hours coverage')+'</small></div>'
+        +'<div class="pf-role-count">'+headcount+'</div>'
+        +'<div class="pf-role-cost">'+money(total)+'</div></div>';
+      $('sv-roles').innerHTML=html;
+
+      var tier=ariaTier(k.size), aria=tier.yr, trad=total;
       $('sv-trad-amt').textContent=money(trad);
       $('sv-aria-amt').textContent=money(aria);
       $('sv-aria-name').textContent='ARIA '+tier.name+' / yr';
-      $('sv-tier-tag').innerHTML='At <b>'+users.toLocaleString('en-US')+'</b> employees, the matching plan is <b>ARIA '+tier.name+'</b> ('+money(aria)+'/yr).';
+      $('sv-tier-tag').innerHTML='At <b>'+k.size.toLocaleString('en-US')+'</b> employees, the matching plan is <b>ARIA '+tier.name+'</b> ('+money(aria)+'/yr).';
       var max=Math.max(trad,aria,1);
       $('sv-trad-bar').style.width=(trad/max*100)+'%';
       $('sv-aria-bar').style.width=(aria/max*100)+'%';
-      var save=trad-aria;
-      var hl=$('sv-headline'), sub=$('sv-subline');
+
+      var save=trad-aria, hl=$('sv-headline'), sub=$('sv-subline');
       if(save>0){
         hl.className='pf-save-headline pos';
         hl.textContent='You save '+money(save)+'/yr';
-        sub.textContent='ARIA runs this L1–L3 support for '+money(aria)+'/yr vs '+money(trad)+'/yr in-house — 24/7, auto-fixing without a ticket, and it never calls in sick.';
+        sub.textContent='ARIA runs this L1–L3 service desk for '+money(aria)+'/yr vs '+money(trad)+'/yr to staff it in-house — 24/7, auto-fixing without a ticket, and it never calls in sick.';
       }else if(save<0){
         hl.className='pf-save-headline neg';
         hl.textContent='ARIA is '+money(Math.abs(save))+'/yr more at this size';
-        sub.textContent='And for that delta you also get 24/7 always-on auto-fix, fleet view, and the compliance + SLA reporting you’d otherwise staff and tool for separately — not just a business-hours queue.';
+        sub.textContent='For that delta you also get 24/7 always-on auto-fix, fleet view, and the compliance + SLA reporting you’d otherwise staff and tool for separately — not just a business-hours queue.';
       }else{
         hl.className='pf-save-headline neg';
         hl.textContent='ARIA matches your in-house cost';
         sub.textContent='For the same spend you get 24/7 always-on auto-fix, fleet view, and compliance + SLA reporting — not just business-hours answers.';
       }
-      // Employee time lost to the helpdesk queue, which ARIA answers in seconds.
-      var wait=num('sv-wait',4), inc=num('sv-incidents',2);
-      var hrs=users*inc*wait;
-      $('sv-time').innerHTML='ARIA answers in <b>seconds</b> vs a ~<b>'+(wait%1?wait:wait.toFixed(0))+'h</b> helpdesk wait → about <b>'+Math.round(hrs).toLocaleString('en-US')+' hrs/month</b> of employee time back ('+users.toLocaleString('en-US')+' employees × '+inc+' incidents × '+wait+'h wait).';
+      var wait=k.wait, inc=k.incidents, hrs=k.size*inc*wait;
+      $('sv-time').innerHTML='ARIA answers in <b>seconds</b> vs a ~<b>'+(wait%1?wait:wait.toFixed(0))+'h</b> helpdesk wait → about <b>'+Math.round(hrs).toLocaleString('en-US')+' hrs/month</b> of employee time back ('+k.size.toLocaleString('en-US')+' employees × '+inc+' incidents × '+wait+'h wait).';
+      var tm=$('sv-tier-map');
+      if(tm)tm.innerHTML='ARIA price = the plan matching your size: <b>&le;1</b> Personal '+money(10788)+'/yr · <b>&le;5</b> Pro '+money(27000)+'/yr · <b>&le;50</b> Small Business '+money(234000)+'/yr · <b>&le;250</b> Mid-Size '+money(468000)+'/yr · <b>&gt;250</b> Enterprise '+money(937500)+'/yr.';
     }
+
+    buildAdj();
     var covWrap=$('sv-cov');
     covWrap.addEventListener('click',function(e){
       var b=e.target.closest('button[data-cov]'); if(!b)return;
@@ -410,9 +494,10 @@
       covWrap.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});
       calc();
     });
-    ['sv-users','sv-r-l1','sv-r-sr','sv-r-mg','sv-r-ld','sv-s-l1','sv-s-sr','sv-s-mg','sv-s-ld','sv-wait','sv-incidents'].forEach(function(id){
-      var el=$(id); if(!el)return;
-      el.addEventListener('input',calc); el.addEventListener('change',calc);
+    $('sv-users').addEventListener('input',calc);
+    ['sv-adj-sal','sv-adj-front','sv-adj-ratio','sv-adj-thr','sv-adj-cov'].forEach(function(id){
+      var c=$(id); if(!c)return;
+      c.addEventListener('input',calc); c.addEventListener('change',calc);
     });
     calc();
   })();
