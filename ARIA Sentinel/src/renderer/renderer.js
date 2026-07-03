@@ -2,6 +2,7 @@ import { bannerVisible, bannerModel, SECURITY_BANNER_DISMISS_KEY } from "../shar
 import "./components/aria-globe.mjs"; // defines the <aria-globe> custom element used in the rail
 import { extOf, requiredSteps, stepFor } from "../shared/delete-confirm.mjs";
 import { renderMarkdown } from "../shared/aria-markdown.mjs"; // RUN 34-1 — readable chat answers (markdown → HTML)
+import { repairTruncatedTail } from "../shared/kb-text.mjs"; // F2 — never render a mid-line-truncated tail ("Print server (`")
 import { walkStepsFor, hasWalkSteps, listFlows, getFlow, flowStep, resolveStep } from "../shared/walkthrough-steps.mjs"; // ONE shared source — recipe steps + companion flows
 import { confidenceBadge } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — per-answer confidence + "Was this fixed?" feedback
 // SENTINEL TRIAL GATING 2026-07-02 — per-tab enable/lock map (Walk-Through survives trial expiry; the buy path never locks).
@@ -2060,7 +2061,9 @@ function initAriaChat() {
     const bubble = r.querySelector(".aria-chat-bubble");
     // RUN 34-1 — render the answer as real markdown (H3/ol/ul/code/links), not raw "## / - / 1." text.
     const answer = document.createElement("div"); answer.className = "aria-chat-md";
-    answer.innerHTML = renderMarkdown(stripFm((res && res.text) || "I couldn't get an answer just now — please try again."));
+    // F2 — repairTruncatedTail is a no-op on complete answers; it only trims a dangling fragment if an upstream
+    // path (e.g. offline/local-kb) ever handed us a mid-line-cut excerpt. Main already swaps in full text for KB.
+    answer.innerHTML = renderMarkdown(repairTruncatedTail(stripFm((res && res.text) || "I couldn't get an answer just now — please try again.")));
     bubble.textContent = ""; bubble.appendChild(answer);
     const kb = res && res.kbMatch;
     if (kb && (kb.title || kb.slug)) {

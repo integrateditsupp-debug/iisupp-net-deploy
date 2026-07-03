@@ -83,8 +83,9 @@ import { installCrashReporter } from "./crash-reporter.mjs"; // RUN 29-D — $0 
 import { bindAll, withRebinds, DEFAULT_HOTKEYS } from "../shared/hotkeys.mjs";
 import { applyRunState } from "../shared/start-stop.mjs";
 import { auditFeatures, summarizeAudit, buildHealReport } from "../shared/self-heal.mjs";
-import { askAria } from "../shared/aria-brain-client.mjs";
+import { askAria, scrubR11 } from "../shared/aria-brain-client.mjs";
 import { loadKbPack, localKbAnswer } from "../shared/aria-local-kb.mjs"; // RUN 30-B — offline cross-platform KB
+import { loadFullText, fullArticle, looksTruncated, repairTruncatedTail } from "../shared/kb-fulltext.mjs"; // F2 — full bundled article text so a mid-line-truncated live excerpt never renders as a dangling "Print server (`"
 import { parseSystemStatus, parseKbStats, parseSessions, parseHeartbeats } from "../shared/aria-surfaces.mjs"; // RUN 33 — ARIA tab data
 import { defaultAppConfig, shouldShowSetup, completeSetup, reopenSetup } from "../shared/app-config.mjs"; // RUN 33-E — setup wizard
 import { anchorTarget, tickAnchored } from "../shared/globe-anchor.mjs";
@@ -3033,6 +3034,16 @@ function kbIndex() {
   return _kbIndex;
 }
 
+// F2 (2026-07-03) — the bundled FULL KB article text (slug → complete markdown), loaded once. Used to repair a
+// live aria-kb-query excerpt that arrives cut mid-line (the deployed web bundle can lag the fixed one). Failure
+// degrades to an empty map → we fall back to repairTruncatedTail on the excerpt (still never a dangling token).
+let _fullTextIndex = null;
+function fullTextIndex() {
+  if (_fullTextIndex) return _fullTextIndex;
+  try { _fullTextIndex = loadFullText(path.join(app.getAppPath(), "aria-kb-pack"), fs); } catch { _fullTextIndex = new Map(); }
+  return _fullTextIndex;
+}
+
 async function chat(message, context = {}) {
   // Local KB match (always computed; used as the offline fallback + as a fix hint).
   const signature = sanitizeToSignature({ issue: message, ...context });
@@ -3050,7 +3061,22 @@ async function chat(message, context = {}) {
   if (brain && !brain.offline && brain.reply) {
     if (brain.session_id) store.set("chatSessionId", brain.session_id);
     if (brain.kb_meta) { store.set("kbMeta", brain.kb_meta); broadcastState(); } // RUN 33-A — surface KB freshness to the top bar
-    return { ok: true, provider: "aria-brain", text: brain.reply, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
+    // F2 (2026-07-03) — the live aria-kb-query excerpt can arrive cut mid-line (e.g. the printer "Escalation
+    // Trigger" section as a dangling "- Print server (`"). If we carry the FULL article for this slug, swap in
+    // the complete text (re-scrubbed with the same R11 rule, keeping the "Full article" footer). If we don't,
+    // strip the incomplete trailing fragment so a dangling token is never rendered. Never fabricates text.
+    let text = brain.reply;
+    if (looksTruncated(text)) {
+      const slug = brain.kb_match && brain.kb_match.slug;
+      const full = slug ? fullArticle(fullTextIndex(), slug) : "";
+      if (full) {
+        const footer = /→ Full article:\s*(\S+)/.exec(text);
+        text = scrubR11(full) + (footer ? `\n\n→ Full article: ${footer[1]}` : "");
+      } else {
+        text = repairTruncatedTail(text);
+      }
+    }
+    return { ok: true, provider: "aria-brain", text, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
   }
   // Offline / unreachable → answer from the bundled cross-platform KB (RUN 30-B). ARIA is full cross-platform
   // tech support (Windows, macOS, iOS, iPadOS, Android, ChromeOS, Linux) — never the old Windows-only string.

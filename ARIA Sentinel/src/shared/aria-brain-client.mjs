@@ -94,7 +94,9 @@ export async function askAria(prompt, ctx = {}) {
 }
 
 // 🔒 R11 — strip the private folder + any absolute path from a KB reply before it reaches the desktop UI.
-function scrubR11(text) {
+// Exported so main can re-scrub bundled full-article text with the exact same rule when it repairs a
+// truncated live excerpt (F2), keeping both KB paths identically safe.
+export function scrubR11(text) {
   return String(text == null ? "" : text)
     .replace(/([a-z]:\\)?[^\r\n"<>|]*?private\s+pics\s+and\s+vids[^\r\n"<>|]*/gi, "<private-folder>")
     .replace(/[A-Za-z]:\\[^\s"'()]+/g, "[path]")
