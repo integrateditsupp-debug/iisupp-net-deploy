@@ -198,17 +198,19 @@
 
   <p style="text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:18px;letter-spacing:.06em;max-width:900px;margin-left:auto;margin-right:auto">Bundled human visits are a minimal cap. Any additional on-site OR remote human support beyond the bundled visits is a separate, quote-based contract &mdash; human-delivered, not ARIA. <a href="mailto:ahmad.wasee@iisupp.net?subject=Human%20Support%20quote" style="color:#c5a059">Request a Human Support quote</a> &middot; see <a href="/terms/" style="color:#c5a059">Terms</a>.</p>
 
+  <div style="text-align:center;margin-top:14px"><button type="button" class="pf-compare-trigger" data-open-compare="1">Compare all features &#9662;</button></div>
+
   <!-- INTERACTIVE STAFFING-COST CALCULATOR (Rule 14: a transparent, adjustable calculator — NOT a fixed claim.
        Every ratio, salary, coverage multiplier and the tier mapping is a LABELED input the user can change.
        Self-contained (no external calls / no CDN): hand-rolled animated CSS bars + vanilla JS. -->
   <style>
-    .pf-save{max-width:1120px;margin:56px auto 0;padding:32px 30px 30px;border:1px solid rgba(197,160,89,.3);border-radius:22px;background:radial-gradient(120% 90% at 50% -10%,rgba(197,160,89,.10) 0%,rgba(197,160,89,0) 55%),linear-gradient(165deg,#0c0a06 0%,#14100a 100%);box-shadow:0 20px 50px rgba(0,0,0,.45)}
+    .pf-save{max-width:960px;margin:52px auto 0;padding:26px 26px 22px;border:1px solid rgba(197,160,89,.3);border-radius:20px;background:radial-gradient(120% 90% at 50% -10%,rgba(197,160,89,.10) 0%,rgba(197,160,89,0) 55%),linear-gradient(165deg,#0c0a06 0%,#14100a 100%);box-shadow:0 20px 50px rgba(0,0,0,.45)}
     .pf-save-head{text-align:center;max-width:700px;margin:0 auto 8px}
     .pf-save-head .eyebrow{color:#c5a059;font-size:11px;letter-spacing:.3em;text-transform:uppercase}
-    .pf-save-head h2{font-size:27px;line-height:1.15;margin:10px 0 6px;font-family:Cinzel,serif;font-weight:700}
+    .pf-save-head h2{font-size:22px;line-height:1.15;margin:9px 0 5px;font-family:Cinzel,serif;font-weight:700}
     .pf-save-head p{color:rgba(255,255,255,.62);font-size:13.5px;line-height:1.6;margin:0}
-    .pf-save-body{display:grid;grid-template-columns:360px 1fr;gap:32px;margin-top:26px;align-items:start}
-    @media (max-width:860px){.pf-save-body{grid-template-columns:1fr;gap:24px}}
+    .pf-save-body{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px;align-items:start}
+    @media (max-width:760px){.pf-save-body{grid-template-columns:1fr;gap:18px}}
     .pf-save-controls{display:flex;flex-direction:column;gap:18px}
     .pf-ctl label{display:block;color:#f1dca7;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
     .pf-ctl .pf-ctl-val{color:#fff;font-weight:700;font-family:Cinzel,serif;font-size:17px}
@@ -218,6 +220,23 @@
     .pf-basis button{flex:1;background:transparent;border:0;color:rgba(255,255,255,.6);font-size:11px;letter-spacing:.02em;padding:9px 6px;border-radius:8px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;transition:background .18s,color .18s}
     .pf-basis button.on{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#1a1410}
     .pf-basis-note{color:rgba(255,255,255,.5);font-size:11px;line-height:1.5;margin:6px 0 0}
+    /* Role checklist — client ticks which desk roles they'd actually staff; only ticked roles count. Compact, titles left.
+       Row selectors are scoped under .pf-rolepick so they out-specify the generic ".pf-ctl label" rule (which would
+       otherwise force display:block and glue the count to the title). */
+    .pf-rolepick{border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.2)}
+    .pf-rolepick-grouphdr{background:rgba(255,255,255,.03);color:#c5a059;font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;padding:7px 12px 5px}
+    .pf-rolepick .pf-rolepick-row{display:flex;align-items:center;gap:9px;padding:6px 12px;margin:0;border-top:1px solid rgba(255,255,255,.05);font-size:12px;line-height:1.25;color:rgba(255,255,255,.82);font-weight:400;letter-spacing:normal;text-transform:none;cursor:pointer}
+    .pf-rolepick .pf-rolepick-row:hover{background:rgba(197,160,89,.05)}
+    .pf-rolepick .pf-rolepick-row input{accent-color:#c5a059;width:15px;height:15px;flex:0 0 auto;cursor:pointer;margin:0}
+    .pf-rolepick .pf-rolepick-row .rp-name{flex:1 1 auto;line-height:1.25}
+    .pf-rolepick .pf-rolepick-row .rp-count{color:#f1dca7;font-family:Cinzel,serif;font-weight:700;font-size:12px;min-width:26px;text-align:right;margin-left:auto}
+    .pf-rolepick .pf-rolepick-row.off{opacity:.4}
+    /* Compact traditional-vs-ARIA numeric readout (replaces the two horizontal bars — less data on screen). */
+    .pf-vs{display:flex;flex-direction:column;gap:0;margin-bottom:8px}
+    .pf-vs-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:12px;color:rgba(255,255,255,.72);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+    .pf-vs-row b{font-family:Cinzel,serif;font-size:15px;white-space:nowrap}
+    .pf-vs-trad b{color:#e78d8d}
+    .pf-vs-aria b{color:#f1dca7}
     /* Adjustable assumptions live in a labeled expander — transparent (Rule 14) without clutter (Rule 17). */
     .pf-adj{border:1px solid rgba(197,160,89,.2);border-radius:12px;background:rgba(0,0,0,.25);padding:0 14px}
     .pf-adj summary{cursor:pointer;color:#f1dca7;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:12px 0;list-style:none;display:flex;justify-content:space-between;align-items:center}
@@ -232,35 +251,10 @@
     .pf-adj-sub{color:#c5a059;font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin:14px 0 8px;font-weight:700}
     .pf-adj-sub.first{margin-top:4px}
     .pf-save-viz{display:flex;flex-direction:column;gap:14px}
-    /* Per-role breakdown of the traditional in-house team (count + $ each, live). */
-    .pf-roles{border:1px solid rgba(255,255,255,.1);border-radius:14px;overflow:hidden}
-    .pf-role{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
-    .pf-role:last-child{border-bottom:0}
-    .pf-role.zero{opacity:.4}
-    .pf-role-name{color:rgba(255,255,255,.82)}
-    .pf-role-name small{display:block;color:rgba(255,255,255,.42);font-size:10.5px;letter-spacing:.02em}
-    .pf-role-count{color:#f1dca7;font-family:Cinzel,serif;font-weight:700;font-size:15px;min-width:34px;text-align:right}
-    .pf-role-cost{color:rgba(255,255,255,.7);font-family:ui-monospace,Menlo,monospace;font-size:12px;min-width:92px;text-align:right}
-    .pf-role.total{background:rgba(197,160,89,.06)}
-    .pf-role.total .pf-role-name{color:#fff;font-weight:700}
-    .pf-role.total .pf-role-cost{color:#f1dca7;font-family:Cinzel,serif;font-size:14px;font-weight:700}
-    .pf-role.group{grid-template-columns:1fr;background:rgba(255,255,255,.02);padding:9px 16px 6px}
-    .pf-role.group .pf-role-name{color:#c5a059;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:700}
-    .pf-role-name .pf-mult{color:#e6c079;font-size:9.5px;letter-spacing:.03em;margin-left:7px;background:rgba(197,160,89,.16);padding:1px 6px;border-radius:6px;vertical-align:middle;white-space:nowrap}
     .pf-tier-map-note{color:rgba(255,255,255,.5);font-size:11px;line-height:1.65;margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
     .pf-tier-map-note b{color:#f1dca7}
-    .pf-bar-row{display:flex;flex-direction:column;gap:6px}
-    .pf-bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px}
-    .pf-bar-top .pf-bar-name{color:rgba(255,255,255,.8)}
-    .pf-bar-top .pf-bar-amt{font-family:Cinzel,serif;font-weight:700;font-size:16px}
-    .pf-bar-track{height:26px;background:rgba(255,255,255,.05);border-radius:8px;overflow:hidden}
-    .pf-bar-fill{height:100%;width:0;border-radius:8px;transition:width .6s cubic-bezier(.4,.15,.2,1)}
-    .pf-bar-trad .pf-bar-fill{background:linear-gradient(90deg,rgba(220,90,90,.55),rgba(220,90,90,.85))}
-    .pf-bar-trad .pf-bar-amt{color:#e78d8d}
-    .pf-bar-aria .pf-bar-fill{background:linear-gradient(90deg,#c5a059,#f1dca7)}
-    .pf-bar-aria .pf-bar-amt{color:#f1dca7}
     .pf-save-readout{margin-top:4px;padding:16px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3)}
-    .pf-save-headline{font-family:Cinzel,serif;font-size:22px;line-height:1.25;margin:0 0 4px}
+    .pf-save-headline{font-family:Cinzel,serif;font-size:15px;line-height:1.25;margin:2px 0 4px}
     .pf-save-headline.pos{color:#5fd08a}
     .pf-save-headline.neg{color:#f1dca7}
     .pf-save-sub{color:rgba(255,255,255,.68);font-size:12.5px;line-height:1.6;margin:0}
@@ -333,13 +327,12 @@
     <div class="pf-save-body">
       <div class="pf-save-controls">
         <div class="pf-ctl">
-          <label>Business size &mdash; <span class="pf-ctl-val" id="sv-users-val">250</span> employees</label>
-          <input type="range" id="sv-users" min="1" max="2000" step="1" value="250">
-          <div class="pf-range-ends"><span>1</span><span>2,000+</span></div>
+          <label>Your team size &mdash; <span class="pf-ctl-val" id="sv-users-val">250</span> employees</label>
           <div class="pf-users-entry">
-            <label for="sv-users-num">Enter your number of users</label>
             <input type="number" id="sv-users-num" min="1" max="100000" step="1" value="250" inputmode="numeric" aria-label="Enter your number of users">
           </div>
+          <input type="range" id="sv-users" min="1" max="2000" step="1" value="250">
+          <div class="pf-range-ends"><span>1</span><span>2,000+</span></div>
         </div>
         <div class="pf-ctl">
           <label>Support coverage</label>
@@ -347,35 +340,14 @@
             <button type="button" data-cov="always" class="on">24/7 always-on</button>
             <button type="button" data-cov="hours">Business hours</button>
           </div>
-          <p class="pf-basis-note">24/7 needs about <b style="color:#f1dca7">4.2&times;</b> the headcount of a business-hours desk (168h/wk &divide; 40h). ARIA is inherently 24/7.</p>
         </div>
-        <details class="pf-adj">
-          <summary>Adjust the assumptions</summary>
-          <div class="pf-adj-body">
-            <p class="pf-adj-sub first">Loaded salary &mdash; $/role/yr</p>
-            <div class="pf-adj-grid" id="sv-adj-sal"></div>
-            <p class="pf-adj-sub">Frontline ratios &mdash; 1 role per N employees</p>
-            <div class="pf-adj-grid" id="sv-adj-front"></div>
-            <p class="pf-adj-sub">Support &amp; process ratios</p>
-            <div class="pf-adj-grid" id="sv-adj-ratio"></div>
-            <p class="pf-adj-sub">Role thresholds &mdash; role starts at N employees</p>
-            <div class="pf-adj-grid" id="sv-adj-thr"></div>
-            <p class="pf-adj-sub">Coverage multiplier &amp; employee time</p>
-            <div class="pf-adj-grid" id="sv-adj-cov"></div>
-            <p class="pf-tier-map-note" id="sv-tier-map"></p>
-          </div>
-        </details>
+        <div class="pf-ctl">
+          <label>Which desk roles would you staff?</label>
+          <div class="pf-rolepick" id="sv-rolepick"></div>
+          <p class="pf-basis-note">Default is a full L1&ndash;L3 desk. Untick any role you wouldn&rsquo;t hire &mdash; only ticked roles count toward the in-house cost. Head-counts scale with your size, and a 24/7 desk needs ~4.2&times; the shift roles.</p>
+        </div>
       </div>
       <div class="pf-save-viz">
-        <div class="pf-roles" id="sv-roles"></div>
-        <div class="pf-bar-row pf-bar-trad">
-          <div class="pf-bar-top"><span class="pf-bar-name" id="sv-trad-name">In-house IT team / yr</span><span class="pf-bar-amt" id="sv-trad-amt">$0</span></div>
-          <div class="pf-bar-track"><div class="pf-bar-fill" id="sv-trad-bar"></div></div>
-        </div>
-        <div class="pf-bar-row pf-bar-aria">
-          <div class="pf-bar-top"><span class="pf-bar-name" id="sv-aria-name">ARIA / yr</span><span class="pf-bar-amt" id="sv-aria-amt">$0</span></div>
-          <div class="pf-bar-track"><div class="pf-bar-fill" id="sv-aria-bar"></div></div>
-        </div>
         <div class="pf-save-readout">
           <div class="pf-donut-wrap">
             <svg class="pf-donut" id="sv-donut" viewBox="0 0 120 120" aria-hidden="true">
@@ -391,6 +363,10 @@
             </div>
           </div>
           <div class="pf-readout-txt">
+            <div class="pf-vs">
+              <div class="pf-vs-row pf-vs-trad"><span>In-house desk / yr</span><b id="sv-trad-amt">$0</b></div>
+              <div class="pf-vs-row pf-vs-aria"><span id="sv-aria-name">ARIA / yr</span><b id="sv-aria-amt">$0</b></div>
+            </div>
             <p class="pf-save-headline pos" id="sv-headline">&mdash;</p>
             <p class="pf-save-sub" id="sv-subline"></p>
             <p class="pf-donut-legend" id="sv-donut-legend"></p>
@@ -404,6 +380,22 @@
         <div class="pf-time-line" id="sv-time"></div>
       </div>
     </div>
+    <details class="pf-adj">
+      <summary>Adjust assumptions</summary>
+      <div class="pf-adj-body">
+        <p class="pf-adj-sub first">Loaded salary &mdash; $/role/yr</p>
+        <div class="pf-adj-grid" id="sv-adj-sal"></div>
+        <p class="pf-adj-sub">Frontline ratios &mdash; 1 role per N employees</p>
+        <div class="pf-adj-grid" id="sv-adj-front"></div>
+        <p class="pf-adj-sub">Support &amp; process ratios</p>
+        <div class="pf-adj-grid" id="sv-adj-ratio"></div>
+        <p class="pf-adj-sub">Role thresholds &mdash; role starts at N employees</p>
+        <div class="pf-adj-grid" id="sv-adj-thr"></div>
+        <p class="pf-adj-sub">Coverage multiplier &amp; employee time</p>
+        <div class="pf-adj-grid" id="sv-adj-cov"></div>
+        <p class="pf-tier-map-note" id="sv-tier-map"></p>
+      </div>
+    </details>
     <p class="pf-save-foot">Estimates from typical loaded IT salaries + service-desk staffing ratios &mdash; adjust to your reality. L1 is always staffed; L2, L3, supervision, quality, ITIL and leadership roles phase in as you grow. 24/7 coverage needs about 4.2&times; the shift roles (168h &divide; 40h). Nothing here is a guarantee; it&rsquo;s a transparent model you control.</p>
   </section>
   <script>
@@ -563,55 +555,46 @@
       var k=knobs();
       $('sv-users-val').textContent=k.size.toLocaleString('en-US');
       var cnt=counts(k), mult=k.mult, always=k.always;
-      var html='', total=0, headcount=0, rolesOut=[];
-      GROUPS.forEach(function(g){
-        html+='<div class="pf-role group"><div class="pf-role-name">'+g.label+'</div></div>';
-        ROLES.filter(function(r){return r.group===g.key;}).forEach(function(r){
-          var base=cnt[r.id]||0;
-          var shiftOn=r.shift&&always&&base>0;
-          var eff=shiftOn?Math.round(base*mult):base; // 24/7 multiplier applied exactly once
-          var salary=readField('sv-s-'+r.id,r.salary,SAL_MIN,SAL_MAX);
-          var cost=eff*salary; total+=cost; headcount+=eff;
-          if(eff>0)rolesOut.push({name:r.name,count:eff,cost:cost});
-          html+='<div class="pf-role'+(eff?'':' zero')+'" title="'+eff+' × '+money(salary)+'/yr = '+money(cost)+'">'
-            +'<div class="pf-role-name">'+r.name+(shiftOn?'<span class="pf-mult">×'+mult+' 24/7</span>':'')+'<small>'+r.hint+'</small></div>'
-            +'<div class="pf-role-count">'+eff+'</div>'
-            +'<div class="pf-role-cost">'+money(cost)+'</div></div>';
-        });
+      var total=0, headcount=0, rolesOut=[];
+      // Each role's size-based head-count counts ONLY if its checklist box is ticked (client picks their desk).
+      ROLES.forEach(function(r){
+        var box=$('sv-pick-'+r.id);
+        var picked=box?box.checked:true;
+        var base=picked?(cnt[r.id]||0):0;
+        var shiftOn=r.shift&&always&&base>0;
+        var eff=shiftOn?Math.round(base*mult):base; // 24/7 multiplier applied exactly once
+        var salary=readField('sv-s-'+r.id,r.salary,SAL_MIN,SAL_MAX);
+        var cost=eff*salary; total+=cost; headcount+=eff;
+        if(eff>0)rolesOut.push({name:r.name,count:eff,cost:cost});
+        var row=$('sv-row-'+r.id), cel=$('sv-cnt-'+r.id);
+        if(cel)cel.textContent=eff>0?eff:'—';
+        if(row){row.classList.toggle('off',!picked);row.title=r.hint+(eff>0?' — '+eff+' × '+money(salary)+'/yr = '+money(cost):'');}
       });
-      html+='<div class="pf-role total" title="Fully-loaded in-house service desk">'
-        +'<div class="pf-role-name">In-house service desk / yr<small>'+headcount.toLocaleString('en-US')+' people · '+(always?'24/7 coverage':'business-hours coverage')+'</small></div>'
-        +'<div class="pf-role-count">'+headcount+'</div>'
-        +'<div class="pf-role-cost">'+money(total)+'</div></div>';
-      $('sv-roles').innerHTML=html;
 
       var tier=ariaTier(k.size), aria=tier.yr, trad=total;
       $('sv-trad-amt').textContent=money(trad);
       $('sv-aria-amt').textContent=money(aria);
       $('sv-aria-name').textContent='ARIA '+tier.name+' / yr';
-      $('sv-tier-tag').innerHTML='At <b>'+k.size.toLocaleString('en-US')+'</b> employees, the matching plan is <b>ARIA '+tier.name+'</b> ('+money(aria)+'/yr).';
-      var max=Math.max(trad,aria,1);
-      $('sv-trad-bar').style.width=(trad/max*100)+'%';
-      $('sv-aria-bar').style.width=(aria/max*100)+'%';
+      $('sv-tier-tag').innerHTML='At <b>'+k.size.toLocaleString('en-US')+'</b> employees, the matching plan is <b>ARIA '+tier.name+'</b> ('+money(aria)+'/yr) · '+headcount.toLocaleString('en-US')+' in-house staff, '+(always?'24/7':'business-hours')+' coverage.';
 
       var save=trad-aria, hl=$('sv-headline'), sub=$('sv-subline');
       if(save>0){
         hl.className='pf-save-headline pos';
         hl.textContent='You save '+money(save)+'/yr';
-        sub.textContent='ARIA runs this L1–L3 service desk for '+money(aria)+'/yr vs '+money(trad)+'/yr to staff it in-house — 24/7, auto-fixing without a ticket, and it never calls in sick.';
+        sub.textContent='ARIA runs this L1–L3 desk 24/7, auto-fixing without a ticket — and it never calls in sick.';
       }else if(save<0){
         hl.className='pf-save-headline neg';
-        hl.textContent='ARIA is '+money(Math.abs(save))+'/yr more at this size';
-        sub.textContent='For that delta you also get 24/7 always-on auto-fix, fleet view, and the compliance + SLA reporting you’d otherwise staff and tool for separately — not just a business-hours queue.';
+        hl.textContent='ARIA is '+money(Math.abs(save))+'/yr more here';
+        sub.textContent='For that delta you also get 24/7 always-on auto-fix, fleet view and the compliance + SLA reporting you’d otherwise staff and tool for separately.';
       }else{
         hl.className='pf-save-headline neg';
         hl.textContent='ARIA matches your in-house cost';
-        sub.textContent='For the same spend you get 24/7 always-on auto-fix, fleet view, and compliance + SLA reporting — not just business-hours answers.';
+        sub.textContent='Same spend, but 24/7 always-on auto-fix, fleet view and compliance + SLA reporting.';
       }
       renderDonut(trad,aria,save);
 
       var wait=k.wait, inc=k.incidents, hrs=k.size*inc*wait;
-      $('sv-time').innerHTML='ARIA answers in <b>seconds</b> vs a ~<b>'+(wait%1?wait:wait.toFixed(0))+'h</b> helpdesk wait → about <b>'+Math.round(hrs).toLocaleString('en-US')+' hrs/month</b> of employee time back ('+k.size.toLocaleString('en-US')+' employees × '+inc+' incidents × '+wait+'h wait).';
+      $('sv-time').innerHTML='ARIA answers in <b>seconds</b> vs a ~<b>'+(wait%1?wait:wait.toFixed(0))+'h</b> helpdesk wait → about <b>'+Math.round(hrs).toLocaleString('en-US')+' hrs/month</b> of employee time back.';
       var tm=$('sv-tier-map');
       if(tm)tm.innerHTML='ARIA price = the plan matching your size: <b>1&ndash;5</b> Personal '+money(10788)+'/yr · <b>6&ndash;40</b> Pro '+money(27000)+'/yr · <b>41&ndash;150</b> Small Business '+money(234000)+'/yr · <b>151&ndash;500</b> Mid-Size '+money(468000)+'/yr · <b>501+</b> Enterprise '+money(937500)+'/yr.';
 
@@ -671,6 +654,22 @@
     }
     $('sv-quote-btn').addEventListener('click',buildQuote);
 
+    // Build the left-hand role checklist (all ticked by default = a full L1–L3 desk; matches the v5 savings math).
+    function buildRolePick(){
+      var html='';
+      GROUPS.forEach(function(g){
+        html+='<div class="pf-rolepick-grouphdr">'+g.label+'</div>';
+        ROLES.filter(function(r){return r.group===g.key;}).forEach(function(r){
+          html+='<label class="pf-rolepick-row" id="sv-row-'+r.id+'" title="'+r.hint+'">'
+            +'<input type="checkbox" id="sv-pick-'+r.id+'" checked>'
+            +'<span class="rp-name">'+r.name+'</span>'
+            +'<span class="rp-count" id="sv-cnt-'+r.id+'">0</span></label>';
+        });
+      });
+      $('sv-rolepick').innerHTML=html;
+      $('sv-rolepick').addEventListener('change',calc);
+    }
+    buildRolePick();
     buildAdj();
     var covWrap=$('sv-cov');
     covWrap.addEventListener('click',function(e){
@@ -771,30 +770,9 @@
       #aria-sentinel .sentinel-card .pf-cta{width:100%;background:#c5a059;border:none;color:#050505;padding:10px 0;font-size:10.5px;letter-spacing:.22em;border-radius:6px;cursor:pointer;font-weight:700;font-family:inherit}
       #aria-sentinel .sentinel-card .pf-cta:hover{opacity:.85}
     </style>
-    <!-- SENTINEL_MATRIX:START -->
-<!-- Duplicate lower tier-card set removed 2026-07-03 — the single top row (open premium boxes) is the one
-     set of pricing boxes. The feature comparison table below is kept (it is not a duplicate "box"). -->
-<div class="sentinel-matrix-wrap">
-<table class="sentinel-matrix">
-<thead><tr><th>Feature</th><th>Personal</th><th>Pro</th><th>Small Business</th><th>Mid Size</th><th>Enterprise</th></tr><tr class="price-row"><td>Price</td><td>$899/mo</td><td>$2,250/mo</td><td>$19,500/mo (billed annually)</td><td>$39,000/mo (billed annually)</td><td>$78,125/mo (billed annually)</td></tr><tr><td>Seats</td><td>1 user · 1 device</td><td>Small team</td><td>Small business fleet</td><td>Mid-size org fleet</td><td>Enterprise fleet</td></tr><tr><td>Bundled human visits</td><td>—</td><td>—</td><td>1 on-site visit/yr + remote jump-ins</td><td>2 on-site visits/yr + remote jump-ins</td><td>4 on-site visits/yr + remote jump-ins</td></tr></thead>
-<tbody>
-<tr><td>Manual mode</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>Confirmed mode</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>Autonomous mode</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>Fix-recipe library</td><td><span>14 recipes</span></td><td><span>77 recipes</span></td><td><span>77 recipes</span></td><td><span>77 recipes</span></td><td><span>77 recipes</span></td></tr>
-<tr><td>Local system inventory</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>Quarterly PDF reports</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>SLA tracking</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>Compliance evidence pack</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>Fleet view (multi-device)</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>Custom recipes</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>White-label</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
-<tr><td>Admin console + OTA publish</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
-</tbody>
-</table>
-</div>
-<p class="sentinel-human-note">Any additional on-site OR remote human support beyond the bundled visits is a separate, quote-based contract — human-delivered, not ARIA. <a href="mailto:ahmad.wasee@iisupp.net?subject=Human%20Support%20quote">Request a Human Support quote →</a></p>
-      <!-- SENTINEL_MATRIX:END -->
+    <!-- Full feature comparison lives in a modal (opened from here or from the pricing boxes) so the main
+         page stays clean; the table + data are unchanged, just relocated to the buy-decision moment. -->
+    <div style="text-align:center;margin-top:8px"><button type="button" class="pf-compare-trigger" data-open-compare="1">See full feature comparison &#9662;</button></div>
   </section>
 
   <!-- ADOPT AI FAST — the Concierge Walk-Through OR the self-serve DIY book (item 2b, 2026-07-03). -->
@@ -994,6 +972,64 @@
     </div>
   </div>
 </div>
+
+<!-- Full feature-comparison modal — relocated off the main page flow; opened from the pricing boxes or the
+     Sentinel section via [data-open-compare]. Same data, surfaced at the buy-decision moment (v6 item 5). -->
+<style>
+  .pf-compare-trigger{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid rgba(197,160,89,.4);color:#f1dca7;padding:10px 20px;border-radius:11px;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:background .15s,box-shadow .15s}
+  .pf-compare-trigger:hover{background:rgba(197,160,89,.1);box-shadow:0 10px 26px rgba(197,160,89,.18)}
+  .pf-compare-card{max-width:920px}
+  .pf-compare-card>p{margin-bottom:16px}
+  .pf-compare-card .sentinel-matrix-wrap{overflow-x:auto;border:1px solid rgba(255,255,255,.1);border-radius:12px;margin-top:4px}
+  .pf-compare-card .sentinel-matrix{width:100%;border-collapse:collapse;font-size:12.5px;min-width:680px}
+  .pf-compare-card .sentinel-matrix th,.pf-compare-card .sentinel-matrix td{padding:9px 12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.08)}
+  .pf-compare-card .sentinel-matrix th:first-child,.pf-compare-card .sentinel-matrix td:first-child{text-align:left;color:rgba(255,255,255,.7)}
+  .pf-compare-card .sentinel-matrix thead th{color:#f1dca7;font-size:13px}
+  .pf-compare-card .sentinel-matrix .price-row td{color:#f1dca7}
+  .pf-compare-card .sentinel-matrix .yes{color:#7afbff}.pf-compare-card .sentinel-matrix .no{color:rgba(255,255,255,.35)}
+  .pf-compare-card .sentinel-human-note{color:rgba(255,255,255,.5);font-size:11.5px;line-height:1.6;margin-top:14px}
+  .pf-compare-card .sentinel-human-note a{color:#c5a059}
+</style>
+<div class="pf-modal" id="pf-compare-modal" hidden>
+  <div class="pf-modal-card pf-compare-card">
+    <button class="pf-modal-close" data-close="pf-compare-modal" aria-label="Close">&times;</button>
+    <h2>Full <span class="gold">feature comparison</span></h2>
+    <p>Every ARIA Sentinel tier, side by side. Prices in USD; business tiers are billed annually.</p>
+    <!-- SENTINEL_MATRIX:START -->
+<div class="sentinel-matrix-wrap">
+<table class="sentinel-matrix">
+<thead><tr><th>Feature</th><th>Personal</th><th>Pro</th><th>Small Business</th><th>Mid Size</th><th>Enterprise</th></tr><tr class="price-row"><td>Price</td><td>$899/mo</td><td>$2,250/mo</td><td>$19,500/mo (billed annually)</td><td>$39,000/mo (billed annually)</td><td>$78,125/mo (billed annually)</td></tr><tr><td>Seats</td><td>1 user · 1 device</td><td>Small team</td><td>Small business fleet</td><td>Mid-size org fleet</td><td>Enterprise fleet</td></tr><tr><td>Bundled human visits</td><td>—</td><td>—</td><td>1 on-site visit/yr + remote jump-ins</td><td>2 on-site visits/yr + remote jump-ins</td><td>4 on-site visits/yr + remote jump-ins</td></tr></thead>
+<tbody>
+<tr><td>Manual mode</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Confirmed mode</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Autonomous mode</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Fix-recipe library</td><td><span>14 recipes</span></td><td><span>77 recipes</span></td><td><span>77 recipes</span></td><td><span>77 recipes</span></td><td><span>77 recipes</span></td></tr>
+<tr><td>Local system inventory</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Quarterly PDF reports</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>SLA tracking</td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Compliance evidence pack</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Fleet view (multi-device)</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Custom recipes</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>White-label</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+<tr><td>Admin console + OTA publish</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="sentinel-human-note">Any additional on-site OR remote human support beyond the bundled visits is a separate, quote-based contract — human-delivered, not ARIA. <a href="mailto:ahmad.wasee@iisupp.net?subject=Human%20Support%20quote">Request a Human Support quote →</a></p>
+    <!-- SENTINEL_MATRIX:END -->
+  </div>
+</div>
+
+<script>
+/* Open the feature-comparison modal from any [data-open-compare] trigger. Close + backdrop are handled by the generic .pf-modal handlers below. */
+(function(){
+  var m=document.getElementById('pf-compare-modal');
+  if(!m)return;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-open-compare]'),function(b){
+    b.addEventListener('click',function(e){e.preventDefault();m.removeAttribute('hidden');document.body.style.overflow='hidden';});
+  });
+})();
+</script>
 
 <script>
 (function(){
