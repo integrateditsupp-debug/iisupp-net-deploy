@@ -274,6 +274,21 @@
     .pf-oneline{font-size:12.5px;line-height:1.65;color:rgba(255,255,255,.72);max-width:280px}
     .pf-oneline b{font-family:Cinzel,serif;white-space:nowrap}
     .pf-oneline .trad{color:#e78d8d}.pf-oneline .aria{color:#f1dca7}.pf-oneline .save{color:#5fd08a}
+    /* Animated cost bars (restored) — sit under the donut, scale to the larger value, transition on width. */
+    .pf-bars{width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;margin-top:2px}
+    .pf-bar-row{width:100%;min-width:0}
+    .pf-bar-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px}
+    .pf-bar-name{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.58);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pf-bar-val{font-family:Cinzel,serif;font-weight:700;font-size:12.5px;white-space:nowrap;flex:0 0 auto}
+    .pf-bar-val.trad{color:#e78d8d}.pf-bar-val.aria{color:#f1dca7}
+    .pf-bar-val small{font-family:Inter,sans-serif;font-weight:400;font-size:9.5px;opacity:.7}
+    .pf-bar-track{width:100%;height:14px;background:rgba(255,255,255,.06);border-radius:7px;overflow:hidden}
+    .pf-bar-fill{height:100%;width:0;border-radius:7px;transition:width .7s cubic-bezier(.4,.15,.2,1)}
+    .pf-bar-fill.trad{background:linear-gradient(90deg,#b95f5f,#e78d8d)}
+    .pf-bar-fill.aria{background:linear-gradient(90deg,#c5a059,#f1dca7)}
+    /* Always-visible "Number of support agents" helper text */
+    .pf-agents-hint{color:rgba(255,255,255,.4);font-size:9px;letter-spacing:.04em;text-transform:none;font-weight:400}
+    .pf-agents-note{color:rgba(255,255,255,.5);font-size:11px;line-height:1.4}
     .pf-quote-btn{display:inline-flex;align-items:center;gap:9px;background:transparent;border:1px solid rgba(197,160,89,.5);color:#f1dca7;padding:11px 20px;border-radius:11px;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:background .15s,box-shadow .15s}
     .pf-quote-btn:hover{background:rgba(197,160,89,.1);box-shadow:0 10px 26px rgba(197,160,89,.22)}
     .pf-quote-btn[disabled]{opacity:.4;cursor:not-allowed}
@@ -332,29 +347,34 @@
     <div class="pf-calc-body">
       <div class="pf-calc-left">
         <div>
-          <p class="pf-sec-label">Number of users &mdash; <span id="sv-users-val">250</span> employees</p>
+          <p class="pf-sec-label">Number of users &mdash; <span id="sv-users-val">120</span> employees</p>
           <div class="pf-users-row">
-            <input type="number" id="sv-users-num" min="1" max="100000" step="1" value="250" inputmode="numeric" aria-label="Number of users">
-            <input type="range" id="sv-users" min="1" max="2000" step="1" value="250" aria-label="Number of users slider">
+            <input type="number" id="sv-users-num" min="1" max="100000" step="1" value="120" inputmode="numeric" aria-label="Number of users">
+            <input type="range" id="sv-users" min="1" max="2000" step="1" value="120" aria-label="Number of users slider">
+          </div>
+          <p class="pf-sec-label" style="margin-top:14px">Number of support agents <span class="pf-agents-hint">L1 front line &middot; adjustable</span></p>
+          <div class="pf-users-row">
+            <input type="number" id="sv-agents" min="0" max="20" step="1" value="2" inputmode="numeric" aria-label="Number of support agents">
+            <span class="pf-agents-note">Sets your L1 tier. Add other roles in &ldquo;Build your desk&rdquo; below.</span>
           </div>
           <div class="pf-cov" id="sv-cov" role="tablist" aria-label="Support coverage">
             <button type="button" data-cov="always">24/7 always-on</button>
             <button type="button" data-cov="hours" class="on">Business hours</button>
           </div>
           <div class="pf-autorow">
-            <button type="button" id="sv-autofill">Auto-fill typical team for <span id="sv-auto-n">250</span></button>
+            <button type="button" id="sv-autofill">Auto-fill typical team for <span id="sv-auto-n">120</span></button>
             <button type="button" class="pf-clear" id="sv-clear">Clear</button>
           </div>
         </div>
         <details class="pf-roles-collapse" id="sv-roles-collapse">
-          <summary><span>Which desk roles would you staff?</span><span class="pf-rc-hint">optional &middot; tap to build by hand</span></summary>
+          <summary><span>Build your desk &mdash; how many of each?</span><span class="pf-rc-hint">optional &middot; tap to build by hand</span></summary>
           <div class="pf-roles" id="sv-roles"></div>
         </details>
       </div>
       <div class="pf-result">
         <div class="pf-summary-bar" id="sv-sumbar">
-          <span class="pf-sumbar-l"><span class="pf-sumbar-k">Matched plan</span><span class="pf-sumbar-plan" id="sv-sumbar-plan">ARIA Pro</span></span>
-          <span class="pf-sumbar-price" id="sv-sumbar-price">$27,000<small>/yr</small></span>
+          <span class="pf-sumbar-l"><span class="pf-sumbar-k">Matched plan</span><span class="pf-sumbar-plan" id="sv-sumbar-plan">ARIA Small Business</span></span>
+          <span class="pf-sumbar-price" id="sv-sumbar-price">$234,000<small>/yr</small></span>
         </div>
         <div class="pf-donut-wrap">
           <svg class="pf-donut" id="sv-donut" viewBox="0 0 120 120" aria-hidden="true">
@@ -367,6 +387,18 @@
             <div class="pf-donut-big" id="sv-donut-big">&mdash;</div>
             <div class="pf-donut-pct" id="sv-donut-pct"></div>
             <div class="pf-donut-small" id="sv-donut-small"></div>
+          </div>
+        </div>
+        <!-- Animated cost bars — Traditional service desk ($/yr, muted red) vs ARIA ($/yr, gold). Both scale to
+             the larger of the two and update live on every input. Fits the right column exactly (border-box). -->
+        <div class="pf-bars" id="sv-bars">
+          <div class="pf-bar-row">
+            <div class="pf-bar-top"><span class="pf-bar-name">Traditional service desk</span><span class="pf-bar-val trad" id="sv-bar-trad-val">&mdash;</span></div>
+            <div class="pf-bar-track"><div class="pf-bar-fill trad" id="sv-bar-trad"></div></div>
+          </div>
+          <div class="pf-bar-row">
+            <div class="pf-bar-top"><span class="pf-bar-name">ARIA</span><span class="pf-bar-val aria" id="sv-bar-aria-val">&mdash;</span></div>
+            <div class="pf-bar-track"><div class="pf-bar-fill aria" id="sv-bar-aria"></div></div>
           </div>
         </div>
         <p class="pf-oneline" id="sv-oneline">Add your team on the left, or hit <b>Auto-fill</b>.</p>
@@ -387,7 +419,7 @@
         <div class="pf-adj-grid" id="sv-adj-cov"></div>
       </div>
     </details>
-    <p class="pf-calc-foot">Estimates from typical loaded IT salaries &mdash; adjust to your reality. Defaults to business-hours coverage; every role starts at 0 &mdash; build your own desk, or auto-fill a typical team for your size. Switch to 24/7 always-on and the shift roles scale about 4.2&times; (168h &divide; 40h), applied once. Nothing here is a guarantee &mdash; it&rsquo;s a transparent model you control.</p>
+    <p class="pf-calc-foot">Estimates from typical loaded IT salaries &mdash; adjust to your reality. Starts on a realistic small-business desk (2 support agents &middot; 1 team lead &middot; 1 service-desk manager) at business-hours coverage &mdash; change any count, or auto-fill a typical team for your size. Switch to 24/7 always-on and the shift roles scale about 4.2&times; (168h &divide; 40h), applied once. Nothing here is a guarantee &mdash; it&rsquo;s a transparent model you control.</p>
   </section>
   <script>
   (function(){
@@ -495,6 +527,16 @@
       }
     }
 
+    // ---- Animated cost bars: Traditional (red) vs ARIA (gold). Both scale to the larger value. ----
+    function renderBars(trad,aria){
+      var maxv=Math.max(trad,aria,1);
+      var tf=$('sv-bar-trad'),af=$('sv-bar-aria'),tv=$('sv-bar-trad-val'),av=$('sv-bar-aria-val');
+      if(tf)tf.style.width=(clamp(trad/maxv,0,1)*100).toFixed(2)+'%';
+      if(af)af.style.width=(clamp(aria/maxv,0,1)*100).toFixed(2)+'%';
+      if(tv)tv.innerHTML=trad>0?money(trad)+'<small>/yr</small>':'&mdash;';
+      if(av)av.innerHTML=money(aria)+'<small>/yr</small>';
+    }
+
     function calc(){
       var size=readSize(), m=readNum('sv-k-mult',4.2,1,10), always=cov==='always';
       $('sv-users-val').textContent=size.toLocaleString('en-US');
@@ -509,6 +551,9 @@
         if(eff>0)rolesOut.push({name:r.name,count:eff,cost:cost});
         var row=$('sv-role-'+r.id); if(row)row.classList.toggle('zero',base<=0);
       });
+      // Keep the always-visible "Number of support agents" box mirrored to the L1 count (unless it's being edited).
+      var agEl=$('sv-agents'), l1El=$('sv-c-l1');
+      if(agEl&&l1El&&document.activeElement!==agEl)agEl.value=Math.round(readNum('sv-c-l1',0,0,CNT_MAX));
       var tier=ariaTier(size), aria=tier.yr, trad=total, save=trad-aria;
       var sbPlan=$('sv-sumbar-plan'), sbPrice=$('sv-sumbar-price');
       if(sbPlan)sbPlan.textContent='ARIA '+tier.name;
@@ -516,12 +561,14 @@
       var one=$('sv-oneline'), qbtn=$('sv-quote-btn');
       if(!any||trad<=0){
         renderDonut(0,aria,0,true);
+        renderBars(0,aria);
         one.innerHTML='Add your team on the left, or hit <b>Auto-fill</b> for a typical desk.';
         qbtn.disabled=true;
         lastModel=null;
         return;
       }
       renderDonut(trad,aria,save,false);
+      renderBars(trad,aria);
       qbtn.disabled=false;
       if(save>0){
         one.innerHTML='In-house <b class="trad">'+money(trad)+'/yr</b> vs <b class="aria">ARIA '+tier.name+' '+money(aria)+'/yr</b> &rarr; save <b class="save">'+money(save)+'/yr</b>.';
@@ -606,6 +653,8 @@
     // ---- Wire up ----
     buildRoles();
     buildAdj();
+    // Realistic Small-Business default desk: 2 L1 support agents · 1 team lead · 1 service-desk manager (rest 0).
+    (function setDefaultDesk(){var d={l1:2,tl:1,mgr:1};ROLES.forEach(function(r){var el=$('sv-c-'+r.id);if(el)el.value=d[r.id]||0;});})();
     var slider=$('sv-users'), numIn=$('sv-users-num'), SLIDER_MAX=parseInt(slider.max,10)||2000;
     slider.addEventListener('input',function(){numIn.value=slider.value;calc();});
     numIn.addEventListener('input',function(){var v=parseInt(numIn.value,10);if(isFinite(v))slider.value=clamp(v,parseInt(slider.min,10)||1,SLIDER_MAX);calc();});
@@ -626,6 +675,14 @@
     rolesWrap.addEventListener('input',calc);
     rolesWrap.addEventListener('change',calc);
 
+    // Always-visible support-agents box drives the L1 count (two-way: calc() mirrors L1 back into it).
+    var agentsIn=$('sv-agents');
+    if(agentsIn){
+      var pushAgents=function(){var l1=$('sv-c-l1');if(l1){var v=parseInt(agentsIn.value,10);if(!isFinite(v)||v<0)v=0;l1.value=clamp(v,0,CNT_MAX);}calc();};
+      agentsIn.addEventListener('input',pushAgents);
+      agentsIn.addEventListener('change',pushAgents);
+    }
+
     $('sv-autofill').addEventListener('click',autofill);
     $('sv-clear').addEventListener('click',clearAll);
     $('sv-quote-btn').addEventListener('click',buildQuote);
@@ -638,14 +695,16 @@
 
   <!-- R-ONE N2 — optional implementation add-on selector → quote request (no fixed price, no Stripe charge). -->
   <style>
-    .aria-impl-addon{max-width:900px;margin:34px auto 0;padding:24px 28px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.02)}
-    .aria-impl-addon .awa-title{font-size:19px;margin:0 0 4px}
-    .aria-impl-addon .awa-sub{color:rgba(255,255,255,.6);font-size:13px;margin:0 0 14px}
-    .aria-impl-addon .awa-conns{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:14px}
-    .aria-impl-addon .awa-conn{font-size:14px;color:rgba(255,255,255,.85);display:flex;gap:8px;align-items:center}
-    .aria-impl-addon .awa-org,.aria-impl-addon .awa-email{display:block;width:100%;max-width:360px;margin:6px 0;padding:9px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.25);color:#fff}
-    .aria-impl-addon .awa-submit{margin-top:8px;background:#c5a059;color:#1a1205;border:0;border-radius:9px;padding:11px 22px;font-weight:700;cursor:pointer}
-    .aria-impl-addon .awa-msg{margin-top:10px;font-size:13px;color:#f1dca7;min-height:18px}
+    /* Compact + clean (v9): tighter grid, small checkboxes, less padding. Same function. */
+    .aria-impl-addon{max-width:820px;margin:30px auto 0;padding:16px 20px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.018)}
+    .aria-impl-addon .awa-title{font-size:15px;margin:0 0 3px}
+    .aria-impl-addon .awa-sub{color:rgba(255,255,255,.55);font-size:11.5px;line-height:1.45;margin:0 0 10px}
+    .aria-impl-addon .awa-conns{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px 12px;margin-bottom:10px}
+    .aria-impl-addon .awa-conn{font-size:12px;color:rgba(255,255,255,.8);display:flex;gap:7px;align-items:center;cursor:pointer;padding:2px 0}
+    .aria-impl-addon .awa-conn input{accent-color:#c5a059;width:13px;height:13px;flex:0 0 auto;margin:0}
+    .aria-impl-addon .awa-org,.aria-impl-addon .awa-email{display:block;width:100%;max-width:300px;margin:0 0 6px;padding:7px 10px;font-size:12.5px;border-radius:7px;border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.25);color:#fff}
+    .aria-impl-addon .awa-submit{margin-top:10px;background:#c5a059;color:#1a1205;border:0;border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:700;cursor:pointer}
+    .aria-impl-addon .awa-msg{margin-top:8px;font-size:12px;color:#f1dca7;min-height:16px}
   </style>
   <div data-aria-impl-addon></div>
 
