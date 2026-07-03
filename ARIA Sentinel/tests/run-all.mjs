@@ -11,6 +11,15 @@ const TESTS = [
   "./tab-gating-post-trial.test.mjs",
   "./walkthrough-webhook-grant.test.mjs",
   "./gating-free-floor.test.mjs", // FIX 2 — free floor ⊊ paid Personal (a paid entry plan is a real upgrade)
+  "./dual-license-matrix.test.mjs", // 2026-07-03 — per-state matrix (admin/pro/smb/personal/trial/expired), backbone of the test-matrix doc
+  // P1 DEAD-SHELL FIX 2026-07-02 — the free/expired floor must stay a NAVIGABLE tier (never a locked shell).
+  "./nav-baseline-navigable.test.mjs",
+  "./renderer-no-deadshell.test.mjs",
+  // P0 DEAD-SHELL FIX 2026-07-02 — renderer import graph must be browser-safe (no node:/bare specifier can
+  // enter it, or the CSP blocks the load and every click dies). Catches the tab-gating→node:crypto regression.
+  "./renderer-import-graph.test.mjs",
+  // P1 OVERLAY 2026-07-02 — ONE box (no #companionPanel layer) + on-device tap-to-speak voice loop.
+  "./overlay-onebox-voice.test.mjs",
   // FORUMS MVP 2026-07-02 — real-KB retrieval + honest abstain + store core + a11y/fabrication gates.
   "../../tests/forums-mvp.test.mjs",
   // CONCIERGE 2026-07-02 — AI Setup Walk-Through homepage card + aria.html copy + services.html listing.
@@ -48,6 +57,10 @@ const TESTS = [
   "./license.test.mjs",
   "./c2-pilot-state.test.mjs",   // RUN-C C2 — free-pilot mechanic
   "./a1-empty-state-no-fabrication.test.mjs",   // RUN-A A1 — Rule 14 real-or-empty (no fabricated metrics)
+  "./admin-console-honesty.test.mjs",   // H1 (2026-07-02) — Rule 14 real-or-empty for the admin console (no fabricated fleet)
+  "./symptom-executor.test.mjs",        // F1 (2026-07-02) — matched symptom → vetted Tier-0 executor binding (resolve actually runs)
+  "./integrations-tab-restore.test.mjs",// Integrations tab RESTORE (2026-07-02, Rule 15) — full tab set + every connector section
+  "./density-charts-collapse.test.mjs", // Density (2026-07-02) — SLA/KPIs as live charts + heavy sections collapse by default
   "./auto-update.test.mjs",
   "./api-v1.test.mjs",
   "./patch-management.test.mjs",
@@ -242,6 +255,10 @@ const TESTS = [
   "./setup-wizard.test.mjs",
   // RUN 34-1 — readable chat: markdown → HTML rendering.
   "./aria-markdown.test.mjs",
+  // F2 2026-07-03 — bundled full KB text repairs a mid-line-truncated live excerpt (printer "Escalation Trigger").
+  "./kb-fulltext.test.mjs",
+  // F2 recurrence 2026-07-03 — truncation must be detected EVEN behind the client's "→ Full article:" footer.
+  "./kb-answer-truncation.test.mjs",
   // RUN 34-3 — license mint never hangs (timeouts on every leg + actionable error).
   "./license-mint-timeout.test.mjs",
   // RUN 33-A — KB freshness surfaced in the top bar.

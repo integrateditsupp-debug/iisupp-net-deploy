@@ -58,8 +58,19 @@ import fs from "node:fs";
 import path from "node:path";
 const rjs = fs.readFileSync(path.join(path.resolve(import.meta.dirname, ".."), "src", "renderer", "renderer.js"), "utf8");
 assert.match(rjs, /import \{ renderMarkdown \} from "\.\.\/shared\/aria-markdown\.mjs"/, "renderer imports the markdown renderer");
-assert.match(rjs, /renderMarkdown\(stripFm/, "chat answer is rendered as markdown");
+assert.match(rjs, /renderMarkdown\(repairTruncatedTail\(stripFm/, "chat answer is rendered as markdown, tail-repaired first (F2)");
 t();
 
-assert.equal(n, 7, "7 markdown test groups");
-console.log(`aria-markdown test passed (${n} groups · headings/ol/ul/code/links/quotes/fences · XSS-safe escape-first · readable hierarchy).`);
+// 8 — F2 REGRESSION: a line containing parentheses + an inline-code UNC path ("Print server (`\\printserver`)")
+// must render IN FULL — never dropped/cut at the "(". This is the exact printer "Escalation Trigger" case.
+const paren = renderMarkdown("## 7. Escalation Trigger\n- Print server (`\\\\printserver`) unreachable.\n- Hardware error code from display.");
+assert.match(paren, /<li>Print server \(<code>\\\\printserver<\/code>\) unreachable\.<\/li>/, "parenthesized UNC-path bullet renders in full (no cut at '(')");
+assert.ok(paren.includes("unreachable."), "text after the '(' is preserved");
+assert.match(paren, /<li>Hardware error code from display\.<\/li>/, "the following bullet still renders");
+// a bare parenthetical in a paragraph also survives intact.
+const paren2 = renderMarkdown("Reserve the printer IP (DHCP reservation) so it doesn't shift.");
+assert.match(paren2, /<p>Reserve the printer IP \(DHCP reservation\) so it doesn't shift\.<\/p>/, "inline parenthetical renders whole");
+t();
+
+assert.equal(n, 8, "8 markdown test groups");
+console.log(`aria-markdown test passed (${n} groups · headings/ol/ul/code/links/quotes/fences · XSS-safe escape-first · readable hierarchy · F2 parentheses-in-full).`);

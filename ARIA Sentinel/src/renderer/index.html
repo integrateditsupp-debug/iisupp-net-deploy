@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'" />
-    <title>ARIA Sentinel Settings</title>
+    <title>ARIA Sentinel</title>
     <link rel="stylesheet" href="./sentinel.css" />
   </head>
   <body>
@@ -59,7 +59,7 @@
             <a href="#system-context" data-anchor="system-context">This Machine</a>
             <a href="#cross-platform" data-anchor="cross-platform">Platform Support</a>
           </div>
-          <button class="nav-item" data-tab="servicenow"><span class="nav-dot"></span>ServiceNow</button>
+          <button class="nav-item" data-tab="integrations"><span class="nav-dot"></span>Integrations</button>
           <button class="nav-item" data-tab="settings"><span class="nav-dot"></span>Settings<span class="nav-caret">▸</span></button>
           <div class="nav-sub" data-sub="settings">
             <a href="#mode" data-anchor="mode">Mode</a>
@@ -79,7 +79,7 @@
       <section class="settings-workspace">
         <header class="settings-topbar">
           <div>
-            <p class="eyebrow">ARIA Sentinel - Settings</p>
+            <p class="eyebrow" id="pageEyebrow">ARIA Sentinel · Dashboard</p>
             <h1 id="pageTitle">Dashboard</h1>
           </div>
           <div class="status-stack">
@@ -153,7 +153,7 @@
         <section id="dashboard" class="tab-panel active">
           <span id="overview" class="ia-anchor"></span>
           <section class="panel hero-panel">
-            <div id="heroStatus" class="hero-status" data-level="protected"><span class="hero-emoji">🟢</span><strong class="hero-label">PROTECTED</strong></div>
+            <div id="heroStatus" class="hero-status" data-level="protected"><strong class="hero-label">PROTECTED</strong></div>
             <p id="heroSubline" class="hero-subline">ARIA is watching.</p>
           </section>
           <div id="kpiTiles" class="kpi-grid"></div>
@@ -176,9 +176,19 @@
             <div class="merge-bar" aria-hidden="true"></div>
             <div><p class="eyebrow">Performance</p><h2>Performance</h2><p class="merge-sub">Operational KPIs · AI diagnosis quality · usage patterns</p></div>
           </div>
-          <section class="panel"><p class="eyebrow">Operational KPIs</p><h2>Operations</h2><div id="perfOperational" class="kpi-grid"></div></section>
-          <section class="panel"><p class="eyebrow">AI performance · the moat</p><h2>Diagnosis quality</h2><div id="perfAI" class="kpi-grid"></div></section>
-          <section class="panel"><p class="eyebrow">Usage patterns</p><h2>Usage</h2><div id="perfUsage" class="health-list"></div></section>
+          <!-- Density 2026-07-02 — KPIs render as a LIVE chart by default (real-or-empty); the full number grids collapse below. -->
+          <div class="kpi-chart-panel">
+            <div class="chart-head"><h3>Operations at a glance</h3><span class="chart-sub">Live · real-or-empty</span></div>
+            <div id="perfChart" class="kpi-chart"></div>
+          </div>
+          <details class="accordion" id="perf-numbers">
+            <summary class="accordion-summary"><span class="accordion-title">See the numbers</span><span class="accordion-sub">Operational KPIs · AI diagnosis quality · usage patterns</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <div class="accordion-body">
+              <section class="panel"><p class="eyebrow">Operational KPIs</p><h2>Operations</h2><div id="perfOperational" class="kpi-grid"></div></section>
+              <section class="panel"><p class="eyebrow">AI performance · the moat</p><h2>Diagnosis quality</h2><div id="perfAI" class="kpi-grid"></div></section>
+              <section class="panel"><p class="eyebrow">Usage patterns</p><h2>Usage</h2><div id="perfUsage" class="health-list"></div></section>
+            </div>
+          </details>
 
           <!-- ## SLA (merged from the SLA tab) -->
           <div class="merge-head" id="sla">
@@ -186,10 +196,20 @@
             <div><p class="eyebrow">SLA</p><h2>SLA</h2><p class="merge-sub">Compliance window · uptime · response &amp; resolution by severity · breaches</p></div>
           </div>
           <section class="panel"><p class="eyebrow">Compliance window</p><h2 id="slaComposite">SLA-met this month</h2><p class="note" id="slaComplianceNote"></p></section>
-          <section class="panel"><p class="eyebrow">Uptime</p><h2>Availability</h2><div id="slaUptime" class="kpi-grid"></div></section>
-          <section class="panel"><p class="eyebrow">Response time</p><h2>Response SLA by severity</h2><div id="slaResponse" class="health-list"></div></section>
-          <section class="panel"><p class="eyebrow">Resolution time</p><h2>Resolution SLA by severity</h2><div id="slaResolution" class="health-list"></div></section>
-          <section class="panel"><p class="eyebrow">Breaches</p><h2>SLA breach tracking</h2><div id="slaBreaches" class="health-list"></div><p class="note">Service credits are auto-calculated but never auto-issued — admin sign-off required.</p></section>
+          <!-- Density 2026-07-02 — uptime renders as a LIVE chart by default (real-or-empty); numbers + severity rows collapse below. -->
+          <div class="kpi-chart-panel">
+            <div class="chart-head"><h3>Availability</h3><span class="chart-sub">Uptime · live · real-or-empty</span></div>
+            <div id="slaChart" class="kpi-chart"></div>
+          </div>
+          <details class="accordion" id="sla-numbers">
+            <summary class="accordion-summary"><span class="accordion-title">See the numbers</span><span class="accordion-sub">Uptime windows · response &amp; resolution by severity · breaches</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <div class="accordion-body">
+              <section class="panel"><p class="eyebrow">Uptime</p><h2>Availability</h2><div id="slaUptime" class="kpi-grid"></div></section>
+              <section class="panel"><p class="eyebrow">Response time</p><h2>Response SLA by severity</h2><div id="slaResponse" class="health-list"></div></section>
+              <section class="panel"><p class="eyebrow">Resolution time</p><h2>Resolution SLA by severity</h2><div id="slaResolution" class="health-list"></div></section>
+              <section class="panel"><p class="eyebrow">Breaches</p><h2>SLA breach tracking</h2><div id="slaBreaches" class="health-list"></div><p class="note">Service credits are auto-calculated but never auto-issued — admin sign-off required.</p></section>
+            </div>
+          </details>
 
           <!-- ## Activity (kept from Overview, now last per RUN 23d layout) -->
           <div class="merge-head" id="dashActivity">
@@ -231,7 +251,7 @@
                 <p class="eyebrow">Local recipe registry</p>
                 <h2>Vetted fixes</h2>
               </div>
-              <button id="simulateAriaError" class="ghost">Simulate ARIA error</button>
+              <button id="simulateAriaError" class="ghost" hidden>Simulate ARIA error</button>
             </div>
             <p id="recipeCatalogMeta" class="note">Loading recipes.</p>
             <div id="recipeList" class="recipe-list compact-list"></div>
@@ -265,11 +285,17 @@
             <div class="merge-bar" aria-hidden="true"></div>
             <div><p class="eyebrow">Compliance</p><h2>Compliance</h2><p class="merge-sub">Audit integrity · safety gate · R11 · framework scores · evidence export</p></div>
           </div>
-          <section class="panel"><p class="eyebrow">Audit integrity</p><h2>Hash chain</h2><div id="compAudit" class="health-list"></div></section>
-          <section class="panel"><p class="eyebrow">Privacy verifier</p><h2>Outbound + sanitization</h2><div id="compPrivacy" class="health-list"></div></section>
-          <section class="panel"><p class="eyebrow">Safety gate</p><h2>Tier-0 blocks</h2><div id="compTier0" class="health-list"></div></section>
-          <section class="panel"><p class="eyebrow">R11 privacy rule</p><h2>Private folder enforcement</h2><div id="compR11" class="health-list"></div></section>
-          <section class="panel"><p class="eyebrow">Frameworks</p><h2>Composite scores</h2><div id="compFrameworks" class="kpi-grid"></div></section>
+          <!-- Density 2026-07-02 — the compliance metric rows collapse behind a one-line summary; expand for detail. -->
+          <details class="accordion" id="compliance-detail">
+            <summary class="accordion-summary"><span class="accordion-title">Compliance detail</span><span class="accordion-sub">Audit hash chain · privacy verifier · Tier-0 safety gate · R11 · framework scores</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <div class="accordion-body">
+              <section class="panel"><p class="eyebrow">Audit integrity</p><h2>Hash chain</h2><div id="compAudit" class="health-list"></div></section>
+              <section class="panel"><p class="eyebrow">Privacy verifier</p><h2>Outbound + sanitization</h2><div id="compPrivacy" class="health-list"></div></section>
+              <section class="panel"><p class="eyebrow">Safety gate</p><h2>Tier-0 blocks</h2><div id="compTier0" class="health-list"></div></section>
+              <section class="panel"><p class="eyebrow">R11 privacy rule</p><h2>Private folder enforcement</h2><div id="compR11" class="health-list"></div></section>
+              <section class="panel"><p class="eyebrow">Frameworks</p><h2>Composite scores</h2><div id="compFrameworks" class="kpi-grid"></div></section>
+            </div>
+          </details>
           <section class="panel" style="grid-column:1/-1"><p class="eyebrow">Trust &amp; how we measure ourselves</p><h2>Honest by design</h2><div id="compTrust" class="trust-posture"></div></section>
           <section class="panel"><p class="eyebrow">Evidence</p><h2>Auditor export</h2><div class="button-row"><button id="compExportEvidence" class="ghost wide">Export evidence pack</button><span id="compEvidenceResult" class="capture-verdict"></span></div></section>
 
@@ -397,8 +423,11 @@
             <p id="systemContextMeta" class="note">All inventory stays on this device. Nothing is sent off-device unless you click "Share with ARIA for diagnosis".</p>
             <input id="systemContextSearch" type="text" placeholder="Search apps, services, drivers…" />
             <div id="systemContextSummary" class="health-list"></div>
-            <h3 style="margin-top:14px">Installed apps</h3>
-            <div id="systemContextApps" class="source-list"></div>
+            <!-- Density 2026-07-02 — the full app inventory is collapsed by default (one-line summary); expand or search to browse. -->
+            <details class="accordion" id="system-apps">
+              <summary class="accordion-summary"><span class="accordion-title">Installed apps</span><span class="accordion-sub">Full local inventory — content-blind. Expand or type in Search to browse.</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+              <div class="accordion-body"><div id="systemContextApps" class="source-list"></div></div>
+            </details>
           </section>
 
           <!-- ## Platform Support (merged from the Cross-Platform tab) -->
@@ -415,48 +444,115 @@
           </section>
         </section>
 
-        <!-- ============ SERVICENOW (own tab — RUN 23d: Ahmad keeps it standalone) ============ -->
-        <section id="servicenow" class="tab-panel">
-          <div class="settings-grid-main">
-            <section class="panel">
-              <p class="eyebrow">ServiceNow connection</p>
-              <h2>Incident bridge</h2>
-              <label class="field">Instance URL <input value="https://customer.service-now.com" readonly /></label>
-              <label class="field">OAuth 2.0 <input value="Not connected in MVP dry-run" readonly /></label>
-              <label class="field">Default caller <input value="ARIA Sentinel local user" readonly /></label>
-              <button id="testServiceNow" class="ghost wide">Test connection</button>
-              <p class="note">Live posting is enabled only after customer OAuth and assignment group approval.</p>
-            </section>
-            <section class="panel">
-              <p class="eyebrow">Assignment group mapping</p>
-              <h2>Automatic routing</h2>
-              <div id="routingRows" class="mapping"></div>
-            </section>
-          </div>
+        <!-- ============ INTEGRATIONS (RESTORED 2026-07-02 — Rule 15: ServiceNow + Entra + Remote + browser ext + Slack/Teams) ============ -->
+        <section id="integrations" class="tab-panel">
           <section class="panel">
-            <p class="eyebrow">Integrations</p>
-            <h2>Notify on auto-fix (Slack / Teams)</h2>
-            <p class="note">Sends a content-blind event (recipe · outcome · endpoint handle · duration) when ARIA auto-applies a fix. Never page content. Slack or Teams incoming-webhook URLs only.</p>
-            <label class="field">Webhook URL <input id="notifyWebhook" type="url" placeholder="Slack or Teams incoming-webhook URL" /></label>
-            <label class="field">Channel (optional) <input id="notifyChannel" type="text" placeholder="#it-fixes" /></label>
-            <div class="button-row">
-              <button id="saveNotify" class="ghost">Save</button>
-              <button id="testNotify" class="ghost">Send test ping</button>
-              <span id="notifyStatus" class="note"></span>
-            </div>
+            <p class="eyebrow">Connections</p>
+            <h2>Integrations</h2>
+            <p class="note">Identity, service, endpoint, and Microsoft&nbsp;365 connectors. Status is read-only; live writes to any directory, RSA, or ServiceNow stay gated behind per-customer approval. Nothing is sent off-device until you connect and approve.</p>
           </section>
-          <section class="panel sn-incidents">
-            <div class="sn-head">
-              <img class="mini-globe live-globe-img" src="aria-live-globe.svg" alt="" aria-hidden="true">
-              <div>
-                <p class="eyebrow">My incidents</p>
-                <h2>Synced with ServiceNow</h2>
+          <div id="integrationsGrid" class="integrations-groups">
+            <p class="note">Loading integrations…</p>
+          </div>
+
+          <!-- ServiceNow — full config, collapsible one-line summary → expand for detail (density) -->
+          <details class="accordion" id="sn-section" open>
+            <summary class="accordion-summary"><span class="accordion-title">ServiceNow</span><span class="accordion-sub">Incident bridge · assignment-group routing · content-blind drafts</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <div class="accordion-body">
+              <div class="settings-grid-main">
+                <section class="panel">
+                  <p class="eyebrow">ServiceNow connection</p>
+                  <h2>Incident bridge</h2>
+                  <label class="field">Instance URL <input value="https://customer.service-now.com" readonly /></label>
+                  <label class="field">OAuth 2.0 <input value="Not connected in MVP dry-run" readonly /></label>
+                  <label class="field">Default caller <input value="ARIA Sentinel local user" readonly /></label>
+                  <button id="testServiceNow" class="ghost wide">Test connection</button>
+                  <p class="note">Live posting is enabled only after customer OAuth and assignment group approval.</p>
+                </section>
+                <section class="panel">
+                  <p class="eyebrow">Assignment group mapping</p>
+                  <h2>Automatic routing</h2>
+                  <div id="routingRows" class="mapping"></div>
+                </section>
               </div>
-              <span id="snSyncNote" class="sync-note">Newest first</span>
+              <section class="panel sn-incidents">
+                <div class="sn-head">
+                  <img class="mini-globe live-globe-img" src="aria-live-globe.svg" alt="" aria-hidden="true">
+                  <div>
+                    <p class="eyebrow">My incidents</p>
+                    <h2>Synced with ServiceNow</h2>
+                  </div>
+                  <span id="snSyncNote" class="sync-note">Newest first</span>
+                </div>
+                <p id="snStatusNote" class="note">ServiceNow live connection is configured per customer. Until then, incidents stay as local content-blind drafts.</p>
+                <div id="incidentList" class="incident-stack"></div>
+              </section>
             </div>
-            <p id="snStatusNote" class="note">ServiceNow live connection is configured per customer. Until then, incidents stay as local content-blind drafts.</p>
-            <div id="incidentList" class="incident-stack"></div>
-          </section>
+          </details>
+
+          <!-- Microsoft Entra ID / 365 -->
+          <details class="accordion" id="entra-section">
+            <summary class="accordion-summary"><span class="accordion-title">Microsoft Entra ID / 365</span><span class="accordion-sub">Directory read-only: users, groups, lockouts, sign-in signals</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <div class="accordion-body">
+              <section class="panel">
+                <p class="eyebrow">Entra / Microsoft Graph connection</p>
+                <h2>Directory (read-only first)</h2>
+                <label class="field">Tenant ID <input value="Not connected" readonly /></label>
+                <label class="field">App (client) ID <input value="Set DIRECTORY_CLIENT_ID to connect" readonly /></label>
+                <p class="note">Read-only by default (users, groups, sign-in signals). Any write (unlock, group change) stays gated behind per-customer admin approval. Use the card's "Test connection" above for a read-only check.</p>
+              </section>
+            </div>
+          </details>
+
+          <!-- Remote assist / Whereby -->
+          <details class="accordion" id="remote-section">
+            <summary class="accordion-summary"><span class="accordion-title">Remote assist (Whereby)</span><span class="accordion-sub">Scoped, time-boxed remote-control room — started on request</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <div class="accordion-body">
+              <section class="panel">
+                <p class="eyebrow">Scoped remote session</p>
+                <h2>Remote assist</h2>
+                <p class="note">No standing connection. When you request help, ARIA opens a scoped Whereby room that expires after 10 minutes. You approve entry; the session ends automatically. Nothing runs on your machine without the desktop approval gates.</p>
+              </section>
+            </div>
+          </details>
+
+          <!-- Browser extensions (Chrome + Edge) -->
+          <details class="accordion" id="ext-section">
+            <summary class="accordion-summary"><span class="accordion-title">Browser extensions (Chrome / Edge)</span><span class="accordion-sub">The gold A in your toolbar — fixes browser issues on-device</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <div class="accordion-body">
+              <section class="panel">
+                <p class="eyebrow">Browser companion</p>
+                <h2>ARIA for Chrome / Edge</h2>
+                <p class="note">On-device only — the extension never sends your browsing anywhere. Install by loading the bundled extension folder.</p>
+                <ol class="ext-steps">
+                  <li>Open your browser's extensions page (chrome://extensions or edge://extensions).</li>
+                  <li>Enable <b>Developer mode</b> (top-right toggle).</li>
+                  <li>Click <b>Load unpacked</b>.</li>
+                  <li>Select: <code>&lt;Sentinel install path&gt;\resources\chrome-extension</code> (or <code>edge-extension</code>).</li>
+                  <li>Done — the gold A appears in your toolbar.</li>
+                </ol>
+              </section>
+            </div>
+          </details>
+
+          <!-- Slack / Teams notify (the auto-fix webhook) -->
+          <details class="accordion" id="notify-section">
+            <summary class="accordion-summary"><span class="accordion-title">Slack / Teams notify</span><span class="accordion-sub">Content-blind auto-fix notifications to a webhook</span><span class="accordion-caret" aria-hidden="true">▸</span></summary>
+            <div class="accordion-body">
+              <section class="panel">
+                <p class="eyebrow">Notify on auto-fix</p>
+                <h2>Slack / Teams</h2>
+                <p class="note">Sends a content-blind event (recipe · outcome · endpoint handle · duration) when ARIA auto-applies a fix. Never page content. Slack or Teams incoming-webhook URLs only.</p>
+                <label class="field">Webhook URL <input id="notifyWebhook" type="url" placeholder="Slack or Teams incoming-webhook URL" /></label>
+                <label class="field">Channel (optional) <input id="notifyChannel" type="text" placeholder="#it-fixes" /></label>
+                <div class="button-row">
+                  <button id="saveNotify" class="ghost">Save</button>
+                  <button id="testNotify" class="ghost">Send test ping</button>
+                  <span id="notifyStatus" class="note"></span>
+                </div>
+              </section>
+            </div>
+          </details>
         </section>
 
         <!-- ============ SETTINGS (RUN 23d: Mode + Hotkeys + Troubleshoot + Support + About) ============ -->
@@ -701,7 +797,11 @@
         </div>
         <div class="onboarding-foot">
           <a href="#" id="planDetails" data-support="https://iisupp.net/aria-sentinel/">Visit iisupp.net for full details</a>
-          <div class="button-row"><button id="planEnterLicense" class="ghost">Enter license</button></div>
+          <div class="button-row">
+            <button id="planEnterLicense" class="ghost">Enter license</button>
+            <!-- DEAD-SHELL FIX 2026-07-02 — dismiss the upsell; never trap the user (baseline stays navigable). -->
+            <button id="planModalClose" class="ghost">Maybe later</button>
+          </div>
         </div>
       </div>
     </div>

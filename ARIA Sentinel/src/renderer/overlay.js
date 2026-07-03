@@ -30,13 +30,16 @@ const card = document.getElementById("overlayCard");
 const chip = document.getElementById("overlayChip");
 const title = document.getElementById("overlayTitle");
 const copy = document.getElementById("overlayBody");
+// 2026-07-02 ONE-BOX: the companion renders into the SAME #overlayBody as the detector card (no separate panel).
+const companionBody = copy;
+const cardHead = document.getElementById("overlayCardHead");
+const overlayActions = document.getElementById("overlayActions");
+const overlaySpeakBtn = document.getElementById("overlaySpeak");
 const globeSvg = document.querySelector(".aria-globe");
 const greeting = document.getElementById("overlayGreeting");
 let greetingTimer = null;
 const confirmEl = document.getElementById("overlayConfirm");
 let confirmTimer = null;
-const companionPanel = document.getElementById("companionPanel");
-const companionBody = document.getElementById("companionBody");
 const companionBackBtn = document.getElementById("companionBack");
 const companionCloseBtn = document.getElementById("companionClose");
 const companionMuteBtn = document.getElementById("companionMute");
@@ -74,6 +77,10 @@ function narrate(text) {
     const v = pickNarrationVoice(); if (v) u.voice = v;
     u.lang = (v && v.lang) || "en-US";
     u.rate = 0.95; u.pitch = 1.0; // soft, unhurried, professional
+    // Globe reflects that ARIA is speaking, then settles back to idle when the reply finishes.
+    u.onstart = () => setGlobeState("speaking");
+    u.onend = () => setGlobeState("idle");
+    u.onerror = () => setGlobeState("idle");
     speechSynthesis.speak(u);
   } catch { /* on-device TTS is best-effort; it never blocks the visible card */ }
 }
@@ -194,13 +201,15 @@ sentinel.getState().then((state) => {
 });
 
 document.getElementById("overlayGlobe").addEventListener("click", async () => {
+  // Voice ASK in progress → a globe tap controls it: listening → stop + answer; speaking → stop.
+  if (voiceActive) { await stopVoiceAndAnswer(); return; }
+  if (typeof speechSynthesis !== "undefined" && speechSynthesis.speaking) { cancelVoice(); return; }
   if (currentDetection) {
     setMode("card");
     return;
   }
-  // No active detection → open the interactive assistant ("What would you like to do?").
+  // No active detection → open the interactive assistant ("What would you like to do?") in the ONE box.
   // main resizes the overlay + sends overlay-mode "companion", which renders the menu via onOverlayMode.
-  setGlobeState("listening");
   await sentinel.openCompanion();
 });
 
@@ -235,15 +244,30 @@ document.getElementById("overlayFix").addEventListener("click", async () => {
   setTimeout(() => setGlobeState("idle"), 2400);
 });
 
+// The single overlay box. Modes: "globe" (nothing but the globe) · "card" (detector Fix/Dismiss) · "companion"
+// (interactive assistant). BOTH card + companion use the ONE #overlayCard. Guarantees at most ONE of
+// {#overlayCard, #overlayConfirm, greeting} is ever visible — opening the card cancels the confirm + greeting
+// timers so they can't stack/clip on top of it (Ahmad's overlap bug). The globe is never covered.
 function setMode(mode) {
-  const showCard = mode === "card";
-  const showCompanion = mode === "companion";
-  body.classList.toggle("globe-only", !showCard && !showCompanion);
+  const companion = mode === "companion";
+  const showCard = mode === "card" || companion;
+  body.classList.toggle("globe-only", !showCard);
   body.classList.toggle("card-visible", showCard);
-  body.classList.toggle("companion-visible", showCompanion);
   card.hidden = !showCard;
-  if (companionPanel) companionPanel.hidden = !showCompanion;
-  if (showCompanion) setGlobeState("idle");
+  // Detector vs companion chrome inside the single card.
+  card.classList.toggle("companion-active", companion);
+  if (cardHead) cardHead.hidden = !companion;
+  if (chip) chip.hidden = companion;
+  if (title) title.hidden = companion;
+  if (overlayActions) overlayActions.hidden = companion;
+  // ONE box: whenever the card opens, hide + cancel the confirm bubble AND the greeting (never stack/overlap).
+  if (showCard) {
+    if (confirmTimer) { clearTimeout(confirmTimer); confirmTimer = null; }
+    if (confirmEl) { confirmEl.classList.remove("show"); confirmEl.hidden = true; }
+    if (greetingTimer) { clearTimeout(greetingTimer); greetingTimer = null; }
+    if (greeting) { greeting.classList.remove("show"); greeting.hidden = true; }
+  }
+  if (companion) setGlobeState("idle");
 }
 
 function render(detection) {
@@ -275,6 +299,45 @@ function advance(view) { pushView({ kind: "flow", flowId: view.flowId, index: vi
 
 companionBackBtn?.addEventListener("click", backView);
 companionCloseBtn?.addEventListener("click", closeCompanion);
+
+// ── Voice ASK (tap-to-speak → ask ARIA by voice, 100% on-device) ─────────────────────────────────────────
+// Tap 🎤 in the box → HIDE the box, keep ONLY the globe in a listening state, transcribe on-device (Vosk), then
+// tap the globe again to stop → route the transcript to ARIA's KB-first answer engine (sentinel.chat) and NARRATE
+// the reply in the calm female voice. Tapping the globe while it's speaking stops it. No audio ever leaves the
+// machine; no cloud recognizer fallback (if the local model is absent, we fall back to the typeable menu).
+let voiceStt = null, voiceActive = false, voiceText = "";
+async function startVoiceAsk() {
+  comp = null;             // leave any open companion step — we go globe-only
+  setMode("globe");        // HIDE the box; only the globe remains
+  const canMic = typeof navigator !== "undefined" && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+  const modelUrl = canMic ? await (sentinel.voskModelUrl?.() ?? null) : null;
+  if (!modelUrl) { setGlobeState("idle"); openCompanion(); return; } // no on-device model → typeable menu (never cloud)
+  voiceText = "";
+  setGlobeState("listening");
+  try {
+    voiceStt = await createLocalStt({ modelUrl, onText: (said) => { if (said) voiceText += (voiceText ? " " : "") + said; } });
+    voiceActive = true;
+  } catch { voiceActive = false; voiceStt = null; setGlobeState("idle"); }
+}
+async function stopVoiceAndAnswer() {
+  if (voiceStt) { try { voiceStt.stop(); } catch { /* ignore */ } voiceStt = null; }
+  voiceActive = false;
+  const q = (voiceText || "").trim(); voiceText = "";
+  if (!q) { setGlobeState("idle"); return; }
+  setGlobeState("diagnosing"); // thinking
+  let reply = "";
+  try { const res = await sentinel.chat?.(q, {}); reply = (res && (res.text || res.reply || res.answer)) || ""; }
+  catch { reply = ""; }
+  if (!reply) { setGlobeState("idle"); return; } // real-or-empty — no answer → stay quiet, never fabricate
+  narrate(reply); // globe → speaking, back to idle when the reply ends
+}
+function cancelVoice() {
+  if (voiceStt) { try { voiceStt.stop(); } catch { /* ignore */ } voiceStt = null; }
+  voiceActive = false; voiceText = "";
+  if (typeof speechSynthesis !== "undefined") { try { speechSynthesis.cancel(); } catch { /* ignore */ } }
+  setGlobeState("idle");
+}
+overlaySpeakBtn?.addEventListener("click", () => { startVoiceAsk(); });
 
 function renderCompanion() {
   if (!comp || !companionBody) return;

@@ -38,6 +38,8 @@ contextBridge.exposeInMainWorld("sentinel", {
   setPaused: (milliseconds) => ipcRenderer.invoke("sentinel:set-paused", milliseconds),
   reportError: (payload) => ipcRenderer.invoke("sentinel:report-error", payload),
   createIncident: (recipeId, context) => ipcRenderer.invoke("sentinel:incident", recipeId, context),
+  getIntegrations: () => ipcRenderer.invoke("sentinel:get-integrations"), // Integrations tab — read-only status
+  testIntegration: (id) => ipcRenderer.invoke("sentinel:integration-test", id), // read-only per-card test
   serviceNowTest: () => ipcRenderer.invoke("sentinel:sn-test"),
   serviceNowRaise: (recipeId, context) => ipcRenderer.invoke("sentinel:sn-raise", recipeId, context),
   serviceNowList: () => ipcRenderer.invoke("sentinel:sn-list"),

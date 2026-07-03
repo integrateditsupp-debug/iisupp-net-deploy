@@ -41,6 +41,8 @@ import { enumerate as enumerateSystem, buildSystemContext } from "./system-conte
 import { TIER0_RECIPES, preview as previewTier0, tier0ById } from "./recipes/tier-0/index.mjs";
 import { loadSymptomKb } from "../shared/symptom-kb.mjs";
 import { diagnose as diagnoseSymptom } from "../shared/diagnostic-reasoner.mjs";
+import { executorForSymptom } from "../shared/symptom-executor.mjs"; // F1 — matched symptom → vetted Tier-0 executor
+import { resolveIntegrations, testIntegration as runIntegrationTest } from "../shared/integrations.mjs"; // Integrations tab (read-only status)
 // RUN 21 — auto-update orchestrator · startup hook · heartbeat. (R11 private-folder guard applied.)
 import { checkForUpdate } from "./update-listener.mjs";
 import * as orchestrator from "./update-orchestrator.mjs";
@@ -81,8 +83,9 @@ import { installCrashReporter } from "./crash-reporter.mjs"; // RUN 29-D — $0 
 import { bindAll, withRebinds, DEFAULT_HOTKEYS } from "../shared/hotkeys.mjs";
 import { applyRunState } from "../shared/start-stop.mjs";
 import { auditFeatures, summarizeAudit, buildHealReport } from "../shared/self-heal.mjs";
-import { askAria } from "../shared/aria-brain-client.mjs";
+import { askAria, scrubR11 } from "../shared/aria-brain-client.mjs";
 import { loadKbPack, localKbAnswer } from "../shared/aria-local-kb.mjs"; // RUN 30-B — offline cross-platform KB
+import { loadFullText, fullArticle, looksTruncated, repairTruncatedTail } from "../shared/kb-fulltext.mjs"; // F2 — full bundled article text so a mid-line-truncated live excerpt never renders as a dangling "Print server (`"
 import { parseSystemStatus, parseKbStats, parseSessions, parseHeartbeats } from "../shared/aria-surfaces.mjs"; // RUN 33 — ARIA tab data
 import { defaultAppConfig, shouldShowSetup, completeSetup, reopenSetup } from "../shared/app-config.mjs"; // RUN 33-E — setup wizard
 import { anchorTarget, tickAnchored } from "../shared/globe-anchor.mjs";
@@ -335,6 +338,7 @@ function createMainWindow() {
     height: 820,
     minWidth: 1024,
     minHeight: 720,
+    show: !process.env.ARIA_BOOT_SMOKE,
     title: "ARIA Sentinel - Settings",
     backgroundColor: "#050505",
     autoHideMenuBar: true,
@@ -347,6 +351,89 @@ function createMainWindow() {
       backgroundThrottling: false
     }
   });
+  // BOOT SELF-TEST (env-gated; ZERO effect in production — only runs when ARIA_BOOT_SMOKE is set by
+  // `npm run test:boot`). Headlessly proves the main window is actually INTERACTIVE after init: clicks the ARIA
+  // nav + a Quick Action and reports whether the panel switched. This is what caught the P0 dead-shell that
+  // node unit tests couldn't (renderer.js silently not executing under CSP). See tests/boot-smoke.mjs.
+  if (process.env.ARIA_BOOT_SMOKE) {
+    const logs = [];
+    const push = (s) => logs.push(String(s));
+    let finalized = false;
+    const finalize = () => {
+      if (finalized) return; finalized = true;
+      const out = "=== ARIA BOOT SMOKE ===\n" + logs.join("\n") + "\n";
+      try { fs.writeFileSync(process.env.ARIA_BOOT_SMOKE_OUT || "boot-smoke-out.txt", out); } catch { /* ignore */ }
+      try { process.stdout.write(out); } catch { /* ignore */ }
+      setTimeout(() => { try { app.exit(0); } catch { /* ignore */ } }, 400);
+    };
+    // Watchdog: no matter what hangs (a stuck executeJavaScript, a window that never loads), always write + exit.
+    setTimeout(() => { push("[watchdog] finalized after timeout"); finalize(); }, 25000);
+    const withTimeout = (p, ms, label) => Promise.race([p, new Promise((r) => setTimeout(() => r(`TIMEOUT:${label}`), ms))]);
+    mainWindow.webContents.on("console-message", (_e, level, message, line, sourceId) => push(`[console:${level}] ${message} @ ${sourceId}:${line}`));
+    mainWindow.webContents.on("preload-error", (_e, p, err) => push(`[preload-error] ${p}: ${err && err.stack || err}`));
+    mainWindow.webContents.on("render-process-gone", (_e, d) => push(`[render-gone] ${JSON.stringify(d)}`));
+    mainWindow.webContents.on("did-fail-load", (_e, code, desc, url) => push(`[did-fail-load] ${code} ${desc} ${url}`));
+    mainWindow.webContents.once("did-finish-load", async () => {
+      try {
+        await new Promise((r) => setTimeout(r, 3000));
+        const probe = await mainWindow.webContents.executeJavaScript(`(function(){try{
+          const before = (document.querySelector('.tab-panel.active')||{}).id;
+          const hasSentinel = !!window.sentinel;
+          const navBtn = document.querySelector('.nav-item[data-tab="aria"]');
+          navBtn && navBtn.click();
+          const afterNav = (document.querySelector('.tab-panel.active')||{}).id;
+          const navStyled = navBtn && navBtn.classList.contains('active');
+          const lockedShown = !(document.getElementById('lockedTabOverlay')||{hidden:true}).hidden;
+          const planShown = !(document.getElementById('planModal')||{hidden:true}).hidden;
+          const qa = document.getElementById('dashDiagnose'); qa && qa.click();
+          const afterQa = (document.querySelector('.tab-panel.active')||{}).id;
+          // Integrations RESTORE + tab-set-complete probe (2026-07-02): the Integrations tab activates and hosts
+          // every connector section; the full expected tab set is present and ServiceNow is no longer top-level.
+          const intBtn = document.querySelector('.nav-item[data-tab="integrations"]');
+          intBtn && intBtn.click();
+          const afterIntegrations = (document.querySelector('.tab-panel.active')||{}).id;
+          const intSections = ['sn-section','entra-section','remote-section','ext-section','notify-section'].every(id=>!!document.getElementById(id));
+          const intGrid = !!document.getElementById('integrationsGrid');
+          const tabSet = Array.from(document.querySelectorAll('.nav-item[data-tab]')).map(b=>b.getAttribute('data-tab'));
+          return JSON.stringify({hasSentinel, before, afterNav, navStyled, lockedShown, planShown, afterQa, afterIntegrations, intSections, intGrid, tabSet});
+        }catch(e){return 'PROBE_THREW: '+(e&&e.stack||e);}})()`, true).catch((e) => "EXECJS_FAILED: " + e);
+        push("[probe] " + probe);
+      } catch (e) { push("[hook-error] " + (e && e.stack || e)); }
+      // OVERLAY ONE-BOX probe (P1): open the companion and assert exactly one box + no ghost #companionPanel.
+      try {
+        if (overlayWindow && !overlayWindow.isDestroyed()) {
+          overlayWindow.webContents.on("console-message", (_e, level, message, line, sourceId) => push(`[overlay-console:${level}] ${message} @ ${sourceId}:${line}`));
+        }
+        showOverlay({ companion: true });
+        await new Promise((r) => setTimeout(r, 1800));
+        if (overlayWindow && !overlayWindow.isDestroyed()) {
+          const oprobe = await withTimeout(overlayWindow.webContents.executeJavaScript(`(async function(){try{
+            const panelGone = document.getElementById('companionPanel') === null;
+            const cardShown = !(document.getElementById('overlayCard')||{hidden:true}).hidden;
+            const confirmHidden = (document.getElementById('overlayConfirm')||{hidden:true}).hidden;
+            const greetingHidden = (document.getElementById('overlayGreeting')||{hidden:true}).hidden;
+            const headShown = !(document.getElementById('overlayCardHead')||{hidden:true}).hidden;
+            const hasSpeak = !!document.getElementById('overlaySpeak');
+            const globeVisible = !!document.getElementById('overlayGlobe');
+            const visibleBoxes = ['overlayCard','overlayConfirm'].filter((id)=>{const e=document.getElementById(id); return e && !e.hidden;});
+            let voskUrl = null; try { voskUrl = await window.sentinel.voskModelUrl(); } catch(e) { voskUrl = 'ERR'; }
+            const voskResolved = typeof voskUrl === 'string' && voskUrl.indexOf('file:') === 0;
+            const c = document.getElementById('overlayCard');
+            const cardScrolls = !!c && c.scrollHeight > c.clientHeight + 2; // premium: common card should NOT scroll
+            const vis = (id) => { const e = document.getElementById(id); return !!e && e.offsetParent !== null; };
+            const chipVisible = vis('overlayChip'); const actionsVisible = vis('overlayActions'); // must be HIDDEN in companion mode
+            return JSON.stringify({panelGone, cardShown, confirmHidden, greetingHidden, headShown, hasSpeak, globeVisible, visibleBoxes, voskResolved, cardScrolls, chipVisible, actionsVisible});
+          }catch(e){return 'OPROBE_THREW: '+(e&&e.stack||e);}})()`, true).catch((e) => "OEXECJS_FAILED: " + e), 6000, "overlay-execjs");
+          push("[overlay-probe] " + oprobe);
+          // Screenshot the overlay card for the before/after report (env-gated; test-only).
+          if (process.env.ARIA_BOOT_SHOT_OUT) {
+            try { const img = await withTimeout(overlayWindow.webContents.capturePage(), 5000, "shot"); if (img && img.toPNG) fs.writeFileSync(process.env.ARIA_BOOT_SHOT_OUT, img.toPNG()); push("[overlay-shot] saved"); } catch (e) { push("[overlay-shot-err] " + e); }
+          }
+        } else { push("[overlay-probe] overlayWindow missing"); }
+      } catch (e) { push("[overlay-hook-error] " + (e && e.stack || e)); }
+      finalize();
+    });
+  }
   mainWindow.setMenuBarVisibility(false);
   mainWindow.on("close", (event) => {
     if (isQuitting) return;
@@ -409,17 +496,19 @@ function pickWaypoint(workArea) {
 // Companion mode = the interactive assistant panel (bigger, top-center); card mode = a detector card
 // (top-center); globe mode = current free-roam position (or a random spawn if none yet).
 function overlayBounds() {
+  // L1/L2 (2026-07-02) — size the WINDOW so the card fits its content + primary buttons with NO scrollbar on a
+  // tiny card, and drop it below the screen top (breathing room; the card doesn't cover the app's header).
   if (overlayCompanion) {
     const wa = screen.getPrimaryDisplay().workArea;
     const width = 384;
-    const height = Math.min(600, wa.height - 40);
-    return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 12 };
+    const height = Math.min(620, wa.height - 80);
+    return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 44 };
   }
   if (overlayExpanded) {
     const wa = screen.getPrimaryDisplay().workArea;
-    const width = 340;
-    const height = 214;
-    return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 10 };
+    const width = 360;
+    const height = Math.min(340, wa.height - 80); // was 214 → clipped the card behind a scrollbar
+    return { width, height, x: Math.round(wa.x + (wa.width - width) / 2), y: wa.y + 44 };
   }
   if (overlayPhysics && Number.isFinite(overlayPhysics.x)) {
     return { x: overlayPhysics.x, y: overlayPhysics.y, width: GLOBE_SIZE, height: GLOBE_SIZE };
@@ -737,8 +826,13 @@ function listTier0Recipes() {
 async function runDiagnose(message) {
   const context = await getSystemContext({});
   const result = diagnoseSymptom(String(message || ""), getSymptomKb(), context || {});
-  logEvent("DIAGNOSE", `Symptom matched: ${result.topSymptom || "unrecognized"} (${result.causes.length} ranked causes).`);
-  return { ok: true, ...result };
+  // F1 — bind the matched symptom to its vetted, reversible Tier-0 executor (printer → restart-print-spooler)
+  // so "Resolve it for me" actually runs the gated fix. Empty when no safe one-click fix exists → the caller
+  // honestly routes to the guided walk-through instead of a resolve that would be held (Rule 14).
+  const topId = (result.matches && result.matches[0] && result.matches[0].id) || "";
+  const recipeId = executorForSymptom(topId);
+  logEvent("DIAGNOSE", `Symptom matched: ${result.topSymptom || "unrecognized"} (${result.causes.length} ranked causes)${recipeId ? " · bound fix " + recipeId : ""}.`);
+  return { ok: true, ...result, recipeId };
 }
 
 // ── RUN 21 — auto-update orchestrator · startup registration · heartbeat ────────────────────────────
@@ -943,7 +1037,9 @@ function performanceData() {
   const fixes = log.filter((e) => e.tag === "RUN").length;
   const diags = log.filter((e) => e.tag === "DIAGNOSE").length;
   return {
-    operational: { mttd: 0, mttr: 0, ftr: 100, autoPct: 100, recipeSuccess: 100, detTrend: [] },
+    // H2 (2026-07-02) — real-or-empty: no fabricated 100%. Until real operational metrics are wired from live
+    // resolution outcomes, these render "--" (Rule 14: never a vanity 100% first-touch/auto/recipe at zero data).
+    operational: { mttd: null, mttr: null, ftr: null, autoPct: null, recipeSuccess: null, detTrend: [] },
     ai: { accuracy: null, calibration: null, confirmRate: null, kbHitRate: null, top3: null, hoursSaved: null, costSaved: null, anomalies: 0, diagnoses: diags },
     usage: { activeToday: Math.round((Date.now() - startedAt) / 3600000), activeWeek: 0, topTier: "tier-0", hotkeys: (store.get("hotkeyUse") || 0) }
   };
@@ -2268,6 +2364,9 @@ function getState() {
   const pausedUntil = Number(store.get("pausedUntil") || 0);
   return {
     version: SENTINEL_VERSION,
+    // F5 (2026-07-02) — dev-only affordances (e.g. "Simulate ARIA error") show ONLY in a dev run, never in the
+    // packaged customer build. app.isPackaged is true for the shipped .exe → devMode false.
+    devMode: !app.isPackaged || Boolean(process.env.ARIA_SENTINEL_DEV),
     mode: store.get("mode"),
     dryRun: !allowSystemFixes || Boolean(store.get("dryRun")),
     systemFixesEnabled: allowSystemFixes,
@@ -2935,6 +3034,16 @@ function kbIndex() {
   return _kbIndex;
 }
 
+// F2 (2026-07-03) — the bundled FULL KB article text (slug → complete markdown), loaded once. Used to repair a
+// live aria-kb-query excerpt that arrives cut mid-line (the deployed web bundle can lag the fixed one). Failure
+// degrades to an empty map → we fall back to repairTruncatedTail on the excerpt (still never a dangling token).
+let _fullTextIndex = null;
+function fullTextIndex() {
+  if (_fullTextIndex) return _fullTextIndex;
+  try { _fullTextIndex = loadFullText(path.join(app.getAppPath(), "aria-kb-pack"), fs); } catch { _fullTextIndex = new Map(); }
+  return _fullTextIndex;
+}
+
 async function chat(message, context = {}) {
   // Local KB match (always computed; used as the offline fallback + as a fix hint).
   const signature = sanitizeToSignature({ issue: message, ...context });
@@ -2952,7 +3061,22 @@ async function chat(message, context = {}) {
   if (brain && !brain.offline && brain.reply) {
     if (brain.session_id) store.set("chatSessionId", brain.session_id);
     if (brain.kb_meta) { store.set("kbMeta", brain.kb_meta); broadcastState(); } // RUN 33-A — surface KB freshness to the top bar
-    return { ok: true, provider: "aria-brain", text: brain.reply, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
+    // F2 (2026-07-03) — the live aria-kb-query excerpt can arrive cut mid-line (e.g. the printer "Escalation
+    // Trigger" section as a dangling "- Print server (`"). If we carry the FULL article for this slug, swap in
+    // the complete text (re-scrubbed with the same R11 rule, keeping the "Full article" footer). If we don't,
+    // strip the incomplete trailing fragment so a dangling token is never rendered. Never fabricates text.
+    let text = brain.reply;
+    if (looksTruncated(text)) {
+      const slug = brain.kb_match && brain.kb_match.slug;
+      const full = slug ? fullArticle(fullTextIndex(), slug) : "";
+      if (full) {
+        const footer = /→ Full article:\s*(\S+)/.exec(text);
+        text = scrubR11(full) + (footer ? `\n\n→ Full article: ${footer[1]}` : "");
+      } else {
+        text = repairTruncatedTail(text);
+      }
+    }
+    return { ok: true, provider: "aria-brain", text, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
   }
   // Offline / unreachable → answer from the bundled cross-platform KB (RUN 30-B). ARIA is full cross-platform
   // tech support (Windows, macOS, iOS, iPadOS, Android, ChromeOS, Linux) — never the old Windows-only string.
@@ -3378,6 +3502,8 @@ ipcMain.handle("sentinel:report-error", (_event, payload = {}) => {
   handleSelfError(new Error(safeShortText(payload.message, "renderer error")), payload.source || "renderer");
   return { ok: true };
 });
+ipcMain.handle("sentinel:get-integrations", () => ({ items: resolveIntegrations(process.env) })); // Integrations tab — read-only status
+ipcMain.handle("sentinel:integration-test", (_event, id) => runIntegrationTest(String(id || ""), process.env)); // read-only per-card test
 ipcMain.handle("sentinel:sn-test", () => serviceNowTestConnection());
 ipcMain.handle("sentinel:sn-raise", (_event, recipeId, context) => serviceNowRaiseIncident(recipeId, context || {}));
 ipcMain.handle("sentinel:sn-list", () => serviceNowListIncidents());

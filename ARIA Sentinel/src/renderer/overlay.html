@@ -10,23 +10,41 @@
       /* Fix 4 — the page is click-through; only interactive elements catch the mouse when the
          window's ignore-mouse is briefly disabled (card mode / Ctrl+Alt+G). */
       html, body { background: transparent; pointer-events: none; }
-      .globe-button, .overlay-card, #overlayCard, .companion-panel, #companionPanel { pointer-events: auto; }
-      /* ARIA Companion — a SMALL card BELOW the golden globe (mirrors #overlayCard / .globe-confirm). The globe
-         itself is never covered: the panel is anchored under it (top ~104px), centered, bounded, and scrolls
-         internally. NEVER inset:0 / full-window — that would hide the globe (Ahmad: "keep the globe"). */
-      .companion-panel { position: absolute; top: 104px; left: 50%; transform: translateX(-50%);
-        width: 300px; max-width: 92vw; max-height: calc(100vh - 120px); display: flex; flex-direction: column;
-        background: linear-gradient(180deg, #141414, #0a0a0a); border: 1px solid #38301d; border-radius: 16px;
-        box-shadow: 0 24px 70px rgba(0,0,0,.6); overflow: hidden; color: #fff;
-        font: 400 13px/1.5 Inter, system-ui, sans-serif; }
-      .companion-head { display: flex; align-items: center; justify-content: space-between; gap: 8px;
-        padding: 12px 14px; border-bottom: 1px solid #1c1c1c; flex: 0 0 auto; }
-      .companion-title { font: 600 13px/1 Cinzel, Georgia, serif; letter-spacing: .16em; color: #f1dca7; text-transform: uppercase; }
-      .companion-head-actions { display: flex; gap: 6px; }
-      .companion-icon { width: 28px; height: 28px; border-radius: 8px; border: 1px solid #2a2a2a; background: #141414;
-        color: #cbb98a; font-size: 18px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
-      .companion-icon:hover { border-color: #c5a059; color: #f1dca7; }
-      .companion-body { flex: 1 1 auto; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+      .globe-button, .overlay-card, #overlayCard { pointer-events: auto; }
+      /* The [hidden] attribute must WIN over class display rules (.chip/.button-row) so companion mode truly
+         hides the detector chip/title/Fix-Dismiss (and vice-versa). Without this they leak into the wrong mode. */
+      [hidden] { display: none !important; }
+      /* L1 (2026-07-02) PREMIUM CARD — one high-end product card: roomy, refined type, soft depth + a hairline
+         gold rim, crisp radius. Anchored BELOW the globe (never covers it); the WINDOW is sized to fit so the
+         common detector card shows with NO scrollbar (scroll only kicks in for genuinely long companion content). */
+      #overlayCard {
+        top: 94px; width: 330px; max-height: calc(100vh - 116px); overflow-y: auto;
+        padding: 26px 20px 18px;
+        border: 1px solid #38301d; border-radius: 18px;
+        background: linear-gradient(180deg, #17140f 0%, #0b0b0d 100%);
+        box-shadow: 0 26px 64px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.04), 0 0 0 1px rgba(197,160,89,.10);
+      }
+      #overlayCard::-webkit-scrollbar { width: 8px; }
+      #overlayCard::-webkit-scrollbar-thumb { background: #2b2620; border-radius: 8px; }
+      #overlayChip { letter-spacing: .12em; }
+      #overlayTitle { font-size: 15.5px; font-weight: 600; margin: 12px 0 6px; color: #fff; }
+      #overlayBody { font-size: 12.5px; line-height: 1.55; color: #b7b1a4; margin: 0; }
+      #overlayActions { margin-top: 16px; gap: 10px; }
+      #overlayActions .primary, #overlayActions .ghost { border-radius: 11px; }
+      /* Companion chrome INSIDE the single card (mute · tap-to-speak · back · close). Only shown in companion mode. */
+      .overlay-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        margin: -14px -6px 12px; padding: 0 2px 10px; border-bottom: 1px solid rgba(255,255,255,.06); }
+      .overlay-card-brand { font: 600 12px/1 Cinzel, Georgia, serif; letter-spacing: .18em; color: #f1dca7; text-transform: uppercase; }
+      .overlay-card-controls { display: flex; gap: 7px; }
+      .overlay-ctl { width: 30px; height: 30px; border-radius: 9px; border: 1px solid #2a2a2a; background: #16130d;
+        color: #cbb98a; font-size: 15px; line-height: 1; cursor: pointer; display: grid; place-items: center; transition: border-color .15s, color .15s, transform .1s; }
+      .overlay-ctl:hover { border-color: #c5a059; color: #f1dca7; transform: translateY(-1px); }
+      /* the mic is the primary voice affordance — distinct GOLD fill so it never reads the same as the mute icon. */
+      #overlaySpeak { background: linear-gradient(180deg, #f1dca7, #c5a059); color: #14100a; border-color: #c5a059; }
+      #overlaySpeak:hover { color: #14100a; filter: brightness(1.05); }
+      /* Companion step content reads left-aligned inside the (otherwise centered) card. */
+      #overlayCard.companion-active { text-align: left; }
+      #overlayCard.companion-active #overlayBody { display: flex; flex-direction: column; gap: 10px; }
       .companion-lead { font-size: 15px; font-weight: 600; color: #fff; margin: 2px 0 2px; }
       .companion-sub { font-size: 12.5px; color: #9a9a9a; }
       .companion-menu-item, .companion-choice { width: 100%; text-align: left; cursor: pointer; padding: 12px 14px;
@@ -68,6 +86,9 @@
       .aria-globe[data-state="done"]       .x-done      { display:block; }
       .aria-globe[data-state="escalation"] .ring-stroke { stroke:#ffcb6b; }
       .aria-globe[data-state="escalation"] .glow        { fill:url(#agAmber); }
+      /* Voice ASK — ARIA is narrating a reply: a warm, faster gold pulse so the user knows it's speaking. */
+      .aria-globe[data-state="speaking"] .glow      { animation: aria-glow 1.4s ease-in-out infinite; fill:url(#agGold); }
+      .aria-globe[data-state="speaking"] .ring-group { animation-duration:12s; }
       @keyframes aria-rot   { to { transform: rotate(360deg); } }
       @keyframes aria-scan  { to { transform: rotate(-360deg); } }
       @keyframes aria-glow  { 0%,100% { opacity:.5; } 50% { opacity:.92; } }
@@ -167,27 +188,26 @@
     <!-- RUN-B B5 - the "issue resolved | email sent | ticket reference" confirmation, directly under the globe. -->
     <div id="overlayConfirm" class="globe-confirm" role="status" aria-live="polite" hidden></div>
 
+    <!-- THE SINGLE overlay box (2026-07-02). Reused for EVERY state — detector Fix/Dismiss, ARIA status, and the
+         interactive companion steps render into #overlayBody. No separate #companionPanel layer any more; the
+         globe is never covered. setMode() guarantees only one of {this card, #overlayConfirm, greeting} shows. -->
     <section id="overlayCard" class="fix-card overlay-card" aria-live="polite" hidden>
+      <div id="overlayCardHead" class="overlay-card-head" hidden>
+        <span class="overlay-card-brand">ARIA</span>
+        <div class="overlay-card-controls">
+          <button id="overlaySpeak" class="overlay-ctl" type="button" title="Tap to speak to ARIA" aria-label="Tap to speak to ARIA">&#127908;</button>
+          <button id="companionMute" class="overlay-ctl" type="button" title="Mute narration" aria-label="Mute narration" aria-pressed="false">&#128266;</button>
+          <button id="companionBack" class="overlay-ctl" type="button" title="Back" aria-label="Back" hidden>&lsaquo;</button>
+          <button id="companionClose" class="overlay-ctl" type="button" title="Close" aria-label="Close">&times;</button>
+        </div>
+      </div>
       <span id="overlayChip" class="chip">MANUAL MODE</span>
       <h3 id="overlayTitle">ARIA is watching</h3>
-      <p id="overlayBody">Local self-diagnosis is active.</p>
-      <div class="button-row">
+      <div id="overlayBody">Local self-diagnosis is active.</div>
+      <div id="overlayActions" class="button-row">
         <button id="overlayFix" class="primary">Open fix</button>
         <button id="overlayDismiss" class="ghost">Dismiss</button>
       </div>
-    </section>
-
-    <!-- ARIA Companion — the interactive, input-collecting assistant. Guide/learn changes NOTHING on the PC. -->
-    <section id="companionPanel" class="companion-panel" aria-live="polite" hidden>
-      <header class="companion-head">
-        <span class="companion-title">ARIA</span>
-        <div class="companion-head-actions">
-          <button id="companionMute" class="companion-icon" type="button" title="Mute narration" aria-label="Mute narration" aria-pressed="false">&#128266;</button>
-          <button id="companionBack" class="companion-icon" type="button" title="Back" aria-label="Back" hidden>&lsaquo;</button>
-          <button id="companionClose" class="companion-icon" type="button" title="Close" aria-label="Close">&times;</button>
-        </div>
-      </header>
-      <div id="companionBody" class="companion-body"></div>
     </section>
     <script type="module" src="./overlay.js"></script>
   </body>

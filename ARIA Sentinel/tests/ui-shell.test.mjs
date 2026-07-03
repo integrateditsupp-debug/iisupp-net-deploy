@@ -9,15 +9,16 @@ const overlayHtml = fs.readFileSync(path.join(root, "src", "renderer", "overlay.
 const adminHtml = fs.readFileSync(path.join(root, "admin-console", "index.html"), "utf8");
 
 // RUN 23d — 9 consolidated desktop nav tabs (each is a data-tab nav button + a tab-panel section).
-const settingsTabs = ["dashboard", "control-center", "recipes", "compliance-privacy", "reports", "knowledge", "system", "servicenow", "settings"];
+const settingsTabs = ["dashboard", "control-center", "recipes", "compliance-privacy", "reports", "knowledge", "system", "integrations", "settings"];
 for (const tab of settingsTabs) {
   assert.match(indexHtml, new RegExp(`data-tab="${tab}"`), `settings nav includes ${tab}`);
   assert.match(indexHtml, new RegExp(`id="${tab}"`), `settings panel includes ${tab}`);
 }
 
 // RUN 22 — "reports" is a legitimate DESKTOP tab (quarterly customer reports); RUN 23d — "system" is now
-// a desktop tab too (This Machine + Platform Support). The rest stay admin-console-only.
-for (const adminOnly of ["release", "endpoints", "policies", "stopcodes", "audit", "integrations", "access"]) {
+// a desktop tab too (This Machine + Platform Support); 2026-07-02 — "integrations" is a desktop tab again
+// (the restored Integrations tab). The rest stay admin-console-only.
+for (const adminOnly of ["release", "endpoints", "policies", "stopcodes", "audit", "access"]) {
   assert.doesNotMatch(indexHtml, new RegExp(`data-tab="${adminOnly}"`), `${adminOnly} is not a desktop settings tab`);
 }
 

@@ -180,7 +180,11 @@ export function cursorOverGlobe(globePos, cursor, size = 96) {
 export const REPEL_RADIUS = 180;   // cursor influence radius (px)
 export const REPEL_STRENGTH = 0.8; // peak force coefficient
 export const ROAM_DAMPING = 0.92;  // velocity retained per tick (water-like)
-export const ROAM_PADDING = 24;    // keep this far from the work-area edges
+export const ROAM_PADDING = 40;    // keep this far from the left/right/bottom work-area edges
+// L2 (2026-07-02) — extra clearance from the TOP so the globe never hugs / gets clipped at the screen edge
+// (menu bar / notch / title area) and its clicks never fall through to the window behind. Anchored fully
+// on-screen with breathing room per Ahmad's QA note.
+export const ROAM_TOP_PADDING = 88;
 
 // Cursor-repulsion force magnitude: (1 - dist/radius)^2 * strength, and exactly 0 at/Beyond radius.
 export function repelForce(dist, radius = REPEL_RADIUS) {
@@ -203,7 +207,7 @@ export function tickFreeRoam(state, cursor, workArea, opts = {}) {
   const dtMs = Number.isFinite(opts.dtMs) ? opts.dtMs : 16;
   const wa = normalizeWorkArea(workArea, size);
   const minX = wa.x + ROAM_PADDING;
-  const minY = wa.y + ROAM_PADDING;
+  const minY = wa.y + ROAM_TOP_PADDING; // L2 — extra top clearance so the globe never hugs the top edge
   const maxX = Math.max(minX, wa.x + wa.width - size - ROAM_PADDING);
   const maxY = Math.max(minY, wa.y + wa.height - size - ROAM_PADDING);
 
@@ -255,8 +259,8 @@ export function roamBounds(workArea, size = 104) {
   const wa = normalizeWorkArea(workArea, size);
   return {
     minX: wa.x + ROAM_PADDING,
-    minY: wa.y + ROAM_PADDING,
+    minY: wa.y + ROAM_TOP_PADDING, // L2 — extra top clearance (matches tickFreeRoam)
     maxX: Math.max(wa.x + ROAM_PADDING, wa.x + wa.width - size - ROAM_PADDING),
-    maxY: Math.max(wa.y + ROAM_PADDING, wa.y + wa.height - size - ROAM_PADDING)
+    maxY: Math.max(wa.y + ROAM_TOP_PADDING, wa.y + wa.height - size - ROAM_PADDING)
   };
 }

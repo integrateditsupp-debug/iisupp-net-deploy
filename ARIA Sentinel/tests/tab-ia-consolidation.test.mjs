@@ -17,7 +17,7 @@ const ok = (label) => { tests++; console.log(`  ✓ ${label}`); };
 
 // ── Test 1 — count-lock: RUN 23d 9 + RUN 33 ARIA + Walk-through (2026-07-02) = 11, in order (≤11 hard stop). ──
 const navOrder = [...indexHtml.matchAll(/class="nav-item[^"]*"\s+data-tab="([^"]+)"/g)].map((m) => m[1]);
-const CANONICAL = ["dashboard", "aria", "control-center", "recipes", "walkthrough", "compliance-privacy", "reports", "knowledge", "system", "servicenow", "settings"];
+const CANONICAL = ["dashboard", "aria", "control-center", "recipes", "walkthrough", "compliance-privacy", "reports", "knowledge", "system", "integrations", "settings"];
 assert.deepEqual(navOrder, CANONICAL, "11 nav tabs in canonical order (9 + ARIA + Walk-through)");
 assert.equal(new Set([...indexHtml.matchAll(/data-tab="([a-z-]+)"/g)].map((m) => m[1])).size, 11, "2026-07-02: 11 tabs (Walk-through added)");
 ok("count-lock: 11 tabs in order (≤11 hard stop)");
@@ -42,7 +42,7 @@ assert.match(compPriv, /id="privacy"/, "## Privacy anchor present");
 ok("Compliance & Privacy renders both sections");
 
 // ── Test 4 — System renders both merged sections (This Machine · Platform Support) ──
-const system = indexHtml.slice(indexHtml.indexOf('id="system"'), indexHtml.indexOf('id="servicenow"'));
+const system = indexHtml.slice(indexHtml.indexOf('id="system"'), indexHtml.indexOf('id="integrations"'));
 for (const id of ["systemContextApps", "systemContextSummary", "blueprintList", "blueprintView"]) {
   assert.match(system, new RegExp(`id="${id}"`), `System hosts #${id}`);
 }

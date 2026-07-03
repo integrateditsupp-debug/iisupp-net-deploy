@@ -12,15 +12,12 @@
 // key to /.netlify/functions/sentinel-resolve and caches the returned { plan, status } (see
 // src/main/license-cache.mjs). keyHash() is the one helper here that is safe on the client (no secret).
 import crypto from "node:crypto";
-import { PLAN_ORDER, normalizePlan, getFeatures, getTier, isAdmin } from "./pricing-tiers.mjs";
-
-// RUN 23e (Ahmad 2026-06-22) — an ACTIVE trial demos the paid modes, so it unlocks the Pro tier.
-// An EXPIRED trial / no license falls back to the FREE FLOOR — a genuine free tier whose feature set is STRICTLY
-// a subset of the lowest PAID tier (Personal), so buying Personal is a real upgrade. 2026-07-02: split the free
-// floor OUT of "personal" — previously FREE_PLAN was "personal", which (a) locked even a PAYING Personal
-// subscriber and (b) meant a paid entry plan unlocked nothing over the expired/unlicensed state. Never admin.
-export const TRIAL_PLAN = "pro";
-export const FREE_PLAN = "free";
+import { PLAN_ORDER, normalizePlan } from "./pricing-tiers.mjs";
+// 2026-07-02 P0 DEAD-SHELL FIX — the PURE plan/feature logic moved to ./license-plan.mjs (NO node:crypto) so the
+// renderer can import it under its CSP. This module keeps ONLY the crypto (secret-boundary) functions and
+// RE-EXPORTS the pure ones so every existing (node-side) importer of activePlan/enabledFeatures/FREE_PLAN/etc.
+// keeps working unchanged. The renderer graph must NEVER reach this file (it would pull node:crypto → CSP block).
+export { TRIAL_PLAN, FREE_PLAN, activePlan, enabledFeatures, activeTier, licenseIsAdmin, isWalkthroughEntitled } from "./license-plan.mjs";
 
 /** Canonical signed message for a plan. Keep in lockstep with the key generator (issuePlanKey). */
 export function licenseMessage(plan) {
@@ -53,47 +50,8 @@ export function resolvePlanFromKey(key, secret) {
   return null;
 }
 
-/**
- * The active plan for a license/gate status:
- *  - a valid license uses its stored (key-resolved) plan;
- *  - an ACTIVE trial unlocks TRIAL_PLAN (Pro — demos the paid modes);
- *  - an expired trial / no license falls back to FREE_PLAN (Personal / Manual).
- * Never returns admin unless the stored plan is genuinely admin. Accepts the gate shape
- * ({licensed, plan, trial:{state}}) or a bare {licensed, plan, trialState}.
- */
-export function activePlan(licenseStatus = {}) {
-  if (licenseStatus && licenseStatus.licensed) return normalizePlan(licenseStatus.plan);
-  const trialState = (licenseStatus && licenseStatus.trial && licenseStatus.trial.state) || (licenseStatus && licenseStatus.trialState);
-  if (trialState === "active") return TRIAL_PLAN;
-  return FREE_PLAN;
-}
-
-/** The feature object for the active plan — the single thing the whole app gates on. */
-export function enabledFeatures(licenseStatus = {}) {
-  return getFeatures(activePlan(licenseStatus));
-}
-
-/** Convenience: the full tier record (label/price/seats/features) for the active plan. */
-export function activeTier(licenseStatus = {}) {
-  return getTier(activePlan(licenseStatus));
-}
-
-/** Admin gate for a license status — admin console + OTA publish. Fail-closed for every client tier. */
-export function licenseIsAdmin(licenseStatus = {}) {
-  return Boolean(licenseStatus && licenseStatus.licensed) && isAdmin(activePlan(licenseStatus));
-}
-
-/**
- * Walk-Through entitlement — INDEPENDENT of the Sentinel plan. The AI Setup Walk-Through package (Concierge
- * purchase) grants a permanent Walk-Through: even at FREE_PLAN / expired-trial, walkthroughEntitled === true
- * keeps the Walk-Through tab usable. A paid plan (or an active trial → Pro) that already lists the walkthrough
- * feature also passes — so a Sentinel subscriber never loses the tab. Server-authoritative: the flag is set
- * by sentinel-resolve / the Stripe webhook on a real Concierge order (never assumed client-side). Pure.
- */
-export function isWalkthroughEntitled(licenseStatus = {}) {
-  if (licenseStatus && licenseStatus.walkthroughEntitled === true) return true;
-  return getFeatures(activePlan(licenseStatus)).walkthrough === true;
-}
+// (activePlan · enabledFeatures · activeTier · licenseIsAdmin · isWalkthroughEntitled · TRIAL_PLAN · FREE_PLAN
+//  now live in ./license-plan.mjs — crypto-free — and are re-exported above so this module's API is unchanged.)
 
 // RUN 24 A1 — the SHA-256 of a key. The revocation check is keyed by this hash so the raw key is NEVER
 // sent off-device (the server stores keyHash → revoked, not the key itself).

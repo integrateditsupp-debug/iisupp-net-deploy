@@ -1,7 +1,8 @@
 // RUN 13 §1 → RUN 23d — information architecture count-lock. Consolidated 17→9 settings tabs.
 // (Ahmad's directive 2026-06-21: Dashboard merges Overview+Performance+SLA; Compliance&Privacy; System
-//  merges System Context+Cross-Platform; Settings merges Mode+Hotkeys+Troubleshoot+Support+About;
-//  ServiceNow keeps its own tab.)
+//  merges System Context+Cross-Platform; Settings merges Mode+Hotkeys+Troubleshoot+Support+About.)
+//  2026-07-02 — the ServiceNow tab was RESTORED to the full "Integrations" tab (ServiceNow + Entra + Remote
+//  assist + browser extensions + Slack/Teams notify) per Ahmad's order; ServiceNow is now a section inside it.
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -14,7 +15,7 @@ const expected = [
   "dashboard", "aria", "control-center", "recipes",   // RUN 33 PIVOT — ARIA added as the 10th tab (after Dashboard)
   "walkthrough",                                       // 2026-07-02 — Walk-through guided-fix tab (Ahmad directive)
   "compliance-privacy", "reports", "knowledge",
-  "system", "servicenow", "settings"
+  "system", "integrations", "settings"        // 2026-07-02 — ServiceNow tab restored to the full Integrations tab
 ];
 assert.deepEqual(navOrder, expected, "nav tabs in order (RUN 23d 9 + RUN 33 ARIA + Walk-through = 11)");
 assert.ok(expected.length <= 11, "tab budget: ≤11 sidebar entries (hard stop; Walk-through added 2026-07-02)");

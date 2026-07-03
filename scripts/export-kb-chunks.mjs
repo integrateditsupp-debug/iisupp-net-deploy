@@ -40,11 +40,25 @@ function parseFrontmatter(content) {
   return { meta, body: m[2] };
 }
 
+// F2 (2026-07-02) — cap content length WITHOUT cutting mid-line/mid-word. The old `slice(0, 3500)` chopped
+// 105/203 articles mid-sentence (e.g. the printer "Escalation Trigger" rendered as a dangling "Print server (`").
+// The cap is generous enough to hold every current article whole; if one ever exceeds it, we cut back to the
+// last clean line break and append an honest truncation marker so the render never dangles.
+const BODY_CAP = 14000;
+function capBody(body) {
+  const b = String(body || '');
+  if (b.length <= BODY_CAP) return b.trimEnd();
+  let cut = b.slice(0, BODY_CAP);
+  const lastBreak = cut.lastIndexOf('\n');
+  if (lastBreak > BODY_CAP * 0.5) cut = cut.slice(0, lastBreak); // fall back to the last line boundary
+  return cut.trimEnd() + '\n\n…[truncated — see https://iisupp.net/aria for the full article]';
+}
+
 const chunks = [];
 const files = [...walkKb(KB_DIR)].filter(f => !f.includes('_meta'));
 for (const f of files) {
   const c = fs.readFileSync(f, 'utf8');
-  const { meta, body } = parseFrontmatter(c);
+  const { meta } = parseFrontmatter(c);
   chunks.push({
     slug: path.basename(f, '.md'),
     path_rel: path.relative(REPO, f),
@@ -54,7 +68,11 @@ for (const f of files) {
     intent_codes: meta.intent_codes || [],
     keywords: meta.keywords || [],
     compliance: meta.compliance || [],
-    content: body.slice(0, 3500) // cap body length
+    // Keep the FULL raw article (frontmatter + body) so every chunk carries its title/category consistently
+    // (the forums retriever + AI crawlers parse the frontmatter); aria-kb-query strips it for chat answers.
+    // Consistent across LF/CRLF files — the previous parseFrontmatter-then-body path silently dropped
+    // frontmatter for LF files, leaving the chunk format inconsistent.
+    content: capBody(c)
   });
 }
 

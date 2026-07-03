@@ -31,7 +31,8 @@ t();
 assert.match(main, /overlayCompanion/, "main tracks companion overlay mode");
 assert.match(main, /function overlayBounds[\s\S]*?if \(overlayCompanion\)/, "companion has its own (bigger) bounds");
 assert.match(main, /overlay-mode", overlayCompanion \? "companion"/, "main sends the companion overlay-mode");
-assert.match(overlayHtml, /id="companionPanel"/, "companion panel exists in the overlay");
+assert.match(overlayHtml, /id="overlayCard"/, "the single overlay card hosts the companion (no separate panel)");
+assert.doesNotMatch(overlayHtml, /id="companionPanel"/, "the old separate #companionPanel layer is deleted (2026-07-02 one-box)");
 assert.match(overlay, /mode === "companion"/, "overlay handles companion mode");
 t();
 
