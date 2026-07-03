@@ -13,7 +13,10 @@ import fs from "node:fs";
 import path from "node:path";
 
 const rendererRoot = path.resolve(import.meta.dirname, "..", "src", "renderer");
-const ENTRY = path.join(rendererRoot, "renderer.js");
+// Both browser entry points run under the same CSP: the main window (renderer.js) AND the globe overlay
+// (overlay.js). A node:/bare import in EITHER graph is a silent dead surface.
+const ENTRIES = [path.join(rendererRoot, "renderer.js"), path.join(rendererRoot, "overlay.js")];
+const ENTRY = ENTRIES[0];
 
 // Match static imports:  import ... from "X"   and   import "X"   (ignores dynamic import() — those are lazy
 // and never fire in the renderer for the server-only paths).
@@ -44,10 +47,10 @@ function walk(file, fromChain) {
   }
 }
 
-walk(ENTRY, ["renderer.js"]);
+for (const entry of ENTRIES) walk(entry, [path.relative(rendererRoot, entry)]);
 
-// 1 — the whole renderer graph is browser-safe: only relative file imports, no node:/bare specifiers.
-assert.deepEqual(offenders, [], `renderer import graph must be browser-safe (no node:/bare imports):\n${offenders.join("\n")}`);
+// 1 — the whole renderer + overlay graph is browser-safe: only relative file imports, no node:/bare specifiers.
+assert.deepEqual(offenders, [], `renderer/overlay import graph must be browser-safe (no node:/bare imports):\n${offenders.join("\n")}`);
 
 // 2 — specifically prove the exact regression is gone: node:crypto must not be reachable from the renderer.
 const graphFiles = [...visited];

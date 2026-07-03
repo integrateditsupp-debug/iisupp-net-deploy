@@ -1,9 +1,9 @@
-// COMPANION GLOBE-BOX FIX — the golden globe stays a globe and is never covered. The companion is a SMALL card
-// BELOW it (mirroring #overlayCard / .globe-confirm), NOT a full-window inset:0 takeover. Proves: (a) the panel
-// is anchored below the globe (top ~104px), bounded width, internal scroll — and is NOT inset:0/full-window;
-// (b) #overlayGlobe stays present/visible when the companion is open (the panel is a sibling, never wraps it);
-// (c) steps render into #companionBody; (d) input-text exposes a .companion-input field + an optional,
-// on-device-STT-guarded tap-to-speak button (typing always works). Structural (source) proof.
+// COMPANION GLOBE-BOX — the golden globe stays a globe and is never covered, and there is now ONE box (2026-07-02
+// refactor: the separate #companionPanel layer is DELETED; the companion renders into the single #overlayCard,
+// anchored BELOW the globe, bounded + internally scrolling, never a full-window takeover). Proves: (a) no
+// #companionPanel; (b) #overlayCard is a below-globe card (top clears the globe, not inset:0); (c) #overlayGlobe
+// stays a visible sibling; (d) steps render into the ONE card body; (e) input-text = field + guarded on-device
+// tap-to-speak, typing always works. Structural (source) proof; the visible one-box is boot-verified in boot-smoke.
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -14,53 +14,45 @@ const overlay = rd("src", "renderer", "overlay.js");
 const overlayHtml = rd("src", "renderer", "overlay.html");
 let n = 0; const t = () => { n++; };
 
-// Extract the `.companion-panel { ... }` rule block so we can assert on its actual declarations.
-const panelRule = (overlayHtml.match(/\.companion-panel\s*\{[\s\S]*?\}/) || [""])[0];
-assert.ok(panelRule, "found the .companion-panel CSS rule");
-
-// 1 — the panel is NOT a full-window takeover: no `inset: 0` (or inset:0) that would cover the globe.
-assert.doesNotMatch(panelRule, /inset\s*:\s*0/, "companion-panel must NOT be inset:0 / full-window (that hid the globe)");
+// 1 — the ugly separate layer is GONE: no #companionPanel element and no .companion-panel CSS rule.
+assert.doesNotMatch(overlayHtml, /id="companionPanel"/, "#companionPanel element is deleted");
+assert.doesNotMatch(overlayHtml, /\.companion-panel\s*\{/, "the .companion-panel CSS layer is deleted");
 t();
 
-// 2 — the panel is anchored as a card BELOW the globe: top ~104px, centered, bounded width, capped height.
-assert.match(panelRule, /position\s*:\s*absolute/, "panel is absolutely positioned (a card, not a flow block)");
-assert.match(panelRule, /top\s*:\s*104px/, "panel anchored just below the globe (top ~104px, like .globe-confirm)");
-assert.match(panelRule, /left\s*:\s*50%/, "panel horizontally centered");
-assert.match(panelRule, /transform\s*:\s*translateX\(-50%\)/, "panel centered via translateX(-50%)");
-assert.match(panelRule, /width\s*:\s*300px/, "panel has a bounded (~300px) width, not full-window");
-assert.match(panelRule, /max-height\s*:/, "panel has a max-height so it fits the window");
-// internal scroll: the body scrolls inside the bounded card.
-assert.match(overlayHtml, /\.companion-body\s*\{[^}]*overflow-y\s*:\s*auto/, "companion body scrolls internally (overflow-y:auto)");
+// 2 — the SINGLE #overlayCard is a below-globe card: anchored under the globe (top clears it), NOT inset:0, and
+// bounded with internal scroll so nothing is cut off.
+const cardRule = (overlayHtml.match(/#overlayCard\s*\{[^}]*top:[^}]*\}/) || [""])[0];
+assert.ok(cardRule, "found the #overlayCard sizing rule (with top/max-height/overflow)");
+assert.doesNotMatch(cardRule, /inset\s*:\s*0/, "#overlayCard must NOT be inset:0 / full-window (that would hide the globe)");
+assert.match(cardRule, /top\s*:\s*9\dpx/, "#overlayCard is anchored BELOW the globe (top clears the ~84px globe)");
+assert.match(cardRule, /max-height\s*:/, "#overlayCard has a max-height so it fits the window");
+assert.match(cardRule, /overflow-y\s*:\s*auto/, "#overlayCard scrolls internally (nothing cut off)");
 t();
 
-// 3 — the globe stays present + visible when the companion is open: #overlayGlobe exists and the companion is a
-// SEPARATE sibling <section> (it never wraps/replaces the globe), and overlay.js only toggles the PANEL hidden.
+// 3 — the globe stays present + a visible sibling; setMode toggles the CARD, never the globe.
 assert.match(overlayHtml, /id="overlayGlobe"/, "the golden globe button is present in the overlay");
-assert.match(overlayHtml, /id="companionPanel"[\s\S]*class="companion-panel"/, "companion is its own panel element");
-// the globe button is declared before the companion panel and neither nests the other (siblings under <body>).
 const globeIdx = overlayHtml.indexOf('id="overlayGlobe"');
-const panelIdx = overlayHtml.indexOf('id="companionPanel"');
-assert.ok(globeIdx > -1 && panelIdx > -1 && globeIdx < panelIdx, "globe and companion are separate siblings (globe first)");
-// overlay.js shows/hides ONLY the companion panel — it never hides the globe when companion opens.
-assert.match(overlay, /companionPanel\.hidden = !showCompanion/, "setMode toggles only the companion panel, not the globe");
+const cardIdx = overlayHtml.indexOf('id="overlayCard"');
+assert.ok(globeIdx > -1 && cardIdx > -1 && globeIdx < cardIdx, "globe and card are separate siblings (globe first)");
+assert.match(overlay, /function setMode\(mode\)[\s\S]*?card\.hidden = !showCard/, "setMode toggles the single card, not the globe");
 assert.doesNotMatch(overlay, /overlayGlobe[^\n]*(hidden = true|style\.display = "none")/, "the globe is never hidden for the companion");
 t();
 
-// 4 — steps render INTO #companionBody (the box below the globe), through the same content engine.
-assert.match(overlay, /const companionBody = document\.getElementById\("companionBody"\)/, "companionBody is the render target");
-assert.match(overlay, /function renderCompanion\(\)[\s\S]*?companionBody\.innerHTML = ""/, "renderCompanion clears + fills companionBody");
-assert.match(overlay, /companionBody\.appendChild/, "steps are appended into companionBody");
+// 4 — steps render INTO the ONE card body (#overlayBody, aliased as companionBody) via the same content engine.
+assert.match(overlay, /const companionBody = copy;/, "companionBody IS the single card body (#overlayBody), not a separate panel");
+assert.match(overlay, /const copy = document\.getElementById\("overlayBody"\)/, "the card body is #overlayBody");
+assert.match(overlay, /function renderCompanion\(\)[\s\S]*?companionBody\.innerHTML = ""/, "renderCompanion clears + fills the card body");
+assert.match(overlay, /companionBody\.appendChild/, "steps are appended into the card body");
 t();
 
-// 5 — an input-text step exposes a .companion-input field AND an optional tap-to-speak button; the button is
-// guarded by SpeechRecognition availability (hidden gracefully when absent) so typing ALWAYS works.
+// 5 — an input-text step exposes a .companion-input field AND an optional on-device tap-to-speak button (guarded);
+// typing ALWAYS works regardless of the mic.
 assert.match(overlay, /step\.type === "input-text"[\s\S]*?el\("input", "companion-input"\)/, "input-text renders a .companion-input field");
 assert.match(overlay, /step\.type === "input-text"[\s\S]*?addTapToSpeak\(input/, "input-text offers the optional tap-to-speak affordance");
-assert.match(overlay, /function addTapToSpeak\(input[\s\S]*?createLocalStt\(/, "tap-to-speak uses the bundled on-device offline engine (createLocalStt), not a cloud recognizer");
+assert.match(overlay, /function addTapToSpeak\(input[\s\S]*?createLocalStt\(/, "in-field tap-to-speak uses the bundled on-device engine (createLocalStt), not a cloud recognizer");
 assert.match(overlay, /function addTapToSpeak\(input[\s\S]*?if \(!canMic \|\| !window\.sentinel \|\| !window\.sentinel\.voskModelUrl\) return null/, "no mic / no bundled model → button hidden gracefully (typing still works)");
-// typing path is unconditional: the input + its input-listener exist regardless of the mic.
 assert.match(overlay, /input\.addEventListener\("input", \(\) => \{ comp\.answers\[step\.key\] = input\.value/, "typing always updates the answer, independent of voice");
 t();
 
 assert.equal(n, 5, "5 companion-globe-box groups");
-console.log(`companion-globe-box test passed (${n} groups · panel is a below-globe card, not inset:0 · bounded width + internal scroll · globe stays a visible sibling · steps render in #companionBody · input-text = field + guarded tap-to-speak, typing always works).`);
+console.log(`companion-globe-box test passed (${n} groups · #companionPanel deleted · ONE #overlayCard below the globe, not inset:0 · bounded + internal scroll · globe stays a visible sibling · steps render into the card body · input-text = field + guarded tap-to-speak).`);

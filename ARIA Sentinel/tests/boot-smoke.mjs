@@ -30,9 +30,12 @@ if (!electronBin) {
 const useShell = electronBin.endsWith(".cmd");
 
 const outFile = path.join(os.tmpdir(), `aria-boot-smoke-${process.pid}.txt`);
+const userDataDir = path.join(os.tmpdir(), `aria-boot-ud-${process.pid}`);
 try { fs.rmSync(outFile, { force: true }); } catch { /* ignore */ }
+try { fs.rmSync(userDataDir, { recursive: true, force: true }); } catch { /* ignore */ }
 
-const res = spawnSync(electronBin, ["."], {
+// A FRESH --user-data-dir avoids a stale single-instance lock from a prior/crashed run silently quitting the app.
+const res = spawnSync(electronBin, [".", `--user-data-dir=${userDataDir}`], {
   cwd: APP,
   env: { ...process.env, ARIA_BOOT_SMOKE: "1", ARIA_SENTINEL_DRY_RUN: "1", ARIA_BOOT_SMOKE_OUT: outFile },
   timeout: 90000,
@@ -42,6 +45,7 @@ const res = spawnSync(electronBin, ["."], {
 
 const out = (fs.existsSync(outFile) ? fs.readFileSync(outFile, "utf8") : "") || res.stdout || "";
 try { fs.rmSync(outFile, { force: true }); } catch { /* ignore */ }
+try { fs.rmSync(userDataDir, { recursive: true, force: true }); } catch { /* ignore */ }
 
 assert.ok(out.includes("[probe]"), `boot produced no probe output — the window never finished loading.\n${out}\n${res.stderr || ""}`);
 // No renderer CSP / node: import violation (the exact P0 cause).
@@ -57,4 +61,17 @@ assert.equal(probe.navStyled, true, "clicking the ARIA nav item styles it active
 assert.equal(probe.afterNav, "aria", "clicking the ARIA nav item SWITCHES to the ARIA panel (the dead-shell is gone)");
 assert.equal(probe.afterQa, "aria", "the Dashboard 'Diagnose issue' Quick Action fired (routed to ARIA)");
 
-console.log(`boot-smoke test passed — real Electron boot: nav switches (dashboard→aria), nav styles active, Quick Action fires, no CSP/module violation. ${JSON.stringify(probe)}`);
+// P1 OVERLAY ONE-BOX — opening the companion shows EXACTLY ONE box, no ghost #companionPanel, globe visible.
+const om = out.match(/\[overlay-probe\]\s*(\{.*\})/);
+assert.ok(om, `no overlay probe in the boot output:\n${out}`);
+const oprobe = JSON.parse(om[1]);
+assert.equal(oprobe.panelGone, true, "#companionPanel is DELETED (no separate ugly layer)");
+assert.equal(oprobe.cardShown, true, "the single #overlayCard is shown when the companion opens");
+assert.equal(oprobe.confirmHidden, true, "#overlayConfirm is hidden while the card is open (no stacking/overlap)");
+assert.equal(oprobe.greetingHidden, true, "the greeting bubble is hidden while the card is open");
+assert.deepEqual(oprobe.visibleBoxes, ["overlayCard"], "EXACTLY ONE overlay box is visible at a time");
+assert.equal(oprobe.headShown, true, "the companion chrome (mute/back/close) shows in the one box");
+assert.equal(oprobe.hasSpeak, true, "the 🎤 Tap-to-speak button is present in the box");
+assert.equal(oprobe.globeVisible, true, "the globe is never covered");
+
+console.log(`boot-smoke test passed — real Electron boot: nav switches (dashboard→aria), Quick Action fires, no CSP/module violation; overlay = ONE box (companionPanel gone, confirm hidden, globe visible). ${JSON.stringify(probe)} | ${JSON.stringify(oprobe)}`);

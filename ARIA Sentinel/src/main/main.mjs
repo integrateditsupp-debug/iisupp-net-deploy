@@ -355,6 +355,17 @@ function createMainWindow() {
   if (process.env.ARIA_BOOT_SMOKE) {
     const logs = [];
     const push = (s) => logs.push(String(s));
+    let finalized = false;
+    const finalize = () => {
+      if (finalized) return; finalized = true;
+      const out = "=== ARIA BOOT SMOKE ===\n" + logs.join("\n") + "\n";
+      try { fs.writeFileSync(process.env.ARIA_BOOT_SMOKE_OUT || "boot-smoke-out.txt", out); } catch { /* ignore */ }
+      try { process.stdout.write(out); } catch { /* ignore */ }
+      setTimeout(() => { try { app.exit(0); } catch { /* ignore */ } }, 400);
+    };
+    // Watchdog: no matter what hangs (a stuck executeJavaScript, a window that never loads), always write + exit.
+    setTimeout(() => { push("[watchdog] finalized after timeout"); finalize(); }, 25000);
+    const withTimeout = (p, ms, label) => Promise.race([p, new Promise((r) => setTimeout(() => r(`TIMEOUT:${label}`), ms))]);
     mainWindow.webContents.on("console-message", (_e, level, message, line, sourceId) => push(`[console:${level}] ${message} @ ${sourceId}:${line}`));
     mainWindow.webContents.on("preload-error", (_e, p, err) => push(`[preload-error] ${p}: ${err && err.stack || err}`));
     mainWindow.webContents.on("render-process-gone", (_e, d) => push(`[render-gone] ${JSON.stringify(d)}`));
@@ -377,10 +388,31 @@ function createMainWindow() {
         }catch(e){return 'PROBE_THREW: '+(e&&e.stack||e);}})()`, true).catch((e) => "EXECJS_FAILED: " + e);
         push("[probe] " + probe);
       } catch (e) { push("[hook-error] " + (e && e.stack || e)); }
-      const out = "=== ARIA BOOT SMOKE ===\n" + logs.join("\n") + "\n";
-      try { fs.writeFileSync(process.env.ARIA_BOOT_SMOKE_OUT || "boot-smoke-out.txt", out); } catch (e) { /* ignore */ }
-      try { process.stdout.write(out); } catch { /* ignore */ }
-      setTimeout(() => { try { app.exit(0); } catch { /* ignore */ } }, 400);
+      // OVERLAY ONE-BOX probe (P1): open the companion and assert exactly one box + no ghost #companionPanel.
+      try {
+        if (overlayWindow && !overlayWindow.isDestroyed()) {
+          overlayWindow.webContents.on("console-message", (_e, level, message, line, sourceId) => push(`[overlay-console:${level}] ${message} @ ${sourceId}:${line}`));
+        }
+        showOverlay({ companion: true });
+        await new Promise((r) => setTimeout(r, 1800));
+        if (overlayWindow && !overlayWindow.isDestroyed()) {
+          const oprobe = await withTimeout(overlayWindow.webContents.executeJavaScript(`(async function(){try{
+            const panelGone = document.getElementById('companionPanel') === null;
+            const cardShown = !(document.getElementById('overlayCard')||{hidden:true}).hidden;
+            const confirmHidden = (document.getElementById('overlayConfirm')||{hidden:true}).hidden;
+            const greetingHidden = (document.getElementById('overlayGreeting')||{hidden:true}).hidden;
+            const headShown = !(document.getElementById('overlayCardHead')||{hidden:true}).hidden;
+            const hasSpeak = !!document.getElementById('overlaySpeak');
+            const globeVisible = !!document.getElementById('overlayGlobe');
+            const visibleBoxes = ['overlayCard','overlayConfirm'].filter((id)=>{const e=document.getElementById(id); return e && !e.hidden;});
+            let voskUrl = null; try { voskUrl = await window.sentinel.voskModelUrl(); } catch(e) { voskUrl = 'ERR'; }
+            const voskResolved = typeof voskUrl === 'string' && voskUrl.indexOf('file:') === 0;
+            return JSON.stringify({panelGone, cardShown, confirmHidden, greetingHidden, headShown, hasSpeak, globeVisible, visibleBoxes, voskResolved});
+          }catch(e){return 'OPROBE_THREW: '+(e&&e.stack||e);}})()`, true).catch((e) => "OEXECJS_FAILED: " + e), 6000, "overlay-execjs");
+          push("[overlay-probe] " + oprobe);
+        } else { push("[overlay-probe] overlayWindow missing"); }
+      } catch (e) { push("[overlay-hook-error] " + (e && e.stack || e)); }
+      finalize();
     });
   }
   mainWindow.setMenuBarVisibility(false);
