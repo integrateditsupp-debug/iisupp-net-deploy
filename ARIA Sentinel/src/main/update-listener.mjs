@@ -77,5 +77,8 @@ export async function checkForUpdate({ fetchManifest, installedVersion, now = ne
     version: parsed.version, releaseNotes: parsed.releaseNotes, size: parsed.size,
     sha512: parsed.sha512, channel, publishedAt: parsed.releaseDate
   } : null;
-  return { ok: true, checkedAt: now, updateAvailable, event, current: installedVersion };
+  // D3 — `manifest` tells the caller whether an update feed was actually reachable, so the UI can say the
+  // HONEST thing: a reachable feed with no newer build → "up to date"; NO feed → "manual updates for now"
+  // (never a false "you're on the latest version" when we simply couldn't check).
+  return { ok: true, checkedAt: now, updateAvailable, event, current: installedVersion, manifest: Boolean(parsed) };
 }

@@ -80,7 +80,17 @@ body.has-security-banner .settings-shell { padding-top: 58px; }
   display: flex;
   flex-direction: column;
   min-width: 0;
+  /* D5 (2026-07-03) — sticky left nav: on long pages (Settings/Troubleshoot with many restore points) the rail
+     used to scroll out of view with the document. Pin it to the viewport so tab switching is always reachable;
+     its own overflow-y handles a nav taller than the screen. height:100vh keeps the globe footer at the bottom. */
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
 }
+/* When the security banner (fixed, 58px) is showing, drop the sticky rail below it. */
+body.has-security-banner .settings-rail { top: 58px; height: calc(100vh - 58px); }
 
 .settings-brand {
   display: flex;
@@ -946,6 +956,7 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .health-dot[data-status="green"]{ background:#4ade80; box-shadow:0 0 10px rgba(74,222,128,.6); }
 .health-dot[data-status="yellow"]{ background:#fbbf24; box-shadow:0 0 10px rgba(251,191,36,.55); }
 .health-dot[data-status="red"]{ background:#fb7185; box-shadow:0 0 10px rgba(251,113,133,.6); }
+.health-dot[data-status="off"]{ background:#64748b; box-shadow:none; opacity:.7; } /* D4 — external AI disabled: neutral, not green */
 .fallthrough .ft-tier { display:flex; justify-content:space-between; gap:10px; padding:9px 12px; border:1px solid rgba(255,255,255,.08); border-radius:9px; margin-bottom:7px; font-size:12.5px; }
 .fallthrough .ft-tier .ft-name { color:#ececec; } .fallthrough .ft-tier .ft-meta { color:var(--muted,#8b8b93); }
 

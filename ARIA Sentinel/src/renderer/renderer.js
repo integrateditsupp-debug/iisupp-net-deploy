@@ -1113,6 +1113,13 @@ function wireUpdates() {
     setText("updateStatusLine", `Update available: ${info?.version || ""} — click Install.`);
   });
 }
+// D3 (2026-07-03) — honest update toast: an update, a real "up to date" (a feed answered), or manual-update
+// mode when no OTA feed is reachable (never a false "you're on the latest version" that we can't actually verify).
+function updateToast(r) {
+  if (r?.updateAvailable) return { title: "Update available", body: r?.event?.version ? `v${r.event.version} is ready to install.` : "A newer version is ready." };
+  if (r?.manifest) return { title: "Up to date", body: "You're on the latest version." };
+  return { title: "Manual updates", body: `You're on ${r?.current || "this version"} · manual updates for now.` };
+}
 function renderUpdates(state) {
   const u = state && state.updates;
   if (!u) return;
@@ -1300,7 +1307,12 @@ function wireLicense() {
   }));
   bindClick("checkUpdates", (button) => runAction(button, async () => {
     const r = await sentinel.checkUpdates?.();
-    setText("updateStatus", !r?.ok ? "Update check unavailable." : r.updateAvailable ? `Update available: ${r.latest.version}` : `Up to date (${r.current}).`);
+    // D3 — honest, non-alarming state. No OTA manifest wired → "manual updates for now" (not a dead "unavailable").
+    const cur = r?.current || "this version";
+    setText("updateStatus",
+      r?.updateAvailable && r.latest ? `Update available: ${r.latest.version}`
+      : (!r?.ok || r?.mode === "manual") ? `You're on ${cur} · manual updates for now`
+      : `Up to date (${cur}).`);
     return r;
   }));
   bindClick("manageSubscription", (button) => runAction(button, () => sentinel.manageSubscription?.()));
@@ -1559,7 +1571,14 @@ function diskPercentUsed(disk = {}) {
 }
 function diskUsageLabel(disk = {}) {
   const pct = diskPercentUsed(disk);
-  if (pct != null) return `${pct}% used`;
+  if (pct != null) {
+    // D6 — real usage like RAM, plus free GB when we have the system-volume size/free (value-first).
+    const size = Number(disk.sizeGb ?? disk.size ?? disk.totalGb ?? disk.total);
+    const free = Number(disk.freeGb ?? disk.freeSpace ?? disk.free);
+    const gb = (n) => n > 1e6 ? Math.round(n / 1e9) : Math.round(n); // bytes → GB (already-GB values pass through)
+    const freeStr = Number.isFinite(size) && Number.isFinite(free) ? ` · ${gb(free)} GB free of ${gb(size)}` : "";
+    return `${pct}% used${freeStr}`;
+  }
   if (disk && disk.model) return `${disk.model}${disk.status ? " · " + disk.status : ""}`;
   return "usage not reported";
 }
@@ -1647,7 +1666,8 @@ function wireRun21() {
   bindClick("checkUpdateChannel", (b) => runAction(b, async () => {
     const r = await sentinel.checkUpdateChannel?.();
     await loadUpdatesPanel();
-    showToast({ title: r?.updateAvailable ? "Update available" : "Up to date", body: r?.event?.version ? `v${r.event.version} is ready to install.` : "You're on the latest version." });
+    // D3 — honest: only claim "up to date" if a feed actually answered; otherwise say manual-update mode.
+    showToast(updateToast(r));
     return r;
   }));
   bindClick("pauseUpdates", (b) => runAction(b, async () => {
@@ -1724,7 +1744,7 @@ function wireRun22() {
   // Overview quick actions.
   bindClick("dashDiagnose", () => { activateTab("aria"); qs("#ariaChatInput")?.focus(); }); // RUN 34-2 — route to the ARIA tab chat
   bindClick("dashHealthCheck", (b) => runAction(b, async () => { const r = await sentinel.selfHeal?.(); showToast({ title: "Health check", body: r?.summary?.headline || "Self-check complete." }); return r; }));
-  bindClick("dashCheckUpdates", (b) => runAction(b, async () => { const r = await sentinel.checkUpdateChannel?.(); showToast({ title: r?.updateAvailable ? "Update available" : "Up to date", body: r?.event?.version ? `v${r.event.version} ready.` : "Latest version." }); return r; }));
+  bindClick("dashCheckUpdates", (b) => runAction(b, async () => { const r = await sentinel.checkUpdateChannel?.(); showToast(updateToast(r)); return r; })); // D3 — honest toast
   bindClick("dashExportEvidence", (b) => runAction(b, () => sentinel.exportEvidence?.()));
   bindClick("compExportEvidence", (b) => runAction(b, async () => { const r = await sentinel.exportEvidence?.(); setText("compEvidenceResult", r?.ok ? `Saved → ${r.path}` : "Export unavailable."); return r; }));
   // Reports actions.
@@ -2257,7 +2277,9 @@ async function loadAriaData() {
     const { data } = (await window.sentinel?.ariaStatus?.()) || { data: null };
     if (data) {
       const dot = qs("#healthDot"); if (dot) dot.dataset.status = data.overall;
-      setText("healthOverall", data.overall === "green" ? "All systems healthy" : data.overall === "yellow" ? "Degraded — fallback active" : data.overall === "red" ? "Outage — using local KB" : "Status unavailable");
+      // D4 — when external AI is off this build, say so honestly rather than a bare "All systems healthy".
+      const offNote = data.externalAiEnabled === false ? " · external AI off (local-symbolic)" : "";
+      setText("healthOverall", (data.overall === "green" ? "All systems healthy" : data.overall === "yellow" ? "Degraded — fallback active" : data.overall === "red" ? "Outage — using local KB" : "Status unavailable") + offNote);
       setText("healthProbe", data.lastProbe ? `last probe ${timeAgoShort(data.lastProbe)}` : "");
       const ft = qs("#fallthroughChain");
       if (ft) ft.innerHTML = data.tiers.map((tr) => `<div class="ft-tier"><span class="ft-name"><span class="health-dot" data-status="${tr.status}" style="width:9px;height:9px;display:inline-block;margin-right:7px"></span>${esc(tr.name)}</span><span class="ft-meta">${esc(tr.cost)} · ${esc(tr.coverage)}</span></div>`).join("");

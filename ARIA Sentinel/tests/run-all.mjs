@@ -123,6 +123,8 @@ const TESTS = [
   // RUN 20 — system knowledge engine + cross-platform blueprint + safe-generic Tier-0 recipes.
   "./system-context-enum.test.mjs",
   "./system-context-refresh.test.mjs",
+  // D6 (2026-07-03) — real disk % used (system-volume free/size), honest fallback when unavailable.
+  "./disk-usage.test.mjs",
   "./symptom-kb-parse.test.mjs",
   "./blueprint-coverage.test.mjs",
   "./tier-0-recipes-dryrun.test.mjs",
@@ -225,6 +227,10 @@ const TESTS = [
   "./aria-local-kb.test.mjs",
   // RUN 31 — KB-first wiring (aria-kb-query before aria-chat; $0 retrieval).
   "./kb-first-wiring.test.mjs",
+  // D1 (2026-07-03) — KB relevance floor: abstain (never return the nearest WRONG article) when no match.
+  "./kb-abstain-floor.test.mjs",
+  // D2 (2026-07-03) — Ask-ARIA usage recorded to local memory + stats (Memory/Dashboard reflect real asks).
+  "./chat-stats.test.mjs",
   // RUN 32-B — 3-mode proof-of-life (Manual/Confirmed/Autonomous execution pipeline).
   "./mode-execution.test.mjs",
   // RUN 34-4 — 3-mode × 13-error matrix (every Windows error class × Manual/Confirmed/Autonomous disposition).

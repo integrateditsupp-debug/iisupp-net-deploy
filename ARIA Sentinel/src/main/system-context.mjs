@@ -93,6 +93,22 @@ export function mergeInstalledApps(registryApps = [], packageApps = [], storeApp
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 
+// D6 (2026-07-03) — real disk USAGE. Win32_DiskDrive gives only Model/Size/Status (no free space), so the
+// "This Machine" disk row read "usage not reported". Merge the system-drive Win32_LogicalDisk volume (Size +
+// FreeSpace) so the row shows real "% used" like RAM. Pure: works off whatever `systemVolume` the caller passes.
+export function buildDiskSummary(parts = {}) {
+  const physical = parts.disk || (Array.isArray(parts.disks) && parts.disks[0]) || null;
+  const vol = parts.systemVolume || null;
+  const size = vol ? Number(vol.Size ?? vol.size) : NaN;
+  const free = vol ? Number(vol.FreeSpace ?? vol.freeSpace ?? vol.free) : NaN;
+  const model = physical ? (physical.Model || physical.model || null) : null;
+  const status = physical ? (physical.Status || physical.status || null) : null;
+  if (Number.isFinite(size) && size > 0 && Number.isFinite(free) && free >= 0) {
+    return { model, status, deviceId: (vol.DeviceID || vol.deviceId || null), size, freeSpace: free, percentUsed: Math.round((1 - free / size) * 100) };
+  }
+  return physical;
+}
+
 // ── Assemble the full sanitized system-context shape (pure) ─────────────────────────────────────────
 export function buildSystemContext(parts = {}, now = new Date().toISOString()) {
   const apps = mergeInstalledApps(parts.registryApps, parts.packageApps, parts.storeApps);
@@ -105,7 +121,7 @@ export function buildSystemContext(parts = {}, now = new Date().toISOString()) {
     cpu: parts.cpu || null,
     ram: parts.ram || null,
     gpu: parts.gpu || null,
-    disk: parts.disk || (Array.isArray(parts.disks) && parts.disks[0]) || null,
+    disk: buildDiskSummary(parts), // D6 — real % used when the system-volume free/size is available
     disks: parts.disks || [],
     network: parts.network || [],
     os: parts.os || null,
@@ -139,6 +155,7 @@ export async function enumerate({ runPS = noopPS, now = new Date().toISOString()
     ram: hw.ram || null,
     gpu: hw.gpu || null,
     disks: hw.disks || [],
+    systemVolume: hw.systemVolume || null, // D6 — Win32_LogicalDisk (system drive) free/size for real % used
     network: hw.network || [],
     os: hw.os || null,
     drivers: hw.drivers || [],

@@ -1,6 +1,7 @@
 // aria-brain-client — RUN 15 §4. The desktop wraps the LIVE iisupp.net/aria brain: chat goes to the
 // same /aria-chat function, with a 4-tier escalation ladder (KB → screen/event → research → ticket).
 // fetch is injectable so it's unit-testable; offline degrades gracefully to local KB.
+import { kbRelevance, KB_RELEVANCE_FLOOR } from "./aria-local-kb.mjs"; // D1 — relevance floor on the KB match
 export const CHAT_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-chat";
 export const RESEARCH_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-research";
 // RUN 31 — KB-FIRST per Ahmad's rule ("do not use Anthropic unless needed"). Same retrieval engine as
@@ -67,6 +68,14 @@ export async function askAria(prompt, ctx = {}) {
       const kb = (typeof kbRes.json === "function" ? await kbRes.json() : kbRes) || {};
       if (kb.match && Number(kb.confidence) >= KB_CONFIDENCE_MIN && kb.content_excerpt) {
         const art = kb.article || {};
+        // D1 — the server can return the NEAREST article even when none truly matches (e.g. "stuck Windows
+        // update" → a "no sound" audio article, confidently). With external AI disabled there is no Anthropic
+        // fallback, so a wrong-but-confident answer would just be served. Require that the query's meaningful
+        // terms actually appear in the returned article; otherwise fall through to aria-chat → local KB, which
+        // either finds the right doc or abstains honestly. Never renders an irrelevant article + "Resolve it".
+        if (kbRelevance(String(prompt || ""), `${art.title || ""} ${kb.content_excerpt}`) < KB_RELEVANCE_FLOOR) {
+          throw new Error("kb-match below relevance floor"); // caught below → falls through to aria-chat
+        }
         return {
           reply: scrubR11(`${kb.content_excerpt}${art.url ? `\n\n→ Full article: ${art.url}` : ""}`),
           session_id: null,

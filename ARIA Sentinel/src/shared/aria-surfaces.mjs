@@ -12,8 +12,12 @@ const STATUS = new Set(["green", "yellow", "red"]);
 const norm = (s, fallback = "unknown") => { const v = String(s || "").toLowerCase(); return STATUS.has(v) ? v : fallback; };
 
 /** /aria-system-status → { overall, tiers:[{name,status,cost,coverage}], lastProbe }. Always returns the 3
- *  fall-through tiers (KB-first / Anthropic / local KB), filling status from the API when present. */
-export function parseSystemStatus(json) {
+ *  fall-through tiers (KB-first / Anthropic / local KB), filling status from the API when present.
+ *  D4 (2026-07-03) — `externalAiEnabled` reflects the DESKTOP's real posture: this MVP build ships with
+ *  external AI calls disabled (state.externalAiCalls === false), so the Anthropic tier must show as OFF/disabled
+ *  here rather than a green "metered · novel only" — otherwise Health contradicts the Control Center boundary
+ *  and the D1 abstain behavior (no Anthropic fallback → KB abstains). */
+export function parseSystemStatus(json, { externalAiEnabled = true } = {}) {
   const j = json && typeof json === "object" ? json : {};
   const byName = {};
   (Array.isArray(j.tiers) ? j.tiers : []).forEach((tr) => { if (tr && tr.name) byName[String(tr.name).toLowerCase()] = tr; });
@@ -21,12 +25,16 @@ export function parseSystemStatus(json) {
     const t = byName[key] || byName[name.toLowerCase()] || {};
     return { name, status: norm(t.status, "unknown"), cost: t.cost != null ? String(t.cost) : cost, coverage: t.coverage != null ? String(t.coverage) : coverage };
   };
+  const anthropic = externalAiEnabled
+    ? tier("anthropic", "Anthropic", "metered", "novel only")
+    : { name: "Anthropic", status: "off", cost: "disabled", coverage: "off in this build" }; // D4 — honest: not green
   return {
     overall: norm(j.overall, "unknown"),
     lastProbe: j.last_probe || j.lastProbe || null,
+    externalAiEnabled,
     tiers: [
       tier("kb", "KB-first", "$0", "~85%"),
-      tier("anthropic", "Anthropic", "metered", "novel only"),
+      anthropic,
       tier("local", "Local KB", "$0", "offline always")
     ]
   };
@@ -71,7 +79,8 @@ export function parseSessions(sessions, { now = Date.now() } = {}) {
     return {
       id: redactPrivate(String(s.id || s.sessionId || "")),
       startedAt: s.started_at || s.startedAt || null,
-      count: turns.length, turns,
+      // D2 — count = real ask count when the session records it (2 turns/ask), else fall back to turns.length.
+      count: Number(s.asks) || turns.length, turns,
       kbHits: Number(s.kb_hits) || turns.filter((tn) => /knowledge base/i.test(tn.text)).length,
       anthropicHits: Number(s.anthropic_hits) || 0
     };

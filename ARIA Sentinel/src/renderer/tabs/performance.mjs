@@ -28,6 +28,8 @@ export function aiTilesHtml(m = {}) {
 
 export function usageHtml(u = {}) {
   const rows = [
+    ["Ask ARIA questions", u.asks ?? 0],            // D2 — real local usage
+    ["Answered from KB ($0)", u.kbHits ?? 0],       // D2
     ["Active today (hrs)", u.activeToday ?? 0],
     ["Active this week (hrs)", u.activeWeek ?? 0],
     ["Top recipe tier", u.topTier || "tier-0"],

@@ -58,6 +58,30 @@ export function scoreKbDoc(doc, queryTokens, targetPlatform) {
   return score;
 }
 
+// D1 (2026-07-03) — generic platform / support words that appear in almost EVERY article of a category, so
+// they must NOT count toward relevance. Without this, any Windows question "matches" any Windows article on
+// the shared word "windows" (e.g. "stuck Windows update" scored the "no sound" audio article as nearest).
+const GENERIC_TERMS = new Set([
+  "windows","win10","win11","macos","mac","osx","ios","iphone","ipad","ipados","android","pixel","samsung",
+  "galaxy","chromeos","chromebook","linux","ubuntu","debian","fedora","rhel","pc","computer","laptop","desktop",
+  "device","machine","phone","tablet","system","fix","fixing","fixed","help","issue","issues","problem","problems",
+  "error","errors","working","work","broken","trouble","support","cant","wont"
+]);
+
+// D1 — query-anchored relevance: what fraction of the query's MEANINGFUL (non-generic) terms actually appear
+// in the article's title/text. This is what separates a real match ("printer not printing" → printer article,
+// 1.0) from the nearest-but-wrong one ("stuck Windows update" → audio article, 0.0 — neither "stuck" nor
+// "update" is in an audio doc). Returns 0..1. An all-generic query falls back to full tokens (can't discriminate).
+export const KB_RELEVANCE_FLOOR = 0.3;
+export function kbRelevance(query, articleText) {
+  const meaningful = tokenize(query).filter((t) => !GENERIC_TERMS.has(t));
+  if (!meaningful.length) return 1; // no discriminating terms → can't judge → defer to the confidence gate
+  const bag = new Set(tokenize(articleText));
+  let hits = 0;
+  for (const t of meaningful) if (bag.has(t)) hits++;
+  return hits / meaningful.length;
+}
+
 /** Best-matching KB doc above a confidence floor, or null. */
 export function matchKb(index, message, { platform = "", min = 0.15 } = {}) {
   const tokens = tokenize(message);
@@ -78,7 +102,11 @@ const NO_MATCH = "I couldn't find a local match for that. I can help across Wind
  */
 export function localKbAnswer({ message, platform = "", index = [] } = {}) {
   const hit = matchKb(index, message, { platform });
-  if (!hit) return { text: NO_MATCH, source: "local-kb", matched: false, platform: inferPlatform(message, platform) };
+  // D1 — matchKb returns the best doc above a low score floor, which for an unknown query is still just the
+  // NEAREST (wrong) doc. Abstain honestly unless the query's meaningful terms actually appear in that doc.
+  if (!hit || kbRelevance(message, `${hit.doc.title || ""} ${hit.doc.summary || hit.doc.text || ""}`) < KB_RELEVANCE_FLOOR) {
+    return { text: NO_MATCH, source: "local-kb", matched: false, platform: inferPlatform(message, platform) };
+  }
   const d = hit.doc;
   const excerpt = scrub(String(d.summary || d.text || "").trim()).slice(0, 600);
   const text = `From the offline knowledge base — ${scrub(d.title || "guide")}:\n\n${excerpt}\n\n(Reconnect for the full ARIA assistant.)`;

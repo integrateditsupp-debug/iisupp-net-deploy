@@ -16,6 +16,21 @@ assert.equal(parseSystemStatus(null).overall, "unknown", "missing → unknown, n
 assert.equal(parseSystemStatus(null).tiers.length, 3, "tiers always present");
 t();
 
+// 1b — D4: when external AI is disabled (this MVP build), the Anthropic tier is OFF/disabled — never a green
+// "metered · novel only" that would contradict the Control Center boundary + the D1 abstain behavior.
+const off = parseSystemStatus({ overall: "green", tiers: [{ name: "anthropic", status: "green" }] }, { externalAiEnabled: false });
+assert.equal(off.externalAiEnabled, false);
+assert.equal(off.tiers[1].name, "Anthropic");
+assert.equal(off.tiers[1].status, "off", "Anthropic shows OFF, not green, when external AI is disabled");
+assert.equal(off.tiers[1].cost, "disabled");
+assert.notEqual(off.tiers[1].status, "green");
+assert.equal(off.tiers[0].name, "KB-first", "KB-first tier still present + healthy");
+// default (enabled) keeps the metered Anthropic tier from the API.
+const on = parseSystemStatus({ tiers: [{ name: "anthropic", status: "green" }] });
+assert.equal(on.tiers[1].status, "green");
+assert.equal(on.tiers[1].coverage, "novel only");
+t();
+
 // 2 — the locked Anthropic-preserved banner constant exists and names the chain.
 assert.match(ANTHROPIC_BANNER, /last-resort safety net/i);
 assert.match(ANTHROPIC_BANNER, /knowledge base first/i);
@@ -99,5 +114,5 @@ assert.match(rjs, /function loadAriaData\(\)/, "loadAriaData defined");
 assert.ok(rd("src", "renderer", "index.html").includes(ANTHROPIC_BANNER), "Health banner copy matches the LOCKED constant");
 t();
 
-assert.equal(n, 7, "7 aria-surfaces test groups");
+assert.equal(n, 8, "8 aria-surfaces test groups");
 console.log(`aria-surfaces test passed (${n} groups · 3-tier status + locked banner · kb-stats · unread dot · Memory R11 scrub+drop · heartbeat stalled>1h).`);

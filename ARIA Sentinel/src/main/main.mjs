@@ -87,6 +87,7 @@ import { askAria, scrubR11 } from "../shared/aria-brain-client.mjs";
 import { loadKbPack, localKbAnswer } from "../shared/aria-local-kb.mjs"; // RUN 30-B — offline cross-platform KB
 import { loadFullText, fullArticle, looksTruncated, repairTruncatedTail } from "../shared/kb-fulltext.mjs"; // F2 — full bundled article text so a mid-line-truncated live excerpt never renders as a dangling "Print server (`"
 import { parseSystemStatus, parseKbStats, parseSessions, parseHeartbeats } from "../shared/aria-surfaces.mjs"; // RUN 33 — ARIA tab data
+import { classifyAnswer, recordAsk, foldStats, kbHitRate as chatKbHitRate } from "../shared/chat-stats.mjs"; // D2 — record real Ask-ARIA usage
 import { defaultAppConfig, shouldShowSetup, completeSetup, reopenSetup } from "../shared/app-config.mjs"; // RUN 33-E — setup wizard
 import { anchorTarget, tickAnchored } from "../shared/globe-anchor.mjs";
 import { dueGreeting, jitteredPeriod } from "../shared/globe-greetings.mjs";
@@ -749,9 +750,10 @@ const PS_COMMANDS = {
     + "percentUsed=[math]::Round((($os.TotalVisibleMemorySize-$os.FreePhysicalMemory)/$os.TotalVisibleMemorySize)*100)};"
     + "$gpu=Get-CimInstance Win32_VideoController|Select-Object -First 1 Name,DriverVersion,AdapterRAM;"
     + "$disks=Get-CimInstance Win32_DiskDrive|Select-Object Model,Size,Status;"
+    + "$sys=Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=3'|Where-Object {$_.DeviceID -eq $env:SystemDrive}|Select-Object -First 1 DeviceID,Size,FreeSpace;" // D6 — system-drive usage
     + "$svc=Get-Service|Select-Object Name,DisplayName,Status,StartType;"
     + "[pscustomobject]@{cpu=@{model=[string]$cpu.Name;cores=$cpu.NumberOfCores;logical=$cpu.NumberOfLogicalProcessors;load=$cpu.LoadPercentage};"
-    + "ram=$ram;gpu=$gpu;disks=$disks;os=@{edition=[string]$os.Caption;build=[string]$os.BuildNumber};services=$svc}|ConvertTo-Json -Compress -Depth 4"
+    + "ram=$ram;gpu=$gpu;disks=$disks;systemVolume=$sys;os=@{edition=[string]$os.Caption;build=[string]$os.BuildNumber};services=$svc}|ConvertTo-Json -Compress -Depth 4"
 };
 
 function runPowerShell(command, timeoutMs = 12000) {
@@ -1036,12 +1038,14 @@ function performanceData() {
   const log = store.get("transparencyLog") || [];
   const fixes = log.filter((e) => e.tag === "RUN").length;
   const diags = log.filter((e) => e.tag === "DIAGNOSE").length;
+  const chatStats = store.get("chatStats") || {}; // D2 — real Ask-ARIA usage
   return {
     // H2 (2026-07-02) — real-or-empty: no fabricated 100%. Until real operational metrics are wired from live
     // resolution outcomes, these render "--" (Rule 14: never a vanity 100% first-touch/auto/recipe at zero data).
     operational: { mttd: null, mttr: null, ftr: null, autoPct: null, recipeSuccess: null, detTrend: [] },
-    ai: { accuracy: null, calibration: null, confirmRate: null, kbHitRate: null, top3: null, hoursSaved: null, costSaved: null, anomalies: 0, diagnoses: diags },
-    usage: { activeToday: Math.round((Date.now() - startedAt) / 3600000), activeWeek: 0, topTier: "tier-0", hotkeys: (store.get("hotkeyUse") || 0) }
+    // D2 — KB hit rate is now REAL: kb hits / total asks (null until the first real ask, Rule 14).
+    ai: { accuracy: null, calibration: null, confirmRate: null, kbHitRate: chatKbHitRate(chatStats), top3: null, hoursSaved: null, costSaved: null, anomalies: 0, diagnoses: diags },
+    usage: { activeToday: Math.round((Date.now() - startedAt) / 3600000), activeWeek: 0, topTier: "tier-0", hotkeys: (store.get("hotkeyUse") || 0), asks: Number(chatStats.asks) || 0, kbHits: Number(chatStats.kbHits) || 0 }
   };
 }
 
@@ -1874,13 +1878,17 @@ function startTrial() {
 }
 
 async function checkForUpdates() {
+  // D3 (2026-07-03) — OTA needs a real signed manifest at UPDATE_ENDPOINT (not wired yet). Rather than a dead,
+  // alarming "Update check unavailable," report the HONEST state: no manifest reachable → manual-update mode
+  // ("You're on 0.1.16 · manual updates for now"). A real manifest with a newer version still surfaces the
+  // update. mode: "manual" | "ota" lets the renderer pick honest copy; ok stays true so it never reads as a failure.
   try {
-    const res = await fetch(UPDATE_ENDPOINT, { headers: { "user-agent": "aria-sentinel" } });
-    const latest = await res.json(); // server returns the already-parsed { version, downloadUrl }
-    const has = latest && latest.version ? updateAvailable(SENTINEL_VERSION, latest) : false;
-    return { ok: true, current: SENTINEL_VERSION, latest: latest || null, updateAvailable: has };
+    const res = await fetch(UPDATE_ENDPOINT, { headers: { "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
+    const latest = res && res.ok ? await res.json().catch(() => null) : null; // { version, downloadUrl } manifest
+    if (!latest || !latest.version) return { ok: true, current: SENTINEL_VERSION, updateAvailable: false, mode: "manual" };
+    return { ok: true, current: SENTINEL_VERSION, latest, updateAvailable: updateAvailable(SENTINEL_VERSION, latest), mode: "ota" };
   } catch {
-    return { ok: false, current: SENTINEL_VERSION, updateAvailable: false, error: "unavailable" };
+    return { ok: true, current: SENTINEL_VERSION, updateAvailable: false, mode: "manual" };
   }
 }
 
@@ -3044,6 +3052,28 @@ function fullTextIndex() {
   return _fullTextIndex;
 }
 
+// D2 (2026-07-03) — persist a completed Ask-ARIA interaction to LOCAL memory + stats so the Memory tab and
+// the Dashboard "Operations at a glance" reflect real usage. One session file per app-run (grouped by a local
+// id) under ~/.aria-sentinel/sessions; global counters live in the electron-store. 🔒 Local-only, never sent.
+const SESSIONS_DIR = () => path.join(os.homedir(), ".aria-sentinel", "sessions");
+function persistChatAsk(message, reply, kind) {
+  const at = new Date().toISOString();
+  try {
+    let sid = store.get("localChatSessionId");
+    if (!sid) { sid = `local-${Date.now().toString(36)}`; store.set("localChatSessionId", sid); }
+    const dir = SESSIONS_DIR();
+    fs.mkdirSync(dir, { recursive: true });
+    const file = path.join(dir, `${sid}.json`);
+    let session = {};
+    try { session = JSON.parse(fs.readFileSync(file, "utf8")); } catch { session = { id: sid }; }
+    session = recordAsk(session, { message, reply, kind, at });
+    if (!session.id) session.id = sid;
+    fs.writeFileSync(file, JSON.stringify(session, null, 2));
+  } catch { /* memory persistence is best-effort; never break the chat reply over it */ }
+  try { store.set("chatStats", foldStats(store.get("chatStats"), kind)); } catch { /* best-effort */ }
+  broadcastState();
+}
+
 async function chat(message, context = {}) {
   // Local KB match (always computed; used as the offline fallback + as a fix hint).
   const signature = sanitizeToSignature({ issue: message, ...context });
@@ -3076,6 +3106,7 @@ async function chat(message, context = {}) {
         text = repairTruncatedTail(text);
       }
     }
+    persistChatAsk(message, text, classifyAnswer({ provider: "aria-brain", action: brain.action || null })); // D2
     return { ok: true, provider: "aria-brain", text, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
   }
   // Offline / unreachable → answer from the bundled cross-platform KB (RUN 30-B). ARIA is full cross-platform
@@ -3085,6 +3116,7 @@ async function chat(message, context = {}) {
   const text = localMatches.length
     ? `${kb.text}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
     : kb.text;
+  persistChatAsk(message, text, classifyAnswer({ provider: "local-kb", matched: kb.matched })); // D2
   return { ok: true, provider: "local-kb", text, signature, matched: kb.matched, matches: localMatches, offline: true, cost: "none" };
 }
 
@@ -3452,10 +3484,14 @@ ipcMain.handle("sentinel:chat", (_event, message, context) => chat(message, cont
 // RUN 33 — ARIA tab data surfaces. Network ones (status/learning) fetch read-only stats (no chat content sent);
 // local ones (memory/agents) read on-device files. All parsing + R11 scrub happens in the shared parsers.
 ipcMain.handle("aria:status", async () => {
+  // D4 — Health must reflect the DESKTOP's real posture (this build ships externalAiCalls:false), so the
+  // Anthropic tier renders OFF/disabled instead of a green "metered · novel only" that would contradict the
+  // Control Center content-boundary and the D1 abstain behavior.
+  const opts = { externalAiEnabled: getState().externalAiCalls === true };
   try {
     const r = await fetch("https://iisupp.net/.netlify/functions/aria-system-status", { headers: { "user-agent": "aria-sentinel" }, signal: AbortSignal.timeout?.(8000) });
-    return { ok: r.ok, data: parseSystemStatus(r.ok ? await r.json() : null) };
-  } catch { return { ok: false, data: parseSystemStatus(null) }; }
+    return { ok: r.ok, data: parseSystemStatus(r.ok ? await r.json() : null, opts) };
+  } catch { return { ok: false, data: parseSystemStatus(null, opts) }; }
 });
 ipcMain.handle("aria:learning", async () => {
   try {
