@@ -11,6 +11,7 @@ const TESTS = [
   "./tab-gating-post-trial.test.mjs",
   "./walkthrough-webhook-grant.test.mjs",
   "./gating-free-floor.test.mjs", // FIX 2 — free floor ⊊ paid Personal (a paid entry plan is a real upgrade)
+  "./dual-license-matrix.test.mjs", // 2026-07-03 — per-state matrix (admin/pro/smb/personal/trial/expired), backbone of the test-matrix doc
   // P1 DEAD-SHELL FIX 2026-07-02 — the free/expired floor must stay a NAVIGABLE tier (never a locked shell).
   "./nav-baseline-navigable.test.mjs",
   "./renderer-no-deadshell.test.mjs",

@@ -33,4 +33,11 @@ assert.match(indexHtml, /id="heroStatus"/, "hero status element present");
 assert.match(indexHtml, /id="heroSubline"/, "hero sub-line present");
 assert.match(indexHtml, /id="trustStrip"/, "trust strip present");
 
-console.log("Dashboard-hero-status test passed (4 sources → protected/attention/critical; security beats operational).");
+// UX 2026-07-03: the status IS the colored word — no separate dot/globe to the left of PROTECTED.
+assert.doesNotMatch(indexHtml, /hero-emoji/, "no separate emoji/dot next to the hero label");
+const rendererJs = fs.readFileSync(path.join(path.resolve(import.meta.dirname, ".."), "src", "renderer", "renderer.js"), "utf8");
+assert.doesNotMatch(rendererJs, /hero-emoji/, "renderer must not inject a separate status dot");
+const css = fs.readFileSync(path.join(path.resolve(import.meta.dirname, ".."), "src", "renderer", "sentinel.css"), "utf8");
+assert.match(css, /data-level="protected"\] \.hero-label \{ color: var\(--aria-status-green\)/, "PROTECTED word carries the status-green color itself");
+
+console.log("Dashboard-hero-status test passed (4 sources → protected/attention/critical; security beats operational; word-only status, no dot).");

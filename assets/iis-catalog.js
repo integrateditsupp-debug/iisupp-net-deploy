@@ -273,6 +273,23 @@
       seo: ['emotional intelligence book','self mastery','how to live well','discipline and balance'],
       free: false, featured: false, comingSoon: true, trendScore: 28,
       preview: null, file: null, related: [], bundle: null, upsell: 'aria'
+    },
+    {
+      // DIY alternative to the white-glove AI Setup Walk-Through (Concierge). Self-serve PDF book.
+      // PRICE TODO (Ahmad confirm): spec = 35% off the Walk-Through (Walk-Through × 0.65); off a $7,000
+      // Walk-Through that is $4,550 → 455000 cents. comingSoon:true until the price is confirmed, the
+      // screenshots are finalized, and STRIPE_PRICE_GL_AI_AUTOMATION_BOOK is set (no wrong charge before then).
+      id: 'gl-ai-automation-setup-book',
+      title: 'AI Automation Setup — The Business Owner’s Step-by-Step Guide',
+      blurb: 'The same playbook our white-glove Concierge uses — set up AI automation for your business yourself, over a weekend.',
+      long: 'A clear, simple step-by-step guide (with screenshots) for setting up AI automation for a business end-to-end using Claude (Cowork + Code), ChatGPT + Codex, and Gemini: accounts and sign-in, your first real prompts, the automation loop, and safe practices. The self-serve, lower-cost alternative to the white-glove AI Setup Walk-Through.',
+      inside: ['Why AI automation (honest value + limits)', 'The three toolkits at a glance', 'Accounts & sign-in (you perform these)', 'Your first prompts (role · task · context · format)', 'The automation loop + review-before-it-runs safety', 'Safe practices & data privacy', 'A 7-day rollout plan', 'Prompt library + glossary'],
+      priceCents: 455000, category: 'AI Agents & Prompting', section: 'guides',
+      audience: ['business', 'human'], format: 'Book · PDF · instant download',
+      tags: ['ai automation setup', 'ai for business', 'claude chatgpt gemini setup', 'diy ai playbook'],
+      seo: ['AI automation setup for business', 'how to set up AI automation', 'Claude ChatGPT Gemini for business'],
+      free: false, password: true, featured: true, comingSoon: true, trendScore: 90,
+      preview: null, file: null, related: ['gl-ai-agent-starter', 'gl-prompt-workflows'], bundle: 'bundle-ai-automation', upsell: 'aria'
     }
   ];
 

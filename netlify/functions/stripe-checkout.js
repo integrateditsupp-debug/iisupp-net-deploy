@@ -44,6 +44,10 @@ const PRICE_MAP = {
   'gl-ai-edge-family-studio': process.env.STRIPE_PRICE_GL_AI_EDGE_FAMILY_STUDIO  || 'price_1TjsfoCa3MISR76yUyAQnyai',
   'gl-ai-edge-adult-momentum':process.env.STRIPE_PRICE_GL_AI_EDGE_ADULT_MOMENTUM || 'price_1TjsfoCa3MISR76ymKbvvc5Z',
   'gl-book-living-well':      process.env.STRIPE_PRICE_GL_BOOK_LIVING_WELL       || 'price_1TjsfpCa3MISR76yTNTcSI8e',
+  // DIY "AI Automation Setup" book — self-serve alternative to the Concierge Walk-Through. Env-only (no
+  // baked default): undefined until Ahmad confirms the price (spec: 35% off the Walk-Through) and creates
+  // the Stripe price, so checkout cleanly 400s and never charges a wrong amount before launch.
+  'gl-ai-automation-setup-book': process.env.STRIPE_PRICE_GL_AI_AUTOMATION_BOOK,
   // Bundles
   'bundle-it-mastery':    process.env.STRIPE_PRICE_BUNDLE_IT_MASTERY    || 'price_1TjsfqCa3MISR76yIJPLflDn',
   'bundle-ai-automation': process.env.STRIPE_PRICE_BUNDLE_AI_AUTOMATION || 'price_1TjsfqCa3MISR76ys9XjhzyH',

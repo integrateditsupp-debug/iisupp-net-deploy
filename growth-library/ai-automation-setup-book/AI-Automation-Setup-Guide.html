@@ -1,0 +1,432 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>AI Automation Setup — The Business Owner's Step-by-Step Guide</title>
+<style>
+  @page { size: Letter; margin: 22mm 20mm; }
+  :root{ --navy:#0b1220; --ink:#1a2230; --gold:#c5a059; --gold-d:#9c7b3a; --muted:#5b6472; --line:#e4dcc9; }
+  *{ box-sizing:border-box; }
+  body{ font-family:"Georgia","Times New Roman",serif; color:var(--ink); line-height:1.62; font-size:11.5pt; margin:0; }
+  h1{ font-family:"Trebuchet MS",Arial,sans-serif; color:var(--navy); font-size:26pt; line-height:1.12; margin:0 0 6pt; letter-spacing:.2px; }
+  h2{ font-family:"Trebuchet MS",Arial,sans-serif; color:var(--navy); font-size:17pt; margin:22pt 0 6pt; padding-bottom:4pt; border-bottom:2px solid var(--gold); page-break-after:avoid; }
+  h3{ font-family:"Trebuchet MS",Arial,sans-serif; color:var(--gold-d); font-size:12.5pt; margin:14pt 0 4pt; page-break-after:avoid; }
+  h4{ font-family:"Trebuchet MS",Arial,sans-serif; color:var(--ink); font-size:11.5pt; margin:12pt 0 3pt; }
+  p{ margin:0 0 8pt; }
+  a{ color:var(--gold-d); text-decoration:none; border-bottom:1px solid rgba(156,123,58,.4); }
+  strong{ color:var(--navy); }
+  ul,ol{ margin:0 0 9pt; padding-left:20pt; }
+  li{ margin:0 0 3pt; }
+  code{ font-family:"Consolas","Courier New",monospace; background:#f4f0e6; border:1px solid var(--line); border-radius:3px; padding:0 3px; font-size:10pt; }
+  hr{ border:0; border-top:1px solid var(--line); margin:16pt 0; }
+  blockquote{ margin:12pt 0; padding:10pt 14pt; background:linear-gradient(180deg,#faf7ef,#f6f1e4); border-left:3px solid var(--gold); border-radius:4px; }
+  blockquote p{ margin:0 0 5pt; } blockquote p:last-child{ margin:0; }
+  .shot{ margin:11pt 0; padding:12pt 14pt; border:1px dashed var(--gold); border-radius:6px; background:#fbfaf5; display:flex; gap:10pt; align-items:baseline; page-break-inside:avoid; }
+  .shot-tag{ font-family:"Trebuchet MS",Arial,sans-serif; font-size:8pt; letter-spacing:1.4px; text-transform:uppercase; color:var(--gold-d); border:1px solid var(--gold); border-radius:3px; padding:1px 6px; white-space:nowrap; }
+  .shot-desc{ color:var(--muted); font-style:italic; font-size:10.5pt; }
+  /* Cover treatment: the first h1 + the two rules around the intro. */
+  h1:first-of-type{ margin-top:8pt; }
+  .cover-rule{ height:3px; background:linear-gradient(90deg,var(--gold),transparent); border:0; margin:10pt 0 16pt; }
+</style></head>
+<body>
+<h1>AI Automation Setup — The Business Owner's Step-by-Step Guide</h1>
+<h3>The same playbook our white-glove Concierge uses</h3>
+<p><strong>By Integrated IT Support Inc. · <a href="https://iisupp.net">iisupp.net</a></strong></p>
+<hr>
+<blockquote><p><strong>What this guide is:</strong> A plain-English, weekend-sized playbook that takes a non-technical business owner or small team from zero to real, working AI automation — using Claude (Cowork + Code), ChatGPT (+ Codex), and Google Gemini. Every step is something you can actually do yourself.</p><p><strong>What this guide is not:</strong> It is not a magic button, and it is not a promise that AI will run your business for you. It will not invent revenue, replace your judgment, or make decisions you should make. We name the real tools and point you to their <strong>official</strong> pricing pages — we never quote a price we can't stand behind, and we never pretend an account signs itself up. You are always the person who signs in, approves, and pays.</p></blockquote>
+<p><em>Prepared by Integrated IT Support Inc. — founded and led by a technologist with 15+ years of hands-on IT experience. Honest by design.</em></p>
+<hr>
+<h2>Table of Contents</h2>
+<ol>
+<li><strong>Chapter 1 — Why AI Automation</strong> (the honest case for it)</li>
+<li><strong>Chapter 2 — The Three Toolkits at a Glance</strong> (Claude, ChatGPT, Gemini)</li>
+<li><strong>Chapter 3 — Accounts &amp; Sign-In</strong> (you do this yourself)</li>
+<li><strong>Chapter 4 — Your First Prompts</strong> (anatomy + 5 copy-paste starters)</li>
+<li><strong>Chapter 5 — The Automation Loop</strong> (one-off → repeatable, safely)</li>
+<li><strong>Chapter 6 — Safe Practices</strong> (privacy, review, audit trail)</li>
+<li><strong>Chapter 7 — A 7-Day Rollout Plan</strong> (day-by-day checklist)</li>
+<li><strong>Appendix A — Prompt Library</strong> (10 reusable prompts)</li>
+<li><strong>Appendix B — Glossary</strong> (LLM, token, agent, MCP, and friends)</li>
+<li><strong>Closing — Going Further with ARIA</strong></li>
+</ol>
+<hr>
+<h2>Chapter 1 — Why AI Automation</h2>
+<p>Most small businesses don't lose to competitors. They lose to the <em>drag</em> — the invisible tax of repetitive work. The email that takes twenty minutes to word carefully. The three-page policy nobody has time to write. The spreadsheet that's "mostly clean." The customer reply you rewrite four times before sending. None of it is hard. All of it is slow. And it never stops arriving.</p>
+<p>AI automation is not about replacing people. It's about removing the drag so the people you have can do the work that actually matters.</p>
+<h3>What it genuinely does well</h3>
+<ul>
+<li><strong>Turns a blank page into a first draft</strong> — emails, proposals, policies, job descriptions, SOPs, product descriptions. You edit instead of originate, which is five to ten times faster.</li>
+<li><strong>Reads faster than you can</strong> — feed it a long contract, report, or thread and get an honest summary, the key risks, or the three things you actually need to decide.</li>
+<li><strong>Cleans and reshapes data</strong> — messy spreadsheets, inconsistent formatting, extracting structure from unstructured notes.</li>
+<li><strong>Answers repetitive questions</strong> — the same customer or staff questions, drafted consistently, in your voice.</li>
+<li><strong>Makes a two-person team feel like five</strong> — because the low-value drafting, formatting, and summarizing stops eating your best hours.</li>
+</ul>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a before/after — a cluttered inbox next to a clean "3 drafts ready for review" panel</span></div>
+<h3>What it does <em>not</em> do (and we won't pretend otherwise)</h3>
+<ul>
+<li>It does <strong>not</strong> know your business better than you do. It fills in gaps with plausible-sounding guesses. Your job is to catch those.</li>
+<li>It does <strong>not</strong> guarantee accuracy. It can state something wrong with total confidence. <strong>Always review before you act.</strong></li>
+<li>It does <strong>not</strong> keep secrets safe by magic. What you paste in can be retained or used to improve models depending on the plan and settings. Treat every prompt like a postcard, not a vault (Chapter 6).</li>
+<li>It does <strong>not</strong> replace your judgment on anything that touches money, legal exposure, or a customer relationship. It drafts; you decide.</li>
+</ul>
+<blockquote><p><strong>The honest promise of this guide:</strong> By the end of a focused weekend, you will have working accounts, a handful of prompts that already save you time today, and one repeatable workflow you trust enough to use every week. That's a real, durable win — no hype required.</p></blockquote>
+<hr>
+<h2>Chapter 2 — The Three Toolkits at a Glance</h2>
+<p>You do not need all three to start. You need <strong>one you're comfortable in</strong>. But knowing what each is best at lets you pick the right tool instead of forcing the wrong one.</p>
+<h3>Claude (Cowork + Code) — by Anthropic</h3>
+<p>Claude is known for careful, well-structured writing and for <strong>following instructions faithfully</strong> — it's less likely to go off-script or fabricate when told not to. Two modes matter for a business owner:</p>
+<ul>
+<li><strong>Claude (chat / Cowork-style):</strong> your everyday drafting, summarizing, and thinking partner. Strong at long documents, nuanced tone, and "do exactly this, nothing more."</li>
+<li><strong>Claude Code:</strong> an agent that can actually <em>work inside files and projects on your computer</em> — editing documents, organizing folders, running multi-step tasks. This is the closest thing to a digital assistant that does the work, not just talks about it. It's more technical to set up, but it's where real automation lives.</li>
+</ul>
+<p><strong>Best for:</strong> careful drafting, faithful instruction-following, long-document work, and hands-on file/project automation. This is the backbone of the ARIA Concierge playbook.</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">Claude chat window with a clean drafted email response</span></div>
+<h3>ChatGPT (+ Codex) — by OpenAI</h3>
+<p>ChatGPT is the most widely known, has a huge ecosystem, and is very strong at brainstorming, general-purpose tasks, image understanding, and voice. <strong>Codex</strong> is its coding/agent capability for developers who want to automate software tasks.</p>
+<p><strong>Best for:</strong> fast general-purpose help, brainstorming, the widest library of community prompts and integrations, and voice/image use.</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">ChatGPT summarizing a long PDF into bullet points</span></div>
+<h3>Google Gemini — by Google</h3>
+<p>Gemini's advantage is <strong>living inside Google's world</strong> — Gmail, Docs, Sheets, Drive, Calendar. If your business runs on Google Workspace, Gemini can help you right where your work already is, with strong handling of very large documents.</p>
+<p><strong>Best for:</strong> businesses on Google Workspace, huge documents, and staying inside Gmail/Docs/Sheets without copy-pasting.</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">Gemini side panel inside a Google Doc</span></div>
+<h3>Simple comparison</h3>
+<p>| If you want to…                                  | Reach for…            |</p>
+<p>|--------------------------------------------------|-----------------------|</p>
+<p>| Careful drafting that follows instructions exactly | <strong>Claude</strong>            |</p>
+<p>| An agent that works inside your files &amp; folders   | <strong>Claude Code</strong>       |</p>
+<p>| Fast general help, brainstorming, voice/images    | <strong>ChatGPT</strong>           |</p>
+<p>| Automate developer/coding tasks                   | <strong>Codex</strong> (ChatGPT)   |</p>
+<p>| Work right inside Gmail / Docs / Sheets           | <strong>Gemini</strong>            |</p>
+<p>| Summarize a very large document                   | <strong>Gemini</strong> or <strong>Claude</strong> |</p>
+<blockquote><p><strong>Tip:</strong> Start with <strong>one</strong> tool for two weeks. Switching between three on day one is the #1 reason people stall. The Concierge playbook leans on Claude for drafting and Claude Code for automation, but any of the three will get you a real win this weekend.</p></blockquote>
+<hr>
+<h2>Chapter 3 — Accounts &amp; Sign-In (You Do This Yourself)</h2>
+<p><strong>Read this first — honesty rule:</strong> No one, including this guide and including our Concierge, creates these accounts for you or pays for them on your behalf. <strong>You</strong> create the account, <strong>you</strong> sign in, and <strong>you</strong> enter any payment details. That's not a limitation — it's the correct, secure way. Your credentials and your card stay yours.</p>
+<p>We will <strong>not</strong> quote a price for any of these plans, because prices change and vary by region and plan. Each step below links to the <strong>official</strong> pricing page so you always see the real, current number before you commit.</p>
+<h3>3.1 Create your Claude account</h3>
+<ol>
+<li>In your browser, go to <strong><a href="https://claude.ai">claude.ai</a></strong>.</li>
+<li>Choose <strong>Sign up</strong>. You'll sign up with an email address or a Google account — your choice.</li>
+<li>Verify your email if prompted (check your inbox for a code or link).</li>
+<li>You'll land in the chat window. There's a free tier to try; paid plans unlock more usage and features.</li>
+<li><strong>Before upgrading:</strong> check the official pricing <em>(check the official pricing page — link below)</em>.</li>
+</ol>
+<ul>
+<li><strong>Official pricing:</strong> <strong><a href="https://claude.ai/pricing">claude.ai/pricing</a></strong></li>
+</ul>
+<ol>
+<li>If you upgrade, <strong>you</strong> enter your own payment details on Anthropic's secure checkout.</li>
+</ol>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">claude.ai sign-up screen with the "Sign up" button highlighted</span></div>
+<blockquote><p><strong>Claude Code note:</strong> Claude Code is a separate developer tool you install on your computer. It's the most powerful and the most technical step — it's completely fine to skip it this weekend and add it later (or let the Concierge set it up with you). Official docs: <strong><a href="https://claude.com/product/claude-code">claude.com/product/claude-code</a></strong>.</p></blockquote>
+<h3>3.2 Create your ChatGPT account</h3>
+<ol>
+<li>Go to <strong><a href="https://chatgpt.com">chatgpt.com</a></strong> (or <a href="https://openai.com/chatgpt">openai.com/chatgpt</a>).</li>
+<li>Select <strong>Sign up</strong> and register with your email, Google, Microsoft, or Apple account.</li>
+<li>Verify your email/phone if prompted.</li>
+<li>There's a free tier; paid plans add capacity and features.</li>
+<li><strong>Before upgrading:</strong> <em>(check the official pricing page — link below)</em>.</li>
+</ol>
+<ul>
+<li><strong>Official pricing:</strong> <strong><a href="https://openai.com/chatgpt/pricing">openai.com/chatgpt/pricing</a></strong></li>
+</ul>
+<ol>
+<li><strong>You</strong> enter your own payment details at checkout if you upgrade.</li>
+</ol>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">ChatGPT account setup with plan options visible</span></div>
+<h3>3.3 Create your Google Gemini account</h3>
+<ol>
+<li>Go to <strong><a href="https://gemini.google.com">gemini.google.com</a></strong>.</li>
+<li>Sign in with your existing <strong>Google account</strong> (the same one behind your Gmail/Workspace). If you don't have one, you'll create it at <a href="https://accounts.google.com">accounts.google.com</a> first.</li>
+<li>Accept the terms shown on screen.</li>
+<li>There's free access; paid tiers (including Google Workspace add-ons) unlock more.</li>
+<li><strong>Before upgrading:</strong> <em>(check the official pricing page — link below)</em>.</li>
+</ol>
+<ul>
+<li><strong>Official pricing:</strong> <strong><a href="https://gemini.google.com">gemini.google.com</a></strong> and, for Workspace, <strong><a href="https://workspace.google.com/pricing">workspace.google.com/pricing</a></strong></li>
+</ul>
+<ol>
+<li><strong>You</strong> manage billing inside your own Google account.</li>
+</ol>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">Gemini sign-in screen using an existing Google account</span></div>
+<h3>3.4 Safe billing practices</h3>
+<ul>
+<li><strong>Start free.</strong> Prove the tool earns its keep before you pay a cent.</li>
+<li><strong>Use a single card you monitor</strong> — ideally a business card, not a personal debit card, so spend is easy to track.</li>
+<li><strong>Set a calendar reminder</strong> a few days before any trial converts to paid, so an upgrade is always a <em>decision</em>, not a surprise.</li>
+<li><strong>One plan at a time.</strong> Don't pay for all three on day one. Pick your primary tool first.</li>
+<li><strong>Keep receipts.</strong> Save the confirmation emails in a "Software/AI" folder for your bookkeeper.</li>
+<li><strong>Turn on two-factor authentication (2FA)</strong> on every account — this is the single biggest thing you can do to protect them.</li>
+</ul>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a 2FA / two-step verification settings screen</span></div>
+<blockquote><p><strong>Tip:</strong> Write down which email you used for each service. Three tools, three logins, three "which email was that again?" moments is a real and avoidable headache.</p></blockquote>
+<hr>
+<h2>Chapter 4 — Your First Prompts</h2>
+<p>A prompt is just an instruction. But a <em>good</em> prompt is the difference between a vague, useless answer and a draft you can send in two minutes.</p>
+<h3>The anatomy of a good prompt</h3>
+<p>Every strong prompt has four parts. Say them in this order:</p>
+<ol>
+<li><strong>Role</strong> — who you want the AI to be. <em>"You are an experienced office manager…"</em></li>
+<li><strong>Task</strong> — the one thing you want done. <em>"…draft a reply to this customer email."</em></li>
+<li><strong>Context</strong> — the facts it needs. Paste the email, the details, the constraints. <em>"Our refund window is 30 days. This customer is on day 34 but is a long-time client."</em></li>
+<li><strong>Format</strong> — how you want the answer. <em>"Keep it under 120 words, warm but firm, and give me two versions."</em></li>
+</ol>
+<blockquote><p><strong>The one-line rule:</strong> <em>Role, Task, Context, Format.</em> If an answer disappoints you, the missing piece is almost always <strong>context</strong> — you knew something the AI didn't.</p></blockquote>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a prompt typed out with the four parts labeled in colored brackets</span></div>
+<h3>Five copy-paste starter prompts</h3>
+<p>Copy these, swap in your own details where you see <strong>[brackets]</strong>, and paste into Claude, ChatGPT, or Gemini.</p>
+<p><strong>1) Draft a professional email</strong></p>
+<p>```</p>
+<p>You are my executive assistant. Draft a professional email.</p>
+<p>Task: Write an email to [recipient] about [subject].</p>
+<p>Context: [paste the situation, any facts, the outcome I want].</p>
+<p>Format: Under 150 words, polite and confident, clear call to action.</p>
+<p>Give me two versions — one warmer, one more direct.</p>
+<p>```</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">the email prompt with two drafted versions side by side</span></div>
+<p><strong>2) Summarize a long document</strong></p>
+<p>```</p>
+<p>You are a sharp analyst. Summarize the document below for a busy owner.</p>
+<p>Task: Give me (a) a 3-sentence summary, (b) the 5 key points,</p>
+<p>(c) anything I should be worried about, (d) what I need to decide.</p>
+<p>Context: [paste the document text].</p>
+<p>Format: Use headers and bullet points. Be honest about anything unclear.</p>
+<p>```</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a long PDF pasted in, with a clean structured summary output</span></div>
+<p><strong>3) Clean up a spreadsheet / list</strong></p>
+<p>```</p>
+<p>You are a meticulous data assistant.</p>
+<p>Task: Clean the data below. Standardize the formatting, fix obvious</p>
+<p>inconsistencies (capitalization, dates, phone formats), and flag anything</p>
+<p>that looks like a duplicate or an error — DO NOT invent or guess missing values.</p>
+<p>Context: [paste the rows, e.g. copied from your spreadsheet].</p>
+<p>Format: Return a clean table plus a short list of what you changed and what I should check.</p>
+<p>```</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a messy list of names/dates transformed into a clean table</span></div>
+<p><strong>4) Draft a Standard Operating Procedure (SOP)</strong></p>
+<p>```</p>
+<p>You are an operations expert who writes clear SOPs.</p>
+<p>Task: Write a step-by-step SOP for [process, e.g. "onboarding a new client"].</p>
+<p>Context: Here's roughly how we do it today: [describe the steps you know].</p>
+<p>Format: Numbered steps, a short "who does this" note per step, and a</p>
+<p>checklist at the end. Mark any step where you had to assume something,</p>
+<p>so I can correct it.</p>
+<p>```</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a drafted SOP with numbered steps and an end checklist</span></div>
+<p><strong>5) Draft a customer reply</strong></p>
+<p>```</p>
+<p>You are our best customer-service rep — warm, calm, and solution-focused.</p>
+<p>Task: Draft a reply to the customer message below.</p>
+<p>Context: [paste the customer's message]. Our relevant policy is: [state it].</p>
+<p>The outcome I want is: [e.g. keep the customer happy but hold the policy line].</p>
+<p>Format: Two versions, under 120 words each. No promises we can't keep.</p>
+<p>```</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a customer complaint with two calm, on-brand reply drafts</span></div>
+<blockquote><p><strong>Tip:</strong> Save the prompts that work for you in a plain document titled "My Prompts." Reusing a proven prompt is how a one-off trick becomes a real time-saver — which is exactly what Chapter 5 is about.</p></blockquote>
+<hr>
+<h2>Chapter 5 — The Automation Loop</h2>
+<p>A single good prompt saves you ten minutes once. A <em>repeatable workflow</em> saves you ten minutes every time, forever. That's the leap from "I tried AI" to "AI runs part of my business."</p>
+<h3>From one-off to repeatable in four steps</h3>
+<ol>
+<li><strong>Notice the repeat.</strong> Any task you do more than a few times a week is a candidate — weekly update emails, invoice reminders, meeting notes, the same customer questions.</li>
+<li><strong>Freeze the prompt.</strong> Once a prompt gives you a good result twice, save it word-for-word in your "My Prompts" document. Now it's an asset, not a lucky moment.</li>
+<li><strong>Templatize the inputs.</strong> Replace the specifics with <strong>[brackets]</strong> so next time you only swap in the new details. Your prompt becomes a fill-in-the-blank form.</li>
+<li><strong>Decide how far to automate.</strong></li>
+</ol>
+<ul>
+<li><strong>Level 1 — Assisted:</strong> you paste in, you copy out, you send. Safest. Start here.</li>
+<li><strong>Level 2 — Connected:</strong> the tool works inside your apps (Gemini in Gmail/Docs, Claude Code in your files). Faster, still you-in-control.</li>
+<li><strong>Level 3 — Scheduled/agentic:</strong> the tool runs steps on a schedule or chains tasks together. Powerful — and only safe with the guardrails below.</li>
+</ul>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a simple 4-box diagram: Notice → Freeze → Templatize → Automate</span></div>
+<h3>The "review before it runs" safety habit</h3>
+<p>This is the single most important habit in the entire guide.</p>
+<blockquote><p><strong>Never let AI take an irreversible action — send, pay, delete, publish, submit — without a human looking first.</strong> Drafts are free to be wrong. Sent emails and deleted files are not.</p></blockquote>
+<p>Build the pause into your workflow on purpose:</p>
+<ul>
+<li>AI <strong>drafts</strong> → <strong>you read</strong> → <strong>you approve</strong> → <strong>then</strong> it sends. Not the other way around.</li>
+<li>For anything touching money, customers, legal, or public-facing content, the human review is <strong>mandatory</strong>, not optional.</li>
+<li>The more automated a step is, the <em>more</em> important the one human checkpoint becomes — because there are fewer natural moments to catch a mistake.</li>
+</ul>
+<p>This is exactly how the ARIA Concierge operates: the AI does the heavy lifting, but a real decision-maker approves anything that leaves the building.</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">an "approve / edit / discard" review step before an email is sent</span></div>
+<h3>Keeping a human in the loop</h3>
+<ul>
+<li><strong>One owner per workflow.</strong> Somebody is responsible for each automated task. "The AI does it" is not an owner.</li>
+<li><strong>Start narrow.</strong> Automate one small, low-risk task completely before you automate a big, high-stakes one.</li>
+<li><strong>Watch it for a week.</strong> Before you trust a workflow unattended, run it <em>with</em> review for a week and see how often you'd have needed to correct it.</li>
+<li><strong>Keep an off-switch.</strong> Know how to turn any automation off in one step. If it starts producing bad output, you stop it — no debugging required in the moment.</li>
+</ul>
+<hr>
+<h2>Chapter 6 — Safe Practices</h2>
+<p>AI is powerful, and power without guardrails is how small businesses get hurt. None of this is hard. All of it is worth doing from day one.</p>
+<h3>Data privacy: treat every prompt like a postcard</h3>
+<p>What you paste into an AI tool may be <strong>stored</strong> and, on some plans, <strong>used to improve the model</strong>. Assume anything you type could be seen by someone else, and act accordingly.</p>
+<ul>
+<li><strong>Never paste</strong> passwords, API keys, full credit-card or bank numbers, government IDs, or health records into a prompt.</li>
+<li><strong>Anonymize</strong> customer and staff data when you can — "Customer A" instead of a real name, "$X" instead of the exact figure — when the specifics aren't needed for the task.</li>
+<li><strong>Check the settings.</strong> Each tool has a data-controls or privacy setting (often the option to turn off "use my data for training"). Turn it to the most private setting your plan allows. Business/Enterprise tiers usually offer stronger data protections — check the official pages.</li>
+<li><strong>When in doubt, leave it out.</strong> The AI almost never needs the truly sensitive detail to do the task well.</li>
+</ul>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">the privacy / data-controls settings page with "improve the model for everyone" toggled off</span></div>
+<h3>Review AI output before you act on it</h3>
+<p>Say it with us one more time: <strong>AI can be confidently wrong.</strong> It can invent a statistic, misread a policy, or cite a rule that doesn't exist.</p>
+<ul>
+<li>Read every draft as if a new, eager, occasionally-careless intern wrote it — because that's a fair description.</li>
+<li><strong>Verify facts, numbers, names, dates, and legal/financial claims</strong> against a real source before they go anywhere.</li>
+<li>If the AI states something as fact that you can't confirm, delete it. Don't ship what you can't stand behind.</li>
+</ul>
+<h3>Keep an audit trail</h3>
+<ul>
+<li><strong>Save your prompts and the outputs</strong> you actually used, especially for anything important (a policy, a customer decision, a financial summary). A simple dated folder is enough.</li>
+<li>This protects you: if a question comes up later — "why did we word it this way?" — you can show the reasoning.</li>
+<li>For regulated work, an audit trail isn't optional. If that's you, keep it religiously.</li>
+</ul>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a dated folder of saved prompts and outputs, e.g. "2026-07 AI Work Log"</span></div>
+<h3>Keep an off-limits zone</h3>
+<p>Decide <strong>now</strong> what AI never touches, and write it down where your team can see it:</p>
+<ul>
+<li>Specific folders, drives, or files that are personal, privileged, or highly sensitive — <strong>off-limits, full stop.</strong> No reading, no scanning, no "just this once."</li>
+<li>Any client or data covered by a confidentiality agreement.</li>
+<li>Anything you'd be uncomfortable seeing on the front page of a newspaper.</li>
+</ul>
+<blockquote><p><strong>Tip:</strong> A one-page "AI Rules for Our Team" sheet — what's allowed, what's off-limits, and "always review before send" — is worth more than any expensive tool. Post it where people work.</p></blockquote>
+<hr>
+<h2>Chapter 7 — A 7-Day Rollout Plan</h2>
+<p>One focused hour a day for a week. By Sunday you'll have real, working automation and the confidence to expand it.</p>
+<p><strong>Day 1 — Set up (about 1 hour).</strong></p>
+<ul>
+<li>[ ] Pick your <strong>one</strong> primary tool (Chapter 2). Don't overthink it.</li>
+<li>[ ] Create the account and sign in (Chapter 3). Turn on 2FA.</li>
+<li>[ ] Check the official pricing page; stay on free for now.</li>
+<li>[ ] Skim each tool's privacy/data-controls settings and tighten them.</li>
+</ul>
+<p><strong>Day 2 — First prompts (about 1 hour).</strong></p>
+<ul>
+<li>[ ] Run all five starter prompts from Chapter 4 on real (but non-sensitive) work.</li>
+<li>[ ] Notice which ones save you the most time. Star your favorites.</li>
+<li>[ ] Start your "My Prompts" document.</li>
+</ul>
+<p><strong>Day 3 — Find your repeat (about 1 hour).</strong></p>
+<ul>
+<li>[ ] List the 5 tasks you do most often that feel like drag.</li>
+<li>[ ] Pick the <strong>one</strong> that's most repetitive and lowest-risk.</li>
+<li>[ ] Write a prompt for it using Role → Task → Context → Format.</li>
+</ul>
+<p><strong>Day 4 — Templatize (about 1 hour).</strong></p>
+<ul>
+<li>[ ] Run your chosen prompt twice on real cases. Refine until the output is genuinely good.</li>
+<li>[ ] Replace specifics with <strong>[brackets]</strong> so it's reusable.</li>
+<li>[ ] Save the finished template. This is your first workflow.</li>
+</ul>
+<p><strong>Day 5 — Add the safety habit (about 1 hour).</strong></p>
+<ul>
+<li>[ ] Write down the "review before it runs" checkpoint for this workflow.</li>
+<li>[ ] Name the one person who owns it and how to switch it off.</li>
+<li>[ ] Do a dry run: draft → review → approve → act.</li>
+</ul>
+<p><strong>Day 6 — Widen a little (about 1 hour).</strong></p>
+<ul>
+<li>[ ] Add a second workflow, or connect your tool to where you work (Gemini in Gmail/Docs, or explore Claude Code).</li>
+<li>[ ] Write your one-page "AI Rules for Our Team," including the off-limits zone.</li>
+</ul>
+<p><strong>Day 7 — Review and decide (about 1 hour).</strong></p>
+<ul>
+<li>[ ] Tally the time saved this week. Be honest.</li>
+<li>[ ] Decide whether the value justifies upgrading to a paid plan — check the official pricing page and make it a deliberate choice.</li>
+<li>[ ] Pick next week's one task to automate. Momentum beats perfection.</li>
+</ul>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">a printed 7-day checklist with the first few boxes ticked</span></div>
+<blockquote><p><strong>Tip:</strong> Done beats perfect. One reliable, reviewed workflow you actually use is worth more than ten clever prompts you tried once and forgot.</p></blockquote>
+<hr>
+<h2>Appendix A — Prompt Library</h2>
+<p>Ten reusable prompts. Swap in your <strong>[brackets]</strong>, keep the ones that work, and add them to your "My Prompts" file.</p>
+<p><strong>1) Meeting notes → action items</strong></p>
+<p>```</p>
+<p>Turn the meeting notes below into (a) a 3-line summary, (b) a list of</p>
+<p>decisions made, and (c) action items with an owner and a due date where stated.</p>
+<p>Flag anything that was left unresolved. Notes: [paste].</p>
+<p>```</p>
+<p><strong>2) Rewrite for tone</strong></p>
+<p>```</p>
+<p>Rewrite the text below to be [warmer / more concise / more formal].</p>
+<p>Keep the meaning identical. Don't add facts. Text: [paste].</p>
+<p>```</p>
+<p><strong>3) Job description draft</strong></p>
+<p>```</p>
+<p>Draft a job description for a [role] at a [type] business.</p>
+<p>Include responsibilities, must-have skills, nice-to-haves, and how to apply.</p>
+<p>Keep it honest and free of hype. Context: [details].</p>
+<p>```</p>
+<p><strong>4) Compare options</strong></p>
+<p>```</p>
+<p>Help me decide between [option A] and [option B] for [goal].</p>
+<p>Give a balanced pros/cons table, then your honest recommendation and why.</p>
+<p>Note what would change your recommendation. Context: [details].</p>
+<p>```</p>
+<p><strong>5) Explain it simply</strong></p>
+<p>```</p>
+<p>Explain [topic] to me as if I'm a smart business owner with no technical</p>
+<p>background. Use a plain analogy. Tell me what I actually need to know to decide.</p>
+<p>```</p>
+<p><strong>6) Draft a policy</strong></p>
+<p>```</p>
+<p>Draft a clear [e.g. refund / privacy / remote-work] policy for my business.</p>
+<p>Keep it fair, plain-English, and under one page. Flag anything I should have a</p>
+<p>professional review. Context: [our situation].</p>
+<p>```</p>
+<p><strong>7) Social / marketing post</strong></p>
+<p>```</p>
+<p>Write 3 short social posts about [topic/offer] in a [friendly/professional] voice.</p>
+<p>No exaggerated claims, no fake urgency. Include a clear, honest call to action.</p>
+<p>Context: [details].</p>
+<p>```</p>
+<p><strong>8) Extract structure from notes</strong></p>
+<p>```</p>
+<p>From the messy notes below, pull out a clean list of [names / dates / tasks / prices].</p>
+<p>Do not invent anything that isn't there — mark gaps as "MISSING". Notes: [paste].</p>
+<p>```</p>
+<p><strong>9) First-draft proposal</strong></p>
+<p>```</p>
+<p>Draft a one-page proposal for [client] for [service].</p>
+<p>Sections: the problem, our approach, what's included, timeline, next step.</p>
+<p>Leave price as [PRICE] for me to fill in. Context: [details].</p>
+<p>```</p>
+<p><strong>10) Weekly update email</strong></p>
+<p>```</p>
+<p>Write my weekly update email to [team/client] based on the notes below.</p>
+<p>Sections: what got done, what's next, anything I need from them.</p>
+<p>Warm, concise, honest about anything that slipped. Notes: [paste].</p>
+<p>```</p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">the "My Prompts" document filled with a few saved, working prompts</span></div>
+<hr>
+<h2>Appendix B — Glossary</h2>
+<ul>
+<li><strong>AI (Artificial Intelligence):</strong> software that performs tasks we associate with human thinking — writing, summarizing, answering questions. In this guide it means the chat tools above.</li>
+<li><strong>LLM (Large Language Model):</strong> the "brain" behind Claude, ChatGPT, and Gemini. It predicts text extremely well, which is why it can draft, summarize, and answer — and also why it can be confidently wrong.</li>
+<li><strong>Prompt:</strong> the instruction you type. Better prompts get better answers (Chapter 4).</li>
+<li><strong>Token:</strong> the small chunk of text an LLM reads and writes in. Usage and pricing are often measured in tokens. Roughly, a token is about ¾ of a word. You rarely need to count them — just know that very long documents use more.</li>
+<li><strong>Context / context window:</strong> how much text the tool can "hold in mind" at once. Bigger windows handle bigger documents.</li>
+<li><strong>Agent:</strong> an AI that doesn't just chat but <em>takes steps</em> — reading files, running tasks, chaining actions. Claude Code and Codex are agent tools. Agents need the "review before it runs" guardrail most of all.</li>
+<li><strong>MCP (Model Context Protocol):</strong> a standard way to safely connect an AI to your tools and data (like a universal adapter). It's how an agent can, for example, work with your files or a business app without custom coding. You'll mostly encounter it if you go deeper with Claude Code.</li>
+<li><strong>Codex:</strong> OpenAI's coding/agent capability inside the ChatGPT ecosystem, for automating software tasks.</li>
+<li><strong>Cowork / Claude Code:</strong> Anthropic's ways of using Claude to actually <em>do work</em> — Cowork-style chat for drafting and thinking, Claude Code for hands-on file and project automation.</li>
+<li><strong>Hallucination:</strong> when an AI states something false as if it were true. The reason Chapter 6 exists.</li>
+<li><strong>2FA (Two-Factor Authentication):</strong> a second sign-in step (a code from your phone). Turn it on everywhere.</li>
+<li><strong>Prompt template:</strong> a saved prompt with <strong>[brackets]</strong> for the parts that change, so you reuse it in seconds.</li>
+<li><strong>Human in the loop:</strong> the practice of keeping a person's approval between the AI and any real-world action.</li>
+</ul>
+<hr>
+<h2>Closing — Going Further with ARIA</h2>
+<p>You now have the same core playbook our white-glove Concierge starts from: pick a tool, master a few prompts, turn the best one into a reviewed, repeatable workflow, and keep a human in the loop. Done well, that alone gives back hours every week.</p>
+<p>Where <strong>ARIA</strong> goes further:</p>
+<ul>
+<li><strong>ARIA Sentinel</strong> is our desktop assistant that brings this playbook onto your actual machine — grounded in a curated knowledge base, with the safety habits from Chapter 6 built in rather than bolted on. It's designed so the automation stays reviewable and the sensitive things stay off-limits.</li>
+<li><strong>The white-glove Walk-Through</strong> is exactly what it sounds like: we sit with you (remotely) and set the whole thing up <em>with</em> you — accounts, first workflows, guardrails, and your team's one-page rules — so you finish with something that works, not just something that was explained.</li>
+</ul>
+<p>We won't oversell it. Everything in this guide, you can do yourself over a weekend. The Concierge exists for owners who'd rather have it done <em>with</em> them, faster, and with an experienced hand making sure the guardrails are real. If that's you, we're glad to help. If it's not, you already have what you need — go save yourself some hours.</p>
+<p><strong>See plans and how the Walk-Through works:</strong> <strong><a href="https://iisupp.net/plans">iisupp.net/plans</a></strong></p>
+<div class="shot"><span class="shot-tag">Screenshot</span><span class="shot-desc">the iisupp.net/plans page showing ARIA Sentinel and the Walk-Through Concierge</span></div>
+<hr>
+<p><strong>Integrated IT Support Inc.</strong></p>
+<p>Honest AI automation for real businesses — led by a technologist with 15+ years of hands-on IT experience.</p>
+<p>📧 <strong>ahmad.wasee@iisupp.net</strong> · 🌐 <strong><a href="https://iisupp.net">iisupp.net</a></strong></p>
+<p><em>This guide names real tools and links to their official pricing pages. We never invent prices, never sign you up automatically, and never ask you to skip the review step. You stay in control — that's the whole point.</em></p>
+</body></html>

@@ -1745,7 +1745,8 @@ async function loadDashboard() {
     const d = (await sentinel.getDashboard?.()) || {};
     const status = computeHeroStatus(d.sources || {});
     const hero = qs("#heroStatus");
-    if (hero) { hero.dataset.level = status.level; hero.innerHTML = `<span class="hero-emoji">${status.emoji}</span><strong class="hero-label">${status.label}</strong>`; }
+    // UX 2026-07-03: no separate dot/globe — the WORD itself carries the status color (see .hero-label CSS).
+    if (hero) { hero.dataset.level = status.level; hero.innerHTML = `<strong class="hero-label">${status.label}</strong>`; }
     setText("heroSubline", heroSubline(d.subline || {}));
     setHtml("kpiTiles", DashboardTab.tilesHtml(heroTiles(d.metrics || {})));
     const pending = d.pending || [];
@@ -1768,13 +1769,22 @@ function renderBarChart(hostId, rows, { empty } = {}) {
     host.innerHTML = `<p class="chart-empty">${escapeHtml(empty || "No data yet — this chart appears after ARIA's first real fix.")}</p>`;
     return;
   }
-  host.innerHTML = `<div class="chart-bars">${real.map((r) => {
-    const max = Number.isFinite(Number(r.max)) && Number(r.max) > 0 ? Number(r.max) : 100;
+  // Shared 0→max axis so bars are visually comparable, with light gridlines + tick labels (clean axis, Rule 17).
+  const unit = real.find((r) => r.unit)?.unit || "";
+  const axisMax = real.reduce((m, r) => Math.max(m, Number.isFinite(Number(r.max)) && Number(r.max) > 0 ? Number(r.max) : 100), 0) || 100;
+  const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) => Math.round(axisMax * f));
+  const grid = `<span class="chart-bar-grid" aria-hidden="true">${ticks.map(() => "<i></i>").join("")}</span>`;
+  const bars = real.map((r) => {
+    const max = Number.isFinite(Number(r.max)) && Number(r.max) > 0 ? Number(r.max) : axisMax;
     const pct = Math.max(0, Math.min(100, (Number(r.value) / max) * 100));
     return `<div class="chart-bar-row"><span class="cb-label">${escapeHtml(r.label)}</span>` +
-      `<span class="chart-bar-track"><span class="chart-bar-fill" style="width:${pct.toFixed(1)}%"></span></span>` +
+      `<span class="chart-bar-track">${grid}<span class="chart-bar-fill" style="width:${pct.toFixed(1)}%"></span></span>` +
       `<span class="cb-val">${escapeHtml(r.value)}${escapeHtml(r.unit || "")}</span></div>`;
-  }).join("")}</div>`;
+  }).join("");
+  const axis = `<div class="chart-axis" aria-hidden="true"><span class="cb-label"></span>` +
+    `<span class="chart-axis-ticks">${ticks.map((t) => `<span>${t}${escapeHtml(unit)}</span>`).join("")}</span>` +
+    `<span class="cb-val"></span></div>`;
+  host.innerHTML = `<div class="chart-bars">${bars}${axis}</div>`;
 }
 
 async function loadPerformance() {

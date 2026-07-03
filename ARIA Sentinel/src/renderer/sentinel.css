@@ -15,6 +15,7 @@
   --aria-success: #7afbff;
   --aria-warning: #ffcb6b;
   --aria-error: #ff7e7e;
+  --aria-status-green: #46d78a; /* the "all-clear" green the PROTECTED word itself carries (no separate dot) */
   --aria-font-display: Cinzel, Georgia, serif;
   --aria-font-ui: Inter, system-ui, sans-serif;
   --aria-font-mono: ui-monospace, "SF Mono", Monaco, Menlo, monospace;
@@ -824,12 +825,13 @@ aria-globe { line-height: 0; }
 
 /* ===== RUN 22 — dashboard · performance · SLA · compliance · reports ===== */
 .hero-panel { text-align: center; }
-.hero-status { display: inline-flex; align-items: center; gap: 12px; font-family: var(--aria-font-display); }
-.hero-status .hero-emoji { font-size: 34px; }
-.hero-status .hero-label { font-size: 30px; letter-spacing: .06em; }
-.hero-status[data-level="protected"] .hero-label { color: var(--aria-success); }
-.hero-status[data-level="attention"] .hero-label { color: var(--aria-warning); }
-.hero-status[data-level="critical"] .hero-label { color: var(--aria-error); }
+/* UX 2026-07-03: status = the colored WORD itself (no separate dot/globe). A soft same-color glow
+   reads as premium/advanced without a redundant indicator. */
+.hero-status { display: inline-flex; align-items: center; font-family: var(--aria-font-display); }
+.hero-status .hero-label { font-size: 32px; font-weight: 600; letter-spacing: .1em; line-height: 1.05; }
+.hero-status[data-level="protected"] .hero-label { color: var(--aria-status-green); text-shadow: 0 0 22px rgba(70, 215, 138, .35); }
+.hero-status[data-level="attention"] .hero-label { color: var(--aria-warning); text-shadow: 0 0 22px rgba(255, 203, 107, .30); }
+.hero-status[data-level="critical"] .hero-label { color: var(--aria-error); text-shadow: 0 0 22px rgba(255, 126, 126, .32); }
 .hero-subline { color: var(--aria-text-2); font-size: 13px; margin: 8px 0 0; }
 .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 14px 0; }
 .kpi-tile { background: var(--aria-grad-card); border: 1px solid var(--aria-border); border-radius: 12px; padding: 14px; }
@@ -1067,9 +1069,21 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .kpi-chart-panel .chart-head .chart-sub { font-size: 11.5px; color: var(--aria-text-muted); }
 .kpi-chart { width: 100%; display: block; }
 .chart-empty { font-size: 12px; color: var(--aria-text-muted); padding: 18px 4px; text-align: center; line-height: 1.5; }
-.chart-bars { display: grid; gap: 8px; }
-.chart-bar-row { display: grid; grid-template-columns: 96px 1fr auto; align-items: center; gap: 10px; font-size: 12px; }
-.chart-bar-row .cb-label { color: var(--aria-text-2); }
-.chart-bar-track { background: var(--aria-inset); border-radius: 999px; height: 10px; overflow: hidden; }
-.chart-bar-fill { height: 100%; background: var(--aria-grad-gold); border-radius: 999px; }
-.chart-bar-row .cb-val { color: var(--aria-gold-light); font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+.chart-bars { display: grid; gap: 10px; }
+.chart-bar-row { display: grid; grid-template-columns: 104px 1fr 56px; align-items: center; gap: 12px; font-size: 12px; }
+.chart-bar-row .cb-label { color: var(--aria-text-2); letter-spacing: .01em; }
+.chart-bar-track { position: relative; background: var(--aria-inset); border-radius: 999px; height: 12px; overflow: hidden;
+  box-shadow: inset 0 0 0 1px var(--aria-border); }
+/* light gridlines behind every bar so the axis reads cleanly */
+.chart-bar-grid { position: absolute; inset: 0; display: flex; justify-content: space-between; pointer-events: none; }
+.chart-bar-grid i { width: 1px; background: rgba(255, 255, 255, .06); }
+.chart-bar-grid i:first-child, .chart-bar-grid i:last-child { background: transparent; }
+.chart-bar-fill { position: relative; height: 100%; background: var(--aria-grad-gold); border-radius: 999px;
+  transition: width .5s cubic-bezier(.22, 1, .36, 1); }
+.chart-bar-row .cb-val { color: var(--aria-gold-light); font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+/* shared axis with tick labels under the track column */
+.chart-axis { display: grid; grid-template-columns: 104px 1fr 56px; gap: 12px; margin-top: 2px; }
+.chart-axis-ticks { display: flex; justify-content: space-between; font-size: 10px; color: var(--aria-text-muted);
+  font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.chart-axis-ticks span:first-child { transform: translateX(-2px); }
+.chart-axis-ticks span:last-child { transform: translateX(2px); }
