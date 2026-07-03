@@ -2212,6 +2212,11 @@
           <button class="qa-chip" data-ask="phishing email security scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Security Scan</button>
         </div>
       </div>
+      <div class="aria-vision-panel" id="ariaVisionPanel" style="margin-top:12px;padding:12px 14px;border:1px solid var(--border,#24240f);border-radius:14px;background:rgba(10,10,10,.5)">
+        <div class="qa-head"><span>SHOW ARIA THE PROBLEM</span><span class="insights-tag">SEE &middot; DIAGNOSE &middot; FIX</span></div>
+        <p style="margin:6px 0 10px;font-size:12.5px;color:var(--muted,#9a9a92);line-height:1.5">Can&rsquo;t describe it? Drop or paste a <strong>screenshot</strong>, an <strong>error dialog</strong>, or a <strong>log</strong> &mdash; ARIA reads it and returns the exact fix. Text &amp; logs are matched on our own server; an image goes to vision only after you approve.</p>
+        <div id="ariaVisionZone"></div>
+      </div>
      </div><!-- /.content-section -->
     </div>
 
@@ -5662,6 +5667,23 @@ if (_prefill){
 </script>
 <script defer src="/aria-transform.js"></script>
 <script defer src="/assets/aria-sentinel-handoff.js"></script>
+<!-- STAGE 2 — ARIA Vision Diagnosis ("show, don't type"): reusable drop/paste/upload zone on the ask surface -->
+<script defer src="/assets/aria-vision-diagnose.js?v=20260703-stage2"></script>
+<script>
+(function(){
+  function mountVision(){
+    var z=document.getElementById('ariaVisionZone');
+    if(!z) return;
+    if(!(window.ARIAVisionDiagnose && window.ARIAVisionDiagnose.mount)){ setTimeout(mountVision,120); return; }
+    if(z.getAttribute('data-mounted')) return;
+    z.setAttribute('data-mounted','1');
+    var os=((navigator.platform||navigator.userAgent||'').toLowerCase().indexOf('mac')>=0)?'mac':'windows';
+    window.ARIAVisionDiagnose.mount(z,{surface:'web',endpoint:'/.netlify/functions/aria-vision-diagnose',os:os});
+  }
+  if(document.readyState!=='loading') mountVision();
+  else document.addEventListener('DOMContentLoaded',mountVision);
+})();
+</script>
 <script defer src="/assets/aria-globe-confirmation.js"></script>
 <script defer src="/aria-brain.js"></script>
 
