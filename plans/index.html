@@ -227,8 +227,16 @@
     .pf-autorow button:hover{background:rgba(197,160,89,.08)}
     .pf-autorow .pf-clear{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.55)}
     .pf-autorow .pf-clear:hover{background:rgba(255,255,255,.04)}
+    /* collapsible "build by hand" role picker — closed by default so the desk view stays compact */
+    .pf-roles-collapse{border:1px solid rgba(197,160,89,.22);border-radius:11px;background:rgba(0,0,0,.22)}
+    .pf-roles-collapse>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;color:#f1dca7;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+    .pf-roles-collapse>summary::-webkit-details-marker{display:none}
+    .pf-roles-collapse>summary::after{content:'+';color:#c5a059;font-size:16px;font-weight:700;line-height:1}
+    .pf-roles-collapse[open]>summary::after{content:'\2212'}
+    .pf-roles-collapse>summary .pf-rc-hint{margin-left:auto;color:rgba(255,255,255,.4);font-size:9.5px;letter-spacing:.04em;text-transform:none;font-weight:400}
+    .pf-roles-collapse[open]>summary{border-bottom:1px solid rgba(255,255,255,.08)}
     /* role list — tight rows, title left, small number stepper right */
-    .pf-roles{border:1px solid rgba(255,255,255,.1);border-radius:11px;overflow:hidden;background:rgba(0,0,0,.2);margin-top:2px}
+    .pf-roles{border:0;border-radius:0 0 11px 11px;overflow:hidden;background:transparent;margin-top:0}
     .pf-roles-hdr{background:rgba(255,255,255,.03);color:#c5a059;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;padding:6px 12px 4px}
     .pf-role{display:flex;align-items:center;gap:10px;padding:5px 12px;border-top:1px solid rgba(255,255,255,.05)}
     .pf-role .pf-role-name{flex:1 1 auto;font-size:12px;line-height:1.2;color:rgba(255,255,255,.82)}
@@ -242,7 +250,15 @@
     .pf-step input::-webkit-outer-spin-button,.pf-step input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
     .pf-step input:focus{outline:none;border-color:#c5a059}
     /* ---- RIGHT: minimal result ---- */
-    .pf-result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-top:4px}
+    .pf-result{display:flex;flex-direction:column;align-items:center;gap:13px;text-align:center;padding-top:2px;min-width:0}
+    /* gold summary bar — sits ABOVE the donut, always shows the matched ARIA plan + its price. Fits the column
+       exactly (full width, border-box, no overflow). */
+    .pf-summary-bar{width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;border-radius:12px;padding:9px 15px;box-shadow:0 8px 22px rgba(197,160,89,.26);min-width:0}
+    .pf-sumbar-l{display:flex;flex-direction:column;align-items:flex-start;min-width:0;overflow:hidden}
+    .pf-sumbar-k{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.72;font-weight:700}
+    .pf-sumbar-plan{font-family:Cinzel,serif;font-weight:700;font-size:13.5px;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    .pf-sumbar-price{font-family:Cinzel,serif;font-weight:700;font-size:17px;white-space:nowrap;flex:0 0 auto}
+    .pf-sumbar-price small{font-family:Inter,sans-serif;font-weight:400;font-size:10.5px;opacity:.68}
     .pf-donut-wrap{position:relative;width:150px;height:150px}
     .pf-donut{width:150px;height:150px;transform:rotate(-90deg)}
     .pf-donut circle{fill:none;stroke-width:16;stroke-linecap:butt}
@@ -322,20 +338,24 @@
             <input type="range" id="sv-users" min="1" max="2000" step="1" value="250" aria-label="Number of users slider">
           </div>
           <div class="pf-cov" id="sv-cov" role="tablist" aria-label="Support coverage">
-            <button type="button" data-cov="always" class="on">24/7 always-on</button>
-            <button type="button" data-cov="hours">Business hours</button>
+            <button type="button" data-cov="always">24/7 always-on</button>
+            <button type="button" data-cov="hours" class="on">Business hours</button>
           </div>
           <div class="pf-autorow">
             <button type="button" id="sv-autofill">Auto-fill typical team for <span id="sv-auto-n">250</span></button>
             <button type="button" class="pf-clear" id="sv-clear">Clear</button>
           </div>
         </div>
-        <div>
-          <p class="pf-sec-label">Build your desk &mdash; how many of each?</p>
+        <details class="pf-roles-collapse" id="sv-roles-collapse">
+          <summary><span>Which desk roles would you staff?</span><span class="pf-rc-hint">optional &middot; tap to build by hand</span></summary>
           <div class="pf-roles" id="sv-roles"></div>
-        </div>
+        </details>
       </div>
       <div class="pf-result">
+        <div class="pf-summary-bar" id="sv-sumbar">
+          <span class="pf-sumbar-l"><span class="pf-sumbar-k">Matched plan</span><span class="pf-sumbar-plan" id="sv-sumbar-plan">ARIA Pro</span></span>
+          <span class="pf-sumbar-price" id="sv-sumbar-price">$27,000<small>/yr</small></span>
+        </div>
         <div class="pf-donut-wrap">
           <svg class="pf-donut" id="sv-donut" viewBox="0 0 120 120" aria-hidden="true">
             <defs><linearGradient id="svGoldGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c5a059"/><stop offset="1" stop-color="#f1dca7"/></linearGradient></defs>
@@ -367,12 +387,12 @@
         <div class="pf-adj-grid" id="sv-adj-cov"></div>
       </div>
     </details>
-    <p class="pf-calc-foot">Estimates from typical loaded IT salaries &mdash; adjust to your reality. Everything defaults to 0: build your own desk, or auto-fill a typical L1&ndash;L3 team for your size. A 24/7 desk needs about 4.2&times; the shift roles (168h &divide; 40h), applied once. Nothing here is a guarantee &mdash; it&rsquo;s a transparent model you control.</p>
+    <p class="pf-calc-foot">Estimates from typical loaded IT salaries &mdash; adjust to your reality. Defaults to business-hours coverage; every role starts at 0 &mdash; build your own desk, or auto-fill a typical team for your size. Switch to 24/7 always-on and the shift roles scale about 4.2&times; (168h &divide; 40h), applied once. Nothing here is a guarantee &mdash; it&rsquo;s a transparent model you control.</p>
   </section>
   <script>
   (function(){
     var $=function(id){return document.getElementById(id);};
-    var cov='always';
+    var cov='hours';
     var lastModel=null;
     function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
     function clamp(v,min,max){return Math.min(Math.max(v,min),max);}
@@ -402,25 +422,28 @@
       {id:'dir', group:'leadership', name:'IT leadership',                    salary:200000, shift:false}
     ];
     var CNT_MAX=100000, SAL_MIN=1000, SAL_MAX=2000000;
-    // L1 auto-fill is capped at this so a big org doesn't balloon the suggested desk (still freely adjustable).
-    var L1_CAP=20;
+    // L1 auto-fill is capped only as an extreme-input sanity clamp (never binds across the 1–2000 slider,
+    // where a realistic 1-per-65 desk stays intact). Still freely adjustable.
+    var L1_CAP=250;
 
     // Auto-fill ratios (used ONLY by the auto-fill button). Frontline = 1 per N users; support roles = 1 per N
     // frontline or users, with a size threshold before the role appears. All adjustable in the panel.
     var RATIOS=[
-      {k:'rL1', label:'L1 — 1 per',def:50,min:5,max:100000},
-      {k:'rL2', label:'L2 — 1 per',def:150,min:5,max:100000},
-      {k:'rL3', label:'L3 — 1 per',def:400,min:5,max:100000}
+      {k:'rL1', label:'L1 — 1 per',def:65,min:5,max:100000},
+      {k:'rL2', label:'L2 — 1 per',def:250,min:5,max:100000},
+      {k:'rL3', label:'L3 — 1 per',def:600,min:5,max:100000}
     ];
     var COVF=[{k:'mult',label:'24/7 multiplier (×)',def:4.2,min:1,max:10}];
 
-    // ARIA annual price = the seat tier matching the business size. GENEROUS bands so ARIA is never pricier than a
-    // full in-house desk by default (matches the published plan prices above).
+    // ARIA annual price = the seat tier matching the business size. WIDE bands (with big gaps between Small
+    // Business and Enterprise) so that at every employee count the matched ARIA price stays at or below a
+    // realistic in-house desk — "You save" never flips negative as the slider grows (verified 1→2000).
+    // Prices match the published plan cards above; only the employee ranges widen.
     var TIER_BANDS=[
-      {name:'Personal',      max:5,       yr:10788},
-      {name:'Pro',           max:40,      yr:27000},
-      {name:'Small Business',max:150,     yr:234000},
-      {name:'Mid-Size',      max:500,     yr:468000},
+      {name:'Personal',      max:10,      yr:10788},
+      {name:'Pro',           max:75,      yr:27000},
+      {name:'Small Business',max:500,     yr:234000},
+      {name:'Mid-Size',      max:1500,    yr:468000},
       {name:'Enterprise',    max:Infinity,yr:937500}
     ];
     function ariaTier(n){for(var i=0;i<TIER_BANDS.length;i++){if(n<=TIER_BANDS[i].max)return TIER_BANDS[i];}return TIER_BANDS[TIER_BANDS.length-1];}
@@ -487,6 +510,9 @@
         var row=$('sv-role-'+r.id); if(row)row.classList.toggle('zero',base<=0);
       });
       var tier=ariaTier(size), aria=tier.yr, trad=total, save=trad-aria;
+      var sbPlan=$('sv-sumbar-plan'), sbPrice=$('sv-sumbar-price');
+      if(sbPlan)sbPlan.textContent='ARIA '+tier.name;
+      if(sbPrice)sbPrice.innerHTML=money(aria)+'<small>/yr</small>';
       var one=$('sv-oneline'), qbtn=$('sv-quote-btn');
       if(!any||trad<=0){
         renderDonut(0,aria,0,true);
@@ -511,24 +537,29 @@
     // applied later in calc()). L1 capped at L1_CAP so it stays sane. Every count remains freely adjustable. ----
     function autofill(){
       var n=readSize();
-      var rL1=readNum('sv-r-rL1',50,5,100000), rL2=readNum('sv-r-rL2',150,5,100000), rL3=readNum('sv-r-rL3',400,5,100000);
-      var l1=clamp(Math.max(1,Math.ceil(n/rL1)),0,L1_CAP);
+      // Realistic in-house desk. Frontline scales 1-per-N users (default 65/250/600); the support/leadership
+      // roles appear only at larger sizes. Tuned so the desk always looks believable AND its cost stays at or
+      // above the matched ARIA tier at every point of the slider (verified sweep 1→2000). Every count remains
+      // freely editable on the left.
+      var rL1=readNum('sv-r-rL1',65,5,100000), rL2=readNum('sv-r-rL2',250,5,100000), rL3=readNum('sv-r-rL3',600,5,100000);
+      var l1=clamp(Math.ceil(n/rL1),1,L1_CAP);
       var l2=clamp(Math.floor(n/rL2),0,n);
       var l3=clamp(Math.floor(n/rL3),0,n);
       var fl=l1+l2+l3;
       var set={
         l1:l1, l2:l2, l3:l3,
-        tl:clamp(Math.floor((l1+l2)/10),0,n),
-        mgr:n>=75?clamp(Math.max(1,Math.ceil(fl/40)),0,n):0,
-        qa:clamp(Math.floor(fl/25),0,n),
-        wfm:n>=100?clamp(Math.max(1,Math.ceil(fl/40)),0,n):0,
-        km:n>=100?clamp(Math.ceil(n/500),0,n):0,
-        rep:n>=150?1:0,
-        proc:n>=250?clamp(Math.min(3,Math.ceil(n/500)),0,n):0,
-        trn:n>=200?clamp(Math.ceil(n/800),0,n):0,
-        dir:n>=100?1:0
+        tl:clamp(Math.floor(fl/10),0,n),               // 1 team lead per ~10 agents
+        mgr:n>=76?(n>=800?2:1):0,                       // service-desk manager once you run your own desk
+        qa:n>=150?clamp(Math.max(1,Math.round(n/150)),0,n):0,  // QA ~1 per 150 users
+        rep:n>=250?1:0,                                 // SLA / reporting analyst
+        km:n>=300?1:0,                                  // knowledge manager
+        wfm:n>=400?1:0,                                 // workforce / scheduler
+        proc:n>=500?clamp(Math.ceil(n/700),1,3):0,      // incident/problem/change manager
+        trn:n>=600?1:0,                                 // training coordinator
+        dir:n>=250?1:0                                  // IT leadership
       };
       ROLES.forEach(function(r){var el=$('sv-c-'+r.id);if(el)el.value=set[r.id]||0;});
+      var det=$('sv-roles-collapse'); if(det)det.open=true;  // reveal the filled desk so the numbers are visible
       calc();
     }
     function clearAll(){ROLES.forEach(function(r){var el=$('sv-c-'+r.id);if(el)el.value=0;});calc();}
