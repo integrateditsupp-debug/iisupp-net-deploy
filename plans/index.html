@@ -251,8 +251,8 @@
     .pf-step input:focus{outline:none;border-color:#c5a059}
     /* ---- RIGHT: minimal result ---- */
     .pf-result{display:flex;flex-direction:column;align-items:center;gap:13px;text-align:center;padding-top:2px;min-width:0}
-    /* gold summary bar — sits ABOVE the donut, always shows the matched ARIA plan + its price. Fits the column
-       exactly (full width, border-box, no overflow). */
+    /* gold summary bar — sits directly below the bar chart (v11), always shows the matched ARIA plan + its price.
+       Fits the column exactly (full width, border-box, no overflow). */
     .pf-summary-bar{width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a1410;border-radius:12px;padding:9px 15px;box-shadow:0 8px 22px rgba(197,160,89,.26);min-width:0}
     .pf-sumbar-l{display:flex;flex-direction:column;align-items:flex-start;min-width:0;overflow:hidden}
     .pf-sumbar-k{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.72;font-weight:700}
@@ -271,9 +271,6 @@
     .pf-donut-center.neg .pf-donut-big{color:#f1dca7}
     .pf-donut-pct{font-family:Cinzel,serif;font-weight:700;font-size:12.5px;color:#f1dca7;margin-top:2px}
     .pf-donut-small{color:rgba(255,255,255,.55);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
-    .pf-oneline{font-size:12.5px;line-height:1.65;color:rgba(255,255,255,.72);max-width:280px}
-    .pf-oneline b{font-family:Cinzel,serif;white-space:nowrap}
-    .pf-oneline .trad{color:#e78d8d}.pf-oneline .aria{color:#f1dca7}.pf-oneline .save{color:#5fd08a}
     /* Animated cost bars (restored) — sit under the donut, scale to the larger value, transition on width. */
     .pf-bars{width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;margin-top:2px}
     .pf-bar-row{width:100%;min-width:0}
@@ -372,6 +369,19 @@
         </details>
       </div>
       <div class="pf-result">
+        <!-- Animated cost bars — Traditional service desk ($/yr, muted red) vs ARIA ($/yr, gold). Both scale to
+             the larger of the two and update live on every input. Fits the right column exactly (border-box). -->
+        <div class="pf-bars" id="sv-bars">
+          <div class="pf-bar-row">
+            <div class="pf-bar-top"><span class="pf-bar-name">Traditional service desk</span><span class="pf-bar-val trad" id="sv-bar-trad-val">&mdash;</span></div>
+            <div class="pf-bar-track"><div class="pf-bar-fill trad" id="sv-bar-trad"></div></div>
+          </div>
+          <div class="pf-bar-row">
+            <div class="pf-bar-top"><span class="pf-bar-name">ARIA</span><span class="pf-bar-val aria" id="sv-bar-aria-val">&mdash;</span></div>
+            <div class="pf-bar-track"><div class="pf-bar-fill aria" id="sv-bar-aria"></div></div>
+          </div>
+        </div>
+        <!-- Gold summary bar — matched ARIA plan + price. Sits directly below the bar chart (v11). Updates live. -->
         <div class="pf-summary-bar" id="sv-sumbar">
           <span class="pf-sumbar-l"><span class="pf-sumbar-k">Matched plan</span><span class="pf-sumbar-plan" id="sv-sumbar-plan">ARIA Small Business</span></span>
           <span class="pf-sumbar-price" id="sv-sumbar-price">$234,000<small>/yr</small></span>
@@ -389,19 +399,6 @@
             <div class="pf-donut-small" id="sv-donut-small"></div>
           </div>
         </div>
-        <!-- Animated cost bars — Traditional service desk ($/yr, muted red) vs ARIA ($/yr, gold). Both scale to
-             the larger of the two and update live on every input. Fits the right column exactly (border-box). -->
-        <div class="pf-bars" id="sv-bars">
-          <div class="pf-bar-row">
-            <div class="pf-bar-top"><span class="pf-bar-name">Traditional service desk</span><span class="pf-bar-val trad" id="sv-bar-trad-val">&mdash;</span></div>
-            <div class="pf-bar-track"><div class="pf-bar-fill trad" id="sv-bar-trad"></div></div>
-          </div>
-          <div class="pf-bar-row">
-            <div class="pf-bar-top"><span class="pf-bar-name">ARIA</span><span class="pf-bar-val aria" id="sv-bar-aria-val">&mdash;</span></div>
-            <div class="pf-bar-track"><div class="pf-bar-fill aria" id="sv-bar-aria"></div></div>
-          </div>
-        </div>
-        <p class="pf-oneline" id="sv-oneline">Add your team on the left, or hit <b>Auto-fill</b>.</p>
         <button type="button" class="pf-quote-btn" id="sv-quote-btn" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Download quote (PDF)
@@ -553,11 +550,10 @@
       var sbPlan=$('sv-sumbar-plan'), sbPrice=$('sv-sumbar-price');
       if(sbPlan)sbPlan.textContent='ARIA '+tier.name;
       if(sbPrice)sbPrice.innerHTML=money(aria)+'<small>/yr</small>';
-      var one=$('sv-oneline'), qbtn=$('sv-quote-btn');
+      var qbtn=$('sv-quote-btn');
       if(!any||trad<=0){
         renderDonut(0,aria,0,true);
         renderBars(0,aria);
-        one.innerHTML='Add your team on the left, or hit <b>Auto-fill</b> for a typical desk.';
         qbtn.disabled=true;
         lastModel=null;
         return;
@@ -565,11 +561,6 @@
       renderDonut(trad,aria,save,false);
       renderBars(trad,aria);
       qbtn.disabled=false;
-      if(save>0){
-        one.innerHTML='In-house <b class="trad">'+money(trad)+'/yr</b> vs <b class="aria">ARIA '+tier.name+' '+money(aria)+'/yr</b> &rarr; save <b class="save">'+money(save)+'/yr</b>.';
-      }else{
-        one.innerHTML='In-house <b class="trad">'+money(trad)+'/yr</b> matches <b class="aria">ARIA '+tier.name+' '+money(aria)+'/yr</b> &mdash; same spend, 24/7 auto-fix.';
-      }
       lastModel={size:size,always:always,roles:rolesOut,headcount:headcount,trad:trad,tierName:tier.name,aria:aria,save:save,mult:m};
     }
 
@@ -696,49 +687,6 @@
   </style>
   <div data-aria-impl-addon></div>
 
-  <!-- ARIA Web vs ARIA Sentinel App — one brain, two surfaces (source: [[ARIA-Web]] / [[ARIA-Sentinel-App]]). -->
-  <style>
-    .pf-what{max-width:1000px;margin:52px auto 0}
-    .pf-what h3{text-align:center;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#c5a059;margin:0 0 4px}
-    .pf-what .pf-what-lead{text-align:center;color:rgba(255,255,255,.6);font-size:13px;margin:0 0 20px}
-    .pf-what-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    @media(max-width:640px){.pf-what-grid{grid-template-columns:1fr}}
-    .pf-what-col{padding:22px 24px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.02)}
-    .pf-what-col h4{font-size:18px;margin:0 0 4px}
-    .pf-what-col .pf-what-sub{color:#c5a059;font-size:12px;margin:0 0 12px}
-    .pf-what-col ul{list-style:none;padding:0;margin:0;color:rgba(255,255,255,.78);font-size:14px;line-height:1.7}
-    .pf-what-col li{padding-left:20px;position:relative}
-    .pf-what-col li::before{content:"\2713";position:absolute;left:0;color:#c5a059}
-  </style>
-  <section class="pf-what" aria-label="ARIA Web vs ARIA Sentinel App">
-    <h3>One brain, two surfaces</h3>
-    <p class="pf-what-lead">ARIA Web and the ARIA Sentinel desktop app share the same knowledge base and honest answer-chain. Your plan unlocks both.</p>
-    <div class="pf-what-grid">
-      <div class="pf-what-col">
-        <h4>ARIA Web</h4>
-        <p class="pf-what-sub">In your browser &middot; nothing to install &middot; iisupp.net/aria</p>
-        <ul>
-          <li>Ask-anything KB chat with source cards</li>
-          <li>Vision Diagnosis demo (show it the problem)</li>
-          <li>Guide-or-Resolve on every answer</li>
-          <li>Community forums + plans &amp; checkout</li>
-          <li>Where a prospect first feels the value</li>
-        </ul>
-      </div>
-      <div class="pf-what-col">
-        <h4>ARIA Sentinel App</h4>
-        <p class="pf-what-sub">Installed Windows agent &middot; resident, 24/7 &middot; 100% on-device</p>
-        <ul>
-          <li>Floating globe + on-device voice assistant</li>
-          <li>7 detectors + gated, reversible fix engine</li>
-          <li>3 modes: Manual, Confirmed, Autonomous</li>
-          <li>Dashboard, SLA, compliance, quarterly PDF</li>
-          <li>Content-blind, private-folder locked</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
   <section id="aria-sentinel" style="margin-top:42px">
     <div style="text-align:center;max-width:820px;margin:0 auto 22px">
       <p style="color:#c5a059;font-size:11px;letter-spacing:.32em;margin-bottom:12px">ARIA SENTINEL &mdash; DESKTOP APP</p>
@@ -772,26 +720,37 @@
     <div style="text-align:center;margin-top:8px"><button type="button" class="pf-compare-trigger" data-open-compare="1">See full feature comparison &#9662;</button></div>
   </section>
 
-  <!-- ADOPT AI FAST — the Concierge Walk-Through OR the self-serve DIY book (item 2b, 2026-07-03). -->
+  <!-- ADOPT AI FAST — Concierge Walk-Through OR self-serve DIY book. Compact FLIP CARDS (v11): front = kind +
+       title + price + one-line hook + button; the details/bullets flip in on hover, keyboard focus, or tap. -->
   <style>
-    .pf-adopt{max-width:1180px;margin:52px auto 0}
-    .pf-adopt-head{text-align:center;max-width:760px;margin:0 auto 24px}
+    .pf-adopt{max-width:900px;margin:52px auto 0}
+    .pf-adopt-head{text-align:center;max-width:640px;margin:0 auto 22px}
     .pf-adopt-head .eyebrow{color:#c5a059;font-size:11px;letter-spacing:.32em;text-transform:uppercase}
-    .pf-adopt-head h2{font-size:30px;line-height:1.15;margin:10px 0 10px}
-    .pf-adopt-head p{color:rgba(255,255,255,.68);font-size:15px;line-height:1.6}
-    .pf-adopt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
-    .pf-adopt-card{padding:26px 28px;border:1px solid rgba(197,160,89,.28);border-radius:16px;background:linear-gradient(180deg,rgba(197,160,89,.06),rgba(255,255,255,.015));display:flex;flex-direction:column}
-    .pf-adopt-card.diy{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.02)}
-    .pf-adopt-card .pf-adopt-kind{color:#c5a059;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
-    .pf-adopt-card h3{font-size:22px;margin:0 0 8px}
-    .pf-adopt-card .pf-adopt-price{font-family:Cinzel,serif;font-size:30px;color:#f1dca7;margin:2px 0 4px}
-    .pf-adopt-card .pf-adopt-price small{font-family:Inter,sans-serif;font-size:13px;color:rgba(255,255,255,.55);font-weight:400}
-    .pf-adopt-card ul{list-style:none;padding:0;margin:14px 0 18px;color:rgba(255,255,255,.8);font-size:14px;line-height:1.7}
-    .pf-adopt-card li{padding-left:22px;position:relative}
-    .pf-adopt-card li::before{content:"\2713";position:absolute;left:0;color:#c5a059}
-    .pf-adopt-card .pf-adopt-value{color:rgba(255,255,255,.62);font-size:13px;font-style:italic;margin:0 0 16px}
-    .pf-adopt-card .pf-cta{margin-top:auto}
-    .pf-adopt-card .pf-adopt-note{color:rgba(255,255,255,.45);font-size:11px;margin-top:10px;line-height:1.55}
+    .pf-adopt-head h2{font-size:26px;line-height:1.15;margin:10px 0 8px}
+    .pf-adopt-head p{color:rgba(255,255,255,.68);font-size:14px;line-height:1.6}
+    .pf-adopt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+    /* flip card — shares the premium tier-card DNA (soft top glow, gold-tinted border, inner sheen). Front stays
+       short + simple; details flip in on hover / :focus-within (keyboard) / .is-flipped (tap, set by JS). */
+    .pf-flip{position:relative;min-height:344px;perspective:1500px}
+    .pf-flip-inner{position:absolute;inset:0;transition:transform .6s cubic-bezier(.4,.15,.2,1);transform-style:preserve-3d}
+    .pf-flip:hover .pf-flip-inner,.pf-flip:focus-within .pf-flip-inner,.pf-flip.is-flipped .pf-flip-inner{transform:rotateY(180deg)}
+    .pf-flip-face{position:absolute;inset:0;display:flex;flex-direction:column;box-sizing:border-box;padding:24px 26px;border:1px solid rgba(197,160,89,.3);border-radius:16px;background:radial-gradient(130% 90% at 50% -10%,rgba(197,160,89,.1) 0%,rgba(197,160,89,0) 55%),linear-gradient(165deg,#0c0a06 0%,#17110a 100%);box-shadow:0 16px 40px rgba(0,0,0,.42),inset 0 1px 0 rgba(241,220,167,.09);-webkit-backface-visibility:hidden;backface-visibility:hidden;overflow:auto}
+    .pf-flip:hover .pf-flip-face,.pf-flip:focus-within .pf-flip-face,.pf-flip.is-flipped .pf-flip-face{border-color:rgba(197,160,89,.55)}
+    .pf-flip-back{transform:rotateY(180deg)}
+    .pf-flip.diy .pf-flip-face{border-color:rgba(255,255,255,.16)}
+    .pf-flip .pf-adopt-kind{color:#c5a059;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
+    .pf-flip h3{font-size:19px;margin:0 0 8px;line-height:1.2}
+    .pf-flip .pf-adopt-price{font-family:Cinzel,serif;font-size:26px;color:#f1dca7;margin:2px 0 8px;line-height:1.1}
+    .pf-flip .pf-adopt-price small{display:block;font-family:Inter,sans-serif;font-size:12px;color:rgba(255,255,255,.55);font-weight:400;margin-top:3px;letter-spacing:normal}
+    .pf-flip .pf-adopt-hook{color:rgba(255,255,255,.74);font-size:13.5px;line-height:1.5;margin:0}
+    .pf-flip .pf-back-label{color:#c5a059;font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 8px;font-weight:700}
+    .pf-flip ul{list-style:none;padding:0;margin:0 0 12px;color:rgba(255,255,255,.82);font-size:12.5px;line-height:1.55}
+    .pf-flip li{padding-left:19px;position:relative;margin-bottom:6px}
+    .pf-flip li::before{content:"\2713";position:absolute;left:0;color:#c5a059}
+    .pf-flip .pf-adopt-value{color:rgba(255,255,255,.6);font-size:11.5px;font-style:italic;margin:0 0 12px;line-height:1.5}
+    .pf-flip .pf-adopt-note{color:rgba(255,255,255,.45);font-size:10.5px;margin:8px 0 0;line-height:1.5}
+    .pf-flip .pf-cta{margin-top:auto}
+    .pf-flip .pf-flip-hint{margin:12px 0 0;color:rgba(255,255,255,.4);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;text-align:center}
   </style>
   <section class="pf-adopt" id="ai-setup" aria-label="AI setup — Walk-Through or DIY book">
     <div class="pf-adopt-head">
@@ -800,37 +759,69 @@
       <p>Want us to do it with you, or a playbook to do it yourself? Same method &mdash; pick the path that fits your budget.</p>
     </div>
     <div class="pf-adopt-grid">
-      <div class="pf-adopt-card">
-        <span class="pf-adopt-kind">White-glove &middot; we do it with you</span>
-        <h3>AI Setup Walk-Through (Concierge)</h3>
-        <div class="pf-adopt-price">$7,000&ndash;$15,000 <small>one-time &middot; talk to us</small></div>
-        <ul>
-          <li>We teach you and your team to actually use Claude (Cowork + Code), ChatGPT + Codex, and Gemini &mdash; step by step</li>
-          <li>Compose your first real prompts, live</li>
-          <li>Includes a 30-day ARIA Sentinel trial (full Pro)</li>
-          <li>A permanent Walk-Through that stays yours after the trial</li>
-        </ul>
-        <p class="pf-adopt-value">&ldquo;In a week my team went from AI-curious to AI-productive &mdash; and we kept the playbook.&rdquo;</p>
-        <a class="pf-cta" href="/book.html?lane=ai-concierge&amp;subject=AI%20Setup%20Walk-Through%20(Concierge)&amp;desc=I%27m%20interested%20in%20the%20white-glove%20AI%20Setup%20Walk-Through.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20we%20want%20to%20automate%3A" style="text-decoration:none;display:block;text-align:center">TALK TO US &rarr;</a>
+      <!-- Concierge Walk-Through — flip card. Front: kind + title + price + hook + button. Back: the details. -->
+      <div class="pf-flip" tabindex="0">
+        <div class="pf-flip-inner">
+          <div class="pf-flip-face pf-flip-front">
+            <span class="pf-adopt-kind">White-glove &middot; we do it with you</span>
+            <h3>AI Setup Walk-Through (Concierge)</h3>
+            <div class="pf-adopt-price">$7,000&ndash;$15,000<small>one-time &middot; talk to us</small></div>
+            <p class="pf-adopt-hook">We get your team from AI-curious to AI-productive &mdash; with you, step by step.</p>
+            <a class="pf-cta" href="/book.html?lane=ai-concierge&amp;subject=AI%20Setup%20Walk-Through%20(Concierge)&amp;desc=I%27m%20interested%20in%20the%20white-glove%20AI%20Setup%20Walk-Through.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20we%20want%20to%20automate%3A" style="text-decoration:none;display:block;text-align:center">TALK TO US &rarr;</a>
+            <p class="pf-flip-hint">Hover or tap for details</p>
+          </div>
+          <div class="pf-flip-face pf-flip-back">
+            <p class="pf-back-label">What&rsquo;s included</p>
+            <ul>
+              <li>We teach you and your team to actually use Claude (Cowork + Code), ChatGPT + Codex, and Gemini &mdash; step by step</li>
+              <li>Compose your first real prompts, live</li>
+              <li>Includes a 30-day ARIA Sentinel trial (full Pro)</li>
+              <li>A permanent Walk-Through that stays yours after the trial</li>
+            </ul>
+            <p class="pf-adopt-value">&ldquo;In a week my team went from AI-curious to AI-productive &mdash; and we kept the playbook.&rdquo;</p>
+            <a class="pf-cta" href="/book.html?lane=ai-concierge&amp;subject=AI%20Setup%20Walk-Through%20(Concierge)&amp;desc=I%27m%20interested%20in%20the%20white-glove%20AI%20Setup%20Walk-Through.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20we%20want%20to%20automate%3A" style="text-decoration:none;display:block;text-align:center">TALK TO US &rarr;</a>
+          </div>
+        </div>
       </div>
-      <div class="pf-adopt-card diy">
-        <span class="pf-adopt-kind">Self-serve &middot; you do it yourself</span>
-        <h3>AI Automation Setup &mdash; DIY Book (PDF)</h3>
-        <!-- PRICE TODO (Ahmad confirm): spec = 35% off the Walk-Through, i.e. Walk-Through &times; 0.65.
-             Off a $7,000 Walk-Through that is $4,550. Adjust freely; the Stripe charge is gated on the
-             STRIPE_PRICE_GL_AI_AUTOMATION_BOOK env (undefined = reserve flow, never a wrong charge). -->
-        <div class="pf-adopt-price">$4,550 <small>one-time &middot; 35% off the Walk-Through (figure to confirm)</small></div>
-        <ul>
-          <li>The same playbook the Concierge uses &mdash; simple step-by-step with screenshots</li>
-          <li>Accounts, first prompts, the automation loop, safe practices</li>
-          <li>Claude Cowork+Code &middot; ChatGPT+Codex &middot; Gemini</li>
-          <li>Instant digital delivery</li>
-        </ul>
-        <p class="pf-adopt-value">&ldquo;Same playbook the concierge uses &mdash; I followed it myself over a weekend and saved thousands.&rdquo;</p>
-        <a class="pf-cta" href="/product.html?id=gl-ai-automation-setup-book" style="text-decoration:none;display:block;text-align:center;background:transparent;border:1px solid #c5a059;color:#f1dca7">GET THE DIY BOOK &rarr;</a>
-        <p class="pf-adopt-note">Also listed in the <a href="/growth-library.html#ai-automation-book" style="color:#c5a059">Growth Gallery</a>. Delivery + price finalize at launch.</p>
+      <!-- DIY Book — flip card. Same layout. Price = 35% off the Walk-Through (document-only); the Stripe charge is
+           gated on STRIPE_PRICE_GL_AI_AUTOMATION_BOOK (undefined = reserve flow, never a wrong charge). -->
+      <div class="pf-flip diy" tabindex="0">
+        <div class="pf-flip-inner">
+          <div class="pf-flip-face pf-flip-front">
+            <span class="pf-adopt-kind">Self-serve &middot; you do it yourself</span>
+            <h3>AI Automation Setup &mdash; DIY Book (PDF)</h3>
+            <div class="pf-adopt-price">$4,550<small>one-time &middot; 35% off the Walk-Through</small></div>
+            <p class="pf-adopt-hook">The same playbook &mdash; do it yourself over a weekend.</p>
+            <a class="pf-cta" href="/product.html?id=gl-ai-automation-setup-book" style="text-decoration:none;display:block;text-align:center;background:transparent;border:1px solid #c5a059;color:#f1dca7">GET THE DIY BOOK &rarr;</a>
+            <p class="pf-flip-hint">Hover or tap for details</p>
+          </div>
+          <div class="pf-flip-face pf-flip-back">
+            <p class="pf-back-label">What&rsquo;s inside</p>
+            <ul>
+              <li>The same playbook the Concierge uses &mdash; simple step-by-step with screenshots</li>
+              <li>Accounts, first prompts, the automation loop, safe practices</li>
+              <li>Claude Cowork+Code &middot; ChatGPT+Codex &middot; Gemini</li>
+              <li>Instant digital delivery</li>
+            </ul>
+            <p class="pf-adopt-value">&ldquo;Same playbook the concierge uses &mdash; I followed it myself over a weekend and saved thousands.&rdquo;</p>
+            <a class="pf-cta" href="/product.html?id=gl-ai-automation-setup-book" style="text-decoration:none;display:block;text-align:center;background:transparent;border:1px solid #c5a059;color:#f1dca7">GET THE DIY BOOK &rarr;</a>
+            <p class="pf-adopt-note">Document-only version of the Walk-Through (35% off). Also in the <a href="/growth-library.html#ai-automation-book" style="color:#c5a059">Growth Gallery</a>. Delivery + price finalize at launch.</p>
+          </div>
+        </div>
       </div>
     </div>
+    <script>
+    /* Touch support: tap a flip card (anywhere except its button/link) to flip it. Hover + keyboard focus flip via CSS. */
+    (function(){
+      var cards=document.querySelectorAll('.pf-adopt .pf-flip');
+      Array.prototype.forEach.call(cards,function(card){
+        card.addEventListener('click',function(e){
+          if(e.target.closest('a,button'))return; // let the CTA work normally
+          card.classList.toggle('is-flipped');
+        });
+      });
+    })();
+    </script>
     <!-- Cookbook add-on (STRIPE-PRICE-LIST-TO-CREATE.md): FREE with the Walk-Through, $45 standalone. Price is
          staged in stripe-checkout.js as the `cookbook` key (STRIPE_PRICE_COOKBOOK, env-only) — the buy button
          lights up when Ahmad creates the Stripe price at launch. Honest until then: no live/broken checkout. -->
