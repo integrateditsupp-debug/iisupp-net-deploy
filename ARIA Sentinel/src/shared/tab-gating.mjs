@@ -25,7 +25,7 @@ export const ALWAYS_OPEN_TABS = Object.freeze(["settings"]);
 // trial or any paid plan. A locked click shows a DISMISSIBLE upsell (never a wall); the baseline stays usable.
 export const GATED_TABS = Object.freeze([
   "control-center", "recipes", "compliance-privacy",
-  "reports", "knowledge", "system", "servicenow"
+  "reports", "knowledge", "system", "integrations"
 ]);
 
 // Honest locked-tab copy (Rule 14 — no fabricated urgency; real days-left is filled in by the renderer).

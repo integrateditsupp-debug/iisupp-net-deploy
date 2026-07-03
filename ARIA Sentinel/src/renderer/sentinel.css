@@ -1018,3 +1018,58 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .companion-input { width: 100%; box-sizing: border-box; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--aria-border); background: var(--aria-bg); color: var(--aria-text); font: inherit; margin: 4px 0; }
 .companion-input:focus { outline: none; border-color: var(--aria-gold); }
 .companion-copy { white-space: pre-wrap; word-break: break-word; font: 12px/1.55 var(--aria-font-mono); background: var(--aria-bg); border: 1px solid var(--aria-border); border-radius: 10px; padding: 12px; color: #eadfc4; margin: 6px 0; }
+
+/* ============ DENSITY REDESIGN (2026-07-02) — premium progressive disclosure ============ */
+/* Accordion: a one-line summary collapsed by default; the full section expands on demand. Rule 15 keeps
+   every capability reachable — density is achieved by COLLAPSING, never by deleting. Native <details>. */
+.accordion { border: 1px solid var(--aria-border); border-radius: 14px; background: var(--aria-grad-card); margin: 12px 0; overflow: hidden; }
+.accordion + .accordion { margin-top: 10px; }
+.accordion > .accordion-summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 16px 18px; user-select: none; }
+.accordion > .accordion-summary::-webkit-details-marker { display: none; }
+.accordion > .accordion-summary:hover { background: var(--aria-gold-tint-bg); }
+.accordion > .accordion-summary:focus-visible { outline: 2px solid var(--aria-gold); outline-offset: -2px; }
+.accordion-title { font-family: var(--aria-font-display); font-size: 15px; color: var(--aria-gold-light); flex: 0 0 auto; }
+.accordion-sub { color: var(--aria-text-2); font-size: 12.5px; flex: 1 1 auto; line-height: 1.4; }
+.accordion-caret { color: var(--aria-gold); font-size: 12px; transition: transform .18s ease; flex: 0 0 auto; }
+.accordion[open] > .accordion-summary > .accordion-caret { transform: rotate(90deg); }
+.accordion[open] > .accordion-summary { border-bottom: 1px solid var(--aria-border-soft); }
+.accordion-body { padding: 4px 18px 18px; }
+.accordion-body > .panel:first-child { margin-top: 12px; }
+
+/* Integrations tab — grouped status cards (RESTORED 2026-07-02). */
+.integrations-groups { display: block; margin: 8px 0 4px; }
+.integration-group { margin: 6px 0 18px; }
+.integration-group-head { display: flex; align-items: center; gap: 10px; margin: 4px 2px 10px; }
+.integration-group-head h3 { font-family: var(--aria-font-display); font-size: 14px; color: var(--aria-text); margin: 0; }
+.integration-count { font-size: 11px; color: var(--aria-text-muted); border: 1px solid var(--aria-border); border-radius: 999px; padding: 1px 8px; }
+.integrations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.integration-card { background: var(--aria-grad-card); border: 1px solid var(--aria-border); border-radius: 13px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+.integration-card:hover { border-color: var(--aria-gold-tint-bd); }
+.integration-top { display: flex; align-items: center; justify-content: space-between; }
+.integration-icon { font-size: 20px; }
+.int-badge { font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; border-radius: 999px; padding: 2px 9px; border: 1px solid var(--aria-border); color: var(--aria-text-2); }
+.int-badge.connected { color: #06231f; background: var(--aria-success); border-color: var(--aria-success); }
+.int-badge.not_configured { color: var(--aria-text-2); }
+.int-badge.error { color: var(--aria-error); border-color: var(--aria-error); }
+.integration-name { font-size: 13.5px; font-weight: 600; color: var(--aria-gold-light); margin: 2px 0 0; }
+.integration-desc { font-size: 11.5px; color: var(--aria-text-2); line-height: 1.45; margin: 0; }
+.integration-detail { font-size: 11px; color: var(--aria-text-muted); line-height: 1.4; margin: 2px 0 0; }
+.integration-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.integration-actions .int-link { padding: 5px 10px; font-size: 11.5px; }
+.int-result { font-size: 11px; color: var(--aria-text-muted); }
+.int-result.pass { color: var(--aria-success); }
+.int-result.fail { color: var(--aria-error); }
+
+/* SLA / KPI live charts — real-or-empty. A chart with real data, or a clean empty state, never fabricated. */
+.kpi-chart-panel { background: var(--aria-grad-card); border: 1px solid var(--aria-border); border-radius: 14px; padding: 16px 18px; margin: 12px 0; }
+.kpi-chart-panel .chart-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.kpi-chart-panel .chart-head h3 { font-family: var(--aria-font-display); font-size: 14px; color: var(--aria-gold-light); margin: 0; }
+.kpi-chart-panel .chart-head .chart-sub { font-size: 11.5px; color: var(--aria-text-muted); }
+.kpi-chart { width: 100%; display: block; }
+.chart-empty { font-size: 12px; color: var(--aria-text-muted); padding: 18px 4px; text-align: center; line-height: 1.5; }
+.chart-bars { display: grid; gap: 8px; }
+.chart-bar-row { display: grid; grid-template-columns: 96px 1fr auto; align-items: center; gap: 10px; font-size: 12px; }
+.chart-bar-row .cb-label { color: var(--aria-text-2); }
+.chart-bar-track { background: var(--aria-inset); border-radius: 999px; height: 10px; overflow: hidden; }
+.chart-bar-fill { height: 100%; background: var(--aria-grad-gold); border-radius: 999px; }
+.chart-bar-row .cb-val { color: var(--aria-gold-light); font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }

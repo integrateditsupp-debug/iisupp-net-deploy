@@ -41,6 +41,8 @@ import { enumerate as enumerateSystem, buildSystemContext } from "./system-conte
 import { TIER0_RECIPES, preview as previewTier0, tier0ById } from "./recipes/tier-0/index.mjs";
 import { loadSymptomKb } from "../shared/symptom-kb.mjs";
 import { diagnose as diagnoseSymptom } from "../shared/diagnostic-reasoner.mjs";
+import { executorForSymptom } from "../shared/symptom-executor.mjs"; // F1 — matched symptom → vetted Tier-0 executor
+import { resolveIntegrations, testIntegration as runIntegrationTest } from "../shared/integrations.mjs"; // Integrations tab (read-only status)
 // RUN 21 — auto-update orchestrator · startup hook · heartbeat. (R11 private-folder guard applied.)
 import { checkForUpdate } from "./update-listener.mjs";
 import * as orchestrator from "./update-orchestrator.mjs";
@@ -384,7 +386,15 @@ function createMainWindow() {
           const planShown = !(document.getElementById('planModal')||{hidden:true}).hidden;
           const qa = document.getElementById('dashDiagnose'); qa && qa.click();
           const afterQa = (document.querySelector('.tab-panel.active')||{}).id;
-          return JSON.stringify({hasSentinel, before, afterNav, navStyled, lockedShown, planShown, afterQa});
+          // Integrations RESTORE + tab-set-complete probe (2026-07-02): the Integrations tab activates and hosts
+          // every connector section; the full expected tab set is present and ServiceNow is no longer top-level.
+          const intBtn = document.querySelector('.nav-item[data-tab="integrations"]');
+          intBtn && intBtn.click();
+          const afterIntegrations = (document.querySelector('.tab-panel.active')||{}).id;
+          const intSections = ['sn-section','entra-section','remote-section','ext-section','notify-section'].every(id=>!!document.getElementById(id));
+          const intGrid = !!document.getElementById('integrationsGrid');
+          const tabSet = Array.from(document.querySelectorAll('.nav-item[data-tab]')).map(b=>b.getAttribute('data-tab'));
+          return JSON.stringify({hasSentinel, before, afterNav, navStyled, lockedShown, planShown, afterQa, afterIntegrations, intSections, intGrid, tabSet});
         }catch(e){return 'PROBE_THREW: '+(e&&e.stack||e);}})()`, true).catch((e) => "EXECJS_FAILED: " + e);
         push("[probe] " + probe);
       } catch (e) { push("[hook-error] " + (e && e.stack || e)); }
@@ -815,8 +825,13 @@ function listTier0Recipes() {
 async function runDiagnose(message) {
   const context = await getSystemContext({});
   const result = diagnoseSymptom(String(message || ""), getSymptomKb(), context || {});
-  logEvent("DIAGNOSE", `Symptom matched: ${result.topSymptom || "unrecognized"} (${result.causes.length} ranked causes).`);
-  return { ok: true, ...result };
+  // F1 — bind the matched symptom to its vetted, reversible Tier-0 executor (printer → restart-print-spooler)
+  // so "Resolve it for me" actually runs the gated fix. Empty when no safe one-click fix exists → the caller
+  // honestly routes to the guided walk-through instead of a resolve that would be held (Rule 14).
+  const topId = (result.matches && result.matches[0] && result.matches[0].id) || "";
+  const recipeId = executorForSymptom(topId);
+  logEvent("DIAGNOSE", `Symptom matched: ${result.topSymptom || "unrecognized"} (${result.causes.length} ranked causes)${recipeId ? " · bound fix " + recipeId : ""}.`);
+  return { ok: true, ...result, recipeId };
 }
 
 // ── RUN 21 — auto-update orchestrator · startup registration · heartbeat ────────────────────────────
@@ -3461,6 +3476,8 @@ ipcMain.handle("sentinel:report-error", (_event, payload = {}) => {
   handleSelfError(new Error(safeShortText(payload.message, "renderer error")), payload.source || "renderer");
   return { ok: true };
 });
+ipcMain.handle("sentinel:get-integrations", () => ({ items: resolveIntegrations(process.env) })); // Integrations tab — read-only status
+ipcMain.handle("sentinel:integration-test", (_event, id) => runIntegrationTest(String(id || ""), process.env)); // read-only per-card test
 ipcMain.handle("sentinel:sn-test", () => serviceNowTestConnection());
 ipcMain.handle("sentinel:sn-raise", (_event, recipeId, context) => serviceNowRaiseIncident(recipeId, context || {}));
 ipcMain.handle("sentinel:sn-list", () => serviceNowListIncidents());

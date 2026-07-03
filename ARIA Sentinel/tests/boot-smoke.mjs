@@ -61,6 +61,15 @@ assert.equal(probe.navStyled, true, "clicking the ARIA nav item styles it active
 assert.equal(probe.afterNav, "aria", "clicking the ARIA nav item SWITCHES to the ARIA panel (the dead-shell is gone)");
 assert.equal(probe.afterQa, "aria", "the Dashboard 'Diagnose issue' Quick Action fired (routed to ARIA)");
 
+// INTEGRATIONS RESTORE + tab-set-complete boot probe (2026-07-02) — the Integrations tab activates at runtime,
+// hosts every connector section, and the full expected 11-tab set is present (ServiceNow folded in, not lost).
+const EXPECTED_TABS = ["dashboard", "aria", "control-center", "recipes", "walkthrough",
+  "compliance-privacy", "reports", "knowledge", "system", "integrations", "settings"];
+assert.equal(probe.afterIntegrations, "integrations", "clicking the Integrations nav item activates the Integrations panel");
+assert.equal(probe.intGrid, true, "the Integrations status grid is present");
+assert.equal(probe.intSections, true, "Integrations hosts every section (ServiceNow + Entra + Remote + extensions + Slack/Teams)");
+assert.deepEqual(probe.tabSet, EXPECTED_TABS, "the full expected tab set is present (nothing silently vanished); ServiceNow is no longer top-level");
+
 // P1 OVERLAY ONE-BOX — opening the companion shows EXACTLY ONE box, no ghost #companionPanel, globe visible.
 const om = out.match(/\[overlay-probe\]\s*(\{.*\})/);
 assert.ok(om, `no overlay probe in the boot output:\n${out}`);

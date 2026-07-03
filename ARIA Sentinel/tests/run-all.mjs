@@ -56,6 +56,10 @@ const TESTS = [
   "./license.test.mjs",
   "./c2-pilot-state.test.mjs",   // RUN-C C2 — free-pilot mechanic
   "./a1-empty-state-no-fabrication.test.mjs",   // RUN-A A1 — Rule 14 real-or-empty (no fabricated metrics)
+  "./admin-console-honesty.test.mjs",   // H1 (2026-07-02) — Rule 14 real-or-empty for the admin console (no fabricated fleet)
+  "./symptom-executor.test.mjs",        // F1 (2026-07-02) — matched symptom → vetted Tier-0 executor binding (resolve actually runs)
+  "./integrations-tab-restore.test.mjs",// Integrations tab RESTORE (2026-07-02, Rule 15) — full tab set + every connector section
+  "./density-charts-collapse.test.mjs", // Density (2026-07-02) — SLA/KPIs as live charts + heavy sections collapse by default
   "./auto-update.test.mjs",
   "./api-v1.test.mjs",
   "./patch-management.test.mjs",

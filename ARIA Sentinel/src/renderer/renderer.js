@@ -29,7 +29,7 @@ const TAB_TITLES = {
   reports: "Reports",
   knowledge: "Knowledge & policy",
   system: "System",
-  servicenow: "ServiceNow",
+  integrations: "Integrations", // RESTORED 2026-07-02 — hosts ServiceNow + Entra + Remote + browser ext + Slack/Teams (Rule 15)
   settings: "Settings"
 };
 // RUN 23d — old tab routes redirect to their new parent + the in-page anchor (= the old tab id),
@@ -48,6 +48,11 @@ const TAB_REDIRECTS = {
   privacy: { tab: "compliance-privacy", anchor: "privacy" },
   "system-context": { tab: "system", anchor: "system-context" },
   "cross-platform": { tab: "system", anchor: "cross-platform" },
+  // Integrations restore — old "servicenow" tab/deep-link routes to the Integrations tab's ServiceNow section
+  // (every prior nav call, hotkey, and integration-card deep-link keeps working — Rule 15).
+  servicenow: { tab: "integrations", anchor: "sn-section" },
+  entra: { tab: "integrations", anchor: "entra-section" },
+  remote: { tab: "integrations", anchor: "remote-section" },
   mode: { tab: "settings", anchor: "mode" },
   hotkeys: { tab: "settings", anchor: "hotkeys" },
   troubleshoot: { tab: "settings", anchor: "troubleshoot" },
@@ -127,7 +132,7 @@ function runTabLoaders(target) {
   if (target === "compliance-privacy") loadCompliance();
   if (target === "system") { loadSystemContext(); loadBlueprints(); }
   if (target === "settings") loadUpdatesPanel();
-  if (target === "servicenow") loadIncidents();
+  if (target === "integrations") { loadIntegrations(); loadIncidents(); } // Integrations tab — status grid + ServiceNow incidents
   if (target === "recipes") renderTier0();
   if (target === "reports") loadReports();
   if (target === "walkthrough") loadWalkthrough();
@@ -147,7 +152,7 @@ async function loadWalkthrough() {
 // Render the step-by-step guided fix (or an honest fallback). REAL-OR-EMPTY: authored steps render Next/Back/Done;
 // a matched-but-unauthored recipe shows the verified KB article + gated-resolve option (never a fake/blank walk);
 // no target shows a short explainer + "Describe your problem" that routes into the ARIA chat.
-function renderWalkthrough(target) {
+async function renderWalkthrough(target) {
   walkthroughTarget = target || null;
   const body = qs("#walkthroughBody");
   const titleEl = qs("#walkthroughTitle");
@@ -184,18 +189,27 @@ function renderWalkthrough(target) {
   if (titleEl) titleEl.textContent = "Walk-through" + (recipeId ? " · " + recipeId : "");
 
   // Real-or-empty fallback — a matched recipe with no authored steps yet. Never fabricate a walk; offer the
-  // verified KB article + the gated-resolve path instead.
+  // verified KB article + (only when a genuinely safe auto-fix is bound) the gated-resolve path. F1 (2026-07-02):
+  // gate the "Resolve it for me" offer on isVettedRecipe so we NEVER surface a resolve that would be held with
+  // "(none) is not in the signed catalog" — an unvetted/empty id shows the article + Ask ARIA only (Rule 14).
   if (!steps.length) {
     const kbUrl = "https://iisupp.net/aria" + (recipeId ? "?article=" + encodeURIComponent(recipeId) : "");
+    let vetted = false;
+    if (recipeId) { try { vetted = Boolean((await sentinel.isVettedRecipe?.(recipeId))?.vetted); } catch { vetted = false; } }
     body.innerHTML = `
-      <p class="note">Guided steps for this exact issue are being written. Here's the verified knowledge-base article, or you can let ARIA resolve it for you (gated — you approve, with a countdown and one-click stop).</p>
+      <p class="note">${vetted
+        ? "Guided steps for this exact issue are being written. Here's the verified knowledge-base article, or you can let ARIA resolve it for you (gated — you approve, with a countdown and one-click stop)."
+        : "Guided steps for this exact issue are being written. Here's the verified knowledge-base article. There's no safe one-click auto-fix for this one yet — ask ARIA and I'll walk you through it."}</p>
       <div class="button-row">
         <a class="ghost" href="${escapeHtml(kbUrl)}" target="_blank" rel="noopener">Open the KB article ↗</a>
-        <button class="primary" data-walkthrough-resolve="${escapeHtml(recipeId)}">Resolve it for me (gated)</button>
+        ${vetted
+          ? `<button class="primary" data-walkthrough-resolve="${escapeHtml(recipeId)}">Resolve it for me (gated)</button>`
+          : `<button class="ghost" id="walkthroughAskAria">Ask ARIA</button>`}
       </div>
       <p class="note resolve-status" id="walkthroughResolveStatus" hidden></p>`;
     const rb = qs("[data-walkthrough-resolve]");
     if (rb) rb.addEventListener("click", () => runAction(rb, () => resolveViaSupervisor(recipeId, "medium", qs("#walkthroughResolveStatus"))));
+    qs("#walkthroughAskAria")?.addEventListener("click", () => { activateTab("aria"); qs("#ariaChatInput")?.focus(); });
     return;
   }
 
@@ -321,7 +335,13 @@ function scrollToAnchor(anchorId) {
   // Defer one frame so the freshly-shown panel is laid out before we scroll to the in-page anchor.
   requestAnimationFrame(() => {
     const el = qs(`#${anchorId}`);
-    if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!el) return;
+    // If the anchor is (or lives inside) a collapsed <details> accordion, open it so the deep-linked
+    // content is actually visible — density collapse must never hide a targeted section.
+    const details = el.closest && el.closest("details");
+    if (details) details.open = true;
+    else if (el.tagName === "DETAILS") el.open = true;
+    if (el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
@@ -586,6 +606,89 @@ function renderDiagnostic(report) {
       <em class="${r.ok ? "diag-ok" : r.severity === "warn" ? "diag-warn" : "diag-fail"}">${r.ok ? "PASS" : r.severity === "warn" ? "WARN" : "FAIL"}</em>
     </div>
   `).join("");
+}
+
+// Integrations tab (RESTORED 2026-07-02) — draw every integration as a status card grouped by area. Status
+// is READ-ONLY and real-or-empty: a card is "Connected" only after a verified Test connection; otherwise
+// "Not connected". Cards deep-link to the in-tab section that holds their full config (Rule 15 — nothing lost).
+const INTEGRATION_STATUS_LABELS = { connected: "Connected", not_configured: "Not connected", error: "Error" };
+
+async function loadIntegrations() {
+  const host = qs("#integrationsGrid");
+  if (!host) return;
+  const data = sentinel.getIntegrations ? await sentinel.getIntegrations().catch(() => null) : null;
+  const items = Array.isArray(data && data.items) ? data.items : [];
+  if (!items.length) {
+    host.innerHTML = `<p class="note">No integrations available.</p>`;
+    return;
+  }
+  const groups = [];
+  for (const item of items) {
+    let group = groups.find((g) => g.name === item.group);
+    if (!group) { group = { name: item.group, cards: [] }; groups.push(group); }
+    group.cards.push(item);
+  }
+  host.innerHTML = groups.map((group) => `
+    <section class="integration-group">
+      <header class="integration-group-head">
+        <h3>${escapeHtml(group.name)}</h3>
+        <span class="integration-count">${group.cards.length}</span>
+      </header>
+      <div class="integrations-grid">
+        ${group.cards.map(renderIntegrationCard).join("")}
+      </div>
+    </section>`).join("");
+  qsa("#integrationsGrid [data-goto]").forEach((button) => {
+    button.addEventListener("click", () => scrollToAnchor(button.dataset.goto));
+  });
+  qsa("#integrationsGrid [data-test-for]").forEach((button) => {
+    button.addEventListener("click", () => runIntegrationCardTest(button));
+  });
+}
+
+function renderIntegrationCard(card) {
+  const status = INTEGRATION_STATUS_LABELS[card.status] ? card.status : "not_configured";
+  const label = INTEGRATION_STATUS_LABELS[status];
+  const canTest = card.id === "servicenow" || card.id === "entra"; // only these two have a live read-only probe
+  const manage = card.goto ? `<button class="ghost int-link" data-goto="${escapeHtml(card.goto)}">Configure →</button>` : "";
+  return `
+    <article class="integration-card" data-integration="${escapeHtml(card.id)}">
+      <div class="integration-top">
+        <span class="integration-icon" aria-hidden="true">${escapeHtml(card.icon || "🔌")}</span>
+        <span class="int-badge ${status}">${escapeHtml(label)}</span>
+      </div>
+      <h4 class="integration-name">${escapeHtml(card.name)}</h4>
+      <p class="integration-desc">${escapeHtml(card.description || "")}</p>
+      ${card.statusDetail ? `<p class="integration-detail">${escapeHtml(card.statusDetail)}</p>` : ""}
+      <div class="integration-actions">
+        ${canTest ? `<button class="ghost" data-test-for="${escapeHtml(card.id)}" title="Read-only connection test">Test connection</button>` : ""}
+        ${manage}
+        <span class="int-result" data-result-for="${escapeHtml(card.id)}" hidden></span>
+      </div>
+    </article>`;
+}
+
+async function runIntegrationCardTest(button) {
+  const id = button.dataset.testFor;
+  const out = qs(`#integrationsGrid [data-result-for="${cssEscape(id)}"]`);
+  const previous = button.textContent;
+  button.disabled = true; button.textContent = "Testing…";
+  if (out) { out.hidden = false; out.classList.remove("pass", "fail"); out.textContent = "Checking…"; }
+  let res;
+  try { res = sentinel.testIntegration ? await sentinel.testIntegration(id) : { ok: false, message: "Unavailable" }; }
+  catch { res = { ok: false, message: "Connection test failed" }; }
+  button.disabled = false; button.textContent = previous;
+  const ok = Boolean(res && res.ok);
+  const message = (res && res.message) || (ok ? "Connected" : "Not connected");
+  if (out) { out.hidden = false; out.textContent = `${ok ? "✓" : "✕"} ${message}`; out.classList.remove("pass", "fail"); out.classList.add(ok ? "pass" : "fail"); }
+  const card = qs(`#integrationsGrid [data-integration="${cssEscape(id)}"]`);
+  const badge = card && card.querySelector(".int-badge");
+  if (badge) {
+    const state = ok ? "connected" : (/not connected|not configured/i.test(message) ? "not_configured" : "error");
+    badge.classList.remove("connected", "not_configured", "error");
+    badge.classList.add(state);
+    badge.textContent = INTEGRATION_STATUS_LABELS[state];
+  }
 }
 
 async function loadIncidents() {
@@ -1425,7 +1528,12 @@ function wireRun20() {
     return ctx;
   }));
   const search = qs("#systemContextSearch");
-  if (search) search.addEventListener("input", () => renderSystemContextApps(search.value.trim().toLowerCase()));
+  if (search) search.addEventListener("input", () => {
+    // Density: the app inventory is collapsed by default — typing a search auto-expands it so results are visible.
+    const acc = qs("#system-apps");
+    if (acc && search.value.trim()) acc.open = true;
+    renderSystemContextApps(search.value.trim().toLowerCase());
+  });
 }
 
 async function loadSystemContext() {
@@ -1648,11 +1756,41 @@ async function loadDashboard() {
   } catch (e) { reportRendererError(e, "dashboard"); }
 }
 
+// Density redesign (2026-07-02) — render SLA + KPIs as LIVE horizontal-bar charts (not raw number grids).
+// REAL-OR-EMPTY: a row is drawn only for a finite value; with no real values yet the host shows a clean
+// empty state ("appears after ARIA's first real fix"), never a fabricated bar. `rows`: [{label,value,max,unit}].
+function renderBarChart(hostId, rows, { empty } = {}) {
+  const host = qs(`#${hostId}`);
+  if (!host) return;
+  const real = (rows || []).filter((r) => Number.isFinite(Number(r.value)));
+  if (!real.length) {
+    host.innerHTML = `<p class="chart-empty">${escapeHtml(empty || "No data yet — this chart appears after ARIA's first real fix.")}</p>`;
+    return;
+  }
+  host.innerHTML = `<div class="chart-bars">${real.map((r) => {
+    const max = Number.isFinite(Number(r.max)) && Number(r.max) > 0 ? Number(r.max) : 100;
+    const pct = Math.max(0, Math.min(100, (Number(r.value) / max) * 100));
+    return `<div class="chart-bar-row"><span class="cb-label">${escapeHtml(r.label)}</span>` +
+      `<span class="chart-bar-track"><span class="chart-bar-fill" style="width:${pct.toFixed(1)}%"></span></span>` +
+      `<span class="cb-val">${escapeHtml(r.value)}${escapeHtml(r.unit || "")}</span></div>`;
+  }).join("")}</div>`;
+}
+
 async function loadPerformance() {
   try {
     const p = (await sentinel.getPerformance?.()) || {};
-    setHtml("perfOperational", PerformanceTab.operationalTilesHtml(p.operational || {}));
-    setHtml("perfAI", PerformanceTab.aiTilesHtml(p.ai || {}));
+    const op = p.operational || {}, ai = p.ai || {};
+    // Live chart (default view): the rate KPIs on a shared 0–100 scale. Real-or-empty.
+    renderBarChart("perfChart", [
+      { label: "First-touch", value: op.ftr, max: 100, unit: "%" },
+      { label: "Auto-resolved", value: op.autoPct, max: 100, unit: "%" },
+      { label: "Recipe success", value: op.recipeSuccess, max: 100, unit: "%" },
+      { label: "Diagnosis acc.", value: ai.accuracy, max: 100, unit: "%" },
+      { label: "KB hit rate", value: ai.kbHitRate, max: 100, unit: "%" }
+    ], { empty: "Operational KPIs appear here as a live chart after ARIA's first real fixes." });
+    // Full number grids stay available (collapsed under "See the numbers") — Rule 15.
+    setHtml("perfOperational", PerformanceTab.operationalTilesHtml(op));
+    setHtml("perfAI", PerformanceTab.aiTilesHtml(ai));
     setHtml("perfUsage", PerformanceTab.usageHtml(p.usage || {}));
   } catch (e) { reportRendererError(e, "performance"); }
 }
@@ -1662,7 +1800,16 @@ async function loadSla() {
     const s = (await sentinel.getSla?.()) || {};
     setText("slaComposite", `${s.compliance?.composite ?? 0}% SLA-met this month`);
     setText("slaComplianceNote", SlaTab.complianceLine(s.compliance || {}));
-    setHtml("slaUptime", SlaTab.uptimeTilesHtml(s.uptime || {}));
+    // Live chart (default view): uptime across windows on a 0–100 scale. Real-or-empty.
+    const u = s.uptime || {};
+    renderBarChart("slaChart", [
+      { label: "Uptime 24h", value: u.h24, max: 100, unit: "%" },
+      { label: "Uptime 7d", value: u.d7, max: 100, unit: "%" },
+      { label: "Uptime 30d", value: u.d30, max: 100, unit: "%" },
+      { label: "Uptime 90d", value: u.d90, max: 100, unit: "%" }
+    ], { empty: "Uptime trend appears here as a live chart once ARIA has run long enough to measure it." });
+    // Full number grids + severity rows stay available (collapsed) — Rule 15.
+    setHtml("slaUptime", SlaTab.uptimeTilesHtml(u));
     setHtml("slaResponse", SlaTab.severityRowsHtml(s.compliance?.response || {}, s.thresholds?.response || {}));
     setHtml("slaResolution", SlaTab.severityRowsHtml(s.compliance?.resolution || {}, s.thresholds?.resolution || {}));
     setHtml("slaBreaches", SlaTab.breachRowsHtml(s.breaches || [], s.credits || {}));

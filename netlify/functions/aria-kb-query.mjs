@@ -191,9 +191,15 @@ export async function handler(event) {
     const m = String(s).match(/^---\s*\n[\s\S]*?\n---\s*\n([\s\S]*)$/);
     return m ? m[1].trim() : s;
   }
-  // Trim content for response
+  // Trim content for response. F2 (2026-07-02) — cut at the last clean line break, never mid-line/mid-word,
+  // so a section like the printer "Escalation Trigger" never renders as a dangling "Print server (`".
   let content = stripFrontmatter(top.chunk.content || "");
-  if (content.length > 4000) content = content.slice(0, 4000) + "\n…[truncated — see iisupp.net/aria for full article]";
+  if (content.length > 4000) {
+    let cut = content.slice(0, 4000);
+    const lastBreak = cut.lastIndexOf("\n");
+    if (lastBreak > 2000) cut = cut.slice(0, lastBreak);
+    content = cut.trimEnd() + "\n…[truncated — see iisupp.net/aria for full article]";
+  }
 
   return json(200, {
     match: true,
