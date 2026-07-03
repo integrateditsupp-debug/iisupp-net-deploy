@@ -269,6 +269,60 @@
     .pf-tier-tag{color:rgba(255,255,255,.55);font-size:11.5px;margin-top:10px}
     .pf-tier-tag b{color:#f1dca7}
     .pf-save-foot{color:rgba(255,255,255,.42);font-size:11px;line-height:1.55;margin:16px auto 0;text-align:center;max-width:780px}
+    /* Manual user entry — the primary way a real business plugs in its size (two-way synced with the slider). */
+    .pf-users-entry{margin-top:12px}
+    .pf-users-entry label{color:rgba(255,255,255,.7);font-size:10.5px;letter-spacing:.03em;text-transform:none;font-weight:500;margin-bottom:5px}
+    .pf-users-entry input{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(197,160,89,.3);color:#fff;padding:10px 12px;border-radius:9px;font-size:15px;font-family:Cinzel,serif;font-weight:700;box-sizing:border-box;letter-spacing:.02em}
+    .pf-users-entry input:focus{outline:none;border-color:#c5a059;box-shadow:0 0 0 3px rgba(197,160,89,.15)}
+    /* Savings donut — the whole ring = the traditional annual cost; gold = ARIA, green = what you save. */
+    .pf-save-readout{display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center}
+    @media (max-width:520px){.pf-save-readout{grid-template-columns:1fr;justify-items:center;text-align:center}}
+    .pf-donut-wrap{position:relative;width:150px;height:150px}
+    .pf-donut{width:150px;height:150px;transform:rotate(-90deg)}
+    .pf-donut circle{fill:none;stroke-width:16;stroke-linecap:butt}
+    .pf-donut-track{stroke:rgba(255,255,255,.08)}
+    .pf-donut-aria{stroke:url(#svGoldGrad);transition:stroke-dasharray .7s cubic-bezier(.4,.15,.2,1),stroke-dashoffset .7s cubic-bezier(.4,.15,.2,1)}
+    .pf-donut-save{stroke:#5fd08a;transition:stroke-dasharray .7s cubic-bezier(.4,.15,.2,1),stroke-dashoffset .7s cubic-bezier(.4,.15,.2,1)}
+    .pf-donut.neg .pf-donut-save{stroke:#e78d8d}
+    .pf-donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 6px}
+    .pf-donut-big{font-family:Cinzel,serif;font-weight:700;font-size:21px;line-height:1.05;color:#5fd08a}
+    .pf-donut.neg ~ .pf-donut-center .pf-donut-big,.pf-donut-center.neg .pf-donut-big{color:#f1dca7}
+    .pf-donut-pct{font-family:Cinzel,serif;font-weight:700;font-size:13px;color:#f1dca7;margin-top:2px}
+    .pf-donut-small{color:rgba(255,255,255,.55);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
+    .pf-donut-legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 0;font-size:11.5px;color:rgba(255,255,255,.66)}
+    .pf-donut-legend span{display:inline-flex;align-items:center;gap:6px}
+    .pf-donut-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+    .pf-quote-btn{margin-top:16px;display:inline-flex;align-items:center;gap:9px;background:transparent;border:1px solid rgba(197,160,89,.5);color:#f1dca7;padding:11px 20px;border-radius:11px;font-family:Cinzel,serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:background .15s,box-shadow .15s}
+    .pf-quote-btn:hover{background:rgba(197,160,89,.1);box-shadow:0 10px 26px rgba(197,160,89,.22)}
+    .pf-quote-btn svg{width:15px;height:15px}
+    /* ---- Print-only branded quote (fix 5): self-contained, no CDN, no server call. ---- */
+    #pf-quote{display:none}
+    @media print{
+      body{background:#fff !important;color:#12100c !important}
+      body *{visibility:hidden}
+      #pf-quote,#pf-quote *{visibility:visible}
+      #pf-quote{display:block;position:absolute;left:0;top:0;width:100%;padding:0;color:#12100c;font-family:Inter,Arial,sans-serif}
+      #pf-quote .q-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #c5a059;padding-bottom:14px;margin-bottom:18px}
+      #pf-quote .q-brand{font-family:Cinzel,serif;font-weight:700;letter-spacing:.14em;font-size:16px;color:#12100c}
+      #pf-quote .q-brand small{display:block;font-family:Inter,sans-serif;font-weight:400;letter-spacing:.04em;font-size:11px;color:#6b6250;margin-top:3px}
+      #pf-quote .q-meta{text-align:right;font-size:11px;color:#6b6250;line-height:1.6}
+      #pf-quote h1{font-size:19px;margin:0 0 4px;color:#12100c}
+      #pf-quote .q-lead{font-size:12px;color:#4a4436;margin:0 0 16px}
+      #pf-quote table{width:100%;border-collapse:collapse;font-size:11.5px;margin:8px 0 4px}
+      #pf-quote th,#pf-quote td{text-align:left;padding:6px 8px;border-bottom:1px solid #e4ddca}
+      #pf-quote th{color:#8a7d5c;text-transform:uppercase;letter-spacing:.08em;font-size:9.5px}
+      #pf-quote td.n,#pf-quote th.n{text-align:right;font-variant-numeric:tabular-nums}
+      #pf-quote tr.q-total td{border-top:2px solid #c5a059;border-bottom:0;font-weight:700;font-size:12.5px;padding-top:9px}
+      #pf-quote .q-cards{display:flex;gap:14px;margin:18px 0}
+      #pf-quote .q-card{flex:1;border:1px solid #d9cfae;border-radius:10px;padding:12px 14px}
+      #pf-quote .q-card .q-k{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:#8a7d5c}
+      #pf-quote .q-card .q-v{font-family:Cinzel,serif;font-weight:700;font-size:18px;color:#12100c;margin-top:3px}
+      #pf-quote .q-card.q-save{background:#f2faf4;border-color:#bfe6cd}
+      #pf-quote .q-card.q-save .q-v{color:#1f8f52}
+      #pf-quote .q-assume{font-size:10px;color:#6b6250;line-height:1.7;margin-top:14px;border-top:1px solid #e4ddca;padding-top:10px}
+      #pf-quote .q-foot{font-size:9.5px;color:#8a7d5c;line-height:1.6;margin-top:16px;border-top:1px solid #e4ddca;padding-top:10px}
+      @page{margin:14mm}
+    }
   </style>
   <section class="pf-save" aria-label="Staffing-cost calculator">
     <div class="pf-save-head">
@@ -280,8 +334,12 @@
       <div class="pf-save-controls">
         <div class="pf-ctl">
           <label>Business size &mdash; <span class="pf-ctl-val" id="sv-users-val">250</span> employees</label>
-          <input type="range" id="sv-users" min="5" max="2000" step="5" value="250">
-          <div class="pf-range-ends"><span>5</span><span>2,000</span></div>
+          <input type="range" id="sv-users" min="1" max="2000" step="1" value="250">
+          <div class="pf-range-ends"><span>1</span><span>2,000+</span></div>
+          <div class="pf-users-entry">
+            <label for="sv-users-num">Enter your number of users</label>
+            <input type="number" id="sv-users-num" min="1" max="100000" step="1" value="250" inputmode="numeric" aria-label="Enter your number of users">
+          </div>
         </div>
         <div class="pf-ctl">
           <label>Support coverage</label>
@@ -319,10 +377,30 @@
           <div class="pf-bar-track"><div class="pf-bar-fill" id="sv-aria-bar"></div></div>
         </div>
         <div class="pf-save-readout">
-          <p class="pf-save-headline pos" id="sv-headline">&mdash;</p>
-          <p class="pf-save-sub" id="sv-subline"></p>
-          <p class="pf-tier-tag" id="sv-tier-tag"></p>
+          <div class="pf-donut-wrap">
+            <svg class="pf-donut" id="sv-donut" viewBox="0 0 120 120" aria-hidden="true">
+              <defs><linearGradient id="svGoldGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c5a059"/><stop offset="1" stop-color="#f1dca7"/></linearGradient></defs>
+              <circle class="pf-donut-track" cx="60" cy="60" r="52"></circle>
+              <circle class="pf-donut-aria" id="sv-donut-aria" cx="60" cy="60" r="52"></circle>
+              <circle class="pf-donut-save" id="sv-donut-save" cx="60" cy="60" r="52"></circle>
+            </svg>
+            <div class="pf-donut-center" id="sv-donut-center">
+              <div class="pf-donut-big" id="sv-donut-big">$0</div>
+              <div class="pf-donut-pct" id="sv-donut-pct"></div>
+              <div class="pf-donut-small" id="sv-donut-small">saved / yr</div>
+            </div>
+          </div>
+          <div class="pf-readout-txt">
+            <p class="pf-save-headline pos" id="sv-headline">&mdash;</p>
+            <p class="pf-save-sub" id="sv-subline"></p>
+            <p class="pf-donut-legend" id="sv-donut-legend"></p>
+          </div>
         </div>
+        <p class="pf-tier-tag" id="sv-tier-tag"></p>
+        <button type="button" class="pf-quote-btn" id="sv-quote-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Download quote (PDF)
+        </button>
         <div class="pf-time-line" id="sv-time"></div>
       </div>
     </div>
@@ -332,8 +410,11 @@
   (function(){
     var $=function(id){return document.getElementById(id);};
     var cov='always';
+    var lastModel=null;
     function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
-    function num(id,def){var el=$(id);if(!el)return def;var v=parseFloat(el.value);return isFinite(v)&&v>0?v:def;}
+    function clamp(v,min,max){return Math.min(Math.max(v,min),max);}
+    // Every adjustable input is parsed + CLAMPED to a sane range so totals can never explode (fix 2).
+    function readField(id,def,min,max){var el=$(id);if(!el)return def;var v=parseFloat(el.value);if(!isFinite(v))return def;return clamp(v,min,max);}
 
     // ---- Model config (Rule 14: every default is a labeled, adjustable input) ----
     var GROUPS=[
@@ -358,93 +439,140 @@
       {id:'trn', group:'itil',       name:'Training Coordinator',              hint:'Onboards & upskills',          salary:70000,  shift:false},
       {id:'dir', group:'leadership', name:'IT Director / Head of Service Desk',hint:'Owns service delivery',        salary:200000, shift:false}
     ];
+    var ROLE_BY_ID={};ROLES.forEach(function(r){ROLE_BY_ID[r.id]=r;});
+    var SAL_MIN=1000, SAL_MAX=2000000;
+    // Frontline ratios can't drop below 5 employees-per-agent (a whole desk per handful of staff is not real) → prevents runaway counts.
     var RATIO_FRONT=[
-      {k:'rL1',label:'L1 — 1 per',def:50},
-      {k:'rL2',label:'L2 — 1 per',def:150},
-      {k:'rL3',label:'L3 — 1 per',def:400}
+      {k:'rL1',label:'L1 — 1 per',def:50,min:5,max:100000},
+      {k:'rL2',label:'L2 — 1 per',def:150,min:5,max:100000},
+      {k:'rL3',label:'L3 — 1 per',def:400,min:5,max:100000}
     ];
     var RATIO_SUP=[
-      {k:'rTL', label:'Team Lead — 1 / N frontline',def:10},
-      {k:'rMgr',label:'Manager — 1 / N frontline',def:40},
-      {k:'rQA', label:'QA — 1 / N frontline',def:25},
-      {k:'rWFM',label:'Scheduler — 1 / N frontline',def:40},
-      {k:'rKM', label:'Knowledge — 1 / N users',def:500},
-      {k:'rProc',label:'Process Mgr — 1 / N users',def:500},
-      {k:'rTrn',label:'Trainer — 1 / N users',def:800}
+      {k:'rTL', label:'Team Lead — 1 / N frontline',def:10,min:1,max:100000},
+      {k:'rMgr',label:'Manager — 1 / N frontline',def:40,min:1,max:100000},
+      {k:'rQA', label:'QA — 1 / N frontline',def:25,min:1,max:100000},
+      {k:'rWFM',label:'Scheduler — 1 / N frontline',def:40,min:1,max:100000},
+      {k:'rKM', label:'Knowledge — 1 / N users',def:500,min:1,max:100000},
+      {k:'rProc',label:'Process Mgr — 1 / N users',def:500,min:1,max:100000},
+      {k:'rTrn',label:'Trainer — 1 / N users',def:800,min:1,max:100000}
     ];
     var THRESH=[
-      {k:'tMgr', label:'Manager starts at',def:75},
-      {k:'tWFM', label:'Scheduler starts at',def:100},
-      {k:'tKM',  label:'Knowledge starts at',def:100},
-      {k:'tRep', label:'Reporting starts at',def:150},
-      {k:'tProc',label:'Process Mgr starts at',def:250},
-      {k:'tTrn', label:'Training starts at',def:200},
-      {k:'tDir', label:'Director starts at',def:100}
+      {k:'tMgr', label:'Manager starts at',def:75,min:1,max:100000},
+      {k:'tWFM', label:'Scheduler starts at',def:100,min:1,max:100000},
+      {k:'tKM',  label:'Knowledge starts at',def:100,min:1,max:100000},
+      {k:'tRep', label:'Reporting starts at',def:150,min:1,max:100000},
+      {k:'tProc',label:'Process Mgr starts at',def:250,min:1,max:100000},
+      {k:'tTrn', label:'Training starts at',def:200,min:1,max:100000},
+      {k:'tDir', label:'Director starts at',def:100,min:1,max:100000}
     ];
+    // 24/7 multiplier CLAMPED 1–10 and applied exactly ONCE (fix 2 — no compounding).
     var COVF=[
-      {k:'mult',     label:'24/7 multiplier (×)',def:4.2},
-      {k:'wait',     label:'Avg helpdesk wait (hrs)',def:4},
-      {k:'incidents',label:'Incidents / user / mo',def:2}
+      {k:'mult',     label:'24/7 multiplier (×)',def:4.2,min:1,max:10},
+      {k:'wait',     label:'Avg helpdesk wait (hrs)',def:4,min:0,max:100},
+      {k:'incidents',label:'Incidents / user / mo',def:2,min:0,max:100}
     ];
+    var ALL_KNOBS=RATIO_FRONT.concat(RATIO_SUP,THRESH,COVF);
 
-    function fld(id,label,val){
-      return '<div class="pf-adj-fld"><label>'+label+'</label><input type="number" id="'+id+'" value="'+val+'" min="0" step="any"></div>';
+    function fld(id,label,val,min,max){
+      return '<div class="pf-adj-fld"><label>'+label+'</label><input type="number" id="'+id+'" value="'+val+'" min="'+min+'" max="'+max+'" step="any"></div>';
     }
     function buildAdj(){
-      $('sv-adj-sal').innerHTML=ROLES.map(function(r){return fld('sv-s-'+r.id,r.name,r.salary);}).join('');
-      $('sv-adj-front').innerHTML=RATIO_FRONT.map(function(x){return fld('sv-k-'+x.k,x.label,x.def);}).join('');
-      $('sv-adj-ratio').innerHTML=RATIO_SUP.map(function(x){return fld('sv-k-'+x.k,x.label,x.def);}).join('');
-      $('sv-adj-thr').innerHTML=THRESH.map(function(x){return fld('sv-k-'+x.k,x.label,x.def);}).join('');
-      $('sv-adj-cov').innerHTML=COVF.map(function(x){return fld('sv-k-'+x.k,x.label,x.def);}).join('');
+      $('sv-adj-sal').innerHTML=ROLES.map(function(r){return fld('sv-s-'+r.id,r.name,r.salary,SAL_MIN,SAL_MAX);}).join('');
+      $('sv-adj-front').innerHTML=RATIO_FRONT.map(function(x){return fld('sv-k-'+x.k,x.label,x.def,x.min,x.max);}).join('');
+      $('sv-adj-ratio').innerHTML=RATIO_SUP.map(function(x){return fld('sv-k-'+x.k,x.label,x.def,x.min,x.max);}).join('');
+      $('sv-adj-thr').innerHTML=THRESH.map(function(x){return fld('sv-k-'+x.k,x.label,x.def,x.min,x.max);}).join('');
+      $('sv-adj-cov').innerHTML=COVF.map(function(x){return fld('sv-k-'+x.k,x.label,x.def,x.min,x.max);}).join('');
     }
 
-    // ARIA annual price = the seat tier that matches the business size (honest mapping to the boxes above).
-    function ariaTier(n){
-      if(n<=1)return{name:'Personal',yr:10788};
-      if(n<=5)return{name:'Pro',yr:27000};
-      if(n<=50)return{name:'Small Business',yr:234000};
-      if(n<=250)return{name:'Mid-Size',yr:468000};
-      return{name:'Enterprise',yr:937500};
-    }
+    // ARIA annual price = the seat tier matching the business size. GENEROUS bands (fix 1) so that across the
+    // whole slider, in the default 24/7 state, the ARIA price stays at or below the traditional desk cost.
+    var TIER_BANDS=[
+      {name:'Personal',      max:5,       yr:10788},
+      {name:'Pro',           max:40,      yr:27000},
+      {name:'Small Business',max:150,     yr:234000},
+      {name:'Mid-Size',      max:500,     yr:468000},
+      {name:'Enterprise',    max:Infinity,yr:937500}
+    ];
+    function ariaTier(n){for(var i=0;i<TIER_BANDS.length;i++){if(n<=TIER_BANDS[i].max)return TIER_BANDS[i];}return TIER_BANDS[TIER_BANDS.length-1];}
 
+    // Size is driven by the manual number field (primary) — two-way synced with the slider (fix 3).
+    function readSize(){
+      var el=$('sv-users-num');var v=el?parseInt(el.value,10):NaN;
+      if(!isFinite(v)){v=parseInt($('sv-users').value,10);}
+      if(!isFinite(v))v=1;
+      return clamp(Math.round(v),1,100000);
+    }
     function knobs(){
-      var k={size:Math.max(1,Math.round(num('sv-users',250))),always:cov==='always'};
-      RATIO_FRONT.concat(RATIO_SUP,THRESH,COVF).forEach(function(x){k[x.k]=num('sv-k-'+x.k,x.def);});
+      var k={size:readSize(),always:cov==='always'};
+      ALL_KNOBS.forEach(function(x){k[x.k]=readField('sv-k-'+x.k,x.def,x.min,x.max);});
       return k;
     }
-    // Head-counts — clamped so a tiny shop shows ~1 L1 and 0 of the rest, then fills out smoothly to a full org.
+    // Head-counts — tiny shop shows ~1 L1 and 0 of the rest, filling to a full org. Each role's base head-count is
+    // capped at the employee count (you'd never staff more of one role than you have people) so nothing blows up.
     function counts(k){
-      var l1=Math.max(1,Math.ceil(k.size/k.rL1));
-      var l2=Math.floor(k.size/k.rL2);
-      var l3=Math.floor(k.size/k.rL3);
+      var cap=function(n){return clamp(Math.round(n),0,k.size);};
+      var l1=clamp(Math.max(1,Math.ceil(k.size/k.rL1)),1,k.size);
+      var l2=cap(Math.floor(k.size/k.rL2));
+      var l3=cap(Math.floor(k.size/k.rL3));
       var fl=l1+l2+l3;
       return {
         l1:l1, l2:l2, l3:l3,
-        tl:Math.floor((l1+l2)/k.rTL),
-        mgr:k.size>=k.tMgr?Math.max(1,Math.ceil(fl/k.rMgr)):0,
-        qa:Math.floor(fl/k.rQA),
-        wfm:(k.always&&k.size>=k.tWFM)?Math.max(1,Math.ceil(fl/k.rWFM)):0,
-        km:k.size>=k.tKM?Math.ceil(k.size/k.rKM):0,
+        tl:cap(Math.floor((l1+l2)/k.rTL)),
+        mgr:k.size>=k.tMgr?cap(Math.max(1,Math.ceil(fl/k.rMgr))):0,
+        qa:cap(Math.floor(fl/k.rQA)),
+        wfm:(k.always&&k.size>=k.tWFM)?cap(Math.max(1,Math.ceil(fl/k.rWFM))):0,
+        km:k.size>=k.tKM?cap(Math.ceil(k.size/k.rKM)):0,
         rep:k.size>=k.tRep?1:0,
-        proc:k.size>=k.tProc?Math.min(3,Math.ceil(k.size/k.rProc)):0,
-        trn:k.size>=k.tTrn?Math.ceil(k.size/k.rTrn):0,
+        proc:k.size>=k.tProc?cap(Math.min(3,Math.ceil(k.size/k.rProc))):0,
+        trn:k.size>=k.tTrn?cap(Math.ceil(k.size/k.rTrn)):0,
         dir:k.size>=k.tDir?1:0
       };
+    }
+
+    // ---- Savings donut (fix 4): whole ring = traditional cost, gold = ARIA, green = you save. ----
+    var DONUT_C=2*Math.PI*52;
+    function setArc(el,frac,offsetFrac){
+      var len=clamp(frac,0,1)*DONUT_C;
+      el.style.strokeDasharray=len.toFixed(2)+' '+(DONUT_C-len).toFixed(2);
+      el.style.strokeDashoffset=(-clamp(offsetFrac,0,1)*DONUT_C).toFixed(2);
+    }
+    function renderDonut(trad,aria,save){
+      var svg=$('sv-donut'),center=$('sv-donut-center'),ariaEl=$('sv-donut-aria'),saveEl=$('sv-donut-save');
+      var big=$('sv-donut-big'),pct=$('sv-donut-pct'),small=$('sv-donut-small'),legend=$('sv-donut-legend');
+      if(save>=0&&trad>0){
+        var af=aria/trad, sf=save/trad;
+        setArc(ariaEl,af,0); setArc(saveEl,sf,af);
+        svg.classList.remove('neg'); center.classList.remove('neg');
+        big.textContent=money(save);
+        pct.textContent=Math.round(sf*100)+'% saved';
+        small.textContent='per year';
+        legend.innerHTML='<span><i style="background:#c5a059"></i>ARIA '+money(aria)+'</span><span><i style="background:#5fd08a"></i>You save '+money(save)+'</span>';
+      }else{
+        // ARIA costs more here — honest flip: whole ring = ARIA cost, gold = in-house-equivalent, red = the extra.
+        var whole=aria>0?aria:1, extra=aria-trad;
+        setArc(ariaEl,trad/whole,0); setArc(saveEl,extra/whole,trad/whole);
+        svg.classList.add('neg'); center.classList.add('neg');
+        big.textContent=money(aria);
+        pct.textContent='ARIA / yr';
+        small.textContent='always-on';
+        legend.innerHTML='<span><i style="background:#c5a059"></i>In-house equiv '+money(trad)+'</span><span><i style="background:#e78d8d"></i>+'+money(extra)+' for 24/7 + fleet</span>';
+      }
     }
 
     function calc(){
       var k=knobs();
       $('sv-users-val').textContent=k.size.toLocaleString('en-US');
       var cnt=counts(k), mult=k.mult, always=k.always;
-      var html='', total=0, headcount=0;
+      var html='', total=0, headcount=0, rolesOut=[];
       GROUPS.forEach(function(g){
         html+='<div class="pf-role group"><div class="pf-role-name">'+g.label+'</div></div>';
         ROLES.filter(function(r){return r.group===g.key;}).forEach(function(r){
           var base=cnt[r.id]||0;
           var shiftOn=r.shift&&always&&base>0;
-          var eff=shiftOn?Math.round(base*mult):base;
-          var salary=num('sv-s-'+r.id,r.salary);
+          var eff=shiftOn?Math.round(base*mult):base; // 24/7 multiplier applied exactly once
+          var salary=readField('sv-s-'+r.id,r.salary,SAL_MIN,SAL_MAX);
           var cost=eff*salary; total+=cost; headcount+=eff;
+          if(eff>0)rolesOut.push({name:r.name,count:eff,cost:cost});
           html+='<div class="pf-role'+(eff?'':' zero')+'" title="'+eff+' × '+money(salary)+'/yr = '+money(cost)+'">'
             +'<div class="pf-role-name">'+r.name+(shiftOn?'<span class="pf-mult">×'+mult+' 24/7</span>':'')+'<small>'+r.hint+'</small></div>'
             +'<div class="pf-role-count">'+eff+'</div>'
@@ -480,11 +608,68 @@
         hl.textContent='ARIA matches your in-house cost';
         sub.textContent='For the same spend you get 24/7 always-on auto-fix, fleet view, and compliance + SLA reporting — not just business-hours answers.';
       }
+      renderDonut(trad,aria,save);
+
       var wait=k.wait, inc=k.incidents, hrs=k.size*inc*wait;
       $('sv-time').innerHTML='ARIA answers in <b>seconds</b> vs a ~<b>'+(wait%1?wait:wait.toFixed(0))+'h</b> helpdesk wait → about <b>'+Math.round(hrs).toLocaleString('en-US')+' hrs/month</b> of employee time back ('+k.size.toLocaleString('en-US')+' employees × '+inc+' incidents × '+wait+'h wait).';
       var tm=$('sv-tier-map');
-      if(tm)tm.innerHTML='ARIA price = the plan matching your size: <b>&le;1</b> Personal '+money(10788)+'/yr · <b>&le;5</b> Pro '+money(27000)+'/yr · <b>&le;50</b> Small Business '+money(234000)+'/yr · <b>&le;250</b> Mid-Size '+money(468000)+'/yr · <b>&gt;250</b> Enterprise '+money(937500)+'/yr.';
+      if(tm)tm.innerHTML='ARIA price = the plan matching your size: <b>1&ndash;5</b> Personal '+money(10788)+'/yr · <b>6&ndash;40</b> Pro '+money(27000)+'/yr · <b>41&ndash;150</b> Small Business '+money(234000)+'/yr · <b>151&ndash;500</b> Mid-Size '+money(468000)+'/yr · <b>501+</b> Enterprise '+money(937500)+'/yr.';
+
+      lastModel={size:k.size,always:always,roles:rolesOut,headcount:headcount,trad:trad,tierName:tier.name,aria:aria,save:save,mult:mult,wait:wait,inc:inc};
     }
+
+    // ---- Two-way slider ⇄ number-field sync (fix 3) ----
+    var slider=$('sv-users'), numIn=$('sv-users-num'), SLIDER_MAX=parseInt(slider.max,10)||2000;
+    slider.addEventListener('input',function(){numIn.value=slider.value;calc();});
+    numIn.addEventListener('input',function(){
+      var v=parseInt(numIn.value,10);
+      if(isFinite(v))slider.value=clamp(v,parseInt(slider.min,10)||1,SLIDER_MAX);
+      calc();
+    });
+    numIn.addEventListener('blur',function(){numIn.value=readSize();calc();});
+
+    // ---- Download quote (PDF) via a print-optimized, self-contained layout (fix 5) ----
+    function esc(s){return String(s).replace(/[&<>]/g,function(c){return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;';});}
+    function buildQuote(){
+      if(!lastModel)calc();
+      var m=lastModel;
+      var d=new Date();
+      var dateStr=d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+      var ref='IIS-'+d.getFullYear()+(''+(d.getMonth()+1)).slice(-2)+(''+d.getDate()).slice(-2)+'-'+m.size;
+      var rows=m.roles.map(function(r){
+        return '<tr><td>'+esc(r.name)+'</td><td class="n">'+r.count+'</td><td class="n">'+money(r.cost)+'</td></tr>';
+      }).join('');
+      var saveCard=m.save>=0
+        ? '<div class="q-card q-save"><div class="q-k">You save / yr</div><div class="q-v">'+money(m.save)+'</div></div>'
+        : '<div class="q-card"><div class="q-k">ARIA net add / yr</div><div class="q-v">'+money(Math.abs(m.save))+'</div></div>';
+      var savePct=m.trad>0?Math.round(m.save/m.trad*100):0;
+      var html=''
+        +'<div class="q-head">'
+          +'<div class="q-brand">INTEGRATED IT SUPPORT<small>ARIA — service-desk cost comparison quote</small></div>'
+          +'<div class="q-meta">'+esc(dateStr)+'<br>Ref '+esc(ref)+'<br>ahmad.wasee@iisupp.net<br>(647) 581-3182</div>'
+        +'</div>'
+        +'<h1>Estimated in-house service desk vs ARIA</h1>'
+        +'<p class="q-lead">Prepared for a <strong>'+m.size.toLocaleString('en-US')+'-employee</strong> organization · '+(m.always?'24/7 always-on coverage':'business-hours coverage')+'. Figures are transparent estimates you control — not a guarantee.</p>'
+        +'<table><thead><tr><th>In-house role</th><th class="n">Headcount</th><th class="n">Annual cost</th></tr></thead><tbody>'
+          +rows
+          +'<tr class="q-total"><td>Fully-loaded in-house service desk ('+m.headcount.toLocaleString('en-US')+' people)</td><td class="n">'+m.headcount+'</td><td class="n">'+money(m.trad)+'</td></tr>'
+        +'</tbody></table>'
+        +'<div class="q-cards">'
+          +'<div class="q-card"><div class="q-k">In-house desk / yr</div><div class="q-v">'+money(m.trad)+'</div></div>'
+          +'<div class="q-card"><div class="q-k">ARIA '+esc(m.tierName)+' / yr</div><div class="q-v">'+money(m.aria)+'</div></div>'
+          +saveCard
+        +'</div>'
+        +'<p class="q-lead">'+(m.save>=0
+            ? 'ARIA runs this L1&ndash;L3 service desk for '+money(m.aria)+'/yr vs '+money(m.trad)+'/yr to staff it in-house — about <strong>'+savePct+'% less</strong>, 24/7 and auto-fixing without a ticket.'
+            : 'At this size ARIA is '+money(Math.abs(m.save))+'/yr more than the in-house team — and includes 24/7 always-on auto-fix, fleet view and compliance + SLA reporting you would otherwise staff and tool for separately.')+'</p>'
+        +'<div class="q-assume"><strong>Assumptions used (all adjustable):</strong> '
+          +'24/7 multiplier ×'+m.mult+' (applied once to shift roles) · '+m.inc+' incidents / user / month · ~'+m.wait+'h typical helpdesk wait · '
+          +'loaded IT salaries and service-desk staffing ratios per role. Change any assumption in the live calculator to match your reality.</div>'
+        +'<div class="q-foot">Integrated IT Support Inc. · D-U-N-S 241726397 · Whitby, ON. This quote is a transparent cost model, not a binding offer or guarantee. ARIA pricing is per the published plan matching your size. Generated from iisupp.net/plans.</div>';
+      $('pf-quote').innerHTML=html;
+      window.print();
+    }
+    $('sv-quote-btn').addEventListener('click',buildQuote);
 
     buildAdj();
     var covWrap=$('sv-cov');
@@ -494,7 +679,6 @@
       covWrap.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});
       calc();
     });
-    $('sv-users').addEventListener('input',calc);
     ['sv-adj-sal','sv-adj-front','sv-adj-ratio','sv-adj-thr','sv-adj-cov'].forEach(function(id){
       var c=$(id); if(!c)return;
       c.addEventListener('input',calc); c.addEventListener('change',calc);
@@ -726,6 +910,9 @@
   </section>
 
   <div id="pf-error" class="pf-error"></div>
+
+  <!-- Print-only branded quote (fix 5) — populated live from the calculator on "Download quote (PDF)". -->
+  <div id="pf-quote" aria-hidden="true"></div>
 </main>
 
 <footer class="pf-foot">
