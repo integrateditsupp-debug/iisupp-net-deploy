@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { stripFrontmatter } from "./kb-text.mjs";
 
-export { looksTruncated, repairTruncatedTail, stripFrontmatter } from "./kb-text.mjs";
+export { looksTruncated, repairTruncatedTail, stripFrontmatter, stripAnswerFooter } from "./kb-text.mjs";
 
 /** Load aria-kb-pack/kb-fulltext.json → Map(slug → frontmatter-stripped full article). Missing/bad file → empty. */
 export function loadFullText(dir, fsImpl = fs) {

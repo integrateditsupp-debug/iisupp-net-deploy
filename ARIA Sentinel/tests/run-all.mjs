@@ -257,6 +257,8 @@ const TESTS = [
   "./aria-markdown.test.mjs",
   // F2 2026-07-03 — bundled full KB text repairs a mid-line-truncated live excerpt (printer "Escalation Trigger").
   "./kb-fulltext.test.mjs",
+  // F2 recurrence 2026-07-03 — truncation must be detected EVEN behind the client's "→ Full article:" footer.
+  "./kb-answer-truncation.test.mjs",
   // RUN 34-3 — license mint never hangs (timeouts on every leg + actionable error).
   "./license-mint-timeout.test.mjs",
   // RUN 33-A — KB freshness surfaced in the top bar.

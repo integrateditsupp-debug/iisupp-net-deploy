@@ -17,19 +17,37 @@ export function stripFrontmatter(s) {
   return (m ? m[1] : str).trim();
 }
 
+// A single answer-footer line the client appends after the KB body: the read-more link ("→ Full article: <url>")
+// and/or the explicit truncation marker ("…[truncated — see …]"). We must look PAST these when judging the tail —
+// otherwise a body cut mid-line at "- Print server (`" hides behind a trailing footer and reads as "complete".
+function isFooterLine(line) {
+  const t = String(line == null ? "" : line).trim();
+  return t === "" || /^→?\s*Full article:/i.test(t) || /^…?\s*\[truncated[^\]]*\]$/i.test(t);
+}
+
+/** Drop a trailing footer block (read-more link / truncation marker / blank lines) so tail checks see the real body. */
+export function stripAnswerFooter(text) {
+  const lines = String(text == null ? "" : text).replace(/\r\n?/g, "\n").split("\n");
+  while (lines.length && isFooterLine(lines[lines.length - 1])) lines.pop();
+  return lines.join("\n");
+}
+
 /**
- * True when a KB excerpt was cut mid-token by an upstream exporter/server, i.e. it ends with an artifact that
- * would render as a dangling fragment: an unterminated inline-code span (odd number of backticks on the last
- * content line), a trailing "(" / "(`", or the explicit truncation marker.
+ * True when a KB excerpt was cut mid-token by an upstream exporter/server, i.e. its BODY ends with an artifact
+ * that would render as a dangling fragment: an unterminated inline-code span (odd number of backticks on the last
+ * content line), a trailing "(" / "(`", or the explicit truncation marker. The client appends a "→ Full article:"
+ * footer after the body (aria-brain-client.mjs), so we judge the tail AFTER stripping that footer — a mid-line cut
+ * followed by the footer used to slip through the last-line check and render as a broken "Print server (`".
  */
 export function looksTruncated(text) {
   const s = String(text == null ? "" : text).replace(/\r\n?/g, "\n");
   if (!s.trim()) return false;
-  if (/\[truncated/i.test(s)) return true;                          // explicit "…[truncated — see …]" marker
-  const trimmed = s.replace(/\s+$/, "");
+  if (/\[truncated/i.test(s)) return true;                          // explicit "…[truncated — see …]" marker (anywhere)
+  const body = stripAnswerFooter(s);                                // ignore the trailing read-more footer the client adds
+  const trimmed = body.replace(/\s+$/, "");
   if (/\(\s*`?\s*$/.test(trimmed)) return true;                     // dangling "(" or "(`"
   const lastLine = trimmed.split("\n").pop() || "";
-  if ((lastLine.match(/`/g) || []).length % 2 === 1) return true;   // unterminated inline code on the last line
+  if ((lastLine.match(/`/g) || []).length % 2 === 1) return true;   // unterminated inline code on the last body line
   return false;
 }
 
@@ -40,8 +58,12 @@ export function looksTruncated(text) {
  * (e.g. a bare "## 7. Escalation Trigger" whose only bullet was the truncated fragment). Never adds text.
  */
 export function repairTruncatedTail(text) {
-  let s = String(text == null ? "" : text).replace(/\r\n?/g, "\n");
-  s = s.replace(/\n?\s*…?\s*\[truncated[^\]]*\]\s*$/i, "");
+  const raw = String(text == null ? "" : text).replace(/\r\n?/g, "\n");
+  // Separate a trailing footer block ("→ Full article: …" + blank lines) so we repair the real BODY, then
+  // re-attach the read-more link — otherwise the footer blocks the tail scan and the dangling token survives.
+  const body = stripAnswerFooter(raw);
+  const footerLink = raw.slice(body.length).split("\n").map((l) => l.trim()).find((l) => /^→?\s*Full article:/i.test(l)) || "";
+  let s = body.replace(/\n?\s*…?\s*\[truncated[^\]]*\]\s*$/i, "");
   const lines = s.split("\n");
   while (lines.length) {
     const last = (lines[lines.length - 1] || "").trimEnd();
@@ -52,5 +74,6 @@ export function repairTruncatedTail(text) {
     lines.pop();
   }
   while (lines.length && /^\s*#{1,6}\s+\S/.test(lines[lines.length - 1])) lines.pop(); // drop a now-orphaned heading
-  return lines.join("\n").trimEnd();
+  const repaired = lines.join("\n").trimEnd();
+  return footerLink ? `${repaired}\n\n${footerLink}` : repaired;   // keep the "read full article" link after the repair
 }

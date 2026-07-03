@@ -46,8 +46,10 @@ const PRICE_MAP = {
   'gl-book-living-well':      process.env.STRIPE_PRICE_GL_BOOK_LIVING_WELL       || 'price_1TjsfpCa3MISR76yTNTcSI8e',
   // DIY "AI Automation Setup" book — self-serve alternative to the Concierge Walk-Through. Env-only (no
   // baked default): undefined until Ahmad confirms the price (spec: 35% off the Walk-Through) and creates
-  // the Stripe price, so checkout cleanly 400s and never charges a wrong amount before launch.
-  'gl-ai-automation-setup-book': process.env.STRIPE_PRICE_GL_AI_AUTOMATION_BOOK,
+  // the Stripe price, so checkout cleanly 400s and never charges a wrong amount before launch. Accepts the
+  // staged-doc key STRIPE_PRICE_DIYBOOK too, so pasting the real ID into either name works with zero code change.
+  'gl-ai-automation-setup-book': process.env.STRIPE_PRICE_GL_AI_AUTOMATION_BOOK || process.env.STRIPE_PRICE_DIYBOOK,
+  diybook:                       process.env.STRIPE_PRICE_DIYBOOK || process.env.STRIPE_PRICE_GL_AI_AUTOMATION_BOOK,
   // Bundles
   'bundle-it-mastery':    process.env.STRIPE_PRICE_BUNDLE_IT_MASTERY    || 'price_1TjsfqCa3MISR76yIJPLflDn',
   'bundle-ai-automation': process.env.STRIPE_PRICE_BUNDLE_AI_AUTOMATION || 'price_1TjsfqCa3MISR76ys9XjhzyH',
@@ -60,13 +62,24 @@ const PRICE_MAP = {
   'inv-desktop-tower':     process.env.STRIPE_PRICE_INV_DESKTOP_TOWER     || 'price_1TjsftCa3MISR76yWbpxHQGN',
   'inv-dell-laptop':       process.env.STRIPE_PRICE_INV_DELL_LAPTOP       || 'price_1TjsfuCa3MISR76yRtjwqT9G',
   'inv-macbook-pro':       process.env.STRIPE_PRICE_INV_MACBOOK_PRO       || 'price_1TjsfvCa3MISR76ygTGXjPfo',
-  // RUN 23e — ARIA Sentinel tiers (env-only; price IDs from scripts/setup-stripe-sentinel.mjs)
-  sentinel_personal_m:   process.env.STRIPE_PRICE_SENTINEL_PERSONAL_M,
-  sentinel_personal_y:   process.env.STRIPE_PRICE_SENTINEL_PERSONAL_Y,
-  sentinel_pro_m:        process.env.STRIPE_PRICE_SENTINEL_PRO_M,
-  sentinel_business_y:   process.env.STRIPE_PRICE_SENTINEL_BUSINESS_Y,
-  sentinel_midsize_y:    process.env.STRIPE_PRICE_SENTINEL_MIDSIZE_Y,
-  sentinel_enterprise_y: process.env.STRIPE_PRICE_SENTINEL_ENTERPRISE_Y,
+  // RUN 23e — ARIA Sentinel tiers. STAGED — PENDING Ahmad Stripe create (do NOT invent IDs): env-only, no baked
+  // default, so checkout cleanly 400s until the real price IDs are pasted. Prices are the source of truth in
+  // pricing-tiers.mjs ($899/mo · $2,250/mo · $234K/yr · $468K/yr · $938K/yr). Each accepts BOTH the original
+  // STRIPE_PRICE_SENTINEL_* name AND the short staged-doc name (STRIPE_PRICE_PERSONAL_M / _PRO_M / _SMB_Y /
+  // _MID_Y / _ENT_Y) so pasting the ID into either variable works with ZERO code change (STRIPE-PRICE-LIST-TO-CREATE.md).
+  sentinel_personal_m:   process.env.STRIPE_PRICE_SENTINEL_PERSONAL_M   || process.env.STRIPE_PRICE_PERSONAL_M,
+  sentinel_personal_y:   process.env.STRIPE_PRICE_SENTINEL_PERSONAL_Y   || process.env.STRIPE_PRICE_PERSONAL_Y,
+  sentinel_pro_m:        process.env.STRIPE_PRICE_SENTINEL_PRO_M        || process.env.STRIPE_PRICE_PRO_M,
+  sentinel_business_y:   process.env.STRIPE_PRICE_SENTINEL_BUSINESS_Y   || process.env.STRIPE_PRICE_SMB_Y,
+  sentinel_midsize_y:    process.env.STRIPE_PRICE_SENTINEL_MIDSIZE_Y    || process.env.STRIPE_PRICE_MID_Y,
+  sentinel_enterprise_y: process.env.STRIPE_PRICE_SENTINEL_ENTERPRISE_Y || process.env.STRIPE_PRICE_ENT_Y,
+  // One-time AI-setup products (STRIPE-PRICE-LIST-TO-CREATE.md). STAGED — PENDING Ahmad Stripe create: env-only,
+  // no baked default. Walk-Through ($7,000 base, quote-to-scope) also has a live inline-priceData path on the
+  // homepage/services buttons; this preset key lets a tier-based checkout use one fixed Stripe price when created.
+  // Cookbook is $45 standalone (FREE — a $0 line — when bundled with the Walk-Through; that bundling is applied
+  // server-side/at fulfilment, never as a fake $0 price here).
+  walkthrough:           process.env.STRIPE_PRICE_WALKTHROUGH,
+  cookbook:              process.env.STRIPE_PRICE_COOKBOOK,
   // Q-WEBTIER — $70/mo "ARIA Web + AI Edge" website subscription (top-of-funnel). SEPARATE product line
   // from the Sentinel desktop license matrix (pricing-tiers.mjs). Env-only: undefined until Ahmad creates
   // the Stripe price + sets STRIPE_PRICE_ARIA_WEB_M, so checkout cleanly 400s ("never a broken checkout").
@@ -139,6 +152,12 @@ exports.handler = async (event) => {
       'small_business','small_business_y',
       'mid_size','mid_size_y','midsize','midsize_y',
       'enterprise','enterprise_y',
+      // ARIA Sentinel desktop tiers ARE recurring (monthly/annual) — they must open a subscription session, not a
+      // one-time payment. Omitting them here meant that the moment Ahmad pastes the recurring price IDs, checkout
+      // would try mode:'payment' on a recurring price and Stripe would reject it (a broken go-live). The /plans +
+      // /downloads buttons POST exactly these tier keys.
+      'sentinel_personal_m','sentinel_personal_y','sentinel_pro_m',
+      'sentinel_business_y','sentinel_midsize_y','sentinel_enterprise_y',
       'aria_web_m'   // Q-WEBTIER — $70/mo website subscription (separate from desktop tiers)
     ]);
     mode = SUBSCRIPTION_TIERS.has(tier) ? 'subscription' : 'payment';

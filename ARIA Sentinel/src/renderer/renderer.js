@@ -120,6 +120,8 @@ function activateTab(tab) {
     qsa("a[data-anchor]", sub).forEach((a, i) => a.classList.toggle("active", on && (activeSub ? a.dataset.anchor === activeSub : i === 0)));
   });
   setText("pageTitle", TAB_TITLES[target]);
+  // Eyebrow follows the active view (was hard-coded "ARIA Sentinel · Settings" on every tab — read as unfinished).
+  if (TAB_TITLES[target]) setText("pageEyebrow", `ARIA Sentinel · ${TAB_TITLES[target]}`);
   // Window title follows the active view (was always "ARIA Sentinel Settings").
   if (TAB_TITLES[target]) document.title = `ARIA Sentinel — ${TAB_TITLES[target]}`;
   runTabLoaders(target);
