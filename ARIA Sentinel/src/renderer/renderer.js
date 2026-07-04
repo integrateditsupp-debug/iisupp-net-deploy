@@ -109,6 +109,7 @@ function runTabLoaders(target) {
   if (target === "settings") loadUpdatesPanel();
   if (target === "servicenow") { loadIncidents(); loadOmniStatus(); }
   if (target === "integrations") loadIntegrations();
+  if (target === "integrations") loadOfficeSafety();
   if (target === "recipes") renderTier0();
   if (target === "reports") loadReports();
 }
@@ -192,6 +193,7 @@ function wireActions() {
     return result;
   }));
   wireDropzone();
+  wireOfficeSafety();
   wireOnboarding();
   bindClick("runDiagnostic", (button) => runAction(button, async () => {
     const report = await sentinel.runDiagnostic?.();
@@ -238,8 +240,8 @@ function renderState(next) {
   const catalog = state.recipeCatalog || {};
   const recipes = state.recipes || [];
 
-  setText("railVersion", `v${state.version || "0.1.0"}`);
-  setText("aboutVersion", state.version || "0.1.0");
+  setText("railVersion", `v${state.version || "0.1.20"}`);
+  setText("aboutVersion", state.version || "0.1.20");
   setText("railStatus", `${titleCase(state.mode || "manual")} mode - ${state.paused ? "paused" : bridge.conflict ? "self repair" : "watching"}`);
 
   setChip("bridgeStatus", bridge.conflict ? `Bridge conflict :${bridge.port}` : bridge.listening ? `Bridge :${bridge.port}` : `Bridge standby :${bridge.port || state.bridgePort}`, bridge.conflict ? "red" : bridge.listening ? "cyan" : "amber");
@@ -256,6 +258,7 @@ function renderState(next) {
   renderLog(state.transparencyLog || []);
   renderSystemChecks(state.systemChecks || defaultChecks(state));
   renderServiceNowStatus(state.serviceNowStatus);
+  renderOfficeSafety(state.officeSafety);
   renderRestorePoints(state.restorePoints || []);
   renderKillBanner(state);
   if (state.lastPrivacyCapture) renderCapture(state.lastPrivacyCapture);
@@ -384,6 +387,65 @@ function renderDiagnostic(report) {
 // W5 — Integrations tab. Cards are drawn from the main process (getIntegrations → edition + resolved
 // descriptors). Status is read-only; "Test connection" is disabled in Slice 1. The ServiceNow card
 // deep-links to its incident bridge panel (which lost its nav slot to this tab).
+function formatOfficeSafetyTime(value) {
+  if (!value) return "not yet";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "not yet";
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function formatOfficeMinutes(ms) {
+  const minutes = Math.max(1, Math.round(Number(ms || 0) / 60000));
+  return `${minutes} min`;
+}
+
+function renderOfficeSafety(status) {
+  const rows = qs("#officeSafetyRows");
+  if (!rows || !status) return;
+  const toggle = qs("#officeSafetyEnabled");
+  if (toggle && toggle !== document.activeElement) toggle.checked = status.enabled !== false;
+  const runningText = status.running ? "Running" : status.enabled ? "Enabled - waiting" : "Disabled";
+  const healthText = status.lastError ? `Needs review (${status.lastError})` : status.validationFailures ? "Review failed backups" : "Healthy";
+  const validationText = `${Number(status.validationsPassed || 0)} passed / ${Number(status.validationFailures || 0)} failed`;
+  rows.innerHTML = [
+    ["Status", runningText, healthText],
+    ["Cadence", `Backup ${formatOfficeMinutes(status.backupIntervalMs)} / validate ${formatOfficeMinutes(status.validationIntervalMs)}`, "Renamed copy"],
+    ["Coverage", `${Number(status.filesTracked || 0)} tracked Office file(s)`, `${Number(status.watchRootsCount || 0)} roots`],
+    ["Backups", `${Number(status.backupsCreated || 0)} created`, formatOfficeSafetyTime(status.lastBackupAt)],
+    ["Validation", validationText, formatOfficeSafetyTime(status.lastValidationAt)],
+    ["Safety", "Local vault only; no cloud upload; no macros", "Content-blind"]
+  ].map(([label, value, meta]) => `
+    <div class="table-row">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
+      <em>${escapeHtml(meta)}</em>
+    </div>
+  `).join("");
+}
+
+async function loadOfficeSafety() {
+  const fallback = state && state.officeSafety;
+  const status = sentinel.officeSafetyStatus ? await sentinel.officeSafetyStatus().catch(() => fallback) : fallback;
+  renderOfficeSafety(status);
+}
+
+function wireOfficeSafety() {
+  bindClick("officeSafetyScan", (button) => runAction(button, async () => {
+    setText("officeSafetyResult", "Scanning...");
+    const result = sentinel.scanOfficeSafety ? await sentinel.scanOfficeSafety() : { ok: false, status: state?.officeSafety };
+    renderOfficeSafety(result?.status || result || state?.officeSafety);
+    setText("officeSafetyResult", result?.ok ? "Scan complete." : "Scan needs review.");
+    return result;
+  }));
+  bindChange("officeSafetyEnabled", (input) => runAction(input, async () => {
+    setText("officeSafetyResult", input.checked ? "Enabling..." : "Disabling...");
+    const result = sentinel.setOfficeSafetyEnabled ? await sentinel.setOfficeSafetyEnabled(input.checked) : { ok: false, status: state?.officeSafety };
+    renderOfficeSafety(result?.status || state?.officeSafety);
+    setText("officeSafetyResult", result?.ok ? (input.checked ? "Protection enabled." : "Protection disabled.") : "Could not change Office Safety.");
+    return result;
+  }));
+}
+
 const INTEGRATION_STATUS_LABELS = { connected: "Connected", not_configured: "Not configured", error: "Error" };
 // Cards with a secure "Configure" credentials panel (encrypted at rest via safeStorage in main).
 let integrationConfig = null; // { encryptionAvailable, fields, config } from getIntegrationConfig()
@@ -1592,7 +1654,7 @@ function renderStartupAudit(audit) {
 }
 
 function renderRun21(next) {
-  const v = `v${(next && next.version) || "0.1.0"}`;
+  const v = `v${(next && next.version) || "0.1.20"}`;
   setText("updCurrentVersion", v);
   setText("trialEndVersion", v);
 }
@@ -2120,6 +2182,29 @@ async function getSentinelApi() {
       { id: "rp-preview-1", name: "ARIA pre-fix DISK.LOW_SPACE", createdAt: new Date().toISOString(), rolledBack: false }
     ],
     serviceNowStatus: { configured: false, connected: false, queued: 0, lastVerified: 0 },
+    officeSafety: {
+      ok: true,
+      enabled: true,
+      running: true,
+      backupIntervalMs: 2 * 60 * 1000,
+      validationIntervalMs: 3 * 60 * 1000,
+      scanIntervalMs: 30 * 1000,
+      activeWindowMs: 24 * 60 * 60 * 1000,
+      watchRootsCount: 2,
+      backupVault: "local-user-vault",
+      backupRootConfigured: true,
+      filesTracked: 0,
+      backupsCreated: 0,
+      validationsPassed: 0,
+      validationFailures: 0,
+      lastScanAt: null,
+      lastBackupAt: null,
+      lastValidationAt: null,
+      lastError: "",
+      documents: [],
+      recentEvents: [],
+      safeContract: { localOnly: true, cloudUpload: false, validatesLiveFile: false, validationUsesRenamedCopy: true, launchesOffice: false, macrosRun: false }
+    },
     bridgePort: BRIDGE_PORT,
     bridgeStatus: { listening: true, conflict: false, port: BRIDGE_PORT, owner: "preview", lastError: "" },
     recipeCatalog: {
@@ -2185,6 +2270,19 @@ async function getSentinelApi() {
       log("KB", "Preview knowledge sources refreshed.");
       return { ok: true };
     },
+    officeSafetyStatus: async () => previewState.officeSafety,
+    setOfficeSafetyEnabled: async (on) => {
+      previewState.officeSafety.enabled = Boolean(on);
+      previewState.officeSafety.running = Boolean(on);
+      log("OFFICE-SAFETY", `Preview Office Safety ${on ? "enabled" : "disabled"}.`);
+      return { ok: true, status: previewState.officeSafety };
+    },
+    scanOfficeSafety: async () => {
+      previewState.officeSafety.lastScanAt = new Date().toISOString();
+      log("OFFICE-SAFETY", "Preview Office Safety scan completed.");
+      return { ok: true, status: previewState.officeSafety };
+    },
+    registerOfficeFile: async () => ({ ok: false, error: "preview-no-files", status: previewState.officeSafety }),
     selfDiagnose: async () => {
       previewState.systemChecks = defaultChecks(previewState);
       log("SELF-CHECK", "Settings self diagnosis passed.");

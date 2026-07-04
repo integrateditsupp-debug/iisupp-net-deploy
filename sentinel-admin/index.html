@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Sentinel Admin Console</title>
+  <meta name="description" content="Public overview for the ARIA Sentinel admin console: licensing, fleet status, privacy posture, and guarded release operations.">
+  <style>
+    :root{--gold:#c5a059;--ink:#f6f1e6;--muted:#b9ad93;--panel:#111;--line:#2b261b}
+    *{box-sizing:border-box}
+    body{margin:0;background:#050505;color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.6}
+    main{max-width:960px;margin:0 auto;padding:64px 20px}
+    .eyebrow{color:var(--gold);letter-spacing:.22em;text-transform:uppercase;font-size:12px;font-weight:700}
+    h1{font-size:clamp(36px,7vw,76px);line-height:.95;margin:12px 0 18px}
+    p{color:var(--muted);font-size:18px;max-width:760px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:36px 0}
+    .card{border:1px solid var(--line);background:linear-gradient(145deg,#141414,#090909);border-radius:20px;padding:22px;min-height:170px}
+    .card h2{font-size:20px;margin:0 0 10px;color:var(--ink)}
+    .card p{font-size:15px;margin:0}
+    .notice{border:1px solid rgba(197,160,89,.45);background:rgba(197,160,89,.08);border-radius:18px;padding:18px;margin-top:24px}
+    a{color:var(--gold)}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Integrated IT Support Inc.</div>
+    <h1>ARIA Sentinel Admin Console</h1>
+    <p>The public admin overview for ARIA Sentinel. The installed desktop console stays local and token-gated; this page explains what an authorized admin can manage without exposing source, customer data, or private app internals.</p>
+    <section class="grid" aria-label="Admin console capabilities">
+      <article class="card"><h2>Licensing</h2><p>Review plan status, trial state, revocation status, and upgrade paths. License secrets are masked and resolved server-side.</p></article>
+      <article class="card"><h2>Fleet Status</h2><p>View real-or-empty health, update, SLA, and privacy posture when customer endpoints are configured. Empty states never fabricate metrics.</p></article>
+      <article class="card"><h2>Release Controls</h2><p>Stage update manifests and evidence packs for review. Production publish remains an explicit authorized action.</p></article>
+      <article class="card"><h2>Safety Gates</h2><p>R11 private-folder lock, content-blind reporting, supervisor approval, countdown, and kill-switch controls remain enforced.</p></article>
+    </section>
+    <div class="notice">
+      <strong>Admin access is not public.</strong> The live console requires customer-owned authority and the configured admin token. This page is informational only.
+    </div>
+    <p><a href="/aria-sentinel/docs">Read the ARIA Sentinel public docs</a> or <a href="/aria">open ARIA</a>.</p>
+  </main>
+</body>
+</html>

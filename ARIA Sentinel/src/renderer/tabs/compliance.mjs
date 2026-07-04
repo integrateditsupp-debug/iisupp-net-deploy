@@ -7,7 +7,9 @@ export function auditRowsHtml(a = {}) {
   return row("hash chain", a.ok ? "verified" : "BROKEN", a.lastVerified || "") + row("entries (30d)", a.entries ?? 0, "");
 }
 export function privacyRowsHtml(p = {}) {
-  return row("last result", p.pass ? "PASS" : "REVIEW", p.ts || "") + row("6-host allowlist", p.allowlistOk ? "intact" : "WIDENED") + row("sanitization rate", `${p.sanitization ?? 100}%`, "must be 100%");
+  // B3: sanitization ?? 100 was seeded (Rule 14). Now real-or-empty: show "--" until first measured value.
+  const sanStr = p.sanitization != null ? `${p.sanitization}%` : "--";
+  return row("last result", p.pass ? "PASS" : "REVIEW", p.ts || "") + row("6-host allowlist", p.allowlistOk ? "intact" : "WIDENED") + row("sanitization rate", sanStr, "must be 100%");
 }
 export function tier0RowsHtml(t = {}) {
   return row("risky actions blocked (30d)", t.blocked ?? 0, "") + row("categories", (t.categories || []).join(", ") || "none");

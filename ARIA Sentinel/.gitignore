@@ -1,5 +1,7 @@
 # Build + backup artifacts — packaged Electron output (.exe/.tar.gz exceed GitHub's 100MB limit).
 # Never commit; produced by `npm run package:win`.
 dist/
+dist.*/
 dist-backups/
 node_modules/
+tests/del-prefs-*.json

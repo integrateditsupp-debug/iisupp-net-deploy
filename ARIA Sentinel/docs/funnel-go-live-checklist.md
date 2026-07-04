@@ -4,6 +4,11 @@ The funnel SOFTWARE is built, tested (166/166 suites) and committed (Half A: A1�
 the operational/infra actions to turn it on. Claude Code cannot do these from the sandbox (no Netlify/
 Stripe access, no binary publish). 🔒 R11 holds throughout; `SENTINEL_LICENSE_SECRET` is server-side only.
 
+> 2026-06-27 status: this is a historical RUN 24 checklist. Current desktop builds (0.1.20) keep
+> `SENTINEL_LICENSE_SECRET` server-side and resolve licenses through `sentinel-resolve` with a local
+> hash-only cache. The former client-secret blocker below is closed; remaining go-live work is Netlify/
+> Stripe env verification, signed binary publish, and an end-to-end purchase/license/install smoke test.
+
 ## ⚠️ Reconcile first — branch divergence
 
 This clone (`sprint-0-backend`, HEAD `0fc91c6`) does NOT contain the commits the RUN 24 packet listed as
@@ -29,7 +34,7 @@ both the RUN 23e `sentinel_*` keys and the RUN 23f canonical IDs, so it works un
 
 - Expected bump: `0.1.1 → 0.1.2`. The shouldBump subject-line hotfix (B1) is already in main
   (`src/shared/ota-release.mjs`, covered by `tests/version-bump.test.mjs`).
-- **🚨 BLOCKER for B3 — client license secret.** Tier resolution + the 6-key test rely on the desktop app
+- **Historical B3 blocker — resolved in current builds.** Tier resolution + the 6-key test originally relied on the desktop app
   knowing `SENTINEL_LICENSE_SECRET` (`resolvePlanFromKey` / `enterLicense` read `process.env.SENTINEL_LICENSE_SECRET`,
   which is EMPTY on a customer machine). Without it, every key resolves to Personal and **B3 fails the HARD
   STOP**. Decide ONE before building:

@@ -74,7 +74,7 @@
         <div class="rail-footer">
           <aria-globe class="aria-living-globe" size="120"></aria-globe>
           <strong>Resident agent</strong>
-          <small id="railVersion">v0.1.0</small>
+          <small id="railVersion">v0.1.20</small>
         </div>
       </aside>
 
@@ -478,6 +478,26 @@
             <h2>Integrations</h2>
             <p class="note" id="integrationsEdition">Identity, service, and Microsoft&nbsp;365 document connectors. Status is read-only; live writes to any directory, RSA, or ServiceNow stay gated behind per-customer approval.</p>
           </section>
+          <section class="panel office-safety-panel">
+            <div class="panel-actions">
+              <div>
+                <p class="eyebrow">Office Safety Net</p>
+                <h2>Word, Excel, PowerPoint rescue backups</h2>
+              </div>
+              <label class="office-safety-toggle">
+                <input id="officeSafetyEnabled" type="checkbox" />
+                <span>Enabled</span>
+              </label>
+            </div>
+            <p class="note">Local-only protection for recently changed Office files: backup every 2 minutes, then validate the latest backup every 3 minutes by opening a renamed copy. No cloud upload, no live-file validation, no macro execution.</p>
+            <div id="officeSafetyRows" class="table-list office-safety-rows">
+              <div class="table-row"><span>Status</span><strong>Loading...</strong><em>Local</em></div>
+            </div>
+            <div class="button-row">
+              <button id="officeSafetyScan" class="ghost">Scan now</button>
+              <span id="officeSafetyResult" class="note"></span>
+            </div>
+          </section>
           <div id="integrationsGrid" class="integrations-groups">
             <p class="note">Loading integrations…</p>
           </div>
@@ -588,7 +608,7 @@
             <h2>Resident IT support that never sleeps</h2>
             <p>ARIA Sentinel lives on your PC, watches for tech problems, and fixes them before they slow you down without sending your data anywhere.</p>
             <div class="table-list">
-              <div class="table-row"><span>Version</span><strong id="aboutVersion">0.1.0</strong><em>Internal MVP</em></div>
+              <div class="table-row"><span>Version</span><strong id="aboutVersion">0.1.20</strong><em>Internal MVP</em></div>
               <div class="table-row"><span>Bridge</span><strong>127.0.0.1:37841</strong><em>Local only</em></div>
               <div class="table-row"><span>Admin</span><strong>Separate local web console</strong><em>Owner-only</em></div>
             </div>
@@ -651,7 +671,7 @@
             </div>
             <div id="startupBanner" class="security-banner-sub" style="color:var(--aria-warning);margin-bottom:8px" hidden></div>
             <div class="health-list">
-              <div class="health-row"><span>version</span><strong id="updCurrentVersion">v0.1.0</strong><em id="updLastCheck">never checked</em></div>
+              <div class="health-row"><span>version</span><strong id="updCurrentVersion">v0.1.20</strong><em id="updLastCheck">never checked</em></div>
               <div class="health-row"><span>pending</span><strong id="updPending">No update pending.</strong><em id="updStrike"></em></div>
             </div>
             <label class="toggle-row" style="display:flex;align-items:center;gap:10px;margin-top:10px">
@@ -693,7 +713,7 @@
         <p class="eyebrow">Trial ended</p>
         <h2 class="trial-end-title">Your ARIA trial has ended</h2>
         <p class="trial-end-sub">Choose your tier to keep ARIA running on this machine.</p>
-        <p class="trial-end-version">ARIA Sentinel <span id="trialEndVersion">v0.1.0</span> · <span class="auto-update-badge">Auto-updates included</span></p>
+        <p class="trial-end-version">ARIA Sentinel <span id="trialEndVersion">v0.1.20</span> · <span class="auto-update-badge">Auto-updates included</span></p>
         <div class="plan-grid plan-grid-5">
           <div class="plan-card" data-tier="personal">
             <strong>Personal</strong><span class="plan-price">$599<em>/mo</em></span>

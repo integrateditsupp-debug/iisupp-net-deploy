@@ -1,4 +1,4 @@
-export const SENTINEL_VERSION = "0.1.0";
+export const SENTINEL_VERSION = "0.1.20";
 export const BRIDGE_PORT = 37841;
 export const CONTROL_PLANE_MVP_RECIPE_COUNT = 25;
 export const CONTROL_PLANE_MVP_STOP_CODE_COUNT = 25;

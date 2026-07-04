@@ -21,3 +21,8 @@ This is the symptom-to-cause-to-safe-fix knowledge base used by ARIA Sentinel to
 | USB & Peripherals | [usb-peripheral.md](usb-peripheral.md) | "usb not recognized" |
 | Antivirus Conflicts | [antivirus-conflict.md](antivirus-conflict.md) | "antivirus blocking app" |
 | Credential & Sign-in Issues | [credential-issues.md](credential-issues.md) | "forgot password" |
+| Account Lockout (AD/Entra) | [account-lockout-windows-ad-entra.md](account-lockout-windows-ad-entra.md) | "account locked out" |
+| Add / Setup Printer | [add-printer-setup.md](add-printer-setup.md) | "how do I add a printer" |
+| Office / Excel Issues | [office-excel-issues.md](office-excel-issues.md) | "excel keeps crashing" |
+| Outlook Password Loop | [outlook-password-loop.md](outlook-password-loop.md) | "outlook keeps asking for password" |
+| Time / Clock Sync | [time-clock-sync.md](time-clock-sync.md) | "clock is wrong" |

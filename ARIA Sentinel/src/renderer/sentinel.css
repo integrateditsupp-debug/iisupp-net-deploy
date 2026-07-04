@@ -354,6 +354,15 @@ p { color: var(--aria-text-2); line-height: 1.5; }
 .int-badge.configured { color: var(--aria-warning); border-color: rgba(255,203,107,.5); background: rgba(255,203,107,.08); }
 .int-badge.error { color: var(--aria-error); border-color: rgba(255,126,126,.5); background: rgba(255,126,126,.08); }
 
+.office-safety-panel { margin-bottom: 16px; }
+.office-safety-toggle {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 7px 10px;
+  border: 1px solid rgba(197,160,89,.45); border-radius: 999px; color: var(--aria-gold-light);
+  font-family: var(--aria-font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+}
+.office-safety-toggle input { accent-color: var(--aria-gold); }
+.office-safety-rows .table-row { grid-template-columns: 128px minmax(0, 1fr) 96px; }
+
 .settings-grid-main {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);

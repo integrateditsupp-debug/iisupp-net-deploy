@@ -324,6 +324,7 @@
           <button data-view-target="integrations"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 7h4v4H7zm6 0h4v4h-4zM7 13h4v4H7zm6 0h4v4h-4z"/></svg>Integrations</button>
           <button data-view-target="settings"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 5l-2.1.7a7 7 0 01-.8 1.9l1 2-2.1 2.1-2-1a7 7 0 01-1.9.8L12 23H9l-.7-2.1a7 7 0 01-1.9-.8l-2 1-2.1-2.1 1-2a7 7 0 01-.8-1.9L0 14v-3l2.1-.7a7 7 0 01.8-1.9l-1-2L4 4.3l2 1a7 7 0 011.9-.8L9 1h3l.7 2.1a7 7 0 011.9.8l2-1L18.7 5l-1 2a7 7 0 01.8 1.9L21 10z"/></svg>Settings</button>
           <button data-view-target="access"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 12a5 5 0 100-10 5 5 0 000 10zm-9 9a9 9 0 1118 0z"/></svg>Access</button>
+          <button data-view-target="rdp-access"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 5h10v8H4zm12 2h4v14H8v-6h8zm-9 9h2v3H7z"/></svg>Grant Asset RDP Access</button>
           <button data-view-target="system"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h16v4H4zm0 6h16v10H4z"/></svg>System</button>
           <button data-view-target="updates"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4v8l4 2-1 2-5-3V4z"/></svg>Updates</button>
           <button data-view-target="fleet-performance"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h4v8H3zm7-6h4v14h-4zm7-4h4v18h-4z"/></svg>Fleet Performance</button>
@@ -642,6 +643,62 @@
             </section>
           </section>
 
+          <!-- ===== Grant Asset RDP Access ===== -->
+          <section class="view" data-view="rdp-access" hidden>
+            <section class="grid-main">
+              <article class="panel">
+                <div class="table-head"><h2>Grant Asset RDP Access</h2><span class="subtle">Corporate-controlled temporary rescue access</span></div>
+                <p class="subtle">Use only for enrolled company assets where Windows is running, the ARIA endpoint agent is reachable, and RDP is allowed by policy. ARIA Sentinel orchestrates and audits; the company owns the authority model.</p>
+                <div class="proof-grid" style="margin-bottom:12px">
+                  <div><span>Default access</span><strong>60 min</strong></div>
+                  <div><span>Authority owner</span><strong>Customer</strong></div>
+                  <div><span>Credential storage</span><strong class="ok">None</strong></div>
+                  <div><span>Manual revoke</span><strong>Required</strong></div>
+                  <div><span>Auto revoke</span><strong>Required</strong></div>
+                  <div><span>Audit history</span><strong class="ok">Append-only</strong></div>
+                </div>
+                <div class="controls" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:12px">
+                  <div class="field"><label>Authority model</label><select id="rdpAuthorityModel"><option>Customer-owned service identity</option><option>Approved local endpoint service</option><option>Prompted admin credentials</option><option>PAM/JIT/MDM/SCCM/AD/Entra workflow</option></select></div>
+                  <div class="field"><label>Asset</label><select id="rdpAsset"><option>LAPTOP-7F3K2MJ - online example</option><option>WS-44KK21 - agent unreachable example</option><option>WS-01F23 - blue screen suspected example</option></select></div>
+                  <div class="field"><label>Duration</label><select id="rdpDuration"><option>60 minutes</option><option>30 minutes</option><option>120 minutes</option></select></div>
+                  <div class="field"><label>User to grant</label><input id="rdpTargetUser" placeholder="DOMAIN\\username or user@company.com" /></div>
+                  <div class="field"><label>Reason / ticket</label><input id="rdpReason" placeholder="INC12345 - recover payroll file" /></div>
+                  <div class="field"><label>Action</label><button class="button" id="rdpGrantBtn" disabled title="Live grant is disabled until a signed endpoint service and customer-owned authority model are configured.">Grant after live validation</button></div>
+                </div>
+                <p id="rdpAccessStatus" class="subtle">Setup required: no live RDP grant is performed from this static console view. Configure signed endpoint commands, customer-owned authority, admin RBAC, revoke cleanup, and audit storage before enabling the action.</p>
+              </article>
+              <aside class="panel">
+                <h2>Safety boundary</h2>
+                <div class="breaker-list">
+                  <div class="breaker-row"><span>No hidden access</span><strong class="ok">Company-owned authority only</strong></div>
+                  <div class="breaker-row"><span>No credential storage</span><strong class="ok">Prompt or broker only</strong></div>
+                  <div class="breaker-row"><span>No permanent grants</span><strong>Temporary by default</strong></div>
+                  <div class="breaker-row"><span>No blue-screen RDP</span><strong class="result sev">Unavailable</strong></div>
+                  <div class="breaker-row"><span>No policy bypass</span><strong class="ok">Fail closed</strong></div>
+                </div>
+                <p class="subtle">RDP cannot work during a blue screen, powered-off state, pre-boot state, or when Windows, networking, the ARIA agent, or RDP services are unavailable.</p>
+              </aside>
+            </section>
+            <section class="panel" style="margin-top:12px">
+              <div class="table-head"><h2>Device state handling</h2><span class="subtle">What the live endpoint service must prove before a grant</span></div>
+              <div class="scroll"><table>
+                <thead><tr><th>State</th><th>Grant allowed?</th><th>Admin message</th><th>Safe recovery path</th></tr></thead>
+                <tbody>
+                  <tr><td>Online / agent reachable / RDP available</td><td><span class="result">Eligible after validation</span></td><td>Temporary access can be requested with reason, duration, and authorized admin.</td><td>Manual and automatic revoke required.</td></tr>
+                  <tr><td>RDP blocked by policy</td><td><span class="result sev">No</span></td><td>Corporate policy blocks RDP. ARIA does not bypass policy.</td><td>Use PAM/JIT, Intune, MDM, SCCM, AD/Entra, or security-approved workflow.</td></tr>
+                  <tr><td>Agent unreachable or offline</td><td><span class="result sev">No</span></td><td>ARIA cannot verify or perform the request.</td><td>Use latest ARIA backups, OneDrive, SharePoint, corporate backup, or onsite recovery.</td></tr>
+                  <tr><td>Blue screen / likely unbootable</td><td><span class="result sev">No</span></td><td>Windows/RDP is not running, so RDP rescue is unavailable.</td><td>Use approved recovery, BitLocker process, drive imaging, or out-of-band tooling already owned by the company.</td></tr>
+                </tbody>
+              </table></div>
+            </section>
+            <section class="panel" style="margin-top:12px">
+              <div class="table-head"><h2>Grant / revoke history</h2><span class="subtle">Live records appear here after endpoint service wiring</span></div>
+              <table class="table"><thead><tr><th>Grant ID</th><th>Admin</th><th>Target user</th><th>Machine</th><th>Expires</th><th>State</th><th>Actions</th></tr></thead>
+                <tbody><tr><td colspan="7" class="subtle">No live RDP grants loaded. This is intentionally empty until the signed endpoint control plane is configured.</td></tr></tbody>
+              </table>
+            </section>
+          </section>
+
           <!-- ===== System ===== -->
           <section class="view" data-view="system" hidden>
             <section class="grid-3">
@@ -914,8 +971,8 @@
         const views = document.querySelectorAll('.view');
         const h1 = document.querySelector('.content h1');
         const subtle = document.querySelector('.content > p.subtle');
-        const labels = ['Overview','Release Gate','Endpoints','Policies','Recipes','KB Bundles','Stop Codes','Audit Events','Reports','Integrations','Settings','Access','System','Updates','Fleet Performance','Quarterly Reports','Cohort SLA','Licenses'];
-        const subtitles = ['Operational summary of ARIA Sentinel','Per-bundle gate results, history and overrides','Fleet inventory · per-endpoint health, KB version, last seen','Policy sets · per-tenant overrides · activation state','Vetted recipes · risk class · success rate · canary status','Bundles · hashes · regions · signing keys','BSOD stop code corpus · likely causes · escalation copy','Append-only audit · per-event class · content-blind','Weekly health · cost saved · top recipes & stop codes','ServiceNow · Slack · M365 · Jira · webhook lanes','Owner-only console preferences · auth · keys','Operators · roles · MFA · session policy','Service health · backend version · region map','Publish · staged rollout · per-license + all-machines rollback','Aggregate KPIs across all heartbeating licenses','Quarterly reports · delivery status · open rate · email queue','% of fleet meeting SLA, tier by tier','Auto-minted on each Stripe subscription · keyed by subscription'];
+        const labels = ['Overview','Release Gate','Endpoints','Policies','Recipes','KB Bundles','Stop Codes','Audit Events','Reports','Integrations','Settings','Access','Grant Asset RDP Access','System','Updates','Fleet Performance','Quarterly Reports','Cohort SLA','Licenses'];
+        const subtitles = ['Operational summary of ARIA Sentinel','Per-bundle gate results, history and overrides','Fleet inventory · per-endpoint health, KB version, last seen','Policy sets · per-tenant overrides · activation state','Vetted recipes · risk class · success rate · canary status','Bundles · hashes · regions · signing keys','BSOD stop code corpus · likely causes · escalation copy','Append-only audit · per-event class · content-blind','Weekly health · cost saved · top recipes & stop codes','ServiceNow · Slack · M365 · Jira · webhook lanes','Owner-only console preferences · auth · keys','Operators · roles · MFA · session policy','Temporary RDP rescue gated by customer-owned authority','Service health · backend version · region map','Publish · staged rollout · per-license + all-machines rollback','Aggregate KPIs across all heartbeating licenses','Quarterly reports · delivery status · open rate · email queue','% of fleet meeting SLA, tier by tier','Auto-minted on each Stripe subscription · keyed by subscription'];
         navButtons.forEach((btn, i) => {
           const target = btn.getAttribute('data-view-target');
           if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', labels[i] || ('Tab ' + (i + 1)));

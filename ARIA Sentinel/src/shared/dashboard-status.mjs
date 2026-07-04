@@ -49,14 +49,18 @@ export function kpiTile({ id, label, value, unit = "", values = [], prev = null 
   return { id, label, value, unit, sparkline: sparklineSvg(values), delta: prev == null ? null : deltaArrow(value, prev) };
 }
 
-/** The six hero tiles from live state (Overview ROW 2). */
+/** The six hero tiles from live state (Overview ROW 2).
+ *  RULE 14 (A1): a null metric means "no data yet" and renders as "—" (no unit, no delta) — never a
+ *  fabricated 100/0. Real values render normally. */
 export function heroTiles(m = {}) {
+  const t = (id, label, value, unit = "", values = [], prev = null) =>
+    kpiTile({ id, label, value: value == null ? "—" : value, unit: value == null ? "" : unit, values, prev: value == null ? null : prev });
   return [
-    kpiTile({ id: "status", label: "Uptime (7d)", value: m.uptime7d ?? 100, unit: "%", values: m.uptimeTrend, prev: m.uptimePrev }),
-    kpiTile({ id: "mttr", label: "MTTR (min, 30d)", value: m.mttr ?? 0, values: m.mttrTrend, prev: m.mttrPrev }),
-    kpiTile({ id: "accuracy", label: "Diagnosis accuracy", value: m.accuracy ?? 0, unit: "%", values: m.accuracyTrend, prev: m.accuracyPrev }),
-    kpiTile({ id: "breaches", label: "SLA breaches MTD", value: m.breaches ?? 0, values: m.breachTrend, prev: m.breachPrev }),
-    kpiTile({ id: "hours", label: "Hours saved MTD", value: m.hoursSaved ?? 0, values: m.hoursTrend, prev: m.hoursPrev }),
-    kpiTile({ id: "update", label: "Version", value: m.version || "0.1.0", unit: m.updatePending ? " · update ready" : "" })
+    t("status", "Uptime (7d)", m.uptime7d, "%", m.uptimeTrend, m.uptimePrev),
+    t("mttr", "MTTR (min, 30d)", m.mttr, "", m.mttrTrend, m.mttrPrev),
+    t("accuracy", "Diagnosis accuracy", m.accuracy, "%", m.accuracyTrend, m.accuracyPrev),
+    t("breaches", "SLA breaches MTD", m.breaches, "", m.breachTrend, m.breachPrev),
+    t("hours", "Hours saved MTD", m.hoursSaved, "", m.hoursTrend, m.hoursPrev),
+    kpiTile({ id: "update", label: "Version", value: m.version || "0.1.20", unit: m.updatePending ? " · update ready" : "" })
   ];
 }

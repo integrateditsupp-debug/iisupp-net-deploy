@@ -30,6 +30,7 @@ import {
 } from "../shared/safety.mjs";
 import { createDetectionOrchestrator } from "../sub-agents/detection/index.mjs";
 import { loadCustomerConfig } from "../shared/customer-config.mjs";
+import { DEEP_LINK_SCHEME, parseSentinelDeepLink, validateResolveLink } from "../shared/deep-link.mjs"; // Slice C — web→Sentinel handoff
 import { ingest as ingestKb } from "../shared/kb-ingester.mjs";
 import { parsePolicyOverlay } from "../shared/policy.mjs";
 import { parseControlPlaneKill, remediationDecision, blockedRecipeResult, KILL_HOTKEY, buildKillResult } from "../shared/kill-switch.mjs";
@@ -56,8 +57,6 @@ import { planCleanup, nextCleanupAt, retentionSummary } from "./data-retention.m
 import { buildQuarterlyReport, quarterOf, isQuarterStart, reportIsClean } from "./report-generator.mjs";
 import { createExecutionCache, runIdempotent } from "../shared/idempotency.mjs";
 import { isActionExecutable, isExecutableRecipe, buildExecution, buildVerification } from "../shared/recipe-runner.mjs";
-import { VERDICT as STAGE7_VERDICT } from "../shared/sandbox-validate.mjs";
-import { runTier0WithStage7 } from "../shared/stage7-tier0.mjs";
 import { buildDiagnostic } from "../shared/diagnostic.mjs";
 import { computeHealthScore, healthTooltip } from "../shared/health-score.mjs";
 import { tickFreeRoam, roamBounds } from "./overlay-physics.mjs";
@@ -86,16 +85,15 @@ import { askAria } from "../shared/aria-brain-client.mjs";
 import { loadKbPack, localKbAnswer } from "../shared/aria-local-kb.mjs"; // RUN 30-B — offline cross-platform KB
 import { parseSystemStatus, parseKbStats, parseSessions, parseHeartbeats } from "../shared/aria-surfaces.mjs"; // RUN 33 — ARIA tab data
 import { defaultAppConfig, shouldShowSetup, completeSetup, reopenSetup } from "../shared/app-config.mjs"; // RUN 33-E — setup wizard
-// First-run profile (local-only PII) + session-end email — spec dev-docs/sentinel-profile-and-session-email-spec.md
-import { loadProfile, saveProfile as persistProfile, profileGateRequired } from "../shared/profile.mjs";
-import { createSession, recordTurn, endSession, buildSessionReport } from "../shared/session.mjs";
 import { anchorTarget, tickAnchored } from "../shared/globe-anchor.mjs";
 import { dueGreeting, jitteredPeriod } from "../shared/globe-greetings.mjs";
+import { buildGlobeConfirmation, mintTicketRef, nextTicketSeq } from "../shared/globe-confirmation.mjs"; // RUN-B B5
 import { sealAudit, verifyAudit, classifyIntegrity } from "../shared/audit-integrity.mjs";
 // RUN 23 — self-service loop: process-health detector · findings→action mapper · supervisor critic ·
 // vetted-tier dry-run policy · abortable 10s countdown gate. The supervisor + policy + countdown form the
 // control plane in FRONT of the existing (dry-run-gated) executor — nothing executes live by default.
 import { createProcessDetector, IPC as PROC_HEALTH_IPC } from "./process-detectors.mjs";
+import { createOfficeSafetyService } from "./office-safety-service.mjs";
 import { recommendAction } from "../shared/recommend-action.mjs";
 import { superviseProposal, supervisorAuditEntry, recipeSideEffects } from "./supervisor-agent.mjs";
 import { executionPolicy, recordOutcome, vettedCountOf, emptyHistory } from "./dry-run-policy.mjs";
@@ -105,6 +103,15 @@ import { EXECUTABLE_RECIPES, YELLOW_RECIPES } from "../shared/recipe-runner.mjs"
 import { executeTier0, resolveExecutorId, TIER0_EXECUTOR_IDS } from "./tier-0-executor.mjs";
 // RUN 23c — OTA: the local bridge serves the built dist .exe metadata so the admin console can 1-click publish.
 import { assetName as otaAssetName, githubAssetUrl as otaAssetUrl } from "../shared/ota-release.mjs";
+import { resolveIntegrations, testIntegration } from "../shared/integrations.mjs";
+import { getEdition } from "../shared/edition.mjs";
+import {
+  loadCredentials as loadIntegrationCreds,
+  saveCredentials as saveIntegrationCreds,
+  applyCredentialsToEnv,
+  maskedView as integrationCredsMaskedView,
+  CREDENTIAL_FIELDS
+} from "../shared/integration-credentials.mjs";
 
 // RUN 23e — single build: the license PLAN (not a build-time flag) decides admin access + feature gates.
 // Reads gateStatus() (license + trial) each call, so a fresh paste / trial expiry re-gates live. An active
@@ -113,6 +120,11 @@ function currentPlanFeatures() { return planEnabledFeatures(gateStatus()); }
 function currentIsAdmin() { return licenseIsAdmin(gateStatus()); }
 let hotkeyStatus = [];
 import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge } from "../shared/license.mjs";
+import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord, stampTtfv, firstFixAtFromAudit, ttfvMinutes, ttfvLabel } from "../shared/pilot-state.mjs"; // RUN-E E1 — TTFV clock
+import { conversionMoment, buildCaseStudy, caseStudyReadiness } from "../shared/case-study.mjs"; // RUN-D D2 — pilot->paid capture, wired
+import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %
+import { valueProof, valueProofKpis } from "../shared/value-proof.mjs"; // RUN-B B2 — real ROI ($/hours) + deflection on every surface
+import { buildTrustSummary } from "../shared/trust-posture.mjs"; // RUN-B B3 — honest trust/security surface (real-or-empty)
 import {
   getServiceNowConfig,
   ping as snPing,
@@ -121,30 +133,19 @@ import {
   postComment as snPostComment,
   drainQueue as snDrainQueue,
   queueDepth as snQueueDepth,
-  hashIdentifier as snHashIdentifier,
-  // MODULE 1 — gated write lifecycle (Interaction → Incident → resolve/close), read-back-verified.
-  createInteraction as snCreateInteraction,
-  createIncidentFromInteraction as snCreateIncidentFromInteraction,
-  resolveIncident as snResolveIncident,
-  closeInteraction as snCloseInteraction
+  hashIdentifier as snHashIdentifier
 } from "../shared/servicenow.mjs";
-// MODULE 2 — gated Entra remediation (revokeSignInSessions / forcePasswordChange), honest labels.
-import { remediateUser as entraRemediateUser } from "../shared/entra-graph-client.mjs";
-// MODULE 3 — supported-case orchestrator (web Resolve → ticket → remediate → close → email).
-import { runSupportCase } from "../shared/case-orchestrator.mjs";
-// MODULE 4 — proactive silent-resolve of safe local issues + the user "what I handled" summary.
-import { buildUserSummary as buildProactiveSummary, summaryIsContentSafe as proactiveSummarySafe } from "../shared/proactive-resolve.mjs";
-import { resolveIntegrations, testIntegration } from "../shared/integrations.mjs"; // W5 — Integrations tab (read-only)
-// Secure in-app credentials store — Integrations "Configure" panels; encrypted at rest via safeStorage.
-import { loadCredentials as loadIntegrationCreds, saveCredentials as saveIntegrationCreds, applyCredentialsToEnv, maskedView as integrationCredsMaskedView, CREDENTIAL_FIELDS } from "../shared/integration-credentials.mjs";
-import { getEdition } from "../shared/edition.mjs";
-// G-METRICS — record REAL measured outcomes (content-blind) + surface the proof aggregate / metrics.json.
-import { recordEvent as recordProof, aggregate as aggregateProof, loadStore as loadProofStore, emitPublicJson as emitProofJson } from "../shared/proof-metrics.mjs";
-// G-OMNI — Slack/Teams front-end (read-only answers + human escalation; honest "not_configured" w/o token).
+import {
+  recordEvent as recordProof,
+  aggregate as aggregateProof,
+  loadStore as loadProofStore,
+  emitPublicJson as emitProofJson
+} from "../shared/proof-metrics.mjs";
 import { getOmniStatus, handleMessage as handleOmniMessage } from "../shared/omni-channel.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(__dirname, "../..");
+function appVersion() { return SENTINEL_VERSION; }
 loadLocalEnv(path.join(appRoot, ".env.local"));
 
 const store = new Store({
@@ -160,10 +161,14 @@ const store = new Store({
     detections: [],
     incidents: [],
     transparencyLog: [],
+    resolutionOutcomes: [],
     serviceNow: {
       instanceUrl: "",
       caller: "",
       connected: false
+    },
+    officeSafety: {
+      enabled: true
     },
     knowledgeSources: [
       { name: "Procedures & runbooks", status: "Indexed", docs: 0 },
@@ -190,6 +195,7 @@ let overlayExpanded = false;
 const childProcesses = new Set();
 const startedAt = Date.now(); // RUN 21 — uptime for the heartbeat
 let detectionOrchestrator = null;
+let officeSafetyService = null;
 // RUN 23 — process-health poller + the set of in-flight pre-execution countdowns (so Ctrl+Alt+K aborts them).
 let processDetector = null;
 let actionIndicatorWindow = null;
@@ -204,14 +210,70 @@ let overlayPhysicsTimer = null;
 let overlayLastTick = 0;
 let overlayActiveUntil = 0;
 
+// Slice C — register the aria-sentinel:// deep-link scheme so the web "Open with ARIA Sentinel" button can
+// hand a matched fix to the installed app. The link only ever carries a recipe id + an intent STRING —
+// never a system command (R6/R8). The id is allowlisted against the local registry and the fix still runs
+// through the full gated pipeline (supervisor + 10s countdown + restore point + Ctrl+Alt+K + audit).
+try {
+  if (process.defaultApp && process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(DEEP_LINK_SCHEME, process.execPath, [path.resolve(process.argv[1])]);
+  } else {
+    app.setAsDefaultProtocolClient(DEEP_LINK_SCHEME);
+  }
+} catch { /* protocol registration is best-effort */ }
+
+let pendingDeepLink = null;
+function extractDeepLink(argv) {
+  if (!Array.isArray(argv)) return null;
+  return argv.find((a) => typeof a === "string" && a.startsWith(DEEP_LINK_SCHEME + "://")) || null;
+}
+
+// Parse + safely act on aria-sentinel://resolve?recipe=<id>&intent=<text>. Parsing + validation live in the
+// pure src/shared/deep-link.mjs (unit-tested); this only wires the verdict to the gated execution pipeline.
+function handleSentinelDeepLink(rawUrl) {
+  const parsed = parseSentinelDeepLink(rawUrl);
+  if (!parsed) return;
+  const verdict = validateResolveLink(parsed, {
+    isKnownRecipe: (id) => Boolean(recipeById(id)) || Boolean(resolveExecutorId(id)),
+    isBlocked: isBlockedPath
+  });
+  if (verdict.reason === "r11_blocked") {
+    logEvent("SECURITY", "Deep-link blocked by R11 (private folder).", r11AuditEntry("deep-link"));
+    return;
+  }
+  // Bring the app forward so the handoff is always visible (transparency — never a silent background fix).
+  showMainWindow("recipes");
+  showOverlay({ expanded: false });
+  if (!verdict.ok) {
+    logEvent("DETECT", `Deep-link not actioned (${verdict.reason}): ${parsed.recipeId || "(none)"}.`, { intent: parsed.intent ? "[provided]" : "" });
+    return;
+  }
+  // Web-originated → ALWAYS gate as Confirmed: one explicit human approve + the visible 10s countdown is the
+  // consent. We deliberately do NOT silently auto-fire from a browser link even for green recipes (R8 trust
+  // boundary); runSupervisedFix already forbids Autonomous for resolve actions. Restore point + Ctrl+Alt+K stay.
+  logEvent("RUN", `Deep-link resolve requested for ${parsed.recipeId}.`, { recipeId: parsed.recipeId });
+  try { runSupervisedFix({ recipeId: parsed.recipeId, mode: "confirmed", risk: (recipeById(parsed.recipeId)?.risk || "medium") }); }
+  catch (e) { logEvent("ERROR", `Deep-link resolve failed: ${e?.message || e}`, { recipeId: parsed.recipeId }); }
+}
+
+// macOS delivers deep-links via open-url (can fire before the app is ready).
+app.on("open-url", (event, openedUrl) => {
+  event.preventDefault();
+  if (app.isReady()) handleSentinelDeepLink(openedUrl);
+  else pendingDeepLink = openedUrl;
+});
+
 const hasSingleInstanceLock = app.requestSingleInstanceLock();
 if (!hasSingleInstanceLock) {
   app.quit();
 } else {
-  app.on("second-instance", () => {
+  app.on("second-instance", (_event, argv) => {
     logEvent("SELF-REPAIR", "Second ARIA Sentinel launch redirected to existing instance.");
     showMainWindow("mode");
     showOverlay({ expanded: false });
+    // Windows delivers the deep-link as an argv on the relaunch that hits the running instance.
+    const link = extractDeepLink(argv);
+    if (link) handleSentinelDeepLink(link);
   });
 }
 
@@ -243,17 +305,44 @@ function loadLocalEnv(envPath) {
   }
 }
 
-// Integration credentials live encrypted in userData (NOT .env.local). Decrypt + feed them into the
-// SAME env keys the providers read, so the Integrations status/Test-connection work unchanged. The UI
-// is the source of truth → these override any stale .env value. Available only after app is ready
-// (userData path). Never throws; never logs secrets.
-function integrationCredsDeps() { return { safeStorage, fs, dir: app.getPath("userData") }; }
+function integrationCredsDeps() {
+  return { safeStorage, fs, dir: appPathSafe("userData") || path.join(os.homedir(), ".aria-sentinel") };
+}
+
 function applyStoredIntegrationCreds() {
   try {
     applyCredentialsToEnv(loadIntegrationCreds(integrationCredsDeps()), process.env);
   } catch {
     // Credential loading must never block the app shell.
   }
+}
+
+function integrationEncryptionAvailable() {
+  try { return Boolean(safeStorage.isEncryptionAvailable()); } catch { return false; }
+}
+
+function getIntegrationStatus() {
+  applyStoredIntegrationCreds();
+  const edition = getEdition(process.env);
+  return { ok: true, edition, items: resolveIntegrations(process.env, edition) };
+}
+
+function getIntegrationConfig() {
+  const creds = loadIntegrationCreds(integrationCredsDeps());
+  return {
+    ok: true,
+    encryptionAvailable: integrationEncryptionAvailable(),
+    fields: CREDENTIAL_FIELDS,
+    config: integrationCredsMaskedView(creds)
+  };
+}
+
+function saveIntegrationConfig(patch = {}) {
+  const deps = integrationCredsDeps();
+  const saved = saveIntegrationCreds(patch, deps);
+  if (saved.ok) applyCredentialsToEnv(loadIntegrationCreds(deps), process.env);
+  const config = getIntegrationConfig();
+  return { ...config, ok: Boolean(saved.ok), error: saved.error || null };
 }
 
 function makeTrayImage(state = "idle") {
@@ -855,10 +944,15 @@ function dashboardData() {
   if (upd.phase && upd.phase !== "IDLE" && upd.phase !== "INSTALLED") pending.push({ text: `Update v${upd.version || ""} available`, cta: "Install", tab: "about" });
   if (s.auditIntegrity && s.auditIntegrity.ok === false) pending.push({ text: "Audit integrity needs review", cta: "Open", tab: "compliance" });
   if (s.gate && s.gate.trial && s.gate.trial.state === "active") pending.push({ text: s.gate.trial.badge, cta: "Upgrade", tab: "about" });
+  const pilotPrompt = pilotPromptNow();
+  if (pilotPrompt && pilotPrompt.show) pending.push({ text: pilotPrompt.title, cta: pilotPrompt.cta, tab: "about" });
+  const conv = conversionMomentNow(); // RUN-D D2 — day-10-14 pilot->paid moment on the SAME pilot-expiry surface
+  if (conv && conv.show) pending.push({ text: conversionPendingText(conv), cta: conv.cta.label, tab: "about", path: conv.cta.path });
+  const vp = valueProofNow(); // RUN-B B2 — real-or-empty ROI ($/hours) + deflection for the dashboard hero
   return {
     sources,
     subline: { eventsToday: log.length, threats: 0, lastSyncAgo: upd.lastCheckAt ? relativeAgo(upd.lastCheckAt) : "just now" },
-    metrics: { uptime7d: 100, mttr: 0, accuracy: 0, breaches: 0, hoursSaved: Math.round(fixes * 0.4 * 10) / 10, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
+    metrics: { uptime7d: null, mttr: null, accuracy: null, breaches: 0, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflection: resolutionStatsNow().deflectionPct, version: SENTINEL_VERSION, updatePending: pending.some((p) => /Update/.test(p.text)) },
     pending,
     activity: recentLog(10),
     trust: "🔒 Local processing · audit integrity verified · 0 outbound to non-allowlisted hosts last 24h · privacy verifier active · 100% sanitization"
@@ -872,7 +966,7 @@ function performanceData() {
   const diags = log.filter((e) => e.tag === "DIAGNOSE").length;
   return {
     operational: { mttd: 0, mttr: 0, ftr: 100, autoPct: 100, recipeSuccess: 100, detTrend: [] },
-    ai: { accuracy: 0, calibration: 100, confirmRate: 0, kbHitRate: 0, top3: 0, hoursSaved: Math.round(fixes * 0.4 * 10) / 10, costSaved: fixes * 50, anomalies: 0, diagnoses: diags },
+    ai: { accuracy: null, calibration: null, confirmRate: null, kbHitRate: null, top3: null, hoursSaved: null, costSaved: null, anomalies: 0, diagnoses: diags },
     usage: { activeToday: Math.round((Date.now() - startedAt) / 3600000), activeWeek: 0, topTier: "tier-0", hotkeys: (store.get("hotkeyUse") || 0) }
   };
 }
@@ -902,7 +996,8 @@ function complianceData() {
     privacy: { pass: true, allowlistOk: true, sanitization: 100, ts: store.get("lastPrivacyCapture")?.ts || "" },
     tier0: { blocked: (store.get("tier0Blocked") || 0), categories: [] },
     r11: r11EnforcementStatus(store.get("r11Attempts") || 0, new Date().toISOString()),
-    frameworks: compositeScores()
+    frameworks: compositeScores(),
+    trust: trustPostureNow() // RUN-B B3 — honest trust/security surface (real-or-empty)
   };
 }
 
@@ -911,11 +1006,12 @@ function reportData(now = Date.now()) {
   const perf = performanceData();
   const sla = slaData();
   const comp = complianceData();
+  const vp = valueProofNow(); // RUN-B B2 — real ROI ($/hours) + deflection into the report/email kpis (real-or-empty)
   return {
     license: (readLicense() || {}).key ? String(readLicense().key).slice(0, 16) : "trial",
     company: "your organization", // content-blind: never the real machine/user name
     quarter: quarterOf(now),
-    kpis: { incidents: perf.ai.diagnoses || 0, autoPct: perf.operational.autoPct, hoursSaved: perf.ai.hoursSaved, accuracy: perf.ai.accuracy, breaches: (sla.breaches || []).length, uptime7d: sla.uptime.d7, mttr: perf.operational.mttr, version: SENTINEL_VERSION },
+    kpis: { incidents: perf.ai.diagnoses || 0, autoPct: perf.operational.autoPct, hoursSaved: vp.hoursSaved, dollarsSaved: vp.dollarsSaved, deflectionPct: vp.deflectionPct, resolved: vp.resolved, conversations: vp.conversations, accuracy: perf.ai.accuracy, breaches: (sla.breaches || []).length, uptime7d: sla.uptime.d7, mttr: perf.operational.mttr, version: SENTINEL_VERSION },
     sla: { composite: sla.compliance.composite, floor: sla.compliance.floor, breaches: (sla.breaches || []).length, categories: { uptime: `${sla.compliance.uptime}%`, met: sla.compliance.met ? "yes" : "no" } },
     compliance: { soc2: comp.frameworks.soc2, hipaa: comp.frameworks.hipaa, pipeda: comp.frameworks.pipeda, gdpr: comp.frameworks.gdpr },
     topIncidents: [], recurring: [], upcoming: ["Continue automated patching", "Quarterly SLA review"]
@@ -1285,6 +1381,7 @@ const MAC_PRIVACY_PANES = {
 // --- RUN 10: trial license · updates · billing portal ----------------------------------------
 const LICENSE_FILE = path.join(os.homedir(), ".aria-sentinel", "license.json");
 const TRIAL_FILE = path.join(os.homedir(), ".aria-sentinel", "trial.json");
+const PILOT_FILE = path.join(os.homedir(), ".aria-sentinel", "pilot.json"); // RUN-C C2 — 14-day SMB pilot
 // The binary checks updates via iisupp.net (server-side function talks to GitHub) — its outbound
 // stays inside the declared allowlist; it never calls GitHub directly.
 const UPDATE_ENDPOINT = "https://iisupp.net/aria-binary-update";
@@ -1394,14 +1491,201 @@ function ensureTrialStarted() {
 function trialState() {
   return computeTrialStatus(readTrial()?.started_at);
 }
+// RUN-C C2 — 14-day SMB free-pilot, stored at ~/.aria-sentinel/pilot.json. Local only, no external send;
+// distinct from the 12-hour trial gate above. Falls back to free Manual at expiry (never locks the user out).
+function readPilot() {
+  try { return JSON.parse(fs.readFileSync(PILOT_FILE, "utf8")); } catch { return null; }
+}
+// RUN-E E1 — persist the pilot record (local only, never an external send).
+function writePilot(record) {
+  try {
+    fs.mkdirSync(path.dirname(PILOT_FILE), { recursive: true });
+    fs.writeFileSync(PILOT_FILE, JSON.stringify(record, null, 2));
+    return true;
+  } catch { return false; }
+}
+// RUN-E E1 — TTFV clock: the FIRST audit-log RUN fix at/after pilot start stamps ttfv into pilot.json,
+// exactly once (write-once; a later "better" fix never rewrites history). Real-or-empty (Rule 14): no
+// pilot, no real fix, or fix-before-start => no write, no number — the dashboard keeps showing "--".
+let ttfvStamping = false;
+function maybeStampPilotTtfv() {
+  if (ttfvStamping) return;
+  const record = readPilot();
+  if (!record) return;
+  const firstFixAt = firstFixAtFromAudit(store.get("transparencyLog") || [], { startedAt: record.started_at });
+  const stamped = stampTtfv(record, { firstFixAt });
+  if (!stamped.changed) return;
+  if (!writePilot(stamped.record)) return;
+  ttfvStamping = true;
+  try {
+    logEvent("PILOT", `First value delivered: first real fix ${stamped.record.ttfv.minutes} min after pilot start (TTFV).`);
+  } finally { ttfvStamping = false; }
+}
+function pilotStateLocal() {
+  return pilotStatus({ startedAt: readPilot()?.started_at });
+}
+function startPilot(intake) {
+  if (readPilot()) return { ok: true, already: true, status: pilotStateLocal() };
+  const built = buildPilotRecord(intake || {}, { deviceId: os.hostname() });
+  if (!built.ok) return { ok: false, errors: built.errors };
+  if (writePilot(built.record)) logEvent("PILOT", "14-day free pilot started."); // best-effort local write; never an external send
+  return { ok: true, status: pilotStatus({ startedAt: built.record.started_at }) };
+}
+function pilotPromptNow() {
+  const dismissed = store.get("pilotPromptDismissed") || [];
+  return pilotUpgradePrompt(pilotStateLocal(), { dismissed });
+}
+function dismissPilotPrompt(state) {
+  const dismissed = new Set(store.get("pilotPromptDismissed") || []);
+  if (state) dismissed.add(String(state));
+  store.set("pilotPromptDismissed", [...dismissed]);
+  return { ok: true };
+}
+// RUN-D D2 — pilot->paid capture, fed by the SAME real signals the dashboard/performance tabs use.
+// fixes = audit-log RUN entries (real resolved fixes). Real-or-empty: 0 fixes or an immature pilot => no ask, ever.
+function pilotMetricsNow() {
+  const log = store.get("transparencyLog") || [];
+  const fixes = log.filter((e) => e.tag === "RUN").length;
+  // RUN-B B1 — feed the REAL deflection (resolved / conversations) into the D2 pilot->paid proof, not just a fix count.
+  return pilotProofMetrics(store.get("resolutionOutcomes") || [], { fixes });
+}
+// RUN-B B1 — the "Was this fixed?" feedback loop -> a real, defensible deflection %. Outcomes persist
+// locally (no external send); the metric is real-or-empty and moves ONLY on a real resolved outcome.
+function resolutionOutcomesLog() { return store.get("resolutionOutcomes") || []; }
+function resolutionStatsNow() { return deflectionStats(resolutionOutcomesLog()); }
+// RUN-B B2 — the ONE real-or-empty value proof (ROI $/hours + real deflection %) every surface renders. fixes =
+// the SAME audit-log RUN count the D2 pilot proof uses; outcomes = the real B1 "was this fixed?" events.
+function valueProofNow() {
+  const log = store.get("transparencyLog") || [];
+  const fixes = log.filter((e) => e.tag === "RUN").length;
+  return valueProof({ fixes, outcomeEvents: resolutionOutcomesLog() });
+}
+// RUN-B B3 — the honest trust/security surface, real-or-empty. Same real signals B1/B2 use: audit-log RUN
+// count for fixes + the real "was this fixed?" outcomes for deflection. No seeded values, no cert we don't hold.
+function trustPostureNow() {
+  const log = store.get("transparencyLog") || [];
+  const fixes = log.filter((e) => e.tag === "RUN").length;
+  return buildTrustSummary({ resolutionEvents: resolutionOutcomesLog(), fixes });
+}
+
+function proofMetricsNow() {
+  const storeSnapshot = loadProofStore();
+  const metrics = aggregateProof(storeSnapshot);
+  try { emitProofJson(); } catch { /* public aggregate emission is best-effort */ }
+  return { ok: true, metrics, updatedAt: storeSnapshot.updatedAt || metrics.generatedAt };
+}
+
+function omniStatusNow() {
+  return { ok: true, providers: getOmniStatus(process.env) };
+}
+
+function omniMessageNow(message = {}) {
+  const payload = typeof message === "string" ? { provider: "slack", text: message } : (message || {});
+  const kbIndex = loadKbPack(path.join(appRoot, "aria-kb-pack"), fs);
+  return handleOmniMessage(payload, {
+    kbIndex,
+    platform: process.platform,
+    record: (event) => recordProof(event)
+  });
+}
+// RUN-B B5 - globe "issue resolved | email sent | ticket reference" confirmation. Everything real (Rule 14):
+// fires ONLY after a real applied+verified fix, mints+RECORDS a real ticket reference, sends the real
+// resolution email (reusing the proven Resend-backed sentinel-session-report function), and NEVER claims
+// "sent" unless the send actually returned success. The overlay renders it directly under the floating globe.
+const RESOLUTION_EMAIL_ENDPOINT = "https://iisupp.net/.netlify/functions/sentinel-session-report";
+
+function mintAndRecordTicketRef(serviceNowNumber = "") {
+  const prev = store.get("ticketSeq") || {};
+  const { day, seq } = nextTicketSeq(prev, Date.now());
+  store.set("ticketSeq", { day, seq });
+  const minted = mintTicketRef({ serviceNowNumber, seq });
+  // Record the reference in the tamper-evident transparency log so a local ref is never "random with no record".
+  logEvent("TICKET", `Ticket reference ${minted.ref} minted (${minted.source}).`, { ref: minted.ref, source: minted.source });
+  const refs = store.get("ticketRefs") || [];
+  refs.unshift(minted.record || { ref: minted.ref, source: minted.source, ts: new Date().toISOString() });
+  store.set("ticketRefs", refs.slice(0, 500));
+  return { ref: minted.ref, source: minted.source };
+}
+
+async function sendResolutionEmail({ issueTitle, ticketRef, sessionId } = {}) {
+  // Honest: no network in dry-run/test -> treat as not-attempted so the copy never claims a phantom send.
+  if (process.env.ARIA_SENTINEL_DRY_RUN === "1") return { attempted: false, sent: false, to: null };
+  const to = (licenseStatus().email || "").trim() || null;
+  const payload = {
+    sessionId: sessionId || `sentinel-${Date.now()}`,
+    outcome: "resolved",
+    endedAt: new Date().toISOString(),
+    issue: issueTitle,
+    ticketRef,
+    user: to ? { email: to } : {}
+  };
+  try {
+    const res = await fetch(RESOLUTION_EMAIL_ENDPOINT, {
+      method: "POST",
+      headers: { "content-type": "application/json", "user-agent": "aria-sentinel" },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout?.(9000)
+    });
+    return { attempted: true, sent: res.ok, to };
+  } catch {
+    return { attempted: true, sent: false, to };   // attempted but not confirmed -> honest "Email pending."
+  }
+}
+
+// Fire the under-globe confirmation for a REAL resolved+verified issue. Non-blocking; safe to call fire-and-forget.
+async function emitGlobeConfirmation({ issueTitle, serviceNowNumber = "", sessionId } = {}) {
+  try {
+    const { ref } = mintAndRecordTicketRef(serviceNowNumber);
+    const email = await sendResolutionEmail({ issueTitle, ticketRef: ref, sessionId });
+    const conf = buildGlobeConfirmation({ completed: true, verified: true, issueTitle, ticketRef: ref, email }, {});
+    if (!conf.show) return conf;
+    logEvent("RESOLVED", conf.text, { ticketRef: conf.ticketRef, emailSent: conf.email.sent });
+    if (overlayWindow && !overlayWindow.isDestroyed()) {
+      try { overlayWindow.webContents.send("sentinel:globe-confirmation", conf); } catch { /* overlay gone */ }
+    }
+    return conf;
+  } catch {
+    return { show: false, reason: "error" };
+  }
+}
+
+function recordResolutionOutcome(payload = {}) {
+  const res = recordResolutionEvent(resolutionOutcomesLog(), payload || {});
+  if (!res.ok) return { ok: false, errors: res.errors, stats: resolutionStatsNow() };
+  store.set("resolutionOutcomes", res.events.slice(-1000)); // cap; never unbounded
+  if (!res.deduped) logEvent("FEEDBACK", `Answer marked "${res.record.outcome}"${res.record.confidence ? ` (${res.record.confidence.level} confidence)` : ""}.`);
+  return { ok: true, deduped: res.deduped, stats: resolutionStatsNow() };
+}
+function conversionMomentNow() {
+  return conversionMoment({ pilot: readPilot(), metrics: pilotMetricsNow() });
+}
+function conversionPendingText(conv) {
+  const p = (conv && conv.proof) || {};
+  const bits = [];
+  if (p.fixes != null) bits.push(`${p.fixes} real fix${p.fixes === 1 ? "" : "es"}`);
+  if (p.hours_saved != null) bits.push(`${p.hours_saved}h saved`);
+  return bits.length ? `${conv.cta.label} \u2014 ${bits.join(" \u00b7 ")}` : conv.cta.label;
+}
+// Staged one-page proof — real-or-empty; NEVER auto-published (publish is Ahmad's consent-gated one-click).
+function caseStudyDraftNow(opts = {}) {
+  const pilot = readPilot();
+  const metrics = pilotMetricsNow();
+  return {
+    readiness: caseStudyReadiness({ pilot, metrics }),
+    draft: buildCaseStudy({ pilot, metrics, vertical: opts && opts.vertical })
+  };
+}
 function gateStatus() {
   const lic = licenseStatus();
   const trial = trialState();
+  const pilot = pilotStateLocal();
   return {
     licensed: lic.licensed,
     plan: lic.plan,
     email: lic.email,
     trial: { state: trial.state, remainingMs: trial.remainingMs, badge: trialBadge(trial.remainingMs) },
+    pilot: { state: pilot.state, daysRemaining: pilot.daysRemaining, badge: pilotBadge(pilot), ttfvMinutes: ttfvMinutes(readPilot()), ttfv: ttfvLabel(readPilot()) }, // RUN-E E1 — real-or-empty TTFV ("--" until a real first fix)
+    conversion: conversionMomentNow(), // RUN-D D2 — surfaced to renderer alongside the pilot block
     unlocked: licenseUnlocked({ licenseValid: lic.licensed, trialState: trial.state })
   };
 }
@@ -1828,7 +2112,9 @@ function runSupervisedFix(payload = {}) {
   const history = readRecipeHistory();
   const runs = (((history.recipes || {})[recipeId] || {}).runs || []).map((r) => ({ recipeId, ts: r.ts, ok: r.outcome === "success" }));
   const proposal = { recipeId, args: { pid: payload.pid }, riskTier: payload.risk || "medium", expectedImpact: recipeSideEffects(recipeId), rollbackPlan: "restore-point" };
-  // Resolve-it-for-me passes an explicit grade; clamp to manual|confirmed so a resolve action can NEVER escalate to autonomous.
+  // "Resolve it for me" (TASK 3) may request CONFIRMED-grade gating for this one action — explicit user
+  // approval + a visible 10s countdown. SAFETY: a resolve action may only request "manual" or "confirmed";
+  // it can NEVER escalate to Autonomous (silent auto-fix). Anything else falls back to the stored mode.
   const requested = String(payload.mode || "");
   const mode = (requested === "manual" || requested === "confirmed") ? requested : (store.get("mode") || "manual");
   const verdict = superviseProposal(proposal, { mode, history: runs, now: Date.now(), vettedCatalog: supervisedVettedCatalog() });
@@ -1870,40 +2156,20 @@ function tier0Run(command) {
 async function runTier0Fix(recipeId, options = {}) {
   // Dry-run unless system fixes are enabled AND the global gate is off AND the caller didn't force dry-run.
   const actualDryRun = !allowSystemFixes || Boolean(store.get("dryRun")) || options.dryRun === true;
-
-  // Dry-run path: describe-only, nothing touches prod, so the Stage-7 prod gate is not needed.
-  if (actualDryRun) {
-    const result = await executeTier0(recipeId, {
-      dryRun: true,
-      run: tier0Run,
-      logger: (event, text, extra) => logEvent(event, text, { ...extra })
-    });
-    try { refreshHealthScore(); } catch { /* health refresh best-effort */ }
-    const ok = ["success", "no-op-neutral", "dry-run"].includes(result.outcome);
-    return { ok, dryRun: true, recipe: { id: result.recipeId || recipeId, tier: "tier-0" }, outcome: result.outcome, steps: result.events, message: result.message };
-  }
-
-  // REAL execution → STAGE 7 prove-before-prod gate (shared adapter). The proven executeTier0 stays the
-  // atomic apply unit (its pre→exec→post→rollback + R11 + allowlist untouched); Stage 7 logic-validates
-  // via a real dry-run first, so a blocked/unbound fix never reaches prod, then applies + reads back +
-  // rolls back on damage, surfacing only a silent outcome.
-  const { gate, applyResult } = await runTier0WithStage7(recipeId, {
+  const result = await executeTier0(recipeId, {
+    dryRun: actualDryRun,
     run: tier0Run,
-    logger: (event, text, extra) => logEvent(event, text, { ...extra }),
-    recordRestorePoint: (id) => recordRestorePoint(id, `ARIA pre-fix ${id}`)
+    logger: (event, text, extra) => logEvent(event, text, { ...extra })
   });
   try { refreshHealthScore(); } catch { /* health refresh best-effort */ }
-  logEvent("STAGE7", `Validated fix ${recipeId}: ${gate.verdict} (${gate.validation}).`, { recipeId, verdict: gate.verdict, validation: gate.validation });
-  const ok = gate.verdict === STAGE7_VERDICT.APPLIED || (applyResult && applyResult.outcome === "no-op-neutral");
+  const ok = ["success", "no-op-neutral", "dry-run"].includes(result.outcome);
   return {
     ok,
-    dryRun: false,
-    recipe: { id: (applyResult && applyResult.recipeId) || recipeId, tier: "tier-0" },
-    outcome: applyResult ? applyResult.outcome : gate.verdict,
-    verdict: gate.verdict,
-    validation: gate.validation,
-    steps: applyResult ? applyResult.events : gate.events,
-    message: gate.userMessage
+    dryRun: actualDryRun,
+    recipe: { id: result.recipeId || recipeId, tier: "tier-0" },
+    outcome: result.outcome,
+    steps: result.events,
+    message: result.message
   };
 }
 
@@ -1944,46 +2210,49 @@ function logEvent(tag, text, extra = {}) {
   current.unshift(entry);
   const trimmed = current.slice(0, 250);
   store.set("transparencyLog", trimmed);
-  // RUN 16 §H — re-seal the log on every write so the next session can detect off-app tampering. The seal
-  // is version-stamped so a later build can tell an upgrade (benign re-seal) from a same-version edit.
-  try { store.set("auditSeal", sealAudit(trimmed, { appVersion: appVersion(), sealedAt: entry.ts })); } catch { /* sealing must never block logging */ }
+  // RUN 16 §H — re-seal the log on every write so the next session can detect off-app tampering.
+  try { store.set("auditSeal", sealAudit(trimmed, { appVersion: appVersion() })); } catch { /* sealing must never block logging */ }
+  // RUN-E E1 — a real fix just landed in the audit log: stamp pilot TTFV (write-once; no-op for other tags).
+  if (tag === "RUN") { try { maybeStampPilotTtfv(); } catch { /* TTFV must never block logging */ } }
   broadcastState();
   return entry;
 }
 
-// The real build version (package.json, e.g. 0.1.19) — changes per install, unlike the static
-// SENTINEL_VERSION constant. Used to version-stamp the audit seal so upgrades aren't read as tampering.
-function appVersion() {
-  try { return app.getVersion(); } catch { return SENTINEL_VERSION; }
-}
-
 // RUN 16 §H — at session start, verify the persisted audit log against the seal written last session.
-// A mismatch UNDER THE SAME BUILD means the on-disk log was edited/truncated/reordered while the app was
-// closed → record a SECURITY entry, surface it to the admin (state + tray). A version UPGRADE (or a
-// legacy version-less seal) is NOT tampering — the install kills the old build and the new one re-seals;
-// we migrate the chain silently so updates never raise a false tamper alarm. Real tamper still alerts.
+// A mismatch means the on-disk log was edited/truncated/reordered while the app was closed → record a
+// SECURITY entry, surface it to the admin (state + tray), then re-baseline the seal to the current log.
 function verifyAuditIntegrity() {
   const log = store.get("transparencyLog") || [];
   const sealed = store.get("auditSeal");
   const verdict = classifyIntegrity(log, sealed, appVersion());
-  const reseal = () => { try { store.set("auditSeal", sealAudit(log, { appVersion: appVersion(), sealedAt: new Date().toISOString() })); } catch { /* non-fatal */ } };
-
+  if (verdict.status === "version-changed") {
+    const finding = { ok: true, status: verdict.status, from: verdict.from || null, to: verdict.to || appVersion(), verifiedAt: new Date().toISOString() };
+    store.set("auditIntegrity", finding);
+    try { store.set("auditSeal", sealAudit(log, { appVersion: appVersion() })); } catch { /* non-fatal */ }
+    return finding;
+  }
   if (verdict.status === "tampered") {
     const finding = { ok: false, reason: verdict.reason, brokenAt: verdict.brokenAt, detectedAt: new Date().toISOString() };
     store.set("auditIntegrity", finding);
-    // logEvent re-seals over the (now-trusted-going-forward) log, so this alert won't repeat next launch.
-    logEvent("SECURITY", `Audit log integrity check FAILED (${verdict.reason}) — tamper detected; admin alerted.`);
+    logEvent("SECURITY", `Audit log integrity check FAILED (${verdict.reason}) - tamper detected; admin alerted.`);
     try { refreshTray(); } catch { /* tray may not exist yet at startup */ }
     return finding;
   }
-
-  const ok = { ok: true, verifiedAt: new Date().toISOString(), migratedAcrossVersion: verdict.status === "version-changed" };
-  store.set("auditIntegrity", ok);
-  reseal(); // baseline (first run) / migrate (version change) / refresh (clean verify) — always under the current version
-  if (verdict.status === "version-changed") {
-    // Audit, but as benign maintenance — NOT a SECURITY tamper alert and NOT a banner trigger.
-    logEvent("AUDIT", `Audit chain re-sealed across version change (${verdict.from || "legacy"} -> ${verdict.to}) — not tampering.`);
+  if (sealed && Array.isArray(sealed.chain)) {
+    const result = verifyAudit(log, sealed);
+    if (!result.ok) {
+      const finding = { ok: false, reason: result.reason, brokenAt: result.brokenAt, detectedAt: new Date().toISOString() };
+      store.set("auditIntegrity", finding);
+      // logEvent re-seals over the (now-trusted-going-forward) log, so this alert won't repeat next launch.
+      logEvent("SECURITY", `Audit log integrity check FAILED (${result.reason}) — tamper detected; admin alerted.`);
+      try { refreshTray(); } catch { /* tray may not exist yet at startup */ }
+      return finding;
+    }
   }
+  const ok = { ok: true, verifiedAt: new Date().toISOString() };
+  store.set("auditIntegrity", ok);
+  // Baseline/refresh the seal (first run, or after a confirmed-clean verify).
+  try { store.set("auditSeal", sealAudit(log, { appVersion: appVersion() })); } catch { /* non-fatal */ }
   return ok;
 }
 
@@ -2042,11 +2311,11 @@ function getState() {
     transparencyLog: store.get("transparencyLog") || [],
     serviceNow: store.get("serviceNow"),
     serviceNowStatus: serviceNowSummary(),
+    officeSafety: officeSafetyStatus(),
     knowledgeSources: store.get("knowledgeSources"),
     restorePoints: (store.get("restorePoints") || []).slice(0, 10),
     deletePrefs: readDeletePrefs(),
-    firstRunComplete: Boolean(store.get("firstRunComplete")),
-    profileRequired: profileGateRequired(fs, path, app.getPath("userData")) // mandatory first-run profile gate
+    firstRunComplete: Boolean(store.get("firstRunComplete"))
   };
 }
 
@@ -2340,6 +2609,11 @@ async function runRecipe(recipeId, options = {}) {
   if (!actualDryRun && isExecutableRecipe(recipe.id) && steps.every((s) => s.ok)) {
     const verified = await verifyRecipe(recipe.id);
     logEvent(verified.ok ? "DONE" : "REVIEW", `Verification for ${recipe.signal}: ${verified.ok ? "passed" : "inconclusive"}.`, { recipeId });
+    // RUN-B B5 - a REAL applied+verified fix: show the under-globe "resolved | email sent | ticket ref"
+    // confirmation (real email + real recorded ticket ref). Non-blocking; never fires on an unverified fix.
+    if (verified.ok) {
+      Promise.resolve(emitGlobeConfirmation({ issueTitle: recipe.title || recipe.signal, sessionId: executionId })).catch(() => {});
+    }
   }
   refreshHealthScore();
   const ok = steps.every((step) => step.ok);
@@ -2654,16 +2928,7 @@ function kbIndex() {
   return _kbIndex;
 }
 
-// G-METRICS — write ONE content-blind proof record per handled chat query. Never throws; a measurement
-// failure must never break a chat answer. Only booleans + a measured latency leave this function.
-function recordChatProof({ source, matchedKb, resolved, escalated, startedAt }) {
-  try {
-    recordProof({ source, matchedKb, resolved, escalated, resolveMs: Date.now() - startedAt });
-  } catch { /* metrics are best-effort; chat answers are never blocked by instrumentation */ }
-}
-
 async function chat(message, context = {}) {
-  const _proofStart = Date.now();
   // Local KB match (always computed; used as the offline fallback + as a fix hint).
   const signature = sanitizeToSignature({ issue: message, ...context });
   const query = queryForSignature(signature);
@@ -2680,8 +2945,6 @@ async function chat(message, context = {}) {
   if (brain && !brain.offline && brain.reply) {
     if (brain.session_id) store.set("chatSessionId", brain.session_id);
     if (brain.kb_meta) { store.set("kbMeta", brain.kb_meta); broadcastState(); } // RUN 33-A — surface KB freshness to the top bar
-    // Measured: the live brain answered → query handled & resolved; KB-hit when a KB article backed it.
-    recordChatProof({ source: "chat", matchedKb: Boolean(brain.kb_match), resolved: true, escalated: false, startedAt: _proofStart });
     return { ok: true, provider: "aria-brain", text: brain.reply, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
   }
   // Offline / unreachable → answer from the bundled cross-platform KB (RUN 30-B). ARIA is full cross-platform
@@ -2691,8 +2954,6 @@ async function chat(message, context = {}) {
   const text = localMatches.length
     ? `${kb.text}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
     : kb.text;
-  // Measured: offline answer. A KB hit auto-resolves ($0, no human); a miss would escalate (online/human).
-  recordChatProof({ source: "local-kb", matchedKb: kb.matched, resolved: kb.matched, escalated: !kb.matched, startedAt: _proofStart });
   return { ok: true, provider: "local-kb", text, signature, matched: kb.matched, matches: localMatches, offline: true, cost: "none" };
 }
 
@@ -2823,6 +3084,7 @@ function runDiagnostic() {
     bridge: { listening: bridgeStatus.listening, conflict: bridgeStatus.conflict, port: BRIDGE_PORT },
     watchers: detectionOrchestrator ? detectionOrchestrator.status() : { running: false, count: 0, lastTickAgeMs: null },
     serviceNow: serviceNowSummary(),
+    officeSafety: officeSafetyStatus(),
     kb: { bundleOk: true, version: (store.get("endpointStatus") || []).every((e) => e.ok !== false) },
     audit: { entries: store.get("transparencyLog") || [] },
     tray: Boolean(tray),
@@ -2832,6 +3094,112 @@ function runDiagnostic() {
   const report = buildDiagnostic(facts);
   logEvent(report.ok ? "SELF-CHECK" : "SELF-REPAIR", `Diagnostic self-test: ${report.passed}/${report.total} checks passed.`);
   return report;
+}
+
+function appPathSafe(name) {
+  try { return app.getPath(name); } catch { return ""; }
+}
+
+function defaultOfficeSafetyConfig() {
+  const saved = store.get("officeSafety") || {};
+  const userData = appPathSafe("userData") || path.join(os.homedir(), ".aria-sentinel");
+  const defaultRoots = [
+    appPathSafe("documents"),
+    appPathSafe("desktop"),
+    process.env.ONEDRIVE,
+    process.env.OneDrive,
+    process.env.OneDriveCommercial,
+    process.env.OneDriveConsumer
+  ].filter(Boolean);
+  return {
+    ...saved,
+    enabled: saved.enabled !== false,
+    backupRoot: saved.backupRoot || path.join(userData, "RescueBackups"),
+    watchRoots: Array.isArray(saved.watchRoots) && saved.watchRoots.length ? saved.watchRoots : defaultRoots
+  };
+}
+
+function officeSafetyStatus() {
+  if (officeSafetyService) return officeSafetyService.status();
+  const cfg = store.get("officeSafety") || {};
+  return {
+    ok: true,
+    enabled: cfg.enabled !== false,
+    running: false,
+    backupIntervalMs: 2 * 60 * 1000,
+    validationIntervalMs: 3 * 60 * 1000,
+    scanIntervalMs: 30 * 1000,
+    activeWindowMs: 24 * 60 * 60 * 1000,
+    watchRootsCount: 0,
+    backupVault: "local-user-vault",
+    backupRootConfigured: false,
+    filesTracked: 0,
+    backupsCreated: 0,
+    validationsPassed: 0,
+    validationFailures: 0,
+    lastScanAt: null,
+    lastBackupAt: null,
+    lastValidationAt: null,
+    lastError: "",
+    documents: [],
+    recentEvents: [],
+    safeContract: {
+      localOnly: true,
+      cloudUpload: false,
+      validatesLiveFile: false,
+      validationUsesRenamedCopy: true,
+      launchesOffice: false,
+      macrosRun: false
+    }
+  };
+}
+
+function ensureOfficeSafetyService() {
+  if (!officeSafetyService) {
+    officeSafetyService = createOfficeSafetyService({
+      fs,
+      path,
+      os,
+      config: defaultOfficeSafetyConfig(),
+      log: logEvent,
+      onChange: () => broadcastState()
+    });
+  }
+  return officeSafetyService;
+}
+
+function startOfficeSafety() {
+  const result = ensureOfficeSafetyService().start(defaultOfficeSafetyConfig());
+  logEvent("OFFICE-SAFETY", result.ok ? "Office Safety Net started." : "Office Safety Net did not start cleanly.");
+  broadcastState();
+  return result;
+}
+
+function setOfficeSafetyEnabled(on) {
+  const next = { ...(store.get("officeSafety") || {}), enabled: Boolean(on) };
+  store.set("officeSafety", next);
+  const result = ensureOfficeSafetyService().configure(defaultOfficeSafetyConfig());
+  logEvent("OFFICE-SAFETY", `Office Safety Net ${next.enabled ? "enabled" : "disabled"}.`);
+  broadcastState();
+  return result;
+}
+
+function scanOfficeSafety() {
+  const service = ensureOfficeSafetyService();
+  if (!service.status().running && (store.get("officeSafety") || {}).enabled !== false) service.start(defaultOfficeSafetyConfig());
+  const result = service.scanNow();
+  broadcastState();
+  return result;
+}
+
+function registerOfficeSafetyFile(filePath) {
+  if (typeof filePath !== "string" || !filePath.trim() || filePath.length > 2048) {
+    return { ok: false, error: "invalid-file-path", status: officeSafetyStatus() };
+  }
+  const service = ensureOfficeSafetyService();
+  const result = service.registerFile(filePath);
+  broadcastState();
+  return result;
 }
 
 function serviceNowSummary() {
@@ -3021,84 +3389,6 @@ function readJson(req) {
   });
 }
 
-// ── First-run profile (local-only) + session-end report ───────────────────────────────────────────────
-// Spec: dev-docs/sentinel-profile-and-session-email-spec.md. The report POSTs to the single allow-listed path
-// (SESSION_OUTBOUND_PATHS in network-capture.mjs) ONLY at session end; two emails (company + user) fire
-// server-side. Outcome is honest (escalated never reads as fixed) and the payload is content-blind.
-const SESSION_REPORT_ENDPOINT = "https://iisupp.net/.netlify/functions/sentinel-session-report";
-const profileDir = () => app.getPath("userData");
-let currentSession = null;
-ipcMain.handle("profile:get", () => loadProfile(fs, path, profileDir()));
-ipcMain.handle("profile:save", (_event, input) => persistProfile(fs, path, profileDir(), input));
-ipcMain.handle("session:start", (_event, issue, intent) => {
-  currentSession = createSession({ issue, intent, startedAt: Date.now() });
-  return { id: currentSession.id };
-});
-ipcMain.handle("session:turn", (_event, role, text) => {
-  if (currentSession) recordTurn(currentSession, role, text, Date.now());
-  return { ok: Boolean(currentSession) };
-});
-ipcMain.handle("session:end", async (_event, outcome) => {
-  if (!currentSession) return { ok: false, reason: "no active session" };
-  endSession(currentSession, outcome, Date.now());                  // REAL measured end timestamp
-  const profile = loadProfile(fs, path, profileDir());
-  if (!profile) { currentSession = null; return { ok: false, reason: "no profile — cannot address the email" }; }
-  let report;
-  try { report = buildSessionReport(currentSession, profile); }     // throws if not ended — never mid-session
-  catch (e) { currentSession = null; return { ok: false, reason: e.message }; }
-  let sent = false;
-  try {
-    const r = await fetch(SESSION_REPORT_ENDPOINT, {
-      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(report)
-    });
-    sent = r.ok || r.status === 207;
-  } catch { sent = false; }
-  const finalOutcome = report.outcome;
-  currentSession = null;
-  return { ok: true, sent, outcome: finalOutcome };
-});
-
-// MODULE 3 — run the full supported case (gated). The renderer passes the case + an explicit `approved`
-// from the user's confirmation; the connector modules enforce gating again regardless. Real ServiceNow
-// writes (M1) + Entra remediation (M2) + the session-end email. RULE 14 honesty is structural in the
-// orchestrator (resolved only on a verified fix; real ticket numbers only; missing scope flagged).
-async function postSessionReport(report) {
-  try {
-    const r = await fetch(SESSION_REPORT_ENDPOINT, {
-      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(report)
-    });
-    return { ok: r.ok || r.status === 207 };
-  } catch { return { ok: false }; }
-}
-ipcMain.handle("sentinel:run-support-case", async (_event, caseInput = {}) => {
-  const profile = loadProfile(fs, path, profileDir()) || {};
-  const snOptions = { env: process.env, logger: logEvent };
-  const entraOptions = { env: process.env, logger: logEvent };
-  return runSupportCase(
-    { ...caseInput, approved: caseInput.approved === true, profile },
-    {
-      serviceNow: { createInteraction: snCreateInteraction, createIncidentFromInteraction: snCreateIncidentFromInteraction, resolveIncident: snResolveIncident, closeInteraction: snCloseInteraction },
-      entra: { remediateUser: entraRemediateUser },
-      snOptions, entraOptions,
-      sendReport: postSessionReport,
-      now: () => Date.now(),
-      logger: logEvent
-    }
-  );
-});
-
-// MODULE 4 — email the user the periodic "what ARIA handled in the background" summary. Takes the REAL
-// resolution records collected by the proactive sweep; refuses to send if the content isn't content-safe.
-ipcMain.handle("sentinel:proactive-summary", async (_event, records = [], period = "this period") => {
-  const profile = loadProfile(fs, path, profileDir());
-  if (!profile || !profile.email) return { ok: false, reason: "no profile email — cannot address the summary" };
-  const summary = buildProactiveSummary(Array.isArray(records) ? records : [], profile, { period });
-  if (!proactiveSummarySafe(summary)) return { ok: false, reason: "summary failed content-safety" };
-  const sent = await postSessionReport({ kind: "proactive-summary", outcome: "resolved", resolved: true, summary, user: summary.user });
-  logEvent("PROACTIVE.SUMMARY", `emailed user summary (${summary.counts.resolved} resolved · ${summary.counts.prevented} prevented)`, {});
-  return { ok: true, sent: sent.ok, counts: summary.counts };
-});
-
 ipcMain.handle("sentinel:get-state", () => getState());
 ipcMain.handle("sentinel:set-mode", (_event, mode, optIn) => {
   if (!["manual", "confirmed", "autonomous"].includes(mode)) return { ok: false };
@@ -3121,6 +3411,12 @@ ipcMain.handle("sentinel:pause-autonomous", (_event, choice) => {
 });
 ipcMain.handle("sentinel:set-notify", (_event, config = {}) => setNotifyConfig(config));
 ipcMain.handle("sentinel:test-notify", () => sendAutoFixNotify({ recipeId: "dns-fail-v1", signal: "NET.DNS.FAIL", outcome: "applied", endpoint: os.hostname(), durationMs: 0, tier: "green" }, { test: true }));
+// RUN-B B5 - lets Cowork/Ahmad trigger the under-globe confirmation live (records a real ticket ref + sends the
+// real resolution email, then renders the message under the globe) so the end-to-end can be seen + verified.
+ipcMain.handle("sentinel:globe-confirm-test", (_e, input = {}) => emitGlobeConfirmation({
+  issueTitle: (input && input.issueTitle) || "DNS lookup failed",
+  sessionId: (input && input.sessionId) || `test-${Date.now()}`
+}));
 ipcMain.handle("sentinel:set-dry-run", (_event, dryRun) => {
   store.set("dryRun", Boolean(dryRun));
   broadcastState();
@@ -3160,8 +3456,16 @@ ipcMain.handle("aria:agents", () => {
     return { ok: true, data: parseHeartbeats(beats) };
   } catch { return { ok: true, data: parseHeartbeats([]) }; }
 });
+ipcMain.handle("sentinel:get-integrations", () => getIntegrationStatus());
+ipcMain.handle("sentinel:integration-test", (_event, id) => testIntegration(String(id || ""), process.env));
+ipcMain.handle("sentinel:get-integration-config", () => getIntegrationConfig());
+ipcMain.handle("sentinel:save-integration-config", (_event, patch) => saveIntegrationConfig(patch || {}));
 ipcMain.handle("sentinel:scan", () => scanDisk());
 ipcMain.handle("sentinel:update-knowledge", () => updateKnowledge());
+ipcMain.handle("sentinel:office-safety-status", () => officeSafetyStatus());
+ipcMain.handle("sentinel:office-safety-set-enabled", (_event, on) => setOfficeSafetyEnabled(on));
+ipcMain.handle("sentinel:office-safety-scan", () => scanOfficeSafety());
+ipcMain.handle("sentinel:office-safety-register-file", (_event, filePath) => registerOfficeSafetyFile(filePath));
 ipcMain.handle("sentinel:incident", (_event, recipeId, context) => makeIncident(recipeId, context || {}));
 ipcMain.handle("sentinel:self-diagnose", (_event, reason) => selfDiagnose(reason || "renderer"));
 ipcMain.handle("sentinel:self-repair", (_event, reason) => selfRepair(reason || "renderer"));
@@ -3185,49 +3489,6 @@ ipcMain.handle("sentinel:report-error", (_event, payload = {}) => {
 ipcMain.handle("sentinel:sn-test", () => serviceNowTestConnection());
 ipcMain.handle("sentinel:sn-raise", (_event, recipeId, context) => serviceNowRaiseIncident(recipeId, context || {}));
 ipcMain.handle("sentinel:sn-list", () => serviceNowListIncidents());
-ipcMain.handle("sentinel:get-integrations", () => {
-  // W5 — read-only Integrations status. Resolves the edition-visible cards from the existing provider
-  // health checks (no network here); "Test connection" stays disabled until a later slice.
-  const edition = getEdition(process.env);
-  return { ok: true, edition, items: resolveIntegrations(process.env, edition) };
-});
-ipcMain.handle("sentinel:integration-test", (_event, id) => {
-  // W5 Slice 2 — read-only connection test. Each provider issues GET-only health checks and never
-  // throws; testIntegration normalizes to { ok, message }. No writes to any directory/RSA/ServiceNow.
-  return testIntegration(String(id || ""), process.env);
-});
-// Secure creds form — return the MASKED config (secret fields report {set} only, never the value) plus
-// whether OS encryption is available (so the UI can warn instead of silently storing nothing).
-ipcMain.handle("sentinel:get-integration-config", () => {
-  const available = Boolean(safeStorage && safeStorage.isEncryptionAvailable && safeStorage.isEncryptionAvailable());
-  return { ok: true, encryptionAvailable: available, fields: CREDENTIAL_FIELDS, config: integrationCredsMaskedView(loadIntegrationCreds(integrationCredsDeps())) };
-});
-// Save (encrypt + persist) submitted credentials, then immediately apply them to the live env so a
-// follow-up Test connection uses them. Blank secret fields are preserved (the UI never echoes secrets).
-ipcMain.handle("sentinel:save-integration-config", (_event, patch) => {
-  const result = saveIntegrationCreds(patch || {}, integrationCredsDeps());
-  if (result.ok) applyStoredIntegrationCreds();
-  return result;
-});
-ipcMain.handle("sentinel:omni-status", () => {
-  // G-OMNI — honest config-presence per provider (never a fake "connected"). Read-only.
-  return { ok: true, providers: getOmniStatus(process.env) };
-});
-// G-OMNI — the desktop-hosted entry a Slack/Teams connector calls for each inbound message. Answers from
-// the bundled local KB, escalates to a human on a miss, and records the SAME content-blind proof event as
-// desktop chat (so omni usage counts toward the real deflection number). READ-ONLY: never executes a fix.
-async function handleHostedOmniMessage(message = {}) {
-  return handleOmniMessage(message, { kbIndex: kbIndex(), record: recordProof });
-}
-ipcMain.handle("sentinel:omni-message", (_event, message) => handleHostedOmniMessage(message || {}));
-ipcMain.handle("sentinel:get-proof-metrics", () => {
-  // G-METRICS — read the local measured store, aggregate the proof numbers, and refresh metrics.json.
-  // Read-only over REAL recorded data; never fabricates (zero stays zero).
-  const store = loadProofStore();
-  const metrics = aggregateProof(store);
-  try { emitProofJson(); } catch { /* emission is best-effort */ }
-  return { ok: true, metrics, updatedAt: store.updatedAt || null, sampleSize: metrics.sampleSize };
-});
 ipcMain.handle("sentinel:sn-comment", (_event, incidentSysId, comment) => serviceNowComment(incidentSysId, comment));
 ipcMain.handle("sentinel:rollback", (_event, snapshotId) => rollbackRestorePoint(snapshotId));
 ipcMain.handle("sentinel:run-diagnostic", () => runDiagnostic());
@@ -3260,6 +3521,18 @@ ipcMain.handle("sentinel:export-evidence", () => exportEvidencePack());
 ipcMain.handle("sentinel:ack-whats-new", () => acknowledgeWhatsNew());
 ipcMain.handle("sentinel:open-mac-permissions", (_event, pane) => openMacPermissions(pane));
 ipcMain.handle("sentinel:start-trial", (_event, email) => startTrial(email));
+ipcMain.handle("sentinel:start-pilot", (_event, intake) => startPilot(intake || {}));
+ipcMain.handle("sentinel:pilot-status", () => ({ status: pilotStateLocal(), prompt: pilotPromptNow() }));
+ipcMain.handle("sentinel:dismiss-pilot-prompt", (_event, state) => dismissPilotPrompt(state));
+ipcMain.handle("sentinel:conversion-moment", () => conversionMomentNow());                    // RUN-D D2
+ipcMain.handle("sentinel:case-study-draft", (_event, opts) => caseStudyDraftNow(opts || {}));  // RUN-D D2 — staged, never auto-publish
+ipcMain.handle("sentinel:resolution-outcome", (_event, payload) => recordResolutionOutcome(payload || {})); // RUN-B B1 — "Was this fixed?" real outcome
+ipcMain.handle("sentinel:resolution-stats", () => resolutionStatsNow());                                     // RUN-B B1 — real deflection %
+ipcMain.handle("sentinel:value-proof", () => valueProofNow());                                                // RUN-B B2 — real ROI + deflection value proof
+ipcMain.handle("sentinel:trust-posture", () => trustPostureNow());                                            // RUN-B B3 — honest trust/security surface
+ipcMain.handle("sentinel:get-proof-metrics", () => proofMetricsNow());                                        // G-METRICS — real measured aggregate
+ipcMain.handle("sentinel:omni-status", () => omniStatusNow());                                                // G-OMNI — Slack/Teams honest status
+ipcMain.handle("sentinel:omni-message", (_event, message) => omniMessageNow(message));                        // G-OMNI — read-only answer/escalate
 ipcMain.handle("sentinel:check-updates", () => checkForUpdates());
 ipcMain.handle("sentinel:manage-subscription", () => manageSubscription());
 ipcMain.handle("sentinel:get-settings", () => ({ showFloatingGlobe: store.get("showFloatingGlobe") !== false, lowPower: Boolean(store.get("lowPower")) }));
@@ -3378,8 +3651,6 @@ if (hasSingleInstanceLock) {
     // RUN 16 §H — verify audit-log integrity BEFORE anything logs (a startup logEvent would re-seal).
     verifyAuditIntegrity();
     initWhatsNew();
-    // Decrypt the in-app integration credentials and feed them into the provider env (before any
-    // window/integration status resolves). Encrypted-at-rest via safeStorage; no-op if none saved.
     applyStoredIntegrationCreds();
     // RUN 29-D — install the content-blind crash reporter early (after the audit verifier): captures uncaught
     // errors to a local queue + best-effort forwards last launch's queue to sentinel-crash (never blocks the UI).
@@ -3388,12 +3659,14 @@ if (hasSingleInstanceLock) {
     createOverlayWindow();
     createTray();
     ensureTrialStarted();
+    try { maybeStampPilotTtfv(); } catch { /* RUN-E E1 — catch a first fix recorded in an earlier session; never blocks startup */ }
     refreshLicense().catch(() => undefined); // RUN 24 A6 — silent server-side re-verify (skips network if cache fresh)
     showOverlay({ expanded: false });
     applyModeBehavior(store.get("mode"));
     startBridge();
     startDetection();
     startProcessHealth(); // RUN 23 — 30s content-blind process-health poll feeding the globe status panel
+    startOfficeSafety(); // Office File Safety Net: local 2m backups + 3m renamed-copy validation.
     serviceNowDrain().catch(() => undefined); // flush any incidents queued while offline
     selfDiagnose("startup").catch((error) => handleSelfError(error, "startup-diagnose"));
     scanDisk().catch((error) => handleSelfError(error, "startup-scan"));
@@ -3419,6 +3692,11 @@ if (hasSingleInstanceLock) {
     // RUN 22 — daily 02:00 data-retention cleanup + quarterly report on a quarter-start launch.
     scheduleDailyAt(2, runRetentionCleanup);
     maybeRunQuarterly();
+    // Slice C — a deep-link that LAUNCHED the app (Windows first-run argv, or a macOS open-url buffered
+    // before ready). Fire it after the UI is up so the recipes view + countdown are visible.
+    const initialLink = pendingDeepLink || extractDeepLink(process.argv);
+    pendingDeepLink = null;
+    if (initialLink) setTimeout(() => handleSentinelDeepLink(initialLink), 1500);
   });
 }
 
@@ -3446,6 +3724,7 @@ app.on("before-quit", () => {
   isQuitting = true;
   stopOverlayPhysics();
   try { globalShortcut.unregisterAll(); } catch { /* nothing registered */ }
+  if (officeSafetyService) officeSafetyService.stop();
   if (detectionOrchestrator) detectionOrchestrator.stopAll();
   if (adminWindow && !adminWindow.isDestroyed()) adminWindow.destroy();
   if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.destroy();

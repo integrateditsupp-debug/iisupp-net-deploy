@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARIA Sentinel Docs</title>
+  <meta name="description" content="Public ARIA Sentinel docs for endpoint contracts, privacy posture, and guarded desktop handoff behavior.">
+  <style>
+    :root{--gold:#c5a059;--ink:#f8f2e6;--muted:#b8ad98;--panel:#111;--line:#2d281f}
+    *{box-sizing:border-box}
+    body{margin:0;background:#050505;color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.65}
+    main{max-width:980px;margin:0 auto;padding:60px 20px}
+    .eyebrow{color:var(--gold);letter-spacing:.22em;text-transform:uppercase;font-size:12px;font-weight:700}
+    h1{font-size:clamp(36px,7vw,72px);line-height:.98;margin:12px 0 18px}
+    h2{color:var(--ink);margin-top:34px}
+    p,li{color:var(--muted);font-size:17px}
+    code{color:var(--gold);background:#14110b;border:1px solid var(--line);border-radius:6px;padding:2px 6px}
+    .panel{border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#141414,#080808);padding:22px;margin:18px 0}
+    a{color:var(--gold)}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">ARIA Sentinel</div>
+    <h1>Public Desktop + Web Contract</h1>
+    <p>ARIA Sentinel is the local Windows desktop agent for guarded IT support. The web surface can explain, triage, and hand off; the desktop app performs local actions only through visible approval gates.</p>
+
+    <section class="panel">
+      <h2>Public endpoints</h2>
+      <ul>
+        <li><code>aria-recipes</code> returns the public recipe registry and global kill-switch metadata.</li>
+        <li><code>aria-stop-codes</code> returns stop-code guidance for BSOD and crash triage.</li>
+        <li><code>aria-kb-bundle</code> returns the public KB bundle used by web and desktop fallback paths.</li>
+        <li><code>aria-recipe-feedback</code> accepts content-blind recipe feedback and measured outcomes.</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Safety model</h2>
+      <p>Local fixes remain gated by supervisor review, a cancelable countdown, the Ctrl+Alt+K kill-switch, R11 private-folder blocking, and content-blind audit logging. The web page never sends a system command to the desktop app.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Integrations</h2>
+      <p>ServiceNow, Microsoft Graph, CRM, RSA, and Microsoft 365 document connectors report honest <code>connected</code>, <code>not_configured</code>, or <code>error</code> states. Credentials are customer-owned and are not embedded in public pages.</p>
+    </section>
+
+    <p><a href="/sentinel-admin">Admin overview</a> · <a href="/aria">Try ARIA</a> · <a href="/security.html">Security</a></p>
+  </main>
+</body>
+</html>

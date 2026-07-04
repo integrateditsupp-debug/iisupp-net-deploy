@@ -40,7 +40,7 @@ const ROUTES = [
   ["audio not working there is no sound", /audio-issues/],
   ["external monitor is not being detected", /display-issues/],
   ["my printer won't print anything", /printer/],
-  ["i am locked out of my account", /credential/],
+  ["i am locked out of my account", /credential|account-lockout/], // account-lockout KB is also valid (more specific)
   ["the laptop battery drains way too fast", /battery-power/],
   ["usb drive is not showing up", /usb-peripheral/]
 ];
@@ -59,4 +59,4 @@ assert.ok(good && good.score >= MATCH_FLOOR, "in-scope match clears the confiden
 ok("out-of-scope rejected (null → escalate); in-scope clears the floor — number never padded");
 
 assert.equal(tests, 5, "kb-matcher-precision runs exactly 5 test cases");
-console.log(`KB-matcher-precision test passed (${tests}/5 · stemmer · synonyms · explicit-platform · real-pack routing · honest out-of-scope reject).`);
+console.log(`KB-matcher-precision test passed (${tests}/5 · stemmer · synonyms · explicit-platform · routing · out-of-scope)`);

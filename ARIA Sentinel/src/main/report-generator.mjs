@@ -20,13 +20,18 @@ export function reportFilename(license, q) {
 
 const esc = (v) => sanitizeText(String(v == null ? "" : v)).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-/** Auto-generated 3-line executive summary (template — NO LLM call). */
+/** RULE 14 (A1): null metric -> "--" empty-state in report output. Never fabricate. */
+const mv = (v, unit = "") => v == null ? "--" : (v + unit);
+
+/** Auto-generated 3-line executive summary (template -- NO LLM call). RULE 14: real-or-empty. */
 export function executiveSummary(data = {}) {
   const k = data.kpis || {};
+  const savingsClause = k.hoursSaved != null ? (", saving ~" + k.hoursSaved + " hours of L1 effort") : "";
+  const autoPctClause = k.autoPct != null ? (", " + k.autoPct + "% automatically") : "";
   return [
-    `ARIA Sentinel resolved ${k.incidents ?? 0} incidents this quarter, ${k.autoPct ?? 0}% automatically, saving ~${k.hoursSaved ?? 0} hours of L1 effort.`,
-    `SLA compliance held at ${data.sla?.composite ?? 0}% against a ${data.sla?.floor ?? 0}% contractual floor, with ${data.sla?.breaches ?? 0} breach(es).`,
-    `Audit integrity verified, privacy verifier passing, and the protected private folder was never accessed (R11 enforced).`
+    "ARIA Sentinel resolved " + (k.incidents ?? 0) + " incidents this quarter" + autoPctClause + savingsClause + ".",
+    "SLA compliance: " + mv(data.sla?.composite, "%") + " against a " + mv(data.sla?.floor, "%") + " contractual floor, with " + (data.sla?.breaches ?? 0) + " breach(es).",
+    "Audit integrity verified, privacy verifier passing, and the protected private folder was never accessed (R11 enforced)."
   ];
 }
 
@@ -38,7 +43,7 @@ export function buildSections(data = {}) {
     { id: "kpis", title: "Quarter-over-quarter KPIs", rows: (data.kpiTable || []).map((r) => ({ label: esc(r.label), value: esc(r.value), delta: esc(r.delta || "") })) },
     { id: "sla", title: "SLA achievement", rows: Object.entries(data.sla?.categories || {}).map(([k2, v]) => ({ label: esc(k2), value: esc(v) })) },
     { id: "incidents", title: "Top incidents resolved", rows: (data.topIncidents || []).map((i) => ({ label: esc(i.title), value: esc(i.outcome) })) },
-    { id: "roi", title: "Hours of human work avoided", value: esc(`${k.hoursSaved ?? 0} hours (${k.incidents ?? 0} incidents)`) },
+    { id: "roi", title: "Hours of human work avoided", value: esc(mv(k.hoursSaved, " hours") + " (" + (k.incidents ?? 0) + " incidents)") },
     { id: "compliance", title: "Compliance posture", rows: Object.entries(data.compliance || {}).map(([fw, s]) => ({ label: esc(fw.toUpperCase()), value: esc(`${s.score}/100 (${s.badge})`) })) },
     { id: "recurring", title: "Recurring issues + recommended fixes", rows: (data.recurring || []).map((r) => ({ label: esc(r.issue), value: esc(r.fix) })) },
     { id: "upcoming", title: "Next-quarter upcoming work", lines: (data.upcoming || []).map(esc) },

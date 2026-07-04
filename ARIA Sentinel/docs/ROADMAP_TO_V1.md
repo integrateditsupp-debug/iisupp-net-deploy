@@ -3,6 +3,11 @@
 > Read at the start of every Claude Code session. Always know the destination.
 > Pattern: 4-hour focused runs, each closes with `npm test` green + a one-paragraph report.
 
+> 2026-06-27 current-state pointer: the product is now at desktop 0.1.20 with the local suite passing
+> 195/195 in the latest Codex review. Treat the RUN 12/RUN 17 sections below as historical ledger entries,
+> not the live launch status. See `docs/PRODUCT_VISION_AND_GAP_REVIEW_2026-06-27.md` for the current
+> product truth, claim hygiene, and SaaS launch gaps.
+
 **Current state (after RUN 17):**
 - 77/77 test suites green · `node --check` clean · readiness 9.95 (10.0 reserved for post-pen-test) · 1 documented dep (electron-updater); all else 0-dep
 - RUN 17: audit-tamper security banner in Settings (cyber-noir, above all tabs; "View audit log" → Privacy tab; Dismiss is per-session sessionStorage, re-shows next launch; never mutates auditIntegrity). Suite 75 → 77

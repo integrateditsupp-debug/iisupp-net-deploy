@@ -56,7 +56,7 @@ assert.equal(settingsTabs.size, 10, "settings tab count (RUN 23d 9 + RUN 33 ARIA
 const adminHtml = read("admin-console", "index.html");
 // RUN 22 added Fleet Performance + Quarterly Reports + Cohort SLA (→17 admin views).
 const adminViews = new Set([...adminHtml.matchAll(/data-view-target="([a-z-]+)"/g)].map((m) => m[1]));
-assert.equal(adminViews.size, 18, "admin console view count (17 + RUN 24 licenses)");
+assert.equal(adminViews.size, 19, "admin console view count (18 + guarded RDP access view)");
 
 // 7 · RUN 17 regression: the audit-integrity banner is still wired (must keep firing on tamper).
 assert.match(main, /function verifyAuditIntegrity\(\)/, "RUN 17 audit-integrity verifier still present");

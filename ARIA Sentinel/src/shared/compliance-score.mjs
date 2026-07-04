@@ -30,7 +30,7 @@ export const GDPR_RIGHTS = [
   { id: "Art15", name: "Right of access — audit export", met: true },
   { id: "Art17", name: "Right to erasure — retention deletion", met: true },
   { id: "Art25", name: "Data protection by design — local-first", met: true },
-  { id: "Art32", name: "Security of processing — sanitization 100%", met: true }
+  { id: "Art32", name: "Security of processing — content-blind sanitization gate", met: true }
 ];
 
 export function frameworkScore(controls = []) {

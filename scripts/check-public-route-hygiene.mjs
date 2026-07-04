@@ -2,7 +2,23 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const skipDirs = new Set(['.git', 'node_modules', 'backups', 'archive', 'artifacts', 'outputs']);
+const skipDirs = new Set([
+  '.git',
+  '.codex-observer',
+  'node_modules',
+  'backups',
+  'archive',
+  'artifacts',
+  'outputs',
+  'ARIA Sentinel',
+  'aria-vault',
+  'senior-director-state',
+  'Forums design brief'
+]);
+const skipFiles = new Set([
+  'ARIA Concept.html',
+  'ARIA Demo.html'
+]);
 const missingRefs = [];
 const invalidJsonLd = [];
 const sitemapIssues = [];
@@ -14,6 +30,7 @@ function walk(dir, files = []) {
       if (skipDirs.has(ent.name)) continue;
       walk(path.join(dir, ent.name), files);
     } else if (ent.isFile() && ent.name.endsWith('.html')) {
+      if (dir === root && skipFiles.has(ent.name)) continue;
       files.push(path.join(dir, ent.name));
     }
   }

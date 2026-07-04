@@ -1,4 +1,4 @@
-// RUN 20 §2 — all 17 symptom files parse to well-formed structured causes, and the master index lists them.
+// RUN 20 §2 — all symptom files parse to well-formed structured causes, and the master index lists them.
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -10,11 +10,14 @@ const dir = path.join(root, "aria-kb-pack", "diagnostics");
 const EXPECTED = [
   "slow-performance", "app-crashes", "system-crashes", "no-internet", "audio-issues", "display-issues",
   "printer-issues", "update-stuck", "license-activation", "boot-issues", "battery-power", "file-explorer",
-  "email-issues", "bluetooth-wifi", "usb-peripheral", "antivirus-conflict", "credential-issues"
+  "email-issues", "bluetooth-wifi", "usb-peripheral", "antivirus-conflict", "credential-issues",
+  // added in subsequent runs (W5 / RUN-B era):
+  "account-lockout-windows-ad-entra", "add-printer-setup", "office-excel-issues",
+  "outlook-password-loop", "time-clock-sync"
 ];
 
 const kb = loadSymptomKb(dir);
-assert.equal(kb.length, 17, "17 symptom files");
+assert.equal(kb.length, EXPECTED.length, `${EXPECTED.length} symptom files`);
 const ids = kb.map((r) => r.id).sort();
 assert.deepEqual(ids, [...EXPECTED].sort(), "all expected symptom categories present");
 
@@ -33,6 +36,7 @@ assert.ok(totalCauses >= 90, `~100 diagnostic entries (got ${totalCauses})`);
 
 // Master index lists every category.
 const index = fs.readFileSync(path.join(dir, "symptoms.md"), "utf8");
-for (const id of EXPECTED) assert.match(index, new RegExp(id), `index references ${id}`);
-
-console.log(`Symptom-KB-parse test passed (17 files, ${totalCauses} causes, all well-formed, index complete).`);
+for (const id of EXPECTED) {
+  assert.ok(index.includes(id), `symptoms.md lists ${id}`);
+}
+console.log(`Symptom KB parse: ${kb.length} files, ${totalCauses} causes, all well-formed.`);
