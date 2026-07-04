@@ -300,6 +300,22 @@
   to = "/services.html"
   status = 200
 [[redirects]]
+  from = "/services/content-assurance"
+  to = "/content-assurance.html"
+  status = 200
+[[redirects]]
+  from = "/content-assurance"
+  to = "/content-assurance.html"
+  status = 200
+[[redirects]]
+  from = "/content-assurance-terms"
+  to = "/content-assurance-terms.html"
+  status = 200
+[[redirects]]
+  from = "/content-assurance-privacy"
+  to = "/content-assurance-privacy.html"
+  status = 200
+[[redirects]]
   from = "/aria"
   to = "/aria.html"
   status = 200

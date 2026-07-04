@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noarchive, nosnippet">
+    <meta name="theme-color" content="#c5a059">
+    <title>Content Assurance | Integrated IT Support</title>
+    <meta name="description" content="Privacy-first content intelligence and assurance for regulated teams. Upload one file, preview the report, then unlock the delivery bundle." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/aria-core.css">
+    <link rel="stylesheet" href="/assets/ai-edge.css">
+    <link rel="stylesheet" href="/assets/content-assurance.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #050505; color: #fff; margin: 0; }
+        h1, h2, h3, h4, .logo-text { font-family: 'Cinzel', serif; }
+        .luxury-flip-container { perspective: 1200px; width: 260px; height: 52px; }
+        .luxury-flip-card { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
+        .luxury-flip-container:hover .luxury-flip-card { transform: rotateX(180deg); }
+        .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 2px; font-weight: 700; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.25em; }
+        .flip-front { background: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); color: #000; }
+        .flip-back { background: #111; color: #f1dca7; transform: rotateX(180deg); border: 1px solid #c5a059; }
+        .mobile-menu-btn { display: none; background: none; border: 1px solid rgba(197, 160, 89, 0.4); color: #c5a059; padding: 8px 10px; cursor: pointer; z-index: 60; }
+        .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: #c5a059; margin: 4px 0; transition: 0.3s; }
+        .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 55; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+        .mobile-nav-overlay.active { display: flex; }
+        .mobile-nav-overlay a { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.3s; padding: 8px 0; }
+        .mobile-nav-overlay a:hover { color: #c5a059; }
+        .nav-groups { display: flex; align-items: center; justify-content: center; gap: 18px; flex: 1; }
+        .nav-group { display: flex; align-items: center; gap: 22px; font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.42); }
+        .nav-group a, .nav-group span.nav-disabled { transition: color 0.3s; text-decoration: none; }
+        .nav-group a:hover { color: #c5a059; }
+        .nav-group .nav-accent { color: #c5a059; }
+        .nav-divider { width: 1px; height: 14px; background: rgba(197,160,89,0.22); flex: 0 0 auto; }
+        .nav-aria-block { display: flex; flex-direction: column; align-items: center; gap: 4px; line-height: 1; padding: 0 6px; }
+        .nav-aria-block .aria-link { color: #f1dca7; font-size: 11px; letter-spacing: 0.5em; padding: 2px 6px; border-bottom: 1px solid rgba(241,220,167,0.3); }
+        .nav-aria-block .method-link { font-size: 8px; letter-spacing: 0.35em; color: rgba(197,160,89,0.75); }
+        .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: #c5a059; font-size: 28px; cursor: pointer; font-family: 'Inter', sans-serif; }
+        .download-app-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(135deg, #c5a059 0%, #f1dca7 50%, #b38728 100%); color: #050505; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; text-decoration: none; transition: all 0.3s ease; border: none; cursor: pointer; }
+        .download-app-btn svg { width: 14px; height: 14px; }
+        @media (max-width: 1279px) { .nav-group.nav-group-collapsible { display: none; } }
+        @media (max-width: 1024px) {
+            .desktop-nav-links { display: none !important; }
+            .mobile-menu-btn { display: inline-block; }
+            .luxury-flip-container { display: none; }
+        }
+    </style>
+</head>
+<body class="ca-page">
+    <nav class="fixed w-full z-50 py-6 px-10 flex justify-between items-center bg-black/90 backdrop-blur-xl border-b border-white/5">
+        <a href="/" class="flex items-center gap-6" style="text-decoration:none;color:inherit;">
+            <div class="w-12 h-12 flex items-center justify-center border border-[#c5a059] relative"><div class="absolute inset-1 border border-[#c5a059]/30"></div><span class="text-[#c5a059] font-bold text-xl logo-text">I</span></div>
+            <div class="flex flex-col"><span class="text-xl font-bold tracking-[0.3em] uppercase logo-text">Integrated IT Support</span><span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase opacity-80">A Distinguished Network</span></div>
+        </a>
+        <div class="desktop-nav-links hidden lg:flex nav-groups" aria-label="Primary">
+            <div class="nav-group nav-group-collapsible">
+                <a href="/shop.html" class="nav-accent">Shop</a>
+                <a href="/#portfolio">Portfolio</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group">
+                <a href="/#service-center">Service Center</a>
+                <a href="/#solutions">Pricing</a>
+                <a href="/services.html" class="nav-accent">Services</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group nav-aria-block">
+                <a href="/aria.html" class="aria-link">ARIA</a>
+                <a href="/#methodology" class="method-link">Methodology</a>
+            </div>
+            <span class="nav-divider"></span>
+            <div class="nav-group nav-group-collapsible">
+                <a href="/growth-library.html" class="nav-accent">Growth Library</a>
+                <a href="/about.html">About Us</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/services.html" class="download-app-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Back to Services</a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+            <div class="luxury-flip-container"><a href="mailto:ahmad.wasee@iisupp.net?subject=Content%20Assurance%20Inquiry" class="luxury-flip-card"><div class="flip-front">Request Consultation</div><div class="flip-back">Direct Email Access</div></a></div>
+        </div>
+    </nav>
+
+    <div id="mobileMenu" class="mobile-nav-overlay">
+        <button class="mobile-nav-close" onclick="toggleMobileMenu()">&times;</button>
+        <a href="/shop.html" onclick="toggleMobileMenu()">Shop</a>
+        <a href="/#portfolio" onclick="toggleMobileMenu()">Portfolio</a>
+        <a href="/services.html" onclick="toggleMobileMenu()" style="color:#c5a059;">Services</a>
+        <a href="/aria.html" onclick="toggleMobileMenu()" style="color:#c5a059;">ARIA</a>
+        <a href="/growth-library.html" onclick="toggleMobileMenu()">Growth Library</a>
+        <a href="/about.html" onclick="toggleMobileMenu()">About Us</a>
+        <a href="tel:+16475813182" onclick="toggleMobileMenu()">Connect with Senior Director</a>
+    </div>
+
+    <section class="ca-hero">
+        <div class="ca-shell">
+            <span class="ca-eyebrow">Services · New route</span>
+            <h1 class="ca-title">Content <em>Assurance</em></h1>
+            <p class="ca-hero-copy">A privacy-first content intelligence tool for regulated teams. Upload one supported file, preview a structured Assurance Report, then unlock the delivery bundle without turning the rest of your site into a product lab.</p>
+            <div class="ca-hero-grid">
+                <div class="ca-trust-chip"><strong>Not stored</strong><span>Source content is processed in a temporary session and is not persisted as a reusable document.</span></div>
+                <div class="ca-trust-chip"><strong>15-minute purge</strong><span>Derived session artifacts expire automatically and the purge cron removes expired sessions every five minutes.</span></div>
+                <div class="ca-trust-chip"><strong>No verdicts</strong><span>AI-likelihood is only a probabilistic signal. It is not proof, a legal conclusion, or grounds for accusation.</span></div>
+                <div class="ca-trust-chip"><strong>Qualified lead path</strong><span>Successful unlocks can push checkout email plus goal into HubSpot without storing the source content itself.</span></div>
+            </div>
+        </div>
+    </section>
+
+    <main class="ca-shell">
+        <section class="ca-steps">
+            <div class="ca-step"><b>1. Upload</b><span>Text, PDF, DOCX, or a pasted transcript. Max 25 MB, 20 pages, about 15k words.</span></div>
+            <div class="ca-step"><b>2. Select modules</b><span>Choose at least three modules and optionally add a business goal for the action plan.</span></div>
+            <div class="ca-step"><b>3. Preview</b><span>Review the on-screen Assurance Report before paying for the delivery bundle.</span></div>
+            <div class="ca-step"><b>4. Unlock + deliver</b><span>Use an included credit, pay for a single report, or start the monthly plan.</span></div>
+        </section>
+
+        <section class="ca-main-grid">
+            <div class="ca-panel">
+                <span class="ca-section-eyebrow">Upload + configure</span>
+                <h2 class="ca-section-title">Build the <em>Assurance Report</em></h2>
+                <p class="ca-panel-copy">The page stays light. Processing, payment, email, search, and purge logic run through isolated Netlify functions behind this route.</p>
+
+                <form id="caAnalyzeForm" class="ca-upload">
+                    <div class="ca-file-drop">
+                        <label class="ca-label" for="caFile">Upload file</label>
+                        <strong>One file per report</strong>
+                        <p class="ca-small-note">Supported now: `.txt`, `.pdf`, `.docx`, or a pasted transcript below. No image, audio, or video in this MVP.</p>
+                        <input id="caFile" name="file" type="file" class="ca-input" accept=".txt,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                        <div id="caFileName" class="ca-file-name">No file selected yet.</div>
+                    </div>
+
+                    <div>
+                        <label class="ca-label" for="caTranscript">Or paste a transcript</label>
+                        <textarea id="caTranscript" name="transcript" class="ca-textarea" placeholder="Paste a meeting transcript, document excerpt, or plain text here if you are not uploading a file."></textarea>
+                    </div>
+
+                    <div class="ca-inline-fields">
+                        <div>
+                            <label class="ca-label" for="caGoal">Optional goal</label>
+                            <select id="caGoal" name="goal" class="ca-select">
+                                <option value="Sales">Sales</option>
+                                <option value="Compliance">Compliance</option>
+                                <option value="Hiring">Hiring</option>
+                                <option value="Meeting-Content" selected>Meeting-Content</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="ca-label" for="caLocation">Location hint for expert search</label>
+                            <input id="caLocation" name="location" class="ca-input" type="text" placeholder="Optional city, province, state, or remote">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="ca-label">Modules (choose at least 3)</label>
+                        <div class="ca-check-grid">
+                            <label class="ca-check"><input type="checkbox" name="modules" value="summary" checked><span><b>Summary &amp; key points</b><span>Condense the content into a decision-ready overview.</span></span></label>
+                            <label class="ca-check"><input type="checkbox" name="modules" value="aiLikelihood" checked><span><b>AI-likelihood signal</b><span>Probabilistic indicator only. Never a verdict.</span></span></label>
+                            <label class="ca-check"><input type="checkbox" name="modules" value="sensitiveData" checked><span><b>Sensitive-data scan</b><span>Flags patterns that may trigger privacy obligations.</span></span></label>
+                            <label class="ca-check"><input type="checkbox" name="modules" value="goalPlan" checked><span><b>Goal action plan + 7 templates</b><span>Goal-aware templates generated from the content.</span></span></label>
+                            <label class="ca-check"><input type="checkbox" name="modules" value="experts"><span><b>Expert suggestions</b><span>Optional live public search results with source links only.</span></span></label>
+                        </div>
+                    </div>
+
+                    <label class="ca-attest">
+                        <input type="checkbox" name="rightsAttestation">
+                        <span>
+                            <b>I confirm I have the right to upload and analyze this content.</b>
+                            <span class="ca-small-note">All outputs are informational only and not legal, forensic, compliance, or employment advice.</span>
+                        </span>
+                    </label>
+
+                    <div class="ca-cta-row">
+                        <button id="caAnalyzeButton" type="submit" class="ca-button">Generate preview</button>
+                        <span class="ca-helper">Your file contents are processed in a temporary session and auto-purged after delivery or expiry.</span>
+                    </div>
+                </form>
+
+                <div id="caStatus" class="ca-status is-info">Start with one supported file and at least three modules. The preview appears below before any payment step.</div>
+            </div>
+
+            <aside class="ca-panel">
+                <span class="ca-section-eyebrow">Commercial model</span>
+                <h2 class="ca-section-title">Unlock the <em>bundle</em></h2>
+                <div class="ca-pricing-grid">
+                    <article class="ca-price-card">
+                        <small>Single</small>
+                        <strong>$5</strong>
+                        <p>One report unlock for a non-subscriber. Good for occasional review or pilot testing.</p>
+                    </article>
+                    <article class="ca-price-card">
+                        <small>Monthly</small>
+                        <strong>$20</strong>
+                        <p>Twenty report credits for the current 30-day cycle in this MVP implementation.</p>
+                    </article>
+                    <article class="ca-price-card">
+                        <small>Overage</small>
+                        <strong>$2</strong>
+                        <p>One additional credit when an active monthly allowance has already been used up.</p>
+                    </article>
+                </div>
+                <div class="ca-legal-grid" style="margin-top:18px;">
+                    <article class="ca-legal-card">
+                        <h3>Data handling</h3>
+                        <p>Only minimal billing and usage metadata persist. Source text and extracted PII are not stored as reusable artifacts.</p>
+                    </article>
+                    <article class="ca-legal-card">
+                        <h3>Legal wrapper</h3>
+                        <p>Use is subject to the <a class="ca-anchor-link" href="/content-assurance-terms">Content Assurance Terms</a> and <a class="ca-anchor-link" href="/content-assurance-privacy">Content Assurance Privacy Notice</a>.</p>
+                    </article>
+                </div>
+            </aside>
+        </section>
+
+        <section id="caPreviewSection" class="ca-hidden" style="margin-top:24px;">
+            <div class="ca-panel">
+                <span class="ca-section-eyebrow">On-screen preview</span>
+                <h2 class="ca-section-title">Assurance <em>Report</em></h2>
+                <div class="ca-report-grid">
+                    <article class="ca-report-card">
+                        <h3>Executive summary</h3>
+                        <p id="caSummary" class="ca-panel-copy"></p>
+                    </article>
+                    <article class="ca-report-card">
+                        <h3>Key points</h3>
+                        <div id="caKeyPoints"></div>
+                    </article>
+                    <article class="ca-report-card">
+                        <h3>AI-likelihood signal</h3>
+                        <div id="caAiLikelihood"></div>
+                    </article>
+                    <article class="ca-report-card">
+                        <h3>Sensitive-data scan</h3>
+                        <div id="caSensitiveData"></div>
+                    </article>
+                    <article class="ca-report-card">
+                        <h3>Goal-based action plan</h3>
+                        <div id="caGoalPlan"></div>
+                    </article>
+                    <article class="ca-report-card">
+                        <h3>Generated templates</h3>
+                        <div id="caTemplates" class="ca-templates"></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="caExpertsWrap" class="ca-hidden" style="margin-top:24px;">
+            <div class="ca-panel">
+                <div class="ca-cta-row" style="justify-content:space-between;">
+                    <div>
+                        <span class="ca-section-eyebrow">Optional live search</span>
+                        <h2 class="ca-section-title">Expert <em>Suggestions</em></h2>
+                    </div>
+                    <div class="ca-cta-row">
+                        <button id="caLoadExperts" type="button" class="ca-button-secondary">Load experts</button>
+                        <button id="caRegenerateExperts" type="button" class="ca-button-subtle">Regenerate</button>
+                    </div>
+                </div>
+                <div class="ca-disclaimer">Only fields present in the real search result are shown. No fabricated referrals or synthetic contact data are rendered.</div>
+                <div id="caExpertsList" class="ca-experts" style="margin-top:18px;"></div>
+            </div>
+        </section>
+
+        <section id="caUnlockSection" class="ca-hidden" style="margin-top:24px;">
+            <div class="ca-two-col">
+                <div class="ca-panel">
+                    <span class="ca-section-eyebrow">Payment gate</span>
+                    <h2 class="ca-section-title">Unlock the <em>delivery bundle</em></h2>
+                    <p class="ca-panel-copy">The on-screen preview stays visible here. The bundle download and email actions unlock after an included credit or successful checkout.</p>
+                    <label class="ca-label" for="caCheckoutEmail">Checkout email</label>
+                    <input id="caCheckoutEmail" class="ca-input" type="email" placeholder="name@company.com">
+                    <div class="ca-cta-row" style="margin-top:14px;">
+                        <button id="caCheckAccess" type="button" class="ca-button">Check access</button>
+                        <span id="caPurgeNote" class="ca-helper">Temporary sessions auto-expire. Unlock and download before the session closes.</span>
+                    </div>
+                    <div id="caCheckoutStatus" class="ca-status is-info" style="margin-top:16px;">Enter the email you want attached to this report, then check for included credits or purchase options.</div>
+                    <div id="caCheckoutActions" class="ca-cta-row" style="margin-top:16px;"></div>
+                </div>
+                <aside class="ca-panel">
+                    <span class="ca-section-eyebrow">Guardrails</span>
+                    <h2 class="ca-section-title">What this <em>does not</em> claim</h2>
+                    <div class="ca-legal-grid">
+                        <article class="ca-legal-card">
+                            <h3>Not proof</h3>
+                            <p>The AI-likelihood module is advisory and probabilistic only. It should not be treated as evidence or grounds for accusation.</p>
+                        </article>
+                        <article class="ca-legal-card">
+                            <h3>Not legal advice</h3>
+                            <p>Privacy or obligation flags identify areas for review. They do not certify compliance or replace legal counsel.</p>
+                        </article>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <section id="caDeliverySection" class="ca-hidden" style="margin-top:24px; padding-bottom:72px;">
+            <div class="ca-panel">
+                <span class="ca-section-eyebrow">Delivery</span>
+                <h2 class="ca-section-title">Download or <em>email</em> the bundle</h2>
+                <div class="ca-delivery-actions">
+                    <a id="caDownloadZip" class="ca-button" href="#" download>Download ZIP</a>
+                    <a id="caDownloadPdf" class="ca-button-secondary" href="#" download>Download PDF</a>
+                    <a id="caDownloadJson" class="ca-button-subtle" href="#" download>Download JSON</a>
+                </div>
+                <div class="ca-email-actions" style="margin-top:18px;">
+                    <button id="caSendSelf" type="button" class="ca-button-secondary">Send to self</button>
+                    <input id="caClientEmail" class="ca-input" type="email" placeholder="client@company.com">
+                    <button id="caSendClient" type="button" class="ca-button-subtle">Send to client</button>
+                </div>
+                <div id="caEmailStatus" class="ca-status is-info" style="margin-top:16px;">Email sends attach the PDF and ZIP bundle using the same temporary delivery token.</div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-20 px-10 border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div><p class="logo-text text-lg tracking-widest uppercase mb-2">Integrated IT Support</p><p class="text-white/20 text-[9px] tracking-widest uppercase font-bold">30 Fothergill Court, Whitby, ON L1P 2L4</p></div>
+            <div class="md:text-right"><a href="tel:+16475813182" class="text-3xl font-light tracking-tighter text-[#c5a059] hover:text-white transition block mb-2">(647) 581-3182</a><p class="text-white/20 text-[8px] uppercase font-bold">Ahmad W. · Senior Director</p></div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/5 text-center">
+            <a href="/services.html" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Services</a>
+            <span class="text-white/20 mx-2">·</span>
+            <a href="/content-assurance-terms" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Content Assurance Terms</a>
+            <span class="text-white/20 mx-2">·</span>
+            <a href="/content-assurance-privacy" class="text-[9px] tracking-[0.35em] uppercase text-white/50 hover:text-[#c5a059] transition">Content Assurance Privacy</a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
+    </script>
+    <script src="/assets/content-assurance.js"></script>
+</body>
+</html>
