@@ -213,8 +213,13 @@ const TESTS = [
   "./windows-error-sweep.test.mjs",
   // RUN 33 PIVOT — ARIA Chat in-tab (Chat sub-section of the ARIA parent tab; detached window removed).
   "./aria-chat-window-ui.test.mjs",
+  // 2026-07-04 — desktop ARIA chat answers become guided web-style cards instead of raw KB blobs.
+  "./aria-chat-readable-answer.test.mjs",
   // RUN 35-1 — chat scroll containment (inner log scrolls; outer tab never grows).
   "./chat-scroll-containment.test.mjs",
+  // 2026-07-04 — 100+ common-call ad/demo lab across Manual, Confirmed, Autonomous safe-demo.
+  "./common-call-demo.test.mjs",
+  "./common-call-demo-ui.test.mjs",
   // RUN 35-2 — aria-kb-query routing iter 7 (security families/takeover · wifi no-word · printer tightened).
   "./aria-kb-routing-iter7.test.mjs",
   // RUN 36 round-3 — routing coverage for calendar · external display · conference-room AV (top50-gaps).

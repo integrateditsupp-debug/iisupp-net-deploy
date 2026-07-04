@@ -2,6 +2,7 @@ import { bannerVisible, bannerModel, SECURITY_BANNER_DISMISS_KEY } from "../shar
 import "./components/aria-globe.mjs"; // defines the <aria-globe> custom element used in the rail
 import { extOf, requiredSteps, stepFor } from "../shared/delete-confirm.mjs";
 import { renderMarkdown } from "../shared/aria-markdown.mjs"; // RUN 34-1 — readable chat answers (markdown → HTML)
+import { COMMON_CALL_DEMO_SCENARIOS, demoDisposition, summarizeCommonCallDemo } from "../shared/common-call-demo.mjs";
 // RUN 22 — dashboard / performance / SLA / compliance / reports tab builders + status.
 import { computeHeroStatus, heroSubline, heroTiles } from "../shared/dashboard-status.mjs";
 import * as DashboardTab from "./tabs/dashboard.mjs";
@@ -155,6 +156,7 @@ function wireActions() {
   wireRun21();
   wireRun22();
   wireRun23e();
+  wireCommonCallDemo();
 
   bindClick("showGlobe", (button) => runAction(button, () => sentinel.showGlobe()));
   bindClick("pauseOneHour", (button) => runAction(button, () => sentinel.setPaused(HOUR_MS)));
@@ -204,6 +206,64 @@ function wireActions() {
     source: "operator-sim",
     issue: "ARIA Sentinel javascript error main process EADDRINUSE port 37841"
   })));
+}
+
+let commonCallDemoTimer = null;
+
+function wireCommonCallDemo() {
+  bindClick("runCommonCallManual", () => runCommonCallDemo("manual"));
+  bindClick("runCommonCallConfirmed", () => runCommonCallDemo("confirmed"));
+  bindClick("runCommonCallAutonomous", () => runCommonCallDemo("autonomous"));
+  renderCommonCallDemoSummary("manual", 0);
+}
+
+function renderCommonCallDemoSummary(mode, completed = 0) {
+  const host = qs("#commonCallDemoSummary");
+  if (!host) return;
+  const summary = summarizeCommonCallDemo(mode);
+  const demoLabel = /demo/i.test(summary.label) ? summary.label : `${summary.label} demo`;
+  host.innerHTML = `
+    <strong>${escapeHtml(demoLabel)}: ${completed}/${summary.count} common calls</strong>
+    <span>${escapeHtml(summary.categories)} categories · ${escapeHtml(summary.green)} low-risk · ${escapeHtml(summary.highRisk)} high/critical approval stops · ${escapeHtml(summary.safety)}</span>`;
+}
+
+function runCommonCallDemo(mode) {
+  const list = qs("#commonCallDemoList");
+  const progress = qs("#commonCallDemoProgress");
+  if (!list) return;
+  if (commonCallDemoTimer) window.clearInterval(commonCallDemoTimer);
+  const scenarios = COMMON_CALL_DEMO_SCENARIOS;
+  const rows = scenarios.map((scenario, index) => {
+    const disposition = demoDisposition(scenario, mode);
+    return `
+      <article class="common-call-row" data-common-call-index="${index}">
+        <div class="ccr-top">
+          <span class="ccr-number">${String(index + 1).padStart(3, "0")}</span>
+          <strong>${escapeHtml(scenario.title)}</strong>
+          <em class="ccr-risk ${escapeHtml(scenario.risk)}">${escapeHtml(scenario.riskLabel)}</em>
+        </div>
+        <p>${escapeHtml(scenario.visualSymptom)}</p>
+        <div class="ccr-meta"><span>${escapeHtml(scenario.category)}</span><span>${escapeHtml(disposition.label)} · ${escapeHtml(disposition.status)}</span></div>
+        <small>${escapeHtml(disposition.summary)}</small>
+      </article>`;
+  }).join("");
+  list.innerHTML = rows;
+  let completed = 0;
+  const step = Math.max(2, Math.ceil(scenarios.length / 28));
+  const tick = () => {
+    completed = Math.min(scenarios.length, completed + step);
+    qsa(".common-call-row", list).forEach((row, index) => row.classList.toggle("live", index < completed));
+    renderCommonCallDemoSummary(mode, completed);
+    if (progress) progress.style.width = `${Math.round((completed / scenarios.length) * 100)}%`;
+    if (completed >= scenarios.length && commonCallDemoTimer) {
+      window.clearInterval(commonCallDemoTimer);
+      commonCallDemoTimer = null;
+    }
+  };
+  renderCommonCallDemoSummary(mode, 0);
+  if (progress) progress.style.width = "0%";
+  tick();
+  commonCallDemoTimer = window.setInterval(tick, 80);
 }
 
 function bindClick(id, handler) {
@@ -1932,6 +1992,82 @@ function setChip(id, text, tone = "") {
 
 // RUN 33 PIVOT — in-tab ARIA Chat (Chat sub-section of the ARIA tab). Reuses the Slice 0 design + the same
 // window.sentinel.chat brain (KB-first → Anthropic → local). 🔒 frontmatter-strip + escaping; no node access.
+function cleanAriaAnswerLine(line) {
+  return String(line || "")
+    .replace(/^#{1,6}\s+/, "")
+    .replace(/^[-*]\s+/, "")
+    .replace(/^\d+[.)]\s+/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function shortenAriaAnswerLine(line, max = 168) {
+  const clean = cleanAriaAnswerLine(line);
+  return clean.length > max ? `${clean.slice(0, max - 3).trim()}...` : clean;
+}
+
+function shapeReadableAriaAnswer(rawText, res, question) {
+  const kb = res && res.kbMatch;
+  if (!kb || res?.action !== "kb-match") return null;
+  const sourceText = String(rawText || "")
+    .replace(/^\s*(?:->|\u2192)?\s*Full article:.*$/gim, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .trim();
+  const lines = sourceText
+    .split(/\r?\n+/)
+    .map(cleanAriaAnswerLine)
+    .filter((line) => line && line.length > 12 && !/^full article/i.test(line));
+  const actionable = [];
+  const fallback = [];
+  const seen = new Set();
+  for (const line of lines) {
+    const compact = shortenAriaAnswerLine(line);
+    const key = compact.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (/\b(check|open|restart|reset|clear|verify|try|select|choose|update|reconnect|repair|save|backup|restore|escalate|ask|confirm|run)\b/i.test(compact)) {
+      actionable.push(compact);
+    } else {
+      fallback.push(compact);
+    }
+    if (actionable.length >= 5) break;
+  }
+  const steps = (actionable.length >= 2 ? actionable : actionable.concat(fallback)).slice(0, 5);
+  return {
+    title: kb.title || kb.slug || "ARIA knowledge-base match",
+    lead: "ARIA matched this to the knowledge base. Start with the safest checks below, then use Resolve it for me only if you want Sentinel to open the gated local fix path.",
+    question: shortenAriaAnswerLine(question || "", 120),
+    steps: steps.length ? steps : [
+      "Confirm the visible symptom and affected app or device.",
+      "Try the lowest-risk check first before changing settings.",
+      "Escalate if the issue involves security, identity, file loss, or policy authority."
+    ],
+    detail: sourceText.length > 1100 ? `${sourceText.slice(0, 1100).trim()}...` : sourceText
+  };
+}
+
+function renderReadableAriaAnswer(model) {
+  const wrap = document.createElement("div");
+  wrap.className = "aria-answer-card";
+  const questionHtml = model.question ? `<p class="aria-answer-question">${escapeHtml(model.question)}</p>` : "";
+  wrap.innerHTML = `
+    <p class="aria-answer-kicker">Knowledge-base match</p>
+    <h3 class="aria-answer-title">${escapeHtml(model.title)}</h3>
+    ${questionHtml}
+    <p class="aria-answer-lead">${escapeHtml(model.lead)}</p>
+    <ol class="aria-answer-steps">
+      ${model.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+    </ol>
+    <p class="aria-answer-note">Sentinel never applies a fix from chat without the normal approval gates, rollback notes, and kill-switch.</p>`;
+  if (model.detail) {
+    const details = document.createElement("details");
+    details.className = "aria-answer-details";
+    details.innerHTML = `<summary>Show KB detail</summary><div class="aria-answer-detail-md">${renderMarkdown(model.detail)}</div>`;
+    wrap.appendChild(details);
+  }
+  return wrap;
+}
+
 function initAriaChat() {
   const log = qs("#ariaChatLog"), form = qs("#ariaChatForm"), input = qs("#ariaChatInput"), send = qs("#ariaChatSend");
   if (!log || !form || !input || !send) return;
@@ -1965,6 +2101,10 @@ function initAriaChat() {
     // RUN 34-1 — render the answer as real markdown (H3/ol/ul/code/links), not raw "## / - / 1." text.
     const answer = document.createElement("div"); answer.className = "aria-chat-md";
     answer.innerHTML = renderMarkdown(stripFm((res && res.text) || "I couldn't get an answer just now — please try again."));
+    const cleanText = stripFm((res && res.text) || "I couldn't get an answer just now - please try again.");
+    const readable = shapeReadableAriaAnswer(cleanText, res, question);
+    if (readable) { answer.textContent = ""; answer.appendChild(renderReadableAriaAnswer(readable)); }
+    else { answer.innerHTML = renderMarkdown(cleanText); }
     bubble.textContent = ""; bubble.appendChild(answer);
     const kb = res && res.kbMatch;
     if (kb && (kb.title || kb.slug)) {

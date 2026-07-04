@@ -1,0 +1,298 @@
+const MODE_LABELS = {
+  manual: "Manual",
+  confirmed: "Confirmed",
+  autonomous: "Autonomous safe demo"
+};
+
+const CALL_GROUPS = [
+  {
+    prefix: "win",
+    category: "Windows startup and reliability",
+    detector: "Event log, service health, update state, disk signal",
+    safeAction: "Collect visible symptoms, map the likely cause, and create a non-destructive recovery checklist.",
+    calls: [
+      ["Blue screen after Windows Update", "Blue screen after restart; user can reach recovery screen", "high"],
+      ["PC stuck on preparing automatic repair", "Repair loop appears before sign-in", "high"],
+      ["Black screen after login", "Desktop never appears after password entry", "medium"],
+      ["App not responding every few minutes", "User sees repeated Not Responding banners", "green"],
+      ["Windows Search does not open", "Start search box spins or closes", "green"],
+      ["Taskbar missing after reboot", "Desktop loads but taskbar is gone", "green"],
+      ["Update stuck at 0 percent", "Windows Update sits at 0 percent for a long time", "medium"],
+      ["System time wrong after travel", "Clock is wrong and sign-ins fail", "green"]
+    ]
+  },
+  {
+    prefix: "net",
+    category: "Network, Wi-Fi, VPN, and DNS",
+    detector: "Adapter state, DNS response, gateway reachability, VPN client presence",
+    safeAction: "Run read-only connectivity probes and present the lowest-risk reset path.",
+    calls: [
+      ["Wi-Fi connected but no internet", "Wi-Fi shows connected, browser cannot load pages", "green"],
+      ["VPN connects then drops", "VPN says connected for seconds then disconnects", "medium"],
+      ["DNS name not resolving", "Internal site name fails but IP works", "green"],
+      ["Captive portal blocks hotel Wi-Fi", "Browser redirects to sign-in page repeatedly", "green"],
+      ["Ethernet unplugged alert", "Docked laptop cannot see wired network", "green"],
+      ["Teams works but browser does not", "Only browser traffic fails", "green"],
+      ["Slow file share access", "Network share takes minutes to open", "medium"],
+      ["Remote app cannot reach server", "Line-of-business app reports server unavailable", "medium"]
+    ]
+  },
+  {
+    prefix: "print",
+    category: "Printing and scanning",
+    detector: "Print queue, spooler service, default printer, driver signal",
+    safeAction: "Inspect queue state and offer a gated spooler or queue-clear fix.",
+    calls: [
+      ["Printer queue stuck", "Documents remain in queue and never print", "green"],
+      ["Wrong default printer", "Jobs go to a printer in another office", "green"],
+      ["Printer offline after sleep", "Printer shows offline even though it is powered on", "green"],
+      ["PDF prints blank pages", "Only PDF documents print blank", "medium"],
+      ["Scanner not detected", "Scan app cannot find the device", "medium"],
+      ["Label printer shifted", "Labels print with bad alignment", "green"],
+      ["Print job asks for admin", "Driver prompt blocks non-admin user", "medium"],
+      ["Secure print release missing", "User cannot find held job at printer", "green"]
+    ]
+  },
+  {
+    prefix: "mail",
+    category: "Outlook and Microsoft 365 mail",
+    detector: "Outlook process, profile hints, credential prompt loop, connectivity",
+    safeAction: "Guide profile/cache checks and keep mailbox/data changes behind confirmation.",
+    calls: [
+      ["Outlook password prompt loop", "Outlook repeatedly asks for password", "medium"],
+      ["Outlook stuck on loading profile", "Outlook never reaches the inbox", "medium"],
+      ["Emails stuck in Outbox", "Messages sit in Outbox after Send", "green"],
+      ["Shared mailbox missing", "Delegated mailbox no longer appears", "medium"],
+      ["Calendar invites not updating", "Meeting changes do not appear", "green"],
+      ["Search in Outlook returns nothing", "Old mail exists but search is empty", "green"],
+      ["Attachment blocked", "Safe attachment cannot be opened", "medium"],
+      ["Mailbox almost full", "Send/receive warns about quota", "green"]
+    ]
+  },
+  {
+    prefix: "meet",
+    category: "Teams, Zoom, and meeting audio/video",
+    detector: "Audio endpoint, camera permission, app process, conference device state",
+    safeAction: "Check selected devices and permissions, then offer reversible app/device steps.",
+    calls: [
+      ["Teams microphone silent", "User can hear others but nobody hears them", "green"],
+      ["Camera black in meeting", "Video preview is black", "green"],
+      ["Speaker output wrong device", "Sound comes from laptop instead of headset", "green"],
+      ["Echo in conference room", "Room audio loops back loudly", "medium"],
+      ["Screen share button missing", "Meeting app blocks sharing", "green"],
+      ["Zoom update required before call", "Zoom blocks join until update", "medium"],
+      ["Bluetooth headset connects but fails", "Headset pairs but does not work in Teams", "green"],
+      ["Meeting link opens wrong app", "Browser opens a wrong/default app", "green"]
+    ]
+  },
+  {
+    prefix: "file",
+    category: "Office, Adobe, and file safety",
+    detector: "Recent Office documents, lock files, extension type, backup validation status",
+    safeAction: "Protect the live file first, validate a renamed backup copy, and avoid macro execution.",
+    calls: [
+      ["Word document may be corrupted", "Word says the document cannot be opened", "medium"],
+      ["Excel workbook crashes on open", "Excel closes after loading one workbook", "medium"],
+      ["PowerPoint missing fonts/media", "Deck opens but slides look broken", "green"],
+      ["PDF form will not save", "Adobe form loses typed fields", "green"],
+      ["Excel file locked by another user", "Workbook says it is already in use", "green"],
+      ["Unsaved Office changes after crash", "User lost edits after app crash", "medium"],
+      ["Macro workbook warning", "User sees a macro security prompt", "high"],
+      ["Large PDF opens slowly", "Adobe freezes on a large PDF", "green"]
+    ]
+  },
+  {
+    prefix: "sync",
+    category: "OneDrive and SharePoint",
+    detector: "Sync client state, file lock, path length, local cache signal",
+    safeAction: "Check sync status and steer the user to safe online/local recovery paths.",
+    calls: [
+      ["OneDrive not syncing", "Cloud icon shows errors", "green"],
+      ["Red X on SharePoint folder", "Files show red X badges", "green"],
+      ["File disappeared from synced folder", "User cannot find a document after sync", "medium"],
+      ["Path too long", "Sync reports invalid file path", "green"],
+      ["OneDrive sign-in expired", "Sync client requests sign-in", "green"],
+      ["Conflicting copies created", "Multiple conflict files appear", "green"],
+      ["SharePoint permission denied", "User cannot open a team folder", "medium"],
+      ["Slow first sync after laptop swap", "New device takes hours to sync", "green"]
+    ]
+  },
+  {
+    prefix: "id",
+    category: "Identity, password, MFA, and lockout",
+    detector: "Lockout symptom, MFA prompt state, directory integration availability",
+    safeAction: "Identify the authority owner and stage safe reset/escalation steps without bypassing policy.",
+    calls: [
+      ["Account locked out", "User cannot sign in after password attempts", "medium"],
+      ["MFA push never arrives", "Authenticator prompt does not appear", "medium"],
+      ["New phone needs MFA transfer", "User replaced phone and cannot approve sign-in", "high"],
+      ["Password changed but app still fails", "Old password prompt repeats in apps", "green"],
+      ["Badge login fails", "Device sign-in with badge/PIN fails", "medium"],
+      ["Temporary access pass request", "User needs a TAP for recovery", "high"],
+      ["Conditional access block", "Sign-in says access blocked by policy", "high"],
+      ["Guest user cannot access tenant", "External collaborator sees permission error", "medium"]
+    ]
+  },
+  {
+    prefix: "perf",
+    category: "Performance, storage, and battery",
+    detector: "CPU, memory, disk space, startup apps, battery health",
+    safeAction: "Gather resource evidence and preview reversible cleanup or startup recommendations.",
+    calls: [
+      ["Laptop is very slow", "Opening apps takes minutes", "green"],
+      ["Disk almost full", "Windows warns storage is low", "green"],
+      ["Fan always loud", "Fan runs high while idle", "green"],
+      ["Battery drains quickly", "Laptop dies far faster than normal", "green"],
+      ["High CPU from one app", "Task Manager shows one app using CPU", "green"],
+      ["Memory pressure warning", "Apps close under heavy memory use", "green"],
+      ["Startup takes too long", "Sign-in to usable desktop is slow", "green"],
+      ["Laptop overheats in dock", "Machine gets hot when docked", "medium"]
+    ]
+  },
+  {
+    prefix: "web",
+    category: "Browser and web applications",
+    detector: "Browser profile state, extension list, cookie/session clue, safe URL classification",
+    safeAction: "Use privacy-safe browser checks and avoid reading page content or credentials.",
+    calls: [
+      ["Website keeps logging out", "Browser loses the session repeatedly", "green"],
+      ["Browser extension breaks site", "Internal website works in private mode only", "green"],
+      ["Pop-ups blocked for required app", "Business app cannot open a required pop-up", "green"],
+      ["Certificate warning", "Browser shows certificate not trusted", "high"],
+      ["Download blocked by browser", "Business download is stopped", "medium"],
+      ["Chrome profile corrupted", "Bookmarks/extensions behave strangely", "medium"],
+      ["Password manager autofill wrong", "Saved login fills old credentials", "green"],
+      ["SaaS app blank white page", "Corporate web app loads blank", "green"]
+    ]
+  },
+  {
+    prefix: "sec",
+    category: "Security and phishing",
+    detector: "Threat category, attachment risk, Defender state, policy gate",
+    safeAction: "Contain first, collect safe evidence, and escalate anything high-risk to security.",
+    calls: [
+      ["Suspicious email reported", "User received a possible phishing email", "high"],
+      ["Clicked a phishing link", "User clicked a suspicious link", "high"],
+      ["Unknown browser pop-up", "Fake antivirus pop-up appears", "high"],
+      ["Defender alert shown", "Windows Security reports a threat", "high"],
+      ["USB drive found", "User inserted an unknown USB drive", "high"],
+      ["Impossible travel sign-in alert", "Security portal reports odd login", "high"],
+      ["Ransomware note screenshot", "User sees a ransom-like message", "critical"],
+      ["Suspicious MFA fatigue", "User gets repeated MFA prompts", "high"]
+    ]
+  },
+  {
+    prefix: "rdp",
+    category: "Remote access and asset rescue",
+    detector: "RDP policy, customer-owned authority, device reachability, recovery preconditions",
+    safeAction: "Stage the access request only; no hidden access, credential storage, or policy bypass.",
+    calls: [
+      ["Remote Desktop cannot connect", "RDP times out to a managed device", "medium"],
+      ["User locked out before file handoff", "Files are needed but user cannot sign in", "high"],
+      ["Grant asset RDP access request", "Admin needs another approved helper on the device RDP list", "high"],
+      ["VPN required before RDP", "RDP works only after VPN connects", "medium"],
+      ["Remote app printer missing", "Printer is not redirected in remote session", "green"],
+      ["Remote session black screen", "RDP connects but shows black screen", "medium"],
+      ["Cannot copy files over RDP", "Clipboard or drive redirect is disabled", "medium"],
+      ["Blue-screen recovery request", "Device cannot boot normally; user asks for file recovery", "critical"]
+    ]
+  },
+  {
+    prefix: "corp",
+    category: "Corporate apps and peripherals",
+    detector: "App health, local device state, policy hint, vendor escalation signal",
+    safeAction: "Identify app/device ownership and provide either a walkthrough or a gated support ticket draft.",
+    calls: [
+      ["ERP app login loop", "Finance app returns to login after password", "medium"],
+      ["CRM records not loading", "Sales app loads but records are blank", "medium"],
+      ["RSA token code rejected", "Token code is valid-looking but rejected", "high"],
+      ["Dock does not charge laptop", "Docked laptop shows not charging", "green"],
+      ["External monitor not detected", "Second display remains black", "green"],
+      ["Keyboard or mouse lag", "Input device stutters during work", "green"],
+      ["Barcode scanner types wrong data", "Scanner enters extra characters", "green"],
+      ["Softphone calls fail", "Corporate phone app cannot place calls", "medium"]
+    ]
+  }
+];
+
+const RISK_LABELS = {
+  green: "low-risk",
+  medium: "medium-risk",
+  high: "high-risk",
+  critical: "critical"
+};
+
+function slug(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 56);
+}
+
+function makeScenario(group, call, index) {
+  const [title, symptom, risk = "medium"] = call;
+  const id = `${group.prefix}-${String(index + 1).padStart(2, "0")}-${slug(title)}`;
+  const riskLabel = RISK_LABELS[risk] || "review";
+  return {
+    id,
+    title,
+    category: group.category,
+    risk,
+    riskLabel,
+    prompt: `A corporate user reports: "${title}". Visible symptom: ${symptom}. Show the safest first response, what ARIA can check locally, and when to escalate.`,
+    visualSymptom: symptom,
+    detector: group.detector,
+    safeDemoAction: group.safeAction,
+    proofPoint: `${riskLabel} demo path; content-blind; no destructive system change.`,
+    modeOutcomes: {
+      manual: `ARIA explains the cause, gives a step-by-step walkthrough, and does not execute anything.`,
+      confirmed: `ARIA stages a fix card with risk, reason, rollback notes, and a countdown before any safe action.`,
+      autonomous: risk === "green"
+        ? `ARIA controls the workflow in safe-demo mode: read-only probes and dry-run repair preview only. No real OS change in the demo.`
+        : `ARIA controls triage, then stops at approval because this is ${riskLabel}. No bypass, no hidden access, no destructive action.`
+    }
+  };
+}
+
+export const COMMON_CALL_DEMO_SCENARIOS = Object.freeze(
+  CALL_GROUPS.flatMap((group) => group.calls.map((call, index) => makeScenario(group, call, index)))
+);
+
+export const COMMON_CALL_DEMO_MODES = Object.freeze(Object.keys(MODE_LABELS));
+
+export function demoDisposition(scenario, mode = "manual") {
+  const normalizedMode = COMMON_CALL_DEMO_MODES.includes(mode) ? mode : "manual";
+  const text = scenario?.modeOutcomes?.[normalizedMode] || "";
+  const gatedRisk = normalizedMode === "autonomous" && scenario?.risk !== "green";
+  return {
+    mode: normalizedMode,
+    label: MODE_LABELS[normalizedMode],
+    summary: text,
+    status: gatedRisk
+      ? "approval-gated"
+      : normalizedMode === "confirmed"
+        ? "confirm-first"
+        : normalizedMode === "autonomous"
+          ? "safe-demo"
+          : "walkthrough"
+  };
+}
+
+export function summarizeCommonCallDemo(mode = "manual") {
+  const normalizedMode = COMMON_CALL_DEMO_MODES.includes(mode) ? mode : "manual";
+  const categories = new Set(COMMON_CALL_DEMO_SCENARIOS.map((s) => s.category));
+  const highRisk = COMMON_CALL_DEMO_SCENARIOS.filter((s) => ["high", "critical"].includes(s.risk)).length;
+  const green = COMMON_CALL_DEMO_SCENARIOS.filter((s) => s.risk === "green").length;
+  return {
+    mode: normalizedMode,
+    label: MODE_LABELS[normalizedMode],
+    count: COMMON_CALL_DEMO_SCENARIOS.length,
+    categories: categories.size,
+    green,
+    highRisk,
+    safety: normalizedMode === "autonomous"
+      ? "Autonomous demo uses read-only probes, dry-runs, and approval stops for risky cases."
+      : "No live system changes are made by the demo lab."
+  };
+}
