@@ -953,6 +953,89 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
      }
 })();
 
+/* ===== CONTENT ASSURANCE SPOTLIGHT (2026-07-04) ===== */
+(function () {
+     "use strict";
+     var p = location.pathname;
+     if (p !== "/" && p !== "/index.html") return;
+
+     function injectStyles() {
+            if (document.getElementById("content-assurance-spotlight-style")) return;
+            var style = document.createElement("style");
+            style.id = "content-assurance-spotlight-style";
+            style.textContent =
+                  "#content-assurance-spotlight{position:relative}" +
+                  "#content-assurance-spotlight .cas-shell{max-width:980px;margin:0 auto;border:1px solid rgba(197,160,89,.22);border-radius:20px;padding:30px 24px;background:radial-gradient(circle at top left,rgba(197,160,89,.14),transparent 42%),linear-gradient(165deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:0 20px 60px rgba(0,0,0,.22)}" +
+                  "#content-assurance-spotlight .cas-eyebrow{display:inline-block;color:#c5a059;font-size:10px;letter-spacing:.34em;text-transform:uppercase;font-weight:700;margin:0 0 12px}" +
+                  "#content-assurance-spotlight .cas-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.9fr);gap:24px;align-items:center}" +
+                  "#content-assurance-spotlight h2{font-family:Cinzel,serif;font-size:32px;line-height:1.12;color:#fff;margin:0 0 12px}" +
+                  "#content-assurance-spotlight h2 .cas-gold{color:#c5a059}" +
+                  "#content-assurance-spotlight .cas-copy{color:rgba(255,255,255,.72);font-size:15px;line-height:1.75;margin:0}" +
+                  "#content-assurance-spotlight .cas-actions{display:flex;flex-direction:column;gap:12px;align-items:flex-start}" +
+                  "#content-assurance-spotlight .cas-btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 22px;border-radius:999px;background:linear-gradient(135deg,#c5a059 0%,#f1dca7 100%);color:#1a140c;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.12em;font-weight:700;text-decoration:none;box-shadow:0 12px 28px rgba(197,160,89,.22);transition:transform .15s ease,box-shadow .2s ease}" +
+                  "#content-assurance-spotlight .cas-btn:hover{transform:translateY(-1px);box-shadow:0 16px 32px rgba(197,160,89,.28)}" +
+                  "#content-assurance-spotlight .cas-note{color:rgba(241,220,167,.82);font-size:11px;line-height:1.7;letter-spacing:.04em}" +
+                  "#content-assurance-spotlight .cas-points{display:grid;grid-template-columns:1fr;gap:8px;margin-top:16px}" +
+                  "#content-assurance-spotlight .cas-point{color:rgba(255,255,255,.64);font-size:12px;line-height:1.55;padding-left:16px;position:relative}" +
+                  "#content-assurance-spotlight .cas-point::before{content:'';position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:#c5a059;box-shadow:0 0 10px rgba(197,160,89,.55)}" +
+                  "@media (max-width:800px){#content-assurance-spotlight .cas-shell{padding:24px 18px;border-radius:16px}#content-assurance-spotlight .cas-grid{grid-template-columns:1fr;gap:18px}#content-assurance-spotlight h2{font-size:26px}#content-assurance-spotlight .cas-copy{font-size:14px}#content-assurance-spotlight .cas-actions{align-items:stretch}#content-assurance-spotlight .cas-btn{width:100%;text-align:center}}";
+            document.head.appendChild(style);
+     }
+
+     function buildSection() {
+            var section = document.createElement("section");
+            section.id = "content-assurance-spotlight";
+            section.className = "py-14 px-6 md:px-10";
+            section.innerHTML = `
+              <div class="cas-shell">
+                <div class="cas-grid">
+                  <div>
+                    <p class="cas-eyebrow">AI Verification</p>
+                    <h2>Content <span class="cas-gold">Assurance</span></h2>
+                    <p class="cas-copy">Check whether a paper, report, proposal, article, or writing sample was likely made with AI. Review the signals, package the findings, and keep the next step simple.</p>
+                    <div class="cas-points">
+                      <div class="cas-point">Upload a file or paste the text you want reviewed.</div>
+                      <div class="cas-point">Get a structured AI-likelihood summary and supporting checks.</div>
+                      <div class="cas-point">Open a clean delivery flow when you need a packaged result.</div>
+                    </div>
+                  </div>
+                  <div class="cas-actions">
+                    <a class="cas-btn" href="/services/content-assurance">Open Content Assurance &rarr;</a>
+                    <div class="cas-note">Best for AI-written-work checks, proof packages, and fast review before you send or submit something important.</div>
+                  </div>
+                </div>
+              </div>`;
+            return section;
+     }
+
+     function init() {
+            if (document.getElementById("content-assurance-spotlight")) return;
+            var intro = document.getElementById("company-intro");
+            var roadmap = document.getElementById("vision-roadmap");
+            var aiEdge = document.querySelector(".ai-edge-band");
+            if (!intro && !roadmap && !aiEdge) return;
+            injectStyles();
+            var section = buildSection();
+            if (roadmap && roadmap.parentNode) {
+                   roadmap.parentNode.insertBefore(section, roadmap);
+                   return;
+            }
+            if (intro && intro.parentNode) {
+                   intro.parentNode.insertBefore(section, intro.nextSibling);
+                   return;
+            }
+            if (aiEdge && aiEdge.parentNode) {
+                   aiEdge.parentNode.insertBefore(section, aiEdge);
+            }
+     }
+
+     if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", init);
+     } else {
+            init();
+     }
+})();
+
 
 /* ===== TRIAL TIMER + PAYWALL + PLANS LINK FIX (v2 2026-05-10) ===== */
 (function () {
