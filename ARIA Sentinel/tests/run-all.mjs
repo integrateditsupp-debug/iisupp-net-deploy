@@ -110,6 +110,7 @@ const TESTS = [
   "./cross-platform-no-control.test.mjs",
   "./event-log-sanitize.test.mjs",
   "./registry-read-only.test.mjs",
+  "./file-association-guard.test.mjs",
   "./escalation-path.test.mjs",
   // RUN 21 — auto-update orchestrator + startup hook + admin capture + heartbeat.
   "./update-listener.test.mjs",

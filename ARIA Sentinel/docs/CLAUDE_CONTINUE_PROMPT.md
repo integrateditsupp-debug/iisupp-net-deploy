@@ -2,6 +2,14 @@
 
 Continue ARIA Sentinel from this state:
 
+Current 2026-07-05 Codex continuation note:
+
+- Active work is no longer only the old UI split. Ahmad is now asking for proactive user-error prevention and system scans in ARIA Sentinel.
+- First concrete issue: `.txt` files should not open in Adobe/Acrobat. The floating globe should warn: "Problem detected: text files are opening in Adobe. Shall I switch them back to Notepad?"
+- Live check on Ahmad's PC: `C:\Users\Ahmad Wasee\Desktop\ARIA sentinel test.xml.txt` exists; current `.txt` default is Notepad (`AppX4ztfk9wxr86nxmzzq47px0nh0e58b8fw`); `Acrobat.exe` is only in OpenWith history.
+- Codex added `src/shared/file-association-guard.mjs`, recipes, main-process read-only scan, startup/60-second interval/autonomous-mode recheck, manual scan IPC, overlay prompt, safe user-approved `Fix in Settings` remediation, and tests. Full Sentinel suite passed `227/227`; local package rebuilt at `dist/win-unpacked/ARIA Sentinel.exe`.
+- Safety rule: do not silently write Windows default-app/UserChoice registry keys. Use read-only detection and an explicit user-approved Windows Settings / Notepad correction path. Do not claim true pre-commit blocking until a real shell-extension/policy hook exists.
+
 - Repo path: `C:\Users\Ahmad Wasee\Documents\GitHub\ARIA — Real-Time AI Assistant\iisupp-net-deploy`
 - Product path: `ARIA Sentinel`
 - Design source of truth: `ARIA Sentinel/design_handoff_aria_sentinel/README.md`, `tokens.css`, `copy.md`, and Ahmad's latest screenshot showing Sentinel Admin + Documentation side by side.

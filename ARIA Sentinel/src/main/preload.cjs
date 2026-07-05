@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld("sentinel", {
   ariaMemory: () => ipcRenderer.invoke("aria:memory"),
   ariaAgents: () => ipcRenderer.invoke("aria:agents"),
   scan: () => ipcRenderer.invoke("sentinel:scan"),
+  fileAssociationScan: () => ipcRenderer.invoke("sentinel:file-association-scan"),
   updateKnowledge: () => ipcRenderer.invoke("sentinel:update-knowledge"),
   officeSafetyStatus: () => ipcRenderer.invoke("sentinel:office-safety-status"),
   setOfficeSafetyEnabled: (on) => ipcRenderer.invoke("sentinel:office-safety-set-enabled", on),

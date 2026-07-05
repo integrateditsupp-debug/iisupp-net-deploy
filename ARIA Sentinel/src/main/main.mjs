@@ -142,6 +142,14 @@ import {
   emitPublicJson as emitProofJson
 } from "../shared/proof-metrics.mjs";
 import { getOmniStatus, handleMessage as handleOmniMessage } from "../shared/omni-channel.mjs";
+import {
+  FILE_ASSOCIATION_GUARD_INTERVAL_MS,
+  TEXT_ASSOCIATION_PRIMARY_RECIPE_ID,
+  TEXT_ASSOCIATION_RISK_RECIPE_ID,
+  buildAssociationGuardStatus,
+  classifyTextAssociation,
+  parseRegQueryValues
+} from "../shared/file-association-guard.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(__dirname, "../..");
@@ -167,6 +175,8 @@ const store = new Store({
       caller: "",
       connected: false
     },
+    fileAssociationGuard: null,
+    fileAssociationLastIssueKey: "",
     officeSafety: {
       enabled: true
     },
@@ -209,6 +219,7 @@ let overlayPhysics = null;
 let overlayPhysicsTimer = null;
 let overlayLastTick = 0;
 let overlayActiveUntil = 0;
+let fileAssociationGuardTimer = null;
 
 // Slice C — register the aria-sentinel:// deep-link scheme so the web "Open with ARIA Sentinel" button can
 // hand a matched fix to the installed app. The link only ever carries a recipe id + an intent STRING —
@@ -2011,6 +2022,113 @@ function startDetection() {
   return detectionOrchestrator;
 }
 
+function runRegQuery(args, timeoutMs = 5000) {
+  return new Promise((resolve) => {
+    if (process.platform !== "win32" || !Array.isArray(args) || args.length === 0) return resolve("");
+    let out = "";
+    let child;
+    try {
+      child = spawn("reg", args, { windowsHide: true, timeout: timeoutMs, stdio: ["ignore", "pipe", "ignore"] });
+    } catch {
+      return resolve("");
+    }
+    childProcesses.add(child);
+    child.stdout?.on("data", (d) => { out += d.toString(); });
+    child.on("error", () => { childProcesses.delete(child); resolve(""); });
+    child.on("close", () => { childProcesses.delete(child); resolve(out); });
+  });
+}
+
+function safeProgIdForRegPath(progId) {
+  const text = String(progId || "").trim();
+  return /^[A-Za-z0-9_.!{}-]{1,180}$/.test(text) ? text : "";
+}
+
+async function readClassValues(progId, subkey) {
+  const safeProgId = safeProgIdForRegPath(progId);
+  if (!safeProgId) return {};
+  const suffix = subkey ? `\\${subkey}` : "";
+  for (const root of ["HKCU\\Software\\Classes", "HKCR"]) {
+    const values = parseRegQueryValues(await runRegQuery(["query", `${root}\\${safeProgId}${suffix}`]));
+    if (Object.keys(values).length) return values;
+  }
+  return {};
+}
+
+async function readTextAssociationSnapshot() {
+  if (process.platform !== "win32") {
+    return { extension: ".txt", source: "unsupported-platform" };
+  }
+  const userChoice = parseRegQueryValues(await runRegQuery([
+    "query",
+    "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt\\UserChoice",
+    "/v",
+    "ProgId"
+  ]));
+  const openWithList = parseRegQueryValues(await runRegQuery([
+    "query",
+    "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.txt\\OpenWithList"
+  ]));
+  const openWithExecutables = Object.entries(openWithList)
+    .filter(([key]) => /^[a-z]$/i.test(key))
+    .map(([, value]) => value)
+    .filter(Boolean);
+  const association = parseRegQueryValues(await runRegQuery(["query", "HKCR\\.txt"]));
+  const userChoiceProgId = userChoice.ProgId || "";
+  const appValues = await readClassValues(userChoiceProgId, "Application");
+  const commandValues = await readClassValues(userChoiceProgId, "Shell\\open\\command");
+  return {
+    extension: ".txt",
+    source: "windows-registry-readonly",
+    userChoiceProgId,
+    userChoiceApplicationName: appValues.ApplicationName || "",
+    userChoiceCommand: commandValues["(Default)"] || "",
+    associationProgId: association["(Default)"] || "",
+    openWithExecutables
+  };
+}
+
+async function scanFileAssociationGuard(reason = "interval") {
+  const snapshot = await readTextAssociationSnapshot();
+  const classification = classifyTextAssociation(snapshot);
+  const status = buildAssociationGuardStatus(classification);
+  store.set("fileAssociationGuard", { ...status, reason });
+
+  if (!classification.issue) {
+    if (store.get("fileAssociationLastIssueKey")) store.set("fileAssociationLastIssueKey", "");
+    broadcastState();
+    return { ok: true, status, issue: null };
+  }
+
+  const issue = classification.issue;
+  const lastKey = String(store.get("fileAssociationLastIssueKey") || "");
+  if (issue.key !== lastKey || reason === "mode-autonomous" || reason === "manual") {
+    const recipe = recipeById(issue.recipeId);
+    if (recipe) {
+      addDetection(recipe, {
+        source: "desktop-scan",
+        signal: issue.signal,
+        issue: issue.summary,
+        signature: { code: issue.signal, family: issue.family, confidence: issue.confidence, source: "desktop" }
+      });
+      logEvent("WATCH", `File association guard surfaced ${issue.signal} (${reason}).`, { recipeId: recipe.id });
+    }
+    store.set("fileAssociationLastIssueKey", issue.key);
+  } else {
+    broadcastState();
+  }
+  return { ok: true, status, issue };
+}
+
+function startFileAssociationGuard() {
+  if (fileAssociationGuardTimer) return;
+  scanFileAssociationGuard("startup").catch((error) => handleSelfError(error, "association-guard-startup"));
+  fileAssociationGuardTimer = setInterval(() => {
+    scanFileAssociationGuard("interval").catch(() => undefined);
+  }, FILE_ASSOCIATION_GUARD_INTERVAL_MS);
+  fileAssociationGuardTimer.unref?.();
+}
+
 // ── RUN 23 — process-health poller + supervised-fix control plane ─────────────────────────────────────────
 // recipe-history.json (vetted-tier ledger) lives in userData, alongside delete-prefs.
 function recipeHistoryFile() { return path.join(app.getPath("userData"), "recipe-history.json"); }
@@ -2311,6 +2429,7 @@ function getState() {
     transparencyLog: store.get("transparencyLog") || [],
     serviceNow: store.get("serviceNow"),
     serviceNowStatus: serviceNowSummary(),
+    fileAssociationGuard: store.get("fileAssociationGuard") || null,
     officeSafety: officeSafetyStatus(),
     knowledgeSources: store.get("knowledgeSources"),
     restorePoints: (store.get("restorePoints") || []).slice(0, 10),
@@ -2569,7 +2688,46 @@ async function detectIssue(input = {}) {
   return { ok: true, signature, detection, matches: matchRecipes(query, { limit: 3 }).map((m) => ({ score: m.score, recipe: publicRecipe(m.recipe) })) };
 }
 
+async function runFileAssociationFix(recipeId, options = {}) {
+  const recipe = recipeById(recipeId);
+  if (!recipe) return { ok: false, error: "recipe_not_found" };
+  const confirmed = options.confirmed === true;
+  const dryRun = options.dryRun === true || !confirmed || process.platform !== "win32";
+  if (dryRun) {
+    return {
+      ok: true,
+      dryRun: true,
+      recipe: publicRecipe(recipe),
+      steps: [{ actionId: "open-default-apps-settings", label: "Open Windows Default Apps", ok: true, dryRun: true, message: "Would open Windows Default Apps so the user can choose Notepad for .txt files." }],
+      message: "Dry-run complete. No system changes were made."
+    };
+  }
+  try {
+    await shell.openExternal("ms-settings:defaultapps");
+    logEvent("RUN", "Opened Windows Default Apps for .txt -> Notepad review.", { recipeId });
+    scanFileAssociationGuard("post-fix-opened").catch(() => undefined);
+    return {
+      ok: true,
+      dryRun: false,
+      recipe: publicRecipe(recipe),
+      steps: [{ actionId: "open-default-apps-settings", label: "Open Windows Default Apps", ok: true, dryRun: false, message: "Opened Windows Default Apps. Select Notepad for .txt files, then ARIA will re-scan." }],
+      message: "Opened Windows Default Apps. Choose Notepad for .txt files; ARIA will re-scan."
+    };
+  } catch {
+    return {
+      ok: false,
+      dryRun: false,
+      recipe: publicRecipe(recipe),
+      steps: [{ actionId: "open-default-apps-settings", label: "Open Windows Default Apps", ok: false, dryRun: false, message: "Windows Default Apps could not be opened automatically." }],
+      message: "Open Windows Settings > Apps > Default apps and choose Notepad for .txt files."
+    };
+  }
+}
+
 async function runRecipe(recipeId, options = {}) {
+  if ([TEXT_ASSOCIATION_PRIMARY_RECIPE_ID, TEXT_ASSOCIATION_RISK_RECIPE_ID].includes(String(recipeId))) {
+    return runFileAssociationFix(String(recipeId), options);
+  }
   // RUN 23b — a Tier-0 id (direct or aliased) routes to the dedicated executor instead of the diagnostic
   // recipe registry. Still dry-run-gated by the same flags; the supervisor + countdown gate it upstream.
   if (resolveExecutorId(recipeId)) return runTier0Fix(recipeId, options);
@@ -3398,7 +3556,10 @@ ipcMain.handle("sentinel:set-mode", (_event, mode, optIn) => {
   }
   store.set("mode", mode);
   applyModeBehavior(mode);
-  if (mode === "autonomous") logEvent("MODE", "Autonomous mode enabled via explicit opt-in.");
+  if (mode === "autonomous") {
+    logEvent("MODE", "Autonomous mode enabled via explicit opt-in.");
+    scanFileAssociationGuard("mode-autonomous").catch(() => undefined);
+  }
   refreshTray();
   broadcastState();
   return { ok: true, state: getState() };
@@ -3462,6 +3623,7 @@ ipcMain.handle("sentinel:get-integration-config", () => getIntegrationConfig());
 ipcMain.handle("sentinel:save-integration-config", (_event, patch) => saveIntegrationConfig(patch || {}));
 ipcMain.handle("sentinel:scan", () => scanDisk());
 ipcMain.handle("sentinel:update-knowledge", () => updateKnowledge());
+ipcMain.handle("sentinel:file-association-scan", () => scanFileAssociationGuard("manual"));
 ipcMain.handle("sentinel:office-safety-status", () => officeSafetyStatus());
 ipcMain.handle("sentinel:office-safety-set-enabled", (_event, on) => setOfficeSafetyEnabled(on));
 ipcMain.handle("sentinel:office-safety-scan", () => scanOfficeSafety());
@@ -3665,6 +3827,7 @@ if (hasSingleInstanceLock) {
     applyModeBehavior(store.get("mode"));
     startBridge();
     startDetection();
+    startFileAssociationGuard();
     startProcessHealth(); // RUN 23 — 30s content-blind process-health poll feeding the globe status panel
     startOfficeSafety(); // Office File Safety Net: local 2m backups + 3m renamed-copy validation.
     serviceNowDrain().catch(() => undefined); // flush any incidents queued while offline
@@ -3725,6 +3888,7 @@ app.on("before-quit", () => {
   stopOverlayPhysics();
   try { globalShortcut.unregisterAll(); } catch { /* nothing registered */ }
   if (officeSafetyService) officeSafetyService.stop();
+  if (fileAssociationGuardTimer) clearInterval(fileAssociationGuardTimer);
   if (detectionOrchestrator) detectionOrchestrator.stopAll();
   if (adminWindow && !adminWindow.isDestroyed()) adminWindow.destroy();
   if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.destroy();

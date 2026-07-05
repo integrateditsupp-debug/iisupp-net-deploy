@@ -18,9 +18,11 @@ const card = document.getElementById("overlayCard");
 const chip = document.getElementById("overlayChip");
 const title = document.getElementById("overlayTitle");
 const copy = document.getElementById("overlayBody");
+const fixButton = document.getElementById("overlayFix");
 const globeSvg = document.querySelector(".aria-globe");
 const greeting = document.getElementById("overlayGreeting");
 let greetingTimer = null;
+const ASSOCIATION_RECIPE_IDS = new Set(["app-txt-default-adobe-v1", "app-txt-openwith-adobe-risk-v1"]);
 
 function setGlobeState(state) {
   if (globeSvg) globeSvg.setAttribute("data-state", state);
@@ -87,6 +89,7 @@ document.getElementById("overlayDismiss").addEventListener("click", async () => 
   chip.textContent = "MANUAL MODE";
   title.textContent = "ARIA is watching";
   copy.textContent = "Local self-diagnosis is active.";
+  fixButton.textContent = "Open fix";
   setMode("globe");
   setGlobeState("idle");
   await sentinel.dismissOverlay?.();
@@ -103,9 +106,12 @@ document.getElementById("overlayFix").addEventListener("click", async () => {
     setTimeout(() => setGlobeState("idle"), 2000);
     return;
   }
+  const runOptions = ASSOCIATION_RECIPE_IDS.has(currentDetection.recipeId)
+    ? { dryRun: false, confirmed: true, frontEnd: true }
+    : { dryRun: true };
   const result = currentDetection.recipeId === "sentinel-self-repair-v1"
     ? await sentinel.selfRepair("overlay")
-    : await sentinel.runRecipe(currentDetection.recipeId, { dryRun: true });
+    : await sentinel.runRecipe(currentDetection.recipeId, runOptions);
   chip.textContent = result.dryRun ? "DRY-RUN COMPLETE" : result.ok ? "DONE" : "REVIEW";
   title.textContent = result.recipe?.title || "ARIA self-repair";
   copy.textContent = result.message || "Self-repair completed.";
@@ -124,4 +130,5 @@ function render(detection) {
   chip.textContent = detection.chip;
   title.textContent = detection.title;
   copy.textContent = detection.summary;
+  fixButton.textContent = ASSOCIATION_RECIPE_IDS.has(detection.recipeId) ? "Fix in Settings" : "Open fix";
 }
