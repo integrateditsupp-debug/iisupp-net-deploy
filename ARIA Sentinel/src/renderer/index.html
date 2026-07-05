@@ -49,7 +49,11 @@
             <a href="#aria-agents" data-anchor="aria-agents">Agents</a>
           </div>
           <button class="nav-item" data-tab="control-center"><span class="nav-dot"></span>Control Center</button>
-          <button class="nav-item" data-tab="recipes"><span class="nav-dot"></span>Recipes</button>
+          <button class="nav-item" data-tab="recipes"><span class="nav-dot"></span>Resolution<span class="nav-caret">&rsaquo;</span></button>
+          <div class="nav-sub" data-sub="recipes">
+            <a href="#fix-it" data-anchor="fix-it">Fix It</a>
+            <a href="#fix-history" data-anchor="fix-history">Fix History</a>
+          </div>
           <button class="nav-item" data-tab="compliance-privacy"><span class="nav-dot"></span>Compliance &amp; Privacy<span class="nav-caret">▸</span></button>
           <div class="nav-sub" data-sub="compliance-privacy">
             <a href="#compliance" data-anchor="compliance">Compliance</a>
@@ -301,24 +305,56 @@
           </section>
         </section>
 
-        <!-- ============ RECIPES (unchanged) ============ -->
+        <!-- ============ RESOLUTION (Fix It + Fix History) ============ -->
         <section id="recipes" class="tab-panel">
-          <section class="panel">
+          <div class="merge-head" id="fix-it">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Resolution</p><h2>Fix It</h2><p class="merge-sub">Search vetted fixes, filter by family, and run only through Sentinel's approval gates.</p></div>
+          </div>
+          <section class="panel" id="fixItBrowser">
             <div class="panel-actions">
               <div>
-                <p class="eyebrow">Local recipe registry</p>
+                <p class="eyebrow">Local fix registry</p>
                 <h2>Vetted fixes</h2>
               </div>
               <button id="simulateAriaError" class="ghost">Simulate ARIA error</button>
             </div>
+            <div class="fix-toolbar" aria-label="Resolution filters">
+              <label class="field">
+                Search fixes
+                <input id="fixSearch" type="search" placeholder="Search printer, Outlook, Adobe, blue screen..." autocomplete="off" />
+              </label>
+              <label class="field">
+                Fix family
+                <select id="fixCategory" aria-label="Filter fixes by family">
+                  <option value="all">All fixes</option>
+                </select>
+              </label>
+            </div>
             <p id="recipeCatalogMeta" class="note">Loading recipes.</p>
+            <div class="fix-section-title"><span>Interactive fixes</span><em id="recipeFilterMeta">Loading</em></div>
             <div id="recipeList" class="recipe-list compact-list"></div>
-          </section>
-          <section class="panel">
-            <p class="eyebrow">Tier-0 · safe-generic</p>
-            <h2>Safe Generic fixes</h2>
-            <p class="note">Run when a symptom doesn't match a specific cause. Every one is dry-run by default, content-blind, audit-logged, and asks before it changes anything. None ever deletes your documents, touches system files, or disables security.</p>
+            <div class="fix-section-title tier0-title"><span>Safe generic fixes</span><em id="tier0FilterMeta">Dry-run by default</em></div>
             <div id="tier0List" class="recipe-list compact-list"></div>
+          </section>
+          <div class="merge-head" id="fix-history">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Resolution</p><h2>Fix History</h2><p class="merge-sub">Last 30 days of Sentinel detections, dry-runs, fixes, and safety stops. Newest first.</p></div>
+          </div>
+          <section class="panel">
+            <div class="panel-actions">
+              <div>
+                <p class="eyebrow">Troubleshoot history</p>
+                <h2>Last 30 days</h2>
+              </div>
+              <span id="fixHistorySummary" class="chip">Loading</span>
+            </div>
+            <div id="fixHistoryList" class="fix-history-list" aria-live="polite"></div>
+            <div class="fix-history-pagination">
+              <button id="fixHistoryPrev" class="ghost">Previous</button>
+              <span id="fixHistoryPage" class="note">Page 1 of 1</span>
+              <button id="fixHistoryNext" class="ghost">Next</button>
+            </div>
           </section>
         </section>
 

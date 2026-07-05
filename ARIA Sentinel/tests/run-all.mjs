@@ -177,6 +177,7 @@ const TESTS = [
   "./r11-publish-paths.test.mjs",
   // RUN 23d — tab IA 17→9 consolidation (Dashboard/Compliance&Privacy/System/Settings merges + redirects).
   "./tab-ia-consolidation.test.mjs",
+  "./resolution-tab.test.mjs",
   // RUN 23e — single build + license-tier feature gating + plan picker + upsell + shouldBump hotfix.
   "./pricing-tiers.test.mjs",
   "./license-features.test.mjs",

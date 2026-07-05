@@ -16,12 +16,20 @@ let state;
 let sentinel;
 
 const HOUR_MS = 60 * 60 * 1000;
+const FIX_HISTORY_DAYS = 30;
+const FIX_HISTORY_MAX = 50;
+const FIX_HISTORY_PAGE_SIZE = 10;
+let recipeCatalogCache = [];
+let tier0Cache = [];
+let fixSearchTerm = "";
+let fixCategoryFilter = "all";
+let fixHistoryPage = 1;
 // RUN 23d — IA consolidated 17→9 tabs. TAB_TITLES holds the 9 canonical nav tabs.
 const TAB_TITLES = {
   dashboard: "Dashboard",
   aria: "ARIA", // RUN 33 PIVOT — the ARIA parent tab (Chat + Learning + Health + Memory + Agents)
   "control-center": "Control Center",
-  recipes: "Recipes",
+  recipes: "Resolution",
   "compliance-privacy": "Compliance & Privacy",
   reports: "Reports",
   knowledge: "Knowledge & policy",
@@ -44,6 +52,8 @@ const TAB_REDIRECTS = {
   sla: { tab: "dashboard", anchor: "sla" },
   compliance: { tab: "compliance-privacy", anchor: "compliance" },
   privacy: { tab: "compliance-privacy", anchor: "privacy" },
+  "fix-it": { tab: "recipes", anchor: "fix-it" },
+  "fix-history": { tab: "recipes", anchor: "fix-history" },
   "system-context": { tab: "system", anchor: "system-context" },
   "cross-platform": { tab: "system", anchor: "cross-platform" },
   mode: { tab: "settings", anchor: "mode" },
@@ -158,6 +168,7 @@ function wireActions() {
   wireRun22();
   wireRun23e();
   wireCommonCallDemo();
+  wireResolutionControls();
 
   bindClick("showGlobe", (button) => runAction(button, () => sentinel.showGlobe()));
   bindClick("pauseOneHour", (button) => runAction(button, () => sentinel.setPaused(HOUR_MS)));
@@ -463,6 +474,31 @@ function bindChange(id, handler) {
   });
 }
 
+function wireResolutionControls() {
+  const search = qs("#fixSearch");
+  if (search) {
+    search.addEventListener("input", () => {
+      fixSearchTerm = String(search.value || "").trim().toLowerCase();
+      renderFixBrowser();
+    });
+  }
+  const category = qs("#fixCategory");
+  if (category) {
+    category.addEventListener("change", () => {
+      fixCategoryFilter = category.value || "all";
+      renderFixBrowser();
+    });
+  }
+  bindClick("fixHistoryPrev", () => {
+    fixHistoryPage = Math.max(1, fixHistoryPage - 1);
+    renderFixHistory(state);
+  });
+  bindClick("fixHistoryNext", () => {
+    fixHistoryPage += 1;
+    renderFixHistory(state);
+  });
+}
+
 async function runAction(element, task) {
   if (element && "disabled" in element) element.disabled = true;
   try {
@@ -491,8 +527,11 @@ function renderState(next) {
   qsa(".mode-row").forEach((button) => button.classList.toggle("selected", button.dataset.mode === state.mode));
   if (qs("#dryRunToggle")) qs("#dryRunToggle").checked = Boolean(state.dryRun);
 
-  setText("recipeCatalogMeta", `${Number(catalog.localInteractive || recipes.length || 0)} local interactive recipes. Admin-only release gates live in the separate web console.`);
-  renderRecipes(recipes);
+  recipeCatalogCache = recipes;
+  setText("recipeCatalogMeta", `${Number(catalog.localInteractive || recipes.length || 0)} local interactive fixes. Safe generic fixes are dry-run first and content-blind.`);
+  populateFixCategoryFilter();
+  renderFixBrowser();
+  renderFixHistory(state);
   renderKnowledge(state.knowledgeSources || []);
   renderRouting(state.routingTargets || []);
   renderOutbound(state.allowedOutboundPaths || []);
@@ -1110,9 +1149,73 @@ async function finishOnboarding() {
 }
 
 function renderRecipes(recipes) {
-  setHtml("recipeList", recipes.map((recipe) => `
-    <article class="recipe-card">
-      <span class="chip">${escapeHtml(recipe.chip)}</span>
+  recipeCatalogCache = Array.isArray(recipes) ? recipes : [];
+  populateFixCategoryFilter();
+  renderFixBrowser();
+}
+
+function normalizeFixCategory(value) {
+  return String(value || "other").trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+function fixCategoryLabel(value) {
+  const raw = String(value || "Other").replace(/[-_]+/g, " ").trim();
+  return raw.toUpperCase() === raw ? raw : titleCase(raw);
+}
+
+function recipeCategory(recipe) {
+  return recipe?.family || String(recipe?.signal || "").split(".")[0] || recipe?.chip || "Other";
+}
+
+function tier0Category(recipe) {
+  return recipe?.category || recipe?.family || "Tier-0 safe generic";
+}
+
+function populateFixCategoryFilter() {
+  const select = qs("#fixCategory");
+  if (!select) return;
+  const previous = fixCategoryFilter || select.value || "all";
+  const categories = new Map();
+  for (const recipe of recipeCatalogCache) categories.set(normalizeFixCategory(recipeCategory(recipe)), fixCategoryLabel(recipeCategory(recipe)));
+  for (const recipe of tier0Cache) categories.set(normalizeFixCategory(tier0Category(recipe)), fixCategoryLabel(tier0Category(recipe)));
+  const rows = [...categories.entries()].sort((a, b) => a[1].localeCompare(b[1]));
+  select.innerHTML = `<option value="all">All fixes</option>${rows.map(([value, label]) => `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`).join("")}`;
+  select.value = rows.some(([value]) => value === previous) ? previous : "all";
+  fixCategoryFilter = select.value;
+}
+
+function fixMatchesSearch(item, category) {
+  const categoryKey = normalizeFixCategory(category);
+  if (fixCategoryFilter !== "all" && categoryKey !== fixCategoryFilter) return false;
+  if (!fixSearchTerm) return true;
+  const haystack = [
+    item.id,
+    item.recipeId,
+    item.title,
+    item.summary,
+    item.signal,
+    item.chip,
+    item.family,
+    category
+  ].filter(Boolean).join(" ").toLowerCase();
+  return haystack.includes(fixSearchTerm);
+}
+
+function renderFixBrowser() {
+  const recipes = (recipeCatalogCache || []).filter((recipe) => fixMatchesSearch(recipe, recipeCategory(recipe)));
+  const tier0 = (tier0Cache || []).filter((recipe) => fixMatchesSearch(recipe, tier0Category(recipe)));
+  setText("recipeFilterMeta", `${recipes.length}/${(recipeCatalogCache || []).length} shown`);
+  setText("tier0FilterMeta", tier0Cache.length ? `${tier0.length}/${tier0Cache.length} shown` : "Load this tab to list safe fixes");
+  setHtml("recipeList", recipes.length ? recipes.map(interactiveRecipeCardHtml).join("") : `<p class="note fix-empty">No interactive fixes match this search.</p>`);
+  setHtml("tier0List", tier0.length ? tier0.map(tier0RecipeCardHtml).join("") : `<p class="note fix-empty">${tier0Cache.length ? "No safe generic fixes match this search." : "Safe generic fixes load when Resolution opens."}</p>`);
+  bindFixBrowserActions();
+}
+
+function interactiveRecipeCardHtml(recipe) {
+  const category = recipeCategory(recipe);
+  return `
+    <article class="recipe-card" data-fix-family="${escapeHtml(normalizeFixCategory(category))}">
+      <div class="fix-card-head"><span class="chip">${escapeHtml(recipe.chip || fixCategoryLabel(category))}</span><em>${escapeHtml(fixCategoryLabel(category))}</em></div>
       <h3>${escapeHtml(recipe.title)}</h3>
       <p>${escapeHtml(recipe.summary)}</p>
       <div class="button-row">
@@ -1120,17 +1223,37 @@ function renderRecipes(recipes) {
         <button class="ghost" data-recipe-run="${escapeHtml(recipe.id)}">Dry-run</button>
       </div>
       <p class="note resolve-status" data-resolve-status="${escapeHtml(recipe.id)}" hidden></p>
-    </article>
-  `).join(""));
+    </article>`;
+}
 
+function tier0RecipeCardHtml(recipe) {
+  const id = recipe.recipeId || recipe.id || "";
+  const category = tier0Category(recipe);
+  return `
+    <article class="recipe-card tier0-card" data-fix-family="${escapeHtml(normalizeFixCategory(category))}">
+      <div class="fix-card-head"><span class="chip">${escapeHtml(recipe.readOnly ? "READ-ONLY" : "SAFE")}</span><em>${escapeHtml(fixCategoryLabel(category))}</em></div>
+      <h3>${escapeHtml(recipe.title || id)}</h3>
+      <p>${escapeHtml(recipe.summary || "Safe dry-run preview available.")}</p>
+      <div class="button-row">
+        <button class="ghost" data-tier0="${escapeHtml(id)}">Dry-run</button>
+      </div>
+    </article>`;
+}
+
+function bindFixBrowserActions() {
   qsa("[data-recipe-run]").forEach((button) => {
     button.addEventListener("click", () => runAction(button, () => {
       if (button.dataset.recipeRun === "sentinel-self-repair-v1") return sentinel.selfRepair("recipe-list");
       return sentinel.runRecipe(button.dataset.recipeRun, { dryRun: true });
     }));
   });
-  // RUN 36 / TASK 3 — "Resolve it for me": run the matched fix LOCALLY through the gated control plane
-  // (R11 → supervisor → execution policy → 10s countdown → kill-switch). Confirmed-grade gating; never autonomous.
+  qsa("[data-tier0]").forEach((button) => {
+    button.addEventListener("click", () => runAction(button, async () => {
+      const result = await sentinel.previewTier0?.(button.dataset.tier0);
+      showToast({ title: `${result?.title || "Dry-run"}`, body: `${result?.summary || ""}${result?.requiresReboot ? " (needs reboot)" : ""}` });
+      return result;
+    }));
+  });
   qsa("[data-resolve-fix]").forEach((button) => bindResolveFix(button));
 }
 
@@ -1161,6 +1284,99 @@ function bindResolveFix(button) {
 }
 
 function cssEscape(s) { return String(s).replace(/[^a-zA-Z0-9_-]/g, (c) => "\\" + c); }
+
+function parseHistoryTime(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  const parsed = Date.parse(value || "");
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function isResolutionLogEntry(entry = {}) {
+  const tag = String(entry.tag || "").toUpperCase();
+  const text = String(entry.text || "");
+  const directTags = new Set(["DETECT", "RUN", "DONE", "ERROR", "REVIEW", "ESCALATE", "SUPERVISOR", "SECURITY", "KILL-SWITCH", "CANCEL", "RESTORE PT", "SELF-ERROR", "AUTONOMOUS"]);
+  return directTags.has(tag) || /\b(fix|recipe|diagnos|detect|repair|guard|resolution|verify|incident|supervisor)\b/i.test(text);
+}
+
+function historyTimeLabel(ms) {
+  if (!ms) return "Unknown time";
+  try { return new Date(ms).toLocaleString(); } catch { return "Unknown time"; }
+}
+
+function buildFixHistory(next = state, now = Date.now()) {
+  const cutoff = now - FIX_HISTORY_DAYS * 24 * 60 * 60 * 1000;
+  const rows = [];
+  for (const detection of next?.detections || []) {
+    const ms = parseHistoryTime(detection.ts);
+    if (!ms || ms < cutoff) continue;
+    rows.push({
+      ts: detection.ts,
+      sort: ms,
+      kind: "DETECTED",
+      title: detection.title || detection.signal || "Issue detected",
+      detail: `${detection.signal || detection.chip || "Local signal"} - ${detection.source || "desktop"} - ${detection.mode || "manual"}`,
+      recipeId: detection.recipeId || "",
+      tone: detection.risk || "yellow",
+      source: "Detection"
+    });
+  }
+  for (const entry of next?.transparencyLog || []) {
+    const ms = parseHistoryTime(entry.ts);
+    if (!ms || ms < cutoff || !isResolutionLogEntry(entry)) continue;
+    const tag = String(entry.tag || "LOG").toUpperCase();
+    rows.push({
+      ts: entry.ts,
+      sort: ms,
+      kind: tag,
+      title: fixHistoryTitle(entry),
+      detail: entry.text || "",
+      recipeId: entry.recipeId || "",
+      tone: tag.includes("ERROR") || tag.includes("SECURITY") || tag.includes("KILL") ? "red" : tag.includes("REVIEW") || tag.includes("ESCALATE") ? "amber" : "green",
+      source: "Audit"
+    });
+  }
+  return rows
+    .sort((a, b) => b.sort - a.sort)
+    .slice(0, FIX_HISTORY_MAX);
+}
+
+function fixHistoryTitle(entry = {}) {
+  const text = String(entry.text || "").trim();
+  if (!text) return String(entry.tag || "Resolution event");
+  return text.length > 86 ? `${text.slice(0, 83).trim()}...` : text;
+}
+
+function renderFixHistory(next = state) {
+  const host = qs("#fixHistoryList");
+  if (!host) return;
+  const rows = buildFixHistory(next);
+  const totalPages = Math.max(1, Math.min(5, Math.ceil(rows.length / FIX_HISTORY_PAGE_SIZE)));
+  fixHistoryPage = Math.min(Math.max(1, fixHistoryPage), totalPages);
+  const start = (fixHistoryPage - 1) * FIX_HISTORY_PAGE_SIZE;
+  const pageRows = rows.slice(start, start + FIX_HISTORY_PAGE_SIZE);
+  setText("fixHistorySummary", rows.length ? `${rows.length} events` : "No events");
+  setText("fixHistoryPage", `Page ${fixHistoryPage} of ${totalPages}`);
+  const prev = qs("#fixHistoryPrev");
+  const nextBtn = qs("#fixHistoryNext");
+  if (prev) prev.disabled = fixHistoryPage <= 1;
+  if (nextBtn) nextBtn.disabled = fixHistoryPage >= totalPages;
+  host.innerHTML = pageRows.length
+    ? pageRows.map(fixHistoryCardHtml).join("")
+    : `<p class="note fix-empty">No troubleshooting history in the last ${FIX_HISTORY_DAYS} days.</p>`;
+}
+
+function fixHistoryCardHtml(item) {
+  const recipe = item.recipeId ? `<code>${escapeHtml(item.recipeId)}</code>` : `<code>${escapeHtml(item.source)}</code>`;
+  return `
+    <article class="fix-history-card ${escapeHtml(item.tone || "")}">
+      <div class="fix-history-when"><strong>${escapeHtml(relativeTime(item.ts))}</strong><span>${escapeHtml(historyTimeLabel(item.sort))}</span></div>
+      <div class="fix-history-body">
+        <div class="fix-history-head"><span class="chip">${escapeHtml(item.kind)}</span>${recipe}</div>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p>${escapeHtml(item.detail || "Resolution event recorded.")}</p>
+      </div>
+    </article>`;
+}
 
 function renderKnowledge(sources) {
   setHtml("knowledgeRows", sources.map((source) => `
@@ -1800,26 +2016,16 @@ async function loadBlueprints() {
 }
 
 async function renderTier0() {
-  if (tier0Loaded) return;
+  if (tier0Loaded) {
+    renderFixBrowser();
+    return;
+  }
   try {
     const list = await sentinel.listTier0?.();
     tier0Loaded = true;
-    const host = qs("#tier0List");
-    if (!host) return;
-    host.innerHTML = (list || []).map((r) => `
-      <article class="recipe-card">
-        <span class="chip">${escapeHtml(r.readOnly ? "READ-ONLY" : "SAFE")}</span>
-        <h3>${escapeHtml(r.title)}</h3>
-        <p>${escapeHtml(r.summary || "")}</p>
-        <div class="button-row">
-          <button class="ghost" data-tier0="${escapeHtml(r.recipeId)}">Dry-run</button>
-        </div>
-      </article>`).join("") || `<p class="note">No Tier-0 recipes available.</p>`;
-    qsa("[data-tier0]").forEach((btn) => btn.addEventListener("click", () => runAction(btn, async () => {
-      const r = await sentinel.previewTier0?.(btn.dataset.tier0);
-      showToast({ title: `${r?.title || "Dry-run"}`, body: `${r?.summary || ""}${r?.requiresReboot ? " (needs reboot)" : ""}` });
-      return r;
-    })));
+    tier0Cache = Array.isArray(list) ? list : [];
+    populateFixCategoryFilter();
+    renderFixBrowser();
   } catch (e) { reportRendererError(e, "tier-0"); }
 }
 

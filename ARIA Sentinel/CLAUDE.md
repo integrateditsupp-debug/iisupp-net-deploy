@@ -15,6 +15,8 @@ Privacy-first Electron desktop agent (Windows/macOS) + Chrome/Edge/Safari MV3 ex
 - The RUN 17 audit-tamper security banner must keep working (`tests/security-banner*.test.mjs`).
 
 ## 2026-07-05 active handoff
+- Completed UI cleanup: `Recipes` is now user-facing `Resolution` while the internal `recipes` route remains stable. Resolution contains `Fix It` with category dropdown + search over interactive/Tier-0 fixes, and `Fix History` with real local troubleshooting/fix activity from detections/transparency log for the past 30 days, newest first, max 50, 10 per page across 5 pages. Do not fabricate history.
+- Resolution verification passed: `node --check src/renderer/renderer.js`; `node tests/resolution-tab.test.mjs`; `node tests/tab-ia-consolidation.test.mjs`; `node tests/ui-shell.test.mjs`; `npm test -- --bail` -> `228/228`; `npm run package:dir`; rebuilt and re-launched `dist/win-unpacked/ARIA Sentinel.exe`; browser preview confirmed search `txt` + APP dropdown narrowed to `2/79` and simulated ARIA error appeared as `1 events` in Fix History with no console errors.
 - Ahmad asked for Sentinel to proactively warn/prevent user mistakes, starting with `.txt` files being associated with Adobe/Acrobat instead of Notepad.
 - Live machine check: `C:\Users\Ahmad Wasee\Desktop\ARIA sentinel test.xml.txt` exists; current `.txt` `UserChoice` resolves to Microsoft Windows Notepad; `Acrobat.exe` is present only in OpenWith history.
 - Codex added `src/shared/file-association-guard.mjs`, recipes, read-only startup/60-second interval/autonomous-mode scans, manual scan IPC, globe prompts, and `Fix in Settings` remediation. Verified `227/227` suites green and rebuilt `dist/win-unpacked/ARIA Sentinel.exe`.
