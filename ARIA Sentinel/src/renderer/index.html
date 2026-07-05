@@ -20,6 +20,9 @@
         <button id="securityBannerDismiss" class="security-banner-btn ghost">Dismiss</button>
       </div>
     </div>
+    <div id="ariaUsingComputerFrame" class="aria-using-computer-frame" aria-hidden="true" hidden>
+      <span>ARIA using computer</span>
+    </div>
     <main class="settings-shell">
       <aside class="settings-rail">
         <div class="settings-brand">
@@ -106,8 +109,9 @@
               <div class="aria-chat-divider"></div>
             </div>
             <div class="aria-chat-log" id="ariaChatLog">
-              <div class="aria-chat-welcome" id="ariaChatWelcome"><strong>Ask ARIA anything.</strong><br/>Windows, Mac, iPhone, iPad, Android, ChromeOS or Linux — answered from the knowledge base first, instantly.</div>
+              <div class="aria-chat-welcome" id="ariaChatWelcome"><strong id="ariaWebWelcomeTitle">How can I help you today?</strong><br/><span id="ariaWebWelcomeBody">Pick a common issue or ask in your own words. ARIA will explain the safest first steps, then Sentinel can walk you through it or open a gated local fix.</span></div>
             </div>
+            <div class="aria-web-quick-actions" id="ariaWebQuickActions" aria-label="ARIA quick issue shortcuts"></div>
             <form class="aria-chat-composer" id="ariaChatForm">
               <textarea id="ariaChatInput" placeholder="Ask ARIA anything…" rows="1"></textarea>
               <button class="aria-chat-send" id="ariaChatSend" type="submit">Send →</button>
@@ -248,10 +252,27 @@
             <p class="note">Use this while recording: ARIA walks through common corporate issues in Manual, Confirmed, and Autonomous safe-demo mode. It creates visual proof without changing Windows, locking accounts, bypassing policy, or granting hidden access.</p>
             <div class="common-call-demo-actions">
               <button id="runLiveCaptureDemo" class="primary">Run live capture demo</button>
+              <button id="runAutonomousTakeoverDemo" class="primary">Run autonomous takeover demo</button>
               <button id="runCommonCallManual" class="ghost">Run Manual demo</button>
               <button id="runCommonCallConfirmed" class="ghost">Run Confirmed demo</button>
               <button id="runCommonCallAutonomous" class="ghost">Run Autonomous safe demo</button>
             </div>
+            <section class="autonomy-choice-card" id="autonomyChoiceCard" aria-live="polite">
+              <div class="live-capture-head">
+                <div>
+                  <p class="eyebrow">Autonomous mode</p>
+                  <h3 id="autonomyChoiceTitle">Ready for autonomous takeover demo</h3>
+                </div>
+                <span id="autonomyRunStatus">standby</span>
+              </div>
+              <p id="autonomyChoicePrompt" class="autonomy-choice-prompt">Run the demo to show how ARIA asks before visible control or background remediation.</p>
+              <div class="autonomy-choice-buttons">
+                <button id="runAutonomyFrontend" class="primary" type="button">Front end - show me</button>
+                <button id="runAutonomyBackend" class="ghost" type="button">Back end - run quietly</button>
+              </div>
+              <div id="autonomyTimeline" class="live-capture-timeline"></div>
+              <div id="autonomyRebootPlan" class="autonomy-reboot-plan"></div>
+            </section>
             <section class="live-capture-card" id="liveCaptureDemoCard" aria-live="polite">
               <div class="live-capture-head">
                 <div>

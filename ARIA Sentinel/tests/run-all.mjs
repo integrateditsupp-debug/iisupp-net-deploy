@@ -215,6 +215,8 @@ const TESTS = [
   "./aria-chat-window-ui.test.mjs",
   // 2026-07-04 — desktop ARIA chat answers become guided web-style cards instead of raw KB blobs.
   "./aria-chat-readable-answer.test.mjs",
+  // 2026-07-04 - desktop ARIA chat mirrors the live iisupp.net/aria entry flow.
+  "./aria-chat-web-alignment.test.mjs",
   // RUN 35-1 — chat scroll containment (inner log scrolls; outer tab never grows).
   "./chat-scroll-containment.test.mjs",
   // 2026-07-04 — 100+ common-call ad/demo lab across Manual, Confirmed, Autonomous safe-demo.

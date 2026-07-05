@@ -1,9 +1,11 @@
 // 2026-07-04 - ad/demo proof battery: 100+ common corporate calls across all three modes.
 import assert from "node:assert/strict";
 import {
+  AUTONOMOUS_TAKEOVER_DEMO,
   COMMON_CALL_DEMO_MODES,
   COMMON_CALL_DEMO_SCENARIOS,
   LIVE_CAPTURE_DEMO_STEPS,
+  buildAutonomousTakeoverDemo,
   buildLiveCaptureDemo,
   demoDisposition,
   summarizeCommonCallDemo
@@ -46,5 +48,20 @@ assert.match(live.case.reportId, /^ARIA-CAPTURE-DEMO-/, "live capture report id"
 assert.match(live.safety, /read-only|dry-run|without changing Windows/i, "live capture safety boundary");
 assert.match(live.completedText, /symptom -> evidence -> diagnosis -> dry-run fix -> verification -> report/, "live capture completion chain is explicit");
 assert.ok(live.case.before.length >= 4 && live.case.after.length >= 4, "live capture has before/after evidence");
+
+const visibleAuto = buildAutonomousTakeoverDemo("frontend");
+const backgroundAuto = buildAutonomousTakeoverDemo("backend");
+assert.equal(visibleAuto.reportId, AUTONOMOUS_TAKEOVER_DEMO.reportId, "autonomous report id is canonical");
+assert.equal(visibleAuto.visibleFrame, true, "front-end mode shows the visible control frame");
+assert.equal(backgroundAuto.visibleFrame, false, "back-end mode does not show the visible control frame");
+assert.match(visibleAuto.prompt, /front end|back end/i, "autonomous prompt offers front/back choice");
+assert.ok(visibleAuto.steps.some((step) => /golden|ARIA using computer/i.test(`${step.detail} ${step.proof}`)), "front-end path includes golden ARIA using computer proof");
+assert.ok(backgroundAuto.steps.some((step) => /background|quietly/i.test(`${step.detail} ${step.proof}`)), "back-end path explains background remediation");
+assert.equal(visibleAuto.rebootPolicy.forceEnabled, false, "forced reboot is disabled without admin policy");
+assert.equal(visibleAuto.rebootPolicy.attempts.length, 3, "reboot reminders have three attempts");
+assert.ok(visibleAuto.rebootPolicy.postponeOptions.includes("1 hour"), "one-hour postpone option exists");
+for (const demo of [visibleAuto, backgroundAuto]) {
+  assert.doesNotMatch(JSON.stringify(demo), /shutdown\.exe|Restart-Computer|forced reboot now|store credential|silently grants/i, "autonomous demo avoids unsafe OS promises");
+}
 
 console.log(`common-call-demo passed (${COMMON_CALL_DEMO_SCENARIOS.length} scenarios, ${categories.size} categories, 3 modes).`);

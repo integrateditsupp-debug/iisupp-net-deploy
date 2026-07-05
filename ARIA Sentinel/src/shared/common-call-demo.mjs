@@ -334,6 +334,121 @@ export function buildLiveCaptureDemo() {
   };
 }
 
+export const AUTONOMOUS_TAKEOVER_DEMO = Object.freeze({
+  id: "autonomous-visible-control-001",
+  reportId: "ARIA-AUTONOMY-DEMO-001",
+  issueTitle: "Issue detected: printer queue stuck",
+  prompt: "ARIA detected a low-risk support issue. Do you want ARIA to fix it visibly on the front end, or run the safe checks in the back end?",
+  choices: Object.freeze([
+    {
+      id: "frontend",
+      label: "Front end - show me",
+      detail: "ARIA displays a golden outline, announces ARIA using computer, and walks through the fix like a visible technician."
+    },
+    {
+      id: "backend",
+      label: "Back end - run quietly",
+      detail: "ARIA runs the same safe workflow in the background, then reports what changed and whether a reboot is needed."
+    }
+  ]),
+  frontendSteps: Object.freeze([
+    {
+      id: "ask-user",
+      label: "Ask user",
+      detail: "ARIA prompts the user before taking visible control.",
+      proof: "User chose front end visibility for the recording."
+    },
+    {
+      id: "show-control",
+      label: "Show visible control",
+      detail: "The screen receives a golden ARIA using computer outline so the user can see when Sentinel is operating.",
+      proof: "Golden control frame is visible; no hidden access."
+    },
+    {
+      id: "inspect-issue",
+      label: "Inspect issue",
+      detail: "ARIA checks the stuck queue, spooler signal, default printer, and reachability using safe probes.",
+      proof: "Evidence collected without reading document contents."
+    },
+    {
+      id: "run-safe-fix",
+      label: "Run safe fix preview",
+      detail: "ARIA previews the vetted queue/spooler fix and keeps risky actions behind the normal approval gate.",
+      proof: "Dry-run repair preview completed; real Windows changes still require approval."
+    },
+    {
+      id: "verify",
+      label: "Verify result",
+      detail: "ARIA compares before and after state and shows whether the issue is resolved or needs human approval.",
+      proof: "Verification report generated for the customer demo."
+    }
+  ]),
+  backendSteps: Object.freeze([
+    {
+      id: "ask-user",
+      label: "Ask user",
+      detail: "ARIA prompts the user before running back-end remediation.",
+      proof: "User chose back end mode."
+    },
+    {
+      id: "run-background",
+      label: "Run background checks",
+      detail: "ARIA runs content-blind health checks and applies only safe, reversible, approved actions.",
+      proof: "Background workflow started without taking over the visible session."
+    },
+    {
+      id: "repair-preview",
+      label: "Repair preview",
+      detail: "ARIA stages the low-risk repair path and records the safety boundary.",
+      proof: "No hidden admin access, credential storage, or policy bypass."
+    },
+    {
+      id: "verify",
+      label: "Verify quietly",
+      detail: "ARIA verifies the result and posts a plain-English completion report.",
+      proof: "Background verification complete."
+    },
+    {
+      id: "reboot-reminder",
+      label: "Reboot reminder",
+      detail: "If a reboot is needed, ARIA reminds the user hourly or uses the user-selected postpone window.",
+      proof: "Reboot remains user/admin approved in this build."
+    }
+  ]),
+  rebootPolicy: Object.freeze({
+    required: true,
+    forceEnabled: false,
+    postponeOptions: Object.freeze(["15 minutes", "1 hour", "4 hours", "Tomorrow morning"]),
+    attempts: Object.freeze([
+      "Restart recommended. ARIA asks to reboot now or postpone.",
+      "One hour later, ARIA reminds the user that the fix still needs a reboot.",
+      "Final notice: in this production-safe build, ARIA still requires user/admin approval before any forced reboot policy can run."
+    ])
+  }),
+  safety: "Autonomous demo shows the control workflow, but real OS changes, forced reboot, and policy changes remain gated."
+});
+
+export function buildAutonomousTakeoverDemo(mode = "frontend") {
+  const normalizedMode = mode === "backend" ? "backend" : "frontend";
+  const choice = AUTONOMOUS_TAKEOVER_DEMO.choices.find((item) => item.id === normalizedMode) || AUTONOMOUS_TAKEOVER_DEMO.choices[0];
+  return {
+    id: AUTONOMOUS_TAKEOVER_DEMO.id,
+    reportId: AUTONOMOUS_TAKEOVER_DEMO.reportId,
+    issueTitle: AUTONOMOUS_TAKEOVER_DEMO.issueTitle,
+    prompt: AUTONOMOUS_TAKEOVER_DEMO.prompt,
+    choices: AUTONOMOUS_TAKEOVER_DEMO.choices,
+    choice,
+    mode: normalizedMode,
+    visibleFrame: normalizedMode === "frontend",
+    steps: normalizedMode === "backend" ? AUTONOMOUS_TAKEOVER_DEMO.backendSteps : AUTONOMOUS_TAKEOVER_DEMO.frontendSteps,
+    rebootPolicy: AUTONOMOUS_TAKEOVER_DEMO.rebootPolicy,
+    safety: AUTONOMOUS_TAKEOVER_DEMO.safety,
+    completedText: normalizedMode === "frontend"
+      ? "Visible autonomous proof complete: prompt -> golden control frame -> inspect -> safe fix preview -> verification."
+      : "Back-end autonomous proof complete: prompt -> background checks -> safe repair preview -> verification -> reboot reminder plan."
+  };
+}
+
 export function demoDisposition(scenario, mode = "manual") {
   const normalizedMode = COMMON_CALL_DEMO_MODES.includes(mode) ? mode : "manual";
   const text = scenario?.modeOutcomes?.[normalizedMode] || "";

@@ -2,7 +2,8 @@ import { bannerVisible, bannerModel, SECURITY_BANNER_DISMISS_KEY } from "../shar
 import "./components/aria-globe.mjs"; // defines the <aria-globe> custom element used in the rail
 import { extOf, requiredSteps, stepFor } from "../shared/delete-confirm.mjs";
 import { renderMarkdown } from "../shared/aria-markdown.mjs"; // RUN 34-1 — readable chat answers (markdown → HTML)
-import { COMMON_CALL_DEMO_SCENARIOS, buildLiveCaptureDemo, demoDisposition, summarizeCommonCallDemo } from "../shared/common-call-demo.mjs";
+import { ARIA_WEB_QUICK_ACTIONS, ARIA_WEB_WELCOME } from "../shared/aria-web-surface.mjs";
+import { COMMON_CALL_DEMO_SCENARIOS, buildAutonomousTakeoverDemo, buildLiveCaptureDemo, demoDisposition, summarizeCommonCallDemo } from "../shared/common-call-demo.mjs";
 // RUN 22 — dashboard / performance / SLA / compliance / reports tab builders + status.
 import { computeHeroStatus, heroSubline, heroTiles } from "../shared/dashboard-status.mjs";
 import * as DashboardTab from "./tabs/dashboard.mjs";
@@ -210,13 +211,18 @@ function wireActions() {
 
 let commonCallDemoTimer = null;
 let liveCaptureDemoTimer = null;
+let autonomyDemoTimer = null;
 
 function wireCommonCallDemo() {
   bindClick("runLiveCaptureDemo", () => runLiveCaptureDemo());
+  bindClick("runAutonomousTakeoverDemo", () => renderAutonomyChoice());
+  bindClick("runAutonomyFrontend", () => runAutonomousTakeoverDemo("frontend"));
+  bindClick("runAutonomyBackend", () => runAutonomousTakeoverDemo("backend"));
   bindClick("runCommonCallManual", () => runCommonCallDemo("manual"));
   bindClick("runCommonCallConfirmed", () => runCommonCallDemo("confirmed"));
   bindClick("runCommonCallAutonomous", () => runCommonCallDemo("autonomous"));
   renderLiveCaptureDemo(-1);
+  renderAutonomyChoice();
   renderCommonCallDemoSummary("manual", 0);
 }
 
@@ -282,6 +288,7 @@ function renderLiveCaptureDemo(stepIndex = -1) {
 
 function runLiveCaptureDemo() {
   if (liveCaptureDemoTimer) window.clearInterval(liveCaptureDemoTimer);
+  setAriaUsingComputerFrame(false);
   let stepIndex = 0;
   renderLiveCaptureDemo(stepIndex);
   liveCaptureDemoTimer = window.setInterval(() => {
@@ -292,6 +299,102 @@ function runLiveCaptureDemo() {
       liveCaptureDemoTimer = null;
     }
   }, 760);
+}
+
+function setAriaUsingComputerFrame(active, mode = "frontend") {
+  const frame = qs("#ariaUsingComputerFrame");
+  if (!frame) return;
+  frame.hidden = !active;
+  frame.dataset.mode = mode;
+  document.body.classList.toggle("aria-control-active", Boolean(active));
+}
+
+function autonomyRebootPlanHtml(demo, done) {
+  if (!demo?.rebootPolicy?.required) return "";
+  const policy = demo.rebootPolicy;
+  const attempts = policy.attempts || [];
+  const attemptHtml = attempts.map((item, index) => `<li><strong>Attempt ${index + 1}:</strong> ${escapeHtml(item)}</li>`).join("");
+  const options = (policy.postponeOptions || []).map((item) => `<button class="ghost autonomy-postpone" type="button">${escapeHtml(item)}</button>`).join("");
+  return `
+    <h4>Reboot reminder plan</h4>
+    <p>${done ? "A reboot is needed for some real fixes. ARIA reminds the user, but this build does not force a restart without user/admin approval." : "If the verified fix needs a reboot, ARIA will show this reminder plan after remediation."}</p>
+    <ol>${attemptHtml}</ol>
+    <div class="autonomy-postpone-row">${options}</div>
+    <small>Forced reboot policy: ${policy.forceEnabled ? "enabled by admin policy" : "disabled in this production-safe demo build"}.</small>`;
+}
+
+function autonomyReportFor(demo, stepIndex) {
+  if (stepIndex < 0) return "Waiting for user choice: front end visible control or back end remediation.";
+  const done = stepIndex >= demo.steps.length;
+  const completed = demo.steps.slice(0, Math.max(0, Math.min(stepIndex + 1, demo.steps.length)));
+  return [
+    `Report: ${demo.reportId}`,
+    `Mode: ${demo.choice.label}`,
+    `Status: ${done ? "VERIFIED - autonomous proof complete" : "RUNNING"}`,
+    "",
+    "Control chain:",
+    ...completed.map((step) => `- ${step.label}: ${step.proof}`),
+    "",
+    done ? demo.completedText : "ARIA is still running the selected workflow.",
+    "",
+    `Safety: ${demo.safety}`
+  ].join("\n");
+}
+
+function renderAutonomyChoice(mode = null, stepIndex = -1) {
+  const demo = buildAutonomousTakeoverDemo(mode || "frontend");
+  const title = qs("#autonomyChoiceTitle");
+  const status = qs("#autonomyRunStatus");
+  const prompt = qs("#autonomyChoicePrompt");
+  const timeline = qs("#autonomyTimeline");
+  const reboot = qs("#autonomyRebootPlan");
+  if (!title || !timeline) return;
+  const standby = !mode && stepIndex < 0;
+  const done = !standby && stepIndex >= demo.steps.length;
+  const running = !standby && stepIndex >= 0 && !done;
+  title.textContent = standby ? "Issue detected - choose how ARIA should run" : demo.issueTitle;
+  if (status) status.textContent = done ? "verified" : running ? demo.choice.label : "waiting";
+  if (prompt) prompt.textContent = standby ? demo.prompt : `${demo.choice.detail} ${demo.safety}`;
+  timeline.innerHTML = standby ? demo.choices.map((choice) => `
+    <article class="live-capture-step running autonomy-choice-option">
+      <span>${choice.id === "frontend" ? "FE" : "BE"}</span>
+      <div>
+        <strong>${escapeHtml(choice.label)}</strong>
+        <p>${escapeHtml(choice.detail)}</p>
+        <small>${choice.id === "frontend" ? "User can watch ARIA work." : "User gets status updates while ARIA works quietly."}</small>
+      </div>
+    </article>`).join("") : demo.steps.map((step, index) => {
+      const state = done || index < stepIndex ? "done" : index === stepIndex ? "running" : "pending";
+      return `
+        <article class="live-capture-step ${state}">
+          <span>${String(index + 1).padStart(2, "0")}</span>
+          <div>
+            <strong>${escapeHtml(step.label)}</strong>
+            <p>${escapeHtml(step.detail)}</p>
+            <small>${escapeHtml(step.proof)}</small>
+          </div>
+        </article>`;
+    }).join("");
+  if (reboot) {
+    reboot.innerHTML = `${autonomyRebootPlanHtml(demo, done)}<pre class="live-capture-report">${escapeHtml(autonomyReportFor(demo, stepIndex))}</pre>`;
+  }
+}
+
+function runAutonomousTakeoverDemo(mode = "frontend") {
+  if (autonomyDemoTimer) window.clearInterval(autonomyDemoTimer);
+  const demo = buildAutonomousTakeoverDemo(mode);
+  let stepIndex = 0;
+  setAriaUsingComputerFrame(demo.visibleFrame, mode);
+  renderAutonomyChoice(mode, stepIndex);
+  autonomyDemoTimer = window.setInterval(() => {
+    stepIndex += 1;
+    renderAutonomyChoice(mode, stepIndex);
+    if (stepIndex >= demo.steps.length) {
+      window.clearInterval(autonomyDemoTimer);
+      autonomyDemoTimer = null;
+      setAriaUsingComputerFrame(false, mode);
+    }
+  }, 860);
 }
 
 function renderCommonCallDemoSummary(mode, completed = 0) {
@@ -309,6 +412,7 @@ function runCommonCallDemo(mode) {
   const progress = qs("#commonCallDemoProgress");
   if (!list) return;
   if (commonCallDemoTimer) window.clearInterval(commonCallDemoTimer);
+  setAriaUsingComputerFrame(false);
   const scenarios = COMMON_CALL_DEMO_SCENARIOS;
   const rows = scenarios.map((scenario, index) => {
     const disposition = demoDisposition(scenario, mode);
@@ -2152,6 +2256,27 @@ function initAriaChat() {
   const esc = (s) => String(s == null ? "" : s).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
   const stripFm = (s) => String(s == null ? "" : s).replace(/^﻿?\s*---\r?\n[\s\S]*?\r?\n---\r?\n?/, "").trim();
   let dropped = false;
+  setText("ariaWebWelcomeTitle", ARIA_WEB_WELCOME.title);
+  setText("ariaWebWelcomeBody", ARIA_WEB_WELCOME.body);
+  function submitAriaQuestion(text) {
+    const value = String(text || "").trim();
+    if (!value || input.disabled) return;
+    input.value = value;
+    input.style.height = "auto";
+    input.style.height = Math.min(140, input.scrollHeight) + "px";
+    input.focus();
+    form.requestSubmit();
+  }
+  function renderAriaWebQuickActions() {
+    const host = qs("#ariaWebQuickActions");
+    if (!host || host.dataset.ready === "1") return;
+    host.innerHTML = ARIA_WEB_QUICK_ACTIONS.map((item) => `<button class="aria-web-chip" type="button" data-aria-web-ask="${escapeHtml(item.ask)}">${escapeHtml(item.label)}</button>`).join("");
+    qsa("[data-aria-web-ask]", host).forEach((button) => {
+      button.addEventListener("click", () => submitAriaQuestion(button.getAttribute("data-aria-web-ask") || ""));
+    });
+    host.dataset.ready = "1";
+  }
+  renderAriaWebQuickActions();
   const drop = () => { if (dropped) return; dropped = true; if (panel) panel.classList.add("chatting"); const w = qs("#ariaChatWelcome"); if (w) w.remove(); };
   // RUN 35-1 — auto-scroll to bottom on new content, BUT pause if the user has scrolled up to read history.
   // stickToBottom flips false when they scroll away from the bottom, true again when they return near it.
