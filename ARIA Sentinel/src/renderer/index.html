@@ -247,10 +247,33 @@
             </div>
             <p class="note">Use this while recording: ARIA walks through common corporate issues in Manual, Confirmed, and Autonomous safe-demo mode. It creates visual proof without changing Windows, locking accounts, bypassing policy, or granting hidden access.</p>
             <div class="common-call-demo-actions">
+              <button id="runLiveCaptureDemo" class="primary">Run live capture demo</button>
               <button id="runCommonCallManual" class="ghost">Run Manual demo</button>
               <button id="runCommonCallConfirmed" class="ghost">Run Confirmed demo</button>
-              <button id="runCommonCallAutonomous" class="primary">Run Autonomous safe demo</button>
+              <button id="runCommonCallAutonomous" class="ghost">Run Autonomous safe demo</button>
             </div>
+            <section class="live-capture-card" id="liveCaptureDemoCard" aria-live="polite">
+              <div class="live-capture-head">
+                <div>
+                  <p class="eyebrow">Troubleshooting proof</p>
+                  <h3 id="liveCaptureTitle">Ready for live capture</h3>
+                </div>
+                <span id="liveCaptureStatus">standby</span>
+              </div>
+              <div class="live-capture-grid">
+                <div>
+                  <h4>Before</h4>
+                  <ul id="liveCaptureBefore"><li>Waiting for capture.</li></ul>
+                </div>
+                <div>
+                  <h4>After</h4>
+                  <ul id="liveCaptureAfter"><li>Run the demo to verify.</li></ul>
+                </div>
+              </div>
+              <div class="live-capture-progress"><span id="liveCaptureProgress"></span></div>
+              <div id="liveCaptureTimeline" class="live-capture-timeline"></div>
+              <pre id="liveCaptureReport" class="live-capture-report">No proof report yet.</pre>
+            </section>
             <div id="commonCallDemoSummary" class="common-call-demo-summary">Ready to simulate 100+ common calls.</div>
             <div class="common-call-progress"><span id="commonCallDemoProgress"></span></div>
             <div id="commonCallDemoList" class="common-call-demo-list" aria-live="polite"></div>

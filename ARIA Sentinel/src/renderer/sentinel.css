@@ -1051,6 +1051,28 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .common-call-row p { margin:6px 0; color:#d6d6d6; font-size:12.5px; }
 .ccr-meta { display:flex; gap:8px; flex-wrap:wrap; color:var(--muted,#8b8b93); font-size:11px; }
 .common-call-row small { display:block; margin-top:6px; color:#f1dca7; line-height:1.45; }
+.live-capture-card { margin-top:12px; border:1px solid rgba(197,160,89,.25); border-radius:14px; padding:13px; background:radial-gradient(circle at 95% 15%, rgba(74,222,128,.13), transparent 32%), #0d0d12; }
+.live-capture-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.live-capture-head h3 { margin:2px 0 0; color:#f1dca7; font-size:16px; }
+.live-capture-head span { border:1px solid rgba(197,160,89,.34); border-radius:999px; padding:4px 9px; color:#c5a059; font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
+.live-capture-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0; }
+.live-capture-grid > div { border:1px solid rgba(255,255,255,.08); border-radius:11px; padding:10px; background:rgba(255,255,255,.025); }
+.live-capture-grid h4 { margin:0 0 6px; color:#ececec; font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+.live-capture-grid ul { margin:0; padding-left:18px; color:#d6d6d6; font-size:12px; line-height:1.55; }
+.live-capture-progress { height:7px; overflow:hidden; border-radius:999px; background:rgba(255,255,255,.08); margin:8px 0 12px; }
+.live-capture-progress span { display:block; width:0%; height:100%; background:linear-gradient(90deg,#38bdf8,#4ade80,#f1dca7); transition:width .24s ease; }
+.live-capture-timeline { display:grid; gap:7px; }
+.live-capture-step { display:grid; grid-template-columns:34px 1fr; gap:9px; align-items:start; border:1px solid rgba(255,255,255,.08); border-radius:11px; padding:9px 10px; background:rgba(255,255,255,.02); opacity:.56; }
+.live-capture-step > span { display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.06); color:#8b8b93; font-size:10px; font-weight:800; }
+.live-capture-step strong { color:#ececec; font-size:12.5px; }
+.live-capture-step p { margin:3px 0; color:#cfcfd5; font-size:12px; line-height:1.45; }
+.live-capture-step small { color:#8b8b93; font-size:11px; line-height:1.4; }
+.live-capture-step.running { opacity:1; border-color:rgba(56,189,248,.45); box-shadow:0 0 16px rgba(56,189,248,.14); }
+.live-capture-step.running > span { background:#38bdf8; color:#03111b; }
+.live-capture-step.done { opacity:1; border-color:rgba(74,222,128,.34); }
+.live-capture-step.done > span { background:#4ade80; color:#06160b; }
+.live-capture-report { margin:11px 0 0; max-height:230px; overflow:auto; border:1px solid rgba(197,160,89,.22); border-radius:11px; padding:10px 12px; background:#07070b; color:#d6d6d6; font-size:11.5px; line-height:1.45; white-space:pre-wrap; }
+@media (max-width: 760px) { .live-capture-grid { grid-template-columns:1fr; } }
 
 /* Health — the LOCKED Anthropic-preserved banner (must never be hidden) + status + fall-through chain */
 .anthropic-banner { border:1px solid rgba(197,160,89,.4); background:linear-gradient(180deg, rgba(197,160,89,.08), transparent); border-radius:10px; padding:11px 14px; font-size:12.5px; line-height:1.5; color:#f1dca7; margin-bottom:14px; }

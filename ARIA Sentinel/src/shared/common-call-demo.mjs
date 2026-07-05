@@ -261,6 +261,79 @@ export const COMMON_CALL_DEMO_SCENARIOS = Object.freeze(
 
 export const COMMON_CALL_DEMO_MODES = Object.freeze(Object.keys(MODE_LABELS));
 
+export const LIVE_CAPTURE_DEMO_CASE = Object.freeze({
+  id: "live-capture-print-queue-001",
+  title: "Live capture: printer queue stuck",
+  scenario: "A user tries to print an invoice, but the queue is frozen and the printer shows offline.",
+  before: [
+    "Queue state: 3 stuck jobs",
+    "Spooler signal: stalled",
+    "Default printer: reachable",
+    "Risk tier: low-risk reversible workflow"
+  ],
+  after: [
+    "Queue state: clear in demo sandbox",
+    "Spooler signal: healthy after dry-run repair preview",
+    "User action: print test page or send real job after approval",
+    "Proof: evidence, diagnosis, action, verification captured"
+  ],
+  reportId: "ARIA-CAPTURE-DEMO-PRN-001"
+});
+
+export const LIVE_CAPTURE_DEMO_STEPS = Object.freeze([
+  {
+    id: "capture-symptom",
+    label: "Capture symptom",
+    detail: "ARIA records the visible complaint: print job is stuck and user cannot complete work.",
+    proof: "Symptom captured without reading document content."
+  },
+  {
+    id: "collect-evidence",
+    label: "Collect evidence",
+    detail: "Read-only probes check queue state, spooler signal, default printer, and reachability.",
+    proof: "Evidence: 3 stuck jobs, spooler stalled, printer reachable."
+  },
+  {
+    id: "diagnose-cause",
+    label: "Diagnose cause",
+    detail: "ARIA matches the pattern to a queue/spooler lock instead of blaming the application.",
+    proof: "Likely cause: spooler queue lock; confidence: high for low-risk printer scenario."
+  },
+  {
+    id: "choose-action",
+    label: "Choose safe action",
+    detail: "ARIA selects the vetted printer queue recipe and keeps it in dry-run for the recording.",
+    proof: "Selected recipe: printer queue reset preview; rollback note attached."
+  },
+  {
+    id: "run-remediation",
+    label: "Run safe remediation",
+    detail: "Autonomous safe demo controls the workflow: preview restart/clear steps without changing Windows.",
+    proof: "Dry-run remediation completed; no service restart or file deletion happened."
+  },
+  {
+    id: "verify-result",
+    label: "Verify result",
+    detail: "ARIA runs a verification probe against the demo state and compares before vs after.",
+    proof: "Verification: queue clears in sandbox; printer route ready for user-approved real job."
+  },
+  {
+    id: "write-report",
+    label: "Write proof report",
+    detail: "ARIA produces a case summary suitable for the customer or advertisement voiceover.",
+    proof: "Report includes symptom, evidence, diagnosis, safe action, verification, and safety boundary."
+  }
+]);
+
+export function buildLiveCaptureDemo() {
+  return {
+    case: LIVE_CAPTURE_DEMO_CASE,
+    steps: LIVE_CAPTURE_DEMO_STEPS,
+    safety: "Demo uses read-only probes and dry-run remediation. It proves the workflow without changing Windows.",
+    completedText: "Troubleshooting proof complete: symptom -> evidence -> diagnosis -> dry-run fix -> verification -> report."
+  };
+}
+
 export function demoDisposition(scenario, mode = "manual") {
   const normalizedMode = COMMON_CALL_DEMO_MODES.includes(mode) ? mode : "manual";
   const text = scenario?.modeOutcomes?.[normalizedMode] || "";

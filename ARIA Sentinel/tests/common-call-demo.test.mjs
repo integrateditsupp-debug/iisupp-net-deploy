@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import {
   COMMON_CALL_DEMO_MODES,
   COMMON_CALL_DEMO_SCENARIOS,
+  LIVE_CAPTURE_DEMO_STEPS,
+  buildLiveCaptureDemo,
   demoDisposition,
   summarizeCommonCallDemo
 } from "../src/shared/common-call-demo.mjs";
@@ -33,5 +35,16 @@ for (const scenario of COMMON_CALL_DEMO_SCENARIOS) {
 const autoSummary = summarizeCommonCallDemo("autonomous");
 assert.equal(autoSummary.count, COMMON_CALL_DEMO_SCENARIOS.length, "summary count matches library");
 assert.match(autoSummary.safety, /read-only|dry-runs|approval/i, "autonomous summary states safety boundary");
+
+const live = buildLiveCaptureDemo();
+assert.equal(live.steps.length, 7, "live capture has a complete troubleshooting chain");
+assert.equal(live.steps, LIVE_CAPTURE_DEMO_STEPS, "live capture returns canonical steps");
+for (const label of ["Capture symptom", "Collect evidence", "Diagnose cause", "Choose safe action", "Run safe remediation", "Verify result", "Write proof report"]) {
+  assert.ok(live.steps.some((step) => step.label === label), `live capture includes ${label}`);
+}
+assert.match(live.case.reportId, /^ARIA-CAPTURE-DEMO-/, "live capture report id");
+assert.match(live.safety, /read-only|dry-run|without changing Windows/i, "live capture safety boundary");
+assert.match(live.completedText, /symptom -> evidence -> diagnosis -> dry-run fix -> verification -> report/, "live capture completion chain is explicit");
+assert.ok(live.case.before.length >= 4 && live.case.after.length >= 4, "live capture has before/after evidence");
 
 console.log(`common-call-demo passed (${COMMON_CALL_DEMO_SCENARIOS.length} scenarios, ${categories.size} categories, 3 modes).`);

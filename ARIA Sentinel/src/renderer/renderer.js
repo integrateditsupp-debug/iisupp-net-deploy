@@ -2,7 +2,7 @@ import { bannerVisible, bannerModel, SECURITY_BANNER_DISMISS_KEY } from "../shar
 import "./components/aria-globe.mjs"; // defines the <aria-globe> custom element used in the rail
 import { extOf, requiredSteps, stepFor } from "../shared/delete-confirm.mjs";
 import { renderMarkdown } from "../shared/aria-markdown.mjs"; // RUN 34-1 — readable chat answers (markdown → HTML)
-import { COMMON_CALL_DEMO_SCENARIOS, demoDisposition, summarizeCommonCallDemo } from "../shared/common-call-demo.mjs";
+import { COMMON_CALL_DEMO_SCENARIOS, buildLiveCaptureDemo, demoDisposition, summarizeCommonCallDemo } from "../shared/common-call-demo.mjs";
 // RUN 22 — dashboard / performance / SLA / compliance / reports tab builders + status.
 import { computeHeroStatus, heroSubline, heroTiles } from "../shared/dashboard-status.mjs";
 import * as DashboardTab from "./tabs/dashboard.mjs";
@@ -209,12 +209,89 @@ function wireActions() {
 }
 
 let commonCallDemoTimer = null;
+let liveCaptureDemoTimer = null;
 
 function wireCommonCallDemo() {
+  bindClick("runLiveCaptureDemo", () => runLiveCaptureDemo());
   bindClick("runCommonCallManual", () => runCommonCallDemo("manual"));
   bindClick("runCommonCallConfirmed", () => runCommonCallDemo("confirmed"));
   bindClick("runCommonCallAutonomous", () => runCommonCallDemo("autonomous"));
+  renderLiveCaptureDemo(-1);
   renderCommonCallDemoSummary("manual", 0);
+}
+
+function listHtml(items) {
+  return (items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+}
+
+function proofReportFor(demo, stepIndex) {
+  const done = stepIndex >= demo.steps.length;
+  const active = done ? demo.steps[demo.steps.length - 1] : demo.steps[Math.max(0, stepIndex)];
+  const completed = demo.steps.slice(0, Math.max(0, Math.min(stepIndex + 1, demo.steps.length)));
+  if (stepIndex < 0) return "No proof report yet.";
+  return [
+    `Report: ${demo.case.reportId}`,
+    `Case: ${demo.case.title}`,
+    `Status: ${done ? "VERIFIED - safe demo complete" : "RUNNING - " + active.label}`,
+    "",
+    "Before:",
+    ...demo.case.before.map((line) => `- ${line}`),
+    "",
+    "Troubleshooting chain:",
+    ...completed.map((step) => `- ${step.label}: ${step.proof}`),
+    "",
+    "After:",
+    ...(done ? demo.case.after.map((line) => `- ${line}`) : ["- Waiting for verification to finish."]),
+    ...(done ? ["", demo.completedText] : []),
+    "",
+    `Safety: ${demo.safety}`
+  ].join("\n");
+}
+
+function renderLiveCaptureDemo(stepIndex = -1) {
+  const demo = buildLiveCaptureDemo();
+  const title = qs("#liveCaptureTitle");
+  const status = qs("#liveCaptureStatus");
+  const before = qs("#liveCaptureBefore");
+  const after = qs("#liveCaptureAfter");
+  const timeline = qs("#liveCaptureTimeline");
+  const report = qs("#liveCaptureReport");
+  const progress = qs("#liveCaptureProgress");
+  if (!title || !timeline) return;
+  const done = stepIndex >= demo.steps.length;
+  const running = stepIndex >= 0 && !done;
+  title.textContent = running || done ? demo.case.title : "Ready for live capture";
+  if (status) status.textContent = done ? "verified" : running ? "capturing" : "standby";
+  if (before) before.innerHTML = listHtml(demo.case.before);
+  if (after) after.innerHTML = done ? listHtml(demo.case.after) : "<li>Waiting for verification to finish.</li>";
+  if (progress) progress.style.width = `${done ? 100 : stepIndex < 0 ? 0 : Math.round(((stepIndex + 1) / demo.steps.length) * 100)}%`;
+  timeline.innerHTML = demo.steps.map((step, index) => {
+    const state = done || index < stepIndex ? "done" : index === stepIndex ? "running" : "pending";
+    return `
+      <article class="live-capture-step ${state}">
+        <span>${String(index + 1).padStart(2, "0")}</span>
+        <div>
+          <strong>${escapeHtml(step.label)}</strong>
+          <p>${escapeHtml(step.detail)}</p>
+          <small>${escapeHtml(step.proof)}</small>
+        </div>
+      </article>`;
+  }).join("");
+  if (report) report.textContent = proofReportFor(demo, stepIndex);
+}
+
+function runLiveCaptureDemo() {
+  if (liveCaptureDemoTimer) window.clearInterval(liveCaptureDemoTimer);
+  let stepIndex = 0;
+  renderLiveCaptureDemo(stepIndex);
+  liveCaptureDemoTimer = window.setInterval(() => {
+    stepIndex += 1;
+    renderLiveCaptureDemo(stepIndex);
+    if (stepIndex >= buildLiveCaptureDemo().steps.length) {
+      window.clearInterval(liveCaptureDemoTimer);
+      liveCaptureDemoTimer = null;
+    }
+  }, 760);
 }
 
 function renderCommonCallDemoSummary(mode, completed = 0) {
