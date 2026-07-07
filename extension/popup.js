@@ -2,6 +2,59 @@ const messages = document.getElementById("messages");
 const userInput = document.getElementById("userInput");
 const sendMessage = document.getElementById("sendMessage");
 
+// Shared ARIA brain session (2026-07-07) — same engine as iisupp.net/aria + Sentinel offline tier.
+// The popup stays open during a conversation, so clarifier -> answer flows keep their context.
+let brainSession = window.AriaBrain ? window.AriaBrain.newSession() : null;
+
+function brainConversationActive() {
+  return Boolean(
+    brainSession && brainSession.topic &&
+    (brainSession.stage === "awaiting" || brainSession.stage === "checking" || brainSession.stage === "answered")
+  );
+}
+
+function renderBrainResult(r) {
+  const emp = r.empathy ? `<div class="brain-emp">${escapeHtmlLocal(r.empathy)}</div>` : "";
+  const say = r.say ? `<div class="brain-say">${escapeHtmlLocal(r.say)}</div>` : "";
+  const ask = r.ask ? `<div class="brain-ask">${escapeHtmlLocal(r.ask)}</div>` : "";
+  const opts = r.options && r.options.length
+    ? `<div class="brain-opts">${r.options
+        .map(o => `<button type="button" class="brain-opt" data-opt="${escapeHtmlLocal(o)}">${escapeHtmlLocal(o)}</button>`)
+        .join("")}</div>`
+    : "";
+  const steps = r.steps && r.steps.length
+    ? `<ol class="brain-steps">${r.steps.map(s => `<li>${escapeHtmlLocal(s)}</li>`).join("")}</ol>`
+    : "";
+  const esc = r.escalate ? `<div class="brain-esc">If that does not resolve it: ${escapeHtmlLocal(r.escalate)}</div>` : "";
+  const also = r.also ? `<div class="brain-also">${escapeHtmlLocal(r.also)}</div>` : "";
+  const tail = r.tail ? `<div class="brain-tail">${escapeHtmlLocal(r.tail)}</div>` : "";
+  return `<div class="brain-turn">${emp}${say}${ask}${opts}${steps}${esc}${also}${tail}</div>`;
+}
+
+// Guided-fix tier: run the shared brain when it can genuinely take the turn.
+// Returns true when the brain rendered a reply.
+function tryBrainTurn(text) {
+  if (!window.AriaBrain) return false;
+  try {
+    if (!brainSession) brainSession = window.AriaBrain.newSession();
+    const midFlow = brainConversationActive();
+    const isGreetBye = /^(hi|hello|hey|thanks|thank you|bye|good (morning|afternoon|evening))\b/i.test(text.trim()) &&
+      text.trim().split(/\s+/).length <= 4;
+    if (!midFlow && !isGreetBye) {
+      const cls = window.AriaBrain.classify(text.toLowerCase(), brainSession);
+      if (!cls || cls.score < 4) return false; // no confident route -> let the network tier try
+    }
+    const r = window.AriaBrain.handleTurn(brainSession, text);
+    if (!r || (!r.say && !r.ask && !r.steps)) return false;
+    addHtmlMessage("aria", renderBrainResult(r));
+    if (r.stage === "closed") brainSession = window.AriaBrain.newSession();
+    return true;
+  } catch (err) {
+    console.warn("[aria-popup] brain error:", err);
+    return false;
+  }
+}
+
 function addMessage(role, text) {
   const div = document.createElement("div");
   div.className = `message ${role}`;
@@ -56,6 +109,10 @@ async function sendPrompt() {
   userInput.value = "";
   addMessage("user", text);
 
+  // 0. Mid-conversation with the brain (it asked a clarifier / gave steps)? The user's short answer
+  //    ("it freezes", "done", "still broken") belongs to that flow — don't let a KB keyword hijack it.
+  if (brainConversationActive() && tryBrainTurn(text)) return;
+
   // 1. Try the local KB first (offline, instant, free, scoped to IT problems).
   try {
     if (window.AriaPopupKB && typeof window.AriaPopupKB.lookup === "function") {
@@ -68,6 +125,10 @@ async function sendPrompt() {
   } catch (err) {
     console.warn("[aria-popup] local kb error:", err);
   }
+
+  // 1.5 Shared ARIA brain — guided, conversational fixes (same engine as iisupp.net/aria + Sentinel).
+  //     Takes greetings and any IT problem it can route confidently; asks ONE clarifier, then steps.
+  if (tryBrainTurn(text)) return;
 
   // 2. Fall back to the network (background.js → /.netlify/functions/aria-search).
   try {
@@ -83,7 +144,14 @@ async function sendPrompt() {
 }
 
 // Related-article click → re-ask with that article's title as the query.
+// Brain option chip click → answer the clarifier with that option.
 document.getElementById("messages").addEventListener("click", (e) => {
+  const opt = e.target.closest(".brain-opt");
+  if (opt) {
+    userInput.value = opt.dataset.opt;
+    sendPrompt();
+    return;
+  }
   const btn = e.target.closest(".kb-related-btn");
   if (!btn) return;
   userInput.value = btn.dataset.title;

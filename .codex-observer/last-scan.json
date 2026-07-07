@@ -1,27 +1,34 @@
 {
   "schema": "codex-observer/last-scan/v1",
-  "generatedAt": "2026-07-07T04:31:00Z",
+  "generatedAt": "2026-07-07T13:10:00Z",
   "windowDays": 2,
-  "windowSince": "2026-07-05T04:31:00Z",
-  "priorScanAt": "2026-07-03T21:08:40Z",
-  "head": { "sha": "c0a0f6b4", "branch": "cc/security-lockdown-2026-07-01" },
-  "scope": "all refs deduped (git log --all --since) + origin/main",
-  "commitCount2d": 4,
-  "netNewSincePriorScan": 6,
+  "windowSince": "2026-07-05T13:10:00Z",
+  "priorScanAt": "2026-07-07T04:31:00Z",
+  "head": { "sha": "a7f9e111", "branch": "cc/security-lockdown-2026-07-01" },
+  "priorHead": { "sha": "c0a0f6b4" },
+  "scope": "all refs deduped (git log --all --since) via /tmp repaired GIT_DIR (packed-refs corruption worked around, original untouched)",
+  "commitCount2d": 1,
+  "netNewSincePriorScan": 1,
   "originMainHead": "0fde03ca",
-  "originMainPrev": "0fde03ca",
-  "originMainNote": "FROZEN at 0fde03ca since 2026-07-03T10:12 (Merge PR #5). ~3.8 days / ~90h no advance. 6 net-new commits all sit on cc/security-lockdown-2026-07-01 (pushed to origin, NOT merged to main).",
-  "authors": { "integrateditsupp-debug": 6, "note": "100% single-author this window; flywheel author-spellings absent; Codex/* namesake dormant ~17d." },
-  "topDirs": { "ARIA Sentinel/tests": 62, "ARIA Sentinel/src": 57, "ARIA Sentinel/aria-kb-pack": 6, "ARIA Sentinel/docs": 4, "note": "100% ARIA Sentinel desktop tree. Web/root-html /plans churn from prior window went quiet." },
-  "churn": { "insertions": 7765, "deletions": 651 },
+  "originMainNote": "origin/main tracking ref ABSENT locally (only origin/cc/security-lockdown-2026-07-01 + origin/HEAD present); last resolvable main = 0fde03ca (Merge PR #5, 2026-07-03 10:12). Commit msg says 'Branch-only, no deploy' -> main still frozen ~4d, this work UNMERGED.",
+  "authors": { "integrateditsupp-debug": 1, "note": "100% single-author; Codex/* namesake dormant ~18d." },
+  "commit": {
+    "sha": "a7f9e111", "parent": "c0a0f6b4",
+    "subject": "Cowork+CC 2026-07-07: ARIA Sentinel fleet policy slice + Phase B browser-protection policy (decision-only, enforced:false) + D1 KB relevance-floor fix; RULE 16 live sweep verified; branch-only, no deploy.",
+    "filesChanged": 171, "added": 61, "modified": 110,
+    "insertions": 30024, "deletions": 1320
+  },
+  "topDirs": { "ARIA Sentinel": 60, "downloads": 22, "scripts": 12, "tests": 10, "knowledge-base": 8, "netlify": 6, "assets": 5, "Forums design brief": 4, "verticals": 3, "note": "BROAD sweep across whole tree — no longer Sentinel-only." },
   "delta": {
-    "newSincePriorScan": "6 commits, all ARIA Sentinel desktop product: production-proof hardening (af5e03ab), 100-call demo lab (cd518cea), live capture demo (9f2b9bd7), visible autonomy demo (69058206), file association guard (ddfcac5b), Resolution tab (c0a0f6b4).",
-    "themePivot": "Prior window = /plans pricing-calculator web/revenue burst. This window = 100% Sentinel demo/proof suite. Work-theme swung web->desktop.",
+    "themePivot": "Prior window = 100% Sentinel desktop demo/proof suite (6 small commits). This window = ONE mega-commit (171 files, +30024/-1320) spanning the WHOLE repo: Sentinel fleet+browser policy, BD/agent scripts (business-development, ceo-action-console, contracts-bids, opportunity-research), web html (services/shop/security/trust/enterprise/government/verticals), downloads/library, chrome+edge+safari extensions, netlify funcs, KB stubs, 10k scenario-corpus + vision-diagnose tests.",
+    "newDirs": ["downloads", "scripts", "knowledge-base", "netlify", "assets", "verticals", "compare", "Forums design brief", ".well-known", "roi"],
     "flags": [
-      "origin/main frozen ~3.8d at 0fde03ca -> nothing merged since PR#5",
-      "TWO revenue lanes now parked off main: /plans calculator (prior window branch) + Sentinel proof/demo suite (this window branch) -> merge+publish to convert",
-      "index.lock CLEARED this run (recurring 7+ stale-lock flag resolved)"
+      "origin/main frozen ~4d at 0fde03ca -> nothing merged since PR#5; work sits on cc/security-lockdown branch (pushed, unmerged)",
+      "HARD-RULE files touched IN COMMIT: aria.html + aperture-learning.html + package.json modified on this branch (memory: hands-off until Ahmad pushes) -> flag to Ahmad, observer did NOT edit them",
+      "Work consolidated 6 small commits -> 1 mega-commit; harder to review/bisect; +30k lines single squash",
+      "packed-refs CORRUPTED (truncated final line) -> worked around via /tmp repaired GIT_DIR; original repo untouched; repo-health flag",
+      "index.lock absent this run (goal-alignment saw stale 00:33Z lock at 11:31Z; cleared since)"
     ]
   },
-  "env": { "observerScript": "UNMOUNTED - reproduced from git log", "gitOptionalLocks": 0, "lockStatus": "no lock present (clean)", "spendUsd": 0 }
+  "env": { "observerScript": "UNMOUNTED - reproduced from git log", "gitOptionalLocks": 0, "gitDir": "/tmp repaired copy (objects symlinked read-only)", "spendUsd": 0 }
 }

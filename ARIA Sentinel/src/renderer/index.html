@@ -454,6 +454,11 @@
               <h2>Knowledge sources</h2>
               <div class="dropzone">Drop documents or browse<br><small>PDF - DOCX - MD - TXT - indexed locally into the KB</small></div>
               <button id="updateKnowledge" class="ghost wide">Update knowledge</button>
+              <div class="button-row kb-index-actions">
+                <button id="reindexKb" class="ghost">Re-index knowledge base</button>
+                <button id="openKbFolder" class="ghost">Open KB folder</button>
+              </div>
+              <p id="kbIndexMeta" class="note">Checking local knowledge index.</p>
               <div id="knowledgeRows" class="source-list"></div>
             </section>
             <section class="panel">
@@ -618,6 +623,23 @@
             </div>
             <!-- RUN 33 PIVOT — dry-run checkbox removed; the chosen Mode governs preview-vs-execute (Manual previews; Confirmed/Autonomous execute after supervisor + countdown + kill-switch). -->
           </section>
+          <!-- ## Browser protection (managed deployment policy — read-only for the user; mirrors the extension policy_locked lock) -->
+          <div class="merge-head" id="browser-protection">
+            <div class="merge-bar" aria-hidden="true"></div>
+            <div><p class="eyebrow">Browser protection</p><h2>Browser protection</h2><p class="merge-sub">What your IT admin has set · decision-only — Sentinel recommends, never blocks a site itself</p></div>
+          </div>
+          <section class="panel">
+            <p class="eyebrow">Managed policy</p>
+            <h2>Active deployment policy</h2>
+            <label class="toggle-row" style="display:flex;align-items:center;gap:10px">
+              <input id="browserProtectionManaged" type="checkbox" disabled />
+              <span>Browser protection</span>
+            </label>
+            <small id="browserProtectionLockNote" class="note">Running safe defaults · not managed.</small>
+            <div id="managedPolicyPanel" class="table-list" style="margin-top:10px"></div>
+            <small class="note">Gated — Sentinel recommends, never blocks a site itself (enforced: false). No OS, registry, proxy, or DNS changes are made. An IT admin deploys this via MDM/Intune.</small>
+          </section>
+
           <!-- RUN 34-2 — the redundant Settings "Ask ARIA" box was removed; ARIA Chat lives only in the ARIA tab. -->
 
           <!-- ## Hotkeys (merged from the Hotkeys tab) -->

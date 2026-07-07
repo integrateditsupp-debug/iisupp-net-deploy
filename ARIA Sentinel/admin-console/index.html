@@ -534,6 +534,33 @@
                 <button class="button">Create Policy Set</button>
               </aside>
             </section>
+            <!-- Deployment policy generator (admin-console only; excluded from customer builds). Composes +
+                 validates a per-customer deployment-policy.json an MSP pushes via MDM/Intune. DECISION/config
+                 only — Sentinel recommends, never blocks a site itself (enforced:false). Export is a browser
+                 download (writes nowhere on disk directly); no fs/registry/proxy/DNS write anywhere here. -->
+            <section class="panel" style="margin-top:12px" id="deploymentPolicyEditor">
+              <div class="table-head">
+                <h2>Deployment policy generator</h2>
+                <span class="subtle">Compose + validate a per-customer <code>deployment-policy.json</code> for MDM/Intune push</span>
+              </div>
+              <p class="subtle">Sentinel <b>recommends, never blocks a site itself</b> (enforced: false). This file sets browser-protection mode, per-threat decisions, end-user overrides, and escalation routing. It makes no OS, registry, proxy, or DNS change.</p>
+              <div class="controls" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+                <div class="field"><label>Customer ID</label><input id="dpCustomerId" placeholder="acme-inc" /></div>
+                <div class="field"><label>Browser protection</label><select id="dpBrowserProtection"><option>on</option><option>off</option><option>locked-on</option><option>locked-off</option></select></div>
+                <div class="field"><label>End-user overrides</label><select id="dpOverrideRules"><option>none</option><option>allow-warn</option><option>allow-suspicious</option><option>request-exception</option></select></div>
+                <div class="field"><label>Escalation routing</label><select id="dpEscalationRouting"><option>support-desk</option><option>security-team</option><option>managed-soc</option><option>customer-admin</option><option>none</option></select></div>
+                <div class="field"><label>Clean &rarr; decision</label><select id="dpDecisionClean" data-level="clean"><option>allow</option><option>warn</option><option>block-recommend</option><option>escalate</option></select></div>
+                <div class="field"><label>Suspicious &rarr; decision</label><select id="dpDecisionSuspicious" data-level="suspicious"><option>warn</option><option>allow</option><option>block-recommend</option><option>escalate</option></select></div>
+                <div class="field"><label>Malicious &rarr; decision</label><select id="dpDecisionMalicious" data-level="malicious"><option>block-recommend</option><option>warn</option><option>allow</option><option>escalate</option></select></div>
+                <div class="field"><label>Critical &rarr; decision</label><select id="dpDecisionCritical" data-level="critical"><option>escalate</option><option>block-recommend</option><option>warn</option><option>allow</option></select></div>
+              </div>
+              <div class="button-row" style="display:flex;gap:8px;margin:12px 0;flex-wrap:wrap">
+                <button class="button" id="dpValidateBtn" type="button">Validate</button>
+                <button class="button" id="dpDownloadBtn" type="button" disabled>Download deployment-policy.json</button>
+              </div>
+              <p id="dpStatus" class="subtle">Fill the fields, then Validate. A valid policy unlocks the download for MDM/Intune deployment.</p>
+              <pre id="dpOutput" style="white-space:pre-wrap;background:#080808;border:1px solid var(--line);border-radius:6px;padding:10px;color:#e5e5e5;max-height:280px;overflow:auto;display:none"></pre>
+            </section>
           </section>
 
           <!-- ===== Recipes ===== -->
@@ -1028,6 +1055,121 @@
             const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = 'sentinel-licenses.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
           } catch { licStatus('Export failed.'); }
+        });
+      })();
+    </script>
+    <script>
+      // Deployment policy generator — a FAITHFUL, self-contained port of
+      // src/shared/deployment-policy-schema.mjs validateDeploymentPolicy() (same enums + error codes).
+      // The admin console runs from file:// with no preload/modules, so the validator is embedded here.
+      // A parity test (tests/admin-deployment-policy-editor.test.mjs) extracts the function between the
+      // markers below and asserts it agrees with the canonical validator across a battery of cases.
+      /* __ARIA_DP_VALIDATOR_START__ */
+      function adminValidateDeploymentPolicy(obj) {
+        var DEPLOYMENT_POLICY_SCHEMA_VERSION = "deployment-policy-v1";
+        var PROTECTION_MODES = ["on", "off", "locked-on", "locked-off"];
+        var MALICIOUS_SITE_DECISIONS = ["allow", "warn", "block-recommend", "escalate"];
+        var THREAT_LEVELS = ["clean", "suspicious", "malicious", "critical"];
+        var OVERRIDE_RULES = ["none", "allow-warn", "allow-suspicious", "request-exception"];
+        var ESCALATION_ROUTES = ["support-desk", "security-team", "managed-soc", "customer-admin", "none"];
+        var ID_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
+        function asId(value, max) {
+          if (max == null) max = 64;
+          return String(value == null ? "" : value).trim().replace(/[^A-Za-z0-9._-]/g, "").slice(0, max);
+        }
+        function isPlainObject(value) { return Boolean(value) && typeof value === "object" && !Array.isArray(value); }
+        var errors = [];
+        if (!isPlainObject(obj)) return { valid: false, errors: ["policy-must-be-object"], policy: null };
+        var customerId = asId(obj.customerId != null ? obj.customerId : (obj.customer_id != null ? obj.customer_id : obj.id));
+        if (!customerId) errors.push("customerId-required");
+        else if (!ID_RE.test(customerId)) errors.push("customerId-invalid");
+        var browserProtection = String(obj.browserProtection == null ? "" : obj.browserProtection).trim().toLowerCase();
+        if (!browserProtection) errors.push("browserProtection-required");
+        else if (PROTECTION_MODES.indexOf(browserProtection) === -1) errors.push("browserProtection-invalid");
+        var msp = obj.maliciousSitePolicy;
+        var normalizedDecisions = {};
+        if (!isPlainObject(msp)) {
+          errors.push("maliciousSitePolicy-required");
+        } else {
+          var decisions = isPlainObject(msp.decisions) ? msp.decisions : msp;
+          for (var level in decisions) {
+            if (!Object.prototype.hasOwnProperty.call(decisions, level)) continue;
+            if (THREAT_LEVELS.indexOf(level) === -1) { errors.push("maliciousSitePolicy-unknown-level:" + (asId(level, 24) || "?")); continue; }
+            var d = String(decisions[level] == null ? "" : decisions[level]).trim().toLowerCase();
+            if (MALICIOUS_SITE_DECISIONS.indexOf(d) === -1) { errors.push("maliciousSitePolicy-invalid-decision:" + level); continue; }
+            normalizedDecisions[level] = d;
+          }
+        }
+        var overrideRule = "none";
+        if (obj.overrideRules != null) {
+          overrideRule = String(obj.overrideRules).trim().toLowerCase();
+          if (OVERRIDE_RULES.indexOf(overrideRule) === -1) errors.push("overrideRules-invalid");
+        }
+        var locked = browserProtection === "locked-on" || browserProtection === "locked-off";
+        if (locked && OVERRIDE_RULES.indexOf(overrideRule) !== -1 && overrideRule !== "none") errors.push("locked-protection-cannot-allow-override");
+        var escalationRouting = "support-desk";
+        if (obj.escalationRouting != null) {
+          escalationRouting = String(obj.escalationRouting).trim().toLowerCase();
+          if (ESCALATION_ROUTES.indexOf(escalationRouting) === -1) errors.push("escalationRouting-invalid");
+        }
+        if (errors.length) return { valid: false, errors: errors, policy: null };
+        return {
+          valid: true,
+          errors: [],
+          policy: {
+            v: DEPLOYMENT_POLICY_SCHEMA_VERSION,
+            customerId: customerId,
+            browserProtection: browserProtection,
+            locked: locked,
+            maliciousSitePolicy: { decisions: normalizedDecisions },
+            overrideRules: overrideRule,
+            escalationRouting: escalationRouting
+          }
+        };
+      }
+      /* __ARIA_DP_VALIDATOR_END__ */
+
+      (function () {
+        var byId = function (id) { return document.getElementById(id); };
+        function collect() {
+          var decisions = {};
+          ["Clean", "Suspicious", "Malicious", "Critical"].forEach(function (L) {
+            var sel = byId("dpDecision" + L);
+            if (sel) decisions[L.toLowerCase()] = sel.value;
+          });
+          return {
+            customerId: ((byId("dpCustomerId") && byId("dpCustomerId").value) || "").trim(),
+            browserProtection: byId("dpBrowserProtection") && byId("dpBrowserProtection").value,
+            maliciousSitePolicy: { decisions: decisions },
+            overrideRules: byId("dpOverrideRules") && byId("dpOverrideRules").value,
+            escalationRouting: byId("dpEscalationRouting") && byId("dpEscalationRouting").value
+          };
+        }
+        var lastPolicy = null;
+        function validate() {
+          var res = adminValidateDeploymentPolicy(collect());
+          var status = byId("dpStatus"), out = byId("dpOutput"), dl = byId("dpDownloadBtn");
+          if (res.valid) {
+            lastPolicy = res.policy;
+            if (status) status.textContent = "Valid — decision-only policy (enforced: false). Ready to download for MDM/Intune push.";
+            if (out) { out.style.display = "block"; out.textContent = JSON.stringify(res.policy, null, 2); }
+            if (dl) dl.disabled = false;
+          } else {
+            lastPolicy = null;
+            if (status) status.textContent = "Invalid: " + res.errors.join(", ");
+            if (out) { out.style.display = "block"; out.textContent = res.errors.join("\n"); }
+            if (dl) dl.disabled = true;
+          }
+        }
+        var vb = byId("dpValidateBtn"); if (vb) vb.addEventListener("click", validate);
+        var db = byId("dpDownloadBtn");
+        if (db) db.addEventListener("click", function () {
+          if (!lastPolicy) return;
+          // Browser download only — writes nowhere on disk directly; the admin/MSP picks the save location.
+          var blob = new Blob([JSON.stringify(lastPolicy, null, 2)], { type: "application/json" });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a"); a.href = url; a.download = "deployment-policy.json";
+          document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
         });
       })();
     </script>

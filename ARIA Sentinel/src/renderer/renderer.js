@@ -11,9 +11,14 @@ import * as PerformanceTab from "./tabs/performance.mjs";
 import * as SlaTab from "./tabs/sla.mjs";
 import * as ComplianceTab from "./tabs/compliance.mjs";
 import * as ReportsTab from "./tabs/reports.mjs";
+import { isRecipeEnabled, normalizeOrigin, siteRulesForRecipe, setRecipeEnabled, toggleSummary } from "../shared/recipe-toggles.mjs"; // per-recipe/per-site enable-disable
 
 let state;
 let sentinel;
+// Per-recipe / per-site enable-disable model, loaded from the desktop store (default = everything enabled).
+let recipeToggleState = { global: {}, sites: {} };
+// Browser-preview (non-Electron) fallback store for the same model, so the toggles work in the web preview.
+let previewRecipeToggles = { global: {}, sites: {} };
 
 const HOUR_MS = 60 * 60 * 1000;
 const FIX_HISTORY_DAYS = 30;
@@ -75,6 +80,8 @@ async function init() {
   sentinel.onNavigate((tab) => activateTab(tab));
   state = await sentinel.getState();
   renderState(state);
+  loadRecipeToggles();   // per-recipe/per-site enable-disable → renders the toggle on each fix card
+  loadKbIndexStatus();   // honest "N entries indexed" count for the Knowledge surface
   // RUN 23d — Dashboard is the default landing tab; it now hosts Overview + Performance + SLA sections.
   loadDashboard();
   loadPerformance();
@@ -118,11 +125,12 @@ function runTabLoaders(target) {
   if (target === "dashboard") { loadDashboard(); loadPerformance(); loadSla(); loadProofMetrics(); }
   if (target === "compliance-privacy") loadCompliance();
   if (target === "system") { loadSystemContext(); loadBlueprints(); }
-  if (target === "settings") loadUpdatesPanel();
+  if (target === "settings") { loadUpdatesPanel(); loadManagedPolicy(); }
   if (target === "servicenow") { loadIncidents(); loadOmniStatus(); }
   if (target === "integrations") loadIntegrations();
   if (target === "integrations") loadOfficeSafety();
-  if (target === "recipes") renderTier0();
+  if (target === "recipes") { renderTier0(); loadRecipeToggles(); }
+  if (target === "knowledge") loadKbIndexStatus();
   if (target === "reports") loadReports();
 }
 
@@ -178,6 +186,17 @@ function wireActions() {
   bindClick("runSelfRepair", (button) => runAction(button, () => sentinel.selfRepair("settings")));
   bindClick("openAdminConsole", (button) => runAction(button, () => sentinel.openAdminConsole()));
   bindClick("updateKnowledge", (button) => runAction(button, () => sentinel.updateKnowledge()));
+  bindClick("reindexKb", (button) => runAction(button, async () => {
+    setText("kbIndexMeta", "Re-indexing.");
+    const r = await sentinel.reindexKb?.();
+    setKbIndexMeta(r);
+    return r;
+  }));
+  bindClick("openKbFolder", (button) => runAction(button, async () => {
+    const r = await sentinel.openKbFolder?.();
+    if (r && r.ok === false) setText("kbIndexMeta", "Could not open the KB folder on this build.");
+    return r;
+  }));
   bindClick("exportAudit", () => downloadJson("aria-sentinel-audit.json", state?.transparencyLog || []));
   bindClick("liveCapture", (button) => runAction(button, async () => {
     setText("captureVerdict", "Capturing 10s…");
@@ -709,6 +728,57 @@ async function loadOfficeSafety() {
   renderOfficeSafety(status);
 }
 
+// Customer-visible ACTIVE deployment policy (read-only) in Settings. Real-or-empty: shows the managed
+// policy an IT admin deployed, or "Running safe defaults · not managed" when no managed file is present.
+// Mirrors the browser-extension policy_locked lock — when browser protection is locked-on/locked-off the
+// user-facing toggle is disabled with a "Locked by your IT admin" note. DECISION/config only: this surface
+// never blocks a site and writes no OS/registry/proxy/DNS setting (enforced:false throughout).
+async function loadManagedPolicy() {
+  if (!qs("#managedPolicyPanel")) return;
+  let bp = null;
+  try {
+    bp = sentinel.getBrowserPolicy ? await sentinel.getBrowserPolicy() : ((state && state.browserPolicy) || null);
+  } catch { bp = null; }
+  renderManagedPolicy(bp);
+}
+
+function renderManagedPolicy(bp) {
+  const panel = qs("#managedPolicyPanel");
+  if (!panel) return;
+  const toggle = qs("#browserProtectionManaged");
+  const lockNote = qs("#browserProtectionLockNote");
+  const managed = !!(bp && bp.ok && bp.source === "managed");
+  const rejected = !!(bp && bp.ok && bp.valid === false);
+  const mode = (bp && bp.browserProtection) || "on";
+  const locked = !!(bp && bp.locked);
+  const protectionOn = mode === "on" || mode === "locked-on";
+  if (toggle) {
+    toggle.checked = protectionOn;
+    toggle.disabled = true; // always a read-only reflection of the admin/managed policy — never a live control
+  }
+  if (lockNote) {
+    lockNote.textContent = locked
+      ? "Locked by your IT admin — this is managed centrally and cannot be changed here."
+      : (managed ? "Set by your IT admin's deployment policy." : "Running safe defaults · not managed.");
+    lockNote.dataset.locked = String(locked);
+  }
+  const overrides = (bp && bp.overrideRules) || "none";
+  const escalation = (bp && bp.escalationRouting) || "support-desk";
+  const statusLine = managed
+    ? `Managed policy active${bp.customerId ? ` (customer ${bp.customerId})` : ""}`
+    : (rejected ? "Managed policy rejected — running safe defaults" : "Running safe defaults · not managed");
+  const rows = [
+    ["Status", statusLine],
+    ["Browser protection", `${mode}${locked ? " (locked)" : ""}`],
+    ["End-user overrides", overrides],
+    ["Escalation routing", escalation],
+    ["Live blocking", "Gated — recommends only, never blocks a site itself (enforced: false)"]
+  ];
+  panel.innerHTML = rows
+    .map(([k, v]) => `<div class="table-row"><span>${escapeHtml(k)}</span><strong>${escapeHtml(String(v))}</strong></div>`)
+    .join("");
+}
+
 function wireOfficeSafety() {
   bindClick("officeSafetyScan", (button) => runAction(button, async () => {
     setText("officeSafetyResult", "Scanning...");
@@ -1236,10 +1306,20 @@ function renderFixBrowser() {
   bindFixBrowserActions();
 }
 
+function recipeIsEnabled(recipeId, origin = "") {
+  return isRecipeEnabled(recipeToggleState, recipeId, origin);
+}
+
+function isBrowserRecipe(recipe) {
+  return String(recipe?.family || "").toUpperCase() === "BROWSER" || normalizeFixCategory(recipeCategory(recipe)) === "browser";
+}
+
 function interactiveRecipeCardHtml(recipe) {
   const category = recipeCategory(recipe);
+  const enabled = recipeIsEnabled(recipe.id);
+  const siteRules = siteRulesForRecipe(recipeToggleState, recipe.id);
   return `
-    <article class="recipe-card" data-fix-family="${escapeHtml(normalizeFixCategory(category))}">
+    <article class="recipe-card${enabled ? "" : " recipe-off"}" data-fix-family="${escapeHtml(normalizeFixCategory(category))}">
       <div class="fix-card-head"><span class="chip">${escapeHtml(recipe.chip || fixCategoryLabel(category))}</span><em>${escapeHtml(fixCategoryLabel(category))}</em></div>
       <h3>${escapeHtml(recipe.title)}</h3>
       <p>${escapeHtml(recipe.summary)}</p>
@@ -1247,8 +1327,32 @@ function interactiveRecipeCardHtml(recipe) {
         <button class="primary" data-resolve-fix="${escapeHtml(recipe.id)}" data-risk="${escapeHtml(recipe.risk || "medium")}">Resolve it for me</button>
         <button class="ghost" data-recipe-run="${escapeHtml(recipe.id)}">Dry-run</button>
       </div>
+      <label class="recipe-toggle-row">
+        <input type="checkbox" data-recipe-toggle="${escapeHtml(recipe.id)}"${enabled ? " checked" : ""} />
+        <span>Auto-run on this device</span>
+        <em class="recipe-toggle-state">${enabled ? "On" : "Off - ARIA will not auto-run this fix"}</em>
+      </label>
+      ${isBrowserRecipe(recipe) ? browserSiteControlHtml(recipe, siteRules) : ""}
       <p class="note resolve-status" data-resolve-status="${escapeHtml(recipe.id)}" hidden></p>
     </article>`;
+}
+
+// Per-site control for a browser recipe: an admin can turn this one fix off on a specific origin (in addition
+// to the browser extension's whole-site "leave me alone" list). Real-or-empty — no invented origins.
+function browserSiteControlHtml(recipe, siteRules) {
+  const rules = Array.isArray(siteRules) ? siteRules : [];
+  const chips = rules.map((origin) => `
+      <span class="site-chip">${escapeHtml(origin)}<button type="button" class="site-chip-x" data-recipe-site-enable="${escapeHtml(recipe.id)}" data-origin="${escapeHtml(origin)}" title="Re-enable on ${escapeHtml(origin)}" aria-label="Re-enable on ${escapeHtml(origin)}">&times;</button></span>`).join("");
+  return `
+      <div class="recipe-site-control">
+        <label class="field site-field">Turn off on a specific site
+          <span class="site-input-row">
+            <input type="text" data-recipe-site-input="${escapeHtml(recipe.id)}" placeholder="example.com" autocomplete="off" spellcheck="false" />
+            <button type="button" class="ghost" data-recipe-site-add="${escapeHtml(recipe.id)}">Disable here</button>
+          </span>
+        </label>
+        <div class="site-chip-row">${rules.length ? chips : `<span class="note">No per-site rules.</span>`}</div>
+      </div>`;
 }
 
 function tier0RecipeCardHtml(recipe) {
@@ -1280,6 +1384,40 @@ function bindFixBrowserActions() {
     }));
   });
   qsa("[data-resolve-fix]").forEach((button) => bindResolveFix(button));
+  // Per-recipe enable-disable (global to this device). A disabled recipe never auto-fires (main-process gate).
+  qsa("[data-recipe-toggle]").forEach((input) => {
+    input.addEventListener("change", () => runAction(input, () => applyRecipeToggle(input.dataset.recipeToggle, input.checked, "")));
+  });
+  // Per-site: disable THIS recipe on the typed origin, or re-enable it from a rule chip.
+  qsa("[data-recipe-site-add]").forEach((button) => {
+    button.addEventListener("click", () => runAction(button, () => {
+      const id = button.dataset.recipeSiteAdd;
+      const input = qs(`[data-recipe-site-input="${cssEscape(id)}"]`);
+      const origin = normalizeOrigin(input && input.value);
+      if (!origin) { if (input) input.focus(); return null; }
+      return applyRecipeToggle(id, false, origin);
+    }));
+  });
+  qsa("[data-recipe-site-enable]").forEach((button) => {
+    button.addEventListener("click", () => runAction(button, () => applyRecipeToggle(button.dataset.recipeSiteEnable, true, button.dataset.origin || "")));
+  });
+}
+
+// Persist one recipe toggle (global when origin is empty, per-site otherwise) then re-render the fix cards.
+async function applyRecipeToggle(recipeId, enabled, origin) {
+  const r = await sentinel.setRecipeToggle?.(recipeId, enabled, origin || "");
+  if (r && r.toggles) recipeToggleState = r.toggles;
+  renderFixBrowser();
+  return r;
+}
+
+// Load the per-recipe/per-site model from the desktop store, then re-render (best-effort — default = all on).
+async function loadRecipeToggles() {
+  try {
+    const r = await sentinel.getRecipeToggles?.();
+    if (r && r.toggles) recipeToggleState = r.toggles;
+  } catch { /* toggles are best-effort; absence means everything stays enabled */ }
+  if (recipeCatalogCache && recipeCatalogCache.length) renderFixBrowser();
 }
 
 // Wire one "Resolve it for me" button to the supervised-fix pipeline and surface the gate's verdict.
@@ -1410,6 +1548,27 @@ function renderKnowledge(sources) {
       <strong>${escapeHtml(source.status || "Ready")} - ${Number(source.docs || 0)} docs</strong>
     </div>
   `).join(""));
+}
+
+// Honest "N entries indexed" line for the Knowledge surface (built-in pack + customer runbooks). Real-or-empty.
+function setKbIndexMeta(status) {
+  if (!status || status.ok === false || !Number.isFinite(Number(status.total))) {
+    setText("kbIndexMeta", "Local knowledge index unavailable in this build.");
+    return;
+  }
+  const total = Number(status.total) || 0;
+  const custom = Number(status.custom) || 0;
+  const entries = `${total} ${total === 1 ? "entry" : "entries"} indexed`;
+  setText("kbIndexMeta", custom > 0
+    ? `${entries} (${Number(status.pack) || 0} built-in + ${custom} custom runbook${custom === 1 ? "" : "s"}).`
+    : `${entries} from the built-in pack. Drop .md runbooks in the KB folder, then re-index to add your own.`);
+}
+
+async function loadKbIndexStatus() {
+  try {
+    const status = await sentinel.kbIndexStatus?.();
+    setKbIndexMeta(status);
+  } catch { setText("kbIndexMeta", "Local knowledge index unavailable in this build."); }
 }
 
 function renderRouting(targets) {
@@ -2858,7 +3017,29 @@ async function getSentinelApi() {
       log("KB", "Preview knowledge sources refreshed.");
       return { ok: true };
     },
+    // Browser preview has no local pack on disk — report an honest empty index (never an invented count).
+    reindexKb: async () => {
+      log("KB", "Preview re-index (no local pack in the browser preview).");
+      return { ok: true, total: 0, pack: 0, custom: 0, indexedAt: new Date().toISOString() };
+    },
+    kbIndexStatus: async () => ({ ok: true, total: 0, pack: 0, custom: 0 }),
+    openKbFolder: async () => {
+      log("KB", "Preview: opening the KB folder is only available in the desktop app.");
+      return { ok: false, error: "preview-no-folder" };
+    },
+    getRecipeToggles: async () => ({ ok: true, toggles: previewRecipeToggles, summary: toggleSummary(previewRecipeToggles) }),
+    setRecipeToggle: async (recipeId, enabled, origin) => {
+      previewRecipeToggles = setRecipeEnabled(previewRecipeToggles, recipeId, enabled !== false, origin || "");
+      log("SETTINGS", `Preview recipe ${recipeId} ${enabled === false ? "disabled" : "enabled"}${origin ? ` on ${origin}` : ""}.`);
+      return { ok: true, toggles: previewRecipeToggles, summary: toggleSummary(previewRecipeToggles) };
+    },
     officeSafetyStatus: async () => previewState.officeSafety,
+    // Browser preview: no managed file, so the customer-visible policy surface honestly shows safe defaults.
+    getBrowserPolicy: async () => ({
+      ok: true, enforced: false, source: "default", valid: true, customerId: "unmanaged",
+      browserProtection: "on", locked: false, overrideRules: "none", escalationRouting: "support-desk",
+      decisions: {}, decisionCounts: null
+    }),
     setOfficeSafetyEnabled: async (on) => {
       previewState.officeSafety.enabled = Boolean(on);
       previewState.officeSafety.running = Boolean(on);

@@ -83,6 +83,7 @@ import { applyRunState } from "../shared/start-stop.mjs";
 import { auditFeatures, summarizeAudit, buildHealReport } from "../shared/self-heal.mjs";
 import { askAria } from "../shared/aria-brain-client.mjs";
 import { loadKbPack, localKbAnswer } from "../shared/aria-local-kb.mjs"; // RUN 30-B — offline cross-platform KB
+import { topicsAnswer } from "../shared/aria-topics-fallback.mjs"; // 2026-07-07 — shared iisupp.net/aria TOPICS brain, offline tier 3
 import { parseSystemStatus, parseKbStats, parseSessions, parseHeartbeats } from "../shared/aria-surfaces.mjs"; // RUN 33 — ARIA tab data
 import { appendChatActivity, sessionFileName } from "../shared/chat-activity.mjs"; // Phase F D2 — real asks show up in Memory/Dashboard
 import { defaultAppConfig, shouldShowSetup, completeSetup, reopenSetup } from "../shared/app-config.mjs"; // RUN 33-E — setup wizard
@@ -3216,11 +3217,18 @@ async function chat(message, context = {}) {
   // tech support (Windows, macOS, iOS, iPadOS, Android, ChromeOS, Linux) — never the old Windows-only string.
   // A matching Sentinel recipe is offered alongside; otherwise the KB answer (or its cross-platform no-match) stands.
   const kb = localKbAnswer({ message: String(message || ""), platform: process.platform, index: kbIndex() });
+  // 2026-07-07 — offline tier 3: when the bundled KB has NO match, the shared iisupp.net/aria TOPICS
+  // brain (same aria-brain.js engine as the web chat) takes the turn with a guided, multi-turn fix —
+  // clarifier -> steps -> honest escalation. Additive: KB-matched answers are untouched, and if the
+  // brain has no confident route either, the original KB no-match copy stands.
+  let topics = null;
+  if (kb.matched !== true) { try { topics = topicsAnswer(String(message || "")); } catch { topics = null; } }
+  const baseText = topics ? topics.text : kb.text;
   const text = localMatches.length
-    ? `${kb.text}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
-    : kb.text;
+    ? `${baseText}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
+    : baseText;
   recordChatActivity({ message, reply: text, provider: "local-kb", kbHit: kb.matched === true, anthropicHit: false });
-  return { ok: true, provider: "local-kb", text, signature, matched: kb.matched, matches: localMatches, offline: true, cost: "none" };
+  return { ok: true, provider: "local-kb", engine: topics ? "aria-topics" : "bundled-kb", text, signature, matched: kb.matched, matches: localMatches, offline: true, cost: "none" };
 }
 
 // Phase F D2 — persist one ask/reply exchange into ~/.aria-sentinel/sessions/<day>.json (the exact

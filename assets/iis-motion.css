@@ -1,27 +1,23 @@
 /* ==========================================================================
-   IIS MOTION LAYER v1.0 — ambient scroll-reactive background system
+   IIS MOTION LAYER v1.1 — ambient scroll-reactive background system
    --------------------------------------------------------------------------
-   Injected sitewide via:
-     <link rel="stylesheet" href="/assets/iis-motion.css">        (in <head>)
-     <script src="/assets/iis-motion.js" defer></script>          (before </body>)
-
-   Principles (per VISION-AND-GOAL-STANDING):
-   · Rule 15 — purely ADDITIVE. Sits behind content (z-index:-1), pointer-events:none.
-     Removes / renames / hides nothing.
-   · Rule 17 — classy, smart, advanced. Black-and-gold luxury, never flashy.
-   · Performance — transform/opacity only, contained, reduced-motion aware.
-
-   The scene cross-fades as the visitor scrolls (JS drives --ta/--tb/--tc):
-     top of page   → calm dawn-gold ambience
-     mid scroll    → warm champagne concentration
-     deep scroll   → steel-and-gold horizon rising from below
+   v1.1 (crispness + coexistence release):
+   · #iism-bg moved to z-index:-4 — sits UNDER every page's own decorative
+     fixed layers (marketplace texture at -2/-3, etc.). Rule 15: their art wins.
+   · mix-blend-mode removed everywhere (was the text-softness culprit on
+     Windows fractional scaling); orb opacities re-tuned to compensate.
+   · reveal: smaller travel, shorter time; JS strips classes after settle so
+     every section returns to 100% pristine paint — guaranteed crisp text.
+   · .bg-i-stage (the site's own scroll-morph icon stage) lifted to z-index:1
+     so it can never be buried by animating sections again.
+   · richer gold dust (more motes + large soft bokeh) — the "floating lights".
    ========================================================================== */
 
 /* ---------- Ambient stage ---------- */
 #iism-bg{
   position:fixed;
   inset:0;
-  z-index:-1;
+  z-index:-4;
   pointer-events:none;
   overflow:hidden;
   contain:strict;
@@ -31,51 +27,45 @@
 /* ---------- Scene tints — scroll-linked cross-fade ---------- */
 #iism-bg .iism-tint{
   position:absolute;
-  inset:-12%;
+  inset:-6%;
   opacity:0;
   will-change:opacity;
 }
 #iism-bg .iism-tint-a{
   background:
-    radial-gradient(120vmax 80vmax at 18% -8%,  rgba(197,160,89,.15), transparent 58%),
-    radial-gradient(90vmax  70vmax at 88% 12%,  rgba(179,135,40,.09),  transparent 60%);
+    radial-gradient(120vmax 80vmax at 18% -8%,  rgba(197,160,89,.16), transparent 58%),
+    radial-gradient(90vmax  70vmax at 88% 12%,  rgba(179,135,40,.10),  transparent 60%);
   opacity:var(--ta);
 }
 #iism-bg .iism-tint-b{
   background:
-    radial-gradient(110vmax 90vmax at 78% 42%,  rgba(241,220,167,.10), transparent 55%),
-    radial-gradient(100vmax 80vmax at 8%  70%,  rgba(197,160,89,.12),  transparent 60%);
+    radial-gradient(110vmax 90vmax at 78% 42%,  rgba(241,220,167,.11), transparent 55%),
+    radial-gradient(100vmax 80vmax at 8%  70%,  rgba(197,160,89,.13),  transparent 60%);
   opacity:var(--tb);
 }
 #iism-bg .iism-tint-c{
   background:
-    radial-gradient(120vmax 90vmax at 50% 108%, rgba(197,160,89,.16),  transparent 62%),
-    radial-gradient(90vmax  70vmax at 82% 88%,  rgba(96,130,182,.09),  transparent 55%),
+    radial-gradient(120vmax 90vmax at 50% 108%, rgba(197,160,89,.17),  transparent 62%),
+    radial-gradient(90vmax  70vmax at 82% 88%,  rgba(96,130,182,.10),  transparent 55%),
     linear-gradient(180deg, transparent 40%, rgba(9,11,17,.45) 100%);
   opacity:var(--tc);
 }
 
-/* ---------- Aurora orbs ----------
-   Outer .iism-orb  = positioner (JS applies scroll-parallax transform)
-   Inner  i         = gradient + slow idle drift keyframes
-   Two transforms on two elements → no keyframe/scroll conflict. */
+/* ---------- Aurora orbs (no blend modes — pure additive glows) ---------- */
 #iism-bg .iism-orbs{position:absolute;inset:0;will-change:transform}
 #iism-bg .iism-orb{position:absolute;will-change:transform}
 #iism-bg .iism-orb i{
   display:block;width:100%;height:100%;border-radius:50%;
-  mix-blend-mode:screen;
   animation:iismDrift var(--dur,52s) ease-in-out var(--del,0s) infinite alternate;
 }
 #iism-bg .iism-o1{width:72vmax;height:72vmax;left:-24vmax;top:-30vmax}
-#iism-bg .iism-o1 i{background:radial-gradient(circle, rgba(197,160,89,.14), rgba(197,160,89,.05) 42%, transparent 68%)}
+#iism-bg .iism-o1 i{background:radial-gradient(circle, rgba(197,160,89,.17), rgba(197,160,89,.06) 42%, transparent 68%)}
 #iism-bg .iism-o2{width:58vmax;height:58vmax;right:-20vmax;top:6vmax}
-#iism-bg .iism-o2 i{background:radial-gradient(circle, rgba(241,220,167,.10), rgba(241,220,167,.04) 40%, transparent 66%);--dur:64s;--del:-18s}
+#iism-bg .iism-o2 i{background:radial-gradient(circle, rgba(241,220,167,.12), rgba(241,220,167,.05) 40%, transparent 66%);--dur:64s;--del:-18s}
 #iism-bg .iism-o3{width:66vmax;height:66vmax;left:8vmax;bottom:-34vmax}
-#iism-bg .iism-o3 i{background:radial-gradient(circle, rgba(179,135,40,.12), rgba(179,135,40,.05) 45%, transparent 70%)}
-#iism-bg .iism-o3{--x:0}
-#iism-bg .iism-o3 i{--dur:74s;--del:-32s}
+#iism-bg .iism-o3 i{background:radial-gradient(circle, rgba(179,135,40,.15), rgba(179,135,40,.06) 45%, transparent 70%);--dur:74s;--del:-32s}
 #iism-bg .iism-o4{width:48vmax;height:48vmax;right:4vmax;bottom:-16vmax}
-#iism-bg .iism-o4 i{background:radial-gradient(circle, rgba(96,130,182,.08), rgba(96,130,182,.03) 40%, transparent 65%);--dur:58s;--del:-9s}
+#iism-bg .iism-o4 i{background:radial-gradient(circle, rgba(96,130,182,.10), rgba(96,130,182,.04) 40%, transparent 65%);--dur:58s;--del:-9s}
 
 @keyframes iismDrift{
   0%  {transform:translate3d(0,0,0)           scale(1)}
@@ -83,16 +73,15 @@
   100%{transform:translate3d(-3vmax,3vmax,0)  scale(.96)}
 }
 
-/* ---------- Light-beam sweep — slow pass of light across the dark ---------- */
+/* ---------- Light-beam sweep ---------- */
 #iism-bg .iism-beam{
   position:absolute;top:-20%;bottom:-20%;left:-34%;width:34%;
   background:linear-gradient(90deg,
     transparent,
-    rgba(241,220,167,.045) 45%,
-    rgba(197,160,89,.075)  50%,
-    rgba(241,220,167,.045) 55%,
+    rgba(241,220,167,.05)  45%,
+    rgba(197,160,89,.085)  50%,
+    rgba(241,220,167,.05)  55%,
     transparent);
-  mix-blend-mode:screen;
   transform:rotate(13deg) translate3d(-170%,0,0);
   animation:iismBeam 18s cubic-bezier(.45,0,.2,1) 5s infinite;
 }
@@ -102,7 +91,7 @@
   100%{transform:rotate(13deg) translate3d(540%,0,0)}
 }
 
-/* ---------- Precision dot grid — faint, parallax (JS drives --py) ---------- */
+/* ---------- Precision dot grid ---------- */
 #iism-bg .iism-grid{
   position:absolute;inset:-80px 0 0 0;
   background-image:radial-gradient(rgba(197,160,89,.32) 1px, transparent 1.45px);
@@ -111,16 +100,15 @@
   transform:translate3d(0, calc(var(--py,0) * 1px), 0);
   -webkit-mask-image:radial-gradient(ellipse 90% 72% at 50% 38%, #000 28%, transparent 78%);
           mask-image:radial-gradient(ellipse 90% 72% at 50% 38%, #000 28%, transparent 78%);
-  will-change:transform;
 }
 
 /* ---------- Gold dust canvas ---------- */
 #iism-dust{position:absolute;inset:0;width:100%;height:100%}
 
-/* ---------- Vignette — quiet depth at the edges ---------- */
+/* ---------- Vignette ---------- */
 #iism-bg .iism-vig{
   position:absolute;inset:0;
-  background:radial-gradient(ellipse 120% 92% at 50% 42%, transparent 56%, rgba(0,0,0,.4) 100%);
+  background:radial-gradient(ellipse 120% 92% at 50% 42%, transparent 58%, rgba(0,0,0,.36) 100%);
 }
 
 /* ---------- Scroll progress — hairline of gold ---------- */
@@ -131,24 +119,134 @@
   transform-origin:0 50%;
   transform:scaleX(0);
   background:linear-gradient(90deg,#b38728,#f1dca7 55%,#c5a059);
-  box-shadow:0 0 14px rgba(197,160,89,.55), 0 0 3px rgba(241,220,167,.8);
+  box-shadow:0 0 10px rgba(197,160,89,.5);
   opacity:0;
   transition:opacity .5s ease;
 }
 #iism-progress.iism-vis{opacity:1}
 
-/* ---------- Section reveal — cinematic rise (JS opts elements in) ----------
-   Only ever applied by JS to below-the-fold sections; if JS never runs,
-   nothing is ever hidden. Ends at transform:none so sticky/fixed children
-   behave normally after entry. */
+/* ---------- Section reveal — crisp by construction ----------
+   JS adds .iism-reveal only to below-the-fold sections, then removes BOTH
+   classes ~1s after the section settles, so no residual compositing, no
+   stacking context, no soft text. If JS never runs, nothing is hidden. */
 .iism-reveal{
   opacity:0;
-  transform:translateY(26px);
+  transform:translateY(18px);
   transition:
-    opacity   .95s cubic-bezier(.16,1,.3,1) var(--iism-d,0s),
-    transform .95s cubic-bezier(.16,1,.3,1) var(--iism-d,0s);
+    opacity   .8s cubic-bezier(.16,1,.3,1),
+    transform .8s cubic-bezier(.16,1,.3,1);
 }
 .iism-reveal.iism-in{opacity:1;transform:none}
+
+/* ==========================================================================
+   SITE-COEXISTENCE FIXES (Rule 15 — the site's own art always wins)
+   ========================================================================== */
+
+/* The site's BACKGROUND I SCROLL-MORPH stage (index/services/about/purchase-
+   tech) lives at z-index:0 where sections animating opacity/transform can
+   paint over it. Lift it just above content paint, still under nav (z-50),
+   cards, modals and fabs. It is pointer-events:none and 14% opacity. */
+.bg-i-stage{z-index:1 !important}
+
+/* ==========================================================================
+   ROADMAP FLIP ENRICHMENT (Road Ahead / #vision-roadmap)
+   The roadmap ships its OWN 3D flip (rm-flip / rm-flip-inner in aria-core).
+   We enrich that native flip — deeper 3D, a lift while flipping, gold bloom,
+   and an engraved sheen on the back face. No DOM changes, CSS only.
+   ========================================================================== */
+#vision-roadmap .rm-flip{
+  perspective:1300px !important;
+  transition:min-height .35s cubic-bezier(.4,0,.2,1),
+             transform  .5s cubic-bezier(.2,.9,.3,1),
+             filter     .5s ease !important;
+}
+#vision-roadmap .rm-flip:hover,
+#vision-roadmap .rm-flip:focus-within{
+  transform:translateY(-5px);
+  filter:drop-shadow(0 20px 38px rgba(0,0,0,.45)) drop-shadow(0 0 20px rgba(197,160,89,.16));
+}
+#vision-roadmap .rm-flip-inner{
+  transition:transform .72s cubic-bezier(.22,.85,.24,1),
+             min-height .35s cubic-bezier(.4,0,.2,1) !important;
+}
+#vision-roadmap .rm-flip:hover .rm-flip-inner,
+#vision-roadmap .rm-flip:focus-within .rm-flip-inner{
+  transform:rotateY(180deg) scale(1.03) !important;
+}
+/* back face: engraved gold ring + soft inner sheen (pure additive overlay) */
+#vision-roadmap .rm-back{position:relative}
+#vision-roadmap .rm-back::after{
+  content:'';
+  position:absolute;inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  box-shadow:
+    inset 0 0 0 1px rgba(241,220,167,.28),
+    inset 0 0 36px rgba(197,160,89,.08);
+  background:radial-gradient(120% 90% at 50% -10%, rgba(241,220,167,.07), transparent 55%);
+}
+@media (prefers-reduced-motion: reduce){
+  #vision-roadmap .rm-flip:hover,
+  #vision-roadmap .rm-flip:focus-within{transform:none;filter:none}
+}
+
+/* ==========================================================================
+   GROWTH LIBRARY — Reading Room organization (page-scoped: body.gl-page)
+   Featured top-3 strip · see-more · topic filters · weekly trend rotation.
+   ========================================================================== */
+body.gl-page #gl-featured{
+  max-width:1180px;margin:26px auto 8px;padding:34px 24px 30px;
+  border-top:3px double rgba(197,160,89,.35);
+  border-bottom:1px solid rgba(197,160,89,.14);
+  position:relative;
+}
+body.gl-page #gl-featured .glf-eyebrow{
+  text-align:center;color:#c5a059;font-size:10px;letter-spacing:.5em;
+  text-transform:uppercase;font-weight:700;margin:0 0 10px;
+}
+body.gl-page #gl-featured h2{
+  text-align:center;font-family:Cinzel,serif;color:#fff;
+  font-size:30px;margin:0 0 6px;letter-spacing:.04em;
+}
+body.gl-page #gl-featured h2 em{color:#c5a059;font-style:italic}
+body.gl-page #gl-featured .glf-note{
+  text-align:center;color:rgba(255,255,255,.42);font-size:11px;margin:0 0 26px;
+}
+body.gl-page #gl-featured .glf-row{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:26px;justify-items:center;max-width:1020px;margin:0 auto;
+}
+@media (max-width:860px){body.gl-page #gl-featured .glf-row{grid-template-columns:1fr;gap:34px}}
+body.gl-page #gl-featured .glf-more{
+  display:block;width:max-content;margin:30px auto 0;padding:12px 30px;
+  border:1px solid rgba(197,160,89,.5);border-radius:999px;
+  color:#f1dca7;font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+  font-weight:700;text-decoration:none;transition:all .3s ease;
+}
+body.gl-page #gl-featured .glf-more:hover{background:rgba(197,160,89,.12);border-color:#c5a059}
+
+body.gl-page #gl-shelf-filters{
+  max-width:1180px;margin:0 auto 20px;display:flex;flex-wrap:wrap;gap:8px;
+  justify-content:center;padding:0 20px;
+}
+body.gl-page #gl-shelf-filters .glt{
+  padding:8px 16px;border-radius:999px;cursor:pointer;
+  border:1px solid rgba(197,160,89,.28);background:rgba(255,255,255,.02);
+  color:rgba(241,220,167,.75);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;font-weight:700;transition:all .25s ease;
+}
+body.gl-page #gl-shelf-filters .glt:hover{border-color:rgba(197,160,89,.6);color:#f1dca7}
+body.gl-page #gl-shelf-filters .glt.is-on{
+  background:linear-gradient(135deg,#c5a059,#f1dca7);color:#0a0a0a;border-color:transparent;
+}
+body.gl-page .gl-shelf-note{
+  text-align:center;color:rgba(255,255,255,.34);font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;margin:6px 0 18px;
+}
+body.gl-page #books-grid{
+  padding-top:22px;
+  border-top:3px double rgba(197,160,89,.22);
+}
 
 /* ---------- Sitewide gold polish (full mode only) ---------- */
 html.iism-full ::selection{background:rgba(197,160,89,.35);color:#fff}

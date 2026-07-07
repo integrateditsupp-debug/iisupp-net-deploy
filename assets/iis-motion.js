@@ -1,24 +1,20 @@
 /*! ==========================================================================
-   IIS MOTION LAYER v1.0 — ambient scroll-reactive background system
+   IIS MOTION LAYER v1.1 — ambient scroll-reactive background system
    --------------------------------------------------------------------------
-   Pairs with /assets/iis-motion.css. Purely additive (Rule 15):
-   · builds a fixed background stage behind all content (z-index:-1)
-   · cross-fades the scene + parallaxes gold auroras as the visitor scrolls
-   · drifts gold dust particles (canvas) with scroll-reactive parallax
-   · hairline gold scroll-progress bar
-   · cinematic section reveals (full mode only, below-the-fold only)
+   v1.1: crisper text (reveal classes stripped after settle → zero residual
+   compositing), richer gold dust (more motes + large soft bokeh, sharper
+   DPR), stronger scroll parallax on the dust. Pairs with iis-motion.css.
 
-   Safety contract:
+   Safety contract unchanged:
    · If this script never runs, no content is ever hidden or altered.
-   · Everything is wrapped — a failure here can never break the page.
+   · Everything wrapped — a failure here can never break the page.
    · prefers-reduced-motion → static ambience, instant reveals, no canvas.
-   · Modes: default "full" · data-mode="bg" (ambience only, no reveals —
-     used on app-like pages such as /aria).
+   · Modes: default "full" · data-mode="bg" (ambience only, no reveals).
    ========================================================================== */
 (function () {
   'use strict';
   if (window.__IISM__) return;
-  window.__IISM__ = 1;
+  window.__IISM__ = 1.1;
 
   var doc = document;
   var root = doc.documentElement;
@@ -93,19 +89,35 @@
     progressBar.id = 'iism-progress';
   }
 
-  /* ---------------- Gold dust ---------------- */
-  function makeParticle(anyY) {
+  /* ---------------- Gold dust — the floating lights ---------------- */
+  function makeParticle(anyY, bokeh) {
     var W = dustCanvas.width / dpr, H = dustCanvas.height / dpr;
+    if (bokeh) {
+      /* large, soft, slow motes drifting like dust in a sunbeam */
+      return {
+        x: Math.random() * W,
+        y: anyY ? Math.random() * H : H + 10,
+        r: 2.4 + Math.random() * 2.2,
+        a: 0.04 + Math.random() * 0.07,
+        tw: Math.random() * 6.283,
+        tws: 0.003 + Math.random() * 0.008,
+        vy: -(0.03 + Math.random() * 0.08),
+        vx: (Math.random() - 0.5) * 0.05,
+        d: 0.15 + Math.random() * 0.35,
+        soft: true
+      };
+    }
     return {
       x: Math.random() * W,
       y: anyY ? Math.random() * H : H + 6,
-      r: 0.5 + Math.random() * 1.35,
-      a: 0.07 + Math.random() * 0.33,
+      r: 0.5 + Math.random() * 1.4,
+      a: 0.08 + Math.random() * 0.36,
       tw: Math.random() * 6.283,
-      tws: 0.006 + Math.random() * 0.02,
-      vy: -(0.05 + Math.random() * 0.2),
-      vx: (Math.random() - 0.5) * 0.07,
-      d: 0.25 + Math.random() * 0.75          /* parallax depth */
+      tws: 0.006 + Math.random() * 0.022,
+      vy: -(0.05 + Math.random() * 0.22),
+      vx: (Math.random() - 0.5) * 0.08,
+      d: 0.25 + Math.random() * 0.75,
+      soft: false
     };
   }
 
@@ -113,11 +125,13 @@
     try {
       dustCtx = dustCanvas.getContext('2d');
       if (!dustCtx) { dustCanvas = null; return; }
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
       sizeCanvas();
-      var n = MOBILE ? 26 : 56;
       particles.length = 0;
-      for (var i = 0; i < n; i++) particles.push(makeParticle(true));
+      var n = MOBILE ? 38 : 84;
+      var nb = MOBILE ? 3 : 7;
+      for (var i = 0; i < n; i++) particles.push(makeParticle(true, false));
+      for (var j = 0; j < nb; j++) particles.push(makeParticle(true, true));
     } catch (e) { dustCanvas = null; }
   }
 
@@ -135,22 +149,34 @@
     for (var i = 0; i < particles.length; i++) {
       var p = particles[i];
       p.tw += p.tws;
-      p.y += p.vy - delta * p.d * 0.5;
-      p.x += p.vx + Math.sin(tick * 0.004 + p.tw) * 0.05;
-      if (p.y < -8) { p.y = H + 8; p.x = Math.random() * W; }
-      else if (p.y > H + 8) { p.y = -8; p.x = Math.random() * W; }
-      if (p.x < -8) p.x = W + 8;
-      else if (p.x > W + 8) p.x = -8;
+      p.y += p.vy - delta * p.d * 0.65;
+      p.x += p.vx + Math.sin(tick * 0.004 + p.tw) * (p.soft ? 0.03 : 0.05);
+      if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+      else if (p.y > H + 10) { p.y = -10; p.x = Math.random() * W; }
+      if (p.x < -10) p.x = W + 10;
+      else if (p.x > W + 10) p.x = -10;
       var alpha = p.a * (0.55 + 0.45 * Math.sin(p.tw));
-      if (alpha <= 0.008) continue;
-      if (p.r > 1.25) {
+      if (alpha <= 0.006) continue;
+      if (p.soft) {
+        /* two-pass soft bokeh: wide faint halo + gentle core */
         dustCtx.beginPath();
-        dustCtx.fillStyle = 'rgba(216,186,120,' + (alpha * 0.28).toFixed(3) + ')';
+        dustCtx.fillStyle = 'rgba(214,184,118,' + (alpha * 0.45).toFixed(3) + ')';
+        dustCtx.arc(p.x, p.y, p.r * 2.2, 0, 6.283);
+        dustCtx.fill();
+        dustCtx.beginPath();
+        dustCtx.fillStyle = 'rgba(238,214,158,' + alpha.toFixed(3) + ')';
+        dustCtx.arc(p.x, p.y, p.r, 0, 6.283);
+        dustCtx.fill();
+        continue;
+      }
+      if (p.r > 1.3) {
+        dustCtx.beginPath();
+        dustCtx.fillStyle = 'rgba(216,186,120,' + (alpha * 0.3).toFixed(3) + ')';
         dustCtx.arc(p.x, p.y, p.r * 2.6, 0, 6.283);
         dustCtx.fill();
       }
       dustCtx.beginPath();
-      dustCtx.fillStyle = 'rgba(224,196,132,' + alpha.toFixed(3) + ')';
+      dustCtx.fillStyle = 'rgba(226,198,134,' + alpha.toFixed(3) + ')';
       dustCtx.arc(p.x, p.y, p.r, 0, 6.283);
       dustCtx.fill();
     }
@@ -158,12 +184,10 @@
 
   /* ---------------- Scroll-reactive scene ---------------- */
   function applyScene(p, y) {
-    /* progress hairline */
     progressBar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
     if (y > 40) { if (!progressBar.className) progressBar.className = 'iism-vis'; }
     else if (progressBar.className) progressBar.className = '';
 
-    /* scene tint cross-fade: dawn gold → champagne → steel horizon */
     var ta = clamp01(1 - p * 1.9);
     var tb = clamp01(1 - Math.abs(p - 0.5) * 2.8);
     var tc = clamp01((p - 0.55) * 2.4);
@@ -171,10 +195,8 @@
     bg.style.setProperty('--tb', tb.toFixed(3));
     bg.style.setProperty('--tc', tc.toFixed(3));
 
-    /* dot grid parallax (34px pattern period → seamless) */
     grid.style.setProperty('--py', (-(y * 0.08 % 34)).toFixed(2));
 
-    /* aurora parallax — whole field + individual orbs */
     orbsWrap.style.transform =
       'translate3d(0,' + (-p * vh * 0.14).toFixed(1) + 'px,0) rotate(' + (p * 7).toFixed(2) + 'deg)';
     orbs[0].style.transform =
@@ -199,14 +221,12 @@
     else if (scrollDelta < -60) scrollDelta = -60;
     lastY = y;
 
-    /* eased progress for a weighted, luxurious feel */
     curP += (targetP - curP) * 0.14;
     if (Math.abs(targetP - curP) < 0.0004) curP = targetP;
 
     applyScene(curP, y);
     stepDust(scrollDelta);
 
-    /* every ~400ms: re-measure doc height (lazy content) + reveal fallback */
     if ((tick & 31) === 0) {
       measure();
       sweepReveal(false);
@@ -225,7 +245,6 @@
     if (rafId) { window.cancelAnimationFrame(rafId); rafId = 0; }
   }
 
-  /* Reduced-motion path: no loop — direct, instant scene updates on scroll. */
   function reducedUpdate() {
     measure();
     var y = scrollY();
@@ -234,7 +253,25 @@
     applyScene(p, y);
   }
 
-  /* ---------------- Section reveals (full mode) ---------------- */
+  /* ---------------- Section reveals (full mode) ----------------
+     v1.1: after a section settles, BOTH classes are removed so the element
+     returns to completely untouched paint — crisp text, no stacking residue,
+     and the site's own fixed decorations (bg-i-stage) are never buried. */
+  function settle(s) {
+    window.setTimeout(function () {
+      try { s.classList.remove('iism-reveal', 'iism-in'); } catch (e) { /* noop */ }
+    }, 900);
+  }
+
+  function revealNow(s) {
+    if (!s.classList.contains('iism-in')) {
+      s.classList.add('iism-in');
+      settle(s);
+    }
+    var idx = pendingReveal.indexOf(s);
+    if (idx > -1) pendingReveal.splice(idx, 1);
+  }
+
   function collectRevealTargets() {
     if (MODE !== 'full' || REDUCED) return;
     var nodes;
@@ -247,12 +284,11 @@
       try {
         if (s.className && String(s.className).indexOf('iism-') !== -1) continue;
         if (s.closest && s.closest('[data-iism-skip], dialog, [role="dialog"], header, nav, #iism-bg')) continue;
-        /* skip sections containing fixed-position UI (transform would re-anchor it) */
         if (s.querySelector && s.querySelector('.fixed, [data-iism-skip]')) continue;
         var r = s.getBoundingClientRect();
-        if (r.height < 40) continue;                 /* hidden / empty */
-        if (r.top < vh * 0.88) continue;             /* at or above the fold — never hide */
-        if (startY > 80 && r.top < vh * 1.15) continue; /* mid-page (re)loads: be generous */
+        if (r.height < 40) continue;
+        if (r.top < vh * 0.88) continue;
+        if (startY > 80 && r.top < vh * 1.15) continue;
         s.classList.add('iism-reveal');
         pendingReveal.push(s);
       } catch (e) { /* skip node */ }
@@ -272,15 +308,7 @@
         for (var k = 0; k < pendingReveal.length; k++) io.observe(pendingReveal[k]);
       } catch (e) { sweepReveal(true); }
     }
-    /* belt & suspenders: throttled geometric sweep also runs from the frame
-       loop, and once on load — so content can never stay hidden. */
     window.setTimeout(function () { sweepReveal(false); }, 1200);
-  }
-
-  function revealNow(s) {
-    if (!s.classList.contains('iism-in')) s.classList.add('iism-in');
-    var idx = pendingReveal.indexOf(s);
-    if (idx > -1) pendingReveal.splice(idx, 1);
   }
 
   function sweepReveal(forceAll) {
@@ -296,6 +324,7 @@
       }
       if (show) {
         s.classList.add('iism-in');
+        settle(s);
         pendingReveal.splice(i, 1);
       }
     }
@@ -335,7 +364,6 @@
         sweepReveal(false);
       });
     } catch (e) {
-      /* Absolute failsafe — never leave anything hidden. */
       try { sweepReveal(true); } catch (e2) { /* noop */ }
     }
   }

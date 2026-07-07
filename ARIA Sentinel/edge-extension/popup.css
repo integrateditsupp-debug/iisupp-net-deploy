@@ -105,6 +105,7 @@ button:hover {
   color: #aaa;
   font-size: 12.5px;
   line-height: 1.45;
+  white-space: pre-line; /* 2026-07-07 — multi-line guided answers (shared brain steps) render as lines */
 }
 
 .message.user {

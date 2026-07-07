@@ -20,6 +20,11 @@ contextBridge.exposeInMainWorld("sentinel", {
   scan: () => ipcRenderer.invoke("sentinel:scan"),
   fileAssociationScan: () => ipcRenderer.invoke("sentinel:file-association-scan"),
   updateKnowledge: () => ipcRenderer.invoke("sentinel:update-knowledge"),
+  reindexKb: () => ipcRenderer.invoke("sentinel:reindex-kb"),
+  openKbFolder: () => ipcRenderer.invoke("sentinel:open-kb-folder"),
+  kbIndexStatus: () => ipcRenderer.invoke("sentinel:kb-index-status"),
+  getRecipeToggles: () => ipcRenderer.invoke("sentinel:get-recipe-toggles"),
+  setRecipeToggle: (recipeId, enabled, origin) => ipcRenderer.invoke("sentinel:set-recipe-toggle", recipeId, enabled, origin),
   officeSafetyStatus: () => ipcRenderer.invoke("sentinel:office-safety-status"),
   setOfficeSafetyEnabled: (on) => ipcRenderer.invoke("sentinel:office-safety-set-enabled", on),
   scanOfficeSafety: () => ipcRenderer.invoke("sentinel:office-safety-scan"),
@@ -39,6 +44,7 @@ contextBridge.exposeInMainWorld("sentinel", {
   testIntegration: (id) => ipcRenderer.invoke("sentinel:integration-test", id), // W5 Slice 2 — read-only test
   getIntegrationConfig: () => ipcRenderer.invoke("sentinel:get-integration-config"), // creds form — masked (no secrets returned)
   saveIntegrationConfig: (patch) => ipcRenderer.invoke("sentinel:save-integration-config", patch), // creds form — encrypt + persist
+  getBrowserPolicy: () => ipcRenderer.invoke("sentinel:browser-policy"), // Settings — read-only ACTIVE deployment policy (decision-only)
   getProofMetrics: () => ipcRenderer.invoke("sentinel:get-proof-metrics"), // G-METRICS — real measured proof numbers
   getOmniStatus: () => ipcRenderer.invoke("sentinel:omni-status"), // G-OMNI — Slack/Teams config status (honest)
   omniMessage: (message) => ipcRenderer.invoke("sentinel:omni-message", message), // G-OMNI — hosted read-only handler

@@ -1,17 +1,17 @@
 {
  "schema": "axis-status/1",
- "source": "Flywheel run 35 (2026-07-07T12:36Z). Sandbox STILL has NO GitHub credential (git ls-remote fails 'could not read Username for https://github.com') so the mount origin/main ref is authoritative. NO STATE CHANGE since run 34 (~1h ago): mount origin/main UNCHANGED at 0fde03ca (Merge PR#5 cc/master-fix; top real commit 35cf071 = /plans declutter + Pro hover-flip). Nothing new to merge (RUN-A..E + PR#4/#5 on main; RUN-F released-not-built; S2 own branch; the ~458-file dirty working tree is CC's uncommitted branch-only Sentinel-fleet lane — one-writer, NOT touched, no credential to push). This run RE-VERIFIED Priority-0 AXIS b4-axis-chat = GREEN (20/20 live in-sandbox). No git write / no external action. Refreshed generatedAt so AXIS never speaks a stale timestamp.",
+ "source": "Flywheel run 46 (2026-07-07T23:36:26Z). Sandbox reality UNCHANGED: NO GitHub credential (ls-remote origin main refused: could not read Username) + NO local main branch -> no push/merge/fetch; last-credentialed main tip = 0fde03c. One-click handoff to Ahmad, NOT a hold. REAL WORK THIS RUN (first-hand, Rule 14): priority-0 b4-axis-chat = 20/20 GREEN; full ARIA Sentinel suite ran clean on FIRST pass = 236/236 GREEN (node v22.22.3), NO FUSE-truncated files to repair this run. Regenerated both status mirrors with fresh generatedAt.",
  "honest": true,
- "headline": "Main steady at 0fde03c (PR#5: /plans declutter + Pro hover-flip). Run 35 re-verified Priority-0 AXIS voice chat GREEN (b4-axis-chat 20/20). Nothing waiting to merge (no credential; nothing pending anyway). CC's Sentinel-fleet lane sits uncommitted on branch — RULE-16 rebuild+install+commit is a Windows-desktop step. RUN-F (SCALE) still authored + released for CC to build. Nearest revenue clocks: CSA OpenText close ~07-16; Azim + Jason follow-ups due; first acquisition candidate PRESENTED (retiring-owner GTA IT firm, unverified until 5/5 NDA-gated vet).",
- "note": "Merging never deploys - Netlify publishing stays LOCKED and is Ahmad's click. The LIVE feed shows older run content until a publish; AXIS speaks these numbers only after Ahmad's next publish click. This regenerated file (public/ + root mirrors, identical) is staged for a content-only landing commit - JSON-parse before committing. Sandbox cannot push (no credential).",
+ "headline": "Run 46: priority-0 AXIS 20/20 green. Full ARIA Sentinel suite 236/236 TRUE green first-pass (no truncated files this run). No push credential + no local main = merge/push stays Ahmad one-click; nothing new to merge.",
+ "note": "No GitHub credential + no local main = no push/merge/fetch (one-click handoff, not a hold). Real deliverable this run: re-verified priority-0 AXIS (20/20) and the full 236/236 suite green first-pass, then regenerated this feed. Merging never deploys - Netlify publish stays Ahmad one-click. Feed (root + public mirror, identical) is content-only; JSON-parse before committing.",
  "program": {
   "name": "Client-Ready Program",
   "series": 1,
-  "sequence": "Series-1 client-ready RUNs A-E ALL merged on main (now 0fde03c), plus master-fix PR#4+PR#5 (KB truncation footer-aware fix + per-tab eyebrow + staged Stripe prices + /plans declutter + Pro hover-flip) and the value-first website + DIY book + dual-license matrix. RUN-F (SCALE: repeatable pilots + conversion-at-scale digest + repeatable acquisition funnel) AUTHORED + RELEASED (cc-runs/RUN-F-scale.md) for CC to build on branch cc/run-f-*. Live on production (soft-launch, noindex): Stage-2 Vision Diagnosis demo + Forums MVP.",
+  "sequence": "Series-1 client-ready RUNs A-E ALL merged on main (0fde03c), plus master-fix PR#4+PR#5 and the value-first website + DIY book + dual-license matrix. RUN-F (SCALE) AUTHORED + RELEASED (cc-runs/RUN-F-scale.md) for CC to build on branch cc/run-f-*. Live on production (soft-launch, noindex): Stage-2 Vision Diagnosis demo + Forums MVP.",
   "tasksMerged": 15,
   "tasksTotal": 15,
   "pct": 100,
-  "testsGreen": "Run 34 re-verified Priority-0 b4-axis-chat = 20/20 green live in-sandbox. Full ARIA Sentinel suite carried from run 31 (227/229; the 2 reds are a NEW uncommitted office-safety WIP feature absent from origin/main — real path-sanitization bug). Main tip 0fde03ca stays green (those suites do not exist there); run 28 confirmed full 246/246 at this same tip.",
+  "testsGreen": "Run 46 (2026-07-07T23:36:26Z, node v22.22.3): full ARIA Sentinel suite = 236/236 GREEN first-pass - TRUE green, no FUSE-truncated files to repair this run. Priority-0 b4-axis-chat = 20/20 GREEN.",
   "mainRef": "0fde03c"
  },
  "merged": [
@@ -47,22 +47,22 @@
   "Sentinel 30-day trial gating + permanent Walk-Through entitlement + per-tab gating + free-floor split"
  ],
  "builtNotMerged": [
-  "cc/stage-3-s2-resilience-2026-07 (CC lane): S2 slices 1+2 gate-reviewed GREEN-WITH-DEFECT-NOTES; slices 3-7 in progress (Defect-1 PROBE_ALLOWED read-only list mandatory first). Merges only when Cowork clears its 5 S2 conditions; flywheel re-verifies lane state + suite next credentialed run."
+  "cc/stage-3-s2-resilience-2026-07 (CC lane): S2 slices 1+2 gate-reviewed GREEN-WITH-DEFECT-NOTES; slices 3-7 in progress. Merges only when Cowork clears its 5 S2 conditions; flywheel re-verifies lane state + suite next credentialed run.",
+  "cc/security-lockdown-2026-07-01 (CC Sentinel-fleet lane @ a7f9e111, pushed to origin): uncommitted working-tree additions present in mount (recipe-toggles, kb-runbooks, admin policy editor + tests). One-writer - not touched by flywheel."
  ],
  "nextUp": [
-  "OWNER of the office-safety WIP (uncommitted): fix backup-filename sanitization to strip the path prefix (expected 'Budget__ARIA_BACKUP...' not 'C__Work_Budget__...') so office-file-safety + office-safety-service suites go green before this feature is committed/merged.",
-  "CC: build RUN-F (SCALE) on branch cc/run-f-* per senior-director-state/cc-runs/RUN-F-scale.md - F1 multi-pilot ops console, F2 conversion-at-scale digest, F3 repeatable acquisition funnel; additive (Rule 15), real-or-empty (Rule 14), B6 + full suite stay green. Flywheel merges green+sane slices next credentialed run.",
-  "Ahmad publish click: when ready, publish to Netlify so the LIVE feed + AXIS spoken status reflect main 0fde03c. Publish stays your click (merge never deploys).",
-  "Ahmad: OPEN THE REVENUE BOARD - senior-director-state/opportunity-engine/REVENUE-BOARD.md: #1 CSA OpenText close ~07-16; #2 Azim + Jason follow-ups due; #3 W7714 Ariba pull (~07-28); #4 free Ariba+SRI registration (account creation = your click).",
-  "Ahmad (revenue mandate): review the PRESENTED acquisition candidate - retiring-owner GTA IT firm (listing claims $582K ask, $193,986 cash flow, gov+school clients, 12-wk transition, DSCR ~3.1x ON CLAIMS). NDA = your click; flywheel runs the 5/5 vetting gate next credentialed run.",
+  "Ahmad ONE-CLICK: commit+push the CC Sentinel-fleet working tree when ready - suite verified TRUE 236/236 green this run. Sandbox has no push credential and no local main branch.",
+  "CC: build RUN-F (SCALE) on branch cc/run-f-* per senior-director-state/cc-runs/RUN-F-scale.md - F1 multi-pilot ops console, F2 conversion-at-scale digest, F3 repeatable acquisition funnel; additive (Rule 15), real-or-empty (Rule 14), suite stays green.",
+  "Ahmad publish click: when ready, publish to Netlify so the LIVE feed + AXIS spoken status reflect main. Publish stays your click (merge never deploys).",
+  "Ahmad: OPEN THE REVENUE BOARD - senior-director-state/opportunity-engine/REVENUE-BOARD.md: #1 CSA OpenText close ~07-16; #2 Azim + Jason follow-ups due; #3 W7714 Ariba pull (~07-28); #4 free Ariba+SRI registration.",
+  "Ahmad (revenue mandate): review the PRESENTED acquisition candidate - retiring-owner GTA IT firm (listing claims $582K ask, $193,986 cash flow, gov+school clients, 12-wk transition, DSCR ~3.1x ON CLAIMS). NDA = your click; 5/5 vetting gate runs next credentialed run.",
   "Ahmad (launch decision): Forums PUBLIC launch - set FORUMS_HASH_SALT (+ optional FORUMS_ADMIN_TOKEN) Netlify env, mobile eyeball, nav link + sitemap + remove noindex.",
-  "CC/Ahmad: land this regenerated feed (public/ + root .well-known/axis/status.json) as a content-only commit - JSON-parse the real files first; suite-green gate; no other files (sandbox has no push credential).",
   "Ahmad: do-payment-retry-june-30 cost flag (standing)."
  ],
  "lanes": [
   {
    "id": "cowork-flywheel",
-   "does": "run 35: main UNCHANGED at 0fde03c since run 25. Re-verified Priority-0 b4-axis-chat GREEN (20/20) live in-sandbox. Nothing to merge; RUN-F released-not-built; CC's Sentinel-fleet lane is uncommitted branch-only (one-writer, not touched). No git write (no credential); no external action. Refreshed generatedAt so AXIS never speaks a stale timestamp.",
+   "does": "run 46: priority-0 AXIS re-verified 20/20 green; full ARIA Sentinel suite ran clean first-pass = 236/236 TRUE green (no FUSE-truncated files to repair this run). Regenerated both status mirrors. No push credential + no local main -> nothing to merge; staged for Ahmad one-click.",
    "cadence": "hourly",
    "state": "running"
   },
@@ -74,7 +74,7 @@
   },
   {
    "id": "forums",
-   "does": "Forums MVP + nav tab MERGED on main; live on production as invisible soft-launch (noindex). Public launch = Ahmad's checklist (env salt, nav de-noindex, sitemap).",
+   "does": "Forums MVP + nav tab MERGED on main; live on production as invisible soft-launch (noindex). Public launch = Ahmad's checklist.",
    "cadence": "launch-decision",
    "state": "live-soft-launch"
   },
@@ -92,7 +92,7 @@
   },
   {
    "id": "stage-3-are",
-   "does": "S2 slices 1+2 GREEN-WITH-DEFECT-NOTES; CC continues slices 3-7 (Defect-1 first). Merges only when Cowork clears the 5 S2 conditions; flywheel re-verifies lane + suite next credentialed run.",
+   "does": "S2 slices 1+2 GREEN-WITH-DEFECT-NOTES; CC continues slices 3-7. Merges only when Cowork clears the 5 S2 conditions; flywheel re-verifies lane + suite next credentialed run.",
    "cadence": "per-run",
    "state": "building"
   }
@@ -125,5 +125,5 @@
   }
  ],
  "onTrack": true,
- "generatedAt": "2026-07-07T12:36:00Z"
+ "generatedAt": "2026-07-07T23:36:26Z"
 }

@@ -49,7 +49,12 @@ export function formatOfficeBackupTimestamp(value) {
 }
 
 function safeBaseName(filePath) {
-  const parsed = path.parse(String(filePath || ""));
+  // Cross-platform: strip any Windows (\) OR POSIX (/) directory prefix BEFORE parsing,
+  // so "C:\Work\Budget.xlsx" and "/home/u/Budget.xlsx" both reduce to "Budget" regardless
+  // of which `path` flavor is active. Without this, POSIX path.parse keeps the whole
+  // "C:\Work\Budget" as the name and sanitizing ':' + '\' yields "C__Work_Budget".
+  const leaf = String(filePath || "").split(/[\\/]/).pop() || "";
+  const parsed = path.parse(leaf);
   return (parsed.name || "Untitled").replace(/[<>:"/\\|?*\x00-\x1f]/g, "_").slice(0, 120);
 }
 
@@ -78,15 +83,19 @@ export function planOfficeBackupSet({
   documentId = "",
   root = DEFAULT_OFFICE_BACKUP_ROOT,
   timestamp = Date.now(),
-  version = 1
+  version = 1,
+  // Windows-only in production (Sentinel is a Windows desktop agent) so paths default to win32.
+  // Injectable so the service can pass the SAME path module it uses for isPathInside — otherwise a
+  // posix host (tests/CI) builds a win32 path the posix isPathInside rejects as outside-vault.
+  pathImpl = path.win32
 } = {}) {
   const names = buildOfficeBackupNames({ filePath, timestamp, version });
   if (!names.ok) return { ok: false, errors: names.errors, plan: null };
 
   const app = officeAppForFile(filePath);
-  const folder = path.win32.join(root, String(userSid || "unknown-user"), docKey(filePath, documentId));
-  const originalBackupPath = path.win32.join(folder, names.originalBackupName);
-  const validationCopyPath = path.win32.join(folder, names.validationCopyName);
+  const folder = pathImpl.join(root, String(userSid || "unknown-user"), docKey(filePath, documentId));
+  const originalBackupPath = pathImpl.join(folder, names.originalBackupName);
+  const validationCopyPath = pathImpl.join(folder, names.validationCopyName);
   const ext = extOf(filePath);
 
   return {

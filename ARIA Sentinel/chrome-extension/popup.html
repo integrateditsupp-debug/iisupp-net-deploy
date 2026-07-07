@@ -64,6 +64,10 @@
       </footer>
     </main>
     <script src="./site-prefs.js"></script>
+    <!-- Shared ARIA brain (2026-07-07): same conversational engine as iisupp.net/aria + the desktop
+         chat tab. Classic script (runs before the module) -> window.AriaBrain for the offline tier.
+         Master copy: /aria-brain.js in the site repo — synced via tools/sync-aria-brain.mjs. -->
+    <script src="./aria-brain.js"></script>
     <script type="module" src="./popup.js"></script>
   </body>
 </html>

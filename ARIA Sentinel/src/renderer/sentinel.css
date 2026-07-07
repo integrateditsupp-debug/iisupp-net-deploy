@@ -1248,3 +1248,26 @@ body.has-security-banner .aria-using-computer-frame span { top:96px; }
 .aria-chat-resolve-btn:disabled { opacity:.55; cursor:default; }
 .aria-chat-resolve-status { font-size:11px; color:var(--aria-gold-light,#f1dca7); }
 .recipe-card .resolve-status { margin-top:8px; font-size:11.5px; color:var(--aria-gold-light,#f1dca7); }
+
+/* Per-recipe / per-site enable-disable controls (Settings -> Resolution). */
+.recipe-toggle-row {
+  display:flex; align-items:center; gap:8px;
+  margin-top:10px; padding-top:10px; border-top:1px solid #1c1c1c;
+  font-size:12px; color:var(--aria-text-muted); cursor:pointer;
+}
+.recipe-toggle-row input[type="checkbox"] { accent-color:var(--aria-gold,#c5a059); width:15px; height:15px; }
+.recipe-toggle-row span { color:var(--aria-text); }
+.recipe-toggle-state { margin-left:auto; font-style:normal; font-family:var(--aria-font-mono); font-size:10.5px; color:var(--aria-text-muted); text-align:right; }
+.recipe-card.recipe-off { opacity:.62; border-color:#2a2016; }
+.recipe-card.recipe-off .recipe-toggle-state { color:var(--aria-gold-light,#f1dca7); }
+.recipe-site-control { margin-top:9px; padding:9px 10px; background:#080808; border:1px solid #1c1c1c; border-radius:9px; }
+.recipe-site-control .site-field { margin-bottom:0; font-size:11px; color:var(--aria-text-muted); }
+.site-input-row { display:flex; gap:6px; margin-top:5px; }
+.site-input-row input { flex:1; min-height:32px; border:1px solid #242424; border-radius:7px; background:#050505; color:var(--aria-text); padding:6px 9px; outline:none; font-size:12px; }
+.site-input-row input:focus { border-color:rgba(197,160,89,.75); }
+.site-input-row button { flex:0 0 auto; min-height:32px; }
+.site-chip-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.site-chip { display:inline-flex; align-items:center; gap:5px; padding:3px 6px 3px 9px; background:#141007; border:1px solid #2a2016; border-radius:999px; font-family:var(--aria-font-mono); font-size:10.5px; color:var(--aria-gold-light,#f1dca7); }
+.site-chip-x { border:none; background:transparent; color:var(--aria-text-muted); font-size:13px; line-height:1; cursor:pointer; padding:0 2px; }
+.site-chip-x:hover { color:var(--aria-gold,#c5a059); }
+.kb-index-actions { margin-top:8px; }

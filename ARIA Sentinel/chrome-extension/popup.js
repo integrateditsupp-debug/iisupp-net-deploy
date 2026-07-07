@@ -145,15 +145,78 @@ async function send() {
   if (!text) return;
   input.value = "";
   addMessage("user", text);
+  // Shared-brain mid-flow (2026-07-07): if the offline brain asked a clarifier, a short answer like
+  // "it freezes" / "2" / "done" belongs to that conversation — keep it local instead of the network.
+  if (ariaBrainMidFlow() && tryAriaBrainTurn(text)) return;
   const [tab] = await chromeApi.tabs.query({ active: true, currentWindow: true });
   const result = await chromeApi.runtime.sendMessage({
     type: "ASK_SENTINEL",
     payload: { message: text, url: tab?.url || "" }
   });
+  // Everything unreachable (bridge + web)? The bundled shared brain takes the turn before the
+  // old "could not reach" dead-end. Same engine as iisupp.net/aria + the desktop chat tab.
+  if (result && result.provider === "local-extension" && tryAriaBrainTurn(text)) return;
   const provider = result.provider === "aria-web-chat" || result.provider === "aria-web-kb" ? "ARIA web chat: " : "";
   const webUrl = result.webChatUrl || result.webBrainUrl;
   const webHint = webUrl ? `\n\nOpen ARIA web: ${webUrl}` : "";
   addMessage("aria", `${provider}${result.text || result.error || "ARIA could not respond."}${webHint}`);
+}
+
+// ---- Shared ARIA brain offline tier (2026-07-07) ------------------------------------------------
+// window.AriaBrain comes from ./aria-brain.js (classic script in popup.html) — the same engine the
+// website chat runs. Guides step-by-step; never claims to execute fixes (its honest tail says so).
+let ariaBrainSession = globalThis.AriaBrain ? globalThis.AriaBrain.newSession() : null;
+let ariaBrainLastOptions = [];
+
+function ariaBrainMidFlow() {
+  return Boolean(
+    ariaBrainSession && ariaBrainSession.topic &&
+    (ariaBrainSession.stage === "awaiting" || ariaBrainSession.stage === "checking" || ariaBrainSession.stage === "answered")
+  );
+}
+
+function ariaBrainFormat(r) {
+  const parts = [];
+  if (r.empathy) parts.push(r.empathy);
+  if (r.say) parts.push(r.say);
+  if (r.ask) {
+    const opts = (r.options || []).map((o, i) => `  ${i + 1}) ${o}`).join("\n");
+    parts.push(`${r.ask}${opts ? `\n${opts}\nReply with the number or your own words.` : ""}`);
+  } else if (r.options && r.options.length) {
+    parts.push(r.options.map((o, i) => `  ${i + 1}) ${o}`).join("\n"));
+  }
+  if (r.steps && r.steps.length) parts.push(r.steps.map((s, i) => `${i + 1}. ${s}`).join("\n"));
+  if (r.escalate) parts.push(`If that doesn't resolve it: ${r.escalate}`);
+  if (r.also) parts.push(r.also);
+  if (r.tail) parts.push(r.tail);
+  return parts.join("\n\n");
+}
+
+function tryAriaBrainTurn(rawText) {
+  if (!globalThis.AriaBrain) return false;
+  try {
+    if (!ariaBrainSession) ariaBrainSession = globalThis.AriaBrain.newSession();
+    let text = String(rawText || "").trim();
+    if (/^[1-9]$/.test(text) && ariaBrainLastOptions.length) {
+      const idx = Number(text) - 1;
+      if (idx < ariaBrainLastOptions.length) text = ariaBrainLastOptions[idx];
+    }
+    const midFlow = ariaBrainMidFlow();
+    const isGreetBye = /^(hi|hello|hey|thanks|thank you|bye|good (morning|afternoon|evening))\b/i.test(text) &&
+      text.split(/\s+/).length <= 4;
+    if (!midFlow && !isGreetBye) {
+      const cls = globalThis.AriaBrain.classify(text.toLowerCase(), ariaBrainSession);
+      if (!cls || cls.score < 4) return false;
+    }
+    const r = globalThis.AriaBrain.handleTurn(ariaBrainSession, text);
+    if (!r || (!r.say && !r.ask && !r.steps)) return false;
+    ariaBrainLastOptions = Array.isArray(r.options) ? r.options.slice() : [];
+    if (r.stage === "closed") ariaBrainSession = globalThis.AriaBrain.newSession();
+    addMessage("aria", ariaBrainFormat(r));
+    return true;
+  } catch {
+    return false; // the offline tier must never break the popup chat
+  }
 }
 
 function addMessage(role, text) {

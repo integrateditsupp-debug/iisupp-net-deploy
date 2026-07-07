@@ -96,7 +96,7 @@ const runLoaders = renderer.slice(renderer.indexOf("function runTabLoaders"), re
 assert.match(runLoaders, /dashboard"\)\s*\{\s*loadDashboard\(\);\s*loadPerformance\(\);\s*loadSla\(\);/, "Dashboard loads overview+perf+sla");
 assert.match(runLoaders, /compliance-privacy"\)\s*loadCompliance\(\)/, "Compliance&Privacy loads compliance");
 assert.match(runLoaders, /system"\)\s*\{\s*loadSystemContext\(\);\s*loadBlueprints\(\);/, "System loads context+blueprints");
-assert.match(runLoaders, /settings"\)\s*loadUpdatesPanel\(\)/, "Settings loads updates/about panel");
+assert.match(runLoaders, /settings"\)\s*\{\s*loadUpdatesPanel\(\);/, "Settings loads updates/about panel");
 ok("merged parents fan out to every former loader");
 
 // ── Test 9 — sidebar sub-anchor lists exist for the 4 merged parents + active-state toggle wiring ──

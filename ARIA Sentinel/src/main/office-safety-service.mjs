@@ -318,7 +318,8 @@ export function createOfficeSafetyService(options = {}) {
       documentId: record.id,
       root: config.backupRoot,
       timestamp: now(),
-      version
+      version,
+      pathImpl: pathMod
     });
     if (!planned.ok) return { ok: false, reason: planned.errors?.[0] || "backup-plan-failed" };
     if (!isPathInside(pathMod, config.backupRoot, planned.plan.originalBackupPath)) {
@@ -358,7 +359,8 @@ export function createOfficeSafetyService(options = {}) {
       documentId: record.id,
       root: config.backupRoot,
       timestamp: now(),
-      version: Math.max(1, record.version || 1)
+      version: Math.max(1, record.version || 1),
+      pathImpl: pathMod
     });
     return planned.ok ? planned.plan.validationCopyPath : record.latestValidationPath;
   }

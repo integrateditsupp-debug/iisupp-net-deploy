@@ -1,29 +1,21 @@
-# Codex Playbook — Delta (scan 2026-07-07 vs 2026-07-03)
+# Codex Playbook Delta — 2026-07-07T13:10Z vs prior scan (2026-07-07T04:31Z)
 
-**Window:** all-refs, 2d (net-new since prior scan 07-03T21:08). Read-only, $0.
-
-## Top-line
-| Metric | Prior (07-03) | Now (07-07) | Move |
+| Metric | Prior scan | This scan | Δ |
 |---|---|---|---|
-| Net-new commits | 58 (all-refs/2d) | 6 net-new | quieted |
-| Author mix | integrateditsupp-debug 47/58 + ~9 flywheel | integrateditsupp-debug 6/6 | fully consolidated |
-| origin/main HEAD | 0fde03ca (advanced that window) | 0fde03ca | **FROZEN ~3.8d** |
-| Top dir | aria-vault/iisupp-strategic | ARIA Sentinel/tests | web->desktop pivot |
-| .git/index.lock | stale ~16h (flagged) | **cleared** | resolved |
+| HEAD | c0a0f6b4 | a7f9e111 | advanced +1 |
+| Commits in window | 6 (small) | 1 (mega) | consolidated |
+| Files / churn | ~62 test-heavy | 171 files, +30024/−1320 | ~3.9x lines |
+| Top dir | ARIA Sentinel/tests | ARIA Sentinel (broad) | scope widened |
+| origin/main | 0fde03ca frozen ~3.8d | 0fde03ca frozen ~4d | still unmerged |
 
-## What's new
-- **Theme pivot web -> desktop.** Prior window was the /plans interactive staffing-cost pricing-calculator (v2->v12) — web conversion lane. This window is 100% **ARIA Sentinel** (the desktop product): a demo/proof push.
-- **6 Sentinel commits (07-04 -> 07-05), all on `cc/security-lockdown-2026-07-01`, pushed to origin, NOT merged:**
-  - af5e03ab Harden ARIA Sentinel production proof (big; +KB pack, admin console, report-gen, compliance/perf/reports tabs)
-  - cd518cea Add 100-call demo lab
-  - 9f2b9bd7 Add live capture demo
-  - 69058206 Add visible autonomy demo
-  - ddfcac5b Add file association guard (main.mjs + preload + shared guard + test)
-  - c0a0f6b4 Add Resolution tab (renderer + test)
-- **Churn +7765 / -651**, concentrated ARIA Sentinel/tests (62 files) + src (57). Test-first discipline holding.
+## New this scan
+- **Scope explosion:** from Sentinel-only → whole-tree (web html, BD scripts, downloads/library, chrome/edge/safari extensions, netlify funcs, KB stubs, 10k test corpus).
+- **BD/revenue scripts touched** (business-development, contracts-bids, opportunity-research) — was absent prior window.
+- **Phase B browser-protection policy** introduced (enforced:false, decision-only).
+- **New flag:** hard-rule files (aria.html, aperture-learning.html, package.json) modified on branch.
+- **New flag:** packed-refs corruption (worked around; original untouched).
 
-## Flags for Ahmad
-1. **origin/main frozen ~3.8 days (~90h) at 0fde03ca** — nothing merged since PR #5. Two full revenue lanes now sit unmerged off main.
-2. **Two parked revenue lanes:** (a) /plans pricing calculator (prior-window branch) and (b) Sentinel demo/proof suite (this-window branch, origin/cc/security-lockdown-2026-07-01). Both are conversion assets that only convert once merged + published.
-3. **index.lock cleared** — the recurring 7+ consecutive stale-lock flag is gone; scans no longer blocked.
-4. Codex/* namesake dormant ~17d; lane is 100% CC-flywheel under integrateditsupp-debug.
+## Resolved / carry-over
+- index.lock clear this run (goal-alignment saw stale 00:33Z lock at 11:31Z; cleared since).
+- Main-frozen + parked-revenue-lanes flag persists and grew (now 3 lanes off main).
+- Codex/* namesake still dormant (~18d); single-author integrateditsupp-debug continues.

@@ -1,30 +1,28 @@
-# Codex Playbook (regenerated 2026-07-07T04:31Z)
+# Codex Playbook — scan 2026-07-07T13:10Z (rolling 2d)
 
-_Read-only observation of git activity in iisupp-net-deploy. $0 spend. Reproduced from `git log` (observer script unmounted)._
+**HEAD:** a7f9e111 on `cc/security-lockdown-2026-07-01` (prior scan HEAD c0a0f6b4)
+**Window:** since 2026-07-05T13:10Z · **Commits:** 1 · **Author:** 100% integrateditsupp-debug
+**origin/main:** last known 0fde03ca (Merge PR #5, 07-03 10:12) — tracking ref absent locally; work UNMERGED, "branch-only, no deploy".
 
-## Who is committing
-- **integrateditsupp-debug** — 100% of this 2d window (6/6). Now the sole active committer; multi-spelling "flywheel" authors absent this cycle.
-- **Codex/*** namesake — dormant ~17 days (latest `codex/homepage-middle-card` == origin/main tip, 07-03). The "codex" lane is effectively the CC-flywheel under one author identity.
+## What happened this window
+One mega-commit `a7f9e111` — **171 files, +30,024 / −1,320** (61 added, 110 modified). Six small demo commits last window became one broad squash spanning the whole repo.
 
-## Current work-theme: ARIA Sentinel (desktop) demo + production proof
-This window swung entirely to the **desktop product**. Pattern = build a *visible, provable* Sentinel: live-capture demo, visible-autonomy demo, 100-call demo lab, production-proof hardening, file-association safety guard, and a Resolution tab. Test-first (62 test files touched vs 57 src).
+## Where the work landed (top buckets)
+- **ARIA Sentinel (60)** — fleet policy slice + Phase B browser-protection policy (`enforced:false`, decision-only) across chrome/edge/safari extensions.
+- **scripts (12)** — BD/agent layer: business-development-agent, ceo-action-console(+proceed/digest), contracts-bids-status, opportunity-research/quality-gate, senior-director-worker, new staged-review-files.
+- **downloads/library (22)** + web html — services, shop, security, trust, enterprise, government, verticals (finance/healthcare/legal).
+- **tests (10)** — scenario-corpus-10k, breadth-results, vision-diagnose(+handler), aperture-learning-truthfulness.
+- **netlify funcs (6)**, **knowledge-base/_stubs (8)**, **assets (5)**, Forums design brief.
 
-Prior window's web lane (`/plans` interactive staffing-cost calculator v2->v12) went quiet — not reverted, just parked on its branch.
+## Pattern read
+- **Theme swung broad.** Prior=Sentinel-desktop-only; now=whole-stack sweep (Sentinel + web + BD scripts + extensions + KB + tests).
+- **BD/revenue lane is active in code** — opportunity-research, contracts-bids, business-development agents all touched.
+- **Test-first mostly held** — 10k scenario corpus + new vision-diagnose suites added alongside src.
 
-## Branch / merge behavior
-- HEAD: `cc/security-lockdown-2026-07-01` @ c0a0f6b4 (== origin tip; pushed).
-- **origin/main FROZEN at 0fde03ca since 07-03 10:12 (~3.8d).** Convention continues: work accretes on `cc/*` branches; main only advances on explicit PR merge.
-- Naming: `cc/<theme>-<date>` branches; commits terse imperative ("Add ARIA Sentinel X", "Harden Y").
+## Flags for Ahmad
+1. **Main frozen ~4 days** at 0fde03ca. Three lanes now parked on branches (prior /plans calculator, Sentinel proof suite, this broad slice). **Merge + publish is the conversion action.**
+2. **HARD-RULE files modified on this branch:** `aria.html`, `aperture-learning.html`, `package.json`. Observer did NOT touch them — surfacing per hands-off rule.
+3. **Mega-commit reviewability** — +30k lines in one squash is hard to review/bisect.
+4. **Repo health:** `.git/packed-refs` was corrupted (truncated final line); observer worked around via /tmp repaired GIT_DIR, original untouched.
 
-## Verbs (this window)
-`Add` (5), `Harden` (1). Consistent additive/hardening cadence — no deletes/reverts.
-
-## Standing observations
-- Test suite grows with every feature (run-all.mjs touched in nearly every commit).
-- HARD-RULE files (aria.html, aperture*.html) untouched this window — respected.
-- Two revenue-conversion lanes (pricing calculator + Sentinel proof) are complete-but-unmerged. The single highest-leverage pending action remains: reconcile + merge + publish to origin/main.
-
-## Flags
-1. main frozen ~3.8d; 2 revenue lanes parked off main.
-2. index.lock CLEARED (prior 7+ stale-lock flags resolved).
-3. Codex namesake dormant ~17d.
+_Read-only · $0 · observe-codex.mjs unmounted → reproduced from git log._

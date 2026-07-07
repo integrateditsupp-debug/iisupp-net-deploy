@@ -1,0 +1,113 @@
+/* ==========================================================================
+   IIS LEGAL SUITE v1.0 — counsel-grade presentation layer
+   --------------------------------------------------------------------------
+   Loaded ONLY on the assurance/legal surfaces (Trust & Security, Copyright &
+   IP). Pure presentation: engraved serif headings, double-rule chambers,
+   small-caps section labels, a faint monogram seal — the quiet gravitas of
+   a law-office document room. No content is added, changed, or removed.
+   ========================================================================== */
+
+/* ---------- typographic register ---------- */
+body{
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+h1, h2, h3{
+  font-family:'Cinzel', Georgia, 'Times New Roman', serif !important;
+  letter-spacing:.06em;
+}
+h2{
+  font-variant-caps:small-caps;
+}
+
+/* ---------- the chamber: content panels read like bound documents ------- */
+main section,
+.legal-panel,
+article{
+  position:relative;
+}
+
+/* headline rule — a thin engraved double line under major headings */
+h1{
+  padding-bottom:18px;
+  background-image:
+    linear-gradient(90deg, transparent, rgba(197,160,89,.75) 18%, rgba(197,160,89,.75) 82%, transparent),
+    linear-gradient(90deg, transparent, rgba(197,160,89,.35) 26%, rgba(197,160,89,.35) 74%, transparent);
+  background-repeat:no-repeat;
+  background-size:100% 1px, 100% 1px;
+  background-position:50% calc(100% - 6px), 50% 100%;
+}
+
+/* section headings get a hanging gold tick and generous air */
+h2{
+  position:relative;
+  padding-top:26px;
+  margin-top:34px !important;
+}
+h2::before{
+  content:'';
+  position:absolute;
+  top:0; left:0;
+  width:64px; height:3px;
+  background:linear-gradient(90deg, #b38728, #f1dca7);
+  border-radius:2px;
+  box-shadow:0 0 8px rgba(197,160,89,.35);
+}
+
+/* body copy: measured, calm, document-like */
+p, li{
+  line-height:1.85 !important;
+}
+
+/* lists carry counsel-style gold markers */
+main ul li::marker,
+article ul li::marker{
+  color:#c5a059;
+}
+
+/* tables & definition rows (document reference blocks) */
+table, .doc-meta{
+  border:1px solid rgba(197,160,89,.25);
+}
+th{
+  font-variant-caps:small-caps;
+  letter-spacing:.14em;
+  color:#f1dca7;
+}
+
+/* links: understated gold, underline on intent only */
+main a:not([class]), article a:not([class]){
+  color:#d8bd84;
+  text-decoration:none;
+  border-bottom:1px solid rgba(197,160,89,.35);
+  transition:border-color .25s ease, color .25s ease;
+}
+main a:not([class]):hover, article a:not([class]):hover{
+  color:#f1dca7;
+  border-bottom-color:#f1dca7;
+}
+
+/* ---------- the seal: faint IIS monogram, bottom-right, watermark ------- */
+body::after{
+  content:'';
+  position:fixed;
+  right:28px; bottom:24px;
+  width:120px; height:120px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.16;
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='56' fill='none' stroke='%23c5a059' stroke-width='1.4'/%3E%3Ccircle cx='60' cy='60' r='48' fill='none' stroke='%23c5a059' stroke-width='.7' stroke-dasharray='2 3'/%3E%3Ctext x='60' y='72' text-anchor='middle' font-family='Georgia, serif' font-size='34' fill='%23c5a059'%3EIIS%3C/text%3E%3Ctext x='60' y='26' text-anchor='middle' font-family='Georgia, serif' font-size='7.5' letter-spacing='2' fill='%23c5a059'%3EINTEGRATED IT SUPPORT%3C/text%3E%3Ctext x='60' y='102' text-anchor='middle' font-family='Georgia, serif' font-size='7.5' letter-spacing='3' fill='%23c5a059'%3EEST. ONTARIO%3C/text%3E%3C/svg%3E");
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+
+/* ---------- print: these ARE documents ---------- */
+@media print{
+  body::after{opacity:.3}
+  h2::before{display:none}
+}
+
+/* ---------- small screens: keep the register, drop the ornament --------- */
+@media (max-width:640px){
+  body::after{width:84px;height:84px;right:14px;bottom:14px;opacity:.12}
+}

@@ -169,3 +169,51 @@ footer a:hover { color: #f1dca7; }
   font-family: inherit;
 }
 .kb-related-btn:hover { color: #f1dca7; border-color: rgba(212,175,55,0.6); }
+
+/* Shared-brain guided turns inside the chat (2026-07-07) — same conversation design as iisupp.net/aria */
+.brain-turn { display: flex; flex-direction: column; gap: 7px; }
+.brain-emp { color: #e8ce96; font-style: italic; font-size: 12px; }
+.brain-say { color: #f3ecd9; font-size: 12.5px; line-height: 1.5; }
+.brain-ask { color: #f1dca7; font-family: 'Cinzel', Georgia, serif; font-size: 12.5px; font-weight: 600; letter-spacing: .03em; }
+.brain-opts { display: flex; flex-wrap: wrap; gap: 5px; }
+.brain-opt {
+  width: auto;
+  padding: 5px 11px;
+  font-size: 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(212,175,55,0.35);
+  background: rgba(212,175,55,0.08);
+  color: #f0e6cc;
+  cursor: pointer;
+  letter-spacing: 0;
+  text-transform: none;
+  font-family: inherit;
+}
+.brain-opt:hover { border-color: rgba(212,175,55,0.75); background: rgba(212,175,55,0.16); color: #f6ecd2; }
+.brain-steps { margin: 2px 0 0 0; padding: 0 0 0 4px; list-style: none; counter-reset: bs; }
+.brain-steps li {
+  position: relative;
+  padding: 6px 0 6px 26px;
+  border-bottom: 1px solid rgba(212,175,55,0.12);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #ded3b8;
+}
+.brain-steps li:last-child { border-bottom: 0; }
+.brain-steps li::before {
+  counter-increment: bs;
+  content: counter(bs);
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #d4af37;
+  color: #191307;
+  font: 600 10px/17px sans-serif;
+  text-align: center;
+}
+.brain-esc { font-size: 11px; color: #b9b09a; border-left: 2px solid rgba(212,175,55,0.4); padding-left: 9px; }
+.brain-also { font-size: 11px; color: #cbb27a; border-left: 2px solid #d4af37; padding-left: 9px; }
+.brain-tail { font-size: 11px; color: #8f886f; font-style: italic; }
