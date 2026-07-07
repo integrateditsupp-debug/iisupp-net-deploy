@@ -76,10 +76,18 @@
 
     var ranked = trendRank(cat.books);
 
-    /* ---------- featured strip: top 3 to the top of the page ---------- */
+    /* ---------- featured strip: top 3 to the top of the page ----------
+       Placement: ABOVE the "Two Paths" (For Humans / For AI Systems) split
+       section, so Trending is the first thing readers meet. Fallbacks keep
+       it working if that section ever changes. */
     if (!doc.getElementById('gl-featured')) {
-      var host = doc.getElementById('vault');
-      if (host && host.closest) host = host.closest('section') || host;
+      var host = null;
+      var split = doc.querySelector('.split-card');
+      if (split && split.closest) host = split.closest('section');
+      if (!host) {
+        host = doc.getElementById('vault');
+        if (host && host.closest) host = host.closest('section') || host;
+      }
       var anchor = host || (grid.closest && grid.closest('section')) || grid;
 
       var feat = doc.createElement('section');
