@@ -145,6 +145,45 @@ try {
   }
 } catch (e) { results.flagged.push(['services catch-all', String(e.message)]); }
 
+/* ---------------- asset cache-busting version stamps ----------------
+   /assets/* is served with a 7-day browser cache (max-age=604800), so asset
+   CHANGES must ship under a new URL. Stamp every reference to our four
+   assets with ?v=TOKEN. Re-runs replace older tokens (idempotent). */
+const TOKEN = '20260707c';
+const STAMP_ASSETS = ['iis-motion.css', 'iis-motion.js', 'iis-upgrades.js', 'legal-suite.css'];
+const SKIP_DIRS = new Set([
+  'node_modules', '.git', '.netlify', 'backups', 'archive', 'apps', 'tests',
+  'docs', 'scripts', 'senior-director-state', '_shipped-src', '_branch-src',
+  'aria-vault', 'aria_memory', 'aria_brain_pack', 'outputs', 'tmp', 'sdk',
+  'openclaw', 'extension', 'email', 'loops', 'tools', 'strategic-reference',
+  'knowledge-base', 'sample-scenarios', 'case-study-templates', 'design-handoff',
+]);
+let stamped = 0;
+function stampWalk(dir) {
+  for (const f of fs.readdirSync(dir)) {
+    const p2 = path.join(dir, f);
+    let st;
+    try { st = fs.statSync(p2); } catch (e) { continue; }
+    if (st.isDirectory()) {
+      if (!SKIP_DIRS.has(f) && !f.startsWith('.')) stampWalk(p2);
+      continue;
+    }
+    if (!f.endsWith('.html')) continue;
+    let html;
+    try { html = fs.readFileSync(p2, 'utf8'); } catch (e) { continue; }
+    let out = html;
+    for (const asset of STAMP_ASSETS) {
+      const re = new RegExp('(/assets/' + asset.replace('.', '\\.') + ')(\\?v=[\\w.\\-]*)?', 'g');
+      out = out.replace(re, '$1?v=' + TOKEN);
+    }
+    if (out !== html) {
+      if (!DRY) fs.writeFileSync(p2, out);
+      stamped++;
+    }
+  }
+}
+try { stampWalk(ROOT); } catch (e) { results.flagged.push(['asset stamping', String(e.message)]); }
+
 /* ---------------- service-worker bumps ---------------- */
 const swBumps = [];
 try {
@@ -188,6 +227,7 @@ console.log('Done      : ' + results.done.length);
 results.done.forEach(function (f) { console.log('   + ' + f); });
 console.log('Already   : ' + results.already.length);
 results.already.forEach(function (f) { console.log('   = ' + f); });
+console.log('Stamped   : ' + stamped + ' pages -> ?v=' + TOKEN);
 console.log('SW bumps  : ' + (swBumps.join(' | ') || 'none'));
 console.log('Flagged   : ' + results.flagged.length);
 results.flagged.forEach(function (r) { console.log('   ! ' + r[0] + ' — ' + r[1]); });
