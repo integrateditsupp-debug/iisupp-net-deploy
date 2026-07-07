@@ -1,15 +1,12 @@
 /*! ==========================================================================
-   IIS SITE UPGRADES v1.0 — additive page enhancers (Rule 15: add, never remove)
+   IIS SITE UPGRADES v1.1 — additive page enhancers (Rule 15: add, never remove)
    --------------------------------------------------------------------------
-   Self-detecting modules; each no-ops unless its page structures exist:
+   NOTE (v1.1): the Road Ahead roadmap on main already ships its own 3D flip
+   (rm-flip / rm-flip-inner inside aria-core.js). We therefore do NOT touch
+   its DOM here — iis-motion.css enriches that flip purely with CSS (deeper
+   3D, lift, glow, back-face sheen). The v1.0 DOM wrapper was removed.
 
-   1. ROADMAP FLIP — Road Ahead (#vision-roadmap, injected by aria-core.js).
-      Restructures each milestone card into front (title + status + hint) and
-      back (the full story) with a 3D flip. All original content preserved —
-      the description moves to the back face. Hover flips on desktop, tap
-      toggles on touch. Styles live in iis-motion.css.
-
-   2. GROWTH LIBRARY ORGANIZER (#books-grid + IIS_CATALOG.books):
+   GROWTH LIBRARY ORGANIZER (#books-grid + IIS_CATALOG.books):
       · "Trending this week" featured strip — top 3 books lifted to the top
         of the page, with a "See the full shelf" link down to the grid.
       · Topic filter chips above the shelf.
@@ -31,70 +28,7 @@
   }
 
   /* ======================================================================
-     1. ROADMAP FLIP
-     ====================================================================== */
-  function enhanceRoadmap() {
-    var tries = 0;
-    var timer = window.setInterval(function () {
-      tries++;
-      var rm = doc.getElementById('vision-roadmap');
-      if (!rm && tries < 40) return;            /* keep waiting up to ~20s */
-      window.clearInterval(timer);
-      if (!rm) return;
-      try { flipify(rm); } catch (e) { /* never break the page */ }
-    }, 500);
-  }
-
-  function flipify(rm) {
-    var cards = rm.querySelectorAll('.rm-card');
-    for (var i = 0; i < cards.length; i++) {
-      var card = cards[i];
-      if (card.classList.contains('rmf')) continue;
-      var h3 = card.querySelector('h3');
-      var p = card.querySelector('p');
-      if (!h3 || !p) continue;
-
-      var inner = doc.createElement('div');
-      inner.className = 'rmf-inner';
-
-      var front = doc.createElement('div');
-      front.className = 'rmf-face rmf-front';
-      var back = doc.createElement('div');
-      back.className = 'rmf-face rmf-back';
-
-      /* move ALL existing children into faces: heading stays front,
-         description moves to the back face. Anything else stays front. */
-      var kids = [];
-      while (card.firstChild) { kids.push(card.firstChild); card.removeChild(card.firstChild); }
-      for (var k = 0; k < kids.length; k++) {
-        if (kids[k] === p) back.appendChild(kids[k]);
-        else front.appendChild(kids[k]);
-      }
-
-      var hint = doc.createElement('span');
-      hint.className = 'rmf-hint';
-      hint.textContent = 'Flip for the story';
-      front.appendChild(hint);
-
-      inner.appendChild(front);
-      inner.appendChild(back);
-      card.appendChild(inner);
-      card.classList.add('rmf');
-
-      /* equalize: back face needs a workable height */
-      var fh = front.offsetHeight || 96;
-      inner.style.minHeight = Math.max(fh, 96) + 'px';
-
-      card.addEventListener('click', function (ev) {
-        /* tap toggle (mobile + accessibility); ignore clicks on links */
-        if (ev.target && ev.target.closest && ev.target.closest('a')) return;
-        this.classList.toggle('rmf-on');
-      });
-    }
-  }
-
-  /* ======================================================================
-     2. GROWTH LIBRARY ORGANIZER
+     GROWTH LIBRARY ORGANIZER
      ====================================================================== */
   var VIEWS_KEY = 'iis_gl_views_v1';
 
@@ -260,7 +194,6 @@
      boot
      ====================================================================== */
   onReady(function () {
-    try { enhanceRoadmap(); } catch (e) { /* noop */ }
     try { enhanceLibrary(); } catch (e) { /* noop */ }
   });
 })();
