@@ -23,9 +23,10 @@
     --muted-2:rgba(245,241,232,.48);
   }
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:
+  html{background:
     radial-gradient(circle at top, rgba(197,160,89,.13), transparent 30%),
-    linear-gradient(180deg, #080808 0%, #050505 100%);color:var(--text);font-family:'Inter',sans-serif}
+    linear-gradient(180deg, #080808 0%, #050505 100%)}
+  html,body{margin:0;padding:0;color:var(--text);font-family:'Inter',sans-serif}
   a{text-decoration:none;color:inherit}
   .shell{min-height:100vh;padding:28px 18px 72px}
   .topbar{
@@ -148,6 +149,7 @@
     .showcase-frame{min-height:260px}
   }
 </style>
+    <link rel="stylesheet" href="/assets/iis-motion.css">
 </head>
 <body>
   <div class="shell">
@@ -493,5 +495,6 @@
       });
     })();
   </script>
+  <script src="/assets/iis-motion.js" defer></script>
 </body>
 </html>
