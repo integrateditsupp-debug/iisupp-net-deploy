@@ -23,6 +23,11 @@ export const STAGED_REVIEW_FILES = [
     status: 'local_only'
   },
   {
+    relPath: 'senior-director-state/staged-start-here-support-ops-ladder-review-2026-06-30.md',
+    title: 'Start Here support-ops ladder slice',
+    status: 'local_only'
+  },
+  {
     relPath: 'senior-director-state/staged-overflow-conversion-review-2026-06-11.md',
     title: 'overflow conversion slice',
     status: 'local_only'
@@ -33,8 +38,88 @@ export const STAGED_REVIEW_FILES = [
     status: 'local_only'
   },
   {
+    relPath: 'senior-director-state/staged-aria-kb-product-ladder-review-2026-06-29.md',
+    title: 'ARIA support-KB product ladder slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-aria-support-ops-rail-review-2026-06-30.md',
+    title: 'ARIA support-ops fast-path slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-aria-support-ops-implementation-ladder-review-2026-07-04.md',
+    title: 'ARIA support-ops implementation ladder slice',
+    status: 'local_only'
+  },
+  {
     relPath: 'senior-director-state/staged-helpdesk-blueprint-preview-review-2026-06-11.md',
     title: 'Help Desk Blueprint sample-preview slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-helpdesk-blueprint-product-route-review-2026-06-27.md',
+    title: 'Help Desk Blueprint practical-route slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-growth-library-vault-details-review-2026-06-27.md',
+    title: 'Growth Library vault details-route slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-growth-library-monetization-ladder-review-2026-06-28.md',
+    title: 'Growth Library monetization-ladder slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-growth-library-support-kb-spotlight-review-2026-06-29.md',
+    title: 'Growth Library support-KB spotlight slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-growth-library-kb-product-route-review-2026-06-29.md',
+    title: 'Growth Library support-KB product-route slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-growth-library-kb-decision-rail-review-2026-06-29.md',
+    title: 'Growth Library support-KB decision-rail slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-growth-library-bundle-ladder-review-2026-06-29.md',
+    title: 'Growth Library bundle-and-membership ladder slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-growth-library-lane-aware-booking-review-2026-07-02.md',
+    title: 'Growth Library lane-aware booking slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-product-lane-aware-booking-review-2026-07-02.md',
+    title: 'product lane-aware booking slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-product-preview-booking-review-2026-07-02.md',
+    title: 'product preview booking cleanup slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-proof-preview-booking-review-2026-07-04.md',
+    title: 'proof-preview lane-aware booking cleanup slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-legacy-preview-booking-review-2026-07-04.md',
+    title: 'legacy preview booking cleanup slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-shared-conversion-switchboard-review-2026-06-27.md',
+    title: 'shared three-path conversion switchboard slice',
     status: 'local_only'
   },
   {
@@ -88,6 +173,21 @@ export const STAGED_REVIEW_FILES = [
     status: 'local_only'
   },
   {
+    relPath: 'senior-director-state/staged-homepage-support-ops-proof-review-2026-06-30.md',
+    title: 'homepage support-ops proof slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-homepage-booking-cta-review-2026-07-01.md',
+    title: 'homepage booking CTA slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-booking-offer-qualifier-review-2026-07-01.md',
+    title: 'booking offer-qualifier slice',
+    status: 'local_only'
+  },
+  {
     relPath: 'senior-director-state/staged-monthly-ai-support-preview-review-2026-06-12.md',
     title: 'Monthly AI Support Plan preview slice',
     status: 'local_only'
@@ -100,6 +200,56 @@ export const STAGED_REVIEW_FILES = [
   {
     relPath: 'senior-director-state/staged-services-fit-deliverable-review-2026-06-12.md',
     title: 'services fit-and-first-deliverable slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-services-support-ops-ladder-review-2026-06-29.md',
+    title: 'services support-ops ladder slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-services-lane-aware-booking-review-2026-07-01.md',
+    title: 'services lane-aware booking slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-support-ops-implementation-booking-lane-review-2026-07-02.md',
+    title: 'support-ops implementation booking lane slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-office-readiness-booking-lane-review-2026-07-02.md',
+    title: 'office-readiness booking lane slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-shop-support-kb-route-review-2026-07-01.md',
+    title: 'Shop support-KB route slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-shop-lane-aware-booking-review-2026-07-02.md',
+    title: 'Shop lane-aware booking slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-support-kb-booking-lane-review-2026-07-01.md',
+    title: 'support-KB booking lane slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-monthly-support-booking-lane-review-2026-07-02.md',
+    title: 'monthly-support booking lane slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-government-enterprise-procurement-cta-review-2026-07-01.md',
+    title: 'government-enterprise procurement staging slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-verticals-booking-cta-review-2026-07-01.md',
+    title: 'vertical-sector booking CTA slice',
     status: 'local_only'
   },
   {
@@ -123,6 +273,16 @@ export const STAGED_REVIEW_FILES = [
     status: 'local_only'
   },
   {
+    relPath: 'senior-director-state/staged-ai-edge-product-ladder-review-2026-06-30.md',
+    title: 'AI Edge product-ladder slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-roi-routeback-review-2026-06-18.md',
+    title: 'ROI routeback conversion slice',
+    status: 'local_only'
+  },
+  {
     relPath: 'senior-director-state/staged-nocode-kit-preview-review-2026-06-13.md',
     title: 'No-Code Automation Kit preview slice',
     status: 'local_only'
@@ -135,6 +295,11 @@ export const STAGED_REVIEW_FILES = [
   {
     relPath: 'senior-director-state/staged-marketplace-bridge-conversion-review-2026-06-13.md',
     title: 'Marketplace quote-first routeback slice',
+    status: 'local_only'
+  },
+  {
+    relPath: 'senior-director-state/staged-marketplace-procurement-booking-review-2026-07-01.md',
+    title: 'Marketplace procurement-fit booking slice',
     status: 'local_only'
   }
 ];

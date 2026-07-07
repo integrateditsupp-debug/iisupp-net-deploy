@@ -36,9 +36,9 @@ const VENDOR_REGISTRATION_METADATA = {
     angle:
       'Integrated IT Support as a senior-led supplier for Microsoft 365 support, workflow automation, endpoint/readiness work, knowledge-base delivery, and controlled operational improvement without broad financial-platform claims.',
     nextPrep:
-      'Use `senior-director-state/td-supplier-registration-prep-pack-2026-06-12.md` plus `senior-director-state/td-supplier-register-checklist-2026-06-13.md`, follow the public SAP Ariba supplier-request path, solve the live reCAPTCHA if Ahmad wants to proceed, and stop before Submit.',
+      'Use `senior-director-state/td-live-request-handoff-2026-07-02.md`, `senior-director-state/td-supplier-registration-prep-pack-2026-06-12.md`, and `senior-director-state/td-supplier-register-checklist-2026-06-13.md`; the live SAP Ariba request path is already restaged at the reCAPTCHA gate, so stop before solving the CAPTCHA or clicking Submit without Ahmad.',
     draftMessage:
-      'Integrated IT Support has a grounded TD supplier-request lane through the official SAP Ariba intake path. The safe next step is to keep the legal-name, address, contact, and relationship-to-TD answers ready, preserve the live reCAPTCHA blocker, and stop before Ahmad certifies or submits anything.',
+      'Integrated IT Support now has a live TD SAP Ariba handoff parked at the reCAPTCHA gate. The safe next step is to keep the legal-name, address, contact, and relationship-to-TD answers ready so Ahmad can inspect the real supplier-request fields before any certification or submit action.',
     requiredDocuments: [
       'Company profile',
       'Services summary',
@@ -55,7 +55,7 @@ const VENDOR_REGISTRATION_METADATA = {
       'Confirm which insurance, privacy/security, accessibility, or due-diligence items are only later-stage requirements.',
     ],
     finalAction:
-      'Ahmad reviews the TD request answers, solves the live reCAPTCHA if he wants to proceed, and clicks Submit only if he is comfortable certifying TD Supplier Code of Conduct alignment.',
+      'Ahmad reviews the TD handoff and request answers, solves the live reCAPTCHA only if he wants to continue, and clicks Submit only if he is comfortable certifying TD Supplier Code of Conduct alignment.',
   },
   'RBC supplier/vendor portal registration review': {
     prepPack: 'senior-director-state/rbc-supplier-registration-prep-pack-2026-06-11.md',
@@ -67,9 +67,9 @@ const VENDOR_REGISTRATION_METADATA = {
     angle:
       'Integrated IT Support as a telecom-adjacent operational supplier for Microsoft 365 support, endpoint readiness, documentation, workflow automation, and scoped office/field technology support without carrier-core or national rollout overclaims.',
     nextPrep:
-      'Use `senior-director-state/rogers-supplier-registration-prep-pack-2026-06-12.md`, follow the public portal into Ivalua, confirm the CAPTCHA-gated registration flow, and stop before Create Account/Register/Submit.',
+      'Use `senior-director-state/rogers-live-registration-handoff-2026-07-02.md` plus `senior-director-state/rogers-supplier-registration-prep-pack-2026-06-12.md`; the live Ivalua self-registration path is already restaged at the CAPTCHA gate, so stop before solving the CAPTCHA or clicking Create Account/Register/Submit.',
     draftMessage:
-      'Integrated IT Support has a verified Rogers supplier entry path through the public supplier portal into Ivalua. The safe next step is to review the CAPTCHA-gated registration flow, supplier-code expectations, and required fields before Ahmad creates an account or certifies anything.',
+      'Integrated IT Support now has a live Rogers Ivalua handoff parked at the browser-check CAPTCHA gate. The safe next step is for Ahmad to decide whether to solve that CAPTCHA, inspect the real registration fields, and only then consider account creation.',
     requiredDocuments: [
       'Company profile',
       'Services summary',
@@ -78,11 +78,11 @@ const VENDOR_REGISTRATION_METADATA = {
       'Reference and policy readiness note',
     ],
     blockers: [
-      'Pass the live Ivalua CAPTCHA and inspect the actual self-registration fields before any data entry.',
+      'Solve the live Ivalua CAPTCHA before the actual self-registration fields can be inspected.',
       'Confirm whether Rogers immediately requests sourcing, banking, invoice, or compliance attestations beyond supplier-database registration.',
     ],
     finalAction:
-      'Ahmad reviews the Rogers packet, solves the CAPTCHA if he wants to proceed, and clicks Create Account/Register only if satisfied.',
+      'Ahmad reviews the Rogers handoff, solves the CAPTCHA only if he wants to continue, and clicks Create Account/Register only if satisfied.',
   },
   'TELUS procurement registration review': {
     prepPack: 'senior-director-state/telus-supplier-registration-prep-pack-2026-06-12.md',
@@ -165,16 +165,16 @@ const VENDOR_REGISTRATION_METADATA = {
     angle:
       'Integrated IT Support as a telecom-adjacent technology operations supplier for endpoint readiness, Microsoft 365 support, documentation, workflow automation, and scoped office/field support without overclaiming carrier-core or national rollout capability.',
     nextPrep:
-      'Use `senior-director-state/rogers-supplier-registration-prep-pack-2026-06-12.md`, follow the public portal into Ivalua, confirm the CAPTCHA-gated registration flow and code-of-conduct expectations, and stop before Create Account/Register/Submit.',
+      'Use `senior-director-state/rogers-live-registration-handoff-2026-07-02.md`, `senior-director-state/rogers-supplier-registration-prep-pack-2026-06-12.md`, and `senior-director-state/rogers-supplier-register-checklist-2026-06-13.md`; the live Rogers path is already stopped at the CAPTCHA gate, so do not solve the CAPTCHA or continue into Create Account/Register/Submit without Ahmad.',
     draftMessage:
-      'Integrated IT Support is preparing for Rogers supplier self-registration from the public supplier portal. The safe next step is to confirm the CAPTCHA-gated portal fields, contact/support routes, and supplier-code expectations before Ahmad creates an account or certifies anything.',
+      'Integrated IT Support is preparing for Rogers supplier self-registration from a live handoff parked at the CAPTCHA gate. The safe next step is to keep the packet and checklist ready so Ahmad can inspect the true registration and compliance asks before any account creation.',
     requiredDocuments: DEFAULT_REQUIRED_DOCUMENTS,
     blockers: [
-      'Pass the live Ivalua CAPTCHA and inspect the actual self-registration fields before any data entry.',
+      'Solve the live Ivalua CAPTCHA before the actual self-registration fields and supplier-code asks become visible.',
       'Confirm supplier-code, labour/ethics, privacy, insurance, banking, tax, or environmental attestation requirements before final action.',
     ],
     finalAction:
-      'Ahmad reviews the Rogers packet, solves the CAPTCHA if he wants to proceed, and clicks Create Account/Register only if satisfied.',
+      'Ahmad reviews the Rogers handoff and checklist, solves the CAPTCHA only if he wants to proceed, and clicks Create Account/Register only if satisfied.',
   },
   'TELUS supplier procurement review': {
     prepPack: 'senior-director-state/telus-supplier-registration-prep-pack-2026-06-12.md',

@@ -228,14 +228,38 @@ function parseRemotive(json, source) {
 }
 
 function manualOpportunity(source) {
+  const manual = source.manualOpportunity || {};
+  const type = source.type || "lead";
+  const defaultTitle =
+    manual.title ||
+    (type === "vendor registration" ? `${source.name} registration review` : source.name);
+  const defaultOrganization =
+    manual.organization ||
+    (type === "vendor registration"
+      ? source.name.replace(/\s+(supplier|vendor|procurement).*/i, "")
+      : source.name);
+  const defaultDescription =
+    manual.description ||
+    (type === "vendor registration"
+      ? "Manual vendor portal opportunity. Review requirements, prepare company profile, and stop before account creation or legal certification."
+      : "Manual opportunity added from verified internal lead review. Confirm requirements, prepare a truthful packet, and stop before submit or any legal commitment.");
+  const defaultNextStep =
+    manual.recommendedNextStep ||
+    (type === "vendor registration"
+      ? "Review portal and prepare registration checklist for Ahmad approval."
+      : "Review the official source, prepare a go/no-go brief, and stop before Submit/Send.");
   return buildOpportunity({
     source,
-    title: `${source.name} registration review`,
-    organization: source.name.replace(/\s+(supplier|vendor|procurement).*/i, ""),
-    link: source.url,
-    description:
-      "Manual vendor portal opportunity. Review requirements, prepare company profile, and stop before account creation or legal certification.",
-    recommendedNextStep: "Review portal and prepare registration checklist for Ahmad approval."
+    title: defaultTitle,
+    organization: defaultOrganization,
+    link: manual.link || source.url,
+    description: defaultDescription,
+    recommendedNextStep: defaultNextStep,
+    deadline: manual.deadline || null,
+    salary: manual.salary || "",
+    location: manual.location || null,
+    remoteStatus: manual.remoteStatus || null,
+    publishedAt: manual.publishedAt || null
   });
 }
 
@@ -425,7 +449,11 @@ async function main() {
 
   const items = mergeItems(priorDb.items || [], found);
   await writeFile(dbPath, JSON.stringify({ version: 1, updated: nowIso(), items }, null, 2));
-  await writeFile(logPath, JSON.stringify({ version: 1, updated: nowIso(), actions: logDb.actions.slice(-1000) }, null, 2));
+  try {
+    await writeFile(logPath, JSON.stringify({ version: 1, updated: nowIso(), actions: logDb.actions.slice(-1000) }, null, 2));
+  } catch (error) {
+    errors.push({ sourceId: "actions-log", sourceName: "actions log write", error: error.message });
+  }
   await publishAgentReport({
     agentId: "opportunity-research-agent",
     label: "Opportunity Research Agent",

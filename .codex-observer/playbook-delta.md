@@ -1,24 +1,29 @@
-# Codex Playbook — Delta
-_New patterns only. Emitted by `codex-observer` for Cowork coordination._
+# Codex Playbook — Delta (scan 2026-07-07 vs 2026-07-03)
 
-- **this scan:** 2026-06-25T13:09:34Z (window since 2026-06-23T13:09:34Z)
-- **prior scan:** 2026-06-24T13:16:09Z (window since 2026-06-22T13:16Z)
-- **verdict:** **NEW PATTERNS** — 30 net-new commits since prior scan.
+**Window:** all-refs, 2d (net-new since prior scan 07-03T21:08). Read-only, $0.
 
-## Net-new since prior scan
-- **30 commits**, all 2026-06-24T16:34→19:54 ET, on **2 NEW branches**: `cc/coverage-buildout-2026-06-24`, `cc/coverage-sentinel-2026-06-24`.
-- Newest across all branches: `60a4093b` (06-24 19:54). Checked-out HEAD `300d240` unchanged (parked on old branch — do not read as "no activity").
+## Top-line
+| Metric | Prior (07-03) | Now (07-07) | Move |
+|---|---|---|---|
+| Net-new commits | 58 (all-refs/2d) | 6 net-new | quieted |
+| Author mix | integrateditsupp-debug 47/58 + ~9 flywheel | integrateditsupp-debug 6/6 | fully consolidated |
+| origin/main HEAD | 0fde03ca (advanced that window) | 0fde03ca | **FROZEN ~3.8d** |
+| Top dir | aria-vault/iisupp-strategic | ARIA Sentinel/tests | web->desktop pivot |
+| .git/index.lock | stale ~16h (flagged) | **cleared** | resolved |
 
-## New patterns detected
-1. **Cadence shift: RUN-NN → DoD-criterion.** `run` (prior #1, 42×) gone from top tokens. New: `slice` 15, `coverage` 13, `dod` 10, `criterion` 10, `recipes` 6, `real` 7, `llm` 5. Evidence-first / definition-of-done commit style.
-2. **Tag-lane flip:** `[cc]` 6→42 (now dominant); `[sentinel]` 49→2; `[aria]` 17→0.
-3. **New directories:** `compliance/` (top-10, replaces `tests`); `ARIA Sentinel/docs` (90) + `ARIA Sentinel/design-review` (34) new 2-seg hotspots; `ARIA Sentinel/tests` 68→201, `src` 65→168.
-4. **New branches:** `cc/coverage-buildout-2026-06-24`, `cc/coverage-sentinel-2026-06-24`.
+## What's new
+- **Theme pivot web -> desktop.** Prior window was the /plans interactive staffing-cost pricing-calculator (v2->v12) — web conversion lane. This window is 100% **ARIA Sentinel** (the desktop product): a demo/proof push.
+- **6 Sentinel commits (07-04 -> 07-05), all on `cc/security-lockdown-2026-07-01`, pushed to origin, NOT merged:**
+  - af5e03ab Harden ARIA Sentinel production proof (big; +KB pack, admin console, report-gen, compliance/perf/reports tabs)
+  - cd518cea Add 100-call demo lab
+  - 9f2b9bd7 Add live capture demo
+  - 69058206 Add visible autonomy demo
+  - ddfcac5b Add file association guard (main.mjs + preload + shared guard + test)
+  - c0a0f6b4 Add Resolution tab (renderer + test)
+- **Churn +7765 / -651**, concentrated ARIA Sentinel/tests (62 files) + src (57). Test-first discipline holding.
 
-## Unchanged
-- `codex/*` namesake lane: still 0 in window, last 06-18 (now dormant ~7d).
-- Ahmad-dominant authorship (50/58).
-- Churn still artifact-inflated (+539K/−11K).
-
-## Coordination note for Cowork
-The Sentinel coverage+DoD work is **complete-and-verified on feature branches but unmerged to `main`**. If Cowork is about to touch Sentinel, branch from `cc/coverage-sentinel-2026-06-24` (newest), not from stale `main`.
+## Flags for Ahmad
+1. **origin/main frozen ~3.8 days (~90h) at 0fde03ca** — nothing merged since PR #5. Two full revenue lanes now sit unmerged off main.
+2. **Two parked revenue lanes:** (a) /plans pricing calculator (prior-window branch) and (b) Sentinel demo/proof suite (this-window branch, origin/cc/security-lockdown-2026-07-01). Both are conversion assets that only convert once merged + published.
+3. **index.lock cleared** — the recurring 7+ consecutive stale-lock flag is gone; scans no longer blocked.
+4. Codex/* namesake dormant ~17d; lane is 100% CC-flywheel under integrateditsupp-debug.

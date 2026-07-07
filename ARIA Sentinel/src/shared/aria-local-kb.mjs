@@ -55,6 +55,19 @@ export function inferPlatform(message, hostPlatform = "") {
 // rejected honestly — we never force a match to pad the metric.
 export const TITLE_BOOST = 3;
 export const MATCH_FLOOR = 0.30;
+// Phase F (D1 follow-up) — a query PHRASE that appears verbatim in a doc's headings (stemmed bigram,
+// e.g. "windows update", "update stuck") is a far stronger topical signal than the same two words
+// scattered across different headings. The bonus is additive-only: docs without a phrase hit keep
+// their exact previous score, so tuned routing stays put and near-ties break toward the true topic.
+export const PHRASE_BOOST = TITLE_BOOST;
+
+/** Consecutive stemmed-token pairs ("a b") of a text — the phrase signal used by scoreKbDoc. */
+export function stemBigrams(text) {
+  const stems = tokenize(text).map(stem);
+  const out = new Set();
+  for (let i = 0; i + 1 < stems.length; i += 1) out.add(`${stems[i]} ${stems[i + 1]}`);
+  return out;
+}
 
 /** Light, symmetric stemmer (applied to query AND doc tokens) so word forms align. */
 export function stem(word) {
@@ -113,6 +126,9 @@ function ensureStems(doc) {
   if (!doc._stemTitleSet) {
     doc._stemTitleSet = new Set(tokenize(doc._headings || doc.title || "").map(stem));
   }
+  if (!doc._headingBigrams) {
+    doc._headingBigrams = stemBigrams(doc._headings || doc.title || "");
+  }
   return doc;
 }
 
@@ -122,12 +138,19 @@ function ensureStems(doc) {
  * come from matchKb; `opts.explicit` is the user-named platform ("" = none).
  */
 export function scoreKbDoc(doc, queryStems, opts = {}) {
-  const { idf = () => 1, totalIdf = 1, explicit = "", titleBoost = TITLE_BOOST } = opts;
+  const { idf = () => 1, totalIdf = 1, explicit = "", titleBoost = TITLE_BOOST, queryBigrams = [], phraseBoost = PHRASE_BOOST } = opts;
   if (!doc || !Array.isArray(queryStems) || !queryStems.length) return { score: 0 };
   ensureStems(doc);
   let sum = 0;
   for (const q of queryStems) {
     if (doc._stemSet.has(q)) sum += idf(q) * (doc._stemTitleSet.has(q) ? titleBoost : 1);
+  }
+  // Phrase bonus — a query bigram found verbatim in the headings adds the pair's average IDF, boosted.
+  for (const bigram of queryBigrams) {
+    if (doc._headingBigrams.has(bigram)) {
+      const [a, b] = bigram.split(" ");
+      sum += phraseBoost * ((idf(a) + idf(b)) / 2);
+    }
   }
   let score = sum / (totalIdf || 1);
   if (explicit && doc.platform) score *= (doc.platform === explicit ? 1.5 : 0.5); // bias ONLY on a named platform
@@ -145,9 +168,10 @@ export function matchKb(index, message, { platform = "", min = MATCH_FLOOR } = {
   if (!Q.length) return null;
   const totalIdf = Q.reduce((s, q) => s + idf(q), 0) || 1;
   const explicit = explicitPlatformMention(message);
+  const queryBigrams = [...stemBigrams(message)];
   let best = null, bestScore = min;
   for (const doc of docs) {
-    const { score } = scoreKbDoc(doc, Q, { idf, totalIdf, explicit });
+    const { score } = scoreKbDoc(doc, Q, { idf, totalIdf, explicit, queryBigrams });
     if (score > bestScore) { bestScore = score; best = doc; }
   }
   return best ? { doc: best, score: bestScore, platform: inferPlatform(message, platform) } : null;

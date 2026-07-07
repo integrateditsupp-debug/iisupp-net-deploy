@@ -2,6 +2,13 @@ const bridge = document.getElementById("bridge");
 const messages = document.getElementById("messages");
 const input = document.getElementById("input");
 const chromeApi = globalThis.chrome?.runtime?.sendMessage ? globalThis.chrome : createPreviewChromeApi();
+const ARIA_WEB_URL = "https://iisupp.net/aria";
+const ARIA_KB_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-kb-query";
+const ARIA_CHAT_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-chat";
+const KB_CONFIDENCE_MIN = 8;
+const EXTENSION_BUILD_MARKER = globalThis.AriaSitePrefs?.EXTENSION_BUILD_MARKER || "unknown";
+
+document.documentElement.dataset.sentinelBuild = EXTENSION_BUILD_MARKER;
 
 init();
 
@@ -12,6 +19,7 @@ async function init() {
     ? "Connected to the local desktop agent. Browser fixes stay on this machine."
     : "The desktop app is not running. I can still perform browser-only fixes.");
   renderStatusBadge(ping.ok);
+  await initProtectionToggle();
   await initSiteToggle();
   await renderTodayCounter();
 }
@@ -72,6 +80,34 @@ async function initSiteToggle() {
   });
 }
 
+async function initProtectionToggle() {
+  const prefs = globalThis.AriaSitePrefs;
+  const box = document.getElementById("protectionToggle");
+  const stateEl = document.getElementById("protectionState");
+  if (!prefs || !box || !globalThis.chrome?.storage?.sync) return;
+  const render = (protection) => {
+    box.checked = protection.enabled;
+    box.disabled = Boolean(protection.locked);
+    if (stateEl) {
+      if (protection.locked) stateEl.textContent = protection.enabled ? "Monitoring active - locked by admin" : "Monitoring paused - locked by admin";
+      else stateEl.textContent = protection.enabled ? "Monitoring active" : "Monitoring paused";
+    }
+  };
+  render(await prefs.loadEffectiveProtection(chrome.storage.sync, chrome.storage.managed));
+  box.addEventListener("change", async () => {
+    const current = await prefs.loadEffectiveProtection(chrome.storage.sync, chrome.storage.managed);
+    if (current.locked) {
+      render(current);
+      return;
+    }
+    const enabled = Boolean(box.checked);
+    await prefs.saveProtection(chrome.storage.sync, enabled);
+    const result = await chromeApi.runtime.sendMessage({ type: "SET_PROTECTION", payload: { enabled } });
+    if (result?.error === "policy_locked") render(await prefs.loadEffectiveProtection(chrome.storage.sync, chrome.storage.managed));
+    else render({ enabled, locked: false });
+  });
+}
+
 document.getElementById("clearCache").addEventListener("click", async () => {
   const [tab] = await chromeApi.tabs.query({ active: true, currentWindow: true });
   const result = await chromeApi.runtime.sendMessage({ type: "CLEAR_ORIGIN_CACHE", payload: { origin: originFrom(tab.url) } });
@@ -95,6 +131,10 @@ document.getElementById("openDesktop").addEventListener("click", async () => {
   await chromeApi.tabs.create({ url: "http://127.0.0.1:37841/state" });
 });
 
+document.getElementById("openAriaWeb").addEventListener("click", async () => {
+  await chromeApi.tabs.create({ url: ARIA_WEB_URL });
+});
+
 document.getElementById("send").addEventListener("click", send);
 input.addEventListener("keydown", (event) => {
   if (event.key === "Enter") send();
@@ -110,7 +150,10 @@ async function send() {
     type: "ASK_SENTINEL",
     payload: { message: text, url: tab?.url || "" }
   });
-  addMessage("aria", result.text || result.error || "ARIA could not respond.");
+  const provider = result.provider === "aria-web-chat" || result.provider === "aria-web-kb" ? "ARIA web chat: " : "";
+  const webUrl = result.webChatUrl || result.webBrainUrl;
+  const webHint = webUrl ? `\n\nOpen ARIA web: ${webUrl}` : "";
+  addMessage("aria", `${provider}${result.text || result.error || "ARIA could not respond."}${webHint}`);
 }
 
 function addMessage(role, text) {
@@ -153,9 +196,49 @@ function createPreviewChromeApi() {
               headers: { "content-type": "application/json" },
               body: JSON.stringify({ message: message.payload?.message || "", context: { surface: "popup-preview" } })
             });
-            return await response.json();
+            const local = await response.json();
+            if (local && (local.text || local.reply)) return { ...local, provider: local.provider || "sentinel-desktop-bridge", webChatUrl: ARIA_WEB_URL };
           } catch {
-            return { ok: true, text: "Preview mode: desktop bridge is offline, browser-only fixes remain local." };
+            // Fall through to ARIA web chat.
+          }
+          try {
+            const kbResponse = await fetch(ARIA_KB_ENDPOINT, {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ query: String(message.payload?.message || "").slice(0, 1000), platform: "browser-extension" })
+            });
+            if (kbResponse.ok) {
+              const kb = await kbResponse.json();
+              if (kb.match && Number(kb.confidence) >= KB_CONFIDENCE_MIN && kb.content_excerpt) {
+                const article = kb.article || {};
+                return {
+                  ok: true,
+                  provider: "aria-web-kb",
+                  text: `${kb.content_excerpt}${article.url ? `\n\nFull ARIA article: ${article.url}` : ""}`,
+                  webChatUrl: ARIA_WEB_URL
+                };
+              }
+            }
+          } catch {
+            // Fall through to aria-chat.
+          }
+          try {
+            const response = await fetch(ARIA_CHAT_ENDPOINT, {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({
+                messages: [{ role: "user", content: String(message.payload?.message || "").slice(0, 1000) }],
+                sessionId: null,
+                source: "sentinel-browser-extension-preview",
+                platform: "browser-extension",
+                tier: "",
+                version: ""
+              })
+            });
+            const web = await response.json();
+            return { ok: true, provider: "aria-web-chat", text: web.text || web.reply || "ARIA web chat responded.", webChatUrl: ARIA_WEB_URL };
+          } catch {
+            return { ok: true, provider: "local-extension", text: `Preview mode: open ${ARIA_WEB_URL} for the full ARIA web chat.`, webChatUrl: ARIA_WEB_URL };
           }
         }
         return { ok: true };

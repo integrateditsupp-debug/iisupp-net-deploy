@@ -80,11 +80,22 @@ const weakFit = [
   /placard holder/i,
   /tractor/i,
   /spectrometer/i,
+  /dilatometer/i,
+  /storage cage/i,
+  /modular storage cage/i,
+  /wind wall/i,
+  /laboratory wind wall/i,
+  /motion platform/i,
+  /hexapod/i,
+  /security guards?/i,
+  /licenses? renewal/i,
+  /cloudera/i,
   /construction(?!.*software|.*technology|.*data|.*security)/i
 ];
 
 const jobCoreFit = /ai|automation|software|developer|engineer|devops|cloud|security|product manager|product development|technical product|site reliability|solutions engineer|platform/i;
-const goodsTenderNoise = /generator|spare parts?|furniture|chairs|containers?|conduit|placard holder|tractor|spectrometer|vehicle|roof|retrofit|repair(?!.*software|.*system)|warehouse|imaging|veterinary|sewage|lift station|force main|cooling coils?|boat house|rehabilitation|lockstation|office space study|replacement/i;
+const goodsTenderNoise = /generator|spare parts?|furniture|chairs|containers?|conduit|placard holder|tractor|spectrometer|dilatometer|storage cage|modular storage cage|wind wall|laboratory wind wall|motion platform|hexapod|licenses? renewal|cloudera|vehicle|roof|retrofit|repair(?!.*software|.*system)|warehouse|imaging|veterinary|sewage|lift station|force main|cooling coils?|boat house|rehabilitation|lockstation|office space study|replacement/i;
+const marketingTenderNoise = /digital marketing|digital advertising|advertising services|marketing growth services|media buying|search engine marketing|\bsem\b|search engine optimization|\bseo\b|social media campaign|brand awareness|campaign optimization|lead generation campaign/i;
 const digitalTenderSignals = /software|application|cloud|cyber|security|data|digital|it support|technical support|help desk|developer|devops|architect|project manager|system|network|backup|identity|microsoft|azure|aws|lms|learning management/i;
 const roleStaffingTenderSignals = /\btbips\b|\btsps\b|\bths\b|temporary help services|supply arrangement|level\s?[1-5]\b|stream\s+\d|p\.\d|project manager|security architect|business system analyst|application\/software architect|programmer\/software developer|special advisor|professional services/i;
 const managedServiceSignals = /help desk|it support|technical support|managed service|operations support|maintenance and support|workflow|knowledge base|documentation|m365|microsoft 365|office move|website|automation blueprint/i;
@@ -126,6 +137,13 @@ function isGoodsTenderNoise(item) {
   return goodsTenderNoise.test(text) && !digitalTenderSignals.test(text);
 }
 
+function isMarketingTenderNoise(item) {
+  if (!['tender', 'contract'].includes(item.type)) return false;
+  const text = factText(item);
+  if (!marketingTenderNoise.test(text)) return false;
+  return !/website redesign|website redevelopment|web development|marketing automation platform|crm implementation|analytics implementation|software implementation/i.test(text);
+}
+
 function isCategoryFeedFalsePositive(item) {
   if (!['tender', 'contract'].includes(item.type)) return false;
   const feed = `${item.sourceName || ''} ${item.organization || ''}`.toLowerCase();
@@ -150,7 +168,7 @@ async function readJson(file, fallback) {
   }
 }
 
-function quality(item) {
+function quality(item, override) {
   const haystack = factText(item);
   let score = 0;
   for (const pattern of strongFit) if (pattern.test(haystack)) score += 1;
@@ -164,8 +182,11 @@ function quality(item) {
   if (item.type === 'job' && /sales|marketing|assistant|coordinator|courier/i.test(haystack) && !/salesforce|engineer|developer|ai|automation|technical/i.test(haystack)) score -= 5;
   if (item.type === 'job' && /sales|marketing/i.test(haystack) && !/salesforce|engineer|developer|ai|automation|technical/i.test(haystack)) score -= 3;
   if (isGoodsTenderNoise(item)) score -= 8;
+  if (isMarketingTenderNoise(item)) score -= 8;
   if (isCategoryFeedFalsePositive(item)) score -= 6;
   if (isRoleStaffingTender(item)) score -= 5;
+  if (override?.disposition === 'partner_path_only') score -= 1;
+  if (override?.disposition === 'research_more_go_no_go') score += 3;
   if (/remote/i.test(haystack)) score += 1;
   if (/government|department|shared services canada|dnd|canadabuys/i.test(haystack) && score > 0) score += 1;
   return score;
@@ -195,7 +216,7 @@ async function main() {
 
   const items = (db.items || []).map((item) => {
     const override = findOverride(item, overrides);
-    const q = quality(item);
+    const q = quality(item, override);
     const status = override?.action === 'ignore' ? 'ignored' : newStatus(item, q);
     const next = {
       ...item,

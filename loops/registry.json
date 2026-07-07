@@ -1,6 +1,6 @@
 {
   "schema": "iis-loops/v1",
-  "updated": "2026-06-26T10:00:00Z",
+  "updated": "2026-07-07T11:31:07Z",
   "loops": [
     {
       "id": "lead-radar",
@@ -75,16 +75,17 @@
       "owner": "joint",
       "cadence": "0 10 * * *",
       "class": "Observer",
-      "status": "running",
+      "status": "idle",
       "approved_spend_usd": 0,
-      "last_run": "2026-06-26T10:00:00Z",
-      "success_count": 4,
+      "last_run": "2026-07-07T11:31:07Z",
+      "success_count": 12,
       "failure_count": 0,
       "spawns": [],
       "serves_top_goal": true,
       "scheduled_via": "cowork-scheduled-tasks",
       "scheduler_id": "goal-alignment-loop",
-      "last_run_outcome": "success"
+      "last_run_outcome": "success",
+      "last_run_note": "aligned 34/34, 0 drifting (12th run); all 34 registered loops carry serves:top-goal (27 agent loops serve-only, 7 operational loops name a sub-goal token). Coverage gaps persist: #5 Capability Statement +17d overdue/unowned; #2/#3 sdr-agent+demand-gen still status:planned. Stale .git/index.lock ~11h (00:33Z) present but Codex namesake dormant ~17d; file-only writes, no git ops; $0."
     },
     {
       "id": "codex-observer",
@@ -93,11 +94,11 @@
       "owner": "cowork",
       "cadence": "0 13,21 * * 1-5",
       "class": "Observer",
-      "status": "running",
+      "status": "idle",
       "approved_spend_usd": 0,
-      "last_run": "2026-06-25T13:09:34Z",
+      "last_run": "2026-07-07T04:31:00Z",
       "last_run_outcome": "success",
-      "success_count": 4,
+      "success_count": 13,
       "failure_count": 0,
       "skip_count": 1,
       "last_skip": "2026-06-24T21:07:43Z",
@@ -105,7 +106,8 @@
       "spawns": [],
       "serves_top_goal": true,
       "scheduled_via": "cowork-scheduled-tasks",
-      "scheduler_id": "codex-observer-loop"
+      "scheduler_id": "codex-observer-loop",
+      "last_run_note": "origin/main 376f3ffb->0fde03ca (Merge PR #5 master-fix). NEW /plans pricing-calculator burst v2->v12 (13-role staffing-cost calc + PDF quote + Pro hover-flip + homepage flip-card) on working branch, NOT yet on main. STAGE-2 /aria 'Show ARIA the problem' drop-zone branch-only (vision 68->76). Author integrateditsupp-debug dominant 47/58; Codex/* dormant ~15d. Stale .git/index.lock ~16h — flagged for Ahmad rm."
     },
     {
       "id": "tender-enrich",
@@ -560,9 +562,9 @@
   ],
   "agents_added": "2026-06-15 — 27 agent org chart (CEO + 6 C-suite + 20 reports)",
   "codex-observer": {
-    "last_run": "2026-06-25T21:06:29Z",
-    "success_count": 1,
-    "failure_count": 0,
-    "skip_count": 0
+    "last_run": "2026-07-03T21:08:40Z",
+    "success_count": 11,
+    "failure_count": 1,
+    "skip_count": 1
   }
 }

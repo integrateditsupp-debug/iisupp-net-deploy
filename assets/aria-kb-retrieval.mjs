@@ -9,9 +9,18 @@
 // article almost always wins over generic token overlap. First match wins per id.
 const ROUTING = [
   [/\b(blue\s*screen|bsod|stop\s*error|kernel\s*panic|critical_process_died|whea_uncorrectable)\b/i, 'l1-windows-001'],
+  // RUN 36 round-3 - top50-gap hard routes for calendar, external display, and conference-room AV.
+  [/\b(outlook\s+)?calendar\b.*\b(missing|disappear|sync|double.?book|free.?busy|shared|permissions?|delegate|invite|invitation|\.ics|room|resource|accept|decline|meeting)\b|\b(meeting|invite|invitation)\b.*\b(missing|disappear|duplicate|calendar|accepted|declined)\b/i, 'l1-calendar-001'],
+  [/\b(conference|meeting)\s+room\b.*\b(av|audio\s*video|projector|tv|display|screen|mic|microphone|camera|teams\s*room|zoom\s*room|hdmi|dongle|airplay|miracast|chromecast|no\s*signal|not\s*working)\b|\b(projector|teams\s*room|zoom\s*room)\b.*\b(no\s*signal|not\s*working|blank|audio|mic|camera|display)\b/i, 'l1-conference-001'],
+  [/\b(external|second|third|dual|other|4k)\s+(monitor|screen|display)\b.*\b(blurry|fuzzy|tiny|huge|resolution|scaling|stretched|pixelated|refresh)\b|\b(display|screen)\b.*\b(resolution|scaling|stretched|blurry|fuzzy)\b/i, 'l1-display-002'],
+  [/\b(external|second|third|dual|other)\s+(monitor|screen|display)\b.*\b(not\s*detected|no\s*signal|blank|black|missing|won.?t\s*(show|display)|not\s*working|hdmi|displayport|usb-?c|thunderbolt|dock|docking)\b|\b(hdmi|displayport|usb-?c|thunderbolt|dock|docking\s*station)\b.*\b(monitor|display|screen|no\s*signal|not\s*detected|blank)\b/i, 'l1-display-001'],
   [/\b(won.?t\s*boot|can.?t\s*boot|spinning\s*dots|stuck\s*on\s*logo|black\s*screen|boot\s*loop|automatic\s*repair)\b/i, 'l1-windows-002'],
   [/\b(slow|laggy|sluggish|freezing|takes\s*forever|high\s*cpu|100%\s*disk)\b.*\b(pc|computer|laptop|machine|mac)?\b/i, 'l1-windows-003'],
   [/\b(disk\s*full|out\s*of\s*space|low\s*disk|c\s*drive\s*full|storage\s*full)\b/i, 'l1-windows-004'],
+  // D1 fix (2026-07-07) — route the stuck/failing/reverting Windows-Update intent to the update articles that
+  // exist in the KB, so a bare "update" token no longer leaks into the audio article. Mirrors aria-kb-query.mjs.
+  [/\b(?:windows\s*)?updates?\b[^.?!]{0,40}\b(?:stuck|won'?t\s*(?:install|finish|download|complete|update)|not\s*(?:install|finish|download|complet)(?:ing|e|ed)?|fail(?:s|ing|ed)?|error|hang(?:s|ing|ed)?|frozen|freezes?|reboot\s*loop|restart\s*loop|keeps?\s*(?:restart|reboot|fail))|\b(?:stuck|frozen|failed|failing|hung)\b[^.?!]{0,40}\b(?:windows\s*)?updates?\b/i, 'l1-windows-007'],
+  [/\bupdates?\b[^.?!]{0,40}\b(?:keeps?\s*(?:revert|rolling\s*back|undoing|uninstall)|revert(?:s|ing|ed)?|rolls?\s*back|undo(?:es|ing)?|won'?t\s*stay)|\b(?:revert|rolling\s*back)\b[^.?!]{0,40}\bupdates?\b/i, 'l1-windows-008'],
   [/\b(no\s*sound|no\s*audio|speakers?\s*not\s*working|red\s*x\s*speaker)\b/i, 'l1-windows-005'],
   [/\b(app\s*won.?t\s*open|app\s*crash|app\s*closes?\s*immediately|application\s*error)\b/i, 'l1-windows-006'],
   [/\b(can.?t\s*sign\s*in|password\s*prompt|login\s*loop|aadsts)\b.*\b(office|365|m365)\b/i, 'l1-m365-001'],

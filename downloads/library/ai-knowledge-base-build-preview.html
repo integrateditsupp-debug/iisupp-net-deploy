@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c5a059">
+<title>AI Knowledge Base Build Preview | Integrated IT Support</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+:root{
+  --panel:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.7);
+  --muted:rgba(255,255,255,.45);
+  --gold:#c5a059;
+  --gold-soft:#f1dca7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(120% 140% at 100% 0%,rgba(197,160,89,.12),transparent 48%),
+    linear-gradient(180deg,#070707 0%,#040404 100%);
+}
+a{text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:32px 22px 72px}
+.toplink{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.eyebrow{display:block;margin-bottom:12px;color:var(--gold);font-size:10px;letter-spacing:.32em;text-transform:uppercase;font-weight:800}
+.hero{
+  margin-top:20px;
+  border:1px solid rgba(197,160,89,.24);
+  border-radius:18px;
+  padding:42px 34px;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(197,160,89,.14),transparent 52%),
+    linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(290px,.8fr);gap:26px}
+.logo{font-family:'Cinzel',serif;font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.02;margin:0 0 16px}
+.gold{color:var(--gold-soft)}
+.lede{margin:0 0 18px;color:var(--text);font-size:15px;line-height:1.85;max-width:740px}
+.tagrow{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.tag{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{
+  height:100%;
+  border:1px solid rgba(197,160,89,.18);
+  border-radius:14px;
+  padding:20px 18px;
+  background:rgba(0,0,0,.24);
+}
+.panel p{margin:0 0 12px;color:var(--text);font-size:13px;line-height:1.8}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 18px;
+  border-radius:8px;
+  border:1px solid rgba(197,160,89,.4);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:rgba(197,160,89,.06);
+}
+.btn.primary{background:linear-gradient(135deg,#b8954f 0%,#d8bd84 50%,#9c7322 100%);color:#1a1407;border-color:transparent}
+.grid-two,.grid-three{display:grid;gap:16px;margin-top:24px}
+.grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px 18px 16px;
+  background:var(--panel);
+}
+.card h2,.card h3{margin:0 0 10px;font-family:'Cinzel',serif}
+.card h2{font-size:1.3rem}
+.card h3{font-size:1rem}
+.card p{margin:0;color:var(--text);font-size:13px;line-height:1.8}
+.checklist,.steps{
+  margin:14px 0 0;
+  padding-left:18px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.notice{
+  margin-top:22px;
+  padding:16px 18px;
+  border-left:3px solid var(--gold);
+  background:rgba(197,160,89,.07);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.85;
+}
+.mini{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width: 900px){
+  .hero-grid,.grid-two,.grid-three{grid-template-columns:1fr}
+  .hero{padding:30px 20px}
+  .wrap{padding:20px 16px 54px}
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="toplink" href="/downloads/library/ai-readable-it-support-kb-pack-preview.html">Back to KB preview</a>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Service Preview</span>
+          <h1 class="logo">AI Knowledge Base <span class="gold">Build</span></h1>
+          <p class="lede">This preview shows how IIS turns scattered support notes, legacy SOPs, recurring tickets, and human memory into a cleaner operating knowledge base that works for staff today and can support safer AI-assisted support later.</p>
+          <div class="tagrow">
+            <span class="tag">For IT teams</span>
+            <span class="tag">For MSPs</span>
+            <span class="tag">For growing businesses</span>
+          </div>
+          <div class="btnrow">
+            <a class="btn primary" href="/book.html?lane=support-kb&amp;source=preview-ai-kb-build-primary&amp;subject=Request%20AI%20Knowledge%20Base%20Build&amp;desc=I%20want%20to%20book%20a%20short%20support-KB%20build%20call%20with%20IIS%20after%20reviewing%20the%20AI%20Knowledge%20Base%20Build%20preview.%0A%0ACompany%3A%0ATeam%20size%20or%20support%20scope%3A%0AWhere%20support%20knowledge%20lives%20today%3A%0ABiggest%20knowledge%20gaps%20or%20inconsistencies%3A%0AWhat%20needs%20to%20be%20safe%20for%20human%20and%20AI%20use%3A%0AWhat%20a%20cleaner%20KB%20would%20look%20like%20first%3A">Stage KB build request</a>
+            <a class="btn" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">Preview support blueprint</a>
+            <a class="btn" href="/aria.html">Return to ARIA</a>
+          </div>
+        </div>
+        <aside class="panel">
+          <span class="eyebrow" style="margin-bottom:10px">Why this preview matters</span>
+          <p>Some buyers trust the AI-readable pack, but still need a stronger proof layer before they ask IIS to build the wider support brain. This page shows the service posture without turning it into a vague automation promise.</p>
+          <p class="mini">No public pricing. No compliance or integration promises. No autonomous-support claim.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">What IIS maps first</span>
+        <h2>The first operating layers</h2>
+        <ul class="checklist">
+          <li>Where support knowledge actually lives today: tickets, docs, chats, inboxes, or staff memory.</li>
+          <li>Which article types recur most often and break trust fastest.</li>
+          <li>Which content is safe for end users, technicians, or admin-only handling.</li>
+          <li>Which escalation and approval boundaries must stay visible.</li>
+          <li>How the KB should support both day-to-day support and later AI retrieval.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best fit</span>
+        <h2>Who should stage this request</h2>
+        <ul class="checklist">
+          <li>Support teams tired of re-answering the same issues differently each time.</li>
+          <li>MSPs building reusable runbooks across multiple technicians or clients.</li>
+          <li>Internal IT teams preparing for calmer intake, clearer escalation, and future AI use.</li>
+          <li>Operators who know the real blocker is scattered knowledge, not missing software.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:24px">
+      <span class="eyebrow">Sample service shape</span>
+      <h2>What a cleaner support-knowledge build leaves behind</h2>
+      <div class="grid-three">
+        <div class="card">
+          <h3>Content model</h3>
+          <p>Article template, symptom classes, audience split, safe-first checks, admin boundary, escalation signal, and versioning rules.</p>
+        </div>
+        <div class="card">
+          <h3>Source cleanup</h3>
+          <p>Ticket review, SOP normalization, duplicate-pattern collapse, and a simple rule for what becomes canonical versus archive-only.</p>
+        </div>
+        <div class="card">
+          <h3>Operational handoff</h3>
+          <p>Ownership model, update rhythm, QA checklist, and a practical first rollout plan so the KB stays usable instead of rotting after delivery.</p>
+        </div>
+      </div>
+      <div class="notice">
+        The build stays scoped. It does not assume a platform rip-and-replace, connector rollout, or legal compliance posture. IIS structures the support brain first, then the buyer decides what should remain human-led or move into later tooling.
+      </div>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <span class="eyebrow">What the discovery prompt should answer</span>
+        <h2>The questions that matter before a build</h2>
+        <ul class="steps">
+          <li>Where do repeated support answers live now?</li>
+          <li>Which issue types create the most ticket churn or inconsistent answers?</li>
+          <li>Which steps must remain technician-only or approval-gated?</li>
+          <li>What does a trustworthy first KB milestone look like?</li>
+          <li>Which teams or users need the cleaner structure first?</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Best next move</span>
+        <h2>Keep the ladder explicit</h2>
+        <ul class="steps">
+          <li>Open the AI-readable preview if the buyer still needs proof of structure.</li>
+          <li>Open the support blueprint if ticket flow and escalation posture also need work.</li>
+          <li>Stage the KB build when the problem is clearly broader than one pack or article set.</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn primary" href="/book.html?lane=support-kb&amp;source=preview-ai-kb-build-bottom&amp;subject=Request%20AI%20Knowledge%20Base%20Build&amp;desc=I%20want%20to%20book%20a%20short%20support-KB%20build%20call%20with%20IIS%20after%20reviewing%20the%20AI%20Knowledge%20Base%20Build%20preview.%0A%0ACompany%3A%0ATeam%20size%20or%20support%20scope%3A%0AWhere%20support%20knowledge%20lives%20today%3A%0ABiggest%20knowledge%20gaps%20or%20inconsistencies%3A%0AWhat%20needs%20to%20be%20safe%20for%20human%20and%20AI%20use%3A%0AWhat%20a%20cleaner%20KB%20would%20look%20like%20first%3A">Stage KB build request</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

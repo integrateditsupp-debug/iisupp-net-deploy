@@ -22,6 +22,14 @@
         <span class="browser-chip" id="browserChip">browser</span>
       </section>
 
+      <section class="protection-toggle">
+        <label for="protectionToggle">
+          <span>Browser protection</span>
+          <small id="protectionState">Monitoring active</small>
+        </label>
+        <input type="checkbox" id="protectionToggle" aria-label="Turn ARIA browser protection on or off" checked />
+      </section>
+
       <section class="actions">
         <button id="clearCache">Clear site cache</button>
         <button id="resetWorkers">Reset site worker</button>
@@ -44,6 +52,7 @@
 
       <section class="chat">
         <div id="messages"></div>
+        <button id="openAriaWeb" class="web-chat" type="button">Open ARIA Web Chat</button>
         <div class="input-row">
           <input id="input" placeholder="Ask ARIA about this page" />
           <button id="send">Send</button>

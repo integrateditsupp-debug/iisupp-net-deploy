@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "ARIA Sentinel for Safari",
   "version": "0.1.0",
+  "version_name": "0.1.0-web-chat-20260707",
   "description": "On-device browser support companion for ARIA Sentinel (Safari Web Extension build).",
   "permissions": [
     "activeTab",

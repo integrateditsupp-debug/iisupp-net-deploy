@@ -107,6 +107,8 @@ export function buildSystemContext(parts = {}, now = new Date().toISOString()) {
     gpu: parts.gpu || null,
     disk: parts.disk || (Array.isArray(parts.disks) && parts.disks[0]) || null,
     disks: parts.disks || [],
+    // Phase F D6 — system-drive usage (bytes; numbers only, content-blind). null when not collected.
+    sysDrive: parts.sysDrive || null,
     network: parts.network || [],
     os: parts.os || null,
     drivers: parts.drivers || [],
@@ -139,6 +141,7 @@ export async function enumerate({ runPS = noopPS, now = new Date().toISOString()
     ram: hw.ram || null,
     gpu: hw.gpu || null,
     disks: hw.disks || [],
+    sysDrive: hw.sysdrive || hw.sysDrive || null,
     network: hw.network || [],
     os: hw.os || null,
     drivers: hw.drivers || [],

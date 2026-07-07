@@ -1215,6 +1215,46 @@
     border-radius:9px;
     background:linear-gradient(155deg,rgba(212,168,90,.09),rgba(20,14,7,.5) 62%,rgba(20,14,7,.42));
   }
+  .conversion-rail{
+    margin-top:8px;
+    border:1px solid rgba(212,168,90,.2);
+    border-radius:9px;
+    background:linear-gradient(155deg,rgba(212,168,90,.08),rgba(17,12,6,.58) 60%,rgba(17,12,6,.44));
+    padding:10px;
+  }
+  .conversion-rail-head{
+    display:flex;justify-content:space-between;gap:10px;align-items:flex-end;margin-bottom:8px;
+  }
+  .conversion-rail-head span{
+    font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--gold-bright);text-transform:uppercase;
+  }
+  .conversion-rail-head p{
+    margin:0;max-width:470px;text-align:right;color:var(--muted);font-size:10.5px;line-height:1.45;
+  }
+  .conversion-rail-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:7px;
+  }
+  .conversion-rail-card{
+    display:block;text-decoration:none;color:inherit;
+    border:1px solid rgba(212,168,90,.14);border-radius:8px;background:rgba(15,11,6,.42);
+    padding:9px;transition:border-color .2s,background .2s,transform .2s;
+  }
+  .conversion-rail-card:hover{
+    border-color:var(--border-glow);background:rgba(34,25,13,.58);transform:translateY(-1px);
+  }
+  .conversion-rail-card strong{
+    display:block;font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--gold-bright);text-transform:uppercase;
+    margin-bottom:5px;font-weight:500;
+  }
+  .conversion-rail-card h3{
+    margin:0 0 5px;font-family:var(--serif);font-size:15px;line-height:1.15;color:var(--cream-2);font-weight:500;
+  }
+  .conversion-rail-card p{
+    margin:0 0 8px;color:var(--cream);font-size:11px;line-height:1.45;
+  }
+  .conversion-rail-card span{
+    display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;
+  }
   .conversion-proof-steps{
     display:grid;
     grid-template-columns:1fr;
@@ -1234,6 +1274,10 @@
     margin-bottom:4px;font-weight:500;
   }
   .conversion-step span{display:block;color:var(--cream);font-size:11px;line-height:1.4}
+  @media (max-width:760px){
+    .conversion-rail-head{display:block}
+    .conversion-rail-head p{max-width:none;text-align:left;margin-top:5px}
+  }
   .issue-list{display:flex;flex-direction:column;gap:6px}
   .issue-row{
     display:flex;align-items:flex-start;gap:8px;
@@ -1997,25 +2041,31 @@
 
       <div class="conversion-panel" id="conversionPanel">
         <div class="status-head"><span class="led amber"></span><span>DEPLOYMENT PATHS</span></div>
-        <div class="conversion-sub">When the ARIA demo proves the concept, move into one scoped next step instead of a broad undefined rollout. The shared guide keeps scoping, audit, and pack-first buyers on the right path.</div>
+        <div class="conversion-sub">When the ARIA demo proves the concept, keep the same three-choice route visible as the rest of the site: open a practical pack, request the AI Workflow Audit, or stage a short scoping call. Use the broader cards below only when the buyer already knows the narrower lane.</div>
         <div class="conversion-grid">
-          <a class="conversion-card" href="/start-here.html">
-            <div class="conversion-top"><span>Guide</span><span>All paths</span></div>
-            <div class="conversion-title">Choose the safest first move</div>
-            <div class="conversion-copy">Open the shared Start Here guide when the buyer likes ARIA but still needs the clearest first step between scoping, workflow mapping, or a proof-first pack.</div>
-            <div class="conversion-cta">Open start guide <span>&rarr;</span></div>
-          </a>
           <a class="conversion-card" href="/product.html?id=gl-helpdesk-blueprint">
-            <div class="conversion-top"><span>Blueprint</span><span>L1 noise first</span></div>
-            <div class="conversion-title">Reduce repetitive ticket load</div>
-            <div class="conversion-copy">Start with the AI Help Desk Automation Blueprint when the team needs a repeatable internal model before buying live coverage.</div>
+            <div class="conversion-top"><span>Pack</span><span>Proof first</span></div>
+            <div class="conversion-title">Buy or preview a practical pack</div>
+            <div class="conversion-copy">Start with the AI Help Desk Automation Blueprint when the team wants concrete proof before a live scoping call or an ARIA deployment discussion.</div>
             <div class="conversion-cta">Open blueprint <span>&rarr;</span></div>
           </a>
           <a class="conversion-card" href="/book.html?lane=workflow-proof&amp;source=aria-conversion-grid&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Audit%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AWorkflow%20or%20handoff%20causing%20the%20most%20friction%3A%0ATools%20used%20today%3A%0AWhat%20a%20good%20first%20pilot%20would%20look%20like%3A">
             <div class="conversion-top"><span>Audit</span><span>Scope first</span></div>
-            <div class="conversion-title">Find the best first AI workflow</div>
-            <div class="conversion-copy">Use the AI Workflow Audit when the problem is broader than IT support and the buyer needs one high-value workflow mapped before implementation.</div>
+            <div class="conversion-title">Request the AI Workflow Audit</div>
+            <div class="conversion-copy">Use the AI Workflow Audit when the real blocker is repeated manual work, messy intake, or scattered knowledge and the best first automation still needs to be chosen.</div>
             <div class="conversion-cta">Stage audit request <span>&rarr;</span></div>
+          </a>
+          <a class="conversion-card" href="/book.html?lane=general-fit&amp;source=aria-conversion-grid&amp;subject=Book%20a%20scoping%20call&amp;desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A%0ATools%20or%20systems%20in%20scope%3A">
+            <div class="conversion-top"><span>Scope</span><span>Service first</span></div>
+            <div class="conversion-title">Book a scoping call</div>
+            <div class="conversion-copy">Use the scoping path when the buyer already knows the service problem is real and wants IIS to scope support cleanup, M365 friction, intake work, or a bounded implementation sprint.</div>
+            <div class="conversion-cta">Stage scoping call <span>&rarr;</span></div>
+          </a>
+          <a class="conversion-card" href="/start-here.html">
+            <div class="conversion-top"><span>Guide</span><span>All paths</span></div>
+            <div class="conversion-title">Compare the three safe routes</div>
+            <div class="conversion-copy">Open the shared Start Here guide when the buyer still needs the clearest route between pack-first proof, workflow mapping, and a scoped service conversation.</div>
+            <div class="conversion-cta">Open start guide <span>&rarr;</span></div>
           </a>
           <a class="conversion-card" href="/book.html?lane=hybrid-support&amp;source=aria-conversion-grid&amp;subject=Request%20Remote%20L1-L3%20Overflow%20Support%20Pilot&amp;desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20queue%20or%20support%20pressure%3A%0ATools%20used%20today%3A%0AIssue%20types%20safe%20to%20delegate%20first%3A%0AWhat%20a%20successful%20two-week%20pilot%20would%20look%20like%3A">
             <div class="conversion-top"><span>Pilot</span><span>Coverage now</span></div>
@@ -2035,12 +2085,61 @@
             <div class="conversion-copy">Use the Small Business AI Agent Setup lane when the first win is a bounded FAQ, booking, quote-prep, or intake assistant with a visible human handoff.</div>
             <div class="conversion-cta">Preview agent setup <span>&rarr;</span></div>
           </a>
-          <a class="conversion-card" href="/downloads/library/ai-readable-it-support-kb-pack-preview.html">
+          <a class="conversion-card" href="/product.html?id=gl-ai-readable-kb-pack">
             <div class="conversion-top"><span>KB lane</span><span>Humans + AI</span></div>
             <div class="conversion-title">Fix support knowledge before scaling ARIA</div>
-            <div class="conversion-copy">Use the AI-readable support-knowledge proof when the blocker is scattered notes, SOPs, and support articles that people and future AI systems cannot trust yet.</div>
-            <div class="conversion-cta">Open KB proof asset <span>&rarr;</span></div>
+            <div class="conversion-copy">Use the AI-readable support-knowledge product lane when the blocker is scattered notes, SOPs, and support articles that people and future AI systems cannot trust yet.</div>
+            <div class="conversion-cta">Open KB product path <span>&rarr;</span></div>
           </a>
+        </div>
+        <div class="conversion-rail">
+          <div class="conversion-rail-head">
+            <span>Support ops fast path</span>
+            <p>When ARIA already feels relevant, narrow the next move to one of three support-buyer jobs: inspect the operating model, fix the knowledge layer, or add bounded live coverage.</p>
+          </div>
+          <div class="conversion-rail-grid">
+            <a class="conversion-rail-card" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">
+              <strong>Proof lane</strong>
+              <h3>Inspect the support operating model</h3>
+              <p>Best when the buyer needs to see ticket flow, escalation discipline, and the ARIA-ready frontline posture before a broader scope conversation.</p>
+              <span>Open blueprint preview <span>&rarr;</span></span>
+            </a>
+            <a class="conversion-rail-card" href="/product.html?id=gl-ai-readable-kb-pack">
+              <strong>Knowledge lane</strong>
+              <h3>Repair the support knowledge layer</h3>
+              <p>Use this when the real blocker is scattered SOPs, weak articles, and support answers that humans and AI systems still cannot trust.</p>
+              <span>Open KB product path <span>&rarr;</span></span>
+            </a>
+            <a class="conversion-rail-card" href="/book.html?lane=hybrid-support&amp;source=aria-support-ops-rail&amp;subject=Request%20Remote%20L1-L3%20Overflow%20Support%20Pilot&amp;desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20queue%20or%20support%20pressure%3A%0ATools%20used%20today%3A%0AIssue%20types%20safe%20to%20delegate%20first%3A%0AWhat%20a%20successful%20two-week%20pilot%20would%20look%20like%3A">
+              <strong>Coverage lane</strong>
+              <h3>Stage overflow support coverage</h3>
+              <p>Choose the pilot path when the queue is already heavy and the team needs bounded triage, M365 support, and cleaner escalation notes quickly.</p>
+              <span>Stage overflow pilot <span>&rarr;</span></span>
+            </a>
+          </div>
+        </div>
+        <div class="conversion-card conversion-proof">
+          <div class="conversion-top"><span>Implementation ladder</span><span>Support-ops service path</span></div>
+          <div class="conversion-title">Move from ARIA demo to a scoped support-ops implementation</div>
+          <div class="conversion-copy">When the buyer already sees the support-model fit, keep the next move explicit: inspect the blueprint, compare the practical pack path, stage the implementation call, then keep the follow-through retainer visible.</div>
+          <div class="conversion-proof-steps">
+            <a class="conversion-step" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">
+              <strong>1 - Open blueprint preview</strong>
+              <span>Show the ticket flow, escalation discipline, and ARIA-ready support posture first.</span>
+            </a>
+            <a class="conversion-step" href="/product.html?id=gl-helpdesk-blueprint">
+              <strong>2 - Open blueprint product page</strong>
+              <span>Let colder buyers compare the preview, pack, and implementation path without guessing.</span>
+            </a>
+            <a class="conversion-step" href="/book.html?lane=support-ops-setup&amp;source=aria-support-ops-implementation-ladder&amp;subject=Request%20AI%20Help%20Desk%20Blueprint%20Implementation&amp;desc=I%20want%20to%20book%20a%20short%20support-ops%20setup%20call%20with%20IIS%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20ticket%20pain%3A%0ASystems%20used%20today%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%20first%3A">
+              <strong>3 - Stage implementation request</strong>
+              <span>Hand Ahmad a preframed Help Desk Blueprint implementation request instead of a generic follow-up.</span>
+            </a>
+            <a class="conversion-step" href="/book.html?lane=monthly-support&amp;source=aria-support-ops-monthly-ladder&amp;subject=Request%20Monthly%20AI%20Support%20Plan&amp;desc=I%20want%20to%20stage%20a%20Monthly%20AI%20Support%20Plan%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20departments%20supported%3A%0ACurrent%20AI%20systems%2C%20workflows%2C%20or%20knowledge%20assets%20in%20use%3A%0AWhat%20keeps%20slipping%20without%20an%20owner%3A%0APriority%20fixes%20or%20updates%20needed%20this%20month%3A%0APreferred%20monthly%20check-in%20cadence%3A%0AApproval%20or%20security%20boundaries%3A">
+              <strong>4 - Stage monthly support</strong>
+              <span>Keep the retainer lane visible when the first ARIA or support-system win already exists and now needs steady ownership.</span>
+            </a>
+          </div>
         </div>
         <div class="conversion-card conversion-proof">
           <div class="conversion-top"><span>Proof stack</span><span>Support-knowledge fast path</span></div>
@@ -2051,12 +2150,16 @@
               <strong>1 · Open KB preview</strong>
               <span>Show the article structure, escalation fields, and AI-readable format first.</span>
             </a>
+            <a class="conversion-step" href="/product.html?id=gl-ai-readable-kb-pack">
+              <strong>2 · Open KB product page</strong>
+              <span>Let colder buyers compare preview, pack, and scoped-build paths without guessing.</span>
+            </a>
             <a class="conversion-step" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">
-              <strong>2 · Preview support blueprint</strong>
+              <strong>3 · Preview support blueprint</strong>
               <span>Inspect the ticket flow, escalation discipline, and ARIA-ready support posture behind the pack.</span>
             </a>
-            <a class="conversion-step" href="/?contact=1&amp;subject=Request%20AI%20Knowledge%20Base%20Build&amp;desc=I%20want%20to%20stage%20an%20AI%20Knowledge%20Base%20Build%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20support%20scope%3A%0AWhere%20support%20knowledge%20lives%20today%3A%0ABiggest%20knowledge%20gaps%20or%20inconsistencies%3A%0AWhat%20needs%20to%20be%20safe%20for%20human%20and%20AI%20use%3A%0AWhat%20a%20cleaner%20KB%20would%20look%20like%20first%3A">
-              <strong>3 · Stage KB build</strong>
+            <a class="conversion-step" href="/book.html?lane=support-kb&amp;source=aria-support-kb-proof&amp;subject=Request%20AI%20Knowledge%20Base%20Build&amp;desc=I%20want%20to%20stage%20an%20AI%20Knowledge%20Base%20Build%20after%20reviewing%20ARIA.%0A%0ACompany%3A%0ATeam%20size%20or%20support%20scope%3A%0AWhere%20support%20knowledge%20lives%20today%3A%0ABiggest%20knowledge%20gaps%20or%20inconsistencies%3A%0AWhat%20needs%20to%20be%20safe%20for%20human%20and%20AI%20use%3A%0AWhat%20a%20cleaner%20KB%20would%20look%20like%20first%3A">
+              <strong>4 · Stage KB build</strong>
               <span>Hand Ahmad a preframed AI Knowledge Base Build request instead of a vague follow-up.</span>
             </a>
           </div>

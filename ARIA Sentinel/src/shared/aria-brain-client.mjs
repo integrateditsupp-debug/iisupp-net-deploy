@@ -10,6 +10,43 @@ export const RESEARCH_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-res
 export const KB_QUERY_ENDPOINT = "https://iisupp.net/.netlify/functions/aria-kb-query";
 export const KB_CONFIDENCE_MIN = 8;
 
+// D1 relevance floor (2026-07-07) — a confident retrieval score alone is NOT proof the article fits the ask.
+// The live sweep found "how do I fix a stuck Windows update?" returning a confident match to the AUDIO article
+// (they merely shared the generic tokens "windows"/"update"). This gate keeps only the query's DISTINCTIVE
+// tokens (dropping stopwords + generic platform words like "windows"/"computer") and requires at least one to
+// appear in the returned article's own label (slug + title). It is CONTENT-BLIND — it reads only the query the
+// user already sent and the public article label the KB returned; no article/query body, no new data leaves the
+// device. Fail-open: no distinctive token, or no slug/title to judge → accept (never block a match with no basis
+// to reject). When it DOES reject, askAria falls through honestly (→ aria-chat if reachable, else the local KB).
+const KB_GENERIC_TOKENS = new Set([
+  "the","and","for","with","that","this","have","has","are","was","were","not","cant","cannot","wont","you",
+  "your","our","will","would","should","could","please","help","need","when","then","from","into","just","how",
+  "why","who","get","got","now","its","did","does","done","fix","fixing","issue","issues","problem","problems",
+  "error","errors","work","working","broken","some","any","all","what",
+  // generic platform / device words — too coarse to establish topical relevance on their own
+  "windows","window","win","win10","win11","microsoft","pc","computer","laptop","desktop","machine","system",
+  "mac","macos","device","phone","tablet"
+]);
+
+function kbTokens(text) {
+  return String(text == null ? "" : text).toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter((t) => t.length >= 3);
+}
+
+/** True unless the returned KB article is clearly off-topic for the query (content-blind — slug/title only). */
+export function isRelevantKbMatch(query, article = {}) {
+  const distinctive = kbTokens(query).filter((t) => !KB_GENERIC_TOKENS.has(t));
+  if (!distinctive.length) return true;                          // nothing distinctive to match on → can't reject
+  const label = `${article.slug || ""} ${article.title || ""}`
+    .replace(/\bl[0-9]\b/gi, " ")                                // drop id scaffolding (l1/l2/l3)
+    .replace(/\b\d{2,}\b/g, " ");                                // …and the numeric slug index (005)
+  const labelTokens = new Set(kbTokens(label));
+  if (!labelTokens.size) return true;                           // no label to judge → accept on confidence alone
+  return distinctive.some((t) => labelTokens.has(t));
+}
+
 // The escalation ladder Ahmad specified.
 export const ESCALATION_TIERS = ["kb", "screen-and-event", "research", "ticket"];
 export function nextEscalationTier(current) {
@@ -65,8 +102,9 @@ export async function askAria(prompt, ctx = {}) {
     });
     if (kbRes && kbRes.ok) {
       const kb = (typeof kbRes.json === "function" ? await kbRes.json() : kbRes) || {};
-      if (kb.match && Number(kb.confidence) >= KB_CONFIDENCE_MIN && kb.content_excerpt) {
-        const art = kb.article || {};
+      const art = kb.article || {};
+      // D1 — a confident score must ALSO be topically relevant; otherwise fall through (never fabricate a match).
+      if (kb.match && Number(kb.confidence) >= KB_CONFIDENCE_MIN && kb.content_excerpt && isRelevantKbMatch(prompt, art)) {
         return {
           reply: scrubR11(`${kb.content_excerpt}${art.url ? `\n\n→ Full article: ${art.url}` : ""}`),
           session_id: null,

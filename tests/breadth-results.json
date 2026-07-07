@@ -1,0 +1,429 @@
+{
+  "scale": {
+    "total": 338496,
+    "correct": 335188,
+    "accuracyPct": 99.02,
+    "itTotal": 194310,
+    "itDeflected": 189981,
+    "deflectionPct": 97.77,
+    "distinctExpectCategories": 37
+  },
+  "byExpect": {
+    "default": {
+      "n": 111814,
+      "acc": 98.9
+    },
+    "password": {
+      "n": 21548,
+      "acc": 100
+    },
+    "mail": {
+      "n": 20235,
+      "acc": 100
+    },
+    "resolution": {
+      "n": 15122,
+      "acc": 93.6
+    },
+    "kb:teams": {
+      "n": 12265,
+      "acc": 100
+    },
+    "wifi": {
+      "n": 12014,
+      "acc": 100
+    },
+    "kb:mfa": {
+      "n": 11400,
+      "acc": 100
+    },
+    "printer": {
+      "n": 11394,
+      "acc": 100
+    },
+    "vpn": {
+      "n": 10085,
+      "acc": 100
+    },
+    "kb:onedrive": {
+      "n": 7890,
+      "acc": 99.7
+    },
+    "kb:performance": {
+      "n": 7704,
+      "acc": 100
+    },
+    "kb:security": {
+      "n": 7580,
+      "acc": 99.9
+    },
+    "kb:windows": {
+      "n": 7264,
+      "acc": 99.8
+    },
+    "kb:hardware": {
+      "n": 6078,
+      "acc": 99.2
+    },
+    "kb:bluetooth": {
+      "n": 5889,
+      "acc": 100
+    },
+    "kb:browser": {
+      "n": 5685,
+      "acc": 100
+    },
+    "outlook_ooo": {
+      "n": 5675,
+      "acc": 100
+    },
+    "kb:m365": {
+      "n": 5555,
+      "acc": 86
+    },
+    "kb:usb": {
+      "n": 5003,
+      "acc": 100
+    },
+    "kb:permissions": {
+      "n": 4360,
+      "acc": 100
+    },
+    "not-resolution": {
+      "n": 4125,
+      "acc": 100
+    },
+    "kb:networking": {
+      "n": 4090,
+      "acc": 93.3
+    },
+    "kb:webcam": {
+      "n": 4024,
+      "acc": 100
+    },
+    "kb:active-directory": {
+      "n": 3810,
+      "acc": 100
+    },
+    "escalation": {
+      "n": 3750,
+      "acc": 100
+    },
+    "kb:onboarding": {
+      "n": 3550,
+      "acc": 100
+    },
+    "kb:macos": {
+      "n": 3080,
+      "acc": 99.7
+    },
+    "shopping": {
+      "n": 3000,
+      "acc": 100
+    },
+    "trade": {
+      "n": 3000,
+      "acc": 100
+    },
+    "weather/news": {
+      "n": 2625,
+      "acc": 100
+    },
+    "kb:bitlocker": {
+      "n": 1875,
+      "acc": 100
+    },
+    "voice": {
+      "n": 1875,
+      "acc": 100
+    },
+    "quote": {
+      "n": 1500,
+      "acc": 100
+    },
+    "news": {
+      "n": 1125,
+      "acc": 100
+    },
+    "kb:mobile": {
+      "n": 857,
+      "acc": 100
+    },
+    "kb:rsa": {
+      "n": 825,
+      "acc": 100
+    },
+    "kb:office": {
+      "n": 825,
+      "acc": 100
+    }
+  },
+  "worstCorpusCategories": [
+    {
+      "k": "kb:m365",
+      "n": 5555,
+      "acc": 86
+    },
+    {
+      "k": "kb:networking",
+      "n": 4090,
+      "acc": 93.3
+    },
+    {
+      "k": "resolution",
+      "n": 15122,
+      "acc": 93.6
+    },
+    {
+      "k": "default",
+      "n": 111814,
+      "acc": 98.9
+    },
+    {
+      "k": "kb:hardware",
+      "n": 6078,
+      "acc": 99.2
+    },
+    {
+      "k": "kb:onedrive",
+      "n": 7890,
+      "acc": 99.7
+    },
+    {
+      "k": "kb:macos",
+      "n": 3080,
+      "acc": 99.7
+    },
+    {
+      "k": "kb:windows",
+      "n": 7264,
+      "acc": 99.8
+    },
+    {
+      "k": "kb:security",
+      "n": 7580,
+      "acc": 99.9
+    },
+    {
+      "k": "password",
+      "n": 21548,
+      "acc": 100
+    },
+    {
+      "k": "kb:mfa",
+      "n": 11400,
+      "acc": 100
+    },
+    {
+      "k": "mail",
+      "n": 20235,
+      "acc": 100
+    }
+  ],
+  "coverage": [
+    {
+      "cat": "break/fix · BSOD/boot",
+      "accept": [
+        "kb:windows"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "break/fix · performance",
+      "accept": [
+        "kb:performance"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "break/fix · hardware",
+      "accept": [
+        "kb:hardware",
+        "kb:windows",
+        "kb:macos",
+        "kb:usb",
+        "kb:bluetooth",
+        "escalation"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 5,
+      "n": 5,
+      "misroutes": []
+    },
+    {
+      "cat": "permissions",
+      "accept": [
+        "kb:permissions"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "account unlock",
+      "accept": [
+        "password",
+        "kb:active-directory"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "password reset",
+      "accept": [
+        "password"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "MFA",
+      "accept": [
+        "kb:mfa"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "app repair",
+      "accept": [
+        "kb:office",
+        "mail",
+        "kb:teams",
+        "kb:m365",
+        "kb:browser",
+        "kb:onedrive"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "printer add",
+      "accept": [
+        "printer"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "mobile iOS/Android setup",
+      "accept": [
+        "kb:mobile",
+        "mail",
+        "kb:m365",
+        "kb:onboarding",
+        "kb:mfa"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "RSA token setup",
+      "accept": [
+        "kb:rsa",
+        "vpn"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "Ivanti Secure VPN",
+      "accept": [
+        "vpn"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "Intune enrollment",
+      "accept": [
+        "kb:m365"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "VPN",
+      "accept": [
+        "vpn"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "email",
+      "accept": [
+        "mail",
+        "outlook_ooo"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "BitLocker",
+      "accept": [
+        "kb:bitlocker"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    },
+    {
+      "cat": "onboarding/offboarding",
+      "accept": [
+        "kb:onboarding"
+      ],
+      "pct": 100,
+      "band": "STRONG",
+      "hit": 6,
+      "n": 6,
+      "misroutes": []
+    }
+  ]
+}

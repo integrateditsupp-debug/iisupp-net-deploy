@@ -94,6 +94,20 @@ body:after{
 .section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}
 .section-head h2{font-family:Cinzel,serif;font-size:clamp(2rem,4.5vw,4.2rem);line-height:.98;margin:10px 0 0}
 .section-head p{max-width:590px;color:var(--muted);font-size:13px;line-height:1.85;margin:0}
+.bridge-shell{border:1px solid rgba(197,160,89,.22);border-radius:34px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(197,160,89,.05) 52%,rgba(0,0,0,.24));box-shadow:0 24px 80px rgba(0,0,0,.34);padding:30px;overflow:hidden;position:relative}
+.bridge-shell:before{content:"";position:absolute;inset:auto -8% -28% auto;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(243,223,170,.16),transparent 68%);pointer-events:none}
+.bridge-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px;position:relative;z-index:1}
+.bridge-head h2{font-family:Cinzel,serif;font-size:clamp(2rem,4.4vw,3.8rem);line-height:.95;margin:10px 0 0}
+.bridge-head p{max-width:620px;color:rgba(255,255,255,.64);font-size:13px;line-height:1.85;margin:0}
+.bridge-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;position:relative;z-index:1}
+.bridge-card{border:1px solid rgba(197,160,89,.18);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(0,0,0,.22));padding:22px;display:grid;gap:12px;min-height:100%}
+.bridge-card .kicker{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:900}
+.bridge-card h3{font-family:Cinzel,serif;font-size:20px;line-height:1.08;margin:0;color:var(--gold2)}
+.bridge-card p{margin:0;color:rgba(255,255,255,.66);font-size:12.5px;line-height:1.75}
+.bridge-card .fit{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:10px 12px;background:rgba(0,0,0,.18);font-size:11px;line-height:1.65;color:rgba(255,255,255,.58)}
+.bridge-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.bridge-foot{margin-top:20px;padding-top:18px;border-top:1px solid rgba(197,160,89,.14);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;position:relative;z-index:1}
+.bridge-foot p{margin:0;max-width:700px;color:rgba(255,255,255,.56);font-size:11.5px;line-height:1.75}
 .category-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 .category-card{position:relative;overflow:hidden;border:1px solid rgba(197,160,89,.18);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(197,160,89,.04));padding:19px;min-height:184px;cursor:pointer;text-align:left;transition:transform .25s,border-color .25s,background .25s}
 .category-card:hover,.category-card.active{transform:translateY(-3px);border-color:rgba(243,223,170,.55);background:linear-gradient(145deg,rgba(197,160,89,.16),rgba(255,255,255,.055))}
@@ -210,6 +224,8 @@ body:after{
   .hero-grid,.trust-grid,.request-grid{grid-template-columns:1fr}
   .category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .market-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bridge-grid{grid-template-columns:1fr}
+  .bridge-head{display:block}
   .rail-row{grid-template-columns:repeat(2,minmax(0,1fr))}
   .toolbar{grid-template-columns:1fr 1fr;top:74px}
   .nav{padding:16px 20px}.brand-title{font-size:13px}.brand{min-width:210px}
@@ -219,7 +235,12 @@ body:after{
   .hero{padding:48px 16px}.hero h1{font-size:clamp(2.55rem,16vw,4.1rem)}
   .hero-lead{text-align:left;font-size:14px}.hero-grid{gap:16px}.hero-visual{min-height:280px}.hero-visual .orb{width:170px;height:170px}.hero-visual .a{font-size:62px}.signal{position:relative;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;display:inline-block;margin:8px;min-width:126px}
   .search-row{grid-template-columns:1fr}.btn{width:100%}
-  .section{padding:40px 16px}.section-head{display:block}.category-grid,.market-grid,.rail-row,.toolbar{grid-template-columns:1fr}.toolbar{position:relative;top:auto;margin:0 16px 26px}
+  .section{padding:40px 16px}.section-head,.bridge-head{display:block}.category-grid,.market-grid,.rail-row,.toolbar,.bridge-grid{grid-template-columns:1fr}.toolbar{position:relative;top:auto;margin:0 16px 26px}
+  .bridge-shell{padding:22px 18px;border-radius:26px}
+  .bridge-card{padding:18px}
+  .bridge-card h3{font-size:18px}
+  .bridge-foot{align-items:stretch}
+  .bridge-foot p{max-width:none}
   .scores{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.modal-body{grid-template-columns:1fr}.request-shell{margin:0 16px 42px;padding:18px}.request-form{grid-template-columns:1fr}.field{grid-column:1/-1}
 }
 </style>
@@ -282,6 +303,59 @@ body:after{
     <aside class="notice">
       <p><strong>Transparent bridge model:</strong> Vendor products and third-party services stay vendor-owned. IIS/ARIA adds research, comparison, listing management, coordination, and a clearly disclosed 20% admin/curation fee. Final vendor/source, shipping, warranty, refund terms, taxes, duties, and service scope must be confirmed before payment.</p>
     </aside>
+
+    <section class="section" id="marketplace-bridge" style="padding-top:0">
+      <div class="wrap">
+        <div class="bridge-shell">
+          <div class="bridge-head">
+            <div>
+              <span class="eyebrow">Before you compare vendors</span>
+              <h2>Choose the right first move.</h2>
+            </div>
+            <p>Marketplace is the right lane when the buyer already needs third-party sourcing, product comparison, or a verified checkout request. If the real need is proof, workflow diagnosis, or done-with-you implementation, route there first instead of forcing a vendor-style request.</p>
+          </div>
+          <div class="bridge-grid">
+            <article class="bridge-card">
+              <div class="kicker">Buy or download first</div>
+              <h3>Open a practical pack</h3>
+              <p>Start with a low-friction digital asset when the buyer wants proof, templates, or a guided first step before paying for sourcing or a live engagement.</p>
+              <div class="fit">Best when the question is, "Show me something concrete first," not "Find a vendor for me right now."</div>
+              <div class="bridge-actions">
+                <a class="btn solid" href="/product.html?id=gl-ai-edge-starter">Open AI Edge Starter</a>
+                <a class="btn" href="/growth-library.html#vault">Browse Growth Library</a>
+              </div>
+            </article>
+            <article class="bridge-card">
+              <div class="kicker">Map the workflow first</div>
+              <h3>Request AI Workflow Audit</h3>
+              <p>Use the audit when the buyer is still sorting out repeated handoffs, messy intake, or unclear automation priorities and the right solution has not been chosen yet.</p>
+              <div class="fit">Best when the blocker is process confusion, not product selection.</div>
+              <div class="bridge-actions">
+                <a class="btn solid" href="/book.html?lane=workflow-proof&amp;source=marketplace-bridge-workflow-audit&amp;subject=Request%20AI%20Workflow%20Audit&amp;desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit%20after%20reviewing%20Marketplace.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0ATools%20we%20use%20today%3A%0AWhat%20is%20slowing%20us%20down%20most%3A%0AWhat%20a%20cleaner%20first%20workflow%20would%20look%20like%3A">Stage audit request</a>
+                <a class="btn" href="/downloads/library/ai-workflow-audit-preview.html">View audit preview</a>
+              </div>
+            </article>
+            <article class="bridge-card">
+              <div class="kicker">Bring IIS in directly</div>
+              <h3>Book a procurement-fit call</h3>
+              <p>Choose the scoped call when the buyer already needs vendor comparison, verified sourcing, setup planning, or a sober review before asking IIS to coordinate the next step.</p>
+              <div class="fit">Best when the buyer can describe the item, vendor, or rollout pressure and wants a practical procurement next step faster than a broad sales conversation.</div>
+              <div class="bridge-actions">
+                <a class="btn solid" href="/book.html?lane=procurement-fit&amp;source=marketplace-bridge-procurement-fit&amp;subject=Request%20Procurement%20Fit%20Call&amp;desc=I%20want%20to%20book%20a%20short%20procurement-fit%20call%20with%20IIS%20after%20reviewing%20Marketplace.%0A%0ACompany%3A%0AWhat%20we%20need%20to%20source%20or%20compare%3A%0ABudget%20or%20price%20range%3A%0AWhat%20is%20time-sensitive%3A%0AVendors%2C%20specs%2C%20or%20constraints%20already%20in%20play%3A%0ASetup%20or%20configuration%20help%20needed%3A">Stage procurement call</a>
+                <a class="btn" href="/services.html">Open services</a>
+              </div>
+            </article>
+          </div>
+          <div class="bridge-foot">
+            <p>This keeps Marketplace honest: buyers who need education, workflow mapping, or implementation help can take the right path immediately, while buyers who really do need vendor research or verified sourcing can stay in the marketplace lane.</p>
+            <div class="bridge-actions">
+              <a class="btn" href="#categories">Browse marketplace shelves</a>
+              <a class="btn" href="#marketplace-request">Request verified checkout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section class="section" id="categories">
       <div class="wrap">

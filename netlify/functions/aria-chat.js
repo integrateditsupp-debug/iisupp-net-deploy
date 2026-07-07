@@ -159,12 +159,17 @@ exports.handler = async (event) => {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  // Hardcoded skip-list of models Anthropic has retired (return 400 not 404 for these). When ARIA_MODEL env
-// is set to a known-deprecated value we ignore it and fall through to the safe default. Ahmad can rotate
-// ARIA_MODEL to any current model on Netlify env any time — only retired strings get the override.
-const DEPRECATED_MODELS = /claude-sonnet-4-20250514|claude-sonnet-4-5-20250929|claude-3-5-sonnet-202(40|41)|claude-3-opus-20240229|claude-3-haiku-20240307/;
-const envModel = process.env.ARIA_MODEL;
-const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'claude-sonnet-4-6';
+  // B4 model-path fix: never hardcode a model string that may not be accessible on the current API key.
+  // Priority: ARIA_MODEL env (operator sets the model they have access to) → ARIA_MODEL_FALLBACK env →
+  // absent both → degrade gracefully (no LLM call, honest fallback). This ensures a missing model never
+  // silently degrades to "Brain busy" or a bare error — the operator is in control.
+  const DEPRECATED_MODELS = /claude-sonnet-4-20250514|claude-sonnet-4-5-20250929|claude-3-5-sonnet-202(40|41)|claude-3-opus-20240229|claude-3-haiku-20240307/;
+  const envModel = process.env.ARIA_MODEL;
+  const fallbackModel = process.env.ARIA_MODEL_FALLBACK; // secondary; Ahmad sets on Netlify
+  // If no env model is configured, we cannot safely guess — degrade to the offline reply.
+  const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel
+    : (fallbackModel && !DEPRECATED_MODELS.test(fallbackModel)) ? fallbackModel
+    : null; // null → skip LLM, return honest offline-brain copy below
   if (!apiKey) {
     return json(500, { error: 'AI service not configured. Call (647) 581-3182.' });
   }
@@ -182,6 +187,30 @@ const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel : 'clau
 
   if (!cleanMsgs.length || cleanMsgs[cleanMsgs.length - 1].role !== 'user') {
     return json(400, { error: 'Last message must be user' });
+  }
+
+  // B4: if no model is configured (ARIA_MODEL env not set), skip the LLM call entirely and
+  // return the honest offline-brain copy. This prevents a 404 / model-not-found from surfacing
+  // as "Brain busy" — and makes the $0 offline path the explicit first-class fallback.
+  if (!model) {
+    console.warn('[aria-chat] No ARIA_MODEL env set — returning offline-brain copy. Set ARIA_MODEL on Netlify to enable LLM path.');
+    return json(200, {
+      text: "I'm running in offline mode right now — my reasoning model isn't configured on this deployment. "
+        + "For most IT questions I can still help you with common troubleshooting steps:\n\n"
+        + "1. Restart the affected app or device first — fixes ~40% of issues.\n"
+        + "2. If it's Outlook, Teams, or M365: clear cache, check service health at status.office.com.\n"
+        + "3. For network issues: ipconfig /release then /renew, or forget/rejoin Wi-Fi.\n"
+        + "4. If you need a human now, call us: (647) 581-3182.\n\n"
+        + "(To enable full AI reasoning, set ARIA_MODEL in your Netlify environment.)",
+      emotion_detected: 'neutral',
+      tone_used: 'warm',
+      takeNotes: null,
+      resolved: false,
+      escalate: false,
+      category: 'other',
+      suggestions: ['restart_app', 'check_m365_health', 'call_support'],
+      offline: true,
+    });
   }
 
   const sessionId = String(body.sessionId || body.session_id || 'anon-' + Date.now()).slice(0, 80);

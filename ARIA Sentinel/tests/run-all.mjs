@@ -6,6 +6,15 @@ const TESTS = [
   "../../tests/deploy-safety-denylist.test.mjs",
   "./scenario-suite.mjs",
   "./extension.test.mjs",
+  "./browser-outcome.test.mjs",
+  // SENTINEL FLEET 2026-07-07 — content-blind policy scaffolds (branch-only; DECISION-only, no real block/override).
+  "./malicious-site-policy.test.mjs",        // T2 — gated malicious-site policy evaluator (allow/warn/block-recommend/escalate)
+  "./deployment-policy-schema.test.mjs",     // T3 — per-customer deployment policy schema + validator
+  "./browser-outcome-fleet-contract.test.mjs", // T4 — fleet-packet SHAPE contract (fails on drift/leak)
+  "./malicious-site-wiring.test.mjs",          // Phase B — scaffolds wired into extension + /browser-outcome (still decision-only)
+  "./kb-phrase-routing.test.mjs",              // Phase F D1 — phrase boost: stuck-Windows-update routes to update-stuck.md, abstain intact
+  "./chat-activity-recording.test.mjs",        // Phase F D2 — real asks persist to Memory/Dashboard (honest tier counters)
+  "./d3-d6-lane-closure.test.mjs",             // Phase F D3–D6 — update-check copy · Health/content-boundary · sticky nav · disk usage
   "./endpoint.test.mjs",
   "./privacy-audit.mjs",
   "./ui-shell.test.mjs",

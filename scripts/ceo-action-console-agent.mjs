@@ -7,6 +7,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const stateDir = path.join(repoRoot, "senior-director-state");
 const outPath = path.join(stateDir, "ceo-action-console-data.json");
 const persistedStatePath = path.join(stateDir, "ceo-action-console-state.json");
+const WARM_LEAD_SEND_GATE_DATE = "2026-07-02";
 
 function read(relPath) {
   try {
@@ -18,6 +19,10 @@ function read(relPath) {
 
 function publicFile(relPath) {
   return relPath.replaceAll("\\", "/");
+}
+
+function todayIsoDate() {
+  return new Date().toISOString().slice(0, 10);
 }
 
 function extractAcceptanceQueue(brief) {
@@ -141,6 +146,7 @@ function makeContractBidActions(prepItems) {
 }
 
 const now = new Date().toISOString();
+const today = todayIsoDate();
 const digest = read("senior-director-state/ceo-now-action-digest.md");
 const approvals = read("senior-director-state/ceo-approval-required.md");
 const brief = read("senior-director-state/business-development-daily-brief.md");
@@ -153,51 +159,38 @@ const reviewFiles = STAGED_REVIEW_FILES.filter(({ relPath }) =>
 
 const immediateActions = [
   {
-    id: "rbc-supplier-registration",
-    title: "RBC supplier registration final gate",
+    id: "telus-supplier-registration",
+    title: "TELUS supplier registration final gate",
     group: "Register / supplier portal",
     type: "vendor registration",
     priority: 10,
-    ahmadAction: "Finish CAPTCHA, attestations/certifications, credentials, then click Register only if everything is true.",
-    agentContinuation: "After Ahmad marks Done, log registration status and queue the next bank/vendor portal.",
-    detail: "Portal is partially prefilled with verified IIS company/contact fields. Agent must not certify or create account for Ahmad.",
+    ahmadAction: "Review the restaged SAP Ariba form, enter password/consent only if accurate, then click Register only if everything is true.",
+    agentContinuation: "After Ahmad marks Done, log TELUS registration status and queue the next enterprise supplier lane.",
+    detail: "The live TELUS SAP Ariba form is restaged with verified IIS company/contact fields. Agent must not create the account or accept consent on Ahmad's behalf.",
     links: [
-      { label: "RBC supplier info", url: "https://www.rbc.com/suppliers/" }
+      { label: "Open TELUS procurement", url: "https://www.telus.com/en/about/procurement" },
+      { label: "Open TELUS handoff", url: publicFile("senior-director-state/telus-live-registration-handoff-2026-06-27.md") }
     ],
-    finalGate: "Register / Create Account / Certify"
+    finalGate: "Register / Create Account / Consent"
   },
-  {
-    id: "jason-brown-hines-follow-up",
-    title: "Jason Brown / Hines Friday follow-up",
+  today >= WARM_LEAD_SEND_GATE_DATE ? {
+    id: "july-2-warm-lead-send-gate",
+    title: "July 2 warm lead send gate",
     group: "Warm lead",
     type: "lead",
     priority: 10,
-    ahmadAction: "If Jason has not replied, send the approved short LinkedIn follow-up. If he replied, hold and mark Needs Agent.",
-    agentContinuation: "If sent, set follow-up cadence. If replied, prepare a tailored response and opportunity note.",
-    detail: "Use the Friday-ready checklist and office-move/property IT one-pager.",
+    ahmadAction: "Check LinkedIn reply state first. If Jason Brown and/or Azim Lila are still silent, send or hold the prepared follow-up for each person. If either replied, hold that message and mark Needs Agent.",
+    agentContinuation: "If either follow-up is sent, set the next cadence. If either person replied, prepare a tailored response and opportunity note instead of using the staged copy.",
+    detail: "Use the combined July 2 gate plus the office-move and AI workflow one-pagers for any reply asking for more detail.",
     links: [
-      { label: "Open checklist", url: publicFile("senior-director-state/hines-jason-brown-friday-send-checklist-2026-06-11.md") },
+      { label: "Open July 2 gate", url: publicFile("senior-director-state/july-02-warm-lead-send-gate-2026-07-01.md") },
       { label: "Open one-pager", url: publicFile("senior-director-state/office-move-property-it-readiness-one-pager-2026-06-11.md") },
+      { label: "Open AI workflow one-pager", url: publicFile("senior-director-state/ai-workflow-quick-win-sprint-one-pager-2026-06-10.md") },
       { label: "Open LinkedIn messages", url: "https://www.linkedin.com/messaging/" }
     ],
-    copyText: "Hi Jason, thanks again for connecting.\n\nI put together a short one-pager because IIS may be useful in one narrow lane around post-go-live operations: support-readiness, handoff cleanup, tenant/user FAQs, and small M365 or documentation workflow fixes that reduce repeated friction without disrupting existing partners.\n\nIf useful, I would be glad to send it over. Happy to compare notes for 15-20 minutes on where teams tend to lose the most time after occupancy or project handoff.",
+    copyText: "Check the July 2 warm lead send gate file for the final Jason Brown and Azim Lila follow-up copy. Send only after confirming there is still no reply.",
     finalGate: "Send"
-  },
-  {
-    id: "direct-contact-first-send",
-    title: "Send approved first-contact queue",
-    group: "Outbound approved",
-    type: "lead",
-    priority: 9,
-    ahmadAction: "Send to WD Numeric Corporate Services, Tangs Accounting Services, and Global Health Physiotherapy Clinic when the contact surface is open.",
-    agentContinuation: "After Done, move each into 7-day follow-up cadence and queue next vetted companies only.",
-    detail: "Already approved-to-transmit. No mass sending, no scraping, no paid tools.",
-    links: [
-      { label: "Open outreach drafts", url: publicFile("senior-director-state/revenue-outreach-drafts.md") },
-      { label: "Open daily brief", url: publicFile("senior-director-state/business-development-daily-brief.md") }
-    ],
-    finalGate: "Send"
-  },
+  } : null,
   {
     id: "publish-approved-slices",
     title: "Publish already-approved website slices",
@@ -213,7 +206,7 @@ const immediateActions = [
     ],
     finalGate: "Publish"
   }
-];
+].filter(Boolean);
 
 const publishReviewActions = reviewFiles.map(({ relPath, title }, index) => ({
   id: `review-${path.basename(relPath, ".md")}`,

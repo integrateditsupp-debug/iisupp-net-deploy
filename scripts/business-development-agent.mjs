@@ -20,6 +20,7 @@ const COMMAND_UPDATE_FILE = path.join(STATE_DIR, 'iis-aria-command-update.md');
 const ARIA_PACKAGES_FILE = path.join(STATE_DIR, 'aria-monetization-packages.md');
 const GROWTH_LIBRARY_ENGINE_FILE = path.join(STATE_DIR, 'growth-library-product-engine.md');
 const LAST_MILE_PROTOCOL_FILE = path.join(STATE_DIR, 'last-mile-execution-protocol.md');
+const OVERRIDES_FILE = path.join(STATE_DIR, 'opportunity-engine', 'manual-overrides.json');
 const EXECUTION_NOTES = path.join(ROOT, 'AGENT_EXECUTION_NOTES.md');
 
 const HARD_EXCLUSIONS = [
@@ -212,8 +213,25 @@ const GROWTH_PRODUCTS = [
   ['Small Business Website Improvement Checklist', 'owners and web-service buyers', 'weak sites lose leads', '$9-$49']
 ].map(([title, buyer, problem, price]) => ({ title, buyer, problem, price }));
 
+const WARM_STATUSES = new Set(['accepted', 'message_sent', 'replied']);
+const REVENUE_BOARD_STATUSES = new Set(['accepted', 'message_sent', 'replied', 'connection_requested', 'followed']);
+const RECONNECT_STATUS = 'connect_visible';
+
+const WARM_LEAD_OVERRIDES = {
+  'jason-brown-hines': {
+    nextFollowUpDate: '2026-07-02',
+    upcomingAction: 'Watch for reply. If Jason is still silent on 2026-07-02, Ahmad can send or hold the prepared Hines follow-up then.',
+    dueAction: 'If Jason has not replied, Ahmad can send or hold the prepared Hines follow-up now. Use the prepared checklist for the final decision.'
+  },
+  'azim-lila-financial-services-digital-strategy': {
+    nextFollowUpDate: '2026-07-02',
+    upcomingAction: 'Watch for reply. If Azim is still silent on 2026-07-02, Ahmad can send or hold the prepared follow-up then.',
+    dueAction: 'If Azim has not replied, Ahmad can send or hold the prepared short follow-up now. Use the prepared checklist for the final decision.'
+  }
+};
+
 const SEED_CONTACTS = [
-  ['Jason Brown', 'Hines', 'Senior Director at Hines; accepted connection; CIBC Square ecosystem.', 'commercial real estate / enterprise operations', 'accepted', '2026-06-09', 'linkedin', 'Hold until Friday, 2026-06-12 unless he replies first. Use the Friday-ready send checklist for the next send decision.'],
+  ['Jason Brown', 'Hines', 'Senior Director at Hines; accepted connection; CIBC Square ecosystem.', 'commercial real estate / enterprise operations', 'accepted', '2026-06-09', 'linkedin', 'If Jason has not replied, Ahmad can send or hold the approved short follow-up now. Use the prepared checklist for the final decision.'],
   ['Azim Lila', 'Financial services / digital strategy', 'AI, disruption, financial inclusion; past CIBC Director / Senior Manager Digital Strategy; free message sent.', 'financial services / AI transformation', 'message_sent', '2026-06-09', 'linkedin', 'Follow up in 7 days if no reply.'],
   ['Steve Lariviere', 'Hines', 'Operations Engineer at Hines; CIBC Square operations signal.', 'commercial real estate operations', 'connection_requested', '2026-06-09', 'linkedin', 'Check acceptance before messaging.'],
   ['David Hoffman', 'Hines', 'General Manager - CIBC SQUARE at Hines.', 'commercial real estate operations', 'connection_requested', '2026-06-09', 'linkedin', 'Check acceptance before messaging.'],
@@ -273,6 +291,31 @@ function daysBetween(startIso, endIso) {
   return Math.floor((end - start) / 86400000);
 }
 
+function normalizeDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return null;
+  return String(value);
+}
+
+function isClosedLead(lead, today) {
+  const close = normalizeDate(lead?.close);
+  return Boolean(close && close < today);
+}
+
+function matchesOverride(lead, rule) {
+  const match = rule?.match || {};
+  const sourceLink = String(lead?.url || '').toLowerCase();
+  const title = String(lead?.title || '');
+  const org = String(lead?.org || '');
+  if (match.sourceLinkIncludes && !sourceLink.includes(String(match.sourceLinkIncludes).toLowerCase())) return false;
+  if (match.titleIncludes && !title.includes(match.titleIncludes)) return false;
+  if (match.organizationIncludes && !org.includes(match.organizationIncludes)) return false;
+  return Boolean(match.sourceLinkIncludes || match.titleIncludes || match.organizationIncludes);
+}
+
+function findLeadOverride(lead, overrides) {
+  return (overrides || []).find((rule) => matchesOverride(lead, rule)) || null;
+}
+
 async function ensureState() {
   await fs.mkdir(STATE_DIR, { recursive: true });
 }
@@ -308,14 +351,26 @@ async function writeJson(file, value) {
   await fs.writeFile(file, JSON.stringify(value, null, 2), 'utf8');
 }
 
-function mergeContacts(existing) {
+function applyWarmLeadOverride(contact, today) {
+  const override = WARM_LEAD_OVERRIDES[contact.id];
+  if (!override) return contact;
+  const nextAction = today >= override.nextFollowUpDate ? override.dueAction : override.upcomingAction;
+  return {
+    ...contact,
+    nextFollowUpDate: override.nextFollowUpDate,
+    nextAction
+  };
+}
+
+function mergeContacts(existing, today) {
   const byId = new Map((existing.contacts || []).map((c) => [c.id || slug(`${c.name}-${c.company}`), c]));
   for (const seed of SEED_CONTACTS) {
     if (HARD_EXCLUSIONS.some((term) => `${seed.name} ${seed.company} ${seed.signal}`.toLowerCase().includes(term.toLowerCase()))) {
       continue;
     }
     const current = byId.get(seed.id);
-    byId.set(seed.id, current ? { ...seed, ...current, id: seed.id } : seed);
+    const merged = current ? { ...seed, ...current, id: seed.id } : seed;
+    byId.set(seed.id, applyWarmLeadOverride(merged, today));
   }
   return {
     version: 1,
@@ -333,17 +388,12 @@ function mergeContacts(existing) {
 
 function nextFollowUp(contact, today) {
   if (contact.retired) return null;
-  if (!['accepted', 'message_sent', 'replied'].includes(contact.status)) return null;
+  if (!WARM_STATUSES.has(contact.status)) return null;
   const base = contact.firstMessageAt || contact.lastMessageAt || contact.lastTouchedAt || contact.firstTouchedAt;
+  const blockedUntil = normalizeDate(contact.nextFollowUpDate);
+  if (blockedUntil && today < blockedUntil) return null;
   const age = daysBetween(base, today);
-  if ((contact.followUpStage || 0) <= 0 && age >= 7) {
-    return {
-      stage: 1,
-      dueDate: addDays(base, 7),
-      label: '7-day short follow-up',
-      message: `Hi ${contact.name.split(' ')[0]}, quick follow-up. I thought there may be useful overlap around practical AI/M365 support, cleaner handoffs, and reducing day-to-day IT friction. Open to a short compare-notes chat if the timing makes sense.`
-    };
-  }
+  const firstFollowDueDate = blockedUntil || addDays(base, 7);
   if ((contact.followUpStage || 0) <= 1 && age >= 21) {
     return {
       stage: 2,
@@ -352,15 +402,31 @@ function nextFollowUp(contact, today) {
       message: `Hi ${contact.name.split(' ')[0]}, last quick note from me. If AI/M365 support, workflow cleanup, or overflow IT help becomes relevant, I would be glad to be useful. Either way, wishing you a strong month ahead.`
     };
   }
+  if ((contact.followUpStage || 0) <= 0 && today >= firstFollowDueDate) {
+    return {
+      stage: 1,
+      dueDate: firstFollowDueDate,
+      label: '7-day short follow-up',
+      message: `Hi ${contact.name.split(' ')[0]}, quick follow-up. I thought there may be useful overlap around practical AI/M365 support, cleaner handoffs, and reducing day-to-day IT friction. Open to a short compare-notes chat if the timing makes sense.`
+    };
+  }
   return null;
 }
 
 function isObtained(contact, today) {
   if (contact.retired) return false;
-  if (contact.status === 'replied') return true;
-  if (contact.status === 'accepted') return true;
+  if (WARM_STATUSES.has(contact.status)) return true;
   const follow = nextFollowUp(contact, today);
   return Boolean(follow);
+}
+
+function nextWarmAction(contact, today) {
+  if (contact.retired) return 'retired';
+  const follow = nextFollowUp(contact, today);
+  if (follow) return `${follow.label} due now`;
+  if (WARM_STATUSES.has(contact.status)) return contact.nextAction;
+  if (contact.status === RECONNECT_STATUS) return 'live LinkedIn shows Connect again; do not treat this as pending or accepted';
+  return 'check acceptance or use visible no-cost LinkedIn action';
 }
 
 function formatStatusCounts(contacts) {
@@ -372,8 +438,9 @@ function formatStatusCounts(contacts) {
 function revenueScoreContact(contact) {
   const text = `${contact.name || ''} ${contact.company || ''} ${contact.signal || ''} ${contact.segment || ''}`.toLowerCase();
   let score = 0;
-  if (['accepted', 'replied', 'message_sent'].includes(contact.status)) score += 35;
+  if (WARM_STATUSES.has(contact.status)) score += 35;
   if (contact.status === 'connection_requested') score += 18;
+  if (contact.status === RECONNECT_STATUS) score -= 6;
   if (/(owner|founder|director|vp|cio|cto|head|general manager|operations|office manager)/.test(text)) score += 20;
   if (/(microsoft 365|m365|copilot|ai|automation|infrastructure|cyber|security|support|help desk|service delivery)/.test(text)) score += 20;
   if (/(hines|cibc square|commercial real estate|property|tenant|move)/.test(text)) score += 12;
@@ -382,21 +449,15 @@ function revenueScoreContact(contact) {
   return score;
 }
 
-function nextMoveLabel(contact) {
-  if (contact.name === 'Jason Brown' && contact.company === 'Hines' && contact.status === 'accepted') {
-    return 'hold until Friday, 2026-06-12 unless he replies first; then use the Friday-ready send checklist';
-  }
-  if (contact.status === 'accepted') return 'prepare/send Ahmad-approved warm follow-up';
-  if (contact.status === 'message_sent') return 'watch for reply, then 7-day follow-up';
+function nextMoveLabel(contact, today) {
+  if (WARM_STATUSES.has(contact.status)) return nextWarmAction(contact, today);
+  if (contact.status === RECONNECT_STATUS) return 'connect is visible again; only retry if worth a fresh manual attempt';
   return 'check acceptance or use visible no-cost LinkedIn action';
 }
 
-function bestLeadNextText(contact) {
-  if (contact.name === 'Jason Brown' && contact.company === 'Hines' && contact.status === 'accepted') {
-    return 'hold until Friday, 2026-06-12 unless he replies first; Friday-ready send checklist is prepared';
-  }
-  if (contact.status === 'accepted') return 'Ahmad-approved warm follow-up';
-  if (contact.status === 'message_sent') return 'watch for reply and prepare 7-day follow-up draft';
+function bestLeadNextText(contact, today) {
+  if (WARM_STATUSES.has(contact.status)) return nextWarmAction(contact, today).replace(/[.]+$/, '');
+  if (contact.status === RECONNECT_STATUS) return 'connect is visible again, so treat as a cold re-approach only if still worthwhile';
   return 'check acceptance or visible no-cost action only';
 }
 
@@ -409,19 +470,31 @@ function pickOffer(contact) {
   return REVENUE_OFFERS[0];
 }
 
-function classifyTenderLead(entry) {
+function classifyTenderLead(entry, today, overrides) {
   const lead = entry.lead || {};
   const classification = entry.classification || {};
+  const override = findLeadOverride(lead, overrides);
   const text = `${lead.title || ''} ${lead.org || ''} ${classification.stream || ''} ${classification.reason || ''}`.toLowerCase();
+  if (override?.action === 'ignore') return -100;
+  if (isClosedLead(lead, today)) return -100;
   let score = 0;
   if (classification.allowed) score += 30;
+  else score -= 15;
   if (lead.hot) score += 20;
   if (/(help desk|technical support|service desk|microsoft|m365|power platform|web architect|cyber|security|cloud|network|application|programmer|developer|tbips)/.test(text)) score += 25;
   if (/(furniture|veterinary|dental|tractor|fuel|construction|laboratory animal|imaging)/.test(text)) score -= 20;
+  if (/(cleaning kits|accessories|identity cards?|printing|printer(?!.*support|.*maintenance)|hardware(?! maintenance and support)|spare parts|conduit|goods|subscription renewal)/.test(text)) score -= 35;
+  if (/(satellite|sensor fusion|real[- ]world missions|indigenous business only|fire services management|database management|training courses?)/.test(text)) score -= 25;
+  if (/(request for information|\brfi\b|training courses?)/.test(text)) score -= 18;
+  if (/(tbips|tsps|ths|project manager|business system analyst|level 3|level 2|stream \d|professional services)/.test(text)
+      && !/(help desk|technical support|service desk|managed service|workflow|knowledge base|documentation|website|automation blueprint)/.test(text)) {
+    score -= 30;
+  }
+  if (override?.action === 'note') score -= 10;
   return score;
 }
 
-function latestUniqueTenderLeads(entries) {
+function latestUniqueTenderLeads(entries, overrides, today) {
   const byRef = new Map();
   for (const entry of entries) {
     const lead = entry.lead || {};
@@ -430,20 +503,37 @@ function latestUniqueTenderLeads(entries) {
     if (!current || String(entry.ts || '') > String(current.ts || '')) byRef.set(key, entry);
   }
   return [...byRef.values()]
-    .map((entry) => ({ ...entry, revenueScore: classifyTenderLead(entry) }))
-    .filter((entry) => entry.revenueScore > 0)
+    .map((entry) => {
+      const lead = entry.lead || {};
+      const override = findLeadOverride(lead, overrides);
+      return {
+        ...entry,
+        override,
+        revenueScore: classifyTenderLead(entry, today, overrides)
+      };
+    })
+    .filter((entry) => entry.revenueScore >= 20 && entry.override?.action !== 'ignore' && !isClosedLead(entry.lead || {}, today))
     .sort((a, b) => b.revenueScore - a.revenueScore)
     .slice(0, 12);
 }
 
-function renderRevenueSprint(contacts, leadQueueEntries, today) {
+function tenderActionText(entry) {
+  const override = entry?.override;
+  if (override?.disposition === 'partner_path_only') return 'partner-path-only review; do not position as a direct IIS bid';
+  if (override?.action === 'note') return override.reason || 'review posture and document caveats before any prep';
+  return (entry?.classification || {}).allowed
+    ? 'prepare bid/no-bid brief and portal checklist'
+    : 'light review only; do not commit until fit is confirmed';
+}
+
+function renderRevenueSprint(contacts, leadQueueEntries, today, overrides) {
   const topContacts = contacts
-    .filter((c) => !c.retired && c.status !== 'premium_gated')
+    .filter((c) => !c.retired && REVENUE_BOARD_STATUSES.has(c.status))
     .map((contact) => ({ contact, score: revenueScoreContact(contact), offer: pickOffer(contact) }))
     .filter((row) => row.score >= 25)
     .sort((a, b) => b.score - a.score)
     .slice(0, 15);
-  const tenderLeads = latestUniqueTenderLeads(leadQueueEntries);
+  const tenderLeads = latestUniqueTenderLeads(leadQueueEntries, overrides, today);
 
   return [
     '# Revenue Generation Sprint',
@@ -474,7 +564,7 @@ function renderRevenueSprint(contacts, leadQueueEntries, today) {
       `   - Status: ${contact.status}`,
       `   - Best offer: ${offer.name}`,
       `   - Signal: ${contact.signal}`,
-      `   - Next move: ${nextMoveLabel(contact)}`
+      `   - Next move: ${nextMoveLabel(contact, today)}`
     ].join('\n')).join('\n\n') : '- No near-warm contacts above threshold right now.',
     '',
     '## Public Tender / Bid Leads Worth Reviewing',
@@ -486,7 +576,7 @@ function renderRevenueSprint(contacts, leadQueueEntries, today) {
         `   - Close: ${lead.close || 'unknown'}`,
         `   - Score: ${entry.revenueScore}`,
         `   - Classification: ${classification.level || 'unknown'} / ${classification.stream || 'unknown'}`,
-        `   - Action: ${classification.allowed ? 'prepare bid/no-bid brief and portal checklist' : 'light review only; do not commit until fit is confirmed'}`,
+        `   - Action: ${tenderActionText(entry)}`,
         `   - Link: ${lead.url || 'n/a'}`
       ].join('\n');
     }).join('\n\n') : '- No tender lead above threshold right now.',
@@ -688,16 +778,18 @@ function renderGrowthLibraryEngine() {
   ].join('\n\n');
 }
 
-function renderCommandUpdate(contacts, leadQueueEntries, today) {
+function renderCommandUpdate(contacts, leadQueueEntries, today, overrides) {
   const topContacts = contacts
-    .filter((c) => !c.retired && c.status !== 'premium_gated')
+    .filter((c) => !c.retired && REVENUE_BOARD_STATUSES.has(c.status))
     .map((contact) => ({ contact, score: revenueScoreContact(contact), offer: pickOffer(contact) }))
     .sort((a, b) => b.score - a.score);
-  const tenderLeads = latestUniqueTenderLeads(leadQueueEntries);
+  const tenderLeads = latestUniqueTenderLeads(leadQueueEntries, overrides, today);
   const bestLead = topContacts[0];
   const bestTender = tenderLeads[0];
   const topProduct = GROWTH_PRODUCTS.find((p) => p.title === 'AI Help Desk Automation Blueprint') || GROWTH_PRODUCTS[0];
   const ariaMove = ARIA_PACKAGES.find((p) => p.title === 'AI Help Desk Blueprint') || ARIA_PACKAGES[0];
+  const pendingCount = contacts.filter((c) => c.status === 'connection_requested' && !c.retired).length;
+  const reconnectCount = contacts.filter((c) => c.status === RECONNECT_STATUS && !c.retired).length;
   const revenueOpps = REVENUE_OFFERS.map((offer) => {
     const score = scoreOpportunity({
       revenue: offer.name.includes('Overflow') ? 8 : 7,
@@ -722,10 +814,10 @@ function renderCommandUpdate(contacts, leadQueueEntries, today) {
     ...revenueOpps,
     '',
     '## 2. Best lead today',
-    bestLead ? `- ${bestLead.contact.name} (${bestLead.contact.company}) - score ${bestLead.score}. Best offer: ${bestLead.offer.name}. Next: ${bestLeadNextText(bestLead.contact)}.` : '- No qualified lead above threshold.',
+    bestLead ? `- ${bestLead.contact.name} (${bestLead.contact.company}) - score ${bestLead.score}. Best offer: ${bestLead.offer.name}. Next: ${bestLeadNextText(bestLead.contact, today)}.` : '- No qualified lead above threshold.',
     '',
     '## 3. Best contract/tender today',
-    bestTender ? `- ${bestTender.lead.title} - ${bestTender.lead.org}. Close: ${bestTender.lead.close || 'unknown'}. Score: ${bestTender.revenueScore}. Action: prepare bid/no-bid brief before any submission. ${bestTender.lead.url || ''}` : '- No tender lead above threshold.',
+    bestTender ? `- ${bestTender.lead.title} - ${bestTender.lead.org}. Close: ${bestTender.lead.close || 'unknown'}. Score: ${bestTender.revenueScore}. Action: ${tenderActionText(bestTender)}. ${bestTender.lead.url || ''}` : '- No tender lead above threshold.',
     '',
     '## 4. Best ARIA monetization move',
     `- Package ${ariaMove.title} as the first serious ARIA service. Price range: ${ariaMove.price}. Hook: ${ariaMove.hook}`,
@@ -743,18 +835,19 @@ function renderCommandUpdate(contacts, leadQueueEntries, today) {
     '- CEO final-action rule: drafts should be taken as close as possible to the final Send/Connect action, then left for Ahmad approval/click.',
     '',
     '## 8. Proposal drafts prepared',
-    '- Not submitted. The Jason Brown / Hines Friday-ready follow-up packet is prepared. Next bid/proposal packaging should focus on the highest-fit tender after Ahmad reviews posture.',
+    '- Not submitted. Jason Brown / Hines and Azim Lila follow-up packets are prepared for Wednesday, 2026-07-02 unless a reply arrives first. Next bid/proposal packaging should focus on the highest-fit tender after Ahmad reviews posture.',
     '',
     '## 9. Risks / approvals needed',
     '- Ahmad approval required before the final irreversible button: Send, Connect when it sends externally, Submit, Apply, Complete, signature/certification, pricing commitment, paid tool, public claim, account creation, production-risk publish, deletion, move, archive, or Git history change.',
     '- Hard exclusions preserved: Raymond James, scraping, spam, paid InMail, fake partnerships, and copied copyrighted products.',
+    reconnectCount ? `- LinkedIn queue drift detected: ${reconnectCount} prior connection-request records now show ordinary Connect again in live LinkedIn, so do not treat them as pending or accepted without a fresh manual decision.` : null,
     '',
     "## 10. Tomorrow's first 3 actions",
-    '- Check LinkedIn accepted connections and move any accepted buyer into Obtained Leads.',
-    '- If Jason Brown has not replied by Friday, 2026-06-12, use the prepared Hines send checklist for the CEO `Send` / `Hold` decision.',
-    '- Review the staged Overflow Support Pilot preview slice and choose publish or hold local only.',
+    pendingCount ? '- Check LinkedIn accepted connections and move any accepted buyer into Obtained Leads.' : '- Keep the warm-send lane on Jason Brown and Azim Lila first; the old pending-request queue is no longer the primary LinkedIn action.',
+    '- Monitor Jason Brown and Azim Lila for reply; if either is still silent on 2026-07-02, use the prepared send checklist then.',
+    reconnectCount ? `- Review the ${reconnectCount} live Connect-again leads and only retry the strongest fits with a fresh manual Connect decision.` : '- Review the staged Overflow Support Pilot preview slice and choose publish or hold local only.',
     ''
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 }
 
 function renderLastMileProtocol() {
@@ -816,7 +909,7 @@ function renderObtained(contacts, today) {
       `   - Segment: ${c.segment || 'unknown'}`,
       `   - Status: ${c.status}`,
       `   - Signal: ${c.signal}`,
-      `   - Action now: ${follow ? follow.label : c.nextAction}`,
+      `   - Next action: ${nextWarmAction(c, today)}`,
       follow ? `   - Draft: ${follow.message}` : null
     ].filter(Boolean).join('\n');
   });
@@ -838,16 +931,16 @@ function csvEscape(value) {
 }
 
 function renderObtainedCsv(contacts, today) {
-  const header = ['name', 'company', 'segment', 'status', 'signal', 'action_now'];
+  const header = ['name', 'company', 'segment', 'status', 'signal', 'next_action'];
   const rows = contacts.filter((c) => isObtained(c, today)).map((c) => {
-    const follow = nextFollowUp(c, today);
-    return [c.name, c.company, c.segment, c.status, c.signal, follow ? follow.label : c.nextAction].map(csvEscape).join(',');
+    return [c.name, c.company, c.segment, c.status, c.signal, nextWarmAction(c, today)].map(csvEscape).join(',');
   });
   return [header.join(','), ...rows].join('\n') + '\n';
 }
 
 function renderDailyBrief(contacts, today) {
   const pending = contacts.filter((c) => c.status === 'connection_requested' && !c.retired);
+  const reconnectVisible = contacts.filter((c) => c.status === RECONNECT_STATUS && !c.retired);
   const followed = contacts.filter((c) => c.status === 'followed' && !c.retired);
   const premiumSkipped = contacts.filter((c) => c.status === 'premium_gated' && !c.retired);
   const obtained = contacts.filter((c) => isObtained(c, today));
@@ -866,9 +959,10 @@ function renderDailyBrief(contacts, today) {
     '',
     '## Today Snapshot',
     formatStatusCounts(contacts),
-    `- warm/obtained leads needing Ahmad action: ${obtained.length}`,
+    `- warm/obtained leads being tracked: ${obtained.length}`,
     `- follow-ups due by cadence: ${followDue.length}`,
     `- pending connection requests to review for acceptance: ${pending.length}`,
+    `- prior requests now showing ordinary Connect again: ${reconnectVisible.length}`,
     `- followed strategic profiles to revisit later: ${followed.length}`,
     `- premium-gated skips preserved: ${premiumSkipped.length}`,
     `- revenue sprint board: ${REVENUE_SPRINT_FILE}`,
@@ -881,13 +975,16 @@ function renderDailyBrief(contacts, today) {
     '- Avoid low-intent activity. A follow/connect only counts if the role, company signal, service angle, and next action are logged.',
     '',
     '## Obtained Leads',
-    obtained.length ? obtained.map((c) => `- ${c.name}${c.company ? ` (${c.company})` : ''}: ${c.status} - ${c.nextAction}`).join('\n') : '- None due right now.',
+    obtained.length ? obtained.map((c) => `- ${c.name}${c.company ? ` (${c.company})` : ''}: ${c.status} - ${nextWarmAction(c, today)}`).join('\n') : '- None due right now.',
     '',
     '## Follow-Ups Due',
     followDue.length ? followDue.map(({ contact, follow }) => `- ${contact.name}: ${follow.label} - ${follow.message}`).join('\n') : '- None due today.',
     '',
     '## Acceptance Review Queue',
     pending.slice(0, 30).map((c) => `- ${c.name}${c.company ? ` (${c.company})` : ''}: ${c.segment} - check if accepted; if accepted, move status to accepted and add to obtained leads.`).join('\n') || '- No pending connection requests.',
+    '',
+    '## Connect-Visible Drift Queue',
+    reconnectVisible.slice(0, 30).map((c) => `- ${c.name}${c.company ? ` (${c.company})` : ''}: ${c.segment} - live LinkedIn now shows Connect again, so the old request is not pending. Retry only if still worth a fresh manual attempt.`).join('\n') || '- No connect-visible drift items.',
     '',
     '## Search Plays For Today',
     ...SEARCH_PLAYS.map((play) => `- ${play.name}: ${play.url}`),
@@ -970,30 +1067,34 @@ async function run() {
   const today = todayIso();
   const existing = await readJson(CRM_FILE, { contacts: [] });
   const leadQueueEntries = await readJsonl(LEAD_QUEUE_FILE);
-  const crm = mergeContacts(existing);
+  const overrideDb = await readJson(OVERRIDES_FILE, { overrides: [] });
+  const overrides = Array.isArray(overrideDb.overrides) ? overrideDb.overrides : [];
+  const crm = mergeContacts(existing, today);
 
   await writeJson(CRM_FILE, crm);
   await fs.writeFile(AGENT_SPEC_FILE, renderSpec(), 'utf8');
   await fs.writeFile(OBTAINED_MD_FILE, renderObtained(crm.contacts, today), 'utf8');
   await fs.writeFile(OBTAINED_CSV_FILE, renderObtainedCsv(crm.contacts, today), 'utf8');
   await fs.writeFile(DAILY_BRIEF_FILE, renderDailyBrief(crm.contacts, today), 'utf8');
-  await fs.writeFile(REVENUE_SPRINT_FILE, renderRevenueSprint(crm.contacts, leadQueueEntries, today), 'utf8');
+  await fs.writeFile(REVENUE_SPRINT_FILE, renderRevenueSprint(crm.contacts, leadQueueEntries, today, overrides), 'utf8');
   await fs.writeFile(REVENUE_DRAFTS_FILE, renderRevenueDrafts(crm.contacts), 'utf8');
   await fs.writeFile(COMMAND_SYSTEM_FILE, renderCommandSystem(), 'utf8');
-  await fs.writeFile(COMMAND_UPDATE_FILE, renderCommandUpdate(crm.contacts, leadQueueEntries, today), 'utf8');
+  await fs.writeFile(COMMAND_UPDATE_FILE, renderCommandUpdate(crm.contacts, leadQueueEntries, today, overrides), 'utf8');
   await fs.writeFile(ARIA_PACKAGES_FILE, renderAriaPackages(), 'utf8');
   await fs.writeFile(GROWTH_LIBRARY_ENGINE_FILE, renderGrowthLibraryEngine(), 'utf8');
   await fs.writeFile(LAST_MILE_PROTOCOL_FILE, renderLastMileProtocol(), 'utf8');
 
   const obtainedCount = crm.contacts.filter((c) => isObtained(c, today)).length;
   const pendingCount = crm.contacts.filter((c) => c.status === 'connection_requested' && !c.retired).length;
+  const reconnectVisibleCount = crm.contacts.filter((c) => c.status === RECONNECT_STATUS && !c.retired).length;
   const followedCount = crm.contacts.filter((c) => c.status === 'followed' && !c.retired).length;
-  const tenderLeadCount = latestUniqueTenderLeads(leadQueueEntries).length;
+  const tenderLeadCount = latestUniqueTenderLeads(leadQueueEntries, overrides, today).length;
   const summary = [
     `Generated daily no-send business-development queue for ${crm.contacts.length} tracked contacts.`,
     '',
-    `Obtained leads needing Ahmad action: ${obtainedCount}`,
+    `Warm/obtained leads tracked: ${obtainedCount}`,
     `Pending connection requests to check: ${pendingCount}`,
+    `Prior requests now showing Connect again: ${reconnectVisibleCount}`,
     `Strategic follows to revisit: ${followedCount}`,
     `Tender/public leads worth review: ${tenderLeadCount}`,
     '',
@@ -1021,6 +1122,7 @@ async function run() {
       trackedContacts: crm.contacts.length,
       obtainedLeads: obtainedCount,
       pendingConnections: pendingCount,
+      reconnectVisibleCount,
       strategicFollows: followedCount,
       tenderLeadCount
     },
@@ -1040,6 +1142,7 @@ async function run() {
     ].filter(Boolean),
     nextActions: [
       pendingCount ? `Check ${pendingCount} pending connection request(s) for acceptance.` : null,
+      reconnectVisibleCount ? `Review ${reconnectVisibleCount} lead(s) whose old connection-request state drifted back to visible Connect.` : null,
       followedCount ? `Revisit ${followedCount} strategic follow(s) on cadence.` : null,
       tenderLeadCount ? `Review ${tenderLeadCount} tender/public lead(s) for bid/no-bid posture.` : null
     ].filter(Boolean),

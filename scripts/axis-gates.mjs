@@ -20,6 +20,10 @@ export const RISKY_PATTERNS = [
   // Infinity-Wisdom additions: the engine must never spend, nor command unbounded self-replication.
   { re: /\b(buy|subscribe|upgrade plan|paid (api|tier|plan)|openai|anthropic api key|gpt-4|per-token)\b/i, why: 'paid API / spend' },
   { re: /\b(spawn|create|launch)[^.]{0,30}(unlimited|infinite|many|hundreds|thousands|army of) (agents?|workers?|bots?)\b/i, why: 'uncontrolled agent spawn' },
+  // Codex P0 hardening (2026-06-28): block irreversible "CEO action" verbs that must always stay
+  // staged-to-Ahmad. These must NEVER auto-fire even if a job is otherwise a safe kind.
+  { re: /\b(submit|apply|sign|e-?sign|accept (the )?terms|agree to terms|create (an? )?account|sign ?up|register (for|an?|with)|enroll|checkout|place (an? )?order|confirm (purchase|order|payment)|opt-?in to)\b/i, why: 'irreversible CEO action (submit/apply/sign/account/register)' },
+  { re: /\b(admin ?consent|grant (admin|tenant) consent|consent to (the )?app|oauth consent)\b/i, why: 'identity admin-consent' },
 ];
 
 /**

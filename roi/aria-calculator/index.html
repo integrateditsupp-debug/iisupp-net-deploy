@@ -53,7 +53,7 @@
         <div class="metric"><span>Potential time value reclaimed</span><strong id="reclaimed">$0</strong></div>
         <div class="metric"><span>Net planning value after pilot cost</span><strong id="netValue">$0</strong></div>
         <p class="range-note" id="paybackNote">Adjust the inputs to model your team.</p>
-        <div class="cta-row" style="justify-content:flex-start;margin-top:18px"><a class="btn solid" id="scopeLink" href="/?contact=1&subject=ARIA%20ROI%20Pilot%20Review">Scope pilot</a><a class="btn" href="/compare/">Compare options</a></div>
+        <div class="cta-row" style="justify-content:flex-start;margin-top:18px"><a class="btn solid" id="scopeLink" href="/book.html?lane=general-fit&amp;source=roi-calculator-pilot-review&amp;subject=ARIA%20ROI%20Pilot%20Review">Scope pilot</a><a class="btn" href="/compare/">Compare options</a></div>
       </aside>
     </div>
   </section>
@@ -86,7 +86,7 @@
       : 'This model suggests narrowing the pilot scope or targeting higher-volume support patterns first.';
     var subject = 'ARIA ROI Pilot Review';
     var desc = 'Employees: '+num('employees')+'\nRepeat questions per employee/month: '+num('tickets')+'\nMinutes lost/question: '+num('minutes')+'\nHourly value: CAD '+num('rate')+'\nDeflection assumption: '+Math.round(num('deflect')*100)+'%\nMonthly pilot cost: CAD '+num('ariaCost');
-    document.getElementById('scopeLink').href='/?contact=1&subject='+encodeURIComponent(subject)+'&desc='+encodeURIComponent(desc);
+    document.getElementById('scopeLink').href='/book.html?lane=general-fit&source=roi-calculator-pilot-review&subject='+encodeURIComponent(subject)+'&desc='+encodeURIComponent(desc);
   }
   ids.forEach(function(id){document.getElementById(id).addEventListener('input',render);});
   render();

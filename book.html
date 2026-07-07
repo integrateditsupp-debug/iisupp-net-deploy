@@ -2,18 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Book a 30-min call — IIS</title>
+<title>Book a 15-min demo - IIS</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Book a 30-minute discovery call with Ahmad Wasee, founder of Integrated IT Support.">
+<meta name="description" content="Book a 15-minute discovery demo with Ahmad Wasee, founder of Integrated IT Support.">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,system-ui,sans-serif;background:#050505;color:#e8e8e8;line-height:1.55;padding:48px 20px;min-height:100vh}
-  .wrap{max-width:640px;margin:0 auto}
+  body{font-family:-apple-system,system-ui,sans-serif;background:
+    radial-gradient(circle at top left,rgba(197,160,89,.16),transparent 26%),
+    radial-gradient(circle at bottom right,rgba(197,160,89,.10),transparent 22%),
+    #050505;color:#e8e8e8;line-height:1.55;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:980px;margin:0 auto}
   .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600;margin-bottom:8px}
   h1{font-size:36px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em;line-height:1.1}
   h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
-  p.sub{color:rgba(255,255,255,.65);font-size:15.5px;margin-bottom:32px}
-  .form-card{background:#0d0d0d;border:1px solid rgba(197,160,89,.4);border-radius:14px;padding:28px}
+  p.sub{color:rgba(255,255,255,.65);font-size:15.5px;margin-bottom:24px}
+  .hero-shell{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:26px;align-items:start}
+  .intro-card,.form-card,.next-card{background:rgba(13,13,13,.92);border:1px solid rgba(197,160,89,.24);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.36)}
+  .intro-card{padding:28px}
+  .intro-copy{color:rgba(255,255,255,.58);font-size:14px;line-height:1.8;margin-bottom:18px}
+  .fit-grid{display:grid;gap:12px;margin-bottom:18px}
+  .fit-box{padding:14px 15px;border-radius:12px;border:1px solid rgba(241,220,167,.14);background:linear-gradient(135deg,rgba(255,255,255,.025),rgba(197,160,89,.07))}
+  .fit-box strong{display:block;color:#f1dca7;font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px}
+  .fit-box span{display:block;color:rgba(255,255,255,.62);font-size:13px;line-height:1.65}
+  .signal-row{display:flex;flex-wrap:wrap;gap:8px}
+  .signal-pill{display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border-radius:999px;border:1px solid rgba(241,220,167,.18);background:rgba(255,255,255,.03);color:rgba(243,236,217,.74);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+  .form-card{padding:28px}
+  .lane-shell{margin-bottom:18px}
+  .lane-shell h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#f1dca7;margin-bottom:6px}
+  .lane-shell p{color:rgba(255,255,255,.52);font-size:12.5px;line-height:1.65;margin-bottom:14px}
+  .lane-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .lane-card{padding:14px;border-radius:12px;border:1px solid rgba(241,220,167,.12);background:linear-gradient(145deg,rgba(255,255,255,.02),rgba(197,160,89,.04));cursor:pointer;text-align:left;transition:border-color .18s,transform .18s,background .18s,box-shadow .18s}
+  .lane-card:hover{border-color:rgba(197,160,89,.4);transform:translateY(-1px)}
+  .lane-card.sel{border-color:#c5a059;background:linear-gradient(145deg,rgba(197,160,89,.12),rgba(255,255,255,.03));box-shadow:0 10px 24px rgba(197,160,89,.12)}
+  .lane-card strong{display:block;color:#fff;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+  .lane-card span{display:block;color:rgba(255,255,255,.6);font-size:12.5px;line-height:1.55}
+  .lane-brief{margin-top:12px;padding:14px 15px;border-radius:12px;border:1px solid rgba(197,160,89,.18);background:rgba(197,160,89,.05)}
+  .lane-brief strong{display:block;color:#f1dca7;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px}
+  .lane-brief p{color:rgba(255,255,255,.66);font-size:12.8px;line-height:1.65;margin:0 0 10px}
+  .lane-links{display:flex;flex-wrap:wrap;gap:10px}
+  .lane-link{display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;border-radius:999px;border:1px solid rgba(197,160,89,.35);background:rgba(255,255,255,.02);color:#c5a059;text-decoration:none;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+  .lane-link:hover{background:rgba(197,160,89,.08)}
+  .helper-note{margin-top:10px;color:rgba(255,255,255,.42);font-size:11.5px;line-height:1.6}
   label{display:block;color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;font-weight:600;margin-top:14px}
   label:first-child{margin-top:0}
   input,select,textarea{width:100%;padding:11px 13px;background:#050505;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14.5px;font-family:inherit}
@@ -26,50 +55,192 @@
   button.book:disabled{opacity:.5;cursor:wait}
   .ok-msg{display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.4);color:#22c55e;padding:13px;border-radius:8px;font-size:13.5px;margin-top:12px}
   .err-msg{display:none;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.3);color:#f87171;padding:11px;border-radius:8px;font-size:13px;margin-top:10px}
+  .next-card{margin-top:18px;padding:18px 20px}
+  .next-card h2{font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#f1dca7;margin-bottom:10px}
+  .next-list{display:grid;gap:10px}
+  .next-item{display:grid;grid-template-columns:20px 1fr;gap:10px;align-items:start;color:rgba(255,255,255,.62);font-size:13px;line-height:1.65}
+  .next-item strong{color:#fff}
+  .next-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;background:rgba(197,160,89,.18);color:#f1dca7;font-size:11px;font-weight:700}
   .nav{text-align:center;margin-top:32px;color:rgba(255,255,255,.4);font-size:12.5px}
   .nav a{color:rgba(255,255,255,.6);text-decoration:none;margin:0 8px}
   .nav a:hover{color:#c5a059}
+  @media (max-width:860px){
+    .hero-shell{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    body{padding:30px 14px 40px}
+    h1{font-size:31px}
+    .intro-card,.form-card,.next-card{border-radius:14px}
+    .intro-card,.form-card{padding:22px 18px}
+    .next-card{padding:16px 18px}
+    p.sub{font-size:14px}
+    .lane-grid{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="crown">Book a discovery call</div>
-  <h1>30 min with <span class="gold">Ahmad.</span></h1>
-  <p class="sub">Founder-direct. No sales rep. We talk about your IT setup, where ARIA fits, and whether a pilot makes sense for you. No pressure.</p>
+  <div class="hero-shell">
+    <div class="intro-card">
+      <div class="crown">Book a 15-min demo</div>
+      <h1>15 min with <span class="gold">Ahmad.</span></h1>
+      <p class="sub">Founder-direct. No sales rep. We focus on the one IT, AI, or workflow problem that matters most right now and whether a practical next step makes sense.</p>
+      <p class="intro-copy">This call is for buyers who already feel the friction and want one sober recommendation, not a generic pitch deck. Bring the bottleneck, the current tools, and the outcome you want first.</p>
 
-  <div class="form-card">
-    <label>Your name *</label>
-    <input id="b-name" type="text" placeholder="Jane Smith">
+      <div class="fit-grid">
+        <div class="fit-box">
+          <strong>Best when</strong>
+          <span>Tickets are piling up, M365 is messy, the website is not converting, or a repetitive workflow keeps wasting time every week.</span>
+        </div>
+        <div class="fit-box">
+          <strong>Useful input</strong>
+          <span>One specific issue, the systems involved, who is affected, and what a good first fix would look like from your side.</span>
+        </div>
+      </div>
 
-    <label>Work email *</label>
-    <input id="b-email" type="email" placeholder="you@company.com">
+      <div class="signal-row" aria-label="Common reasons to book">
+        <span class="signal-pill">Ticket overflow</span>
+        <span class="signal-pill">L1 enablement</span>
+        <span class="signal-pill">Service desk SOP</span>
+        <span class="signal-pill">Support KB cleanup</span>
+        <span class="signal-pill">M365 cleanup</span>
+        <span class="signal-pill">AI workflow</span>
+        <span class="signal-pill">Website intake</span>
+        <span class="signal-pill">Monthly AI support</span>
+        <span class="signal-pill">Procurement packet</span>
+        <span class="signal-pill">Procurement fit</span>
+      </div>
+    </div>
 
-    <label>Company *</label>
-    <input id="b-company" type="text" placeholder="Acme Inc.">
+    <div>
+      <div class="form-card">
+        <div class="lane-shell">
+          <h2>Pick the best-fit lane</h2>
+          <p>Choose the offer or issue lane that best matches this request. Ahmad sees the lane, route source, and scoped notes before he confirms the call.</p>
+          <div class="lane-grid" id="lane-grid">
+            <button type="button" class="lane-card" data-lane="general-fit">
+              <strong>General fit call</strong>
+              <span>Use this if you need a quick founder read on the right IIS lane first.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="hybrid-support">
+              <strong>Overflow support</strong>
+              <span>Best for ticket pressure, user support drag, or bounded L1-L3 overflow help.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="office-readiness">
+              <strong>Office readiness</strong>
+              <span>Best for move-ins, expansions, vendor handoffs, and day-one workplace technology readiness.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="workflow-proof">
+              <strong>AI workflow audit</strong>
+              <span>Best for repeated admin, handoff, reporting, or documentation friction.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="ai-agent-setup">
+              <strong>AI agent setup</strong>
+              <span>Best for bounded FAQ, intake, booking, quote-prep, or human-handoff assistant setup.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="support-kb">
+              <strong>Support KB build</strong>
+              <span>Best for scattered ticket memory, weak support articles, or KB cleanup before broader AI rollout.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="support-blueprint-review">
+              <strong>Blueprint review</strong>
+              <span>Best for support teams that know the queue is messy but still need IIS to confirm the right first support lane.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="support-ops-setup">
+              <strong>Support ops setup</strong>
+              <span>Best for ticket intake, triage, escalation templates, and help-desk blueprint implementation.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="l1-enablement">
+              <strong>L1 enablement</strong>
+              <span>Best for first-response structure, analyst ramp-up, recurring L1 ticket quality, and sharper escalation boundaries.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="service-desk-sop">
+              <strong>Service desk SOP</strong>
+              <span>Best for intake, ownership, closure discipline, and service-desk operating rhythm cleanup.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="conversion-fix">
+              <strong>Website intake fix</strong>
+              <span>Best for weak CTAs, poor booking logic, or website visitors not converting.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="m365-tuneup">
+              <strong>M365 tune-up</strong>
+              <span>Best for messy admin, Teams/SharePoint friction, MFA, or identity cleanup.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="procurement-packet">
+              <strong>Procurement packet</strong>
+              <span>Best for security, legal, or procurement teams that need the packet and artifacts before a live call.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="procurement-fit">
+              <strong>Procurement fit</strong>
+              <span>Best for sourcing, vendor comparison, verified checkout prep, or setup planning.</span>
+            </button>
+            <button type="button" class="lane-card" data-lane="monthly-support">
+              <strong>Monthly AI support</strong>
+              <span>Best for recurring prompt, KB, workflow, and small-fix ownership after the first AI asset is live.</span>
+            </button>
+          </div>
+          <div class="lane-brief" id="lane-brief">
+            <strong id="lane-brief-title">General fit call</strong>
+            <p id="lane-brief-copy">Use this when you want a short human read on whether the first move should be support, workflow, M365, or website-related.</p>
+            <div class="lane-links">
+              <a class="lane-link" id="lane-proof-link" href="/start-here.html">Open route guide</a>
+              <a class="lane-link" id="lane-alt-link" href="/services.html">Open services</a>
+            </div>
+            <div class="helper-note" id="lane-helper-note">If you came from another page, the booking route can pre-select the lane and stage the request context automatically.</div>
+          </div>
+        </div>
 
-    <label>Vertical</label>
-    <select id="b-vertical">
-      <option value="">Pick one...</option>
-      <option>Healthcare / clinic</option>
-      <option>Legal / law firm</option>
-      <option>Finance / accounting</option>
-      <option>Education</option>
-      <option>Manufacturing</option>
-      <option>General SMB</option>
-      <option>Other</option>
-    </select>
+        <label>Your name *</label>
+        <input id="b-name" type="text" placeholder="Jane Smith">
 
-    <label>Preferred day + time (3 options)</label>
-    <input id="b-slot1" type="text" placeholder="Tue 2026-07-22 2pm ET">
-    <input id="b-slot2" type="text" placeholder="Thu 2026-07-24 10am ET" style="margin-top:6px">
-    <input id="b-slot3" type="text" placeholder="Fri 2026-07-25 3pm ET" style="margin-top:6px">
+        <label>Work email *</label>
+        <input id="b-email" type="email" placeholder="you@company.com">
 
-    <label>What is the IT issue most on your mind right now?</label>
-    <textarea id="b-context" placeholder="e.g. 'Our Outlook crashes during morning huddles' — one specific thing"></textarea>
+        <label>Company *</label>
+        <input id="b-company" type="text" placeholder="Acme Inc.">
 
-    <button class="book" id="book-btn">Request 30-min call →</button>
-    <div class="ok-msg" id="ok-msg">Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.</div>
-    <div class="err-msg" id="err-msg"></div>
+        <label>Vertical</label>
+        <select id="b-vertical">
+          <option value="">Pick one...</option>
+          <option>Government / public sector</option>
+          <option>Enterprise / procurement</option>
+          <option>Healthcare / clinic</option>
+          <option>Legal / law firm</option>
+          <option>Finance / accounting</option>
+          <option>Education</option>
+          <option>Manufacturing</option>
+          <option>General SMB</option>
+          <option>Other</option>
+        </select>
+
+        <label>Team size or users affected</label>
+        <input id="b-team" type="text" placeholder="e.g. 12 users, 2 support staff, or one front desk team">
+
+        <label>Core tools or systems in scope</label>
+        <input id="b-tools" type="text" placeholder="e.g. Microsoft 365, Outlook, Teams, website CMS, help desk">
+
+        <label id="slot-label">Preferred day + time (3 options)</label>
+        <input id="b-slot1" type="text" placeholder="Tue 2026-07-22 2pm ET">
+        <input id="b-slot2" type="text" placeholder="Thu 2026-07-24 10am ET" style="margin-top:6px">
+        <input id="b-slot3" type="text" placeholder="Fri 2026-07-25 3pm ET" style="margin-top:6px">
+
+        <label id="context-label">What is the IT issue most on your mind right now?</label>
+        <textarea id="b-context" placeholder="e.g. 'Our Outlook crashes during morning huddles' - one specific thing"></textarea>
+
+        <button class="book" id="book-btn">Request 15-min demo -&gt;</button>
+        <div class="ok-msg" id="ok-msg">Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.</div>
+        <div class="err-msg" id="err-msg"></div>
+      </div>
+
+      <div class="next-card">
+        <h2>What happens next</h2>
+        <div class="next-list">
+          <div class="next-item"><span class="next-num">1</span><span id="next-step-1"><strong>Ahmad reviews the request.</strong> He checks the issue, the context, and whether the call should stay narrow or route into a different IIS lane.</span></div>
+          <div class="next-item"><span class="next-num">2</span><span id="next-step-2"><strong>You get one confirmed slot.</strong> A calendar invite and the short meeting link follow once the best option is picked.</span></div>
+          <div class="next-item"><span class="next-num">3</span><span id="next-step-3"><strong>The outcome is a sensible next move.</strong> That may be a scoping call, an audit, a support lane, or a proof-first product instead of a larger engagement.</span></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <p style="color:rgba(255,255,255,.4);font-size:12px;margin-top:18px;text-align:center">No automated scheduling. Ahmad replies personally with the confirmed slot + Google Meet link.</p>
@@ -80,11 +251,360 @@
 </div>
 
 <script>
+var LANE_CONFIG = {
+  'general-fit': {
+    label: 'General fit call',
+    copy: 'Use this when you want a short founder read on the right IIS lane before committing to a deeper audit, support slice, or website fix.',
+    proofHref: '/start-here.html',
+    proofText: 'Open route guide',
+    altHref: '/services.html',
+    altText: 'Open services',
+    helper: 'Best for direct homepage, government, or enterprise booking traffic that still needs the first route sorted.',
+    contextPlaceholder: 'e.g. The main bottleneck is still fuzzy, but we know it is costing time and we need the right first move.',
+    buttonText: 'Request 15-min fit call ->',
+    subject: 'Book a 15-min fit call',
+    intent: 'demo_call_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the IT issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.',
+    nextSteps: [
+      '<strong>Ahmad reviews the request.</strong> He checks the issue, the context, and whether the call should stay narrow or route into a different IIS lane.',
+      '<strong>You get one confirmed slot.</strong> A calendar invite and the short meeting link follow once the best option is picked.',
+      '<strong>The outcome is a sensible next move.</strong> That may be a scoping call, an audit, a support lane, or a proof-first product instead of a larger engagement.'
+    ]
+  },
+  'hybrid-support': {
+    label: 'Remote L1-L3 Overflow Support Pilot',
+    copy: 'Use this when ticket pressure, onboarding/offboarding drag, or routine support load needs bounded help before a bigger managed-services commitment.',
+    proofHref: '/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html',
+    proofText: 'View pilot preview',
+    altHref: '/services.html',
+    altText: 'Open support services',
+    helper: 'Best for support queues, Microsoft 365/user support drag, and post-change support pressure.',
+    contextPlaceholder: 'e.g. Our queue is backing up after onboarding waves and senior staff keep getting pulled into repeat tickets.',
+    buttonText: 'Request overflow support call ->',
+    subject: 'Request Remote L1-L3 Overflow Support Pilot',
+    intent: 'overflow_support_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the IT issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.'
+  },
+  'office-readiness': {
+    label: 'Office Move / Property IT Readiness',
+    copy: 'Use this when a move, expansion, tenant opening, or workspace refresh is creating day-one support pressure across users, devices, vendors, meeting rooms, printers, and Microsoft 365 readiness.',
+    proofHref: '/downloads/library/office-move-property-it-readiness-preview.html',
+    proofText: 'View readiness preview',
+    altHref: '/services.html',
+    altText: 'Open services',
+    helper: 'Best for office managers, property and facilities teams, project leads, and operators who need a sane move-readiness path without pretending IIS is the construction prime.',
+    contextPlaceholder: 'e.g. We have an office move coming up and need a clear day-one readiness plan across users, vendors, rooms, printers, and Microsoft 365 setup.',
+    buttonText: 'Request office-readiness call ->',
+    subject: 'Request Office Move / Property IT Readiness',
+    intent: 'office_readiness_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the office, move, or readiness issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will review the readiness details, choose the best slot, and reply with the cleanest next step within 4 business hours.',
+    nextSteps: [
+      '<strong>Ahmad reviews the readiness request.</strong> He checks the site, timeline, vendor dependencies, and the riskiest day-one blockers before confirming the call.',
+      '<strong>You get one confirmed next step.</strong> That may be a short readiness call, a tighter checklist request, or a scoped follow-up if more details are needed first.',
+      '<strong>The outcome stays operations-first.</strong> The goal is a practical move-readiness plan, clearer vendor handoffs, and safer opening-day support.'
+    ]
+  },
+  'workflow-proof': {
+    label: 'AI Workflow Audit',
+    copy: 'Use this when repeated admin, scattered documents, or slow handoffs keep wasting time and you need the first practical AI workflow mapped cleanly.',
+    proofHref: '/downloads/library/ai-workflow-audit-preview.html',
+    proofText: 'View audit preview',
+    altHref: '/aria.html',
+    altText: 'Open ARIA',
+    helper: 'Best for operations, finance, admin, project, or internal support workflows that keep repeating the same manual work.',
+    contextPlaceholder: 'e.g. Staff repeat the same document and follow-up work every week and we need one practical workflow to fix first.',
+    buttonText: 'Request AI workflow call ->',
+    subject: 'Request AI Workflow Audit',
+    intent: 'workflow_audit_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the IT issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.'
+  },
+  'ai-agent-setup': {
+    label: 'Small Business AI Agent Setup',
+    copy: 'Use this when the first win is a bounded FAQ, intake, booking, quote-prep, or human-handoff assistant and the buyer needs a clean setup lane instead of a broader workflow audit first.',
+    proofHref: '/downloads/library/small-business-ai-agent-setup-preview.html',
+    proofText: 'View setup preview',
+    altHref: '/aria.html',
+    altText: 'Open ARIA',
+    helper: 'Best for service businesses, operators, and lean internal teams that want one safe assistant flow before a larger automation program.',
+    contextPlaceholder: 'e.g. We keep answering the same questions and need one trustworthy assistant flow that collects cleaner context before a human steps in.',
+    buttonText: 'Request AI agent setup call ->',
+    subject: 'Request Small Business AI Agent Setup',
+    intent: 'ai_agent_setup_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What should this AI agent help with first?',
+    successMessage: 'Request received. Ahmad will review the setup scope, pick one of your time slots, and reply with the cleanest next step within 4 business hours.',
+    nextSteps: [
+      '<strong>Ahmad reviews the setup request.</strong> He checks the repeated questions, intake path, approval boundaries, and whether the first win should stay assistant-first or route into a different IIS lane.',
+      '<strong>You get one confirmed next step.</strong> That may be a short setup call, a tighter scoping reply, or a recommendation to start with an audit if the first use case is still unclear.',
+      '<strong>The outcome stays bounded.</strong> The goal is one trustworthy assistant path with visible human review, not an oversized AI-program commitment.'
+    ]
+  },
+  'support-kb': {
+    label: 'AI Knowledge Base Build',
+    copy: 'Use this when support knowledge is spread across tickets, SOPs, chats, and staff memory and you need a cleaner human-plus-AI knowledge layer before scaling automation.',
+    proofHref: '/downloads/library/ai-readable-it-support-kb-pack-preview.html',
+    proofText: 'Open KB preview',
+    altHref: '/product.html?id=gl-ai-readable-kb-pack',
+    altText: 'Open KB product page',
+    helper: 'Best for support leads, MSPs, internal IT teams, and AI builders who need safer article structure, escalation logic, and support-knowledge cleanup first.',
+    contextPlaceholder: 'e.g. Support knowledge lives in too many places and the team needs a cleaner KB structure before we trust a broader AI rollout.',
+    buttonText: 'Request support-KB build call ->',
+    subject: 'Request AI Knowledge Base Build',
+    intent: 'support_kb_build_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the IT issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.'
+  },
+  'support-blueprint-review': {
+    label: 'AI Help Desk Blueprint Review',
+    copy: 'Use this when the support queue is noisy but the right first move is still unclear and you need IIS to confirm whether blueprint design, SOP cleanup, KB cleanup, or overflow coverage should come first.',
+    proofHref: '/downloads/library/ai-help-desk-automation-blueprint-preview.html',
+    proofText: 'View blueprint preview',
+    altHref: '/product.html?id=gl-helpdesk-blueprint',
+    altText: 'Open blueprint product page',
+    helper: 'Best for MSP owners, IT managers, internal support leads, and operations teams that know support quality is slipping but are not ready to jump straight into implementation.',
+    contextPlaceholder: 'e.g. Ticket quality is drifting and we need IIS to confirm whether the first fix should be blueprint design, SOP cleanup, KB cleanup, or overflow support.',
+    buttonText: 'Request blueprint review ->',
+    subject: 'Request AI Help Desk Blueprint Review',
+    intent: 'support_blueprint_review_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What support-ops issue is most on your mind right now?',
+    successMessage: 'Request received. Ahmad will review the support-ops context, choose the best slot, and reply with the cleanest next step within 4 business hours.',
+    nextSteps: [
+      '<strong>Ahmad reviews the support-ops context.</strong> He checks the queue pain, handoff gaps, knowledge sprawl, and whether the real first move is blueprint review, SOP cleanup, KB cleanup, or overflow coverage.',
+      '<strong>You get one confirmed next step.</strong> That may be a short blueprint-review call, a narrower support lane recommendation, or a request for one missing detail before the call is confirmed.',
+      '<strong>The outcome stays route-first.</strong> The goal is to choose the cleanest first support move without forcing a premature implementation commitment.'
+    ]
+  },
+  'support-ops-setup': {
+    label: 'AI Help Desk Blueprint Implementation',
+    copy: 'Use this when the support team needs cleaner intake, triage rules, escalation templates, KB structure, and a measured rollout path before adding more tooling or headcount.',
+    proofHref: '/downloads/library/ai-help-desk-automation-blueprint-preview.html',
+    proofText: 'View blueprint preview',
+    altHref: '/product.html?id=gl-helpdesk-blueprint',
+    altText: 'Open blueprint product page',
+    helper: 'Best for MSP owners, IT managers, internal support leads, and teams trying to reduce repeated L1 noise without forcing a platform rip-and-replace.',
+    contextPlaceholder: 'e.g. Ticket quality is inconsistent, escalation notes are weak, and we need a practical support-ops model before the queue gets worse.',
+    buttonText: 'Request support-ops setup call ->',
+    subject: 'Request AI Help Desk Blueprint Implementation',
+    intent: 'support_ops_setup_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the IT issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.'
+  },
+  'l1-enablement': {
+    label: 'L1 Support Enablement Review',
+    copy: 'Use this when the team needs cleaner first-response structure, junior or generalist ramp-up guidance, and sharper escalation boundaries before the queue gets noisier.',
+    proofHref: '/downloads/library/l1-it-support-bible-preview.html',
+    proofText: 'View L1 preview',
+    altHref: '/product.html?id=gl-l1-it-bible',
+    altText: 'Open L1 product page',
+    helper: 'Best for MSP owners, internal IT leads, and support managers trying to improve recurring Level 1 quality without pretending the answer is more tooling alone.',
+    contextPlaceholder: 'e.g. New analysts keep escalating too early, ticket notes are weak, and the team needs a cleaner first-response structure before the queue gets worse.',
+    buttonText: 'Request L1 enablement review ->',
+    subject: 'Request L1 Support Enablement Review',
+    intent: 'l1_enablement_review_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the first-response or escalation issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will review the support-enablement details, choose the best slot, and reply with the cleanest next step within 4 business hours.',
+    nextSteps: [
+      '<strong>Ahmad reviews the support-enablement request.</strong> He checks the recurring ticket types, analyst mix, escalation drift, and what should stay documented versus delegated.',
+      '<strong>You get one confirmed next step.</strong> That may be a short enablement call, a tighter follow-up on runbooks or SOP gaps, or a recommendation to start with a different support lane first.',
+      '<strong>The outcome stays first-response focused.</strong> The goal is cleaner L1 structure, better note quality, and sharper escalation boundaries before broader support automation or coverage is discussed.'
+    ]
+  },
+  'service-desk-sop': {
+    label: 'Service Desk SOP Sprint',
+    copy: 'Use this when the support team needs stronger intake, ownership, note quality, closure discipline, and a more consistent operating rhythm across the desk.',
+    proofHref: '/downloads/library/service-desk-sop-pack-preview.html',
+    proofText: 'View SOP preview',
+    altHref: '/product.html?id=gl-service-desk-sop-pack',
+    altText: 'Open SOP product page',
+    helper: 'Best for MSPs and internal IT teams where tickets are solvable but handoffs, ownership, and reusable note quality keep breaking the workflow.',
+    contextPlaceholder: 'e.g. Tickets keep bouncing, closure notes are inconsistent, and the team needs a better service-desk operating rhythm before more tooling is added.',
+    buttonText: 'Request SOP sprint ->',
+    subject: 'Request Service Desk SOP Sprint',
+    intent: 'service_desk_sop_sprint_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the service-desk quality or handoff issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will review the service-desk details, choose the best slot, and reply with the cleanest next step within 4 business hours.',
+    nextSteps: [
+      '<strong>Ahmad reviews the SOP sprint request.</strong> He checks the support channels, handoff friction, note quality, and what must stay human-approved or out of scope.',
+      '<strong>You get one confirmed next step.</strong> That may be a short SOP sprint call, a narrower discovery reply, or a recommendation to route into the blueprint or overflow lane instead.',
+      '<strong>The outcome stays operations-first.</strong> The goal is cleaner desk discipline, clearer ownership, and reusable ticket notes that strengthen both current agents and future AI-assisted support.'
+    ]
+  },
+  'conversion-fix': {
+    label: 'Website + AI Intake Conversion Fix',
+    copy: 'Use this when the site gets traffic but the CTA, booking logic, or intake path is too weak to turn attention into real calls or requests.',
+    proofHref: '/downloads/library/small-business-website-improvement-checklist-preview.html',
+    proofText: 'View website preview',
+    altHref: '/growth-library.html',
+    altText: 'Open Growth Library',
+    helper: 'Best for weak service-page routing, unclear booking paths, or contact forms that collect too little context.',
+    contextPlaceholder: 'e.g. People visit the site but do not understand the next step and our intake path is too vague to qualify them properly.',
+    buttonText: 'Request conversion-fix call ->',
+    subject: 'Request Website + AI Intake Conversion Fix',
+    intent: 'website_conversion_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the IT issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.'
+  },
+  'm365-tuneup': {
+    label: 'M365 Security and Productivity Tune-Up',
+    copy: 'Use this when Microsoft 365, Teams, SharePoint, devices, or identity basics feel messy and the team needs a prioritized cleanup path.',
+    proofHref: '/downloads/library/m365-security-productivity-tune-up-preview.html',
+    proofText: 'View M365 preview',
+    altHref: '/services.html',
+    altText: 'Open M365 services',
+    helper: 'Best for admin cleanup, user friction, governance gaps, and security basics that are known but not owned.',
+    contextPlaceholder: 'e.g. M365 works, but admin ownership is messy and the same friction keeps hitting users and internal admins.',
+    buttonText: 'Request M365 tune-up call ->',
+    subject: 'Request M365 Security and Productivity Tune-Up',
+    intent: 'm365_tuneup_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the IT issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.'
+  },
+  'procurement-packet': {
+    label: 'Procurement Packet Request',
+    copy: 'Use this when procurement, security, or legal needs the packet, artifact list, and questionnaire posture first and a live call is optional.',
+    proofHref: '/government.html',
+    proofText: 'Open government page',
+    altHref: '/enterprise.html',
+    altText: 'Open enterprise page',
+    helper: 'Best for packet-first buyer traffic. Optional time slots help only if a short clarifying call would speed the packet handoff.',
+    contextPlaceholder: 'e.g. We need the control answers, residency posture, evaluator artifacts, and any packet gaps called out before we involve more reviewers.',
+    buttonText: 'Request procurement packet ->',
+    subject: 'Request Procurement Packet',
+    intent: 'procurement_packet_request',
+    slotLabel: 'Optional call slots if a live review would help',
+    contextLabel: 'What must the packet answer or include first?',
+    successMessage: 'Request received. Ahmad will review the packet ask and reply with the cleanest packet or next step within 4 business hours.',
+    nextSteps: [
+      '<strong>Ahmad reviews the packet ask.</strong> He checks the requested controls, artifact needs, and whether the page already supplied enough context.',
+      '<strong>You get the cleanest next step.</strong> That may be the packet itself, a short clarifying reply, or a tight procurement-fit call if the request is still ambiguous.',
+      '<strong>The outcome stays procurement-first.</strong> The goal is to move the evaluator toward the right material without forcing a generic demo path.'
+    ]
+  },
+  'procurement-fit': {
+    label: 'Procurement Fit Call',
+    copy: 'Use this when you already need vendor comparison, verified sourcing, rollout planning, or setup guidance and want IIS to frame the safest procurement next step.',
+    proofHref: '/marketplace.html#marketplace-bridge',
+    proofText: 'Open marketplace guide',
+    altHref: '/shop.html',
+    altText: 'Open shop',
+    helper: 'Best for equipment, software, vendor-service, or setup requests where the buying path needs a human fit check before quote coordination.',
+    contextPlaceholder: 'e.g. We need help comparing vendors, validating specs, and deciding the cleanest procurement and setup path before we request checkout.',
+    buttonText: 'Request procurement-fit call ->',
+    subject: 'Request Procurement Fit Call',
+    intent: 'procurement_fit_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the IT issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.'
+  },
+  'monthly-support': {
+    label: 'Monthly AI Support Plan',
+    copy: 'Use this when prompts, KB assets, internal AI workflows, or lightweight automations already exist and someone now needs to own the monthly cleanup, QA, next priorities, and small fixes.',
+    proofHref: '/downloads/library/monthly-ai-support-plan-preview.html',
+    proofText: 'View monthly preview',
+    altHref: '/growth-library.html#allaccess',
+    altText: 'Open membership ladder',
+    helper: 'Best for teams that already have AI or knowledge assets in motion but need a recurring owner to keep them useful instead of drifting stale.',
+    contextPlaceholder: 'e.g. We already have prompts, KBs, or AI workflows in play, but nobody owns the monthly upkeep, backlog, and next practical fixes.',
+    buttonText: 'Request monthly-support call ->',
+    subject: 'Request Monthly AI Support Plan',
+    intent: 'monthly_ai_support_demo_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What is the IT issue most on your mind right now?',
+    successMessage: 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.'
+  },
+  'guided-session': {
+    label: 'Guided AI Session',
+    copy: 'Use this when the buyer wants a live AI Edge session for family learning, tutor support, or adult planning and needs a guided start instead of a generic contact handoff.',
+    proofHref: '/ai-edge.html',
+    proofText: 'Open AI Edge',
+    altHref: '/product.html?id=gl-ai-edge-starter',
+    altText: 'Open AI Edge starter',
+    helper: 'Best for parent, tutor, learner, founder, or operator traffic that already knows the session theme and wants a guided call with bounded human support.',
+    contextPlaceholder: 'e.g. We want one guided session around learning goals, planning friction, or a practical AI support routine before deciding on anything broader.',
+    buttonText: 'Request guided session ->',
+    subject: 'Request Guided AI Session',
+    intent: 'guided_ai_session_request',
+    slotLabel: 'Preferred day + time (3 options)',
+    contextLabel: 'What should this guided session help with first?',
+    successMessage: 'Request received. Ahmad will review the session request, pick one of your time slots, and reply with the cleanest next step within 4 business hours.',
+    nextSteps: [
+      '<strong>Ahmad reviews the guided-session request.</strong> He checks whether the ask is family learning, tutor support, or adult planning and makes sure the first session stays appropriately scoped.',
+      '<strong>You get one confirmed next step.</strong> That may be a short guided session, a tighter scoping reply, or a recommendation to use the product or preview path first.',
+      '<strong>The outcome stays session-first.</strong> The goal is a practical guided start with visible human boundaries, not an open-ended promise of autonomous AI coaching.'
+    ]
+  }
+};
+
+var selectedLane = 'general-fit';
+var query = new URLSearchParams(window.location.search);
+var subjectOverride = query.get('subject') || '';
+var descOverride = query.get('desc') || '';
+var sourceOverride = query.get('source') || '';
+
+function laneConfigFor(id) {
+  return LANE_CONFIG[id] || LANE_CONFIG['general-fit'];
+}
+
+function setLane(id) {
+  selectedLane = LANE_CONFIG[id] ? id : 'general-fit';
+  var cfg = laneConfigFor(selectedLane);
+  document.querySelectorAll('.lane-card').forEach(function(node) {
+    node.classList.toggle('sel', node.getAttribute('data-lane') === selectedLane);
+  });
+  document.getElementById('lane-brief-title').textContent = cfg.label;
+  document.getElementById('lane-brief-copy').textContent = cfg.copy;
+  var proof = document.getElementById('lane-proof-link');
+  proof.href = cfg.proofHref;
+  proof.textContent = cfg.proofText;
+  var alt = document.getElementById('lane-alt-link');
+  alt.href = cfg.altHref;
+  alt.textContent = cfg.altText;
+  document.getElementById('lane-helper-note').textContent = cfg.helper;
+  document.getElementById('slot-label').textContent = cfg.slotLabel || 'Preferred day + time (3 options)';
+  document.getElementById('context-label').textContent = cfg.contextLabel || 'What is the IT issue most on your mind right now?';
+  document.getElementById('b-context').placeholder = cfg.contextPlaceholder;
+  document.getElementById('book-btn').textContent = cfg.buttonText;
+  document.getElementById('ok-msg').textContent = cfg.successMessage || 'Request received. Ahmad will pick one of your time slots + send a calendar invite within 4 business hours.';
+  var nextSteps = cfg.nextSteps || LANE_CONFIG['general-fit'].nextSteps;
+  document.getElementById('next-step-1').innerHTML = nextSteps[0];
+  document.getElementById('next-step-2').innerHTML = nextSteps[1];
+  document.getElementById('next-step-3').innerHTML = nextSteps[2];
+}
+
+document.querySelectorAll('.lane-card').forEach(function(node) {
+  node.addEventListener('click', function() {
+    setLane(node.getAttribute('data-lane'));
+  });
+});
+
+setLane(query.get('lane') || query.get('focus') || 'general-fit');
+if (descOverride) {
+  document.getElementById('b-context').value = descOverride;
+}
+
 document.getElementById('book-btn').onclick = async function(){
+  var cfg = laneConfigFor(selectedLane);
   var name = document.getElementById('b-name').value.trim();
   var email = document.getElementById('b-email').value.trim();
   var company = document.getElementById('b-company').value.trim();
   var vertical = document.getElementById('b-vertical').value;
+  var team = document.getElementById('b-team').value.trim();
+  var tools = document.getElementById('b-tools').value.trim();
   var s1 = document.getElementById('b-slot1').value.trim();
   var s2 = document.getElementById('b-slot2').value.trim();
   var s3 = document.getElementById('b-slot3').value.trim();
@@ -98,21 +618,23 @@ document.getElementById('book-btn').onclick = async function(){
   btn.disabled = true; btn.textContent = 'Sending...';
   try {
     var slots = [s1, s2, s3].filter(s => s).join(' OR ');
+    var requestLine = (subjectOverride || cfg.subject || 'BOOK 15-MIN DEMO').trim();
     var r = await fetch('/.netlify/functions/aria-lead-capture', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         name: name, email: email, company: company,
-        message: 'BOOK 30-MIN CALL.\n\nVertical: ' + (vertical || '(not specified)') + '\n\nProposed slots:\n' + (slots || '(no slots provided)') + '\n\nContext: ' + (context || '(none)'),
-        source: 'book-page', last_intent: 'demo_call_request'
+        message: requestLine + '.\n\nFocus lane: ' + cfg.label + '\nSource route: ' + (sourceOverride || 'book-page-direct') + '\nVertical: ' + (vertical || '(not specified)') + '\nTeam size or users affected: ' + (team || '(not specified)') + '\nCore tools or systems: ' + (tools || '(not specified)') + '\n\nProposed slots:\n' + (slots || '(no slots provided)') + '\n\nContext: ' + (context || '(none)'),
+        source: sourceOverride || 'book-page',
+        last_intent: cfg.intent || 'demo_call_request'
       })
     });
     if (!r.ok) throw new Error('send failed');
     ok.style.display = 'block';
     btn.style.display = 'none';
   } catch(e) {
-    err.textContent = 'Could not send — try again or email ahmad.wasee@iisupp.net.';
+    err.textContent = 'Could not send - try again or email ahmad.wasee@iisupp.net.';
     err.style.display = 'block';
-    btn.disabled = false; btn.textContent = 'Request 30-min call →';
+    btn.disabled = false; btn.textContent = cfg.buttonText;
   }
 };
 </script>

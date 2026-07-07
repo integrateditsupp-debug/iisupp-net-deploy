@@ -13,7 +13,7 @@
       "dependencies": [
         "npm:@netlify/blobs@^7.4.0",
         "npm:framer-motion@^12.40.0",
-        "npm:nodemailer@^6.9.16",
+        "npm:nodemailer@^9.0.1",
         "npm:stripe@17"
       ]
     }

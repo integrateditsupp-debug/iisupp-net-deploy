@@ -13,7 +13,9 @@ import { getStore } from '@netlify/blobs';
 // Routing rules — ORDER MATTERS, first match adds +25 score boost. Tuned 2026-06-23 from
 // live stress test on 30 real-world queries. Mac-specific BEFORE BSOD (otherwise BSOD eats kernel-panic).
 // Mobile (iPhone/iPad/Android) — no article exists yet, let them fall through to generic wifi/bluetooth.
-const ROUTING = [
+// Exported (with tokenize/score) so the exact live scorer is unit-testable — see ARIA Sentinel
+// tests/kb-phrase-routing.test.mjs (D1 regression). Adding a rule is gated by that test.
+export const ROUTING = [
   // === Mac-specific (must beat BSOD on kernel-panic, beach-ball) ===
   [/\b(macbook|imac|mac\s*mini|mac\s*pro|mac\s*os|macos|os\s*x|apple\s*logo|beach\s*ball|kernel\s*panic|rainbow\s*wheel|spinning\s*beach)/i, 'l1-mac-001'],
   [/\bmac\b.*(freeze|crash|restart|hang|slow|wont|boot|start|sleep|wake|stuck|spinning)|mac.*wont\s*(start|boot|turn\s*on)/i, 'l1-mac-001'],
@@ -37,6 +39,13 @@ const ROUTING = [
   // === Windows performance (broader) ===
   [/(slow|laggy|sluggish|freezing|takes\s*forever|high\s*cpu|100\s*(percent|%)\s*(cpu|disk|memory)|cpu\s*at\s*100|disk\s*usage|fans?\s*spinning|laptop\s*hot|overheat|memory\s*leak|high\s*memory|slow\s*shutdown|slow\s*startup|sluggish|laggy\s*machine|disk\s*100%|svchost|antimalware\s*service|windows\s*search\s*high\s*cpu|laptop\s*takes\s*forever|computer\s*is\s*sluggish|system\s*slow|my\s*laptop\s*is\s*slow)/i, 'l1-windows-003'],
   [/(disk\s*full|out\s*of\s*space|low\s*disk|c\s*drive\s*full|storage\s*full|almost\s*full)/i, 'l1-windows-004'],
+  // === Windows Update stuck / failing / reverting (D1 fix, 2026-07-07) ===
+  // Before this rule "stuck windows update" had NO route, so a generic "update"/"windows" token leaked into
+  // the audio article (l1-windows-005, whose body mentions "Windows Update broke audio") and won near the
+  // confidence floor. Route the stuck/failing/reverting-update intent to the update articles that DO exist in
+  // the KB (l1-windows-007 / -008). Narrow enough not to catch "update my password", "should I update to win11".
+  [/\b(?:windows\s*)?updates?\b[^.?!]{0,40}\b(?:stuck|won'?t\s*(?:install|finish|download|complete|update)|not\s*(?:install|finish|download|complet)(?:ing|e|ed)?|fail(?:s|ing|ed)?|error|hang(?:s|ing|ed)?|frozen|freezes?|reboot\s*loop|restart\s*loop|keeps?\s*(?:restart|reboot|fail))|\b(?:stuck|frozen|failed|failing|hung)\b[^.?!]{0,40}\b(?:windows\s*)?updates?\b/i, 'l1-windows-007'],
+  [/\bupdates?\b[^.?!]{0,40}\b(?:keeps?\s*(?:revert|rolling\s*back|undoing|uninstall)|revert(?:s|ing|ed)?|rolls?\s*back|undo(?:es|ing)?|won'?t\s*stay)|\b(?:revert|rolling\s*back)\b[^.?!]{0,40}\bupdates?\b/i, 'l1-windows-008'],
   // === Windows audio ===
   [/(no\s*sound|no\s*audio|speakers?\s*not\s*working|speakers?\s*dead|audio\s*not\s*working|sound\s*not\s*working|red\s*x.*speaker)/i, 'l1-windows-005'],
   [/\bapp(lication)?\b.*(wont?\s*open|crash|close|fail|error|hang|freez|not\s*respond)/i, 'l1-windows-006'],
@@ -128,11 +137,11 @@ async function loadLiveChunks() {
 
 const STOP_WORDS = new Set("a an and are as at be been being but by can could did do does for from get had has have he her him his how i if in into is it its me my no not now of on only or our should so than that the their them then there these they this to too us was we were what when where which who why will with would you your".split(" "));
 
-function tokenize(s) {
+export function tokenize(s) {
   return String(s || "").toLowerCase().replace(/[^a-z0-9\s.-]/g, " ").split(/\s+/).filter(t => t && t.length >= 2 && !STOP_WORDS.has(t));
 }
 
-function score(query, chunk) {
+export function score(query, chunk) {
   const qTokens = tokenize(query);
   if (!qTokens.length) return 0;
   const hay = (chunk.title + " " + chunk.slug + " " + (chunk.keywords || []).join(" ") + " " + chunk.content).toLowerCase();

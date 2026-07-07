@@ -134,6 +134,176 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
   var upsell = p.upsell==='aria'
     ? '<a class="c-btn" href="/aria.html">Want it automated? Meet ARIA →</a>'
     : '<a class="c-btn" href="/services.html">Want it done for you? See services →</a>';
+  var decisionBand = '';
+  if (p.id === 'gl-ai-readable-kb-pack') {
+    decisionBand =
+      '<div style="margin:28px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(155deg,rgba(197,160,89,.08),rgba(255,255,255,.02) 62%,transparent)">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Choose the cleanest next step</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Preview it, buy the pack, or stage the broader KB build</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">This buyer path works best when the next move is explicit. Use the preview to judge trust, unlock the pack when one team needs a cleaner article model now, or stage the broader build when the real problem is bigger than one product.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px">'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Proof first</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Preview the structure</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer wants to see article shape, metadata, and escalation boundaries before paying or requesting a bigger build.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/downloads/library/ai-readable-it-support-kb-pack-preview.html">View sample</a><a class="c-btn" href="/downloads/library/ai-knowledge-base-build-preview.html">View build preview</a></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Product now</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Unlock the pack</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when one team needs a practical support-knowledge model immediately without turning this into a larger scoped engagement yet.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="c-btn solid" data-buy="'+esc(p.id)+'-full-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'full\')">Unlock full · '+money(p.priceCents)+'</button><button class="c-btn" data-buy="'+esc(p.id)+'-peek-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'peek\')">Peek inside · '+money(peek)+'</button></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Broader build</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Stage the KB build</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when support knowledge already lives across tickets, chats, docs, and staff memory and the real need is cleanup, validation, and rollout.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/book.html?lane=support-kb&source=product-support-kb-hero&subject=Request%20AI%20Knowledge%20Base%20Build&desc=I%20want%20to%20stage%20an%20AI%20Knowledge%20Base%20Build%20after%20reviewing%20the%20AI-readable%20support-knowledge%20preview.%0A%0ACompany%3A%0ATeam%20size%20or%20support%20scope%3A%0AWhere%20support%20knowledge%20lives%20today%3A%0ABiggest%20knowledge%20gaps%20or%20inconsistencies%3A%0AWhat%20needs%20to%20be%20safe%20for%20human%20and%20AI%20use%3A%0AWhat%20a%20cleaner%20KB%20would%20look%20like%20first%3A">Stage KB build</a><a class="c-btn" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">View blueprint</a></div>'+
+          '</div>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:14px 0 0">This decision rail clarifies scope without adding public guarantees, autonomous-resolution claims, or fixed implementation pricing.</p>'+
+      '</div>';
+  } else if (p.id === 'bundle-it-mastery') {
+    decisionBand =
+      '<div style="margin:28px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(155deg,rgba(197,160,89,.08),rgba(255,255,255,.02) 62%,transparent)">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Choose the right support depth</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Buy one urgent fix, equip the whole desk, or stage the cleanup</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">This bundle works best when the buyer already knows Windows, Outlook, Microsoft 365, and daily L1 noise are connected. Keep the single-pack and service-exit paths visible so the team can choose the right depth without guesswork.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px">'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">One issue first</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Start with one practical pack</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer needs one cleaner fix path first, not a full internal support library on day one.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/product.html?id=gl-l1-it-bible">Open L1 guide</a><a class="c-btn" href="/product.html?id=gl-m365-kb">Open M365 pack</a></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Team enablement</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Unlock the full bundle</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the support team needs repeatable L1, Outlook, Windows, and M365 structure instead of buying separate packs one by one.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="c-btn solid" data-buy="'+esc(p.id)+'-full-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'full\')">Unlock bundle · '+money(p.priceCents)+'</button><button class="c-btn" data-buy="'+esc(p.id)+'-peek-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'peek\')">Peek inside · '+money(peek)+'</button></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Scoped cleanup</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Stage the operational fix</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when recurring Outlook, endpoint, and M365 issues already need a real cleanup sprint or support review rather than more reading.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/book.html?lane=m365-tuneup&source=product-m365-tuneup&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up</a><a class="c-btn" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View overflow preview</a></div>'+
+          '</div>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:14px 0 0">This decision rail clarifies whether the buyer needs one pack, a desk-enablement bundle, or a scoped IIS service without changing public pricing posture.</p>'+
+      '</div>';
+  } else if (p.id === 'bundle-ai-automation') {
+    decisionBand =
+      '<div style="margin:28px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(155deg,rgba(197,160,89,.08),rgba(255,255,255,.02) 62%,transparent)">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Choose the right AI entry point</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Validate one workflow, equip the team, or stage the first sprint</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">This bundle works best when the buyer wants more than one AI workflow asset and needs a cleaner jump from curiosity into operating practice. Keep the single-pack and implementation exits visible so the bundle feels like a deliberate choice, not a forced upsell.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px">'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">One lane first</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Start with one buyer-safe pack</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer still needs to prove one use case first before paying for broader team enablement.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/product.html?id=gl-ai-agent-starter">Open AI Agent Starter</a><a class="c-btn" href="/product.html?id=gl-helpdesk-blueprint">Open blueprint</a></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Team toolkit</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Unlock the full bundle</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer wants prompts, starter agent logic, support-automation thinking, and no-code workflow structure in one operating shelf.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="c-btn solid" data-buy="'+esc(p.id)+'-full-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'full\')">Unlock bundle · '+money(p.priceCents)+'</button><button class="c-btn" data-buy="'+esc(p.id)+'-peek-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'peek\')">Peek inside · '+money(peek)+'</button></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Implementation now</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Stage the first sprint</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the workflow waste is already obvious and the buyer wants a short audit or sprint instead of another research loop.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/book.html?lane=workflow-proof&source=product-workflow-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit</a><a class="c-btn" href="/book.html?lane=workflow-proof&source=product-workflow-sprint&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint</a></div>'+
+          '</div>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:14px 0 0">This decision rail strengthens the bundle-to-service ladder without adding public savings guarantees, autonomous-send claims, or fixed implementation pricing.</p>'+
+      '</div>';
+  } else if (p.id === 'gl-ai-edge-starter') {
+    decisionBand =
+      '<div style="margin:28px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(155deg,rgba(197,160,89,.08),rgba(255,255,255,.02) 62%,transparent)">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Choose the first AI move</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Open the proof, unlock the starter, or stage the scoped setup</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">AI Edge Starter works best when the buyer knows AI could help but still needs a safer first move than hype. Keep the proof path, self-serve product path, and scoped IIS setup path visible in one place.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px">'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Proof first</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Open the AI Edge proof layer</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer wants to inspect the tone, buyer ladder, and safe-first posture before paying or asking IIS to scope the first workflow.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/ai-edge.html">Open AI Edge</a><a class="c-btn" href="/growth-library.html#ai-edge">View the ladder</a></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Product now</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Unlock the starter</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when one owner or small team wants the guide, templates, and worksheet now without turning the first step into a broader service engagement yet.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="c-btn solid" data-buy="'+esc(p.id)+'-full-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'full\')">Unlock full · '+money(p.priceCents)+'</button><button class="c-btn" data-buy="'+esc(p.id)+'-peek-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'peek\')">Peek inside · '+money(peek)+'</button></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Scoped setup</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Stage Starter AI Setup</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer wants IIS to help select one safe use case, scope the first workflow, and keep human-review boundaries visible from day one.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/book.html?lane=ai-agent-setup&source=product-starter-ai-setup&subject=Request%20Starter%20AI%20Setup&desc=I%20want%20to%20stage%20a%20Starter%20AI%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20AI%20or%20workflow%20problem%20today%3A%0AOne%20process%20or%20question%20we%20want%20to%20improve%20first%3A%0AWhat%20still%20needs%20human%20review%20or%20approval%3A%0AWhat%20a%20useful%20first%20AI%20win%20would%20look%20like%3A">Stage setup</a><a class="c-btn" href="/book.html?lane=workflow-proof&source=product-workflow-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a></div>'+
+          '</div>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:14px 0 0">This decision rail clarifies how AI Edge Starter becomes real revenue without adding public ROI promises, autonomous-send claims, or fixed implementation pricing.</p>'+
+      '</div>';
+  } else if (p.id === 'gl-ai-edge-pro-playbook') {
+    decisionBand =
+      '<div style="margin:28px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(155deg,rgba(197,160,89,.08),rgba(255,255,255,.02) 62%,transparent)">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Choose the next AI operating layer</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Validate the use case, unlock the playbook, or stage ongoing support</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">AI Edge Pro works best when the buyer already sees the opportunity but still needs a cleaner bridge from AI intent into delivery. Keep the audit, playbook, and operating-owner paths visible in one place.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px">'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Audit first</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Validate the first use case</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the team has AI ideas but still needs help choosing the first workflow, risk boundary, or quick-win lane before buying a deeper operating guide.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/book.html?lane=workflow-proof&source=product-workflow-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit</a><a class="c-btn" href="/ai-edge.html">Open AI Edge</a></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Product now</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Unlock the playbook</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer wants the operating guide, templates, and rollout logic now while still keeping implementation decisions under their own control.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="c-btn solid" data-buy="'+esc(p.id)+'-full-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'full\')">Unlock full · '+money(p.priceCents)+'</button><button class="c-btn" data-buy="'+esc(p.id)+'-peek-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'peek\')">Peek inside · '+money(peek)+'</button></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Owner needed</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Stage monthly support</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer already has prompts, workflows, or half-built AI ideas and needs a recurring owner for cleanup, testing, and the next implementation priorities.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/book.html?lane=monthly-support&source=product-monthly-support&subject=Request%20Monthly%20AI%20Support%20Plan&desc=I%20want%20to%20stage%20a%20Monthly%20AI%20Support%20Plan%20after%20reviewing%20the%20product%20decision%20rail.%0A%0ACompany%3A%0ATeam%20size%20or%20departments%20supported%3A%0ACurrent%20AI%20systems%2C%20workflows%2C%20or%20knowledge%20assets%20in%20use%3A%0AWhat%20keeps%20slipping%20without%20an%20owner%3A%0APriority%20fixes%20or%20updates%20needed%20this%20month%3A%0APreferred%20monthly%20check-in%20cadence%3A%0AApproval%20or%20security%20boundaries%3A">Stage monthly support</a><a class="c-btn" href="/book.html?lane=workflow-proof&source=product-workflow-sprint&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint</a></div>'+
+          '</div>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:14px 0 0">This decision rail strengthens the AI Edge product-to-service ladder without adding public savings guarantees, staffing claims, or fixed retainer pricing.</p>'+
+      '</div>';
+  } else if (p.id === 'bundle-allaccess') {
+    decisionBand =
+      '<div style="margin:28px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(155deg,rgba(197,160,89,.08),rgba(255,255,255,.02) 62%,transparent)">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Choose the right library depth</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Validate one lane, buy a team bundle, or own the whole vault</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">All-Access works best when the buyer expects multiple needs across teams and wants the library to compound over the next year. Make the narrower paths visible so membership feels earned rather than premature.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px">'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Lower commitment</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Start smaller first</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer still needs proof around one problem, one team, or one workflow before committing to broader reuse.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/product.html?id=bundle-it-mastery">Open IT bundle</a><a class="c-btn" href="/product.html?id=bundle-ai-automation">Open AI bundle</a></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Broad reuse</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Unlock All-Access</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when support, AI, workflow, and documentation needs will keep surfacing across the next year and the buyer wants one cleaner buying decision.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="c-btn solid" data-buy="'+esc(p.id)+'-full-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'full\')">Unlock All-Access · '+money(p.priceCents)+'</button><button class="c-btn" data-buy="'+esc(p.id)+'-peek-decision" onclick="IIS_CATALOG.buy(\''+esc(p.id)+'\',\'peek\')">Peek inside · '+money(peek)+'</button></div>'+
+          '</div>'+
+          '<div style="padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)">'+
+            '<div class="eyebrow" style="margin-bottom:8px;font-size:8px">Owner needed</div>'+
+            '<h3 style="margin:0 0 8px;font-size:15px;color:#f1dca7">Stage monthly support</h3>'+
+            '<p style="margin:0 0 12px;font-size:12px;line-height:1.75;color:rgba(255,255,255,.6)">Best when the buyer wants the vault plus a recurring operator who keeps packs, prompts, KB assets, and small workflow improvements from going stale.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="c-btn solid" href="/book.html?lane=monthly-support&source=product-monthly-support&subject=Request%20Monthly%20AI%20Support%20Plan&desc=I%20want%20to%20stage%20a%20Monthly%20AI%20Support%20Plan%20after%20reviewing%20the%20product%20decision%20rail.%0A%0ACompany%3A%0ATeam%20size%20or%20departments%20supported%3A%0ACurrent%20AI%20systems%2C%20workflows%2C%20or%20knowledge%20assets%20in%20use%3A%0AWhat%20keeps%20slipping%20without%20an%20owner%3A%0APriority%20fixes%20or%20updates%20needed%20this%20month%3A%0APreferred%20monthly%20check-in%20cadence%3A%0AApproval%20or%20security%20boundaries%3A">Stage monthly support</a><a class="c-btn" href="/growth-library.html#allaccess">See the ladder</a></div>'+
+          '</div>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:14px 0 0">This decision rail clarifies when All-Access is the right choice without changing payment behavior, public guarantees, or staffing claims.</p>'+
+      '</div>';
+  }
   var previewBands = {
     'gl-l1-it-bible':
       '<div style="margin:26px 0 0;padding:20px 22px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
@@ -142,7 +312,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames recurring L1 support pain: start with impact and symptom, separate user-safe checks from admin-only work, and keep escalation discipline visible before routine user issues become senior-staff drag.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/l1-it-support-bible-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20L1%20Support%20Enablement%20Review&desc=I%20want%20to%20stage%20an%20L1%20Support%20Enablement%20Review.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ANumber%20of%20new%20or%20generalist%20support%20staff%3A%0ABiggest%20recurring%20L1%20ticket%20types%3A%0AWhat%20gets%20escalated%20too%20early%20or%20too%20late%3A%0ACurrent%20runbooks%20or%20KBs%20in%20place%3A%0AWhat%20a%20cleaner%20first-response%20flow%20would%20look%20like%3A">Stage enablement review</a>'+
+          '<a class="c-btn" href="/book.html?lane=l1-enablement&source=product-l1-enablement-preview&subject=Request%20L1%20Support%20Enablement%20Review&desc=I%20want%20to%20stage%20an%20L1%20Support%20Enablement%20Review.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ANumber%20of%20new%20or%20generalist%20support%20staff%3A%0ABiggest%20recurring%20L1%20ticket%20types%3A%0AWhat%20gets%20escalated%20too%20early%20or%20too%20late%3A%0ACurrent%20runbooks%20or%20KBs%20in%20place%3A%0AWhat%20a%20cleaner%20first-response%20flow%20would%20look%20like%3A">Stage enablement review</a>'+
           '<a class="c-btn" href="/downloads/library/service-desk-sop-pack-preview.html">View SOP preview</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public staffing guarantee, certification claim, or autonomous-support promise is added to the sample. It is a trust-building preview only.</p>'+
@@ -154,7 +324,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames prompt engineering for real operations: define the job, the evidence, the output shape, and the review boundary so the answer is usable instead of generic.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/prompt-engineering-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-prompt-workflows-preview&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
           '<a class="c-btn" href="/downloads/library/ai-workflow-quick-win-sprint-preview.html">View sprint preview</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public productivity guarantee, autonomous-send claim, or regulated-work shortcut is added to the sample. It is a trust-building preview only.</p>'+
@@ -166,20 +336,33 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows the tone, structure, and one real review section so buyers can judge fit before they buy the pack or request a scoped conversion cleanup sprint.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/small-business-website-improvement-checklist-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Website%20%2B%20AI%20Intake%20Conversion%20Fix&desc=I%20want%20to%20stage%20a%20Website%20%2B%20AI%20Intake%20Conversion%20Fix.%0A%0ACompany%3A%0AWebsite%20URL%3A%0ABiggest%20conversion%20or%20intake%20friction%20today%3A%0ACurrent%20CTA%20or%20booking%20path%3A%0APages%20that%20need%20the%20most%20help%3A%0AWhat%20a%20better%20next%20step%20should%20look%20like%3A">Stage conversion fix</a>'+
+          '<a class="c-btn" href="/book.html?lane=conversion-fix&source=product-website-checklist-preview&subject=Request%20Website%20%2B%20AI%20Intake%20Conversion%20Fix&desc=I%20want%20to%20stage%20a%20Website%20%2B%20AI%20Intake%20Conversion%20Fix.%0A%0ACompany%3A%0AWebsite%20URL%3A%0ABiggest%20conversion%20or%20intake%20friction%20today%3A%0ACurrent%20CTA%20or%20booking%20path%3A%0APages%20that%20need%20the%20most%20help%3A%0AWhat%20a%20better%20next%20step%20should%20look%20like%3A">Stage conversion fix</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public price or guaranteed-conversion claim is added to the sample. It is a trust-building preview only.</p>'+
       '</div>',
     'gl-helpdesk-blueprint':
       '<div style="margin:26px 0 0;padding:20px 22px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
         '<div class="eyebrow" style="margin-bottom:10px">Free sample preview</div>'+
-        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">See a real section before unlocking the full pack</h2>'+
-        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows the tone, structure, and one practical operating section so buyers can judge fit before they buy or request implementation help.</p>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">See the practical rollout posture before unlocking the full blueprint</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames the first support-automation move: start with a baseline queue audit, use tools already in place, keep approval boundaries visible, and avoid pretending a new platform is required on day one.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Help%20Desk%20Blueprint%20Implementation&desc=I%20want%20help%20implementing%20the%20AI%20Help%20Desk%20Blueprint.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20ticket%20pain%3A%0ASystems%20used%20today%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%3A">Stage implementation request</a>'+
+          '<a class="c-btn" href="/book.html?lane=support-ops-setup&source=product-helpdesk-blueprint-preview&subject=Request%20AI%20Help%20Desk%20Blueprint%20Implementation&desc=I%20want%20to%20book%20a%20short%20support-ops%20setup%20call%20with%20IIS%20after%20reviewing%20the%20Help%20Desk%20Blueprint%20preview.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20ticket%20pain%3A%0ASystems%20used%20today%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%20first%3A">Stage implementation request</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-helpdesk-blueprint-audit-preview&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
         '</div>'+
-        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public price or unsupported outcome claim is added to the sample. It is a trust-building preview only.</p>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public deflection guarantee, autonomous-ticketing claim, or forced-platform posture is added to the sample. It is a trust-building preview only.</p>'+
+      '</div>',
+    'gl-ai-readable-kb-pack':
+      '<div style="margin:26px 0 0;padding:20px 22px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Free sample preview</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">See the support-knowledge proof posture before unlocking the full pack</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS structures recurring support knowledge: keep user-safe and admin-boundary steps distinct, expose escalation triggers before risky guessing starts, and add metadata that makes later AI retrieval cleaner instead of messier.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/downloads/library/ai-readable-it-support-kb-pack-preview.html">View sample section</a>'+
+          '<a class="c-btn" href="/downloads/library/ai-knowledge-base-build-preview.html">View KB build preview</a>'+
+          '<a class="c-btn" href="/book.html?lane=support-kb&source=product-support-kb-proof&subject=Request%20AI%20Knowledge%20Base%20Build&desc=I%20want%20to%20stage%20an%20AI%20Knowledge%20Base%20Build%20after%20reviewing%20the%20AI-readable%20support-knowledge%20preview.%0A%0ACompany%3A%0ATeam%20size%20or%20support%20scope%3A%0AWhere%20support%20knowledge%20lives%20today%3A%0ABiggest%20knowledge%20gaps%20or%20inconsistencies%3A%0AWhat%20needs%20to%20be%20safe%20for%20human%20and%20AI%20use%3A%0AWhat%20a%20cleaner%20KB%20would%20look%20like%20first%3A">Stage KB build</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public autonomous-resolution promise, integration claim, or compliance shortcut is added to the sample. It is a trust-building preview only.</p>'+
       '</div>',
     'gl-m365-kb':
       '<div style="margin:26px 0 0;padding:20px 22px;border:1px solid rgba(197,160,89,.26);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
@@ -188,7 +371,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames recurring Microsoft 365 ticket work: which checks stay user-safe, which actions remain admin-owned, and how the buyer moves from pack to tune-up without collapsing both lanes into one vague service pitch.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/m365-help-desk-kb-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>'+
+          '<a class="c-btn" href="/book.html?lane=m365-tuneup&source=product-m365-kb-preview&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>'+
           '<a class="c-btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View tune-up preview</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public price, compliance claim, or licensing-reseller posture is added to the sample. It is a trust-building preview only.</p>'+
@@ -200,7 +383,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames recurring Windows 11 support pain: separate user-safe checks from admin-only endpoint work, keep escalation signals visible, and avoid pretending every slow-device complaint needs a broad managed-services contract.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/windows-11-troubleshooting-kb-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Windows%2011%20and%20Endpoint%20Cleanup&desc=I%20want%20to%20stage%20a%20Windows%2011%20and%20endpoint%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%20or%20devices%20supported%3A%0ABiggest%20Windows%2011%20friction%20today%3A%0AAffected%20device%20count%20or%20teams%3A%0ARecent%20changes%2C%20updates%2C%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage endpoint cleanup</a>'+
+          '<a class="c-btn" href="/book.html?lane=hybrid-support&source=product-win11-endpoint-preview&subject=Request%20Windows%2011%20and%20Endpoint%20Cleanup&desc=I%20want%20to%20stage%20a%20Windows%2011%20and%20endpoint%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%20or%20devices%20supported%3A%0ABiggest%20Windows%2011%20friction%20today%3A%0AAffected%20device%20count%20or%20teams%3A%0ARecent%20changes%2C%20updates%2C%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage endpoint cleanup</a>'+
           '<a class="c-btn" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View overflow preview</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public device-repair guarantee, uptime promise, or unsupported admin-access claim is added to the sample. It is a trust-building preview only.</p>'+
@@ -212,7 +395,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames recurring Outlook pain: start with user-safe checks, separate mailbox or profile issues from wider M365 drift, and keep the next move scoped instead of jumping straight into a broad managed-services pitch.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/outlook-fix-guide-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Outlook%20and%20M365%20Cleanup&desc=I%20want%20to%20stage%20an%20Outlook%20and%20M365%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20Outlook%20friction%20today%3A%0AHow%20many%20users%20are%20affected%3A%0ARecent%20changes%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage cleanup request</a>'+
+          '<a class="c-btn" href="/book.html?lane=m365-tuneup&source=product-outlook-fix-preview&subject=Request%20Outlook%20and%20M365%20Cleanup&desc=I%20want%20to%20stage%20an%20Outlook%20and%20M365%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20Outlook%20friction%20today%3A%0AHow%20many%20users%20are%20affected%3A%0ARecent%20changes%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage cleanup request</a>'+
           '<a class="c-btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View M365 preview</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public mailbox-recovery guarantee, tenant-wide-fix claim, or admin-access promise is added to the sample. It is a trust-building preview only.</p>'+
@@ -224,7 +407,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS keeps security-awareness training practical: focus on the daily employee habits that actually reduce avoidable risk, keep the reporting path clear, and avoid pretending a short pack replaces a full security program.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/cybersecurity-basics-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Security%20Awareness%20Setup&desc=I%20want%20to%20stage%20a%20Security%20Awareness%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20security%20behavior%20or%20training%20gap%20today%3A%0AAny%20recent%20phishing%20or%20account-risk%20issues%3A%0AWhat%20the%20team%20needs%20to%20improve%20first%3A">Stage security review</a>'+
+          '<a class="c-btn" href="/book.html?lane=m365-tuneup&source=product-cyber-basics-preview&subject=Request%20Security%20Awareness%20Setup&desc=I%20want%20to%20stage%20a%20Security%20Awareness%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20security%20behavior%20or%20training%20gap%20today%3A%0AAny%20recent%20phishing%20or%20account-risk%20issues%3A%0AWhat%20the%20team%20needs%20to%20improve%20first%3A">Stage security review</a>'+
           '<a class="c-btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View M365 preview</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public compliance guarantee, cyber-insurance shortcut, or incident-response claim is added to the sample. It is a trust-building preview only.</p>'+
@@ -236,7 +419,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames the first no-code automation decision: choose one repetitive workflow, keep the approval boundaries visible, and avoid pretending every admin task should become a live automation on day one.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/no-code-automation-kit-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-nocode-kit-preview&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public savings guarantee, connector-depth claim, or autonomous-send posture is added to the sample. It is a trust-building preview only.</p>'+
       '</div>',
@@ -247,7 +430,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames the meeting-and-document acceleration lane: capture the right inputs, convert them into assigned actions, and leave a cleaner SOP handoff instead of a loose recap that dies in chat.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/meeting-to-sop-ai-pack-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Meeting-to-SOP%20AI%20Sprint&desc=I%20want%20to%20stage%20a%20Meeting-to-SOP%20AI%20Sprint.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMeetings%20or%20handoffs%20creating%20the%20most%20drag%3A%0AWhere%20notes%2C%20action%20items%2C%20or%20SOPs%20live%20today%3A%0AWhat%20keeps%20getting%20missed%20after%20meetings%3A%0ATools%20used%20today%3A%0AWhat%20a%20cleaner%20handoff%20would%20look%20like%3A">Stage sprint request</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-meeting-sop-preview&subject=Request%20Meeting-to-SOP%20AI%20Sprint&desc=I%20want%20to%20stage%20a%20Meeting-to-SOP%20AI%20Sprint.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMeetings%20or%20handoffs%20creating%20the%20most%20drag%3A%0AWhere%20notes%2C%20action%20items%2C%20or%20SOPs%20live%20today%3A%0AWhat%20keeps%20getting%20missed%20after%20meetings%3A%0ATools%20used%20today%3A%0AWhat%20a%20cleaner%20handoff%20would%20look%20like%3A">Stage sprint request</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public ROI, autonomous-send, or records-compliance claim is added to the sample. It is a trust-building preview only.</p>'+
       '</div>',
@@ -258,7 +441,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 14px">This sample page shows how IIS frames service-desk cleanup: clearer intake, stronger ownership, cleaner escalation notes, and closure discipline that helps human agents now and makes later AI support safer.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/service-desk-sop-pack-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Service%20Desk%20SOP%20Sprint&desc=I%20want%20to%20stage%20a%20Service%20Desk%20SOP%20Sprint.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20support%20channels%20used%20today%3A%0ABiggest%20service-desk%20quality%20or%20handoff%20problem%3A%0AWhat%20keeps%20getting%20missed%20or%20reopened%3A%0AExisting%20SOPs%20or%20runbooks%20in%20place%3A%0AWhat%20a%20cleaner%20support%20flow%20would%20look%20like%3A">Stage SOP sprint</a>'+
+          '<a class="c-btn" href="/book.html?lane=service-desk-sop&source=product-service-desk-sop-preview&subject=Request%20Service%20Desk%20SOP%20Sprint&desc=I%20want%20to%20stage%20a%20Service%20Desk%20SOP%20Sprint.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20support%20channels%20used%20today%3A%0ABiggest%20service-desk%20quality%20or%20handoff%20problem%3A%0AWhat%20keeps%20getting%20missed%20or%20reopened%3A%0AExisting%20SOPs%20or%20runbooks%20in%20place%3A%0AWhat%20a%20cleaner%20support%20flow%20would%20look%20like%3A">Stage SOP sprint</a>'+
           '<a class="c-btn" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">View blueprint preview</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public staffing guarantee, SLA commitment, or autonomous-escalation claim is added to the sample. It is a trust-building preview only.</p>'+
@@ -269,18 +452,35 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
     'gl-helpdesk-blueprint':
       '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
         '<div class="eyebrow" style="margin-bottom:10px">Need it built with you?</div>'+
-        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the blueprint into an IIS implementation plan</h2>'+
-        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the blueprint as the operating asset, then move into a scoped IIS engagement for ticket intake, triage, escalation quality, knowledge-base structure, and pilot rollout.</p>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the blueprint into a scoped support-automation sprint</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the blueprint as the operating asset, then move into a scoped IIS engagement for ticket intake, routing, response templates, knowledge-base structure, and a measured pilot rollout that works with the stack you already have.</p>'+
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">MSP owners, IT managers, internal support leads, and teams drowning in repeated L1 questions.</p></div>'+
-          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Ticket intake model, routing matrix, escalation templates, KB structure, and a pilot rollout checklist.</p></div>'+
-          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a safer first step than buying tooling blind or adding headcount before support structure is ready.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Ticket taxonomy, routing matrix, response templates, KB outline, and a 90-day rollout checklist the team can operate from.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a safer first step than forcing a platform rip-and-replace or adding headcount before the queue structure is ready.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20AI%20Help%20Desk%20Blueprint%20Implementation&desc=I%20want%20help%20implementing%20the%20AI%20Help%20Desk%20Blueprint.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20ticket%20pain%3A%0ASystems%20used%20today%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%3A">Stage implementation request</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit first</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=support-ops-setup&source=product-helpdesk-blueprint-implementation&subject=Request%20AI%20Help%20Desk%20Blueprint%20Implementation&desc=I%20want%20to%20book%20a%20short%20support-ops%20setup%20call%20with%20IIS%20after%20reviewing%20the%20Help%20Desk%20Blueprint%20implementation%20lane.%0A%0ACompany%3A%0ATeam%20size%3A%0ACurrent%20ticket%20pain%3A%0ASystems%20used%20today%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%20first%3A">Stage implementation request</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-helpdesk-blueprint-implementation-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit first</a>'+
         '</div>'+
-        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This stays value-first and does not hard-commit public pricing, staffing, or tool claims.</p>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This stays value-first and does not hard-commit public pricing, staffing, vendor dependence, or tool claims.</p>'+
+      '</div>',
+    'gl-ai-readable-kb-pack':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need the broader KB built, not just the pack?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn the proof pack into a scoped AI Knowledge Base Build</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the pack to prove the structure first, then move into an IIS AI Knowledge Base Build when the buyer needs real source cleanup, article creation, validation, and a support-knowledge system that works for both humans and future AI use.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">MSPs, support leads, internal IT teams, and AI builders trying to clean up ticket memory, scattered docs, and SOP drift before automation trust breaks.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">A clearer article system, scoped cleanup priorities, safer escalation boundaries, and a path into the broader KB build only when the real need is proven.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a safer first step than jumping into a vague AI-support build before the knowledge layer is even trustworthy.</p></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/book.html?lane=support-kb&source=product-support-kb-build&subject=Request%20AI%20Knowledge%20Base%20Build&desc=I%20want%20to%20stage%20an%20AI%20Knowledge%20Base%20Build%20after%20reviewing%20the%20AI-readable%20support-knowledge%20preview.%0A%0ACompany%3A%0ATeam%20size%20or%20support%20scope%3A%0AWhere%20support%20knowledge%20lives%20today%3A%0ABiggest%20knowledge%20gaps%20or%20inconsistencies%3A%0AWhat%20needs%20to%20be%20safe%20for%20human%20and%20AI%20use%3A%0AWhat%20a%20cleaner%20KB%20would%20look%20like%20first%3A">Stage KB build</a>'+
+          '<a class="c-btn" href="/downloads/library/ai-knowledge-base-build-preview.html">View build preview</a>'+
+          '<a class="c-btn" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">View support blueprint</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step scoped around knowledge structure and cleanup without implying autonomous resolution, guaranteed deflection, or fixed public pricing.</p>'+
       '</div>',
     'gl-m365-kb':
       '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
@@ -293,8 +493,8 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a clean first sprint when they know M365 is messy but are not ready for a broad managed-services decision.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=m365-tuneup&source=product-m365-tuneup-offer&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>'+
+          '<a class="c-btn" href="/book.html?lane=general-fit&source=product-m365-general-fit&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step practical and scoped without implying long-term retention, licensing resale, or public fixed pricing.</p>'+
       '</div>',
@@ -309,8 +509,8 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a narrower first step than a broad MSP conversation when the visible business pain is Outlook friction and ticket churn.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20Outlook%20and%20M365%20Cleanup&desc=I%20want%20to%20stage%20an%20Outlook%20and%20M365%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20Outlook%20friction%20today%3A%0AHow%20many%20users%20are%20affected%3A%0ARecent%20changes%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage cleanup request</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=m365-tuneup&source=product-outlook-cleanup-offer&subject=Request%20Outlook%20and%20M365%20Cleanup&desc=I%20want%20to%20stage%20an%20Outlook%20and%20M365%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20Outlook%20friction%20today%3A%0AHow%20many%20users%20are%20affected%3A%0ARecent%20changes%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage cleanup request</a>'+
+          '<a class="c-btn" href="/book.html?lane=general-fit&source=product-outlook-general-fit&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step specific and safe without implying guaranteed mailbox repair, long-term retention, or tenant-wide remediation claims.</p>'+
       '</div>',
@@ -325,8 +525,8 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a safer first step than jumping straight into a larger security engagement or making public compliance assumptions.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20Security%20Awareness%20Setup&desc=I%20want%20to%20stage%20a%20Security%20Awareness%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20security%20behavior%20or%20training%20gap%20today%3A%0AAny%20recent%20phishing%20or%20account-risk%20issues%3A%0AWhat%20the%20team%20needs%20to%20improve%20first%3A">Stage security review</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage M365 tune-up</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=m365-tuneup&source=product-security-awareness-review&subject=Request%20Security%20Awareness%20Setup&desc=I%20want%20to%20stage%20a%20Security%20Awareness%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20security%20behavior%20or%20training%20gap%20today%3A%0AAny%20recent%20phishing%20or%20account-risk%20issues%3A%0AWhat%20the%20team%20needs%20to%20improve%20first%3A">Stage security review</a>'+
+          '<a class="c-btn" href="/book.html?lane=m365-tuneup&source=product-security-awareness-m365&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage M365 tune-up</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step practical and scoped without implying audit readiness, cyber-insurance acceptance, or guaranteed risk reduction.</p>'+
       '</div>',
@@ -342,10 +542,44 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/downloads/library/ai-agent-starter-kit-preview.html">View sample section</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit first</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint request</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-ai-agent-starter-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ATeam%3A%0AMost%20repetitive%20process%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%3A">Stage audit first</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-ai-agent-starter-sprint&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint request</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">No public ROI promise, autonomous-send claim, or deep integration promise is added to the sample. It is a trust-building preview only.</p>'+
+      '</div>',
+    'gl-ai-edge-starter':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need the first workflow scoped, not just the guide?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn AI Edge Starter into a Starter AI Setup</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the guide as the trust layer, then move into a short IIS setup when the buyer wants one practical workflow, assistant, or intake improvement scoped safely before anyone buys a bigger platform.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Small business owners, operators, and lean internal teams who want to test one practical AI use case without starting a larger program.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">One clearer first use case, human-review boundaries, and a practical handoff plan instead of a vague AI brainstorm.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives IIS a narrow first paid engagement when the buyer is still too early for a larger sprint or monthly retainer.</p></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/book.html?lane=ai-agent-setup&source=product-starter-ai-setup&subject=Request%20Starter%20AI%20Setup&desc=I%20want%20to%20stage%20a%20Starter%20AI%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20AI%20or%20workflow%20problem%20today%3A%0AOne%20process%20or%20question%20we%20want%20to%20improve%20first%3A%0AWhat%20still%20needs%20human%20review%20or%20approval%3A%0AWhat%20a%20useful%20first%20AI%20win%20would%20look%20like%3A">Stage setup</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-starter-ai-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
+          '<a class="c-btn" href="/ai-edge.html">Open AI Edge</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step scoped and safe without implying public ROI, autonomous-send behavior, or a required new platform purchase.</p>'+
+      '</div>',
+    'gl-ai-edge-pro-playbook':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need an operating owner, not just the playbook?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Turn AI Edge Pro into a monthly AI support lane</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the playbook as the working reference, then move into Monthly AI Support when the buyer already has prompts, ideas, or half-built workflows and needs an owner for cleanup, testing, and next priorities.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Founders, operators, and internal teams with active AI experiments, prompt libraries, or a workflow backlog that no one owns consistently.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Monthly priorities, prompt and KB cleanup, practical QA notes, and one clearer sequence of next fixes instead of scattered AI intentions.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why pair them</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It turns the playbook from a static guide into a working operating rhythm without forcing a bigger implementation commitment first.</p></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/book.html?lane=monthly-support&source=product-monthly-support&subject=Request%20Monthly%20AI%20Support%20Plan&desc=I%20want%20to%20stage%20a%20Monthly%20AI%20Support%20Plan%20after%20reviewing%20the%20product%20decision%20rail.%0A%0ACompany%3A%0ATeam%20size%20or%20departments%20supported%3A%0ACurrent%20AI%20systems%2C%20workflows%2C%20or%20knowledge%20assets%20in%20use%3A%0AWhat%20keeps%20slipping%20without%20an%20owner%3A%0APriority%20fixes%20or%20updates%20needed%20this%20month%3A%0APreferred%20monthly%20check-in%20cadence%3A%0AApproval%20or%20security%20boundaries%3A">Stage monthly support</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-monthly-support-sprint&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint</a>'+
+          '<a class="c-btn" href="/ai-edge.html">Open AI Edge</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step implementation-aware without implying fixed retainer pricing, unlimited change volume, or autonomous production action.</p>'+
       '</div>',
     'gl-nocode-kit':
       '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
@@ -358,9 +592,9 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It turns product curiosity into one concrete operational improvement without forcing a big automation program upfront.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint request</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=workflow-proof&source=product-quick-win-sprint-offer&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint request</a>'+
           '<a class="c-btn" href="/downloads/library/ai-workflow-quick-win-sprint-preview.html">View sprint preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>'+
+          '<a class="c-btn" href="/book.html?lane=general-fit&source=product-quick-win-general-fit&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step implementation-first without implying heavy-code delivery, unsupported connector depth, or public fixed pricing.</p>'+
       '</div>',
@@ -375,9 +609,9 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It turns document and meeting drag into one concrete operational fix without forcing a bigger automation program first.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20Meeting-to-SOP%20AI%20Sprint&desc=I%20want%20to%20stage%20a%20Meeting-to-SOP%20AI%20Sprint.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMeetings%20or%20handoffs%20creating%20the%20most%20drag%3A%0AWhere%20notes%2C%20action%20items%2C%20or%20SOPs%20live%20today%3A%0AWhat%20keeps%20getting%20missed%20after%20meetings%3A%0ATools%20used%20today%3A%0AWhat%20a%20cleaner%20handoff%20would%20look%20like%3A">Stage sprint request</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=workflow-proof&source=product-meeting-sop-offer&subject=Request%20Meeting-to-SOP%20AI%20Sprint&desc=I%20want%20to%20stage%20a%20Meeting-to-SOP%20AI%20Sprint.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMeetings%20or%20handoffs%20creating%20the%20most%20drag%3A%0AWhere%20notes%2C%20action%20items%2C%20or%20SOPs%20live%20today%3A%0AWhat%20keeps%20getting%20missed%20after%20meetings%3A%0ATools%20used%20today%3A%0AWhat%20a%20cleaner%20handoff%20would%20look%20like%3A">Stage sprint request</a>'+
           '<a class="c-btn" href="/downloads/library/meeting-to-sop-ai-pack-preview.html">View sample preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-meeting-sop-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step implementation-first without implying autonomous communication, records retention guarantees, or fixed savings claims.</p>'+
       '</div>',
@@ -392,9 +626,9 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a concrete operating fix before they commit to broader tooling, staffing, or ARIA implementation decisions.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20Service%20Desk%20SOP%20Sprint&desc=I%20want%20to%20stage%20a%20Service%20Desk%20SOP%20Sprint.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20support%20channels%20used%20today%3A%0ABiggest%20service-desk%20quality%20or%20handoff%20problem%3A%0AWhat%20keeps%20getting%20missed%20or%20reopened%3A%0AExisting%20SOPs%20or%20runbooks%20in%20place%3A%0AWhat%20a%20cleaner%20support%20flow%20would%20look%20like%3A">Stage SOP sprint</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=service-desk-sop&source=product-service-desk-sop-implementation&subject=Request%20Service%20Desk%20SOP%20Sprint&desc=I%20want%20to%20stage%20a%20Service%20Desk%20SOP%20Sprint.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20support%20channels%20used%20today%3A%0ABiggest%20service-desk%20quality%20or%20handoff%20problem%3A%0AWhat%20keeps%20getting%20missed%20or%20reopened%3A%0AExisting%20SOPs%20or%20runbooks%20in%20place%3A%0AWhat%20a%20cleaner%20support%20flow%20would%20look%20like%3A">Stage SOP sprint</a>'+
           '<a class="c-btn" href="/downloads/library/service-desk-sop-pack-preview.html">View sample preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-service-desk-sop-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the next step implementation-first without implying queue-volume guarantees, autonomous ticket handling, or fixed public pricing.</p>'+
       '</div>',
@@ -409,8 +643,8 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives buyers a focused conversion cleanup step instead of forcing them into a full-site rebuild conversation too early.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20Website%20%2B%20AI%20Intake%20Conversion%20Fix&desc=I%20want%20to%20stage%20a%20Website%20%2B%20AI%20Intake%20Conversion%20Fix.%0A%0ACompany%3A%0AWebsite%20URL%3A%0ABiggest%20conversion%20or%20intake%20friction%20today%3A%0ACurrent%20CTA%20or%20booking%20path%3A%0APages%20that%20need%20the%20most%20help%3A%0AWhat%20a%20better%20next%20step%20should%20look%20like%3A">Stage conversion fix</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=conversion-fix&source=product-website-conversion-offer&subject=Request%20Website%20%2B%20AI%20Intake%20Conversion%20Fix&desc=I%20want%20to%20stage%20a%20Website%20%2B%20AI%20Intake%20Conversion%20Fix.%0A%0ACompany%3A%0AWebsite%20URL%3A%0ABiggest%20conversion%20or%20intake%20friction%20today%3A%0ACurrent%20CTA%20or%20booking%20path%3A%0APages%20that%20need%20the%20most%20help%3A%0AWhat%20a%20better%20next%20step%20should%20look%20like%3A">Stage conversion fix</a>'+
+          '<a class="c-btn" href="/book.html?lane=general-fit&source=product-website-general-fit&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A">Book scoping call</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This keeps the conversation scoped around clarity, CTA, intake, and follow-up friction without implying guaranteed conversion lifts or a full redesign commitment.</p>'+
       '</div>',
@@ -425,7 +659,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It creates a premium first step before a family or tutor commits to a bigger ongoing learning program.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20Family%20AI%20Learning%20Session&desc=I%20want%20to%20stage%20a%20Family%20AI%20Learning%20Session.%0A%0AParent%20or%20tutor%20name%3A%0AStudent%20age%20or%20range%3A%0ALearning%20goals%3A%0ATopics%20or%20interests%3A%0AHow%20you%20want%20AI%20to%20help%3A">Stage guided session</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=guided-session&source=product-ai-edge-family-guided-session&subject=Request%20Family%20AI%20Learning%20Session&desc=I%20want%20to%20stage%20a%20Family%20AI%20Learning%20Session.%0A%0AParent%20or%20tutor%20name%3A%0AStudent%20age%20or%20range%3A%0ALearning%20goals%3A%0ATopics%20or%20interests%3A%0AHow%20you%20want%20AI%20to%20help%3A">Stage guided session</a>'+
           '<a class="c-btn" href="/ai-edge.html">Open AI Edge</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">Adult guides. Child learns. AI supports. Build, your future starts now. Invest in yourself.</p>'+
@@ -441,10 +675,26 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why start here</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It gives adults a premium planning layer before they try to build deeper automation or workflow systems.</p></div>'+
         '</div>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
-          '<a class="c-btn solid" href="/?contact=1&subject=Request%20Adult%20Momentum%20AI%20Session&desc=I%20want%20to%20stage%20an%20Adult%20Momentum%20AI%20Session.%0A%0AName%3A%0AMain%20roles%20or%20responsibilities%3A%0ABiggest%20friction%20today%3A%0AProjects%20or%20goals%20I%20want%20to%20move%20forward%3A%0AHow%20I%20want%20AI%20to%20help%3A">Stage guided session</a>'+
+          '<a class="c-btn solid" href="/book.html?lane=guided-session&source=product-ai-edge-adult-guided-session&subject=Request%20Adult%20Momentum%20AI%20Session&desc=I%20want%20to%20stage%20an%20Adult%20Momentum%20AI%20Session.%0A%0AName%3A%0AMain%20roles%20or%20responsibilities%3A%0ABiggest%20friction%20today%3A%0AProjects%20or%20goals%20I%20want%20to%20move%20forward%3A%0AHow%20I%20want%20AI%20to%20help%3A">Stage guided session</a>'+
           '<a class="c-btn" href="/ai-edge.html">Open AI Edge</a>'+
         '</div>'+
         '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">You stay in charge. AI helps sort and move. Build, your future starts now. Invest in yourself.</p>'+
+      '</div>',
+    'bundle-allaccess':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.28);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.08),rgba(255,255,255,.02))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need an operating owner, not just the library?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Pair All-Access with a monthly support rhythm</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">All-Access is the asset layer. The Monthly AI Support Plan is the operating layer when the buyer wants someone to keep prompts, KBs, small fixes, and next-step priorities moving instead of collecting dust.</p>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 16px">'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Best fit</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">Teams buying across support, AI, workflow, or documentation lanes and already feeling the drag of too many half-finished internal assets.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Leaves you with</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">One reusable vault plus a recurring review lane for updates, small implementation asks, and priorities that need a live owner.</p></div>'+
+          '<div style="padding:12px 13px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.02)"><div class="eyebrow" style="margin-bottom:7px;font-size:7px">Why pair them</div><p style="margin:0;font-size:12px;line-height:1.7;color:rgba(255,255,255,.62)">It turns the membership from a library purchase into a practical operating system without forcing a larger retainer claim or public guarantee.</p></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/book.html?lane=monthly-support&source=product-monthly-support&subject=Request%20Monthly%20AI%20Support%20Plan&desc=I%20want%20to%20stage%20a%20Monthly%20AI%20Support%20Plan%20after%20reviewing%20the%20product%20decision%20rail.%0A%0ACompany%3A%0ATeam%20size%20or%20departments%20supported%3A%0ACurrent%20AI%20systems%2C%20workflows%2C%20or%20knowledge%20assets%20in%20use%3A%0AWhat%20keeps%20slipping%20without%20an%20owner%3A%0APriority%20fixes%20or%20updates%20needed%20this%20month%3A%0APreferred%20monthly%20check-in%20cadence%3A%0AApproval%20or%20security%20boundaries%3A">Stage monthly support</a>'+
+          '<a class="c-btn" href="/growth-library.html#allaccess">Open the ladder</a>'+
+        '</div>'+
+        '<p style="font-size:11px;color:rgba(255,255,255,.42);line-height:1.7;margin:12px 0 0">This stays route-first and does not imply fixed public pricing, unlimited change volume, or autonomous production action.</p>'+
       '</div>'
   };
   var implementationBand = implementationBands[p.id] || '';
@@ -455,7 +705,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Not every buyer should unlock this pack first. Use the shared route guide when you need to compare the scoping, audit, sprint, and proof-first lanes without guessing.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-three-path-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit first</a>'+
           '<a class="c-btn" href="/aria.html">Meet ARIA</a>'+
         '</div>'+
       '</div>'
@@ -465,7 +715,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">If the buyer is not ready to unlock this pack, route them into the shared guide instead of losing them in the wrong CTA.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A%0ATools%20or%20systems%20in%20scope%3A">Book scoping call</a>'+
+          '<a class="c-btn" href="/book.html?lane=general-fit&source=product-three-path-general-fit&subject=Book%20a%20scoping%20call&desc=I%20want%20to%20book%20a%20short%20scoping%20call%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%3A%0AWhat%20I%20need%20help%20with%3A%0AWhat%20is%20time-sensitive%3A%0ATools%20or%20systems%20in%20scope%3A">Book scoping call</a>'+
           '<a class="c-btn" href="/services.html">See services</a>'+
         '</div>'+
       '</div>';
@@ -479,18 +729,31 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
           '<a class="c-btn" href="/downloads/library/service-desk-sop-pack-preview.html">View SOP preview</a>'+
           '<a class="c-btn" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View overflow preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20L1%20Support%20Enablement%20Review&desc=I%20want%20to%20stage%20an%20L1%20Support%20Enablement%20Review.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ANumber%20of%20new%20or%20generalist%20support%20staff%3A%0ABiggest%20recurring%20L1%20ticket%20types%3A%0AWhat%20gets%20escalated%20too%20early%20or%20too%20late%3A%0ACurrent%20runbooks%20or%20KBs%20in%20place%3A%0AWhat%20a%20cleaner%20first-response%20flow%20would%20look%20like%3A">Stage enablement review</a>'+
+          '<a class="c-btn" href="/book.html?lane=l1-enablement&source=product-related-l1-enablement&subject=Request%20L1%20Support%20Enablement%20Review&desc=I%20want%20to%20stage%20an%20L1%20Support%20Enablement%20Review.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ANumber%20of%20new%20or%20generalist%20support%20staff%3A%0ABiggest%20recurring%20L1%20ticket%20types%3A%0AWhat%20gets%20escalated%20too%20early%20or%20too%20late%3A%0ACurrent%20runbooks%20or%20KBs%20in%20place%3A%0AWhat%20a%20cleaner%20first-response%20flow%20would%20look%20like%3A">Stage enablement review</a>'+
         '</div>'+
       '</div>',
     'gl-helpdesk-blueprint':
       '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.24);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.06),rgba(255,255,255,.015))">'+
         '<div class="eyebrow" style="margin-bottom:10px">Need a different first step?</div>'+
-        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Switch from pack-first to coverage-first if the queue is already on fire</h2>'+
-        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the shared route guide if the buyer is still comparing options, or jump straight into the overflow pilot when the real need is live queue relief instead of blueprint review.</p>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Choose blueprint review, SOP cleanup, or overflow based on the real queue pain</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Use the shared route guide if the buyer is still comparing options, the SOP pack if handoffs are the real issue, the blueprint review when IIS should confirm the first support lane, or the overflow preview when live queue pressure already matters.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
+          '<a class="c-btn" href="/downloads/library/service-desk-sop-pack-preview.html">View SOP preview</a>'+
           '<a class="c-btn" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View overflow preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Remote%20L1-L3%20Overflow%20Support%20Pilot&desc=I%20want%20to%20stage%20a%20Remote%20L1-L3%20Overflow%20Support%20Pilot.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20queue%20or%20support%20pressure%3A%0ATools%20used%20today%3A%0AIssue%20types%20safe%20to%20delegate%20first%3A%0AWhat%20a%20successful%20two-week%20pilot%20would%20look%20like%3A">Stage pilot request</a>'+
+          '<a class="c-btn" href="/book.html?lane=support-blueprint-review&source=product-related-blueprint-review&subject=Request%20AI%20Help%20Desk%20Blueprint%20Review&desc=I%20want%20to%20book%20a%20short%20AI%20Help%20Desk%20Blueprint%20Review%20with%20IIS.%0A%0ACompany%3A%0ATeam%20size%20or%20users%20supported%3A%0ACurrent%20ticket%20pain%20or%20quality%20issue%3A%0AWhere%20notes%2C%20runbooks%2C%20or%20support%20knowledge%20live%20today%3A%0AWhat%20feels%20most%20unclear%20right%20now%20(blueprint%2C%20SOPs%2C%20KB%2C%20or%20overflow)%3A%0AWhat%20a%20better%20support%20flow%20would%20look%20like%20first%3A">Stage blueprint review</a>'+
+        '</div>'+
+      '</div>',
+    'gl-ai-readable-kb-pack':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.24);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.06),rgba(255,255,255,.015))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need a different first step?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Route support-knowledge buyers into blueprint, SOP, or build paths before they stall</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Some visitors only need the pack. Others need the broader KB build, help-desk blueprint, or support-ops cleanup lane made obvious from the product page itself.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
+          '<a class="c-btn" href="/downloads/library/ai-knowledge-base-build-preview.html">View KB build preview</a>'+
+          '<a class="c-btn" href="/downloads/library/service-desk-sop-pack-preview.html">View SOP preview</a>'+
+          '<a class="c-btn" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">View blueprint preview</a>'+
         '</div>'+
       '</div>',
     'gl-m365-kb':
@@ -501,7 +764,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
           '<a class="c-btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View tune-up preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>'+
+          '<a class="c-btn" href="/book.html?lane=m365-tuneup&source=product-related-m365-preview&subject=Request%20M365%20Security%20and%20Productivity%20Tune-Up&desc=I%20want%20to%20stage%20an%20M365%20Security%20and%20Productivity%20Tune-Up.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20M365%20friction%20today%3A%0AAdmin%20areas%20that%20feel%20messy%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage tune-up request</a>'+
         '</div>'+
       '</div>',
     'gl-win11-kb':
@@ -512,7 +775,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
           '<a class="c-btn" href="/downloads/library/windows-11-troubleshooting-kb-preview.html">View sample preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Windows%2011%20and%20Endpoint%20Cleanup&desc=I%20want%20to%20stage%20a%20Windows%2011%20and%20endpoint%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%20or%20devices%20supported%3A%0ABiggest%20Windows%2011%20friction%20today%3A%0AAffected%20device%20count%20or%20teams%3A%0ARecent%20changes%2C%20updates%2C%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage endpoint cleanup</a>'+
+          '<a class="c-btn" href="/book.html?lane=hybrid-support&source=product-related-endpoint-preview&subject=Request%20Windows%2011%20and%20Endpoint%20Cleanup&desc=I%20want%20to%20stage%20a%20Windows%2011%20and%20endpoint%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%20or%20devices%20supported%3A%0ABiggest%20Windows%2011%20friction%20today%3A%0AAffected%20device%20count%20or%20teams%3A%0ARecent%20changes%2C%20updates%2C%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage endpoint cleanup</a>'+
           '<a class="c-btn" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View overflow preview</a>'+
         '</div>'+
       '</div>',
@@ -524,7 +787,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
           '<a class="c-btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View M365 preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Outlook%20and%20M365%20Cleanup&desc=I%20want%20to%20stage%20an%20Outlook%20and%20M365%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20Outlook%20friction%20today%3A%0AHow%20many%20users%20are%20affected%3A%0ARecent%20changes%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage cleanup request</a>'+
+          '<a class="c-btn" href="/book.html?lane=m365-tuneup&source=product-related-outlook-preview&subject=Request%20Outlook%20and%20M365%20Cleanup&desc=I%20want%20to%20stage%20an%20Outlook%20and%20M365%20cleanup%20request.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20Outlook%20friction%20today%3A%0AHow%20many%20users%20are%20affected%3A%0ARecent%20changes%20or%20signals%3A%0AWhat%20needs%20to%20improve%20first%3A">Stage cleanup request</a>'+
         '</div>'+
       '</div>',
     'gl-website-checklist':
@@ -535,7 +798,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
           '<a class="c-btn" href="/downloads/library/small-business-website-improvement-checklist-preview.html">View sample preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Website%20%2B%20AI%20Intake%20Conversion%20Fix&desc=I%20want%20to%20stage%20a%20Website%20%2B%20AI%20Intake%20Conversion%20Fix.%0A%0ACompany%3A%0AWebsite%20URL%3A%0ABiggest%20conversion%20or%20intake%20friction%20today%3A%0ACurrent%20CTA%20or%20booking%20path%3A%0APages%20that%20need%20the%20most%20help%3A%0AWhat%20a%20better%20next%20step%20should%20look%20like%3A">Stage conversion fix</a>'+
+          '<a class="c-btn" href="/book.html?lane=conversion-fix&source=product-related-website-preview&subject=Request%20Website%20%2B%20AI%20Intake%20Conversion%20Fix&desc=I%20want%20to%20stage%20a%20Website%20%2B%20AI%20Intake%20Conversion%20Fix.%0A%0ACompany%3A%0AWebsite%20URL%3A%0ABiggest%20conversion%20or%20intake%20friction%20today%3A%0ACurrent%20CTA%20or%20booking%20path%3A%0APages%20that%20need%20the%20most%20help%3A%0AWhat%20a%20better%20next%20step%20should%20look%20like%3A">Stage conversion fix</a>'+
         '</div>'+
       '</div>',
     'gl-ai-agent-starter':
@@ -546,7 +809,31 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
           '<a class="c-btn" href="/downloads/library/ai-workflow-audit-preview.html">View audit preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit request</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-related-workflow-preview&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit request</a>'+
+        '</div>'+
+      '</div>',
+    'gl-ai-edge-starter':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.24);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.06),rgba(255,255,255,.015))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need a different first step?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Route AI Edge Starter buyers into proof, audit, or scoped setup before they stall</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Some visitors should buy the guide. Others still need the proof layer, a first-use-case audit, or a scoped setup request made obvious from the product page itself.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/ai-edge.html">Open AI Edge</a>'+
+          '<a class="c-btn" href="/book.html?lane=ai-agent-setup&source=product-related-starter-ai&subject=Request%20Starter%20AI%20Setup&desc=I%20want%20to%20stage%20a%20Starter%20AI%20Setup.%0A%0ACompany%3A%0ATeam%20size%3A%0ABiggest%20AI%20or%20workflow%20problem%20today%3A%0AOne%20process%20or%20question%20we%20want%20to%20improve%20first%3A%0AWhat%20still%20needs%20human%20review%20or%20approval%3A%0AWhat%20a%20useful%20first%20AI%20win%20would%20look%20like%3A">Stage setup</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-related-starter-ai-audit&subject=Request%20AI%20Workflow%20Audit&desc=I%20want%20to%20request%20an%20AI%20Workflow%20Audit.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20we%20use%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage audit request</a>'+
+          '<a class="c-btn" href="/start-here.html">Open the 3-path guide</a>'+
+        '</div>'+
+      '</div>',
+    'gl-ai-edge-pro-playbook':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.24);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.06),rgba(255,255,255,.015))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need a different first step?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Route AI Edge Pro buyers into audit, sprint, or monthly support before they stall</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Some visitors should unlock the playbook. Others already need the audit, one scoped sprint, or recurring owner path made explicit from the product page itself.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/ai-edge.html">Open AI Edge</a>'+
+          '<a class="c-btn" href="/book.html?lane=monthly-support&source=product-monthly-support&subject=Request%20Monthly%20AI%20Support%20Plan&desc=I%20want%20to%20stage%20a%20Monthly%20AI%20Support%20Plan%20after%20reviewing%20the%20product%20decision%20rail.%0A%0ACompany%3A%0ATeam%20size%20or%20departments%20supported%3A%0ACurrent%20AI%20systems%2C%20workflows%2C%20or%20knowledge%20assets%20in%20use%3A%0AWhat%20keeps%20slipping%20without%20an%20owner%3A%0APriority%20fixes%20or%20updates%20needed%20this%20month%3A%0APreferred%20monthly%20check-in%20cadence%3A%0AApproval%20or%20security%20boundaries%3A">Stage monthly support</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-related-monthly-support-sprint&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint request</a>'+
+          '<a class="c-btn" href="/start-here.html">Open the 3-path guide</a>'+
         '</div>'+
       '</div>',
     'gl-nocode-kit':
@@ -557,7 +844,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
           '<a class="c-btn" href="/downloads/library/ai-workflow-audit-preview.html">View audit preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint request</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-related-quick-win-preview&subject=Request%20AI%20Workflow%20Quick-Win%20Sprint&desc=I%20want%20to%20stage%20an%20AI%20Workflow%20Quick-Win%20Sprint.%0A%0ACompany%3A%0ATeam%20size%3A%0AMost%20repetitive%20process%20today%3A%0AEstimated%20hours%20lost%20per%20week%3A%0ATools%20used%20today%3A%0AWhat%20success%20would%20look%20like%20first%3A">Stage sprint request</a>'+
         '</div>'+
       '</div>',
     'gl-meeting-sop-pack':
@@ -568,7 +855,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
         '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
           '<a class="c-btn" href="/downloads/library/meeting-to-sop-ai-pack-preview.html">View sample preview</a>'+
-          '<a class="c-btn" href="/?contact=1&subject=Request%20Meeting-to-SOP%20AI%20Sprint&desc=I%20want%20to%20stage%20a%20Meeting-to-SOP%20AI%20Sprint.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMeetings%20or%20handoffs%20creating%20the%20most%20drag%3A%0AWhere%20notes%2C%20action%20items%2C%20or%20SOPs%20live%20today%3A%0AWhat%20keeps%20getting%20missed%20after%20meetings%3A%0ATools%20used%20today%3A%0AWhat%20a%20cleaner%20handoff%20would%20look%20like%3A">Stage sprint request</a>'+
+          '<a class="c-btn" href="/book.html?lane=workflow-proof&source=product-related-meeting-sop&subject=Request%20Meeting-to-SOP%20AI%20Sprint&desc=I%20want%20to%20stage%20a%20Meeting-to-SOP%20AI%20Sprint.%0A%0ACompany%3A%0ATeam%20or%20department%3A%0AMeetings%20or%20handoffs%20creating%20the%20most%20drag%3A%0AWhere%20notes%2C%20action%20items%2C%20or%20SOPs%20live%20today%3A%0AWhat%20keeps%20getting%20missed%20after%20meetings%3A%0ATools%20used%20today%3A%0AWhat%20a%20cleaner%20handoff%20would%20look%20like%3A">Stage sprint request</a>'+
         '</div>'+
       '</div>',
     'gl-service-desk-sop-pack':
@@ -580,6 +867,42 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
           '<a class="c-btn solid" href="/start-here.html">Open the 3-path guide</a>'+
           '<a class="c-btn" href="/downloads/library/ai-help-desk-automation-blueprint-preview.html">View blueprint preview</a>'+
           '<a class="c-btn" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View overflow preview</a>'+
+        '</div>'+
+      '</div>',
+    'bundle-it-mastery':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.24);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.06),rgba(255,255,255,.015))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need a different first step?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Route support buyers into single-pack, tune-up, or overflow paths before they stall</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Some buyers need one support guide. Others already need the M365 cleanup lane or overflow coverage. Keep those adjacent exits visible from the bundle page itself.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/product.html?id=gl-l1-it-bible">Open L1 guide</a>'+
+          '<a class="c-btn" href="/downloads/library/m365-security-productivity-tune-up-preview.html">View M365 preview</a>'+
+          '<a class="c-btn" href="/downloads/library/remote-l1-l3-overflow-support-pilot-preview.html">View overflow preview</a>'+
+          '<a class="c-btn" href="/start-here.html">Open the 3-path guide</a>'+
+        '</div>'+
+      '</div>',
+    'bundle-ai-automation':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.24);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.06),rgba(255,255,255,.015))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need a different first step?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Route AI buyers into audit, sprint, or single-pack paths before they stall</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Some visitors should buy the bundle. Others still need the audit or sprint path because the real blocker is choosing the first workflow, not buying more assets.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/product.html?id=gl-ai-agent-starter">Open AI Agent Starter</a>'+
+          '<a class="c-btn" href="/downloads/library/ai-workflow-audit-preview.html">View audit preview</a>'+
+          '<a class="c-btn" href="/downloads/library/ai-workflow-quick-win-sprint-preview.html">View sprint preview</a>'+
+          '<a class="c-btn" href="/start-here.html">Open the 3-path guide</a>'+
+        '</div>'+
+      '</div>',
+    'bundle-allaccess':
+      '<div style="margin:26px 0 0;padding:22px 24px;border:1px solid rgba(197,160,89,.24);border-radius:12px;background:linear-gradient(145deg,rgba(197,160,89,.06),rgba(255,255,255,.015))">'+
+        '<div class="eyebrow" style="margin-bottom:10px">Need a different first step?</div>'+
+        '<h2 style="font-size:17px;margin:0 0 10px;color:#f1dca7;border:0;padding:0">Route membership buyers into bundles, proof, or monthly support before they stall</h2>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.62);line-height:1.8;margin:0 0 16px">Some visitors are ready for the whole vault. Others should still choose a bundle, review one proof lane, or stage the monthly support plan because the real need is operating ownership.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="c-btn solid" href="/product.html?id=bundle-it-mastery">Open IT bundle</a>'+
+          '<a class="c-btn" href="/product.html?id=bundle-ai-automation">Open AI bundle</a>'+
+          '<a class="c-btn" href="/book.html?lane=monthly-support&source=product-monthly-support&subject=Request%20Monthly%20AI%20Support%20Plan&desc=I%20want%20to%20stage%20a%20Monthly%20AI%20Support%20Plan%20after%20reviewing%20the%20product%20decision%20rail.%0A%0ACompany%3A%0ATeam%20size%20or%20departments%20supported%3A%0ACurrent%20AI%20systems%2C%20workflows%2C%20or%20knowledge%20assets%20in%20use%3A%0AWhat%20keeps%20slipping%20without%20an%20owner%3A%0APriority%20fixes%20or%20updates%20needed%20this%20month%3A%0APreferred%20monthly%20check-in%20cadence%3A%0AApproval%20or%20security%20boundaries%3A">Stage monthly support</a>'+
+          '<a class="c-btn" href="/growth-library.html#allaccess">View ladder</a>'+
         '</div>'+
       '</div>'
   };
@@ -594,6 +917,7 @@ nav{position:fixed;width:100%;z-index:50;padding:20px 40px;display:flex;justify-
     (p.long?'<p style="font-size:14px;color:rgba(255,255,255,.55);line-height:1.8;max-width:720px;margin:0 0 26px">'+esc(p.long)+'</p>':'')+
     '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 30px"><span style="font-family:\'Cinzel\',serif;font-size:30px" class="gold-text">'+priceLabel+'</span><div style="display:flex;gap:10px;flex-wrap:wrap">'+actions+'</div></div>'+
     previewBand +
+    decisionBand +
     (insideList?'<h2 style="font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:#f1dca7;margin:30px 0 12px">What’s inside</h2><ul style="color:rgba(255,255,255,.65);font-size:14px;line-height:1.9;padding-left:20px">'+insideList+'</ul>':'')+
     (bundleList?'<h2 style="font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:#f1dca7;margin:30px 0 12px">Included in this bundle</h2>'+bundleList:'')+
     '<div style="margin:34px 0;padding:20px 22px;border:1px dashed rgba(197,160,89,.35);border-radius:10px;background:rgba(197,160,89,.04);font-size:13px;color:rgba(255,255,255,.6)"><b style="color:#d8bd84">Peek before you commit.</b> The 30% preview shows the structure and a real section — credited toward full access (reply to your receipt). Full unlock includes every step, templates, and the AI-readable version. '+upsell+'</div>'+

@@ -82,11 +82,11 @@ function classifyApprovalQueue(items) {
       alreadyApproved.push(item);
       continue;
     }
-    if (/approved-to-transmit|send them when an email\/contact surface is available/i.test(item)) {
+    if (/approved-to-transmit|send them when an email\/contact surface is available|Direct-contact follow-up queue|Jason Brown \/ Hines follow-up: if Jason has not replied|July 2 warm lead send gate: if Jason Brown and\/or Azim Lila are still silent/i.test(item)) {
       sendNow.push(item);
       continue;
     }
-    if (/Jason Brown/i.test(item)) {
+    if (/Friday, 2026-06-12|window opens|dated follow-up|Watch for reply|still silent on \d{4}-\d{2}-\d{2}|follow-up then/i.test(item)) {
       upcoming.push(item);
       continue;
     }

@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#07080B}
+  ::selection{background:rgba(34,211,238,.28);color:#EEF2F6}
+  @keyframes sk{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes dotb{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+  @keyframes glowP{0%,100%{opacity:.55}50%{opacity:1}}
+  @keyframes ringPulse{0%{box-shadow:0 0 0 0 rgba(233,184,114,.55)}70%{box-shadow:0 0 0 14px rgba(233,184,114,0)}100%{box-shadow:0 0 0 0 rgba(233,184,114,0)}}
+  @keyframes scanline{0%{transform:translateY(-120%)}100%{transform:translateY(460%)}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  *::-webkit-scrollbar{width:10px;height:10px}
+  *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+  *::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.17);background-clip:padding-box}
+  input,textarea,button{font-family:inherit}
+  input::placeholder,textarea::placeholder{color:#5B6672}
+</style>
+</helmet>
+
+<div style="height:100vh;display:flex;flex-direction:column;overflow:hidden;background:#07080B;color:#EEF2F6;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;position:relative">
+
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(1200px 620px at 12% -12%, rgba(34,211,238,.10), transparent 60%),radial-gradient(1000px 520px at 100% -6%, rgba(233,184,114,.055), transparent 55%),radial-gradient(900px 700px at 50% 120%, rgba(34,211,238,.05), transparent 60%)"></div>
+
+  <div style="{{ shellStyle }}">
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+  <header style="position:relative;z-index:5;flex:0 0 auto;height:60px;display:flex;align-items:center;gap:13px;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(8,9,12,.72);backdrop-filter:blur(14px)">
+    <div onClick="{{ goHome }}" style="display:flex;align-items:center;gap:11px;cursor:pointer;flex:0 0 auto">
+      <div style="position:relative;width:26px;height:26px;display:grid;place-items:center">
+        <div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(34,211,238,.85);box-shadow:0 0 14px rgba(34,211,238,.5)"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#22D3EE;box-shadow:0 0 10px rgba(34,211,238,.9)"></div>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <span style="font-weight:800;font-size:17px;letter-spacing:-.02em">iis</span>
+        <span style="width:1px;height:15px;background:rgba(255,255,255,.16);display:inline-block"></span>
+        <span style="font-weight:600;font-size:14.5px;color:#9AA6B4">Forums</span>
+      </div>
+    </div>
+
+    <nav style="display:flex;align-items:center;gap:2px;margin-left:8px">
+      <sc-for list="{{ navTabs }}" as="tab" hint-placeholder-count="5">
+        <div onClick="{{ tab.onSelect }}" data-active="{{ tab.active }}" style="{{ tab.style }}" style-hover="color:#EEF2F6;background:rgba(255,255,255,.05)">{{ tab.label }}</div>
+      </sc-for>
+    </nav>
+
+    <div style="flex:1"></div>
+
+    <sc-if value="{{ showHeaderSearch }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ focusHeaderSearch }}" style="display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;min-width:150px;max-width:260px;flex:1 1 auto;background:#0C0F15;border:1px solid rgba(255,255,255,.09);border-radius:10px;cursor:text;color:#5B6672;font-size:13.5px" style-hover="border-color:rgba(255,255,255,.16)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5B6672" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <span style="flex:1">Ask or search…</span>
+        <span style="font-family:'JetBrains Mono';font-size:10.5px;color:#5B6672;border:1px solid rgba(255,255,255,.12);border-radius:5px;padding:1px 5px">/</span>
+      </div>
+    </sc-if>
+
+    <button onClick="{{ onDownloadSentinel }}" style="height:36px;padding:0 14px;background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#C7D0DB;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px" style-hover="border-color:rgba(34,211,238,.5);color:#EEF2F6">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+      Sentinel
+    </button>
+    <div onClick="{{ openSSO }}" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#14323a,#0b1418);border:1px solid rgba(34,211,238,.35);display:grid;place-items:center;cursor:pointer;font-weight:700;font-size:12.5px;color:#67E8F9" style-hover="border-color:rgba(34,211,238,.7)" title="Sign in with IIS SSO">AH</div>
+  </header>
+  </sc-if>
+
+  <!-- MOBILE HEADER -->
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:0 0 auto;position:relative;z-index:5">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 22px 3px;font-size:12.5px;font-weight:700;color:#EEF2F6">
+      <span style="font-variant-numeric:tabular-nums">9:41</span>
+      <div style="display:flex;align-items:center;gap:6px;color:#EEF2F6">
+        <svg width="17" height="11" viewBox="0 0 24 16" fill="currentColor"><rect x="0" y="10" width="4" height="6" rx="1"></rect><rect x="6" y="7" width="4" height="9" rx="1"></rect><rect x="12" y="4" width="4" height="12" rx="1"></rect><rect x="18" y="1" width="4" height="15" rx="1"></rect></svg>
+        <svg width="16" height="12" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 7a15 15 0 0 1 20 0M5 11a9 9 0 0 1 14 0"></path><circle cx="12" cy="15" r="1.4" fill="currentColor"></circle></svg>
+        <svg width="24" height="12" viewBox="0 0 26 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="21" height="12" rx="3"></rect><rect x="3" y="3" width="15" height="8" rx="1.5" fill="currentColor"></rect><rect x="23.5" y="5" width="1.6" height="4" rx="1" fill="currentColor"></rect></svg>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 16px 12px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(8,9,12,.72);backdrop-filter:blur(12px)">
+      <div onClick="{{ goHome }}" style="display:flex;align-items:center;gap:9px;cursor:pointer">
+        <div style="position:relative;width:24px;height:24px;display:grid;place-items:center"><div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(34,211,238,.85);box-shadow:0 0 12px rgba(34,211,238,.5)"></div><div style="width:6px;height:6px;border-radius:50%;background:#22D3EE;box-shadow:0 0 8px #22D3EE"></div></div>
+        <div style="display:flex;align-items:baseline;gap:6px"><span style="font-weight:800;font-size:16px;letter-spacing:-.02em">iis</span><span style="font-weight:600;font-size:13.5px;color:#9AA6B4">Forums</span></div>
+      </div>
+      <div style="flex:1"></div>
+      <button onClick="{{ focusHeaderSearch }}" style="width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#0C0F15;color:#9AA6B4;cursor:pointer;display:grid;place-items:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button>
+      <div onClick="{{ openSSO }}" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#14323a,#0b1418);border:1px solid rgba(34,211,238,.35);display:grid;place-items:center;cursor:pointer;font-weight:700;font-size:12px;color:#67E8F9">AH</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <main ref="{{ scrollRef }}" style="position:relative;z-index:1;flex:1;overflow-y:auto;overflow-x:hidden">
+    <div style="{{ stageStyle }}">
+
+      <!-- ============================ HOME ============================ -->
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <!-- HERO -->
+        <section style="max-width:1120px;margin:0 auto;padding:64px 28px 30px;text-align:center">
+          <div style="display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;border:1px solid rgba(34,211,238,.28);background:rgba(34,211,238,.06);font-size:12.5px;color:#8fdff0;font-weight:600;margin-bottom:26px">
+            <span style="width:6px;height:6px;border-radius:50%;background:#22D3EE;box-shadow:0 0 8px #22D3EE;animation:glowP 2.4s ease-in-out infinite"></span>
+            ARIA-native · Free forever · No paywalls
+          </div>
+
+          <!-- hero variant switcher -->
+          <div style="display:inline-flex;padding:3px;background:#0C0F15;border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-bottom:30px;gap:2px">
+            <sc-for list="{{ heroTabs }}" as="h" hint-placeholder-count="3">
+              <button onClick="{{ h.onSelect }}" style="{{ h.style }}">{{ h.label }}</button>
+            </sc-for>
+          </div>
+
+          <!-- VARIANT A: search-forward -->
+          <sc-if value="{{ heroA }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <h1 style="font-size:clamp(34px,5.4vw,60px);line-height:1.02;letter-spacing:-.035em;font-weight:800;margin:0 auto 18px;max-width:15ch;background:linear-gradient(180deg,#FFFFFF,#B9C2CE);-webkit-background-clip:text;background-clip:text;color:transparent">Describe the problem.<br>Get the fix — instantly.</h1>
+            <p style="font-size:clamp(15px,1.6vw,18px);line-height:1.5;color:#9AA6B4;max-width:52ch;margin:0 auto 34px">AI-native IT answers from a real knowledge base and accepted community fixes — verified, ranked, and one click from being solved on your machine.</p>
+            {{ askBar }}
+            <div style="display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:20px">
+              <sc-for list="{{ exampleChips }}" as="c" hint-placeholder-count="4">
+                <button onClick="{{ c.onPick }}" style="display:flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.09);background:#0C0F15;color:#9AA6B4;font-size:13px;font-weight:500;cursor:pointer" style-hover="border-color:rgba(34,211,238,.4);color:#EEF2F6;background:#12161d">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5B6672" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                  {{ c.label }}
+                </button>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 16px;margin-top:26px;font-size:12.5px;color:#5B6672">
+              <span style="display:flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path></svg>Local-first · your data stays yours</span>
+              <span style="opacity:.4">•</span>
+              <span>Free to search — no account needed</span>
+              <span style="opacity:.4">•</span>
+              <span>WCAG 2.1 AA</span>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- VARIANT B: split answer-preview -->
+          <sc-if value="{{ heroB }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;{{ heroBcols }};gap:34px;align-items:center;text-align:left;max-width:1000px;margin:0 auto">
+            <div>
+              <h1 style="font-size:clamp(30px,4.4vw,48px);line-height:1.04;letter-spacing:-.035em;font-weight:800;margin:0 0 16px;background:linear-gradient(180deg,#FFFFFF,#B9C2CE);-webkit-background-clip:text;background-clip:text;color:transparent">Ask in plain English.<br>See the answer rank #1.</h1>
+              <p style="font-size:16px;line-height:1.5;color:#9AA6B4;margin:0 0 26px">One search across the KB and accepted community answers. Confidence-scored, source-badged, and one click from a fix.</p>
+              {{ askBar }}
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+                <sc-for list="{{ exampleChips }}" as="c" hint-placeholder-count="3">
+                  <button onClick="{{ c.onPick }}" style="padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.09);background:#0C0F15;color:#9AA6B4;font-size:12.5px;cursor:pointer" style-hover="border-color:rgba(34,211,238,.4);color:#EEF2F6">{{ c.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="position:relative">
+              <div style="position:absolute;-inset:1px;inset:-1px;border-radius:18px;background:linear-gradient(135deg,rgba(34,211,238,.4),rgba(233,184,114,.25));opacity:.5;filter:blur(14px)"></div>
+              <div style="position:relative;background:#0E1219;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;box-shadow:0 24px 60px -20px rgba(0,0,0,.7)">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+                  <span style="font-family:'JetBrains Mono';font-size:11px;color:#04262B;background:#22D3EE;padding:3px 8px;border-radius:6px;font-weight:600">RANKED #1</span>
+                  <span style="font-size:12px;color:#5B6672">for “outlook password loop”</span>
+                </div>
+                <div style="font-weight:700;font-size:16px;letter-spacing:-.01em;margin-bottom:8px">Outlook keeps asking for password after MFA enrollment</div>
+                <div style="font-size:13.5px;line-height:1.55;color:#9AA6B4;margin-bottom:14px">Cached legacy credentials block modern auth. Clear the stored credential and re-register the account under Entra…</div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                  <div style="flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden"><div style="width:88%;height:100%;background:linear-gradient(90deg,#0E9CB8,#34D399);border-radius:999px"></div></div>
+                  <span style="font-family:'JetBrains Mono';font-size:12px;color:#34D399;font-weight:600">88% · High</span>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <div style="flex:1;height:38px;border-radius:9px;background:#22D3EE;color:#04262B;font-weight:700;font-size:13px;display:grid;place-items:center">Fix with ARIA</div>
+                  <div style="padding:0 14px;height:38px;border-radius:9px;border:1px solid rgba(233,184,114,.4);color:#E9B872;font-weight:600;font-size:13px;display:grid;place-items:center;background:rgba(233,184,114,.06)">from a discussion →</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- VARIANT C: screenshot-forward -->
+          <sc-if value="{{ heroC }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <h1 style="font-size:clamp(32px,5vw,54px);line-height:1.03;letter-spacing:-.035em;font-weight:800;margin:0 auto 16px;max-width:16ch;background:linear-gradient(180deg,#FFFFFF,#B9C2CE);-webkit-background-clip:text;background-clip:text;color:transparent">Show us the error.<br>We’ll diagnose it.</h1>
+            <p style="font-size:17px;line-height:1.5;color:#9AA6B4;max-width:50ch;margin:0 auto 30px">Paste a screenshot of any error, BSOD, or config — Fable 5 vision reads it and returns the fix. Or just ask in words.</p>
+            <div onClick="{{ goAskAI }}" style="max-width:560px;margin:0 auto;border:1.5px dashed rgba(34,211,238,.4);border-radius:18px;background:linear-gradient(180deg,rgba(34,211,238,.05),rgba(34,211,238,.01));padding:38px 24px;cursor:pointer;transition:all .2s" style-hover="border-color:rgba(34,211,238,.8);background:rgba(34,211,238,.08)">
+              <div style="width:52px;height:52px;border-radius:14px;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.3);display:grid;place-items:center;margin:0 auto 14px">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m4 17 4.5-4 3 2.5L16 11l4 4"></path></svg>
+              </div>
+              <div style="font-weight:700;font-size:16px;margin-bottom:5px">Drop a screenshot, or paste with ⌘V</div>
+              <div style="font-size:13px;color:#5B6672">PNG · JPG · logs · PDF — analyzed locally-first, never stored</div>
+            </div>
+            <div style="margin-top:18px;font-size:13px;color:#5B6672">or <span onClick="{{ focusHeaderSearch }}" style="color:#67E8F9;cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:3px">type your problem instead →</span></div>
+          </div>
+          </sc-if>
+        </section>
+
+        <!-- TRUST STRIP (honest, no numbers) -->
+        <section style="max-width:1120px;margin:34px auto 0;padding:0 28px">
+          <div style="display:grid;{{ g3 }};gap:14px">
+            <sc-for list="{{ trustPillars }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;gap:13px;align-items:flex-start;padding:18px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)">
+                <div style="flex:0 0 auto;width:38px;height:38px;border-radius:10px;background:{{ p.iconBg }};display:grid;place-items:center;color:{{ p.iconColor }}">{{ p.icon }}</div>
+                <div>
+                  <div style="font-weight:600;font-size:14px;margin-bottom:3px">{{ p.title }}</div>
+                  <div style="font-size:12.5px;line-height:1.45;color:#8b95a2">{{ p.body }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- RECENTLY SOLVED -->
+        <section style="max-width:1120px;margin:44px auto 0;padding:0 28px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
+            <h2 style="font-size:19px;font-weight:700;letter-spacing:-.02em;margin:0">Recently solved</h2>
+            <span onClick="{{ goSolutions }}" style="font-size:13px;color:#67E8F9;font-weight:600;cursor:pointer">Browse all solutions →</span>
+          </div>
+          <div style="display:grid;{{ g3 }};gap:14px">
+            <sc-for list="{{ recentSolutions }}" as="s" hint-placeholder-count="3">
+              <div onClick="{{ s.onOpen }}" style="display:flex;flex-direction:column;padding:16px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0C0F15;cursor:pointer;transition:all .18s;min-height:168px" style-hover="border-color:rgba(34,211,238,.32);background:#0E1219;transform:translateY(-2px)">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px">
+                  <span style="font-size:11px;font-weight:600;color:#9AA6B4;background:rgba(255,255,255,.05);padding:3px 8px;border-radius:6px">{{ s.category }}</span>
+                  <span style="{{ s.badgeStyle }}">{{ s.badge }}</span>
+                </div>
+                <div style="font-weight:650;font-size:14.5px;line-height:1.35;letter-spacing:-.01em;margin-bottom:8px">{{ s.title }}</div>
+                <div style="font-size:12.5px;line-height:1.5;color:#8b95a2;margin-bottom:14px;flex:1">{{ s.snippet }}</div>
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div style="display:flex;align-items:center;gap:7px">
+                    <div style="width:48px;height:5px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="{{ s.confFill }}"></div></div>
+                    <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ s.confColor }}">{{ s.confLabel }}</span>
+                  </div>
+                  <span style="font-size:12px;color:#67E8F9;font-weight:600">Open →</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- TRENDING — honest empty state -->
+        <section style="max-width:1120px;margin:40px auto 70px;padding:0 28px">
+          <h2 style="font-size:19px;font-weight:700;letter-spacing:-.02em;margin:0 0 16px">Trending issues</h2>
+          <div style="position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.07);border-radius:16px;background:#0A0D12;padding:40px 28px;text-align:center">
+            <div style="position:absolute;inset:0;opacity:.35;background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);background-size:200% 100%;animation:sk 3.4s linear infinite"></div>
+            <div style="position:relative">
+              <div style="width:46px;height:46px;border-radius:12px;background:rgba(233,184,114,.1);border:1px solid rgba(233,184,114,.25);display:grid;place-items:center;margin:0 auto 14px;color:#E9B872">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"></path><path d="M17 7h4v4"></path></svg>
+              </div>
+              <div style="font-weight:700;font-size:16px;margin-bottom:6px">Trends are still warming up</div>
+              <div style="font-size:13.5px;line-height:1.55;color:#8b95a2;max-width:44ch;margin:0 auto 18px">We show real signals only — never fabricated numbers. As the community resolves issues, the top trends will appear here.</div>
+              <button onClick="{{ goDiscussions }}" style="height:38px;padding:0 18px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#C7D0DB;font-weight:600;font-size:13px;cursor:pointer" style-hover="border-color:rgba(34,211,238,.5);color:#EEF2F6">Browse discussions</button>
+            </div>
+          </div>
+        </section>
+      </div>
+      </sc-if>
+
+      <!-- ============================ SOLUTIONS ============================ -->
+      <sc-if value="{{ isSolutions }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:940px;margin:0 auto;padding:26px 28px 70px">
+        <!-- query context -->
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:9px;flex:1;min-width:260px;height:46px;padding:0 8px 0 15px;background:#0B0E14;border:1px solid rgba(255,255,255,.11);border-radius:12px">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5B6672" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            <input value="{{ query }}" onChange="{{ onQueryChange }}" onKeyDown="{{ onQueryKey }}" placeholder="Describe your IT problem…" style="flex:1;min-width:0;background:transparent;border:none;outline:none;color:#EEF2F6;font-size:14.5px;font-weight:500" />
+            <button onClick="{{ submitAskBtn }}" style="height:32px;padding:0 14px;border-radius:8px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:13px;cursor:pointer">Ask</button>
+          </div>
+        </div>
+
+        <!-- filters -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+          <span style="font-size:12px;color:#5B6672;font-weight:600;margin-right:2px">Filter</span>
+          <sc-for list="{{ filterChips }}" as="f" hint-placeholder-count="4">
+            <button onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}</button>
+          </sc-for>
+          <div style="flex:1"></div>
+          <sc-for list="{{ sortChips }}" as="f" hint-placeholder-count="2">
+            <button onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}</button>
+          </sc-for>
+        </div>
+
+        <!-- LOADING -->
+        <sc-if value="{{ searchLoading }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:18px;color:#67E8F9;font-size:13.5px;font-weight:600">
+              <span style="width:15px;height:15px;border-radius:50%;border:2px solid rgba(34,211,238,.25);border-top-color:#22D3EE;display:inline-block;animation:spin .8s linear infinite"></span>
+              Searching the KB and accepted answers…
+            </div>
+            <sc-for list="{{ skeletons }}" as="k" hint-placeholder-count="4">
+              <div style="border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px;margin-bottom:12px;background:#0A0D12">
+                <div style="height:13px;width:38%;border-radius:6px;background:linear-gradient(90deg,#12161d,#1a2029,#12161d);background-size:200% 100%;animation:sk 1.4s linear infinite;margin-bottom:12px"></div>
+                <div style="height:10px;width:88%;border-radius:6px;background:linear-gradient(90deg,#101319,#161b23,#101319);background-size:200% 100%;animation:sk 1.4s linear infinite;margin-bottom:8px"></div>
+                <div style="height:10px;width:64%;border-radius:6px;background:linear-gradient(90deg,#101319,#161b23,#101319);background-size:200% 100%;animation:sk 1.4s linear infinite"></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- RESULTS -->
+        <sc-if value="{{ searchResults }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-size:13px;color:#8b95a2;margin-bottom:14px"><sc-if value="{{ query }}" hint-placeholder-val="{{ true }}">Best matches for <span style="color:#EEF2F6;font-weight:600">“{{ query }}”</span> · blended from KB + accepted answers</sc-if><sc-if value="{{ noQuery }}" hint-placeholder-val="{{ false }}">Top solutions right now · blended from KB + accepted answers</sc-if></div>
+
+            <!-- #1 hero result -->
+            <div style="position:relative;border:1px solid rgba(34,211,238,.3);border-radius:16px;padding:22px;margin-bottom:16px;background:linear-gradient(180deg,rgba(34,211,238,.05),rgba(34,211,238,.01));box-shadow:0 0 0 1px rgba(34,211,238,.08),0 20px 50px -22px rgba(34,211,238,.35)">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px;flex-wrap:wrap">
+                <span style="font-family:'JetBrains Mono';font-size:10.5px;font-weight:600;color:#04262B;background:#22D3EE;padding:3px 9px;border-radius:6px">RANKED #1</span>
+                <span style="{{ rankedTop.badgeStyle }}">{{ rankedTop.badge }}</span>
+                <span style="font-size:12px;color:#5B6672">{{ rankedTop.metaLine }}</span>
+              </div>
+              <div onClick="{{ rankedTop.onOpen }}" style="font-weight:700;font-size:21px;letter-spacing:-.02em;line-height:1.2;margin-bottom:10px;cursor:pointer" style-hover="color:#67E8F9">{{ rankedTop.title }}</div>
+              <div style="font-size:14px;line-height:1.6;color:#9AA6B4;margin-bottom:16px;max-width:64ch">{{ rankedTop.snippet }}</div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+                <div style="flex:0 0 160px;max-width:160px;height:7px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="{{ rankedTop.confFill }}"></div></div>
+                <span style="font-family:'JetBrains Mono';font-size:12.5px;font-weight:600;color:{{ rankedTop.confColor }}">{{ rankedTop.confLabel }} confidence</span>
+                <span style="font-size:12px;color:#5B6672;display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5B6672" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>Why #1: exact error-code + verified steps</span>
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button onClick="{{ openFix }}" style="height:42px;padding:0 18px;border-radius:11px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 10px 26px -10px rgba(34,211,238,.6)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7Z"></path></svg>Fix with ARIA
+                </button>
+                <button onClick="{{ rankedTop.onOpen }}" style="height:42px;padding:0 18px;border-radius:11px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#EEF2F6;font-weight:600;font-size:14px;cursor:pointer" style-hover="border-color:rgba(34,211,238,.5)">Open solution →</button>
+              </div>
+            </div>
+
+            <!-- rest -->
+            <sc-for list="{{ rankedRest }}" as="r" hint-placeholder-count="4">
+              <div onClick="{{ r.onOpen }}" style="display:flex;gap:16px;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:17px 18px;margin-bottom:11px;background:#0A0D12;cursor:pointer;transition:all .16s" style-hover="border-color:rgba(255,255,255,.16);background:#0C0F15">
+                <div style="flex:0 0 34px;height:34px;border-radius:9px;background:rgba(255,255,255,.04);display:grid;place-items:center;font-family:'JetBrains Mono';font-size:13px;color:#5B6672;font-weight:600">{{ r.rank }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+                    <span style="font-weight:650;font-size:15.5px;letter-spacing:-.01em">{{ r.title }}</span>
+                    <span style="{{ r.badgeStyle }}">{{ r.badge }}</span>
+                  </div>
+                  <div style="font-size:13px;line-height:1.5;color:#8b95a2;margin-bottom:10px">{{ r.snippet }}</div>
+                  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                    <div style="display:flex;align-items:center;gap:7px">
+                      <div style="width:70px;height:5px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="{{ r.confFill }}"></div></div>
+                      <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ r.confColor }}">{{ r.confLabel }}</span>
+                    </div>
+                    <span style="font-size:12px;color:#5B6672">{{ r.metaLine }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- EMPTY / no confident match -->
+        <sc-if value="{{ searchEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px solid rgba(255,255,255,.08);border-radius:16px;background:#0A0D12;padding:34px 26px;text-align:center">
+            <div style="width:48px;height:48px;border-radius:12px;background:rgba(233,184,114,.1);border:1px solid rgba(233,184,114,.25);display:grid;place-items:center;margin:0 auto 15px;color:#E9B872">
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3-3M11 8v3M11 14h.01"></path></svg>
+            </div>
+            <div style="font-weight:700;font-size:18px;margin-bottom:7px">No confident match yet</div>
+            <div style="font-size:13.5px;line-height:1.55;color:#8b95a2;max-width:46ch;margin:0 auto 22px">We’d rather say “not sure” than guess. Nothing in the KB clears our confidence bar for <span style="color:#C7D0DB">“{{ query }}”</span> — here’s how to get an answer fast.</div>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+              <button onClick="{{ goAskAI }}" style="height:42px;padding:0 18px;border-radius:11px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:13.5px;cursor:pointer;display:flex;align-items:center;gap:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="m4 18 4.5-4 3 2.5L15 13l5 5"></path></svg>Ask AI with a screenshot</button>
+              <button onClick="{{ startDiscussion }}" style="height:42px;padding:0 18px;border-radius:11px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#EEF2F6;font-weight:600;font-size:13.5px;cursor:pointer" style-hover="border-color:rgba(34,211,238,.5)">Ask the community</button>
+              <button onClick="{{ onEscalate }}" style="height:42px;padding:0 18px;border-radius:11px;border:1px solid rgba(233,184,114,.4);background:rgba(233,184,114,.06);color:#E9B872;font-weight:600;font-size:13.5px;cursor:pointer" style-hover="border-color:rgba(233,184,114,.7)">Escalate to IIS</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <!-- ============================ SOLUTION / ARTICLE ============================ -->
+      <sc-if value="{{ isSolution }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:800px;margin:0 auto;padding:24px 28px 80px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#5B6672;margin-bottom:22px">
+          <span onClick="{{ goSolutions }}" style="cursor:pointer;color:#9AA6B4;display:flex;align-items:center;gap:5px" style-hover="color:#67E8F9"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg>Solutions</span>
+          <span>/</span><span>{{ sol.category }}</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px;flex-wrap:wrap">
+          <span style="{{ sol.badgeStyle }}">{{ sol.badge }}</span>
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:56px;height:5px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="{{ sol.confFill }}"></div></div>
+            <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ sol.confColor }}">{{ sol.confLabel }}</span>
+          </div>
+          <span style="font-size:12px;color:#5B6672">{{ sol.metaLine }}</span>
+        </div>
+        <h1 style="font-size:30px;line-height:1.18;letter-spacing:-.025em;font-weight:750;margin:0 0 26px">{{ sol.title }}</h1>
+
+        <!-- primary action card -->
+        <div style="position:relative;overflow:hidden;border:1px solid rgba(34,211,238,.28);border-radius:16px;background:linear-gradient(120deg,rgba(34,211,238,.07),rgba(233,184,114,.03));padding:20px;margin-bottom:30px">
+          <div style="font-weight:700;font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:8px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7Z"></path></svg>Fix this automatically</div>
+          <div style="font-size:13px;color:#8b95a2;margin-bottom:16px;max-width:56ch">ARIA runs the verified steps below on your machine, then confirms the fix. Local-first — nothing leaves your device, and you can roll back anytime.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button onClick="{{ openFix }}" style="height:44px;padding:0 20px;border-radius:11px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:14.5px;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 10px 26px -10px rgba(34,211,238,.6)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7Z"></path></svg>Open in ARIA</button>
+            <button onClick="{{ onDownloadSentinel }}" style="height:44px;padding:0 18px;border-radius:11px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#EEF2F6;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px" style-hover="border-color:rgba(34,211,238,.5)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>Download Sentinel</button>
+            <button onClick="{{ onEscalate }}" style="height:44px;padding:0 18px;border-radius:11px;border:1px solid rgba(233,184,114,.4);background:rgba(233,184,114,.06);color:#E9B872;font-weight:600;font-size:14px;cursor:pointer" style-hover="border-color:rgba(233,184,114,.7)">Escalate to IIS</button>
+          </div>
+        </div>
+
+        <!-- body -->
+        <div style="font-size:15px;line-height:1.7;color:#C7D0DB;margin-bottom:26px">{{ sol.overview }}</div>
+
+        <div style="font-weight:700;font-size:15px;color:#EEF2F6;margin-bottom:14px;letter-spacing:.01em">Steps</div>
+        <div style="margin-bottom:28px">
+          <sc-for list="{{ solSteps }}" as="step" hint-placeholder-count="4">
+            <div style="display:flex;gap:14px;margin-bottom:14px">
+              <div style="flex:0 0 26px;height:26px;border-radius:8px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);display:grid;place-items:center;font-family:'JetBrains Mono';font-size:12px;font-weight:600;color:#67E8F9;margin-top:1px">{{ step.n }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:14.5px;line-height:1.6;color:#D4DBE3">{{ step.text }}</div>
+                <sc-if value="{{ step.code }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:9px;background:#05060A;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px 13px;font-family:'JetBrains Mono';font-size:12.5px;color:#8fdff0;overflow-x:auto;white-space:pre">{{ step.code }}</div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- verify callout -->
+        <div style="display:flex;gap:12px;border:1px solid rgba(52,211,153,.25);background:rgba(52,211,153,.05);border-radius:13px;padding:15px 17px;margin-bottom:34px">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" style="flex:0 0 auto;margin-top:1px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="m9 11 3 3L22 4"></path></svg>
+          <div>
+            <div style="font-weight:650;font-size:13.5px;color:#34D399;margin-bottom:3px">Verify it worked</div>
+            <div style="font-size:13.5px;line-height:1.55;color:#9AA6B4">{{ sol.verify }}</div>
+          </div>
+        </div>
+
+        <!-- SCREENSHOT DIAGNOSIS ZONE -->
+        <div style="border:1px solid rgba(255,255,255,.08);border-radius:16px;background:#0A0D12;padding:20px;margin-bottom:34px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#04262B;background:#22D3EE;padding:2px 7px;border-radius:5px">Fable 5 vision</span>
+            <span style="font-weight:700;font-size:15px">Not quite your situation? Show us.</span>
+          </div>
+          <div style="font-size:13px;color:#8b95a2;margin-bottom:16px">Paste a screenshot of your exact error, BSOD, or config — Fable 5 reads it and tailors the fix.</div>
+
+          <sc-if value="{{ diagIdle }}" hint-placeholder-val="{{ true }}">
+            <div onClick="{{ runDiag }}" style="border:1.5px dashed rgba(34,211,238,.35);border-radius:13px;background:linear-gradient(180deg,rgba(34,211,238,.04),transparent);padding:26px 20px;text-align:center;cursor:pointer;transition:all .2s" style-hover="border-color:rgba(34,211,238,.7);background:rgba(34,211,238,.07)">
+              <div style="width:42px;height:42px;border-radius:11px;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.3);display:grid;place-items:center;margin:0 auto 11px;color:#22D3EE"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="m4 18 4.5-4 3 2.5L15 13l5 5"></path></svg></div>
+              <div style="font-weight:600;font-size:14px;margin-bottom:4px">Drop a screenshot, or paste with ⌘V</div>
+              <div style="font-size:12px;color:#5B6672">or <span style="color:#67E8F9;font-weight:600">try a sample error →</span></div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ diagAnalyzing }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:16px;align-items:center;border:1px solid rgba(34,211,238,.25);border-radius:13px;background:rgba(34,211,238,.03);padding:16px">
+              <div style="position:relative;flex:0 0 120px;height:80px;border-radius:9px;overflow:hidden;background:#0b3a86;border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 0 30px rgba(0,0,0,.4)">
+                <div style="padding:9px;color:#dbe7ff;font-family:'JetBrains Mono';font-size:8px;line-height:1.3">:( Your PC ran into<br>a problem<br><br>NETIO.SYS<br>0x000000D1</div>
+                <div style="position:absolute;left:0;right:0;top:0;height:22px;background:linear-gradient(180deg,rgba(34,211,238,.55),transparent);animation:scanline 1.6s linear infinite"></div>
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;gap:7px;font-weight:650;font-size:14px;color:#67E8F9;margin-bottom:6px">Fable 5 is reading your screenshot
+                  <span style="display:inline-flex;gap:3px"><span style="width:5px;height:5px;border-radius:50%;background:#22D3EE;animation:dotb 1.2s infinite"></span><span style="width:5px;height:5px;border-radius:50%;background:#22D3EE;animation:dotb 1.2s .2s infinite"></span><span style="width:5px;height:5px;border-radius:50%;background:#22D3EE;animation:dotb 1.2s .4s infinite"></span></span>
+                </div>
+                <div style="font-size:12.5px;color:#8b95a2">Detecting error signature · matching KB · ranking the fix</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ diagDone }}" hint-placeholder-val="{{ false }}">
+            <div style="border:1px solid rgba(52,211,153,.28);border-radius:13px;background:rgba(52,211,153,.04);padding:17px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.2"><path d="m5 13 4 4L19 7"></path></svg>
+                <span style="font-weight:700;font-size:14.5px;color:#34D399">Diagnosed: driver fault in netio.sys</span>
+              </div>
+              <div style="font-size:13.5px;line-height:1.6;color:#C7D0DB;margin-bottom:14px">Your BSOD signature <span style="font-family:'JetBrains Mono';font-size:12px;color:#8fdff0">0xD1 · netio.sys</span> matches a known NIC-driver regression. Highest-confidence fix is to roll back the network adapter driver, then verify.</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button onClick="{{ openFix }}" style="height:38px;padding:0 16px;border-radius:10px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:13px;cursor:pointer">Fix with ARIA</button>
+                <button onClick="{{ startDiscussion }}" style="height:38px;padding:0 16px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#EEF2F6;font-weight:600;font-size:13px;cursor:pointer">Open a discussion</button>
+                <button onClick="{{ resetDiag }}" style="height:38px;padding:0 14px;border-radius:10px;border:none;background:transparent;color:#5B6672;font-weight:600;font-size:13px;cursor:pointer">Try another</button>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- related -->
+        <div style="font-weight:700;font-size:15px;margin-bottom:12px">Related solutions</div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:34px">
+          <sc-for list="{{ relatedSolutions }}" as="r" hint-placeholder-count="3">
+            <div onClick="{{ r.onOpen }}" style="display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:13px 15px;background:#0A0D12;cursor:pointer" style-hover="border-color:rgba(255,255,255,.16);background:#0C0F15">
+              <div style="flex:1;font-size:14px;font-weight:550">{{ r.title }}</div>
+              <span style="{{ r.badgeStyle }}">{{ r.badge }}</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5B6672" stroke-width="2"><path d="M9 18l6-6-6-6"></path></svg>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- helpful -->
+        <div style="display:flex;align-items:center;gap:14px;border-top:1px solid rgba(255,255,255,.07);padding-top:20px">
+          <span style="font-size:13.5px;color:#9AA6B4;font-weight:600">Was this helpful?</span>
+          <button onClick="{{ helpfulUp }}" style="{{ helpfulUpStyle }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10v11M7 10l4-7a2 2 0 0 1 3 2l-1 5h5a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 20 22H7"></path></svg>Yes</button>
+          <button onClick="{{ helpfulDown }}" style="{{ helpfulDownStyle }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 14V3M17 14l-4 7a2 2 0 0 1-3-2l1-5H6a2 2 0 0 1-2-2.3l1.4-7A2 2 0 0 1 8 2h9"></path></svg>No</button>
+          <sc-if value="{{ helpfulThanks }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#34D399">Thanks — that tunes ranking for everyone.</span></sc-if>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ DISCUSSIONS ============================ -->
+      <sc-if value="{{ isDiscussions }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:900px;margin:0 auto;padding:26px 28px 80px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+          <div>
+            <h1 style="font-size:24px;font-weight:750;letter-spacing:-.02em;margin:0 0 4px">Discussions</h1>
+            <div style="font-size:13px;color:#8b95a2">Ask the community. Accepted answers graduate into Solutions.</div>
+          </div>
+          <button onClick="{{ startDiscussion }}" style="height:42px;padding:0 18px;border-radius:11px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 10px 26px -12px rgba(34,211,238,.6)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"></path></svg>Start a discussion</button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+          <sc-for list="{{ discChips }}" as="f" hint-placeholder-count="5">
+            <button onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <sc-for list="{{ discThreads }}" as="t" hint-placeholder-count="5">
+            <div onClick="{{ t.onOpen }}" style="display:flex;gap:15px;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 18px;background:#0A0D12;cursor:pointer;transition:all .16s" style-hover="border-color:rgba(255,255,255,.16);background:#0C0F15">
+              <div style="flex:0 0 auto;width:36px;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:2px">
+                <div style="{{ t.statusStyle }}">{{ t.statusIcon }}</div>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+                  <span style="font-weight:650;font-size:15.5px;letter-spacing:-.01em;color:#EEF2F6">{{ t.title }}</span>
+                  <sc-if value="{{ t.graduated }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;font-weight:600;color:#22D3EE;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);padding:2px 7px;border-radius:6px;display:inline-flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>Graduated to Solutions</span></sc-if>
+                </div>
+                <div style="font-size:13px;line-height:1.5;color:#8b95a2;margin-bottom:11px">{{ t.excerpt }}</div>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                  <sc-for list="{{ t.tags }}" as="tag" hint-placeholder-count="2">
+                    <span style="font-size:11px;color:#9AA6B4;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:2px 8px;border-radius:6px">{{ tag }}</span>
+                  </sc-for>
+                  <span style="font-size:12px;color:#5B6672">{{ t.meta }}</span>
+                </div>
+              </div>
+              <div style="flex:0 0 auto;display:flex;align-items:center;margin-left:4px">
+                <sc-for list="{{ t.avatars }}" as="a" hint-placeholder-count="3">
+                  <div style="{{ a.style }}">{{ a.initials }}</div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ SINGLE THREAD ============================ -->
+      <sc-if value="{{ isThread }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:780px;margin:0 auto;padding:24px 28px 90px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#5B6672;margin-bottom:20px">
+          <span onClick="{{ goDiscussions }}" style="cursor:pointer;color:#9AA6B4;display:flex;align-items:center;gap:5px" style-hover="color:#67E8F9"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg>Discussions</span>
+          <span>/</span><span>{{ thread.category }}</span>
+        </div>
+
+        <h1 style="font-size:26px;line-height:1.22;font-weight:750;letter-spacing:-.02em;margin:0 0 12px">{{ thread.title }}</h1>
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:24px;flex-wrap:wrap">
+          <sc-for list="{{ thread.tags }}" as="tag" hint-placeholder-count="3">
+            <span style="font-size:11px;color:#9AA6B4;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:2px 8px;border-radius:6px">{{ tag }}</span>
+          </sc-for>
+          <span style="font-size:12.5px;color:#5B6672">Opened by {{ thread.author }} · {{ thread.when }}</span>
+        </div>
+
+        <!-- AI suggested answer -->
+        <div style="position:relative;overflow:hidden;border:1px solid rgba(34,211,238,.3);border-radius:15px;background:linear-gradient(135deg,rgba(34,211,238,.07),rgba(34,211,238,.01));padding:18px;margin-bottom:26px">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:7px;font-weight:700;font-size:14px;color:#67E8F9"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z"></path></svg>AI suggested answer</div>
+            <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:#34D399">88% match</span>
+            <span style="font-size:11px;color:#5B6672;border:1px solid rgba(255,255,255,.1);padding:2px 7px;border-radius:5px">Verify before applying</span>
+          </div>
+          <div style="font-size:14px;line-height:1.65;color:#C7D0DB;margin-bottom:13px">{{ thread.aiBody }}</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:12px;color:#5B6672">Sourced from</span>
+            <span onClick="{{ openS2 }}" style="font-size:12px;color:#67E8F9;font-weight:600;cursor:pointer;border:1px solid rgba(34,211,238,.25);background:rgba(34,211,238,.06);padding:2px 8px;border-radius:6px" style-hover="border-color:rgba(34,211,238,.6)">KB · Modern-auth credential loop →</span>
+            <span style="font-size:12px;color:#5B6672;border:1px solid rgba(255,255,255,.09);padding:2px 8px;border-radius:6px">the accepted answer below</span>
+          </div>
+        </div>
+
+        <!-- posts -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <sc-for list="{{ threadPosts }}" as="p" hint-placeholder-count="3">
+            <div data-post="{{ p.id }}" style="{{ p.wrapStyle }}">
+              <sc-if value="{{ p.isHighlight }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;inset:-1px;border-radius:15px;pointer-events:none;box-shadow:0 0 0 2px rgba(233,184,114,.6);animation:ringPulse 1.6s ease-out 2"></div>
+              </sc-if>
+              <sc-if value="{{ p.accepted }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+                  <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#E9B872;background:rgba(233,184,114,.1);border:1px solid rgba(233,184,114,.3);padding:3px 10px;border-radius:7px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4 4L19 7"></path></svg>Accepted answer</span>
+                  <span onClick="{{ openS2 }}" style="font-size:12px;font-weight:600;color:#22D3EE;cursor:pointer;display:inline-flex;align-items:center;gap:5px" style-hover="text-decoration:underline">Graduated to Solutions →</span>
+                </div>
+              </sc-if>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:11px">
+                <div style="{{ p.avatarStyle }}">{{ p.initials }}</div>
+                <div>
+                  <div style="font-weight:650;font-size:13.5px;color:#EEF2F6">{{ p.author }}<sc-if value="{{ p.isOP }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;font-weight:600;color:#9AA6B4;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;margin-left:7px">OP</span></sc-if></div>
+                  <div style="font-size:11.5px;color:#5B6672">{{ p.when }}</div>
+                </div>
+              </div>
+              <div style="font-size:14.5px;line-height:1.68;color:#C7D0DB">{{ p.bodyEl }}</div>
+              <sc-if value="{{ p.code }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:11px;background:#05060A;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;font-family:'JetBrains Mono';font-size:12.5px;color:#8fdff0;overflow-x:auto;white-space:pre">{{ p.code }}</div>
+              </sc-if>
+              <sc-if value="{{ p.accepted }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:12px;margin-top:15px;padding-top:13px;border-top:1px solid rgba(255,255,255,.06)">
+                  <span style="font-size:12.5px;color:#9AA6B4;font-weight:600">Was this helpful?</span>
+                  <button onClick="{{ helpfulUp }}" style="{{ helpfulUpStyle }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10v11M7 10l4-7a2 2 0 0 1 3 2l-1 5h5a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 20 22H7"></path></svg>Yes</button>
+                  <button onClick="{{ helpfulDown }}" style="{{ helpfulDownStyle }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 14V3M17 14l-4 7a2 2 0 0 1-3-2l1-5H6a2 2 0 0 1-2-2.3l1.4-7A2 2 0 0 1 8 2h9"></path></svg>No</button>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- composer -->
+        <div style="margin-top:22px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:#0A0D12;padding:14px">
+          <textarea placeholder="Add a reply — Markdown and ```code``` supported, @mention teammates…" style="width:100%;min-height:74px;resize:vertical;background:transparent;border:none;outline:none;color:#EEF2F6;font-size:14px;line-height:1.6"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+            <div style="display:flex;gap:6px;color:#5B6672">
+              <span style="font-family:'JetBrains Mono';font-size:11px;border:1px solid rgba(255,255,255,.1);padding:2px 6px;border-radius:5px">B</span>
+              <span style="font-family:'JetBrains Mono';font-size:11px;border:1px solid rgba(255,255,255,.1);padding:2px 6px;border-radius:5px">‹›</span>
+              <span style="font-family:'JetBrains Mono';font-size:11px;border:1px solid rgba(255,255,255,.1);padding:2px 6px;border-radius:5px">@</span>
+            </div>
+            <button onClick="{{ postReply }}" style="height:36px;padding:0 16px;border-radius:9px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:13px;cursor:pointer">Post reply</button>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ ASK AI ============================ -->
+      <sc-if value="{{ isAskAI }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:760px;margin:0 auto;padding:22px 24px 40px;min-height:100%;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:11px;margin-bottom:22px">
+          <div style="position:relative;width:34px;height:34px;display:grid;place-items:center"><div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(34,211,238,.7);box-shadow:0 0 16px rgba(34,211,238,.5)"></div><div style="width:9px;height:9px;border-radius:50%;background:#22D3EE;box-shadow:0 0 12px #22D3EE;animation:glowP 2.4s ease-in-out infinite"></div></div>
+          <div>
+            <div style="font-weight:750;font-size:17px;letter-spacing:-.01em">ARIA · Ask AI</div>
+            <div style="font-size:12px;color:#5B6672">Fable 5 vision + agentic · local-first, your data stays yours</div>
+          </div>
+        </div>
+
+        <div style="flex:1">
+          <!-- welcome / empty -->
+          <sc-if value="{{ aiEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:8px 0">
+              <div style="font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px">How can I help you fix it?</div>
+              <div style="font-size:14px;line-height:1.55;color:#9AA6B4;max-width:52ch;margin-bottom:22px">Describe the problem, paste an error, or drop a screenshot / log / PDF. I’ll diagnose it, rank the fix, and hand off to ARIA to apply it — or open a discussion if it needs a human.</div>
+              <div onClick="{{ aiUploadSample }}" style="border:1.5px dashed rgba(34,211,238,.4);border-radius:15px;background:linear-gradient(180deg,rgba(34,211,238,.04),transparent);padding:24px;text-align:center;cursor:pointer;margin-bottom:20px" style-hover="border-color:rgba(34,211,238,.75);background:rgba(34,211,238,.07)">
+                <div style="width:44px;height:44px;border-radius:12px;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.3);display:grid;place-items:center;margin:0 auto 11px;color:#22D3EE"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="m4 18 4.5-4 3 2.5L15 13l5 5"></path></svg></div>
+                <div style="font-weight:650;font-size:14.5px;margin-bottom:4px">Drop a screenshot, or paste with ⌘V</div>
+                <div style="font-size:12.5px;color:#5B6672">Try a sample: a <span style="color:#67E8F9;font-weight:600">BSOD screenshot →</span></div>
+              </div>
+              <div style="font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#5B6672;margin-bottom:10px">Or start from a common issue</div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ aiPrompts }}" as="p" hint-placeholder-count="3">
+                  <div onClick="{{ p.onPick }}" style="display:flex;align-items:center;gap:11px;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 15px;background:#0A0D12;cursor:pointer;transition:all .16s" style-hover="border-color:rgba(34,211,238,.4);background:#0C0F15">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="1.9" style="flex:0 0 auto"><path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z"></path></svg>
+                    <span style="flex:1;font-size:14px;color:#D4DBE3">{{ p.label }}</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5B6672" stroke-width="2"><path d="M9 18l6-6-6-6"></path></svg>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- feed -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <sc-for list="{{ aiFeed }}" as="m" hint-placeholder-count="0">
+              <div style="{{ m.rowStyle }}">{{ m.el }}</div>
+            </sc-for>
+
+            <sc-if value="{{ aiThinking }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:11px;align-items:flex-start">
+                <div style="flex:0 0 auto;position:relative;width:30px;height:30px;display:grid;place-items:center;margin-top:2px"><div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(34,211,238,.6)"></div><div style="width:8px;height:8px;border-radius:50%;background:#22D3EE;animation:glowP 1.4s infinite"></div></div>
+                <div style="flex:1;border:1px solid rgba(34,211,238,.22);border-radius:14px;background:rgba(34,211,238,.03);padding:15px 16px">
+                  <div style="display:flex;align-items:center;gap:8px;font-weight:650;font-size:13.5px;color:#67E8F9;margin-bottom:12px">ARIA is running a check
+                    <span style="display:inline-flex;gap:3px"><span style="width:5px;height:5px;border-radius:50%;background:#22D3EE;animation:dotb 1.2s infinite"></span><span style="width:5px;height:5px;border-radius:50%;background:#22D3EE;animation:dotb 1.2s .2s infinite"></span><span style="width:5px;height:5px;border-radius:50%;background:#22D3EE;animation:dotb 1.2s .4s infinite"></span></span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:9px">
+                    <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:#9AA6B4"><span style="width:16px;height:16px;border-radius:50%;background:rgba(52,211,153,.15);display:grid;place-items:center;color:#34D399"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 13 4 4L19 7"></path></svg></span>Reading input &amp; extracting the error signature</div>
+                    <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:#9AA6B4"><span style="width:16px;height:16px;border-radius:50%;background:rgba(52,211,153,.15);display:grid;place-items:center;color:#34D399"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 13 4 4L19 7"></path></svg></span>Matching against the KB + accepted answers</div>
+                    <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:#67E8F9"><span style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(34,211,238,.3);border-top-color:#22D3EE;animation:spin .8s linear infinite"></span>Ranking the highest-confidence fix</div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <!-- input bar -->
+        <div style="position:sticky;bottom:0;padding-top:14px;margin-top:14px">
+          <div style="display:flex;align-items:center;gap:9px;padding:8px 8px 8px 10px;background:#0B0E14;border:1px solid rgba(255,255,255,.12);border-radius:14px;box-shadow:0 12px 40px -18px rgba(0,0,0,.8)">
+            <button onClick="{{ aiUploadSample }}" title="Attach a screenshot / log / PDF" style="flex:0 0 auto;width:38px;height:38px;border-radius:10px;border:none;background:transparent;color:#8b95a2;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(255,255,255,.05);color:#22D3EE"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 12.5 12.5 21a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.9 18.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"></path></svg></button>
+            <input value="{{ aiInput }}" onChange="{{ onAiInput }}" onKeyDown="{{ onAiKey }}" placeholder="Describe your issue, or paste an error…" style="flex:1;min-width:0;background:transparent;border:none;outline:none;color:#EEF2F6;font-size:14.5px;padding:9px 0" />
+            <button onClick="{{ aiSend }}" style="flex:0 0 auto;height:38px;width:38px;border-radius:10px;border:none;background:#22D3EE;color:#04262B;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 22px -8px rgba(34,211,238,.6)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+          </div>
+          <div style="text-align:center;font-size:11px;color:#5B6672;margin-top:8px">ARIA can be wrong — it always shows sources and confidence. Verify before applying.</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ EXPERTS ============================ -->
+      <sc-if value="{{ isExperts }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:900px;margin:0 auto;padding:26px 28px 80px">
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:5px 11px;border-radius:999px;border:1px solid rgba(233,184,114,.3);background:rgba(233,184,114,.06);font-size:12px;color:#E9B872;font-weight:600;margin-bottom:16px">Coming soon · honest placeholder</div>
+        <h1 style="font-size:26px;font-weight:750;letter-spacing:-.02em;margin:0 0 8px">Experts</h1>
+        <div style="font-size:14px;line-height:1.55;color:#9AA6B4;max-width:56ch;margin-bottom:26px">Verified IIS specialists will be listed here once the program launches. Until then, we won’t show names or ratings we can’t back up — but you can request an expert by area and we’ll route it.</div>
+        <div style="display:grid;{{ g2 }};gap:14px">
+          <sc-for list="{{ expertAreas }}" as="e" hint-placeholder-count="4">
+            <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:18px">
+              <div style="width:38px;height:38px;border-radius:10px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);display:grid;place-items:center;color:#22D3EE;margin-bottom:12px">{{ e.icon }}</div>
+              <div style="font-weight:650;font-size:15px;margin-bottom:4px">{{ e.title }}</div>
+              <div style="font-size:12.5px;line-height:1.5;color:#8b95a2;margin-bottom:14px">{{ e.body }}</div>
+              <button onClick="{{ e.onRequest }}" style="height:36px;padding:0 14px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#C7D0DB;font-weight:600;font-size:12.5px;cursor:pointer" style-hover="border-color:rgba(34,211,238,.5);color:#EEF2F6">Request an expert</button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ TRENDS ============================ -->
+      <sc-if value="{{ isTrends }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:900px;margin:0 auto;padding:26px 28px 80px">
+        <h1 style="font-size:26px;font-weight:750;letter-spacing:-.02em;margin:0 0 8px">Trends</h1>
+        <div style="font-size:14px;line-height:1.55;color:#9AA6B4;max-width:58ch;margin-bottom:24px">The top IT issues across the community, ranked from real resolved data. We only chart real signal — never fabricated numbers — so this stays empty until there’s enough to be honest about.</div>
+        <div style="position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.07);border-radius:16px;background:#0A0D12;padding:24px">
+          <div style="display:flex;align-items:flex-end;gap:14px;height:180px;padding:0 6px;opacity:.5">
+            <sc-for list="{{ trendBars }}" as="b" hint-placeholder-count="6">
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="{{ b.style }}"></div></div>
+            </sc-for>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:52px;border-top:1px dashed rgba(255,255,255,.14)"></div>
+          <div style="position:absolute;inset:0;display:grid;place-items:center">
+            <div style="text-align:center;background:rgba(8,9,12,.6);backdrop-filter:blur(3px);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:20px 26px">
+              <div style="width:42px;height:42px;border-radius:11px;background:rgba(233,184,114,.1);border:1px solid rgba(233,184,114,.25);display:grid;place-items:center;margin:0 auto 12px;color:#E9B872"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"></path><path d="M17 7h4v4"></path></svg></div>
+              <div style="font-weight:700;font-size:16px;margin-bottom:5px">Awaiting real signal</div>
+              <div style="font-size:13px;line-height:1.55;color:#8b95a2;max-width:40ch;margin:0 auto">Trends chart real resolved issues. As the community grows, the top categories will rank here automatically.</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+          <sc-for list="{{ trendCats }}" as="c" hint-placeholder-count="5">
+            <span style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:#9AA6B4;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);padding:6px 11px;border-radius:999px">{{ c.name }}<span style="font-family:'JetBrains Mono';font-size:11px;color:#5B6672">—</span></span>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+  </main>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:0 0 auto;display:flex;align-items:stretch;padding:6px 4px 10px;border-top:1px solid rgba(255,255,255,.08);background:rgba(8,9,12,.92);backdrop-filter:blur(12px)">
+    <sc-for list="{{ navTabs }}" as="tab" hint-placeholder-count="5">
+      <div onClick="{{ tab.onSelect }}" style="{{ tab.mWrapStyle }}">{{ tab.mIcon }}<span style="{{ tab.mLabelStyle }}">{{ tab.label }}</span></div>
+    </sc-for>
+  </div>
+  </sc-if>
+  </div>
+
+  <!-- FIX WITH ARIA MODAL -->
+  <sc-if value="{{ fixModalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeFix }}" style="position:fixed;inset:0;z-index:80;background:rgba(4,5,8,.72);backdrop-filter:blur(6px);display:grid;place-items:center;padding:24px">
+      <div onClick="{{ stop }}" style="width:460px;max-width:100%;background:#0E1219;border:1px solid rgba(255,255,255,.12);border-radius:18px;box-shadow:0 40px 100px -24px rgba(0,0,0,.8);overflow:hidden">
+        <div style="display:flex;align-items:center;gap:11px;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.07)">
+          <div style="position:relative;width:30px;height:30px;display:grid;place-items:center"><div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(34,211,238,.7);box-shadow:0 0 14px rgba(34,211,238,.5)"></div><div style="width:8px;height:8px;border-radius:50%;background:#22D3EE;box-shadow:0 0 10px #22D3EE"></div></div>
+          <div style="flex:1"><div style="font-weight:700;font-size:15px">Fix with ARIA</div><div style="font-size:11.5px;color:#5B6672">Local-first · applied on your machine</div></div>
+          <button onClick="{{ closeFix }}" style="width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:#8b95a2;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(255,255,255,.06)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+        </div>
+
+        <sc-if value="{{ fixChoose }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:20px">
+            <div style="font-size:13px;color:#8b95a2;margin-bottom:8px">ARIA will apply this fix and verify it:</div>
+            <div style="font-weight:650;font-size:15px;letter-spacing:-.01em;margin-bottom:16px;color:#EEF2F6">{{ sol.title }}</div>
+            <div style="border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#0A0D12;padding:14px;margin-bottom:16px">
+              <sc-for list="{{ fixSteps }}" as="s" hint-placeholder-count="3">
+                <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:9px"><span style="flex:0 0 auto;width:18px;height:18px;border-radius:6px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);display:grid;place-items:center;font-family:'JetBrains Mono';font-size:10px;color:#67E8F9;margin-top:1px">{{ s.n }}</span><span style="font-size:12.5px;line-height:1.5;color:#B7C0CB">{{ s.text }}</span></div>
+              </sc-for>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5B6672;margin-bottom:18px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path></svg>Nothing leaves your device · roll back anytime from ARIA history</div>
+            <div style="display:flex;gap:10px">
+              <button onClick="{{ runFix }}" style="flex:1;height:44px;border-radius:11px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 26px -10px rgba(34,211,238,.6)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7Z"></path></svg>Run the fix in ARIA</button>
+              <button onClick="{{ onDownloadSentinel }}" style="height:44px;padding:0 16px;border-radius:11px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#EEF2F6;font-weight:600;font-size:13px;cursor:pointer">Get Sentinel</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ fixRunning }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:24px 20px">
+            <div style="display:flex;align-items:center;gap:9px;font-weight:650;font-size:14px;color:#67E8F9;margin-bottom:18px">ARIA is applying the fix<span style="display:inline-flex;gap:3px"><span style="width:5px;height:5px;border-radius:50%;background:#22D3EE;animation:dotb 1.2s infinite"></span><span style="width:5px;height:5px;border-radius:50%;background:#22D3EE;animation:dotb 1.2s .2s infinite"></span><span style="width:5px;height:5px;border-radius:50%;background:#22D3EE;animation:dotb 1.2s .4s infinite"></span></span></div>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px">
+              <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#9AA6B4"><span style="width:18px;height:18px;border-radius:50%;background:rgba(52,211,153,.15);display:grid;place-items:center;color:#34D399"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 13 4 4L19 7"></path></svg></span>Connected to ARIA on this device</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#9AA6B4"><span style="width:18px;height:18px;border-radius:50%;background:rgba(52,211,153,.15);display:grid;place-items:center;color:#34D399"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 13 4 4L19 7"></path></svg></span>Applied remediation steps</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#67E8F9"><span style="width:18px;height:18px;border-radius:50%;border:2px solid rgba(34,211,238,.3);border-top-color:#22D3EE;animation:spin .8s linear infinite"></span>Verifying the symptom is gone…</div>
+            </div>
+            <div style="height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden"><div style="height:100%;width:40%;background:linear-gradient(90deg,#0E9CB8,#22D3EE);border-radius:999px;animation:sk 1.4s linear infinite;background-size:200% 100%"></div></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ fixApplied }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:26px 20px;text-align:center">
+            <div style="width:52px;height:52px;border-radius:50%;background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.4);display:grid;place-items:center;margin:0 auto 14px;color:#34D399"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4 4L19 7"></path></svg></div>
+            <div style="font-weight:700;font-size:17px;margin-bottom:6px">Fixed &amp; verified</div>
+            <div style="font-size:13px;line-height:1.55;color:#9AA6B4;max-width:38ch;margin:0 auto 20px">ARIA applied the steps and confirmed the issue is resolved. You can roll back anytime from ARIA history.</div>
+            <div style="display:flex;gap:10px;justify-content:center">
+              <button onClick="{{ closeFix }}" style="height:40px;padding:0 20px;border-radius:10px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:13.5px;cursor:pointer">Done</button>
+              <button onClick="{{ onDownloadSentinel }}" style="height:40px;padding:0 16px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#EEF2F6;font-weight:600;font-size:13px;cursor:pointer">View what changed</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- SSO MODAL -->
+  <sc-if value="{{ ssoOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeSSO }}" style="position:fixed;inset:0;z-index:82;background:rgba(4,5,8,.72);backdrop-filter:blur(6px);display:grid;place-items:center;padding:24px">
+      <div onClick="{{ stop }}" style="width:400px;max-width:100%;background:#0E1219;border:1px solid rgba(255,255,255,.12);border-radius:18px;box-shadow:0 40px 100px -24px rgba(0,0,0,.8);padding:26px;text-align:center">
+        <div style="display:flex;justify-content:flex-end"><button onClick="{{ closeSSO }}" style="width:28px;height:28px;border-radius:8px;border:none;background:transparent;color:#8b95a2;cursor:pointer;display:grid;place-items:center" style-hover="background:rgba(255,255,255,.06)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+        <div style="position:relative;width:44px;height:44px;display:grid;place-items:center;margin:0 auto 16px"><div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(34,211,238,.8);box-shadow:0 0 18px rgba(34,211,238,.5)"></div><div style="width:11px;height:11px;border-radius:50%;background:#22D3EE;box-shadow:0 0 12px #22D3EE"></div></div>
+        <div style="font-weight:750;font-size:19px;letter-spacing:-.01em;margin-bottom:6px">Continue with IIS</div>
+        <div style="font-size:13px;line-height:1.55;color:#9AA6B4;max-width:34ch;margin:0 auto 22px">Single sign-on with your existing IIS account. The forum is free — you don’t need an account just to search.</div>
+        <button onClick="{{ ssoContinue }}" style="width:100%;height:46px;border-radius:11px;border:none;background:#22D3EE;color:#04262B;font-weight:700;font-size:14.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:12px;box-shadow:0 10px 26px -10px rgba(34,211,238,.6)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Sign in with IIS SSO</button>
+        <div style="display:flex;align-items:center;justify-content:center;gap:7px;font-size:11.5px;color:#5B6672"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path></svg>Local-first · your data stays yours</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- TOAST -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:11px;padding:12px 16px;background:#12161d;border:1px solid rgba(255,255,255,.12);border-radius:12px;box-shadow:0 20px 50px -12px rgba(0,0,0,.7);animation:fadeUp .3s ease both;max-width:90vw">
+      <div style="{{ toastIconWrap }}">{{ toastIcon }}</div>
+      <div>
+        <div style="font-weight:650;font-size:13.5px">{{ toastTitle }}</div>
+        <sc-if value="{{ toastDesc }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b95a2;margin-top:1px">{{ toastDesc }}</div></sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- PROTOTYPE DOCK -->
+  <div style="position:absolute;bottom:16px;right:16px;z-index:55;display:flex;align-items:center;gap:8px;padding:7px 8px;background:rgba(12,15,21,.9);border:1px solid rgba(255,255,255,.1);border-radius:12px;backdrop-filter:blur(10px);box-shadow:0 10px 30px -8px rgba(0,0,0,.6)">
+    <span style="font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#5B6672;padding-left:5px">Preview</span>
+    <div style="display:flex;padding:2px;background:#07080B;border:1px solid rgba(255,255,255,.08);border-radius:8px;gap:2px">
+      <sc-for list="{{ viewportTabs }}" as="v" hint-placeholder-count="2">
+        <button onClick="{{ v.onSelect }}" title="{{ v.label }}" style="{{ v.style }}">{{ v.icon }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:760}}">
+class Component extends DCLogic {
+  state = {
+    view: 'home',
+    viewport: 'desktop',
+    heroVariant: 'A',
+    query: '',
+    askFocused: false,
+    searchStage: 'idle',   // idle | loading | results | empty
+    activeSolutionId: 's1',
+    activeThreadId: 't1',
+    highlightPostId: null,
+    aiStage: 'idle',
+    aiInput: '',
+    aiMessages: [],
+    aiHasUpload: false,
+    aiThinking: false,
+    fixModal: 'closed',    // closed | choose | running | applied | needsSentinel
+    ssoOpen: false,
+    toast: null,
+    helpfulVote: null,
+    diagStage: 'idle',
+    discCat: 'all',
+    filterCat: 'all',
+    filterSort: 'relevance',
+  };
+
+  timers = [];
+  after = (ms, fn) => { const t = setTimeout(fn, ms); this.timers.push(t); return t; };
+  componentWillUnmount() { this.timers.forEach(clearTimeout); }
+
+  // ---------- data ----------
+  TABS = [
+    { id: 'solutions', label: 'Solutions', icon:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="M14 3v5h5"></path><path d="M8 13h8M8 17h5"></path></svg>' },
+    { id: 'discussions', label: 'Discussions', icon:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"></path></svg>' },
+    { id: 'askai', label: 'Ask AI', icon:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z"></path></svg>' },
+    { id: 'experts', label: 'Experts', icon:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg>' },
+    { id: 'trends', label: 'Trends', icon:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 17l6-6 4 4 8-8"></path><path d="M17 7h4v4"></path></svg>' },
+  ];
+
+  SOLUTIONS = [
+    { id:'s1', title:'Windows Update stuck at 0% (error 0x80070002)', category:'Windows', os:'Windows 11', source:'kb', verified:true, conf:94,
+      snippet:'The update cache is corrupt. Stop the update services, clear SoftwareDistribution, then restart — resolves the 0x80070002 loop.', updated:'Updated 3 days ago' },
+    { id:'s2', title:'Outlook keeps asking for password after MFA enrollment', category:'Microsoft 365', os:'Windows 11', source:'discussion', threadId:'t1', conf:88,
+      snippet:'Cached legacy credentials block modern auth. Remove the stored credential and re-register the account under Entra to stop the loop.', updated:'Graduated from a discussion' },
+    { id:'s3', title:'VPN connects but there is no internet access', category:'Network', os:'Any', source:'kb', verified:true, conf:82,
+      snippet:'Split-tunnel DNS is not resolving. Set the DNS suffix on the tunnel adapter and flush the resolver cache to restore access.', updated:'Updated 1 week ago' },
+    { id:'s4', title:'BSOD: DRIVER_IRQL_NOT_LESS_OR_EQUAL (netio.sys)', category:'Windows', os:'Windows 11', source:'kb', verified:true, conf:76,
+      snippet:'A network driver is faulting in the kernel. Roll back or update the NIC driver, then verify with Driver Verifier.', updated:'Updated 2 weeks ago' },
+    { id:'s5', title:'“Your organization’s data cannot be pasted here”', category:'Microsoft 365', os:'Windows 11', source:'kb', verified:true, conf:71,
+      snippet:'An Intune MAM policy is blocking clipboard transfer between managed and unmanaged apps. Adjust the app-protection policy scope.', updated:'Updated 4 days ago' },
+    { id:'s6', title:'Printer shows offline after the Windows 11 23H2 update', category:'Devices', os:'Windows 11', source:'discussion', threadId:'t2', conf:69,
+      snippet:'The print spooler lost the port binding. Restart the spooler and re-add the TCP/IP port — accepted community fix.', updated:'Graduated from a discussion' },
+  ];
+
+  THREADS = [
+    { id:'t3', title:'Phasing out on-prem AD for Entra-only — how are you sequencing it?', category:'Identity', tags:['entra','migration'], author:'Sam R.', when:'6 hours ago', active:true, avatars:['SR','LF'],
+      excerpt:'We’re hybrid today and planning the cutover order — devices, then apps, then GPO → Intune. What bit you?',
+      body:'We’re hybrid today and planning the cutover order — devices first, then apps, then GPO → Intune. For anyone who’s done it: what surprised you, and what would you sequence differently?',
+      ai:'Based on similar migrations in the KB, the lowest-risk order is: (1) establish Entra Connect + SSO, (2) move devices to Hybrid Join, (3) migrate apps to Entra SSO, (4) convert GPO to Intune configuration profiles last. The common trap is cutting GPO before Intune baselines are proven.' },
+    { id:'t5', title:'Defender flagging our internal deployment tool after the latest update', category:'Security', tags:['defender','false-positive'], author:'Tom B.', when:'3 hours ago', active:true, avatars:['TB','MK'],
+      excerpt:'Started this morning — MpCmdRun quarantines the binary. Anyone else, or is it just us?',
+      body:'Started this morning after the platform update — Defender quarantines our internal deployment binary as a generic trojan. Hash hasn’t changed in weeks. Anyone else seeing a false positive?',
+      ai:'A same-day quarantine on an unchanged hash points to a cloud-delivered signature false positive. Submit the file to Microsoft for analysis and add a temporary certificate-based allow (not a path exclusion) while it’s reviewed. Verify the detection name matches a generic/heuristic family.' },
+    { id:'t4', title:'PowerShell to audit stale Intune devices — review welcome', category:'Automation', tags:['powershell','intune'], author:'Lena F.', when:'1 day ago', avatars:['LF','SR','TB'],
+      excerpt:'Small script to list devices with no check-in > 90 days. Sanity check before I schedule it?',
+      body:'Small script that lists Intune devices with no check-in in over 90 days so we can retire them. Would appreciate a sanity check before I schedule it against production.',
+      ai:'For a stale-device audit, prefer Get-MgDeviceManagementManagedDevice with a filter on lastSyncDateTime and page the results — the v1.0 Graph endpoint is safe for read. Add a -WhatIf guard before any retire action so a scheduled run can’t remove devices unattended.' },
+    { id:'t1', title:'Outlook “Need Password” loop after MFA — solved, sharing the fix', category:'Microsoft 365', tags:['outlook','entra','mfa'], author:'Priya N.', when:'2 days ago', accepted:true, graduated:true, avatars:['PN','MK','AH'],
+      excerpt:'Kept re-prompting even with the right password. Turned out to be a stale cached credential. Full fix inside.',
+      ai:'This is the classic modern-auth credential loop: a stale Windows credential for MicrosoftOffice shadows the Entra token, so Outlook keeps prompting. Remove the cached credential, clear the Office identity cache, and re-sign in. Verified steps are in the accepted answer below and the linked KB article.' },
+    { id:'t2', title:'Printer offline after 23H2 — the port binding fix that worked', category:'Devices', tags:['printing','23h2'], author:'Marco D.', when:'4 days ago', accepted:true, graduated:true, avatars:['MD','LF'],
+      excerpt:'Spooler lost the TCP/IP port after the feature update. Re-adding the port fixed it for the whole floor.',
+      body:'After 23H2 the printer flipped to Offline across the floor. The spooler had lost the TCP/IP port binding. Re-adding the Standard TCP/IP port fixed it — details below.',
+      ai:'A printer going Offline right after a feature update is usually a lost spooler port binding. Restart the spooler, then re-add the Standard TCP/IP port with the correct IP and disable SNMP status if it still reports offline. This is now a verified Solution.' },
+  ];
+
+  THREAD = {
+    posts:[
+      { id:'op', author:'Priya N.', initials:'PN', when:'2 days ago', isOP:true,
+        body:'Posting because this cost me a full afternoon. After we enforced MFA, one user’s Outlook kept popping the password box even with the correct password — a hard loop. It came down to a stale cached credential plus the Office identity cache.' },
+      { id:'r1', author:'Marco D.', initials:'MD', when:'2 days ago',
+        body:'We hit this too after the Entra rollout. Removing the Credential Manager entry alone didn’t stick for us — clearing the Licensing cache was the missing step.' },
+      { id:'accepted', author:'Priya N.', initials:'PN', when:'2 days ago', accepted:true,
+        body:'Here’s the exact sequence that fixed it. @Marco D. you’re right — the Licensing cache is the part everyone misses:',
+        code:'# 1) close Outlook, then remove cached creds\ncmdkey /list | findstr MicrosoftOffice\ncmdkey /delete:MicrosoftOffice16_Data:...\n\n# 2) clear the Office identity cache\nrmdir /s /q "%localappdata%\\Microsoft\\Office\\16.0\\Licensing"\n\n# 3) reopen Outlook, sign in, approve the MFA prompt once' },
+      { id:'r2', author:'Ahmad H.', initials:'AH', when:'1 day ago',
+        body:'Confirmed on three machines. @Priya N. I promoted this to the KB so Solutions surfaces it directly — thank you for the writeup.' },
+    ],
+  };
+
+  openS2 = () => this.openSolution('s2');
+  postReply = () => this.showToast({ title:'Reply posted', desc:'Your reply is live in the thread.', kind:'success' });
+  setDiscCat = (c) => this.setState({ discCat:c });
+  mentionize = (text) => {
+    if (!text) return text;
+    const parts = String(text).split(/(@[A-Za-z]+(?: [A-Z]\.)?)/g);
+    return parts.map((p,i) => p && p.charAt(0)==='@'
+      ? React.createElement('span',{key:i,style:{color:'#67E8F9',fontWeight:600}},p)
+      : p);
+  };
+
+  aiScrollDown = () => this.after(40, () => { if (this.scrollEl) this.scrollEl.scrollTop = this.scrollEl.scrollHeight; });
+  onAiInput = (e) => this.setState({ aiInput: e.target.value });
+  onAiKey = (e) => { if (e.key === 'Enter') this.aiSend(); };
+  askConcierge = (userMsg, diagFactory) => {
+    const msgs = [...this.state.aiMessages, userMsg];
+    this.setState({ aiMessages: msgs, aiThinking: true });
+    this.aiScrollDown();
+    this.after(2400, () => { this.setState({ aiMessages: [...msgs, diagFactory()], aiThinking: false }); this.aiScrollDown(); });
+  };
+  aiSend = () => { const t = (this.state.aiInput||'').trim(); if (!t) return; this.setState({ aiInput:'' }); this.askConcierge({ role:'user', kind:'text', text:t }, () => this.buildTextDiag(t)); };
+  aiPickPrompt = (t) => this.askConcierge({ role:'user', kind:'text', text:t }, () => this.buildTextDiag(t));
+  aiUploadSample = () => this.askConcierge({ role:'user', kind:'upload' }, () => this.buildShotDiag());
+  buildTextDiag = (q) => {
+    const s = q.toLowerCase();
+    let id = 's1';
+    if (/outlook|password|mfa/.test(s)) id='s2';
+    else if (/vpn|internet|dns/.test(s)) id='s3';
+    else if (/bsod|netio|irql|blue ?screen/.test(s)) id='s4';
+    else if (/paste|intune|clipboard/.test(s)) id='s5';
+    else if (/print/.test(s)) id='s6';
+    const sol = this.SOLUTIONS.find(x => x.id===id); const det = this.SOLDETAIL[id];
+    return { role:'ai', kind:'diag', solId:id, title:sol.title, conf:sol.conf, body:det.overview, steps:det.steps.slice(0,3), lead:'Most likely fix' };
+  };
+  buildShotDiag = () => {
+    const det = this.SOLDETAIL['s4'];
+    return { role:'ai', kind:'diag', solId:'s4', title:'BSOD: DRIVER_IRQL_NOT_LESS_OR_EQUAL (netio.sys)', conf:76,
+      body:'I read your screenshot — the bugcheck is 0xD1 in netio.sys, a network driver faulting at high IRQL. This matches a known NIC-driver regression. Highest-confidence fix:',
+      steps:det.steps.slice(0,3), lead:'Diagnosed from your screenshot' };
+  };
+  renderAiMsg = (m) => {
+    const h = React.createElement;
+    if (m.role === 'user') {
+      if (m.kind === 'upload') {
+        return h('div',{style:{maxWidth:'82%',border:'1px solid rgba(255,255,255,.1)',borderRadius:'14px 14px 4px 14px',background:'#12161d',padding:'10px',display:'flex',gap:'11px',alignItems:'center'}},
+          h('div',{style:{position:'relative',width:'96px',height:'62px',borderRadius:'8px',overflow:'hidden',background:'#0b3a86',border:'1px solid rgba(255,255,255,.14)',flex:'0 0 auto'},dangerouslySetInnerHTML:{__html:'<div style="padding:7px;color:#dbe7ff;font-family:JetBrains Mono,monospace;font-size:7px;line-height:1.35">:( Your PC ran into a problem<br><br>NETIO.SYS<br>0x000000D1</div>'}}),
+          h('div',{},
+            h('div',{style:{fontSize:'13px',fontWeight:600,color:'#EEF2F6'}},'Screenshot attached'),
+            h('div',{style:{fontSize:'11.5px',color:'#5B6672',marginTop:'2px'}},'bsod-netio.png')));
+      }
+      return h('div',{style:{maxWidth:'82%',borderRadius:'14px 14px 4px 14px',background:'#12161d',border:'1px solid rgba(255,255,255,.08)',padding:'11px 15px',fontSize:'14px',lineHeight:1.55,color:'#EEF2F6'}}, m.text);
+    }
+    const stepEls = (m.steps||[]).map((s,i) => h('div',{key:i,style:{display:'flex',gap:'10px',marginBottom:'8px'}},
+      h('div',{style:{flex:'0 0 22px',height:'22px',borderRadius:'7px',background:'rgba(34,211,238,.1)',border:'1px solid rgba(34,211,238,.25)',display:'grid',placeItems:'center',fontFamily:'JetBrains Mono',fontSize:'11px',fontWeight:600,color:'#67E8F9'}}, s.n),
+      h('div',{style:{flex:1,fontSize:'13.5px',lineHeight:1.55,color:'#C7D0DB'}}, s.text)));
+    return h('div',{style:{display:'flex',gap:'11px',alignItems:'flex-start',width:'100%'}},
+      h('div',{style:{flex:'0 0 auto',position:'relative',width:'30px',height:'30px',display:'grid',placeItems:'center',marginTop:'2px'}},
+        h('div',{style:{position:'absolute',inset:0,borderRadius:'50%',border:'1.5px solid rgba(34,211,238,.6)'}}),
+        h('div',{style:{width:'8px',height:'8px',borderRadius:'50%',background:'#22D3EE'}})),
+      h('div',{style:{flex:1,minWidth:0,border:'1px solid rgba(34,211,238,.25)',borderRadius:'14px',background:'linear-gradient(135deg,rgba(34,211,238,.05),transparent)',padding:'16px'}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:'8px',marginBottom:'10px',flexWrap:'wrap'}},
+          h('span',{style:{fontSize:'10px',fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase',color:'#67E8F9'}}, m.lead),
+          h('span',{style:{fontFamily:'JetBrains Mono',fontSize:'11px',fontWeight:600,color:this.confColor(m.conf)}}, m.conf+'% · '+this.confLabel(m.conf))),
+        h('div',{style:{fontWeight:700,fontSize:'15px',letterSpacing:'-.01em',marginBottom:'8px',color:'#EEF2F6'}}, m.title),
+        h('div',{style:{fontSize:'13.5px',lineHeight:1.6,color:'#9AA6B4',marginBottom:'14px'}}, m.body),
+        h('div',{style:{marginBottom:'14px'}}, stepEls),
+        h('div',{style:{display:'flex',gap:'8px',flexWrap:'wrap'}},
+          h('button',{onClick:this.openFix,style:{height:'36px',padding:'0 14px',borderRadius:'9px',border:'none',background:'#22D3EE',color:'#04262B',fontWeight:700,fontSize:'12.5px',cursor:'pointer',display:'flex',alignItems:'center',gap:'6px'}},'⚡ Fix with ARIA'),
+          h('button',{onClick:() => this.openSolution(m.solId),style:{height:'36px',padding:'0 14px',borderRadius:'9px',border:'1px solid rgba(255,255,255,.14)',background:'transparent',color:'#EEF2F6',fontWeight:600,fontSize:'12.5px',cursor:'pointer'}},'Open full solution →'),
+          h('button',{onClick:this.startDiscussion,style:{height:'36px',padding:'0 14px',borderRadius:'9px',border:'none',background:'transparent',color:'#8b95a2',fontWeight:600,fontSize:'12.5px',cursor:'pointer'}},'Open a discussion'))));
+  };
+
+  EXPERTS = [
+    { title:'Identity & Entra', body:'Hybrid AD, conditional access, MFA, and tenant-to-tenant migrations.', icon:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg>' },
+    { title:'Endpoint & Intune', body:'Device compliance, app protection, autopilot, and Windows updates.', icon:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="13" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>' },
+    { title:'Network & VPN', body:'Split tunneling, DNS, firewall policy, and connectivity triage.', icon:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12.5a10 10 0 0 1 14 0M8.5 15.5a6 6 0 0 1 7 0"></path><circle cx="12" cy="18.5" r="1.2" fill="currentColor"></circle></svg>' },
+    { title:'Security & Defender', body:'Threat triage, false-positive handling, and hardening baselines.', icon:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path></svg>' },
+  ];
+
+  SOLDETAIL = {
+    s1:{ overview:'Windows Update fails at 0% with 0x80070002 when the update datastore is corrupt or a pending operation is wedged. Clearing the cache forces a clean re-download of the manifest.',
+      steps:[
+        {n:1,text:'Open an elevated terminal (Win + X → Terminal (Admin)).'},
+        {n:2,text:'Stop the update services:',code:'net stop wuauserv\nnet stop bits\nnet stop cryptsvc'},
+        {n:3,text:'Rename the cache folders so Windows rebuilds them:',code:'ren %systemroot%\\SoftwareDistribution SoftwareDistribution.old\nren %systemroot%\\System32\\catroot2 catroot2.old'},
+        {n:4,text:'Restart the services and re-check for updates:',code:'net start wuauserv\nnet start bits\nnet start cryptsvc'} ],
+      verify:'Settings → Windows Update → Check for updates. The download now advances past 0% and completes without 0x80070002.' },
+    s2:{ overview:'After MFA / Entra enrollment, Outlook loops on the password prompt when a stale legacy credential shadows modern auth. Removing the cached credential and re-registering the account resolves it.',
+      steps:[
+        {n:1,text:'Close Outlook fully (check the system tray).'},
+        {n:2,text:'Credential Manager → Windows Credentials → remove any MicrosoftOffice / MSOutlook entries.'},
+        {n:3,text:'Clear the Office identity cache:',code:'%localappdata%\\Microsoft\\Office\\16.0\\Licensing'},
+        {n:4,text:'Reopen Outlook, sign in with your IIS account, and approve the MFA prompt once.'} ],
+      verify:'Outlook connects without re-prompting; the status bar reads “Connected to: Microsoft Exchange.”' },
+    s3:{ overview:'A VPN that connects but carries no traffic is almost always split-tunnel DNS: the tunnel adapter has no working resolver, so names fail even though routing is up.',
+      steps:[
+        {n:1,text:'Confirm the tunnel is up but DNS fails — ping an IP vs a hostname.'},
+        {n:2,text:'Set the DNS suffix + server on the tunnel adapter (or push it from the profile).'},
+        {n:3,text:'Flush and re-register:',code:'ipconfig /flushdns\nipconfig /registerdns'} ],
+      verify:'nslookup of an internal hostname resolves via the tunnel’s DNS and internal sites load.' },
+    s4:{ overview:'DRIVER_IRQL_NOT_LESS_OR_EQUAL pointing at netio.sys is a network driver dereferencing bad memory at high IRQL — almost always a NIC-driver regression.',
+      steps:[
+        {n:1,text:'Device Manager → Network adapters → your NIC → Properties → Driver → Roll Back Driver.'},
+        {n:2,text:'If rollback is unavailable, install the vendor’s latest signed driver (not the generic one).'},
+        {n:3,text:'Optionally confirm the culprit with Driver Verifier scoped to the network stack.'} ],
+      verify:'No further bugchecks under load; Reliability Monitor shows no new netio.sys faults after a day.' },
+    s5:{ overview:'“Your organization’s data cannot be pasted here” is an Intune app-protection (MAM) policy blocking clipboard transfer between managed and unmanaged apps — working as configured, but often scoped too broadly.',
+      steps:[
+        {n:1,text:'Intune admin center → Apps → App protection policies → open the relevant policy.'},
+        {n:2,text:'Set “Cut, copy, and paste” to Policy-managed apps with paste-in, or narrow the policy’s app scope.'},
+        {n:3,text:'Allow ~15 min for the policy to refresh, then re-test.'} ],
+      verify:'Paste works between the intended apps while unmanaged targets stay blocked.' },
+    s6:{ overview:'After 23H2 a printer flips to Offline when the spooler loses its TCP/IP port binding. Restarting the spooler and re-adding the port restores it.',
+      steps:[
+        {n:1,text:'Restart the spooler:',code:'net stop spooler\nnet start spooler'},
+        {n:2,text:'Printers & scanners → printer → Printer properties → Ports → re-add the Standard TCP/IP port with the correct IP.'},
+        {n:3,text:'Uncheck “Enable SNMP status” if the device reports offline despite being reachable.'} ],
+      verify:'The printer shows Ready and a test page prints.' },
+  };
+
+  runDiag = () => { this.setState({ diagStage:'analyzing' }); this.after(2300, () => this.setState({ diagStage:'done' })); };
+  resetDiag = () => this.setState({ diagStage:'idle' });
+  helpfulUp = () => this.setState({ helpfulVote:'up' });
+  helpfulDown = () => this.setState({ helpfulVote:'down' });
+
+  TRUST = [
+    { key:'private', title:'Local-first & private', body:'Diagnosis runs on-device when it can. Your data stays yours — nothing is stored to answer you.',
+      iconBg:'rgba(52,211,153,.1)', iconColor:'#34D399',
+      icon:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-4"></path></svg>' },
+    { key:'kb', title:'Real answers, honestly ranked', body:'Blended from a verified KB and accepted community fixes — confidence-scored, with sources you can open.',
+      iconBg:'rgba(34,211,238,.1)', iconColor:'#22D3EE',
+      icon:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="M14 3v5h5"></path><path d="M8 13h8M8 17h5"></path></svg>' },
+    { key:'aria', title:'One-click Fix with ARIA', body:'Every solution can hand off to ARIA / Sentinel to apply the fix on your machine — from web to done.',
+      iconBg:'rgba(233,184,114,.1)', iconColor:'#E9B872',
+      icon:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 3 14h7l-1 8 10-12h-7Z"></path></svg>' },
+  ];
+
+  // ---------- helpers ----------
+  confColor = (c) => c >= 85 ? '#34D399' : c >= 65 ? '#E9B872' : '#8b95a2';
+  confLabel = (c) => (c >= 85 ? 'High' : c >= 65 ? 'Medium' : 'Low');
+  confFillStyle = (c) => `width:${c}%;height:100%;border-radius:999px;background:${c>=85?'linear-gradient(90deg,#0E9CB8,#34D399)':c>=65?'linear-gradient(90deg,#C9973F,#E9B872)':'#6b7683'}`;
+
+  badgeFor = (s) => {
+    if (s.source === 'discussion')
+      return { text:'from a discussion', style:'font-size:10.5px;font-weight:600;color:#E9B872;background:rgba(233,184,114,.1);border:1px solid rgba(233,184,114,.25);padding:2px 7px;border-radius:6px;display:inline-flex;align-items:center;gap:4px' };
+    return { text:'KB · Verified', style:'font-size:10.5px;font-weight:600;color:#34D399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.22);padding:2px 7px;border-radius:6px' };
+  };
+
+  // ---------- navigation ----------
+  scrollRef = (el) => { this.scrollEl = el; };
+  toTop = () => this.after(0, () => { if (this.scrollEl) this.scrollEl.scrollTop = 0; });
+  smoothScrollTo = (target) => {
+    const el = this.scrollEl; if (!el) return;
+    const start = el.scrollTop, dist = target - start, dur = 460, t0 = performance.now();
+    const step = (now) => { const p = Math.min(1, (now - t0) / dur); el.scrollTop = start + dist * (1 - Math.pow(1 - p, 3)); if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  };
+  go = (view) => { this.setState({ view }); this.toTop(); };
+  goHome = () => this.go('home');
+  goSolutions = () => { this.setState({ view:'solutions', searchStage: this.state.searchStage==='idle' ? 'results' : this.state.searchStage }); this.toTop(); };
+  goDiscussions = () => this.go('discussions');
+  goAskAI = () => this.go('askai');
+
+  focusHeaderSearch = () => { this.go('home'); this.after(60, () => { if (this.askInput) this.askInput.focus(); }); };
+
+  // ---------- ask bar ----------
+  askInputRef = (el) => { this.askInput = el; };
+  onQueryChange = (e) => this.setState({ query: e.target.value });
+  onAskFocus = () => this.setState({ askFocused: true });
+  onAskBlur = () => this.after(140, () => this.setState({ askFocused: false }));
+  onQueryKey = (e) => { if (e.key === 'Enter') this.submitAsk(); };
+
+  submitAsk = (q) => {
+    const query = (q != null ? q : this.state.query || '').trim();
+    if (!query) { if (this.askInput) this.askInput.focus(); return; }
+    const confident = query.length >= 4 && !/xyz|obscure|no ?match|asdf/i.test(query);
+    this.setState({ view:'solutions', query, searchStage:'loading', askFocused:false });
+    this.toTop();
+    this.after(1150, () => this.setState({ searchStage: confident ? 'results' : 'empty' }));
+  };
+  pickExample = (label) => { this.setState({ query: label }); this.submitAsk(label); };
+
+  // ---------- misc actions ----------
+  openSSO = () => this.setState({ ssoOpen: true });
+  closeSSO = () => this.setState({ ssoOpen: false });
+  onDownloadSentinel = () => this.showToast({ title:'Sentinel installer ready', desc:'The desktop agent closes the loop from web to your machine.', kind:'info' });
+
+  openSolution = (id) => { this.setState({ view:'solution', activeSolutionId:id }); this.toTop(); };
+  openThread = (id, highlightPostId) => {
+    this.setState({ view:'thread', activeThreadId:id, highlightPostId: highlightPostId || null });
+    this.toTop();
+    if (highlightPostId) {
+      this.after(420, () => {
+        const el = this.scrollEl && this.scrollEl.querySelector('[data-post="'+highlightPostId+'"]');
+        if (el && this.scrollEl) {
+          const top = el.getBoundingClientRect().top - this.scrollEl.getBoundingClientRect().top + this.scrollEl.scrollTop - 90;
+          this.smoothScrollTo(Math.max(0, top));
+        }
+      });
+      this.after(3200, () => this.setState({ highlightPostId: null }));
+    }
+  };
+
+  setHero = (v) => this.setState({ heroVariant: v });
+  setViewport = (v) => this.setState({ viewport: v });
+
+  showToast = (t) => { this.setState({ toast: t }); this.after(3400, () => this.setState({ toast: null })); };
+
+  submitAskBtn = () => this.submitAsk();
+  setFilter = (c) => this.setState({ filterCat: c });
+  setSort = (s) => this.setState({ filterSort: s });
+  startDiscussion = () => { this.go('discussions'); this.showToast({ title:'Start a discussion', desc:'The community and ARIA will both weigh in.', kind:'info' }); };
+  onEscalate = () => this.showToast({ title:'Escalated to IIS', desc:'A specialist picks this up — you’ll get a reply in-thread.', kind:'success' });
+  openFix = () => this.setState({ fixModal:'choose' });
+  runFix = () => { this.setState({ fixModal:'running' }); this.after(2400, () => { this.setState({ fixModal:'applied' }); this.showToast({ title:'Fix applied by ARIA', desc:'Verified on your machine. You can roll back anytime.', kind:'success' }); }); };
+  closeFix = () => this.setState({ fixModal:'closed' });
+  needSentinel = () => this.setState({ fixModal:'needsSentinel' });
+  stop = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
+  ssoContinue = () => { this.setState({ ssoOpen:false }); this.showToast({ title:'Signed in', desc:'Connected with your IIS account via SSO.', kind:'success' }); };
+
+  resultDisplay = (s, rank) => {
+    const b = this.badgeFor(s);
+    return { ...s, rank, badge:b.text, badgeStyle:b.style,
+      onOpen: s.source==='discussion' ? () => this.openThread(s.threadId,'accepted') : () => this.openSolution(s.id),
+      confFill:this.confFillStyle(s.conf), confColor:this.confColor(s.conf), confLabel:s.conf+'% · '+this.confLabel(s.conf),
+      metaLine: s.os+' · '+s.updated };
+  };
+
+  // ---------- render ----------
+  renderVals() {
+    const st = this.state;
+    const isMobile = st.viewport === 'mobile';
+
+    const tabStyleBase = 'white-space:nowrap;padding:7px 11px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s;color:#9AA6B4;background:transparent';
+    const activeTabId = ({ home:null, solutions:'solutions', solution:'solutions', discussions:'discussions', thread:'discussions', askai:'askai', experts:'experts', trends:'trends' })[st.view];
+    const navTabs = this.TABS.map(t => { const on = activeTabId === t.id; return {
+      ...t, active: on,
+      style: on ? 'white-space:nowrap;padding:7px 11px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;color:#EEF2F6;background:rgba(34,211,238,.1);box-shadow:inset 0 0 0 1px rgba(34,211,238,.25)' : tabStyleBase,
+      onSelect: () => (t.id==='solutions' ? this.goSolutions() : this.go(t.id)),
+      mIcon: React.createElement('span',{style:{display:'grid',placeItems:'center',color:on?'#22D3EE':'#5B6672',transition:'color .15s'},dangerouslySetInnerHTML:{__html:t.icon}}),
+      mLabelStyle: 'font-size:9.5px;font-weight:600;margin-top:3px;letter-spacing:-.01em;color:'+(on?'#67E8F9':'#5B6672'),
+      mWrapStyle: 'flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:7px 2px;cursor:pointer;'+(on?'':'opacity:.9'),
+    }; });
+    const isDesktop = !isMobile;
+    const shellStyle = isMobile
+      ? 'margin:auto;position:relative;width:392px;max-width:100%;height:min(94vh,864px);display:flex;flex-direction:column;overflow:hidden;border-radius:40px;border:1px solid rgba(255,255,255,.16);background:#08090C;box-shadow:0 50px 120px -30px rgba(0,0,0,.9),inset 0 0 0 5px #050608,inset 0 0 0 6px rgba(255,255,255,.06)'
+      : 'flex:1;display:flex;flex-direction:column;min-height:0;width:100%';
+    const g3 = isMobile ? 'grid-template-columns:1fr' : 'grid-template-columns:repeat(3,1fr)';
+    const g2 = isMobile ? 'grid-template-columns:1fr' : 'grid-template-columns:repeat(2,1fr)';
+    const heroBcols = isMobile ? 'grid-template-columns:1fr' : 'grid-template-columns:1.05fr .95fr';
+
+    const heroTabDef = [ {id:'A',label:'Search-first'}, {id:'B',label:'Answer preview'}, {id:'C',label:'Screenshot-first'} ];
+    const heroTabs = heroTabDef.map(h => ({
+      ...h,
+      onSelect: () => this.setHero(h.id),
+      style: st.heroVariant===h.id
+        ? 'padding:7px 13px;border-radius:8px;border:none;font-size:12.5px;font-weight:600;cursor:pointer;background:rgba(34,211,238,.12);color:#67E8F9'
+        : 'padding:7px 13px;border-radius:8px;border:none;font-size:12.5px;font-weight:600;cursor:pointer;background:transparent;color:#8b95a2',
+    }));
+
+    const vpDef = [
+      { id:'desktop', label:'Desktop', icon:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="13" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>' },
+      { id:'mobile', label:'Mobile', icon:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2.5"></rect><path d="M11 18h2"></path></svg>' },
+    ];
+    const viewportTabs = vpDef.map(v => ({
+      id:v.id, label:v.label,
+      icon: React.createElement('span',{style:{display:'grid',placeItems:'center'},dangerouslySetInnerHTML:{__html:v.icon}}),
+      onSelect: () => this.setViewport(v.id),
+      style: st.viewport===v.id
+        ? 'width:30px;height:26px;border:none;border-radius:6px;display:grid;place-items:center;cursor:pointer;background:rgba(34,211,238,.14);color:#67E8F9'
+        : 'width:30px;height:26px;border:none;border-radius:6px;display:grid;place-items:center;cursor:pointer;background:transparent;color:#5B6672',
+    }));
+
+    const exampleChips = [
+      'Windows Update stuck at 0%',
+      'VPN connects but no internet',
+      'Outlook keeps asking for password',
+      'BSOD netio.sys',
+    ].map(label => ({ label, onPick: () => this.pickExample(label) }));
+
+    const recentSolutions = this.SOLUTIONS.slice(0,3).map(s => {
+      const b = this.badgeFor(s);
+      return { ...s, onOpen: () => this.openSolution(s.id),
+        badge:b.text, badgeStyle:b.style,
+        confFill:this.confFillStyle(s.conf), confColor:this.confColor(s.conf), confLabel:s.conf+'% · '+this.confLabel(s.conf) };
+    });
+
+    // ask bar element (shared across hero variants) — built here so state/focus survive
+    const askBar = this.buildAskBar();
+
+    const stageStyle = 'min-height:100%';
+
+    // toast styling
+    const toastKind = st.toast && st.toast.kind || 'info';
+    const toastIconWrap = 'flex:0 0 auto;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;'+
+      (toastKind==='success'?'background:rgba(52,211,153,.14);color:#34D399':toastKind==='error'?'background:rgba(251,113,133,.14);color:#FB7185':'background:rgba(34,211,238,.14);color:#22D3EE');
+    const toastIcon = React.createElement('span',{dangerouslySetInnerHTML:{__html:
+      toastKind==='success'?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4 4L19 7"></path></svg>'
+      :toastKind==='error'?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>'
+      :'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>'}});
+
+    // ---- solutions ----
+    let solList = this.SOLUTIONS.slice();
+    if (st.filterCat !== 'all') solList = solList.filter(s => s.category === st.filterCat);
+    if (st.filterSort === 'helpful') solList.sort((a,b) => b.conf - a.conf);
+    const rankedTop = solList[0] ? this.resultDisplay(solList[0], 1) : null;
+    const rankedRest = solList.slice(1).map((s,i) => this.resultDisplay(s, i+2));
+    const catDefs = [ ['all','All'], ['Windows','Windows'], ['Microsoft 365','Microsoft 365'], ['Network','Network'], ['Devices','Devices'] ];
+    const chipBase = 'padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.09);background:#0C0F15;color:#9AA6B4;transition:all .15s';
+    const chipActive = 'padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid rgba(34,211,238,.5);background:rgba(34,211,238,.1);color:#67E8F9';
+    const filterChips = catDefs.map(([id,label]) => ({ label, onClick:() => this.setFilter(id), style: st.filterCat===id?chipActive:chipBase }));
+    const sortDefs = [ ['relevance','Relevance'], ['helpful','Most helpful'] ];
+    const sortChips = sortDefs.map(([id,label]) => ({ label, onClick:() => this.setSort(id), style: st.filterSort===id?chipActive:chipBase }));
+
+    // ---- solution page ----
+    const sBase = this.SOLUTIONS.find(x => x.id === st.activeSolutionId) || this.SOLUTIONS[0];
+    const sDet = this.SOLDETAIL[sBase.id] || { overview:sBase.snippet, steps:[{n:1,text:'Follow the verified remediation for this issue.'}], verify:'Confirm the symptom no longer reproduces.' };
+    const sBadge = this.badgeFor(sBase);
+    const sol = { ...sBase, ...sDet, badge:sBadge.text, badgeStyle:sBadge.style,
+      confFill:this.confFillStyle(sBase.conf), confColor:this.confColor(sBase.conf), confLabel:sBase.conf+'% · '+this.confLabel(sBase.conf),
+      metaLine: sBase.os+' · '+sBase.updated };
+    const relatedSolutions = this.SOLUTIONS.filter(x => x.id !== sBase.id).slice(0,3).map(s => {
+      const b=this.badgeFor(s); return { ...s, badge:b.text, badgeStyle:b.style, onOpen:() => this.openSolution(s.id) };
+    });
+    const hv = st.helpfulVote;
+    const hlBase = 'height:34px;padding:0 14px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#9AA6B4;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px';
+    const helpfulUpStyle = hv==='up' ? 'height:34px;padding:0 14px;border-radius:9px;border:1px solid rgba(52,211,153,.5);background:rgba(52,211,153,.1);color:#34D399;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px' : hlBase;
+    const helpfulDownStyle = hv==='down' ? 'height:34px;padding:0 14px;border-radius:9px;border:1px solid rgba(251,113,133,.5);background:rgba(251,113,133,.1);color:#FB7185;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px' : hlBase;
+
+    // ---- discussions ----
+    const discCatDefs = [ ['all','All'], ['Identity','Identity'], ['Security','Security'], ['Automation','Automation'], ['Microsoft 365','Microsoft 365'], ['Devices','Devices'] ];
+    const discChips = discCatDefs.map(([id,label]) => ({ label, onClick:() => this.setDiscCat(id), style: st.discCat===id?chipActive:chipBase }));
+    const svgCheck = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4 4L19 7"></path></svg>';
+    const svgChat = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"></path></svg>';
+    let discList = this.THREADS.slice();
+    if (st.discCat !== 'all') discList = discList.filter(t => t.category === st.discCat);
+    const discThreads = discList.map(t => {
+      const status = t.accepted
+        ? { style:'width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#E9B872;background:rgba(233,184,114,.1);border:1px solid rgba(233,184,114,.28)', html:svgCheck }
+        : t.active
+          ? { style:'width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#22D3EE;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2)', html:svgChat }
+          : { style:'width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#5B6672;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)', html:svgChat };
+      return { ...t,
+        onOpen:() => this.openThread(t.id),
+        statusStyle: status.style,
+        statusIcon: React.createElement('span',{style:{display:'grid',placeItems:'center'},dangerouslySetInnerHTML:{__html:status.html}}),
+        meta: t.author+' · '+t.when+' · '+t.category,
+        avatars: (t.avatars||[]).map((ini,i) => ({ initials:ini, style:`width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:9.5px;font-weight:700;color:#C7D0DB;background:#161b23;border:2px solid #0A0D12;margin-left:${i?-9:0}px` })),
+      };
+    });
+
+    // ---- single thread ----
+    const tRow = this.THREADS.find(x => x.id === st.activeThreadId) || this.THREADS.find(x => x.id==='t1');
+    const thread = { ...tRow, aiBody: tRow.ai };
+    const rawPosts = tRow.id==='t1'
+      ? this.THREAD.posts
+      : [ { id:'op', author:tRow.author, initials:(tRow.avatars&&tRow.avatars[0])||'··', when:tRow.when, isOP:true, body:tRow.body || tRow.excerpt } ];
+    const threadPosts = rawPosts.map(p => ({
+      ...p,
+      initials: p.initials || (p.author||'?').split(' ').map(w=>w[0]).join('').slice(0,2),
+      isHighlight: st.highlightPostId === p.id,
+      bodyEl: this.mentionize(p.body),
+      wrapStyle: p.accepted
+        ? 'position:relative;border:1px solid rgba(233,184,114,.32);border-radius:14px;background:linear-gradient(180deg,rgba(233,184,114,.05),transparent);padding:17px'
+        : 'position:relative;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:17px',
+      avatarStyle: p.accepted || p.isOP
+        ? 'flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:#67E8F9;background:linear-gradient(135deg,#14323a,#0b1418);border:1px solid rgba(34,211,238,.3)'
+        : 'flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:#C7D0DB;background:#161b23;border:1px solid rgba(255,255,255,.1)',
+    }));
+
+    // ---- ask ai ----
+    const aiFeed = st.aiMessages.map((m,i) => ({
+      rowStyle: m.role==='user' ? 'display:flex;justify-content:flex-end' : 'display:flex;justify-content:flex-start',
+      el: this.renderAiMsg(m),
+    }));
+    const aiPrompts = [
+      'Outlook keeps asking for my password after we enabled MFA',
+      'VPN connects but I have no internet',
+      'Printer went offline after the 23H2 update',
+    ].map(label => ({ label, onPick:() => this.aiPickPrompt(label) }));
+
+    // ---- experts ----
+    const expertAreas = this.EXPERTS.map(e => ({ ...e,
+      icon: React.createElement('span',{style:{display:'grid',placeItems:'center'},dangerouslySetInnerHTML:{__html:e.icon}}),
+      onRequest:() => this.showToast({ title:'Request routed', desc:'We’ll match you with an IIS specialist in '+e.title+'.', kind:'success' }) }));
+
+    // ---- trends (placeholder heights, clearly greyed) ----
+    const trendBars = [42,68,54,88,36,60].map(hh => ({ style:`width:100%;height:${hh}%;background:rgba(255,255,255,.06);border-radius:6px 6px 0 0` }));
+    const trendCats = ['Identity','Windows','Microsoft 365','Network','Devices','Security'].map(name => ({ name }));
+
+    return {
+      // view flags
+      isHome: st.view==='home', isSolutions: st.view==='solutions', isSolution: st.view==='solution',
+      isDiscussions: st.view==='discussions', isThread: st.view==='thread', isAskAI: st.view==='askai',
+      isExperts: st.view==='experts', isTrends: st.view==='trends',
+      isMobile, isDesktop, shellStyle, g3, g2, heroBcols,
+      heroA: st.heroVariant==='A', heroB: st.heroVariant==='B', heroC: st.heroVariant==='C',
+      showHeaderSearch: st.view!=='home',
+      stageStyle,
+      // nav
+      navTabs, heroTabs, viewportTabs, scrollRef: this.scrollRef,
+      goHome:this.goHome, goSolutions:this.goSolutions, goDiscussions:this.goDiscussions, goAskAI:this.goAskAI,
+      focusHeaderSearch:this.focusHeaderSearch, openSSO:this.openSSO, onDownloadSentinel:this.onDownloadSentinel,
+      // hero / home
+      askBar, exampleChips, trustPillars:this.TRUST, recentSolutions,
+      // toast
+      toast: !!st.toast, toastTitle: st.toast&&st.toast.title, toastDesc: st.toast&&st.toast.desc,
+      toastIcon, toastIconWrap,
+      // solutions
+      query: st.query, onQueryChange:this.onQueryChange, onQueryKey:this.onQueryKey, submitAskBtn:this.submitAskBtn,
+      searchLoading: st.searchStage==='loading', searchResults: st.searchStage==='results', searchEmpty: st.searchStage==='empty',
+      skeletons:[1,2,3,4], rankedTop, rankedRest, filterChips, sortChips, noQuery: !st.query,
+      openFix:this.openFix, startDiscussion:this.startDiscussion, onEscalate:this.onEscalate,
+      // solution page
+      sol, solSteps:sDet.steps, relatedSolutions,
+      diagIdle: st.diagStage==='idle', diagAnalyzing: st.diagStage==='analyzing', diagDone: st.diagStage==='done',
+      runDiag:this.runDiag, resetDiag:this.resetDiag, onDownloadSentinel:this.onDownloadSentinel,
+      helpfulUp:this.helpfulUp, helpfulDown:this.helpfulDown, helpfulUpStyle, helpfulDownStyle, helpfulThanks: !!hv,
+      // discussions + thread
+      discChips, discThreads, thread, threadPosts, openS2:this.openS2, postReply:this.postReply,
+      // ask ai
+      aiEmpty: st.aiMessages.length===0 && !st.aiThinking, aiFeed, aiThinking: st.aiThinking,
+      aiInput: st.aiInput, onAiInput:this.onAiInput, onAiKey:this.onAiKey, aiSend:this.aiSend, aiUploadSample:this.aiUploadSample, aiPrompts,
+      // experts + trends
+      expertAreas, trendBars, trendCats,
+      // modals
+      fixModalOpen: st.fixModal!=='closed', fixChoose: st.fixModal==='choose', fixRunning: st.fixModal==='running', fixApplied: st.fixModal==='applied',
+      fixSteps: sDet.steps.slice(0,3), closeFix:this.closeFix, runFix:this.runFix, stop:this.stop,
+      ssoOpen: st.ssoOpen, closeSSO:this.closeSSO, ssoContinue:this.ssoContinue,
+    };
+  }
+
+  buildAskBar() {
+    const st = this.state;
+    const focused = st.askFocused;
+    const wrap = {
+      display:'flex', alignItems:'center', gap:'10px',
+      maxWidth:'660px', margin:'0 auto', padding:'8px 8px 8px 16px',
+      background:'#0B0E14', borderRadius:'16px',
+      border:'1px solid '+(focused?'rgba(34,211,238,.55)':'rgba(255,255,255,.11)'),
+      boxShadow: focused
+        ? '0 0 0 4px rgba(34,211,238,.1), 0 20px 60px -18px rgba(34,211,238,.4)'
+        : '0 12px 40px -18px rgba(0,0,0,.7)',
+      transition:'border-color .2s, box-shadow .25s', position:'relative',
+    };
+    const icon = React.createElement('span',{style:{flex:'0 0 auto',display:'grid',placeItems:'center',color:focused?'#22D3EE':'#5B6672',transition:'color .2s'},dangerouslySetInnerHTML:{__html:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 3l1.6 3.4L10 8 6.6 9.6 5 13l-1.6-3.4L0 8l3.4-1.6z" transform="translate(3 2) scale(.8)"></path><circle cx="11" cy="11" r="6.4" opacity=".9"></circle><path d="m19.5 19.5-3-3"></path></svg>'}});
+    const input = React.createElement('input',{
+      ref:this.askInputRef, value:st.query, onChange:this.onQueryChange,
+      onFocus:this.onAskFocus, onBlur:this.onAskBlur, onKeyDown:this.onQueryKey,
+      placeholder:'Describe your IT problem in plain English…',
+      style:{flex:'1',minWidth:'0',background:'transparent',border:'none',outline:'none',color:'#EEF2F6',fontSize:'15.5px',fontWeight:'500',padding:'8px 0'},
+    });
+    const camBtn = React.createElement('button',{onClick:this.goAskAI,title:'Diagnose from a screenshot',
+      style:{flex:'0 0 auto',width:'38px',height:'38px',borderRadius:'10px',border:'1px solid rgba(255,255,255,.1)',background:'transparent',color:'#8b95a2',cursor:'pointer',display:'grid',placeItems:'center'},
+      dangerouslySetInnerHTML:{__html:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="m4 18 4.5-4 3 2.5L15 13l5 5"></path></svg>'}});
+    const askBtn = React.createElement('button',{onClick:()=>this.submitAsk(),
+      style:{flex:'0 0 auto',height:'38px',padding:'0 18px',borderRadius:'10px',border:'none',background:'#22D3EE',color:'#04262B',fontWeight:'700',fontSize:'14px',cursor:'pointer',display:'flex',alignItems:'center',gap:'7px',boxShadow:'0 8px 24px -8px rgba(34,211,238,.6)'}},
+      'Ask',
+      React.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>'},style:{display:'grid',placeItems:'center'}}));
+
+    // suggestions dropdown
+    let dropdown = null;
+    if (focused) {
+      const sugg = [
+        {t:'Windows Update stuck at 0% (0x80070002)', k:'KB'},
+        {t:'Outlook keeps asking for password after MFA', k:'Discussion'},
+        {t:'VPN connects but no internet access', k:'KB'},
+      ];
+      dropdown = React.createElement('div',{
+        style:{position:'absolute',top:'calc(100% + 8px)',left:0,right:0,background:'#0C0F15',border:'1px solid rgba(255,255,255,.12)',borderRadius:'14px',padding:'6px',zIndex:20,boxShadow:'0 24px 60px -16px rgba(0,0,0,.8)',textAlign:'left'}},
+        React.createElement('div',{style:{fontSize:'10.5px',fontWeight:'600',letterSpacing:'.06em',textTransform:'uppercase',color:'#5B6672',padding:'8px 10px 6px'}},'Suggested'),
+        ...sugg.map((s,i)=>React.createElement('div',{key:i,onMouseDown:(e)=>{e.preventDefault();this.pickExample(s.t);},
+          style:{display:'flex',alignItems:'center',gap:'10px',padding:'9px 10px',borderRadius:'9px',cursor:'pointer',color:'#C7D0DB',fontSize:'13.5px'},
+          onMouseEnter:e=>e.currentTarget.style.background='rgba(255,255,255,.05)',onMouseLeave:e=>e.currentTarget.style.background='transparent'},
+          React.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6672" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>'},style:{display:'grid',placeItems:'center'}}),
+          React.createElement('span',{style:{flex:1}},s.t),
+          React.createElement('span',{style:{fontSize:'10.5px',fontWeight:600,color:s.k==='KB'?'#34D399':'#E9B872',background:s.k==='KB'?'rgba(52,211,153,.1)':'rgba(233,184,114,.1)',padding:'2px 7px',borderRadius:'5px'}},s.k))),
+        React.createElement('div',{onMouseDown:(e)=>{e.preventDefault();this.goAskAI();},
+          style:{display:'flex',alignItems:'center',gap:'10px',padding:'10px',margin:'4px 0 0',borderTop:'1px solid rgba(255,255,255,.06)',cursor:'pointer',color:'#67E8F9',fontSize:'13px',fontWeight:600},
+          onMouseEnter:e=>e.currentTarget.style.background='rgba(34,211,238,.06)',onMouseLeave:e=>e.currentTarget.style.background='transparent'},
+          React.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="m4 18 4.5-4 3 2.5L15 13l5 5"></path></svg>'},style:{display:'grid',placeItems:'center'}}),
+          'Diagnose from a screenshot instead →'));
+    }
+
+    return React.createElement('div',{style:wrap}, icon, input, camBtn, askBtn, dropdown);
+  }
+}
+</script>
+</body>
+</html>

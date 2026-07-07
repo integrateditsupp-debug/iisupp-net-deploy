@@ -199,7 +199,7 @@ const nextMoves = [
   `1. Advance approved/accepted website items only to publish staging and verification notes using \`${path.relative(repoRoot, websitePackagePath).replaceAll("\\", "/")}\`. Stop before production publish unless Ahmad explicitly performs the publish gate.`,
   "2. Submit-authorized Contracts/Bids may be filled/submitted only with exact saved dashboard fields and only if no new legal/cost/certification/upload/credential/unknown field appears.",
   "3. For LinkedIn/contact items marked Needs Agent, prepare/check next action only. Do not send, connect, scrape, or message autonomously.",
-  "4. RBC is marked done with CEO note to monitor status. Track future email/inbox/status evidence; do not create new registrations without a final gate.",
+  "4. TELUS is marked done only after Ahmad completes the live registration gate. Track future email/inbox/status evidence; do not create new registrations without a final gate.",
   "5. Held items stay parked until Ahmad reopens them.",
   "6. Open items remain visible in the CEO dashboard."
 ];

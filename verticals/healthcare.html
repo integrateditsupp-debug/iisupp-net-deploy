@@ -43,6 +43,13 @@
   .quote-box{background:rgba(197,160,89,.06);border-left:3px solid #c5a059;padding:18px 22px;margin:24px 0;border-radius:0 10px 10px 0}
   .quote-box p{color:#fff;font-size:15px;font-style:italic;line-height:1.55}
   .quote-box .src{display:block;color:rgba(255,255,255,.5);font-size:12px;margin-top:8px;font-style:normal;letter-spacing:.06em}
+  .path-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:32px}
+  .path-card{display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,rgba(197,160,89,.08),rgba(13,13,13,.92));border:1px solid rgba(197,160,89,.18);border-radius:14px;padding:22px}
+  .path-card .eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#c5a059;font-weight:700}
+  .path-card h3{font-size:18px;color:#fff;line-height:1.2}
+  .path-card p{color:rgba(255,255,255,.68);font-size:13.5px}
+  .path-card .path-link{display:inline-flex;align-items:center;justify-content:center;margin-top:auto;padding:12px 16px;border-radius:8px;text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid rgba(197,160,89,.32);color:#f1dca7;background:rgba(197,160,89,.08)}
+  .path-card .path-link:hover{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505}
   footer.bot{padding:48px 0 32px;border-top:1px solid rgba(255,255,255,.06);text-align:center;color:rgba(255,255,255,.4);font-size:12px;letter-spacing:.06em}
   footer.bot a{color:rgba(255,255,255,.6);text-decoration:none;margin:0 8px}
   footer.bot a:hover{color:#c5a059}
@@ -151,10 +158,25 @@
       <div class="card"><h3>Pro</h3><p style="color:#f1dca7;font-size:22px;margin:8px 0">$1,500 USD/mo</p><p>Multi-clinic groups, family-health teams</p></div>
       <div class="card"><h3>Small Business</h3><p style="color:#f1dca7;font-size:22px;margin:8px 0">$156,000 USD/yr</p><p>Mid-market practices, networks, regional chains</p></div>
     </div>
-
-    <div class="cta-row" style="margin-top:32px">
-      <a href="/aria" class="btn btn-primary">Try ARIA — 10 min live</a>
-      <a href="mailto:ahmad.wasee@iisupp.net?subject=Healthcare%20pilot%20interest" class="btn btn-ghost">Email founder directly</a>
+    <div class="path-grid">
+      <div class="path-card">
+        <span class="eyebrow">Fit call</span>
+        <h3>Book the safest first scoping call</h3>
+        <p>Use this when a clinic wants to confirm EMR, secure-fax, MFA, or PHIPA/HIPAA boundaries before a pilot.</p>
+        <a class="path-link" href="/book.html?lane=general-fit&amp;source=healthcare-vertical-fit&amp;subject=Request%20Healthcare%20ARIA%20Fit%20Call&amp;desc=I%20want%20to%20book%20a%20short%20healthcare%20fit%20call%20with%20IIS%20after%20reviewing%20the%20Healthcare%20page.%0A%0AClinic%20or%20organization%3A%0ANumber%20of%20locations%20or%20staff%3A%0AEMR%2C%20PACS%2C%20secure-fax%2C%20or%20other%20systems%20in%20scope%3A%0ABiggest%20IT%20or%20support%20friction%20today%3A%0AAny%20privacy%2C%20audit%2C%20or%20approval%20constraints%3A%0AWhat%20a%20useful%20fit%20call%20should%20confirm%3A">Book 15-min fit call</a>
+      </div>
+      <div class="path-card">
+        <span class="eyebrow">Knowledge layer</span>
+        <h3>Stage a support-KB build</h3>
+        <p>Best when your team has repeated front-desk, device, login, or workflow questions that need safer human-plus-AI answers.</p>
+        <a class="path-link" href="/book.html?lane=support-kb&amp;source=healthcare-vertical-support-kb&amp;subject=Request%20Healthcare%20Support%20KB%20Build&amp;desc=I%20want%20to%20stage%20a%20healthcare%20support%20knowledge-base%20build%20with%20IIS%20after%20reviewing%20the%20Healthcare%20page.%0A%0AClinic%20or%20organization%3A%0ATeam%20size%20or%20support%20scope%3A%0AWhere%20support%20knowledge%20lives%20today%3A%0ARepeat%20issues%20we%20want%20documented%20first%3A%0AWhat%20must%20stay%20human-approved%20or%20off-limits%3A%0AWhat%20a%20cleaner%20KB%20would%20look%20like%20first%3A">Stage support-KB build</a>
+      </div>
+      <div class="path-card">
+        <span class="eyebrow">Live proof</span>
+        <h3>Try ARIA live first</h3>
+        <p>Open the product before the call if you want to see the tone, guardrails, and first-response experience in action.</p>
+        <a class="path-link" href="/aria">Try ARIA live</a>
+      </div>
     </div>
   </section>
 

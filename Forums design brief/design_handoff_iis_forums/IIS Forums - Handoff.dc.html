@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#07080B}
+  ::selection{background:rgba(34,211,238,.28);color:#EEF2F6}
+  @keyframes sk{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  *::-webkit-scrollbar{width:10px}
+  *::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#07080B;color:#EEF2F6;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;position:relative">
+  <div style="position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(1100px 560px at 10% -10%, rgba(34,211,238,.09), transparent 60%),radial-gradient(900px 480px at 100% 0%, rgba(233,184,114,.05), transparent 55%)"></div>
+
+  <div style="position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:56px 32px 100px">
+
+    <!-- COVER -->
+    <div style="display:inline-flex;align-items:center;gap:10px;padding:6px 13px;border-radius:999px;border:1px solid rgba(34,211,238,.28);background:rgba(34,211,238,.06);font-size:12.5px;color:#8fdff0;font-weight:600;margin-bottom:26px">
+      <span style="width:6px;height:6px;border-radius:50%;background:#22D3EE;box-shadow:0 0 8px #22D3EE"></span>
+      Design handoff · for Claude Code
+    </div>
+    <h1 style="font-size:clamp(36px,5.6vw,58px);line-height:1.02;letter-spacing:-.035em;font-weight:800;margin:0 0 18px;max-width:16ch;background:linear-gradient(180deg,#FFFFFF,#B9C2CE);-webkit-background-clip:text;background-clip:text;color:transparent">IIS Forums — dark-matter design system</h1>
+    <p style="font-size:17px;line-height:1.55;color:#9AA6B4;max-width:60ch;margin:0 0 22px">Everything Claude Code needs to build <span style="color:#C7D0DB">iisupp.net/forums</span>: tokens as variables, the component inventory with every state, the signature-interaction specs, accessibility bar, and how each prototype simulation maps to a real integration. Pairs with the live <span style="color:#67E8F9">IIS Forums Prototype</span>.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px">
+      <sc-for list="{{ coverChips }}" as="c" hint-placeholder-count="5">
+        <span style="font-size:12.5px;color:#9AA6B4;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:6px 12px;border-radius:999px">{{ c }}</span>
+      </sc-for>
+    </div>
+
+    <!-- 01 PRINCIPLES -->
+    <div style="margin-top:64px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#22D3EE;margin-bottom:8px;font-family:'JetBrains Mono'">01 · Design rationale</div>
+      <h2 style="font-size:27px;font-weight:750;letter-spacing:-.02em;margin:0 0 20px">Confident · 10-years-ahead · honest</h2>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+        <sc-for list="{{ principles }}" as="p" hint-placeholder-count="4">
+          <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:18px">
+            <div style="font-weight:700;font-size:15.5px;margin-bottom:6px;color:{{ p.color }}">{{ p.title }}</div>
+            <div style="font-size:13.5px;line-height:1.6;color:#9AA6B4">{{ p.body }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- 02 COLOR -->
+    <div style="margin-top:60px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#22D3EE;margin-bottom:8px;font-family:'JetBrains Mono'">02 · Color tokens</div>
+      <h2 style="font-size:27px;font-weight:750;letter-spacing:-.02em;margin:0 0 8px">Color</h2>
+      <p style="font-size:13.5px;color:#8b95a2;margin:0 0 22px;max-width:64ch">Bind these to CSS variables — never hardcode. Deep near-black surfaces, one cyan accent (primary/AI), one warm gold (accepted / premium / graduated), semantic + a confidence scale.</p>
+      <sc-for list="{{ colorGroups }}" as="g" hint-placeholder-count="5">
+        <div style="margin-bottom:22px">
+          <div style="font-size:12.5px;font-weight:700;color:#C7D0DB;margin-bottom:11px">{{ g.name }}</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <sc-for list="{{ g.items }}" as="c" hint-placeholder-count="4">
+              <div style="border:1px solid rgba(255,255,255,.07);border-radius:11px;overflow:hidden;background:#0A0D12">
+                <div style="{{ c.swatch }}"></div>
+                <div style="padding:9px 11px">
+                  <div style="font-family:'JetBrains Mono';font-size:11px;color:#EEF2F6;font-weight:600">{{ c.token }}</div>
+                  <div style="font-family:'JetBrains Mono';font-size:10.5px;color:#5B6672;margin-top:2px">{{ c.hex }}</div>
+                  <div style="font-size:11px;color:#8b95a2;margin-top:5px;line-height:1.4">{{ c.use }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- 03 TYPE -->
+    <div style="margin-top:60px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#22D3EE;margin-bottom:8px;font-family:'JetBrains Mono'">03 · Typography</div>
+      <h2 style="font-size:27px;font-weight:750;letter-spacing:-.02em;margin:0 0 8px">Type</h2>
+      <p style="font-size:13.5px;color:#8b95a2;margin:0 0 22px;max-width:64ch"><span style="color:#C7D0DB">Hanken Grotesk</span> for UI &amp; display (neutral grotesque, tight tracking on large sizes) · <span style="color:#C7D0DB">JetBrains Mono</span> for code, error signatures, confidence values, and kbd.</p>
+      <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;overflow:hidden">
+        <sc-for list="{{ typeScale }}" as="t" hint-placeholder-count="6">
+          <div style="display:flex;align-items:baseline;gap:18px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.05)">
+            <div style="flex:1;min-width:0;overflow:hidden;{{ t.preview }}">{{ t.sample }}</div>
+            <div style="flex:0 0 auto;text-align:right">
+              <div style="font-family:'JetBrains Mono';font-size:11.5px;color:#C7D0DB;font-weight:600">{{ t.name }}</div>
+              <div style="font-family:'JetBrains Mono';font-size:10.5px;color:#5B6672;margin-top:2px">{{ t.spec }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- 04 SPACE / RADIUS / ELEVATION / MOTION -->
+    <div style="margin-top:60px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#22D3EE;margin-bottom:8px;font-family:'JetBrains Mono'">04 · Space · radius · elevation · motion</div>
+      <h2 style="font-size:27px;font-weight:750;letter-spacing:-.02em;margin:0 0 20px">Foundations</h2>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+        <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:18px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:12px">Spacing · 4px base</div>
+          <div style="display:flex;align-items:flex-end;gap:6px;margin-bottom:10px">
+            <sc-for list="{{ spacing }}" as="s" hint-placeholder-count="8">
+              <div style="text-align:center"><div style="{{ s.bar }}"></div><div style="font-family:'JetBrains Mono';font-size:9px;color:#5B6672;margin-top:4px">{{ s.v }}</div></div>
+            </sc-for>
+          </div>
+          <div style="font-size:12px;color:#8b95a2;line-height:1.5">Gutters 28 (desktop) / 16–18 (mobile). Card padding 16–22. Section rhythm 40–64.</div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:18px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:12px">Radius</div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <sc-for list="{{ radii }}" as="r" hint-placeholder-count="5">
+              <div style="text-align:center"><div style="{{ r.box }}"></div><div style="font-family:'JetBrains Mono';font-size:9.5px;color:#5B6672;margin-top:5px">{{ r.label }}</div></div>
+            </sc-for>
+          </div>
+          <div style="font-size:12px;color:#8b95a2;line-height:1.5;margin-top:12px">Inputs 10–12 · cards 14 · modals 18 · pills/avatars 999.</div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:18px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:14px">Elevation</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ elevation }}" as="e" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="{{ e.box }}"></div>
+                <div><div style="font-family:'JetBrains Mono';font-size:11px;color:#C7D0DB;font-weight:600">{{ e.name }}</div><div style="font-size:11.5px;color:#8b95a2;margin-top:1px">{{ e.use }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:18px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:12px">Motion</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ motion }}" as="m" hint-placeholder-count="5">
+              <div style="display:flex;align-items:baseline;gap:10px;font-size:12.5px"><span style="font-family:'JetBrains Mono';font-size:11px;color:#67E8F9;flex:0 0 118px">{{ m.name }}</span><span style="color:#9AA6B4;line-height:1.45">{{ m.desc }}</span></div>
+            </sc-for>
+          </div>
+          <div style="font-size:11.5px;color:#8b95a2;line-height:1.5;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)">Honor <span style="font-family:'JetBrains Mono';color:#C7D0DB">prefers-reduced-motion</span>: disable shimmer, pulse, and auto-scroll animation.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 COMPONENTS -->
+    <div style="margin-top:60px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#22D3EE;margin-bottom:8px;font-family:'JetBrains Mono'">05 · Components</div>
+      <h2 style="font-size:27px;font-weight:750;letter-spacing:-.02em;margin:0 0 20px">Inventory &amp; states</h2>
+
+      <!-- live examples -->
+      <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:20px;margin-bottom:16px">
+        <div style="font-weight:700;font-size:13.5px;color:#C7D0DB;margin-bottom:14px">Buttons</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px">
+          <div style="height:40px;padding:0 16px;border-radius:10px;background:#22D3EE;color:#04262B;font-weight:700;font-size:13.5px;display:grid;place-items:center;box-shadow:0 10px 26px -10px rgba(34,211,238,.6)">Primary</div>
+          <div style="height:40px;padding:0 16px;border-radius:10px;border:1px solid rgba(255,255,255,.14);color:#EEF2F6;font-weight:600;font-size:13.5px;display:grid;place-items:center">Secondary</div>
+          <div style="height:40px;padding:0 16px;border-radius:10px;border:1px solid rgba(233,184,114,.4);background:rgba(233,184,114,.06);color:#E9B872;font-weight:600;font-size:13.5px;display:grid;place-items:center">Escalate (gold)</div>
+          <div style="height:40px;padding:0 16px;border-radius:10px;color:#8b95a2;font-weight:600;font-size:13.5px;display:grid;place-items:center">Ghost</div>
+        </div>
+        <div style="font-weight:700;font-size:13.5px;color:#C7D0DB;margin-bottom:12px">Confidence meter · high / medium / low</div>
+        <div style="display:flex;flex-wrap:wrap;gap:20px;margin-bottom:6px">
+          <sc-for list="{{ confSamples }}" as="c" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:9px"><div style="width:90px;height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="{{ c.fill }}"></div></div><span style="font-family:'JetBrains Mono';font-size:11.5px;font-weight:600;color:{{ c.color }}">{{ c.label }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:20px;margin-bottom:16px">
+        <div style="font-weight:700;font-size:13.5px;color:#C7D0DB;margin-bottom:14px">Badges &amp; source tags</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <span style="font-size:10.5px;font-weight:600;color:#34D399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.22);padding:3px 9px;border-radius:6px">KB · Verified</span>
+          <span style="font-size:10.5px;font-weight:600;color:#E9B872;background:rgba(233,184,114,.1);border:1px solid rgba(233,184,114,.25);padding:3px 9px;border-radius:6px">from a discussion</span>
+          <span style="font-size:10.5px;font-weight:600;color:#22D3EE;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);padding:3px 9px;border-radius:6px">Graduated to Solutions</span>
+          <span style="font-family:'JetBrains Mono';font-size:10.5px;font-weight:600;color:#04262B;background:#22D3EE;padding:3px 9px;border-radius:6px">RANKED #1</span>
+          <span style="font-size:10.5px;font-weight:700;color:#E9B872;background:rgba(233,184,114,.1);border:1px solid rgba(233,184,114,.3);padding:3px 10px;border-radius:7px">✓ Accepted answer</span>
+        </div>
+      </div>
+
+      <!-- inventory table -->
+      <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1.1fr 1.4fr 1.5fr;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#5B6672">
+          <div>Component</div><div>Variants</div><div>States</div>
+        </div>
+        <sc-for list="{{ components }}" as="c" hint-placeholder-count="10">
+          <div style="display:grid;grid-template-columns:1.1fr 1.4fr 1.5fr;gap:12px;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.05)">
+            <div style="font-weight:650;font-size:13.5px;color:#EEF2F6">{{ c.name }}</div>
+            <div style="font-size:12.5px;color:#9AA6B4;line-height:1.5">{{ c.variants }}</div>
+            <div style="font-size:12.5px;color:#8b95a2;line-height:1.5">{{ c.states }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- 06 INTERACTIONS -->
+    <div style="margin-top:60px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#22D3EE;margin-bottom:8px;font-family:'JetBrains Mono'">06 · Signature interactions</div>
+      <h2 style="font-size:27px;font-weight:750;letter-spacing:-.02em;margin:0 0 8px">The 10-years-ahead moments</h2>
+      <p style="font-size:13.5px;color:#8b95a2;margin:0 0 20px;max-width:64ch">Each is a designed sequence with explicit states + timing. Perceived speed comes from optimistic routing and skeletons; honesty comes from always showing sources and confidence.</p>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ interactions }}" as="i" hint-placeholder-count="4">
+          <div style="border:1px solid rgba(34,211,238,.18);border-radius:14px;background:linear-gradient(135deg,rgba(34,211,238,.04),transparent);padding:18px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:#04262B;background:#22D3EE;width:24px;height:24px;border-radius:7px;display:grid;place-items:center">{{ i.n }}</span>
+              <span style="font-weight:700;font-size:15.5px;letter-spacing:-.01em">{{ i.name }}</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:11px">
+              <sc-for list="{{ i.steps }}" as="s" hint-placeholder-count="4">
+                <span style="font-size:12px;color:#C7D0DB;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);padding:4px 10px;border-radius:8px">{{ s }}</span>
+              </sc-for>
+            </div>
+            <div style="font-size:12.5px;line-height:1.55;color:#9AA6B4">{{ i.note }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- 07 ACCESSIBILITY -->
+    <div style="margin-top:60px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#22D3EE;margin-bottom:8px;font-family:'JetBrains Mono'">07 · Accessibility — WCAG 2.1 AA</div>
+      <h2 style="font-size:27px;font-weight:750;letter-spacing:-.02em;margin:0 0 8px">Accessibility = credibility</h2>
+      <p style="font-size:13.5px;color:#8b95a2;margin:0 0 20px;max-width:64ch">Non-negotiable for enterprise trust. This is a build checklist, not a nice-to-have.</p>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+        <sc-for list="{{ a11y }}" as="a" hint-placeholder-count="6">
+          <div style="display:flex;gap:11px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:#0A0D12;padding:15px">
+            <span style="flex:0 0 auto;width:22px;height:22px;border-radius:7px;background:rgba(52,211,153,.14);display:grid;place-items:center;color:#34D399;margin-top:1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m5 13 4 4L19 7"></path></svg></span>
+            <div><div style="font-weight:650;font-size:13.5px;margin-bottom:3px">{{ a.title }}</div><div style="font-size:12.5px;line-height:1.5;color:#8b95a2">{{ a.body }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- 08 LAYOUT -->
+    <div style="margin-top:60px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#22D3EE;margin-bottom:8px;font-family:'JetBrains Mono'">08 · Layout &amp; grids</div>
+      <h2 style="font-size:27px;font-weight:750;letter-spacing:-.02em;margin:0 0 20px">Layout</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:18px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:12px">Desktop</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <sc-for list="{{ layoutDesktop }}" as="l" hint-placeholder-count="6">
+              <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#9AA6B4">{{ l.k }}</span><span style="font-family:'JetBrains Mono';color:#C7D0DB">{{ l.v }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;padding:18px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:12px">Mobile</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <sc-for list="{{ layoutMobile }}" as="l" hint-placeholder-count="6">
+              <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#9AA6B4">{{ l.k }}</span><span style="font-family:'JetBrains Mono';color:#C7D0DB">{{ l.v }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 09 WIRING -->
+    <div style="margin-top:60px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E9B872;margin-bottom:8px;font-family:'JetBrains Mono'">09 · Handoff — wire it up</div>
+      <h2 style="font-size:27px;font-weight:750;letter-spacing:-.02em;margin:0 0 8px">Prototype simulation → real integration</h2>
+      <p style="font-size:13.5px;color:#8b95a2;margin:0 0 20px;max-width:64ch">The prototype fakes the backend with canned data + timers. Here's what each simulated moment becomes in the build.</p>
+      <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;background:#0A0D12;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:14px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#5B6672"><div>In the prototype</div><div>In the build</div></div>
+        <sc-for list="{{ wiring }}" as="w" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:14px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.05)">
+            <div style="font-size:13px;color:#C7D0DB;line-height:1.5;font-weight:550">{{ w.sim }}</div>
+            <div style="font-size:12.5px;color:#9AA6B4;line-height:1.55">{{ w.real }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:12px;border:1px solid rgba(233,184,114,.28);background:rgba(233,184,114,.05);border-radius:13px;padding:16px;margin-top:16px">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#E9B872" stroke-width="1.9" style="flex:0 0 auto;margin-top:1px"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg>
+        <div><div style="font-weight:700;font-size:14px;color:#E9B872;margin-bottom:4px">Rule 14 — nothing fabricated in the UI</div><div style="font-size:13px;line-height:1.6;color:#9AA6B4">Never render vote counts, view counts, member/online counts, ratings, or testimonials until backed by real data. Below threshold, render the honest empty state (Trends, Experts, trust strip all ship empty-first). An honest empty beats a fake stat.</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:56px;padding-top:22px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:11px;color:#5B6672;font-size:12.5px">
+      <div style="position:relative;width:22px;height:22px;display:grid;place-items:center"><div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(34,211,238,.7)"></div><div style="width:6px;height:6px;border-radius:50%;background:#22D3EE"></div></div>
+      IIS Forums · dark-matter design system · hand-off to Claude Code · pairs with the live prototype
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1000,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  coverChips = ['Tokens as variables','Component inventory + states','Signature-interaction specs','WCAG 2.1 AA','Sim → build map','Rule 14'];
+
+  principles = [
+    { title:'Trust at first glance', color:'#67E8F9', body:'One obvious job per screen, zero clutter, enterprise polish. The universal ask bar is the single star of Home — everything else supports it.' },
+    { title:'Honest by construction', color:'#34D399', body:'Rule 14 is a design constraint, not a disclaimer. Confidence is always shown, sources are always linked, and empty states ship before fake numbers ever could.' },
+    { title:'Perceived speed', color:'#E9B872', body:'Optimistic routing, skeletons, staged AI-thinking traces. The answer feels instant even when a Fable-5 run takes seconds — the wait is legible, never a blank spinner.' },
+    { title:'Loop-closer', color:'#67E8F9', body:'Every solution can hand off to ARIA / Sentinel — web to machine to verified. Conversion paths are present and inviting, never a funnel; the forum reads as a gift.' },
+  ];
+
+  swatch = (bg, dark) => `height:52px;background:${bg}` + (dark ? ';box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)' : '');
+  colorGroups = [
+    { name:'Surfaces', items:[
+      { token:'--bg-void', hex:'#07080B', use:'App background', dark:true },
+      { token:'--surface-1', hex:'#0A0D12', use:'Panels · wells', dark:true },
+      { token:'--surface-2', hex:'#0C0F15', use:'Cards · inputs', dark:true },
+      { token:'--surface-3', hex:'#12161D', use:'Raised · hover', dark:true },
+    ]},
+    { name:'Text & hairlines', items:[
+      { token:'--text-primary', hex:'#EEF2F6', use:'Headings · body' },
+      { token:'--text-secondary', hex:'#9AA6B4', use:'Sub · meta' },
+      { token:'--text-tertiary', hex:'#5B6672', use:'Muted · hints' },
+      { token:'--hairline', hex:'rgba(255,255,255,.07)', use:'Borders · dividers', dark:true },
+    ]},
+    { name:'Cyan — primary / AI', items:[
+      { token:'--cyan-400', hex:'#67E8F9', use:'Links · hover' },
+      { token:'--cyan-500', hex:'#22D3EE', use:'Primary · AI · CTA' },
+      { token:'--cyan-600', hex:'#0E9CB8', use:'Deep · meter fill' },
+      { token:'--on-accent', hex:'#04262B', use:'Text on cyan', dark:true },
+    ]},
+    { name:'Gold — accepted / premium', items:[
+      { token:'--gold-400', hex:'#F5D199', use:'Light accents' },
+      { token:'--gold-500', hex:'#E9B872', use:'Accepted · graduated' },
+      { token:'--gold-600', hex:'#C9973F', use:'Deep gold' },
+      { token:'--gold-glow', hex:'rgba(233,184,114,.16)', use:'Highlight pulse', dark:true },
+    ]},
+    { name:'Semantic & confidence', items:[
+      { token:'--success', hex:'#34D399', use:'Verified · conf ≥85' },
+      { token:'--warning', hex:'#F5B34A', use:'Caution' },
+      { token:'--danger', hex:'#FB7185', use:'Error · BSOD' },
+      { token:'--conf-low', hex:'#7C8794', use:'Conf <65 → escalate', dark:true },
+    ]},
+  ];
+
+  typeScale = [
+    { name:'Display', spec:'56 / 800 / -.035em', size:38, weight:800, tracking:'-.03em', sample:'Describe the problem.' },
+    { name:'H1 · page', spec:'30–40 / 750 / -.025em', size:28, weight:750, tracking:'-.02em', sample:'Windows Update stuck at 0%' },
+    { name:'H2 · section', spec:'24–28 / 700 / -.02em', size:22, weight:700, tracking:'-.02em', sample:'Recently solved' },
+    { name:'Title · card', spec:'15–17 / 650', size:16, weight:650, tracking:'-.01em', sample:'Outlook password loop after MFA' },
+    { name:'Body', spec:'15 / 400–500 / 1.6', size:15, weight:450, tracking:'0', sample:'Blended from a verified KB and accepted community fixes.' },
+    { name:'Caption · meta', spec:'12.5 / 500', size:12.5, weight:500, tracking:'0', sample:'Windows 11 · Updated 3 days ago' },
+    { name:'Micro · label', spec:'11–12 / 600 / .06em ↑', size:11, weight:700, tracking:'.06em', sample:'RANKED #1', upper:true },
+    { name:'Mono', spec:"JetBrains 12.5 / 500", size:13, weight:500, tracking:'0', sample:'0xD1 · netio.sys · 94%', mono:true },
+  ];
+
+  spacing = [4,8,12,16,24,32,48,64].map(v => ({ v, bar:`width:14px;height:${Math.min(v,64)}px;background:linear-gradient(180deg,#22D3EE,#0E9CB8);border-radius:3px;opacity:.85` }));
+  radii = [['sm',8],['md',10],['lg',14],['xl',18],['pill',22]].map(([label,r]) => ({ label:label+' '+ (label==='pill'?'999':r), box:`width:44px;height:44px;background:#12161D;border:1px solid rgba(34,211,238,.4);border-radius:${label==='pill'?999:r}px` }));
+  elevation = [
+    { name:'e1 · card', use:'hairline + faint depth', box:'width:46px;height:34px;border-radius:9px;background:#10131A;border:1px solid rgba(255,255,255,.08)' },
+    { name:'e2 · raised', use:'0 6px 20px -6px rgba(0,0,0,.5)', box:'width:46px;height:34px;border-radius:9px;background:#10131A;box-shadow:0 6px 20px -6px rgba(0,0,0,.6)' },
+    { name:'e3 · modal', use:'0 40px 100px -24px rgba(0,0,0,.8)', box:'width:46px;height:34px;border-radius:9px;background:#151922;box-shadow:0 18px 40px -12px rgba(0,0,0,.8)' },
+    { name:'glow · CTA', use:'cyan cast under primary + focus ring', box:'width:46px;height:34px;border-radius:9px;background:#22D3EE;box-shadow:0 10px 26px -8px rgba(34,211,238,.7)' },
+  ];
+  motion = [
+    { name:'fast 120ms', desc:'hover · color · small state' },
+    { name:'base 180–200ms', desc:'route · reveal · toggle' },
+    { name:'slow 320ms', desc:'modal · sheet · emphasis' },
+    { name:'ease-standard', desc:'cubic-bezier(.2,.7,.2,1)' },
+    { name:'loops', desc:'shimmer 1.4s · dots 1.2s · spinner .8s · ring-pulse 1.6s×2' },
+  ];
+
+  confSamples = [
+    { label:'94% · High', color:'#34D399', fill:'width:94%;height:100%;border-radius:999px;background:linear-gradient(90deg,#0E9CB8,#34D399)' },
+    { label:'76% · Medium', color:'#E9B872', fill:'width:76%;height:100%;border-radius:999px;background:linear-gradient(90deg,#C9973F,#E9B872)' },
+    { label:'52% · Low', color:'#7C8794', fill:'width:52%;height:100%;border-radius:999px;background:#6b7683' },
+  ];
+
+  components = [
+    { name:'Button', variants:'primary · secondary · ghost · gold (escalate)', states:'hover · active · focus-ring · disabled · loading' },
+    { name:'Universal ask bar', variants:'hero · header-compact · inline (results)', states:'idle · focus (glow + suggestions) · typing · submitting' },
+    { name:'Confidence meter', variants:'bar · compact chip', states:'high (green ≥85) · medium (gold 65–84) · low (muted <65 → escalate)' },
+    { name:'Result / solution card', variants:'ranked #1 (emphasized) · standard row · discussion-sourced', states:'default · hover · focus' },
+    { name:'Source badge', variants:'KB · Verified · from a discussion · Graduated', states:'—' },
+    { name:'Tag / filter chip', variants:'category · sort', states:'active · inactive · hover' },
+    { name:'Avatar', variants:'solo · stacked (initials, no fake +N)', states:'—' },
+    { name:'Thread row', variants:'accepted · active · neutral', states:'hover · status dot' },
+    { name:'AI card', variants:'suggested-answer · diagnosis · thinking-trace', states:'thinking (staged) · answered · sourced' },
+    { name:'Post', variants:'OP · reply · accepted (gold)', states:'default · deep-link highlight (ring-pulse)' },
+    { name:'Fix-with-ARIA modal', variants:'choose · running · applied · Sentinel fallback', states:'agentic progress · success' },
+    { name:'SSO modal', variants:'IIS single sign-on', states:'default · signed-in toast' },
+    { name:'Toast', variants:'info · success · error', states:'enter · auto-dismiss (3.4s)' },
+    { name:'Empty state', variants:'no-confident-match · Trends · Experts', states:'honest copy + next action' },
+    { name:'Skeleton', variants:'result rows', states:'shimmer while loading' },
+    { name:'Mobile chrome', variants:'device frame · status bar · bottom 5-tab nav', states:'active tab (cyan)' },
+  ];
+
+  interactions = [
+    { n:'1', name:'Universal ask → ranked answer', steps:['type in plain English','Enter / Ask','route to Solutions','skeleton ~1.1s','ranked #1 + confidence'], note:'Optimistic route feels instant. #1 result is emphasized with a confidence meter and a “Why #1” rationale; low-confidence queries fall through to the honest no-match state (ask community / escalate).' },
+    { n:'2', name:'Screenshot → diagnosis (Fable 5 vision)', steps:['drop / paste / sample','user bubble','thinking trace ~2.4s','diagnosis card'], note:'Staged trace (read input → match KB → rank fix) keeps the wait legible. Result returns root cause, error signature, steps, confidence, and one-click Fix + open-discussion fallback. Present on the Solution page and Ask AI.' },
+    { n:'3', name:'One-click Fix with ARIA', steps:['CTA on any solution','modal: steps preview','running: agentic checks + progress ~2.4s','applied: verified + rollback','success toast'], note:'Local-first framing throughout. Sentinel download is the fallback when ARIA isn’t installed. This is the web → machine loop-closer.' },
+    { n:'4', name:'Discussion → Solution deep-link', steps:['result badged “from a discussion”','click','route to exact thread','smooth scroll-to','gold ring-pulse ~3.2s → fade'], note:'Accepted answers graduate into the KB with a backlink; results deep-link to the precise post and land with a highlight so the user sees exactly why it ranked.' },
+  ];
+
+  a11y = [
+    { title:'Contrast ≥ AA', body:'Primary text ~15:1 on void; secondary ~7:1. On-accent uses #04262B on cyan. Verify every badge/label pair at build.' },
+    { title:'Visible focus', body:'Cyan focus ring (0 0 0 4px rgba(34,211,238,.1) + border) on all interactive elements. Never remove an outline without a replacement.' },
+    { title:'Keyboard complete', body:'Full tab order, Enter submits the ask bar, Esc closes modals, arrow keys move through ask-bar suggestions. Modals trap focus.' },
+    { title:'Screen-reader semantics', body:'Landmark nav/main, heading hierarchy, aria-live on AI-thinking + toasts, alt text on user screenshots, aria-hidden on decorative icons.' },
+    { title:'Reduced motion', body:'prefers-reduced-motion disables shimmer, ring-pulse, thinking-dot bounce, and the deep-link auto-scroll animation (jump instead).' },
+    { title:'Hit targets ≥44px', body:'Mobile bottom-nav items, buttons, and vote controls meet 44px minimum. Chips get adequate spacing to avoid mis-taps.' },
+  ];
+
+  layoutDesktop = [
+    { k:'Top nav', v:'60px sticky' },
+    { k:'Home', v:'max 1120' },
+    { k:'Solutions', v:'max 940' },
+    { k:'Solution', v:'max 800' },
+    { k:'Thread', v:'max 780' },
+    { k:'Ask AI', v:'max 760' },
+    { k:'Gutter', v:'28px' },
+  ];
+  layoutMobile = [
+    { k:'Frame', v:'392px' },
+    { k:'Chrome', v:'status + app bar' },
+    { k:'Primary nav', v:'bottom 5-tab' },
+    { k:'Grids', v:'1 column' },
+    { k:'Gutter', v:'16–18px' },
+    { k:'Targets', v:'≥44px' },
+  ];
+
+  wiring = [
+    { sim:'Ranked results from canned data + a timer', real:'RUN-A semantic retriever over the KB + accepted answers; confidence = normalized retriever score; blend + badge by source.' },
+    { sim:'“from a discussion” badge + deep-link', real:'Store the source thread/post anchor on each promoted KB entry; route + scroll-to + highlight the exact post.' },
+    { sim:'“Graduated to Solutions” badge', real:'Auto-promote accepted answers into the KB with a two-way backlink; show the badge on both the thread and the solution.' },
+    { sim:'Screenshot → diagnosis (2.4s timer)', real:'Fable 5 vision; stream the staged trace; return structured { signature, rootCause, steps[], confidence }.' },
+    { sim:'Fix with ARIA (progress timer)', real:'Hand off to the ARIA / Sentinel agent; poll run states; return a verify result + rollback token. Sentinel install is the no-agent fallback.' },
+    { sim:'SSO modal → toast', real:'IIS account OIDC / SSO. Forum stays fully readable without auth — search needs no account (free, no paywall).' },
+  ];
+
+  renderVals() {
+    const withPreview = (t) => ({
+      ...t,
+      preview: `font-size:${t.size}px;font-weight:${t.weight};letter-spacing:${t.tracking};line-height:1.15;color:#EEF2F6;white-space:nowrap;`
+        + (t.mono ? "font-family:'JetBrains Mono';" : '')
+        + (t.upper ? 'text-transform:uppercase;' : ''),
+    });
+    const withSwatch = (c) => ({ ...c, swatch: this.swatch(c.hex, c.dark) });
+    return {
+      coverChips: this.coverChips,
+      principles: this.principles,
+      colorGroups: this.colorGroups.map(g => ({ ...g, items: g.items.map(withSwatch) })),
+      typeScale: this.typeScale.map(withPreview),
+      spacing: this.spacing, radii: this.radii, elevation: this.elevation, motion: this.motion,
+      confSamples: this.confSamples, components: this.components, interactions: this.interactions,
+      a11y: this.a11y, layoutDesktop: this.layoutDesktop, layoutMobile: this.layoutMobile, wiring: this.wiring,
+    };
+  }
+}
+</script>
+</body>
+</html>

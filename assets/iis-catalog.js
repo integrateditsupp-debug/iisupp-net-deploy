@@ -138,16 +138,30 @@
     {
       id: 'gl-helpdesk-blueprint',
       title: 'AI Help Desk Automation Blueprint',
-      blurb: 'The architecture for an AI-assisted help desk — the exact thinking behind ARIA.',
-      long: 'How AI monitors tickets, summarizes them, detects SLA risk, alerts teams, suggests fixes, writes knowledge articles and reduces Level-1 noise. A complete conceptual blueprint — patterns, escalation logic, KPI/SLA monitoring and a future roadmap — for businesses and MSPs building AI into support.',
-      inside: ['AI ticket monitoring, summary & SLA-risk detection', 'Suggested-fix & auto-KB-article concepts', 'Teams / Outlook alert patterns', 'Ticket-pattern detection & triage logic', 'SLA / KPI monitoring concepts', 'Help-desk automation architecture', 'ARIA-style future roadmap'],
+      blurb: 'A vendor-neutral guide to reduce repeated L1 noise, improve ticket quality, and pilot AI-assisted support with the tools you already own.',
+      long: 'A practical help-desk blueprint for MSPs and internal IT teams: baseline the queue, tighten intake and routing, add self-serve and template responses, structure knowledge for people and AI systems, and pilot AI-assisted triage without forcing a new platform purchase first. Built to bridge naturally into ARIA or an IIS implementation sprint when the team wants help.',
+      inside: ['10-ticket baseline audit + L1 noise scoring', 'Self-serve portal, SSPR, and KB starter plan', 'Routing rules, ticket taxonomy, and escalation matrix', 'Template response library + onboarding/offboarding flow', 'AI-assisted triage options using existing tools', '90-day rollout checklist + leadership metrics'],
       priceCents: 44700, category: 'Cloud & Automation', section: 'guides',
-      audience: ['business', 'ai', 'it'], format: 'PDF blueprint + diagrams',
+      audience: ['business', 'ai', 'it'], format: 'PDF blueprint + AI-readable JSON',
       tags: ['help desk automation', 'ai knowledge base for support teams', 'technical support SOP'],
       seo: ['help desk automation', 'AI knowledge base for support teams', 'technical support SOP'],
       free: false, password: true, featured: true, trendScore: 86,
       preview: '/downloads/library/ai-help-desk-automation-blueprint-preview.html', file: null,
-      related: ['gl-m365-kb', 'gl-ai-agent-starter'], bundle: 'bundle-ai-automation', upsell: 'aria'
+      related: ['gl-ai-readable-kb-pack', 'gl-service-desk-sop-pack', 'gl-m365-kb', 'gl-l1-it-bible'], bundle: 'bundle-ai-automation', upsell: 'aria'
+    },
+    {
+      id: 'gl-ai-readable-kb-pack',
+      title: 'AI-Readable IT Support KB Pack',
+      blurb: 'A proof-first support knowledge pack that shows buyers how clean article structure, metadata, and escalation logic should work before a larger KB build.',
+      long: 'A practical support-knowledge pack for MSPs, internal IT teams, and AI builders who need support articles people and systems can trust. It shows how IIS structures symptoms, user-safe steps, admin boundaries, escalation triggers, and metadata so recurring issues stop living in scattered notes, half-finished SOPs, and ticket memory. It is built to bridge naturally into a scoped AI Knowledge Base Build when the real need is broader than one pack.',
+      inside: ['Article structure with user-safe and admin-boundary steps', 'Metadata and taxonomy fields for cleaner retrieval and routing', 'Escalation signals that stop risky self-fixes early', 'Sample AI-readable formatting for future support agents', 'Support-knowledge cleanup posture before a bigger build', 'Route into a scoped AI Knowledge Base Build when needed'],
+      priceCents: 19700, category: 'Knowledge Base Packs', section: 'guides',
+      audience: ['ai', 'it', 'business'], format: 'PDF + AI-readable KB schema',
+      tags: ['ai readable knowledge base', 'support knowledge base', 'it support kb', 'support documentation'],
+      seo: ['AI-readable IT support KB pack', 'support knowledge base structure', 'IT support knowledge base template'],
+      free: false, password: true, featured: true, trendScore: 87,
+      preview: '/downloads/library/ai-readable-it-support-kb-pack-preview.html', file: null,
+      related: ['gl-service-desk-sop-pack', 'gl-helpdesk-blueprint', 'gl-m365-kb'], bundle: null, upsell: 'service'
     },
     {
       id: 'gl-cyber-basics',
@@ -189,7 +203,7 @@
       seo: ['service desk SOP pack', 'help desk SOP templates', 'support escalation process'],
       free: false, password: true, featured: true, trendScore: 85,
       preview: '/downloads/library/service-desk-sop-pack-preview.html', file: null,
-      related: ['gl-helpdesk-blueprint', 'gl-m365-kb', 'gl-l1-it-bible'], bundle: null, upsell: 'service'
+      related: ['gl-ai-readable-kb-pack', 'gl-helpdesk-blueprint', 'gl-m365-kb', 'gl-l1-it-bible'], bundle: null, upsell: 'service'
     },
     {
       id: 'gl-meeting-sop-pack',
@@ -655,6 +669,7 @@
       priceHtml = '<span class="iis-book__price">' + money(p.priceCents) + '</span>';
       actions =
         '<span class="iis-book__actions">' +
+          '<a class="iis-book__detail" href="/product.html?id=' + esc(p.id) + '">Details</a>' +
           '<button class="iis-book__peek" data-buy="' + esc(p.id) + '-peek" onclick="IIS_CATALOG.buy(\'' + esc(p.id) + '\',\'peek\')" title="A teaser, credited toward full access">Peek ' + money(previewCents(p)) + '</button>' +
           '<button class="iis-book__open" data-buy="' + esc(p.id) + '-full" onclick="IIS_CATALOG.buy(\'' + esc(p.id) + '\',\'full\')">Unlock</button>' +
         '</span>';

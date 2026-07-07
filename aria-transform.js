@@ -3,7 +3,7 @@
    - The REAL ARIA orb (#globeWrap .globe-stage) morphs in place when a query is sent:
        A  ->  app icon (by detected issue)  ->  fault-path dive  ->  diagnosis check  ->  A
    - A compact, clearly-labeled VISUALIZATION box is added in the chat showing what ARIA is checking.
-   - The "Resolve it for me" auto-fix card is grayed out as COMING SOON (future feature).
+   - The "Prepare fix for approval" card is labeled as a preview, not a live device fix.
    Honesty: this is an illustrative visualization of ARIA's reasoning. It does NOT claim ARIA
    executed anything on the user's device. No fabricated "resolved / downtime saved" metrics.
 */
@@ -56,10 +56,10 @@
   ready(function(){
     var style=document.createElement('style');style.id='aex-orb-style';style.textContent=CSS;document.head.appendChild(style);
 
-    // gray out the "Resolve it for me" auto-fix card whenever it appears (it is added dynamically)
-    function gray(){document.querySelectorAll('.choice.recommended').forEach(function(o2){if(o2.__aexg)return;o2.__aexg=1;o2.style.position='relative';o2.style.opacity='.5';o2.style.filter='grayscale(1)';o2.style.pointerEvents='none';var b=document.createElement('div');b.className='aexcs';b.textContent='COMING SOON';o2.appendChild(b);});}
-    gray();
-    try{new MutationObserver(gray).observe(document.body,{childList:true,subtree:true});}catch(e){}
+    // mark the staged fix path as a preview whenever it appears (it is added dynamically)
+    function markPreview(){document.querySelectorAll('.choice.recommended').forEach(function(o2){if(o2.__aexg)return;o2.__aexg=1;o2.style.position='relative';var b=document.createElement('div');b.className='aexcs';b.textContent='PREVIEW';o2.appendChild(b);});}
+    markPreview();
+    try{new MutationObserver(markPreview).observe(document.body,{childList:true,subtree:true});}catch(e){}
 
     var ovBuilt=false,letterEl=null,stageEl=null;
     function buildOverlay(){

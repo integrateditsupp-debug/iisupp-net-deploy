@@ -99,8 +99,8 @@ export function collectApprovalBullets(markdown) {
 }
 
 function classifyApproval(item) {
-  if (/approved-to-transmit|send them when an email\/contact surface is available/i.test(item)) return 'send';
-  if (/Jason Brown/i.test(item)) return 'dated_send';
+  if (/approved-to-transmit|send them when an email\/contact surface is available|Direct-contact follow-up queue|Jason Brown \/ Hines follow-up: if Jason has not replied|July 2 warm lead send gate: if Jason Brown and\/or Azim Lila are still silent/i.test(item)) return 'send';
+  if (/Friday, 2026-06-12|window opens|dated follow-up|Watch for reply|still silent on \d{4}-\d{2}-\d{2}|follow-up then/i.test(item)) return 'dated_send';
   if (/supplier registration|Create Account|Register|certification|CAPTCHA/i.test(item)) return 'portal_submit';
   if (/publish|preview slice|local-only|deployment-path slice|sample-preview slice|route-guide slice/i.test(item)) return 'publish';
   if (/delete|archive|cleanup/i.test(item)) return 'cleanup';

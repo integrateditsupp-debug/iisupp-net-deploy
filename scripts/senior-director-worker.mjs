@@ -20,6 +20,7 @@ const LEAD_QUEUE_FILE = path.join(STATE_DIR, 'lead-queue.jsonl');
 const AGENT_QUEUE_FILE = path.join(STATE_DIR, 'codex-claude-queue.md');
 const OVERNIGHT_BRIEF_FILE = path.join(STATE_DIR, 'overnight-brief.md');
 const OPERATING_BOARD_FILE = path.join(STATE_DIR, 'director-operating-board.md');
+const OVERRIDES_FILE = path.join(STATE_DIR, 'opportunity-engine', 'manual-overrides.json');
 const APPROVALS_FILE = path.join(STATE_DIR, 'ceo-approval-required.md');
 const GROWTH_WORKBOOK_FILE = path.join(STATE_DIR, 'IIS_Growth_Engine.xlsx');
 const GROWTH_RESEARCH_NOTES_FILE = path.join(STATE_DIR, 'growth-research-notes.md');
@@ -39,6 +40,7 @@ const WORKSPACE_KNOWLEDGE_HANDOFF_FILE = path.join(STATE_DIR, 'workspace-knowled
 const AGENT_CARE_REPORT_FILE = path.join(STATE_DIR, 'agent-care-and-recognition.md');
 const WORKSPACE_STEWARD_QUEUE_FILE = path.join(STATE_DIR, 'workspace-steward-task-queue.md');
 const EXECUTION_NOTES = path.join(ROOT, 'AGENT_EXECUTION_NOTES.md');
+const WARM_LEAD_SEND_GATE_DATE = '2026-07-02';
 
 const CFG = {
   baseUrl: process.env.IIS_BASE_URL || 'https://iisupp.net',
@@ -196,6 +198,17 @@ function sleep(ms) {
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+function todayIsoDate() {
+  return nowIso().slice(0, 10);
+}
+
+function warmLeadSendGateApprovalText(today = todayIsoDate()) {
+  if (today >= WARM_LEAD_SEND_GATE_DATE) {
+    return 'July 2 warm lead send gate: if Jason Brown and/or Azim Lila are still silent, Ahmad can send or hold the approved short follow-ups now after checking LinkedIn reply state first. Use `senior-director-state/july-02-warm-lead-send-gate-2026-07-01.md`.';
+  }
+  return `July 2 warm lead send gate: watch LinkedIn reply state first. If Jason Brown and/or Azim Lila are still silent on ${WARM_LEAD_SEND_GATE_DATE}, Ahmad can send or hold the prepared follow-ups then. Use \`senior-director-state/july-02-warm-lead-send-gate-2026-07-01.md\`.`;
 }
 
 async function ensureState() {
@@ -370,6 +383,45 @@ function leadSummary(lead, classification) {
   ].filter(Boolean).join('\n');
 }
 
+function matchesLeadOverride(lead, rule) {
+  const match = rule?.match || {};
+  const sourceLink = String(lead?.url || '').toLowerCase();
+  const title = String(lead?.title || '');
+  const org = String(lead?.org || '');
+  if (match.sourceLinkIncludes && !sourceLink.includes(String(match.sourceLinkIncludes).toLowerCase())) return false;
+  if (match.titleIncludes && !title.includes(match.titleIncludes)) return false;
+  if (match.organizationIncludes && !org.includes(match.organizationIncludes)) return false;
+  return Boolean(match.sourceLinkIncludes || match.titleIncludes || match.organizationIncludes);
+}
+
+function findLeadOverride(lead, overrides) {
+  return (overrides || []).find((rule) => matchesLeadOverride(lead, rule)) || null;
+}
+
+function classificationWithOverride(lead, classification, overrides) {
+  const override = findLeadOverride(lead, overrides);
+  if (override?.action === 'ignore') {
+    return {
+      level: override.disposition || 'manual_override',
+      stream: 'Parked / Manual Override',
+      reason: override.reason || 'Manually parked by override.',
+      allowed: false,
+      override
+    };
+  }
+  if (override?.action === 'note') {
+    return {
+      ...classification,
+      reason: override.reason || classification.reason,
+      override
+    };
+  }
+  return {
+    ...classification,
+    override: null
+  };
+}
+
 async function queueForCodexClaude(title, body) {
   const stamp = nowIso();
   const entry = `\n## ${stamp} - Senior Director Worker\n\n### ${title}\n\n${body.trim()}\n`;
@@ -527,11 +579,12 @@ function parseLogSummary(text) {
   };
 }
 
-function parseLeadSummary(text) {
+function parseLeadSummary(text, overrides = []) {
   const leads = text.split(/\r?\n/).map((line) => {
     try { return JSON.parse(line); } catch { return null; }
   }).filter(Boolean).map((item) => {
-    const currentClassification = item.lead ? classifyLead(item.lead) : (item.classification || {});
+    const baseClassification = item.lead ? classifyLead(item.lead) : (item.classification || {});
+    const currentClassification = classificationWithOverride(item.lead || {}, baseClassification, overrides);
     return { ...item, currentClassification };
   });
   return {
@@ -765,14 +818,16 @@ function formatLeadBullets(summary) {
 
 function buildOperatingBoard({ hb, repo, logSummary, leadSummary, recentNotes, growthNotes, mcpReport, cleanupBoard, retirementPlan, careReport }) {
   const changed = repo.status ? repo.status.split('\n').filter(Boolean).length : 0;
+  const today = todayIsoDate();
   const approvalItems = [
-    'Direct-contact follow-up queue: `WD Numeric Corporate Services`, `Tangs Accounting Services`, and `Global Health Physiotherapy Clinic` were already sent on 2026-06-11 through public website contact forms. The next live action is for Ahmad to send or hold the prepared follow-up drafts now.',
-    'Jason Brown / Hines follow-up: if Jason has not replied, Ahmad can send or hold the approved short follow-up now. Use `senior-director-state/hines-jason-brown-friday-send-checklist-2026-06-11.md`.',
+    warmLeadSendGateApprovalText(today),
     APPROVED_PUBLISH_SUMMARY,
     ...LOCAL_ONLY_STAGED_REVIEW_FILES.map(approvalTextForReview),
     'Workspace cleanup posture: summary-only cleanup pass is approved. Destructive cleanup remains blocked.',
     'Samsung ProCare tender posture: park as no-bid unless a real no-cost compliant OEM/partner path appears.',
-    'RBC supplier registration path: live portal open and partially prefilled with verified IIS company/contact fields. Remaining Ahmad-only steps are CAPTCHA, any attestation/certification choices, account credentials, and the final `Register` click.',
+    'TELUS supplier registration path: live SAP Ariba form is restaged with the verified IIS company/contact fields. Remaining Ahmad-only steps are password entry, checkbox consent, account creation, and the final `Register` click. Use `senior-director-state/telus-live-registration-handoff-2026-06-27.md`.',
+    'Rogers supplier registration path: live Ivalua self-registration is restaged at the browser-check CAPTCHA gate. Remaining Ahmad-only steps are solving the CAPTCHA, reviewing the exposed registration/compliance fields, and the final `Create Account` / `Register` click. Use `senior-director-state/rogers-live-registration-handoff-2026-07-02.md`.',
+    'TD supplier request path: live SAP Ariba supplier-request flow is restaged at the reCAPTCHA gate. Remaining Ahmad-only steps are solving the CAPTCHA, reviewing the exposed supplier-request fields and Supplier Code of Conduct posture, and the final `Submit` click. Use `senior-director-state/td-live-request-handoff-2026-07-02.md`.',
     hb.openclawReadiness?.authExpired ? 'OpenClaw/Claude OAuth is expired; Ahmad or a signed-in desktop session may need to refresh auth.' : null,
     changed > 120 ? `Repo has ${changed} changed files; deployment grouping should still be reviewed before any production publish.` : null,
     /Retirement Candidates|Approval Required Before|Retiring agents/i.test(`${retirementPlan}\n${cleanupBoard}`) ? 'Workspace steward has cleanup/retirement recommendations; destructive action stays blocked until a later keep/archive/delete review.' : null
@@ -891,11 +946,13 @@ async function runOperatingCycle(hb) {
     readTextTail(AGENT_RETIREMENT_PLAN_FILE, 5000),
     readTextTail(AGENT_CARE_REPORT_FILE, 4000)
   ]);
+  const overrideDb = await readJson(OVERRIDES_FILE, { overrides: [] });
+  const overrides = Array.isArray(overrideDb.overrides) ? overrideDb.overrides : [];
   const board = buildOperatingBoard({
     hb,
     repo,
     logSummary: parseLogSummary(recentLog),
-    leadSummary: parseLeadSummary(allLeads),
+    leadSummary: parseLeadSummary(allLeads, overrides),
     recentNotes,
     growthNotes,
     mcpReport,

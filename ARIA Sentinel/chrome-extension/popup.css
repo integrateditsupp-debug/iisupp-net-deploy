@@ -79,6 +79,13 @@ button:hover {
   gap: 8px;
 }
 
+.web-chat {
+  width: 100%;
+  border-color: rgba(122, 251, 255, .36);
+  color: #7afbff;
+  font-family: ui-monospace, "SF Mono", Monaco, Menlo, monospace;
+}
+
 #messages {
   min-height: 180px;
   max-height: 220px;
@@ -134,7 +141,8 @@ footer {
 }
 
 /* Per-site "leave me alone" toggle */
-.site-toggle {
+.site-toggle,
+.protection-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -145,10 +153,14 @@ footer {
   border-radius: 10px;
   background: rgba(197, 160, 89, .06);
 }
-.site-toggle label { display: flex; flex-direction: column; gap: 2px; cursor: pointer; }
-.site-toggle #siteName { font-size: 13px; font-weight: 600; word-break: break-all; }
-.site-toggle #siteState { font-size: 11px; color: #c5a059; }
-.site-toggle input { width: 18px; height: 18px; accent-color: #c5a059; cursor: pointer; }
+.site-toggle label,
+.protection-toggle label { display: flex; flex-direction: column; gap: 2px; cursor: pointer; }
+.site-toggle #siteName,
+.protection-toggle span { font-size: 13px; font-weight: 600; word-break: break-all; }
+.site-toggle #siteState,
+.protection-toggle small { font-size: 11px; color: #c5a059; }
+.site-toggle input,
+.protection-toggle input { width: 18px; height: 18px; accent-color: #c5a059; cursor: pointer; }
 
 /* RUN 5 — status badge + today counter */
 .status-badge-row { display: flex; align-items: center; gap: 8px; margin: 10px 16px 0; padding: 8px 12px; border: 1px solid rgba(197,160,89,.3); border-radius: 10px; font-size: 12px; }

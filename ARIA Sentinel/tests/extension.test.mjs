@@ -8,6 +8,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "u
 
 assert.equal(manifest.manifest_version, 3);
 assert.equal(manifest.name, "ARIA Sentinel");
+assert.equal(manifest.version_name, "0.1.0-web-chat-20260707", "manifest exposes the latest web-chat build marker");
 for (const permission of ["browsingData", "storage", "tabs", "scripting"]) {
   assert.ok(manifest.permissions.includes(permission), `manifest includes ${permission}`);
 }
@@ -42,6 +43,22 @@ assert.equal(prefs.normalizeHost("EXAMPLE.com"), "example.com");
 assert.equal(prefs.AUTO_PAUSE_MS, 5 * 60 * 1000, "auto-pause window is 5 minutes");
 assert.equal(prefs.shouldAutoPause(0, 5 * 60 * 1000 + 1), true, "auto-pause fires just past 5 min");
 assert.equal(prefs.shouldAutoPause(0, 60 * 1000), false, "no auto-pause inside the window");
+assert.equal(prefs.isProtectionEnabled(undefined), true, "browser protection defaults on");
+assert.equal(prefs.isProtectionEnabled(false), false, "browser protection can be paused");
+assert.equal(prefs.PROTECTION_POLICY_KEY, "ariaBrowserProtectionPolicy", "managed policy key is exported");
+assert.equal(prefs.EXTENSION_BUILD_MARKER, "web-chat-20260707", "shared build marker exposes the latest extension bundle");
+const managedOverride = prefs.resolveProtection(false, { locked: true, enabled: true, reason: "Admin policy" });
+assert.equal(managedOverride.enabled, true, "managed policy lock overrides user pause");
+assert.equal(managedOverride.locked, true, "managed policy lock is surfaced");
+assert.equal(managedOverride.source, "managed", "managed policy lock is source-attributed");
+assert.equal(managedOverride.reason, "Admin policy", "managed policy reason is preserved");
+assert.equal(prefs.classifyBrowserIssue({ statusCode: 404 }).signal, "BROWSER.HTTP.404");
+assert.equal(prefs.classifyBrowserIssue({ errorText: "NET::ERR_CERT_DATE_INVALID" }).signal, "BROWSER.CERT.ERROR");
+assert.equal(prefs.classifyBrowserIssue({ errorText: "ERR_PROXY_CONNECTION_FAILED" }).signal, "BROWSER.PROXY.ERROR");
+assert.equal(prefs.classifyBrowserIssue({ errorText: "DNS_PROBE_FINISHED_NXDOMAIN" }).signal, "BROWSER.DNS.ERROR");
+assert.equal(prefs.classifyBrowserIssue({ title: "Deceptive site ahead" }).signal, "BROWSER.SECURITY.SUSPICIOUS");
+assert.equal(prefs.classifyBrowserIssue({ bodyText: "Service Unavailable", statusCode: 503 }).vendorOutagePossible, true);
+assert.equal(prefs.classifyBrowserIssue({ errorText: "content security policy blocked resource" }).signal, "BROWSER.RESOURCE.BLOCKED");
 
 // An in-memory stand-in for chrome.storage.sync (promise-based get/set).
 function makeSyncStorage() {
@@ -57,6 +74,17 @@ function makeSyncStorage() {
 const storage = makeSyncStorage();
 // (load() returns an array minted inside the vm realm, so compare by length, not deepEqual.)
 assert.equal((await prefs.load(storage)).length, 0, "starts with no disabled sites");
+assert.equal(await prefs.loadProtection(storage), true, "global browser monitoring defaults on");
+await prefs.saveProtection(storage, false);
+assert.equal(await prefs.loadProtection(storage), false, "global browser monitoring pause persists");
+await prefs.saveProtection(storage, true);
+assert.equal(await prefs.loadProtection(storage), true, "global browser monitoring resume persists");
+const managedStorage = makeSyncStorage();
+managedStorage.backing[prefs.PROTECTION_POLICY_KEY] = { locked: true, enabled: false, reason: "Pilot safety hold" };
+const lockedProtection = await prefs.loadEffectiveProtection(storage, managedStorage);
+assert.equal(lockedProtection.enabled, false, "managed lock can force monitoring off");
+assert.equal(lockedProtection.locked, true, "managed lock marks toggle locked");
+assert.equal(lockedProtection.source, "managed", "managed lock is source-attributed");
 
 const list = prefs.toggle(await prefs.load(storage), "https://example.com/app");
 await prefs.save(storage, list);
@@ -73,12 +101,48 @@ assert.equal(prefs.isDisabled(await prefs.load(storage), "example.com"), false, 
 const contentJs = fs.readFileSync(path.join(root, "content-script.js"), "utf8");
 assert.match(contentJs, /AriaSitePrefs|prefs\./, "content script uses the shared site-prefs API");
 assert.match(contentJs, /isDisabled/, "content script checks the per-site disable list");
+assert.match(contentJs, /loadProtection|PROTECTION_KEY/, "content script checks the global monitoring toggle");
+assert.match(contentJs, /loadEffectiveProtection|PROTECTION_POLICY_KEY/, "content script honors managed protection policy");
+assert.match(contentJs, /Resolve it for me/, "content card offers autonomous/resolve option");
+assert.match(contentJs, /Walkthrough/, "content card offers manual walkthrough option");
+assert.match(contentJs, /Live help/, "content card offers live help fallback");
+assert.match(contentJs, /securitypolicyviolation/, "content script watches blocked resources");
+assert.match(contentJs, /RELOAD_PAGE/, "content script can request a safe reload action");
+assert.match(contentJs, /BROWSER_OUTCOME/, "content script records per-issue user outcomes");
+assert.match(contentJs, /recordOutcome\("walkthrough"|recordOutcome\("resolved"|recordOutcome\("dismissed"/, "content script records walkthrough/resolve/dismiss choices");
 assert.match(contentJs, /AUTO_PAUSE_MS|setTimeout/, "content script implements auto-pause");
+assert.match(contentJs, /dataset\.sentinelBuild/, "content script exposes a DOM build marker for stale-extension detection");
+
+const backgroundJs = fs.readFileSync(path.join(root, "background.js"), "utf8");
+assert.match(backgroundJs, /SET_PROTECTION/, "background accepts global protection changes");
+assert.match(backgroundJs, /monitoring_disabled/, "background does not log detections while monitoring is paused");
+assert.match(backgroundJs, /RELOAD_PAGE/, "background exposes a safe reload action");
+assert.match(backgroundJs, /BROWSER_OUTCOME/, "background accepts per-issue outcome records");
+assert.match(backgroundJs, /"\/browser-outcome"/, "background forwards sanitized browser outcomes to the local desktop bridge");
+assert.match(backgroundJs, /https:\/\/iisupp\.net\/aria/, "background links fallback chat to the ARIA web chat");
+assert.match(backgroundJs, /aria-kb-query/, "background uses no-cost ARIA KB query before web chat");
+assert.match(backgroundJs, /aria-chat/, "background can fall through to the ARIA web chat endpoint");
+assert.match(backgroundJs, /sentinel-browser-extension/, "background labels extension chat requests for the web chat");
+assert.match(backgroundJs, /aria-web-chat|aria-web-kb/, "background returns a web-chat provider label");
+assert.match(backgroundJs, /OUTCOME_LIMIT = 50/, "background caps outcome history at 50 records");
+assert.match(backgroundJs, /policy_locked/, "background blocks user toggle changes when managed policy locks protection");
+assert.match(backgroundJs, /PROTECTION_POLICY_KEY/, "background reads managed browser protection policy");
 
 // Popup exposes the per-site toggle and loads the shared module first.
 const popupHtml = fs.readFileSync(path.join(root, "popup.html"), "utf8");
 assert.match(popupHtml, /id="siteDisable"/, "popup has the On-this-site toggle");
+assert.match(popupHtml, /id="protectionToggle"/, "popup has the global Browser protection toggle");
+assert.match(popupHtml, /id="openAriaWeb"/, "popup exposes a direct ARIA web chat link");
 assert.match(popupHtml, /site-prefs\.js/, "popup loads site-prefs.js");
+const popupJs = fs.readFileSync(path.join(root, "popup.js"), "utf8");
+assert.match(popupJs, /loadEffectiveProtection/, "popup renders effective protection state");
+assert.match(popupJs, /locked by admin/, "popup explains managed lock state");
+assert.match(popupJs, /box\.disabled/, "popup disables protection toggle when policy locked");
+assert.match(popupJs, /https:\/\/iisupp\.net\/aria/, "popup direct link opens ARIA web chat");
+assert.match(popupJs, /aria-kb-query/, "popup preview uses ARIA web KB-first path");
+assert.match(popupJs, /aria-chat/, "popup preview can fall through to ARIA web chat");
+assert.match(popupJs, /Open ARIA web/, "popup chat exposes the ARIA web chat link on replies");
+assert.match(popupJs, /dataset\.sentinelBuild/, "popup exposes a DOM build marker for stale-extension detection");
 
 // ---- RUN 5: all three browser manifests validate -------------------------------------------
 const repoRoot = path.resolve("");
@@ -88,6 +152,7 @@ for (const dir of ["chrome-extension", "edge-extension", "safari-extension"]) {
     : path.join(repoRoot, dir, "manifest.json");
   const mf = JSON.parse(fs.readFileSync(mfPath, "utf8"));
   assert.equal(mf.manifest_version, 3, `${dir} is MV3`);
+  assert.equal(mf.version_name, "0.1.0-web-chat-20260707", `${dir} exposes latest build marker`);
   assert.ok(/ARIA Sentinel/.test(mf.name), `${dir} name`);
   assert.ok(Array.isArray(mf.content_scripts) && mf.content_scripts[0].js.includes("content-script.js"), `${dir} has content script`);
   assert.ok(mf.action && mf.action.default_popup === "popup.html", `${dir} has popup`);
@@ -96,6 +161,7 @@ for (const dir of ["chrome-extension", "edge-extension", "safari-extension"]) {
 // Edge + Safari manifests are tweaked names of the same Chrome code.
 assert.equal(JSON.parse(fs.readFileSync(path.join(repoRoot, "edge-extension", "manifest.json"), "utf8")).name, "ARIA Sentinel for Edge");
 assert.equal(JSON.parse(fs.readFileSync(path.join(repoRoot, "safari-extension", "manifest.json"), "utf8")).name, "ARIA Sentinel for Safari");
+assert.match(fs.readFileSync(path.join(repoRoot, "edge-extension", "background.js"), "utf8"), /https:\/\/iisupp\.net\/aria/, "Edge background has ARIA web chat link");
 // Safari ships the web assets under Resources/.
 assert.ok(fs.existsSync(path.join(repoRoot, "safari-extension", "Resources", "content-script.js")), "safari Resources has the content script");
 
@@ -113,4 +179,4 @@ assert.equal(await prefs.readToday(localStore, "example.com", day), 2, "counter 
 assert.equal(await prefs.readToday(localStore, "other.com", day), 0, "counter is per-host");
 assert.equal(await prefs.readToday(localStore, "example.com", "2026-06-20T00:00:00Z"), 0, "counter is per-day");
 
-console.log("Chrome extension test passed (3 manifests validate · per-site disable persists · auto-pause · browser detect · today counter).");
+console.log("Chrome extension test passed (3 manifests validate · policy lock · outcome log · protection toggle · browser classifier · issue prompt · safe actions · per-site disable · auto-pause · today counter).");

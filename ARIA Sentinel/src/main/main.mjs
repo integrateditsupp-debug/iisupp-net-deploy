@@ -84,6 +84,7 @@ import { auditFeatures, summarizeAudit, buildHealReport } from "../shared/self-h
 import { askAria } from "../shared/aria-brain-client.mjs";
 import { loadKbPack, localKbAnswer } from "../shared/aria-local-kb.mjs"; // RUN 30-B — offline cross-platform KB
 import { parseSystemStatus, parseKbStats, parseSessions, parseHeartbeats } from "../shared/aria-surfaces.mjs"; // RUN 33 — ARIA tab data
+import { appendChatActivity, sessionFileName } from "../shared/chat-activity.mjs"; // Phase F D2 — real asks show up in Memory/Dashboard
 import { defaultAppConfig, shouldShowSetup, completeSetup, reopenSetup } from "../shared/app-config.mjs"; // RUN 33-E — setup wizard
 import { anchorTarget, tickAnchored } from "../shared/globe-anchor.mjs";
 import { dueGreeting, jitteredPeriod } from "../shared/globe-greetings.mjs";
@@ -123,6 +124,9 @@ import { computeTrialStatus, isUnlocked as licenseUnlocked, trialBadge } from ".
 import { pilotStatus, pilotBadge, pilotUpgradePrompt, buildPilotRecord, stampTtfv, firstFixAtFromAudit, ttfvMinutes, ttfvLabel } from "../shared/pilot-state.mjs"; // RUN-E E1 — TTFV clock
 import { conversionMoment, buildCaseStudy, caseStudyReadiness } from "../shared/case-study.mjs"; // RUN-D D2 — pilot->paid capture, wired
 import { deflectionStats, recordOutcome as recordResolutionEvent, pilotProofMetrics } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — real deflection %
+import { appendBrowserOutcome, browserOutcomeToResolutionPayload, buildBrowserOutcomeFleetPacket } from "../shared/browser-outcome.mjs";
+import { evaluateMaliciousSite } from "../shared/malicious-site-policy.mjs"; // Phase B — DECISION-only (enforced:false), never a real block
+import { safeDeploymentPolicy, deploymentPolicyToEvaluator } from "../shared/deployment-policy-schema.mjs"; // Phase B — malformed managed policy -> safe defaults
 import { valueProof, valueProofKpis } from "../shared/value-proof.mjs"; // RUN-B B2 — real ROI ($/hours) + deflection on every surface
 import { buildTrustSummary } from "../shared/trust-posture.mjs"; // RUN-B B3 — honest trust/security surface (real-or-empty)
 import {
@@ -215,6 +219,27 @@ let agentState = "idle";
 let lastPrivacyCapture = null;
 let whatsNewState = { show: false, version: SENTINEL_VERSION, notes: "" };
 let customerConfig = loadCustomerConfig();
+// Phase B — per-customer deployment policy (MDM drops deployment-policy.json next to customer.json).
+// Malformed/absent -> safe defaults via safeDeploymentPolicy(); the loaded policy only ever feeds the
+// DECISION-only malicious-site evaluator + a content-blind status surface. No OS/registry/proxy/DNS write.
+function deploymentPolicyFilePath() {
+  return path.join(os.homedir(), ".aria-sentinel", "deployment-policy.json");
+}
+function loadDeploymentPolicyState() {
+  let raw = null;
+  let present = false;
+  try {
+    const filePath = deploymentPolicyFilePath();
+    if (fs.existsSync(filePath)) {
+      present = true;
+      raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    }
+  } catch {
+    raw = {}; // unreadable/unparsable file -> validator rejects -> safe defaults + error codes
+  }
+  return { ...safeDeploymentPolicy(raw, { present }), filePresent: present };
+}
+let deploymentPolicyState = loadDeploymentPolicyState();
 let overlayPhysics = null;
 let overlayPhysicsTimer = null;
 let overlayLastTick = 0;
@@ -335,7 +360,9 @@ function integrationEncryptionAvailable() {
 function getIntegrationStatus() {
   applyStoredIntegrationCreds();
   const edition = getEdition(process.env);
-  return { ok: true, edition, items: resolveIntegrations(process.env, edition) };
+  // Phase B — browserPolicy rides along content-blind (real-or-empty) so the Integrations tab can
+  // surface the managed browser-protection state without a new card (8-card contract unchanged).
+  return { ok: true, edition, items: resolveIntegrations(process.env, edition), browserPolicy: browserPolicyStateNow() };
 }
 
 function getIntegrationConfig() {
@@ -696,9 +723,12 @@ const PS_COMMANDS = {
     + "percentUsed=[math]::Round((($os.TotalVisibleMemorySize-$os.FreePhysicalMemory)/$os.TotalVisibleMemorySize)*100)};"
     + "$gpu=Get-CimInstance Win32_VideoController|Select-Object -First 1 Name,DriverVersion,AdapterRAM;"
     + "$disks=Get-CimInstance Win32_DiskDrive|Select-Object Model,Size,Status;"
+    // Phase F D6 — the system drive's real free/used (read-only Win32_LogicalDisk) so the disk row
+    // shows usage like RAM/CPU do, instead of a blank "usage not reported".
+    + "$sys=Get-CimInstance Win32_LogicalDisk -Filter \"DeviceID='C:'\"|Select-Object -First 1 Size,FreeSpace;"
     + "$svc=Get-Service|Select-Object Name,DisplayName,Status,StartType;"
     + "[pscustomobject]@{cpu=@{model=[string]$cpu.Name;cores=$cpu.NumberOfCores;logical=$cpu.NumberOfLogicalProcessors;load=$cpu.LoadPercentage};"
-    + "ram=$ram;gpu=$gpu;disks=$disks;os=@{edition=[string]$os.Caption;build=[string]$os.BuildNumber};services=$svc}|ConvertTo-Json -Compress -Depth 4"
+    + "ram=$ram;gpu=$gpu;disks=$disks;sysdrive=@{size=$sys.Size;free=$sys.FreeSpace};os=@{edition=[string]$os.Caption;build=[string]$os.BuildNumber};services=$svc}|ConvertTo-Json -Compress -Depth 4"
 };
 
 function runPowerShell(command, timeoutMs = 12000) {
@@ -1563,6 +1593,7 @@ function pilotMetricsNow() {
 // RUN-B B1 — the "Was this fixed?" feedback loop -> a real, defensible deflection %. Outcomes persist
 // locally (no external send); the metric is real-or-empty and moves ONLY on a real resolved outcome.
 function resolutionOutcomesLog() { return store.get("resolutionOutcomes") || []; }
+function browserOutcomesLog() { return store.get("browserOutcomes") || []; }
 function resolutionStatsNow() { return deflectionStats(resolutionOutcomesLog()); }
 // RUN-B B2 — the ONE real-or-empty value proof (ROI $/hours + real deflection %) every surface renders. fixes =
 // the SAME audit-log RUN count the D2 pilot proof uses; outcomes = the real B1 "was this fixed?" events.
@@ -1666,6 +1697,79 @@ function recordResolutionOutcome(payload = {}) {
   store.set("resolutionOutcomes", res.events.slice(-1000)); // cap; never unbounded
   if (!res.deduped) logEvent("FEEDBACK", `Answer marked "${res.record.outcome}"${res.record.confidence ? ` (${res.record.confidence.level} confidence)` : ""}.`);
   return { ok: true, deduped: res.deduped, stats: resolutionStatsNow() };
+}
+
+function recordBrowserOutcome(payload = {}) {
+  const res = appendBrowserOutcome(browserOutcomesLog(), payload || {});
+  if (!res.ok) return { ok: false, errors: res.errors, stats: resolutionStatsNow() };
+  store.set("browserOutcomes", res.events);
+  let proof = null;
+  const resolutionPayload = browserOutcomeToResolutionPayload(res.record);
+  if (resolutionPayload) proof = recordResolutionOutcome(resolutionPayload);
+  // Phase B — run the ingested signal through the managed DECISION-only evaluator. The decision is
+  // returned to the caller (extension routes warn/block-recommend/escalate to guidance/live-help) and
+  // counted content-blind; it never blocks, redirects, or writes any OS/browser setting (enforced:false).
+  const policyDecision = evaluateMaliciousSite(deploymentPolicyToEvaluator(deploymentPolicyState.policy), {
+    signal: res.record.signal,
+    severity: res.record.severity || payload.severity,
+    userOverride: payload.userOverride
+  });
+  if (!res.deduped && policyDecision.threatLevel !== "clean") bumpBrowserPolicyDecision(policyDecision);
+  if (!res.deduped) {
+    logEvent("BROWSER", `Browser issue ${res.record.signal} marked ${res.record.outcome}.`, {
+      signal: res.record.signal,
+      outcome: res.record.outcome,
+      action: res.record.action,
+      originCategory: res.record.originCategory
+    });
+  }
+  broadcastState();
+  return {
+    ok: true,
+    deduped: res.deduped,
+    record: res.record,
+    proof,
+    policyDecision,
+    browserOutcomes: res.events.length,
+    stats: resolutionStatsNow()
+  };
+}
+
+// Phase B — content-blind decision counters (symbolic decision names + an ISO timestamp only).
+function bumpBrowserPolicyDecision(decision) {
+  const counts = store.get("browserPolicyDecisions") || {};
+  counts[decision.decision] = (Number(counts[decision.decision]) || 0) + 1;
+  if (decision.policy_locked) counts.policyLockedRefusals = (Number(counts.policyLockedRefusals) || 0) + 1;
+  counts.lastDecisionAt = new Date().toISOString();
+  store.set("browserPolicyDecisions", counts);
+}
+
+// Phase B — the content-blind browser-protection policy surface (Integrations tab + local bridge).
+// Real-or-empty: decisionCounts is null until a real suspicious/malicious signal was actually decided.
+function browserPolicyStateNow() {
+  const s = deploymentPolicyState || loadDeploymentPolicyState();
+  const p = s.policy || {};
+  return {
+    ok: true,
+    enforced: false, // DECISION-only layer — Sentinel never blocks a site or writes a policy for real
+    source: s.source, // "managed" (valid deployment-policy.json) | "default" (unmanaged or rejected)
+    valid: (s.errors || []).length === 0,
+    errors: (s.errors || []).slice(0, 10), // symbolic validator codes only
+    customerId: p.customerId || "unmanaged",
+    browserProtection: p.browserProtection || "on",
+    locked: p.locked === true,
+    overrideRules: p.overrideRules || "none",
+    escalationRouting: p.escalationRouting || "support-desk",
+    decisions: (p.maliciousSitePolicy && p.maliciousSitePolicy.decisions) || {},
+    decisionCounts: store.get("browserPolicyDecisions") || null
+  };
+}
+
+function browserOutcomeFleetPacketNow() {
+  return buildBrowserOutcomeFleetPacket(browserOutcomesLog(), {
+    now: Date.now(),
+    endpointSeed: "local-browser"
+  });
 }
 function conversionMomentNow() {
   return conversionMoment({ pilot: readPilot(), metrics: pilotMetricsNow() });
@@ -3103,6 +3207,9 @@ async function chat(message, context = {}) {
   if (brain && !brain.offline && brain.reply) {
     if (brain.session_id) store.set("chatSessionId", brain.session_id);
     if (brain.kb_meta) { store.set("kbMeta", brain.kb_meta); broadcastState(); } // RUN 33-A — surface KB freshness to the top bar
+    // Phase F D2 — record the real ask locally so Memory/Dashboard reflect real use. kb_match = the $0
+    // KB tier answered; otherwise the aria-chat tier (the locked chain's Anthropic tier) produced it.
+    recordChatActivity({ message, reply: brain.reply, provider: "aria-brain", kbHit: Boolean(brain.kb_match), anthropicHit: !brain.kb_match });
     return { ok: true, provider: "aria-brain", text: brain.reply, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
   }
   // Offline / unreachable → answer from the bundled cross-platform KB (RUN 30-B). ARIA is full cross-platform
@@ -3112,7 +3219,23 @@ async function chat(message, context = {}) {
   const text = localMatches.length
     ? `${kb.text}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
     : kb.text;
+  recordChatActivity({ message, reply: text, provider: "local-kb", kbHit: kb.matched === true, anthropicHit: false });
   return { ok: true, provider: "local-kb", text, signature, matched: kb.matched, matches: localMatches, offline: true, cost: "none" };
+}
+
+// Phase F D2 — persist one ask/reply exchange into ~/.aria-sentinel/sessions/<day>.json (the exact
+// files the ARIA→Memory tab + Dashboard ops read via parseSessions). Local-only, never sent anywhere;
+// failure is silent — recording activity must never break the chat itself.
+function recordChatActivity({ message, reply, provider, kbHit, anthropicHit }) {
+  try {
+    const dir = path.join(os.homedir(), ".aria-sentinel", "sessions");
+    fs.mkdirSync(dir, { recursive: true });
+    const file = path.join(dir, sessionFileName());
+    let session = null;
+    try { session = JSON.parse(fs.readFileSync(file, "utf8")); } catch { session = null; }
+    const updated = appendChatActivity(session, { message, reply, provider, kbHit, anthropicHit });
+    fs.writeFileSync(file, JSON.stringify(updated, null, 2));
+  } catch { /* local recording is best-effort */ }
 }
 
 function queryForSignature(signature, rawSignal = "") {
@@ -3452,6 +3575,9 @@ function startBridge() {
       if (req.method === "GET" && url.pathname === "/dist-info") return sendJson(res, 200, readDistInfo());
       if (req.method === "POST" && url.pathname === "/signature") return sendJson(res, 200, { ok: true, signature: sanitizeToSignature(await readJson(req)) });
       if (req.method === "POST" && url.pathname === "/detect") return sendJson(res, 200, await detectIssue(await readJson(req)));
+      if (req.method === "POST" && url.pathname === "/browser-outcome") return sendJson(res, 200, recordBrowserOutcome(await readJson(req)));
+      if (req.method === "GET" && url.pathname === "/browser-outcomes/fleet-packet") return sendJson(res, 200, browserOutcomeFleetPacketNow());
+      if (req.method === "GET" && url.pathname === "/browser-protection/policy") return sendJson(res, 200, browserPolicyStateNow());
       if (req.method === "POST" && url.pathname === "/run-recipe") {
         const body = await readJson(req);
         return sendJson(res, 200, await runRecipe(body.recipeId, body));

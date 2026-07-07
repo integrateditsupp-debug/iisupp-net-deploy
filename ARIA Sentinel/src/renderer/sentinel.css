@@ -79,6 +79,20 @@ body.has-security-banner .settings-shell { padding-top: 58px; }
   display: flex;
   flex-direction: column;
   min-width: 0;
+  /* Phase F D5 — sticky nav: on long pages (Troubleshoot restore points, Settings) the rail stays in
+     view so tabs are always reachable; a too-tall rail scrolls internally instead of vanishing. */
+  position: sticky;
+  top: 0;
+  align-self: start;
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+/* Keep the sticky rail clear of the fixed audit-tamper banner when it is shown. */
+body.has-security-banner .settings-rail {
+  top: 58px;
+  min-height: calc(100vh - 58px);
+  max-height: calc(100vh - 58px);
 }
 
 .settings-brand {

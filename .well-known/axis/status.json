@@ -1,0 +1,129 @@
+{
+ "schema": "axis-status/1",
+ "source": "Flywheel run 35 (2026-07-07T12:36Z). Sandbox STILL has NO GitHub credential (git ls-remote fails 'could not read Username for https://github.com') so the mount origin/main ref is authoritative. NO STATE CHANGE since run 34 (~1h ago): mount origin/main UNCHANGED at 0fde03ca (Merge PR#5 cc/master-fix; top real commit 35cf071 = /plans declutter + Pro hover-flip). Nothing new to merge (RUN-A..E + PR#4/#5 on main; RUN-F released-not-built; S2 own branch; the ~458-file dirty working tree is CC's uncommitted branch-only Sentinel-fleet lane — one-writer, NOT touched, no credential to push). This run RE-VERIFIED Priority-0 AXIS b4-axis-chat = GREEN (20/20 live in-sandbox). No git write / no external action. Refreshed generatedAt so AXIS never speaks a stale timestamp.",
+ "honest": true,
+ "headline": "Main steady at 0fde03c (PR#5: /plans declutter + Pro hover-flip). Run 35 re-verified Priority-0 AXIS voice chat GREEN (b4-axis-chat 20/20). Nothing waiting to merge (no credential; nothing pending anyway). CC's Sentinel-fleet lane sits uncommitted on branch — RULE-16 rebuild+install+commit is a Windows-desktop step. RUN-F (SCALE) still authored + released for CC to build. Nearest revenue clocks: CSA OpenText close ~07-16; Azim + Jason follow-ups due; first acquisition candidate PRESENTED (retiring-owner GTA IT firm, unverified until 5/5 NDA-gated vet).",
+ "note": "Merging never deploys - Netlify publishing stays LOCKED and is Ahmad's click. The LIVE feed shows older run content until a publish; AXIS speaks these numbers only after Ahmad's next publish click. This regenerated file (public/ + root mirrors, identical) is staged for a content-only landing commit - JSON-parse before committing. Sandbox cannot push (no credential).",
+ "program": {
+  "name": "Client-Ready Program",
+  "series": 1,
+  "sequence": "Series-1 client-ready RUNs A-E ALL merged on main (now 0fde03c), plus master-fix PR#4+PR#5 (KB truncation footer-aware fix + per-tab eyebrow + staged Stripe prices + /plans declutter + Pro hover-flip) and the value-first website + DIY book + dual-license matrix. RUN-F (SCALE: repeatable pilots + conversion-at-scale digest + repeatable acquisition funnel) AUTHORED + RELEASED (cc-runs/RUN-F-scale.md) for CC to build on branch cc/run-f-*. Live on production (soft-launch, noindex): Stage-2 Vision Diagnosis demo + Forums MVP.",
+  "tasksMerged": 15,
+  "tasksTotal": 15,
+  "pct": 100,
+  "testsGreen": "Run 34 re-verified Priority-0 b4-axis-chat = 20/20 green live in-sandbox. Full ARIA Sentinel suite carried from run 31 (227/229; the 2 reds are a NEW uncommitted office-safety WIP feature absent from origin/main — real path-sanitization bug). Main tip 0fde03ca stays green (those suites do not exist there); run 28 confirmed full 246/246 at this same tip.",
+  "mainRef": "0fde03c"
+ },
+ "merged": [
+  "A1",
+  "B1",
+  "B2",
+  "B3",
+  "B4",
+  "B5",
+  "B6",
+  "C1",
+  "C2",
+  "C3",
+  "D1",
+  "D2",
+  "D2-wiring",
+  "D3",
+  "E1",
+  "E2",
+  "E3"
+ ],
+ "extraMerged": [
+  "SECURITY LOCKDOWN v2 (PR#2)",
+  "STAGE-3 S1 Autonomous Resolution Engine, Confirmed mode only (PR#3)",
+  "MASTER-FIX PR#4 - KB truncation footer-aware fix + per-tab eyebrow + staged Stripe prices (376f3ff)",
+  "Value-first website + DIY book + dual-license matrix (51d389c9)",
+  "AXIS voice + spoken status + B4 chat fix + live status feed",
+  "SERVING-LAYER LOCKDOWN (denylist green)",
+  "STAGE-2 VISION DIAGNOSIS demo - MERGED + LIVE soft-launch",
+  "FORUMS MVP + Forums nav tab - MERGED + LIVE soft-launch",
+  "ARIA Companion - interactive globe + on-device Vosk STT + female narration + Walk-Through tab",
+  "Concierge AI Setup Walk-Through - homepage service card + aria copy",
+  "Sentinel 30-day trial gating + permanent Walk-Through entitlement + per-tab gating + free-floor split"
+ ],
+ "builtNotMerged": [
+  "cc/stage-3-s2-resilience-2026-07 (CC lane): S2 slices 1+2 gate-reviewed GREEN-WITH-DEFECT-NOTES; slices 3-7 in progress (Defect-1 PROBE_ALLOWED read-only list mandatory first). Merges only when Cowork clears its 5 S2 conditions; flywheel re-verifies lane state + suite next credentialed run."
+ ],
+ "nextUp": [
+  "OWNER of the office-safety WIP (uncommitted): fix backup-filename sanitization to strip the path prefix (expected 'Budget__ARIA_BACKUP...' not 'C__Work_Budget__...') so office-file-safety + office-safety-service suites go green before this feature is committed/merged.",
+  "CC: build RUN-F (SCALE) on branch cc/run-f-* per senior-director-state/cc-runs/RUN-F-scale.md - F1 multi-pilot ops console, F2 conversion-at-scale digest, F3 repeatable acquisition funnel; additive (Rule 15), real-or-empty (Rule 14), B6 + full suite stay green. Flywheel merges green+sane slices next credentialed run.",
+  "Ahmad publish click: when ready, publish to Netlify so the LIVE feed + AXIS spoken status reflect main 0fde03c. Publish stays your click (merge never deploys).",
+  "Ahmad: OPEN THE REVENUE BOARD - senior-director-state/opportunity-engine/REVENUE-BOARD.md: #1 CSA OpenText close ~07-16; #2 Azim + Jason follow-ups due; #3 W7714 Ariba pull (~07-28); #4 free Ariba+SRI registration (account creation = your click).",
+  "Ahmad (revenue mandate): review the PRESENTED acquisition candidate - retiring-owner GTA IT firm (listing claims $582K ask, $193,986 cash flow, gov+school clients, 12-wk transition, DSCR ~3.1x ON CLAIMS). NDA = your click; flywheel runs the 5/5 vetting gate next credentialed run.",
+  "Ahmad (launch decision): Forums PUBLIC launch - set FORUMS_HASH_SALT (+ optional FORUMS_ADMIN_TOKEN) Netlify env, mobile eyeball, nav link + sitemap + remove noindex.",
+  "CC/Ahmad: land this regenerated feed (public/ + root .well-known/axis/status.json) as a content-only commit - JSON-parse the real files first; suite-green gate; no other files (sandbox has no push credential).",
+  "Ahmad: do-payment-retry-june-30 cost flag (standing)."
+ ],
+ "lanes": [
+  {
+   "id": "cowork-flywheel",
+   "does": "run 35: main UNCHANGED at 0fde03c since run 25. Re-verified Priority-0 b4-axis-chat GREEN (20/20) live in-sandbox. Nothing to merge; RUN-F released-not-built; CC's Sentinel-fleet lane is uncommitted branch-only (one-writer, not touched). No git write (no credential); no external action. Refreshed generatedAt so AXIS never speaks a stale timestamp.",
+   "cadence": "hourly",
+   "state": "running"
+  },
+  {
+   "id": "serving-safety",
+   "does": "deploy-safety-denylist force-404 rules present in netlify.toml on main 0fde03c. Live production re-probe not attempted this run.",
+   "cadence": "every run + post-publish",
+   "state": "green"
+  },
+  {
+   "id": "forums",
+   "does": "Forums MVP + nav tab MERGED on main; live on production as invisible soft-launch (noindex). Public launch = Ahmad's checklist (env salt, nav de-noindex, sitemap).",
+   "cadence": "launch-decision",
+   "state": "live-soft-launch"
+  },
+  {
+   "id": "stage-2-vision",
+   "does": "Vision Diagnosis demo MERGED on main; live on production soft-launch (noindex,nofollow; honest D2 copy).",
+   "cadence": "done pending launch decision",
+   "state": "live-soft-launch"
+  },
+  {
+   "id": "revenue-board",
+   "does": "REVENUE-BOARD.md: CSA OpenText close ~07-16; Azim + Jason follow-ups due; W7714 ~07-28; Ariba+SRI reg. Acquisition lane: 0 vetted IN the board (honest) + 1 candidate PRESENTED awaiting NDA + 5/5 vetting.",
+   "cadence": "regenerated each credentialed flywheel run",
+   "state": "live-local"
+  },
+  {
+   "id": "stage-3-are",
+   "does": "S2 slices 1+2 GREEN-WITH-DEFECT-NOTES; CC continues slices 3-7 (Defect-1 first). Merges only when Cowork clears the 5 S2 conditions; flywheel re-verifies lane + suite next credentialed run.",
+   "cadence": "per-run",
+   "state": "building"
+  }
+ ],
+ "needsAhmad": [
+  {
+   "action": "Netlify publish click (when ready)",
+   "why": "makes the LIVE feed + AXIS spoken status reflect current merged reality (main 0fde03c). Merging never deploys - publishing stays your click.",
+   "oneClick": true
+  },
+  {
+   "action": "Open REVENUE-BOARD.md + act the top rows",
+   "why": "CSA OpenText close ~07-16; Azim + Jason follow-ups due; W7714 ~07-28; Ariba+SRI registration free but account creation is yours by rule.",
+   "oneClick": true
+  },
+  {
+   "action": "Review the presented acquisition candidate (NDA = your click)",
+   "why": "revenue mandate: retiring-owner GTA IT firm - listing claims $582K ask / $193,986 cash flow / gov+school clients / 12-wk transition / DSCR ~3.1x ON CLAIMS (unverified until vetting). If numbers survive the 5/5 gate, acquired revenue could service a loan - your call, your click.",
+   "oneClick": true
+  },
+  {
+   "action": "Forums public-launch checklist (when you decide to launch)",
+   "why": "live now but invisible (noindex, unlinked). Public = set FORUMS_HASH_SALT (+ optional FORUMS_ADMIN_TOKEN) Netlify env, mobile eyeball, nav link + sitemap + remove noindex.",
+   "oneClick": true
+  },
+  {
+   "action": "do-payment-retry-june-30 cost flag",
+   "why": "open cost dependency surfaced per free-only rule",
+   "oneClick": true
+  }
+ ],
+ "onTrack": true,
+ "generatedAt": "2026-07-07T12:36:00Z"
+}

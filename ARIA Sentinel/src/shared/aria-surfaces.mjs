@@ -68,10 +68,12 @@ export function parseSessions(sessions, { now = Date.now() } = {}) {
     const turns = (Array.isArray(s.turns) ? s.turns : [])
       .filter((tn) => tn && !isBlockedPath(JSON.stringify(tn)))           // drop any off-limits-referencing turn
       .map((tn) => ({ role: tn.role === "user" ? "user" : "assistant", text: redactPrivate(scrubPath(String(tn.text || ""))).slice(0, 800) }));
+    // D2 honesty fix — an "ask" is a USER turn; counting assistant replies doubled the number.
+    const asks = turns.filter((tn) => tn.role === "user").length;
     return {
       id: redactPrivate(String(s.id || s.sessionId || "")),
       startedAt: s.started_at || s.startedAt || null,
-      count: turns.length, turns,
+      count: turns.length, asks: asks || turns.length, turns,
       kbHits: Number(s.kb_hits) || turns.filter((tn) => /knowledge base/i.test(tn.text)).length,
       anthropicHits: Number(s.anthropic_hits) || 0
     };
@@ -80,7 +82,7 @@ export function parseSessions(sessions, { now = Date.now() } = {}) {
   return {
     stats: {
       active: list.length ? 1 : 0, total: list.length,
-      totalAsks: sum((x) => x.count), kbHits: sum((x) => x.kbHits), anthropicHits: sum((x) => x.anthropicHits),
+      totalAsks: sum((x) => x.asks), kbHits: sum((x) => x.kbHits), anthropicHits: sum((x) => x.anthropicHits),
       oldest: list.reduce((acc, x) => { const t = Date.parse(x.startedAt || ""); return Number.isFinite(t) && t < acc ? t : acc; }, now)
     },
     list: list.slice(0, 10)

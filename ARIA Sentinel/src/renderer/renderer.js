@@ -761,6 +761,31 @@ async function loadIntegrations() {
         ${group.cards.map(renderIntegrationCard).join("")}
       </div>
     </section>`).join("");
+  // Phase B — managed browser-protection policy strip (content-blind, real-or-empty). Only symbolic
+  // enum values + counters ever render here; absent in browser preview (no browserPolicy field).
+  const bp = data && data.browserPolicy;
+  if (bp && bp.ok) {
+    const counts = bp.decisionCounts;
+    const modeLine = `Mode: ${bp.browserProtection}${bp.locked ? " (locked by admin policy)" : ""} · overrides: ${bp.overrideRules} · escalation: ${bp.escalationRouting} · decision-only — Sentinel never blocks a site itself`;
+    const sourceLine = bp.source === "managed"
+      ? `Managed deployment policy active (customer ${bp.customerId}).`
+      : (bp.valid ? "No managed policy file — running safe defaults." : `Managed policy rejected (${bp.errors.join(", ")}) — running safe defaults.`);
+    const countsLine = counts
+      ? `Decisions — warn ${counts.warn || 0} · block-recommend ${counts["block-recommend"] || 0} · escalate ${counts.escalate || 0}${counts.policyLockedRefusals ? ` · override refused by lock ${counts.policyLockedRefusals}` : ""}`
+      : "No suspicious/malicious site decisions recorded yet.";
+    const strip = document.createElement("section");
+    strip.className = "integration-group";
+    strip.dataset.browserPolicy = bp.source;
+    strip.innerHTML = `
+      <header class="integration-group-head">
+        <h3>Browser protection policy</h3>
+        <span class="integration-count">${escapeHtml(bp.source === "managed" ? "Managed" : "Default")}</span>
+      </header>
+      <p class="note">${escapeHtml(sourceLine)}</p>
+      <p class="note">${escapeHtml(modeLine)}</p>
+      <p class="note">${escapeHtml(countsLine)}</p>`;
+    host.appendChild(strip);
+  }
   // ServiceNow card → its incident bridge panel (no longer in the nav rail).
   qsa("#integrationsGrid [data-goto]").forEach((button) => {
     button.addEventListener("click", () => activateTab(button.dataset.goto));
@@ -1699,7 +1724,10 @@ function wireLicense() {
   }));
   bindClick("checkUpdates", (button) => runAction(button, async () => {
     const r = await sentinel.checkUpdates?.();
-    setText("updateStatus", !r?.ok ? "Update check unavailable." : r.updateAvailable ? `Update available: ${r.latest.version}` : `Up to date (${r.current}).`);
+    // Phase F D3 — never a dead end: a failed check states the real version + the honest manual path.
+    setText("updateStatus", !r?.ok
+      ? `Couldn't reach the update server — you're on ${r?.current || "this version"}. Manual updates still work.`
+      : r.updateAvailable ? `Update available: ${r.latest.version}` : `Up to date (${r.current}).`);
     return r;
   }));
   bindClick("manageSubscription", (button) => runAction(button, () => sentinel.manageSubscription?.()));
@@ -1945,11 +1973,17 @@ function renderSystemContext(ctx) {
   const ram = ctx.ram || {};
   const disk = ctx.disk || {};
   const os = ctx.os || {};
+  // Phase F D6 — real system-drive usage like the RAM/CPU rows; honest fallback when not collected yet.
+  const drive = ctx.sysDrive || {};
+  const driveSize = Number(drive.size);
+  const driveFree = Number(drive.free);
+  const diskPct = driveSize > 0 && Number.isFinite(driveFree) ? Math.round(((driveSize - driveFree) / driveSize) * 100) : null;
+  const diskUsage = diskPct != null ? `${diskPct}% used · ${Math.round(driveFree / 1073741824)} GB free` : "usage pending next inventory refresh";
   const rows = [
     { id: "os", message: `${os.edition || "Windows"}${os.build ? " · build " + os.build : ""}`, ok: true },
     { id: "cpu", message: `${cpu.model || "CPU"}${cpu.cores ? " · " + cpu.cores + " cores" : ""}${cpu.load != null ? " · " + cpu.load + "% load" : ""}`, ok: true },
     { id: "ram", message: ram.percentUsed != null ? `${ram.percentUsed}% used` : "RAM", ok: (ram.percentUsed || 0) < 90 },
-    { id: "disk", message: disk.model ? `${disk.model} · ${disk.status || "OK"}` : "Disk", ok: true }
+    { id: "disk", message: `${disk.model ? disk.model + " · " : ""}${diskUsage}`, ok: diskPct != null ? diskPct < 90 : true }
   ];
   setHtml("systemContextSummary", rows.map((r) => `
     <div class="health-row"><span>${escapeHtml(r.id)}</span><strong>${escapeHtml(r.message)}</strong><em>${r.ok ? "OK" : "CHECK"}</em></div>
@@ -2636,7 +2670,13 @@ async function loadAriaData() {
       setText("healthOverall", data.overall === "green" ? "All systems healthy" : data.overall === "yellow" ? "Degraded — fallback active" : data.overall === "red" ? "Outage — using local KB" : "Status unavailable");
       setText("healthProbe", data.lastProbe ? `last probe ${timeAgoShort(data.lastProbe)}` : "");
       const ft = qs("#fallthroughChain");
-      if (ft) ft.innerHTML = data.tiers.map((tr) => `<div class="ft-tier"><span class="ft-name"><span class="health-dot" data-status="${tr.status}" style="width:9px;height:9px;display:inline-block;margin-right:7px"></span>${esc(tr.name)}</span><span class="ft-meta">${esc(tr.cost)} · ${esc(tr.coverage)}</span></div>`).join("");
+      // Phase F D4 — Health must agree with the Control Center content boundary: when external AI calls
+      // are disabled on this device, the Anthropic tier renders as OFF here, never as a healthy fallback.
+      const externalAiOff = state && state.externalAiCalls === false;
+      const tierRows = data.tiers.map((tr) => (externalAiOff && /anthropic/i.test(tr.name))
+        ? { ...tr, status: "unknown", cost: "disabled", coverage: "off on this device (content boundary)" }
+        : tr);
+      if (ft) ft.innerHTML = tierRows.map((tr) => `<div class="ft-tier"><span class="ft-name"><span class="health-dot" data-status="${tr.status}" style="width:9px;height:9px;display:inline-block;margin-right:7px"></span>${esc(tr.name)}</span><span class="ft-meta">${esc(tr.cost)} · ${esc(tr.coverage)}</span></div>`).join("");
     }
   } catch (e) { /* offline → leave placeholder */ }
 
