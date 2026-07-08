@@ -149,7 +149,7 @@ try {
    /assets/* is served with a 7-day browser cache (max-age=604800), so asset
    CHANGES must ship under a new URL. Stamp every reference to our four
    assets with ?v=TOKEN. Re-runs replace older tokens (idempotent). */
-const TOKEN = '20260707d';
+const TOKEN = '20260707e';
 const STAMP_ASSETS = ['iis-motion.css', 'iis-motion.js', 'iis-upgrades.js', 'legal-suite.css'];
 const SKIP_DIRS = new Set([
   'node_modules', '.git', '.netlify', 'backups', 'archive', 'apps', 'tests',
@@ -214,6 +214,8 @@ try {
   if (!motionCss.includes('bg-i-stage')) results.flagged.push(['assets/iis-motion.css', 'v1.1 morph fix missing — stale file?']);
   if (!motionCss.includes('z-index:-4')) results.flagged.push(['assets/iis-motion.css', 'v1.1 z-order fix missing — stale file?']);
   if (!motionCss.includes('rm-flip')) results.flagged.push(['assets/iis-motion.css', 'roadmap flip enrichment missing — stale file?']);
+  if (!motionCss.includes('gl-ledge')) results.flagged.push(['assets/iis-motion.css', 'v1.2 shelf styles missing — stale file?']);
+  if (!motionCss.includes('gl-chapter')) results.flagged.push(['assets/iis-motion.css', 'v1.2 chapter styles missing — stale file?']);
   const upg = fs.readFileSync(path.join(ROOT, 'assets/iis-upgrades.js'), 'utf8');
   if (upg.includes('flipify')) results.flagged.push(['assets/iis-upgrades.js', 'stale v1.0 DOM flip wrapper still present']);
   const forums = fs.readFileSync(path.join(ROOT, 'forums/index.html'), 'utf8');
