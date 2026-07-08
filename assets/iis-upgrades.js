@@ -17,7 +17,7 @@
 (function () {
   'use strict';
   if (window.__IIS_UPGRADES__) return;
-  window.__IIS_UPGRADES__ = 1.2;
+  window.__IIS_UPGRADES__ = 1.3;
 
   var doc = document;
 
@@ -78,7 +78,9 @@
     var per = perShelf(container, cap);
     var html = '';
     for (var i = 0; i < cardHtmlList.length; i += per) {
-      html += '<div class="gl-shelf-row">' + cardHtmlList.slice(i, i + per).join('') + '</div>' +
+      /* brass-and-walnut dividers stand between neighbouring books */
+      var row = cardHtmlList.slice(i, i + per).join('<div class="gl-divider" aria-hidden="true"></div>');
+      html += '<div class="gl-shelf-row">' + row + '</div>' +
               '<div class="gl-ledge" aria-hidden="true"></div>';
     }
     container.innerHTML = html;
@@ -154,7 +156,8 @@
         return current === 'all' || (b.topic || 'Other') === current;
       });
       shelveInto(grid, list.map(cat.renderBook), 4);
-      if (featRow) shelveInto(featRow, ranked.slice(0, 3).map(cat.renderBook), 3);
+      /* the trending trio stays OFF the shelf — open display, no case */
+      if (featRow) featRow.innerHTML = ranked.slice(0, 3).map(cat.renderBook).join('');
       if (!list.length) {
         grid.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,.45);padding:30px 0">Nothing on this shelf yet.</p>';
       }
@@ -188,9 +191,8 @@
       });
     }
 
-    /* ---------- build the cases + first render ---------- */
+    /* ---------- build the case (collection only) + first render ---------- */
     encase(grid, 'The Collection');
-    if (featRow) encase(featRow, 'Trending — This Week’s Shelf');
     renderShelves();
 
     /* responsive re-shelving */

@@ -248,7 +248,7 @@ body.gl-page .gl-shelf-note{
    Books stand in rows on rendered wooden ledges inside gold-trimmed cases.
    ========================================================================== */
 body.gl-page #books-grid{display:block !important}
-body.gl-page #gl-featured .glf-row{display:block !important;max-width:none}
+/* trending trio stays on open display — original 3-across grid, no case */
 
 body.gl-page .gl-bookcase{
   position:relative;
@@ -309,10 +309,47 @@ body.gl-page .gl-ledge::after{
   pointer-events:none;
 }
 body.gl-page .gl-shelf-row .iis-book{margin-bottom:0}
+
+/* ---------- brass-and-walnut dividers between neighbouring books -------- */
+body.gl-page .gl-divider{
+  align-self:stretch;
+  flex:0 0 7px;width:7px;
+  margin:26px 2px 0;
+  border-radius:3px 3px 1px 1px;
+  background:linear-gradient(180deg, #57432a 0%, #2e2113 55%, #1a1109 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(241,220,167,.32),
+    inset -1px 0 1px rgba(0,0,0,.55),
+    2px 6px 12px rgba(0,0,0,.4);
+}
+
+/* ---------- pull-out-and-flip: the book slides off the shelf ------------
+   The book component's own hover flips it in place; on the shelves we
+   deepen that — the book first comes OUT toward the reader (translateZ +
+   lift), flips while out, and glides back when the pointer leaves. */
+body.gl-page .gl-shelf-row .iis-book{position:relative}
+@media (hover:hover) and (pointer:fine){
+  body.gl-page .gl-shelf-row .iis-book:hover{
+    transform:perspective(1700px) translateZ(110px) translateY(-20px) rotateX(4deg) rotateY(180deg);
+    z-index:6;
+    filter:drop-shadow(0 34px 34px rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(197,160,89,.14));
+  }
+}
+body.gl-page .gl-shelf-row .iis-book.is-flipped{
+  transform:perspective(1700px) translateZ(110px) translateY(-20px) rotateX(4deg) rotateY(180deg);
+  z-index:6;
+  filter:drop-shadow(0 34px 34px rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(197,160,89,.14));
+}
+@media (prefers-reduced-motion: reduce){
+  body.gl-page .gl-shelf-row .iis-book:hover,
+  body.gl-page .gl-shelf-row .iis-book.is-flipped{transform:none;filter:none}
+}
+
 @media (max-width:640px){
   body.gl-page .gl-bookcase{padding:0 14px 4px;margin:8px 10px 20px}
   body.gl-page .gl-crown{margin:0 -14px 6px}
   body.gl-page .gl-shelf-row{gap:18px}
+  body.gl-page .gl-divider{margin-top:16px}
 }
 
 /* ==========================================================================

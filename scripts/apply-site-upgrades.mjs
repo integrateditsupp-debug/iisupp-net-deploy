@@ -149,7 +149,7 @@ try {
    /assets/* is served with a 7-day browser cache (max-age=604800), so asset
    CHANGES must ship under a new URL. Stamp every reference to our four
    assets with ?v=TOKEN. Re-runs replace older tokens (idempotent). */
-const TOKEN = '20260707e';
+const TOKEN = '20260707f';
 const STAMP_ASSETS = ['iis-motion.css', 'iis-motion.js', 'iis-upgrades.js', 'legal-suite.css'];
 const SKIP_DIRS = new Set([
   'node_modules', '.git', '.netlify', 'backups', 'archive', 'apps', 'tests',
