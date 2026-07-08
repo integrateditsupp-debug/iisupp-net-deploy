@@ -353,7 +353,7 @@ body.gl-page .gl-shelf-row .iis-book.is-flipped{
 }
 
 /* ==========================================================================
-   GROWTH LIBRARY — CHAPTER INDEX (v1.2)
+   CHAPTER INDEX (v1.4 — sitewide: growth-library, shop, services, marketplace)
    Long marketing bands fold into elegant chapters. All content preserved.
    ========================================================================== */
 #gl-index-note{
@@ -361,7 +361,7 @@ body.gl-page .gl-shelf-row .iis-book.is-flipped{
   text-align:center;color:rgba(197,160,89,.55);
   font-size:10px;letter-spacing:.5em;text-transform:uppercase;font-weight:700;
 }
-body.gl-page .gl-chapter{
+body.iis-chapters .gl-chapter{
   max-width:1180px;margin:12px auto;
   border:1px solid rgba(197,160,89,.2);
   border-radius:16px;
@@ -369,46 +369,46 @@ body.gl-page .gl-chapter{
   overflow:hidden;
   transition:border-color .3s ease, box-shadow .3s ease;
 }
-body.gl-page .gl-chapter:hover{border-color:rgba(197,160,89,.42)}
-body.gl-page .gl-chapter.open{
+body.iis-chapters .gl-chapter:hover{border-color:rgba(197,160,89,.42)}
+body.iis-chapters .gl-chapter.open{
   border-color:rgba(197,160,89,.5);
   box-shadow:0 24px 60px rgba(0,0,0,.4), inset 0 0 0 1px rgba(197,160,89,.08);
 }
-body.gl-page .gl-chapter-head{
+body.iis-chapters .gl-chapter-head{
   display:flex;align-items:center;gap:18px;width:100%;
   padding:18px 26px;cursor:pointer;text-align:left;
   background:none;border:none;outline-offset:-2px;
   transition:background .3s ease;
 }
-body.gl-page .gl-chapter-head:hover{background:rgba(197,160,89,.05)}
-body.gl-page .gl-chapter-num{
+body.iis-chapters .gl-chapter-head:hover{background:rgba(197,160,89,.05)}
+body.iis-chapters .gl-chapter-num{
   font-family:'Cinzel',serif;color:#c5a059;
   font-size:14px;letter-spacing:.14em;min-width:34px;text-align:center;
   border:1px solid rgba(197,160,89,.3);border-radius:10px;padding:7px 6px;
 }
-body.gl-page .gl-chapter-titles{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
-body.gl-page .gl-chapter-title{
+body.iis-chapters .gl-chapter-titles{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+body.iis-chapters .gl-chapter-title{
   font-family:'Cinzel',serif;color:#f1dca7;
   font-size:15px;letter-spacing:.06em;line-height:1.3;
 }
-body.gl-page .gl-chapter-sub{
+body.iis-chapters .gl-chapter-sub{
   color:rgba(255,255,255,.38);font-size:10.5px;letter-spacing:.14em;
   text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-body.gl-page .gl-chapter-chev{color:#c5a059;flex-shrink:0;transition:transform .45s cubic-bezier(.2,.9,.3,1)}
-body.gl-page .gl-chapter.open .gl-chapter-chev{transform:rotate(180deg)}
-body.gl-page .gl-chapter-body{
+body.iis-chapters .gl-chapter-chev{color:#c5a059;flex-shrink:0;transition:transform .45s cubic-bezier(.2,.9,.3,1)}
+body.iis-chapters .gl-chapter.open .gl-chapter-chev{transform:rotate(180deg)}
+body.iis-chapters .gl-chapter-body{
   max-height:0;overflow:hidden;
   transition:max-height .7s cubic-bezier(.2,.9,.3,1);
 }
-body.gl-page .gl-chapter-body > section{margin-top:0}
+body.iis-chapters .gl-chapter-body > section{margin-top:0}
 @media (max-width:640px){
-  body.gl-page .gl-chapter{margin:10px 12px}
-  body.gl-page .gl-chapter-sub{display:none}
+  body.iis-chapters .gl-chapter{margin:10px 12px}
+  body.iis-chapters .gl-chapter-sub{display:none}
 }
 @media (prefers-reduced-motion: reduce){
-  body.gl-page .gl-chapter-body{transition:none}
-  body.gl-page .gl-chapter-chev{transition:none}
+  body.iis-chapters .gl-chapter-body{transition:none}
+  body.iis-chapters .gl-chapter-chev{transition:none}
 }
 
 /* ==========================================================================

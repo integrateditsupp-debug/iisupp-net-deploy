@@ -17,7 +17,7 @@
 (function () {
   'use strict';
   if (window.__IIS_UPGRADES__) return;
-  window.__IIS_UPGRADES__ = 1.3;
+  window.__IIS_UPGRADES__ = 1.4;
 
   var doc = document;
 
@@ -248,34 +248,79 @@
      CHAPTER INDEX — fold the long bands into collapsible chapters.
      Content is never removed; it lives one elegant click away (Rule 15
      collapse pattern). Deep links auto-expand their chapter.
+     Config-driven per page: growth-library, shop, services, marketplace.
      ====================================================================== */
   var ROMANS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
+  /* c: section class · i: element/section id · h: heading text fragment
+     all:true folds every match of a class (e.g. services' route bands). */
+  var CHAPTER_MAP = {
+    'growth-library': [
+      { c: 'ai-edge-band' }, { c: 'route-band' }, { i: 'helpdesk-spotlight' },
+      { h: 'cleanest entry point' }, { i: 'ai-automation-book' },
+      { h: 'buying depth' }, { i: 'allaccess' }
+    ],
+    'shop': [
+      { c: 'ai-edge-band' }, { h: 'beyond the single purchase' },
+      { c: 'route-band' }, { h: 'help desk automation blueprint' },
+      { h: 'start with the real bottleneck' }, { h: 'the growth library' }
+    ],
+    'services': [
+      { c: 'ai-edge-band' }, { c: 'route-band', all: true }
+    ],
+    'marketplace': [
+      { i: 'trust' }, { i: 'system' }
+    ]
+  };
+
+  /* sections that must NEVER fold (buying surfaces + shelves) */
+  var KEEP_IDS = ['gl-featured', 'vault', 'topbooks', 'access', 'catalog',
+    'estimator', 'partners', 'finder', 'how', 'service-catalog', 'results',
+    'featured', 'categories', 'top', 'marketplace-request', 'boards', 'room'];
+  var KEEP_INNER = ['#books-grid', '#vault-grid', '#gl-featured', '#catalog',
+    '#service-catalog', '#results', '#estimator'];
+
+  function pageKey() {
+    var p = (window.location.pathname || '').toLowerCase();
+    var m = p.match(/\/([a-z0-9-]+)(?:\.html)?\/?$/);
+    var base = m ? m[1] : 'index';
+    if (p === '/' || base === 'index') return 'index';
+    return base;
+  }
+
   function chapterTargets() {
+    var spec = CHAPTER_MAP[pageKey()];
+    if (!spec) return [];
     var wanted = [];
-    function byId(id) { var el = doc.getElementById(id); if (el) wanted.push(el.tagName === 'SECTION' ? el : (el.closest && el.closest('section'))); }
-    function byClass(cls) { var el = doc.querySelector('section.' + cls); if (el) wanted.push(el); }
-    function byHeading(frag) {
-      var secs = doc.querySelectorAll('section');
-      for (var i = 0; i < secs.length; i++) {
-        var h = secs[i].querySelector('h1,h2,h3');
-        if (h && h.textContent.toLowerCase().indexOf(frag) !== -1) { wanted.push(secs[i]); return; }
+    function push(el) { if (el && el.tagName === 'SECTION') wanted.push(el); else if (el && el.closest) { var s = el.closest('section'); if (s) wanted.push(s); } }
+    for (var i = 0; i < spec.length; i++) {
+      var rule = spec[i];
+      if (rule.i) { push(doc.getElementById(rule.i)); continue; }
+      if (rule.c) {
+        var found = doc.querySelectorAll('section.' + rule.c);
+        if (rule.all) { for (var f = 0; f < found.length; f++) wanted.push(found[f]); }
+        else if (found[0]) wanted.push(found[0]);
+        continue;
+      }
+      if (rule.h) {
+        var secs = doc.querySelectorAll('section');
+        for (var s2 = 0; s2 < secs.length; s2++) {
+          var h = secs[s2].querySelector('h1,h2,h3');
+          if (h && h.textContent.toLowerCase().indexOf(rule.h) !== -1) { wanted.push(secs[s2]); break; }
+        }
       }
     }
-    byClass('ai-edge-band');                    /* AI Edge makes this easier to buy */
-    byClass('route-band');                      /* Pick the next move */
-    byId('helpdesk-spotlight');                 /* Blueprint spotlight */
-    byHeading('cleanest entry point');          /* Choose the cleanest entry point */
-    byId('ai-automation-book');                 /* AI Automation Setup book */
-    byHeading('buying depth');                  /* Pick the buying depth */
-    byId('allaccess');                          /* The All-Access pass */
-    /* de-dup + drop anything containing the shelves or the vault */
+    /* de-dup + protect the buying surfaces */
     var out = [];
     for (var j = 0; j < wanted.length; j++) {
       var s = wanted[j];
       if (!s || out.indexOf(s) !== -1) continue;
-      if (s.querySelector && (s.querySelector('#books-grid') || s.querySelector('#vault-grid') || s.querySelector('#gl-featured'))) continue;
-      if (s.id === 'gl-featured' || s.id === 'vault' || s.id === 'topbooks' || s.id === 'access') continue;
+      if (KEEP_IDS.indexOf(s.id) !== -1) continue;
+      var guarded = false;
+      for (var k = 0; k < KEEP_INNER.length; k++) {
+        if (s.querySelector && s.querySelector(KEEP_INNER[k])) { guarded = true; break; }
+      }
+      if (guarded) continue;
       out.push(s);
     }
     return out;
@@ -290,10 +335,10 @@
   }
 
   function organizeChapters() {
-    if (!doc.body.classList.contains('gl-page')) return;
     if (doc.querySelector('.gl-chapter')) return;
     var sections = chapterTargets();
     if (!sections.length) return;
+    doc.body.classList.add('iis-chapters');
 
     for (var i = 0; i < sections.length; i++) {
       (function (section, idx) {
@@ -356,7 +401,9 @@
     if (first && !doc.getElementById('gl-index-note')) {
       var note = doc.createElement('p');
       note.id = 'gl-index-note';
-      note.textContent = 'The Library Index — open any chapter';
+      note.textContent = pageKey() === 'growth-library'
+        ? 'The Library Index — open any chapter'
+        : 'The Index — open any chapter';
       first.parentNode.insertBefore(note, first);
     }
 

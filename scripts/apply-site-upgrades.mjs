@@ -27,7 +27,7 @@ const LEGAL_TAG = '<link rel="stylesheet" href="/assets/legal-suite.css">';
 
 const UPGRADE_PAGES = [
   'index.html', 'services.html', 'about.html', 'purchase-tech.html',
-  'growth-library.html',
+  'growth-library.html', 'shop.html', 'marketplace.html',
 ];
 const LEGAL_PAGES = ['trust.html', 'copyright.html'];
 
@@ -149,7 +149,7 @@ try {
    /assets/* is served with a 7-day browser cache (max-age=604800), so asset
    CHANGES must ship under a new URL. Stamp every reference to our four
    assets with ?v=TOKEN. Re-runs replace older tokens (idempotent). */
-const TOKEN = '20260707g';
+const TOKEN = '20260707h';
 const STAMP_ASSETS = ['iis-motion.css', 'iis-motion.js', 'iis-upgrades.js', 'legal-suite.css'];
 const SKIP_DIRS = new Set([
   'node_modules', '.git', '.netlify', 'backups', 'archive', 'apps', 'tests',
@@ -220,6 +220,9 @@ try {
   if (upg.includes('flipify')) results.flagged.push(['assets/iis-upgrades.js', 'stale v1.0 DOM flip wrapper still present']);
   const forums = fs.readFileSync(path.join(ROOT, 'forums/index.html'), 'utf8');
   if (!forums.includes('Knowledge Commons')) results.flagged.push(['forums/index.html', 'new Commons page missing — stale file?']);
+  if (!forums.includes('commons-room') && !forums.includes('id="room"')) results.flagged.push(['forums/index.html', 'live boards missing — stale file?']);
+  if (!fs.existsSync(path.join(ROOT, 'netlify/functions/forum.mjs'))) results.flagged.push(['netlify/functions/forum.mjs', 'REQUIRED FILE MISSING']);
+  if (!motionCss.includes('iis-chapters')) results.flagged.push(['assets/iis-motion.css', 'v1.4 sitewide chapter styles missing — stale file?']);
 } catch (e) { results.flagged.push(['sanity', String(e.message)]); }
 
 /* ---------------- report ---------------- */
