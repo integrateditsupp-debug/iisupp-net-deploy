@@ -411,6 +411,15 @@ body.gl-page .gl-chapter-body > section{margin-top:0}
   body.gl-page .gl-chapter-chev{transition:none}
 }
 
+/* ==========================================================================
+   ARIA PAGE — right-panel rhythm fix (v1.3)
+   The live-activity stats sat at the top of the panel with a dead gap before
+   the globe (the globe-area flexed to fill and centered its content). Let the
+   globe area size to its content: stats now sit JUST ABOVE the globe, with
+   Tap-to-speak directly beneath — the globe keeps its full size.
+   ========================================================================== */
+#rightPanel .aria-section > .globe-area{flex:0 0 auto;min-height:0}
+
 /* ---------- Sitewide gold polish (full mode only) ---------- */
 html.iism-full ::selection{background:rgba(197,160,89,.35);color:#fff}
 html.iism-full{scrollbar-color:#4a3d26 #060606}
