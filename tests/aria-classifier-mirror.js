@@ -19,15 +19,12 @@ function classify(text) {
   // core
   if (/(mail|email|inbox|outlook|outlok|outloook|outlk|sent items|drafts? folder|spam filter|junk folder|email attachment|attachments? not opening|email signature|autocomplete|exchange|mailbox|smtp|imap|pop3|exchange online)/.test(q)) return /out of office|ooo|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';
   if (/vpn|tunnel|globalprotect|anyconnect|cisco (vpn|anyconnect)|fortinet|pulse secure|pulsesecure|openvpn|wireguard|remote access|forticlient/.test(q)) return 'vpn';
-<<<<<<< HEAD
   // Active Directory (on-prem) BEFORE password, so 'account locked in ad' / 'unlock ad account' route to AD,
   // not the generic password bucket. Requires AD context + an identity/account action (avoids 'saw an ad'),
   // and EXCLUDES azure/entra/aad/cloud (those are kb:m365).
   if ((/(active directory|domain controller|\bdc\b replication|kerberos|krb5|ad replication|ad authentication|domain account|on[- ]?prem(ises)? ad|local ad)/.test(q)
        || (/\b(ad|domain)\b/.test(q) && /(account|lockout|lock(ed)? out|locked|unlock|disabl|re-?enabl|\benabl|reset|password|login|log[- ]?in|sign[- ]?in|logon|group|membership|credential|user)/.test(q)))
       && !/(azure|entra|\baad\b|conditional access|intune|m365|microsoft 365|office 365|\bcloud\b|onboard|offboard|new hire|new starter|provision|deactivat|byod|employee leaving|departing|leaver|joiner)/.test(q)) return 'kb:active-directory';
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   if (/(password|pasword|passwd|passw0rd|pasworld|locked out|sign[- ]in|sign[- ]on|log[- ]in|login|logon|reset.*(password|login)|can'?t (log|sign|get) in|wont? (let me )?(log|sign) in|wont? log in|cant log in|can'?t log on|invalid (login|sign[- ]?in)|account locked( (out|after))?)/.test(q) && !/\b(wifi|wi-fi|wireless|router|modem)\b/.test(q)) return 'password';
   // Bluetooth wireless audio before generic wifi (so 'wireless headset cutting out' hits bluetooth)
   // Printer-specific BEFORE wifi (so 'network printer' hits printer not wifi)

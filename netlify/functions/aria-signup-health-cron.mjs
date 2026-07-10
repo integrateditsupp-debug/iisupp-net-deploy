@@ -4,17 +4,11 @@
  *  Sends Ahmad an "intervention needed" email per stale tenant.
  *  Cat 15 — Lifecycle activation.
  */
-<<<<<<< HEAD
 import { beat } from './_heartbeat.mjs';
 const STALE_THRESHOLD_HOURS = 48;
 
 export default async () => {
   await beat('aria-signup-health-cron');
-=======
-const STALE_THRESHOLD_HOURS = 48;
-
-export default async () => {
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   const out = { ran_at: new Date().toISOString(), checked: 0, stale: [], notified: 0 };
   let store;
   try { ({ getStore } = await import('@netlify/blobs')); store = (await import('@netlify/blobs')).getStore({ name: 'aria-pilot-state', consistency: 'eventual' }); }

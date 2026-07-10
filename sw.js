@@ -1,11 +1,7 @@
 // Bump this version on each deploy to force returning visitors to flush the
 // old cache and pick up the new aria-trial widget + kb-index. The fetch
 // strategy is network-first, so cache only matters when offline.
-<<<<<<< HEAD
 const CACHE_NAME = "iisupport-v12";
-=======
-const CACHE_NAME = "iisupport-v9";
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 const PRECACHE = [
   "/",
   "/aria.html",

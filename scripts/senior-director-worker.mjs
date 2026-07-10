@@ -9,7 +9,6 @@ import {
   approvalTextForReview
 } from './staged-review-files.mjs';
 import { publishAgentReport, runAutonomySupervisor } from './autonomy-supervisor-core.mjs';
-<<<<<<< HEAD
 import { openAxisInbox, readAxisInbox, processAxisInbox, consumeAxisInbox } from './lib/axis-inbox.mjs';
 
 // AXIS approve-hop (vision-flaw-audit fix #2): each tick, pull the AXIS Command Center inbox, run the
@@ -33,8 +32,6 @@ async function runAxisInboxHop() {
     await log('axis approve-hop failed', { error: e?.message || String(e) }).catch(() => {});
   }
 }
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const STATE_DIR = path.join(ROOT, 'senior-director-state');
@@ -1161,7 +1158,6 @@ async function acquireLock() {
   return cleanup;
 }
 
-<<<<<<< HEAD
 // ── AXIS Command Center: emit a PUBLIC, secret-free state snapshot each tick ───────────────
 // Written to assets/axis-state.json (assets/ is public; senior-director-state/ is redirect-blocked).
 // HARD GATE: no secrets/PII. Backtick spans (file paths + named prospects/companies), urls, emails,
@@ -1275,8 +1271,6 @@ async function emitAxisState(hb, workerState) {
   }
 }
 
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 async function tick(reason = 'interval') {
   await ensureState();
   const hb = await heartbeat();
@@ -1302,11 +1296,8 @@ async function tick(reason = 'interval') {
     state.lastMissionBrief = now;
   }
   await writeJson(path.join(STATE_DIR, 'worker-state.json'), state);
-<<<<<<< HEAD
   await emitAxisState(hb, state);
   await runAxisInboxHop();
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   await publishAgentReport({
     agentId: 'senior-director-worker',
     label: 'Senior Director Worker',

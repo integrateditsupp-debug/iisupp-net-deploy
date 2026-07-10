@@ -127,7 +127,6 @@ async function deliverDeepReply({ responseUrl, text, userName, baseUrl }) {
 
   const intent = classifyIntent(q);
   const hints = {
-<<<<<<< HEAD
     password: '*Password / sign-in:* Try aka.ms/sspr for self-serve reset if your org enabled it. Admin path: Entra ID -> Users -> Password reset.',
     mfa: '*MFA:* If you lost your device, admin must re-register MFA from Entra ID -> Users -> Authentication methods, then re-add via aka.ms/mfasetup.',
     mail: '*Outlook / mail:* Try safe mode first. Ctrl+click Outlook -> Yes to safe mode. If it opens, disable COM add-ins one by one.',
@@ -246,6 +245,3 @@ async function sendSlackResponse(responseUrl, text) {
     })
   });
 }
-=======
-    password: '*Password / sign-in:* Try aka.ms/sspr for self-serve reset if your org enabled it. Admin path: Entra 
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])

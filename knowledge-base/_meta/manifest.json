@@ -39,11 +39,7 @@
     },
     {
       "id": "l1-email-001",
-<<<<<<< HEAD
       "title": "Suspicious email / suspected phishing — what to do",
-=======
-      "title": "Suspicious email / suspected phishing \u2014 what to do",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "email",
       "support_level": "L1",
       "severity": "high",
@@ -112,11 +108,7 @@
     },
     {
       "id": "l1-m365-002",
-<<<<<<< HEAD
       "title": "Microsoft 365 license / activation issues — apps in reduced functionality",
-=======
-      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "m365",
       "support_level": "L1",
       "severity": "medium",
@@ -246,11 +238,7 @@
     },
     {
       "id": "l1-onedrive-003",
-<<<<<<< HEAD
       "title": "OneDrive sync conflict — 'two copies of file' / file with computer name appended",
-=======
-      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "onedrive",
       "support_level": "L1",
       "severity": "low",
@@ -590,11 +578,7 @@
     },
     {
       "id": "l1-windows-002",
-<<<<<<< HEAD
       "title": "Windows won't boot — stuck on spinning dots or black screen",
-=======
-      "title": "Windows won't boot \u2014 stuck on spinning dots or black screen",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "windows",
       "support_level": "L1",
       "severity": "high",
@@ -1774,11 +1758,7 @@
     },
     {
       "id": "ga-checkout-001",
-<<<<<<< HEAD
       "title": "Safe online checkout — payment options ranked",
-=======
-      "title": "Safe online checkout \u2014 payment options ranked",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "shopping",
       "support_level": "GA",
       "severity": "high",
@@ -1951,11 +1931,7 @@
     },
     {
       "id": "ga-shopping-002",
-<<<<<<< HEAD
       "title": "Comparing products fairly — what specs matter and which are marketing",
-=======
-      "title": "Comparing products fairly \u2014 what specs matter and which are marketing",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "shopping",
       "support_level": "GA",
       "severity": "low",
@@ -1983,11 +1959,7 @@
     },
     {
       "id": "ga-vendor-research-001",
-<<<<<<< HEAD
       "title": "Vendor / seller research — is this company legit?",
-=======
-      "title": "Vendor / seller research \u2014 is this company legit?",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "shopping",
       "support_level": "GA",
       "severity": "medium",
@@ -2256,11 +2228,7 @@
     },
     {
       "id": "l1-mac-legacy-001",
-<<<<<<< HEAD
       "title": "Older Mac stuck on macOS 10.13-10.15 — app compatibility and security",
-=======
-      "title": "Older Mac stuck on macOS 10.13-10.15 \u2014 app compatibility and security",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "macos",
       "support_level": "L1",
       "severity": "medium",
@@ -2292,11 +2260,7 @@
       "path": "legacy/l1-mac-legacy-001-older-macos-stuck-on-1015.md",
       "tech_generation": "legacy",
       "year_range": "2017-2020 (Apple security updates ended 2022)",
-<<<<<<< HEAD
       "eol_status": "Apple last released security updates for macOS 11 Big Sur Sept 2023. macOS 10.15 Catalina and earlier no longer receive ANY security updates. Browsers and most apps have dropped support — Chrome 120+, Firefox 117+, Safari (capped at the OS version).",
-=======
-      "eol_status": "Apple last released security updates for macOS 11 Big Sur Sept 2023. macOS 10.15 Catalina and earlier no longer receive ANY security updates. Browsers and most apps have dropped support \u2014 Chrome 120+, Firefox 117+, Safari (capped at the OS version).",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "last_updated": "2026-05-11"
     },
     {
@@ -2375,11 +2339,7 @@
     },
     {
       "id": "l1-windows-legacy-001",
-<<<<<<< HEAD
       "title": "Windows 7 still running in 2026 — security risk, isolation, and safe operation",
-=======
-      "title": "Windows 7 still running in 2026 \u2014 security risk, isolation, and safe operation",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "windows",
       "support_level": "L1",
       "severity": "high",
@@ -2414,11 +2374,7 @@
     },
     {
       "id": "l2-network-legacy-001",
-<<<<<<< HEAD
       "title": "Office router is WPA2-PSK only — modern devices misbehave, Wi-Fi 6/7 clients drop",
-=======
-      "title": "Office router is WPA2-PSK only \u2014 modern devices misbehave, Wi-Fi 6/7 clients drop",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "networking",
       "support_level": "L2",
       "severity": "medium",
@@ -2457,11 +2413,7 @@
     },
     {
       "id": "l1-ai-be-001",
-<<<<<<< HEAD
       "title": "AI coding agents at work — Claude Code, GitHub Copilot agents, Cursor, ChatGPT business use",
-=======
-      "title": "AI coding agents at work \u2014 Claude Code, GitHub Copilot agents, Cursor, ChatGPT business use",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "ai-tooling",
       "support_level": "L1",
       "severity": "low",
@@ -2488,30 +2440,18 @@
         "l1-mac-be-001-macos-16-apple-intelligence",
         "l3-security-001"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Employee handling regulated data (HIPAA, PCI, GDPR, trade secrets) needs to use AI coding tools → DLP review + appropriate plan tier required before approval.",
-=======
-      "escalation_trigger": "Employee handling regulated data (HIPAA, PCI, GDPR, trade secrets) needs to use AI coding tools \u2192 DLP review + appropriate plan tier required before approval.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "25",
       "version": "1.0",
       "path": "bleeding-edge/l1-ai-be-001-ai-coding-agents-business.md",
       "tech_generation": "bleeding-edge",
       "year_range": "2024-2026",
-<<<<<<< HEAD
       "eol_status": "Current. Field moving fast — review article quarterly.",
-=======
-      "eol_status": "Current. Field moving fast \u2014 review article quarterly.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "last_updated": "2026-05-11"
     },
     {
       "id": "l1-mac-be-001",
-<<<<<<< HEAD
       "title": "macOS 16 Apple Intelligence — features, privacy, and Private Cloud Compute",
-=======
-      "title": "macOS 16 Apple Intelligence \u2014 features, privacy, and Private Cloud Compute",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "macos",
       "support_level": "L1",
       "severity": "low",
@@ -2536,11 +2476,7 @@
         "l1-windows-be-001-windows-11-25h1-copilot-plus",
         "l1-ai-be-001-ai-coding-agents-business"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Enterprise customer needs to disable Apple Intelligence org-wide for data sovereignty / compliance → MDM configuration profile required, escalate to L2.",
-=======
-      "escalation_trigger": "Enterprise customer needs to disable Apple Intelligence org-wide for data sovereignty / compliance \u2192 MDM configuration profile required, escalate to L2.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "20",
       "version": "1.0",
       "path": "bleeding-edge/l1-mac-be-001-macos-16-apple-intelligence.md",
@@ -2551,11 +2487,7 @@
     },
     {
       "id": "l1-network-be-001",
-<<<<<<< HEAD
       "title": "Wi-Fi 7 in the office — 320 MHz, MLO, and backward compatibility with Wi-Fi 6/6E/5 clients",
-=======
-      "title": "Wi-Fi 7 in the office \u2014 320 MHz, MLO, and backward compatibility with Wi-Fi 6/6E/5 clients",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "networking",
       "support_level": "L1",
       "severity": "low",
@@ -2584,11 +2516,7 @@
         "l2-network-legacy-001-wpa2-only-router-replacement",
         "l3-networking-001-architecture"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Deploying Wi-Fi 7 across 20+ APs, multi-floor, or regulated industry → L3 network design with proper spectrum management.",
-=======
-      "escalation_trigger": "Deploying Wi-Fi 7 across 20+ APs, multi-floor, or regulated industry \u2192 L3 network design with proper spectrum management.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "25",
       "version": "1.0",
       "path": "bleeding-edge/l1-network-be-001-wifi-7-rollout-compatibility.md",
@@ -2599,11 +2527,7 @@
     },
     {
       "id": "l1-windows-be-001",
-<<<<<<< HEAD
       "title": "Windows 11 25H1 Copilot+ PC features — Recall, Click to Do, Cocreator, Live Captions",
-=======
-      "title": "Windows 11 25H1 Copilot+ PC features \u2014 Recall, Click to Do, Cocreator, Live Captions",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "windows",
       "support_level": "L1",
       "severity": "low",
@@ -2630,11 +2554,7 @@
         "l1-mac-be-001-macos-16-apple-intelligence",
         "l1-ai-be-001-ai-coding-agents-business"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Customer is enrolling 10+ Copilot+ PCs at once — design rollout (Recall policies, data governance, group policy) before mass deployment.",
-=======
-      "escalation_trigger": "Customer is enrolling 10+ Copilot+ PCs at once \u2014 design rollout (Recall policies, data governance, group policy) before mass deployment.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "20",
       "version": "1.0",
       "path": "bleeding-edge/l1-windows-be-001-windows-11-25h1-copilot-plus.md",
@@ -2645,11 +2565,7 @@
     },
     {
       "id": "l1-mobile-be-001",
-<<<<<<< HEAD
       "title": "iOS 18 / Android 15 — Apple Intelligence on iPhone, Gemini on Pixel, work profile changes",
-=======
-      "title": "iOS 18 / Android 15 \u2014 Apple Intelligence on iPhone, Gemini on Pixel, work profile changes",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "mobile",
       "support_level": "L1",
       "severity": "low",
@@ -2679,11 +2595,7 @@
         "l1-windows-be-001-windows-11-25h1-copilot-plus",
         "l2-byod-001-bring-your-own-device"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Company-issued device on iOS 18+ / Android 15+ enrolled in MDM and AI features need to be policy-controlled → L2 to configure MDM payload.",
-=======
-      "escalation_trigger": "Company-issued device on iOS 18+ / Android 15+ enrolled in MDM and AI features need to be policy-controlled \u2192 L2 to configure MDM payload.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "25",
       "version": "1.0",
       "path": "bleeding-edge/l1-mobile-be-001-ios-18-android-15-business-features.md",
@@ -2694,11 +2606,7 @@
     },
     {
       "id": "l1-outlook-be-001",
-<<<<<<< HEAD
       "title": "New Outlook vs Classic Outlook in 2026 — which one to use and how to switch",
-=======
-      "title": "New Outlook vs Classic Outlook in 2026 \u2014 which one to use and how to switch",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "outlook",
       "support_level": "L1",
       "severity": "medium",
@@ -2724,30 +2632,18 @@
         "l1-outlook-002-cant-send-emails",
         "l1-office-legacy-001-office-2010-2013-mail-stopped"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Customer relies on a feature New Outlook doesn't support (PST import for offline work, third-party COM add-ins) and is forced to migrate — assess workflow rework before forcing.",
-=======
-      "escalation_trigger": "Customer relies on a feature New Outlook doesn't support (PST import for offline work, third-party COM add-ins) and is forced to migrate \u2014 assess workflow rework before forcing.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "20",
       "version": "1.0",
       "path": "bleeding-edge/l1-outlook-be-001-new-outlook-vs-classic-2026.md",
       "tech_generation": "bleeding-edge",
       "year_range": "New Outlook GA 2024; Classic Outlook (Win32) supported through at least 2029 per Microsoft commitment",
-<<<<<<< HEAD
       "eol_status": "Classic Outlook (Win32) on supported Microsoft 365 Apps tier — patched through Microsoft's Modern Lifecycle. New Outlook is the strategic future.",
-=======
-      "eol_status": "Classic Outlook (Win32) on supported Microsoft 365 Apps tier \u2014 patched through Microsoft's Modern Lifecycle. New Outlook is the strategic future.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "last_updated": "2026-05-11"
     },
     {
       "id": "l1-vpn-anyconnect-001",
-<<<<<<< HEAD
       "title": "Cisco AnyConnect / Cisco Secure Client — connect to corporate VPN, step by step",
-=======
-      "title": "Cisco AnyConnect / Cisco Secure Client \u2014 connect to corporate VPN, step by step",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "vpn",
       "support_level": "L1",
       "severity": "high",
@@ -2779,11 +2675,7 @@
     },
     {
       "id": "l1-vpn-generic-001",
-<<<<<<< HEAD
       "title": "VPN won't connect — universal triage and when to call IT",
-=======
-      "title": "VPN won't connect \u2014 universal triage and when to call IT",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "vpn",
       "support_level": "L1",
       "severity": "high",
@@ -2822,11 +2714,7 @@
     },
     {
       "id": "l1-vpn-globalprotect-001",
-<<<<<<< HEAD
       "title": "Palo Alto GlobalProtect — connect to corporate VPN, step by step",
-=======
-      "title": "Palo Alto GlobalProtect \u2014 connect to corporate VPN, step by step",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "vpn",
       "support_level": "L1",
       "severity": "high",
@@ -2859,11 +2747,7 @@
     },
     {
       "id": "l1-vpn-ivanti-001",
-<<<<<<< HEAD
       "title": "Ivanti Secure Access (formerly Pulse Secure) — connect to corporate VPN, step by step",
-=======
-      "title": "Ivanti Secure Access (formerly Pulse Secure) \u2014 connect to corporate VPN, step by step",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "vpn",
       "support_level": "L1",
       "severity": "high",
@@ -2901,11 +2785,7 @@
     },
     {
       "id": "l1-vpn-mobilepass-001",
-<<<<<<< HEAD
       "title": "MobilePASS+ — install, enroll, and use for VPN MFA tokens",
-=======
-      "title": "MobilePASS+ \u2014 install, enroll, and use for VPN MFA tokens",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "mfa",
       "support_level": "L1",
       "severity": "high",
@@ -2930,30 +2810,18 @@
         "l1-vpn-ivanti-001-ivanti-secure-access-connect",
         "l1-mfa-001-setup-recovery"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Enrollment link expired AND user has critical VPN need — IT must reissue enrollment from SafeNet Authentication Service / Trusted Access console.",
-=======
-      "escalation_trigger": "Enrollment link expired AND user has critical VPN need \u2014 IT must reissue enrollment from SafeNet Authentication Service / Trusted Access console.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "12",
       "version": "1.0",
       "path": "vpn/l1-vpn-mobilepass-001-mobilepass-token-setup.md",
       "tech_generation": "current",
       "year_range": "MobilePASS+ replaced MobilePASS Classic 2018; current",
-<<<<<<< HEAD
       "eol_status": "Thales (formerly Gemalto / SafeNet) MobilePASS+ is current. Classic MobilePASS EOL March 2025 — must migrate.",
-=======
-      "eol_status": "Thales (formerly Gemalto / SafeNet) MobilePASS+ is current. Classic MobilePASS EOL March 2025 \u2014 must migrate.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "last_updated": "2026-05-12"
     },
     {
       "id": "l1-vpn-pulse-001",
-<<<<<<< HEAD
       "title": "Pulse Secure (legacy) — same product as Ivanti Secure Access, when you see the old name",
-=======
-      "title": "Pulse Secure (legacy) \u2014 same product as Ivanti Secure Access, when you see the old name",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "vpn",
       "support_level": "L1",
       "severity": "medium",
@@ -2972,11 +2840,7 @@
         "l1-vpn-ivanti-001-ivanti-secure-access-connect",
         "l1-vpn-001-cant-connect"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Company is still on Pulse Secure pre-9.1R12 — major CVEs unpatched. Escalate to L2/L3 for gateway upgrade plan.",
-=======
-      "escalation_trigger": "Company is still on Pulse Secure pre-9.1R12 \u2014 major CVEs unpatched. Escalate to L2/L3 for gateway upgrade plan.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "10",
       "version": "1.0",
       "path": "vpn/l1-vpn-pulse-001-pulse-secure-legacy.md",
@@ -2987,11 +2851,7 @@
     },
     {
       "id": "l1-internet-001",
-<<<<<<< HEAD
       "title": "No internet at all — total outage, home or office",
-=======
-      "title": "No internet at all \u2014 total outage, home or office",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "networking",
       "support_level": "L1",
       "severity": "critical",
@@ -3016,11 +2876,7 @@
         "l1-internet-003-intermittent-drops",
         "l1-vpn-generic-001-when-to-call-vs-self-fix"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "After 30 minutes of self-fix attempts, internet is still down AND mobile hotspot from a different carrier also has issues (regional outage). Or if your business has an SLA with the ISP — call them immediately.",
-=======
-      "escalation_trigger": "After 30 minutes of self-fix attempts, internet is still down AND mobile hotspot from a different carrier also has issues (regional outage). Or if your business has an SLA with the ISP \u2014 call them immediately.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "20",
       "version": "1.0",
       "path": "internet/l1-internet-001-no-internet-at-all.md",
@@ -3031,11 +2887,7 @@
     },
     {
       "id": "l1-internet-002",
-<<<<<<< HEAD
       "title": "Internet is slow but connected — speed troubleshooting",
-=======
-      "title": "Internet is slow but connected \u2014 speed troubleshooting",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "networking",
       "support_level": "L1",
       "severity": "medium",
@@ -3062,11 +2914,7 @@
         "l2-network-legacy-001-wpa2-only-router-replacement",
         "l1-network-be-001-wifi-7-rollout-compatibility"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Wired speed is more than 30% below the ISP's advertised plan AND modem signal levels are out of spec — escalate to ISP for line work.",
-=======
-      "escalation_trigger": "Wired speed is more than 30% below the ISP's advertised plan AND modem signal levels are out of spec \u2014 escalate to ISP for line work.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "20",
       "version": "1.0",
       "path": "internet/l1-internet-002-slow-but-connected.md",
@@ -3077,11 +2925,7 @@
     },
     {
       "id": "l1-internet-003",
-<<<<<<< HEAD
       "title": "Internet drops randomly — intermittent disconnects",
-=======
-      "title": "Internet drops randomly \u2014 intermittent disconnects",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "networking",
       "support_level": "L1",
       "severity": "high",
@@ -3102,11 +2946,7 @@
         "l1-internet-002-slow-but-connected",
         "l1-wifi-001-cant-connect"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Modem reboots itself randomly (logs show power-cycle events with no user action) → hardware failure, ISP must replace. Or multiple devices in the office drop simultaneously several times per day → likely AP / switch issue, escalate to L2.",
-=======
-      "escalation_trigger": "Modem reboots itself randomly (logs show power-cycle events with no user action) \u2192 hardware failure, ISP must replace. Or multiple devices in the office drop simultaneously several times per day \u2192 likely AP / switch issue, escalate to L2.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "25",
       "version": "1.0",
       "path": "internet/l1-internet-003-intermittent-drops.md",
@@ -3117,11 +2957,7 @@
     },
     {
       "id": "l1-calendar-001",
-<<<<<<< HEAD
       "title": "Outlook calendar problems — meetings missing, double-booked, won't sync",
-=======
-      "title": "Outlook calendar problems \u2014 meetings missing, double-booked, won't sync",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "outlook",
       "support_level": "L1",
       "severity": "medium",
@@ -3149,11 +2985,7 @@
         "l1-outlook-002-cant-send-emails",
         "l1-calendar-002-out-of-office-setup"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Calendar shows different events on different devices for the same account AND clearing cache + rebuild profile doesn't fix → Exchange Online sync issue, L2 to check mailbox database / repair calendar.",
-=======
-      "escalation_trigger": "Calendar shows different events on different devices for the same account AND clearing cache + rebuild profile doesn't fix \u2192 Exchange Online sync issue, L2 to check mailbox database / repair calendar.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "15",
       "version": "1.0",
       "path": "top50-gaps/l1-calendar-001-outlook-calendar-issues.md",
@@ -3164,11 +2996,7 @@
     },
     {
       "id": "l1-calendar-002",
-<<<<<<< HEAD
       "title": "Out-of-Office (Automatic Replies) — set up correctly for time away",
-=======
-      "title": "Out-of-Office (Automatic Replies) \u2014 set up correctly for time away",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "outlook",
       "support_level": "L1",
       "severity": "low",
@@ -3190,11 +3018,7 @@
         "l1-calendar-001-outlook-calendar-issues",
         "l1-outlook-001-not-receiving-emails"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "User can't set OOO because the option is greyed out in all interfaces — likely admin policy blocking. Escalate to L2 for tenant config check.",
-=======
-      "escalation_trigger": "User can't set OOO because the option is greyed out in all interfaces \u2014 likely admin policy blocking. Escalate to L2 for tenant config check.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "8",
       "version": "1.0",
       "path": "top50-gaps/l1-calendar-002-out-of-office-setup.md",
@@ -3205,11 +3029,7 @@
     },
     {
       "id": "l1-display-001",
-<<<<<<< HEAD
       "title": "External monitor not detected — laptop won't show video on second screen",
-=======
-      "title": "External monitor not detected \u2014 laptop won't show video on second screen",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "hardware",
       "support_level": "L1",
       "severity": "medium",
@@ -3234,11 +3054,7 @@
         "l1-usb-001-device-not-recognized",
         "l1-windows-be-001-windows-11-25h1-copilot-plus"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Monitor works on another laptop but not yours, AND laptop's HDMI / USB-C port doesn't work with any monitor → port hardware failure, requires service ticket / replacement.",
-=======
-      "escalation_trigger": "Monitor works on another laptop but not yours, AND laptop's HDMI / USB-C port doesn't work with any monitor \u2192 port hardware failure, requires service ticket / replacement.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "15",
       "version": "1.0",
       "path": "top50-gaps/l1-display-001-external-monitor-not-detected.md",
@@ -3249,11 +3065,7 @@
     },
     {
       "id": "l1-input-001",
-<<<<<<< HEAD
       "title": "Keyboard or mouse not working — wired, wireless, or specific keys",
-=======
-      "title": "Keyboard or mouse not working \u2014 wired, wireless, or specific keys",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "hardware",
       "support_level": "L1",
       "severity": "high",
@@ -3280,11 +3092,7 @@
         "l1-bluetooth-001-pairing-failed",
         "l1-usb-001-device-not-recognized"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Multiple keyboards / mice fail on this laptop AND wired+wireless both fail → laptop USB controller or Bluetooth radio dead. Escalate to L2 / hardware service.",
-=======
-      "escalation_trigger": "Multiple keyboards / mice fail on this laptop AND wired+wireless both fail \u2192 laptop USB controller or Bluetooth radio dead. Escalate to L2 / hardware service.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "12",
       "version": "1.0",
       "path": "top50-gaps/l1-input-001-keyboard-mouse-not-working.md",
@@ -3295,11 +3103,7 @@
     },
     {
       "id": "l1-security-001",
-<<<<<<< HEAD
       "title": "Lost or stolen company device — immediate response protocol",
-=======
-      "title": "Lost or stolen company device \u2014 immediate response protocol",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "security",
       "support_level": "L1",
       "severity": "critical",
@@ -3336,11 +3140,7 @@
     },
     {
       "id": "l1-conference-001",
-<<<<<<< HEAD
       "title": "Conference room AV not working — projector, mic, camera, Teams Room",
-=======
-      "title": "Conference room AV not working \u2014 projector, mic, camera, Teams Room",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "hardware",
       "support_level": "L1",
       "severity": "high",
@@ -3372,11 +3172,7 @@
         "l1-teams-001-audio-not-working",
         "l1-teams-002-wont-load-stuck-splash"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Conference room hardware physically dead (no power, no display) OR scheduled meeting starting in <5 min and ALL options failing → call IT emergency line for in-person help.",
-=======
-      "escalation_trigger": "Conference room hardware physically dead (no power, no display) OR scheduled meeting starting in <5 min and ALL options failing \u2192 call IT emergency line for in-person help.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "15",
       "version": "1.0",
       "path": "top50-gaps/l1-conference-001-conference-room-av-not-working.md",
@@ -3387,11 +3183,7 @@
     },
     {
       "id": "l1-file-recovery-001",
-<<<<<<< HEAD
       "title": "Recover a deleted or lost file — OneDrive, SharePoint, Teams, Recycle Bin",
-=======
-      "title": "Recover a deleted or lost file \u2014 OneDrive, SharePoint, Teams, Recycle Bin",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "file-management",
       "support_level": "L1",
       "severity": "medium",
@@ -3417,11 +3209,7 @@
         "l1-onedrive-002-restore-deleted-file",
         "l1-onedrive-003-version-conflict"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "File deleted > 30 days ago AND not in any restore path → ticket IT for backup tape / Azure Blob soft-delete recovery (may have additional retention).",
-=======
-      "escalation_trigger": "File deleted > 30 days ago AND not in any restore path \u2192 ticket IT for backup tape / Azure Blob soft-delete recovery (may have additional retention).",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "10",
       "version": "1.0",
       "path": "top50-gaps/l1-file-recovery-001-deleted-file-recovery.md",
@@ -3432,11 +3220,7 @@
     },
     {
       "id": "l1-mobile-email-001",
-<<<<<<< HEAD
       "title": "Set up work email on your phone — iPhone, Android, new device",
-=======
-      "title": "Set up work email on your phone \u2014 iPhone, Android, new device",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "m365",
       "support_level": "L1",
       "severity": "medium",
@@ -3459,11 +3243,7 @@
         "l1-outlook-001-not-receiving-emails",
         "l1-security-001-lost-stolen-device"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "MFA succeeds but mobile mail won't sync after 3 attempts AND conditional access policy blocks unknown device → IT to register device or grant exception.",
-=======
-      "escalation_trigger": "MFA succeeds but mobile mail won't sync after 3 attempts AND conditional access policy blocks unknown device \u2192 IT to register device or grant exception.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "10",
       "version": "1.0",
       "path": "top50-gaps/l1-mobile-email-001-set-up-work-email-on-phone.md",
@@ -3474,11 +3254,7 @@
     },
     {
       "id": "l1-newdevice-001",
-<<<<<<< HEAD
       "title": "New work laptop — first-boot setup checklist",
-=======
-      "title": "New work laptop \u2014 first-boot setup checklist",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "onboarding",
       "support_level": "L1",
       "severity": "medium",
@@ -3504,11 +3280,7 @@
         "l2-onboarding-001-new-user",
         "l1-mobile-email-001-set-up-work-email-on-phone"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Autopilot / Jamf enrollment fails to apply policies after 2 attempts → IT to manually re-enroll device.",
-=======
-      "escalation_trigger": "Autopilot / Jamf enrollment fails to apply policies after 2 attempts \u2192 IT to manually re-enroll device.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "60",
       "version": "1.0",
       "path": "top50-gaps/l1-newdevice-001-new-laptop-first-boot.md",
@@ -3519,11 +3291,7 @@
     },
     {
       "id": "l1-software-install-001",
-<<<<<<< HEAD
       "title": "Requesting software install on work computer — process and self-serve options",
-=======
-      "title": "Requesting software install on work computer \u2014 process and self-serve options",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "category": "software",
       "support_level": "L1",
       "severity": "low",
@@ -3549,11 +3317,7 @@
         "l1-windows-006-app-wont-open",
         "l1-m365-002-license-activation-issues"
       ],
-<<<<<<< HEAD
       "escalation_trigger": "Software not in self-serve catalog AND business case is clear (regulated industry tool, compliance need, customer-required) → IT submits formal request through procurement; user notified within 2 business days.",
-=======
-      "escalation_trigger": "Software not in self-serve catalog AND business case is clear (regulated industry tool, compliance need, customer-required) \u2192 IT submits formal request through procurement; user notified within 2 business days.",
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "estimated_time_minutes": "10",
       "version": "1.0",
       "path": "top50-gaps/l1-software-install-001-software-install-request.md",
@@ -3569,7 +3333,6 @@
       "support_level": "L1",
       "severity": "medium",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Windows 10",
         "Windows 11",
@@ -3588,11 +3351,6 @@
         "l2-hipaa-003-mfa-recovery-for-clinical-staff",
         "l2-patient-portal-001-mychart-account-locked"
       ],
-=======
-      "os_scope": ["Windows 10", "Windows 11", "macOS", "iOS", "Android"],
-      "keywords": ["epic", "mychart", "login", "password", "browser"],
-      "related_articles": ["l2-hipaa-003-mfa-recovery-for-clinical-staff", "l2-patient-portal-001-mychart-account-locked"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Portal reset fails, account is locked, or identity record appears mismatched",
       "estimated_time_minutes": "15",
       "version": "1.0",
@@ -3609,7 +3367,6 @@
       "support_level": "L1",
       "severity": "high",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Windows 10",
         "Windows 11"
@@ -3625,11 +3382,6 @@
         "l2-emr-006-citrix-receiver-emr-disconnect-frequently",
         "l2-hipaa-005-encryption-at-rest-audit"
       ],
-=======
-      "os_scope": ["Windows 10", "Windows 11"],
-      "keywords": ["cerner", "powerchart", "crash", "citrix", "workstation"],
-      "related_articles": ["l2-emr-006-citrix-receiver-emr-disconnect-frequently", "l2-hipaa-005-encryption-at-rest-audit"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Crash repeats after restart and profile isolation, or multiple clinical users are affected",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -3646,7 +3398,6 @@
       "support_level": "L1",
       "severity": "medium",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Windows 10",
         "Windows 11"
@@ -3662,11 +3413,6 @@
         "l2-emr-006-citrix-receiver-emr-disconnect-frequently",
         "l2-emr-007-emr-database-connection-loss-post-patch"
       ],
-=======
-      "os_scope": ["Windows 10", "Windows 11"],
-      "keywords": ["allscripts", "sunrise", "slow", "performance", "workstation"],
-      "related_articles": ["l2-emr-006-citrix-receiver-emr-disconnect-frequently", "l2-emr-007-emr-database-connection-loss-post-patch"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Multiple users or modules are slow in the same time window",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -3683,7 +3429,6 @@
       "support_level": "L1",
       "severity": "medium",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Windows 10",
         "Windows 11",
@@ -3700,11 +3445,6 @@
         "l1-clinical-printer-001-prescription-printer-out-of-paper",
         "l2-clinical-printer-003-zebra-label-driver-windows-11"
       ],
-=======
-      "os_scope": ["Windows 10", "Windows 11", "macOS"],
-      "keywords": ["athenahealth", "print", "printer", "forms", "labels"],
-      "related_articles": ["l1-clinical-printer-001-prescription-printer-out-of-paper", "l2-clinical-printer-003-zebra-label-driver-windows-11"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Local printer works but athenahealth output still fails",
       "estimated_time_minutes": "15",
       "version": "1.0",
@@ -3721,7 +3461,6 @@
       "support_level": "L1",
       "severity": "medium",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Windows 10",
         "Windows 11"
@@ -3737,11 +3476,6 @@
         "l1-pacs-001-dicom-image-not-displaying",
         "l2-hipaa-005-encryption-at-rest-audit"
       ],
-=======
-      "os_scope": ["Windows 10", "Windows 11"],
-      "keywords": ["nextgen", "pacs", "image", "viewer", "dicom"],
-      "related_articles": ["l1-pacs-001-dicom-image-not-displaying", "l2-hipaa-005-encryption-at-rest-audit"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Viewer opens but image retrieval fails, or issue affects multiple workstations",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -3758,7 +3492,6 @@
       "support_level": "L2",
       "severity": "critical",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Microsoft 365",
         "Google Workspace",
@@ -3775,11 +3508,6 @@
         "l2-hipaa-004-business-associate-agreement-checklist",
         "l2-hipaa-005-encryption-at-rest-audit"
       ],
-=======
-      "os_scope": ["Microsoft 365", "Google Workspace", "Email gateway"],
-      "keywords": ["hipaa", "ephi", "email", "leak", "breach"],
-      "related_articles": ["l2-hipaa-004-business-associate-agreement-checklist", "l2-hipaa-005-encryption-at-rest-audit"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "External recipient involved, recall fails, or privacy officer review is required",
       "estimated_time_minutes": "30",
       "version": "1.0",
@@ -3796,7 +3524,6 @@
       "support_level": "L2",
       "severity": "critical",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Windows 10",
         "Windows 11",
@@ -3813,11 +3540,6 @@
         "l1-security-001-lost-stolen-device",
         "l2-hipaa-005-encryption-at-rest-audit"
       ],
-=======
-      "os_scope": ["Windows 10", "Windows 11", "macOS"],
-      "keywords": ["hipaa", "lost laptop", "ephi", "encryption", "intune"],
-      "related_articles": ["l1-security-001-lost-stolen-device", "l2-hipaa-005-encryption-at-rest-audit"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Encryption cannot be proven or device contains clinical data",
       "estimated_time_minutes": "30",
       "version": "1.0",
@@ -3834,7 +3556,6 @@
       "support_level": "L2",
       "severity": "high",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Microsoft Entra ID",
         "Okta",
@@ -3851,11 +3572,6 @@
         "l1-mfa-001-setup-recovery",
         "l2-hipaa-001-suspected-ePHI-email-leak"
       ],
-=======
-      "os_scope": ["Microsoft Entra ID", "Okta", "Duo"],
-      "keywords": ["hipaa", "mfa", "authenticator", "clinical staff", "recovery"],
-      "related_articles": ["l1-mfa-001-setup-recovery", "l2-hipaa-001-suspected-ePHI-email-leak"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Identity cannot be verified or risky sign-in activity appears",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -3872,7 +3588,6 @@
       "support_level": "L2",
       "severity": "high",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Vendor review",
         "Procurement",
@@ -3889,11 +3604,6 @@
         "l2-hipaa-001-suspected-ePHI-email-leak",
         "l2-hipaa-005-encryption-at-rest-audit"
       ],
-=======
-      "os_scope": ["Vendor review", "Procurement", "Security"],
-      "keywords": ["hipaa", "baa", "business associate", "vendor", "checklist"],
-      "related_articles": ["l2-hipaa-001-suspected-ePHI-email-leak", "l2-hipaa-005-encryption-at-rest-audit"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Vendor may access ePHI and no signed BAA is confirmed",
       "estimated_time_minutes": "25",
       "version": "1.0",
@@ -3910,7 +3620,6 @@
       "support_level": "L2",
       "severity": "high",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Windows",
         "macOS",
@@ -3929,11 +3638,6 @@
         "l2-hipaa-002-lost-laptop-with-ePHI",
         "l2-hipaa-004-business-associate-agreement-checklist"
       ],
-=======
-      "os_scope": ["Windows", "macOS", "Cloud", "Database", "Backup"],
-      "keywords": ["hipaa", "encryption", "bitlocker", "filevault", "audit"],
-      "related_articles": ["l2-hipaa-002-lost-laptop-with-ePHI", "l2-hipaa-004-business-associate-agreement-checklist"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "ePHI is stored on unencrypted or unmanaged systems",
       "estimated_time_minutes": "45",
       "version": "1.0",
@@ -3950,7 +3654,6 @@
       "support_level": "L1",
       "severity": "high",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Medical device network",
         "PACS"
@@ -3966,11 +3669,6 @@
         "l1-pacs-001-dicom-image-not-displaying",
         "l2-hipaa-005-encryption-at-rest-audit"
       ],
-=======
-      "os_scope": ["Medical device network", "PACS"],
-      "keywords": ["imaging", "modality", "network", "dicom", "pacs"],
-      "related_articles": ["l1-pacs-001-dicom-image-not-displaying", "l2-hipaa-005-encryption-at-rest-audit"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "No network link, wrong IP, or PACS destination unreachable",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -3987,7 +3685,6 @@
       "support_level": "L1",
       "severity": "high",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Medical device Wi-Fi"
       ],
@@ -4002,11 +3699,6 @@
         "l1-medical-device-001-imaging-modality-not-on-network",
         "l2-hipaa-003-mfa-recovery-for-clinical-staff"
       ],
-=======
-      "os_scope": ["Medical device Wi-Fi"],
-      "keywords": ["infusion pump", "wifi", "wireless", "drops", "biomedical"],
-      "related_articles": ["l1-medical-device-001-imaging-modality-not-on-network", "l2-hipaa-003-mfa-recovery-for-clinical-staff"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Multiple pumps drop in same area or device profile appears stale",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -4023,7 +3715,6 @@
       "support_level": "L1",
       "severity": "high",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Medical device Wi-Fi",
         "Monitoring systems"
@@ -4039,11 +3730,6 @@
         "l1-medical-device-002-infusion-pump-wifi-drops",
         "l2-hipaa-005-encryption-at-rest-audit"
       ],
-=======
-      "os_scope": ["Medical device Wi-Fi", "Monitoring systems"],
-      "keywords": ["vital signs", "monitor", "offline", "wifi", "biomedical"],
-      "related_articles": ["l1-medical-device-002-infusion-pump-wifi-drops", "l2-hipaa-005-encryption-at-rest-audit"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Several monitors in same area are offline or registration is missing",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -4060,7 +3746,6 @@
       "support_level": "L1",
       "severity": "high",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "PACS",
         "Windows 10",
@@ -4077,11 +3762,6 @@
         "l1-pacs-002-radiology-workstation-slow-load",
         "l1-emr-005-nextgen-emr-pacs-image-load"
       ],
-=======
-      "os_scope": ["PACS", "Windows 10", "Windows 11"],
-      "keywords": ["pacs", "dicom", "image", "viewer", "radiology"],
-      "related_articles": ["l1-pacs-002-radiology-workstation-slow-load", "l1-emr-005-nextgen-emr-pacs-image-load"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Same study fails for multiple authorized users or devices",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -4098,7 +3778,6 @@
       "support_level": "L1",
       "severity": "high",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "PACS",
         "Windows 10",
@@ -4115,11 +3794,6 @@
         "l1-pacs-001-dicom-image-not-displaying",
         "l2-hipaa-005-encryption-at-rest-audit"
       ],
-=======
-      "os_scope": ["PACS", "Windows 10", "Windows 11"],
-      "keywords": ["pacs", "radiology", "workstation", "slow", "images"],
-      "related_articles": ["l1-pacs-001-dicom-image-not-displaying", "l2-hipaa-005-encryption-at-rest-audit"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Multiple workstations or modalities are slow during diagnostic workflow",
       "estimated_time_minutes": "25",
       "version": "1.0",
@@ -4136,7 +3810,6 @@
       "support_level": "L2",
       "severity": "high",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Secure fax",
         "eFax",
@@ -4153,11 +3826,6 @@
         "l2-fax-002-rightfax-srfax-troubleshoot",
         "l2-hipaa-001-suspected-ePHI-email-leak"
       ],
-=======
-      "os_scope": ["Secure fax", "eFax", "Downtime workflow"],
-      "keywords": ["hipaa", "secure fax", "failover", "downtime", "efax"],
-      "related_articles": ["l2-fax-002-rightfax-srfax-troubleshoot", "l2-hipaa-001-suspected-ePHI-email-leak"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "No approved secure failover path exists or urgent transmission fails",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -4174,7 +3842,6 @@
       "support_level": "L2",
       "severity": "high",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "RightFax",
         "SRFax",
@@ -4191,11 +3858,6 @@
         "l2-fax-001-secure-fax-failover-explain",
         "l2-hipaa-004-business-associate-agreement-checklist"
       ],
-=======
-      "os_scope": ["RightFax", "SRFax", "Secure fax"],
-      "keywords": ["hipaa", "rightfax", "srfax", "fax", "queue"],
-      "related_articles": ["l2-fax-001-secure-fax-failover-explain", "l2-hipaa-004-business-associate-agreement-checklist"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Platform-wide queue, connector, or failed test-send issue appears",
       "estimated_time_minutes": "25",
       "version": "1.0",
@@ -4212,7 +3874,6 @@
       "support_level": "L1",
       "severity": "medium",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Windows 10",
         "Windows 11",
@@ -4229,11 +3890,6 @@
         "l1-emr-004-athenahealth-print-issues",
         "l2-clinical-printer-003-zebra-label-driver-windows-11"
       ],
-=======
-      "os_scope": ["Windows 10", "Windows 11", "Clinical printers"],
-      "keywords": ["prescription printer", "paper", "printer", "rx", "clinic"],
-      "related_articles": ["l1-emr-004-athenahealth-print-issues", "l2-clinical-printer-003-zebra-label-driver-windows-11"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Printer mapping or hardware failure blocks prescribing workflow",
       "estimated_time_minutes": "10",
       "version": "1.0",
@@ -4250,7 +3906,6 @@
       "support_level": "L1",
       "severity": "high",
       "audience": "healthcare-user",
-<<<<<<< HEAD
       "os_scope": [
         "Windows 10",
         "Windows 11",
@@ -4267,11 +3922,6 @@
         "l2-clinical-printer-003-zebra-label-driver-windows-11",
         "l1-emr-004-athenahealth-print-issues"
       ],
-=======
-      "os_scope": ["Windows 10", "Windows 11", "Clinical printers"],
-      "keywords": ["label printer", "specimen", "stuck", "zebra", "clinic"],
-      "related_articles": ["l2-clinical-printer-003-zebra-label-driver-windows-11", "l1-emr-004-athenahealth-print-issues"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Specimen label calibration fails or lab workflow is delayed",
       "estimated_time_minutes": "15",
       "version": "1.0",
@@ -4288,7 +3938,6 @@
       "support_level": "L2",
       "severity": "medium",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Patient portal",
         "Epic MyChart"
@@ -4304,11 +3953,6 @@
         "l1-emr-001-epic-mychart-login-issues",
         "l2-patient-portal-002-portal-mfa-recovery-no-email"
       ],
-=======
-      "os_scope": ["Patient portal", "Epic MyChart"],
-      "keywords": ["hipaa", "mychart", "locked", "account", "portal"],
-      "related_articles": ["l1-emr-001-epic-mychart-login-issues", "l2-patient-portal-002-portal-mfa-recovery-no-email"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Identity mapping needs correction or account unlock fails",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -4325,7 +3969,6 @@
       "support_level": "L2",
       "severity": "medium",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Patient portal",
         "MFA"
@@ -4341,11 +3984,6 @@
         "l2-patient-portal-001-mychart-account-locked",
         "l2-hipaa-003-mfa-recovery-for-clinical-staff"
       ],
-=======
-      "os_scope": ["Patient portal", "MFA"],
-      "keywords": ["hipaa", "patient portal", "mfa", "recovery", "email"],
-      "related_articles": ["l2-patient-portal-001-mychart-account-locked", "l2-hipaa-003-mfa-recovery-for-clinical-staff"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Identity cannot be verified remotely or recovery is disputed",
       "estimated_time_minutes": "20",
       "version": "1.0",
@@ -4362,7 +4000,6 @@
       "support_level": "L2",
       "severity": "medium",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Windows 11",
         "Zebra printers"
@@ -4378,11 +4015,6 @@
         "l1-clinical-printer-002-label-printer-for-specimens-stuck",
         "l1-emr-004-athenahealth-print-issues"
       ],
-=======
-      "os_scope": ["Windows 11", "Zebra printers"],
-      "keywords": ["hipaa", "zebra", "label printer", "windows 11", "driver"],
-      "related_articles": ["l1-clinical-printer-002-label-printer-for-specimens-stuck", "l1-emr-004-athenahealth-print-issues"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Approved driver installs but clinical label output remains wrong",
       "estimated_time_minutes": "25",
       "version": "1.0",
@@ -4399,7 +4031,6 @@
       "support_level": "L2",
       "severity": "high",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "Citrix Workspace",
         "Windows 10",
@@ -4417,11 +4048,6 @@
         "l1-emr-002-cerner-powerchart-crashes",
         "l2-emr-007-emr-database-connection-loss-post-patch"
       ],
-=======
-      "os_scope": ["Citrix Workspace", "Windows 10", "Windows 11"],
-      "keywords": ["hipaa", "citrix", "receiver", "workspace", "emr", "disconnect"],
-      "related_articles": ["l1-emr-002-cerner-powerchart-crashes", "l2-emr-007-emr-database-connection-loss-post-patch"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Drops affect multiple users or care workflows after client repair",
       "estimated_time_minutes": "30",
       "version": "1.0",
@@ -4438,7 +4064,6 @@
       "support_level": "L2",
       "severity": "critical",
       "audience": "healthcare-it",
-<<<<<<< HEAD
       "os_scope": [
         "EMR",
         "Database",
@@ -4456,11 +4081,6 @@
         "l2-emr-006-citrix-receiver-emr-disconnect-frequently",
         "l2-hipaa-005-encryption-at-rest-audit"
       ],
-=======
-      "os_scope": ["EMR", "Database", "Windows Server", "Network"],
-      "keywords": ["hipaa", "emr", "database", "patch", "connection loss"],
-      "related_articles": ["l2-emr-006-citrix-receiver-emr-disconnect-frequently", "l2-hipaa-005-encryption-at-rest-audit"],
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "escalation_trigger": "Clinical access is broadly affected after patching",
       "estimated_time_minutes": "45",
       "version": "1.0",
@@ -4469,7 +4089,6 @@
       "year_range": "Current",
       "eol_status": "Current",
       "last_updated": "2026-06-18"
-<<<<<<< HEAD
     },
     {
       "id": "l1-passkey-001",
@@ -5450,39 +5069,10 @@
     "cloud": 1,
     "continuity": 1,
     "cryptography": 2,
-=======
-    }
-  ],
-  "total_articles": 96,
-  "by_level": {
-    "L1": 39,
-    "L2": 36,
-    "L3": 11,
-    "GA": 10
-  },
-  "by_category": {
-    "browser": 1,
-    "email": 1,
-    "m365": 2,
-    "mfa": 1,
-    "onedrive": 3,
-    "outlook": 2,
-    "passwords": 1,
-    "printers": 3,
-    "teams": 2,
-    "vpn": 2,
-    "wifi": 1,
-    "windows": 5,
-    "performance": 3,
-    "active-directory": 2,
-    "azure-ad": 1,
-    "bitlocker": 1,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     "deployment": 1,
     "dhcp": 1,
     "dns": 1,
     "drivers": 1,
-<<<<<<< HEAD
     "education": 2,
     "email": 2,
     "endpoint": 8,
@@ -5530,29 +5120,5 @@
     "webcam": 1,
     "wifi": 1,
     "windows": 7
-=======
-    "endpoint": 2,
-    "exchange": 1,
-    "intune": 1,
-    "security": 2,
-    "networking": 2,
-    "onboarding": 2,
-    "permissions": 1,
-    "rdp": 1,
-    "sharepoint": 1,
-    "backup-dr": 2,
-    "certificates": 1,
-    "cloud": 1,
-    "enterprise": 1,
-    "servers": 1,
-    "sso-saml": 1,
-    "booking": 1,
-    "education": 2,
-    "shopping": 4,
-    "forms": 1,
-    "scam-detection": 1,
-    "senior-friendly": 1,
-    "healthcare": 24
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   }
 }

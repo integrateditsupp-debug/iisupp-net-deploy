@@ -275,8 +275,6 @@ Both agents must independently enforce. Any output that fails a check goes to `d
 
 ## 11 · Update log (append at top — never silently rewrite)
 
-<<<<<<< HEAD
-=======
 ### 2026-06-18 — Cowork (Sonnet, autonomous 2h run while Ahmad away — Lanes 10-17)
 **Compounding lanes:** Lane 10 internal automation (founder-digest cron + Stripe pilot-events + lead auto-triage), Lane 11 ARIA self-improvement (gap-detector-cron clusters thumbs-down + low-confidence into KB stubs), Lane 12 SEO completeness (22 new pages got JSON-LD + Open Graph + Twitter Card via scripts/inject-seo.mjs + sitemap regen 26->38 URLs), Lane 13 revenue dashboard (MRR/ARR/ARPU/cohort), Lane 14 security polish (security.txt + pgp-key placeholder + hall-of-fame), Lane 15 backup cron (weekly Sundays snapshots 15 blob stores w/ 12-week retention), Lane 16 smoke test harness (110 functions, 26 PASS / 4 known-upstream-FAIL / 80 SKIP), Lane 17 perf + booking + a11y (/book demo-booking page + netlify.toml cache headers + robots.txt AI-bot policy).
 
@@ -344,7 +342,6 @@ Both agents must independently enforce. Any output that fails a check goes to `d
 - Whereby OR Daily account ($0 hobby tier) — for live screen-share: `WHEREBY_API_KEY` or `DAILY_API_KEY`
 
 
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 ### 2026-06-13 — Cowork (Sonnet)
 **Loops Engineering added as the operating system.** New companion file `docs/LOOPS_SPEC.md` (mirror in `outputs/codex-collab/LOOPS_SPEC.md`) makes "every recurring agent task is a loop with a goal, budget, verification, and on-failure" the law. Slash-commands `/goal` and `/loops` introduced; bootstrap set of 7 YAML loops drafted at `outputs/codex-collab/loops-drafts/`. See §13 below for the summary. Codex's queue: implement §10 of LOOPS_SPEC. Ahmad's directive: "loop engineer should be our focus... times that by 100." Both agents inherit. Triggered by TikTok upload of Claude Code's founder + Ahmad's /loops /goal direction.
 
@@ -423,7 +420,6 @@ Edit §1 carefully — preserve original prompt verbatim, append clarifications 
 ---
 
 **End of brief. Both agents: build to this, push back on violations, append updates honestly.**
-<<<<<<< HEAD
 
 ---
 
@@ -516,5 +512,3 @@ Picked up Codex's split work + Ahmad's CLAUDE_CONTINUE_PROMPT.md correction. Ver
 **Did NOT touch:** any src/main/, src/renderer/, src/shared/ — they're working per Codex's build and Ahmad's "if it's working don't touch it" rule.
 
 **Codex didn't miss anything — the split was already correct.** Polish was the only delta.
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])

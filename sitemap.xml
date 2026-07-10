@@ -9,17 +9,8 @@
   <url><loc>https://iisupp.net/verticals/finance</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://iisupp.net/government</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://iisupp.net/enterprise</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-<<<<<<< HEAD
   <url><loc>https://iisupp.net/health-check</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://iisupp.net/compliance-gap</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-=======
-  <url><loc>https://iisupp.net/scorecard</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://iisupp.net/health-check</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://iisupp.net/compliance-gap</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://iisupp.net/cost-calculator</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://iisupp.net/webinar</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://iisupp.net/insiders</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   <url><loc>https://iisupp.net/refer</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://iisupp.net/partners-prep</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://iisupp.net/sample-scenarios</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -32,25 +23,12 @@
   <url><loc>https://iisupp.net/compare/</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://iisupp.net/compare/aria-vs-retell/</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://iisupp.net/compare/aria-vs-vapi/</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-<<<<<<< HEAD
   <url><loc>https://iisupp.net/docs/api</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://iisupp.net/status</loc><lastmod>2026-06-18</lastmod><changefreq>daily</changefreq><priority>0.4</priority></url>
-=======
-  <url><loc>https://iisupp.net/compare/aria-vs-msp-x/</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://iisupp.net/docs/api</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://iisupp.net/status</loc><lastmod>2026-06-18</lastmod><changefreq>daily</changefreq><priority>0.4</priority></url>
-  <url><loc>https://iisupp.net/soc2-readiness</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://iisupp.net/compliance/iso-27001-readiness</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://iisupp.net/compliance/pipeda-readiness</loc><lastmod>2026-06-18</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://iisupp.net/compliance/automated-decisions</loc><lastmod>2026-06-18</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   <url><loc>https://iisupp.net/privacy</loc><lastmod>2026-06-18</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://iisupp.net/terms</loc><lastmod>2026-06-18</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://iisupp.net/ai-governance</loc><lastmod>2026-06-18</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://iisupp.net/security/disclosure</loc><lastmod>2026-06-18</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
-<<<<<<< HEAD
 
   <url><loc>https://iisupp.net/compliance/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 </urlset>

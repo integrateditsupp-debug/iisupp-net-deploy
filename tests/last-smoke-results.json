@@ -1,17 +1,9 @@
 {
-<<<<<<< HEAD
   "ran_at": "2026-06-26T13:53:58.336Z",
   "total": 166,
   "pass": 26,
   "fail": 4,
   "skip": 136,
-=======
-  "ran_at": "2026-06-18T17:52:35.545Z",
-  "total": 110,
-  "pass": 26,
-  "fail": 4,
-  "skip": 80,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   "results": [
     {
       "fn": "aperture-audit",
@@ -44,7 +36,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-ab-test",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -55,34 +46,26 @@
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-account-delete",
       "status": "PASS",
       "http": 400
     },
     {
-<<<<<<< HEAD
       "fn": "aria-admin-auth",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-analytics-dashboard",
       "status": "PASS",
       "http": 200
     },
     {
-<<<<<<< HEAD
       "fn": "aria-audit-export",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-backup-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -93,14 +76,11 @@
       "http": 200
     },
     {
-<<<<<<< HEAD
       "fn": "aria-breaker-status",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-call-summary",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -116,14 +96,11 @@
       "reason": "no safe payload defined"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-churn-predictor",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-contact-back",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -139,33 +116,26 @@
       "http": 200
     },
     {
-<<<<<<< HEAD
       "fn": "aria-coupon-admin",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-coupon",
       "status": "PASS",
       "http": 200
     },
     {
-<<<<<<< HEAD
       "fn": "aria-cron-health-monitor",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-cross-device-sync",
       "status": "PASS",
       "http": 401
     },
     {
-<<<<<<< HEAD
       "fn": "aria-customer-health",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -176,8 +146,6 @@
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-data-export",
       "status": "PASS",
       "http": 200
@@ -188,14 +156,11 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-env-check",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-escalation",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -246,14 +211,11 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-impl-quote",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-inquiry",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -274,7 +236,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-kb-freshness",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -295,8 +256,6 @@
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-lead-auto-triage",
       "status": "PASS",
       "http": 200
@@ -367,14 +326,11 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-llm-cost-cap",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-llm-governor",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -422,7 +378,6 @@
       "body_sample": "{\"error\":\"STRIPE_SECRET_KEY not configured\"}"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-nps-pulse",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -433,28 +388,22 @@
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-pattern-router",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-pipeline-weekly-report",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-plan-change",
       "status": "FAIL",
       "http": 503,
       "body_sample": "{\"error\":\"STRIPE_PRICE_PRO not configured in Netlify\"}"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-platform-readiness",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -465,8 +414,6 @@
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-receipt-email",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -477,14 +424,11 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-recipes",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-renewal-reminders",
       "status": "FAIL",
       "http": 503,
@@ -501,7 +445,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-retention-sweep-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -512,8 +455,6 @@
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-reverify-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -524,27 +465,21 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-room-provider-test",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-room-provider",
       "status": "PASS",
       "http": 200
     },
     {
-<<<<<<< HEAD
       "fn": "aria-scheduled-tasks-audit",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-screenshare-request",
       "status": "PASS",
       "http": 200
@@ -565,7 +500,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-self-eval-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -601,8 +535,6 @@
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-session-end",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -613,20 +545,16 @@
       "http": 200
     },
     {
-<<<<<<< HEAD
       "fn": "aria-session-recording-hook",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-session",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-signup-health-cron",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -637,8 +565,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-slack-command",
       "status": "PASS",
       "http": 200
@@ -649,14 +575,11 @@
       "reason": "no safe payload defined"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-slack-install",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-slack-interactive",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -667,7 +590,6 @@
       "reason": "no safe payload defined"
     },
     {
-<<<<<<< HEAD
       "fn": "aria-soc2-evidence-collect",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -683,14 +605,11 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-stripe-pilot-events",
       "status": "PASS",
       "http": 200
     },
     {
-<<<<<<< HEAD
       "fn": "aria-system-status",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -701,8 +620,6 @@
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-teams-bot",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -723,20 +640,16 @@
       "http": 200
     },
     {
-<<<<<<< HEAD
       "fn": "aria-tenant-isolation-test",
       "status": "SKIP",
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-tenant-kb",
       "status": "PASS",
       "http": 400
     },
     {
-<<<<<<< HEAD
       "fn": "aria-tenant-offboard",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -757,8 +670,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-trace",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -784,7 +695,6 @@
       "http": 200
     },
     {
-<<<<<<< HEAD
       "fn": "aria-web-tier",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -805,8 +715,6 @@
       "reason": "no safe payload defined"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "aria-white-label",
       "status": "PASS",
       "http": 400
@@ -814,14 +722,11 @@
     {
       "fn": "aria-winback-cron",
       "status": "SKIP",
-<<<<<<< HEAD
       "reason": "no safe payload defined"
     },
     {
       "fn": "aria-winback-cron",
       "status": "SKIP",
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
@@ -880,7 +785,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-<<<<<<< HEAD
       "fn": "sentinel-licenses",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -896,8 +800,6 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       "fn": "stocks",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"

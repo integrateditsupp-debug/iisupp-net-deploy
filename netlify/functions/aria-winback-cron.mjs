@@ -6,10 +6,7 @@
  *  Schedule: daily 11:00 UTC.
  *  Cat 2 — SaaS lifecycle.
  */
-<<<<<<< HEAD
 import { beat } from './_heartbeat.mjs';
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 const PROMO = {
   subject: 'A small offer just for you',
   html_template: function(name) {
@@ -25,10 +22,7 @@ const PROMO = {
 };
 
 export default async () => {
-<<<<<<< HEAD
   await beat('aria-winback-cron');
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   const key = process.env.STRIPE_SECRET_KEY;
   const resendKey = process.env.RESEND_API_KEY;
   if (!key) return new Response(JSON.stringify({ ok: false, error: 'STRIPE_SECRET_KEY missing' }), { status: 500, headers: {'Content-Type':'application/json'} });

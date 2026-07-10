@@ -1607,10 +1607,7 @@
 .aria-confidence.low{color:#fb7185}
 .aria-low-conf-note{color:rgba(255,255,255,.62);font-size:12px;font-style:italic;margin:0 0 10px;padding:8px 12px;background:rgba(251,113,133,.06);border-left:2px solid rgba(251,113,133,.4);border-radius:4px}
 </style>
-<<<<<<< HEAD
     <link rel="stylesheet" href="/assets/iis-motion.css?v=20260707c">
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 </head>
 <body>
 <div id="ariaOnboard" role="dialog" aria-labelledby="aoTitle" aria-modal="true">
@@ -1919,7 +1916,6 @@
               <div class="aria-tag">ARIA</div>
               <div class="aria-content">
                 <div class="aria-headline">How can I help you today?</div>
-<<<<<<< HEAD
                 <!-- Hero handoff CTA (D-20260624: web hands off, never runs a local fix). Opens ARIA Sentinel in
                      GUIDE mode (mode=walkthrough → the desktop Walk-through tab, changes nothing). Never a dead
                      click — the download fallback is always visible. -->
@@ -1934,8 +1930,6 @@
                     Guided step-by-step fixes on your own device. Don't have ARIA Sentinel yet? <a href="/downloads/" target="_blank" rel="noopener" style="color:var(--gold-bright,#f1dca7);font-weight:600">Download it &rarr;</a>
                   </div>
                 </div>
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
               </div>
             </div>
           </div>
@@ -1948,12 +1942,8 @@
           </div>
           <div class="history-bar">
             <button class="history-toggle" id="historyToggle">HISTORY <span class="count" id="historyCount">0</span><span class="caret">▾</span></button>
-<<<<<<< HEAD
             <button class="history-clear" id="newChatBtn" title="Start a fresh conversation — archives the current chat to History">NEW CHAT</button>
             <button class="history-clear" id="historyClear" title="Clear everything — reset the current chat and wipe archived chats">CLEAR</button>
-=======
-            <button class="history-clear" id="historyClear" title="Clear archived chats only — does not affect the current chat">CLEAR</button>
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
             <div class="history-dropdown" id="historyDropdown">
               <div class="history-empty">No archived chats</div>
             </div>
@@ -2868,7 +2858,6 @@ if (_historyClear){
     clearChatHistory();
   });
 }
-<<<<<<< HEAD
 const _newChatBtn = document.getElementById('newChatBtn');
 if (_newChatBtn){
   _newChatBtn.addEventListener('click', e => {
@@ -2876,8 +2865,6 @@ if (_newChatBtn){
     resetConversation();
   });
 }
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 document.addEventListener('click', e => {
   if (!e.target.closest('.history-bar')) _historyDD?.classList.remove('open');
   // followup chip → fire as user input
@@ -2935,10 +2922,7 @@ const state = {
   testQueue: null,
   testIdx: 0,
   unknownQueries: [],    // learning loop — batch to IIS via mailto
-<<<<<<< HEAD
   llmHistory: [],        // Slice D — rolling transcript sent to the aria-chat web brain for general Qs
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   user: null,            // { firstName, lastName, company, email }
   sessionStart: Date.now(),
   satisfactionShown: false,
@@ -2956,7 +2940,6 @@ function flushUnknowns(){
   state.unknownQueries = [];
 }
 
-<<<<<<< HEAD
 /* ============== Slice D — general-question path to the ARIA web brain (aria-chat) ============== */
 // Reached only when no IT recipe / KB pattern matched. Sends the rolling transcript to aria-chat and
 // renders a real LLM answer, so novel questions ("16 vs 32GB RAM for video editing?") get answered
@@ -3014,8 +2997,6 @@ function queueUnknownFallback(text){
   appendMessage(ariaBubble("I couldn't reach the helpdesk service just now.", "Your question is logged. Try again shortly, or call (647) 581-3182.", teachCue));
 }
 
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 /* ============== AUTO-UPDATE — fetch manifest, swap KB / caps when newer ============== */
 const ARIA_VERSION = { kb: 1, caps: 1 };
 const UPDATE_MANIFEST_URL = 'https://iisupp.net/aria/v1/manifest.json';
@@ -3272,7 +3253,6 @@ function archiveCurrentChat(){
               <div class="aria-tag">ARIA</div>
               <div class="aria-content">
                 <div class="aria-headline">How can I help you today?</div>
-<<<<<<< HEAD
                 <!-- Hero handoff CTA (D-20260624: web hands off, never runs a local fix). Opens ARIA Sentinel in
                      GUIDE mode (mode=walkthrough → the desktop Walk-through tab, changes nothing). Never a dead
                      click — the download fallback is always visible. -->
@@ -3299,19 +3279,10 @@ function archiveCurrentChat(){
   state.testQueue = null;
   state.testIdx = 0;
   state.llmHistory = [];
-=======
-              </div>
-            </div>
-          `;
-  state.thread = [];
-  state.introCleared = false;
-  state.lastIntent = null;
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   document.querySelector('.browser-frame')?.classList.remove('active-chat');
   renderHistoryDropdown();
 }
 
-<<<<<<< HEAD
 // Slice D R2 — wipe the CURRENT conversation to a clean slate: restore the intro and clear EVERY piece of
 // conversational state. Shared by NEW CHAT (after archiving the current chat) and CLEAR (which now also
 // hard-resets the live session). Does not touch the archive itself.
@@ -3360,8 +3331,6 @@ function resetConversation(){
   document.getElementById('historyDropdown')?.classList.remove('open');
 }
 
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 function renderHistoryDropdown(){
   const dd = document.getElementById('historyDropdown');
   const count = document.getElementById('historyCount');
@@ -3402,18 +3371,11 @@ function restoreFromHistory(id){
 }
 
 function clearChatHistory(){
-<<<<<<< HEAD
   // Slice D R2 — CLEAR now hard-resets the live session AND wipes the archive (a true "clear everything").
   hardResetCurrentChat();
   chatHistory = [];
   renderHistoryDropdown();
   document.getElementById('historyDropdown')?.classList.remove('open');
-=======
-  // wipe archive only — DO NOT touch current chat
-  chatHistory = [];
-  renderHistoryDropdown();
-  document.getElementById('historyDropdown').classList.remove('open');
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 }
 
 function timeAgo(d){
@@ -3550,8 +3512,6 @@ const KB = {
     headline:'I can either guide you step-by-step,<br/>or set Outlook out-of-office for you remotely.',
     sub:'Both options are safe and reversible. Which would you prefer?',
     note:'I will only modify the Automatic Replies setting. Inbox rules and your signature will not be touched.',
-<<<<<<< HEAD
-=======
     autoTime:'6.4s',
     audit:[
       ['14:42:08','info','Permission token validated · device-2861-MX'],
@@ -3575,7 +3535,6 @@ const KB = {
           </div>
         </div>
       </div>`,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     walk:[
       { title:'Open Outlook', sub:'ARIA will highlight the icon in your taskbar.', screenshot: outlookSS('open') },
       { title:'Click File → Automatic Replies', sub:'Top-left of the ribbon.', screenshot: outlookSS('file') },
@@ -3588,8 +3547,6 @@ const KB = {
     headline:'I can either guide you step-by-step,<br/>or resolve the issue for you remotely.',
     sub:'Both options are safe and reversible. Which would you prefer?',
     note:"<em>Don't worry</em> — I'll help you through this step by step. Nothing is changed without your approval.",
-<<<<<<< HEAD
-=======
     autoTime:'17.4s',
     audit:[
       ['14:42:08','info','Permission token validated · device-2861-MX'],
@@ -3606,7 +3563,6 @@ const KB = {
           <span>1,204 messages · last sync 2 sec ago</span><span style="color:var(--green)">✓ inbox synced</span>
         </div>
       </div>`,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     walk:[
       { title:'Open Task Manager', sub:'Press Ctrl + Shift + Esc.', screenshot: genericSS('Task Manager','Processes · 27') },
       { title:'Locate the Mail process', sub:'Sort by Memory — find the row marked Not Responding.', screenshot: genericSS('Mail','412 MB · NOT RESPONDING') },
@@ -3619,8 +3575,6 @@ const KB = {
     headline:'I can either guide you step-by-step,<br/>or help verify the safest Outlook startup path.',
     sub:'First ARIA should confirm the exact behavior, then keep the next step short and reversible.',
     note:"<em>Nothing risky happens first</em> — ARIA starts by confirming whether Outlook is frozen, crashing, showing an error, or failing silently.",
-<<<<<<< HEAD
-=======
     autoTime:'14.8s',
     audit:[
       ['14:42:08','info','Permission token validated · device-2861-MX'],
@@ -3637,7 +3591,6 @@ const KB = {
           <span>Startup path isolated · safe test ready</span><span style="color:var(--green)">✓ no profile change yet</span>
         </div>
       </div>`,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     walk:[
       { title:'Confirm what Outlook does', sub:'Does it do nothing, freeze, crash, or show an error?', screenshot: genericSS('Outlook startup','Open / freeze / error?') },
       { title:'Close any stuck Outlook process', sub:'Task Manager → end Outlook only if it is still hanging.', screenshot: genericSS('Task Manager','OUTLOOK.EXE · not responding') },
@@ -3650,8 +3603,6 @@ const KB = {
     headline:'I can run a VPN diagnostic,<br/>or reconfigure the tunnel for you.',
     sub:'Diagnostic is read-only. Reconfigure restores defaults under audit.',
     note:'<em>Heads up</em> — reconfiguring the VPN may briefly disconnect any active sessions.',
-<<<<<<< HEAD
-=======
     autoTime:'24.1s',
     audit:[
       ['09:18:02','info','Permission token validated · device-2861-MX'],
@@ -3662,7 +3613,6 @@ const KB = {
     ],
     summary:{ time:'24.1 s', actions:'5', down:'9', cost:'$0.00' },
     confirmCard:`<div class="preview-pane"><div class="preview-head"><span>VPN · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>Connected · 12 ms latency · region eu-west</span><span style="color:var(--green)">✓ tunnel up</span></div></div>`,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     walk:[
       { title:'Open the VPN client', sub:'Find the icon in the system tray.', screenshot: genericSS('VPN Client','Status: disconnected') },
       { title:'Click Disconnect, then Connect', sub:'Forces a fresh handshake.', screenshot: genericSS('Reconnecting','TLS handshake…') },
@@ -3674,8 +3624,6 @@ const KB = {
     headline:'I can walk you through a reset,<br/>or issue a temporary password for you.',
     sub:'Both paths trigger a multi-factor confirmation on your phone.',
     note:"<em>Just a moment</em> — I'll keep your session active while we recover access.",
-<<<<<<< HEAD
-=======
     autoTime:'4.2s',
     audit:[
       ['11:02:01','info','Identity verified via MFA push'],
@@ -3686,7 +3634,6 @@ const KB = {
     ],
     summary:{ time:'4.2 s', actions:'5', down:'6', cost:'$0.00' },
     confirmCard:`<div class="preview-pane"><div class="preview-head"><span>ACCOUNT · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>Signed in · device-2861 · 1 active session</span><span style="color:var(--green)">✓ MFA confirmed</span></div></div>`,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     walk:[
       { title:'Approve the MFA prompt on your phone', sub:'Authenticator app — tap Approve.', screenshot: genericSS('MFA Push','Approve sign-in?') },
       { title:'Enter the temporary password', sub:'I have placed it in your secure clipboard.', screenshot: genericSS('Sign in','Temporary password') },
@@ -3698,8 +3645,6 @@ const KB = {
     headline:'I can reset your network adapter,<br/>or walk you through diagnostics.',
     sub:'Adapter reset takes about ten seconds and is fully reversible.',
     note:'Wi-Fi will drop briefly while the adapter cycles. Hang tight.',
-<<<<<<< HEAD
-=======
     autoTime:'12.4s',
     audit:[
       ['08:31:10','info','Adapter state queried'],
@@ -3710,7 +3655,6 @@ const KB = {
     ],
     summary:{ time:'12.4 s', actions:'5', down:'4', cost:'$0.00' },
     confirmCard:`<div class="preview-pane"><div class="preview-head"><span>NETWORK · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>MERIDIAN-CORP · 5 GHz · 867 Mbps</span><span style="color:var(--green)">✓ connected</span></div></div>`,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     walk:[
       { title:'Open Network Settings', sub:'Right-click the Wi-Fi icon → Network settings.', screenshot: genericSS('Network','Wi-Fi · disconnected') },
       { title:'Disable then re-enable Wi-Fi', sub:'Toggle off, wait 5 seconds, toggle on.', screenshot: genericSS('Adapter','Wi-Fi · OFF → ON') },
@@ -3722,8 +3666,6 @@ const KB = {
     headline:'I can re-add the printer,<br/>or clear the print spooler for you.',
     sub:'Both run under audit. The spooler clear will discard pending jobs.',
     note:'Pending print jobs will be lost when the spooler is cleared.',
-<<<<<<< HEAD
-=======
     autoTime:'9.0s',
     audit:[
       ['16:05:11','info','Spooler service status: degraded'],
@@ -3734,7 +3676,6 @@ const KB = {
     ],
     summary:{ time:'9.0 s', actions:'5', down:'3', cost:'$0.00' },
     confirmCard:`<div class="preview-pane"><div class="preview-head"><span>PRINTER · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>HP-LJ-Floor3 · ready · 0 pending</span><span style="color:var(--green)">✓ online</span></div></div>`,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     walk:[
       { title:'Open Printers & scanners', sub:'Settings → Bluetooth & devices → Printers.', screenshot: genericSS('Printers','HP-LJ-Floor3 · offline') },
       { title:'Remove the printer, then re-add', sub:'ARIA will keep your defaults.', screenshot: genericSS('Add printer','Searching…') },
@@ -3746,8 +3687,6 @@ const KB = {
     headline:"I can help with that.",
     sub:"Tell me a bit more — or pick how you'd like to proceed.",
     note:"Try things like <em>set my out of office</em>, <em>my mail won't open</em>, <em>VPN is broken</em>, or <em>show ops</em>.",
-<<<<<<< HEAD
-=======
     autoTime:'12.0s',
     audit:[
       ['12:00:00','info','Session created · device-2861-MX'],
@@ -3758,7 +3697,6 @@ const KB = {
     ],
     summary:{ time:'12.0 s', actions:'5', down:'10', cost:'$0.00' },
     confirmCard:`<div class="preview-pane"><div class="preview-head"><span>RESULT · LIVE PREVIEW</span></div><div class="preview-body" style="color:var(--cream);font-size:13px;display:flex;justify-content:space-between"><span>Resolution confirmed · last sync 2 sec ago</span><span style="color:var(--green)">✓ done</span></div></div>`,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     walk:[
       { title:'Tell me what app or area is affected', sub:'A short description is enough.', screenshot: genericSS('Description','e.g. "Outlook crashes when…"') },
       { title:'I will run a safe diagnostic', sub:'Read-only — no changes yet.', screenshot: genericSS('Diagnostic','Scanning…') },
@@ -4057,17 +3995,12 @@ function classify(text){
 
   // OneDrive password-prompt BEFORE password generic
   if (/onedrive/.test(q)) return 'kb:onedrive';
-<<<<<<< HEAD
   // Active Directory (on-prem) BEFORE password, so 'account locked in ad' / 'unlock ad account' / 'ad pasword reset'
   // route to AD, not the generic password bucket. Requires AD context + an identity/account action (avoids 'saw an ad'),
   // and EXCLUDES azure/entra/aad/cloud (those are kb:m365) and onboarding/offboarding. Mirrored in tests/aria-classifier-mirror.js.
   if ((/(active directory|domain controller|\bdc\b replication|kerberos|krb5|ad replication|ad authentication|domain account|on[- ]?prem(ises)? ad|local ad)/.test(q)
        || (/\b(ad|domain)\b/.test(q) && /(account|lockout|lock(ed)? out|locked|unlock|disabl|re-?enabl|\benabl|reset|password|login|log[- ]?in|sign[- ]?in|logon|group|membership|credential|user)/.test(q)))
       && !/(azure|entra|\baad\b|conditional access|intune|m365|microsoft 365|office 365|\bcloud\b|onboard|offboard|new hire|new starter|provision|deactivat|byod|employee leaving|departing|leaver|joiner)/.test(q)) return 'kb:active-directory';
-=======
-  // AD-specific qualifiers BEFORE password (so 'ad password reset' hits AD)
-  if (/\b(active directory|ad lockout|domain account|domain controller|kerberos|krb5)\b/.test(q) || /\bad\b\s+(account|password|user|lockout|sync|replication|reset|unlock)/.test(q) || /\b(account|user|password) (locked|unlock|reset)\s+(in (ad|active directory)|in domain|domain side)\b/.test(q) || /\block(ed)? out in domain\b/.test(q) || /\bcan'?t unlock (ad|domain) account\b/.test(q)) return 'kb:active-directory';
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 
   // === CORE TECHNICAL ===
   if (/(mail|email|inbox|outlook|outlok|outloook|outlk|sent items|drafts? folder|spam filter|junk folder|email attachment|attachments? not opening|email signature|autocomplete|exchange|mailbox|smtp|imap|pop3|exchange online)/.test(q)) return /out of office|ooo|auto.?reply/.test(q) ? 'outlook_ooo' : 'mail';
@@ -4367,7 +4300,6 @@ function renderTechnical(intent, userText){
     </details>`;
 
   const choicesHTML = `
-<<<<<<< HEAD
     <div class="sentinel-walk-cta" style="margin:0 0 15px">
       <button type="button" class="sentinel-walk-btn" data-walk-sentinel data-intent="${issueIntent}"
         aria-label="Walk me through it in ARIA Sentinel"
@@ -4385,27 +4317,13 @@ function renderTechnical(intent, userText){
         <h3>Preview the steps here</h3>
         <p>See the same steps right in this chat first — a quick look before you open the desktop app. Nothing runs on your device from the website.</p>
         <div class="tags"><span class="pill">EST · 2 MIN</span><span class="pill">IN-BROWSER PREVIEW</span></div>
-=======
-    <div class="choice-grid">
-      <div class="choice" data-choice="guided" data-intent="${issueIntent}">
-        <div class="num">01</div>
-        <span class="badge">GUIDED</span>
-        <h3>Walk me through it</h3>
-        <p>ARIA narrates each step with on-screen markers. You stay in control of the keyboard and mouse.</p>
-        <div class="tags"><span class="pill">EST · 2 MIN</span><span class="pill">YOU IN CONTROL</span></div>
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       </div>
       <div class="choice recommended" data-choice="auto" data-intent="${issueIntent}">
         <div class="num">02</div>
         <span class="badge">RECOMMENDED</span>
         <h3>Resolve it for me</h3>
-<<<<<<< HEAD
         <p>Hands this issue to the ARIA Sentinel desktop app, which runs the gated fix on <strong>your own device</strong> — you approve, with a 10-second countdown and one-click stop. Not installed? You'll get a download link.</p>
         <div class="tags"><span class="pill">ON YOUR DEVICE</span><span class="pill">GATED · REVERSIBLE</span></div>
-=======
-        <p>ARIA performs the fix remotely under audited permissions. You'll see every action and can intervene anytime.</p>
-        <div class="tags"><span class="pill">EST · ${kb.autoTime}</span><span class="pill">FULL AUDIT TRAIL</span></div>
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       </div>
     </div>
     <div class="aria-text" style="margin-top:14px"><strong style="color:var(--gold-bright);font-weight:500">Safe start:</strong> ${kb.note}</div>
@@ -4583,67 +4501,10 @@ function renderArticle(insight){
   }));
 }
 
-<<<<<<< HEAD
 // HARD RULE 14 (2026-06-26 audit): the fake auto-resolution helpers were DELETED at source — they streamed a
 // fabricated audit trail (invented timestamps, fake device IDs, downtime/ticket-cost metrics) and fake "resolved"
 // headlines. The ONLY "Resolve it for me" path is the choice card / typed-confirm → openResolveModal
 // → aria-sentinel:// handoff (real, on-device, gated) or the install/download fallback. The fake can never resurface.
-=======
-function renderAutoResolution(intent){
-  const kb = KB[intent] || KB.default;
-  const auditHTML = `<div class="audit-mini">
-    <div class="audit-mini-head"><span>AUDIT TRAIL · LIVE</span><span>${kb.audit.length} ACTIONS</span></div>
-    <div id="auditStream-${Date.now()}"></div>
-  </div>`;
-  const sumHTML = `<div class="summary-mini">
-    <div class="sum-cell"><div class="lbl">TIME TO FIX</div><div class="val">${kb.summary.time}</div></div>
-    <div class="sum-cell"><div class="lbl">ACTIONS</div><div class="val">${kb.summary.actions}</div></div>
-    <div class="sum-cell"><div class="lbl">DOWNTIME SAVED</div><div class="val">≈ ${kb.summary.down} min</div></div>
-    <div class="sum-cell"><div class="lbl">TICKET COST</div><div class="val">${kb.summary.cost}</div></div>
-  </div>`;
-
-  const wrap = appendMessage(ariaBubble('Working on it now…','I will keep you posted as I make changes.', `<div class="inline-resolution">${auditHTML}</div>`));
-  // stream audit rows
-  const stream = wrap.querySelector('[id^="auditStream-"]');
-  kb.audit.forEach((row, i) => {
-    setTimeout(() => {
-      const div = document.createElement('div');
-      div.className = 'audit-row fade-in';
-      div.innerHTML = `<span class="ts">${row[0]}</span><span class="lvl ${row[1]}">${row[1].toUpperCase()}</span><span class="msg">${row[2]}</span>`;
-      stream.appendChild(div);
-      const body = document.getElementById('chatBody');
-      body.scrollTo({ top: body.scrollHeight, behavior:'smooth' });
-    }, 400 + i * 450);
-  });
-
-  // final success card
-  const totalDelay = 400 + kb.audit.length * 450 + 400;
-  setTimeout(() => {
-    const success = appendMessage(ariaBubble('Done.', kbSuccessLine(intent),
-      `<div class="inline-resolution success">
-        <div class="resolution-head">
-          <div class="resolution-headline">${kbAutoHeadline(intent)}</div>
-          <div class="resolved-pill"><span class="dot"></span><span>RESOLVED · ${kb.autoTime}</span></div>
-        </div>
-        ${sumHTML}
-        ${kb.confirmCard}
-      </div>`));
-    speak(kbSuccessLine(intent));
-  }, totalDelay);
-}
-
-function kbAutoHeadline(intent){
-  return ({
-    outlook_ooo:'Out of Office is now on.',
-    mail:'Mail has been restored successfully.',
-    vpn:'VPN tunnel has been re-established.',
-    password:'Password has been reset successfully.',
-    wifi:'Wi-Fi connection has been restored.',
-    printer:'Printer has been reconnected.',
-    default:'Issue has been resolved successfully.',
-  })[intent] || 'Done.';
-}
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 function kbSuccessLine(intent){
   return ({
     outlook_ooo:"Outlook out-of-office is set. Anything else?",
@@ -4712,7 +4573,6 @@ function renderGuided(intent){
   }, 100);
 }
 
-<<<<<<< HEAD
 // Prominent primary CTA — "Walk me through it in ARIA Sentinel". Honors D-20260624: the web NEVER runs a local
 // fix; it hands off to the desktop app in GUIDE mode (mode=walkthrough → the app's Walk-through tab, which
 // changes nothing). If the app isn't installed the visible download fallback already covers it, and the in-line
@@ -4735,9 +4595,6 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 else wireWalkSentinelCtas();
 function wireChoices(){
   wireWalkSentinelCtas();
-=======
-function wireChoices(){
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   document.querySelectorAll('.choice').forEach(el => {
     if (el.dataset.wired) return;
     el.dataset.wired = '1';
@@ -4750,13 +4607,9 @@ function wireChoices(){
       const sibs = el.parentElement.querySelectorAll('.choice');
       sibs.forEach(s => { if (s !== el){ s.style.opacity='0.4'; s.style.pointerEvents='none'; } });
       const intent = el.dataset.intent;
-<<<<<<< HEAD
       // TASK 5 — web NEVER runs a local fix. "Resolve it for me" opens a two-option gate
       // (download ARIA Sentinel for on-device fixes, or continue the guided walkthrough here).
       if (el.dataset.choice === 'auto') openResolveModal(intent, el);
-=======
-      if (el.dataset.choice === 'auto') renderAutoResolution(intent);
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       else renderGuided(intent);
       // BUG FIX: scroll-to-bottom after option click (render functions append via setTimeout)
       setTimeout(function(){
@@ -4767,7 +4620,6 @@ function wireChoices(){
   });
 }
 
-<<<<<<< HEAD
 /* TASK 5 — "Resolve it for me" gate (web). The website never executes a local fix; for security, fixes run
    on the user's own device. This opens a black+gold modal with two choices: (A) download ARIA Sentinel for
    on-device troubleshooting, or (B) continue the guided walkthrough here. */
@@ -4863,8 +4715,6 @@ function openWithSentinel(intent, recipeId, onNotInstalled, mode){
   catch(e){ cleanup(); if (typeof onNotInstalled === 'function') onNotInstalled(); }
 }
 
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 /* ============== ROUTER ============== */
 // strip the kind of small typos / punctuation that shouldn't matter
 function normalizeInput(text){
@@ -5310,12 +5160,8 @@ function handleUserInput(text){
     // continuation only if a topic is currently active — typo-tolerant
     if (state.lastIntent && fuzzyCmd(q, ['yes','yeah','yep','yup','do it','please','sure','go','ok','okay','resolve','fix it','go ahead'])){
       appendMessage(youBubble(text));
-<<<<<<< HEAD
       // typed confirmation ("do it" / "resolve" / "go ahead") → hand off to the gated desktop app, not a fake fix.
       setTimeout(() => openResolveModal(state.lastIntent, null), 200);
-=======
-      setTimeout(() => renderAutoResolution(state.lastIntent), 200);
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       return;
     }
     if (state.lastIntent && /^(walk\s*(me\s*)?through(\s*it)?|guide\s*me|show\s*me\s*(how|the\s*steps?|step\s*by\s*step)?|step\s*(through|by\s*step)|guided?|narrate)\s*(it|please)?\s*$/.test(q)){
@@ -5367,24 +5213,9 @@ function handleUserInput(text){
       )), 200);
       return;
     }
-<<<<<<< HEAD
     // === Slice D — non-recipe / general question → ARIA web brain (LLM). No canned IT pattern matched,
     // so hand it to aria-chat for a real free-form answer. On any failure, fall back to the learning loop. ===
     askAriaLLM(text);
-=======
-    // === LEARNING LOOP — queue unknown for IIS team to teach ARIA ===
-    state.unknownQueries = state.unknownQueries || [];
-    state.unknownQueries.push({ text, ts: Date.now() });
-    const n = state.unknownQueries.length;
-    const teachCue = n >= 3
-      ? `<div class="aria-text" style="margin-top:10px"><button class="esc-btn esc-urgent" data-send-unknowns style="width:auto;display:inline-flex"><div class="esc-num">${n}</div><div class="esc-body"><strong>Send these to IIS so they can teach me</strong><span>${n} unknown queries queued · email ahmad.wasee@iisupp.net</span></div></button></div>`
-      : `<div class="aria-text" style="font-size:11px;color:var(--muted);margin-top:6px">I'll log this and the next unknowns. After 3, you can send them to IIS to teach me.</div>`;
-    renderConversational("Hmm — I don't have a confident match for that yet.", text);
-    setTimeout(() => {
-      const last = document.querySelector('#chatMessages .aria-block:last-child .aria-content');
-      if (last) last.insertAdjacentHTML('beforeend', teachCue);
-    }, 350);
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     return;
   }
 
@@ -5466,7 +5297,6 @@ function renderEscalation(userText){
 
 function handleEscalation(choice, ctx){
   if (choice === 'ms-recover'){
-<<<<<<< HEAD
     // HARD RULE 14 (2026-06-26 audit): the website cannot read your Microsoft account or your real BitLocker key,
     // so it never displays a fabricated one. It points you to where YOUR real key actually lives.
     appendMessage(ariaBubble("Here's how to get your BitLocker recovery key.", "", `
@@ -5476,28 +5306,6 @@ function handleEscalation(choice, ctx){
         <li><strong>Work / school account</strong> — <span style="color:var(--gold-bright)">aka.ms/myrecoverykey</span> (your IT escrows it in Azure AD / Entra).</li>
         <li><strong>Local IT</strong> — they hold it in your tenant's escrow. Or use <strong>option 3</strong> above to escalate to IIS now.</li>
       </ul>`));
-=======
-    appendMessage(ariaBubble("Checking your Microsoft account…", "", `<div class="aria-text">Looking up the recovery key for this device sign-in…</div>`));
-    setTimeout(() => {
-      const found = Math.random() > 0.5;
-      if (found){
-        appendMessage(ariaBubble("Found it.", "", `
-          <div class="recovery-key">
-            <div class="rk-label">RECOVERY KEY · BitLocker</div>
-            <div class="rk-value" id="rkVal">428913-672034-188205-559371-294006-820915-103467-275488</div>
-            <div class="rk-meta">From your Microsoft account · device-2861-MX · escrowed 2024-03-12</div>
-            <button class="rk-copy" onclick="navigator.clipboard.writeText(document.getElementById('rkVal').textContent);this.textContent='COPIED'">COPY</button>
-          </div>`));
-      } else {
-        appendMessage(ariaBubble("Couldn't find it.", "Your local IT will have the key.", `
-          <div class="aria-text">No recovery key for this device in your Microsoft account. Two paths:</div>
-          <ul class="help-list">
-            <li><strong>Local IT</strong> — they hold it in your tenant's Azure AD escrow.</li>
-            <li>Or <strong>option 3</strong> above to escalate to IIS now.</li>
-          </ul>`));
-      }
-    }, 1500);
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   } else if (choice === 'agent'){
     const subj = `${intentLabel(ctx)} — user needs immediate help`;
     const body = `Session #${state.sessionId} · ${intentLabel(ctx)}\nUser requested live-agent callback at ${new Date().toLocaleString()}.`;
@@ -5749,11 +5557,7 @@ async function submitAsk(text){
   handleUserInput(v);
   askInput.value = '';
 }
-<<<<<<< HEAD
 sendBtn.addEventListener('click', () => void submitAsk()); // pass no arg → submitAsk reads askInput.value (NOT the click event)
-=======
-sendBtn.addEventListener('click', submitAsk);
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 askInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') void submitAsk(); });
 
 document.getElementById('micBtn').addEventListener('click', () => {
@@ -5963,11 +5767,8 @@ if (_prefill){
 })();
 </script>
 <script defer src="/aria-transform.js"></script>
-<<<<<<< HEAD
 <script defer src="/assets/aria-sentinel-handoff.js"></script>
 <script defer src="/assets/aria-globe-confirmation.js"></script>
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 <script defer src="/aria-brain.js"></script>
 
 <script>
@@ -6429,7 +6230,6 @@ setInterval(attach, 1200);
 })();
 </script>
 
-<<<<<<< HEAD
 <!-- Q-WEBTIER — $70/mo ARIA Web + AI Edge upsell (env-aware; renders Subscribe only when the Stripe price is
      set, else a free-trial/contact fallback). Bottom strip — non-disruptive to the chat widget above.
      NOTE: visual placement on /aria to be confirmed on the deploy preview before publish. -->
@@ -6448,8 +6248,5 @@ setInterval(attach, 1200);
 <script src="/assets/aria-i18n-page-copy.js"></script>
 <script defer src="/assets/aria-web-tier.js"></script>
   <script src="/assets/iis-motion.js?v=20260707c" defer data-mode="bg"></script>
-=======
-<script src="/assets/aria-i18n-page-copy.js"></script>
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 </body>
 </html>

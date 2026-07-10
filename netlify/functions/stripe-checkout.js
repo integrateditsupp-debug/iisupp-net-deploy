@@ -14,7 +14,6 @@
 const Stripe = require('stripe');
 
 const PRICE_MAP = {
-<<<<<<< HEAD
   // Subscription tiers (env var OR baked default from 2026-06-18 Stripe API run)
   personal:           process.env.STRIPE_PRICE_PERSONAL          || 'price_1TjsfaCa3MISR76yoni52e2z',
   personal_y:         process.env.STRIPE_PRICE_PERSONAL_Y        || 'price_1TjsfaCa3MISR76yt5JbtK5Y',
@@ -85,15 +84,6 @@ const PRICE_MAP = {
   // from the Sentinel desktop license matrix (pricing-tiers.mjs). Env-only: undefined until Ahmad creates
   // the Stripe price + sets STRIPE_PRICE_ARIA_WEB_M, so checkout cleanly 400s ("never a broken checkout").
   aria_web_m:            process.env.STRIPE_PRICE_ARIA_WEB_M,
-=======
-  personal:        process.env.STRIPE_PRICE_PERSONAL,
-  personal_y:      process.env.STRIPE_PRICE_PERSONAL_Y,
-  pro:             process.env.STRIPE_PRICE_PRO,
-  pro_y:           process.env.STRIPE_PRICE_PRO_Y,
-  small_business:  process.env.STRIPE_PRICE_SMALL_BUSINESS,
-  mid_size:        process.env.STRIPE_PRICE_MID_SIZE,
-  enterprise:      process.env.STRIPE_PRICE_ENTERPRISE,
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 };
 
 exports.handler = async (event) => {
@@ -131,15 +121,9 @@ exports.handler = async (event) => {
     }];
     mode = 'payment';
     metadata = {
-<<<<<<< HEAD
       tier: String(body.tier || pd.id || 'one-time').slice(0, 40),
       planName: productName,
       kind: 'one-time'
-=======
-      tier: String(body.tier || pd.id || 'tech-service').slice(0, 40),
-      planName: productName,
-      kind: 'tech-service'
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     };
     // Callers may attach extra metadata (e.g. concierge book-order fee breakdown).
     // Values must be strings; this can set kind:'book-order' which the webhook acts on.
@@ -152,13 +136,8 @@ exports.handler = async (event) => {
     // land digital buyers on a delivery page. Defaults to homepage (unchanged).
     successUrl = origin + (typeof body.successPath === 'string' && body.successPath.charAt(0) === '/'
       ? body.successPath + (body.successPath.indexOf('?') >= 0 ? '&' : '?') + 'checkout=success&session_id={CHECKOUT_SESSION_ID}'
-<<<<<<< HEAD
       : '/checkout-success.html?checkout=success&session_id={CHECKOUT_SESSION_ID}');
     cancelUrl  = origin + '/checkout-success.html?checkout=canceled';
-=======
-      : '/?checkout=success&session_id={CHECKOUT_SESSION_ID}');
-    cancelUrl  = origin + '/?checkout=canceled';
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   } else {
     // Branch 2: existing ARIA tier subscription
     const tier = String(body.tier || '').toLowerCase();
@@ -167,7 +146,6 @@ exports.handler = async (event) => {
       return j(400, { error: 'Unknown tier: ' + tier });
     }
     lineItems = [{ price: priceId, quantity: 1 }];
-<<<<<<< HEAD
     // Subscription tiers vs one-time catalog items
     const SUBSCRIPTION_TIERS = new Set([
       'personal','personal_y','pro','pro_y',
@@ -196,16 +174,6 @@ exports.handler = async (event) => {
       successUrl = origin + (body.successPath || '/?checkout=success&session_id={CHECKOUT_SESSION_ID}');
       cancelUrl  = origin + '/?checkout=canceled';
     }
-=======
-    mode = 'subscription';
-    metadata = {
-      tier: tier,
-      planName: body.planName || tier,
-      kind: 'aria-plan'
-    };
-    successUrl = origin + '/aria?checkout=success&session_id={CHECKOUT_SESSION_ID}';
-    cancelUrl  = origin + '/aria?checkout=canceled';
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   }
 
   try {
@@ -214,11 +182,8 @@ exports.handler = async (event) => {
       line_items: lineItems,
       success_url: successUrl,
       cancel_url:  cancelUrl,
-<<<<<<< HEAD
       // Explicit payment_method_types so new Stripe accounts don't fall through auto-detect
       payment_method_types: ['card'],
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
       metadata: metadata,

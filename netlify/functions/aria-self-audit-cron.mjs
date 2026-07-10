@@ -5,10 +5,7 @@
 // aria-learning-promote (03:00) rebuilds the retrieval index, so the audit grades
 // against fresh data. Cost: $0 (deterministic, no LLM).
 
-<<<<<<< HEAD
 import { beat } from './_heartbeat.mjs';
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 const handler = async () => {
@@ -25,10 +22,7 @@ const handler = async () => {
 // Nightly at 03:30 UTC (after promote at 03:00). (Ahmad 2026-06-01) Use config.schedule —
 // the legacy schedule() wrapper is not registered by Netlify on this site.
 export default async () => {
-<<<<<<< HEAD
   await beat('aria-self-audit-cron');
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   await handler();
   return new Response('ok', { headers: { 'content-type': 'text/plain' } });
 };

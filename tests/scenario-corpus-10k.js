@@ -79,7 +79,6 @@ NEG_BASE.forEach(b => {
   });
 });
 
-<<<<<<< HEAD
 /* ============================================================
    ADVERSARIAL LAYER - Sunday 2026-06-21 corpus growth (~5K)
    WHY: the 29,072 clean corpus held 100% pass for 6 consecutive
@@ -1619,7 +1618,3 @@ HOSP_PRINT_BASES.forEach(function(b){
 });
 
 console.error('Hospitality vertical layer added:', out.length - hospStart, 'scenarios');
-=======
-console.error('10K Corpus size:', out.length);
-module.exports = out;
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])

@@ -56,7 +56,6 @@
   ready(function(){
     var style=document.createElement('style');style.id='aex-orb-style';style.textContent=CSS;document.head.appendChild(style);
 
-<<<<<<< HEAD
     // HARD RULE 14 (2026-06-26): "Resolve it for me" is now ACTIVE. It hands the issue to the ARIA Sentinel
     // desktop app (openResolveModal → aria-sentinel://) which runs the gated fix on-device (approve + 10s
     // countdown + System Restore point + Ctrl+Alt+K kill-switch). It is no longer grayed as COMING SOON.
@@ -64,12 +63,6 @@
     function ungray(){document.querySelectorAll('.choice.recommended').forEach(function(o2){o2.style.opacity='';o2.style.filter='';o2.style.pointerEvents='';o2.__aexg=0;var b=o2.querySelector('.aexcs');if(b)b.remove();});}
     ungray();
     try{new MutationObserver(ungray).observe(document.body,{childList:true,subtree:true});}catch(e){}
-=======
-    // gray out the "Resolve it for me" auto-fix card whenever it appears (it is added dynamically)
-    function gray(){document.querySelectorAll('.choice.recommended').forEach(function(o2){if(o2.__aexg)return;o2.__aexg=1;o2.style.position='relative';o2.style.opacity='.5';o2.style.filter='grayscale(1)';o2.style.pointerEvents='none';var b=document.createElement('div');b.className='aexcs';b.textContent='COMING SOON';o2.appendChild(b);});}
-    gray();
-    try{new MutationObserver(gray).observe(document.body,{childList:true,subtree:true});}catch(e){}
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 
     var ovBuilt=false,letterEl=null,stageEl=null;
     function buildOverlay(){

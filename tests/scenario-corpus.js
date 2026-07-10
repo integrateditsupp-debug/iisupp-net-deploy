@@ -291,7 +291,6 @@ const corpus = [];
   'fan making noise','keyboard not typing','spacebar broken','sticky keys',
   'mouse cursor frozen','touchpad not responding','sound not working',
   'no audio after update','headphone jack not working','speakers crackling',
-<<<<<<< HEAD
   'cd drive missing',
   'taskbar missing','start menu gone','desktop icons gone','recycle bin missing',
   'file explorer crashed','windows explorer not responding','clock wrong','timezone wrong',
@@ -299,22 +298,12 @@ const corpus = [];
   'licensing issue',
   'cannot activate office','cannot install update',
   
-=======
-  'cd drive missing','sd card not detected','external hard drive missing',
-  'taskbar missing','start menu gone','desktop icons gone','recycle bin missing',
-  'file explorer crashed','windows explorer not responding','clock wrong','timezone wrong',
-  'language pack missing','wrong keyboard layout','task scheduler issue',
-  'printer just stopped','licensing issue','cannot activate windows',
-  'cannot activate office','cannot install update','windows update failed',
-  'feature update fails','servicing stack error','cumulative update fails',
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   'i need help','can you help me','support please','urgent help',
   'this is urgent','my system is broken','everything is broken','nothing works',
   'whole computer dead','laptop on fire','smoke from computer',
   'spilled coffee on laptop','dropped laptop','laptop won\'t turn on',
   'no power to laptop','power button does nothing','adapter not working',
   'charger broken','hdmi cable issue','displayport not working','vga issue',
-<<<<<<< HEAD
   'ethernet cable not working','rj45 broken'
 ].forEach(q => corpus.push({ q, expect: 'default' }));
 
@@ -323,11 +312,6 @@ const corpus = [];
 ['sd card not detected','external hard drive missing','usb-c hub not working'].forEach(q => corpus.push({ q, expect: 'kb:usb' }));
 ['printer just stopped'].forEach(q => corpus.push({ q, expect: 'printer' }));
 
-=======
-  'usb-c hub not working','ethernet cable not working','rj45 broken'
-].forEach(q => corpus.push({ q, expect: 'default' }));
-
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 // Padding: variants and casing variations to push count over 1000
 const seed = corpus.slice();
 seed.forEach(item => {

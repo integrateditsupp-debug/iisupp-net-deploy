@@ -70,11 +70,8 @@ unless explicitly multi-tagged.
 | Printer not printing | l1-printer-001 |
 | Printer prints garbage | l1-printer-002 |
 | MFA / lost phone | l1-mfa-001 |
-<<<<<<< HEAD
 | Set up a passkey / passwordless | l1-passkey-001 |
 | Lost passkey device / can't sign in with passkey | l1-passkey-002 |
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 | Forgot password | l1-password-001 |
 | VPN won't connect | l1-vpn-001 |
 | Browser won't load site | l1-browser-001 |
@@ -94,13 +91,10 @@ unless explicitly multi-tagged.
 | User offboarding | l2-offboarding-001 |
 | Print server / Universal Print | l2-printers-001 |
 | Mail flow / NDR | l2-exchange-001 |
-<<<<<<< HEAD
 | Email spoofed / going to spam (SPF/DKIM/DMARC) | l2-mail-auth-001 |
 | SASE / SSE / ZTNA access issue | l2-sase-001 |
 | Wi-Fi coverage / site survey | l2-wifi-survey-001 |
 | Patch management / failed updates fleet-wide | l2-patch-management-001 |
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 | User profile rebuild | l2-windows-001 |
 | Performance traces (WPA) | l2-performance-001 |
 | NTFS / share permissions | l2-permissions-001 |
@@ -108,7 +102,6 @@ unless explicitly multi-tagged.
 | Device deployment / Autopilot | l2-deployment-001 |
 | Network latency / loss | l2-networking-001 |
 | Cyber incident (P1) | l3-security-001 |
-<<<<<<< HEAD
 | RAID / SAN failure + rebuild | l3-storage-001 |
 | Hypervisor cluster down (vSphere/Hyper-V) | l3-virtualization-001 |
 | CA / certificate expiry (mass outage) | l3-certificates-002 |
@@ -117,8 +110,6 @@ unless explicitly multi-tagged.
 | Forensic evidence preservation | l3-forensics-001 → l3-security-001 |
 | DR / business continuity plan | l3-business-continuity-001 |
 | Tenant-to-tenant migration (M365/Workspace) | l3-migration-001 |
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 | SSO / SAML federation | l3-sso-saml-001 |
 | Internal PKI / certs | l3-certificates-001 |
 | Disaster recovery | l3-disaster-recovery-001 |
@@ -142,7 +133,6 @@ unless explicitly multi-tagged.
 
 ---
 
-<<<<<<< HEAD
 ## Tier-4 (frontier) signals
 
 Tier-4 articles (`tech_generation: tier-4` in `tier4/`) are the strategic-moat topics. They are
@@ -174,8 +164,6 @@ engagement (no certification or autonomous frontier-infra action).
 
 ---
 
-=======
->>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 ## Multi-article patterns
 
 Some user requests pull multiple articles:
