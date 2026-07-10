@@ -420,6 +420,73 @@ body.iis-chapters .gl-chapter-body > section{margin-top:0}
    ========================================================================== */
 #rightPanel .aria-section > .globe-area{flex:0 0 auto;min-height:0}
 
+/* ==========================================================================
+   MOBILE PARITY (v1.5) — phone view carries the same dignity as desktop.
+   Two structural repairs measured at 393px on production:
+   1. Road Ahead roadmap: the stone grid collapsed to 8px columns → text
+      rendered one letter per line over the timeline. Mobile now uses a
+      single-column layout: node beside a full-width story card.
+   2. Pricing deck cards: fixed 520px desktop geometry left a ~half-screen
+      void inside every stacked card. Heights are content-driven on mobile;
+      the 3D flip is preserved (visible face defines the height).
+   ========================================================================== */
+@media (max-width:760px){
+  /* ---- Road Ahead — single-column stones ---- */
+  #vision-roadmap .rm-tree{display:none !important}
+  #vision-roadmap .rm-stone{
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:flex-start !important;
+    gap:12px !important;
+    width:100% !important;
+    max-width:none !important;
+  }
+  #vision-roadmap .rm-stone::before{display:none !important}
+  #vision-roadmap .rm-spacer{display:none !important}
+  #vision-roadmap .rm-node{order:0;flex:0 0 auto;margin-top:4px}
+  #vision-roadmap .rm-card{
+    order:1;
+    flex:1 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    justify-self:stretch !important;
+    text-align:left !important;
+    padding:10px 12px !important;
+  }
+  #vision-roadmap .rm-stone.left .rm-card,
+  #vision-roadmap .rm-stone.right .rm-card{text-align:left !important}
+  #vision-roadmap .rm-flip{max-width:none !important;width:100% !important}
+  #vision-roadmap .rm-flip-inner{width:100% !important}
+
+  /* ---- Pricing deck — content-driven heights, flip preserved ---- */
+  .deck-slot{height:auto !important;min-height:0 !important}
+  .deck-card{height:auto !important;min-height:0 !important}
+  .deck-card .deck-face{
+    position:relative !important;
+    inset:auto !important;
+    height:auto !important;
+    min-height:0 !important;
+  }
+  .deck-card .deck-back{
+    position:absolute !important;
+    inset:0 !important;
+    height:100% !important;
+    overflow:auto;
+  }
+  .deck-slot.is-flipped .deck-card .deck-back{
+    position:relative !important;
+    inset:auto !important;
+    height:auto !important;
+  }
+  .deck-slot.is-flipped .deck-card .deck-front{
+    position:absolute !important;
+    inset:0 !important;
+    height:100% !important;
+    overflow:hidden;
+  }
+}
+
 /* ---------- Sitewide gold polish (full mode only) ---------- */
 html.iism-full ::selection{background:rgba(197,160,89,.35);color:#fff}
 html.iism-full{scrollbar-color:#4a3d26 #060606}
