@@ -130,6 +130,7 @@ const TESTS = [
   "./diagnostic-reasoner-system-aware.test.mjs",
   "./no-harm-gate.test.mjs",
   "./anomaly-surfacing.test.mjs",
+  "./root-cause-correlation.test.mjs", // F4 (SENTINEL-BRAIN-AUDIT) — cross-subsystem root-cause correlation -> ONE Resolution Plan
   "./cross-platform-no-control.test.mjs",
   "./event-log-sanitize.test.mjs",
   "./registry-read-only.test.mjs",
