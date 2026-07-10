@@ -302,6 +302,8 @@ const TESTS = [
   "./plan-resume-after-reboot.test.mjs",
   "./plan-autonomy-ladder.test.mjs",
   "./plan-r11-and-killswitch.test.mjs",
+  // STAGE 3 S3 (2026-07-03) — brain-audit F3: multi-hypothesis disambiguation (near-tie => ONE real question, never guess matches[0]).
+  "./multi-hypothesis.test.mjs",
   // WALK-THROUGH + WEB CTA + P1 (2026-07-02) — guided step-by-step tab (guide mode changes nothing) +
   // web deep-link mode=walkthrough + "Resolve it for me" never dead-ends at Control Center.
   "./walkthrough-tab-render.test.mjs",
