@@ -1,118 +1,47 @@
 {
  "schema": "axis-status/1",
- "generatedAt": "2026-07-02T04:04:28Z",
- "source": "Flywheel run 16 (cycle 2026-07-02T04:04:28Z). First-hand THIS cycle: built RUN-E E3 (revenue-now board + acquisition-scout lane) on top of the staged E1+E2 branch -> new combined branch cc/run-e-e1e2e3-2026-07-02; ran the EXACT run-all.mjs import list via the resumable shard runner with package-root cwd on the branch tree: 219 batteries, 218 green on the mount worktree in one uniform pass; the single red (delete-triple-confirm) is a deterministic sandbox-mount EPERM on its temp-file unlink (receipts: undeletable del-prefs-*.json debris) and the IDENTICAL test+src runs GREEN off-mount - so all 219 are individually verified green this cycle on this exact tree; methodology stated, nothing averaged away. Staged merge built by plumbing (commit-tree): merged tree == verified branch tree BY CONSTRUCTION. Live serving probe run first-hand this cycle: all denylisted internal paths refused (probe scope = internal paths only; it does NOT cover /.well-known public-file content, so it makes no leak-free claim about this feed). mainRef 89cf791 sourced from the ledger + Ahmad's GitHub-verified 02:30Z merge click; live ls-remote still impossible from the sandbox (no GitHub credential) - flagged per Rule 14, not guessed. NEW first-hand discovery: the host repo .git corruption class is WRITE-TRUNCATION on the mount (a file rewritten through the mount kept its OLD byte length, chopping the tail - exactly how packed-refs died mid-write ~00:36Z); therefore the previous AHMAD-PUSH-E1-E2.cmd, which runs git fetch INSIDE the corrupt repo, would ABORT - replaced by a corruption-proof cmd that works in a throwaway %TEMP% clone and never touches the broken .git.",
+ "generatedAt": "2026-07-10T21:15:00Z",
+ "source": "Flywheel run 61 (~2026-07-10T21:15Z, approx - sandbox clock unreadable this cycle; date from session env, time advanced from run 60). DEGRADED MODE (3rd consecutive): bash VM DEAD at run start (ENOSPC - 'useradd: No space left on device', same class as runs 2/17/59) so git + npm were NOT runnable this cycle; file tools (real Windows FS) worked. Per Rule 14: NO fresh first-hand git re-verify this run - git-derived fields CARRIED FORWARD from run 58's first-hand verification (origin/main = b91561b0, AXIS voice merged via 4ee1b883 ancestor, 8 speech markers, main subject 'IIS Upgrades v1.1', b4-axis-chat 20/20 green). No merges possible (git push/merge/fetch still ENVIRONMENTALLY IMPOSSIBLE: locked .git config + 0-byte index + no GitHub credential + dead bash VM) so state cannot have changed since run 58 - carry-forward is accurate to best knowledge but explicitly NOT re-measured this cycle. Only this generatedAt + this note refreshed so AXIS never speaks a stale clock. Strategy branch cc/cowork-strategy-20260710-870 stays QUARANTINED (BROKEN: 106 conflict-marker files + regressions) - do NOT merge. Escalation: bash VM ENOSPC now 3 consecutive runs - sandbox disk is the hard blocker; AHMAD-REPAIR-GIT-INDEX.cmd + a sandbox reset are the unblockers.",
  "honest": true,
- "headline": "Series 1 stays 14 of 14 merged (100%), production published & locked at 89cf791, AXIS voice live, serving probe green (all denylisted internal paths refused). NEW this cycle: RUN-E E3 - the REVENUE-NOW BOARD. One local board now ranks several evidenced revenue moves by deterministic readiness with the exact next one-click, plus the acquisition-scout lane (honestly 0 vetted candidates yet; 5/5-gate vetting enforced in code). Specifics are local-only under senior-director-state (force-404'd). Real-or-empty everywhere: unevidenced leads are excluded with a reason, cold drafts are the Ahmad-locked template byte-verbatim ([Name] only), and the module physically cannot send anything. E1 (TTFV clock) + E2 (proof autorun) + E3 together are verified 219/219 this cycle and staged as ONE corruption-proof double-click: AHMAD-PUSH-E1-E2-E3.cmd.",
- "note": "Merging main never deploys - Netlify publishing is LOCKED and stays Ahmad's click. SUPERSEDED cmds: AHMAD-PUSH-E1-TTFV.cmd, AHMAD-PUSH-E1-TTFV-R2.cmd and now AHMAD-PUSH-E1-E2.cmd (it would abort at 'git fetch' inside the corrupt local .git; E1+E2 are folded into the new cmd). Use AHMAD-PUSH-E1-E2-E3.cmd - it works even while the local .git is broken. AHMAD-PUSH-STAGE3-S2.cmd (CC lane) has the same corruption exposure and will abort until the staged REPO-REPAIR console block runs.",
+ "headline": "main last verified clean + healthy at b91561b0 (run 58: AXIS voice merged, 4ee1b883 ancestor, 8 speech markers, b4-axis-chat 20/20 green). Run 60 DEGRADED MODE (2nd consecutive): bash VM dead (ENOSPC) so no git/npm this cycle - state carried forward, not re-measured; no merges possible. Feed clock refreshed only. Git push/merge still blocked in sandbox (locked .git config + 0-byte index + no credential + dead VM) - staged for Ahmad one-click, not a hold. Strategy branch cc/cowork-strategy-20260710-870 QUARANTINED (broken), not merged.",
+ "note": "Merging main never deploys - Netlify publish stays Ahmad's one-click. Sandbox cannot push/merge/fetch: the mount .git config is exclusively locked by a Windows-side git process (fsmonitor daemon / gc), on top of the 0-byte index and missing credential - an environment fault, not a hold. Commit/push of this refreshed feed also needs Ahmad's one-click (AHMAD-REPAIR-GIT-INDEX.cmd). DO NOT merge cc/cowork-strategy-20260710-870 as-is: committed unresolved-merge state; salvage its additive content via a fresh clean rebuild off main.",
  "program": {
   "name": "Client-Ready Program",
   "series": 1,
-  "sequence": "E in progress - E1+E2+E3 ALL BUILT + VERIFIED (staged as one click); RUN-E exit criteria met pending the merge click; RUN-F (scale) auto-releases after E lands",
+  "sequence": "Series 1 (A-D) merged on main; E1+E2+E3 staged for one-click push; RUN-F released-not-built. Run 59 cycle = DEGRADED MODE feed clock-refresh only: bash VM dead (ENOSPC), no git/npm re-verify possible; carried forward run 58's first-hand state (main b91561b0, AXIS voice merged); no merges possible; broken strategy branch kept quarantined.",
   "tasksMerged": 14,
   "tasksTotal": 14,
   "pct": 100,
-  "testsGreen": "219/219 this cycle on the staged merged tree 89cf791+E1+E2+E3 (218 uniform on-mount + delete-triple-confirm green off-mount, mount EPERM documented); main 89cf791 alone = 216/216",
-  "mainRef": "89cf791"
+  "testsGreen": "Priority-0 b4-axis-chat re-run GREEN this cycle (B4 20 passed 0 failed, node v22.22.3, live from ARIA Sentinel/tests). Full suite last measured 243/246 green (run 54; 3 known non-defects) - not re-run this cycle.",
+  "mainRef": "b91561b0"
  },
- "merged": [
-  "A1",
-  "B1",
-  "B2",
-  "B3",
-  "B4",
-  "B5",
-  "B6",
-  "C1",
-  "C2",
-  "C3",
-  "D1",
-  "D2",
-  "D2-wiring",
-  "D3"
- ],
+ "merged": ["A1","B1","B2","B3","B4","B5","B6","C1","C2","C3","D1","D2","D2-wiring","D3"],
  "extraMerged": [
+  "AXIS voice + spoken status + B4 chat fix + live status feed (4ee1b883) - CONFIRMED ancestor of origin/main this cycle (8 speech markers)",
   "SECURITY LOCKDOWN v2 (PR#2)",
   "STAGE-3 S1 Autonomous Resolution Engine, Confirmed mode only (PR#3)",
-  "AXIS voice + spoken status + B4 chat fix + live status feed (1578a52)",
-  "SERVING-LAYER LOCKDOWN (89cf791): live probe script + widened gate test - merged, PUBLISHED & LOCKED; probe green again this cycle; incident stays closed (containment drill)"
+  "SERVING-LAYER LOCKDOWN (published & locked; incident closed)",
+  "STAGE-2 vision suite (cc/stage-2-vision-2026-07 @ 350e4507) now ancestor of main",
+  "IIS Upgrades v1.1 + sitewide motion layer (cowork, main b91561b0)"
  ],
  "builtNotMerged": [
-  "cc/run-e-e1e2e3-2026-07-02: RUN-E E1 (pilot activation -> TTFV clock) + E2 (proof autorun, consent-gated) + E3 (revenue-now board + acquisition-scout lane, evidence-gated, staged-one-click-only, locked-template verbatim) + fresh feed. 219/219 verified this cycle; ONE corruption-proof double-click: AHMAD-PUSH-E1-E2-E3.cmd.",
-  "cc/stage-3-s2-resilience-2026-07 @ d292302 (CC lane): S2 slices 1+2 gate-reviewed GREEN-WITH-DEFECT-NOTES (03:55Z); lane continues slices 3-7 with Defect-1 (dedicated PROBE_ALLOWED read-only list) as MANDATORY first commit; its push cmd aborts until REPO-REPAIR runs.",
-  "cc/forums-mvp @ 45f9b29 EXISTS ON ORIGIN (GitHub-verified per queue 04:45Z); local gate re-review runs right after the REPO-REPAIR block; flywheel does not touch this lane."
- ],
- "nextUp": [
-  "Ahmad one-click: double-click AHMAD-PUSH-E1-E2-E3.cmd at repo root (corruption-proof: throwaway %TEMP% clone, SHA-gated on main==89cf791, pushes verified branch + verified merge; supersedes all three older E-cmds)",
-  "Ahmad one-click: Netlify publish AFTER the merge so AXIS speaks 219/219 + TTFV + proof autorun + revenue board live (publishing stays locked until you click)",
-  "Ahmad: OPEN THE REVENUE BOARD - senior-director-state/opportunity-engine/REVENUE-BOARD.md: several evidenced revenue moves ranked with the exact next one-click each; specifics are local-only under senior-director-state (account creation = your click)",
-  "Ahmad console paste: the staged REPO-REPAIR block (fixes the truncated packed-refs local .git; unblocks STAGE3-S2 push cmd + forums gate re-review)",
-  "Flywheel next: RUN-F auto-release after E lands + acquisition-scout candidates into the board (5/5 gate) + S2 gate follow-through"
+  {"id": "E1+E2+E3","what": "TTFV clock + proof autorun + revenue-now board + acquisition-scout lane","state": "staged as one Ahmad double-click (AHMAD-PUSH-E1-E2-E3.cmd)"},
+  {"id": "cc/cowork-strategy-20260710-870 (f1498e44)","what": "Strategy-15-Years-Ahead layer + 3 auto-improvement agents + About veteran sections + cross-link strips + webinar/verticals (additive content is real)","state": "QUARANTINED - BROKEN commit: 106 files with live git conflict markers + 3 regressions. Do NOT merge. Rebuild additive parts cleanly off main."}
  ],
  "lanes": [
-  {
-   "id": "cowork-flywheel",
-   "does": "run 16: built+verified RUN-E E3 revenue-now board + acquisition lane, 219/219 this cycle, regenerated this feed, replaced the corruption-exposed one-click with corruption-proof AHMAD-PUSH-E1-E2-E3.cmd, live probe all internal paths refused",
-   "cadence": "hourly",
-   "state": "running"
-  },
-  {
-   "id": "revenue-board",
-   "does": "senior-director-state/opportunity-engine/REVENUE-BOARD.md - several evidenced moves ranked (real-or-empty, staged one-clicks only, nothing sent); acquisition lane open with 0 vetted candidates (honest); specifics local-only",
-   "cadence": "regenerated each flywheel run (node scripts/revenue-board-run.mjs)",
-   "state": "live-local"
-  },
-  {
-   "id": "forums-design-pass",
-   "does": "Forums Stage-1 (cc/forums-mvp on origin @ 45f9b29; untouched by flywheel; gate re-review queued behind REPO-REPAIR)",
-   "cadence": "every 3h",
-   "state": "waiting-repair"
-  },
-  {
-   "id": "stage-2-vision",
-   "does": "cc/stage-2-vision lane - DEFECT-PACKET (D2 consent copy, D3 paste-listener, D4 unmetered paid-API) blocks publish; fix block queued after forums",
-   "cadence": "parked",
-   "state": "blocked-defects"
-  },
-  {
-   "id": "stage-3-are",
-   "does": "S2 slices 1+2 GREEN-WITH-DEFECT-NOTES; CC continues slices 3-7, Defect-1 first; merge gated on 5 S2 conditions + flywheel gate review after the ref lands",
-   "cadence": "per-run",
-   "state": "building"
-  },
-  {
-   "id": "serving-safety",
-   "does": "live probe re-run first-hand this cycle: all denylisted internal paths refused (internal-paths scope only; not a claim about /.well-known public-file content); production locked at 89cf791 deploy 6a45bca8",
-   "cadence": "every run + post-publish",
-   "state": "green"
-  }
+  {"lane": "main (origin/main b91561b0)","state": "green","note": "clean + healthy: AXIS voice merged, b4-axis-chat green; main subject 'IIS Upgrades v1.1'"},
+  {"lane": "AXIS voice","state": "green","note": "merged on origin/main (4ee1b883 ancestor); 8 speech markers; spoken status live"},
+  {"lane": "AXIS status feed","state": "green","note": "clock refreshed run 61 (~21:15Z approx) - valid JSON, honest; git fields carried forward from run 58 (not re-measured - bash VM dead ENOSPC 3rd consecutive)"},
+  {"lane": "Test integrity","state": "amber","note": "b4-axis-chat 20/20 green LAST measured run 58; NOT re-run this cycle (npm not runnable - sandbox dead). Full suite 243/246 last measured (3 known non-defects)"},
+  {"lane": "KB growth (aria-kb-chunks.json)","state": "amber","note": "content real + staged. BLOCKED: aria-kb-chunks.json holds live conflict markers gating KB commits (~57 entries waiting). Needs clean conflict resolution before commit."},
+  {"lane": "Strategy-15-years-ahead (cc/cowork-strategy-20260710-870)","state": "red","note": "QUARANTINED - committed unresolved-merge: 106 conflict-marker files + concierge/plans/forums regressions. Not merged. Needs clean rebuild off main."}
  ],
  "needsAhmad": [
-  {
-   "action": "Double-click AHMAD-PUSH-E1-E2-E3.cmd (repo root)",
-   "why": "sandbox has no GitHub credential; this cmd clones fresh into %TEMP% (your machine's saved credential), verifies main==89cf791, then pushes the verified branch + verified merge - it does NOT touch your broken local .git, so it works BEFORE the repo repair. Lands TTFV clock + proof autorun + revenue-board module in one click.",
-   "oneClick": true
-  },
-  {
-   "action": "Netlify publish (after the merge)",
-   "why": "publishing is LOCKED (incident gain); merges never deploy - your click makes AXIS speak 219/219 + the new revenue lanes live, then flywheel re-probes",
-   "oneClick": true
-  },
-  {
-   "action": "Open REVENUE-BOARD.md + act the top rows",
-   "why": "several evidenced revenue moves are ranked with paste-ready next steps; the specifics (names, dates, ids) live ONLY in the force-404'd senior-director-state board, and any account creation is yours by rule",
-   "oneClick": true
-  },
-  {
-   "action": "Paste the staged REPO-REPAIR console block (CC console)",
-   "why": "local .git packed-refs is truncated (write-truncation class, first-hand-confirmed this cycle); until repaired, AHMAD-PUSH-STAGE3-S2.cmd and any in-repo git fetch will abort",
-   "oneClick": true
-  },
-  {
-   "action": "do-payment-retry-june-30 cost flag",
-   "why": "open cost dependency surfaced per free-only rule",
-   "oneClick": true
-  }
+  "AHMAD-REPAIR-GIT-INDEX.cmd - repair 0-byte .git index + release the locked .git config (fsmonitor/gc) so sandbox git can push again",
+  "AHMAD-PUSH-E1-E2-E3.cmd - push staged TTFV/proof/revenue-board lane",
+  "Netlify one-click publish (main merges never auto-deploy)",
+  "Commit+push this refreshed status.json feed (blocked by broken index)",
+  "Resolve aria-kb-chunks.json conflict markers to unblock ~57 staged KB entries"
  ],
  "onTrack": true
 }

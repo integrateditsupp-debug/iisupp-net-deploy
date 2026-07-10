@@ -487,6 +487,152 @@ body.iis-chapters .gl-chapter-body > section{margin-top:0}
   }
 }
 
+/* ==========================================================================
+   IIS MOBILE OS (v1.6) — the phone-native home (m.html · body.ios-on)
+   Globe OS + Concierge: one living screen, four doors, everything else in
+   the Index. Same brand: black, gold, Cinzel, dust. Reduced-motion honored.
+   ========================================================================== */
+body.ios-on #ios-home{
+  min-height:96svh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:64px 22px 30px;position:relative;
+}
+body.ios-on .ios-eyebrow{
+  color:rgba(197,160,89,.85);font-size:10px;letter-spacing:.55em;
+  text-transform:uppercase;font-weight:700;margin:0 0 26px;
+}
+body.ios-on .ios-stage{position:relative;width:min(72vw,290px);aspect-ratio:1;margin:0 auto}
+body.ios-on .ios-halo{
+  position:absolute;inset:-14%;border-radius:50%;
+  background:radial-gradient(circle, rgba(197,160,89,.22), rgba(197,160,89,.05) 55%, transparent 72%);
+  animation:iosBreathe 6.5s ease-in-out infinite;
+}
+body.ios-on .ios-ring{
+  position:absolute;inset:2%;border-radius:50%;
+  border:1px dashed rgba(197,160,89,.35);
+  animation:iosSpin 80s linear infinite;
+}
+body.ios-on .ios-globe{
+  position:absolute;inset:14%;border-radius:50%;
+  border:1px solid rgba(197,160,89,.7);
+  background:
+    radial-gradient(circle at 34% 28%, rgba(241,220,167,.32), transparent 42%),
+    radial-gradient(circle at 62% 74%, rgba(179,135,40,.25), transparent 52%),
+    radial-gradient(circle, #241708 0%, #120b04 68%, #0a0602 100%);
+  box-shadow:0 24px 70px rgba(0,0,0,.65), inset 0 0 40px rgba(197,160,89,.12);
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+body.ios-on .ios-mono{
+  font-family:'Cinzel',Georgia,serif;color:#f1dca7;font-size:clamp(44px,15vw,64px);
+  text-shadow:0 0 26px rgba(241,220,167,.45);
+}
+body.ios-on .ios-globe i{position:absolute;border:1px solid rgba(241,220,167,.16);border-radius:50%}
+body.ios-on .ios-lat{left:-12%;right:-12%;top:32%;height:36%}
+body.ios-on .ios-lat2{left:-6%;right:-6%;top:14%;height:72%}
+body.ios-on .ios-lon{top:-10%;bottom:-10%;left:30%;width:40%}
+body.ios-on .ios-orbit{position:absolute;inset:0;pointer-events:none}
+body.ios-on .ios-chip{
+  position:absolute;pointer-events:auto;text-decoration:none;
+  border:1px solid rgba(197,160,89,.55);border-radius:999px;
+  padding:7px 15px;background:rgba(10,7,3,.88);
+  color:#f1dca7;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+  box-shadow:0 8px 22px rgba(0,0,0,.5), inset 0 0 12px rgba(197,160,89,.08);
+  transition:transform .3s ease, border-color .3s ease, background .3s ease;
+  animation:iosFloat 5.5s ease-in-out infinite;
+}
+body.ios-on .ios-chip:active{transform:scale(.94)}
+body.ios-on .ios-chip-n{top:-5%;left:50%;transform:translateX(-50%)}
+body.ios-on .ios-chip-e{right:-9%;top:47%;transform:translateY(-50%);animation-delay:-1.4s}
+body.ios-on .ios-chip-s{bottom:-5%;left:50%;transform:translateX(-50%);animation-delay:-2.8s}
+body.ios-on .ios-chip-w{left:-9%;top:47%;transform:translateY(-50%);animation-delay:-4.2s}
+body.ios-on .ios-title{
+  font-family:'Cinzel',Georgia,serif;color:#f8f1de;font-weight:700;
+  font-size:clamp(26px,7.6vw,34px);line-height:1.22;letter-spacing:.02em;
+  margin:34px 0 10px;
+}
+body.ios-on .ios-title em{color:#c5a059;font-style:italic}
+body.ios-on .ios-sub{
+  color:rgba(255,255,255,.55);font-size:13.5px;line-height:1.75;
+  max-width:300px;margin:0 auto 24px;font-weight:300;
+}
+body.ios-on .ios-cta{
+  position:relative;display:inline-block;text-decoration:none;overflow:hidden;
+  padding:15px 44px;border-radius:999px;
+  background:linear-gradient(135deg,#b38728,#f1dca7 55%,#c5a059);
+  color:#171004;font-size:11px;letter-spacing:.34em;text-transform:uppercase;font-weight:700;
+  box-shadow:0 14px 34px rgba(197,160,89,.28);
+}
+body.ios-on .ios-cta::after{
+  content:'';position:absolute;top:-40%;bottom:-40%;left:-30%;width:34%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.5) 50%,transparent);
+  transform:translateX(-120%) rotate(8deg);
+  animation:iosSheen 7.5s ease-in-out 2.4s infinite;
+}
+body.ios-on .ios-cue{
+  margin-top:34px;background:none;border:none;cursor:pointer;
+  color:rgba(197,160,89,.75);font-size:10px;letter-spacing:.42em;text-transform:uppercase;font-weight:700;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+body.ios-on .ios-cue i{
+  width:1px;height:26px;display:block;
+  background:linear-gradient(180deg,#c5a059,transparent);
+  animation:iosDrip 2.4s ease-in-out infinite;
+}
+@keyframes iosBreathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.07);opacity:1}}
+@keyframes iosSpin{to{transform:rotate(360deg)}}
+@keyframes iosFloat{0%,100%{margin-top:0}50%{margin-top:-5px}}
+@keyframes iosSheen{0%{transform:translateX(-130%) rotate(8deg)}18%,100%{transform:translateX(430%) rotate(8deg)}}
+@keyframes iosDrip{0%{transform:scaleY(.2);transform-origin:top;opacity:.4}55%{transform:scaleY(1);opacity:1}100%{transform:scaleY(.2);transform-origin:top;opacity:.4}}
+
+/* ---- the concierge doors ---- */
+body.ios-on #ios-doors{padding:8px 20px 26px;max-width:560px;margin:0 auto}
+body.ios-on .ios-doors-head{
+  text-align:center;color:rgba(255,255,255,.4);
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;margin:0 0 14px;
+}
+body.ios-on .ios-door{
+  display:flex;align-items:center;gap:14px;text-decoration:none;
+  border:1px solid rgba(197,160,89,.28);border-radius:16px;
+  padding:15px 16px;margin-bottom:10px;
+  background:linear-gradient(165deg, rgba(197,160,89,.06), rgba(255,255,255,.008) 55%);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .7s cubic-bezier(.16,1,.3,1) calc(var(--i) * .09s + .15s),
+             transform .7s cubic-bezier(.16,1,.3,1) calc(var(--i) * .09s + .15s),
+             border-color .3s ease;
+}
+body.ios-on.ios-in .ios-door{opacity:1;transform:none}
+body.ios-on .ios-door:active{border-color:#c5a059}
+body.ios-on .ios-door-glyph{
+  flex:0 0 44px;height:44px;border-radius:13px;
+  border:1px solid rgba(197,160,89,.4);
+  display:flex;align-items:center;justify-content:center;color:#f1dca7;
+  background:radial-gradient(circle at 32% 22%, rgba(197,160,89,.2), transparent 70%);
+}
+body.ios-on .ios-door-glyph svg{width:20px;height:20px}
+body.ios-on .ios-door-copy{flex:1;min-width:0}
+body.ios-on .ios-door-copy b{
+  display:block;font-family:'Cinzel',Georgia,serif;font-weight:700;
+  color:#f1dca7;font-size:14.5px;letter-spacing:.03em;margin-bottom:3px;
+}
+body.ios-on .ios-door-copy small{color:rgba(255,255,255,.45);font-size:11px;line-height:1.5;display:block}
+body.ios-on .ios-door-arrow{color:rgba(197,160,89,.7);font-size:16px}
+
+/* ---- the index ---- */
+body.ios-on #ios-index{padding:14px 14px 60px;max-width:640px;margin:0 auto}
+body.ios-on .ios-index-note{
+  text-align:center;color:rgba(197,160,89,.55);
+  font-size:9.5px;letter-spacing:.42em;text-transform:uppercase;font-weight:700;
+  margin:20px 6px 14px;
+}
+body.ios-on #ios-index .gl-chapter{margin:10px 4px}
+
+@media (prefers-reduced-motion: reduce){
+  body.ios-on .ios-halo,body.ios-on .ios-ring,body.ios-on .ios-chip,
+  body.ios-on .ios-cta::after,body.ios-on .ios-cue i{animation:none !important}
+  body.ios-on .ios-door{opacity:1;transform:none;transition:none}
+}
+
 /* ---------- Sitewide gold polish (full mode only) ---------- */
 html.iism-full ::selection{background:rgba(197,160,89,.35);color:#fff}
 html.iism-full{scrollbar-color:#4a3d26 #060606}

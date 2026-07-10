@@ -168,6 +168,422 @@
       "id": "l1-password-001",
       "title": "Password reset / forgotten password (self-service)",
       "level": "L1"
+    }
+  ],
+  "we couldn't connect": [
+    {
+      "id": "l1-m365-001",
+      "title": "Can't sign in to Microsoft 365 / repeated password prompts",
+      "level": "L1"
+    }
+  ],
+  "office activation": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "reduced functionality": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "license": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "subscription expired": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "product deactivated": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "sign in to activate office": [
+    {
+      "id": "l1-m365-002",
+      "title": "Microsoft 365 license / activation issues \u2014 apps in reduced functionality",
+      "level": "L1"
+    }
+  ],
+  "mfa": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "2fa": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "two factor": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "multi factor": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "authenticator": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "lost phone": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "new phone": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "mfa code": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "microsoft authenticator": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "authy": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "google authenticator": [
+    {
+      "id": "l1-mfa-001",
+      "title": "Multi-factor authentication (MFA): setup, lost device, and recovery",
+      "level": "L1"
+    }
+  ],
+  "onedrive": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "not syncing": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "paused": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "looking for changes": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "sync stuck": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "red x": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "upload pending": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "blocked file": [
+    {
+      "id": "l1-onedrive-001",
+      "title": "OneDrive not syncing / paused / stuck on 'looking for changes'",
+      "level": "L1"
+    }
+  ],
+  "restore file": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "deleted file": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "recover file": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "version history": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "previous version": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "rollback": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    },
+    {
+      "id": "l2-drivers-001",
+      "title": "Driver rollback / WHQL gating / fleet driver management",
+      "level": "L2"
+    }
+  ],
+  "ransomware recovery": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "onedrive recycle bin": [
+    {
+      "id": "l1-onedrive-002",
+      "title": "Restore deleted or modified file from OneDrive / version history",
+      "level": "L1"
+    }
+  ],
+  "sync conflict": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "duplicate file": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "file conflict": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "two copies": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "my computer copy": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "merged file": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "which version": [
+    {
+      "id": "l1-onedrive-003",
+      "title": "OneDrive sync conflict \u2014 'two copies of file' / file with computer name appended",
+      "level": "L1"
+    }
+  ],
+  "outlook": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    },
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "not receiving emails": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "email stuck": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "inbox not updating": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "missing emails": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "send/receive": [
+    {
+      "id": "l1-outlook-001",
+      "title": "Outlook not receiving new emails",
+      "level": "L1"
+    }
+  ],
+  "can't send": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "stuck in outbox": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "email not sending": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "unable to send": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "smtp error": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "outbox": [
+    {
+      "id": "l1-outlook-002",
+      "title": "Outlook can't send emails / messages stuck in Outbox",
+      "level": "L1"
+    }
+  ],
+  "password reset": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "forgot password": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "sspr": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "self service password reset": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
+    }
+  ],
+  "locked out": [
+    {
+      "id": "l1-password-001",
+      "title": "Password reset / forgotten password (self-service)",
+      "level": "L1"
     },
     {
       "id": "l2-active-directory-001",
@@ -671,6 +1087,20 @@
     }
   ],
   "audio missing": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "no audio output device": [
+    {
+      "id": "l1-windows-005",
+      "title": "Windows: no sound at all from the computer",
+      "level": "L1"
+    }
+  ],
+  "red x speaker icon": [
     {
       "id": "l1-windows-005",
       "title": "Windows: no sound at all from the computer",
@@ -2043,6 +2473,34 @@
     }
   ],
   "dns": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "name resolution": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "split brain": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "conditional forwarder": [
+    {
+      "id": "l2-dns-001",
+      "title": "DNS: internal name resolution failing / split-brain issues",
+      "level": "L2"
+    }
+  ],
+  "stub zone": [
     {
       "id": "l2-dns-001",
       "title": "DNS: internal name resolution failing / split-brain issues",

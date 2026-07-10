@@ -887,27 +887,93 @@ function axisUnknownFallback(q, d, feed) {
 let __axisRecog = null;          // active SpeechRecognition instance while listening
 let __axisVoiceOn = true;        // speak replies aloud by default (Ahmad: "I want to talk, it's faster")
 
-// Pick a natural English (male-leaning) voice when the OS offers one; else default.
+// Pick the most HUMAN English voice the OS/browser offers (upgraded 2026-07-10 — Ahmad: "sounds robotic").
+// Ranking: Neural/Natural (Edge online voices) > Google (Chrome online) > Premium/Enhanced (macOS)
+// > preferred male names > any en-US > any English. A manual override persists in localStorage.
+function axisScoreVoice(v) {
+  try {
+    const n = (v.name || '') + ' ' + (v.voiceURI || '');
+    let s = 0;
+    if (/natural|neural/i.test(n)) s += 100;              // Edge "Online (Natural)" — most human
+    if (/google/i.test(n)) s += 60;                        // Chrome online voices — clearly better than SAPI
+    if (/premium|enhanced|siri/i.test(n)) s += 50;         // macOS high-quality tiers
+    if (/online/i.test(n)) s += 20;                        // cloud voices beat local legacy
+    if (/(guy|davis|andrew|brian|christopher|eric|roger|steffan|ryan|thomas|daniel|alex|arthur|george|james|mark)/i.test(n)) s += 12; // male-leaning, matches AXIS persona
+    if (/^en(-|_)?(US|CA)/i.test(v.lang || '')) s += 8; else if (/^en/i.test(v.lang || '')) s += 4; else s -= 50;
+    if (/david|zira|sam\b/i.test(n) && !/natural|neural|online/i.test(n)) s -= 15; // legacy SAPI = the robotic sound
+    return s;
+  } catch (_) { return -1; }
+}
 function axisPickVoice() {
   try {
     const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
-    return vs.find((v) => /^en(-|_)?(US|GB|CA|AU)?/i.test(v.lang) && /(david|daniel|alex|george|fred|arthur|guy|male|mark|james)/i.test(v.name))
-        || vs.find((v) => /^en/i.test(v.lang))
-        || vs[0] || null;
+    if (!vs.length) return null;
+    const wanted = (function () { try { return localStorage.getItem('axis-voice-name') || ''; } catch (_) { return ''; } })();
+    if (wanted) { const hit = vs.find((v) => v.name === wanted); if (hit) return hit; }
+    return vs.slice().sort((a, b) => axisScoreVoice(b) - axisScoreVoice(a))[0] || null;
   } catch (_) { return null; }
 }
+// Optional manual controls (also reachable from DevTools): cycle voices / set a specific one. Persisted.
+window.axisVoiceNext = function () {
+  try {
+    const vs = ((window.speechSynthesis && speechSynthesis.getVoices()) || []).filter((v) => /^en/i.test(v.lang || ''));
+    if (!vs.length) return null;
+    const cur = axisPickVoice();
+    const i = Math.max(0, vs.findIndex((v) => cur && v.name === cur.name));
+    const nxt = vs[(i + 1) % vs.length];
+    try { localStorage.setItem('axis-voice-name', nxt.name); } catch (_) {}
+    axisSpeak('Now speaking with ' + nxt.name.replace(/microsoft|google|online|\(|\)/gi, ' ').replace(/\s+/g, ' ').trim() + '.');
+    return nxt.name;
+  } catch (_) { return null; }
+};
+window.axisSetVoice = function (name) { try { localStorage.setItem('axis-voice-name', String(name || '')); } catch (_) {} return name; };
 
-// Speak a concise string aloud (strips bullet glyphs / collapses whitespace for natural speech).
+// Make text sound like a person, not a screen reader: strip glyphs/markdown, speak symbols
+// naturally, and split into sentence chunks so the voice breathes between thoughts
+// (chunking also avoids Chrome's long-utterance cutoff).
+function axisHumanizeForSpeech(text) {
+  let t = String(text || '');
+  t = t.replace(/[•·▪◦●⚠🔊🔇🎙✅❌→]/g, ' ')
+       .replace(/[*_`#>\[\]]/g, ' ')
+       .replace(/https?:\/\/([^\s\/]+)[^\s]*/gi, '$1')
+       .replace(/\b24\s*\/\s*7\b/g, 'twenty-four seven')
+       .replace(/\bw\//gi, 'with ')
+       .replace(/\be\.g\.\s*/gi, 'for example, ')
+       .replace(/\bi\.e\.\s*/gi, 'that is, ')
+       .replace(/(\d+)\s*%/g, '$1 percent')
+       .replace(/\s[-–—]\s/g, ', ')
+       .replace(/\s*\n+\s*/g, '. ')
+       .replace(/\.\s*\./g, '.')
+       .replace(/\s+/g, ' ').trim();
+  return t;
+}
 function axisSpeak(text) {
   try {
     if (!window.speechSynthesis || !__axisVoiceOn) return;
-    const clean = String(text || '').replace(/[•·⚠🔊🔇🎙●]/g, ' ').replace(/\s*\n+\s*/g, '. ').replace(/\s+/g, ' ').trim();
+    const clean = axisHumanizeForSpeech(text);
     if (!clean) return;
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(clean);
-    const v = axisPickVoice(); if (v) { u.voice = v; u.lang = v.lang; }
-    u.rate = 1.04; u.pitch = 0.96;
-    speechSynthesis.speak(u);
+    const v = axisPickVoice();
+    const natural = !!(v && /natural|neural|google|premium|enhanced/i.test(v.name || ''));
+    // Sentence-chunk so delivery has natural pauses instead of one monotone stream.
+    const chunks = clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [clean];
+    let buf = '';
+    const queue = [];
+    for (const c of chunks) {
+      if ((buf + c).length > 180 && buf) { queue.push(buf.trim()); buf = c; } else { buf += c; }
+    }
+    if (buf.trim()) queue.push(buf.trim());
+    queue.forEach(function (part) {
+      const u = new SpeechSynthesisUtterance(part);
+      if (v) { u.voice = v; u.lang = v.lang; }
+      // Natural voices sound best at neutral settings; legacy voices get a gentle lift.
+      u.rate = natural ? 1.0 : 1.02;
+      u.pitch = natural ? 1.0 : 1.0;
+      u.volume = 1;
+      speechSynthesis.speak(u);
+    });
+    // Show which voice is in use (hover the speaker button) — helps Ahmad pick via axisVoiceNext().
+    try { const b = $('axis-speak'); if (b && v) b.title = 'Voice: ' + v.name + ' — click-cycle: axisVoiceNext()'; } catch (_) {}
   } catch (_) {}
 }
 

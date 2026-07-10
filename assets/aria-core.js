@@ -920,6 +920,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
                 +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🏆</div><h3 class="ci-card-title"><span class="ci-count" data-to="15">15</span>+ years</h3></div><div class="ci-face ci-back"><p>ITIL, Six Sigma, cross-industry — actually applied, not framed on a wall.</p></div></div></div>'
                 +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🤖</div><h3 class="ci-card-title">Built on AI</h3></div><div class="ci-face ci-back"><p>AI helps you take on challenges before they become problems.</p></div></div></div>'
                 +   '</div>'
+                +   '<div class="text-center mt-10"><a href="#introducing-aria" class="inline-block text-[10px] tracking-[0.4em] uppercase font-bold border-b border-[#c5a059]/40 pb-2 transition hover:text-white" style="color:#c5a059">See our apps, examples &amp; recent work ↓</a></div>'
                 + '</div>';
             var aiEdge = document.querySelector(".ai-edge-band");
             if (aiEdge && aiEdge.parentNode) { aiEdge.parentNode.insertBefore(intro, aiEdge); }

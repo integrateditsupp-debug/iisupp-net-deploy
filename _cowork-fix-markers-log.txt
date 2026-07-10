@@ -1,0 +1,47 @@
+FIX-MARKERS START 2026-07-10 16:59:41.14
+FIXED .\ai-edge.html
+FIXED .\aperture-learning.html
+FIXED .\aperture.html
+FIXED .\aria-transform.js
+FIXED .\aria.html
+FIXED .\assets\aria-core.js
+FIXED .\assets\aria-kb-local-bundle-v3.json
+FIXED .\assets\aria-kb-local-bundle.json
+FIXED .\assets\iis-catalog.js
+FIXED .\compliance\automated-decisions.html
+FIXED .\compliance-gap.html
+FIXED .\cost-calculator.html
+FIXED .\enterprise.html
+FIXED .\government.html
+FIXED .\growth-library.html
+FIXED .\index.html
+FIXED .\knowledge-base\_meta\index-by-keyword.json
+FIXED .\knowledge-base\_meta\manifest.json
+FIXED .\netlify\functions\aria-chat.js
+FIXED .\netlify\functions\aria-founder-digest.mjs
+FIXED .\netlify\functions\aria-signup-health-cron.mjs
+FIXED .\netlify\functions\aria-slack-command.js
+FIXED .\netlify\functions\stripe-checkout.js
+FIXED .\package-lock.json
+FIXED .\plans\index.html
+FIXED .\scorecard.html
+FIXED .\scripts\export-kb-chunks.mjs
+FIXED .\scripts\regenerate-sitemap.mjs
+FIXED .\service-worker.js
+FIXED .\services.html
+FIXED .\shop.html
+FIXED .\sitemap.xml
+FIXED .\start-here.html
+FIXED .\sw.js
+FIXED .\tests\last-smoke-results.json
+FIXED .\tests\run-all-smoke.mjs
+FIXED .\tests\run-mega-scenarios.js
+FIXED .\tests\run-stats.json
+FIXED .\tests\scenario-corpus-10k.js
+FIXED .\tests\scenario-corpus.js
+FIXED .\verticals\finance.html
+FIXED .\verticals\healthcare.html
+FIXED .\verticals\legal.html
+---
+fixed files: 43
+manual review needed: none

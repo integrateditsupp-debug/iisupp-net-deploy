@@ -1,0 +1,24 @@
+{
+  "scan_ts": "2026-07-09T21:06:35Z",
+  "window": "2d",
+  "head": "b91561b084800eee74415f529fa72c3f6f7a0b42",
+  "commits_in_window": 3,
+  "top_dirs": [
+    "downloads/library",
+    "scripts",
+    "trust.html",
+    "services.html",
+    "index.html",
+    "growth-library.html",
+    "forums/index.html"
+  ],
+  "prefixes": {
+    "[cowork]": 3
+  },
+  "authors": {
+    "integrateditsupp-debug": 3
+  },
+  "prior_head": "b91561b0",
+  "prior_scan": "2026-07-09T18:24:52Z",
+  "delta": "no new commits since prior scan; window rolled forward (7->3 commits as 07-05 activity aged out); all 3 in-window commits are the same IIS Upgrades v1.1 slice already reported"
+}

@@ -85,3 +85,7 @@ CLAUDE.md
 !ARIA Sentinel/**/*.ps1
 !ARIA Sentinel/**/*.bat
 !ARIA Sentinel/CLAUDE.md
+
+# Local Sentinel build snapshots (dist.<ver>.<ts>/) — contain >100MB exes GitHub rejects (GH001).
+# Build artifacts only; files stay on disk. Shipped installers live in downloads/.
+ARIA Sentinel/dist.*/
