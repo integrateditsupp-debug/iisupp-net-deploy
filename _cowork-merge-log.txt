@@ -1,224 +1,92 @@
-MERGE START 2026-07-10 16:51:07.80
-workdir: C:\Users\AHMADW~1\AppData\Local\Temp\iis-merge-20260710-28447
-Cloning into 'C:\Users\AHMADW~1\AppData\Local\Temp\iis-merge-20260710-28447'...
-Already on 'main'
-Your branch is up to date with 'origin/main'.
+MERGE-V2 START 2026-07-10 17:06:17.52
+workdir: C:\Users\AHMADW~1\AppData\Local\Temp\iis-merge-v2-31418
+Cloning into 'C:\Users\AHMADW~1\AppData\Local\Temp\iis-merge-v2-31418'...
+Updating files:  98% (2275/2321)Updating files:  99% (2298/2321)Updating files: 100% (2321/2321)Updating files: 100% (2321/2321), done.
 main before merge: 357dbd4
+From https://github.com/integrateditsupp-debug/iisupp-net-deploy
+ * [new branch]      cc/cowork-strategy-20260710-870 -> origin/cc/cowork-strategy-20260710-870
 Auto-merging about.html
 Auto-merging ai-edge.html
 Auto-merging aria.html
 Auto-merging assets/iis-motion.css
-Auto-merging book.html
-Auto-merging commercial-real-estate.html
-Auto-merging compare/aria-vs-retell/index.html
-Auto-merging compare/aria-vs-vapi/index.html
-Auto-merging compare/index.html
-Auto-merging copyright.html
 Auto-merging cost-calculator.html
-Auto-merging downloads/library/ai-agent-starter-kit-preview.html
-Auto-merging downloads/library/ai-help-desk-automation-blueprint-preview.html
-Auto-merging downloads/library/ai-workflow-audit-preview.html
-Auto-merging downloads/library/ai-workflow-quick-win-sprint-preview.html
-Auto-merging downloads/library/cybersecurity-basics-preview.html
-Auto-merging downloads/library/m365-security-productivity-tune-up-preview.html
-Auto-merging downloads/library/meeting-to-sop-ai-pack-preview.html
-Auto-merging downloads/library/monthly-ai-support-plan-preview.html
-Auto-merging downloads/library/msp-partner-overflow-coverage-preview.html
-Auto-merging downloads/library/no-code-automation-kit-preview.html
-Auto-merging downloads/library/office-move-property-it-readiness-preview.html
-Auto-merging downloads/library/outlook-fix-guide-preview.html
-Auto-merging downloads/library/prompt-engineering-preview.html
-Auto-merging downloads/library/remote-l1-l3-overflow-support-pilot-preview.html
-Auto-merging downloads/library/small-business-website-improvement-checklist-preview.html
 Auto-merging enterprise.html
-Auto-merging extension.html
 Auto-merging forums/index.html
-Auto-merging governance/ai-use.html
-Auto-merging governance/anti-bribery.html
-Auto-merging governance/code-of-conduct.html
-Auto-merging governance/environmental.html
-Auto-merging governance/health-and-safety.html
-Auto-merging governance/human-rights.html
-Auto-merging governance/incident-response.html
-Auto-merging governance/index.html
-Auto-merging governance/information-security.html
-Auto-merging governance/modern-slavery.html
-Auto-merging governance/privacy.html
-Auto-merging governance/responsible-sourcing.html
-Auto-merging governance/supplier-code-of-conduct.html
 Auto-merging government.html
 Auto-merging growth-library.html
 Auto-merging health-check.html
 Auto-merging index.html
-Auto-merging insiders.html
-Auto-merging marketplace.html
 Auto-merging plans/index.html
-Auto-merging product.html
-Auto-merging purchase-tech.html
-Auto-merging refer.html
-Auto-merging scorecard.html
 Auto-merging scripts/apply-site-upgrades.mjs
 Auto-merging services.html
 Auto-merging shop.html
 Auto-merging start-here.html
-Auto-merging status.html
-Auto-merging terms.html
-Auto-merging unlock.html
-Auto-merging verticals/finance.html
-Auto-merging verticals/healthcare.html
-Auto-merging verticals/index.html
-Auto-merging verticals/legal.html
 Merge made by the 'ort' strategy.
- .codex-observer/codex-playbook.md                  |    27 +
- .codex-observer/last-scan.json                     |    24 +
- .gitignore                                         |     4 +
- .well-known/axis/.status.AH0Z.json                 |    49 +
- .well-known/axis/status.json                       |   121 +-
- ARIA Sentinel/src/renderer/index.html              |    14 +-
- ARIA Sentinel/src/renderer/overlay.js              |    23 +-
- ARIA Sentinel/src/renderer/renderer.js             |   159 +-
- ARIA Sentinel/tests/del-prefs-13.json              |     1 +
- ARIA Sentinel/tests/del-prefs-15.json              |     1 +
- ARIA Sentinel/tests/del-prefs-16.json              |     1 +
- ARIA Sentinel/tests/del-prefs-17.json              |     1 +
- ARIA Sentinel/tests/del-prefs-18.json              |     1 +
- ARIA Sentinel/tests/del-prefs-23.json              |     1 +
- ARIA Sentinel/tests/del-prefs-25.json              |     1 +
- ARIA Sentinel/tests/del-prefs-26.json              |     1 +
- ARIA Sentinel/tests/del-prefs-3.json               |     1 +
- ARIA Sentinel/tests/del-prefs-37.json              |     1 +
- ARIA Sentinel/tests/del-prefs-4.json               |     1 +
- ARIA Sentinel/tests/del-prefs-40.json              |     1 +
- ARIA Sentinel/tests/del-prefs-5.json               |     1 +
- ARIA Sentinel/tests/del-prefs-6.json               |     1 +
- ARIA Sentinel/tests/del-prefs-7.json               |     1 +
- ARIA Sentinel/tests/del-prefs-8.json               |     1 +
- ARIA Sentinel/tests/del-prefs-81.json              |     1 +
- about.html                                         |    12 +-
- ai-edge.html                                       |    44 +-
- aperture-learning.html                             |   586 ++
- aperture.html                                      |     4 +
- aria-transform.js                                  |     7 +
- aria.html                                          |   312 +-
- assets/aperture-learning.js                        |    86 +-
- assets/aria-core.js                                |    23 +
- assets/aria-kb-local-bundle-v3.json                |     6 +-
- assets/aria-kb-local-bundle.json                   |     6 +-
- assets/iis-catalog.js                              |    16 +
- assets/iis-mobile-os.js                            |   198 +
- assets/iis-motion.css                              |   146 +
- book.html                                          |    10 +-
- commercial-real-estate.html                        |    10 +-
- compare/aria-vs-msp-x/index.html                   |   124 +
- compare/aria-vs-retell/index.html                  |    10 +-
- compare/aria-vs-vapi/index.html                    |    10 +-
- compare/index.html                                 |    10 +-
- compliance-gap.html                                |     4 +
- compliance/automated-decisions.html                |     4 +
- copyright.html                                     |    12 +-
- cost-calculator.html                               |    14 +-
- docs/COLLAB_BRIEF.md                               |    73 +
- docs/LOOPS_ALIGNMENT.md                            |    34 +-
- docs/LOOPS_LEDGER.md                               |    10 +
- .../library/ai-agent-starter-kit-preview.html      |    10 +-
- .../ai-help-desk-automation-blueprint-preview.html |    10 +-
- downloads/library/ai-workflow-audit-preview.html   |    10 +-
- .../ai-workflow-quick-win-sprint-preview.html      |    10 +-
- .../library/cybersecurity-basics-preview.html      |    10 +-
- ...m365-security-productivity-tune-up-preview.html |    10 +-
- .../library/meeting-to-sop-ai-pack-preview.html    |    10 +-
- .../library/monthly-ai-support-plan-preview.html   |    10 +-
- .../msp-partner-overflow-coverage-preview.html     |    10 +-
- .../library/no-code-automation-kit-preview.html    |    10 +-
- .../office-move-property-it-readiness-preview.html |    10 +-
- downloads/library/outlook-fix-guide-preview.html   |    10 +-
- downloads/library/prompt-engineering-preview.html  |    10 +-
- ...emote-l1-l3-overflow-support-pilot-preview.html |    10 +-
- ...ness-website-improvement-checklist-preview.html |    10 +-
- enterprise.html                                    |    18 +-
- extension.html                                     |    10 +-
- forums/index.html                                  |     4 +-
- governance/ai-use.html                             |    10 +-
- governance/anti-bribery.html                       |    10 +-
- governance/code-of-conduct.html                    |    10 +-
- governance/environmental.html                      |    10 +-
- governance/health-and-safety.html                  |    10 +-
- governance/human-rights.html                       |    10 +-
- governance/incident-response.html                  |    10 +-
- governance/index.html                              |    10 +-
- governance/information-security.html               |    10 +-
- governance/modern-slavery.html                     |    10 +-
- governance/privacy.html                            |    10 +-
- governance/responsible-sourcing.html               |    10 +-
- governance/supplier-code-of-conduct.html           |    10 +-
- government.html                                    |    18 +-
- growth-library.html                                |    56 +-
- health-check.html                                  |    10 +-
- index.html                                         |   170 +-
- insiders.html                                      |    10 +-
- knowledge-base/_meta/index-by-keyword.json         | 10053 +++++++++++++------
- knowledge-base/_meta/manifest.json                 |   434 +
- knowledge-base/_meta/routing.md                    |    12 +
- loops/registry.json                                |    14 +-
- marketplace.html                                   |    11 +-
- mesh-registry.json                                 |    33 +
- netlify.toml                                       |    27 +
- netlify/functions/aria-backup-cron.mjs             |     6 +
- netlify/functions/aria-chat.js                     |    16 +
- netlify/functions/aria-engagement-cron.mjs         |     6 +
- netlify/functions/aria-evolution-cron.mjs          |     6 +
- netlify/functions/aria-founder-digest.mjs          |     4 +
- netlify/functions/aria-gap-detector-cron.mjs       |     6 +
- netlify/functions/aria-governor-alert-cron.mjs     |     6 +
- netlify/functions/aria-lead-radar-cron.mjs         |     6 +
- netlify/functions/aria-learning-cron.mjs           |     6 +
- netlify/functions/aria-reverify-cron.mjs           |     6 +
- netlify/functions/aria-self-audit-cron.mjs         |     6 +
- netlify/functions/aria-self-eval-cron.mjs          |     6 +
- netlify/functions/aria-signup-health-cron.mjs      |     6 +
- netlify/functions/aria-slack-command.js            |     4 +
- netlify/functions/aria-uptime-probe.mjs            |     6 +
- netlify/functions/aria-winback-cron.mjs            |     6 +
- netlify/functions/senior-director-digest-cron.mjs  |     6 +
- netlify/functions/stripe-checkout.js               |    35 +
- package-lock.json                                  |    41 +
- plans/index.html                                   |   123 +-
- product.html                                       |    10 +-
- public/.well-known/axis/status.json                |   121 +-
- public/.well-known/axis/t_big.tmp                  |     0
- purchase-tech.html                                 |    12 +-
- refer.html                                         |    10 +-
- scorecard.html                                     |    14 +-
- scripts/apply-site-upgrades.mjs                    |    22 +-
- scripts/ceo-action-console-agent.mjs               |    12 +-
- scripts/contracts-bids-status-agent.mjs            |    71 +-
- scripts/export-kb-chunks.mjs                       |    11 +
- scripts/regenerate-sitemap.mjs                     |    20 +
- scripts/senior-director-worker.mjs                 |     9 +
- service-worker.js                                  |     4 +
- services.html                                      |   169 +-
- shop.html                                          |    32 +-
- sitemap.xml                                        |    22 +
- start-here.html                                    |    32 +-
- status.html                                        |    10 +-
- sw.js                                              |     4 +
- terms.html                                         |    10 +-
- tests/aria-brain-v2-matrix.test.mjs                |   321 +
- tests/aria-brain-v2.test.mjs                       |   148 +
- tests/aria-classifier-mirror.js                    |     3 +
- tests/last-smoke-results.json                      |    98 +
- tests/run-all-smoke.mjs                            |     8 +
- tests/run-mega-scenarios.js                        |    26 +
- tests/run-stats.json                               |   151 +-
- tests/scenario-corpus-10k.js                       |     5 +
- tests/scenario-corpus.js                           |    16 +
- unlock.html                                        |    10 +-
- verticals/finance.html                             |    28 +-
- verticals/healthcare.html                          |    28 +-
- verticals/index.html                               |    10 +-
- verticals/legal.html                               |    28 +-
- webinar.html                                       |   217 +
- 149 files changed, 11536 insertions(+), 3832 deletions(-)
+ .codex-observer/codex-playbook.md          |  27 ++
+ .codex-observer/last-scan.json             |  24 ++
+ .gitignore                                 |   4 +
+ .well-known/axis/.status.AH0Z.json         |  49 +++
+ .well-known/axis/status.json               | 121 ++------
+ ARIA Sentinel/src/renderer/index.html      |  14 +-
+ ARIA Sentinel/src/renderer/overlay.js      |  23 +-
+ ARIA Sentinel/src/renderer/renderer.js     | 159 +---------
+ ARIA Sentinel/tests/del-prefs-13.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-15.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-16.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-17.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-18.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-23.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-25.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-26.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-3.json       |   1 +
+ ARIA Sentinel/tests/del-prefs-37.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-4.json       |   1 +
+ ARIA Sentinel/tests/del-prefs-40.json      |   1 +
+ ARIA Sentinel/tests/del-prefs-5.json       |   1 +
+ ARIA Sentinel/tests/del-prefs-6.json       |   1 +
+ ARIA Sentinel/tests/del-prefs-7.json       |   1 +
+ ARIA Sentinel/tests/del-prefs-8.json       |   1 +
+ ARIA Sentinel/tests/del-prefs-81.json      |   1 +
+ _cowork-fix-markers-log.txt                |  47 +++
+ _cowork-merge-log.txt                      | 250 ++++++++++++++++
+ about.html                                 |  71 ++++-
+ ai-edge.html                               |  21 +-
+ aria.html                                  | 105 +++++++
+ assets/aperture-learning.js                |  86 +++++-
+ assets/aria-core.js                        |   1 +
+ assets/aria-kb-local-bundle-v3.json        |   2 +-
+ assets/aria-kb-local-bundle.json           |   2 +-
+ assets/iis-mobile-os.js                    | 198 +++++++++++++
+ assets/iis-motion.css                      | 146 +++++++++
+ compare/aria-vs-msp-x/index.html           | 124 ++++++++
+ cost-calculator.html                       |  19 +-
+ docs/COLLAB_BRIEF.md                       |  67 +++++
+ docs/LOOPS_ALIGNMENT.md                    |  34 +--
+ docs/LOOPS_LEDGER.md                       |  10 +
+ enterprise.html                            |  18 ++
+ forums/index.html                          |   4 +-
+ government.html                            |  18 ++
+ growth-library.html                        |  20 ++
+ health-check.html                          |  19 +-
+ index.html                                 |  20 ++
+ knowledge-base/_meta/index-by-keyword.json | 458 +++++++++++++++++++++++++++++
+ loops/registry.json                        |  14 +-
+ mesh-registry.json                         |  33 +++
+ plans/index.html                           |   4 +
+ public/.well-known/axis/status.json        | 121 ++------
+ public/.well-known/axis/t_big.tmp          |   0
+ scripts/apply-site-upgrades.mjs            |  22 +-
+ scripts/ceo-action-console-agent.mjs       |  12 +-
+ scripts/contracts-bids-status-agent.mjs    |  71 ++++-
+ scripts/fix-conflict-markers.mjs           |  44 +++
+ services.html                              |  20 ++
+ shop.html                                  |  20 ++
+ start-here.html                            |  18 ++
+ tests/aria-brain-v2-matrix.test.mjs        | 321 ++++++++++++++++++++
+ tests/aria-brain-v2.test.mjs               | 148 ++++++++++
+ tests/run-stats.json                       |   2 +-
+ webinar.html                               | 217 ++++++++++++++
+ 64 files changed, 2829 insertions(+), 416 deletions(-)
  create mode 100644 .codex-observer/codex-playbook.md
  create mode 100644 .codex-observer/last-scan.json
  create mode 100644 .well-known/axis/.status.AH0Z.json
@@ -239,12 +107,17 @@ Merge made by the 'ort' strategy.
  create mode 100644 ARIA Sentinel/tests/del-prefs-7.json
  create mode 100644 ARIA Sentinel/tests/del-prefs-8.json
  create mode 100644 ARIA Sentinel/tests/del-prefs-81.json
+ create mode 100644 _cowork-fix-markers-log.txt
+ create mode 100644 _cowork-merge-log.txt
  create mode 100644 assets/iis-mobile-os.js
  create mode 100644 compare/aria-vs-msp-x/index.html
  create mode 100644 public/.well-known/axis/t_big.tmp
+ create mode 100644 scripts/fix-conflict-markers.mjs
  create mode 100644 tests/aria-brain-v2-matrix.test.mjs
  create mode 100644 tests/aria-brain-v2.test.mjs
  create mode 100644 webinar.html
-150
 mesh-registry JSON OK
-GATE FAIL about 
+GATE PASS: js + json + about + voice + zero markers
+To https://github.com/integrateditsupp-debug/iisupp-net-deploy
+   357dbd4..b368736  main -> main
+MERGE-V2 OK 17:06:32.32 main 357dbd4 -> b368736
