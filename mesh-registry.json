@@ -1124,6 +1124,39 @@
         "senior-director",
         "codex-side"
       ]
+    },
+    {
+      "id": "ads-monitor-agent",
+      "type": "monitor",
+      "status": "active",
+      "capabilities": [
+        "google-ads-monitoring",
+        "meta-ads-monitoring",
+        "ad-transparency-sweeps",
+        "competitor-ad-intel",
+        "spend-cap-watch"
+      ],
+      "endpoint": "local://cowork-scheduled/ads-monitor-daily",
+      "method": "LOCAL_QUEUE",
+      "confidence_threshold": 0.7,
+      "weight": 0.5,
+      "tier": "L0",
+      "input_schema": {
+        "instruction": "string",
+        "context": "object?"
+      },
+      "output_schema": {
+        "brief": "string",
+        "report_path": "string",
+        "nextActions": "array?"
+      },
+      "description": "Monitors IIS advertising on Google and Meta (Facebook/Instagram). Free public transparency sweeps (Google Ads Transparency Center + Meta Ad Library) for our ads and competitor MSP ads; when Ahmad connects ad accounts it reports spend/clicks/conversions against the spend cap. Reports daily to the Director via senior-director-state/ads-monitor/ADS-REPORT.md + agent-dispatch-log. Real-or-empty: reports 'no active campaigns' honestly until campaigns exist.",
+      "tags": [
+        "advertising",
+        "monitoring",
+        "director-reporting",
+        "cowork-scheduled"
+      ]
     }
   ],
   "router_policy": {

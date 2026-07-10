@@ -18,3 +18,7 @@ Append-only. Newest at top is fine; readers tolerate either order.
 - 2026-07-09T18:25:50Z | goal-alignment | success | aligned=35/35 drifting=[] (all loops serves:top-goal; explicit-token matches: ae-agent, bid-mgr, kb-engineer)
 
 - 2026-07-09T21:06:35Z | codex-observer | no-change | commits_2d=3 new_since_prior=0 head=b91561b0 (HEAD unchanged vs prior 18:25 scan same day; no new Codex commits — last activity 07-07T18:24, quiet 07-08/09). NOTE: no .git/index.lock, Codex not active; observe-codex.mjs still missing → reconstructed read-only from git log; file-only writes to .codex-observer + ledger + registry, no git ops, no Codex source touched.
+
+- 2026-07-10T10:02:32Z | goal-alignment | success | aligned=35/35 drifting=[] (all loops serves:top-goal; explicit-token matches: ae-agent, sdr-agent, bid-mgr, coo-agent, kb-engineer, director-idle-improvement)
+
+- 2026-07-10T10:20:00Z | codex-observer | failure | reason=shell-VM-down (workspace bash unavailable: "useradd failed: No space left on device" on /etc/passwd — VM out of disk, not a repo/Codex fault). No git log scan possible; observe-codex.mjs could not run. Read-only file tools reach repo fine (HEAD still b91561b0 per prior 07-09 21:06 scan, no new Codex activity indicated). No .git/index.lock check performed (needs shell). File-only writes to ledger + registry, no git ops, no Codex source touched. RETRY next scheduled slot when VM recovers.

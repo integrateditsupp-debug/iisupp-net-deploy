@@ -28,12 +28,17 @@ function ok(name, cond, detail) {
 function skipIf(cond, n = 1) { if (cond) { skip += n; return true; } return false; }
 const T = AB._TOPICS.filter(Boolean);
 const topicIds = T.map(t => t.id);
+// crash-proof turn: an engine throw is a scored FAILURE (dead chat), never a suite kill.
+function turn(s, text) {
+  try { return AB.handleTurn(s, text) || { stage: "__null__" }; }
+  catch (e) { return { stage: "__threw__", __threw: true, __err: String(e && e.message || e).slice(0, 60) }; }
+}
 function seedPhrase(t) { // strongest signal phrase for a topic
   return t.signals.slice().sort((a, b) => b[1] - a[1])[0][0];
 }
 function freshOn(topic) { // session already routed to the topic's clarifier
   const s = AB.newSession();
-  const r = AB.handleTurn(s, seedPhrase(topic));
+  const r = turn(s, seedPhrase(topic));
   return { s, r };
 }
 
@@ -58,7 +63,7 @@ console.log("SUITE 2 — branch reachability (topic × branch)");
 for (const t of T) {
   t.branches.forEach((b, i) => {
     const { s } = freshOn(t);
-    const r2 = AB.handleTurn(s, b.when[0]);
+    const r2 = turn(s, b.when[0]);
     const okBranch = r2.stage === "answered" && r2.topic === t.id && Array.isArray(r2.steps) && r2.steps.length >= 2;
     ok(`S2 ${t.id} branch#${i} via "${b.when[0]}"`, okBranch, `stage=${r2.stage} topic=${r2.topic}`);
   });
@@ -71,7 +76,7 @@ const chipMisses = [];
 for (const t of T) {
   for (const opt of t.clarifier.options) {
     const { s } = freshOn(t);
-    const r2 = AB.handleTurn(s, opt);
+    const r2 = turn(s, opt);
     const routed = r2.stage === "answered" && r2.topic === t.id;
     if (!routed) chipMisses.push(`${t.id} :: "${opt}" -> ${r2.stage}`);
     ok(`S3 chip ${t.id} :: "${opt}"`, routed, `stage=${r2.stage}`);
@@ -82,7 +87,7 @@ for (const t of T) {
 console.log("SUITE 4 — triage chip routing");
 {
   const s = AB.newSession();
-  const r = AB.handleTurn(s, "something odd going on with this machine");
+  const r = turn(s, "something odd going on with this machine");
   ok("S4 vague -> triage", r.stage === "triage" && Array.isArray(r.options));
   const expects = [
     ["Email / Outlook", "outlook"],
@@ -93,15 +98,15 @@ console.log("SUITE 4 — triage chip routing");
   ];
   for (const [chip, want] of expects) {
     const s2 = AB.newSession();
-    AB.handleTurn(s2, "something odd going on with this machine");
-    const r2 = AB.handleTurn(s2, chip);
+    turn(s2, "something odd going on with this machine");
+    const r2 = turn(s2, chip);
     const wanted = Array.isArray(want) ? want : [want];
     ok(`S4 triage chip "${chip}"`, wanted.includes(r2.topic) && (r2.ask || r2.steps), `-> ${r2.topic}/${r2.stage}`);
   }
   if (V2) {
     const s3 = AB.newSession();
-    AB.handleTurn(s3, "something odd going on with this machine");
-    const r3 = AB.handleTurn(s3, "Security / suspicious email");
+    turn(s3, "something odd going on with this machine");
+    const r3 = turn(s3, "Security / suspicious email");
     ok("S4 triage chip security (v2)", r3.topic === "phishing", `-> ${r3.topic}`);
   } else skipIf(true);
 }
@@ -111,37 +116,37 @@ console.log("SUITE 5 — flows");
 // 5a. greet -> problem -> clarifier -> chip -> answered -> bye
 {
   const s = AB.newSession();
-  const g = AB.handleTurn(s, "hello");
+  const g = turn(s, "hello");
   ok("S5 greet", g.stage === "greet");
-  const p = AB.handleTurn(s, "my printer is acting up");
+  const p = turn(s, "my printer is acting up");
   ok("S5 greet->printer clarifier", p.topic === "printer" && p.stage === "awaiting");
-  const a = AB.handleTurn(s, "jobs stuck in the queue");
+  const a = turn(s, "jobs stuck in the queue");
   ok("S5 chip->answered", a.stage === "answered" && a.steps.length >= 2);
-  const b = AB.handleTurn(s, "thanks, that worked");
+  const b = turn(s, "thanks, that worked");
   ok("S5 bye closes", b.stage === "closed");
 }
 // 5b. context carryover: short follow-up stays on topic (never re-routes to 'slow')
 {
   const s = AB.newSession();
-  AB.handleTurn(s, "outlook won't open");
-  const r = AB.handleTurn(s, "it freezes");
+  turn(s, "outlook won't open");
+  const r = turn(s, "it freezes");
   ok("S5 carryover freeze->outlook not slow", r.topic === "outlook", `-> ${r.topic}`);
 }
 // 5c. explicit topic switch mid-flow wins
 {
   const s = AB.newSession();
-  AB.handleTurn(s, "outlook won't open");
-  const r = AB.handleTurn(s, "actually forget that, my vpn won't connect at all");
+  turn(s, "outlook won't open");
+  const r = turn(s, "actually forget that, my vpn won't connect at all");
   ok("S5 explicit switch outlook->vpn", r.topic === "vpn", `-> ${r.topic}`);
 }
 // 5d. didn't-work chain for EVERY topic: answer -> same-symptom complaint -> different angle -> still broken -> escalated (v2)
 if (V2) {
   for (const t of T) {
     const { s } = freshOn(t);
-    const first = AB.handleTurn(s, t.branches[0].when[0]);
+    const first = turn(s, t.branches[0].when[0]);
     if (first.stage !== "answered") { ok(`S5 dnw ${t.id} setup`, false, `setup stage=${first.stage}`); continue; }
-    const retry = AB.handleTurn(s, `still broken, ${t.branches[0].when[0]} didnt work`);
-    const escal = AB.handleTurn(s, "nope still not working");
+    const retry = turn(s, `still broken, ${t.branches[0].when[0]} didnt work`);
+    const escal = turn(s, "nope still not working");
     ok(`S5 didn't-work ${t.id}`, retry.stage === "awaiting" && escal.stage === "escalated" && Boolean(escal.escalate),
       `retry=${retry.stage} escal=${escal.stage}`);
   }
@@ -149,10 +154,10 @@ if (V2) {
 // 5e. done -> checking -> fixed (v2)
 if (V2) {
   const s = AB.newSession();
-  AB.handleTurn(s, "teams mic not working");
-  AB.handleTurn(s, "no one can hear me");
-  const d = AB.handleTurn(s, "ok done");
-  const f = AB.handleTurn(s, "It's fixed");
+  turn(s, "teams mic not working");
+  turn(s, "no one can hear me");
+  const d = turn(s, "ok done");
+  const f = turn(s, "It's fixed");
   ok("S5 done->checking->closed", d.stage === "checking" && f.stage === "closed", `${d.stage}/${f.stage}`);
 } else skipIf(true);
 // 5f. multi-intent pairs queue + handoff (v2)
@@ -164,13 +169,13 @@ if (V2) {
   ];
   for (const [msg, ids] of pairs) {
     const s = AB.newSession();
-    const r = AB.handleTurn(s, msg);
+    const r = turn(s, msg);
     const okQ = ids.includes(r.topic) && Boolean(s.queued) && ids.includes(s.queued) && r.topic !== s.queued;
     ok(`S5 multi-intent "${msg.slice(0, 30)}..."`, okQ, `topic=${r.topic} queued=${s.queued}`);
     if (okQ) {
       const t1 = T.find(x => x.id === r.topic);
-      AB.handleTurn(s, t1.branches[0].when[0]);
-      const h = AB.handleTurn(s, "thanks that fixed it");
+      turn(s, t1.branches[0].when[0]);
+      const h = turn(s, "thanks that fixed it");
       ok(`S5 handoff to queued (${s.topic})`, h.stage === "awaiting" && h.topic === (ids.find(i => i !== r.topic)), `-> ${h.topic}/${h.stage}`);
     }
   }
@@ -178,15 +183,15 @@ if (V2) {
 // 5g. BYE + CONT conflict: "thanks but it still doesn't work" must NOT close
 {
   const s = AB.newSession();
-  AB.handleTurn(s, "printer offline");
-  AB.handleTurn(s, 'shows "offline"');
-  const r = AB.handleTurn(s, "thanks but it still doesnt work");
+  turn(s, "printer offline");
+  turn(s, 'shows "offline"');
+  const r = turn(s, "thanks but it still doesnt work");
   ok("S5 bye+cont stays open", r.stage !== "closed", `stage=${r.stage}`);
 }
 // 5h. empathy triggers on urgency; absent without (v2)
 if (V2) {
-  const a = AB.handleTurn(AB.newSession(), "URGENT deadline my vpn keeps dropping, so frustrating");
-  const b = AB.handleTurn(AB.newSession(), "vpn keeps dropping");
+  const a = turn(AB.newSession(), "URGENT deadline my vpn keeps dropping, so frustrating");
+  const b = turn(AB.newSession(), "vpn keeps dropping");
   ok("S5 empathy present", typeof a.empathy === "string" && a.empathy.length > 8);
   ok("S5 empathy absent", !b.empathy);
 } else skipIf(true, 2);
@@ -212,20 +217,22 @@ const nasties = [
   ["justhelp", "help"],
 ];
 for (const [name, input] of nasties) {
-  let r = null, threw = false;
-  try { r = AB.handleTurn(AB.newSession(), input); } catch { threw = true; }
-  ok(`S6 no-throw ${name}`, !threw && r && typeof r.stage === "string", threw ? "THREW" : "no result");
-  if (r) ok(`S6 sane-output ${name}`, Boolean(r.say || r.ask || r.steps || r.options), `stage=${r.stage}`);
+  const r = turn(AB.newSession(), input);
+  const threw = Boolean(r.__threw);
+  ok(`S6 no-throw ${name}`, !threw && typeof r.stage === "string", threw ? `THREW ${r.__err}` : "no result");
+  if (!threw) ok(`S6 sane-output ${name}`, Boolean(r.say || r.ask || r.steps || r.options), `stage=${r.stage}`);
+  else fail0();
 }
+function fail0() { fail++; bad.push("S6 sane-output skipped (engine threw)"); }
 // specific expectations
 {
-  const r = AB.handleTurn(AB.newSession(), "MY OUTLOOK KEEPS CRASHING EVERY TIME");
+  const r = turn(AB.newSession(), "MY OUTLOOK KEEPS CRASHING EVERY TIME");
   ok("S6 caps still routes", r.topic === "outlook", `-> ${r.topic}`);
-  const r2 = AB.handleTurn(AB.newSession(), "so yesterday i was working on the quarterly report and then my nephew called and after that when i came back the wifi says connected but no internet and i restarted twice");
+  const r2 = turn(AB.newSession(), "so yesterday i was working on the quarterly report and then my nephew called and after that when i came back the wifi says connected but no internet and i restarted twice");
   ok("S6 ramble routes wifi + branch", r2.topic === "wifi" && r2.stage === "answered", `-> ${r2.topic}/${r2.stage}`);
-  const r3 = AB.handleTurn(AB.newSession(), "write me a poem about the ocean");
+  const r3 = turn(AB.newSession(), "write me a poem about the ocean");
   ok("S6 offtopic -> triage not fake steps", r3.stage === "triage" && !r3.steps, `stage=${r3.stage}`);
-  const r4 = AB.handleTurn(AB.newSession(), "printer");
+  const r4 = turn(AB.newSession(), "printer");
   ok("S6 one word routes", r4.topic === "printer" && Boolean(r4.ask), `-> ${r4.topic}`);
 }
 
@@ -234,18 +241,16 @@ console.log("SUITE 7 — robustness");
 // 7a. reuse of a closed session starts cleanly
 {
   const s = AB.newSession();
-  AB.handleTurn(s, "printer offline"); AB.handleTurn(s, 'shows "offline"'); AB.handleTurn(s, "thanks all good");
-  const r = AB.handleTurn(s, "now my wifi keeps dropping");
+  turn(s, "printer offline"); turn(s, 'shows "offline"'); turn(s, "thanks all good");
+  const r = turn(s, "now my wifi keeps dropping");
   ok("S7 closed-session reuse", r.topic === "wifi", `-> ${r.topic}`);
 }
 // 7b. foreign/legacy session objects don't crash (missing v2 fields / unknown topic id)
 {
-  let threw = false, r = null;
-  try { r = AB.handleTurn({ topic: "deleted_topic_xyz", stage: "awaiting", turns: 3 }, "it still fails"); } catch { threw = true; }
-  ok("S7 unknown-topic session safe", !threw && r, threw ? "THREW" : "");
-  let threw2 = false;
-  try { AB.handleTurn({}, "outlook wont open"); } catch { threw2 = true; }
-  ok("S7 bare-object session safe", !threw2);
+  const r = turn({ topic: "deleted_topic_xyz", stage: "awaiting", turns: 3 }, "it still fails");
+  ok("S7 unknown-topic session safe", !r.__threw, r.__err || "");
+  const r2 = turn({}, "outlook wont open");
+  ok("S7 bare-object session safe", !r2.__threw, r2.__err || "");
 }
 // 7c. 60-turn fuzz on one session — never throws, stage always a string
 {
@@ -257,10 +262,9 @@ console.log("SUITE 7 — robustness");
   const s = AB.newSession();
   let threw = false, badStage = false;
   for (let i = 0; i < 60; i++) {
-    try {
-      const r = AB.handleTurn(s, pool[i % pool.length] + (i % 7 === 0 ? " " + pool[(i + 5) % pool.length] : ""));
-      if (!r || typeof r.stage !== "string") badStage = true;
-    } catch { threw = true; break; }
+    const r = turn(s, pool[i % pool.length] + (i % 7 === 0 ? " " + pool[(i + 5) % pool.length] : ""));
+    if (r.__threw) { threw = true; break; }
+    if (typeof r.stage !== "string") badStage = true;
   }
   ok("S7 60-turn fuzz", !threw && !badStage, threw ? "THREW" : badStage ? "bad stage" : "");
 }
@@ -274,7 +278,7 @@ console.log("SUITE 8 — honesty invariants");
   for (const t of T) {
     for (const b of t.branches) {
       const { s } = freshOn(t);
-      const r = AB.handleTurn(s, b.when[0]);
+      const r = turn(s, b.when[0]);
       if (r.stage === "answered") {
         answered++;
         if (r.tail && /can't make changes on your device/i.test(r.tail)) tails++;
@@ -288,17 +292,17 @@ console.log("SUITE 8 — honesty invariants");
   // escalated stage always carries escalate guidance (v2)
   if (V2) {
     const s = AB.newSession();
-    AB.handleTurn(s, "outlook wont open"); AB.handleTurn(s, "nothing happens");
-    AB.handleTurn(s, "still broken didnt work"); const e = AB.handleTurn(s, "still not working");
+    turn(s, "outlook wont open"); turn(s, "nothing happens");
+    turn(s, "still broken didnt work"); const e = turn(s, "still not working");
     ok("S8 escalated carries guidance", e.stage === "escalated" && typeof e.escalate === "string" && e.escalate.length > 20);
   } else skipIf(true);
   // security topics lead with containment (v2)
   if (V2) {
-    const r1 = AB.handleTurn(AB.newSession(), "ransomware encrypted my files, ransom note everywhere");
+    const r1 = turn(AB.newSession(), "ransomware encrypted my files, ransom note everywhere");
     ok("S8 ransomware contains first", /disconnect/i.test((r1.steps || [""])[0]));
-    const r2 = AB.handleTurn(AB.newSession(), "i entered my password on a fake login page");
+    const r2 = turn(AB.newSession(), "i entered my password on a fake login page");
     ok("S8 credential-theft acts first", /immediately/i.test((r2.steps || [""])[0]));
-    const r3 = AB.handleTurn(AB.newSession(), "fake virus warning says call microsoft support number");
+    const r3 = turn(AB.newSession(), "fake virus warning says call microsoft support number");
     ok("S8 scam: never call", (r3.steps || []).some(x => /do not call|don't call/i.test(x)) || /scam/i.test(r3.say || ""));
   } else skipIf(true, 3);
 }

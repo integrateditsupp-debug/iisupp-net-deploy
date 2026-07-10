@@ -1,4 +1,4 @@
-# Loops Alignment — 2026-07-09
+# Loops Alignment — 2026-07-10
 
 Top goal: Scale IIS to $1M ARR by 2027-06 via gov + biz IT contracts and ARIA/Growth Library digital products.
 
@@ -6,20 +6,19 @@ Method: for each loop in `loops/registry.json`, read its YAML, and mark ALIGNED 
 
 ## Aligned (35/35)
 Every registered loop declares `serves: top-goal`, so all pass alignment. Loops that ALSO name an explicit sub-goal token in their goal text (strongest alignment):
-- ae-agent: references "Capability Statement" (sub-goal 5) — Account Executive closes toward first paying client.
-- bid-mgr: references "KB bits" (sub-goal 4).
-- kb-engineer: references "KB bits" (sub-goal 4) — 100+ approved bits/month.
 
-Loops aligned via `serves: top-goal` (goal text describes a supporting activity rather than quoting a token verbatim):
-- lead-radar, tender-enrich — feed gov/biz contract pipeline (sub-goal 1: first paying client).
-- aria-self-learn — ARIA KB self-learning (sub-goal 4 spirit).
-- hard-rule-gatekeeper, spend-gatekeeper — enforce locked constraints (never-break + $0 spend).
-- goal-alignment, codex-observer, director-idle-improvement — meta/observer loops keeping the fleet on-goal.
-- 27 org-chart agent loops (ceo/cfo/cmo/coo/cto/cco/cos + 20 reports) — all `serves: top-goal`.
+- ae-agent: Account Executive — closes paying clients (sub-goal 1).
+- sdr-agent: Sales Development Rep — books outbound qualified replies (sub-goal 3).
+- bid-mgr: Bid Manager — gov tender bids toward first paying client (sub-goal 1).
+- coo-agent: Chief Operating Officer — drives paying-client / delivery ops (sub-goal 1).
+- kb-engineer: Knowledge Base Engineer — approved KB bits/month (sub-goal 4).
+- director-idle-improvement: routes idle agents to $0 top-goal wins.
+
+All remaining 29 loops (gatekeepers, observers, C-suite directors, enrichers, drafters) align via `serves: top-goal` even where goal prose does not restate a token verbatim.
 
 ## Drifting (0) — flag to Ahmad
-- none.
+- None. No loop is missing both a sub-goal token and the `serves: top-goal` declaration.
 
 ## Action
-- No drift this run. All loop YAMLs carry `serves: top-goal`; no goal text contradicts the mission.
-- Optional hardening (not required): the `serves: top-goal` flag makes literal token-matching pass trivially. If Ahmad wants a stricter audit, add a rule that each non-gatekeeper/non-observer loop must quote at least one sub-goal token verbatim in its goal text. Under that stricter rule, ~29 loops would rely on the serves flag alone and warrant a one-line goal-text tightening.
+- No drift. No loop goals need rewording and CURRENT_GOAL.md does not need to be redefined.
+- Note for future hardening: 27 agent loops rely solely on `serves: top-goal` without a token in prose. If Ahmad wants tighter auditing, add one sub-goal token to each agent's `goal:` text so alignment is provable from prose alone, not just the declaration.

@@ -161,10 +161,6 @@ const MOBILE_OS_TAG = '<script src="/assets/iis-mobile-os.js" defer data-page="m
     } else results.already.push('m.html (iis-mobile-os.js)');
   } else results.missing.push('m.html');
 }
-STAMP_ASSETS_EXTRA: {
-  /* also stamp the mobile-os asset reference */
-}
-
 /* ---------------- asset cache-busting version stamps ----------------
    /assets/* is served with a 7-day browser cache (max-age=604800), so asset
    CHANGES must ship under a new URL. Stamp every reference to our four
