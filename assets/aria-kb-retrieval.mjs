@@ -17,9 +17,12 @@ const ROUTING = [
   [/\b(can.?t\s*sign\s*in|password\s*prompt|login\s*loop|aadsts)\b.*\b(office|365|m365)\b/i, 'l1-m365-001'],
   [/\b(office|m365).*(can.?t\s*sign\s*in|password\s*prompt)\b/i, 'l1-m365-001'],
   [/\b(office|word|excel)\b.*(unlicensed|reduced\s*functionality|activation|product\s*deactivated|subscription\s*expired)\b/i, 'l1-m365-002'],
+<<<<<<< HEAD
   // Slice A — Office file won't open / corrupt / locked.
   [/\b(excel|word|powerpoint|xlsx|docx|pptx|spreadsheet|workbook)\b.*(won.?t\s*open|corrupt|damaged|format.*not\s*valid|locked|in\s*use|repair|recover)\b/i, 'l1-m365-003'],
   [/\b(file\s*format|format)\b.*(not\s*valid|invalid)\b/i, 'l1-m365-003'],
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   [/\boutlook\b.*(not\s*receiv|missing\s*email|inbox\s*not\s*updat|stuck|offline|i.?m\s*offline|says.*offline)\b/i, 'l1-outlook-001'],
   [/\boutlook\b.*(can.?t\s*send|stuck\s*in\s*outbox|smtp|unable\s*to\s*send)\b/i, 'l1-outlook-002'],
   [/\bteams\b.*(no\s*audio|can.?t\s*hear|hear\s*me|mic|microphone|speaker|sound)\b/i, 'l1-teams-001'],
@@ -29,18 +32,25 @@ const ROUTING = [
   [/\b(restore|recover)\s*(deleted|previous)|version\s*history|recycle\s*bin\b/i, 'l1-onedrive-002'],
   [/\bonedrive\b.*(duplicate|conflict|two\s*copies|computer\s*copy)\b/i, 'l1-onedrive-003'],
   [/\b(wi.?fi|wireless)\b.*(not\s*working|yellow\s*triangle|no\s*internet|secured|can.?t\s*connect|dropped)\b/i, 'l1-wifi-001'],
+<<<<<<< HEAD
   // RUN 35-2 iter-7 — connectivity phrasings that never say the word "wifi" (lifts wifi 76→95%+).
   [/\b(no\s*internet\s*access|internet\s*keeps\s*going\s*out|internet\s*(is\s*)?down|connected\s*but\s*no\s*internet|network\s*keeps\s*timing\s*out|office\s*wifi\s*slow|2\.4\s*ghz|can.?t\s*see\s*5g|wireless\s*adapter\s*not\s*found|wi.?fi\s*card\s*missing)\b/i, 'l1-wifi-001'],
   // RUN 35-2 iter-7 — printer rule tightened: route on the WORD "printer", or "print" + a printer-specific
   // symptom. A bare vertical-app "WONT PRINT CONFIRM" (no "printer", no print-symptom) falls through to chat.
   [/\bprinter\b|print\s*(queue|spooler|driver|jam|offline|not\s*working|to\s*pdf|too\s*small|too\s*large)|add\s*a\s*printer|install\s*printer/i, 'l1-printer-001'],
+=======
+  [/\bprinter\b.*(not\s*print|stuck|won.?t\s*print|offline|jam|spooler)\b/i, 'l1-printer-001'],
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   [/\bprinter\b.*(garble|garbage|symbols|wrong\s*characters|gibberish)\b/i, 'l1-printer-002'],
   [/\b(lost|new)\s+phone\b.*\b(mfa|2fa|authenticator)\b/i, 'l1-mfa-001'],
   [/\b(mfa|2fa|authenticator)\b.*\b(lost|new)\s+phone\b/i, 'l1-mfa-001'],
   [/\b(mfa|2fa|two.?factor|authenticator)\b.*(setup|recovery|reset|locked\s*out)\b/i, 'l1-mfa-001'],
+<<<<<<< HEAD
   // RUN 35-7 — surfaced in the live sample: bare "authenticator" and phone-loss MFA phrasings weren't routing.
   [/\bauthenticator\s*(app|phone|code|reset)?\b/i, 'l1-mfa-001'],
   [/\b(lost|new|replaced|broke|upgraded)\s+(my\s+)?phone\b.*\b(mfa|2fa|verif|sign.?in|log\s*in|login|authenticat|2.?step)\b/i, 'l1-mfa-001'],
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   [/\b(forgot|reset)\s*password|self.?service|sspr|reset\s*link\b/i, 'l1-password-001'],
   [/\bvpn\b.*(won.?t\s*connect|disconnect|timeout|drop|not\s*connecting)\b/i, 'l1-vpn-001'],
   [/\b(cisco\s*anyconnect|globalprotect|fortinet|openvpn|always\s*on\s*vpn)\b/i, 'l1-vpn-001'],
@@ -62,9 +72,12 @@ const ROUTING = [
   [/\bbitlocker\b.*(recovery|prompt|key|tpm|protector)\b/i, 'l2-bitlocker-001'],
   [/\b(malware|virus|infect|trojan|compromised|quarantine)\b/i, 'l2-malware-001'],
   [/\bransomware|files?\s*encrypted|\.locked|\.crypted|ransom\s*note\b/i, 'l2-malware-001'],
+<<<<<<< HEAD
   // RUN 35-2 iter-7 — ransomware families + malware-popup phrasings (lifts kb:security 67→95%+).
   [/\b(lockbit|wannacry|conti|ryuk|crypto.?locker|maze|revil|blackcat|alphv)\b/i, 'l2-malware-001'],
   [/\b(encrypted\s*all|all\s*(my\s*)?files?\s*(are\s*)?encrypted|virus\s*warning\s*popup|trojan\s*detected|malware\s*on\s*(my\s*)?(laptop|pc|computer)|got\s*a\s*phishing|clicked.*phishing|phishing\s*link|fake\s*virus\s*alert|ransomware\s*on\s*my)\b/i, 'l2-malware-001'],
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   [/\bdns\b.*(resolution|fail|split.?brain|not\s*resolving)\b/i, 'l2-dns-001'],
   [/\b(dhcp|apipa|169\.254|scope\s*exhaust)\b/i, 'l2-dhcp-001'],
   [/\b(rdp|remote\s*desktop|rd\s*gateway|terminal\s*server|rds)\b/i, 'l2-rdp-001'],
@@ -87,8 +100,11 @@ const ROUTING = [
   [/\b(wpr|xperf|performance\s*trace|boot\s*performance)\b/i, 'l2-performance-001'],
   [/\b(vpn\s*gateway|always\s*on\s*vpn|aovpn|device\s*tunnel|user\s*tunnel|rras|ikev2)\b/i, 'l2-vpn-001'],
   [/\b(cyber\s*incident|p1\s*incident|breach|kill\s*chain|exfiltration|lateral\s*movement)\b/i, 'l3-security-001'],
+<<<<<<< HEAD
   // RUN 35-2 iter-7 — account-takeover signals → security incident (lifts kb:security 67→95%+).
   [/\b(account\s*(is\s*|was\s*|been\s*|got\s*)?(compromised|hacked|hijacked|breached)|someone\s*has\s*access|unauthorized\s*access|impossible\s*travel|mfa\s*bombing|suspicious\s*activity\s*on\s*(my\s*)?account|sign.?in\s*from\s*(china|russia|north\s*korea|iran)|account\s*takeover)\b/i, 'l3-security-001'],
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   [/\b(sso|saml|oidc|federation|identity\s*provider|jwt|okta\s*entra)\b/i, 'l3-sso-saml-001'],
   [/\b(pki|certificate\s*authority|ad\s*cs|autoenroll|crl|ocsp|root\s*ca|hsm)\b/i, 'l3-certificates-001'],
   [/\b(disaster\s*recovery|rto|rpo|veeam|rubrik|cohesity|3-2-1|tabletop|bcp)\b/i, 'l3-disaster-recovery-001'],
@@ -99,6 +115,7 @@ const ROUTING = [
   [/\b(network\s*architecture|segmentation|zero\s*trust|sd-?wan|hub\s*spoke|microsegment)\b/i, 'l3-networking-001'],
   [/\b(landing\s*zone|management\s*group|azure\s*policy|tenant\s*design)\b/i, 'l3-cloud-001'],
   [/\b(server\s*role|sysprep|reference\s*image|s2d|storage\s*spaces\s*direct)\b/i, 'l3-server-001'],
+<<<<<<< HEAD
   // RUN 36 round-3 — high-frequency end-user categories that had KB articles but NO routing rule
   // (calendar, external display, conference-room AV). Sourced from the top50-gaps KB set.
   [/\b(out\s*of\s*office|automatic\s*repl(y|ies)|\boof\b|vacation\s*responder|away\s*message)\b/i, 'l1-calendar-002'],
@@ -108,6 +125,8 @@ const ROUTING = [
   [/\b(monitor|hdmi|displayport|second\s*screen)\b.*(no\s*signal|not\s*detect)/i, 'l1-display-001'],
   [/\b(monitor|display|screen)\b.*(resolution|scaling|blurry|too\s*(small|big|tiny|huge))/i, 'l1-display-002'],
   [/\b(conference|meeting)\s*room\b|\b(teams\s*room|projector|boardroom)\b|\broom\s*(av|tv|display|projector)\b/i, 'l1-conference-001'],
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   // GA — general assistance
   [/\b(scam|fake)\s*(site|website)|look.?alike\s*domain|typo.?squat|amaz0n|paypa1|microsoft-update|is\s*this\s*site\s*safe\b/i, 'ga-scam-001'],
   [/\b(help|teach|show)\b.*\b(my\s*)?(mom|dad|grandm|grandp|elderly|senior|parent)\b/i, 'ga-senior-001'],
@@ -140,6 +159,7 @@ function tokenize(text) {
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
+<<<<<<< HEAD
 // Returns the set of hard-routed article ids a query matches (first match per id).
 // Exported so the routing rules can be unit-tested without the full KB article set.
 export function routeIds(query) {
@@ -149,6 +169,8 @@ export function routeIds(query) {
   return ids;
 }
 
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 export function classify(query) {
   const q = (query || '').toLowerCase();
   const signals = { level_hint: 'L1', audience: 'end-user', severity_signal: 'medium', sensitive: false };

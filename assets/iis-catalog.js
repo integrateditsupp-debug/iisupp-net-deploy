@@ -273,6 +273,7 @@
       seo: ['emotional intelligence book','self mastery','how to live well','discipline and balance'],
       free: false, featured: false, comingSoon: true, trendScore: 28,
       preview: null, file: null, related: [], bundle: null, upsell: 'aria'
+<<<<<<< HEAD
     },
     {
       // DIY alternative to the white-glove AI Setup Walk-Through (Concierge). Self-serve PDF book.
@@ -290,6 +291,8 @@
       seo: ['AI automation setup for business', 'how to set up AI automation', 'Claude ChatGPT Gemini for business'],
       free: false, password: true, featured: true, comingSoon: true, trendScore: 90,
       preview: null, file: null, related: ['gl-ai-agent-starter', 'gl-prompt-workflows'], bundle: 'bundle-ai-automation', upsell: 'aria'
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     }
   ];
 
@@ -535,6 +538,7 @@
     var orig = btn ? btn.innerHTML : '';
     if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = 'Opening secure checkout…'; }
     try {
+<<<<<<< HEAD
       // FULL purchases prefer real Stripe price ID (tier path) when SKU is mapped.
       // PEEK (30% preview) stays on inline priceData since it's discounted on the fly.
       var checkoutBody;
@@ -552,6 +556,18 @@
       var r = await fetch('/.netlify/functions/stripe-checkout', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(checkoutBody)
+=======
+      var r = await fetch('/.netlify/functions/stripe-checkout', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ successPath: META.successUrl, priceData: {
+          amount_cents: amount, currency: 'usd',
+          product_name: 'IIS · ' + p.title + (mode === 'peek' ? ' — Preview peek (30%)' : ''),
+          description: (mode === 'peek'
+            ? 'Paid preview of "' + p.title + '" — a teaser of what\'s inside. Credited toward full access; reply to your receipt to apply it.'
+            : (p.blurb || '').slice(0, 165)) + ' [' + (p.format || 'digital') + ']',
+          id: p.id + '-' + mode
+        } })
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
       });
       var data = await r.json();
       if (data && data.url) { window.location = data.url; return; }

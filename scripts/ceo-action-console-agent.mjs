@@ -20,6 +20,15 @@ function publicFile(relPath) {
   return relPath.replaceAll("\\", "/");
 }
 
+function stableId(value, fallback = "item") {
+  return String(value || fallback)
+    .toLowerCase()
+    .replace(/https?:\/\//g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 96) || fallback;
+}
+
 function extractAcceptanceQueue(brief) {
   const marker = "## Acceptance Review Queue";
   const nextMarker = "## Search Plays For Today";
@@ -70,8 +79,9 @@ function extractPrepItems(handoff) {
     const deadlineLine = lines.find((line) => line.startsWith("- Deadline:"));
     const metaLine = lines.find((line) => line.startsWith("- Type:"));
     const url = linkLine ? linkLine.replace("- Link:", "").trim() : "";
+    const idBasis = url || title;
     return {
-      id: `prep-${index + 1}`,
+      id: `prep-${stableId(idBasis, `prep-${index + 1}`)}`,
       title,
       group: "Agent prep queue",
       type: title.toLowerCase().includes("supplier") || title.toLowerCase().includes("procurement") ? "vendor registration" : "tender",

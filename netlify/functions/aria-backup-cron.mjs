@@ -7,7 +7,10 @@
  *  Backup blob keyed by YYYY-MM-DD per source store. 12-week retention; older auto-deleted.
  *  Cat 13 — Failure modes + DR.
  */
+<<<<<<< HEAD
 import { beat } from './_heartbeat.mjs';
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 const SOURCE_STORES = [
   'aria-leads', 'aria-feedback', 'aria-tenant-audit', 'aria-cost-tracker',
   'aria-session-memory', 'aria-write-gate', 'aria-pilot-state',
@@ -17,7 +20,10 @@ const SOURCE_STORES = [
 const RETENTION_WEEKS = 12;
 
 export default async () => {
+<<<<<<< HEAD
   await beat('aria-backup-cron');
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   const out = { ran_at: new Date().toISOString(), backups: {}, errors: [], purged: 0 };
   let getStore;
   try {

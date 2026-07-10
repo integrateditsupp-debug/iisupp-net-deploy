@@ -11,8 +11,17 @@ const PAGES = [
   { path: '/verticals/finance', changefreq: 'monthly', priority: 0.8 },
   { path: '/government', changefreq: 'monthly', priority: 0.8 },
   { path: '/enterprise', changefreq: 'monthly', priority: 0.8 },
+<<<<<<< HEAD
   { path: '/health-check', changefreq: 'monthly', priority: 0.8 },
   { path: '/compliance-gap', changefreq: 'monthly', priority: 0.7 },
+=======
+  { path: '/scorecard', changefreq: 'monthly', priority: 0.8 },
+  { path: '/health-check', changefreq: 'monthly', priority: 0.8 },
+  { path: '/compliance-gap', changefreq: 'monthly', priority: 0.7 },
+  { path: '/cost-calculator', changefreq: 'monthly', priority: 0.7 },
+  { path: '/webinar', changefreq: 'weekly', priority: 0.7 },
+  { path: '/insiders', changefreq: 'weekly', priority: 0.6 },
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   { path: '/refer', changefreq: 'monthly', priority: 0.6 },
   { path: '/partners-prep', changefreq: 'monthly', priority: 0.5 },
   { path: '/sample-scenarios', changefreq: 'monthly', priority: 0.7 },
@@ -25,10 +34,21 @@ const PAGES = [
   { path: '/compare/', changefreq: 'monthly', priority: 0.6 },
   { path: '/compare/aria-vs-retell/', changefreq: 'monthly', priority: 0.5 },
   { path: '/compare/aria-vs-vapi/', changefreq: 'monthly', priority: 0.5 },
+<<<<<<< HEAD
   { path: '/docs/api', changefreq: 'monthly', priority: 0.5 },
   { path: '/status', changefreq: 'daily', priority: 0.4 },
   { path: '/compliance/',
   '/privacy', changefreq: 'yearly', priority: 0.3 },
+=======
+  { path: '/compare/aria-vs-msp-x/', changefreq: 'monthly', priority: 0.5 },
+  { path: '/docs/api', changefreq: 'monthly', priority: 0.5 },
+  { path: '/status', changefreq: 'daily', priority: 0.4 },
+  { path: '/soc2-readiness', changefreq: 'monthly', priority: 0.4 },
+  { path: '/compliance/iso-27001-readiness', changefreq: 'monthly', priority: 0.4 },
+  { path: '/compliance/pipeda-readiness', changefreq: 'monthly', priority: 0.4 },
+  { path: '/compliance/automated-decisions', changefreq: 'yearly', priority: 0.3 },
+  { path: '/privacy', changefreq: 'yearly', priority: 0.3 },
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   { path: '/terms', changefreq: 'yearly', priority: 0.3 },
   { path: '/ai-governance', changefreq: 'yearly', priority: 0.3 },
   { path: '/security/disclosure', changefreq: 'yearly', priority: 0.3 }

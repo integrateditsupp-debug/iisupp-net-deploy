@@ -2326,167 +2326,20 @@ function escapeHtml(value) {
 
 async function getSentinelApi() {
   if (window.sentinel) return window.sentinel;
-  const {
-    ALLOWED_OUTBOUND_PATHS,
-    BRIDGE_PORT,
-    CONTROL_PLANE_MVP_RECIPE_COUNT,
-    CONTROL_PLANE_MVP_STOP_CODE_COUNT,
-    RECIPES,
-    ROUTING_TARGETS,
-    SENTINEL_VERSION,
-    STOP_CODES,
-    matchRecipes
-  } = await import("../shared/recipes.mjs");
-  const { contentSafeContext, sanitizeToSignature } = await import("../shared/safety.mjs");
-
-  const listeners = new Set();
-  const previewState = {
-    version: SENTINEL_VERSION,
-    mode: "manual",
-    dryRun: true,
-    systemFixesEnabled: false,
-    externalAiCalls: false,
-    paused: false,
-    pausedUntil: 0,
-    firstRunComplete: true,
-    killed: false,
-    restorePoints: [
-      { id: "rp-preview-1", name: "ARIA pre-fix DISK.LOW_SPACE", createdAt: new Date().toISOString(), rolledBack: false }
-    ],
-    serviceNowStatus: { configured: false, connected: false, queued: 0, lastVerified: 0 },
-    bridgePort: BRIDGE_PORT,
-    bridgeStatus: { listening: true, conflict: false, port: BRIDGE_PORT, owner: "preview", lastError: "" },
-    recipeCatalog: {
-      localInteractive: RECIPES.length,
-      controlPlaneMvp: CONTROL_PLANE_MVP_RECIPE_COUNT,
-      localStopCodes: STOP_CODES.length,
-      controlPlaneStopCodes: CONTROL_PLANE_MVP_STOP_CODE_COUNT
-    },
-    recipes: RECIPES,
-    routingTargets: ROUTING_TARGETS,
-    allowedOutboundPaths: ALLOWED_OUTBOUND_PATHS,
-    transparencyLog: [{ ts: new Date().toISOString(), tag: "PREVIEW", text: "Browser preview mode. Desktop bridge not required." }],
-    knowledgeSources: [
-      { name: "Procedures & runbooks", status: "Indexed", docs: 24 },
-      { name: "IT policies & workflows", status: "Indexed", docs: 12 },
-      { name: "Security & compliance", status: "Indexed", docs: 9 },
-      { name: "Audit & regulatory", status: "Indexed", docs: 6 },
-      { name: "Culture & tone", status: "Processing", docs: 4 }
-    ],
-    systemChecks: []
-  };
-  previewState.systemChecks = defaultChecks(previewState);
-
-  const notify = () => listeners.forEach((listener) => listener({ ...previewState }));
-  const log = (tag, text) => {
-    previewState.transparencyLog.unshift({ ts: new Date().toISOString(), tag, text });
-    notify();
-  };
-
-  return {
-    getState: async () => ({ ...previewState }),
-    onState: (listener) => {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-    onNavigate: () => () => {},
-    setMode: async (mode) => {
-      previewState.mode = mode;
-      log("POLICY", `Mode set to ${mode}.`);
-      return { ok: true };
-    },
-    setDryRun: async (dryRun) => {
-      previewState.dryRun = Boolean(dryRun);
-      log("POLICY", `Dry-run ${previewState.dryRun ? "enabled" : "disabled"}.`);
-      return { ok: true };
-    },
-    setPaused: async (milliseconds = 0) => {
-      previewState.pausedUntil = milliseconds ? Date.now() + Number(milliseconds) : 0;
-      previewState.paused = previewState.pausedUntil > Date.now();
-      log("WATCH", previewState.paused ? "Watching paused." : "Watching resumed.");
-      return { ok: true };
-    },
-    showGlobe: async () => {
-      log("OVERLAY", "Top-center globe requested.");
-      return { ok: true };
-    },
-    openAdminConsole: async () => {
-      log("ADMIN", "Local admin console requested.");
-      return { ok: true };
-    },
-    updateKnowledge: async () => {
-      previewState.knowledgeSources = previewState.knowledgeSources.map((source) => ({ ...source, status: "Indexed" }));
-      log("KB", "Preview knowledge sources refreshed.");
-      return { ok: true };
-    },
-    selfDiagnose: async () => {
-      previewState.systemChecks = defaultChecks(previewState);
-      log("SELF-CHECK", "Settings self diagnosis passed.");
-      return { ok: true, checks: previewState.systemChecks, bridgeStatus: previewState.bridgeStatus };
-    },
-    selfRepair: async () => {
-      previewState.systemChecks = defaultChecks(previewState);
-      log("SELF-REPAIR", "Preview self repair ran.");
-      return { ok: true, actions: ["overlay-verified", "bridge-verified"], diagnosis: { ok: true, checks: previewState.systemChecks } };
-    },
-    detect: async (input = {}) => {
-      const signature = sanitizeToSignature(input);
-      const [match] = matchRecipes([signature.code, signature.family, input.issue || ""].join(" "), { limit: 1 });
-      if (!match) return { ok: false, error: "no_match" };
-      log("DETECT", `${match.recipe.signal}: ${match.recipe.title}`);
-      return { ok: true, detection: { ...match.recipe, recipeId: match.recipe.id, context: contentSafeContext(input) } };
-    },
-    runRecipe: async (recipeId) => {
-      const recipe = RECIPES.find((item) => item.id === recipeId);
-      log("RUN", `Dry-run recipe ${recipe?.signal || recipeId}.`);
-      return { ok: Boolean(recipe), dryRun: true, recipe, message: "Dry-run complete. No system changes were made." };
-    },
-    reportError: async (payload = {}) => {
-      log("SELF-ERROR", `Renderer reported ${payload.source || "error"}.`);
-      return { ok: true };
-    },
-    serviceNowTest: async () => {
-      log("SERVICENOW", "Preview ServiceNow test (no live connection).");
-      return { ok: false, configured: false };
-    },
-    serviceNowList: async () => ({ ok: true, configured: false, incidents: [] }),
-    serviceNowComment: async () => ({ ok: false, dryRun: true }),
-    rollback: async (id) => {
-      log("RESTORE PT", `Preview roll back ${String(id).slice(0, 8)}.`);
-      return { ok: true, dryRun: true };
-    },
-    ingestKb: async (file = {}) => {
-      previewState.knowledgeSources.unshift({ name: file.name || "Customer document", status: "Indexed", docs: 1 });
-      log("KB", "Preview document indexed locally.");
-      notify();
-      return { ok: true, chunkCount: 1, status: "Indexed", sha256: "preview" };
-    },
-    completeOnboarding: async () => ({ ok: true }),
-    runDiagnostic: async () => ({
-      ok: true,
-      passed: 7,
-      total: 7,
-      rows: [
-        { id: "bridge", label: "Local bridge port", ok: true, severity: "ok", detail: "Listening on 127.0.0.1:37841", remediation: "" },
-        { id: "watchers", label: "Detection watchers", ok: true, severity: "ok", detail: "7/7 watchers · last tick 4s ago", remediation: "" },
-        { id: "servicenow", label: "ServiceNow connection", ok: true, severity: "ok", detail: "Not configured (local drafts only)", remediation: "" },
-        { id: "kb-bundle", label: "Knowledge bundle", ok: true, severity: "ok", detail: "Bundle current verified", remediation: "" },
-        { id: "audit", label: "Audit log integrity", ok: true, severity: "ok", detail: "1 local events · content-blind", remediation: "" },
-        { id: "tray", label: "Tray icon", ok: true, severity: "ok", detail: "Gold globe present", remediation: "" },
-        { id: "overlay", label: "Overlay rendering", ok: true, severity: "ok", detail: "Globe window available", remediation: "" }
-      ]
-    })
-  };
+  throw new Error("sentinel_bridge_unavailable");
 }
 
 init().catch((error) => {
   console.error(error);
+  const bridgeDown = String(error?.message || "").includes("sentinel_bridge_unavailable");
   document.body.innerHTML = `
     <main class="settings-workspace">
       <section class="panel">
         <p class="eyebrow">ARIA Sentinel</p>
-        <h1>Self-repair started</h1>
-        <p>ARIA caught a renderer startup error and reported it to the local self-diagnosis path.</p>
+        <h1>${bridgeDown ? "Desktop bridge unavailable" : "Self-repair started"}</h1>
+        <p>${bridgeDown
+          ? "ARIA Sentinel did not load its local Electron bridge, so the app stopped instead of falling back to a simulated preview. Restart the desktop app. If this persists, the preload bridge is failing before the renderer can talk to the real local runtime."
+          : "ARIA caught a renderer startup error and reported it to the local self-diagnosis path."}</p>
       </section>
     </main>
   `;

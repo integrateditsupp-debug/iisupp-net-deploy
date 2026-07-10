@@ -243,9 +243,394 @@ body.gl-page .gl-shelf-note{
   text-align:center;color:rgba(255,255,255,.34);font-size:10px;
   letter-spacing:.14em;text-transform:uppercase;margin:6px 0 18px;
 }
-body.gl-page #books-grid{
-  padding-top:22px;
-  border-top:3px double rgba(197,160,89,.22);
+/* ==========================================================================
+   GROWTH LIBRARY — REAL SHELVES (v1.2)
+   Books stand in rows on rendered wooden ledges inside gold-trimmed cases.
+   ========================================================================== */
+body.gl-page #books-grid{display:block !important}
+/* trending trio stays on open display — original 3-across grid, no case */
+
+body.gl-page .gl-bookcase{
+  position:relative;
+  max-width:1180px;margin:10px auto 26px;
+  padding:0 30px 6px;
+  border-radius:16px;
+  background:
+    linear-gradient(90deg, rgba(38,26,14,.85) 0, rgba(20,13,7,.45) 26px, rgba(20,13,7,.45) calc(100% - 26px), rgba(38,26,14,.85) 100%),
+    linear-gradient(180deg, rgba(24,16,9,.6), rgba(10,7,4,.72));
+  box-shadow:
+    inset 0 0 0 1px rgba(197,160,89,.18),
+    inset 26px 0 34px -26px rgba(0,0,0,.8),
+    inset -26px 0 34px -26px rgba(0,0,0,.8),
+    0 30px 70px rgba(0,0,0,.45);
+}
+body.gl-page .gl-crown{
+  text-align:center;
+  margin:0 -30px 8px;
+  padding:12px 20px;
+  border-radius:16px 16px 0 0;
+  background:linear-gradient(180deg, rgba(52,37,20,.95), rgba(30,20,11,.9));
+  box-shadow:inset 0 1px 0 rgba(241,220,167,.22), inset 0 -1px 0 rgba(0,0,0,.6);
+}
+body.gl-page .gl-crown span{
+  font-family:'Cinzel',serif;
+  color:#e9d5a3;
+  font-size:11px;letter-spacing:.42em;text-transform:uppercase;
+}
+body.gl-page .gl-case-inner{padding-top:16px}
+
+body.gl-page .gl-shelf-row{
+  display:flex;justify-content:center;align-items:flex-end;
+  gap:34px;padding:8px 8px 0;flex-wrap:nowrap;
+}
+body.gl-page .gl-ledge{
+  position:relative;
+  height:15px;
+  margin:0 auto 40px;
+  width:calc(100% - 8px);
+  border-radius:2px 2px 4px 4px;
+  background:linear-gradient(180deg, #4a3620 0%, #2c1d0f 40%, #170e07 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(241,220,167,.25),
+    inset 0 -2px 3px rgba(0,0,0,.7),
+    0 3px 0 rgba(197,160,89,.08);
+}
+body.gl-page .gl-ledge::before{
+  content:'';
+  position:absolute;left:0;right:0;top:100%;height:8px;
+  background:linear-gradient(180deg, #0d0805, #050302);
+  border-radius:0 0 4px 4px;
+  box-shadow:0 14px 22px rgba(0,0,0,.65);
+}
+body.gl-page .gl-ledge::after{
+  content:'';
+  position:absolute;left:5%;right:5%;top:-30px;height:30px;
+  background:radial-gradient(60% 100% at 50% 100%, rgba(0,0,0,.34), transparent 78%);
+  pointer-events:none;
+}
+body.gl-page .gl-shelf-row .iis-book{margin-bottom:0}
+
+/* ---------- brass-and-walnut dividers between neighbouring books -------- */
+body.gl-page .gl-divider{
+  align-self:stretch;
+  flex:0 0 7px;width:7px;
+  margin:26px 2px 0;
+  border-radius:3px 3px 1px 1px;
+  background:linear-gradient(180deg, #57432a 0%, #2e2113 55%, #1a1109 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(241,220,167,.32),
+    inset -1px 0 1px rgba(0,0,0,.55),
+    2px 6px 12px rgba(0,0,0,.4);
+}
+
+/* ---------- pull-out-and-flip: the book slides off the shelf ------------
+   The book component's own hover flips it in place; on the shelves we
+   deepen that — the book first comes OUT toward the reader (translateZ +
+   lift), flips while out, and glides back when the pointer leaves. */
+body.gl-page .gl-shelf-row .iis-book{position:relative}
+@media (hover:hover) and (pointer:fine){
+  body.gl-page .gl-shelf-row .iis-book:hover{
+    transform:perspective(1700px) translateZ(110px) translateY(-20px) rotateX(4deg) rotateY(180deg);
+    z-index:6;
+    filter:drop-shadow(0 34px 34px rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(197,160,89,.14));
+  }
+}
+body.gl-page .gl-shelf-row .iis-book.is-flipped{
+  transform:perspective(1700px) translateZ(110px) translateY(-20px) rotateX(4deg) rotateY(180deg);
+  z-index:6;
+  filter:drop-shadow(0 34px 34px rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(197,160,89,.14));
+}
+@media (prefers-reduced-motion: reduce){
+  body.gl-page .gl-shelf-row .iis-book:hover,
+  body.gl-page .gl-shelf-row .iis-book.is-flipped{transform:none;filter:none}
+}
+
+@media (max-width:640px){
+  body.gl-page .gl-bookcase{padding:0 14px 4px;margin:8px 10px 20px}
+  body.gl-page .gl-crown{margin:0 -14px 6px}
+  body.gl-page .gl-shelf-row{gap:18px}
+  body.gl-page .gl-divider{margin-top:16px}
+}
+
+/* ==========================================================================
+   CHAPTER INDEX (v1.4 — sitewide: growth-library, shop, services, marketplace)
+   Long marketing bands fold into elegant chapters. All content preserved.
+   ========================================================================== */
+#gl-index-note{
+  max-width:1180px;margin:34px auto 12px;padding:0 24px;
+  text-align:center;color:rgba(197,160,89,.55);
+  font-size:10px;letter-spacing:.5em;text-transform:uppercase;font-weight:700;
+}
+body.iis-chapters .gl-chapter{
+  max-width:1180px;margin:12px auto;
+  border:1px solid rgba(197,160,89,.2);
+  border-radius:16px;
+  background:linear-gradient(165deg, rgba(255,255,255,.02), rgba(255,255,255,.004));
+  overflow:hidden;
+  transition:border-color .3s ease, box-shadow .3s ease;
+}
+body.iis-chapters .gl-chapter:hover{border-color:rgba(197,160,89,.42)}
+body.iis-chapters .gl-chapter.open{
+  border-color:rgba(197,160,89,.5);
+  box-shadow:0 24px 60px rgba(0,0,0,.4), inset 0 0 0 1px rgba(197,160,89,.08);
+}
+body.iis-chapters .gl-chapter-head{
+  display:flex;align-items:center;gap:18px;width:100%;
+  padding:18px 26px;cursor:pointer;text-align:left;
+  background:none;border:none;outline-offset:-2px;
+  transition:background .3s ease;
+}
+body.iis-chapters .gl-chapter-head:hover{background:rgba(197,160,89,.05)}
+body.iis-chapters .gl-chapter-num{
+  font-family:'Cinzel',serif;color:#c5a059;
+  font-size:14px;letter-spacing:.14em;min-width:34px;text-align:center;
+  border:1px solid rgba(197,160,89,.3);border-radius:10px;padding:7px 6px;
+}
+body.iis-chapters .gl-chapter-titles{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+body.iis-chapters .gl-chapter-title{
+  font-family:'Cinzel',serif;color:#f1dca7;
+  font-size:15px;letter-spacing:.06em;line-height:1.3;
+}
+body.iis-chapters .gl-chapter-sub{
+  color:rgba(255,255,255,.38);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.iis-chapters .gl-chapter-chev{color:#c5a059;flex-shrink:0;transition:transform .45s cubic-bezier(.2,.9,.3,1)}
+body.iis-chapters .gl-chapter.open .gl-chapter-chev{transform:rotate(180deg)}
+body.iis-chapters .gl-chapter-body{
+  max-height:0;overflow:hidden;
+  transition:max-height .7s cubic-bezier(.2,.9,.3,1);
+}
+body.iis-chapters .gl-chapter-body > section{margin-top:0}
+@media (max-width:640px){
+  body.iis-chapters .gl-chapter{margin:10px 12px}
+  body.iis-chapters .gl-chapter-sub{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  body.iis-chapters .gl-chapter-body{transition:none}
+  body.iis-chapters .gl-chapter-chev{transition:none}
+}
+
+/* ==========================================================================
+   ARIA PAGE — right-panel rhythm fix (v1.3)
+   The live-activity stats sat at the top of the panel with a dead gap before
+   the globe (the globe-area flexed to fill and centered its content). Let the
+   globe area size to its content: stats now sit JUST ABOVE the globe, with
+   Tap-to-speak directly beneath — the globe keeps its full size.
+   ========================================================================== */
+#rightPanel .aria-section > .globe-area{flex:0 0 auto;min-height:0}
+
+/* ==========================================================================
+   MOBILE PARITY (v1.5) — phone view carries the same dignity as desktop.
+   Two structural repairs measured at 393px on production:
+   1. Road Ahead roadmap: the stone grid collapsed to 8px columns → text
+      rendered one letter per line over the timeline. Mobile now uses a
+      single-column layout: node beside a full-width story card.
+   2. Pricing deck cards: fixed 520px desktop geometry left a ~half-screen
+      void inside every stacked card. Heights are content-driven on mobile;
+      the 3D flip is preserved (visible face defines the height).
+   ========================================================================== */
+@media (max-width:760px){
+  /* ---- Road Ahead — single-column stones ---- */
+  #vision-roadmap .rm-tree{display:none !important}
+  #vision-roadmap .rm-stone{
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:flex-start !important;
+    gap:12px !important;
+    width:100% !important;
+    max-width:none !important;
+  }
+  #vision-roadmap .rm-stone::before{display:none !important}
+  #vision-roadmap .rm-spacer{display:none !important}
+  #vision-roadmap .rm-node{order:0;flex:0 0 auto;margin-top:4px}
+  #vision-roadmap .rm-card{
+    order:1;
+    flex:1 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    justify-self:stretch !important;
+    text-align:left !important;
+    padding:10px 12px !important;
+  }
+  #vision-roadmap .rm-stone.left .rm-card,
+  #vision-roadmap .rm-stone.right .rm-card{text-align:left !important}
+  #vision-roadmap .rm-flip{max-width:none !important;width:100% !important}
+  #vision-roadmap .rm-flip-inner{width:100% !important}
+
+  /* ---- Pricing deck — content-driven heights, flip preserved ---- */
+  .deck-slot{height:auto !important;min-height:0 !important}
+  .deck-card{height:auto !important;min-height:0 !important}
+  .deck-card .deck-face{
+    position:relative !important;
+    inset:auto !important;
+    height:auto !important;
+    min-height:0 !important;
+  }
+  .deck-card .deck-back{
+    position:absolute !important;
+    inset:0 !important;
+    height:100% !important;
+    overflow:auto;
+  }
+  .deck-slot.is-flipped .deck-card .deck-back{
+    position:relative !important;
+    inset:auto !important;
+    height:auto !important;
+  }
+  .deck-slot.is-flipped .deck-card .deck-front{
+    position:absolute !important;
+    inset:0 !important;
+    height:100% !important;
+    overflow:hidden;
+  }
+}
+
+/* ==========================================================================
+   IIS MOBILE OS (v1.6) — the phone-native home (m.html · body.ios-on)
+   Globe OS + Concierge: one living screen, four doors, everything else in
+   the Index. Same brand: black, gold, Cinzel, dust. Reduced-motion honored.
+   ========================================================================== */
+body.ios-on #ios-home{
+  min-height:96svh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:64px 22px 30px;position:relative;
+}
+body.ios-on .ios-eyebrow{
+  color:rgba(197,160,89,.85);font-size:10px;letter-spacing:.55em;
+  text-transform:uppercase;font-weight:700;margin:0 0 26px;
+}
+body.ios-on .ios-stage{position:relative;width:min(72vw,290px);aspect-ratio:1;margin:0 auto}
+body.ios-on .ios-halo{
+  position:absolute;inset:-14%;border-radius:50%;
+  background:radial-gradient(circle, rgba(197,160,89,.22), rgba(197,160,89,.05) 55%, transparent 72%);
+  animation:iosBreathe 6.5s ease-in-out infinite;
+}
+body.ios-on .ios-ring{
+  position:absolute;inset:2%;border-radius:50%;
+  border:1px dashed rgba(197,160,89,.35);
+  animation:iosSpin 80s linear infinite;
+}
+body.ios-on .ios-globe{
+  position:absolute;inset:14%;border-radius:50%;
+  border:1px solid rgba(197,160,89,.7);
+  background:
+    radial-gradient(circle at 34% 28%, rgba(241,220,167,.32), transparent 42%),
+    radial-gradient(circle at 62% 74%, rgba(179,135,40,.25), transparent 52%),
+    radial-gradient(circle, #241708 0%, #120b04 68%, #0a0602 100%);
+  box-shadow:0 24px 70px rgba(0,0,0,.65), inset 0 0 40px rgba(197,160,89,.12);
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+body.ios-on .ios-mono{
+  font-family:'Cinzel',Georgia,serif;color:#f1dca7;font-size:clamp(44px,15vw,64px);
+  text-shadow:0 0 26px rgba(241,220,167,.45);
+}
+body.ios-on .ios-globe i{position:absolute;border:1px solid rgba(241,220,167,.16);border-radius:50%}
+body.ios-on .ios-lat{left:-12%;right:-12%;top:32%;height:36%}
+body.ios-on .ios-lat2{left:-6%;right:-6%;top:14%;height:72%}
+body.ios-on .ios-lon{top:-10%;bottom:-10%;left:30%;width:40%}
+body.ios-on .ios-orbit{position:absolute;inset:0;pointer-events:none}
+body.ios-on .ios-chip{
+  position:absolute;pointer-events:auto;text-decoration:none;
+  border:1px solid rgba(197,160,89,.55);border-radius:999px;
+  padding:7px 15px;background:rgba(10,7,3,.88);
+  color:#f1dca7;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+  box-shadow:0 8px 22px rgba(0,0,0,.5), inset 0 0 12px rgba(197,160,89,.08);
+  transition:transform .3s ease, border-color .3s ease, background .3s ease;
+  animation:iosFloat 5.5s ease-in-out infinite;
+}
+body.ios-on .ios-chip:active{transform:scale(.94)}
+body.ios-on .ios-chip-n{top:-5%;left:50%;transform:translateX(-50%)}
+body.ios-on .ios-chip-e{right:-9%;top:47%;transform:translateY(-50%);animation-delay:-1.4s}
+body.ios-on .ios-chip-s{bottom:-5%;left:50%;transform:translateX(-50%);animation-delay:-2.8s}
+body.ios-on .ios-chip-w{left:-9%;top:47%;transform:translateY(-50%);animation-delay:-4.2s}
+body.ios-on .ios-title{
+  font-family:'Cinzel',Georgia,serif;color:#f8f1de;font-weight:700;
+  font-size:clamp(26px,7.6vw,34px);line-height:1.22;letter-spacing:.02em;
+  margin:34px 0 10px;
+}
+body.ios-on .ios-title em{color:#c5a059;font-style:italic}
+body.ios-on .ios-sub{
+  color:rgba(255,255,255,.55);font-size:13.5px;line-height:1.75;
+  max-width:300px;margin:0 auto 24px;font-weight:300;
+}
+body.ios-on .ios-cta{
+  position:relative;display:inline-block;text-decoration:none;overflow:hidden;
+  padding:15px 44px;border-radius:999px;
+  background:linear-gradient(135deg,#b38728,#f1dca7 55%,#c5a059);
+  color:#171004;font-size:11px;letter-spacing:.34em;text-transform:uppercase;font-weight:700;
+  box-shadow:0 14px 34px rgba(197,160,89,.28);
+}
+body.ios-on .ios-cta::after{
+  content:'';position:absolute;top:-40%;bottom:-40%;left:-30%;width:34%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.5) 50%,transparent);
+  transform:translateX(-120%) rotate(8deg);
+  animation:iosSheen 7.5s ease-in-out 2.4s infinite;
+}
+body.ios-on .ios-cue{
+  margin-top:34px;background:none;border:none;cursor:pointer;
+  color:rgba(197,160,89,.75);font-size:10px;letter-spacing:.42em;text-transform:uppercase;font-weight:700;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+body.ios-on .ios-cue i{
+  width:1px;height:26px;display:block;
+  background:linear-gradient(180deg,#c5a059,transparent);
+  animation:iosDrip 2.4s ease-in-out infinite;
+}
+@keyframes iosBreathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.07);opacity:1}}
+@keyframes iosSpin{to{transform:rotate(360deg)}}
+@keyframes iosFloat{0%,100%{margin-top:0}50%{margin-top:-5px}}
+@keyframes iosSheen{0%{transform:translateX(-130%) rotate(8deg)}18%,100%{transform:translateX(430%) rotate(8deg)}}
+@keyframes iosDrip{0%{transform:scaleY(.2);transform-origin:top;opacity:.4}55%{transform:scaleY(1);opacity:1}100%{transform:scaleY(.2);transform-origin:top;opacity:.4}}
+
+/* ---- the concierge doors ---- */
+body.ios-on #ios-doors{padding:8px 20px 26px;max-width:560px;margin:0 auto}
+body.ios-on .ios-doors-head{
+  text-align:center;color:rgba(255,255,255,.4);
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;margin:0 0 14px;
+}
+body.ios-on .ios-door{
+  display:flex;align-items:center;gap:14px;text-decoration:none;
+  border:1px solid rgba(197,160,89,.28);border-radius:16px;
+  padding:15px 16px;margin-bottom:10px;
+  background:linear-gradient(165deg, rgba(197,160,89,.06), rgba(255,255,255,.008) 55%);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .7s cubic-bezier(.16,1,.3,1) calc(var(--i) * .09s + .15s),
+             transform .7s cubic-bezier(.16,1,.3,1) calc(var(--i) * .09s + .15s),
+             border-color .3s ease;
+}
+body.ios-on.ios-in .ios-door{opacity:1;transform:none}
+body.ios-on .ios-door:active{border-color:#c5a059}
+body.ios-on .ios-door-glyph{
+  flex:0 0 44px;height:44px;border-radius:13px;
+  border:1px solid rgba(197,160,89,.4);
+  display:flex;align-items:center;justify-content:center;color:#f1dca7;
+  background:radial-gradient(circle at 32% 22%, rgba(197,160,89,.2), transparent 70%);
+}
+body.ios-on .ios-door-glyph svg{width:20px;height:20px}
+body.ios-on .ios-door-copy{flex:1;min-width:0}
+body.ios-on .ios-door-copy b{
+  display:block;font-family:'Cinzel',Georgia,serif;font-weight:700;
+  color:#f1dca7;font-size:14.5px;letter-spacing:.03em;margin-bottom:3px;
+}
+body.ios-on .ios-door-copy small{color:rgba(255,255,255,.45);font-size:11px;line-height:1.5;display:block}
+body.ios-on .ios-door-arrow{color:rgba(197,160,89,.7);font-size:16px}
+
+/* ---- the index ---- */
+body.ios-on #ios-index{padding:14px 14px 60px;max-width:640px;margin:0 auto}
+body.ios-on .ios-index-note{
+  text-align:center;color:rgba(197,160,89,.55);
+  font-size:9.5px;letter-spacing:.42em;text-transform:uppercase;font-weight:700;
+  margin:20px 6px 14px;
+}
+body.ios-on #ios-index .gl-chapter{margin:10px 4px}
+
+@media (prefers-reduced-motion: reduce){
+  body.ios-on .ios-halo,body.ios-on .ios-ring,body.ios-on .ios-chip,
+  body.ios-on .ios-cta::after,body.ios-on .ios-cue i{animation:none !important}
+  body.ios-on .ios-door{opacity:1;transform:none;transition:none}
 }
 
 /* ---------- Sitewide gold polish (full mode only) ---------- */

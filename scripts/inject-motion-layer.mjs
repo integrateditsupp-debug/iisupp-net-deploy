@@ -36,7 +36,7 @@ const scriptTag = (mode) =>
 
 /* ---------------- target sets ---------------- */
 const FULL = [
-  'index.html', 'services.html', 'shop.html', 'marketplace.html',
+  'index.html', 'm.html', 'services.html', 'shop.html', 'marketplace.html',
   'growth-library.html', 'ai-edge.html', 'about.html', 'product.html',
   'health-check.html', 'terms.html', 'copyright.html', 'purchase-tech.html',
   'refer.html', 'unlock.html', 'checkout-success.html', 'trust.html',

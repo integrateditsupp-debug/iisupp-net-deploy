@@ -83,6 +83,7 @@ export const RECIPES = [
     allowlistTags: ['office-repair','m365']
   },
   {
+<<<<<<< HEAD
     id: 'office-file-repair-v1',
     title: 'Excel / Word file won’t open (format not valid, corrupt, or locked)',
     category: 'm365',
@@ -134,6 +135,8 @@ export const RECIPES = [
     allowlistTags: ['office-repair','file-recovery','m365']
   },
   {
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     id: 'teams-cache-reset-v1',
     title: 'Teams stuck loading or won’t sign in',
     category: 'm365',
@@ -615,6 +618,7 @@ export const RECIPES = [
       onSuccess: 'Disable suspect extensions, close + reopen browser, and test. If suspicious behavior continues, escalate — you may have malware. Call (647) 581-3182 IMMEDIATELY.'
     },
     allowlistTags: ['browser-settings','security']
+<<<<<<< HEAD
   },
   // ── Coverage Slice 1 — Tier 1/2 volume recipes (guided; the web never executes a local fix) ──────────
   {
@@ -766,6 +770,8 @@ export const RECIPES = [
       onSuccess: 'After enabling backup, confirm each folder shows a sync status icon and that a test file appears in OneDrive on the web.'
     },
     allowlistTags: ['m365','onedrive','backup']
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   }
 ];
 

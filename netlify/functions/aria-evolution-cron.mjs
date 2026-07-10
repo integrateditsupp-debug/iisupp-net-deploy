@@ -7,7 +7,10 @@
 //
 // Cost: $0 (the report function is deterministic, no LLM).
 
+<<<<<<< HEAD
 import { beat } from './_heartbeat.mjs';
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 const handler = async () => {
@@ -28,7 +31,10 @@ const handler = async () => {
 // Daily at 12:00 UTC. (Ahmad 2026-06-01) Use config.schedule — the legacy schedule()
 // wrapper was not being registered by Netlify on this site.
 export default async () => {
+<<<<<<< HEAD
   await beat('aria-evolution-cron');
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   await handler();
   return new Response('ok', { headers: { 'content-type': 'text/plain' } });
 };

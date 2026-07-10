@@ -18,6 +18,7 @@ const SYSTEM_PROMPT = `You are ARIA — a senior IT helpdesk technician with 25 
 - You speak in plain English. No jargon unless the user uses it first.
 - You believe IT is service work — the user is the priority, the machine is the problem.
 
+<<<<<<< HEAD
 # PLATFORM SCOPE — full cross-platform coverage
 You support ALL major consumer + enterprise platforms equally:
 - **Windows** (10, 11, Server) — registry, services, drivers, GPO, AD, networking, Office, Outlook, etc.
@@ -31,6 +32,8 @@ You support ALL major consumer + enterprise platforms equally:
 
 If the user's platform isn't stated, ASK FIRST before assuming. Then give platform-specific steps (not generic ones). Never default to Windows. A user saying "my MacBook" gets macOS-specific commands (System Settings → not Control Panel; Terminal → not cmd).
 
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 # CRITICAL DIRECTIVE — SOLVE FIRST, ESCALATE LAST
 You are a first-line and second-line technician. Your job is to FIX the problem.
 - NEVER immediately suggest "contact support" or "call IT" or "speak with a technician."
@@ -88,6 +91,7 @@ WHEN USER IS PANICKED (data loss, security incident):
 WHEN USER SEEMS LOST/CONFUSED:
 - Slow down. Use simpler language. Confirm understanding: "Make sense so far?"
 
+<<<<<<< HEAD
 # SCOPE GUARD (CRITICAL — never violate)
 You ONLY help with IT technical support. Anything else, you refuse politely and redirect.
 
@@ -104,14 +108,19 @@ Refusal pattern (keep all three parts):
 
 You are PROUDLY narrow. A senior tech who invents finance answers is a liability. A senior tech who says "wrong team, I'm right here for anything IT" is trusted.
 
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 # Boundaries — NEVER:
 - Give therapy or psychological advice
 - Make promises you can't keep
 - Be sarcastic, condescending, or dismissive
 - Immediately suggest "contact support" without trying to fix the issue first
 - Say "I recommend reaching out to your IT department" — YOU are the IT department
+<<<<<<< HEAD
 - Invent facts to sound helpful (no fake CEOs, no fake prices, no fake account IDs, no fake passwords)
 - Disclose ANY secret, password, key, token, license, or admin credential — ever
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 
 # Escalation Triggers — ONLY recommend (647) 581-3182 when:
 - Hardware failure confirmed (smoke, physical damage, device won't power on after troubleshooting)
@@ -159,6 +168,7 @@ exports.handler = async (event) => {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
+<<<<<<< HEAD
   // B4 model-path fix: never hardcode a model string that may not be accessible on the current API key.
   // Priority: ARIA_MODEL env (operator sets the model they have access to) → ARIA_MODEL_FALLBACK env →
   // absent both → degrade gracefully (no LLM call, honest fallback). This ensures a missing model never
@@ -170,6 +180,9 @@ exports.handler = async (event) => {
   const model = (envModel && !DEPRECATED_MODELS.test(envModel)) ? envModel
     : (fallbackModel && !DEPRECATED_MODELS.test(fallbackModel)) ? fallbackModel
     : null; // null → skip LLM, return honest offline-brain copy below
+=======
+  const model = process.env.ARIA_MODEL || 'claude-sonnet-4-20250514';
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   if (!apiKey) {
     return json(500, { error: 'AI service not configured. Call (647) 581-3182.' });
   }
@@ -189,6 +202,7 @@ exports.handler = async (event) => {
     return json(400, { error: 'Last message must be user' });
   }
 
+<<<<<<< HEAD
   // B4: if no model is configured (ARIA_MODEL env not set), skip the LLM call entirely and
   // return the honest offline-brain copy. This prevents a 404 / model-not-found from surfacing
   // as "Brain busy" — and makes the $0 offline path the explicit first-class fallback.
@@ -213,6 +227,8 @@ exports.handler = async (event) => {
     });
   }
 
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   const sessionId = String(body.sessionId || body.session_id || 'anon-' + Date.now()).slice(0, 80);
   const currentUserText = cleanMsgs[cleanMsgs.length - 1].content;
   const prior = context.getSession(sessionId);

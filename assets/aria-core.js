@@ -892,6 +892,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
                 +   '#company-intro .ci-card:nth-child(4) .ci-icon{animation-delay:1.8s}'
                 +   '@keyframes ciFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}'
                 +   '@media (prefers-reduced-motion:reduce){#company-intro .ci-card{opacity:1;transform:none}#company-intro .ci-dot,#company-intro .ci-icon{animation:none}}'
+<<<<<<< HEAD
                 +   '#company-intro .ci-card-flip{perspective:900px;min-height:108px}'
                 +   '#company-intro .ci-card-inner{position:relative;width:100%;height:108px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}'
                 +   '#company-intro .ci-card-flip:hover .ci-card-inner,#company-intro .ci-card-flip:focus-within .ci-card-inner{transform:rotateY(180deg)}'
@@ -900,6 +901,15 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
                 +   '#company-intro .ci-card-title{color:#c5a059;font-family:Cinzel,serif;font-size:11px;font-weight:700;letter-spacing:.03em;margin:0;line-height:1.15}'
                 +   '#company-intro .ci-back p{color:rgba(255,255,255,.78);font-size:10px;line-height:1.42;margin:0}'
                 +   '#company-intro .ci-front .ci-icon{font-size:17px!important;margin-bottom:7px!important}'
+=======
+                +   '#company-intro .ci-card-flip{perspective:900px;min-height:128px}'
+                +   '#company-intro .ci-card-inner{position:relative;width:100%;height:128px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}'
+                +   '#company-intro .ci-card-flip:hover .ci-card-inner,#company-intro .ci-card-flip:focus-within .ci-card-inner{transform:rotateY(180deg)}'
+                +   '#company-intro .ci-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;border:1px solid rgba(197,160,89,.22);background:rgba(255,255,255,.02);padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}'
+                +   '#company-intro .ci-face.ci-back{transform:rotateY(180deg);background:linear-gradient(160deg,rgba(20,16,11,.92),rgba(8,7,5,.98));border-color:rgba(241,220,167,.5)}'
+                +   '#company-intro .ci-card-title{color:#c5a059;font-family:Cinzel,serif;font-size:12px;font-weight:700;letter-spacing:.04em;margin:0;line-height:1.2}'
+                +   '#company-intro .ci-back p{color:rgba(255,255,255,.78);font-size:11px;line-height:1.5;margin:0}'
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
                 +   '@media (prefers-reduced-motion:reduce){#company-intro .ci-card-flip:hover .ci-card-inner{transform:none}}'
                 + '</style>'
                 + '<div class="max-w-5xl mx-auto">'
@@ -908,18 +918,25 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
                 +     '<h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family:Cinzel,serif">Welcome to <span style="color:#c5a059">Integrated IT Support Inc.</span></h2>'
                 +     '<p class="text-base md:text-lg leading-relaxed text-white/70 max-w-2xl mx-auto">We remove the IT costs that do not make sense — so you save money, save time, and stay focused on growing your business.</p>'
                 +   '</div>'
+<<<<<<< HEAD
                 +   '<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto mb-3 md:mb-4">'
                 +     '<div class="ci-card-flip" tabindex="0"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🛠️</div><h3 class="ci-card-title">L1 – L3 IT Support</h3></div><div class="ci-face ci-back"><p>Helpdesk to escalation engineering, every tier. <a href="/plans/" style="color:#f1dca7;text-decoration:underline">See pricing →</a></p></div></div></div>'
                 +     '<div class="ci-card-flip" tabindex="0"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🚚</div><h3 class="ci-card-title">Move-In / Move-Out</h3></div><div class="ci-face ci-back"><p>We set up &amp; configure offices during moves — desks, network, printers, phones — and decommission cleanly.</p></div></div></div>'
                 +     '<div class="ci-card-flip" tabindex="0"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">📈</div><h3 class="ci-card-title">IT Improvement Assessments</h3></div><div class="ci-face ci-back"><p>We audit your IT team with 21+ years of experience — candidly, without the job-security hesitation a manager might have. Stronger IT, not needless expense.</p></div></div></div>'
                 +     '<div class="ci-card-flip" tabindex="0"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🛡️</div><h3 class="ci-card-title">Cybersecurity</h3></div><div class="ci-face ci-back"><p>Endpoint protection, M365 hardening, backup &amp; DR, compliance. <a href="/services.html" style="color:#f1dca7;text-decoration:underline">Explore →</a></p></div></div></div>'
                 +   '</div>'
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
                 +   '<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto">'
                 +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">💰</div><h3 class="ci-card-title">Cut IT waste</h3></div><div class="ci-face ci-back"><p>We eliminate IT costs that do not make sense.</p></div></div></div>'
                 +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🎯</div><h3 class="ci-card-title">Focus on revenue</h3></div><div class="ci-face ci-back"><p>We own your IT so you do not have to think about it.</p></div></div></div>'
                 +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🏆</div><h3 class="ci-card-title"><span class="ci-count" data-to="15">15</span>+ years</h3></div><div class="ci-face ci-back"><p>ITIL, Six Sigma, cross-industry — actually applied, not framed on a wall.</p></div></div></div>'
                 +     '<div class="ci-card-flip"><div class="ci-card-inner"><div class="ci-face ci-front"><div class="ci-icon text-xl mb-2">🤖</div><h3 class="ci-card-title">Built on AI</h3></div><div class="ci-face ci-back"><p>AI helps you take on challenges before they become problems.</p></div></div></div>'
                 +   '</div>'
+<<<<<<< HEAD
+=======
+                +   '<div class="text-center mt-10"><a href="#introducing-aria" class="inline-block text-[10px] tracking-[0.4em] uppercase font-bold border-b border-[#c5a059]/40 pb-2 transition hover:text-white" style="color:#c5a059">See our apps, examples &amp; recent work ↓</a></div>'
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
                 + '</div>';
             var aiEdge = document.querySelector(".ai-edge-band");
             if (aiEdge && aiEdge.parentNode) { aiEdge.parentNode.insertBefore(intro, aiEdge); }
@@ -954,6 +971,7 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
      }
 })();
 
+<<<<<<< HEAD
 /* ===== CONTENT ASSURANCE SPOTLIGHT (2026-07-04) ===== */
 (function () {
      "use strict";
@@ -1037,6 +1055,8 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
      }
 })();
 
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 
 /* ===== TRIAL TIMER + PAYWALL + PLANS LINK FIX (v2 2026-05-10) ===== */
 (function () {
@@ -1410,7 +1430,10 @@ try { var __voices = window.speechSynthesis.getVoices(); var __femPref = ["Saman
     { status: "done",    title: "Enterprise platform shipped",       desc: "2026 — Microsoft 365 Graph integration, multi-language (EN/FR/AR/ES/DE), mobile + iOS support, Slack + Teams apps, white-label theming, public API + Node & Python SDKs, cross-device session memory." },
     { status: "done",    title: "Security & compliance live",       desc: "2026 — SOC 2 readiness self-assessment, GDPR Art. 22 + PIPEDA Principle 9 notices, ISO 29147 vulnerability disclosure, AI governance + automated-decisions policy, per-tenant audit log + human-approval gate on every privileged action." },
     { status: "current", title: "Connecting with brands & companies", desc: "Where we are right now. Engaging brands directly. Building partnerships with Anthropic, Microsoft, and AWS in motion. Proving the model in the field, contract by contract." },
+<<<<<<< HEAD
     { status: "future",  title: "ARIA Sentinel — desktop companion", desc: "Within a month — ARIA Sentinel arrives. The desktop companion to ARIA, available on all platforms beginning with Windows. Quieter machines, faster recoveries, fewer support tickets. macOS, Linux, and mobile follow." },
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
     { status: "future",  title: "Global expansion",                desc: "Multi-region, multi-language. Wherever a business needs IT support, ARIA shows up — North America, Europe, Asia, beyond." },
     { status: "future",  title: "Charity support, pro bono",       desc: "Free ARIA for non-profits doing the work governments won't. Their tech burden becomes our responsibility." },
     { status: "future",  title: "Reimagining education — with respect", desc: "Education is the most important part of our lives. It must change and grow with us — but never by tearing down the hardship and dedication of the generations before. We stay appreciative and aware. There is no good done from negativity; start negative and you end with a toxic message. We're not perfect — we strive for balance. To those who 'badmouth' the system, we understand the pain behind it, and we're with you too. Lead by great example: not by acting perfect, but by being vulnerable and true to our humanity." },

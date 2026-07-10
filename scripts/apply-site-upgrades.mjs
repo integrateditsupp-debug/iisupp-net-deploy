@@ -27,7 +27,7 @@ const LEGAL_TAG = '<link rel="stylesheet" href="/assets/legal-suite.css">';
 
 const UPGRADE_PAGES = [
   'index.html', 'services.html', 'about.html', 'purchase-tech.html',
-  'growth-library.html',
+  'growth-library.html', 'shop.html', 'marketplace.html',
 ];
 const LEGAL_PAGES = ['trust.html', 'copyright.html'];
 
@@ -145,12 +145,32 @@ try {
   }
 } catch (e) { results.flagged.push(['services catch-all', String(e.message)]); }
 
+/* ---------------- Mobile OS (m.html only) ---------------- */
+const MOBILE_OS_TAG = '<script src="/assets/iis-mobile-os.js" defer data-page="m"></script>';
+{
+  const abs = path.join(ROOT, 'm.html');
+  if (fs.existsSync(abs)) {
+    let html = fs.readFileSync(abs, 'utf8');
+    if (!html.includes('iis-mobile-os')) {
+      const idx = html.lastIndexOf('</body>');
+      if (idx !== -1) {
+        html = html.slice(0, idx) + '  ' + MOBILE_OS_TAG + '\n' + html.slice(idx);
+        if (!DRY) fs.writeFileSync(abs, html);
+        results.done.push('m.html + iis-mobile-os.js (Globe OS home)');
+      } else results.flagged.push(['m.html', 'no body close for mobile os']);
+    } else results.already.push('m.html (iis-mobile-os.js)');
+  } else results.missing.push('m.html');
+}
+STAMP_ASSETS_EXTRA: {
+  /* also stamp the mobile-os asset reference */
+}
+
 /* ---------------- asset cache-busting version stamps ----------------
    /assets/* is served with a 7-day browser cache (max-age=604800), so asset
    CHANGES must ship under a new URL. Stamp every reference to our four
    assets with ?v=TOKEN. Re-runs replace older tokens (idempotent). */
-const TOKEN = '20260707c';
-const STAMP_ASSETS = ['iis-motion.css', 'iis-motion.js', 'iis-upgrades.js', 'legal-suite.css'];
+const TOKEN = '20260710k';
+const STAMP_ASSETS = ['iis-motion.css', 'iis-motion.js', 'iis-upgrades.js', 'legal-suite.css', 'iis-mobile-os.js'];
 const SKIP_DIRS = new Set([
   'node_modules', '.git', '.netlify', 'backups', 'archive', 'apps', 'tests',
   'docs', 'scripts', 'senior-director-state', '_shipped-src', '_branch-src',
@@ -214,10 +234,17 @@ try {
   if (!motionCss.includes('bg-i-stage')) results.flagged.push(['assets/iis-motion.css', 'v1.1 morph fix missing — stale file?']);
   if (!motionCss.includes('z-index:-4')) results.flagged.push(['assets/iis-motion.css', 'v1.1 z-order fix missing — stale file?']);
   if (!motionCss.includes('rm-flip')) results.flagged.push(['assets/iis-motion.css', 'roadmap flip enrichment missing — stale file?']);
+  if (!motionCss.includes('gl-ledge')) results.flagged.push(['assets/iis-motion.css', 'v1.2 shelf styles missing — stale file?']);
+  if (!motionCss.includes('gl-chapter')) results.flagged.push(['assets/iis-motion.css', 'v1.2 chapter styles missing — stale file?']);
   const upg = fs.readFileSync(path.join(ROOT, 'assets/iis-upgrades.js'), 'utf8');
   if (upg.includes('flipify')) results.flagged.push(['assets/iis-upgrades.js', 'stale v1.0 DOM flip wrapper still present']);
   const forums = fs.readFileSync(path.join(ROOT, 'forums/index.html'), 'utf8');
   if (!forums.includes('Knowledge Commons')) results.flagged.push(['forums/index.html', 'new Commons page missing — stale file?']);
+  if (!forums.includes('commons-room') && !forums.includes('id="room"')) results.flagged.push(['forums/index.html', 'live boards missing — stale file?']);
+  if (!fs.existsSync(path.join(ROOT, 'netlify/functions/forum.mjs'))) results.flagged.push(['netlify/functions/forum.mjs', 'REQUIRED FILE MISSING']);
+  if (!motionCss.includes('iis-chapters')) results.flagged.push(['assets/iis-motion.css', 'v1.4 sitewide chapter styles missing — stale file?']);
+  if (!motionCss.includes('ios-globe')) results.flagged.push(['assets/iis-motion.css', 'v1.6 mobile OS styles missing — stale file?']);
+  if (!fs.existsSync(path.join(ROOT, 'assets/iis-mobile-os.js'))) results.flagged.push(['assets/iis-mobile-os.js', 'REQUIRED FILE MISSING']);
 } catch (e) { results.flagged.push(['sanity', String(e.message)]); }
 
 /* ---------------- report ---------------- */

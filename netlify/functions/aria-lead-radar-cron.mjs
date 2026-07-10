@@ -5,7 +5,10 @@
 // fetches the endpoint once a day to confirm the CanadaBuys feed still parses and to surface
 // breakage in logs. Cost: $0 (deterministic, no LLM).
 
+<<<<<<< HEAD
 import { beat } from './_heartbeat.mjs';
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 const ARIA_BASE = process.env.URL || 'https://iisupp.net';
 
 const handler = async () => {
@@ -25,7 +28,10 @@ const handler = async () => {
 // Once a day at 06:00 UTC. (Ahmad 2026-06-01) Use config.schedule — the legacy
 // schedule() wrapper was not registered by Netlify here.
 export default async () => {
+<<<<<<< HEAD
   await beat('aria-lead-radar-cron');
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   await handler();
   return new Response('ok', { headers: { 'content-type': 'text/plain' } });
 };

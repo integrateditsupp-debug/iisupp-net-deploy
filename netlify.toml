@@ -1,9 +1,12 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+<<<<<<< HEAD
   # Static site — no build step. Pricing matrix on /plans is hardcoded HTML between
   # SENTINEL_MATRIX:START/END markers (RUN 23f baseline). When the build-plans-matrix.mjs
   # script lands on main from sprint-0-backend, re-enable as: command = "..."
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "APP_URL,SALES_NOTIFY_EMAIL,ARIA_MODEL,ARIA_RATE_LIMIT,NETLIFY_SITE_ID,RESEND_FROM,TELEGRAM_BOT_TOKEN,TELEGRAM_WEBHOOK_SECRET,TELEGRAM_OWNER_CHAT_ID,SENIOR_DIRECTOR_SECRET,SENIOR_DIRECTOR_DAILY_ALWAYS"
@@ -12,9 +15,12 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["stripe", "@netlify/blobs"]
+<<<<<<< HEAD
   # The authed /api/axis-state function reads the worker-emitted full state. Bundle that non-public file with
   # the functions; it is NOT served at a public URL (/netlify/* is redirect-blocked).
   included_files = ["netlify/functions/_axis-state-full.json"]
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 
 [[headers]]
   for = "/*"
@@ -51,6 +57,7 @@
   status = 404
   force = true
 [[redirects]]
+<<<<<<< HEAD
   from = "/apps/*"
   to = "/index.html"
   status = 404
@@ -76,6 +83,8 @@
   status = 404
   force = true
 [[redirects]]
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   from = "/backups/*"
   to = "/index.html"
   status = 404
@@ -132,6 +141,7 @@
   to = "/index.html"
   status = 404
   force = true
+<<<<<<< HEAD
 [[redirects]]
   from = "/sentinel-admin"
   to = "/sentinel-admin/index.html"
@@ -147,6 +157,8 @@
   to = "/downloads/index.html"
   status = 200
   force = true
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 # Internal-only paths blocked from public access (security audit 2026-05-29). These also stay
 # gitignored/untracked; the 404 rules are defense-in-depth in case a file is ever re-added.
 [[redirects]]
@@ -225,6 +237,7 @@
   status = 404
   force = true
 
+<<<<<<< HEAD
 # SECURITY LOCKDOWN 2026-07-01 — internal brain/ops paths force-404'd (belt over suspenders;
 # the same trees are also untracked from git so they never reach a deploy in the first place).
 # /senior-director-state/* and /backups/* already have force=true rules above.
@@ -258,6 +271,8 @@
   to = "/forums/index.html"
   status = 200
 
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 [[redirects]]
   from = "/shop"
   to = "/shop.html"
@@ -300,6 +315,7 @@
   to = "/services.html"
   status = 200
 [[redirects]]
+<<<<<<< HEAD
   from = "/services/content-assurance"
   to = "/content-assurance.html"
   status = 200
@@ -316,6 +332,8 @@
   to = "/content-assurance-privacy.html"
   status = 200
 [[redirects]]
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
   from = "/aria"
   to = "/aria.html"
   status = 200
@@ -406,7 +424,10 @@
   from = "/governance/ai-use"
   to = "/governance/ai-use.html"
   status = 200
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 [[redirects]]
   from = "/ai-governance"
   to = "/governance/ai-use.html"
@@ -472,6 +493,7 @@
   to = "/aperture-learning.html"
   status = 200
 
+<<<<<<< HEAD
 
 # Rule 9 — kills + compliance hub merge (2026-06-18)
 # Fake-competitor page killed (Rule 7 — no fake proof)
@@ -559,6 +581,8 @@
   to = "/#aria-demo"
   status = 301
 
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])
 # IIS_CACHE_HEADERS — long cache static, short cache HTML
 [[headers]]
   for = "/assets/*"
@@ -574,6 +598,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "interest-cohort=()"
+<<<<<<< HEAD
 
 # Industry-tester SEC-1 fix (2026-06-23): add CSP + X-Frame + HSTS site-wide
 # (the existing for="/*.html" block doesn't match "/" so homepage was uncovered)
@@ -583,3 +608,5 @@
     X-Frame-Options = "SAMEORIGIN"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     Content-Security-Policy = "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; upgrade-insecure-requests"
+=======
+>>>>>>> 6a5244d1 (Lanes 30-32 [A/B + testimonial + image audit])

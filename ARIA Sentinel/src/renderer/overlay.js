@@ -1,26 +1,25 @@
 import { COMPANION_MENU, getFlow, flowStep, resolveStep, stepKey, isStepAnswered, listFlows } from "../shared/walkthrough-steps.mjs";
 import { createLocalStt } from "./local-stt.mjs"; // TRUE on-device offline STT (Vosk) — no cloud, no audio egress
 
-// Defensive: if the preload bridge ever fails to attach, fall back to a no-op API so the
-// globe still renders instead of throwing an uncaught TypeError.
+// Keep the overlay renderable long enough to surface bridge failure, but never pretend fixes ran.
 const sentinel = window.sentinel || {
   onOverlayMode: () => {},
   onDetection: () => {},
   getState: async () => ({ detections: [] }),
   showGlobe: async () => {},
   dismissOverlay: async () => {},
-  selfDiagnose: async () => ({ ok: true }),
-  selfRepair: async () => ({ ok: true }),
-  runRecipe: async () => ({ ok: true, dryRun: true }),
+  selfDiagnose: async () => ({ ok: false, error: "bridge_unavailable" }),
+  selfRepair: async () => ({ ok: false, error: "bridge_unavailable" }),
+  runRecipe: async () => ({ ok: false, error: "bridge_unavailable" }),
   onGreeting: () => {},
   onGlobeConfirmation: () => {},
-  openCompanion: async () => {},
-  openWalkthrough: async () => ({ ok: true }),
-  openMainTab: async () => ({ ok: true }),
-  openExternal: async () => ({ ok: true }),
-  copyText: async () => ({ ok: true }),
-  supervisedFix: async () => ({ ok: true }),
-  diagnose: async () => ({}),
+  openCompanion: async () => ({ ok: false, error: "bridge_unavailable" }),
+  openWalkthrough: async () => ({ ok: false, error: "bridge_unavailable" }),
+  openMainTab: async () => ({ ok: false, error: "bridge_unavailable" }),
+  openExternal: async () => ({ ok: false, error: "bridge_unavailable" }),
+  copyText: async () => ({ ok: false, error: "bridge_unavailable" }),
+  supervisedFix: async () => ({ ok: false, error: "bridge_unavailable", reason: "Desktop bridge unavailable." }),
+  diagnose: async () => ({ ok: false, error: "bridge_unavailable" }),
   isVettedRecipe: async () => ({ vetted: false })
 };
 let currentDetection = null;

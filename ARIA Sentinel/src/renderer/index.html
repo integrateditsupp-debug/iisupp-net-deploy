@@ -251,7 +251,7 @@
                 <p class="eyebrow">Local recipe registry</p>
                 <h2>Vetted fixes</h2>
               </div>
-              <button id="simulateAriaError" class="ghost" hidden>Simulate ARIA error</button>
+              <button id="simulateAriaError" class="ghost" hidden>Trigger ARIA bridge check</button>
             </div>
             <p id="recipeCatalogMeta" class="note">Loading recipes.</p>
             <div id="recipeList" class="recipe-list compact-list"></div>
@@ -259,7 +259,7 @@
           <section class="panel">
             <p class="eyebrow">Tier-0 · safe-generic</p>
             <h2>Safe Generic fixes</h2>
-            <p class="note">Run when a symptom doesn't match a specific cause. Every one is dry-run by default, content-blind, audit-logged, and asks before it changes anything. None ever deletes your documents, touches system files, or disables security.</p>
+            <p class="note">Run when a symptom does not match a specific cause. These fixes stay content-blind, audit-logged, and gated before any machine change. Manual mode previews them; Confirmed and Autonomous can execute them only after the supervisor, countdown, and kill-switch checks pass.</p>
             <div id="tier0List" class="recipe-list compact-list"></div>
           </section>
         </section>
@@ -464,7 +464,7 @@
                   <p class="eyebrow">ServiceNow connection</p>
                   <h2>Incident bridge</h2>
                   <label class="field">Instance URL <input value="https://customer.service-now.com" readonly /></label>
-                  <label class="field">OAuth 2.0 <input value="Not connected in MVP dry-run" readonly /></label>
+                  <label class="field">OAuth 2.0 <input value="Not connected" readonly /></label>
                   <label class="field">Default caller <input value="ARIA Sentinel local user" readonly /></label>
                   <button id="testServiceNow" class="ghost wide">Test connection</button>
                   <p class="note">Live posting is enabled only after customer OAuth and assignment group approval.</p>
@@ -560,15 +560,15 @@
           <!-- ## Mode (merged from the Mode tab) -->
           <div class="merge-head" id="mode">
             <div class="merge-bar" aria-hidden="true"></div>
-            <div><p class="eyebrow">Mode</p><h2>Mode</h2><p class="merge-sub">Choose how ARIA helps · the chosen mode governs preview vs execute</p></div>
+            <div><p class="eyebrow">Mode</p><h2>Mode</h2><p class="merge-sub">Choose how ARIA helps · the chosen mode governs guidance, approval, and live execution</p></div>
           </div>
           <section class="panel mode-panel-centered">
             <p class="eyebrow">Choose how ARIA helps</p>
             <h2>Mode</h2>
             <div class="mode-list">
-              <button class="mode-row selected" data-mode="manual"><span class="radio"></span><span><strong>Manual</strong><em>DEFAULT - FREE</em><small>ARIA detects issues and walks you through fixes in chat. The globe free-roams; nothing is applied automatically.</small></span></button>
-              <button class="mode-row" data-mode="confirmed"><span class="radio"></span><span><strong>Confirmed</strong><em>PAID</em><small>The globe pins on top and pops a fix-card bubble; ARIA applies once you confirm.</small></span></button>
-              <button class="mode-row" data-mode="autonomous"><span class="radio"></span><span><strong>Autonomous</strong><em>PAID - OPT-IN</em><small>The globe pins on top and auto-applies low-risk (green) fixes; risky fixes still confirm.</small></span></button>
+              <button class="mode-row selected" data-mode="manual"><span class="radio"></span><span><strong>Manual</strong><em>DEFAULT</em><small>ARIA detects issues and walks you through fixes in chat. Fixes stay in guided preview unless you explicitly step up to a live approval mode.</small></span></button>
+              <button class="mode-row" data-mode="confirmed"><span class="radio"></span><span><strong>Confirmed</strong><em>LIVE WITH APPROVAL</em><small>ARIA surfaces the fix card, runs the safety gate, and applies the fix only after you approve.</small></span></button>
+              <button class="mode-row" data-mode="autonomous"><span class="radio"></span><span><strong>Autonomous</strong><em>LIVE - OPT-IN</em><small>ARIA may fast-path proven low-risk fixes after the supervisor clears them; higher-risk fixes still stop for approval.</small></span></button>
             </div>
             <!-- RUN 33 PIVOT — dry-run checkbox removed; the chosen Mode governs preview-vs-execute (Manual previews; Confirmed/Autonomous execute after supervisor + countdown + kill-switch). -->
           </section>
