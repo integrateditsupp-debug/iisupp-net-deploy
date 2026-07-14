@@ -344,6 +344,9 @@ const TESTS = [
   "./s3-root-cause-correlation.test.mjs",
   "./s3-severity-escalation.test.mjs",
   "./s3-invariants-and-feed-wiring.test.mjs",
+  // STAGE-3 S4 2026-07-14 — persisted plan state is a CAPABILITY (unattended execution is granted from a
+  // count on disk): tamper-evident, fail-closed, atomic, R11-first, bounded without weakening F1.
+  "./s4-plan-state-store.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

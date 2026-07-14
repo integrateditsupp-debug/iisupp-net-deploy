@@ -20,7 +20,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const src = (rel) => fs.readFileSync(path.join(HERE, "..", "src", rel), "utf8");
 
 // 1 — the control plane is UNCHANGED: it does not know S3 exists (no back-edges, no new coupling).
-const S3_MODULES = ["maintenance-window", "deflection-feed", "multi-hypothesis", "root-cause-correlation", "escalation-policy", "plan-executor", "plan-autonomy-ladder"];
+const S3_MODULES = ["maintenance-window", "deflection-feed", "multi-hypothesis", "root-cause-correlation", "escalation-policy", "plan-executor", "plan-autonomy-ladder", "plan-state-store"];
 for (const f of ["main/supervisor-agent.mjs", "main/action-countdown.mjs", "main/tier-0-executor.mjs"]) {
   const text = src(f);
   for (const m of S3_MODULES) {
