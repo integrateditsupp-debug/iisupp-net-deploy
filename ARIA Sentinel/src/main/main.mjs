@@ -85,6 +85,8 @@ import { applyRunState } from "../shared/start-stop.mjs";
 import { auditFeatures, summarizeAudit, buildHealReport } from "../shared/self-heal.mjs";
 import { askAria, scrubR11 } from "../shared/aria-brain-client.mjs";
 import { loadKbPack, localKbAnswer } from "../shared/aria-local-kb.mjs"; // RUN 30-B — offline cross-platform KB
+import { topicsAnswer } from "../shared/aria-topics-fallback.mjs"; // P3 (2026-07-14) — offline tier-3 guided TOPICS brain (v2.1)
+import { shapeKbAnswerForEndUser } from "../shared/kb-answer-shape.mjs"; // P0 (2026-07-14) — strip internal/keyword sections from end-user chat
 import { loadFullText, fullArticle, looksTruncated, repairTruncatedTail } from "../shared/kb-fulltext.mjs"; // F2 — full bundled article text so a mid-line-truncated live excerpt never renders as a dangling "Print server (`"
 import { parseSystemStatus, parseKbStats, parseSessions, parseHeartbeats } from "../shared/aria-surfaces.mjs"; // RUN 33 — ARIA tab data
 import { classifyAnswer, recordAsk, foldStats, kbHitRate as chatKbHitRate } from "../shared/chat-stats.mjs"; // D2 — record real Ask-ARIA usage
@@ -3106,6 +3108,12 @@ async function chat(message, context = {}) {
         text = repairTruncatedTail(text);
       }
     }
+    // P0 (2026-07-14) — shape the answer for the end user: lead with the plain-language explanation + fix
+    // steps and NEVER render "Internal Technician Notes" / "Keywords / Search Tags" (registry + security-
+    // tradeoff content is internal-facing). Defense in depth — the server excerpt is also shaped.
+    const footerMatch = /(\n+→ Full article:\s*\S+)\s*$/.exec(text);
+    const footerLine = footerMatch ? footerMatch[1] : "";
+    text = shapeKbAnswerForEndUser(footerLine ? text.slice(0, footerMatch.index) : text) + footerLine;
     persistChatAsk(message, text, classifyAnswer({ provider: "aria-brain", action: brain.action || null })); // D2
     return { ok: true, provider: "aria-brain", text, action: brain.action || null, kbMatch: brain.kb_match || null, kbMeta: brain.kb_meta || null, matches: localMatches };
   }
@@ -3113,7 +3121,25 @@ async function chat(message, context = {}) {
   // tech support (Windows, macOS, iOS, iPadOS, Android, ChromeOS, Linux) — never the old Windows-only string.
   // A matching Sentinel recipe is offered alongside; otherwise the KB answer (or its cross-platform no-match) stands.
   const kb = localKbAnswer({ message: String(message || ""), platform: process.platform, index: kbIndex() });
-  const text = localMatches.length
+  if (kb.matched) {
+    const text = localMatches.length
+      ? `${kb.text}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
+      : kb.text;
+    persistChatAsk(message, text, classifyAnswer({ provider: "local-kb", matched: true })); // D2
+    return { ok: true, provider: "local-kb", text, signature, matched: true, matches: localMatches, offline: true, cost: "none" };
+  }
+  // P3 (2026-07-14) — tier 3: the shared TOPICS brain (v2.1) gives GUIDED, multi-turn, $0 help when the
+  // bundled KB has no confident match. Skipped for a credential-retrieval refusal (that answer stands).
+  if (!kb.refusal) {
+    let topic = null;
+    try { topic = topicsAnswer(String(message || "")); } catch { topic = null; }
+    if (topic && topic.text) {
+      persistChatAsk(message, topic.text, classifyAnswer({ provider: "aria-topics", matched: true })); // D2
+      return { ok: true, provider: "aria-topics", text: topic.text, signature, matched: true, matches: localMatches, offline: true, cost: "none" };
+    }
+  }
+  // No confident match at any offline tier → the KB no-match message (or the credential refusal) stands.
+  const text = (!kb.refusal && localMatches.length)
     ? `${kb.text}\n\nI also found a local Sentinel recipe that may help: ${localMatches[0].recipe.title} — I can dry-run it or show the steps.`
     : kb.text;
   persistChatAsk(message, text, classifyAnswer({ provider: "local-kb", matched: kb.matched })); // D2

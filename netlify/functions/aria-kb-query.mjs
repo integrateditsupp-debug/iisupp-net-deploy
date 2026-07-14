@@ -156,6 +156,56 @@ function score(query, chunk) {
   return s;
 }
 
+// P0 (2026-07-14) — end-user answer shaping. Mirrors ARIA Sentinel/src/shared/kb-answer-shape.mjs. The KB
+// articles carry INTERNAL sections (## 10. Internal Technician Notes with spooler CLI + registry keys flagged
+// "security trade-off"; ## 12. Keywords / Search Tags; ## 3. Questions To Ask User) that must never reach an
+// end user. Lead with the plain-language User-Friendly Explanation + fix steps; drop the internal/keyword
+// blocks. audience === "technician" | "it" keeps the full article (the desktop "IT view" affordance).
+const _normHeading = (t) => String(t || "").toLowerCase().replace(/^\d+[.)]\s*/, "").replace(/[^a-z ]+/g, " ").replace(/\s+/g, " ").trim();
+const _EXCLUDE = [/internal technician notes/, /internal notes/, /technician notes/, /keywords/, /search tags/, /questions to ask/];
+function _roleOf(key) {
+  if (/user friendly explanation|plain language|in plain/.test(key)) return "explain";
+  if (/resolution steps|the fix|how to fix|fix steps/.test(key)) return "fix";
+  if (/troubleshooting steps|troubleshooting|diagnos/.test(key)) return "troubleshoot";
+  if (/verification steps|verify|confirm/.test(key)) return "verify";
+  if (/escalation trigger|escalation|when to escalate/.test(key)) return "escalate";
+  if (/prevention tips|prevention|avoid/.test(key)) return "prevent";
+  if (/related/.test(key)) return "related";
+  return "other";
+}
+function shapeForEndUser(markdown) {
+  const raw = String(markdown == null ? "" : markdown);
+  if (!raw.trim()) return raw;
+  const lines = raw.split(/\r?\n/);
+  const sections = [];
+  let title1 = "";
+  let cur = { title: "", key: "__preamble__", role: "preamble", lines: [] };
+  for (const line of lines) {
+    const h1 = line.match(/^#\s+(.*)$/);
+    if (h1 && !title1) { title1 = h1[1].trim(); continue; }
+    const m = line.match(/^(#{2,3})\s+(.*)$/);
+    if (m) { sections.push(cur); const key = _normHeading(m[2]); cur = { title: m[2].trim(), key, role: _roleOf(key), lines: [] }; }
+    else cur.lines.push(line);
+  }
+  sections.push(cur);
+  const kept = sections.filter((s) => !_EXCLUDE.some((re) => re.test(s.key)));
+  const body = (s) => s.lines.join("\n").trim();
+  const byRole = (role) => kept.filter((s) => s.role === role && body(s));
+  const explain = byRole("explain"), fix = byRole("fix"), troubleshoot = byRole("troubleshoot");
+  if (!explain.length && !fix.length && !troubleshoot.length) {
+    const out = []; if (title1) out.push(`# ${title1}`);
+    for (const s of kept) { const b = body(s); if (!b) continue; out.push(s.role === "preamble" ? b : `## ${s.title}\n${b}`); }
+    return out.join("\n\n").trim();
+  }
+  const parts = []; if (title1) parts.push(`# ${title1}`);
+  for (const s of explain) parts.push(body(s));
+  for (const s of (fix.length ? fix : troubleshoot)) parts.push(`**What to do**\n${body(s)}`);
+  for (const s of byRole("verify")) parts.push(`**Confirm it's fixed**\n${body(s)}`);
+  for (const s of byRole("escalate")) parts.push(`**If that doesn't resolve it**\n${body(s)}`);
+  for (const s of byRole("prevent")) parts.push(`**Prevent it next time**\n${body(s)}`);
+  return parts.join("\n\n").trim();
+}
+
 function json(status, body, extra = {}) {
   return {
     statusCode: status,
@@ -172,6 +222,8 @@ export async function handler(event) {
   try { body = JSON.parse(event.body || "{}"); } catch { return json(400, { error: "bad-json" }); }
   const query = String(body.query || "").trim();
   if (!query || query.length < 2) return json(400, { error: "query required" });
+  const audience = String(body.audience || "end-user").toLowerCase();
+  const technicianView = audience === "technician" || audience === "it";
 
   const data = await loadChunks();
   const staticChunks = data.chunks || [];
@@ -194,6 +246,10 @@ export async function handler(event) {
   // Trim content for response. F2 (2026-07-02) — cut at the last clean line break, never mid-line/mid-word,
   // so a section like the printer "Escalation Trigger" never renders as a dangling "Print server (`".
   let content = stripFrontmatter(top.chunk.content || "");
+  // P0 — shape for the end user unless an explicit technician/IT view was requested: lead with the plain
+  // explanation + fix steps, drop "Internal Technician Notes" / "Keywords / Search Tags" (registry + security
+  // trade-off content is internal-facing). Shape BEFORE truncation so the cut never lands in a dropped section.
+  if (!technicianView) content = shapeForEndUser(content);
   if (content.length > 4000) {
     let cut = content.slice(0, 4000);
     const lastBreak = cut.lastIndexOf("\n");

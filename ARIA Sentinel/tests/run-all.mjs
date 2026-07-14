@@ -229,6 +229,12 @@ const TESTS = [
   "./kb-first-wiring.test.mjs",
   // D1 (2026-07-03) — KB relevance floor: abstain (never return the nearest WRONG article) when no match.
   "./kb-abstain-floor.test.mjs",
+  // P0 (2026-07-14) — end-user chat answer shaping: never render Internal Technician Notes / registry / keywords.
+  "./chat-answer-shaping.test.mjs",
+  // P3 (2026-07-14) — shared TOPICS brain v2.1 battery (root; the offline tier-3 engine synced into Sentinel).
+  "../../tests/aria-brain-v2.test.mjs",
+  // P0–P2 acceptance (2026-07-14) — L1–L3 IT-director scenario pack: containment-first + honesty invariants.
+  "./l1-l3-director-scenarios.test.mjs",
   // D2 (2026-07-03) — Ask-ARIA usage recorded to local memory + stats (Memory/Dashboard reflect real asks).
   "./chat-stats.test.mjs",
   // RUN 32-B — 3-mode proof-of-life (Manual/Confirmed/Autonomous execution pipeline).

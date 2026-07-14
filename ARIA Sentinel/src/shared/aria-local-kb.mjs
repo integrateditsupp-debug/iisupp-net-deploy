@@ -96,16 +96,83 @@ export function matchKb(index, message, { platform = "", min = 0.15 } = {}) {
 
 const NO_MATCH = "I couldn't find a local match for that. I can help across Windows, Mac, iPhone, iPad, Android, ChromeOS and Linux — reconnect to the internet for the full assistant, or rephrase with the device + symptom.";
 
+// P1 (2026-07-14) — the offline matcher scores hits/meaningful-tokens over FULL article text, so a long
+// doc can swallow a short generic query ("pizza place near the office" → Audio at 0.33). A higher offline
+// floor restores the honest abstain for those without regressing any real match (lowest genuine match ≈ 0.40).
+// The shared KB_RELEVANCE_FLOOR (0.30) stays for the ONLINE brain-client path (unchanged, separately tested).
+export const OFFLINE_KB_RELEVANCE_FLOOR = 0.38;
+
+// P1 (2026-07-14) — credential/secret RETRIEVAL requests are out of scope and a liability. ARIA never
+// surfaces account secrets; it points the user at the approved IT access process. This is NOT a
+// password-RESET help request ("i forgot my password" still routes to the KB) — only "give/tell/share me
+// the … password" or "the admin password for the server" style asks.
+const CREDENTIAL_REQUEST =
+  /\b(give|share|tell|send|show|whats?|what\s+is|provide|retrieve|hand\s+over)\b[^.?!]{0,40}\b(password|passwd|credential|credentials|admin\s+login|login\s+details|api\s+key|secret)\b|\b(admin|administrator|root|domain|server)\b[^.?!]{0,20}\bpassword\b[^.?!]{0,20}\b(for|to|of)\b/i;
+const CREDENTIAL_REFUSAL =
+  "For security, I can't look up or share passwords, admin credentials, or account secrets — even offline. I couldn't find a safe self-service step for a credential request like this. To get access to the server or account, request it from your IT team through the approved process (a ticket or admin approval).";
+
+// P2 (2026-07-14) — security & recovery incidents where minutes matter. The offline tier answers
+// containment-FIRST, deterministically, instead of routing generic KB excerpts (which lack disconnect /
+// change-password-now / don't-call language) or asking a multi-turn clarifier. Honest (Rule 14): these are
+// guidance, never a claim that ARIA acted. Ordered most-urgent first; first matching responder wins.
+const INCIDENT_RESPONDERS = [
+  {
+    id: "ransomware",
+    test: (m) => /\bransom(ware)?\b|ransom\s*note|files?\s*(were|got|are)?\s*(renamed|encrypted)|encrypted\s*(all|our|my|the)\s*(files|data|drive)|\bbitcoin\b/i.test(m),
+    title: "Suspected ransomware — contain first",
+    body: "Those are ransomware signs. Contain first, clean second — minutes matter.\n\n1. DISCONNECT / isolate the machine from the network NOW (unplug Ethernet, turn off Wi-Fi) so it can't spread to shares and backups.\n2. Do NOT pay the ransom, and don't delete anything — leave the note and files as evidence.\n3. From a different, clean device, change your important passwords (email first).\n4. Contact IT / security immediately. Recovery is isolate → clean/reimage → restore from backups that predate the infection."
+  },
+  {
+    id: "phishing-credential",
+    test: (m) => /enter(ed)?\s*(my\s*)?(password|credentials|login)[^.?!]*\b(fake|phishing|suspicious|scam)\b|\bfake\s*(microsoft|office|google|outlook|login|sign\W?in)\b[^.?!]*\b(page|screen|site|form|link)\b|typed\s*my\s*password[^.?!]*\b(fake|phish)/i.test(m),
+    title: "Password entered on a fake page — treat it as stolen",
+    body: "Treat the password as stolen — speed matters now.\n\n1. Change that password IMMEDIATELY from a device you trust — and everywhere you reused it.\n2. Sign out all sessions (for Microsoft accounts: account Security page → \"Sign out everywhere\").\n3. Make sure MFA is on for the account and review recent sign-in activity.\n4. Report it to IT / security so they can watch the account for misuse."
+  },
+  {
+    id: "fake-support-scam",
+    test: (m) => /virus\s*detected[^.?!]*call|call\s*(microsoft|apple|windows|support)[^.?!]*(now|number|immediately|back)|(popup|pop\W?up)[^.?!]*(call|virus\s*detected)|says?\s*(to\s*)?call\s*(microsoft|this\s*number|support)|tech\s*support\s*(scam|popup)/i.test(m),
+    title: "\"Virus detected — call this number\" is a scam",
+    body: "That full-screen \"virus detected — call this number\" page is a scam, not a real detection. Real antivirus never asks you to call.\n\n1. Do NOT call the number, and do not let anyone remote into your PC from that page.\n2. Close the browser (Ctrl+Shift+Esc → select the browser → End task) and reopen WITHOUT restoring tabs.\n3. Clear that site's notification permission (browser Settings → Site settings → Notifications → remove it).\n4. Run a full Windows Security scan to be safe."
+  },
+  {
+    id: "deleted-file",
+    test: (m) => /(deleted|removed)[^.?!]*(folder|file|files|directory)[^.?!]*(accident|by\s*mistake|didn\W?t\s*mean)|accidentally\s*(deleted|removed)|deleted\s*the\s*(whole|entire)[^.?!]*(folder|file|files)/i.test(m),
+    title: "Recover a deleted file or folder",
+    body: "Don't panic — deleted files are usually recoverable if you act before they're overwritten.\n\n1. Check the Recycle Bin first and restore from there if it's present.\n2. On a network / shared drive, right-click the parent folder → Properties → Previous Versions, or ask IT to restore from the file-server backup / snapshot.\n3. On OneDrive / SharePoint, use the Recycle Bin on the web (deleted items stay ~30–93 days) and \"Restore your OneDrive\".\n4. Stop writing to that drive until it's recovered; if the above don't show it, IT can restore from backup."
+  }
+];
+
+function incidentAnswer(message) {
+  const m = String(message || "");
+  for (const r of INCIDENT_RESPONDERS) {
+    try { if (r.test(m)) return r; } catch { /* a bad regex must never break chat */ }
+  }
+  return null;
+}
+
 /**
  * Offline answer for Ask ARIA. Returns { text, source, matched, platform } — never throws, never echoes a path.
  * `index` is the loaded KB pack (inject for tests). With no match → the cross-platform NO_MATCH message.
  */
 export function localKbAnswer({ message, platform = "", index = [] } = {}) {
-  const hit = matchKb(index, message, { platform });
+  const msg = String(message || "");
+  // P2 — security / recovery incidents first: containment-first, deterministic (minutes matter).
+  const inc = incidentAnswer(msg);
+  if (inc) {
+    const text = `${inc.title}\n\n${scrub(inc.body)}\n\n(Guidance only — I can't make changes on your device from here. Reconnect for the full ARIA assistant, or tell me what happens after a step.)`;
+    return { text, source: "local-kb", matched: true, platform: inferPlatform(msg, platform), id: `incident/${inc.id}` };
+  }
+  // P1 — credential/secret RETRIEVAL requests: honest refusal, never a KB junk match (out of scope).
+  if (CREDENTIAL_REQUEST.test(msg)) {
+    return { text: CREDENTIAL_REFUSAL, source: "local-kb", matched: false, refusal: true, platform: inferPlatform(msg, platform) };
+  }
+  const hit = matchKb(index, msg, { platform });
   // D1 — matchKb returns the best doc above a low score floor, which for an unknown query is still just the
   // NEAREST (wrong) doc. Abstain honestly unless the query's meaningful terms actually appear in that doc.
-  if (!hit || kbRelevance(message, `${hit.doc.title || ""} ${hit.doc.summary || hit.doc.text || ""}`) < KB_RELEVANCE_FLOOR) {
-    return { text: NO_MATCH, source: "local-kb", matched: false, platform: inferPlatform(message, platform) };
+  // P1 — the offline floor (0.38) is stricter than the shared online floor so short generic out-of-scope
+  // queries ("pizza place near the office" → Audio @ 0.33) abstain honestly instead of returning a wrong doc.
+  if (!hit || kbRelevance(msg, `${hit.doc.title || ""} ${hit.doc.summary || hit.doc.text || ""}`) < OFFLINE_KB_RELEVANCE_FLOOR) {
+    return { text: NO_MATCH, source: "local-kb", matched: false, platform: inferPlatform(msg, platform) };
   }
   const d = hit.doc;
   const excerpt = scrub(String(d.summary || d.text || "").trim()).slice(0, 600);
