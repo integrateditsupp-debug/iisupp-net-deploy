@@ -39,7 +39,10 @@ assert.equal(verifyChain(inserted).ok, false);
 
 // 3 — closed vocabulary: unknown events throw (replay logic must be total).
 assert.throws(() => appendEntry(j2, { event: "PLAN.VIBES" }, now), /unknown event/);
-assert.equal(PLAN_EVENTS.length, 9);
+// S3 added exactly ONE event to the closed vocabulary: PLAN.QUEUED (maintenance-window deferral).
+// The lock stays a lock — the count is asserted, and PLAN.QUEUED is asserted by name.
+assert.equal(PLAN_EVENTS.length, 10);
+assert.ok(PLAN_EVENTS.includes("PLAN.QUEUED"));
 
 // 4 — JSONL roundtrip preserves the chain.
 const text = toJsonl(j2);

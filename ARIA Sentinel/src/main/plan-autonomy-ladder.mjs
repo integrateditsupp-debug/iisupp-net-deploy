@@ -8,8 +8,15 @@
 import { isBlockedPath } from "../shared/path-guard.mjs";
 import { vettedTier } from "./dry-run-policy.mjs";
 
-// S1 hard gate — Confirmed mode only. S3 flips this after Cowork live review + Codex safety review.
+// S1 hard gate — Confirmed mode only. KEPT (Rule 15): it is the historic contract line, and any caller
+// that passes `unattendedEnabled: S1_UNATTENDED_ENABLED` still gets S1 behaviour.
 export const S1_UNATTENDED_ENABLED = false;
+// S3 — the conscious flip. Unattended plan execution now EXISTS, but it is not a free pass: the plan
+// must still be EARNED (≥10 supervised successes, every step vetted Tier ≤1, Autonomous mode), the
+// supervisor still re-approves EVERY step against live state, the plan-start countdown still runs (an
+// unattended plan is never silent), the kill-switch still aborts + rolls back, and the dry-run checkbox
+// still wins over everything. Autonomy removes the CLICK — it removes no gate.
+export const S3_UNATTENDED_ENABLED = true;
 export const PLAN_UNATTENDED_MIN_SUCCESSES = 10;
 export const PLAN_UNATTENDED_MAX_STEP_TIER = 1;
 
@@ -56,4 +63,27 @@ export function canRunUnattended({ plan, planHistory, vettedCountOf, mode, unatt
   const successes = planSupervisedSuccesses(planHistory, plan && plan.id);
   if (successes < PLAN_UNATTENDED_MIN_SUCCESSES) reasons.push(`plan has ${successes}/${PLAN_UNATTENDED_MIN_SUCCESSES} supervised successes`);
   return { allowed: reasons.length === 0, reasons };
+}
+
+/**
+ * S3 entry point: the same predicate, with the stage flag ON by default.
+ * Callers that want S1 semantics pass `unattendedEnabled: false` explicitly.
+ */
+export function canRunUnattendedS3(args = {}) {
+  const enabled = args.unattendedEnabled === undefined ? S3_UNATTENDED_ENABLED : args.unattendedEnabled;
+  const d = canRunUnattended({ ...args, unattendedEnabled: enabled });
+  // Reason strings are what the plan card shows the user, so keep them in S3 language when the flag is on.
+  return enabled ? d : { ...d, reasons: d.reasons };
+}
+
+/**
+ * The honest sentence under the plan card. Never claims autonomy the plan has not earned.
+ */
+export function autonomyLine(decision, plan, planHistory) {
+  if (decision && decision.allowed) {
+    return `This plan has earned autonomy — it will run on its own, with the countdown, the live step banner and Stop always on screen.`;
+  }
+  const n = planSupervisedSuccesses(planHistory, plan && plan.id);
+  const reasons = (decision && decision.reasons) || [];
+  return `This plan still needs your click (${n}/${PLAN_UNATTENDED_MIN_SUCCESSES} supervised successes). ${reasons[0] || ""}`.trim();
 }

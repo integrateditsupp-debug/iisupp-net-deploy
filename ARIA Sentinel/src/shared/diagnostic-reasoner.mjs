@@ -2,6 +2,12 @@
 // by probability × live-system relevance, surfaces unrelated anomalies, gates actions by "first, do no
 // harm", and drafts an escalation after repeated Tier-0 failures. No I/O, no Electron, no actuation.
 
+// STAGE 3 S3 (brain audit F3/F4/F7) — the reasoner no longer acts on matches[0] alone. Additive only:
+// every field it returned before is still returned, with the same meaning.
+import { hypothesisDecision } from "./multi-hypothesis.mjs";
+import { correlateRootCause } from "./root-cause-correlation.mjs";
+import { classifySeverity, escalationThreshold } from "./escalation-policy.mjs";
+
 const STOP = new Set(["the", "a", "an", "is", "it", "my", "to", "of", "on", "in", "and", "i", "me", "no", "not", "cant", "cannot", "wont", "keeps", "very", "so", "this", "that", "with", "for"]);
 
 function tokens(s) {
@@ -91,13 +97,20 @@ export function requiresConfirmation(action = {}) {
   return !canAutoRun(action);
 }
 
-/** After N (default 3) failed Tier-0 attempts, draft a content-blind ServiceNow escalation. */
-export function buildEscalationDraft({ symptomTitle = "Unresolved issue", attempts = [], context = {} } = {}, threshold = 3) {
+/**
+ * After N failed Tier-0 attempts, draft a content-blind ServiceNow escalation.
+ * S3/F7: N is SEVERITY-WEIGHTED — a high-impact issue no longer waits for three failures. An explicitly
+ * passed threshold still wins (back-compatible); with no severity and no threshold the historic 3 stands.
+ */
+export function buildEscalationDraft({ symptomTitle = "Unresolved issue", attempts = [], context = {}, severity = null } = {}, threshold = null) {
   const tried = Array.isArray(attempts) ? attempts : [];
-  if (tried.length < threshold) return null;
+  const limit = Number.isFinite(threshold) ? Number(threshold) : escalationThreshold(severity, 3);
+  if (tried.length < limit) return null;
   return {
     escalate: true,
-    shortDescription: `ARIA Sentinel: ${symptomTitle} unresolved after ${tried.length} safe attempts`,
+    severity: severity ? String(severity) : undefined,
+    threshold: limit,
+    shortDescription: `ARIA Sentinel: ${symptomTitle} unresolved after ${tried.length} safe attempt${tried.length === 1 ? "" : "s"}`,
     category: "endpoint",
     contentBlind: true,
     // Symbolic only — recipe ids + outcomes, never page content or file paths.
@@ -119,12 +132,29 @@ export function diagnose(input, kb, context = {}) {
   const top = matches[0];
   const ranked = top ? rankCauses(top.record.causes, context) : [];
   const relatedSubsystems = top ? subsystemsFor(top.id) : [];
+  // F3 — do NOT act on matches[0] when #2 is just as likely. Ask ONE question instead.
+  const decision = hypothesisDecision(matches);
+  // F4 — co-failing subsystems are usually ONE cause. Correlate before proposing per-symptom fixes.
+  const correlation = correlateRootCause(context);
   return {
     matches,
     topSymptom: top ? top.title : null,
     causes: ranked.slice(0, 3),
     anomalies: surfaceAnomalies(context, { relatedSubsystems }),
-    needsMoreInfo: matches.length === 0
+    needsMoreInfo: matches.length === 0,
+    // ── S3 additions (every field above is unchanged) ────────────────────────────────────────────
+    hypotheses: decision.hypotheses,                                   // F3: top-3, kept, not discarded
+    ambiguous: decision.action === "ask-one-question",                 // F3: too close to call
+    question: decision.question,                                       // F3: exactly ONE question, or null
+    nextAction: decision.action,                                       // "proceed" | "ask-one-question" | "need-info"
+    correlation,                                                       // F4: shared root cause, or null
+    severity: classifySeverity({                                       // F7: evidence-derived, never inflated
+      workBlocking: !!(context && context.workBlocking),
+      scope: (context && context.scope) || "single-app",
+      dataAtRisk: !!(context && context.dataAtRisk),
+      securityImpact: !!(context && context.securityImpact),
+      recurred: !!(context && context.recurred)
+    })
   };
 }
 

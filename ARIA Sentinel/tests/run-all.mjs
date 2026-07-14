@@ -329,6 +329,21 @@ const TESTS = [
   "./s2-restore-point.test.mjs",
   "./s2-escalation-packet.test.mjs",
   "./s2-resume-after-reboot-wiring.test.mjs",
+  // STAGE 3 S3 (earned autonomy, 2026-07-14): the plan-history ladder is live and Autonomous mode can now
+  // run a plan unattended — but only a plan that EARNED it (10 supervised successes, every step vetted
+  // Tier ≤1). Autonomy removes the CLICK and no gate: countdown, per-step supervisor re-approval,
+  // kill-switch and dry-run supremacy all stay. Maintenance windows queue disruptive unattended plans to
+  // the user's window. The deflection feed (durable resolutions only, null-not-zero) reaches B1/Stage-4.
+  // Plus the brain-audit S3 fixes: F3 multi-hypothesis (ONE disambiguating question when the top-2 are
+  // close), F4 cross-subsystem root-cause correlation (one plan, not three symptom patches), F7
+  // severity-weighted escalation (high-impact → a human after one attempt).
+  "./s3-autonomy-unattended.test.mjs",
+  "./s3-maintenance-window.test.mjs",
+  "./s3-deflection-feed.test.mjs",
+  "./s3-multi-hypothesis.test.mjs",
+  "./s3-root-cause-correlation.test.mjs",
+  "./s3-severity-escalation.test.mjs",
+  "./s3-invariants-and-feed-wiring.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

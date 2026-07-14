@@ -25,6 +25,10 @@ import { planRestorePoint, createRestorePoint as createRestorePointReal, rollbac
 import { buildEscalationPacket, deliverEscalation } from "./escalation-packet.mjs";
 import { issueSignature, decideOnRecurrence, recordResolution } from "../shared/durability-ledger.mjs";
 import { recipes as TIER0_CATALOG } from "./recipes/tier-0/catalog.mjs";
+// S3 — earned autonomy + maintenance windows. Also OPT-IN via ctx: inject nothing and the executor
+// behaves exactly as it did in S1/S2 (which is why every earlier battery stays green, untouched).
+import { canRunUnattendedS3, recordPlanOutcome, autonomyLine } from "./plan-autonomy-ladder.mjs";
+import { shouldDeferToWindow } from "./maintenance-window.mjs";
 
 /** Does this recipe need a reboot for its full effect? (catalog truth — e.g. reset-network-stack) */
 function requiresReboot(recipeId) {
@@ -36,7 +40,8 @@ function requiresReboot(recipeId) {
 const ALIASES_BACK = Object.freeze({ "restart-audio": "restart-audio-service", "flush-dns-cache": "flush-dns" });
 
 export const PLAN_OUTCOMES = Object.freeze([
-  "resolved", "already-healthy", "escalated", "aborted", "blocked", "invalid", "dry-run"
+  "resolved", "already-healthy", "escalated", "aborted", "blocked", "invalid", "dry-run",
+  "queued" // S3 — deferred to the user's maintenance window (nothing ran; it is re-proposed at the window)
 ]);
 
 function safeStringify(obj) {
@@ -131,7 +136,26 @@ export async function executePlan(plan, ctx = {}) {
     if (typeof ctx.logger === "function") { try { ctx.logger(e.event, e.detail, { planId: e.planId, planRunId: e.planRunId, stepIndex: e.stepIndex, recipeId: e.recipeId, ...(e.extra || {}) }); } catch { /* same */ } }
     return e;
   };
-  const finish = (outcome, extraFields = {}) => ({ outcome, planRunId, journal: entries, ...extraFields });
+  // S3 — PLAN-HISTORY LADDER, live. This is how a plan EARNS autonomy, and it is deliberately hard:
+  //   • only a SUPERVISED (clicked), live, goalProbe-verified success counts +1 — an unattended success
+  //     never inflates the count that granted the autonomy in the first place, and a dry-run never counts;
+  //   • a human stopping the plan (kill-switch / countdown abort) and a mid-plan supervisor veto count −1.
+  // Nothing is written here: the NEW ledger is returned and the caller persists it (ctx.persistPlanHistory).
+  let unattendedRun = false;
+  let dryRunFlag = false;
+  const recordHistory = (kind) => {
+    if (!kind || !ctx.planHistory) return null;
+    const next = recordPlanOutcome(ctx.planHistory, (plan && plan.id) || "", kind, now());
+    if (typeof ctx.persistPlanHistory === "function") { try { ctx.persistPlanHistory(next); } catch { /* never kills the plan */ } }
+    return next;
+  };
+  const finish = (outcome, extraFields = {}) => {
+    const { __history, ...rest } = extraFields;
+    let kind = __history || null;
+    if (!kind && outcome === "resolved" && !unattendedRun && !dryRunFlag) kind = "success";
+    const planHistory = recordHistory(kind);
+    return { outcome, planRunId, journal: entries, ...(planHistory ? { planHistory } : {}), ...rest };
+  };
   // F1 — record every terminal outcome against the issue signature. `resolved:true` ONLY on a goalProbe
   // pass with a real change: that is the only thing that can ever start the 24h quiet window that earns
   // the words "durably resolved". Returns the NEW ledger (caller persists; nothing is written here).
@@ -159,14 +183,51 @@ export async function executePlan(plan, ctx = {}) {
   const mode = String(ctx.mode || "confirmed");
   journal("PLAN.PROPOSED", { detail: plan.title, extra: { steps: plan.steps.length, riskEnvelope: plan.riskEnvelope.level, mode } });
 
-  // 3 — S1 hard gate: unattended execution does not exist yet. Refuse, never silently downgrade.
+  // 3 — S3 EARNED AUTONOMY. Unattended execution now exists, but it is EARNED, never assumed:
+  //   ≥10 supervised successes for THIS plan · every step vetted Tier ≤1 · mode = Autonomous.
+  // Autonomy removes the CLICK and nothing else — the plan-start countdown still runs (an unattended plan
+  // is never silent), the supervisor still re-approves every step against LIVE state, the kill-switch still
+  // aborts + rolls back, the dry-run checkbox still wins, and the durability ladder still refuses a repeat.
+  // A plan that has not earned it is REFUSED (with the honest reasons), never silently downgraded to a run.
+  let autonomy = null;
   if (ctx.unattended === true) {
-    journal("PLAN.ABORTED", { detail: "S1: unattended plan execution is not enabled — Confirmed mode (one click) required", extra: { code: "UNATTENDED_NOT_ENABLED" } });
-    return finish("aborted");
+    autonomy = canRunUnattendedS3({
+      plan,
+      planHistory: ctx.planHistory,
+      vettedCountOf: typeof ctx.vettedCountOf === "function" ? ctx.vettedCountOf : () => 0,
+      mode,
+      unattendedEnabled: ctx.unattendedEnabled // undefined → S3 default (enabled); false → S1 semantics
+    });
+    if (!autonomy.allowed) {
+      journal("PLAN.ABORTED", {
+        detail: `unattended refused — ${autonomy.reasons[0] || "not earned"}`,
+        extra: { code: "UNATTENDED_NOT_ENABLED", reasons: autonomy.reasons }
+      });
+      return finish("aborted", { autonomy });
+    }
+    unattendedRun = true;
   }
 
   // Dry-run resolution: the checkbox always wins; S1 executes in confirmed semantics.
   const dryRun = resolveDryRun({ mode: mode === "autonomous" ? "confirmed" : mode, dryRunCheckbox: ctx.dryRunCheckbox });
+  dryRunFlag = dryRun;
+
+  // 3a — MAINTENANCE WINDOW (S3). A disruptive plan that is running UNATTENDED waits for the user's window
+  // instead of interrupting them mid-work ("it fixed it overnight" — honestly earned). An attended run, a
+  // user-initiated run, a plan that opts out, a dry-run preview, or no configured window → no deferral is
+  // invented and the plan proceeds under its normal gates.
+  const windowDecision = shouldDeferToWindow({
+    plan, window: ctx.maintenanceWindow, unattended: unattendedRun,
+    now: now(), dateOf: ctx.dateOf, userInitiated: ctx.userInitiated === true
+  });
+  if (!dryRun && windowDecision.defer) {
+    journal("PLAN.QUEUED", {
+      detail: windowDecision.line,
+      extra: { code: "MAINTENANCE_WINDOW", nextStart: windowDecision.nextStart, reason: windowDecision.reason }
+    });
+    return finish("queued", { window: windowDecision, autonomy: autonomy || undefined });
+  }
+
   const supervise = typeof ctx.supervise === "function" ? ctx.supervise : superviseProposal;
   const executeStep = typeof ctx.executeStep === "function" ? ctx.executeStep : executeTier0;
   const runFn = ctx.run || defaultRun;
@@ -229,33 +290,50 @@ export async function executePlan(plan, ctx = {}) {
   });
 
   // 4 — consent. No confirm channel → no consent → no execution (real-or-empty, never default-yes).
-  if (typeof ctx.confirmPlan !== "function") {
-    journal("PLAN.ABORTED", { detail: "no confirm channel wired — refusing to assume consent", extra: { code: "NO_CONFIRM_CHANNEL" } });
-    return finish("aborted");
-  }
-  if (killed()) { journal("PLAN.ABORTED", { detail: "kill-switch engaged before start", extra: { code: "KILL_SWITCH" } }); return finish("aborted"); }
-  let confirmed = false;
-  try {
-    confirmed = (await ctx.confirmPlan({
-      plan, planRunId,
-      restorePoint: restoreDecision,            // "I'll make a restore point" / "journal-only, and here's why"
-      rollback: rollbackPosture({ plan, restorePoint: null }),
-      durability: durability || undefined,      // "this is the 2nd time — I'll try a deeper fix"
-      resumedFrom: startIndex > 0 ? startIndex : undefined
-    })) === true;
-  } catch { confirmed = false; }
-  if (!confirmed) {
-    journal("PLAN.ABORTED", { detail: "user declined the plan", extra: { code: "USER_DECLINED" } });
-    return finish("aborted");
+  // S3: an EARNED unattended plan skips the CLICK (that is the whole point of earned autonomy) — it skips
+  // NOTHING else. It is announced on the live banner before the countdown, so it is never silent.
+  if (killed()) { journal("PLAN.ABORTED", { detail: "kill-switch engaged before start", extra: { code: "KILL_SWITCH" } }); return finish("aborted", { __history: "abort" }); }
+  if (unattendedRun) {
+    journal("PLAN.STEP.PRE", {
+      stepIndex: null,
+      detail: autonomyLine(autonomy, plan, ctx.planHistory),
+      extra: { unattended: true, autonomyEarned: true, supervisedSuccesses: (ctx.planHistory && ctx.planHistory.plans && ctx.planHistory.plans[plan.id] && ctx.planHistory.plans[plan.id].supervisedSuccesses) || 0, restorePoint: restoreDecision.decision, rollback: rollbackPosture({ plan, restorePoint: null }).line }
+    });
+    if (typeof ctx.onBanner === "function") {
+      try { ctx.onBanner({ plan, planRunId, phase: "plan-start", unattended: true, restorePoint: restoreDecision, rollback: rollbackPosture({ plan, restorePoint: null }) }); } catch { /* the banner must never kill the plan */ }
+    }
+  } else {
+    if (typeof ctx.confirmPlan !== "function") {
+      journal("PLAN.ABORTED", { detail: "no confirm channel wired — refusing to assume consent", extra: { code: "NO_CONFIRM_CHANNEL" } });
+      return finish("aborted");
+    }
+    let confirmed = false;
+    try {
+      confirmed = (await ctx.confirmPlan({
+        plan, planRunId,
+        restorePoint: restoreDecision,            // "I'll make a restore point" / "journal-only, and here's why"
+        rollback: rollbackPosture({ plan, restorePoint: null }),
+        durability: durability || undefined,      // "this is the 2nd time — I'll try a deeper fix"
+        autonomy: autonomy || undefined,          // "still needs your click — 7/10 supervised successes"
+        resumedFrom: startIndex > 0 ? startIndex : undefined
+      })) === true;
+    } catch { confirmed = false; }
+    if (!confirmed) {
+      journal("PLAN.ABORTED", { detail: "user declined the plan", extra: { code: "USER_DECLINED" } });
+      return finish("aborted");
+    }
   }
 
   // 5 — plan-start countdown ALWAYS (abort funnel: banner button, Stop, Ctrl+Alt+K via abortAll).
   const gate = typeof ctx.countdownGate === "function" ? ctx.countdownGate : defaultCountdownGate(ctx);
   if (!(await gate({ id: plan.id, phase: "plan-start", seconds: COUNTDOWN_SECONDS }))) {
     journal("PLAN.ABORTED", { detail: "aborted during the plan-start countdown", extra: { code: "COUNTDOWN_ABORT" } });
-    return finish("aborted");
+    return finish("aborted", { __history: "abort" });
   }
-  journal("PLAN.APPROVED", { detail: "confirmed + plan-start countdown passed", extra: { mode, resumedFrom: startIndex || undefined } });
+  journal("PLAN.APPROVED", {
+    detail: unattendedRun ? "earned autonomy + plan-start countdown passed (unattended, banner live)" : "confirmed + plan-start countdown passed",
+    extra: { mode, unattended: unattendedRun || undefined, resumedFrom: startIndex || undefined }
+  });
 
   // 5b — RESTORE POINT (spec: before step 1, for any plan that touches system state). Throttle-aware:
   // if Windows refuses (1-per-24h) or System Restore is off, we DEGRADE HONESTLY to journal-only
@@ -305,7 +383,8 @@ export async function executePlan(plan, ctx = {}) {
   const abortPlan = async (code, stepIndex, detail) => {
     const rolledBack = await rollbackCompleted();
     journal("PLAN.ABORTED", { stepIndex, detail: detail || `aborted (${code})`, extra: { code, rolledBack } });
-    return finish("aborted");
+    // A human stopping the plan is a trust signal AGAINST it: −1 on the autonomy ladder.
+    return finish("aborted", { __history: (code === "KILL_SWITCH" || code === "COUNTDOWN_ABORT") ? "abort" : undefined });
   };
 
   const events = { PRE: "PLAN.STEP.PRE", EXEC: "PLAN.STEP.EXEC", POST: "PLAN.STEP.POST", ROLLBACK: "PLAN.STEP.ROLLBACK" };
@@ -344,7 +423,7 @@ export async function executePlan(plan, ctx = {}) {
       journal("PLAN.STEP.PRE", { stepIndex: i, recipeId: step.recipeId, detail: `supervisor veto: ${verdict.code} — ${verdict.reason}`, extra: { veto: true, code: verdict.code } });
       const rolledBack = await rollbackCompleted();
       journal("PLAN.ESCALATED", { stepIndex: i, detail: `mid-plan supervisor veto (${verdict.code}) — escalating to IIS`, extra: { code: verdict.code, rolledBack } });
-      return finish("escalated", { escalation: await escalateWithPacket({ reason: "supervisor-veto", durability, signature }), durabilityLedger: recordDurability(signature, false, "") });
+      return finish("escalated", { escalation: await escalateWithPacket({ reason: "supervisor-veto", durability, signature }), durabilityLedger: recordDurability(signature, false, ""), __history: "veto" });
     }
 
     // Per-step countdown for medium/high-risk steps; approve-fast + low-risk fast-path inside the plan.

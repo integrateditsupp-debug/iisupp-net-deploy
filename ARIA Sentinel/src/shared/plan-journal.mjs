@@ -12,9 +12,12 @@ export const JOURNAL_VERSION = "plan-journal-v1";
 export const PLAN_EVENTS = Object.freeze([
   "PLAN.PROPOSED", "PLAN.APPROVED",
   "PLAN.STEP.PRE", "PLAN.STEP.EXEC", "PLAN.STEP.POST", "PLAN.STEP.ROLLBACK",
-  "PLAN.RESOLVED", "PLAN.ABORTED", "PLAN.ESCALATED"
+  "PLAN.RESOLVED", "PLAN.ABORTED", "PLAN.ESCALATED",
+  // S3 — an unattended, disruptive plan deferred to the user's maintenance window. Terminal FOR THIS RUN
+  // (nothing was executed, so there is nothing to resume): the window re-proposes it as a fresh run.
+  "PLAN.QUEUED"
 ]);
-const TERMINAL_EVENTS = new Set(["PLAN.RESOLVED", "PLAN.ABORTED", "PLAN.ESCALATED"]);
+const TERMINAL_EVENTS = new Set(["PLAN.RESOLVED", "PLAN.ABORTED", "PLAN.ESCALATED", "PLAN.QUEUED"]);
 const MID_STEP_EVENTS = new Set(["PLAN.STEP.PRE", "PLAN.STEP.EXEC", "PLAN.STEP.ROLLBACK"]);
 
 // Deep-redact: strings are R11-redacted; objects/arrays walked; anything unserializable dropped.
