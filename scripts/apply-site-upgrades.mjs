@@ -145,27 +145,15 @@ try {
   }
 } catch (e) { results.flagged.push(['services catch-all', String(e.message)]); }
 
-/* ---------------- Mobile OS (m.html only) ---------------- */
-const MOBILE_OS_TAG = '<script src="/assets/iis-mobile-os.js" defer data-page="m"></script>';
-{
-  const abs = path.join(ROOT, 'm.html');
-  if (fs.existsSync(abs)) {
-    let html = fs.readFileSync(abs, 'utf8');
-    if (!html.includes('iis-mobile-os')) {
-      const idx = html.lastIndexOf('</body>');
-      if (idx !== -1) {
-        html = html.slice(0, idx) + '  ' + MOBILE_OS_TAG + '\n' + html.slice(idx);
-        if (!DRY) fs.writeFileSync(abs, html);
-        results.done.push('m.html + iis-mobile-os.js (Globe OS home)');
-      } else results.flagged.push(['m.html', 'no body close for mobile os']);
-    } else results.already.push('m.html (iis-mobile-os.js)');
-  } else results.missing.push('m.html');
-}
+/* Mobile OS layer (Globe OS redesign) is PARKED per Ahmad 2026-07-10 —
+   phones get the desktop design auto-scaled instead. The asset stays in
+   /assets/iis-mobile-os.js, uninjected, ready if he ever wants it. */
+
 /* ---------------- asset cache-busting version stamps ----------------
    /assets/* is served with a 7-day browser cache (max-age=604800), so asset
    CHANGES must ship under a new URL. Stamp every reference to our four
    assets with ?v=TOKEN. Re-runs replace older tokens (idempotent). */
-const TOKEN = '20260710k';
+const TOKEN = '20260710L';
 const STAMP_ASSETS = ['iis-motion.css', 'iis-motion.js', 'iis-upgrades.js', 'legal-suite.css', 'iis-mobile-os.js'];
 const SKIP_DIRS = new Set([
   'node_modules', '.git', '.netlify', 'backups', 'archive', 'apps', 'tests',
@@ -174,7 +162,12 @@ const SKIP_DIRS = new Set([
   'openclaw', 'extension', 'email', 'loops', 'tools', 'strategic-reference',
   'knowledge-base', 'sample-scenarios', 'case-study-templates', 'design-handoff',
 ]);
+/* Desktop-scaled mobile (Ahmad 2026-07-10): every public page carries a
+   fixed 1280px layout viewport so phones render the DESKTOP design and
+   auto-scale it to the screen. m.html keeps its own native viewport. */
+const DESKTOP_VIEWPORT = '<meta name="viewport" content="width=1280">';
 let stamped = 0;
+let viewported = 0;
 function stampWalk(dir) {
   for (const f of fs.readdirSync(dir)) {
     const p2 = path.join(dir, f);
@@ -191,6 +184,11 @@ function stampWalk(dir) {
     for (const asset of STAMP_ASSETS) {
       const re = new RegExp('(/assets/' + asset.replace('.', '\\.') + ')(\\?v=[\\w.\\-]*)?', 'g');
       out = out.replace(re, '$1?v=' + TOKEN);
+    }
+    const rel = path.relative(ROOT, p2).split(path.sep).join('/');
+    if (rel !== 'm.html') {
+      const vp = out.replace(/<meta[^>]*name=["']viewport["'][^>]*\/?>(\s*)/i, DESKTOP_VIEWPORT + '$1');
+      if (vp !== out) { out = vp; if (out.includes(DESKTOP_VIEWPORT)) viewported++; }
     }
     if (out !== html) {
       if (!DRY) fs.writeFileSync(p2, out);
@@ -251,6 +249,7 @@ results.done.forEach(function (f) { console.log('   + ' + f); });
 console.log('Already   : ' + results.already.length);
 results.already.forEach(function (f) { console.log('   = ' + f); });
 console.log('Stamped   : ' + stamped + ' pages -> ?v=' + TOKEN);
+console.log('Viewport  : ' + viewported + ' pages -> width=1280 (desktop-scaled mobile)');
 console.log('SW bumps  : ' + (swBumps.join(' | ') || 'none'));
 console.log('Flagged   : ' + results.flagged.length);
 results.flagged.forEach(function (r) { console.log('   ! ' + r[0] + ' — ' + r[1]); });
