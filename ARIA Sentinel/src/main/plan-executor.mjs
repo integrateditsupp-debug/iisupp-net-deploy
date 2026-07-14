@@ -19,6 +19,21 @@ import { superviseProposal } from "./supervisor-agent.mjs";
 import { createCountdown, COUNTDOWN_SECONDS } from "./action-countdown.mjs";
 import { executeTier0, resolveExecutorId, validateTier0Command, defaultRun, TIER0_COMMANDS } from "./tier-0-executor.mjs";
 import { resolveDryRun } from "./dry-run-policy.mjs";
+// S2 — resilience + durability (all OPT-IN via ctx: an executor call that injects none of them behaves
+// exactly as it did in S1, which is why the S1 batteries stay green untouched).
+import { planRestorePoint, createRestorePoint as createRestorePointReal, rollbackPosture } from "./restore-point.mjs";
+import { buildEscalationPacket, deliverEscalation } from "./escalation-packet.mjs";
+import { issueSignature, decideOnRecurrence, recordResolution } from "../shared/durability-ledger.mjs";
+import { recipes as TIER0_CATALOG } from "./recipes/tier-0/catalog.mjs";
+
+/** Does this recipe need a reboot for its full effect? (catalog truth — e.g. reset-network-stack) */
+function requiresReboot(recipeId) {
+  const id = String(recipeId || "");
+  const entry = TIER0_CATALOG[id] || TIER0_CATALOG[String(ALIASES_BACK[id] || "")];
+  return !!(entry && entry.requiresReboot);
+}
+// The catalog uses the recipe-facing ids; the executor canonicalises a couple of them.
+const ALIASES_BACK = Object.freeze({ "restart-audio": "restart-audio-service", "flush-dns-cache": "flush-dns" });
 
 export const PLAN_OUTCOMES = Object.freeze([
   "resolved", "already-healthy", "escalated", "aborted", "blocked", "invalid", "dry-run"
@@ -117,6 +132,15 @@ export async function executePlan(plan, ctx = {}) {
     return e;
   };
   const finish = (outcome, extraFields = {}) => ({ outcome, planRunId, journal: entries, ...extraFields });
+  // F1 — record every terminal outcome against the issue signature. `resolved:true` ONLY on a goalProbe
+  // pass with a real change: that is the only thing that can ever start the 24h quiet window that earns
+  // the words "durably resolved". Returns the NEW ledger (caller persists; nothing is written here).
+  const recordDurability = (sig, resolved, evidence) => {
+    if (!sig || !ctx.durabilityLedger) return null;
+    const led = recordResolution(ctx.durabilityLedger, { signature: sig, planId: (plan && plan.id) || "", fixApplied: (plan && plan.id) || "", resolved, evidence, now: now() });
+    if (typeof ctx.persistDurability === "function") { try { ctx.persistDurability(led); } catch { /* never kills the plan */ } }
+    return led;
+  };
   const killed = () => (typeof ctx.isKilled === "function" && !!ctx.isKilled()) || !!(ctx.killSignal && ctx.killSignal.aborted === true);
 
   // 1 — 🔒 R11: check #1 at the plan layer, before validation, before ANY journal detail can leak.
@@ -141,6 +165,69 @@ export async function executePlan(plan, ctx = {}) {
     return finish("aborted");
   }
 
+  // Dry-run resolution: the checkbox always wins; S1 executes in confirmed semantics.
+  const dryRun = resolveDryRun({ mode: mode === "autonomous" ? "confirmed" : mode, dryRunCheckbox: ctx.dryRunCheckbox });
+  const supervise = typeof ctx.supervise === "function" ? ctx.supervise : superviseProposal;
+  const executeStep = typeof ctx.executeStep === "function" ? ctx.executeStep : executeTier0;
+  const runFn = ctx.run || defaultRun;
+  const liveContext = typeof ctx.liveContext === "function"
+    ? ctx.liveContext
+    : () => ({ mode, history: ctx.history || [], recentAttempts: ctx.recentAttempts, vettedCatalog: ctx.vettedCatalog, now: now() });
+  const completed = []; // { stepIndex, recipeId (canonical), outcome }
+  // S2 — RESUME: continue an interrupted run at a safe step boundary. The journal chain is CONTINUED
+  // (priorEntries), never restarted, and already-completed steps stay in `completed` so a later abort
+  // still rolls THEM back in reverse order. Consent is re-asked (above): a reboot is not consent.
+  for (const e of (Array.isArray(ctx.priorEntries) ? ctx.priorEntries : [])) {
+    if (e && e.event === "PLAN.STEP.POST" && e.stepIndex != null && e.extra && e.extra.stepComplete) {
+      completed.push({ stepIndex: Number(e.stepIndex), recipeId: resolveExecutorId(e.recipeId) || String(e.recipeId || ""), outcome: String(e.extra.outcome || "prior") });
+    }
+  }
+  const startIndex = Number.isInteger(ctx.resumeFrom) && ctx.resumeFrom > 0 ? Math.min(ctx.resumeFrom, plan.steps.length) : 0;
+
+  // The escalation evidence packet (S2): built at EVERY escalation exit when the caller wires it.
+  // Content-blind + tamper-evident; nothing is auto-sent (no bridge → staged for Ahmad's one-click).
+  const escalateWithPacket = async ({ reason, durability: dur, signature: sig, probeEvidence, restorePoint } = {}) => {
+    if (!ctx.escalationBridge && ctx.wantEscalationPacket !== true) return null;
+    const built = buildEscalationPacket({
+      plan, planRunId, journal: entries, reason,
+      probeEvidence: probeEvidence || "", issue: ctx.issue, signature: sig || undefined,
+      durability: dur || undefined, restorePoint: restorePoint || restorePointResult, now: now()
+    });
+    if (!built.ok) return { ok: false, staged: false, delivered: false, reason: built.reason, line: "Escalation packet withheld — it could not be proven content-blind." };
+    const delivery = await deliverEscalation({ packet: built.packet, bridge: ctx.escalationBridge });
+    if (typeof ctx.onEscalationPacket === "function") { try { ctx.onEscalationPacket(built.packet, delivery); } catch { /* never kills the plan */ } }
+    return { ok: true, packet: built.packet, ...delivery };
+  };
+  let restorePointResult = null;
+
+
+  // 3b — 🔁 F1 DURABILITY PRE-FLIGHT. If this exact issue signature was "fixed" inside the recurrence
+  // window and we are about to run the SAME fix again, we refuse: repeating a fix that did not hold is
+  // the bug Ahmad named ("the issue comes back easily"). We escalate ONE rung instead.
+  const signature = ctx.issue || ctx.signature ? (ctx.signature && ctx.signature.hash ? ctx.signature : issueSignature(ctx.issue)) : null;
+  let durability = null;
+  if (signature && ctx.durabilityLedger) {
+    durability = decideOnRecurrence(ctx.durabilityLedger, signature.hash, now());
+    if (durability.recurred && String(durability.lastFixPlanId || "") === String(plan.id)) {
+      journal("PLAN.ESCALATED", {
+        detail: `same issue returned within the durability window — NOT repeating "${plan.id}"; escalating to "${durability.rung}"`,
+        extra: { code: "RECURRENCE_LADDER", rung: durability.rung, occurrences: durability.occurrences, recurred: true }
+      });
+      const esc = await escalateWithPacket({ reason: "recurrence-ladder-exhausted", durability, signature });
+      return finish("escalated", { durability, escalation: esc });
+    }
+  }
+
+  // 3c — RESTORE POINT decision (throttle-aware). Decided BEFORE consent so the plan card can say —
+  // honestly, in advance — whether this run is protected by a system restore point or journal-only.
+  const restoreDecision = planRestorePoint({
+    plan,
+    lastRestorePointAt: Number(ctx.lastRestorePointAt || 0),
+    systemRestoreEnabled: ctx.systemRestoreEnabled !== false,
+    now: now(),
+    dryRun: resolveDryRun({ mode: mode === "autonomous" ? "confirmed" : mode, dryRunCheckbox: ctx.dryRunCheckbox })
+  });
+
   // 4 — consent. No confirm channel → no consent → no execution (real-or-empty, never default-yes).
   if (typeof ctx.confirmPlan !== "function") {
     journal("PLAN.ABORTED", { detail: "no confirm channel wired — refusing to assume consent", extra: { code: "NO_CONFIRM_CHANNEL" } });
@@ -148,7 +235,15 @@ export async function executePlan(plan, ctx = {}) {
   }
   if (killed()) { journal("PLAN.ABORTED", { detail: "kill-switch engaged before start", extra: { code: "KILL_SWITCH" } }); return finish("aborted"); }
   let confirmed = false;
-  try { confirmed = (await ctx.confirmPlan({ plan, planRunId })) === true; } catch { confirmed = false; }
+  try {
+    confirmed = (await ctx.confirmPlan({
+      plan, planRunId,
+      restorePoint: restoreDecision,            // "I'll make a restore point" / "journal-only, and here's why"
+      rollback: rollbackPosture({ plan, restorePoint: null }),
+      durability: durability || undefined,      // "this is the 2nd time — I'll try a deeper fix"
+      resumedFrom: startIndex > 0 ? startIndex : undefined
+    })) === true;
+  } catch { confirmed = false; }
   if (!confirmed) {
     journal("PLAN.ABORTED", { detail: "user declined the plan", extra: { code: "USER_DECLINED" } });
     return finish("aborted");
@@ -160,17 +255,28 @@ export async function executePlan(plan, ctx = {}) {
     journal("PLAN.ABORTED", { detail: "aborted during the plan-start countdown", extra: { code: "COUNTDOWN_ABORT" } });
     return finish("aborted");
   }
-  journal("PLAN.APPROVED", { detail: "confirmed + plan-start countdown passed", extra: { mode } });
+  journal("PLAN.APPROVED", { detail: "confirmed + plan-start countdown passed", extra: { mode, resumedFrom: startIndex || undefined } });
 
-  // Dry-run resolution: the checkbox always wins; S1 executes in confirmed semantics.
-  const dryRun = resolveDryRun({ mode: mode === "autonomous" ? "confirmed" : mode, dryRunCheckbox: ctx.dryRunCheckbox });
-  const supervise = typeof ctx.supervise === "function" ? ctx.supervise : superviseProposal;
-  const executeStep = typeof ctx.executeStep === "function" ? ctx.executeStep : executeTier0;
-  const runFn = ctx.run || defaultRun;
-  const liveContext = typeof ctx.liveContext === "function"
-    ? ctx.liveContext
-    : () => ({ mode, history: ctx.history || [], recentAttempts: ctx.recentAttempts, vettedCatalog: ctx.vettedCatalog, now: now() });
-  const completed = []; // { stepIndex, recipeId (canonical), outcome }
+  // 5b — RESTORE POINT (spec: before step 1, for any plan that touches system state). Throttle-aware:
+  // if Windows refuses (1-per-24h) or System Restore is off, we DEGRADE HONESTLY to journal-only
+  // rollback and journal exactly that — we never let the user believe they are protected when they
+  // are not, and we never abort a plan just because a checkpoint wasn't possible.
+  if (restoreDecision.decision === "create") {
+    const mk = typeof ctx.createRestorePoint === "function" ? ctx.createRestorePoint : createRestorePointReal;
+    restorePointResult = await mk({ planId: plan.id, run: runFn, now: now() });
+    journal("PLAN.STEP.PRE", {
+      stepIndex: null,
+      detail: restorePointResult.created ? "restore point created before step 1" : `no restore point (${restorePointResult.reason}) — journal-only rollback for this run`,
+      extra: { restorePoint: true, created: !!restorePointResult.created, degraded: !!restorePointResult.degraded, reason: restorePointResult.reason, rollback: rollbackPosture({ plan, restorePoint: restorePointResult }).line }
+    });
+  } else if (restoreDecision.decision === "journal-only") {
+    journal("PLAN.STEP.PRE", {
+      stepIndex: null,
+      detail: `no restore point (${restoreDecision.reason}) — journal-only rollback for this run`,
+      extra: { restorePoint: true, created: false, degraded: true, reason: restoreDecision.reason, rollback: rollbackPosture({ plan, restorePoint: null }).line }
+    });
+  }
+
 
   // Reverse-order plan rollback: completed service steps are brought back to Running; a DNS flush
   // has no inverse (the cache repopulates) and is journaled as such. Never throws.
@@ -212,7 +318,7 @@ export async function executePlan(plan, ctx = {}) {
     return executeStep(step.recipeId, { dryRun, run: runFn, logger: bridge, now });
   };
 
-  for (let i = 0; i < plan.steps.length; i++) {
+  for (let i = startIndex; i < plan.steps.length; i++) {
     const step = plan.steps[i];
     if (killed()) return abortPlan("KILL_SWITCH", i, "kill-switch engaged mid-plan");
 
@@ -238,7 +344,7 @@ export async function executePlan(plan, ctx = {}) {
       journal("PLAN.STEP.PRE", { stepIndex: i, recipeId: step.recipeId, detail: `supervisor veto: ${verdict.code} — ${verdict.reason}`, extra: { veto: true, code: verdict.code } });
       const rolledBack = await rollbackCompleted();
       journal("PLAN.ESCALATED", { stepIndex: i, detail: `mid-plan supervisor veto (${verdict.code}) — escalating to IIS`, extra: { code: verdict.code, rolledBack } });
-      return finish("escalated");
+      return finish("escalated", { escalation: await escalateWithPacket({ reason: "supervisor-veto", durability, signature }), durabilityLedger: recordDurability(signature, false, "") });
     }
 
     // Per-step countdown for medium/high-risk steps; approve-fast + low-risk fast-path inside the plan.
@@ -260,12 +366,19 @@ export async function executePlan(plan, ctx = {}) {
       if (step.onFail === "rollback-plan") {
         const rolledBack = await rollbackCompleted();
         journal("PLAN.ESCALATED", { stepIndex: i, detail: `step failed — plan rolled back in reverse order, escalating to IIS`, extra: { code: "STEP_FAILED_ROLLED_BACK", rolledBack } });
-        return finish("escalated");
+        return finish("escalated", { escalation: await escalateWithPacket({ reason: "step-failed", durability, signature }), durabilityLedger: recordDurability(signature, false, "") });
       }
       journal("PLAN.ESCALATED", { stepIndex: i, detail: "step failed — escalating to IIS", extra: { code: "STEP_FAILED" } });
-      return finish("escalated");
+      return finish("escalated", { escalation: await escalateWithPacket({ reason: "step-failed", durability, signature }), durabilityLedger: recordDurability(signature, false, "") });
     }
     completed.push({ stepIndex: i, recipeId: result.recipeId, outcome: result.outcome });
+    // Explicit step-outcome boundary: this is the entry the boot watchdog resumes FROM (last event =
+    // STEP.POST = safe boundary) and it carries the honest outcome (success | no-op-neutral | dry-run).
+    journal("PLAN.STEP.POST", {
+      stepIndex: i, recipeId: result.recipeId,
+      detail: `step outcome: ${result.outcome}`,
+      extra: { outcome: result.outcome, stepComplete: true, rebootRequired: requiresReboot(result.recipeId) }
+    });
 
     // Optional extra per-step probe (belt over the tier-0 POST probe). Honest: a failed probe is a fail.
     if (step.successProbe && !dryRun) {
@@ -278,7 +391,7 @@ export async function executePlan(plan, ctx = {}) {
         } else {
           journal("PLAN.ESCALATED", { stepIndex: i, detail: "successProbe failed — escalating to IIS", extra: { code: "STEP_PROBE_FAILED" } });
         }
-        return finish("escalated");
+        return finish("escalated", { escalation: await escalateWithPacket({ reason: "step-failed", durability, signature, probeEvidence: p.output }), durabilityLedger: recordDurability(signature, false, p.output) });
       }
     }
   }
@@ -300,7 +413,9 @@ export async function executePlan(plan, ctx = {}) {
   const changedSomething = completed.some((c) => c.outcome === "success");
   if (probe.pass && changedSomething) {
     journal("PLAN.RESOLVED", { detail: `goalProbe passed: ${plan.goalProbe.description}`, extra: { evidence: probe.output, noChange: false } });
-    return finish("resolved", { evidence: probe.output });
+    const led = recordDurability(signature, true, probe.output);
+    // Honest: a goalProbe pass = "resolved (monitoring)". "Durably resolved" is earned by 24h of quiet.
+    return finish("resolved", { evidence: probe.output, durabilityLedger: led, durability: durability || undefined, restorePoint: restorePointResult || undefined });
   }
   if (probe.pass && !changedSomething) {
     // NO-OP-NEUTRAL is never counted as resolved-by-ARIA: the system was already healthy.
@@ -308,5 +423,9 @@ export async function executePlan(plan, ctx = {}) {
     return finish("already-healthy", { evidence: probe.output });
   }
   journal("PLAN.ESCALATED", { detail: `goalProbe failed: ${plan.goalProbe.description} — escalating to IIS`, extra: { code: "GOAL_PROBE_FAILED", evidence: probe.output } });
-  return finish("escalated", { evidence: probe.output });
+  return finish("escalated", {
+    evidence: probe.output,
+    escalation: await escalateWithPacket({ reason: "goal-probe-failed", durability, signature, probeEvidence: probe.output }),
+    durabilityLedger: recordDurability(signature, false, probe.output)
+  });
 }

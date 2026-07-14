@@ -320,6 +320,15 @@ const TESTS = [
   // STAGE 3 S2 (slices 1+2) — F5 bindings safety + F2 outcome-level goalProbes.
   "./s2-tier0-bindings-safety.test.mjs",
   "./s2-goalprobe-outcome-real-or-empty.test.mjs",
+  // STAGE 3 S2 (slice 3 — resilience + durability, 2026-07-14): F1 durability ledger (same fix is never
+  // repeated inside 72h; "durably resolved" is earned by a 24h quiet window; deflection counts durable
+  // resolutions only) + throttle-aware restore points with an honest journal-only degrade + the escalation
+  // evidence packet (content-blind, tamper-evident, staged for Ahmad — never auto-sent) + resume-after-reboot
+  // wired to the boot watchdog (safe boundary resumes; mid-step rolls back — never half-applied).
+  "./s2-durability-ledger.test.mjs",
+  "./s2-restore-point.test.mjs",
+  "./s2-escalation-packet.test.mjs",
+  "./s2-resume-after-reboot-wiring.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

@@ -14,12 +14,17 @@ export const TIER0_ALLOWED_PREFIXES = [
   "Get-Service", "Get-ItemProperty", "Measure-Object",
   // S2 (F2) — read-only OUTCOME-probe tokens: resolve a real host, reach a real port, read adapter/queue state.
   "Get-NetAdapter", "Get-Printer", "Resolve-DnsName", "Test-NetConnection",
+  // S2 (restore points) — create a system checkpoint before a system-state plan, and READ the
+  // existing checkpoints to detect Windows' 24h creation throttle. Checkpoint-Computer only ADDS a
+  // safety net; it never changes user config. Restore-Computer (the REVERT) is deliberately absent
+  // from this list AND named in TIER0_DENY below: a revert is offered to the user, never automatic.
+  "Checkpoint-Computer", "Get-ComputerRestorePoint",
   "Stop-Service", "Start-Service", "Restart-Service",
   "Remove-Item", "Start-Process", "wmic", "sfc", "msdt.exe", "reg"
 ];
 
 // Never-allowed substrings (destructive / security-disabling / write ops) — defense in depth.
-export const TIER0_DENY = /\b(format-volume|remove-partition|clear-disk|diskpart|bcdedit|reg\s+add|reg\s+delete|set-itemproperty|new-itemproperty|set-mppreference|disable|uninstall|del\s+\/|rd\s+\/s)\b/i;
+export const TIER0_DENY = /\b(format-volume|remove-partition|clear-disk|diskpart|bcdedit|reg\s+add|reg\s+delete|set-itemproperty|new-itemproperty|set-mppreference|restore-computer|disable|uninstall|del\s+\/|rd\s+\/s)\b/i;
 
 const def = (o) => ({
   tier: TIER0,
