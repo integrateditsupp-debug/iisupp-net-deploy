@@ -904,8 +904,10 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
    (#ariaChatLog) scrolls INTERNALLY; the head stays pinned at top and the composer + statusline stay
    pinned at the bottom. A long conversation never grows the outer ARIA tab / portal. min-height:0 on the
    log is the critical bit — without it a flex child won't shrink below its content and overflow never fires. */
+/* P8 (2026-07-14) — the combined ARIA view gives Chat the FULL viewport envelope (never the old ~110px cram);
+   min-height is clamped to the envelope so a short window can't push the panel past the tab + clip it. */
 .aria-chat-panel { display:flex; flex-direction:column; max-width:720px; margin:0 auto;
-  height:calc(100vh - 112px); max-height:calc(100vh - 112px); min-height:440px; }
+  height:calc(100vh - 112px); max-height:calc(100vh - 112px); min-height:min(440px, calc(100vh - 112px)); }
 .aria-chat-head { text-align:center; padding:6px 0 10px; flex-shrink:0; }
 .aria-chat-globe { width:40px; height:40px; margin:0 auto 8px; border-radius:50%;
   background:radial-gradient(circle at 35% 30%, #f1dca7, #c5a059 55%, #6b521f 100%); box-shadow:0 0 18px rgba(197,160,89,.45); }
@@ -930,6 +932,13 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .aria-chat-article .ac-title { font-size:12.5px; font-weight:600; color:#f1dca7; }
 .aria-chat-article .ac-tier { font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; padding:2px 7px; border-radius:999px; border:1px solid rgba(197,160,89,.32); color:#c5a059; }
 .aria-chat-article a { font-size:11.5px; color:#c5a059; text-decoration:none; } .aria-chat-article a:hover { text-decoration:underline; }
+/* P7 — collapsible "more help" (verify/escalate/prevent) so the answer leads concise but loses nothing. */
+.aria-chat-more { margin-top:9px; border-top:1px solid rgba(255,255,255,.08); padding-top:8px; }
+.aria-chat-more > summary { cursor:pointer; font-size:11.5px; color:#c5a059; list-style:none; user-select:none; }
+.aria-chat-more > summary::-webkit-details-marker { display:none; }
+.aria-chat-more > summary::before { content:"▸ "; }
+.aria-chat-more[open] > summary::before { content:"▾ "; }
+.aria-chat-more .aria-chat-md { margin-top:7px; }
 .aria-chat-src { font-size:10px; color:var(--muted,#8b8b93); margin-top:5px; }
 .aria-chat-src.anthropic { color:#8aa6c8; }
 /* TASK 4 — Sentinel-only "Resolve it for me" chip under an answer (the gated local-fix action). */
@@ -1004,6 +1013,8 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .aria-chat-feedback-btn:hover:not(:disabled) { background:rgba(255,255,255,.12); }
 .aria-chat-feedback-btn:disabled { opacity:.45; cursor:default; }
 .aria-chat-feedback-status { font-size:12px; opacity:.75; }
+/* P5/P6 — the escalation panel shown under a "Not yet" answer (walk-through / connect-a-technician + ticket ref). */
+.aria-chat-escalate { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:8px; padding-top:8px; border-top:1px dashed rgba(197,160,89,.28); width:100%; }
 
 /* ===== Walk-through tab (guided, step-by-step · guide mode changes nothing) ===== */
 .walkthrough-guide-note { color: var(--aria-gold-light); }
@@ -1028,6 +1039,10 @@ body.low-power .trial-end-card .plan-card::before { display: none; }
 .walkthrough-lib-card:hover { border-color: var(--aria-gold); background: var(--aria-gold-tint-bg); }
 .walkthrough-lib-title { display: block; font-size: 13.5px; font-weight: 600; color: var(--aria-gold-light); }
 .walkthrough-lib-blurb { display: block; font-size: 11.5px; color: var(--aria-text-muted); margin-top: 3px; line-height: 1.45; }
+/* LAUNCHER (2026-07-14) — the "Start ▸" cue + per-group subline. Start opens the guided flow under the globe. */
+.walkthrough-lib-start { display: inline-block; margin-top: 9px; font-size: 11px; font-weight: 700; letter-spacing: .04em; color: #1a1410; background: linear-gradient(135deg, var(--aria-gold, #c5a059), var(--aria-gold-light, #f1dca7)); border-radius: 999px; padding: 3px 11px; }
+.walkthrough-lib-card:hover .walkthrough-lib-start { box-shadow: 0 0 12px rgba(197,160,89,.45); }
+.walkthrough-group-sub { margin: 2px 0 8px; font-size: 11.5px; color: var(--aria-text-muted); }
 .companion-input { width: 100%; box-sizing: border-box; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--aria-border); background: var(--aria-bg); color: var(--aria-text); font: inherit; margin: 4px 0; }
 .companion-input:focus { outline: none; border-color: var(--aria-gold); }
 .companion-copy { white-space: pre-wrap; word-break: break-word; font: 12px/1.55 var(--aria-font-mono); background: var(--aria-bg); border: 1px solid var(--aria-border); border-radius: 10px; padding: 12px; color: #eadfc4; margin: 6px 0; }

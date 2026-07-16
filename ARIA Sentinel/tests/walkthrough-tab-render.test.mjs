@@ -58,5 +58,13 @@ assert.match(fn, /Fix a problem/, "empty state offers a Fix-a-problem entry");
 assert.match(fn, /activateTab\("aria"\)/, "empty state routes into the ARIA chat");
 t();
 
-assert.equal(n, 6, "6 walkthrough-tab-render groups");
-console.log(`walkthrough-tab-render test passed (${n} groups · tab registered + switchable · real steps for authored issues · real-or-empty [] for unauthored · honest fallback · empty-state routes to chat).`);
+// 7 — LAUNCHER role (2026-07-14): the empty state is a launcher (Start cards) that opens the guided flow UNDER
+// the floating globe (openCompanionFlow), NOT in-tab; the in-tab runner stays as the graceful fallback (Rule 15).
+assert.match(fn, /class="walkthrough-lib-start">Start/, "launcher cards show a Start cue");
+assert.match(fn, /startWalkthroughUnderGlobe\(b\.dataset\.flow/, "Start routes through startWalkthroughUnderGlobe");
+assert.match(renderer, /sentinel\.openCompanionFlow\?\.\(flowId\)/, "Start opens the flow under the globe");
+assert.match(renderer, /function renderCompanionFlowInTab\(/, "in-tab runner kept as the fallback (content relocated, not deleted)");
+t();
+
+assert.equal(n, 7, "7 walkthrough-tab-render groups");
+console.log(`walkthrough-tab-render test passed (${n} groups · tab registered + switchable · real steps for authored issues · real-or-empty [] for unauthored · honest fallback · empty-state routes to chat · launcher → under-globe).`);

@@ -30,8 +30,10 @@ export function pendingHtml(actions = []) {
 /** Map a raw transparency-log entry to an activity row (icon + deep-link tab by tag). */
 export function eventToActivity(entry = {}) {
   const tag = String(entry.tag || "LOG");
-  const icon = { "RUN": "🔧", "DIAGNOSE": "🩺", "UPDATE": "🔄", "SECURITY": "🛡", "HEARTBEAT": "💓", "KILL-SWITCH": "🛑", "SELF-HEAL": "🩹" }[tag] || "•";
-  const tab = { "DIAGNOSE": "mode", "UPDATE": "about", "SECURITY": "compliance", "RUN": "recipes" }[tag] || "overview";
+  // P6 (2026-07-14) — RESOLVED/ESCALATE/TICKET carry a minted ticket reference in their text; surface them here
+  // (a 🎫 row on the Dashboard timeline) so an in-app ticket ref is never "minted but invisible".
+  const icon = { "RUN": "🔧", "DIAGNOSE": "🩺", "UPDATE": "🔄", "SECURITY": "🛡", "HEARTBEAT": "💓", "KILL-SWITCH": "🛑", "SELF-HEAL": "🩹", "RESOLVED": "✅", "ESCALATE": "🎫", "TICKET": "🎫" }[tag] || "•";
+  const tab = { "DIAGNOSE": "mode", "UPDATE": "about", "SECURITY": "compliance", "RUN": "recipes", "RESOLVED": "compliance", "ESCALATE": "compliance", "TICKET": "compliance" }[tag] || "overview";
   const time = entry.ts ? new Date(entry.ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
   return { time, icon, text: `${tag}: ${entry.text || ""}`, status: "✓", tab };
 }

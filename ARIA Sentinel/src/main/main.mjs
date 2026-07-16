@@ -211,6 +211,9 @@ let pendingDeepLink = null;
 // The last web-originated Walk-through target, held so the renderer can pull it once the tab loads even if the
 // event fired before the panel was ready (fresh-launch race). Content-blind: a recipe id + a capped intent only.
 let pendingWalkthrough = null;
+// The Walk-through LAUNCHER (2026-07-14) target: a companion flow id the globe overlay opens UNDER the globe.
+// Held so a freshly-shown overlay renderer can pull it on companion-mode entry (mirrors pendingWalkthrough).
+let pendingCompanionFlow = null;
 function extractDeepLink(argv) {
   if (!Array.isArray(argv)) return null;
   return argv.find((a) => typeof a === "string" && a.startsWith(DEEP_LINK_SCHEME + "://")) || null;
@@ -3609,6 +3612,34 @@ ipcMain.handle("sentinel:case-study-draft", (_event, opts) => caseStudyDraftNow(
 ipcMain.handle("sentinel:case-study-consent", (_event, consent) => recordCaseStudyConsent(consent || {})); // RUN-E E2 — explicit one-click consent, never inferred
 ipcMain.handle("sentinel:case-study-publishable", () => publishableCaseStudy({ ready: true, missing: [], record: readCaseStudyDraft() })); // RUN-E E2 — null until consent + review
 ipcMain.handle("sentinel:resolution-outcome", (_event, payload) => recordResolutionOutcome(payload || {})); // RUN-B B1 — "Was this fixed?" real outcome
+// P5/P6 (2026-07-14) — chat escalation. When a user says "not yet" and asks to connect a technician, mint a REAL
+// ticket reference (IIS-YYYYMMDD-NNN, or a ServiceNow number when that bridge is live for a matched recipe), log
+// it to the transparency log so it surfaces in Dashboard → Activity, and return the ref for the chat bubble.
+// Real-or-empty: the ref is minted + recorded exactly like a resolve ticket; nothing is faked.
+ipcMain.handle("sentinel:escalate-ticket", async (_event, payload = {}) => {
+  let snNumber = "";
+  const recipeId = String((payload && payload.recipeId) || "");
+  if (recipeId) {
+    try { const r = await serviceNowRaiseIncident(recipeId, { intent: String((payload && payload.issue) || "").slice(0, 200) }); if (r && r.ok && r.number) snNumber = String(r.number); }
+    catch { /* ServiceNow best-effort; a local ref is always minted below */ }
+  }
+  const { ref, source } = mintAndRecordTicketRef(snNumber);
+  logEvent("ESCALATE", `Escalation ticket ${ref} opened from a chat question (${source}).`, { ref, source });
+  broadcastState();
+  return { ok: true, ref, source };
+});
+// P5 — record a KB "miss" (the user said the answer didn't fix it) to the local learning loop so weak answers are
+// visible + improvable. Content-blind: we store only the outcome + match score, never the raw question off-device.
+ipcMain.handle("sentinel:answer-miss", (_event, payload = {}) => {
+  try {
+    const score = Number(payload && payload.matchScore);
+    const misses = store.get("answerMisses") || [];
+    misses.unshift({ ts: new Date().toISOString(), matchScore: Number.isFinite(score) ? score : null });
+    store.set("answerMisses", misses.slice(0, 500));
+    logEvent("FEEDBACK", "Answer marked not-yet — logged a KB miss for review.");
+    return { ok: true, count: misses.length };
+  } catch { return { ok: false }; }
+});
 ipcMain.handle("sentinel:resolution-stats", () => resolutionStatsNow());                                     // RUN-B B1 — real deflection %
 ipcMain.handle("sentinel:value-proof", () => valueProofNow());                                                // RUN-B B2 — real ROI + deflection value proof
 ipcMain.handle("sentinel:trust-posture", () => trustPostureNow());                                            // RUN-B B3 — honest trust/security surface
@@ -3726,7 +3757,11 @@ ipcMain.handle("sentinel:is-vetted", (_event, recipeId) => ({ vetted: Boolean(re
 // site (their pricing / sign-up) — this is the USER's click launching their own browser, NOT an app network
 // call and NOT an account/payment action by the agent (those stay the user's, always). Host-anchored so only
 // these exact official domains are ever opened. No paid API is called from here.
-const OPEN_EXTERNAL_ALLOW = /^https:\/\/(iisupp\.net|[\w.-]+\.service-now\.com|(www\.)?anthropic\.com|claude\.ai|(www\.)?openai\.com|chatgpt\.com|gemini\.google\.com|ai\.google\.dev)(\/|$)/;
+// AI-tool vendor pages + the IT-setup official pages the Walk-through launcher opens (Microsoft 365 / OneDrive /
+// Copilot / MFA / the browser-extension stores). Host-anchored, https-only, user-initiated browser opens only —
+// never an app network call, account, or payment action. Kept in sync with the flow `open` URLs (proven by
+// tests/walkthrough-open-live.test.mjs, which asserts every flow URL matches this allowlist).
+const OPEN_EXTERNAL_ALLOW = /^https:\/\/(iisupp\.net|[\w.-]+\.service-now\.com|(www\.)?anthropic\.com|claude\.ai|(www\.)?openai\.com|chatgpt\.com|gemini\.google\.com|ai\.google\.dev|(www\.)?perplexity\.ai|(www\.)?microsoft\.com|support\.microsoft\.com|copilot\.microsoft\.com|(www\.)?microsoft365\.com|aka\.ms|chromewebstore\.google\.com|microsoftedge\.microsoft\.com)(\/|$)/;
 ipcMain.handle("sentinel:open-external", (_event, url) => {
   if (typeof url === "string" && OPEN_EXTERNAL_ALLOW.test(url)) {
     shell.openExternal(url);
@@ -3746,8 +3781,25 @@ ipcMain.handle("sentinel:open-main-tab", (_event, tab) => {
   showMainWindow(allowed.has(String(tab)) ? String(tab) : "aria");
   return { ok: true };
 });
-// Companion → open the assistant panel on the floating globe overlay (companion mode).
-ipcMain.handle("sentinel:open-companion", () => { showOverlay({ companion: true }); return { ok: true }; });
+// Companion → open the assistant panel on the floating globe overlay (companion mode). Clears any un-consumed
+// launcher flow first, so a plain globe click always lands on the menu (never resumes a stale launcher flow).
+ipcMain.handle("sentinel:open-companion", () => { pendingCompanionFlow = null; showOverlay({ companion: true }); return { ok: true }; });
+// Walk-through LAUNCHER (2026-07-14) → open a SPECIFIC guided flow UNDER the floating globe (not in the app
+// window). Stash the id so the overlay renderer can pull it on companion-mode entry (freshly-shown race), AND
+// push it directly for the already-open case. Guide/setup changes nothing on the machine; `open` steps launch
+// the user's browser via the host-anchored allowlist, and account/pay steps stay the user's own hard-stops.
+ipcMain.handle("sentinel:open-companion-flow", (_event, flowId) => {
+  const id = String(flowId || "");
+  if (!id) return { ok: false, error: "no-flow" };
+  pendingCompanionFlow = id;
+  showOverlay({ companion: true });               // shows the overlay even if the ambient globe is hidden
+  if (overlayWindow && !overlayWindow.isDestroyed()) {
+    try { overlayWindow.webContents.send("sentinel:companion-flow", { flowId: id }); } catch { /* overlay gone → pull covers it */ }
+  }
+  return { ok: true, flowId: id };
+});
+// The overlay pulls (and clears) the pending launcher flow when it enters companion mode — flash-free start.
+ipcMain.handle("sentinel:get-companion-flow", () => { const f = pendingCompanionFlow; pendingCompanionFlow = null; return f; });
 // Companion → copy a locally-composed prompt to the OS clipboard. R11: never copy an off-limits path reference.
 ipcMain.handle("sentinel:copy", (_event, text) => {
   const s = String(text || "");

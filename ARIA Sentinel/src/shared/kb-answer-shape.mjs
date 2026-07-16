@@ -103,6 +103,19 @@ export function shapeKbAnswerForEndUser(markdown) {
   return parts.join("\n\n").trim();
 }
 
+// P7 (2026-07-14) — split a SHAPED answer into the concise LEAD (plain-language explanation + the fix steps) and
+// the supporting "more help" (verify / escalation / prevention). The chat leads with the LEAD (Rule 17 — value
+// first) and tucks `more` behind a toggle. Loses nothing (F2-safe): the "Full article" link still stands, and a
+// text without the supporting markers (offline/learned chunk) returns all as `lead` with an empty `more`.
+const MORE_MARKERS = ["**Confirm it's fixed**", "**If that doesn't resolve it**", "**Prevent it next time**"];
+export function splitShapedAnswer(shaped) {
+  const text = String(shaped == null ? "" : shaped);
+  let cut = -1;
+  for (const m of MORE_MARKERS) { const i = text.indexOf(m); if (i >= 0 && (cut < 0 || i < cut)) cut = i; }
+  if (cut < 0) return { lead: text.trim(), more: "" };
+  return { lead: text.slice(0, cut).trim(), more: text.slice(cut).trim() };
+}
+
 // A cheap assertion helper for tests: true if the text carries NO internal/keyword marker or registry hive.
 export function isEndUserSafe(text) {
   const t = String(text || "");

@@ -15,6 +15,9 @@ const sentinel = window.sentinel || {
   onGreeting: () => {},
   onGlobeConfirmation: () => {},
   openCompanion: async () => {},
+  openCompanionFlow: async () => ({ ok: true }),
+  getCompanionFlow: async () => null,
+  onCompanionFlow: () => {},
   openWalkthrough: async () => ({ ok: true }),
   openMainTab: async () => ({ ok: true }),
   openExternal: async () => ({ ok: true }),
@@ -169,9 +172,24 @@ sentinel.onGlobeConfirmation?.((c) => {
 
 sentinel.onOverlayMode?.((mode) => {
   setMode(mode);
-  // If main put us into companion mode (globe click / proactive), make sure the menu is rendered.
-  if (mode === "companion") { if (!comp) openCompanion(); }
-  else { comp = null; } // leaving companion mode clears the in-memory session (answers never persist)
+  // If main put us into companion mode (globe click / proactive / launcher Start), render the right surface.
+  // The Walk-through LAUNCHER stashes a specific flow id in main; pull it here so the guided pop-up opens UNDER
+  // the globe with NO menu flash. No pending flow → the "What would you like to do?" menu (globe-click path).
+  if (mode === "companion") {
+    if (!comp) {
+      Promise.resolve(sentinel.getCompanionFlow?.()).then((flowId) => {
+        if (comp) return;                       // a push (onCompanionFlow) already opened something
+        if (flowId && getFlow(flowId)) openCompanionAtFlow(flowId);
+        else openCompanion();
+      }).catch(() => { if (!comp) openCompanion(); });
+    }
+  } else { comp = null; } // leaving companion mode clears the in-memory session (answers never persist)
+});
+
+// Walk-through LAUNCHER push — when the overlay is ALREADY in companion mode, main pushes the flow id directly.
+sentinel.onCompanionFlow?.((payload) => {
+  const flowId = payload && payload.flowId;
+  if (flowId && getFlow(flowId)) openCompanionAtFlow(flowId);
 });
 
 sentinel.onDetection((detection) => {
@@ -289,6 +307,14 @@ function topView() { return comp && comp.stack[comp.stack.length - 1]; }
 
 function openCompanion() {
   comp = { answers: {}, stack: [{ kind: "menu" }] };
+  setMode("companion");
+  renderCompanion();
+}
+// Walk-through LAUNCHER — open the companion DIRECTLY at a chosen flow (its first step), under the globe. Reuses
+// the exact same flow engine as the menu path (renderFlowStep handles all 6 step types incl. live-open `open`).
+function openCompanionAtFlow(flowId) {
+  if (!getFlow(flowId)) { openCompanion(); return; } // unknown id → honest menu, never a blank pop-up
+  comp = { answers: {}, stack: [{ kind: "flow", flowId, index: 0 }] };
   setMode("companion");
   renderCompanion();
 }

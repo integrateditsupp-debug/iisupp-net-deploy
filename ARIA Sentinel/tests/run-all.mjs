@@ -319,6 +319,13 @@ const TESTS = [
   "./deep-link-walkthrough-mode.test.mjs",
   "./resolve-button-routing.test.mjs",
   "./web-walkthrough-cta.test.mjs",
+  // WALK-THROUGH UNDER THE GLOBE (2026-07-14) — the tab is a launcher → Start opens the guided flow under the
+  // floating globe + live-opens each target; the live-open never auto-enters credentials/pays (Rule 14 boundary).
+  "./walkthrough-launcher.test.mjs",
+  "./walkthrough-open-live.test.mjs",
+  // P5/P6/P7 (2026-07-14) — not-yet offers next steps + a real ticket ref surfaced in-app; answer concision toggle.
+  "./chat-escalation-ticket.test.mjs",
+  "./answer-concision-p7.test.mjs",
   // ARIA COMPANION (2026-07-02) — globe → interactive assistant; typed step engine collecting input; honest
   // Claude AI-setup (no invented price, user-click accounts); interactive Learn lessons.
   "./companion-shell.test.mjs",

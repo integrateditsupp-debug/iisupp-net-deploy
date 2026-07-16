@@ -80,6 +80,17 @@ contextBridge.exposeInMainWorld("sentinel", {
   // ARIA Companion (globe assistant) — open the panel, hand a fix to the main Walk-through tab, bring a main tab
   // forward (Ask ARIA), and copy a composed prompt. Copy uses the OS clipboard via main (no page-clipboard perms).
   openCompanion: () => ipcRenderer.invoke("sentinel:open-companion"),
+  // Walk-through LAUNCHER — open a SPECIFIC guided flow UNDER the floating globe (not in the app window).
+  openCompanionFlow: (flowId) => ipcRenderer.invoke("sentinel:open-companion-flow", flowId),
+  getCompanionFlow: () => ipcRenderer.invoke("sentinel:get-companion-flow"), // overlay pulls the pending launcher flow
+  onCompanionFlow: (callback) => {
+    const listener = (_event, payload) => callback(payload);
+    ipcRenderer.on("sentinel:companion-flow", listener);
+    return () => ipcRenderer.removeListener("sentinel:companion-flow", listener);
+  },
+  // P5/P6 — chat escalation: mint + record a real ticket ref (and raise ServiceNow for a matched recipe); log a KB miss.
+  escalateTicket: (payload) => ipcRenderer.invoke("sentinel:escalate-ticket", payload),
+  logAnswerMiss: (payload) => ipcRenderer.invoke("sentinel:answer-miss", payload),
   openWalkthrough: (payload) => ipcRenderer.invoke("sentinel:open-walkthrough", payload),
   openMainTab: (tab) => ipcRenderer.invoke("sentinel:open-main-tab", tab),
   copyText: (text) => ipcRenderer.invoke("sentinel:copy", text),

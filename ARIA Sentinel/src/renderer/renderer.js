@@ -3,7 +3,8 @@ import "./components/aria-globe.mjs"; // defines the <aria-globe> custom element
 import { extOf, requiredSteps, stepFor } from "../shared/delete-confirm.mjs";
 import { renderMarkdown } from "../shared/aria-markdown.mjs"; // RUN 34-1 — readable chat answers (markdown → HTML)
 import { repairTruncatedTail } from "../shared/kb-text.mjs"; // F2 — never render a mid-line-truncated tail ("Print server (`")
-import { walkStepsFor, hasWalkSteps, listFlows, getFlow, flowStep, resolveStep } from "../shared/walkthrough-steps.mjs"; // ONE shared source — recipe steps + companion flows
+import { splitShapedAnswer } from "../shared/kb-answer-shape.mjs"; // P7 — concise lead + collapsible "more help"
+import { walkStepsFor, hasWalkSteps, listFlows, getFlow, flowStep, resolveStep, LAUNCHER_GROUPS } from "../shared/walkthrough-steps.mjs"; // ONE shared source — recipe steps + companion flows + launcher groups
 import { confidenceBadge } from "../shared/resolution-outcome.mjs"; // RUN-B B1 — per-answer confidence + "Was this fixed?" feedback
 // SENTINEL TRIAL GATING 2026-07-02 — per-tab enable/lock map (Walk-Through survives trial expiry; the buy path never locks).
 import { tabGateMap, LOCKED_TAB_MESSAGE, WALKTHROUGH_TAB } from "../shared/tab-gating.mjs";
@@ -166,25 +167,27 @@ async function renderWalkthrough(target) {
   // A companion flow opened full-screen in the tab (the tab is the "library" view of the same content source).
   if (target && target.flowId) { renderCompanionFlowInTab(String(target.flowId)); return; }
 
-  // Empty state — the library: describe a problem + the same guided setups/lessons the globe companion runs.
+  // LAUNCHER (2026-07-14) — the tab is a launcher: pick a system, press Start, and the guided walk-through opens
+  // UNDER the floating globe (its own overlay), live-opening each setup target as it advances. "Fix a problem"
+  // still routes into the ARIA chat. No step content renders in the tab; the in-tab runner stays as a fallback.
   if (!recipeId && !intent) {
     if (titleEl) titleEl.textContent = "Walk-through";
-    const flowCards = (group, heading) => `
-      <p class="eyebrow">${escapeHtml(heading)}</p>
+    const launcherCards = (group) => `
       <div class="walkthrough-library">
         ${listFlows(group).map((f) => `
           <button class="walkthrough-lib-card" data-flow="${escapeHtml(f.id)}">
             <span class="walkthrough-lib-title">${escapeHtml(f.title)}</span>
             <span class="walkthrough-lib-blurb">${escapeHtml(f.blurb || "")}</span>
+            <span class="walkthrough-lib-start">Start ▸</span>
           </button>`).join("")}
       </div>`;
     body.innerHTML = `
-      <p class="note">Pick a guided task and I'll walk you through it step by step — collecting what I need as we go. Guide and learn change nothing on your PC. The same walk-throughs run right on the floating globe.</p>
+      <p class="note">Pick a system to set up and press Start — the guided walk-through opens right under the floating globe and opens each page or app for you as you go. Guide and setup change nothing on your PC; you sign in and pay yourself.</p>
       <div class="button-row"><button class="primary" id="walkthroughDescribe">Fix a problem</button></div>
-      ${flowCards("setup", "Set up an AI tool")}
-      ${flowCards("learn", "Learn")}`;
+      ${LAUNCHER_GROUPS.map((g) => `<p class="eyebrow">${escapeHtml(g.label)}</p>${g.sub ? `<p class="note walkthrough-group-sub">${escapeHtml(g.sub)}</p>` : ""}${launcherCards(g.group)}`).join("")}
+      <p class="note resolve-status" id="walkthroughStartStatus" hidden></p>`;
     qs("#walkthroughDescribe")?.addEventListener("click", () => { activateTab("aria"); qs("#ariaChatInput")?.focus(); });
-    qsa("[data-flow]").forEach((b) => b.addEventListener("click", () => renderCompanionFlowInTab(b.dataset.flow)));
+    qsa("[data-flow]").forEach((b) => b.addEventListener("click", () => startWalkthroughUnderGlobe(b.dataset.flow, qs("#walkthroughStartStatus"))));
     return;
   }
 
@@ -267,6 +270,21 @@ async function resolveViaSupervisor(recipeId, risk, statusEl) {
     }
   }
   return r;
+}
+
+// Walk-through LAUNCHER — Start opens the guided flow UNDER the floating globe (its own overlay window, which
+// survives the app window minimizing/closing). If the overlay can't show (globe unavailable on this run), fall
+// back to the in-tab full-screen runner so the user is never stuck — the SAME content, just relocated (Rule 15).
+async function startWalkthroughUnderGlobe(flowId, statusEl) {
+  if (!flowId) return;
+  try {
+    const r = await sentinel.openCompanionFlow?.(flowId);
+    if (r && r.ok) {
+      if (statusEl) { statusEl.hidden = false; statusEl.textContent = "Opened under the floating globe — follow it there. You can minimize this window."; }
+      return;
+    }
+  } catch { /* fall through to the in-tab runner */ }
+  renderCompanionFlowInTab(flowId); // graceful fallback — the relocated content is never deleted (Rule 15)
 }
 
 // Full-screen runner for a companion flow inside the Walk-through tab — the SAME engine + content the globe
@@ -2095,8 +2113,17 @@ function initAriaChat() {
     const answer = document.createElement("div"); answer.className = "aria-chat-md";
     // F2 — repairTruncatedTail is a no-op on complete answers; it only trims a dangling fragment if an upstream
     // path (e.g. offline/local-kb) ever handed us a mid-line-cut excerpt. Main already swaps in full text for KB.
-    answer.innerHTML = renderMarkdown(repairTruncatedTail(stripFm((res && res.text) || "I couldn't get an answer just now — please try again.")));
+    // P7 — lead with the plain-language explanation + fix steps; tuck verify/escalate/prevent behind a toggle.
+    const full = repairTruncatedTail(stripFm((res && res.text) || "I couldn't get an answer just now — please try again."));
+    const { lead, more } = splitShapedAnswer(full);
+    answer.innerHTML = renderMarkdown(lead || full);
     bubble.textContent = ""; bubble.appendChild(answer);
+    if (more) {
+      const det = document.createElement("details"); det.className = "aria-chat-more";
+      const sum = document.createElement("summary"); sum.textContent = "More help — verify, escalate, prevent";
+      const body2 = document.createElement("div"); body2.className = "aria-chat-md"; body2.innerHTML = renderMarkdown(more);
+      det.append(sum, body2); bubble.appendChild(det);
+    }
     const kb = res && res.kbMatch;
     if (kb && (kb.title || kb.slug)) {
       const card = document.createElement("div"); card.className = "aria-chat-article";
@@ -2197,8 +2224,34 @@ function initAriaChat() {
       yes.disabled = true; no.disabled = true;
       try {
         await window.sentinel.resolutionOutcome({ outcome, matchScore: top, sessionId: sid });
-        st.textContent = outcome === "resolved" ? "Thanks — logged as resolved." : "Thanks — we'll keep improving.";
+        if (outcome === "resolved") { st.textContent = "Thanks — logged as resolved."; return; }
+        // P5 (2026-07-14) — "Not yet" is no longer a dead end. Log the miss to the local learning loop, then offer
+        // real next steps: the guided walk-through OR a real technician ticket (P6 — a minted IIS-YYYYMMDD-NNN ref).
+        st.textContent = "Thanks — let's get you unstuck.";
+        try { await window.sentinel.logAnswerMiss?.({ matchScore: top }); } catch { /* miss-log is best-effort */ }
+        renderEscalation();
       } catch { st.textContent = "Couldn't save that just now."; yes.disabled = false; no.disabled = false; }
+    }
+    // P5/P6 — the escalation panel under a "Not yet" answer: try the guided walk-through, or open a REAL ticket a
+    // technician can pick up (the minted reference shows here AND lands in Dashboard → Activity). Never a dead end.
+    function renderEscalation() {
+      if (wrap.querySelector(".aria-chat-escalate")) return; // render once
+      const panel = document.createElement("div"); panel.className = "aria-chat-escalate";
+      const walk = document.createElement("button"); walk.type = "button"; walk.className = "aria-chat-feedback-btn"; walk.textContent = "Walk me through it";
+      const tech = document.createElement("button"); tech.type = "button"; tech.className = "aria-chat-feedback-btn"; tech.textContent = "Connect a technician";
+      const es = document.createElement("span"); es.className = "aria-chat-feedback-status";
+      walk.addEventListener("click", () => { activateTab("walkthrough"); renderWalkthrough({ intent: question || "", mode: "guide" }); });
+      tech.addEventListener("click", async () => {
+        tech.disabled = true; es.textContent = "Opening a ticket…";
+        try {
+          let recipeId = ""; try { recipeId = await diagnoseRecipeId(question); } catch { /* recipe is optional — a local ref is always minted */ }
+          const r = await window.sentinel.escalateTicket?.({ issue: question || "", recipeId });
+          es.textContent = r && r.ok && r.ref
+            ? `Ticket ${r.ref} opened — a technician can take it from here. You'll see it on your Dashboard activity.`
+            : "Couldn't open a ticket just now — please try again.";
+        } catch { es.textContent = "Couldn't open a ticket just now — please try again."; tech.disabled = false; }
+      });
+      panel.append(walk, tech, es); wrap.appendChild(panel);
     }
     yes.addEventListener("click", () => mark("resolved"));
     no.addEventListener("click", () => mark("not-yet"));

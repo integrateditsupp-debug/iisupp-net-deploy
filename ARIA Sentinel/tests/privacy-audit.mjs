@@ -35,7 +35,19 @@ const allowedHosts = [
   "claude.ai",
   "openai.com",
   "chatgpt.com",
-  "gemini.google.com"
+  "gemini.google.com",
+  // WALK-THROUGH LAUNCHER (2026-07-14) — the AI-tool + IT-setup flows' `open` steps launch the USER's own browser
+  // to these OFFICIAL vendor / support pages (pricing, sign-in, the browser-extension stores, MFA setup). The app
+  // NEVER fetches them and never signs in or pays — shell.openExternal is host-anchored to exactly these (see
+  // OPEN_EXTERNAL_ALLOW in main.mjs; proven in sync by tests/walkthrough-open-live.test.mjs).
+  "www.perplexity.ai",
+  "www.microsoft.com",
+  "copilot.microsoft.com",
+  "www.microsoft365.com",
+  "support.microsoft.com",
+  "aka.ms",
+  "chromewebstore.google.com",
+  "microsoftedge.microsoft.com"
 ];
 
 const findings = [];

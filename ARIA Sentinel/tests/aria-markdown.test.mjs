@@ -58,7 +58,8 @@ import fs from "node:fs";
 import path from "node:path";
 const rjs = fs.readFileSync(path.join(path.resolve(import.meta.dirname, ".."), "src", "renderer", "renderer.js"), "utf8");
 assert.match(rjs, /import \{ renderMarkdown \} from "\.\.\/shared\/aria-markdown\.mjs"/, "renderer imports the markdown renderer");
-assert.match(rjs, /renderMarkdown\(repairTruncatedTail\(stripFm/, "chat answer is rendered as markdown, tail-repaired first (F2)");
+assert.match(rjs, /repairTruncatedTail\(stripFm/, "chat answer is tail-repaired first (F2)");
+assert.match(rjs, /renderMarkdown\(lead \|\| full\)/, "the (concise, P7) answer is rendered as markdown"); // P7 — repair→split→render preserves F2
 t();
 
 // 8 — F2 REGRESSION: a line containing parentheses + an inline-code UNC path ("Print server (`\\printserver`)")

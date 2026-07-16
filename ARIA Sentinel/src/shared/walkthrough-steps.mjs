@@ -239,6 +239,107 @@ export const FLOWS = Object.freeze({
       ...composeAndLoopSteps("Gemini")
     ]
   },
+  "codex-setup": {
+    id: "codex-setup", group: "setup", title: "Set up Claude Code / Codex CLI", tool: "Claude Code",
+    blurb: "The command-line coding agents — build software and automate files right on your PC.",
+    steps: [
+      { type: "display", title: "Let's set up a coding agent", body: "Claude Code (Anthropic) and Codex (OpenAI) run in your terminal and can build and automate on your machine — this very app was built that way. A few quick questions first so I can tailor it to you." },
+      ...interviewSteps(),
+      { type: "display", title: "Which one fits you", body: "Claude Code pairs with a Claude account; Codex pairs with a ChatGPT account. Both need a paid plan for real work — I never guess a number. The next steps open the official pages so you see today's real prices. IIS setup fee: we'll quote you — nothing is charged here." },
+      { type: "open", title: "See Claude Code's real pricing", body: "Opens Anthropic's official pricing page so you see current, accurate numbers — not a guess.", url: "https://www.anthropic.com/pricing", note: "Opens your browser. You decide if and what to pay — ARIA never pays for you." },
+      { type: "open", title: "Create your Claude account, then install Claude Code", body: "Opens claude.ai to sign up; install Claude Code from Anthropic's official site afterwards.", url: "https://claude.ai", note: "HARD STOP: you create the account, sign in, and pay yourself. ARIA never types your password, signs in, or pays." },
+      ...composeAndLoopSteps("Claude Code")
+    ]
+  },
+  "perplexity-setup": {
+    id: "perplexity-setup", group: "setup", title: "Set up Perplexity", tool: "Perplexity",
+    blurb: "Answer engine with live web citations — fast, sourced research.",
+    steps: [
+      { type: "display", title: "Let's set up Perplexity", body: "Perplexity answers with live sources and citations, which makes it great for research you can trust. A few quick questions first." },
+      ...interviewSteps(),
+      { type: "display", title: "Why Perplexity fits you", body: "Great at: sourced answers and quick research. Honest limit: it's a research/answer tool, not a builder — pair it with a coding agent to build. Cost: free tier and a paid Pro plan — I never guess a number. The next step opens Perplexity's official pricing. IIS setup fee: we'll quote you — nothing charged here." },
+      { type: "open", title: "See Perplexity's real pricing", body: "Opens Perplexity's official site so you see current numbers.", url: "https://www.perplexity.ai", note: "Opens your browser. You decide if and what to pay — ARIA never pays for you." },
+      { type: "open", title: "Create your Perplexity account", body: "Opens perplexity.ai. Sign up with your email.", url: "https://www.perplexity.ai", note: "HARD STOP: you create the account, sign in, and pay yourself. ARIA never types your password, signs in, or pays." },
+      ...composeAndLoopSteps("Perplexity")
+    ]
+  },
+  "copilot-setup": {
+    id: "copilot-setup", group: "setup", title: "Set up Microsoft Copilot", tool: "Copilot",
+    blurb: "Microsoft's assistant across Windows, Edge, and Microsoft 365.",
+    steps: [
+      { type: "display", title: "Let's set up Copilot", body: "Copilot is built into Windows, Edge, and Microsoft 365, so it's handy if you already live in the Microsoft world. A few quick questions first." },
+      ...interviewSteps(),
+      { type: "display", title: "Why Copilot fits you", body: "Great at: everyday help inside Windows, Edge, and Office. Honest limit: the most useful features need a Microsoft 365 / Copilot paid add-on — I never guess a number. The next step opens Microsoft's official pricing. IIS setup fee: we'll quote you — nothing charged here." },
+      { type: "open", title: "See Copilot's real pricing", body: "Opens Microsoft's official page so you see current numbers.", url: "https://www.microsoft.com/microsoft-copilot", note: "Opens your browser. You decide if and what to pay — ARIA never pays for you." },
+      { type: "open", title: "Open Copilot and sign in", body: "Opens copilot.microsoft.com. Sign in with your own Microsoft account.", url: "https://copilot.microsoft.com", note: "HARD STOP: you sign in with your own Microsoft account and pick any plan yourself. ARIA never types your password, signs in, or pays." },
+      ...composeAndLoopSteps("Copilot")
+    ]
+  },
+  "m365-setup": {
+    id: "m365-setup", group: "it-setup", title: "Set up Microsoft 365 / Outlook",
+    blurb: "Get Outlook, Word, Excel, and Teams working with your account.",
+    steps: [
+      { type: "display", title: "Set up Microsoft 365", body: "We'll get your Microsoft 365 apps (Outlook, Word, Excel, Teams) signed in with your work or personal account. Nothing here changes your PC — I only open the pages; you sign in." },
+      { type: "open", title: "See Microsoft 365 plans + pricing", body: "Opens Microsoft's official page so you see current, accurate numbers — not a guess.", url: "https://www.microsoft.com/microsoft-365", note: "Opens your browser. You decide if and what to pay — ARIA never pays for you." },
+      { type: "open", title: "Sign in to Microsoft 365", body: "Opens microsoft365.com. Sign in with your work or Microsoft account to reach your apps online.", url: "https://www.microsoft365.com", note: "HARD STOP: you sign in with your own account. ARIA never types your password or signs in for you." },
+      { type: "display", title: "Add your account to Outlook", body: "Open Outlook → File → Add Account → type your email → follow the prompts. If your workplace uses single sign-on it may just confirm your identity." },
+      { type: "confirm", key: "m365Done", title: "Is Outlook showing your mail?", yes: { label: "Yes — I'm set up" }, no: { label: "Not yet", help: "If it won't connect, your IT admin may need to grant access — come back to Ask ARIA and I'll help you word the request." } }
+    ]
+  },
+  "onedrive-setup": {
+    id: "onedrive-setup", group: "it-setup", title: "Set up OneDrive backup",
+    blurb: "Back up your Desktop, Documents, and Pictures to the cloud.",
+    steps: [
+      { type: "display", title: "Set up OneDrive", body: "OneDrive keeps your important folders backed up and synced. We'll sign you in and turn on folder backup. Nothing changes until you choose the folders." },
+      { type: "display", title: "Open OneDrive", body: "Press Start, type OneDrive, open it. If it asks, enter your work or Microsoft email and sign in — you do this part." },
+      { type: "open", title: "See OneDrive plans + storage", body: "Opens Microsoft's official page so you see current storage + pricing.", url: "https://www.microsoft.com/microsoft-365/onedrive/online-cloud-storage", note: "Opens your browser. You decide if and what to pay — ARIA never pays for you." },
+      { type: "display", title: "Turn on Folder Backup", body: "OneDrive → Settings (gear) → Sync and backup → Manage backup → turn on Desktop, Documents, Pictures → Save. Your files start backing up." },
+      { type: "confirm", key: "onedriveDone", title: "Is the OneDrive cloud icon showing 'Up to date'?", yes: { label: "Yes — backed up" }, no: { label: "Not yet", help: "A first backup can take a while on lots of files. If it's stuck, ask ARIA and I'll walk you through fixing sync." } }
+    ]
+  },
+  "vpn-setup": {
+    id: "vpn-setup", group: "it-setup", title: "Connect to your work VPN",
+    blurb: "Reach work systems securely from anywhere.",
+    steps: [
+      { type: "display", title: "Connect your VPN", body: "A VPN gives you a secure tunnel to your workplace. The exact client depends on your employer — common ones are Windows' built-in VPN, Cisco AnyConnect, or GlobalProtect. I'll show the general steps; your IT team gives you the server details and sign-in." },
+      { type: "display", title: "Add the connection (built-in VPN)", body: "Settings → Network & internet → VPN → Add VPN. Enter the server name/address your IT provided, pick the VPN type they specified, and save." },
+      { type: "display", title: "Sign in and connect", body: "Click your VPN → Connect → enter the username, password, and any MFA code your IT gave you. You enter these — ARIA never handles your credentials." },
+      { type: "confirm", key: "vpnDone", title: "Did the VPN connect?", yes: { label: "Yes — connected" }, no: { label: "Not yet", help: "If it fails, you likely need the exact server + settings from your IT team. Ask ARIA and I'll help you draft the request." } }
+    ]
+  },
+  "printer-add-setup": {
+    id: "printer-add-setup", group: "it-setup", title: "Add a printer",
+    blurb: "Set up a new printer on this PC.",
+    steps: [
+      { type: "display", title: "Add a printer", body: "We'll add a printer through Windows Settings. Make sure the printer is on and on the same Wi-Fi/network (or plugged in by USB)." },
+      { type: "display", title: "Open printer settings", body: "Settings → Bluetooth & devices → Printers & scanners → Add device. Windows scans the network." },
+      { type: "display", title: "Pick your printer", body: "Choose your printer when it appears and let Windows install the driver. If it doesn't show, choose 'Add manually' and enter the printer's IP (from the printer's own display)." },
+      { type: "open", title: "Need the driver? Open the official help", body: "If Windows can't find a driver, open Microsoft's printer support for the exact steps.", url: "https://support.microsoft.com", note: "Opens your browser — an official help page. Nothing is installed without your say-so." },
+      { type: "confirm", key: "printerDone", title: "Did a test page print?", yes: { label: "Yes — it prints" }, no: { label: "Not yet", help: "If it's added but won't print, ARIA can walk you through restarting the print spooler — ask me." } }
+    ]
+  },
+  "browser-extension-setup": {
+    id: "browser-extension-setup", group: "it-setup", title: "Install the ARIA browser extension",
+    blurb: "Add ARIA to Chrome or Edge for one-click help.",
+    steps: [
+      { type: "display", title: "Add ARIA to your browser", body: "The ARIA extension puts one-click IT help in Chrome or Edge. It's free. Open your browser's store below and click Add — you do the install." },
+      { type: "open", title: "Get it for Chrome", body: "Opens the Chrome Web Store.", url: "https://chromewebstore.google.com", note: "Opens your browser to the official store. You click Add — ARIA doesn't install anything for you." },
+      { type: "open", title: "Get it for Edge", body: "Opens the Microsoft Edge Add-ons store.", url: "https://microsoftedge.microsoft.com", note: "Opens your browser to the official store. You click Get — ARIA doesn't install anything for you." },
+      { type: "open", title: "Setup help", body: "Opens the IIS extension page with install steps.", url: "https://iisupp.net", note: "Opens your browser — an official IIS page." },
+      { type: "confirm", key: "extDone", title: "Is the ARIA icon in your toolbar?", yes: { label: "Yes — installed" }, no: { label: "Not yet", help: "If you don't see it, click the puzzle-piece icon in your browser and pin ARIA. Ask me if it's not there." } }
+    ]
+  },
+  "mfa-setup": {
+    id: "mfa-setup", group: "it-setup", title: "Set up MFA / Authenticator",
+    blurb: "Add a second sign-in step so a stolen password isn't enough.",
+    steps: [
+      { type: "display", title: "Set up multi-factor sign-in", body: "MFA adds a second step (a code or approval on your phone) so a stolen password alone can't get in. We'll open the official setup page and you enrol your phone — you approve each step yourself." },
+      { type: "open", title: "Open Microsoft MFA setup", body: "Opens aka.ms/mfasetup — Microsoft's official security-info page.", url: "https://aka.ms/mfasetup", note: "HARD STOP: you sign in and approve enrolment yourself. ARIA never enters your password or approves sign-ins for you." },
+      { type: "display", title: "Install Authenticator on your phone", body: "On your phone's app store install 'Microsoft Authenticator' (or your workplace's app). Open it → Add account → Work or school → scan the QR code the setup page shows." },
+      { type: "display", title: "Approve a test", body: "Finish the wizard; it sends a test approval to your phone. Approve it to confirm MFA works." },
+      { type: "confirm", key: "mfaDone", title: "Did the test approval succeed?", yes: { label: "Yes — MFA is on" }, no: { label: "Not yet", help: "If the QR won't scan, most pages offer 'enter a code manually'. Ask ARIA and I'll walk you through it." } }
+    ]
+  },
   "learn-prompts": {
     id: "learn-prompts", group: "learn", title: "How to write prompts",
     blurb: "The 4-part shape of a good prompt — then compose one from your own goal.",
@@ -308,4 +409,36 @@ export function resolveStep(step, answers = {}) {
     out.ready = isStepAnswered(step, answers);
   }
   return out;
+}
+
+// ============================================================================================================
+// WALK-THROUGH LAUNCHER (2026-07-14) — the Walk-through tab is a LAUNCHER: pick a system → Start → the guided
+// pop-up opens UNDER the floating globe and, on each `open` step, ARIA live-opens the real target. These groups
+// order the launcher cards. IT-setup flows join the AI-setup + learn flows already above (all ONE source).
+// ============================================================================================================
+export const LAUNCHER_GROUPS = Object.freeze([
+  { group: "setup",    label: "Set up an AI tool",   sub: "Claude · ChatGPT · Codex · Gemini · Perplexity · Copilot" },
+  { group: "it-setup", label: "Set up your workspace", sub: "Microsoft 365 · OneDrive · VPN · printer · browser · MFA" },
+  { group: "learn",    label: "Learn",               sub: "Write prompts · How AI loops work" }
+]);
+
+// SAFETY BOUNDARY (Rule 14) — ARIA may OPEN targets on the user's click, but NEVER auto-enters credentials,
+// submits a form, accepts terms, or pays. Any `open` step that lands on an account/sign-in/pay surface MUST
+// carry a hard-stop `note` stated on the card; these regexes let the tests PROVE that invariant holds.
+export const HARD_STOP_RE = /HARD STOP|you (create|sign in|create the account|pick|choose)|you decide if and what to pay|never (types|enters) your password|ARIA never (pays|signs in)/i;
+export const ACCOUNT_OR_PAY_RE = /account|sign[\s-]?in|sign[\s-]?up|log[\s-]?in|create your|enrol|pay\b|purchase|subscribe|checkout|\bplan\b/i;
+
+/** True when an `open` step lands on an account/sign-in/pay surface and therefore MUST state a user hard-stop. */
+export function openStepNeedsHardStop(step) {
+  return Boolean(step && step.type === "open" && ACCOUNT_OR_PAY_RE.test(`${step.title || ""} ${step.body || ""}`));
+}
+/** True when a step honours the hard-stop rule (either it isn't an account/pay open, or it carries a hard-stop note). */
+export function stepHonoursHardStop(step) {
+  return !openStepNeedsHardStop(step) || Boolean(step && step.note && HARD_STOP_RE.test(step.note));
+}
+/** Every distinct `open`-step URL across all flows — used to prove they all sit inside the host allowlist. */
+export function allFlowOpenUrls() {
+  const urls = new Set();
+  for (const f of Object.values(FLOWS)) for (const s of f.steps) if (s.type === "open" && s.url) urls.add(s.url);
+  return [...urls];
 }
