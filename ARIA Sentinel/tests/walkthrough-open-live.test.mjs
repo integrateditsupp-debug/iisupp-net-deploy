@@ -60,9 +60,10 @@ for (const bad of ["http://claude.ai", "https://claude.ai.evil.com", "https://pa
 }
 t();
 
-// 4 — the live-open fires ONLY from a user CLICK handler (never at render/advance). The overlay + tab bind
-// openExternal(step.url) inside a click listener; neither calls openExternal outside a click.
-assert.match(overlay, /addEventListener\("click", async \(\) => \{ const res = await sentinel\.openExternal\(step\.url\)/, "overlay live-opens only on the user's click");
+// 4 — the MANUAL live-open still fires from a user CLICK handler (the only path for a hard-stop open + the paused
+// path). The overlay + tab bind openExternal(step.url) inside a click listener. (Walk-through v2 auto-run may ALSO
+// auto-open the SAFE, non-hard-stop targets without a click — still allowlist-bound; proven in walkthrough-autorun.)
+assert.match(overlay, /addEventListener\("click", async \(\) => \{ const res = await sentinel\.openExternal\(step\.url\)/, "overlay keeps the manual user-click open handler");
 assert.match(renderer, /qs\("#wtOpenBtn"\)\?\.addEventListener\("click", async \(\) => \{ const res = await sentinel\.openExternal\?\.\(step\.url\)/, "tab runner live-opens only on the user's click");
 // main gates every open through the allowlist handler (user-initiated browser open, not an app network call).
 assert.match(main, /ipcMain\.handle\("sentinel:open-external", \(_event, url\) => \{[\s\S]*?OPEN_EXTERNAL_ALLOW\.test\(url\)/, "main gates open-external through the allowlist");

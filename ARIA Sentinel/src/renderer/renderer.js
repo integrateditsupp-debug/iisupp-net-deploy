@@ -172,6 +172,7 @@ async function renderWalkthrough(target) {
   // still routes into the ARIA chat. No step content renders in the tab; the in-tab runner stays as a fallback.
   if (!recipeId && !intent) {
     if (titleEl) titleEl.textContent = "Walk-through";
+    let selectedFlow = null;
     const launcherCards = (group) => `
       <div class="walkthrough-library">
         ${listFlows(group).map((f) => `
@@ -181,13 +182,27 @@ async function renderWalkthrough(target) {
             <span class="walkthrough-lib-start">Start ▸</span>
           </button>`).join("")}
       </div>`;
+    // BIG START (2026-07-16) — pick a system (its card highlights), then the big primary START launches that flow
+    // under the globe, which auto-runs the majority for you. The per-card Start (click a card) stays too (Rule 15).
     body.innerHTML = `
-      <p class="note">Pick a system to set up and press Start — the guided walk-through opens right under the floating globe and opens each page or app for you as you go. Guide and setup change nothing on your PC; you sign in and pay yourself.</p>
-      <div class="button-row"><button class="primary" id="walkthroughDescribe">Fix a problem</button></div>
+      <p class="note">Pick a system to set up, then press <b>Start setup</b> — the guided walk-through opens right under the floating globe and <b>runs itself</b>: ARIA opens each page or app for you and only pauses when it needs you to type something, choose, or sign in. Guide and setup change nothing on your PC; you sign in and pay yourself.</p>
+      <div class="button-row walkthrough-start-row">
+        <button class="primary walkthrough-big-start" id="walkthroughBigStart" disabled>▶ Start setup</button>
+        <button class="ghost" id="walkthroughDescribe">Fix a problem</button>
+      </div>
       ${LAUNCHER_GROUPS.map((g) => `<p class="eyebrow">${escapeHtml(g.label)}</p>${g.sub ? `<p class="note walkthrough-group-sub">${escapeHtml(g.sub)}</p>` : ""}${launcherCards(g.group)}`).join("")}
       <p class="note resolve-status" id="walkthroughStartStatus" hidden></p>`;
+    const bigStart = qs("#walkthroughBigStart");
+    const selectCard = (b) => {
+      qsa("[data-flow]").forEach((x) => x.classList.toggle("selected", x === b));
+      selectedFlow = b.dataset.flow;
+      if (bigStart) { bigStart.disabled = false; bigStart.textContent = "▶ Start " + (b.querySelector(".walkthrough-lib-title")?.textContent || "setup"); }
+    };
     qs("#walkthroughDescribe")?.addEventListener("click", () => { activateTab("aria"); qs("#ariaChatInput")?.focus(); });
-    qsa("[data-flow]").forEach((b) => b.addEventListener("click", () => startWalkthroughUnderGlobe(b.dataset.flow, qs("#walkthroughStartStatus"))));
+    // Per-card Start (kept): clicking a card highlights it AND launches it under the globe (quick launch).
+    qsa("[data-flow]").forEach((b) => b.addEventListener("click", () => { selectCard(b); startWalkthroughUnderGlobe(b.dataset.flow, qs("#walkthroughStartStatus")); }));
+    // Big START (picked-system launcher): launches the highlighted system under the globe.
+    bigStart?.addEventListener("click", () => { if (selectedFlow) startWalkthroughUnderGlobe(selectedFlow, qs("#walkthroughStartStatus")); });
     return;
   }
 

@@ -165,7 +165,7 @@ export function composeLearnPrompt(goal) {
 // The shared interview (input-collection Ahmad asked for). Reused by every AI-setup flow.
 function interviewSteps() {
   return [
-    { type: "input-text", key: "name", title: "What's your first name?", placeholder: "e.g. Alex", body: "So I can talk to you like a person. This stays on your device." },
+    { type: "input-text", key: "name", label: "YOUR FIRST NAME", title: "What's your first name?", placeholder: "e.g. Alex", body: "So I can talk to you like a person. This stays on your device." },
     { type: "choice", key: "goal", title: "What do you most want AI to help you with?", options: [
       { value: "write", label: "Write", sub: "emails, docs, content" },
       { value: "code", label: "Code", sub: "scripts, small apps" },
@@ -173,7 +173,7 @@ function interviewSteps() {
       { value: "automate", label: "Automate tasks", sub: "repetitive work" },
       { value: "research", label: "Research", sub: "find + summarize" }
     ] },
-    { type: "input-text", key: "goalDetail", title: "In your own words, what's the first thing you'd want it to do?", placeholder: "e.g. draft replies to customer emails", body: "One sentence is enough — I'll turn it into a real prompt for you." },
+    { type: "input-text", key: "goalDetail", label: "WHAT DO YOU WANT IT TO DO", title: "In your own words, what's the first thing you'd want it to do?", placeholder: "e.g. draft replies to customer emails", body: "One sentence is enough — I'll turn it into a real prompt for you." },
     { type: "choice", key: "comfort", title: "How comfortable are you with tech and AI?", options: [
       { value: "1", label: "1 — Brand new" }, { value: "2", label: "2" }, { value: "3", label: "3 — Some" }, { value: "4", label: "4" }, { value: "5", label: "5 — Very" }
     ] },
@@ -345,7 +345,7 @@ export const FLOWS = Object.freeze({
     blurb: "The 4-part shape of a good prompt — then compose one from your own goal.",
     steps: [
       { type: "display", title: "A good prompt has 4 parts", body: "Role (who the AI should be) · Task (what you want) · Context (what it should know) · Format (how the answer should look). Get those four in and you'll get far better results." },
-      { type: "input-text", key: "goal", title: "What do you want the AI to do?", placeholder: "e.g. summarize this contract in plain English", body: "Type your real goal — I'll turn it into a proper prompt you can reuse." },
+      { type: "input-text", key: "goal", label: "YOUR GOAL", title: "What do you want the AI to do?", placeholder: "e.g. summarize this contract in plain English", body: "Type your real goal — I'll turn it into a proper prompt you can reuse." },
       { type: "copy", title: "Your prompt — built the right way", body: "Copy this and paste it into any AI. Notice the four parts.",
         compose: (a) => composeLearnPrompt(a.goal), safety: "Never paste passwords, card numbers, or one-time codes into an AI." },
       { type: "display", title: "Reuse the shape", body: "Any time you want something from an AI, fill in the same four blanks: Role, Task, Context, Format. That's the whole trick." }
@@ -356,7 +356,7 @@ export const FLOWS = Object.freeze({
     blurb: "Ask → Read → Refine → Repeat — try it on a real task.",
     steps: [
       { type: "display", title: "AI works in a loop", body: "Ask → Read the answer → Refine your ask → Repeat. You rarely get it perfect on the first try — and that's fine. Each pass gets closer." },
-      { type: "input-text", key: "loopTask", title: "Pick one small task to try the loop on", placeholder: "e.g. write a friendly out-of-office message", body: "Something real and small. We'll run one loop on it." },
+      { type: "input-text", key: "loopTask", label: "YOUR TASK", title: "Pick one small task to try the loop on", placeholder: "e.g. write a friendly out-of-office message", body: "Something real and small. We'll run one loop on it." },
       { type: "display", title: "Your worked example", compose: (a) => {
         const task = String(a.loopTask || "").trim();
         if (!task) return null; // real-or-empty — no task, no fabricated example
@@ -441,4 +441,53 @@ export function allFlowOpenUrls() {
   const urls = new Set();
   for (const f of Object.values(FLOWS)) for (const s of f.steps) if (s.type === "open" && s.url) urls.add(s.url);
   return [...urls];
+}
+
+// ============================================================================================================
+// AUTO-RUN THE MAJORITY (2026-07-16) — Ahmad: "automate the majority unless user input is needed." The under-globe
+// runner does the mechanical steps itself (auto-opens allowlisted pages, auto-advances read-only cards) and PAUSES
+// only for genuine user input. This classifier is the single source of truth for what auto-runs vs what halts, so
+// the UI and the tests agree. Rule 14 boundary is baked IN: a hard-stop `open` (sign in / create account / pick a
+// plan / pay / accept terms) is classified "halt" — ARIA NEVER auto-opens, auto-fills, auto-submits, or pays it.
+// ============================================================================================================
+export const AUTORUN_ACTIONS = Object.freeze(["advance", "open", "halt"]);
+
+/**
+ * True when an `open` step is a HARD STOP the auto-runner must NOT auto-open: either it lands on an account/
+ * sign-in/pay surface (regex), or it declares an explicit "HARD STOP" on the card (e.g. the MFA sign-in/enrol
+ * step). ARIA never auto-opens, auto-fills, auto-submits, or pays any of these — the user performs them.
+ */
+export function openStepIsHardStop(step) {
+  if (!step || step.type !== "open") return false;
+  return openStepNeedsHardStop(step) || /HARD[\s-]?STOP/i.test(String(step.note || ""));
+}
+
+/**
+ * How the auto-runner treats a step:
+ *   · "advance" — a pure `display` card: auto-advance after a short readable beat (Next goes faster; Back returns).
+ *   · "open"    — a NON-hard-stop `open` (e.g. a vendor pricing page, a browser store, a help page): ARIA auto-opens
+ *                 the allowlisted target so the user WATCHES it happen, then advances. Allowlist-bound in main.
+ *   · "halt"    — input-text / choice / confirm / copy, AND every hard-stop `open`: the runner BLOCKS and waits for
+ *                 the user. This is where sign-in / account / plan / pay always stay 100% user-performed.
+ */
+export function autoRunAction(step) {
+  if (!step) return "halt";
+  if (step.type === "display") return "advance";
+  if (step.type === "open") return openStepIsHardStop(step) ? "halt" : "open";
+  return "halt"; // input-text · choice · confirm · copy — always user-driven, never auto-filled/auto-paid
+}
+
+/** True when the auto-runner must stop and wait for the user at this step (input / choice / copy / hard-stop). */
+export function autoRunHalts(step) { return autoRunAction(step) === "halt"; }
+
+/**
+ * The onboarding-card TAG CHIP for a flow step (e.g. "SET UP CLAUDE · STEP 3"), matching the under-globe fix-card
+ * style (a small-caps tag above the bold title). Scope comes from the flow's tool/title; honest + derived, never
+ * invented. `index` is 0-based.
+ */
+export function flowStepTag(flow, index) {
+  const scope = String((flow && (flow.tool || flow.title)) || "SET UP").toUpperCase();
+  const groupWord = flow && flow.group === "learn" ? "LEARN" : "SET UP";
+  const label = /^SET UP|^LEARN/.test(scope) ? scope : `${groupWord} ${scope}`;
+  return `${label} · STEP ${Number(index) + 1}`;
 }

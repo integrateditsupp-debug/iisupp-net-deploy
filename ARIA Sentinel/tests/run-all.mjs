@@ -30,6 +30,9 @@ const TESTS = [
   "./privacy-audit.mjs",
   "./ui-shell.test.mjs",
   "./watchers.test.mjs",
+  // GLOBE FALSE-POSITIVE GATE 2026-07-16 — SYSTEM.SERVICE.STOPPED must not nag about idle-normal Manual/Trigger
+  // services (esp. wuauserv); Automatic-down still fires + failure evidence overrides (Rule 15 — detector kept).
+  "./service-idle-normal.test.mjs",
   "./macos-watchers.test.mjs",
   "./overlay-physics.test.mjs",
   "./servicenow.test.mjs",
@@ -323,6 +326,9 @@ const TESTS = [
   // floating globe + live-opens each target; the live-open never auto-enters credentials/pays (Rule 14 boundary).
   "./walkthrough-launcher.test.mjs",
   "./walkthrough-open-live.test.mjs",
+  // WALK-THROUGH V2 AUTO-RUN (2026-07-16) — ARIA auto-opens the safe (non-hard-stop) allowlisted targets + auto-
+  // advances display cards, and HALTS at every input/choice/copy + sign-in/account/pay hard-stop (Rule 14 boundary).
+  "./walkthrough-autorun.test.mjs",
   // P5/P6/P7 (2026-07-14) — not-yet offers next steps + a real ticket ref surfaced in-app; answer concision toggle.
   "./chat-escalation-ticket.test.mjs",
   "./answer-concision-p7.test.mjs",

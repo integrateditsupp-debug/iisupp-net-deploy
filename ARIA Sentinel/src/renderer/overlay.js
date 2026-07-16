@@ -1,4 +1,4 @@
-import { COMPANION_MENU, getFlow, flowStep, resolveStep, stepKey, isStepAnswered, listFlows } from "../shared/walkthrough-steps.mjs";
+import { COMPANION_MENU, getFlow, flowStep, resolveStep, stepKey, isStepAnswered, listFlows, autoRunAction, flowStepTag } from "../shared/walkthrough-steps.mjs";
 import { createLocalStt } from "./local-stt.mjs"; // TRUE on-device offline STT (Vosk) — no cloud, no audio egress
 
 // Keep the overlay renderable long enough to surface bridge failure, but never pretend fixes ran.
@@ -303,6 +303,18 @@ function render(detection) {
 // ============================================================================================================
 let comp = null; // { answers, stack:[view] } — null when the panel is closed
 
+// AUTO-RUN THE MAJORITY (2026-07-16) — a launched flow auto-does the mechanical steps (auto-opens allowlisted pages,
+// auto-advances read-only cards) and pauses ONLY for real user input (input-text/choice/confirm/copy) or a hard-stop
+// `open` (sign in / create account / pick a plan / pay). autoRunAction() (shared) is the single source of truth for
+// which is which. A header Auto/Pause toggle flips `autoRun`; it never changes anything on the machine beyond opening
+// allowlisted targets. Timings: display beat ≈3.4s, open beat ≈2.6s — enough to read/watch, Next/Skip goes faster.
+let autoRun = true;         // ON by default when a flow opens; the Auto/Pause toggle in the card flips it
+let autoTimer = null;
+const AUTO_DISPLAY_MS = 3400, AUTO_OPEN_MS = 2600;
+function clearAutoTimer() { if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; } }
+function armAuto(fn, ms) { clearAutoTimer(); autoTimer = setTimeout(() => { autoTimer = null; if (comp) fn(); }, ms); }
+function hostOf(url) { try { return new URL(String(url)).hostname.replace(/^www\./, ""); } catch { return "the page"; } }
+
 function el(tag, cls, text) { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
 function topView() { return comp && comp.stack[comp.stack.length - 1]; }
 
@@ -316,12 +328,13 @@ function openCompanion() {
 function openCompanionAtFlow(flowId) {
   if (!getFlow(flowId)) { openCompanion(); return; } // unknown id → honest menu, never a blank pop-up
   comp = { answers: {}, stack: [{ kind: "flow", flowId, index: 0 }] };
+  autoRun = true; // a launched flow auto-runs the majority; the user can pause it from the card
   setMode("companion");
   renderCompanion();
 }
-function closeCompanion() { comp = null; if (typeof speechSynthesis !== "undefined") { try { speechSynthesis.cancel(); } catch { /* ignore */ } } setGlobeState("idle"); sentinel.showGlobe(); }
+function closeCompanion() { clearAutoTimer(); comp = null; if (typeof speechSynthesis !== "undefined") { try { speechSynthesis.cancel(); } catch { /* ignore */ } } setGlobeState("idle"); sentinel.showGlobe(); }
 function pushView(view) { comp.stack.push(view); renderCompanion(); }
-function backView() { if (!comp) return; comp.stack.pop(); if (!comp.stack.length) { closeCompanion(); return; } renderCompanion(); }
+function backView() { if (!comp) return; clearAutoTimer(); comp.stack.pop(); if (!comp.stack.length) { closeCompanion(); return; } renderCompanion(); }
 function advance(view) { pushView({ kind: "flow", flowId: view.flowId, index: view.index + 1 }); }
 
 companionBackBtn?.addEventListener("click", backView);
@@ -368,6 +381,7 @@ overlaySpeakBtn?.addEventListener("click", () => { startVoiceAsk(); });
 
 function renderCompanion() {
   if (!comp || !companionBody) return;
+  clearAutoTimer(); // each render re-arms auto-run only where appropriate (renderFlowStep decides)
   companionBody.innerHTML = "";
   const view = topView();
   companionBackBtn.hidden = comp.stack.length <= 1;
@@ -410,20 +424,30 @@ function renderPicker(group) {
 }
 
 function renderFlowStep(view) {
+  const flow = getFlow(view.flowId);
   const step = flowStep(view.flowId, view.index);
   if (!step) return renderFlowDone();
   const r = resolveStep(step, comp.answers);
+  const action = autoRunAction(step); // "advance" (display) · "open" (auto-openable) · "halt" (needs the user)
+
+  // ── ONBOARDING FIX-CARD HEAD (2026-07-16) — every step renders in the SAME structure as the under-globe
+  // detector fix-card: a small-caps TAG CHIP, a bold TITLE, then a one-line SUBTITLE. Reuses the card family so
+  // the walk-through and the fix-cards are visually identical siblings (Ahmad's screenshot reference). ─────────
+  companionBody.appendChild(el("div", "companion-tag", flowStepTag(flow, view.index)));
+  companionBody.appendChild(el("div", "companion-lead", step.title));
+
   let showNext = true; // choice/confirm advance on their own; a not-ready copy has nothing to proceed to
+  const isLast = view.index >= (flow.steps.length - 1);
   const nextBtn = el("button", "cbtn primary"); nextBtn.type = "button";
-  nextBtn.textContent = (view.index >= (getFlow(view.flowId).steps.length - 1)) ? "Done" : "Next";
+  nextBtn.textContent = isLast ? "Done" : "Next";
 
   if (step.type === "display") {
-    companionBody.appendChild(el("div", "companion-lead", step.title));
     // compose-backed display: show the live text, or the re-ask body when a required input is still missing.
     companionBody.appendChild(el("div", "companion-sub", r.text != null ? r.text : (step.body || "")));
   } else if (step.type === "input-text") {
-    companionBody.appendChild(el("div", "companion-lead", step.title));
     if (step.body) companionBody.appendChild(el("div", "companion-sub", step.body));
+    // Labeled field (small-caps label above the input) — the onboarding-card data-entry shape Ahmad asked for.
+    if (step.label) companionBody.appendChild(el("div", "companion-field-label", step.label));
     const input = el("input", "companion-input"); input.type = "text"; input.placeholder = step.placeholder || "";
     input.value = comp.answers[step.key] || "";
     input.addEventListener("input", () => { comp.answers[step.key] = input.value; nextBtn.disabled = !input.value.trim(); });
@@ -432,7 +456,7 @@ function renderFlowStep(view) {
     nextBtn.disabled = !input.value.trim();
     setTimeout(() => input.focus(), 30);
   } else if (step.type === "choice") {
-    companionBody.appendChild(el("div", "companion-lead", step.title));
+    if (step.body) companionBody.appendChild(el("div", "companion-sub", step.body));
     for (const opt of step.options) {
       const c = el("button", "companion-choice" + (comp.answers[step.key] === opt.value ? " sel" : "")); c.type = "button";
       c.appendChild(el("b", null, opt.label));
@@ -443,7 +467,6 @@ function renderFlowStep(view) {
     // choice advances on selection; only Back is offered here.
     showNext = false;
   } else if (step.type === "copy") {
-    companionBody.appendChild(el("div", "companion-lead", step.title));
     if (step.body) companionBody.appendChild(el("div", "companion-sub", step.body));
     if (r.ready && r.text) {
       const block = el("div", "companion-copy", r.text);
@@ -460,16 +483,28 @@ function renderFlowStep(view) {
       showNext = false;
     }
   } else if (step.type === "open") {
-    companionBody.appendChild(el("div", "companion-lead", step.title));
     if (step.body) companionBody.appendChild(el("div", "companion-sub", step.body));
     const openBtn = el("button", "cbtn primary"); openBtn.type = "button"; openBtn.textContent = "Open in my browser";
     const status = el("div", "companion-status", "");
+    // Manual open — the USER's click. This is the ONLY path for a hard-stop open (sign in / create account / pick a
+    // plan / pay) and the path when auto-run is paused. Never auto-fills/submits/pays (Rule 14).
     openBtn.addEventListener("click", async () => { const res = await sentinel.openExternal(step.url); status.textContent = res && res.ok ? "Opened in your browser." : "Couldn't open that link."; });
     const row = el("div", "companion-actions"); row.appendChild(openBtn); companionBody.appendChild(row);
     companionBody.appendChild(status);
     if (step.note) companionBody.appendChild(el("div", "companion-safety", step.note));
+    // AUTO-OPEN THE MAJORITY: for a NON-hard-stop open (action === "open"), ARIA opens the allowlisted target
+    // ITSELF after a short beat so the user watches it happen — no click needed — then auto-advances. Still routed
+    // through main's host-anchored allowlist (off-list/forged URLs refused). Hard-stop opens are action === "halt"
+    // and never reach here, so ARIA never auto-opens an account/sign-in/pay surface.
+    if (autoRun && action === "open") {
+      status.textContent = `Opening ${hostOf(step.url)}…`;
+      armAuto(async () => {
+        const res = await sentinel.openExternal(step.url); // allowlist-enforced by main
+        status.textContent = res && res.ok ? `Opened ${hostOf(step.url)} in your browser.` : "Couldn't open that link.";
+        armAuto(() => advance(view), 900);
+      }, AUTO_OPEN_MS - 900);
+    }
   } else if (step.type === "confirm") {
-    companionBody.appendChild(el("div", "companion-lead", step.title));
     const row = el("div", "companion-actions");
     const yes = el("button", "cbtn primary"); yes.type = "button"; yes.textContent = (step.yes && step.yes.label) || "Yes";
     const no = el("button", "cbtn ghost"); no.type = "button"; no.textContent = (step.no && step.no.label) || "Not yet";
@@ -479,13 +514,30 @@ function renderFlowStep(view) {
     showNext = false;
   }
 
-  // Shared footer: Back is always available inside a flow; Next only when the step doesn't advance itself.
+  // Shared footer: Back · (Next/Skip) · an Auto/Pause toggle. While an auto beat is pending the primary reads
+  // "Skip →" so the user can jump ahead; Back always returns; the toggle stops auto-run and switches to manual.
   const footer = el("div", "companion-actions");
   const backBtn = el("button", "cbtn ghost"); backBtn.type = "button"; backBtn.textContent = "Back";
   backBtn.addEventListener("click", backView);
   if (view.index > 0 || comp.stack.length > 1) footer.appendChild(backBtn);
-  if (showNext) { nextBtn.addEventListener("click", () => advance(view)); footer.appendChild(nextBtn); }
+  if (showNext) {
+    if (autoRun && (action === "advance" || action === "open")) nextBtn.textContent = isLast ? "Done" : "Skip →";
+    nextBtn.addEventListener("click", () => { clearAutoTimer(); advance(view); });
+    footer.appendChild(nextBtn);
+  }
+  // Auto/Pause toggle — only where the runner can auto-drive (a display or a non-hard-stop open).
+  if (action === "advance" || action === "open") {
+    const toggle = el("button", "cbtn ghost companion-autotoggle"); toggle.type = "button";
+    toggle.textContent = autoRun ? "⏸ Pause auto" : "▶ Auto-run";
+    toggle.setAttribute("aria-pressed", String(autoRun));
+    toggle.addEventListener("click", () => { autoRun = !autoRun; renderCompanion(); });
+    footer.appendChild(toggle);
+  }
   if (footer.childElementCount) companionBody.appendChild(footer);
+
+  // Arm the auto-advance for a pure display card (the open case armed its own open+advance above). HALT steps
+  // (input-text / choice / confirm / copy + hard-stop opens) never arm a timer — the runner waits for the user.
+  if (autoRun && action === "advance") armAuto(() => advance(view), AUTO_DISPLAY_MS);
 }
 
 function renderFlowDone() {

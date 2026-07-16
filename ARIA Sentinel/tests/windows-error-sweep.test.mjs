@@ -57,8 +57,11 @@ const CASES = [
     () => evaluateServices({ Spooler: "Running" }, [{ Name: "Spooler", Status: "Stopped", DisplayName: PII[3] }]).signals],
   ["E17 Windows Audio stopped", "SYSTEM.SERVICE.STOPPED.AUDIOSRV",
     () => evaluateServices({ Audiosrv: "Running" }, [{ Name: "Audiosrv", Status: "Stopped" }]).signals],
-  ["E18 Windows Update svc stopped", "SYSTEM.SERVICE.STOPPED.WUAUSERV",
-    () => evaluateServices({ wuauserv: "Running" }, [{ Name: "wuauserv", Status: "Stopped" }]).signals],
+  // E18 — wuauserv is Manual/Trigger Start, so stopped-when-idle is NORMAL and must NOT fire (2026-07-16 gate).
+  // The sweep covers a GENUINELY-down update service: corroborating failure evidence (or Automatic startup) still
+  // raises the card. Idle-normal suppression is proven separately in service-idle-normal.test.mjs.
+  ["E18 Windows Update svc genuinely down", "SYSTEM.SERVICE.STOPPED.WUAUSERV",
+    () => evaluateServices({ wuauserv: "Running" }, [{ Name: "wuauserv", Status: "Stopped", Failing: true }]).signals],
 
   // --- Network. ---
   ["E19 network adapter down", "NET.ADAPTER.DOWN",
