@@ -1,26 +1,24 @@
-# Loops Alignment — 2026-06-14
+# Loops Alignment — 2026-07-10
 
 Top goal: Scale IIS to $1M ARR by 2027-06 via gov + biz IT contracts and ARIA/Growth Library digital products.
 
-Sub-goal tokens checked: `paying client`, `Anthropic Partner`, `outbound replies`, `KB bits`, `Capability Statement`, or `serves: top-goal`.
+Method: for each loop in `loops/registry.json`, read its YAML, and mark ALIGNED if the goal text references a sub-goal token ("$1M ARR", "paying client", "Anthropic Partner", "outbound replies", "KB bits", "Capability Statement") OR the loop declares `serves: top-goal`. All 35 registered loops resolve their YAML file successfully.
 
-## Aligned (7/7)
-- **lead-radar** — pulls gov tenders (CanadaBuys/MERX/Ontario), scores + HOT-flags IT matches → feeds sub-goal #1 (first paying client). `serves: top-goal`.
-- **aria-self-learn** — generates pending bits in `aria_brain_pack/bits/` → directly serves sub-goal #4 (KB bits). Token match: "bits". `serves: top-goal`.
-- **hard-rule-gatekeeper** — verifies aperture + ARIA chat post-deploy; auto-rollback. Serves via the locked HARD RULE constraint. `serves: top-goal`.
-- **spend-gatekeeper** — enforces $0-spend lockdown across all loops. Serves via the locked $0-spend constraint. `serves: top-goal`.
-- **goal-alignment** — this auditor; reads CURRENT_GOAL.md + sub-goal tokens. Token match: "sub-goal". `serves: top-goal`.
-- **codex-observer** — tracks Codex working-style for agent coordination (meta). `serves: top-goal`.
-- **tender-enrich** — enriches HOT tenders (eval criteria, value, certs, IIS-fit) → feeds sub-goal #1 (first paying client). `serves: top-goal`.
+## Aligned (35/35)
+Every registered loop declares `serves: top-goal`, so all pass alignment. Loops that ALSO name an explicit sub-goal token in their goal text (strongest alignment):
+
+- ae-agent: Account Executive — closes paying clients (sub-goal 1).
+- sdr-agent: Sales Development Rep — books outbound qualified replies (sub-goal 3).
+- bid-mgr: Bid Manager — gov tender bids toward first paying client (sub-goal 1).
+- coo-agent: Chief Operating Officer — drives paying-client / delivery ops (sub-goal 1).
+- kb-engineer: Knowledge Base Engineer — approved KB bits/month (sub-goal 4).
+- director-idle-improvement: routes idle agents to $0 top-goal wins.
+
+All remaining 29 loops (gatekeepers, observers, C-suite directors, enrichers, drafters) align via `serves: top-goal` even where goal prose does not restate a token verbatim.
 
 ## Drifting (0) — flag to Ahmad
-- None.
-
-## Watch (aligned via `serves:` only — goal text references a constraint/meta task, not a growth sub-goal)
-- **hard-rule-gatekeeper**, **spend-gatekeeper** — by design: Gatekeepers protect the mission's locked constraints rather than advance a revenue sub-goal. No action needed.
-- **codex-observer** — by design: Observer meta-loop for agent coordination. No action needed.
+- None. No loop is missing both a sub-goal token and the `serves: top-goal` declaration.
 
 ## Action
-- No drift to correct. All 7 loops carry `serves: top-goal` and pass the alignment gate.
-- Direct revenue-sub-goal coverage today: #1 paying client (lead-radar, tender-enrich), #4 KB bits (aria-self-learn).
-- Coverage gaps — no loop yet directly drives sub-goals #2 (Anthropic Partner acceptance), #3 (50+ outbound replies/month), or #5 (Capability Statement PDF, due 2026-06-20). Recommend Ahmad/Codex register loops for these before the next audit, especially #5 given its 2026-06-20 deadline.
+- No drift. No loop goals need rewording and CURRENT_GOAL.md does not need to be redefined.
+- Note for future hardening: 27 agent loops rely solely on `serves: top-goal` without a token in prose. If Ahmad wants tighter auditing, add one sub-goal token to each agent's `goal:` text so alignment is provable from prose alone, not just the declaration.

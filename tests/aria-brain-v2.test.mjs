@@ -1,10 +1,13 @@
-// tests/aria-brain-v2.test.mjs — ARIA brain v2 behavior battery (2026-07-07, Cowork)
+// tests/aria-brain-v2.test.mjs — ARIA brain v2 behavior battery (2026-07-07, Cowork; re-staged after
+// the working-tree revert — the original rode to branch cc/security-lockdown-2026-07-01 in 24a33108).
 // Run:  node tests/aria-brain-v2.test.mjs
 // Optional: ARIA_BRAIN_PATH=/abs/path/to/aria-brain.js overrides the engine under test.
+// v2.1 note: version assertion accepts any 2.x (matrix hardening bumped 2.0 -> 2.1).
 //
 // Covers: v1 regressions (clarifier-then-wait, context carryover, weighted classification, honesty),
 // the fixed sparse-array dead-chat bug, all v2 layers (empathy, didn't-work memory, done-check,
 // multi-intent queue, Node-safety), and a schema lint across every topic.
+// The deeper scenario matrix lives in tests/aria-brain-v2-matrix.test.mjs (topic × branch × chip).
 
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -27,7 +30,7 @@ function ok(name, cond, detail) {
 ok("exports.handleTurn", typeof AB.handleTurn === "function");
 ok("exports.newSession", typeof AB.newSession === "function");
 ok("exports.classify", typeof AB.classify === "function");
-ok("exports.version v2", /^2\.\d+$/.test(String(AB.version)), `got ${AB.version}`);
+ok("exports.version 2.x", /^2\./.test(String(AB.version || "")), `got ${AB.version}`);
 
 // ---------- 1. TOPICS schema lint (every topic complete, no sparse holes) ----------
 const T = AB._TOPICS;
@@ -59,7 +62,7 @@ ok("v1 carryover -> outlook branch", r.topic === "outlook" && r.stage === "answe
 ok("v1 honest tail", /can't make changes on your device/i.test(r.tail || ""));
 // low-confidence -> triage, no dump
 r = AB.handleTurn(AB.newSession(), "everything is weird help");
-ok("v1 triage on low confidence", r.stage === "triage" && Array.isArray(r.options) && !r.steps);
+ok("v1 triage on low confidence", r.stage === "triage" && Array.isArray(r.options) && !r.steps, `stage=${r.stage}`);
 // greeting + goodbye
 ok("v1 greet", AB.handleTurn(AB.newSession(), "hello").stage === "greet");
 s = AB.newSession();

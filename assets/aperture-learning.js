@@ -58,6 +58,7 @@ let OFFICE_STATE = [];
 let OFFICE_TIMER = null;
 let OFFICE_CAPTION_INDEX = 0;
 
+document.body.classList.toggle('aperture-authenticated', !!TOKEN);
 if (TOKEN) showApp();
 
 /* ── auth ─────────────────────────────────────────────────────────── */
@@ -85,13 +86,15 @@ function logout(){
   localStorage.removeItem('aperture_jwt');
   localStorage.removeItem('aperture_token_v1');
   if (POLL) clearInterval(POLL);
-  $('app').style.display='none'; $('login').style.display='flex';
+  document.body.classList.remove('aperture-authenticated');
+  $('app').style.display='none';
 }
 function authHeaders(extra){
   return Object.assign({ 'Authorization':'Bearer '+TOKEN }, extra || {});
 }
 function showApp(){
-  $('login').style.display='none'; $('app').style.display='block';
+  document.body.classList.add('aperture-authenticated');
+  $('app').style.display='block';
   tickClock(); setInterval(tickClock,1000);
   try {
     renderAgentOffice([], [], {}, [], [], {});
@@ -661,6 +664,7 @@ function countTo(id, target, suffix){
 const AXIS_INTENTS = [
   // "status" is intentionally broad: Ahmad's "status of everything" → the full picture (program % + lanes + digest + what needs him).
   { name:'status',    re:/\b(status|how.*(going|doing|running)|overview|summary|brief|update|what.*happen|whats?\s*up|going\s*on|everything|state|health|alive|progress|percent|client.?ready|series|sequence|lanes?|build|program)\b/i },
+  { name:'next',      re:/\b(next|what.?s next|what is next|what now|next step|next move|what do i do|what needs me|what needs ahmad)\b/i },
   { name:'agents',    re:/\b(agent|agents|roster|team|who.*working|workers|fleet|lineup)\b/i },
   { name:'leads',     re:/\b(lead|leads|pipeline|prospect|opportunity|hot|radar)\b/i },
   { name:'queue',     re:/\b(queue|queued|pending|work.*lined|backlog|tasks?|upcoming)\b/i },
@@ -708,6 +712,15 @@ async function axisFetchStatusFeed() {
   return null;
 }
 
+function axisFormatAction(item) {
+  if (typeof item === 'string') return item;
+  if (!item || typeof item !== 'object') return 'Unknown action';
+  const bits = [];
+  if (item.action) bits.push(item.action);
+  if (item.why) bits.push('— ' + item.why);
+  return bits.join(' ');
+}
+
 // Format the FULL "status of everything" — program % + lanes + live digest + what needs Ahmad. Ahmad's primary ask.
 function axisFormatStatus(d, feed) {
   const out = [];
@@ -734,7 +747,7 @@ function axisFormatStatus(d, feed) {
   }
   if (feed && Array.isArray(feed.needsAhmad) && feed.needsAhmad.length) {
     out.push('\nNeeds you (one-click):');
-    feed.needsAhmad.forEach((n) => out.push('• ' + n));
+    feed.needsAhmad.forEach((n) => out.push('• ' + axisFormatAction(n)));
   }
   if (feed && feed.generatedAt) out.push('\nAs of ' + axisAgo(feed.generatedAt).text + (feed.onTrack ? ' · on track.' : '.'));
   if (!out.length) {
@@ -742,6 +755,24 @@ function axisFormatStatus(d, feed) {
              : 'Program snapshot unavailable and the Director API is not deployed on this environment. Live panels above still show what I can see.';
   }
   return staleWarn + out.join('\n');
+}
+
+function axisFormatNext(d, feed) {
+  const out = [];
+  if (feed && Array.isArray(feed.nextUp) && feed.nextUp.length) {
+    out.push('Next best steps:');
+    feed.nextUp.slice(0, 4).forEach((item) => out.push('• ' + axisFormatAction(item)));
+  }
+  if (feed && Array.isArray(feed.needsAhmad) && feed.needsAhmad.length) {
+    out.push('\nNeeds Ahmad:');
+    feed.needsAhmad.slice(0, 4).forEach((item) => out.push('• ' + axisFormatAction(item)));
+  }
+  if (d && d.queue) {
+    const pending = d.queue.pending ?? 0;
+    out.push('\nPrivate queue: ' + pending + ' pending' + (d.queue.failed ? ', ' + d.queue.failed + ' failed recently' : '') + '.');
+  }
+  if (!out.length) return 'No next-step queue is exposed right now. Ask for status or sign in for the private command queue.';
+  return out.join('\n');
 }
 
 // A tight, natural SPOKEN version of the full status (so AXIS talks fast, not read-aloud bullets).
@@ -760,8 +791,14 @@ function axisSpeakableStatus(d, feed) {
   return 'Program snapshot is unavailable right now. Check the live panels above.';
 }
 
-function axisFormatAgents(d) {
-  if (!d) return 'Agent roster unavailable (Director API not deployed on this environment).';
+function axisFormatAgents(d, feed) {
+  if (!d) {
+    const lanes = Array.isArray(feed && feed.lanes) ? feed.lanes : [];
+    if (!lanes.length) return 'Agent roster unavailable publicly. Sign in for the private roster.';
+    let out = lanes.length + ' live lane' + (lanes.length !== 1 ? 's' : '') + ' are exposed publicly:';
+    lanes.slice(0, 5).forEach((lane) => { out += '\n• ' + lane.id + ' — ' + lane.does; });
+    return out;
+  }
   const active = d.agents ? (d.agents.active ?? 0) : 0;
   const total  = d.agents ? (d.agents.total  ?? 0) : 0;
   let out = active + ' of ' + total + ' agents are active.';
@@ -773,8 +810,12 @@ function axisFormatAgents(d) {
   return out;
 }
 
-function axisFormatLeads(d) {
-  if (!d) return 'Lead radar unavailable (Director API not deployed on this environment).';
+function axisFormatLeads(d, feed) {
+  if (!d) {
+    const lane = Array.isArray(feed && feed.lanes) ? feed.lanes.find((l) => /\b(revenue|lead|radar|acquisition|opportunity)\b/i.test((l.id || '') + ' ' + (l.does || ''))) : null;
+    if (lane) return 'Public lead detail stays gated. Closest live lane: ' + lane.id + ' — ' + lane.does + '. Sign in for private lead radar.';
+    return 'Lead radar is private on this page. Sign in for the private lead list.';
+  }
   const count   = d.leads ? (d.leads.count ?? 0) : 0;
   const hot     = d.leads ? (d.leads.hot ?? 0) : 0;
   const scanned = d.leads ? (d.leads.scanned ?? 0) : 0;
@@ -789,8 +830,14 @@ function axisFormatLeads(d) {
   return out;
 }
 
-function axisFormatQueue(d) {
-  if (!d) return 'Queue unavailable (Director API not deployed on this environment).';
+function axisFormatQueue(d, feed) {
+  if (!d) {
+    const nextUp = Array.isArray(feed && feed.nextUp) ? feed.nextUp : [];
+    if (!nextUp.length) return 'Queue detail is private on this page. Ask for status or sign in for the private queue.';
+    let out = nextUp.length + ' public next step' + (nextUp.length !== 1 ? 's' : '') + ':';
+    nextUp.slice(0, 5).forEach((item) => { out += '\n• ' + axisFormatAction(item); });
+    return out;
+  }
   const pending = d.queue ? (d.queue.pending ?? 0) : 0;
   const failed  = d.queue ? (d.queue.failed  ?? 0) : 0;
   let out = pending + ' task' + (pending !== 1 ? 's' : '') + ' pending in queue' + (failed ? ', ' + failed + ' recently failed' : '') + '.';
@@ -802,8 +849,14 @@ function axisFormatQueue(d) {
   return out;
 }
 
-function axisFormatApprovals(d) {
-  if (!d) return 'Approval gate info unavailable (Director API not deployed on this environment).';
+function axisFormatApprovals(d, feed) {
+  if (!d) {
+    const needs = Array.isArray(feed && feed.needsAhmad) ? feed.needsAhmad : [];
+    if (!needs.length) return 'No public approval items are exposed right now. Sign in for the full gate list.';
+    let out = 'Public approval queue:';
+    needs.slice(0, 5).forEach((item) => { out += '\n• ' + axisFormatAction(item); });
+    return out;
+  }
   const gates = Array.isArray(d.policy && d.policy.requiresApproval) ? d.policy.requiresApproval : [];
   let out = 'Active approval gates:';
   if (gates.length) {
@@ -834,27 +887,93 @@ function axisUnknownFallback(q, d, feed) {
 let __axisRecog = null;          // active SpeechRecognition instance while listening
 let __axisVoiceOn = true;        // speak replies aloud by default (Ahmad: "I want to talk, it's faster")
 
-// Pick a natural English (male-leaning) voice when the OS offers one; else default.
+// Pick the most HUMAN English voice the OS/browser offers (upgraded 2026-07-10 — Ahmad: "sounds robotic").
+// Ranking: Neural/Natural (Edge online voices) > Google (Chrome online) > Premium/Enhanced (macOS)
+// > preferred male names > any en-US > any English. A manual override persists in localStorage.
+function axisScoreVoice(v) {
+  try {
+    const n = (v.name || '') + ' ' + (v.voiceURI || '');
+    let s = 0;
+    if (/natural|neural/i.test(n)) s += 100;              // Edge "Online (Natural)" — most human
+    if (/google/i.test(n)) s += 60;                        // Chrome online voices — clearly better than SAPI
+    if (/premium|enhanced|siri/i.test(n)) s += 50;         // macOS high-quality tiers
+    if (/online/i.test(n)) s += 20;                        // cloud voices beat local legacy
+    if (/(guy|davis|andrew|brian|christopher|eric|roger|steffan|ryan|thomas|daniel|alex|arthur|george|james|mark)/i.test(n)) s += 12; // male-leaning, matches AXIS persona
+    if (/^en(-|_)?(US|CA)/i.test(v.lang || '')) s += 8; else if (/^en/i.test(v.lang || '')) s += 4; else s -= 50;
+    if (/david|zira|sam\b/i.test(n) && !/natural|neural|online/i.test(n)) s -= 15; // legacy SAPI = the robotic sound
+    return s;
+  } catch (_) { return -1; }
+}
 function axisPickVoice() {
   try {
     const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
-    return vs.find((v) => /^en(-|_)?(US|GB|CA|AU)?/i.test(v.lang) && /(david|daniel|alex|george|fred|arthur|guy|male|mark|james)/i.test(v.name))
-        || vs.find((v) => /^en/i.test(v.lang))
-        || vs[0] || null;
+    if (!vs.length) return null;
+    const wanted = (function () { try { return localStorage.getItem('axis-voice-name') || ''; } catch (_) { return ''; } })();
+    if (wanted) { const hit = vs.find((v) => v.name === wanted); if (hit) return hit; }
+    return vs.slice().sort((a, b) => axisScoreVoice(b) - axisScoreVoice(a))[0] || null;
   } catch (_) { return null; }
 }
+// Optional manual controls (also reachable from DevTools): cycle voices / set a specific one. Persisted.
+window.axisVoiceNext = function () {
+  try {
+    const vs = ((window.speechSynthesis && speechSynthesis.getVoices()) || []).filter((v) => /^en/i.test(v.lang || ''));
+    if (!vs.length) return null;
+    const cur = axisPickVoice();
+    const i = Math.max(0, vs.findIndex((v) => cur && v.name === cur.name));
+    const nxt = vs[(i + 1) % vs.length];
+    try { localStorage.setItem('axis-voice-name', nxt.name); } catch (_) {}
+    axisSpeak('Now speaking with ' + nxt.name.replace(/microsoft|google|online|\(|\)/gi, ' ').replace(/\s+/g, ' ').trim() + '.');
+    return nxt.name;
+  } catch (_) { return null; }
+};
+window.axisSetVoice = function (name) { try { localStorage.setItem('axis-voice-name', String(name || '')); } catch (_) {} return name; };
 
-// Speak a concise string aloud (strips bullet glyphs / collapses whitespace for natural speech).
+// Make text sound like a person, not a screen reader: strip glyphs/markdown, speak symbols
+// naturally, and split into sentence chunks so the voice breathes between thoughts
+// (chunking also avoids Chrome's long-utterance cutoff).
+function axisHumanizeForSpeech(text) {
+  let t = String(text || '');
+  t = t.replace(/[•·▪◦●⚠🔊🔇🎙✅❌→]/g, ' ')
+       .replace(/[*_`#>\[\]]/g, ' ')
+       .replace(/https?:\/\/([^\s\/]+)[^\s]*/gi, '$1')
+       .replace(/\b24\s*\/\s*7\b/g, 'twenty-four seven')
+       .replace(/\bw\//gi, 'with ')
+       .replace(/\be\.g\.\s*/gi, 'for example, ')
+       .replace(/\bi\.e\.\s*/gi, 'that is, ')
+       .replace(/(\d+)\s*%/g, '$1 percent')
+       .replace(/\s[-–—]\s/g, ', ')
+       .replace(/\s*\n+\s*/g, '. ')
+       .replace(/\.\s*\./g, '.')
+       .replace(/\s+/g, ' ').trim();
+  return t;
+}
 function axisSpeak(text) {
   try {
     if (!window.speechSynthesis || !__axisVoiceOn) return;
-    const clean = String(text || '').replace(/[•·⚠🔊🔇🎙●]/g, ' ').replace(/\s*\n+\s*/g, '. ').replace(/\s+/g, ' ').trim();
+    const clean = axisHumanizeForSpeech(text);
     if (!clean) return;
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(clean);
-    const v = axisPickVoice(); if (v) { u.voice = v; u.lang = v.lang; }
-    u.rate = 1.04; u.pitch = 0.96;
-    speechSynthesis.speak(u);
+    const v = axisPickVoice();
+    const natural = !!(v && /natural|neural|google|premium|enhanced/i.test(v.name || ''));
+    // Sentence-chunk so delivery has natural pauses instead of one monotone stream.
+    const chunks = clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [clean];
+    let buf = '';
+    const queue = [];
+    for (const c of chunks) {
+      if ((buf + c).length > 180 && buf) { queue.push(buf.trim()); buf = c; } else { buf += c; }
+    }
+    if (buf.trim()) queue.push(buf.trim());
+    queue.forEach(function (part) {
+      const u = new SpeechSynthesisUtterance(part);
+      if (v) { u.voice = v; u.lang = v.lang; }
+      // Natural voices sound best at neutral settings; legacy voices get a gentle lift.
+      u.rate = natural ? 1.0 : 1.02;
+      u.pitch = natural ? 1.0 : 1.0;
+      u.volume = 1;
+      speechSynthesis.speak(u);
+    });
+    // Show which voice is in use (hover the speaker button) — helps Ahmad pick via axisVoiceNext().
+    try { const b = $('axis-speak'); if (b && v) b.title = 'Voice: ' + v.name + ' — click-cycle: axisVoiceNext()'; } catch (_) {}
   } catch (_) {}
 }
 
@@ -895,6 +1014,13 @@ window.axisVoiceToggle = function() {
   else if (window.speechSynthesis) speechSynthesis.cancel();
 };
 
+window.axisQuickAsk = function(q) {
+  const inp = $('axis-chat-in');
+  if (!inp) return;
+  inp.value = q || '';
+  window.axisChatSend();
+};
+
 // Main AXIS chat send handler — deterministic (no LLM, never "Brain busy"), now voice-aware.
 window.axisChatSend = async function() {
   const inp = $('axis-chat-in');
@@ -914,20 +1040,31 @@ window.axisChatSend = async function() {
   try {
     const intent = axisClassifyIntent(q);
     if (intent === 'help') {
-      reply = axisHelp();
-      speak = 'I can tell you status, agents, leads, queue, or approvals. Just ask.';
+      reply = 'I can answer:\n  status / brief — live overview\n  next — what happens now\n  agents / roster — fleet status\n  leads / radar — lead view\n  queue / pending — queued work\n  approvals / gates — what needs Ahmad sign-off\n\nPublic mode stays honest. Sign in for the private director data.';
+      speak = 'Ask for status, next, agents, leads, queue, or approvals.';
     } else {
       // Pull the honest program-status feed (always) + the live director digest (when deployed). Both deterministic, no LLM.
       const [feed, digest] = await Promise.all([
         axisFetchStatusFeed(),
-        (async () => { try { const r = await fetch('/api/senior-director-agent', { headers: authHeaders(), cache: 'no-store' }); if (r.ok) { const j = await r.json(); return j.digest || null; } } catch (_) {} return null; })()
+        (async () => {
+          if (!TOKEN) return null;
+          try {
+            const r = await fetch('/api/senior-director-agent', { headers: authHeaders(), cache: 'no-store' });
+            if (r.ok) {
+              const j = await r.json();
+              return j.digest || null;
+            }
+          } catch (_) {}
+          return null;
+        })()
       ]);
 
       if (intent === 'status')         { reply = axisFormatStatus(digest, feed); speak = axisSpeakableStatus(digest, feed); }
-      else if (intent === 'agents')    { reply = axisFormatAgents(digest); speak = reply; }
-      else if (intent === 'leads')     { reply = axisFormatLeads(digest); speak = reply; }
-      else if (intent === 'queue')     { reply = axisFormatQueue(digest); speak = reply; }
-      else if (intent === 'approvals') { reply = axisFormatApprovals(digest); speak = reply; }
+      else if (intent === 'next')      { reply = axisFormatNext(digest, feed); speak = 'I have your next steps ready.'; }
+      else if (intent === 'agents')    { reply = axisFormatAgents(digest, feed); speak = reply; }
+      else if (intent === 'leads')     { reply = axisFormatLeads(digest, feed); speak = reply; }
+      else if (intent === 'queue')     { reply = axisFormatQueue(digest, feed); speak = reply; }
+      else if (intent === 'approvals') { reply = axisFormatApprovals(digest, feed); speak = reply; }
       else                             { reply = axisUnknownFallback(q, digest, feed); speak = axisSpeakableStatus(digest, feed); }
     }
   } catch (e) {
