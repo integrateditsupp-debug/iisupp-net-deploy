@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ARIA Auto-Resolve Benchmark — What Our Support AI Answers, and What It Refuses to Guess | IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Most support-AI vendors publish one flattering number. We publish three, including our false-answer rate — and the command you can run yourself to reproduce them. Measured 2026-07-14 on 437 real IT questions.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="ARIA Auto-Resolve Benchmark — three honest numbers, not one flattering one">
+<meta property="og:description" content="In-scope deflection 93.1%. Out-of-scope false answers 0%. Control hijacks 0%. Reproduce it yourself in one command.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://iisupp.net/aria-benchmark">
+<meta property="og:image" content="https://iisupp.net/assets/aria-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ARIA Auto-Resolve Benchmark">
+<meta name="twitter:description" content="We publish our support AI's false-answer rate. Reproduce every number in one command.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050505;color:#e8e8e8;line-height:1.6;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:860px;margin:0 auto}
+  .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h1{font-size:38px;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-.02em;line-height:1.15}
+  h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  p.sub{color:rgba(255,255,255,.65);font-size:16px;margin-bottom:14px}
+  .privacy-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.35);color:#7ee2a8;border-radius:999px;padding:8px 14px;font-size:12px;letter-spacing:.05em;margin-bottom:30px}
+  h2{font-size:22px;color:#fff;font-weight:700;margin:38px 0 12px;letter-spacing:-.01em}
+  h3{font-size:16px;color:#fff;font-weight:700;margin:22px 0 6px}
+  p{color:rgba(255,255,255,.78);font-size:15px;margin-bottom:12px}
+  .lede{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-left:3px solid #c5a059;border-radius:10px;padding:20px 22px;color:rgba(255,255,255,.78);font-size:15px;margin-bottom:28px}
+  .lede p:last-child{margin-bottom:0}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:26px 0 8px}
+  .card{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px}
+  .card.good{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.05)}
+  .card .label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#c5a059;margin-bottom:8px}
+  .card.good .label{color:#7ee2a8}
+  .card .score{font-size:40px;font-weight:800;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.1;color:#fff}
+  .card .n{font-size:12.5px;color:rgba(255,255,255,.45);margin-top:4px;font-family:ui-monospace,monospace}
+  .card .why{font-size:13.5px;color:rgba(255,255,255,.7);margin-top:10px}
+  .card .must{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7ee2a8;margin-top:10px;font-weight:700}
+  .fixlist{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;margin-top:12px}
+  .fixlist ol,.fixlist ul{margin:8px 0 0 20px;color:rgba(255,255,255,.8);font-size:14.5px}
+  .fixlist li{margin-bottom:12px}
+  .fixlist li:last-child{margin-bottom:0}
+  .fixlist li b{color:#fff}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#050505;border:1px solid #2a2a2a;border-radius:6px;padding:2px 7px;font-size:13.5px;color:#f1dca7}
+  pre{background:#050505;border:1px solid #2a2a2a;border-radius:10px;padding:16px 18px;overflow-x:auto;margin:12px 0}
+  pre code{background:none;border:none;padding:0;color:#f1dca7;font-size:13.5px}
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14.5px}
+  th,td{text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.8)}
+  th{color:#c5a059;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  td.num{font-family:ui-monospace,monospace;color:#fff;white-space:nowrap}
+  .bar{display:block;width:100%;max-width:170px;height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+  .fill{display:block;height:100%;background:linear-gradient(90deg,#c5a059,#f1dca7);border-radius:99px}
+  .cta-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+  .btn{padding:13px 24px;border-radius:8px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;text-decoration:none;font-family:ui-monospace,monospace;display:inline-block;transition:transform .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505}
+  .btn-ghost{background:transparent;color:#c5a059;border:1px solid rgba(197,160,89,.45)}
+  footer{margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);font-size:13px;text-align:center}
+  footer a{color:#c5a059;text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)}
+  .stamp{font-family:ui-monospace,monospace;font-size:12.5px;color:rgba(255,255,255,.42);margin-top:8px}
+  @media(max-width:640px){h1{font-size:29px}body{padding:32px 16px}.bar{max-width:90px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crown">ARIA · Auto-Resolve Benchmark</div>
+  <h1>We publish our support AI's <span class="gold">false-answer rate</span>.</h1>
+  <p class="sub">Anyone can quote a resolution rate. Almost nobody tells you how often their bot confidently answers a question it had no business answering. Both numbers are below — plus the command to reproduce them.</p>
+  <div class="privacy-pill">◆ Measured 2026-07-14 · reproducible in one command · no signup</div>
+
+  <div class="lede">
+    <p><b>One number would lie.</b> A support bot can hit a beautiful "answered 90% of questions" score by answering <i>everything</i> — including the questions it should have handed to a human, and the ones that were never IT support in the first place. That is not coverage. That is a bot guessing with confidence.</p>
+    <p>So we measure three things and publish all three, including the ones that make us look worse.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="label">1 · In-scope deflection</div>
+      <div class="score">93.1%</div>
+      <div class="n">407 / 437 real IT questions</div>
+      <div class="why">Answered instantly by the offline knowledge base — zero AI calls, zero network, zero human. Higher is better, and this is the number we are actively pushing up.</div>
+    </div>
+    <div class="card good">
+      <div class="label">2 · Out-of-scope false answers</div>
+      <div class="score">0%</div>
+      <div class="n">30 non-IT questions</div>
+      <div class="why">Questions that were never IT support ("bitcoin price", "what's the weather"). If the bot answers one of these, that is a defect, not coverage.</div>
+      <div class="must">Must be 0 · currently 0</div>
+    </div>
+    <div class="card good">
+      <div class="label">3 · Control hijacks</div>
+      <div class="score">0%</div>
+      <div class="n">83 dialogue turns</div>
+      <div class="why">Conversation turns the dialogue layer owns — "still not working", "get me a human". Firing a printer fix at one of these is a hijack.</div>
+      <div class="must">Must be 0 · currently 0</div>
+    </div>
+  </div>
+
+  <h2>Reproduce every number yourself</h2>
+  <p>The knowledge base and the question corpus are both plain files in our repository. The harness reads the exact same knowledge base that ships to your browser — not a copy, not a mock.</p>
+  <pre><code>node tools/measure-kb-selftest.mjs</code></pre>
+  <div class="fixlist">
+    <ul>
+      <li><b>The knowledge base:</b> <code>assets/aria-knowledge-base.js</code> — 31 patterns, the same file the browser loads.</li>
+      <li><b>The corpus:</b> <code>tests/scenario-corpus.js</code> — 1896 entries, de-duplicated to <b>631 unique questions</b>. We de-duplicate because the corpus pads itself with ALL-CAPS restatements, and counting those would inflate the sample without adding a single new phrasing.</li>
+      <li><b>Case stability:</b> every answered question is re-asked in ALL CAPS and must still be answered. Currently: <b>passing</b>.</li>
+    </ul>
+  </div>
+
+  <h2>Coverage by problem type</h2>
+  <p>This is the honest spread — the strong areas and the weak ones, in the same table. The low rows are our backlog, not a secret.</p>
+  <table>
+    <thead><tr><th>Problem type</th><th>Answered</th><th>Rate</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>printer</td><td class="num">21/21</td><td class="num">100%</td><td><span class="bar"><span class="fill" style="width:100%"></span></span></td></tr>
+      <tr><td>onedrive sync</td><td class="num">20/20</td><td class="num">100%</td><td><span class="bar"><span class="fill" style="width:100%"></span></span></td></tr>
+      <tr><td>performance</td><td class="num">20/20</td><td class="num">100%</td><td><span class="bar"><span class="fill" style="width:100%"></span></span></td></tr>
+      <tr><td>windows / boot</td><td class="num">20/20</td><td class="num">100%</td><td><span class="bar"><span class="fill" style="width:100%"></span></span></td></tr>
+      <tr><td>browser</td><td class="num">15/15</td><td class="num">100%</td><td><span class="bar"><span class="fill" style="width:100%"></span></span></td></tr>
+      <tr><td>microsoft 365 / entra</td><td class="num">12/12</td><td class="num">100%</td><td><span class="bar"><span class="fill" style="width:100%"></span></span></td></tr>
+      <tr><td>macos</td><td class="num">8/8</td><td class="num">100%</td><td><span class="bar"><span class="fill" style="width:100%"></span></span></td></tr>
+      <tr><td>onboarding</td><td class="num">8/8</td><td class="num">100%</td><td><span class="bar"><span class="fill" style="width:100%"></span></span></td></tr>
+      <tr><td>bitlocker</td><td class="num">5/5</td><td class="num">100%</td><td><span class="bar"><span class="fill" style="width:100%"></span></span></td></tr>
+      <tr><td>microsoft teams</td><td class="num">29/30</td><td class="num">96.7%</td><td><span class="bar"><span class="fill" style="width:96.7%"></span></span></td></tr>
+      <tr><td>vpn / remote access</td><td class="num">24/25</td><td class="num">96%</td><td><span class="bar"><span class="fill" style="width:96%"></span></span></td></tr>
+      <tr><td>mfa / 2fa</td><td class="num">28/30</td><td class="num">93.3%</td><td><span class="bar"><span class="fill" style="width:93.3%"></span></span></td></tr>
+      <tr><td>out-of-office</td><td class="num">14/15</td><td class="num">93.3%</td><td><span class="bar"><span class="fill" style="width:93.3%"></span></span></td></tr>
+      <tr><td>bluetooth / audio</td><td class="num">14/15</td><td class="num">93.3%</td><td><span class="bar"><span class="fill" style="width:93.3%"></span></span></td></tr>
+      <tr><td>usb / external drives</td><td class="num">12/13</td><td class="num">92.3%</td><td><span class="bar"><span class="fill" style="width:92.3%"></span></span></td></tr>
+      <tr><td>email / outlook</td><td class="num">46/50</td><td class="num">92%</td><td><span class="bar"><span class="fill" style="width:92%"></span></span></td></tr>
+      <tr><td>security / phishing</td><td class="num">18/20</td><td class="num">90%</td><td><span class="bar"><span class="fill" style="width:90%"></span></span></td></tr>
+      <tr><td>webcam</td><td class="num">9/10</td><td class="num">90%</td><td><span class="bar"><span class="fill" style="width:90%"></span></span></td></tr>
+      <tr><td>active directory</td><td class="num">9/10</td><td class="num">90%</td><td><span class="bar"><span class="fill" style="width:90%"></span></span></td></tr>
+      <tr><td>file permissions</td><td class="num">9/10</td><td class="num">90%</td><td><span class="bar"><span class="fill" style="width:90%"></span></span></td></tr>
+      <tr><td>core networking (dns/dhcp)</td><td class="num">9/10</td><td class="num">90%</td><td><span class="bar"><span class="fill" style="width:90%"></span></span></td></tr>
+      <tr><td>password / login</td><td class="num">34/40</td><td class="num">85%</td><td><span class="bar"><span class="fill" style="width:85%"></span></span></td></tr>
+      <tr><td>wi-fi</td><td class="num">23/30</td><td class="num">76.7%</td><td><span class="bar"><span class="fill" style="width:76.7%"></span></span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>What we fixed the day we published this</h2>
+  <p>Running this benchmark honestly is only worth something if we act on what it finds. The last run found real defects. Here is what they were and what we did:</p>
+  <div class="fixlist">
+    <ol>
+      <li><b>The bot answered "bitcoin price" with our pricing sheet.</b> A too-broad pricing pattern matched any sentence containing the word "price". It is exactly the class of defect a single flattering metric hides. Fixed: a price word must now sit next to something we actually sell, and an explicit guard vetoes crypto, stock, flight and shopping phrasings. Out-of-scope false answers went from 6.7% to <b>0%</b>.</li>
+      <li><b>Four whole problem types had zero coverage</b> — VPN / remote access, webcams, BitLocker recovery, and employee onboarding &amp; offboarding. All four are now answered. In-scope deflection rose from 23.6% to <b>93.1%</b> after the coverage build-out below.</li>
+      <li><b>The benchmark itself had a scoring bug — so we fixed the benchmark and said so.</b> It was counting the bot's correct "glad that worked" reply to "thanks, that worked" as a false fire, and it was scoring an unlabelled grab-bag of questions as if every one of them were a dialogue turn. Both were corrected. That grab-bag (80 questions, the bot answers 15) is now reported separately and <b>excluded from the headline entirely</b>, because it mixes real support questions with small talk and neither answering nor abstaining is provably right. We would rather exclude it and tell you than score it in whichever direction flatters us.</li>
+    </ol>
+  </div>
+
+  <h2>What this number is <i>not</i></h2>
+  <div class="fixlist">
+    <ul>
+      <li><b>Deflection is not resolution.</b> This measures the instant offline answer layer — the part that responds with zero AI cost and zero waiting. Full resolution is that layer plus the AI, plus guided recipes, plus a human when it matters.</li>
+      <li><b>Deflection is not remediation.</b> Answering "here is how to fix your VPN" is not the same as changing the machine. That is ARIA Sentinel's job, it runs under an approval gate, and it is measured separately.</li>
+      <li><b>This is a self-test, not a customer-validated production rate.</b> It runs against a public corpus of real-phrased IT questions. When we have production numbers from paying clients, we will publish those too — and we will say which is which.</li>
+    </ul>
+  </div>
+
+  <h2>Why any of this matters to you</h2>
+  <p>When you buy IT support with an AI layer in front of it, the risk is not that the AI misses a question — a human picks that up. The risk is that it <b>answers wrongly with total confidence</b>, and your staff act on it. A vendor who cannot tell you their false-answer rate has not measured it. Ask them for it. If they will not publish it, that is your answer.</p>
+  <p>We would rather ARIA say nothing and hand you to a person than guess. That is why two of the three numbers on this page are required to be zero, and why the one that is allowed to be imperfect is the one we show in full detail.</p>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="/aria">Try ARIA</a>
+    <a class="btn btn-ghost" href="/health-check">Free IT health check</a>
+    <a class="btn btn-ghost" href="/managed-it-cost-toronto.html">What managed IT costs in the GTA</a>
+  </div>
+
+  <footer>
+    <div>Integrated IT Support Inc. · Whitby, Ontario · <a href="/">iisupp.net</a></div>
+    <div class="stamp">Measured 2026-07-14 · harness tools/measure-kb-selftest.mjs · KB 31 patterns · corpus 631 unique questions · case-stable: yes</div>
+    <div style="margin-top:10px">
+      <a href="/services">Services</a> · <a href="/start-here">Start here</a> · <a href="/cost-calculator">Cost calculator</a> · <a href="/aria">ARIA</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

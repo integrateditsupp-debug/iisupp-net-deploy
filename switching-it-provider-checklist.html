@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Switching IT Providers — Do You Actually Own Your Own IT? Free Handover Check | IIS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Before you leave your IT provider, find out what you actually own: the tenant, the domain, the backups, the licences, the documentation. Free 12-point ownership check plus a ready-to-send handover demand list. Runs entirely in your browser — nothing is sent anywhere, no signup.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="Switching IT Providers — Do You Actually Own Your Own IT?">
+<meta property="og:description" content="12-point ownership check plus a ready-to-send handover demand list. Runs 100% in your browser. Nothing leaves your device.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://iisupp.net/switching-it-provider-checklist">
+<meta property="og:image" content="https://iisupp.net/assets/aria-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Switching IT Providers — Do You Actually Own Your Own IT?">
+<meta name="twitter:description" content="12-point ownership check plus a ready-to-send handover demand list. Nothing leaves your device.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#050505;color:#e8e8e8;line-height:1.6;padding:48px 20px;min-height:100vh}
+  .wrap{max-width:820px;margin:0 auto}
+  .crown{font-size:11px;letter-spacing:.22em;color:#c5a059;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h1{font-size:38px;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-.02em;line-height:1.15}
+  h1 .gold{background:linear-gradient(135deg,#c5a059,#f1dca7);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  p.sub{color:rgba(255,255,255,.65);font-size:16px;margin-bottom:14px}
+  .privacy-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.35);color:#7ee2a8;border-radius:999px;padding:8px 14px;font-size:12px;letter-spacing:.05em;margin-bottom:30px}
+  h2{font-size:22px;color:#fff;font-weight:700;margin:38px 0 12px;letter-spacing:-.01em}
+  h3{font-size:16px;color:#fff;font-weight:700;margin:22px 0 6px}
+  .lede{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-left:3px solid #c5a059;border-radius:10px;padding:20px 22px;color:rgba(255,255,255,.78);font-size:15px;margin-bottom:28px}
+  .form-card{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:26px;margin-bottom:16px}
+  .q{padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .q:last-child{border-bottom:none}
+  .q .qtext{display:block;color:#fff;font-size:15px;font-weight:600;margin-bottom:4px}
+  .q .qwhy{display:block;color:rgba(255,255,255,.45);font-size:12.5px;margin-bottom:10px}
+  .q select{width:100%;padding:11px 13px;background:#050505;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14.5px;font-family:inherit}
+  .q select:focus{outline:2px solid #c5a059;outline-offset:1px;border-color:#c5a059}
+  button.calc{width:100%;padding:16px;background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505;border:none;border-radius:10px;font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-top:14px;transition:transform .15s,box-shadow .2s}
+  button.calc:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(197,160,89,.3)}
+  button.calc:focus-visible{outline:2px solid #fff;outline-offset:2px}
+  .results{display:none;margin-top:26px}
+  .results.show{display:block}
+  .band{border-radius:14px;padding:26px;text-align:center;margin-bottom:20px;border:1px solid}
+  .band .label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;opacity:.85}
+  .band .score{font-size:46px;font-weight:800;font-family:ui-monospace,monospace;line-height:1}
+  .band .verdict{font-size:15px;margin-top:10px;color:rgba(255,255,255,.85)}
+  .band.red{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.07);color:#f87171}
+  .band.amber{border-color:rgba(234,179,8,.45);background:rgba(234,179,8,.07);color:#fbbf24}
+  .band.green{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.07);color:#22c55e}
+  .fixlist{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;margin-bottom:16px}
+  .fixlist ol{margin:12px 0 0 20px;color:rgba(255,255,255,.8);font-size:14.5px}
+  .fixlist li{margin-bottom:12px}
+  .fixlist li b{color:#fff}
+  .none{color:rgba(255,255,255,.6);font-size:14.5px}
+  .letter{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px}
+  .letter textarea{width:100%;min-height:300px;background:#050505;border:1px solid #2a2a2a;border-radius:8px;color:#d8d8d8;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.65;padding:14px;resize:vertical}
+  .letter textarea:focus{outline:2px solid #c5a059;outline-offset:1px;border-color:#c5a059}
+  .copy-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .copied{color:#7ee2a8;font-size:12.5px;align-self:center;display:none}
+  .copied.show{display:inline}
+  .cta-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+  .btn{padding:13px 24px;border-radius:8px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;text-decoration:none;font-family:ui-monospace,monospace;display:inline-block;transition:transform .15s;border:none;cursor:pointer}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:linear-gradient(135deg,#c5a059,#f1dca7);color:#050505}
+  .btn-ghost{background:transparent;color:#c5a059;border:1px solid rgba(197,160,89,.45)}
+  .timeline{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px}
+  .tl{border-left:2px solid rgba(197,160,89,.35);margin-left:8px;padding-left:20px}
+  .tl .step{margin-bottom:20px;position:relative}
+  .tl .step:last-child{margin-bottom:0}
+  .tl .step::before{content:'';position:absolute;left:-27px;top:6px;width:10px;height:10px;border-radius:50%;background:#c5a059}
+  .tl .when{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#c5a059;font-weight:700}
+  .tl .what{color:#fff;font-weight:600;font-size:15px;margin-top:2px}
+  .tl .detail{color:rgba(255,255,255,.7);font-size:14px;margin-top:3px}
+  details{background:#0d0d0d;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px 18px;margin-bottom:10px}
+  details summary{color:#fff;font-weight:600;font-size:15px;cursor:pointer}
+  details p{color:rgba(255,255,255,.72);font-size:14.5px;margin-top:10px}
+  a{color:#c5a059}
+  .disclaimer{color:rgba(255,255,255,.45);font-size:12px;margin-top:28px;line-height:1.6;border-top:1px solid rgba(255,255,255,.08);padding-top:18px}
+  .nav{text-align:center;margin-top:36px;color:rgba(255,255,255,.4);font-size:12.5px}
+  .nav a{color:rgba(255,255,255,.6);text-decoration:none;margin:0 8px}
+  .nav a:hover{color:#c5a059}
+  .fresh{color:rgba(255,255,255,.4);font-size:12px;margin-top:6px}
+  @media(max-width:640px){h1{font-size:29px}body{padding:32px 16px}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What do I actually own when I leave my IT provider?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You should own the Microsoft 365 or Google tenant itself, your domain name and its DNS, your data and a restorable copy of your backups, your software licences and subscriptions in your own name, and the documentation of how your environment is built. If any of those sit inside your provider's tenant, their registrar account, their backup account or their heads, you do not own your IT — you rent access to it, and leaving is expensive."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can my IT provider hold my data hostage when I leave?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In practice the leverage is rarely the data itself — it is the access to it. The common pressure points are ownership of the tenant's global admin account, control of the domain registrar, backups living in the provider's own storage account rather than yours, and licences bought under the provider's agreement rather than yours. Establish who holds each of those before you give notice, not after."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does switching IT providers take?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The contractual notice period is usually 30 to 90 days, but the work that decides whether the switch is painless is done in the first two weeks: proving you can access your own tenant, confirming your domain and DNS are in your name, and getting a restore actually tested rather than promised. A switch fails when those three are discovered late, not when the notice is short."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I ask my outgoing IT provider for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ask in writing for: global admin credentials to your own tenant, transfer of the domain and DNS to an account you control, an exported and verified copy of your backups, a list of every licence and subscription with its renewal date and who it is billed to, network and system documentation, and the list of every third-party account created on your behalf. Ask for a date on each one."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this check send my information anywhere?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The check runs entirely in your browser as static JavaScript. It makes no network calls, stores nothing, and requires no signup or email address to show your result or generate your handover letter."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crown">Free tool · Integrated IT Support Inc.</div>
+  <h1>The day you leave your IT provider,<br>do you actually <span class="gold">own</span> anything?</h1>
+  <p class="sub">A 12-point ownership check for any business thinking about switching IT providers — plus a ready-to-send handover demand list you can paste straight into an email. Find out what you own before you give notice, not after.</p>
+  <div class="privacy-pill">Runs 100% in your browser · no network calls · no signup · nothing stored</div>
+
+  <div class="lede">
+    <strong>Why this exists.</strong> Switching providers almost never goes wrong on price or notice periods. It goes wrong on <em>ownership</em> — and the discovery always happens at the worst possible moment. The tenant's global admin account belongs to the provider. The domain is registered under their registrar login. The backups live in their storage, not yours. The licences are billed under their agreement. Nobody wrote any of it down. None of that is malicious; it is just how it accumulates when nobody asks. This page is the asking. It is free, it works whether or not you ever talk to us, and it will tell you things a provider being replaced has no incentive to volunteer.
+  </div>
+
+  <h2>The ownership check</h2>
+  <form class="form-card" id="chk">
+    <div id="qs"></div>
+    <button class="calc" type="submit">Show me what I own</button>
+  </form>
+
+  <div class="results" id="res" role="status" aria-live="polite">
+    <div class="band" id="band">
+      <div class="label">Switch risk</div>
+      <div class="score" id="score">—</div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+
+    <div class="fixlist">
+      <h3>Establish these first — in this order</h3>
+      <div id="fixes"></div>
+    </div>
+
+    <div class="letter">
+      <h3>Your handover demand list</h3>
+      <p class="none" style="margin-bottom:12px">Generated from your answers. Send it to your current provider <strong>before</strong> you give notice — the answers you get, and how fast you get them, tell you more about your exit than any contract clause. Edit freely; it is your letter.</p>
+      <textarea id="letter" spellcheck="false" aria-label="Handover demand list"></textarea>
+      <div class="copy-row">
+        <button class="btn btn-primary" type="button" id="copy">Copy to clipboard</button>
+        <span class="copied" id="copied">Copied — paste it into your email.</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/book.html">Have us run the switch with you</a>
+        <a class="btn btn-ghost" href="/managed-it-cost-toronto.html">What managed IT costs here</a>
+        <a class="btn btn-ghost" href="/health-check.html">Free IT health check</a>
+      </div>
+    </div>
+  </div>
+
+  <h2>The 30-day switch, in the order that actually works</h2>
+  <div class="timeline">
+    <div class="tl">
+      <div class="step">
+        <div class="when">Before you give notice</div>
+        <div class="what">Prove you can get into your own tenant</div>
+        <div class="detail">Sign in as a global administrator of your Microsoft 365 or Google tenant, using an account whose password only you control, with MFA on a device you hold. If you cannot do this today, nothing else on this list matters yet. This is the single point that decides whether your exit is an administrative task or a negotiation.</div>
+      </div>
+      <div class="step">
+        <div class="when">Before you give notice</div>
+        <div class="what">Confirm the domain and DNS are in your name</div>
+        <div class="detail">Log into the registrar directly. Not a portal your provider gave you — the registrar. Your company should be the registrant, with billing on your card and the account recoverable to your email. A domain you cannot log into is a business you cannot email from.</div>
+      </div>
+      <div class="step">
+        <div class="when">Before you give notice</div>
+        <div class="what">Get a restore tested, not promised</div>
+        <div class="detail">Ask for a real restore of a real file and a real mailbox, watched by you, dated. "We have backups" is not a backup; a restore you have seen is. Ask where the backup data physically lives and whose account pays for it — because that is who can switch it off.</div>
+      </div>
+      <div class="step">
+        <div class="when">Week 1 after notice</div>
+        <div class="what">Send the handover demand list with dates</div>
+        <div class="detail">Every item above, in writing, each with a date attached. Cooperation in week one is the best predictor of a clean exit. Silence in week one is information.</div>
+      </div>
+      <div class="step">
+        <div class="when">Week 2</div>
+        <div class="what">Take the licences and subscriptions into your own name</div>
+        <div class="detail">Every seat, every renewal date, every auto-renew, every third-party account opened on your behalf — moved onto your billing or, at minimum, listed so nothing silently lapses or silently keeps charging after you leave.</div>
+      </div>
+      <div class="step">
+        <div class="when">Weeks 2–3</div>
+        <div class="what">Document the environment while the outgoing team still answers the phone</div>
+        <div class="detail">Network layout, firewall rules, line-of-business applications and who supports them, the printers everyone quietly depends on, the one server nobody documented. This knowledge is worth more than any file transfer, and it evaporates on the last day.</div>
+      </div>
+      <div class="step">
+        <div class="when">Week 4</div>
+        <div class="what">Rotate every credential — then close the door</div>
+        <div class="detail">Rotate admin passwords, revoke old sessions and tokens, remove the outgoing provider's delegated access, partner relationships and remote-access agents. Confirm removal rather than assume it. An exit is not finished when the invoice stops; it is finished when the access does.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Questions people ask us</h2>
+  <details>
+    <summary>Is this page trying to make me switch to you?</summary>
+    <p>It is trying to make you <em>able</em> to switch — which is a different thing, and it is useful to you even if you stay exactly where you are. A business that owns its tenant, its domain, its backups and its documentation is a business whose provider has to keep earning it. We would rather compete for you on that footing than lock you in on any other. If you run this check and the honest answer is that your current provider is doing all of it right, that is a good outcome and you should keep them.</p>
+  </details>
+  <details>
+    <summary>Why would you publish the exact list of things to demand from a provider?</summary>
+    <p>Because we intend to be on the receiving end of it one day, and we would rather be judged by how we answer it. Every item on this list is something we hand over on request, on a date, without a negotiation. Publishing the list is the cheapest honest way to say so.</p>
+  </details>
+  <details>
+    <summary>Does anything I type here leave my device?</summary>
+    <p>No. The page is static HTML and JavaScript. There is no form submission, no fetch call, no analytics on your answers, no email gate, and nothing is stored. Your letter is assembled in your browser and put on your clipboard only when you press the button. You can disconnect from the internet and this page still works.</p>
+  </details>
+  <details>
+    <summary>My current provider says the tenant has to be under their partner account. Is that true?</summary>
+    <p>A provider can hold a delegated administration or partner relationship <em>to</em> your tenant while the tenant itself remains yours — that is the normal arrangement, and it is reversible by you. What is not normal is the tenant being created and owned inside the provider's own subscription with no global admin account in your control. If you are told the second arrangement is a requirement, ask for it in writing and take the answer to a second opinion.</p>
+  </details>
+  <details>
+    <summary>What if the check says my switch risk is high?</summary>
+    <p>Then you have found it now, on your own terms, with time to fix it — which is the entire point. Nothing on that list is unfixable, and most of it is paperwork rather than engineering. Work down the ordered list, top item first. If you want a second pair of hands on it, that is what we do; if you want to do it yourself, everything you need is on this page.</p>
+  </details>
+
+  <p class="disclaimer">
+    <strong>Honesty note.</strong> This tool contains no benchmarks, no industry averages, no survey data and no statistics — because we will not publish numbers we have not measured ourselves. Your result is arithmetic on your own twelve answers, nothing more. It is a self-assessment and a preparation aid, not an audit, and it is not legal or contractual advice; your obligations to your current provider are governed by the agreement you signed, which you should read, and where the stakes are material, have a lawyer read. Microsoft 365 and Google Workspace are the products of their respective owners; Integrated IT Support Inc. is not affiliated with them.<br>
+    <span class="fresh">Integrated IT Support Inc. · Whitby, Ontario · Serving Durham Region and the GTA · Last reviewed 2026-07-14</span>
+  </p>
+
+  <div class="nav">
+    <a href="/index.html">Home</a> ·
+    <a href="/services.html">Services</a> ·
+    <a href="/managed-it-cost-toronto.html">What managed IT costs</a> ·
+    <a href="/copilot-oversharing-check.html">Copilot oversharing check</a> ·
+    <a href="/trust.html">Trust</a> ·
+    <a href="/book.html">Talk to us</a>
+  </div>
+</div>
+
+<script>
+// 100% client-side. No network calls. No storage. Nothing leaves this browser.
+var QUESTIONS = [
+  {id:'globaladmin', w:3, q:'Can you personally sign in to your Microsoft 365 / Google tenant as a global administrator today?',
+   why:'If only your provider holds this, every other item on this list runs through them.',
+   ask:'Global administrator access to our own tenant, under an account we control, with MFA on our device.',
+   fix:['Get global admin of your own tenant','Everything else — data, mail, licences, offboarding — runs through this one account. Until you hold it, you are asking permission to reach your own business.'],
+   opts:[['No — the provider holds all admin accounts',3],['There is an account but I have never signed into it',2],['Yes, and I have used it recently',0],['I do not know',3]]},
+  {id:'domain', w:3, q:'Is your domain name registered in your company’s name, in an account you can log into?',
+   why:'A domain you cannot log into is a business you cannot email from.',
+   ask:'Transfer of the domain registration and DNS control to an account in our company name, with billing on our card.',
+   fix:['Take back the domain and DNS','Log into the registrar itself, not a provider portal. Your company should be the registrant, with recovery going to an email address you hold.'],
+   opts:[['No — the provider registered and holds it',3],['I think so, but I have never logged in',2],['Yes — I have logged into the registrar myself',0],['I do not know',3]]},
+  {id:'restore', w:3, q:'Have you personally watched a real file and a real mailbox be restored from backup?',
+   why:'"We have backups" is a claim. A restore you have seen is a fact.',
+   ask:'A witnessed test restore of one file and one mailbox, on a date, plus written confirmation of where the backup data is stored and whose account funds it.',
+   fix:['Get a restore tested in front of you','Ask for a real file and a real mailbox back, watched by you, dated. Then ask where the backup data lives and who pays for that storage — that is who can turn it off.'],
+   opts:[['No — never tested',3],['The provider says they test it; I have not seen one',2],['Yes — witnessed, with a date',0],['I do not know',3]]},
+  {id:'backupowner', w:2, q:'Do your backups live in a storage account that your company owns and pays for?',
+   why:'Backups inside a provider’s own account leave with the provider.',
+   ask:'An exported, verified copy of all backup data, and confirmation of the retention period after our contract ends.',
+   fix:['Move backups into storage you own','Or, at minimum, export a verified copy before notice. Data you cannot reach without a third party is not a backup — it is a favour.'],
+   opts:[['No — they are in the provider’s storage',3],['Mixed / partly',2],['Yes — our own account, our own billing',0],['I do not know',3]]},
+  {id:'licences', w:2, q:'Are your software licences and subscriptions billed to your company, in your name?',
+   why:'Licences under a provider’s agreement can end with the agreement.',
+   ask:'A complete list of every licence and subscription, its seat count, renewal date, and who it is billed to — plus transfer of each into our own name.',
+   fix:['Take licences and subscriptions into your own name','Get the full list with renewal dates first. The expensive surprises at switch time are the auto-renewals nobody knew about and the seats that silently lapse.'],
+   opts:[['No — bought under the provider’s agreement',3],['Some ours, some theirs',2],['Yes — all in our name',0],['I do not know',3]]},
+  {id:'passwords', w:3, q:'Do you hold the administrator credentials for your firewall, servers and core systems?',
+   why:'These are the ones that are always found missing on the last day.',
+   ask:'Administrator credentials for every firewall, server, switch, wireless controller and core system, delivered through a secure channel.',
+   fix:['Collect the infrastructure credentials','Firewall, servers, switches, wireless, hypervisor. Put them in a password manager your company owns. Ask for them while the outgoing team still answers the phone.'],
+   opts:[['No — provider-held only',3],['Some of them',2],['Yes — in our own password manager',0],['I do not know',3]]},
+  {id:'docs', w:2, q:'Is there written documentation of how your environment is actually built?',
+   why:'Undocumented knowledge walks out with the technician who had it.',
+   ask:'Network diagram, system and application documentation, vendor and support contacts, and the runbook for anything custom.',
+   fix:['Get the environment documented before the last day','Network layout, firewall rules, line-of-business apps and who supports them, and the one server nobody has mentioned. This is worth more than the file transfer.'],
+   opts:[['No — it lives in their heads',3],['Some, probably out of date',2],['Yes — current and in our hands',0],['I do not know',3]]},
+  {id:'thirdparty', w:2, q:'Do you have a list of every third-party account opened on your behalf?',
+   why:'These keep billing, or silently expire, long after a provider leaves.',
+   ask:'A list of every third-party account, portal and vendor relationship created on our behalf, with the credentials and the billing arrangement for each.',
+   fix:['Inventory the third-party accounts','Monitoring tools, antivirus portals, domain and SSL vendors, VoIP, remote-access agents. Each one is either a bill you keep paying or a service that quietly stops.'],
+   opts:[['No idea what exists',3],['A partial list',2],['Yes — complete and current',0],['I do not know',3]]},
+  {id:'contract', w:2, q:'Do you know your notice period and what happens to your data at the end of the contract?',
+   why:'The exit terms matter far more than the monthly price.',
+   ask:'Written confirmation of the notice period, offboarding fees if any, and the data-retention and deletion policy after termination.',
+   fix:['Read the exit clauses before the pricing clauses','Notice period, offboarding fees, what happens to your data and how long they keep it. If offboarding assistance is billable, find out the rate now rather than in the invoice.'],
+   opts:[['No — I have not read the contract',3],['Roughly',2],['Yes — I know the notice period and the data terms',0],['I do not know',3]]},
+  {id:'mfa', w:2, q:'Is the break-glass / emergency admin account under your control, with MFA on a device you hold?',
+   why:'If the recovery account is theirs, so is the recovery.',
+   ask:'Control of the emergency access (break-glass) account, with MFA registered to a device we hold.',
+   fix:['Take the break-glass account','A recovery account whose MFA lives on someone else’s phone is not your recovery account. Register it to a device your company holds, and store the credentials offline.'],
+   opts:[['No / does not exist',3],['It exists but the provider holds it',2],['Yes — ours, with MFA on our device',0],['I do not know',3]]},
+  {id:'tickets', w:1, q:'Do you have access to your own ticket and issue history?',
+   why:'Your history is the map of what actually breaks in your business.',
+   ask:'An export of our full ticket and incident history for the life of the contract.',
+   fix:['Export your ticket history','It is the cheapest possible briefing document for whoever comes next, and it is the record of what your business actually struggles with. Ask for the export before the portal access ends.'],
+   opts:[['No',2],['Only through their portal, which ends with the contract',2],['Yes — exportable',0],['I do not know',2]]},
+  {id:'single', w:1, q:'Is there exactly one person at your provider who knows how everything works?',
+   why:'Key-person dependency is a risk whether or not you ever switch.',
+   ask:'Confirmation that at least two named engineers can support our environment, and a documented handover between them.',
+   fix:['Break the key-person dependency','This is a risk today, not just at switch time. One person’s holiday should not be an outage. Ask for a named second engineer and documentation good enough for them to use.'],
+   opts:[['Yes — one person, and everyone knows it',2],['Probably two people',1],['No — the team is properly cross-covered',0],['I do not know',2]]}
+];
+
+var qs = document.getElementById('qs');
+QUESTIONS.forEach(function(q){
+  var d = document.createElement('div'); d.className = 'q';
+  var lab = document.createElement('label');
+  lab.setAttribute('for', 'sel_' + q.id);
+  lab.innerHTML = '<span class="qtext"></span><span class="qwhy"></span>';
+  lab.querySelector('.qtext').textContent = q.q;
+  lab.querySelector('.qwhy').textContent = q.why;
+  var sel = document.createElement('select'); sel.id = 'sel_' + q.id;
+  q.opts.forEach(function(o, i){
+    var op = document.createElement('option');
+    op.value = String(i); op.textContent = o[0];
+    sel.appendChild(op);
+  });
+  d.appendChild(lab); d.appendChild(sel); qs.appendChild(d);
+});
+
+function buildLetter(gaps){
+  var lines = [];
+  lines.push('Subject: Handover and account-ownership confirmation request');
+  lines.push('');
+  lines.push('Hello,');
+  lines.push('');
+  lines.push('As part of a routine review of our IT arrangements, we are confirming what our company owns and can access directly. Please confirm the following in writing, with a target date against each item.');
+  lines.push('');
+  gaps.forEach(function(g, i){ lines.push(String(i + 1) + '. ' + g.ask); });
+  lines.push('');
+  lines.push('Where any of the above currently sits under your company’s account, ownership or billing rather than ours, please tell us plainly, and set out what is required to transfer it to us.');
+  lines.push('');
+  lines.push('Please acknowledge receipt and let us know when we can expect each item.');
+  lines.push('');
+  lines.push('Thank you,');
+  lines.push('[Your name] · [Your company]');
+  return lines.join('\n');
+}
+
+document.getElementById('chk').addEventListener('submit', function(e){
+  e.preventDefault();
+  var total = 0, max = 0, gaps = [];
+  QUESTIONS.forEach(function(q){
+    var idx = parseInt(document.getElementById('sel_' + q.id).value, 10);
+    var pts = q.opts[idx][1];
+    var worst = q.opts.reduce(function(m, o){ return Math.max(m, o[1]); }, 0);
+    total += pts * q.w; max += worst * q.w;
+    if (pts > 0) gaps.push({ w: q.w, pts: pts, ask: q.ask, fix: q.fix });
+  });
+  var pct = max ? Math.round((total / max) * 100) : 0;
+  var band = document.getElementById('band');
+  var verdict = document.getElementById('verdict');
+  band.className = 'band ' + (pct >= 55 ? 'red' : pct >= 25 ? 'amber' : 'green');
+  document.getElementById('score').textContent = pct + '%';
+  if (pct >= 55) {
+    verdict.textContent = 'High. On today’s answers, leaving your provider would be a negotiation rather than an administrative task. Establish the items below before you give notice — not after.';
+  } else if (pct >= 25) {
+    verdict.textContent = 'Moderate. You hold the core of your own IT, but there are gaps that get expensive precisely when you are under time pressure. Close them while nothing is urgent.';
+  } else if (pct > 0) {
+    verdict.textContent = 'Low. You own your own IT and you could switch on your own terms. Close the remaining items and keep it that way.';
+  } else {
+    verdict.textContent = 'None. You own your tenant, your domain, your backups, your licences and your documentation. That is rarer than it should be. Whoever set that up did right by you.';
+  }
+
+  gaps.sort(function(a, b){ return (b.w * b.pts) - (a.w * a.pts); });
+  var fixes = document.getElementById('fixes');
+  fixes.innerHTML = '';
+  if (!gaps.length) {
+    var p = document.createElement('p'); p.className = 'none';
+    p.textContent = 'Nothing to establish — you answered yes to all twelve. Keep the documentation current and re-run this the next time your provider, or your provider’s staff, changes.';
+    fixes.appendChild(p);
+  } else {
+    var ol = document.createElement('ol');
+    gaps.forEach(function(g){
+      var li = document.createElement('li');
+      var b = document.createElement('b'); b.textContent = g.fix[0];
+      li.appendChild(b); li.appendChild(document.createTextNode(' — ' + g.fix[1]));
+      ol.appendChild(li);
+    });
+    fixes.appendChild(ol);
+  }
+  document.getElementById('letter').value = buildLetter(gaps.length ? gaps : QUESTIONS.map(function(q){ return { ask: q.ask }; }));
+  document.getElementById('res').classList.add('show');
+  document.getElementById('res').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+document.getElementById('copy').addEventListener('click', function(){
+  var ta = document.getElementById('letter');
+  ta.select();
+  try { document.execCommand('copy'); } catch (err) { /* user can copy manually */ }
+  if (window.getSelection) { window.getSelection().removeAllRanges(); }
+  var c = document.getElementById('copied');
+  c.classList.add('show');
+  setTimeout(function(){ c.classList.remove('show'); }, 2600);
+});
+</script>
+</body>
+</html>
