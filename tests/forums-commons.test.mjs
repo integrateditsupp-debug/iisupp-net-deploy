@@ -27,7 +27,7 @@ assert.ok((commons.match(/aria-label=/g) || []).length >= 2, "Commons: navigatio
 
 // 2 — two-way cross-link: neither surface is a dead end (funnel-link-guard also enforces resolution).
 assert.ok(/href="\/forums\/commons"/.test(mvp), "MVP page links to the Knowledge Commons");
-assert.ok(/href="\/forums\/?"/.test(commons), "Commons links back to the Solutions forum");
+assert.ok(/href="\/forums\/solutions"/.test(commons), "Commons links back to the Solutions forum");
 assert.ok(/href="\/aria(\.html)?"/.test(commons), "Commons offers the live-ARIA next step (no dead end)");
 
 // 3 — Rule 14 honesty: boards are STAGED, never a fabricated live count.
