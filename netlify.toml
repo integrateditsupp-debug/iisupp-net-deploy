@@ -253,10 +253,12 @@
   from = "/forums"
   to = "/forums/commons.html"
   status = 200
+  force = true
 [[redirects]]
   from = "/forums/"
   to = "/forums/commons.html"
   status = 200
+  force = true
 [[redirects]]
   from = "/forums/solutions"
   to = "/forums/index.html"
