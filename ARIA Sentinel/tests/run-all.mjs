@@ -345,6 +345,13 @@ const TESTS = [
   // tap-to-speak (STT) + calm female narration (TTS), both guarded, muteable, $0.
   "./companion-globe-box.test.mjs",
   "./companion-voice.test.mjs",
+  // HELP SURFACES (2026-07-16) — public Technical Support FAQ built from the real KB (end-user-safe,
+  // FAQPage JSON-LD) + Forums Concierge (auto-answer, honest abstain, $0) + Moderator (reversible tiers,
+  // never hard-deletes) + the web KB-shaper mirror kept in parity with the canonical Sentinel shaper.
+  "../../tests/support-faq.test.mjs",
+  "../../tests/forums-concierge.test.mjs",
+  "../../tests/forums-moderation.test.mjs",
+  "../../tests/kb-answer-shape-parity.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");

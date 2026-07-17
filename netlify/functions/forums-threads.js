@@ -132,15 +132,49 @@ function acceptPost(thread, { postId, email }) {
 }
 
 const voteCount = (p) => Object.values(p.voters || {}).reduce((a, b) => a + b, 0);
+const isBot = (p) => !!(p.bot || (p.author && p.author.bot));
 function publicThread(t) {
   return {
     id: t.id, title: t.title, tags: t.tags, ts: t.ts, graduated: !!t.graduated, acceptedPostId: t.acceptedPostId,
+    ariaAnswered: !!t.ariaAnswered,
     // `verified` is per-post; the UI shows a "self-reported" disclosure wherever it is false.
-    posts: t.posts.map((p) => ({ id: p.id, author: p.author.name, verified: !!(p.author && p.author.verified), body: p.body, ts: p.ts, votes: voteCount(p), accepted: !!p.accepted, isOP: p.author.id === t.authorId }))
+    // ADDITIVE (concierge + moderator, 2026-07-16): `bot`/`botLabel` mark the ARIA auto-answer; a soft-removed
+    // post never ships its body — only the honest placeholder; `flagged` is human-review-pending (post still shown).
+    posts: t.posts.map((p) => ({
+      id: p.id, author: p.author.name, verified: !!(p.author && p.author.verified),
+      bot: isBot(p), botLabel: p.botLabel || '',
+      removed: !!p.removed, removedReason: p.removed ? (p.removedReason || '') : '', flagged: !!p.flagged,
+      body: p.removed ? '' : p.body, ts: p.ts, votes: voteCount(p), accepted: !!p.accepted, isOP: p.author.id === t.authorId
+    }))
   };
 }
 function listRow(t) {
-  return { id: t.id, title: t.title, tags: t.tags, ts: t.ts, author: t.posts[0] ? t.posts[0].author.name : '', verified: !!(t.posts[0] && t.posts[0].author && t.posts[0].author.verified), replies: Math.max(0, t.posts.length - 1), accepted: !!t.acceptedPostId, graduated: !!t.graduated };
+  return { id: t.id, title: t.title, tags: t.tags, ts: t.ts, author: t.posts[0] ? t.posts[0].author.name : '', verified: !!(t.posts[0] && t.posts[0].author && t.posts[0].author.verified), replies: Math.max(0, t.posts.length - 1), accepted: !!t.acceptedPostId, graduated: !!t.graduated, ariaAnswered: !!t.ariaAnswered };
+}
+
+// Moderation persistence keys (shared with the concierge cron + admin console).
+const CONFIG_KEY = 'forums-config-v1';
+const MOD_AUDIT_KEY = 'mod-audit-v1';
+const MOD_QUEUE_KEY = 'mod-queue-v1';
+async function readConfig(s) { try { return (await s.get(CONFIG_KEY, { type: 'json' })) || {}; } catch { return {}; } }
+async function appendCapped(s, key, entry, cap) {
+  try { const arr = (await s.get(key, { type: 'json' })) || []; arr.unshift(entry); await s.setJSON(key, arr.slice(0, cap)); } catch { /* best-effort audit */ }
+}
+// Post-create moderation hook — runs the local $0 classifier on the just-added post, applies the
+// reversible action (shared assets/forums-moderation.mjs applyVerdict), and writes an audit (+ a
+// human-review queue for flags). Fail-open on availability: a moderation error never blocks the write;
+// the concierge cron re-sweeps.
+async function applyModeration(s, thread, post) {
+  if (!post) return;
+  try {
+    const mod = await import('../../assets/forums-moderation.mjs');
+    const cfg = await readConfig(s);
+    const verdict = mod.moderate(post.body, {});
+    const applied = mod.applyVerdict(post, verdict, cfg);
+    if (applied === 'allow') return;
+    await appendCapped(s, MOD_AUDIT_KEY, { at: post.ts, threadId: thread.id, postId: post.id, tier: verdict.tier, action: applied, reason: mod.auditReason(verdict) }, 500);
+    if (applied === 'flag') await appendCapped(s, MOD_QUEUE_KEY, { at: post.ts, threadId: thread.id, postId: post.id, reason: mod.auditReason(verdict), resolved: false }, 300);
+  } catch { /* moderation module unavailable — fail open; cron sweep covers it */ }
 }
 
 // ── handler ─────────────────────────────────────────────────────────────────────────────────
@@ -184,6 +218,7 @@ exports.handler = async (event) => {
       case 'create': {
         const r = newThread({ ...body, verified }, now);
         if (!r.ok) return reply(400, { ok: false, errors: r.errors });
+        await applyModeration(s, r.thread, r.thread.posts[r.thread.posts.length - 1]); // post-create moderation hook
         await save(r.thread);
         return reply(200, { ok: true, id: r.thread.id, thread: publicThread(r.thread) });
       }
@@ -192,6 +227,7 @@ exports.handler = async (event) => {
         if (!t) return reply(404, { ok: false, error: 'thread not found' });
         const r = body.op === 'reply' ? addReply(t, { ...body, verified }, now) : body.op === 'vote' ? applyVote(t, body) : acceptPost(t, body);
         if (!r.ok) return reply(400, { ok: false, errors: r.errors });
+        if (body.op === 'reply') await applyModeration(s, r.thread, r.thread.posts[r.thread.posts.length - 1]); // moderate new replies too
         await save(r.thread);
         return reply(200, { ok: true, thread: publicThread(r.thread) });
       }
@@ -218,4 +254,4 @@ exports.handler = async (event) => {
 };
 
 // pure core exports for the test battery
-exports._core = { validateThreadInput, newThread, addReply, applyVote, acceptPost, publicThread, listRow, authorFrom, voteCount, hashEmail, verifySessionToken, isVerified };
+exports._core = { validateThreadInput, newThread, addReply, applyVote, acceptPost, publicThread, listRow, authorFrom, voteCount, hashEmail, verifySessionToken, isVerified, isBot };

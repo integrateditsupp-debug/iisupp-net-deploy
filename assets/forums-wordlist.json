@@ -1,0 +1,92 @@
+{
+  "version": "1.0",
+  "updated": "2026-07-16",
+  "note": "Curated, admin-editable moderation lists for the ARIA Forums moderator. Everything is local + $0 (no external toxicity API). Tier-1 = clear slurs / hate / explicit-sexual / targeted harassment / spam -> SOFT-REMOVE (reversible, placeholder + audit). Tier-2 = profanity / insults / anger -> FLAG for human review (KEEP the post; do not nuke legit frustration). allowContext = mild venting words that are always fine in a genuine help post (never flagged, never removed). Patterns are matched against a leetspeak-normalized, separator-collapsed copy of the text (so f.u.c.k / f0ck / f u c k are caught). Edit this file to tune the moderator without touching code.",
+  "tier1": {
+    "slurs": [
+      "n[i1]gg[e3]r",
+      "n[i1]gg[a4]",
+      "f[a4]gg[o0]t",
+      "\\bf[a4]g\\b",
+      "r[e3]t[a4]rd",
+      "k[i1]k[e3]",
+      "sp[i1]c\\b",
+      "ch[i1]nk\\b",
+      "tr[a4]nny",
+      "w[e3]tb[a4]ck"
+    ],
+    "hate": [
+      "kill your ?self",
+      "\\bkys\\b",
+      "you should die",
+      "go die",
+      "hang your ?self",
+      "gas the",
+      "should be exterminated"
+    ],
+    "explicit": [
+      "send nudes",
+      "child p[o0]rn",
+      "\\bcp\\b link",
+      "rape you"
+    ],
+    "spam": [
+      "buy now[^a-z]{0,20}https?://",
+      "free (crypto|bitcoin|btc|eth|nft)",
+      "make \\$?\\d+[k]? (a|per) (day|week)",
+      "t\\.me/\\w+",
+      "telegram @?\\w{4,}",
+      "click here to (win|claim)",
+      "hot singles",
+      "(viagra|cialis)"
+    ]
+  },
+  "tier2": {
+    "profanity": [
+      "fuck",
+      "shit",
+      "bitch",
+      "asshole",
+      "bastard",
+      "\\bdick\\b",
+      "\\bcock\\b",
+      "\\bcunt\\b",
+      "motherfucker",
+      "bullshit",
+      "\\bprick\\b",
+      "\\bwanker\\b"
+    ],
+    "insults": [
+      "\\bidiot\\b",
+      "\\bmoron\\b",
+      "\\bstupid\\b",
+      "dumbass",
+      "\\bloser\\b",
+      "\\bimbecile\\b",
+      "\\bpathetic\\b",
+      "brain ?dead",
+      "\\bincompetent\\b",
+      "\\bclueless\\b"
+    ]
+  },
+  "allowContext": [
+    "damn",
+    "dammit",
+    "dammnit",
+    "hell",
+    "crap",
+    "crappy",
+    "suck",
+    "sucks",
+    "sucked",
+    "screwed",
+    "freaking",
+    "frigging",
+    "heck",
+    "wtf",
+    "pissed",
+    "annoying",
+    "frustrat",
+    "ugh"
+  ]
+}

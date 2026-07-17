@@ -285,13 +285,21 @@ async function renderThread(id, targetPost) {
   const me = getEmail();
   const banner = targetPost ? `<div class="xlink-banner"><span aria-hidden="true">↗</span> You followed a <b>&nbsp;discussion-sourced&nbsp;</b> result from Solutions — jumping to the exact post.</div>` : "";
   const postHtml = (p) => {
+    // ARIA concierge auto-answer — clearly labelled as a bot (never implied human).
+    const badge = p.bot ? `<span class="chip cyan" style="margin-left:6px"><span class="led"></span>${esc(p.botLabel || "ARIA · auto-answer")}</span>` : "";
+    // Moderator (reversible): soft-removed posts show an honest placeholder, never the hidden body;
+    // flagged posts stay visible with a note (mild venting in a real help post is kept, not nuked).
+    const bodyHtml = p.removed
+      ? `<div class="body"><em class="muted">${esc(p.removedReason || "Removed by ARIA moderator — this post violated the community guidelines. Reversible; retained for review.")}</em></div>`
+      : `<div class="body">${md(p.body)}</div>`;
+    const flagNote = (p.flagged && !p.removed) ? `<div class="muted" style="font-size:12px;margin-top:4px">⚑ Flagged for a human to review — kept visible.</div>` : "";
     const inner =
       `<div class="post"><div class="vote">` +
       `<button aria-label="Upvote" data-vote="up" data-post="${p.id}">▲</button><span class="v">${p.votes}</span><button aria-label="Downvote" data-vote="down" data-post="${p.id}">▼</button></div>` +
-      `<div><div class="who"><span class="avatar" aria-hidden="true">${esc((p.author || "?")[0].toUpperCase())}</span><b style="color:var(--txt)">${esc(p.author)}</b>` +
+      `<div><div class="who"><span class="avatar" aria-hidden="true">${esc((p.author || "?")[0].toUpperCase())}</span><b style="color:var(--txt)">${esc(p.author)}</b>${badge}` +
       `${p.isOP ? `<span class="muted">· original post</span>` : ""}</div>` +
-      `<div class="body">${md(p.body)}</div>` +
-      `${!p.accepted && !p.isOP && t.canAccept ? `<div class="rowbtn"><button class="btn ghost" data-accept="${p.id}" style="padding:7px 12px;font-size:12px">✓ Accept this answer</button></div>` : ""}` +
+      bodyHtml + flagNote +
+      `${!p.accepted && !p.isOP && !p.removed && t.canAccept ? `<div class="rowbtn"><button class="btn ghost" data-accept="${p.id}" style="padding:7px 12px;font-size:12px">✓ Accept this answer</button></div>` : ""}` +
       `</div></div>`;
     return p.accepted
       ? `<div class="accepted${targetPost === p.id ? " target-post" : ""}" id="post-${p.id}"><div class="acc-tag"><span class="led"></span>Accepted answer${t.graduated ? " · graduated to Solutions ↗" : ""}</div>${inner}</div>`

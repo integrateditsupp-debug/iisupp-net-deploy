@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ARIA Forums — Moderation &amp; Concierge Console</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+  :root{--bg:#0b0f1a;--surface:#121828;--surface2:#0e1422;--line:#26304a;--txt:#e8edf7;--txt2:#9fb0cc;--gold:#c5a059;--cyan:#22c3e6;--red:#e2707a;--amber:#e0b64d;--green:#57c98a}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+  header{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+  header b{font-size:16px;letter-spacing:-.01em}
+  header .tag{font-size:12px;color:var(--txt2)}
+  main{max-width:1060px;margin:0 auto;padding:22px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 16px}
+  .card h3{margin:0 0 12px;font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:var(--txt2)}
+  .auth{max-width:380px;margin:14vh auto;text-align:center}
+  input[type=password],input[type=text]{width:100%;padding:11px 12px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--txt);font-size:14px}
+  button{cursor:pointer;border:1px solid var(--line);background:var(--surface2);color:var(--txt);border-radius:9px;padding:9px 14px;font-size:13px}
+  button.primary{background:var(--gold);color:#1a1206;border-color:var(--gold);font-weight:600}
+  button.ghost{background:transparent}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .toggle{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .toggle:last-child{border-bottom:0}
+  .toggle .k{flex:1}
+  .toggle .k small{display:block;color:var(--txt2);font-size:12px;margin-top:2px}
+  .sw{width:44px;height:26px;border-radius:20px;background:var(--surface2);border:1px solid var(--line);position:relative;transition:.15s}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--txt2);transition:.15s}
+  .sw.on{background:rgba(87,201,138,.25);border-color:var(--green)}
+  .sw.on::after{left:20px;background:var(--green)}
+  .item{border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin:0 0 9px;background:var(--surface2)}
+  .item .meta{font-size:12px;color:var(--txt2);margin-top:4px}
+  .pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--line);margin-right:6px}
+  .pill.t1{color:var(--red);border-color:var(--red)}
+  .pill.t2{color:var(--amber);border-color:var(--amber)}
+  .pill.t3{color:var(--cyan);border-color:var(--cyan)}
+  .pill.ok{color:var(--green);border-color:var(--green)}
+  .empty{color:var(--txt2);font-size:13px;padding:8px 0}
+  a{color:var(--gold)}
+  .hide{display:none}
+</style>
+</head>
+<body>
+
+<div id="auth" class="auth">
+  <div class="card">
+    <h3>ARIA Forums Console</h3>
+    <p style="color:var(--txt2);font-size:13px">Admin sign-in required. This page is not indexed.</p>
+    <input id="pw" type="password" placeholder="Admin token" aria-label="Admin token" autocomplete="off">
+    <div style="height:10px"></div>
+    <button class="primary" id="signin" style="width:100%">Sign in</button>
+    <div id="autherr" style="color:var(--red);font-size:13px;margin-top:10px" role="alert"></div>
+  </div>
+</div>
+
+<div id="app" class="hide">
+  <header>
+    <b>ARIA Forums</b><span class="tag">Moderation &amp; Concierge Console</span>
+    <span style="flex:1"></span>
+    <button class="ghost" id="refresh">↻ Refresh</button>
+    <button class="ghost" id="runNow" title="Run one concierge + moderation sweep now">▶ Run sweep</button>
+  </header>
+  <main>
+    <div class="card">
+      <h3>Toggles</h3>
+      <div class="toggle"><div class="k">Concierge auto-answer<small>ARIA answers genuine unanswered help posts from the KB (honest abstain; never fabricates).</small></div><div class="sw" data-cfg="conciergeEnabled" role="switch" tabindex="0"></div></div>
+      <div class="toggle"><div class="k">Moderation · Tier 1 (soft-remove)<small>Slurs / hate / explicit / spam → hidden behind a placeholder (reversible).</small></div><div class="sw" data-cfg="tier1" role="switch" tabindex="0"></div></div>
+      <div class="toggle"><div class="k">Moderation · Tier 2 (flag)<small>Profanity / insults → flagged for human review. The post stays up.</small></div><div class="sw" data-cfg="tier2" role="switch" tabindex="0"></div></div>
+      <div class="toggle"><div class="k">Moderation · Tier 3 (redact)<small>Personal data / doxxing → masked in place.</small></div><div class="sw" data-cfg="tier3" role="switch" tabindex="0"></div></div>
+    </div>
+
+    <div class="card">
+      <h3>Moderation queue · flags awaiting review</h3>
+      <div id="queue"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="card">
+      <h3>Concierge activity · answered by ARIA</h3>
+      <div id="activity"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="card">
+      <h3>Curation queue · strong Q&amp;A for KB review <span class="pill">not auto-published</span></h3>
+      <div id="curation"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="card">
+      <h3>Audit log · recent</h3>
+      <div id="audit"><div class="empty">Loading…</div></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const FN = "/.netlify/functions/forums-admin";
+let TOKEN = "";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? "" : s).replace(/[<>&"']/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c]));
+const when = (ms) => ms ? new Date(ms).toLocaleString() : "—";
+
+async function call(eventName, extra = {}) {
+  const r = await fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: eventName, admin_token: TOKEN, ...extra }) });
+  if (r.status === 401) throw new Error("unauthorized");
+  return r.json();
+}
+
+$("#signin").addEventListener("click", signIn);
+$("#pw").addEventListener("keydown", (e) => { if (e.key === "Enter") signIn(); });
+async function signIn() {
+  TOKEN = $("#pw").value.trim();
+  if (!TOKEN) return;
+  try { await call("list"); $("#auth").classList.add("hide"); $("#app").classList.remove("hide"); load(); }
+  catch { $("#autherr").textContent = "Invalid token."; }
+}
+$("#refresh").addEventListener("click", load);
+$("#runNow").addEventListener("click", async () => { $("#runNow").textContent = "Running…"; try { const r = await call("run_concierge"); $("#runNow").textContent = "▶ Run sweep"; alert("Sweep: " + JSON.stringify(r.summary || {})); load(); } catch { $("#runNow").textContent = "▶ Run sweep"; } });
+
+document.addEventListener("click", async (e) => {
+  const sw = e.target.closest(".sw");
+  if (sw) { const key = sw.dataset.cfg; const on = !sw.classList.contains("on"); await call("set_config", { config: { [key]: on } }); sw.classList.toggle("on", on); return; }
+  const act = e.target.closest("[data-act]");
+  if (act) { await call("moderate", { action: act.dataset.act, threadId: act.dataset.thread, postId: act.dataset.post, queueAt: Number(act.dataset.at || 0) }); load(); }
+});
+document.addEventListener("keydown", (e) => { const sw = e.target.closest && e.target.closest(".sw"); if (sw && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); sw.click(); } });
+
+async function load() {
+  const d = await call("list");
+  const cfg = d.config || {};
+  document.querySelectorAll(".sw").forEach((sw) => sw.classList.toggle("on", cfg[sw.dataset.cfg] !== false));
+
+  const q = (d.queue || []).filter((x) => !x.resolved);
+  $("#queue").innerHTML = q.length ? q.map((x) =>
+    `<div class="item"><span class="pill t2">flag</span>${esc(x.reason || "")}<div class="meta">thread ${esc(x.threadId)} · post ${esc(x.postId)} · ${when(x.at)}</div>` +
+    `<div class="row" style="margin-top:8px"><button data-act="remove" data-thread="${esc(x.threadId)}" data-post="${esc(x.postId)}">Soft-remove</button>` +
+    `<button data-act="resolve" data-thread="${esc(x.threadId)}" data-post="${esc(x.postId)}" data-at="${x.at}">Mark reviewed</button></div></div>`
+  ).join("") : '<div class="empty">No flags awaiting review.</div>';
+
+  $("#activity").innerHTML = (d.activity || []).length ? d.activity.map((x) =>
+    `<div class="item"><span class="pill ok">answered</span>${esc(x.title)}<div class="meta">source ${esc(x.articleSlug || "—")} · ${when(x.at)} · <a href="/forums/">open forums</a></div></div>`
+  ).join("") : '<div class="empty">ARIA has not auto-answered any threads yet.</div>';
+
+  $("#curation").innerHTML = (d.curation || []).length ? d.curation.map((x) =>
+    `<div class="item">${esc(x.title)}<div class="meta">confidence ${esc((x.confidence && x.confidence.value) || "")} · source ${esc(x.articleSlug || "—")} · ${when(x.at)}</div></div>`
+  ).join("") : '<div class="empty">No curation candidates yet.</div>';
+
+  $("#audit").innerHTML = (d.audit || []).length ? d.audit.slice(0, 40).map((x) =>
+    `<div class="item"><span class="pill t${x.tier || 0}">${esc(x.action || "")}</span>${esc(x.reason || "")}<div class="meta">${x.threadId ? "thread " + esc(x.threadId) + " · " : ""}${when(x.at)}</div></div>`
+  ).join("") : '<div class="empty">No moderation actions logged.</div>';
+}
+</script>
+</body>
+</html>
