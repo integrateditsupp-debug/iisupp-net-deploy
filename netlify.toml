@@ -257,6 +257,18 @@
   from = "/forums/"
   to = "/forums/index.html"
   status = 200
+[[redirects]]
+  from = "/forums/solutions"
+  to = "/forums/index.html"
+  status = 200
+[[redirects]]
+  from = "/forums/commons"
+  to = "/forums/commons.html"
+  status = 200
+[[redirects]]
+  from = "/forums/commons/"
+  to = "/forums/commons.html"
+  status = 200
 
 [[redirects]]
   from = "/shop"

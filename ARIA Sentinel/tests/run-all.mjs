@@ -22,6 +22,9 @@ const TESTS = [
   "./overlay-onebox-voice.test.mjs",
   // FORUMS MVP 2026-07-02 — real-KB retrieval + honest abstain + store core + a11y/fabrication gates.
   "../../tests/forums-mvp.test.mjs",
+  // FORUMS KNOWLEDGE COMMONS 2026-07-16 — Ahmad chose "1 AND 2": both surfaces ship. Commons a11y +
+  // Rule-14 honesty (staged boards, no fabricated counts) + two-way cross-link (neither is a dead end).
+  "../../tests/forums-commons.test.mjs",
   // CONCIERGE 2026-07-02 — AI Setup Walk-Through homepage card + aria.html copy + services.html listing.
   "../../tests/concierge-service.test.mjs",
   "./scenario-suite.mjs",
