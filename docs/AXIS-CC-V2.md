@@ -84,11 +84,38 @@ Run: `for t in tests/axis-*.test.mjs tests/sentry.test.mjs tests/p6.test.mjs tes
 2. **First real email send.** Needs: DKIM "Start authentication" in Google Admin, Gmail OAuth
    (`scripts/gmail-auth.mjs` → `data/secrets/`), then per-item approval of the ≤5 first batch.
 
-## Known follow-ups (not blockers)
+## AXIS dock voice (restored 2026-07-21)
 
-- `.well-known/axis/status.json` (public) exposes internal build-lane status. It is owned by the
-  observer loop and was left untouched to avoid clobbering worker-managed state; recommend reducing to
-  headline-only or gating it in a separate pass. No PII/secrets present.
+The v1 console's voice chat (push-to-talk mic + humanized spoken replies, commits 4ee1b883 +
+0e17c2ca) is fully ported into the v2 dock — free browser Web Speech API, no paid API, no LLM:
+
+- **🎙 mic** (`#axisMic`): push-to-talk; transcript fills the dock input and auto-sends to
+  `axis-director`. Starting the mic barges in over any current spoken reply.
+- **🔊 toggle** (`#axisVoice`): spoken replies, ON by default. Neural/Natural > Google > premium
+  voice ranking; manual override persists in `localStorage['axis-voice-name']` (same key as v1 —
+  a voice picked on the old console carries over). `axisVoiceNext()` / `axisSetVoice(name)` in
+  DevTools to cycle/set.
+- Replies are humanized for speech (glyph/markdown strip, "24/7" → words, % → percent) and
+  sentence-chunked (~180 chars) so Chrome never cuts long utterances.
+- Guard: `tests/axis-voice-dock.test.mjs` (fails if the dock ever drops voice again, or if the v1
+  console loses its own voice code).
+
+## AXIS status feed — headline-only law (2026-07-21)
+
+The public mirrors `.well-known/axis/status.json` + `public/.well-known/axis/status.json` are
+HEADLINE-ONLY (status / milestone / readiness / revenueToDate / headline / note). The ONLY
+sanctioned writer is `scripts/lib/axis-status-emit.mjs` — it allowlists keys, caps lengths, and
+REFUSES leak-class content (git SHAs, `cc/` branch names, operator `.cmd`/`.ps1` names, git/lock
+state, run counters, internal paths). Full flywheel detail goes to
+`netlify/functions/_axis-status-full.json` (force-404 live) and is served only via the
+authenticated `/api/axis-status` (Aperture login, same gate as `/api/axis-state`).
+
+**Flywheel/observer rule:** never hand-write the `.well-known` mirrors. Emit with
+`node scripts/lib/axis-status-emit.mjs emit --fields <headline.json> --full <detail.json>`, and
+verify with `… check`. `tests/deploy-safety-denylist.test.mjs` imports the same leak patterns, so
+a bypassing writer fails the suite; `tests/axis-status-emitter.test.mjs` proves the refusal logic.
+
+## Known follow-ups (not blockers)
 - Old consoles (`/command-center`, `/agents`, `/agent-command-center.html`) keep their Basic-auth edge
   gate (`aperture-gate.ts`) and then 301 → `/aperture-learning.html`. The double auth on those
   deprecated URLs is harmless; the login edge function was intentionally not modified.

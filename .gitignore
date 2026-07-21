@@ -94,11 +94,7 @@ ARIA Sentinel/dist.*/
 # local snapshot spool. publish="." → this MUST never be tracked or it deploys prospect PII publicly.
 data/
 
-# AXIS CC v2 agent installers must stay trackable/reviewable despite the blanket *.ps1 lockdown above
-# (same rationale as the ARIA Sentinel negations). Only the three new agents' install/run pair.
-!scripts/install-cartographer-worker.ps1
-!scripts/run-cartographer-worker.ps1
-!scripts/install-sentry-worker.ps1
-!scripts/run-sentry-worker.ps1
-!scripts/install-miner-worker.ps1
-!scripts/run-miner-worker.ps1
+# AXIS CC v2 agent installers stay LOCAL-ONLY (2026-07-21). The earlier negations that made them
+# trackable conflicted with the SECURITY-LOCKDOWN deploy-safety denylist (tests/deploy-safety-denylist
+# hard-fails any tracked .ps1 outside ARIA Sentinel — publish="." ships tracked files to clones and the
+# live deploy). Files stay on disk for the operator; they are just never committed.

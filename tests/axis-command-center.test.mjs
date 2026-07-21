@@ -53,14 +53,15 @@ const full = JSON.parse(fs.readFileSync(path.join(root, 'netlify', 'functions', 
 assert.ok(Array.isArray(full.approvals) && Array.isArray(full.recentActivity), 'full state has the detail arrays');
 ok();
 
-// ---- 5. director endpoint contract (no throw on any action) ----
+// ---- 5. director endpoint contract (no throw on any action; AXIS CC v2 P1a auth spine: every
+// action fails CLOSED without an Aperture session — unauthed callers get 401, never an execution) ----
 const handler = (await import(pathToFileURL(path.join(root, 'netlify', 'functions', 'axis-director.js')).href)).handler;
 assert.equal((await handler({ httpMethod: 'OPTIONS' })).statusCode, 204, 'OPTIONS → 204');
 assert.equal((await handler({ httpMethod: 'GET' })).statusCode, 405, 'GET → 405');
 const cmd = await handler({ httpMethod: 'POST', body: JSON.stringify({ action: 'command', intent: 'queue find leads' }) });
-assert.equal(JSON.parse(cmd.body).ok, true, 'command acknowledged');
+assert.equal(cmd.statusCode, 401, 'unauthed command → 401 (fail-closed, P1a)');
 const apr = await handler({ httpMethod: 'POST', body: JSON.stringify({ action: 'approval', approvalId: 'apr-1', decision: 'approve' }) });
-assert.match(JSON.parse(apr.body).text, /approv/i, 'approval acknowledged');
+assert.equal(apr.statusCode, 401, 'unauthed approval → 401 (fail-closed, P1a)');
 ok();
 
-console.log(`AXIS Command Center test passed (${n} groups · roster · PUBLIC counts-only · no-name/title/strategy leak · AUTHED /api/axis-state gates detail (401) · director endpoint contract).`);
+console.log(`AXIS Command Center test passed (${n} groups · roster · PUBLIC counts-only · no-name/title/strategy leak · AUTHED /api/axis-state gates detail (401) · director endpoint fail-closed contract).`);

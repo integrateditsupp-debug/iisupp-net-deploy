@@ -5,7 +5,7 @@
 // the CLAUDE.md/vault leak class impossible to reintroduce silently.
 // Packet: documents/product-engineering/SECURITY-LOCKDOWN-PACKET-CC-2026-07-01.md
 import { execFileSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -114,6 +114,29 @@ if (contentLeaks.length) {
   console.error(`DEPLOY-SAFETY PUBLIC-CONTENT — ${contentLeaks.length} sensitive pattern(s) in publicly-served file(s):`);
   for (const c of contentLeaks) console.error("  " + c);
   throw new Error(`deploy-safety-denylist: a publicly-served file carries business-sensitive specifics — scrub it (tender ids / deal names / decision-gates / pipeline counts / $ figures belong ONLY under the force-404'd senior-director-state board).`);
+}
+
+// ── AXIS STATUS LEAK-CLASS SCAN 2026-07-21 — the flywheel repeatedly re-leaked build internals (git SHAs,
+// cc/ branch names, AHMAD-*.cmd operator scripts, lock state) into the .well-known/axis/status.json mirrors;
+// the 9f40a6c2 trim missed the public/ mirror entirely. The only sanctioned writer is now
+// scripts/lib/axis-status-emit.mjs (headline-only allowlist). This scan imports the SAME LEAK_PATTERNS,
+// so a future run that hand-writes either mirror fails the suite even if it never touches the emitter.
+const { LEAK_PATTERNS, PUBLIC_STATUS_FILES } = await import(
+  pathToFileURL(path.join(repoRoot, "scripts", "lib", "axis-status-emit.mjs")).href
+);
+const statusLeaks = [];
+for (const rel of PUBLIC_STATUS_FILES) {
+  let text;
+  try { text = readFileSync(path.join(repoRoot, rel), "utf8"); } catch { continue; }
+  for (const [re, reason] of LEAK_PATTERNS) {
+    const m = text.match(re);
+    if (m) statusLeaks.push(`${rel}: ${reason} ("${String(m[0]).slice(0, 50)}")`);
+  }
+}
+if (statusLeaks.length) {
+  console.error(`DEPLOY-SAFETY AXIS-STATUS — ${statusLeaks.length} leak-class pattern(s) in PUBLIC status mirror(s):`);
+  for (const c of statusLeaks) console.error("  " + c);
+  throw new Error(`deploy-safety-denylist: a public AXIS status mirror carries internal build state — regenerate it with scripts/lib/axis-status-emit.mjs (full detail belongs in netlify/functions/_axis-status-full.json, served only via /api/axis-status).`);
 }
 
 console.log(`deploy-safety-denylist: OK — 0 of ${files.length} tracked paths match the internal denylist; all ${REQUIRED_FORCE_404.length} force-404 rules present in netlify.toml; ${PUBLIC_SERVED_FILES.length} public files scanned, 0 sensitive-content leaks.`);

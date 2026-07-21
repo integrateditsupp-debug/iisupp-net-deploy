@@ -718,9 +718,122 @@ async function axisSend() {
     const j = await r.json(); dockLog.pop();
     const reply = { role: 'axis', text: (j && j.text) || 'Heard you.' };
     if (j && j.routedAgent && j.intent) reply.chips = [{ label: 'Approve route', onclick: () => { postIntent('approve', { intent: j.intent, agent: j.routedAgent }); toast('Routed to ' + j.routedAgent); } }];
-    dockLog.push(reply); renderDock();
-  } catch { dockLog.pop(); dockLog.push({ role: 'axis', text: 'Brain unreachable.' }); renderDock(); }
+    dockLog.push(reply); renderDock(); axisSpeak(reply.text);
+  } catch { dockLog.pop(); dockLog.push({ role: 'axis', text: 'Brain unreachable.' }); renderDock(); axisSpeak('Brain unreachable.'); }
 }
+
+// ── AXIS voice (restored from the v1 console, full behavior) — mic push-to-talk + spoken replies,
+// free browser Web Speech API; no paid API, no LLM. Ported from assets/aperture-learning.js
+// (4ee1b883 push-to-talk, 0e17c2ca humanized voice — Ahmad: "sounds robotic" fix). Voice defaults ON
+// (Ahmad: "I want to talk, it's faster"); a manual voice override persists in localStorage and is the
+// SAME key the v1 console used, so a voice picked there carries over here.
+let axisVoiceOn = true, axisRec = null, axisListening = false;
+
+// Rank the most HUMAN English voice the OS/browser offers: Neural/Natural (Edge online) > Google
+// (Chrome online) > Premium/Enhanced (macOS) > male-leaning names (AXIS persona) > any en-US/CA.
+function axisScoreVoice(v) {
+  try {
+    const n = (v.name || '') + ' ' + (v.voiceURI || '');
+    let s = 0;
+    if (/natural|neural/i.test(n)) s += 100;
+    if (/google/i.test(n)) s += 60;
+    if (/premium|enhanced|siri/i.test(n)) s += 50;
+    if (/online/i.test(n)) s += 20;
+    if (/(guy|davis|andrew|brian|christopher|eric|roger|steffan|ryan|thomas|daniel|alex|arthur|george|james|mark)/i.test(n)) s += 12;
+    if (/^en(-|_)?(US|CA)/i.test(v.lang || '')) s += 8; else if (/^en/i.test(v.lang || '')) s += 4; else s -= 50;
+    if (/david|zira|sam\b/i.test(n) && !/natural|neural|online/i.test(n)) s -= 15; // legacy SAPI = the robotic sound
+    return s;
+  } catch { return -1; }
+}
+function axisPickVoice() {
+  try {
+    const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
+    if (!vs.length) return null;
+    let wanted = ''; try { wanted = localStorage.getItem('axis-voice-name') || ''; } catch {}
+    if (wanted) { const hit = vs.find(v => v.name === wanted); if (hit) return hit; }
+    return vs.slice().sort((a, b) => axisScoreVoice(b) - axisScoreVoice(a))[0] || null;
+  } catch { return null; }
+}
+// Manual controls (DevTools or console): cycle voices / set a specific one. Persisted.
+window.axisVoiceNext = function () {
+  try {
+    const vs = ((window.speechSynthesis && speechSynthesis.getVoices()) || []).filter(v => /^en/i.test(v.lang || ''));
+    if (!vs.length) return null;
+    const cur = axisPickVoice();
+    const i = Math.max(0, vs.findIndex(v => cur && v.name === cur.name));
+    const nxt = vs[(i + 1) % vs.length];
+    try { localStorage.setItem('axis-voice-name', nxt.name); } catch {}
+    axisSpeak('Now speaking with ' + nxt.name.replace(/microsoft|google|online|\(|\)/gi, ' ').replace(/\s+/g, ' ').trim() + '.');
+    return nxt.name;
+  } catch { return null; }
+};
+window.axisSetVoice = function (name) { try { localStorage.setItem('axis-voice-name', String(name || '')); } catch {} return name; };
+
+// Make text sound like a person, not a screen reader: strip glyphs/markdown, speak symbols naturally.
+function axisHumanizeForSpeech(text) {
+  let t = String(text || '');
+  t = t.replace(/[•·▪◦●⚠🔊🔇🎙✅❌→]/g, ' ')
+       .replace(/[*_`#>\[\]]/g, ' ')
+       .replace(/https?:\/\/([^\s\/]+)[^\s]*/gi, '$1')
+       .replace(/\b24\s*\/\s*7\b/g, 'twenty-four seven')
+       .replace(/\bw\//gi, 'with ')
+       .replace(/\be\.g\.\s*/gi, 'for example, ')
+       .replace(/\bi\.e\.\s*/gi, 'that is, ')
+       .replace(/(\d+)\s*%/g, '$1 percent')
+       .replace(/\s[-–—]\s/g, ', ')
+       .replace(/\s*\n+\s*/g, '. ')
+       .replace(/\.\s*\./g, '.')
+       .replace(/\s+/g, ' ').trim();
+  return t;
+}
+function axisSpeak(text) {
+  try {
+    if (!axisVoiceOn || !window.speechSynthesis) return;
+    const clean = axisHumanizeForSpeech(text);
+    if (!clean) return;
+    speechSynthesis.cancel(); // barge-in: a new reply always interrupts the old one
+    const v = axisPickVoice();
+    const natural = !!(v && /natural|neural|google|premium|enhanced/i.test(v.name || ''));
+    // Sentence-chunk so delivery breathes between thoughts (also avoids Chrome's long-utterance cutoff).
+    const chunks = clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [clean];
+    let buf = ''; const queue = [];
+    for (const c of chunks) { if ((buf + c).length > 180 && buf) { queue.push(buf.trim()); buf = c; } else { buf += c; } }
+    if (buf.trim()) queue.push(buf.trim());
+    queue.forEach(part => {
+      const u = new SpeechSynthesisUtterance(part);
+      if (v) { u.voice = v; u.lang = v.lang; }
+      u.rate = natural ? 1.0 : 1.02; u.pitch = 1.0; u.volume = 1;
+      speechSynthesis.speak(u);
+    });
+    const b = $('axisVoice'); if (b && v) b.title = 'Voice: ' + v.name + ' — cycle: axisVoiceNext()';
+  } catch {}
+}
+function axisSyncVoiceBtn() {
+  const b = $('axisVoice');
+  if (b) { b.setAttribute('aria-pressed', axisVoiceOn ? 'true' : 'false'); b.style.color = axisVoiceOn ? 'var(--gold)' : ''; b.style.borderColor = axisVoiceOn ? 'var(--gold)' : ''; b.title = axisVoiceOn ? 'Spoken replies ON' : 'Toggle spoken replies'; }
+}
+function axisVoiceToggle() {
+  axisVoiceOn = !axisVoiceOn;
+  axisSyncVoiceBtn();
+  if (axisVoiceOn) axisSpeak('Voice on. Ask me for a status update.');
+  else if ('speechSynthesis' in window) speechSynthesis.cancel();
+  toast('AXIS voice ' + (axisVoiceOn ? 'on' : 'off'));
+}
+function axisMicToggle() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('Mic needs Chrome or Edge'); return; }
+  if (axisListening) { try { axisRec && axisRec.stop(); } catch {} return; }
+  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {} // barge-in: talking over AXIS stops it
+  const mic = $('axisMic');
+  axisRec = new SR(); axisRec.lang = 'en-CA'; axisRec.interimResults = false; axisRec.maxAlternatives = 1;
+  axisRec.onstart = () => { axisListening = true; if (mic) { mic.style.color = 'var(--gold)'; mic.style.borderColor = 'var(--gold)'; mic.textContent = '⏺'; } };
+  axisRec.onend = () => { axisListening = false; if (mic) { mic.style.color = ''; mic.style.borderColor = ''; mic.textContent = '🎙'; } };
+  axisRec.onerror = () => { axisListening = false; if (mic) { mic.style.color = ''; mic.style.borderColor = ''; mic.textContent = '🎙'; } toast('Mic error — check browser permission'); };
+  axisRec.onresult = (ev) => { const t = ev.results && ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript.trim(); if (t) { $('axisInput').value = t; axisSend(); } };
+  try { axisRec.start(); } catch { toast('Mic busy'); }
+}
+// Warm up the async voice list (Chrome loads voices lazily) + reflect the default-ON state on the button.
+try { if (window.speechSynthesis) { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } } catch {}
 
 // ── Command palette ──
 let palSel = 0;
@@ -765,6 +878,9 @@ $('logoutBtn').addEventListener('click', logout);
 $('axisFab').addEventListener('click', openDock);
 $('axisClose').addEventListener('click', closeDock);
 $('axisSend').addEventListener('click', axisSend);
+$('axisMic')?.addEventListener('click', axisMicToggle);
+$('axisVoice')?.addEventListener('click', axisVoiceToggle);
+axisSyncVoiceBtn(); // voice defaults ON — show it
 $('axisInput').addEventListener('keydown', (e) => e.key === 'Enter' && axisSend());
 $('search').addEventListener('click', openPalette);
 $('paletteInput')?.addEventListener('input', renderPalette);
