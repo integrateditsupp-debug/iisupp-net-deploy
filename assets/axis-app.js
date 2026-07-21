@@ -21,7 +21,8 @@ const ago = (ts) => { if (!ts) return ''; const s = (Date.now() - ts) / 1000; if
 
 const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
 const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview',
-  ui: { inboxFilter: 'all', thread: null, apTab: 'pending', apOpen: null, apSel: new Set(), apCursor: 0, crmTab: 'contact', crmFilter: '', crmDrawer: null } };
+  ui: { inboxFilter: 'all', thread: null, apTab: 'pending', apOpen: null, apSel: new Set(), apCursor: 0, crmTab: 'contact', crmFilter: '', crmDrawer: null,
+    prospect: null, prospectFilter: '', realOnly: false, pipeView: 'kanban' } };
 const authHeaders = (extra = {}) => ({ Authorization: 'Bearer ' + state.token, ...extra });
 const data = (mod) => (state.snap[mod] && state.snap[mod].data) || {};
 
@@ -252,6 +253,160 @@ function renderCrmDrawer() {
       el('button', { class: 'chip', onclick: () => { toast('Draft email → Approvals'); postIntent('draft_email', { record_id: r.id }); } }, 'Draft email'),
       el('button', { class: 'chip', onclick: () => { const n = prompt('Note (anonymized to vault):'); if (n) { toast('Note → vault (Lead handle)'); postIntent('add_note', { record_id: r.id, note: n }); } } }, 'Add note')])]));
 }
+
+// ── S6 Prospect Database ──
+SCREENS.prospects = (c) => {
+  if (state.ui.prospect != null) return renderProspectProfile(c, state.ui.prospect);
+  const d = data('prospects'); let rows = d.rows || [];
+  c.append(head('Prospect Database', `${d.real_count || 0} researched · ${rows.length} total · Toronto → GTA → ON → CA`));
+  c.append(el('div', { class: 'thread-bar' }, [
+    el('button', { class: 'chip', 'aria-selected': state.ui.realOnly, onclick: () => { state.ui.realOnly = !state.ui.realOnly; renderModule(); } }, 'Researched only'),
+    el('div', { style: 'flex:1' }),
+    el('input', { class: 'search', style: 'max-width:220px;color:var(--txt)', placeholder: 'filter name / city / industry…', value: state.ui.prospectFilter, oninput: (e) => { state.ui.prospectFilter = e.target.value; renderProspectRows(); } }),
+    el('button', { class: 'chip', onclick: () => { toast('CSV export queued'); postIntent('csv_export', { module: 'prospects' }); } }, 'Export'),
+  ]));
+  c.append(el('div', { class: 'card', id: 'prospectRows', style: 'padding:0' }));
+  renderProspectRows();
+};
+function renderProspectRows() {
+  const wrap = $('prospectRows'); if (!wrap) return; wrap.innerHTML = '';
+  let rows = (data('prospects').rows) || [];
+  if (state.ui.realOnly) rows = rows.filter(r => r.is_real);
+  const q = state.ui.prospectFilter.toLowerCase();
+  if (q) rows = rows.filter(r => `${r.name} ${r.handle} ${r.city} ${r.industry}`.toLowerCase().includes(q));
+  wrap.append(el('div', { class: 'row', style: 'font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3)' }, [
+    el('div', { style: 'width:70px' }, 'Handle'), el('div', { style: 'flex:1' }, 'Company'), el('div', { style: 'width:110px' }, 'Industry'),
+    el('div', { style: 'width:70px' }, 'City'), el('div', { style: 'width:120px' }, 'Maturity IT/CY/CL/AI'), el('div', { style: 'width:80px;text-align:right' }, 'Est/mo')]));
+  if (!rows.length) { wrap.append(el('div', { class: 'empty' }, 'No prospects.')); return; }
+  rows.forEach(r => wrap.append(el('div', { class: 'row', style: 'cursor:pointer', onclick: () => { state.ui.prospect = r.id; renderModule(); } }, [
+    el('div', { style: 'width:70px' }, [el('span', { class: 'stage-tag' }, r.handle)]),
+    el('div', { style: 'flex:1;font-weight:600' }, [r.is_real ? el('span', { style: 'color:var(--ok);margin-right:6px', title: 'researched with provenance' }, '●') : el('span', { style: 'color:var(--txt-3);margin-right:6px', title: 'sample data' }, '○'), r.name || r.handle]),
+    el('div', { style: 'width:110px;color:var(--txt-2);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, (r.industry || '—').split('(')[0]),
+    el('div', { style: 'width:70px;color:var(--txt-2)' }, r.city ? r.city.split(' ')[0] : '—'),
+    el('div', { style: 'width:120px' }, maturityMini(r.maturity)),
+    el('div', { style: 'width:80px;text-align:right;font-variant-numeric:tabular-nums' }, r.est_monthly_value ? '$' + r.est_monthly_value.toLocaleString() : '—')])));
+}
+function maturityMini(m) {
+  m = m || {}; const dims = [['IT', m.it], ['CY', m.cyber], ['CL', m.cloud], ['AI', m.ai]];
+  return el('div', { style: 'display:flex;gap:6px' }, dims.map(([k, v]) =>
+    el('span', { class: 'mono', style: 'font-size:9px;color:' + (v >= 4 ? 'var(--ok)' : v <= 2 ? 'var(--crit)' : 'var(--txt-2)') }, k + (v || '—'))));
+}
+
+// ── S5 Prospect Profile (provenance-first, Law 3) ──
+function renderProspectProfile(c, id) {
+  const p = ((data('prospects').rows) || []).find(x => x.id === id);
+  if (!p) { c.append(el('div', { class: 'empty' }, 'Not found.')); return; }
+  c.append(el('div', { class: 'thread-bar' }, [el('button', { class: 'chip', onclick: () => { state.ui.prospect = null; renderModule(); } }, '← Prospects'),
+    el('div', { style: 'flex:1' }), p.is_real ? el('span', { class: 'footnote' }, [el('span', { class: 'src' }, '● researched'), ' · provenance below']) : el('span', { class: 'stage-tag' }, 'sample')]));
+  // Header
+  c.append(el('div', { style: 'display:flex;align-items:baseline;gap:12px;margin-bottom:4px' }, [
+    el('div', { class: 'screen-title' }, p.name || p.handle), el('span', { class: 'stage-tag' }, p.handle), el('span', { class: 'stage-tag' }, p.stage)]));
+  const links = [['Website', pv(p, 'website')], ['LinkedIn', pv(p, 'linkedin_url')]].filter(x => x[1]);
+  c.append(el('div', { style: 'margin-bottom:14px' }, links.map(([l, u]) => el('a', { href: u, target: '_blank', style: 'margin-right:12px;font-size:12px' }, l + ' ↗'))));
+
+  // Company details grid — every field with provenance footnote or the honest unknown
+  c.append(el('div', { class: 'kpi-grid' }, [
+    provField(p, 'industry', 'Industry'), provField(p, 'city', 'Location'), provField(p, 'size', 'Size'),
+    provField(p, 'address', 'Address'), provField(p, 'phone', 'Phone'), provField(p, 'public_email', 'Public email'),
+    provField(p, 'revenue', 'Revenue'), provField(p, 'founded', 'Founded'), provField(p, 'maps_url', 'Google Maps'),
+  ]));
+
+  // Maturity meters (1–5 + basis)
+  c.append(head('IT / Cyber / Cloud / AI maturity', 'assessment — basis on hover', 'margin-top:20px'));
+  const md = p.maturity_detail || {};
+  c.append(el('div', { class: 'card', style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px' },
+    [['IT', 'it'], ['Cyber', 'cyber'], ['Cloud', 'cloud'], ['AI', 'ai']].map(([lbl, k]) => meter(lbl, p.maturity?.[k], md[k]?.basis))));
+
+  // Opportunity assessments
+  c.append(head('Opportunities', `est. $${(p.est_monthly_value || 0).toLocaleString()}/mo total — assessment`, 'margin-top:20px'));
+  const opps = p.opportunities || [];
+  c.append(el('div', { class: 'card', style: 'display:flex;gap:8px;flex-wrap:wrap' }, opps.length ? opps.map(o =>
+    el('span', { class: 'chip', title: o.basis + ' (confidence ' + Math.round((o.confidence || 0) * 100) + '%)' }, [o.service, el('span', { class: 'count', style: 'color:var(--gold)' }, '$' + (o.est_mrr || 0).toLocaleString() + '/mo')])) : [el('span', { class: 'unknown' }, 'No opportunities assessed')]));
+
+  // Public decision makers
+  c.append(head('Public decision makers', 'sourced — emails require enrichment', 'margin-top:20px'));
+  const cts = p.contacts || [];
+  const cc = el('div', { class: 'card', style: 'padding:0' });
+  if (!cts.length) cc.append(el('div', { class: 'empty' }, 'Not found — never guessed'));
+  else cts.forEach(ct => cc.append(el('div', { class: 'row' }, [
+    el('div', { style: 'flex:1' }, [el('div', { style: 'font-weight:600' }, ct.name), el('div', { style: 'font-size:12px;color:var(--txt-3)' }, ct.title)]),
+    el('div', {}, ct.public_email ? ct.public_email : el('span', { class: 'unknown' }, 'email: Not found — never guessed')),
+    el('span', { class: 'footnote' }, ['src', ' — ', el('span', { class: 'src' }, 'Apollo ✓')])])));
+  c.append(cc);
+
+  // Stage control (manual override always available; auto-transitions logged)
+  c.append(head('Pipeline stage', 'manual override always available', 'margin-top:20px'));
+  c.append(el('div', { class: 'card' }, [stagePicker(p)]));
+}
+const pv = (p, key) => p.provenance?.[key]?.value ?? null;
+function provField(p, key, label) {
+  const f = p.provenance?.[key];
+  const box = el('div', { class: 'kpi' }, [el('div', { class: 'label' }, label)]);
+  if (!f || f.value == null) { box.append(el('div', { class: 'unknown', style: 'margin-top:6px;font-size:12px' }, 'Not found — never guessed')); return box; }
+  box.append(el('div', { style: 'margin-top:6px;font-size:13px;font-weight:500' }, String(f.value)));
+  const src = (f.source_url || '').replace(/^https?:\/\/(www\.)?/, '').split('/')[0] || 'source';
+  box.append(el('div', { class: 'footnote', style: 'margin-top:8px' }, [src, ' · ', el('span', { class: 'src' }, Math.round((f.confidence || 0) * 100) + '% ✓'), ' · ', f.last_verified || '—']));
+  return box;
+}
+function meter(label, score, basis) {
+  const wrap = el('div', { title: basis || '' });
+  wrap.append(el('div', { style: 'display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px' }, [el('span', {}, label), el('span', { class: 'mono', style: 'color:var(--gold)' }, (score || '—') + '/5')]));
+  const bar = el('div', { style: 'display:flex;gap:3px' });
+  for (let i = 1; i <= 5; i++) bar.append(el('span', { style: `flex:1;height:6px;border-radius:3px;background:${i <= (score || 0) ? 'var(--gold)' : 'var(--surface-3)'}` }));
+  wrap.append(bar);
+  if (basis) wrap.append(el('div', { style: 'font-size:11px;color:var(--txt-3);margin-top:6px' }, basis));
+  return wrap;
+}
+function stagePicker(p) {
+  const sel = el('select', { class: 'chip', style: 'padding:6px 10px', onchange: (e) => { toast('Stage override → ' + e.target.value); postIntent('stage_override', { business_id: p.id, to_stage: e.target.value }); } });
+  PIPE_STAGES.forEach(s => sel.append(el('option', { value: s, selected: s === p.stage }, s)));
+  return el('div', { style: 'display:flex;align-items:center;gap:10px' }, [el('span', { class: 'eyebrow' }, 'current:'), el('span', { class: 'stage-tag' }, p.stage), sel]);
+}
+
+// ── S4 Sales Pipeline (kanban + table) ──
+const PIPE_PHASES = [
+  { label: 'Research', stages: ['Researching', 'Profile Completed'] },
+  { label: 'Outreach', stages: ['Email Generated', 'Waiting Approval', 'Approved', 'Ready to Send', 'Sent', 'Delivered', 'Opened'] },
+  { label: 'Engaged', stages: ['Replied', 'Follow-up Required', 'Meeting Scheduled'] },
+  { label: 'Deal', stages: ['Proposal Sent', 'Negotiation'] },
+  { label: 'Closed', stages: ['Won', 'Lost', 'Archived'] },
+];
+const PIPE_STAGES = PIPE_PHASES.flatMap(p => p.stages);
+SCREENS.pipeline = (c) => {
+  const d = data('pipeline'); const cards = d.cards || [];
+  c.append(el('div', { class: 'screen-head' }, [el('div', { class: 'screen-title' }, 'Sales Pipeline'),
+    el('div', { style: 'display:flex;gap:8px' }, [
+      el('button', { class: 'chip', 'aria-selected': state.ui.pipeView === 'kanban', onclick: () => { state.ui.pipeView = 'kanban'; renderModule(); } }, 'Kanban'),
+      el('button', { class: 'chip', 'aria-selected': state.ui.pipeView === 'table', onclick: () => { state.ui.pipeView = 'table'; renderModule(); } }, 'Table')])]));
+  if (state.ui.pipeView === 'table') {
+    const wrap = el('div', { class: 'card', style: 'padding:0' });
+    cards.forEach(card => wrap.append(el('div', { class: 'row', style: 'cursor:pointer', onclick: () => { state.module = 'prospects'; state.ui.prospect = card.id; renderNav(); renderModule(); } }, [
+      el('span', { class: 'stage-tag' }, card.handle), el('div', { style: 'flex:1;font-weight:600' }, card.name || card.handle),
+      el('span', { class: 'stage-tag' }, card.stage), el('div', { style: 'width:90px;text-align:right' }, card.est_monthly_value ? '$' + card.est_monthly_value.toLocaleString() : '—')])));
+    c.append(wrap); return;
+  }
+  // Kanban: columns per stage that has cards (dense) grouped by phase colour
+  const board = el('div', { style: 'display:flex;gap:12px;overflow-x:auto;padding-bottom:8px' });
+  PIPE_STAGES.forEach(stage => {
+    const inStage = cards.filter(c2 => c2.stage === stage);
+    if (!inStage.length) return; // dense: only show stages with cards
+    const col = el('div', { style: 'min-width:220px;flex:0 0 220px' }, [
+      el('div', { class: 'eyebrow', style: 'margin-bottom:8px' }, [stage, el('span', { style: 'color:var(--gold);margin-left:6px' }, inStage.length)])]);
+    inStage.forEach(card => {
+      const auto = card.auto ? el('span', { title: 'auto-moved', style: 'color:var(--gold);font-size:10px' }, '↻') : null;
+      col.append(el('div', { class: 'card', style: 'margin-bottom:8px;padding:11px;cursor:pointer', draggable: 'true',
+        ondragstart: (e) => { e.dataTransfer.setData('text/plain', card.id); },
+        onclick: () => { state.module = 'prospects'; state.ui.prospect = card.id; renderNav(); renderModule(); } }, [
+        el('div', { style: 'display:flex;justify-content:space-between' }, [el('span', { style: 'font-weight:600;font-size:12.5px' }, card.name || card.handle), auto]),
+        el('div', { style: 'font-size:11px;color:var(--txt-3);margin-top:4px' }, [(card.city || '').split(' ')[0], ' · ', card.est_monthly_value ? '$' + card.est_monthly_value.toLocaleString() + '/mo' : '—'])]));
+    });
+    // drop target → stage_override
+    col.addEventListener('dragover', (e) => e.preventDefault());
+    col.addEventListener('drop', (e) => { e.preventDefault(); const id = +e.dataTransfer.getData('text/plain'); toast('Stage → ' + stage); postIntent('stage_override', { business_id: id, to_stage: stage }); const card = cards.find(x => x.id === id); if (card) { card.stage = stage; renderModule(); } });
+    board.append(col);
+  });
+  c.append(board);
+};
 
 function placeholder(label) {
   return (c) => {

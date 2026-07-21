@@ -22,19 +22,31 @@ export function computeSnapshots(db) {
     phases: PIPELINE_PHASES,
     counts: Object.fromEntries(PIPELINE_STAGES.map(s => [s, biz.filter(b => b.pipeline_stage === s).length])),
     cards: biz.map(b => ({
-      id: b.id, handle: b.handle, city: b.city, industry: b.industry,
+      id: b.id, handle: b.handle, name: b.name, is_real: !!b.is_real, city: b.city, industry: b.industry,
       est_monthly_value: b.est_monthly_value, stage: b.pipeline_stage, stage_updated_at: b.stage_updated_at,
     })),
   };
 
-  // Prospects: dense list (handles + maturity + opportunity value).
+  // Prospects: full BI profiles (Law 3 provenance travels with the row so S5 can render source/verified).
+  const contactsAll = all('SELECT * FROM contacts');
+  const byBiz = {};
+  for (const c of contactsAll) (byBiz[c.business_id] = byBiz[c.business_id] || []).push({ name: c.name, title: c.title, public_email: c.public_email, linkedin_url: c.linkedin_url, source_url: c.source_url, confidence: c.confidence });
   out.prospects = {
     count: biz.length,
+    real_count: biz.filter(b => b.is_real).length,
     rows: biz.map(b => ({
-      id: b.id, handle: b.handle, industry: b.industry, city: b.city, size: b.size,
+      id: b.id, handle: b.handle, name: b.name, is_real: !!b.is_real,
+      industry: b.industry, city: b.city, region: b.region, size: b.size, address: b.address,
+      website: b.website, phone: b.phone, public_email: b.public_email, linkedin_url: b.linkedin_url,
+      socials: j(b, 'socials_json', {}),
       maturity: { it: b.maturity_it, cyber: b.maturity_cyber, cloud: b.maturity_cloud, ai: b.maturity_ai },
+      maturity_detail: j(b, 'maturity_json', null),
+      opportunities: j(b, 'opportunities_json', []),
+      provenance: j(b, 'provenance_json', {}),
+      source: j(b, 'source_json', {}),
       est_monthly_value: b.est_monthly_value, stage: b.pipeline_stage,
       has_public_email: !!b.public_email,
+      contacts: byBiz[b.id] || [],
     })),
   };
 

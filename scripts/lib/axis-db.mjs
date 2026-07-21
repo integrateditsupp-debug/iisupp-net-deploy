@@ -22,9 +22,13 @@ CREATE TABLE IF NOT EXISTS businesses (
   name TEXT, website TEXT, industry TEXT, city TEXT, region TEXT, size TEXT,
   address TEXT, phone TEXT, public_email TEXT, maps_url TEXT, linkedin_url TEXT, socials_json TEXT,
   maturity_it INTEGER, maturity_cyber INTEGER, maturity_cloud INTEGER, maturity_ai INTEGER,
+  maturity_json TEXT,                -- {it:{score,basis}, cyber:{...}, cloud:{...}, ai:{...}}
   opportunities_json TEXT, est_monthly_value INTEGER,
   pipeline_stage TEXT DEFAULT 'Researching', stage_updated_at INTEGER,
-  source_json TEXT, created_at INTEGER
+  source_json TEXT,                  -- discovery source (e.g. Apollo org search)
+  provenance_json TEXT,              -- Law 3: per-field {field:{value,source_url,confidence,last_verified}}
+  is_real INTEGER DEFAULT 0,         -- 1 = real researched business (not fictional seed)
+  created_at INTEGER
 );
 CREATE TABLE IF NOT EXISTS contacts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -107,6 +111,15 @@ export function ensureDirs() {
   fs.mkdirSync(SECRETS_DIR, { recursive: true });
 }
 
+// Additive migrations for DBs created before a column existed. Safe to run every open.
+function migrate(db) {
+  const cols = db.prepare('PRAGMA table_info(businesses)').all().map(r => r.name);
+  const add = (name, decl) => { if (!cols.includes(name)) db.exec(`ALTER TABLE businesses ADD COLUMN ${name} ${decl};`); };
+  add('maturity_json', 'TEXT');
+  add('provenance_json', 'TEXT');
+  add('is_real', 'INTEGER DEFAULT 0');
+}
+
 // Open (creating if needed), apply schema, set safe pragmas. Returns the DatabaseSync handle.
 export function openDb(dbPath = DB_PATH) {
   ensureDirs();
@@ -114,6 +127,7 @@ export function openDb(dbPath = DB_PATH) {
   db.exec('PRAGMA journal_mode = WAL;');
   db.exec('PRAGMA foreign_keys = ON;');
   db.exec(SCHEMA);
+  migrate(db);
   // Guard: pipeline_stage values must be from the canonical enum. Enforced in app code, not a CHECK
   // (so a future stage rename never bricks the DB); we validate on write via assertStage().
   return db;

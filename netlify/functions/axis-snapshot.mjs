@@ -18,11 +18,16 @@ const VERSION_KEY = 'version';
 // Bundled fallback (fictional demo snapshots) so the console renders BEFORE the local worker has pushed
 // real snapshots to Blobs — same pattern as axis-state.mjs's _axis-state-full.json. Behind the JWT gate.
 // Once the worker writes real Blobs snapshots, those take precedence.
-const SEED_FILE = path.join(path.dirname(fileURLToPath(import.meta.url)), '_axis-snapshots-seed.json');
-let SEED = null;
+const FN_DIR = path.dirname(fileURLToPath(import.meta.url));
+const SEED_FILE = path.join(FN_DIR, '_axis-snapshots-seed.json');
+// Local dev override: real worker snapshots the worker writes to gitignored data/ (NOT bundled, NOT
+// deployed). In `netlify dev` the function can read the repo's data/ dir; in prod that path is absent so
+// this is skipped and we fall back to Blobs / the fictional committed seed. Keeps REAL data out of git.
+const LOCAL_FILE = path.join(FN_DIR, '..', '..', 'data', 'axis-snapshots.local.json');
+function readJson(f) { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } }
 function seed() {
-  if (SEED === null) { try { SEED = JSON.parse(fs.readFileSync(SEED_FILE, 'utf8')); } catch { SEED = false; } }
-  return SEED || null;
+  // priority: gitignored local real snapshot (dev only) → committed fictional seed
+  return readJson(LOCAL_FILE) || readJson(SEED_FILE);
 }
 const MODULES = new Set([
   'overview', 'inbox', 'approvals', 'pipeline', 'prospects', 'outreach',
