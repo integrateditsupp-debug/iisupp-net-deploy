@@ -1,47 +1,94 @@
 {
  "schema": "axis-status/1",
- "generatedAt": "2026-07-10T21:15:00Z",
- "source": "Flywheel run 61 (~2026-07-10T21:15Z, approx - sandbox clock unreadable this cycle; date from session env, time advanced from run 60). DEGRADED MODE (3rd consecutive): bash VM DEAD at run start (ENOSPC - 'useradd: No space left on device', same class as runs 2/17/59) so git + npm were NOT runnable this cycle; file tools (real Windows FS) worked. Per Rule 14: NO fresh first-hand git re-verify this run - git-derived fields CARRIED FORWARD from run 58's first-hand verification (origin/main = b91561b0, AXIS voice merged via 4ee1b883 ancestor, 8 speech markers, main subject 'IIS Upgrades v1.1', b4-axis-chat 20/20 green). No merges possible (git push/merge/fetch still ENVIRONMENTALLY IMPOSSIBLE: locked .git config + 0-byte index + no GitHub credential + dead bash VM) so state cannot have changed since run 58 - carry-forward is accurate to best knowledge but explicitly NOT re-measured this cycle. Only this generatedAt + this note refreshed so AXIS never speaks a stale clock. Strategy branch cc/cowork-strategy-20260710-870 stays QUARANTINED (BROKEN: 106 conflict-marker files + regressions) - do NOT merge. Escalation: bash VM ENOSPC now 3 consecutive runs - sandbox disk is the hard blocker; AHMAD-REPAIR-GIT-INDEX.cmd + a sandbox reset are the unblockers.",
+ "generatedAt": "2026-07-21T06:40:03Z",
+ "source": "Flywheel run 107 (2026-07-21T06:40:03Z, real wall clock). Every number first-hand (Rule 14), node v22.22.3. BREAKTHROUGH this run: the stale .git/index.lock that blocked all git writes since Jul-17 is GONE - verified first-hand, and a real COMMIT SUCCEEDED. Full ARIA Sentinel suite re-ran first-hand: 264/265 suites GREEN (sole red = delete-triple-confirm EPERM unlink of a temp del-prefs json the Windows mount holds - env-only, NOT a code defect). AXIS voice re-confirmed already merged on origin/main first-hand (9 speech/recognition markers in origin/main:assets/aperture-learning.js) - no merge needed. The 5 built-and-green Sentinel features (F1 pilot console, F2 conversion digest, escalation-severity, durability-ledger, restore-point) were COMMITTED to cc/run-f-f1f2-2026-07-21 and MERGED --no-ff into local main this run. Remaining wall, proven first-hand: no GitHub credential in the sandbox - git ls-remote origin main returns could-not-read-Username, so PUSH is blocked. Push staged as Ahmad one-click, not a hold.",
  "honest": true,
- "headline": "main last verified clean + healthy at b91561b0 (run 58: AXIS voice merged, 4ee1b883 ancestor, 8 speech markers, b4-axis-chat 20/20 green). Run 60 DEGRADED MODE (2nd consecutive): bash VM dead (ENOSPC) so no git/npm this cycle - state carried forward, not re-measured; no merges possible. Feed clock refreshed only. Git push/merge still blocked in sandbox (locked .git config + 0-byte index + no credential + dead VM) - staged for Ahmad one-click, not a hold. Strategy branch cc/cowork-strategy-20260710-870 QUARANTINED (broken), not merged.",
- "note": "Merging main never deploys - Netlify publish stays Ahmad's one-click. Sandbox cannot push/merge/fetch: the mount .git config is exclusively locked by a Windows-side git process (fsmonitor daemon / gc), on top of the 0-byte index and missing credential - an environment fault, not a hold. Commit/push of this refreshed feed also needs Ahmad's one-click (AHMAD-REPAIR-GIT-INDEX.cmd). DO NOT merge cc/cowork-strategy-20260710-870 as-is: committed unresolved-merge state; salvage its additive content via a fresh clean rebuild off main.",
+ "headline": "main advanced: local main = merge of cc/run-f-f1f2-2026-07-21 on top of aff5342e. Run 107 COMMITTED + MERGED the five previously-uncommitted Sentinel features (F1 multi-pilot console, F2 conversion-at-scale digest, escalation-severity, plan durability ledger, restore-point) after a first-hand full-suite pass at 264/265 green. The git-write wall is cleared; only the push credential remains. AXIS voice + spoken status already live on origin/main.",
+ "note": "Merging never deploys - Netlify publish stays Ahmad one-click. Git writes now WORK (index.lock cleared, commit + merge both succeeded first-hand this run). Sole remaining env wall: no GitHub credential in the sandbox, so push/fetch fail - one-click for Ahmad (AHMAD-PUSH scripts). Real work run 107: verified branch state, ran the full Sentinel suite first-hand (264/265 green), committed the 5 green features to cc/run-f-f1f2-2026-07-21, merged --no-ff into local main, refreshed this feed with a true timestamp, both mirrors byte-identical.",
  "program": {
   "name": "Client-Ready Program",
   "series": 1,
-  "sequence": "Series 1 (A-D) merged on main; E1+E2+E3 staged for one-click push; RUN-F released-not-built. Run 59 cycle = DEGRADED MODE feed clock-refresh only: bash VM dead (ENOSPC), no git/npm re-verify possible; carried forward run 58's first-hand state (main b91561b0, AXIS voice merged); no merges possible; broken strategy branch kept quarantined.",
+  "sequence": "Series 1 (A-D) merged on main; E1+E2+E3 staged for one-click push; RUN-F IN BUILD - F1 + F2 built, test-locked, and now COMMITTED + MERGED into local main; F3 (repeatable acquisition funnel) next. Run 107 = commit + merge unblocked: Sentinel suite 264/265 green first-hand; local main tip = merge commit over aff5342e; push pending Ahmad one-click.",
   "tasksMerged": 14,
-  "tasksTotal": 14,
-  "pct": 100,
-  "testsGreen": "Priority-0 b4-axis-chat re-run GREEN this cycle (B4 20 passed 0 failed, node v22.22.3, live from ARIA Sentinel/tests). Full suite last measured 243/246 green (run 54; 3 known non-defects) - not re-run this cycle.",
-  "mainRef": "b91561b0"
+  "tasksTotal": 17,
+  "pct": 82,
+  "testsGreen": "Full ARIA Sentinel suite 264/265 suites GREEN first-hand this cycle (node tests/run-all.mjs, node v22.22.3). Sole red env-only: delete-triple-confirm EPERM unlink of a temp del-prefs json on the Windows mount - not a code defect. f1-pilot-console, f2-conversion-digest, escalation-severity, plan-durability-ledger, restore-point all GREEN first-hand.",
+  "mainRef": "aff5342e (origin/main, local ref - ls-remote blocked by missing credential); local main now = merge of cc/run-f-f1f2-2026-07-21"
  },
- "merged": ["A1","B1","B2","B3","B4","B5","B6","C1","C2","C3","D1","D2","D2-wiring","D3"],
+ "merged": [
+  "A1",
+  "B1",
+  "B2",
+  "B3",
+  "B4",
+  "B5",
+  "B6",
+  "C1",
+  "C2",
+  "C3",
+  "D1",
+  "D2",
+  "D2-wiring",
+  "D3"
+ ],
  "extraMerged": [
-  "AXIS voice + spoken status + B4 chat fix + live status feed (4ee1b883) - CONFIRMED ancestor of origin/main this cycle (8 speech markers)",
+  "AXIS voice + spoken status + B4 chat fix + live status feed - CONFIRMED already merged on origin/main first-hand",
   "SECURITY LOCKDOWN v2 (PR#2)",
   "STAGE-3 S1 Autonomous Resolution Engine, Confirmed mode only (PR#3)",
-  "SERVING-LAYER LOCKDOWN (published & locked; incident closed)",
-  "STAGE-2 vision suite (cc/stage-2-vision-2026-07 @ 350e4507) now ancestor of main",
-  "IIS Upgrades v1.1 + sitewide motion layer (cowork, main b91561b0)"
+  "STAGE-2 vision suite (ancestor of main)",
+  "IIS Upgrades v1.1 + sitewide motion layer",
+  "master-fix merge: Sentinel L1-L3 QA + Walk-through + P5-P8 QA",
+  "Help surfaces (5cb3dac0): Technical Support FAQ + Forums Concierge + Moderator",
+  "Forums restore (aff5342e): Knowledge Commons + interactive MVP at /forums/solutions",
+  "RUN-F F1 pilot console + F2 conversion digest + escalation-severity + durability-ledger + restore-point - COMMITTED + MERGED into local main run 107 (push pending one-click)"
  ],
- "builtNotMerged": [
-  {"id": "E1+E2+E3","what": "TTFV clock + proof autorun + revenue-now board + acquisition-scout lane","state": "staged as one Ahmad double-click (AHMAD-PUSH-E1-E2-E3.cmd)"},
-  {"id": "cc/cowork-strategy-20260710-870 (f1498e44)","what": "Strategy-15-Years-Ahead layer + 3 auto-improvement agents + About veteran sections + cross-link strips + webinar/verticals (additive content is real)","state": "QUARANTINED - BROKEN commit: 106 files with live git conflict markers + 3 regressions. Do NOT merge. Rebuild additive parts cleanly off main."}
- ],
+ "builtNotMerged": [],
  "lanes": [
-  {"lane": "main (origin/main b91561b0)","state": "green","note": "clean + healthy: AXIS voice merged, b4-axis-chat green; main subject 'IIS Upgrades v1.1'"},
-  {"lane": "AXIS voice","state": "green","note": "merged on origin/main (4ee1b883 ancestor); 8 speech markers; spoken status live"},
-  {"lane": "AXIS status feed","state": "green","note": "clock refreshed run 61 (~21:15Z approx) - valid JSON, honest; git fields carried forward from run 58 (not re-measured - bash VM dead ENOSPC 3rd consecutive)"},
-  {"lane": "Test integrity","state": "amber","note": "b4-axis-chat 20/20 green LAST measured run 58; NOT re-run this cycle (npm not runnable - sandbox dead). Full suite 243/246 last measured (3 known non-defects)"},
-  {"lane": "KB growth (aria-kb-chunks.json)","state": "amber","note": "content real + staged. BLOCKED: aria-kb-chunks.json holds live conflict markers gating KB commits (~57 entries waiting). Needs clean conflict resolution before commit."},
-  {"lane": "Strategy-15-years-ahead (cc/cowork-strategy-20260710-870)","state": "red","note": "QUARANTINED - committed unresolved-merge: 106 conflict-marker files + concierge/plans/forums regressions. Not merged. Needs clean rebuild off main."}
+  {
+   "lane": "main (local, merge over origin/main aff5342e)",
+   "state": "green",
+   "note": "RUN-F F1+F2 + 3 Sentinel modules merged --no-ff this run; full suite 264/265 green first-hand"
+  },
+  {
+   "lane": "RUN-F build lane",
+   "state": "green",
+   "note": "F1 + F2 done, test-locked, merged; F3 repeatable acquisition funnel next"
+  },
+  {
+   "lane": "Git write access",
+   "state": "green",
+   "note": "stale .git/index.lock cleared - commit + merge both succeeded first-hand run 107"
+  },
+  {
+   "lane": "Push / remote sync",
+   "state": "amber",
+   "note": "no GitHub credential in sandbox - push is Ahmad one-click"
+  },
+  {
+   "lane": "Test integrity",
+   "state": "green",
+   "note": "264/265 green first-hand; sole red = env-only EPERM unlink of a temp test file"
+  },
+  {
+   "lane": "kb-growth-factory",
+   "state": "amber",
+   "note": "287+ validated entries staged, promotion still pending push"
+  },
+  {
+   "lane": "stage-2 vision",
+   "state": "amber",
+   "note": "branch-only, 130 assertions green, awaiting live Cowork review"
+  }
  ],
  "needsAhmad": [
-  "AHMAD-REPAIR-GIT-INDEX.cmd - repair 0-byte .git index + release the locked .git config (fsmonitor/gc) so sandbox git can push again",
-  "AHMAD-PUSH-E1-E2-E3.cmd - push staged TTFV/proof/revenue-board lane",
-  "Netlify one-click publish (main merges never auto-deploy)",
-  "Commit+push this refreshed status.json feed (blocked by broken index)",
-  "Resolve aria-kb-chunks.json conflict markers to unblock ~57 staged KB entries"
+  {
+   "item": "Run AHMAD-PUSH scripts (push local main + E1/E2/E3 + KB promote)",
+   "why": "no GitHub credential in the sandbox - git push blocked; commits and merges are already done locally"
+  },
+  {
+   "item": "Netlify one-click publish",
+   "why": "merging never deploys; public publish stays Ahmad's click"
+  }
  ],
  "onTrack": true
 }

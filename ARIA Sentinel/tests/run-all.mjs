@@ -306,6 +306,9 @@ const TESTS = [
   "./e1-pilot-activation-ttfv.test.mjs",
   "./e2-proof-autorun.test.mjs",
   "./e3-revenue-board.test.mjs",
+  // RUN-F F1 (2026-07-21) — multi-pilot operations console: N concurrent real pilots, honest empty
+  // board, real-or-empty fix/activity, maturity gate (real TTFV + 3 real fixes), staged one-clicks only.
+  "./f1-pilot-console.test.mjs",
   // RUN-B B6 (2026-07-01) — regression-sweep LOCK: RUN-B modules present, gates stay registered, honesty moat live, real-or-empty + inflated Trust pages stay deleted.
   "./b6-regression-sweep.test.mjs",
   // STAGE 3 S1 (2026-07-01) — Autonomous Resolution Engine, Confirmed mode only: plan schema +
@@ -352,6 +355,7 @@ const TESTS = [
   "../../tests/forums-concierge.test.mjs",
   "../../tests/forums-moderation.test.mjs",
   "../../tests/kb-answer-shape-parity.test.mjs",
+  "./f2-conversion-digest.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
