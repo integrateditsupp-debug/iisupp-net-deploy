@@ -10,11 +10,27 @@
 // Auto-prunes events older than 24h on every write.
 
 import { getStore } from '@netlify/blobs';
+import { verifyAperture } from './aperture-auth.mjs';
 
 const STORE_NAME = 'aria-mesh-events';
 const KEY = 'events.json';
 const MAX_RETAIN = 5000;
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+// WRITE GATE (2026-07-21): POST was UNAUTHENTICATED — anyone could inject forged "live activity"
+// (arbitrary spread fields) that render across every console. Writers are all server-to-server or the
+// local bridge, so we gate on an internal shared token (MESH_WRITE_TOKEN) or a valid Aperture JWT.
+// Convention matches aria-mesh-task-queue's authOk: fail-OPEN only when no token is provisioned (dev),
+// so nothing breaks before Ahmad sets MESH_WRITE_TOKEN in Netlify env + threads it to the local bridge.
+function meshWriteAuthOk(req) {
+  const want = process.env.MESH_WRITE_TOKEN;
+  if (!want) {
+    console.warn('[aria-mesh-events] MESH_WRITE_TOKEN not set — write path is OPEN (unprotected). Set it in Netlify env to close injection.');
+    return true;
+  }
+  if (req.headers.get('x-mesh-write-token') === want) return true;
+  return !!verifyAperture(req);
+}
 
 async function loadAll() {
   const store = getStore(STORE_NAME);
@@ -39,6 +55,9 @@ export default async (req, _context) => {
   const url = new URL(req.url);
 
   if (req.method === 'POST') {
+    if (!meshWriteAuthOk(req)) {
+      return new Response(JSON.stringify({ ok: false, reason: 'unauthorized' }), { status: 401, headers: { 'content-type': 'application/json' } });
+    }
     let body = {};
     try { body = await req.json(); } catch (_) {}
     const event = {

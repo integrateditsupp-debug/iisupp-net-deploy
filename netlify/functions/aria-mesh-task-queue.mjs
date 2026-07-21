@@ -51,7 +51,7 @@ async function logEvent(host, event) {
   try {
     await fetch(`https://${host}/api/mesh-events`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...(process.env.MESH_WRITE_TOKEN ? { 'x-mesh-write-token': process.env.MESH_WRITE_TOKEN } : {}) },
       body: JSON.stringify(event)
     });
   } catch (_) {}
@@ -140,7 +140,17 @@ export default async (req, _context) => {
   if (target) tasks = tasks.filter(t => t.target === target);
   tasks = tasks.slice(-limit);
 
-  return new Response(JSON.stringify({ ok: true, count: tasks.length, tasks }), {
+  // READ PROJECTION (2026-07-21): the GET list was fully public and exposed payload.instruction
+  // (operator-typed agent instructions). Same fix pattern as /api/axis-state: unauthenticated callers
+  // get status/target/timing only; the sensitive payload is served only to a valid Aperture session.
+  // Keeps the console/queue-count boards working with zero client changes.
+  const authed = !!verifyAperture(req);
+  const projected = authed ? tasks : tasks.map(t => ({
+    id: t.id, target: t.target, source: t.source, status: t.status,
+    createdAt: t.createdAt, claimedAt: t.claimedAt, completedAt: t.completedAt, durationMs: t.durationMs
+  }));
+
+  return new Response(JSON.stringify({ ok: true, count: projected.length, authed, tasks: projected }), {
     headers: { 'content-type': 'application/json' }
   });
 };

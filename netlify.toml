@@ -36,6 +36,13 @@
   status = 404
   force = true
 [[redirects]]
+  # AXIS CC v2: worker-owned SQLite DB + secrets + local snapshot spool. Belt-and-suspenders with
+  # .gitignore (data/) — even if a data file is ever present at publish, this force-404s it.
+  from = "/data/*"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
   from = "/senior-director-state/*"
   to = "/index.html"
   status = 404

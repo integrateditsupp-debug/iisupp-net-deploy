@@ -58,9 +58,17 @@ Respond with ONLY JSON, no markdown:
 
 const DEPRECATED_MODELS = /claude-sonnet-4-20250514|claude-sonnet-4-5-20250929|claude-3-5-sonnet-202(40|41)|claude-3-opus-20240229|claude-3-haiku-20240307/;
 
+const { bearerFromEvent } = require('./_verify-bearer.cjs');
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: cors(), body: '' };
   if (event.httpMethod !== 'POST') return json(405, { error: 'POST required' });
+
+  // HARD GATE (2026-07-21): this endpoint writes command/approval intents to the axis-inbox the
+  // local worker executes from, and burns ANTHROPIC_API_KEY on chat. It was previously UNAUTHENTICATED
+  // — an anonymous caller could forge {action:'approval',decision:'approve'} and bypass the approval
+  // gate. Now requires a valid Aperture admin JWT (same login as the console).
+  if (!bearerFromEvent(event)) return json(401, { error: 'unauthorized — Aperture login required' });
 
   let body;
   try { body = JSON.parse(event.body || '{}'); } catch { return json(400, { error: 'Invalid JSON' }); }
@@ -160,4 +168,4 @@ function sanitize(text, max) {
   return String(text || '').replace(/`[^`]*`/g, '…').replace(/https?:\/\/\S+/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
 }
 function json(statusCode, b) { return { statusCode, headers: { ...cors(), 'content-type': 'application/json' }, body: JSON.stringify(b) }; }
-function cors() { return { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type' }; }
+function cors() { return { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type, authorization' }; }

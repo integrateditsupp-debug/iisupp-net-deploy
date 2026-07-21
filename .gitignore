@@ -89,3 +89,16 @@ CLAUDE.md
 # Local Sentinel build snapshots (dist.<ver>.<ts>/) — contain >100MB exes GitHub rejects (GH001).
 # Build artifacts only; files stay on disk. Shipped installers live in downloads/.
 ARIA Sentinel/dist.*/
+
+# AXIS Command Center v2 (2026-07-21) — worker-owned SQLite system-of-record + Gmail/API secrets +
+# local snapshot spool. publish="." → this MUST never be tracked or it deploys prospect PII publicly.
+data/
+
+# AXIS CC v2 agent installers must stay trackable/reviewable despite the blanket *.ps1 lockdown above
+# (same rationale as the ARIA Sentinel negations). Only the three new agents' install/run pair.
+!scripts/install-cartographer-worker.ps1
+!scripts/run-cartographer-worker.ps1
+!scripts/install-sentry-worker.ps1
+!scripts/run-sentry-worker.ps1
+!scripts/install-miner-worker.ps1
+!scripts/run-miner-worker.ps1

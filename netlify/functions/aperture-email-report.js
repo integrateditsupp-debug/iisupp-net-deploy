@@ -16,16 +16,22 @@
 // Returns 500 with full diagnostic if both paths fail.
 
 const nodemailer = require('nodemailer');
+const { bearerFromEvent } = require('./_verify-bearer.cjs');
 
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
+
+  // HARD GATE (2026-07-21): this endpoint sends email via Resend/Gmail using the IIS sender identity.
+  // Previously UNAUTHENTICATED — an open relay: anyone could send arbitrary-subject mail to any address.
+  // Now requires a valid Aperture admin JWT (the console operator).
+  if (!bearerFromEvent(event)) return { statusCode: 401, headers, body: JSON.stringify({ error: 'unauthorized — Aperture login required' }) };
 
   let body;
   try { body = JSON.parse(event.body || '{}'); }

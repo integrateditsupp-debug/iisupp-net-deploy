@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-26",
+  "updated": "2026-07-21",
   "director": { "name": "AXIS", "role": "Director — you talk to AXIS; it dispatches the rest", "maps": "senior-director-worker daemon + Cowork" },
   "executor": { "name": "Forge", "role": "Code builder (Claude Code) — ships features on command", "maps": "CC" },
   "agents": [
@@ -26,6 +26,9 @@
     { "name": "Herald",     "task": "golive-pending-reminder",          "does": "Daily 8am: list queued go-live items", "fn": "Approvals" },
     { "name": "Dawn",       "task": "aria-morning-autopilot",           "does": "Sunday am: revenue, uptime, weekly priorities", "fn": "Work Report" },
     { "name": "Dusk",       "task": "aria-evening-autopilot",           "does": "Sunday pm: week recap + next #1 priority", "fn": "Work Report" },
-    { "name": "Biller",     "task": "do-payment-retry-june-30",         "does": "One-off: retry DigitalOcean payment Jun 30", "fn": "Finance" }
+    { "name": "Biller",     "task": "do-payment-retry-june-30",         "does": "One-off: retry DigitalOcean payment Jun 30", "fn": "Finance" },
+    { "name": "Cartographer","task": "axis-cartographer-research",       "does": "Geo-ladder research (Toronto→GTA→ON→CA): builds sourced BI prospect profiles", "fn": "Research" },
+    { "name": "Sentry",     "task": "axis-sentry-inbox-monitor",         "does": "Polls Gmail 2–5min: classifies replies/new requests → Action Inbox badge", "fn": "Inbox Monitor" },
+    { "name": "Miner",      "task": "axis-miner-product-discovery",      "does": "Logs recurring prospect needs → scored product/service opportunities", "fn": "Product Discovery" }
   ]
 }

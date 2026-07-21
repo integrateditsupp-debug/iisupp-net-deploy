@@ -573,7 +573,7 @@ function postBit(){
 }
 function sendReportNow(){
   fetch('/.netlify/functions/aperture-email-report',{
-    method:'POST', headers:{'Content-Type':'application/json'},
+    method:'POST', headers:authHeaders({'Content-Type':'application/json'}),
     body:JSON.stringify({ to:'integrateditsupp@gmail.com', name:'Ahmad',
       sessionId:'manual-report-'+Date.now(), summary:'Manual report triggered from ARIA Command Center.',
       endedBy:'user', subjectOverride:'ARIA · Operations Report · '+new Date().toISOString().slice(0,10) })

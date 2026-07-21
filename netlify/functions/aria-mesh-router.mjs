@@ -141,7 +141,7 @@ async function logEvent(host, event) {
   try {
     await fetch(url, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...(process.env.MESH_WRITE_TOKEN ? { 'x-mesh-write-token': process.env.MESH_WRITE_TOKEN } : {}) },
       body: JSON.stringify(event)
     });
   } catch (_) { /* swallow */ }

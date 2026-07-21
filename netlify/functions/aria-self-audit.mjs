@@ -159,7 +159,7 @@ export default async (request) => {
     const host = request.headers.get('host') || url.host;
     await fetch(`https://${host}/api/mesh-events`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...(process.env.MESH_WRITE_TOKEN ? { 'x-mesh-write-token': process.env.MESH_WRITE_TOKEN } : {}) },
       body: JSON.stringify({ kind: 'self-audit', agentId: 'aria-self-audit', successRate, deadEnds: deadEnds.length, requeued, indexed, openGaps: topGaps.length, topGap: topGaps[0] ? topGaps[0].topic : null, ts: Date.now() })
     });
   } catch (_) {}
