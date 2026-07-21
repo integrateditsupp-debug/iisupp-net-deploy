@@ -29,11 +29,28 @@ Scopes: `gmail.compose` (create drafts + send) and `gmail.modify` (read replies 
 3. The outbound queue calls `railsCheck()` **at send time** — daily cap, suppression, approved template, quiet hours (America/Toronto), CASL footer, consent basis. Any fail → held.
 4. `gmail-outreach.createDraft()` materializes the Gmail draft, then `sendDraft()` sends it (draft-then-send so replies thread). Only after your per-item approval.
 
-## Lint (enforced at generation)
-Rejects banned filler, requires ≥1 sourced company-specific fact, problem-first framing, initial ≤150 words. See `BANNED_FILLER` / `OUTREACH_LIMITS` in `axis-constants.js` and `lint()` in `scripts/lib/outreach.mjs`.
+## Copy = Ahmad's LOCKED approved template
+Body copy is **not** invented. It comes verbatim from `aria-vault/01_Frontal/Outreach-Template-Approved.md`
+(locked 2026-06-25), mirrored into `APPROVED_TEMPLATE` in `axis-constants.js`. Personalize **only** `{name}`;
+the demo link, contact line, and signature stay exactly as written. Subject (the one element not in the
+locked body) is minimal + factual: "Managed IT & AI automation for {company}".
+
+## Lint (conformance, enforced at generation)
+Because the body is authoritative, lint enforces **conformance**: `{name}` personalized (no leftover
+placeholder), the approved markers survive (offer, demo link, contact, phone), it opens with the approved
+greeting (drift guard), no *residual* banned filler, length sane. See `lint()` in `scripts/lib/outreach.mjs`.
+
+## Pacing (P4 addendum — deliverability)
+First batch is **personalized, ≤5/day, no blast**. Volume does **not** ramp until Workspace DKIM is live —
+enforced in `railsCheck()` (`OUTREACH_PACING.requires_dkim_to_ramp`): with DKIM absent the daily cap is
+pinned to 5 and the rails surface a ⚠ until it's enabled.
 
 ## CASL
-Every commercial email carries the real mailing address (`30 Fothergill Court, Whitby, ON L1P 2L4, Canada`), phone, and a working one-click unsubscribe (`List-Unsubscribe` header + link) honored immediately via the suppression list. Consent basis (`conspicuous_publication` + the public URL where the business email was found) is recorded per contact in `consent_basis`. Max 3 follow-ups then stop.
+Exact footer on every commercial email (`CASL.line` in `axis-constants.js`):
+`Integrated IT Support Inc. · 30 Fothergill Crt, Whitby, ON L1P 1L4 · ahmad.wasee@iisupp.net · 647-581-3182 · instant one-click unsubscribe: <link>`
+plus a `List-Unsubscribe` header (one-click), honored immediately via the suppression list. Consent basis
+(`conspicuous_publication` + the public URL where the business email was found) is recorded per contact in
+`consent_basis`. Max 3 follow-ups then stop.
 
 ## Secrets / env
 | Name | Where | Read by |

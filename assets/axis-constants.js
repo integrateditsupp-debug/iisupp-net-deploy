@@ -67,27 +67,56 @@ export const OUTREACH_IDENTITY = {
   watch_mailbox: 'ahmad.wasee@iisupp.net', // P5 reply monitor
 };
 
-// CASL footer — REAL registered mailing address (public on iisupp.net) + working unsubscribe. Every
-// commercial email carries this. Postal code L1P 1L4 confirmed correct by Ahmad 2026-07-21 (the marketing
-// pages that showed L1P 2L4 were a typo, corrected in the same change).
+// CASL footer — EXACT per Ahmad 2026-07-21. This one line + a working one-click unsubscribe on every
+// commercial email. "Crt" and postal code L1P 1L4 as specified (authoritative for the outreach footer).
 export const CASL = {
   company: 'Integrated IT Support Inc.',
-  address: '30 Fothergill Court, Whitby, ON L1P 1L4, Canada',
-  phone: '(647) 581-3182',
+  address: '30 Fothergill Crt, Whitby, ON L1P 1L4',
   contact: 'ahmad.wasee@iisupp.net',
-  // consent bases we record per contact + the evidence that supports each
+  phone: '647-581-3182',
   bases: CONSENT_BASES, // implied | conspicuous_publication | express
+  // Exact footer text (unsubscribe link appended per-recipient):
+  line: 'Integrated IT Support Inc. · 30 Fothergill Crt, Whitby, ON L1P 1L4 · ahmad.wasee@iisupp.net · 647-581-3182 · instant one-click unsubscribe',
 };
 
-// Lint (P4 §6): banned filler → hard reject; require ≥1 sourced company fact; problem-first; initial ≤150 words.
+// APPROVED outreach copy — Ahmad-LOCKED verbatim (aria-vault/01_Frontal/Outreach-Template-Approved.md,
+// locked 2026-06-25). Personalize ONLY {name}. Do NOT rewrite the body. Cold email appends the CASL footer.
+export const DEMO_LINK = 'https://calendar.app.google/LUyV5pHxkqJRg5vp8';
+export const APPROVED_TEMPLATE = {
+  source: 'aria-vault/01_Frontal/Outreach-Template-Approved.md (locked 2026-06-25)',
+  body: `Hello {name},
+
+Hope you are doing well, I won't take much of your time.
+
+We provide Managed IT Services that meet all your needs for IT support, AI automation, agentic workflow setup, and much more. Please book a quick 15-minute demo (${DEMO_LINK}) on how we can bring your business up to speed with tech and help prevent unnecessary costs and frustrating technical issues.
+
+We'd appreciate your consideration for any current projects or if you could whitelist us for your future goals. You may reach us via ahmad.wasee@iisupp.net, 647-581-3182 or iisupp.net for more detailed info and ideas.
+
+
+Regards,
+
+Ahmad Wasee
+Founder | Director
+Integrated IT Support Inc.
+E: ahmad.wasee@iisupp.net
+T: 647-581-3182
+W: iisupp.net`,
+  // Markers lint checks are present (must survive personalization).
+  must_contain: ['Managed IT Services', DEMO_LINK, 'ahmad.wasee@iisupp.net', '647-581-3182'],
+};
+
+// Lint: the approved body is authoritative, so lint enforces CONFORMANCE (personalized {name}, demo link +
+// contact intact, CASL footer, length) + a residual filler blocklist for DRIFT if anyone edits the body.
+// "hope you are doing well" is intentionally NOT banned — the approved template uses it.
 export const BANNED_FILLER = [
-  'i hope this finds you well', 'i hope this email finds you well', 'hope you are doing well', 'hope all is well',
-  'cutting-edge', 'cutting edge', 'synergy', 'synergies', 'circle back', 'touch base', 'game-changer', 'game changer',
+  'i hope this finds you well', 'i hope this email finds you well',
+  'cutting-edge', 'cutting edge', 'synergy', 'synergies', 'circle back', 'game-changer', 'game changer',
   'revolutionary', 'best-in-class', 'best in class', 'move the needle', 'low-hanging fruit', 'thought leader',
-  'in today\'s fast-paced', 'paradigm shift', 'seamlessly', 'unlock the power', 'take it to the next level',
-  'we are excited to', 'i wanted to reach out', 'quick question', 'pick your brain', 'world-class',
+  'paradigm shift', 'unlock the power', 'take it to the next level', 'world-class', 'pick your brain',
 ];
-export const OUTREACH_LIMITS = { initial_words_max: 150, subjects: 3, followups: 3 };
+export const OUTREACH_LIMITS = { body_words_max: 200 };
+// First-batch pacing (P4 addendum): personalized, a few/day, no blast. Do NOT ramp until DKIM is live.
+export const OUTREACH_PACING = { first_batch_daily_cap: 5, ramped_daily_cap: 25, requires_dkim_to_ramp: true };
 
 // ── Blobs store names. Intents reuse the existing axis-inbox store (worker already consumes pending/).
 // Snapshots get a dedicated store; key = module name, plus a 'version' key holding {v, modules:{m:v}}. ──

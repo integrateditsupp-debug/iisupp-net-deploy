@@ -418,11 +418,12 @@ SCREENS.outreach = (c) => {
   drafts.forEach(dr => {
     const b = ((data('prospects').rows) || []).find(x => x.id === dr.business_id);
     const lint = dr.lint || {};
+    const noIssue = (re) => (lint.issues || []).every(i => !re.test(i));
     const checklist = [
-      ['Specific company mention', /* has sourced fact */ (lint.issues || []).every(i => !/sourced/.test(i))],
-      ['Problem-first framing', (lint.issues || []).every(i => !/problem-first/.test(i))],
-      ['No mass-produced filler', (lint.issues || []).every(i => !/filler/.test(i))],
-      [`Under 150 words (${lint.word_count ?? '?'})`, (lint.word_count ?? 999) <= 150],
+      ['Personalized (no {name})', noIssue(/placeholder|personalized/)],
+      ['Approved template intact', noIssue(/approved element|drift|greeting/)],
+      ['No banned filler', noIssue(/filler/)],
+      [`CASL footer + unsubscribe`, /unsubscribe/i.test(dr.body || '')],
     ];
     const card = el('div', { class: 'card', style: 'margin-bottom:12px' }, [
       el('div', { style: 'display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px' }, [
