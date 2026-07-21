@@ -138,6 +138,7 @@ const TESTS = [
   "./diagnostic-reasoner-system-aware.test.mjs",
   "./no-harm-gate.test.mjs",
   "./anomaly-surfacing.test.mjs",
+  "./root-cause-correlation.test.mjs", // F4 (SENTINEL-BRAIN-AUDIT) — cross-subsystem root-cause correlation -> ONE Resolution Plan
   "./cross-platform-no-control.test.mjs",
   "./event-log-sanitize.test.mjs",
   "./registry-read-only.test.mjs",
@@ -322,6 +323,17 @@ const TESTS = [
   "./plan-resume-after-reboot.test.mjs",
   "./plan-autonomy-ladder.test.mjs",
   "./plan-r11-and-killswitch.test.mjs",
+  // STAGE 3 (ARE) FEEDS (2026-07-17) — PLAN-LEVEL autonomous-resolution rate computed FROM the hash-chained
+  // plan journal (the sellable Stage-3 number; distinct grain from the chat "was this fixed?" deflection).
+  // Real-or-empty + UN-INFLATABLE: only goalProbe-proven real-change PLAN.RESOLVED counts; no-op-neutral,
+  // dry-run, pre-exec abort, interrupted, and any TAMPERED "resolved" are all excluded. Pure; frozen files untouched.
+  "./plan-deflection.test.mjs",
+  // STAGE 3 · F1 × FEEDS JOIN (2026-07-21) — the DURABLE autonomous-resolution feed for RUN-B B1 /
+  // Stage-4. plan-deflection decides which runs are honest attempts; durability-ledger decides whether
+  // the fix actually HELD through the quiet monitoring window. The headline counts only the intersection,
+  // so a fix that came back can never be sold as a resolution. The join may only ever move the number
+  // DOWN (asserted over all 162 durability-state combinations). Pure; frozen files untouched.
+  "./plan-durability-feed.test.mjs",
   // WALK-THROUGH + WEB CTA + P1 (2026-07-02) — guided step-by-step tab (guide mode changes nothing) +
   // web deep-link mode=walkthrough + "Resolve it for me" never dead-ends at Control Center.
   "./walkthrough-tab-render.test.mjs",
@@ -369,6 +381,14 @@ const TESTS = [
   "./j1-deal-blocker-autopsy.test.mjs",
   "./j2-delivery-capacity-truth.test.mjs",
   "./j3-weekly-truth-digest.test.mjs",
+  // STAGE-3 ARE — packets landed by Cowork run 113 (2026-07-21). Registered here because each packet's
+  // run-all patch was cut against an older anchor; the suites themselves are unmodified from the packets.
+  "./escalation-decision.test.mjs",
+  "./plan-boot-recovery.test.mjs",
+  "./multi-hypothesis.test.mjs",
+  "./unbound-recipe-walkthrough.test.mjs",
+  "./plan-maintenance-window.test.mjs",
+  "./goal-probe-grade.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
