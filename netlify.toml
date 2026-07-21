@@ -379,12 +379,14 @@
   status = 200
 [[redirects]]
   from = "/command-center"
-  to = "/agent-command-center.html"
-  status = 200
+  to = "/aperture-learning.html"
+  status = 301
+  force = true
 [[redirects]]
   from = "/agents"
-  to = "/agent-command-center.html"
-  status = 200
+  to = "/aperture-learning.html"
+  status = 301
+  force = true
 [[redirects]]
   from = "/growth-command-center"
   to = "/growth-command-center.html"
@@ -492,6 +494,34 @@
   from = "/aperture-learning/"
   to = "/aperture-learning.html"
   status = 200
+
+# --- AXIS Command Center v2 (P8): the canonical hub /aperture-learning.html serves the v2 shell
+#     (assets/axis.html); the old consoles redirect in at parity. Auth is unchanged (aperture JWT). ---
+[[redirects]]
+  from = "/aperture-learning.html"
+  to = "/axis.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/command-center.html"
+  to = "/aperture-learning.html"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/agent-command-center.html"
+  to = "/aperture-learning.html"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/ceo-action-console.html"
+  to = "/aperture-learning.html"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/analytics.html"
+  to = "/aperture-learning.html"
+  status = 301
+  force = true
 
 
 # Rule 9 — kills + compliance hub merge (2026-06-18)

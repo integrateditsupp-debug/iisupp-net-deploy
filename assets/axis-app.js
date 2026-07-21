@@ -637,6 +637,36 @@ SCREENS.reports = (c) => {
 function settingBox(label, value) { return el('div', {}, [el('div', { class: 'eyebrow' }, label), el('div', { style: 'font-size:16px;font-weight:600;margin-top:4px' }, value ?? '—')]); }
 SCREENS.settings = SCREENS.reports; // Reports & Settings share the screen (spec S13)
 
+// ── S11 Product Discovery (Miner) ──
+SCREENS.products = (c) => {
+  const d = data('products'); const rows = d.rows || [];
+  c.append(head('Product Discovery', `${rows.length} opportunities · scored 1–5 · weighted rank · → AXIS review`));
+  if (!rows.length) { c.append(el('div', { class: 'empty' }, 'Miner has not run yet.')); return; }
+  const axes = [['demand', 'Demand'], ['ease', 'Ease'], ['profitability', 'Profit'], ['scalability', 'Scale'], ['advantage', 'Edge']];
+  rows.forEach((p, i) => {
+    const card = el('div', { class: 'card', style: 'margin-bottom:12px' }, [
+      el('div', { style: 'display:flex;justify-content:space-between;align-items:baseline' }, [
+        el('div', {}, [el('span', { class: 'mono', style: 'color:var(--gold);margin-right:8px' }, '#' + (i + 1)), el('span', { style: 'font-weight:600' }, p.name)]),
+        el('div', { style: 'display:flex;gap:8px;align-items:center' }, [el('span', { class: 'mono', style: 'color:var(--gold);font-size:15px' }, (p.weighted_score ?? 0).toFixed(1)), el('span', { class: 'stage-tag', style: p.status === 'Recommended' ? 'color:var(--ok)' : '' }, p.status)])]),
+      el('div', { style: 'font-size:11px;color:var(--txt-3);margin:4px 0 10px' }, p.category),
+      // 5-axis mini-meters
+      el('div', { style: 'display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px' }, axes.map(([k, lbl]) => el('div', { style: 'min-width:90px' }, [
+        el('div', { style: 'display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px' }, [el('span', { style: 'color:var(--txt-3)' }, lbl), el('span', { class: 'mono', style: 'color:var(--gold)' }, (p.axes?.[k] ?? '—') + '/5')]),
+        el('div', { style: 'display:flex;gap:2px' }, [1, 2, 3, 4, 5].map(n => el('span', { style: `width:12px;height:5px;border-radius:2px;background:${n <= (p.axes?.[k] || 0) ? 'var(--gold)' : 'var(--surface-3)'}` }))),
+      ]))),
+      // evidence + action
+      el('div', { class: 'footnote', style: 'display:inline-block;margin-bottom:10px' }, ['evidence: ', el('span', { class: 'src' }, evidenceText(p.evidence))]),
+      el('div', { class: 'appr-actions' }, [el('button', { class: 'chip', style: 'border-color:var(--gold);color:var(--gold)', onclick: () => { toast('Sent to AXIS review'); postIntent('send_to_axis_review', { product_id: p.id }); } }, 'Send to AXIS review')]),
+    ]);
+    c.append(card);
+  });
+};
+function evidenceText(e) {
+  if (!e) return '—';
+  if (e.need_count != null) return `${e.need_count} of ${e.of_prospects} researched prospects need this${e.sample ? ' (e.g. ' + e.sample.slice(0, 2).join(', ') + ')' : ''}`;
+  return e.market_signal || JSON.stringify(e).slice(0, 80);
+}
+
 function placeholder(label) {
   return (c) => {
     c.append(head(label, 'live data bound · full UI in a later phase'));
