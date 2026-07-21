@@ -1,19 +1,19 @@
 {
  "schema": "axis-status/1",
- "generatedAt": "2026-07-21T11:43:34Z",
- "source": "Flywheel run 110 (2026-07-21T11:43:34Z). Full first-hand cycle: bash VM alive, node v22.22.3. No CC branch existed for RUN-H, so Cowork BUILT H1+H2+H3 itself, ran the FULL ARIA Sentinel suite (272 suites), merged --no-ff into local main as 94ac9762. Push to GitHub origin still blocked: no sandbox credential (git ls-remote = could-not-read-Username) - staged as Ahmad's one-click, not a hold.",
+ "generatedAt": "2026-07-21T12:40:07Z",
+ "source": "Flywheel run 111 (2026-07-21T12:40:07Z). Full first-hand cycle: bash VM alive, node v22.22.3. No CC branch existed for RUN-I, so Cowork BUILT I1+I2+I3 itself, ran the FULL ARIA Sentinel suite (275 suites), committed to cc/run-i-i1i2i3-2026-07-21 (fabe1a9b) and merged --no-ff into local main as 7a5bfc2d. Push to GitHub origin still blocked: no sandbox credential (git ls-remote = could-not-read-Username) - staged as Ahmad's one-click, not a hold.",
  "honest": true,
- "headline": "RUN-H merged on local main: H1 customer-verifiable proof pack (every claim cites the record id + timestamp; unevidenced claims are OMITTED, not softened), H2 objection ledger that answers ONLY from artifacts that really exist in the repo and prints the rest as OPEN gaps, H3 signature-ready close packet that structurally cannot send, sign, or charge. Full Sentinel suite 270/272 green first-hand; both reds are environment (no .git in the extracted tree, no node_modules) and each was re-run against the real environment and PASSED - effective 272/272. Local main is ahead of origin/main; push is your one-click and merging never deploys.",
- "note": "Merging main never deploys - Netlify publish stays Ahmad's one-click. Nothing was sent, signed, paid, registered, or published this run. The close packet is structurally unsendable and unsignable (sent:false / signed:false are constants; the module has no transport and no signing path, static-scan locked).",
+ "headline": "RUN-I merged on local main: I1 one-click billing handoff that is structurally incapable of invoicing, charging, or sending (charged/invoiced/sent are false constants; the module imports nothing at all) and that produces NOTHING from a close packet that refused to render; I2 renewal readiness decided from real post-sale records only - silence is reported as a named churn signal instead of default health, escalation rate is disclosed, and no renewal is ever booked ($0); I3 a single revenue truth board where real money reads CAD $0 because $0 is true, pipeline is unweighted and carries its evidence, and blocked-on-Ahmad is separated from blocked-on-us. Full Sentinel suite 273/275 green first-hand; both reds are environment (no .git in the extracted tree, no node_modules) and each was re-run against the real environment and PASSED - effective 275/275. Local main is ahead of origin/main; push is your one-click and merging never deploys.",
+ "note": "Merging main never deploys - Netlify publish stays Ahmad's one-click. Nothing was sent, signed, paid, invoiced, registered, or published this run. The billing handoff is structurally incapable of charging (charged:false / invoiced:false / sent:false are constants, the module has zero imports and no transport, spawn, disk, or payment SDK - static-scan locked).",
  "program": {
   "name": "Client-Ready Program",
   "series": 1,
-  "sequence": "Series 1 A-D merged; E1-E3 merged; RUN-F F1+F2+F3 merged (runs 107-108); RUN-G G1+G2+G3 merged (run 109); RUN-H H1+H2+H3 built + merged run 110 -> RUN-H exit criteria met, RUN-I auto-released.",
-  "tasksMerged": 26,
-  "tasksTotal": 26,
+  "sequence": "Series 1 A-D merged; E1-E3 merged; RUN-F F1+F2+F3 merged (runs 107-108); RUN-G G1+G2+G3 merged (run 109); RUN-H H1+H2+H3 merged (run 110); RUN-I I1+I2+I3 built + merged run 111 -> RUN-I exit criteria met, RUN-J auto-released.",
+  "tasksMerged": 29,
+  "tasksTotal": 29,
   "pct": 100,
-  "testsGreen": "270/272 suites green, re-run first-hand this cycle (node v22.22.3, tests/run-all.mjs against a full git-archive extraction of local main; 272 suites now incl. h1/h2/h3). Two reds, both environment: deploy-safety-denylist needs a real .git (absent in an archive extraction) and forums-concierge needs @netlify/blobs (no node_modules). Each was re-run against the real environment -> both PASSED. Effective 272/272.",
-  "mainRef": "local main 94ac9762 (run-110 merge); origin/main last known aff5342e (unfetchable - no sandbox GitHub credential)"
+  "testsGreen": "273/275 suites green, re-run first-hand this cycle (node v22.22.3, tests/run-all.mjs against a full git-archive extraction of local main; 275 suites now incl. i1/i2/i3). Two reds, both environment: deploy-safety-denylist needs a real .git (absent in an archive extraction) and forums-concierge needs @netlify/blobs. Each was re-run against the real environment -> deploy-safety-denylist OK (0 of 2402 tracked paths flagged, all 9 force-404 rules present), forums-concierge PASSED. Effective 275/275.",
+  "mainRef": "local main 7a5bfc2d (run-111 merge of cc/run-i-i1i2i3-2026-07-21 fabe1a9b); origin/main last known aff5342e (unfetchable - no sandbox GitHub credential)"
  },
  "merged": [
   "A1",
@@ -41,7 +41,10 @@
   "G3",
   "H1",
   "H2",
-  "H3"
+  "H3",
+  "I1",
+  "I2",
+  "I3"
  ],
  "extraMerged": [
   "AXIS voice + spoken status + B4 chat fix + live status feed - confirmed on origin/main (9 speech markers)",
@@ -56,7 +59,7 @@
   {
    "lane": "main (local)",
    "state": "green",
-   "note": "run 110 merge 94ac9762 on top of runs 107-109; full suite re-run green this cycle"
+   "note": "run 111 merge 7a5bfc2d on top of runs 107-110; full suite re-run green this cycle"
   },
   {
    "lane": "AXIS voice",
@@ -66,12 +69,17 @@
   {
    "lane": "AXIS status feed",
    "state": "green",
-   "note": "regenerated first-hand run 110 from real git + real test output; both mirrors byte-identical"
+   "note": "regenerated first-hand run 111 from real git refs + real test output; both mirrors byte-identical"
+  },
+  {
+   "lane": "RUN-I first dollar + renewal truth",
+   "state": "green",
+   "note": "I1 billing handoff (cannot charge) + I2 renewal earned-not-assumed + I3 honest revenue truth board; test-locked, merged locally"
   },
   {
    "lane": "RUN-H proof + close",
    "state": "green",
-   "note": "H1 proof pack + H2 objection ledger + H3 close packet built by Cowork, test-locked (24 assertion groups), merged locally"
+   "note": "H1 proof pack + H2 objection ledger + H3 close packet merged"
   },
   {
    "lane": "RUN-G GTM + ops leverage",
@@ -84,9 +92,14 @@
    "note": "F1 console + F2 conversion digest + F3 acquisition funnel merged"
   },
   {
+   "lane": "Real revenue",
+   "state": "red",
+   "note": "CAD $0 actually received. The machinery to invoice is staged; no money has landed. Reported as $0 because $0 is true."
+  },
+  {
    "lane": "Push to GitHub",
    "state": "amber",
-   "note": "no sandbox GitHub credential - staged one-click AHMAD-PUSH-RUN110-RUN-H.cmd (fetch + ancestor guarded, never force)"
+   "note": "no sandbox GitHub credential - staged one-click AHMAD-PUSH-RUN111-RUN-I.cmd (fetch + ancestor guarded, never force)"
   },
   {
    "lane": "KB growth (aria-kb-chunks.json)",
@@ -105,7 +118,7 @@
   }
  ],
  "needsAhmad": [
-  "AHMAD-PUSH-RUN110-RUN-H.cmd - push local main (runs 107-110) to origin; guarded, never force. Supersedes AHMAD-PUSH-RUN109-RUN-G.cmd",
+  "AHMAD-PUSH-RUN111-RUN-I.cmd - push local main (runs 107-111) to origin; guarded, never force. Supersedes AHMAD-PUSH-RUN110-RUN-H.cmd",
   "Netlify one-click publish (merging main never auto-deploys)",
   "Resolve aria-kb-chunks.json conflict markers to unblock ~57 staged KB entries",
   "bash documents/product-engineering/stage-2-vision-build/PUSH-STAGE-2-READY.sh - push the finished Stage-2 branch (origin copy is stale)"
