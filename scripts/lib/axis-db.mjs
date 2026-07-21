@@ -127,6 +127,16 @@ function migrate(db) {
   addO('consent_evidence', 'TEXT');
   addO('draft_id', 'TEXT');           // Gmail draft id once materialized (post-OAuth)
   addO('lint_json', 'TEXT');          // lint result snapshot
+  // P5 Sentry: inbox_messages classifier + system-note + sender fields.
+  const icols = db.prepare('PRAGMA table_info(inbox_messages)').all().map(r => r.name);
+  const addI = (name, decl) => { if (!icols.includes(name)) db.exec(`ALTER TABLE inbox_messages ADD COLUMN ${name} ${decl};`); };
+  addI('from_email', 'TEXT');
+  addI('classify_reason', 'TEXT');
+  addI('sysnote', 'TEXT');            // quiet inline system note (auto-cancel / auto-move)
+  addI('body', 'TEXT');
+  // businesses: email validity flag (bounce → invalid), + a per-business email-status.
+  const bc = db.prepare('PRAGMA table_info(businesses)').all().map(r => r.name);
+  if (!bc.includes('email_invalid')) db.exec('ALTER TABLE businesses ADD COLUMN email_invalid INTEGER DEFAULT 0;');
 }
 
 // Open (creating if needed), apply schema, set safe pragmas. Returns the DatabaseSync handle.

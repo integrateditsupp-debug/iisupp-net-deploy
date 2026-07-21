@@ -56,8 +56,9 @@ export function computeSnapshots(db) {
   out.inbox = {
     badge: openActionable.length, // exact number the red badge shows; 0 → UI renders no badge element
     rows: msgs.map(m => ({
-      id: m.id, thread_id: m.thread_id, classification: m.classification, subject: m.subject,
-      snippet: m.snippet, received_at: m.received_at, unread: !!m.unread,
+      id: m.id, thread_id: m.thread_id, classification: m.classification, classify_reason: m.classify_reason,
+      subject: m.subject, snippet: m.snippet, body: m.body, from_email: m.from_email, sysnote: m.sysnote,
+      received_at: m.received_at, unread: !!m.unread,
       actioned: !!m.actioned_at, snoozed_until: m.snoozed_until, business_id: m.business_id,
     })),
     counts: {

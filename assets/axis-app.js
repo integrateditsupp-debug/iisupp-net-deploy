@@ -139,29 +139,49 @@ SCREENS.inbox = (c) => {
   c.append(dr);
 };
 function openThread(m) { m.unread = false; state.ui.thread = m; renderNav(); renderModule(); }
+function prospectById(id) { return ((data('prospects').rows) || []).find(x => x.id === id); }
+function businessName(id) { const p = prospectById(id); return p ? (p.name || p.handle) : null; }
 function renderThread(c, m) {
   c.append(el('div', { class: 'thread-bar' }, [el('button', { class: 'chip', onclick: () => { state.ui.thread = null; renderModule(); } }, '← Inbox'),
     el('div', { style: 'flex:1' }), el('span', { class: 'stage-tag' }, m.classification === 'reply_to_outreach' ? 'Reply' : 'New Request')]));
   const actions = [['draft_reply', 'Draft AI Reply'], ['open_gmail', 'Open in Gmail'], ['schedule_followup', 'Schedule Follow-up'], ['book_meeting', 'Book Meeting'], ['advance_stage', 'Advance Stage'], ['mark_handled', 'Mark Handled'], ['snooze', 'Snooze'], ['suppress', 'Suppress']];
-  const bar = el('div', { class: 'thread-bar' }, actions.map(([t, lbl]) => el('button', { class: 'chip', onclick: () => inboxAction(t, m) }, lbl)));
+  const bar = el('div', { class: 'thread-bar', style: 'position:sticky;top:0;background:var(--bg);z-index:2' }, actions.map(([t, lbl]) => el('button', { class: 'chip', onclick: () => inboxAction(t, m) }, lbl)));
   const left = el('div', {}, [
-    el('div', { class: 'thread-msg' }, [el('div', { class: 'eyebrow' }, m.classification === 'reply_to_outreach' ? 'client reply' : 'new inbound'), el('div', { style: 'font-weight:600;margin:6px 0' }, m.subject), el('div', { style: 'color:var(--txt-2)' }, m.snippet)]),
-    m.actioned ? el('div', { class: 'sysnote' }, 'Handled — this contact’s pending follow-ups auto-cancelled; pipeline card moved to Replied.') : null,
+    el('div', { class: 'thread-msg' }, [
+      el('div', { class: 'eyebrow' }, `${m.classification === 'reply_to_outreach' ? 'client reply' : 'new inbound'} · from ${m.from_email || 'unknown'}`),
+      el('div', { style: 'font-weight:600;margin:6px 0' }, m.subject),
+      el('div', { style: 'color:var(--txt-2);white-space:pre-line' }, m.body || m.snippet)]),
+    m.sysnote ? el('div', { class: 'sysnote' }, m.sysnote) : null,
     bar,
   ]);
-  const b = businessName(m.business_id);
-  const rail = el('aside', { class: 'rail' }, [el('div', { class: 'eyebrow' }, 'company'), el('div', { style: 'font-weight:600;margin:4px 0 10px' }, b || 'Unlinked'),
-    el('div', { class: 'footnote' }, ['handle', ' — ', el('span', { class: 'src' }, b ? 'Lead record ✓' : 'Not found — never guessed')])]);
+  // Right rail: company · pipeline stage · outreach history · notes
+  const p = prospectById(m.business_id);
+  const history = ((data('outreach').drafts) || []).filter(d => d.business_id === m.business_id);
+  const rail = el('aside', { class: 'rail' }, [
+    el('div', { class: 'eyebrow' }, 'company'),
+    el('div', { style: 'font-weight:600;margin:4px 0 6px' }, p ? p.name : (m.from_email || 'Unlinked')),
+    p ? el('div', { style: 'margin-bottom:12px' }, [el('span', { class: 'stage-tag' }, p.stage), p.est_monthly_value ? el('span', { class: 'mono', style: 'font-size:10px;color:var(--txt-3);margin-left:8px' }, '$' + p.est_monthly_value.toLocaleString() + '/mo') : null]) : null,
+    el('div', { class: 'eyebrow', style: 'margin-bottom:6px' }, 'outreach history'),
+    history.length ? el('div', {}, history.map(hh => el('div', { style: 'font-size:11px;color:var(--txt-2);padding:3px 0;border-bottom:1px solid var(--line)' }, [el('span', { class: 'stage-tag', style: 'margin-right:6px' }, hh.kind), hh.status]))) : el('div', { class: 'unknown', style: 'font-size:11px' }, 'No prior outreach on file'),
+    el('div', { class: 'eyebrow', style: 'margin:12px 0 6px' }, 'notes'),
+    el('div', { style: 'font-size:11px;color:var(--txt-3)' }, m.classify_reason ? 'Classified: ' + m.classify_reason : '—'),
+  ]);
   c.append(el('div', { class: 'thread-wrap' }, [left, rail]));
 }
-function businessName(id) { const p = (data('prospects').rows) || []; const f = p.find(x => x.id === id); return f ? f.handle : null; }
 async function inboxAction(type, m) {
+  if (type === 'open_gmail') { // real deep link to the exact Gmail thread
+    window.open(`https://mail.google.com/mail/u/0/#all/${encodeURIComponent(m.thread_id || '')}`, '_blank');
+    toast('Opening Gmail thread'); return;
+  }
+  if (type === 'draft_reply') { toast('Draft AI reply → Approvals'); postIntent('draft_reply', { message_id: m.id, thread_id: m.thread_id }); return; }
   const irreversibleUI = ['mark_handled', 'snooze', 'suppress'];
   if (irreversibleUI.includes(type)) { // optimistic side-effect (Law 4): decrement badge same tick
     if (type === 'snooze') m.snoozed_until = Date.now() + 864e5; else m.actioned = true;
-    renderNav(); renderModule();
-  }
-  toast(labelFor(type) + ' → queued');
+    toast(labelFor(type)); renderNav();
+    // after handling, drop back to the list so the (now smaller) badge is visible
+    if (type !== 'snooze') { state.ui.thread = null; }
+    renderModule();
+  } else { toast(labelFor(type) + ' → queued'); }
   postIntent(type, { message_id: m.id, thread_id: m.thread_id });
 }
 const labelFor = (t) => ({ draft_reply: 'Draft reply (→ Approvals)', open_gmail: 'Opening Gmail', schedule_followup: 'Follow-up scheduled', book_meeting: 'Meeting request', advance_stage: 'Stage advanced', mark_handled: 'Marked handled', snooze: 'Snoozed', suppress: 'Sender suppressed' }[t] || t);

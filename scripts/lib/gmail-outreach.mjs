@@ -71,6 +71,28 @@ export async function createDraft(msg) {
   return { draftId: j.id, messageId: j.message?.id, threadId: j.message?.threadId };
 }
 
+// ── Read side (P5 Sentry reply monitor). Read-only; requires OAuth (gmail.modify scope). ──
+export async function listInbound(afterEpochSec) {
+  const token = await accessToken();
+  const q = encodeURIComponent(`in:inbox ${afterEpochSec ? `after:${afterEpochSec}` : 'newer_than:2d'}`);
+  const r = await fetch(`${GMAIL}/messages?q=${q}&maxResults=50`, { headers: { authorization: `Bearer ${token}` } });
+  if (!r.ok) throw new Error('listInbound failed: ' + (await r.text()).slice(0, 200));
+  const j = await r.json();
+  return (j.messages || []).map(m => m.id);
+}
+export async function getMessageParsed(id) {
+  const token = await accessToken();
+  const r = await fetch(`${GMAIL}/messages/${id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=In-Reply-To&metadataHeaders=References&metadataHeaders=List-Unsubscribe&metadataHeaders=Auto-Submitted&metadataHeaders=Precedence&metadataHeaders=Content-Type`, { headers: { authorization: `Bearer ${token}` } });
+  if (!r.ok) throw new Error('getMessage failed: ' + (await r.text()).slice(0, 200));
+  const j = await r.json();
+  const headers = {};
+  for (const h of (j.payload?.headers || [])) headers[h.name] = h.value;
+  return {
+    gmail_message_id: j.id, thread_id: j.threadId, from: headers.From, subject: headers.Subject,
+    snippet: j.snippet, headers, received_at: Number(j.internalDate) || Date.now(),
+  };
+}
+
 // Send an already-approved draft (draft-then-send so replies thread). Called ONLY by the outbound queue
 // after per-item approval + passing rails. Never call this speculatively.
 export async function sendDraft(draftId) {
