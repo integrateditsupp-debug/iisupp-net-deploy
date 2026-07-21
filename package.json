@@ -43,6 +43,7 @@
   "dependencies": {
     "@netlify/blobs": "^7.4.0",
     "busboy": "^1.6.0",
+    "exceljs": "^4.4.0",
     "framer-motion": "^12.40.0",
     "jszip": "^3.10.1",
     "mammoth": "^1.12.0",

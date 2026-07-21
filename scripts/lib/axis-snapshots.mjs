@@ -136,21 +136,75 @@ export function computeSnapshots(db) {
   for (const r of runs) if (!byAgent[r.agent]) byAgent[r.agent] = r;
   out.fleet = { agents: Object.values(byAgent).map(r => ({ agent: r.agent, status: r.status, started_at: r.started_at, finished_at: r.finished_at, summary: r.summary })) };
 
-  // Analytics (worker-computed aggregates; UI only renders).
+  // Analytics — 3 dashboards, all worker-computed from SQLite (UI only renders; numbers reconcile exactly).
+  const GTA = ['toronto', 'mississauga', 'markham', 'scarborough', 'north york', 'etobicoke', 'vaughan', 'richmond hill', 'brampton', 'pickering', 'whitby', 'oakville', 'grimsby'];
+  const cityKey = (c) => (c || '').split(/[ ,(]/)[0];
+  const byCity = {}; for (const b of biz) { const k = cityKey(b.city) || 'Unknown'; byCity[k] = (byCity[k] || 0) + 1; }
+  const meetingsN = (one('SELECT COUNT(*) c FROM meetings') || {}).c || 0;
+  const oppsAll = all('SELECT service, est_mrr, status FROM opportunities');
+  const funnel = [
+    { stage: 'Generated', n: items.filter(i => i.kind === 'initial').length },
+    { stage: 'Approved', n: items.filter(i => ['approved', 'outbound', 'sent'].includes(i.status)).length },
+    { stage: 'Sent', n: items.filter(i => i.status === 'sent').length },
+    { stage: 'Replied', n: msgs.filter(m => m.classification === 'reply_to_outreach').length },
+    { stage: 'Won', n: biz.filter(b => b.pipeline_stage === 'Won').length },
+  ];
   out.analytics = {
-    funnel: {
-      generated: items.length,
-      approved: items.filter(i => ['approved', 'outbound', 'sent'].includes(i.status)).length,
-      sent: items.filter(i => i.status === 'sent').length,
-      replied: msgs.filter(m => m.classification === 'reply_to_outreach').length,
-      won: biz.filter(b => b.pipeline_stage === 'Won').length,
+    // 1) Research progress
+    research: {
+      total: biz.length, researched: biz.filter(b => b.is_real).length,
+      by_city: byCity,
+      geo_coverage: {
+        Toronto: biz.filter(b => /toronto/i.test(b.city || '')).length,
+        GTA: biz.filter(b => GTA.some(g => (b.city || '').toLowerCase().includes(g))).length,
+        Ontario: biz.filter(b => /\bON\b|ontario/i.test((b.region || '') + ' ' + (b.city || ''))).length || biz.filter(b => b.is_real).length,
+        Canada: biz.length,
+      },
     },
+    // 2) Sales activity
+    sales: {
+      generated: items.filter(i => i.kind === 'initial').length,
+      followups: items.filter(i => i.kind === 'followup').length,
+      approved: items.filter(i => ['approved', 'outbound', 'sent'].includes(i.status)).length,
+      rejected: items.filter(i => i.status === 'rejected').length,
+      sent: items.filter(i => i.status === 'sent').length,
+      replies: msgs.filter(m => m.classification === 'reply_to_outreach').length,
+      new_requests: msgs.filter(m => m.classification === 'new_inbound_request').length,
+      meetings: meetingsN,
+      opportunities: oppsAll.length,
+      won: biz.filter(b => b.pipeline_stage === 'Won').length,
+      lost: biz.filter(b => b.pipeline_stage === 'Lost').length,
+      funnel,
+    },
+    // 3) Business insights
+    insights: {
+      pipeline_value: biz.reduce((s, b) => s + (b.est_monthly_value || 0), 0),
+      top_value: biz.filter(b => b.is_real).sort((a, b2) => (b2.est_monthly_value || 0) - (a.est_monthly_value || 0)).slice(0, 8).map(b => ({ name: b.name || b.handle, value: b.est_monthly_value || 0 })),
+      by_industry: (() => { const m = {}; for (const b of biz) { const k = (b.industry || 'Other').split('(')[0].trim().slice(0, 20); m[k] = (m[k] || 0) + 1; } return m; })(),
+      by_stage: out.pipeline.counts,
+      opportunity_mrr: oppsAll.reduce((s, o) => s + (o.est_mrr || 0), 0),
+    },
+    funnel, // kept for the Overview convenience
     pipeline_value: biz.reduce((s, b) => s + (b.est_monthly_value || 0), 0),
   };
 
-  // Reports meta + settings + integrations status placeholders.
-  out.reports = { workbook: null, lastGenerated: null };
-  out.settings = { rails: DEFAULT_RAILS, suppression_count: (one('SELECT COUNT(*) c FROM suppression_list') || {}).c || 0 };
+  // Reports meta + settings — worker writes these to the settings table (setSetting), snapshot reads them.
+  const getS = (k, d) => { const r = one('SELECT value FROM settings WHERE key=?', k); if (!r) return d; try { return JSON.parse(r.value); } catch { return d; } };
+  out.reports = getS('reports_meta', { lastGenerated: null, files: [], sheets: ['Businesses', 'Contacts', 'Outreach', 'Follow-ups', 'Meetings', 'Opportunities', 'Analytics', 'Revenue Forecast', 'Products', 'Services', 'Notes'] });
+  out.settings = {
+    rails: DEFAULT_RAILS,
+    suppression_count: (one('SELECT COUNT(*) c FROM suppression_list') || {}).c || 0,
+    integrations: getS('integrations', [
+      { name: 'Gmail', status: 'pending', detail: 'OAuth not configured (ahmad.wasee@iisupp.net)' },
+      { name: 'DKIM', status: 'ok', detail: 'google._domainkey published' },
+      { name: 'Apollo', status: 'ok', detail: 'MCP connector' },
+      { name: 'Resend', status: 'unknown', detail: 'env RESEND_API_KEY' },
+      { name: 'Telegram', status: 'unknown', detail: 'env TELEGRAM_BOT_TOKEN' },
+      { name: 'Stripe', status: 'ok', detail: 'live' },
+      { name: 'M365 Graph', status: 'unknown', detail: 'env M365_*' },
+    ]),
+    data: getS('data_meta', { db: 'data/axis-sales.db', last_backup: null }),
+  };
 
   // Overview KPIs (derived, never hardcoded).
   out.overview = {

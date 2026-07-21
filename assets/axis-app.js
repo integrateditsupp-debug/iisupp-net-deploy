@@ -22,7 +22,7 @@ const ago = (ts) => { if (!ts) return ''; const s = (Date.now() - ts) / 1000; if
 const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
 const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview',
   ui: { inboxFilter: 'all', thread: null, apTab: 'pending', apOpen: null, apSel: new Set(), apCursor: 0, crmTab: 'contact', crmFilter: '', crmDrawer: null,
-    prospect: null, prospectFilter: '', realOnly: false, pipeView: 'kanban', fuView: 'due_today', doc: null } };
+    prospect: null, prospectFilter: '', realOnly: false, pipeView: 'kanban', fuView: 'due_today', doc: null, anTab: 'research' } };
 const authHeaders = (extra = {}) => ({ Authorization: 'Bearer ' + state.token, ...extra });
 const data = (mod) => (state.snap[mod] && state.snap[mod].data) || {};
 
@@ -546,6 +546,96 @@ function downloadText(name, text) {
   a.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(text || '');
   a.download = name; a.click();
 }
+
+// ── SVG chart helpers (no external lib — self-contained, theme-aware via currentColor/tokens) ──
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svg = (tag, attrs = {}, kids = []) => { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); (Array.isArray(kids) ? kids : [kids]).forEach(c => c && n.append(c.nodeType ? c : document.createTextNode(String(c)))); return n; };
+function barChart(rows, { colorVar = '--c1', money = false } = {}) {
+  rows = rows.filter(r => r); const max = Math.max(1, ...rows.map(r => r.value));
+  const W = 560, rowH = 26, pad = 150, h = rows.length * rowH + 10;
+  const g = svg('svg', { viewBox: `0 0 ${W} ${h}`, width: '100%', style: `max-width:${W}px` });
+  rows.forEach((r, i) => {
+    const y = i * rowH + 6, bw = ((W - pad - 60) * r.value) / max;
+    g.append(svg('text', { x: 0, y: y + 14, fill: 'var(--txt-2)', 'font-size': 11, 'font-family': 'var(--sans)' }, (r.label || '').slice(0, 22)));
+    g.append(svg('rect', { x: pad, y: y + 4, width: Math.max(2, bw), height: 14, rx: 3, fill: `var(${colorVar})`, opacity: 0.85 }));
+    g.append(svg('text', { x: pad + Math.max(2, bw) + 6, y: y + 15, fill: 'var(--txt-3)', 'font-size': 10, 'font-family': 'var(--mono)' }, money ? '$' + r.value.toLocaleString() : r.value));
+  });
+  return g;
+}
+function funnelChart(stages) {
+  const W = 620, sh = 46, h = stages.length * sh + 10, max = Math.max(1, ...stages.map(s => s.n));
+  const g = svg('svg', { viewBox: `0 0 ${W} ${h}`, width: '100%', style: `max-width:${W}px` });
+  stages.forEach((s, i) => {
+    const y = i * sh + 6, w = ((W - 40) * s.n) / max, x = (W - w) / 2;
+    g.append(svg('rect', { x, y, width: Math.max(30, w), height: sh - 12, rx: 5, fill: `var(--c${(i % 6) + 1})`, opacity: 0.8 }));
+    g.append(svg('text', { x: W / 2, y: y + 22, fill: '#fff', 'font-size': 12, 'font-weight': 600, 'text-anchor': 'middle', 'font-family': 'var(--sans)' }, `${s.stage} · ${s.n}`));
+  });
+  return g;
+}
+
+// ── S10 Analytics ──
+SCREENS.analytics = (c) => {
+  const a = data('analytics');
+  c.append(head('Analytics', 'computed by the worker · reconciles to SQLite'));
+  const tabs = [['research', 'Research progress'], ['sales', 'Sales activity'], ['insights', 'Business insights']];
+  c.append(el('div', { class: 'thread-bar' }, tabs.map(([id, lbl]) => el('button', { class: 'chip', 'aria-selected': state.ui.anTab === id, onclick: () => { state.ui.anTab = id; renderModule(); } }, lbl))));
+  if (state.ui.anTab === 'research') {
+    const g = a.research || {}; const geo = g.geo_coverage || {};
+    c.append(kpiRow([['Total', g.total], ['Researched', g.researched], ['Toronto', geo.Toronto], ['GTA', geo.GTA]]));
+    c.append(head('Geo coverage · Toronto → GTA → Ontario → Canada', '', 'margin-top:18px'));
+    c.append(el('div', { class: 'card' }, [barChart(Object.entries(geo).map(([k, v]) => ({ label: k, value: v })), { colorVar: '--c2' })]));
+    c.append(head('By city', '', 'margin-top:16px'));
+    c.append(el('div', { class: 'card' }, [barChart(Object.entries(g.by_city || {}).sort((x, y) => y[1] - x[1]).slice(0, 10).map(([k, v]) => ({ label: k, value: v })), { colorVar: '--c3' })]));
+  } else if (state.ui.anTab === 'sales') {
+    const s = a.sales || {};
+    c.append(kpiRow([['Generated', s.generated], ['Sent', s.sent], ['Replies', s.replies], ['New req', s.new_requests], ['Meetings', s.meetings], ['Won', s.won]]));
+    c.append(head('Funnel · Generated → Won', '', 'margin-top:18px'));
+    c.append(el('div', { class: 'card' }, [funnelChart(s.funnel || [])]));
+    c.append(head('Activity', '', 'margin-top:16px'));
+    c.append(el('div', { class: 'card' }, [barChart([['Generated', s.generated], ['Follow-ups', s.followups], ['Approved', s.approved], ['Rejected', s.rejected], ['Opportunities', s.opportunities]].map(([label, value]) => ({ label, value: value || 0 })), { colorVar: '--c1' })]));
+  } else {
+    const ins = a.insights || {};
+    c.append(kpiRow([['Pipeline $/mo', '$' + (ins.pipeline_value || 0).toLocaleString()], ['Opp MRR $/mo', '$' + (ins.opportunity_mrr || 0).toLocaleString()]]));
+    c.append(head('Top prospects by est. value', '', 'margin-top:18px'));
+    c.append(el('div', { class: 'card' }, [barChart((ins.top_value || []).map(t => ({ label: t.name, value: t.value })), { colorVar: '--c1', money: true })]));
+    c.append(head('By industry', '', 'margin-top:16px'));
+    c.append(el('div', { class: 'card' }, [barChart(Object.entries(ins.by_industry || {}).sort((x, y) => y[1] - x[1]).slice(0, 8).map(([k, v]) => ({ label: k, value: v })), { colorVar: '--c5' })]));
+  }
+  c.append(el('div', { class: 'appr-actions', style: 'margin-top:16px' }, ['png', 'csv', 'pdf'].map(f => el('button', { class: 'chip', onclick: () => { toast('Export ' + f.toUpperCase() + ' queued'); postIntent('export', { format: f, module: 'analytics' }); } }, 'Export ' + f.toUpperCase()))));
+};
+function kpiRow(pairs) { return el('div', { class: 'kpi-grid' }, pairs.map(([l, v]) => el('div', { class: 'kpi' }, [el('div', { class: 'label' }, l), el('div', { class: 'value' }, v ?? 0)]))); }
+
+// ── S13 Reports & Settings ──
+SCREENS.reports = (c) => {
+  const r = data('reports'); const st = data('settings');
+  c.append(head('Reports & Settings', 'workbook · CSV · PDF · rails · integrations'));
+  // Reports
+  c.append(el('div', { class: 'card', style: 'margin-bottom:14px' }, [
+    el('div', { style: 'display:flex;justify-content:space-between;align-items:baseline' }, [el('div', { style: 'font-weight:600' }, 'Excel workbook + CSV + PDF'), el('button', { class: 'chip', style: 'border-color:var(--gold);color:var(--gold)', onclick: () => { toast('Report generation queued'); postIntent('generate_report', {}); } }, 'Generate report')]),
+    el('div', { class: 'eyebrow', style: 'margin:8px 0' }, r.lastGenerated ? 'last generated ' + r.lastGenerated.slice(0, 16).replace('T', ' ') : 'not yet generated'),
+    el('div', { style: 'font-size:12px;color:var(--txt-2)' }, 'Sheets: ' + (r.sheets || []).join(' · ')),
+    (r.files || []).length ? el('div', { style: 'margin-top:8px' }, (r.files || []).map(f => el('span', { class: 'footnote', style: 'margin-right:8px' }, `${f.name} (${Math.round(f.size / 1024)}KB)`))) : null,
+  ]));
+  // Settings — rails
+  const rails = st.rails || {};
+  c.append(head('Safety rails', '', 'margin-top:6px'));
+  c.append(el('div', { class: 'card', style: 'display:flex;gap:20px;flex-wrap:wrap' }, [
+    settingBox('Daily cap', rails.daily_cap), settingBox('Quiet hours', `${rails.quiet_hours?.start ?? 21}:00–${rails.quiet_hours?.end ?? 8}:00 ET`),
+    settingBox('Follow-up cadence', (rails.followup_days || [3, 7, 14]).join('/') + ' d'), settingBox('Max touches', rails.max_followups ?? 3),
+    settingBox('Suppression list', st.suppression_count ?? 0),
+  ]));
+  // Integrations
+  c.append(head('Integrations', '', 'margin-top:16px'));
+  const dot = (s) => s === 'ok' ? 'dot-ok' : s === 'error' ? 'dot-crit' : 'dot-warn';
+  c.append(el('div', { class: 'card', style: 'padding:0' }, (st.integrations || []).map(ig => el('div', { class: 'row' }, [
+    el('span', { class: 'dot ' + dot(ig.status) }), el('div', { style: 'width:120px;font-weight:600' }, ig.name),
+    el('div', { style: 'flex:1;color:var(--txt-3);font-size:12px' }, ig.detail), el('span', { class: 'stage-tag' }, ig.status)]))));
+  // Data & backups
+  c.append(head('Data & backups', '', 'margin-top:16px'));
+  c.append(el('div', { class: 'card' }, [el('div', { style: 'font-size:12px;color:var(--txt-2)' }, `System of record: ${st.data?.db || 'data/axis-sales.db'} (SQLite, local, gitignored). Last backup: ${st.data?.last_backup || '—'}.`)]));
+};
+function settingBox(label, value) { return el('div', {}, [el('div', { class: 'eyebrow' }, label), el('div', { style: 'font-size:16px;font-weight:600;margin-top:4px' }, value ?? '—')]); }
+SCREENS.settings = SCREENS.reports; // Reports & Settings share the screen (spec S13)
 
 function placeholder(label) {
   return (c) => {
