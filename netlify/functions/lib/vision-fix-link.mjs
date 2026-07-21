@@ -50,7 +50,16 @@ export function matchFix(issueText, os = 'windows', RECIPES = []) {
     firstStepId: (best.fixSteps && best.fixSteps[0] && best.fixSteps[0].id) || null,
     auditEndpoint: AUDIT_ENDPOINT,
     matchEndpoint: MATCH_ENDPOINT,
-    // The message the user sees once the gated flow completes (spec Stage-3 / B5 tie-in).
-    resolvedMessageTemplate: 'resolved · email sent · ticket {ticketRef}',
+    // Spec Stage-3 / B5 tie-in. The confirmation SENTENCE is NOT built here and NOT built by the
+    // widget — it comes from the shared B5 builder (globe-confirmation / ariaGlobeConfirmation),
+    // which enforces real-or-empty: it renders only on a genuinely completed AND verified resolve
+    // that carries a REAL ticket ref, and never claims an email was sent unless one really was.
+    // We only declare the contract the client must satisfy before it may show anything (Rule 14).
+    resolvedConfirmation: {
+      builder: 'ariaGlobeConfirmation.build',
+      clientApi: 'ARIAVisionDiagnose.mount(...).reportResolved',
+      requires: ['completed', 'verified', 'ticketRef'],
+      neverFabricated: true,
+    },
   };
 }

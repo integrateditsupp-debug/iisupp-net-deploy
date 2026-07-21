@@ -84,6 +84,7 @@
       (surface === 'sentinel' ? '<p class="avd-note">Or use “Diagnose my current screen” — Sentinel asks your permission first.</p>' : '') +
       '<div class="avd-note">Text &amp; logs are matched against the offline KB on our own server — no third-party AI model. Images go to the cloud vision model, <strong>unredacted</strong>, only after you approve.</div>';
     var out = el('div');
+    var lastCard = null;   // set by render(); the B5 resolve confirmation attaches here
     var fileInput = el('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/*,.txt,.log,.json,.md,.csv,.xml,.ini,.cfg,.out,.err';
@@ -192,6 +193,7 @@
         return;
       }
       var card = el('div', 'avd-card');
+      lastCard = card;
       var lvl = res.confidenceLabel || (res.abstain ? 'abstain' : 'low');
       var pct = Math.max(6, Math.min(100, Math.round((res.confidence || 0) / 40 * 100)));
 
@@ -243,9 +245,36 @@
       out.appendChild(card);
     }
 
+
+    // ── B5 tie-in — "resolved · email sent · ticket ref" (Rule 14: real-or-empty) ──────────────
+    // The HOST calls this only after the EXISTING gated fix flow (aria-guided-fix / Sentinel
+    // resolve: restore point · kill-switch · risk gate · HMAC audit token · append-only log)
+    // reports a genuinely completed AND verified repair. This widget never mints a ticket ref,
+    // never decides an email was sent, and never writes the sentence itself: the wording and the
+    // real-or-empty rules come from the shared B5 builder (window.ariaGlobeConfirmation), so the
+    // vision surface can never drift from the desktop/web confirmation the rest of ARIA shows.
+    // Anything short of a real verified resolve with a real ticket ref renders NOTHING.
+    function reportResolved(detail) {
+      detail = detail || {};
+      if (detail.completed !== true || detail.verified !== true) return { show: false, reason: 'not-resolved' };
+      var b5 = global.ariaGlobeConfirmation;
+      // No shared builder loaded → we stay silent rather than invent our own wording.
+      if (!b5 || typeof b5.build !== 'function') return { show: false, reason: 'confirmation-unavailable' };
+      var email = detail.email || {};
+      var conf = b5.build({
+        kbResolved: true,
+        issueTitle: detail.issueTitle != null ? detail.issueTitle : detail.issue,
+        ticketRef: detail.ticketRef,          // pass-through only — a missing/blank ref => show:false
+        email: { attempted: email.attempted === true || email.sent === true, sent: email.sent === true, to: email.to }
+      }, {});
+      if (!conf || !conf.show) return conf || { show: false, reason: 'not-shown' };
+      if (typeof b5.render === 'function') b5.render(lastCard || out, conf);
+      return conf;
+    }
+
     function renderError(msg) { out.innerHTML = ''; out.appendChild(el('div', 'avd-err', esc(msg))); }
 
-    return { diagnoseCurrentScreen: diagnoseCurrentScreen, submit: submit };
+    return { diagnoseCurrentScreen: diagnoseCurrentScreen, submit: submit, reportResolved: reportResolved };
   }
 
   global.ARIAVisionDiagnose = { mount: mount, version: '1.0.0' };
