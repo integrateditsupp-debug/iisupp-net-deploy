@@ -68,11 +68,11 @@ export const OUTREACH_IDENTITY = {
 };
 
 // CASL footer — REAL registered mailing address (public on iisupp.net) + working unsubscribe. Every
-// commercial email carries this. Address confirmed on index/about/services/shop; postal code L1P 2L4
-// per the marketing site + about.html schema.org (a few internal pages show L1P 1L4 — confirm before send).
+// commercial email carries this. Postal code L1P 1L4 confirmed correct by Ahmad 2026-07-21 (the marketing
+// pages that showed L1P 2L4 were a typo, corrected in the same change).
 export const CASL = {
   company: 'Integrated IT Support Inc.',
-  address: '30 Fothergill Court, Whitby, ON L1P 2L4, Canada',
+  address: '30 Fothergill Court, Whitby, ON L1P 1L4, Canada',
   phone: '(647) 581-3182',
   contact: 'ahmad.wasee@iisupp.net',
   // consent bases we record per contact + the evidence that supports each
