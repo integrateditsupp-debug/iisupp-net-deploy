@@ -14,7 +14,7 @@
   external_node_modules = ["stripe", "@netlify/blobs"]
   # The authed /api/axis-state function reads the worker-emitted full state. Bundle that non-public file with
   # the functions; it is NOT served at a public URL (/netlify/* is redirect-blocked).
-  included_files = ["netlify/functions/_axis-state-full.json"]
+  included_files = ["netlify/functions/_axis-state-full.json", "netlify/functions/_axis-snapshots-seed.json"]
 
 [[headers]]
   for = "/*"

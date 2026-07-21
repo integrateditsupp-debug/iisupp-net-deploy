@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>AXIS · Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/axis-tokens.css">
+</head>
+<body>
+
+<!-- Login gate: the static page carries NO prospect data; everything renders only after a valid Aperture session. -->
+<div class="login" id="login">
+  <div class="login-card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <circle cx="15" cy="15" r="13.5" fill="none" stroke="var(--gold)" stroke-width="1" opacity="0.55"/>
+        <ellipse cx="15" cy="15" rx="13.5" ry="5.5" fill="none" stroke="var(--gold)" stroke-width="0.8" opacity="0.35"/>
+        <text x="15" y="19.5" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="650" fill="var(--gold)">A</text>
+      </svg>
+      <div><div style="font-weight:650">AXIS · Command Center</div><div class="eyebrow">Integrated IT Support</div></div>
+    </div>
+    <input id="email" type="email" placeholder="email" autocomplete="username">
+    <input id="pass" type="password" placeholder="password" autocomplete="current-password">
+    <button id="loginBtn">Sign in</button>
+    <div id="loginErr" style="color:var(--crit);font-size:11px;margin-top:8px;min-height:14px"></div>
+  </div>
+</div>
+
+<!-- App shell (hidden until authed) -->
+<div class="app" id="app" style="display:none">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <circle cx="15" cy="15" r="13.5" fill="none" stroke="var(--gold)" stroke-width="1" opacity="0.55"/>
+        <ellipse cx="15" cy="15" rx="13.5" ry="5.5" fill="none" stroke="var(--gold)" stroke-width="0.8" opacity="0.35"/>
+        <text x="15" y="19.5" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="650" fill="var(--gold)">A</text>
+      </svg>
+      <span class="brand-text">AXIS</span>
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="search" id="search">🔍 Search <span class="kbd">⌘K</span></div>
+      <span class="tick" id="tick">connecting…</span>
+      <span class="dot dot-ok" id="health" title="system health"></span>
+      <button class="iconbtn" id="themeBtn" title="toggle theme">◐</button>
+      <button class="iconbtn" id="logoutBtn" title="sign out">⎋</button>
+    </header>
+    <main class="content" id="content"><div class="skeleton" style="height:120px"></div></main>
+  </div>
+
+  <!-- AXIS dock -->
+  <button class="axis-fab" id="axisFab" title="Talk to AXIS" aria-label="Talk to AXIS">
+    <svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true">
+      <circle cx="15" cy="15" r="13" fill="none" stroke="var(--gold)" stroke-width="1.1" opacity="0.6"/>
+      <ellipse cx="15" cy="15" rx="13" ry="5.2" fill="none" stroke="var(--gold)" stroke-width="0.9" opacity="0.4"/>
+      <text x="15" y="19.5" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="650" fill="var(--gold)">A</text>
+    </svg>
+  </button>
+  <section class="axis-dock" id="axisDock" hidden aria-label="AXIS director">
+    <header class="axis-dock-head"><span class="eyebrow">AXIS · director</span><button class="iconbtn" id="axisClose" style="padding:2px 7px">✕</button></header>
+    <div class="axis-log" id="axisLog"></div>
+    <div class="axis-input"><input id="axisInput" placeholder="Tell AXIS…" autocomplete="off"><button class="chip" id="axisSend">Send</button></div>
+  </section>
+</div>
+
+<!-- ⌘K command palette -->
+<div class="palette" id="palette" hidden>
+  <div class="palette-box">
+    <input id="paletteInput" placeholder="Type a command or screen…" autocomplete="off">
+    <div class="palette-list" id="paletteList"></div>
+  </div>
+</div>
+
+<script type="module" src="/assets/axis-app.js"></script>
+</body>
+</html>
