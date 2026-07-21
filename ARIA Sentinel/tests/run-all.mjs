@@ -356,6 +356,7 @@ const TESTS = [
   "../../tests/forums-moderation.test.mjs",
   "../../tests/kb-answer-shape-parity.test.mjs",
   "./f2-conversion-digest.test.mjs",
+  "./f3-acquisition-funnel.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
