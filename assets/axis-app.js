@@ -22,7 +22,7 @@ const ago = (ts) => { if (!ts) return ''; const s = (Date.now() - ts) / 1000; if
 const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
 const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview',
   ui: { inboxFilter: 'all', thread: null, apTab: 'pending', apOpen: null, apSel: new Set(), apCursor: 0, crmTab: 'contact', crmFilter: '', crmDrawer: null,
-    prospect: null, prospectFilter: '', realOnly: false, pipeView: 'kanban' } };
+    prospect: null, prospectFilter: '', realOnly: false, pipeView: 'kanban', fuView: 'due_today', doc: null } };
 const authHeaders = (extra = {}) => ({ Authorization: 'Bearer ' + state.token, ...extra });
 const data = (mod) => (state.snap[mod] && state.snap[mod].data) || {};
 
@@ -467,6 +467,85 @@ SCREENS.outreach = (c) => {
     c.append(card);
   });
 };
+
+// ── S8 Follow-ups ──
+SCREENS.followups = (c) => {
+  const d = data('followups');
+  c.append(head('Follow-ups', `cadence day ${(d.cadence || [3, 7, 14]).join('/')} · max ${d.max_touches || 3} touches then stop · queued through Approvals`));
+  const views = [['due_today', 'Due today'], ['overdue', 'Overdue'], ['upcoming', 'Upcoming'], ['auto_cancelled', 'Auto-cancelled']];
+  c.append(el('div', { class: 'thread-bar' }, views.map(([id, lbl]) => el('button', { class: 'chip', 'aria-selected': state.ui.fuView === id, onclick: () => { state.ui.fuView = id; renderModule(); } }, [lbl, el('span', { class: 'count' }, (d[id] || []).length)]))));
+  const rows = d[state.ui.fuView] || [];
+  const card = el('div', { class: 'card', style: 'padding:0' });
+  if (!rows.length) card.append(el('div', { class: 'empty' }, state.ui.fuView === 'auto_cancelled' ? 'None auto-cancelled.' : 'Nothing here.'));
+  else rows.forEach(f => {
+    const overdue = state.ui.fuView === 'overdue';
+    card.append(el('div', { class: 'row' }, [
+      el('div', { style: 'flex:1;font-weight:600' }, f.company || 'Prospect'),
+      el('span', { class: 'mono', style: `font-size:11px;color:${overdue ? 'var(--crit)' : 'var(--txt-3)'}` }, new Date(f.due_at).toISOString().slice(0, 10)),
+      state.ui.fuView === 'auto_cancelled'
+        ? el('span', { class: 'stage-tag', style: 'color:var(--gold)' }, 'auto-cancelled (reply)')
+        : el('span', { class: 'stage-tag' }, 'queued → Approvals'),
+    ]));
+  });
+  c.append(card);
+  c.append(el('div', { class: 'card', style: 'margin-top:12px;display:flex;gap:8px;align-items:center' }, [
+    el('span', { class: 'eyebrow' }, 'cadence editor'),
+    ...(d.cadence || [3, 7, 14]).map(day => el('span', { class: 'stage-tag' }, 'day ' + day)),
+    el('button', { class: 'chip', onclick: () => { const v = prompt('Cadence days (comma-separated, max 3):', (d.cadence || [3, 7, 14]).join(',')); if (v) { toast('Cadence updated'); postIntent('cadence_edit', { days: v.split(',').map(x => +x.trim()).filter(Boolean).slice(0, 3) }); } } }, 'Edit'),
+  ]));
+};
+
+// ── S9 Documents & Contracts ──
+SCREENS.documents = (c) => {
+  if (state.ui.doc != null) return renderDoc(c, state.ui.doc);
+  const d = data('documents'); const rows = d.rows || [];
+  c.append(head('Documents & Contracts', `${rows.length} Ontario DRAFT templates · merge → Approvals · e-sign future-ready`));
+  const grid = el('div', { style: 'display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px' });
+  rows.forEach(dc => grid.append(el('div', { class: 'card', style: 'cursor:pointer', onclick: () => { state.ui.doc = dc.id; renderModule(); } }, [
+    el('div', { style: 'display:flex;justify-content:space-between;align-items:baseline' }, [el('div', { style: 'font-weight:600;font-size:13px' }, dc.type), el('span', { class: 'stage-tag', style: dc.status === 'Ready' ? 'color:var(--ok)' : '' }, dc.status)]),
+    el('div', { style: 'font-size:11px;color:var(--txt-3);margin-top:6px' }, `v${(dc.versions || []).length} · ${(dc.versions || []).length} version${(dc.versions || []).length === 1 ? '' : 's'}`),
+    el('div', { style: 'font-size:11px;color:var(--txt-2);margin-top:8px;max-height:44px;overflow:hidden' }, (dc.body || '').split('\n').filter(Boolean)[2] || 'DRAFT template'),
+  ])));
+  c.append(grid);
+};
+function renderDoc(c, id) {
+  const dc = ((data('documents').rows) || []).find(x => x.id === id);
+  if (!dc) { c.append(el('div', { class: 'empty' }, 'Not found.')); return; }
+  c.append(el('div', { class: 'thread-bar' }, [el('button', { class: 'chip', onclick: () => { state.ui.doc = null; renderModule(); } }, '← Documents'),
+    el('div', { style: 'flex:1' }), el('span', { class: 'stage-tag' }, dc.status)]));
+  c.append(el('div', { style: 'display:flex;align-items:baseline;gap:12px;margin-bottom:10px' }, [el('div', { class: 'screen-title' }, dc.type), el('span', { class: 'eyebrow' }, dc.title)]));
+  // actions
+  c.append(el('div', { class: 'appr-actions', style: 'margin-bottom:12px' }, [
+    el('button', { class: 'chip', style: 'border-color:var(--gold);color:var(--gold)', onclick: () => {
+      const list = ((data('prospects').rows) || []).filter(p => p.is_real);
+      const name = prompt('Prepare for which prospect? (type part of the name)\n' + list.slice(0, 8).map(p => '· ' + p.name).join('\n'));
+      if (!name) return; const m = list.find(p => p.name.toLowerCase().includes(name.toLowerCase()));
+      if (!m) { toast('No match'); return; }
+      toast(`Preparing ${dc.type} for ${m.name} → Approvals`); postIntent('prepare_for_client', { doc_id: dc.id, business_id: m.id });
+    } }, 'Prepare for client'),
+    el('button', { class: 'chip', onclick: () => { toast('Duplicated'); postIntent('duplicate', { doc_id: dc.id }); } }, 'Duplicate'),
+    el('button', { class: 'chip', onclick: () => { toast('Downloaded (DRAFT)'); downloadText(dc.title + '.md', dc.body); } }, 'Download'),
+  ]));
+  // merge-fields hint
+  const fields = (dc.body.match(/\{\{(\w+)\}\}/g) || []).filter((v, i, a) => a.indexOf(v) === i);
+  if (fields.length) c.append(el('div', { class: 'card', style: 'margin-bottom:12px;padding:10px 14px' }, [el('span', { class: 'eyebrow' }, 'merge fields: '), el('span', { class: 'mono', style: 'font-size:11px;color:var(--gold)' }, fields.join('  '))]));
+  // body (editable → new version)
+  c.append(el('div', { class: 'thread-wrap' }, [
+    el('textarea', { style: 'width:100%;min-height:420px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;color:var(--txt);font:inherit;font-size:12px;padding:14px;white-space:pre-wrap',
+      onblur: (e) => { if (e.target.value !== dc.body) { toast('Saved as new version (old retained)'); postIntent('new_version', { doc_id: dc.id, body: e.target.value }); } } }, dc.body),
+    el('aside', { class: 'rail' }, [
+      el('div', { class: 'eyebrow', style: 'margin-bottom:8px' }, 'version history (append-only)'),
+      ...((dc.versions || []).slice().reverse().map(v => el('div', { style: 'font-size:12px;padding:6px 0;border-bottom:1px solid var(--line)' }, [el('span', { class: 'stage-tag', style: 'margin-right:8px' }, 'v' + v.version), new Date(v.created_at).toISOString().slice(0, 10)]))),
+      el('div', { class: 'eyebrow', style: 'margin:12px 0 6px' }, 'e-signature'),
+      el('div', { class: 'unknown', style: 'font-size:11px' }, 'Future-ready (status only — not enabled)'),
+    ]),
+  ]));
+}
+function downloadText(name, text) {
+  const a = document.createElement('a');
+  a.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(text || '');
+  a.download = name; a.click();
+}
 
 function placeholder(label) {
   return (c) => {

@@ -7,6 +7,7 @@
 // Snapshots are SANITIZED: no secrets, business identity uses the Lead-NNN handle in list views; full
 // name/contact only inside a record the authed operator opened (still behind the JWT).
 import { SNAPSHOT_MODULES, PIPELINE_PHASES, PIPELINE_STAGES, ACTIONABLE_CLASSES, BLOBS, DEFAULT_RAILS } from './axis-constants.mjs';
+import { followupViews } from './followups.mjs';
 
 const j = (row, col, fallback) => { try { return JSON.parse(row[col]); } catch { return fallback; } };
 
@@ -98,14 +99,8 @@ export function computeSnapshots(db) {
     })),
   };
 
-  // Follow-ups.
-  const fups = all('SELECT * FROM follow_ups');
-  const nowTs = j({ t: null }, 't', null); // snapshots are time-agnostic; UI computes due/overdue from due_at
-  out.followups = {
-    scheduled: fups.filter(f => f.status === 'scheduled').length,
-    cancelled: fups.filter(f => f.status === 'cancelled').length,
-    rows: fups.map(f => ({ id: f.id, business_id: f.business_id, due_at: f.due_at, status: f.status })),
-  };
+  // Follow-ups — 4 views (S8). Cadence day 3/7/14, max 3 touches (in the views payload).
+  out.followups = followupViews(db);
 
   // CRM (4 tabs derived from crm_records + businesses).
   const crm = all('SELECT * FROM crm_records ORDER BY updated_at DESC');
@@ -119,9 +114,17 @@ export function computeSnapshots(db) {
     records: crm.map(r => ({ id: r.id, type: r.type, fields: j(r, 'fields_json', {}), business_id: r.business_id, updated_at: r.updated_at })),
   };
 
-  // Documents.
+  // Documents (S9) — templates + client-prepared, with append-only version history + current body.
   const docs = all('SELECT * FROM documents');
-  out.documents = { rows: docs.map(d => ({ id: d.id, type: d.type, title: d.title, status: d.status })) };
+  const versionsByDoc = {};
+  for (const v of all('SELECT id,document_id,version,created_at FROM document_versions ORDER BY version')) (versionsByDoc[v.document_id] = versionsByDoc[v.document_id] || []).push({ id: v.id, version: v.version, created_at: v.created_at });
+  out.documents = {
+    types: docs.length,
+    rows: docs.map(d => {
+      const cur = one('SELECT body FROM document_versions WHERE id=?', d.current_version_id) || one('SELECT body FROM document_versions WHERE document_id=? ORDER BY version DESC LIMIT 1', d.id);
+      return { id: d.id, type: d.type, title: d.title, status: d.status, current_version_id: d.current_version_id, versions: versionsByDoc[d.id] || [], body: cur ? cur.body : '' };
+    }),
+  };
 
   // Products discovered (Miner).
   const prods = all('SELECT * FROM products_discovered ORDER BY weighted_score DESC');
@@ -155,7 +158,7 @@ export function computeSnapshots(db) {
       pipeline_value: out.analytics.pipeline_value,
       awaiting_approval: pending.length,
       messages_waiting: openActionable.length,
-      followups_due: fups.filter(f => f.status === 'scheduled').length,
+      followups_due: (out.followups.due_today.length + out.followups.overdue.length),
       meetings_week: (one('SELECT COUNT(*) c FROM meetings') || {}).c || 0,
       mrr: (one("SELECT COALESCE(SUM(est_mrr),0) s FROM opportunities WHERE status='won'") || {}).s || 0,
     },
