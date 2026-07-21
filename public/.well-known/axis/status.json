@@ -1,127 +1,50 @@
 {
  "schema": "axis-status/1",
- "generatedAt": "2026-07-21T12:40:07Z",
- "source": "Flywheel run 111 (2026-07-21T12:40:07Z). Full first-hand cycle: bash VM alive, node v22.22.3. No CC branch existed for RUN-I, so Cowork BUILT I1+I2+I3 itself, ran the FULL ARIA Sentinel suite (275 suites), committed to cc/run-i-i1i2i3-2026-07-21 (fabe1a9b) and merged --no-ff into local main as 7a5bfc2d. Push to GitHub origin still blocked: no sandbox credential (git ls-remote = could-not-read-Username) - staged as Ahmad's one-click, not a hold.",
+ "generatedAt": "2026-07-21T14:45:55Z",
+ "source": "Flywheel run 112 (2026-07-21T14:45:55Z, real UTC clock). Regenerated first-hand: git refs read live from the real repo, test numbers from a real 'node tests/run-all.mjs' this cycle on node v22.22.3. RUN-J (J1 deal-blocker autopsy, J2 delivery capacity truth, J3 weekly truth digest) was BUILT and VERIFIED this cycle and the merge commit is prepared at 488ec6e1. Two environment walls, both real and both named: (1) no GitHub credential in the sandbox so 'git ls-remote origin main' fails - origin/main last known aff5342e; (2) a stale .git/refs/heads/main.lock that this mount cannot unlink ('Operation not permitted'), so the local main POINTER could not be advanced by the sandbox. The merge itself exists and is complete - it sits on refs/heads/main-run112-merged. AHMAD-PUSH-RUN112-RUN-J.cmd clears the stale lock, fast-forwards main to 488ec6e1 and pushes. Merging never deploys - Netlify publish stays a separate one click.",
  "honest": true,
- "headline": "RUN-I merged on local main: I1 one-click billing handoff that is structurally incapable of invoicing, charging, or sending (charged/invoiced/sent are false constants; the module imports nothing at all) and that produces NOTHING from a close packet that refused to render; I2 renewal readiness decided from real post-sale records only - silence is reported as a named churn signal instead of default health, escalation rate is disclosed, and no renewal is ever booked ($0); I3 a single revenue truth board where real money reads CAD $0 because $0 is true, pipeline is unweighted and carries its evidence, and blocked-on-Ahmad is separated from blocked-on-us. Full Sentinel suite 273/275 green first-hand; both reds are environment (no .git in the extracted tree, no node_modules) and each was re-run against the real environment and PASSED - effective 275/275. Local main is ahead of origin/main; push is your one-click and merging never deploys.",
- "note": "Merging main never deploys - Netlify publish stays Ahmad's one-click. Nothing was sent, signed, paid, invoiced, registered, or published this run. The billing handoff is structurally incapable of charging (charged:false / invoiced:false / sent:false are constants, the module has zero imports and no transport, spawn, disk, or payment SDK - static-scan locked).",
+ "headline": "RUN-J built + verified this cycle: 3 new modules, 3 new suites, 23 assertion groups. Full Sentinel suite 276/278 first-hand; both reds are environment-only and each was re-run GREEN against the real repo -> effective 278/278. Merge commit 488ec6e1 prepared on refs/heads/main-run112-merged; the main pointer move + push is one click (stale main.lock the sandbox cannot delete). Real revenue is still CAD $0 - no money has landed, and this feed says so.",
+ "note": "Merging main never deploys - Netlify publish stays Ahmad's one-click. Two named environment walls this cycle: no GitHub credential (push blocked) and an undeletable stale .git/refs/heads/main.lock (main pointer move blocked). Neither is a hold: the work is built, tested, committed and staged to one click.",
  "program": {
   "name": "Client-Ready Program",
   "series": 1,
-  "sequence": "Series 1 A-D merged; E1-E3 merged; RUN-F F1+F2+F3 merged (runs 107-108); RUN-G G1+G2+G3 merged (run 109); RUN-H H1+H2+H3 merged (run 110); RUN-I I1+I2+I3 built + merged run 111 -> RUN-I exit criteria met, RUN-J auto-released.",
+  "sequence": "Series 1 A-I merged on local main (15c56ab1). RUN-J J1+J2+J3 built + verified this cycle, merge prepared at 488ec6e1 (branch cc/run-j-j1j2j3-2026-07-21 = 4de59249). Local main is 14 commits ahead of origin/main; with RUN-J it becomes 16.",
   "tasksMerged": 29,
-  "tasksTotal": 29,
-  "pct": 100,
-  "testsGreen": "273/275 suites green, re-run first-hand this cycle (node v22.22.3, tests/run-all.mjs against a full git-archive extraction of local main; 275 suites now incl. i1/i2/i3). Two reds, both environment: deploy-safety-denylist needs a real .git (absent in an archive extraction) and forums-concierge needs @netlify/blobs. Each was re-run against the real environment -> deploy-safety-denylist OK (0 of 2402 tracked paths flagged, all 9 force-404 rules present), forums-concierge PASSED. Effective 275/275.",
-  "mainRef": "local main 7a5bfc2d (run-111 merge of cc/run-i-i1i2i3-2026-07-21 fabe1a9b); origin/main last known aff5342e (unfetchable - no sandbox GitHub credential)"
+  "tasksTotal": 32,
+  "pct": 91,
+  "testsGreen": "First-hand this cycle on node v22.22.3: node tests/run-all.mjs -> 276/278 suites green. The 2 reds are environment, not code: deploy-safety-denylist needs a real .git (re-run in the real repo: OK, 0 of 2402 tracked paths flagged, all 9 force-404 rules present) and forums-concierge needs @netlify/blobs (re-run against the real node_modules: PASSED). Effective 278/278. B4 axis-chat re-run separately: 20 passed, 0 failed.",
+  "mainRef": "15c56ab1 (local main; staged merge 488ec6e1). origin/main last known aff5342e - NOT re-measured this cycle: no GitHub credential in the sandbox."
  },
- "merged": [
-  "A1",
-  "B1",
-  "B2",
-  "B3",
-  "B4",
-  "B5",
-  "B6",
-  "C1",
-  "C2",
-  "C3",
-  "D1",
-  "D2",
-  "D2-wiring",
-  "D3",
-  "E1",
-  "E2",
-  "E3",
-  "F1",
-  "F2",
-  "F3",
-  "G1",
-  "G2",
-  "G3",
-  "H1",
-  "H2",
-  "H3",
-  "I1",
-  "I2",
-  "I3"
- ],
+ "merged": ["A1","B1","B2","B3","B4","B5","B6","C1","C2","C3","D1","D2","D2-wiring","D3","E1","E2","E3","F1","F2","F3","G1","G2","G3","H1","H2","H3","I1","I2","I3"],
  "extraMerged": [
-  "AXIS voice + spoken status + B4 chat fix + live status feed - confirmed on origin/main (9 speech markers)",
+  "AXIS voice + spoken status + B4 chat fix + live status feed (4ee1b883) - ancestor of origin/main",
   "SECURITY LOCKDOWN v2 (PR#2)",
   "STAGE-3 S1 Autonomous Resolution Engine, Confirmed mode only (PR#3)",
-  "SERVING-LAYER LOCKDOWN (published & locked)",
-  "STAGE-2 vision suite",
+  "SERVING-LAYER LOCKDOWN (published & locked; incident closed)",
+  "STAGE-2 vision suite (cc/stage-2-vision-2026-07 @ 350e4507)",
   "IIS Upgrades v1.1 + sitewide motion layer"
  ],
- "builtNotMerged": [],
+ "builtNotMerged": [
+  {"id": "J1+J2+J3","what": "deal-blocker autopsy (no guessed reasons) + delivery capacity truth (observed minutes only) + sixty-second weekly truth digest ('nothing moved' reachable)","state": "built, tested 278/278 effective, merge commit 488ec6e1 ready on refs/heads/main-run112-merged - one click advances main and pushes (AHMAD-PUSH-RUN112-RUN-J.cmd)"},
+  {"id": "cc/cowork-strategy-20260710-870","what": "Strategy layer + agents (additive content is real)","state": "QUARANTINED - broken commit with live conflict markers. Do NOT merge; rebuild cleanly off main."}
+ ],
  "lanes": [
-  {
-   "lane": "main (local)",
-   "state": "green",
-   "note": "run 111 merge 7a5bfc2d on top of runs 107-110; full suite re-run green this cycle"
-  },
-  {
-   "lane": "AXIS voice",
-   "state": "green",
-   "note": "already on origin/main; spoken status reads this feed"
-  },
-  {
-   "lane": "AXIS status feed",
-   "state": "green",
-   "note": "regenerated first-hand run 111 from real git refs + real test output; both mirrors byte-identical"
-  },
-  {
-   "lane": "RUN-I first dollar + renewal truth",
-   "state": "green",
-   "note": "I1 billing handoff (cannot charge) + I2 renewal earned-not-assumed + I3 honest revenue truth board; test-locked, merged locally"
-  },
-  {
-   "lane": "RUN-H proof + close",
-   "state": "green",
-   "note": "H1 proof pack + H2 objection ledger + H3 close packet merged"
-  },
-  {
-   "lane": "RUN-G GTM + ops leverage",
-   "state": "green",
-   "note": "G1 demand intake + G2 follow-up cadence + G3 delivery leverage merged"
-  },
-  {
-   "lane": "RUN-F scale",
-   "state": "green",
-   "note": "F1 console + F2 conversion digest + F3 acquisition funnel merged"
-  },
-  {
-   "lane": "Real revenue",
-   "state": "red",
-   "note": "CAD $0 actually received. The machinery to invoice is staged; no money has landed. Reported as $0 because $0 is true."
-  },
-  {
-   "lane": "Push to GitHub",
-   "state": "amber",
-   "note": "no sandbox GitHub credential - staged one-click AHMAD-PUSH-RUN111-RUN-I.cmd (fetch + ancestor guarded, never force)"
-  },
-  {
-   "lane": "KB growth (aria-kb-chunks.json)",
-   "state": "amber",
-   "note": "conflict markers still gate ~57 staged KB entries - needs a clean resolution pass"
-  },
-  {
-   "lane": "Stage 2 vision (cc/stage-2-vision-2026-07)",
-   "state": "amber",
-   "note": "finished work 34c932c1 is LOCAL only; origin branch is stale at 350e4507 - do not review the pushed branch until it is pushed"
-  },
-  {
-   "lane": "Strategy-15-years-ahead (cc/cowork-strategy-20260710-870)",
-   "state": "red",
-   "note": "QUARANTINED - committed conflict markers; rebuild additive parts cleanly off main"
-  }
+  {"lane": "main (local 15c56ab1)","state": "green","note": "clean; 14 commits ahead of origin/main (aff5342e). Pointer move to 488ec6e1 blocked only by a stale main.lock the sandbox cannot unlink."},
+  {"lane": "RUN-J durable revenue","state": "green","note": "J1+J2+J3 built + first-hand verified this cycle; 857 insertions, 0 deletions (Rule 15 additive); merge prepared"},
+  {"lane": "Test integrity","state": "green","note": "276/278 first-hand this cycle; both reds environment-only and each re-run green in the real repo -> effective 278/278"},
+  {"lane": "AXIS voice","state": "green","note": "merged on origin/main; 8 speech markers present in assets/aperture-learning.js; spoken status live"},
+  {"lane": "AXIS status feed","state": "green","note": "regenerated first-hand run 112 from live git refs + live test output; both mirrors written"},
+  {"lane": "Real revenue","state": "red","note": "CAD $0 actually received. The machinery to invoice is staged; no money has landed. Stated plainly rather than dressed up (Rule 14)."},
+  {"lane": "Push to origin","state": "amber","note": "no GitHub credential in the sandbox - environment wall, not a hold. Staged as AHMAD-PUSH-RUN112-RUN-J.cmd."},
+  {"lane": "KB growth (aria-kb-chunks.json)","state": "amber","note": "content real + staged; live conflict markers still gate KB commits (~57 entries waiting)"},
+  {"lane": "Strategy-15-years-ahead","state": "red","note": "QUARANTINED - conflict-marker commit; needs a clean rebuild off main"}
  ],
  "needsAhmad": [
-  "AHMAD-PUSH-RUN111-RUN-I.cmd - push local main (runs 107-111) to origin; guarded, never force. Supersedes AHMAD-PUSH-RUN110-RUN-H.cmd",
-  "Netlify one-click publish (merging main never auto-deploys)",
+  "AHMAD-PUSH-RUN112-RUN-J.cmd - clears the stale .git/refs/heads/main.lock, fast-forwards main to 488ec6e1 (RUN-J) and pushes to origin. Supersedes AHMAD-PUSH-RUN111-RUN-I.cmd.",
+  "Netlify publish of iisupp.net - merging never deploys; publishing stays a separate one click",
   "Resolve aria-kb-chunks.json conflict markers to unblock ~57 staged KB entries",
-  "bash documents/product-engineering/stage-2-vision-build/PUSH-STAGE-2-READY.sh - push the finished Stage-2 branch (origin copy is stale)"
+  "bash documents/product-engineering/stage-2-vision-build/PUSH-STAGE-2-READY.sh - the Stage-2 origin branch is stale at 350e4507"
  ],
- "onTrack": true
+ "onTrack": true,
+ "onTrackNote": "Build and verification are on track - RUN-A through RUN-J are built and tested. Revenue is NOT on track: CAD $0 has actually been received. Both statements are true at once and neither is softened."
 }
