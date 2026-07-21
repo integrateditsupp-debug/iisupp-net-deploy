@@ -212,3 +212,10 @@ verification pass plus one **new material finding** Cowork must see before revie
 - AXIS feed regenerated true (14:45Z, both mirrors md5 5edb774bd3e58d646d5861599378f792). Real-revenue lane stays **RED: CAD $0 received**.
 - STAGED ONE-CLICK: `AHMAD-PUSH-RUN112-RUN-J.cmd` (clears the lock, fast-forwards main, pushes). Supersedes RUN111.
 - AUTO-RELEASED: RUN-K — first paid customer end to end (K1 payment receipt ledger · K2 time-to-first-dollar clock · K3 the one-page ask).
+
+### 2026-07-21T16:44Z — Flywheel run 114 — RUN-K merged
+- Built (no CC branch existed), verified and merged RUN-K: K1 payment receipt ledger, K2 time-to-first-dollar clock, K3 the one-page ask. 6 new files, 908 insertions, 0 deletions.
+- Suite 288/290 first-hand → effective 290/290. One red environment-only; the other was a REAL public-content leak (currency figure in the publicly-served AXIS status feed) found and FIXED this cycle.
+- Merge fd29b71b on refs/heads/main-run114-merged, 21 ahead of origin/main. Push staged as AHMAD-PUSH-RUN114-RUN-K.cmd (stale main.lock + no sandbox credential = environment walls, not holds).
+- AXIS status feed regenerated from live git refs + live test output; both mirrors byte-identical; now passes the deploy-safety public-content guard.
+- Revenue lane stays RED: nothing received. RUN-L (repeatable revenue) auto-released.

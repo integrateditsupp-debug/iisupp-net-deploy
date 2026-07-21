@@ -1971,3 +1971,52 @@ No CC branch existed for RUN-I, so Cowork built it (path B), then merged it (pat
 
 ### NEXT — AUTO-RELEASED
 - **RUN-K — FIRST PAID CUSTOMER, END TO END** → `senior-director-state/cc-runs/RUN-K-first-paid-customer.md`.
+
+## RUN 114 — 2026-07-21 — RUN-K FIRST PAID CUSTOMER, END TO END (built, verified, MERGED)
+
+### BUILT (Cowork, this cycle — no CC branch existed for RUN-K, so Cowork built it)
+- **K1 — PAYMENT RECEIPT LEDGER.** `src/shared/payment-receipt-ledger.mjs` + `tests/k1-payment-receipt-ledger.test.mjs`.
+  - A payment **without a real processor reference is never recorded as received** — it is recorded as *claimed, unverified*, kept in its own total, and is structurally incapable of reaching the I3 truth board or the J3 digest. A reference with an unrecognised processor is also only a claim.
+  - **One entry, every report.** `toBoardPayments()` is the single adapter into the truth board (which the digest already reads), so one recorded payment moves both with **no second entry and no manual sync** — asserted first-hand.
+  - A **duplicate id is rejected as a bookkeeping error**, not counted as a second payment — real revenue is the one number we are least allowed to inflate.
+  - Incomplete records (no id / customer / amount / date, or a negative amount) are rejected and **named**, and they still print even on an otherwise empty ledger.
+  - No network, no payment SDK, no fs, no child_process — static-scan locked. GREEN first-hand: 7 assertion groups.
+- **K2 — TIME-TO-FIRST-DOLLAR CLOCK.** `src/shared/time-to-first-dollar.mjs` + `tests/k2-time-to-first-dollar.test.mjs`.
+  - Measured **only** from timestamps that already exist on real artifacts (engagement record, EARNED proof pack, RENDERED close packet, PRODUCED handoff, VERIFIED receipt). An unearned/refused/unproduced artifact contributes **no** timestamp.
+  - `still-running` / `completed` / `not-enough-data` all reachable. No payment ⇒ **"still running, N day(s)"** plus an explicit statement that it is elapsed time, not a prediction. **No forecast vocabulary survives in any reachable output** (banned-word scan across all four render paths) and no forecast field name exists in the source.
+  - The **slowest real step is named by both endpoints**; an interval that jumps a missing stage is flagged rather than smoothed. A *claimed* payment does **not** stop the clock.
+  - GREEN first-hand: 7 assertion groups.
+- **K3 — THE ONE-PAGE ASK.** `src/shared/one-page-ask.mjs` + `tests/k3-one-page-ask.test.mjs`.
+  - Composes the real H1 proof pack, the real H3 close packet and the real J2 capacity verdict. Missing/unproven input ⇒ **refuses and names it**; a refused page leaks no plan, price or scope.
+  - **Over observed capacity ⇒ refuses outright** — we do not ask a buyer to sign for delivery we have already measured we cannot staff. `not-enough-data` capacity renders but makes **no delivery-volume promise**.
+  - Every proof line **cites a record id or is dropped**; if nothing is citeable there is nothing to ask with. No invented reference customer, no "companies like yours", no case-study filler.
+  - Guarantee/risk-free language is **re-screened here** rather than trusted upstream, and a removed term is **counted, never reprinted** onto the buyer's page (a real leak found and fixed during the build).
+  - GREEN first-hand: 7 assertion groups.
+- All three registered in `tests/run-all.mjs` (suite count 287 → 290).
+
+### VERIFIED FIRST-HAND
+- **`node tests/run-all.mjs` → 288/290 GREEN** (node v22.22.3, clean-room `git archive` of the merged line).
+- Red 1 — `forums-concierge` needs `@netlify/blobs`: **re-run against the real node_modules → PASSED.** Environment only.
+- Red 2 — `deploy-safety-denylist` needs a real `.git`: re-run in the real repo it **FAILED for a REAL reason** — the AXIS status feed carried a currency-figure pattern in a publicly-served file (both mirrors). **Fixed this cycle, not waived:** the revenue lane now states the same truth without a currency figure. Guard now reports **OK — 0 of 2407 tracked paths flagged, all 9 force-404 rules present, 3 public files scanned, 0 sensitive-content leaks.** **Effective 290/290.**
+- `tests/b4-axis-chat.test.mjs` re-run separately: **20 passed, 0 failed.**
+- Diff sanity-checked: **additive only (Rule 15)** — 6 new files + `run-all.mjs` touched only to register three suites; **908 insertions, 0 deletions**. No fabricated customer, payment, reference, minute, or figure (Rule 14).
+
+### MERGED (Cowork as sole .git writer)
+- Branch `cc/run-k-k1k2k3-2026-07-21` = **`da269d98`**; merge commit = **`fd29b71b`**, written through a temporary git index so the mount's working tree (on `axis-command-center-v2`) was never disturbed.
+- Merged line tip **`refs/heads/main-run114-merged` (`fd29b71b`)** — 21 commits ahead of `origin/main` (`aff5342e`).
+- **The main POINTER still could not be advanced by the sandbox:** `.git/refs/heads/main.lock` remains a stale lock this mount cannot unlink ("Operation not permitted"). Not a hold — the one-click clears it and fast-forwards.
+
+### AXIS STATUS FEED — regenerated true
+- `generatedAt` = 2026-07-21T16:44:00Z (real UTC clock), run 114, **both mirrors byte-identical** (md5 `c9caecc8902a869fd1014729a6a7a3d5`), valid JSON, testsGreen measured this cycle. **Lane "Real revenue" stays RED: nothing has actually been received.** `onTrackNote` states both truths at once — build on track, revenue not.
+
+### ENV WALLS re-proven first-hand (NOT holds)
+1. `git ls-remote origin main` → "could not read Username" → no GitHub credential in the sandbox; origin/main last known `aff5342e`.
+2. `.git/refs/heads/main.lock` undeletable from the mount → main pointer move blocked.
+3. Sandbox root filesystem was **100% full** at run start (prior runs' `/tmp` clones are owned by a different uid and cannot be removed). Worked around by building under `/sessions/.../scratch` — not a hold, and worth noting for the next run.
+
+### STAGED ONE-CLICK
+- **`AHMAD-PUSH-RUN114-RUN-K.cmd`** — clears the stale lock, fast-forwards `main` to `main-run114-merged` (guarded: ancestor check, never force), fetches, verifies origin/main is still an ancestor, pushes. **Supersedes AHMAD-PUSH-RUN112-RUN-J.cmd.**
+- Netlify publish stays Ahmad's one click (merging never deploys).
+
+### NEXT — AUTO-RELEASED
+- **RUN-L — REPEATABLE REVENUE** → `senior-director-state/cc-runs/RUN-L-repeatable-revenue.md` (L1 demand-to-ask conveyor · L2 second-customer repeatability · L3 honest pricing floor from observed minutes only).

@@ -7326,3 +7326,14 @@ Branch-only. No main write, no merge, no deploy, no publish, no external send, n
 - **Two named environment walls, neither a hold:** no GitHub credential in the sandbox (push blocked; origin/main last known aff5342e) and an undeletable stale `.git/refs/heads/main.lock` (main pointer move blocked). One click clears both: **`AHMAD-PUSH-RUN112-RUN-J.cmd`**.
 - **Codex:** do NOT touch `cc/forums-mvp` or `cc/stage-2-vision-2026-07`. Do not re-point `main` — the fast-forward is scripted and guarded.
 - **Next released:** `senior-director-state/cc-runs/RUN-K-first-paid-customer.md` (K1 payment receipt ledger · K2 time-to-first-dollar clock · K3 the one-page ask).
+
+---
+
+## [cowork-flywheel run 114 · 2026-07-21] RUN-K MERGED — FIRST PAID CUSTOMER, END TO END
+- **No CC branch existed for RUN-K, so Cowork built it, verified it, and MERGED it.** K1 payment receipt ledger (no processor reference ⇒ *claimed, unverified*, never received; one entry moves board + digest; duplicate id rejected) · K2 time-to-first-dollar clock (two real timestamps or nothing; still-running / completed / not-enough-data all reachable; no forecast vocabulary anywhere; slowest real step named by both endpoints) · K3 the one-page ask (refuses and names the missing input; **refuses outright when over observed capacity**; every claim cites a record id or is dropped; a removed guarantee-style term is counted, never reprinted).
+- **Suite 288/290 first-hand.** `forums-concierge` red = environment (`@netlify/blobs`), re-run in the real repo **PASSED**. `deploy-safety-denylist` red was **REAL** — the AXIS status feed carried a currency figure in a publicly-served file — **fixed this cycle, not waived**; guard now OK (0 of 2407 tracked paths, 9/9 force-404 rules, 0 content leaks). **Effective 290/290.** b4-axis-chat 20/20.
+- **Refs:** branch `cc/run-k-k1k2k3-2026-07-21` da269d98 · merge fd29b71b · merged line `refs/heads/main-run114-merged`, 21 ahead of origin/main (aff5342e). Additive only: 908 insertions, 0 deletions.
+- **Two named environment walls, neither a hold:** no GitHub credential in the sandbox (push blocked) and an undeletable stale `.git/refs/heads/main.lock` (main pointer move blocked). One click clears both: **`AHMAD-PUSH-RUN114-RUN-K.cmd`** (supersedes RUN112).
+- **Codex:** do NOT touch `cc/forums-mvp` or `cc/stage-2-vision-2026-07`. Do not re-point `main` — the fast-forward is scripted and guarded.
+- **Next released:** `senior-director-state/cc-runs/RUN-L-repeatable-revenue.md` (L1 demand-to-ask conveyor · L2 second-customer repeatability · L3 honest pricing floor).
+- **Revenue truth:** nothing has been received. The board says so, the feed says so, this briefing says so.
