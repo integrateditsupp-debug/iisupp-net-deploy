@@ -154,17 +154,19 @@
         <div class="eyebrow" style="text-align:center;margin-bottom:6px">Concierge · offline KB baseline</div>
         <h1 style="text-align:center;font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 0 22px">Ask ARIA anything IT</h1>
         <div id="aiLog" aria-live="polite"></div>
-        <div class="dropzone" id="aiDrop" role="button" tabindex="0" aria-label="Drop a screenshot for visual diagnosis">
+        <!-- STAGE 2 — the shared vision-diagnosis widget mounts into #aiDrop (same engine as ARIA web +
+             Sentinel). The markup below is the no-JS / script-failure fallback; the widget replaces it. -->
+        <div class="dropzone" id="aiDrop" role="button" tabindex="0" aria-label="Drop a screenshot, log, or error text for diagnosis">
           <div class="di" aria-hidden="true">🖼</div>
           <b>Drop a screenshot, log, or photo of the error</b>
-          <div class="muted" style="font-size:13px;margin-top:6px">Once it's online, Fable 5 visual diagnosis will read BSODs, dialogs, and config screens.</div>
-          <div class="chip gold" style="margin-top:12px"><span class="led"></span>Visual diagnosis coming online</div>
+          <div class="muted" style="font-size:13px;margin-top:6px">Describe the problem in text below and the real KB answers now.</div>
+          <div class="chip gold" style="margin-top:12px"><span class="led"></span>Loading visual diagnosis…</div>
         </div>
         <form class="askbar" id="aiAsk" role="search" style="margin-top:16px">
           <span class="ico" aria-hidden="true">✦</span>
           <input id="aiAskInput" type="text" placeholder="Type the problem — answered from the real KB…" aria-label="Message ARIA">
         </form>
-        <p class="ai-honesty" style="text-align:center;margin-top:10px">Answers are AI-retrieved from the verified KB and sourced. Verify before acting on production systems. Baseline runs on the free offline KB; visual diagnosis arrives with the Fable&nbsp;5 vision engine.</p>
+        <p class="ai-honesty" style="text-align:center;margin-top:10px">Answers are AI-retrieved from the verified KB and sourced. Verify before acting on production systems. Baseline runs on the free offline KB; images are read by the Fable&nbsp;5 vision engine only after you approve, and ARIA abstains rather than guess.</p>
       </div>
     </div>
   </section>
@@ -230,6 +232,7 @@
 
 <div class="toast-wrap" id="toasts" role="status" aria-live="polite"></div>
 
+<script src="/assets/aria-vision-diagnose.js"></script>
 <script type="module" src="/assets/forums.js"></script>
 </body>
 </html>

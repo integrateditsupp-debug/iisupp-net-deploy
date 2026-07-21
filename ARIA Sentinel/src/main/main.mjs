@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, shell, screen, session, globalShortcut, powerMonitor, clipboard } from "electron";
+import { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage, shell, screen, session, globalShortcut, powerMonitor, clipboard, desktopCapturer, dialog } from "electron";
 import Store from "electron-store";
 import { exec, spawn } from "node:child_process";
 import { randomUUID, createHash } from "node:crypto";
@@ -34,6 +34,8 @@ import { DEEP_LINK_SCHEME, parseSentinelDeepLink, validateResolveLink } from "..
 import { ingest as ingestKb } from "../shared/kb-ingester.mjs";
 import { parsePolicyOverlay } from "../shared/policy.mjs";
 import { parseControlPlaneKill, remediationDecision, blockedRecipeResult, KILL_HOTKEY, buildKillResult } from "../shared/kill-switch.mjs";
+// STAGE 2 — screen-capture consent policy (pure + unit-tested in tests/vision-surfaces.test.mjs).
+import { decideCapture, CAPTURE_DISCLOSURE, captureDataFlow, captureAuditEntry } from "../shared/vision-capture.mjs";
 import { registerWithFallback } from "../shared/hotkeys.mjs";
 import { normalizePrefs, addOptOut, resetOptOuts, normalizeExt } from "../shared/delete-confirm.mjs";
 // RUN 20 — system knowledge engine: inventory enumerator, Tier-0 recipes, symptom KB + doctor reasoner.
@@ -3600,6 +3602,71 @@ ipcMain.handle("sentinel:logout", () => logoutLicense());
 ipcMain.handle("sentinel:choose-plan", (_event, tier) => openPlanCheckout(tier));
 ipcMain.handle("sentinel:open-plan-picker", () => openPlanPicker());
 ipcMain.handle("sentinel:privacy-capture", (_event, windowMs) => runPrivacyCapture(Number(windowMs) || 10000));
+
+// STAGE 2 — "diagnose my current screen". ONE still image, only after an explicit per-capture yes.
+// The renderer cannot capture on its own: the only path to desktopCapturer is through this handler,
+// and this handler always shows the disclosure dialog first. Consent is never remembered.
+ipcMain.handle("sentinel:vision-capture", async () => {
+  const blocked = agentBlocked();
+  const pre = decideCapture({ consent: null, agentBlocked: blocked, captureSupported: !!desktopCapturer });
+  const envelope = { disclosure: CAPTURE_DISCLOSURE, dataFlow: captureDataFlow() };
+
+  // Stood down (kill-switch / paused) or unsupported → refuse before showing any dialog.
+  if (pre.reason === "agent-stood-down" || pre.reason === "capture-unsupported") {
+    const a = captureAuditEntry({ allowed: false, reason: pre.reason });
+    logEvent(a.tag, a.text, { consented: false, reason: a.reason });
+    return { consented: false, reason: pre.reason, ...envelope };
+  }
+
+  // The consent moment. Cancel is the default button AND the escape action.
+  let approved = false;
+  try {
+    const answer = await dialog.showMessageBox(mainWindow || undefined, {
+      type: "question",
+      buttons: [CAPTURE_DISCLOSURE.cancelLabel, CAPTURE_DISCLOSURE.confirmLabel],
+      defaultId: 0,
+      cancelId: 0,
+      noLink: true,
+      title: CAPTURE_DISCLOSURE.title,
+      message: CAPTURE_DISCLOSURE.title,
+      detail: [CAPTURE_DISCLOSURE.what, CAPTURE_DISCLOSURE.where, CAPTURE_DISCLOSURE.advice].join("\n\n"),
+    });
+    approved = answer && answer.response === 1;
+  } catch {
+    approved = false;   // a dialog we cannot show is a "no", never a silent yes
+  }
+
+  // Re-run the SAME policy on the answer — the gate is enforced in one place only.
+  const consent = approved ? { screenCapture: true, cloudProcessing: true, autoCapture: false, ts: Date.now() } : {};
+  const decision = decideCapture({ consent, agentBlocked: agentBlocked(), captureSupported: true });
+  if (!decision.allowed) {
+    const a = captureAuditEntry({ allowed: false, reason: decision.reason });
+    logEvent(a.tag, a.text, { consented: false, reason: a.reason });
+    return { consented: false, reason: decision.reason, requiresConsent: decision.requiresConsent, ...envelope };
+  }
+
+  try {
+    const size = screen.getPrimaryDisplay().size || { width: 1920, height: 1080 };
+    const w = Math.min(1920, Math.max(640, size.width));
+    const h = Math.round(w * (size.height / Math.max(1, size.width)));
+    const sources = await desktopCapturer.getSources({ types: ["screen"], thumbnailSize: { width: w, height: h } });
+    const src = (sources || [])[0];
+    if (!src || !src.thumbnail || src.thumbnail.isEmpty()) {
+      const a = captureAuditEntry({ allowed: false, reason: "capture-empty" });
+      logEvent(a.tag, a.text, { consented: false, reason: a.reason });
+      return { consented: false, reason: "capture-empty", ...envelope };
+    }
+    // In memory only — the PNG buffer is base64'd for the one request and never written to disk.
+    const imageBase64 = src.thumbnail.toPNG().toString("base64");
+    const a = captureAuditEntry({ allowed: true, sourceLabel: src.name });
+    logEvent(a.tag, a.text, { consented: true, source: src.name });
+    return { consented: true, imageBase64, mediaType: "image/png", consent, sourceLabel: src.name, ...envelope };
+  } catch (err) {
+    const a = captureAuditEntry({ allowed: false, reason: "capture-failed" });
+    logEvent(a.tag, a.text, { consented: false, reason: a.reason, error: String(err && err.message || err) });
+    return { consented: false, reason: "capture-failed", ...envelope };
+  }
+});
 ipcMain.handle("sentinel:export-evidence", () => exportEvidencePack());
 ipcMain.handle("sentinel:ack-whats-new", () => acknowledgeWhatsNew());
 ipcMain.handle("sentinel:open-mac-permissions", (_event, pane) => openMacPermissions(pane));

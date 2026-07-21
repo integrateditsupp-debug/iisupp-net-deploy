@@ -2434,3 +2434,50 @@ init().catch((error) => {
     </main>
   `;
 });
+
+// ── STAGE 2 · Vision diagnosis surface ────────────────────────────────────────────────────────
+// Mounts the SAME widget the website and Forums use (vendor/aria-vision-diagnose.js), so the
+// diagnosis, confidence, abstain and privacy-receipt behaviour cannot drift between surfaces.
+// Sentinel adds exactly one capability the browser can't have: a consent-gated screen capture,
+// which is performed entirely in the main process (see ipcMain "sentinel:vision-capture").
+(function mountSentinelVision() {
+  const zone = document.getElementById("ariaVisionZone");
+  const captureBtn = document.getElementById("ariaVisionCapture");
+  if (!zone) return;
+
+  const api = globalThis.ARIAVisionDiagnose;
+  if (!api || typeof api.mount !== "function") {
+    // Rule 14 — no dead UI pretending to work.
+    zone.textContent = "Visual diagnosis module failed to load. Ask ARIA in chat above — the local KB still answers.";
+    if (captureBtn) captureBtn.disabled = true;
+    return;
+  }
+
+  let requestCapture = null;
+  const view = api.mount(zone, {
+    surface: "sentinel",
+    // Sentinel is a desktop app: the diagnose endpoint is always the live site.
+    endpoint: "https://iisupp.net/.netlify/functions/aria-vision-diagnose",
+    os: (globalThis.navigator && /Mac/i.test(navigator.platform || "")) ? "mac" : "windows",
+    exposeCapture: (fn) => { requestCapture = fn; },
+    onFix: (fix) => {
+      // One-click Fix goes through the EXISTING gated resolve flow (restore point · kill-switch ·
+      // signed audit) — this only opens the recipe, it never executes it directly.
+      try { globalThis.location.hash = "#recipes"; } catch { /* non-fatal */ }
+      const run = globalThis.sentinelBridge && globalThis.sentinelBridge.runRecipe;
+      if (typeof run === "function" && fix && fix.recipeId) run({ recipeId: fix.recipeId });
+    },
+  });
+
+  if (captureBtn) {
+    captureBtn.addEventListener("click", () => {
+      const fn = requestCapture || (view && view.diagnoseCurrentScreen);
+      if (typeof fn === "function") fn();
+    });
+    // Only offer the capture button where the bridge actually exists.
+    if (!globalThis.ariaSentinel || typeof globalThis.ariaSentinel.captureScreenWithConsent !== "function") {
+      captureBtn.disabled = true;
+      captureBtn.title = "Screen capture needs the Sentinel desktop bridge.";
+    }
+  }
+})();

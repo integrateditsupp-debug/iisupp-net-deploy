@@ -50,6 +50,7 @@ contextBridge.exposeInMainWorld("sentinel", {
   reopenSetup: () => ipcRenderer.invoke("setup:reopen"),
   runDiagnostic: () => ipcRenderer.invoke("sentinel:run-diagnostic"),
   privacyCapture: (windowMs) => ipcRenderer.invoke("sentinel:privacy-capture", windowMs),
+  visionCapture: () => ipcRenderer.invoke("sentinel:vision-capture"), // STAGE 2 — consent-gated screen capture
   exportEvidence: () => ipcRenderer.invoke("sentinel:export-evidence"),
   exportAudit: (kind) => ipcRenderer.invoke("sentinel:export-audit", kind),
   setLowPower: (on) => ipcRenderer.invoke("sentinel:set-low-power", on),
@@ -187,4 +188,14 @@ contextBridge.exposeInMainWorld("sentinelBridge", {
   getProcessHealth: () => ipcRenderer.invoke("sentinel:processHealth:get"),
   onProcessHealth: (cb) => { const l = (_e, snap) => cb(snap); ipcRenderer.on("sentinel:processHealth", l); return () => ipcRenderer.removeListener("sentinel:processHealth", l); },
   onCountdownTick: (cb) => { const l = (_e, info) => cb(info); ipcRenderer.on("sentinel:countdown-tick", l); return () => ipcRenderer.removeListener("sentinel:countdown-tick", l); }
+});
+
+
+// STAGE 2 — the shared vision-diagnosis widget (assets/aria-vision-diagnose.js, reused verbatim by
+// ARIA web and Forums) probes for `window.ariaSentinel.captureScreenWithConsent`. Exposing it here is
+// what turns "Diagnose my current screen" on inside Sentinel and leaves it off everywhere else.
+// This is a thin pass-through: the consent dialog and the capture itself both live in the main
+// process, so a compromised renderer cannot capture the screen by calling this.
+contextBridge.exposeInMainWorld("ariaSentinel", {
+  captureScreenWithConsent: () => ipcRenderer.invoke("sentinel:vision-capture"),
 });

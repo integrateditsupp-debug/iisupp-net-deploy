@@ -390,10 +390,11 @@ $("#aiAsk").addEventListener("submit", async (e) => {
     `<div class="ai-honesty">AI-retrieved and sourced from the verified KB. Verify before acting on production systems.</div>`;
 });
 
-// Drop-zone: honest MVP — the Stage-2 vision engine isn't wired yet, and we say so plainly.
+// Drop-zone: STAGE 2 is LIVE on #aiDrop (mounted below). Any OTHER .dropzone on the page keeps the
+// honest 'not wired here' message — we never pretend a surface reads screenshots when it doesn't.
 function wireDropzones(root) {
   $$(".dropzone", root || document).forEach((dz) => {
-    if (dz._wired) return; dz._wired = true;
+    if (dz._wired || dz.dataset.visionLive === "1") return; dz._wired = true;
     const state = () => {
       const inAsk = !!dz.closest("[data-view='askai']");
       const msg = `<b>Visual diagnosis is coming online.</b><div class="muted" style="font-size:13px;margin-top:6px">The Fable 5 vision engine isn't wired into Forums yet — we won't pretend to read your screenshot. Describe the problem in text and the real KB answers now, or open a discussion and attach details there.</div>`;
@@ -408,6 +409,30 @@ function wireDropzones(root) {
 
 // ── boot
 paintSession();
+
+// ── STAGE 2 — mount the shared vision-diagnosis widget on the Ask-AI surface.
+// Same engine and same consent/abstain contract as ARIA web and Sentinel; only `surface` differs.
+// If the script failed to load we leave the static fallback markup + the honest dropzone message.
+function mountVisionDiagnose() {
+  const zone = $("#aiDrop");
+  if (!zone || zone.dataset.visionLive === "1") return;
+  const api = window.ARIAVisionDiagnose;
+  if (!api || typeof api.mount !== "function") return;   // no fake capability — fallback stays
+  zone.dataset.visionLive = "1";
+  zone.classList.remove("dropzone");                     // the widget renders its own zone chrome
+  zone.removeAttribute("role"); zone.removeAttribute("tabindex");
+  api.mount(zone, {
+    surface: "forums",
+    endpoint: "/.netlify/functions/aria-vision-diagnose",
+    os: /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent || "") ? "mac" : "windows",
+    onFallback: (opt) => {
+      // Keep the user inside Forums for the "open a discussion" path instead of a hard reload.
+      if (opt && opt.action === "open-discussion") { location.hash = "#discussions"; return; }
+      if (opt && opt.href) location.href = opt.href;
+    },
+  });
+}
+mountVisionDiagnose();
 wireDropzones(document);
 loadKb().catch(() => { $("#kbCount").textContent = "--"; });
 route();

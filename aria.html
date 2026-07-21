@@ -1936,8 +1936,15 @@
         </div>
 
         <div class="chat-dock">
+          <!-- STAGE 2 — "show, don't type". Collapsed by default so the ask bar is untouched;
+               opens the shared vision-diagnosis widget (same engine as Forums Ask-AI + Sentinel). -->
+          <div class="vision-panel" id="visionPanel" hidden aria-label="Show ARIA the problem"></div>
           <div class="input-row">
             <input id="askInput" placeholder="Ask ARIA anything…" autocomplete="off" />
+            <button type="button" class="vision-btn" id="visionBtn" aria-expanded="false" aria-controls="visionPanel" title="Show ARIA the problem — drop or paste a screenshot, error dialog, or log">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h2.2l1.1-1.7A1 1 0 0 1 8.6 4h6.8a1 1 0 0 1 .8.3L17.3 6h2.2A1.5 1.5 0 0 1 21 7.5v10A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.2" r="3.4"/></svg>
+              <span class="sr-only">Show ARIA the problem</span>
+            </button>
             <button class="send-btn" id="sendBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
           </div>
           <div class="history-bar">
@@ -6246,6 +6253,59 @@ setInterval(attach, 1200);
 </style>
 <div id="aria-web-tier-strip"><div data-aria-web-tier></div></div>
 <script src="/assets/aria-i18n-page-copy.js"></script>
+<style id="vision-panel-css">
+  /* STAGE 2 — ask-bar vision zone. Purely additive: the ask input, send button and history bar
+     keep their existing layout; the panel is hidden until the user opens it. */
+  .chat-dock .vision-btn{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+    width:38px;height:38px;margin-right:6px;border-radius:10px;cursor:pointer;
+    background:transparent;border:1px solid rgba(197,160,89,.45);color:#c5a059;transition:.15s}
+  .chat-dock .vision-btn:hover,.chat-dock .vision-btn[aria-expanded="true"]{background:rgba(197,160,89,.14);border-color:#c5a059}
+  .chat-dock .vision-btn svg{width:19px;height:19px}
+  .chat-dock .vision-panel{margin-bottom:10px;max-height:60vh;overflow:auto}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+</style>
+<script src="/assets/aria-vision-diagnose.js"></script>
+<script>
+/* STAGE 2 — mount the shared vision widget on the ARIA web ask bar (surface: 'web').
+   Rule 14: if the widget script is unavailable we say so plainly rather than showing a dead zone.
+   Rule 15: nothing existing is removed — this only adds a toggle + a collapsed panel. */
+(function () {
+  var btn = document.getElementById('visionBtn');
+  var panel = document.getElementById('visionPanel');
+  if (!btn || !panel) return;
+  var mounted = false;
+  btn.addEventListener('click', function () {
+    var open = panel.hasAttribute('hidden');
+    if (open && !mounted) {
+      var api = window.ARIAVisionDiagnose;
+      if (api && typeof api.mount === 'function') {
+        api.mount(panel, {
+          surface: 'web',
+          endpoint: '/.netlify/functions/aria-vision-diagnose',
+          os: /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent || '') ? 'mac' : 'windows',
+          onFix: function (fix, res) {
+            /* One-click Fix runs through the SAME gated Sentinel resolve flow (restore point,
+               kill-switch, signed audit token). The web surface only HANDS OFF via the existing
+               aria-sentinel:// deep link — it never executes anything on the visitor's machine.
+               `walkthrough` (not `apply`) so the desktop still shows its own confirm step. */
+            var intent = (res && res.diagnosis && res.diagnosis.title) || '';
+            var link = (typeof window.ashBuildResolveLink === 'function')
+              ? window.ashBuildResolveLink(fix.recipeId, intent, 'walkthrough') : '';
+            if (link) { try { location.href = link; } catch (e) { /* scheme may be unregistered */ } }
+            /* No Sentinel installed → send them to the product page rather than a dead scheme. */
+            setTimeout(function () { if (!document.hidden) location.href = '/aria-sentinel/'; }, 1500);
+          }
+        });
+      } else {
+        panel.textContent = 'The visual diagnosis module could not load. Type the error text above and ARIA answers from the offline KB.';
+      }
+      mounted = true;
+    }
+    if (open) { panel.removeAttribute('hidden'); btn.setAttribute('aria-expanded', 'true'); }
+    else { panel.setAttribute('hidden', ''); btn.setAttribute('aria-expanded', 'false'); }
+  });
+})();
+</script>
 <script defer src="/assets/aria-web-tier.js"></script>
   <script src="/assets/iis-motion.js?v=20260710L" defer data-mode="bg"></script>
 </body>

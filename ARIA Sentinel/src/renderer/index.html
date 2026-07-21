@@ -113,6 +113,27 @@
             <div class="aria-chat-statusline">Answer chain: <b>KB-first</b> ($0) · <b>Anthropic</b> fallback · <b>local KB</b> offline · <span id="ariaChatChunks">203 chunks</span></div>
           </section>
 
+          <!-- ── STAGE 2 · Vision diagnosis ("show, don't type") ────────────────────────────────
+               Same widget file as ARIA web + Forums Ask-AI (see renderer/vendor/README.md).
+               The screen-capture button is the ONLY thing unique to Sentinel, and it cannot fire
+               without the main-process consent dialog. ── -->
+          <span id="aria-vision" class="ia-anchor"></span>
+          <section class="panel aria-vision-panel">
+            <p class="eyebrow">ARIA</p>
+            <h2>Show ARIA the problem</h2>
+            <p class="merge-sub">Drop, paste, or upload a screenshot, error dialog, or log — or let ARIA look at your screen once, with your permission. If ARIA isn't confident, it says so instead of guessing.</p>
+            <div id="ariaVisionZone"></div>
+            <div class="aria-vision-actions" style="margin-top:12px">
+              <button class="btn" id="ariaVisionCapture" type="button">Diagnose my current screen</button>
+              <p class="merge-sub" id="ariaVisionCaptureNote" style="margin-top:8px;font-size:12px">
+                ARIA asks first, every time. One still image of the screen you pick — no video, no keystrokes,
+                nothing saved to disk. The image is sent unredacted to the vision model to read the error,
+                because pixels can't be masked the way text can; only the text it reads back is filtered for
+                secrets. Typing the error instead keeps it entirely on our own server.
+              </p>
+            </div>
+          </section>
+
           <!-- ── Learning ── -->
           <div class="merge-head" id="aria-learning"><div class="merge-bar" aria-hidden="true"></div><div><p class="eyebrow">ARIA</p><h2>Learning</h2><p class="merge-sub">What ARIA is learning from the web /aria knowledge base</p></div></div>
           <section class="panel">
@@ -907,6 +928,7 @@
       </div>
     </div>
 
-    <script type="module" src="./renderer.js"></script>
+    <script src="./vendor/aria-vision-diagnose.js"></script>
+  <script type="module" src="./renderer.js"></script>
   </body>
 </html>
