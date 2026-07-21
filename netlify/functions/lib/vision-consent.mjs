@@ -52,6 +52,7 @@ export function dataFlow({ willCallCloud, kind }) {
       thirdPartyModel: true,
       sentTo: VISION_MODEL_LABEL,
       sends: 'the image itself, UNREDACTED — pixels cannot be masked like text; only the text ARIA reads back is filtered for secrets',
+      preCleaned: 'embedded metadata (EXIF/GPS, device serial, owner name, IPTC, PNG text chunks) is stripped from the file before it is sent — the visible picture is unchanged',
       retention: 'not stored by us beyond this request; no raw screenshot retained on our side',
       cost: 'paid model — used only for images you explicitly submit for cloud analysis',
     };
@@ -75,6 +76,7 @@ export function buildDisclosure({ surface, kind, willCallCloud, isCapture }) {
   if (willCallCloud) {
     lines.push(`The image itself is sent UNREDACTED to ${VISION_MODEL_LABEL} to read the error — pixels can't be masked the way text is. Only the text ARIA reads back is filtered for secrets.`);
     lines.push("Don't upload anything you wouldn't show a technician — or type the error text instead to keep the image off the cloud.");
+    lines.push('Before it is sent we strip the file\u2019s hidden metadata (EXIF/GPS, device serial, owner name) \u2014 that is a real removal, but it does not change the visible picture.');
     lines.push('We keep no raw screenshot after you get your answer.');
   } else {
     lines.push('Your text is sent to our own iisupp.net function, matched against the offline knowledge base, and not stored — it is never sent to any third-party AI model.');

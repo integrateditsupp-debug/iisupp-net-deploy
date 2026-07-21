@@ -24,6 +24,7 @@
 
 import { diagnoseInput, redactPII } from './lib/vision-diagnose-core.mjs';
 import { evaluateConsent, shouldCallCloudVision, dataFlow } from './lib/vision-consent.mjs';
+import { scrubImageMetadata } from './lib/vision-image-scrub.mjs';
 import { matchFix } from './lib/vision-fix-link.mjs';
 import { RECIPES } from './aria-recipes-data.mjs';
 // D4 — reuse the site's existing spend controls for the paid vision call (same as aria-chat.js).
@@ -93,6 +94,7 @@ export default async (req) => {
   let visionText = '';
   let visionUsed = false;
   let visionNote = null;
+  let imageScrub = null;   // privacy pre-flight report for the image path (null for text/logs)
 
   if (isImage) {
     if (willCallCloud) {
@@ -119,8 +121,38 @@ export default async (req) => {
           meta: { surface, kind, visionUsed: false },
         });
       }
+      // 🔒 PRIVACY PRE-FLIGHT (spec: redact obvious PII/secrets in images BEFORE any cloud call).
+      // Embedded metadata — EXIF/GPS, device serial, owner name, IPTC, PNG text chunks — is
+      // invisible to the user and routinely carries real PII, so it is stripped here, before the
+      // bytes leave the machine. Pixels are NOT masked: the disclosure keeps saying so.
+      // If we cannot parse the image well enough to pre-clean it, we do NOT send it (Rule 14:
+      // refuse honestly rather than quietly ship an uncleaned image to a paid third-party model).
+      const scrub = scrubImageMetadata(body.imageBase64, body.mediaType || 'image/png', redactPII);
+      if (!scrub.ok) {
+        return resp(200, {
+          ok: true, blocked: false, abstain: true, diagnosis: null,
+          confidence: 0, confidenceLabel: 'abstain',
+          reason: 'image-not-prescrubbable',
+          scrubReason: scrub.reason,
+          disclosure: gate.disclosure,
+          dataFlow: dataFlow({ willCallCloud: false, kind }),
+          imageScrub: { ok: false, reason: scrub.reason, note: scrub.note },
+          honestFallback: honestFallback(os),
+          hint: 'Save the screenshot as PNG or JPEG and retry, or paste the error text — the offline knowledge base answers that for free.',
+          meta: { surface, kind, visionUsed: false },
+        });
+      }
+      imageScrub = {
+        ok: true,
+        format: scrub.format,
+        removed: scrub.removed,
+        piiFound: scrub.piiFound,
+        bytesBefore: scrub.bytesBefore,
+        bytesAfter: scrub.bytesAfter,
+        note: scrub.note,
+      };
       try {
-        visionText = await runVision({ imageBase64: body.imageBase64, mediaType: body.mediaType || 'image/png', hostBase: hostBase(req) });
+        visionText = await runVision({ imageBase64: scrub.base64, mediaType: body.mediaType || 'image/png', hostBase: hostBase(req) });
         visionUsed = true;
       } catch (e) {
         // Cloud vision failed — do NOT fabricate. Fall through to honest abstain.
@@ -136,6 +168,7 @@ export default async (req) => {
         ok: true, blocked: false, abstain: true, diagnosis: null,
         confidence: 0, confidenceLabel: 'abstain',
         reason: visionNote,
+        imageScrub,
         disclosure: gate.disclosure,
         dataFlow: dataFlow({ willCallCloud: false, kind }),
         honestFallback: honestFallback(os),
@@ -163,6 +196,7 @@ export default async (req) => {
     disclosure: gate.disclosure,
     dataFlow: dataFlow({ willCallCloud, kind }),
     redaction: d.redaction,          // {found:[{type,count}], count} — shown to the user
+    imageScrub,                      // what metadata was stripped before the image left (null for text)
     signals: d.signals,
     confidence: d.confidence,
     confidenceLabel: d.confidenceLabel,
