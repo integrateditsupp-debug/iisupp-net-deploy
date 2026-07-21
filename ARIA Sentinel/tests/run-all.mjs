@@ -363,6 +363,9 @@ const TESTS = [
   "./h1-proof-pack.test.mjs",
   "./h2-objection-ledger.test.mjs",
   "./h3-close-packet.test.mjs",
+  "./i1-billing-handoff.test.mjs",
+  "./i2-renewal-readiness.test.mjs",
+  "./i3-revenue-truth-board.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
