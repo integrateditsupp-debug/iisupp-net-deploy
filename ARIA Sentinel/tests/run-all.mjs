@@ -381,6 +381,9 @@ const TESTS = [
   "./j1-deal-blocker-autopsy.test.mjs",
   "./j2-delivery-capacity-truth.test.mjs",
   "./j3-weekly-truth-digest.test.mjs",
+  "./k1-payment-receipt-ledger.test.mjs",
+  "./k2-time-to-first-dollar.test.mjs",
+  "./k3-one-page-ask.test.mjs",
   // STAGE-3 ARE — packets landed by Cowork run 113 (2026-07-21). Registered here because each packet's
   // run-all patch was cut against an older anchor; the suites themselves are unmodified from the packets.
   "./escalation-decision.test.mjs",
