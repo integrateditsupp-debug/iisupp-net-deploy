@@ -366,6 +366,9 @@ const TESTS = [
   "./i1-billing-handoff.test.mjs",
   "./i2-renewal-readiness.test.mjs",
   "./i3-revenue-truth-board.test.mjs",
+  "./j1-deal-blocker-autopsy.test.mjs",
+  "./j2-delivery-capacity-truth.test.mjs",
+  "./j3-weekly-truth-digest.test.mjs",
 ];
 
 const bail = process.argv.includes("--bail");
