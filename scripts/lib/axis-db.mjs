@@ -113,11 +113,20 @@ export function ensureDirs() {
 
 // Additive migrations for DBs created before a column existed. Safe to run every open.
 function migrate(db) {
-  const cols = db.prepare('PRAGMA table_info(businesses)').all().map(r => r.name);
-  const add = (name, decl) => { if (!cols.includes(name)) db.exec(`ALTER TABLE businesses ADD COLUMN ${name} ${decl};`); };
-  add('maturity_json', 'TEXT');
-  add('provenance_json', 'TEXT');
-  add('is_real', 'INTEGER DEFAULT 0');
+  const bcols = db.prepare('PRAGMA table_info(businesses)').all().map(r => r.name);
+  const addB = (name, decl) => { if (!bcols.includes(name)) db.exec(`ALTER TABLE businesses ADD COLUMN ${name} ${decl};`); };
+  addB('maturity_json', 'TEXT');
+  addB('provenance_json', 'TEXT');
+  addB('is_real', 'INTEGER DEFAULT 0');
+  // P4 outreach: recipient + template + CASL consent + Gmail draft linkage on outreach_items.
+  const ocols = db.prepare('PRAGMA table_info(outreach_items)').all().map(r => r.name);
+  const addO = (name, decl) => { if (!ocols.includes(name)) db.exec(`ALTER TABLE outreach_items ADD COLUMN ${name} ${decl};`); };
+  addO('to_email', 'TEXT');
+  addO('template_id', 'TEXT');
+  addO('consent_basis', 'TEXT');
+  addO('consent_evidence', 'TEXT');
+  addO('draft_id', 'TEXT');           // Gmail draft id once materialized (post-OAuth)
+  addO('lint_json', 'TEXT');          // lint result snapshot
 }
 
 // Open (creating if needed), apply schema, set safe pragmas. Returns the DatabaseSync handle.

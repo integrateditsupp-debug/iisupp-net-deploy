@@ -87,10 +87,13 @@ export function computeSnapshots(db) {
     rails: DEFAULT_RAILS,
   };
 
-  // Outreach studio packs (grouped by business).
+  // Outreach studio drafts (full content for S7 — every exit routes through Approvals; no send here).
   out.outreach = {
-    packs: items.filter(i => i.channel && i.kind).map(i => ({
-      id: i.id, business_id: i.business_id, channel: i.channel, kind: i.kind, subject: i.subject, status: i.status,
+    identity: { from: 'Ahmad Wasee <ahmad.wasee@iisupp.net>', reply_to: 'ahmad.wasee@iisupp.net' },
+    drafts: items.filter(i => i.channel === 'email').map(i => ({
+      id: i.id, business_id: i.business_id, channel: i.channel, kind: i.kind, subject: i.subject, body: i.body,
+      to_email: i.to_email, status: i.status, template_id: i.template_id,
+      consent_basis: i.consent_basis, consent_evidence: i.consent_evidence, lint: j(i, 'lint_json', null),
     })),
   };
 

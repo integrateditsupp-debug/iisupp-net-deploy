@@ -408,6 +408,45 @@ SCREENS.pipeline = (c) => {
   c.append(board);
 };
 
+// ── S7 Outreach Studio (generation only — NO send button exists; every exit → Approvals) ──
+SCREENS.outreach = (c) => {
+  const d = data('outreach'); const drafts = d.drafts || [];
+  c.append(head('Outreach Studio', `${d.identity?.from || 'ahmad.wasee@iisupp.net'} · drafts only`));
+  c.append(el('div', { class: 'card', style: 'border-color:var(--gold);background:var(--gold-dim);margin-bottom:14px;padding:11px 14px;font-size:12.5px' },
+    ['🔒 No send button exists here. Every draft routes through ', el('b', {}, 'Approvals'), ' — nothing leaves without your per-item approval and a passing rails check at send time.']));
+  if (!drafts.length) { c.append(el('div', { class: 'empty' }, 'No drafts yet. Generate outreach from a prospect profile.')); return; }
+  drafts.forEach(dr => {
+    const b = ((data('prospects').rows) || []).find(x => x.id === dr.business_id);
+    const lint = dr.lint || {};
+    const checklist = [
+      ['Specific company mention', /* has sourced fact */ (lint.issues || []).every(i => !/sourced/.test(i))],
+      ['Problem-first framing', (lint.issues || []).every(i => !/problem-first/.test(i))],
+      ['No mass-produced filler', (lint.issues || []).every(i => !/filler/.test(i))],
+      [`Under 150 words (${lint.word_count ?? '?'})`, (lint.word_count ?? 999) <= 150],
+    ];
+    const card = el('div', { class: 'card', style: 'margin-bottom:12px' }, [
+      el('div', { style: 'display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px' }, [
+        el('div', {}, [el('span', { style: 'font-weight:600' }, (b?.name || 'Prospect')), el('span', { class: 'stage-tag', style: 'margin-left:8px' }, dr.to_email)]),
+        el('span', { class: 'stage-tag', style: dr.status === 'pending' ? 'color:var(--gold)' : '' }, dr.status)]),
+      el('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'subject'),
+      el('div', { style: 'font-weight:500;margin-bottom:8px' }, dr.subject),
+      el('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'body (edit in place — saves to draft, still needs approval)'),
+      el('textarea', { style: 'width:100%;min-height:150px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;color:var(--txt);font:inherit;font-size:12.5px;padding:10px;white-space:pre-wrap',
+        onblur: (e) => { toast('Draft saved — still needs approval'); postIntent('edit_draft', { item_id: dr.id, body: e.target.value }); } }, dr.body),
+      // human-sounding checklist
+      el('div', { style: 'display:flex;gap:14px;flex-wrap:wrap;margin:10px 0' }, checklist.map(([lbl, ok]) =>
+        el('span', { style: `font-size:12px;color:${ok ? 'var(--ok)' : 'var(--crit)'}` }, `${ok ? '✓' : '✗'} ${lbl}`))),
+      el('div', { class: 'footnote', style: 'display:inline-block' }, ['CASL consent: ', el('span', { class: 'src' }, dr.consent_basis || '—'), ' · ', dr.consent_evidence || '']),
+      // tone controls + route-to-approvals (NO send)
+      el('div', { class: 'appr-actions', style: 'margin-top:12px' }, [
+        ...['professional', 'friendly', 'brief'].map(t => el('button', { class: 'chip', onclick: () => { toast('Regenerate (' + t + ') → AXIS'); postIntent('regen', { item_id: dr.id, tone: t }); } }, t)),
+        el('div', { style: 'flex:1' }),
+        el('button', { class: 'chip', style: 'border-color:var(--gold);color:var(--gold)', onclick: () => go('approvals') }, 'Review in Approvals →')]),
+    ]);
+    c.append(card);
+  });
+};
+
 function placeholder(label) {
   return (c) => {
     c.append(head(label, 'live data bound · full UI in a later phase'));

@@ -57,6 +57,38 @@ export const SNAPSHOT_MODULES = [
 export const UNKNOWN_FACT = { value: null, source_url: null, confidence: 0, last_verified: null, unknown: true };
 export const UNKNOWN_LABEL = 'Not found — never guessed';
 
+// ── Outreach identity (P4). ONE identity everywhere: From, Reply-To, CASL contact, and the mailbox
+// the P5 inbox monitor watches for replies. iisupp.net is Google Workspace (MX=smtp.google.com), so this
+// is a Workspace mailbox — Gmail API OAuth runs directly against it; tokens live LOCAL in data/secrets/. ──
+export const OUTREACH_IDENTITY = {
+  from_name: 'Ahmad Wasee',
+  from_email: 'ahmad.wasee@iisupp.net',
+  reply_to: 'ahmad.wasee@iisupp.net',
+  watch_mailbox: 'ahmad.wasee@iisupp.net', // P5 reply monitor
+};
+
+// CASL footer — REAL registered mailing address (public on iisupp.net) + working unsubscribe. Every
+// commercial email carries this. Address confirmed on index/about/services/shop; postal code L1P 2L4
+// per the marketing site + about.html schema.org (a few internal pages show L1P 1L4 — confirm before send).
+export const CASL = {
+  company: 'Integrated IT Support Inc.',
+  address: '30 Fothergill Court, Whitby, ON L1P 2L4, Canada',
+  phone: '(647) 581-3182',
+  contact: 'ahmad.wasee@iisupp.net',
+  // consent bases we record per contact + the evidence that supports each
+  bases: CONSENT_BASES, // implied | conspicuous_publication | express
+};
+
+// Lint (P4 §6): banned filler → hard reject; require ≥1 sourced company fact; problem-first; initial ≤150 words.
+export const BANNED_FILLER = [
+  'i hope this finds you well', 'i hope this email finds you well', 'hope you are doing well', 'hope all is well',
+  'cutting-edge', 'cutting edge', 'synergy', 'synergies', 'circle back', 'touch base', 'game-changer', 'game changer',
+  'revolutionary', 'best-in-class', 'best in class', 'move the needle', 'low-hanging fruit', 'thought leader',
+  'in today\'s fast-paced', 'paradigm shift', 'seamlessly', 'unlock the power', 'take it to the next level',
+  'we are excited to', 'i wanted to reach out', 'quick question', 'pick your brain', 'world-class',
+];
+export const OUTREACH_LIMITS = { initial_words_max: 150, subjects: 3, followups: 3 };
+
 // ── Blobs store names. Intents reuse the existing axis-inbox store (worker already consumes pending/).
 // Snapshots get a dedicated store; key = module name, plus a 'version' key holding {v, modules:{m:v}}. ──
 export const BLOBS = { inbox: 'axis-inbox', intentPrefix: 'pending/', snapshotStore: 'axis-snapshots', versionKey: 'version' };
