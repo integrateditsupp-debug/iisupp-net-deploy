@@ -11,6 +11,7 @@
 //     filename?,
 //     os?: 'windows'|'mac',
 //     allowCloudVision?: bool,         // user opted into cloud vision for this image
+//     redactRegions?: [{x,y,w,h}],     // 0..1 fractions the USER painted out; masked before sending
 //     consent?: { screenCapture?, cloudProcessing?, autoCapture?, ts? }
 //   }
 // →  { ok, blocked?, requiresConsent?, disclosure, dataFlow, diagnosis|null, fix|null,
@@ -23,8 +24,9 @@
 //    model is configured (ARIA_VISION_MODEL). The $0 offline KB is always the fallback.
 
 import { diagnoseInput, redactPII } from './lib/vision-diagnose-core.mjs';
-import { evaluateConsent, shouldCallCloudVision, dataFlow } from './lib/vision-consent.mjs';
+import { evaluateConsent, shouldCallCloudVision, dataFlow, buildDisclosure } from './lib/vision-consent.mjs';
 import { scrubImageMetadata } from './lib/vision-image-scrub.mjs';
+import { redactImageRegions } from './lib/vision-pixel-redact.mjs';
 import { matchFix } from './lib/vision-fix-link.mjs';
 import { RECIPES } from './aria-recipes-data.mjs';
 // D4 — reuse the site's existing spend controls for the paid vision call (same as aria-chat.js).
@@ -94,7 +96,8 @@ export default async (req) => {
   let visionText = '';
   let visionUsed = false;
   let visionNote = null;
-  let imageScrub = null;   // privacy pre-flight report for the image path (null for text/logs)
+  let imageScrub = null;      // metadata pre-flight report for the image path (null for text/logs)
+  let pixelRedaction = null;  // user-painted pixel redaction report (null when the user painted nothing)
 
   if (isImage) {
     if (willCallCloud) {
@@ -151,8 +154,51 @@ export default async (req) => {
         bytesAfter: scrub.bytesAfter,
         note: scrub.note,
       };
+
+      // 🔒 PRIVACY PRE-FLIGHT, PART 2 — PIXELS.
+      // The metadata strip above cannot touch an email address that is visibly on screen. If the
+      // user painted boxes over the sensitive areas, those pixels are destroyed in the file HERE,
+      // before the paid call. Nothing is detected automatically — there is no OCR — so an image
+      // with no painted regions still goes unredacted and every disclosure keeps saying so.
+      // If the user ASKED for redaction and we cannot deliver it, we refuse: shipping the
+      // unpainted original to a third-party model after being asked to mask it would be the
+      // worst possible failure mode.
+      let sendBase64 = scrub.base64;
+      let sendMediaType = body.mediaType || 'image/png';
+      if (Array.isArray(body.redactRegions) && body.redactRegions.length > 0) {
+        const pr = redactImageRegions(scrub.base64, sendMediaType, body.redactRegions);
+        if (!pr.ok) {
+          return resp(200, {
+            ok: true, blocked: false, abstain: true, diagnosis: null,
+            confidence: 0, confidenceLabel: 'abstain',
+            reason: 'pixel-redaction-failed',
+            redactionReason: pr.reason,
+            disclosure: gate.disclosure,
+            dataFlow: dataFlow({ willCallCloud: false, kind }),
+            imageScrub,
+            pixelRedaction: { ok: false, reason: pr.reason, note: pr.note },
+            honestFallback: honestFallback(os),
+            hint: 'You asked for areas to be painted out and we could not do it, so nothing was sent. Re-save the screenshot as PNG and retry, or paste the error text — the offline knowledge base answers that for free.',
+            meta: { surface, kind, visionUsed: false },
+          });
+        }
+        sendBase64 = pr.base64;
+        sendMediaType = pr.mediaType;
+        pixelRedaction = {
+          ok: true,
+          regions: pr.regions,
+          pixelsPainted: pr.pixelsPainted,
+          percentPainted: pr.percentPainted,
+          width: pr.width,
+          height: pr.height,
+          bytesBefore: pr.bytesBefore,
+          bytesAfter: pr.bytesAfter,
+          note: pr.note,
+        };
+      }
+
       try {
-        visionText = await runVision({ imageBase64: scrub.base64, mediaType: body.mediaType || 'image/png', hostBase: hostBase(req) });
+        visionText = await runVision({ imageBase64: sendBase64, mediaType: sendMediaType, hostBase: hostBase(req) });
         visionUsed = true;
       } catch (e) {
         // Cloud vision failed — do NOT fabricate. Fall through to honest abstain.
@@ -169,6 +215,7 @@ export default async (req) => {
         confidence: 0, confidenceLabel: 'abstain',
         reason: visionNote,
         imageScrub,
+        pixelRedaction,
         disclosure: gate.disclosure,
         dataFlow: dataFlow({ willCallCloud: false, kind }),
         honestFallback: honestFallback(os),
@@ -193,10 +240,11 @@ export default async (req) => {
   const base = {
     ok: true, blocked: false,
     surface, kind, os,
-    disclosure: gate.disclosure,
-    dataFlow: dataFlow({ willCallCloud, kind }),
+    disclosure: buildDisclosure({ surface, kind, willCallCloud, isCapture: kind === 'screen-capture', pixelRedactedRegions: pixelRedaction && pixelRedaction.ok ? pixelRedaction.regions : 0 }),
+    dataFlow: dataFlow({ willCallCloud, kind, pixelRedactedRegions: pixelRedaction && pixelRedaction.ok ? pixelRedaction.regions : 0 }),
     redaction: d.redaction,          // {found:[{type,count}], count} — shown to the user
     imageScrub,                      // what metadata was stripped before the image left (null for text)
+    pixelRedaction,                  // what the USER painted out before it was sent (null if nothing)
     signals: d.signals,
     confidence: d.confidence,
     confidenceLabel: d.confidenceLabel,

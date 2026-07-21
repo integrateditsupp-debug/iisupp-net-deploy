@@ -45,6 +45,10 @@
       '.avd-priv{font-size:11px;color:#8a8a82;margin-top:10px;border-top:1px solid #1a1a1a;padding-top:8px}',
       '.avd-consent{margin-top:12px;background:#120f06;border:1px solid #3a2f12;border-radius:10px;padding:12px 14px;font-size:13px}',
       '.avd-consent label{display:block;margin:8px 0;cursor:pointer}',
+      '.avd-redact{margin:10px 0;border:1px solid #3a2f12;border-radius:8px;background:#000;overflow:auto;max-height:320px}',
+      '.avd-redact canvas{display:block;max-width:100%;cursor:crosshair;touch-action:none}',
+      '.avd-redact-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:#9a9a92;margin-top:6px}',
+      '.avd-mini{padding:4px 10px;border-radius:6px;border:1px solid #5c4a1f;background:transparent;color:' + GOLD + ';font-size:12px;cursor:pointer}',
       '.avd-fb{margin-top:10px;font-size:13px;color:#9a9a92}',
       '.avd-err{color:#c98b8b;font-size:13px;margin-top:8px}'
     ].join('\n');
@@ -160,8 +164,75 @@
       var box = el('div', 'avd-consent');
       box.innerHTML =
         '<strong style="color:' + GOLD + '">Before ARIA looks at this image</strong>' +
-        '<p style="margin:8px 0;color:#c9c9c1">The image itself is sent <strong>unredacted</strong> to Claude Fable 5 (vision) to read the error — pixels can\'t be masked the way text is. Only the text ARIA reads back is filtered for secrets, and we keep no screenshot after. Don\'t upload anything you wouldn\'t show a technician — or cancel and type the error text to keep it off the cloud.</p>' +
-        '<label><input type="checkbox" id="avd-ok"> I understand the image is sent unredacted, and I want ARIA to analyze it.</label>';
+        '<p style="margin:8px 0;color:#c9c9c1">Every pixel you do <strong>not</strong> paint over is sent <strong>unredacted</strong> to Claude Fable 5 (vision) to read the error — nothing is found or masked automatically, there is no OCR. Drag over anything you don\'t want sent (an email address, a customer name, a licence key): those pixels are painted out in the file itself, in this browser, before it is sent. Only the text ARIA reads back is filtered for secrets, and we keep no screenshot after. Don\'t upload anything you wouldn\'t show a technician — or cancel and type the error text to keep it off the cloud.</p>';
+
+      // ── Paint-over tool: the user marks what must not leave. Real pixels, not an overlay. ──
+      // Regions are kept as 0..1 fractions so they survive any display scaling, and are ALSO
+      // sent to the server, which repaints them server-side before the paid call. Belt and
+      // braces: if the browser export fails, the server still refuses to send an unpainted
+      // image once redaction has been asked for.
+      var regions = [];
+      var wrap = el('div', 'avd-redact');
+      var canvas = document.createElement('canvas');
+      wrap.appendChild(canvas);
+      var bar = el('div', 'avd-redact-bar');
+      var count = el('span', '', 'Nothing painted out yet — the whole image will be sent.');
+      var undo = el('button', 'avd-mini', 'Undo last box');
+      var clear = el('button', 'avd-mini', 'Clear boxes');
+      bar.appendChild(count); bar.appendChild(undo); bar.appendChild(clear);
+      box.appendChild(wrap); box.appendChild(bar);
+
+      var img = new Image();
+      var ready = false;
+      img.onload = function () {
+        canvas.width = img.naturalWidth || img.width;
+        canvas.height = img.naturalHeight || img.height;
+        ready = true;
+        repaint();
+      };
+      img.onerror = function () { wrap.style.display = 'none'; bar.style.display = 'none'; };
+      img.src = 'data:' + (mediaType || 'image/png') + ';base64,' + b64;
+
+      function repaint(live) {
+        if (!ready) return;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#000';
+        regions.concat(live ? [live] : []).forEach(function (r) {
+          ctx.fillRect(r.x * canvas.width, r.y * canvas.height, r.w * canvas.width, r.h * canvas.height);
+        });
+        count.textContent = regions.length
+          ? (regions.length + ' area' + (regions.length === 1 ? '' : 's') + ' will be painted out before sending. Everything else is still sent unredacted.')
+          : 'Nothing painted out yet — the whole image will be sent.';
+      }
+
+      var drag = null;
+      function pointAt(e) {
+        var b = canvas.getBoundingClientRect();
+        var cx = (e.touches ? e.touches[0].clientX : e.clientX) - b.left;
+        var cy = (e.touches ? e.touches[0].clientY : e.clientY) - b.top;
+        return { x: Math.min(Math.max(cx / b.width, 0), 1), y: Math.min(Math.max(cy / b.height, 0), 1) };
+      }
+      function boxOf(a, z) {
+        return { x: Math.min(a.x, z.x), y: Math.min(a.y, z.y), w: Math.abs(z.x - a.x), h: Math.abs(z.y - a.y) };
+      }
+      canvas.addEventListener('pointerdown', function (e) { if (!ready) return; e.preventDefault(); drag = pointAt(e); });
+      canvas.addEventListener('pointermove', function (e) { if (!drag) return; repaint(boxOf(drag, pointAt(e))); });
+      canvas.addEventListener('pointerup', function (e) {
+        if (!drag) return;
+        var r = boxOf(drag, pointAt(e));
+        drag = null;
+        if (r.w > 0.004 && r.h > 0.004) regions.push(r);   // ignore accidental taps
+        repaint();
+      });
+      canvas.addEventListener('pointerleave', function () { if (drag) { drag = null; repaint(); } });
+      undo.addEventListener('click', function () { regions.pop(); repaint(); });
+      clear.addEventListener('click', function () { regions = []; repaint(); });
+
+      var label = el('label', '', '');
+      label.innerHTML = '<input type="checkbox" id="avd-ok"> I understand everything I have not painted over is sent unredacted, and I want ARIA to analyze it.';
+      box.appendChild(label);
+
       var go = el('button', 'avd-btn', 'Analyze image');
       var cancel = el('button', 'avd-btn ghost', 'Cancel — I\'ll type it instead');
       box.appendChild(go); box.appendChild(cancel);
@@ -169,7 +240,21 @@
       go.addEventListener('click', function () {
         if (!box.querySelector('#avd-ok').checked) return;
         var consent = Object.assign({ cloudProcessing: true, ts: Date.now() }, extraConsent || {});
-        submit({ kind: extraConsent && extraConsent.screenCapture ? 'screen-capture' : 'image', imageBase64: b64, mediaType: mediaType, allowCloudVision: true, consent: consent });
+        var sendB64 = b64, sendType = mediaType, sendRegions = regions.slice();
+        if (ready && regions.length) {
+          // Flatten in the browser: the painted pixels are destroyed here, so the original
+          // never leaves this machine at all. The server repaints the same regions anyway.
+          try {
+            var flat = canvas.toDataURL('image/png').split(',')[1];
+            if (flat && flat.length) { sendB64 = flat; sendType = 'image/png'; }
+          } catch (err) { /* keep the original + server-side paint as the fallback */ }
+        }
+        submit({
+          kind: extraConsent && extraConsent.screenCapture ? 'screen-capture' : 'image',
+          imageBase64: sendB64, mediaType: sendType,
+          redactRegions: sendRegions,
+          allowCloudVision: true, consent: consent
+        });
       });
       cancel.addEventListener('click', function () { out.innerHTML = ''; });
     }
@@ -237,9 +322,12 @@
       var red = res.redaction || { count: 0, found: [] };
       var flow = res.dataFlow || {};
       // Honest receipt: text redaction applies to the text path; the image itself is sent unredacted.
+      // Real-or-silent: the painted-region line appears only when the server confirms it painted.
+      var pxr = res.pixelRedaction && res.pixelRedaction.ok ? res.pixelRedaction : null;
       var priv = 'Privacy: ' + (red.count ? ('removed ' + red.count + ' sensitive item' + (red.count === 1 ? '' : 's') + ' from the text (' + (red.found || []).map(function (f) { return f.count + ' ' + f.type.toLowerCase(); }).join(', ') + '). ') : 'no sensitive text detected. ') +
+        (pxr ? ('You painted out ' + pxr.regions + ' area' + (pxr.regions === 1 ? '' : 's') + ' (' + pxr.percentPainted + '% of the image) — those pixels were destroyed before sending. ') : '') +
         (flow.thirdPartyModel
-          ? ('The image was sent UNREDACTED to ' + esc(flow.sentTo || 'the vision model') + '; ' + esc(flow.retention || 'not stored') + '.')
+          ? ((pxr ? 'Every pixel you did not paint was sent UNREDACTED to ' : 'The image was sent UNREDACTED to ') + esc(flow.sentTo || 'the vision model') + '; ' + esc(flow.retention || 'not stored') + '.')
           : ('Matched on our own server against the offline KB — ' + esc(flow.retention || 'not stored') + '. No third-party AI model saw it.'));
       card.appendChild(el('div', 'avd-priv', priv));
       out.appendChild(card);

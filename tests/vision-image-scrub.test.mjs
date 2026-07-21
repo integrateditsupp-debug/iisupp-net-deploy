@@ -126,7 +126,11 @@ test('[8] the handler wires the scrub in ahead of the paid call', async () => {
   const visionAt = src.indexOf('await runVision(');
   assert.ok(scrubAt > 0 && visionAt > 0, 'both the scrub and the vision call exist');
   assert.ok(scrubAt < visionAt, 'the scrub runs BEFORE the paid cloud call');
-  assert.ok(/imageBase64:\s*scrub\.base64/.test(src), 'the SCRUBBED bytes are what get sent, not the original');
+  // The bytes handed to the paid call are the pre-flighted ones, never `body.imageBase64`.
+  // (They now travel via `sendBase64`, which is seeded from the scrub and may then be painted.)
+  assert.ok(/let sendBase64 = scrub\.base64/.test(src), 'the send buffer is seeded from the SCRUBBED bytes, not the original');
+  assert.ok(/imageBase64:\s*sendBase64/.test(src), 'the pre-flighted bytes are what get sent');
+  assert.ok(!/imageBase64:\s*body\.imageBase64/.test(src), 'the raw uploaded bytes are never sent to the paid model');
   assert.ok(/image-not-prescrubbable/.test(src), 'an unscrubbable image aborts with an honest reason');
 });
 
