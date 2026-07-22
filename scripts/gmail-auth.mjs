@@ -31,6 +31,7 @@ const state = crypto.randomBytes(16).toString('hex');
 const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' + new URLSearchParams({
   client_id, redirect_uri, response_type: 'code', scope: SCOPES, access_type: 'offline', prompt: 'consent', state,
 });
+try { fs.mkdirSync(SECRETS, { recursive: true }); fs.writeFileSync(path.join(SECRETS, 'gmail-auth-url.txt'), String(authUrl)); } catch {}
 
 const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, redirect_uri);
