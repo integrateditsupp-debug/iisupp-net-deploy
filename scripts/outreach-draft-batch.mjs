@@ -7,7 +7,7 @@ import dns from 'node:dns/promises';
 import { openDb } from './lib/axis-db.mjs';
 import { generateOutreach, caslFooter, lint, railsCheck } from './lib/outreach.mjs';
 import { previewRfc822, isConfigured } from './lib/gmail-outreach.mjs';
-import { OUTREACH_IDENTITY, CASL } from '../assets/axis-constants.js';
+import { OUTREACH_IDENTITY, CASL } from './lib/axis-constants.mjs';
 
 const TEMPLATE_ID = 'approved-v1-2026-06-25';
 const BATCH_HANDLES = ['Lead-022', 'Lead-024', 'Lead-025', 'Lead-027', 'Lead-032'];

@@ -8,7 +8,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { OUTREACH_IDENTITY } from '../../assets/axis-constants.js';
+import { OUTREACH_IDENTITY } from './axis-constants.mjs';
 
 const SECRETS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'data', 'secrets');
 const TOKENS_FILE = path.join(SECRETS_DIR, 'gmail-tokens.json');       // { refresh_token, access_token?, expiry? }

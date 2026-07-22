@@ -24,7 +24,8 @@ ok();
 
 // ---- 2. mic input: push-to-talk → transcript → auto-send to axis-director ----
 assert.ok(/window\.SpeechRecognition\s*\|\|\s*window\.webkitSpeechRecognition/.test(app), 'mic uses the browser Web Speech API (free, on-device trigger — no paid API)');
-assert.ok(/onresult[\s\S]{0,200}axisSend\(\)/.test(app), 'mic transcript auto-sends');
+assert.ok(/onresult[\s\S]{0,220}send\(\)/.test(app), 'mic transcript auto-sends');
+assert.ok(/send = axisSend/.test(app), 'dock mic default-binds to axisSend (public panel passes its own sender)');
 assert.ok(/axis-director/.test(app), 'dock send is wired to the axis-director function');
 ok();
 

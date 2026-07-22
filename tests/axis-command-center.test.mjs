@@ -53,6 +53,20 @@ const full = JSON.parse(fs.readFileSync(path.join(root, 'netlify', 'functions', 
 assert.ok(Array.isArray(full.approvals) && Array.isArray(full.recentActivity), 'full state has the detail arrays');
 ok();
 
+// ---- 4b. Browser-served constants carry UI vocabulary ONLY (R-series gate review 2026-07-21):
+// assets/axis-constants.js rides the pre-auth module graph AND is world-readable under publish=".".
+// The outreach playbook (LOCKED template, identity/watched mailbox, pacing/ramp strategy, Blobs
+// store names, rail caps) must live ONLY in scripts/lib/axis-private-constants.mjs (force-404'd). ----
+const pubConsts = await import(pathToFileURL(path.join(root, 'assets', 'axis-constants.js')).href);
+for (const k of ['APPROVED_TEMPLATE', 'OUTREACH_IDENTITY', 'CASL', 'BLOBS', 'DEFAULT_RAILS', 'BANNED_FILLER', 'OUTREACH_PACING', 'OUTREACH_LIMITS', 'DEMO_LINK'])
+  assert.ok(!(k in pubConsts), `browser constants must NOT export ${k} (operator-internal)`);
+const pubConstsText = fs.readFileSync(path.join(root, 'assets', 'axis-constants.js'), 'utf8');
+assert.ok(!/calendar\.app\.google|watch_mailbox|first_batch_daily_cap|axis-inbox/.test(pubConstsText), 'no playbook strings in the browser constants file');
+const workerConsts = await import(pathToFileURL(path.join(root, 'scripts', 'lib', 'axis-constants.mjs')).href);
+for (const k of ['APPROVED_TEMPLATE', 'OUTREACH_IDENTITY', 'CASL', 'BLOBS', 'DEFAULT_RAILS', 'SNAPSHOT_MODULES', 'PIPELINE_STAGES'])
+  assert.ok(k in workerConsts, `worker namespace still exports ${k} (no drift)`);
+ok();
+
 // ---- 5. director endpoint contract (no throw on any action; AXIS CC v2 P1a auth spine: every
 // action fails CLOSED without an Aperture session — unauthed callers get 401, never an execution) ----
 const handler = (await import(pathToFileURL(path.join(root, 'netlify', 'functions', 'axis-director.js')).href)).handler;

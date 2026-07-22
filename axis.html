@@ -29,6 +29,34 @@
     <button id="loginBtn">Sign in</button>
     <div id="loginErr" style="color:var(--crit);font-size:11px;margin-top:8px;min-height:14px"></div>
   </div>
+
+  <!-- Public AXIS — generic program status ONLY (headline feed + canned lines). No prospect data,
+       no counts, no names pre-auth. Voice is browser-local. -->
+  <section class="axis-public" id="axisPublic" aria-label="Ask AXIS — public status">
+    <div style="display:flex;align-items:center;gap:11px">
+      <span class="axis-orb axis-orb-sm" data-orb></span>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="eyebrow" style="color:var(--gold)">AXIS · Director</span>
+          <span class="axis-state-word" id="axisPubState" aria-live="polite">idle</span>
+        </div>
+        <div style="font-size:12.5px;color:var(--txt-2);margin-top:2px">Ask AXIS what is live right now.</div>
+      </div>
+    </div>
+    <div class="axis-pub-log" id="axisPubLog" hidden></div>
+    <div class="axis-input" style="border-top:none;padding:0">
+      <input id="axisPubInput" placeholder="Ask AXIS…" autocomplete="off" aria-label="Ask AXIS a public question">
+      <button class="chip" id="axisPubMic" title="Push to talk (Chrome / Edge)" aria-label="Push to talk">🎙</button>
+      <button class="chip" id="axisPubVoice" title="Toggle spoken replies" aria-pressed="false" aria-label="Toggle spoken replies">🔊</button>
+      <button class="chip" id="axisPubSend">Ask</button>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="chip" data-pub-q="status">Status</button>
+      <button class="chip" data-pub-q="next">Next</button>
+      <button class="chip" data-pub-q="help">Help</button>
+    </div>
+    <div class="eyebrow">public mode · general status only · sign in for the director view</div>
+  </section>
 </div>
 
 <!-- App shell (hidden until authed) -->
@@ -56,15 +84,18 @@
   </div>
 
   <!-- AXIS dock -->
-  <button class="axis-fab" id="axisFab" title="Talk to AXIS" aria-label="Talk to AXIS">
-    <svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true">
-      <circle cx="15" cy="15" r="13" fill="none" stroke="var(--gold)" stroke-width="1.1" opacity="0.6"/>
-      <ellipse cx="15" cy="15" rx="13" ry="5.2" fill="none" stroke="var(--gold)" stroke-width="0.9" opacity="0.4"/>
-      <text x="15" y="19.5" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="650" fill="var(--gold)">A</text>
-    </svg>
+  <button class="axis-fab" id="axisFab" title="Ask AXIS" aria-label="Ask AXIS — open the director dock">
+    <span class="axis-orb" data-orb></span>
+    <span class="axis-fab-pill">Ask AXIS</span>
   </button>
   <section class="axis-dock" id="axisDock" hidden aria-label="AXIS director">
-    <header class="axis-dock-head"><span class="eyebrow">AXIS · director</span><button class="iconbtn" id="axisClose" style="padding:2px 7px">✕</button></header>
+    <header class="axis-dock-head">
+      <span style="display:flex;align-items:center;gap:9px">
+        <span class="axis-orb axis-orb-xs" data-orb></span>
+        <span class="eyebrow" style="color:var(--gold)">AXIS · Director</span>
+        <span class="axis-state-word" id="axisStateWord" aria-live="polite">idle</span>
+      </span>
+      <button class="iconbtn" id="axisClose" aria-label="Close AXIS dock" style="padding:2px 7px">✕</button></header>
     <div class="axis-log" id="axisLog"></div>
     <div class="axis-input"><input id="axisInput" placeholder="Tell AXIS…" autocomplete="off"><button class="chip" id="axisMic" title="Push to talk (Chrome / Edge)" aria-label="Push to talk">🎙</button><button class="chip" id="axisVoice" title="Toggle spoken replies" aria-pressed="false" aria-label="Toggle spoken replies">🔊</button><button class="chip" id="axisSend">Send</button></div>
   </section>

@@ -1,9 +1,9 @@
 // outreach.mjs — AXIS CC v2 P4 outreach + lint + SEND-TIME rails. WORKER-OWNED.
-// Copy source of truth = Ahmad's LOCKED approved template (assets/axis-constants.js APPROVED_TEMPLATE,
+// Copy source of truth = Ahmad's LOCKED approved template (scripts/lib/axis-private-constants.mjs APPROVED_TEMPLATE,
 // mirrored from aria-vault/01_Frontal/Outreach-Template-Approved.md). We DO NOT invent body copy — we
 // personalize {name} only and append the exact CASL footer. Lint enforces conformance + a residual filler
 // blocklist (drift guard). Sending is never done here; railsCheck() runs at send time in the outbound queue.
-import { OUTREACH_IDENTITY, CASL, BANNED_FILLER, OUTREACH_LIMITS, OUTREACH_PACING, APPROVED_TEMPLATE } from '../../assets/axis-constants.js';
+import { OUTREACH_IDENTITY, CASL, BANNED_FILLER, OUTREACH_LIMITS, OUTREACH_PACING, APPROVED_TEMPLATE } from './axis-constants.mjs';
 
 const domainOf = (url) => (url || '').replace(/^https?:\/\/(www\.)?/, '').split('/')[0];
 const firstProv = (p, k) => { try { return JSON.parse(p.provenance_json)[k]?.value ?? null; } catch { return null; } };

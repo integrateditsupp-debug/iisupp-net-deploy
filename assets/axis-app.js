@@ -85,6 +85,7 @@ const SCREENS = {};
 
 SCREENS.overview = (c) => {
   const d = data('overview'); const k = d.kpis || {};
+  c.append(axisStrip(k)); // AXIS front-and-center: command strip above everything (R3)
   c.append(head('Overview', 'command deck'));
   const kpis = [['Pipeline value', fmtMoney(k.pipeline_value)], ['Awaiting approval', k.awaiting_approval ?? 0],
     ['Client messages waiting', k.messages_waiting ?? 0], ['Follow-ups due', k.followups_due ?? 0],
@@ -703,7 +704,9 @@ function renderDock() {
   const log = $('axisLog'); log.innerHTML = '';
   if (!dockLog.length) log.append(el('div', { class: 'empty', style: 'padding:20px' }, 'Talk to AXIS. Blunt. Important-only.'));
   dockLog.forEach(m => {
-    const node = el('div', { class: 'axis-msg ' + m.role }, m.text);
+    const node = (m.role === 'axis' && m.text === '…')
+      ? el('div', { class: 'axis-msg axis axis-thinking', role: 'status', 'aria-label': 'AXIS is thinking' }, [el('span'), el('span'), el('span')])
+      : el('div', { class: 'axis-msg ' + m.role }, m.text);
     if (m.chips) node.append(el('div', { class: 'chips' }, m.chips.map(ch => el('button', { class: 'chip', onclick: ch.onclick }, ch.label))));
     log.append(node);
   });
@@ -712,14 +715,19 @@ function renderDock() {
 async function axisSend() {
   const inp = $('axisInput'); const text = inp.value.trim(); if (!text) return; inp.value = '';
   dockLog.push({ role: 'user', text }); renderDock();
-  dockLog.push({ role: 'axis', text: '…' }); renderDock();
+  // Remove OUR placeholder by reference, never the array tail — concurrent sends must not eat
+  // each other's replies or orphan a fake thinking row (gate-review finding, 2026-07-21).
+  const pending = { role: 'axis', text: '…' };
+  const dropPending = () => { const i = dockLog.indexOf(pending); if (i >= 0) dockLog.splice(i, 1); };
+  dockLog.push(pending); renderDock();
+  setAxisState('thinking'); // orb + state word: awaiting the director brain
   try {
     const r = await fetch('/.netlify/functions/axis-director', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'chat', messages: dockLog.filter(m => m.role === 'user').map(m => ({ role: 'user', content: m.text })) }) });
-    const j = await r.json(); dockLog.pop();
+    const j = await r.json(); dropPending();
     const reply = { role: 'axis', text: (j && j.text) || 'Heard you.' };
     if (j && j.routedAgent && j.intent) reply.chips = [{ label: 'Approve route', onclick: () => { postIntent('approve', { intent: j.intent, agent: j.routedAgent }); toast('Routed to ' + j.routedAgent); } }];
-    dockLog.push(reply); renderDock(); axisSpeak(reply.text);
-  } catch { dockLog.pop(); dockLog.push({ role: 'axis', text: 'Brain unreachable.' }); renderDock(); axisSpeak('Brain unreachable.'); }
+    dockLog.push(reply); renderDock(); if (!axisSpeak(reply.text)) setAxisState('idle');
+  } catch { dropPending(); dockLog.push({ role: 'axis', text: 'Brain unreachable.' }); renderDock(); if (!axisSpeak('Brain unreachable.')) setAxisState('idle'); }
 }
 
 // ── AXIS voice (restored from the v1 console, full behavior) — mic push-to-talk + spoken replies,
@@ -786,12 +794,14 @@ function axisHumanizeForSpeech(text) {
        .replace(/\s+/g, ' ').trim();
   return t;
 }
+let __speakGen = 0; // generation guard: a stale utterance's onend must never clobber a newer state
 function axisSpeak(text) {
   try {
-    if (!axisVoiceOn || !window.speechSynthesis) return;
+    if (!axisVoiceOn || !window.speechSynthesis) return false;
     const clean = axisHumanizeForSpeech(text);
-    if (!clean) return;
+    if (!clean) return false;
     speechSynthesis.cancel(); // barge-in: a new reply always interrupts the old one
+    const gen = ++__speakGen;
     const v = axisPickVoice();
     const natural = !!(v && /natural|neural|google|premium|enhanced/i.test(v.name || ''));
     // Sentence-chunk so delivery breathes between thoughts (also avoids Chrome's long-utterance cutoff).
@@ -799,41 +809,153 @@ function axisSpeak(text) {
     let buf = ''; const queue = [];
     for (const c of chunks) { if ((buf + c).length > 180 && buf) { queue.push(buf.trim()); buf = c; } else { buf += c; } }
     if (buf.trim()) queue.push(buf.trim());
-    queue.forEach(part => {
+    setAxisState('speaking');
+    queue.forEach((part, qi) => {
       const u = new SpeechSynthesisUtterance(part);
       if (v) { u.voice = v; u.lang = v.lang; }
       u.rate = natural ? 1.0 : 1.02; u.pitch = 1.0; u.volume = 1;
+      // cancel() fires 'error' (interrupted/canceled), not 'end' — without onerror the machine
+      // would stick on 'speaking' forever (gate-review finding). Every chunk resets, gen-guarded.
+      const settle = () => { if (gen === __speakGen && document.documentElement.dataset.axisState === 'speaking') setAxisState('idle'); };
+      if (qi === queue.length - 1) u.onend = settle;
+      u.onerror = settle;
       speechSynthesis.speak(u);
     });
     const b = $('axisVoice'); if (b && v) b.title = 'Voice: ' + v.name + ' — cycle: axisVoiceNext()';
-  } catch {}
+    return true;
+  } catch { return false; }
 }
 function axisSyncVoiceBtn() {
-  const b = $('axisVoice');
-  if (b) { b.setAttribute('aria-pressed', axisVoiceOn ? 'true' : 'false'); b.style.color = axisVoiceOn ? 'var(--gold)' : ''; b.style.borderColor = axisVoiceOn ? 'var(--gold)' : ''; b.title = axisVoiceOn ? 'Spoken replies ON' : 'Toggle spoken replies'; }
+  for (const id of ['axisVoice', 'axisPubVoice']) {
+    const b = $(id);
+    if (b) { b.setAttribute('aria-pressed', axisVoiceOn ? 'true' : 'false'); b.style.color = axisVoiceOn ? 'var(--gold)' : ''; b.style.borderColor = axisVoiceOn ? 'var(--gold)' : ''; b.title = axisVoiceOn ? 'Spoken replies ON' : 'Toggle spoken replies'; }
+  }
 }
 function axisVoiceToggle() {
   axisVoiceOn = !axisVoiceOn;
   axisSyncVoiceBtn();
   if (axisVoiceOn) axisSpeak('Voice on. Ask me for a status update.');
-  else if ('speechSynthesis' in window) speechSynthesis.cancel();
+  else if ('speechSynthesis' in window) { speechSynthesis.cancel(); if (document.documentElement.dataset.axisState === 'speaking') setAxisState('idle'); }
   toast('AXIS voice ' + (axisVoiceOn ? 'on' : 'off'));
 }
-function axisMicToggle() {
+// Push-to-talk, shared by the dock and the public panel (one mic at a time).
+function axisMicToggle(micId = 'axisMic', inputId = 'axisInput', send = axisSend) {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { toast('Mic needs Chrome or Edge'); return; }
   if (axisListening) { try { axisRec && axisRec.stop(); } catch {} return; }
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch {} // barge-in: talking over AXIS stops it
-  const mic = $('axisMic');
+  const mic = $(micId);
+  const restMic = () => { axisListening = false; if (mic) { mic.style.color = ''; mic.style.borderColor = ''; mic.textContent = '🎙'; } if (document.documentElement.dataset.axisState === 'listening') setAxisState('idle'); };
   axisRec = new SR(); axisRec.lang = 'en-CA'; axisRec.interimResults = false; axisRec.maxAlternatives = 1;
-  axisRec.onstart = () => { axisListening = true; if (mic) { mic.style.color = 'var(--gold)'; mic.style.borderColor = 'var(--gold)'; mic.textContent = '⏺'; } };
-  axisRec.onend = () => { axisListening = false; if (mic) { mic.style.color = ''; mic.style.borderColor = ''; mic.textContent = '🎙'; } };
-  axisRec.onerror = () => { axisListening = false; if (mic) { mic.style.color = ''; mic.style.borderColor = ''; mic.textContent = '🎙'; } toast('Mic error — check browser permission'); };
-  axisRec.onresult = (ev) => { const t = ev.results && ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript.trim(); if (t) { $('axisInput').value = t; axisSend(); } };
+  axisRec.onstart = () => { axisListening = true; setAxisState('listening'); if (mic) { mic.style.color = 'var(--gold)'; mic.style.borderColor = 'var(--gold)'; mic.textContent = '⏺'; } };
+  axisRec.onend = restMic;
+  axisRec.onerror = () => { restMic(); toast('Mic error — check browser permission'); };
+  axisRec.onresult = (ev) => { const t = ev.results && ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript.trim(); if (t) { const i = $(inputId); if (i) i.value = t; send(); } };
   try { axisRec.start(); } catch { toast('Mic busy'); }
 }
 // Warm up the async voice list (Chrome loads voices lazily) + reflect the default-ON state on the button.
 try { if (window.speechSynthesis) { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } } catch {}
+
+// ── AXIS orb + state machine (R-series) ──────────────────────────────────────
+// One SVG identity, mounted into every [data-orb] slot (fab, dock header, strip, public panel).
+// Ported from the design-handoff AnimatedGlobe contract: hairline lat/long ellipses, stronger
+// equator, radial gold core, glowing A. Motion lives in CSS, keyed off :root[data-axis-state].
+let __orbN = 0;
+const orbSVG = (uid) => '<svg viewBox="0 0 60 60" aria-hidden="true">'
+  + '<defs><radialGradient id="' + uid + '" cx="0.5" cy="0.42" r="0.62">'
+  + '<stop offset="0%" stop-color="var(--gold-2)" stop-opacity=".8"/>'
+  + '<stop offset="55%" stop-color="var(--gold)" stop-opacity=".28"/>'
+  + '<stop offset="100%" stop-color="var(--gold)" stop-opacity="0"/></radialGradient></defs>'
+  + '<circle cx="30" cy="30" r="28" fill="none" stroke="var(--gold)" stroke-width=".5" stroke-dasharray="1.5 4" opacity=".5"/>'
+  + '<g class="orb-spin">'
+  + '<ellipse cx="30" cy="30" rx="26" ry="9" fill="none" stroke="var(--gold)" stroke-width=".55" opacity=".5"/>'
+  + '<ellipse cx="30" cy="30" rx="26" ry="17" fill="none" stroke="var(--gold)" stroke-width=".35" opacity=".28"/>'
+  + '</g><g class="orb-spin-rev">'
+  + '<ellipse cx="30" cy="30" rx="9" ry="26" fill="none" stroke="var(--gold)" stroke-width=".4" opacity=".34"/>'
+  + '<ellipse cx="30" cy="30" rx="17" ry="26" fill="none" stroke="var(--gold)" stroke-width=".3" opacity=".2"/>'
+  + '</g>'
+  + '<circle class="orb-pulse" cx="30" cy="30" r="20" fill="none" stroke="var(--gold)" stroke-width=".9"/>'
+  + '<circle class="orb-core" cx="30" cy="30" r="17" fill="url(#' + uid + ')"/>'
+  + '<text x="30" y="35.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="15" font-weight="650" fill="var(--gold)">A</text></svg>';
+function mountOrbs(scope = document) {
+  scope.querySelectorAll('[data-orb]:not([data-orb-live])').forEach(n => {
+    n.setAttribute('data-orb-live', '1'); n.innerHTML = orbSVG('axisOrbFade' + (++__orbN)); // unique gradient id per mount
+  });
+}
+// idle | listening | thinking | speaking — drives every orb + the aria-live state words.
+function setAxisState(s) {
+  document.documentElement.dataset.axisState = s;
+  const w = $('axisStateWord'); if (w) w.textContent = s;
+  const p = $('axisPubState'); if (p) p.textContent = s;
+}
+
+// ── AXIS command strip (R3) — Overview, above everything ──
+function askAxis(text) {
+  if ($('axisDock').hidden) openDock();
+  const inp = $('axisInput'); inp.value = text; axisSend();
+}
+function axisStrip(k) {
+  // Honest counts only — straight from the snapshot KPIs the cards below already show.
+  const n1 = k.awaiting_approval ?? 0, n2 = k.messages_waiting ?? 0, n3 = k.followups_due ?? 0;
+  const bits = [];
+  if (n1) bits.push(n1 + (n1 === 1 ? ' approval' : ' approvals') + ' waiting');
+  if (n2) bits.push(n2 + (n2 === 1 ? ' client reply' : ' client replies') + ' waiting');
+  if (n3) bits.push(n3 + (n3 === 1 ? ' follow-up' : ' follow-ups') + ' due');
+  const line = bits.length ? bits.join(' · ') : 'All quiet. AXIS is watching.';
+  const input = el('input', { placeholder: 'Tell AXIS…', 'aria-label': 'Tell AXIS', autocomplete: 'off' });
+  // The 15s snapshot tick re-renders Overview; a draft mid-sentence must survive it (gate-review finding).
+  input.value = state.ui.stripDraft || '';
+  input.addEventListener('input', () => { state.ui.stripDraft = input.value; });
+  input.addEventListener('focus', () => { state.ui.stripFocus = true; });
+  input.addEventListener('blur', () => { state.ui.stripFocus = false; });
+  if (state.ui.stripFocus) requestAnimationFrame(() => { input.focus(); const n = input.value.length; try { input.setSelectionRange(n, n); } catch {} });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && input.value.trim()) { const t = input.value.trim(); input.value = ''; state.ui.stripDraft = ''; askAxis(t); } });
+  const chips = [['Status', 'status'], ['Needs me', 'what needs me now'], ['Next', 'what is next'], ['Approvals', 'approvals']]
+    .map(([lbl, q]) => el('button', { class: 'chip', onclick: () => askAxis(q) }, lbl));
+  const s = el('section', { class: 'axis-strip', 'aria-label': 'AXIS command strip' }, [
+    el('span', { class: 'axis-orb', 'data-orb': '' }),
+    el('div', {}, [el('div', { class: 'eyebrow', style: 'color:var(--gold)' }, 'AXIS · Director'),
+      el('div', { class: 'axis-strip-status' }, line)]),
+    input, ...chips]);
+  mountOrbs(s);
+  return s;
+}
+
+// ── Public AXIS (R4, pre-auth) ────────────────────────────────────────────────
+// Deterministic + $0: answers come ONLY from the emitter-guaranteed HEADLINE-ONLY public feed
+// (/.well-known/axis/status.json) plus canned strings. Never authed endpoints, never prospect
+// data, never counts from private state. axis-director stays fully JWT-gated (P1a) — an unauthed
+// LLM branch would let anonymous callers burn the API key, so public mode is served client-side.
+let __pubFeed = null;
+async function pubFeed() {
+  if (__pubFeed) return __pubFeed;
+  try { const r = await fetch('/.well-known/axis/status.json', { cache: 'no-store' }); if (r.ok) __pubFeed = await r.json(); } catch {}
+  return __pubFeed;
+}
+const PUB_SIGNIN = ' Sign in for the director view.';
+async function pubAnswer(q) {
+  const s = String(q).toLowerCase();
+  if (/help|what can|how do/.test(s)) return 'Public mode. I can share the general program status only — try "status" or "next". Approvals, pipeline, and the fleet are behind sign-in.';
+  const f = await pubFeed();
+  if (/next|milestone|plan|roadmap|coming|ready/.test(s))
+    return f && (f.milestone || f.readiness) ? [f.milestone, f.readiness].filter(Boolean).join(' ') + PUB_SIGNIN
+      : 'The build is moving. I cannot reach the public status feed right now.' + PUB_SIGNIN;
+  if (/status|live|now|state|running|revenue|up\b/.test(s))
+    return f && f.headline ? f.headline + PUB_SIGNIN
+      : 'Hub is live. The worker runs on schedule. All sending stays approval-gated.' + PUB_SIGNIN;
+  return 'Public mode — I only share the general status here, never client or pipeline detail. Ask "status" or "next".' + PUB_SIGNIN;
+}
+async function pubAsk(q) {
+  q = String(q || '').trim(); if (!q) return;
+  const log = $('axisPubLog'); if (!log) return;
+  log.hidden = false;
+  log.append(el('div', { class: 'axis-msg user' }, q));
+  setAxisState('thinking');
+  const a = await pubAnswer(q);
+  log.append(el('div', { class: 'axis-msg axis' }, a));
+  log.scrollTop = log.scrollHeight;
+  if (!axisSpeak(a)) setAxisState('idle');
+}
 
 // ── Command palette ──
 let palSel = 0;
@@ -855,7 +977,11 @@ function renderPalette() {
 
 // ── Auth ──
 function showApp() { $('login').style.display = 'none'; $('app').style.display = 'grid'; renderNav(); renderModule(); fetchSnapshots();
-  clearInterval(window.__axisPoll); window.__axisPoll = setInterval(() => { if (!document.hidden) pollVersion(); }, 15000); }
+  clearInterval(window.__axisPoll); window.__axisPoll = setInterval(() => { if (!document.hidden) pollVersion(); }, 15000);
+  // R2 auto-open: AXIS greets once per authed session; a close is respected for the whole session.
+  if (sessionStorage.getItem('axisDockDismissed') !== '1')
+    setTimeout(() => { try { if ($('app').style.display !== 'none' && $('axisDock').hidden) openDock(); } catch {} }, 600);
+}
 function logout() { localStorage.removeItem(TOKEN_KEY); state.token = ''; $('app').style.display = 'none'; $('login').style.display = 'grid'; clearInterval(window.__axisPoll); }
 async function doLogin() {
   $('loginErr').textContent = '';
@@ -869,7 +995,7 @@ async function doLogin() {
 // ── Theme + dock + wiring ──
 function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('axis_theme', t); }
 function openDock() { $('axisDock').hidden = false; $('axisFab').hidden = true; renderDock(); $('axisInput').focus(); }
-function closeDock() { $('axisDock').hidden = true; $('axisFab').hidden = false; }
+function closeDock() { $('axisDock').hidden = true; $('axisFab').hidden = false; try { sessionStorage.setItem('axisDockDismissed', '1'); } catch {} }
 $('themeBtn').addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 applyTheme(localStorage.getItem('axis_theme') || 'dark');
 $('loginBtn').addEventListener('click', doLogin);
@@ -878,8 +1004,17 @@ $('logoutBtn').addEventListener('click', logout);
 $('axisFab').addEventListener('click', openDock);
 $('axisClose').addEventListener('click', closeDock);
 $('axisSend').addEventListener('click', axisSend);
-$('axisMic')?.addEventListener('click', axisMicToggle);
+$('axisMic')?.addEventListener('click', () => axisMicToggle());
 $('axisVoice')?.addEventListener('click', axisVoiceToggle);
+// Public panel (pre-auth): same voice machinery, canned public-safe answers only.
+const pubSubmit = () => { const i = $('axisPubInput'); const q = i.value; i.value = ''; pubAsk(q); };
+$('axisPubSend')?.addEventListener('click', pubSubmit);
+$('axisPubInput')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') pubSubmit(); });
+$('axisPubMic')?.addEventListener('click', () => axisMicToggle('axisPubMic', 'axisPubInput', pubSubmit));
+$('axisPubVoice')?.addEventListener('click', axisVoiceToggle);
+document.querySelectorAll('[data-pub-q]').forEach(b => b.addEventListener('click', () => pubAsk(b.dataset.pubQ)));
+mountOrbs();          // fill every static [data-orb] slot (fab, dock header, public panel)
+setAxisState('idle'); // orb state machine baseline
 axisSyncVoiceBtn(); // voice defaults ON — show it
 $('axisInput').addEventListener('keydown', (e) => e.key === 'Enter' && axisSend());
 $('search').addEventListener('click', openPalette);

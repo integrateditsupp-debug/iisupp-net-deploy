@@ -2,7 +2,7 @@
 // queues them through Approvals (pending outreach_items kind='followup'); the follow_ups table tracks the
 // schedule. Cadence day 3/7/14, MAX 3 touches then STOP. Auto-cancel on reply is handled by sentry.mjs
 // (cancelFollowups) — reused, not duplicated. Nothing sends.
-import { DEFAULT_RAILS, OUTREACH_IDENTITY, CASL } from '../../assets/axis-constants.js';
+import { DEFAULT_RAILS, OUTREACH_IDENTITY, CASL } from './axis-constants.mjs';
 
 const DAY = 86400000;
 export const CADENCE_DAYS = DEFAULT_RAILS.followup_days;   // [3, 7, 14]
