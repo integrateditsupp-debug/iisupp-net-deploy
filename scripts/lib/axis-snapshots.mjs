@@ -69,7 +69,10 @@ export function computeSnapshots(db) {
       // The LOCKED template (axis-private-constants APPROVED_TEMPLATE, locked 2026-06-25), personalized
       // on {name} only and carrying the exact CASL footer. Generated HERE so the browser never retypes
       // approved copy — the prospect composer opens with these exact bytes and sends them.
-      outreach_draft: (() => { const g = generateOutreach(b); return { subject: g.subject, body: g.body + caslBlock(), template_id: g.template }; })(),
+      // A nameless prospect can't be personalized (generateOutreach hard-fails to prevent "Hello ,") —
+      // in the read model that must degrade gracefully, not crash the whole snapshot: emit no draft and
+      // let the composer/Approvals surface the missing name instead.
+      outreach_draft: (() => { try { const g = generateOutreach(b); return { subject: g.subject, body: g.body + caslBlock(), template_id: g.template }; } catch (e) { return { subject: null, body: null, template_id: null, blocked: e.code || 'RENDER_ERROR', reason: 'no usable name — cannot personalize' }; } })(),
     })),
   };
 
