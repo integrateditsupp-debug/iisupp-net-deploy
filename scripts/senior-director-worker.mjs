@@ -27,7 +27,45 @@ async function runAxisInboxHop() {
       );
     }
     await consumeAxisInbox(store, execute);
-    await log('axis approve-hop', { executed: execute.length, held: hold.length, consumed: consumed.length });
+
+    // ── CC v2 intents (schema 'axis-cc-v2') ──────────────────────────────────────────────────────
+    // processAxisInbox only understands the legacy command/approval shape, so every v2 intent lands in
+    // `hold`. This is the applier: it writes the reversible ones to SQLite (today: delegate_followup →
+    // scheduleFollowups, which only creates PENDING outreach + a schedule, still approval-gated) and
+    // leaves everything it does not recognise held for Ahmad. Then it republishes the snapshot so the
+    // Command Center actually shows the result — otherwise the operator clicks Delegate and the UI
+    // looks unchanged until the next manual push, which reads exactly like a broken button.
+    let v2 = { applied: [], rejected: [], held };
+    if (hold.length) {
+      try {
+        const [{ openDb }, { applyAxisV2Intents }] = await Promise.all([
+          import('./lib/axis-db.mjs'), import('./lib/axis-intent-apply.mjs'),
+        ]);
+        const db = openDb();
+        try { v2 = applyAxisV2Intents(db, hold); } finally { db.close(); }
+        if (v2.applied.length || v2.rejected.length) {
+          await consumeAxisInbox(store, [...v2.applied, ...v2.rejected].map((r) => r.item));
+        }
+        if (v2.applied.length) {
+          const { computeSnapshots, pushSnapshots, openSnapshotStore } = await import('./lib/axis-snapshots.mjs');
+          const snapStore = await openSnapshotStore();
+          if (snapStore) {
+            const fresh = openDb();
+            let snaps; try { snaps = computeSnapshots(fresh); } finally { fresh.close(); }
+            const prev = await snapStore.get('version', { type: 'json' }).catch(() => null);
+            await pushSnapshots(snapStore, snaps, prev);
+          }
+        }
+      } catch (e) {
+        await log('axis v2 intent apply failed', { error: e?.message || String(e) }).catch(() => {});
+      }
+    }
+
+    await log('axis approve-hop', {
+      executed: execute.length, held: v2.held.length, consumed: consumed.length,
+      v2_applied: v2.applied.map((r) => `${r.type}:${r.scheduled ?? 'ok'}`),
+      v2_rejected: v2.rejected.map((r) => `${r.type}:${r.reason}`),
+    });
   } catch (e) {
     await log('axis approve-hop failed', { error: e?.message || String(e) }).catch(() => {});
   }
