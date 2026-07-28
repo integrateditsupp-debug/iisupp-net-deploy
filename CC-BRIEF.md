@@ -1,9 +1,13 @@
 # CC BRIEF — AXIS Command Center rebuild
 
-**Rev 3.1 · 2026-07-28 (evening).** Author: Cowork (Claude).
+**Rev 3.2 · 2026-07-29.** Author: Cowork (Claude).
 Every fact below was verified this session against the repo, `data/axis-sales.db`,
 the live Netlify project, and the Gmail mailbox. Facts are VERIFIED, not assumed.
 Read the whole file before touching code.
+
+**Rev 3.2 adds §5 — the outreach → waiting-reply → follow-up revenue loop** (the merge-bug
+fix, the reply-likelihood ICP, DKIM now live, the new Waiting Reply tab, and the 11 staged
+drafts awaiting approval). If you are here to send outreach or touch the pipeline, read §5 first.
 
 ---
 
@@ -24,6 +28,9 @@ If you read Rev 2, these things you were told are now **wrong**. Re-read §0.3, 
 | 9 | *(Rev 3)* a git push to `main` deploys the site | **False.** The published deploy was **`locked`** (auto-publishing stopped). Netlify built every push and published none. See §3.6. |
 | 10 | *(Rev 3)* `AXIS_SNAPSHOT_PUSH_TOKEN` just needs setting | **Now set** on Netlify as a secret env var (contexts: production, deploy-preview, branch-deploy; scopes: functions, runtime). Endpoint is live and authing. |
 | 11 | — | **Do not compute snapshots with `main`-lineage libs.** They report `pipeline_value $77,500` (assessed) where the shipped v2 libs correctly report `$0` (booked). See §3.5. |
+| 12 | *(Rev 3.1)* the `Hello ,` merge bug (B5) is open | **Fixed.** `generateOutreach()` hard-fails on an empty name; `lint()` now catches an empty/sentinel greeting; the batch skips nameless rows. See §5.1. |
+| 13 | DKIM is ABSENT — pace to ≤5/day, do not ramp | **DKIM is LIVE** (`google._domainkey.iisupp.net` present), SPF pass, DMARC `p=none`. The single biggest reason the first 201 got 0 replies is gone. See §5.2. |
+| 14 | — | **New Waiting Reply tab** (snapshot module `waiting_reply` + nav tab) tracks every sent-but-unanswered email and flags cold ones for the Director → follow-up hand-off. **In v2 code; live only after v2 deploys.** See §5.4. |
 
 ---
 
@@ -511,3 +518,65 @@ already sent. Do not clear these until B5 is fixed — they are the source list 
 3. **Correction email** to the ~40 of the ~200 `Hello ,` recipients who actually fit the ICP.
    Not drafted. Nothing sends without explicit approval.
 4. **Re-enabling `SECRETS_SCAN_ENABLED`** once the working tree is clean.
+
+---
+
+## 5. THE REVENUE LOOP — outreach → waiting-reply → follow-up (Rev 3.2)
+
+The whole point of the Command Center is one loop: **find a fit prospect → send the locked cold
+email → track the wait → follow up on silence → book the demo.** As of Rev 3.2 that loop is
+merge-safe, DKIM-backed, and surfaced end-to-end in the UI. What follows is how it actually works.
+
+### 5.1 The `Hello ,` merge bug is fixed (was B5)
+
+`generateOutreach()` used to do `template.replace(/{name}/g, p.name)` with no guard — an empty
+name rendered the locked greeting as `Hello ,`, and `lint()` only checked for a *leftover* `{name}`
+literal, so the garbage passed. That is how a batch went out unpersonalized. Fixed in
+`scripts/lib/outreach.mjs`:
+
+- `cleanName()` rejects empty / whitespace / `undefined`/`null`/`NaN` sentinels.
+- `generateOutreach()` **throws `EMPTY_MERGE_FIELD`** on a nameless prospect — it can no longer emit
+  an unpersonalized body.
+- `lint()` hard-fails an empty greeting (`Hello ,`) and a sentinel greeting (`Hello undefined,`).
+- `scripts/outreach-draft-batch.mjs` and `scripts/outreach-stage-fresh.mjs` skip nameless rows and
+  report them; `axis-snapshots.mjs` degrades gracefully (emits a blocked draft) instead of crashing.
+- Regression guard: `tests/outreach-merge-guard.test.mjs` (13 assertions).
+
+### 5.2 DKIM is LIVE — the deliverability blocker is gone
+
+The first ~201 sends got **0 human positive replies**. The brief's old diagnosis was "merge-bug +
+ICP." The third, unlogged reason was deliverability: **DKIM was not published**, so mail landed in
+spam. As of Rev 3.2, verified live for `iisupp.net`: SPF `v=spf1 include:_spf.google.com ~all`,
+**DKIM present** (`google._domainkey`), DMARC `v=DMARC1; p=none`. Pacing can ramp off the ≤5/day
+floor. Do not treat past volume as the lever — treat ICP + a healthy domain as the lever.
+
+### 5.3 Reply-likelihood ICP — do not waste sends on people who won't answer
+
+The prospect DB carries a 1–5 maturity score per axis (IT / cyber / cloud / AI). For cold MSP
+outreach, **low IT/cyber maturity = unmet pain = most likely to reply.** Rank sendable prospects by
+pain, not by deal size. A `RevUp Dental` at IT/cyber 5/5 is already sorted and will not answer; a
+`Winchesters` at 1/2 is the one that books. The Cartographer sources these from Apollo (the team's
+own B2B account) + public web; the send path must always consult `suppression_list` (exact email
+AND `@domain`) and skip anything already sent/approved/queued.
+
+### 5.4 Waiting Reply tab + the Director → follow-up hand-off
+
+New snapshot module **`waiting_reply`** (in `SNAPSHOT_MODULES`) and a new **Waiting Reply** nav tab
+(`assets/axis-app.js`). It computes, from SQLite, every `status='sent'` initial that has NOT drawn a
+`reply_to_outreach` message and is not suppressed — ranked by days silent, each row carrying its
+follow-up state. A reply clears the row automatically. Once a row is past the last cadence day (14)
+with no scheduled touch left, it is flagged `delegate=true` and the tab shows a **Delegate** action
+that posts a `delegate_followup` intent — the hand-off the Director agent picks up to route into the
+existing follow-up engine (`scripts/lib/followups.mjs`, cadence 3/7/14, max 3 touches), whose touches
+then appear in the **Follow-ups** tab. **This UI is in v2 code and is live only once v2 deploys to
+production** (see §3.6 publish runbook) — the outreach *data* already flows to whatever is deployed.
+Remaining wire: a worker handler that drains the `delegate_followup` intent into `scheduleFollowups()`.
+
+### 5.5 Current staged state (2026-07-29)
+
+- **11 pending drafts staged** by `outreach-stage-fresh.mjs` — every fresh, named, non-suppressed,
+  not-yet-sent prospect with a public email. All lint PASS, all personalized, **0 sent**. They sit in
+  `outreach_items` status='pending' → visible in Approvals at the next worker tick.
+- Already sent: 4 (`Lead-022/025/027/032`). `Lead-027` (apbs.ca) is also a hard-bounce suppression.
+- Suppression list = 6 (Jillian Zavitz + `@houserhenry.com` + 4 hard bounces). The stage script honors it.
+- **Nothing sends without explicit human approval.** The approval-first rail is unchanged.

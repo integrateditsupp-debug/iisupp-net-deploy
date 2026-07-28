@@ -142,6 +142,45 @@ export function computeSnapshots(db) {
     })),
   };
 
+  // Waiting Reply — the surface between "sent" and "follow-up". Every initial that WENT OUT and has not yet
+  // drawn a human reply lands here, ranked by how long it has been silent. Each row carries its follow-up
+  // state so the operator sees the loop working; once the cadence is exhausted with no reply, the row is
+  // flagged delegate=true — that is the hand-off the Director picks up to route into the follow-up engine.
+  // Replied businesses drop off automatically (a reply_to_outreach message clears them); suppressed do too.
+  const DAY_MS = 86400000;
+  const repliedBiz = new Set(msgsAll.filter(m => m.classification === 'reply_to_outreach' && m.business_id).map(m => m.business_id));
+  const wrSupp = new Set(all('SELECT LOWER(email) e FROM suppression_list').map(r => r.e));
+  const wrIsSupp = (em) => { const e = (em || '').toLowerCase(); return wrSupp.has(e) || wrSupp.has('@' + e.split('@')[1]); };
+  const fuByBiz = {};
+  for (const f of all('SELECT * FROM follow_ups')) (fuByBiz[f.business_id] = fuByBiz[f.business_id] || []).push(f);
+  const lastCadence = (DEFAULT_RAILS.followup_days || [3, 7, 14]).slice(-1)[0];
+  const maxTouches = DEFAULT_RAILS.max_followups || 3;
+  const waitingRows = items
+    .filter(i => i.status === 'sent' && i.kind === 'initial' && !repliedBiz.has(i.business_id) && !wrIsSupp(i.to_email))
+    .map(i => {
+      const sentAt = i.sent_at || i.created_at;
+      const days = Math.floor((Date.now() - sentAt) / DAY_MS);
+      const fus = fuByBiz[i.business_id] || [];
+      const scheduled = fus.filter(f => f.status === 'scheduled');
+      const overdue = scheduled.filter(f => f.due_at < Date.now());
+      const touchesDone = fus.filter(f => f.status === 'sent').length;
+      let next_action, delegate = false;
+      if (overdue.length) next_action = 'follow-up due';
+      else if (scheduled.length) next_action = `follow-up in ${Math.max(0, Math.ceil((Math.min(...scheduled.map(f => f.due_at)) - Date.now()) / DAY_MS))}d`;
+      else if (touchesDone >= maxTouches || days > lastCadence) { next_action = 'delegate to Director'; delegate = true; }
+      else next_action = 'awaiting';
+      const biz = bizById.get(i.business_id);
+      return { id: i.id, business_id: i.business_id, company: (biz && biz.name) || i.to_email, to_email: i.to_email,
+        subject: i.subject, sent_at: sentAt, days_waiting: days, touches_done: touchesDone, scheduled: scheduled.length, next_action, delegate };
+    })
+    .sort((a, b) => b.days_waiting - a.days_waiting);
+  out.waiting_reply = {
+    count: waitingRows.length,
+    needs_delegation: waitingRows.filter(r => r.delegate).length,
+    cadence: DEFAULT_RAILS.followup_days, max_touches: maxTouches,
+    rows: waitingRows,
+  };
+
   // Follow-ups — 4 views (S8). Cadence day 3/7/14, max 3 touches (in the views payload).
   out.followups = followupViews(db, Date.now(), true);
 

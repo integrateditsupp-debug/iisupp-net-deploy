@@ -49,7 +49,7 @@ export const PRODUCT_STATES = ['Idea', 'Validating', 'Recommended', 'Approved', 
 // ── Snapshot module set (build plan D8). One Blobs key per module + snapshot:version. ──
 export const SNAPSHOT_MODULES = [
   'overview', 'inbox', 'approvals', 'pipeline', 'prospects', 'outreach',
-  'followups', 'documents', 'analytics', 'products', 'fleet', 'reports', 'crm', 'settings',
+  'waiting_reply', 'followups', 'documents', 'analytics', 'products', 'fleet', 'reports', 'crm', 'settings',
 ];
 
 // ── Provenance: the shape every displayed business fact must carry (Law 3). ──

@@ -32,7 +32,8 @@ const NAV = [
     { id: 'overview', label: 'Overview', glyph: 'OV' }, { id: 'inbox', label: 'Action Inbox', glyph: 'IN' },
     { id: 'pipeline', label: 'Pipeline', glyph: 'PL' }, { id: 'crm', label: 'CRM', glyph: 'CR' },
     { id: 'prospects', label: 'Prospects', glyph: 'PR' }, { id: 'outreach', label: 'Outreach Studio', glyph: 'OS' },
-    { id: 'approvals', label: 'Approvals', glyph: 'AP' }, { id: 'followups', label: 'Follow-ups', glyph: 'FU' },
+    { id: 'approvals', label: 'Approvals', glyph: 'AP' }, { id: 'waiting_reply', label: 'Waiting Reply', glyph: 'WR' },
+    { id: 'followups', label: 'Follow-ups', glyph: 'FU' },
   ] },
   { group: 'Workspace', items: [
     { id: 'documents', label: 'Documents', glyph: 'DO' }, { id: 'analytics', label: 'Analytics', glyph: 'AN' },
@@ -48,16 +49,18 @@ const navItem = (id) => NAV.flatMap(g => g.items).find(i => i.id === id);
 // Badge Law (2): red inbox badge ONLY when open actionable > 0; approvals neutral when pending > 0. No others.
 function inboxBadgeCount() { const rows = (data('inbox').rows) || []; return rows.filter(m => ACTIONABLE.includes(m.classification) && !m.actioned && !m.snoozed_until).length; }
 function approvalsPending() { const rows = (data('approvals').rows) || []; return rows.filter(r => r.status === 'pending').length; }
+function waitingReplyCount() { return (data('waiting_reply').count) || 0; }
 
 function renderNav() {
   const nav = $('nav'); nav.innerHTML = '';
-  const ib = inboxBadgeCount(), ap = approvalsPending();
+  const ib = inboxBadgeCount(), ap = approvalsPending(), wr = waitingReplyCount(), wrd = (data('waiting_reply').needs_delegation) || 0;
   for (const grp of NAV) {
     nav.append(el('div', { class: 'nav-group' }, grp.group));
     for (const it of grp.items) {
       const kids = [el('span', { class: 'nav-glyph' }, it.glyph), el('span', { class: 'nav-label' }, it.label)];
       if (it.id === 'inbox' && ib > 0) kids.push(el('span', { class: 'badge badge-red' }, ib));
       if (it.id === 'approvals' && ap > 0) kids.push(el('span', { class: 'badge badge-neutral' }, ap));
+      if (it.id === 'waiting_reply' && wr > 0) kids.push(el('span', { class: 'badge ' + (wrd > 0 ? 'badge-red' : 'badge-neutral') }, wr));
       nav.append(el('button', { class: 'nav-item', 'aria-current': state.module === it.id ? 'true' : 'false',
         onclick: () => go(it.id) }, kids));
     }
@@ -561,6 +564,37 @@ SCREENS.followups = (c) => {
     ...(d.cadence || [3, 7, 14]).map(day => el('span', { class: 'stage-tag' }, 'day ' + day)),
     el('button', { class: 'chip', onclick: () => { const v = prompt('Cadence days (comma-separated, max 3):', (d.cadence || [3, 7, 14]).join(',')); if (v) { toast('Cadence updated'); postIntent('cadence_edit', { days: v.split(',').map(x => +x.trim()).filter(Boolean).slice(0, 3) }); } } }, 'Edit'),
   ]));
+};
+
+SCREENS.waiting_reply = (c) => {
+  const d = data('waiting_reply');
+  const rows = d.rows || [];
+  c.append(head('Waiting Reply', `${d.count || 0} sent · awaiting a human reply · a reply clears the row automatically · cadence day ${(d.cadence || [3, 7, 14]).join('/')}`));
+  if ((d.needs_delegation || 0) > 0) {
+    c.append(el('div', { class: 'card', style: 'border-left:3px solid var(--crit);margin-bottom:12px;display:flex;gap:10px;align-items:center' }, [
+      el('span', { class: 'stage-tag', style: 'color:var(--crit)' }, `${d.needs_delegation} silent past cadence`),
+      el('div', { style: 'flex:1;font-size:13px' }, 'These have gone cold with no reply and no scheduled touch left — hand to the Director to delegate follow-up.'),
+      el('button', { class: 'chip', onclick: () => { rows.filter(r => r.delegate).forEach(r => postIntent('delegate_followup', { business_id: r.business_id, outreach_item_id: r.id })); toast('Handed to Director → follow-up agent'); } }, 'Delegate all'),
+    ]));
+  }
+  const card = el('div', { class: 'card', style: 'padding:0' });
+  if (!rows.length) card.append(el('div', { class: 'empty' }, 'Nothing waiting — no sent outreach is unanswered.'));
+  else rows.forEach(r => {
+    const hot = r.delegate || r.next_action === 'follow-up due';
+    card.append(el('div', { class: 'row', style: 'gap:10px' }, [
+      el('div', { style: 'flex:1;min-width:0' }, [
+        el('div', { style: 'font-weight:600' }, r.company),
+        el('div', { class: 'mono', style: 'font-size:11px;color:var(--txt-3)' }, r.to_email),
+      ]),
+      el('span', { class: 'mono', style: `font-size:11px;color:${r.days_waiting >= 7 ? 'var(--crit)' : 'var(--txt-3)'}` }, `${r.days_waiting}d silent`),
+      el('span', { class: 'stage-tag', style: 'font-size:11px;color:var(--txt-3)' }, r.touches_done ? `${r.touches_done} touch${r.touches_done === 1 ? '' : 'es'}` : 'no touch yet'),
+      el('span', { class: 'stage-tag', style: `color:${hot ? 'var(--crit)' : 'var(--gold)'}` }, r.next_action),
+      r.delegate
+        ? el('button', { class: 'chip', onclick: () => { postIntent('delegate_followup', { business_id: r.business_id, outreach_item_id: r.id }); toast('Handed to Director → follow-up agent'); } }, 'Delegate')
+        : el('button', { class: 'chip', onclick: () => go('followups') }, 'Follow-ups'),
+    ]));
+  });
+  c.append(card);
 };
 
 // ── S9 Documents & Contracts ──
