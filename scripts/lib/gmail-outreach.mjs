@@ -9,6 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { OUTREACH_IDENTITY } from './axis-constants.mjs';
+import { assertDeliverabilityOrThrow } from './deliverability.mjs';
 
 const SECRETS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'data', 'secrets');
 const TOKENS_FILE = path.join(SECRETS_DIR, 'gmail-tokens.json');       // { refresh_token, access_token?, expiry? }
@@ -96,6 +97,10 @@ export async function getMessageParsed(id) {
 // Send an already-approved draft (draft-then-send so replies thread). Called ONLY by the outbound queue
 // after per-item approval + passing rails. Never call this speculatively.
 export async function sendDraft(draftId) {
+  // HARD DELIVERABILITY GATE — monitored every time, immediately before the wire send. If SPF/DKIM/DMARC
+  // are not all live this throws DELIVERABILITY_DOWN and NOTHING is sent, so mail can never go out into a
+  // spam-bound domain again. Memoized 10 min so a batch does one DNS check; a DOWN result is never cached.
+  await assertDeliverabilityOrThrow(OUTREACH_IDENTITY.from_email.split('@')[1]);
   const token = await accessToken();
   const r = await fetch(`${GMAIL}/drafts/send`, {
     method: 'POST', headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },

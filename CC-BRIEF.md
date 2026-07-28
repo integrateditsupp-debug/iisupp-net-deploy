@@ -31,6 +31,7 @@ If you read Rev 2, these things you were told are now **wrong**. Re-read §0.3, 
 | 12 | *(Rev 3.1)* the `Hello ,` merge bug (B5) is open | **Fixed.** `generateOutreach()` hard-fails on an empty name; `lint()` now catches an empty/sentinel greeting; the batch skips nameless rows. See §5.1. |
 | 13 | DKIM is ABSENT — pace to ≤5/day, do not ramp | **DKIM is LIVE** (`google._domainkey.iisupp.net` present), SPF pass, DMARC `p=none`. The single biggest reason the first 201 got 0 replies is gone. See §5.2. |
 | 14 | — | **New Waiting Reply tab** (snapshot module `waiting_reply` + nav tab) tracks every sent-but-unanswered email and flags cold ones for the Director → follow-up hand-off. **In v2 code; live only after v2 deploys.** See §5.4. |
+| 15 | — | **Deliverability Guardian** — SPF/DKIM/DMARC are now a HARD pre-send gate (`sendDraft()` refuses to send if any is down) + a daily 17:00 America/Toronto sweep that diagnoses the cause of any drop. See §6. |
 
 ---
 
@@ -580,3 +581,44 @@ Remaining wire: a worker handler that drains the `delegate_followup` intent into
 - Already sent: 4 (`Lead-022/025/027/032`). `Lead-027` (apbs.ca) is also a hard-bounce suppression.
 - Suppression list = 6 (Jillian Zavitz + `@houserhenry.com` + 4 hard bounces). The stage script honors it.
 - **Nothing sends without explicit human approval.** The approval-first rail is unchanged.
+
+---
+
+## 6. DELIVERABILITY GUARDIAN — SPF/DKIM/DMARC can never silently drop again
+
+DKIM being unpublished is the single failure that put the first ~201 sends in spam and returned 0
+replies. It must never recur unnoticed. Rev 3.2 makes that structural, two ways:
+
+### 6.1 Hard pre-send gate (every send, every time)
+
+`scripts/lib/deliverability.mjs` exposes `assertDeliverabilityOrThrow()`. `sendDraft()` in
+`scripts/lib/gmail-outreach.mjs` calls it **immediately before the wire send**. If SPF, DKIM, or
+DMARC is not live it throws `DELIVERABILITY_DOWN` and **nothing is sent** — mail can no longer go out
+into a spam-bound domain. The check is memoized for 10 minutes so a batch does one DNS round-trip, but
+a DOWN result is never cached (it re-checks until it clears). DKIM is validated for a **non-empty
+public key** — a `p=` with no key after it is a revoked key and counts as DOWN (a subtlety that would
+otherwise pass a naive presence check).
+
+### 6.2 Daily 17:00 sweep (scheduled task)
+
+Scheduled task `trig_01PV1sRPXFV5N7ekRvqhADdc` fires daily at **21:00 UTC = 17:00 America/Toronto (EDT)**
+and runs the guardian check. All live → one-line confirmation. Any record down → it push-notifies Ahmad
+and reports **which record, current vs expected, the likely cause, and the exact fix** (DKIM →
+Google Admin re-authenticate + re-add `google._domainkey` TXT; SPF/DMARC → restore the root/`_dmarc`
+TXT; MX → verify `smtp.google.com`). The cron is fixed UTC; after the DST change it lands at 16:00
+Toronto until re-adjusted. `node scripts/deliverability-guardian.mjs` runs the same check on demand
+(exit 0 = live, exit 1 = down; `--json` for machine-readable).
+
+### 6.3 Known-good baseline (captured 2026-07-29, verified live)
+
+| record | host | value |
+|---|---|---|
+| SPF | `@` | `v=spf1 include:_spf.google.com ~all` |
+| DKIM | `google._domainkey` | `v=DKIM1; k=rsa; p=<google-workspace key>` (must be non-empty) |
+| DMARC | `_dmarc` | `v=DMARC1; p=none; rua=mailto:ahmad.wasee@iisupp.net; pct=100` |
+| MX | `@` | `1 smtp.google.com` |
+
+The baseline lives in `BASELINE` in `deliverability.mjs`; a live record that no longer matches its
+baseline is how the guardian names the cause of a regression rather than only flagging it. **Next
+deliverability upgrade (not blocking):** move DMARC from `p=none` to `p=quarantine` once a week of
+`rua` aggregate reports confirms clean auth — tightens inbox placement further.
