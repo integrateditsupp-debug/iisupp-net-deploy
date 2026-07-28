@@ -74,9 +74,11 @@ for (const f of visited) {
 const app = fs.readFileSync(ENTRY, 'utf8');
 const navBlock = (app.match(/const NAV = \[[\s\S]*?\n\];/) || [''])[0];
 const navIds = [...navBlock.matchAll(/id: '([^']+)'/g)].map(m => m[1]);
-const EXPECTED = ['overview', 'inbox', 'pipeline', 'crm', 'prospects', 'outreach', 'approvals', 'followups',
+// 'waiting_reply' sits between approvals and followups: sent-and-silent lives after "approve it" and
+// before "chase it". Bumping this list is intentional — an unplanned NAV change still fails the gate.
+const EXPECTED = ['overview', 'inbox', 'pipeline', 'crm', 'prospects', 'outreach', 'approvals', 'waiting_reply', 'followups',
   'documents', 'analytics', 'products', 'fleet', 'axis-agent-director', 'reports', 'settings'];
-t('NAV has exactly 15 tabs', navIds.length === 15);
+t('NAV has exactly 16 tabs', navIds.length === 16);
 t('NAV ids and order are unchanged', JSON.stringify(navIds) === JSON.stringify(EXPECTED));
 
 const screens = new Set();
