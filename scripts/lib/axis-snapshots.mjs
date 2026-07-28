@@ -20,7 +20,13 @@ export function computeSnapshots(db) {
   // Pipeline: cards grouped by stage (Kanban) — list view uses handle, not name.
   // The authenticated UI is operational, not a demo surface. A fixture can remain useful to a
   // local test, but records explicitly marked non-real never cross this read-model boundary.
-  const biz = all('SELECT * FROM businesses WHERE is_real=1');
+  //
+  // TWO cohorts, deliberately. `biz` (real only) backs every OPERATIONAL surface — pipeline cards,
+  // prospect PII, approvals, CRM, revenue. `bizAll` backs RESEARCH COVERAGE analytics, where the whole
+  // point of the panel is "researched N of total M": collapsing total onto the real subset would make
+  // total === researched and destroy the distinction the Prospects header already renders.
+  const bizAll = all('SELECT * FROM businesses');
+  const biz = bizAll.filter(b => b.is_real);
   const realBusinessIds = new Set(biz.map(b => b.id));
   const belongsToRealBusiness = (row) => !row.business_id || realBusinessIds.has(row.business_id);
   out.pipeline = {
@@ -56,7 +62,13 @@ export function computeSnapshots(db) {
   };
 
   // Inbox: only actionable rows count for the badge (Law 2).
-  const msgs = all('SELECT * FROM inbox_messages ORDER BY received_at DESC').filter(belongsToRealBusiness);
+  // Rows already marked 'suppressed' were caught by the BUG B2 ingest filter (internal/DMARC/LinkedIn/
+  // retail bulk). They are retained in SQLite as an audit trail — nothing is deleted — but they are kept
+  // out of the read model entirely, including the Filtered drawer, because the point of suppressing at
+  // ingest rather than at classify is that they should cost the operator nothing at all. The count is
+  // still surfaced so the number is honest rather than hidden.
+  const msgsAll = all('SELECT * FROM inbox_messages ORDER BY received_at DESC').filter(belongsToRealBusiness);
+  const msgs = msgsAll.filter(m => m.classification !== 'suppressed');
   const openActionable = msgs.filter(m => ACTIONABLE_CLASSES.includes(m.classification) && !m.actioned_at && !m.snoozed_until);
   out.inbox = {
     badge: openActionable.length, // exact number the red badge shows; 0 → UI renders no badge element
@@ -72,6 +84,7 @@ export function computeSnapshots(db) {
       new_requests: msgs.filter(m => m.classification === 'new_inbound_request').length,
       snoozed: msgs.filter(m => m.snoozed_until).length,
       handled: msgs.filter(m => m.actioned_at).length,
+      suppressed: msgsAll.length - msgs.length, // never entered the action inbox (B2)
     },
   };
 
@@ -150,7 +163,7 @@ export function computeSnapshots(db) {
   // Analytics — 3 dashboards, all worker-computed from SQLite (UI only renders; numbers reconcile exactly).
   const GTA = ['toronto', 'mississauga', 'markham', 'scarborough', 'north york', 'etobicoke', 'vaughan', 'richmond hill', 'brampton', 'pickering', 'whitby', 'oakville', 'grimsby'];
   const cityKey = (c) => (c || '').split(/[ ,(]/)[0];
-  const byCity = {}; for (const b of biz) { const k = cityKey(b.city) || 'Unknown'; byCity[k] = (byCity[k] || 0) + 1; }
+  const byCity = {}; for (const b of bizAll) { const k = cityKey(b.city) || 'Unknown'; byCity[k] = (byCity[k] || 0) + 1; }
   const meetingsN = (one('SELECT COUNT(*) c FROM meetings m JOIN businesses b ON b.id=m.business_id WHERE b.is_real=1') || {}).c || 0;
   const oppsAll = all('SELECT o.service, o.est_mrr, o.status FROM opportunities o JOIN businesses b ON b.id=o.business_id WHERE b.is_real=1');
   const funnel = [
@@ -161,15 +174,15 @@ export function computeSnapshots(db) {
     { stage: 'Won', n: biz.filter(b => b.pipeline_stage === 'Won').length },
   ];
   out.analytics = {
-    // 1) Research progress
+    // 1) Research progress — coverage over the WHOLE table (see the bizAll/biz note at the top).
     research: {
-      total: biz.length, researched: biz.filter(b => b.is_real).length,
+      total: bizAll.length, researched: bizAll.filter(b => b.is_real).length,
       by_city: byCity,
       geo_coverage: {
-        Toronto: biz.filter(b => /toronto/i.test(b.city || '')).length,
-        GTA: biz.filter(b => GTA.some(g => (b.city || '').toLowerCase().includes(g))).length,
-        Ontario: biz.filter(b => /\bON\b|ontario/i.test((b.region || '') + ' ' + (b.city || ''))).length || biz.filter(b => b.is_real).length,
-        Canada: biz.length,
+        Toronto: bizAll.filter(b => /toronto/i.test(b.city || '')).length,
+        GTA: bizAll.filter(b => GTA.some(g => (b.city || '').toLowerCase().includes(g))).length,
+        Ontario: bizAll.filter(b => /\bON\b|ontario/i.test((b.region || '') + ' ' + (b.city || ''))).length || bizAll.filter(b => b.is_real).length,
+        Canada: bizAll.length,
       },
     },
     // 2) Sales activity
@@ -189,14 +202,25 @@ export function computeSnapshots(db) {
     },
     // 3) Business insights
     insights: {
-      pipeline_value: biz.reduce((s, b) => s + (b.est_monthly_value || 0), 0),
-      top_value: biz.filter(b => b.is_real).sort((a, b2) => (b2.est_monthly_value || 0) - (a.est_monthly_value || 0)).slice(0, 8).map(b => ({ name: b.name || b.handle, value: b.est_monthly_value || 0 })),
-      by_industry: (() => { const m = {}; for (const b of biz) { const k = (b.industry || 'Other').split('(')[0].trim().slice(0, 20); m[k] = (m[k] || 0) + 1; } return m; })(),
+      // HONESTY SPLIT (2026-07-28). These were one field called `pipeline_value`, computed as
+      // SUM(businesses.est_monthly_value) — i.e. the sum of our own *guesses* about what 25
+      // strangers we have never spoken to might one day pay. Rendering that as "Pipeline value"
+      // on the command deck is the same inflation Rule 14 was written to stop, and it is why the
+      // live dashboard read $93,250 while nothing had actually been sold. Now two named fields,
+      // one meaning each, and the UI labels both for what they are:
+      //   pipeline_value — money actually in play: real opportunities, open or won.  Today: $0.
+      //   assessed_value — pre-contact research estimate across prospects.           Today: $77,500.
+      pipeline_value: oppsAll.filter(o => o.status !== 'lost').reduce((s, o) => s + (o.est_mrr || 0), 0),
+      assessed_value: bizAll.reduce((s, b) => s + (b.est_monthly_value || 0), 0),
+      assessed_basis: `pre-contact estimate across ${bizAll.length} researched prospects — not booked revenue`,
+      top_value: biz.slice().sort((a, b2) => (b2.est_monthly_value || 0) - (a.est_monthly_value || 0)).slice(0, 8).map(b => ({ name: b.name || b.handle, value: b.est_monthly_value || 0 })),
+      by_industry: (() => { const m = {}; for (const b of bizAll) { const k = (b.industry || 'Other').split('(')[0].trim().slice(0, 20); m[k] = (m[k] || 0) + 1; } return m; })(),
       by_stage: out.pipeline.counts,
       opportunity_mrr: oppsAll.reduce((s, o) => s + (o.est_mrr || 0), 0),
     },
     funnel, // kept for the Overview convenience
-    pipeline_value: biz.reduce((s, b) => s + (b.est_monthly_value || 0), 0),
+    pipeline_value: oppsAll.filter(o => o.status !== 'lost').reduce((s, o) => s + (o.est_mrr || 0), 0),
+    assessed_value: bizAll.reduce((s, b) => s + (b.est_monthly_value || 0), 0),
   };
 
   // Reports meta + settings — worker writes these to the settings table (setSetting), snapshot reads them.

@@ -2,7 +2,23 @@
 // the genuinely ambiguous, and the safety default: unsure between noise and actionable → ACTIONABLE.
 // Classes: reply_to_outreach | new_inbound_request | bounce | out_of_office | unsubscribe_request | noise.
 // Only reply_to_outreach + new_inbound_request are actionable (Badge Law). Everything else is filtered.
+import { CAMPAIGN_SUBJECT_MARKERS, MIN_CAMPAIGN_MARKERS } from './axis-constants.mjs';
+
 export const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
+
+// BUG B1 helper — how many of OUR campaign phrases a subject line carries. Normalizes the Re:/Fwd:
+// chain and punctuation first so "RE: Managed IT Services & AI automation — quick 15-min demo" scores
+// the same as the subject we actually sent. Exported so the reclassifier and tests can assert on it.
+export function campaignMarkerHits(subject) {
+  const s = String(subject || '')
+    .replace(/^((re|fw|fwd|aw|antw)\s*:\s*)+/i, '')   // strip any depth of reply/forward prefixes
+    .toLowerCase()
+    .replace(/[‐-―−]/g, '-')            // en/em dashes and minus → plain hyphen
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return CAMPAIGN_SUBJECT_MARKERS.filter(m => s.includes(m)).length;
+}
 
 const h = (msg, name) => {
   const hs = msg.headers || {};
@@ -60,10 +76,19 @@ export function classify(msg, ctx = {}) {
     return det('noise', 'provider developer-instance notification');
   }
 
-  // 6) Reply to our outreach → reply_to_outreach (thread/Message-ID match, or known contact replying)
+  // 6) Reply to our outreach → reply_to_outreach (thread/Message-ID match, known contact, or — for the
+  //    hand-sent batch that predates AXIS and therefore has no thread_id — our own campaign phrasing
+  //    coming back on a Re:). See CAMPAIGN_SUBJECT_MARKERS for why this bridge exists (BUG B1).
   if (threadsWithSent) return det('reply_to_outreach', 'threads with a sent outreach message');
   if (ctx.knownContacts && ctx.knownContacts.has(from) && /^re:/i.test(msg.subject || '')) {
     return det('reply_to_outreach', 'known contact + Re: subject');
+  }
+  const isReplyPrefixed = /^\s*((re|aw|antw)\s*:\s*)/i.test(msg.subject || '');
+  if (isReplyPrefixed) {
+    const hits = campaignMarkerHits(msg.subject);
+    if (hits >= MIN_CAMPAIGN_MARKERS) {
+      return det('reply_to_outreach', `Re: carrying ${hits} of our campaign subject phrases (hand-sent outreach has no thread id)`);
+    }
   }
 
   // 7) Known contact, new thread → new_inbound_request

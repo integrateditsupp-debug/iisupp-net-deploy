@@ -30,7 +30,16 @@ t('sales.replies exact', a.sales.replies === q("SELECT COUNT(*) n FROM inbox_mes
 t('sales.meetings exact', a.sales.meetings === q('SELECT COUNT(*) n FROM meetings').n);
 t('sales.opportunities exact', a.sales.opportunities === q('SELECT COUNT(*) n FROM opportunities').n);
 t('sales.won exact', a.sales.won === q("SELECT COUNT(*) n FROM businesses WHERE pipeline_stage='Won'").n);
-t('insights.pipeline_value == SUM(est)', a.insights.pipeline_value === q('SELECT COALESCE(SUM(est_monthly_value),0) s FROM businesses').s);
+// HONESTY SPLIT (2026-07-28). This assertion used to read
+//   insights.pipeline_value === SUM(businesses.est_monthly_value)
+// i.e. it required "pipeline" to mean the sum of our own pre-contact guesses about companies we
+// have never spoken to. That is what put $93,250 of imaginary pipeline on the live dashboard while
+// $0 had been sold. The assertion was not wrong about the code — the code was wrong about the word.
+// Two fields now, one meaning each, and BOTH are still pinned to SQLite exactly:
+t('insights.pipeline_value == open/won opportunities', a.insights.pipeline_value === q("SELECT COALESCE(SUM(est_mrr),0) s FROM opportunities WHERE status<>'lost'").s);
+t('insights.assessed_value == SUM(est)', a.insights.assessed_value === q('SELECT COALESCE(SUM(est_monthly_value),0) s FROM businesses').s);
+t('assessed_value is NOT reported as pipeline', a.insights.assessed_value !== a.insights.pipeline_value || a.insights.assessed_value === 0);
+t('top-level pipeline_value mirrors insights', a.pipeline_value === a.insights.pipeline_value);
 t('insights.opportunity_mrr == SUM(est_mrr)', a.insights.opportunity_mrr === q('SELECT COALESCE(SUM(est_mrr),0) s FROM opportunities').s);
 t('funnel Generated == generated', a.sales.funnel[0].n === a.sales.generated);
 t('funnel Won == won', a.sales.funnel[4].n === a.sales.won);

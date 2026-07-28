@@ -2,8 +2,26 @@
 // logged; nothing here sends. Enforces the guardrails: unsubscribe→suppress instantly, bounce→invalidate +
 // pause sequence, reply→auto-cancel follow-ups + auto-move pipeline card to Replied (quiet system note).
 import { classify, ACTIONABLE } from './sentry-classify.mjs';
+import { INGEST_SUPPRESS } from './axis-constants.mjs';
 
 const emailOf = (s) => (String(s || '').match(/[\w.+%-]+@[\w.-]+\.[\w-]+/) || [''])[0].toLowerCase();
+
+// BUG B2 — INGEST-LEVEL suppression. Returns the matching rule name, or null to let the message in.
+// This runs BEFORE classification and before any INSERT: a suppressed sender never becomes a row, so it
+// never costs the founder a scroll and never dilutes the action inbox. It is a deterministic sender
+// match only — we never drop mail on a content guess.
+//
+// The escape hatch matters: if a suppressed address is replying inside a thread we actually sent to,
+// it is a real client reply and must survive. Bulk senders never thread with our outreach, so this
+// costs nothing in practice and closes the one way this could swallow a genuine message.
+export function ingestSuppressionRule(msg, ctx = {}) {
+  const from = emailOf(msg.from);
+  if (!from) return null;
+  const threadsWithSent = !!(ctx.sentThreadIds && msg.thread_id && ctx.sentThreadIds.has(msg.thread_id));
+  if (threadsWithSent) return null;
+  const hit = INGEST_SUPPRESS.find(r => r.test.test(from));
+  return hit ? hit.rule : null;
+}
 
 // Build classifier context from what we've sent + who we know.
 export function buildCtx(db) {
@@ -35,7 +53,12 @@ function cancelFollowups(db, businessId) {
 }
 
 // Ingest one message: classify, persist, apply side-effects. Returns { classification, sysnote, businessId }.
+// A sender on the ingest suppression list short-circuits here — no row, no side-effects, no badge impact.
+// We return the rule name so the caller can keep an honest tally of what was filtered and why.
 export function ingestMessage(db, msg, ctx = buildCtx(db)) {
+  const suppressed = ingestSuppressionRule(msg, ctx);
+  if (suppressed) return { classification: 'suppressed', reason: `ingest-suppressed: ${suppressed}`, suppressedRule: suppressed, sysnote: null, businessId: null, actionable: false, ingested: false };
+
   const c = classify(msg, ctx);
   const businessId = resolveBusiness(db, msg);
   const from = emailOf(msg.from);
@@ -69,7 +92,7 @@ export function ingestMessage(db, msg, ctx = buildCtx(db)) {
     msg.gmail_message_id, msg.thread_id || null, businessId, from, 'inbound', c.classification, c.reason,
     msg.subject || '', msg.snippet || '', msg.body || msg.snippet || '', sysnote, msg.received_at || Date.now());
 
-  return { classification: c.classification, reason: c.reason, sysnote, businessId, actionable: ACTIONABLE.includes(c.classification) };
+  return { classification: c.classification, reason: c.reason, sysnote, businessId, actionable: ACTIONABLE.includes(c.classification), ingested: true };
 }
 
 // Draft an AI reply to an inbox message → writes a PENDING outreach_item (kind='reply') into Approvals.
