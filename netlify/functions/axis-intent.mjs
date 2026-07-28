@@ -22,6 +22,9 @@ const KNOWN_TYPES = new Set([
   'stage_override', 'won_lost',
   'queue_research', 'generate_pack', 'edit_draft', 'regen',
   'cadence_edit', 'cancel_followup',
+  // Waiting Reply → Director → follow-up engine. Applied by scripts/lib/axis-intent-apply.mjs on the
+  // worker; creates PENDING follow-up outreach only, so it still clears Approvals before anything sends.
+  'delegate_followup',
   'duplicate', 'edit', 'new_version', 'prepare_for_client',
   'export', 'send_to_axis_review', 'score_edit',
   'run_now', 'pause', 'instruct',
