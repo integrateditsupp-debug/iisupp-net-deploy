@@ -57,6 +57,8 @@ const REQUIRED_FORCE_404 = [
   "/ARIA-Vault-Backups/*",
   "/backups/*",
   "/AGENT_EXECUTION_NOTES.md",
+  "/COLLAB-CLAUDE-CODEX.md",
+  "/CC-BRIEF.md",
   // 2026-07-02 amendment: ops + functions source must never serve either (the probe script
   // lives under /scripts; /netlify holds function sources).
   "/scripts/*",

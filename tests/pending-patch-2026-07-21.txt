@@ -1,0 +1,10 @@
+ANCHOR_EARLY (insert immediately BEFORE the webcam line):
+  if (/\b(workstation on wheels|wow cart|clinical cart|bedside (terminal|computer)|barcode scanner|handheld scanner|medication scanner|wristband scanner|smart ?card reader|proximity reader|badge reader|rfid reader|kvm switch|bloomberg (keyboard|b-?unit)|market data terminal|vital signs monitor|ecg workstation|ekg machine|ups beeping|touchscreen not respond|touch monitor not work)\b/.test(q) && !/\b(wifi|wi-fi|wireless|network|internet|vpn|password|print)\b/.test(q)) return 'kb:hardware';
+  if (/\bnew (nurse|doctor|physician|clinician|employee|staff|user|teacher|technician|analyst|agent|associate|contractor|intern|resident)\b[\s\S]*\b(access|account|set ?up|setup|onboard|provision|credential|login|badge|laptop)/.test(q)) return 'kb:onboarding';
+  if (/(no puedo (iniciar sesion|entrar|acceder)|iniciar sesi[oó]n|contrase[nñ]a|olvid[eé] mi contrase[nñ]a|restablecer contrase[nñ]a|cuenta bloqueada)/.test(q)) return 'password';
+
+ANCHOR_PERF (insert immediately BEFORE the kb:performance line):
+  if (/\b(edge|chrome|firefox|safari|brave|opera)\b/.test(q) && /\b(slow|laggy|sluggish|freez|crash|hang|not respond|won'?t open|wont open)\b/.test(q)) return 'kb:browser';
+
+ANCHOR_ONEDRIVE (insert immediately BEFORE the kb:onedrive line):
+  if (/(files?|folder|document)s?\s+(wo?n'?[tr]|will not|not|dont|doesn'?t|isn'?t)\s*(sync|syncing)|(wo?n'?[tr]|not)\s+sync/.test(q)) return 'kb:onedrive';

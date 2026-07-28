@@ -1,0 +1,401 @@
+{
+  "measuredAt": "2026-07-14T17:43:53.180Z",
+  "harness": "tools/measure-kb-selftest.mjs",
+  "measures": "offline-KB instant deflection + false-answer safety. NOT end-to-end resolution, NOT endpoint remediation, NOT customer-validated.",
+  "inputs": {
+    "kb": "assets/aria-knowledge-base.js",
+    "kbPatternCount": 31,
+    "corpus": "tests/scenario-corpus.js",
+    "corpusRawEntries": 1896,
+    "uniqueQuestions": 631
+  },
+  "headline": {
+    "inScopeDeflectionPct": 93.1,
+    "inScopeN": 437,
+    "inScopeAnswered": 407,
+    "outOfScopeFalseAnswerPct": 0,
+    "outOfScopeN": 30,
+    "controlFalseFirePct": 0,
+    "controlN": 83,
+    "caseStable": true
+  },
+  "unscoredMixedBucket": {
+    "why": "corpus intent 'default' is an unlabelled grab-bag holding BOTH dialogue turns ('hi') and real support questions ('laptop won't turn on'). Neither firing nor abstaining is provably correct for it, so it is reported here and EXCLUDED from the headline rather than scored in either direction.",
+    "n": 81,
+    "kbFired": 16,
+    "firedExamples": [
+      {
+        "q": "hi",
+        "kbIntent": "fix",
+        "category": "other"
+      },
+      {
+        "q": "hello",
+        "kbIntent": "fix",
+        "category": "other"
+      },
+      {
+        "q": "good morning",
+        "kbIntent": "fix",
+        "category": "other"
+      },
+      {
+        "q": "good afternoon",
+        "kbIntent": "fix",
+        "category": "other"
+      },
+      {
+        "q": "yo",
+        "kbIntent": "fix",
+        "category": "other"
+      },
+      {
+        "q": "sup",
+        "kbIntent": "fix",
+        "category": "other"
+      },
+      {
+        "q": "keyboard not typing",
+        "kbIntent": "fix",
+        "category": "hardware"
+      },
+      {
+        "q": "mouse cursor frozen",
+        "kbIntent": "fix",
+        "category": "software"
+      },
+      {
+        "q": "cd drive missing",
+        "kbIntent": "fix",
+        "category": "security"
+      },
+      {
+        "q": "taskbar missing",
+        "kbIntent": "fix",
+        "category": "security"
+      },
+      {
+        "q": "start menu gone",
+        "kbIntent": "fix",
+        "category": "security"
+      },
+      {
+        "q": "desktop icons gone",
+        "kbIntent": "fix",
+        "category": "security"
+      }
+    ]
+  },
+  "defects": [],
+  "intents": [
+    {
+      "intent": "default",
+      "scope": "mixed",
+      "total": 81,
+      "fired": 16,
+      "pct": 19.8,
+      "sampleMisses": []
+    },
+    {
+      "intent": "mail",
+      "scope": "in_scope",
+      "total": 50,
+      "fired": 46,
+      "pct": 92,
+      "sampleMisses": [
+        "mail not syncing",
+        "mail rules not firing",
+        "spam filter not working"
+      ]
+    },
+    {
+      "intent": "resolution",
+      "scope": "control",
+      "total": 44,
+      "fired": 10,
+      "pct": 22.7,
+      "sampleMisses": []
+    },
+    {
+      "intent": "password",
+      "scope": "in_scope",
+      "total": 40,
+      "fired": 34,
+      "pct": 85,
+      "sampleMisses": [
+        "sign-in keeps failing",
+        "sign in keeps failing",
+        "login won't work"
+      ]
+    },
+    {
+      "intent": "kb:mfa",
+      "scope": "in_scope",
+      "total": 30,
+      "fired": 28,
+      "pct": 93.3,
+      "sampleMisses": [
+        "sms code not arriving",
+        "text code never came"
+      ]
+    },
+    {
+      "intent": "wifi",
+      "scope": "in_scope",
+      "total": 30,
+      "fired": 23,
+      "pct": 76.7,
+      "sampleMisses": [
+        "5ghz not connecting",
+        "2.4ghz only",
+        "can't see 5g network"
+      ]
+    },
+    {
+      "intent": "kb:teams",
+      "scope": "in_scope",
+      "total": 30,
+      "fired": 29,
+      "pct": 96.7,
+      "sampleMisses": [
+        "can't see channels"
+      ]
+    },
+    {
+      "intent": "vpn",
+      "scope": "in_scope",
+      "total": 25,
+      "fired": 24,
+      "pct": 96,
+      "sampleMisses": [
+        "pulse secure broken"
+      ]
+    },
+    {
+      "intent": "printer",
+      "scope": "in_scope",
+      "total": 21,
+      "fired": 21,
+      "pct": 100,
+      "sampleMisses": []
+    },
+    {
+      "intent": "kb:onedrive",
+      "scope": "in_scope",
+      "total": 20,
+      "fired": 20,
+      "pct": 100,
+      "sampleMisses": []
+    },
+    {
+      "intent": "kb:performance",
+      "scope": "in_scope",
+      "total": 20,
+      "fired": 20,
+      "pct": 100,
+      "sampleMisses": []
+    },
+    {
+      "intent": "kb:windows",
+      "scope": "in_scope",
+      "total": 20,
+      "fired": 20,
+      "pct": 100,
+      "sampleMisses": []
+    },
+    {
+      "intent": "kb:security",
+      "scope": "in_scope",
+      "total": 20,
+      "fired": 18,
+      "pct": 90,
+      "sampleMisses": [
+        "someone has access to my account",
+        "sign-in from russia alert"
+      ]
+    },
+    {
+      "intent": "outlook_ooo",
+      "scope": "in_scope",
+      "total": 15,
+      "fired": 14,
+      "pct": 93.3,
+      "sampleMisses": [
+        "automatic reply not firing"
+      ]
+    },
+    {
+      "intent": "kb:bluetooth",
+      "scope": "in_scope",
+      "total": 15,
+      "fired": 14,
+      "pct": 93.3,
+      "sampleMisses": [
+        "sound only on left airpod"
+      ]
+    },
+    {
+      "intent": "kb:browser",
+      "scope": "in_scope",
+      "total": 15,
+      "fired": 15,
+      "pct": 100,
+      "sampleMisses": []
+    },
+    {
+      "intent": "not-resolution",
+      "scope": "control",
+      "total": 15,
+      "fired": 0,
+      "pct": 0,
+      "sampleMisses": []
+    },
+    {
+      "intent": "kb:usb",
+      "scope": "in_scope",
+      "total": 13,
+      "fired": 12,
+      "pct": 92.3,
+      "sampleMisses": [
+        "seagate drive not appearing"
+      ]
+    },
+    {
+      "intent": "kb:m365",
+      "scope": "in_scope",
+      "total": 12,
+      "fired": 12,
+      "pct": 100,
+      "sampleMisses": []
+    },
+    {
+      "intent": "kb:webcam",
+      "scope": "in_scope",
+      "total": 10,
+      "fired": 9,
+      "pct": 90,
+      "sampleMisses": [
+        "logitech c920 not working"
+      ]
+    },
+    {
+      "intent": "kb:active-directory",
+      "scope": "in_scope",
+      "total": 10,
+      "fired": 9,
+      "pct": 90,
+      "sampleMisses": [
+        "ad authentication failing"
+      ]
+    },
+    {
+      "intent": "kb:permissions",
+      "scope": "in_scope",
+      "total": 10,
+      "fired": 9,
+      "pct": 90,
+      "sampleMisses": [
+        "permissions reset on share"
+      ]
+    },
+    {
+      "intent": "kb:networking",
+      "scope": "in_scope",
+      "total": 10,
+      "fired": 9,
+      "pct": 90,
+      "sampleMisses": [
+        "can't reach internal site"
+      ]
+    },
+    {
+      "intent": "escalation",
+      "scope": "control",
+      "total": 10,
+      "fired": 0,
+      "pct": 0,
+      "sampleMisses": []
+    },
+    {
+      "intent": "edge",
+      "scope": "control",
+      "total": 9,
+      "fired": 0,
+      "pct": 0,
+      "sampleMisses": []
+    },
+    {
+      "intent": "kb:macos",
+      "scope": "in_scope",
+      "total": 8,
+      "fired": 8,
+      "pct": 100,
+      "sampleMisses": []
+    },
+    {
+      "intent": "kb:onboarding",
+      "scope": "in_scope",
+      "total": 8,
+      "fired": 8,
+      "pct": 100,
+      "sampleMisses": []
+    },
+    {
+      "intent": "shopping",
+      "scope": "out_of_scope",
+      "total": 8,
+      "fired": 0,
+      "pct": 0,
+      "sampleMisses": []
+    },
+    {
+      "intent": "trade",
+      "scope": "out_of_scope",
+      "total": 8,
+      "fired": 0,
+      "pct": 0,
+      "sampleMisses": []
+    },
+    {
+      "intent": "weather/news",
+      "scope": "out_of_scope",
+      "total": 7,
+      "fired": 0,
+      "pct": 0,
+      "sampleMisses": []
+    },
+    {
+      "intent": "kb:bitlocker",
+      "scope": "in_scope",
+      "total": 5,
+      "fired": 5,
+      "pct": 100,
+      "sampleMisses": []
+    },
+    {
+      "intent": "voice",
+      "scope": "control",
+      "total": 5,
+      "fired": 0,
+      "pct": 0,
+      "sampleMisses": []
+    },
+    {
+      "intent": "quote",
+      "scope": "out_of_scope",
+      "total": 4,
+      "fired": 0,
+      "pct": 0,
+      "sampleMisses": []
+    },
+    {
+      "intent": "news",
+      "scope": "out_of_scope",
+      "total": 3,
+      "fired": 0,
+      "pct": 0,
+      "sampleMisses": []
+    }
+  ],
+  "zeroCoverageInScopeIntents": []
+}

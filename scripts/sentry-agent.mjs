@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { openDb, DATA_DIR } from './lib/axis-db.mjs';
+import { openDb, DATA_DIR, setSetting, getSetting } from './lib/axis-db.mjs';
 import { buildCtx, ingestMessage, actionableCount } from './lib/sentry.mjs';
 import { isConfigured, listInbound, getMessageParsed } from './lib/gmail-outreach.mjs';
 
@@ -43,6 +43,14 @@ async function tick() {
     if (r.actionable) newlyActionable.push({ business: r.businessId, classification: r.classification });
   }
   fs.writeFileSync(STATE, JSON.stringify({ last_epoch: newest || Date.now() }));
+  // MERGE, never replace. Writing a bare [Gmail] array here wiped DKIM/Apollo/Stripe status out of the
+  // settings snapshot, which silently dropped the send rails back to the un-ramped DKIM-off daily cap.
+  const existing = getSetting(db, 'integrations', []) || [];
+  const gmail = { name: 'Gmail', status: 'ok', detail: `Live inbox scan ${new Date().toISOString()}` };
+  const merged = existing.some(i => i && i.name === 'Gmail')
+    ? existing.map(i => (i && i.name === 'Gmail' ? gmail : i))
+    : [gmail, ...existing];
+  setSetting(db, 'integrations', merged);
   const after = actionableCount(db);
   if (after > before) {
     // Name the company on the newest actionable if we can.

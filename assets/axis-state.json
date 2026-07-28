@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-06-26T17:53:56.931Z",
+  "generatedAt": "2026-07-28T16:18:50.190Z",
   "public": true,
   "note": "Counts only. Approval detail + live activity require an Aperture login (served via /api/axis-state).",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-06-26T17:53:56.930Z",
-    "leadsQueued": 157,
-    "agentsTotal": 24,
-    "approvalsPending": 31,
-    "classifierSelfTestPassPct": 99.7
+    "heartbeatAt": "2026-07-28T16:18:48.898Z",
+    "leadsQueued": 277,
+    "agentsTotal": 27,
+    "approvalsPending": 32,
+    "classifierSelfTestPassPct": 92.27
   },
   "autoApprove": {
     "enabled": true,
@@ -22,17 +22,17 @@
     "note": "Auto-sends fire only within the rails. Anything irreversible / anomalous waits in Approvals; a daily auto-fire digest lists what fired."
   },
   "approvalsSummary": {
-    "pending": 31,
+    "pending": 32,
     "byKind": {
-      "review": 31
+      "review": 32
     }
   },
   "activitySummary": {
     "recentCount": 8,
-    "lastActivityAt": "2026-06-26T17:47:24.446Z"
+    "lastActivityAt": "2026-07-28T16:03:44.114Z"
   },
   "agentsSummary": {
-    "total": 24,
+    "total": 27,
     "byFunction": {
       "Find Leads": 6,
       "Draft Emails": 2,
@@ -43,7 +43,10 @@
       "Finance": 3,
       "Ops Health": 3,
       "Brain": 2,
-      "Approvals": 1
+      "Approvals": 1,
+      "Research": 1,
+      "Inbox Monitor": 1,
+      "Product Discovery": 1
     }
   },
   "agents": [
@@ -189,6 +192,24 @@
       "name": "Biller",
       "fn": "Finance",
       "does": "One-off: retry DigitalOcean payment Jun 30",
+      "status": "scheduled"
+    },
+    {
+      "name": "Cartographer",
+      "fn": "Research",
+      "does": "Geo-ladder research (Toronto→GTA→ON→CA): builds sourced BI prospect profiles",
+      "status": "scheduled"
+    },
+    {
+      "name": "Sentry",
+      "fn": "Inbox Monitor",
+      "does": "Polls Gmail 2–5min: classifies replies/new requests → Action Inbox badge",
+      "status": "scheduled"
+    },
+    {
+      "name": "Miner",
+      "fn": "Product Discovery",
+      "does": "Logs recurring prospect needs → scored product/service opportunities",
       "status": "scheduled"
     }
   ],

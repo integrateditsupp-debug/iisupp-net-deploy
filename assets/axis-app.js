@@ -3,21 +3,17 @@
 // from the authed endpoint. Writes go through /api/axis/intent (optimistic UI; the worker executes behind
 // rails — the client NEVER sends/approves/pays). Laws enforced here: Badge Law (2) + side-effects (4).
 import { SNAPSHOT_MODULES } from './axis-constants.js';
+// Shared primitives now live in axis-dom.js so the sibling screen modules (composer, charts, fleet,
+// reports, director) use the SAME el()/toast()/postIntent() rather than each carrying a copy that
+// could drift. initDom() below injects the auth/logout closures they cannot see from here.
+import { $, el, fmtMoney, ago, toast, postIntent, head, downloadText, initDom } from './axis-dom.js';
+import { barChart, funnelChart } from './axis-charts.js';
+import { openComposer } from './axis-composer.js';
+import { renderFleet } from './axis-fleet.js';
+import { renderReports } from './axis-reports.js';
+import { renderDirector } from './axis-director-screen.js';
 
 const TOKEN_KEY = 'aperture_jwt';
-const $ = (id) => document.getElementById(id);
-const el = (tag, attrs = {}, kids = []) => {
-  const n = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'class') n.className = v; else if (k === 'html') n.innerHTML = v;
-    else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
-    else if (v != null && v !== false) n.setAttribute(k, v);
-  }
-  (Array.isArray(kids) ? kids : [kids]).forEach(c => c != null && c !== false && n.append(c.nodeType ? c : document.createTextNode(String(c))));
-  return n;
-};
-const fmtMoney = (n) => n == null ? '—' : '$' + Number(n).toLocaleString();
-const ago = (ts) => { if (!ts) return ''; const s = (Date.now() - ts) / 1000; if (s < 3600) return Math.floor(s / 60) + 'm'; if (s < 86400) return Math.floor(s / 3600) + 'h'; return Math.floor(s / 86400) + 'd'; };
 
 const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
 const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview',
@@ -26,21 +22,9 @@ const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version:
 const authHeaders = (extra = {}) => ({ Authorization: 'Bearer ' + state.token, ...extra });
 const data = (mod) => (state.snap[mod] && state.snap[mod].data) || {};
 
-// ── Toast + intent ──
-let toastTimer;
-function toast(msg) {
-  let t = $('toast'); if (t) t.remove();
-  t = el('div', { class: 'toast', id: 'toast' }, msg); document.body.append(t);
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.remove(), 2800);
-}
-async function postIntent(type, payload = {}) {
-  try {
-    const r = await fetch('/api/axis/intent', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ type, payload }) });
-    if (r.status === 401) return logout();
-    const j = await r.json();
-    return j && j.ok;
-  } catch { return false; }
-}
+// Hand axis-dom.js the two things it cannot reach from a module of its own: how to sign a request,
+// and what to do when the session has expired. Everything downstream of here shares one write path.
+initDom({ authHeaders, onUnauthorized: () => logout() });
 
 // ── Nav ──
 const NAV = [
@@ -48,14 +32,16 @@ const NAV = [
     { id: 'overview', label: 'Overview', glyph: 'OV' }, { id: 'inbox', label: 'Action Inbox', glyph: 'IN' },
     { id: 'pipeline', label: 'Pipeline', glyph: 'PL' }, { id: 'crm', label: 'CRM', glyph: 'CR' },
     { id: 'prospects', label: 'Prospects', glyph: 'PR' }, { id: 'outreach', label: 'Outreach Studio', glyph: 'OS' },
-    { id: 'approvals', label: 'Approvals', glyph: 'AP' }, { id: 'followups', label: 'Follow-ups', glyph: 'FU' },
+    { id: 'approvals', label: 'Approvals', glyph: 'AP' }, { id: 'waiting_reply', label: 'Waiting Reply', glyph: 'WR' },
+    { id: 'followups', label: 'Follow-ups', glyph: 'FU' },
   ] },
   { group: 'Workspace', items: [
     { id: 'documents', label: 'Documents', glyph: 'DO' }, { id: 'analytics', label: 'Analytics', glyph: 'AN' },
     { id: 'products', label: 'Product Discovery', glyph: 'PD' },
   ] },
   { group: 'System', items: [
-    { id: 'fleet', label: 'Fleet', glyph: 'FL' }, { id: 'reports', label: 'Reports', glyph: 'RE' }, { id: 'settings', label: 'Settings', glyph: 'SE' },
+    { id: 'fleet', label: 'Fleet', glyph: 'FL' }, { id: 'axis-agent-director', label: 'AXIS Agent Director', glyph: 'AX' },
+    { id: 'reports', label: 'Reports', glyph: 'RE' }, { id: 'settings', label: 'Settings', glyph: 'SE' },
   ] },
 ];
 const navItem = (id) => NAV.flatMap(g => g.items).find(i => i.id === id);
@@ -63,22 +49,43 @@ const navItem = (id) => NAV.flatMap(g => g.items).find(i => i.id === id);
 // Badge Law (2): red inbox badge ONLY when open actionable > 0; approvals neutral when pending > 0. No others.
 function inboxBadgeCount() { const rows = (data('inbox').rows) || []; return rows.filter(m => ACTIONABLE.includes(m.classification) && !m.actioned && !m.snoozed_until).length; }
 function approvalsPending() { const rows = (data('approvals').rows) || []; return rows.filter(r => r.status === 'pending').length; }
+function waitingReplyCount() { return (data('waiting_reply').count) || 0; }
 
 function renderNav() {
   const nav = $('nav'); nav.innerHTML = '';
-  const ib = inboxBadgeCount(), ap = approvalsPending();
+  const ib = inboxBadgeCount(), ap = approvalsPending(), wr = waitingReplyCount(), wrd = (data('waiting_reply').needs_delegation) || 0;
   for (const grp of NAV) {
     nav.append(el('div', { class: 'nav-group' }, grp.group));
     for (const it of grp.items) {
       const kids = [el('span', { class: 'nav-glyph' }, it.glyph), el('span', { class: 'nav-label' }, it.label)];
       if (it.id === 'inbox' && ib > 0) kids.push(el('span', { class: 'badge badge-red' }, ib));
       if (it.id === 'approvals' && ap > 0) kids.push(el('span', { class: 'badge badge-neutral' }, ap));
+      if (it.id === 'waiting_reply' && wr > 0) kids.push(el('span', { class: 'badge ' + (wrd > 0 ? 'badge-red' : 'badge-neutral') }, wr));
       nav.append(el('button', { class: 'nav-item', 'aria-current': state.module === it.id ? 'true' : 'false',
         onclick: () => go(it.id) }, kids));
     }
   }
 }
 function go(mod) { state.module = mod; state.ui.thread = null; state.ui.crmDrawer = null; renderNav(); renderModule(); }
+
+// The Director tab IS the command channel — it carries its own orb, transcript, mic and input. Leaving
+// the floating dock up there puts two AXIS inputs on one screen, and the dock physically covers the
+// tab's own composer. Hide the dock (and its fab) on that tab only; restore whatever the operator had
+// when they leave, so closing the dock elsewhere still sticks.
+let dockHiddenForDirector = false;
+function syncDockVisibility() {
+  const onDirector = state.module === 'axis-agent-director';
+  const dock = $('axisDock'), fab = $('axisFab');
+  if (!dock || !fab) return;
+  if (onDirector) {
+    if (!dockHiddenForDirector) { dockHiddenForDirector = !dock.hidden; dock.hidden = true; }
+    fab.hidden = true;
+  } else if (dockHiddenForDirector) {
+    dockHiddenForDirector = false; dock.hidden = false; fab.hidden = true; renderDock();
+  } else if (dock.hidden) {
+    fab.hidden = false;
+  }
+}
 
 // ── Screens ──
 const SCREENS = {};
@@ -106,6 +113,26 @@ SCREENS.overview = (c) => {
     c.append(el('div', { class: 'card', style: 'display:flex;gap:16px;flex-wrap:wrap' }, fleet.slice(0, 8).map(a =>
       el('div', { style: 'display:flex;align-items:center;gap:7px' }, [el('span', { class: 'dot ' + (a.status === 'ok' ? 'dot-ok' : 'dot-warn') }), el('span', { class: 'mono', style: 'font-size:11px' }, a.agent)]))));
   }
+};
+
+SCREENS['axis-agent-director'] = (c) => {
+  // The Director screen lives in axis-director-screen.js. Voice is NOT reimplemented there — the v1
+  // machinery restored in 642251ad is passed in, so the tab, the fab dock and the public panel all
+  // drive one orb state machine and one transcript.
+  renderDirector(c, {
+    data: { overview: data('overview'), approvals: data('approvals'), fleet: data('fleet'),
+            settings: data('settings'), inbox: data('inbox'), analytics: data('analytics'),
+            version: state.version },
+    voice: {
+      send: () => axisSend('axisDirectorInput'),
+      micToggle: () => axisMicToggle('axisDirectorMic', 'axisDirectorInput', () => axisSend('axisDirectorInput')),
+      voiceToggle: axisVoiceToggle,
+      mountOrbs, setState: setAxisState, renderLog: renderDock,
+      get voiceOn() { return axisVoiceOn; },
+    },
+    onIntent: (type, payload) => postIntent(type, payload),
+    openComposer,
+  });
 };
 
 // ── S2 Action Inbox ──
@@ -174,7 +201,27 @@ async function inboxAction(type, m) {
     window.open(`https://mail.google.com/mail/u/0/#all/${encodeURIComponent(m.thread_id || '')}`, '_blank');
     toast('Opening Gmail thread'); return;
   }
-  if (type === 'draft_reply') { toast('Draft AI reply → Approvals'); postIntent('draft_reply', { message_id: m.id, thread_id: m.thread_id }); return; }
+  if (type === 'draft_reply') {
+    // CC-BRIEF §2A: this used to queue an intent and send the operator to Approvals to wait — two tab
+    // changes and the task never actually completed. The reply text now rides the snapshot
+    // (inbox.rows[].suggested_reply, produced by the worker), so the composer opens instantly, in
+    // place, over this very thread. Nothing navigates.
+    const draft = m.suggested_reply;
+    openComposer({
+      mode: 'reply',
+      to: m.from_email,
+      subject: draft ? draft.subject : (/^re:/i.test(m.subject || '') ? m.subject : 'Re: ' + (m.subject || '')),
+      body: draft ? draft.body : '',
+      templateId: draft && draft.template_id,
+      messageId: m.id,
+      businessId: m.business_id,
+      contactName: m.from_email,
+      companyName: businessName(m.business_id),
+      rails: data('settings'),
+      onSent: () => { m.actioned = true; state.ui.thread = null; renderNav(); renderModule(); },
+    });
+    return;
+  }
   const irreversibleUI = ['mark_handled', 'snooze', 'suppress'];
   if (irreversibleUI.includes(type)) { // optimistic side-effect (Law 4): decrement badge same tick
     if (type === 'snooze') m.snoozed_until = Date.now() + 864e5; else m.actioned = true;
@@ -349,10 +396,33 @@ function renderProspectProfile(c, id) {
   const cts = p.contacts || [];
   const cc = el('div', { class: 'card', style: 'padding:0' });
   if (!cts.length) cc.append(el('div', { class: 'empty' }, 'Not found — never guessed'));
-  else cts.forEach(ct => cc.append(el('div', { class: 'row' }, [
-    el('div', { style: 'flex:1' }, [el('div', { style: 'font-weight:600' }, ct.name), el('div', { style: 'font-size:12px;color:var(--txt-3)' }, ct.title)]),
-    el('div', {}, ct.public_email ? ct.public_email : el('span', { class: 'unknown' }, 'email: Not found — never guessed')),
-    el('span', { class: 'footnote' }, ['src', ' — ', el('span', { class: 'src' }, 'Apollo ✓')])])));
+  else cts.forEach(ct => {
+    // CC-BRIEF §2B: a decision maker used to be dead text. Now the address is exposed and the SAME
+    // composer opens inline on this profile, pre-filled with the LOCKED template the worker generated
+    // (p.outreach_draft) — the copy is never retyped here.
+    const to = ct.public_email || p.public_email || null;
+    const draft = p.outreach_draft;
+    const act = to && draft
+      ? el('div', { style: 'display:flex;gap:6px' }, [
+        el('button', {
+          class: 'chip', style: 'border-color:var(--gold);color:var(--gold)',
+          onclick: () => openComposer({
+            mode: 'outreach', to, subject: draft.subject, body: draft.body, templateId: draft.template_id,
+            businessId: p.id, contactName: ct.name || to, companyName: p.name || p.handle,
+            rails: data('settings'),
+            onSent: () => toast('Queued for send behind the rails — logged to CRM on delivery'),
+          }),
+        }, 'Draft AI Email'),
+        el('a', { class: 'chip', href: 'mailto:' + to, title: 'Open in your own mail client instead' }, 'Email'),
+      ])
+      : el('span', { class: 'unknown', style: 'font-size:11px' }, to ? 'No approved template for this prospect' : 'No address — cannot send');
+    cc.append(el('div', { class: 'row' }, [
+      el('div', { style: 'flex:1;min-width:0' }, [el('div', { style: 'font-weight:600' }, ct.name), el('div', { style: 'font-size:12px;color:var(--txt-3)' }, ct.title)]),
+      el('div', { style: 'width:210px;overflow:hidden;text-overflow:ellipsis' }, to ? el('span', { class: 'mono', style: 'font-size:11.5px' }, to) : el('span', { class: 'unknown' }, 'email: Not found — never guessed')),
+      act,
+      ct.source_url ? el('span', { class: 'footnote' }, ['src', ' — ', el('span', { class: 'src' }, (ct.source_url || '').replace(/^https?:\/\/(www\.)?/, '').split('/')[0] + ' ✓')]) : el('span', { class: 'footnote' }, 'src — unrecorded'),
+    ]));
+  });
   c.append(cc);
 
   // Stage control (manual override always available; auto-transitions logged)
@@ -496,6 +566,37 @@ SCREENS.followups = (c) => {
   ]));
 };
 
+SCREENS.waiting_reply = (c) => {
+  const d = data('waiting_reply');
+  const rows = d.rows || [];
+  c.append(head('Waiting Reply', `${d.count || 0} sent · awaiting a human reply · a reply clears the row automatically · cadence day ${(d.cadence || [3, 7, 14]).join('/')}`));
+  if ((d.needs_delegation || 0) > 0) {
+    c.append(el('div', { class: 'card', style: 'border-left:3px solid var(--crit);margin-bottom:12px;display:flex;gap:10px;align-items:center' }, [
+      el('span', { class: 'stage-tag', style: 'color:var(--crit)' }, `${d.needs_delegation} silent past cadence`),
+      el('div', { style: 'flex:1;font-size:13px' }, 'These have gone cold with no reply and no scheduled touch left — hand to the Director to delegate follow-up.'),
+      el('button', { class: 'chip', onclick: () => { rows.filter(r => r.delegate).forEach(r => postIntent('delegate_followup', { business_id: r.business_id, outreach_item_id: r.id })); toast('Handed to Director → follow-up agent'); } }, 'Delegate all'),
+    ]));
+  }
+  const card = el('div', { class: 'card', style: 'padding:0' });
+  if (!rows.length) card.append(el('div', { class: 'empty' }, 'Nothing waiting — no sent outreach is unanswered.'));
+  else rows.forEach(r => {
+    const hot = r.delegate || r.next_action === 'follow-up due';
+    card.append(el('div', { class: 'row', style: 'gap:10px' }, [
+      el('div', { style: 'flex:1;min-width:0' }, [
+        el('div', { style: 'font-weight:600' }, r.company),
+        el('div', { class: 'mono', style: 'font-size:11px;color:var(--txt-3)' }, r.to_email),
+      ]),
+      el('span', { class: 'mono', style: `font-size:11px;color:${r.days_waiting >= 7 ? 'var(--crit)' : 'var(--txt-3)'}` }, `${r.days_waiting}d silent`),
+      el('span', { class: 'stage-tag', style: 'font-size:11px;color:var(--txt-3)' }, r.touches_done ? `${r.touches_done} touch${r.touches_done === 1 ? '' : 'es'}` : 'no touch yet'),
+      el('span', { class: 'stage-tag', style: `color:${hot ? 'var(--crit)' : 'var(--gold)'}` }, r.next_action),
+      r.delegate
+        ? el('button', { class: 'chip', onclick: () => { postIntent('delegate_followup', { business_id: r.business_id, outreach_item_id: r.id }); toast('Handed to Director → follow-up agent'); } }, 'Delegate')
+        : el('button', { class: 'chip', onclick: () => go('followups') }, 'Follow-ups'),
+    ]));
+  });
+  c.append(card);
+};
+
 // ── S9 Documents & Contracts ──
 SCREENS.documents = (c) => {
   if (state.ui.doc != null) return renderDoc(c, state.ui.doc);
@@ -542,37 +643,8 @@ function renderDoc(c, id) {
     ]),
   ]));
 }
-function downloadText(name, text) {
-  const a = document.createElement('a');
-  a.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(text || '');
-  a.download = name; a.click();
-}
-
-// ── SVG chart helpers (no external lib — self-contained, theme-aware via currentColor/tokens) ──
-const SVGNS = 'http://www.w3.org/2000/svg';
-const svg = (tag, attrs = {}, kids = []) => { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); (Array.isArray(kids) ? kids : [kids]).forEach(c => c && n.append(c.nodeType ? c : document.createTextNode(String(c)))); return n; };
-function barChart(rows, { colorVar = '--c1', money = false } = {}) {
-  rows = rows.filter(r => r); const max = Math.max(1, ...rows.map(r => r.value));
-  const W = 560, rowH = 26, pad = 150, h = rows.length * rowH + 10;
-  const g = svg('svg', { viewBox: `0 0 ${W} ${h}`, width: '100%', style: `max-width:${W}px` });
-  rows.forEach((r, i) => {
-    const y = i * rowH + 6, bw = ((W - pad - 60) * r.value) / max;
-    g.append(svg('text', { x: 0, y: y + 14, fill: 'var(--txt-2)', 'font-size': 11, 'font-family': 'var(--sans)' }, (r.label || '').slice(0, 22)));
-    g.append(svg('rect', { x: pad, y: y + 4, width: Math.max(2, bw), height: 14, rx: 3, fill: `var(${colorVar})`, opacity: 0.85 }));
-    g.append(svg('text', { x: pad + Math.max(2, bw) + 6, y: y + 15, fill: 'var(--txt-3)', 'font-size': 10, 'font-family': 'var(--mono)' }, money ? '$' + r.value.toLocaleString() : r.value));
-  });
-  return g;
-}
-function funnelChart(stages) {
-  const W = 620, sh = 46, h = stages.length * sh + 10, max = Math.max(1, ...stages.map(s => s.n));
-  const g = svg('svg', { viewBox: `0 0 ${W} ${h}`, width: '100%', style: `max-width:${W}px` });
-  stages.forEach((s, i) => {
-    const y = i * sh + 6, w = ((W - 40) * s.n) / max, x = (W - w) / 2;
-    g.append(svg('rect', { x, y, width: Math.max(30, w), height: sh - 12, rx: 5, fill: `var(--c${(i % 6) + 1})`, opacity: 0.8 }));
-    g.append(svg('text', { x: W / 2, y: y + 22, fill: '#fff', 'font-size': 12, 'font-weight': 600, 'text-anchor': 'middle', 'font-family': 'var(--sans)' }, `${s.stage} · ${s.n}`));
-  });
-  return g;
-}
+// downloadText + the local SVG chart helpers moved to axis-dom.js / axis-charts.js — the chart
+// versions there keep the same visual language but add hover, keyboard focus and drill-down.
 
 // ── S10 Analytics ──
 SCREENS.analytics = (c) => {
@@ -608,15 +680,14 @@ function kpiRow(pairs) { return el('div', { class: 'kpi-grid' }, pairs.map(([l, 
 
 // ── S13 Reports & Settings ──
 SCREENS.reports = (c) => {
-  const r = data('reports'); const st = data('settings');
-  c.append(head('Reports & Settings', 'workbook · CSV · PDF · rails · integrations'));
-  // Reports
-  c.append(el('div', { class: 'card', style: 'margin-bottom:14px' }, [
-    el('div', { style: 'display:flex;justify-content:space-between;align-items:baseline' }, [el('div', { style: 'font-weight:600' }, 'Excel workbook + CSV + PDF'), el('button', { class: 'chip', style: 'border-color:var(--gold);color:var(--gold)', onclick: () => { toast('Report generation queued'); postIntent('generate_report', {}); } }, 'Generate report')]),
-    el('div', { class: 'eyebrow', style: 'margin:8px 0' }, r.lastGenerated ? 'last generated ' + r.lastGenerated.slice(0, 16).replace('T', ' ') : 'not yet generated'),
-    el('div', { style: 'font-size:12px;color:var(--txt-2)' }, 'Sheets: ' + (r.sheets || []).join(' · ')),
-    (r.files || []).length ? el('div', { style: 'margin-top:8px' }, (r.files || []).map(f => el('span', { class: 'footnote', style: 'margin-right:8px' }, `${f.name} (${Math.round(f.size / 1024)}KB)`))) : null,
-  ]));
+  const st = data('settings');
+  // Reports half (S13) — charts, quarterly roll-up of daily agent work, summary→detail drill-down and
+  // worker-side .xlsx export — lives in axis-reports.js. The Settings half below is unchanged, and
+  // SCREENS.settings still aliases this whole screen so BOTH nav tabs keep working exactly as before.
+  renderReports(c, {
+    data: data('reports'), settings: st, analytics: data('analytics'),
+    onIntent: (type, payload) => postIntent(type, payload),
+  });
   // Settings — rails
   const rails = st.rails || {};
   c.append(head('Safety rails', '', 'margin-top:6px'));
@@ -637,6 +708,13 @@ SCREENS.reports = (c) => {
 };
 function settingBox(label, value) { return el('div', {}, [el('div', { class: 'eyebrow' }, label), el('div', { style: 'font-size:16px;font-weight:600;margin-top:4px' }, value ?? '—')]); }
 SCREENS.settings = SCREENS.reports; // Reports & Settings share the screen (spec S13)
+
+// ── Fleet — the live agent floor. Was the only NAV entry with no SCREENS handler at all, so it fell
+// through to placeholder() and rendered raw snapshot JSON. agent_runs is genuinely empty until the
+// worker records runs, and the screen is built to look correct in that state rather than fake one.
+SCREENS.fleet = (c) => {
+  renderFleet(c, { data: data('fleet'), onIntent: (type, payload) => postIntent(type, payload) });
+};
 
 // ── S11 Product Discovery (Miner) ──
 SCREENS.products = (c) => {
@@ -676,22 +754,35 @@ function placeholder(label) {
       el('pre', { class: 'mono', style: 'font-size:11px;white-space:pre-wrap;color:var(--txt-2);margin:0;max-height:340px;overflow:auto' }, d ? JSON.stringify(d, null, 2) : '(empty)')]));
   };
 }
-function head(title, eyebrow, style) { return el('div', { class: 'screen-head', style }, [el('div', { class: 'screen-title' }, title), eyebrow ? el('span', { class: 'eyebrow' }, eyebrow) : null]); }
 function renderModule() {
   clearOverlays();
   const c = $('content'); c.innerHTML = '';
   const screen = el('div', { class: 'screen' }); c.append(screen);
   (SCREENS[state.module] || placeholder(navItem(state.module)?.label || state.module))(screen);
+  syncDockVisibility();
 }
 function clearOverlays() { document.querySelectorAll('.drawer, .drawer-bg').forEach(n => n.remove()); }
 
 // ── Snapshot loop ──
 function renderTick() { $('tick').textContent = state.source === 'seed' ? 'seed data · worker idle' : (state.version && state.version.tick ? 'last worker tick ' + state.version.tick.slice(11, 16) : 'live'); }
+// An open composer holds text the operator is typing. renderModule() rebuilds the whole content area
+// and clearOverlays() sweeps drawers, so re-rendering underneath a modal is how a half-written email
+// gets destroyed by a background tick — the same class of bug already fixed once for the AXIS strip
+// input. Take the fresh data, but defer the repaint until the overlay closes.
+const overlayOpen = () => !!document.querySelector('.axis-overlay-bg');
+document.addEventListener('axis:overlay-closed', () => {
+  if (state.ui.repaintPending) { state.ui.repaintPending = false; renderModule(); }
+});
 async function fetchSnapshots() {
   const r = await fetch('/api/axis/snapshot?module=all', { headers: authHeaders(), cache: 'no-store' });
   if (r.status === 401) return logout();
   const j = await r.json();
-  if (j && j.ok) { state.snap = j.snapshots || {}; state.version = j.version; state.source = j.source; renderTick(); renderNav(); renderModule(); }
+  if (j && j.ok) {
+    state.snap = j.snapshots || {}; state.version = j.version; state.source = j.source;
+    renderTick(); renderNav();
+    if (overlayOpen()) { state.ui.repaintPending = true; return; }
+    renderModule();
+  }
 }
 async function pollVersion() {
   try { const r = await fetch('/api/axis/snapshot', { headers: authHeaders(), cache: 'no-store' }); if (r.status === 401) return logout();
@@ -700,8 +791,8 @@ async function pollVersion() {
 
 // ── AXIS dock ──
 const dockLog = [];
-function renderDock() {
-  const log = $('axisLog'); log.innerHTML = '';
+function renderAxisLog(log) {
+  log.innerHTML = '';
   if (!dockLog.length) log.append(el('div', { class: 'empty', style: 'padding:20px' }, 'Talk to AXIS. Blunt. Important-only.'));
   dockLog.forEach(m => {
     const node = (m.role === 'axis' && m.text === '…')
@@ -712,8 +803,14 @@ function renderDock() {
   });
   log.scrollTop = log.scrollHeight;
 }
-async function axisSend() {
-  const inp = $('axisInput'); const text = inp.value.trim(); if (!text) return; inp.value = '';
+function renderDock() {
+  for (const id of ['axisLog', 'axisDirectorLog']) {
+    const log = $(id);
+    if (log) renderAxisLog(log);
+  }
+}
+async function axisSend(inputId = 'axisInput') {
+  const inp = $(inputId); const text = inp?.value.trim(); if (!text) return; inp.value = '';
   dockLog.push({ role: 'user', text }); renderDock();
   // Remove OUR placeholder by reference, never the array tail — concurrent sends must not eat
   // each other's replies or orphan a fake thinking row (gate-review finding, 2026-07-21).
@@ -826,7 +923,7 @@ function axisSpeak(text) {
   } catch { return false; }
 }
 function axisSyncVoiceBtn() {
-  for (const id of ['axisVoice', 'axisPubVoice']) {
+  for (const id of ['axisVoice', 'axisPubVoice', 'axisDirectorVoice']) {
     const b = $(id);
     if (b) { b.setAttribute('aria-pressed', axisVoiceOn ? 'true' : 'false'); b.style.color = axisVoiceOn ? 'var(--gold)' : ''; b.style.borderColor = axisVoiceOn ? 'var(--gold)' : ''; b.title = axisVoiceOn ? 'Spoken replies ON' : 'Toggle spoken replies'; }
   }
@@ -885,6 +982,7 @@ function mountOrbs(scope = document) {
 // idle | listening | thinking | speaking — drives every orb + the aria-live state words.
 function setAxisState(s) {
   document.documentElement.dataset.axisState = s;
+  document.querySelectorAll('[data-axis-state-word]').forEach(w => { w.textContent = s; });
   const w = $('axisStateWord'); if (w) w.textContent = s;
   const p = $('axisPubState'); if (p) p.textContent = s;
 }
@@ -994,7 +1092,11 @@ async function doLogin() {
 
 // ── Theme + dock + wiring ──
 function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('axis_theme', t); }
-function openDock() { $('axisDock').hidden = false; $('axisFab').hidden = true; renderDock(); $('axisInput').focus(); }
+function openDock() {
+  // On the Director tab the dock would cover that screen's own command channel — send there instead.
+  if (state.module === 'axis-agent-director') { const i = $('axisDirectorInput'); if (i) i.focus(); return; }
+  $('axisDock').hidden = false; $('axisFab').hidden = true; renderDock(); $('axisInput').focus();
+}
 function closeDock() { $('axisDock').hidden = true; $('axisFab').hidden = false; try { sessionStorage.setItem('axisDockDismissed', '1'); } catch {} }
 $('themeBtn').addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 applyTheme(localStorage.getItem('axis_theme') || 'dark');

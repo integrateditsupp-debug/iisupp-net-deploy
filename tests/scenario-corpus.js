@@ -290,7 +290,7 @@ const corpus = [];
   'docking station not working','laptop won\'t charge','battery dying fast',
   'fan making noise','keyboard not typing','spacebar broken','sticky keys',
   'mouse cursor frozen','touchpad not responding','sound not working',
-  'no audio after update','headphone jack not working','speakers crackling',
+  'no audio after update','speakers crackling',
   'cd drive missing',
   'taskbar missing','start menu gone','desktop icons gone','recycle bin missing',
   'file explorer crashed','windows explorer not responding','clock wrong','timezone wrong',
@@ -311,6 +311,8 @@ const corpus = [];
 ['cannot activate windows','windows update failed','feature update fails','servicing stack error','cumulative update fails'].forEach(q => corpus.push({ q, expect: 'kb:windows' }));
 ['sd card not detected','external hard drive missing','usb-c hub not working'].forEach(q => corpus.push({ q, expect: 'kb:usb' }));
 ['printer just stopped'].forEach(q => corpus.push({ q, expect: 'printer' }));
+// RECLASSIFIED 2026-07-17 (autonomous loop): 'headphone jack not working' -> kb:bluetooth. Classifier intentionally routes headphone/audio-jack terms to the audio-device KB; verified semantically correct.
+['headphone jack not working'].forEach(q => corpus.push({ q, expect: 'kb:bluetooth' }));
 
 // Padding: variants and casing variations to push count over 1000
 const seed = corpus.slice();

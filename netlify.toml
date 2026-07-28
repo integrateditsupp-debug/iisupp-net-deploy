@@ -207,6 +207,12 @@
   status = 404
   force = true
 [[redirects]]
+  # Internal engineering brief — infra IDs, bug inventory, prospect names. Never serves.
+  from = "/CC-BRIEF.md"
+  to = "/index.html"
+  status = 404
+  force = true
+[[redirects]]
   from = "/mesh-registry.json"
   to = "/index.html"
   status = 404

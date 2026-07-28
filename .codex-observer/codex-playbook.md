@@ -1,27 +1,36 @@
-# Codex Playbook — scan 2026-07-09T18:24:52Z
+# Codex Playbook — scan 2026-07-28T21:40Z (window: 2d)
 
-Window: last 2 days (--since=2d). Read-only reconstruction (observe-codex.mjs still absent from mounted session).
+**Method:** read-only `git log` reconstruction (observe-codex.mjs still missing). No commits, no pushes, no edits outside `.codex-observer/`, `docs/LOOPS_LEDGER.md`, `loops/registry.json`. HARD-RULE files (aria.html, aperture.html, aperture-learning.html) untouched.
 
-## Top-line
-- Commits in window: 7 (all dated 2026-07-07; none 07-08 or 07-09)
-- Author identity: 100% integrateditsupp-debug (single git identity — lane attribution still collapsed; only commit-message prefixes distinguish [cc]/[cowork]/[codex])
-- HEAD: b91561b084800eee74415f529fa72c3f6f7a0b42 (detached) — subject: [cowork] IIS Upgrades v1.1
-- Prefix mix (window): [cowork] x5, Cowork+CC x1, bare "W1:" x1
+## Top line
+| Metric | This scan | Prior (13:05Z) |
+|---|---|---|
+| Commits in 2d window | 5 | 1 |
+| Codex-proper commits | 0 | 0 |
+| Distinct authors | 2 | 1 |
+| HEAD | ceed5ae5 | 6394986f |
+| Dirty working-tree paths | 516 | 506 |
+| Unpushed on main | 14 | 14 |
+| .git/index.lock | PRESENT (live) | PRESENT (stale) |
 
-## Top directories touched (window)
-1. downloads/library (52)  — Growth Library product expansion
-2. governance (39)         — NEW hotspot (policy/compliance docs)
-3. assets (16)
-4. verticals (12)          — NEW hotspot (industry landing pages)
-5. knowledge-base/top50-gaps (10) — KB gap-fill
-6. scripts (7)
-7. index.html / services.html / growth-library.html / about.html / trust.html (site copy)
-8. ARIA Sentinel/tests (6) + ARIA Sentinel/src/shared (5) — Sentinel fleet-policy slice
+## Commits in window
+- `ceed5ae5` **AXIS Worker** 06:55Z — B3: token-authed `/api/axis/snapshot-push` (push snapshots without a Netlify PAT)
+- `6d1985cf` CC Stage2 01:12 — protect open composer from 15s tick; make snapshot push prove itself
+- `891913f9` CC Stage2 01:10 — AXIS CC v2: in-place composer, live Fleet, quarterly Reports, Director tab
+- `add875a0` CC Stage2 01:01 — fix B1 (reply misclassified), B2 (ingest noise), pipeline-value lie
+- `6394986f` CC Stage2 00:43 — merge main d0b57fbc + triage 21 dirty files
 
-## Biggest churn
-- 24a33108 "Cowork+CC 2026-07-07": 74 files, +11202 / -978 — ARIA Sentinel fleet policy + Phase B browser-protection (decision-only, enforced:false) + D1 KB relevance-floor fix. Branch-only, no deploy.
-- 5ea047bb / 2fffa9d1 "IIS Motion Layer": ~70-79 files each, sitewide scroll-reactive ambience across 74 public pages.
-- b91561b0 "IIS Upgrades v1.1": 67 files — motion polish, roadmap flip, Reading Room, Knowledge Commons, legal suite.
+## What's new vs prior scan
+1. **New author: "AXIS Worker."** First appearance in the stream. Third distinct identity after CC Stage2 and (dormant) Forge.
+2. **New verb class: infra/auth.** `add token-authed … endpoint` is the first credential-surface change in recent windows; prior commits were merge / triage / regenerate.
+3. **Churn shifted to real source.** scripts/lib (11 touches), netlify/functions (3), assets/axis-app.js + axis-dom.js (5). Prior window was ~all regenerated state JSON.
+4. **No new top-level directories.** All churn inside already-known dirs.
 
-## Dominant verbs (last 30 commits)
-[cc] 13 · [cowork] 4 · Merge 3 · Tighten/Shrink/Reposition/Refine/Promote/Move/Fix 1 each — polish + IA refinement phase, not net-new build.
+## Flags for Ahmad
+1. **`.git/index.lock` is LIVE-CONTENDED, not stale.** mtime moved 02:55 → 11:26 *during this scan*. Something is actively holding git. Sandbox cannot unlink (mount perms). Verify no orphaned git process before deleting.
+2. **main still 14 commits ahead of origin/main — unchanged 8 days.** RUN-F…RUN-K (first paid customer, first dollar, renewal truth, durable revenue) all unpushed. Highest-value blocker on the board, and it has not moved.
+3. **axis-command-center-v2 is 9 ahead of its own remote, 5 ahead of origin/main.** AXIS CC v2 P0–B3 unpushed.
+4. **New token-auth endpoint needs review.** `/api/axis/snapshot-push` accepts a token in place of a Netlify PAT — confirm the token is server-side only and not committed.
+5. **Dirty tree grew 506 → 516** despite a commit claiming to triage it. Tree keeps drifting from git.
+6. **Codex proper: 0 commits, 26 days dormant** (since 07-02). This loop is functionally a Cowork/CC observer. Either rename it or retire the Codex framing.
+7. **observe-codex.mjs still missing** — every scan since 07-21 is manual reconstruction. Rebuild it in-repo or make reconstruction canonical in LOOPS_SPEC.md §6.

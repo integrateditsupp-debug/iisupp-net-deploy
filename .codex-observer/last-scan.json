@@ -1,24 +1,25 @@
 {
-  "scan_ts": "2026-07-09T21:06:35Z",
+  "scan_ts": "2026-07-28T21:40:00Z",
   "window": "2d",
-  "head": "b91561b084800eee74415f529fa72c3f6f7a0b42",
-  "commits_in_window": 3,
-  "top_dirs": [
-    "downloads/library",
-    "scripts",
-    "trust.html",
-    "services.html",
-    "index.html",
-    "growth-library.html",
-    "forums/index.html"
-  ],
-  "prefixes": {
-    "[cowork]": 3
-  },
-  "authors": {
-    "integrateditsupp-debug": 3
-  },
-  "prior_head": "b91561b0",
-  "prior_scan": "2026-07-09T18:24:52Z",
-  "delta": "no new commits since prior scan; window rolled forward (7->3 commits as 07-05 activity aged out); all 3 in-window commits are the same IIS Upgrades v1.1 slice already reported"
+  "head": "ceed5ae5",
+  "branch": "axis-command-center-v2",
+  "commits_in_window": 5,
+  "codex_commits_in_window": 0,
+  "commits_since_prior_scan": 4,
+  "top_dirs": ["scripts/lib", "netlify/functions", "assets", "tests", "scripts"],
+  "prefixes": { "AXIS": 4, "B3": 1 },
+  "authors": { "CC Stage2": 4, "AXIS Worker": 1 },
+  "prior_head": "6394986f",
+  "prior_scan": "2026-07-28T13:05:00Z",
+  "index_lock_present": true,
+  "index_lock_note": "0-byte lock; mtime moved 02:55 -> 11:26 during this scan (actively re-created, not merely stale). Sandbox cannot unlink (mount perms).",
+  "working_tree_dirty_paths": 516,
+  "unpushed_on_main": 14,
+  "unpushed_on_branch_vs_origin_main": 5,
+  "unpushed_on_branch_vs_own_remote": 9,
+  "commits_by_day_last_10d": { "2026-07-21": 41, "2026-07-22": 2, "2026-07-28": 5 },
+  "codex_dormant_days": 26,
+  "delta": "FREEZE BROKEN. 07-28 went 1 -> 5 commits in ~6h (00:43 to 06:55). NEW AUTHOR: 'AXIS Worker' (ceed5ae5) -- first appearance, distinct from 'CC Stage2' and dormant 'Forge'. NEW VERB CLASS: infra/auth surface ('add token-authed /api/axis/snapshot-push') -- prior windows were merge/triage/regenerate only. Churn concentrated in scripts/lib (11), netlify/functions (3), assets/axis-*.js (5) -- real source edits, not regenerated state JSON. Substantive: B1 reply-misclassification fix, B2 ingest noise, 'pipeline-value lie' correction, composer-tick protection. Codex proper STILL 0 commits, 26 days dormant. index.lock mtime advanced mid-scan -> a process is actively touching git, so lock is live-contended not stale.",
+  "read_only": true,
+  "notes": "observe-codex.mjs still absent; scan reconstructed from git log (read-only, no index writes)."
 }

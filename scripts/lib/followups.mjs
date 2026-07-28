@@ -37,8 +37,8 @@ export function scheduleFollowups(db, businessId, initialItemId, sentAt = Date.n
 
 // Views for S8. `now` is injectable for tests. Overdue = past & still scheduled; Due today = within today;
 // Upcoming = future; Auto-cancelled = status cancelled.
-export function followupViews(db, now = Date.now()) {
-  const rows = db.prepare(`SELECT f.*, b.name AS company, b.handle FROM follow_ups f LEFT JOIN businesses b ON b.id=f.business_id`).all();
+export function followupViews(db, now = Date.now(), realOnly = false) {
+  const rows = db.prepare(`SELECT f.*, b.name AS company, b.handle FROM follow_ups f LEFT JOIN businesses b ON b.id=f.business_id${realOnly ? ' WHERE b.is_real=1' : ''}`).all();
   const startOfDay = new Date(now); startOfDay.setHours(0, 0, 0, 0);
   const endOfDay = startOfDay.getTime() + DAY;
   const enrich = (r) => ({ id: r.id, business_id: r.business_id, company: r.company || r.handle, due_at: r.due_at, status: r.status, outreach_item_id: r.outreach_item_id });

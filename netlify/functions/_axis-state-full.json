@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-06-26T17:53:56.930Z",
+  "generatedAt": "2026-07-28T16:18:50.189Z",
   "health": {
     "worker": "up",
-    "heartbeatAt": "2026-06-26T17:53:56.930Z",
-    "leadsQueued": 157,
-    "agentsTotal": 24,
-    "approvalsPending": 31,
-    "classifierSelfTestPassPct": 99.7
+    "heartbeatAt": "2026-07-28T16:18:48.898Z",
+    "leadsQueued": 277,
+    "agentsTotal": 27,
+    "approvalsPending": 32,
+    "classifierSelfTestPassPct": 92.27
   },
   "autoApprove": {
     "enabled": true,
@@ -21,49 +21,49 @@
   },
   "recentActivity": [
     {
-      "at": "2026-06-26T17:47:24.446Z",
-      "agent": "Interaction Avoidance Agent",
-      "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
-      "status": "ready"
-    },
-    {
-      "at": "2026-06-26T17:46:50.953Z",
+      "at": "2026-07-28T16:03:44.114Z",
       "agent": "Senior Director Worker",
       "text": "Director heartbeat, lead scans, mission brief cadence, and operating board orchestration completed for this tick.",
       "status": "ready"
     },
     {
-      "at": "2026-06-26T17:44:51.035Z",
+      "at": "2026-07-28T15:47:23.766Z",
+      "agent": "Interaction Avoidance Agent",
+      "text": "Prep-agent routing and one-minute CEO final-action lanes are refreshed.",
+      "status": "ready"
+    },
+    {
+      "at": "2026-07-28T15:44:51.403Z",
       "agent": "Opportunity Quality Gate Agent",
       "text": "Opportunity quality gate refreshed the revenue queue and parked weak-fit noise.",
       "status": "ready"
     },
     {
-      "at": "2026-06-26T17:31:50.816Z",
+      "at": "2026-07-28T15:31:51.150Z",
       "agent": "CEO Action Digest Agent",
       "text": "CEO-only approval, send, publish, and register decisions are compressed into a short digest.",
       "status": "ready"
     },
     {
-      "at": "2026-06-26T17:28:59.944Z",
+      "at": "2026-07-28T15:28:59.194Z",
       "agent": "Opportunity Review Agent",
       "text": "Opportunity records were enriched with summaries, drafts, reminders, and required-document scaffolding.",
       "status": "ready"
     },
     {
-      "at": "2026-06-26T17:28:59.883Z",
+      "at": "2026-07-28T15:28:59.115Z",
       "agent": "Opportunity Research Agent",
       "text": "Public opportunity sources were rescanned and merged into the opportunity engine.",
       "status": "ready"
     },
     {
-      "at": "2026-06-26T17:21:55.079Z",
+      "at": "2026-07-28T15:21:55.272Z",
       "agent": "Opportunity Prep Packets Agent",
       "text": "Bid, portal, and job preparation packets are refreshed to the CEO final-action point.",
       "status": "ready"
     },
     {
-      "at": "2026-06-26T12:00:01.677Z",
+      "at": "2026-07-28T12:00:01.952Z",
       "agent": "Business Development Agent",
       "text": "Daily no-send business-development queue refreshed and routed into the autonomous board.",
       "status": "ready"
@@ -222,6 +222,11 @@
     },
     {
       "id": "apr-31",
+      "title": "OpenClaw/Claude OAuth is expired; Ahmad or a signed-in desktop session may need to refresh auth.",
+      "kind": "review"
+    },
+    {
+      "id": "apr-32",
       "title": "Workspace steward has cleanup/retirement recommendations; destructive action stays blocked until a later keep/archive/delete review.",
       "kind": "review"
     }
@@ -439,6 +444,33 @@
       "fn": "Finance",
       "does": "One-off: retry DigitalOcean payment Jun 30",
       "task": "do-payment-retry-june-30",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Cartographer",
+      "fn": "Research",
+      "does": "Geo-ladder research (Toronto→GTA→ON→CA): builds sourced BI prospect profiles",
+      "task": "axis-cartographer-research",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Sentry",
+      "fn": "Inbox Monitor",
+      "does": "Polls Gmail 2–5min: classifies replies/new requests → Action Inbox badge",
+      "task": "axis-sentry-inbox-monitor",
+      "lastRunAt": null,
+      "status": "scheduled",
+      "summary": ""
+    },
+    {
+      "name": "Miner",
+      "fn": "Product Discovery",
+      "does": "Logs recurring prospect needs → scored product/service opportunities",
+      "task": "axis-miner-product-discovery",
       "lastRunAt": null,
       "status": "scheduled",
       "summary": ""

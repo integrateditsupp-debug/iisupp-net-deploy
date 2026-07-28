@@ -5,7 +5,7 @@
 import crypto from 'node:crypto';
 import dns from 'node:dns/promises';
 import { openDb } from './lib/axis-db.mjs';
-import { generateOutreach, caslFooter, lint, railsCheck } from './lib/outreach.mjs';
+import { generateOutreach, caslFooter, lint, railsCheck, cleanName } from './lib/outreach.mjs';
 import { previewRfc822, isConfigured } from './lib/gmail-outreach.mjs';
 import { OUTREACH_IDENTITY, CASL } from './lib/axis-constants.mjs';
 
@@ -24,8 +24,18 @@ async function domainAuth(d = 'iisupp.net') {
 const db = openDb();
 const prov = (b, k) => { try { return JSON.parse(b.provenance_json)[k]?.value ?? null; } catch { return null; } };
 const rows = BATCH_HANDLES.map(h => db.prepare('SELECT * FROM businesses WHERE handle=? AND is_real=1').get(h)).filter(Boolean);
-const sendable = rows.filter(b => { const e = prov(b, 'public_email'); return e && /@/.test(e); });
-if (sendable.length !== rows.length) { console.error('ABORT: a batch row lacked a real public email'); process.exit(1); }
+const withEmail = rows.filter(b => { const e = prov(b, 'public_email'); return e && /@/.test(e); });
+if (withEmail.length !== rows.length) { console.error('ABORT: a batch row lacked a real public email'); process.exit(1); }
+// Pre-send merge-field gate: a row with no usable name would render "Hello ," — drop it from the batch and
+// report it loudly rather than draft garbage. This is the caller-side half of the renderer's hard-fail.
+const sendable = [];
+const nameless = [];
+for (const b of withEmail) (cleanName(b.name) ? sendable : nameless).push(b);
+if (nameless.length) {
+  console.error(`\n⚠ SKIPPED ${nameless.length} prospect(s) with no usable name (would merge to "Hello ,"): ${nameless.map(b => b.handle).join(', ')}`);
+  console.error('  → fix businesses.name for these rows before drafting; not counted as failures, but NOT drafted.');
+}
+if (!sendable.length) { console.error('ABORT: no draftable rows after the name gate'); process.exit(1); }
 for (const b of sendable) db.prepare('DELETE FROM outreach_items WHERE business_id=? AND kind=?').run(b.id, 'initial');
 
 const auth = await domainAuth();

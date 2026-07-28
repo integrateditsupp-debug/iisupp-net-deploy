@@ -78,3 +78,42 @@ export const OUTREACH_PACING = { first_batch_daily_cap: 5, ramped_daily_cap: 25,
 // ── Blobs store names. Intents reuse the existing axis-inbox store (worker already consumes pending/).
 // Snapshots get a dedicated store; key = module name, plus a 'version' key holding {v, modules:{m:v}}. ──
 export const BLOBS = { inbox: 'axis-inbox', intentPrefix: 'pending/', snapshotStore: 'axis-snapshots', versionKey: 'version' };
+
+// ── BUG B2 — INGEST-LEVEL noise floor (CC-BRIEF §0). ─────────────────────────────────────────────
+// These senders were being classified as 'noise' AFTER landing in inbox_messages, so the founder's
+// action inbox held 26 rows of which 25 were LinkedIn digests, DMARC XML, Best Buy sales, and ARIA's
+// own outbound digests — 96% noise around one real client reply, which is exactly why that reply went
+// unseen for days. Classify-time filtering was the wrong layer: the row still exists, still costs a
+// scroll, still dilutes the surface. Suppress at INGEST — never write the row at all.
+//
+// Ingest suppression is a HARD, deterministic sender rule, never a content guess, and it is auditable:
+// the worker records a per-rule tally in settings.ingest_suppressed so the UI can honestly report
+// "N suppressed at ingest" without keeping the bodies. A sender here can still reach us — a direct
+// reply to our outreach threads past this list (see threadsWithSent in sentry-classify.mjs).
+export const INGEST_SUPPRESS = [
+  // Our own machines writing to our own founder. ARIA's digests are telemetry, not client work.
+  { rule: 'internal', test: /^(aria|hello|noreply|no-reply|postmaster|admin)@(iisupp\.net|integrateditsupp\.com)$/i },
+  // Deliverability report plumbing — machine-readable XML, never a human asking for anything.
+  { rule: 'dmarc', test: /^noreply-dmarc-support@google\.com$|@[\w.-]*mimecastreport\.com$|dmarc[\w.-]*@/i },
+  // Social network activity digests.
+  { rule: 'linkedin', test: /@(\w+\.)?linkedin\.com$/i },
+  // Retail / consumer newsletters.
+  { rule: 'retail-newsletter', test: /^newsletter@|@e\.bestbuy\.ca$|@[\w.-]*\.bestbuy\.ca$/i },
+];
+
+// BUG B1 — campaign fingerprints. Ahmad's first real outreach batch was sent BY HAND from Gmail, not
+// through AXIS, so no outreach_items row carries a thread_id or gmail_message_id (verified: all 18 are
+// NULL). That means the thread/Message-ID linkage the classifier relies on can never fire for those
+// replies, and `reply_to_outreach` sat at 0 across the whole table while a genuine reply from a Toronto
+// law firm was filed as a cold `new_inbound_request`.
+//
+// These are the distinctive phrases our own outreach subject lines actually use. A reply is recognised
+// when it is an inbound Re: carrying at least MIN_CAMPAIGN_MARKERS of them — two independent phrase hits
+// on a Re: is a strong signal and will not fire on unrelated mail. This is a bridge for hand-sent
+// history: once AXIS sends and records thread_ids, real linkage takes over and outranks this.
+export const CAMPAIGN_SUBJECT_MARKERS = [
+  'managed it', 'ai automation', 'agentic workflow',
+  '15-min demo', '15 min demo', '15-minute demo', '15 minute demo',
+  'integrated it support',
+];
+export const MIN_CAMPAIGN_MARKERS = 2;

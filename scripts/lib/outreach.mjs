@@ -8,10 +8,29 @@ import { OUTREACH_IDENTITY, CASL, BANNED_FILLER, OUTREACH_LIMITS, OUTREACH_PACIN
 const domainOf = (url) => (url || '').replace(/^https?:\/\/(www\.)?/, '').split('/')[0];
 const firstProv = (p, k) => { try { return JSON.parse(p.provenance_json)[k]?.value ?? null; } catch { return null; } };
 
+// Merge-field sanitizer. Returns a clean name string, or null if there is nothing real to personalize
+// with. This is the ONE gate that turns "Hello ," (the merge bug) into a hard refusal: null in => throw.
+// Treats undefined/null/empty/whitespace AND the stringified sentinels ("undefined"/"null"/"NaN") as empty,
+// because a bad upstream .replace() or JSON round-trip is exactly how those literals reach the greeting.
+export function cleanName(raw) {
+  if (raw == null) return null;
+  const s = String(raw).replace(/\s+/g, ' ').trim();
+  if (!s) return null;
+  if (/^(undefined|null|nan)$/i.test(s)) return null;
+  return s;
+}
+
 // Generate the initial email from the LOCKED template. Personalize {name} ONLY. Subject is the one element
 // not in the locked body — kept minimal + factual, tied to the template's actual offer.
+// HARD-FAILS on a missing/empty name: the renderer will never emit "Hello ," — a nameless prospect is a
+// data problem for the caller to fix or skip, not something to paper over with an empty merge.
 export function generateOutreach(p) {
-  const name = p.name; // [Name] for a company public inbox = the company
+  const name = cleanName(p && p.name); // [Name] for a company public inbox = the company
+  if (!name) {
+    const err = new Error(`refusing to render outreach: prospect has no usable name (handle=${p && p.handle || '?'}, id=${p && p.id || '?'}) — merge would produce "Hello ,"`);
+    err.code = 'EMPTY_MERGE_FIELD';
+    throw err;
+  }
   const body = APPROVED_TEMPLATE.body.replace(/\{name\}/g, name);
   const subject = `Managed IT & AI automation for ${name}`;
   return { subject, body, template: APPROVED_TEMPLATE.source, service: 'Managed IT' };
@@ -29,6 +48,10 @@ export function lint(body, p) {
   const lc = body.toLowerCase();
   // 1) personalization actually applied — no leftover placeholder
   if (/\{name\}|\[name\]/i.test(body)) issues.push('placeholder {name} not personalized');
+  // 1b) merge resolved to EMPTY or a sentinel — the "Hello ," bug. A leftover {name} is caught above;
+  //     this catches the OTHER half: a substitution that left the greeting with no real name.
+  if (/^hello\s*,/i.test(body.trim())) issues.push('empty merge: greeting personalized to nothing ("Hello ,")');
+  if (/^hello\s+(undefined|null|nan)\s*,/i.test(body.trim())) issues.push('bad merge: greeting personalized to a sentinel ("Hello undefined,")');
   // 2) approved markers survived (offer, demo link, contact, phone)
   for (const m of APPROVED_TEMPLATE.must_contain) if (!body.includes(m)) issues.push(`missing approved element: ${m}`);
   // 3) opens as the approved template does (drift guard)
