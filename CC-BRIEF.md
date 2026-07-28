@@ -1,6 +1,6 @@
 # CC BRIEF — AXIS Command Center rebuild
 
-**Rev 3 · 2026-07-28.** Author: Cowork (Claude).
+**Rev 3.1 · 2026-07-28 (evening).** Author: Cowork (Claude).
 Every fact below was verified this session against the repo, `data/axis-sales.db`,
 the live Netlify project, and the Gmail mailbox. Facts are VERIFIED, not assumed.
 Read the whole file before touching code.
@@ -19,7 +19,11 @@ If you read Rev 2, these things you were told are now **wrong**. Re-read §0.3, 
 | 4 | booking link = the long `calendar.google.com/.../AcZssZ0iSn7...` URL | **`https://calendar.app.google/LUyV5pHxkqJRg5vp8`** — decided by Ahmad, already correct in code as `DEMO_LINK` |
 | 5 | B3 blocked on `NETLIFY_API_TOKEN` | **B3 is unblocked.** A token-authed push endpoint now exists — see §3.5 |
 | 6 | `.git/index.lock` means a rogue process is writing | **False.** It is a filesystem limitation of the remote bridge — see §0.1 |
-| 7 | Support FAQ is a homepage nav tab | Moved: it now lives **under Forums** — see §2.G |
+| 7 | Support FAQ is a homepage nav tab | Moved: it now lives **under Forums** — **shipped and live** on `iisupp.net`, see §2.G |
+| 8 | *(Rev 3)* the live dashboard still shows `$93,250` | **False as of 15:46 today.** Live now reads `pipeline_value 0 / awaiting_approval 2 / messages_waiting 1`. §0.4 rewritten. |
+| 9 | *(Rev 3)* a git push to `main` deploys the site | **False.** The published deploy was **`locked`** (auto-publishing stopped). Netlify built every push and published none. See §3.6. |
+| 10 | *(Rev 3)* `AXIS_SNAPSHOT_PUSH_TOKEN` just needs setting | **Now set** on Netlify as a secret env var (contexts: production, deploy-preview, branch-deploy; scopes: functions, runtime). Endpoint is live and authing. |
+| 11 | — | **Do not compute snapshots with `main`-lineage libs.** They report `pipeline_value $77,500` (assessed) where the shipped v2 libs correctly report `$0` (booked). See §3.5. |
 
 ---
 
@@ -128,10 +132,20 @@ origin/main              d0b57fbc   ← THIS IS WHAT PRODUCTION IS SERVING
 
 ### 0.4 THE LIVE DASHBOARD IS LYING — and here are the real numbers
 
-`https://iisupp.net/aperture-learning.html` still renders
+**RESOLVED 2026-07-28 15:46Z.** This section is kept because the failure mode is
+permanent, not because the symptom is still present.
+
+For weeks `https://iisupp.net/aperture-learning.html` rendered
 `$93,250 pipeline / 22 approvals / 2 replies`. That snapshot was pushed BEFORE the
 DB was cleaned, and **Netlify Blobs has no TTL** — a stale value serves forever
-until something overwrites it. That is the entire root cause of B3.
+until something overwrites it. That was the entire root cause of B3.
+
+The live store now reads, verified directly against the `axis-snapshots` blob store:
+`version v13 · tick 2026-07-28T15:46:29Z · overview.kpis = {pipeline_value 0,
+awaiting_approval 2, messages_waiting 1, followups_due 5, meetings_week 0, mrr 0}`.
+The Windows push loop (`axisbuild/push-loop.cmd`, 15-min interval) is alive and is
+what keeps it current. **The dashboard is no longer lying.** Assume nothing —
+re-read the blob before you claim a KPI is stale again.
 
 Verified DB state, 2026-07-28:
 
@@ -258,7 +272,9 @@ than silently degrade.
 ### G. Public site IA — Support FAQ now lives under Forums
 
 Changed 2026-07-28 on Ahmad's instruction: *"support FAQ tab should be under the
-Forums tab not in the homepage."*
+Forums tab not in the homepage."* **Shipped — live on `iisupp.net` since 15:56Z**
+(deploy `6a68d0bdfd820c6451d46eb1`). Verified: 0 FAQ nav tabs on the homepage,
+1 under Forums, `/support-faq.html` still `200`.
 
 - **Removed:** the `Support FAQ` nav tab from the homepage primary nav
   (`index.html`, `solutions` nav group). Do not re-add it.
@@ -324,8 +340,53 @@ Responses: `200` wrote · `400` bad body / unknown module · `401` bad token ·
    `pipeline_value = 0`, `awaiting_approval = 2`, `messages_waiting = 1`.
 5. Only then call B3 closed.
 
+**LINEAGE WARNING — read before step 1.** `scripts/lib/axis-snapshots.mjs` differs
+between `main` and `axis-command-center-v2`. Computing from the **`main`** copy
+yields `pipeline_value $77,500` because it sums *assessed* value across the 25
+businesses; the **v2** copy yields `$0` because `opportunities` has 0 rows and only
+booked value counts. The v2 number is the honest one and is what is live. Pushing a
+`main`-lineage payload would silently re-inflate the dashboard — the exact bug this
+whole endpoint exists to prevent. Compute from the branch, not from `main`.
+
+**Endpoint status, verified live 2026-07-28:**
+`GET` with a valid bearer → `200` + version doc · `POST` with a valid bearer and a
+bogus module → `400 unknown module(s)` · `POST` with a wrong bearer → `401`. The
+`503 token not set` state is gone; `AXIS_SNAPSHOT_PUSH_TOKEN` is now a secret env
+var on the project.
+
 `scripts/push-live-snapshot.mjs` already reads back and diffs every headline KPI,
 exiting `2` on NO_STORE and `3` on VERIFY FAILED. Trust its exit code, not its stdout.
+
+## 3.6 PUBLISH RUNBOOK — a git push does NOT deploy this site
+
+This cost an hour. Do not rediscover it.
+
+`stop_builds` is **false**, so Netlify *does* build every push to `main`. But the
+published production deploy was **`locked: true`** — Netlify's "stop auto
+publishing". Builds succeed, go `ready`, and are never promoted. `currentDeploy`
+stays pinned to the old deploy forever and the live site never changes, with no
+error anywhere to explain it.
+
+Symptom signature: GitHub `refs/heads/main` is at your new commit, the Netlify
+project's `currentDeploy` is an older id, and polling the live URL returns the old
+build indefinitely.
+
+**Procedure (needs `NETLIFY_API_TOKEN` — it lives in `axisbuild/push-run.cmd`):**
+
+1. `GET /api/v1/sites/{site_id}/deploys?per_page=12` — find the `ready` deploy whose
+   `commit_ref` is your commit. It usually already exists. Do **not** re-upload.
+2. Smoke-test it on its permalink `https://{deploy_id}--iisupp.netlify.app` **before**
+   publishing. Check the pages you changed, the functions you added, and that every
+   force-404 rule still 404s.
+3. `POST /api/v1/sites/{site_id}/deploys/{deploy_id}/restore` — publishes it. This
+   preserves the "stop auto publishing" posture, just re-pinned to the new deploy.
+4. Re-verify on `https://iisupp.net`.
+
+Do **not** reach for the Netlify MCP `deploy-site` operation as a workaround. It
+zips and uploads the working directory — 206 MB of tracked files here — and returns
+`400 Bad Request`. The build already exists server-side; publish it, don't rebuild it.
+
+---
 
 ## 4. DEFINITION OF DONE
 
