@@ -12,8 +12,14 @@
     "packageJson": {
       "dependencies": [
         "npm:@netlify/blobs@^7.4.0",
+        "npm:busboy@^1.6.0",
+        "npm:exceljs@^4.4.0",
         "npm:framer-motion@^12.40.0",
+        "npm:jszip@^3.10.1",
+        "npm:mammoth@^1.12.0",
         "npm:nodemailer@^6.9.16",
+        "npm:pdf-parse@^2.4.5",
+        "npm:pdfkit@~0.19.1",
         "npm:stripe@17"
       ]
     }

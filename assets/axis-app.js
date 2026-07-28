@@ -55,7 +55,8 @@ const NAV = [
     { id: 'products', label: 'Product Discovery', glyph: 'PD' },
   ] },
   { group: 'System', items: [
-    { id: 'fleet', label: 'Fleet', glyph: 'FL' }, { id: 'reports', label: 'Reports', glyph: 'RE' }, { id: 'settings', label: 'Settings', glyph: 'SE' },
+    { id: 'fleet', label: 'Fleet', glyph: 'FL' }, { id: 'axis-agent-director', label: 'AXIS Agent Director', glyph: 'AX' },
+    { id: 'reports', label: 'Reports', glyph: 'RE' }, { id: 'settings', label: 'Settings', glyph: 'SE' },
   ] },
 ];
 const navItem = (id) => NAV.flatMap(g => g.items).find(i => i.id === id);
@@ -106,6 +107,44 @@ SCREENS.overview = (c) => {
     c.append(el('div', { class: 'card', style: 'display:flex;gap:16px;flex-wrap:wrap' }, fleet.slice(0, 8).map(a =>
       el('div', { style: 'display:flex;align-items:center;gap:7px' }, [el('span', { class: 'dot ' + (a.status === 'ok' ? 'dot-ok' : 'dot-warn') }), el('span', { class: 'mono', style: 'font-size:11px' }, a.agent)]))));
   }
+};
+
+SCREENS['axis-agent-director'] = (c) => {
+  const overview = data('overview');
+  const gmail = (data('settings').integrations || []).find(i => i.name === 'Gmail');
+  const tick = state.version?.tick ? new Date(state.version.tick).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Awaiting worker tick';
+  const status = [
+    ['Mailbox sync', gmail?.status === 'ok' ? gmail.detail : 'Not connected'],
+    ['Approval queue', `${overview.kpis?.awaiting_approval || 0} waiting`],
+    ['Worker tick', tick],
+  ];
+  const composer = el('div', { class: 'axis-director-compose' }, [
+    el('input', { id: 'axisDirectorInput', placeholder: 'Talk to AXIS', autocomplete: 'off', 'aria-label': 'Talk to AXIS', onkeydown: (e) => { if (e.key === 'Enter') axisSend('axisDirectorInput'); } }),
+    el('button', { class: 'iconbtn axis-director-control', id: 'axisDirectorMic', title: 'Push to talk', 'aria-label': 'Push to talk', onclick: () => axisMicToggle('axisDirectorMic', 'axisDirectorInput', () => axisSend('axisDirectorInput')) }, '🎙'),
+    el('button', { class: 'iconbtn axis-director-control', id: 'axisDirectorVoice', title: 'Toggle spoken replies', 'aria-label': 'Toggle spoken replies', 'aria-pressed': axisVoiceOn ? 'true' : 'false', onclick: axisVoiceToggle }, '🔊'),
+    el('button', { class: 'axis-director-send', title: 'Send to AXIS', 'aria-label': 'Send to AXIS', onclick: () => axisSend('axisDirectorInput') }, 'Send'),
+  ]);
+  const shell = el('section', { class: 'axis-director-workspace', 'aria-label': 'AXIS Agent Director workspace' }, [
+    el('header', { class: 'axis-director-head' }, [
+      el('div', {}, [el('h1', {}, 'AXIS Agent Director'), el('div', { class: 'axis-director-subtitle' }, 'Voice-first command channel for the operator.')]),
+      el('div', { class: 'axis-director-state', 'aria-live': 'polite' }, [el('span', { class: 'axis-orb axis-orb-sm', 'data-orb': '' }), el('span', { class: 'axis-state-word', 'data-axis-state-word': '' }, 'idle')]),
+    ]),
+    el('div', { class: 'axis-director-status' }, status.map(([label, value]) => el('div', { class: 'axis-director-status-item' }, [el('span', {}, label), el('strong', {}, value)]))),
+    el('div', { class: 'axis-director-conversation' }, [
+      el('div', { class: 'axis-director-orb-wrap' }, [el('span', { class: 'axis-orb axis-orb-director', 'data-orb': '' }), el('span', { class: 'axis-state-word', 'data-axis-state-word': '' }, 'idle')]),
+      el('div', { class: 'axis-log axis-director-log', id: 'axisDirectorLog', 'aria-live': 'polite' }),
+    ]),
+    composer,
+    el('div', { class: 'axis-director-prompts' }, [
+      ['Status', 'Give me the current operational status.'],
+      ['Needs me', 'What needs my attention now?'],
+      ['Approvals', 'Summarize what is awaiting approval.'],
+    ].map(([label, prompt]) => el('button', { class: 'chip', onclick: () => { const input = $('axisDirectorInput'); input.value = prompt; axisSend('axisDirectorInput'); } }, label))),
+  ]);
+  c.append(shell);
+  mountOrbs(shell);
+  axisSyncVoiceBtn();
+  renderDock();
 };
 
 // ── S2 Action Inbox ──
@@ -700,8 +739,8 @@ async function pollVersion() {
 
 // ── AXIS dock ──
 const dockLog = [];
-function renderDock() {
-  const log = $('axisLog'); log.innerHTML = '';
+function renderAxisLog(log) {
+  log.innerHTML = '';
   if (!dockLog.length) log.append(el('div', { class: 'empty', style: 'padding:20px' }, 'Talk to AXIS. Blunt. Important-only.'));
   dockLog.forEach(m => {
     const node = (m.role === 'axis' && m.text === '…')
@@ -712,8 +751,14 @@ function renderDock() {
   });
   log.scrollTop = log.scrollHeight;
 }
-async function axisSend() {
-  const inp = $('axisInput'); const text = inp.value.trim(); if (!text) return; inp.value = '';
+function renderDock() {
+  for (const id of ['axisLog', 'axisDirectorLog']) {
+    const log = $(id);
+    if (log) renderAxisLog(log);
+  }
+}
+async function axisSend(inputId = 'axisInput') {
+  const inp = $(inputId); const text = inp?.value.trim(); if (!text) return; inp.value = '';
   dockLog.push({ role: 'user', text }); renderDock();
   // Remove OUR placeholder by reference, never the array tail — concurrent sends must not eat
   // each other's replies or orphan a fake thinking row (gate-review finding, 2026-07-21).
@@ -826,7 +871,7 @@ function axisSpeak(text) {
   } catch { return false; }
 }
 function axisSyncVoiceBtn() {
-  for (const id of ['axisVoice', 'axisPubVoice']) {
+  for (const id of ['axisVoice', 'axisPubVoice', 'axisDirectorVoice']) {
     const b = $(id);
     if (b) { b.setAttribute('aria-pressed', axisVoiceOn ? 'true' : 'false'); b.style.color = axisVoiceOn ? 'var(--gold)' : ''; b.style.borderColor = axisVoiceOn ? 'var(--gold)' : ''; b.title = axisVoiceOn ? 'Spoken replies ON' : 'Toggle spoken replies'; }
   }
@@ -885,6 +930,7 @@ function mountOrbs(scope = document) {
 // idle | listening | thinking | speaking — drives every orb + the aria-live state words.
 function setAxisState(s) {
   document.documentElement.dataset.axisState = s;
+  document.querySelectorAll('[data-axis-state-word]').forEach(w => { w.textContent = s; });
   const w = $('axisStateWord'); if (w) w.textContent = s;
   const p = $('axisPubState'); if (p) p.textContent = s;
 }

@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-06-26T13:53:58.336Z",
-  "total": 166,
+  "ran_at": "2026-07-22T01:56:56.943Z",
+  "total": 184,
   "pass": 26,
   "fail": 4,
-  "skip": 136,
+  "skip": 154,
   "results": [
     {
       "fn": "aperture-audit",
@@ -690,6 +690,11 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
+      "fn": "aria-vision-diagnose",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
       "fn": "aria-warm-handoff",
       "status": "PASS",
       "http": 200
@@ -740,6 +745,81 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
+      "fn": "axis-director",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "axis-intent",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "axis-snapshot",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "axis-state",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "axis-status",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "ca-analyze",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "ca-checkout",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "ca-delivery",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "ca-email",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "ca-expert-search",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "ca-purge-cron",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "forum",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "forums-admin",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
+      "fn": "forums-concierge-cron",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "forums-threads",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
+    },
+    {
       "fn": "health",
       "status": "SKIP",
       "reason": "no safe payload defined"
@@ -785,6 +865,11 @@
       "reason": "scheduled / esm — not unit-testable from this harness"
     },
     {
+      "fn": "sentinel-crash",
+      "status": "SKIP",
+      "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
       "fn": "sentinel-licenses",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
@@ -793,6 +878,11 @@
       "fn": "sentinel-resolve",
       "status": "SKIP",
       "reason": "scheduled / esm — not unit-testable from this harness"
+    },
+    {
+      "fn": "sentinel-session-report",
+      "status": "SKIP",
+      "reason": "no safe payload defined"
     },
     {
       "fn": "sentinel-stripe-webhook",

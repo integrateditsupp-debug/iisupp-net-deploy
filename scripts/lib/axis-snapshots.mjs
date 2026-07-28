@@ -18,7 +18,11 @@ export function computeSnapshots(db) {
   const one = (sql, ...a) => db.prepare(sql).get(...a);
 
   // Pipeline: cards grouped by stage (Kanban) — list view uses handle, not name.
-  const biz = all('SELECT * FROM businesses');
+  // The authenticated UI is operational, not a demo surface. A fixture can remain useful to a
+  // local test, but records explicitly marked non-real never cross this read-model boundary.
+  const biz = all('SELECT * FROM businesses WHERE is_real=1');
+  const realBusinessIds = new Set(biz.map(b => b.id));
+  const belongsToRealBusiness = (row) => !row.business_id || realBusinessIds.has(row.business_id);
   out.pipeline = {
     phases: PIPELINE_PHASES,
     counts: Object.fromEntries(PIPELINE_STAGES.map(s => [s, biz.filter(b => b.pipeline_stage === s).length])),
@@ -52,7 +56,7 @@ export function computeSnapshots(db) {
   };
 
   // Inbox: only actionable rows count for the badge (Law 2).
-  const msgs = all('SELECT * FROM inbox_messages ORDER BY received_at DESC');
+  const msgs = all('SELECT * FROM inbox_messages ORDER BY received_at DESC').filter(belongsToRealBusiness);
   const openActionable = msgs.filter(m => ACTIONABLE_CLASSES.includes(m.classification) && !m.actioned_at && !m.snoozed_until);
   out.inbox = {
     badge: openActionable.length, // exact number the red badge shows; 0 → UI renders no badge element
@@ -72,7 +76,7 @@ export function computeSnapshots(db) {
   };
 
   // Approvals: pending get the neutral count badge.
-  const items = all('SELECT * FROM outreach_items ORDER BY created_at DESC');
+  const items = all('SELECT * FROM outreach_items ORDER BY created_at DESC').filter(belongsToRealBusiness);
   const pending = items.filter(i => i.status === 'pending');
   out.approvals = {
     pending: pending.length,
@@ -100,10 +104,10 @@ export function computeSnapshots(db) {
   };
 
   // Follow-ups — 4 views (S8). Cadence day 3/7/14, max 3 touches (in the views payload).
-  out.followups = followupViews(db);
+  out.followups = followupViews(db, Date.now(), true);
 
   // CRM (4 tabs derived from crm_records + businesses).
-  const crm = all('SELECT * FROM crm_records ORDER BY updated_at DESC');
+  const crm = all('SELECT * FROM crm_records ORDER BY updated_at DESC').filter(belongsToRealBusiness);
   out.crm = {
     counts: {
       contacts: crm.filter(r => r.type === 'contact').length,
@@ -126,9 +130,16 @@ export function computeSnapshots(db) {
     }),
   };
 
-  // Products discovered (Miner).
+  // Products discovered (Miner) — 5-axis scores + weighted rank + evidence, ranked.
   const prods = all('SELECT * FROM products_discovered ORDER BY weighted_score DESC');
-  out.products = { rows: prods.map(p => ({ id: p.id, name: p.name, category: p.category, weighted_score: p.weighted_score, status: p.status })) };
+  out.products = {
+    count: prods.length,
+    rows: prods.map(p => ({
+      id: p.id, name: p.name, category: p.category, status: p.status, weighted_score: p.weighted_score,
+      axes: { demand: p.demand, ease: p.ease, profitability: p.profitability, scalability: p.scalability, advantage: p.advantage },
+      evidence: j(p, 'evidence_json', {}),
+    })),
+  };
 
   // Fleet: latest run per agent.
   const runs = all('SELECT * FROM agent_runs ORDER BY started_at DESC');
@@ -140,8 +151,8 @@ export function computeSnapshots(db) {
   const GTA = ['toronto', 'mississauga', 'markham', 'scarborough', 'north york', 'etobicoke', 'vaughan', 'richmond hill', 'brampton', 'pickering', 'whitby', 'oakville', 'grimsby'];
   const cityKey = (c) => (c || '').split(/[ ,(]/)[0];
   const byCity = {}; for (const b of biz) { const k = cityKey(b.city) || 'Unknown'; byCity[k] = (byCity[k] || 0) + 1; }
-  const meetingsN = (one('SELECT COUNT(*) c FROM meetings') || {}).c || 0;
-  const oppsAll = all('SELECT service, est_mrr, status FROM opportunities');
+  const meetingsN = (one('SELECT COUNT(*) c FROM meetings m JOIN businesses b ON b.id=m.business_id WHERE b.is_real=1') || {}).c || 0;
+  const oppsAll = all('SELECT o.service, o.est_mrr, o.status FROM opportunities o JOIN businesses b ON b.id=o.business_id WHERE b.is_real=1');
   const funnel = [
     { stage: 'Generated', n: items.filter(i => i.kind === 'initial').length },
     { stage: 'Approved', n: items.filter(i => ['approved', 'outbound', 'sent'].includes(i.status)).length },
@@ -214,7 +225,7 @@ export function computeSnapshots(db) {
       messages_waiting: openActionable.length,
       followups_due: (out.followups.due_today.length + out.followups.overdue.length),
       meetings_week: (one('SELECT COUNT(*) c FROM meetings') || {}).c || 0,
-      mrr: (one("SELECT COALESCE(SUM(est_mrr),0) s FROM opportunities WHERE status='won'") || {}).s || 0,
+      mrr: (one("SELECT COALESCE(SUM(o.est_mrr),0) s FROM opportunities o JOIN businesses b ON b.id=o.business_id WHERE o.status='won' AND b.is_real=1") || {}).s || 0,
     },
     needs_you_now: pending.slice(0, 5).map(i => ({ id: i.id, subject: i.subject, business_id: i.business_id, kind: i.kind })),
   };

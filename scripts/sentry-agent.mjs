@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { openDb, DATA_DIR } from './lib/axis-db.mjs';
+import { openDb, DATA_DIR, setSetting } from './lib/axis-db.mjs';
 import { buildCtx, ingestMessage, actionableCount } from './lib/sentry.mjs';
 import { isConfigured, listInbound, getMessageParsed } from './lib/gmail-outreach.mjs';
 
@@ -43,6 +43,10 @@ async function tick() {
     if (r.actionable) newlyActionable.push({ business: r.businessId, classification: r.classification });
   }
   fs.writeFileSync(STATE, JSON.stringify({ last_epoch: newest || Date.now() }));
+  setSetting(db, 'integrations', [{
+    name: 'Gmail', status: 'ok',
+    detail: `Live inbox scan ${new Date().toISOString()}`,
+  }]);
   const after = actionableCount(db);
   if (after > before) {
     // Name the company on the newest actionable if we can.

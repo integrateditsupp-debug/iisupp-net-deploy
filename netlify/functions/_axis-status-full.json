@@ -1,134 +1,77 @@
 {
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
- "schema": "axis-status/1",
- "generatedAt": "2026-07-21T23:55:00Z",
- "source": "Flywheel run 117 (2026-07-21, clock APPROXIMATE ~23:55Z and flagged as such). The Linux sandbox failed to boot on every attempt again - 'useradd: No space left on device' - so there was no shell, no git command, no node, no test run and no readable wall clock. Second consecutive no-shell cycle (runs 116, 117). File tools against the real Windows repo DID work and were used. Everything below marked 'read first-hand' was read from the real .git this cycle; everything else is CARRIED from run 114 and labelled carried, not re-measured. Read first-hand run 117: refs/heads/main = 15c56ab1 (unchanged), refs/remotes/origin/main = aff5342e (unchanged - local ref only, no credential to ls-remote), refs/heads/main-run114-merged = 02934b7b (unchanged), and .git/refs/heads/main.lock is STILL PRESENT - so AHMAD-PUSH-RUN114-RUN-K.cmd has not been clicked and nothing has moved since run 115. Real finding shipped this cycle: there are 45 AHMAD-*.cmd scripts at the repo root and only one of them is live, which makes 'which do I click' a genuine question rather than an obvious one. A single unambiguous entry point AHMAD-START-HERE.cmd was added - it adds no git behaviour of its own, it only hands off to the current script with every existing safety gate intact. Nothing was deleted (Rule 15).",
- "honest": true,
- "headline": "Second no-shell cycle in a row: the sandbox VM was out of disk on every attempt, so nothing was re-measured and nothing here pretends to be. Git refs were re-read first-hand from the real repo and are unchanged since run 115; main.lock is still present and the RUN-K one-click is still unclicked. Real friction addressed this cycle: 45 one-click scripts sat at the repo root with no marker for which is current, so a single AHMAD-START-HERE.cmd now points at the one that is. Revenue received to date: none. No money has landed, and this feed says so.",
- "note": "Merging main never deploys - Netlify publish stays Ahmad's one-click. Three named environment walls: no GitHub credential (push blocked), an undeletable stale .git/refs/heads/main.lock (main pointer move blocked), and this cycle a dead sandbox VM (ENOSPC - no shell, no tests). None is a hold: the work is built, tested at run 114, merged onto refs/heads/main-run114-merged and staged to one click.",
+ "generatedAt": "2026-07-22T04:44:56Z",
+ "schema": "axis-status-full/1",
  "program": {
-  "name": "Client-Ready Program",
-  "series": 1,
-  "sequence": "Series 1 A-K. A-I merged on local main (15c56ab1). RUN-J merged run 112, the Stage-3 ARE packet backlog landed run 113, RUN-K built + merged run 114 - all three sit on refs/heads/main-run114-merged (02934b7b, re-read first-hand run 117), ahead of origin/main (aff5342e). RUN-L released, not yet built - no shell this cycle to build it.",
-  "tasksMerged": 35,
-  "tasksTotal": 35,
+  "series": "RUN-L",
+  "sequence": "L1 + L2 + L3",
+  "tasksBuilt": 3,
+  "tasksTotal": 3,
+  "tasksMergedToOriginMain": 0,
   "pct": 100,
-  "testsGreen": "CARRIED from run 114 and NOT re-measured this cycle - the sandbox VM failed to boot (ENOSPC) so no test could run. Run-114 first-hand figure on node v22.22.3: node tests/run-all.mjs -> 288/290 suites green in a clean room, with both reds explained there (forums-concierge missing @netlify/blobs, environment only; deploy-safety-denylist which caught a real public-content leak in this feed and was fixed, not waived). B4 axis-chat 20 passed, 0 failed. Treat this as run-114 evidence, not run-117 evidence.",
-  "mainRef": "02934b7b (refs/heads/main-run114-merged), re-read first-hand run 117 - unchanged. Local main still 15c56ab1 and .git/refs/heads/main.lock still present, both re-read first-hand run 117. origin/main aff5342e from the local ref only - no shell and no credential this cycle."
+  "pctNote": "3 of 3 RUN-L tasks built and green on the reconciled line; 0 of 3 on origin/main until the sandbox has a push credential.",
+  "testsGreen": "292/293",
+  "testsRed": 1,
+  "testsRedDetail": "forums-concierge.test.mjs - Cannot find package '@netlify/blobs' (no node_modules in the build sandbox). Environment-only; not a product defect.",
+  "priorityZeroGreen": "b4-axis-chat 20/20 - axis-voice-dock 6/6 - deploy-safety-denylist OK (0 of 2496 tracked paths, 9/9 force-404, 0 content leaks)",
+  "mainRef": "238426edcba97b9330ac718699880f5ffb9edd06",
+  "mainRefSource": "local tracking ref read first-hand; NOT confirmed against live GitHub this cycle - the sandbox has no credential for ls-remote",
+  "reconciledLineRef": "487ccd7d9cc7958f3d1beab0fd7ed1e2d5660807",
+  "reconciledLineBranch": "cc/reconcile-revenue-axis"
  },
- "merged": [
-  "A1",
-  "B1",
-  "B2",
-  "B3",
-  "B4",
-  "B5",
-  "B6",
-  "C1",
-  "C2",
-  "C3",
-  "D1",
-  "D2",
-  "D2-wiring",
-  "D3",
-  "E1",
-  "E2",
-  "E3",
-  "F1",
-  "F2",
-  "F3",
-  "G1",
-  "G2",
-  "G3",
-  "H1",
-  "H2",
-  "H3",
-  "I1",
-  "I2",
-  "I3",
-  "J1",
-  "J2",
-  "J3",
-  "K1",
-  "K2",
-  "K3"
- ],
- "extraMerged": [
-  "AXIS voice + spoken status + B4 chat fix + live status feed (4ee1b883) - ancestor of origin/main",
-  "SECURITY LOCKDOWN v2 (PR#2)",
-  "STAGE-3 S1 Autonomous Resolution Engine, Confirmed mode only (PR#3)",
-  "STAGE-3 ARE packet backlog - 9 packets landed run 113",
-  "SERVING-LAYER LOCKDOWN (published & locked; incident closed)",
-  "STAGE-2 vision suite (cc/stage-2-vision-2026-07 @ 350e4507)",
-  "IIS Upgrades v1.1 + sitewide motion layer"
- ],
- "builtNotMerged": [
-  {
-   "id": "STAGE-2 metascrub",
-   "what": "image metadata (EXIF/GPS/IPTC) stripped before any paid cloud-vision call",
-   "state": "committed locally at d7d06617; origin/cc/stage-2-vision-2026-07 is STALE at 350e4507 - reviewing the pushed branch reviews the wrong code"
-  },
-  {
-   "id": "cc/cowork-strategy-20260710-870",
-   "what": "Strategy layer + agents (additive content is real)",
-   "state": "QUARANTINED - broken commit with live conflict markers. Do NOT merge; rebuild cleanly off main."
-  }
- ],
  "lanes": [
   {
-   "lane": "main (merged line 02934b7b)",
-   "state": "green",
-   "note": "ahead of origin/main (aff5342e). Pointer move blocked only by a stale main.lock the sandbox cannot unlink. All three refs re-read first-hand run 117, all unchanged."
+   "lane": "reconcile",
+   "state": "built + green",
+   "detail": "The RUN-G..RUN-K revenue chain (21 commits) was NOT on the main line carrying the AXIS command centre. Both lines merged; only conflicts were the two status mirrors, resolved to the headline-only law. 6 operator-internal paths re-introduced by the revenue line were untracked and gitignored - deploy-safety denylist back to green."
   },
   {
-   "lane": "RUN-K first paid customer",
-   "state": "green",
-   "note": "K1+K2+K3 built by Cowork at run 114 (no CC branch existed), verified first-hand then, merged; 908 insertions, 0 deletions. Not re-verified since."
+   "lane": "RUN-L L1 demand-to-ask conveyor",
+   "state": "built + 9/9 green",
+   "detail": "Places every real demand record on the K-chain; a stage advances only on a real artifact id, never on elapsed time. Send-locked."
   },
   {
-   "lane": "Test integrity",
-   "state": "amber",
-   "note": "288/290 stands from run 114 but was NOT re-run this cycle - no shell. Amber for staleness of the evidence, not for any known failure."
+   "lane": "RUN-L L2 second-customer repeatability",
+   "state": "built + 9/9 green",
+   "detail": "Two independent accounts through the same modules with zero bespoke code; cross-account artifact reuse reported as contamination; a broken account fails honestly and inherits nothing; every hand-entered value is named, not absorbed."
   },
   {
-   "lane": "AXIS voice",
-   "state": "green",
-   "note": "merged on origin/main; speech markers present in assets/aperture-learning.js; spoken status live"
+   "lane": "RUN-L L3 honest pricing floor",
+   "state": "built + 8/8 green",
+   "detail": "Delivery cost floor from observed minutes and a recorded operator cost basis only. No cost basis means 'cannot be stated' - never a default rate. A quote at or below the floor is blocked before it can reach a buyer-facing ask."
   },
   {
-   "lane": "AXIS status feed",
-   "state": "green",
-   "note": "CORRECTED 2026-07-21: this detailed mirror previously sat at public/.well-known/axis/status.json and WAS anonymously reachable under publish=\".\" — the run-117 claim that it was internal was wrong. It now truly lives at netlify/functions/_axis-status-full.json (force-404 live, served only via authenticated /api/axis-status). Both public mirrors are headline-only, written exclusively by scripts/lib/axis-status-emit.mjs, which refuses leak-class content (SHAs, branch names, operator scripts, git state)."
-  },
-  {
-   "lane": "Real revenue",
-   "state": "red",
-   "note": "Nothing has actually been received - zero, in Canadian dollars. The machinery to record, invoice and ask is built and staged; no money has landed. Stated plainly rather than dressed up (Rule 14)."
-  },
-  {
-   "lane": "Push to origin",
-   "state": "amber",
-   "note": "no GitHub credential in the sandbox - environment wall, not a hold. Staged as AHMAD-PUSH-RUN114-RUN-K.cmd, now reachable through the single AHMAD-START-HERE.cmd entry point added run 117."
-  },
-  {
-   "lane": "KB growth (aria-kb-chunks.json)",
-   "state": "amber",
-   "note": "content real + staged; live conflict markers still gate KB commits (~57 entries waiting)"
-  },
-  {
-   "lane": "Strategy-15-years-ahead",
-   "state": "red",
-   "note": "QUARANTINED - conflict-marker commit; needs a clean rebuild off main"
+   "lane": "AXIS voice + status feed",
+   "state": "on the main line, green",
+   "detail": "Push-to-talk mic, spoken replies, and the status-of-everything answer are already merged; feed regenerated this cycle through the sanctioned emitter."
   }
  ],
  "needsAhmad": [
-  "AHMAD-START-HERE.cmd - added run 117. The single entry point at the repo root. It only hands off to AHMAD-PUSH-RUN114-RUN-K.cmd with that script's own safety gates unchanged, so there is no longer a question of which of the 45 scripts is the current one. Click this one.",
-  "AHMAD-PUSH-RUN114-RUN-K.cmd - the live script START-HERE calls. Clears the stale .git/refs/heads/main.lock, fast-forwards main to refs/heads/main-run114-merged (02934b7b: RUN-J + ARE backlog + RUN-K) and pushes to origin. Confirmed first-hand run 117 as STILL UNCLICKED - the lock and all three refs are unchanged. Supersedes AHMAD-PUSH-RUN112-RUN-J.cmd.",
-  "Netlify publish of iisupp.net - merging never deploys; publishing stays a separate one click",
-  "Resolve aria-kb-chunks.json conflict markers to unblock ~57 staged KB entries",
-  "bash documents/product-engineering/stage-2-vision-build/PUSH-STAGE-2-READY.sh - the Stage-2 origin branch is stale at 350e4507"
+  {
+   "item": "Push the reconciled line to GitHub",
+   "why": "The build sandbox has no GitHub credential, so nothing can reach origin from here. One click on his machine lands the reconcile + all three RUN-L tasks.",
+   "type": "one-click"
+  },
+  {
+   "item": "A GitHub credential for the build sandbox",
+   "why": "Would end the staging cycle entirely - the flywheel could confirm origin live and push its own verified branches.",
+   "type": "one-click"
+  },
+  {
+   "item": "Netlify publish of the site",
+   "why": "Merging never deploys. The web publish stays a deliberate operator action.",
+   "type": "one-click"
+  }
  ],
  "onTrack": true,
- "onTrackNote": "Build is on track - RUN-A through RUN-K are built, tested at run 114 and merged onto the merged line. Verification is STALE: no shell this cycle, so nothing was re-run. Revenue is NOT on track: nothing has been received. Delivery to origin is blocked on one unclicked script, not on engineering. All four statements are true at once and none is softened."
+ "onTrackNote": "Machinery is compounding and honest. Revenue received remains none - that is the real number and it is not softened.",
+ "revenue": {
+  "received": "none",
+  "verifiedReceipts": 0
+ },
+ "blockers": [
+  "No GitHub credential in the build sandbox (environment wall, staged to one click).",
+  "The mount's git index lock cannot be removed from the sandbox, so commits are made in an isolated clone and delivered as a bundle."
+ ]
 }

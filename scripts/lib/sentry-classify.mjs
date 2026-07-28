@@ -49,6 +49,17 @@ export function classify(msg, ctx = {}) {
     return det('noise', 'transactional receipt from no-reply sender');
   }
 
+  // 5b) AXIS/ARIA internal reports and known provider account notices are operational telemetry,
+  // not client work. A direct reply to sent outreach still wins below through its thread linkage.
+  const internalSystemSender = /@(iisupp\.net|integrateditsupp\.com)$/i.test(from);
+  if (internalSystemSender && !threadsWithSent) return det('noise', 'internal AXIS/IIS operational message');
+  if (/@mail\.anthropic\.com$|academy-support@anthropic\.com$/i.test(from) && !threadsWithSent) {
+    return det('noise', 'provider account or program notification');
+  }
+  if (/@service-now\.com$/i.test(from) && /developer instance|inactivity warning|instance.*warning/i.test(subj + ' ' + body) && !threadsWithSent) {
+    return det('noise', 'provider developer-instance notification');
+  }
+
   // 6) Reply to our outreach → reply_to_outreach (thread/Message-ID match, or known contact replying)
   if (threadsWithSent) return det('reply_to_outreach', 'threads with a sent outreach message');
   if (ctx.knownContacts && ctx.knownContacts.has(from) && /^re:/i.test(msg.subject || '')) {

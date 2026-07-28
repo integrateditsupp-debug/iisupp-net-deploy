@@ -1,12 +1,12 @@
 {
- "generatedAt": "2026-07-21T20:59:30.378Z",
  "status": "active build",
- "milestone": "Customer-facing product and operator command center are built and tested; delivery is staged and awaits a single operator action.",
- "readiness": "Built and tested. Publishing is a deliberate manual step by the operator, not automatic.",
+ "milestone": "The revenue chain and the operator command centre now live on one reconciled line, with repeatability and a delivery-cost floor built and tested.",
+ "readiness": "Built and tested locally. Publishing to the web remains a deliberate manual step by the operator, not automatic.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build. The customer-facing product and operator command center are built and tested. Revenue received to date: none — stated plainly, not dressed up (Rule 14).",
- "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command center. This public feed never carries commit, branch, or operator-script detail.",
+ "headline": "ARIA / AXIS is in active build. The customer-facing product and the operator command centre are built and tested; the pricing floor now refuses a quote that would lose money. Revenue received to date: none - stated plainly, not dressed up.",
+ "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command center.",
  "schema": "axis-status/1",
+ "generatedAt": "2026-07-22T04:44:56.624Z",
  "public": true,
  "honest": true
 }
