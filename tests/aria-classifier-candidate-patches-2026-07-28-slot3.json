@@ -1,0 +1,22 @@
+[
+ {
+  "id": "P33-antimalware-perf",
+  "desc": "kb:security must not swallow 'antimalware service executable high cpu' \u2014 negative lookbehind so 'antimalware' no longer matches the malware security token; those route to kb:performance.",
+  "edits": [
+   {
+    "find": "|malware|ransomware|trojan",
+    "replace": "|(?<!anti)malware|ransomware|trojan"
+   }
+  ]
+ },
+ {
+  "id": "P34-deactivate-onboarding",
+  "desc": "'need to deactivate user' / 'provision user' are onboarding/offboarding lifecycle, not M365 licensing. Remove those two tokens from the kb:m365 rule so the kb:onboarding rule (which already owns them) fires.",
+  "edits": [
+   {
+    "find": "|deactivate user|provision user|new hire (account|license))",
+    "replace": "|new hire (account|license))"
+   }
+  ]
+ }
+]

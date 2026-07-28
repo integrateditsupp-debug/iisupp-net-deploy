@@ -98,3 +98,31 @@ data/
 # trackable conflicted with the SECURITY-LOCKDOWN deploy-safety denylist (tests/deploy-safety-denylist
 # hard-fails any tracked .ps1 outside ARIA Sentinel — publish="." ships tracked files to clones and the
 # live deploy). Files stay on disk for the operator; they are just never committed.
+
+# Operator-internal — never ship (deploy-safety denylist)
+/AHMAD-PUSH-*.cmd
+/senior-director-state/
+
+# Flywheel staging area (2026-07-28, RUN-M) — git bundles, suite logs, commit lists and diffs that
+# Cowork stages for Ahmad's one-click push. Operator-internal build state; publish="." means a stray
+# commit would serve it to the anonymous web. Files stay on disk, never tracked.
+_staged-cc-runs/
+_branch-src/
+_shipped-src/
+
+# Generated outputs (2026-07-28) — 440 MB of run artifacts, drafts and prospect data.
+# publish="." serves every tracked file to the anonymous web; these must never be tracked.
+outputs/
+
+# Operator-internal build state, scratch logs and git bundles — never ship
+*.bundle
+/_*.txt
+/cowork-write-test.txt
+/odysseus/
+/AI OS and Command center Design Request/
+/FORGE-AXIS-DIRECTOR-REDESIGN.md
+/aria-tokens.css
+
+# Filesystem / editor junk
+**/.fuse_hidden*
+/tests/.residual-tmp.js
