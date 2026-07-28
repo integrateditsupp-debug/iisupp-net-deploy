@@ -15,7 +15,8 @@
 //     consent?: { screenCapture?, cloudProcessing?, autoCapture?, ts? }
 //   }
 // →  { ok, blocked?, requiresConsent?, disclosure, dataFlow, diagnosis|null, fix|null,
-//      redaction, confidence, confidenceLabel, abstain, honestFallback?, meta }
+//      redaction, confidence, confidenceLabel, abstain, honestFallback?, meta,
+//        diagnosisId, feedbackPrompt, feedbackEndpoint }
 //
 // 🔒 RULE 14: an image we cannot confidently read → honest abstain, never a made-up diagnosis.
 // 🔒 PRIVACY: consent gate first; text/logs redacted BEFORE anything leaves; the vision model is
@@ -28,6 +29,7 @@ import { evaluateConsent, shouldCallCloudVision, dataFlow, buildDisclosure } fro
 import { scrubImageMetadata } from './lib/vision-image-scrub.mjs';
 import { redactImageRegions } from './lib/vision-pixel-redact.mjs';
 import { matchFix } from './lib/vision-fix-link.mjs';
+import { newDiagnosisId, FEEDBACK_ENDPOINT } from './lib/vision-feedback.mjs';
 import { RECIPES } from './aria-recipes-data.mjs';
 // D4 — reuse the site's existing spend controls for the paid vision call (same as aria-chat.js).
 // CJS interop: default-import the module object, then destructure (named CJS imports are flaky).
@@ -253,7 +255,14 @@ export default async (req) => {
 
   if (!d.match) {
     // Honest abstain — closest guidance + open a discussion / escalate to IIS.
-    return resp(200, { ...base, abstain: true, diagnosis: null, closest: d.closest || null, honestFallback: honestFallback(os) });
+    return resp(200, {
+      ...base, abstain: true, diagnosis: null, closest: d.closest || null, honestFallback: honestFallback(os),
+      // An abstain is still an answer the user can rate — a wrong abstain is the most
+      // valuable signal we can collect, so it gets the same real feedback path.
+      diagnosisId: newDiagnosisId({ surface, kind, slug: null, confidence: d.confidence }),
+      feedbackPrompt: 'Did this point you somewhere useful?',
+      feedbackEndpoint: FEEDBACK_ENDPOINT,
+    });
   }
 
   // Confident match → attach the diagnosis + the gated one-click fix.
@@ -271,7 +280,9 @@ export default async (req) => {
       steps: d.excerpt,
     },
     fix: fix ? { ...fix, note: 'Executing runs through the gated Sentinel resolve flow (restore point · kill-switch · signed audit token · logged).' } : null,
+    diagnosisId: newDiagnosisId({ surface, kind, slug: d.article.slug, confidence: d.confidence }),
     feedbackPrompt: 'Was this the right fix?',
+    feedbackEndpoint: FEEDBACK_ENDPOINT,
   });
 };
 

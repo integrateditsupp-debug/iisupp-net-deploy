@@ -9,8 +9,13 @@
  *     endpoint: '/.netlify/functions/aria-vision-diagnose',
  *     os: 'windows',
  *     onFix:      (fix, result) => {},                 // wire to Sentinel deep-link / download / audit flow
- *     onFeedback: (helpful, result) => {},
+ *     onFeedback: (helpful, result) => {},             // OPTIONAL extra hook — still called
+ *     feedbackEndpoint: '/.netlify/functions/aria-feedback',   // override; default is this
  *   });
+ *
+ * FEEDBACK: "Was this the right fix?" posts the vote to the existing aria-feedback function
+ * by default, and the widget only says "recorded" when that call actually succeeded — a
+ * failure says so and offers a retry. It never claims to have noted something it did not.
  *
  * PRIVACY: images are only sent to the cloud vision model AFTER the user opts in on the disclosure.
  * Text/logs are matched against the offline KB — the widget shows exactly what leaves the device.
@@ -291,6 +296,8 @@
           btn.addEventListener('click', function () { if (o.href) global.location.href = o.href; else if (opts.onFallback) opts.onFallback(o, res); });
           card.appendChild(btn);
         });
+        // A wrong abstain is the single most valuable signal we can collect — rate it too.
+        card.appendChild(buildFeedback(res));
       } else {
         var d = res.diagnosis;
         card.appendChild(el('div', 'avd-h',
@@ -308,14 +315,7 @@
         solo.addEventListener('click', function () { global.location.href = d.url; });
         card.appendChild(solo);
         // Feedback (Rule 14 — real signal, no fake activity)
-        var fb = el('div', 'avd-fb', (res.feedbackPrompt || 'Was this the right fix?') + '  ');
-        ['Yes', 'Not yet'].forEach(function (label) {
-          var y = el('button', 'avd-btn ghost', label);
-          y.style.padding = '4px 12px';
-          y.addEventListener('click', function () { fb.innerHTML = 'Thanks — noted.'; if (opts.onFeedback) opts.onFeedback(label === 'Yes', res); });
-          fb.appendChild(y);
-        });
-        card.appendChild(fb);
+        card.appendChild(buildFeedback(res));
       }
 
       // Privacy receipt — what we removed + what left the device.
@@ -358,6 +358,92 @@
       if (!conf || !conf.show) return conf || { show: false, reason: 'not-shown' };
       if (typeof b5.render === 'function') b5.render(lastCard || out, conf);
       return conf;
+    }
+
+    // ── Feedback — REAL signal, honestly reported (Rule 14) ──────────────────────────────────
+    // The prompt used to say "Thanks — noted." while noting nothing. It now posts to the
+    // existing aria-feedback function and only claims the vote was recorded when the
+    // endpoint actually confirms it; a failure says so plainly and lets the user retry.
+    // The payload carries NO image, NO raw log/screen text and NO redacted PII — only the
+    // headline, confidence and surface the user already saw on screen.
+    function feedbackPayload(helpful, res) {
+      if (!res || typeof res !== 'object') return null;
+      var d = res.diagnosis || null;
+      var abstained = res.abstain === true || !d;
+      var conf = Math.max(0, Math.min(100, Math.round(Number(res.confidence) || 0)));
+      var surf = safeKey(surface || res.surface) || 'web';
+      var kind = safeKey(res.kind) || 'text';
+      var usedVision = !!(res.meta && res.meta.visionUsed);
+      var msgId = safeKey(res.diagnosisId) ||
+        ['vd', surf, kind, safeKey(d && d.slug) || 'abstain', conf, Date.now().toString(36)].join('.');
+      return {
+        msg_id: msgId.slice(0, 120),
+        vote: helpful ? 'up' : 'down',
+        intent: ('vision-diagnose:' + (abstained ? 'abstain' : (safeKey(d.slug) || 'matched'))).slice(0, 60),
+        text: abstained
+          ? ('ARIA abstained (no confident match) - user says this was ' + (helpful ? 'still useful' : 'not useful'))
+          : String(d.title || 'diagnosis').slice(0, 200),
+        comment: ['surface=' + surf, 'kind=' + kind, 'confidence=' + conf,
+                  'label=' + (safeKey(res.confidenceLabel) || 'unknown'),
+                  'abstain=' + (abstained ? 'yes' : 'no'),
+                  'visionUsed=' + (usedVision ? 'yes' : 'no'),
+                  'oneClickFix=' + (res.fix && res.fix.oneClickEligible ? 'yes' : 'no')].join(' | ').slice(0, 600)
+      };
+    }
+
+    function safeKey(v) {
+      if (v == null) return '';
+      return String(v).replace(/[^a-zA-Z0-9._:-]/g, '-').slice(0, 60);
+    }
+
+    function buildFeedback(res) {
+      var fb = el('div', 'avd-fb', (res.feedbackPrompt || 'Was this the right fix?') + '  ');
+      var busy = false;
+      [['Yes', true], ['Not yet', false]].forEach(function (pair) {
+        var b = el('button', 'avd-btn ghost', pair[0]);
+        b.style.padding = '4px 12px';
+        b.addEventListener('click', function () {
+          if (busy) return;
+          busy = true;
+          fb.querySelectorAll('button').forEach(function (x) { x.disabled = true; });
+          var status = el('span', null, ' sending…');
+          fb.appendChild(status);
+          // The host's own handler still runs — never removed (Rule 15).
+          try { if (opts.onFeedback) opts.onFeedback(pair[1], res); } catch (e) { /* host error must not break the vote */ }
+          postFeedback(pair[1], res).then(function (r) {
+            if (r.recorded) {
+              fb.innerHTML = 'Thanks — recorded.';
+            } else {
+              // Honest: we did NOT record it. Say so and let them retry.
+              fb.innerHTML = 'Couldn\'t record that (' + esc(r.reason || 'offline') + '). ';
+              var again = el('button', 'avd-btn ghost', 'Try again');
+              again.style.padding = '4px 12px';
+              again.addEventListener('click', function () {
+                var host = fb.parentNode;
+                if (host) host.replaceChild(buildFeedback(res), fb);
+              });
+              fb.appendChild(again);
+            }
+          });
+        });
+        fb.appendChild(b);
+      });
+      return fb;
+    }
+
+    function postFeedback(helpful, res) {
+      var payload = feedbackPayload(helpful, res);
+      if (!payload) return Promise.resolve({ recorded: false, reason: 'nothing-to-send' });
+      var url = (res && res.feedbackEndpoint) || opts.feedbackEndpoint || '/.netlify/functions/aria-feedback';
+      if (typeof fetch !== 'function') return Promise.resolve({ recorded: false, reason: 'no-transport' });
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (r) {
+        if (!r || !r.ok) return { recorded: false, reason: 'http-' + ((r && r.status) || 'error') };
+        return { recorded: true, payload: payload };
+      }).catch(function (e) { return { recorded: false, reason: (e && e.message) || 'network' }; });
     }
 
     function renderError(msg) { out.innerHTML = ''; out.appendChild(el('div', 'avd-err', esc(msg))); }
