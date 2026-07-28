@@ -3,21 +3,17 @@
 // from the authed endpoint. Writes go through /api/axis/intent (optimistic UI; the worker executes behind
 // rails — the client NEVER sends/approves/pays). Laws enforced here: Badge Law (2) + side-effects (4).
 import { SNAPSHOT_MODULES } from './axis-constants.js';
+// Shared primitives now live in axis-dom.js so the sibling screen modules (composer, charts, fleet,
+// reports, director) use the SAME el()/toast()/postIntent() rather than each carrying a copy that
+// could drift. initDom() below injects the auth/logout closures they cannot see from here.
+import { $, el, fmtMoney, ago, toast, postIntent, head, downloadText, initDom } from './axis-dom.js';
+import { barChart, funnelChart } from './axis-charts.js';
+import { openComposer } from './axis-composer.js';
+import { renderFleet } from './axis-fleet.js';
+import { renderReports } from './axis-reports.js';
+import { renderDirector } from './axis-director-screen.js';
 
 const TOKEN_KEY = 'aperture_jwt';
-const $ = (id) => document.getElementById(id);
-const el = (tag, attrs = {}, kids = []) => {
-  const n = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'class') n.className = v; else if (k === 'html') n.innerHTML = v;
-    else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
-    else if (v != null && v !== false) n.setAttribute(k, v);
-  }
-  (Array.isArray(kids) ? kids : [kids]).forEach(c => c != null && c !== false && n.append(c.nodeType ? c : document.createTextNode(String(c))));
-  return n;
-};
-const fmtMoney = (n) => n == null ? '—' : '$' + Number(n).toLocaleString();
-const ago = (ts) => { if (!ts) return ''; const s = (Date.now() - ts) / 1000; if (s < 3600) return Math.floor(s / 60) + 'm'; if (s < 86400) return Math.floor(s / 3600) + 'h'; return Math.floor(s / 86400) + 'd'; };
 
 const ACTIONABLE = ['reply_to_outreach', 'new_inbound_request'];
 const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version: null, module: 'overview',
@@ -26,21 +22,9 @@ const state = { token: localStorage.getItem(TOKEN_KEY) || '', snap: {}, version:
 const authHeaders = (extra = {}) => ({ Authorization: 'Bearer ' + state.token, ...extra });
 const data = (mod) => (state.snap[mod] && state.snap[mod].data) || {};
 
-// ── Toast + intent ──
-let toastTimer;
-function toast(msg) {
-  let t = $('toast'); if (t) t.remove();
-  t = el('div', { class: 'toast', id: 'toast' }, msg); document.body.append(t);
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.remove(), 2800);
-}
-async function postIntent(type, payload = {}) {
-  try {
-    const r = await fetch('/api/axis/intent', { method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ type, payload }) });
-    if (r.status === 401) return logout();
-    const j = await r.json();
-    return j && j.ok;
-  } catch { return false; }
-}
+// Hand axis-dom.js the two things it cannot reach from a module of its own: how to sign a request,
+// and what to do when the session has expired. Everything downstream of here shares one write path.
+initDom({ authHeaders, onUnauthorized: () => logout() });
 
 // ── Nav ──
 const NAV = [
@@ -81,6 +65,25 @@ function renderNav() {
 }
 function go(mod) { state.module = mod; state.ui.thread = null; state.ui.crmDrawer = null; renderNav(); renderModule(); }
 
+// The Director tab IS the command channel — it carries its own orb, transcript, mic and input. Leaving
+// the floating dock up there puts two AXIS inputs on one screen, and the dock physically covers the
+// tab's own composer. Hide the dock (and its fab) on that tab only; restore whatever the operator had
+// when they leave, so closing the dock elsewhere still sticks.
+let dockHiddenForDirector = false;
+function syncDockVisibility() {
+  const onDirector = state.module === 'axis-agent-director';
+  const dock = $('axisDock'), fab = $('axisFab');
+  if (!dock || !fab) return;
+  if (onDirector) {
+    if (!dockHiddenForDirector) { dockHiddenForDirector = !dock.hidden; dock.hidden = true; }
+    fab.hidden = true;
+  } else if (dockHiddenForDirector) {
+    dockHiddenForDirector = false; dock.hidden = false; fab.hidden = true; renderDock();
+  } else if (dock.hidden) {
+    fab.hidden = false;
+  }
+}
+
 // ── Screens ──
 const SCREENS = {};
 
@@ -110,41 +113,23 @@ SCREENS.overview = (c) => {
 };
 
 SCREENS['axis-agent-director'] = (c) => {
-  const overview = data('overview');
-  const gmail = (data('settings').integrations || []).find(i => i.name === 'Gmail');
-  const tick = state.version?.tick ? new Date(state.version.tick).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Awaiting worker tick';
-  const status = [
-    ['Mailbox sync', gmail?.status === 'ok' ? gmail.detail : 'Not connected'],
-    ['Approval queue', `${overview.kpis?.awaiting_approval || 0} waiting`],
-    ['Worker tick', tick],
-  ];
-  const composer = el('div', { class: 'axis-director-compose' }, [
-    el('input', { id: 'axisDirectorInput', placeholder: 'Talk to AXIS', autocomplete: 'off', 'aria-label': 'Talk to AXIS', onkeydown: (e) => { if (e.key === 'Enter') axisSend('axisDirectorInput'); } }),
-    el('button', { class: 'iconbtn axis-director-control', id: 'axisDirectorMic', title: 'Push to talk', 'aria-label': 'Push to talk', onclick: () => axisMicToggle('axisDirectorMic', 'axisDirectorInput', () => axisSend('axisDirectorInput')) }, '🎙'),
-    el('button', { class: 'iconbtn axis-director-control', id: 'axisDirectorVoice', title: 'Toggle spoken replies', 'aria-label': 'Toggle spoken replies', 'aria-pressed': axisVoiceOn ? 'true' : 'false', onclick: axisVoiceToggle }, '🔊'),
-    el('button', { class: 'axis-director-send', title: 'Send to AXIS', 'aria-label': 'Send to AXIS', onclick: () => axisSend('axisDirectorInput') }, 'Send'),
-  ]);
-  const shell = el('section', { class: 'axis-director-workspace', 'aria-label': 'AXIS Agent Director workspace' }, [
-    el('header', { class: 'axis-director-head' }, [
-      el('div', {}, [el('h1', {}, 'AXIS Agent Director'), el('div', { class: 'axis-director-subtitle' }, 'Voice-first command channel for the operator.')]),
-      el('div', { class: 'axis-director-state', 'aria-live': 'polite' }, [el('span', { class: 'axis-orb axis-orb-sm', 'data-orb': '' }), el('span', { class: 'axis-state-word', 'data-axis-state-word': '' }, 'idle')]),
-    ]),
-    el('div', { class: 'axis-director-status' }, status.map(([label, value]) => el('div', { class: 'axis-director-status-item' }, [el('span', {}, label), el('strong', {}, value)]))),
-    el('div', { class: 'axis-director-conversation' }, [
-      el('div', { class: 'axis-director-orb-wrap' }, [el('span', { class: 'axis-orb axis-orb-director', 'data-orb': '' }), el('span', { class: 'axis-state-word', 'data-axis-state-word': '' }, 'idle')]),
-      el('div', { class: 'axis-log axis-director-log', id: 'axisDirectorLog', 'aria-live': 'polite' }),
-    ]),
-    composer,
-    el('div', { class: 'axis-director-prompts' }, [
-      ['Status', 'Give me the current operational status.'],
-      ['Needs me', 'What needs my attention now?'],
-      ['Approvals', 'Summarize what is awaiting approval.'],
-    ].map(([label, prompt]) => el('button', { class: 'chip', onclick: () => { const input = $('axisDirectorInput'); input.value = prompt; axisSend('axisDirectorInput'); } }, label))),
-  ]);
-  c.append(shell);
-  mountOrbs(shell);
-  axisSyncVoiceBtn();
-  renderDock();
+  // The Director screen lives in axis-director-screen.js. Voice is NOT reimplemented there — the v1
+  // machinery restored in 642251ad is passed in, so the tab, the fab dock and the public panel all
+  // drive one orb state machine and one transcript.
+  renderDirector(c, {
+    data: { overview: data('overview'), approvals: data('approvals'), fleet: data('fleet'),
+            settings: data('settings'), inbox: data('inbox'), analytics: data('analytics'),
+            version: state.version },
+    voice: {
+      send: () => axisSend('axisDirectorInput'),
+      micToggle: () => axisMicToggle('axisDirectorMic', 'axisDirectorInput', () => axisSend('axisDirectorInput')),
+      voiceToggle: axisVoiceToggle,
+      mountOrbs, setState: setAxisState, renderLog: renderDock,
+      get voiceOn() { return axisVoiceOn; },
+    },
+    onIntent: (type, payload) => postIntent(type, payload),
+    openComposer,
+  });
 };
 
 // ── S2 Action Inbox ──
@@ -213,7 +198,27 @@ async function inboxAction(type, m) {
     window.open(`https://mail.google.com/mail/u/0/#all/${encodeURIComponent(m.thread_id || '')}`, '_blank');
     toast('Opening Gmail thread'); return;
   }
-  if (type === 'draft_reply') { toast('Draft AI reply → Approvals'); postIntent('draft_reply', { message_id: m.id, thread_id: m.thread_id }); return; }
+  if (type === 'draft_reply') {
+    // CC-BRIEF §2A: this used to queue an intent and send the operator to Approvals to wait — two tab
+    // changes and the task never actually completed. The reply text now rides the snapshot
+    // (inbox.rows[].suggested_reply, produced by the worker), so the composer opens instantly, in
+    // place, over this very thread. Nothing navigates.
+    const draft = m.suggested_reply;
+    openComposer({
+      mode: 'reply',
+      to: m.from_email,
+      subject: draft ? draft.subject : (/^re:/i.test(m.subject || '') ? m.subject : 'Re: ' + (m.subject || '')),
+      body: draft ? draft.body : '',
+      templateId: draft && draft.template_id,
+      messageId: m.id,
+      businessId: m.business_id,
+      contactName: m.from_email,
+      companyName: businessName(m.business_id),
+      rails: data('settings'),
+      onSent: () => { m.actioned = true; state.ui.thread = null; renderNav(); renderModule(); },
+    });
+    return;
+  }
   const irreversibleUI = ['mark_handled', 'snooze', 'suppress'];
   if (irreversibleUI.includes(type)) { // optimistic side-effect (Law 4): decrement badge same tick
     if (type === 'snooze') m.snoozed_until = Date.now() + 864e5; else m.actioned = true;
@@ -388,10 +393,33 @@ function renderProspectProfile(c, id) {
   const cts = p.contacts || [];
   const cc = el('div', { class: 'card', style: 'padding:0' });
   if (!cts.length) cc.append(el('div', { class: 'empty' }, 'Not found — never guessed'));
-  else cts.forEach(ct => cc.append(el('div', { class: 'row' }, [
-    el('div', { style: 'flex:1' }, [el('div', { style: 'font-weight:600' }, ct.name), el('div', { style: 'font-size:12px;color:var(--txt-3)' }, ct.title)]),
-    el('div', {}, ct.public_email ? ct.public_email : el('span', { class: 'unknown' }, 'email: Not found — never guessed')),
-    el('span', { class: 'footnote' }, ['src', ' — ', el('span', { class: 'src' }, 'Apollo ✓')])])));
+  else cts.forEach(ct => {
+    // CC-BRIEF §2B: a decision maker used to be dead text. Now the address is exposed and the SAME
+    // composer opens inline on this profile, pre-filled with the LOCKED template the worker generated
+    // (p.outreach_draft) — the copy is never retyped here.
+    const to = ct.public_email || p.public_email || null;
+    const draft = p.outreach_draft;
+    const act = to && draft
+      ? el('div', { style: 'display:flex;gap:6px' }, [
+        el('button', {
+          class: 'chip', style: 'border-color:var(--gold);color:var(--gold)',
+          onclick: () => openComposer({
+            mode: 'outreach', to, subject: draft.subject, body: draft.body, templateId: draft.template_id,
+            businessId: p.id, contactName: ct.name || to, companyName: p.name || p.handle,
+            rails: data('settings'),
+            onSent: () => toast('Queued for send behind the rails — logged to CRM on delivery'),
+          }),
+        }, 'Draft AI Email'),
+        el('a', { class: 'chip', href: 'mailto:' + to, title: 'Open in your own mail client instead' }, 'Email'),
+      ])
+      : el('span', { class: 'unknown', style: 'font-size:11px' }, to ? 'No approved template for this prospect' : 'No address — cannot send');
+    cc.append(el('div', { class: 'row' }, [
+      el('div', { style: 'flex:1;min-width:0' }, [el('div', { style: 'font-weight:600' }, ct.name), el('div', { style: 'font-size:12px;color:var(--txt-3)' }, ct.title)]),
+      el('div', { style: 'width:210px;overflow:hidden;text-overflow:ellipsis' }, to ? el('span', { class: 'mono', style: 'font-size:11.5px' }, to) : el('span', { class: 'unknown' }, 'email: Not found — never guessed')),
+      act,
+      ct.source_url ? el('span', { class: 'footnote' }, ['src', ' — ', el('span', { class: 'src' }, (ct.source_url || '').replace(/^https?:\/\/(www\.)?/, '').split('/')[0] + ' ✓')]) : el('span', { class: 'footnote' }, 'src — unrecorded'),
+    ]));
+  });
   c.append(cc);
 
   // Stage control (manual override always available; auto-transitions logged)
@@ -581,37 +609,8 @@ function renderDoc(c, id) {
     ]),
   ]));
 }
-function downloadText(name, text) {
-  const a = document.createElement('a');
-  a.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(text || '');
-  a.download = name; a.click();
-}
-
-// ── SVG chart helpers (no external lib — self-contained, theme-aware via currentColor/tokens) ──
-const SVGNS = 'http://www.w3.org/2000/svg';
-const svg = (tag, attrs = {}, kids = []) => { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); (Array.isArray(kids) ? kids : [kids]).forEach(c => c && n.append(c.nodeType ? c : document.createTextNode(String(c)))); return n; };
-function barChart(rows, { colorVar = '--c1', money = false } = {}) {
-  rows = rows.filter(r => r); const max = Math.max(1, ...rows.map(r => r.value));
-  const W = 560, rowH = 26, pad = 150, h = rows.length * rowH + 10;
-  const g = svg('svg', { viewBox: `0 0 ${W} ${h}`, width: '100%', style: `max-width:${W}px` });
-  rows.forEach((r, i) => {
-    const y = i * rowH + 6, bw = ((W - pad - 60) * r.value) / max;
-    g.append(svg('text', { x: 0, y: y + 14, fill: 'var(--txt-2)', 'font-size': 11, 'font-family': 'var(--sans)' }, (r.label || '').slice(0, 22)));
-    g.append(svg('rect', { x: pad, y: y + 4, width: Math.max(2, bw), height: 14, rx: 3, fill: `var(${colorVar})`, opacity: 0.85 }));
-    g.append(svg('text', { x: pad + Math.max(2, bw) + 6, y: y + 15, fill: 'var(--txt-3)', 'font-size': 10, 'font-family': 'var(--mono)' }, money ? '$' + r.value.toLocaleString() : r.value));
-  });
-  return g;
-}
-function funnelChart(stages) {
-  const W = 620, sh = 46, h = stages.length * sh + 10, max = Math.max(1, ...stages.map(s => s.n));
-  const g = svg('svg', { viewBox: `0 0 ${W} ${h}`, width: '100%', style: `max-width:${W}px` });
-  stages.forEach((s, i) => {
-    const y = i * sh + 6, w = ((W - 40) * s.n) / max, x = (W - w) / 2;
-    g.append(svg('rect', { x, y, width: Math.max(30, w), height: sh - 12, rx: 5, fill: `var(--c${(i % 6) + 1})`, opacity: 0.8 }));
-    g.append(svg('text', { x: W / 2, y: y + 22, fill: '#fff', 'font-size': 12, 'font-weight': 600, 'text-anchor': 'middle', 'font-family': 'var(--sans)' }, `${s.stage} · ${s.n}`));
-  });
-  return g;
-}
+// downloadText + the local SVG chart helpers moved to axis-dom.js / axis-charts.js — the chart
+// versions there keep the same visual language but add hover, keyboard focus and drill-down.
 
 // ── S10 Analytics ──
 SCREENS.analytics = (c) => {
@@ -647,15 +646,14 @@ function kpiRow(pairs) { return el('div', { class: 'kpi-grid' }, pairs.map(([l, 
 
 // ── S13 Reports & Settings ──
 SCREENS.reports = (c) => {
-  const r = data('reports'); const st = data('settings');
-  c.append(head('Reports & Settings', 'workbook · CSV · PDF · rails · integrations'));
-  // Reports
-  c.append(el('div', { class: 'card', style: 'margin-bottom:14px' }, [
-    el('div', { style: 'display:flex;justify-content:space-between;align-items:baseline' }, [el('div', { style: 'font-weight:600' }, 'Excel workbook + CSV + PDF'), el('button', { class: 'chip', style: 'border-color:var(--gold);color:var(--gold)', onclick: () => { toast('Report generation queued'); postIntent('generate_report', {}); } }, 'Generate report')]),
-    el('div', { class: 'eyebrow', style: 'margin:8px 0' }, r.lastGenerated ? 'last generated ' + r.lastGenerated.slice(0, 16).replace('T', ' ') : 'not yet generated'),
-    el('div', { style: 'font-size:12px;color:var(--txt-2)' }, 'Sheets: ' + (r.sheets || []).join(' · ')),
-    (r.files || []).length ? el('div', { style: 'margin-top:8px' }, (r.files || []).map(f => el('span', { class: 'footnote', style: 'margin-right:8px' }, `${f.name} (${Math.round(f.size / 1024)}KB)`))) : null,
-  ]));
+  const st = data('settings');
+  // Reports half (S13) — charts, quarterly roll-up of daily agent work, summary→detail drill-down and
+  // worker-side .xlsx export — lives in axis-reports.js. The Settings half below is unchanged, and
+  // SCREENS.settings still aliases this whole screen so BOTH nav tabs keep working exactly as before.
+  renderReports(c, {
+    data: data('reports'), settings: st, analytics: data('analytics'),
+    onIntent: (type, payload) => postIntent(type, payload),
+  });
   // Settings — rails
   const rails = st.rails || {};
   c.append(head('Safety rails', '', 'margin-top:6px'));
@@ -676,6 +674,13 @@ SCREENS.reports = (c) => {
 };
 function settingBox(label, value) { return el('div', {}, [el('div', { class: 'eyebrow' }, label), el('div', { style: 'font-size:16px;font-weight:600;margin-top:4px' }, value ?? '—')]); }
 SCREENS.settings = SCREENS.reports; // Reports & Settings share the screen (spec S13)
+
+// ── Fleet — the live agent floor. Was the only NAV entry with no SCREENS handler at all, so it fell
+// through to placeholder() and rendered raw snapshot JSON. agent_runs is genuinely empty until the
+// worker records runs, and the screen is built to look correct in that state rather than fake one.
+SCREENS.fleet = (c) => {
+  renderFleet(c, { data: data('fleet'), onIntent: (type, payload) => postIntent(type, payload) });
+};
 
 // ── S11 Product Discovery (Miner) ──
 SCREENS.products = (c) => {
@@ -715,12 +720,12 @@ function placeholder(label) {
       el('pre', { class: 'mono', style: 'font-size:11px;white-space:pre-wrap;color:var(--txt-2);margin:0;max-height:340px;overflow:auto' }, d ? JSON.stringify(d, null, 2) : '(empty)')]));
   };
 }
-function head(title, eyebrow, style) { return el('div', { class: 'screen-head', style }, [el('div', { class: 'screen-title' }, title), eyebrow ? el('span', { class: 'eyebrow' }, eyebrow) : null]); }
 function renderModule() {
   clearOverlays();
   const c = $('content'); c.innerHTML = '';
   const screen = el('div', { class: 'screen' }); c.append(screen);
   (SCREENS[state.module] || placeholder(navItem(state.module)?.label || state.module))(screen);
+  syncDockVisibility();
 }
 function clearOverlays() { document.querySelectorAll('.drawer, .drawer-bg').forEach(n => n.remove()); }
 
@@ -1040,7 +1045,11 @@ async function doLogin() {
 
 // ── Theme + dock + wiring ──
 function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('axis_theme', t); }
-function openDock() { $('axisDock').hidden = false; $('axisFab').hidden = true; renderDock(); $('axisInput').focus(); }
+function openDock() {
+  // On the Director tab the dock would cover that screen's own command channel — send there instead.
+  if (state.module === 'axis-agent-director') { const i = $('axisDirectorInput'); if (i) i.focus(); return; }
+  $('axisDock').hidden = false; $('axisFab').hidden = true; renderDock(); $('axisInput').focus();
+}
 function closeDock() { $('axisDock').hidden = true; $('axisFab').hidden = false; try { sessionStorage.setItem('axisDockDismissed', '1'); } catch {} }
 $('themeBtn').addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 applyTheme(localStorage.getItem('axis_theme') || 'dark');

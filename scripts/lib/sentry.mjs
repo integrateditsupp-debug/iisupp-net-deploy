@@ -2,7 +2,7 @@
 // logged; nothing here sends. Enforces the guardrails: unsubscribe→suppress instantly, bounce→invalidate +
 // pause sequence, reply→auto-cancel follow-ups + auto-move pipeline card to Replied (quiet system note).
 import { classify, ACTIONABLE } from './sentry-classify.mjs';
-import { INGEST_SUPPRESS } from './axis-constants.mjs';
+import { INGEST_SUPPRESS, DEMO_LINK } from './axis-constants.mjs';
 
 const emailOf = (s) => (String(s || '').match(/[\w.+%-]+@[\w.-]+\.[\w-]+/) || [''])[0].toLowerCase();
 
@@ -95,23 +95,32 @@ export function ingestMessage(db, msg, ctx = buildCtx(db)) {
   return { classification: c.classification, reason: c.reason, sysnote, businessId, actionable: ACTIONABLE.includes(c.classification), ingested: true };
 }
 
-// Draft an AI reply to an inbox message → writes a PENDING outreach_item (kind='reply') into Approvals.
-// NEVER sends. Confident, warm, peer-to-peer (the approved reply-mindset). Threads onto the original.
-export function draftReplyToInbox(db, inboxMsgId) {
-  const m = db.prepare('SELECT * FROM inbox_messages WHERE id=?').get(inboxMsgId);
-  if (!m) return null;
-  const biz = m.business_id ? db.prepare('SELECT * FROM businesses WHERE id=?').get(m.business_id) : null;
+// Build the reply-mindset draft for an inbox message. WORKER-OWNED copy — exported so the read model
+// can ship the same text to the composer. The browser must never invent outbound wording: what the
+// operator edits in the composer is this, produced here, plus the CASL block appended below.
+// Confident, warm, peer-to-peer. Nothing here sends.
+export function buildReplyDraft(m, biz) {
   const subject = /^re:/i.test(m.subject || '') ? m.subject : 'Re: ' + (m.subject || '');
   const body =
 `Hi,
 
 Great to hear from you${biz ? ` — thanks for the note` : ''}. Here's the one-pager I mentioned; it's a quick read on what I'd check first, no obligation.
 
-If it's useful, grab any 15 minutes here: https://calendar.app.google/LUyV5pHxkqJRg5vp8 — otherwise I'm happy to answer over email.
+If it's useful, grab any 15 minutes here: ${DEMO_LINK} — otherwise I'm happy to answer over email.
 
 Either way, I'll keep it low-touch and won't chase.
 
 — Ahmad Wasee, Integrated IT Support Inc.`;
+  return { subject, body, template_id: 'reply-mindset-v1' };
+}
+
+// Draft an AI reply to an inbox message → writes a PENDING outreach_item (kind='reply') into Approvals.
+// NEVER sends. Threads onto the original.
+export function draftReplyToInbox(db, inboxMsgId) {
+  const m = db.prepare('SELECT * FROM inbox_messages WHERE id=?').get(inboxMsgId);
+  if (!m) return null;
+  const biz = m.business_id ? db.prepare('SELECT * FROM businesses WHERE id=?').get(m.business_id) : null;
+  const { subject, body } = buildReplyDraft(m, biz);
   const info = db.prepare(`INSERT INTO outreach_items
     (business_id,channel,kind,subject,body,to_email,template_id,status,thread_id,created_at)
     VALUES (?,?,?,?,?,?,?,?,?,?)`).run(

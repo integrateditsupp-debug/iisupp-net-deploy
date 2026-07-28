@@ -6,8 +6,15 @@
 //   - a 'version' key = { v, modules: {module: v}, tick } — UI polls this, refetches only changed modules
 // Snapshots are SANITIZED: no secrets, business identity uses the Lead-NNN handle in list views; full
 // name/contact only inside a record the authed operator opened (still behind the JWT).
-import { SNAPSHOT_MODULES, PIPELINE_PHASES, PIPELINE_STAGES, ACTIONABLE_CLASSES, BLOBS, DEFAULT_RAILS } from './axis-constants.mjs';
+import { SNAPSHOT_MODULES, PIPELINE_PHASES, PIPELINE_STAGES, ACTIONABLE_CLASSES, BLOBS, DEFAULT_RAILS, CASL, OUTREACH_PACING } from './axis-constants.mjs';
 import { followupViews } from './followups.mjs';
+import { buildReplyDraft } from './sentry.mjs';
+import { generateOutreach } from './outreach.mjs';
+
+// The composer must show the EXACT bytes that will transmit, and the browser is not allowed to invent
+// outbound wording. So the read model ships worker-produced copy with the CASL block already attached —
+// what the operator reads in the composer is what the send queue will use.
+const caslBlock = () => `\n\n—\n${CASL.line}`;
 
 const j = (row, col, fallback) => { try { return JSON.parse(row[col]); } catch { return fallback; } };
 
@@ -27,6 +34,7 @@ export function computeSnapshots(db) {
   // total === researched and destroy the distinction the Prospects header already renders.
   const bizAll = all('SELECT * FROM businesses');
   const biz = bizAll.filter(b => b.is_real);
+  const bizById = new Map(bizAll.map(b => [b.id, b]));
   const realBusinessIds = new Set(biz.map(b => b.id));
   const belongsToRealBusiness = (row) => !row.business_id || realBusinessIds.has(row.business_id);
   out.pipeline = {
@@ -58,6 +66,10 @@ export function computeSnapshots(db) {
       est_monthly_value: b.est_monthly_value, stage: b.pipeline_stage,
       has_public_email: !!b.public_email,
       contacts: byBiz[b.id] || [],
+      // The LOCKED template (axis-private-constants APPROVED_TEMPLATE, locked 2026-06-25), personalized
+      // on {name} only and carrying the exact CASL footer. Generated HERE so the browser never retypes
+      // approved copy — the prospect composer opens with these exact bytes and sends them.
+      outreach_draft: (() => { const g = generateOutreach(b); return { subject: g.subject, body: g.body + caslBlock(), template_id: g.template }; })(),
     })),
   };
 
@@ -72,12 +84,23 @@ export function computeSnapshots(db) {
   const openActionable = msgs.filter(m => ACTIONABLE_CLASSES.includes(m.classification) && !m.actioned_at && !m.snoozed_until);
   out.inbox = {
     badge: openActionable.length, // exact number the red badge shows; 0 → UI renders no badge element
-    rows: msgs.map(m => ({
-      id: m.id, thread_id: m.thread_id, classification: m.classification, classify_reason: m.classify_reason,
-      subject: m.subject, snippet: m.snippet, body: m.body, from_email: m.from_email, sysnote: m.sysnote,
-      received_at: m.received_at, unread: !!m.unread,
-      actioned: !!m.actioned_at, snoozed_until: m.snoozed_until, business_id: m.business_id,
-    })),
+    rows: msgs.map(m => {
+      const row = {
+        id: m.id, thread_id: m.thread_id, classification: m.classification, classify_reason: m.classify_reason,
+        subject: m.subject, snippet: m.snippet, body: m.body, from_email: m.from_email, sysnote: m.sysnote,
+        received_at: m.received_at, unread: !!m.unread,
+        actioned: !!m.actioned_at, action_taken: m.action_taken, snoozed_until: m.snoozed_until, business_id: m.business_id,
+      };
+      // Actionable rows carry a ready reply so "Draft AI Reply" opens a composer INSTANTLY, in place,
+      // with real text — instead of queuing an intent and sending the operator off to another tab to
+      // wait for it (the exact tab-hopping defect in CC-BRIEF §2A).
+      if (ACTIONABLE_CLASSES.includes(m.classification)) {
+        const biz = m.business_id ? bizById.get(m.business_id) : null;
+        const d = buildReplyDraft(m, biz);
+        row.suggested_reply = { subject: d.subject, body: d.body + caslBlock(), template_id: d.template_id };
+      }
+      return row;
+    }),
     counts: {
       all: msgs.length,
       replies: msgs.filter(m => m.classification === 'reply_to_outreach').length,
@@ -226,8 +249,20 @@ export function computeSnapshots(db) {
   // Reports meta + settings — worker writes these to the settings table (setSetting), snapshot reads them.
   const getS = (k, d) => { const r = one('SELECT value FROM settings WHERE key=?', k); if (!r) return d; try { return JSON.parse(r.value); } catch { return d; } };
   out.reports = getS('reports_meta', { lastGenerated: null, files: [], sheets: ['Businesses', 'Contacts', 'Outreach', 'Follow-ups', 'Meetings', 'Opportunities', 'Analytics', 'Revenue Forecast', 'Products', 'Services', 'Notes'] });
+  const dkimOk = (getS('integrations', []).find(i => i.name === 'DKIM') || {}).status === 'ok';
+  const sentToday = (one("SELECT COUNT(*) c FROM outreach_items WHERE status='sent' AND sent_at >= ?", Date.now() - 864e5) || {}).c || 0;
   out.settings = {
     rails: DEFAULT_RAILS,
+    // Live rail state the composer DISPLAYS. It never recomputes these — railsCheck() in outreach.mjs
+    // is authoritative at send time; this is the operator-facing read-out of the same facts.
+    rail_state: {
+      sent_today: sentToday,
+      daily_cap: (OUTREACH_PACING.requires_dkim_to_ramp && !dkimOk) ? OUTREACH_PACING.first_batch_daily_cap : OUTREACH_PACING.ramped_daily_cap,
+      dkim_ok: dkimOk,
+      quiet_hours: DEFAULT_RAILS.quiet_hours,
+      toronto_hour: Number(new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto', hour: '2-digit', hour12: false }).format(new Date())) % 24,
+      suppressed: all('SELECT email FROM suppression_list').map(r => String(r.email || '').toLowerCase()),
+    },
     suppression_count: (one('SELECT COUNT(*) c FROM suppression_list') || {}).c || 0,
     integrations: getS('integrations', [
       { name: 'Gmail', status: 'pending', detail: 'OAuth not configured (ahmad.wasee@iisupp.net)' },
