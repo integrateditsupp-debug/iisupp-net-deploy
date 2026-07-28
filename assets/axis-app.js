@@ -731,11 +731,24 @@ function clearOverlays() { document.querySelectorAll('.drawer, .drawer-bg').forE
 
 // ── Snapshot loop ──
 function renderTick() { $('tick').textContent = state.source === 'seed' ? 'seed data · worker idle' : (state.version && state.version.tick ? 'last worker tick ' + state.version.tick.slice(11, 16) : 'live'); }
+// An open composer holds text the operator is typing. renderModule() rebuilds the whole content area
+// and clearOverlays() sweeps drawers, so re-rendering underneath a modal is how a half-written email
+// gets destroyed by a background tick — the same class of bug already fixed once for the AXIS strip
+// input. Take the fresh data, but defer the repaint until the overlay closes.
+const overlayOpen = () => !!document.querySelector('.axis-overlay-bg');
+document.addEventListener('axis:overlay-closed', () => {
+  if (state.ui.repaintPending) { state.ui.repaintPending = false; renderModule(); }
+});
 async function fetchSnapshots() {
   const r = await fetch('/api/axis/snapshot?module=all', { headers: authHeaders(), cache: 'no-store' });
   if (r.status === 401) return logout();
   const j = await r.json();
-  if (j && j.ok) { state.snap = j.snapshots || {}; state.version = j.version; state.source = j.source; renderTick(); renderNav(); renderModule(); }
+  if (j && j.ok) {
+    state.snap = j.snapshots || {}; state.version = j.version; state.source = j.source;
+    renderTick(); renderNav();
+    if (overlayOpen()) { state.ui.repaintPending = true; return; }
+    renderModule();
+  }
 }
 async function pollVersion() {
   try { const r = await fetch('/api/axis/snapshot', { headers: authHeaders(), cache: 'no-store' }); if (r.status === 401) return logout();

@@ -115,6 +115,9 @@ export function overlay({ title = '', onClose, width = 720 } = {}) {
     bg.remove(); root.remove();
     if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
     if (typeof onClose === 'function') onClose();
+    // The shell suppresses its 15s repaint while a modal is up (a repaint underneath would destroy
+    // whatever the operator is typing). Tell it the coast is clear so any deferred tick can land.
+    if (!document.querySelector('.axis-overlay-bg')) document.dispatchEvent(new CustomEvent('axis:overlay-closed'));
   }
 
   // Capture phase so the overlay wins Esc/Tab over any screen-level handler underneath.
