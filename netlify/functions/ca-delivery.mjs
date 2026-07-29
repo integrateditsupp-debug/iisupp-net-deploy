@@ -6,6 +6,7 @@ import {
   buildZipBundle,
   createDeliveryToken,
   getScopedStore,
+  initBlobs,
   jsonResponse,
   optionsResponse,
   parseJsonBody,
@@ -15,6 +16,7 @@ import {
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const handler = async (event) => {
+  initBlobs(event);
   if (event.httpMethod === 'OPTIONS') return optionsResponse();
   if (event.httpMethod === 'GET') return handleDownload(event);
   if (event.httpMethod !== 'POST') return jsonResponse(405, { error: 'POST only' });

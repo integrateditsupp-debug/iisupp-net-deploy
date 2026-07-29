@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import JSZip from 'jszip';
 import PDFDocument from 'pdfkit';
-import { getStore } from '@netlify/blobs';
+import { connectLambda, getStore } from '@netlify/blobs';
 
 export const CONTENT_ASSURANCE_STORE = 'content-assurance-ephemeral';
 export const CONTENT_ASSURANCE_LEDGER = 'content-assurance-billing';
@@ -57,6 +57,21 @@ export function jsonResponse(statusCode, body, extraHeaders = {}) {
     },
     body: JSON.stringify(body)
   };
+}
+
+// Netlify Functions running in Lambda-compatibility mode (named `handler` export) do NOT get
+// the Blobs environment injected automatically the way v2 (`export default`) functions do — the
+// credentials arrive on the Lambda `event`/`context` and must be handed to @netlify/blobs
+// explicitly. Without this you get:
+//   "The environment has not been configured to use Netlify Blobs ... supply siteID, token"
+// Call this once at the top of every v1 handler that touches a store.
+export function initBlobs(event) {
+  if (shouldUseLocalStore()) return;
+  try {
+    connectLambda(event);
+  } catch {
+    // Already connected, or running in a context that configures Blobs itself. Non-fatal.
+  }
 }
 
 export function getScopedStore(name) {

@@ -3,6 +3,7 @@ import {
   CONTENT_ASSURANCE_LEDGER,
   CONTENT_ASSURANCE_STORE,
   getScopedStore,
+  initBlobs,
   jsonResponse,
   optionsResponse,
   parseJsonBody,
@@ -10,6 +11,7 @@ import {
 } from './lib/content-assurance.mjs';
 
 export const handler = async (event) => {
+  initBlobs(event);
   if (event.httpMethod === 'OPTIONS') return optionsResponse();
   if (event.httpMethod !== 'POST') return jsonResponse(405, { error: 'POST only' });
 
