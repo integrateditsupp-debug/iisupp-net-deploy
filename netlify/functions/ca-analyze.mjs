@@ -22,7 +22,7 @@ import {
 
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 
-export default async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return optionsResponse();
   if (event.httpMethod !== 'POST') return jsonResponse(405, { error: 'POST only' });
 

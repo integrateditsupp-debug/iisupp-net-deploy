@@ -14,7 +14,7 @@ import {
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
-export default async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return optionsResponse();
   if (event.httpMethod === 'GET') return handleDownload(event);
   if (event.httpMethod !== 'POST') return jsonResponse(405, { error: 'POST only' });
@@ -96,43 +96,51 @@ async function handleDownload(event) {
   const sessionId = String(params.sessionId || '').trim();
   const token = String(params.token || '').trim();
   const format = String(params.format || 'zip').trim().toLowerCase();
-  if (!sessionId || !token) return new Response('Missing session token.', { status: 400 });
+  if (!sessionId || !token) return textResponse(400, 'Missing session token.');
 
   const store = getScopedStore(CONTENT_ASSURANCE_STORE);
   const session = await store.get('session-' + sessionId, { type: 'json' });
   if (!session || !session.unlocked || session.deliveryToken !== token) {
-    return new Response('Delivery session not available.', { status: 403 });
+    return textResponse(403, 'Delivery session not available.');
   }
 
   if (format === 'pdf') {
     const pdf = await buildPdfBuffer(session);
-    return new Response(pdf, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="content-assurance-${sessionId}.pdf"`
-      }
-    });
+    return binaryResponse(pdf, 'application/pdf', `content-assurance-${sessionId}.pdf`);
   }
 
   if (format === 'json') {
-    return new Response(JSON.stringify(session.report, null, 2), {
-      status: 200,
+    return {
+      statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
         'Content-Disposition': `attachment; filename="content-assurance-${sessionId}.json"`
-      }
-    });
+      },
+      body: JSON.stringify(session.report, null, 2)
+    };
   }
 
   const zip = await buildZipBundle(session);
-  return new Response(zip, {
-    status: 200,
+  return binaryResponse(zip, 'application/zip', `content-assurance-${sessionId}.zip`);
+}
+
+// This function runs in Netlify's Lambda-compatible mode (named `handler` export), so every
+// return value must be a { statusCode, headers, body } object — NOT a Response. Returning a
+// Response here is what produced "error decoding lambda response: unexpected end of JSON input".
+function textResponse(statusCode, text) {
+  return { statusCode, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: text };
+}
+
+function binaryResponse(buffer, contentType, filename) {
+  return {
+    statusCode: 200,
     headers: {
-      'Content-Type': 'application/zip',
-      'Content-Disposition': `attachment; filename="content-assurance-${sessionId}.zip"`
-    }
-  });
+      'Content-Type': contentType,
+      'Content-Disposition': `attachment; filename="${filename}"`
+    },
+    body: Buffer.from(buffer).toString('base64'),
+    isBase64Encoded: true
+  };
 }
 
 function buildDeliveryPayload(session) {
