@@ -74,9 +74,30 @@ export function initBlobs(event) {
   }
 }
 
+// Strong consistency is NOT available to functions running in Lambda-compatibility mode: the
+// runtime never supplies the `uncachedEdgeURL` the strong-consistency reader needs, and every
+// read throws "Netlify Blobs has failed to perform a read using strong consistency". We use the
+// default (eventual) consistency and close the replication window with a short bounded retry on
+// null reads, which is what the read-after-write paths here (analyze -> checkout -> delivery)
+// actually need.
+const READ_RETRY_DELAYS_MS = [150, 300, 600];
+
 export function getScopedStore(name) {
   if (shouldUseLocalStore()) return createLocalStore(name);
-  return getStore({ name, consistency: 'strong' });
+  return withReadRetry(getStore({ name }));
+}
+
+function withReadRetry(store) {
+  const originalGet = store.get.bind(store);
+  store.get = async (key, options) => {
+    let value = await originalGet(key, options);
+    for (let i = 0; value === null && i < READ_RETRY_DELAYS_MS.length; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, READ_RETRY_DELAYS_MS[i]));
+      value = await originalGet(key, options);
+    }
+    return value;
+  };
+  return store;
 }
 
 export function optionsResponse() {
