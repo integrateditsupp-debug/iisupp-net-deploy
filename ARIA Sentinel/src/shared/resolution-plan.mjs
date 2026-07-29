@@ -12,7 +12,11 @@ import { isBlockedPath, R11_SURFACE } from "./path-guard.mjs";
 export const STEP_ON_FAIL = Object.freeze(["retry-once", "rollback-plan", "escalate"]);
 export const RISK_LEVELS = Object.freeze(["low", "medium", "high"]);
 export const ROLLBACK_POLICIES = Object.freeze(["reverse-order", "escalate-only"]);
-export const PROBE_INTERPRETS = Object.freeze(["service-running", "count-positive"]);
+// S2 (brain-audit F2) — "count-zero" and "bool-true" exist so a goalProbe can assert an OUTCOME
+// (queue drained · network reachable), not just a service state. Service-state probes stay legal for
+// per-step successProbes, but a plan-level goalProbe should prove the user's problem is gone.
+export const PROBE_INTERPRETS = Object.freeze(["service-running", "count-positive", "count-zero", "bool-true"]);
+export const OUTCOME_INTERPRETS = Object.freeze(["count-zero", "bool-true", "count-positive"]);
 export const TRIGGER_KINDS = Object.freeze(["detector-cluster", "user-request", "vision-intake"]);
 const MAX_STEPS = 12;
 
@@ -70,5 +74,8 @@ export function validatePlan(plan, opts = {}) {
     errors.push("riskEnvelope must be { level: low|medium|high, touchesSystemState: boolean }");
   }
   if (!ROLLBACK_POLICIES.includes(plan.rollbackPolicy)) errors.push(`rollbackPolicy must be one of ${ROLLBACK_POLICIES.join("|")}`);
+  // S2 optional field: stop as soon as the goalProbe says the user's problem is gone, so a bigger
+  // hammer (e.g. a reboot-requiring network-stack reset) never fires after the small fix already worked.
+  if (plan.stopWhenGoalMet != null && typeof plan.stopWhenGoalMet !== "boolean") errors.push("stopWhenGoalMet must be a boolean when present");
   return { ok: errors.length === 0, code: errors.length ? "INVALID" : "", errors };
 }

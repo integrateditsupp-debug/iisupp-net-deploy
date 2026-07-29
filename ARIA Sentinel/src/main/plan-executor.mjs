@@ -19,9 +19,18 @@ import { superviseProposal } from "./supervisor-agent.mjs";
 import { createCountdown, COUNTDOWN_SECONDS } from "./action-countdown.mjs";
 import { executeTier0, resolveExecutorId, validateTier0Command, defaultRun, TIER0_COMMANDS } from "./tier-0-executor.mjs";
 import { resolveDryRun } from "./dry-run-policy.mjs";
+// S2 — resilience + quality. Restore point before a system-touching plan (honest degrade), outcome-level
+// probe interpretation (F2), the durability ledger (F1) and the escalation evidence packet.
+import { ensureRestorePoint } from "./restore-point.mjs";
+import { interpretOutcome } from "./outcome-probes.mjs";
+import { buildEscalationPacket } from "./escalation-packet.mjs";
+import { onRecurrence, issueSignature } from "./durability-ledger.mjs";
+import { isRebootPending } from "./plan-resume.mjs";
 
 export const PLAN_OUTCOMES = Object.freeze([
-  "resolved", "already-healthy", "escalated", "aborted", "blocked", "invalid", "dry-run"
+  "resolved", "already-healthy", "escalated", "aborted", "blocked", "invalid", "dry-run",
+  // S2 — the step applied but only a reboot can make it real. Not success, not failure, not a no-op.
+  "reboot-pending"
 ]);
 
 function safeStringify(obj) {
@@ -45,6 +54,9 @@ export function evaluateProbe(spec, output) {
     const m = text.match(/-?\d+/);
     return !!m && Number(m[0]) > 0;
   }
+  // S2 (F2) — outcome-level interprets, evaluated by the one shared interpreter so a probe can never
+  // be read two different ways depending on who called it.
+  if (spec.interpret === "count-zero" || spec.interpret === "bool-true") return interpretOutcome(spec.interpret, text);
   return false;
 }
 
@@ -100,6 +112,9 @@ export async function executePlan(plan, ctx = {}) {
   const now = typeof ctx.now === "function" ? ctx.now : () => Date.now();
   const planRunId = String(ctx.planRunId || `${(plan && plan.id) || "plan"}-run-${now()}`);
   let entries = [];
+  // S2 state, declared before `finish` so every early return can carry it safely.
+  let restorePoint = null;                       // { mode, reason, note } — honest degrade to journal-only
+  let durability = ctx.durability || null;       // F1 recurrence decision for this issue signature
   const journal = (event, fields = {}) => {
     entries = appendEntry(entries, { event, planId: (plan && plan.id) || "", planRunId, ...fields }, now);
     const e = entries[entries.length - 1];
@@ -107,7 +122,23 @@ export async function executePlan(plan, ctx = {}) {
     if (typeof ctx.logger === "function") { try { ctx.logger(e.event, e.detail, { planId: e.planId, planRunId: e.planRunId, stepIndex: e.stepIndex, recipeId: e.recipeId, ...(e.extra || {}) }); } catch { /* same */ } }
     return e;
   };
-  const finish = (outcome, extraFields = {}) => ({ outcome, planRunId, journal: entries, ...extraFields });
+  const finish = (outcome, extraFields = {}) => {
+    const res = { outcome, planRunId, journal: entries, ...extraFields };
+    // S2 — every non-success ending that hands the problem to a human carries the content-blind
+    // evidence packet. Built here, STAGED only: nothing in this module ever sends anything.
+    if (outcome === "escalated" || outcome === "blocked") {
+      res.escalationPacket = buildEscalationPacket({
+        planRun: { planId: (plan && plan.id) || "", planRunId, outcome },
+        journalEntries: entries,
+        durability,
+        issue: ctx.issue || null,
+        now
+      });
+    }
+    if (restorePoint) res.restorePoint = restorePoint;
+    if (durability) res.durability = durability;
+    return res;
+  };
   const killed = () => (typeof ctx.isKilled === "function" && !!ctx.isKilled()) || !!(ctx.killSignal && ctx.killSignal.aborted === true);
 
   // 1 — 🔒 R11: check #1 at the plan layer, before validation, before ANY journal detail can leak.
@@ -125,6 +156,24 @@ export async function executePlan(plan, ctx = {}) {
 
   const mode = String(ctx.mode || "confirmed");
   journal("PLAN.PROPOSED", { detail: plan.title, extra: { steps: plan.steps.length, riskEnvelope: plan.riskEnvelope.level, mode } });
+
+  // 2b — S2 (brain-audit F1) DURABILITY CHECK, before we choose to act at all. If this exact issue
+  // signature came back inside the 72h window, repeating the same fix is the behaviour Ahmad called
+  // out ("the problem comes back easily"). We climb exactly one rung instead — and when the ladder is
+  // exhausted a human gets it, immediately. Content-blind: only a hashed signature is ever used.
+  if (!durability && ctx.durabilityLedger && ctx.issue) {
+    const sig = issueSignature(ctx.issue);
+    const rec = onRecurrence(ctx.durabilityLedger, sig.signature, now());
+    durability = { ...rec, signature: sig.signature, code: sig.code };
+    journal("PLAN.STEP.PRE", {
+      detail: rec.recurred ? `durability: ${rec.reason}` : "durability: first sighting of this issue signature",
+      extra: { durability: true, recurred: rec.recurred, rung: rec.rung, withinH: rec.withinH }
+    });
+    if (rec.escalateToHuman) {
+      journal("PLAN.ESCALATED", { detail: "this issue already climbed the fix ladder — escalating to a human instead of retrying", extra: { code: "DURABILITY_LADDER_EXHAUSTED", rung: rec.rung } });
+      return finish("escalated");
+    }
+  }
 
   // 3 — S1 hard gate: unattended execution does not exist yet. Refuse, never silently downgrade.
   if (ctx.unattended === true) {
@@ -193,6 +242,21 @@ export async function executePlan(plan, ctx = {}) {
     return finish("aborted");
   };
 
+  // S2 — restore point before step 1 of any plan that touches system state. Throttle-aware: Windows
+  // allows one automatic checkpoint per 24h by default, and System Protection is often off entirely.
+  // When we cannot get one we DEGRADE HONESTLY to journal-only rollback and the plan card says so —
+  // a safety net we do not have is worse than no safety net. Never reverts anything automatically.
+  if (!dryRun) {
+    restorePoint = await ensureRestorePoint({
+      run: runFn, now, journal, planRunId,
+      touchesSystemState: !!(plan.riskEnvelope && plan.riskEnvelope.touchesSystemState),
+      lastRestorePointAt: ctx.lastRestorePointAt,
+      systemProtectionEnabled: ctx.systemProtectionEnabled
+    });
+  } else {
+    restorePoint = { mode: "not-needed", reason: "dry-run", note: "dry-run — nothing is changed, so no restore point is created", evidence: "" };
+  }
+
   const events = { PRE: "PLAN.STEP.PRE", EXEC: "PLAN.STEP.EXEC", POST: "PLAN.STEP.POST", ROLLBACK: "PLAN.STEP.ROLLBACK" };
   const runStep = async (step, i, attempt) => {
     const bridge = (event, text, extra = {}) => {
@@ -228,6 +292,15 @@ export async function executePlan(plan, ctx = {}) {
     if (killed()) return abortPlan("KILL_SWITCH", i, "kill-switch engaged mid-plan");
 
     let result = await runStep(step, i, 0);
+    // S2 — a reboot-requiring step (e.g. the network-stack reset) CANNOT be called a success on this
+    // side of the reboot. Journal a clean step boundary carrying rebootPending, arm the resume, and
+    // stop. plan-resume replays this journal at boot and continues at the next step (never half-applied).
+    if (isRebootPending(result)) {
+      completed.push({ stepIndex: i, recipeId: result.recipeId, outcome: result.outcome });
+      journal("PLAN.STEP.POST", { stepIndex: i, recipeId: step.recipeId, detail: "applied — a reboot is required before this step can be verified; the plan resumes after the reboot", extra: { rebootPending: true, resumeAfterReboot: true, nextStepIndex: i + 1 } });
+      if (typeof ctx.armResume === "function") { try { await ctx.armResume({ planId: plan.id, planRunId, nextStepIndex: i + 1 }); } catch { /* arming must never crash a plan */ } }
+      return finish("reboot-pending", { nextStepIndex: i + 1, resumeAfterReboot: true });
+    }
     if (result.outcome === "blocked") {
       journal("PLAN.ABORTED", { stepIndex: i, recipeId: step.recipeId, detail: "step blocked by R11/allowlist — hard stop", extra: { code: "STEP_BLOCKED", surfaced: R11_SURFACE } });
       return finish("blocked", { surfaced: R11_SURFACE });
@@ -259,6 +332,17 @@ export async function executePlan(plan, ctx = {}) {
         return finish("escalated");
       }
     }
+
+    // S2 — stop the moment the user's problem is actually gone. Running the bigger hammer (a
+    // reboot-requiring stack reset) AFTER the small fix already worked is collateral damage, not care.
+    if (plan.stopWhenGoalMet === true && !dryRun && i < plan.steps.length - 1) {
+      const early = await runProbe(plan.goalProbe, runFn);
+      if (early.pass && completed.some((c) => c.outcome === "success")) {
+        journal("PLAN.RESOLVED", { stepIndex: i, detail: `goalProbe passed after step ${i + 1} — stopping early; the remaining steps were not needed`, extra: { evidence: early.output, earlyStop: true, stepsSkipped: plan.steps.length - (i + 1) } });
+        if (typeof ctx.onResolved === "function") { try { await ctx.onResolved({ planId: plan.id, planRunId, evidence: early.output, durability, stepsRun: i + 1 }); } catch { /* never breaks a good outcome */ } }
+        return finish("resolved", { evidence: early.output, earlyStop: true });
+      }
+    }
   }
 
   if (killed()) return abortPlan("KILL_SWITCH", plan.steps.length, "kill-switch engaged before the goal probe");
@@ -278,6 +362,9 @@ export async function executePlan(plan, ctx = {}) {
   const changedSomething = completed.some((c) => c.outcome === "success");
   if (probe.pass && changedSomething) {
     journal("PLAN.RESOLVED", { detail: `goalProbe passed: ${plan.goalProbe.description}`, extra: { evidence: probe.output, noChange: false } });
+    // S2 (F1) — hand the outcome to the durability ledger. It is only a DURABLE resolution after the
+    // quiet monitoring window; nothing here claims durability on the spot.
+    if (typeof ctx.onResolved === "function") { try { await ctx.onResolved({ planId: plan.id, planRunId, evidence: probe.output, durability, stepsRun: plan.steps.length }); } catch { /* never breaks a good outcome */ } }
     return finish("resolved", { evidence: probe.output });
   }
   if (probe.pass && !changedSomething) {

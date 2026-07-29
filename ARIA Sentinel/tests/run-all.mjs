@@ -348,6 +348,19 @@ const TESTS = [
   // HELP SURFACES (2026-07-16) — public Technical Support FAQ built from the real KB (end-user-safe,
   // FAQPage JSON-LD) + Forums Concierge (auto-answer, honest abstain, $0) + Moderator (reversible tiers,
   // never hard-deletes) + the web KB-shaper mirror kept in parity with the canonical Sentinel shaper.
+  // STAGE 3 S2 (2026-07-29) — Autonomous Resolution Engine, resilience + quality slice:
+  // F5 executor bindings, F2 outcome-level goalProbes, throttle-aware restore points, live
+  // reverse-order rollback + escalation packet, resume-after-reboot, F1 durability ledger,
+  // and the zero-deletion guard proving the safety stack was reused unchanged.
+  "./tier-0-new-bindings.test.mjs",
+  "./outcome-goalprobes.test.mjs",
+  "./restore-point-throttle.test.mjs",
+  "./durability-ledger.test.mjs",
+  "./escalation-packet.test.mjs",
+  "./plan-rollback-live.test.mjs",
+  "./plan-resume-wiring.test.mjs",
+  "./plan-s2-quality.test.mjs",
+  "./s2-zero-deletion-guard.test.mjs",
   "../../tests/support-faq.test.mjs",
   "../../tests/forums-concierge.test.mjs",
   "../../tests/forums-moderation.test.mjs",

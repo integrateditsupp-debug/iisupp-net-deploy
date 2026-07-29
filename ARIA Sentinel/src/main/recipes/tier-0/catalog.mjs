@@ -13,6 +13,7 @@ export const TIER0_ALLOWED_PREFIXES = [
   "Get-ChildItem", "Get-Package", "Get-AppxPackage", "Get-CimInstance", "Get-WinEvent",
   "Get-Service", "Get-ItemProperty", "Measure-Object",
   "Stop-Service", "Start-Service", "Restart-Service",
+  "Get-Printer", "Get-PrintJob", "Remove-PrintJob", // S2: the print-queue binding (spool jobs only, never files)
   "Remove-Item", "Start-Process", "wmic", "sfc", "msdt.exe", "reg"
 ];
 
@@ -57,6 +58,15 @@ export const recipes = {
     id: "restart-print-spooler", title: "Restart print spooler", category: "printer-issues",
     whatItDoes: "Stops and restarts the Print Spooler service to clear a stuck print queue.",
     commands: ["Stop-Service -Name Spooler", "Start-Service -Name Spooler"]
+  }),
+  // STAGE 3 S2 (brain-audit F5) — signed catalog entry for the new Tier-0 binding. The supervisor only
+  // approves recipe ids that live in THIS map, so the binding and the signed catalog land together.
+  // ONE-WAY: cleared jobs are not restorable, so the plan layer never claims a rollback for it.
+  // Not a user-data delete: print jobs are transient spool items, never documents on disk.
+  "clear-print-queue": def({
+    id: "clear-print-queue", title: "Clear the stuck print queue", category: "printer-issues",
+    whatItDoes: "Removes the queued print jobs that are jamming the printer. One-way — cleared jobs must be resubmitted.",
+    commands: ["Get-Printer | Get-PrintJob | Remove-PrintJob"]
   }),
   "restart-audio-service": def({
     id: "restart-audio-service", title: "Restart audio services", category: "audio-issues",

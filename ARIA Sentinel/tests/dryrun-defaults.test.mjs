@@ -43,8 +43,9 @@ for (const mode of ["confirmed", "autonomous"]) {
 }
 t();
 
-// 5 — all 20 Tier-0 recipes route to REAL execution under Autonomous + supervisor approval.
-assert.equal(TIER0_RECIPES.length, 20, "20 Tier-0 recipes in the catalog");
+// 5 — all 21 Tier-0 recipes route to REAL execution under Autonomous + supervisor approval.
+// (21 since Stage-3 S2 added the signed clear-print-queue recipe alongside its executor binding.)
+assert.equal(TIER0_RECIPES.length, 21, "21 Tier-0 recipes in the catalog");
 let liveCount = 0;
 for (const r of TIER0_RECIPES) {
   // A Tier-0 recipe carries 100+ vetted runs; under Autonomous + approve it must execute live + may auto-fire.
@@ -55,7 +56,7 @@ for (const r of TIER0_RECIPES) {
   assert.equal(pol.canAutoFire, true, `${r.id}: Tier-0 may auto-fire in Autonomous`);
   if (pol.execute) liveCount++;
 }
-assert.equal(liveCount, 20, "all 20 Tier-0 recipes execute live under Autonomous");
+assert.equal(liveCount, 21, "all 21 Tier-0 recipes execute live under Autonomous");
 t();
 
 // 6 — Autonomous live default is still overridable to dry-run for diagnostics (per-invocation).

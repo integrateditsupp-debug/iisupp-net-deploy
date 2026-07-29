@@ -34,13 +34,18 @@ const sneaky = goodPlan();
 sneaky.steps[0].args = { logDir: "C:\\private PICS and vids\\x" };
 assert.equal(validatePlan(sneaky, { isBound }).code, "R11_BLOCKED");
 
-// 3 — S1 bound-step enforcement: reset-network-stack is a real catalog recipe but has NO live
-// executor binding, so a plan using it is invalid (S1 runs only bound, vetted recipes).
+// 3 — bound-step enforcement: a real catalog recipe with NO live executor binding cannot be a plan
+// step (only bound, vetted recipes run). S2 bound reset-network-stack (brain-audit F5), so the
+// unbound case is now demonstrated with restart-windows-search, which still has no binding.
 const unbound = goodPlan();
-unbound.steps[0].recipeId = "reset-network-stack";
+unbound.steps[0].recipeId = "restart-windows-search";
 v = validatePlan(unbound, { isBound });
 assert.equal(v.ok, false);
-assert.ok(v.errors.some((e) => e.includes("reset-network-stack") && e.includes("no live Tier-0 executor binding")));
+assert.ok(v.errors.some((e) => e.includes("restart-windows-search") && e.includes("no live Tier-0 executor binding")));
+// ...and reset-network-stack is now genuinely bound, so the brain's top network fix can really run.
+const boundNow = goodPlan();
+boundNow.steps[0].recipeId = "reset-network-stack";
+assert.equal(validatePlan(boundNow, { isBound }).ok, true, "reset-network-stack is bound after S2");
 
 // 4 — shape errors: empty steps, bad onFail, bad rollbackPolicy, missing goalProbe.
 assert.equal(validatePlan({ ...goodPlan(), steps: [] }, { isBound }).ok, false);

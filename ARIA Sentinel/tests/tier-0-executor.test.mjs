@@ -24,8 +24,9 @@ function dnsRun({ start = 50, exit = 0, calls } = {}) {
   };
 }
 
-// 5 bindings present + ids stable.
-assert.deepEqual(TIER0_EXECUTOR_IDS, ["restart-print-spooler", "restart-windows-update", "flush-dns-cache", "restart-bluetooth", "restart-audio"]);
+// 7 bindings present + ids stable. S2 (brain-audit F5) added clear-print-queue + reset-network-stack
+// additively; the original 5 are unchanged and keep their relative order (s2-zero-deletion-guard proves it).
+assert.deepEqual(TIER0_EXECUTOR_IDS, ["restart-print-spooler", "clear-print-queue", "reset-network-stack", "restart-windows-update", "flush-dns-cache", "restart-bluetooth", "restart-audio"]);
 
 // 1 — service success (was Stopped → now Running).
 let r = await executeTier0("restart-print-spooler", { run: svcRun({ start: "Stopped", afterRestart: "Running" }) });

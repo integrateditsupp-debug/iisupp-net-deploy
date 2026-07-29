@@ -18,6 +18,15 @@ import { TIER0_ALLOWED_PREFIXES, TIER0_DENY } from "./recipes/tier-0/catalog.mjs
 // The 5 vetted, reversible bindings. `kind:"service"` → Status probe; `kind:"dns"` → cache-count probe.
 export const TIER0_COMMANDS = Object.freeze({
   "restart-print-spooler": { kind: "service", service: "Spooler", command: "Restart-Service Spooler -Force; (Get-Service Spooler).Status", probe: "(Get-Service Spooler).Status" },
+  // STAGE 3 S2 (brain-audit F5) — the two bindings the reasoner already recommends but could not run.
+  // With these, network + print stop being single-recipe nudges and become true multi-step Resolution
+  // Plans. Additive only: the five original entries are untouched (s2-zero-deletion-guard.test.mjs
+  // proves it), so the catalog is 7 bindings, not the 5 the note above describes.
+  //   clear-print-queue  → kind "queue": numeric job-count probe; ONE-WAY (cleared jobs are not restorable).
+  //   reset-network-stack → kind "net": winsock + TCP/IP reset. Requires a reboot, so it can NEVER report
+  //   success on this side of the reboot — it returns "reboot-pending" and the plan layer resumes after boot.
+  "clear-print-queue": { kind: "queue", oneWay: true, command: "Get-Printer | Get-PrintJob | Remove-PrintJob", probe: "(Get-Printer | Get-PrintJob | Measure-Object).Count" },
+  "reset-network-stack": { kind: "net", requiresReboot: true, command: "netsh winsock reset; netsh int ip reset", probe: "(Get-Service Dnscache).Status" },
   "restart-windows-update": { kind: "service", service: "wuauserv", command: "Restart-Service wuauserv -Force; (Get-Service wuauserv).Status", probe: "(Get-Service wuauserv).Status" },
   "flush-dns-cache": { kind: "dns", command: "ipconfig /flushdns", probe: "(Get-DnsClientCache | Measure-Object).Count" },
   "restart-bluetooth": { kind: "service", service: "bthserv", command: "Restart-Service bthserv -Force; (Get-Service bthserv).Status", probe: "(Get-Service bthserv).Status" },
@@ -43,6 +52,14 @@ export function resolveExecutorId(recipeId) {
 // Read-only Get-DnsClientCache is added to the Tier-0 allowlist (consistent with the other Get-* probes).
 const EXEC_ALLOWED = [...TIER0_ALLOWED_PREFIXES, "Get-DnsClientCache"];
 const firstToken = (seg) => seg.replace(/^[\s(]+/, "").split(/[\s.|]/)[0] || "";
+// STAGE 3 S2 — additive allowlist tokens for the new bindings, the outcome-level probes (F2) and the
+// restore-point checkpoint. Nothing is removed from TIER0_ALLOWED_PREFIXES / EXEC_ALLOWED; this list is
+// checked IN ADDITION to them. Every token here is either read-only or the vetted body of a new binding.
+export const S2_EXEC_ALLOWED = Object.freeze([
+  "Get-Printer", "Get-PrintJob", "Remove-PrintJob",   // clear-print-queue + print outcome probe
+  "Test-NetConnection", "Resolve-DnsName",            // network outcome probes (read-only)
+  "Checkpoint-Computer", "Get-ComputerRestorePoint"   // restore point create + throttle read
+]);
 
 /** Defense-in-depth: each `;`-separated statement must start with an allowlisted token and miss the deny list. */
 export function validateTier0Command(cmd) {
@@ -52,6 +69,7 @@ export function validateTier0Command(cmd) {
     const s = seg.trim();
     if (!s) continue;
     const tok = firstToken(s);
+    if (S2_EXEC_ALLOWED.some((p) => p.toLowerCase() === tok.toLowerCase())) continue; // S2 additive tokens
     if (!EXEC_ALLOWED.some((p) => p.toLowerCase() === tok.toLowerCase())) return false;
   }
   return true;
@@ -66,12 +84,17 @@ async function safeRun(run, cmd) {
 function parseState(spec, res) {
   // 🔒 R11 — redact probe stdout at the source so a private path can never reach before/after or the audit.
   const text = redactPrivate(String((res && res.stdout) || "")).trim();
+  if (spec.kind === "queue") { const m = text.match(/-?\d+/); return m ? Number(m[0]) : null; } // S2: job count
   if (spec.kind === "dns") { const m = text.match(/-?\d+/); return m ? Number(m[0]) : null; }
   return text.split(/\r?\n/).map((s) => s.trim()).filter(Boolean).pop() || ""; // "Running" / "Stopped" / ""
 }
 
 function classify(spec, before, after, exec) {
   if (!exec || exec.exitCode !== 0) return "fail";
+  // S2 — queue: drained (0 jobs) is the only success; already-empty is a no-op, never a fix.
+  if (spec.kind === "queue") return after === 0 ? (before === 0 ? "no-op-neutral" : "success") : "fail";
+  // S2 — net: the stack reset only takes effect after a reboot, so success CANNOT be claimed here (Rule 14).
+  if (spec.kind === "net") return "reboot-pending";
   if (spec.kind === "dns") return (before === 0 && after === 0) ? "no-op-neutral" : "success";
   if (after === "Running") return before === "Running" ? "no-op-neutral" : "success";
   return "fail"; // not Running after a restart → failed
@@ -93,6 +116,8 @@ export function defaultRun(command) {
 }
 
 async function rollbackService(spec, run, emit) {
+  // S2 — a one-way step (e.g. cleared print jobs) has no inverse. Say that, never imply a recovery.
+  if (spec && spec.oneWay) { emit("TIER0.ROLLBACK", "no rollback applicable (one-way: cleared print jobs must be resubmitted)", { recovered: false, manual: false, oneWay: true }); return false; }
   if (spec.kind !== "service" || !spec.service) { emit("TIER0.ROLLBACK", "no rollback applicable (idempotent command)", { recovered: false, manual: false }); return false; }
   const cmd = `Start-Service ${spec.service}`;
   if (isBlockedPath(cmd) || !validateTier0Command(cmd)) { emit("TIER0.ROLLBACK", "rollback command rejected; manual intervention needed", { recovered: false, manual: true }); return false; }
@@ -164,6 +189,11 @@ export async function executeTier0(recipeId, opts = {}) {
   if (verdict === "fail") {
     const rolledBack = await rollbackService(spec, run, emit);
     return { recipeId: canonical, outcome: "fail", before, after, exitCode: exec && exec.exitCode, rolledBack, events, message: rolledBack ? "Failed; service recovered to running." : "Failed; manual intervention needed." };
+  }
+  // S2 — reboot-pending is NOT success and NOT a no-op: the change is staged until the machine reboots.
+  if (verdict === "reboot-pending") {
+    emit("TIER0.POST", "applied — a reboot is required before this can be verified", { rebootPending: true });
+    return { recipeId: canonical, outcome: "reboot-pending", before, after, exitCode: exec && exec.exitCode, rolledBack: false, events, requiresReboot: true, message: "Applied. A reboot is required before this can be verified — no fix is claimed yet." };
   }
   return { recipeId: canonical, outcome: verdict, before, after, exitCode: exec && exec.exitCode, rolledBack: false, events, message: verdict === "success" ? "Recovered." : "No change needed (already healthy)." };
 }
