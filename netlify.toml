@@ -30,6 +30,22 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "microphone=(self), camera=(), geolocation=(self)"
 
+# ARIA Sentinel binaries. The publish dir is "." so the installer physically lives at
+# /public/sentinel-binaries/..., but src/shared/update-manifest.mjs builds electron-updater
+# feed URLs as https://iisupp.net/sentinel-binaries/<file> — which 404'd, silently breaking
+# auto-update. This rewrite makes the documented path real. Keep it above the 404 rules.
+[[redirects]]
+  from = "/sentinel-binaries/*"
+  to = "/public/sentinel-binaries/:splat"
+  status = 200
+
+# Clean, version-agnostic download URL for the Downloads page. Repoint the `to` when a new
+# installer is published so the public link never goes stale.
+[[redirects]]
+  from = "/downloads/aria-sentinel-windows.exe"
+  to = "/public/sentinel-binaries/ARIA-Sentinel-0.1.0-unsigned.exe"
+  status = 200
+
 # Internal-only paths â€” blocked from public access (return 404).
 # force=true is required so the rule overrides the physically-present static files.
 [[redirects]]

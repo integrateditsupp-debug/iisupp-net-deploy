@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280">
 <title>Downloads · ARIA Sentinel — Integrated IT Support</title>
-<meta name="description" content="ARIA Sentinel — autonomous desktop IT support agent. Windows release within a month, then all platforms. Content-blind by design.">
+<meta name="description" content="Download ARIA Sentinel for Windows (early access) and the ARIA browser extension for Chrome and Edge. Autonomous desktop IT support, content-blind by design.">
 <link rel="icon" type="image/png" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,6 +26,32 @@
   .hero h1{font-family:Cinzel,serif;font-size:48px;margin-bottom:16px;line-height:1.1}
   .hero h1 .gold{color:#c5a059}
   .hero p{color:rgba(255,255,255,.72);font-size:15.5px;max-width:680px;margin:0 auto;line-height:1.65}
+  /* --- Available-now download cards --- */
+  .dl{max-width:1100px;margin:34px auto 0;padding:0 24px}
+  .dl-tag{color:#c5a059;font-size:10px;letter-spacing:.32em;text-align:center;margin-bottom:18px;font-weight:600}
+  .dl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px}
+  @media(max-width:760px){.dl-grid{grid-template-columns:1fr}}
+  .dl-card{background:rgba(197,160,89,.045);border:1px solid rgba(197,160,89,.24);border-radius:14px;padding:22px 22px 20px;display:flex;flex-direction:column;gap:12px}
+  .dl-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .dl-card h2{font-family:Cinzel,serif;font-size:20px;color:#fff;font-weight:600;line-height:1.25}
+  .dl-sub{font-size:11.5px;color:rgba(255,255,255,.5);letter-spacing:.06em;margin-top:4px}
+  .dl-badge{flex:0 0 auto;font-size:9px;letter-spacing:.18em;font-weight:700;color:#f1dca7;border:1px solid rgba(197,160,89,.45);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .dl-blurb{font-size:13px;line-height:1.65;color:rgba(255,255,255,.68);margin:0}
+  .dl-btn{display:block;text-align:center;background:#c5a059;color:#050505;padding:13px 0;border-radius:8px;font-size:11px;letter-spacing:.2em;font-weight:700;transition:opacity .2s}
+  .dl-btn:hover{opacity:.86}
+  .dl-meta{display:grid;gap:7px;margin:0;font-size:12px}
+  .dl-meta div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px}
+  .dl-meta dt{color:rgba(255,255,255,.42);letter-spacing:.04em}
+  .dl-meta dd{margin:0;color:rgba(255,255,255,.75)}
+  .dl-hash{margin:0;font-size:11px;line-height:1.6}
+  .dl-hash b{display:block;color:rgba(255,255,255,.42);letter-spacing:.14em;font-size:9.5px;font-weight:600;margin-bottom:3px}
+  .dl-hash code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:rgba(255,255,255,.6);word-break:break-all}
+  .dl-warn{border-radius:10px;padding:13px 15px;font-size:12px;line-height:1.65;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.26);color:rgba(255,255,255,.72)}
+  .dl-warn.is-info{background:rgba(197,160,89,.07);border-color:rgba(197,160,89,.28)}
+  .dl-warn b{font-weight:600;color:rgba(255,255,255,.9)}
+  .dl-warn-h{display:block;color:#fca5a5;margin-bottom:5px;font-size:12.5px}
+  .dl-warn.is-info .dl-warn-h{color:#f1dca7}
+  .dl-warn code{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#f1dca7;word-break:normal;overflow-wrap:break-word;white-space:nowrap}
   .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:0 24px;max-width:1180px;margin:24px auto 0}
   @media(max-width:1024px){.cards{grid-template-columns:repeat(3,1fr)}}
   @media(max-width:680px){.cards{grid-template-columns:1fr 1fr}}
@@ -89,8 +115,59 @@
 <main>
 <section class="hero">
   <p class="hero-tag">DOWNLOADS</p>
-  <h1>ARIA Sentinel &mdash; <span class="gold">coming soon</span></h1>
-  <p>The desktop companion to ARIA. Keeps your machine running smoothly so you stop losing hours to IT. <strong style="color:#f1dca7">Available on all platforms beginning with Windows within a month.</strong> Talk to our team for a tailored walkthrough.</p>
+  <h1>ARIA Sentinel &mdash; <span class="gold">early access</span></h1>
+  <p>The desktop companion to ARIA. Keeps your machine running smoothly so you stop losing hours to IT. <strong style="color:#f1dca7">The Windows early-access build and the ARIA browser extension are available below right now.</strong> General availability follows on macOS, Linux, and mobile.</p>
+</section>
+
+<section class="dl">
+  <p class="dl-tag">AVAILABLE NOW</p>
+  <div class="dl-grid">
+
+    <article class="dl-card">
+      <div class="dl-head">
+        <div>
+          <h2>ARIA Sentinel for Windows</h2>
+          <p class="dl-sub">Desktop agent &middot; Windows 10 / 11, 64-bit</p>
+        </div>
+        <span class="dl-badge">EARLY ACCESS</span>
+      </div>
+      <p class="dl-blurb">The autonomous desktop agent. Watches for the failures that cost you hours &mdash; drivers, updates, storage, network, printer queues &mdash; and fixes what it can before you notice. Content-blind by design: it never reads your documents, screen, or files.</p>
+      <a class="dl-btn" href="/downloads/aria-sentinel-windows.exe" download="ARIA-Sentinel-0.1.0-Setup.exe">DOWNLOAD .EXE &nbsp;&middot;&nbsp; 97.8 MB</a>
+      <dl class="dl-meta">
+        <div><dt>Version</dt><dd>0.1.0 (early access)</dd></div>
+        <div><dt>Installer</dt><dd>NSIS, per-user, no admin rights required</dd></div>
+        <div><dt>Size</dt><dd>97.8 MB (102,536,604 bytes)</dd></div>
+      </dl>
+      <p class="dl-hash"><b>SHA-256</b><code>57c1b2dea2b7659d067a369dfa351965093a21c5afc6513563e8388267ccc93c</code></p>
+      <div class="dl-warn">
+        <b class="dl-warn-h">This build is not code-signed yet.</b>
+        Windows SmartScreen will show <em>&ldquo;Windows protected your PC&rdquo;</em>. Click <b>More info</b> &rarr; <b>Run anyway</b> to continue. Verify the SHA-256 above first &mdash; in PowerShell, run <code>Get-FileHash .\ARIA-Sentinel-0.1.0-Setup.exe -Algorithm SHA256</code> and confirm it matches. An Authenticode-signed build ships at general availability and the warning disappears.
+      </div>
+    </article>
+
+    <article class="dl-card">
+      <div class="dl-head">
+        <div>
+          <h2>ARIA browser extension</h2>
+          <p class="dl-sub">Chrome &amp; Edge &middot; Manifest V3</p>
+        </div>
+        <span class="dl-badge">v1.0.0</span>
+      </div>
+      <p class="dl-blurb">ARIA in your browser &mdash; reminders, search, and tech triage on the page you are already on, backed by the same knowledge base as the web assistant. Nothing leaves the browser except the questions you ask.</p>
+      <a class="dl-btn" href="/downloads/aria-chrome-extension.zip" download>DOWNLOAD .ZIP &nbsp;&middot;&nbsp; 75 KB</a>
+      <dl class="dl-meta">
+        <div><dt>Version</dt><dd>1.0.0 &middot; Manifest V3</dd></div>
+        <div><dt>Browsers</dt><dd>Chrome 110+, Edge 110+, Brave, Opera</dd></div>
+        <div><dt>Size</dt><dd>75 KB (76,567 bytes)</dd></div>
+      </dl>
+      <p class="dl-hash"><b>SHA-256</b><code>4ecbea2a9f0c7cc9e7c20bbead74b32356d769db923b67b03d6c33bb241acfe7</code></p>
+      <div class="dl-warn is-info">
+        <b class="dl-warn-h">Browser extensions do not install from an .exe.</b>
+        Chrome and Edge only accept a package, so this ships as a ZIP. Unzip it, open <code>chrome://extensions</code> (or <code>edge://extensions</code>), turn on <b>Developer mode</b>, click <b>Load unpacked</b>, and select the unzipped folder. One-click install arrives with the Chrome Web Store listing.
+      </div>
+    </article>
+
+  </div>
 </section>
 
 <section class="cards">
@@ -151,7 +228,7 @@
 <section class="platforms">
   <p class="platforms-tag">PLATFORM ROADMAP</p>
   <div class="platforms-grid">
-    <div class="platform live"><b>Windows</b><span class="when">Within a month</span></div>
+    <div class="platform live"><b>Windows</b><span class="when">Early access &mdash; download above</span></div>
     <div class="platform"><b>macOS</b><span class="when">Following Windows</span></div>
     <div class="platform"><b>Linux</b><span class="when">Following macOS</span></div>
     <div class="platform"><b>Mobile</b><span class="when">Companion app</span></div>
