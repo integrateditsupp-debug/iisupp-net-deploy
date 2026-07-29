@@ -7,3 +7,7 @@ engine and the *same* consent/abstain contract.
 
 `tests/vision-surfaces.test.mjs` asserts the two files are identical. If you change one, copy it
 across; the test fails loudly on drift rather than letting the surfaces quietly diverge.
+
+- `aria-pdf-text.js` — byte-identical copy of `assets/aria-pdf-text.js` (STAGE 2 local PDF
+  text extraction). Must be loaded BEFORE `aria-vision-diagnose.js`. Zero dependencies, no
+  network calls: a PDF dropped on Sentinel is read on the device and only its text is submitted.

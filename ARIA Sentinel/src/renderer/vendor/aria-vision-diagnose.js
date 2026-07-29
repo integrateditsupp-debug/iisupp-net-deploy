@@ -19,12 +19,15 @@
  *
  * PRIVACY: images are only sent to the cloud vision model AFTER the user opts in on the disclosure.
  * Text/logs are matched against the offline KB — the widget shows exactly what leaves the device.
+ * PDFs are read locally by aria-pdf-text.js (load it before this file): the file never leaves the
+ * device, only the extracted text is submitted, and an unreadable PDF is refused, never guessed.
  */
 (function (global) {
   'use strict';
 
   var GOLD = '#c5a059';
   var TEXT_EXT = /\.(txt|log|json|md|csv|xml|ini|cfg|conf|out|err|trace)$/i;
+  var PDF_EXT = /\.pdf$/i;
 
   function injectCSS() {
     if (document.getElementById('avd-css')) return;
@@ -88,15 +91,15 @@
     zone.setAttribute('aria-label', 'Show ARIA the problem — click, or focus and paste a screenshot or error text');
     zone.innerHTML =
       '<h4>Show ARIA the problem</h4>' +
-      '<p>Drop or paste a <strong>screenshot</strong>, an <strong>error dialog</strong>, or a <strong>log file</strong> — ARIA reads it and returns the fix.</p>' +
+      '<p>Drop or paste a <strong>screenshot</strong>, an <strong>error dialog</strong>, a <strong>log file</strong> or a <strong>PDF</strong> — ARIA reads it and returns the fix.</p>' +
       '<p style="color:' + GOLD + '">Drag &amp; drop · click here then paste (Ctrl/Cmd-V) · or click to choose a file</p>' +
       (surface === 'sentinel' ? '<p class="avd-note">Or use “Diagnose my current screen” — Sentinel asks your permission first.</p>' : '') +
-      '<div class="avd-note">Text &amp; logs are matched against the offline KB on our own server — no third-party AI model. Images go to the cloud vision model, <strong>unredacted</strong>, only after you approve.</div>';
+      '<div class="avd-note">Text, logs &amp; PDFs are matched against the offline KB on our own server — no third-party AI model. A PDF is read <strong>on this device</strong>: only the text it contains is submitted, the file itself is never uploaded. Images go to the cloud vision model, <strong>unredacted</strong>, only after you approve.</div>';
     var out = el('div');
     var lastCard = null;   // set by render(); the B5 resolve confirmation attaches here
     var fileInput = el('input');
     fileInput.type = 'file';
-    fileInput.accept = 'image/*,.txt,.log,.json,.md,.csv,.xml,.ini,.cfg,.out,.err';
+    fileInput.accept = 'image/*,application/pdf,.pdf,.txt,.log,.json,.md,.csv,.xml,.ini,.cfg,.out,.err';
     fileInput.style.display = 'none';
 
     root.appendChild(zone);
@@ -135,6 +138,7 @@
 
     function handleFile(file) {
       if (!file) return;
+      if (PDF_EXT.test(file.name) || file.type === 'application/pdf') { handlePdf(file); return; }
       if (file.type.indexOf('image') === 0) {
         var reader = new FileReader();
         reader.onload = function () {
@@ -147,8 +151,41 @@
         tr.onload = function () { submit({ kind: 'log', text: String(tr.result), filename: file.name }); };
         tr.readAsText(file);
       } else {
-        renderError('That file type isn\'t supported yet. Paste the error text, drop a screenshot, or a .log/.txt file.');
+        renderError('That file type isn\'t supported yet. Paste the error text, drop a screenshot, a PDF, or a .log/.txt file.');
       }
+    }
+
+    // ---- PDF: read it HERE, on the user's device. -------------------------------------
+    // The PDF file itself is never uploaded — only the text it contains, and that text goes
+    // down the same server-side offline-KB path as a pasted log (no third-party AI model).
+    // If the PDF is a scan, is encrypted, or decodes to unmappable byte soup, the extractor
+    // refuses and we SAY so; we never submit unreliable text as if it were the user's error.
+    function handlePdf(file) {
+      var pdf = global.ARIAPdfText;
+      if (!pdf || typeof pdf.extractText !== 'function') {
+        renderError('The PDF reader did not load on this page. Open the PDF and paste the error text, or screenshot the page and drop that instead.');
+        return;
+      }
+      out.innerHTML = '<p style="color:' + GOLD + '">Reading that PDF on this device…</p>';
+      var fr = new FileReader();
+      fr.onerror = function () { renderError('That PDF could not be read from disk. Try screenshotting the page with the error instead.'); };
+      fr.onload = function () {
+        var bytes;
+        try { bytes = new Uint8Array(fr.result); }
+        catch (e) { renderError('That PDF could not be read. Screenshot the page with the error and drop that instead.'); return; }
+        pdf.extractText(bytes).then(function (res) {
+          if (!res || !res.ok) {
+            renderError((res && res.note) || 'No readable text could be recovered from that PDF. Screenshot the page with the error and drop that instead.');
+            return;
+          }
+          submit({ kind: 'pdf', text: res.text, filename: file.name, localExtract: {
+            chars: res.chars, streams: res.streams, truncated: !!res.truncated, quality: res.quality
+          } });
+        }, function () {
+          renderError('That PDF could not be read. Screenshot the page with the error and drop that instead.');
+        });
+      };
+      fr.readAsArrayBuffer(file);
     }
 
     // Sentinel: request a consent-gated screen capture from the host (Electron preload bridge).
