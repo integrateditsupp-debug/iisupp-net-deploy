@@ -1,0 +1,129 @@
+/* ---------------------------------------------------------------------------
+   IIS site-wide fine print.
+
+   One disclaimer strip, one style, same position on every public page: a quiet
+   rule above the very bottom of the document. It is deliberately small and low
+   contrast — this is legal fine print, not a warning banner. Do not make it
+   louder without a reason; a defensive-looking site sells worse.
+
+   Injected by scripts/inject-disclaimer.mjs, enforced by
+   scripts/check-disclaimer-coverage.mjs (npm run site:hygiene).
+   Full notice lives at /disclaimer.html.
+--------------------------------------------------------------------------- */
+
+.iis-fineprint {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 20px 24px 30px;
+  border-top: 1px solid rgba(255, 255, 255, .06);
+  background: transparent;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  text-align: center;
+  clear: both;
+}
+
+.iis-fineprint__inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.iis-fineprint__label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: rgba(197, 160, 89, .55);
+}
+
+.iis-fineprint__text {
+  margin: 0;
+  font-size: 10.5px;
+  line-height: 1.75;
+  letter-spacing: .01em;
+  color: rgba(255, 255, 255, .34);
+}
+
+.iis-fineprint__text + .iis-fineprint__text {
+  margin-top: 6px;
+}
+
+.iis-fineprint a {
+  color: rgba(197, 160, 89, .78);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.iis-fineprint a:hover {
+  color: #c5a059;
+}
+
+/* Light-background pages: opt in by adding .iis-fineprint--light. */
+.iis-fineprint--light {
+  border-top-color: rgba(0, 0, 0, .08);
+}
+
+.iis-fineprint--light .iis-fineprint__text {
+  color: rgba(0, 0, 0, .5);
+}
+
+.iis-fineprint--light .iis-fineprint__label {
+  color: rgba(140, 106, 40, .8);
+}
+
+.iis-fineprint--light a {
+  color: #8c6a28;
+}
+
+/* ---------------------------------------------------------------------------
+   Contextual notice — used only on pages where the visitor actually executes
+   something (troubleshooting steps, tools, calculators, readiness scores).
+   Sits with the content rather than at the foot of the page. Still fine print,
+   just close enough to be read before someone acts.
+--------------------------------------------------------------------------- */
+
+.iis-riskbar {
+  box-sizing: border-box;
+  display: block;
+  margin: 18px auto;
+  max-width: 960px;
+  padding: 10px 14px;
+  border: 1px solid rgba(197, 160, 89, .22);
+  border-left: 2px solid rgba(197, 160, 89, .55);
+  border-radius: 3px;
+  background: rgba(197, 160, 89, .045);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 10.5px;
+  line-height: 1.7;
+  letter-spacing: .01em;
+  color: rgba(255, 255, 255, .42);
+  text-align: left;
+}
+
+.iis-riskbar b {
+  color: rgba(241, 220, 167, .82);
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.iis-riskbar a {
+  color: rgba(197, 160, 89, .82);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.iis-riskbar a:hover {
+  color: #c5a059;
+}
+
+@media (max-width: 768px) {
+  .iis-fineprint { padding: 16px 16px 24px; }
+  .iis-fineprint__text { font-size: 10px; line-height: 1.7; }
+  .iis-riskbar { margin: 14px 12px; font-size: 10px; }
+}
+
+@media print {
+  .iis-fineprint, .iis-riskbar { color: #444; border-color: #ccc; }
+}

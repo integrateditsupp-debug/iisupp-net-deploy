@@ -3,6 +3,7 @@
 <title>SOC 2 Evidence Inventory · Internal</title>
 <meta name="robots" content="noindex">
 <style>body{font-family:system-ui;background:#0a0f1a;color:#e6f0ff;max-width:1100px;margin:30px auto;padding:24px;line-height:1.55}h1{color:#7afbff;margin:0 0 6px}h2{color:#7afbff;border-bottom:1px solid #2a3a55;padding-bottom:6px;margin-top:30px}table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}td,th{padding:8px 10px;border-bottom:1px solid #1f2a3f;text-align:left;vertical-align:top}th{background:#0e1626;color:#7afbff}.ok{color:#7dffae}.partial{color:#ffcb6b}.todo{color:#ff7e7e}input{background:#0e1626;color:#e6f0ff;border:1px solid #2a3a55;padding:8px;border-radius:4px;width:280px}button{background:#7afbff;color:#0a0f1a;border:0;padding:8px 14px;border-radius:5px;font-weight:600;cursor:pointer;margin-left:8px}</style>
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head><body>
 <h1>SOC 2 Evidence Inventory</h1>
 <p>Living list of evidence we have / partial / missing, mapped to TSC controls. Pull the actual evidence package via <code>aria-soc2-evidence-collect</code>.</p>
@@ -51,4 +52,13 @@ async function loadEvidence() {
   document.getElementById('live').innerHTML = '<pre style="background:#0e1626;padding:14px;border-radius:6px;overflow:auto">'+JSON.stringify(j,null,2)+'</pre>';
 }
 </script>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+  </div>
+</div>
+<!-- iis-fineprint:end -->
 </body></html>
