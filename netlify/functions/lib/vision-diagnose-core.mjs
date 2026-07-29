@@ -14,6 +14,8 @@
 //
 // This module does ZERO network I/O and imports nothing with side-effects → unit-testable offline.
 
+import { triageLog } from './vision-log-triage.mjs';
+
 // ============================ RETRIEVER (ported from aria-kb-query.mjs, RUN-A) ============================
 // Routing rules — ORDER MATTERS, first match adds +25. Kept in parity with the live web retriever.
 export const ROUTING = [
@@ -174,19 +176,32 @@ export function extractSignals(text) {
 // Returns { query, redaction, signals, description } — `query` is what the retriever scores.
 export function buildProblemDescription({ kind, text = '', visionText = '', filename = '' }) {
   let base, redaction;
+  let logTriage = null;
+
   if (kind === 'image') {
     // Vision text is redacted by the caller before it reaches us, but redact again defensively.
     const r = redactPII(visionText);
+    base = r.redacted; redaction = r;
+  } else if (kind === 'log') {
+    // A log is NOT a sentence. Reading its first 4000 characters means reading the banner, not
+    // the failure. Triage it first (offline, $0): keep only the verbatim lines that actually
+    // indicate a failure, collapse repeats, rank by severity/repetition/recency — then redact.
+    // Rule 14: triage never invents a line. If it finds no failure lines we fall back to the raw
+    // text rather than pretending, and `logTriage.hasFindings` tells the caller to abstain.
+    logTriage = triageLog(text, { filename });
+    const source = logTriage.hasFindings && logTriage.query ? logTriage.query : String(text || '');
+    const r = redactPII(source);
     base = r.redacted; redaction = r;
   } else {
     const r = redactPII(text);
     base = r.redacted; redaction = r;
   }
+
   const signals = extractSignals(base + ' ' + filename);
   const signalTail = [...signals.codes, ...signals.bugchecks, ...signals.apps].join(' ');
   // Cap the base so a giant log doesn't drown the routing signal; keep the first 4000 chars.
   const description = (base.slice(0, 4000) + ' ' + signalTail).trim();
-  return { query: description, redaction, signals, description };
+  return { query: description, redaction, signals, description, logTriage };
 }
 
 // ============================ DIAGNOSE ============================
@@ -239,6 +254,26 @@ function stripFrontmatter(s) {
 // One-call convenience used by the function + tests: description → diagnosis.
 export function diagnoseInput({ kind, text, visionText, filename, chunks, threshold }) {
   const built = buildProblemDescription({ kind, text, visionText, filename });
+
+  // A log we could read but that contains ZERO failure lines must not be "diagnosed". Scoring a
+  // clean log against the KB would produce a confident-looking answer to a problem the evidence
+  // never showed — exactly the fabrication Rule 14 forbids. Abstain and say why.
+  if (kind === 'log' && built.logTriage && built.logTriage.ok && !built.logTriage.hasFindings) {
+    return {
+      match: false, abstain: true, confidence: 0, confidenceLabel: 'abstain',
+      reason: 'log-no-failure-lines',
+      redaction: built.redaction, signals: built.signals, logTriage: built.logTriage,
+    };
+  }
+  // A log we could not read as text at all (binary .evtx, etc.) — refuse honestly, don't guess.
+  if (kind === 'log' && built.logTriage && !built.logTriage.ok && built.logTriage.reason === 'binary-not-text') {
+    return {
+      match: false, abstain: true, confidence: 0, confidenceLabel: 'abstain',
+      reason: 'log-binary-not-text',
+      redaction: built.redaction, signals: built.signals, logTriage: built.logTriage,
+    };
+  }
+
   const result = diagnose(built.query, chunks, { threshold });
-  return { ...result, redaction: built.redaction, signals: built.signals };
+  return { ...result, redaction: built.redaction, signals: built.signals, logTriage: built.logTriage };
 }

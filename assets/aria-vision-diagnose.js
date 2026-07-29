@@ -51,6 +51,22 @@
       '.avd-btn{display:inline-block;margin:10px 8px 0 0;padding:9px 16px;border-radius:8px;border:1px solid ' + GOLD + ';background:' + GOLD + ';color:#000;font-weight:700;font-size:13px;cursor:pointer}',
       '.avd-btn.ghost{background:transparent;color:' + GOLD + '}',
       '.avd-priv{font-size:11px;color:#8a8a82;margin-top:10px;border-top:1px solid #1a1a1a;padding-top:8px}',
+      '.avd-log{margin-top:12px;border:1px solid #1f1f1f;border-radius:8px;padding:8px 10px;background:#0d0d0c}',
+      '.avd-log>summary{cursor:pointer;font-size:12px;color:#c9c9c1;font-weight:600;list-style:none}',
+      '.avd-log>summary::-webkit-details-marker{display:none}',
+      '.avd-log>summary:before{content:"\\25B8 ";color:#8a8a82}',
+      '.avd-log[open]>summary:before{content:"\\25BE "}',
+      '.avd-log p{font-size:12px;color:#9a9a92;margin:8px 0 4px}',
+      '.avd-log-list{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px}',
+      '.avd-log-list li{font-size:11px;line-height:1.5;border-left:2px solid #333;padding-left:8px}',
+      '.avd-log-list li.sev-critical{border-left-color:#e05555}',
+      '.avd-log-list li.sev-error{border-left-color:#d08a2a}',
+      '.avd-log-list li.sev-warning{border-left-color:#6a6a5a}',
+      '.avd-sev{text-transform:uppercase;letter-spacing:.04em;font-weight:700;color:#c9c9c1;margin-right:6px}',
+      '.avd-cnt{color:#8a8a82;margin-right:6px}',
+      '.avd-ln{color:#6a6a62;margin-right:6px}',
+      '.avd-log-list code{display:block;color:#b8b8b0;white-space:pre-wrap;word-break:break-word;margin-top:2px}',
+      '.avd-note{font-size:11px;color:#8a8a82;font-style:italic}',
       '.avd-consent{margin-top:12px;background:#120f06;border:1px solid #3a2f12;border-radius:10px;padding:12px 14px;font-size:13px}',
       '.avd-consent label{display:block;margin:8px 0;cursor:pointer}',
       '.avd-redact{margin:10px 0;border:1px solid #3a2f12;border-radius:8px;background:#000;overflow:auto;max-height:320px}',
@@ -353,6 +369,33 @@
         card.appendChild(solo);
         // Feedback (Rule 14 — real signal, no fake activity)
         card.appendChild(buildFeedback(res));
+      }
+
+      // Log receipt — when a LOG was dropped, show what we actually read out of it. This is the
+      // evidence panel: verbatim lines from THEIR file, with counts and line numbers, so the user
+      // can check our reasoning instead of trusting it. Nothing here is generated — every line
+      // shown exists in the file they gave us (Rule 14).
+      var lt = res.logTriage;
+      if (lt && lt.summary) {
+        var lg = el('details', 'avd-log');
+        var sum = el('summary', null, esc(lt.hasFindings
+          ? ('What I read in your log — ' + lt.counts.critical + ' critical, ' + lt.counts.error + ' error, ' + lt.counts.warning + ' warning across ' + lt.totalLines + ' lines')
+          : 'What I read in your log'));
+        lg.appendChild(sum);
+        lg.appendChild(el('p', null, esc(lt.summary)));
+        if (lt.findings && lt.findings.length) {
+          var ul = el('ul', 'avd-log-list');
+          lt.findings.forEach(function (f) {
+            ul.appendChild(el('li', 'sev-' + esc(f.severity),
+              '<span class="avd-sev">' + esc(f.severity) + '</span>' +
+              (f.count > 1 ? '<span class="avd-cnt">x' + f.count + '</span>' : '') +
+              '<span class="avd-ln">line ' + f.firstLine + '</span>' +
+              '<code>' + esc(f.line) + '</code>'));
+          });
+          lg.appendChild(ul);
+        }
+        if (lt.truncated) lg.appendChild(el('p', 'avd-note', 'Log was very large — I read the most recent portion, where current failures live.'));
+        card.appendChild(lg);
       }
 
       // Privacy receipt — what we removed + what left the device.

@@ -245,6 +245,7 @@ export default async (req) => {
     disclosure: buildDisclosure({ surface, kind, willCallCloud, isCapture: kind === 'screen-capture', pixelRedactedRegions: pixelRedaction && pixelRedaction.ok ? pixelRedaction.regions : 0 }),
     dataFlow: dataFlow({ willCallCloud, kind, pixelRedactedRegions: pixelRedaction && pixelRedaction.ok ? pixelRedaction.regions : 0 }),
     redaction: d.redaction,          // {found:[{type,count}], count} — shown to the user
+    logTriage: d.logTriage ? publicTriage(d.logTriage) : null, // what we actually read out of a dropped log
     imageScrub,                      // what metadata was stripped before the image left (null for text)
     pixelRedaction,                  // what the USER painted out before it was sent (null if nothing)
     signals: d.signals,
@@ -255,6 +256,24 @@ export default async (req) => {
 
   if (!d.match) {
     // Honest abstain — closest guidance + open a discussion / escalate to IIS.
+    // Two log-specific abstains carry their own plain-English reason so the user is told what we
+    // actually saw in their file instead of a generic "not confident" (Rule 14).
+    if (d.reason === 'log-no-failure-lines' || d.reason === 'log-binary-not-text') {
+      return resp(200, {
+        ...base, abstain: true, diagnosis: null, reason: d.reason,
+        closest: null,
+        honestFallback: {
+          ...honestFallback(os),
+          message: d.reason === 'log-binary-not-text'
+            ? 'I could not read that log as text, so I will not guess what is in it.'
+            : 'I read the whole log and it contains no error, critical or warning entries — so there is nothing here for me to diagnose.',
+          logSummary: d.logTriage ? d.logTriage.summary : null,
+        },
+        diagnosisId: newDiagnosisId({ surface, kind, slug: null, confidence: 0 }),
+        feedbackPrompt: 'Did this point you somewhere useful?',
+        feedbackEndpoint: FEEDBACK_ENDPOINT,
+      });
+    }
     return resp(200, {
       ...base, abstain: true, diagnosis: null, closest: d.closest || null, honestFallback: honestFallback(os),
       // An abstain is still an answer the user can rate — a wrong abstain is the most
@@ -285,6 +304,30 @@ export default async (req) => {
     feedbackEndpoint: FEEDBACK_ENDPOINT,
   });
 };
+
+// Only the triage facts a user should see — verbatim evidence lines, counts, and what we read.
+// No raw log body is echoed back; the findings are the lines already surfaced in the diagnosis.
+function publicTriage(t) {
+  if (!t) return null;
+  return {
+    ok: t.ok,
+    format: t.format,
+    hasFindings: t.hasFindings,
+    reason: t.reason,
+    totalLines: t.totalLines,
+    truncated: t.truncated,
+    counts: t.counts,
+    // The summary quotes the top finding verbatim, so it goes through the SAME redactor as the
+    // findings. Anything echoed back to the user is redacted — no exceptions, no near-misses.
+    summary: t.summary ? redactPII(t.summary).redacted : t.summary,
+    findings: (t.findings || []).slice(0, 5).map(f => ({
+      severity: f.severity,
+      count: f.count,
+      line: redactPII(f.line).redacted,   // verbatim, minus PII/secrets
+      firstLine: f.firstLine,
+    })),
+  };
+}
 
 function hostBase(req) {
   try { return new URL(req.url).origin; } catch { return process.env.APP_URL || 'https://iisupp.net'; }

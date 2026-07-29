@@ -165,13 +165,20 @@ test('[11] the widget never puts image bytes or raw input into the vote', () => 
 });
 
 // ── 6. the SERVER hands the widget what it needs ────────────────────────────────────────
-test('[12] the handler issues a diagnosisId + feedback endpoint on BOTH answer paths', () => {
+test('[12] the handler issues a diagnosisId + feedback endpoint on EVERY answer path', () => {
   const src = read(HANDLER);
   assert.ok(src.includes("from './lib/vision-feedback.mjs'"), 'handler imports the shared module');
+
+  // The rule is "every path that returns an ANSWER is rateable", not "there are exactly N paths":
+  // new honest-abstain paths get added as new input kinds land (log triage added one), and pinning
+  // a number here would fail a correct change while a silently unrateable path would slip past.
+  // So: count the answer paths, and require an id AND an endpoint on each one.
   const ids = src.match(/diagnosisId: newDiagnosisId\(/g) || [];
-  assert.equal(ids.length, 2, 'both the matched and the abstain response carry an id');
   const eps = src.match(/feedbackEndpoint: FEEDBACK_ENDPOINT/g) || [];
-  assert.equal(eps.length, 2, 'both responses tell the widget where to send the vote');
+  const prompts = src.match(/feedbackPrompt: /g) || [];
+  assert.ok(ids.length >= 2, 'at least the matched and the abstain response carry an id');
+  assert.equal(eps.length, ids.length, 'every rateable response tells the widget where to send the vote');
+  assert.equal(prompts.length, ids.length, 'every rateable response asks its own question');
   assert.ok(src.includes("feedbackPrompt: 'Did this point you somewhere useful?'"),
     'the abstain path asks its own honest question');
 });
