@@ -1,25 +1,46 @@
 {
-  "scan_ts": "2026-07-28T21:40:00Z",
+  "scan_ts": "2026-07-29T13:10:00Z",
   "window": "2d",
-  "head": "ceed5ae5",
+  "head": "73a6f0e4",
   "branch": "axis-command-center-v2",
-  "commits_in_window": 5,
+  "commits_in_window": 14,
   "codex_commits_in_window": 0,
-  "commits_since_prior_scan": 4,
-  "top_dirs": ["scripts/lib", "netlify/functions", "assets", "tests", "scripts"],
-  "prefixes": { "AXIS": 4, "B3": 1 },
-  "authors": { "CC Stage2": 4, "AXIS Worker": 1 },
-  "prior_head": "6394986f",
-  "prior_scan": "2026-07-28T13:05:00Z",
+  "commits_since_prior_scan": 0,
+  "top_dirs": [
+    "scripts",
+    "tests",
+    "assets",
+    "docs",
+    "netlify",
+    "loops"
+  ],
+  "prefixes": {
+    "feat": 4,
+    "fix": 1,
+    "chore": 1,
+    "Security": 1,
+    "CC-BRIEF": 1,
+    "Site IA": 1
+  },
+  "authors": {
+    "Ahmad Wasee": 7,
+    "CC Stage2": 5,
+    "Cowork (Claude)": 1,
+    "AXIS Worker": 1
+  },
+  "prior_head": "73a6f0e4",
+  "prior_scan": "2026-07-28T21:10:00Z",
   "index_lock_present": true,
-  "index_lock_note": "0-byte lock; mtime moved 02:55 -> 11:26 during this scan (actively re-created, not merely stale). Sandbox cannot unlink (mount perms).",
-  "working_tree_dirty_paths": 516,
+  "index_lock_note": "0-byte, mtime 2026-07-28T15:38:00 -0400 \u2014 IDENTICAL to prior scan, ~21.5h old, frozen across two consecutive scans. CONFIRMED STALE (not live-contended). Sandbox cannot unlink (mount perms). Did not block read-only git log.",
+  "working_tree_dirty_paths": 183,
   "unpushed_on_main": 14,
-  "unpushed_on_branch_vs_origin_main": 5,
-  "unpushed_on_branch_vs_own_remote": 9,
-  "commits_by_day_last_10d": { "2026-07-21": 41, "2026-07-22": 2, "2026-07-28": 5 },
-  "codex_dormant_days": 26,
-  "delta": "FREEZE BROKEN. 07-28 went 1 -> 5 commits in ~6h (00:43 to 06:55). NEW AUTHOR: 'AXIS Worker' (ceed5ae5) -- first appearance, distinct from 'CC Stage2' and dormant 'Forge'. NEW VERB CLASS: infra/auth surface ('add token-authed /api/axis/snapshot-push') -- prior windows were merge/triage/regenerate only. Churn concentrated in scripts/lib (11), netlify/functions (3), assets/axis-*.js (5) -- real source edits, not regenerated state JSON. Substantive: B1 reply-misclassification fix, B2 ingest noise, 'pipeline-value lie' correction, composer-tick protection. Codex proper STILL 0 commits, 26 days dormant. index.lock mtime advanced mid-scan -> a process is actively touching git, so lock is live-contended not stale.",
+  "commits_by_day_last_10d": {
+    "2026-07-21": 15,
+    "2026-07-22": 2,
+    "2026-07-28": 14
+  },
+  "codex_dormant_days": 27,
+  "delta": "NO-CHANGE. HEAD unchanged at 73a6f0e4 since the 07-28T21:10Z scan \u2014 zero commits in the last ~16h. The 07-28 burst (14 commits) has stopped. No new authors, no new verbs, no new directories. Two regressions vs prior scan: (1) dirty working-tree paths climbed 127 -> 183 (+56) with no commit absorbing them \u2014 the bb98ebf1 .gitignore hygiene win is already eroding; (2) .git/index.lock mtime is FROZEN at the same value as the prior scan (07-28 15:38 EDT, now ~21.5h), which upgrades it from 'reads stale' to CONFIRMED STALE and matches the 07-17 signature that froze the repo 4 days and produced the 07-21 41-commit discharge. Codex proper 0 commits, 27 days dormant.",
   "read_only": true,
-  "notes": "observe-codex.mjs still absent; scan reconstructed from git log (read-only, no index writes)."
+  "notes": "observe-codex.mjs still absent (path lives in an unmounted prior-session outputs dir); scan reconstructed from git log. No index writes, no commits, no pushes."
 }

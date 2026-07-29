@@ -30,7 +30,10 @@ const corpus = [];
   'mfa loop','keep getting mfa prompts','too many mfa prompts','mfa fatigue',
   'sms code not arriving','text code never came','call for mfa never came','mfa challenge fails',
   'two factor auth issue','need authenticator setup','set up authenticator app','authenticator missing',
-  'mfa device lost','mfa app uninstalled'
+  'mfa device lost','mfa app uninstalled',
+  // moved from kb:security 2026-07-28 (autonomous loop): MFA-push abuse is an MFA
+  // workflow problem; aria.html deliberately catches these BEFORE kb:security.
+  'mfa bombing','50 mfa pushes'
 ].forEach(q => corpus.push({ q, expect: 'kb:mfa' }));
 
 // === OUTLOOK / MAIL === (50)
@@ -78,8 +81,11 @@ const corpus = [];
   'wireless adapter not found','wifi card missing','no wifi networks showing','wifi disabled',
   '5ghz not connecting','2.4ghz only','can\'t see 5g network','network keeps timing out',
   'internet keeps going out','wifi disconnects randomly','router not responding','modem rebooted',
-  'ip conflict on wifi','dhcp not assigning ip'
+  'ip conflict on wifi'
 ].forEach(q => corpus.push({ q, expect: 'wifi' }));
+// moved from wifi 2026-07-28 (autonomous loop): DHCP address assignment is an
+// infrastructure/networking fault, not a wireless-link fault.
+[ 'dhcp not assigning ip' ].forEach(q => corpus.push({ q, expect: 'kb:networking' }));
 
 // === PRINTER === (20)
 [
@@ -150,7 +156,7 @@ const corpus = [];
   'ransomware on my computer','my files are encrypted','lockbit virus','trojan detected',
   'virus warning popup','malware on laptop','suspicious link','i clicked a phishing link',
   'someone has access to my account','account compromised','sign-in from russia alert','impossible travel alert',
-  'mfa bombing','50 mfa pushes','suspicious activity on account','virus warning'
+  'suspicious activity on account','virus warning'
 ].forEach(q => corpus.push({ q, expect: 'kb:security' }));
 
 // === WEBCAM === (10)

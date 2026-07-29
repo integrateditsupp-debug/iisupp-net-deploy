@@ -1,0 +1,234 @@
+[
+ {
+  "id": "P30-hardware-v3",
+  "desc": "NEW INTENT kb:hardware \u2014 physical endpoint/peripheral fault detection, guarded against printer/wifi/mail/mfa signals and the bare 'docking station not working' default. Inserted immediately before the kb:webcam rule.",
+  "edits": [
+   {
+    "find": "  if (/(camera|webcam|video call|logitech c\\d+",
+    "replace": "  if (!/print|wifi|wi-fi|wireless|email|e-mail|two factor|2fa|not syncing/.test(q) && !/docking station not working\\s*(?:thanks|please|asap|urgent|now)?[.!? ]*$/.test(q) && /(?:\\b(?:workstation on wheels|wow cart|clinical cart|mobile workstation|bedside (?:terminal|computer|pc)|nursing station|nurses station|barcode scanner|handheld scanner|scanner gun|wristband scanner|medication scanner|handheld rf (?:device|terminal)|rf terminal|smart ?card reader|proximity reader|badge reader|rfid reader|fingerprint reader|piv card reader|cac card|docking station|second (?:screen|monitor)|dual monitor|multi-monitor|touchscreen|touch screen|touch monitor|panel pc|kiosk|pos terminal|point of sale|payment terminal|cash drawer|self checkout|time clock kiosk|turret phone|squawk box|video wall|ticker screen|plotter|forklift mounted computer|weigh scale|kitchen display|electronic shelf label|shelf label|price tag display|shop floor terminal|ruggedized laptop|ruggedized tablet|rugged tablet|hardened laptop|cnc machine control|workorder terminal|trading desk|trading workstation|trading terminal|trader workstation|market data terminal|evidence scanning station|trial presentation laptop|ecg workstation|ekg machine|vital signs monitor|bp machine|store tablet|store laptop|store associate device|back office workstation|mobile pos|gc workstation|gc tablet|gc laptop|government laptop|government desktop|government tablet|government issued laptop|government issued phone|attorney workstation|clinical keyboard|bloomberg keyboard|bloomberg b-unit)\\b[^]{0,40}?(?:won'?t|wont|won t|not\\b|\\bno\\b|dead|broken|frozen|freezing|crash(?:ed|ing)?|jam(?:med)?|flicker(?:ing)?|crack(?:ed)?|unresponsive|offline|beeping|locked up|fault|failure|overheat(?:ing)?|blank)|(?:won'?t|wont|won t|not\\b|\\bno\\b|dead|broken|frozen|freezing|crash(?:ed|ing)?|jam(?:med)?|flicker(?:ing)?|crack(?:ed)?|unresponsive|offline|beeping|locked up|fault|failure|overheat(?:ing)?|blank)[^]{0,40}?\\b(?:workstation on wheels|wow cart|clinical cart|mobile workstation|bedside (?:terminal|computer|pc)|nursing station|nurses station|barcode scanner|handheld scanner|scanner gun|wristband scanner|medication scanner|handheld rf (?:device|terminal)|rf terminal|smart ?card reader|proximity reader|badge reader|rfid reader|fingerprint reader|piv card reader|cac card|docking station|second (?:screen|monitor)|dual monitor|multi-monitor|touchscreen|touch screen|touch monitor|panel pc|kiosk|pos terminal|point of sale|payment terminal|cash drawer|self checkout|time clock kiosk|turret phone|squawk box|video wall|ticker screen|plotter|forklift mounted computer|weigh scale|kitchen display|electronic shelf label|shelf label|price tag display|shop floor terminal|ruggedized laptop|ruggedized tablet|rugged tablet|hardened laptop|cnc machine control|workorder terminal|trading desk|trading workstation|trading terminal|trader workstation|market data terminal|evidence scanning station|trial presentation laptop|ecg workstation|ekg machine|vital signs monitor|bp machine|store tablet|store laptop|store associate device|back office workstation|mobile pos|gc workstation|gc tablet|gc laptop|government laptop|government desktop|government tablet|government issued laptop|government issued phone|attorney workstation|clinical keyboard|bloomberg keyboard|bloomberg b-unit)\\b)/.test(q)) return 'kb:hardware';\n  if (/(camera|webcam|video call|logitech c\\d+"
+   }
+  ]
+ },
+ {
+  "id": "P6",
+  "desc": "escalation anchor: allow prefixed 'please i'm stuck' / 'help me find recovery key'",
+  "edits": [
+   {
+    "find": "^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)",
+    "replace": "(?:^|\\b)(?:help me find|i need help finding|i'?m stuck|im stuck|find (?:the |my )?recovery key)"
+   },
+   {
+    "find": "^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)",
+    "replace": "(?:^|\\b)(?:help me find|i need help finding|i'?m stuck|im stuck|find (?:the |my )?recovery key)"
+   }
+  ]
+ },
+ {
+  "id": "P7",
+  "desc": "kb:teams typo tolerance (team's / teamz / teem / tems)",
+  "edits": [
+   {
+    "find": "if (/(teams|microsoft teams",
+    "replace": "if (/(team'?s|\\bteamz\\b|\\bteem\\b|\\btems\\b|\\bteasm\\b|teams|microsoft teams"
+   }
+  ]
+ },
+ {
+  "id": "P8",
+  "desc": "facility-network -> kb:networking before wifi",
+  "edits": [
+   {
+    "find": "  if (/(wifi|wi-fi|wireless|network|internet|limited connectivity",
+    "replace": "  if (/\\b(hospital|ward|clinic|campus|building|plant|floor \\d|branch|warehouse|facility|site)\\b[^]*?\\bnetwork\\b[^]*?\\b(down|outage|out|unreachable|dropping|drops)\\b|\\bnetwork (outage|is down|down)\\b/.test(q)) return 'kb:networking';\n  if (/(wifi|wi-fi|wireless|network|internet|limited connectivity"
+   }
+  ]
+ },
+ {
+  "id": "P9",
+  "desc": "password precedence over mail when lockout/reset language present",
+  "edits": [
+   {
+    "find": "  if (/(mail|email|inbox|outlook|outlok",
+    "replace": "  if (/(locked out|lock(ed)? out of|reset (my |the )?password|password reset|forgot (my )?password|can'?t (log|sign) in|cant (log|sign) in)/.test(q) && /(mail|email|outlook)/.test(q)) return 'password';\n  if (/(mail|email|inbox|outlook|outlok"
+   }
+  ]
+ },
+ {
+  "id": "P10",
+  "desc": "kb:mfa authenticator-app vocabulary (duo/okta verify/ping/authy)",
+  "edits": [
+   {
+    "find": "if (/(mfa|multi[- ]factor|two.?factor|2fa|authenticator",
+    "replace": "if (/(duo (mobile|push|prompt|app|auth)|okta verify|ping id|pingid|authy|rsa securid|mfa|multi[- ]factor|two.?factor|2fa|authenticator"
+   }
+  ]
+ },
+ {
+  "id": "P11",
+  "desc": "wifi typo 'wfi'",
+  "edits": [
+   {
+    "find": "if (/(wifi|wi-fi|wireless|network|internet|limited connectivity",
+    "replace": "if (/(\\bwfi\\b|\\bwifi?i\\b|\\bwiif\\b|wifi|wi-fi|wireless|network|internet|limited connectivity"
+   }
+  ]
+ },
+ {
+  "id": "P12",
+  "desc": "printer typos (prnter/pinter/priner/printr)",
+  "edits": [
+   {
+    "find": "if (/\\b(network printer|wifi printer|wireless printer)\\b/.test(q) || /print/.test(q)) return 'printer';",
+    "replace": "if (/\\b(network printer|wifi printer|wireless printer)\\b/.test(q) || /print|\\bprnter\\b|\\bpinter\\b|\\bpriner\\b|\\bprintr\\b|\\bprnt\\b/.test(q)) return 'printer';"
+   }
+  ]
+ },
+ {
+  "id": "P14",
+  "desc": "vpn typo 'vpm'",
+  "edits": [
+   {
+    "find": "if (/vpn|tunnel|globalprotect",
+    "replace": "if (/vpn|\\bvpm\\b|\\bvnp\\b|tunnel|globalprotect"
+   }
+  ]
+ },
+ {
+  "id": "P15",
+  "desc": "kb:permissions apostrophe-loss 'can t / can;t open folder'",
+  "edits": [
+   {
+    "find": "|cant open folder|can'?t open folder|user can'?t open|",
+    "replace": "|can.?t open folder|user can.?t open|cannot open folder|"
+   }
+  ]
+ },
+ {
+  "id": "P16",
+  "desc": "kb:networking apostrophe-loss 'can t reach internal / resolve hostname'",
+  "edits": [
+   {
+    "find": "|cant resolve hostname|can'?t resolve hostname|",
+    "replace": "|can.?t resolve hostname|can.?t reach internal|cannot reach internal site|"
+   }
+  ]
+ },
+ {
+  "id": "P20",
+  "desc": "kb:onboarding new-<role>-needs-<app>-access (broad role list)",
+  "edits": [
+   {
+    "find": "if (/(onboarding|offboarding|byod|new hire",
+    "replace": "if (/(new (nurse|doctor|physician|clinician|employee|hire|staff|user|operator|officer|technician|tech|clerk|analyst|agent|associate|teller|guard|driver|server|cashier|paralegal|attorney|engineer|manager)\\b[^]*\\b(access|account|set ?up|setup|onboard|provision|login|credentials))|(onboarding|offboarding|byod|new hire"
+   }
+  ]
+ },
+ {
+  "id": "P22",
+  "desc": "kb:performance thermal/lag phrasing ('fan is spinning','running hot','is lagging')",
+  "edits": [
+   {
+    "find": "|fans? (spin|spinning)|overheat(ing)?|laptop hot|",
+    "replace": "|fans? (is |are )?(spin|spinning|loud|blasting)|overheat(ing)?|laptop (is )?hot|running hot|lagg(y|ing)|"
+   }
+  ]
+ },
+ {
+  "id": "P5",
+  "desc": "kb:onedrive typo-tolerant 'files won t / won'r sync'",
+  "edits": [
+   {
+    "find": "files? wont sync|files? won'?t sync|file wont? sync",
+    "replace": "files? won.?[tr]? sync|file won.?[tr]? sync|files? not syncing"
+   }
+  ]
+ },
+ {
+  "id": "P19c",
+  "desc": "password: i18n + SSO/smartcard/badge + app-auth failure, guarded against MFA vocabulary",
+  "edits": [
+   {
+    "find": "  if (/(password|pasword|passwd",
+    "replace": "  if (/(no puedo (iniciar sesion|acceder)|iniciar sesi[o\u00f3]n|contrase[n\u00f1]a|je ne peux pas me connecter|mot de passe|mein passwort|passwort (ist )?abgelaufen|kennwort|smart ?card reader|badge tap|proximity card reader|\\bsso\\b|single sign[- ]?on|credentials? (expired|rejected|not accepted|invalid)|not accepting (credentials|pin)|authentication (error|failed|failure|issue|broken)|account expired|keeps logging me out|(wont|won'?t) let me in|can.?t access (cerner|meditech|epic|patient portal|order management|the portal))/.test(q) && !/(mfa|multi[- ]factor|two.?factor|2fa|authenticator|\\bduo\\b|\\botp\\b|verification code|one[- ]time code|push notification|security key|yubikey)/.test(q)) return 'password';\n  if (/(password|pasword|passwd"
+   }
+  ]
+ },
+ {
+  "id": "P31-resolution-v1",
+  "desc": "looksLikeResolution: (a) add standalone 'great' to POS_KEYWORDS, (b) extend thanks phrase to 'thanks a million', (c) hard-guard 'no longer working/works/connecting/syncing' as NOT-resolution (currently false-positives on the POS 'working' token).",
+  "edits": [
+   {
+    "find": "  if (!t) return false;\n  const NEG =",
+    "replace": "  if (!t) return false;\n  if (/\\bno longer (working|works|connect(s|ing)?|sync(s|ing)?|opening|opens|loading|loads)\\b/.test(t)) return false;\n  const NEG ="
+   },
+   {
+    "find": "const POS_KEYWORDS = /\\b(resolved?|",
+    "replace": "const POS_KEYWORDS = /\\b(great|resolved?|"
+   },
+   {
+    "find": "thanks?\\s+(a\\s+lot|so much|very much|alot|so|much)",
+    "replace": "thanks?\\s+(a\\s+lot|a\\s+million|a\\s+bunch|a\\s+ton|so much|very much|alot|so|much)"
+   }
+  ]
+ },
+ {
+  "id": "P32-contraction-normalize",
+  "desc": "Shared pre-normalization in classify(): collapse split/mistyped negative contractions (won t / can;t / won'r / doesn t) to their canonical form so every downstream intent regex matches without needing per-intent typo alternates.",
+  "edits": [
+   {
+    "find": "  let q = String(text || '').toLowerCase()",
+    "replace": "  let q = String(text || '').toLowerCase().replace(/\\b(wo|ca|do|does|did|is|are|was|were|has|have|had|could|would|should)n?['\u2019;`]?\\s*[tr]\\b/g, function(mm, g1){ return g1 + 'nt'; })"
+   }
+  ]
+ },
+ {
+  "id": "P33-antimalware-perf",
+  "desc": "kb:security must not swallow 'antimalware service executable high cpu' \u2014 negative lookbehind so 'antimalware' no longer matches the malware security token; those route to kb:performance.",
+  "edits": [
+   {
+    "find": "|malware|ransomware|trojan",
+    "replace": "|(?<!anti)malware|ransomware|trojan"
+   }
+  ]
+ },
+ {
+  "id": "P34-deactivate-onboarding",
+  "desc": "'need to deactivate user' / 'provision user' are onboarding/offboarding lifecycle, not M365 licensing. Remove those two tokens from the kb:m365 rule so the kb:onboarding rule (which already owns them) fires.",
+  "edits": [
+   {
+    "find": "|deactivate user|provision user|new hire (account|license))",
+    "replace": "|new hire (account|license))"
+   }
+  ]
+ },
+ {
+  "id": "P35-onedrive-shares",
+  "desc": "kb:onedrive \u2014 shared-drive / SharePoint / document-library fault vocabulary across verticals (clinical, finance, legal, gov). Extends the existing kb:onedrive rule.",
+  "edits": [
+   {
+    "find": "  if (/(onedrive|sync(ing)? files?",
+    "replace": "  if (/(?:\\b(?:shared (?:drive|folder|file|server|research folder|clinical drive|p&l tracking file|pleadings folder|briefing folder)|share ?point|document library|file server|intranet files?|gcdocs|imanage workspace|research repository|(?:matter|client|policy|discovery|discharge|settlement|pitch deck|equity model|legal pad|deposition exhibit|investment committee|project) (?:folder|documents? folder|templates?))\\b)[^]*?(?:missing|gone|disappeared|not accessible|inaccessible|offline|down|not loading|not open|permissions? (?:denied|error)|not syncing|sync not working|can'?t access|cant access|can'?t open|cant open)/.test(q) || /(onedrive|sync(ing)? files?"
+   }
+  ]
+ },
+ {
+  "id": "P36-onboarding-newstarter",
+  "desc": "kb:onboarding \u2014 new-starter provisioning vocabulary (new/incoming/junior/graduate/lateral/locum/intern + needs + access/setup/provisioned/configured/account).",
+  "edits": [
+   {
+    "find": "  if (/(onboarding|offboarding|byod|new hire",
+    "replace": "  if (/\\b(?:new|incoming|junior|graduate|lateral hire|contract attorney|contractor|locum|seconded|student placement|intern|resident)\\b[^]*?\\b(?:needs?|need)\\b[^]*?\\b(?:access|provisioned?|set ?up|configured?|account|workstation|device|credentials|environment|subscriptions?|laptop|terminal)\\b/.test(q) || /\\b(?:new [a-z ]{2,20}(?:account not created)|it setup (?:needed|incomplete)|orientation it setup)\\b/.test(q) || /(onboarding|offboarding|byod|new hire"
+   }
+  ]
+ },
+ {
+  "id": "P37-onedrive-password-prompt",
+  "desc": "kb:onedrive over password \u2014 'onedrive keeps prompting for password' is a sync-token/credential-cache fault, not a password reset. Adds an exclusion to the password branch.",
+  "edits": [
+   {
+    "find": "&& !/\\b(wifi|wi-fi|wireless|router|modem)\\b/.test(q)) return 'password';",
+    "replace": "&& !/\\b(wifi|wi-fi|wireless|router|modem)\\b/.test(q) && !/onedrive\\s+(keeps\\s+)?(prompting|asking|re-?prompting)/.test(q)) return 'password';"
+   }
+  ]
+ }
+]

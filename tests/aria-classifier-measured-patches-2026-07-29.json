@@ -1,0 +1,128 @@
+[
+  {
+    "id": "P2-onboarding-fallback",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/\\b(new|junior|incoming|graduate|lateral|locum|contract|temporary|starting)\\b[^.]{0,60}\\b(hire|starter|nurse|doctor|physician|clinician|resident|staff|employee|trader|analyst|associate|attorney|paralegal|partner|broker|quant|intern|tech|technician|operator|agent|member|user|assistant)\\b/.test(q) && /(access|account|provision|set ?up|workstation|onboard|orientation|credential|licen[cs]e|environment|subscription|tools?)/.test(q)) return 'kb:onboarding';\n  if (/\\b(needs?|requires?)\\b[^.]{0,50}\\b(access|account|provisioned|set ?up|workstation|credentials?)\\b/.test(q) && /\\b(new|joining|starting|start(s|ing)? (monday|today|tomorrow|next week)|first day|day one)\\b/.test(q)) return 'kb:onboarding';\n  return 'default';\n}"
+      }
+    ]
+  },
+  {
+    "id": "P3-password-fallback",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/(iniciar sesi[o\u00f3]n|contrase[n\u00f1]a|no puedo entrar|me connecter|mot de passe|passwort( ist)? (abgelaufen|vergessen)|anmelden nicht)/.test(q)) return 'password';\n  if (/\\b(cerner|meditech|epic|ehr|emr|citrix|sap|peoplesoft|workday)\\b/.test(q) && /(keeps? logging me out|logged out|wont let me in|won'?t let me in|cant access|can'?t access|cannot access|kicked out|credentials? (rejected|not accepted))/.test(q)) return 'password';\n  if (/\\b(smart ?card|badge|piv|cac) (reader )?(not working|wont read|won'?t read|failing|rejected)\\b/.test(q) && /(login|log ?in|sign ?in|logon|authenticat)/.test(q)) return 'password';\n  return 'default';\n}"
+      }
+    ]
+  },
+  {
+    "id": "P4-onedrive-fallback",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/(won\\s?t sync|won'?r sync|not sync(ing)?|sharepoint|shared (drive|folder|file|server)|network drive not accessible|file server|document (folder|repository)|folder (missing|gone|not accessible|disappeared)|files? (missing|gone|not accessible)|intranet files?)/.test(q)) return 'kb:onedrive';\n  return 'default';\n}"
+      }
+    ]
+  },
+  {
+    "id": "P6-vpn-fallback",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/\\b(vpm|citrix|rdp|remote desktop|telework|remote session|remote monitoring|offsite|off-site|working from home|work from home)\\b/.test(q)) return 'vpn';\n  return 'default';\n}"
+      }
+    ]
+  },
+  {
+    "id": "P7-performance-fallback",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/(lagging|lags|hanging|hangs|unresponsive|buffering|pixelated|timing out|times? out|timeout|taking (ages|forever|too long|minutes)|response time|freezing on|freezes on|running hot|fan is spinning|hot and loud)/.test(q)) return 'kb:performance';\n  return 'default';\n}"
+      }
+    ]
+  },
+  {
+    "id": "P8-mfa-fallback",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/\\b(rsa|duo|authy|soft token|hard(ware)? token|security token|token fob|fob|securid|piv token|otp)\\b/.test(q)) return 'kb:mfa';\n  if (/\\bsecurity code\\b/.test(q)) return 'kb:mfa';\n  return 'default';\n}"
+      }
+    ]
+  },
+  {
+    "id": "P9-mail-typo-fallback",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/(emial|eamil|emails?|e-?mail|correo|messaging (app|not|broken)|message center)/.test(q)) return 'mail';\n  return 'default';\n}"
+      }
+    ]
+  },
+  {
+    "id": "P10-wifi-teams-printer-typo-fallback",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/\\b(wfi|wirless|wifii|red inalambrica)\\b/.test(q)) return 'wifi';\n  if (/(team'?s|teamz|teem)\\b/.test(q)) return 'kb:teams';\n  if (/\\b(prnter|priner|printr|pritner)\\b/.test(q)) return 'printer';\n  return 'default';\n}"
+      }
+    ]
+  },
+  {
+    "id": "P11-escalation-prefix",
+    "edits": [
+      {
+        "find": "  if (/^(help me find|i need help finding|i'?m stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';",
+        "replace": "  if (/^(please |can you help with |i need help with |help me with |sorry but |quick question \u2014 |urgent:? |asap |help now: |critical: |p1: |hi |hey )*(help me find|i need help finding|i'?m stuck|im stuck|find (the |my )?recovery key)/.test(q)) return 'escalation';"
+      }
+    ]
+  },
+  {
+    "id": "P14-password-before-mail",
+    "edits": [
+      {
+        "find": "  if (/(mail|email|inbox|outlook|outlok|outloook|outlk|sent items",
+        "replace": "  if (/(locked out of (my )?(email|mail|inbox|outlook)|reset password for (outlook|email|mail))/.test(q)) return 'password';\n  if (/(mail|email|inbox|outlook|outlok|outloook|outlk|sent items"
+      }
+    ]
+  },
+  {
+    "id": "P15-networking-before-wifi",
+    "edits": [
+      {
+        "find": "  if (/(wifi|wi-fi|wireless|network|internet|limited connectivity",
+        "replace": "  if (/\\bnetwork\\b/.test(q) && /\\b(switch|outage|down|dropping|congested|unreachable|packet loss|latency|link|drive|drop(s|ping)?|not accessible|not routing|speed)\\b/.test(q) && !/\\b(wifi|wi-fi|wireless|ssid|access point)\\b/.test(q)) return 'kb:networking';\n  if (/(wifi|wi-fi|wireless|network|internet|limited connectivity"
+      }
+    ]
+  },
+  {
+    "id": "P16-onedrive-password-prompt",
+    "edits": [
+      {
+        "find": "  if (/(password|pasword|passwd|passw0rd|pasworld|locked out",
+        "replace": "  if (/onedrive/.test(q) && /(prompt|asking|keeps? asking).{0,20}password/.test(q)) return 'kb:onedrive';\n  if (/(password|pasword|passwd|passw0rd|pasworld|locked out"
+      }
+    ]
+  },
+  {
+    "id": "P1c-hardware-trading-scanner",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/\\b(trading desk|plotter|scanner)\\b/.test(q)) return 'kb:hardware';\n  return 'default';\n}"
+      }
+    ]
+  },
+  {
+    "id": "P5b-networking-reach",
+    "edits": [
+      {
+        "find": "  return 'default';\n}",
+        "replace": "  if (/(can\\s?t reach|can;t reach|cannot reach|can\\s?t resolve|can;t resolve)/.test(q) && /(server|host|internal site|clinical pc|workstation)/.test(q)) return 'kb:networking';\n  return 'default';\n}"
+      }
+    ]
+  }
+]

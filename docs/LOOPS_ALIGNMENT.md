@@ -1,72 +1,72 @@
-# Loops Alignment — 2026-07-28
+# Loops Alignment — 2026-07-29
 
 Top goal: Scale IIS to $1M ARR by 2027-06 via gov + biz IT contracts and ARIA/Growth Library digital products.
 
-Run: goal-alignment loop (scheduled). READ-ONLY on loop YAMLs.
+Registry entries audited: 35 (8 top-level loops + 27 org-chart agents)
+Git state: `.git/index.lock` present (stale — see memory `project_git_index_lock_blocker_2026_07_29`). No git ops attempted; docs written directly.
 
-Note: `.git/index.lock` PRESENT (0-byte, 2026-07-28T02:55 local, ~12h stale). No git operations performed this run — report + ledger written to working tree only.
+## Aligned (35/35) — registry test
 
-## Aligned (35/35)
+Every registered loop declares `serves: top-goal` in its YAML. Per LOOPS_SPEC §8g rule 3c this passes.
 
-- **lead-radar** — [tender, lead] Each day pull the CanadaBuys "new tender notice" CSV + MERX search results + Ontario Tenders RSS. Filter by 40+ IT-keyword list. S
-- **aria-self-learn** — [serves: top-goal] Every 6 hours, scan ARIA chat audit log for queries that returned a generic fallback or low-confidence answer. For each, generate 
-- **hard-rule-gatekeeper** — [serves: top-goal] After every Netlify deploy (and every 30 min as a safety net) fetch: https://iisupp.net/aperture-learning.html (200 + login form p
-- **spend-gatekeeper** — [serves: top-goal] Continuously audit every loop's run cost. Sum across all loops per day. Pause any loop whose cumulative day spend > its budget OR 
-- **goal-alignment** — [serves: top-goal] Once a day at 06:00 ET, read CURRENT_GOAL.md. For each loop in registry.json, verify its serves: field points to top-goal AND its 
-- **codex-observer** — [serves: top-goal] Every working-day at 09:00 and 17:00, run observe-codex.mjs (--since=2d). Compare today's playbook to yesterday's. Flag any new pa
-- **tender-enrich** — [tender, lead] When lead-radar emits a match with score >= 60, this loop fetches the full solicitation page, extracts evaluation criteria, estima
-- **ae-agent** — [contract] Convert qualified opportunities to signed contracts. Proposals + negotiation prep.
-- **ap-ar-clerk** — [serves: top-goal] Invoice generation + payment tracking + vendor payment scheduling.
-- **bid-mgr** — [tender] Enrich HOT tenders. Pull eval criteria, value, required certs. Draft fit analysis.
-- **brand-mgr** — [serves: top-goal] Visual stability + copy consistency + voice audit + brand guideline enforcement.
-- **cco-agent** — [serves: top-goal] Ethical design enforcement + human-review gate + legal review + privacy. Watches Legal, Privacy Officer, QA Auditor.
-- **ceo-agent** — [serves: top-goal] Set top-level goal. Allocate capital + agent priority. Approve high-risk actions. Read daily digests + LOOPS_LEDGER.md. Write CEO 
-- **cfo-agent** — [serves: top-goal] Spend governance + cash management + tax + financial forecast. Watches Treasurer, AP/AR, Tax Agent.
-- **cmo-agent** — [serves: top-goal] Brand voice + content production + demand gen + public visibility. Watches Content Strategist, Brand Mgr, Demand Gen, PR.
-- **content-strat** — [serves: top-goal] Growth Library product authoring + KB article production.
-- **coo-agent** — [bid] Daily ops + sales pipeline + delivery. Watches Procurement Mgr, Bid Mgr, SDR, AE. Forecasts pipeline.
-- **cos-agent** — [serves: top-goal] CEO leverage. Goal alignment across all agents. Status reporting. Email triage. Strategic projects.
-- **cto-agent** — [serves: top-goal] Product reliability + KB quality + security posture + dev velocity. Watches SRE, Platform Eng, KB Eng, DevOps Eng.
-- **demand-gen** — [serves: top-goal] Trend Radar continuous scanning. Feed Marketing pipeline. Campaign planning.
-- **devops-eng** — [serves: top-goal] Post-deploy verification. Smoke tests. Performance monitoring. CI/CD pipeline health.
-- **ea-agent** — [serves: top-goal] Email triage + calendar orchestration + reminder/follow-up tracking.
-- **kb-engineer** — [kb bit] Generate KB bits autonomously. Validate schema. Curate KB library quality.
-- **legal-counsel** — [contract] Contract review + terms of service + IP + procurement clause analysis.
-- **platform-eng** — [serves: top-goal] Watch Codex + Cowork commit patterns. Surface working-style deltas. Architectural drift detection.
-- **pm-agent** — [serves: top-goal] Task tracking across all loops + status digest + blocker flags.
-- **pr-agent** — [serves: top-goal] LinkedIn page + press releases + public-facing copy.
-- **privacy-officer** — [serves: top-goal] PIPEDA + PHIPA + GDPR posture. Data retention. Privacy impact assessments.
-- **procurement-mgr** — [contract, tender] Find new gov tenders + biz contracts daily. Score IIS-fit. Flag HOT matches.
-- **qa-auditor** — [serves: top-goal] Fact-check claims + source verification + fake-data guard + benchmark verification.
-- **sdr-agent** — [prospect] Cold outreach pipeline. Build prospect lists. Personalize emails. Enroll in sequences.
-- **sre-agent** — [serves: top-goal] Uptime + HARD RULE verification + auto-rollback on regression.
-- **tax-agent** — [serves: top-goal] CRA tax workbook sync. Monthly reconciliation. Annual return prep.
-- **treasurer** — [serves: top-goal] Enforce $0 spend lockdown. Pause any loop that breaches budget. Track approved exceptions.
-- **director-idle-improvement** — [arr] When any direct report is idle AND the queue is empty AND the CEO is not blocked/waiting, the Director Agent delegates the idle re
+## Drifting (0) — registry test
 
-## Drifting (0) — flag to Ahmad
+None.
 
-- none
+---
 
-## Structural defect (carried, still unfixed — 3rd consecutive run)
+## Strict test (goal/mandate text must name a sub-goal token)
 
-All 27 agent YAMLs under `loops/agents/` have their `kpis:` and `tools_allowed:` block bodies **swapped**. `kpis:` holds the tool allow-list; `tools_allowed:` holds the KPI sentence. Example — `loops/agents/sdr-agent.yaml`:
+The `serves:` field is a self-declared flag and passes trivially for all 35. Running the harder test — does the loop's own goal/mandate prose reference a sub-goal — gives a truer picture.
+
+### Top-level loops (8)
+
+| Loop | Strict | Evidence |
+|---|---|---|
+| aria-self-learn | PASS | "generate 1-3 candidate bits in aria_brain_pack/bits/" → sub-goal 4 |
+| lead-radar | PASS | CanadaBuys/MERX tender digest → sub-goal 1 pipeline |
+| tender-enrich | PASS | solicitation enrichment + IIS-fit score → sub-goal 1 |
+| spend-gatekeeper | PASS (constraint) | enforces locked $0-spend constraint |
+| hard-rule-gatekeeper | PASS (constraint) | enforces locked aperture/ARIA HARD RULE |
+| goal-alignment | PASS (meta) | this loop; audits the goal itself |
+| codex-observer | **WEAK** | pure process observation; no revenue/KB/outbound token |
+| director-idle-improvement | **WEAK** | dispatch mechanics only; no sub-goal token |
+
+### Org-chart agents (27)
+
+Strict-pass on mandate text: 8/27 — ae-agent, bid-mgr, coo-agent, content-strat, cto-agent, kb-engineer, legal-counsel, procurement-mgr, sdr-agent.
+
+No sub-goal token in mandate: 19/27 — ap-ar-clerk, brand-mgr, cco-agent, ceo-agent, cfo-agent, cmo-agent, cos-agent, demand-gen, devops-eng, ea-agent, pm-agent, platform-eng, pr-agent, privacy-officer, qa-auditor, sre-agent, tax-agent, treasurer.
+
+This is expected for support/governance roles (finance, compliance, reliability) — they serve the goal indirectly. It is **not** expected for `demand-gen` (Hunter class, reports to CMO): a demand-generation agent whose mandate never names leads, replies, or pipeline is a genuine drift signal.
+
+---
+
+## Structural findings (new this run)
+
+**F1 — schema drift: agents use `mandate:`, loops use `goal:`.**
+All 27 files under `loops/agents/` carry `mandate:` where `loops/*.yaml` carry `goal:`. LOOPS_SPEC §8g describes only `goal:`. The auditor must special-case agents. Recommend: update LOOPS_SPEC to declare `mandate:` the agent-tier synonym of `goal:`, or rename the field. Doc-only change, zero runtime risk.
+
+**F2 — field-content swap in all 27 agent YAMLs (P2).**
+In every agent file the `kpis:` block contains the tools list and `tools_allowed:` contains the KPI sentence. Example, `loops/agents/sdr-agent.yaml`:
 
 ```
 kpis: |
     - apollo
   - gmail (draft + schedule send only)
+  ...
 tools_allowed:
-  Outbound sent/day · reply rate · meeting booked rate
+  Outbound sent/day · reply rate · meeting booked rate · sequence drop rate
 ```
 
-Impact: any executor that reads `tools_allowed` to gate capability gets a prose string, not a list — so the allow-list is effectively unenforced across the whole 27-agent org chart. This is a **spend + safety gate failure mode**, not cosmetic. All 27 are `status: planned`, so nothing is executing on it yet — but this must be fixed before any agent loop is promoted to `idle`/`running`.
+Systemic — a template generation bug, not 27 independent typos. Any executor that reads `tools_allowed` to gate tool access will read prose and either grant nothing or fail open. All 27 agents are `status: planned`, so nothing is executing on this yet — fix before any agent flips to `idle`/`active`.
 
-Secondary: agent YAMLs use `mandate:` where core loops use `goal:`. Alignment currently passes on the `serves: top-goal` field alone. Recommend LOOPS_SPEC.md §8g name one canonical key.
+READ-ONLY constraint honoured: no loop YAML was edited this run.
 
 ## Action
 
-1. **Zero drifting loops** — no goal-text realignment needed this cycle.
-2. **Fix the kpis/tools_allowed swap** in all 27 `loops/agents/*.yaml` before promoting any agent loop out of `planned`. Mechanical swap; safe to script.
-3. **Unify the goal key** — either add `goal:` to agent YAMLs or have LOOPS_SPEC §8g accept `mandate:` as equivalent.
-4. **Clear `.git/index.lock`** (Ahmad, local) — same stale-lock signature that froze the repo 2026-07-17 and produced the 07-21 discharge burst. Sandbox cannot unlink it.
+1. **codex-observer / director-idle-improvement (WEAK)** — recommend (a): add one clause to each goal naming what they protect. codex-observer already has an open blocker (`observe-codex.mjs` missing, memory 2026-07-15); fold the goal edit into that repair.
+2. **demand-gen (drift)** — recommend (a): rewrite mandate to name sub-goal 3 ("50+ outbound qualified replies/month").
+3. **F2 (P2 blocker)** — recommend a single scripted pass over `loops/agents/*.yaml` swapping the two block bodies back. Needs Codex + Ahmad approval since it edits loop YAMLs (out of this loop's write scope).
+4. **F1** — update `docs/LOOPS_SPEC.md` §8g to name `mandate:` as the agent-tier goal field.
+5. **Auditor hardening** — the `serves:` check alone yields 35/35 forever. Recommend promoting the strict prose test to primary in the next spec revision so this loop can actually fail.

@@ -1,0 +1,106 @@
+@echo off
+setlocal
+REM ============================================================================
+REM  PUSH-THE-WORK.bat
+REM
+REM  Pushes the 5 commits that currently exist ONLY as patch files, up to GitHub.
+REM
+REM  This script is deliberately non-destructive:
+REM    - It does NOT touch your current branch (axis-command-center-v2).
+REM    - It does NOT touch your uncommitted work.
+REM    - It builds a separate git worktree in a sibling folder and works there.
+REM    - It never force-pushes.
+REM  If anything goes wrong it stops and tells you, rather than continuing.
+REM
+REM  Just double-click this file.
+REM ============================================================================
+
+cd /d "%~dp0.."
+echo.
+echo === Repo: %CD%
+echo.
+
+git rev-parse --is-inside-work-tree >nul 2>&1
+if errorlevel 1 (
+  echo [STOP] This is not a git repo. Put this file back in the _incoming-patches
+  echo        folder inside iisupp-net-deploy and run it again.
+  goto :end
+)
+
+echo === Step 1/5: fetching from GitHub...
+git fetch origin
+if errorlevel 1 (
+  echo.
+  echo [STOP] Could not reach GitHub. Check your network / credentials, then rerun.
+  goto :end
+)
+
+echo.
+echo === Step 2/5: creating an isolated worktree so your current work is untouched...
+if exist "..\iisupp-push-merge" (
+  echo     Worktree folder already exists - reusing it.
+) else (
+  git worktree add "..\iisupp-push-merge" -b merge-v2-to-main origin/main
+  if errorlevel 1 (
+    echo.
+    echo [STOP] Could not create the worktree. Nothing was changed.
+    echo        If a branch named merge-v2-to-main already exists locally, run:
+    echo            git worktree add "..\iisupp-push-merge" merge-v2-to-main
+    echo        and then rerun this script.
+    goto :end
+  )
+)
+
+echo.
+echo === Step 3/5: applying the 5 commits...
+pushd "..\iisupp-push-merge"
+git am "%~dp0*.patch"
+if errorlevel 1 (
+  echo.
+  echo [PAUSED] A patch hit a conflict. Nothing is lost and nothing is broken.
+  echo.
+  echo   You are now in:  %CD%
+  echo   Run:  git status          to see the conflicting file
+  echo         (fix it)
+  echo         git add -A
+  echo         git am --continue
+  echo   Or to back out completely:  git am --abort
+  echo.
+  popd
+  goto :end
+)
+
+echo.
+echo === Step 4/5: pushing to GitHub...
+git push -u origin merge-v2-to-main
+if errorlevel 1 (
+  echo.
+  echo [STOP] Push failed. The commits are safe in the worktree at:
+  echo        %CD%
+  echo        Fix the auth issue and run:  git push -u origin merge-v2-to-main
+  popd
+  goto :end
+)
+
+echo.
+echo === Step 5/5: done.
+git log --oneline -6
+popd
+
+echo.
+echo ============================================================================
+echo  PUSHED. All 5 commits are now on GitHub on branch merge-v2-to-main.
+echo.
+echo  Next: Netlify will build the deploy. Auto Publishing is locked on the site,
+echo  so the build will sit unpublished until you click Publish in the Netlify UI.
+echo  The bid radar cron only starts firing once that deploy is published.
+echo.
+echo  Your original branch and your uncommitted work were never touched.
+echo  The temporary worktree is at:  ..\iisupp-push-merge
+echo  You can remove it later with:  git worktree remove ../iisupp-push-merge
+echo ============================================================================
+
+:end
+echo.
+pause
+endlocal

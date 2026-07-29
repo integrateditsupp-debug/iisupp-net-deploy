@@ -1,0 +1,100 @@
+From 1fcd10046aa67a56b5c4777cadb9887952898116 Mon Sep 17 00:00:00 2001
+From: CC Stage2 <cc@iis.local>
+Date: Wed, 29 Jul 2026 04:58:15 +0000
+Subject: [PATCH 1/5] Support FAQ: remove from homepage, make it bold gold
+ under Forums
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ahmad's call: the FAQ should live only under Forums, and it should be
+loud enough there that people actually click it.
+
+- index.html: drop both Support FAQ links (desktop nav group, mobile menu).
+  The homepage no longer references support-faq anywhere.
+- forums/index.html: the subnav pill was font-weight 500 and var(--accent),
+  which resolves to cyan #22e1ff in forums-tokens.css — it read as just
+  another tab. Now 800-weight gold (--gold-hi) on a --gold-wash fill with a
+  --gold-deep border and a --gold-glow ring, plus a "Commonly asked
+  questions" title. Footer link bolded gold to match.
+- forums/commons.html: nav + footer Support FAQ links bolded to --champ
+  (that file defines its own gold scale).
+
+Gates: site:hygiene green (164 HTML files, 0 missing refs) and the
+held-release gate green (0 violations).
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01TAEeWzAz1B7dHt85zVuk8C
+---
+ forums/commons.html | 4 ++--
+ forums/index.html   | 4 ++--
+ index.html          | 2 --
+ 3 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/forums/commons.html b/forums/commons.html
+index d8e2807..bad5e8e 100644
+--- a/forums/commons.html
++++ b/forums/commons.html
+@@ -244,7 +244,7 @@
+     <nav>
+       <a href="/">Home</a>
+       <a href="/forums/solutions">Solutions forum</a>
+-      <a href="/support-faq.html">Support FAQ</a>
++      <a href="/support-faq.html" title="Commonly asked questions" style="font-weight:800;color:var(--champ)">Support FAQ</a>
+       <a href="/growth-library.html">Growth Library</a>
+       <a href="/aria.html">ARIA</a>
+       <a href="/services.html">Services</a>
+@@ -369,7 +369,7 @@
+   <footer>
+     <div class="links">
+       <a href="/">Home</a>
+-      <a href="/support-faq.html">Support FAQ</a>
++      <a href="/support-faq.html" style="font-weight:800;color:var(--champ)">Support FAQ</a>
+       <a href="/growth-library.html">Growth Library</a>
+       <a href="/governance/">Governance</a>
+       <a href="/terms.html">Terms</a>
+diff --git a/forums/index.html b/forums/index.html
+index 570019b..3356b0a 100644
+--- a/forums/index.html
++++ b/forums/index.html
+@@ -23,7 +23,7 @@
+         <span class="mark"><img src="/images/logo.png" alt="" aria-hidden="true" onerror="this.remove()"></span>
+         <span><b>IIS Forums</b><span class="tag" style="display:block">Powered by ARIA · Fable 5</span></span>
+       </a>
+-      <a class="forums-subnav-link" href="/support-faq.html" style="margin-left:-8px;padding:5px 12px;border:1px solid var(--line-2);border-radius:var(--r-pill);font-size:12.5px;font-weight:500;letter-spacing:.02em;white-space:nowrap;text-decoration:none;color:var(--accent);flex:0 0 auto;">Support FAQ</a>
++      <a class="forums-subnav-link" href="/support-faq.html" title="Commonly asked questions" style="margin-left:-8px;padding:5px 12px;border:1px solid var(--gold-deep);background:var(--gold-wash);border-radius:var(--r-pill);font-size:12.5px;font-weight:800;letter-spacing:.02em;white-space:nowrap;text-decoration:none;color:var(--gold-hi);box-shadow:0 0 0 3px var(--gold-glow);flex:0 0 auto;">Support FAQ</a>
+       <div class="tabs" role="navigation" aria-label="Sections">
+         <a href="#solutions" data-nav="solutions">Solutions</a>
+         <a href="#discussions" data-nav="discussions">Discussions</a>
+@@ -200,7 +200,7 @@
+ 
+ <footer class="forums-foot">
+   <div class="app">
+-    Integrated IT Support Inc. · <a href="/">iisupp.net</a> · <a href="/aria">ARIA</a> · <a href="/forums/commons">Knowledge Commons</a> · <a href="/support-faq.html">Support FAQ</a> · <a href="/governance/privacy">Privacy</a>
++    Integrated IT Support Inc. · <a href="/">iisupp.net</a> · <a href="/aria">ARIA</a> · <a href="/forums/commons">Knowledge Commons</a> · <a href="/support-faq.html" style="font-weight:800;color:var(--gold-hi)">Support FAQ</a> · <a href="/governance/privacy">Privacy</a>
+     <span style="float:right">Free to read — no account, no paywall.</span>
+   </div>
+ </footer>
+diff --git a/index.html b/index.html
+index 89d9f1e..a7aae24 100644
+--- a/index.html
++++ b/index.html
+@@ -1700,7 +1700,6 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important;
+                 <span class="nav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg></span>
+                 <a href="/downloads/" class="nav-accent">Downloads</a>
+                 <a href="/forums/" class="nav-accent">Forums</a>
+-                <a href="/support-faq.html" class="nav-accent nav-sub">Support FAQ</a>
+             </div>
+             <span class="nav-node nav-node-r" aria-hidden="true"></span>
+         </div>
+@@ -1830,7 +1829,6 @@ iframe[src*="aria.html"], iframe[src*="aria-demo"] { height: 1100px !important;
+         <div class="mobile-nav-sep" aria-hidden="true"></div>
+         <a href="/downloads/" onclick="toggleMobileMenu()" style="color: #c5a059;">Downloads</a>
+         <a href="/forums/" onclick="toggleMobileMenu()" style="color: #c5a059;">Forums</a>
+-        <a href="/support-faq.html" onclick="toggleMobileMenu()" style="color:#c5a059;padding-left:18px;opacity:.85;font-size:.94em;">Support FAQ</a>
+         <div class="mobile-nav-sep" aria-hidden="true"></div>
+         <a href="tel:+16475813182" onclick="toggleMobileMenu()">Connect with Senior Director</a>
+         <a href="mailto:ahmad.wasee@iisupp.net?subject=Private Consultation Request" onclick="toggleMobileMenu()" style="color: #c5a059;">Request Consultation</a>
+-- 
+2.43.0
+

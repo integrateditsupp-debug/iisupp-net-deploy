@@ -27,8 +27,8 @@ const PAGES = [
   { path: '/compare/aria-vs-vapi/', changefreq: 'monthly', priority: 0.5 },
   { path: '/docs/api', changefreq: 'monthly', priority: 0.5 },
   { path: '/status', changefreq: 'daily', priority: 0.4 },
-  { path: '/compliance/',
-  '/privacy', changefreq: 'yearly', priority: 0.3 },
+  { path: '/compliance/', changefreq: 'yearly', priority: 0.3 },
+  { path: '/privacy', changefreq: 'yearly', priority: 0.3 },
   { path: '/terms', changefreq: 'yearly', priority: 0.3 },
   { path: '/ai-governance', changefreq: 'yearly', priority: 0.3 },
   { path: '/security/disclosure', changefreq: 'yearly', priority: 0.3 }

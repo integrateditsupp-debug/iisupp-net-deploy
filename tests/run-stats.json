@@ -1,13 +1,13 @@
 {
  "schema_version": "1.4",
  "label": "ARIA classifier + product autonomous loop",
- "last_run_iso": "2026-07-28",
- "total_runs": 38,
- "cumulative_scenarios": 1829882,
+ "last_run_iso": "2026-07-29",
+ "total_runs": 41,
+ "cumulative_scenarios": 1944803,
  "last_session_scenarios": 38307,
- "last_pass_rate_pct": 92.27,
- "last_pass_count": 35346,
- "last_fail_count": 2961,
+ "last_pass_rate_pct": 92.65,
+ "last_pass_count": 35490,
+ "last_fail_count": 2817,
  "cumulative_regex_swaps_applied": 46,
  "cumulative_fixes_shipped": 47,
  "current_corpus_size": 38307,
@@ -515,8 +515,8 @@
   "push_blocker": "No PAT at .cowork-github-pat this session; no env token; no embedded PAT in remote URL; HEAD on cc/master-fix-2026-07-02 (feature branch) not main. run-stats.json updated on disk via Cowork file API. AHMAD: from a /tmp clone with a valid PAT off origin/main -- git add tests/scenario-corpus.js tests/run-stats.json && git commit -m \"[autonomous] classifier loop 2026-07-17: 92.3% pass, 38307 corpus, 1 safe flip\" && git push origin main. Do NOT git-add through the corrupt mount.",
   "ran_at": "2026-07-17T15:53:36Z"
  },
- "last_run_at": "2026-07-28T11:40:00Z",
- "next_run_at": "2026-07-28T19:40:00Z",
+ "last_run_at": "2026-07-29T08:00:00Z",
+ "next_run_at": "2026-07-29T16:00:00Z",
  "this_session_2026_07_17_slot3": {
   "harness": "run-10k-scenarios.js",
   "scenarios": 38307,
@@ -667,5 +667,48 @@
   "push_blocker": "No PAT at .cowork-github-pat this session; HEAD on axis-command-center-v2 not main. All artifacts written to working tree. AHMAD: from a /tmp clone off origin/main with a valid PAT -- git add tests/ knowledge-base/L1/l1-hardware-001-* && git commit -m \"[autonomous] classifier loop 2026-07-28: kb:hardware KB article + P31/P32, +1131 zero-regression (92.27->95.22%)\" && git push origin main",
   "ran_at": "2026-07-28T08:20:00Z"
  },
- "last_slot_note": "slot3: measured 19-patch zero-regression set = 95.47% (+1227, 0 reg). 2 new patches P33/P34 (+96). Nothing auto-applied; awaiting approval to port into aria.html."
+ "last_slot_note": "slot2: MEASURED full 14-patch set individually + combined = 95.56% (+1117, 0 regressions) upgraded from slot1 13-patch PROJECTION of 95.44%. Candidate mirror emitted at tests/aria-classifier-mirror.CANDIDATE-2026-07-29-slot2.js for mechanical port. ZERO corpus expectations flipped - no cluster qualified as a safe flip. STRUCTURAL GAP FOUND: kb:hardware 0/408 because the intent does not exist in aria.html or the mirror (0 grep hits); invented by past Sunday vertical-layer growth runs. Worth 1.07 pts. Declined to flip 408 expectations to default - that would be metric-gaming. Needs product decision.",
+ "pending_zero_regression_patches": 14,
+ "pending_zero_regression_target_pct": 95.56,
+ "pending_zero_regression_net": 1117,
+ "last_slot": "2026-07-29-slot2",
+ "pending_measured_patches": {
+  "file": "tests/aria-classifier-measured-patches-2026-07-29.json",
+  "candidate_mirror": "tests/aria-classifier-mirror.CANDIDATE-2026-07-29-slot2.js",
+  "patches_measured": 14,
+  "patches_zero_regression": 14,
+  "measured_net_gain": 1117,
+  "measured_regressions": 0,
+  "measured_pass_rate_pct": 95.56,
+  "measured_pass_count": 36607,
+  "lift_points": 2.91,
+  "status": "AWAITING_APPROVAL_TO_PORT_INTO_ARIA_HTML",
+  "verification": "measured not projected - classifier-patch-measure.js against live 38307 corpus"
+ },
+ "structural_gaps": {
+  "kb:hardware": {
+   "pass": "0/408",
+   "pct": 0,
+   "root_cause": "intent absent from aria.html AND aria-classifier-mirror.js (0 grep hits); expectation invented by 7 vertical corpus layers",
+   "worth_pct_points": 1.07,
+   "p1c_recovers": 46,
+   "options": [
+    "build kb:hardware intent + KB triage article (recommended)",
+    "retire expectation - flip 408 to default"
+   ],
+   "decision_owner": "Ahmad",
+   "declined_action": "unilateral expectation flip = metric-gaming"
+  }
+ },
+ "this_session_2026_07_29_slot2": {
+  "harness": "run-10k-scenarios.js",
+  "scenarios": 38307,
+  "pass_rate_pct": 92.65,
+  "pass": 35490,
+  "fail": 2817,
+  "delta_from_last_run_pct": 0.0,
+  "corpus_fixes_applied": 0,
+  "regex_changes_pending_review": 14,
+  "note": "Friday slot-2. Baseline flat vs slot1 (nothing applied by design). Value delivered = full-set measurement + candidate mirror + kb:hardware root cause."
+ }
 }

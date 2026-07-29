@@ -1,0 +1,204 @@
+@echo off
+setlocal
+REM ============================================================================
+REM  _PUSH-EVERYTHING.bat
+REM
+REM  Gets ALL of your unpushed work onto GitHub in one run.
+REM
+REM  It does three things:
+REM    1. Applies the 6 packaged commits (the ones that only exist as patch
+REM       files) onto a fresh branch called merge-v2-to-main, and pushes it.
+REM    2. Pushes every other local branch that has commits GitHub does not
+REM       have -- 26 branches, 36 commits.
+REM    3. Writes PUSH-LOG.txt so the result can be verified.
+REM
+REM  It is deliberately non-destructive:
+REM    - Your current branch (axis-command-center-v2) is never checked out,
+REM      never merged, never rebased.
+REM    - Your uncommitted work is never touched.
+REM    - It NEVER force-pushes. If a normal push is rejected, it pushes that
+REM      branch to a "--backup-20260729" name instead so nothing is lost and
+REM      nothing on GitHub is overwritten.
+REM    - Nothing is ever deleted.
+REM
+REM  JUST DOUBLE-CLICK THIS FILE.
+REM ============================================================================
+
+cd /d "%~dp0"
+set "REPO=%CD%"
+set "PATCHDIR=%~dp0_incoming-patches"
+set "STAMP=20260729"
+
+echo.
+echo ============================================================
+echo  Repo: %REPO%
+echo ============================================================
+echo.
+
+git rev-parse --is-inside-work-tree >nul 2>&1
+if errorlevel 1 (
+  echo [STOP] This folder is not a git repo.
+  echo        This file must sit in the iisupp-net-deploy folder itself.
+  goto :end
+)
+
+if not exist "%PATCHDIR%\0001-Support-FAQ-remove-from-homepage-make-it-bold-gold-u.patch" (
+  echo [WARN] Patch files not found in:
+  echo        %PATCHDIR%
+  echo        Skipping step 2. Steps 1 and 3 will still run.
+  set "NOPATCH=1"
+)
+
+REM ---------------------------------------------------------------- STEP 1 ---
+echo === Step 1 of 3: fetching from GitHub ...
+git fetch origin --prune
+if errorlevel 1 (
+  echo.
+  echo [STOP] Could not reach GitHub.
+  echo        If it asked for a login and you cancelled, run it again and sign in.
+  echo        Nothing was changed.
+  goto :end
+)
+echo     ok.
+echo.
+
+REM ---------------------------------------------------------------- STEP 2 ---
+if defined NOPATCH goto :step3
+
+echo === Step 2 of 3: applying the 6 packaged commits in an isolated worktree ...
+
+if exist "..\iisupp-push-merge" (
+  echo     Worktree already exists - reusing it.
+) else (
+  git worktree add "..\iisupp-push-merge" -b merge-v2-to-main origin/main
+  if errorlevel 1 (
+    echo     Branch may already exist - retrying without creating it ...
+    git worktree add "..\iisupp-push-merge" merge-v2-to-main
+    if errorlevel 1 (
+      echo.
+      echo [STOP] Could not create the worktree. Nothing was changed.
+      goto :end
+    )
+  )
+)
+
+pushd "..\iisupp-push-merge"
+
+git log --oneline -20 | findstr /c:"bid response pack" >nul 2>&1
+if not errorlevel 1 (
+  echo     Patches already applied here - skipping straight to the push.
+  goto :pushmerge
+)
+
+for %%P in ("%PATCHDIR%\0*.patch") do (
+  echo     applying %%~nxP
+  git am -3 "%%~fP"
+  if errorlevel 1 goto :amfail
+)
+echo     all 6 applied.
+
+:pushmerge
+echo     pushing merge-v2-to-main ...
+git push -u origin merge-v2-to-main
+if errorlevel 1 (
+  echo.
+  echo [WARN] Push of merge-v2-to-main failed. The commits are SAFE in:
+  echo        %CD%
+  echo        You can retry later with:  git push -u origin merge-v2-to-main
+) else (
+  echo     merge-v2-to-main is on GitHub.
+)
+popd
+echo.
+goto :step3
+
+:amfail
+echo.
+echo [PAUSED] A patch hit a conflict. Nothing is lost and nothing is broken.
+echo          Your real working folder was not touched.
+echo.
+echo          You are in:  %CD%
+echo          To see it:        git status
+echo          Then:             git add -A
+echo                            git am --continue
+echo          Or to back out:   git am --abort
+echo.
+echo          Steps 1 and 3 already ran. Press a key to finish step 3.
+pause >nul
+popd
+
+REM ---------------------------------------------------------------- STEP 3 ---
+:step3
+echo === Step 3 of 3: pushing every other branch that GitHub is missing ...
+echo.
+
+git for-each-ref --format="%%(refname:short)" refs/heads/ > "%TEMP%\iis-branches.txt"
+
+for /f "usebackq delims=" %%B in ("%TEMP%\iis-branches.txt") do call :pushbranch "%%B"
+
+del "%TEMP%\iis-branches.txt" >nul 2>&1
+
+echo.
+echo === Writing PUSH-LOG.txt ...
+(
+  echo ===== branches after run =====
+  git branch -vv
+  echo.
+  echo ===== commits still not on GitHub =====
+  git rev-list --count --branches --not --remotes=origin
+  echo.
+  echo ===== worktrees =====
+  git worktree list
+) > "%PATCHDIR%\PUSH-LOG.txt" 2>&1
+
+echo.
+echo ============================================================
+echo  DONE.
+echo.
+echo  Anything marked [pushed] is now on GitHub.
+echo  Anything marked [backup] went up under a "--backup-%STAMP%"
+echo  name because a straight push would have overwritten newer
+echo  work on GitHub. Nothing was lost, nothing was overwritten.
+echo.
+echo  Your branch and your uncommitted files were never touched.
+echo.
+echo  NEXT: Netlify will build merge-v2-to-main. Auto Publishing is
+echo  locked, so the build waits until you click Publish in Netlify.
+echo  The bid radar only starts firing after that Publish click.
+echo.
+echo  A log was written to:
+echo    _incoming-patches\PUSH-LOG.txt
+echo  Send me that file and I will confirm everything landed.
+echo ============================================================
+goto :end
+
+REM --------------------------------------------------------------- HELPER ---
+:pushbranch
+setlocal
+set "B=%~1"
+set "N=0"
+for /f %%N in ('git rev-list --count "%B%" --not --remotes=origin 2^>nul') do set "N=%%N"
+if "%N%"=="0" (
+  echo   [ok    ] %B%
+  endlocal
+  goto :eof
+)
+echo   [push  ] %B%  -- %N% commit^(s^) GitHub does not have
+git push origin "refs/heads/%B%:refs/heads/%B%" >nul 2>&1
+if errorlevel 1 (
+  git push origin "refs/heads/%B%:refs/heads/%B%--backup-%STAMP%" >nul 2>&1
+  if errorlevel 1 (
+    echo   [FAILED] %B%  -- could not push. Nothing lost, it is still local.
+  ) else (
+    echo   [backup] %B%  -- pushed as %B%--backup-%STAMP%
+  )
+) else (
+  echo   [pushed] %B%
+)
+endlocal
+goto :eof
+
+:end
+echo.
+pause
+endlocal

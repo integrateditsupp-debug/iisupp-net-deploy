@@ -1,0 +1,246 @@
+From 9e7f73d2892ff12481547073ce4d78cc21b95ee9 Mon Sep 17 00:00:00 2001
+From: CC Stage2 <cc@iis.local>
+Date: Wed, 29 Jul 2026 15:01:21 +0000
+Subject: [PATCH 5/5] docs: ranked free listing/supplier-register venue list +
+ corrected co-op analysis
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Companion to docs/listing-copy-pack.md — that file is what to write, this is
+where to put it and in what order. Scored by expected contract dollars per hour
+of effort, not by traffic.
+
+Every venue is free to join, free to stay on, and free to bid from. Anything
+with a paid tier, converting trial, annual renewal, sponsor fee or "contact us
+for pricing" is in the do-not-touch section with the reason, so nobody
+re-researches it in three months.
+
+Co-op buying group section corrected against official pages 2026-07-29. Two
+prior beliefs were wrong:
+  - CDW Canada is NOT expiring Sept 2026. Contract 121923-CDW runs to
+    2028-02-27. It is a subcontracting target, not a bid.
+  - Only Introba 072822-RBZ expires 2026-09-09, and the rest of that Smart City
+    program was already re-competed to 2029. One stray contract, not a cliff.
+Canoe's ERP category was awarded 2026-07-06 (Infosys to 2033) — shut for years.
+
+Also corrected: there is no such thing as a co-op "roster application." Canoe
+and Supply Ontario both qualify vendors only through winning a posted
+solicitation. Any plan that consists of "get on the roster" is a plan to do
+nothing.
+
+The one live time-boxed opening is the Supply Ontario I&IT Solutions Consulting
+VOR replacement — confirmed in the Three Year Outlook as REPLACEMENT, tendering
+Jul-26, contract start Jan-27, replacing Tender-15176. Stream A (under $5M) is
+the realistic target. Prerequisites with lead time (free Ontario Tenders Portal
+account, free Ontario Tax Compliance Verification) added to Tier 1.
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01TAEeWzAz1B7dHt85zVuk8C
+---
+ docs/listing-venues.md | 193 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 193 insertions(+)
+ create mode 100644 docs/listing-venues.md
+
+diff --git a/docs/listing-venues.md b/docs/listing-venues.md
+new file mode 100644
+index 0000000..37f7d8b
+--- /dev/null
++++ b/docs/listing-venues.md
+@@ -0,0 +1,193 @@
++# Free Listing & Supplier-Register Venue List
++
++Companion to `docs/listing-copy-pack.md` — that file holds *what* to write, this one
++holds *where* to put it and *in what order*.
++
++Every venue below is **free to join, free to stay on, and free to bid or transact from**.
++Anything with a paid tier, a trial that converts, a mandatory local sponsor fee, an
++annual renewal, or a "contact us for pricing" gate is in the Do-Not-Touch section at the
++bottom with the reason. Nothing here will ever generate an invoice.
++
++Last verified: 2026-07-29
++
++---
++
++## How to read the score
++
++Score is **expected contract dollars per hour of effort**, not popularity. A directory
++with a million visitors that sends tyre-kickers scores lower than a supplier register
++with two hundred buyers who have budget and a purchase-order process.
++
++- **9–10** — do this week. Direct line to buyers with money.
++- **7–8** — do this month. Real pipeline, slower.
++- **5–6** — do when the high scorers are done. Long-horizon or low-probability.
++
++---
++
++## Tier 1 — do these first (Canada)
++
++| # | Venue | Score | Why it pays | Account needed |
++|---|---|---|---|---|
++| 1 | **Google Business Profile** | 10 | The single highest-intent free channel that exists. "IT support near me" in Whitby/Durham is a buyer with a broken thing and a credit card. Also feeds Maps, which is where local buyers actually search. | Yes — Ahmad, needs postcard/phone verification at 30 Fothergill Court |
++| 2 | **Whitby bids&tenders vendor account** | 9 | Whitby Procurement Policy F-080 Schedule D permits **direct award under $10,000** (goods/services) and **under $25,000** (professional services). A registered local vendor can be handed work with no RFP at all. Home municipality — the shortest path from zero to a public-sector reference. | Yes — Ahmad |
++| 3 | **Microsoft Partner Center (Microsoft AI Cloud Partner Program)** | 9 | Free tier, no Solutions Partner fee required to be listed. Puts the firm in Microsoft's partner-finder in front of buyers already committed to M365 — which is exactly the stack we sell. Also unlocks free internal-use licensing paths. | Yes — Ahmad |
++| 4 | **CanadaBuys supplier registration (SAP Business Network standard account)** | 8 | Free forever at the standard tier. Required to receive and respond to federal notices. The bid radar already reads the public feed, but transacting needs the account. Federal standing offers (TBIPS/SBIPS) are the "qualify once, stay on the menu" plays. | Yes — Ahmad |
++| 5 | **Ontario Tenders Portal (Jaggaer)** | 8 | Free supplier registration. Province-wide broader-public-sector notices — hospitals, colleges, school boards, agencies. Set commodity-code notifications on signup. **This is also where the Supply Ontario I&IT VOR replacement will be posted (see below) — the account must exist before it drops.** `ontariotenders.app.jaggaer.com` | Yes — Ahmad |
++| 5b | **Ontario Tax Compliance Verification (TCV)** | 8 | Not a listing — a **prerequisite**. Ontario government bids require a TCV number, it is explicitly free (*"There are no costs to the vendor"*), and it takes lead time to issue. Missing it is how a firm gets disqualified on a technicality the day a VOR closes. Do this before the I&IT VOR posts, not after. `ontario.ca/page/check-your-tax-compliance-status` | Yes — Ahmad |
++| 6 | **Euna / Bonfire supplier network** | 8 | Free. Increasing share of Ontario municipalities are migrating here from bids&tenders (including Canoe Procurement Group in Q3 2026). One profile, many buyers. | Yes — Ahmad |
++| 7 | **LinkedIn Company Page + Services section** | 8 | Free. The Services section is indexed by LinkedIn's own service-provider search, which is a genuine inbound channel for B2B IT. Also the base for the Friday content cadence. | Yes — Ahmad |
++| 8 | **OECM supplier expression of interest** | 7 | No fee to submit interest. IT Help Desk is locked to 2033-08-21 and IT Project-Based Professional Services to 2029-11-24, so there is nothing to bid on now — but being on the notification list for the re-tender is the whole point, and it costs one form. | Yes — Ahmad |
++| 9 | **City of Toronto SAP Ariba supplier registration** | 7 | Free standard account. Largest municipal buyer in Canada. Long cycle, big ticket. | Yes — Ahmad |
++| 10 | **Durham Region Business Directory** (Durham Economic Development) | 7 | Free, local, and specifically consulted by regional buyers and by other Durham businesses looking for local suppliers. Small pool, high relevance. | Yes — Ahmad |
++
++## Tier 2 — do these next (Canada / North America)
++
++| # | Venue | Score | Why | Account |
++|---|---|---|---|---|
++| 11 | **Yellow Pages Canada free listing** — `solutions.yp.ca/free-online-listing` | 6 | Still carries local-search weight and feeds citation consistency for the Google profile. *(Note: `/business/add` 404s — use the URL above.)* | Yes |
++| 12 | **Bing Places for Business** | 6 | Free, imports directly from the Google profile in about two minutes. Small traffic, near-zero effort. | Yes |
++| 13 | **Apple Business Connect** | 6 | Free. Apple Maps is the default on every iPhone; a missing listing is invisible to a meaningful share of local searchers. | Yes |
++| 14 | **TechBehemoths** — `techbehemoths.com/register` | 6 | Free agency/MSP directory with real B2B intent traffic. *(Note: `/join` 404s.)* | Yes |
++| 15 | **Clutch free profile** | 6 | Free tier exists. Value is almost entirely in verified reviews — worth doing only if we will actually chase two or three client reviews. Empty profile = no value. | Yes |
++| 16 | **Canadian Company Capabilities (ISED)** | 6 | Free federal business directory, consulted by trade officers and by primes looking for Canadian subcontractors. | Yes |
++| 17 | **Ontario municipal vendor lists** (Oshawa, Ajax, Pickering, Clarington, Scugog, Uxbridge) | 6 | Free per-municipality vendor registration. Same direct-award logic as Whitby, one form each. Batch these in one sitting. | Yes |
++| 18 | **Chamber of Commerce — Whitby / Ajax-Pickering** free member directory listings | 5 | Only the *free* directory tiers. Membership itself is paid — **do not join**. Referral value is from the local network, not the listing. | Varies |
++
++## Tier 3 — international, free at every stage
++
++| # | Venue | Score | Why | Account |
++|---|---|---|---|---|
++| 19 | **Canadian Trade Commissioner Service (TCS)** | 8 | Free. Gets a real human trade officer in-market (Dubai, Doha, Riyadh) making introductions on our behalf. This is the highest-leverage Gulf entry point and it costs nothing but a profile and a call. | Yes |
++| 20 | **UNGM (United Nations Global Marketplace)** | 7 | **Verified free at every stage** — registration, notifications and bidding. One registration reaches the whole UN system. Long cycle, but genuinely open to a small Canadian vendor. | Yes |
++| 21 | **UAE Federal Supplier Register** | 6 | Explicit **"Foreign Supplier"** category, stated **"Service fees: No Fees"**, ~30 working-day approval. Register by username/password **now**, before UAE PASS becomes mandatory and closes the foreign-supplier path. | Yes |
++| 22 | **Saudi Etimad — foreign supplier without CR** | 6 | Etimad supports foreign suppliers with no Saudi commercial registration. Free. | Yes |
++| 23 | **Qatar Foundation supplier registration** | 6 | Free supplier portal, accepts foreign vendors, real IT spend. | Yes |
++
++**Legal note for the Gulf:** the UAE abolished the mandatory local-service-agent
++requirement (Federal Decree-Law 26 of 2020), and Qatar's agency law is optional. No
++sponsor, no agent, no fee is required to register in either. Anyone telling us otherwise
++is selling something.
++
++---
++
++## Do NOT touch — and why
++
++These were researched and rejected. Recording them here so nobody re-researches them in
++three months.
++
++**Costs money now or eventually**
++
++- **Any Chamber of Commerce paid membership** — recurring annual fee.
++- **Clutch / DesignRush / UpCity sponsored placement** — the free tier is fine, the paid
++  placement is a subscription. DesignRush's free tier is effectively invisible anyway.
++- **getlistedae.com** — a private blog network selling guest posts. Paid, and an active
++  SEO liability: links from a PBN can trigger a manual penalty on iisupp.net.
++
++**Structurally closed or dead**
++
++- **UpCity** — domain is dead (NXDOMAIN).
++- **Datto / Kaseya partner directories** — retired, 404.
++- **UN Development Business** — ceased operations 31 March 2025.
++- **LAS (Local Authority Services)** — structurally closed to new IT suppliers.
++- **Sourcewell** — next IT category cycle is roughly four years out.
++- **Mohawk Medbuy / HealthPRO** — no IT category at all.
++- **Durham Region on bids&tenders** — unlike Whitby, Durham runs a **paid** agency model.
++  The bid radar reads it for free; do not pay for a vendor account.
++
++**Wrong fit or disqualifying**
++
++- **SAM.gov (US federal)** — auto-classifies Canadian firms as large business, which
++  removes the small-business set-aside advantage that is the only reason to be there.
++- **Expertise.com** — US-only.
++- **Capterra / GetApp** — software product marketplaces, not service providers.
++- **Ontario Made** — excludes services.
++- **ADNOC** — Emirates ID mandatory.
++- **Abu Dhabi ADGPG** — government-initiated registration only, and ICV is 40% of the
++  financial evaluation, which a foreign vendor cannot score on.
++- **Dubai eSupply** — Dubai Law No. 12 of 2020 Art. 15(1) requires UAE licensing at award.
++- **Aramco** — Canada is not in the self-registration geography.
++- **CCPI via ProServices** — the only open Canadian IT co-op intake, but gated behind
++  sponsor-only Contract Security Program clearance we cannot self-initiate.
++
++**Domains that do not exist** (do not waste time looking): connect.ae,
++gulfyellowpages.com, qatarbusinessdirectory.com, saudiyellowpages.com,
++yellowpages.com.sa. `qataryellowpagesonline.com` exists but ships `noindex,nofollow`,
++so a listing there is invisible to search engines by design.
++
++---
++
++## The honest read on co-operative buying groups
++
++Verified 2026-07-29 against official publisher pages. Two things previously believed
++turned out to be wrong, and they are corrected here rather than quietly dropped.
++
++**There is no such thing as a co-op "roster application."** Not at Canoe, not at Supply
++Ontario. Canoe states it plainly: *"Only suppliers who respond to an official RFP issued
++by Canoe will be considered"* — registering on the portal is notification plumbing, not
++qualification. Supply Ontario is the same: VOR status comes only from winning a posted
++solicitation. Any plan that consists of "get on the roster" is a plan to do nothing.
++
++### The one live, time-boxed opening
++
++**Supply Ontario — I&IT Solutions Consulting Services VOR replacement.**
++
++Confirmed from Supply Ontario's own Three Year Outlook (March 2026 – March 2029): the
++category is listed as **REPLACEMENT**, estimated electronic tendering **Jul-26**,
++estimated contract start **Jan-27**, open to OPS and Non-OPS clients. The incumbent is
++**Tender-15176** (three years from 1 Jan 2023, stated expiry 31 Dec 2025, running on its
++extension option), with **156 qualified vendors** split into **Stream A (projects under
++$5M)** and **Stream B ($5M+)**. That vendor list contains plenty of small specialist
++firms alongside the Accentures and IBMs — **Stream A is a realistic target for us.**
++
++As of 29 July 2026 the Supply Ontario news feed runs to 16 July with no I&IT call for
++vendors, so it most likely has not posted yet. That is circumstantial, not certain: the
++Ontario Tenders Portal is robots-disallowed and cannot be read by an automated fetch.
++**This needs a human with a browser to check, and it needs checking weekly.**
++
++Prerequisites that take lead time and should be done *now*, not when it posts: free
++Ontario Tenders Portal supplier account with commodity-code alerts, and the free Ontario
++Tax Compliance Verification number.
++
++### Canoe Procurement Group — corrected
++
++Two beliefs carried in from earlier research were wrong:
++
++- **CDW Canada is not expiring in September 2026.** Contract **121923-CDW** runs to
++  **27 February 2028**. It is the Apple Education Reseller Program contract but its scope
++  is broad — end-user devices, networking, servers, storage, software, security, cloud,
++  IT services. Nothing to compete for; this is a **subcontracting target**, not a bid.
++- **Only Introba expires this September.** Contract **072822-RBZ**, **9 September 2026**,
++  under the **Smart City Solutions** program (originally awarded to Ross & Baruzzini).
++  The rest of that program was already re-competed in 2025 — Cooper Lighting, Dimonoff
++  and Signify all run to 22 July 2029, Miovision to 17 July 2029. So this is one stray
++  contract, not an IT category cliff.
++
++Also confirmed and consequential: **Canoe's ERP category was just awarded.** Twenty-one
++new contracts were announced 6 July 2026, ten of them ERP — Catalis, CentralSquare,
++CloudAvanti, Endeavor Solutions, EQTech, HGS Canada, Infosys, KPMG, Kyndryl, MNP Digital,
++Sylogist. Infosys Public Services runs to **30 June 2033**. That door is shut for years.
++
++Canoe is mid-migration from `canoe.bidsandtenders.ca` to **`canoe.bonfirehub.ca`**
++(Bonfire/Euna), new postings from Q3 2026, **registration free with no maintenance fee**.
++Register for the alerts; do not expect the registration itself to produce anything.
++
++### The rest of the co-op landscape
++
++OECM is locked (IT Help Desk to 2033-08-21, IT Project-Based Professional Services to
++2029-11-24). LAS is structurally closed. CCPI via ProServices is gated behind sponsor-only
++Contract Security Program clearance we cannot self-initiate. Sourcewell is roughly four
++years out. Mohawk Medbuy and HealthPRO have no IT category at all.
++
++### So the real play
++
++Canoe contracts are national, all-thirteen-provinces supply arrangements. A 1–10 person
++Whitby firm does not win one alone, and pretending otherwise wastes a bid cycle.
++
++**Subcontract to a prime that already holds the paper.** CDW Canada (to Feb 2028), SHI,
++or any of the 156 vendors on Tender-15176 who need Ontario delivery capacity they do not
++have in-house. No fee, no qualification cycle, no reference bar. Then bid Stream A of the
++I&IT VOR replacement when it posts — with a prime's subcontract already on the résumé as
++the public-sector reference that bid will ask for.
++
++That is the sequence: **subcontract first to earn the reference, then qualify.** Trying it
++in the other order is why small MSPs bounce off public procurement for years.
+-- 
+2.43.0
+

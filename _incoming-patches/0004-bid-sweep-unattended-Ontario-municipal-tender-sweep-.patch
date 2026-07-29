@@ -1,0 +1,589 @@
+From 221fbb6a5c68803f66895c50bee5f4651933a480 Mon Sep 17 00:00:00 2001
+From: CC Stage2 <cc@iis.local>
+Date: Wed, 29 Jul 2026 14:52:15 +0000
+Subject: [PATCH 4/5] bid-sweep: unattended Ontario municipal tender sweep +
+ master listing copy pack
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+scripts/bid-sweep.mjs — headless Playwright sweep of 42 confirmed-live Ontario
+bids&tenders portals. Companion to netlify/functions/bid-radar-cron.mjs, which
+covers CanadaBuys; municipal grids are client-rendered with no public feed, so
+they need a real browser, which Netlify Functions cannot run.
+
+Verified live 2026-07-29: 53 subdomains tried, 42 reachable, 261 open bids,
+18 IT-relevant after filtering. 11 dead subdomains pruned and documented so
+they are not re-added (each costs a 40s timeout).
+
+Filter tuned against real output — bare 'consult' and bare 'system' pulled in
+land surveyors, hydraulic modelling and job-evaluation studies; both qualified.
+EXCLUDE list carries only terms observed as actual false positives.
+
+De-dupes against .bid-sweep-seen.json with 180-day retention, so --email only
+fires on genuinely new bids. Silence is the signal.
+
+docs/listing-copy-pack.md — single source of truth for NAP, NAICS/UNSPSC/GSIN
+codes, profile copy pre-fitted to 40/80/160/300/600/1500 chars, 37-item service
+list, keyword set, five rotating hooks, and reusable registration-form answers.
+NAP verified against the repo, not memory: L1P 1L4 (23 hits, zero for L1P 2L4).
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01TAEeWzAz1B7dHt85zVuk8C
+---
+ .gitignore                |   1 +
+ docs/listing-copy-pack.md | 281 ++++++++++++++++++++++++++++++++++++++
+ scripts/bid-sweep.mjs     | 244 +++++++++++++++++++++++++++++++++
+ 3 files changed, 526 insertions(+)
+ create mode 100644 docs/listing-copy-pack.md
+ create mode 100644 scripts/bid-sweep.mjs
+
+diff --git a/.gitignore b/.gitignore
+index 21de4c4..aa2b769 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -126,3 +126,4 @@ outputs/
+ # Filesystem / editor junk
+ **/.fuse_hidden*
+ /tests/.residual-tmp.js
++.bid-sweep-seen.json
+diff --git a/docs/listing-copy-pack.md b/docs/listing-copy-pack.md
+new file mode 100644
+index 0000000..f32170e
+--- /dev/null
++++ b/docs/listing-copy-pack.md
+@@ -0,0 +1,281 @@
++# Integrated IT Support Inc. — Master Listing Copy Pack
++
++One source of truth for every directory, portal, supplier register, and profile.
++Copy from here. Never retype from memory — inconsistent name/address/phone (NAP) data
++is the single fastest way to tank local search ranking and get a Google Business Profile
++flagged.
++
++Last updated: 2026-07-29
++
++---
++
++## 1. Canonical NAP block — use this exact text everywhere
++
++```
++Integrated IT Support Inc.
++30 Fothergill Court
++Whitby, Ontario  L1P 1L4
++Canada
++(647) 581-3182
++https://iisupp.net
++integrateditsupp@gmail.com
++```
++
++Rules that are not optional:
++
++- Legal name is **Integrated IT Support Inc.** — with the period on "Inc." Do not list as
++  "Integrated IT Support", "IIS", "IISupport", or "iisupp.net". Directories match on exact
++  string; variants create duplicate entities.
++- Postal code is **L1P 1L4**. Some older outbound templates carry **L1P 2L4** — that is
++  wrong, and under CASL an inaccurate physical address in a commercial email is a defect.
++  Fix it wherever it appears before it propagates into a public listing.
++- Phone renders as **(647) 581-3182** in North American forms and **+1 647 581 3182**
++  in international forms (UAE, Saudi, Qatar, UN). Same number, format matched to region.
++- Website is always `https://iisupp.net` — with `https`, without `www`.
++
++---
++
++## 2. Business classification codes
++
++Most procurement registers and B2B directories ask for these. Having them ready turns a
++25-minute registration into a 6-minute one.
++
++| System | Code | Label |
++|---|---|---|
++| NAICS (Canada/US) | **541512** | Computer Systems Design Services |
++| NAICS secondary | **541519** | Other Computer Related Services |
++| NAICS secondary | **811210** | Electronic and Precision Equipment Repair and Maintenance |
++| NAICS secondary | **541511** | Custom Computer Programming Services |
++| UNSPSC | **81111800** | Computer services |
++| UNSPSC | **81111500** | Software or hardware engineering |
++| UNSPSC | **81112200** | Data services |
++| UNSPSC | **81111700** | Information technology consulting services |
++| UNSPSC | **43230000** | Software |
++| UNSPSC | **43220000** | Data voice or multimedia network equipment |
++| GSIN (CanadaBuys) | **D302** | IT and telecom — systems development |
++| GSIN (CanadaBuys) | **D399** | IT and telecom — other |
++| GSIN (CanadaBuys) | **N7030** | ADP software |
++| SIC (legacy/intl) | **7379** | Computer Rental and Leasing / Computer Services |
++
++Primary category string for directories that use free text:
++**Computer Support and Services** — with **Managed IT Service Provider (MSP)**,
++**IT Consultant**, **Computer Security Service**, and **Website Designer** as secondaries.
++
++---
++
++## 3. Profile copy by character limit
++
++Every listing form has a different cap. These are pre-fitted. Use the largest one that
++fits without truncation — a sentence cut off mid-word reads as abandonment.
++
++### 40 characters — app tiles, short taglines
++```
++Managed IT support for Ontario business
++```
++
++### 80 characters — directory taglines, LinkedIn headline
++```
++Managed IT, cybersecurity and Microsoft 365 support for Ontario businesses.
++```
++
++### 160 characters — meta descriptions, Google Business short description
++```
++Integrated IT Support Inc. delivers managed IT, helpdesk, Microsoft 365, cybersecurity and network support to small and mid-sized businesses across Ontario.
++```
++
++### 300 characters — most B2B directory "about" fields
++```
++Integrated IT Support Inc. is a Whitby, Ontario managed service provider delivering helpdesk support, Microsoft 365 administration, network and server management, cybersecurity, backup and disaster recovery to small and mid-sized businesses. Flat monthly pricing. Response times in writing.
++```
++
++### 600 characters — supplier registers, partner directories
++```
++Integrated IT Support Inc. is a Canadian managed service provider based in Whitby, Ontario, supporting small and mid-sized businesses, professional practices and public-sector teams across the Greater Toronto Area and remotely nationwide.
++
++We run the whole IT function so our clients do not have to: unlimited helpdesk, Microsoft 365 and Google Workspace administration, network and server management, cybersecurity monitoring, backup and disaster recovery, procurement and vendor management. Flat monthly pricing, documented response times, and no long lock-in contracts.
++```
++
++### 1500 characters — capability statements, RFP vendor profiles, UNGM/UAE/Etimad
++```
++Integrated IT Support Inc. is a Canadian managed service provider headquartered in Whitby, Ontario. We act as the complete IT department for small and mid-sized organizations that need enterprise-grade reliability without an enterprise-sized payroll — professional practices, multi-site trades and retail operations, non-profits, and public-sector teams across the Greater Toronto Area, with remote coverage nationwide.
++
++Core services:
++- Managed IT and unlimited helpdesk support, L1 through L3
++- Microsoft 365 and Google Workspace deployment, migration, security hardening and administration
++- Network design, Wi-Fi, VPN, firewall and structured connectivity
++- Server installation, virtualization, patching and lifecycle management
++- Cybersecurity: vulnerability assessment, penetration testing, endpoint protection, security awareness
++- Backup, disaster recovery and business continuity planning
++- Cloud migration and hybrid infrastructure
++- Compliance readiness support for HIPAA, PCI DSS and SOC 2 programs
++- Hardware and software procurement, asset lifecycle and vendor management
++- Web design, hosting, and business process automation
++
++How we work: flat monthly pricing so budgets are predictable, response times committed in writing, documented environments so knowledge is never trapped in one person's head, and month-to-month terms because we would rather earn renewal than enforce it.
++
++Integrated IT Support Inc. is fully insured and carries commercial general liability and
++errors and omissions coverage. References available on request.
++```
++
++---
++
++## 4. Service list — for forms that want line items
++
++Paste in full, or trim from the bottom. Ordered by revenue relevance, not alphabetically.
++
++```
++Managed IT Services
++Help Desk Support (L1-L3)
++Remote IT Support
++Microsoft 365 Setup, Migration and Administration
++Google Workspace Setup and Migration
++Active Directory and User Management
++Network Setup and Configuration
++Wi-Fi Network Design and Optimization
++VPN and Remote Access
++Firewall Configuration and Management
++Server Installation, Configuration and Maintenance
++Cloud Migration and Hybrid Infrastructure
++Cybersecurity Audit and Assessment
++Penetration Testing
++Endpoint Protection and Virus/Malware Removal
++Data Backup and Disaster Recovery
++Business Continuity Planning
++Compliance Readiness (HIPAA / PCI DSS / SOC 2)
++VoIP Phone System Setup
++CCTV and Security Camera Installation
++Structured Cabling and Office IT Fit-Out
++Hardware and Software Procurement
++Asset Lifecycle and Vendor Management
++PC and Mac Repair
++Data Recovery
++Printer and Peripheral Support
++IT Consulting and Strategy Roadmap
++IT Project Management
++Office Move and Property IT Readiness
++Website Design, Development and Hosting
++E-commerce Store Setup
++SEO and Digital Marketing
++Custom Software Development
++Mobile App Development
++API and System Integration
++Business Process Automation
++AI Workflow Audit and Automation Deployment
++```
++
++---
++
++## 5. Keyword set — for tag fields and search-visibility
++
++Use the first 10 when the field caps out. They are ordered by commercial intent, meaning
++the terms buyers type when they have budget, not when they are browsing.
++
++```
++managed IT services
++IT support Whitby
++managed service provider Ontario
++IT support Durham Region
++outsourced IT department
++Microsoft 365 support
++small business IT support Toronto
++cybersecurity services Ontario
++IT helpdesk services
++network support services
++server management
++cloud migration services
++data backup and disaster recovery
++IT consulting Whitby
++computer repair Durham Region
++VoIP phone systems
++IT procurement
++MSP Greater Toronto Area
++business continuity planning
++penetration testing Canada
++```
++
++---
++
++## 6. Hook variants — rotate these, do not reuse one everywhere
++
++A hook is the line that earns the click. Directory listings that read like a services
++menu get skimmed past. These lead with the buyer's problem, not our capability. Rotate
++so the same sentence is not indexed on forty domains — duplicate copy across directories
++is treated as low-quality by search engines and dilutes every listing.
++
++**Hook 1 — the cost of the status quo**
++> Most small businesses do not have an IT problem. They have a "nobody owns it" problem —
++> until the server dies on a Friday. We own it, for a flat monthly fee.
++
++**Hook 2 — the response-time promise**
++> Your last IT company answered when they got around to it. Ours commits response times
++> in writing, and you can hold us to them.
++
++**Hook 3 — the lock-in objection**
++> Month-to-month. No three-year contract, no exit fee. We would rather earn the renewal
++> than enforce it.
++
++**Hook 4 — the "one person knows everything" risk**
++> If one person is the only one who knows how your network is set up, that is not an IT
++> department — that is a single point of failure. We document everything and hand you the keys.
++
++**Hook 5 — the budget-predictability angle**
++> Flat monthly pricing. No surprise invoices after an outage, because preventing the
++> outage is what you are already paying for.
++
++---
++
++## 7. Founder / key contact bio
++
++**60 words**
++```
++Ahmad Wasee is the founder of Integrated IT Support Inc., a Whitby, Ontario managed
++service provider. He works hands-on across client environments — networks, Microsoft 365,
++servers and security — and built the firm on the principle that small businesses deserve
++the same response times and documentation standards that enterprises pay a premium for.
++```
++
++**25 words**
++```
++Ahmad Wasee is the founder of Integrated IT Support Inc., a Whitby, Ontario managed
++service provider serving businesses across the Greater Toronto Area.
++```
++
++---
++
++## 8. Things to never put in a public listing
++
++- Any street address other than the canonical one above. Virtual offices, coworking
++  desks and mail drops violate Google Business Profile guidelines and risk suspension of
++  the legitimate Whitby profile. This applies with force to any Gulf-region listing —
++  do **not** create a UAE, Saudi or Qatar Google Business Profile without a real staffed
++  premises there.
++- Claims of certification, partner tier, clearance or designation we do not hold.
++  Procurement registers cross-check, and a false designation is grounds for
++  disqualification and debarment, not just correction.
++- Indigenous, women-owned, veteran-owned or minority-owned business status unless it is
++  factually true. The Indigenous Business Directory requires 51%+ Indigenous ownership.
++- Any pricing figure. Directory pricing goes stale and becomes an anchor in negotiation.
++  Say "flat monthly pricing" and take the conversation to a call.
++- Placeholder data. The site currently contains at least two dummy phone numbers
++  ((123) 456-7890 and (416) 555-0100) in template files — verify none of these leak into
++  a listing form.
++
++---
++
++## 9. Reusable answers for registration forms
++
++| Field | Answer |
++|---|---|
++| Business type | Corporation (Canada, federally/provincially incorporated) |
++| Country of operation | Canada |
++| Year established | *(confirm before submitting — do not guess)* |
++| Number of employees | 1–10 |
++| Small business | Yes |
++| Delivery model | Remote nationwide; onsite Greater Toronto Area |
++| Languages | English |
++| Currency | CAD (accepts USD) |
++| Insurance | Commercial General Liability; Errors & Omissions |
++| Payment terms accepted | Net 30 |
++| Accepts government purchase orders | Yes |
++| Willing to subcontract to a prime | Yes |
++| Bonding capacity | *(none currently — answer "not applicable" for service-only bids)* |
+diff --git a/scripts/bid-sweep.mjs b/scripts/bid-sweep.mjs
+new file mode 100644
+index 0000000..29bd99d
+--- /dev/null
++++ b/scripts/bid-sweep.mjs
+@@ -0,0 +1,244 @@
++#!/usr/bin/env node
++/**
++ * bid-sweep.mjs — Headless sweep of Ontario municipal bids&tenders portals.
++ *
++ *  Companion to netlify/functions/bid-radar-cron.mjs. That cron covers CanadaBuys
++ *  (federal + participating provincial), which is a clean machine-readable CSV.
++ *  Municipal bids&tenders portals render their grids client-side and expose no
++ *  public feed, so they need a real browser — which Netlify Functions cannot run.
++ *  This script does, unattended, in the Cowork container.
++ *
++ *  Usage:
++ *    node scripts/bid-sweep.mjs                 # sweep all portals, print JSON
++ *    node scripts/bid-sweep.mjs --email         # also email new hits via Resend
++ *    node scripts/bid-sweep.mjs whitby ajax     # sweep specific portals only
++ *
++ *  Env: RESEND_API_KEY, RESEND_FROM, FOUNDER_EMAIL (only needed for --email)
++ *  State: .bid-sweep-seen.json in cwd — de-dupes so you only ever see new bids.
++ *
++ *  Notes for future maintainers:
++ *   - Chromium cannot reach the container's egress proxy directly (ERR_CONNECTION_RESET).
++ *     Every request is routed through Node's fetch, which can. Do not remove ctx.route.
++ *   - A real bid row has exactly 4 cells: [name, status, closing date, days left].
++ *     1-cell rows are the action-button row; 7-cell numeric rows are the date picker.
++ */
++import { readFileSync, writeFileSync } from 'node:fs';
++
++/* Playwright lives in the global npm prefix in this container, not in the repo's
++   node_modules, so a bare ESM specifier resolves only when cwd happens to be right.
++   Try the bare import first, fall back to the global path. */
++const pickChromium = m => m?.chromium || m?.default?.chromium;
++let chromium;
++for (const spec of ['playwright',
++  process.env.PLAYWRIGHT_PKG || '/home/claude/.npm-global/lib/node_modules/playwright/index.js']) {
++  try { chromium = pickChromium(await import(spec)); } catch { /* try next */ }
++  if (chromium) break;
++}
++if (!chromium) {
++  console.error('playwright not resolvable. Set PLAYWRIGHT_PKG to its index.js, or npm i -g playwright.');
++  process.exit(1);
++}
++
++/* Ontario municipal + regional bids&tenders subdomains, confirmed reachable by a full
++   sweep on 2026-07-29. Adding a speculative subdomain is cheap — unreachable ones are
++   reported and skipped — but each dead host costs ~40s of timeout, so prune after testing. */
++const ALL_PORTALS = [
++  // Durham Region + lower tier (home turf)
++  'durham', 'whitby', 'ajax', 'pickering', 'oshawa', 'clarington', 'scugog', 'uxbridge',
++  // York Region + lower tier
++  'york', 'markham', 'richmondhill', 'vaughan', 'newmarket', 'aurora', 'georgina',
++  'eastgwillimbury', 'king',
++  // Peel / Halton / Toronto area
++  'peelregion', 'brampton', 'caledon', 'burlington', 'oakville', 'milton', 'haltonhills',
++  // Simcoe / Kawartha / Northumberland
++  'barrie', 'orillia', 'innisfil', 'kawarthalakes', 'cobourg', 'porthope',
++  // Waterloo / Wellington / Niagara corridor
++  'guelph', 'wellington', 'kitchener', 'waterloo', 'niagararegion', 'stcatharines',
++  // Eastern Ontario
++  'belleville', 'quintewest', 'brockville', 'cornwall',
++  // Education / other public bodies
++  'ddsb', 'dcdsb'
++];
++
++/* Confirmed NOT on bids&tenders as of 2026-07-29 — they use Bonfire, Ariba, Merx or
++   their own portal. Do not re-add without checking first; each costs a 40s timeout.
++   brock, whitchurchstouffville, halton, bradfordwestgwillimbury, simcoe, peterborough,
++   northumberland, cambridge, kingston, durhamcollege, ontariotechu                     */
++
++/* Title-level relevance. Deliberately broader than the CanadaBuys filter because
++   municipal bid titles are terse ("Network Switch Replacement", not a full description).
++   Bare 'consult' and bare 'system' were tested and pulled in land surveyors, hydraulic
++   modelling and job-evaluation studies — both are now qualified. */
++const IT_MATCH = new RegExp([
++  'managed (it|service)', 'help ?desk', 'service desk', '\\bit\\b', 'information technolog',
++  'end.?user', 'desktop', 'cyber ?security', 'microsoft 365', 'office 365', '\\bm365\\b',
++  'cloud', 'server', 'technical support', 'network', 'backup',
++  'disaster recovery', 'business continuity', '\\bvoip\\b', 'telephon', 'phone system',
++  '\\bsiem\\b', 'penetration test', 'vulnerability', 'audio ?visual', '\\bav\\b',
++  'structured cabling', 'cabling', 'fibre optic', 'fiber optic', 'wi-?fi', 'wireless',
++  'endpoint', 'firewall', 'workstation', 'laptop', 'computer', 'hardware', 'software',
++  'licens', 'saas', 'digital', 'website', 'web site', 'data cent',
++  'print (manage|fleet|servic)', 'security (system|camera|assess|audit)',
++  'access control', 'surveillance', 'telecom', 'internet servic', 'connectivity',
++  '\\bgis\\b', '\\berp\\b', '\\bcrm\\b', 'asset management (system|software|solution)',
++  '(it|technolog|technology|digital|cyber|network|software|systems?|data) consult',
++  '(management|integration|integrator|migration|implementation) (system|solution|services)',
++  'systems? (integrat|administrat|implement)'
++].join('|'), 'i');
++
++/* Things that match the keywords but are never an MSP opportunity. Each entry here was
++   added because it actually showed up as a false positive in a live sweep. */
++const EXCLUDE = new RegExp([
++  'snow', 'salt', 'sidewalk', '\\broad\\b', 'sewer', 'watermain', 'paving', 'asphalt',
++  'arena', '\\bpark\\b', '\\btree\\b', 'turf', 'fleet vehicle', 'pickup truck', 'garbage',
++  'waste collection', 'catch basin', 'culvert', 'bridge', 'streetlight', 'traffic signal',
++  'playground', '\\bpool\\b', 'zamboni', 'fire truck', 'ambulance', 'uniform', 'janitorial',
++  'cleaning servic', 'landscap', 'grass', 'fuel suppl',
++  // false positives observed 2026-07-29
++  'irrigation', '\\bgolf\\b', 'waterproofing', 'generator', 'solar', 'ice resurfac',
++  'hydraulic', 'geotechnical', 'geo-technical', 'environmental', 'land surveyor',
++  'job evaluation', 'urban design', 'boulevard', 'backflow', 'fire life', 'cot fastener',
++  'master plan', 'peer review', 'whistle cessation', 'affordable housing'
++].join('|'), 'i');
++
++const STATE_FILE = '.bid-sweep-seen.json';
++const RETENTION_DAYS = 180;
++
++const args = process.argv.slice(2);
++const doEmail = args.includes('--email');
++const picked = args.filter(a => !a.startsWith('--'));
++const PORTALS = picked.length ? picked : ALL_PORTALS;
++
++const esc = s => String(s || '').replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
++
++const browser = await chromium.launch({
++  executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
++  args: ['--no-sandbox', '--disable-dev-shm-usage']
++});
++const ctx = await browser.newContext({
++  ignoreHTTPSErrors: true,
++  userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
++});
++
++/* Route every browser request through Node's fetch — Chromium cannot reach the proxy. */
++await ctx.route('**/*', async route => {
++  const req = route.request();
++  try {
++    const headers = { ...req.headers() };
++    delete headers['accept-encoding'];
++    const res = await fetch(req.url(), {
++      method: req.method(),
++      headers,
++      body: ['GET', 'HEAD'].includes(req.method()) ? undefined : req.postDataBuffer(),
++      redirect: 'follow'
++    });
++    const body = Buffer.from(await res.arrayBuffer());
++    const h = {};
++    res.headers.forEach((v, k) => {
++      if (!/^(content-encoding|content-length|transfer-encoding)$/i.test(k)) h[k] = v;
++    });
++    await route.fulfill({ status: res.status, headers: h, body });
++  } catch { await route.abort(); }
++});
++
++const portalResults = [];
++const allBids = [];
++
++for (const p of PORTALS) {
++  const page = await ctx.newPage();
++  const r = { portal: p, reachable: false, bids: 0 };
++  try {
++    await page.goto(`https://${p}.bidsandtenders.ca/Module/Tenders/en`, {
++      waitUntil: 'domcontentloaded', timeout: 40000
++    });
++    await page.waitForTimeout(5000);
++    const rows = await page.evaluate(() =>
++      [...document.querySelectorAll('table tbody tr')].map(tr =>
++        [...tr.querySelectorAll('td')].map(td => td.innerText.trim().replace(/\s+/g, ' '))));
++    r.reachable = rows.length > 0;
++    for (const c of rows) {
++      // Real bid row: 4 cells, cell[1] is a status word, cell[2] is a date.
++      if (c.length < 4) continue;
++      if (!/^(open|closed|awarded|cancelled|pending|upcoming)/i.test(c[1] || '')) continue;
++      if (!/20\d\d/.test(c[2] || '')) continue;
++      r.bids++;
++      allBids.push({ portal: p, name: c[0], status: c[1], closes: c[2], days_left: c[3] });
++    }
++  } catch (e) { r.error = e.message.split('\n')[0].slice(0, 70); }
++  await page.close();
++  portalResults.push(r);
++  process.stderr.write(`${r.reachable ? 'OK  ' : '--  '}${p.padEnd(24)} bids=${r.bids}${r.error ? '  ' + r.error : ''}\n`);
++}
++await browser.close();
++
++const relevant = allBids.filter(b =>
++  /^open/i.test(b.status) && IT_MATCH.test(b.name) && !EXCLUDE.test(b.name));
++
++/* De-dupe against previous runs. */
++const now = Date.now();
++let seen = {};
++try { seen = JSON.parse(readFileSync(STATE_FILE, 'utf8')); } catch { seen = {}; }
++const keyOf = b => `${b.portal}::${b.name}`;
++const fresh = relevant.filter(b => !seen[keyOf(b)]);
++const nextSeen = {};
++for (const [k, v] of Object.entries(seen)) if (v > now - RETENTION_DAYS * 86400000) nextSeen[k] = v;
++for (const b of relevant) nextSeen[keyOf(b)] = seen[keyOf(b)] || now;
++try { writeFileSync(STATE_FILE, JSON.stringify(nextSeen)); } catch {}
++
++const summary = {
++  ran_at: new Date().toISOString(),
++  portals_tried: PORTALS.length,
++  portals_reachable: portalResults.filter(r => r.reachable).length,
++  unreachable: portalResults.filter(r => !r.reachable).map(r => r.portal),
++  total_open_bids: allBids.filter(b => /^open/i.test(b.status)).length,
++  it_relevant: relevant.length,
++  new_since_last_run: fresh.length,
++  emailed: false,
++  new_bids: fresh,
++  all_it_relevant: relevant
++};
++
++if (doEmail && fresh.length && process.env.RESEND_API_KEY) {
++  const html = `
++    <div style="max-width:680px;margin:0 auto;font-family:system-ui,sans-serif">
++      <h2 style="font-size:17px;margin:0 0 4px">Municipal Bid Sweep — ${fresh.length} new</h2>
++      <p style="font-size:12px;color:#777;margin:0 0 18px">
++        ${summary.portals_reachable}/${summary.portals_tried} Ontario portals swept &middot;
++        ${summary.total_open_bids} open bids &middot; ${relevant.length} IT-relevant &middot;
++        ${fresh.length} not seen before.
++      </p>
++      ${fresh.map(b => `
++        <div style="border-left:3px solid #c8a24a;padding:8px 12px;margin:0 0 14px">
++          <div style="font:600 15px/1.35 system-ui,sans-serif">${esc(b.name)}</div>
++          <div style="font:13px system-ui,sans-serif;color:#555;margin:3px 0">
++            ${esc(b.portal)} &middot; closes <b>${esc(b.closes)}</b>
++            ${b.days_left ? ` (${esc(b.days_left)} days left)` : ''}
++          </div>
++          <div style="font:12px system-ui,sans-serif;margin-top:4px">
++            <a href="https://${esc(b.portal)}.bidsandtenders.ca/Module/Tenders/en">Open portal</a>
++          </div>
++        </div>`).join('')}
++      <p style="font-size:11px;color:#999;border-top:1px solid #eee;padding-top:10px;margin-top:20px">
++        bid-sweep &middot; ${summary.ran_at} &middot; you only get this email when something new appears.
++      </p>
++    </div>`;
++  try {
++    const res = await fetch('https://api.resend.com/emails', {
++      method: 'POST',
++      headers: {
++        'Authorization': 'Bearer ' + process.env.RESEND_API_KEY,
++        'Content-Type': 'application/json'
++      },
++      body: JSON.stringify({
++        from: process.env.RESEND_FROM || 'ARIA <noreply@iisupp.net>',
++        to: [process.env.FOUNDER_EMAIL || 'ahmad.wasee@iisupp.net'],
++        subject: `[Bid Sweep] ${fresh.length} new municipal IT opportunit${fresh.length === 1 ? 'y' : 'ies'}`,
++        html
++      })
++    });
++    summary.emailed = res.ok;
++    if (!res.ok) summary.email_error = 'HTTP ' + res.status;
++  } catch (e) { summary.email_error = e.message; }
++}
++
++console.log(JSON.stringify(summary, null, 1));
+-- 
+2.43.0
+

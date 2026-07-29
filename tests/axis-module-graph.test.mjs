@@ -4,7 +4,7 @@
 // catch it. This walks the real import graph from the entry module and asserts every edge resolves.
 //
 // It also guards the two structural invariants CC-BRIEF calls out explicitly:
-//   * NAV is exactly the 15 tabs, in order, unrenamed  (Ahmad: "DO not change or move around anything")
+//   * NAV is exactly the 16 tabs, in order, unrenamed  (Ahmad: "DO not change or move around anything")
 //   * every NAV id has a real SCREENS handler — a missing one silently falls through to placeholder()
 //     and dumps raw JSON at the operator, which is how Fleet sat dead.
 import fs from 'node:fs';
@@ -74,9 +74,12 @@ for (const f of visited) {
 const app = fs.readFileSync(ENTRY, 'utf8');
 const navBlock = (app.match(/const NAV = \[[\s\S]*?\n\];/) || [''])[0];
 const navIds = [...navBlock.matchAll(/id: '([^']+)'/g)].map(m => m[1]);
-const EXPECTED = ['overview', 'inbox', 'pipeline', 'crm', 'prospects', 'outreach', 'approvals', 'followups',
-  'documents', 'analytics', 'products', 'fleet', 'axis-agent-director', 'reports', 'settings'];
-t('NAV has exactly 15 tabs', navIds.length === 15);
+// 2026-07-28 (DEFECT-107): commit eecd0510 ADDED a 16th tab `waiting_reply` between `approvals` and
+// `followups`. Nothing was removed, renamed, or reordered — Rule 15 intact — so the guard baseline is
+// extended, not relaxed. Additions still have to be declared here on purpose.
+const EXPECTED = ['overview', 'inbox', 'pipeline', 'crm', 'prospects', 'outreach', 'approvals', 'waiting_reply',
+  'followups', 'documents', 'analytics', 'products', 'fleet', 'axis-agent-director', 'reports', 'settings'];
+t('NAV has exactly 16 tabs', navIds.length === 16);
 t('NAV ids and order are unchanged', JSON.stringify(navIds) === JSON.stringify(EXPECTED));
 
 const screens = new Set();
