@@ -39,12 +39,15 @@
   to = "/public/sentinel-binaries/:splat"
   status = 200
 
-# Clean, version-agnostic download URL for the Downloads page. Repoint the `to` when a new
-# installer is published so the public link never goes stale.
-[[redirects]]
-  from = "/downloads/aria-sentinel-windows.exe"
-  to = "/public/sentinel-binaries/ARIA-Sentinel-0.1.0-unsigned.exe"
-  status = 200
+# HELD — the public Windows download link is intentionally NOT live. Restore this block
+# only when the Authenticode EV cert is bought AND the installer is rebuilt from the
+# current source tree (shipped binary is v0.1.0, source is v0.1.16). Full restore steps:
+# docs/held-releases/downloads-available-now.html
+#
+# [[redirects]]
+#   from = "/downloads/aria-sentinel-windows.exe"
+#   to = "/public/sentinel-binaries/<NEW-SIGNED-INSTALLER>.exe"
+#   status = 200
 
 # Internal-only paths â€” blocked from public access (return 404).
 # force=true is required so the rule overrides the physically-present static files.
