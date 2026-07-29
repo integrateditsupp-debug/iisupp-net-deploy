@@ -30,6 +30,7 @@ import { scrubImageMetadata } from './lib/vision-image-scrub.mjs';
 import { redactImageRegions } from './lib/vision-pixel-redact.mjs';
 import { matchFix } from './lib/vision-fix-link.mjs';
 import { newDiagnosisId, FEEDBACK_ENDPOINT } from './lib/vision-feedback.mjs';
+import { buildHandoff, escalationRequest, FORUMS_COMPOSE_URL, ESCALATE_URL } from './lib/vision-handoff.mjs';
 import { RECIPES } from './aria-recipes-data.mjs';
 // D4 — reuse the site's existing spend controls for the paid vision call (same as aria-chat.js).
 // CJS interop: default-import the module object, then destructure (named CJS imports are flaky).
@@ -101,13 +102,30 @@ export default async (req) => {
   let imageScrub = null;      // metadata pre-flight report for the image path (null for text/logs)
   let pixelRedaction = null;  // user-painted pixel redaction report (null when the user painted nothing)
 
+  // Every honest-abstain response leaves through here so the handoff drafts are attached in ONE
+  // place. An abstain that offers "open a discussion" / "escalate to IIS" must carry the evidence
+  // with it — otherwise we are asking the user to re-describe, from memory, the thing they just
+  // showed us. `handoffDrafts` returns null when there is genuinely nothing real to hand over
+  // (an unreadable image, a rate-limit refusal), and the client then shows the plain options
+  // without a draft rather than a hollow one (Rule 14).
+  const abstainResp = (status, payload) => {
+    if (payload && payload.honestFallback) {
+      const drafts = handoffDrafts(
+        { ...payload, kind, surface, os },
+        isImage ? '' : String(body.text || '')
+      );
+      payload.honestFallback.handoff = drafts;
+    }
+    return resp(status, payload);
+  };
+
   if (isImage) {
     if (willCallCloud) {
       // D4 — size cap: refuse oversized payloads BEFORE any paid call or work.
       const maxB64 = maxImageB64Bytes();
       const b64len = typeof body.imageBase64 === 'string' ? body.imageBase64.length : 0;
       if (!b64len || b64len > maxB64) {
-        return resp(413, {
+        return abstainResp(413, {
           ok: false, blocked: false, abstain: true, diagnosis: null,
           confidence: 0, confidenceLabel: 'abstain',
           reason: b64len ? 'image-too-large' : 'no-image',
@@ -120,7 +138,7 @@ export default async (req) => {
       // D4 — per-IP throttle so anonymous visitors can't loop the paid model.
       const rl = checkRateLimit({}, { key: hashKey('vision:' + clientIp(req)), limit: visionIpLimit(), windowMs: VISION_IP_WINDOW_MS });
       if (!rl.ok) {
-        return resp(429, {
+        return abstainResp(429, {
           ok: false, error: 'rate_limited', retry_after_sec: rl.retryAfterSec,
           abstain: true, diagnosis: null, honestFallback: honestFallback(os),
           meta: { surface, kind, visionUsed: false },
@@ -134,7 +152,7 @@ export default async (req) => {
       // refuse honestly rather than quietly ship an uncleaned image to a paid third-party model).
       const scrub = scrubImageMetadata(body.imageBase64, body.mediaType || 'image/png', redactPII);
       if (!scrub.ok) {
-        return resp(200, {
+        return abstainResp(200, {
           ok: true, blocked: false, abstain: true, diagnosis: null,
           confidence: 0, confidenceLabel: 'abstain',
           reason: 'image-not-prescrubbable',
@@ -170,7 +188,7 @@ export default async (req) => {
       if (Array.isArray(body.redactRegions) && body.redactRegions.length > 0) {
         const pr = redactImageRegions(scrub.base64, sendMediaType, body.redactRegions);
         if (!pr.ok) {
-          return resp(200, {
+          return abstainResp(200, {
             ok: true, blocked: false, abstain: true, diagnosis: null,
             confidence: 0, confidenceLabel: 'abstain',
             reason: 'pixel-redaction-failed',
@@ -212,7 +230,7 @@ export default async (req) => {
       visionNote = hasVisionModel ? 'cloud-vision-not-authorized' : 'cloud-vision-not-configured';
     }
     if (!visionUsed) {
-      return resp(200, {
+      return abstainResp(200, {
         ok: true, blocked: false, abstain: true, diagnosis: null,
         confidence: 0, confidenceLabel: 'abstain',
         reason: visionNote,
@@ -229,7 +247,7 @@ export default async (req) => {
   // ---- Redact + diagnose (shared $0 retriever) ----
   let chunks;
   try { chunks = await loadChunks(); }
-  catch (e) { return resp(200, { ok: true, abstain: true, diagnosis: null, reason: 'kb-unavailable', honestFallback: honestFallback(os), meta: { error: e.message } }); }
+  catch (e) { return abstainResp(200, { ok: true, abstain: true, diagnosis: null, reason: 'kb-unavailable', honestFallback: honestFallback(os), meta: { error: e.message } }); }
 
   const d = diagnoseInput({
     kind,
@@ -259,7 +277,7 @@ export default async (req) => {
     // Two log-specific abstains carry their own plain-English reason so the user is told what we
     // actually saw in their file instead of a generic "not confident" (Rule 14).
     if (d.reason === 'log-no-failure-lines' || d.reason === 'log-binary-not-text') {
-      return resp(200, {
+      return abstainResp(200, {
         ...base, abstain: true, diagnosis: null, reason: d.reason,
         closest: null,
         honestFallback: {
@@ -274,7 +292,7 @@ export default async (req) => {
         feedbackEndpoint: FEEDBACK_ENDPOINT,
       });
     }
-    return resp(200, {
+    return abstainResp(200, {
       ...base, abstain: true, diagnosis: null, closest: d.closest || null, honestFallback: honestFallback(os),
       // An abstain is still an answer the user can rate — a wrong abstain is the most
       // valuable signal we can collect, so it gets the same real feedback path.
@@ -392,11 +410,32 @@ function honestFallback(os) {
     message: "I'm not confident enough to give you a fix from this — I won't guess.",
     options: [
       { label: 'Type the exact error text', action: 'type-error' },
-      { label: 'Open a discussion in the community', action: 'open-discussion', href: '/forums' },
-      { label: 'Escalate to IIS (a human will help)', action: 'escalate', href: '/aria?escalate=1' },
+      { label: 'Open a discussion in the community', action: 'open-discussion', href: FORUMS_COMPOSE_URL },
+      { label: 'Escalate to IIS (a human will help)', action: 'escalate', href: ESCALATE_URL },
     ],
     os,
   };
+}
+
+// The two navigating options above used to be dead ends: they carried the user to /forums and to
+// /aria and dropped every piece of evidence on the way. `handoff` is the bridge — a ready-to-review
+// discussion draft and a ready-to-review escalation draft, composed SERVER-SIDE so the redaction
+// that protects them cannot be skipped by a client, and so the wording exists in exactly one place
+// (`lib/vision-handoff.mjs`) instead of being re-implemented in a browser file that could drift.
+// The client only stores it and shows it. It never posts either one on its own (Rule 14 + consent).
+function handoffDrafts(res, sentText) {
+  const sent = { kind: res.kind, surface: res.surface, os: res.os, text: sentText || '' };
+  const forums = buildHandoff(res, sent, { target: 'forums' });
+  const escalate = buildHandoff(res, sent, { target: 'escalate' });
+  if (!forums.ok && !escalate.ok) return null;
+  let escalateOut = null;
+  if (escalate.ok) {
+    // The ticket body travels pre-composed, minus the email only the browser knows. The client
+    // adds that one field and POSTs it on an explicit click — it never invents the rest.
+    const req = escalationRequest(escalate);
+    escalateOut = { ...escalate, request: req.ok ? { endpoint: req.endpoint, body: req.body, needsEmail: true } : null };
+  }
+  return { forums: forums.ok ? forums : null, escalate: escalateOut };
 }
 
 function resp(status, obj) {

@@ -21,6 +21,11 @@
  * Text/logs are matched against the offline KB — the widget shows exactly what leaves the device.
  * PDFs are read locally by aria-pdf-text.js (load it before this file): the file never leaves the
  * device, only the extracted text is submitted, and an unreadable PDF is refused, never guessed.
+ *
+ * HANDOFF: when ARIA abstains, "Open a discussion" / "Escalate to IIS" carry the evidence with
+ * them instead of dropping it. Load aria-vision-handoff.js before this file to enable that; the
+ * draft text itself is composed server-side (lib/vision-handoff.mjs), never here. Nothing is
+ * posted or sent by this widget — the user submits on the destination page.
  */
 (function (global) {
   'use strict';
@@ -344,11 +349,46 @@
         card.appendChild(el('div', 'avd-h', '<span class="avd-badge abstain">Not sure — won\'t guess</span>'));
         var hf = res.honestFallback || {};
         card.appendChild(el('p', null, esc(hf.message || 'I don\'t have a confident answer for this one.')));
+        // The handoff drafts the SERVER composed for this abstain (null when there was genuinely
+        // nothing real to hand over). The widget never writes a word of them — see
+        // aria-vision-handoff.js for why composition stays server-side.
+        var handoff = hf.handoff || null;
+        var HO = global.ARIAVisionHandoff || null;
         (hf.options || []).forEach(function (o) {
           var btn = el('button', 'avd-btn ghost', esc(o.label));
-          btn.addEventListener('click', function () { if (o.href) global.location.href = o.href; else if (opts.onFallback) opts.onFallback(o, res); });
+          btn.addEventListener('click', function () {
+            // "Open a discussion" and "Escalate to IIS" used to be dead links: they navigated
+            // away and left every piece of evidence behind, so the user had to re-describe from
+            // memory the thing they had just shown us. Now the draft travels with them.
+            var draft = null;
+            if (handoff && o.action === 'open-discussion') draft = handoff.forums;
+            if (handoff && o.action === 'escalate') draft = handoff.escalate;
+            if (draft && HO) {
+              // If storage is unavailable (private mode, blocked storage) we must not navigate
+              // promising a prefilled form we cannot deliver. Say so and stay put.
+              if (!HO.stash(draft)) {
+                var warn = el('p', 'avd-note',
+                  'This browser will not let me carry the details to the next page. Copy the summary below and paste it there.');
+                card.appendChild(warn);
+                card.appendChild(buildDraftPreview(draft));
+                return;
+              }
+            }
+            if (opts.onFallback) {
+              var handled = opts.onFallback(o, res, draft);
+              if (handled === true) return;      // host took over (Sentinel has no site nav)
+            }
+            if (o.href) global.location.href = o.href;
+          });
           card.appendChild(btn);
         });
+        // What would travel, in plain words, BEFORE anything is handed over. Collapsed by
+        // default (Rule 15's density rule: minimise, never delete) and built by counting what is
+        // actually in the draft rather than by describing what we meant to put there.
+        if (handoff && HO) {
+          var anyDraft = handoff.forums || handoff.escalate;
+          if (anyDraft) card.appendChild(buildDraftPreview(anyDraft));
+        }
         // A wrong abstain is the single most valuable signal we can collect — rate it too.
         card.appendChild(buildFeedback(res));
       } else {
@@ -524,6 +564,23 @@
         if (!r || !r.ok) return { recorded: false, reason: 'http-' + ((r && r.status) || 'error') };
         return { recorded: true, payload: payload };
       }).catch(function (e) { return { recorded: false, reason: (e && e.message) || 'network' }; });
+    }
+
+    // buildDraftPreview(draft) — the "what will travel" disclosure for a handoff. Shows the
+    // literal draft text, not a paraphrase of it, so what the user reads is what would be sent.
+    function buildDraftPreview(draft) {
+      var HO = global.ARIAVisionHandoff || null;
+      var wrap = el('details', 'avd-log');
+      wrap.appendChild(el('summary', null, 'What gets handed over if you pick one of those'));
+      var lines = (HO && HO.describe) ? HO.describe(draft) : [];
+      if (lines.length) {
+        var ul = el('ul', 'avd-log-list');
+        lines.forEach(function (l) { ul.appendChild(el('li', null, esc(l))); });
+        wrap.appendChild(ul);
+      }
+      wrap.appendChild(el('div', 'avd-steps', esc(draft.body || '')));
+      wrap.appendChild(el('p', 'avd-note', 'Nothing is posted or sent until you press the button on that page yourself.'));
+      return wrap;
     }
 
     function renderError(msg) { out.innerHTML = ''; out.appendChild(el('div', 'avd-err', esc(msg))); }

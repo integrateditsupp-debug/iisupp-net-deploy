@@ -258,6 +258,47 @@ async function renderThreadList() {
   ).join("");
 }
 $("#newThreadBtn").addEventListener("click", () => requireSignIn(() => { $("#composerWrap").hidden = false; $("#ctTitle").focus(); }));
+
+// ── ARIA vision handoff → prefilled discussion draft
+// When ARIA abstains on a screenshot / log / PDF it offers "Open a discussion in the community".
+// That used to land here empty, so the user had to re-describe from memory the thing they had just
+// shown ARIA. The draft now travels with them (same-origin sessionStorage — never the URL, which
+// would copy their error text into access logs, Referer headers and history).
+//
+// It is a DRAFT, not a post: the composer opens, the text is editable, and the existing submit
+// path is untouched. Nothing is posted until the person presses the button themselves. The text is
+// composed server-side (netlify/functions/lib/vision-handoff.mjs) and already redacted there —
+// nothing is re-worded here, and no ARIA-authored line is added to it.
+function applyVisionHandoff() {
+  const HO = window.ARIAVisionHandoff;
+  if (!HO || !HO.take) return;
+  const params = new URLSearchParams(location.search);
+  if (params.get("compose") !== "vision" && !HO.peek()) return;
+  const draft = HO.take();
+  if (!draft || !draft.body) return;
+
+  $("#composerWrap").hidden = false;
+  $("#ctTitle").value = draft.title || "";
+  $("#ctBody").value = draft.body;
+  if (Array.isArray(draft.tags) && draft.tags.length) $("#ctTags").value = draft.tags.join(", ");
+
+  // Say where it came from, and say the one thing that matters: it is not posted yet. A title
+  // ARIA could not derive from real evidence is left EMPTY on purpose — it must not invent one —
+  // so in that case the note asks for it and focus goes to the title instead of the body.
+  const wrap = $("#composerWrap");
+  if (!$("#vhNote")) {
+    const note = document.createElement("p");
+    note.id = "vhNote";
+    note.className = "muted";
+    note.style.cssText = "font-size:13px;line-height:1.55;border-left:2px solid var(--gold);padding-left:10px;margin:0 0 12px";
+    note.textContent = draft.titleFromEvidence
+      ? "ARIA could not diagnose this, so it wrote up what it actually read and brought it here. Edit anything, then post it yourself — nothing has been posted."
+      : "ARIA could not diagnose this and could not tell what to call it, so the title is blank on purpose — please write one. The details below are what it actually read. Nothing has been posted.";
+    wrap.insertBefore(note, wrap.firstChild);
+  }
+  toast("Draft ready — review it, then post.");
+  (draft.titleFromEvidence ? $("#ctBody") : $("#ctTitle")).focus();
+}
 $("#composerCancel").addEventListener("click", () => { $("#composerWrap").hidden = true; });
 $("#threadComposer").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -427,12 +468,19 @@ function mountVisionDiagnose() {
     os: /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent || "") ? "mac" : "windows",
     onFallback: (opt) => {
       // Keep the user inside Forums for the "open a discussion" path instead of a hard reload.
-      if (opt && opt.action === "open-discussion") { location.hash = "#discussions"; return; }
+      // The widget has already stashed the draft by the time this runs, so the composer can be
+      // filled in place; returning true tells the widget not to navigate.
+      if (opt && opt.action === "open-discussion") {
+        location.hash = "#discussions";
+        applyVisionHandoff();
+        return true;
+      }
       if (opt && opt.href) location.href = opt.href;
     },
   });
 }
 mountVisionDiagnose();
 wireDropzones(document);
+applyVisionHandoff();   // a draft ARIA carried here from another page (or from this one)
 loadKb().catch(() => { $("#kbCount").textContent = "--"; });
 route();
