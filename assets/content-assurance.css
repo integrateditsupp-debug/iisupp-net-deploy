@@ -432,10 +432,112 @@
   font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 
+/* The pricing block lives in the narrow right-hand column of .ca-main-grid (~330px).
+   A fixed repeat(3, 1fr) squeezed each card to ~110px, so every description wrapped to
+   two or three words per line at wildly uneven heights. auto-fit collapses it to a single
+   column wherever the container is narrow and restores columns when there is room. */
 .ca-pricing-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 14px;
+}
+
+/* Stacked price rows: fixed amount rail on the left, name + blurb on the right.
+   Reads cleanly from ~240px up, so it survives the sidebar and the mobile stack. */
+.ca-price-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.ca-price-row {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+  padding: 15px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ca-price-row.is-featured {
+  border-color: rgba(197, 160, 89, 0.42);
+  background: rgba(197, 160, 89, 0.06);
+}
+
+.ca-price-amount {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ca-gold-soft);
+  white-space: nowrap;
+}
+
+.ca-price-amount small {
+  display: block;
+  margin-top: 6px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ca-text-muted);
+}
+
+.ca-price-body {
+  min-width: 0;
+}
+
+.ca-price-body b {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.ca-price-body span {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ca-text-soft);
+}
+
+.ca-price-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border: 1px solid rgba(197, 160, 89, 0.5);
+  border-radius: 999px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ca-gold-soft);
+  vertical-align: 2px;
+}
+
+/* .ca-panel p wins on specificity otherwise, and renders this caption at body size. */
+.ca-panel p.ca-price-note {
+  margin: 14px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ca-text-muted);
+}
+
+@media (max-width: 380px) {
+  .ca-price-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .ca-price-amount small {
+    display: inline;
+    margin-left: 8px;
+  }
 }
 
 .ca-price-card strong {
@@ -469,9 +571,11 @@
   text-decoration: underline;
 }
 
+/* Same reason as .ca-pricing-grid — two fixed columns inside a ~330px sidebar produced
+   ~150px cards and shredded the copy. auto-fit gives one column there, two where it fits. */
 .ca-legal-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
 }
 
