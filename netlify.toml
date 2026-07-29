@@ -11,7 +11,14 @@
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["stripe", "@netlify/blobs"]
+  # pdfkit is CommonJS and calls require('stream') internally. esbuild bundling it into an ESM
+  # function turns that into a stub that throws "Dynamic require of \"stream\" is not supported"
+  # AT MODULE LOAD — the lambda never initialises, never writes a response, and Netlify surfaces
+  # "error decoding lambda response: unexpected end of JSON input" as a 502. Every ca-* function
+  # imports lib/content-assurance.mjs, which imports pdfkit, so all six went down at once and the
+  # Content Assurance preview broke. jszip/pdf-parse/mammoth/busboy are externalised for the same
+  # class of reason (CJS interop + runtime file reads that do not survive inlining).
+  external_node_modules = ["stripe", "@netlify/blobs", "pdfkit", "jszip", "pdf-parse", "mammoth", "busboy"]
   # The authed /api/axis-state function reads the worker-emitted full state. Bundle that non-public file with
   # the functions; it is NOT served at a public URL (/netlify/* is redirect-blocked).
   included_files = ["netlify/functions/_axis-state-full.json", "netlify/functions/_axis-snapshots-seed.json"]
