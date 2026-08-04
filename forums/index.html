@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/forums-tokens.css">
 <link rel="stylesheet" href="/assets/forums.css">
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head>
 <body>
 
@@ -23,6 +24,7 @@
         <span class="mark"><img src="/images/logo.png" alt="" aria-hidden="true" onerror="this.remove()"></span>
         <span><b>IIS Forums</b><span class="tag" style="display:block">Powered by ARIA · Fable 5</span></span>
       </a>
+      <a class="forums-subnav-link" href="/support-faq.html" title="Commonly asked questions" style="margin-left:-8px;padding:5px 12px;border:1px solid var(--gold-deep);background:var(--gold-wash);border-radius:var(--r-pill);font-size:12.5px;font-weight:800;letter-spacing:.02em;white-space:nowrap;text-decoration:none;color:var(--gold-hi);box-shadow:0 0 0 3px var(--gold-glow);flex:0 0 auto;">Support FAQ</a>
       <div class="tabs" role="navigation" aria-label="Sections">
         <a href="#solutions" data-nav="solutions">Solutions</a>
         <a href="#discussions" data-nav="discussions">Discussions</a>
@@ -30,7 +32,6 @@
         <a href="#experts" data-nav="experts">Experts</a>
         <a href="#trends" data-nav="trends">Trends</a>
         <a href="/forums/commons">Knowledge Commons</a>
-        <a href="/support-faq.html">Support FAQ</a>
       </div>
       <div class="navspace"></div>
       <form class="navsearch" id="navSearch" role="search">
@@ -51,6 +52,9 @@
         <div class="eyebrow">AI-native IT answers · instantly</div>
         <h1>Describe the problem.<br>Get the fix.</h1>
         <p>Search verified IIS solutions, ask the community, or drop a screenshot and let ARIA diagnose it — free, no account required to read.</p>
+<!-- iis-riskbar:start -->
+<div class="iis-riskbar" role="note" aria-label="Risk notice"><b>Community content.</b> Posts, replies and AI-generated answers here come from many sources, are not verified by IIS, and may be out of date or wrong for your environment. Anything you try from this site is <b>at your own risk</b> &mdash; do your own due diligence, and if the system matters, call <a href="tel:+16475813182">(647)&nbsp;581-3182</a>. <a href="/disclaimer.html">Full disclaimer</a>.</div>
+<!-- iis-riskbar:end -->
         <form class="askbar" id="heroAsk" role="search">
           <span class="ico" aria-hidden="true">⌕</span>
           <input id="heroAskInput" type="search" placeholder='e.g. Outlook stuck at "loading profile" after Windows update' aria-label="Ask or search a problem">
@@ -200,7 +204,7 @@
 
 <footer class="forums-foot">
   <div class="app">
-    Integrated IT Support Inc. · <a href="/">iisupp.net</a> · <a href="/aria">ARIA</a> · <a href="/forums/commons">Knowledge Commons</a> · <a href="/support-faq.html">Support FAQ</a> · <a href="/governance/privacy">Privacy</a>
+    Integrated IT Support Inc. · <a href="/">iisupp.net</a> · <a href="/aria">ARIA</a> · <a href="/forums/commons">Knowledge Commons</a> · <a href="/support-faq.html" style="font-weight:800;color:var(--gold-hi)">Support FAQ</a> · <a href="/governance/privacy">Privacy</a>
     <span style="float:right">Free to read — no account, no paywall.</span>
   </div>
 </footer>
@@ -231,5 +235,14 @@
 <div class="toast-wrap" id="toasts" role="status" aria-live="polite"></div>
 
 <script type="module" src="/assets/forums.js"></script>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+  </div>
+</div>
+<!-- iis-fineprint:end -->
 </body>
 </html>

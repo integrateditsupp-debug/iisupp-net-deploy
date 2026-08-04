@@ -290,6 +290,7 @@ const TESTS = [
   "./web-handoff-contract.test.mjs",
   // RUN-C C1 (2026-06-30) — funnel "zero dead ends" guard: every customer-facing internal link resolves + conversion chain intact.
   "./funnel-link-guard.test.mjs",
+  "./site-fineprint-gate.test.mjs", // 2026-08-04 — the site-wide legal disclaimer strip cannot be lost to a merge
   // RUN-C C3 (2026-06-30) — 5-minute onboarding activation + time-to-first-value (real-or-empty, no dead step).
   "./onboarding-activation.test.mjs",
   // RUN-D D2 (2026-07-01) — pilot->paid capture engine: case study real-or-empty + consent gate + conversion moment.

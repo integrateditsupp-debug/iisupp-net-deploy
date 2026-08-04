@@ -29,9 +29,12 @@ function seed() {
   // priority: gitignored local real snapshot (dev only) → committed fictional seed
   return readJson(LOCAL_FILE) || readJson(SEED_FILE);
 }
+// MUST stay identical to SNAPSHOT_MODULES in assets/axis-constants.js — a module the worker computes
+// but this allowlist omits is silently dropped, and the tab renders empty forever. Gated by
+// tests/snapshot-module-parity.test.mjs so the two lists can never drift again.
 const MODULES = new Set([
   'overview', 'inbox', 'approvals', 'pipeline', 'prospects', 'outreach',
-  'followups', 'documents', 'analytics', 'products', 'fleet', 'reports', 'crm', 'settings',
+  'waiting_reply', 'followups', 'documents', 'analytics', 'products', 'fleet', 'reports', 'crm', 'settings',
 ]);
 
 const cors = {

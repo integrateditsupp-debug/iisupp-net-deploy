@@ -79,6 +79,7 @@
 }
 </script>
     <link rel="stylesheet" href="/assets/iis-motion.css?v=20260710L">
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head>
 <body>
 <div class="wrap">
@@ -86,6 +87,9 @@
   <h1>AI Readiness Scorecard</h1>
   <p class="sub">12 questions · 2 minutes · Get a 0–100 score and a tailored action list. No commitment — just clarity on what to fix first.</p>
 
+  <!-- iis-riskbar:start -->
+<div class="iis-riskbar" role="note" aria-label="Risk notice"><b>About this tool.</b> Your result is a general indication based only on what you enter here &mdash; it is not an audit, an assessment, or professional advice. Inputs and benchmarks may be out of date, so do your own due diligence and use the result <b>at your own risk</b>. Want a real assessment of your environment? Call <a href="tel:+16475813182">(647)&nbsp;581-3182</a>. <a href="/disclaimer.html">Full disclaimer</a>.</div>
+<!-- iis-riskbar:end -->
   <div id="root"></div>
 
   <div class="nav">
@@ -265,5 +269,14 @@ render();
   </div>
 </section>
   <script src="/assets/iis-motion.js?v=20260710L" defer></script>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+  </div>
+</div>
+<!-- iis-fineprint:end -->
 </body>
 </html>

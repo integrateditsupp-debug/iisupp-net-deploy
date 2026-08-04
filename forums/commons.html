@@ -233,6 +233,7 @@
     @media (max-width:640px){ .top{flex-direction:column} .hero{padding-top:46px} .thread-row{flex-wrap:wrap} }
   </style>
   <link rel="stylesheet" href="/assets/iis-motion.css?v=20260710L">
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head>
 <body>
 
@@ -244,6 +245,7 @@
     <nav>
       <a href="/">Home</a>
       <a href="/forums/solutions">Solutions forum</a>
+      <a href="/support-faq.html" title="Commonly asked questions" style="font-weight:800;color:var(--champ)">Support FAQ</a>
       <a href="/growth-library.html">Growth Library</a>
       <a href="/aria.html">ARIA</a>
       <a href="/services.html">Services</a>
@@ -273,7 +275,10 @@
     <p class="sub">A collaboration layer for ARIA users, Growth Library readers, and IIS service clients —
       operators and practitioners sharing what actually works: fixes, playbooks, prompts, and hard-won lessons.
       The boards are <strong style="color:#7fd9a2;font-weight:600">live</strong> — pick one and write the first word.</p>
-    <div class="rule"></div>
+    <!-- iis-riskbar:start -->
+<div class="iis-riskbar" role="note" aria-label="Risk notice"><b>Community content.</b> Posts, replies and AI-generated answers here come from many sources, are not verified by IIS, and may be out of date or wrong for your environment. Anything you try from this site is <b>at your own risk</b> &mdash; do your own due diligence, and if the system matters, call <a href="tel:+16475813182">(647)&nbsp;581-3182</a>. <a href="/disclaimer.html">Full disclaimer</a>.</div>
+<!-- iis-riskbar:end -->
+  <div class="rule"></div>
     <div class="finder">
       <input id="board-finder" type="search" placeholder="FIND YOUR BOARD — TRY &quot;M365&quot;, &quot;SECURITY&quot;, &quot;ARIA&quot;…" aria-label="Filter boards">
     </div>
@@ -368,7 +373,7 @@
   <footer>
     <div class="links">
       <a href="/">Home</a>
-      <a href="/support-faq.html">Support FAQ</a>
+      <a href="/support-faq.html" style="font-weight:800;color:var(--champ)">Support FAQ</a>
       <a href="/growth-library.html">Growth Library</a>
       <a href="/governance/">Governance</a>
       <a href="/terms.html">Terms</a>
@@ -575,5 +580,14 @@
     })();
   </script>
   <script src="/assets/iis-motion.js?v=20260710L" defer data-mode="bg"></script>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+  </div>
+</div>
+<!-- iis-fineprint:end -->
 </body>
 </html>

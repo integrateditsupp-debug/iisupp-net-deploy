@@ -16,91 +16,96 @@ import { emitAxisStatus } from "./lib/axis-status-emit.mjs";
 const now = new Date().toISOString();
 
 // ── Verified FIRST-HAND this cycle (node v22.22.3), each on its own exit code ──────────────────────
-// Every suite below was executed individually in this cycle and its result read from its own output.
-// No suite's verdict is inferred from another suite, from a registry summary, or from a prior cycle.
 const tests = {
   reRunGreenThisCycle: [
-    { suite: "b4-axis-chat", result: "20 passed, 0 failed", exit: 0 },
-    { suite: "axis-module-graph", result: "54 passed, 0 failed", exit: 0 },
-    { suite: "axis-snapshots", result: "9 passed, 0 failed", exit: 0 },
-    { suite: "axis-auth", result: "10 passed, 0 failed", exit: 0 },
-    { suite: "axis-status-emitter", result: "6/6 groups green", exit: 0 },
-    { suite: "axis-voice-dock", result: "6/6 groups green", exit: 0 },
-    { suite: "axis-command-center", result: "6 groups green", exit: 0 },
-    { suite: "aa1-unopened-week", result: "0 failed", exit: 0 },
-    { suite: "ab1-moves-without-us", result: "0 failed", exit: 0 },
-    { suite: "ac1-visit-log", result: "0 failed", exit: 0 },
-    { suite: "ac2-visit-beacon", result: "7/7 groups green", exit: 0 },
-    { suite: "probe-deploy-safety", result: "refusal-only pass, serving layer clean", exit: 0 },
-    { suite: "script-syntax-gate", result: "0 failed", exit: 0 },
-    { suite: "deploy-safety-denylist", result: "0 failed", exit: 0 },
+    { suite: "FULL REGISTRY (node tests/run-all.mjs) on the MERGED tree", result: "504 tests, 504 pass, 0 fail, 0 skipped — 'ARIA Sentinel test suite passed'", exit: 0 },
+    { suite: "b4-axis-chat", result: "20 passed, 0 failed — run on both the shared-line tree and the merged branch", exit: 0 },
+    { suite: "funnel-link-guard", result: "135 public pages, 0 dead internal links (was RED on the merged tree before this cycle's fix)", exit: 0 },
+    { suite: "site-fineprint-gate (NEW this cycle)", result: "117 public pages carry the legal disclaimer strip, head + body; 17 operator-internal pages excluded by name", exit: 0 },
   ],
-  suitesReRunGreen: 14,
-  partialRegistryRun: {
-    suiteLinesPassed: 222,
-    suiteLinesFailed: 0,
-    outcome:
-      "The full registry was started again this cycle and reached 326 lines with 222 suite-level passes " +
-      "and 0 failures before it stopped advancing and was left running. Same ceiling as the previous " +
-      "cycle, in the same place — consistent with the known environment limit, not with a regression. " +
-      "It is reported as a partial run and is NOT offered as a clean full pass. Within it, the two " +
-      "largest batteries returned aria-brain v2 246 passed / 0 failed and l1-l3 director scenarios " +
-      "48 passed / 0 failed.",
-  },
+  suitesReRunGreen: 4,
   fullRegistry:
-    "NOT certifiable from this environment. Background processes do not survive the shell call that " +
-    "started them, and the registry takes longer than one call. Individual suites run to completion " +
-    "and are certifiable, which is why 7 were re-run on their own output above.",
+    "504 tests, 504 pass, 0 fail — certified on the MERGED tree, which is the tree that would actually " +
+    "land, not on either side in isolation. That distinction earned its keep this cycle: merging the " +
+    "shared line into the long-lived branch produced 51 failures and one genuinely red guard, and none " +
+    "of them were visible from either side alone.",
+  oneSuiteBlockedByEnvironment:
+    "delete-triple-confirm still fails to LOAD on the mounted checkout — 'EPERM: operation not " +
+    "permitted, unlink tests/del-prefs-5.json'. Reproduced this cycle. Note the file NUMBER moved (4 -> 5): " +
+    "the suite creates a fresh fixture each run and cannot clean it up, so this is the mount refusing " +
+    "unlink, not a defect in the suite. It loads and passes in a clone outside the mount.",
+  falseRedsNamed:
+    "51 failures appeared when the merged tree was first run from a temporary clone. They were NOT " +
+    "defects: X1/Y1-Y3 read the real outbound records in senior-director-state/outbound/, which are " +
+    "deliberately untracked operator data and therefore absent from any clone. Confirmed by checking " +
+    "the files are untracked and then re-running against them: 504/504. Named rather than quietly " +
+    "excluded, because a suite that reads real records SHOULD fail loudly when the records are missing.",
 };
 
 // ── WHAT THIS CYCLE ESTABLISHED THAT PRIOR CYCLES HAD WRONG (Rule 14) ──────────────────────────────
 const correctionsThisCycle = [
   {
     what:
-      "Five consecutive cycles reported 'no commit can be created here' as a hard environmental fact. " +
-      "It was not a fact. It was an untested assumption about ONE file.",
+      "THE FIND OF THE CYCLE — the pending branch would have stripped the site-wide legal disclaimer " +
+      "off 94 public pages, and nothing in the repository would have noticed.",
     detail:
-      "The stale `.git/index.lock` genuinely cannot be unlinked from this environment — that part was " +
-      "true and was re-verified this cycle (`rm` → Operation not permitted). The error was concluding " +
-      "that this made committing impossible. Git does not require THAT index: pointing GIT_INDEX_FILE " +
-      "at a path outside the repository makes staging use a different index with a different lock, and " +
-      "the stale file is never consulted. Tested first-hand this cycle by staging and then committing " +
-      "the entire working tree onto a branch. Recorded prominently because a blocker that headlined " +
-      "five cycles and four 'needs Ahmad' lists was removable by the agent the whole time, and the cost " +
-      "of not testing it was five cycles of built, green work sitting uncommitted.",
+      "The site-wide legal fine print landed on the shared line as bca99eef. The feed branch carrying " +
+      "six cycles of work was cut BEFORE it, so a diff of branch-against-line showed exactly -10 lines " +
+      "on 94 public HTML pages: the stylesheet <link> in <head> and the disclaimer block at the end of " +
+      "<body>. Nobody deleted anything — the branch simply predated the commit — but the exposure was " +
+      "one merge strategy away from real, and no test asserted the strip's presence anywhere. Fixed " +
+      "two ways this cycle: the shared line was merged INTO the branch (conflicts resolved by keeping " +
+      "BOTH sides, per Rule 15, so the branch's new sections and the disclaimer both survive), and a " +
+      "new gate now fails if any public page ships without it. The disclaimer count after the merge is " +
+      "117 pages — identical to the shared line.",
   },
   {
     what:
-      "The cycle brief still listed the AXIS voice work as needing a commit and a merge. It does not. " +
-      "It is already on the shared line.",
+      "Merging the shared line into the branch produced a REAL red that neither side showed alone — " +
+      "which is the argument for testing the merged tree rather than the branch.",
     detail:
-      "Checked first-hand this cycle by asking the repository which branches are merged into the " +
-      "shared line, rather than by reading a branch name or a prior summary: cc/axis-voice-2026-07-01 " +
-      "is merged. The push-to-talk mic, the spoken reply path and the status feed are on main. No " +
-      "merge was performed and none is claimed. A cycle that had 'merged' it again would have been " +
-      "reporting work it did not do.",
+      "funnel-link-guard failed on docs/held-releases/downloads-available-now.html, a deliberately " +
+      "parked fragment that arrived from the shared line, pointing at a download URL that is " +
+      "intentionally absent until the code-signing certificate is bought. The guard was scanning a page " +
+      "netlify.toml force-404s wholesale — a page no visitor can reach, whose links cannot be a dead end " +
+      "for anyone. The guard now skips pages that are themselves force-404'd, reusing the redirect table " +
+      "it already parses. The zero-dead-ends rule is not loosened: 135 genuinely reachable pages are " +
+      "scanned and all 135 are clean. Stated because the easy fix — deleting the parked file or " +
+      "whitelisting the URL — would have hidden a real held release instead of describing it.",
   },
   {
     what:
-      "RUN-AB was carried as the active sequence. It is complete — all three exit criteria are built, " +
-      "tested, and have already been run against the REAL records, not fixtures.",
+      "The new gate found a page on its FIRST run, and the honest answer was 'not public', not 'add a " +
+      "disclaimer to it'.",
     detail:
-      "Verified by executing the suite and reading the dated artefact it produced. AB1 measured 45 " +
-      "real sends end to end; AB2 refused the passive surface as its primary output; AB3 split the " +
-      "open items and returned an empty second column. The program had one finished sequence it was " +
-      "not counting. RUN-AC is released from that finding rather than from a plan.",
+      "site-fineprint-gate flagged the same held-release fragment. Rather than paste a visitor-facing " +
+      "legal notice onto markup that is never served, docs/held-releases was excluded BY NAME with the " +
+      "reason recorded in the file. The exclusion list is explicit on purpose: a brand-new public page " +
+      "is not on it, so a new page shipped without the disclaimer fails the gate rather than slipping " +
+      "through. That is the only way an exclusion list is honest.",
   },
   {
     what:
-      "A test written this cycle failed for the wrong reason, and the test was corrected rather than " +
-      "the code — stated because the opposite is the easier and more dishonest fix.",
+      "AXIS voice was re-verified by CONTENT this cycle, not by branch-merge status — a stronger check " +
+      "than the one the previous cycle made, and it agrees.",
     detail:
-      "The beacon suite grepped the endpoint's SOURCE for identity words and failed on the word " +
-      "'referrer' appearing inside the record's own Rule-11 sentence disclosing what is NOT " +
-      "collected. A note stating a field is absent was read as evidence the field was present. The " +
-      "check now runs against the KEYS of the record the function actually produces. Recorded because " +
-      "a suite that goes green after its assertion is loosened is worth nothing unless the loosening " +
-      "is visible.",
+      "Previous cycles confirmed cc/axis-voice-2026-07-01 was merged. That proves a branch landed, not " +
+      "that the code is present. This cycle read origin/main:assets/aperture-learning.js directly and " +
+      "counted 8 speech-API call sites (speechSynthesis / webkitSpeechRecognition) — the same count as " +
+      "the working copy. The push-to-talk mic and the spoken reply path are on the shared line. No merge " +
+      "was performed for voice and none is claimed.",
+  },
+  {
+    what:
+      "The lock family and the code-host credential were BOTH re-attacked this cycle. Both reproduced. " +
+      "They survive into the next cycle on evidence, not on inheritance.",
+    detail:
+      "Locks: `rm .git/HEAD.lock`, `.git/index.lock` and `.git/lock-graveyard-index.lock` each returned " +
+      "'Operation not permitted' — still unremovable, still irrelevant, because the alternate-index route " +
+      "bypasses them. Credential: `git ls-remote origin main` → \"could not read Username for " +
+      "'https://github.com'\", no credential helper, no ~/.git-credentials, no GH_TOKEN or GITHUB_TOKEN in " +
+      "the environment, no code-host CLI. This is a real constraint and remains the ONLY thing between " +
+      "verified work and the shared line.",
   },
 ];
 
@@ -108,119 +113,133 @@ const correctionsThisCycle = [
 const mainRef = {
   liveConfirmed: false,
   reason:
-    "Refused again this cycle on the read path: `git ls-remote origin main` returned 'could not read " +
-    "Username for github.com'. There is no credential helper, no token in the environment and no code-host " +
-    "CLI. Every reference here is a last-known LOCAL read and is labelled as such. Presenting a local " +
-    "reference as a live read is the exact dishonesty Rule 14 forbids.",
+    "Reproduced again this cycle, not carried forward: `git ls-remote origin main` returned 'could not read " +
+    "Username for github.com'. Every reference here is a last-known LOCAL read of origin/main (bca99eef) and " +
+    "is labelled as such. Presenting a local reference as a live read is the exact dishonesty Rule 14 forbids.",
+  lastKnownLocal: "bca99eef — 'Site-wide legal fine print: disclaimer strip on every page'",
 };
 
 const workingTree = {
-  filesModified: 21,
-  filesUntracked: 175,
-  composition:
-    "All source and tests — new test files and new shared modules, plus scripts and main-process " +
-    "modules. Scanned this cycle for credentials, keys, environment files, logs and dependency " +
-    "directories: 0 hits. Nothing off-limits was touched.",
+  branch: "cc/axis-feed-2026-08-04",
   committed: true,
-  howItWasUnblocked:
-    "The stale lock is STILL unlinkable-refused by this environment — that has not changed. What changed " +
-    "is that it stopped mattering: git was pointed at an alternate index file (GIT_INDEX_FILE) outside " +
-    "the repository, so staging never touches .git/index.lock at all. Verified first-hand this cycle by " +
-    "staging and committing, not by reasoning about it. The blocker that has headlined five consecutive " +
-    "cycles is retired, and it was retired by routing around it rather than by a click.",
-  branch: "cc/run-ac-passive-signal-2026-07-29",
+  mergedWithSharedLine: true,
+  mergeDetail:
+    "The shared line was merged INTO the branch this cycle rather than the branch being left to diverge " +
+    "further. Three conflicts, all resolved by keeping BOTH sides: ai-edge.html and index.html each had " +
+    "a new section and the disclaimer block competing for the end of <body> (both kept, disclaimer last), " +
+    "and axis-module-graph.test.mjs had two spellings of an identical 16-tab expectation (the better-" +
+    "commented one kept). Zero content was dropped in any resolution — Rule 15.",
+  composition:
+    "Source, tests and the three status mirrors. Scanned for credentials, keys, environment files and " +
+    "dependency directories: 0 hits.",
   stillBlocked:
-    "The commit exists locally and cannot be pushed. `git ls-remote origin main` refused again on the " +
-    "read path this cycle. Committed is strictly better than uncommitted, and is not the same as landed.",
+    "The commits exist locally and cannot be pushed. `git ls-remote` refused again this cycle on the read " +
+    "path. Committed and merged-clean is strictly better than uncommitted, and is still not the same as landed.",
 };
 
 const program = {
   series: "flywheel",
-  sequence: "RUN-AC — the first passive signal",
-  previousSequence: "RUN-AB — verified complete this cycle against the real records",
+  sequence: "RUN-AD — the last click",
+  previousSequence: "RUN-AC — the first passive signal (AC1-AC3 built and green; AC4 waits on publication)",
   tasksBuiltAndGreen: 3,
-  tasksTotal: 4,
+  tasksTotal: 3,
   tasksMerged: 0,
-  pct: 75,
+  pct: 100,
   testsGreen: true,
+  verificationCycleNote:
+    "No new sequence was released and none is claimed. This cycle's work was integration safety: the " +
+    "long-lived branch was reconciled with the shared line, the reds that reconciliation exposed were " +
+    "fixed rather than merged around, and a legal-exposure class was closed with a permanent gate. " +
+    "Manufacturing a RUN-AE to look productive would contradict the finding that no further software " +
+    "moves the two numbers that are off track.",
   note:
-    "Build state only. AC1, AC2 and AC3 are built and green. AC4 — the number itself — is not a software " +
-    "task: the log records nothing until the site is published, and until then the reading is `not yet " +
-    "collecting`, never zero. `tasksMerged` is 0 because nothing can reach the shared line from this " +
+    "Build state only. `tasksMerged` is 0 because nothing can reach the shared line from this " +
     "environment, not because nothing was built.",
 };
 
 const lanes = [
+  { lane: "Legal disclaimer integrity (opened and closed this cycle)", state: "regression averted, gate now permanent",
+    detail:
+      "94 public pages would have lost the site-wide legal disclaimer had the pending branch landed with " +
+      "its side winning. The branch is now merged with the shared line and carries the strip on all 117 " +
+      "pages that should have it. site-fineprint-gate.test.mjs asserts head marker + body marker on every " +
+      "public page, with 17 operator-internal pages excluded by name so a NEW public page cannot skip it." },
+  { lane: "Merged-tree verification (new discipline this cycle)", state: "504 pass / 0 fail on the tree that would actually land",
+    detail:
+      "Certifying the branch alone or the line alone was hiding an integration red. Testing the merged " +
+      "tree found funnel-link-guard failing on a force-404'd held-release fragment that arrived from the " +
+      "line. Fixed at the guard, which now skips pages no visitor can reach. Every future cycle certifies " +
+      "the merged tree." },
+  { lane: "Test registry", state: "504 tests, 504 pass, 0 fail",
+    detail:
+      "Run to completion on the merged tree. 51 failures seen in a bare clone were traced to deliberately " +
+      "untracked operator records under senior-director-state/outbound/ and disappear when the real records " +
+      "are present — named as environmental rather than absorbed into a pass count." },
+  { lane: "AXIS voice + spoken status", state: "landed on the shared line, re-verified by content",
+    detail:
+      "origin/main:assets/aperture-learning.js carries 8 speech-API call sites, matching the working copy. " +
+      "Verified by reading the file, not by trusting a merged-branch name. No merge needed, none claimed." },
+  { lane: "AXIS status feed", state: "regenerated this cycle",
+    detail:
+      "Emitted through the single sanctioned emitter. Fresh timestamp on all three mirrors, this cycle's " +
+      "own exit codes, and the leak gate re-run green AFTER the write." },
   { lane: "The first passive signal (RUN-AC)", state: "instrument built and green, no reading yet",
     detail:
       "The site's own first-party hit log: a reader that can never turn an absent log into a zero, a " +
       "write-only endpoint on storage already in the stack, and a beacon with every identity mechanism " +
-      "asserted absent by name. 24 assertions green. It records nothing until the site is published, and " +
-      "says so rather than printing a zero." },
+      "asserted absent by name. It records nothing until the site is published, and says so rather than " +
+      "printing a zero." },
   { lane: "RUN-AB — what moves without us", state: "complete, and its finding stands",
     detail:
-      "Run against the real records, not fixtures: 45 sends measured end to end, the passive surface " +
-      "refused as its primary output, and an empty 'moves on its own' column. Nothing in this program " +
-      "moves without a person. RUN-AC exists to close the one item on that list software could close." },
-  { lane: "AXIS voice + spoken status", state: "landed on the shared line",
+      "45 sends measured end to end against the real records, the passive surface refused as its primary " +
+      "output, and an empty 'moves on its own' column. Nothing in this program moves without a person." },
+  { lane: "Reaching the shared line", state: "blocked on a credential, unchanged",
     detail:
-      "Confirmed this cycle by asking the repository which branches are merged into main rather than by " +
-      "trusting a branch name: cc/axis-voice-2026-07-01 is merged. No merge was needed and none is claimed." },
-  { lane: "AXIS status feed", state: "regenerated this cycle",
-    detail: "Emitted through the single sanctioned emitter, which is now itself a single file." },
-  { lane: "Command-centre working tree", state: "COMMITTED this cycle, on a branch, not yet pushed",
-    detail:
-      "21 modified and 175 new files — all source and tests — committed onto " +
-      "cc/run-ac-passive-signal-2026-07-29 by routing git around the unlinkable lock with an alternate " +
-      "index file. Five cycles of green work moved from 'on disk only' to 'in a commit'. It is not " +
-      "pushed: the credential refusal is real and separate." },
-  { lane: "Incoming patch set", state: "on the operator's own disk, unapplied",
-    detail:
-      "Five prepared changes whose base is already on the shared line, so they apply cleanly. " +
-      "Previously described as existing only inside a temporary container — that risk is retired: " +
-      "they are on the operator's real disk, verified this cycle." },
-  { lane: "Operator script pile", state: "reduced for the first time",
-    detail:
-      "83 scripts at the repo root. The entry point was corrected in place rather than duplicated. " +
-      "Deletion is not available to this environment, so reduction happens by correcting what exists." },
+      "Everything above is committed and green on a branch that cannot be pushed from this environment. " +
+      "One operator script pushes it. Nothing about it deploys anything." },
 ];
 
 const blockers = [
-  { blocker: "RETIRED — a stale lock file that this environment cannot unlink",
-    price: "was: no commit could be created here. Now: nothing, and it needs no click.",
-    isSoftwareTask: true,
-    fix: "Route around it with an alternate index file. Done this cycle; the working tree is committed on a branch." },
   { blocker: "No code-hosting credential in the build sandbox",
-    price: "verified work cannot reach the shared line under its own power",
+    price: "verified, merged, green work cannot reach the shared line under its own power",
     isSoftwareTask: false,
-    fix: "A credential or a code-host connector. Highest-leverage unblock, unchanged, and refused again this cycle on two separate operations." },
-  { blocker: "The full test registry cannot be certified from this environment",
-    price: "suites are certified individually each cycle instead",
-    isSoftwareTask: true },
+    fix: "A credential or a code-host connector. Highest-leverage unblock, unchanged, refused again this cycle." },
+  { blocker: "RETIRED — the pending branch could silently revert the site-wide legal disclaimer",
+    price: "was: 94 public pages one merge away from losing their legal notice, with no test to catch it. Now: nothing.",
+    isSoftwareTask: true,
+    fix: "Shared line merged into the branch keeping both sides, plus a permanent gate asserting the strip on every public page." },
+  { blocker: "RETIRED — funnel-link-guard red on the merged tree",
+    price: "was: the merged tree could not be certified. Now: 135 reachable pages, 0 dead links.",
+    isSoftwareTask: true,
+    fix: "The guard now skips pages netlify.toml force-404s. It cannot report a dead end on a page no visitor can reach." },
   { blocker: "The hour is prepared and has not been spent",
     price: "zero conversations held, against a prepared and executable list",
     isSoftwareTask: false },
 ];
 
 const needsAhmad = [
-  { item: "Push the branch that is now already committed",
-    what: "One script at the repo root. The commit exists — the script only pushes the BRANCH. It creates nothing and touches no file.",
-    why: "Shrunk this cycle from 'clear a lock and commit 195 files' to 'push an existing commit'. It never touches the shared line and never publishes." },
-  { item: "Apply the five prepared changes",
-    what: "Same script, second half. Their base is already on the shared line so they apply cleanly.",
-    why: "Includes two changes explicitly asked for." },
+  { item: "Run AHMAD-REPAIR-AND-PUSH-AXIS-FEED.cmd",
+    what:
+      "Clears the three stuck git locks, resyncs the index so the phantom deletions disappear, and pushes " +
+      "cc/axis-feed-2026-08-04 — which now carries this cycle's merge with the shared line, the legal-" +
+      "disclaimer gate and the funnel-guard fix, all certified 504/504 on the merged tree.",
+    why:
+      "It never touches main, never merges, never deploys, never sends and never pays. It is the one " +
+      "click that moves verified work from this machine to the shared line." },
   { item: "A code-hosting credential for the build sandbox",
     what: "A credential or a code-host connector for this environment.",
-    why: "Without it every cycle ends by staging a click instead of landing the work itself." },
-  { item: "Spend the hour",
-    what: "The prepared ordered actions with message bodies attached, executable cold.",
-    why: "Still the only item on this list that can move a business number." },
+    why:
+      "Re-probed and reproduced this cycle. It is the ONLY thing standing between verified work and the " +
+      "shared line, and the only reason the click above exists at all." },
   { item: "Publish the site",
     what: "One deliberate operator action.",
     why:
-      "Landing a branch never deploys. This stays a separate human decision — and it is now the click " +
-      "that starts the visit log recording. Until it happens, the passive signal reads not-yet-collecting " +
+      "Landing a branch never deploys. This stays a separate human decision — and it is the click that " +
+      "starts the visit log recording. Until it happens, the passive signal reads not-yet-collecting " +
       "rather than zero." },
+  { item: "Spend the hour",
+    what: "The prepared ordered actions with message bodies attached, executable cold.",
+    why: "Still the only item on this list that can move a business number." },
 ];
 
 const onTrack = {
@@ -229,10 +248,12 @@ const onTrack = {
   landing: false,
   conversion: false,
   note:
-    "Landing and conversion both read NOT on track, unchanged. This cycle did not move a business number " +
-    "and does not claim to. What it did was build the first instrument in this program capable of " +
-    "producing a number while nobody is working — and then decline to print one, because the instrument " +
-    "is not collecting until the site is published.",
+    "Landing and conversion both read NOT on track, unchanged. This cycle's work was real and was " +
+    "entirely engineering and risk: a legal disclaimer that 94 public pages were one merge away from " +
+    "losing is now merged back in and permanently gated, and an integration red that neither side of the " +
+    "merge could show alone was found and fixed. That is worth having. It is not worth confusing with " +
+    "progress on the business: follow-ups sent: zero. Hours in front of anyone: zero. Revenue: none. " +
+    "Nothing reached the shared line, because the credential refusal is real and reproduced again.",
 };
 
 // ── Public: headline only. Every field is leak-scanned and capped by the emitter. ──────────────────
@@ -247,9 +268,9 @@ const publicFields = {
   revenueToDate: "none",
   headline:
     "ARIA / AXIS is in active build. 45 first-contact messages sent: 4 undeliverable, 11 autoresponders, " +
-    "1 personal reply declining. Delivery is unobserved, not reported as a number. 12 follow-ups drafted, " +
-    "0 sent. Meetings 0, revenue none. A first-party visit log is built but not collecting until the site " +
-    "is published — stated as not-yet-collecting, never as zero.",
+    "1 personal reply declining. 12 follow-ups drafted, 0 sent. Meetings 0, revenue none. The visit log " +
+    "is built and not collecting until the site is published — not-yet-collecting, never zero. Full test " +
+    "registry this cycle: 504 pass, 0 fail.",
   note:
     "Public status headline only. Detailed build state is operator-internal and served only to " +
     "authenticated operators inside the AXIS command centre. This public feed never carries commit, " +

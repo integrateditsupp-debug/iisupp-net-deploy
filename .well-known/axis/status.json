@@ -1,10 +1,10 @@
 {
- "generatedAt": "2026-08-04T06:39:35.000Z",
+ "generatedAt": "2026-08-04T15:45:45.145Z",
  "status": "active build",
  "milestone": "The customer-facing product and the operator command centre are built and tested. Delivery is staged and waits on deliberate operator actions, not on further software.",
  "readiness": "Built and tested. Publishing is a deliberate manual step by the operator, never automatic.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build. Eight test gates re-ran green this cycle on their own exit codes. 45 first-contact messages sent: 4 undeliverable, 11 autoresponders, 1 personal reply declining. 12 follow-ups drafted, 0 sent, so no reply to them exists yet. Meetings 0, revenue none. The first-party visit log is built and not collecting until publish.",
+ "headline": "ARIA / AXIS is in active build. 45 first-contact messages sent: 4 undeliverable, 11 autoresponders, 1 personal reply declining. 12 follow-ups drafted, 0 sent. Meetings 0, revenue none. The visit log is built and not collecting until the site is published — not-yet-collecting, never zero. Full test registry this cycle: 504 pass, 0 fail.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
  "schema": "axis-status/1",
  "public": true,

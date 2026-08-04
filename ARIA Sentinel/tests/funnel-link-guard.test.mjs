@@ -65,8 +65,19 @@ function walk(d, acc) {
 // 1 — ZERO DEAD ENDS across every customer-facing page.
 const pages = walk(ROOT, []);
 assert.ok(pages.length > 50, `expected to scan the public site (>50 pages), saw ${pages.length}`);
+// A page that is itself force-404'd is not a customer-facing page: no visitor can reach it, so its
+// links cannot be a dead end for anyone. Scanning it anyway was reporting broken links on unreachable
+// markup — found 2026-08-04 when a parked, deliberately-unpublished held-release fragment under
+// docs/ (which netlify.toml 404s wholesale) failed this guard for a download URL that is intentionally
+// absent until the code-signing certificate is bought. The reachability decision reuses the redirect
+// table this file already parses; it does not loosen the zero-dead-ends rule for any live page.
+const isForce404Page = (rel) => {
+  const r = matchRedirect("/" + rel.split(path.sep).join("/"));
+  return !!r && r.status === 404;
+};
 const dead = [];
 for (const f of pages) {
+  if (isForce404Page(f)) continue;
   const html = read(f);
   const dir = path.dirname("/" + f).replace(/^\//, "");
   for (const h of extract(html)) {

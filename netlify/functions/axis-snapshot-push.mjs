@@ -22,9 +22,12 @@ const STORE = 'axis-snapshots';
 const VERSION_KEY = 'version';
 const MAX_BODY = 4 * 1024 * 1024; // 4 MB — a full 14-module snapshot is orders of magnitude smaller
 
+// MUST stay identical to SNAPSHOT_MODULES in assets/axis-constants.js — a module the worker computes
+// but this allowlist omits is silently dropped, and the tab renders empty forever. Gated by
+// tests/snapshot-module-parity.test.mjs so the two lists can never drift again.
 const MODULES = new Set([
   'overview', 'inbox', 'approvals', 'pipeline', 'prospects', 'outreach',
-  'followups', 'documents', 'analytics', 'products', 'fleet', 'reports', 'crm', 'settings',
+  'waiting_reply', 'followups', 'documents', 'analytics', 'products', 'fleet', 'reports', 'crm', 'settings',
 ]);
 
 const headers = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };

@@ -122,6 +122,7 @@ a{color:var(--gold-solid);text-decoration:none}
   }
 }
 </script>
+  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head>
 <body>
 <div class="wrap">
@@ -132,7 +133,10 @@ a{color:var(--gold-solid);text-decoration:none}
     <div class="kicker">Free &middot; 60 seconds &middot; no signup to see your score</div>
     <h1 class="hero-title">What's your <em>IT Health Score?</em></h1>
     <p class="hero-sub">Six quick questions reveal the risks quietly costing most businesses money and downtime. You'll see your score and your top three weak spots <strong>instantly</strong>.</p>
-    <div class="cta-row"><button class="cta-btn" id="startBtn">Start the check →</button></div>
+    <!-- iis-riskbar:start -->
+<div class="iis-riskbar" role="note" aria-label="Risk notice"><b>About this tool.</b> Your result is a general indication based only on what you enter here &mdash; it is not an audit, an assessment, or professional advice. Inputs and benchmarks may be out of date, so do your own due diligence and use the result <b>at your own risk</b>. Want a real assessment of your environment? Call <a href="tel:+16475813182">(647)&nbsp;581-3182</a>. <a href="/disclaimer.html">Full disclaimer</a>.</div>
+<!-- iis-riskbar:end -->
+  <div class="cta-row"><button class="cta-btn" id="startBtn">Start the check →</button></div>
     <div class="trust">No account. No card. Your answers stay private.</div>
   </section>
 
@@ -381,5 +385,14 @@ a{color:var(--gold-solid);text-decoration:none}
     <a href="/switching-it-provider-checklist.html" style="color:#c5a059;text-decoration:none;border-bottom:1px solid rgba(197,160,89,.35)">Switching IT providers: what do you own?</a>
   </div>
 </section>
+<!-- iis-fineprint:start -->
+<div class="iis-fineprint" role="note" aria-label="Site content disclaimer">
+  <div class="iis-fineprint__inner">
+    <span class="iis-fineprint__label">Disclaimer</span>
+    <p class="iis-fineprint__text">Content on iisupp.net and its sub-sites is general information only. Any troubleshooting step, instruction, tool, estimate or data taken from this site is <strong style="color:rgba(255,255,255,.5);font-weight:600">used at your own risk</strong>, and information may be out of date &mdash; please do your own due diligence before acting on it.</p>
+    <p class="iis-fineprint__text">No published guide can account for every factor in a live environment. If the system matters, don&rsquo;t guess &mdash; call <a href="tel:+16475813182">(647) 581-3182</a> and have it done safely. Full <a href="/disclaimer.html">disclaimer</a> &middot; <a href="/terms.html">terms</a> &middot; <a href="/governance/privacy">privacy</a>.</p>
+  </div>
+</div>
+<!-- iis-fineprint:end -->
 </body>
 </html>
