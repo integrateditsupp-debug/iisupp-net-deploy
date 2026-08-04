@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>60-Second IT Health Check — Integrated IT Support</title>
-<meta name="description" content="Answer 6 quick questions and get your IT Health Score instantly. Free. No signup to see your result.">
+<title>IT Health Check — Score your IT in 90 seconds | Integrated IT Support</title>
+<meta name="description" content="Eleven quick questions covering backups, MFA, email fraud, patching, access, recovery and what IT costs you today. Get your IT Health Score instantly. Free. No signup to see your result.">
 <meta property="og:title" content="What's your IT Health Score?">
-<meta property="og:description" content="60 seconds. 6 questions. Instant score + the top risks hiding in your IT. Free.">
+<meta property="og:description" content="90 seconds. 11 questions. Instant score, your top risks, what you already have covered, and a cost model you can play with. Free.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
@@ -68,6 +68,44 @@ a{color:var(--gold-solid);text-decoration:none}
 .risk b{color:var(--ink);font-weight:600}
 .risk small{display:block;color:var(--dim);font-size:13px;line-height:1.55;margin-top:2px}
 
+/* sector context + cost framing */
+.ctx{background:#0a0805;border:1px solid var(--line);border-left:2px solid var(--gold-solid);border-radius:10px;padding:18px 20px;margin:0 0 26px;color:var(--dim);font-size:13.5px;line-height:1.7}
+.costline{color:var(--dim);font-size:13px;line-height:1.6;max-width:460px;margin:-14px auto 26px;text-align:center;font-style:italic}
+.field select{width:100%;background:#080603;border:1px solid #2f2817;color:var(--ink);padding:14px 15px;border-radius:9px;font-size:15px;font-family:inherit;transition:border-color .15s;appearance:none}
+.field select:focus{outline:none;border-color:var(--gold-solid)}
+.orcall{text-align:center;margin-top:14px}
+.orcall a{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:12px 22px;font-family:monospace;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-solid);transition:border-color .15s}
+.orcall a:hover{border-color:var(--gold-solid)}
+
+/* service desk cost model */
+.dc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px 22px;margin:0 0 26px}
+.dc h3{font-family:'Inter',sans-serif;font-size:16px;letter-spacing:.01em;color:var(--ink);margin:0 0 6px;font-weight:600}
+.dc-sub{color:var(--dim);font-size:13px;line-height:1.6;margin:0 0 20px}
+.dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.dc-f{display:flex;flex-direction:column;gap:6px}
+.dc-f span{font-size:11.5px;letter-spacing:.06em;color:var(--dim);text-transform:uppercase}
+.dc-f input,.dc-f select{background:#080603;border:1px solid #2f2817;color:var(--ink);padding:11px 12px;border-radius:8px;font-size:14.5px;font-family:inherit;width:100%;transition:border-color .15s}
+.dc-f input:focus,.dc-f select:focus{outline:none;border-color:var(--gold-solid)}
+.dc-bar{margin-bottom:14px}
+.dc-bh{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:6px;gap:10px}
+.dc-bh b{color:var(--ink);font-weight:600}
+.dc-bh i{font-style:normal;color:var(--dim);font-size:12px}
+.dc-bh u{text-decoration:none;color:var(--gold-bright);font-weight:700;font-size:15px;white-space:nowrap}
+.dc-t{height:12px;background:#141109;border-radius:99px;overflow:hidden}
+.dc-t > i{display:block;height:100%;width:0;border-radius:99px;transition:width .7s cubic-bezier(.16,.84,.44,1)}
+.dc-t.now  > i{background:#5a6570}
+.dc-t.house> i{background:#8a6f3a}
+.dc-t.aria > i{background:var(--gold)}
+.dc-t.msp  > i{background:linear-gradient(135deg,#7c5cff,#b3a0ff)}
+.dc-note{background:#0a0805;border-left:2px solid var(--gold-solid);border-radius:8px;padding:14px 16px;color:var(--dim);font-size:13px;line-height:1.7;margin:16px 0 0}
+.dc-fine{color:#6f6a5e;font-size:11.5px;line-height:1.65;margin:14px 0 0}
+.dc-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.dc-cta a{flex:1 1 auto;text-align:center;border-radius:8px;padding:12px 16px;font-family:monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;white-space:nowrap}
+.dc-b1{background:var(--gold);color:#050505}
+.dc-b2{border:1px solid var(--line);color:var(--gold-solid);font-weight:400}
+.dc-b2:hover{border-color:var(--gold-solid)}
+@media (max-width:520px){.dc-grid{grid-template-columns:1fr}}
+
 /* lead form */
 .lead{background:linear-gradient(180deg,#100d07,#0a0805);border:1px solid var(--line);border-radius:16px;padding:26px 22px;margin-top:6px}
 .lead h3{font-size:19px;margin:0 0 6px;text-align:center}
@@ -92,19 +130,19 @@ a{color:var(--gold-solid);text-decoration:none}
 </style>
 
 <meta property="og:title" content="IT Health Check — IIS">
-<meta property="og:description" content="60-second IT health quiz.">
+<meta property="og:description" content="90-second IT health check — 11 questions, instant score, live cost model.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://iisupp.net/health-check">
 <meta property="og:image" content="https://iisupp.net/assets/aria-og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="IT Health Check — IIS">
-<meta name="twitter:description" content="60-second IT health quiz.">
+<meta name="twitter:description" content="90-second IT health check — 11 questions, instant score, live cost model.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "IT Health Check",
-  "description": "60-second IT health quiz.",
+  "description": "90-second IT health check — 11 questions, instant score, live cost model.",
   "url": "https://iisupp.net/health-check",
   "provider": {
     "@type": "Organization",
@@ -122,7 +160,7 @@ a{color:var(--gold-solid);text-decoration:none}
   }
 }
 </script>
-  <!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
+<!-- iis-fineprint:head:start --><link rel="stylesheet" href="/assets/iis-fineprint.css?v=20260729a"><!-- iis-fineprint:head:end -->
 </head>
 <body>
 <div class="wrap">
@@ -130,20 +168,20 @@ a{color:var(--gold-solid);text-decoration:none}
 
   <!-- ===== INTRO ===== -->
   <section id="intro" class="fade">
-    <div class="kicker">Free &middot; 60 seconds &middot; no signup to see your score</div>
+    <div class="kicker">Free &middot; about 90 seconds &middot; no signup to see your score</div>
     <h1 class="hero-title">What's your <em>IT Health Score?</em></h1>
-    <p class="hero-sub">Six quick questions reveal the risks quietly costing most businesses money and downtime. You'll see your score and your top three weak spots <strong>instantly</strong>.</p>
-    <!-- iis-riskbar:start -->
+    <p class="hero-sub">Eleven quick questions across backups, access, email fraud, patching, recovery and what IT costs you today — the things that quietly cost businesses money and downtime. You'll see your score, your top weak spots, and <strong>what you already have covered</strong>, instantly.</p>
+<!-- iis-riskbar:start -->
 <div class="iis-riskbar" role="note" aria-label="Risk notice"><b>About this tool.</b> Your result is a general indication based only on what you enter here &mdash; it is not an audit, an assessment, or professional advice. Inputs and benchmarks may be out of date, so do your own due diligence and use the result <b>at your own risk</b>. Want a real assessment of your environment? Call <a href="tel:+16475813182">(647)&nbsp;581-3182</a>. <a href="/disclaimer.html">Full disclaimer</a>.</div>
 <!-- iis-riskbar:end -->
-  <div class="cta-row"><button class="cta-btn" id="startBtn">Start the check →</button></div>
-    <div class="trust">No account. No card. Your answers stay private.</div>
+    <div class="cta-row"><button class="cta-btn" id="startBtn">Start the check →</button></div>
+    <div class="trust">No account. No card. Nothing is sent anywhere until you choose to ask for the full report.</div>
   </section>
 
   <!-- ===== QUIZ ===== -->
   <section id="quiz" class="hide">
     <div class="bar"><i id="barFill"></i></div>
-    <div class="qcount" id="qCount">Question 1 of 6</div>
+    <div class="qcount" id="qCount">Question 1 of 11</div>
     <h2 class="q-title" id="qTitle"></h2>
     <div class="opts" id="opts"></div>
   </section>
@@ -165,11 +203,63 @@ a{color:var(--gold-solid);text-decoration:none}
       </div>
       <div class="grade" id="gradeText"></div>
       <p class="verdict" id="verdict"></p>
+      <p class="costline" id="costLine"></p>
     </div>
 
     <div class="risks" id="risksBox">
       <h3>Your top action items</h3>
       <div id="riskList"></div>
+    </div>
+
+    <div class="risks hide" id="strengthsBox">
+      <h3>What you already have covered</h3>
+      <div id="strengthList"></div>
+    </div>
+
+    <div class="ctx hide" id="contextBox"></div>
+
+    <!-- ===== SERVICE DESK COST MODEL ===== -->
+    <div class="dc" id="deskCalc">
+      <h3>Build your service desk — what it costs vs ARIA</h3>
+      <p class="dc-sub">These are your numbers, not ours. Change anything below and the chart moves. Nothing here is sent anywhere.</p>
+
+      <div class="dc-grid">
+        <label class="dc-f"><span>Staff needing support</span>
+          <input type="number" id="dc_staff" min="1" max="5000" step="1"></label>
+        <label class="dc-f"><span>Tickets per person / month</span>
+          <input type="number" id="dc_tpp" min="0.1" max="20" step="0.1" value="2.5"></label>
+        <label class="dc-f"><span>Tickets one analyst closes / month</span>
+          <input type="number" id="dc_tpa" min="20" max="600" step="10" value="180"></label>
+        <label class="dc-f"><span>Analyst salary (CAD / yr)</span>
+          <input type="number" id="dc_sal" min="30000" max="200000" step="1000" value="65000"></label>
+        <label class="dc-f"><span>Employer burden %</span>
+          <input type="number" id="dc_bur" min="0" max="60" step="1" value="25"></label>
+        <label class="dc-f"><span>Tools per analyst / month</span>
+          <input type="number" id="dc_tools" min="0" max="500" step="5" value="55"></label>
+        <label class="dc-f"><span>Coverage you need</span>
+          <select id="dc_cov">
+            <option value="1">Business hours</option>
+            <option value="1.6">Extended hours</option>
+            <option value="3.5">24/7</option>
+          </select></label>
+        <label class="dc-f"><span>What you pay today (CAD / mo)</span>
+          <input type="number" id="dc_now" min="0" max="500000" step="100"></label>
+      </div>
+
+      <div class="dc-chart" id="dcChart"></div>
+      <div class="dc-note" id="dcNote"></div>
+
+      <div class="dc-fine">
+        In-house is calculated purely from the values above — headcount is rounded up, because you cannot hire two-thirds of an analyst.
+        ARIA and managed figures use published pricing (USD converted at 1.36). What the in-house column does <strong>not</strong> include:
+        recruitment, turnover, management time, training, or the weeks when your one analyst is sick, on vacation, or has just resigned.
+      </div>
+
+      <div class="dc-cta">
+        <a class="dc-b1" href="/plans">See the plans →</a>
+        <a class="dc-b2" href="tel:+16475813182">Call (647) 581-3182</a>
+        <a class="dc-b2" id="dcMail" href="mailto:ahmad.wasee@iisupp.net">Email us</a>
+      </div>
     </div>
 
     <!-- lead capture -->
@@ -187,6 +277,7 @@ a{color:var(--gold-solid);text-decoration:none}
         <div class="err" id="formErr"></div>
         <div class="formnote">Prefer to talk now? Call <a href="tel:+16475813182">(647) 581-3182</a> or <a href="/aria.html">ask ARIA</a>.</div>
       </form>
+      <div class="orcall" id="bookRow"><a href="/book">Rather just book 15 minutes →</a></div>
       <div class="thanks hide" id="thanks">
         <div class="big">Check your inbox ✓</div>
         <p class="s" style="margin:0">Your full report is on its way to <b id="sentTo"></b>. We'll reach out about your free review shortly. Talk soon.</p>
@@ -206,6 +297,30 @@ a{color:var(--gold-solid);text-decoration:none}
   // ---- Questions. weight = points if "best" answer; each option carries 0..1 of that weight.
   // risk text shows when an option scores below the "good" threshold.
   var QUESTIONS = [
+    { id:'size', profile:true, q:"First — how many people work at your business?",
+      opts:[
+        {t:"1–10"},
+        {t:"11–50"},
+        {t:"51–200"},
+        {t:"More than 200"}
+      ]},
+    { id:'industry', profile:true, q:"And what kind of business is it?",
+      opts:[
+        {t:"Accounting / bookkeeping"},
+        {t:"Legal"},
+        {t:"Healthcare / clinic"},
+        {t:"Real estate / brokerage"},
+        {t:"Something else"}
+      ]},
+    { id:'spend', profile:true, q:"Roughly what does IT cost you each month right now?",
+      opts:[
+        {t:"Nothing — we handle it ourselves", v2:0},
+        {t:"Under $2,000", v2:1500},
+        {t:"$2,000 – $7,500", v2:4750},
+        {t:"$7,500 – $20,000", v2:13750},
+        {t:"More than $20,000", v2:25000},
+        {t:"Not sure", v2:null}
+      ]},
     { id:'support', w:18, q:"When something breaks, who fixes your IT?",
       opts:[
         {t:"A dedicated IT provider / MSP", v:1},
@@ -227,12 +342,26 @@ a{color:var(--gold-solid);text-decoration:none}
         {t:"No", v:0, risk:["Accounts protected by passwords alone","Stolen or guessed passwords are the #1 way businesses get breached. MFA blocks the vast majority of account takeovers and is free to enable."]},
         {t:"Don't know", v:0.2, risk:["MFA status is unknown","If you can't confirm MFA is on, assume there are gaps. A 15-minute audit tells you exactly who's exposed."]}
       ]},
+    { id:'email', w:16, q:"Is your email protected against spoofing and invoice fraud?",
+      opts:[
+        {t:"Yes — SPF, DKIM and DMARC are enforced", v:1},
+        {t:"We have spam filtering, that's it", v:0.4, risk:["Email can be sent in your name","Spam filtering stops junk coming in. It does not stop someone sending email that looks like it came from you — which is how fake invoices and payment-redirect requests reach your clients."]},
+        {t:"No — or we've had a suspicious invoice before", v:0, risk:["Exposed to invoice and payment-redirect fraud","Business email compromise is the most expensive attack on businesses this size, because the money leaves by wire and rarely comes back. The DNS records that block impersonation cost nothing to put in place."]},
+        {t:"Don't know", v:0.2, risk:["Email authentication status unknown","If nobody can confirm SPF, DKIM and DMARC are enforced, assume they aren't. It's a 10-minute check that either clears you or finds a live exposure."]}
+      ]},
     { id:'access', w:14, q:"When did you last review who has access to what?",
       opts:[
         {t:"Within the last 6 months", v:1},
         {t:"Sometime this year", v:0.6, risk:["Access reviews are infrequent","Permissions drift as people join, move, and leave. Stale access is how ex-staff and forgotten accounts become a breach path."]},
         {t:"Over a year ago", v:0.25, risk:["Access hasn't been reviewed recently","Former employees or vendors may still have live access. A quick review usually finds accounts that should've been closed long ago."]},
         {t:"Never / not sure", v:0, risk:["No access governance","Nobody knows who can reach sensitive data. This is both a security and a compliance gap that's quick to start fixing."]}
+      ]},
+    { id:'patching', w:14, q:"Are your computers getting security updates automatically?",
+      opts:[
+        {t:"Yes — managed and monitored", v:1},
+        {t:"Windows/macOS updates run on their own", v:0.6, risk:["Updates run, but nobody is checking","Default updaters skip machines that are off, low on disk, or stuck mid-install — and they don't cover the apps attackers actually target, like browsers and PDF readers. Nobody finds out until one of them is the way in."]},
+        {t:"Staff update when they get a prompt", v:0.25, risk:["Patching depends on staff remembering","Prompts get dismissed for weeks by the people who are busiest. A managed patch cycle removes the decision from the user entirely."]},
+        {t:"Not sure", v:0, risk:["Patch status is unknown across your devices","Unpatched machines are the most common way ransomware gets its first foothold. A one-time inventory shows exactly which devices are behind."]}
       ]},
     { id:'licenses', w:12, q:"Microsoft 365 / Google licenses — confident you're not over-paying?",
       opts:[
@@ -249,13 +378,34 @@ a{color:var(--gold-solid);text-decoration:none}
       ]}
   ];
 
+  // What a best answer earns you — shown back so the score feels fair, not like a sales trap.
+  var STRENGTHS = {
+    support:  "You have a clear owner for IT problems",
+    backup:   "Backups are automated, offsite and tested",
+    mfa:      "MFA is on for everyone",
+    email:    "Your email is authenticated against impersonation",
+    recovery: "You have a recovery plan you can actually run",
+    access:   "Access is reviewed on a regular cycle",
+    patching: "Devices are patched and monitored",
+    licenses: "Licensing has been reviewed and right-sized"
+  };
+
+  // One honest, sector-specific note. No statistics we can't stand behind.
+  var INDUSTRY_NOTE = {
+    "Accounting / bookkeeping": "One thing worth naming for accounting firms: the same failure costs very different amounts depending on when it lands. An outage in July is an inconvenience. The identical outage during filing season is lost billable days you cannot make back.",
+    "Legal":                    "One thing worth naming for law firms: a confidentiality failure is not only an IT problem. Depending on what was exposed, it can become a client-notification obligation and a Law Society matter — which is why access reviews and email authentication carry more weight here than the score alone suggests.",
+    "Healthcare / clinic":      "One thing worth naming for clinics: under PHIPA you remain accountable for patient information even when it lives inside your EMR vendor's system. Most clinics have never had that boundary mapped, so it is worth knowing where your responsibility actually starts and stops.",
+    "Real estate / brokerage":  "One thing worth naming for brokerages: deposit-redirect fraud targets your industry more than almost any other. It arrives as a normal-looking email during a closing, and it is an email-authentication problem far more than a staff-training one — which is why training alone rarely stops it.",
+    "Something else":           ""
+  };
+
   var POST_URL = "/.netlify/functions/aria-health-lead";
-  var state = { i:0, answers:{}, score:0, grade:'', risks:[] };
+  var state = { i:0, answers:{}, score:0, grade:'', risks:[], strengths:[] };
 
   var $ = function(id){ return document.getElementById(id); };
   function show(sec){ ['intro','quiz','result'].forEach(function(s){ $(s).classList.toggle('hide', s!==sec); }); }
 
-  $('startBtn').addEventListener('click', function(){ state={i:0,answers:{},score:0,grade:'',risks:[]}; show('quiz'); renderQ(); });
+  $('startBtn').addEventListener('click', function(){ state={i:0,answers:{},score:0,grade:'',risks:[],strengths:[]}; show('quiz'); renderQ(); });
   $('retryBtn').addEventListener('click', function(){ show('intro'); $('intro').classList.add('fade'); });
 
   function renderQ(){
@@ -277,6 +427,7 @@ a{color:var(--gold-solid);text-decoration:none}
   function pick(q, o){
     state.answers[q.id] = o.t;
     if (o.risk) state.risks.push({ key:q.id, title:o.risk[0], detail:o.risk[1], good:false });
+    if (!q.profile && o.v === 1 && STRENGTHS[q.id]) state.strengths.push(STRENGTHS[q.id]);
     if (state.i < QUESTIONS.length-1){ state.i++; renderQ(); }
     else finish();
   }
@@ -284,6 +435,7 @@ a{color:var(--gold-solid);text-decoration:none}
   function finish(){
     var total=0, max=0;
     QUESTIONS.forEach(function(q){
+      if (q.profile) return;              // size/industry describe you, they don't score you
       max += q.w;
       var chosen = q.opts.find(function(o){ return o.t === state.answers[q.id]; });
       total += q.w * (chosen ? chosen.v : 0);
@@ -315,9 +467,49 @@ a{color:var(--gold-solid);text-decoration:none}
         rl.appendChild(d);
       });
     }
+
+    // strengths — shown so the result reads as an assessment, not a sales pitch
+    var sb = $('strengthsBox'), sl = $('strengthList');
+    sl.innerHTML = "";
+    if (state.strengths.length){
+      state.strengths.forEach(function(s){
+        var d = document.createElement('div'); d.className='risk';
+        d.innerHTML = '<span class="ok">✓</span><div><b>'+s+'</b></div>';
+        sl.appendChild(d);
+      });
+      sb.classList.remove('hide');
+    } else { sb.classList.add('hide'); }
+
+    // what this usually costs — general, not a claim about their business
+    $('costLine').textContent = costText(score);
+
+    // sector-specific note
+    var note = INDUSTRY_NOTE[state.answers.industry] || "";
+    var cb = $('contextBox');
+    if (note){ cb.textContent = note; cb.classList.remove('hide'); }
+    else { cb.classList.add('hide'); }
+
+    // seed the desk model from what they just told us, then draw it
+    $('dc_staff').value = sizeToStaff(state.answers.size);
+    var sp = reportedSpend();
+    $('dc_now').value = (sp === null || sp === undefined) ? '' : sp;
+    $('dcMail').href = 'mailto:ahmad.wasee@iisupp.net'
+      + '?subject=' + encodeURIComponent('IT Health Check — ' + state.score + '/100 (grade ' + state.grade + ')')
+      + '&body=' + encodeURIComponent(
+          'Hi Ahmad,\n\nI ran the IT Health Check and scored ' + state.score + '/100.\n\n'
+          + (top.length ? 'Flagged:\n' + top.map(function(r,i){ return (i+1) + '. ' + r.title; }).join('\n') + '\n\n' : '')
+          + 'What I\'d like to talk about:\n\n');
+    renderDesk();
     // reset lead form view
     $('leadForm').classList.remove('hide'); $('thanks').classList.add('hide'); $('formErr').textContent="";
     window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  function costText(s){
+    if (s>=80) return "At this level you're mostly protecting against rare events rather than likely ones. The remaining items below are cheap relative to what they cover.";
+    if (s>=70) return "Gaps at this level usually show up as repeat incidents rather than one dramatic failure — time lost in small pieces, which is harder to notice and easier to keep paying.";
+    if (s>=55) return "For context: a single IT emergency handled reactively typically runs $500–$2,000, before counting the hours your team loses waiting. Several of the items below are the ones that create those days.";
+    return "For context: a single IT emergency handled reactively typically runs $500–$2,000, and an extended outage or data loss can exceed a year of ongoing support. Every item below is fixable, and the first ones are quick.";
   }
 
   function verdictText(s){
@@ -334,6 +526,96 @@ a{color:var(--gold-solid);text-decoration:none}
     requestAnimationFrame(step);
   }
 
+  // ---- service desk cost model -------------------------------------------
+  var USD_CAD = 1.36;
+
+  function sizeToStaff(band){
+    if (band === '1–10') return 8;
+    if (band === '11–50') return 25;
+    if (band === '51–200') return 100;
+    if (band === 'More than 200') return 300;
+    return 25;
+  }
+  function reportedSpend(){
+    var q = QUESTIONS.find(function(x){ return x.id === 'spend'; });
+    if (!q) return null;
+    var o = q.opts.find(function(x){ return x.t === state.answers.spend; });
+    return o ? o.v2 : null;
+  }
+  // Published ARIA pricing, USD -> CAD. Personal/Pro are monthly; the rest are annual.
+  function ariaPlan(staff){
+    if (staff <= 5)   return { name:'ARIA Personal',      mo: 599 * USD_CAD };
+    if (staff <= 25)  return { name:'ARIA Pro',           mo: 1500 * USD_CAD };
+    if (staff <= 250) return { name:'ARIA Small Business',mo: (156000 * USD_CAD) / 12 };
+    return              { name:'ARIA Mid-Size',           mo: (312000 * USD_CAD) / 12 };
+  }
+  // Published IIS retainer tiers (already CAD). Uses the floor of each band.
+  function mspTier(staff){
+    if (staff <= 10)  return { name:'IIS Tier 1 · Operational Foundation', mo: 6000 };
+    if (staff <= 50)  return { name:'IIS Tier 2 · Business Continuity',    mo: 14000 };
+    return              { name:'IIS Tier 3 · Enterprise Operations',       mo: 30000 };
+  }
+  function num(id, fb){ var v = parseFloat($(id).value); return isFinite(v) ? v : fb; }
+  function money(n){ return '$' + Math.round(n).toLocaleString(); }
+
+  function renderDesk(){
+    var staff = Math.max(1, num('dc_staff', 25));
+    var tpp   = Math.max(0.1, num('dc_tpp', 2.5));
+    var tpa   = Math.max(20, num('dc_tpa', 180));
+    var sal   = Math.max(0, num('dc_sal', 65000));
+    var bur   = Math.max(0, num('dc_bur', 25)) / 100;
+    var tools = Math.max(0, num('dc_tools', 55));
+    var cov   = parseFloat($('dc_cov').value) || 1;
+    var now   = Math.max(0, num('dc_now', 0));
+
+    var loadedMo  = (sal * (1 + bur)) / 12;               // one analyst, fully loaded
+    var tickets   = staff * tpp;
+    var analysts  = Math.max(1, Math.ceil((tickets / tpa) * cov));
+    var house     = analysts * (loadedMo + tools);
+
+    var plan = ariaPlan(staff), tier = mspTier(staff);
+    var ariaTotal = plan.mo + (loadedMo * 0.3);           // ARIA + a part-time human for hands-on work
+
+    var rows = [
+      { k:'now',   label:'What you pay today',  sub: now > 0 ? 'your figure' : 'not given', val: now },
+      { k:'house', label:'Build it in-house',   sub: analysts + (analysts === 1 ? ' analyst' : ' analysts') + ' · ' + Math.round(tickets) + ' tickets/mo', val: house },
+      { k:'aria',  label:plan.name + ' + part-time human', sub:'ARIA handles L1/L2', val: ariaTotal },
+      { k:'msp',   label:tier.name,             sub:'fully managed, from', val: tier.mo }
+    ];
+    var max = Math.max.apply(null, rows.map(function(r){ return r.val; })) || 1;
+
+    $('dcChart').innerHTML = rows.map(function(r){
+      return '<div class="dc-bar"><div class="dc-bh"><b>' + r.label + '</b><u>' + (r.val > 0 ? money(r.val) + '/mo' : '—') + '</u></div>'
+           + '<div class="dc-t ' + r.k + '"><i style="width:' + Math.max(2, (r.val / max) * 100) + '%"></i></div>'
+           + '<div class="dc-bh" style="margin:5px 0 0"><i>' + r.sub + '</i><i>' + (r.val > 0 ? money(r.val * 12) + '/yr' : '') + '</i></div></div>';
+    }).join('');
+
+    // Honest read of whatever the numbers actually say — no forced win.
+    var note;
+    if (ariaTotal < house){
+      note = '<strong>' + plan.name + ' comes in ' + money(house - ariaTotal) + '/mo under a staffed desk</strong> at your volume — '
+           + money((house - ariaTotal) * 12) + ' a year. The gap is headcount: you need ' + analysts + ' '
+           + (analysts === 1 ? 'analyst' : 'analysts') + ' to cover ' + Math.round(tickets) + ' tickets a month'
+           + (cov > 1 ? ' at that coverage level' : '') + ', and ARIA absorbs the L1 and L2 volume that drives most of it.';
+    } else {
+      note = '<strong>At your volume a staffed desk is the cheaper line item</strong> — ' + money(house) + '/mo against '
+           + money(ariaTotal) + '. That is the honest read. What it does not price in is what happens when that '
+           + (analysts === 1 ? 'one person is off, or leaves' : 'team is short-staffed') + ', which is the exact risk the check above flags.';
+    }
+    if (now > 0 && now > house && now > ariaTotal){
+      note += ' Worth noting: you are already paying ' + money(now) + '/mo — more than either option modelled here.';
+    }
+    if (cov > 1){
+      note += ' Coverage beyond business hours is where in-house gets expensive fast — shifts need bodies, and one person cannot cover ' + ($('dc_cov').value === '3.5' ? '24/7' : 'extended hours') + '.';
+    }
+    $('dcNote').innerHTML = note;
+  }
+
+  ['dc_staff','dc_tpp','dc_tpa','dc_sal','dc_bur','dc_tools','dc_cov','dc_now'].forEach(function(id){
+    var el = $(id); if (el) el.addEventListener('input', renderDesk);
+    if (el) el.addEventListener('change', renderDesk);
+  });
+
   // ---- lead submit
   $('leadForm').addEventListener('submit', function(e){
     e.preventDefault();
@@ -348,9 +630,13 @@ a{color:var(--gold-solid);text-decoration:none}
       email: email,
       company: $('f_company').value.trim(),
       phone: $('f_phone').value.trim(),
+      size: state.answers.size || '',
+      industry: state.answers.industry || '',
+      spend: state.answers.spend || '',
       score: state.score, grade: state.grade,
       answers: state.answers,
       risks: state.risks.slice(0,3).map(function(r){ return r.title; }),
+      strengths: state.strengths.slice(0,8),
       source: "health-check"
     };
 
