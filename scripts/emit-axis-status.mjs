@@ -18,94 +18,69 @@ const now = new Date().toISOString();
 // ── Verified FIRST-HAND this cycle (node v22.22.3), each on its own exit code ──────────────────────
 const tests = {
   reRunGreenThisCycle: [
-    { suite: "FULL REGISTRY (node tests/run-all.mjs) on the MERGED tree", result: "504 tests, 504 pass, 0 fail, 0 skipped — 'ARIA Sentinel test suite passed'", exit: 0 },
-    { suite: "b4-axis-chat", result: "20 passed, 0 failed — run on both the shared-line tree and the merged branch", exit: 0 },
-    { suite: "funnel-link-guard", result: "135 public pages, 0 dead internal links (was RED on the merged tree before this cycle's fix)", exit: 0 },
-    { suite: "site-fineprint-gate (NEW this cycle)", result: "117 public pages carry the legal disclaimer strip, head + body; 17 operator-internal pages excluded by name", exit: 0 },
+    { suite: "FULL REGISTRY (ARIA Sentinel/tests/run-all.mjs)", result: "514 tests, 514 pass, 0 fail, 0 skipped; 328/328 suite files green", exit: 0 },
+    { suite: "b4-axis-chat", result: "20 passed, 0 failed", exit: 0 },
+    { suite: "funnel-link-guard", result: "135 public pages, 0 dead internal links", exit: 0 },
+    { suite: "site-fineprint-gate", result: "117 public pages carry the legal disclaimer strip; 17 operator-internal pages excluded by name", exit: 0 },
+    { suite: "deploy-safety-denylist", result: "0 of 2679 tracked paths match; 11 force-404 rules present; 3 public files scanned, 0 leaks", exit: 0 },
+    { suite: "axis-module-graph", result: "54 passed, 0 failed", exit: 0 },
+    { suite: "verify-clone-prep (NEW this cycle)", result: "10 passed, 0 failed", exit: 0 },
   ],
-  suitesReRunGreen: 4,
+  suitesReRunGreen: 7,
   fullRegistry:
-    "504 tests, 504 pass, 0 fail — certified on the MERGED tree, which is the tree that would actually " +
-    "land, not on either side in isolation. That distinction earned its keep this cycle: merging the " +
-    "shared line into the long-lived branch produced 51 failures and one genuinely red guard, and none " +
-    "of them were visible from either side alone.",
-  oneSuiteBlockedByEnvironment:
-    "delete-triple-confirm still fails to LOAD on the mounted checkout — 'EPERM: operation not " +
-    "permitted, unlink tests/del-prefs-5.json'. Reproduced this cycle. Note the file NUMBER moved (4 -> 5): " +
-    "the suite creates a fresh fixture each run and cannot clean it up, so this is the mount refusing " +
-    "unlink, not a defect in the suite. It loads and passes in a clone outside the mount.",
-  falseRedsNamed:
-    "51 failures appeared when the merged tree was first run from a temporary clone. They were NOT " +
-    "defects: X1/Y1-Y3 read the real outbound records in senior-director-state/outbound/, which are " +
-    "deliberately untracked operator data and therefore absent from any clone. Confirmed by checking " +
-    "the files are untracked and then re-running against them: 504/504. Named rather than quietly " +
-    "excluded, because a suite that reads real records SHOULD fail loudly when the records are missing.",
+    "514 tests, 514 pass, 0 fail, 0 skipped across 328 suite files, exit 0, run to completion on the " +
+    "MERGED tree (this branch with the shared line merged in). Up from 504 because this cycle added a " +
+    "10-assertion suite and registered it in the runner.",
+  environmentalRedsRetired:
+    "The 53 reds that every prior verification cycle re-derived from scratch are retired as a class, not " +
+    "excused. 51 were the U/V/W/X/Y suites reading the real untracked operator records under " +
+    "senior-director-state/outbound/, absent from any clone; 2 were suite LOAD failures for " +
+    "'@netlify/blobs', which is correctly declared in package.json and simply not installed in a fresh " +
+    "clone. Neither was ever a product defect. With the records copied in and the dependency installed, " +
+    "the registry runs 514/514. That prep is now a script (scripts/verify-clone-prep.mjs) with its own " +
+    "suite, so the next cycle certifies in one command instead of re-deriving the same 53.",
 };
 
 // ── WHAT THIS CYCLE ESTABLISHED THAT PRIOR CYCLES HAD WRONG (Rule 14) ──────────────────────────────
 const correctionsThisCycle = [
   {
     what:
-      "THE FIND OF THE CYCLE — the pending branch would have stripped the site-wide legal disclaimer " +
-      "off 94 public pages, and nothing in the repository would have noticed.",
+      "THE FIND OF THE CYCLE — a recurring 53-red count was being carried in the record as a standing " +
+      "environmental caveat, when it was fully clearable in two steps and had been for every cycle that " +
+      "reported it.",
     detail:
-      "The site-wide legal fine print landed on the shared line as bca99eef. The feed branch carrying " +
-      "six cycles of work was cut BEFORE it, so a diff of branch-against-line showed exactly -10 lines " +
-      "on 94 public HTML pages: the stylesheet <link> in <head> and the disclaimer block at the end of " +
-      "<body>. Nobody deleted anything — the branch simply predated the commit — but the exposure was " +
-      "one merge strategy away from real, and no test asserted the strip's presence anywhere. Fixed " +
-      "two ways this cycle: the shared line was merged INTO the branch (conflicts resolved by keeping " +
-      "BOTH sides, per Rule 15, so the branch's new sections and the disclaimer both survive), and a " +
-      "new gate now fails if any public page ships without it. The disclaimer count after the merge is " +
-      "117 pages — identical to the shared line.",
+      "Each verification cycle cloned the branch, saw 51 assertion failures plus 2 suites failing to " +
+      "load, correctly reasoned that neither was a product defect, wrote that reasoning down, and moved " +
+      "on. The reasoning was right and the response was wrong: a caveat that reappears every cycle is a " +
+      "task, not a fact. The 51 are the U/V/W/X/Y suites reading real operator records that are " +
+      "deliberately untracked and therefore absent from a clone — correct behaviour, kept unchanged. " +
+      "The 2 load failures were '@netlify/blobs' missing from node_modules; the dependency is properly " +
+      "declared in package.json, so a clone just needed an install. Copying the 9 real records in and " +
+      "installing the one dependency takes the registry from 436/487 to 514/514. Both steps are now in " +
+      "scripts/verify-clone-prep.mjs.",
   },
   {
     what:
-      "Merging the shared line into the branch produced a REAL red that neither side showed alone — " +
-      "which is the argument for testing the merged tree rather than the branch.",
+      "The prep script is guarded so it cannot become a way to launder a red into a green.",
     detail:
-      "funnel-link-guard failed on docs/held-releases/downloads-available-now.html, a deliberately " +
-      "parked fragment that arrived from the shared line, pointing at a download URL that is " +
-      "intentionally absent until the code-signing certificate is bought. The guard was scanning a page " +
-      "netlify.toml force-404s wholesale — a page no visitor can reach, whose links cannot be a dead end " +
-      "for anyone. The guard now skips pages that are themselves force-404'd, reusing the redirect table " +
-      "it already parses. The zero-dead-ends rule is not loosened: 135 genuinely reachable pages are " +
-      "scanned and all 135 are clean. Stated because the easy fix — deleting the parked file or " +
-      "whitelisting the URL — would have hidden a real held release instead of describing it.",
+      "verify-clone-prep refuses to invent a record: an empty source directory copies nothing and exits " +
+      "non-zero rather than creating a placeholder, and a present-but-empty records directory is " +
+      "reported as not-prepared rather than as a clean tree. Its classifyReds() makes the verdict a " +
+      "function of the tree's state and never of the size of the number — one red on a PREPARED tree is " +
+      "real and can never be called environmental, while 51 reds on an unprepared tree certify nothing " +
+      "in either direction and must not be recorded as a pass rate. Ten assertions in " +
+      "tests/verify-clone-prep.test.mjs hold that line, registered in the runner so a later cycle cannot " +
+      "quietly soften it.",
   },
   {
     what:
-      "The new gate found a page on its FIRST run, and the honest answer was 'not public', not 'add a " +
-      "disclaimer to it'.",
+      "The branch was one commit behind the shared line and this cycle closed that gap before certifying.",
     detail:
-      "site-fineprint-gate flagged the same held-release fragment. Rather than paste a visitor-facing " +
-      "legal notice onto markup that is never served, docs/held-releases was excluded BY NAME with the " +
-      "reason recorded in the file. The exclusion list is explicit on purpose: a brand-new public page " +
-      "is not on it, so a new page shipped without the disclaimer fails the gate rather than slipping " +
-      "through. That is the only way an exclusion list is honest.",
-  },
-  {
-    what:
-      "AXIS voice was re-verified by CONTENT this cycle, not by branch-merge status — a stronger check " +
-      "than the one the previous cycle made, and it agrees.",
-    detail:
-      "Previous cycles confirmed cc/axis-voice-2026-07-01 was merged. That proves a branch landed, not " +
-      "that the code is present. This cycle read origin/main:assets/aperture-learning.js directly and " +
-      "counted 8 speech-API call sites (speechSynthesis / webkitSpeechRecognition) — the same count as " +
-      "the working copy. The push-to-talk mic and the spoken reply path are on the shared line. No merge " +
-      "was performed for voice and none is claimed.",
-  },
-  {
-    what:
-      "The lock family and the code-host credential were BOTH re-attacked this cycle. Both reproduced. " +
-      "They survive into the next cycle on evidence, not on inheritance.",
-    detail:
-      "Locks: `rm .git/HEAD.lock`, `.git/index.lock` and `.git/lock-graveyard-index.lock` each returned " +
-      "'Operation not permitted' — still unremovable, still irrelevant, because the alternate-index route " +
-      "bypasses them. Credential: `git ls-remote origin main` → \"could not read Username for " +
-      "'https://github.com'\", no credential helper, no ~/.git-credentials, no GH_TOKEN or GITHUB_TOKEN in " +
-      "the environment, no code-host CLI. This is a real constraint and remains the ONLY thing between " +
-      "verified work and the shared line.",
+      "The shared line had moved on to the IT Health Check v3 work (health-check.html, " +
+      "aria-health-lead.mjs, the bid-radar cron and sweep, the listing and bid-response docs) after the " +
+      "previous cycle's merge. Certifying a branch that does not contain the current line certifies a " +
+      "tree that will never exist. The line was merged in first — clean, no conflicts, 9 files — and " +
+      "every number above was then read from that merged tree.",
   },
 ];
 
@@ -113,10 +88,14 @@ const correctionsThisCycle = [
 const mainRef = {
   liveConfirmed: false,
   reason:
-    "Reproduced again this cycle, not carried forward: `git ls-remote origin main` returned 'could not read " +
-    "Username for github.com'. Every reference here is a last-known LOCAL read of origin/main (bca99eef) and " +
-    "is labelled as such. Presenting a local reference as a live read is the exact dishonesty Rule 14 forbids.",
-  lastKnownLocal: "bca99eef — 'Site-wide legal fine print: disclaimer strip on every page'",
+    "Reproduced again this cycle, not carried forward: `git ls-remote origin main` and `git fetch origin " +
+    "main` both returned 'could not read Username for https://github.com'. No credential helper, no " +
+    "stored credentials, no code-host CLI in this environment. Every reference here is a last-known " +
+    "LOCAL read and is labelled as such. Presenting a local reference as a live read is the exact " +
+    "dishonesty Rule 14 forbids.",
+  lastKnownLocal:
+    "08e54225 — '[ops] IT Health Check v3 — spend question, size+sector qualification, email/patching " +
+    "risks, strengths panel, live service desk cost model vs ARIA'",
 };
 
 const workingTree = {
@@ -124,17 +103,16 @@ const workingTree = {
   committed: true,
   mergedWithSharedLine: true,
   mergeDetail:
-    "The shared line was merged INTO the branch this cycle rather than the branch being left to diverge " +
-    "further. Three conflicts, all resolved by keeping BOTH sides: ai-edge.html and index.html each had " +
-    "a new section and the disclaimer block competing for the end of <body> (both kept, disclaimer last), " +
-    "and axis-module-graph.test.mjs had two spellings of an identical 16-tab expectation (the better-" +
-    "commented one kept). Zero content was dropped in any resolution — Rule 15.",
+    "The shared line (last-known local 08e54225) was merged INTO the branch this cycle before anything " +
+    "was certified. Clean merge, zero conflicts, 9 files changed. Nothing was dropped in the " +
+    "resolution — Rule 15.",
   composition:
-    "Source, tests and the three status mirrors. Scanned for credentials, keys, environment files and " +
-    "dependency directories: 0 hits.",
+    "Source, tests and the three status mirrors, plus this cycle's clone-prep script and its suite. " +
+    "Scanned for credentials, keys, environment files and dependency directories: 0 hits.",
   stillBlocked:
-    "The commits exist locally and cannot be pushed. `git ls-remote` refused again this cycle on the read " +
-    "path. Committed and merged-clean is strictly better than uncommitted, and is still not the same as landed.",
+    "The commits exist locally and cannot be pushed. The credential refusal was reproduced this cycle on " +
+    "the read path as well as the write path. Committed, merged-clean and 514/514 green is strictly " +
+    "better than uncommitted, and is still not the same as landed.",
 };
 
 const program = {
@@ -147,52 +125,54 @@ const program = {
   pct: 100,
   testsGreen: true,
   verificationCycleNote:
-    "No new sequence was released and none is claimed. This cycle's work was integration safety: the " +
-    "long-lived branch was reconciled with the shared line, the reds that reconciliation exposed were " +
-    "fixed rather than merged around, and a legal-exposure class was closed with a permanent gate. " +
-    "Manufacturing a RUN-AE to look productive would contradict the finding that no further software " +
-    "moves the two numbers that are off track.",
+    "No new sequence was released and none is claimed. This cycle's work was verification hygiene: the " +
+    "branch was reconciled with the current shared line, and a 53-red caveat that had been re-derived " +
+    "every cycle was retired as a class with a guarded, tested prep script. Manufacturing a RUN-AE to " +
+    "look productive would contradict the standing finding that no further software moves the two " +
+    "numbers that are off track.",
   note:
     "Build state only. `tasksMerged` is 0 because nothing can reach the shared line from this " +
     "environment, not because nothing was built.",
 };
 
 const lanes = [
-  { lane: "Legal disclaimer integrity (opened and closed this cycle)", state: "regression averted, gate now permanent",
+  { lane: "Verification honesty (opened and closed this cycle)", state: "53-red caveat retired as a class, guarded by tests",
     detail:
-      "94 public pages would have lost the site-wide legal disclaimer had the pending branch landed with " +
-      "its side winning. The branch is now merged with the shared line and carries the strip on all 117 " +
-      "pages that should have it. site-fineprint-gate.test.mjs asserts head marker + body marker on every " +
-      "public page, with 17 operator-internal pages excluded by name so a NEW public page cannot skip it." },
-  { lane: "Merged-tree verification (new discipline this cycle)", state: "504 pass / 0 fail on the tree that would actually land",
+      "A red count that reappears every cycle is a task, not a fact. 51 of them were the U/V/W/X/Y " +
+      "suites reading real operator records that a clone cannot have; 2 were suite load failures for a " +
+      "dependency that is declared but not installed in a fresh clone. Neither was ever a defect. " +
+      "scripts/verify-clone-prep.mjs performs both prep steps, refuses to invent a record, and makes " +
+      "the red/environmental verdict a function of the tree's state rather than the size of the number. " +
+      "Ten assertions hold that line and are registered in the runner." },
+  { lane: "Merged-tree verification (standing discipline)", state: "514 pass / 0 fail on the tree that would actually land",
     detail:
-      "Certifying the branch alone or the line alone was hiding an integration red. Testing the merged " +
-      "tree found funnel-link-guard failing on a force-404'd held-release fragment that arrived from the " +
-      "line. Fixed at the guard, which now skips pages no visitor can reach. Every future cycle certifies " +
-      "the merged tree." },
-  { lane: "Test registry", state: "504 tests, 504 pass, 0 fail",
+      "The shared line was merged into the branch BEFORE anything was certified — clean, 9 files, zero " +
+      "conflicts. Certifying a branch that does not contain the current line certifies a tree that will " +
+      "never exist. Every number in this feed was read from the merged tree." },
+  { lane: "Test registry", state: "514 tests, 514 pass, 0 fail across 328 suite files",
     detail:
-      "Run to completion on the merged tree. 51 failures seen in a bare clone were traced to deliberately " +
-      "untracked operator records under senior-director-state/outbound/ and disappear when the real records " +
-      "are present — named as environmental rather than absorbed into a pass count." },
+      "Run to completion, exit 0. Up from 504 because this cycle added a suite and registered it. No " +
+      "suite is excluded, and no failure is absorbed into a pass count." },
+  { lane: "Legal disclaimer integrity", state: "gate holding, 117 pages",
+    detail:
+      "site-fineprint-gate asserts the head marker and body marker on every public page, with 17 " +
+      "operator-internal pages excluded by name so a NEW public page cannot skip it. Re-run green on " +
+      "the merged tree this cycle." },
   { lane: "AXIS voice + spoken status", state: "landed on the shared line, re-verified by content",
     detail:
-      "origin/main:assets/aperture-learning.js carries 8 speech-API call sites, matching the working copy. " +
-      "Verified by reading the file, not by trusting a merged-branch name. No merge needed, none claimed." },
+      "assets/aperture-learning.js on the shared line carries 8 speech-API call sites, matching the " +
+      "working copy — verified by reading the file, not by trusting a merged-branch name. No merge was " +
+      "needed and none is claimed." },
   { lane: "AXIS status feed", state: "regenerated this cycle",
     detail:
-      "Emitted through the single sanctioned emitter. Fresh timestamp on all three mirrors, this cycle's " +
-      "own exit codes, and the leak gate re-run green AFTER the write." },
+      "Emitted through the single sanctioned emitter. Fresh timestamp on all three mirrors, this " +
+      "cycle's own exit codes, and the leak gate re-run green AFTER the write." },
   { lane: "The first passive signal (RUN-AC)", state: "instrument built and green, no reading yet",
     detail:
       "The site's own first-party hit log: a reader that can never turn an absent log into a zero, a " +
       "write-only endpoint on storage already in the stack, and a beacon with every identity mechanism " +
       "asserted absent by name. It records nothing until the site is published, and says so rather than " +
       "printing a zero." },
-  { lane: "RUN-AB — what moves without us", state: "complete, and its finding stands",
-    detail:
-      "45 sends measured end to end against the real records, the passive surface refused as its primary " +
-      "output, and an empty 'moves on its own' column. Nothing in this program moves without a person." },
   { lane: "Reaching the shared line", state: "blocked on a credential, unchanged",
     detail:
       "Everything above is committed and green on a branch that cannot be pushed from this environment. " +
@@ -201,45 +181,55 @@ const lanes = [
 
 const blockers = [
   { blocker: "No code-hosting credential in the build sandbox",
-    price: "verified, merged, green work cannot reach the shared line under its own power",
+    price: "verified, merged, 514/514-green work cannot reach the shared line under its own power",
     isSoftwareTask: false,
-    fix: "A credential or a code-host connector. Highest-leverage unblock, unchanged, refused again this cycle." },
-  { blocker: "RETIRED — the pending branch could silently revert the site-wide legal disclaimer",
-    price: "was: 94 public pages one merge away from losing their legal notice, with no test to catch it. Now: nothing.",
-    isSoftwareTask: true,
-    fix: "Shared line merged into the branch keeping both sides, plus a permanent gate asserting the strip on every public page." },
-  { blocker: "RETIRED — funnel-link-guard red on the merged tree",
-    price: "was: the merged tree could not be certified. Now: 135 reachable pages, 0 dead links.",
-    isSoftwareTask: true,
-    fix: "The guard now skips pages netlify.toml force-404s. It cannot report a dead end on a page no visitor can reach." },
+    fix: "A credential or a code-host connector. Highest-leverage unblock, unchanged, refused again this cycle on both the read and the write path." },
+  { blocker: "The site is not published, so the visit log records nothing",
+    price: "the one instrument that could produce a number without a person is built, green, and reading nothing",
+    isSoftwareTask: false,
+    fix: "One deliberate publish click. The log is write-only and starts collecting the moment the site is live." },
   { blocker: "The hour is prepared and has not been spent",
     price: "zero conversations held, against a prepared and executable list",
     isSoftwareTask: false },
+  { blocker: "RETIRED — a 53-red verification caveat re-derived from scratch every cycle",
+    price: "was: every cycle spent effort re-explaining the same reds, and left a number in the record a reader could not separate from truth. Now: nothing.",
+    isSoftwareTask: true,
+    fix: "scripts/verify-clone-prep.mjs performs both prep steps and refuses to invent a record; ten registered assertions make the verdict a function of the tree's state, never of the size of the number." },
+  { blocker: "RETIRED — the pending branch could silently revert the site-wide legal disclaimer",
+    price: "was: 94 public pages one merge away from losing their legal notice, with no test to catch it. Now: nothing.",
+    isSoftwareTask: true,
+    fix: "Shared line merged into the branch keeping both sides, plus a permanent gate asserting the strip on every public page. Re-run green this cycle: 117 pages." },
+  { blocker: "RETIRED — funnel-link-guard red on the merged tree",
+    price: "was: the merged tree could not be certified. Now: 135 reachable pages, 0 dead links.",
+    isSoftwareTask: true,
+    fix: "The guard skips pages netlify.toml force-404s. It cannot report a dead end on a page no visitor can reach." },
 ];
 
 const needsAhmad = [
   { item: "Run AHMAD-REPAIR-AND-PUSH-AXIS-FEED.cmd",
     what:
-      "Clears the three stuck git locks, resyncs the index so the phantom deletions disappear, and pushes " +
-      "cc/axis-feed-2026-08-04 — which now carries this cycle's merge with the shared line, the legal-" +
-      "disclaimer gate and the funnel-guard fix, all certified 504/504 on the merged tree.",
+      "Clears the stuck git locks, resyncs the index so the phantom deletions disappear, and pushes " +
+      "cc/axis-feed-2026-08-04 — which now carries the current shared line merged in, this cycle's " +
+      "clone-prep guard and its suite, all certified 514/514 on the merged tree.",
     why:
       "It never touches main, never merges, never deploys, never sends and never pays. It is the one " +
       "click that moves verified work from this machine to the shared line." },
   { item: "A code-hosting credential for the build sandbox",
     what: "A credential or a code-host connector for this environment.",
     why:
-      "Re-probed and reproduced this cycle. It is the ONLY thing standing between verified work and the " +
-      "shared line, and the only reason the click above exists at all." },
+      "Re-probed and reproduced this cycle on both the read and the write path. It is the ONLY thing " +
+      "standing between verified work and the shared line, and it removes a manual click from every " +
+      "future cycle rather than just this one." },
   { item: "Publish the site",
-    what: "One deliberate operator action.",
+    what: "One deliberate publish click. Never automatic, never taken by an agent.",
     why:
-      "Landing a branch never deploys. This stays a separate human decision — and it is the click that " +
-      "starts the visit log recording. Until it happens, the passive signal reads not-yet-collecting " +
-      "rather than zero." },
-  { item: "Spend the hour",
-    what: "The prepared ordered actions with message bodies attached, executable cold.",
-    why: "Still the only item on this list that can move a business number." },
+      "It is the click that starts the visit log. Until it happens the only instrument that can produce " +
+      "a number without a person is collecting nothing — and reports that honestly rather than as a zero." },
+  { item: "Spend the prepared hour",
+    what: "The ranked, cold-executable outreach list is built and sitting unspent.",
+    why:
+      "Still the only item on this list that can move a business number. Follow-ups sent: zero. " +
+      "Meetings: zero. Revenue: none." },
 ];
 
 const onTrack = {
@@ -249,11 +239,11 @@ const onTrack = {
   conversion: false,
   note:
     "Landing and conversion both read NOT on track, unchanged. This cycle's work was real and was " +
-    "entirely engineering and risk: a legal disclaimer that 94 public pages were one merge away from " +
-    "losing is now merged back in and permanently gated, and an integration red that neither side of the " +
-    "merge could show alone was found and fixed. That is worth having. It is not worth confusing with " +
-    "progress on the business: follow-ups sent: zero. Hours in front of anyone: zero. Revenue: none. " +
-    "Nothing reached the shared line, because the credential refusal is real and reproduced again.",
+    "entirely engineering hygiene: the branch now contains the current shared line, and the recurring " +
+    "53-red verification caveat is retired with a tested guard rather than restated. That is worth " +
+    "having. It is not worth confusing with progress on the business: follow-ups sent: zero. Hours in " +
+    "front of anyone: zero. Meetings: zero. Revenue: none. Nothing reached the shared line, because the " +
+    "credential refusal is real and was reproduced again on both the read and the write path.",
 };
 
 // ── Public: headline only. Every field is leak-scanned and capped by the emitter. ──────────────────
@@ -269,8 +259,8 @@ const publicFields = {
   headline:
     "ARIA / AXIS is in active build. 45 first-contact messages sent: 4 undeliverable, 11 autoresponders, " +
     "1 personal reply declining. 12 follow-ups drafted, 0 sent. Meetings 0, revenue none. The visit log " +
-    "is built and not collecting until the site is published — not-yet-collecting, never zero. Full test " +
-    "registry this cycle: 504 pass, 0 fail.",
+    "is built and not collecting until the site is published — not-yet-collecting, never zero. The full " +
+    "test registry ran end to end this cycle: 514 tests, 514 pass, 0 fail.",
   note:
     "Public status headline only. Detailed build state is operator-internal and served only to " +
     "authenticated operators inside the AXIS command centre. This public feed never carries commit, " +
