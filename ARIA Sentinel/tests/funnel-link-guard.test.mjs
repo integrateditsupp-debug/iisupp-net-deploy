@@ -51,11 +51,24 @@ function resolveTarget(raw, dir) {
 // strict: real navigational href / form action only — NOT data-action / data-href
 const extract = (html) => { const out = []; const re = /(?<![\w-])(?:href|action)\s*=\s*"([^"]*)"/gi; let m; while ((m = re.exec(html))) out.push(m[1]); return out; };
 const SKIP = /^(node_modules|archive|backups|aria-vault|\.git|outputs|senior-director-state|tests|scripts|apps|ARIA Sentinel|aria_brain_pack|aria-architecture|design-handoff)(\/|$)/;
+// Depth-independent skips. The top-level SKIP list is anchored at `^`, so it never matched dependency
+// trees or build output nested deeper down — e.g. `.netlify/functions-serve/*/node_modules`. Walking
+// those took the guard past 6,600 directories without finishing, which is what stopped `npm test` from
+// ever completing. None of these directories are the shipped public site, so excluding them at any
+// depth narrows the walk to exactly what this guard is meant to assert on and does not weaken it.
+const SKIP_DIR_ANY_DEPTH = new Set([
+  "node_modules",     // dependency trees (top level and vendored copies under build output)
+  ".git",             // repository internals
+  ".netlify",         // Netlify build/bundle output — generated, never authored, never served as pages
+  ".codex-temp-cdp",  // agent scratch directory
+  ".cache",
+]);
 function walk(d, acc) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
     const fp = path.join(d, e.name);
     const rel = path.relative(ROOT, fp);
     if (SKIP.test(rel)) continue;
+    if (e.isDirectory() && SKIP_DIR_ANY_DEPTH.has(e.name)) continue;
     if (e.isDirectory()) walk(fp, acc);
     else if (e.name.endsWith(".html")) acc.push(rel);
   }
@@ -63,7 +76,19 @@ function walk(d, acc) {
 }
 
 // 1 — ZERO DEAD ENDS across every customer-facing page.
-const pages = walk(ROOT, []);
+// A page that is itself force-404'd by netlify.toml is, by definition, not customer-facing — nobody can
+// reach it, so a broken link inside it is not a dead end for any visitor. Scanning those pages produced
+// false failures from directories the site deliberately does not serve (`/_branch-src/*`, `/odysseus/*`)
+// and from vendored third-party documentation that ships inside a Python virtualenv. Filtering them here
+// keeps the assertion aimed at the real public site instead of weakening the zero-dead-ends rule.
+const isVendored = (rel) => rel.split("/").some((seg) => seg === "venv" || seg === "site-packages");
+const isBlockedFromServing = (rel) => {
+  const r = matchRedirect("/" + rel);
+  return Boolean(r && r.status === 404);
+};
+const allPages = walk(ROOT, []);
+const skippedPages = allPages.filter((f) => isVendored(f) || isBlockedFromServing(f));
+const pages = allPages.filter((f) => !isVendored(f) && !isBlockedFromServing(f));
 assert.ok(pages.length > 50, `expected to scan the public site (>50 pages), saw ${pages.length}`);
 const dead = [];
 for (const f of pages) {
