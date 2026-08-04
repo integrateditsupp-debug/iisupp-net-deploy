@@ -1,0 +1,226 @@
+/**
+ * bid-radar-cron — Zero-touch public-sector bid radar.
+ *
+ *  Pulls the CanadaBuys open-tender open-data feed (free, no auth, no account, no
+ *  scraping) every weekday morning, filters it down to opportunities Integrated IT
+ *  Support can actually bid, de-dupes against everything already reported, and emails
+ *  Ahmad ONLY when something new lands. Silence = nothing new. No portal checking.
+ *
+ *  Why this source: bids&tenders municipal portals render their grids client-side and
+ *  expose no public JSON/RSS endpoint (verified 2026-07-29 — every candidate feed path
+ *  302s to an error page and the served HTML is a localisation shell with zero <table>
+ *  elements). Those portals are covered separately by the scheduled browser sweep.
+ *  CanadaBuys is the one machine-readable national feed, and it carries federal plus
+ *  participating provincial/MASH notices — ~900 live notices per pull.
+ *
+ *  De-dupe store: bid-radar-seen (Netlify Blobs), keyed by solicitation reference.
+ *  Entries self-prune after RETENTION_DAYS.
+ */
+import { beat } from './_heartbeat.mjs';
+
+const FEED_URL = 'https://canadabuys.canada.ca/opendata/pub/openTenderNotice-ouvertAvisAppelOffres.csv';
+const STORE_NAME = 'bid-radar-seen';
+const RETENTION_DAYS = 180;
+
+/* Tight match, TITLE ONLY. Description matching was tested and produced 135/887 hits of
+   almost pure noise (any notice mentioning "IT" in passing). Title-only produced 15/887
+   with no false positives. Keep it title-only. */
+const IT_MATCH = new RegExp([
+  'managed (it|service)', 'help ?desk', 'service desk', '\\bit support\\b',
+  'information technolog', 'informatic', 'end.?user (support|comput)',
+  'desktop support', 'cyber ?security', 'microsoft 365', 'office 365', '\\bm365\\b',
+  'cloud (migrat|hosting|manage)', 'server (support|maintenance|manage|room)',
+  'technical support services',
+  '\\bit (consult|profession|infrastructur|service|solution|manage|securit|equipment|hardware|modern|staff|resourc)',
+  'network (support|infrastructure|manage|equipment|cabling)',
+  'systems? (integrat|administrat)', 'backup and (recovery|disaster)', 'disaster recovery',
+  '\\bvoip\\b', '\\bsiem\\b', '\\bmsp\\b', 'penetration test',
+  'vulnerability (assess|manage|scan)', 'audio ?visual', 'structured cabling',
+  '\\bwi-?fi\\b', 'endpoint (manage|protect|securit)', 'firewall',
+  'workstation', 'laptop (suppl|refresh|lifecycle)', 'print (manage|fleet)'
+].join('|'), 'i');
+
+/* Regions worth waking up for. Everything else is still captured but ranked below. */
+const HOT_REGION = /(ontario|toronto|durham|ottawa|national capital|\*canada|nationwide)/i;
+
+/* ---------- RFC4180-ish CSV parser (quote-aware, handles embedded newlines) ---------- */
+function parseCSV(text) {
+  if (text.charCodeAt(0) === 0xfeff) text = text.slice(1); // strip BOM
+  const rows = [];
+  let row = [], field = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false;
+      } else field += c;
+    } else if (c === '"') inQ = true;
+    else if (c === ',') { row.push(field); field = ''; }
+    else if (c === '\n') { row.push(field); field = ''; rows.push(row); row = []; }
+    else if (c !== '\r') field += c;
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  if (!rows.length) return [];
+  const head = rows[0];
+  return rows.slice(1)
+    .filter(r => r.length >= head.length - 2)
+    .map(r => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ''])));
+}
+
+const COL = {
+  title: 'title-titre-eng',
+  ref: 'referenceNumber-numeroReference',
+  solicitation: 'solicitationNumber-numeroSollicitation',
+  published: 'publicationDate-datePublication',
+  closes: 'tenderClosingDate-appelOffresDateCloture',
+  status: 'tenderStatus-appelOffresStatut-eng',
+  category: 'procurementCategory-categorieApprovisionnement',
+  noticeType: 'noticeType-avisType-eng',
+  method: 'procurementMethod-methodeApprovisionnement-eng',
+  regions: 'regionsOfDelivery-regionsLivraison-eng',
+  buyer: 'contractingEntityName-nomEntitContractante-eng',
+  contactName: 'contactInfoName-informationsContactNom',
+  contactEmail: 'contactInfoEmail-informationsContactCourriel',
+  url: 'noticeURL-URLavis-eng',
+  description: 'tenderDescription-descriptionAppelOffres-eng'
+};
+
+const esc = s => String(s || '').replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+
+export default async () => {
+  await beat('bid-radar-cron');
+  const out = {
+    ran_at: new Date().toISOString(), source: 'canadabuys-opendata',
+    notices_scanned: 0, matched: 0, new_hits: 0, emailed: false, errors: []
+  };
+
+  /* ---- 1. Pull the feed ---- */
+  let text;
+  try {
+    const res = await fetch(FEED_URL, {
+      headers: { 'User-Agent': 'IntegratedITSupport-BidRadar/1.0 (+https://iisupp.net)' }
+    });
+    if (!res.ok) throw new Error('feed HTTP ' + res.status);
+    text = await res.text();
+  } catch (e) {
+    out.errors.push('feed_fetch: ' + e.message);
+    return new Response(JSON.stringify(out), { headers: { 'Content-Type': 'application/json' } });
+  }
+
+  /* ---- 2. Parse + filter ---- */
+  let rows = [];
+  try { rows = parseCSV(text); } catch (e) { out.errors.push('parse: ' + e.message); }
+  out.notices_scanned = rows.length;
+
+  const nowMs = Date.now();
+  const matched = rows
+    .filter(r => IT_MATCH.test(r[COL.title] || ''))
+    .map(r => {
+      const closes = (r[COL.closes] || '').slice(0, 10);
+      const closesMs = Date.parse(closes) || 0;
+      const daysOut = closesMs ? Math.round((closesMs - nowMs) / 86400000) : null;
+      return {
+        key: (r[COL.ref] || r[COL.solicitation] || r[COL.title] || '').trim(),
+        title: (r[COL.title] || '').trim(),
+        buyer: (r[COL.buyer] || '').trim(),
+        closes, days_out: daysOut,
+        /* >365 days out = a standing offer / supply arrangement that stays open for
+           continuous qualification. Those are roster plays, not one-shot bids. */
+        standing: daysOut !== null && daysOut > 365,
+        regions: (r[COL.regions] || '').replace(/\s*\n\s*/g, ', ').replace(/\*/g, '').trim(),
+        method: (r[COL.method] || '').trim(),
+        notice_type: (r[COL.noticeType] || '').trim(),
+        contact: (r[COL.contactName] || '').trim(),
+        contact_email: (r[COL.contactEmail] || '').trim(),
+        url: (r[COL.url] || '').trim(),
+        blurb: (r[COL.description] || '').replace(/\s+/g, ' ').trim().slice(0, 320)
+      };
+    })
+    .filter(h => h.key && (h.days_out === null || h.days_out >= 0));
+  out.matched = matched.length;
+
+  /* ---- 3. De-dupe against what we've already reported ---- */
+  let store = null;
+  try {
+    const { getStore } = await import('@netlify/blobs');
+    store = getStore({ name: STORE_NAME, consistency: 'strong' });
+  } catch (e) { out.errors.push('blobs_unavailable: ' + e.message); }
+
+  let fresh = matched;
+  if (store) {
+    let seen = {};
+    try { seen = (await store.get('index', { type: 'json' })) || {}; } catch { seen = {}; }
+    fresh = matched.filter(h => !seen[h.key]);
+    const cutoff = nowMs - RETENTION_DAYS * 86400000;
+    const next = {};
+    for (const [k, v] of Object.entries(seen)) if (v > cutoff) next[k] = v;
+    for (const h of fresh) next[h.key] = nowMs;
+    try { await store.setJSON('index', next); }
+    catch (e) { out.errors.push('blobs_write: ' + e.message); }
+  }
+  out.new_hits = fresh.length;
+
+  /* ---- 4. Email only if something new. Silence is the feature. ---- */
+  if (fresh.length && process.env.RESEND_API_KEY) {
+    const rank = h => (HOT_REGION.test(h.regions) ? 0 : 1) * 1000 + (h.days_out ?? 9999);
+    fresh.sort((a, b) => rank(a) - rank(b));
+    const live = fresh.filter(h => !h.standing);
+    const standing = fresh.filter(h => h.standing);
+
+    const card = h => `
+      <div style="border-left:3px solid ${HOT_REGION.test(h.regions) ? '#c8a24a' : '#ccc'};padding:8px 12px;margin:0 0 14px">
+        <div style="font:600 15px/1.35 system-ui,sans-serif">${esc(h.title)}</div>
+        <div style="font:13px system-ui,sans-serif;color:#555;margin:3px 0">
+          ${esc(h.buyer)}${h.regions ? ' &middot; ' + esc(h.regions) : ''}
+        </div>
+        <div style="font:13px system-ui,sans-serif;margin:3px 0">
+          <b>Closes ${esc(h.closes) || 'n/a'}</b>${h.days_out !== null ? ` (${h.days_out} days)` : ''}
+          ${h.method ? ' &middot; ' + esc(h.method) : ''}
+        </div>
+        ${h.blurb ? `<div style="font:12px/1.45 system-ui,sans-serif;color:#444;margin:5px 0">${esc(h.blurb)}&hellip;</div>` : ''}
+        ${h.contact_email ? `<div style="font:12px system-ui,sans-serif;color:#555">Contact: ${esc(h.contact)} &lt;${esc(h.contact_email)}&gt;</div>` : ''}
+        ${h.url ? `<div style="font:12px system-ui,sans-serif;margin-top:4px"><a href="${esc(h.url)}">Open notice</a></div>` : ''}
+      </div>`;
+
+    const html = `
+      <div style="max-width:680px;margin:0 auto;font-family:system-ui,sans-serif">
+        <h2 style="font-size:17px;margin:0 0 4px">Bid Radar — ${fresh.length} new opportunit${fresh.length === 1 ? 'y' : 'ies'}</h2>
+        <p style="font-size:12px;color:#777;margin:0 0 18px">
+          ${out.notices_scanned} live notices scanned on CanadaBuys &middot; ${out.matched} IT-relevant &middot; ${fresh.length} not seen before.
+          Gold bar = Ontario or Canada-wide delivery.
+        </p>
+        ${live.length ? `<h3 style="font-size:14px;margin:0 0 10px">Live bids</h3>${live.map(card).join('')}` : ''}
+        ${standing.length ? `<h3 style="font-size:14px;margin:22px 0 4px">Standing offers / supply arrangements</h3>
+          <p style="font-size:12px;color:#777;margin:0 0 10px">Open for continuous qualification — get on these once and stay on the buyer's list.</p>
+          ${standing.map(card).join('')}` : ''}
+        <p style="font-size:11px;color:#999;border-top:1px solid #eee;padding-top:10px;margin-top:20px">
+          bid-radar-cron &middot; ${out.ran_at} &middot; you only get this email when something new appears.
+        </p>
+      </div>`;
+
+    try {
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + process.env.RESEND_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: process.env.RESEND_FROM || 'ARIA <noreply@iisupp.net>',
+          to: [process.env.FOUNDER_EMAIL || 'ahmad.wasee@iisupp.net'],
+          subject: `[Bid Radar] ${fresh.length} new IT opportunit${fresh.length === 1 ? 'y' : 'ies'}`,
+          html
+        })
+      });
+      if (!r.ok) throw new Error('resend HTTP ' + r.status);
+      out.emailed = true;
+    } catch (e) { out.errors.push('email: ' + e.message); }
+  }
+
+  out.sample = fresh.slice(0, 10).map(h => `${h.closes} | ${h.title}`);
+  return new Response(JSON.stringify(out), { headers: { 'Content-Type': 'application/json' } });
+};
+
+/* Weekdays 11:00 UTC = 07:00 Toronto (EDT). NOTE: after the November DST change this
+   lands at 06:00 Toronto — same DST caveat as the other crons in this project. */
+export const config = { schedule: '0 11 * * 1-5' };
