@@ -17,6 +17,30 @@ import path from "node:path";
 
 export const CAUSE_FIELDS = ["probability", "detection", "safeDiagnostic", "safeFix", "escalation"];
 
+// A2 (recovered 2026-08-05) — newer KB docs carry a YAML frontmatter block declaring what KIND of
+// article they are. `intent: setup` marks a HOW-TO ("how do I add a printer") — a real KB article the
+// matcher should route to, but NOT a symptom -> cause -> fix record. Loading a how-to as a symptom doc
+// was a mis-classification: it has no ranked causes to parse, so it could only ever read as malformed.
+// Docs with no frontmatter (the original 17) are break-fix by definition, so the default preserves them.
+export const NON_SYMPTOM_INTENTS = ["setup"];
+
+/** Parse a leading `---\nkey: value\n---` block. Returns {} when absent. Never throws. */
+export function parseFrontmatter(md) {
+  const m = String(md || "").match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!m) return {};
+  const out = {};
+  for (const line of m[1].split(/\r?\n/)) {
+    const kv = line.match(/^\s*([A-Za-z_][A-Za-z0-9_-]*)\s*:\s*(.*)$/);
+    if (kv) out[kv[1].toLowerCase()] = kv[2].trim();
+  }
+  return out;
+}
+
+/** True when a doc is a symptom (break-fix) record rather than a how-to/setup article. */
+export function isSymptomDoc(rec) {
+  return !NON_SYMPTOM_INTENTS.includes(String(rec?.intent || "break-fix"));
+}
+
 function field(block, label) {
   const re = new RegExp(`\\*\\*${label}:\\*\\*\\s*([^\\n]+)`, "i");
   const m = block.match(re);
@@ -55,7 +79,8 @@ export function parseSymptomFile(md, id = "") {
     };
   });
 
-  return { id, title, symptoms, phrasings, causes };
+  const fm = parseFrontmatter(text);
+  return { id, title, symptoms, phrasings, causes, intent: fm.intent || "break-fix", vertical: fm.vertical || "generic" };
 }
 
 /** True when a parsed record has the required structure (used by the parse test). */
@@ -66,7 +91,8 @@ export function isWellFormed(rec) {
 }
 
 /** Load + parse every <symptom>.md in a directory (skips the symptoms.md master index). */
-export function loadSymptomKb(dir) {
+export function loadSymptomKb(dir, { includeNonSymptom = false } = {}) {
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") && f !== "symptoms.md");
-  return files.map((f) => parseSymptomFile(fs.readFileSync(path.join(dir, f), "utf8"), path.basename(f, ".md")));
+  const recs = files.map((f) => parseSymptomFile(fs.readFileSync(path.join(dir, f), "utf8"), path.basename(f, ".md")));
+  return includeNonSymptom ? recs : recs.filter(isSymptomDoc);
 }

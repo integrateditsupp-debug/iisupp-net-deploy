@@ -42,9 +42,50 @@ export function inferPlatform(message, hostPlatform = "") {
   return hostPlatform || "";
 }
 
+// ── A2 (recovered 2026-08-05) — VERTICAL GUARD ──────────────────────────────────────────────────────
+// A KB article may declare `vertical:` in its frontmatter (healthcare, banking, legal, hr). A vertical
+// article answers a question only someone inside that vertical is asking. Without a guard, a healthcare
+// "patient portal lockout" doc competes for a generic "my Windows account is locked" query on the shared
+// words, and the confident answer is confidently wrong -- the worst failure this matcher can produce.
+// The guard multiplies a non-generic doc's score by VERTICAL_PENALTY unless the query signals the same
+// vertical. Every article shipping today is `generic`, so this is a NO-OP on the current corpus: it is a
+// standing guard for the vertical packs, not a re-ranking of what exists.
+export const VERTICAL_PENALTY = 0.3;
+
+/** Infer the vertical a question comes from. "generic" when nothing vertical-specific is named. */
+export function inferVertical(message) {
+  const m = String(message || "").toLowerCase();
+  if (/mychart|\bepic\b|patient portal|\behr\b|\bemr\b|meditech|cerner|allscripts|healthstream/.test(m)) return "healthcare";
+  if (/online banking|bank login|\btd bank\b|\brbc\b|\bbmo\b|scotiabank|\bcibc\b|wells fargo/.test(m)) return "banking";
+  if (/legal software|\bclio\b|practice management law/.test(m)) return "legal";
+  if (/workday|\badp\b|\bhris\b|payroll portal|bamboohr/.test(m)) return "hr";
+  return "generic";
+}
+
+// ── A2 (2026-08-05) — INTENT GUARD ──────────────────────────────────────────────────────────────────
+// "How do I add a printer" and "the printer won't print" are different questions about the same hardware,
+// and they share almost every token. Without a guard the setup how-to answers the break-fix question and
+// vice versa -- a confident answer to a question the user did not ask. A doc declares `intent:` in its
+// frontmatter (`setup` for how-tos, `break-fix` by default); the query's intent is read from how it is
+// phrased. On a mismatch the doc is multiplied down, never excluded: if nothing else matches, a related
+// article still beats an abstain.
+export const INTENT_PENALTY = 0.35;
+const SETUP_ASK = /\b(how (do|can|would) (i|we|you)|how to|steps to|guide to|walk me through)\b|\b(add|adding|install|installing|set ?up|setting ?up|configure|configuring|connect|connecting|onboard|enroll)\b/i;
+const BREAKFIX_ASK = /\b(wont|will not|won't|cannot|cant|can't|not working|stopped|broken|fails?|failing|failed|error|crash(es|ing|ed)?|stuck|frozen|freezes|hangs?|slow|missing|offline|disconnect(ed|s)?|keeps? (asking|dropping|crashing|restarting)|no (sound|internet|display|power))\b/i;
+
+/** Infer whether a question is asking how to SET SOMETHING UP or how to FIX something that is broken. */
+export function inferIntent(message) {
+  const m = String(message || "");
+  const breakfix = BREAKFIX_ASK.test(m);
+  const setup = SETUP_ASK.test(m);
+  if (breakfix && !setup) return "break-fix";
+  if (setup && !breakfix) return "setup";
+  return "";  // both or neither signalled -> stay neutral, apply no penalty
+}
+
 /** Score a KB doc against the query tokens. Platform-agnostic docs (diagnostics) always eligible; a doc whose
  *  platform matches the target gets a bias bump so e.g. a Mac question prefers the macOS blueprint. */
-export function scoreKbDoc(doc, queryTokens, targetPlatform) {
+export function scoreKbDoc(doc, queryTokens, targetPlatform, queryVertical = "generic", queryIntent = "") {
   if (!doc || !queryTokens || !queryTokens.length) return 0;
   const hay = doc._tokens || tokenize(`${doc.title || ""} ${doc.text || ""} ${(doc.tags || []).join(" ")}`);
   const hp = doc._tokenSet || new Set(hay);
@@ -55,6 +96,12 @@ export function scoreKbDoc(doc, queryTokens, targetPlatform) {
   if (doc.platform && targetPlatform && doc.platform === targetPlatform) score += 0.25; // platform bias
   if (doc.platform && targetPlatform && doc.platform !== targetPlatform) score -= 0.05; // mild off-platform penalty
   if (!targetPlatform && !doc.platform) score += 0.02; // no platform given → prefer the general diagnostic
+  // A2 vertical guard — suppress a vertical article for a query that does not signal that vertical.
+  const docVertical = doc.vertical || "generic";
+  if (docVertical !== "generic" && docVertical !== (queryVertical || "generic")) score *= VERTICAL_PENALTY;
+  // A2 intent guard — a setup how-to must not answer a break-fix question, or the reverse.
+  const docIntent = doc.intent || "break-fix";
+  if (queryIntent && docIntent !== queryIntent) score *= INTENT_PENALTY;
   return score;
 }
 
@@ -86,9 +133,11 @@ export function kbRelevance(query, articleText) {
 export function matchKb(index, message, { platform = "", min = 0.15 } = {}) {
   const tokens = tokenize(message);
   const target = inferPlatform(message, platform);
+  const vertical = inferVertical(message); // A2
+  const intent = inferIntent(message);     // A2
   let best = null, bestScore = min;
   for (const doc of Array.isArray(index) ? index : []) {
-    const s = scoreKbDoc(doc, tokens, target);
+    const s = scoreKbDoc(doc, tokens, target, vertical, intent);
     if (s > bestScore) { bestScore = s; best = doc; }
   }
   return best ? { doc: best, score: bestScore, platform: target } : null;
@@ -194,13 +243,20 @@ export function loadKbPack(dir, fsImpl) {
   const index = [];
   for (const sub of ["blueprints", "diagnostics"]) {
     let files = [];
-    try { files = fsImpl.readdirSync(`${dir}/${sub}`).filter((f) => f.endsWith(".md")); } catch { continue; }
+    // `symptoms.md` is the master INDEX — a table of contents. It shares every topical word in the pack,
+    // so left in the corpus it outscores the article it points at and ARIA answers a user with a link table.
+    // The symptom loader already skipped it; the matcher did not. (A2, 2026-08-05.)
+    try { files = fsImpl.readdirSync(`${dir}/${sub}`).filter((f) => f.endsWith(".md") && f !== "symptoms.md"); } catch { continue; }
     for (const f of files) {
       let raw = "";
       try { raw = fsImpl.readFileSync(`${dir}/${sub}/${f}`, "utf8"); } catch { continue; }
       const title = (raw.match(/^#\s+(.+)$/m) || [])[1] || f.replace(/\.md$/, "");
       const text = raw.toLowerCase();
-      index.push({ id: `${sub}/${f}`, platform: sub === "blueprints" ? platformOf(f) : "", title, text, _tokens: tokenize(`${title} ${text}`), _tokenSet: new Set(tokenize(`${title} ${text}`)) });
+      const fm = (raw.match(/^---\r?\n([\s\S]*?)\r?\n---/) || [])[1] || "";
+      const fmField = (k) => ((fm.match(new RegExp(`^\\s*${k}\\s*:\\s*(.*)$`, "im")) || [])[1] || "").trim();
+      index.push({ id: `${sub}/${f}`, platform: sub === "blueprints" ? platformOf(f) : "", title, text,
+        vertical: fmField("vertical") || "generic", intent: fmField("intent") || "break-fix",
+        _tokens: tokenize(`${title} ${text}`), _tokenSet: new Set(tokenize(`${title} ${text}`)) });
     }
   }
   return index;
