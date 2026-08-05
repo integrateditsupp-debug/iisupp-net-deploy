@@ -2,12 +2,12 @@
  "_internal": true,
  "_emitRule": "INTERNAL ONLY — force-404 live, served via authenticated /api/axis-status. NEVER copy this content into .well-known: regenerate the public mirrors with scripts/lib/axis-status-emit.mjs (headline-only, leak-scanned).",
  "schema": "axis-status-full/1",
- "generatedAt": "2026-08-05T20:50:52.174Z",
+ "generatedAt": "2026-08-05T21:48:04.776Z",
  "honest": true,
  "claims": {
   "testsPassedAfterWrites": {
-   "value": 618,
-   "measuredAt": "2026-08-05T20:51:17.967Z",
+   "value": 646,
+   "measuredAt": "2026-08-05T21:48:29.955Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# pass)",
    "kind": "test",
    "provenance": "measured",
@@ -21,7 +21,7 @@
   },
   "testsFailedAfterWrites": {
    "value": 0,
-   "measuredAt": "2026-08-05T20:51:17.967Z",
+   "measuredAt": "2026-08-05T21:48:29.955Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (# fail)",
    "kind": "test",
    "provenance": "measured",
@@ -34,8 +34,8 @@
    "stale": false
   },
   "suitesGreenAfterWrites": {
-   "value": 338,
-   "measuredAt": "2026-08-05T20:51:17.967Z",
+   "value": 340,
+   "measuredAt": "2026-08-05T21:48:29.955Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -48,8 +48,8 @@
    "stale": false
   },
   "suitesTotalAfterWrites": {
-   "value": 338,
-   "measuredAt": "2026-08-05T20:51:17.967Z",
+   "value": 340,
+   "measuredAt": "2026-08-05T21:48:29.955Z",
    "source": "the full registry run performed by this emit script, parsed from the runner's own output (N/N suites green)",
    "kind": "test",
    "provenance": "measured",
@@ -63,7 +63,7 @@
   },
   "registryExitCode": {
    "value": 0,
-   "measuredAt": "2026-08-05T20:51:17.968Z",
+   "measuredAt": "2026-08-05T21:48:29.955Z",
    "source": "the exit code of the registry run this script performed",
    "kind": "test",
    "provenance": "measured",
@@ -76,8 +76,8 @@
    "stale": false
   },
   "testsPassedBeforeAnyWrite": {
-   "value": 563,
-   "measuredAt": "2026-08-05T20:51:17.968Z",
+   "value": 618,
+   "measuredAt": "2026-08-05T21:48:29.956Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -88,8 +88,8 @@
    "stale": false
   },
   "suitesGreenBeforeAnyWrite": {
-   "value": 334,
-   "measuredAt": "2026-08-05T20:51:17.968Z",
+   "value": 338,
+   "measuredAt": "2026-08-05T21:48:29.956Z",
    "source": "not measurable in this environment: the pre-write read cannot be re-taken after the writes; it is reported as last known rather than re-stamped",
    "kind": "test",
    "provenance": "declared-unmeasurable",
@@ -100,8 +100,8 @@
    "stale": false
   },
   "commitsAheadOfSharedLine": {
-   "value": 46,
-   "measuredAt": "2026-08-05T20:51:18.190Z",
+   "value": 47,
+   "measuredAt": "2026-08-05T21:48:30.180Z",
    "source": "a revision count taken against the last known shared reference during this cycle",
    "kind": "count",
    "provenance": "measured",
@@ -115,7 +115,7 @@
   },
   "pushCredentialRefused": {
    "value": true,
-   "measuredAt": "2026-08-05T20:51:18.453Z",
+   "measuredAt": "2026-08-05T21:48:30.365Z",
    "source": "a remote probe run with prompts disabled during this emit; the refusal is the measurement",
    "kind": "blocker",
    "provenance": "measured",
@@ -129,7 +129,7 @@
   },
   "secondMessagesDrafted": {
    "value": 12,
-   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "measuredAt": "2026-08-05T21:48:30.368Z",
    "source": "a read of senior-director-state/outbound/SEND-SHEET-2026-08-05.md on disk during this cycle, counting its entries",
    "kind": "count",
    "provenance": "measured",
@@ -144,7 +144,7 @@
   },
   "customerRoutesResolved": {
    "value": 761,
-   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "measuredAt": "2026-08-05T21:48:30.368Z",
    "source": "the customer link-graph walk performed during this emit, over the declared customer entry points",
    "kind": "measurement",
    "provenance": "measured",
@@ -158,8 +158,8 @@
   },
   "customerRoutesBroken": {
    "value": 0,
-   "measuredAt": "2026-08-05T20:51:18.454Z",
-   "source": "the same walk; a broken route is one resolving to no file, an empty file, a force-404 rule, or a login-only body",
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "the same walk; a broken route resolves to no file, an empty file, a force-404 rule, or a login-only body",
    "kind": "blocker",
    "provenance": "measured",
    "read": {
@@ -172,8 +172,8 @@
   },
   "customerRoutesUnchecked": {
    "value": 133,
-   "measuredAt": "2026-08-05T20:51:18.454Z",
-   "source": "the same walk; external hosts, mail/tel schemes, fragments, runtime-built hrefs and function routes — undecidable from disk and never counted as passing",
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "the same walk; external hosts, mail/tel schemes, fragments, runtime hrefs and function routes — undecidable from disk, never counted as passing",
    "kind": "measurement",
    "provenance": "measured",
    "read": {
@@ -184,9 +184,107 @@
    "maxAgeHours": 24,
    "stale": false
   },
+  "firstScreensWithAValueClaim": {
+   "value": 9,
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "the first-screen audit run during this emit over the declared customer entry points",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditEntryPoints() — chrome stripped, above-the-fold prose held to Rule 17 and Rule 14",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstScreensWithFindings": {
+   "value": 6,
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "the same audit; a finding is a named violation carrying its file and, where the string exists in source, its line",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditEntryPoints().broken",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "firstScreensUnchecked": {
+   "value": 0,
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "the same audit; an entry point mounted at runtime or absent from disk — never counted as passing",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "auditEntryPoints().unchecked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "firstScreenRule14Violations": {
+   "value": 0,
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "the same audit, filtered to the honesty classes: guarantee language, experience overclaim, forbidden name, fabricated proof, uncarried metric",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "auditEntryPoints() findings filtered to the Rule 14 class set",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "entryPointsReachingAConversation": {
+   "value": 15,
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "the conversation-path walk run during this emit, from each entry point out to the action that starts a conversation",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "walkAllConversationPaths() — breadth-first to 2 clicks, delivery target required on disk",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "entryPointsWithNoConversation": {
+   "value": 0,
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "the same walk; no path, a path past the click budget, or a path ending in a form that declares no delivery target",
+   "kind": "blocker",
+   "provenance": "measured",
+   "read": {
+    "command": "walkAllConversationPaths().broken",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 72,
+   "stale": false
+  },
+  "entryPointsConversationUnchecked": {
+   "value": 0,
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "the same walk; an entry point not on disk in this checkout — never counted as reachable",
+   "kind": "measurement",
+   "provenance": "measured",
+   "read": {
+    "command": "walkAllConversationPaths().unchecked",
+    "exitCode": 0
+   },
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
   "outboundLinksResolved": {
    "value": 0,
-   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "measuredAt": "2026-08-05T21:48:30.368Z",
    "source": "the audit of every site link in the send sheet, run during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -200,7 +298,7 @@
   },
   "stagedItemsAudited": {
    "value": 4,
-   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "measuredAt": "2026-08-05T21:48:30.368Z",
    "source": "the staged-action guard run over the tracked staged-actions module during this emit",
    "kind": "measurement",
    "provenance": "measured",
@@ -212,33 +310,9 @@
    "maxAgeHours": 24,
    "stale": false
   },
-  "secondMessagesSent": {
-   "value": 0,
-   "measuredAt": "2026-08-05T20:51:18.454Z",
-   "source": "not measurable in this environment: no send path exists in this environment and none was attempted; the outbound record shows none",
-   "kind": "count",
-   "provenance": "declared-unmeasurable",
-   "unmeasurableReason": "no send path exists in this environment and none was attempted; the outbound record shows none",
-   "note": "last known value, carried forward and labelled — NOT measured this cycle",
-   "ageHours": 0,
-   "maxAgeHours": 24,
-   "stale": false
-  },
-  "meetingsHeld": {
-   "value": 0,
-   "measuredAt": "2026-08-05T20:51:18.454Z",
-   "source": "not measurable in this environment: replies and meetings live in a mailbox and a calendar this environment cannot read",
-   "kind": "count",
-   "provenance": "declared-unmeasurable",
-   "unmeasurableReason": "replies and meetings live in a mailbox and a calendar this environment cannot read",
-   "note": "last known value, carried forward and labelled — NOT measured this cycle",
-   "ageHours": 0,
-   "maxAgeHours": 24,
-   "stale": false
-  },
   "stagedItemsRanked": {
    "value": 4,
-   "measuredAt": "2026-08-05T20:51:18.454Z",
+   "measuredAt": "2026-08-05T21:48:30.368Z",
    "source": "the staged list read during this emit; AN2 requires a rank and an unblocks statement per item",
    "kind": "measurement",
    "provenance": "measured",
@@ -250,9 +324,33 @@
    "maxAgeHours": 24,
    "stale": false
   },
+  "secondMessagesSent": {
+   "value": 0,
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "not measurable in this environment: no send path exists in this environment and none was attempted; the outbound record shows none",
+   "kind": "count",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "no send path exists in this environment and none was attempted; the outbound record shows none",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
+  "meetingsHeld": {
+   "value": 0,
+   "measuredAt": "2026-08-05T21:48:30.368Z",
+   "source": "not measurable in this environment: replies and meetings live in a mailbox and a calendar this environment cannot read",
+   "kind": "count",
+   "provenance": "declared-unmeasurable",
+   "unmeasurableReason": "replies and meetings live in a mailbox and a calendar this environment cannot read",
+   "note": "last known value, carried forward and labelled — NOT measured this cycle",
+   "ageHours": 0,
+   "maxAgeHours": 24,
+   "stale": false
+  },
   "daysDraftedUnsent": {
    "value": 16,
-   "measuredAt": "2026-08-05T20:50:52.174Z",
+   "measuredAt": "2026-08-05T21:48:04.776Z",
    "source": "the date the twelve were first drafted (2026-07-21), differenced against today",
    "kind": "count",
    "ageHours": 0,
@@ -261,7 +359,7 @@
   },
   "revenueToDate": {
    "value": "none",
-   "measuredAt": "2026-08-05T20:50:52.174Z",
+   "measuredAt": "2026-08-05T21:48:04.776Z",
    "source": "no invoice has been issued",
    "kind": "fact",
    "ageHours": 0,
@@ -270,7 +368,7 @@
   },
   "feedMaxAgeHours": {
    "value": 24,
-   "measuredAt": "2026-08-05T20:50:52.174Z",
+   "measuredAt": "2026-08-05T21:48:04.776Z",
    "source": "the freshness policy wired into the served-feed read path",
    "kind": "fact",
    "ageHours": 0,
@@ -278,49 +376,47 @@
    "stale": false
   }
  },
- "claimsPolicy": "Every figure above is { value, measuredAt, source, kind } AND declares who authored the stamp. A figure this environment can read must carry `provenance: measured` plus the command and exit code that produced it — the emit script no longer types those numbers anywhere, and the emitter refuses the whole write if one arrives hand-typed. A figure that cannot be read here is `declared-unmeasurable` with a reason and, where useful, a value explicitly labelled last known. Only figures with nothing to read may be attested by hand.",
+ "claimsPolicy": "Every figure above is { value, measuredAt, source, kind } AND declares who authored the stamp. A figure this environment can read must carry `provenance: measured` plus the command and exit code that produced it — the emit script types none of those numbers, and the emitter refuses the whole write if one arrives hand-typed. A figure that cannot be read here is `declared-unmeasurable` with a reason and, where useful, a value explicitly labelled last known. Only figures with nothing to read may be attested by hand.",
  "program": {
   "series": "flywheel",
-  "sequence": "RUN-AN — the door nobody tried (AN1, AN2, AN3)",
-  "previousSequence": "RUN-AM — the stamp the writer cannot type (3/3)",
+  "sequence": "RUN-AO — the first thing a stranger sees (AO1, AO2, AO3)",
+  "previousSequence": "RUN-AN — the door nobody tried (3/3 plus one unplanned)",
   "tasksBuiltAndGreen": 3,
   "tasksTotal": 3,
   "tasksMerged": 3,
   "pct": 100,
-  "unplannedTasksBuiltAndGreen": 1,
   "tasksStillOpen": [],
-  "carriedFrom": "nothing carried; AM closed 3/3",
+  "carriedFrom": "nothing carried; AN closed 3/3 plus the inherited classifier regression",
   "testsGreen": true,
-  "verificationCycleNote": "The registry arrived RED this cycle — an in-flight classifier patch in the working tree had dropped the `default` intent to 85.8%, under its 86% regression floor. It was diagnosed to a single unbounded typo alternate matching inside unrelated product names, bounded, and the floor restored to 86.13% with the patch's own gains kept. That fix is the unplanned task.",
-  "note": "AN1 — the customer-facing path, proven from the repository. Nineteen cycles made the OPERATOR's numbers unable to lie and never once proved the thing a PROSPECT would meet. The link graph is now walked from the declared customer entry points, on disk, with no network call and no deploy: a route resolving to no file, to an empty file, to a force-404 redirect rule, or to a body that is nothing but a sign-in gate fails red and names its file and line. Routes that genuinely cannot be decided here — external hosts, mail/tel schemes, fragments, hrefs assembled at runtime, function routes — are UNCHECKED with a reason and are never folded into the pass count, which is asserted by its own test. AN2 — the staged one-click list stopped pretending its items are equals. Rank, what the click unblocks, and what stays blocked without it are now required; ties and gaps fail at the list level; and the order the operator reads is asserted by a test rather than by the order the array happens to be typed in. The send leads; the credential that would retire the push permanently outranks the push it retires. AN3 — this feed, emitted by measurement. Second messages sent: still zero."
+  "verificationCycleNote": "The registry arrived GREEN this cycle and was read again after every write. The working tree arrived with a stale index — thirteen files staged as deleted that were present on disk, and four git locks left behind by an interrupted process hours earlier. Both were repaired before any work, the locks preserved rather than destroyed, and no tracked content was lost.",
+  "note": "AO1 — the first screen, held to Rule 17 and Rule 14 at the same time. Nineteen cycles proved the operator's numbers cannot lie and one proved the customer's routes resolve; none had ever read what the first screen actually says. It is now extracted from disk with the navigation, header and footer chrome stripped, and fails by name on guarantee / money-back / risk-free language, on an experience claim past 15+ years, on the forbidden name, on a proof claim with no evidence, on a hard metric the measured feed does not carry, and — the finding this task exists for — on a first screen that is navigation and nothing else, as `no-claim-above-the-fold`. A bare noun is explicitly refused as a value claim, because the company name contains one and accepting it would have passed every page by accident. No page was rewritten to make the number look better. AO2 — the route from that screen to a conversation. A resolving link graph in which no prospect can reach a human is a working website and a dead business, so each entry point is walked out to the action that starts a conversation within 2 clicks, and the terminus must declare a delivery target on disk: a form that accepts a prospect's typing and sends it nowhere fails as a dead end rather than passing as a contact page. AO3 — this feed, emitted by measurement. Second messages sent: still zero."
  },
  "tests": {
   "afterEveryWrite": {
-   "pass": 618,
+   "pass": 646,
    "fail": 0,
-   "suites": "338/338",
+   "suites": "340/340",
    "exit": 0
   },
   "beforeAnyWriteLastKnown": {
-   "pass": 592,
+   "pass": 618,
    "fail": 0,
-   "suites": "336/336",
+   "suites": "338/338",
    "exit": 0,
-   "note": "opening read of this cycle AFTER the inherited classifier regression was fixed; reported as last known, not re-stamped"
+   "note": "opening read of this cycle, taken before any RUN-AO write; reported as last known, not re-stamped"
   },
   "arrivalState": {
-   "red": true,
-   "suite": "classifier-accuracy",
-   "detail": "intent \"default\" 85.82% under its 86% floor, from an in-flight working-tree patch; fixed to 86.13% before any RUN-AN write"
+   "red": false,
+   "detail": "the registry arrived green; the stale index and four abandoned git locks were the only arrival defects, both repaired without loss"
   },
   "riseExplained": "this cycle's two new suites and nothing else",
   "newThisCycle": [
    {
-    "suite": "customer-link-graph",
+    "suite": "first-screen-audit",
     "redThenGreen": true
    },
    {
-    "suite": "staged-action-rank",
+    "suite": "conversation-path",
     "redThenGreen": true
    }
   ]
@@ -400,7 +496,7 @@
  "onTrack": {
   "landing": false,
   "conversion": false,
-  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (46 commits ahead of the last known shared reference) because the environment holds no credential for the shared host."
+  "honestNote": "Nothing published. No customer-visible change and none claimed. The verified work still sits on the local line (47 commits ahead of the last known shared reference) because the environment holds no credential for the shared host — probed again this cycle and refused again."
  },
  "needsAhmad": [
   {
@@ -448,7 +544,58 @@
   "broken": 0,
   "uncheckedWithReason": 133,
   "outboundSiteLinks": 0,
-  "note": "Walked from disk, no network call, no deploy. Unchecked is a third verdict with a stated reason and is never counted as passing."
+  "firstScreen": {
+   "withAValueClaim": 9,
+   "withFindings": 6,
+   "unchecked": 0,
+   "rule14Violations": [],
+   "findings": [
+    {
+     "file": "product.html",
+     "line": null,
+     "class": "no-claim-above-the-fold",
+     "detail": "the first screen names things but promises nothing a reader can feel (Rule 17)"
+    },
+    {
+     "file": "about.html",
+     "line": null,
+     "class": "no-claim-above-the-fold",
+     "detail": "the first screen names things but promises nothing a reader can feel (Rule 17)"
+    },
+    {
+     "file": "growth-library.html",
+     "line": null,
+     "class": "no-claim-above-the-fold",
+     "detail": "the first screen names things but promises nothing a reader can feel (Rule 17)"
+    },
+    {
+     "file": "trust.html",
+     "line": null,
+     "class": "no-claim-above-the-fold",
+     "detail": "the first screen names things but promises nothing a reader can feel (Rule 17)"
+    },
+    {
+     "file": "security.html",
+     "line": null,
+     "class": "no-claim-above-the-fold",
+     "detail": "the first screen names things but promises nothing a reader can feel (Rule 17)"
+    },
+    {
+     "file": "terms.html",
+     "line": null,
+     "class": "no-claim-above-the-fold",
+     "detail": "the first screen names things but promises nothing a reader can feel (Rule 17)"
+    }
+   ]
+  },
+  "conversation": {
+   "maxClicks": 2,
+   "reachable": 15,
+   "noReachablePath": 0,
+   "unchecked": 0,
+   "findings": []
+  },
+  "note": "Walked from disk, no network call, no deploy. Unchecked is a third verdict with a stated reason and is never counted as passing or as reachable."
  },
  "stagedAudit": {
   "audited": 4,

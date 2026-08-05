@@ -47,6 +47,18 @@ const TESTS = [
   // required, ties and gaps fail at the list level, and the order the operator reads is asserted by
   // a test rather than by the order somebody typed the array.
   "../../tests/staged-action-rank.test.mjs",
+  // FIRST SCREEN 2026-08-05 (RUN-AO / AO1) — AN1 proved the customer path RESOLVES. This asks the
+  // harder question nobody in the series has asked: what the first screen SAYS. Held to Rule 17 (it
+  // must promise something a reader can feel — a screen that is navigation and nothing else fails as
+  // `no-claim-above-the-fold`) and Rule 14 at the same time (no guarantee/money-back/risk-free, no
+  // experience claim past 15+ years, no forbidden name, no proof claim or hard metric the measured
+  // feed cannot carry). Findings name the file and line; nothing is rewritten to make this pass.
+  "../../tests/first-screen-audit.test.mjs",
+  // CONVERSATION PATH 2026-08-05 (RUN-AO / AO2) — a resolving link graph in which no prospect can
+  // reach a human is a working website and a dead business. Walks entry point → the action that
+  // starts a conversation, fails on no path, on a path past two clicks, and on a path ending in a
+  // form that accepts typing and delivers it nowhere. Undecidable = UNCHECKED, never a pass.
+  "../../tests/conversation-path.test.mjs",
   // SENTINEL TRIAL GATING 2026-07-02 — 30-day trial + permanent Walk-Through entitlement (Concierge buyers).
   "./walkthrough-entitlement.test.mjs",
   "./tab-gating-post-trial.test.mjs",

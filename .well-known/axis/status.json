@@ -3,9 +3,9 @@
  "milestone": "The customer-facing product and the operator command centre are built and tested. Delivery is staged and waits on deliberate operator actions, not on further software.",
  "readiness": "Built and tested. Publishing is a deliberate manual step by the operator, never automatic.",
  "revenueToDate": "none",
- "headline": "ARIA / AXIS is in active build. This cycle turned from the operator's view to the customer's: every route a prospect can reach from the public pages is now checked from the repository — 761 resolve, 0 broken, 133 honestly undecidable and never counted as passing. Second messages sent: 0 — drafted 16 days. Meetings 0, revenue none. Tests: 618 pass, 0 fail, 338 of 338 suites.",
+ "headline": "ARIA / AXIS is in active build. Last cycle proved the customer routes resolve; this one reads what the first screen says. 9 of 15 entry points make a claim a reader can feel, 0 carry a claim we cannot stand behind, 15 put a person within 2 clicks. Second messages sent: 0 — drafted 16 days. Meetings 0, revenue none. Tests: 646 pass, 0 fail, 340/340 suites.",
  "note": "Public status headline only. Detailed build state is operator-internal and served only to authenticated operators inside the AXIS command centre. This public feed never carries commit, branch, or operator-script detail.",
- "generatedAt": "2026-08-05T20:50:52.174Z",
+ "generatedAt": "2026-08-05T21:48:04.776Z",
  "schema": "axis-status/1",
  "public": true,
  "honest": true
